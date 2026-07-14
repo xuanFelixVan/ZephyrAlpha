@@ -800,7 +800,7 @@ WHERE e.from_node_id = 1001 AND e.cross_domain = 1;
 
 #### 14.2.1 自动触发机制调研依据（裁定#209 证据基础）
 
-> 调研时间：2026-07-02。方法：阅读 [generate_project_depgraph.py](../../../../scripts/governance/generate_project_depgraph.py)（3924行）+ [reconciliation_registry.py](../../../../src/zephyr/governance/audit/reconciliation_registry.py) + [git_commit_gateway.py](../../../../src/zephyr/governance/rule_bridge/git_commit_gateway.py) 代码实证 + 业界网络调研。
+> 调研时间：2026-07-02。方法：阅读 [generate_project_depgraph.py](../../../../scripts/governance/generate_project_depgraph.py)（3924行）+ [reconciliation_registry.py](../../../../src/zephyr/gov_audit/reconciliation_registry.py) + [git_commit_gateway.py](../../../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py) 代码实证 + 业界网络调研。
 
 ##### A. 生成器实现证据
 

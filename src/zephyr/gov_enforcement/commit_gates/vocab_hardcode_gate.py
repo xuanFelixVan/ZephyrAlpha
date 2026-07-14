@@ -44,7 +44,7 @@ M01 检出 13 个词表硬编码违规（基线）。check_vocab_hardcode.py 能
 
 Usage::
 
-    from zephyr.governance.commit_gates.vocab_hardcode_gate import make_vocab_hardcode_gate
+    from zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate import make_vocab_hardcode_gate
 
     registry.register(make_vocab_hardcode_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
@@ -69,7 +69,7 @@ _SCRIPT_PATH = (
         os.path.dirname(os.path.abspath(__file__))
     ))))
 )
-# src/zephyr/governance/commit_gates/ -> 上 5 级 = 项目根
+# src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
 _VOCAB_SCRIPT = os.path.join(_SCRIPT_PATH, "scripts", "governance", "d3_metadata", "check_vocab_hardcode.py")
 
 

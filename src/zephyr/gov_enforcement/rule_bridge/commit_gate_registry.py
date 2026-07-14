@@ -38,7 +38,7 @@ reconciler 注册 + commit 编排 + stash 隔离），多 session 频繁修改�
 
 Usage::
 
-    from zephyr.governance.rule_bridge.commit_gate_registry import (
+    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
         GateResult, GateSpec, CommitGateRegistry,
     )
 

@@ -148,7 +148,7 @@ class TestGetDataclassFields:
 
         sys.modules["_test_sample_dc"] = sys.modules[__name__]
         with patch(
-            "zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.importlib.import_module"
+            "zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.importlib.import_module"
         ) as mock_import:
             mock_mod = type("mod", (), {"SampleDC": SampleDC})()
             mock_import.return_value = mock_mod
@@ -167,20 +167,20 @@ class TestGetDataclassFields:
 
     def test_non_dataclass(self):
         result = _get_dataclass_fields(
-            "zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility", "TYPE_ALIAS_MAP"
+            "zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility", "TYPE_ALIAS_MAP"
         )
         assert result is None
 
 
 class TestRunCheck:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
     def test_empty_contracts_passes(self, mock_load):
         mock_load.return_value = {"contracts": []}
         result = run_check()
         assert result.passed is True
         assert result.total == 0
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
     def test_contract_no_physical_path_skipped(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -191,7 +191,7 @@ class TestRunCheck:
         assert result.passed is True
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
     def test_contract_no_fields_skipped(self, mock_load):
         mock_load.return_value = {
             "contracts": [
@@ -202,9 +202,9 @@ class TestRunCheck:
         assert result.passed is True
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_matching_fields_passes(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int"}
@@ -224,9 +224,9 @@ class TestRunCheck:
         assert result.passed is True
         assert result.matched == 1
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_missing_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str"}
@@ -246,9 +246,9 @@ class TestRunCheck:
         assert result.passed is False
         assert len(result.mismatches) >= 1
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_extra_field_in_code_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "str", "value": "int", "extra": "float"}
@@ -267,8 +267,8 @@ class TestRunCheck:
         result = run_check()
         assert result.passed is False
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_unresolvable_module_skipped(self, mock_strip, mock_load):
         mock_strip.return_value = None
         mock_load.return_value = {
@@ -283,9 +283,9 @@ class TestRunCheck:
         result = run_check()
         assert len(result.skipped) >= 1
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._load_contracts")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._get_dataclass_fields")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility._strip_module_path")
     def test_type_mismatch_fails(self, mock_strip, mock_fields, mock_load):
         mock_strip.return_value = ("zephyr.shared.contracts.foo", "Foo")
         mock_fields.return_value = {"name": "int"}
@@ -305,21 +305,21 @@ class TestRunCheck:
 
 
 class TestCheck:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
     def test_returns_tuple(self, mock_run):
         mock_run.return_value = CompatibilityResult(passed=True, total=3, matched=3)
         passed, msg = check()
         assert isinstance(passed, bool)
         assert isinstance(msg, str)
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
     def test_pass(self, mock_run):
         mock_run.return_value = CompatibilityResult(passed=True, total=5, matched=5)
         passed, msg = check()
         assert passed is True
         assert "[PASS]" in msg
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility.run_check")
     def test_fail(self, mock_run):
         mock_run.return_value = CompatibilityResult(passed=False, total=2, matched=1, mismatches=["m1"])
         passed, msg = check()

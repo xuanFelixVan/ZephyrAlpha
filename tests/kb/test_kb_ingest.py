@@ -18,7 +18,7 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from zephyr.governance.kb.ingest import (
+from zephyr.gov_kb.ingest import (
     ALLOWED_EXTENSIONS,
     BLACKLIST_PATTERNS,
     MIN_CONTENT_CHARS,
@@ -26,7 +26,7 @@ from zephyr.governance.kb.ingest import (
     IngestGate,
     IngestResult,
 )
-from zephyr.governance.rule_enforcement.gate_types import GateResult, GateViolation
+from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
 
 
 def _mock_gate_engine(passed: bool = True) -> MagicMock:

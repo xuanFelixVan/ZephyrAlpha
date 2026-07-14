@@ -55,7 +55,7 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # 
 
 _GATE_HEADER_TEMPLATE = """\
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md
-# [MODULE] zephyr.governance.commit_gates.{name}
+# [MODULE] zephyr.gov_enforcement.commit_gates.{name}
 # [DOMAIN] D_GOVERNANCE
 # [TESTS] {tests_path}
 # [TTL] permanent
@@ -224,7 +224,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "foo_gate", "tests/governance/commit_gates/test_foo.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is True
         assert msg == ""
 
@@ -234,7 +234,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "foo_gate", "tests/nonexistent/test_foo.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is False
         assert "META-TESTS-COVERAGE" in msg
         assert "foo_gate.py" in msg
@@ -246,7 +246,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "foo_gate", "—")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is True
 
     @pytest.mark.parametrize("exempt", ["", "—", "-", "none", "None", "无", "N/A", "n/a"])
@@ -256,7 +256,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "foo_gate", exempt)
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, _ = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, _ = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is True
 
     def test_underscore_prefix_skipped(self, tmp_path):
@@ -265,7 +265,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "_helper", "tests/nonexistent.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/_helper.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/_helper.py"])
         assert ok is True
         assert msg == ""
 
@@ -278,7 +278,7 @@ class TestGatewayIntegration:
         )
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/no_header.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/no_header.py"])
         assert ok is True
 
     def test_fail_open_on_listdir_error(self, tmp_path):
@@ -297,7 +297,7 @@ class TestGatewayIntegration:
         original = os.listdir
         os.listdir = _fail_listdir
         try:
-            ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+            ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
             assert ok is True
             assert msg == ""
         finally:
@@ -307,7 +307,7 @@ class TestGatewayIntegration:
         """gate 目录不存在 → fail-open（放行）。"""
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is True
         assert msg == ""
 
@@ -329,7 +329,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "bar_gate", "tests/missing_bar.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/foo_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/foo_gate.py"])
         assert ok is False
         assert "foo_gate.py" in msg
         assert "bar_gate.py" in msg
@@ -344,7 +344,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "bad_gate", "tests/test_missing.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/ok_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/ok_gate.py"])
         assert ok is False
         assert "bad_gate.py" in msg
         assert "ok_gate.py" not in msg
@@ -356,7 +356,7 @@ class TestGatewayIntegration:
         (gate_dir / "README.md").write_text("# [TESTS] tests/nonexistent.py", encoding="utf-8")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/README.md"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/README.md"])
         assert ok is True
 
     def test_trigger_only_on_gate_dir_files(self, tmp_path):
@@ -374,7 +374,7 @@ class TestGatewayIntegration:
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
         # 触发文件是 bar_gate.py，但 foo_gate.py 的违规也会被检测到
-        ok, msg = spec.check(gw, files=["src/zephyr/governance/commit_gates/bar_gate.py"])
+        ok, msg = spec.check(gw, files=["src/zephyr/gov_enforcement/commit_gates/bar_gate.py"])
         assert ok is False
         assert "foo_gate.py" in msg
 

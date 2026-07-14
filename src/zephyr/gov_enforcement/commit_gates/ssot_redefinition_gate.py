@@ -36,7 +36,7 @@ SSoT 符号筛选规则:
 
 Usage::
 
-    from zephyr.governance.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
+    from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
     registry.register(make_ssot_redefinition_gate())
 """
 

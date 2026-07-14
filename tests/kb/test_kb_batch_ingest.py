@@ -18,8 +18,8 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from zephyr.governance.kb.batch_ingest import BatchIngestEntry, BatchIngestor, BatchIngestReport
-from zephyr.governance.kb.ingest import IngestResult
+from zephyr.gov_kb.batch_ingest import BatchIngestEntry, BatchIngestor, BatchIngestReport
+from zephyr.gov_kb.ingest import IngestResult
 
 
 def _mock_ingest_gate(passed: bool = True) -> MagicMock:

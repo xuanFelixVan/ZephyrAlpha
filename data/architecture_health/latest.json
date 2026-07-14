@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14T08:18:39.982223+00:00",
+  "timestamp": "2026-07-14T09:43:52.937769+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
@@ -53,7 +53,7 @@
     {
       "metric_id": "M03",
       "name": "重复簇函数数",
-      "count": 512,
+      "count": 514,
       "target": 0,
       "details": [
         "簇(91): src\\zephyr\\autonomy_core\\prompt_registry.py:__init__() L140 | src\\zephyr\\autonomy_core\\context\\context_assembler.py:__init__() L113 | src\\zephyr\\backtest\\core\\data_handler.py:__init__() L58",
@@ -198,7 +198,7 @@
       "error": ""
     }
   ],
-  "total_auto": 1896,
+  "total_auto": 1898,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }

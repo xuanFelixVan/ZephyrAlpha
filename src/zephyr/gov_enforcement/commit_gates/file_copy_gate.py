@@ -47,7 +47,7 @@ M05 检出 159 对文件复制（基线）。check_code_duplication.py 能检出
 
 Usage::
 
-    from zephyr.governance.commit_gates.file_copy_gate import make_file_copy_gate
+    from zephyr.gov_enforcement.commit_gates.file_copy_gate import make_file_copy_gate
 
     registry.register(make_file_copy_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
@@ -72,7 +72,7 @@ _SCRIPT_PATH = (
         os.path.dirname(os.path.abspath(__file__))
     ))))
 )
-# src/zephyr/governance/commit_gates/ -> 上 5 级 = 项目根
+# src/zephyr/gov_enforcement/commit_gates/ -> 上 5 级 = 项目根
 _DUP_SCRIPT = os.path.join(
     _SCRIPT_PATH, "scripts", "governance", "d5_architecture", "checkers", "check_code_duplication.py"
 )

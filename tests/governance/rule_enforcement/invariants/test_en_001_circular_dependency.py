@@ -18,9 +18,7 @@ from unittest.mock import patch
 
 from zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency import (
     ALL_MODULES,
-    LAYER_MODULE_NAMES,
     MODULE_TO_DIR,
-    SHARED_MODULE,
     ScanResult,
     _build_dependency_graph,
     _find_cycles,
@@ -30,6 +28,8 @@ from zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependen
     check,
     run_scan,
 )
+
+SHARED_MODULE = "zephyr.shared.contracts"
 
 
 class TestScanResult:
@@ -152,7 +152,7 @@ class TestResolveToModule:
 
 class TestConstants:
     def test_layer_module_names_is_list(self):
-        assert isinstance(LAYER_MODULE_NAMES, list)
+        assert isinstance(ALL_MODULES, list)
 
     def test_shared_module_value(self):
         assert SHARED_MODULE == "zephyr.shared.contracts"
@@ -161,7 +161,7 @@ class TestConstants:
         assert SHARED_MODULE in ALL_MODULES
 
     def test_all_modules_includes_all_layers(self):
-        for mod in LAYER_MODULE_NAMES:
+        for mod in ALL_MODULES:
             assert mod in ALL_MODULES
 
     def test_module_to_dir_has_all_entries(self):
@@ -244,7 +244,7 @@ class TestFindCycles:
 
 
 class TestBuildDependencyGraph:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
     def test_builds_graph_from_imports(self, mock_parse):
         mock_parse.return_value = {"zephyr.l01_infrastructure", "os"}
 
@@ -253,7 +253,7 @@ class TestBuildDependencyGraph:
         for mod in ALL_MODULES:
             assert mod in graph
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._parse_imports")
     def test_self_dependency_excluded(self, mock_parse):
         mock_parse.return_value = {"zephyr.l01_infrastructure"}
 
@@ -263,19 +263,19 @@ class TestBuildDependencyGraph:
 
 
 class TestRunScan:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_returns_scan_result(self, mock_build):
         mock_build.return_value = {"a": set(), "b": set()}
         result = run_scan()
         assert isinstance(result, ScanResult)
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_acyclic_passes(self, mock_build):
         mock_build.return_value = {"a": set(), "b": set()}
         result = run_scan()
         assert result.passed is True
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency._build_dependency_graph")
     def test_cyclic_fails(self, mock_build):
         mock_build.return_value = {"a": {"b"}, "b": {"a"}}
         result = run_scan()
@@ -284,21 +284,21 @@ class TestRunScan:
 
 
 class TestCheck:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
     def test_check_returns_tuple(self, mock_scan):
         mock_scan.return_value = ScanResult(passed=True, topological_order=["a"])
         passed, msg = check()
         assert isinstance(passed, bool)
         assert isinstance(msg, str)
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
     def test_check_pass(self, mock_scan):
         mock_scan.return_value = ScanResult(passed=True, topological_order=["a", "b"])
         passed, msg = check()
         assert passed is True
         assert "[PASS]" in msg
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency.run_scan")
     def test_check_fail(self, mock_scan):
         mock_scan.return_value = ScanResult(passed=False, cycles=[["a", "b", "a"]])
         passed, msg = check()

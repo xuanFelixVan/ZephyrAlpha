@@ -190,7 +190,7 @@ class TestGatewayIntegration:
 
     def test_upward_governance_import_blocked(self, tmp_path):
         red = "src/zephyr/shared/types.py"
-        content = "from zephyr.governance.rule_bridge import X\n"
+        content = "from zephyr.gov_enforcement.rule_bridge import X\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_import_direction_gate().check(gw, [])
@@ -231,7 +231,7 @@ class TestGatewayIntegration:
     def test_non_shared_file_passes(self, tmp_path):
         # 非 shared 层文件不检测
         red = "src/zephyr/trading/mod.py"
-        content = "from zephyr.governance.rule_bridge import X\n"
+        content = "from zephyr.gov_enforcement.rule_bridge import X\n"
         _write_file(tmp_path, red, content)
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_import_direction_gate().check(gw, [])

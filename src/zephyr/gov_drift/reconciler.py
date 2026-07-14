@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.reconciler
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; src/zephyr/governance/rule_enforcement/drift_detector.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 自动修复必须验证闭环

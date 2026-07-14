@@ -38,7 +38,7 @@ in-process gate（无法用 --no-verify 绕过）。
 
 Usage::
 
-    from zephyr.governance.commit_gates.rule_four_way_alignment_gate import (
+    from zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate import (
         make_rule_four_way_alignment_gate,
     )
 

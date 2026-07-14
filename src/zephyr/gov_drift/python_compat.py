@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.python_compat
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_scanners.py; tests/audit/test_python_compat.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_python_compat.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 兼容性检查不可跳过

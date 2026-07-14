@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 # P2迁移审查修复：禁止 Path("D:/ZephyrAlpha") 硬编码，改用 REPO_ROOT 真源
 BLUEPRINT_REGISTRY: Final[Path] = REPO_ROOT / "docs/03_modules/blueprint_registry.yaml"
 MODULE_REGISTRY: Final[Path] = REPO_ROOT / "docs/03_modules/module-registry.yaml"
-GATES_REGISTRY: Final[Path] = REPO_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml"
+GATES_REGISTRY: Final[Path] = REPO_ROOT / "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
 BLUEPRINTS_DIR: Final[Path] = REPO_ROOT / "docs/03_modules"
 
 

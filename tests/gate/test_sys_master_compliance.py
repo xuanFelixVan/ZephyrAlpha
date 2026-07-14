@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-SYS_MASTER = "zephyr.governance.rule_enforcement.sys_master_compliance"
+SYS_MASTER = "zephyr.gov_enforcement.rule_enforcement.sys_master_compliance"
 
 
 class TestBlueprintExistence:

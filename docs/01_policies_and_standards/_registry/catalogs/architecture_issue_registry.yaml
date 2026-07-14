@@ -230,7 +230,7 @@ entries:
 - issue_id: '#ARCH-022'
   title: _detector_registry.yaml 路径错误导致检测器被静默跳过
   severity: P1高
-  adjudication: 修正 src/zephyr/governance/drift_detection/_detector_registry.yaml 和 src/zephyr/behavioral_audit/_detector_registry.yaml 中注册路径 `d5_architecture/validate_depends_on_format.py`——实际路径缺少 `validators/` 子目录，正确路径为 `d5_architecture/validators/validate_depends_on_format.py`。当前 os.path.exists() 静默跳过，检测器未执行。
+  adjudication: 修正 src/zephyr/gov_drift/_detector_registry.yaml 和 src/zephyr/behavioral_audit/_detector_registry.yaml 中注册路径 `d5_architecture/validate_depends_on_format.py`——实际路径缺少 `validators/` 子目录，正确路径为 `d5_architecture/validators/validate_depends_on_format.py`。当前 os.path.exists() 静默跳过，检测器未执行。
   fix_phase: 已完成（_detector_registry.yaml 18条路径修复；SRC-2026070401）
   status: resolved
   created: '2026-06-27'
@@ -398,7 +398,7 @@ entries:
   severity: P1高
   adjudication: |
     trae_060 §4 治本。src/zephyr/ops/ 目录向内收治理——按功能域归位到
-    src/zephyr/trading/feedback_loop/。6 阶段治本：阶段1（commit 7d4cabdbd1）
+    src/zephyr/feedback_loop/。6 阶段治本：阶段1（commit 7d4cabdbd1）
     删除 shim/死代码/脏数据；P2（7b9e85e584）删除重复的 kill_switch+
     analytics_base；P2b（27ee506631）删除重复的 telemetry.py；P2c（6b08324d9a）
     circuit_breaker 迁移到 governance/；P2f（c0a1435cc9）observability 合并到
@@ -448,9 +448,9 @@ entries:
   severity: P2中
   adjudication: |
     P8 phase2 治本时发现，phase5 补登后治本完成。多真源问题：
-    (1)3 个 trigger_router.py 文件——主文件 src/zephyr/trading/orchestrator/
+    (1)3 个 trigger_router.py 文件——主文件 src/zephyr/orchestrator/
     trigger_router.py（765行 canonical 真源，6 消费者，5 handler 已升级 operational）、
-    子包 src/zephyr/trading/orchestrator/core/trigger_router.py（710行死代码副本，
+    子包 src/zephyr/orchestrator/core/trigger_router.py（710行死代码副本，
     0 消费者，handler 名与 YAML 不匹配 handle_drift_stub vs handle_drift_detected，
     Self 类型注解缺陷）、autonomy_core/trigger_router.py（129行同名异义，施工阶段
     路由器非 YAML 触发分派，4 消费者活跃）；
@@ -461,7 +461,7 @@ entries:
     (3)module_id 撞车——3 文件都声明 MOD-ORC_trigger_router 违反 GATE-SSOT 硬层3。
     治本：(a)git rm 删除子包死代码 core/trigger_router.py + 清理 core/__init__.py
     import/__all__ + 清理 blueprint_scorer.py [CONSUMERS] 过期引用；
-    (b)修正 5 处配置路径漂移为真实路径 src/zephyr/trading/orchestrator/trigger_router.py；
+    (b)修正 5 处配置路径漂移为真实路径 src/zephyr/orchestrator/trigger_router.py；
     (c)autonomy_core/trigger_router.py module_id 改为 MOD-AUTONOMY_stage_router
     消除撞车。autonomy_core 文件保留（同名异义非重复，4 消费者活跃，建议未来
     重命名为 StageRouter 消除类名撞名，可单独建卡）。
@@ -514,7 +514,7 @@ entries:
   adjudication: |
     trae_060 §4 治本。病根：原 src/zephyr/behavioral_audit/ 74 文件平铺，
     新 AI 不知道已有哪些功能模块（无能力索引）。治本：整体合并至
-    src/zephyr/governance/drift_detection/，模块级注册 67 条 capability
+    src/zephyr/gov_drift/，模块级注册 67 条 capability
     （capability_canonical_file_registry.yaml L1051-1266+），canonical 指向
     governance/drift_detection/。多阶段治本：治本（d0a7ea32f9）behavioral_audit
     强化发现性不建物理子目录；整体合并（3929edf969）behavioral_audit/ →

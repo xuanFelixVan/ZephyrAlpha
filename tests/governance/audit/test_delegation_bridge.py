@@ -27,8 +27,8 @@ class TestAuditDelegationBridgeInstantiation:
 class TestRecordDelegation:
     def test_record_returns_dict(self):
         bridge = AuditDelegationBridge()
-        with patch("zephyr.governance.audit_trail.delegation_bridge.AuditWriter", create=True):
-            with patch("zephyr.governance.audit_trail.writer.AuditWriter", create=True):
+        with patch("zephyr.gov_audit.delegation_bridge.AuditWriter", create=True):
+            with patch("zephyr.gov_audit.writer.AuditWriter", create=True):
                 result = bridge.record_delegation(
                     from_agent="a0",
                     to_agent="a1",
@@ -47,7 +47,7 @@ class TestRecordDelegation:
     def test_record_delegation_handles_writer_failure(self):
         bridge = AuditDelegationBridge()
         with patch(
-            "zephyr.governance.audit_trail.delegation_bridge.AuditWriter", side_effect=Exception("fail"), create=True
+            "zephyr.gov_audit.delegation_bridge.AuditWriter", side_effect=Exception("fail"), create=True
         ):
             result = bridge.record_delegation(
                 from_agent="a0",

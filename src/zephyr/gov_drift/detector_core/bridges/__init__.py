@@ -7,19 +7,19 @@ Drift Detector — MOD-GOV_DRIFT_bridges
 Agent行为漂移检测：签名一致性 + 输出分布监控.
 
 bridges/ 是向后兼容垫片，位于 drift_detector_core/ 下。
-当前真源：zephyr.governance.drift_detection（66 文件主包，ARCH-042 裁定 T_soft=120 合规）。
+当前真源：zephyr.gov_drift（66 文件主包，ARCH-042 裁定 T_soft=120 合规）。
 本垫片代理到 drift_detection，请直接从 drift_detection 导入。
 
 正确导入路径:
-  from zephyr.governance.drift_detection.drift_engine import scan
-  from zephyr.governance.drift_detection.reconciler import AutoFixer
-  from zephyr.governance.drift_detection.state_machine import DriftStateMachine
+  from zephyr.gov_drift.drift_engine import scan
+  from zephyr.gov_drift.reconciler import AutoFixer
+  from zephyr.gov_drift.state_machine import DriftStateMachine
 """
 
 import warnings
 
 warnings.warn(
-    "zephyr.gov_drift.detector_core.bridges 已废弃，请直接从 zephyr.governance.drift_detection 导入。"
+    "zephyr.gov_drift.detector_core.bridges 已废弃，请直接从 zephyr.gov_drift 导入。"
     "本兼容层将在 2 个版本后移除。",
     DeprecationWarning,
     stacklevel=2,

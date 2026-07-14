@@ -35,10 +35,10 @@ class TestCmdSearch:
         mock_query.search.return_value = [
             {"timestamp": "2026-05-22T10:00:00Z", "agent_id": "a1", "event_type": "write"},
         ]
-        with patch("zephyr.governance.audit_trail.cli.AuditQuery", return_value=mock_query, create=True):
+        with patch("zephyr.gov_audit.cli.AuditQuery", return_value=mock_query, create=True):
             with patch.dict(
                 "sys.modules",
-                {"zephyr.governance.audit_trail.query": MagicMock(AuditQuery=MagicMock(return_value=mock_query))},
+                {"zephyr.gov_audit.query": MagicMock(AuditQuery=MagicMock(return_value=mock_query))},
             ):
                 pass
         mock_query.search("test")
@@ -49,7 +49,7 @@ class TestCmdVerify:
     def test_verify_valid_chain(self, capsys):
         mock_verifier = MagicMock()
         mock_verifier.verify_chain.return_value = {"status": "valid", "events_checked": 10}
-        with patch("zephyr.governance.audit_trail.cli.IntegrityVerifier", return_value=mock_verifier, create=True):
+        with patch("zephyr.gov_audit.cli.IntegrityVerifier", return_value=mock_verifier, create=True):
             pass
         mock_verifier.verify_chain()
         mock_verifier.verify_chain.assert_called_once()

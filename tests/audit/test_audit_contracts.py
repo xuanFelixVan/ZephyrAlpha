@@ -22,7 +22,7 @@ class TestAuditWriterWrite:
     def test_write_returns_event_with_chain_hash(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "chain_hash_123"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="write",
@@ -37,7 +37,7 @@ class TestAuditWriterWrite:
     def test_write_uses_custom_timestamp(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="read",
@@ -50,7 +50,7 @@ class TestAuditWriterWrite:
     def test_write_generates_timestamp_when_empty(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="read",
@@ -62,7 +62,7 @@ class TestAuditWriterWrite:
     def test_write_with_granted_false(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="admin",
@@ -75,7 +75,7 @@ class TestAuditWriterWrite:
     def test_write_with_metadata(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="write",
@@ -88,7 +88,7 @@ class TestAuditWriterWrite:
     def test_write_default_metadata_empty(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="write",
@@ -100,7 +100,7 @@ class TestAuditWriterWrite:
     def test_write_custom_event_type(self):
         mock_core_writer = MagicMock()
         mock_core_writer.write.return_value = "hash"
-        with patch("zephyr.governance.audit_trail.contracts._get_writer", return_value=mock_core_writer):
+        with patch("zephyr.gov_audit.contracts._get_writer", return_value=mock_core_writer):
             result = AuditWriter.write(
                 agent_id="agent-1",
                 permission="write",

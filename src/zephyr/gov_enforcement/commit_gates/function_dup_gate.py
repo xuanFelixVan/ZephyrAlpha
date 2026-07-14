@@ -46,7 +46,7 @@ name + body hash 的实现——重复代码违反 DRY 原则，应扩展现有�
 
 Usage::
 
-    from zephyr.governance.commit_gates.function_dup_gate import make_function_dup_gate
+    from zephyr.gov_enforcement.commit_gates.function_dup_gate import make_function_dup_gate
 
     registry.register(make_function_dup_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

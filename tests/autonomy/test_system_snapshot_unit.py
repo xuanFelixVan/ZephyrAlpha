@@ -82,7 +82,7 @@ def snapshotter(tmp_repo):
         snapshots_dir=tmp_repo["snapshots_dir"],
         db_path=tmp_repo["db_path"],
         gates_dir=tmp_repo["gates_dir"],
-        module_manifests={"zephyr.governance.rule_enforcement.gate_engine": "v1.0.0"},
+        module_manifests={"zephyr.gov_enforcement.rule_enforcement.gate_engine": "v1.0.0"},
     )
 
 
@@ -95,7 +95,7 @@ class TestSystemSnapshotModel:
     def test_frozen_raises_on_mutate(self):
         snap = SystemSnapshot(
             timestamp="2026-04-27T10:00:00+00:00",
-            module_versions={"zephyr.governance.rule_enforcement": "v1.0.0"},
+            module_versions={"zephyr.gov_enforcement.rule_enforcement": "v1.0.0"},
             provenance_fingerprint="abc123",
             registry_hashes={"G1": "deadbeef"},
             blueprint_v12_pass_rate=0.95,
@@ -132,8 +132,8 @@ class TestSystemSnapshotModel:
 class TestModuleVersions:
     def test_module_versions_populated(self, snapshotter):
         snap, _ = snapshotter.capture()
-        assert "zephyr.governance.rule_enforcement.gate_engine" in snap.module_versions
-        assert snap.module_versions["zephyr.governance.rule_enforcement.gate_engine"] == "v1.0.0"
+        assert "zephyr.gov_enforcement.rule_enforcement.gate_engine" in snap.module_versions
+        assert snap.module_versions["zephyr.gov_enforcement.rule_enforcement.gate_engine"] == "v1.0.0"
 
     def test_module_versions_empty_manifests(self, tmp_repo):
         s = SystemSnapshotter(

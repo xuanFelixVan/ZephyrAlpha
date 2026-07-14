@@ -86,9 +86,9 @@ class MiniQMTProvider(DataSourceBase):
             "sector_list",
             "l2_tick",
             "auction_data",
-            "kline_futures_qmt",
+            "futures_kline_qmt",
             "hk_kline",
-            "us_kline",
+            "kline_us_daily",
             "etf_nav",
             "repurchase",
             "margin_trading_qmt",
@@ -267,13 +267,13 @@ class MiniQMTProvider(DataSourceBase):
         elif capability == "auction_data":
             # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表）
             yield from self._fetch_auction_data(payload, policy)
-        elif capability == "kline_futures_qmt":
+        elif capability == "futures_kline_qmt":
             # 期货K线：get_market_data_ex，symbols 格式如 'IF2407.CFFEX'
             yield from self._fetch_kline_futures_qmt(payload, policy)
         elif capability == "hk_kline":
             # 港股K线：get_market_data_ex，symbols 格式如 '00700.HK'
             yield from self._fetch_hk_kline(payload, policy)
-        elif capability == "us_kline":
+        elif capability == "kline_us_daily":
             # 美股K线：get_market_data_ex，symbols 格式如 'AAPL.US'
             yield from self._fetch_us_kline(payload, policy)
         elif capability == "etf_nav":
@@ -3242,13 +3242,13 @@ class MiniQMTProvider(DataSourceBase):
         """
         if not payload.symbols:
             yield FetchResult(
-                table=payload.table or "c1_market.us_kline",
+                table=payload.table or "c1_market.kline_us_daily",
                 columns=[], rows=[], last_key="",
                 elapsed_sec=0.0,
                 error="QMT 无美股板块，需在 tasks.yaml 中手动指定 symbols（如 ['AAPL.US', 'MSFT.US']），且需开通美股行情权限",
             )
             return
-        yield from self._fetch_simple_kline(payload, policy, "c1_market.us_kline")
+        yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_us_daily")
 
     # ============== ETF净值 ==============
 

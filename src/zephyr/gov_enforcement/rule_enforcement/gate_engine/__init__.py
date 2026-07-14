@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_engine.__init__
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_enforcement 内部模块
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement 内部模块
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 包聚合 gate_* 引擎实现 + check_type handler 函数（_handle_* 在 gate_engine.py _CHECK_DISPATCH 注册）

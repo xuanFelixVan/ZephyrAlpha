@@ -20,7 +20,7 @@ actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\bluepr
 template_for: blueprint
 generation: 2
 functional_domain: governance
-responsibility_domain: D_GOVERNANCE
+responsibility_domain: 
 parent_module: "SYS-MASTER-001"
 belongs_to: "SYS-MASTER-001"
 rule_form: structural

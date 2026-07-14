@@ -431,7 +431,7 @@ class TestDocstringExemption:
 
     def test_multiline_docstring_inner_line_exempt(self):
         """多行 docstring 中间的 ``**data`` 示例不报（行号在 docstring 集合内）"""
-        blue_file = "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
+        blue_file = "src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py"
         # 完整文件内容：第 2-4 行在 docstring 内
         full_content = (
             '"""模块 docstring\n'
@@ -517,7 +517,7 @@ class TestDocstringExemption:
 
     def test_gate_self_docstring_no_warn(self):
         """gate 自身 docstring 中的示例不触发 warn（修复目标场景）"""
-        gate_file = "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
+        gate_file = "src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py"
         # 模拟 gate 文件的真实 docstring 片段
         full_content = (
             '"""unsafe_dict_spread_gate.py\n'

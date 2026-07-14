@@ -2,7 +2,7 @@ entries:
 - old_module: zephyr.governance.default_attribution_engine
   new_module: zephyr.governance.audit.default_attribution_engine
   old_path: src/zephyr/governance/default_attribution_engine.py
-  new_path: src/zephyr/governance/audit/default_attribution_engine.py
+  new_path: src/zephyr/gov_audit/default_attribution_engine.py
   subdir: audit
   status: done
   classification_method: module_frontmatter
@@ -14,9 +14,9 @@ entries:
   status: done
   classification_method: module_frontmatter
 - old_module: zephyr.governance.gate_repo
-  new_module: zephyr.governance.commit_gates.gate_repo
+  new_module: zephyr.gov_enforcement.commit_gates.gate_repo
   old_path: src/zephyr/governance/gate_repo.py
-  new_path: src/zephyr/governance/commit_gates/gate_repo.py
+  new_path: src/zephyr/gov_enforcement/commit_gates/gate_repo.py
   subdir: commit_gates
   status: done
   classification_method: module_frontmatter
@@ -121,7 +121,7 @@ entries:
 - old_module: zephyr.governance.default_tca_engine
   new_module: zephyr.governance.audit.default_tca_engine
   old_path: src/zephyr/governance/default_tca_engine.py
-  new_path: src/zephyr/governance/audit/default_tca_engine.py
+  new_path: src/zephyr/gov_audit/default_tca_engine.py
   subdir: audit
   status: done
   classification_method: module_frontmatter
@@ -161,100 +161,100 @@ entries:
   status: done
   classification_method: module_frontmatter
 - old_module: zephyr.governance.compliance_rule
-  new_module: zephyr.governance.rule_enforcement.compliance_rule
+  new_module: zephyr.gov_enforcement.rule_enforcement.compliance_rule
   old_path: src/zephyr/governance/compliance_rule.py
-  new_path: src/zephyr/governance/rule_enforcement/compliance_rule.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/compliance_rule.py
   subdir: rule_enforcement
   status: done
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_engine
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_engine
-  old_path: src/zephyr/governance/rule_enforcement/gate_engine.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_engine
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_context
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_context
-  old_path: src/zephyr/governance/rule_enforcement/gate_context.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_context.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_context
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_context.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_context.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_health
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_health
-  old_path: src/zephyr/governance/rule_enforcement/gate_health.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_health.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_health
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_health
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_health.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_health.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_pipeline
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_pipeline
-  old_path: src/zephyr/governance/rule_enforcement/gate_pipeline.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_pipeline.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_pipeline
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_pipeline
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_pipeline.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_pipeline.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_simulator
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_simulator
-  old_path: src/zephyr/governance/rule_enforcement/gate_simulator.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_simulator.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_simulator
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_simulator
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_simulator.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_simulator.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_override
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_override
-  old_path: src/zephyr/governance/rule_enforcement/gate_override.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_override.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_override
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_override
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_override.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_override.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.gate_integrity_guard
-  new_module: zephyr.governance.rule_enforcement.gate_engine.gate_integrity_guard
-  old_path: src/zephyr/governance/rule_enforcement/gate_integrity_guard.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/gate_integrity_guard.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.gate_integrity_guard
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_integrity_guard
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/gate_integrity_guard.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_integrity_guard.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.adversarial_validation
-  new_module: zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
-  old_path: src/zephyr/governance/rule_enforcement/adversarial_validation.py
-  new_path: src/zephyr/governance/rule_enforcement/gate_engine/adversarial_validation.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.adversarial_validation
+  new_module: zephyr.gov_enforcement.rule_enforcement.gate_engine.adversarial_validation
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/adversarial_validation.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/adversarial_validation.py
   subdir: gate_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.rule_engine
-  new_module: zephyr.governance.rule_enforcement.rule_engine.rule_engine
-  old_path: src/zephyr/governance/rule_enforcement/rule_engine.py
-  new_path: src/zephyr/governance/rule_enforcement/rule_engine/rule_engine.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.rule_engine
+  new_module: zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_engine
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.rule_canary_manager
-  new_module: zephyr.governance.rule_enforcement.rule_engine.rule_canary_manager
-  old_path: src/zephyr/governance/rule_enforcement/rule_canary_manager.py
-  new_path: src/zephyr/governance/rule_enforcement/rule_engine/rule_canary_manager.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.rule_canary_manager
+  new_module: zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_canary_manager
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/rule_canary_manager.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_canary_manager.py
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.rule_debt_auditor
-  new_module: zephyr.governance.rule_enforcement.rule_engine.rule_debt_auditor
-  old_path: src/zephyr/governance/rule_enforcement/rule_debt_auditor.py
-  new_path: src/zephyr/governance/rule_enforcement/rule_engine/rule_debt_auditor.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.rule_debt_auditor
+  new_module: zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_debt_auditor
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/rule_debt_auditor.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_debt_auditor.py
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.rule_shadow_runner
-  new_module: zephyr.governance.rule_enforcement.rule_engine.rule_shadow_runner
-  old_path: src/zephyr/governance/rule_enforcement/rule_shadow_runner.py
-  new_path: src/zephyr/governance/rule_enforcement/rule_engine/rule_shadow_runner.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.rule_shadow_runner
+  new_module: zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_shadow_runner
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/rule_shadow_runner.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_shadow_runner.py
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter
-- old_module: zephyr.governance.rule_enforcement.rule_watcher
-  new_module: zephyr.governance.rule_enforcement.rule_engine.rule_watcher
-  old_path: src/zephyr/governance/rule_enforcement/rule_watcher.py
-  new_path: src/zephyr/governance/rule_enforcement/rule_engine/rule_watcher.py
+- old_module: zephyr.gov_enforcement.rule_enforcement.rule_watcher
+  new_module: zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher
+  old_path: src/zephyr/gov_enforcement/rule_enforcement/rule_watcher.py
+  new_path: src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_watcher.py
   subdir: rule_engine
   status: pending
   classification_method: module_frontmatter

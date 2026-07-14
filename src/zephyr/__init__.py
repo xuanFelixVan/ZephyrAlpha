@@ -17,7 +17,7 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
 
 快速导入参考：
   核心数据模型:    from zephyr.shared.schema.schemas import Task, TaskStatus
-  门禁检查:        from zephyr.governance.rule_enforcement import gate_engine
+  门禁检查:        from zephyr.gov_enforcement.rule_enforcement import gate_engine
   上下文构建:      from zephyr.autonomy_core.context.context_management import intent_parser
   向量记忆服务:    from zephyr.integration.vector_memory import InProcessVectorMemory
 """
@@ -210,7 +210,7 @@ register_lazy(
     "contract_registry", "zephyr.orchestrator.contracts.contract_registry"
 )  # MOD-MASTER_BLUEPRINT CT-* contract registry
 register_lazy(
-    "truth_source", "zephyr.governance.rule_enforcement.truth_source_validator"
+    "truth_source", "zephyr.gov_enforcement.rule_enforcement.truth_source_validator"
 )  # MOD-MASTER_BLUEPRINT §0 truth source precedence
 register_lazy("autopilot", "zephyr.trading.autopilot")  # MOD-INF-012B AutoPilot — AI session 自动驾驶
 # 删除 register_lazy("signal", "zephyr.signal") — D-SIGNAL 域已拆分为3个平级兄弟域

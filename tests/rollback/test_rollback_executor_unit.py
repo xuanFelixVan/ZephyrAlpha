@@ -279,7 +279,7 @@ class TestDependencyImpactAnalysis:
     def test_identifies_impacted_modules(self):
         exec = RollbackExecutor()
         with patch.object(exec, "_run_git") as mock_git:
-            mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/governance/rule_enforcement/_registry.yaml"
+            mock_git.return_value = "src/zephyr/rollback/executor.py\nsrc/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
             result = exec.dependency_impact_analysis("abc123")
             modules = result.get("impacted_modules", [])
             assert len(modules) > 0

@@ -60,7 +60,7 @@ PROJECT_ROOT = REPO_ROOT
 REGISTRIES = {
     "module": PROJECT_ROOT / "docs/03_modules/module-registry.yaml",
     "blueprint": PROJECT_ROOT / "docs/03_modules/blueprint_registry.yaml",
-    "gate": PROJECT_ROOT / "src/zephyr/governance/rule_enforcement/_registry.yaml",
+    "gate": PROJECT_ROOT / "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
     "cross_dep": PROJECT_ROOT
     / "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml",
 }
@@ -300,9 +300,9 @@ def sync_dependencies(dry_run: bool = False) -> int:
 
     for dep in raw_deps:
         mod_name = dep["module"]
-        if not mod_name.startswith("zephyr.governance.feedback_loop"):
+        if not mod_name.startswith("zephyr.feedback_loop"):
             continue
-        target = mod_name.replace("zephyr.governance.feedback_loop.", "").split(".")[0]
+        target = mod_name.replace("zephyr.feedback_loop.", "").split(".")[0]
         target_id = f"fle-{target}"
         if target_id in existing_sources:
             continue

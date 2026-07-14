@@ -26,7 +26,7 @@ DriftBridge — 漂移检测器事件桥接 (MOD-GOV_DRIFT_det_bridge).
   3. task_completed 事件到达时记录日志（用于漂移趋势分析）
 
 用法:
-    from zephyr.governance.drift_detection.bridges.drift_bridge import (
+    from zephyr.gov_drift.bridges.drift_bridge import (
         subscribe_eventbus,
     )
     subscribe_eventbus()  # 在 boot_hooks 中统一调用

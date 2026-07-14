@@ -33,7 +33,7 @@ Safety  : L（只读校验，不修改任何数据）
 
 用法
 ----
-    from zephyr.governance.kb.graph_validator import GraphValidator
+    from zephyr.gov_kb.graph_validator import GraphValidator
 
     validator = GraphValidator()
     report = validator.validate()

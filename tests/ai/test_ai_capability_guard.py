@@ -5,7 +5,7 @@
 
 # [INVARIANTS] CapabilityLevel enum has exactly 3 members; _level_meets_min is deterministic
 
-# [MODIFY-GUARD] src/zephyr/governance/rule_enforcement/ai_capability_guard.py
+# [MODIFY-GUARD] src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py
 
 # [CONSUMERS] CI pipeline
 
@@ -136,7 +136,7 @@ class TestRequireCapability:
 
             with (
                 patch(
-                    "zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level",
+                    "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard._check_file_level",
                     return_value=CapabilityLevel.IMMUTABLE,
                 ),
                 pytest.raises(PermissionError),
@@ -154,7 +154,7 @@ class TestRequireCapability:
                 return "ok"
 
             with patch(
-                "zephyr.governance.rule_enforcement.ai_capability_guard._check_file_level",
+                "zephyr.gov_enforcement.rule_enforcement.ai_capability_guard._check_file_level",
                 return_value=CapabilityLevel.FULL,
             ):
                 result = open_func()

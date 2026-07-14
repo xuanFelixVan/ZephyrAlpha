@@ -42,7 +42,7 @@ architecture_debt §5.160.2：apply_depgraph.py 174处裸SQL + file_task_mapper.
 
 Usage::
 
-    from zephyr.governance.commit_gates.bare_sql_gate import make_bare_sql_gate
+    from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
 
     registry.register(make_bare_sql_gate())
 """

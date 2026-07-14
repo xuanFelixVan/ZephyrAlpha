@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.scan_mutex
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_scanners.py; tests/audit/test_scan_mutex.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_scan_mutex.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 扫描互斥不可绕过

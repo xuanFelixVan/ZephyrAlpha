@@ -208,7 +208,7 @@ dual_storage:
     format: "SQLite"
     content: "元数据 + 血缘 + 质量 + 版本"
   consistency: "同一 Engine.compute() 驱动两种存储写入 → 消除15-25%偏差"
-responsibility_domain:
+responsibility_domain: 
 build_status: generated
 ---
 

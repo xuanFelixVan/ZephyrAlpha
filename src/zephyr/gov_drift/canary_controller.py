@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.canary_controller
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/ba/test_ba_canary_controller.py; tests/canary/test_canary_controller.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/ba/test_ba_canary_controller.py; tests/canary/test_canary_controller.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 金丝雀保护不可禁用

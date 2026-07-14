@@ -91,35 +91,35 @@ class TestSnapshot:
         assert isinstance(snap, ResourceSnapshot)
 
     def test_normal_status_when_low_memory(self):
-        with patch("zephyr.governance.drift_detection.resource_guard._get_memory_usage_mb", return_value=10.0):
+        with patch("zephyr.gov_drift.resource_guard._get_memory_usage_mb", return_value=10.0):
             snap = snapshot()
             assert snap.status == ResourceStatus.OK
             assert snap.degradation_level == DegradationLevel.NORMAL
 
     def test_warning_at_l1(self):
         mem = LIMITS.max_memory_mb * LIMITS.l1_threshold
-        with patch("zephyr.governance.drift_detection.resource_guard._get_memory_usage_mb", return_value=mem):
+        with patch("zephyr.gov_drift.resource_guard._get_memory_usage_mb", return_value=mem):
             snap = snapshot()
             assert snap.status == ResourceStatus.WARNING
             assert snap.degradation_level == DegradationLevel.LEVEL_1
 
     def test_critical_at_l2(self):
         mem = LIMITS.max_memory_mb * LIMITS.l2_threshold
-        with patch("zephyr.governance.drift_detection.resource_guard._get_memory_usage_mb", return_value=mem):
+        with patch("zephyr.gov_drift.resource_guard._get_memory_usage_mb", return_value=mem):
             snap = snapshot()
             assert snap.status == ResourceStatus.CRITICAL
             assert snap.degradation_level == DegradationLevel.LEVEL_2
 
     def test_critical_at_l3(self):
         mem = LIMITS.max_memory_mb * LIMITS.l3_threshold
-        with patch("zephyr.governance.drift_detection.resource_guard._get_memory_usage_mb", return_value=mem):
+        with patch("zephyr.gov_drift.resource_guard._get_memory_usage_mb", return_value=mem):
             snap = snapshot()
             assert snap.status == ResourceStatus.CRITICAL
             assert snap.degradation_level == DegradationLevel.LEVEL_3
 
     def test_oom_at_l4(self):
         mem = LIMITS.max_memory_mb * LIMITS.l4_threshold
-        with patch("zephyr.governance.drift_detection.resource_guard._get_memory_usage_mb", return_value=mem):
+        with patch("zephyr.gov_drift.resource_guard._get_memory_usage_mb", return_value=mem):
             snap = snapshot()
             assert snap.status == ResourceStatus.OOM
             assert snap.degradation_level == DegradationLevel.LEVEL_4

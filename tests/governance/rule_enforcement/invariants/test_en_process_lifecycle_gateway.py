@@ -303,14 +303,14 @@ class TestScanDirectory:
 
 
 class TestResult:
-    @patch("zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway.scan_directory")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_process_lifecycle_gateway.scan_directory")
     def test_result_delegates(self, mock_scan):
         mock_scan.return_value = GateResult(passed=True, scanned_files=42)
         r = result()
         assert r.passed is True
         assert r.scanned_files == 42
 
-    @patch("zephyr.governance.rule_enforcement.invariants.en_process_lifecycle_gateway.scan_directory")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.en_process_lifecycle_gateway.scan_directory")
     def test_result_with_violations(self, mock_scan):
         v = Violation(file="a.py", line=1, call_type="subprocess.Popen", snippet="x")
         mock_scan.return_value = GateResult(passed=False, violations=[v], scanned_files=10)

@@ -48,6 +48,7 @@ references:
   - {id: "MOD-INF-022", at: "§2", why: "Escalation Protocol——大脑异常升级路径"}
 design_maturity: prototype
 build_status: generated
+responsibility_domain: 
 ---
 
 # AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心
@@ -1148,9 +1149,9 @@ STEP 3: 拆分后验证
 
 | # | 组件 | 完整绝对路径 | 现有能力 | 缺口 |
 |---|------|------------|---------|------|
-| 1 | WorktreeManager | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py` | create/merge/cleanup/get_current session worktree | **未强制启用**——能力存在但 AI 可绕过 |
-| 2 | GitCommitGateway | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` | 全局跨进程串行锁 + PID 僵尸检测 + TTL 1800s | 主目录裸 commit 仅 logger.info「建议」，**未硬阻断** |
-| 3 | HeldOverlapGate | `D:\ZephyrAlpha\src\zephyr\governance\commit_gates\held_overlap_gate.py` | commit 时检测搭便车（目标文件被其他 session 持有）| **仅 commit 时检测**，编辑期无防护 |
+| 1 | WorktreeManager | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\worktree_manager.py` | create/merge/cleanup/get_current session worktree | **未强制启用**——能力存在但 AI 可绕过 |
+| 2 | GitCommitGateway | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\git_commit_gateway.py` | 全局跨进程串行锁 + PID 僵尸检测 + TTL 1800s | 主目录裸 commit 仅 logger.info「建议」，**未硬阻断** |
+| 3 | HeldOverlapGate | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\held_overlap_gate.py` | commit 时检测搭便车（目标文件被其他 session 持有）| **仅 commit 时检测**，编辑期无防护 |
 | 4 | SessionRegistry | `D:\ZephyrAlpha\src\zephyr\security\access_control\session_concurrency.py` | session 注册/心跳/claim_file/release_file | held_files 是「预警不阻断」（policy §3.2 明确） |
 | 5 | SessionHandoff | `D:\ZephyrAlpha\src\zephyr\security\access_control\session_concurrency.py` | 跨 session 状态交接包 `.runtime/handoffs/` | 已落地，不涉及隔离 |
 | 6 | parallel_session_coordination_policy | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\parallel_session_coordination_policy.md` | §5.2「不新增阻断层」+ §7「最外层可见性」 | **设计缺陷**：把阻断责任推给 GitCommitGateway，但全局锁只串行化 commit 不防编辑覆盖 |
@@ -1193,7 +1194,7 @@ STEP 3: 拆分后验证
 
 | 项目 | 内容 |
 |------|------|
-| 变更文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` |
+| 变更文件 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\git_commit_gateway.py` |
 | 变更位置 | 第326-341行 worktree 检测分支 |
 | 变更内容 | `wt_session is None` 时返回 `CommitStatus.MAIN_BRANCH_VIOLATION`（不再向后兼容） |
 | 新增参数 | `commit(..., allow_main_branch: bool = False)`——逃生通道，对标现有 `allow_overlap` |
@@ -1234,7 +1235,7 @@ STEP 3: 拆分后验证
 
 | 项目 | 内容 |
 |------|------|
-| 变更文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` |
+| 变更文件 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\git_commit_gateway.py` |
 | 变更位置 | commit 流程中 HeldOverlapGate 调用处 |
 | 变更内容 | HeldOverlapGate 从「warning 不阻断」升级为「reject 阻断」——commit 时对所有 staged 文件做三元校验 |
 | 校验规则 | ① 文件在当前 session 的 claim 列表 → ✅ 通过；② 文件被其他活跃 session claim → ❌ 拒绝（防搭便车覆盖）；③ 文件未 claim → ❌ 拒绝（强制 AI 先声明） |
@@ -1247,7 +1248,7 @@ STEP 3: 拆分后验证
 
 | 项目 | 内容 |
 |------|------|
-| 新建文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\session_claim.py` |
+| 新建文件 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\session_claim.py` |
 | 职责 | 提供 AI 对话启动时的 session 注册 + 文件 claim + 冲突检测一体化接口 |
 | 核心 API | `session_claim_start(session_id, files=[])` 启动并声明；`session_claim_add(session_id, file)` 追加声明；`session_claim_check(file, session_id)` 写前检测；`session_claim_end(session_id)` 结束释放 |
 | session_id 生成 | `sess-{PID}-{yyyyMMddHHmmss}`（Trae 对话无内置 session_id，用 PID+时间戳；同一 Trae 进程内多对话用对话索引区分） |
@@ -1260,7 +1261,7 @@ STEP 3: 拆分后验证
 
 | 项目 | 内容 |
 |------|------|
-| 复用文件 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py`（已实现，无改动） |
+| 复用文件 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\worktree_manager.py`（已实现，无改动） |
 | 职责 | 对改契约文件/大范围重构等高风险任务，AI 可选择 `WorktreeManager.create_session_worktree()` 创建 worktree，在 worktree 内操作后 merge 回主目录 |
 | 使用场景 | ① 修改 GitCommitGateway/WorktreeManager 等契约文件本身；② 大范围重构（>10 文件）；③ 实验性改动（不确定是否保留） |
 | 非强制原因 | Trae 模式下 AI 默认在主目录用 Trae 工具操作，强制 worktree 会破坏 IDE 工作流；worktree 内 AI 需手动用完整路径，增加认知负担 |
@@ -1306,8 +1307,8 @@ STEP 3: 拆分后验证
 
 | 组件 | 文件 | 职责 |
 |------|------|------|
-| **session_worktree.py**（新建）| `src/zephyr/governance/rule_bridge/session_worktree.py` | AI 对话 worktree 生命周期 helper（5 函数：start/commit/merge/abort/status）|
-| **worktree_manager.py**（现有+修复）| `src/zephyr/governance/rule_bridge/worktree_manager.py` | 底层 worktree 引擎（create/merge/cleanup/list）；修复 `_worktree_exists` 路径标准化 bug（Windows `\` vs `/`）|
+| **session_worktree.py**（新建）| `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py` | AI 对话 worktree 生命周期 helper（5 函数：start/commit/merge/abort/status）|
+| **worktree_manager.py**（现有+修复）| `src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py` | 底层 worktree 引擎（create/merge/cleanup/list）；修复 `_worktree_exists` 路径标准化 bug（Windows `\` vs `/`）|
 | **GATE-COMMIT-GW**（现有+扩展）| `scripts/governance/d11_compliance/validate_commit_gateway.py` | 新增 `_is_session_worktree_commit()` 放行 worktree 内 commit（FP-ISO.4C 授权绕过 GitCommitGateway）|
 
 ##### AI 对话工作流（AGENTS.md 规定，君子协定模式 2026-07-02）
@@ -1396,9 +1397,9 @@ STEP 3: 拆分后验证
 
 | Phase | 件 | 变更文件 | 验收命令 | 状态 |
 |-------|---|---------|---------|:---:|
-| Phase 1 | 件1改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\git_commit_gateway.py` + `D:\ZephyrAlpha\src\zephyr\governance\commit_gates\held_overlap_gate.py` | `python -m pytest tests/governance/test_git_commit_gateway.py::test_claim_violation tests/governance/test_git_commit_gateway.py::test_unclaimed_violation -v` | 待施工 |
-| Phase 1 | 件2改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\session_claim.py`（新建） | `python -m pytest tests/governance/test_session_claim.py -v` | 待施工 |
-| Phase 2 | 件3改 | `D:\ZephyrAlpha\src\zephyr\governance\rule_bridge\worktree_manager.py`（复用，无改动） | `python -m pytest tests/governance/test_worktree_manager.py -v` | ✅ 已实现 |
+| Phase 1 | 件1改 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\git_commit_gateway.py` + `D:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\held_overlap_gate.py` | `python -m pytest tests/governance/test_git_commit_gateway.py::test_claim_violation tests/governance/test_git_commit_gateway.py::test_unclaimed_violation -v` | 待施工 |
+| Phase 1 | 件2改 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\session_claim.py`（新建） | `python -m pytest tests/governance/test_session_claim.py -v` | 待施工 |
+| Phase 2 | 件3改 | `D:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\worktree_manager.py`（复用，无改动） | `python -m pytest tests/governance/test_worktree_manager.py -v` | ✅ 已实现 |
 | Phase 2 | — | `D:\ZephyrAlpha\AGENTS.md` | 新增「AI 对话启动第一步：session_claim_start」规则 | 待施工 |
 | Phase 3 | Q4 | `D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\infrastructure_contracts.yaml`（新建）| 契约文件清单完整，claim 强制单文件 + Owner 审批 | 待施工 |
 | Phase 3 | — | `D:\ZephyrAlpha\docs\01_policies_and_standards\policies\parallel_session_coordination_policy.md` | §3.2/§5.2 修订：held_files 从「预警不阻断」升级为「commit 时硬校验」 | 待施工 |

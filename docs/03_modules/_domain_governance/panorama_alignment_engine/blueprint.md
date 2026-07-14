@@ -8,7 +8,7 @@ ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-responsibility_domain: D_GOV_SCRIPTS
+responsibility_domain: 
 tags:
   - panorama-alignment
   - four-way-alignment

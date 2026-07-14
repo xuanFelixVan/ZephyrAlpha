@@ -23,6 +23,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from zephyr.shared.io.paths import REPO_ROOT
+
 GOV_DIR = REPO_ROOT / "scripts" / "governance"
 
 ENV = os.environ.copy()

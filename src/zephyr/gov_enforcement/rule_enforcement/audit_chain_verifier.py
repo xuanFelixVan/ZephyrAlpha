@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta）
-同时将门禁审计事件写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链
+同时将门禁审计事件写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链
 """
 
 from zephyr.shared.io.serialization import dumps

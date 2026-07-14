@@ -50,7 +50,7 @@ KEY_MODULES = [
     "zephyr.governance.escalation.escalation_engine",
     "zephyr.security.llm_defense.llm_security.gateway",
     "zephyr.infrastructure.system_telemetry.auto_bootstrap",
-    "zephyr.governance.kb.unified_memory_api",
+    "zephyr.gov_kb.unified_memory_api",
     "zephyr.governance",
 ]
 

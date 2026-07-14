@@ -23,7 +23,7 @@ RollbackAuditNexus — 回滚审计记录聚合到 Nexus AuditLog.
 将每次回滚操作的完整上下文写入 Project-level Audit Nexus:
     时间/操作者/代码变更/DB变更/原因/影响范围。
     与 central-audit-nexus 集成——同一 audit event 落入 Nexus 流。
-    同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
+    同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
 """
 
 from __future__ import annotations

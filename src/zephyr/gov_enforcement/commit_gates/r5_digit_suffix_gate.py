@@ -52,7 +52,7 @@ trae_028 L1242: "历史违规目录在下次涉及该目录的refactor时顺带�
 
 Usage::
 
-    from zephyr.governance.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
+    from zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
 
     registry.register(make_r5_digit_suffix_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

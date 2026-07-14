@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV-create_guard | tests/test_create_guard.py | §create-guard-tests
 # [MODULE] tests.test_create_guard
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.create_guard, zephyr.governance.rule_bridge.git_commit_gateway
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates.create_guard, zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -106,7 +106,7 @@ class TestNewPyWithoutTokenBlocked:
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/commit_gates/__create_guard_test_fake_20260630__.py",
+            "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
@@ -183,7 +183,7 @@ class TestFailClosedRegistryMissing:
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/commit_gates/__create_guard_test_fake_20260630__.py",
+            "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
         # monkeypatch REGISTRY_YAML 指向不存在文件（避免触碰真源）
         monkeypatch.setattr(
@@ -207,7 +207,7 @@ class TestFailClosedRegistryParseError:
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/commit_gates/__create_guard_test_fake_20260630__.py",
+            "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
         # 写非法 YAML（避免触碰真源）
         bad_yaml = tmp_path / "bad_registry.yaml"
@@ -237,7 +237,7 @@ class TestFailClosedGitDiffFailure:
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/commit_gates/__create_guard_test_fake_20260630__.py",
+            "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
         # mock gateway._run_git 返回 returncode=1（git diff 失败）
         gw = MagicMock()
@@ -261,7 +261,7 @@ class TestFailClosedGitDiffFailure:
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/commit_gates/__create_guard_test_fake_20260630__.py",
+            "src/zephyr/gov_enforcement/commit_gates/__create_guard_test_fake_20260630__.py",
         )
         gw = MagicMock()
         gw.project_root = tmp_path
@@ -284,7 +284,7 @@ class TestFailClosedGitDiffFailure:
 class TestNewReconcilerMarker:
     """新增 make_*_reconciler 需 # trae_060-reviewed 标记（元问题3治本）。"""
 
-    _RECONCILER_REL = "src/zephyr/governance/audit/reconciliation_registry.py"
+    _RECONCILER_REL = "src/zephyr/gov_audit/reconciliation_registry.py"
 
     def _setup_reconciler_registry(
         self, repo_dir: Path, head_content: str, staged_content: str
@@ -546,14 +546,14 @@ class TestGovernanceSubdirNewPyNotAntiRelapse:
     """governance/<subdir>/ 新增 .py 文件不触发 ARCH-031 防复发。"""
 
     def test_governance_subdir_new_py_not_anti_relapse(self, tmp_path: Path) -> None:
-        """staged src/zephyr/governance/audit/new_module.py → 不被 ARCH-031 防复发阻断。
+        """staged src/zephyr/gov_audit/new_module.py → 不被 ARCH-031 防复发阻断。
 
         该文件可能被 token 检测阻断（无 creation_token），但 detail 不应含 "防复发"。
         """
         _init_git_repo(tmp_path)
         f = _stage_file(
             tmp_path,
-            "src/zephyr/governance/audit/new_anti_relapse_subdir_test.py",
+            "src/zephyr/gov_audit/new_anti_relapse_subdir_test.py",
         )
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()

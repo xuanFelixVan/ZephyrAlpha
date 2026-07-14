@@ -32,7 +32,7 @@ from zephyr.gov_enforcement.commit_gates.capability_overlap_gate import (
     make_capability_overlap_gate,
 )
 
-_LOGGER_NAME = "zephyr.governance.commit_gates.capability_overlap_gate"
+_LOGGER_NAME = "zephyr.gov_enforcement.commit_gates.capability_overlap_gate"
 
 # 最小 capability registry fixture：gate 只读 capability_id + aliases
 _MINIMAL_REGISTRY_YAML = """\

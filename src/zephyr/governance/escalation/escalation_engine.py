@@ -278,22 +278,22 @@ class EscalationEngine:
         detector_modules = [
             ("zephyr.governance.security_governance.persuasion_detector", "PersuasionDetector"),
             ("zephyr.governance.resilience_governance.deadlock_detector", "DeadlockDetector"),
-            ("zephyr.governance.drift_detection.drift_detector", "DriftDetector"),
+            ("zephyr.gov_drift.drift_detector", "DriftDetector"),
             ("zephyr.governance.escalation.escalation_loop_detector", "EscalationLoopDetector"),
             ("zephyr.governance.resilience_governance.engine_sandbox", "EngineSandbox"),
             ("zephyr.governance.intelligence_governance.confidence_estimator", "ConfidenceEstimator"),
-            ("zephyr.governance.drift_detection.vigil_runtime", "VigilRuntime"),
+            ("zephyr.gov_drift.vigil_runtime", "VigilRuntime"),
             ("zephyr.governance.architecture_governance.formal_verifier", "FormalVerifier"),
             ("zephyr.governance.intelligence_governance.provider_failover", "ProviderFailover"),
             ("zephyr.governance.security_governance.credential_guard", "CredentialGuard"),
-            ("zephyr.governance.audit_trail.merkle_audit", "MerkleAudit"),
+            ("zephyr.gov_audit.merkle_audit", "MerkleAudit"),
             ("zephyr.governance.security_governance.sbom_guard", "SBOMGuard"),
             ("zephyr.governance.ops_governance.clock_guard", "ClockGuard"),
             ("zephyr.governance.context_governance.command_chain_length_gate", "CommandChainGate"),
             ("zephyr.governance.security_governance.compositional_safety_tester", "CompositionalSafetyTester"),
             ("zephyr.governance.security_governance.anti_automation_bias", "AntiAutomationBias"),
-            ("zephyr.governance.rule_enforcement.slo_contract", "SLOContractEngine"),
-            ("zephyr.governance.drift_detection.reward_hacking_rebound_detector", "ReboundDetector"),
+            ("zephyr.gov_enforcement.rule_enforcement.slo_contract", "SLOContractEngine"),
+            ("zephyr.gov_drift.reward_hacking_rebound_detector", "ReboundDetector"),
         ]
         for module_path, class_name in detector_modules:
             try:

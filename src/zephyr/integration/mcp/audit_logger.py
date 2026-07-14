@@ -23,7 +23,7 @@
 - timestamp + client_session_id + tool_name + arguments_hash
 - result_status + duration_ms + error_code（如有）
 - 对标 R81 ZephyrLogger 格式
-- 同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链
+- 同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链
 """
 
 from __future__ import annotations

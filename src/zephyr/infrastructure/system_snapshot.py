@@ -71,8 +71,8 @@ _UTC = UTC
 
 # 已知关键子模块（用于版本收集）
 _MODULE_MANIFESTS: dict[str, str] = {
-    "zephyr.governance.rule_enforcement.gate_engine": "v1.0.0",
-    "zephyr.governance.rule_enforcement.circuit_breaker": "v1.0.0",
+    "zephyr.gov_enforcement.rule_enforcement.gate_engine": "v1.0.0",
+    "zephyr.gov_enforcement.rule_enforcement.circuit_breaker": "v1.0.0",
     "zephyr.autonomy_core.system_snapshot": "v1.0.0",
     "zephyr.autonomy_core.doc_compressor": "v1.0.0",
     "zephyr.autonomy_core.context.context_budget_tracker": "v1.0.0",
@@ -154,7 +154,7 @@ class SystemSnapshotter:
     db_path
         SQLite 数据库路径（用于查询 G4 通过率）；默认 DB_PATH_DEFAULT。
     gates_dir
-        门禁 YAML 所在目录；默认 src/zephyr/governance/rule_enforcement/。
+        门禁 YAML 所在目录；默认 src/zephyr/gov_enforcement/rule_enforcement/。
     module_manifests
         模块版本字典；默认 _MODULE_MANIFESTS（运行时可覆盖以注入真实版本）。
 

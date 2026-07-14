@@ -16,7 +16,7 @@ from __future__ import annotations
 import pytest
 
 sgw_mod = pytest.importorskip("zephyr.governance.security_governance.default_security_gateway")
-scanner_mod = pytest.importorskip("zephyr.governance.drift_detection.artifact_scanner")
+scanner_mod = pytest.importorskip("zephyr.gov_drift.artifact_scanner")
 sandbox_mod = pytest.importorskip("zephyr.governance.intelligence_governance.aisg_sandbox")
 base_mod = pytest.importorskip("zephyr.governance.security_governance.security_gateway_base")
 

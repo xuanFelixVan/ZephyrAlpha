@@ -84,7 +84,7 @@ class OrphanJudgeConfig(BaseModel):
         default_factory=lambda: [
             "docs/registry_of_registries.yaml",
             "scripts/script-manifest.yaml",
-            "src/zephyr/governance/rule_enforcement/_registry.yaml",
+            "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
             "data/asset_index/unified-asset-index.yaml",
         ]
     )

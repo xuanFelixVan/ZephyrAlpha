@@ -2223,7 +2223,7 @@ class MultiAgentSecurityLayer:
 ### 23.4 L8 Circuit Breaker 实现
 
 ```python
-# src/zephyr/governance/rule_enforcement/circuit_breaker.py
+# src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py
 from enum import Enum
 
 class CBState(str, Enum):

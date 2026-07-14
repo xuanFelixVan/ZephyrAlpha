@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.tamper_proof_audit
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/audit/test_tamper_proof_audit.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/audit/test_tamper_proof_audit.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 审计记录不可篡改
@@ -31,7 +31,7 @@ anomaly_detection: 总行数减少/批量清洗/回溯修改 -> P0 CRITICAL从Gi
 对标 blueprint.md §6.26。
 
 
-同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""
 
 from __future__ import annotations
 
@@ -302,7 +302,7 @@ def generate_audit_log(
 
     import importlib as _importlib
 
-    _write_to_core = _importlib.import_module("zephyr.governance.audit_trail.bridge").write_to_core
+    _write_to_core = _importlib.import_module("zephyr.gov_audit.bridge").write_to_core
     _write_to_core(
         "drift_tamper_proof_audit",
         {

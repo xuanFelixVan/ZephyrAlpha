@@ -49,7 +49,7 @@ from zephyr.shared.foundation.models import TaskCard
 # Fixtures
 # ---------------------------------------------------------------------------
 
-GATES_DIR = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
 
 
 def _compute_expected_gate_ids() -> frozenset[str]:
@@ -242,7 +242,7 @@ def test_all_deprecated_patterns_blocked(path: str, engine: GateEngine) -> None:
 
 
 def test_valid_path_not_blocked(engine: GateEngine) -> None:
-    task = _make_task(deliverables=["src/zephyr/governance/rule_enforcement/g1_ingest.yaml"])
+    task = _make_task(deliverables=["src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml"])
     result = engine.evaluate(task, "G1")
     assert result.passed is True
 
@@ -578,7 +578,7 @@ def test_check_path_blacklist_hit() -> None:
 
 
 def test_check_path_blacklist_miss() -> None:
-    violations = _check_path_blacklist(["src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py"], {})
+    violations = _check_path_blacklist(["src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py"], {})
     assert len(violations) == 0
 
 

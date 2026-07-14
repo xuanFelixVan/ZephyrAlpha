@@ -48,7 +48,7 @@ architecture_debt §5.160.9：DEFAULT_OLLAMA_URL 原在 3 处重复定义，6 �
 
 Usage::
 
-    from zephyr.governance.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
+    from zephyr.gov_enforcement.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
 
     registry.register(make_hardcoded_url_gate())
 """

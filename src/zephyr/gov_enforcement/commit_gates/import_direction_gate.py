@@ -49,7 +49,7 @@ architecture_debt §5.152：shared 层（L0）向上 import trading/governance �
 
 Usage::
 
-    from zephyr.governance.commit_gates.import_direction_gate import make_import_direction_gate
+    from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 
     registry.register(make_import_direction_gate())
 """

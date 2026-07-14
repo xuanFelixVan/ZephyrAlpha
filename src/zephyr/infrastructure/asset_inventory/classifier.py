@@ -43,7 +43,7 @@ from zephyr.infrastructure.asset_inventory.models import (
 logger = logging.getLogger(__name__)
 
 TYPE_MAPPING: list[tuple[str, list[str], AssetType]] = [
-    ("src/zephyr/governance/rule_enforcement/", [".yaml"], AssetType.GATE),
+    ("src/zephyr/gov_enforcement/rule_enforcement/", [".yaml"], AssetType.GATE),
     ("src/zephyr/", [".py"], AssetType.MODULE),
     ("scripts/", [".py"], AssetType.SCRIPT),
     ("docs/", [".md"], AssetType.DOC),

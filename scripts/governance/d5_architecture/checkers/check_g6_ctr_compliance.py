@@ -23,7 +23,7 @@ Checks:
 - Whether cross-layer imports go through shared/contracts/ rather than direct layer imports
 
 exit codes: 0=pass, 1=findings, 2=error
-SSoT: src/zephyr/governance/rule_enforcement/g6_ctr_compliance.yaml
+SSoT: src/zephyr/gov_enforcement/rule_enforcement/g6_ctr_compliance.yaml
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ import argparse
 
 import yaml
 
-GATE_CONFIG_REL = "src/zephyr/governance/rule_enforcement/g6_ctr_compliance.yaml"
+GATE_CONFIG_REL = "src/zephyr/gov_enforcement/rule_enforcement/g6_ctr_compliance.yaml"
 FORBIDDEN_CLASS_NAMES_BY_LAYER = {
     "data": {"NormalizedMarketData", "MarketData", "Tick", "Bar", "TradeData", "Candle", "Quote"},
     "factor": {"FactorSignal", "Factor", "FactorValue", "AlphaSignal", "Signal"},

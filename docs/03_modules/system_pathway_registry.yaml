@@ -235,7 +235,7 @@ pathways:
     name: "gate_engine"
     layer: "B-Track"
     blueprint: "docs/03_modules/_cross_layer/gate_engine/blueprint.md"
-    source_dir: "src/zephyr/governance/rule_enforcement/"
+    source_dir: "src/zephyr/gov_enforcement/rule_enforcement/"
     test_dir: "tests/"
     config: ""
     status: "implemented"

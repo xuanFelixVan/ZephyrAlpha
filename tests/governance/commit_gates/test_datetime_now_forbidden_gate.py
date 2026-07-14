@@ -166,11 +166,11 @@ class TestIsGeneratorFile:
     def test_non_generator_file(self):
         """非生成器文件 → False"""
         assert not _is_generator_file("src/zephyr/trading/some_module.py")
-        assert not _is_generator_file("src/zephyr/governance/rule_bridge/git_commit_gateway.py")
+        assert not _is_generator_file("src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py")
 
     def test_non_generate_prefix(self):
         """文件名不以 generate_ 开头且不在 generators/ → False"""
-        assert not _is_generator_file("src/zephyr/governance/commit_gates/datetime_now_forbidden_gate.py")
+        assert not _is_generator_file("src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py")
 
 
 # ============================================================================
@@ -297,7 +297,7 @@ class TestNonGeneratorFileExemption:
 
     def test_runtime_module_passes(self):
         """运行时模块（非生成器）中的 datetime.now() → 豁免"""
-        non_gen = "src/zephyr/governance/rule_bridge/session_worktree.py"
+        non_gen = "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
         gw = _make_mock_gateway(
             [non_gen], {non_gen: ["    now = datetime.now()"]}
         )

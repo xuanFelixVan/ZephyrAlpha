@@ -805,8 +805,8 @@ sections:
     impact_on_rules: 参考文件是门禁策略的上下游依赖
     key_decisions:
     - KB决策记录——KBG-0030(门禁策略定义)/KBG-0038(严重级别映射)/KBG-0040(YAML Schema规范)/KBG-0041(豁免机制)/KBG-0013(知识管道)
-    - 代码模块——src/zephyr/governance/rule_enforcement/gate_engine.py(GateEngine)/src/zephyr/governance/task_repo.py(task_repo)
-    - YAML文件——src/zephyr/governance/rule_enforcement/下门禁YAML(g1_ingest.yaml~g5_extract.yaml)+phase_manager配置+schema定义
+    - 代码模块——src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py(GateEngine)/src/zephyr/governance/task_repo.py(task_repo)
+    - YAML文件——src/zephyr/gov_enforcement/rule_enforcement/下门禁YAML(g1_ingest.yaml~g5_extract.yaml)+phase_manager配置+schema定义
   gov_arch_006_change_history:
     section_type: examples
     title: 门禁策略变更历史
@@ -822,7 +822,7 @@ sections:
       language: yaml
       note: 字段命名规范化
     - title: v2.1.0 目录迁移
-      code: '- 迁移门禁YAML到src/zephyr/governance/rule_enforcement/
+      code: '- 迁移门禁YAML到src/zephyr/gov_enforcement/rule_enforcement/
 
         - 更新GateEngine加载路径
 
@@ -858,14 +858,14 @@ references:
   - scripts/governance/d5_architecture/validators/validate_ssot.py
   - scripts/governance/diagnose_depgraph.py
   modules:
-  - src/zephyr/governance/rule_enforcement/gate_engine.py
+  - src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py
   - src/zephyr/governance/task_repo.py
   - src/zephyr/governance/phase_manager.py
-  - src/zephyr/governance/rule_enforcement/g1_ingest.yaml
-  - src/zephyr/governance/rule_enforcement/g2_triage.yaml
-  - src/zephyr/governance/rule_enforcement/g3_evaluate.yaml
-  - src/zephyr/governance/rule_enforcement/g4_activate.yaml
-  - src/zephyr/governance/rule_enforcement/g5_extract.yaml
+  - src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml
+  - src/zephyr/gov_enforcement/rule_enforcement/g2_triage.yaml
+  - src/zephyr/gov_enforcement/rule_enforcement/g3_evaluate.yaml
+  - src/zephyr/gov_enforcement/rule_enforcement/g4_activate.yaml
+  - src/zephyr/gov_enforcement/rule_enforcement/g5_extract.yaml
   blueprints:
   - docs/03_modules/_cross_layer/gate_engine/blueprint.md
   - docs/03_modules/_domain_governance/governance_automation/blueprint.md
@@ -875,7 +875,7 @@ enforcement:
   - scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py
   - scripts/governance/d5_architecture/validators/validate_ssot.py
   - scripts/governance/diagnose_depgraph.py
-  - src/zephyr/governance/rule_enforcement/gate_engine.py
+  - src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py
   - src/zephyr/governance/phase_manager.py
   bypass_allowed: false
 metadata:
@@ -889,8 +889,8 @@ metadata:
     by: session-20260619-001
     changes:
     - RQ审查修复——填充references(enforcement)空字段
-    - 修正gate_engine.py路径(src/zephyr/governance/gate_engine.py→src/zephyr/governance/rule_enforcement/gate_engine.py)
-    - 修正门禁YAML路径(src/zephyr/governance/rule_enforcement/→src/zephyr/governance/rule_enforcement/)
+    - 修正gate_engine.py路径(src/zephyr/governance/gate_engine.py→src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py)
+    - 修正门禁YAML路径(src/zephyr/gov_enforcement/rule_enforcement/→src/zephyr/gov_enforcement/rule_enforcement/)
     - 标注validate_phase_exit/entry.py为计划中脚本
     - 修复g1_g5_check_items的section_type(verification→rule)
     - 统一L304为绝对路径

@@ -22,7 +22,7 @@ RuleWatcher — YAML 规则文件变更检测与自动同步
   2. verify_rule_yaml_migration.py --check-hash（哈希验证）
 
 用法：
-    from zephyr.governance.rule_enforcement.rule_engine.rule_watcher import RuleWatcher
+    from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher import RuleWatcher
     watcher = RuleWatcher()
     changes = watcher.check_changes()
     if changes:
@@ -30,9 +30,9 @@ RuleWatcher — YAML 规则文件变更检测与自动同步
         watcher.verify_changed(changes)
 
 CLI:
-    python -m zephyr.governance.rule_enforcement.rule_watcher          # 持续轮询
-    python -m zephyr.governance.rule_enforcement.rule_watcher --once    # 检查一次
-    python -m zephyr.governance.rule_enforcement.rule_watcher --poll-interval 10
+    python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher          # 持续轮询
+    python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher --once    # 检查一次
+    python -m zephyr.gov_enforcement.rule_enforcement.rule_watcher --poll-interval 10
 """
 
 from __future__ import annotations

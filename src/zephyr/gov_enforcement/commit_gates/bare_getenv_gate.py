@@ -48,7 +48,7 @@ architecture_debt §5.17.10：AI 在 10 个模块里写 10 种 os.getenv("API_KE
 
 Usage::
 
-    from zephyr.governance.commit_gates.bare_getenv_gate import make_bare_getenv_gate
+    from zephyr.gov_enforcement.commit_gates.bare_getenv_gate import make_bare_getenv_gate
 
     registry.register(make_bare_getenv_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

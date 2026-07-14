@@ -242,7 +242,7 @@ def __getattr__(name: str):
         import logging
 
         logging.getLogger("zephyr.stability_guard").warning(
-            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.governance.rule_enforcement.task_types",
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.gov_enforcement.rule_enforcement.task_types",
             name,
         )
-    raise AttributeError(f"module 'zephyr.governance.rule_enforcement.task_types' has no attribute {name!r}")
+    raise AttributeError(f"module 'zephyr.gov_enforcement.rule_enforcement.task_types' has no attribute {name!r}")

@@ -1356,7 +1356,7 @@ class AssetType(str, Enum):
     SCRIPT = "script"        # scripts/**/*.py（独立脚本）
     DOC = "doc"              # docs/**/*.md（蓝图/标准/报告）
     CONFIG = "config"        # config/**/*.yaml + *.json + *.toml
-    GATE = "gate"            # src/zephyr/governance/rule_enforcement/*.yaml
+    GATE = "gate"            # src/zephyr/gov_enforcement/rule_enforcement/*.yaml
     TEST = "test"            # tests/**/*.py
     DATA = "data"            # data/**/*.db + *.jsonl + *.yaml
     INFRA = "infra"          # pyproject.toml / .gitignore / *.bat / *.ps1
@@ -1368,7 +1368,7 @@ class AssetType(str, Enum):
 
 | 目录前缀 | 扩展名 | → asset_type |
 |----------|--------|-------------|
-| `src/zephyr/governance/rule_enforcement/` | `.yaml` | `gate` |
+| `src/zephyr/gov_enforcement/rule_enforcement/` | `.yaml` | `gate` |
 | `src/zephyr/` | `.py` | `module` |
 | `scripts/` | `.py` | `script` |
 | `docs/` | `.md` | `doc` |
@@ -3517,7 +3517,7 @@ scanner:
 
 classifier:
   type_mapping:
-    "src/zephyr/governance/rule_enforcement/": {ext: ".yaml", type: "gate"}
+    "src/zephyr/gov_enforcement/rule_enforcement/": {ext: ".yaml", type: "gate"}
     "src/zephyr/": {ext: ".py", type: "module"}
     "scripts/": {ext: ".py", type: "script"}
     "docs/": {ext: ".md", type: "doc"}

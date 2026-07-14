@@ -61,8 +61,8 @@ class TestTriggerRecoveryImport:
 
 
 class TestTriggerRecoveryMinimalPayload:
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_returns_dict_with_expected_keys(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -84,8 +84,8 @@ class TestTriggerRecoveryMinimalPayload:
 
 
 class TestTriggerRecoveryEmptyPayload:
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_empty_dict_returns_defaults(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -108,7 +108,7 @@ class TestTriggerRecoveryEmptyPayload:
 
 
 class TestHotfixBypass:
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_hotfix_commit_sets_bypass(self, mock_bypass_cls):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = True
@@ -125,8 +125,8 @@ class TestHotfixBypass:
         assert result["recovery_status"] == "HOTFIX_BYPASSED"
         assert result["module_id"] == "MOD-TEST"
 
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_non_hotfix_commit_no_bypass(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -144,7 +144,7 @@ class TestHotfixBypass:
         assert result["hotfix_bypass"] is False
         assert result["recovery_status"] != "HOTFIX_BYPASSED"
 
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_hotfix_bypass_instantiation_failure_non_fatal(self, mock_bypass_cls):
         mock_bypass_cls.side_effect = RuntimeError("config missing")
 
@@ -160,8 +160,8 @@ class TestHotfixBypass:
 
 
 class TestScanLevel:
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_invalid_scan_level_falls_back_to_standard(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -179,8 +179,8 @@ class TestScanLevel:
         assert isinstance(result, dict)
         assert result["recovery_status"] in ("NO_DRIFT_FOUND", "SCAN_FAILED", "INITIATED")
 
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_scan_level_deep_accepted(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -201,12 +201,12 @@ class TestScanLevel:
 
 class TestDriftEngineImportError:
     def test_drift_engine_unavailable_causes_unbound_local(self):
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.drift_engine": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.drift_engine": None}):
             with pytest.raises(UnboundLocalError):
                 trigger_recovery({"module_id": "MOD-TEST"})
 
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_scan_failure_sets_scan_failed(self, mock_bypass_cls, mock_scan):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -221,11 +221,11 @@ class TestDriftEngineImportError:
 
 
 class TestTriggerRecoveryWithDriftEvents:
-    @patch("zephyr.governance.drift_detection.reconciler.AutoFixer")
-    @patch("zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused", return_value=False)
-    @patch("zephyr.governance.drift_detection.cascade_detector.detect_cascade", return_value=[])
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.reconciler.AutoFixer")
+    @patch("zephyr.gov_drift.cascade_detector.is_auto_fix_paused", return_value=False)
+    @patch("zephyr.gov_drift.cascade_detector.detect_cascade", return_value=[])
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_fully_recovered_when_all_fixed(
         self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
     ):
@@ -252,11 +252,11 @@ class TestTriggerRecoveryWithDriftEvents:
         assert len(result["fix_results"]) == 2
         assert all(fr["status"] == "AUTO_FIXED" for fr in result["fix_results"])
 
-    @patch("zephyr.governance.drift_detection.reconciler.AutoFixer")
-    @patch("zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused", return_value=False)
-    @patch("zephyr.governance.drift_detection.cascade_detector.detect_cascade", return_value=[])
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.reconciler.AutoFixer")
+    @patch("zephyr.gov_drift.cascade_detector.is_auto_fix_paused", return_value=False)
+    @patch("zephyr.gov_drift.cascade_detector.detect_cascade", return_value=[])
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_partially_recovered_when_some_fixed(
         self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
     ):
@@ -280,11 +280,11 @@ class TestTriggerRecoveryWithDriftEvents:
         assert "AUTO_FIXED" in statuses
         assert any(s != "AUTO_FIXED" for s in statuses)
 
-    @patch("zephyr.governance.drift_detection.reconciler.AutoFixer")
-    @patch("zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused", return_value=False)
-    @patch("zephyr.governance.drift_detection.cascade_detector.detect_cascade", return_value=[])
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.reconciler.AutoFixer")
+    @patch("zephyr.gov_drift.cascade_detector.is_auto_fix_paused", return_value=False)
+    @patch("zephyr.gov_drift.cascade_detector.detect_cascade", return_value=[])
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_recovery_failed_when_none_fixed(
         self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused, mock_fixer_cls
     ):
@@ -307,10 +307,10 @@ class TestTriggerRecoveryWithDriftEvents:
 
 
 class TestCascadeLockout:
-    @patch("zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused", return_value=True)
-    @patch("zephyr.governance.drift_detection.cascade_detector.detect_cascade")
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.cascade_detector.is_auto_fix_paused", return_value=True)
+    @patch("zephyr.gov_drift.cascade_detector.detect_cascade")
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_cascade_lockout_when_auto_fix_paused(
         self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused
     ):
@@ -339,10 +339,10 @@ class TestCascadeLockout:
 
 
 class TestFixerUnavailable:
-    @patch("zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused", return_value=False)
-    @patch("zephyr.governance.drift_detection.cascade_detector.detect_cascade", return_value=[])
-    @patch("zephyr.governance.drift_detection.drift_engine.scan")
-    @patch("zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass")
+    @patch("zephyr.gov_drift.cascade_detector.is_auto_fix_paused", return_value=False)
+    @patch("zephyr.gov_drift.cascade_detector.detect_cascade", return_value=[])
+    @patch("zephyr.gov_drift.drift_engine.scan")
+    @patch("zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass")
     def test_fixer_import_error_sets_unavailable(self, mock_bypass_cls, mock_scan, mock_detect_cascade, mock_is_paused):
         mock_bypass_inst = MagicMock()
         mock_bypass_inst.is_hotfix_commit.return_value = False
@@ -351,7 +351,7 @@ class TestFixerUnavailable:
         event1 = _make_event("code")
         mock_scan.return_value = _make_scan_result(events=[event1], total=1)
 
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.reconciler": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.reconciler": None}):
             result = trigger_recovery({"module_id": "MOD-TEST"})
 
         assert result["recovery_status"] == "FIXER_UNAVAILABLE"

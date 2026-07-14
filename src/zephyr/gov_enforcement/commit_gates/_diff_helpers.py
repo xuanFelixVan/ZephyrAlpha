@@ -30,7 +30,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates._diff_helpers import (
+    from zephyr.gov_enforcement.commit_gates._diff_helpers import (
         _is_exempt_line,
         _extract_docstring_lines,
         _extract_sql_constant_lines,

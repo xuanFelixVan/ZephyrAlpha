@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-audit_orchestrator = pytest.importorskip("zephyr.governance.audit_trail")
+audit_orchestrator = pytest.importorskip("zephyr.gov_audit")
 AuditAdmissionController = audit_orchestrator.AuditAdmissionController
 AdmissionResult = audit_orchestrator.AdmissionResult
 ResourceAwarePool = audit_orchestrator.ResourceAwarePool

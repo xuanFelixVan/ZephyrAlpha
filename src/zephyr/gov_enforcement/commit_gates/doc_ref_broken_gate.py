@@ -46,7 +46,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
+    from zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
 
     registry.register(make_doc_ref_broken_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

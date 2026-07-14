@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.core.gate_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] backward-compat shim — canonical location is zephyr.governance.rule_enforcement.gate_types
+# [CONSUMERS] backward-compat shim — canonical location is zephyr.gov_enforcement.rule_enforcement.gate_types
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -19,5 +19,5 @@
 # shared.contracts -> governance.rule_enforcement -> governance.__init__ -> ... -> governance (cycle)
 # At module load time, governance may not be fully initialized yet.
 def __getattr__(name):
-    _mod = __import__("zephyr.governance.rule_enforcement.gate_types", fromlist=[name])
+    _mod = __import__("zephyr.gov_enforcement.rule_enforcement.gate_types", fromlist=[name])
     return getattr(_mod, name)

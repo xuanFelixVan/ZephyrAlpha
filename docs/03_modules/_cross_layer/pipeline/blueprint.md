@@ -36,6 +36,7 @@ references:
   - {id: "architecture_model/layers/b_pipeline.yaml", at: "全篇", why: "Pipeline YAML SSoT——本蓝图真源"}
 design_maturity: design
 build_status: planned
+responsibility_domain: 
 ---
 
 > module_id: MOD-INF-009 | version: 0.39.1 | status: active | layer: cross_layer

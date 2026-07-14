@@ -123,7 +123,7 @@ class TestDriftBridge:
             assert result.critical_gaps == 1
 
     def test_scan_audit_anomalies_import_error(self, bridge):
-        with patch("zephyr.governance.audit_trail.anomaly.AnomalyDetector", side_effect=ImportError):
+        with patch("zephyr.gov_audit.anomaly.AnomalyDetector", side_effect=ImportError):
             result = bridge._scan_audit_anomalies()
             assert result == []
 

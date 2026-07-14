@@ -15,7 +15,7 @@
 # [TTL] task_bound
 """KB 13项一键体检 — CLI入口薄包装
 
-实际实现位于 zephyr.governance.kb.self_test.SelfTest
+实际实现位于 zephyr.gov_kb.self_test.SelfTest
 用法:
     python scripts/kb/self_test.py        # 全量13项
     python scripts/kb/self_test.py --json # JSON输出

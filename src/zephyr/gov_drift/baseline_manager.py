@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.baseline_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/audit/test_baseline_manager.py; tests/drift/test_drift_core.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/audit/test_baseline_manager.py; tests/drift/test_drift_core.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基线更新必须经过投毒防护

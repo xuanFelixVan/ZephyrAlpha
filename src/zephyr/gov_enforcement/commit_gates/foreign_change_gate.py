@@ -51,7 +51,7 @@ HELD-OVERLAP gate 只检测目标文件是否被其他**活跃** session **claim
 
 Usage::
 
-    from zephyr.governance.commit_gates.foreign_change_gate import make_foreign_change_gate
+    from zephyr.gov_enforcement.commit_gates.foreign_change_gate import make_foreign_change_gate
 
     registry.register(make_foreign_change_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, allow_overlap=False)

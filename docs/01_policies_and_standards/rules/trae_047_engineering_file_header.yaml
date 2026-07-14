@@ -496,7 +496,7 @@ sections:
     - description: B_yaml格式定义
       details: '# --- 治理锚定 --- / # blueprint: {module_id} | {blueprint_path} | §{N} / # module_id: {module_id} / # stability: {frozen|stable|evolving|volatile} / # safety_level: {H|M|L} / # ai_autonomy: {immutable_core|human_gated|ai_modifiable} / # ttl: {permanent|task_bound} / # --- 治理锚定结束 ---'
     - description: B_yaml适用文件清单
-      details: 'gate: src/zephyr/governance/rule_enforcement/*.yaml(g1-ingest.yaml) | registry: *_registry.yaml, *manifest.yaml(_registry.yaml, script-manifest.yaml) | contract(yaml): docs/.../contracts/*.yaml(architecture_contract.yaml) | config: config/*.yaml(flags.yaml, budget_policy.yaml) | data: data/**/*.yaml(capability_cards/*.yaml, work_dags/*.yaml) | architecture: architecture_model/**/*.yaml(_index.yaml, l00_data_source.yaml)'
+      details: 'gate: src/zephyr/gov_enforcement/rule_enforcement/*.yaml(g1-ingest.yaml) | registry: *_registry.yaml, *manifest.yaml(_registry.yaml, script-manifest.yaml) | contract(yaml): docs/.../contracts/*.yaml(architecture_contract.yaml) | config: config/*.yaml(flags.yaml, budget_policy.yaml) | data: data/**/*.yaml(capability_cards/*.yaml, work_dags/*.yaml) | architecture: architecture_model/**/*.yaml(_index.yaml, l00_data_source.yaml)'
   gov_eng_002_cjson_format:
     title: C_json格式定义与适用文件(GOV-ENG-002§6)
     section_type: examples

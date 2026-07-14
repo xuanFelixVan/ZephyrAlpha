@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.self_check
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/__main__.py; src/zephyr/governance/drift_detection/_analysis.py (+2 more)
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/__main__.py; src/zephyr/gov_drift/_analysis.py (+2 more)
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 自检逻辑不可跳过

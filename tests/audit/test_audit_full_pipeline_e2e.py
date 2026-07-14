@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 import pytest
 
-finding_model = pytest.importorskip("zephyr.governance.audit_trail.finding_model", reason="finding_model not available")
+finding_model = pytest.importorskip("zephyr.gov_audit.finding_model", reason="finding_model not available")
 AuditFinding = finding_model.AuditFinding
 FindingSeverity = finding_model.FindingSeverity
 FindingDimension = finding_model.FindingDimension
@@ -27,19 +27,19 @@ RemediationPriority = finding_model.RemediationPriority
 generate_finding_id = finding_model.generate_finding_id
 
 finding_ingest_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.finding_ingest", reason="finding_ingest not available"
+    "zephyr.gov_audit.finding_ingest", reason="finding_ingest not available"
 )
 FindingIngest = finding_ingest_mod.FindingIngest
 IngestResult = finding_ingest_mod.IngestResult
 
 pipeline_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available"
+    "zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available"
 )
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 
 adapter_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.text_to_finding_adapter", reason="text_to_finding_adapter not available"
+    "zephyr.gov_audit.text_to_finding_adapter", reason="text_to_finding_adapter not available"
 )
 TextToFindingAdapter = adapter_mod.TextToFindingAdapter
 
@@ -96,7 +96,7 @@ class TestFindingIngestE2E:
         received_events = []
 
         with patch.object(finding_ingest_mod, "bus", create=True) as mock_bus_module:
-            with patch("zephyr.governance.audit_trail.finding_ingest.FindingIngest._emit_event") as mock_emit:
+            with patch("zephyr.gov_audit.finding_ingest.FindingIngest._emit_event") as mock_emit:
                 mock_emit.side_effect = lambda f: received_events.append(f)
                 result = ingest.ingest_string(jsonl_line)
 

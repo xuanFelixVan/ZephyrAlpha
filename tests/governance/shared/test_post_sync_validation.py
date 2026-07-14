@@ -52,7 +52,7 @@ from zephyr.shared.io.paths import REPO_ROOT
 # PSV_UNDER_TEST seam：mutation 测试可重定向到变异副本；缺省指向真源。
 # 正常 pytest 运行不受影响（加载 src 下真源）。
 _PROJECT_ROOT = REPO_ROOT
-_DEFAULT_SSOt = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "post_sync_validator.py"
+_DEFAULT_SSOt = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "architecture_governance" / "post_sync_validator.py"
 _SSoT_PATH = Path(os.environ.get("PSV_UNDER_TEST", str(_DEFAULT_SSOt)))
 
 _spec = importlib.util.spec_from_file_location(

@@ -25,7 +25,7 @@
 影响评估: 批量操作前评估受影响KE范围
 
 用法:
-    from zephyr.governance.kb.safety_brake import SafetyBrake
+    from zephyr.gov_kb.safety_brake import SafetyBrake
     sb = SafetyBrake()
     sb.pre_flight_check("batch_delete", affected_ke_count=50)
 """

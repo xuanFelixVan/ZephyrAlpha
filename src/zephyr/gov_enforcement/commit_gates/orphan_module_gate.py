@@ -48,7 +48,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.orphan_module_gate import make_orphan_module_gate
+    from zephyr.gov_enforcement.commit_gates.orphan_module_gate import make_orphan_module_gate
 
     registry.register(make_orphan_module_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

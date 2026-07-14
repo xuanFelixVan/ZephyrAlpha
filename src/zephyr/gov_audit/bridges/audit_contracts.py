@@ -18,7 +18,7 @@
 """G-CT-001 契约消费端 — Audit.write() 公共接口.
 
 RBAC 权限判定完成后调用，写入不可变审计记录.
-委托 zephyr.governance.audit_trail.writer.AuditWriter 真实实现——
+委托 zephyr.gov_audit.writer.AuditWriter 真实实现——
 append-only JSONL + SHA-256 哈希链 + HMAC-SHA256 + Lamport 时钟 + Merkle 聚合.
 """
 

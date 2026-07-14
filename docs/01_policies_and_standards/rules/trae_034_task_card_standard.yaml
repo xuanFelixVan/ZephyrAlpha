@@ -1112,7 +1112,7 @@ sections:
     - GOV-TASK-005
     steps:
     - step: 清扫通过
-      command: python src/zephyr/governance/rule_enforcement/task_completion_gate.py --scan
+      command: python src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py --scan
       expected_exit: 0
       on_fail: 执行--clean后重新扫描
     - step: 编码合规
@@ -1176,7 +1176,7 @@ sections:
     - GOV-TASK-005
     content:
       summary: task_completion_gate.py脚本功能和退出码定义
-      script_path: src/zephyr/governance/rule_enforcement/task_completion_gate.py
+      script_path: src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
       commands:
       - command: --scan
         function: 扫描指定路径输出残留文件分类报告
@@ -1203,7 +1203,7 @@ sections:
     content:
       summary: 关闭标准的消费者及其同步要求
       consumers:
-      - consumer: src/zephyr/governance/rule_enforcement/task_completion_gate.py
+      - consumer: src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
         dependency: 残留物分类规则、退出码定义
         sync_requirement: 分类规则变更必须同commit更新
       - consumer: src/zephyr/governance/task_repo.py
@@ -1346,7 +1346,7 @@ references:
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/diagnose_depgraph.py
   modules:
-  - src/zephyr/governance/rule_enforcement/task_completion_gate.py
+  - src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
   - src/zephyr/governance/task_repo.py
   blueprints:
   - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md

@@ -10,7 +10,7 @@
 Trigger Router → Drift Recovery 集成测试
 ==========================================
 验证 trigger_router.yaml drift_detected 事件能正确触发
-zephyr.governance.drift_detection.drift_detector.trigger_recovery 完成恢复闭环。
+zephyr.gov_drift.drift_detector.trigger_recovery 完成恢复闭环。
 
 覆盖场景：
   1. trigger_recovery 可被 trigger_router 正确导入
@@ -47,7 +47,7 @@ def test_handle_drift_detected_uses_trigger_recovery():
 
     payload = {"module_id": "MOD-INF-023", "changed_files": [], "commit_message": ""}
 
-    with patch("zephyr.governance.drift_detection.drift_detector.trigger_recovery") as mock_recovery:
+    with patch("zephyr.gov_drift.drift_detector.trigger_recovery") as mock_recovery:
         mock_recovery.return_value = {
             "recovery_id": "test-123",
             "recovery_status": "NO_DRIFT_FOUND",
@@ -65,7 +65,7 @@ def test_handle_drift_detected_fallback_on_import_error():
 
     with (
         patch(
-            "zephyr.governance.drift_detection.drift_detector.trigger_recovery",
+            "zephyr.gov_drift.drift_detector.trigger_recovery",
             side_effect=ImportError("test import error"),
         ),
         patch(
@@ -87,7 +87,7 @@ def test_trigger_recovery_hotfix_bypass():
     }
 
     with patch(
-        "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+        "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
         return_value=True,
     ):
         result = trigger_recovery(payload)
@@ -108,9 +108,9 @@ def test_trigger_recovery_no_drift():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.gov_drift.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
     ):
@@ -137,17 +137,17 @@ def test_trigger_recovery_cascade_lockout():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.gov_drift.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
+            "zephyr.gov_drift.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
+            "zephyr.gov_drift.cascade_detector.is_auto_fix_paused",
             return_value=True,
         ),
     ):
@@ -173,21 +173,21 @@ def test_trigger_recovery_auto_fix_success():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.gov_drift.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
+            "zephyr.gov_drift.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
+            "zephyr.gov_drift.cascade_detector.is_auto_fix_paused",
             return_value=False,
         ),
         patch(
-            "zephyr.governance.drift_detection.reconciler.AutoFixer",
+            "zephyr.gov_drift.reconciler.AutoFixer",
         ) as MockAutoFixer,
     ):
         mock_fixer = MockAutoFixer.return_value
@@ -217,21 +217,21 @@ def test_trigger_recovery_auto_fix_failure_fallback():
     payload = {"module_id": "MOD-INF-023", "changed_files": []}
 
     with (
-        patch("zephyr.governance.drift_detection.drift_engine.scan", return_value=mock_scan_result),
+        patch("zephyr.gov_drift.drift_engine.scan", return_value=mock_scan_result),
         patch(
-            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=False,
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.detect_cascade",
+            "zephyr.gov_drift.cascade_detector.detect_cascade",
             return_value=[],
         ),
         patch(
-            "zephyr.governance.drift_detection.cascade_detector.is_auto_fix_paused",
+            "zephyr.gov_drift.cascade_detector.is_auto_fix_paused",
             return_value=False,
         ),
         patch(
-            "zephyr.governance.drift_detection.reconciler.AutoFixer",
+            "zephyr.gov_drift.reconciler.AutoFixer",
         ) as MockAutoFixer,
     ):
         mock_fixer = MockAutoFixer.return_value

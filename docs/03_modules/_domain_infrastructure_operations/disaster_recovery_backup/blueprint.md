@@ -502,7 +502,7 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 | MOD-INF-016 (DatabaseService) | 提供PG/SQLite/ClickHouse连接参数 |
 | MOD-INF-026 (AssetInventory) | 资产分类为备份内容裁定提供依据 |
 | ReconciliationRegistry (zephyr.governance.audit) | post-commit reconciler注册与触发机制 |
-| GitCommitGateway (zephyr.governance.rule_bridge) | merge后触发reconcile_for，驱动backup_reconciler |
+| GitCommitGateway (zephyr.gov_enforcement.rule_bridge) | merge后触发reconcile_for，驱动backup_reconciler |
 | Restic (外部工具) | 去重+加密+校验备份引擎 |
 | pg_dump (PostgreSQL客户端) | PG数据库dump |
 | sqlite3 (SQLite客户端) | SQLite数据库dump |

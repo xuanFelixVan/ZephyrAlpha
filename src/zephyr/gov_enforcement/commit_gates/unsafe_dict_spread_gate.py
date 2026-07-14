@@ -44,7 +44,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
+    from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
     registry.register(make_unsafe_dict_spread_gate())
 """
 

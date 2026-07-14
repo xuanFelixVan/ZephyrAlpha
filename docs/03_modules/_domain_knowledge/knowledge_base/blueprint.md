@@ -13,7 +13,7 @@ created_by: AI-Claude
 date: "2026-05-06"
 valid_from: "2026-05-05"
 ttl: permanent
-actual_disk_path: "src/zephyr/governance/kb/"
+actual_disk_path: "src/zephyr/gov_kb/"
 construction_progress: completed
 summary: "ZephyrAlpha 知识库系统完整蓝图——[容量升级中 v0.11.0] 设计上限 10,000脚本/1,500模块/100AI并发/40-100脚本并发执行/增量扫描默认/全量扫描可选。当前覆盖：入库(G1-G5五门禁+§3.9.1 8条来源矩阵+§5.14内容安全门禁) → 存储(§7三层存储+§7.8灾备+§7.9部分回滚与事务写入+§7.10系统自身纵深防御+§7.10.8 Windows单机健壮性) → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配+§9.4.1多模型格式适配) → 演化(§9 KE版本semver+依赖级联+§9.8隐含因果链检测+§9.8.1引用完整性自检+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思) → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV+§4.5冷启动引导引擎+§9.11.1截图文本退化+§12.5 E2E集成测试) → 健康保障(§9.18 7项运营期长青机制+§3.9.6异常中断恢复) → §3.5.1多信号源新鲜度引擎(四信源融合min()防御)。§7.10 纵深防御(7项SOC2/ISO27001审计级保护)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机 + 三轨19类知识分类 + KO→KE→KB三级漏斗 + KE Schema 31字段 + 字段稳定性三级分级 + Human-Gated三层权限模型 + KB规则执行引擎(§9.5) + 互补知识链接(§9.9.1) + 项目阶段感知温度(§9.12.2)。全自动零Owner触发(月均≤12min@≤300KE，非线性增长，LLM费用≤¥0.40)。experimental代码已实现(12模块/3600行)，beta建设进行中。"
 tags: [knowledge_base, ke, embedding, vector-db, semantic-search, chromadb, mcp, state-machine, g1-g5, triage, audit-pipeline, self-test, tombstone, lifecycle-sla, reference-liveness, non-use-decay, silent-period, complementary-links, phase-aware-temperature, semantic-drift, conflict-pattern-learning, memory-consolidation, pruning-session, emergency-freeze, safe-mode, load-bearing-ke, source-integrity, self-referential-isolation, override-mitigation, red-team, deterministic-verification, soc2, iso27001, defense-in-depth, windows-max-path, av-whitelist, hnsw-compaction, unclean-shutdown, multi-signal-freshness, crash-recovery, nonlinear-time-budget, implicit-causality, multi-model-format, reference-integrity]

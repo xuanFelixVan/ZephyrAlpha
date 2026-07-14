@@ -31,7 +31,7 @@ priority=40 优先于 HELD-OVERLAP(50)：先检查 claim 再检查 overlap，
 
 Usage::
 
-    from zephyr.governance.commit_gates.claim_required_gate import make_claim_required_gate
+    from zephyr.gov_enforcement.commit_gates.claim_required_gate import make_claim_required_gate
     registry.register(make_claim_required_gate())
 """
 

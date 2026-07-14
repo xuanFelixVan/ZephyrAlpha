@@ -55,7 +55,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
+    from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 
     registry.register(make_ch_batch_size_gate())
 """

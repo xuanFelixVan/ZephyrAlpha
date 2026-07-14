@@ -23,19 +23,19 @@ Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 
 ----
 
-    python -m zephyr.governance.drift_detection scan                    # 默认 LIGHT 扫描
+    python -m zephyr.gov_drift scan                    # 默认 LIGHT 扫描
 
-    python -m zephyr.governance.drift_detection scan --level STANDARD   # 标准扫描
+    python -m zephyr.gov_drift scan --level STANDARD   # 标准扫描
 
-    python -m zephyr.governance.drift_detection scan --level DEEP       # 深度扫描
+    python -m zephyr.gov_drift scan --level DEEP       # 深度扫描
 
-    python -m zephyr.governance.drift_detection self-test               # SelfTestVerifier 自检
+    python -m zephyr.gov_drift self-test               # SelfTestVerifier 自检
 
-    python -m zephyr.governance.drift_detection budget [module_id]      # 检查漂移预算
+    python -m zephyr.gov_drift budget [module_id]      # 检查漂移预算
 
-    python -m zephyr.governance.drift_detection list                    # 列出所有已注册检测器
+    python -m zephyr.gov_drift list                    # 列出所有已注册检测器
 
-    python -m zephyr.governance.drift_detection status                  # 模块健康状态"""
+    python -m zephyr.gov_drift status                  # 模块健康状态"""
 
 from __future__ import annotations
 
@@ -336,7 +336,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        prog="python -m zephyr.governance.drift_detection",
+        prog="python -m zephyr.gov_drift",
         description="ZephyrAlpha Drift Detector — 漂移运行时检测 (MOD-INF-023)",
     )
 

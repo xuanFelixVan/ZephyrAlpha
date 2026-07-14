@@ -57,7 +57,7 @@ ARCH-CAP-002 v1.0.8 规定：单域 production_nodes ≤150 通过，>150 必须
 ### 2.1 原则：先 depgraph 映射后物理迁移
 
 - **第一阶段（本次）**：仅改 depgraph 中节点的 domain_id + 同步所有引用（代码表头、蓝图、注册表等）。不移动代码物理路径。
-- **第二阶段（后续专项）**：物理迁移代码目录（如 `src/zephyr/trading/feedback_loop/` → `src/zephyr/feedback_loop/`），修改 import 路径。
+- **第二阶段（后续专项）**：物理迁移代码目录（如 `src/zephyr/feedback_loop/` → `src/zephyr/feedback_loop/`），修改 import 路径。
 
 ### 2.2 域边界划分规则
 
@@ -137,8 +137,8 @@ src/zephyr/governance/ 包按"八件套"拆分，目标 D_GOVERNANCE 核心降�
 
 | 新域 | domain_id | domain_name | ssot_path | blueprint_id |
 |---|---|---|---|---|
-| 反馈循环引擎 | D_FEEDBACK_LOOP | feedback_loop_engine | src/zephyr/trading/feedback_loop/ | MOD-FEEDBACK_LOOP |
-| 代理编排器 | D_ORCHESTRATOR | agent_orchestrator | src/zephyr/trading/orchestrator/ | MOD-INF-039 |
+| 反馈循环引擎 | D_FEEDBACK_LOOP | feedback_loop_engine | src/zephyr/feedback_loop/ | MOD-FEEDBACK_LOOP |
+| 代理编排器 | D_ORCHESTRATOR | agent_orchestrator | src/zephyr/orchestrator/ | MOD-INF-039 |
 
 每域需新建 5 处定义（同 D_GOV_KB）。
 
@@ -146,8 +146,8 @@ src/zephyr/governance/ 包按"八件套"拆分，目标 D_GOVERNANCE 核心降�
 
 | 操作 | 迁移条件 | 节点数 | production | 目标域 |
 |---|---|---|---|---|
-| 1 | path LIKE 'src/zephyr/trading/feedback_loop/%' | 336 | 177 | D_FEEDBACK_LOOP |
-| 2 | path LIKE 'src/zephyr/trading/orchestrator/%' | 74 | 60 | D_ORCHESTRATOR |
+| 1 | path LIKE 'src/zephyr/feedback_loop/%' | 336 | 177 | D_FEEDBACK_LOOP |
+| 2 | path LIKE 'src/zephyr/orchestrator/%' | 74 | 60 | D_ORCHESTRATOR |
 
 **预期效果**：D_TRADING 降至 ~43 production（合规）。D_FEEDBACK_LOOP = 177（仍超限，需二期二分）。
 
@@ -155,8 +155,8 @@ src/zephyr/governance/ 包按"八件套"拆分，目标 D_GOVERNANCE 核心降�
 
 | 代码目录 | 文件数 | 当前表头 | 新表头 |
 |---|---|---|---|
-| src/zephyr/trading/feedback_loop/ | 100 | 多为 D_OPS | D_FEEDBACK_LOOP |
-| src/zephyr/trading/orchestrator/ | 75 | 多为 D_INFRA_RUNTIME | D_ORCHESTRATOR |
+| src/zephyr/feedback_loop/ | 100 | 多为 D_OPS | D_FEEDBACK_LOOP |
+| src/zephyr/orchestrator/ | 75 | 多为 D_INFRA_RUNTIME | D_ORCHESTRATOR |
 
 ### 4.4 第四步：同步蓝图和文档
 

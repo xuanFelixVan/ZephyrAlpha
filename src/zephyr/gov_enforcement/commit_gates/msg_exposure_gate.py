@@ -57,7 +57,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.msg_exposure_gate import make_msg_exposure_gate
+    from zephyr.gov_enforcement.commit_gates.msg_exposure_gate import make_msg_exposure_gate
 
     registry.register(make_msg_exposure_gate())
 """

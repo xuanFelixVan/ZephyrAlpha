@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.runbook_generator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 手册生成格式不可变

@@ -50,7 +50,7 @@
 Usage（AI 通过 RunCommand 调用）::
 
     python -c "
-    from zephyr.governance.rule_bridge.session_worktree import (
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import (
         session_worktree_start, session_worktree_commit,
         session_worktree_merge, generate_session_id,
     )

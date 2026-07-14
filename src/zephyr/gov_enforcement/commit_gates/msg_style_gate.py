@@ -48,7 +48,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.msg_style_gate import make_msg_style_gate
+    from zephyr.gov_enforcement.commit_gates.msg_style_gate import make_msg_style_gate
 
     registry.register(make_msg_style_gate())
 """

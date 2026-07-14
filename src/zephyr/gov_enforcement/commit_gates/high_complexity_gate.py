@@ -43,7 +43,7 @@ architecture_debt §5.158：10 处长函数（复杂度 30+/17/16 等），
 
 Usage::
 
-    from zephyr.governance.commit_gates.high_complexity_gate import make_high_complexity_gate
+    from zephyr.gov_enforcement.commit_gates.high_complexity_gate import make_high_complexity_gate
 
     registry.register(make_high_complexity_gate())
 """

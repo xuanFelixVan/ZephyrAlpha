@@ -216,7 +216,7 @@ class TestNoRedefinitionInPackage:
         "module_path",
         [
             "zephyr.governance.semantic_audit.kb_gate",
-            "zephyr.governance.audit_trail.kb_gate",
+            "zephyr.gov_audit.kb_gate",
         ],
     )
     def test_kb_gate_imports_poisoning_indicators(self, module_path):
@@ -231,7 +231,7 @@ class TestNoRedefinitionInPackage:
         "module_path",
         [
             "zephyr.governance.semantic_audit.privacy",
-            "zephyr.governance.audit_trail.privacy",
+            "zephyr.gov_audit.privacy",
         ],
     )
     def test_privacy_imports_pii_symbols(self, module_path):

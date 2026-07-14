@@ -37,8 +37,8 @@ KB 13项一键体检 + --self-test入口
   13. Embedding模型可用性
 
 用法:
-    python -m zephyr.governance.kb.self_test        # 全量13项
-    python -m zephyr.governance.kb.self_test --json # JSON输出
+    python -m zephyr.gov_kb.self_test        # 全量13项
+    python -m zephyr.gov_kb.self_test --json # JSON输出
 """
 
 from __future__ import annotations
@@ -298,7 +298,7 @@ def _check_freeze_state(root: Path) -> CheckResult:
             "Freeze State",
             CheckStatus.WARN,
             f"KB is in {mode} mode since {data.get('since', 'unknown')}. Reason: {data.get('reason', 'unspecified')}",
-            "若冻结已解决问题，运行 python -m zephyr.governance.kb.freeze --unfreeze 恢复",
+            "若冻结已解决问题，运行 python -m zephyr.gov_kb.freeze --unfreeze 恢复",
         )
     except Exception as e:
         return CheckResult(9, "Freeze State", CheckStatus.FAIL, "internal error")

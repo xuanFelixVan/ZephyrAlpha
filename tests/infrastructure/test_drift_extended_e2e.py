@@ -198,7 +198,7 @@ class TestHotfixBypass:
             "changed_files": [],
         }
         with patch(
-            "zephyr.governance.drift_detection.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
+            "zephyr.gov_drift.drift_hotfix_bypass.HotfixBypass.is_hotfix_commit",
             return_value=True,
         ):
             result = trigger_recovery(payload)

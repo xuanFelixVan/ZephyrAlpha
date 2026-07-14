@@ -1160,7 +1160,7 @@ STEP 3: 拆分后验证
 | pair_id | 注册表源 | 磁盘源 | 严重性 |
 |---------|---------|--------|:---:|
 | ALIGN-SCRIPT-001 | scripts/script-manifest.yaml | scripts/ | RED |
-| ALIGN-GATE-001 | src/zephyr/governance/rule_enforcement/_registry.yaml | src/zephyr/governance/rule_enforcement/ | RED |
+| ALIGN-GATE-001 | src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml | src/zephyr/gov_enforcement/rule_enforcement/ | RED |
 | ALIGN-MODULE-001 | docs/03_modules/blueprint_registry.yaml | src/zephyr/ | RED |
 | ALIGN-BLUEPRINT-001 | docs/03_modules/blueprint_registry.yaml | docs/03_modules/ | YELLOW |
 | ALIGN-DEPENDENCY-001 | cross-module-dependency-registry.yaml | src/zephyr/ | YELLOW |

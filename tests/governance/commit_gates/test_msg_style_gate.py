@@ -282,7 +282,7 @@ class TestGatewayIntegration:
         gate_file.write_text('raise ValueError(f"x → y。")\n', encoding="utf-8")
         rel = str(gate_file).replace("\\", "/")
         # 模拟路径含 governance/commit_gates/
-        rel_exempt = "src/zephyr/governance/commit_gates/some_gate.py"
+        rel_exempt = "src/zephyr/gov_enforcement/commit_gates/some_gate.py"
         gw = self._make_gateway(diff_stdout=rel_exempt, added_stdout=rel_exempt)
         spec = make_msg_style_gate()
         passed, msg = spec.check(gw, [])

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.gate_persistence
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/gate/test_gate_persistence.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/gate/test_gate_persistence.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 门禁结果不可篡改

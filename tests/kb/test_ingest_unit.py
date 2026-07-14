@@ -26,7 +26,7 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.governance.kb.ingest import IngestGate
+from zephyr.gov_kb.ingest import IngestGate
 
 
 @pytest.fixture()

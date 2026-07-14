@@ -18,7 +18,7 @@
 
 L66: Market Abuse + Financial Stress Test + Independent Price Verification + Collateral + Tax + Privacy + IP + Insurance
 L67: Full 67-layer pipeline audit — every gate must log independently; full traceability required
-同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。
 """
 
 from __future__ import annotations

@@ -37,7 +37,7 @@ GitCommitGateway 的 stash 隔离方案在多 session 并发下产生 stash 循�
 
 Usage::
 
-    from zephyr.governance.rule_bridge.worktree_manager import WorktreeManager
+    from zephyr.gov_enforcement.rule_bridge.worktree_manager import WorktreeManager
 
     mgr = WorktreeManager()
     wt_path = mgr.create_session_worktree("sess-001")

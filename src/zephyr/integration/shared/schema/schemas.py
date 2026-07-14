@@ -67,9 +67,9 @@ _FROZEN_PUBLIC_API = frozenset(__all__)
 # integration.shared.schema.schemas -> governance.rule_enforcement.task_types -> integration.shared.schema.*
 # These symbols are re-export only (zero business usage in this module).
 _GOVERNANCE_TASK_TYPES = {
-    "Task": "zephyr.governance.rule_enforcement.task_types",
-    "TaskNamespace": "zephyr.governance.rule_enforcement.task_types",
-    "TaskStatus": "zephyr.governance.rule_enforcement.task_types",
+    "Task": "zephyr.gov_enforcement.rule_enforcement.task_types",
+    "TaskNamespace": "zephyr.gov_enforcement.rule_enforcement.task_types",
+    "TaskStatus": "zephyr.gov_enforcement.rule_enforcement.task_types",
 }
 
 

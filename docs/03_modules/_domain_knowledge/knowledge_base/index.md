@@ -20,22 +20,22 @@ ttl: permanent
 | 维度 | 详情 |
 |------|------|
 | 蓝图路径 | [blueprint.md](./blueprint.md) |
-| 代码路径 | `src/zephyr/governance/kb/` |
+| 代码路径 | `src/zephyr/gov_kb/` |
 | KE存放路径 | `docs/08_knowledge/` |
 | 施工进度 | completed（G1-G5 五门禁已实现） |
 | MCP Server | `src/zephyr/integration/mcp/knowledge_base_server.py` |
 | KE Schema | `src/zephyr/shared/schemas.py`（KeEntry） |
-| 核心入口 | `src/zephyr/governance/kb/kb_repo.py` |
+| 核心入口 | `src/zephyr/gov_kb/kb_repo.py` |
 
 ## G1-G5 五门禁流水线（已实现）
 
 | 门禁 | 代码文件 | 说明 |
 |:---:|------|------|
-| G1 摄取 | `src/zephyr/governance/kb/ingest.py` | 摄取门禁 |
-| G2 分拣 | `src/zephyr/governance/kb/triage.py` | 分拣门禁 |
-| G3 分析 | `src/zephyr/governance/kb/analyze.py` | 分析门禁 |
-| G4 激活 | `src/zephyr/governance/kb/activate.py` | 激活门禁 |
-| G5 提取 | `src/zephyr/governance/kb/extract.py` | 提取门禁 |
+| G1 摄取 | `src/zephyr/gov_kb/ingest.py` | 摄取门禁 |
+| G2 分拣 | `src/zephyr/gov_kb/triage.py` | 分拣门禁 |
+| G3 分析 | `src/zephyr/gov_kb/analyze.py` | 分析门禁 |
+| G4 激活 | `src/zephyr/gov_kb/activate.py` | 激活门禁 |
+| G5 提取 | `src/zephyr/gov_kb/extract.py` | 提取门禁 |
 
 ## 容量升级 Phase 规划（§0.7）
 

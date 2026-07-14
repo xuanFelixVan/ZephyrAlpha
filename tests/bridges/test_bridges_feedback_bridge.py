@@ -89,7 +89,7 @@ class TestAuditFeedbackBridge:
         assert result["layer"] == ""
 
     def test_scan_and_bridge_no_events(self, bridge):
-        with patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q:
+        with patch("zephyr.gov_audit.query.AuditQuery") as mock_q:
             mock_inst = MagicMock()
             mock_inst._load_events.return_value = []
             mock_q.return_value = mock_inst
@@ -98,8 +98,8 @@ class TestAuditFeedbackBridge:
 
     def test_scan_and_bridge_with_anomalies(self, bridge):
         with (
-            patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q,
-            patch("zephyr.governance.audit_trail.anomaly.AnomalyDetector") as mock_d,
+            patch("zephyr.gov_audit.query.AuditQuery") as mock_q,
+            patch("zephyr.gov_audit.anomaly.AnomalyDetector") as mock_d,
         ):
             mock_q_inst = MagicMock()
             mock_q_inst._load_events.return_value = [{"event_type": "test"}]
@@ -117,7 +117,7 @@ class TestAuditFeedbackBridge:
             assert len(result) >= 1
 
     def test_scan_and_bridge_exception(self, bridge):
-        with patch("zephyr.governance.audit_trail.query.AuditQuery", side_effect=Exception("fail")):
+        with patch("zephyr.gov_audit.query.AuditQuery", side_effect=Exception("fail")):
             result = bridge.scan_and_bridge()
             assert result == []
 

@@ -177,7 +177,7 @@ class TestRedefinitionBlocked:
         assert "SSoT" in detail
 
     def test_assignment_blocked(self, setup_registry):
-        red_file = "src/zephyr/governance/audit_trail/kb_gate.py"
+        red_file = "src/zephyr/gov_audit/kb_gate.py"
         gw = _make_mock_gateway(
             [red_file], {red_file: ["POISONING_INDICATORS = []"]}
         )

@@ -96,12 +96,12 @@ _STATIC_MANIFEST: list[dict] = [
     # 红蓝对抗发现 RULES_MANIFEST 9 条清单不含保护机制自身——攻击者篡改 gateway/registry
     # 后 C 层不检测，篡改持久化。本次追加 3 条闭环自指悖论。
     {
-        "path": "src/zephyr/governance/rule_bridge/git_commit_gateway.py",
+        "path": "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py",
         "critical": True,
         "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)",
     },
     {
-        "path": "src/zephyr/governance/audit/reconciliation_registry.py",
+        "path": "src/zephyr/gov_audit/reconciliation_registry.py",
         "critical": True,
         "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)",
     },
@@ -122,7 +122,7 @@ _STATIC_MANIFEST: list[dict] = [
     # TEST_EXEMPT_PREFIXES/is_test_exempt 真源将集中于此，是高价值篡改目标
     # （篡改加 \"src/\" 可豁免所有源码绕过 create_guard）。须 C 层 golden hash 保护。
     {
-        "path": "src/zephyr/governance/rule_bridge/commit_gate_registry.py",
+        "path": "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py",
         "critical": True,
         "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）",
     },

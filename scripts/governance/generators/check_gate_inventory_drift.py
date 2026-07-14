@@ -17,7 +17,7 @@
 # [ARCH-055]
 """check_gate_inventory_drift.py — commit_gates 模块清单漂移检测（ARCH-055 治本）
 
-检测 src/zephyr/governance/commit_gates/*.py 实际文件与
+检测 src/zephyr/gov_enforcement/commit_gates/*.py 实际文件与
 docs/03_modules/_cross_layer/gate_engine/blueprint.md §0.1 模块清单表格的一致性。
 
 病根（ARCH-055）：blueprint.md §0.1 模块清单靠手工维护，100% AI 开发模式下

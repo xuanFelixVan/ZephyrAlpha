@@ -47,7 +47,7 @@ class TestClassifySource:
         assert tier == TruthTier.TIER_3
 
     def test_tier4_code(self, validator):
-        tier = validator.classify_source("src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py")
+        tier = validator.classify_source("src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py")
         assert tier == TruthTier.TIER_4
 
 

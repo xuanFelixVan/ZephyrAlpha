@@ -213,5 +213,5 @@ class TestAuditIntegration:
             success=True,
         )
 
-        with patch.dict("sys.modules", {"zephyr.governance.audit_trail.bridge": MagicMock(write_to_core=mock_write)}):
+        with patch.dict("sys.modules", {"zephyr.gov_audit.bridge": MagicMock(write_to_core=mock_write)}):
             engine._audit_optimization(record)

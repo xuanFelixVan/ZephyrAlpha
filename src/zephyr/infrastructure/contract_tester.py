@@ -22,7 +22,7 @@ M-11 ContractTester — 契约测试框架
 对标：Pact + OpenAPI Schema Validation
 使用方式：
     tester = ContractTester()
-    result = tester.test_contract("src/zephyr/governance/rule_enforcement/task_completion_gate.py")
+    result = tester.test_contract("src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py")
 """
 
 from __future__ import annotations

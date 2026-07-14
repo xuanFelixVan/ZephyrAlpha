@@ -50,7 +50,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.perm_trigger_gate import make_perm_trigger_gate
+    from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import make_perm_trigger_gate
 
     registry.register(make_perm_trigger_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

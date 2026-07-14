@@ -407,7 +407,7 @@ CREATE INDEX idx_tbu_ts ON token_budget_usage(ts);
 | 已有实现 | 实际路径 | 能力 | 蓝图对应 | 管理方式 |
 |---------|---------|------|---------|---------|
 | Token 预算管理器 | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | 三级阈值 L1/L2/L3 | M-21 的 session 级子集 | 由 context_engine 蓝图管理，本蓝图引用 |
-| 熔断器 | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | 单向熔断 + L08 注册表 | M-13 fault_isolator 的子集 | 由 gate_engine 蓝图管理，本蓝图引用 |
+| 熔断器 | `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | 单向熔断 + L08 注册表 | M-13 fault_isolator 的子集 | 由 gate_engine 蓝图管理，本蓝图引用 |
 | Agent SLO 监控 | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | 5 项 SLO + 三态健康 | M-18 capacity_slo.yaml 的 Agent 维度 | 由 orchestrator 蓝图管理，本蓝图引用 |
 | MCP 工具限流 | `src/zephyr/mcp/tool-contracts.yaml` | 声明式 rate_limit_qps | M-21 的 MCP 层子集 | 由 mcp_servers 蓝图管理，本蓝图引用 |
 | 上下文规则 | `config/context-rules.yaml` | 15 条上下文管理规则 | M-18 的上下文维度 | 由 context_engine 蓝图管理，本蓝图引用 |
@@ -1652,7 +1652,7 @@ STEP 3: 拆分后验证
 |------|---------|---------|---------|---------|
 | Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context_engine |
 | 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/test_doc_compressor.py` | — | context_engine |
-| 熔断器（CBGManager + L08 注册表） | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate_engine |
+| 熔断器（CBGManager + L08 注册表） | `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate_engine |
 | Agent SLO 监控（5 项 SLO + 三态健康） | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | `tests/test_agent_health_monitor.py` | — | orchestrator |
 | AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | `tests/test_ai_behavior_audit_logger.py` | — | llm_security |
 | 输入消毒器（InputSanitizer） | `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | — | — | llm_security |
@@ -5042,7 +5042,7 @@ class CoreIntegrityGuard:
  IMMUTABLE_CORE = [
  Path("src/zephyr/infrastructure/runtime_integration/rollback/kill_switch.py"),
  Path("src/zephyr/shared/error_budget_tracker.py"),
- Path("src/zephyr/governance/rule_enforcement/circuit_breaker.py"),
+ Path("src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py"),
  Path("src/zephyr/orchestration/runtime_core/orchestrator/token_budget_tracker.py"),
  Path("src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/graceful_shutdown.py"),
  Path("src/zephyr/infrastructure/runtime_integration/capacity_assurance/modules/startup_guard.py"),

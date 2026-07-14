@@ -139,7 +139,7 @@ class TestRunScript:
         assert code == 1
         assert "Script not found" in err
 
-    @patch("zephyr.governance.rule_enforcement.invariants.zero_residue_check.subprocess.run")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check.subprocess.run")
     def test_script_success(self, mock_run, tmp_path):
         scripts_dir = tmp_path / "scripts" / "governance" / "d1_structure"
         scripts_dir.mkdir(parents=True)
@@ -152,7 +152,7 @@ class TestRunScript:
         code, out, err = scanner._run_script("d1_structure/detect_temp_files.py")
         assert code == 0
 
-    @patch("zephyr.governance.rule_enforcement.invariants.zero_residue_check.subprocess.run")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check.subprocess.run")
     def test_script_timeout(self, mock_run, tmp_path):
         import subprocess
 
@@ -168,7 +168,7 @@ class TestRunScript:
         assert code == 1
         assert "timed out" in err.lower()
 
-    @patch("zephyr.governance.rule_enforcement.invariants.zero_residue_check.subprocess.run")
+    @patch("zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check.subprocess.run")
     def test_script_exception(self, mock_run, tmp_path):
         mock_run.side_effect = OSError("permission denied")
 

@@ -16,26 +16,26 @@ from unittest.mock import patch
 
 import pytest
 
-finding_model = pytest.importorskip("zephyr.governance.audit_trail.finding_model", reason="finding_model not available")
+finding_model = pytest.importorskip("zephyr.gov_audit.finding_model", reason="finding_model not available")
 AuditFinding = finding_model.AuditFinding
 FindingSeverity = finding_model.FindingSeverity
 FindingDimension = finding_model.FindingDimension
 generate_finding_id = finding_model.generate_finding_id
 
 finding_ingest_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.finding_ingest", reason="finding_ingest not available"
+    "zephyr.gov_audit.finding_ingest", reason="finding_ingest not available"
 )
 FindingIngest = finding_ingest_mod.FindingIngest
 IngestResult = finding_ingest_mod.IngestResult
 
 pipeline_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available"
+    "zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available"
 )
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult
 
 adapter_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.text_to_finding_adapter", reason="text_to_finding_adapter not available"
+    "zephyr.gov_audit.text_to_finding_adapter", reason="text_to_finding_adapter not available"
 )
 TextToFindingAdapter = adapter_mod.TextToFindingAdapter
 

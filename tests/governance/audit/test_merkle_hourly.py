@@ -16,7 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 
-from zephyr.governance.merkle_hourly import (
+from zephyr.gov_audit.merkle_hourly import (
     AggregationResult,
     HourlyMerkleAggregator,
     MerkleHourlyRoot,

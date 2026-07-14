@@ -37,7 +37,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.held_overlap_gate import make_held_overlap_gate
+    from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
 
     registry.register(make_held_overlap_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, allow_overlap=False)

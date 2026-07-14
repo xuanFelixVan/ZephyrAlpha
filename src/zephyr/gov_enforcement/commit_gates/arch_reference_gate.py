@@ -46,7 +46,7 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
 
 Usage::
 
-    from zephyr.governance.commit_gates.arch_reference_gate import make_arch_reference_gate
+    from zephyr.gov_enforcement.commit_gates.arch_reference_gate import make_arch_reference_gate
 
     registry.register(make_arch_reference_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

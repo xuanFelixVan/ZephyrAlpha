@@ -12,7 +12,7 @@ import sys
 import types
 from pathlib import Path
 
-_SRC_ROOT = Path(__file__).resolve().parent.parent.parent.parent / "src"
+_SRC_ROOT = Path(__file__).resolve().parent.parent.parent / "src"
 _ZEPHYR = _SRC_ROOT / "zephyr"
 
 
@@ -41,9 +41,9 @@ _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
 _ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
 _ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
-_ensure_stub("zephyr.drift_detector", _ZEPHYR / "drift-detector")
+_ensure_stub("zephyr.drift_detector", _ZEPHYR / "gov_drift")
 
-_load("zephyr.governance.drift_detection.drift_models", _ZEPHYR / "drift-detector" / "drift_models.py")
-_load("zephyr.governance.drift_detection.drift_infrastructure", _ZEPHYR / "drift-detector" / "drift_infrastructure.py")
-_load("zephyr.governance.drift_detection.drift_engine", _ZEPHYR / "drift-detector" / "drift_engine.py")
-_load("zephyr.governance.drift_detection.baseline_manager", _ZEPHYR / "drift-detector" / "baseline_manager.py")
+_load("zephyr.gov_drift.drift_models", _ZEPHYR / "gov_drift" / "drift_models.py")
+_load("zephyr.gov_drift.drift_infrastructure", _ZEPHYR / "gov_drift" / "drift_infrastructure.py")
+_load("zephyr.gov_drift.drift_engine", _ZEPHYR / "gov_drift" / "drift_engine.py")
+_load("zephyr.gov_drift.baseline_manager", _ZEPHYR / "gov_drift" / "baseline_manager.py")

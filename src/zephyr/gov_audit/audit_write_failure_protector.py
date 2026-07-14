@@ -19,7 +19,7 @@
 
 Audit Write Failure Protector — v0.13.0 审计写入失败保护器。
 
-委托 zephyr.governance.audit_trail.writer.AuditWriter 内置的写入失败保护机制。
+委托 zephyr.gov_audit.writer.AuditWriter 内置的写入失败保护机制。
 AuditWriter.write() 内部已实现连续5次失败后自动进入 readonly 模式。
 """
 

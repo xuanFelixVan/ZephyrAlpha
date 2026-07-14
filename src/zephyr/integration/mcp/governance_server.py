@@ -445,7 +445,7 @@ class GovernanceServer(BaseMCPServer):
                 "zephyr.governance.agent_spec",
             ],
             "phase_1": [
-                "zephyr.governance.audit_trail",
+                "zephyr.gov_audit",
                 "zephyr.governance.rollback",
                 "zephyr.governance.escalation",
                 "zephyr.governance.behavioral_auditor",
@@ -532,7 +532,7 @@ class GovernanceServer(BaseMCPServer):
         eight_modules = [
             "zephyr.governance.agent_rbac",
             "zephyr.governance.agent_spec",
-            "zephyr.governance.audit_trail",
+            "zephyr.gov_audit",
             "zephyr.governance.rollback",
             "zephyr.governance.escalation",
             "zephyr.governance.behavioral_auditor",

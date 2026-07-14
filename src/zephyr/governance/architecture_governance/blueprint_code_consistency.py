@@ -130,21 +130,21 @@ DECISION_MAP: Final[list[DecisionMapping]] = [
         "D-022-12",
         "SLO驱动升级合约",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.governance.rule_enforcement.slo_contract",
+        "zephyr.gov_enforcement.rule_enforcement.slo_contract",
         "SLOContractEngine 7 SLI + 4级 Error Budget + 11 项测试覆盖",
     ),
     DecisionMapping(
         "D-022-16",
         "Agent行为漂移检测",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.governance.drift_detection.drift_detector",
+        "zephyr.gov_drift.drift_detector",
         "四维漂移检测已实现",
     ),
     DecisionMapping(
         "D-022-17",
         "VIGIL维护运行时",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.governance.drift_detection.vigil_runtime",
+        "zephyr.gov_drift.vigil_runtime",
         "VigilRuntime 已加载",
     ),
     DecisionMapping(
@@ -179,7 +179,7 @@ DECISION_MAP: Final[list[DecisionMapping]] = [
         "D-022-22",
         "Merkle Tree 密码学审计",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.governance.audit_trail.merkle_audit",
+        "zephyr.gov_audit.merkle_audit",
         "MerkleAudit 已集成到 hooks",
     ),
     DecisionMapping(
@@ -214,7 +214,7 @@ DECISION_MAP: Final[list[DecisionMapping]] = [
         "D-022-37D",
         "奖励黑客三阶段反弹纵向检测 (盲点#161)",
         DecisionStatus.IMPLEMENTED,
-        "zephyr.governance.drift_detection.reward_hacking_rebound_detector",
+        "zephyr.gov_drift.reward_hacking_rebound_detector",
         "ReboundDetector 90天滑动窗口+严重度比较+P0-FATAL升级+Engine Hook集成",
     ),
 ]

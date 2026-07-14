@@ -35,7 +35,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
+    from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
 
     registry.register(make_panorama_alignment_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

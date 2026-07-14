@@ -298,7 +298,7 @@ class TestTryRealGate:
         mock_engine.evaluate.return_value = mock_result
         runner = DefenseRunner(gate_engine=mock_engine)
         scenario = make_scenario()
-        with patch("zephyr.governance.rule_enforcement.task_types.Task") as mock_task_cls:
+        with patch("zephyr.gov_enforcement.rule_enforcement.task_types.Task") as mock_task_cls:
             mock_task_cls.return_value = MagicMock()
             result = runner._try_real_gate(scenario, "G1")
         assert isinstance(result, bool)

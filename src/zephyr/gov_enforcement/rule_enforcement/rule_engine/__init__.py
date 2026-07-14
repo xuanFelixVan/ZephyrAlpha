@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.rule_engine.__init__
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.rule_enforcement 内部模块
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement 内部模块
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 包仅聚合 rule_* 引擎实现（rule_engine/rule_canary_manager/rule_debt_auditor/rule_shadow_runner/rule_watcher）

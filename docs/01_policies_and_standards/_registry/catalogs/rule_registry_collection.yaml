@@ -974,7 +974,7 @@ items:
   name: tasks.yaml
   node_type: config
   status: active
-- file: src/zephyr/governance/drift_detection/migration_plan.yaml
+- file: src/zephyr/gov_drift/migration_plan.yaml
   name: migration_plan.yaml
   node_type: config
   status: active

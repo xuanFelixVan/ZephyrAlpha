@@ -30,11 +30,11 @@ class TestAuditTrailImportSmoke:
     """验证 audit-trail 核心模块可以被成功导入."""
 
     def test_import_audit_trail_init(self) -> None:
-        """测试导入 zephyr.governance.audit_trail 包自身."""
+        """测试导入 zephyr.gov_audit 包自身."""
         _ensure_path()
         import zephyr.gov_audit
 
-        assert hasattr(zephyr.governance.audit_trail, "__all__")
+        assert hasattr(zephyr.gov_audit, "__all__")
 
     def test_import_models(self) -> None:
         """Can import AuditEntryV1, AuditEventType, LamportClock from audit-trail.models."""

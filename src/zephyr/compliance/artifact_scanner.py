@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""Re-export wrapper: artifact_scanner has migrated to zephyr.governance.drift_detection.artifact_scanner"""
+"""Re-export wrapper: artifact_scanner has migrated to zephyr.gov_drift.artifact_scanner"""
 
 from zephyr.gov_drift.artifact_scanner import *  # noqa: F403

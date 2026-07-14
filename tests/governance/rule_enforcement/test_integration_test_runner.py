@@ -90,7 +90,7 @@ class TestPipCheck:
         mock_result.returncode = 0
         mock_result.stdout = "No broken requirements found."
         with patch(
-            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
+            "zephyr.gov_enforcement.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
         ):
             result = runner.pip_check()
         assert isinstance(result, SelfTestResult)
@@ -105,7 +105,7 @@ class TestPipCheck:
         mock_result.returncode = 1
         mock_result.stdout = "some-package 1.0 requires missing-dep"
         with patch(
-            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
+            "zephyr.gov_enforcement.rule_enforcement.integration_test_runner.subprocess.run", return_value=mock_result
         ):
             result = runner.pip_check()
         assert result.passed is False
@@ -118,7 +118,7 @@ class TestPipCheck:
 
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         with patch(
-            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run",
+            "zephyr.gov_enforcement.rule_enforcement.integration_test_runner.subprocess.run",
             side_effect=sp.TimeoutExpired(cmd="pip check", timeout=60),
         ):
             result = runner.pip_check()
@@ -130,7 +130,7 @@ class TestPipCheck:
     def test_pip_check_file_not_found(self, tmp_path):
         runner = IntegrationTestRunner(project_root=str(tmp_path))
         with patch(
-            "zephyr.governance.rule_enforcement.integration_test_runner.subprocess.run",
+            "zephyr.gov_enforcement.rule_enforcement.integration_test_runner.subprocess.run",
             side_effect=FileNotFoundError("pip not found"),
         ):
             result = runner.pip_check()

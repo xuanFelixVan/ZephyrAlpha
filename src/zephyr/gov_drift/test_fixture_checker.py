@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.test_fixture_checker
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_scanners.py; tests/audit/test_test_fixture_checker.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_scanners.py; tests/audit/test_test_fixture_checker.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 测试夹具检查不可跳过

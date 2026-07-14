@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.trend_analyzer
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/audit/test_trend_analyzer.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/audit/test_trend_analyzer.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 趋势数据不可篡改

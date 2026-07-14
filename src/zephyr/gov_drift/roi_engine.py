@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.roi_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/audit/test_roi_engine.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/audit/test_roi_engine.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] ROI计算不可人为调整

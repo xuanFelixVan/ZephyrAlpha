@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "9dd082561850eb49",
+      "hash": "21b52eb719deed67",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -45,10 +45,10 @@
       "critical": true,
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
-    "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "0fc5f1ab5610b43e",
+    "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
+      "hash": "583ee8220e247abc",
       "critical": true,
-      "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
+      "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
       "hash": "35d15414af5cb6dc",
@@ -59,8 +59,13 @@
       "hash": "8c07636853f7871b",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
+    },
+    "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
+      "hash": "bdb0f28c06254f96",
+      "critical": true,
+      "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-07-14T08:18:50.266019+00:00",
+  "registered_at": "2026-07-14T08:47:33.564869+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }

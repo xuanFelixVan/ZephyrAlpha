@@ -1527,7 +1527,7 @@ directories:
 
 
 
-  - path: "src/zephyr/governance/rule_enforcement/"
+  - path: "src/zephyr/gov_enforcement/rule_enforcement/"
 
     responsibility: "门禁引擎——G1~G5 策略 YAML + GateEngine + 断路?"
     parent: "src/zephyr/"

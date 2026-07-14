@@ -450,7 +450,7 @@ immutable_core:
       reason: "核心原则——AI 行为宪法"
     - path: "docs/01_policies_and_standards/governance/**"
       reason: "治理规则——policy-as-code 真源"
-    - path: "src/zephyr/governance/rule_enforcement/_registry.yaml"
+    - path: "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
       reason: "门禁注册表——门禁体系 SSoT"
     - path: ".pre-commit-config.yaml"
       reason: "CI 护栏——pre-commit 检查定义"
@@ -6143,7 +6143,7 @@ class PermissionHooks:
 | 1 | `src/zephyr/agent-rbac/rbac_roles.yaml` | 角色定义变更 |
 | 2 | `src/zephyr/agent-rbac/permission_hooks.yaml` | 钩子配置变更 |
 | 3 | `docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml` | GOV-AI-001 权限声明变更 |
-| 4 | `src/zephyr/governance/rule_enforcement/` | Gate Engine 集成点变更 |
+| 4 | `src/zephyr/gov_enforcement/rule_enforcement/` | Gate Engine 集成点变更 |
 | 5 | `tests/agent-rbac/test_permissions.py` | 测试用例变更 |
 
 ---

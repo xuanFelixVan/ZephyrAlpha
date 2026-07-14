@@ -55,7 +55,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.shared.infra.observer import EventType
 
-_tt_mod = _importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+_tt_mod = _importlib.import_module("zephyr.gov_enforcement.rule_enforcement.task_types")
 TaskStatus = _tt_mod.TaskStatus
 from zephyr.integration.shared.schema.base_config import BASE_CONFIG
 

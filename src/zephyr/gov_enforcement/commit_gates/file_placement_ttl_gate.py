@@ -60,7 +60,7 @@ AI 创建临时文件（ttl=task_bound）时无路径约束，乱放根目录或
 
 Usage::
 
-    from zephyr.governance.commit_gates.file_placement_ttl_gate import make_file_placement_ttl_gate
+    from zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate import make_file_placement_ttl_gate
 
     registry.register(make_file_placement_ttl_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, allow_promote=..., allow_overlap=...)

@@ -40,12 +40,12 @@ __module_id__ = "MOD-INF-020"
 
 
 def __getattr__(name: str):
-    # __all__ 里的子模块名（如 audit_anomaly）实际位于 zephyr.governance.audit_trail.bridges.*，
+    # __all__ 里的子模块名（如 audit_anomaly）实际位于 zephyr.gov_audit.bridges.*，
     # 用 __getattr__ 按需 lazy 加载（替代已删除的 `from . import spec_auditor`）
     import importlib
 
     try:
-        mod = importlib.import_module(f"zephyr.governance.audit_trail.bridges.{name}")
+        mod = importlib.import_module(f"zephyr.gov_audit.bridges.{name}")
         globals()[name] = mod
         return mod
     except ImportError:

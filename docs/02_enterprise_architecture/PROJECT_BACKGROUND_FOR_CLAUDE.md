@@ -111,7 +111,7 @@ PostgreSQL `localhost:5432/depgraph`，存储 nodes / edges / domains / contract
 
 ### 3.3 GitCommitGateway — 全项目唯一合法 git commit 入口
 
-[git_commit_gateway.py](../../src/zephyr/governance/rule_bridge/git_commit_gateway.py)：
+[git_commit_gateway.py](../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py)：
 
 - **全局跨进程串行锁**：`.ailocks/git_commit_global.lock`，TTL=1800s
 - **门禁注册制 CommitGateRegistry**：commit_gates 数量见注册表动态统计（arch_reference / bare_getenv / capability_overlap / claim_required / create_guard / dangling_reference / directory_contract / doc_ref_broken / empty_handler / file_copy / function_dup / held_overlap / id_uniqueness / module_id_consistency / orphan_module / perm_trigger / r5_digit_suffix / rule_four_way_alignment / session_required / ssot_redefinition / ttl / vocab_hardcode 等）
@@ -567,12 +567,12 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 - [architecture_debt_registry.md](../../docs/02_enterprise_architecture/architecture_debt_registry.md)
 
 ### 治理代码
-- [git_commit_gateway.py](../../src/zephyr/governance/rule_bridge/git_commit_gateway.py)
-- [session_worktree.py](../../src/zephyr/governance/rule_bridge/session_worktree.py)
+- [git_commit_gateway.py](../../src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py)
+- [session_worktree.py](../../src/zephyr/gov_enforcement/rule_bridge/session_worktree.py)
 - [depgraph_schema.py](../../src/zephyr/governance/depgraph_schema.py)
 - [capability_lookup.py](../../src/zephyr/governance/capability_lookup.py)
 - [task_repo.py](../../src/zephyr/governance/persistence/task_repo.py)
-- [commit_gates/](../../src/zephyr/governance/commit_gates/)
+- [commit_gates/](../../src/zephyr/gov_enforcement/commit_gates/)
 
 ### 注册表
 - [capability_canonical_file_registry.yaml](../../docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)

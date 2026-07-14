@@ -32,7 +32,7 @@ creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，�
 
 元问题3治本扩展（2026-06-30，AD-GOV-001 收敛约束技术强制）
 ------------------------------------------------------------
-扩展检测范围：若 commit 包含 ``src/zephyr/governance/audit/reconciliation_registry.py``，
+扩展检测范围：若 commit 包含 ``src/zephyr/gov_audit/reconciliation_registry.py``，
 用 AST 对比 staged 与 HEAD 版本的 ``make_*_reconciler`` 函数集，新增函数需在
 def 前 5 行内添加 ``# trae_060-reviewed: <审查结论>`` 标记，否则硬阻断。
 
@@ -92,14 +92,14 @@ creation_tokens 字段登记 token（声明创建意图 + 关联 capability）�
 creation_tokens 字段结构（capability_canonical_file_registry.yaml 顶层字段）::
 
     creation_tokens:
-      - file: "src/zephyr/governance/commit_gates/create_guard.py"
+      - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
         token: "auto-create-guard-20260630"
         created_by: "session-trae-redteam-deadly-5"
         capability: "create_guard"
 
 Usage::
 
-    from zephyr.governance.commit_gates.create_guard import make_create_guard
+    from zephyr.gov_enforcement.commit_gates.create_guard import make_create_guard
 
     registry.register(make_create_guard())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)
@@ -145,7 +145,7 @@ def make_create_guard() -> GateSpec:
         # 时，需在函数定义前 5 行内添加 '# trae_060-reviewed: <审查结论>' 标记。
         # 放在最前：reconciliation_registry.py 是已存在文件，不在 new_py_files 里，
         # 若等 new_py_files 过滤后检测，会被 "not new_py_files: return True" 提前返回跳过。
-        _RECONCILER_REGISTRY_REL = "src/zephyr/governance/audit/reconciliation_registry.py"
+        _RECONCILER_REGISTRY_REL = "src/zephyr/gov_audit/reconciliation_registry.py"
         _TRAEO60_MARKER = "trae_060-reviewed"
 
         if _RECONCILER_REGISTRY_REL in commit_files_rel:

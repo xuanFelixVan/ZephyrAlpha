@@ -50,7 +50,7 @@ fail-closed 设计，防 checker 被删后静默放行）。
 
 Usage::
 
-    from zephyr.governance.commit_gates.ttl_gate import make_ttl_gate
+    from zephyr.gov_enforcement.commit_gates.ttl_gate import make_ttl_gate
 
     registry.register(make_ttl_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

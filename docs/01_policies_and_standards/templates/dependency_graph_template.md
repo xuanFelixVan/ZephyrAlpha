@@ -280,7 +280,7 @@ functional_domains:
     subdomain: ""                        # 子域（如 rule_enforcement, access_control）
     domain_id: ""                        # depgraph 中的域ID（如 D-ALT-DATA, D_AUTONOMY）
     ssot_module: ""                      # 域的 SSoT 模块ID（如 MOD-GATE_ENGINE）
-    ssot_path: ""                        # 域的代码根路径（如 src/zephyr/governance/rule_enforcement/）
+    ssot_path: ""                        # 域的代码根路径（如 src/zephyr/gov_enforcement/rule_enforcement/）
     covers: []                           # 域覆盖的功能列表
     aliases: []                          # 域的别名/搜索关键词
     change_policy: ""                     # frozen | stable | evolving | volatile

@@ -135,7 +135,7 @@ Task System 是 ZephyrAlpha 的任务系统——解决"蓝图→任务卡→执
 | src/zephyr/shared/shared_services/blueprint_decomposer.py | MOD-TASK_SYSTEM | 蓝图拆解器 |
 | src/zephyr/integration/mcp/task_manager_server.py | MOD-TASK_SYSTEM（业务逻辑）/ MOD-INF-013（协议层） | 见 §0.4 SSoT 声明 |
 | src/zephyr/pipeline/ | MOD-INF-009 | 管线调度 |
-| src/zephyr/governance/rule_enforcement/ | MOD-GATE_ENGINE | 门禁引擎 |
+| src/zephyr/gov_enforcement/rule_enforcement/ | MOD-GATE_ENGINE | 门禁引擎 |
 
 ---
 
@@ -733,7 +733,7 @@ class TaskLifecycleManager:
 | 数据层 | `src/zephyr/data/persistence/sqlite_schema.py` | 5 | Schema + 迁移链 |
 | MCP 接口 | `src/zephyr/integration/mcp/task_manager_server.py` | 2 | MCP 5 Tool |
 | MCP 契约 | `src/zephyr/mcp/tool-contracts.yaml` | 2 | Tool Schema |
-| 门禁 | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | 1 | G7 门禁 |
+| 门禁 | `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | 1 | G7 门禁 |
 | 管线 | `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py` | 1 | 管线编排器 |
 | 上下文 | `src/zephyr/orchestration/context_management/context_assembler.py` | 1 | 上下文装配器 |
 | 任务卡（SQLite 真源）| `data/databases/governance.db` — tasks 表 | 5 | SQLite |
@@ -767,7 +767,7 @@ class TaskLifecycleManager:
 | 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
 | 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | MCP 5 Tool | 接入 SQLite |
-| 6 | task_completion_gate.py | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | G7 门禁逻辑同步 | 约束对齐 |
+| 6 | task_completion_gate.py | `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | G7 门禁逻辑同步 | 约束对齐 |
 
 ---
 
@@ -1401,7 +1401,7 @@ STEP 3: 拆分后验证
 | 6 | core/models.py | `src/zephyr/shared/shared_services/models.py` | 重写 | 对齐到 shared/schemas.py Task 继承 |
 | 7 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 重写 | 输出改为 task_repo(SQLite) + .md |
 | 8 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | 重写 | 接入 task_repo(SQLite) 真源 |
-| 9 | task_completion_gate.py | `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | 读取 | 需同步 G7 门禁 |
+| 9 | task_completion_gate.py | `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | 读取 | 需同步 G7 门禁 |
 | 10 | metadata_registry.yaml | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 读取 | §7 字段真源 |
 | 11 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 修改 | 更新迁移状态 |
 
@@ -1490,7 +1490,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/task_repo.py` | ✅ 已实现 | |
 | `src/zephyr/data/persistence/sqlite_schema.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 

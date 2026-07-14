@@ -243,7 +243,7 @@ def _cmd_run_audit(args: argparse.Namespace) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        prog="python -m zephyr.governance.audit_trail",
+        prog="python -m zephyr.gov_audit",
         description="ZephyrAlpha Audit Orchestrator CLI (MOD-INF-027)",
     )
     sub = parser.add_subparsers(dest="command")

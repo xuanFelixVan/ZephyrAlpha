@@ -16,7 +16,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-actual_disk_path: "src/zephyr/governance/audit_trail/"
+actual_disk_path: "src/zephyr/gov_audit/"
 construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

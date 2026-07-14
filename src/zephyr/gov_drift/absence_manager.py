@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.absence_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/audit/test_absence_manager.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/audit/test_absence_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 缺席管理不可禁用

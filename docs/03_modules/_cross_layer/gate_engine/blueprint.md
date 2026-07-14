@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/rule_enforcement/ + src/zephyr/feedback_loop/gates/ + src/zephyr/governance/commit_gates/"
+actual_disk_path: "src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ + src/zephyr/gov_enforcement/commit_gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
 last_updated: "2026-05-18"
@@ -64,7 +64,7 @@ build_status: planned
 本蓝图描述 Gate Engine——ZephyrAlpha 的门禁引擎。它解决了任务执行和知识生命周期关键决策点的合规判定问题。核心职责包括：G0-G7 八门禁覆盖任务全生命周期、G1-G5 KMS 决策门覆盖知识生命周期、熔断器阻断异常传播、法证审计完整性。当前规模 ~268 脚本/51 模块，目标容量 10000 脚本/1500 模块/100 AI 并发。上游依赖脚本系统(MOD-INF-005)提供 exit code，下游被 Orchestrator(MOD-TASK_SYSTEM)消费判定结果。
 
 > module_id: MOD-GATE_ENGINE | version: 0.8.2 | status: Draft | layer: cross_layer
-> actual_disk_path: src/zephyr/governance/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ | generation: 1 | construction_progress: partially_implemented
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
 > - 蓝图+施工图模板：[blueprint-template.md](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md)
 > - AI 压缩工作流标准：[trae_030_doc_numbering_metadata.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml)
@@ -180,9 +180,9 @@ build_status: planned
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → 已实现章节的代码存在 | `ls src/zephyr/governance/rule_enforcement/*.py` 核对 | ☐ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/governance/rule_enforcement/gate_engine.py` | ☐ |
-| 门禁YAML注册表 = _registry.yaml内容 | `cat src/zephyr/governance/rule_enforcement/_registry.yaml` | ☐ |
+| construction_progress = partially_implemented → 已实现章节的代码存在 | `ls src/zephyr/gov_enforcement/rule_enforcement/*.py` 核对 | ☐ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` | ☐ |
+| 门禁YAML注册表 = _registry.yaml内容 | `cat src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` | ☐ |
 | 测试文件覆盖核心模块 | `ls tests/test_gate_*.py` | ☐ |
 | G0-G7 YAML规则与蓝图§A描述一致 | 逐文件核对entry_conditions | ☐ |
 
@@ -212,8 +212,8 @@ build_status: planned
 
 | # | 声明项 | 值 |
 |---|--------|-----|
-| 1 | 主代码目录 | `src/zephyr/governance/rule_enforcement/`（MUST与 frontmatter.actual_disk_path 一致） |
-| 2 | 已知副本目录 | `src/zephyr/governance/rule_enforcement/` — re-export shim（1文件） |
+| 1 | 主代码目录 | `src/zephyr/gov_enforcement/rule_enforcement/`（MUST与 frontmatter.actual_disk_path 一致） |
+| 2 | 已知副本目录 | `src/zephyr/gov_enforcement/rule_enforcement/` — re-export shim（1文件） |
 | 3 | 副本处置状态 | shim保留——向后兼容导入路径 |
 
 ---
@@ -877,7 +877,7 @@ class ManualApprovalGate:
 ### 添加新门禁
 
 ```
-1. cp src/zephyr/governance/rule_enforcement/_template.yaml → src/zephyr/governance/rule_enforcement/<category>/<new_gate>.yaml
+1. cp src/zephyr/gov_enforcement/rule_enforcement/_template.yaml → src/zephyr/gov_enforcement/rule_enforcement/<category>/<new_gate>.yaml
 2. 按_template.yaml的11节填写全部字段（check必须是布尔表达式）
 3. 写入_registry.yaml的gates列表
 4. 在gate_engine.py的_GATE_FILES映射中添加
@@ -928,7 +928,7 @@ class ManualApprovalGate:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 GateEngine.evaluate() + §12.1 CT-ORC-GATE-001 |
-| 产出位置 | `src/zephyr/governance/rule_enforcement/gate_engine.py` + `src/zephyr/data/persistence/task_repo.py` |
+| 产出位置 | `src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` + `src/zephyr/data/persistence/task_repo.py` |
 | 验收标准 | TaskCard.status DRAFT→TODO自动触发G0；REVIEW→COMPLETED自动触发G7 |
 | 验证命令 | `python -m pytest tests/integration/test_gate_e2e.py -k test_auto_trigger` |
 | G7 检查项 | 上游task_repo.py已列出？下游GateResult消费方已适配？回滚方案可执行？ |
@@ -940,7 +940,7 @@ class ManualApprovalGate:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §3.2 数据流 + §12.1 CT-SCRIPT-GATE-001 |
-| 产出位置 | `src/zephyr/governance/rule_enforcement/gate_engine.py` |
+| 产出位置 | `src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` |
 | 验收标准 | exit 0→PASS / exit 1→PASS_WITH_WARNINGS / exit 2→FAIL / exit 3→CRITICAL_FAIL |
 | 验证命令 | `python -m pytest tests/test_gate_engine.py -k test_exit_code_mapping` |
 | G7 检查项 | 四种exit code全覆盖？CRITICAL_FAIL传播链正确？ |
@@ -1009,7 +1009,7 @@ class ManualApprovalGate:
 | # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
 |---|:----:|------|---------|----------|----------|----------|
 | 1 | 施工 | BOM字符导致SyntaxError | import失败 | `python -c "from zephyr.gates.gate_engine import GateEngine"` | 移除BOM字节 | import成功 |
-| 2 | 施工 | §0.1与实际代码不对齐 | 蓝图标记"未实现"但文件存在 | `ls src/zephyr/governance/rule_enforcement/` 逐文件核对 | 更新§0.1存在性 | 蓝图与磁盘一致 |
+| 2 | 施工 | §0.1与实际代码不对齐 | 蓝图标记"未实现"但文件存在 | `ls src/zephyr/gov_enforcement/rule_enforcement/` 逐文件核对 | 更新§0.1存在性 | 蓝图与磁盘一致 |
 | 3 | 运行 | 熔断器永久OPEN | 连续FAIL触发OPEN后不恢复 | 检查cooldown配置+HALF_OPEN试探日志 | 等待cooldown→自动试探 | CLOSED状态恢复 |
 | 4 | 运行 | 哈希链断裂 | audit_chain_verifier报错 | 从JSONL副本重建SQLite+重建hash链 | 链完整性恢复 | verify_chain_integrity PASS |
 
@@ -1029,16 +1029,16 @@ class ManualApprovalGate:
 |:---:|---------|---------|---------|
 | GAP-C01 | 冷启动协议：DepGraph.preload_or_build() + /health/ready + 缓存文件 | src/zephyr/governance/audit-orchestrator/cold_start.py | 重启GateEngine→验证503→5s后200 |
 | GAP-C04 | 增量更新：DepGraph.update_incremental(manifest_diff) + 每日全量重建cron | dep_graph.py增量patch | 新增1脚本→图谱更新<100ms |
-| GAP-C03 | 脚本缓存：ScriptCache + SQLite cache表 + 跨Agent共享 | src/zephyr/governance/rule_enforcement/script_cache.py | 相同输入两次扫描→第二次全是cache hit |
+| GAP-C03 | 脚本缓存：ScriptCache + SQLite cache表 + 跨Agent共享 | src/zephyr/gov_enforcement/rule_enforcement/script_cache.py | 相同输入两次扫描→第二次全是cache hit |
 | GAP-C06 | 优先级队列：PriorityQueue + 20% P0预留worker | bulkhead.py patch | P0请求在P2饱和时仍<1s获得worker |
 
 **Phase B：稳定性加固（v0.7.0-beta）**
 
 | 缺口 | 施工内容 | 预估产出 | 验证方式 |
 |:---:|---------|---------|---------|
-| GAP-C02 | 反压传播：BackpressureController + credit-based流控 | src/zephyr/governance/rule_enforcement/backpressure.py | 模拟L3饱和→L1 refill_rate自动降速 |
+| GAP-C02 | 反压传播：BackpressureController + credit-based流控 | src/zephyr/gov_enforcement/rule_enforcement/backpressure.py | 模拟L3饱和→L1 refill_rate自动降速 |
 | GAP-C07 | 长尾池：第5个Bulkhead池+耗时自动分类 | bulkhead.py新增long_tail池 | S2占满long_tail→quick池S0/S1不受影响 |
-| GAP-C05 | Agent身份：AgentQuotaManager + per-session TokenBucket | src/zephyr/governance/rule_enforcement/agent_quota.py | Agent超配额→429+其他Agent正常 |
+| GAP-C05 | Agent身份：AgentQuotaManager + per-session TokenBucket | src/zephyr/gov_enforcement/rule_enforcement/agent_quota.py | Agent超配额→429+其他Agent正常 |
 | GAP-C11 | 优雅降级：四级降级树+DegradationController+自动恢复 | src/zephyr/testing/code_dedup/degradation.py | 模拟150%负载→自动进入tier_2→负载降→tier_0 |
 | GAP-C09 | 跨分片一致性：全局序列号+两阶段写入 | shard_router.py patch | 并发写4 shard→hash chain序列号无跳跃 |
 
@@ -1048,7 +1048,7 @@ class ManualApprovalGate:
 |:---:|---------|---------|---------|
 | GAP-C08 | 压测框架：gate_engine_load_gen.py + 5场景+报告生成 | scripts/benchmark/gate_engine_load_gen.py | 跑BM-01~05全部通过 |
 | GAP-C10 | 容量监控：Prometheus metrics + 7告警规则 + Grafana dashboard | src/zephyr/shared/metrics.py + config/grafana/ | /metrics端点输出+告警规则验证 |
-| GAP-C12 | 热更新：YAML/manifest文件监控+原子替换+模拟验证 | src/zephyr/governance/rule_enforcement/hot_reload.py | 修改G1 YAML→5s内生效+无重启 |
+| GAP-C12 | 热更新：YAML/manifest文件监控+原子替换+模拟验证 | src/zephyr/gov_enforcement/rule_enforcement/hot_reload.py | 修改G1 YAML→5s内生效+无重启 |
 
 ### 施工Phase规划
 
@@ -1330,8 +1330,8 @@ STEP 3: 拆分后验证
 | [quality-standard.md](file:///d:/ZephyrAlpha/scripts/governance/quality-standard.md) | 脚本质量标准 SCRIPT-QUALITY-001 |
 | [b_gates.yaml](file:///d:/ZephyrAlpha/architecture_model/layers/b_gates.yaml) | Gates YAML SSoT |
 | [MOD-MASTER_BLUEPRINT blueprint](file:///d:/ZephyrAlpha/docs/03_modules/_master_blueprint/blueprint.md) | 总蓝图——CT-SCRIPT-GATE-001 + CT-ORC-GATE-001 |
-| [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
-| [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/_registry.yaml) | 全部门禁注册表 SSoT |
+| [gate_engine.py](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py) | 核心门禁引擎实现 |
+| [_registry.yaml](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml) | 全部门禁注册表 SSoT |
 
 ---
 
@@ -1340,10 +1340,10 @@ STEP 3: 拆分后验证
 
 | 功能 | 位置 | 覆盖度 | 复用决策 |
 |------|------|:---:|---------|
-| BulkheadExecutor 4池隔离 | `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | 80% | 扩展——新增第5池 long_tail |
-| ShardingRouter | `src/zephyr/governance/rule_enforcement/` | 40% | 扩展——激活+跨分片一致性 |
-| DependencyGraph | `src/zephyr/governance/rule_enforcement/` | 60% | 扩展——增量更新+预热协议 |
-| GateEngine.evaluate() | `src/zephyr/governance/rule_enforcement/gate_engine.py` | 70% | 扩展——管线化+上下文传播 |
+| BulkheadExecutor 4池隔离 | `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | 80% | 扩展——新增第5池 long_tail |
+| ShardingRouter | `src/zephyr/gov_enforcement/rule_enforcement/` | 40% | 扩展——激活+跨分片一致性 |
+| DependencyGraph | `src/zephyr/gov_enforcement/rule_enforcement/` | 60% | 扩展——增量更新+预热协议 |
+| GateEngine.evaluate() | `src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` | 70% | 扩展——管线化+上下文传播 |
 
 ---
 
@@ -1352,8 +1352,8 @@ STEP 3: 拆分后验证
 
 | 目录 | 文件数 | 说明 |
 |------|:---:|------|
-| `src/zephyr/governance/rule_enforcement/` | 55 | 门禁引擎核心实现（.py + .yaml） |
-| `src/zephyr/governance/rule_enforcement/` | 1 | re-export shim |
+| `src/zephyr/gov_enforcement/rule_enforcement/` | 55 | 门禁引擎核心实现（.py + .yaml） |
+| `src/zephyr/gov_enforcement/rule_enforcement/` | 1 | re-export shim |
 | `tests/` | 5 | 门禁单元测试 |
 | `tests/integration/` | 1 | 门禁端到端测试 |
 | `scripts/governance/d6_security/` | 1 | validate_gate_discipline.py |
@@ -1371,73 +1371,73 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/rule_enforcement/_registry.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/_template.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/adaptive_threshold.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/admission/mad-001-architecture-necessity.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/admission/mad-002-phase-relevance.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/admission/mad-003-dependency-compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/admission/mad-004-interface-definability.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/admission/mad_005_dependency_graph_template.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/ai_capability_guard.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/anti_pattern_guard.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/audit_chain_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/breaking_change_detector.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/can_i_deploy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/capability_checker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/cbac_matrix.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/cdc_broker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/circuit_breaker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/contract_template_manager.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/drift-detector.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/end_to_end_walkthrough.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g1-ingest.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g2-triage.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g3-evaluate.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g4-activate.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g5-extract.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g6-blueprint-compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g6-path-tree-freshness.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g7-position-limits.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g8.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g8-leverage.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g9.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g9-strategy-correlation.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/g-asset-inventory.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate-dedup.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_context.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_engine.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_health.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_integrity_guard.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_override.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_simulator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gate_types.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/gct-024-budget-enforcer.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/integration_test_runner.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en_001_circular_dependency.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en-001-circular-dependency.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en-002-enforcement-validator.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en_003_contract_compatibility.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en-003-contract-compatibility.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/en_process_lifecycle_gateway.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/invariants/zero_residue_check.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/kiss_enforcer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/observability-baseline.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/risk_ssot.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/secrets_guard.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/sys_master_compliance.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/sys-master-compliance.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task/g0-entry.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task/g0-orc-gate_engine.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task/g7-orc-gate_engine.yaml` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/task_types.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/triple_alignment.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/truth_source_validator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/rule_enforcement/zero-residue.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/_template.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-001-architecture-necessity.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-002-phase-relevance.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-003-dependency-compliance.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-004-interface-definability.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/admission/mad_005_dependency_graph_template.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/breaking_change_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/can_i_deploy.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/capability_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/cbac_matrix.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/cdc_broker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/contract_template_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/drift-detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/end_to_end_walkthrough.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g1-ingest.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g2-triage.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g3-evaluate.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g4-activate.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g5-extract.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g6-blueprint-compliance.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g6-ctr-compliance.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g6-path-tree-freshness.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g7-position-limits.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g8.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g8-leverage.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g9.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g9-strategy-correlation.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/g-asset-inventory.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate-dedup.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_context.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_health.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_integrity_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_override.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_simulator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gate_types.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/gct-024-budget-enforcer.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/integration_test_runner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_001_circular_dependency.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en-001-circular-dependency.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_002_enforcement_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en-002-enforcement-validator.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_003_contract_compatibility.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en-003-contract-compatibility.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/en_process_lifecycle_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/invariants/zero_residue_check.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/kiss_enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/observability-baseline.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/risk_ssot.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/secrets_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/sys-master-compliance.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task/g0-entry.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task/g0-orc-gate_engine.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task/g7-orc-gate_engine.yaml` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/task_types.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/truth_source_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/zero-residue.yaml` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
@@ -1607,14 +1607,14 @@ STEP 3: 拆分后验证
 
 | 门禁 | 文件路径 | gate_id | 触发事件 | 关键check ID | severity |
 |------|---------|---------|---------|-------------|----------|
-| G0 任务准入 | `src/zephyr/governance/rule_enforcement/task/g0-entry.yaml` | G0 | DRAFT→TODO | G0-C00 required_fields_present; G0-C01 task_type_valid | error |
-| G1 蓝图合规 | `src/zephyr/governance/rule_enforcement/g6-blueprint-compliance.yaml` | G1 | TODO→IN_PROGRESS | G1-C00 module_has_approved_blueprint | error |
+| G0 任务准入 | `src/zephyr/gov_enforcement/rule_enforcement/task/g0-entry.yaml` | G0 | DRAFT→TODO | G0-C00 required_fields_present; G0-C01 task_type_valid | error |
+| G1 蓝图合规 | `src/zephyr/gov_enforcement/rule_enforcement/g6-blueprint-compliance.yaml` | G1 | TODO→IN_PROGRESS | G1-C00 module_has_approved_blueprint | error |
 | G2 依赖完整 | (同G1文件) | G2 | → | G2-C00 depends_on_modules_implemented | error |
 | G3 容量检查 | (同G1文件) | G3 | → | G3-C00 within_global_token_budget | warning |
-| G4 沙箱合规 | `src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml` | G4 | 执行中 | G4-C00 sandbox_profile_matches_task_type | error |
+| G4 沙箱合规 | `src/zephyr/gov_enforcement/rule_enforcement/g6-ctr-compliance.yaml` | G4 | 执行中 | G4-C00 sandbox_profile_matches_task_type | error |
 | G5 模型合规 | (同G4文件) | G5 | → | G5-C00 model_in_capability_matrix | error |
-| G6 安全合规 | `src/zephyr/governance/rule_enforcement/g6-ctr-compliance.yaml` | G6 | → | G6-C00 tool_call_whitelist | error |
-| G7 交付前 | `src/zephyr/governance/rule_enforcement/task/g7-orc-gate_engine.yaml` | G7 | REVIEW→COMPLETED | G7-C00 all_associated_scripts_audit_pass | error |
+| G6 安全合规 | `src/zephyr/gov_enforcement/rule_enforcement/g6-ctr-compliance.yaml` | G6 | → | G6-C00 tool_call_whitelist | error |
+| G7 交付前 | `src/zephyr/gov_enforcement/rule_enforcement/task/g7-orc-gate_engine.yaml` | G7 | REVIEW→COMPLETED | G7-C00 all_associated_scripts_audit_pass | error |
 
 **YAML字段约束**：check必须是布尔表达式；每条reject必须配fix_hint；severity: error/warning；on_failure: reject/defer/warn
 
@@ -1777,7 +1777,7 @@ class GateEngineIntegrityGuard:
 
 ### §M 深度合规——形式vs实质
 
-> G7D YAML已实现于 `src/zephyr/governance/rule_enforcement/g7d_depth_compliance.yaml`。蓝图只保留关键字段约束。
+> G7D YAML已实现于 `src/zephyr/gov_enforcement/rule_enforcement/g7d_depth_compliance.yaml`。蓝图只保留关键字段约束。
 
 | check ID | 名称 | 类型 | severity | 核心check |
 |----------|------|------|----------|----------|
@@ -1806,7 +1806,7 @@ class GateEngineIntegrityGuard:
 | 维度 | 状态 |
 |------|------|
 | construction_progress | phase_1_partial（核心门禁8/16文件已实现，Phase 2 Beta/Experimental 8个文件规划中） |
-| 源码路径 | `src/zephyr/governance/rule_enforcement/` |
+| 源码路径 | `src/zephyr/gov_enforcement/rule_enforcement/` |
 | 源码文件数 | 55个 .py/.yaml |
 | 测试路径 | `tests/integration/ + tests/architecture/` |
 | 配置文件 | `architecture_model/layers/b_gates.yaml` |

@@ -58,7 +58,7 @@ canonical 扩展点也不覆盖 §X.Y——全项目无任何机制检测 AGENTS
 
 Usage::
 
-    from zephyr.governance.commit_gates.dangling_reference_gate import make_dangling_reference_gate
+    from zephyr.gov_enforcement.commit_gates.dangling_reference_gate import make_dangling_reference_gate
 
     registry.register(make_dangling_reference_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

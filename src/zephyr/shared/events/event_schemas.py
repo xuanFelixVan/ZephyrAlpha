@@ -61,7 +61,7 @@ _TASK_TYPES_NAMES = {"TaskStatus"}
 
 def __getattr__(name):
     if name in _TASK_TYPES_NAMES:
-        _mod = importlib.import_module("zephyr.governance.rule_enforcement.task_types")
+        _mod = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.task_types")
         _val = getattr(_mod, name)
         globals()[name] = _val
         return _val

@@ -430,6 +430,12 @@ class IntegratorScheduler:
         Returns:
             {task_id: success_bool} 字典
         """
+        # L10 周末补下载层：不走常规 run_task，调用 backfill_checker 独立处理
+        if schedule_name == "weekend_backfill":
+            from zephyr.data.backfill_checker import run_weekend_backfill
+            result = run_weekend_backfill(self)
+            return {"tick_backfill_weekly": result.get("success", False)}
+
         # 过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）
         schedule_tasks = [
             t for t in self._tasks

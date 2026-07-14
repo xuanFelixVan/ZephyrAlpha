@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 文件含 src/zephyr/governance/commit_gates/*.py 变更时，扫描整个 gate 目录，检测每个 .py 文件 [TESTS] 头部声明的测试文件路径是否实际存在；声明但文件不存在 → 阻断 commit（passed=False）；[TESTS] — / 空 / none 豁免；_*.py 前缀文件豁免（helpers）；文件系统异常 fail-open（logger.warning）；守卫者的守卫者（quis custodiet ipsos custodes）——确保每个 gate 自身有测试
+# [INVARIANTS] 硬阻断——staged 文件含 src/zephyr/gov_enforcement/commit_gates/*.py 变更时，扫描整个 gate 目录，检测每个 .py 文件 [TESTS] 头部声明的测试文件路径是否实际存在；声明但文件不存在 → 阻断 commit（passed=False）；[TESTS] — / 空 / none 豁免；_*.py 前缀文件豁免（helpers）；文件系统异常 fail-open（logger.warning）；守卫者的守卫者（quis custodiet ipsos custodes）——确保每个 gate 自身有测试
 # [MODIFY-GUARD] gate_id="META-TESTS-COVERAGE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -16,7 +16,7 @@
 # [TTL] permanent
 """tests_coverage_gate.py — Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057）
 
-检测 ``src/zephyr/governance/commit_gates/*.py`` 的 ``[TESTS]`` 头部声明的测试文件
+检测 ``src/zephyr/gov_enforcement/commit_gates/*.py`` 的 ``[TESTS]`` 头部声明的测试文件
 是否实际存在——"声明但不兑现"的系统性缺口治本。
 
 病根（第一性原理）
@@ -31,7 +31,7 @@
 治本方案
 --------
 在 GitCommitGateway pre-commit 阶段（in-process）注册 meta-gate：
-  1. trigger 条件：staged 文件含 ``src/zephyr/governance/commit_gates/*.py`` 变更
+  1. trigger 条件：staged 文件含 ``src/zephyr/gov_enforcement/commit_gates/*.py`` 变更
   2. 扫描整个 gate 目录所有 ``*.py`` 文件（跳过 ``_`` 前缀 helpers）
   3. 正则提取头部 ``# [TESTS] <path>`` 声明
   4. 豁免：``—`` / 空 / ``none``（显式声明无测试）
@@ -49,7 +49,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.tests_coverage_gate import make_tests_coverage_gate
+    from zephyr.gov_enforcement.commit_gates.tests_coverage_gate import make_tests_coverage_gate
 
     registry.register(make_tests_coverage_gate())
 """
@@ -67,7 +67,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["make_tests_coverage_gate"]
 
 _GATE_DIR = "src/zephyr/governance/commit_gates"
-_TRIGGER_PREFIX = "src/zephyr/governance/commit_gates/"
+_TRIGGER_PREFIX = "src/zephyr/gov_enforcement/commit_gates/"
 
 # 注意：用 [ \t] 而非 \s，避免 \s 匹配换行符导致跨行提取下一行内容
 _TESTS_HEADER_RE = re.compile(r"^#[ \t]*\[TESTS\][ \t]*(.*?)[ \t]*$", re.MULTILINE)

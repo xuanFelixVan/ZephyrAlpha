@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.cross_module_score
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; tests/cross/test_cross_module_score.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; tests/cross/test_cross_module_score.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 跨模块评分不可人为调整

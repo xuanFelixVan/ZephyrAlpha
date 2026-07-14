@@ -978,7 +978,7 @@ class StandaloneResult(BaseModel):
 
 | 属性 | 值 |
 |------|-----|
-| 入口点 | `src/zephyr/governance/audit-orchestrator/__main__.py` + `scripts/**/*.py` + `tests/**/*.py` + `src/zephyr/governance/rule_enforcement/*.py` + `config/orphan_judge_entry_points.yaml` |
+| 入口点 | `src/zephyr/governance/audit-orchestrator/__main__.py` + `scripts/**/*.py` + `tests/**/*.py` + `src/zephyr/gov_enforcement/rule_enforcement/*.py` + `config/orphan_judge_entry_points.yaml` |
 | 图构建时间 | <10s（全项目） |
 | 单文件可达性查询 | <100ms |
 | 图内存占用 | <200MB |
@@ -1183,7 +1183,7 @@ orphan_judge:
       - "src/zephyr/integration/mcp/governance_server.py"
     scripts: "scripts/**/*.py"
     tests: "tests/**/*.py"
-    gates: "src/zephyr/governance/rule_enforcement/*.py"
+    gates: "src/zephyr/gov_enforcement/rule_enforcement/*.py"
   reference_graph:
     cache_enabled: true
     cache_ttl_seconds: 3600

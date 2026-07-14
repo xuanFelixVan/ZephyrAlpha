@@ -24,8 +24,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.governance.kb.batch_ingest import BatchIngestor
-from zephyr.governance.kb.ingest import IngestGate
+from zephyr.gov_kb.batch_ingest import BatchIngestor
+from zephyr.gov_kb.ingest import IngestGate
 
 
 @pytest.fixture()

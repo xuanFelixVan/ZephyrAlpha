@@ -50,7 +50,7 @@ gateway 内不复制检测逻辑）。fail-closed：checker 缺失/执行失败�
 
 Usage::
 
-    from zephyr.governance.commit_gates.directory_contract_gate import make_directory_contract_gate
+    from zephyr.gov_enforcement.commit_gates.directory_contract_gate import make_directory_contract_gate
 
     registry.register(make_directory_contract_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

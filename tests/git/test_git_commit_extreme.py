@@ -404,7 +404,7 @@ class TestTimeoutAndResourceExhaustion:
                 super().__init__(project_root, timeout=2.0)
 
         gw = GitCommitGateway(project_root=tmp_path)
-        with patch("zephyr.governance.rule_bridge.git_commit_gateway._GlobalCommitLock", FastLock):
+        with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway._GlobalCommitLock", FastLock):
             (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
             result = gw.commit("sess-wait", [str(tmp_path / "a.py")], "feat: lock wait")
 

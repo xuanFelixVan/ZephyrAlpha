@@ -45,7 +45,7 @@ architecture_debt §5.150：5 处 Long Parameter List（16/9/9 参数），
 
 Usage::
 
-    from zephyr.governance.commit_gates.long_param_list_gate import make_long_param_list_gate
+    from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
 
     registry.register(make_long_param_list_gate())
 """

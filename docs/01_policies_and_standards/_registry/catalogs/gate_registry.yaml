@@ -71,7 +71,7 @@ gates:
   status: active
 - gate_id: GATE-TRIPLE-ALIGN
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
-  entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
+  entry: python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
   description: ''
   files_trigger: ^(docs/03_modules/.*blueprint\.md|src/zephyr/.*\.py)$
   always_run: false
@@ -155,7 +155,7 @@ gates:
   status: active
 - gate_id: GATE-ZR
   name: 'GATE-ZR: 零残留强制门禁（IRN-011）'
-  entry: python -B -c "from zephyr.governance.rule_enforcement.invariants.zero_residue_check
+  entry: python -B -c "from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check
     import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0
     if r.is_clean else 1)"
   description: 零残留强制门禁——违规即阻断commit。对标IRN-011（ZR-001~009），任何残留物不得入库。多AI并发优化：改为按文件触发，避免always_run卡死

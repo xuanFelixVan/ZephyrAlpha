@@ -38,7 +38,7 @@ tests = [
     ("MOD-INF-036", "zephyr.intelligence.model_profiling", []),
     ("MOD-INF-018", "zephyr.security.access_control", ["PermissionGuard"]),
     ("MOD-INF-019", "zephyr.autonomy_core", []),
-    ("MOD-INF-020", "zephyr.governance.audit_trail", []),
+    ("MOD-INF-020", "zephyr.gov_audit", []),
     ("MOD-INF-021", "zephyr.infrastructure.rollback", []),
     ("MOD-INF-022", "zephyr.resilience.escalation", []),
     ("MOD-INF-024", "zephyr.resilience.budget_enforcement", []),

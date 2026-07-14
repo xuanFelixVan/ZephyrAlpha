@@ -31,7 +31,7 @@ class TestAuditDelegationBridge:
         assert _MAX_DELEGATION_DEPTH == 5
 
     def test_record_delegation(self, bridge):
-        with patch("zephyr.governance.audit_trail.writer.AuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.writer.AuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash123"
             mock_cls.return_value = mock_writer
@@ -50,7 +50,7 @@ class TestAuditDelegationBridge:
             assert "chain_hash" in result
 
     def test_record_delegation_write_failure(self, bridge):
-        with patch("zephyr.governance.audit_trail.writer.AuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.writer.AuditWriter") as mock_cls:
             mock_cls.side_effect = Exception("write failed")
             result = bridge.record_delegation(
                 from_agent="a",

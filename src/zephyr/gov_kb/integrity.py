@@ -22,7 +22,7 @@
 
 三层完整性:
   L1-KE文件   — 每个ke-*.md的SHA256 (manifest)
-  L2-KB源码   — 每个src/zephyr/governance/kb/*.py的SHA256
+  L2-KB源码   — 每个src/zephyr/gov_kb/*.py的SHA256
   L3-全局     — 整个kb包的aggregate hash
 
 CI检查:

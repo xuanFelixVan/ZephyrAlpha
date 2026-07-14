@@ -53,13 +53,12 @@ from zephyr.data.provider_base import DataSourceBase, DataSourceMeta
 _logger = logging.getLogger(__name__)
 
 __meta__ = DataSourceMeta(
-    provider_id="memory",
-    provider_name="Memory 合成数据",
-    asset_classes=["equity", "index"],
-    markets=["CN"],
-    supports_realtime=False,
-    supports_historical=True,
-    rate_limit_per_min=999999,
+    name="memory",
+    display_name="Memory 合成数据",
+    auth_type="anonymous",
+    requires_process=False,
+    thread_safety="shared",
+    rate_limit_default=999999,
 )
 
 

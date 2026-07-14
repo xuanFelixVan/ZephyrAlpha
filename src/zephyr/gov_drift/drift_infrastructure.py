@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.drift_infrastructure
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/__main__.py; src/zephyr/governance/drift_detection/_drift.py (+9 more)
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/__main__.py; src/zephyr/gov_drift/_drift.py (+9 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基础设施不可禁用

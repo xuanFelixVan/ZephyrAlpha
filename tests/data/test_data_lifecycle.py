@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_detection.data_lifecycle import (
+from zephyr.governance.data_governance.data_lifecycle import (
     ARCHIVE_AFTER_YEARS,
     GDPR_PII_FIELDS,
     PURGE_AFTER_YEARS,

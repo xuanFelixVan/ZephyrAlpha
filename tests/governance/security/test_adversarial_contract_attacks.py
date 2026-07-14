@@ -21,7 +21,7 @@ import pytest
 
 from zephyr.autonomy_core.skill_rbac_registry import AgentCapability, SpecRegistry
 from zephyr.gov_audit.anomaly import AnomalyDetector
-from zephyr.governance.drift_fix import DriftFixHandler
+from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
 from zephyr.governance.agent_spec.rbac_bridge import BudgetRBACBridge, EscalationRBACBridge
 from zephyr.security.access_control.a2a_check import verify_a2a_pair
 from zephyr.security.access_control.approver_check import verify_approver

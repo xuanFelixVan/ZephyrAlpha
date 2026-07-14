@@ -449,7 +449,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
 
         import importlib as _il
 
-        _gd = _il.import_module("zephyr.governance.rule_enforcement.drift_detector")
+        _gd = _il.import_module("zephyr.gov_enforcement.rule_enforcement.drift_detector")
         trigger_recovery = _gd.trigger_recovery
 
         recovery = trigger_recovery(

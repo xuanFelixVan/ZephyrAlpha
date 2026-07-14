@@ -28,7 +28,7 @@
   5. 路径引用 -> 检查路径是否可解析
 
 用法:
-    from zephyr.governance.kb.verify import FactChecker
+    from zephyr.gov_kb.verify import FactChecker
     fc = FactChecker()
     fc.verify("file_exists", path="src/zephyr/data/knowledge_management/kb/__init__.py")
 """

@@ -45,9 +45,9 @@ __all__ = [
 
 _LAZY_IMPORTS = {
     "AISGSandbox": ("zephyr.governance.intelligence_governance.aisg_sandbox", "AISGSandbox"),
-    "ArtifactFinding": ("zephyr.governance.drift_detection.artifact_scanner", "ArtifactFinding"),
-    "ArtifactScanner": ("zephyr.governance.drift_detection.artifact_scanner", "ArtifactScanner"),
-    "ScanReport": ("zephyr.governance.drift_detection.artifact_scanner", "ScanReport"),
+    "ArtifactFinding": ("zephyr.gov_drift.artifact_scanner", "ArtifactFinding"),
+    "ArtifactScanner": ("zephyr.gov_drift.artifact_scanner", "ArtifactScanner"),
+    "ScanReport": ("zephyr.gov_drift.artifact_scanner", "ScanReport"),
     "ComplianceManagerBase": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceManagerBase"),
     "ComplianceRule": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceRule"),
     "DefaultSecurityGateway": ("zephyr.governance.security_governance.default_security_gateway", "DefaultSecurityGateway"),

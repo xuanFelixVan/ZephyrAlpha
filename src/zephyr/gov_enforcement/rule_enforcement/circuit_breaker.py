@@ -43,7 +43,7 @@ CircuitBreakerGateway (CBG) — 模块间调用单向熔断器
 
 装饰器用法
 ----------
-    from zephyr.governance.rule_enforcement.circuit_breaker import circuit_breaker
+    from zephyr.gov_enforcement.rule_enforcement.circuit_breaker import circuit_breaker
 
     @circuit_breaker(target_module="M2")
     def call_m2():

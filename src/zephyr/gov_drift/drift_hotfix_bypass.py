@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.drift_hotfix_bypass
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.contracts.protocols
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_drift.py; src/zephyr/governance/rule_enforcement/drift_detector.py (+3 more)
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_drift.py; src/zephyr/gov_enforcement/rule_enforcement/drift_detector.py (+3 more)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 旁路必须72h自动过期
@@ -25,7 +25,7 @@ P0 Hotfix 快速旁路处理：[HOTFIX]/[EMERGENCY] commit 自动标记为 ACKNO
 对标 blueprint.md §2.12（热修复/紧急变更旁路）。
 
 
-同时写入核心 zephyr.governance.audit_trail.writer.AuditWriter 不可变审计链。"""
+同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""
 
 from __future__ import annotations
 
@@ -95,7 +95,7 @@ class HotfixBypass:
             try:
                 import importlib as _importlib
 
-                _CoreAuditWriter = _importlib.import_module("zephyr.governance.audit_trail.writer").AuditWriter
+                _CoreAuditWriter = _importlib.import_module("zephyr.gov_audit.writer").AuditWriter
                 self._core_writer = _CoreAuditWriter()
 
             except Exception as e:

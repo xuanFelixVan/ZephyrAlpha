@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.credibility_engine
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_analysis.py; src/zephyr/governance/drift_detection/brain_integration.py; tests/audit/test_credibility_engine.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_analysis.py; src/zephyr/gov_drift/brain_integration.py; tests/audit/test_credibility_engine.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 可信度评分不可人为调整

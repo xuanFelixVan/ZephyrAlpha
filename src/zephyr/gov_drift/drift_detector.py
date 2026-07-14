@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] SSoT=zephyr.governance.drift_detection(MOD-INF-023);本文件为兼容别名;API保持不变
+# [INVARIANTS] SSoT=zephyr.gov_drift(MOD-INF-023);本文件为兼容别名;API保持不变
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] frozen
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-RES_drift_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Drift Detector — 兼容别名，SSoT已迁移至 zephyr.governance.drift_detection (MOD-INF-023).
+"""Drift Detector — 兼容别名，SSoT已迁移至 zephyr.gov_drift (MOD-INF-023).
 
 原欧氏距离基线检测已被MOD-INF-023的39+检测器超集覆盖。
 本模块保留API兼容性，内部实现保持独立（SSoT为异步扫描架构，不适合同步调用）。

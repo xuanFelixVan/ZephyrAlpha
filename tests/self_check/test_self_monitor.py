@@ -70,7 +70,7 @@ class TestSelfMonitor:
         mon = SelfMonitor(data_dir=data_dir_with_events)
         with (
             patch("zephyr.governance.integrity.IntegrityVerifier") as mock_v,
-            patch("zephyr.governance.audit_trail.query.AuditQuery") as mock_q,
+            patch("zephyr.gov_audit.query.AuditQuery") as mock_q,
         ):
             mock_v_inst = MagicMock()
             mock_v_inst.verify_chain.return_value = {"status": "valid", "events_checked": 2, "issues": []}
@@ -98,7 +98,7 @@ class TestSelfMonitor:
         assert monitor.is_running is False
 
     def test_write_heartbeat(self, data_dir):
-        with patch("zephyr.governance.audit_trail.writer.AuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.writer.AuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "abc123def456"
             mock_writer.event_count = 1

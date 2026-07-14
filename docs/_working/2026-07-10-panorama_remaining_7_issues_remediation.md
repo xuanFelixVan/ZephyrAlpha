@@ -22,7 +22,7 @@
 |---|---|---|---|
 | MOD-GOV-SYNC-PANORAMA | D_GOV_SCRIPTS（3 非测试脚本） | D_GOVERNANCE | 粒度不一致：物理位置=D_GOV_SCRIPTS(脚本子域)，逻辑声明=D_GOVERNANCE(治理总域) |
 | MOD-INF-035 | D_TRADING（29 非测试源码在 src/zephyr/trading/） | D_INFRA_RUNTIME | 遗留目录命名错位：源码在 trading/ 目录但实际是运行时基础设施 |
-| MOD-INF-039 | D_TRADING（71 非测试源码在 src/zephyr/trading/orchestrator/） | D_INFRA_RUNTIME | 同上；蓝图正文 actual_disk_path 已暗示目标路径为 src/zephyr/orchestrator/ |
+| MOD-INF-039 | D_TRADING（71 非测试源码在 src/zephyr/orchestrator/） | D_INFRA_RUNTIME | 同上；蓝图正文 actual_disk_path 已暗示目标路径为 src/zephyr/orchestrator/ |
 
 ## 2. 第一性原理分析
 
@@ -103,7 +103,7 @@ ARCH-056 的"depgraph 为真源"裁定对于**架构数据**（模块存在性�
 
 **长期治理**（不在本方案施工范围内，登记为技术债务）：
 - MOD-INF-035：将 `src/zephyr/trading/` 下属本模块的 29 个文件迁至 `src/zephyr/runtime/` 或 `src/zephyr/infrastructure/`
-- MOD-INF-039：将 `src/zephyr/trading/orchestrator/` 迁至 `src/zephyr/orchestrator/`（蓝图正文 actual_disk_path 已暗示此目标路径）
+- MOD-INF-039：将 `src/zephyr/orchestrator/` 迁至 `src/zephyr/orchestrator/`（蓝图正文 actual_disk_path 已暗示此目标路径）
 - 迁移后 depgraph 路径投票将自然收敛到 D_INFRA_RUNTIME
 
 ### 裁定 C：ARCH-056 裁定记录修正

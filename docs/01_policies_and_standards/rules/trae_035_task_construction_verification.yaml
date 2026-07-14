@@ -337,7 +337,7 @@ references:
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/diagnose_depgraph.py
   modules:
-  - src/zephyr/governance/rule_enforcement/task_completion_gate.py
+  - src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
   - src/zephyr/governance/task_repo.py
   blueprints:
   - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md

@@ -248,7 +248,7 @@ class BlueprintWatcher:
         try:
             import re
 
-            _mod = importlib.import_module("zephyr.governance.rule_enforcement.triple_alignment")
+            _mod = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.triple_alignment")
             check_triple_alignment = _mod.check_triple_alignment
             content = blueprint_path.read_text(encoding="utf-8")
             mid_match = re.search(r"module_id:\s*(MOD-INF-\d+|MOD-MASTER-\d+|DOM-\w+-\d+|GOV-FSTR-\d+)", content)

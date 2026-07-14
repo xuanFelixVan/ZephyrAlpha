@@ -34,9 +34,9 @@ REGISTRY = Path(r"D:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_de
 # ═══════════════════════════════════════════════════════════
 PATH_REPLACEMENTS = [
     # 旧路径前缀 → 新路径前缀
-    (r"src/zephyr/behavioral_audit/", r"src/zephyr/governance/drift_detection/"),
-    (r"src[/\\]zephyr[/\\]behavioral_audit[/\\]", r"src/zephyr/governance/drift_detection/"),
-    (r"src\\zephyr\\behavioral_audit\\", r"src/zephyr/governance/drift_detection/"),
+    (r"src/zephyr/behavioral_audit/", r"src/zephyr/gov_drift/"),
+    (r"src[/\\]zephyr[/\\]behavioral_audit[/\\]", r"src/zephyr/gov_drift/"),
+    (r"src\\zephyr\\behavioral_audit\\", r"src/zephyr/gov_drift/"),
     # ops/ → trading/feedback_loop/ (仅限特定子目录，ops/observability单独处理)
     (r"src/zephyr/ops/evolution_engine", r"src/zephyr/feedback_loop/evolution_engine"),
     (r"src/zephyr/ops/scheduler", r"src/zephyr/feedback_loop/scheduler"),

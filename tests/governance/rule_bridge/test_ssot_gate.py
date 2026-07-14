@@ -235,7 +235,7 @@ class TestGitCommitGatewaySSoT:
         """L2-1：新增 .py 声明已有 module_path → 阻断。
 
         场景：AI 绕过 scaffold 直接 Write 一个新文件，
-        文件头声明了 zephyr.governance.rule_bridge.git_commit_gateway（已有 module_path）。
+        文件头声明了 zephyr.gov_enforcement.rule_bridge.git_commit_gateway（已有 module_path）。
         """
         fake_new_rel = "src/zephyr/governance/fake_new_ssot_xyz.py"
         fake_new_abs = self._fake_new_py_abs(fake_new_rel)
@@ -244,7 +244,7 @@ class TestGitCommitGatewaySSoT:
         monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
 
         # mock _parse_header 返回声明已有 module_path 的 header
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
@@ -253,7 +253,7 @@ class TestGitCommitGatewaySSoT:
         # mock find_files_by_module_path 返回已有文件冲突
         # （_disk_headers 被 mock 的 _parse_header 污染，故需控制 find 返回值；
         #  find 的正确性在 L1 测试组 TestFindFilesByModulePath 已覆盖）
-        existing_conflict = "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
+        existing_conflict = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
             lambda self, mp: [existing_conflict] if mp == existing_mp else [],
@@ -399,7 +399,7 @@ class TestL2MutationFalsifiability:
 
         monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
 
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
@@ -424,7 +424,7 @@ class TestL2MutationFalsifiability:
 
         monkeypatch.setattr(GitCommitGateway, "_is_git_tracked", lambda self, rel: False)
 
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path=fake_new_rel, module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
@@ -510,13 +510,13 @@ class TestCheckSsotConflicts:
     def test_existing_module_path_returns_conflict(self, monkeypatch):
         """已有 module_path → 返回冲突。"""
         lookup = CapabilityLookup()
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake_new.py", module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
             staticmethod(lambda py, rel: fake_header),
         )
-        existing_file = "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
+        existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
             lambda self, mp: [existing_file] if mp == existing_mp else [],
@@ -533,8 +533,8 @@ class TestCheckSsotConflicts:
         场景：新文件路径恰好与已有文件相同（理论上不会发生，但验证排除逻辑）。
         """
         lookup = CapabilityLookup()
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
-        new_rel = "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
+        new_rel = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         fake_header = HeaderInfo(path=new_rel, module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
@@ -551,7 +551,7 @@ class TestCheckSsotConflicts:
     def test_multiple_files_mixed(self, monkeypatch):
         """多文件混合：有的无头、有的新mp、有的冲突 → 正确分类。"""
         lookup = CapabilityLookup()
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         new_mp = "zephyr.totally.new.xyz"
 
         # 三个文件：无头 / 新mp / 冲突mp
@@ -564,7 +564,7 @@ class TestCheckSsotConflicts:
             CapabilityLookup, "_parse_header",
             staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))),
         )
-        existing_file = "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
+        existing_file = "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
             lambda self, mp: [existing_file] if mp == existing_mp else [],
@@ -584,7 +584,7 @@ class TestCheckSsotConflicts:
     def test_returns_ssoTConflict_type(self, monkeypatch):
         """返回类型应为 SSoTConflict（验证 dataclass 结构）。"""
         lookup = CapabilityLookup()
-        existing_mp = "zephyr.governance.rule_bridge.git_commit_gateway"
+        existing_mp = "zephyr.gov_enforcement.rule_bridge.git_commit_gateway"
         fake_header = HeaderInfo(path="src/zephyr/fake.py", module_path=existing_mp)
         monkeypatch.setattr(
             CapabilityLookup, "_parse_header",
@@ -661,9 +661,9 @@ class TestRedBlueExtreme:
             monkeypatch,
             headers={"src/zephyr/governance/fake_red.py": HeaderInfo(
                 path="src/zephyr/governance/fake_red.py",
-                module_path="zephyr.governance.rule_bridge.git_commit_gateway",
+                module_path="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
             )},
-            conflicts={"zephyr.governance.rule_bridge.git_commit_gateway": ["src/zephyr/governance/rule_bridge/git_commit_gateway.py"]},
+            conflicts={"zephyr.gov_enforcement.rule_bridge.git_commit_gateway": ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"]},
         )
         exit_code = gate_module.main()
         assert exit_code == 1, "L3 应阻断直接 git commit 的重复文件"
@@ -717,7 +717,7 @@ class TestRedBlueExtreme:
         """
         import tempfile, os
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as f:
-            f.write("# [module] zephyr.governance.rule_bridge.git_commit_gateway\n")
+            f.write("# [module] zephyr.gov_enforcement.rule_bridge.git_commit_gateway\n")
             tmp = f.name
         try:
             header = CapabilityLookup._parse_header(Path(tmp), "fake.py")
@@ -755,7 +755,7 @@ class TestRedBlueExtreme:
         """红方攻击8：module_path 大小写变异 → 不匹配（检测能力限制）。
 
         AI 声明 Zephyr.Governance.Git_Commit_Gateway（大写）→ 与已有
-        zephyr.governance.rule_bridge.git_commit_gateway（小写）不匹配 → 不报冲突。
+        zephyr.gov_enforcement.rule_bridge.git_commit_gateway（小写）不匹配 → 不报冲突。
         检测依赖 AI 正确声明 module_path——这是方案 E 的固有边界。
         """
         lookup = CapabilityLookup()
@@ -764,7 +764,7 @@ class TestRedBlueExtreme:
         monkeypatch.setattr(CapabilityLookup, "_parse_header", staticmethod(lambda py, rel: headers.get(rel, HeaderInfo(path=rel))))
         monkeypatch.setattr(
             CapabilityLookup, "find_files_by_module_path",
-            lambda self, mp: ["src/zephyr/governance/rule_bridge/git_commit_gateway.py"] if mp == "zephyr.governance.rule_bridge.git_commit_gateway" else [],
+            lambda self, mp: ["src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"] if mp == "zephyr.gov_enforcement.rule_bridge.git_commit_gateway" else [],
         )
         result = lookup.check_ssot_conflicts([("/abs/fake_case.py", "src/zephyr/fake_case.py")])
         assert result == [], "大小写不同的 module_path 应不匹配（检测能力限制）"

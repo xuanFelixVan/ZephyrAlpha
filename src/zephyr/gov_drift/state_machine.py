@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.state_machine
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.gov_drift.drift_models
-# [CONSUMERS] src/zephyr/governance/drift_detection/_core.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py
+# [CONSUMERS] src/zephyr/gov_drift/_core.py; src/zephyr/governance/drift_detector_core/bridges/__init__.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 状态转换必须合法

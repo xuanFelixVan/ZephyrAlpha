@@ -38,7 +38,7 @@ Safety     : M（只读查询，不修改数据）
 
 用法
 ----
-    from zephyr.governance.audit_trail.audit_schema import AuditQuery
+    from zephyr.gov_audit.audit_schema import AuditQuery
 
     aq = AuditQuery(db_path="data/databases/governance.db")
     trail = aq.query_audit_for_session("session-20260501")

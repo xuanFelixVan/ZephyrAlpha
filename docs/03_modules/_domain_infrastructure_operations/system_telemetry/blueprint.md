@@ -833,7 +833,7 @@ MOD-INF-015 在线6:运维保障线。上游: 系统运行时 → MOD-INF-015。
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §0.5 代码目录唯一性声明 |
-| 验证命令 | `python src/zephyr/governance/rule_enforcement/triple_alignment.py --module MOD-INF-015` |
+| 验证命令 | `python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py --module MOD-INF-015` |
 | RULE-THREE 审判 | 每个文件必须通过三步审判（登记检查→重复检查→功能价值检查） |
 
 #### 步骤 5：project-path-tree.yaml 同步 — ✅ 已完成

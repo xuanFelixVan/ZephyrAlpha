@@ -92,7 +92,7 @@ class TestClassifierClassify:
         assert result.assets[0].asset_type == AssetType.SCRIPT
 
     def test_classify_gate(self):
-        entry = _make_entry(relative_path="src/zephyr/governance/rule_enforcement/g1_ingest.yaml", extension=".yaml")
+        entry = _make_entry(relative_path="src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml", extension=".yaml")
         scan = _make_scan(entries=[entry])
         c = Classifier()
         result = c.classify(scan)
@@ -127,7 +127,7 @@ class TestClassifierClassify:
         assert result.assets[0].asset_type == AssetType.DATA
 
     def test_classify_registry(self):
-        entry = _make_entry(relative_path="src/zephyr/governance/rule_enforcement/_registry.yaml", extension=".yaml")
+        entry = _make_entry(relative_path="src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml", extension=".yaml")
         scan = _make_scan(entries=[entry])
         c = Classifier()
         result = c.classify(scan)

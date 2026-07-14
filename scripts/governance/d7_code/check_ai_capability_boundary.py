@@ -91,7 +91,7 @@ def get_immutable_scopes() -> list[str]:
             "src/zephyr/shared/contracts/**/*.py",
             "docs/02_enterprise_architecture/ssot-authority-map.md",
             "docs/01_policies_and_standards/governance/ai/**/*.md",
-            "src/zephyr/governance/rule_enforcement/_registry.yaml",
+            "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
         ]
     scopes: list[str] = []
     for entry in matrix.get("matrix", {}).get("entries", []):

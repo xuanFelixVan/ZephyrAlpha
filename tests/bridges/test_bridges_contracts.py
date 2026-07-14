@@ -20,7 +20,7 @@ from zephyr.gov_audit.contracts import AuditWriter
 
 class TestAuditWriter:
     def test_write_basic(self, tmp_path):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "abc123"
             mock_cls.return_value = mock_writer
@@ -39,7 +39,7 @@ class TestAuditWriter:
             assert "chain_hash" in result
 
     def test_write_with_granted(self, tmp_path):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash123"
             mock_cls.return_value = mock_writer
@@ -53,7 +53,7 @@ class TestAuditWriter:
             assert result["granted"] is True
 
     def test_write_with_timestamp(self):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash"
             mock_cls.return_value = mock_writer
@@ -67,7 +67,7 @@ class TestAuditWriter:
             assert result["timestamp"] == "2026-01-01T00:00:00Z"
 
     def test_write_with_session_id(self):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash"
             mock_cls.return_value = mock_writer
@@ -81,7 +81,7 @@ class TestAuditWriter:
             assert result["session_id"] == "sess-1"
 
     def test_write_with_metadata(self):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash"
             mock_cls.return_value = mock_writer
@@ -96,7 +96,7 @@ class TestAuditWriter:
             assert result["metadata"] == meta
 
     def test_write_default_metadata(self):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash"
             mock_cls.return_value = mock_writer
@@ -109,7 +109,7 @@ class TestAuditWriter:
             assert result["metadata"] == {}
 
     def test_write_auto_timestamp(self):
-        with patch("zephyr.governance.audit_trail.contracts._CoreAuditWriter") as mock_cls:
+        with patch("zephyr.gov_audit.contracts._CoreAuditWriter") as mock_cls:
             mock_writer = MagicMock()
             mock_writer.write.return_value = "hash"
             mock_cls.return_value = mock_writer

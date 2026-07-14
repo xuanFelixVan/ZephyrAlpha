@@ -43,7 +43,7 @@ references:
   - path: "D:\\ZephyrAlpha\\architecture_model\\layers\\l05_portfolio_construction.yaml"
     section: "全篇"
     why: "YAML SSoT"
-responsibility_domain:
+responsibility_domain: 
 build_status: generated
 ---
 

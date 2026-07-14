@@ -40,7 +40,7 @@ priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)：先检查 sessio
 
 Usage::
 
-    from zephyr.governance.commit_gates.session_required_gate import make_session_required_gate
+    from zephyr.gov_enforcement.commit_gates.session_required_gate import make_session_required_gate
     registry.register(make_session_required_gate())
 """
 

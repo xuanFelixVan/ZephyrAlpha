@@ -1922,9 +1922,9 @@ d:\ZephyrAlpha\src\zephyr\reporting\
 ```
 你是项目审计 AI-11，负责审计以下区域（治理-规则+安全韧性）：
 
-d:\ZephyrAlpha\src\zephyr\governance\rule_enforcement\      （gate_engine/check_types/invariants/task/admission + 大量 g_*.yaml）
-d:\ZephyrAlpha\src\zephyr\governance\rule_bridge\           （session_worktree.py, git_commit_gateway.py, commit_gate_registry.py, session_claim.py, worktree_manager.py）
-d:\ZephyrAlpha\src\zephyr\governance\commit_gates\
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_enforcement\      （gate_engine/check_types/invariants/task/admission + 大量 g_*.yaml）
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\           （session_worktree.py, git_commit_gateway.py, commit_gate_registry.py, session_claim.py, worktree_manager.py）
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\
 d:\ZephyrAlpha\src\zephyr\governance\security_governance\   （含 30+ 安全治理模块）
 d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resilience/circuit_breaker/deadlock_detector 等）
 
@@ -2111,12 +2111,12 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
 ```
 你是项目审计 AI-12，负责审计以下区域（治理-审计+语义行为）：
 
-d:\ZephyrAlpha\src\zephyr\governance\audit_trail\           （anomaly/bridge/cli/contracts/genesis/indexer/integrity/kb_gate/models/privacy/query/retention/writer）
+d:\ZephyrAlpha\src\zephyr\gov_audit\           （anomaly/bridge/cli/contracts/genesis/indexer/integrity/kb_gate/models/privacy/query/retention/writer）
 d:\ZephyrAlpha\src\zephyr\governance\audit_orchestration\
 d:\ZephyrAlpha\src\zephyr\governance\semantic_audit\         （alignment_engine/compliance_map/feedback_self_audit/fix_prioritizer/issue_aggregator/llm_bridge/models/orchestrator/reference_extractor/safety_boundary/self_healer/self_health/semantic_cache/spec_auditor/trigger_engine）
 d:\ZephyrAlpha\src\zephyr\governance\semantic_auditor\
 d:\ZephyrAlpha\src\zephyr\governance\behavioral_auditor\
-d:\ZephyrAlpha\src\zephyr\governance\behavioral_admission\
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\behavioral_admission\
 d:\ZephyrAlpha\src\zephyr\governance\red_blue_validator\
 d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
 

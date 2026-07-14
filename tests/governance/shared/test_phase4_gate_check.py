@@ -52,12 +52,12 @@ def test_phase4_gate_all_contracts_exist():
         "zephyr.infrastructure.rollback.auditor",
         "zephyr.infrastructure.rollback.budget_tracker",
         "zephyr.governance.agent_spec.rbac_bridge",
-        "zephyr.governance.drift_detection.rollback_bridge",
+        "zephyr.gov_drift.rollback_bridge",
         "zephyr.infrastructure.budget_enforcement.rbac_bridge",
-        "zephyr.governance.audit_trail.drift_bridge",
+        "zephyr.gov_audit.drift_bridge",
         "zephyr.security.access_control.contracts",
-        "zephyr.governance.audit_trail.contracts",
-        "zephyr.governance.audit_trail.anomaly",
+        "zephyr.gov_audit.contracts",
+        "zephyr.gov_audit.anomaly",
         "zephyr.infrastructure.rollback.contracts",
     ]
     for mod in modules:

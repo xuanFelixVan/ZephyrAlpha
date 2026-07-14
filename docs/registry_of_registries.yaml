@@ -28,7 +28,7 @@ tiers:
     registries:
       - registry_id: REG-GATE-001
         name: Gate 门禁注册表
-        physical_path: src/zephyr/governance/rule_enforcement/_registry.yaml
+        physical_path: src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml
         format: yaml
         maintenance: manual
         entry_count: 43
@@ -92,7 +92,7 @@ tiers:
 
       - registry_id: REG-DRIFT-001
         name: 漂移检测器注册表
-        physical_path: src/zephyr/governance/drift_detection/_detector_registry.yaml
+        physical_path: src/zephyr/gov_drift/_detector_registry.yaml
         format: yaml
         maintenance: manual
         entry_count: 31

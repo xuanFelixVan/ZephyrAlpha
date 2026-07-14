@@ -50,7 +50,7 @@
 
 Usage::
 
-    from zephyr.governance.commit_gates.datetime_now_forbidden_gate import make_datetime_now_forbidden_gate
+    from zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate import make_datetime_now_forbidden_gate
 
     registry.register(make_datetime_now_forbidden_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

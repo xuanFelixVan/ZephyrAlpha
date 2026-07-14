@@ -112,8 +112,8 @@ def _has_module_level_skip(tree: ast.Module) -> bool:
 def _module_to_path(module_path: str) -> Path | None:
     """将 Python 模块路径转换为源码文件路径。
 
-    ``zephyr.governance.audit_trail.feedback_bridge`` ->
-    ``src/zephyr/governance/audit_trail/feedback_bridge.py``
+    ``zephyr.gov_audit.feedback_bridge`` ->
+    ``src/zephyr/gov_audit/feedback_bridge.py``
 
     ``zephyr.governance`` ->
     ``src/zephyr/governance/__init__.py``

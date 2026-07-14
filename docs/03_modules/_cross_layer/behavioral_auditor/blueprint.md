@@ -15,7 +15,7 @@ date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/drift_detection/"
+actual_disk_path: "src/zephyr/gov_drift/"
 actual_disk_path_note: "MOD-INF-033独有5个文件(verdict_engine/admission_controller/protection_index/gpu_consensus_scheduler/session_lifecycle)将放在此目录。54个共享文件属于MOD-INF-023(src/zephyr/behavioral-auditor/)，033通过import消费"
 architecture_layer: "L1_分析引擎"
 belongs_to: "MOD-INF-027"

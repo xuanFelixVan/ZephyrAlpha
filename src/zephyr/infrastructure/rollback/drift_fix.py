@@ -30,7 +30,7 @@ ARCH-034 P3 / SRC-038 合并审核（2026-07-01）：
   - rollback/governance/__init__.py 改为从本文件 re-export DriftFixHandler
 
   DriftFixHandler 包含专属的 on_drift_fix() 回滚兜底逻辑，不可简化为纯 shim。
-  从 zephyr.governance.drift_detection.events 导入 ManagedDriftEvent。
+  从 zephyr.gov_drift.events 导入 ManagedDriftEvent。
 """
 
 from typing import Any

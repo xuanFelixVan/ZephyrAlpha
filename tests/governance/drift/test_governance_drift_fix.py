@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from zephyr.governance.drift_fix import DriftFixHandler
+from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
 from zephyr.gov_drift.events import ManagedDriftEvent, ManagedDriftState, DriftType
 
 

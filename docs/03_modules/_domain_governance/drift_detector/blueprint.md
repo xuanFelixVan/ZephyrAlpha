@@ -12,11 +12,11 @@ classification: internal
 language: zh
 created_by: AI-GLM-5.1
 valid_from: 2026-05-05
-submodule_path: src/zephyr/governance/drift_detection/
+submodule_path: src/zephyr/gov_drift/
 date: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented
-actual_disk_path: "src/zephyr/governance/drift_detection/; src/zephyr/governance/drift_detector_core/"
+actual_disk_path: "src/zephyr/gov_drift/; src/zephyr/governance/drift_detector_core/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1
@@ -79,7 +79,7 @@ design_maturity: design
 ---
 
 > module_id: MOD-INF-023 | version: 3.1.0 | status: Active | layer: cross_layer
-> actual_disk_path: src/zephyr/governance/drift_detection/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
+> actual_disk_path: src/zephyr/gov_drift/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
 
@@ -173,9 +173,9 @@ design_maturity: design
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = partially_implemented → 代码文件清单存在（部分已实现） | `ls D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 逐文件核对 | ✅ |
-| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" D:\ZephyrAlpha\src\zephyr\governance\drift_detection\*.py` | ✅ |
-| actual_disk_path = §11 业务代码路径 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 存在 | ✅ |
+| construction_progress = partially_implemented → 代码文件清单存在（部分已实现） | `ls D:\ZephyrAlpha\src\zephyr\gov_drift\` 逐文件核对 | ✅ |
+| 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" D:\ZephyrAlpha\src\zephyr\gov_drift\*.py` | ✅ |
+| actual_disk_path = §11 业务代码路径 | `D:\ZephyrAlpha\src\zephyr\gov_drift\` 存在 | ✅ |
 | 红白对抗验证通过 | `python tests/infrastructure/drift_red_blue_adversarial.py`（独立脚本，非pytest） | ✅ |
 
 ### §0.3 版本-代码映射
@@ -195,7 +195,7 @@ design_maturity: design
 | 漂移检测核心策略（2.1-2.21） | ✅ 是 | — | 无其他蓝图定义此策略集 |
 | 漂移分析高级策略（6.1-6.27） | ✅ 是 | — | 无其他蓝图定义此策略集 |
 | 10 状态漂移生命周期 | ✅ 是 | — | 无其他蓝图定义此状态机 |
-| `src/zephyr/governance/drift_detection/` + `drift_detector_core/` 代码 | ✅ 是 | — | MOD-INF-033 已改 actual_disk_path 为 behavioral_audit/，双包路径冲突已消除（ARCH-042 裁定双包并存） |
+| `src/zephyr/gov_drift/` + `drift_detector_core/` 代码 | ✅ 是 | — | MOD-INF-033 已改 actual_disk_path 为 behavioral_audit/，双包路径冲突已消除（ARCH-042 裁定双包并存） |
 | `src/zephyr/drift-detector/` 代码 | ✅ 已清理 | — | 消费者已迁移至 drift_detection |
 
 ### §0.5 代码目录唯一性声明
@@ -508,7 +508,7 @@ class BaselineSnapshot(BaseModel):
 |---|:----:|--------|-----------|------|
 | 1 | 编码模式 | `for + subprocess.run()` 串行 | `ThreadPoolExecutor(max_workers=8)` | RULE-SEVEN |
 | 2 | 编码模式 | `open(path, "w")` 直接写 | temp-file + `os.replace()` 原子写入 | RULE-ONE |
-| 3 | 导入源 | `from zephyr.l00_* import *` | `from zephyr.governance.drift_detection import *` | 分层约束 |
+| 3 | 导入源 | `from zephyr.l00_* import *` | `from zephyr.gov_drift import *` | 分层约束 |
 | 4 | 编码模式 | 检测器跳过执行 | 39 检测器必须全部执行 | [INVARIANTS] |
 
 ---
@@ -686,9 +686,9 @@ class BaselineSnapshot(BaseModel):
 | 产出物类型 | 存放完整绝对路径 | 说明 | consumer_min |
 |----------|---------------|------|-------------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_governance\drift_detector\blueprint.md` | 本文件（含设计和施工指引） | AI session |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` | Python 源码（54 .py 文件） | MOD-INF-021/022/020/018/007/016 |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\gov_drift\` | Python 源码（54 .py 文件） | MOD-INF-021/022/020/018/007/016 |
 | 测试代码 | `D:\ZephyrAlpha\tests\behavioral-auditor\` | 单元+集成+红白对抗测试 | CI pipeline |
-| 事件定义 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\events.py` | 漂移事件+异常类 | MOD-INF-020/021 |
+| 事件定义 | `D:\ZephyrAlpha\src\zephyr\gov_drift\events.py` | 漂移事件+异常类 | MOD-INF-020/021 |
 
 ---
 
@@ -818,17 +818,17 @@ class BaselineSnapshot(BaseModel):
 
 | # | 规格名称 | 类型 | 规格内容 | 对应代码 |
 |---|---------|------|---------|---------|
-| 1 | 漂移状态机存储 | SQL | `CREATE TABLE drift_events (event_id TEXT PK, module_id TEXT, detector_id TEXT, state TEXT, severity TEXT, detected_at TIMESTAMP, updated_at TIMESTAMP, auto_fixable BOOLEAN, hotfix BOOLEAN DEFAULT 0)` + `CREATE TRIGGER prevent_update BEFORE UPDATE ON drift_events BEGIN SELECT RAISE(ABORT, 'append-only'); END` | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\state_machine.py` |
-| 2 | 基线快照存储 | 文件格式 | `data/drift_baselines/{module_id}/baseline_v{N}.json` 含 tree_hash/interface_snapshot/import_graph/config_snapshot + `integritymanifest.yaml` 含 SHA256 chain | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\baseline_manager.py` |
-| 3 | 检测器调度并行 | 算法 | `ThreadPoolExecutor(max_workers=8)` + per-detector checkpoint + 超时终止 + 结果缓存 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\detector_dispatcher.py` |
-| 4 | 告警去重与聚合 | 算法 | pattern_hash = SHA256(module_id + dimension + target_path) → 相同 hash 去重 → 同维度聚合 → 同模块聚合 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\alert_router.py` |
+| 1 | 漂移状态机存储 | SQL | `CREATE TABLE drift_events (event_id TEXT PK, module_id TEXT, detector_id TEXT, state TEXT, severity TEXT, detected_at TIMESTAMP, updated_at TIMESTAMP, auto_fixable BOOLEAN, hotfix BOOLEAN DEFAULT 0)` + `CREATE TRIGGER prevent_update BEFORE UPDATE ON drift_events BEGIN SELECT RAISE(ABORT, 'append-only'); END` | `D:\ZephyrAlpha\src\zephyr\gov_drift\state_machine.py` |
+| 2 | 基线快照存储 | 文件格式 | `data/drift_baselines/{module_id}/baseline_v{N}.json` 含 tree_hash/interface_snapshot/import_graph/config_snapshot + `integritymanifest.yaml` 含 SHA256 chain | `D:\ZephyrAlpha\src\zephyr\gov_drift\baseline_manager.py` |
+| 3 | 检测器调度并行 | 算法 | `ThreadPoolExecutor(max_workers=8)` + per-detector checkpoint + 超时终止 + 结果缓存 | `D:\ZephyrAlpha\src\zephyr\gov_drift\detector_dispatcher.py` |
+| 4 | 告警去重与聚合 | 算法 | pattern_hash = SHA256(module_id + dimension + target_path) → 相同 hash 去重 → 同维度聚合 → 同模块聚合 | `D:\ZephyrAlpha\src\zephyr\gov_drift\alert_router.py` |
 
 ### 16.8 施工参考卡
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -m zephyr.governance.drift_detection` | 漂移检测 CLI | `--scope: 模块ID列表` `--level: LIGHT/STANDARD/DEEP` | ScanResult |
-| 2 | 命令 | `python -m zephyr.governance.drift_detection --baseline-update` | 基线更新 | `--module-id: 模块ID` `--force: 跳过投毒检测` | BaselineSnapshot |
+| 1 | 命令 | `python -m zephyr.gov_drift` | 漂移检测 CLI | `--scope: 模块ID列表` `--level: LIGHT/STANDARD/DEEP` | ScanResult |
+| 2 | 命令 | `python -m zephyr.gov_drift --baseline-update` | 基线更新 | `--module-id: 模块ID` `--force: 跳过投毒检测` | BaselineSnapshot |
 | 3 | 配置 | `_detector-registry.yaml` | 检测器注册表 | id/name/dimension/severity/auto_fixable/status/script_path/timeout_s | YAML 格式 |
 | 4 | 配置 | `data/drift_baselines/` | 基线快照目录 | JSON 格式，按 module_id 分目录 | 保留最近 3 版本 |
 
@@ -1069,7 +1069,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 漂移检测代码 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` | 修改 | 蓝图描述的核心代码 |
+| 1 | 漂移检测代码 | `D:\ZephyrAlpha\src\zephyr\gov_drift\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 测试代码 | `D:\ZephyrAlpha\tests\behavioral-auditor\` | 修改 | 测试用例 |
 | 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_governance\drift_detector\blueprint.md` | 修改 | 本文件 |
 | 4 | 旧治理脚本 | `D:\ZephyrAlpha\src\zephyr\governance\` | 迁移 | 孤儿文件迁移到 drift_detection/ |
@@ -1107,7 +1107,7 @@ STEP 3: 拆分后验证
 | Tier 2 | MOD-INF-020 Audit Trail | audit-trail/drift_bridge.py |
 | Tier 2 | MOD-INF-013 MCP Server | mcp/governance_server.py |
 | Tier 2 | governance/ shim | drift-detector/__init__.py + phase_check_registry.py |
-| Tier 3 | `D:\ZephyrAlpha\src\zephyr\governance\drift_detection\` 代码 | §4 文件归属 |
+| Tier 3 | `D:\ZephyrAlpha\src\zephyr\gov_drift\` 代码 | §4 文件归属 |
 
 ### 触发条件
 

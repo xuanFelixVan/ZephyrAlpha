@@ -1216,7 +1216,7 @@ class CapabilityLookup:
         """判断同 basename 文件是否构成"同域包根 vs 子目录"碰撞。
 
         ARCH-031 场景：一方在域根（如 src/zephyr/governance/foo.py），
-        另一方在子目录（如 src/zephyr/governance/audit/foo.py）。
+        另一方在子目录（如 src/zephyr/gov_audit/foo.py）。
 
         判定逻辑：
           - 共同前缀至少 3 级（src/zephyr/governance）

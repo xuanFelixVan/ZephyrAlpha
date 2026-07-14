@@ -660,7 +660,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Runtime Integration | MOD-INF-002 | 95% | 跨层集成与缺口填补 | `src/zephyr/runtime/` | 已实现 |
 | Script System | MOD-INF-005 | 95% | 脚本发现/执行/验证 | `src/zephyr/infrastructure/script_system/` | 已实现 |
 | Task System | MOD-TASK_SYSTEM | 95% | 任务卡全生命周期 | `src/zephyr/db/` | 已实现 |
-| Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
+| Gate Engine | MOD-GATE_ENGINE | 35% | G0-G7门禁+断路器 | `src/zephyr/gov_enforcement/rule_enforcement/` | 部分实现 |
 | Context Engine | MOD-CONTEXT_ENGINE | 95% | 上下文四阶段流水线 | `src/zephyr/context_engine/` | 已实现 |
 | Pipeline | MOD-INF-009 | 95% | M1-M11双管线 | `src/zephyr/pipeline/` | 已实现 |
 | Feedback Loop | MOD-FEEDBACK_LOOP | 95% | 系统自调节闭环 | `src/zephyr/feedback_loop/` | 已实现 |
@@ -4022,4 +4022,4 @@ STEP 3: 拆分后验证
 | 系统拓扑变更 | MOD-MASTER_BLUEPRINT (集成总蓝图) + blueprint_registry.yaml |
 | 架构原则变更 | .trae/rules/project_rules.md + 所有模块蓝图 |
 | 分派表变更 | 对应子系统蓝图 §0 分派表 |
-| 门控检查变更 | src/zephyr/governance/rule_enforcement/_registry.yaml |
+| 门控检查变更 | src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml |

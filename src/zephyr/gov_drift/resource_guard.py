@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.resource_guard
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/resource/test_resource_guard.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/resource/test_resource_guard.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬限制不可突破

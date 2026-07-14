@@ -16,11 +16,11 @@ from unittest.mock import patch
 
 import pytest
 
-finding_model = pytest.importorskip("zephyr.governance.audit_trail.finding_model", reason="finding_model not available")
+finding_model = pytest.importorskip("zephyr.gov_audit.finding_model", reason="finding_model not available")
 AuditFinding = finding_model.AuditFinding
 
 pipeline_mod = pytest.importorskip(
-    "zephyr.governance.audit_trail.pipeline_runner", reason="pipeline_runner not available"
+    "zephyr.gov_audit.pipeline_runner", reason="pipeline_runner not available"
 )
 PipelineRunner = pipeline_mod.PipelineRunner
 PipelineResult = pipeline_mod.PipelineResult

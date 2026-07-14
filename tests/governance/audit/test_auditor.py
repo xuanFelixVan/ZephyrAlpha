@@ -29,7 +29,7 @@ class TestRollbackAuditorInstantiation:
 
 
 class TestLogRollback:
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_calls_audit_writer(self, mock_writer_cls):
         mock_write = MagicMock(return_value={"status": "ok"})
         mock_writer_cls.write = mock_write
@@ -51,7 +51,7 @@ class TestLogRollback:
         )
         assert result == {"status": "ok"}
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_default_session_id(self, mock_writer_cls):
         mock_write = MagicMock(return_value={"status": "ok"})
         mock_writer_cls.write = mock_write
@@ -64,7 +64,7 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["session_id"] == ""
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_passes_rollback_target_metadata(self, mock_writer_cls):
         mock_write = MagicMock(return_value={"event_id": "ev-1"})
         mock_writer_cls.write = mock_write
@@ -77,7 +77,7 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["metadata"] == {"rollback_target": "v2.0"}
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_granted_is_true(self, mock_writer_cls):
         mock_write = MagicMock(return_value={})
         mock_writer_cls.write = mock_write
@@ -90,7 +90,7 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["granted"] is True
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_permission_is_rollback(self, mock_writer_cls):
         mock_write = MagicMock(return_value={})
         mock_writer_cls.write = mock_write
@@ -103,7 +103,7 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["permission"] == "rollback"
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_decision_basis_format(self, mock_writer_cls):
         mock_write = MagicMock(return_value={})
         mock_writer_cls.write = mock_write
@@ -116,7 +116,7 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["decision_basis"] == "Rollback→Audit: commit-sha"
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_returns_writer_result(self, mock_writer_cls):
         expected = {"event_id": "ev-99", "written": True}
         mock_write = MagicMock(return_value=expected)
@@ -129,7 +129,7 @@ class TestLogRollback:
         )
         assert result == expected
 
-    @patch("zephyr.governance.audit_trail.contracts.AuditWriter")
+    @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_empty_strings(self, mock_writer_cls):
         mock_write = MagicMock(return_value={})
         mock_writer_cls.write = mock_write

@@ -1437,7 +1437,7 @@ python -m zephyr.red_blue_validator [OPTIONS]
 |---------|:---:|------|
 | src/zephyr/**/*.py | TIER_1 | Python 代码变更 |
 | scripts/**/*.py | TIER_1 | 脚本变更 |
-| src/zephyr/governance/rule_enforcement/** | TIER_1 + TIER_2 | Gate 变更触发 AI Agent 特攻 |
+| src/zephyr/gov_enforcement/rule_enforcement/** | TIER_1 + TIER_2 | Gate 变更触发 AI Agent 特攻 |
 | .claude/settings.json | TIER_2 | AI Agent 配置变更 |
 | _registry.yaml | TIER_1 | 注册表变更 |
 | requirements.txt | TIER_2 | 依赖变更 |

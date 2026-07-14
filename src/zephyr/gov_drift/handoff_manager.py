@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.handoff_manager
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/audit/test_handoff_manager.py; tests/ba/test_ba_handoff_manager.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py; tests/audit/test_handoff_manager.py; tests/ba/test_ba_handoff_manager.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 交接包完整性不可破坏

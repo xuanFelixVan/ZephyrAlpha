@@ -30,7 +30,7 @@ prompt construction. Supports three retrieval modes:
 KB refactor (Phase 1-3 done): removed kb_repo.py SQLite layer.
 inject_by_* methods return empty InjectedContext (no data source).
 KB retrieval is handled by UnifiedMemoryAPI
-(see zephyr.governance.kb.storage.unified_memory_api).
+(see zephyr.gov_kb.storage.unified_memory_api).
 
 Respects token budget limits from ContextBudgetTracker.
 """
@@ -81,7 +81,7 @@ class ContextInjector:
 
     KB refactor (Phase 1-3 done): removed kb_repo.py; inject_by_* return empty.
     KB retrieval is handled by UnifiedMemoryAPI
-    (zephyr.governance.kb.storage.unified_memory_api).
+    (zephyr.gov_kb.storage.unified_memory_api).
 
     Parameters
     ----------

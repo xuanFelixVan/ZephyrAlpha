@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.gov_audit.feedback_bridge import AuditFeedbackBridge
+from zephyr.gov_audit.feedback_bridge import FeedbackBridge as AuditFeedbackBridge
 
 
 class TestAuditFeedbackBridgeInit:

@@ -36,7 +36,7 @@ AI 看到 warning 后自行判断是扩展还是新建。
 
 Usage::
 
-    from zephyr.governance.commit_gates.capability_overlap_gate import make_capability_overlap_gate
+    from zephyr.gov_enforcement.commit_gates.capability_overlap_gate import make_capability_overlap_gate
 
     registry.register(make_capability_overlap_gate())
     # commit() 内部：registry.check_all(gateway, files, session_id=sid, ...)

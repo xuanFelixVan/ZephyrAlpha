@@ -19,10 +19,11 @@ import pytest
 
 aggregator_base = pytest.importorskip("zephyr.signal_fundamental.gen.aggregator_base")
 signal_synthesizer = pytest.importorskip("zephyr.signal_fundamental.synth.signal_synthesizer")
+degradation_monitor_base_mod = pytest.importorskip("zephyr.signal_quality.degradation_monitor_base")
 
 SignalAggregatorBase = aggregator_base.SignalAggregatorBase
 CapitalAllocatorBase = aggregator_base.CapitalAllocatorBase
-DegradationMonitorBase = aggregator_base.DegradationMonitorBase
+DegradationMonitorBase = degradation_monitor_base_mod.DegradationMonitorBase
 
 SignalSynthesizerBase = signal_synthesizer.SignalSynthesizerBase
 

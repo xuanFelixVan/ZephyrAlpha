@@ -112,14 +112,14 @@ class GateBridge:
         session_id: str,
     ) -> bool:
         try:
-            _mod = importlib.import_module("zephyr.governance.rule_enforcement.gate_engine")
+            _mod = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.gate_engine")
             GateEngine = _mod.GateEngine
             engine = GateEngine()
             if hasattr(engine, "evaluate_gate"):
                 result = engine.evaluate_gate(gate_id, {"finding_count": count})
                 return getattr(result, "passed", True)
             if hasattr(engine, "run_gate"):
-                _gt_mod = importlib.import_module("zephyr.governance.rule_enforcement.gate_types")
+                _gt_mod = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.gate_types")
                 GateResult = _gt_mod.GateResult
                 result: GateResult = engine.run_gate(gate_id)
                 return result.passed

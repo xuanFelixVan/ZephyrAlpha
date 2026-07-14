@@ -192,7 +192,7 @@ permission_table:
       permission: Human-Gated
       reason: 进化策略影响系统演化方向
     - module: gates
-      path: src/zephyr/governance/rule_enforcement/
+      path: src/zephyr/gov_enforcement/rule_enforcement/
       permission: Immutable Core
       reason: 合规门禁不可由 AI 禁用
     - module: db
@@ -441,7 +441,7 @@ permission_table:
       reason: Session 状态管理
       approval: Owner 审批
     - module: RI-07 DriftDetector 算法
-      path: src/zephyr/governance/rule_enforcement/drift-detector.py
+      path: src/zephyr/gov_enforcement/rule_enforcement/drift-detector.py
       permission: AI-Modifiable
       reason: 算法可优化（Wave 1 修正：原整体 Human-Gated 偏紧，需拆分）
       approval: 写 Provenance
@@ -464,7 +464,7 @@ permission_table:
       reason: 校验逻辑核心
       approval: Owner + R-XXX
     - component: CircuitBreakerGateway
-      path: src/zephyr/governance/rule_enforcement/circuit_breaker.py
+      path: src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py
       permission: Immutable Core
       reason: 熔断不可由 AI 禁用
       approval: Owner + R-XXX

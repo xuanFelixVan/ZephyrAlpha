@@ -3039,7 +3039,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
 
     trigger 裁定（注册表路径真源：index_generator.py REGISTRY_DIRS）：
     - src/zephyr/**/*.py：资产文件变更->索引可能漂移
-    - src/zephyr/governance/rule_enforcement/_registry.yaml：gates 注册表变更
+    - src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml：gates 注册表变更
     - docs/03_modules/module-registry.yaml：模块注册表变更
     - docs/03_modules/blueprint_registry.yaml：蓝图注册表变更
 
@@ -3062,7 +3062,7 @@ def make_index_generator_reconciler(gateway: "object") -> ReconcilerSpec:
     _INDEX_REL = "data/asset_index/unified-asset-index.yaml"
     # 注册表路径真源：index_generator.py REGISTRY_DIRS
     _REGISTRY_PATHS = (
-        "src/zephyr/governance/rule_enforcement/_registry.yaml",
+        "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
         "docs/03_modules/module-registry.yaml",
         "docs/03_modules/blueprint_registry.yaml",
     )
@@ -3694,7 +3694,7 @@ def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
 def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 commit_gates 模块清单漂移检测 post-commit reconciler（ARCH-055 治本）。
 
-    commit src/zephyr/governance/commit_gates/*.py 后，blueprint.md §0.1 模块清单
+    commit src/zephyr/gov_enforcement/commit_gates/*.py 后，blueprint.md §0.1 模块清单
     可能过时（新增/删除 gate 文件但文档未同步）。本 reconciler 在 post-commit 跑
     check_gate_inventory_drift.py 检测脚本，漂移时 warn（不阻断）。
 
@@ -3716,7 +3716,7 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if rel.startswith("src/zephyr/governance/commit_gates/") and rel.endswith(".py"):
+            if rel.startswith("src/zephyr/gov_enforcement/commit_gates/") and rel.endswith(".py"):
                 return True
         return False
 

@@ -58,11 +58,11 @@ class AdmissionResult(BaseModel):
 
 class AuditAdmissionController:
     _MODULE_MAP: dict[str, str] = {
-        "audit-trail": "zephyr.governance.audit_trail",
+        "audit-trail": "zephyr.gov_audit",
         "semantic-auditor": "zephyr.security.semantic_auditor",
         "orphan-judge": "zephyr.security.access_control.orphan_judge",
         "red-blue-validator": "zephyr.security.adversarial_validation",
-        "behavioral-auditor": "zephyr.governance.drift_detection",
+        "behavioral-auditor": "zephyr.gov_drift",
     }
 
     def __init__(self) -> None:

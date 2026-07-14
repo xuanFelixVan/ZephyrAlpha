@@ -1449,11 +1449,11 @@ sections:
 references:
   rule_ids: [TRAE-010, TRAE-022, TRAE-030, TRAE-042]
   scripts: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py]
-  modules: [src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py, src/zephyr/governance/rule_patterns.py]
+  modules: [src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py, src/zephyr/governance/rule_patterns.py]
   blueprints: []
 enforcement:
   type: code
-  executors: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py, src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py]
+  executors: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py, src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py]
   bypass_allowed: false
 metadata:
   change_policy: stable

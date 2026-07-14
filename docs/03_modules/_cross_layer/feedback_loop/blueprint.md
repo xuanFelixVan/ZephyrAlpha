@@ -46,6 +46,7 @@ references:
 last_updated: "2026-05-19"
 build_status: planned
 design_maturity: design
+responsibility_domain: 
 ---
 
 # Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心

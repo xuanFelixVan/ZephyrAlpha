@@ -54,7 +54,7 @@ tags: [risk-management, l04, phase-1-partial, stop-loss, kill-switch]
 priority: P0
 runtime_plane: hot
 ssot_yaml: "docs/03_modules/_domain_risk/blueprint.md"
-responsibility_domain:
+responsibility_domain: 
 build_status: generated
 ---
 

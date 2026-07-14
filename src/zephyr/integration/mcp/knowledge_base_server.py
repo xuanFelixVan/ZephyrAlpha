@@ -22,7 +22,7 @@ KnowledgeBaseServer: 知识库语义检索 MCP Server
 Task ID  : T-3-04 (B15)
 Server   : knowledge_base (tool-contracts.yaml §Server 2)
 Protocol : ADR-0033（stdio 传输、JSON-RPC 2.0）
-Backend  : UnifiedMemoryAPI (zephyr.governance.kb.storage.unified_memory_api) + InProcessVectorMemory
+Backend  : UnifiedMemoryAPI (zephyr.gov_kb.storage.unified_memory_api) + InProcessVectorMemory
            KB refactor 已移除 SQLite knowledge 表 + ChromaDB 中间层
 
 实现工具
@@ -92,7 +92,7 @@ class KnowledgeBaseServer(BaseMCPServer):
     """knowledge_base MCP Server 实现。
 
     持久化后端：UnifiedMemoryAPI (RI-02 三件套，真源:
-    zephyr.governance.kb.storage.unified_memory_api) + InProcessVectorMemory。
+    zephyr.gov_kb.storage.unified_memory_api) + InProcessVectorMemory。
     KB refactor 已移除 KbRepo (SQLite + ChromaDB) 中间层，禁止重建。
     降级策略：UnifiedMemoryAPI 不可用时回退到内存字典。
     """

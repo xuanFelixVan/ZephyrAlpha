@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.alert_router
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_infrastructure.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_infrastructure.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 告警路由不可绕过;去重窗口不可缩短

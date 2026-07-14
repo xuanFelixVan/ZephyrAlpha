@@ -155,7 +155,7 @@ class UnifiedMemoryAPI:
 
     生产用法
     --------
-        from zephyr.governance.kb.unified_memory_api import get_unified_memory_api, build_provenance
+        from zephyr.gov_kb.unified_memory_api import get_unified_memory_api, build_provenance
 
         kb = get_unified_memory_api()
         prov = build_provenance(origin="M1:doc_compressor", audit_chain=["T-V2-006"])

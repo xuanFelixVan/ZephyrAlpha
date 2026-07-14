@@ -44,7 +44,7 @@ auto_runtime_core 42方法 / action_dispatcher 22方法），职责过多。
 
 Usage::
 
-    from zephyr.governance.commit_gates.god_class_gate import make_god_class_gate
+    from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
 
     registry.register(make_god_class_gate())
 """

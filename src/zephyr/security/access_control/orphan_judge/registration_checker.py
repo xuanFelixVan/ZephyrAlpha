@@ -37,7 +37,7 @@ __all__ = [
 _REGISTRY_CANDIDATES = [
     "docs/registry_of_registries.yaml",
     "scripts/script-manifest.yaml",
-    "src/zephyr/governance/rule_enforcement/_registry.yaml",
+    "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
     "src/zephyr/agent-spec/_registry.yaml",
     "src/zephyr/kb/_registry.yaml",
     "src/zephyr/audit-orchestrator/_registry.yaml",

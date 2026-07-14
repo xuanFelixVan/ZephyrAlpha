@@ -1113,13 +1113,13 @@ tasks:
     extra:
       description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累）"
 
-  - task_id: kline_futures_qmt_incremental
-    table: c1_market.kline_futures_qmt
+  - task_id: futures_kline_qmt_incremental
+    table: c1_market.futures_kline_qmt
     source: miniqmt
     schedule: daily_capital
     incremental: true
     dependencies: []
-    capability: kline_futures_qmt
+    capability: futures_kline_qmt
     symbols: null  # 需指定合约代码如IF2407.CFFEX
     extra:
       description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
@@ -1135,13 +1135,13 @@ tasks:
     extra:
       description: "港股日K线增量（miniQMT get_market_data_ex，symbols如00700.HK）"
 
-  - task_id: us_kline_incremental
-    table: c1_market.us_kline
+  - task_id: kline_us_daily_incremental
+    table: c1_market.kline_us_daily
     source: miniqmt
     schedule: daily_capital
     incremental: true
     dependencies: []
-    capability: us_kline
+    capability: kline_us_daily
     symbols: null  # 需指定美股代码如AAPL.US
     extra:
       description: "美股日K线增量（miniQMT get_market_data_ex，symbols如AAPL.US，需美股行情权限）"
@@ -1327,3 +1327,21 @@ tasks:
     symbols: null
     extra:
       description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"
+
+  # ============== L10 周末补下载层（周日 02:00）==============
+  # 不依赖 last_key，直接查 ClickHouse 实际行数检测缺失，精准补下载
+  # source=backfill 为特殊路由，scheduler.run_schedule 检测到 weekend_backfill 时段时
+  # 调用 backfill_checker.run_weekend_backfill() 而非常规 run_task
+  - task_id: tick_backfill_weekly
+    table: c1_market.tick_data
+    source: backfill
+    schedule: weekend_backfill
+    incremental: false
+    dependencies: []
+    capability: tick_backfill
+    symbols: null
+    extra:
+      description: "Tick数据周补下载——检测过去7天缺失日期并补下载"
+      backfill_days: 7
+      backfill_mode: detect_and_fill
+      threshold: 5000000

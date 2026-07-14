@@ -22,7 +22,7 @@ GateEngineServer: 门禁裁决服务 MCP Server
 Task ID  : T-3-04 (B15)
 Server   : gate_engine (tool-contracts.yaml §Server 3)
 Protocol : ADR-0033（stdio 传输、JSON-RPC 2.0）
-Backend  : src/zephyr/governance/rule_enforcement/gate_engine/gate_engine.py (T-2-17)
+Backend  : src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py (T-2-17)
 Gate策略 : docs/02_enterprise_architecture/gate-strategy-standard.md
 
 实现工具

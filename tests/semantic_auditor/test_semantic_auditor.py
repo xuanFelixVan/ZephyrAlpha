@@ -19,7 +19,7 @@ cm_mod = pytest.importorskip("zephyr.governance.semantic_audit.compliance_map")
 fsa_mod = pytest.importorskip("zephyr.governance.semantic_audit.feedback_self_audit")
 kbg_mod = pytest.importorskip("zephyr.governance.semantic_audit.kb_gate")
 priv_mod = pytest.importorskip("zephyr.governance.semantic_audit.privacy")
-sc_mod = pytest.importorskip("zephyr.governance.audit_trail.supply_chain")
+sc_mod = pytest.importorskip("zephyr.gov_audit.supply_chain")
 
 ComplianceMapper = cm_mod.ComplianceMapper
 ComplianceFramework = cm_mod.ComplianceFramework

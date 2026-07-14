@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_drift.config_consistency
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES]
-# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/governance/drift_detection/_core.py; src/zephyr/governance/drift_detection/_infrastructure.py; tests/config/test_config_consistency.py
+# [CONSUMERS] src/zephyr/governance/behavioral_auditor/__init__.py; src/zephyr/gov_drift/_core.py; src/zephyr/gov_drift/_infrastructure.py; tests/config/test_config_consistency.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 配置一致性检查不可绕过

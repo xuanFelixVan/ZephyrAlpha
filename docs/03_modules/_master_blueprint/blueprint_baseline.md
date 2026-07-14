@@ -154,7 +154,7 @@ build_status: stable
 | **Script System** (脚本系统) | CT-ORC-SCRIPT, CT-SCRIPT-KB, CT-SCRIPT-GATE, CT-FEATUREFLAG | Finding, KE | ~1400 | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | 部分实现 |
 | **Knowledge Base** (知识库) | CT-SCRIPT-KB, CT-KB-VMS, CT-DATA-LIFECYCLE | KE | ~1000 | `src/zephyr/kb/` | 部分实现 |
 | **Context Engine** (CE) | CT-ORC-CE, CT-CE-VMS, CT-CE-LSG, CT-BULKHEAD | TaskCard | ~1400 | `src/zephyr/context_engine/` | 部分实现 |
-| **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/governance/rule_enforcement/` | 部分实现 |
+| **Gate Engine** (门控引擎) | CT-ORC-GATE, CT-SCRIPT-GATE, CT-FEATUREFLAG | TaskCard | ~900 | `src/zephyr/gov_enforcement/rule_enforcement/` | 部分实现 |
 | **Feedback Loop** (FLE) | CT-FLE-ORC, CT-FLE-DB, CT-TELE-FLE, CT-WATCHDOG | — | ~1200 | `src/zephyr/feedback_loop/` | 部分实现 |
 | **Pipeline** | CT-PIPE-ORC | TaskCard | ~400 | `src/zephyr/pipeline/` | 部分实现 |
 | **Vector Memory** (VMS) | CT-ORC-VMS, CT-CE-VMS, CT-KB-VMS, CT-BULKHEAD | — | ~900 | `src/zephyr/vector_memory/` | 部分实现 |
@@ -190,7 +190,7 @@ build_status: stable
 | **Agent Orchestrator (Orc)** | `src/zephyr/orchestrator/` | MOD-TASK_SYSTEM 任务系统蓝图 | 任务生命周期管理 + Agent 调度 + 沙箱执行 |
 | **Script System** | `src/zephyr/infra_ops/script_system/` + `scripts/governance/` | MOD-INF-005 脚本系统蓝图 | 12维度治理审计 + pre-commit门禁 + Finding管理 |
 | **Knowledge Base (KB)** | `src/zephyr/kb/` | MOD-KB-001 知识库蓝图 | 知识全生命周期（G1→G5）+ KE管理 + ChromaDB |
-| **Gate Engine (Gates)** | `src/zephyr/governance/rule_enforcement/` | MOD-GATE_ENGINE gate_engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
+| **Gate Engine (Gates)** | `src/zephyr/gov_enforcement/rule_enforcement/` | MOD-GATE_ENGINE gate_engine蓝图 | G0-G7任务门禁 + G1-G5 KMS门禁 + 准入判定 |
 | **Context Engine (CE)** | `src/zephyr/context_engine/` | MOD-CONTEXT_ENGINE context_engine蓝图 | build→compress→validate→inject 四阶段上下文注入 |
 | **Task Pipeline** | `src/zephyr/pipeline/` | MOD-INF-009 pipeline蓝图 | M1-M11双管线路由——决定任务用什么模型执行 |
 | **Feedback Loop Engine (FLE)** | `src/zephyr/feedback_loop/` | MOD-FEEDBACK_LOOP feedback_loop蓝图 | 指标采集→异常检测→调度改进——自我改进闭环 |
@@ -738,7 +738,7 @@ systems:
     blueprint: "MOD-INF-005"
   - role: consumer
     name: gate_engine
-    path: "src/zephyr/governance/rule_enforcement/"
+    path: "src/zephyr/gov_enforcement/rule_enforcement/"
     blueprint: "MOD-GATE_ENGINE"
 
 mapping:
@@ -837,7 +837,7 @@ systems:
     blueprint: "MOD-TASK_SYSTEM"
   - role: consumer
     name: gate_engine
-    path: "src/zephyr/governance/rule_enforcement/"
+    path: "src/zephyr/gov_enforcement/rule_enforcement/"
     blueprint: "MOD-GATE_ENGINE"
 
 data_flow:
@@ -1333,7 +1333,7 @@ Phase A: 无依赖先行（可并行）
 │   └── src/zephyr/shared/schemas/ke.py          ← KE dataclass
 │
 ├── A2: CT-ORC-GATE-001   ← 只依赖TaskCard + Gates层YAML
-│   └── src/zephyr/governance/rule_enforcement/task_gates.py
+│   └── src/zephyr/gov_enforcement/rule_enforcement/task_gates.py
 │
 ├── A3: CT-CE-LSG-001     ← 只依赖CE层YAML + LSG层YAML
 │   └── src/zephyr/security/llm_defense/llm_security/ce_lsg_bridge.py

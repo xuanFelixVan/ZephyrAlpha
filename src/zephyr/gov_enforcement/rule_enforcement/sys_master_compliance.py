@@ -21,7 +21,7 @@ SYS-MASTER-001 Compliance Checker
 依据：SYS-MASTER-CMP gate——系统总蓝图合规门禁
 验证：蓝图存在/冷启动引用/依赖完整性/进度一致性/规则无回归/crosscheck健康
 
-用法：python -m zephyr.governance.rule_enforcement.sys_master_compliance [--json]
+用法：python -m zephyr.gov_enforcement.rule_enforcement.sys_master_compliance [--json]
 exit: 0=pass, 1=findings
 """
 
@@ -337,7 +337,7 @@ def check_sli_data_sources() -> list[dict]:
     sli_sources = [
         ("SLI-01", "E2E AI 请求延迟", "zephyr.feedback_loop.slo_manager", "SLOManager"),
         ("SLI-02", "蓝图读取耗时", "zephyr.autonomy_core.dispatch_table", "SystemDispatch"),
-        ("SLI-03", "门禁执行总延迟", "zephyr.governance.rule_enforcement.gate_engine", "GateEngine"),
+        ("SLI-03", "门禁执行总延迟", "zephyr.gov_enforcement.rule_enforcement.gate_engine", "GateEngine"),
         (
             "SLI-04",
             "AI Session 启动数",
@@ -345,9 +345,9 @@ def check_sli_data_sources() -> list[dict]:
             "SessionContinuity",
         ),
         ("SLI-05", "Script 执行吞吐量", "zephyr.infrastructure.rollback.phase_check_registry", "PhaseCheckRegistry"),
-        ("SLI-06", "Gate 失败率", "zephyr.governance.rule_enforcement.gate_engine", "GateEngine"),
+        ("SLI-06", "Gate 失败率", "zephyr.gov_enforcement.rule_enforcement.gate_engine", "GateEngine"),
         ("SLI-07", "Script 执行错误率", "zephyr.infrastructure.rollback.phase_check_registry", "PhaseCheckRegistry"),
-        ("SLI-08", "契约漂移检出率", "zephyr.governance.drift_detection.drift_engine", "AIConstructionDetectors"),
+        ("SLI-08", "契约漂移检出率", "zephyr.gov_drift.drift_engine", "AIConstructionDetectors"),
         ("SLI-09", "Token 预算利用率", "zephyr.infrastructure.budget_enforcement", "BudgetEngine"),
         ("SLI-10", "SQLite WAL 深度", "zephyr.governance.database_manager", "DatabaseManager"),
         (

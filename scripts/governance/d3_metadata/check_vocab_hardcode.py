@@ -571,10 +571,10 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     # commit_gates 中 tests/ 豁免必须从 commit_gate_registry.is_test_exempt 引用，
     # 禁止硬编码 "tests/" 字面量——真源漂移风险（新AI可能直接硬编码绕过 SSoT，
     # 导致 Windows 路径归一化等治本逻辑被绕过）。
-    # 范围：仅 src/zephyr/governance/commit_gates/*.py
+    # 范围：仅 src/zephyr/gov_enforcement/commit_gates/*.py
     # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
     # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
-    # 真源：src/zephyr/governance/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
+    # 真源：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
     commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
     try:
         is_commit_gate = filepath.is_relative_to(commit_gates_dir)
@@ -600,7 +600,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
             issues.append((
                 node.lineno,
                 "硬编码测试目录名 'tests/'"
-                "（应 from zephyr.governance.rule_bridge.commit_gate_registry import is_test_exempt 引用 SSoT）",
+                "（应 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用 SSoT）",
             ))
 
     return issues

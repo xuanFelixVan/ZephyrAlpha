@@ -90,8 +90,8 @@ def test_e2e_contract_tester_on_real_files():
 
     tester = ContractTester(strict=False)
     gate_files = [
-        REPO_ROOT / "src/zephyr/governance/rule_enforcement/g1_ingest.yaml",
-        REPO_ROOT / "src/zephyr/governance/rule_enforcement/g2_triage.yaml",
+        REPO_ROOT / "src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml",
+        REPO_ROOT / "src/zephyr/gov_enforcement/rule_enforcement/g2_triage.yaml",
     ]
 
     for gf in gate_files:

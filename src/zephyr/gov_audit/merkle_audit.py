@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] SSoT=zephyr.governance.audit_trail(MOD-INF-020);本文件为兼容别名
+# [INVARIANTS] SSoT=zephyr.gov_audit(MOD-INF-020);本文件为兼容别名
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-RES_merkle_audit | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.governance.audit_trail (MOD-INF-020).
+"""Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).
 
 原内存Merkle树已被MOD-INF-020的MerkleAggregator+HourlyMerkleAggregator超集覆盖。
 本模块保留API兼容性，内部委托至SSoT。

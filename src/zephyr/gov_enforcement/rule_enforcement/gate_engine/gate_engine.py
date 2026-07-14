@@ -984,7 +984,7 @@ def _handle_security_artifact_scan(
     try:
         import importlib
 
-        _mod = importlib.import_module("zephyr.governance.drift_detection.artifact_scanner")
+        _mod = importlib.import_module("zephyr.gov_drift.artifact_scanner")
         ArtifactScanner = _mod.ArtifactScanner
 
         scanner = ArtifactScanner()

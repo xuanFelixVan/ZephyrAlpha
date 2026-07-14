@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-Gate-side Drift Detector Recovery — zephyr.governance.rule_enforcement.drift_detector
+Gate-side Drift Detector Recovery — zephyr.gov_enforcement.rule_enforcement.drift_detector
 
 module_id: GCT-023 (gate integration)
 trigger_router 消费端：drift_detected 事件 -> 扫描确认 -> 自动修复 -> 回滚兜底。

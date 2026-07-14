@@ -30,7 +30,7 @@ from zephyr.autonomy_core.__main__ import (
 class TestCmdScan:
     def test_returns_1_on_import_error(self):
         args = argparse.Namespace(level="LIGHT")
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.drift_engine": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.drift_engine": None}):
             result = _cmd_scan(args)
         assert result == 1
 
@@ -38,7 +38,7 @@ class TestCmdScan:
 class TestCmdSelfTest:
     def test_returns_1_on_import_error(self):
         args = argparse.Namespace(json=False)
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.self_test_verifier": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.self_test_verifier": None}):
             result = _cmd_self_test(args)
         assert result == 1
 
@@ -47,7 +47,7 @@ class TestCmdSelfTest:
         mock_result = MagicMock()
         mock_result.summary = "8/8 checks passed"
         mock_result.checks = [{"check": "c1", "status": "PASS", "detail": ""}]
-        with patch("zephyr.governance.drift_detection.self_test_verifier.SelfTestVerifier") as MockVerifier:
+        with patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier") as MockVerifier:
             MockVerifier.return_value.run_all.return_value = mock_result
             result = _cmd_self_test(args)
         assert result == 0
@@ -59,7 +59,7 @@ class TestCmdSelfTest:
         mock_result = MagicMock()
         mock_result.summary = "6/8 checks passed"
         mock_result.checks = [{"check": "c1", "status": "FAIL", "detail": ""}]
-        with patch("zephyr.governance.drift_detection.self_test_verifier.SelfTestVerifier") as MockVerifier:
+        with patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier") as MockVerifier:
             MockVerifier.return_value.run_all.return_value = mock_result
             result = _cmd_self_test(args)
         assert result == 1
@@ -68,14 +68,14 @@ class TestCmdSelfTest:
 class TestCmdBudget:
     def test_returns_1_on_import_error(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=False)
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.drift_infrastructure": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.drift_infrastructure": None}):
             result = _cmd_budget(args)
         assert result == 1
 
     def test_returns_0_when_allowed(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=False)
         with patch(
-            "zephyr.governance.drift_detection.drift_infrastructure.check_budget_for_gate",
+            "zephyr.gov_drift.drift_infrastructure.check_budget_for_gate",
             return_value={"allowed": True, "reason": "within budget"},
         ):
             result = _cmd_budget(args)
@@ -84,7 +84,7 @@ class TestCmdBudget:
     def test_returns_1_when_blocked(self):
         args = argparse.Namespace(module_id="MOD-INF-023", tier="P0", json=False)
         with patch(
-            "zephyr.governance.drift_detection.drift_infrastructure.check_budget_for_gate",
+            "zephyr.gov_drift.drift_infrastructure.check_budget_for_gate",
             return_value={"allowed": False, "reason": "budget exhausted"},
         ):
             result = _cmd_budget(args)
@@ -94,7 +94,7 @@ class TestCmdBudget:
 class TestCmdList:
     def test_returns_1_on_import_error(self):
         args = argparse.Namespace(json=False)
-        with patch.dict("sys.modules", {"zephyr.governance.drift_detection.drift_engine": None}):
+        with patch.dict("sys.modules", {"zephyr.gov_drift.drift_engine": None}):
             result = _cmd_list(args)
         assert result == 1
 
@@ -109,7 +109,7 @@ class TestCmdList:
         mock_det.status = "active"
         mock_det.auto_fixable = False
         with patch(
-            "zephyr.governance.drift_detection.drift_engine.load_detector_registry",
+            "zephyr.gov_drift.drift_engine.load_detector_registry",
             return_value=[mock_det],
         ):
             result = _cmd_list(args)
@@ -120,12 +120,12 @@ class TestCmdStatus:
     def test_returns_0_when_healthy(self, capsys):
         with (
             patch(
-                "zephyr.governance.drift_detection.drift_engine.load_detector_registry",
+                "zephyr.gov_drift.drift_engine.load_detector_registry",
                 return_value=[],
             ),
-            patch("zephyr.governance.drift_detection.self_test_verifier.SelfTestVerifier") as MockSTV,
+            patch("zephyr.gov_drift.self_test_verifier.SelfTestVerifier") as MockSTV,
             patch(
-                "zephyr.governance.drift_detection.self_check.bootstrap_self_check",
+                "zephyr.gov_drift.self_check.bootstrap_self_check",
                 return_value=True,
             ),
         ):
@@ -137,7 +137,7 @@ class TestCmdStatus:
 
     def test_returns_1_when_degraded(self, capsys):
         with patch(
-            "zephyr.governance.drift_detection.drift_engine.load_detector_registry",
+            "zephyr.gov_drift.drift_engine.load_detector_registry",
             side_effect=Exception("fail"),
         ):
             result = _cmd_status(argparse.Namespace())

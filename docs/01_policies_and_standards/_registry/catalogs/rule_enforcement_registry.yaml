@@ -16,7 +16,7 @@
 #       用 1 个 gate_rule_set 聚合节点代表。本文件是聚合节点的 SSoT 指针目标，
 #       列出所有门禁 yaml 的 gate_id/title/description/rule_ids。
 #
-# 维护方式: 自动生成（扫描 src/zephyr/governance/rule_enforcement/ 目录）+ 手工补充
+# 维护方式: 自动生成（扫描 src/zephyr/gov_enforcement/rule_enforcement/ 目录）+ 手工补充
 # 生成脚本: tmp_gen_registry.py（task_bound，生成后退役）
 # ============================================================================
 
@@ -32,7 +32,7 @@ ai_autonomy: ai_modifiable
 ttl: permanent
 collection_id: GATE_RULE_SET
 collection_name: 门禁规则集 / Gate Rule Set
-collection_path: src/zephyr/governance/rule_enforcement/
+collection_path: src/zephyr/gov_enforcement/rule_enforcement/
 owner_module: MOD-GATE_ENGINE
 node_type: gate_rule_set
 total_registered: 83
@@ -46,7 +46,7 @@ _schema:
   - status
   - category
 items:
-- file: src/zephyr/governance/rule_enforcement/admission/mad_001_architecture_necessity.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/admission/mad_001_architecture_necessity.yaml
   gate_id: MAD-001
   title: MAD-001 Architecture Necessity
   description: 对标：Architecture Decision Records (KB 决策记录) + YAGNI principle。 任何新模块在创建前 MUST 通过此门禁证明其架构必要性。 防止过度工程化和模块蔓延 (module sprawl)。
@@ -55,7 +55,7 @@ items:
   - TRAE-015
   status: active
   category: admission
-- file: src/zephyr/governance/rule_enforcement/admission/mad_002_phase_relevance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/admission/mad_002_phase_relevance.yaml
   gate_id: MAD-002
   title: MAD-002 Phase Relevance
   description: '对标：Wardley Mapping + Phase-based delivery。 任何新模块 MUST 证明与当前开发阶段（Phase A/B/C/D/E）的战略相关性。 Phase A (当前): 承重墙锁死 + 契约 SSoT 就位 Phase B: 层骨架生成 + 模块准入 Phase C: 第一支柱 MVP (D_DATA~D_REPORTING) 超前于当前阶段的模块提案即使合理也标记为
@@ -64,7 +64,7 @@ items:
   - TRAE-013
   status: active
   category: admission
-- file: src/zephyr/governance/rule_enforcement/admission/mad_003_dependency_compliance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/admission/mad_003_dependency_compliance.yaml
   gate_id: MAD-003
   title: MAD-003 Dependency Compliance
   description: 对标：Layer Isolation Principle + ArchUnit fitness functions。 新模块的依赖关系 MUST 符合架构定义的层依赖方向： - 低层不导入高层 - 跨层数据交换只走 shared/contracts/ - 外部依赖必须声明显式版本和降级策略
@@ -73,7 +73,7 @@ items:
   - TRAE-015
   status: active
   category: admission
-- file: src/zephyr/governance/rule_enforcement/admission/mad_004_interface_definability.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/admission/mad_004_interface_definability.yaml
   gate_id: MAD-004
   title: MAD-004 Interface Definability
   description: 对标：Interface Segregation Principle (ISP) + Contract-First Design。 任何新模块 MUST 在实现前明确定义其公开接口： - 入站接口（消费什么数据/事件） - 出站接口（产出什么数据/事件） - 异常接口（抛出什么错误） - 配置接口（需要什么配置参数）
@@ -82,7 +82,7 @@ items:
   - TRAE-014
   status: active
   category: admission
-- file: src/zephyr/governance/rule_enforcement/admission/mad_005_dependency_graph_template.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/admission/mad_005_dependency_graph_template.yaml
   gate_id: MAD-005
   title: MAD-005 Dependency Graph Template Compliance
   description: '对标：TPL-DEPGRAPH-001 v4.0.0 + project_rules.md 铁律 #7。 依赖图产出物 MUST 符合 TPL-DEPGRAPH-001 模板定义的 16 大结构： - 必须包含元数据、节点、边、邻接表、图属性、完整性声明、约束规则 - 节点必须有 node_id/type/layer/stability/safety_level - 边必须有
@@ -92,7 +92,7 @@ items:
   - TRAE-015
   status: active
   category: admission
-- file: src/zephyr/governance/rule_enforcement/g1_ingest.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g1_ingest.yaml
   gate_id: G1
   title: G1 Ingest Gate
   description: Ingest stage admission gate - validates file existence, encoding compliance, and frontmatter completeness before document enters the pipeline
@@ -100,7 +100,7 @@ items:
   - TRAE-001
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g2_triage.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g2_triage.yaml
   gate_id: G2
   title: G2 Triage Gate
   description: Triage stage admission gate - validates classification labels and priority scoring before document proceeds to evaluation
@@ -108,7 +108,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g3_evaluate.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g3_evaluate.yaml
   gate_id: G3
   title: G3 Evaluate Gate
   description: Evaluate stage admission gate - ensures knowledge value score meets threshold before document is considered for knowledge extraction
@@ -116,7 +116,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g4_activate.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g4_activate.yaml
   gate_id: G4
   title: G4 Activate Gate
   description: Activate stage admission gate - ensures dependencies are ready and no conflicts exist before knowledge entry is activated
@@ -124,7 +124,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g5_extract.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g5_extract.yaml
   gate_id: G5
   title: G5 Extract Gate
   description: Extract stage admission gate - ensures extraction templates are ready and target paths are compliant before knowledge extraction begins
@@ -132,7 +132,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g6_blueprint_compliance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g6_blueprint_compliance.yaml
   gate_id: G6_BP
   title: G6 Blueprint Compliance Gate
   description: beta hard compliance gate — AI agent MUST read the relevant blueprint BEFORE modifying code. Blocks any code change where the blueprint was not consulted first.
@@ -141,7 +141,7 @@ items:
   - TRAE-014
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g6_ctr_compliance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g6_ctr_compliance.yaml
   gate_id: G6
   title: G6 CTR Contract Compliance Gate
   description: CTR contract compliance gate - ensures all data through reporting domain modules use standardized cross-layer data contracts from shared/contracts/ instead of defining their own data types
@@ -150,7 +150,7 @@ items:
   - TRAE-014
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g6_path_tree_freshness.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g6_path_tree_freshness.yaml
   gate_id: G6_PT
   title: G6 Path Tree Freshness Gate
   description: GOV-DOC-004 §四-A 强制门禁 — 文件创建/删除/移动后必须刷新物理路径树快照和路径归属声明，防止路径漂移和AI幻觉
@@ -159,7 +159,7 @@ items:
   - TRAE-013
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g7_position_limits.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g7_position_limits.yaml
   gate_id: G10
   title: ''
   description: AI 生成的策略配置（D_PORTFOLIO_CORE/D_EXECUTION_CORE 产出）必须尊重 RiskLimits 中定义的 持仓比例上限。对标 SEC Reg T + FINRA 日内交易限制。
@@ -167,7 +167,7 @@ items:
   - TRAE-019
   status: ''
   category: trading
-- file: src/zephyr/governance/rule_enforcement/g7c_cross_gate_consistency.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g7c_cross_gate_consistency.yaml
   gate_id: G7C
   title: G7C Cross Gate Consistency Gate（跨门禁时序一致性）
   description: "跨门禁时序一致性校验：检测任务执行期间蓝图版本是否发生变化。 FOR EACH module_id IN task.affected_modules:\n  G1_snapshot.blueprint_version == current_module_blueprint_version\n不一致时severity=warning（不阻断——只告知）。 降级策略：tier_2_severe时G7C暂停（见蓝图§降级矩阵）。"
@@ -176,7 +176,7 @@ items:
   - TRAE-005
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g7d_depth_compliance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g7d_depth_compliance.yaml
   gate_id: G7D
   title: G7D Depth Compliance Gate（深度合规——形式+实质双重验证）
   description: G7交付门禁通过后的深度合规校验：单元测试覆盖率、依赖CVE、回归测试、lint检查。 与G7互补——G7验证交付完整性，G7D验证交付质量。 降级策略：tier_2_severe时G7D暂停（见蓝图§降级矩阵）。
@@ -185,7 +185,7 @@ items:
   - TRAE-005
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g8.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g8.yaml
   gate_id: G8
   title: G8 SSoT Consistency Gate — frontmatter ↔ registry 双向一致性校验
   description: SSoT 一致性门禁——校验每份 blueprint.md 的 frontmatter construction_progress 与 blueprint_registry.yaml / module-registry.yaml 完全一致。不一致 = 注册表不可信 = 阻断。
@@ -194,7 +194,7 @@ items:
   - TRAE-014
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g8_leverage.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g8_leverage.yaml
   gate_id: G11
   title: ''
   description: 检查 AI 生成的策略总杠杆（含衍生品）不超过 RiskLimits.max_gross_leverage。 一票否决制 (one-strike rejection)：任何策略超过阈值即 REJECT。
@@ -202,7 +202,7 @@ items:
   - TRAE-019
   status: ''
   category: trading
-- file: src/zephyr/governance/rule_enforcement/g9.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g9.yaml
   gate_id: G9
   title: Four-Blueprint Cross-Module Integration Compliance
   description: '机械验证四个关键蓝图系统与 Pipeline 的跨模块集成链路。
@@ -213,7 +213,7 @@ items:
   - TRAE-013
   status: ''
   category: governance
-- file: src/zephyr/governance/rule_enforcement/g9_strategy_correlation.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g9_strategy_correlation.yaml
   gate_id: G12
   title: ''
   description: 当 AI 生成新策略或修改现有策略时，检查新策略与已有策略的相关性。 防止 AI 产生"策略集群"——5 个本质上相同的策略分散部署， 在一个因子失效时同时失效（灾难性共振）。
@@ -221,7 +221,7 @@ items:
   - TRAE-019
   status: ''
   category: trading
-- file: src/zephyr/governance/rule_enforcement/g_asset_inventory.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_asset_inventory.yaml
   gate_id: G_asset_inventory
   title: G_asset_inventory Gate
   description: 资产盘点系统健康门禁 — 验证 unified-asset-index.yaml 存在且健康评分达标，确保项目资产可追溯性与全量注册（MOD-INF-026 §3.3）
@@ -229,7 +229,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g_forward_reference.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_forward_reference.yaml
   gate_id: G_FWD_REF
   title: ''
   description: 前向引用检测门禁——检测 class X 定义内部引用 X 自身的模式（前向引用 bug）。 当 class 定义体内引用了自身类名且文件缺少 from __future__ import annotations 时， 运行时会抛出 NameError。触发时自动运行 detect_forward_reference.py 扫描器。 根因：表头升级（TRAE-047）大规模修改文件时引入此类
@@ -238,7 +238,7 @@ items:
   - TRAE-047
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/g_trae_003.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_003.yaml
   gate_id: G_TRAE_003
   title: G_TRAE_003 Gate — 任务粒度与完成门槛协议
   description: 自动化门禁：强制执行 TRAE-003（任务粒度与完成门槛协议）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -246,7 +246,7 @@ items:
   - TRAE-003
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_004.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_004.yaml
   gate_id: G_TRAE_004
   title: G_TRAE_004 Gate — 并行执行与原子事务协议
   description: 自动化门禁：强制执行 TRAE-004（并行执行与原子事务协议）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -254,7 +254,7 @@ items:
   - TRAE-004
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_006.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_006.yaml
   gate_id: G_TRAE_006
   title: G_TRAE_006 Gate — 防幻觉-结构追溯层
   description: 自动化门禁：强制执行 TRAE-006（防幻觉-结构追溯层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -262,7 +262,7 @@ items:
   - TRAE-006
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_007.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_007.yaml
   gate_id: G_TRAE_007
   title: G_TRAE_007 Gate — 防幻觉-行为约束层
   description: 自动化门禁：强制执行 TRAE-007（防幻觉-行为约束层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -270,7 +270,7 @@ items:
   - TRAE-007
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_008.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_008.yaml
   gate_id: G_TRAE_008
   title: G_TRAE_008 Gate — 防幻觉-输出验证层
   description: 自动化门禁：强制执行 TRAE-008（防幻觉-输出验证层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -278,7 +278,7 @@ items:
   - TRAE-008
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_009.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_009.yaml
   gate_id: G_TRAE_009
   title: G_TRAE_009 Gate — 防幻觉-安全防护层
   description: 自动化门禁：强制执行 TRAE-009（防幻觉-安全防护层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -286,7 +286,7 @@ items:
   - TRAE-009
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_010.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_010.yaml
   gate_id: G_TRAE_010
   title: G_TRAE_010 Gate — 代码构建-命名与组织
   description: 自动化门禁：强制执行 TRAE-010（代码构建-命名与组织）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -294,7 +294,7 @@ items:
   - TRAE-010
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_011.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_011.yaml
   gate_id: G_TRAE_011
   title: G_TRAE_011 Gate — 代码构建-类型与导入
   description: 自动化门禁：强制执行 TRAE-011（代码构建-类型与导入）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -302,7 +302,7 @@ items:
   - TRAE-011
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_012.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_012.yaml
   gate_id: G_TRAE_012
   title: G_TRAE_012 Gate — 代码构建-测试与安全
   description: 自动化门禁：强制执行 TRAE-012（代码构建-测试与安全）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -310,7 +310,7 @@ items:
   - TRAE-012
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_016.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_016.yaml
   gate_id: G_TRAE_016
   title: G_TRAE_016 Gate — 架构约束-漂移检测
   description: 自动化门禁：强制执行 TRAE-016（架构约束-漂移检测）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -318,7 +318,7 @@ items:
   - TRAE-016
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_017.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_017.yaml
   gate_id: G_TRAE_017
   title: G_TRAE_017 Gate — 架构约束-治理顺序
   description: 自动化门禁：强制执行 TRAE-017（架构约束-治理顺序）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -326,7 +326,7 @@ items:
   - TRAE-017
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_018.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_018.yaml
   gate_id: G_TRAE_018
   title: G_TRAE_018 Gate — 行为边界-代码操作绝对禁止
   description: 自动化门禁：强制执行 TRAE-018（行为边界-代码操作绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -334,7 +334,7 @@ items:
   - TRAE-018
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_020.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_020.yaml
   gate_id: G_TRAE_020
   title: G_TRAE_020 Gate — 行为边界-治理纪律绝对禁止
   description: 自动化门禁：强制执行 TRAE-020（行为边界-治理纪律绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -342,7 +342,7 @@ items:
   - TRAE-020
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_021.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_021.yaml
   gate_id: G_TRAE_021
   title: G_TRAE_021 Gate — 行为边界-其余绝对禁止
   description: 自动化门禁：强制执行 TRAE-021（行为边界-其余绝对禁止）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -350,7 +350,7 @@ items:
   - TRAE-021
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_022.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_022.yaml
   gate_id: G_TRAE_022
   title: G_TRAE_022 Gate — 行为边界-条件禁止(代码与安全)
   description: 自动化门禁：强制执行 TRAE-022（行为边界-条件禁止(代码与安全)）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -358,7 +358,7 @@ items:
   - TRAE-022
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_023.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_023.yaml
   gate_id: G_TRAE_023
   title: G_TRAE_023 Gate — 行为边界-条件禁止(治理与文档)
   description: 自动化门禁：强制执行 TRAE-023（行为边界-条件禁止(治理与文档)）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -366,7 +366,7 @@ items:
   - TRAE-023
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_024.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_024.yaml
   gate_id: G_TRAE_024
   title: G_TRAE_024 Gate — 方法论-诊断与根因分析
   description: 自动化门禁：强制执行 TRAE-024（方法论-诊断与根因分析）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -374,7 +374,7 @@ items:
   - TRAE-024
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_025.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_025.yaml
   gate_id: G_TRAE_025
   title: G_TRAE_025 Gate — 方法论-决策与执行
   description: 自动化门禁：强制执行 TRAE-025（方法论-决策与执行）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -382,7 +382,7 @@ items:
   - TRAE-025
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_026.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_026.yaml
   gate_id: G_TRAE_026
   title: G_TRAE_026 Gate — 方法论-质量与度量
   description: 自动化门禁：强制执行 TRAE-026（方法论-质量与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -390,7 +390,7 @@ items:
   - TRAE-026
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_027.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_027.yaml
   gate_id: G_TRAE_027
   title: G_TRAE_027 Gate — 方法论-协作与演进
   description: 自动化门禁：强制执行 TRAE-027（方法论-协作与演进）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -398,7 +398,7 @@ items:
   - TRAE-027
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_028.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_028.yaml
   gate_id: G_TRAE_028
   title: G_TRAE_028 Gate — 文档治理-结构与命名
   description: 自动化门禁：强制执行 TRAE-028（文档治理-结构与命名）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -406,7 +406,7 @@ items:
   - TRAE-028
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_029.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_029.yaml
   gate_id: G_TRAE_029
   title: G_TRAE_029 Gate — 文档治理-操作安全
   description: 自动化门禁：强制执行 TRAE-029（文档治理-操作安全）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -414,7 +414,7 @@ items:
   - TRAE-029
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_030.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_030.yaml
   gate_id: G_TRAE_030
   title: G_TRAE_030 Gate — 文档治理-编号与元数据
   description: 自动化门禁：强制执行 TRAE-030（文档治理-编号与元数据）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -422,7 +422,7 @@ items:
   - TRAE-030
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_031.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_031.yaml
   gate_id: G_TRAE_031
   title: G_TRAE_031 Gate — 安全治理-密钥与访问控制
   description: 自动化门禁：强制执行 TRAE-031（安全治理-密钥与访问控制）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -430,7 +430,7 @@ items:
   - TRAE-031
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_032.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_032.yaml
   gate_id: G_TRAE_032
   title: G_TRAE_032 Gate — 模块治理-准入与生命周期
   description: 自动化门禁：强制执行 TRAE-032（模块治理-准入与生命周期）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -438,7 +438,7 @@ items:
   - TRAE-032
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_033.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_033.yaml
   gate_id: G_TRAE_033
   title: G_TRAE_033 Gate — 模块治理-注册与同步
   description: 自动化门禁：强制执行 TRAE-033（模块治理-注册与同步）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -446,7 +446,7 @@ items:
   - TRAE-033
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_034.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_034.yaml
   gate_id: G_TRAE_034
   title: G_TRAE_034 Gate — 任务系统-卡片标准与生命周期
   description: 自动化门禁：强制执行 TRAE-034（任务系统-卡片标准与生命周期）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -454,7 +454,7 @@ items:
   - TRAE-034
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_035.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_035.yaml
   gate_id: G_TRAE_035
   title: G_TRAE_035 Gate — 任务系统-施工与验证
   description: 自动化门禁：强制执行 TRAE-035（任务系统-施工与验证）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -462,7 +462,7 @@ items:
   - TRAE-035
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_036.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_036.yaml
   gate_id: G_TRAE_036
   title: G_TRAE_036 Gate — 架构治理-门禁与过渡
   description: 自动化门禁：强制执行 TRAE-036（架构治理-门禁与过渡）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -470,7 +470,7 @@ items:
   - TRAE-036
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_037.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_037.yaml
   gate_id: G_TRAE_037
   title: G_TRAE_037 Gate — 架构治理-合格与版本化
   description: 自动化门禁：强制执行 TRAE-037（架构治理-合格与版本化）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -478,7 +478,7 @@ items:
   - TRAE-037
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_038.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_038.yaml
   gate_id: G_TRAE_038
   title: G_TRAE_038 Gate — 架构治理-CTR注入规则
   description: 自动化门禁：强制执行 TRAE-038（架构治理-CTR注入规则）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -486,7 +486,7 @@ items:
   - TRAE-038
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_039.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_039.yaml
   gate_id: G_TRAE_039
   title: G_TRAE_039 Gate — AI治理-幻觉检测与自检
   description: 自动化门禁：强制执行 TRAE-039（AI治理-幻觉检测与自检）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -494,7 +494,7 @@ items:
   - TRAE-039
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_040.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_040.yaml
   gate_id: G_TRAE_040
   title: G_TRAE_040 Gate — AI治理-模型路由与协作
   description: 自动化门禁：强制执行 TRAE-040（AI治理-模型路由与协作）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -502,7 +502,7 @@ items:
   - TRAE-040
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_041.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_041.yaml
   gate_id: G_TRAE_041
   title: G_TRAE_041 Gate — 元规则-规则分类与裁决
   description: 自动化门禁：强制执行 TRAE-041（元规则-规则分类与裁决）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -510,7 +510,7 @@ items:
   - TRAE-041
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_042.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_042.yaml
   gate_id: G_TRAE_042
   title: G_TRAE_042 Gate — 元规则-标准体系与模板
   description: 自动化门禁：强制执行 TRAE-042（元规则-标准体系与模板）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -518,7 +518,7 @@ items:
   - TRAE-042
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_043.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_043.yaml
   gate_id: G_TRAE_043
   title: G_TRAE_043 Gate — 元规则-元数据与度量
   description: 自动化门禁：强制执行 TRAE-043（元规则-元数据与度量）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -526,7 +526,7 @@ items:
   - TRAE-043
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_044.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_044.yaml
   gate_id: G_TRAE_044
   title: G_TRAE_044 Gate — 合规治理-审计与监管
   description: 自动化门禁：强制执行 TRAE-044（合规治理-审计与监管）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -534,7 +534,7 @@ items:
   - TRAE-044
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_045.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_045.yaml
   gate_id: G_TRAE_045
   title: G_TRAE_045 Gate — 数据治理-质量与血缘
   description: 自动化门禁：强制执行 TRAE-045（数据治理-质量与血缘）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -542,7 +542,7 @@ items:
   - TRAE-045
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_046.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_046.yaml
   gate_id: G_TRAE_046
   title: G_TRAE_046 Gate — 工程治理-代码重组安全
   description: 自动化门禁：强制执行 TRAE-046（工程治理-代码重组安全）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -550,7 +550,7 @@ items:
   - TRAE-046
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_047.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_047.yaml
   gate_id: G_TRAE_047
   title: G_TRAE_047 Gate — 工程治理-文件头部与扩展
   description: 自动化门禁：强制执行 TRAE-047（工程治理-文件头部与扩展）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -558,7 +558,7 @@ items:
   - TRAE-047
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_048.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_048.yaml
   gate_id: G_TRAE_048
   title: G_TRAE_048 Gate — 操作-Vibe Coding会话管理
   description: 自动化门禁：强制执行 TRAE-048（操作-Vibe Coding会话管理）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -566,7 +566,7 @@ items:
   - TRAE-048
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_049.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_049.yaml
   gate_id: G_TRAE_049
   title: G_TRAE_049 Gate — 操作-领域操作手册
   description: 自动化门禁：强制执行 TRAE-049（操作-领域操作手册）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -574,7 +574,7 @@ items:
   - TRAE-049
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_050.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_050.yaml
   gate_id: G_TRAE_050
   title: G_TRAE_050 Gate — 域策略-数据源与因子层
   description: 自动化门禁：强制执行 TRAE-050（域策略-数据源与因子层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -582,7 +582,7 @@ items:
   - TRAE-050
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_051.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_051.yaml
   gate_id: G_TRAE_051
   title: G_TRAE_051 Gate — 域策略-风控与盘后层
   description: 自动化门禁：强制执行 TRAE-051（域策略-风控与盘后层）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -590,7 +590,7 @@ items:
   - TRAE-051
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_052.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_052.yaml
   gate_id: G_TRAE_052
   title: G_TRAE_052 Gate — 铁律补充-跨蓝图变更与项目瘦身
   description: 自动化门禁：强制执行 TRAE-052（铁律补充-跨蓝图变更与项目瘦身）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -598,7 +598,7 @@ items:
   - TRAE-052
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_053.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_053.yaml
   gate_id: G_TRAE_053
   title: G_TRAE_053 Gate — 铁律补充-自动化双轨判定
   description: 自动化门禁：强制执行 TRAE-053（铁律补充-自动化双轨判定）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -606,7 +606,7 @@ items:
   - TRAE-053
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_054.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_054.yaml
   gate_id: G_TRAE_054
   title: G_TRAE_054 Gate — depgraph 程序化访问协议
   description: 自动化门禁：强制执行 TRAE-054（depgraph 程序化访问协议）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -614,7 +614,7 @@ items:
   - TRAE-054
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_055.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_055.yaml
   gate_id: G_TRAE_055
   title: G_TRAE_055 Gate — 架构容量与域治理规则
   description: 自动化门禁：强制执行 TRAE-055（架构容量与域治理规则）规则。将规则从文档约束升级为phase_gate自动阻断。
@@ -622,7 +622,7 @@ items:
   - TRAE-055
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/g_trae_059.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/g_trae_059.yaml
   gate_id: G_TRAE_059
   title: G_TRAE_059 Gate — _schema_version 写入保护 + 版本一致性
   description: 自动化门禁：强制执行 TRAE-059（_schema_version 写入保护规范）。 两层检查：(1) AST 扫描检测非 depgraph_schema.py 对 _schema_version 的写入操作； (2) DB 状态校验 _schema_version.MAX(version) == _MIGRATIONS 最大版本号。 根因：DM-202947 止血修复发现
@@ -632,7 +632,7 @@ items:
   - TRAE-054
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/gate_dedup.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/gate_dedup.yaml
   gate_id: GATE-DEDUP
   title: ''
   description: 代码去重门禁——每次 GateEngine.evaluate("GATE-DEDUP") 触发时， 调用 code_dedup_engine Scanner 执行增量扫描，根据退出码判定 PASS/WARN/BLOCK/SKIP/DEGRADED。 对标 MOD-INF-017 蓝图 §12 集成目标。
@@ -640,7 +640,7 @@ items:
   - TRAE-002
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/gct_024_budget_enforcer.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/gct_024_budget_enforcer.yaml
   gate_id: gct_024_budget_enforcer
   title: GCT-024 Budget Enforcer — MOD-INF-024 · v0.13.0 · Token/Cost/Time 3D Seven-Level Budget
   description: ''
@@ -648,7 +648,7 @@ items:
   - TRAE-019
   status: active
   category: governance
-- file: src/zephyr/governance/rule_enforcement/invariants/en_001_circular_dependency.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_001_circular_dependency.yaml
   gate_id: EN-001
   title: ''
   description: 扫描 14 层 + shared/contracts 的全部 Python 导入，构建依赖 DAG， Kahn's algorithm 拓扑排序——若存在环则 P0 阻断。
@@ -657,7 +657,7 @@ items:
   - TRAE-015
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/invariants/en_002_enforcement_validator.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_002_enforcement_validator.yaml
   gate_id: EN-002
   title: ''
   description: 读取 cross_layer_contracts.yaml，验证每条 P0 契约均声明了 enforcement （enforcement_mode / enforcement_action），且值与实际路由策略一致。
@@ -666,7 +666,7 @@ items:
   - TRAE-014
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/invariants/en_003_contract_compatibility.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/invariants/en_003_contract_compatibility.yaml
   gate_id: EN-003
   title: ''
   description: 读取 cross_layer_contracts.yaml 中的字段定义，与 codegen 生成的 Python dataclass 实际字段做 diff——检测字段缺失/类型不匹配/顺序错误。
@@ -675,7 +675,7 @@ items:
   - TRAE-014
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/observability_baseline.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/observability_baseline.yaml
   gate_id: GATE-OBSERVABILITY
   title: Observability Baseline Gate — System Telemetry MOD-INF-015 v0.9.0
   description: Phase 1 observability baseline gate — validates System Telemetry (MOD-INF-015) 9-subsystem facade is importable, health-registerable, metrics-writable, and all loops closed before proceeding
@@ -684,7 +684,7 @@ items:
   - TRAE-002
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/post_doc_review.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/post_doc_review.yaml
   gate_id: POST_DOC_REVIEW
   title: Post-Execution Document Content Review Gate
   description: Session 关门时审查本次 session 修改的文档+蓝图/规则， 按 trae_030 §0 时态判定 + §1 可删清单 + GOV-DOC-016 纯陈述原则 检查过程陈述/噪音/冲突，标记"待规格化"（不立即删除）， 标记数≥3 时触发 trae_030 规格化流程。
@@ -692,7 +692,7 @@ items:
   - TRAE-030
   status: active
   category: compliance
-- file: src/zephyr/governance/rule_enforcement/sys_master_compliance.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.yaml
   gate_id: SYS-MASTER-CMP
   title: SYS-MASTER-001 Compliance Gate
   description: 系统总蓝图合规门禁——验证 SYS-MASTER-001（三级金字塔顶点）与 MOD-MASTER-001 的集成链路完整性、冷启动序列引用、construction_progress 一致性及 76 条 ai_role_instruction 规则无回归。
@@ -701,7 +701,7 @@ items:
   - TRAE-014
   status: active
   category: ''
-- file: src/zephyr/governance/rule_enforcement/task/g0_entry.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/task/g0_entry.yaml
   gate_id: G0
   title: G0 Task Entry Gate
   description: G0 是所有任务（AI Agent 任务 + 人工作业）进入 ZephyrAlpha 工作流系统 的强制性入口门禁。对标 Kubernetes Admission Controller。
@@ -710,7 +710,7 @@ items:
   - TRAE-005
   status: active
   category: task
-- file: src/zephyr/governance/rule_enforcement/task/g0_orc_gate_engine.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/task/g0_orc_gate_engine.yaml
   gate_id: G0
   title: G0 Task Entry Gate（Orc 最小硬校验）
   description: 任务进入执行队列前的可自动化校验：priority 枚举、核心字段非空、task_id 正则。 Orc 契约中的 assignee / deadline 等字段待在 Task 模型落地后再增补 checks。
@@ -719,7 +719,7 @@ items:
   - TRAE-005
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/task/g7_orc_gate_engine.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_gate_engine.yaml
   gate_id: G7
   title: G7 Task Delivery Gate（Orc 最小硬校验）
   description: 收尾校验：TaskCard.verification_status=verified；audit_findings 全部 resolved。 残余目录扫描等见 task_completion_gate.py（与 YAML 门禁互补）。
@@ -728,7 +728,7 @@ items:
   - TRAE-005
   status: ''
   category: ''
-- file: src/zephyr/governance/rule_enforcement/zero_residue.yaml
+- file: src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml
   gate_id: ZERO-RESIDUE
   title: ''
   description: 零残留原则自动化执行层——每次 GateEngine.evaluate("ZERO-RESIDUE") 触发时， 自动运行全量残留扫描（ZeroResidueScanner），聚合 5 个已有检测脚本。 对标 IRN-011（ai-behavior-iron-policy.md）9 条零残留规则（ZR-001~009）。

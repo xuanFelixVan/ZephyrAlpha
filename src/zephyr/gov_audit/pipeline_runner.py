@@ -26,7 +26,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-# STUB: from zephyr.governance.audit_trail.text_to_finding_adapter import TextToFindingAdapter
+# STUB: from zephyr.gov_audit.text_to_finding_adapter import TextToFindingAdapter
 # Reason: lazy import to break circular import with audit-orchestrator.__init__
 from zephyr.gov_audit.finding_model import (
     AuditFinding,
@@ -1044,7 +1044,7 @@ class PipelineRunner:
                             dimension="D5",
                             severity=FindingSeverity.HIGH,
                             category="门禁检查不可调用",
-                            file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+                            file_path="src/zephyr/gov_enforcement/rule_enforcement/phase_check_registry.py",
                             description=f"门禁检查 {check_name} 不是可调用对象",
                             evidence=f"type={type(check_fn).__name__}",
                             remediation_action=RemediationAction.FIX,
@@ -1060,7 +1060,7 @@ class PipelineRunner:
                                 dimension="D5",
                                 severity=FindingSeverity.HIGH,
                                 category="门禁检查返回类型错误",
-                                file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+                                file_path="src/zephyr/gov_enforcement/rule_enforcement/phase_check_registry.py",
                                 description=f"门禁检查 {check_name} 返回 {type(result).__name__}，期望 GateResult",
                                 evidence=f"return_type={type(result).__name__}",
                                 remediation_action=RemediationAction.FIX,
@@ -1073,7 +1073,7 @@ class PipelineRunner:
                             dimension="D5",
                             severity=FindingSeverity.HIGH,
                             category="门禁检查执行失败",
-                            file_path="src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+                            file_path="src/zephyr/gov_enforcement/rule_enforcement/phase_check_registry.py",
                             description=f"门禁检查 {check_name} 执行时抛出异常",
                             evidence=f"error={exc}",
                             remediation_action=RemediationAction.FIX,

@@ -171,7 +171,7 @@ END_REQUIRED_SECTIONS
 | 1 | registry_governance.py | §3.1 | 功能域注册表管理+SSoT门禁+一致性校验入口 | ✅ | 本模块 | — |
 | 2 | `scripts/governance/generate_project_path_tree.py` | §3.1 | 物理路径树快照生成(REG-017) | ✅ | 本模块 | — |
 | 3 | `scripts/governance/generators/generate_path_ownership_map.py` | §3.1 | 路径归属声明生成+冲突检测(REG-018) | ✅ | 本模块 | — |
-| 4 | `src/zephyr/governance/rule_enforcement/g6-path-tree-freshness.yaml` | §3.1 | 路径树刷新强制门禁(G6_PT) | ✅ | 本模块 |
+| 4 | `src/zephyr/gov_enforcement/rule_enforcement/g6-path-tree-freshness.yaml` | §3.1 | 路径树刷新强制门禁(G6_PT) | ✅ | 本模块 |
 | 5 | `__init__.py` | §3.1 |   init   | 已实现 | — |
 | 6 | `auto_diagnostics.py` | §3.1 | auto diagnostics | 已实现 | — |
 | 7 | `config.py` | §3.1 | config | 已实现 | — |
@@ -198,7 +198,7 @@ END_REQUIRED_SECTIONS
 | 代码 [BLUEPRINT] 头部指向 = MOD-INF-037 | `grep "\[BLUEPRINT\]" registry_governance.py` | ✅ |
 | 路径树生成脚本 [BLUEPRINT] = MOD-INF-037 | `grep "\[BLUEPRINT\]" scripts/governance/generate_project_path_tree.py` | ✅ |
 | 归属图生成脚本 [BLUEPRINT] = MOD-INF-037 | `grep "\[BLUEPRINT\]" scripts/governance/generators/generate_path_ownership_map.py` | ✅ |
-| G6_PT门禁已注册到gate registry | `grep "G6_PT" src/zephyr/governance/rule_enforcement/_registry.yaml` | ✅ |
+| G6_PT门禁已注册到gate registry | `grep "G6_PT" src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` | ✅ |
 
 ### §0.3 版本-代码映射
 
@@ -226,7 +226,7 @@ END_REQUIRED_SECTIONS
 |---|--------|-----|
 | 1 | 主代码目录 | `src/zephyr/infra_ops/` |
 | 2 | 脚本目录 | `scripts/governance/` (generate_project_path_tree.py, generate_path_ownership_map.py) |
-| 3 | 门禁目录 | `src/zephyr/governance/rule_enforcement/` (g6-path-tree-freshness.yaml) |
+| 3 | 门禁目录 | `src/zephyr/gov_enforcement/rule_enforcement/` (g6-path-tree-freshness.yaml) |
 | 4 | 已知副本目录 | 无 |
 | 5 | 副本处置状态 | 无副本 |
 
@@ -312,7 +312,7 @@ END_REQUIRED_SECTIONS
 | 注册表一致性校验 | [MOD-INF-026] | 同上 |
 | 物理路径树生成 | [MOD-INF-005, MOD-INF-026] | `python scripts/governance/generate_project_path_tree.py --check` |
 | 路径归属声明+冲突检测 | [MOD-INF-005] | `python scripts/governance/generators/generate_path_ownership_map.py --conflicts` |
-| 路径树刷新门禁 | [MOD-GATE_ENGINE] | `grep "G6_PT" src/zephyr/governance/rule_enforcement/_registry.yaml` |
+| 路径树刷新门禁 | [MOD-GATE_ENGINE] | `grep "G6_PT" src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
 
 ---
 
@@ -638,7 +638,7 @@ class OverlapResult:
 | 校验脚本 | `scripts/governance/d3_metadata/check_registry_consistency.py` | 注册表一致性校验CLI | ≥0 | script-manifest.yaml |
 | 路径树生成脚本 | `scripts/governance/generate_project_path_tree.py` | 物理路径树快照生成 | ≥0 | script-manifest.yaml |
 | 归属图生成脚本 | `scripts/governance/generators/generate_path_ownership_map.py` | 路径归属声明生成+冲突检测 | ≥0 | script-manifest.yaml |
-| 路径树刷新门禁 | `src/zephyr/governance/rule_enforcement/g6-path-tree-freshness.yaml` | GOV-DOC-004 §四-A 强制门禁(G6_PT) | ≥0 | gate _registry.yaml |
+| 路径树刷新门禁 | `src/zephyr/gov_enforcement/rule_enforcement/g6-path-tree-freshness.yaml` | GOV-DOC-004 §四-A 强制门禁(G6_PT) | ≥0 | gate _registry.yaml |
 | 测试代码 | `tests/infrastructure/test_registry_governance.py` | 测试用例 | ≥0 | pytest自动发现 |
 | Frontmatter字段注册表 | `docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml` | 40个Frontmatter字段定义（REG-FRONTMATTER-001） | ≥1 | registry_of_registries.yaml |
 

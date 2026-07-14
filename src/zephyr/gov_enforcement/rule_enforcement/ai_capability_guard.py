@@ -27,7 +27,7 @@ ZephyrAlpha — gates/ai_capability_guard.py
 
 用法
 ----
-    from zephyr.governance.rule_enforcement.ai_capability_guard import require_capability
+    from zephyr.gov_enforcement.rule_enforcement.ai_capability_guard import require_capability
 
     @require_capability("modify_factor_registry", min_level=CapabilityLevel.EXTEND)
     def register_new_factor(factor_def: dict) -> None:
@@ -51,7 +51,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-_logger = logging.getLogger("zephyr.governance.rule_enforcement.capability_guard")
+_logger = logging.getLogger("zephyr.gov_enforcement.rule_enforcement.capability_guard")
 
 
 class CapabilityLevel(str, Enum):
