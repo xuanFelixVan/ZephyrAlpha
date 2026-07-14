@@ -4861,6 +4861,10 @@ creation_tokens:
     token: "auto-data-retention-contract-20260714"
     created_by: "session-sess-9444-20260714212810"
     capability: "data_retention_contract"
+  - file: "docs/03_modules/_domain_governance/alignment_loop/blueprint.md"
+    token: "auto-alignment-loop-blueprint-20260714"
+    created_by: "session-sess-30596-20260714230339"
+    capability: "alignment_loop_blueprint"
 
 # ============================================================================
 # 维护日志
