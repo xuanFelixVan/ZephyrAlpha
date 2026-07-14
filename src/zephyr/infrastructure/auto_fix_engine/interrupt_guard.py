@@ -139,7 +139,7 @@ class InterruptGuard:
                 logger.error("WAL recovery failed for %s: %s", wal_file, exc, exc_info=True)
         return recovered
 
-    def _handle_interrupt(self, signum: int, frame: Any) -> None:
+    def _handle_interrupt(self, signum: int, frame: object) -> None:
         logger.warning("Interrupt signal %d received, initiating WAL recovery", signum)
         with self._lock:
             for action_id, fix_data in list(self._active_fixes.items()):

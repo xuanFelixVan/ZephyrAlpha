@@ -179,11 +179,11 @@ class FixResultCache:
         self._max_size = max_size
         self._lock = threading.Lock()
 
-    def get(self, key: str) -> Any | None:
+    def get(self, key: str) -> object | None:
         with self._lock:
             return self._cache.get(key)
 
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: str, value: object) -> None:
         with self._lock:
             if len(self._cache) >= self._max_size:
                 oldest = next(iter(self._cache))

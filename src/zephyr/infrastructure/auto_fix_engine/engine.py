@@ -276,7 +276,7 @@ class AutoFixEngine:
     def get_approval_queue(self) -> list[FixAction]:
         return self._approval_queue.get_pending()
 
-    def _find_fixer(self, action_type: str) -> Any:
+    def _find_fixer(self, action_type: str) -> object:
         type_to_fixer = {
             "zombie_cleanup": "zombie_cleaner",
             "all_completion": "all_completer",

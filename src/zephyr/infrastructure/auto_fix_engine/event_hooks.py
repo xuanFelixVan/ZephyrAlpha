@@ -155,7 +155,7 @@ def subscribe_eventbus() -> None:
         logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
-def _get_engine() -> Any:
+def _get_engine() -> object:
     """懒加载 AutoFixEngine 单例。"""
     global _engine_instance
     if _engine_instance is None:

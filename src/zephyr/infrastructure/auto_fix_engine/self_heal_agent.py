@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from typing import Any
 
 from zephyr.infrastructure.auto_fix_engine.models import (
@@ -43,7 +44,7 @@ class SelfHealAgent:
     def circuit_open(self) -> bool:
         return self._circuit_open
 
-    def heal(self, target: str, diagnose_fn: Any, fix_fn: Any, validate_fn: Any) -> FixAction:
+    def heal(self, target: str, diagnose_fn: Callable[..., object], fix_fn: Callable[..., object], validate_fn: Callable[..., object]) -> FixAction:
         if self._circuit_open:
             return FixAction(
                 action_type="self_heal",
@@ -102,7 +103,7 @@ class SelfHealAgent:
         action.metadata["round_history"] = [{"round": r["round"], "phase": r["phase"]} for r in self._round_history]
         return action
 
-    def _observe(self, target: str, diagnose_fn: Any) -> dict[str, Any]:
+    def _observe(self, target: str, diagnose_fn: Callable[..., object]) -> dict[str, Any]:
         try:
             result = diagnose_fn(target)
             if isinstance(result, dict):
@@ -135,7 +136,7 @@ class SelfHealAgent:
             return {"plan": "escalate", "reason": "High severity issue requires human review"}
         return {"plan": "auto_fix", "severity": severity}
 
-    def _act(self, target: str, fix_plan: dict[str, Any], fix_fn: Any) -> FixAction:
+    def _act(self, target: str, fix_plan: dict[str, Any], fix_fn: Callable[..., object]) -> FixAction:
         if fix_plan.get("plan") == "skip":
             return FixAction(action_type="self_heal", target=target, status=FixStatus.COMPLETED)
         if fix_plan.get("plan") == "escalate":
@@ -150,7 +151,7 @@ class SelfHealAgent:
                 action_type="self_heal", target=target, status=FixStatus.FAILED, metadata={"error": str(exc)}
             )
 
-    def _validate(self, target: str, validate_fn: Any) -> ValidationResult:
+    def _validate(self, target: str, validate_fn: Callable[..., object]) -> ValidationResult:
         try:
             result = validate_fn(target)
             if isinstance(result, ValidationResult):

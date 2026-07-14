@@ -31,7 +31,7 @@ def set_record_writer(fn: Callable[[dict[str, Any], dict[str, Any] | None], bool
     _record_writer = fn
 
 
-def get_current_span() -> Any:
+def get_current_span() -> object:
     if _span_context_getter is not None:
         return _span_context_getter()
     return None

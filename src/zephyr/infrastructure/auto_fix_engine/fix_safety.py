@@ -24,6 +24,7 @@ import subprocess
 import tempfile
 import time
 from collections import defaultdict
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -273,7 +274,7 @@ class SandboxExecutor:
     def __init__(self, base_dir: str | None = None) -> None:
         self._base_dir = base_dir or os.path.join(tempfile.gettempdir(), "auto_fix_sandbox")
 
-    def execute(self, action: FixAction, fix_fn: Any) -> tuple[bool, str]:
+    def execute(self, action: FixAction, fix_fn: Callable[..., object]) -> tuple[bool, str]:
         sandbox_dir = os.path.join(self._base_dir, action.action_id)
         os.makedirs(sandbox_dir, exist_ok=True)
         try:

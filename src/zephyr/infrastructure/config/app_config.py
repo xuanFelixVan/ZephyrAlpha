@@ -34,7 +34,7 @@ import os
 import threading
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable
+from typing import Callable
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class AppConfig:
             object.__setattr__(self, "data_source_priority", tuple(self.data_source_priority))
 
 
-def _deep_merge_lists(val: Any) -> tuple[str, ...] | Any:
+def _deep_merge_lists(val: object) -> tuple[str, ...] | object:
     if isinstance(val, list):
         return tuple(str(x) for x in val)
     return val

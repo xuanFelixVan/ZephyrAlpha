@@ -98,7 +98,7 @@ class TraceCollector:
 def trace(operation: str = ""):
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             collector = TraceCollector.get_instance()
             t0 = time.time()
             start_ts = datetime.now(UTC).isoformat()

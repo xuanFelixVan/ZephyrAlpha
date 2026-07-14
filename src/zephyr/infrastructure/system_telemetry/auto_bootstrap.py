@@ -49,7 +49,7 @@ _module_registry: dict[str, Any] = {}
 _registry_lock = threading.Lock()
 
 
-def register_module(module_id: str, environment: str = "dev") -> Any:
+def register_module(module_id: str, environment: str = "dev") -> object:
     """自动注册模块到全局 Telemetry（线程安全，幂等）。
 
     首次调用创建 Telemetry 实例并注册，后续调用返回同一实例。

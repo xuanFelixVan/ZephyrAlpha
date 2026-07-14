@@ -93,7 +93,7 @@ class Span:
             return None
         return (self.end_time_ns - self.start_time_ns) / _NS_PER_MS
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: object) -> None:
         self.attributes[key] = value
 
     def add_event(self, name: str, attrs: dict[str, Any] | None = None) -> None:
