@@ -1,7 +1,7 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-15 02:07:12
+%% 生成时间: 2026-07-15 03:02:33
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 94, 依赖边数: 9
+%% 模块数: 94, 依赖边数: 10
 
 graph TD
 
@@ -106,6 +106,7 @@ graph TD
     %% 域内依赖（最多显示 80 条）
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_orphan_judge_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_auto_fix_engine_blueprint_md
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_pipeline_blueprint_md
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -113,7 +114,7 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_red_blue_validator_blueprint_md
     %% D_GOV_DRIFT -> D_GOV_DOCS (2 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
-    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_database_blueprint_md
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_GOV_DOCS -> D_GOV_DRIFT (2 条)
@@ -123,6 +124,6 @@ graph TD
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
 
     %% 统计
-    %% 域内依赖: 3 条
+    %% 域内依赖: 4 条
     %% 跨域入边: 3 条
     %% 跨域出边: 3 条

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 代理编排器（D_ORCHESTRATOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 02:07:00
+> 最后更新: 2026-07-15 03:02:21
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -189,29 +189,29 @@ graph TD
     src_zephyr_orchestrator_init_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     src_zephyr_orchestrator_init_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_script_runner_py
     src_zephyr_orchestrator_contracts_contract_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
-    src_zephyr_orchestrator_contracts_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_contracts_alert_handler_py
+    src_zephyr_orchestrator_contracts_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_contracts_construction_guide_py
     src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
-    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_dispatch_table_py
+    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_context_bridge_py
     src_zephyr_orchestrator_fault_tolerance_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     src_zephyr_orchestrator_execution_script_runner_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_orchestrator_execution_script_runner_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_orchestrator_failure_matcher_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_orchestrator_core_task_queue_py -.->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_orchestrator_agent_orchestrator_py -->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_execution_batch_orchestrator_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_orchestrator_execution_memory_writer_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_orchestrator_execution_script_runner_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_orchestrator_execution_batch_orchestrator_py -.->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_orchestrator_execution_trigger_router_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
@@ -225,24 +225,24 @@ graph TD
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_prompt_version_py
+    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_agent_orchestrator_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_memory_writer_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_context_bridge_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_execution_reconciliation_loop_py
-    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_registry_py
-    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_router_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_orchestrator_execution_phase_executor_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_execution_reconciliation_loop_py
+    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_router_py
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_finding_bridge_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_alert_handler_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_agent_health_monitor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_orchestrator_init_py,src_zephyr_orchestrator_agent_health_monitor_py,src_zephyr_orchestrator_agent_orchestrator_py,src_zephyr_orchestrator_contracts_construction_guide_py,src_zephyr_orchestrator_contracts_contract_registry_py,src_zephyr_orchestrator_contracts_contract_router_py,src_zephyr_orchestrator_contracts_design_decisions_py,src_zephyr_orchestrator_contracts_finding_bridge_py,src_zephyr_orchestrator_contracts_prompt_version_py,src_zephyr_orchestrator_deferred_queue_py,src_zephyr_orchestrator_execution_batch_orchestrator_py,src_zephyr_orchestrator_execution_data_lifecycle_py,src_zephyr_orchestrator_execution_dispatch_table_py,src_zephyr_orchestrator_execution_dlq_manager_py,src_zephyr_orchestrator_execution_phase_executor_py,src_zephyr_orchestrator_execution_reconciliation_loop_py,src_zephyr_orchestrator_execution_trigger_router_py,src_zephyr_orchestrator_execution_wave_generator_py,src_zephyr_orchestrator_failure_matcher_py,src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py production
     class src_zephyr_orchestrator_contracts_init_py,src_zephyr_orchestrator_contracts_alert_handler_py,src_zephyr_orchestrator_core_init_py,src_zephyr_orchestrator_core_task_queue_py,src_zephyr_orchestrator_execution_init_py,src_zephyr_orchestrator_execution_context_bridge_py,src_zephyr_orchestrator_execution_memory_writer_py,src_zephyr_orchestrator_execution_script_runner_py,src_zephyr_orchestrator_execution_task_context_builder_py,src_zephyr_orchestrator_fault_tolerance_init_py design
-    class D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INTEGRATION,D_FEEDBACK_LOOP external_prod
-    class D_INFRA_RUNTIME,D_SHARED,D_AUTONOMY_CORE,D_TRADING,D_INFRASTRUCTURE,D_GOV_AUDIT external_design
+    class D_SHARED,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INTEGRATION,D_FEEDBACK_LOOP external_prod
+    class D_INFRA_RUNTIME,D_AUTONOMY_CORE,D_TRADING,D_INFRASTRUCTURE,D_GOV_AUDIT external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -285,7 +285,7 @@ graph TD
     src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_governance_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
     src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
-    src_zephyr_orchestrator_lifecycle_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_housekeeping_py
+    src_zephyr_orchestrator_lifecycle_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_session_conflict_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_orchestrator_hallucination_detector_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -305,21 +305,21 @@ graph TD
     D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
     D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
     D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_canary_manager_py
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_orchestrator_file_task_mapper_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_dependency_lock_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_state_synchronizer_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_session_manager_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_path_index_py
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_disk_guard_py
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_incident_postmortem_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_schema_migration_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_network_partition_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_session_conflict_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_session_manager_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_path_index_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_schema_migration_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_feature_flag_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -327,7 +327,7 @@ graph TD
     class src_zephyr_orchestrator_fault_tolerance_canary_manager_py,src_zephyr_orchestrator_fault_tolerance_chaos_engine_py,src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py,src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py,src_zephyr_orchestrator_fault_tolerance_disk_guard_py,src_zephyr_orchestrator_fault_tolerance_fault_types_py,src_zephyr_orchestrator_fault_tolerance_network_partition_py,src_zephyr_orchestrator_file_task_mapper_py,src_zephyr_orchestrator_governance_autonomy_guard_py,src_zephyr_orchestrator_governance_capacity_budget_py,src_zephyr_orchestrator_governance_dependency_lock_py,src_zephyr_orchestrator_governance_feature_flag_py,src_zephyr_orchestrator_governance_model_registry_py,src_zephyr_orchestrator_governance_path_index_py,src_zephyr_orchestrator_governance_risk_registry_py,src_zephyr_orchestrator_governance_schema_migration_py,src_zephyr_orchestrator_governance_version_manifest_py,src_zephyr_orchestrator_hallucination_detector_py,src_zephyr_orchestrator_lifecycle_housekeeping_py,src_zephyr_orchestrator_lifecycle_incident_postmortem_py,src_zephyr_orchestrator_lifecycle_rolling_upgrade_py,src_zephyr_orchestrator_lifecycle_session_conflict_py,src_zephyr_orchestrator_lifecycle_session_manager_py,src_zephyr_orchestrator_lifecycle_startup_sequencer_py,src_zephyr_orchestrator_lifecycle_state_propagation_py,src_zephyr_orchestrator_lifecycle_state_synchronizer_py,src_zephyr_orchestrator_lifecycle_system_transfer_py,src_zephyr_orchestrator_lifecycle_teardown_manager_py production
     class src_zephyr_orchestrator_governance_init_py,src_zephyr_orchestrator_lifecycle_init_py design
     class D_INTEGRATION,D_SHARED,D_GOV_OPS_RESILIENCE external_prod
-    class D_INFRA_RECOVERY,D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_TRADING external_design
+    class D_INFRA_RECOVERY,D_TRADING,D_AUTONOMY_CORE,D_GOV_SCRIPTS external_design
 ```
 
 #### 第 3 页 / 共 3 页
@@ -358,29 +358,29 @@ graph TD
         tests_orchestrator_test_orchestrator_trigger_router_py["(原型态 / prototype) test_orchestrator_trigger_router.py"]
         tests_orchestrator_test_orchestrator_wave_generator_py["(原型态 / prototype) test_orchestrator_wave_generator.py"]
     end
-    src_zephyr_orchestrator_quality_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
     src_zephyr_orchestrator_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_resilience_failure_matcher_py
-    tests_orchestrator_test_orchestrator_rollback_manager_py -.->|测试依赖 / test_depends| src_zephyr_orchestrator_rollback_manager_py
+    src_zephyr_orchestrator_quality_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_quality_agent_quality_py
     tests_orchestrator_test_orchestrator_task_queue_py -.->|测试依赖 / test_depends| src_zephyr_orchestrator_task_queue_py
+    tests_orchestrator_test_orchestrator_rollback_manager_py -.->|测试依赖 / test_depends| src_zephyr_orchestrator_rollback_manager_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_orchestrator_resilience_failure_matcher_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_orchestrator_rollback_manager_py -->|导入依赖 / import_depends| D_SHARED
     tests_orchestrator_test_deferred_queue_py -.->|测试依赖 / test_depends| D_SHARED
     src_zephyr_orchestrator_rollback_manager_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_rollback_manager_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_orchestrator_rollback_manager_py -->|导入依赖 / import_depends| D_SHARED
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_agent_quality_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_lean_scanner_py
+    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_blueprint_scorer_py
+    D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_blind_spot_closure_py
     D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_ke_quality_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_blueprint_scorer_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_stability_guard_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_lean_scanner_py
     D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_knowledge_freshness_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_stability_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -388,7 +388,7 @@ graph TD
     class src_zephyr_orchestrator_quality_agent_quality_py,src_zephyr_orchestrator_quality_benchmark_runner_py,src_zephyr_orchestrator_quality_blind_spot_closure_py,src_zephyr_orchestrator_quality_blueprint_scorer_py,src_zephyr_orchestrator_quality_ke_quality_py,src_zephyr_orchestrator_quality_knowledge_freshness_py,src_zephyr_orchestrator_quality_lean_scanner_py,src_zephyr_orchestrator_quality_stability_guard_py,src_zephyr_orchestrator_resilience_failure_matcher_py,src_zephyr_orchestrator_rollback_manager_py,src_zephyr_orchestrator_task_queue_py production
     class src_zephyr_orchestrator_quality_init_py,src_zephyr_orchestrator_resilience_init_py,tests_orchestrator_test_deferred_queue_py,tests_orchestrator_test_orchestrator_data_lifecycle_py,tests_orchestrator_test_orchestrator_failure_matcher_py,tests_orchestrator_test_orchestrator_hallucination_detector_py,tests_orchestrator_test_orchestrator_model_registry_py,tests_orchestrator_test_orchestrator_rollback_manager_py,tests_orchestrator_test_orchestrator_task_queue_py,tests_orchestrator_test_orchestrator_trigger_router_py,tests_orchestrator_test_orchestrator_wave_generator_py design
     class D_GOV_OPS_RESILIENCE,D_SHARED external_prod
-    class D_TRADING,D_AUTONOMY_CORE,D_KNOWLEDGE,D_GOV_SCRIPTS external_design
+    class D_AUTONOMY_CORE,D_GOV_SCRIPTS,D_TRADING,D_KNOWLEDGE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -485,9 +485,9 @@ graph TD
     src_zephyr_orchestrator_execution_batch_orchestrator_py -.->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_orchestrator_execution_trigger_router_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_agent_orchestrator_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
@@ -495,23 +495,24 @@ graph TD
     D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_canary_manager_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_contract_registry_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_prompt_version_py
+    D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_ke_quality_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_orchestrator_file_task_mapper_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_contracts_prompt_version_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_orchestrator_governance_dependency_lock_py
-    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_agent_orchestrator_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_orchestrator_quality_agent_quality_py
+    D_TRADING -.->|测试依赖 / test_depends| src_zephyr_orchestrator_lifecycle_state_synchronizer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_orchestrator_init_py,src_zephyr_orchestrator_agent_health_monitor_py,src_zephyr_orchestrator_agent_orchestrator_py,src_zephyr_orchestrator_contracts_construction_guide_py,src_zephyr_orchestrator_contracts_contract_registry_py,src_zephyr_orchestrator_contracts_contract_router_py,src_zephyr_orchestrator_contracts_design_decisions_py,src_zephyr_orchestrator_contracts_finding_bridge_py,src_zephyr_orchestrator_contracts_prompt_version_py,src_zephyr_orchestrator_deferred_queue_py,src_zephyr_orchestrator_execution_batch_orchestrator_py,src_zephyr_orchestrator_execution_data_lifecycle_py,src_zephyr_orchestrator_execution_dispatch_table_py,src_zephyr_orchestrator_execution_dlq_manager_py,src_zephyr_orchestrator_execution_phase_executor_py,src_zephyr_orchestrator_execution_reconciliation_loop_py,src_zephyr_orchestrator_execution_trigger_router_py,src_zephyr_orchestrator_execution_wave_generator_py,src_zephyr_orchestrator_failure_matcher_py,src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py,src_zephyr_orchestrator_fault_tolerance_canary_manager_py,src_zephyr_orchestrator_fault_tolerance_chaos_engine_py,src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py,src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py,src_zephyr_orchestrator_fault_tolerance_disk_guard_py,src_zephyr_orchestrator_fault_tolerance_fault_types_py,src_zephyr_orchestrator_fault_tolerance_network_partition_py,src_zephyr_orchestrator_file_task_mapper_py,src_zephyr_orchestrator_governance_autonomy_guard_py,src_zephyr_orchestrator_governance_capacity_budget_py,src_zephyr_orchestrator_governance_dependency_lock_py,src_zephyr_orchestrator_governance_feature_flag_py,src_zephyr_orchestrator_governance_model_registry_py,src_zephyr_orchestrator_governance_path_index_py,src_zephyr_orchestrator_governance_risk_registry_py,src_zephyr_orchestrator_governance_schema_migration_py,src_zephyr_orchestrator_governance_version_manifest_py,src_zephyr_orchestrator_hallucination_detector_py,src_zephyr_orchestrator_lifecycle_housekeeping_py,src_zephyr_orchestrator_lifecycle_incident_postmortem_py,src_zephyr_orchestrator_lifecycle_rolling_upgrade_py,src_zephyr_orchestrator_lifecycle_session_conflict_py,src_zephyr_orchestrator_lifecycle_session_manager_py,src_zephyr_orchestrator_lifecycle_startup_sequencer_py,src_zephyr_orchestrator_lifecycle_state_propagation_py,src_zephyr_orchestrator_lifecycle_state_synchronizer_py,src_zephyr_orchestrator_lifecycle_system_transfer_py,src_zephyr_orchestrator_lifecycle_teardown_manager_py,src_zephyr_orchestrator_quality_agent_quality_py,src_zephyr_orchestrator_quality_benchmark_runner_py,src_zephyr_orchestrator_quality_blind_spot_closure_py,src_zephyr_orchestrator_quality_blueprint_scorer_py,src_zephyr_orchestrator_quality_ke_quality_py,src_zephyr_orchestrator_quality_knowledge_freshness_py,src_zephyr_orchestrator_quality_lean_scanner_py,src_zephyr_orchestrator_quality_stability_guard_py,src_zephyr_orchestrator_resilience_failure_matcher_py,src_zephyr_orchestrator_rollback_manager_py,src_zephyr_orchestrator_task_queue_py production
     class D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INTEGRATION,D_FEEDBACK_LOOP external_prod
-    class D_SHARED,D_AUTONOMY_CORE,D_INFRA_RECOVERY,D_TRADING,D_INFRASTRUCTURE,D_GOV_SCRIPTS external_design
+    class D_SHARED,D_AUTONOMY_CORE,D_INFRA_RECOVERY,D_TRADING,D_INFRASTRUCTURE,D_KNOWLEDGE,D_GOV_SCRIPTS external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -551,18 +552,18 @@ graph TD
         tests_orchestrator_test_orchestrator_trigger_router_py["(原型态 / prototype) test_orchestrator_trigger_router.py"]
         tests_orchestrator_test_orchestrator_wave_generator_py["(原型态 / prototype) test_orchestrator_wave_generator.py"]
     end
-    src_zephyr_orchestrator_contracts_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_contracts_alert_handler_py
     src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
+    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_context_bridge_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_core_task_queue_py -.->|导入依赖 / import_depends| D_SHARED
@@ -668,12 +669,12 @@ graph TD
 | 8 | D_AUTONOMY_CORE 自治核心: test_session_conflict.py | → | Session 冲突预防契约（CT-SESSION-CONFLICT）——... | 测试依赖 / test_depends |
 | 9 | D_AUTONOMY_CORE 自治核心: test_session_manager.py | → | SessionManager — AI Agent 会话生命周期管理（CT... | 测试依赖 / test_depends |
 | 10 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | Orc 告警接收器 — handle_alert() 消费者 (alert_... | 导入依赖 / import_depends |
-| 11 | D_GOVERNANCE 生命周期管理: check_handoff_manifests.py — AI Session Handof... | → | 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
-| 12 | D_GOV_AUDIT 审计追踪: test_phase_executor_root.py | → | Phase 执行引擎（Phase Executor） (phase_executo... | 测试依赖 / test_depends |
-| 13 | D_GOV_ENFORCEMENT 规则执行: test_capacity_budget_root.py | → | 全局容量预算控制器（Capacity Budget Controller... | 测试依赖 / test_depends |
-| 14 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
-| 15 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | BatchOrchestrator — 多 Worker 批量任务协调器（... | 导入依赖 / import_depends |
-| 16 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 导入依赖 / import_depends |
+| 11 | D_GOV_AUDIT 审计追踪: test_phase_executor_root.py | → | Phase 执行引擎（Phase Executor） (phase_executo... | 测试依赖 / test_depends |
+| 12 | D_GOV_ENFORCEMENT 规则执行: test_capacity_budget_root.py | → | 全局容量预算控制器（Capacity Budget Controller... | 测试依赖 / test_depends |
+| 13 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
+| 14 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | BatchOrchestrator — 多 Worker 批量任务协调器（... | 导入依赖 / import_depends |
+| 15 | D_GOV_OPS_RESILIENCE 运维弹性治理: PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 导入依赖 / import_depends |
+| 16 | D_GOV_SCRIPTS 脚本治理: check_handoff_manifests.py — AI Session Handof... | → | 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
 | 17 | D_GOV_SCRIPTS 脚本治理: test_blueprint_scorer.py | → | BlueprintScorer — 蓝图路由统一打分逻辑 (bluepr... | 测试依赖 / test_depends |
 | 18 | D_GOV_SCRIPTS 脚本治理: test_dependency_lock.py | → | 外部依赖版本锁（CT-DEPS）——Python包版本锁定+h... | 测试依赖 / test_depends |
 | 19 | D_INFRASTRUCTURE: test_contract_registry_root.py | → | 集成契约注册表（Contract Registry） (contract_r... | 测试依赖 / test_depends |
@@ -743,11 +744,11 @@ graph LR
     D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
-    D_SECURITY_LLM["D_SECURITY_LLM<br/>LLM防御"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_RISK["D_RISK<br/>风控"]
+    D_SECURITY_LLM["D_SECURITY_LLM<br/>LLM防御"]
     D_ORCHESTRATOR -->|34条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_ORCHESTRATOR -->|8条 导入依赖 / import_depends| D_INTEGRATION
     D_ORCHESTRATOR -->|3条 导入依赖 / import_depends| D_INFRA_RUNTIME
@@ -761,19 +762,18 @@ graph LR
     D_TRADING -->|29条 导入依赖 / import_depends, 测试依赖 / test_depends| D_ORCHESTRATOR
     D_AUTONOMY_CORE -->|9条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_INFRA_RECOVERY -->|5条 测试依赖 / test_depends| D_ORCHESTRATOR
+    D_GOV_SCRIPTS -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_ORCHESTRATOR
     D_INFRASTRUCTURE -->|3条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_OPS_RESILIENCE -->|3条 导入依赖 / import_depends| D_ORCHESTRATOR
-    D_GOV_SCRIPTS -->|2条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_KNOWLEDGE -->|2条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_SHARED -->|2条 测试依赖 / test_depends| D_ORCHESTRATOR
-    D_SECURITY_LLM -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
-    D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
-    D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_GOV_AUDIT -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
+    D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_GOV_ENFORCEMENT -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_INFRA_RUNTIME -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_INTELLIGENCE -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_RISK -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
+    D_SECURITY_LLM -->|1条 测试依赖 / test_depends| D_ORCHESTRATOR
 ```
 
 ## 说明 / Notes

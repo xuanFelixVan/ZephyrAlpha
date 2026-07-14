@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 02:06:27
+> 最后更新: 2026-07-15 03:01:38
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,7 +27,7 @@ ttl: permanent
 | 域名称 | 架构文档治理 | Domain Name | Architecture Docs Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 94 | Module Count | 94 |
-| 域内依赖 | 3 | Internal Dependencies | 3 |
+| 域内依赖 | 4 | Internal Dependencies | 4 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 26 | Design Modules | 26 |
@@ -284,13 +284,14 @@ graph TD
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_auto_fix_engine_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_orphan_judge_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
     D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -405,7 +406,7 @@ graph TD
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 26 个，3 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 26 个，4 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -440,13 +441,14 @@ graph TD
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_auto_fix_engine_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_orphan_judge_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
     D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
     docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
