@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_DATA_GOV 数据治理架构文档
 version: "1.0"
 status: active
-date: 2026-07-14
+date: 2026-07-15
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 数据治理（D_DATA_GOV）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 23:10:59
+> 最后更新: 2026-07-15 00:48:14
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -124,28 +124,28 @@ graph TD
         src_zephyr_data_governance_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_data_governance_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    data_asset_index_archive_migration_scripts_check_coverage_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_comprehensive_import_fix_py
+    data_asset_index_archive_migration_scripts_check_coverage_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_domain_prefix_import_fix_py
+    data_asset_index_archive_migration_scripts_comprehensive_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_create_target_dirs_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_execute_move_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_apply_rulings_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_generate_migration_registry_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_generate_path_migration_mapping_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_preflight_check_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_domain_prefix_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_cross_domain_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_lock_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_execute_move_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_generate_migration_registry_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_inject_domain_fields_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_lock_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_preflight_check_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_generate_path_migration_mapping_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_scan_import_impact_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_test_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_update_imports_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_rollback_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_shared_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_test_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_update_imports_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_update_non_import_refs_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_verify_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_migration_shared_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_verify_step4_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -203,28 +203,28 @@ graph TD
         src_zephyr_data_governance_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_data_governance_services_init_py["(原型态 / prototype) __init__.py"]
     end
-    data_asset_index_archive_migration_scripts_check_coverage_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_comprehensive_import_fix_py
+    data_asset_index_archive_migration_scripts_check_coverage_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_domain_prefix_import_fix_py
+    data_asset_index_archive_migration_scripts_comprehensive_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_create_target_dirs_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_execute_move_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_apply_rulings_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_generate_migration_registry_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_generate_path_migration_mapping_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_preflight_check_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_domain_prefix_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_cross_domain_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_lock_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_execute_move_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_generate_migration_registry_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_inject_domain_fields_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_lock_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_preflight_check_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_generate_path_migration_mapping_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_scan_import_impact_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_test_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_update_imports_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_rollback_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_shared_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
-    data_asset_index_archive_migration_scripts_verify_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_test_import_fix_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_unnest_from_mcp_server_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_update_imports_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_update_non_import_refs_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_verify_batch_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_migration_shared_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     data_asset_index_archive_migration_scripts_verify_step4_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
+    data_asset_index_archive_migration_scripts_verify_manifest_py -.->|config_depends / config_depends| data_asset_index_archive_migration_scripts_check_coverage_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
