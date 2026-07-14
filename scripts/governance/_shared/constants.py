@@ -101,22 +101,42 @@ class PgConnExecuteWrapper:
         pass
 
 
-def get_depgraph_pg_connection(autocommit: bool = True, allow_edge_delete: bool = False) -> PgConnExecuteWrapper:
+def get_depgraph_pg_connection(
+    autocommit: bool = True,
+    allow_edge_delete: bool = False,
+    read_only: bool = True,
+    superuser: bool = False,
+) -> PgConnExecuteWrapper:
     """获取 depgraph (PostgreSQL) 连接（包装为兼容 sqlite3 接口）。
 
     P2迁移后：所有治理脚本通过此入口获取 PG 连接，避免散点连接绕过统一配置。
     返回的 PgConnExecuteWrapper 支持 conn.execute(sql, params).fetchone()/fetchall() 模式，
     与原 sqlite3.Connection.execute() 接口兼容。
 
+    裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制
+    - 默认 read_only=True 使用 depgraph_reader 只读角色
+    - allow_edge_delete=True 自动隐含 read_only=False（删边需写权限）
+    - superuser=True 使用 postgres 超级用户（优先级最高，覆盖 read_only）
+    - 仅白名单脚本（apply_depgraph/generate_project_depgraph/sync_yaml_to_depgraph）可写
+
     :param autocommit: True 启用自动提交（默认，适合只读/简单写）；False 需显式 conn.commit()
     :param allow_edge_delete: S1.3 — True 时设置 session variable 允许删除 apply_depgraph design edges
                               (valid_since IS NULL)。仅 apply_depgraph.py 应传 True。
+                              （自动隐含 read_only=False，因删边需写权限）
+    :param read_only: True（默认）只读角色；False 读写角色（仅白名单脚本）
+    :param superuser: True 使用 postgres 超级用户（用于 DDL/迁移，覆盖 read_only）
     :return: PgConnExecuteWrapper 包装的 psycopg2 连接
     """
+    # allow_edge_delete 需要写权限，自动覆盖 read_only
+    if allow_edge_delete:
+        read_only = False
+
     # 调用 F1 真源（depgraph_schema.get_depgraph_pg_connection），非本模块 wrapper。
     # 用 import 别名消除同名遮蔽，否则会无限递归（wrapper 调用自己）。
     conn = PgConnExecuteWrapper(
-        _get_depgraph_pg_connection_from_depgraph_schema(autocommit=autocommit)
+        _get_depgraph_pg_connection_from_depgraph_schema(
+            autocommit=autocommit, read_only=read_only, superuser=superuser
+        )
     )
     if allow_edge_delete:
         # S1.3: edges 表三写分区保护 — apply_depgraph.py 需删除 design edges (valid_since IS NULL)

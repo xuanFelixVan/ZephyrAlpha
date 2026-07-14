@@ -105,6 +105,14 @@ _PG_REQUIRED_KEYS: tuple[str, ...] = (
     "POSTGRES_PASSWORD",
 )
 
+# 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问凭证（可选，缺失时 _build_pg_dsn 报错）
+_PG_OPTIONAL_KEYS: tuple[str, ...] = (
+    "POSTGRES_READER_USER",
+    "POSTGRES_READER_PASSWORD",
+    "POSTGRES_WRITER_USER",
+    "POSTGRES_WRITER_PASSWORD",
+)
+
 
 def _load_pg_config() -> dict[str, str]:
     """从 config/.env.postgres 加载 PostgreSQL 连接参数。
@@ -112,6 +120,8 @@ def _load_pg_config() -> dict[str, str]:
     §5.34.8 修复：改用 get_secret_from_file（SecretProvider 真源），
     优先级 os.environ > 指定文件 > 抛异常。
     必需字段：POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
+    可选字段：POSTGRES_READER_USER/PASSWORD, POSTGRES_WRITER_USER/PASSWORD
+        （裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: read_only 分级访问所需，缺失时由 _build_pg_dsn 报错）
     """
     if not _PG_ENV_PATH.exists():
         raise FileNotFoundError(
@@ -130,13 +140,29 @@ def _load_pg_config() -> dict[str, str]:
                 raise
     if missing:
         raise ValueError(f"PG 连接配置缺少必需字段: {missing} (文件: {_PG_ENV_PATH})")
+    # 加载可选字段（reader/writer 凭证，缺失不报错，由 _build_pg_dsn 在使用时检查）
+    for key in _PG_OPTIONAL_KEYS:
+        try:
+            config[key] = get_secret_from_file(key, _PG_ENV_PATH)
+        except SecretsError:
+            pass
     return config
 
 
-def _build_pg_dsn(config: dict[str, str] | None = None, *, superuser: bool = False) -> dict[str, Any]:
+def _build_pg_dsn(
+    config: dict[str, str] | None = None,
+    *,
+    superuser: bool = False,
+    read_only: bool = True,
+) -> dict[str, Any]:
     """构建 psycopg2.connect() 的关键字参数。
 
-    :param superuser: True 时使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+    裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制
+    优先级: superuser > read_only（superuser 覆盖 read_only）
+
+    :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+    :param read_only: True（默认）使用 depgraph_reader 只读角色；
+        False 使用 depgraph_writer 读写角色（仅白名单脚本可用）
     :return: psycopg2.connect() 的 kwargs
     """
     if config is None:
@@ -145,10 +171,32 @@ def _build_pg_dsn(config: dict[str, str] | None = None, *, superuser: bool = Fal
         "host": config["POSTGRES_HOST"],
         "port": config["POSTGRES_PORT"],
         "dbname": config["POSTGRES_DB"],
-        "password": config["POSTGRES_PASSWORD"],
     }
-    kwargs["user"] = "postgres" if superuser else config["POSTGRES_USER"]
+    if superuser:
+        kwargs["user"] = "postgres"
+        kwargs["password"] = config["POSTGRES_PASSWORD"]
+    elif read_only:
+        _check_role_config(config, "READER")
+        kwargs["user"] = config["POSTGRES_READER_USER"]
+        kwargs["password"] = config["POSTGRES_READER_PASSWORD"]
+    else:
+        _check_role_config(config, "WRITER")
+        kwargs["user"] = config["POSTGRES_WRITER_USER"]
+        kwargs["password"] = config["POSTGRES_WRITER_PASSWORD"]
     return kwargs
+
+
+def _check_role_config(config: dict[str, str], role: str) -> None:
+    """检查角色凭证是否已配置（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL）。"""
+    user_key = f"POSTGRES_{role}_USER"
+    pass_key = f"POSTGRES_{role}_PASSWORD"
+    missing = [k for k in (user_key, pass_key) if k not in config]
+    if missing:
+        raise ValueError(
+            f"角色 {role.lower()} 凭证缺失: {missing}\n"
+            f"请执行 scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql 创建角色，"
+            f"并在 config/.env.postgres 中添加 {user_key}/{pass_key}"
+        )
 
 # ---------------------------------------------------------------------------
 # DDL — nodes 表（31列，v11删除module_lifecycle_state+添加CHECK约束）
@@ -1295,6 +1343,7 @@ def get_depgraph_pg_connection(
     db_path: Path | str | None = None,  # 保留参数向后兼容（PG模式下忽略）
     *,
     superuser: bool = False,
+    read_only: bool = True,  # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 默认只读
     autocommit: bool = True,
     replica: bool = False,
     # 以下参数保留向后兼容但 PG 模式下无效（避免调用方修改）
@@ -1306,7 +1355,15 @@ def get_depgraph_pg_connection(
 
     所有 depgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。
 
+    裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制
+    - 默认 read_only=True 使用 depgraph_reader 只读角色（技术阻断写入）
+    - 仅白名单脚本可传 read_only=False 使用 depgraph_writer 读写角色
+    - DEPGRAPH-WRITE-PATH pre-commit gate 检测 read_only=False 调用点是否在白名单内
+
     :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+        （优先级最高，覆盖 read_only）
+    :param read_only: True（默认）使用 depgraph_reader 只读角色；
+        False 使用 depgraph_writer 读写角色（仅白名单脚本可用）
     :param autocommit: True 启用自动提交（默认）；False 需显式 conn.commit()
     :param replica: True 设置 session_replication_role='replica' 禁用所有触发器和 FK
         （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True）
@@ -1317,7 +1374,7 @@ def get_depgraph_pg_connection(
     if replica:
         superuser = True  # session_replication_role 需要超级用户
 
-    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser))
+    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser, read_only=read_only))
     conn.autocommit = autocommit
 
     if replica:
