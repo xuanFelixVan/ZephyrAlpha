@@ -26,9 +26,12 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from zephyr.shared.events.dlq import DeadLetterQueue
+
+if TYPE_CHECKING:
+    from zephyr.shared.infra.observer import Observer
 
 __all__ = [
     "DLQEventBridge",
@@ -39,8 +42,8 @@ __all__ = [
 _logger = logging.getLogger(__name__)
 
 
-def make_dlq_event_handler(dlq: DeadLetterQueue) -> Callable[[str, Any, Exception], None]:
-    def _handler(event_name: str, payload: Any, error: Exception) -> None:
+def make_dlq_event_handler(dlq: DeadLetterQueue) -> Callable[[str, dict[str, Any], Exception], None]:
+    def _handler(event_name: str, payload: dict[str, Any], error: Exception) -> None:
         try:
             error_msg = f"{type(error).__name__}: {error}"
             dlq.enqueue(
@@ -55,12 +58,12 @@ def make_dlq_event_handler(dlq: DeadLetterQueue) -> Callable[[str, Any, Exceptio
 
 
 class DLQEventBridge:
-    def __init__(self, dlq: DeadLetterQueue, observer: Any | None = None) -> None:
+    def __init__(self, dlq: DeadLetterQueue, observer: Observer | None = None) -> None:
         self._dlq = dlq
         self._observer = observer
         self._attached = False
 
-    def attach(self, observer: Any | None = None) -> None:
+    def attach(self, observer: Observer | None = None) -> None:
         obs = observer or self._observer
         if obs is None:
             _logger.warning("DLQEventBridge.attach: no observer available")
@@ -92,7 +95,7 @@ class DLQEventBridge:
 
 def attach_dlq_to_observer(
     dlq: DeadLetterQueue,
-    observer: Any,
+    observer: Observer,
 ) -> DLQEventBridge:
     bridge = DLQEventBridge(dlq, observer)
     bridge.attach()

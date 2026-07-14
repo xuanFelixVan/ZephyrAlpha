@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 import os
 import tempfile
+from collections.abc import Callable
 from typing import Any
 
 __all__ = ["SandboxExecutor"]
@@ -32,7 +33,7 @@ class SandboxExecutor:
     def __init__(self, base_dir: str | None = None) -> None:
         self._base_dir = base_dir or os.path.join(tempfile.gettempdir(), "auto_fix_sandbox")
 
-    def execute(self, action: Any, fix_fn: Any) -> tuple[bool, str]:
+    def execute(self, action: object, fix_fn: Callable[..., object]) -> tuple[bool, str]:
         sandbox_dir = os.path.join(self._base_dir, getattr(action, "action_id", "unknown"))
         os.makedirs(sandbox_dir, exist_ok=True)
         try:

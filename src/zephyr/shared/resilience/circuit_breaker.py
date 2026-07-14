@@ -46,6 +46,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from enum import Enum, unique
 from threading import RLock
 from typing import Any
@@ -165,7 +166,7 @@ class CircuitBreaker:
             self._opened_at = 0.0
             self._half_open_calls = 0
 
-    def call(self, func: Any, *args: Any, **kwargs: Any) -> Any:
+    def call(self, func: Callable[..., object], *args: Any, **kwargs: Any) -> object:
         with self._lock:
             state = self._transition()
             if state is CircuitState.OPEN:

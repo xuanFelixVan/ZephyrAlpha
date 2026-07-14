@@ -23,6 +23,7 @@ a unified healthz endpoint consumable by external monitoring.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Final
 import logging
 from typing import Any
@@ -57,7 +58,7 @@ class HealthDiscovery:
         for name in ALL_SYSTEM_NAMES:
             self._registered[name] = {"status": "unknown", "last_check": "", "details": {}}
 
-    def register(self, system_name: str, check_fn: Any, **metadata: Any) -> None:
+    def register(self, system_name: str, check_fn: Callable[[], bool], **metadata: Any) -> None:
         if system_name not in self._registered:
             _logger.warning("HealthDiscovery.register: unknown system '%s'", system_name)
             self._registered[system_name] = {}
@@ -100,7 +101,7 @@ class HealthDiscovery:
 _discovery = HealthDiscovery()
 
 
-def register_system_health(system_name: str, check_fn: Any, **metadata: Any) -> None:
+def register_system_health(system_name: str, check_fn: Callable[[], bool], **metadata: Any) -> None:
     _discovery.register(system_name, check_fn, **metadata)
     _logger.info(
         "CT-HEALTH-001 registered: %s status=%s",

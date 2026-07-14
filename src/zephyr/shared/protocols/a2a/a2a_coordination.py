@@ -30,9 +30,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, IntEnum
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
+
+if TYPE_CHECKING:
+    from zephyr.shared.protocols.a2a.a2a_registry import AgentCard
 
 
 class AgentRole(IntEnum):
@@ -82,7 +85,7 @@ class DispatchedTask:
     def start(self) -> None:
         self.status = TaskStatus.IN_PROGRESS
 
-    def complete(self, result: Any) -> None:
+    def complete(self, result: object) -> None:
         self.status = TaskStatus.COMPLETED
         self.result = result
         from datetime import UTC, datetime
@@ -169,9 +172,9 @@ class ResultMerge:
 class TaskDispatchProtocol(Protocol):
     """Protocol interface for task dispatch to agents."""
 
-    def register_agent(self, card: Any) -> None: ...
+    def register_agent(self, card: AgentCard) -> None: ...
 
-    def unregister_agent(self, agent_id: str) -> Any | None: ...
+    def unregister_agent(self, agent_id: str) -> object | None: ...
 
     def assign(
         self, task_id: str, description: str, required_role: AgentRole | None = None

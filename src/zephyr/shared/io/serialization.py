@@ -144,7 +144,7 @@ _SERIALIZERS: dict[type, Any] = {
 }
 
 
-def _serialize_value(value: Any) -> Any:
+def _serialize_value(value: object) -> object:
     if value is None:
         return None
     if isinstance(value, Enum):
@@ -164,7 +164,7 @@ def _serialize_value(value: Any) -> Any:
     )
 
 
-def _deserialize_value(value: Any) -> Any:
+def _deserialize_value(value: object) -> object:
     if value is None:
         return None
     if isinstance(value, dict):
@@ -181,7 +181,7 @@ def _deserialize_value(value: Any) -> Any:
     )
 
 
-def to_dict(obj: Any) -> dict[str, Any]:
+def to_dict(obj: object) -> dict[str, Any]:
     """将 Pydantic 模型或 dataclass 转换为确定性 dict。
 
     Decimal -> str / datetime -> ISO 8601 UTC / Enum -> str(value)
@@ -216,7 +216,7 @@ def from_dict(
     data: dict[str, Any],
     *,
     model: type | None = None,
-) -> dict[str, Any] | Any:
+) -> dict[str, Any] | object:
     """从确定性 dict 恢复为 Pydantic 模型实例或原生 dict。
 
     如果提供 model，则用 model(**deserialized_dict) 构造，Pydantic 会按字段类型自动还原。
@@ -241,7 +241,7 @@ def from_dict(
     return deserialized
 
 
-def to_json(obj: Any, *, indent: int | None = None) -> str:
+def to_json(obj: object, *, indent: int | None = None) -> str:
     """将对象序列化为确定性 JSON 字符串。
 
     Decimal -> str / datetime -> ISO 8601 UTC / Enum -> str(value)
@@ -258,7 +258,7 @@ def to_json(obj: Any, *, indent: int | None = None) -> str:
 
 
 def dumps(
-    obj: Any,
+    obj: object,
     *,
     indent: int | None = None,
     ensure_ascii: bool = True,
@@ -282,7 +282,7 @@ def dumps(
         JSON 字符串。
     """
 
-    def _default(o: Any) -> Any:
+    def _default(o: object) -> object:
         try:
             return _serialize_value(o)
         except SerializationError:
@@ -353,7 +353,7 @@ def from_json(
     json_str: str,
     *,
     model: type | None = None,
-) -> dict[str, Any] | Any:
+) -> dict[str, Any] | object:
     """从确定性 JSON 字符串恢复对象。
 
     Args:

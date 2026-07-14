@@ -297,7 +297,7 @@ def subscribe_monitoring_events() -> None:
     try:
         from zephyr.shared.event_bus import bus
 
-        def _on_f5_deadlock(payload: Any) -> None:
+        def _on_f5_deadlock(payload: dict[str, Any]) -> None:
             try:
                 entry = {
                     "event": "f5.deadlock_detected",
@@ -311,7 +311,7 @@ def subscribe_monitoring_events() -> None:
             except Exception as e:
                 logger.warning("suppressed error in health", exc_info=True)
 
-        def _on_fle_anomaly(payload: Any) -> None:
+        def _on_fle_anomaly(payload: dict[str, Any]) -> None:
             try:
                 entry = {
                     "event": "fle.anomaly",
@@ -325,7 +325,7 @@ def subscribe_monitoring_events() -> None:
             except Exception as e:
                 logger.warning("suppressed error in health", exc_info=True)
 
-        def _on_audit_finding(payload: Any) -> None:
+        def _on_audit_finding(payload: dict[str, Any]) -> None:
             try:
                 entry = {
                     "event": "audit.finding_created",

@@ -139,7 +139,7 @@ def deprecated(
         message = " ".join(message_parts)
 
         @functools.wraps(obj)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             mode = get_deprecation_mode()
 
             if mode == DeprecationMode.SILENT:

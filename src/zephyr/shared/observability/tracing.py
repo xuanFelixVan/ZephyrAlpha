@@ -128,7 +128,7 @@ def traced(name: str | None = None, kind: str = "INTERNAL") -> Callable[[Callabl
         span_name = name or func.__qualname__
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             with start_span(span_name, kind=kind):
                 return func(*args, **kwargs)
 
@@ -142,10 +142,10 @@ class _NoopSpan:
         self.name = name
         self._trace_id = trace_id
 
-    def set_attribute(self, key: str, value: Any) -> None:
+    def set_attribute(self, key: str, value: object) -> None:
         pass
 
-    def set_status(self, status: Any) -> None:
+    def set_status(self, status: object) -> None:
         pass
 
     def end(self) -> None:
