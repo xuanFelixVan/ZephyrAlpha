@@ -1,4 +1,4 @@
-# [BLUEPRINT] R1-1 | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
+# [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §4.1
 # [MODULE] zephyr.trading.runtime.async_runtime
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES]
