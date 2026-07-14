@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 feedback_diagnosers（D_FBL_DIAGNOSERS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 15:50:09
+> 最后更新: 2026-07-14 16:46:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -175,7 +175,11 @@ graph TD
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_cognitive_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_health_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py
@@ -189,18 +193,13 @@ graph TD
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py,src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py,src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py,src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py,src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py,src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py,src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py,src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py,src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py,src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py,src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py,src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py production
     class src_zephyr_feedback_loop_diagnosers_init_py,src_zephyr_feedback_loop_diagnosers_cognitive_init_py,src_zephyr_feedback_loop_diagnosers_diagnosis_init_py,src_zephyr_feedback_loop_diagnosers_health_init_py design
-    class D_FEEDBACK_LOOP external_prod
-    class D_GOV_AUDIT,D_AUTONOMY_CORE external_design
+    class D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_GOV_AUDIT external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -239,34 +238,34 @@ graph TD
         src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py["(生产态 / production) LLM Quality Regression — v0.12.0 R161<br/>文件: llm_quality_regression.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py["(生产态 / production) Model Rotation — v0.9.0 R125<br/>文件: model_rotation.py"]
     end
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_model_health_py
     D_FRONTEND["(原型态 / prototype) D_FRONTEND"]
     D_FRONTEND -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py
+    D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
-    D_DATA["(原型态 / prototype) D_DATA"]
-    D_DATA -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py,src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py,src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py,src_zephyr_feedback_loop_diagnosers_health_global_health_map_py,src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py,src_zephyr_feedback_loop_diagnosers_health_model_health_py,src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py,src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py,src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py,src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py,src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py,src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py,src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py,src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py,src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py,src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py,src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py,src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py,src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py,src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py,src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py,src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py,src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py,src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py,src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py,src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py,src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py,src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py production
     class src_zephyr_feedback_loop_diagnosers_reliability_init_py design
-    class D_FRONTEND,D_GOV_AUDIT,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOVERNANCE,D_DATA external_design
+    class D_INTELLIGENCE,D_FRONTEND,D_AUTONOMY_CORE,D_GOV_AUDIT,D_GOV_ENFORCEMENT,D_FEEDBACK_LOOP external_design
 ```
 
 #### 第 3 页 / 共 3 页
@@ -294,31 +293,32 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py -->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py
     D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py,src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py,src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py,src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py,src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py,src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py,src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py,src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py,src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py,src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py,src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py,src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py,src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py,src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py production
     class D_SHARED external_prod
-    class D_INTELLIGENCE,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_GOV_AUDIT external_design
+    class D_INTELLIGENCE,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOV_AUDIT,D_INFRA_RUNTIME external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -402,32 +402,34 @@ graph TD
     end
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py -->|导入依赖 / import_depends| D_SHARED
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_model_health_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py
     D_FRONTEND["(原型态 / prototype) D_FRONTEND"]
     D_FRONTEND -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py,src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py,src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py,src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py,src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py,src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py,src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py,src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py,src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py,src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py,src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py,src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py,src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py,src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py,src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py,src_zephyr_feedback_loop_diagnosers_health_global_health_map_py,src_zephyr_feedback_loop_diagnosers_health_memory_self_check_py,src_zephyr_feedback_loop_diagnosers_health_model_health_py,src_zephyr_feedback_loop_diagnosers_health_self_benchmark_py,src_zephyr_feedback_loop_diagnosers_health_self_bottleneck_detector_py,src_zephyr_feedback_loop_diagnosers_health_self_health_monitor_py,src_zephyr_feedback_loop_diagnosers_health_self_llm_observability_py,src_zephyr_feedback_loop_diagnosers_reliability_amplification_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_api_dependency_metrics_py,src_zephyr_feedback_loop_diagnosers_reliability_burn_rate_alerter_py,src_zephyr_feedback_loop_diagnosers_reliability_burnout_alarm_py,src_zephyr_feedback_loop_diagnosers_reliability_capacity_aware_repair_py,src_zephyr_feedback_loop_diagnosers_reliability_cold_start_conservative_mode_py,src_zephyr_feedback_loop_diagnosers_reliability_context_truncation_py,src_zephyr_feedback_loop_diagnosers_reliability_context_window_pressure_manager_py,src_zephyr_feedback_loop_diagnosers_reliability_cross_guard_conflict_detector_py,src_zephyr_feedback_loop_diagnosers_reliability_cross_session_consistency_validator_py,src_zephyr_feedback_loop_diagnosers_reliability_data_volume_growth_monitor_py,src_zephyr_feedback_loop_diagnosers_reliability_feedback_delay_compensator_py,src_zephyr_feedback_loop_diagnosers_reliability_guard_interaction_topology_mapper_py,src_zephyr_feedback_loop_diagnosers_reliability_guard_self_consistency_auditor_py,src_zephyr_feedback_loop_diagnosers_reliability_human_anomaly_flood_detector_py,src_zephyr_feedback_loop_diagnosers_reliability_latency_slo_py,src_zephyr_feedback_loop_diagnosers_reliability_llm_provider_integrity_py,src_zephyr_feedback_loop_diagnosers_reliability_llm_quality_regression_py,src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_py,src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py,src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py,src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_operational_seasonality_py,src_zephyr_feedback_loop_diagnosers_reliability_prompt_fingerprint_py,src_zephyr_feedback_loop_diagnosers_reliability_prompt_sanitizer_py,src_zephyr_feedback_loop_diagnosers_reliability_recovery_time_stats_py,src_zephyr_feedback_loop_diagnosers_reliability_regime_gain_scheduling_py,src_zephyr_feedback_loop_diagnosers_reliability_retirement_planner_py,src_zephyr_feedback_loop_diagnosers_reliability_slo_capacity_metrics_py,src_zephyr_feedback_loop_diagnosers_reliability_system_entropy_monitor_py,src_zephyr_feedback_loop_diagnosers_reliability_temporal_integrity_guard_py,src_zephyr_feedback_loop_diagnosers_reliability_timezone_semantic_reasoner_py,src_zephyr_feedback_loop_diagnosers_reliability_toil_quantification_py,src_zephyr_feedback_loop_diagnosers_reliability_value_added_baseline_py,src_zephyr_feedback_loop_diagnosers_reliability_zombie_fle_detector_py production
     class D_SHARED external_prod
-    class D_FRONTEND,D_GOV_AUDIT,D_AUTONOMY_CORE,D_FEEDBACK_LOOP external_design
+    class D_FEEDBACK_LOOP,D_INTELLIGENCE,D_AUTONOMY_CORE,D_FRONTEND,D_GOV_AUDIT,D_GOV_ENFORCEMENT external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

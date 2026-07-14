@@ -1,5 +1,5 @@
 %% D_PF_CORE 域全景依赖图
-%% 生成时间: 2026-07-14 15:51:02
+%% 生成时间: 2026-07-14 16:47:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 13, 依赖边数: 8
 
@@ -27,8 +27,8 @@ graph TD
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_TRADING -> D_PF_CORE (2 条)
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_pf_core_performance_attribution_report_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_pf_core_strategy_base_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_pf_core_performance_attribution_report_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_PF_CORE -> D_GOVERNANCE (3 条)

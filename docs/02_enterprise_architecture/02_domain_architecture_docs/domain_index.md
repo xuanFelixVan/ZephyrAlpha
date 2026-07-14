@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 5022 |
-| 生产态模块 | 1788 |
+| 模块总数 | 4938 |
+| 生产态模块 | 1705 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3170 |
+| 原型态模块 | 3169 |
 
 ## 域清单（按架构层分组）
 
@@ -82,8 +82,8 @@ ttl: permanent
 | D_GOVERNANCE | registry_management / Lifecycle Management | 1034 | 129 | 3 | 902 | 1034/150 (超容) | [38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 272 | 63 | 2 | 207 | 272/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
-| D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
-| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 164 | 100 | 0 | 64 | 164/150 (超容) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
+| D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 72 | 1 | 4 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
+| D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 80 | 16 | 0 | 64 | 80/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 30 | 16 | 0 | 14 | 30/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 21 | 4 | 0 | 17 | 21/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 35 | 30 | 0 | 5 | 35/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |

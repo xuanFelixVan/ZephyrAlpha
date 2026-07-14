@@ -1,5 +1,5 @@
 %% D_FBL_DIAGNOSERS 域全景依赖图
-%% 生成时间: 2026-07-14 15:51:01
+%% 生成时间: 2026-07-14 16:47:05
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 76, 依赖边数: 118
 
@@ -109,16 +109,16 @@ graph TD
     D_DATA[D_DATA] -->|test_depends| src_zephyr_feedback_loop_diagn___ta_volume_growth_monitor_py
     %% D_FEEDBACK_LOOP -> D_FBL_DIAGNOSERS (57 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagn___agnosis_diagnosis_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagn___agnosis_diagnosis_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___ve_adaptive_param_tuning_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___cognitive_cognitive_load_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___e_collaborative_learning_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___ve_confidence_decomposer_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___e_collaborative_learning_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___diagnosis_counterfactual_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___mposition_health_monitor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_diagn___ve_adaptive_param_tuning_py
@@ -147,8 +147,8 @@ graph TD
     %% D_GOV_AUDIT -> D_FBL_DIAGNOSERS (24 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___lity_amplification_guard_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___y_api_dependency_metrics_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___eliability_burnout_alarm_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___bility_burn_rate_alerter_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___eliability_burnout_alarm_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn____causal_inference_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___ve_cognitive_load_budget_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn____diagnosis_diagnosis_kpi_py
@@ -171,16 +171,16 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_diagn___h_self_llm_observability_py
     %% D_GOV_ENFORCEMENT -> D_FBL_DIAGNOSERS (3 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_diagn___ty_capacity_aware_repair_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_diagn___self_consistency_auditor_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_diagn___eraction_topology_mapper_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_diagn___self_consistency_auditor_py
     %% D_INFRA_RUNTIME -> D_FBL_DIAGNOSERS (2 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_feedback_loop_diagn____start_conservative_mode_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_feedback_loop_diagn___temporal_integrity_guard_py
     %% D_INTELLIGENCE -> D_FBL_DIAGNOSERS (4 条)
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_feedback_loop_diagn___bility_model_rotation_v2_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_feedback_loop_diagn___liability_model_rotation_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_feedback_loop_diagnosers_health_model_health_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_feedback_loop_diagn___l_version_semantic_drift_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_feedback_loop_diagn___bility_model_rotation_v2_py
     %% D_KNOWLEDGE -> D_FBL_DIAGNOSERS (2 条)
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_feedback_loop_diagn___ledge_bus_factor_monitor_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_feedback_loop_diagn___agnosis_knowledge_market_py

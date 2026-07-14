@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 代码质量治理（D_GOV_CODE_QUALITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 15:50:25
+> 最后更新: 2026-07-14 16:46:26
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -213,7 +213,7 @@ graph TD
     end
     src_zephyr_gov_code_quality_code_dedup_cli_py -.->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_auto_fixer_py
     src_zephyr_gov_code_quality_code_dedup_cli_py -.->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_exit_codes_py
-    src_zephyr_gov_code_quality_code_dedup_init_py -.->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
+    src_zephyr_gov_code_quality_code_dedup_init_py -.->|config_depends / config_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_gov_code_quality_code_dedup_cli_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
@@ -286,9 +286,11 @@ graph TD
     end
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     src_zephyr_gov_code_quality_code_dedup_integration_hub_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_stale_shared_detector_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_shadow_verifier_py
     D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
     D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_phase_executor_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_symbol_index_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
@@ -298,11 +300,9 @@ graph TD
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_thematic_clusterer_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_shadow_trust_validator_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_micro_clone_detector_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_stale_shared_detector_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_mock_duplicate_generator_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_report_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_health_monitor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_observation_window_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -361,10 +361,10 @@ graph TD
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     src_zephyr_gov_enforcement_commit_gates_blueprint_format_gate_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_enforcement_commit_gates_capability_overlap_gate_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_enforcement_commit_gates_capability_overlap_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_gov_enforcement_commit_gates_claim_required_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
@@ -376,6 +376,8 @@ graph TD
     src_zephyr_gov_enforcement_commit_gates_dangling_reference_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
     D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_gov_code_quality_code_dedup_trackers_blind_spot_tracker_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_doc_ref_broken_gate_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_foreign_change_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_capability_overlap_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py
@@ -384,12 +386,10 @@ graph TD
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_directory_contract_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_file_copy_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_exempt_zone_frontmatter_gate_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_foreign_change_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_function_dup_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_hardcoded_url_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_trackers_question_tracker_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_trackers_hotspot_tracker_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_verifier_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -604,10 +604,14 @@ graph TD
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     src_zephyr_gov_enforcement_commit_gates_capability_overlap_gate_py -->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_stale_shared_detector_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_shadow_verifier_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_doc_ref_broken_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_fifteen_dimension_auditor_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_symbol_index_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_degradation_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_debt_projector_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_foreign_change_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_grandfather_manager_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_policy_tree_validator_py
@@ -615,10 +619,6 @@ graph TD
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_pre_apply_integrity_gate_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_code_analyzer_runner_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_function_discovery_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_code_quality_code_dedup_simplicity_auditor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_arch_reference_gate_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_capability_overlap_gate_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000

@@ -1,5 +1,5 @@
 %% D_INFRASTRUCTURE 域全景依赖图
-%% 生成时间: 2026-07-14 15:51:01
+%% 生成时间: 2026-07-14 16:47:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 61, 依赖边数: 140
 
@@ -83,9 +83,9 @@ graph TD
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_EX_CORE -> D_INFRASTRUCTURE (4 条)
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_fill_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_order_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_GOVERNANCE -> D_INFRASTRUCTURE (13 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
@@ -189,9 +189,9 @@ graph TD
     src_zephyr_shared_contracts_fill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_factor_signal_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_market_data_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_position_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_risk_limits_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_synthesized_signal_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]

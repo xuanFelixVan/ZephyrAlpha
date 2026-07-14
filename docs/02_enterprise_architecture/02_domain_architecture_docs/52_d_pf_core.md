@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 15:50:50
+> 最后更新: 2026-07-14 16:46:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -123,10 +123,10 @@ graph TD
         src_zephyr_pf_core_performance_attribution_report_py["(生产态 / production) Re-export wrapper: performance_attribution_repo...<br/>文件: performance_attribution_report.py"]
         src_zephyr_pf_core_strategy_base_py["(生产态 / production) Re-export wrapper: strategy_base has migrated t...<br/>文件: strategy_base.py"]
     end
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
-    src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_strategy_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_base_py
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_pf_core_performance_attribution_report_py
@@ -135,7 +135,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_performance_attribution_report_py,src_zephyr_pf_core_strategy_base_py production
-    class D_GOV_ENFORCEMENT,D_GOVERNANCE,D_TRADING external_design
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_TRADING external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
