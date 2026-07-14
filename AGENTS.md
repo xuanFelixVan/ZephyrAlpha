@@ -836,6 +836,77 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 > **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
 
+### 11.0.3 depgraph DB 直接查询标准方式（AI 验证依赖关系时必读）
+
+> **铁律**：AI 需要验证 depgraph 中节点/边是否存在时（如审查"依赖是否已登记"），MUST 用本节标准方式直接查 PostgreSQL，禁止凭代码 `[DEPENDENCIES]` 头部推断（头部声明 ≠ DB 已登记），禁止假设"reconciler 已自动同步"。`apply_depgraph.py` 是写入工具（无 `--query-node` 参数），`extract_depgraph.py` 适合命令行速查但复杂查询受限——程序化验证用本节 Python 直连方式。
+
+**查询入口**（readonly，安全）：
+```python
+import sys
+sys.path.insert(0, r"d:\ZephyrAlpha\src")
+from zephyr.infrastructure.database_service import DatabaseService
+
+svc = DatabaseService()
+conn = svc.get_depgraph_conn(read_only=True)  # ⚠️ 必须传 read_only=True
+cur = conn.cursor()
+```
+
+**关键表名**（注意：不是 `depgraph_nodes`/`depgraph_edges`，是裸表名）：
+- `nodes` — 模块/文件节点（34 字段）
+- `edges` — 依赖关系边
+
+**nodes 表关键字段**：
+- `node_id`（主键，bigint）
+- `blueprint_id`（如 `MOD-L00-004`，对应 `[BLUEPRINT]` 头部 module_id）
+- `file_path`（如 `src/zephyr/data/backfill_checker.py`）
+- `build_status`（`planned`/`generated`/`testing`/`stable`/`deprecated`）
+- `design_maturity`（`design`/`prototype`/`production` 等）
+
+**edges 表关键字段**：
+- `from_node_id` / `to_node_id`（外键 → nodes.node_id）
+- `dep_type`（依赖类型，常见值 `import_depends`——AST import 扫描产生）
+
+**⚠️ RealDictCursor 陷阱**：`get_depgraph_conn` 返回的 cursor 是 `RealDictCursor`，`fetchone()`/`fetchall()` 返回 `RealDictRow`（dict-like），**不能用 `r[0]` 索引访问**，必须用 `r["node_id"]` 或 `dict(r)`。这是 AI 反复踩过的坑（KeyError: 0）。
+
+**典型查询模板**：
+
+1. 查某文件节点 + 其所有出边（验证依赖是否已登记）：
+```python
+cur.execute("SELECT node_id FROM nodes WHERE file_path LIKE '%backfill_checker.py'")
+row = cur.fetchone()
+bf_id = row["node_id"] if row else None
+
+cur.execute("""
+    SELECT n.file_path, e.dep_type
+    FROM edges e JOIN nodes n ON e.to_node_id = n.node_id
+    WHERE e.from_node_id = %s
+""", (bf_id,))
+for r in cur.fetchall():
+    print(dict(r))
+```
+
+2. 验证 A→B 依赖边是否存在（审查"依赖未登记"类问题）：
+```python
+cur.execute("""
+    SELECT count(*) FROM edges
+    WHERE from_node_id = %s AND to_node_id = %s
+""", (node_a_id, node_b_id))
+cnt = cur.fetchone()["count"]  # ⚠️ 不是 [0]
+```
+
+3. 查表结构（不确定字段名时）：
+```python
+cur.execute("""
+    SELECT column_name FROM information_schema.columns
+    WHERE table_name = 'nodes' ORDER BY ordinal_position
+""")
+cols = [r["column_name"] for r in cur.fetchall()]
+```
+
+> **常见错误**：① 用 `depgraph_nodes`/`depgraph_edges` 作表名（实际是 `nodes`/`edges`）；② 用 `e.edge_type`（实际是 `e.dep_type`）；③ 用 `n.module_id`（实际是 `n.blueprint_id`）；④ `fetchone()[0]` 索引访问（RealDictCursor 不支持，用 `["col"]`）；⑤ 不传 `read_only=True`（违反安全约束）。
+
+> **生成器 vs 增量同步 vs 全量重建**：reconciler 的增量同步（post-commit，67s 级）基于 git diff 只处理变更文件，可能漏登复杂 import（如 `from package import module` 子模块解析，已由 generate_project_depgraph.py L1166-1179 修复）。如增量同步后边仍缺失，需运行 `python scripts/governance/generate_project_depgraph.py --output-db depgraph --force` 全量重建（P1/P2 保护设计态数据不丢失，裁定#207 R2 C2）。全量重建耗时约 1-2 分钟（4993 nodes / 6114 edges 量级）。
+
 ### 11.1 生成器发现指引与时间戳约定
 
 > **新 AI 进入项目涉及"生成器"相关工作时，MUST 先读本节。**
