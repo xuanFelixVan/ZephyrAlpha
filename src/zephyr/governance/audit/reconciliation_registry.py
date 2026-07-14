@@ -77,6 +77,7 @@ __all__ = [
     "make_path_ownership_reconciler",
     "make_depgraph_ops_reconciler",
     "make_drift_scan_reconciler",
+    "make_drift_fix_reconciler",
     "make_yaml_sync_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_vocab_change_reconciler",
@@ -128,6 +129,29 @@ SQL_INSERT_DRIFT_SCAN_RESULT = (
     "(scan_id, scan_time, trigger_event, total_drifts, "
     "high_count, low_count, auto_fixable, details_json) "
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+)
+
+# S2: drift_fix_reconciler SQL（§5.160.2 NO-BARE-SQL gate 合规）
+SQL_FIND_MODULE_BY_PATH = (
+    "SELECT DISTINCT blueprint_id FROM nodes "
+    "WHERE path = %s AND blueprint_id IS NOT NULL AND blueprint_id != '' "
+    "LIMIT 1"
+)
+
+SQL_CREATE_DRIFT_AUDIT_FINDINGS = """CREATE TABLE IF NOT EXISTS drift_audit_findings (
+    finding_id TEXT PRIMARY KEY,
+    finding_time TEXT NOT NULL,
+    drift_type TEXT NOT NULL,
+    severity TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    detail TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open'
+)"""
+
+SQL_INSERT_DRIFT_AUDIT_FINDING = (
+    "INSERT INTO drift_audit_findings "
+    "(finding_id, finding_time, drift_type, severity, file_path, detail, status) "
+    "VALUES (?, ?, ?, ?, ?, ?, 'open')"
 )
 
 
@@ -650,6 +674,9 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         start = time.time()
+        _env = dict(os.environ)
+        _src = str(project_root / "src")
+        _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
         scan_result = _run_subprocess(
             [
                 sys.executable,
@@ -663,6 +690,7 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
             encoding="utf-8",
             errors="replace",
             timeout=300,
+            env=_env,
         )
         elapsed = time.time() - start
         if scan_result.returncode != 0:
@@ -722,6 +750,196 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=140,
+    )
+
+
+def _drift_fix_find_module(file_rel: str) -> str | None:
+    """查 depgraph 反查 file→blueprint_id（模块级，降低 make_drift_fix_reconciler 复杂度）。
+
+    注意：zephyr.governance.depgraph_schema.get_depgraph_pg_connection 返回原生
+    psycopg2 connection（无 execute() 方法，需用 cursor()）。与 scripts/_shared/
+    constants.py 的 PgConnExecuteWrapper 不同——src 内不可导入 _shared 包。
+    """
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+    file_rel = file_rel.replace("\\", "/")
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+        with conn.cursor() as cur:
+            cur.execute(SQL_FIND_MODULE_BY_PATH, (file_rel,))
+            row = cur.fetchone()
+        conn.close()
+        if row:
+            return row[0]
+    except Exception as e:
+        logger.warning("drift_fix: depgraph lookup failed for %s: %s", file_rel, e)
+    return None
+
+
+def _drift_fix_header(project_root: "Path", file_rel: str, old_modid: str, new_modid: str) -> bool:
+    """修复 .py 文件 [BLUEPRINT] 头部的 module_id。"""
+    import os
+    import re
+    abs_path = os.path.join(str(project_root), file_rel)
+    try:
+        with open(abs_path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except OSError:
+        return False
+    pattern = re.compile(r"(\[BLUEPRINT\]\s+)" + re.escape(old_modid))
+    new_content, count = pattern.subn(r"\g<1>" + new_modid, content, count=1)
+    if count == 0:
+        return False
+    with open(abs_path, "w", encoding="utf-8") as f:
+        f.write(new_content)
+    return True
+
+
+def _drift_fix_log_audit(project_root: "Path", finding: dict) -> None:
+    """不可修复的 drift 写入 governance.db drift_audit_findings 表。"""
+    import os
+    import sqlite3
+    import uuid
+    db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+    try:
+        conn = sqlite3.connect(db_path, timeout=30.0)
+        conn.execute(SQL_CREATE_DRIFT_AUDIT_FINDINGS)
+        finding_id = f"af-{uuid.uuid4().hex[:12]}"
+        conn.execute(
+            SQL_INSERT_DRIFT_AUDIT_FINDING,
+            (finding_id, now_utc(),
+             finding.get("type", ""), finding.get("severity", ""),
+             finding.get("file", ""), finding.get("detail", "")),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        logger.warning("drift_fix: audit finding log failed: %s", e)
+
+
+def _classify_orphan_drifts(
+    findings: list[dict], project_root: "Path",
+) -> tuple[list[tuple[str, str, str]], list[dict]]:
+    """遍历 findings，对 ORPHAN_MODULE_ID 分级：可修复→fixed_files，不可修复→escalated。"""
+    fixed_files: list[tuple[str, str, str]] = []
+    escalated: list[dict] = []
+    for f in findings:
+        if f.get("type") != "ORPHAN_MODULE_ID":
+            continue
+        file_rel = f.get("file", "").replace("\\", "/")
+        detail = f.get("detail", "")
+        old_modid = ""
+        if "引用" in detail and "不在" in detail:
+            old_modid = detail.split("引用")[1].split("不在")[0].strip()
+        if not old_modid:
+            escalated.append(f)
+            continue
+        matched = _drift_fix_find_module(file_rel)
+        if matched and matched != old_modid and _drift_fix_header(project_root, file_rel, old_modid, matched):
+            fixed_files.append((file_rel, old_modid, matched))
+        else:
+            escalated.append(f)
+    return fixed_files, escalated
+
+
+def _finalize_drift_fixes(
+    fixed_files: list[tuple[str, str, str]],
+    escalated: list[dict],
+    session_id: str,
+    start: float,
+    gateway: "object",
+    project_root: "Path",
+) -> ReconcileResult:
+    """自动提交修复 + 记录升级的 audit findings，返回 ReconcileResult。"""
+    import time
+    if not fixed_files and not escalated:
+        return ReconcileResult(action="clean", detail="no fixable drifts found")
+    for ef in escalated:
+        _drift_fix_log_audit(project_root, ef)
+    if not fixed_files:
+        return ReconcileResult(
+            action="warn",
+            detail=f"escalated {len(escalated)} unresolvable drift(s) to audit findings",
+        )
+    abs_files = [str(project_root / f[0]) for f in fixed_files]
+    fix_summary = "; ".join(f"{old}→{new}" for _, old, new in fixed_files)
+    auto_msg = f"fix(alignment_loop): S2 auto-fix ORPHAN_MODULE_ID drift ({fix_summary})"
+    commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+    elapsed = time.time() - start
+    esc_suffix = f", escalated {len(escalated)} to audit" if escalated else ""
+    if commit_result.status == "OK":
+        return ReconcileResult(
+            action="auto_committed",
+            detail=f"auto-fixed {len(fixed_files)} ORPHAN_MODULE_ID drift(s){esc_suffix} in {elapsed:.1f}s",
+        )
+    return ReconcileResult(
+        action="warn",
+        detail=f"fixed {len(fixed_files)} file(s) but auto-commit failed: {commit_result.message[:100]}",
+    )
+
+
+def make_drift_fix_reconciler(gateway: "object") -> ReconcilerSpec:
+    """S2: 分级自治 drift 自动修复 pipeline（MOD-GOV-ALIGNMENT-LOOP §4.S2）。
+
+    S1 扫描后，对检测到的 drift 按风险分级自动修复：
+    - ORPHAN_MODULE_ID (HIGH, 可匹配): 查 depgraph 反查 file→module_id → 修复 [BLUEPRINT] 头部 → auto_commit
+    - ORPHAN_MODULE_ID (HIGH, 不可匹配): 写入 drift_audit_findings 表 → 人工审批
+    - CODE_NOT_IN_DEPGRAPH (LOW): 跳过（depgraph_ops_reconciler priority=130 已处理）
+
+    闭环验证：修复后 S1 下次扫描自动确认 drift 减少。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-DRIFT-FIX", priority=150)。
+    """
+    import json
+    import os
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        import time
+        start = time.time()
+        _env = dict(os.environ)
+        _src = str(project_root / "src")
+        _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
+        scan_result = _run_subprocess(
+            [
+                sys.executable,
+                "scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py",
+                "--json", "--warn-only",
+            ],
+            cwd=str(project_root),
+            capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=300,
+            env=_env,
+        )
+        if scan_result.returncode != 0:
+            return ReconcileResult(action="warn", detail=f"drift fix scan failed: {scan_result.stderr.strip()[:200]}")
+        try:
+            data = json.loads(scan_result.stdout)
+        except json.JSONDecodeError:
+            return ReconcileResult(action="warn", detail="drift fix scan JSON parse failed")
+        findings = data.get("findings", [])
+        if not findings:
+            return ReconcileResult(action="clean", detail="no drifts to fix")
+        fixed_files, escalated = _classify_orphan_drifts(findings, project_root)
+        return _finalize_drift_fixes(fixed_files, escalated, session_id, start, gateway, project_root)
+
+    return ReconcilerSpec(
+        gate_id="GATE-DRIFT-FIX",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=150,
     )
 
 
