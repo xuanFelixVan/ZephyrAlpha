@@ -73,7 +73,7 @@ _PURPLE = "#ab47bc"     # 基准
 _YELLOW = "#ffd54f"     # 高亮
 
 
-def _dark_template() -> Any:
+def _dark_template() -> object:
     """创建 plotly 暗色主题 template (匹配 #2b2b2b 调色板)"""
     if go is None:
         return None
@@ -571,7 +571,7 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
 
 # ===== UI 辅助函数 =====
 
-def _kpi_card(label_zh: str, label_en: str, value: str, color: str = _TEXT) -> Any:
+def _kpi_card(label_zh: str, label_en: str, value: str, color: str = _TEXT) -> object:
     """生成单个 KPI 卡片 (掘金风格: 标签 + 大号数值)"""
     if pn is None:
         return {"label_zh": label_zh, "label_en": label_en, "value": value, "color": color}
@@ -595,7 +595,7 @@ def _kpi_card(label_zh: str, label_en: str, value: str, color: str = _TEXT) -> A
     )
 
 
-def _section_header(title: str) -> Any:
+def _section_header(title: str) -> object:
     """章节标题 (中英双语)"""
     if pn is None:
         return title
@@ -620,7 +620,7 @@ def _fmt_pct(v: float, decimals: int = 2) -> str:
 
 # ===== Tab 1: 绩效概览 =====
 
-def _render_overview(data: BacktestPerformanceData) -> Any:
+def _render_overview(data: BacktestPerformanceData) -> object:
     """Tab 1 绩效概览: 信息横幅 + 6 KPI + 收益图 + 回撤图 + 日收益率图 + 16指标表"""
     p = data.performance
     items: list[Any] = []
@@ -778,7 +778,7 @@ def _render_overview(data: BacktestPerformanceData) -> Any:
 
 # ===== Tab 2: 持仓分析 =====
 
-def _render_positions(data: BacktestPerformanceData) -> Any:
+def _render_positions(data: BacktestPerformanceData) -> object:
     """Tab 2 持仓分析: 仓位分布堆叠图 + 每日快照表"""
     items: list[Any] = []
     items.append(_section_header("仓位分布 Position Distribution"))
@@ -842,7 +842,7 @@ def _render_positions(data: BacktestPerformanceData) -> Any:
 
 # ===== Tab 3: 交易统计 =====
 
-def _render_trade_stats(data: BacktestPerformanceData) -> Any:
+def _render_trade_stats(data: BacktestPerformanceData) -> object:
     """Tab 3 交易统计: 28指标网格 + 月度收益热力图"""
     items: list[Any] = []
     ts = data.trade_stats
@@ -920,7 +920,7 @@ def _render_trade_stats(data: BacktestPerformanceData) -> Any:
 
 # ===== Tab 4: 每日明细 =====
 
-def _render_daily_detail(data: BacktestPerformanceData) -> Any:
+def _render_daily_detail(data: BacktestPerformanceData) -> object:
     """Tab 4 每日明细: 日期选择器 + 当日资金/持仓/委托三表"""
     items: list[Any] = []
 

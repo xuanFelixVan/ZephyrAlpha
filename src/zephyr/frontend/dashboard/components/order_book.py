@@ -88,7 +88,7 @@ def fetch_order_book(miniqmt_provider: Any, symbol: str) -> OrderBookData:
     if not raw:
         return OrderBookData(symbol=symbol)
 
-    def _get_field(key: str) -> Any:
+    def _get_field(key: str) -> object:
         return raw.get(key) if isinstance(raw, dict) else getattr(raw, key, [])
 
     ask_p = [float(v) for v in (_get_field("ask_price") or [])]
