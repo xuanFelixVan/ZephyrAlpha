@@ -42,7 +42,7 @@ import sys
 
 from zephyr.shared.io.paths import REPO_ROOT
 
-GATES_DIR = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
+GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
 BLUEPRINT_PATH = (
     REPO_ROOT / "docs" / "03_modules" / "_cross_layer" / "gate_engine" / "blueprint.md"
 )

@@ -14,10 +14,10 @@
 # [TESTS] tests/governance/commit_gates/test_arch_reference_gate.py
 # [A_module] module_id=MOD-GOV-arch_reference_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""arch_reference_gate.py — #ARCH-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）
+"""arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）
 
-检测 staged 文件中**新增的** ``#ARCH-NNN`` 引用是否在 architecture_issue_registry.yaml
-中登记。命中则阻断 commit（``ARCH_REFERENCE_VIOLATION``）。
+检测 staged 文件中**新增的** ``#ARCH-NNN`` / ``#ARCH-CH-NNN`` / ``#ARCH-MM-NNN`` 等引用
+是否在 architecture_issue_registry.yaml 中登记。命中则阻断 commit（``ARCH_REFERENCE_VIOLATION``）。
 
 病根（第一性原理）
 -----------------
@@ -40,8 +40,9 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
 3. **issue_id 从工作区 registry 提取**：commit 后 registry 的新真源即工作区版本。
 4. **priority=75**：紧跟 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前
    ——同属"引用完整性"类检查，集中执行。
-5. **正则提取**：``#ARCH-(\\d+)`` 匹配 ``#ARCH-008`` / ``#ARCH-037`` 等，
-   捕获组为纯数字。registry 中 issue_id 形如 ``'#ARCH-008'``，提取数字后比较。
+5. **正则提取**：``#ARCH-([A-Z]+-\\d+|\\d+)`` 匹配 ``#ARCH-008`` / ``#ARCH-037`` /
+   ``#ARCH-CH-007`` / ``#ARCH-MM-001`` 等，捕获组为编号后缀（纯数字或域前缀-数字）。
+   registry 中 issue_id 形如 ``'#ARCH-008'`` 或 ``'#ARCH-CH-007'``，提取后缀后比较。
 6. **不扫 commit message**：只扫 ``files`` 参数（commit 目标文件）。
 
 Usage::
@@ -69,9 +70,9 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_arch_reference_gate"]
 
-# #ARCH-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-037" 等
-# 捕获组为纯数字字符串
-_ARCH_REF_RE = re.compile(r"#ARCH-(\d+)")
+# #ARCH-NNN / #ARCH-DOMAIN-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-CH-007" 等
+# 捕获组为编号后缀（纯数字 "008" 或域前缀-数字 "CH-007"）
+_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+-\d+|\d+)")
 
 # 扫描的文件扩展名（可能含 #ARCH-NNN 引用的文件类型）
 _SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
