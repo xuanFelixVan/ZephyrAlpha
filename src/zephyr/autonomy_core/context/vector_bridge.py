@@ -85,7 +85,7 @@ class VectorBridge:
 
     def __init__(
         self,
-        vms_client: Any | None = None,
+        vms_client: object | None = None,
         *,
         default_timeout_s: float = 5.0,
     ) -> None:

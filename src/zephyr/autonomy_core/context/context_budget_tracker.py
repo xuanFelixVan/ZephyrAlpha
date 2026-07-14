@@ -254,7 +254,7 @@ class ContextBudgetTracker:
         with self._lock:
             self._doc_compressor = compressor
 
-    def get_doc_compressor(self) -> Any | None:
+    def get_doc_compressor(self) -> object | None:
         """返回已注册的 DocCompressor 实例（M3 触发器调用入口）。
 
         未注册时返回 None（M3 负责处理 None 情况，不抛出异常）。

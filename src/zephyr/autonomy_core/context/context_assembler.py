@@ -445,7 +445,7 @@ def build_context(
     task_type: str | None = None,
     target_layer: str | None = None,
     session_id: str = "",
-    vms: Any | None = None,
+    vms: object | None = None,
 ) -> RawContext:
     """BUILD 阶段入口——从 VMS 四 Collection 检索组装原始上下文。
 
@@ -556,7 +556,7 @@ def _infer_task_type(task: TaskCard) -> str:
     return "code_gen"
 
 
-def _safe_search(vms: Any, collection: str, query: str, top_k: int) -> list[str]:
+def _safe_search(vms: object, collection: str, query: str, top_k: int) -> list[str]:
     if not query:
         return []
     results = vms.search(collection, query, top_k=top_k)
