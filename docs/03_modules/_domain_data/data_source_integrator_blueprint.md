@@ -427,15 +427,23 @@ scheduler = BackgroundScheduler(
 )
 ```
 
-### §6.2 调度计划（4 档时段）
+### §6.2 调度计划（11 档时段）
 
-| 时段 | cron | 任务 | 数据源 | 说明 |
-|------|------|------|--------|------|
-| **盘后日K** | 16:30 周一-五 | kline_daily / kline_daily_hfq / kline_daily_none / daily_kline / adj_factor / index_kline / daily_valuation / etf_kline_* / lof_kline_* | iFind + QMT | 日频核心，先跑 |
-| **盘后资金** | 17:00 周一-五 | margin_trading / block_trade / dragon_tiger / money_flow / futures_kline / hk_daily_kline / us_daily_kline / us_index / macro_data | iFind + QMT + AKShare + TickFlow | 资金面 + 外盘 |
-| **盘后事件** | 18:00 周一-五 | rights_issue / dividend / restricted_shares / disclosure_plan / analyst_forecast / news_data / news_news_info / news_security | AKShare + iFind + RSS + tushare | 事件驱动数据 |
-| **周末财务** | 10:00 周六 | balance_sheet / income_statement / cashflow_statement / financial_indicator / main_business / earnings_forecast / express_report / audit_opinion / shareholder_count / top10_shareholders / top10_circulating_shareholders / equity_pledge_detail / equity_pledge_summary | QMT + iFind + AKShare | 低频财务数据 |
-| **静态数据** | 09:00 每月1日 | stock_list / index_list / index_constituent / industry_class / trade_calendar / etf_list / lof_list / convertible_bond_list / hk_stock_list | 各源 | 月度刷新 |
+> 真源：`src/zephyr/data/config/schedule.yaml`（11 档分层架构，对标专业机构实践）
+
+| 时段 | cron | executor | 任务 | 数据源 | 说明 |
+|------|------|----------|------|--------|------|
+| **L1 盘中实时** | */5 9-15 周一-五 | realtime | tick_data / index_quote / auction_snapshot / futures_position / kline_hk_daily | QMT | 盘中高频轮询 |
+| **L2 盘中分钟K线** | */5 9-15 周一-五 | intraday_minute | kline_1min / 5min / 15min / 30min / 60min + ETF/LOF 分钟K线 | QMT | 盘中分钟滚动更新 |
+| **L3 事件驱动** | */15 7×24 | default | news_data / macro_data | RSS + AKShare | 来了就处理 |
+| **L4 盘后日K** | 30 16 周一-五 | heavy | kline_daily / kline_daily_hfq / adj_factor / kline_index / daily_valuation / kline_weekly / monthly / hfq 系列 | QMT + iFind | 日频核心，先跑 |
+| **L5 盘后资金** | 00 18 周一-五 | default | margin_trading / block_trade / dragon_tiger / money_flow / futures_kline / us_daily / us_index / share_unlock | iFind + QMT + AKShare + TickFlow | 资金面 + 外盘 |
+| **L6 盘后事件** | 00 19 周一-五 | default | analyst_forecast / dividend / rights_issue / disclosure_plan | AKShare + iFind | 事件类数据 |
+| **L7 夜间财务** | 00 22 周一-五 | heavy | balance_sheet / income_statement / cashflow / financial_indicator / top10_shareholders / equity_pledge | QMT + iFind + AKShare | 低频财务数据 |
+| **L8 周末校准** | 00 2 周六 | heavy | 全量校准 / TDX板块 / 概念板块 / 美股全量 | 各源 | 全量刷新 |
+| **L9 月初静态** | 00 9 1 * * | default | stock_list / index_list / trade_calendar / etf_list | 各源 | 月度刷新 |
+| **L10 周末补下载** | 00 2 周日 | heavy | tick_data 补下载 + 全表缺失检测补下载 | QMT + 各源 | 动态发现 tasks.yaml 全表，检测过去7天缺失并精准补下载 |
+| **L11 完整性巡检** | 00 23 周一-五 | default | integrity_check_daily | internal | 动态发现 tasks.yaml 全表，检测当日数据是否达标，不达标告警 |
 
 ### §6.3 任务依赖图
 
@@ -466,12 +474,20 @@ index_list ──→ index_constituent ──→ index_kline
 ### §6.5 失败重试与告警
 
 - **任务级重试**：Provider 内部按 SourcePolicy 重试（瞬时错误）
+- **数据源 fallback**：主源失败后自动尝试副源（详见 §15.5 数据韧性三层机制）
+  - 不可恢复错误（配额-4318/接口废弃/认证失败）→ 立即 fallback，不浪费重试
+  - 可恢复错误（超时/网络波动）→ PolicyRegistry 重试用完后 fallback
+  - tasks.yaml 配置 `fallback_sources` 字段声明副源优先级列表
 - **调度级重跑**：DEAD 任务进入 `failures/` 目录，CLI `integrator rerun-failed` 一键重跑
+- **L10 周末补下载**：周日 02:00 自动检测过去7天全表缺失并补下载（不依赖 last_key）
+- **L11 每日巡检**：每天 23:00 盘后全表数据达标检测，不达标告警
 - **告警触发**：
   - 任务 DEAD → 立即告警
+  - 主源失败 fallback 到副源 → 告警通知
   - 单日失败率 > 5% → 汇总告警
   - 某数据源连续 3 天失败 → 升级告警
   - iFind 月度配额 -4318 → 立即告警并暂停该源所有任务
+  - L11 巡检发现表当日数据不达标 → 告警通知
 
 ---
 
@@ -853,6 +869,151 @@ akshare:
 
 **验证**：重新运行 `generate_acquisition_matrix.py`，61 项任务全部接入调度（44 有数据 + 15 空表 + 2 已禁用；其中 8 张表已由 `tmp/sql/_create_integrator_missing_tables.sql` 补建，从"表不存在"转为"空表"）。
 
+### §15.5 阶段5：数据韧性三层机制 ✅ 已完成（2026-07-15，commit 54263b281f，49 tests passed）
+
+> **设计文档**：`docs/_working/2026-07-15-data-resilience-design.md`（临时工作文档，本节为正式蓝图归档）
+> **关联裁定**：#ARCH-BACKFILL-001（L10 周末补下载）、#ARCH-CH-004（运行时门禁强制蓝图约束）
+
+**背景**：80+ 自动任务存在三个韧性缺口——①无数据源级 fallback（ifind 配额耗尽不自动切 akshare）；②L10 补下载只覆盖 tick_data；③除 tick_data 外无完整性巡检。
+
+**目标**：补齐三个缺口，形成闭环——巡检发现缺失 → 告警 → fallback 保证数据源可用 → L10 补下载修复。
+
+**关键约束**：系统必须自动检测新增表。新表只要在 tasks.yaml 注册任务，自动纳入全部三层机制，无需手动修改任何配置。
+
+#### §15.5.1 整体架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     tasks.yaml (真源)                         │
+│  80+ 任务，每个任务可配置:                                    │
+│    - source: 主数据源                                        │
+│    - fallback_sources: [副数据源列表]  ← 新增字段(可选)      │
+│    - schedule: 调度时段                                      │
+│  新增表只需在此注册任务 → 自动纳入全部三层机制               │
+└──────────┬──────────────────────────────────┬───────────────┘
+           │                                  │
+           ▼                                  ▼
+┌─────────────────────┐          ┌─────────────────────────┐
+│  §1 数据源 fallback  │          │  §3 完整性巡检          │
+│  scheduler.run_task  │          │  integrity_checker      │
+│  + error_classifier  │          │  (L11 每天23:00巡检)    │
+│  主源→失败→副源      │          │  动态读tasks.yaml全表   │
+└─────────┬───────────┘          └───────────┬─────────────┘
+          │                                  │
+          │              ┌──────────────────────────────────┐
+          │              │  §2 全表补下载                   │
+          │              │  backfill_checker (L10扩展)      │
+          │              │  周日02:00自动运行               │
+          │              │  动态读tasks.yaml全表            │
+          │              └──────────────────────────────────┘
+          ▼
+┌─────────────────────────┐
+│  §4 新增表门禁           │
+│  DATA-TASK-COMPLETENESS  │
+│  commit gate (warn级)    │
+│  检测tasks.yaml新增任务  │
+│  warn: 缺fallback_sources│
+└─────────────────────────┘
+```
+
+#### §15.5.2 §1 数据源 fallback
+
+**文件**：`error_classifier.py`（错误分类器）+ `scheduler.py`（run_task 重构）
+
+**tasks.yaml 配置格式**：
+
+```yaml
+- task_id: daily_valuation_incremental
+  source: ifind                    # 主数据源
+  fallback_sources:                # 副数据源列表（可选）
+    - source: akshare
+      capability: daily_valuation  # 副源的capability（可能与主源不同）
+```
+
+**run_task fallback 逻辑**（`scheduler.py` L264-L332）：
+
+1. 构造数据源尝试列表：`sources_to_try = [(主源, capability)] + [(副源, capability), ...]`
+2. 逐源调用 `_try_source()`（提取自原 run_task 的核心逻辑）
+3. 不可恢复错误 → 立即 fallback（跳过重试）
+4. 可恢复错误 → PolicyRegistry 重试用完后 fallback
+5. 任一源成功即返回 True，全部失败返回 False
+
+**错误分类器**（`error_classifier.py`）：
+
+| 分类 | 关键词 | 行为 |
+|------|--------|------|
+| 不可恢复 | `-4318` / `-4309` / `配额` / `quota` / `接口已废弃` / `认证失败` / `401` / `403` / `license` | 立即 fallback |
+| 可恢复 | `Timeout` / `ConnectionError` / `RemoteDisconnected` / `HTTPError` / `503` / `502` | 重试用完才 fallback |
+| 未知 | 无匹配 | 当作可恢复处理（给重试机会） |
+
+#### §15.5.3 §2 全表补下载（L10 扩展）
+
+**文件**：`backfill_checker.py`（已扩展为全表覆盖）
+
+**动态发现机制**（`_discover_backfill_tables()`，L265-L293）：
+
+从 tasks.yaml 动态读取所有非 disabled 任务的表，同表多任务去重。自动推断：
+- **日期列名**：`DESCRIBE TABLE` 查 Date 类型列，优先选 `trade_date`/`end_date`/`report_date`/`unlock_date`/`announce_date`
+- **阈值**：过去7天平均行数×0.5（低于均值50%视为缺失）；无历史数据返回0（跳过巡检，新表首日不报缺失）
+
+**补下载执行**（`run_weekend_backfill()`）：
+
+1. 动态发现所有表 → 获取过去7天交易日
+2. 逐表检测缺失日期
+3. tick_data 用专门 `backfill_tick_data()`（分时段+批量写入）
+4. 其他表用 `scheduler.run_task(task_id)` 重跑
+5. 结果记录到 progress_store
+
+#### §15.5.4 §3 完整性巡检（L11 新增）
+
+**文件**：`integrity_checker.py`（新增）
+
+**巡检流程**（`run_daily_check()`）：
+
+1. 复用 `backfill_checker._discover_backfill_tables()` 动态发现全表
+2. 逐表检查当天 `count() WHERE date_col = today()` 是否 ≥ 阈值
+3. 不达标的表通过 `alerter.notify()` 告警
+4. 结果记录到 progress_store
+
+**调度集成**：`scheduler.run_schedule("integrity_check")` 路由到 `integrity_checker.run_daily_check(scheduler)`
+
+#### §15.5.5 §4 新增表门禁
+
+**文件**：`data_task_completeness_gate.py`（commit gate，priority=80，warn 级）
+
+**检测逻辑**：
+
+1. 只在 tasks.yaml 被修改时触发
+2. `git diff HEAD -- tasks.yaml` 提取新增的 `task_id`
+3. 解析 tasks.yaml 检查新增任务是否配置了 `fallback_sources`
+4. 未配置 → 返回 `passed=True`（warn 级不阻断）+ detail 含 WARN 信息
+
+**设计决策：warn 不阻断**——因为有些表确实没有备用数据源（如 tick_data 只有 miniqmt），硬阻断会阻碍开发。但 warn 信息出现在 commit 输出中，形成"AI 增加表 → 门禁提醒 → AI 补充 fallback_sources"闭环。
+
+#### §15.5.6 文件清单
+
+| 文件 | 操作 | 说明 |
+|------|------|------|
+| `src/zephyr/data/error_classifier.py` | 新增 | 错误分类器（不可恢复/可恢复/未知） |
+| `src/zephyr/data/integrity_checker.py` | 新增 | 每日盘后完整性巡检（动态发现全表） |
+| `src/zephyr/data/backfill_checker.py` | 修改 | 扩展为全表覆盖+动态发现（`_discover_backfill_tables`） |
+| `src/zephyr/data/scheduler.py` | 修改 | run_task 重构为 fallback 循环+`_try_source`提取；run_schedule 增加 integrity_check 路由 |
+| `src/zephyr/data/config/tasks.yaml` | 修改 | kline_daily/daily_valuation/money_flow 增加 fallback_sources |
+| `src/zephyr/data/config/schedule.yaml` | 修改 | 新增 L11 integrity_check 时段（23:00） |
+| `src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py` | 新增 | warn 级 commit gate（priority=80） |
+| `src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py` | 修改 | 注册 DATA-TASK-COMPLETENESS gate |
+| `tests/zephyr/data/test_error_classifier.py` | 新增 | 24 个测试 |
+| `tests/zephyr/data/test_integrity_checker.py` | 新增 | 9 个测试 |
+| `tests/governance/commit_gates/test_data_task_completeness_gate.py` | 新增 | 16 个测试 |
+
+#### §15.5.7 不做的事（YAGNI）
+
+- 不做实时监控（每天盘后巡检足够）
+- 不做数据源健康评分（简单的错误分类即可）
+- 不做跨表关联巡检（单表行数检查足够）
+- 不做自动数据修复（只告警+补下载，不修改已有数据）
+- 门禁不硬阻断（warn 级别，不阻碍开发）
+
 ---
 
 ## §16 已知风险与缓解
@@ -883,6 +1044,10 @@ akshare:
 | 2026-07-10 | 引擎选择不可依赖 AI 自觉回查蓝图 | #ARCH-CH-004：100% AI 开发模式需运行时门禁强制蓝图约束 |
 | 2026-07-10 | ch_writer 混合传输（query/delete_where 走 TCP，write_tsv 保留 WSL） | #ARCH-CH-005：2.9x 查询加速，TSV 保留类型自动转换，driver 不可用自动降级 WSL |
 | 2026-07-10 | 幂等策略自动检测引擎（get_table_engine/is_replacing_engine） | #ARCH-CH-002 补充：ReplacingMergeTree 跳过写前删除，避免 mutation 开销 |
+| 2026-07-15 | 数据源 fallback 用 warn 级门禁而非 block 级 | 有些表确实无副源（tick_data 只有 miniqmt），硬阻断阻碍开发；warn 出现在 commit 输出形成提醒闭环 |
+| 2026-07-15 | 动态发现 tasks.yaml 全表而非硬编码表列表 | 新增表只需在 tasks.yaml 注册任务即自动纳入三层机制，无需手动维护表列表（用户核心需求） |
+| 2026-07-15 | 阈值用历史7天日均×0.5 而非固定值 | 不同表行数量级差异大（tick_data 2000万 vs macro_data 几十行），固定阈值无法通用 |
+| 2026-07-15 | 错误分类器用关键词匹配而非异常类型 | FetchResult.error 是字符串（跨 Provider 统一接口），无法用 isinstance 判断异常类型 |
 
 ---
 
