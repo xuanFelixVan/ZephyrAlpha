@@ -179,6 +179,7 @@ build_status: planned
 | `commit_gates/ch_batch_size_gate.py` | §0.1 | CH批量写入防回退门禁（CH-BATCH-SIZE，§18.4防复发，AST检测write_result在循环内直接调用） | 已实现 | | 本模块 |
 | `commit_gates/ch_final_gate.py` | §0.1 | ch_writer.query()直接调用阻断门禁（CH-FINAL-GATE，裁定#ARCH-CH-007 B5防复发，强制走ch_reader.query()自动注入FINAL） | 已实现 | | 本模块 |
 | `commit_gates/test_source_consistency_gate.py` | §0.1 | 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178防复发，检测tests/中import的符号在源码是否存在） | 已实现 | | 本模块 |
+| `commit_gates/data_task_completeness_gate.py` | §0.1 | 数据任务完整性warn级门禁（DATA-TASK-COMPLETENESS，提醒新增tasks.yaml任务配置fallback_sources，数据韧性三层机制） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
