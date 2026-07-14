@@ -4865,6 +4865,18 @@ creation_tokens:
     token: "auto-alignment-loop-blueprint-20260714"
     created_by: "session-sess-30596-20260714230339"
     capability: "alignment_loop_blueprint"
+  # --- ch_reader 统一查询层（裁定 #ARCH-CH-007，2026-07-15）---
+  # 对 ReplacingMergeTree 表自动注入 FINAL，消除 AI 遗漏 FINAL 的风险
+  - file: "src/zephyr/data/ch_reader.py"
+    token: "auto-ch-reader-20260715"
+    created_by: "session-sess-33112-20260715005712"
+    capability: "ch_reader"
+  # --- backfill_checker L10 周末补下载检测器（裁定 #ARCH-BACKFILL-001）---
+  # 查 CH 实际行数发现缺口，走 ch_reader 统一查询层自动注入 FINAL
+  - file: "src/zephyr/data/backfill_checker.py"
+    token: "auto-backfill-checker-20260715"
+    created_by: "session-sess-33112-20260715005712"
+    capability: "backfill_checker"
 
 # ============================================================================
 # 维护日志
