@@ -313,7 +313,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         return weights
 
-    def _to_datetime(self, date: Any) -> datetime:
+    def _to_datetime(self, date: object) -> datetime:
         """将日期转换为datetime对象"""
         if isinstance(date, datetime):
             return date

@@ -122,7 +122,7 @@ class EventDrivenEngine(BacktestEngineBase):
 
     def __init__(
         self,
-        config: Optional[Any] = None,
+        config: object | None = None,
         matching_config: Optional[MatchingConfig] = None,
     ):
         """初始化事件驱动回测引擎
@@ -165,7 +165,7 @@ class EventDrivenEngine(BacktestEngineBase):
 
     def run_tick(
         self,
-        provider: Any,
+        provider: object,
         symbols: list[str],
         start: datetime,
         end: datetime,
@@ -460,7 +460,7 @@ class EventDrivenEngine(BacktestEngineBase):
         return gate_results
 
 
-def _to_datetime(dt: Any) -> datetime:
+def _to_datetime(dt: object) -> datetime:
     """将各种日期类型转换为 datetime"""
     if isinstance(dt, datetime):
         return dt

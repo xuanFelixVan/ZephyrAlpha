@@ -158,7 +158,7 @@ class BacktestDataHandler:
 
         return self.get_bar(date)
 
-    def get_bar(self, date: Any) -> pd.DataFrame:
+    def get_bar(self, date: object) -> pd.DataFrame:
         """获取指定日期的bar数据(PIT:仅返回该日期的数据)
 
         Args:
@@ -183,7 +183,7 @@ class BacktestDataHandler:
 
         return bar
 
-    def get_history(self, date: Any, lookback: int = 1) -> pd.DataFrame:
+    def get_history(self, date: object, lookback: int = 1) -> pd.DataFrame:
         """获取历史数据(PIT:返回date及之前lookback天的数据)
 
         用于需要历史窗口的指标计算(如移动平均)。
@@ -270,7 +270,7 @@ class BacktestDataHandler:
         symbols: list[str],
         start_date: str,
         end_date: str,
-        database_service: Optional[Any] = None,
+        database_service: object | None = None,
         table: str = "daily_kline",
     ) -> "BacktestDataHandler":
         """从ClickHouse加载OHLCV数据（通过 DatabaseService）
@@ -403,12 +403,12 @@ class MultiSourceDataHandler:
     def __init__(
         self,
         symbols: list[str],
-        start: Any,
-        end: Any,
+        start: object,
+        end: object,
         mode: str = "auto",
-        tick_provider: Optional[Any] = None,
+        tick_provider: object | None = None,
         batch_data: Optional[pd.DataFrame] = None,
-        database_service: Optional[Any] = None,
+        database_service: object | None = None,
         table: str = "daily_kline",
     ):
         """初始化多源数据处理器
@@ -451,7 +451,7 @@ class MultiSourceDataHandler:
     def _resolve_source(
         self,
         batch_data: Optional[pd.DataFrame],
-        database_service: Optional[Any],
+        database_service: object | None,
     ) -> None:
         """根据 mode 解析实际数据源
 
@@ -523,7 +523,7 @@ class MultiSourceDataHandler:
     def _init_batch_source(
         self,
         batch_data: Optional[pd.DataFrame],
-        database_service: Optional[Any],
+        database_service: object | None,
     ) -> None:
         """初始化批量数据源（DataFrame 或 ClickHouse）
 
@@ -546,7 +546,7 @@ class MultiSourceDataHandler:
             )
 
     @staticmethod
-    def _format_date(dt: Any) -> str:
+    def _format_date(dt: object) -> str:
         """格式化日期为 YYYY-MM-DD"""
         if hasattr(dt, "strftime"):
             return dt.strftime("%Y-%m-%d")
