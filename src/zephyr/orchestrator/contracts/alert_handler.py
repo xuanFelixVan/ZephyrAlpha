@@ -24,7 +24,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
@@ -41,7 +41,7 @@ class AlertHandler:
     def __init__(self, task_repo: TaskRepositoryProtocol | None = None) -> None:
         self._task_repo = task_repo
 
-    def handle_alert(self, event: Any) -> Any | None:
+    def handle_alert(self, event: object) -> object | None:
         try:
             severity_val = _get_severity(event)
             category_val = _get_category(event)
@@ -70,29 +70,29 @@ class AlertHandler:
             raise
 
 
-def _get_severity(event: Any) -> str:
+def _get_severity(event: object) -> str:
     if hasattr(event, "severity"):
         sv = event.severity
         return sv.value if hasattr(sv, "value") else str(sv)
     return str(getattr(event, "severity", "MEDIUM"))
 
 
-def _get_category(event: Any) -> str:
+def _get_category(event: object) -> str:
     if hasattr(event, "category"):
         cat = event.category
         return cat.value if hasattr(cat, "value") else str(cat)
     return str(getattr(event, "category", "unknown"))
 
 
-def _get_title(event: Any) -> str:
+def _get_title(event: object) -> str:
     return str(getattr(event, "title", "") or "FLE Alert")
 
 
-def _get_detail(event: Any) -> str:
+def _get_detail(event: object) -> str:
     return str(getattr(event, "detail", ""))
 
 
-def _record_event(event_id: str, severity: str, category: str, event: Any) -> None:
+def _record_event(event_id: str, severity: str, category: str, event: object) -> None:
     try:
         from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
@@ -126,7 +126,7 @@ def _create_repair_task(
     title: str,
     detail: str,
     task_repo: TaskRepositoryProtocol | None = None,
-) -> Any:
+) -> object:
     from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
     from zephyr.integration.shared.schema.execution_model import ExecutionModel
     from zephyr.integration.shared.schema.severity_types import Priority
@@ -182,5 +182,5 @@ def _create_repair_task(
     return repo.create(task, allow_direct_create=True)
 
 
-def handle_alert(event: Any) -> Any | None:
+def handle_alert(event: object) -> object | None:
     return AlertHandler().handle_alert(event)

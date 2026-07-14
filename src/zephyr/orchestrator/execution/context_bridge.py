@@ -62,7 +62,7 @@ class ContextResponse:
 
 
 class ContextBridge:
-    def request_context(self, task: Any, *, task_type: str | None = None, session_id: str = "") -> ContextResponse:
+    def request_context(self, task: object, *, task_type: str | None = None, session_id: str = "") -> ContextResponse:
         task_id = getattr(task, "task_id", "unknown")
         t_type = task_type or _infer_type(task)
         t_blueprint = getattr(task, "source_blueprint", "")
@@ -108,7 +108,7 @@ class ContextBridge:
             logger.debug("[CE-VMS] context vectorize skipped", exc_info=True)
 
 
-def _infer_type(task: Any) -> str:
+def _infer_type(task: object) -> str:
     tags = getattr(task, "tags", "")
     if isinstance(tags, str):
         import json
@@ -134,5 +134,5 @@ def _infer_type(task: Any) -> str:
     return "code_construction"
 
 
-def request_context(task: Any, *, task_type: str | None = None, session_id: str = "") -> ContextResponse:
+def request_context(task: object, *, task_type: str | None = None, session_id: str = "") -> ContextResponse:
     return ContextBridge().request_context(task, task_type=task_type, session_id=session_id)

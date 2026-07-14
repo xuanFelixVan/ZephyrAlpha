@@ -95,7 +95,7 @@ class StateSynchronizer:
     def __init__(self, db_path: Path | None = None) -> None:
         self._db_path = db_path or DB_PATH
 
-    def _iter_task_files(self, conn: Any) -> list[tuple[str, str, str]]:
+    def _iter_task_files(self, conn: object) -> list[tuple[str, str, str]]:
         """返回 [(task_id, file_path, status), ...] 过滤空 files_in_scope。"""
         rows = conn.execute(
             "SELECT task_id, files_in_scope, status FROM tasks "
@@ -320,7 +320,7 @@ class StateSynchronizer:
 
         return None
 
-    def _update_task_status(self, conn: Any, task_id: str, new_status: str) -> None:
+    def _update_task_status(self, conn: object, task_id: str, new_status: str) -> None:
         now = now_iso()
         conn.execute("BEGIN")
         conn.execute(

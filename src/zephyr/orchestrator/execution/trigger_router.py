@@ -518,7 +518,7 @@ class TriggerRouter:
         skipped: bool,
         skip_reason: str,
         error: str | None,
-        handler_result: Any,
+        handler_result: object,
         started: datetime,
     ) -> RouterDispatchResult:
         ended = datetime.now(_UTC)
@@ -593,7 +593,7 @@ def get_trigger_router(
     *,
     config_path: Path | None = None,
     handlers: dict[str, Callable[..., Any]] | None = None,
-    audit_logger: Any | None = None,
+    audit_logger: object | None = None,
     session_id: str = "",
     reset: bool = False,
 ) -> TriggerRouter:
