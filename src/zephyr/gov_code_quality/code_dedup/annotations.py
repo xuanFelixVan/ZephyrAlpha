@@ -36,7 +36,7 @@ def shared(module: str = "", version: str = "1.0.0") -> Callable[[F], F]:
         SHARED_FUNCTIONS[key] = version
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             return func(*args, **kwargs)
 
         wrapper._shared_info = {"module": module, "version": version}
@@ -52,7 +52,7 @@ def known_dup(group_id: str = "", confidence: float = 0.0) -> Callable[[F], F]:
         KNOWN_DUPLICATES.setdefault(group_id, []).append(func.__name__)
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             return func(*args, **kwargs)
 
         wrapper._dup_info = {"group_id": group_id, "confidence": confidence}
@@ -68,7 +68,7 @@ def intentional(reason: str = "") -> Callable[[F], F]:
         INTENTIONAL_DUPLICATES[func.__name__] = reason
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             return func(*args, **kwargs)
 
         return wrapper  # type: ignore[return-value]

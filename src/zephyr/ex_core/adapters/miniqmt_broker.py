@@ -50,6 +50,7 @@ from typing import Final
 import logging
 import threading
 from datetime import datetime
+from collections.abc import Callable
 from decimal import Decimal
 from typing import Any, Optional
 
@@ -172,7 +173,7 @@ class MiniQmtBroker(BrokerInterface):
         self,
         path: str = "",
         session_id: str = "zephyr_session",
-        shared_xtquant_conn: Optional[Any] = None,
+        shared_xtquant_conn: object | None = None,
         matching_logic: Optional[MatchingLogic] = None,
         matching_config: Optional[MatchingConfig] = None,
         reconnect_max_retries: int = 3,
@@ -628,7 +629,7 @@ class MiniQmtBroker(BrokerInterface):
             error_code=-1,
         )
 
-    def _call_xttrader_with_reconnect(self, func: Any) -> Any:
+    def _call_xttrader_with_reconnect(self, func: Callable[..., object]) -> object:
         """调用 xttrader API，失败时自动触发断线重连后重试一次
 
         Blueprint §16.7.1 D 要求断线重连自动触发。本方法封装所有 xttrader 调用，
@@ -802,7 +803,7 @@ class MiniQmtBroker(BrokerInterface):
         return status_map.get(xt_status, OrderStatus.PENDING)
 
     @staticmethod
-    def _map_xt_side(xt_order: Any) -> OrderSide:
+    def _map_xt_side(xt_order: object) -> OrderSide:
         """从 xttrader XtOrder 对象推断买卖方向
 
         xttrader 的 XtOrder.order_type 字段值：
@@ -830,7 +831,7 @@ class MiniQmtBroker(BrokerInterface):
         _logger.warning("无法从 xttrader 推断 side: order_type=%s", order_type_val)
         return OrderSide.BUY
 
-    def _xt_order_to_order(self, xt_order: Any) -> Order:
+    def _xt_order_to_order(self, xt_order: object) -> Order:
         """将 xttrader 订单对象转换为 Order"""
         return Order(
             idempotency_key=xt_order.order_id,

@@ -39,7 +39,7 @@ import time
 import threading
 import datetime
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Callable, Iterator, Any
+from typing import TYPE_CHECKING, Callable, Iterator
 
 if TYPE_CHECKING:
     from .policy_registry import SourcePolicy
@@ -183,7 +183,7 @@ class DataSourceBase(abc.ABC):
         policy: "SourcePolicy",
         *args,
         **kwargs,
-    ) -> Any:
+    ) -> object:
         """按策略调用 SDK 函数：先限流休眠，再调用，失败按策略重试。
 
         Args:

@@ -911,7 +911,7 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
         except Exception as e:
             self._send_json(500, {"error": str(e)})
 
-    def _send_json(self, code: int, obj: Any) -> None:
+    def _send_json(self, code: int, obj: object) -> None:
         body = json.dumps(obj, ensure_ascii=False, default=str)
         self._send(code, body, "application/json; charset=utf-8")
 

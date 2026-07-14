@@ -119,7 +119,7 @@ class FalseNegativeAuditor:
         }
 
     @staticmethod
-    def _dup_key(entry: Any) -> str:
+    def _dup_key(entry: object) -> str:
         if hasattr(entry, "group_id"):
             return entry.group_id
         if isinstance(entry, dict):

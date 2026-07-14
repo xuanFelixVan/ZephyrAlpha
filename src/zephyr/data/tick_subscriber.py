@@ -30,7 +30,6 @@ import threading
 import time
 from datetime import datetime
 from decimal import Decimal
-from typing import Any
 
 log = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ def _stock_to_symbol(stock_code: str) -> str:
     return stock_code.split(".")[0]
 
 
-def _safe_decimal(val: Any) -> Decimal | None:
+def _safe_decimal(val: object) -> Decimal | None:
     """安全转换为 Decimal，失败/0 返回 None。"""
     if val is None:
         return None
@@ -88,7 +87,7 @@ def _safe_decimal(val: Any) -> Decimal | None:
         return None
 
 
-def _safe_int(val: Any) -> int | None:
+def _safe_int(val: object) -> int | None:
     """安全转换为 int，失败返回 None。"""
     if val is None:
         return None
