@@ -173,13 +173,13 @@ class BufferedWriter:
                 self._table, self._flush_count, len(self._buffer),
                 self._total_flushed, self._total_added,
             )
+            self._buffer.clear()
+            self._first_buffer_ts = None
         else:
             log.error(
-                "BufferedWriter.flush(%s): 写入失败，%d 行丢失",
+                "BufferedWriter.flush(%s): 写入失败，%d 行保留在缓冲区待重试",
                 self._table, len(self._buffer),
             )
-        self._buffer.clear()
-        self._first_buffer_ts = None
         return ok
 
     @property

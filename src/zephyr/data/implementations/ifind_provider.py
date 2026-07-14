@@ -1412,11 +1412,19 @@ class IFindProvider(DataSourceBase):
 
         symbols = payload.symbols
         if not symbols:
-            symbols = self._get_all_a_share_codes(policy)
+            try:
+                symbols = self._get_all_a_share_codes(policy)
+            except RuntimeError as e:
+                # 配额耗尽等致命错误直接透传，不降级为通用失败
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key="",
+                    elapsed_sec=0.0, error=str(e),
+                )
+                return
         if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="无法获取标的清单（symbols 为空且 THS_DataPool 失败）",
+                elapsed_sec=0.0, error="无法获取标的清单（symbols 为空且 THS_DataPool/ClickHouse 均失败）",
             )
             return
 
@@ -1725,8 +1733,18 @@ class IFindProvider(DataSourceBase):
             return []
 
         # 检查 errorcode（-4001=no data 等错误码）
+        # 配额耗尽错误码(-4318/-4309/-4210/-5100/-4216)透传为 RuntimeError，
+        # 不降级为 return []，避免掩盖配额耗尽导致 _get_all_a_share_codes 盲目回退到 CH
         err_code = raw.get("errorcode", 0)
         if err_code != 0:
+            try:
+                err_int = int(err_code)
+            except (TypeError, ValueError):
+                err_int = 0
+            if err_int in (-4318, -4309, -4210, -5100, -4216):
+                raise RuntimeError(
+                    f"iFind配额耗尽: code={err_code} msg={raw.get('errmsg', '')}"
+                )
             self._log.warning(f"THS_DataPool 错误: code={err_code} msg={raw.get('errmsg', '')}")
             return []
 

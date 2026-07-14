@@ -86,6 +86,7 @@ class MiniQMTProvider(DataSourceBase):
             "sector_list",
             "l2_tick",
             "auction_data",
+            "auction_book",
             "futures_kline_qmt",
             "hk_kline",
             "kline_us_daily",
@@ -265,8 +266,11 @@ class MiniQMTProvider(DataSourceBase):
             # Level-2逐笔：get_l2_quote
             yield from self._fetch_l2_tick(payload, policy)
         elif capability == "auction_data":
-            # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表）
+            # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表，基础字段）
             yield from self._fetch_auction_data(payload, policy)
+        elif capability == "auction_book":
+            # 集合竞价盘口：get_full_tick 五档快照（写入 auction_book 表，含五档）
+            yield from self._fetch_auction_book(payload, policy)
         elif capability == "futures_kline_qmt":
             # 期货K线：get_market_data_ex，symbols 格式如 'IF2407.CFFEX'
             yield from self._fetch_kline_futures_qmt(payload, policy)
@@ -2301,10 +2305,10 @@ class MiniQMTProvider(DataSourceBase):
         payload: FetchPayload,
         policy: SourcePolicy,
     ) -> Iterator[FetchResult]:
-        """抓取指数实时行情快照。
+        """抓取指数实时行情快照（3秒级）。
 
-        使用 xtdata.get_market_data_ex(period='1d') 获取指数行情。
-        symbols 格式如 '000001.SH'。
+        使用 xtdata.get_full_tick 获取指数实时快照，适用于盘中实时行情。
+        symbols 为 None 时自动获取"沪深指数"板块全部指数。
         表 schema: (trade_date, timestamp, symbol, price, volume, amount, data_source)
         quality_flag 有 DEFAULT 1，不返回。
 
@@ -2313,7 +2317,7 @@ class MiniQMTProvider(DataSourceBase):
             policy: 调用策略
 
         Yields:
-            FetchResult: 每个指数一批
+            FetchResult: 一批（全部指数）
         """
         from xtquant import xtdata
 
@@ -2323,61 +2327,66 @@ class MiniQMTProvider(DataSourceBase):
             "price", "volume", "amount", "data_source",
         ]
 
-        try:
-            start_str = self._date_to_str(payload.start)
-            end_str = self._date_to_str(payload.end)
-        except Exception as e:
-            yield FetchResult(
-                table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error=f"日期转换失败: {e}",
-            )
-            return
-
-        symbols = payload.symbols or []
-        last_key = end_str
-
-        for index_code in symbols:
-            t0 = time.time()
+        # symbols 为空时自动获取"沪深指数"板块全部指数
+        # （与 _fetch_auction_data 获取"沪深A股"同模式，修复 null symbols 导致恒写0行的 bug）
+        symbols = payload.symbols
+        if not symbols:
             try:
-                self._call_with_policy(
-                    xtdata.download_history_data, policy,
-                    index_code, "1d", start_str, end_str,
-                )
-                data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [index_code], "1d", start_str, end_str,
-                )
-
-                rows = []
-                df = data.get(index_code) if data else None
-                if df is not None and len(df) > 0:
-                    symbol = index_code  # 指数代码保留后缀
-                    # 取最后一条作为快照
-                    last_idx = df.index[-1]
-                    s = str(int(last_idx))
-                    if len(s) >= 8:
-                        trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-                    else:
-                        trade_date = payload.end.isoformat()
-                    timestamp = trade_date + " 15:00:00"
-                    close = self.safe_float(df["close"].iloc[-1])
-                    vol = self.safe_float(df["volume"].iloc[-1])
-                    vol = int(vol) if vol is not None else 0
-                    amt = self.safe_float(df["amount"].iloc[-1])
-                    rows.append((
-                        trade_date, timestamp, symbol,
-                        close, vol, amt, "miniqmt",
-                    ))
-                yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                symbols = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深指数"
                 )
             except Exception as e:
                 yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                    error=f"抓取失败: {e}",
+                    table=table, columns=[], rows=[], last_key="",
+                    elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
                 )
+                return
+
+        t0 = time.time()
+        try:
+            trade_date = payload.end.isoformat()
+            rows = []
+            # get_full_tick 批量获取实时快照
+            batch_size = 200
+            for i in range(0, len(symbols), batch_size):
+                batch = symbols[i:i + batch_size]
+                tick_data = self._call_with_policy(
+                    xtdata.get_full_tick, policy, batch,
+                )
+                if tick_data:
+                    for index_code, tick in tick_data.items():
+                        if not tick:
+                            continue
+                        symbol = index_code  # 指数代码保留后缀
+                        price = self.safe_float(tick.get("lastPrice"))
+                        vol = self.safe_float(tick.get("volume"))
+                        vol = int(vol) if vol is not None else 0
+                        amt = self.safe_float(tick.get("amount")) or 0.0
+                        # timetag 格式 "YYYYMMDD HH:MM:SS"
+                        timetag = tick.get("timetag", "")
+                        ts_str = str(timetag) if timetag else ""
+                        if len(ts_str) >= 17 and " " in ts_str:
+                            date_part = ts_str[:8]
+                            time_part = ts_str[9:17]
+                            timestamp = f"{date_part[:4]}-{date_part[4:6]}-{date_part[6:8]} {time_part}"
+                        else:
+                            from datetime import datetime
+                            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        rows.append((
+                            trade_date, timestamp, symbol,
+                            price, vol, amt, "miniqmt",
+                        ))
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=self._date_to_str(payload.end),
+                elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.time() - t0,
+                error=f"指数实时快照抓取失败: {e}",
+            )
 
     # ============== 股票列表 ==============
 
@@ -3072,7 +3081,8 @@ class MiniQMTProvider(DataSourceBase):
 
         使用 xtdata.get_full_tick 获取实时行情快照，适用于集合竞价时段（9:15-9:25）。
         写入已有的 auction_snapshot 表。
-        表 schema: (trade_date, timestamp, symbol, price, volume, amount, data_source)
+        表 schema: (trade_date, auction_time, symbol, auction_price,
+                    auction_volume, auction_amount, market_type, data_source, quality_flag)
 
         Args:
             payload: 下载请求
@@ -3084,7 +3094,12 @@ class MiniQMTProvider(DataSourceBase):
         from xtquant import xtdata
 
         table = payload.table or "c1_market.auction_snapshot"
-        columns = ["trade_date", "timestamp", "symbol", "price", "volume", "amount", "data_source"]
+        # 字段名与表 schema 严格对齐（曾因字段名不一致导致写入0值）
+        columns = [
+            "trade_date", "auction_time", "symbol", "auction_price",
+            "auction_volume", "auction_amount", "market_type",
+            "data_source", "quality_flag",
+        ]
 
         symbols = payload.symbols
         if not symbols:
@@ -3117,21 +3132,29 @@ class MiniQMTProvider(DataSourceBase):
                         symbol = self._stock_to_symbol(stock_code)
                         price = self.safe_float(tick.get("lastPrice"))
                         vol = self.safe_float(tick.get("volume"))
-                        vol = int(vol) if vol is not None else None
-                        amt = self.safe_float(tick.get("amount"))
-                        # timetag 格式为 "YYYYMMDDHHMMSSmmm"
+                        vol = int(vol) if vol is not None else 0
+                        amt = self.safe_float(tick.get("amount")) or 0.0
+                        # timetag 格式为 "YYYYMMDD HH:MM:SS"（含空格和冒号）
                         timetag = tick.get("timetag", "")
-                        ts_str = str(timetag)
-                        if len(ts_str) >= 14:
-                            timestamp = (
+                        ts_str = str(timetag) if timetag else ""
+                        if len(ts_str) >= 17 and " " in ts_str:
+                            date_part = ts_str[:8]
+                            time_part = ts_str[9:17]
+                            auction_time = f"{date_part[:4]}-{date_part[4:6]}-{date_part[6:8]} {time_part}"
+                        elif len(ts_str) >= 14:
+                            auction_time = (
                                 f"{ts_str[:4]}-{ts_str[4:6]}-{ts_str[6:8]} "
                                 f"{ts_str[8:10]}:{ts_str[10:12]}:{ts_str[12:14]}"
                             )
                         else:
-                            timestamp = trade_date + " 09:25:00"
+                            # 无 timetag 时用当前时间兜底
+                            from datetime import datetime
+                            auction_time = datetime.now().strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
                         rows.append((
-                            trade_date, timestamp, symbol, price, vol, amt,
-                            "miniqmt",
+                            trade_date, auction_time, symbol, price, vol, amt,
+                            "A_share", "miniqmt", 1,
                         ))
             yield FetchResult(
                 table=table, columns=columns, rows=rows,
@@ -3145,7 +3168,125 @@ class MiniQMTProvider(DataSourceBase):
                 error=f"集合竞价数据抓取失败: {e}",
             )
 
-    # ============== 期货K线（QMT） ==============
+    @staticmethod
+    def _parse_timetag(timetag) -> str:
+        """解析 xtdata timetag 为 'YYYY-MM-DD HH:MM:SS'。"""
+        from datetime import datetime
+        ts_str = str(timetag) if timetag else ""
+        if len(ts_str) >= 17 and " " in ts_str:
+            d, t = ts_str[:8], ts_str[9:17]
+            return f"{d[:4]}-{d[4:6]}-{d[6:8]} {t}"
+        if len(ts_str) >= 14:
+            return f"{ts_str[:4]}-{ts_str[4:6]}-{ts_str[6:8]} {ts_str[8:10]}:{ts_str[10:12]}:{ts_str[12:14]}"
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def _extract_5_levels(self, raw, default) -> list:
+        """提取5档数据，不足补默认值。"""
+        vals = list(raw or []) + [default] * 5
+        return [self.safe_float(vals[i]) or default for i in range(5)]
+
+    def _parse_auction_book_tick(self, tick: dict, symbol: str, trade_date: str) -> tuple:
+        """解析单个 tick 为 auction_book 行（五档盘口）。"""
+        ts_value = self._parse_timetag(tick.get("timetag", ""))
+        last_price = self.safe_float(tick.get("lastPrice")) or 0.0
+        vol = int(self.safe_float(tick.get("volume")) or 0)
+        amt = self.safe_float(tick.get("amount")) or 0.0
+        open_p = self.safe_float(tick.get("open")) or 0.0
+        high = self.safe_float(tick.get("high")) or 0.0
+        low = self.safe_float(tick.get("low")) or 0.0
+        pre_close = self.safe_float(tick.get("lastClose")) or 0.0
+        stock_status = int(tick.get("stockStatus") or 0)
+        upper_limit = pre_close * 1.1 if stock_status & 0x04 else 0.0
+        lower_limit = pre_close * 0.9 if stock_status & 0x08 else 0.0
+        bp = self._extract_5_levels(tick.get("bidPrice"), 0.0)
+        bv = [int(v) for v in self._extract_5_levels(tick.get("bidVol"), 0.0)]
+        ap = self._extract_5_levels(tick.get("askPrice"), 0.0)
+        av = [int(v) for v in self._extract_5_levels(tick.get("askVol"), 0.0)]
+        return (
+            trade_date, ts_value, symbol, last_price, vol, amt,
+            open_p, high, low, pre_close, upper_limit, lower_limit,
+            bp[0], bp[1], bp[2], bp[3], bp[4],
+            bv[0], bv[1], bv[2], bv[3], bv[4],
+            ap[0], ap[1], ap[2], ap[3], ap[4],
+            av[0], av[1], av[2], av[3], av[4],
+            "miniqmt",
+        )
+
+    def _fetch_auction_book(
+        self, payload: FetchPayload, policy: SourcePolicy,
+    ) -> Iterator[FetchResult]:
+        """抓取集合竞价盘口快照（含五档）。
+
+        使用 xtdata.get_full_tick 获取实时五档盘口快照，适用于集合竞价时段
+        (9:15-9:25)。写入 auction_book 表，用于主力挂单撤单行为分析。
+        表 schema: (trade_date, timestamp, symbol, last_price, volume, amount,
+                    open, high, low, pre_close, upper_limit, lower_limit,
+                    bid_price1-5, bid_volume1-5, ask_price1-5, ask_volume1-5,
+                    data_source)
+
+        Args:
+            payload: 下载请求
+            policy: 调用策略
+
+        Yields:
+            FetchResult: 一批（全部标的）
+        """
+        from xtquant import xtdata
+
+        table = payload.table or "c1_market.auction_book"
+        columns = [
+            "trade_date", "timestamp", "symbol", "last_price", "volume",
+            "amount", "open", "high", "low", "pre_close",
+            "upper_limit", "lower_limit",
+            "bid_price1", "bid_price2", "bid_price3", "bid_price4", "bid_price5",
+            "bid_volume1", "bid_volume2", "bid_volume3", "bid_volume4", "bid_volume5",
+            "ask_price1", "ask_price2", "ask_price3", "ask_price4", "ask_price5",
+            "ask_volume1", "ask_volume2", "ask_volume3", "ask_volume4", "ask_volume5",
+            "data_source",
+        ]
+
+        symbols = payload.symbols
+        if not symbols:
+            try:
+                symbols = self._call_with_policy(
+                    xtdata.get_stock_list_in_sector, policy, "沪深A股"
+                )
+            except Exception as e:
+                yield FetchResult(
+                    table=table, columns=[], rows=[], last_key="",
+                    elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
+                )
+                return
+
+        t0 = time.time()
+        try:
+            batch_size = 200
+            rows = []
+            trade_date = payload.end.isoformat()
+            for i in range(0, len(symbols), batch_size):
+                batch = symbols[i:i + batch_size]
+                tick_data = self._call_with_policy(
+                    xtdata.get_full_tick, policy, batch,
+                )
+                if tick_data:
+                    for stock_code, tick in tick_data.items():
+                        if not tick:
+                            continue
+                        symbol = self._stock_to_symbol(stock_code)
+                        rows.append(
+                            self._parse_auction_book_tick(tick, symbol, trade_date)
+                        )
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=self._date_to_str(payload.end),
+                elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.time() - t0,
+                error=f"集合竞价盘口抓取失败: {e}",
+            )
 
     def _fetch_kline_futures_qmt(
         self, payload: FetchPayload, policy: SourcePolicy,
