@@ -1,5 +1,5 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-14 23:11:34
+%% 生成时间: 2026-07-15 00:49:03
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 17
 
@@ -25,16 +25,16 @@ graph TD
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_AUDITTEST -> D_BACKTEST (13 条)
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_backtest_decisiongraph_adapter_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_backtest_decisiongraph_adapter_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
+    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_miniqmt_broker_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
     tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]

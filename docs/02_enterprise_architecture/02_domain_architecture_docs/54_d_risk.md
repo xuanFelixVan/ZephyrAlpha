@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_RISK 风控架构文档
 version: "1.0"
 status: active
-date: 2026-07-14
+date: 2026-07-15
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 风控（D_RISK）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 23:11:28
+> 最后更新: 2026-07-15 00:48:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -122,28 +122,28 @@ graph TD
         tests_risk_test_risk_registry_root_py["(原型态 / prototype) test_risk_registry_root.py"]
         tests_risk_test_risk_ssot_py["(原型态 / prototype) test_risk_ssot.py"]
     end
-    src_zephyr_risk_cross_asset_init_py -.->|导入依赖 / import_depends| src_zephyr_risk_init_py
     src_zephyr_risk_stop_loss_py -.->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    src_zephyr_risk_cross_asset_init_py -.->|导入依赖 / import_depends| src_zephyr_risk_init_py
     src_zephyr_risk_cross_asset_cross_market_data_adapter_init_py -.->|config_depends / config_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -.->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_position_limit_checker_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
-    src_zephyr_risk_implementations_init_py -.->|config_depends / config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
-    src_zephyr_risk_implementations_default_stop_loss_engine_py -.->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_init_py -.->|config_depends / config_depends| src_zephyr_risk_implementations_default_risk_manager_orchestrator_py
+    tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_risk_limits_py
     tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_py
     tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_risk_manager_base_py
-    tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_risk_limits_py
-    tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_stop_loss_py
     tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_risk_validator_py
+    tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| src_zephyr_risk_stop_loss_py
     tests_risk_test_ml_experiment_pipeline_py -.->|测试依赖 / test_depends| src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_SHARED
@@ -200,19 +200,19 @@ graph TD
     end
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_limits_calculator_py
+    src_zephyr_risk_implementations_default_risk_manager_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_risk_implementations_default_risk_validator_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
+    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_risk_validator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_validator_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_limits_calculator_py -->|导入依赖 / import_depends| src_zephyr_risk_risk_limits_py
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
     src_zephyr_risk_risk_manager_py -->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_risk_risk_limits_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -223,7 +223,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_risk_cross_asset_cross_market_data_adapter_ml_experiment_pipeline_py,src_zephyr_risk_implementations_default_risk_limits_calculator_py,src_zephyr_risk_implementations_default_risk_manager_orchestrator_py,src_zephyr_risk_implementations_default_risk_validator_py,src_zephyr_risk_risk_limits_py,src_zephyr_risk_risk_manager_py,src_zephyr_risk_risk_manager_base_py,src_zephyr_risk_risk_validator_py,src_zephyr_risk_stop_loss_py production
-    class D_TRADING,D_INFRASTRUCTURE external_prod
+    class D_INFRASTRUCTURE,D_TRADING external_prod
     class D_SHARED,D_GOVERNANCE external_design
 ```
 
@@ -235,7 +235,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 20 个，2 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 20 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -262,7 +262,6 @@ graph TD
         tests_risk_test_risk_ssot_py["(原型态 / prototype) test_risk_ssot.py"]
     end
     src_zephyr_risk_cross_asset_init_py -.->|导入依赖 / import_depends| src_zephyr_risk_init_py
-    src_zephyr_risk_implementations_init_py -.->|config_depends / config_depends| src_zephyr_risk_implementations_default_position_limit_checker_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     tests_risk_test_l04_risk_management_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
     D_TRADING["(生产态 / production) D_TRADING"]

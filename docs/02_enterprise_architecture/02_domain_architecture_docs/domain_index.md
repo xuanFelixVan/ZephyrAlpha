@@ -21,8 +21,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 5052 |
-| 生产态模块 | 1778 |
+| 模块总数 | 5051 |
+| 生产态模块 | 1777 |
 | 设计态模块 | 64 |
 | 原型态模块 | 3210 |
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 329 | 145 | 3 | 181 | 329/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 328 | 144 | 3 | 181 | 328/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)

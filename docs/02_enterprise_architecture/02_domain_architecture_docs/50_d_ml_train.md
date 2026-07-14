@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_ML_TRAIN 训练架构文档
 version: "1.0"
 status: active
-date: 2026-07-14
+date: 2026-07-15
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 训练（D_ML_TRAIN）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 23:11:27
+> 最后更新: 2026-07-15 00:48:54
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -82,17 +82,17 @@ graph TD
         tests_ml_experiment_test_l13_experimentation_py["(原型态 / prototype) test_l13_experimentation.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends / config_depends| D_INTELLIGENCE
-    D_TRADING["(生产态 / production) D_TRADING"]
-    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
+    D_TRADING["(生产态 / production) D_TRADING"]
+    src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
@@ -100,7 +100,7 @@ graph TD
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -146,8 +146,8 @@ graph TD
         tests_ml_experiment_test_l13_experimentation_py["(原型态 / prototype) test_l13_experimentation.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_intelligence_model_evaluation_init_py -.->|config_depends / config_depends| D_INTELLIGENCE
     D_TRADING["(生产态 / production) D_TRADING"]
@@ -157,13 +157,13 @@ graph TD
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_trainer_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|config_depends / config_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    D_SHARED -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_implementations_default_inference_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -195,7 +195,7 @@ graph TD
 | 2 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
 | 3 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
 | 4 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
-| 5 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — ML Training Domain (__init__.py) | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | config_depends / config_depends |
+| 5 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — ML Training Domain (__init__.py) | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | config_depends / config_depends |
 | 6 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — ML Training Concrete Implementati... | → | D_ML_TRAIN — Default Inference Engine (default... | 导入依赖 / import_depends |
 | 7 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管... | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
 | 8 | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管... | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
