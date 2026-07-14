@@ -1,4 +1,4 @@
-# [BLUEPRINT]
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §
 # [MODULE] zephyr.security.access_control.orphan_judge.judge
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.duplicate_detector; zephyr.gov_enforcement.rule_enforcement.gate_types
