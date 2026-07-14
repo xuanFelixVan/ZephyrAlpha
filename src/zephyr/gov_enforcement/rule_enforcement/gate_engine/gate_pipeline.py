@@ -65,8 +65,8 @@ class GatePipeline:
     def from_engine_step(
         cls,
         gate_id: str,
-        engine: Any,
-        task: Any,
+        engine: object,
+        task: object,
         *,
         combinator: Combinator = Combinator.AND,
         depends_on: list[str] | None = None,

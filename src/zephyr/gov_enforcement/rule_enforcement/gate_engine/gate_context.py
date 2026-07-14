@@ -82,7 +82,7 @@ class GateResult:
         return f"[FAIL] Gate {self.gate_id} task={self.task_id} violations={total} (P0={p0})"
 
     @classmethod
-    def from_engine_result(cls, engine_result: Any) -> GateResult:
+    def from_engine_result(cls, engine_result: object) -> GateResult:
         if isinstance(engine_result, cls):
             return engine_result
         passed = getattr(engine_result, "passed", False)

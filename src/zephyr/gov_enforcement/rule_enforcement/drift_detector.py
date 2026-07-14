@@ -238,7 +238,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def _fallback_to_rollback_handler(event: Any) -> dict[str, Any]:
+def _fallback_to_rollback_handler(event: object) -> dict[str, Any]:
     """AutoFixer 修复失败时，尝试通过 DriftFixHandler 兜底回滚。"""
     try:
         from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler

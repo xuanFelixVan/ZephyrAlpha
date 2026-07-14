@@ -148,7 +148,7 @@ class CommitGateRegistry:
         """注册门禁（幂等，同 gate_id 覆盖）。"""
         self._specs[spec.gate_id] = spec
 
-    def check_all(self, gateway: Any, files: list[str], **kwargs: Any) -> list[GateResult]:
+    def check_all(self, gateway: object, files: list[str], **kwargs: Any) -> list[GateResult]:
         """按 priority 升序执行所有 gate，返回结果列表。
 
         单个 gate 异常降级为 fail-closed（passed=False，安全优先），

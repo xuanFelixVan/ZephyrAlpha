@@ -166,8 +166,8 @@ _YELLOW_VIOLATION_THRESHOLD: int = 3
 class VerdictEngine:
     def __init__(
         self,
-        protection_index: Any = None,
-        gpu_scheduler: Any = None,
+        protection_index: object = None,
+        gpu_scheduler: object = None,
         verdict_timeout_s: float = 10.0,
         max_batch_size: int = 100,
         batch_timeout_s: float = 300.0,
@@ -183,7 +183,7 @@ class VerdictEngine:
         self._yellow_count: int = 0
         self._pass_count: int = 0
 
-    async def evaluate(self, event: Any) -> Verdict:
+    async def evaluate(self, event: object) -> Verdict:
         start = time.monotonic()
         self._eval_count += 1
 
@@ -253,7 +253,7 @@ class VerdictEngine:
             reason=reason,
         )
 
-    def _extract_event_info(self, event: Any) -> tuple | None:
+    def _extract_event_info(self, event: object) -> tuple | None:
         """Extract actor/operation/gate info from event. Returns None if unknown type."""
         if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
             return self._extract_from_audit_entry(event)
@@ -379,7 +379,7 @@ class VerdictEngine:
         loop = asyncio.get_running_loop()
         results: list[Verdict] = []
 
-        async def _eval_one(evt: Any) -> Verdict:
+        async def _eval_one(evt: object) -> Verdict:
             try:
                 return await asyncio.wait_for(
                     self.evaluate(evt),

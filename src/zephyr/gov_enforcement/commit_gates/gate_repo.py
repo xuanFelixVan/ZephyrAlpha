@@ -73,7 +73,7 @@ class GateRepo:
         artifact_path: str | None = None,
         session_id: str | None = None,
         evaluated_at: str | None = None,
-        conn: Any | None = None,
+        conn: object | None = None,
     ) -> str:
         gate_run_id = f"gr-{uuid.uuid4()}"
         composite_gate_id = f"{gate_id}:{task_id}" if task_id else gate_id

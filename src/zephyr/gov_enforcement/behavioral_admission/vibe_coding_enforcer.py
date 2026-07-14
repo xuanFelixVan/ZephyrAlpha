@@ -65,7 +65,7 @@ def enforce_all(checks: dict[str, VibeRuleLevel | None]) -> dict[str, bool]:
 def must(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             if not enforce(rule_name, level=VibeRuleLevel.MUST):
                 import logging
 
@@ -82,7 +82,7 @@ def must(rule_name: str) -> Callable[[F], F]:
 def should(rule_name: str) -> Callable[[F], F]:
     def decorator(func: F) -> F:
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             enforce(rule_name, level=VibeRuleLevel.SHOULD)
             return func(*args, **kwargs)
 
