@@ -765,7 +765,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 4. ~~准备操作 market.duckdb~~ → **market.duckdb（原 INFRA-DB-005）已于 2026-07-01 彻底删除**（墓碑清理，见 ARCH-046 铁律3"删除即彻底删除"）。原 market_schema.py 同步删除（死代码）。业务行情数据迁移至 ClickHouse c1_market（INFRA-DB-006，status=connected），统一入口 `DatabaseService.get_clickhouse_conn()`（readonly=1），详见 [c1_market_clickhouse.md](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md)。**注意**：DuckDB OLAP 引擎（INFRA-DB-004，:memory: 内存模式只读挂载 governance.db）保留不变，与 market.duckdb 是两个独立实体。
 5. **ARCH-046 数据库节点全景图登记三铁律**（2026-07-04 固化）：(1) 粒度铁律——数据库在全景图中有且仅有一个点（`infrastructure_components` 表），不展开内部表/schema；(2) 运营态/设计态语义铁律——数据库存在并使用=运营态（status=connected），不存在=设计态（status=planned），禁止 status 漂移；(3) 动态更新铁律——数据库节点随项目实况增删，不保留墓碑，生成器（generate_project_depgraph.py）MUST NOT 碰 `infrastructure_components` 表。详见 [ARCH-046](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
-> **业务数据表清单**（2026-07-06）：想知道 ClickHouse c1_market/c3_fundamental 各业务表有什么数据、起止时间、标的数、新鲜度 → 读 [`docs/03_modules/_domain_data/data_inventory.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/data_inventory.md)。生成器 [`tmp/generate_data_inventory.py`](file:///d:/ZephyrAlpha/tmp/generate_data_inventory.py) 可随时运行刷新（`python tmp\generate_data_inventory.py`）。禁止手工同步业务表清单到其它文档——一律用纯指针指向此文档。
+> **业务数据表清单**（2026-07-15）：想知道 ClickHouse c1_market/c3_fundamental 各业务表有什么数据、起止时间、标的数、新鲜度 → 读 [`docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md)（10层分层体系，v3.0）。生成器 [`scripts/governance/d5_architecture/generators/generate_data_inventory.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_data_inventory.py) 可随时运行刷新（`python scripts\governance\d5_architecture\generators\generate_data_inventory.py`）。禁止手工同步业务表清单到其它文档——一律用纯指针指向此文档。
 
 > **L10 周末补下载层**（2026-07-15，#ARCH-BACKFILL-001）：每周日 02:00 自动检测过去 7 天 tick_data 缺失并精准补下载。不依赖 last_key，直接查 ClickHouse 实际行数判定缺失（阈值 500 万行/天），对缺失日期通过 QMT 下载 + WSL subprocess 写入。入口 [`backfill_checker.py`](file:///d:/ZephyrAlpha/src/zephyr/data/backfill_checker.py) `run_weekend_backfill()`，调度配置 `schedule.yaml` weekend_backfill（cron `"00 2 * * 0"`），任务登记 `tasks.yaml` tick_backfill_weekly。与 L8 全量校准互补：L8 校准准确性，L10 补完整性。
 
@@ -834,7 +834,14 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script_manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
 > 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。禁止裸连数据库，必须通过 `apply_depgraph.py` 程序化访问（真源方向见 §11.0 决策表）。架构文档由生成器自动产出，禁止手动编辑。
 
-> **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
+> **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
+
+> **depgraph 访问控制三层防护（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-15）**——depgraph 写入路径白名单制，防止非授权代码直接写 depgraph 数据库绕过 `apply_depgraph.py` 统一入口：
+> - **L1 PostgreSQL 角色分级**：`depgraph_reader`（SELECT only）+ `depgraph_writer`（INSERT/UPDATE/DELETE）+ `postgres`（DDL）。角色创建见 [`04_create_roles.sql`](file:///d:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql)，凭证在 `config/.env.postgres`。
+> - **L2 连接函数默认只读**：[`get_depgraph_pg_connection(read_only=True)`](file:///d:/ZephyrAlpha/src/zephyr/governance/depgraph_schema.py) 默认使用 reader 角色。仅白名单文件可传 `read_only=False`（writer）或 `superuser=True`（DDL）。
+> - **L3 pre-commit 门禁**：[DEPGRAPH-WRITE-PATH gate](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py)（priority=97）检测非白名单 .py 文件中的写入权限参数，硬阻断 commit。
+> - **白名单文件（5个）**：`apply_depgraph.py`（修改唯一合法 CLI）、`generate_project_depgraph.py`（全量重建）、`sync_yaml_to_depgraph.py`（YAML→DB 同步）、`_shared/constants.py`（连接 wrapper）、`depgraph_schema.py`（连接函数定义）。
+> - **AI 使用指引**：查询 depgraph 用 `read_only=True`（默认）；写入 depgraph MUST 通过 `apply_depgraph.py` CLI，禁止在代码中直接传 `read_only=False`/`superuser=True`。
 
 ### 11.0.3 depgraph DB 直接查询标准方式（AI 验证依赖关系时必读）
 
