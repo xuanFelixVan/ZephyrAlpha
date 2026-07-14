@@ -1,7 +1,7 @@
 %% D_PF_CORE 域全景依赖图
-%% 生成时间: 2026-07-14 21:27:17
+%% 生成时间: 2026-07-14 23:11:35
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 13, 依赖边数: 9
+%% 模块数: 12, 依赖边数: 7
 
 graph TD
 
@@ -13,7 +13,6 @@ graph TD
         src_zephyr_pf_core_compliance_rule_py["src/zephyr/pf_core/compliance_rule.py [production]"]
         src_zephyr_pf_core_core___init___py["src/zephyr/pf_core/core/__init__.py [prototype]"]
         src_zephyr_pf_core_infrastructure___init___py["...yr/pf_core/infrastructure/__init__.py [prototype]"]
-        src_zephyr_pf_core_performance_attribution_report_py["...ore/performance_attribution_report.py [production]"]
         src_zephyr_pf_core_risk_limits_py["src/zephyr/pf_core/risk_limits.py [prototype]"]
         src_zephyr_pf_core_services___init___py["src/zephyr/pf_core/services/__init__.py [prototype]"]
         src_zephyr_pf_core_strategies___init___py["...zephyr/pf_core/strategies/__init__.py [prototype]"]
@@ -23,25 +22,23 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_pf_core___init___py -->|config_depends| src_zephyr_pf_core_compliance_rule_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_TRADING -> D_PF_CORE (2 条)
+    %% D_TRADING -> D_PF_CORE (1 条)
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_pf_core_strategy_base_py
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_pf_core_performance_attribution_report_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_PF_CORE -> D_GOVERNANCE (4 条)
-    src_zephyr_pf_core_strategy_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_PF_CORE -> D_GOVERNANCE (3 条)
     src_zephyr_pf_core_risk_limits_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_pf_core_performance_attribution_report_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_pf_core_strategy_registry_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_pf_core_strategy_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
     src_zephyr_pf_core_compliance_rule_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_PF_CORE -> D_PF_ALLOC (2 条)
+    %% D_PF_CORE -> D_PF_ALLOC (1 条)
     src_zephyr_pf_core_strategy_engine___init___py -->|import_depends| D_PF_ALLOC[D_PF_ALLOC]
-    src_zephyr_pf_core___init___py -->|config_depends| D_PF_ALLOC[D_PF_ALLOC]
 
     %% 统计
-    %% 域内依赖: 0 条
-    %% 跨域入边: 2 条
-    %% 跨域出边: 7 条
+    %% 域内依赖: 1 条
+    %% 跨域入边: 1 条
+    %% 跨域出边: 5 条

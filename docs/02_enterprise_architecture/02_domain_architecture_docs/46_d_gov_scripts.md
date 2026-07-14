@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 脚本治理（D_GOV_SCRIPTS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 21:27:02
+> 最后更新: 2026-07-14 23:11:19
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 104 | Module Count | 104 |
 | 域内依赖 | 10 | Internal Dependencies | 10 |
-| 跨域入边 | 135 | Cross-domain Incoming | 135 |
+| 跨域入边 | 134 | Cross-domain Incoming | 134 |
 | 跨域出边 | 171 | Cross-domain Outgoing | 171 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 97 | Prototype Modules | 97 |
@@ -324,15 +324,15 @@ graph TD
     scripts_governance_archive_one_off_perf_depgraph_baseline_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_d5_architecture_syncers_blueprint_frontmatter_reconciler_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d5_architecture_syncers_blueprint_frontmatter_reconciler_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_generators_init_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_generators_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d2_links_init_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_d5_architecture_syncers_blueprint_frontmatter_reconciler_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d2_links_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
@@ -386,28 +386,28 @@ graph TD
     end
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_governance_migrate_sqlite_to_pg_migrate_data_py -.->|导入依赖 / import_depends| D_SHARED
-    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
-    tests_blueprint_test_blueprint_code_reconciler_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_blueprint_test_blueprint_bloat_monitor_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_blueprint_test_blueprint_code_consistency_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_blueprint_test_blueprint_fidelity_py -.->|测试依赖 / test_depends| D_SECURITY
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    tests_blueprint_test_blueprint_code_reconciler_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     tests_blueprint_test_blueprint_reconciler_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_blueprint_test_blueprint_validator_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_blueprint_test_blueprint_scorer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_blueprint_test_blueprint_validator_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_blueprint_test_gen_inherited_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_dependency_test_dependency_lock_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_dependency_test_dependency_manager_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_dependency_test_dependency_root_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_dependency_test_dependency_auditor_py -.->|测试依赖 / test_depends| D_SECURITY
     D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
     tests_dependency_test_dependency_freshness_monitor_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     tests_dependency_test_dependency_tracker_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
-    tests_dependency_test_dependency_auditor_py -.->|测试依赖 / test_depends| D_SECURITY
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_dependency_test_dependency_root_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_dependency_test_dependency_manager_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_dependency_test_dependency_lock_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_sync_panorama_module_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_vms_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_vms_init_py
@@ -420,7 +420,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_sync_panorama_module_py production
     class scripts_governance_migrate_sqlite_to_pg_migrate_data_py,scripts_governance_observability_init_py,scripts_governance_test_concurrent_safety_ps1,scripts_governance_vms_init_py,tests_blueprint_test_blueprint_bloat_monitor_py,tests_blueprint_test_blueprint_code_consistency_py,tests_blueprint_test_blueprint_code_reconciler_py,tests_blueprint_test_blueprint_fidelity_py,tests_blueprint_test_blueprint_metrics_py,tests_blueprint_test_blueprint_reconciler_py,tests_blueprint_test_blueprint_scorer_py,tests_blueprint_test_blueprint_validator_py,tests_blueprint_test_gen_inherited_py,tests_dependency_test_dependency_auditor_py,tests_dependency_test_dependency_freshness_monitor_py,tests_dependency_test_dependency_lock_py,tests_dependency_test_dependency_manager_py,tests_dependency_test_dependency_root_py,tests_dependency_test_dependency_tracker_py,tests_git_test_git_bisector_py,tests_git_test_git_hook_pre_scanner_py,tests_git_test_git_infra_snapshot_py,tests_git_test_lock_release_uncommitted_py,tests_governance_scripts_governance_test_check_vocab_hardcode_py,tests_governance_scripts_governance_test_pre_write_gate_py,tests_trae_rules_test_g_trae_003_py,tests_trae_rules_test_g_trae_004_py,tests_trae_rules_test_g_trae_006_py,tests_trae_rules_test_g_trae_007_py design
-    class D_SHARED,D_FBL_VERIFICATION,D_GOVERNANCE,D_SECURITY,D_ORCHESTRATOR,D_FEEDBACK_LOOP,D_FBL_DETECTORS,D_AUTONOMY_CORE,D_INFRA_RUNTIME external_prod
+    class D_SHARED,D_GOVERNANCE,D_SECURITY,D_FBL_VERIFICATION,D_ORCHESTRATOR,D_FEEDBACK_LOOP,D_INFRA_RUNTIME,D_FBL_DETECTORS,D_AUTONOMY_CORE external_prod
 ```
 
 #### 第 3 页 / 共 4 页
@@ -460,22 +460,22 @@ graph TD
         tests_trae_rules_test_g_trae_041_py["(原型态 / prototype) Test gate g_trae_041 for rule TRAE-041 — calls...<br/>文件: test_g_trae_041.py"]
     end
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
-    tests_trae_rules_test_g_trae_008_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_008_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_010_py -.->|测试依赖 / test_depends| D_GOV_RULE
     D_SHARED["(生产态 / production) D_SHARED"]
+    tests_trae_rules_test_g_trae_010_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_010_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_016_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_016_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_016_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_008_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_008_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_008_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_011_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_011_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_011_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_012_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_018_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_018_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_018_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_009_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_009_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_009_py -.->|测试依赖 / test_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -505,22 +505,22 @@ graph TD
         tests_trae_rules_test_g_trae_055_py["(原型态 / prototype) Test gate g_trae_055 for rule TRAE-055 — calls...<br/>文件: test_g_trae_055.py"]
     end
     D_SHARED["(生产态 / production) D_SHARED"]
+    tests_trae_rules_test_g_trae_049_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_055_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_053_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_052_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_047_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_049_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_053_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_051_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_046_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_046_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_045_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_044_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_051_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_050_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_055_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_043_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_045_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_050_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_053_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_043_py -.->|测试依赖 / test_depends| D_GOV_RULE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -549,7 +549,6 @@ graph TD
     scripts_governance_sync_panorama_module_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_sync_panorama_module_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_sync_panorama_module_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d5_architecture_syncers_blueprint_frontmatter_reconciler_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_d5_architecture_syncers_blueprint_frontmatter_reconciler_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_init_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_sync_panorama_module_py
@@ -684,33 +683,33 @@ graph TD
     scripts_governance_archive_one_off_migrate_clean_build_status_py -.->|config_depends / config_depends| scripts_governance_archive_one_off_analyze_orphan_consumers_py
     D_SHARED["(生产态 / production) D_SHARED"]
     tests_trae_rules_test_g_trae_032_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_049_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trae_rules_test_g_trae_038_py -.->|测试依赖 / test_depends| D_SHARED
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_git_test_git_bisector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_dependency_test_dependency_auditor_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_054_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_055_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_028_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_trae_rules_test_g_trae_053_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_trae_rules_test_g_trae_026_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trae_rules_test_g_trae_052_py -.->|测试依赖 / test_depends| D_GOV_RULE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_dependency_test_dependency_manager_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_trae_rules_test_g_trae_037_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_047_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_trae_rules_test_g_trae_049_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_053_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trae_rules_test_g_trae_017_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_git_test_git_bisector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_dependency_test_dependency_lock_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trae_rules_test_g_trae_022_py -.->|测试依赖 / test_depends| D_SHARED
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_generators_init_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_generators_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d2_links_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d7_code_init_py
-    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
+    D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d2_links_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
     D_GOVERNANCE -.->|config_depends / config_depends| scripts_governance_d6_security_init_py
@@ -722,7 +721,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_archive_one_off_analyze_orphan_consumers_py,scripts_governance_archive_one_off_check_rule_coverage_py,scripts_governance_archive_one_off_group_orphan_modules_py,scripts_governance_archive_one_off_migrate_clean_build_status_py,scripts_governance_archive_one_off_migrate_domain_id_hyphen_to_underscore_py,scripts_governance_archive_one_off_perf_depgraph_baseline_py,scripts_governance_shared_init_py,scripts_governance_tasks_init_py,scripts_governance_ast_import_rewriter_py,scripts_governance_d10_performance_init_py,scripts_governance_d11_compliance_init_py,scripts_governance_d11_compliance_check_test_structure_py,scripts_governance_d11_compliance_verify_key_imports_py,scripts_governance_d12_ai_hallucination_init_py,scripts_governance_d1_structure_init_py,scripts_governance_d2_links_init_py,scripts_governance_d4_paths_init_py,scripts_governance_d5_architecture_panorama_common_py,scripts_governance_d6_security_init_py,scripts_governance_d7_code_init_py,scripts_governance_d8_doc_sync_init_py,scripts_governance_d9_knowledge_init_py,scripts_governance_generators_init_py,scripts_governance_git_hooks_post_commit_guard_sh,scripts_governance_migrate_sqlite_to_pg_migrate_data_py,scripts_governance_observability_init_py,scripts_governance_test_concurrent_safety_ps1,scripts_governance_vms_init_py,tests_blueprint_test_blueprint_bloat_monitor_py,tests_blueprint_test_blueprint_code_consistency_py,tests_blueprint_test_blueprint_code_reconciler_py,tests_blueprint_test_blueprint_fidelity_py,tests_blueprint_test_blueprint_metrics_py,tests_blueprint_test_blueprint_reconciler_py,tests_blueprint_test_blueprint_scorer_py,tests_blueprint_test_blueprint_validator_py,tests_blueprint_test_gen_inherited_py,tests_dependency_test_dependency_auditor_py,tests_dependency_test_dependency_freshness_monitor_py,tests_dependency_test_dependency_lock_py,tests_dependency_test_dependency_manager_py,tests_dependency_test_dependency_root_py,tests_dependency_test_dependency_tracker_py,tests_git_test_git_bisector_py,tests_git_test_git_hook_pre_scanner_py,tests_git_test_git_infra_snapshot_py,tests_git_test_lock_release_uncommitted_py,tests_governance_scripts_governance_test_check_vocab_hardcode_py,tests_governance_scripts_governance_test_pre_write_gate_py,tests_trae_rules_test_g_trae_003_py,tests_trae_rules_test_g_trae_004_py,tests_trae_rules_test_g_trae_006_py,tests_trae_rules_test_g_trae_007_py,tests_trae_rules_test_g_trae_008_py,tests_trae_rules_test_g_trae_009_py,tests_trae_rules_test_g_trae_010_py,tests_trae_rules_test_g_trae_011_py,tests_trae_rules_test_g_trae_012_py,tests_trae_rules_test_g_trae_016_py,tests_trae_rules_test_g_trae_017_py,tests_trae_rules_test_g_trae_018_py,tests_trae_rules_test_g_trae_020_py,tests_trae_rules_test_g_trae_021_py,tests_trae_rules_test_g_trae_022_py,tests_trae_rules_test_g_trae_023_py,tests_trae_rules_test_g_trae_024_py,tests_trae_rules_test_g_trae_025_py,tests_trae_rules_test_g_trae_026_py,tests_trae_rules_test_g_trae_027_py,tests_trae_rules_test_g_trae_028_py,tests_trae_rules_test_g_trae_029_py,tests_trae_rules_test_g_trae_030_py,tests_trae_rules_test_g_trae_031_py,tests_trae_rules_test_g_trae_032_py,tests_trae_rules_test_g_trae_033_py,tests_trae_rules_test_g_trae_034_py,tests_trae_rules_test_g_trae_035_py,tests_trae_rules_test_g_trae_036_py,tests_trae_rules_test_g_trae_037_py,tests_trae_rules_test_g_trae_038_py,tests_trae_rules_test_g_trae_039_py,tests_trae_rules_test_g_trae_040_py,tests_trae_rules_test_g_trae_041_py,tests_trae_rules_test_g_trae_042_py,tests_trae_rules_test_g_trae_043_py,tests_trae_rules_test_g_trae_044_py,tests_trae_rules_test_g_trae_045_py,tests_trae_rules_test_g_trae_046_py,tests_trae_rules_test_g_trae_047_py,tests_trae_rules_test_g_trae_048_py,tests_trae_rules_test_g_trae_049_py,tests_trae_rules_test_g_trae_050_py,tests_trae_rules_test_g_trae_051_py,tests_trae_rules_test_g_trae_052_py,tests_trae_rules_test_g_trae_053_py,tests_trae_rules_test_g_trae_054_py,tests_trae_rules_test_g_trae_055_py design
-    class D_SHARED,D_GOV_RULE,D_GOVERNANCE,D_GOV_DRIFT,D_ORCHESTRATOR external_prod
+    class D_SHARED,D_GOV_DRIFT,D_SECURITY,D_GOV_RULE,D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -966,86 +965,85 @@ graph TD
 | 57 | D_GOVERNANCE 生命周期管理: detect_excessive_file_moves.py — 文件过度搬迁... | → | D4 路径有效性 — 文件系统中路径引用/落位合规性.... | config_depends / config_depends |
 | 58 | D_GOVERNANCE 生命周期管理: detect_ruins_references.py — 残骸/废弃路径引用... | → | D4 路径有效性 — 文件系统中路径引用/落位合规性.... | config_depends / config_depends |
 | 59 | D_GOVERNANCE 生命周期管理: detect_split_delete_ref_commit.py — 删除引用分... | → | D4 路径有效性 — 文件系统中路径引用/落位合规性.... | config_depends / config_depends |
-| 60 | D_GOVERNANCE 生命周期管理: __init__.py | → | blueprint_frontmatter_reconciler.py — 蓝图 fro... | config_depends / config_depends |
-| 61 | D_GOVERNANCE 生命周期管理: check_protected_paths.py — 受保护路径写入检查.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 62 | D_GOVERNANCE 生命周期管理: detect_anchor_file_deletion.py — 锚点文件删除... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 63 | D_GOVERNANCE 生命周期管理: detect_git_dangerous.py — 危险 Git 命令检测 (d... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 64 | D_GOVERNANCE 生命周期管理: detect_keywords_in_logs.py — 日志输出敏感关键.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 65 | D_GOVERNANCE 生命周期管理: detect_permanent_file_deletion.py — 永久文件删... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 66 | D_GOVERNANCE 生命周期管理: detect_secrets.py — 密钥/Token/凭证硬编码检测 ... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 67 | D_GOVERNANCE 生命周期管理: detect_shell_dangerous.py — 危险 Shell 命令检... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 68 | D_GOVERNANCE 生命周期管理: detect_shell_true.py — shell=True 调用检测 (de... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 69 | D_GOVERNANCE 生命周期管理: detect_threading_lock.py — threading.Lock 导入... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 70 | D_GOVERNANCE 生命周期管理: detect_vague_terms.py — 模糊/不确定术语检测 (d... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 71 | D_GOVERNANCE 生命周期管理: CI Entry: Adversarial Validation — Red-Blue Dr... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 72 | D_GOVERNANCE 生命周期管理: 对标 architecture_principles.md §1bis R2 安全.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 73 | D_GOVERNANCE 生命周期管理: 对标 06-security_architecture.md §6.3 L3-Audit... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 74 | D_GOVERNANCE 生命周期管理: validate_gate_discipline.py — 门禁纪律校验 (va... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
-| 75 | D_GOVERNANCE 生命周期管理: 行为说明 (check_ai_capability_boundary.py) | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 76 | D_GOVERNANCE 生命周期管理: check_encoding.py — 编码合规校验（INJ-007） (c... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 77 | D_GOVERNANCE 生命周期管理: check_idempotency.py — 幂等性缺失检查（HC-9） ... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 78 | D_GOVERNANCE 生命周期管理: check_pit_compliance.py — PIT 合规检查（HC-10... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 79 | D_GOVERNANCE 生命周期管理: check_pure_shim.py — GATE-NO-PURE-SHIM 检测器.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 80 | D_GOVERNANCE 生命周期管理: detect_absolute_path_hardcoding.py — 绝对路径.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 81 | D_GOVERNANCE 生命周期管理: detect_direct_llm_calls.py — 裸调 LLM API 检测... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 82 | D_GOVERNANCE 生命周期管理: detect_forward_reference — 前向引用检测扫描器... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 83 | D_GOVERNANCE 生命周期管理: detect_missing_encoding.py — open() 缺 encodin... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 84 | D_GOVERNANCE 生命周期管理: detect_pydantic_any_fields.py — Pydantic Any .... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 85 | D_GOVERNANCE 生命周期管理: detect_silent_degradation.py — 静默降级检测 (d... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 86 | D_GOVERNANCE 生命周期管理: N-06 module_id scope 前缀检测修复脚本。 (fix_n0... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 87 | D_GOVERNANCE 生命周期管理: N-12 KE 条目命名格式批量修复脚本。 (fix_n12_ke_... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 88 | D_GOVERNANCE 生命周期管理: N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 89 | D_GOVERNANCE 生命周期管理: N-14 __init__.py 缺少 __all__ 批量修复脚本。 (f... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 90 | D_GOVERNANCE 生命周期管理: N-15 BLUEPRINT 头部路径不存在批量修复脚本。 (fi... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 91 | D_GOVERNANCE 生命周期管理: fix_naming_manual — 手动修复少量命名违规(N-11/... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 92 | D_GOVERNANCE 生命周期管理: fix_orphan_exports.py — 批量修复孤儿模块导出（... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 93 | D_GOVERNANCE 生命周期管理: rewrite_imports.py — 批量重写 Python import 路... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 94 | D_GOVERNANCE 生命周期管理: validate_contracts_purity.py — 契约纯度校验 (v... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 95 | D_GOVERNANCE 生命周期管理: validate_docstring_coverage.py — Docstring 覆.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 96 | D_GOVERNANCE 生命周期管理: validate_fle_action_metadata.py — FLE Action .... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 97 | D_GOVERNANCE 生命周期管理: validate_fle_imports.py — FLE import 接口合规... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 98 | D_GOVERNANCE 生命周期管理: validate_import_style.py — 导入风格一致性校验 ... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 99 | D_GOVERNANCE 生命周期管理: validate_init_all.py — __init__.py __all__ 完.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 100 | D_GOVERNANCE 生命周期管理: validate_kb_write_provenance.py — 知识库写入 p... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 101 | D_GOVERNANCE 生命周期管理: validate_python_syntax.py — Python 语法完整性... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 102 | D_GOVERNANCE 生命周期管理: validate_test_assertion_depth.py — 测试断言深.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 103 | D_GOVERNANCE 生命周期管理: validate_test_coverage.py — 测试覆盖率治理校验... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 104 | D_GOVERNANCE 生命周期管理: validate_type_annotation_coverage.py — 类型注.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 105 | D_GOVERNANCE 生命周期管理: validate_unused_imports.py — 未使用导入检测 (v... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 106 | D_GOVERNANCE 生命周期管理: audit_rename_completeness.py — 改名完整性审计.... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 107 | D_GOVERNANCE 生命周期管理: 全自动注册表同步器 (auto_sync_all_registries.py) | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 108 | D_GOVERNANCE 生命周期管理: detect_ai_products_in_docs.py — AI 产物位置检... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 109 | D_GOVERNANCE 生命周期管理: detect_dated_snapshots.py — 带日期快照文件检测... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 110 | D_GOVERNANCE 生命周期管理: Checks that every RULE-ZERO through RULE-N in .... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 111 | D_GOVERNANCE 生命周期管理: update_progress.py — 从 domain_progress.json .... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 112 | D_GOVERNANCE 生命周期管理: validate_document_lifecycle.py — 文档生命周期... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 113 | D_GOVERNANCE 生命周期管理: validate_document_ttl.py — 文档 TTL 过期检测 (... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
-| 114 | D_GOVERNANCE 生命周期管理: detect_duplicated_normative_language.py — 规范... | → | D9 知识覆盖审计维度 (__init__.py) | config_depends / config_depends |
-| 115 | D_GOVERNANCE 生命周期管理: detect_orphan_documents.py — 孤立文档检测 (det... | → | D9 知识覆盖审计维度 (__init__.py) | config_depends / config_depends |
-| 116 | D_GOVERNANCE 生命周期管理: 从磁盘扫描生成路径全景图的tree段（运营态目录结.... | → | __init__.py | config_depends / config_depends |
-| 117 | D_GOVERNANCE 生命周期管理: fix_module_manifest_layout.py — 校正治理脚本模... | → | __init__.py | config_depends / config_depends |
-| 118 | D_GOVERNANCE 生命周期管理: generate_gate_registry.py — 门禁登记表自动生成... | → | __init__.py | config_depends / config_depends |
-| 119 | D_GOVERNANCE 生命周期管理: generate_registry_master_index.py — 登记表总索... | → | __init__.py | config_depends / config_depends |
-| 120 | D_GOVERNANCE 生命周期管理: inject_manifests.py — __manifest__ 批量注入器 ... | → | __init__.py | config_depends / config_depends |
-| 121 | D_GOVERNANCE 生命周期管理: refresh_master_entries.py — 登记表总索引 entri... | → | __init__.py | config_depends / config_depends |
-| 122 | D_GOVERNANCE 生命周期管理: sync_audit_protocol_numbers.py — 从 SSoT 注册.... | → | __init__.py | config_depends / config_depends |
-| 123 | D_GOVERNANCE 生命周期管理: run_gate_chain.py — 顺序运行多个门禁脚本，任一... | → | __init__.py | config_depends / config_depends |
-| 124 | D_GOVERNANCE 生命周期管理: status.py — 审计系统状态仪表盘 (status.py) | → | __init__.py | config_depends / config_depends |
-| 125 | D_GOVERNANCE 生命周期管理: sync 完整性校验脚本：验证 YAML→DB 同步的一致性... | → | __init__.py | config_depends / config_depends |
-| 126 | D_GOVERNANCE 生命周期管理: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R... | → | __init__.py | config_depends / config_depends |
-| 127 | D_GOVERNANCE 生命周期管理: VMS Build Completion Check — MOD-INF-011 · TA... | → | __init__.py | config_depends / config_depends |
-| 128 | D_GOVERNANCE 生命周期管理: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TA... | → | __init__.py | config_depends / config_depends |
-| 129 | D_GOVERNANCE 生命周期管理: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0... | → | __init__.py | config_depends / config_depends |
-| 130 | D_GOVERNANCE 生命周期管理: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0... | → | __init__.py | config_depends / config_depends |
-| 131 | D_GOVERNANCE 生命周期管理: test_ssot_gate — SSoT 创建门禁红蓝变异测试。 (... | → | __init__.py | 测试依赖 / test_depends |
-| 132 | D_GOVERNANCE 生命周期管理: test_blueprint_frontmatter_reconciler.py — 蓝.... | → | blueprint_frontmatter_reconciler.py — 蓝图 fro... | 测试依赖 / test_depends |
-| 133 | D_GOVERNANCE 生命周期管理: test_sync_panorama_module.py — 四图模块同步引.... | → | sync_panorama_module.py — 四图模块同步引擎（AR... | 测试依赖 / test_depends |
-| 134 | D_GOV_CODE_QUALITY 代码质量治理: check_module_id_consistency.py — module_id 全.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
-| 135 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成... | → | __init__.py | config_depends / config_depends |
+| 60 | D_GOVERNANCE 生命周期管理: check_protected_paths.py — 受保护路径写入检查.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 61 | D_GOVERNANCE 生命周期管理: detect_anchor_file_deletion.py — 锚点文件删除... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 62 | D_GOVERNANCE 生命周期管理: detect_git_dangerous.py — 危险 Git 命令检测 (d... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 63 | D_GOVERNANCE 生命周期管理: detect_keywords_in_logs.py — 日志输出敏感关键.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 64 | D_GOVERNANCE 生命周期管理: detect_permanent_file_deletion.py — 永久文件删... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 65 | D_GOVERNANCE 生命周期管理: detect_secrets.py — 密钥/Token/凭证硬编码检测 ... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 66 | D_GOVERNANCE 生命周期管理: detect_shell_dangerous.py — 危险 Shell 命令检... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 67 | D_GOVERNANCE 生命周期管理: detect_shell_true.py — shell=True 调用检测 (de... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 68 | D_GOVERNANCE 生命周期管理: detect_threading_lock.py — threading.Lock 导入... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 69 | D_GOVERNANCE 生命周期管理: detect_vague_terms.py — 模糊/不确定术语检测 (d... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 70 | D_GOVERNANCE 生命周期管理: CI Entry: Adversarial Validation — Red-Blue Dr... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 71 | D_GOVERNANCE 生命周期管理: 对标 architecture_principles.md §1bis R2 安全.... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 72 | D_GOVERNANCE 生命周期管理: 对标 06-security_architecture.md §6.3 L3-Audit... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 73 | D_GOVERNANCE 生命周期管理: validate_gate_discipline.py — 门禁纪律校验 (va... | → | D6 安全漏洞 — 代码/配置/依赖安全风险审计。 (__... | config_depends / config_depends |
+| 74 | D_GOVERNANCE 生命周期管理: 行为说明 (check_ai_capability_boundary.py) | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 75 | D_GOVERNANCE 生命周期管理: check_encoding.py — 编码合规校验（INJ-007） (c... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 76 | D_GOVERNANCE 生命周期管理: check_idempotency.py — 幂等性缺失检查（HC-9） ... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 77 | D_GOVERNANCE 生命周期管理: check_pit_compliance.py — PIT 合规检查（HC-10... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 78 | D_GOVERNANCE 生命周期管理: check_pure_shim.py — GATE-NO-PURE-SHIM 检测器.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 79 | D_GOVERNANCE 生命周期管理: detect_absolute_path_hardcoding.py — 绝对路径.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 80 | D_GOVERNANCE 生命周期管理: detect_direct_llm_calls.py — 裸调 LLM API 检测... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 81 | D_GOVERNANCE 生命周期管理: detect_forward_reference — 前向引用检测扫描器... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 82 | D_GOVERNANCE 生命周期管理: detect_missing_encoding.py — open() 缺 encodin... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 83 | D_GOVERNANCE 生命周期管理: detect_pydantic_any_fields.py — Pydantic Any .... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 84 | D_GOVERNANCE 生命周期管理: detect_silent_degradation.py — 静默降级检测 (d... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 85 | D_GOVERNANCE 生命周期管理: N-06 module_id scope 前缀检测修复脚本。 (fix_n0... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 86 | D_GOVERNANCE 生命周期管理: N-12 KE 条目命名格式批量修复脚本。 (fix_n12_ke_... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 87 | D_GOVERNANCE 生命周期管理: N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 88 | D_GOVERNANCE 生命周期管理: N-14 __init__.py 缺少 __all__ 批量修复脚本。 (f... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 89 | D_GOVERNANCE 生命周期管理: N-15 BLUEPRINT 头部路径不存在批量修复脚本。 (fi... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 90 | D_GOVERNANCE 生命周期管理: fix_naming_manual — 手动修复少量命名违规(N-11/... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 91 | D_GOVERNANCE 生命周期管理: fix_orphan_exports.py — 批量修复孤儿模块导出（... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 92 | D_GOVERNANCE 生命周期管理: rewrite_imports.py — 批量重写 Python import 路... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 93 | D_GOVERNANCE 生命周期管理: validate_contracts_purity.py — 契约纯度校验 (v... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 94 | D_GOVERNANCE 生命周期管理: validate_docstring_coverage.py — Docstring 覆.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 95 | D_GOVERNANCE 生命周期管理: validate_fle_action_metadata.py — FLE Action .... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 96 | D_GOVERNANCE 生命周期管理: validate_fle_imports.py — FLE import 接口合规... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 97 | D_GOVERNANCE 生命周期管理: validate_import_style.py — 导入风格一致性校验 ... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 98 | D_GOVERNANCE 生命周期管理: validate_init_all.py — __init__.py __all__ 完.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 99 | D_GOVERNANCE 生命周期管理: validate_kb_write_provenance.py — 知识库写入 p... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 100 | D_GOVERNANCE 生命周期管理: validate_python_syntax.py — Python 语法完整性... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 101 | D_GOVERNANCE 生命周期管理: validate_test_assertion_depth.py — 测试断言深.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 102 | D_GOVERNANCE 生命周期管理: validate_test_coverage.py — 测试覆盖率治理校验... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 103 | D_GOVERNANCE 生命周期管理: validate_type_annotation_coverage.py — 类型注.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 104 | D_GOVERNANCE 生命周期管理: validate_unused_imports.py — 未使用导入检测 (v... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 105 | D_GOVERNANCE 生命周期管理: audit_rename_completeness.py — 改名完整性审计.... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 106 | D_GOVERNANCE 生命周期管理: 全自动注册表同步器 (auto_sync_all_registries.py) | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 107 | D_GOVERNANCE 生命周期管理: detect_ai_products_in_docs.py — AI 产物位置检... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 108 | D_GOVERNANCE 生命周期管理: detect_dated_snapshots.py — 带日期快照文件检测... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 109 | D_GOVERNANCE 生命周期管理: Checks that every RULE-ZERO through RULE-N in .... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 110 | D_GOVERNANCE 生命周期管理: update_progress.py — 从 domain_progress.json .... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 111 | D_GOVERNANCE 生命周期管理: validate_document_lifecycle.py — 文档生命周期... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 112 | D_GOVERNANCE 生命周期管理: validate_document_ttl.py — 文档 TTL 过期检测 (... | → | D8 文档代码同步审计维度 (__init__.py) | config_depends / config_depends |
+| 113 | D_GOVERNANCE 生命周期管理: detect_duplicated_normative_language.py — 规范... | → | D9 知识覆盖审计维度 (__init__.py) | config_depends / config_depends |
+| 114 | D_GOVERNANCE 生命周期管理: detect_orphan_documents.py — 孤立文档检测 (det... | → | D9 知识覆盖审计维度 (__init__.py) | config_depends / config_depends |
+| 115 | D_GOVERNANCE 生命周期管理: 从磁盘扫描生成路径全景图的tree段（运营态目录结.... | → | __init__.py | config_depends / config_depends |
+| 116 | D_GOVERNANCE 生命周期管理: fix_module_manifest_layout.py — 校正治理脚本模... | → | __init__.py | config_depends / config_depends |
+| 117 | D_GOVERNANCE 生命周期管理: generate_gate_registry.py — 门禁登记表自动生成... | → | __init__.py | config_depends / config_depends |
+| 118 | D_GOVERNANCE 生命周期管理: generate_registry_master_index.py — 登记表总索... | → | __init__.py | config_depends / config_depends |
+| 119 | D_GOVERNANCE 生命周期管理: inject_manifests.py — __manifest__ 批量注入器 ... | → | __init__.py | config_depends / config_depends |
+| 120 | D_GOVERNANCE 生命周期管理: refresh_master_entries.py — 登记表总索引 entri... | → | __init__.py | config_depends / config_depends |
+| 121 | D_GOVERNANCE 生命周期管理: sync_audit_protocol_numbers.py — 从 SSoT 注册.... | → | __init__.py | config_depends / config_depends |
+| 122 | D_GOVERNANCE 生命周期管理: run_gate_chain.py — 顺序运行多个门禁脚本，任一... | → | __init__.py | config_depends / config_depends |
+| 123 | D_GOVERNANCE 生命周期管理: status.py — 审计系统状态仪表盘 (status.py) | → | __init__.py | config_depends / config_depends |
+| 124 | D_GOVERNANCE 生命周期管理: sync 完整性校验脚本：验证 YAML→DB 同步的一致性... | → | __init__.py | config_depends / config_depends |
+| 125 | D_GOVERNANCE 生命周期管理: VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R... | → | __init__.py | config_depends / config_depends |
+| 126 | D_GOVERNANCE 生命周期管理: VMS Build Completion Check — MOD-INF-011 · TA... | → | __init__.py | config_depends / config_depends |
+| 127 | D_GOVERNANCE 生命周期管理: VMS 跨文件内容一致性检查器 — MOD-INF-011 · TA... | → | __init__.py | config_depends / config_depends |
+| 128 | D_GOVERNANCE 生命周期管理: VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0... | → | __init__.py | config_depends / config_depends |
+| 129 | D_GOVERNANCE 生命周期管理: VMS 版本同步检查器 — MOD-INF-011 · TASK-INF-0... | → | __init__.py | config_depends / config_depends |
+| 130 | D_GOVERNANCE 生命周期管理: test_ssot_gate — SSoT 创建门禁红蓝变异测试。 (... | → | __init__.py | 测试依赖 / test_depends |
+| 131 | D_GOVERNANCE 生命周期管理: test_blueprint_frontmatter_reconciler.py — 蓝.... | → | blueprint_frontmatter_reconciler.py — 蓝图 fro... | 测试依赖 / test_depends |
+| 132 | D_GOVERNANCE 生命周期管理: test_sync_panorama_module.py — 四图模块同步引.... | → | sync_panorama_module.py — 四图模块同步引擎（AR... | 测试依赖 / test_depends |
+| 133 | D_GOV_CODE_QUALITY 代码质量治理: check_module_id_consistency.py — module_id 全.... | → | D7 代码质量 — Python 代码静态分析与质量合规审... | config_depends / config_depends |
+| 134 | D_GOV_RULE 规则治理: generate_script_manifest.py — 脚本清单自动生成... | → | __init__.py | config_depends / config_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 14 个外部域直接连接（出边 171 条 + 入边 135 条 = 306 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 14 个外部域直接连接（出边 171 条 + 入边 134 条 = 305 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -1077,7 +1075,7 @@ graph LR
     D_GOV_SCRIPTS -->|1条 测试依赖 / test_depends| D_GOV_DRIFT
     D_GOV_SCRIPTS -->|1条 测试依赖 / test_depends| D_AUTONOMY_CORE
     D_GOV_SCRIPTS -->|1条 测试依赖 / test_depends| D_INFRA_RECOVERY
-    D_GOVERNANCE -->|133条 config_depends / config_depends, 测试依赖 / test_depends| D_GOV_SCRIPTS
+    D_GOVERNANCE -->|132条 config_depends / config_depends, 测试依赖 / test_depends| D_GOV_SCRIPTS
     D_GOV_CODE_QUALITY -->|1条 config_depends / config_depends| D_GOV_SCRIPTS
     D_GOV_RULE -->|1条 config_depends / config_depends| D_GOV_SCRIPTS
 ```

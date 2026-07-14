@@ -1,5 +1,5 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-14 21:27:16
+%% 生成时间: 2026-07-14 23:11:34
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 82, 依赖边数: 260
 
@@ -93,8 +93,8 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_gov_enforcement_beh___ssion_admission_response_py -->|import_depends| src_zephyr_gov_enforcement_beh___ion_admission_controller_py
-    src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
     src_zephyr_gov_enforcement_beh___mission_protection_index_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
+    src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_verdict_engine_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ion_admission_controller_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___ssion_admission_response_py
     src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| src_zephyr_gov_enforcement_beh___admission_code_review_ai_py
@@ -115,7 +115,7 @@ graph TD
     tests_rule_test_rule_debt_auditor_py -->|test_depends| src_zephyr_gov_enforcement_rul___engine_rule_debt_auditor_py
     tests_rule_test_rule_canary_manager_py -->|test_depends| src_zephyr_gov_enforcement_rul___gine_rule_canary_manager_py
     tests_rule_test_rule_shadow_runner_py -->|test_depends| src_zephyr_gov_enforcement_rul___ngine_rule_shadow_runner_py
-    src_zephyr_gov_enforcement_rule_bridge___init___py -->|config_depends| src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py
+    src_zephyr_gov_enforcement_rule_bridge___init___py -->|config_depends| src_zephyr_gov_enforcement_rul___dge_commit_gate_registry_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOV_ENFORCEMENT (1 条)
@@ -198,7 +198,7 @@ graph TD
     D_GOV_REPAIR[D_GOV_REPAIR] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
     %% D_GOV_RULE -> D_GOV_ENFORCEMENT (2 条)
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_gov_enforcement_rul___ts_post_doc_review_check_py
-    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_gov_enforcement_rul___ngine_rule_shadow_runner_py
+    D_GOV_RULE[D_GOV_RULE] -->|config_depends| src_zephyr_gov_enforcement_rul___gine_rule_canary_manager_py
     %% D_PF_CORE -> D_GOV_ENFORCEMENT (1 条)
     D_PF_CORE[D_PF_CORE] -->|import_depends| src_zephyr_gov_enforcement_rul___orcement_compliance_rule_py
     %% D_SHARED -> D_GOV_ENFORCEMENT (2 条)
@@ -219,33 +219,33 @@ graph TD
     tests_guard_test_guard_interaction_topology_mapper_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     tests_guard_test_guard_self_consistency_auditor_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     %% D_GOV_ENFORCEMENT -> D_FBL_VERIFICATION (14 条)
-    tests_gate_test_concurrent_change_deconfliction_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_dynamic_llm_cost_router_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_ci_cd_pre_scanner_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_conflict_arbitration_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_deployment_suppression_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_emergency_takeover_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_cve_scanner_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_federated_security_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_concurrent_change_deconfliction_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_deployment_suppression_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_flag_lifecycle_manager_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_meta_performance_gate_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_license_compliance_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_gate_test_parameterized_safety_gate_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_emergency_takeover_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_dynamic_llm_cost_router_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_federated_security_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_merkle_audit_root_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_parameterized_safety_gate_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_license_compliance_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    tests_gate_test_meta_performance_gate_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     tests_gate_test_scope_creep_monitor_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
     %% D_GOV_ENFORCEMENT -> D_FEEDBACK_LOOP (2 条)
-    tests_guard_test_guard_configuration_drift_monitor_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_guard_test_guard_complexity_budget_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_guard_test_guard_configuration_drift_monitor_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (3 条)
     src_zephyr_gov_enforcement_rul___rcement_dlq_retry_policy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_rule_test_rule_integration_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     tests_rule_test_rule_red_blue_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_ENFORCEMENT -> D_GOV_AUDIT (6 条)
-    src_zephyr_gov_enforcement_beh___admission_verdict_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_gov_enforcement_behavioral_admission___init___py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    src_zephyr_gov_enforcement_beh___admission_verdict_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (42 条)
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
@@ -282,9 +282,9 @@ graph TD
     src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
+    tests_gate_test_gate_integrity_guard_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     tests_gate_test_gate_health_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     tests_gate_test_gate_persistence_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    tests_gate_test_gate_integrity_guard_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_ENFORCEMENT -> D_GOV_OPS_RESILIENCE (1 条)
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_GOV_ENFORCEMENT -> D_GOV_RULE (18 条)
@@ -297,13 +297,13 @@ graph TD
     src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_gov_enforcement_rule_enforcement___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     tests_gate_test_gate_context_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_gate_test_gate_override_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_gate_test_gate_simulator_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_gate_test_gate_simulator_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_gate_test_gate_simulator_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_gate_test_gate_pipeline_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_gate_test_gate_pipeline_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_gate_test_gate_types_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_gate_test_gate_override_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_gate_test_gate_pipeline_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_gate_test_gate_pipeline_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_rule_test_rule_integration_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_rule_test_rule_e2e_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_GOV_ENFORCEMENT -> D_INFRASTRUCTURE (1 条)
@@ -319,21 +319,21 @@ graph TD
     %% D_GOV_ENFORCEMENT -> D_SECURITY (6 条)
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_guard_test_guard_layers_root_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_rule_test_rule_injection_guard_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_GOV_ENFORCEMENT -> D_SHARED (17 条)
+    src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh____gpu_consensus_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_beh___ission_session_lifecycle_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_beh___ssion_gate_event_adapter_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rule_bridge_git_commit_gateway_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rule_bridge_worktree_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rule_bridge_session_worktree_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_rule_bridge_session_claim_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___ts_post_doc_review_check_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___rule_engine_rule_watcher_py -->|import_depends| D_SHARED[D_SHARED]
     tests_gate_test_circuit_breaker_types_py -->|test_depends| D_SHARED[D_SHARED]

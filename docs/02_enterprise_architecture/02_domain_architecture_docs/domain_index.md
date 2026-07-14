@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 5058 |
-| 生产态模块 | 1780 |
+| 模块总数 | 5052 |
+| 生产态模块 | 1778 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3214 |
+| 原型态模块 | 3210 |
 
 ## 域清单（按架构层分组）
 
@@ -77,10 +77,10 @@ ttl: permanent
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 0 | 0 | 7 | 7/150 (OK) | [33_d_exec_sim.md](33_d_exec_sim.md) |
 | D_EX_CORE | 执行核心 / Execution Core | 23 | 6 | 1 | 16 | 23/150 (OK) | [34_d_ex_core.md](34_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
-| D_FACTOR | 因子 / Factor | 14 | 4 | 0 | 10 | 14/150 (OK) | [36_d_factor.md](36_d_factor.md) |
+| D_FACTOR | 因子 / Factor | 13 | 3 | 0 | 10 | 13/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 1062 | 147 | 3 | 912 | 1062/150 (超容) | [38_d_governance.md](38_d_governance.md) |
-| D_GOV_AUDIT | audit_orchestration / Audit Trail | 277 | 68 | 2 | 207 | 277/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 1060 | 147 | 3 | 910 | 1060/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOV_AUDIT | audit_orchestration / Audit Trail | 276 | 68 | 2 | 206 | 276/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 82 | 17 | 0 | 65 | 82/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
@@ -93,7 +93,7 @@ ttl: permanent
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
 | D_ML_TRAIN | model_evaluation / Training | 6 | 0 | 1 | 5 | 6/150 (OK) | [50_d_ml_train.md](50_d_ml_train.md) |
 | D_PF_ALLOC | 组合分配 / Portfolio Allocation | 10 | 1 | 1 | 8 | 10/150 (OK) | [51_d_pf_alloc.md](51_d_pf_alloc.md) |
-| D_PF_CORE | 组合核心 / Portfolio Core | 13 | 3 | 0 | 10 | 13/150 (OK) | [52_d_pf_core.md](52_d_pf_core.md) |
+| D_PF_CORE | 组合核心 / Portfolio Core | 12 | 2 | 0 | 10 | 12/150 (OK) | [52_d_pf_core.md](52_d_pf_core.md) |
 | D_POSITION | 仓位管理 / Position Management | 8 | 1 | 0 | 7 | 8/150 (OK) | [53_d_position.md](53_d_position.md) |
 | D_RISK | 风控 / Risk Control | 29 | 9 | 0 | 20 | 29/150 (OK) | [54_d_risk.md](54_d_risk.md) |
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 0 | 0 | 7 | 7/150 (OK) | [55_d_sell_decision.md](55_d_sell_decision.md) |
@@ -106,7 +106,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 0 | 0 | 0 | 0 | 0/200 (OK) | [59_d_behavioral_audit.md](59_d_behavioral_audit.md) |
-| D_COMPLIANCE | compliance_gate / Compliance | 24 | 0 | 0 | 24 | 24/200 (OK) | [60_d_compliance.md](60_d_compliance.md) |
+| D_COMPLIANCE | compliance_gate / Compliance | 23 | 0 | 0 | 23 | 23/200 (OK) | [60_d_compliance.md](60_d_compliance.md) |
 | D_DATA | data_source_integrator / D_DATA | 56 | 7 | 0 | 49 | 56/200 (OK) | [61_d_data.md](61_d_data.md) |
 | D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 61 | 9 | 0 | 52 | 61/200 (OK) | [62_d_infrastructure.md](62_d_infrastructure.md) |
 | D_SIGLEGACY | signal_legacy / Signal Legacy (Design) | 16 | 1 | 0 | 15 | 16/200 (OK) | [63_d_siglegacy.md](63_d_siglegacy.md) |
