@@ -1,4 +1,4 @@
-# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.intelligence_governance.autonomy_dashboard
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.intelligence_governance.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_TRADING)
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.risk.trading_kill_switch
 # [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.risk.__init__

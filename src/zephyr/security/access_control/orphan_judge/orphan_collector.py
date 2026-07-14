@@ -1,4 +1,4 @@
-# [BLUEPRINT]
+# [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md
 # [MODULE] zephyr.security.access_control.orphan_judge.orphan_collector
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.access_control.orphan_judge.cascade_analyzer; zephyr.security.access_control.orphan_judge.decision_table; zephyr.security.access_control.orphan_judge.safety_fence; zephyr.security.access_control.orphan_judge.deprecation_tracker

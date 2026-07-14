@@ -1,4 +1,4 @@
-# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.escalation.owner_absent
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.escalation.__init__

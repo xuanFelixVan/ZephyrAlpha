@@ -1,4 +1,4 @@
-# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_GOVERNANCE)
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.governance.architecture_governance.llm_impact_analyzer
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__

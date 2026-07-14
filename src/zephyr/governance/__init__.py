@@ -1,4 +1,4 @@
-# [BLUEPRINT] DOM-GOV-001 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [TTL] permanent
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0

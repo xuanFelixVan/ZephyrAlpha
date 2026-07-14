@@ -1,4 +1,4 @@
-# [BLUEPRINT] (migrated from MOD-INF-021 by ARCH-039 P1, target domain=D_INFRA_RUNTIME)
+# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.runtime.gate_coordinator
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.runtime.__init__
