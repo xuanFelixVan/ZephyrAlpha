@@ -240,8 +240,10 @@ KNOWLEDGE_DOC_PATHS = _DEPGRAPH_CONFIG.get("knowledge_doc_paths", _FALLBACK_KNOW
 # Old layer name normalization: strip l00_, l01_, ..., l13_ prefixes from path segments.
 # These legacy prefixes (e.g., l00-data-source, l01-infrastructure) persist in
 # tests/ and docs/03_modules/ directories on disk but should not appear in depgraph IDs.
-# Matches l\d{2}_ at: start of string, after /, or after _ (e.g., test_l00_xxx)
-_OLD_LAYER_PREFIX_RE = re.compile(r"(^|/|_)l\d{2}_")
+# Matches l\d{2}_ at: start of string or after / (path segment boundary only).
+# Fix 2026-07-14: removed _ from alternation — _l\d{2}_ inside filenames (e.g.,
+# safety_gate_l28_l29.py) was incorrectly stripped, corrupting the path.
+_OLD_LAYER_PREFIX_RE = re.compile(r"(^|/)l\d{2}_")
 
 # H3 fix: Path validation patterns
 _ILLEGAL_PATH_PATTERNS = re.compile(
