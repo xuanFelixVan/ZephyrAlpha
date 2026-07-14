@@ -96,7 +96,7 @@ numeric_facts:
   - id: gate_count
     fact: "43"
     description: "门禁数量（_registry.yaml gate_id: 计数 43）"
-    ssot_source: "src/zephyr/governance/rule_enforcement/_registry.yaml gate_id count"
+    ssot_source: "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml gate_id count"
     must_appear_in:
       - ".trae/rules/project_rules.md"
       - ".trae/rules/onboarding_detail.md"
@@ -489,8 +489,8 @@ path_facts:
       - "AGENTS.md"
     must_not_appear_as:
       - file: "AGENTS.md"
-        pattern: "zephyr.trading.orchestrator"
-        reason: "zephyr.trading.orchestrator 包已移出（裁定#200），实际在 zephyr.orchestrator"
+        pattern: "zephyr.orchestrator"
+        reason: "zephyr.orchestrator 包已移出（裁定#200），实际在 zephyr.orchestrator"
 
   - id: functional_domain_registry_underscore
     fact: "functional_domain_registry.yaml"
@@ -655,7 +655,7 @@ path_facts:
   - id: detector_registry_in_registry
     fact: "_detector_registry.yaml"
     description: "漂移检测器注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
-    ssot_source: "src/zephyr/governance/drift_detection/_detector_registry.yaml"
+    ssot_source: "src/zephyr/gov_drift/_detector_registry.yaml"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:

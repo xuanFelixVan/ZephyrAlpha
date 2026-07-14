@@ -36,7 +36,7 @@
 |------|:---:|------|
 | 模块 | 4,639 | `python scripts/governance/extract_depgraph.py --summary` |
 | 脚本 | 483 | `scripts/script_manifest.yaml` |
-| 门禁 | 43 | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
+| 门禁 | 43 | `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
 | 蓝图 / 模板 | 60 / 13 | `docs/03_modules/blueprint_registry.yaml` / `template_registry.yaml` |
 | Agent Skill | 22 | `data/capability_cards/` (skill_*.yaml) |
 

@@ -40,7 +40,7 @@ if str(_D3_META) not in sys.path:
 
 import check_vocab_hardcode as cvh  # noqa: E402
 
-_COMMIT_GATES_REL = "src/zephyr/governance/commit_gates"
+_COMMIT_GATES_REL = "src/zephyr/gov_enforcement/commit_gates"
 
 
 def _make_commit_gate_file(tmp_path: Path, name: str, content: str) -> Path:

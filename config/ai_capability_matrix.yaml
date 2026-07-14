@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 # AI 能力边界矩阵 — SSoT 定义文件
 #
@@ -43,7 +44,7 @@ matrix:
       description: "AI 行为铁律 IRN-001~010"
       rationale: "铁律是系统最高安全约束"
 
-    - scope: "src/zephyr/governance/rule_enforcement/_registry.yaml"
+    - scope: "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
       level: IMMUTABLE
       description: "门禁注册表（机器可读）"
       rationale: "注册表定义了所有安全门禁的入口"

@@ -1,6 +1,6 @@
 ---
 module_id: MOD-INF-020
-submodule_path: src/zephyr/governance/audit_trail
+submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active

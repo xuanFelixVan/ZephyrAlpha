@@ -140,16 +140,16 @@ error_codes:
   file: src/zephyr/governance/audit/snapshot_manager.py
 - code: ZA-GV-0003
   class: PushError
-  module: zephyr.governance.behavioral_admission.mcp_result_push
-  file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
+  module: zephyr.gov_enforcement.behavioral_admission.mcp_result_push
+  file: src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py
 - code: ZA-GV-0004
   class: CallbackConnectionError
-  module: zephyr.governance.behavioral_admission.mcp_result_push
-  file: src/zephyr/governance/behavioral_admission/mcp_result_push.py
+  module: zephyr.gov_enforcement.behavioral_admission.mcp_result_push
+  file: src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py
 - code: ZA-GV-0005
   class: InvalidDecisionError
-  module: zephyr.governance.behavioral_admission.admission_response
-  file: src/zephyr/governance/behavioral_admission/admission_response.py
+  module: zephyr.gov_enforcement.behavioral_admission.admission_response
+  file: src/zephyr/gov_enforcement/behavioral_admission/admission_response.py
 - code: ZA-GV-0006
   class: TaskRepositoryError
   module: zephyr.governance.persistence.task_repo
@@ -168,12 +168,12 @@ error_codes:
   file: src/zephyr/governance/persistence/task_repo.py
 - code: ZA-GV-0010
   class: EventStoreError
-  module: zephyr.governance.audit_trail.event_store
-  file: src/zephyr/governance/audit_trail/event_store.py
+  module: zephyr.gov_audit.event_store
+  file: src/zephyr/gov_audit/event_store.py
 - code: ZA-GV-0011
   class: IntegrityError
-  module: zephyr.governance.audit_trail.event_store
-  file: src/zephyr/governance/audit_trail/event_store.py
+  module: zephyr.gov_audit.event_store
+  file: src/zephyr/gov_audit/event_store.py
 - code: ZA-GV-0012
   class: P0InflationFrozenError
   module: zephyr.governance.persistence.task_repo
@@ -252,12 +252,12 @@ error_codes:
   file: src/zephyr/governance/observability_governance/projection_engine.py
 - code: ZA-GV-0031
   class: WorktreeError
-  module: zephyr.governance.rule_bridge.worktree_manager
-  file: src/zephyr/governance/rule_bridge/worktree_manager.py
+  module: zephyr.gov_enforcement.rule_bridge.worktree_manager
+  file: src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py
 - code: ZA-GV-0032
   class: GatewayError
-  module: zephyr.governance.rule_bridge.git_commit_gateway
-  file: src/zephyr/governance/rule_bridge/git_commit_gateway.py
+  module: zephyr.gov_enforcement.rule_bridge.git_commit_gateway
+  file: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
 - code: ZA-GV-0033
   class: CostBudgetExceededError
   module: zephyr.governance.ops_governance.cost_budget
@@ -268,48 +268,48 @@ error_codes:
   file: src/zephyr/governance/semantic_audit/self_healer.py
 - code: ZA-GV-0035
   class: ContractViolationError
-  module: zephyr.governance.audit_trail.contracts
-  file: src/zephyr/governance/audit_trail/contracts.py
+  module: zephyr.gov_audit.contracts
+  file: src/zephyr/gov_audit/contracts.py
 - code: ZA-GV-0036
   class: CircuitOpenError
-  module: zephyr.governance.rule_enforcement.circuit_breaker
-  file: src/zephyr/governance/rule_enforcement/circuit_breaker.py
+  module: zephyr.gov_enforcement.rule_enforcement.circuit_breaker
+  file: src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py
 - code: ZA-GV-0037
   class: DepgraphLoadError
   module: zephyr.governance.resilience_governance.blast_radius
   file: src/zephyr/governance/resilience_governance/blast_radius.py
 - code: ZA-GV-0038
   class: MemoryBackendError
-  module: zephyr.governance.kb.storage._backend_protocol
-  file: src/zephyr/governance/kb/storage/_backend_protocol.py
+  module: zephyr.gov_kb.storage._backend_protocol
+  file: src/zephyr/gov_kb/storage/_backend_protocol.py
 - code: ZA-GV-0039
   class: GitUnavailableError
-  module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
-  file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
+  module: zephyr.gov_enforcement.rule_enforcement.invariants.post_doc_review_check
+  file: src/zephyr/gov_enforcement/rule_enforcement/invariants/post_doc_review_check.py
 - code: ZA-GV-0040
   class: TamperingError
-  module: zephyr.governance.rule_enforcement.invariants.post_doc_review_check
-  file: src/zephyr/governance/rule_enforcement/invariants/post_doc_review_check.py
+  module: zephyr.gov_enforcement.rule_enforcement.invariants.post_doc_review_check
+  file: src/zephyr/gov_enforcement/rule_enforcement/invariants/post_doc_review_check.py
 - code: ZA-GV-0041
   class: GateEngineError
-  module: zephyr.governance.rule_enforcement.gate_types
-  file: src/zephyr/governance/rule_enforcement/gate_types.py
+  module: zephyr.gov_enforcement.rule_enforcement.gate_types
+  file: src/zephyr/gov_enforcement/rule_enforcement/gate_types.py
 - code: ZA-GV-0042
   class: GateViolationError
-  module: zephyr.governance.rule_enforcement.gate_types
-  file: src/zephyr/governance/rule_enforcement/gate_types.py
+  module: zephyr.gov_enforcement.rule_enforcement.gate_types
+  file: src/zephyr/gov_enforcement/rule_enforcement/gate_types.py
 - code: ZA-GV-0043
   class: StrategyError
-  module: zephyr.governance.rule_enforcement.adversarial_strategies
-  file: src/zephyr/governance/rule_enforcement/adversarial_strategies.py
+  module: zephyr.gov_enforcement.rule_enforcement.adversarial_strategies
+  file: src/zephyr/gov_enforcement/rule_enforcement/adversarial_strategies.py
 - code: ZA-GV-0044
   class: AdversarialValidationError
-  module: zephyr.governance.rule_enforcement.gate_engine.adversarial_validation
-  file: src/zephyr/governance/rule_enforcement/gate_engine/adversarial_validation.py
+  module: zephyr.gov_enforcement.rule_enforcement.gate_engine.adversarial_validation
+  file: src/zephyr/gov_enforcement/rule_enforcement/gate_engine/adversarial_validation.py
 - code: ZA-GV-0045
   class: InvalidTransitionError
-  module: zephyr.governance.drift_detection.state_machine
-  file: src/zephyr/governance/drift_detection/state_machine.py
+  module: zephyr.gov_drift.state_machine
+  file: src/zephyr/gov_drift/state_machine.py
 - code: ZA-HF-0001
   class: MCPError
   module: zephyr.integration.mcp.doc_guard_server

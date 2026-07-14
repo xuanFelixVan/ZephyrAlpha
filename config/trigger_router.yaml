@@ -106,7 +106,7 @@ triggers:
 # --- AUTO-GENERATED WIRING STATUS START ---
 # trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
 # trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
-# trigger: drift_detected → handle_drift_detected（✅ 真实） ✅→ zephyr.governance.rule_enforcement.drift_detector.trigger_recovery [experimental（T-V2-009）]
+# trigger: drift_detected → handle_drift_detected（✅ 真实） ✅→ zephyr.gov_enforcement.rule_enforcement.drift_detector.trigger_recovery [experimental（T-V2-009）]
 # trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.archive_drafts_zone.archive_expired_drafts [experimentalg+]
 # trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
 #

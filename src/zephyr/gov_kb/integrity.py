@@ -88,7 +88,7 @@ def _get_project_root() -> Path:
 class IntegrityGuard:
     _MANIFEST_FILE = "kb-integrity-manifest.json"
     _KE_DIR = "docs/08_knowledge/01_raw_intake"
-    _KB_SRC_DIR = "src/zephyr/governance/kb"
+    _KB_SRC_DIR = "src/zephyr/gov_kb"
 
     def __init__(self, project_root: Path | None = None):
         self._root = project_root or _get_project_root()

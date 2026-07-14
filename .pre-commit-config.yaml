@@ -235,7 +235,7 @@ repos:
       # 模式：硬阻断（ERROR 时 exit(1) 拒绝提交）
       - id: gate-triple-align
         name: "GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁"
-        entry: python src/zephyr/governance/rule_enforcement/triple_alignment.py
+        entry: python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
         language: system
         pass_filenames: false
         always_run: false
@@ -396,7 +396,7 @@ repos:
       # 模式：--ci 硬阻断（零残留违规 = 拒绝提交）
       - id: gate-zr-zero-residue
         name: "GATE-ZR: 零残留强制门禁（IRN-011）"
-        entry: python -B -c "from zephyr.governance.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
+        entry: python -B -c "from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
         language: system
         pass_filenames: false
         always_run: false

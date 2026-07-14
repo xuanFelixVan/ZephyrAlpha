@@ -65,8 +65,8 @@ __all__ = [
 
 _SYSTEM_CRITICAL_PATTERNS = [
     "src/zephyr/security/access_control/orphan_judge/",
-    "src/zephyr/governance/rule_enforcement/phase_manager.py",
-    "src/zephyr/governance/rule_enforcement/phase_check_registry.py",
+    "src/zephyr/gov_enforcement/rule_enforcement/phase_manager.py",
+    "src/zephyr/gov_enforcement/rule_enforcement/phase_check_registry.py",
     "src/zephyr/agent-rbac/",
     "src/zephyr/escalation/",
     "src/zephyr/behavioral-auditor/",

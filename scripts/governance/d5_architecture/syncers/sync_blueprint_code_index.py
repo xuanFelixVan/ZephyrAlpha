@@ -158,7 +158,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "gate-engine": {
         "module_id": "MOD-GATE_ENGINE",
-        "source_dirs": ["src/zephyr/governance/rule_enforcement"],
+        "source_dirs": ["src/zephyr/gov_enforcement/rule_enforcement"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/test_gate_engine.py",

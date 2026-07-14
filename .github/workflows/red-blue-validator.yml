@@ -6,7 +6,7 @@ on:
     branches: [main, master, "phase/*", "sprint/*", "feature/*"]
     paths:
       - "src/zephyr/red_blue_validator/**"
-      - "src/zephyr/governance/rule_enforcement/**"
+      - "src/zephyr/gov_enforcement/rule_enforcement/**"
       - "src/zephyr/llm_security/**"
       - "src/zephyr/escalation-engine/**"
       - "src/zephyr/governance/**"
@@ -18,7 +18,7 @@ on:
     branches: [main, master]
     paths:
       - "src/zephyr/red_blue_validator/**"
-      - "src/zephyr/governance/rule_enforcement/**"
+      - "src/zephyr/gov_enforcement/rule_enforcement/**"
   workflow_dispatch:
 
 jobs:

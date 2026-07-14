@@ -308,9 +308,9 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 | 策略项 | 设计 | 理由 |
 |--------|------|------|
 | 引擎 | **全部 ReplacingMergeTree**（裁定 #ARCH-CH-002） | 直接 INSERT，CH 后台去重，零 mutation 开销；增量回填幂等 |
-| 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪和 TTL |
+| 分区策略 | PARTITION BY toYYYYMMDD(trade_date)（高频表）/ toYYYYMM(trade_date)（日频表） | 按天/月分区，方便分区裁剪 |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp)（高频）/ ORDER BY (symbol, trade_date)（日频） | 回测主要查单只股票历史数据，symbol 前缀 |
-| TTL | tick_data/index_quote 保留 90 天后归档 Parquet | 高频数据体积大，超期归档 |
+| TTL | **无TTL**（INV-RET-003 铁律：所有表 Hot 层无 TTL，永久保留） | 数据保留契约 PS-CTR-003 §1 INV-RET-003 |
 | 数据类型 | Decimal(18,4) 价格 / UInt64 成交量 / LowCardinality(String) 枚举 | ClickHouse 推荐类型 |
 | 批量写入 | **BufferedWriter 强制攒批**（≥ 50000 行或 ≥ 30 秒触发）（裁定 #ARCH-CH-003） | 每次 INSERT 创建 1 个 data part，逐个写入导致 parts 爆炸 |
 
@@ -342,7 +342,6 @@ CREATE TABLE IF NOT EXISTS c1_market.tick_data
 ENGINE = MergeTree
 PARTITION BY toYYYYMMDD(trade_date)
 ORDER BY (symbol, trade_date, timestamp)
-TTL trade_date + INTERVAL 90 DAY
 COMMENT 'A股3秒Tick行情(原料,replay)'
 """
 ```
@@ -358,7 +357,7 @@ COMMENT 'A股3秒Tick行情(原料,replay)'
 | 分区 | PARTITION BY toYYYYMMDD(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date, timestamp) |
 | 索引 | INDEX idx_ts timestamp TYPE minmax GRANULARITY 1 |
-| TTL | trade_date + INTERVAL 90 DAY（超期归档 Parquet） |
+| TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
 | calc_mode | **replay**（回测时逐笔回放，保证=实盘） |
 | category_id | **market_tick** |
 

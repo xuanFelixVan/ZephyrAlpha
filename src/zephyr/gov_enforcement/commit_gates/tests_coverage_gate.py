@@ -66,7 +66,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_tests_coverage_gate"]
 
-_GATE_DIR = "src/zephyr/governance/commit_gates"
+_GATE_DIR = "src/zephyr/gov_enforcement/commit_gates"
 _TRIGGER_PREFIX = "src/zephyr/gov_enforcement/commit_gates/"
 
 # 注意：用 [ \t] 而非 \s，避免 \s 匹配换行符导致跨行提取下一行内容

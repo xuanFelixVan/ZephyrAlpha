@@ -72,7 +72,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 |----------|---------|-----------|
 | `src/zephyr/<pkg>/<name>.py` | `scaffold.py module <pkg> <name>` | `<pkg>/__init__.py` `__all__` |
 | `scripts/<path>/<name>.py` | `scaffold.py script <path>` | `scripts/script-manifest.yaml` |
-| `src/zephyr/governance/rule_enforcement/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/governance/rule_enforcement/_registry.yaml` |
+| `src/zephyr/gov_enforcement/rule_enforcement/<id>.yaml` | `scaffold.py gate <id>` | `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
 
 **修改已有文件不走 scaffold**——走 RULE-ZERO 锁协议。
 
@@ -82,7 +82,7 @@ AFTER WRITE  → RELEASE → python scripts/lock_files.py release <file> <sessio
 
 **规则真源**: [trae_001_file_operation_security.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-FOUR + [trae_015_arch_path_registration.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml) | 实现: [scaffold.py](file:///d:/ZephyrAlpha/scripts/scaffold.py) | 验证: `python scripts/governance/d11_compliance/audit_registration.py`
 
-**搭便车防护 + 门禁注册制（2026-06-30 治本）**: 多 session 修改同一文件时，后提交的 session 会把工作区全部修改（含前一个 session WIP）一并提交（"搭便车提交"/ghost commit）。防护链：① commit 前 MUST `claim_files` 声明工作范围（[AGENTS.md §8 L284](file:///d:/ZephyrAlpha/AGENTS.md)）② `claim_required_gate` 检测 session 已注册但目标文件未 claim → 阻断 ③ `held_overlap_gate` 检测目标文件被其他活跃 session 持有 → `HELD_OVERLAP_VIOLATION` 阻断（`--allow-overlap` 逃生通道）④ 新增 pre-commit 门禁走 `CommitGateRegistry` 注册制（[commit_gates/](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/) 子目录 + `make_*_gate()`），禁止在 `commit()` 方法体硬编码 `_check_*`（架构债务 #AD-001 治本）。详见 [AGENTS.md §8 L283-286](file:///d:/ZephyrAlpha/AGENTS.md)。
+**搭便车防护 + 门禁注册制（2026-06-30 治本）**: 多 session 修改同一文件时，后提交的 session 会把工作区全部修改（含前一个 session WIP）一并提交（"搭便车提交"/ghost commit）。防护链：① commit 前 MUST `claim_files` 声明工作范围（[AGENTS.md §8 L284](file:///d:/ZephyrAlpha/AGENTS.md)）② `claim_required_gate` 检测 session 已注册但目标文件未 claim → 阻断 ③ `held_overlap_gate` 检测目标文件被其他活跃 session 持有 → `HELD_OVERLAP_VIOLATION` 阻断（`--allow-overlap` 逃生通道）④ 新增 pre-commit 门禁走 `CommitGateRegistry` 注册制（[commit_gates/](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/) 子目录 + `make_*_gate()`），禁止在 `commit()` 方法体硬编码 `_check_*`（架构债务 #AD-001 治本）。详见 [AGENTS.md §8 L283-286](file:///d:/ZephyrAlpha/AGENTS.md)。
 
 ---
 
@@ -244,7 +244,7 @@ except PermissionError:
 
 **每日安检**: `python scripts/lock_files.py status`（check-session 命令从未实现，trae_001 YAML L223 已确认；status 是真源命令，覆盖 check-session 设计意图）
 
-**规则真源**: [zero_residue.yaml](file:///d:/ZephyrAlpha/src/zephyr/governance/rule_enforcement/zero_residue.yaml)（gate_id: ZERO-RESIDUE, ZR-001~009）
+**规则真源**: [zero_residue.yaml](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml)（gate_id: ZERO-RESIDUE, ZR-001~009）
 
 ---
 

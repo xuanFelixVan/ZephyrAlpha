@@ -247,7 +247,7 @@ routes:
     blueprint_level: module
     path_patterns:
       - "src/zephyr/observability/feedback_loop/gates/**"
-      - "src/zephyr/governance/rule_enforcement/_registry.yaml"
+      - "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
       - "src/zephyr/integration/mcp/gate_engine_server.py"
     task_keywords:
       - "门禁"
@@ -650,7 +650,7 @@ routes:
     blueprint_id: "MOD-INF-023"
     blueprint_level: module
     path_patterns:
-      - "src/zephyr/governance/drift_detection/**"
+      - "src/zephyr/gov_drift/**"
       - "src/zephyr/autonomy_perm/escalation-engine/drift_detector.py"
     task_keywords:
       - "漂移"

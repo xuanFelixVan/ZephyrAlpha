@@ -11,7 +11,7 @@ modules:
   - id: kb-lifecycle
     module_id: MOD-KB-001
     name: Knowledge Lifecycle Manager
-    submodule_path: src/zephyr/governance/kb/
+    submodule_path: src/zephyr/gov_kb/
     status: implemented
     priority: P1
     runtime_plane: warm

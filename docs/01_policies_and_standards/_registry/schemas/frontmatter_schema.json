@@ -844,7 +844,7 @@
         },
         {
           "const": "gate",
-          "description": "门禁定义——src/zephyr/governance/rule_enforcement/*.yaml"
+          "description": "门禁定义——src/zephyr/gov_enforcement/rule_enforcement/*.yaml"
         },
         {
           "const": "registry",

@@ -379,4 +379,4 @@ class TestGatewayIntegration:
         assert "foo_gate.py" in msg
 
 
-_GATE_DIR_REL = "src/zephyr/governance/commit_gates"
+_GATE_DIR_REL = "src/zephyr/gov_enforcement/commit_gates"

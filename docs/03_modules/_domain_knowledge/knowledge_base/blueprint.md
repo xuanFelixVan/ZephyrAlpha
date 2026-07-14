@@ -1,6 +1,6 @@
 ---
 module_id: MOD-KB-001
-submodule_path: src/zephyr/governance/kb
+submodule_path: src/zephyr/gov_kb
 title: "知识库系统蓝图"
 doc_type: blueprint
 status: Active
