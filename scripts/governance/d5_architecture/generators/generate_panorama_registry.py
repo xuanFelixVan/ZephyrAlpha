@@ -374,7 +374,7 @@ PENDING_PANORAMAS: list[dict] = [
         "source_architecture": "待裁定（depgraph 扩展 vs 独立表）",
         "related_blueprints": [
             "docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md",
-            "docs/03_modules/_domain_data/data_inventory.md",
+            "docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md",
         ],
         "data_source_tbd": "待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态配置。现有 asset_inventory.yaml 只是配置，不构成全景图",
         "priority": "高",
@@ -406,10 +406,11 @@ PENDING_PANORAMAS: list[dict] = [
         "source_architecture": "待裁定（dataflowgraph 扩展 vs 独立表）",
         "related_blueprints": [
             "docs/03_modules/_domain_data/blueprint.md",
-            "docs/03_modules/_domain_data/data_catalog.md",
+            "docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md",
+            "docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md",
             "docs/03_modules/_domain_data/data_acquisition_plan.md",
         ],
-        "data_source_tbd": "待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md / data_catalog.md 不是从全景图派生",
+        "data_source_tbd": "待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md 不是从全景图派生，data_inventory.md / data_acquisition_flow.md 已迁移到 05_dataflow_architecture/",
         "priority": "高",
         "description": "从全景图派生的数据目录，含数据完整性/延迟/质量的实时视图。量化强依赖数据质量，PIT/幸存者偏差/数据缺口必须可视化",
     },

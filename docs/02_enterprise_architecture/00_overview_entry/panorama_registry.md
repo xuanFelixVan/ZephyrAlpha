@@ -31,7 +31,7 @@
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 63 | 功能域清单——63 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
 | 依赖图 depgraph | `nodes` | 5008 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5008 个 |
-| 依赖图 depgraph | `edges` | 6154 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6154 条 |
+| 依赖图 depgraph | `edges` | 6151 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6151 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 64 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -276,9 +276,9 @@
 
 | ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |
 |------|------|:---:|------|------|------|
-| PAN-ASSET-01 | 资产清单 / CMDB | ⏳待建 | 待裁定（depgraph 扩展 vs 独立表） | 一张图看完所有运行中服务/数据流/契约的总览。量化系统有大量外部数据源/券商接口，资产清单是风险管理基础 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_asset_panorama.py (待建)`<br>真源待裁定：待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态配置。现有 asset_inventory.yaml 只是配置，不构成全景图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md) / [`data_inventory.md`](../../03_modules/_domain_data/data_inventory.md) |
+| PAN-ASSET-01 | 资产清单 / CMDB | ⏳待建 | 待裁定（depgraph 扩展 vs 独立表） | 一张图看完所有运行中服务/数据流/契约的总览。量化系统有大量外部数据源/券商接口，资产清单是风险管理基础 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_asset_panorama.py (待建)`<br>真源待裁定：待裁定：PostgreSQL 表 asset_registry（运行时服务/数据流/契约总览）vs YAML 静态配置。现有 asset_inventory.yaml 只是配置，不构成全景图<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md) / [`data_inventory.md`](../05_dataflow_architecture/data_inventory.md) |
 | PAN-ASSET-02 | API 契约目录 | ⏳待建 | 待裁定（depgraph contracts 扩展 vs 独立表） | 面向人类的 API 契约目录全景图（谁提供什么/谁消费什么/版本号/Owner）。量化系统接口众多（行情/交易/风控），契约目录是接入新策略的入口 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_api_contract_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 depgraph contracts 表 vs 独立 api_contracts 表。现有 PAN-BUILT-11 契约目录配置只是静态派生，缺版本号/Owner/消费方<br>相关蓝图：[`contracts_blueprint.md`](../../03_modules/_cross_layer/shared_core/contracts_blueprint.md) / [`blueprint.md`](../../03_modules/_domain_integration/blueprint.md) |
-| PAN-ASSET-03 | 数据目录 Data Catalog | ⏳待建 | 待裁定（dataflowgraph 扩展 vs 独立表） | 从全景图派生的数据目录，含数据完整性/延迟/质量的实时视图。量化强依赖数据质量，PIT/幸存者偏差/数据缺口必须可视化 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md / data_catalog.md 不是从全景图派生<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`data_catalog.md`](../../03_modules/_domain_data/data_catalog.md) / [`data_acquisition_plan.md`](../../03_modules/_domain_data/data_acquisition_plan.md) |
+| PAN-ASSET-03 | 数据目录 Data Catalog | ⏳待建 | 待裁定（dataflowgraph 扩展 vs 独立表） | 从全景图派生的数据目录，含数据完整性/延迟/质量的实时视图。量化强依赖数据质量，PIT/幸存者偏差/数据缺口必须可视化 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_catalog.py (待建)`<br>真源待裁定：待裁定：扩展现有 dataflow_datasets 表加完整性/延迟/质量字段 vs 独立 data_catalog 表。现有 data_acquisition_plan.md 不是从全景图派生，data_inventory.md / data_acquisition_flow.md 已迁移到 05_dataflow_architecture/<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`data_inventory.md`](../05_dataflow_architecture/data_inventory.md) / [`data_acquisition_flow.md`](../05_dataflow_architecture/data_acquisition_flow.md) / [`data_acquisition_plan.md`](../../03_modules/_domain_data/data_acquisition_plan.md) |
 | PAN-ASSET-04 | 数据血缘图 Data Lineage | ⏳待建 | 待裁定（dataflowgraph 字段级扩展 vs 独立表） | 字段级血缘图（某个因子字段上游来自哪些原始表）。因子可解释性、监管追溯、数据问题定位必备 | 规划目录：`08_asset_panorama/`<br>生成器：`generate_data_lineage.py (待建)`<br>真源待裁定：待裁定：扩展 dataflow_edges 表加字段级血缘 vs 独立 column_lineage 表。dataflowgraph 是作业级流图，缺字段级血缘<br>相关蓝图：[`blueprint.md`](../../03_modules/_domain_data/blueprint.md) / [`blueprint.md`](../../03_modules/_cross_layer/database/blueprint.md) |
 
 ### 09 运行时全景（待建）
