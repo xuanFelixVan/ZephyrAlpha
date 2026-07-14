@@ -46,6 +46,7 @@ except ImportError:
     DatabaseService = None  # type: ignore[assignment,misc]
 
 from zephyr.backtest.core.pit_manager import PITManager, PITConfig
+from zephyr.data import ch_reader
 
 _logger = logging.getLogger(__name__)
 
@@ -322,6 +323,9 @@ class BacktestDataHandler:
             f"ORDER BY date, symbol"
         )
         params = {"start": start_date, "end": end_date}
+
+        # 裁定 #ARCH-CH-007: 对 ReplacingMergeTree 表自动注入 FINAL
+        query = ch_reader.inject_final(query)
 
         try:
             rows = client.execute(query, params)
