@@ -519,11 +519,37 @@ CREATE TABLE task_runs (
 > 原因：5204 只股票逐个写入场景下，"先删后插"= 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts；
 > ReplacingMergeTree 直接 INSERT，CH 后台去重，零 mutation 开销。详见 §18.2。
 
+> **补充说明（2026-07-15）**：实际有 8 个 c3_fundamental 表仍为 MergeTree 引擎
+>（share_unlock / restricted_shares / analyst_forecast / disclosure_plan / equity_pledge_detail /
+> rights_issue / share_change / industry_class_suppl）。scheduler.run_task 对这些表在写入前
+> 执行 `DELETE WHERE toDate(date_col) IN (start..end)` 保证幂等性，date_col 从 tasks.yaml 读取。
+
 | 表引擎 | 幂等策略 | 状态 |
 |--------|---------|:----:|
 | ReplacingMergeTree（**统一**） | 直接 INSERT，重复键由 CH 后台合并 | ✅ 采用 |
+| MergeTree（8个基本面表遗留） | 写前 `DELETE WHERE toDate(date_col) IN (...)`，date_col 从 tasks.yaml 读取 | ✅ 采用 |
 | ~~MergeTree 先删后插~~ | 写前 `ALTER TABLE ... DELETE WHERE` | ❌ 废弃（mutation 开销过大） |
 | ~~临时表 staging~~ | 写入 staging 表，再 `INSERT SELECT DISTINCT` | ❌ 废弃（复杂度过高） |
+
+#### §7.3.1 date_col 字段（表→日期列映射 SSoT）
+
+`tasks.yaml` 中每个 `incremental: true` 的任务必须声明 `date_col` 字段，值为该表用于
+增量断点续传和幂等性 DELETE 的日期列名。**禁止硬编码日期列名**（如 ann_date / trade_date），
+必须从 tasks.yaml 读取。
+
+**为什么需要**：不同表的日期列名不一致（c1_market 多数用 trade_date，c3_fundamental
+用 unlock_date / announce_date / report_period 等），AI 无法凭记忆推断正确列名，
+硬编码会导致 DELETE WHERE 列名错误。
+
+**示例**：
+```yaml
+- task_id: share_unlock_incremental
+  table: c3_fundamental.share_unlock
+  incremental: true
+  date_col: unlock_date    # ← SSoT，scheduler 和补跑脚本都从这里读
+```
+
+**使用方**：scheduler.py run_task() → `task.get("date_col")` → ch_writer.delete_by_date_range()
 
 ---
 

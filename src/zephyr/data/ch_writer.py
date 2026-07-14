@@ -600,3 +600,29 @@ def delete_where(
     except Exception as e2:
         log.error("CH delete 异常(driver+WSL 均失败, %s): %s", table, e2)
         return False
+
+
+def delete_by_date_range(
+    table: str,
+    date_col: str,
+    dates: list[str],
+    timeout: int = _DEFAULT_TIMEOUT,
+) -> bool:
+    """按日期范围删除行（MergeTree 幂等性便捷方法）。
+
+    封装 delete_where，自动构造 ``toDate(date_col) IN (...)`` 条件。
+    date_col 应从 tasks.yaml 读取（SSoT），禁止硬编码列名。
+
+    Args:
+        table: 表名（如 c3_fundamental.share_unlock）
+        date_col: 日期列名（如 unlock_date），从 tasks.yaml date_col 字段读取
+        dates: 日期字符串列表（如 ["2026-07-13", "2026-07-14"]）
+        timeout: 超时秒数
+
+    Returns:
+        是否成功。
+    """
+    if not dates:
+        return True
+    date_list = ", ".join(f"toDate('{d}')" for d in dates)
+    return delete_where(table, f"toDate({date_col}) IN ({date_list})", timeout=timeout)
