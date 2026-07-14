@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "281459c75269d1cf",
+      "hash": "d056cc7cde074ea2",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "25fcb398131b0c75",
+      "hash": "f2f4a09fe32e00c9",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "583ee8220e247abc",
+      "hash": "322a4d245f84076f",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -56,7 +56,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "9b0b12a0b65e2515",
+      "hash": "c9dbf38830f0ee22",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -66,6 +66,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-07-14T16:49:40.943701+00:00",
+  "registered_at": "2026-07-14T18:07:47.237220+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }
