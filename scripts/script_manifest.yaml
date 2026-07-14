@@ -3,7 +3,7 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-07-14'
+generated_at: '2026-07-15'
 total_scripts: 566
 scripts:
 - name: __init__.py
