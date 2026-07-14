@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-15 04:35:14
+%% 生成时间: 2026-07-15 04:54:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 29, 依赖边数: 41
 
@@ -46,14 +46,14 @@ graph TD
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_limits_py
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_risk_limits_calculator_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     tests_risk_test_ml_experiment_pipeline_py -->|test_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
     tests_risk_test_l04_risk_management_py -->|test_depends| src_zephyr_risk_risk_manager_py
     tests_risk_test_l04_risk_management_py -->|test_depends| src_zephyr_risk_risk_manager_base_py
@@ -80,8 +80,8 @@ graph TD
     %% D_RISK -> D_GOV_RULE (1 条)
     tests_risk_test_risk_ssot_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_RISK -> D_INFRASTRUCTURE (3 条)
-    src_zephyr_risk_risk_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_risk_risk_limits_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_risk_risk_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     tests_risk_test_l04_risk_management_py -->|test_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_RISK -> D_ORCHESTRATOR (1 条)
     tests_risk_test_risk_registry_root_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]

@@ -1,5 +1,5 @@
 %% D_ORCHESTRATOR 域全景依赖图
-%% 生成时间: 2026-07-15 04:35:14
+%% 生成时间: 2026-07-15 04:54:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 82, 依赖边数: 149
 
@@ -107,18 +107,18 @@ graph TD
     src_zephyr_orchestrator_resilience___init___py -->|import_depends| src_zephyr_orchestrator_resilience_failure_matcher_py
     tests_orchestrator_test_deferred_queue_py -->|test_depends| src_zephyr_orchestrator_deferred_queue_py
     tests_orchestrator_test_orchestrator_data_lifecycle_py -->|test_depends| src_zephyr_orchestrator_execution_data_lifecycle_py
+    tests_orchestrator_test_orchestrator_model_registry_py -->|test_depends| src_zephyr_orchestrator_governance_model_registry_py
     tests_orchestrator_test_orchestrator_failure_matcher_py -->|test_depends| src_zephyr_orchestrator_failure_matcher_py
     tests_orchestrator_test_orchestrator_rollback_manager_py -->|test_depends| src_zephyr_orchestrator_rollback_manager_py
-    tests_orchestrator_test_orchestrator_model_registry_py -->|test_depends| src_zephyr_orchestrator_governance_model_registry_py
-    tests_orchestrator_test_orchestrator_task_queue_py -->|test_depends| src_zephyr_orchestrator_task_queue_py
     tests_orchestrator_test_orches___r_hallucination_detector_py -->|test_depends| src_zephyr_orchestrator_hallucination_detector_py
-    tests_orchestrator_test_orchestrator_trigger_router_py -->|test_depends| src_zephyr_orchestrator_execution_trigger_router_py
+    tests_orchestrator_test_orchestrator_task_queue_py -->|test_depends| src_zephyr_orchestrator_task_queue_py
     tests_orchestrator_test_orchestrator_wave_generator_py -->|test_depends| src_zephyr_orchestrator_execution_wave_generator_py
-    src_zephyr_orchestrator_contracts___init___py -->|config_depends| src_zephyr_orchestrator_contracts_contract_registry_py
+    tests_orchestrator_test_orchestrator_trigger_router_py -->|test_depends| src_zephyr_orchestrator_execution_trigger_router_py
+    src_zephyr_orchestrator_contracts___init___py -->|config_depends| src_zephyr_orchestrator_contracts_construction_guide_py
     src_zephyr_orchestrator_core___init___py -->|config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution___init___py -->|config_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     src_zephyr_orchestrator_fault_tolerance___init___py -->|config_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
-    src_zephyr_orchestrator_governance___init___py -->|config_depends| src_zephyr_orchestrator_governance_capacity_budget_py
+    src_zephyr_orchestrator_governance___init___py -->|config_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
     src_zephyr_orchestrator_lifecycle___init___py -->|config_depends| src_zephyr_orchestrator_lifecycle_housekeeping_py
     src_zephyr_orchestrator_quality___init___py -->|config_depends| src_zephyr_orchestrator_quality_agent_quality_py
 
@@ -126,8 +126,8 @@ graph TD
     %% D_AUTONOMY_CORE -> D_ORCHESTRATOR (9 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_agent_health_monitor_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_agent_orchestrator_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_agent_orchestrator_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_quality_agent_quality_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_agent_orchestrator_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_governance_autonomy_guard_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_execution_dispatch_table_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_orchestrator_contracts_prompt_version_py
@@ -177,12 +177,12 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_orchestrator_execution_script_runner_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_execution_batch_orchestrator_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_quality_benchmark_runner_py
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_quality_blind_spot_closure_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_fault_tolerance_bulkhead_manager_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_contracts_construction_guide_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_fault_tolerance_degrade_cascade_py
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_execution_dlq_manager_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_contracts_design_decisions_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_execution_dlq_manager_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_fault_tolerance_disk_guard_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_governance_feature_flag_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
@@ -195,8 +195,8 @@ graph TD
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_rolling_upgrade_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_governance_schema_migration_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_quality_stability_guard_py
-    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_state_propagation_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_startup_sequencer_py
+    D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_state_propagation_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_state_synchronizer_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_system_transfer_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_orchestrator_lifecycle_teardown_manager_py
@@ -209,9 +209,9 @@ graph TD
     %% D_ORCHESTRATOR -> D_FEEDBACK_LOOP (1 条)
     src_zephyr_orchestrator_execution_trigger_router_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     %% D_ORCHESTRATOR -> D_GOVERNANCE (3 条)
+    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_ORCHESTRATOR -> D_GOV_DRIFT (1 条)
     src_zephyr_orchestrator_execution_trigger_router_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_ORCHESTRATOR -> D_GOV_OPS_RESILIENCE (2 条)
@@ -251,18 +251,18 @@ graph TD
     src_zephyr_orchestrator_rollback_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_rollback_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_hallucination_detector_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_contracts_finding_bridge_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_orchestrator_contracts_alert_handler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_core_task_queue_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_execution_batch_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_execution_batch_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_execution_memory_writer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_orchestrator_execution_wave_generator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_orchestrator_execution_wave_generator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_execution_trigger_router_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_orchestrator_execution_wave_generator_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_orchestrator_execution_wave_generator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_lifecycle_session_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_orchestrator_lifecycle_session_manager_py -->|import_depends| D_SHARED[D_SHARED]
