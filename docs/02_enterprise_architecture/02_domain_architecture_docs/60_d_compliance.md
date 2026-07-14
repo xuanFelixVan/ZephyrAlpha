@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 17:48:35
+> 最后更新: 2026-07-14 21:26:41
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -112,7 +112,7 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_compliance_manager_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_compliance_financial_compliance_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
@@ -184,7 +184,7 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_compliance_manager_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_compliance_financial_compliance_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]

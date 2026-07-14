@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号遗留设计态（D_SIGLEGACY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 17:49:24
+> 最后更新: 2026-07-14 21:27:15
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -101,9 +101,9 @@ graph TD
     D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_FACTOR
     src_zephyr_signal_fundamental_pipeline_py -->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
@@ -194,9 +194,9 @@ graph TD
     D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_combiner_impl_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
@@ -204,9 +204,9 @@ graph TD
     src_zephyr_signal_fundamental_strategy_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_gen_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_synth_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_signal_fundamental_init_py
     D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_combiner_init_py

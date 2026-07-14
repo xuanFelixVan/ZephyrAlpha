@@ -1,5 +1,5 @@
 %% D_REPORTING 域全景依赖图
-%% 生成时间: 2026-07-14 17:49:27
+%% 生成时间: 2026-07-14 21:27:17
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 16
 
@@ -28,16 +28,16 @@ graph TD
     %% D_GOVERNANCE -> D_REPORTING (1 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_reporting_analytics_base_py
     %% D_GOV_AUDIT -> D_REPORTING (2 条)
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_reporting_default_attribution_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_reporting_default_tca_engine_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_reporting_default_attribution_engine_py
     %% D_TRADING -> D_REPORTING (1 条)
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_REPORTING -> D_GOVERNANCE (3 条)
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_reporting_analytics_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_reporting___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_reporting_analytics_base_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_REPORTING -> D_INFRASTRUCTURE (6 条)
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]

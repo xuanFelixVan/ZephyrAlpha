@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-14 17:49:17
+> 最后更新: 2026-07-14 21:27:10
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 10 | Module Count | 10 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域入边 | 2 | Cross-domain Incoming | 2 |
 | 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
@@ -94,6 +94,7 @@ graph TD
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_PF_CORE -.->|config_depends / config_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -120,6 +121,7 @@ graph TD
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
+    D_PF_CORE -.->|config_depends / config_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -186,11 +188,12 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — Portfolio Construction Stra... | → | D_PORTFOLIO_CORE — Default Equity Long-Only St... | 导入依赖 / import_depends |
+| 1 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE Portfolio Construction — Pack... | → | D_PORTFOLIO_CORE — Default Equity Long-Only St... | config_depends / config_depends |
+| 2 | D_PF_CORE 组合核心: D_PORTFOLIO_CORE — Portfolio Construction Stra... | → | D_PORTFOLIO_CORE — Default Equity Long-Only St... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 4 条 + 入边 1 条 = 5 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 4 个外部域直接连接（出边 4 条 + 入边 2 条 = 6 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -202,7 +205,7 @@ graph LR
     D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_SHARED
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_GOVERNANCE
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_PF_CORE -->|1条 导入依赖 / import_depends| D_PF_ALLOC
+    D_PF_CORE -->|2条 config_depends / config_depends, 导入依赖 / import_depends| D_PF_ALLOC
 ```
 
 ## 说明 / Notes
