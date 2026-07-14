@@ -32,10 +32,13 @@ APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖
 from __future__ import annotations
 
 import datetime
+import http.server
+import json
 import logging
 import threading
 import time
 from pathlib import Path
+from socketserver import ThreadingMixIn
 from typing import Callable, Any
 
 from zephyr.data.provider_base import DataSourceBase, FetchPayload, FetchResult
@@ -596,9 +599,158 @@ class IntegratorScheduler:
             "task_summary": self._task_queue.summary(),
         }
 
+    def get_health(self) -> dict[str, Any]:
+        """获取调度器详细健康状态（供 /health 端点）。
+
+        Returns:
+            健康状态字典，包含：
+            - status: healthy/degraded/down
+            - uptime_seconds: 运行时长
+            - scheduler_started: 调度器是否已启动
+            - jobs: 注册的 cron job 列表 + 下次执行时间
+            - clickhouse: ClickHouse 连接状态
+            - providers: 已连接的 Provider 列表
+            - task_summary: 任务队列摘要
+            - metrics_snapshot: 指标快照（task_total 按 status 汇总）
+        """
+        self._metrics.update_uptime()
+
+        # ClickHouse 连接检查
+        ch_status = "ok"
+        try:
+            result = ch_writer.query("SELECT 1")
+            if not result.strip():
+                ch_status = "error: empty response"
+        except Exception as e:
+            ch_status = f"error: {e}"
+
+        # APScheduler job 信息
+        jobs: list[dict] = []
+        if self._scheduler:
+            try:
+                for job in self._scheduler.get_jobs():
+                    jobs.append({
+                        "id": job.id,
+                        "next_run_time": str(job.next_run_time) if job.next_run_time else None,
+                    })
+            except Exception as e:
+                log.warning("获取 APScheduler jobs 失败: %s", e)
+
+        # 指标快照：按 status 汇总 task_total
+        task_stats: dict[str, int] = {"SUCCESS": 0, "FAILED": 0, "BLOCKED": 0}
+        with self._metrics._lock:
+            for (_tid, _src, status), val in self._metrics._task_total.items():
+                task_stats[status] = task_stats.get(status, 0) + val
+
+        # 判断整体状态
+        status = "healthy"
+        if not self._started:
+            status = "down"
+        elif ch_status != "ok":
+            status = "degraded"
+
+        return {
+            "status": status,
+            "uptime_seconds": round(self._metrics._uptime, 2),
+            "scheduler_started": self._started,
+            "jobs_registered": len(self._schedules),
+            "jobs": jobs,
+            "clickhouse": ch_status,
+            "providers": list(self._providers.keys()),
+            "task_summary": self._task_queue.summary(),
+            "task_stats": task_stats,
+        }
+
     def list_tasks(self) -> list[dict]:
         """列出所有任务。"""
         return list(self._tasks)
+
+
+# ============== 监控 HTTP 端点 ==============
+
+class _MonitorHandler(http.server.BaseHTTPRequestHandler):
+    """监控 HTTP handler（标准库实现，无额外依赖）。
+
+    端点：
+    - GET /metrics → Prometheus 文本格式（供 Prometheus 抓取）
+    - GET /health  → JSON 健康状态（含 CH 连接、job 调度、task 统计）
+    - GET /status  → JSON 调度器基本状态
+    """
+
+    scheduler: "IntegratorScheduler | None" = None  # 类变量，由 start_monitor 设置
+
+    def do_GET(self) -> None:
+        if self.path == "/metrics":
+            self._handle_metrics()
+        elif self.path == "/health":
+            self._handle_health()
+        elif self.path == "/status":
+            self._handle_status()
+        else:
+            self._send_json(404, {"error": "not found", "endpoints": ["/metrics", "/health", "/status"]})
+
+    def _handle_metrics(self) -> None:
+        """输出 Prometheus 文本格式指标。"""
+        from zephyr.data.metrics import get_metrics
+        m = get_metrics()
+        m.update_uptime()
+        body = m.render()
+        self._send(200, body, "text/plain; version=0.0.4; charset=utf-8")
+
+    def _handle_health(self) -> None:
+        """输出详细健康状态 JSON。"""
+        if self.scheduler is None:
+            self._send_json(503, {"status": "down", "error": "scheduler not initialized"})
+            return
+        try:
+            health = self.scheduler.get_health()
+            self._send_json(200, health)
+        except Exception as e:
+            self._send_json(500, {"status": "error", "error": str(e)})
+
+    def _handle_status(self) -> None:
+        """输出调度器基本状态 JSON。"""
+        if self.scheduler is None:
+            self._send_json(503, {"error": "scheduler not initialized"})
+            return
+        try:
+            status = self.scheduler.get_status()
+            self._send_json(200, status)
+        except Exception as e:
+            self._send_json(500, {"error": str(e)})
+
+    def _send_json(self, code: int, obj: Any) -> None:
+        body = json.dumps(obj, ensure_ascii=False, default=str)
+        self._send(code, body, "application/json; charset=utf-8")
+
+    def _send(self, code: int, body: str, content_type: str) -> None:
+        data = body.encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def log_message(self, fmt: str, *args: Any) -> None:
+        pass  # 静默 HTTP 访问日志（避免刷屏）
+
+
+class _ThreadingHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+
+
+def start_monitor(scheduler: "IntegratorScheduler", port: int = 9100) -> None:
+    """启动监控 HTTP server（后台守护线程）。
+
+    Args:
+        scheduler: 调度器实例
+        port: 监听端口，默认 9100（Prometheus 标准端口段）
+    """
+    _MonitorHandler.scheduler = scheduler
+    server = _ThreadingHTTPServer(("0.0.0.0", port), _MonitorHandler)
+    t = threading.Thread(target=server.serve_forever, daemon=True, name="monitor-http")
+    t.start()
+    log.info("监控 HTTP server 已启动，端口 %d（/metrics /health /status）", port)
 
 
 # ============== 入口 ==============
@@ -628,6 +780,9 @@ def main() -> None:
     if not sched.start():
         log.error("调度器启动失败，退出")
         sys.exit(1)
+
+    # 启动监控 HTTP server（端口 9100：/metrics /health /status）
+    start_monitor(sched, port=9100)
 
     log.info("调度器已启动，按 Ctrl+C 停止")
 
