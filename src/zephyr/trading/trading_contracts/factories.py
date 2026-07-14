@@ -30,7 +30,6 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
 
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
@@ -40,7 +39,7 @@ from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 
 
-def _to_decimal(value: Any) -> Decimal:
+def _to_decimal(value: float | int | str | Decimal | None) -> Decimal:
     if isinstance(value, Decimal):
         return value
     if isinstance(value, float):
@@ -48,7 +47,7 @@ def _to_decimal(value: Any) -> Decimal:
     return Decimal(str(value)) if value is not None else Decimal("0")
 
 
-def _optional_decimal(value: Any) -> Decimal | None:
+def _optional_decimal(value: float | int | str | Decimal | None) -> Decimal | None:
     if value is None:
         return None
     return _to_decimal(value)

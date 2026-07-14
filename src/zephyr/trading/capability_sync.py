@@ -14,14 +14,19 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_capability_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 import yaml
 
 from zephyr.trading.capability_card import CapabilityCard, CapabilityCategory
 from zephyr.trading.capability_registry import CapabilityRegistry
+
+if TYPE_CHECKING:
+    from zephyr.infrastructure.a2a_protocol.layer1_discovery.a2a_registry import A2ARegistry
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +57,7 @@ class CapabilitySync:
     def __init__(self, registry: CapabilityRegistry) -> None:
         self._registry = registry
 
-    def sync_a2a(self, a2a_registry: Any) -> int:
+    def sync_a2a(self, a2a_registry: A2ARegistry | None) -> int:
         if a2a_registry is None:
             return 0
         synced = 0
