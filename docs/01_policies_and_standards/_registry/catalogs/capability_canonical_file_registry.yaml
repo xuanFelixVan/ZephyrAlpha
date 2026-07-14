@@ -1604,6 +1604,22 @@ capabilities:
       - make_ch_batch_size_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ch_final_gate
+    aliases:
+      - CH-FINAL-GATE
+      - ch-final-gate
+      - make_ch_final_gate
+      - ch_writer_query_blocker
+    description: >-
+      ch_writer.query() 直接调用阻断门禁(CH-FINAL-GATE, 裁定 #ARCH-CH-007 B5
+      防复发). AST 检测 staged .py 文件中直接调用 ch_writer.query() 的代码,
+      阻断并提示改用 ch_reader.query() 自动注入 FINAL. ch_reader.py/ch_writer.py
+      豁免, tests/ 豁免, AST/git 异常 fail-open,
+      检出违规则 fail-closed (passed=False). priority=37.
+    integrity_anchors:
+      - make_ch_final_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: speed_test
     aliases:
       - speed-test
@@ -4293,6 +4309,10 @@ creation_tokens:
     token: "auto-ch-batch-size-gate-20260710"
     created_by: "session-sess-14956-20260710111553"
     capability: "ch_batch_size_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py"
+    token: "auto-ch-final-gate-20260715"
+    created_by: "session-sess-28192-20260715012043"
+    capability: "ch_final_gate"
   - file: "src/zephyr/data/speed_tester.py"
     token: "auto-speed-tester-20260710"
     created_by: "session-sess-32844-20260710170551"

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.scheduler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{ifind,miniqmt,akshare}_provider; apscheduler(pip)
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{ifind,miniqmt,akshare}_provider; apscheduler(pip)
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -47,6 +47,7 @@ from zephyr.data.progress_store import ProgressStore, get_store
 from zephyr.data.task_queue import TaskQueue, SUCCESS, FAILED, PENDING, RUNNING
 from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_CRITICAL
 from . import ch_writer  # 相对导入：避免 depgraph 记录到 zephyr.data 包节点导致循环（裁定#213）
+from . import ch_reader  # 健康检查走 ch_reader 自动注入 FINAL（裁定 #ARCH-CH-007）
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
 from zephyr.shared.io.paths import REPO_ROOT
@@ -618,7 +619,7 @@ class IntegratorScheduler:
         # ClickHouse 连接检查
         ch_status = "ok"
         try:
-            result = ch_writer.query("SELECT 1")
+            result = ch_reader.query("SELECT 1")
             if not result.strip():
                 ch_status = "error: empty response"
         except Exception as e:
