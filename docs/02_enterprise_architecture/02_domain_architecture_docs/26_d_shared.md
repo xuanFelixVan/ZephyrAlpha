@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 共享服务（D_SHARED）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 00:48:57
+> 最后更新: 2026-07-15 02:07:04
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -460,27 +460,27 @@ graph TD
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_SIMULATION
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
     src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     src_zephyr_shared_blueprint_tools_blueprint_scorer_py -.->|config_depends / config_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_cross_layer_ml_experiment_pipeline_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_shared_api_api_index_py -.->|config_depends / config_depends| D_INFRA_RUNTIME
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_adaptation_execution_tuner_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
-    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_adaptation_execution_tuner_py
     D_RISK["(生产态 / production) D_RISK"]
     D_RISK -.->|导入依赖 / import_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_compensation_saga_compensator_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_model_capacity_probe_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_fingerprint_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_shared_compensation_saga_compensator_py
-    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_compensation_saga_compensator_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_fingerprint_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_runbook_generator_py
-    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_cross_layer_ml_experiment_pipeline_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_digital_twin_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_capacity_calibrator_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_capacity_governance_model_capacity_probe_py
-    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_capacity_governance_adaptive_sampler_py
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_capacity_governance_budget_aware_prompt_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -527,55 +527,51 @@ graph TD
         src_zephyr_shared_contracts_execution_order_py["(原型态 / prototype) Backward-compat shim — canonical location is z...<br/>文件: order.py"]
         src_zephyr_shared_contracts_experiment_experiment_result_py["(原型态 / prototype) experiment_result.py"]
     end
-    src_zephyr_shared_contracts_backpressure_resume_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_pause_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_types_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_backpressure_resume_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_backpressure_throttle_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_enums_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_contract_violation_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_data_quality_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_factor_computation_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_enums_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_contracts_errors_execution_rejection_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    src_zephyr_shared_contracts_errors_signal_degradation_warning_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_errors_risk_limit_violation_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_factor_computation_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_signal_degradation_warning_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    src_zephyr_shared_contracts_errors_data_quality_error_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     src_zephyr_shared_contracts_experiment_experiment_result_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_execution_order_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_execution_order_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_contract_bus_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_execution_execution_report_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_GOV_REPAIR["(原型态 / prototype) D_GOV_REPAIR"]
+    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_execution_rejection_error_py
     D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
     D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_execution_rejection_error_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_timestamp_py
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_base_event_py
     D_INFRASTRUCTURE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_EX_CORE["(生产态 / production) D_EX_CORE"]
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
-    D_OPS["(生产态 / production) D_OPS"]
-    D_OPS -->|导入依赖 / import_depends| src_zephyr_shared_contracts_escalation_budget_alert_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_trace_context_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_errors_data_quality_error_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_escalation_budget_alert_py production
     class src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_contract_tester_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py design
-    class D_EX_CORE,D_BACKTEST,D_OPS external_prod
-    class D_INFRASTRUCTURE,D_INTEGRATION,D_AUTONOMY_CORE,D_INTELLIGENCE external_design
+    class D_INFRASTRUCTURE,D_AUTONOMY_CORE,D_GOV_REPAIR,D_INTEGRATION external_design
 ```
 
 #### 第 3 页 / 共 12 页
@@ -618,41 +614,40 @@ graph TD
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_shared_contracts_portfolio_performance_attribution_report_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_external_ext_002_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_003_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_004_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_dependency_dependency_graph_py
+    src_zephyr_shared_contracts_external_ext_002_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_experiment_model_serving_response_py
     D_SECURITY["(生产态 / production) D_SECURITY"]
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_security_decision_py
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
-    D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_instrument_py
+    D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_security_decision_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_agent_identity_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_factor_monitor_report_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_instrument_py
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
+    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
     D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_shared_contracts_security_security_decision_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_risk_validator_protocol_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_SECURITY -->|导入依赖 / import_depends| src_zephyr_shared_contracts_security_security_decision_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
-    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_identity_permission_py
+    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
+    D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_dependency_dependency_graph_py production
     class src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_factor_monitor_report_py,src_zephyr_shared_contracts_market_factor_signal_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_market_macro_factor_signal_py,src_zephyr_shared_contracts_market_market_data_py,src_zephyr_shared_contracts_market_synthesized_signal_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py design
-    class D_INFRASTRUCTURE,D_INTELLIGENCE,D_SECURITY,D_INTEGRATION,D_TRADING external_prod
-    class D_INFRA_RUNTIME,D_PF_ALLOC,D_GOVERNANCE,D_SECURITY_LLM,D_ORCHESTRATOR external_design
+    class D_INFRASTRUCTURE,D_INTELLIGENCE,D_SECURITY,D_INFRA_RUNTIME,D_ORCHESTRATOR external_prod
+    class D_TRADING,D_GOVERNANCE,D_SECURITY_LLM,D_PF_ALLOC external_design
 ```
 
 #### 第 4 页 / 共 12 页
@@ -692,55 +687,55 @@ graph TD
         src_zephyr_shared_io_frontmatter_utils_py["(生产态 / production) frontmatter_utils.py — Markdown/YAML frontmatt...<br/>文件: frontmatter_utils.py"]
     end
     src_zephyr_shared_events_dlq_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
-    src_zephyr_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
     src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    src_zephyr_shared_events_observer_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
+    src_zephyr_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    src_zephyr_shared_events_observer_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_observer_py
     src_zephyr_shared_events_outbox_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_outbox_py
     src_zephyr_shared_foundation_constants_py -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_limiter_py -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_limiter_py -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
+    src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_shared_event_bus_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_event_bus_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_foundation_types_py -.->|config_depends / config_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_infra_observer_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_shared_infra_lock_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
-    D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_shared_io_file_utils_py
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_infra_process_lifecycle_gateway_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_file_utils_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
-    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
-    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
+    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
+    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
+    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_shared_foundation_errors_py
+    D_GOV_DRIFT["(原型态 / prototype) D_GOV_DRIFT"]
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_shared_infra_process_pool_py
+    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_shared_foundation_models_py
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_foundation_constants_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_migration_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py production
     class src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_observer_py,src_zephyr_shared_events_outbox_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_limiter_py design
-    class D_INFRA_RUNTIME,D_INTEGRATION,D_GOV_RULE,D_TRADING external_prod
-    class D_GOVERNANCE,D_SECURITY,D_ORCHESTRATOR external_design
+    class D_INFRA_RUNTIME,D_TRADING,D_INTELLIGENCE external_prod
+    class D_INTEGRATION,D_GOVERNANCE,D_SECURITY_LLM,D_GOV_DRIFT external_design
 ```
 
 #### 第 5 页 / 共 12 页
@@ -779,41 +774,41 @@ graph TD
         src_zephyr_shared_protocols_a2a_a2a_registry_py["(原型态 / prototype) A2A Registry and Agent Card contracts — discov...<br/>文件: a2a_registry.py"]
         src_zephyr_shared_protocols_a2a_a2a_schemas_py["(原型态 / prototype) A2A data structure contracts — Message, Task, ...<br/>文件: a2a_schemas.py"]
     end
-    src_zephyr_shared_io_sqlite_factory_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_io_yaml_utils_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
+    src_zephyr_shared_io_sqlite_factory_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_io_io_cache_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_shared_protocols_a2a_a2a_coordination_py -.->|导入依赖 / import_depends| D_GOV_RULE
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_yaml_utils_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
     D_INFRA_RECOVERY -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RECOVERY -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    D_INFRA_RECOVERY -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_knowledge_ke_linker_py,src_zephyr_shared_knowledge_ke_structurer_py,src_zephyr_shared_knowledge_kms_interface_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py production
     class src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py design
-    class D_INFRA_RUNTIME,D_GOV_RULE,D_ORCHESTRATOR,D_INFRA_RECOVERY,D_FEEDBACK_LOOP,D_GOV_ENFORCEMENT,D_GOV_AUDIT,D_GOVERNANCE external_prod
+    class D_INFRA_RUNTIME,D_GOV_RULE,D_GOV_OPS_RESILIENCE,D_INTEGRATION,D_ORCHESTRATOR,D_INFRA_RECOVERY external_prod
+    class D_GOVERNANCE external_design
 ```
 
 #### 第 6 页 / 共 12 页
@@ -860,36 +855,35 @@ graph TD
     src_zephyr_shared_session_session_audit_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_reliability_retry_handler_py
+    D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_session_session_continuity_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_utils_async_utils_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_ports_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_session_session_continuity_py
+    D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_session_session_continuity_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_session_session_continuity_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    D_GOV_KB["(生产态 / production) D_GOV_KB"]
-    D_GOV_KB -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_protocols_registry_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_security_secrets_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_limiter_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py production
     class src_zephyr_shared_protocols_capability_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_security_idempotency_py,src_zephyr_shared_security_lock_py,src_zephyr_shared_utils_async_utils_py design
-    class D_GOV_AUDIT,D_FEEDBACK_LOOP,D_TRADING,D_AUTONOMY_CORE,D_INTEGRATION,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOV_KB external_prod
-    class D_GOVERNANCE external_design
+    class D_GOV_AUDIT,D_FEEDBACK_LOOP,D_TRADING,D_AUTONOMY_CORE,D_INTEGRATION external_prod
+    class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_OPS_RESILIENCE external_design
 ```
 
 #### 第 7 页 / 共 12 页
@@ -929,61 +923,62 @@ graph TD
         tests_e_test_e_confidence_estimator_py["(原型态 / prototype) test_e_confidence_estimator.py"]
     end
     src_zephyr_shared_utils_zephyr_logger_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    tests_cross_test_cross_session_knowledge_integrity_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_cross_test_cross_session_correlator_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_cross_test_cross_env_consistency_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
-    tests_cross_test_cross_session_knowledge_integrity_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     tests_cross_test_cross_boundary_detector_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     tests_cross_test_cross_blueprint_contract_drift_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_cross_test_cross_gen_validation_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
+    tests_cross_test_cross_system_correlator_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_e_test_e_circuit_breaker_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
     tests_cross_test_cross_signal_validator_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
-    tests_cross_test_cross_agent_conflict_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_cross_test_cross_system_correlator_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
     tests_cross_test_cross_assistant_adapter_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_e_test_e_confidence_estimator_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_cross_test_cross_module_score_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
-    tests_cross_test_cross_platform_shell_py -.->|测试依赖 / test_depends| D_INFRA_RECOVERY
+    tests_cross_test_cross_agent_conflict_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_cross_test_cross_session_detector_py -.->|测试依赖 / test_depends| D_SECURITY
+    D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
+    tests_cross_test_cross_platform_shell_py -.->|测试依赖 / test_depends| D_INFRA_RECOVERY
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_cross_test_cross_module_score_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_BACKTEST["(原型态 / prototype) D_BACKTEST"]
     D_BACKTEST -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_DATA["(原型态 / prototype) D_DATA"]
     D_DATA -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_KB["(生产态 / production) D_GOV_KB"]
+    D_GOV_KB -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_utils_db_utils_py
     D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_FRONTEND["(生产态 / production) D_FRONTEND"]
-    D_FRONTEND -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_GOV_DRIFT -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
+    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
+    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py production
     class src_zephyr_shared_utils_migration_py,tests_cross_test_cross_agent_conflict_detector_py,tests_cross_test_cross_assistant_adapter_py,tests_cross_test_cross_blueprint_contract_drift_py,tests_cross_test_cross_boundary_detector_py,tests_cross_test_cross_cutting_py,tests_cross_test_cross_env_consistency_py,tests_cross_test_cross_gen_validation_py,tests_cross_test_cross_guard_conflict_detector_py,tests_cross_test_cross_layer_py,tests_cross_test_cross_module_integration_root_py,tests_cross_test_cross_module_score_py,tests_cross_test_cross_platform_shell_py,tests_cross_test_cross_session_consistency_validator_py,tests_cross_test_cross_session_correlator_py,tests_cross_test_cross_session_detector_py,tests_cross_test_cross_session_knowledge_integrity_py,tests_cross_test_cross_signal_validator_py,tests_cross_test_cross_system_correlator_py,tests_e_test_e_circuit_breaker_py,tests_e_test_e_clock_guard_py,tests_e_test_e_confidence_estimator_py design
-    class D_GOVERNANCE,D_FBL_VERIFICATION,D_GOV_CODE_QUALITY,D_FEEDBACK_LOOP,D_GOV_OPS_RESILIENCE,D_FBL_DETECTORS,D_GOV_DRIFT,D_INFRA_RECOVERY,D_SECURITY,D_TRADING,D_GOV_AUDIT,D_INFRA_RUNTIME,D_ORCHESTRATOR,D_FRONTEND external_prod
-    class D_BACKTEST,D_DATA,D_INTELLIGENCE external_design
+    class D_FBL_VERIFICATION,D_GOVERNANCE,D_GOV_CODE_QUALITY,D_FEEDBACK_LOOP,D_FBL_DETECTORS,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INFRA_RECOVERY,D_GOV_DRIFT,D_TRADING,D_GOV_AUDIT,D_GOV_KB,D_INFRA_RUNTIME,D_ORCHESTRATOR,D_INTEGRATION,D_INTELLIGENCE external_prod
+    class D_BACKTEST,D_DATA external_design
 ```
 
 #### 第 8 页 / 共 12 页
@@ -1026,29 +1021,30 @@ graph TD
     tests_e_test_e_gov_a2a_failure_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_e_test_e_escalation_api_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_e_test_e_exchange_partition_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_e_test_e_objective_tracker_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_e_test_e_deadlock_detector_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_e_test_e_escalation_models_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_e_test_e_gov_rbac_bridge_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
+    tests_e_test_e_gov_approval_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     tests_e_test_e_merkle_audit_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
-    tests_e_test_e_objective_tracker_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_e_test_e_flash_crash_guard_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_OPS["(生产态 / production) D_OPS"]
+    tests_e_test_e_gov_budget_handler_py -.->|测试依赖 / test_depends| D_OPS
     D_POSITION["(生产态 / production) D_POSITION"]
     tests_e_test_e_position_reconciler_py -.->|测试依赖 / test_depends| D_POSITION
     tests_e_test_e_protocol_state_store_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_e_test_e_reward_hacking_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_e_test_e_risk_matrix_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    tests_e_test_e_gov_approval_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    tests_e_test_e_decision_fatigue_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    tests_e_test_e_gov_rbac_bridge_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_e_test_e_integrity_verifier_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
-    tests_e_test_e_error_budget_burst_limiter_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    tests_e_test_e_escalation_metrics_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    tests_e_test_e_flash_crash_guard_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_e_test_e_consequence_manager_py,tests_e_test_e_context_package_py,tests_e_test_e_deadlock_detector_py,tests_e_test_e_decision_fatigue_py,tests_e_test_e_error_budget_burst_limiter_py,tests_e_test_e_escalation_api_py,tests_e_test_e_escalation_metrics_py,tests_e_test_e_escalation_models_py,tests_e_test_e_exchange_partition_detector_py,tests_e_test_e_flash_crash_guard_py,tests_e_test_e_forensic_package_py,tests_e_test_e_gap_analyzer_py,tests_e_test_e_ghost_scan_py,tests_e_test_e_gov_a2a_failure_py,tests_e_test_e_gov_approval_py,tests_e_test_e_gov_budget_handler_py,tests_e_test_e_gov_contracts_py,tests_e_test_e_gov_rbac_bridge_py,tests_e_test_e_identity_verifier_py,tests_e_test_e_integrity_verifier_py,tests_e_test_e_interrupt_handler_py,tests_e_test_e_merkle_audit_py,tests_e_test_e_meta_confidence_py,tests_e_test_e_objective_tracker_py,tests_e_test_e_position_reconciler_py,tests_e_test_e_protocol_state_store_py,tests_e_test_e_reward_hacking_py,tests_e_test_e_risk_matrix_py,tests_e_test_e_self_test_py,tests_e_test_e_self_validator_py design
-    class D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_GOV_AUDIT,D_POSITION,D_GOV_DRIFT,D_GOV_ENFORCEMENT external_prod
+    class D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_GOV_ENFORCEMENT,D_GOV_AUDIT,D_OPS,D_POSITION,D_GOV_DRIFT external_prod
 ```
 
 #### 第 9 页 / 共 12 页
@@ -1088,33 +1084,32 @@ graph TD
         tests_fixtures_g_trae_008_mock_yaml["(生产态 / production) Mock task to test TRAE-008 gate. This is a vali...<br/>文件: g_trae_008_mock.yaml"]
     end
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_file_test_file_watcher_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_file_test_file_task_mapper_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_fix_test_fix_report_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_fix_test_fix_scheduler_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_fix_test_fix_scheduler_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_e_test_e_strategy_portfolio_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_fix_test_fix_budget_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
-    tests_file_test_file_task_mapper_root_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_fix_test_fix_pattern_miner_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_fix_test_fix_pattern_miner_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_fix_test_fix_health_check_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_fix_test_fix_safety_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    tests_e_test_e_strategy_scoper_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_e_test_e_silence_detector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     tests_fix_test_fix_budget_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
-    tests_e_test_e_slo_contract_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    tests_e_test_e_strategy_scoper_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_fix_test_fix_health_check_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_fix_test_fix_safety_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_file_test_file_watcher_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_file_test_file_task_mapper_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_e_test_e_strategy_portfolio_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_fix_test_fix_reliability_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    tests_file_test_file_task_mapper_root_py -.->|测试依赖 / test_depends| D_GOV_RULE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_fixtures_g_trae_003_mock_yaml,tests_fixtures_g_trae_004_mock_yaml,tests_fixtures_g_trae_006_mock_yaml,tests_fixtures_g_trae_007_mock_yaml,tests_fixtures_g_trae_008_mock_yaml production
     class tests_e_test_e_silence_detector_py,tests_e_test_e_slo_contract_py,tests_e_test_e_strategy_portfolio_py,tests_e_test_e_strategy_scoper_py,tests_file_test_file_attr_checker_py,tests_file_test_file_autoregister_py,tests_file_test_file_creator_py,tests_file_test_file_task_mapper_root_py,tests_file_test_file_watcher_py,tests_fix_test_alignment_syncer_py,tests_fix_test_all_completer_py,tests_fix_test_compliance_auditor_py,tests_fix_test_fix_budget_py,tests_fix_test_fix_diff_py,tests_fix_test_fix_health_check_py,tests_fix_test_fix_pattern_miner_py,tests_fix_test_fix_reliability_py,tests_fix_test_fix_report_py,tests_fix_test_fix_safety_py,tests_fix_test_fix_scheduler_py,tests_fix_test_import_fixer_py,tests_fixtures_test_commit_target_py,tests_fixtures_test_lock_target_py,tests_fixtures_test_mixed_target_py,tests_fixtures_test_staging_target_py design
-    class D_INFRA_RUNTIME,D_ORCHESTRATOR,D_GOVERNANCE,D_GOV_RULE,D_GOV_DRIFT,D_GOV_ENFORCEMENT external_prod
+    class D_INFRA_RUNTIME,D_GOVERNANCE,D_GOV_DRIFT,D_ORCHESTRATOR,D_GOV_RULE external_prod
 ```
 
 #### 第 10 页 / 共 12 页
@@ -1196,32 +1191,32 @@ graph TD
         tests_utils_test_foundation_flags_py["(原型态 / prototype) test_foundation_flags.py"]
         tests_utils_test_resilience_fallback_py["(原型态 / prototype) test_resilience_fallback.py"]
     end
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_path_test_path_index_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_path_test_path_guard_py -.->|测试依赖 / test_depends| D_SECURITY
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     tests_path_test_path_tree_generator_design_protection_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
-    tests_multi_test_multi_agent_root_py -.->|测试依赖 / test_depends| D_INFRA_A2A
+    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
+    tests_path_test_path_index_validator_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_multi_test_multi_instance_coord_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_multi_test_multi_agent_orchestrator_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_path_test_path_index_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
-    tests_path_test_path_index_validator_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
+    tests_multi_test_multi_agent_root_py -.->|测试依赖 / test_depends| D_INFRA_A2A
     tests_multi_test_multi_turn_intent_analyzer_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_multi_test_multi_agent_collusion_detector_py -.->|测试依赖 / test_depends| D_SECURITY
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_utils_test_foundation_env_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
     tests_multi_test_multi_signal_correlator_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_utils_test_foundation_env_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_fixtures_g_trae_043_mock_yaml,tests_fixtures_g_trae_044_mock_yaml,tests_fixtures_g_trae_045_mock_yaml,tests_fixtures_g_trae_046_mock_yaml,tests_fixtures_g_trae_047_mock_yaml,tests_fixtures_g_trae_048_mock_yaml,tests_fixtures_g_trae_049_mock_yaml,tests_fixtures_g_trae_050_mock_yaml,tests_fixtures_g_trae_051_mock_yaml,tests_fixtures_g_trae_052_mock_yaml,tests_fixtures_g_trae_053_mock_yaml,tests_fixtures_g_trae_054_mock_yaml,tests_fixtures_g_trae_055_mock_yaml production
     class tests_fixtures_psv_mock_script_py,tests_fixtures_psv_mock_script_alt_py,tests_multi_test_multi_agent_collusion_detector_py,tests_multi_test_multi_agent_orchestrator_py,tests_multi_test_multi_agent_root_py,tests_multi_test_multi_instance_coord_py,tests_multi_test_multi_signal_correlator_py,tests_multi_test_multi_turn_intent_analyzer_py,tests_path_test_path_guard_py,tests_path_test_path_index_py,tests_path_test_path_index_validator_py,tests_path_test_path_tree_generator_design_protection_py,tests_utils_test_foundation_deprecation_py,tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py,tests_utils_test_foundation_flags_py,tests_utils_test_resilience_fallback_py design
-    class D_SECURITY,D_GOVERNANCE,D_INFRA_A2A,D_FEEDBACK_LOOP,D_ORCHESTRATOR,D_GOV_CODE_QUALITY,D_INFRA_RUNTIME,D_FBL_DETECTORS external_prod
+    class D_ORCHESTRATOR,D_SECURITY,D_GOVERNANCE,D_GOV_CODE_QUALITY,D_FEEDBACK_LOOP,D_INFRA_A2A,D_FBL_DETECTORS,D_INFRA_RUNTIME external_prod
 ```
 
 #### 第 12 页 / 共 12 页
@@ -1251,21 +1246,21 @@ graph TD
         tests_zephyr_data_test_task_queue_py["(原型态 / prototype) task_queue 单测（MOD-L00-004 阶段2）。<br/>文件: test_task_queue.py"]
     end
     tests_zephyr_data_test_alerter_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_metrics_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_ch_writer_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_progress_store_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_policy_registry_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_progress_store_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_stage3_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_metrics_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_provider_base_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_task_queue_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     tests_utils_test_utils_testing_py -.->|测试依赖 / test_depends| D_INTEGRATION
-    D_DATA["(生产态 / production) D_DATA"]
-    tests_zephyr_data_test_cli_py -.->|测试依赖 / test_depends| D_DATA
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_utils_test_utils_testing_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_utils_test_utils_testing_py -.->|测试依赖 / test_depends| D_INTEGRATION
+    D_DATA["(生产态 / production) D_DATA"]
+    tests_zephyr_data_test_cli_py -.->|测试依赖 / test_depends| D_DATA
     tests_zephyr_data_test_cli_py -.->|测试依赖 / test_depends| D_DATA
     tests_zephyr_data_test_scheduler_py -.->|测试依赖 / test_depends| D_DATA
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -1273,7 +1268,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py,tests_zephyr_data_init_py,tests_zephyr_data_test_alerter_py,tests_zephyr_data_test_ch_writer_py,tests_zephyr_data_test_cli_py,tests_zephyr_data_test_metrics_py,tests_zephyr_data_test_policy_registry_py,tests_zephyr_data_test_progress_store_py,tests_zephyr_data_test_provider_base_py,tests_zephyr_data_test_providers_py,tests_zephyr_data_test_providers_stage3_py,tests_zephyr_data_test_scheduler_py,tests_zephyr_data_test_task_queue_py design
-    class D_INTEGRATION,D_DATA,D_GOV_RULE external_prod
+    class D_INTEGRATION,D_GOV_RULE,D_DATA external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -1442,18 +1437,18 @@ graph TD
     src_zephyr_shared_alerts_alert_escalation_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_api_dos_launcher_py -->|导入依赖 / import_depends| src_zephyr_shared_io_paths_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
-    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_severity_types_py
+    src_zephyr_shared_blueprint_tools_blueprint_decomposer_py -->|导入依赖 / import_depends| src_zephyr_shared_schema_task_types_py
     src_zephyr_shared_events_event_reactor_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_events_hook_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     src_zephyr_shared_foundation_flags_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
-    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_infra_idempotency_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_foundation_models_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_time_utils_py
     src_zephyr_shared_infra_lock_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_cache_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_infra_outbox_py -->|导入依赖 / import_depends| src_zephyr_shared_utils_logging_py
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| src_zephyr_shared_infra_process_pool_py
     src_zephyr_shared_io_serialization_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_errors_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_blueprint_decomposer_py
     src_zephyr_shared_lifecycle_healthcheck_service_py -->|导入依赖 / import_depends| src_zephyr_shared_foundation_models_py
@@ -1472,42 +1467,42 @@ graph TD
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_shared_session_session_audit_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_lifecycle_health_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_event_bus_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_shared_security_secrets_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    src_zephyr_shared_event_bus_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_shared_infra_process_pool_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_shared_infra_process_lifecycle_gateway_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_shared_io_io_cache_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_enforcer_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_system_configuration_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_system_configuration_py
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_shared_observability_tracing_py
     D_INFRA_RUNTIME -.->|config_depends / config_depends| src_zephyr_shared_adaptation_execution_tuner_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_shared_version_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_shared_event_bus_py
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_shared_event_bus_py
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_shared_event_bus_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_shared_event_bus_py
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
-    D_TRADING["(生产态 / production) D_TRADING"]
-    D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_shared_event_bus_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_version_py,src_zephyr_shared_adaptation_execution_tuner_py,src_zephyr_shared_adaptation_prompt_version_manager_py,src_zephyr_shared_ai_guards_ai_audit_guard_py,src_zephyr_shared_ai_guards_combinatorial_gate_py,src_zephyr_shared_ai_guards_core_integrity_guard_py,src_zephyr_shared_alerts_alert_escalation_py,src_zephyr_shared_alerts_alert_manager_py,src_zephyr_shared_alerts_alert_precision_tracker_py,src_zephyr_shared_alerts_dual_channel_alert_py,src_zephyr_shared_alerts_heartbeat_server_py,src_zephyr_shared_api_dos_launcher_py,src_zephyr_shared_blueprint_tools_ai_understandability_constraint_py,src_zephyr_shared_blueprint_tools_blueprint_code_auditor_py,src_zephyr_shared_blueprint_tools_blueprint_decomposer_py,src_zephyr_shared_capacity_governance_adaptive_sampler_py,src_zephyr_shared_capacity_governance_budget_aware_prompt_py,src_zephyr_shared_capacity_governance_capacity_calibrator_py,src_zephyr_shared_capacity_governance_capacity_digital_twin_py,src_zephyr_shared_capacity_governance_capacity_fingerprint_py,src_zephyr_shared_capacity_governance_capacity_runbook_generator_py,src_zephyr_shared_capacity_governance_cost_estimator_py,src_zephyr_shared_capacity_governance_dependency_capacity_guard_py,src_zephyr_shared_capacity_governance_model_capacity_probe_py,src_zephyr_shared_compensation_saga_compensator_py,src_zephyr_shared_context_context_engine_py,src_zephyr_shared_contracts_core_enforcer_py,src_zephyr_shared_contracts_core_system_configuration_py,src_zephyr_shared_contracts_core_trace_context_py,src_zephyr_shared_contracts_escalation_budget_alert_py,src_zephyr_shared_contracts_identity_agent_identity_py,src_zephyr_shared_contracts_identity_permission_py,src_zephyr_shared_contracts_portfolio_money_py,src_zephyr_shared_contracts_security_security_decision_py,src_zephyr_shared_dependency_dependency_graph_py,src_zephyr_shared_draft_draft_assistant_py,src_zephyr_shared_event_bus_py,src_zephyr_shared_events_event_bus_upgrade_py,src_zephyr_shared_events_event_reactor_py,src_zephyr_shared_events_hook_dispatcher_py,src_zephyr_shared_foundation_deprecation_py,src_zephyr_shared_foundation_errors_py,src_zephyr_shared_foundation_flags_py,src_zephyr_shared_foundation_migration_py,src_zephyr_shared_foundation_models_py,src_zephyr_shared_infra_cache_py,src_zephyr_shared_infra_idempotency_py,src_zephyr_shared_infra_lock_py,src_zephyr_shared_infra_observer_py,src_zephyr_shared_infra_outbox_py,src_zephyr_shared_infra_process_lifecycle_gateway_py,src_zephyr_shared_infra_process_pool_py,src_zephyr_shared_io_content_fingerprint_py,src_zephyr_shared_io_file_utils_py,src_zephyr_shared_io_frontmatter_utils_py,src_zephyr_shared_io_io_cache_py,src_zephyr_shared_io_paths_py,src_zephyr_shared_io_serialization_py,src_zephyr_shared_io_streaming_reader_py,src_zephyr_shared_knowledge_ke_linker_py,src_zephyr_shared_knowledge_ke_structurer_py,src_zephyr_shared_knowledge_kms_interface_py,src_zephyr_shared_lifecycle_health_py,src_zephyr_shared_lifecycle_health_discovery_py,src_zephyr_shared_lifecycle_healthcheck_service_py,src_zephyr_shared_lifecycle_longevity_monitor_py,src_zephyr_shared_lifecycle_task_heartbeat_py,src_zephyr_shared_lifecycle_ttl_cleanup_engine_py,src_zephyr_shared_maintenance_autonomy_monitor_py,src_zephyr_shared_maintenance_code_economy_analyzer_py,src_zephyr_shared_maintenance_dogfooding_py,src_zephyr_shared_maintenance_handbook_py,src_zephyr_shared_maintenance_owner_trust_gauge_py,src_zephyr_shared_maintenance_slo_review_assistant_py,src_zephyr_shared_maintenance_zero_config_py,src_zephyr_shared_observability_metrics_py,src_zephyr_shared_observability_reasoning_spans_py,src_zephyr_shared_observability_tracing_py,src_zephyr_shared_protocols_module_birth_registry_py,src_zephyr_shared_reliability_diff_planner_py,src_zephyr_shared_reliability_retry_handler_py,src_zephyr_shared_resilience_circuit_breaker_py,src_zephyr_shared_resilience_degradation_chain_py,src_zephyr_shared_resilience_error_budget_tracker_py,src_zephyr_shared_resilience_fallback_py,src_zephyr_shared_resilience_fault_isolator_py,src_zephyr_shared_resilience_limiter_py,src_zephyr_shared_resilience_retry_py,src_zephyr_shared_schema_severity_types_py,src_zephyr_shared_schema_task_types_py,src_zephyr_shared_security_capability_py,src_zephyr_shared_security_sandbox_executor_py,src_zephyr_shared_security_secrets_py,src_zephyr_shared_security_ssot_guard_py,src_zephyr_shared_session_session_audit_py,src_zephyr_shared_session_session_boundary_py,src_zephyr_shared_session_session_continuity_py,src_zephyr_shared_utils_cli_summary_py,src_zephyr_shared_utils_context_py,src_zephyr_shared_utils_db_utils_py,src_zephyr_shared_utils_diff_utils_py,src_zephyr_shared_utils_logging_py,src_zephyr_shared_utils_pagination_py,src_zephyr_shared_utils_testing_py,src_zephyr_shared_utils_time_utils_py,src_zephyr_shared_utils_zephyr_logger_py,src_zephyr_shared_versioning_vibe_experiment_tracker_py,tests_fixtures_g_trae_003_mock_yaml,tests_fixtures_g_trae_004_mock_yaml,tests_fixtures_g_trae_006_mock_yaml,tests_fixtures_g_trae_007_mock_yaml,tests_fixtures_g_trae_008_mock_yaml,tests_fixtures_g_trae_009_mock_yaml,tests_fixtures_g_trae_010_mock_yaml,tests_fixtures_g_trae_011_mock_yaml,tests_fixtures_g_trae_012_mock_yaml,tests_fixtures_g_trae_016_mock_yaml,tests_fixtures_g_trae_017_mock_yaml,tests_fixtures_g_trae_018_mock_yaml,tests_fixtures_g_trae_020_mock_yaml,tests_fixtures_g_trae_021_mock_yaml,tests_fixtures_g_trae_022_mock_yaml,tests_fixtures_g_trae_023_mock_yaml,tests_fixtures_g_trae_024_mock_yaml,tests_fixtures_g_trae_025_mock_yaml,tests_fixtures_g_trae_026_mock_yaml,tests_fixtures_g_trae_027_mock_yaml,tests_fixtures_g_trae_028_mock_yaml,tests_fixtures_g_trae_029_mock_yaml,tests_fixtures_g_trae_030_mock_yaml,tests_fixtures_g_trae_031_mock_yaml,tests_fixtures_g_trae_032_mock_yaml,tests_fixtures_g_trae_033_mock_yaml,tests_fixtures_g_trae_034_mock_yaml,tests_fixtures_g_trae_035_mock_yaml,tests_fixtures_g_trae_036_mock_yaml,tests_fixtures_g_trae_037_mock_yaml,tests_fixtures_g_trae_038_mock_yaml,tests_fixtures_g_trae_039_mock_yaml,tests_fixtures_g_trae_040_mock_yaml,tests_fixtures_g_trae_041_mock_yaml,tests_fixtures_g_trae_042_mock_yaml,tests_fixtures_g_trae_043_mock_yaml,tests_fixtures_g_trae_044_mock_yaml,tests_fixtures_g_trae_045_mock_yaml,tests_fixtures_g_trae_046_mock_yaml,tests_fixtures_g_trae_047_mock_yaml,tests_fixtures_g_trae_048_mock_yaml,tests_fixtures_g_trae_049_mock_yaml,tests_fixtures_g_trae_050_mock_yaml,tests_fixtures_g_trae_051_mock_yaml,tests_fixtures_g_trae_052_mock_yaml,tests_fixtures_g_trae_053_mock_yaml,tests_fixtures_g_trae_054_mock_yaml,tests_fixtures_g_trae_055_mock_yaml production
-    class D_GOV_AUDIT,D_INFRA_RUNTIME,D_FEEDBACK_LOOP,D_INTEGRATION,D_AUTONOMY_CORE,D_GOV_OPS_RESILIENCE,D_TRADING external_prod
-    class D_INFRASTRUCTURE,D_INTELLIGENCE,D_GOVERNANCE external_design
+    class D_GOV_AUDIT,D_INFRA_RUNTIME,D_FEEDBACK_LOOP,D_INTEGRATION,D_AUTONOMY_CORE,D_GOV_OPS_RESILIENCE external_prod
+    class D_INFRASTRUCTURE,D_GOVERNANCE,D_INTELLIGENCE,D_SECURITY external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -1723,19 +1718,19 @@ graph TD
     src_zephyr_shared_contracts_enums_init_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_enums_order_enums_py
     src_zephyr_shared_database_init_py -.->|config_depends / config_depends| src_zephyr_shared_database_database_crud_mixin_py
     src_zephyr_shared_events_dlq_py -.->|导入依赖 / import_depends| src_zephyr_shared_io_sqlite_factory_py
-    src_zephyr_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_dlq_bridge_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_dlq_py
+    src_zephyr_shared_events_event_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     src_zephyr_shared_events_upgrade_strategy_py -.->|导入依赖 / import_depends| src_zephyr_shared_events_observer_py
     src_zephyr_shared_foundation_constants_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_core_runtime_plane_tag_py
     src_zephyr_shared_foundation_constants_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_schemas_py
     src_zephyr_shared_protocols_ports_py -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     src_zephyr_shared_schema_schemas_py -.->|导入依赖 / import_depends| src_zephyr_shared_schema_base_config_py
     tests_zephyr_data_test_alerter_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_metrics_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_ch_writer_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
-    tests_zephyr_data_test_progress_store_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_policy_registry_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_progress_store_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_stage3_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
+    tests_zephyr_data_test_metrics_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_providers_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_provider_base_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
     tests_zephyr_data_test_task_queue_py -.->|config_depends / config_depends| tests_zephyr_data_init_py
@@ -1745,43 +1740,43 @@ graph TD
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_shared_contracts_contract_bus_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_contract_tester_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_execution_execution_report_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_execution_model_serving_request_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_execution_capital_allocation_result_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_execution_order_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_001_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
-    src_zephyr_shared_contracts_external_ext_004_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_execution_execution_report_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_execution_fill_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_003_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_external_ext_002_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
+    src_zephyr_shared_contracts_external_ext_004_py -.->|config_depends / config_depends| D_INFRASTRUCTURE
     src_zephyr_shared_contracts_portfolio_performance_attribution_report_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_shared_foundation_types_py -.->|config_depends / config_depends| D_INFRA_RUNTIME
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_llm_gateway_protocol_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_orchestration_protocol_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_skill_protocol_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_skill_protocol_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_skill_protocol_py
-    D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_skill_protocol_py
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
-    D_INFRASTRUCTURE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING["(生产态 / production) D_TRADING"]
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
+    D_INTEGRATION -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_task_repository_protocol_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_shared_cross_layer_ml_experiment_pipeline_py,src_zephyr_shared_api_api_client_py,src_zephyr_shared_api_api_index_py,src_zephyr_shared_blueprint_tools_blueprint_scorer_py,src_zephyr_shared_contracts_backpressure_types_py,src_zephyr_shared_contracts_backpressure_pause_py,src_zephyr_shared_contracts_backpressure_resume_py,src_zephyr_shared_contracts_backpressure_throttle_py,src_zephyr_shared_contracts_contract_bus_py,src_zephyr_shared_contracts_contract_tester_py,src_zephyr_shared_contracts_core_base_event_py,src_zephyr_shared_contracts_core_factories_py,src_zephyr_shared_contracts_core_gate_types_py,src_zephyr_shared_contracts_core_registry_py,src_zephyr_shared_contracts_core_runtime_plane_tag_py,src_zephyr_shared_contracts_core_timestamp_py,src_zephyr_shared_contracts_enums_init_py,src_zephyr_shared_contracts_enums_order_enums_py,src_zephyr_shared_contracts_errors_contract_violation_error_py,src_zephyr_shared_contracts_errors_data_quality_error_py,src_zephyr_shared_contracts_errors_execution_rejection_error_py,src_zephyr_shared_contracts_errors_factor_computation_error_py,src_zephyr_shared_contracts_errors_risk_limit_violation_error_py,src_zephyr_shared_contracts_errors_signal_degradation_warning_py,src_zephyr_shared_contracts_execution_capital_allocation_result_py,src_zephyr_shared_contracts_execution_execution_report_py,src_zephyr_shared_contracts_execution_fill_py,src_zephyr_shared_contracts_execution_model_serving_request_py,src_zephyr_shared_contracts_execution_order_py,src_zephyr_shared_contracts_experiment_experiment_result_py,src_zephyr_shared_contracts_experiment_model_serving_response_py,src_zephyr_shared_contracts_external_ext_001_py,src_zephyr_shared_contracts_external_ext_002_py,src_zephyr_shared_contracts_external_ext_003_py,src_zephyr_shared_contracts_external_ext_004_py,src_zephyr_shared_contracts_llm_gateway_protocol_py,src_zephyr_shared_contracts_market_factor_monitor_report_py,src_zephyr_shared_contracts_market_factor_signal_py,src_zephyr_shared_contracts_market_instrument_py,src_zephyr_shared_contracts_market_macro_factor_signal_py,src_zephyr_shared_contracts_market_market_data_py,src_zephyr_shared_contracts_market_synthesized_signal_py,src_zephyr_shared_contracts_orchestration_protocol_py,src_zephyr_shared_contracts_portfolio_performance_attribution_report_py,src_zephyr_shared_contracts_portfolio_position_py,src_zephyr_shared_contracts_portfolio_strategy_lifecycle_event_py,src_zephyr_shared_contracts_risk_compliance_rule_py,src_zephyr_shared_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_risk_limits_py,src_zephyr_shared_contracts_risk_risk_metrics_py,src_zephyr_shared_contracts_risk_risk_validator_protocol_py,src_zephyr_shared_contracts_skill_protocol_py,src_zephyr_shared_contracts_task_repository_protocol_py,src_zephyr_shared_database_init_py,src_zephyr_shared_database_database_crud_mixin_py,src_zephyr_shared_events_dlq_py,src_zephyr_shared_events_dlq_bridge_py,src_zephyr_shared_events_event_schemas_py,src_zephyr_shared_events_observer_py,src_zephyr_shared_events_outbox_py,src_zephyr_shared_events_upgrade_strategy_py,src_zephyr_shared_foundation_constants_py,src_zephyr_shared_foundation_env_py,src_zephyr_shared_foundation_types_py,src_zephyr_shared_infra_limiter_py,src_zephyr_shared_io_sqlite_factory_py,src_zephyr_shared_io_yaml_utils_py,src_zephyr_shared_lifecycle_state_machine_py,src_zephyr_shared_protocols_a2a_a2a_coordination_py,src_zephyr_shared_protocols_a2a_a2a_protocol_py,src_zephyr_shared_protocols_a2a_a2a_registry_py,src_zephyr_shared_protocols_a2a_a2a_schemas_py,src_zephyr_shared_protocols_capability_py,src_zephyr_shared_protocols_ports_py,src_zephyr_shared_protocols_registry_py,src_zephyr_shared_schema_base_config_py,src_zephyr_shared_schema_schema_registry_py,src_zephyr_shared_schema_schemas_py,src_zephyr_shared_security_idempotency_py,src_zephyr_shared_security_lock_py,src_zephyr_shared_utils_async_utils_py,src_zephyr_shared_utils_migration_py,tests_cross_test_cross_agent_conflict_detector_py,tests_cross_test_cross_assistant_adapter_py,tests_cross_test_cross_blueprint_contract_drift_py,tests_cross_test_cross_boundary_detector_py,tests_cross_test_cross_cutting_py,tests_cross_test_cross_env_consistency_py,tests_cross_test_cross_gen_validation_py,tests_cross_test_cross_guard_conflict_detector_py,tests_cross_test_cross_layer_py,tests_cross_test_cross_module_integration_root_py,tests_cross_test_cross_module_score_py,tests_cross_test_cross_platform_shell_py,tests_cross_test_cross_session_consistency_validator_py,tests_cross_test_cross_session_correlator_py,tests_cross_test_cross_session_detector_py,tests_cross_test_cross_session_knowledge_integrity_py,tests_cross_test_cross_signal_validator_py,tests_cross_test_cross_system_correlator_py,tests_e_test_e_circuit_breaker_py,tests_e_test_e_clock_guard_py,tests_e_test_e_confidence_estimator_py,tests_e_test_e_consequence_manager_py,tests_e_test_e_context_package_py,tests_e_test_e_deadlock_detector_py,tests_e_test_e_decision_fatigue_py,tests_e_test_e_error_budget_burst_limiter_py,tests_e_test_e_escalation_api_py,tests_e_test_e_escalation_metrics_py,tests_e_test_e_escalation_models_py,tests_e_test_e_exchange_partition_detector_py,tests_e_test_e_flash_crash_guard_py,tests_e_test_e_forensic_package_py,tests_e_test_e_gap_analyzer_py,tests_e_test_e_ghost_scan_py,tests_e_test_e_gov_a2a_failure_py,tests_e_test_e_gov_approval_py,tests_e_test_e_gov_budget_handler_py,tests_e_test_e_gov_contracts_py,tests_e_test_e_gov_rbac_bridge_py,tests_e_test_e_identity_verifier_py,tests_e_test_e_integrity_verifier_py,tests_e_test_e_interrupt_handler_py,tests_e_test_e_merkle_audit_py,tests_e_test_e_meta_confidence_py,tests_e_test_e_objective_tracker_py,tests_e_test_e_position_reconciler_py,tests_e_test_e_protocol_state_store_py,tests_e_test_e_reward_hacking_py,tests_e_test_e_risk_matrix_py,tests_e_test_e_self_test_py,tests_e_test_e_self_validator_py,tests_e_test_e_silence_detector_py,tests_e_test_e_slo_contract_py,tests_e_test_e_strategy_portfolio_py,tests_e_test_e_strategy_scoper_py,tests_file_test_file_attr_checker_py,tests_file_test_file_autoregister_py,tests_file_test_file_creator_py,tests_file_test_file_task_mapper_root_py,tests_file_test_file_watcher_py,tests_fix_test_alignment_syncer_py,tests_fix_test_all_completer_py,tests_fix_test_compliance_auditor_py,tests_fix_test_fix_budget_py,tests_fix_test_fix_diff_py,tests_fix_test_fix_health_check_py,tests_fix_test_fix_pattern_miner_py,tests_fix_test_fix_reliability_py,tests_fix_test_fix_report_py,tests_fix_test_fix_safety_py,tests_fix_test_fix_scheduler_py,tests_fix_test_import_fixer_py,tests_fixtures_test_commit_target_py,tests_fixtures_test_lock_target_py,tests_fixtures_test_mixed_target_py,tests_fixtures_test_staging_target_py,tests_fixtures_psv_mock_script_py,tests_fixtures_psv_mock_script_alt_py,tests_multi_test_multi_agent_collusion_detector_py,tests_multi_test_multi_agent_orchestrator_py,tests_multi_test_multi_agent_root_py,tests_multi_test_multi_instance_coord_py,tests_multi_test_multi_signal_correlator_py,tests_multi_test_multi_turn_intent_analyzer_py,tests_path_test_path_guard_py,tests_path_test_path_index_py,tests_path_test_path_index_validator_py,tests_path_test_path_tree_generator_design_protection_py,tests_utils_test_foundation_deprecation_py,tests_utils_test_foundation_env_py,tests_utils_test_foundation_errors_py,tests_utils_test_foundation_flags_py,tests_utils_test_resilience_fallback_py,tests_utils_test_resilience_retry_py,tests_utils_test_utils_context_py,tests_utils_test_utils_diff_utils_py,tests_utils_test_utils_migration_py,tests_utils_test_utils_pagination_py,tests_utils_test_utils_testing_py,tests_utils_test_utils_time_utils_py,tests_utils_test_version_py,tests_zephyr_data_init_py,tests_zephyr_data_test_alerter_py,tests_zephyr_data_test_ch_writer_py,tests_zephyr_data_test_cli_py,tests_zephyr_data_test_metrics_py,tests_zephyr_data_test_policy_registry_py,tests_zephyr_data_test_progress_store_py,tests_zephyr_data_test_provider_base_py,tests_zephyr_data_test_providers_py,tests_zephyr_data_test_providers_stage3_py,tests_zephyr_data_test_scheduler_py,tests_zephyr_data_test_task_queue_py design
-    class D_INTEGRATION,D_ORCHESTRATOR,D_GOVERNANCE external_prod
-    class D_INFRA_RUNTIME,D_INFRASTRUCTURE,D_TRADING external_design
+    class D_INTEGRATION,D_ORCHESTRATOR,D_GOVERNANCE,D_TRADING external_prod
+    class D_INFRA_RUNTIME,D_INFRASTRUCTURE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -2466,151 +2461,151 @@ graph TD
 | 548 | D_INFRA_RUNTIME 运行时集成: 三冗余 Watchdog（CT-WATCHDOG-001）——互检+Pani... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 549 | D_INFRA_RUNTIME 运行时集成: _cross_layer: Cross-layer integration pipelines... | → | MLExperimentPipeline D_ML_TRAIN->实验跨层集成管... | config_depends / config_depends |
 | 550 | D_INFRA_RUNTIME 运行时集成: 包 shared.adaptation 的初始化文件。 (__init__.py) | → | Execution Tuner — 执行调谐器（token/timeout 自... | config_depends / config_depends |
-| 551 | D_INFRA_RUNTIME 运行时集成: 包 shared.capacity_governance 的初始化文件。 (_... | → | adaptive_sampler.py | config_depends / config_depends |
+| 551 | D_INFRA_RUNTIME 运行时集成: 包 shared.capacity_governance 的初始化文件。 (_... | → | budget_aware_prompt.py | config_depends / config_depends |
 | 552 | D_INFRA_RUNTIME 运行时集成: 包 shared.compensation 的初始化文件。 (__init__... | → | Saga Compensator — 补偿事务：多步操作任一失败 ... | config_depends / config_depends |
-| 553 | D_INFRA_RUNTIME 运行时集成: 包 shared.dependency 的初始化文件。 (__init__.py) | → | Dependency Graph — 任务卡依赖关系管理。 (depen... | config_depends / config_depends |
-| 554 | D_INFRA_RUNTIME 运行时集成: 包 shared.draft 的初始化文件。 (__init__.py) | → | Draft Assistant — 想法 -> MTH-012 蓝图骨架生成... | config_depends / config_depends |
-| 555 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | CT-DLQ-001: DeadLetterQueue -> System Event Bus... | 导入依赖 / import_depends |
-| 556 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点... | 导入依赖 / import_depends |
-| 557 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 导入依赖 / import_depends |
-| 558 | D_INFRA_RUNTIME 运行时集成: 包 shared.knowledge 的初始化文件。 (__init__.py) | → | KE Linker — 知识条目关联图。 (ke_linker.py) | config_depends / config_depends |
-| 559 | D_INFRA_RUNTIME 运行时集成: 包 shared.maintenance 的初始化文件。 (__init__.py) | → | Onboarding Handbook — AI Agent 施工手册生成。 ... | config_depends / config_depends |
-| 560 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A Coordination — shared interface definition... | 导入依赖 / import_depends |
-| 561 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | Core A2A Protocol interface and governance data... | 导入依赖 / import_depends |
-| 562 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
-| 563 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
-| 564 | D_INFRA_RUNTIME 运行时集成: A2A Layer3 Coordination — shared Protocol inte... | → | A2A Coordination — shared interface definition... | 导入依赖 / import_depends |
-| 565 | D_INFRA_RUNTIME 运行时集成: 包 shared.reliability 的初始化文件。 (__init__.py) | → | Diff Planner — 最小增量变更规划器。 (diff_plan... | config_depends / config_depends |
-| 566 | D_INFRA_RUNTIME 运行时集成: shared.schema — auto-generated package init. (... | → | schema_registry.py | config_depends / config_depends |
-| 567 | D_INFRA_RUNTIME 运行时集成: shared.security — auto-generated package init.... | → | idempotency.py —— Re-export wrapper -> canoni... | config_depends / config_depends |
-| 568 | D_INFRA_RUNTIME 运行时集成: 包 shared.session 的初始化文件。 (__init__.py) | → | session_audit.py —— Session 审计轨迹（Phase 1... | config_depends / config_depends |
-| 569 | D_INFRA_RUNTIME 运行时集成: shared.utils — auto-generated package init. (_... | → | context.py —— 结构化上下文传播（Phase 8 新增 ... | 导入依赖 / import_depends |
-| 570 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 571 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 572 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
-| 573 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 574 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 575 | D_INFRA_RUNTIME 运行时集成: AutoIntegrator — 自动接入器 (auto_integrator.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 576 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | system_configuration.py | 导入依赖 / import_depends |
-| 577 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 578 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 579 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 580 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
-| 581 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (auto_task_... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 582 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (auto_task_... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 583 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 584 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 585 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 586 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 587 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | health.py —— ZephyrAlpha 聚合健康检查 (health.py) | 导入依赖 / import_depends |
-| 588 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | CT-HEALTH-001: System-wide Health Discovery Reg... | 导入依赖 / import_depends |
-| 589 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Healthcheck Service — 运行时健康检查服务。 (he... | 导入依赖 / import_depends |
-| 590 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | longevity_monitor.py | 导入依赖 / import_depends |
-| 591 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Autonomy Monitor — AI 自主等级监控与降级。 (au... | 导入依赖 / import_depends |
-| 592 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
-| 593 | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (capability_... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 594 | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 595 | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 596 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | → | health.py —— ZephyrAlpha 聚合健康检查 (health.py) | 导入依赖 / import_depends |
-| 597 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
-| 598 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 599 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 600 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | Healthcheck Service — 运行时健康检查服务。 (he... | 导入依赖 / import_depends |
-| 601 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | longevity_monitor.py | 导入依赖 / import_depends |
-| 602 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
-| 603 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 604 | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 605 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 606 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 607 | D_INFRA_RUNTIME 运行时集成: Protocol-based interface layer for runtime->pip... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
-| 608 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_calibrator.py | 导入依赖 / import_depends |
-| 609 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_digital_twin.py | 导入依赖 / import_depends |
-| 610 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_fingerprint.py | 导入依赖 / import_depends |
-| 611 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_runbook_generator.py | 导入依赖 / import_depends |
-| 612 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | model_capacity_probe.py | 导入依赖 / import_depends |
-| 613 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 614 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
-| 615 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | io_cache.py - File-level I/O cache with LRU evi... | 导入依赖 / import_depends |
-| 616 | D_INFRA_RUNTIME 运行时集成: StatusDashboard — 实时状态面板 (status_dashboa... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 617 | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 618 | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 619 | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 620 | D_INFRA_RUNTIME 运行时集成: audit_rename_completeness.py 回归测试（红蓝对抗... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 621 | D_INFRA_RUNTIME 运行时集成: F18 治理脚本系统红蓝对抗极端测试. (test_f18_gov... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 622 | D_INFRA_RUNTIME 运行时集成: test_infra_cache.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 623 | D_INFRA_RUNTIME 运行时集成: test_infra_cache.py | → | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点... | 测试依赖 / test_depends |
-| 624 | D_INFRA_RUNTIME 运行时集成: test_infra_idempotency.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 625 | D_INFRA_RUNTIME 运行时集成: test_infra_idempotency.py | → | idempotency.py —— 幂等性基础设施（Phase 8 新.... | 测试依赖 / test_depends |
-| 626 | D_INFRA_RUNTIME 运行时集成: test_infra_limiter.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 627 | D_INFRA_RUNTIME 运行时集成: test_infra_limiter.py | → | limiter.py —— Re-export wrapper -> canonical:... | 测试依赖 / test_depends |
-| 628 | D_INFRA_RUNTIME 运行时集成: test_infra_lock.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 629 | D_INFRA_RUNTIME 运行时集成: test_infra_lock.py | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点... | 测试依赖 / test_depends |
-| 630 | D_INFRA_RUNTIME 运行时集成: test_infra_observer.py | → | Zero-dependency Observer pattern (subscribe/emi... | 测试依赖 / test_depends |
-| 631 | D_INFRA_RUNTIME 运行时集成: test_infra_outbox.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 632 | D_INFRA_RUNTIME 运行时集成: test_infra_outbox.py | → | outbox.py —— 事务性 Outbox 模式（Phase 10 新.... | 测试依赖 / test_depends |
-| 633 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
-| 634 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 635 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
-| 636 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 637 | D_INFRA_RUNTIME 运行时集成: DM-202913: MCP _mcp_health_check死亡进程检测+re... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
-| 638 | D_INFRA_RUNTIME 运行时集成: DM-202913: MCP _mcp_health_check死亡进程检测+re... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 639 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
-| 640 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | process_pool.py - Shared process pool for MCP s... | 测试依赖 / test_depends |
-| 641 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 642 | D_INFRA_RUNTIME 运行时集成: DM-202911: MCP SIGINT/SIGTERM 信号优雅关闭进程.... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
-| 643 | D_INFRA_RUNTIME 运行时集成: DM-202911: MCP SIGINT/SIGTERM 信号优雅关闭进程.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 644 | D_INFRA_RUNTIME 运行时集成: test_observability_logging.py | → | logging.py —— ZephyrAlpha 结构化日志系统（Str... | 测试依赖 / test_depends |
-| 645 | D_INFRA_RUNTIME 运行时集成: test_observability_metrics.py | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 测试依赖 / test_depends |
-| 646 | D_INFRA_RUNTIME 运行时集成: test_observability_tracing.py | → | tracing.py —— OpenTelemetry 分布式追踪（Phase... | 测试依赖 / test_depends |
-| 647 | D_INFRA_RUNTIME 运行时集成: test_observability_tracing.py | → | logging.py —— ZephyrAlpha 结构化日志系统（Str... | 测试依赖 / test_depends |
-| 648 | D_INFRA_TELEMETRY 可观测性: AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 649 | D_INFRA_TELEMETRY 可观测性: SchemaSubsystem — Schema 版本管理与兼容性校验.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 650 | D_INTEGRATION 管线路由: __init__.py | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
-| 651 | D_INTEGRATION 管线路由: __init__.py | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
-| 652 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 653 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 654 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 655 | D_INTEGRATION 管线路由: OllamaEmbedder — 通过 Ollama HTTP API 生成文本... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 656 | D_INTEGRATION 管线路由: BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 657 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 658 | D_INTEGRATION 管线路由: BlueprintSearchServer — MCP Server for bluepri... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 659 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (... | → | schemas.py | 导入依赖 / import_depends |
-| 660 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 661 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (gate... | → | schemas.py | 导入依赖 / import_depends |
-| 662 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (gate... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 663 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 664 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | yaml_utils.py — vocabulary YAML 加载公共工具（... | 导入依赖 / import_depends |
-| 665 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
-| 666 | D_INTEGRATION 管线路由: MCP Resource 提供者（MOD-INF-013 Phase 6 — 关.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 667 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | ZephyrAlpha 蓝图拆解器 (blueprint_decomposer.py) | 导入依赖 / import_depends |
-| 668 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
-| 669 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 670 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | schemas.py | 导入依赖 / import_depends |
-| 671 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | severity_types.py | 导入依赖 / import_depends |
-| 672 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 673 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Telemetry Server — 系统可观测.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 674 | D_INTEGRATION 管线路由: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
-| 675 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 ... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 676 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 ... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 677 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | LLMGatewayProtocol — LLM 网关抽象接口 (llm_gat... | 导入依赖 / import_depends |
-| 678 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 679 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 680 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
-| 681 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
-| 682 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 683 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
-| 684 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
-| 685 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 686 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 687 | D_INTEGRATION 管线路由: contract_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
-| 688 | D_INTEGRATION 管线路由: CTR-ERR-001: DataQualityError / 行情质量门禁不.... | → | trace_context.py | 导入依赖 / import_depends |
-| 689 | D_INTEGRATION 管线路由: execution_rejection_error.py | → | trace_context.py | 导入依赖 / import_depends |
-| 690 | D_INTEGRATION 管线路由: CTR-ERR-002: FactorComputationError / 因子计算.... | → | trace_context.py | 导入依赖 / import_depends |
-| 691 | D_INTEGRATION 管线路由: risk_limit_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
-| 692 | D_INTEGRATION 管线路由: signal_degradation_warning.py | → | trace_context.py | 导入依赖 / import_depends |
-| 693 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
-| 694 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 695 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 553 | D_INFRA_RUNTIME 运行时集成: 包 shared.draft 的初始化文件。 (__init__.py) | → | Draft Assistant — 想法 -> MTH-012 蓝图骨架生成... | config_depends / config_depends |
+| 554 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | CT-DLQ-001: DeadLetterQueue -> System Event Bus... | 导入依赖 / import_depends |
+| 555 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点... | 导入依赖 / import_depends |
+| 556 | D_INFRA_RUNTIME 运行时集成: __init__.py | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 导入依赖 / import_depends |
+| 557 | D_INFRA_RUNTIME 运行时集成: 包 shared.knowledge 的初始化文件。 (__init__.py) | → | KMS Interface — KE 推送契约 + 生命周期关联。 (... | config_depends / config_depends |
+| 558 | D_INFRA_RUNTIME 运行时集成: 包 shared.maintenance 的初始化文件。 (__init__.py) | → | Dogfooding — 自举测试：用 TaskCard 管理 TaskCa... | config_depends / config_depends |
+| 559 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A Coordination — shared interface definition... | 导入依赖 / import_depends |
+| 560 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | Core A2A Protocol interface and governance data... | 导入依赖 / import_depends |
+| 561 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
+| 562 | D_INFRA_RUNTIME 运行时集成: A2A Protocol — shared interface definitions. (... | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
+| 563 | D_INFRA_RUNTIME 运行时集成: A2A Layer3 Coordination — shared Protocol inte... | → | A2A Coordination — shared interface definition... | 导入依赖 / import_depends |
+| 564 | D_INFRA_RUNTIME 运行时集成: 包 shared.reliability 的初始化文件。 (__init__.py) | → | Retry Handler — 指数退避重试 + 可恢复/不可恢复... | config_depends / config_depends |
+| 565 | D_INFRA_RUNTIME 运行时集成: shared.schema — auto-generated package init. (... | → | base_config.py | config_depends / config_depends |
+| 566 | D_INFRA_RUNTIME 运行时集成: shared.security — auto-generated package init.... | → | CBAC 能力检查器 (Capability-Based Access Contro... | config_depends / config_depends |
+| 567 | D_INFRA_RUNTIME 运行时集成: 包 shared.session 的初始化文件。 (__init__.py) | → | SessionContinuity — Session 交接包自动生成与恢... | config_depends / config_depends |
+| 568 | D_INFRA_RUNTIME 运行时集成: shared.utils — auto-generated package init. (_... | → | context.py —— 结构化上下文传播（Phase 8 新增 ... | 导入依赖 / import_depends |
+| 569 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 570 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 571 | D_INFRA_RUNTIME 运行时集成: ActionDispatcher --- 大脑的"手" v2.0 (Phase 2) ... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
+| 572 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 573 | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 574 | D_INFRA_RUNTIME 运行时集成: AutoIntegrator — 自动接入器 (auto_integrator.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 575 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | system_configuration.py | 导入依赖 / import_depends |
+| 576 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 577 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 578 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 579 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
+| 580 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (auto_task_... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 581 | D_INFRA_RUNTIME 运行时集成: AutoTaskGenerator — 自动任务生成器 (auto_task_... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 582 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 583 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 584 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 585 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 586 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | health.py —— ZephyrAlpha 聚合健康检查 (health.py) | 导入依赖 / import_depends |
+| 587 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | CT-HEALTH-001: System-wide Health Discovery Reg... | 导入依赖 / import_depends |
+| 588 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Healthcheck Service — 运行时健康检查服务。 (he... | 导入依赖 / import_depends |
+| 589 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | longevity_monitor.py | 导入依赖 / import_depends |
+| 590 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | Autonomy Monitor — AI 自主等级监控与降级。 (au... | 导入依赖 / import_depends |
+| 591 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
+| 592 | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (capability_... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 593 | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 594 | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 595 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | → | health.py —— ZephyrAlpha 聚合健康检查 (health.py) | 导入依赖 / import_depends |
+| 596 | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
+| 597 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 598 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 599 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | Healthcheck Service — 运行时健康检查服务。 (he... | 导入依赖 / import_depends |
+| 600 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | longevity_monitor.py | 导入依赖 / import_depends |
+| 601 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 导入依赖 / import_depends |
+| 602 | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 603 | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 604 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 605 | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 606 | D_INFRA_RUNTIME 运行时集成: Protocol-based interface layer for runtime->pip... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
+| 607 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_calibrator.py | 导入依赖 / import_depends |
+| 608 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_digital_twin.py | 导入依赖 / import_depends |
+| 609 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_fingerprint.py | 导入依赖 / import_depends |
+| 610 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | capacity_runbook_generator.py | 导入依赖 / import_depends |
+| 611 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | model_capacity_probe.py | 导入依赖 / import_depends |
+| 612 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 613 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | process_pool.py - Shared process pool for MCP s... | 导入依赖 / import_depends |
+| 614 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | io_cache.py - File-level I/O cache with LRU evi... | 导入依赖 / import_depends |
+| 615 | D_INFRA_RUNTIME 运行时集成: StatusDashboard — 实时状态面板 (status_dashboa... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 616 | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 617 | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 618 | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 619 | D_INFRA_RUNTIME 运行时集成: audit_rename_completeness.py 回归测试（红蓝对抗... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 620 | D_INFRA_RUNTIME 运行时集成: F18 治理脚本系统红蓝对抗极端测试. (test_f18_gov... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 621 | D_INFRA_RUNTIME 运行时集成: test_infra_cache.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 622 | D_INFRA_RUNTIME 运行时集成: test_infra_cache.py | → | cache.py —— 统一缓存抽象（Phase 8 新增 | 盲点... | 测试依赖 / test_depends |
+| 623 | D_INFRA_RUNTIME 运行时集成: test_infra_idempotency.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 624 | D_INFRA_RUNTIME 运行时集成: test_infra_idempotency.py | → | idempotency.py —— 幂等性基础设施（Phase 8 新.... | 测试依赖 / test_depends |
+| 625 | D_INFRA_RUNTIME 运行时集成: test_infra_limiter.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 626 | D_INFRA_RUNTIME 运行时集成: test_infra_limiter.py | → | limiter.py —— Re-export wrapper -> canonical:... | 测试依赖 / test_depends |
+| 627 | D_INFRA_RUNTIME 运行时集成: test_infra_lock.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 628 | D_INFRA_RUNTIME 运行时集成: test_infra_lock.py | → | lock.py —— 分布式锁抽象（Phase 10 新增 | 盲点... | 测试依赖 / test_depends |
+| 629 | D_INFRA_RUNTIME 运行时集成: test_infra_observer.py | → | Zero-dependency Observer pattern (subscribe/emi... | 测试依赖 / test_depends |
+| 630 | D_INFRA_RUNTIME 运行时集成: test_infra_outbox.py | → | errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 631 | D_INFRA_RUNTIME 运行时集成: test_infra_outbox.py | → | outbox.py —— 事务性 Outbox 模式（Phase 10 新.... | 测试依赖 / test_depends |
+| 632 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
+| 633 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 634 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
+| 635 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 636 | D_INFRA_RUNTIME 运行时集成: DM-202913: MCP _mcp_health_check死亡进程检测+re... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
+| 637 | D_INFRA_RUNTIME 运行时集成: DM-202913: MCP _mcp_health_check死亡进程检测+re... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 638 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
+| 639 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | process_pool.py - Shared process pool for MCP s... | 测试依赖 / test_depends |
+| 640 | D_INFRA_RUNTIME 运行时集成: DM-202912: MCP idle_timeout 10分钟自动回收验证... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 641 | D_INFRA_RUNTIME 运行时集成: DM-202911: MCP SIGINT/SIGTERM 信号优雅关闭进程.... | → | ProcessLifecycleGateway — 进程生命周期统一入口... | 测试依赖 / test_depends |
+| 642 | D_INFRA_RUNTIME 运行时集成: DM-202911: MCP SIGINT/SIGTERM 信号优雅关闭进程.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 643 | D_INFRA_RUNTIME 运行时集成: test_observability_logging.py | → | logging.py —— ZephyrAlpha 结构化日志系统（Str... | 测试依赖 / test_depends |
+| 644 | D_INFRA_RUNTIME 运行时集成: test_observability_metrics.py | → | metrics.py —— 轻量级 Metrics 收集基础设施（Ph... | 测试依赖 / test_depends |
+| 645 | D_INFRA_RUNTIME 运行时集成: test_observability_tracing.py | → | tracing.py —— OpenTelemetry 分布式追踪（Phase... | 测试依赖 / test_depends |
+| 646 | D_INFRA_RUNTIME 运行时集成: test_observability_tracing.py | → | logging.py —— ZephyrAlpha 结构化日志系统（Str... | 测试依赖 / test_depends |
+| 647 | D_INFRA_TELEMETRY 可观测性: AlertSubsystem — 告警规则评估引擎（MOD-INF-015... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 648 | D_INFRA_TELEMETRY 可观测性: SchemaSubsystem — Schema 版本管理与兼容性校验.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 649 | D_INTEGRATION 管线路由: __init__.py | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
+| 650 | D_INTEGRATION 管线路由: __init__.py | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
+| 651 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 652 | D_INTEGRATION 管线路由: DeepSeekChat — 通过 DeepSeek API 进行 LLM 推理... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 653 | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 654 | D_INTEGRATION 管线路由: OllamaEmbedder — 通过 Ollama HTTP API 生成文本... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 655 | D_INTEGRATION 管线路由: BaseMCPServer: stdio 传输 + JSON-RPC 2.0 协议基... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 656 | D_INTEGRATION 管线路由: MCP 全量工具调用审计日志（MOD-INF-013 §12 Step... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 657 | D_INTEGRATION 管线路由: BlueprintSearchServer — MCP Server for bluepri... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 658 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (... | → | schemas.py | 导入依赖 / import_depends |
+| 659 | D_INTEGRATION 管线路由: DocGuardServer: 跨会话交接协议服务 MCP Server (... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 660 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (gate... | → | schemas.py | 导入依赖 / import_depends |
+| 661 | D_INTEGRATION 管线路由: GateEngineServer: 门禁裁决服务 MCP Server (gate... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 662 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 663 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | yaml_utils.py — vocabulary YAML 加载公共工具（... | 导入依赖 / import_depends |
+| 664 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
+| 665 | D_INTEGRATION 管线路由: MCP Resource 提供者（MOD-INF-013 Phase 6 — 关.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 666 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | ZephyrAlpha 蓝图拆解器 (blueprint_decomposer.py) | 导入依赖 / import_depends |
+| 667 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
+| 668 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 669 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | schemas.py | 导入依赖 / import_depends |
+| 670 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | severity_types.py | 导入依赖 / import_depends |
+| 671 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Task Manager Server (task_manag... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 672 | D_INTEGRATION 管线路由: ZephyrAlpha MCP Telemetry Server — 系统可观测.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 673 | D_INTEGRATION 管线路由: VectorMemoryServer: VMS 向量记忆 MCP Server (MO... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
+| 674 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 ... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 675 | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 ... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 676 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | LLMGatewayProtocol — LLM 网关抽象接口 (llm_gat... | 导入依赖 / import_depends |
+| 677 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 678 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 679 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
+| 680 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
+| 681 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 682 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | ports — D-DATA 服务的 Protocol 定义 (ports.py) | 导入依赖 / import_depends |
+| 683 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
+| 684 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 685 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 686 | D_INTEGRATION 管线路由: contract_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
+| 687 | D_INTEGRATION 管线路由: CTR-ERR-001: DataQualityError / 行情质量门禁不.... | → | trace_context.py | 导入依赖 / import_depends |
+| 688 | D_INTEGRATION 管线路由: execution_rejection_error.py | → | trace_context.py | 导入依赖 / import_depends |
+| 689 | D_INTEGRATION 管线路由: CTR-ERR-002: FactorComputationError / 因子计算.... | → | trace_context.py | 导入依赖 / import_depends |
+| 690 | D_INTEGRATION 管线路由: risk_limit_violation_error.py | → | trace_context.py | 导入依赖 / import_depends |
+| 691 | D_INTEGRATION 管线路由: signal_degradation_warning.py | → | trace_context.py | 导入依赖 / import_depends |
+| 692 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
+| 693 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 694 | D_INTEGRATION 管线路由: dlq.py —— ZephyrAlpha 死信队列（Dead Letter Q... | → | SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 695 | D_INTEGRATION 管线路由: CT-DLQ-001: DeadLetterQueue -> System Event Bus... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
 | 696 | D_INTEGRATION 管线路由: event_schemas.py —— Observer 事件体 Pydantic ... | → | Zero-dependency Observer pattern (subscribe/emi... | 导入依赖 / import_depends |
 | 697 | D_INTEGRATION 管线路由: EventBus 升级策略引擎 (upgrade_strategy.py) | → | observer.py —— Re-export wrapper -> canonical... | 导入依赖 / import_depends |
 | 698 | D_INTEGRATION 管线路由: schema_registry.py | → | __version__.py —— ZephyrAlpha Shared 模块版本... | 导入依赖 / import_depends |
@@ -2837,9 +2832,9 @@ graph LR
     D_SHARED -->|1条 测试依赖 / test_depends| D_FUNDAMENTAL_SIGNAL
     D_SHARED -->|1条 测试依赖 / test_depends| D_OPS
     D_SHARED -->|1条 测试依赖 / test_depends| D_INTELLIGENCE
-    D_INFRA_RUNTIME -->|187条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
+    D_INFRA_RUNTIME -->|186条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_GOVERNANCE -->|110条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
-    D_INTEGRATION -->|66条 导入依赖 / import_depends| D_SHARED
+    D_INTEGRATION -->|67条 导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE -->|56条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_GOV_SCRIPTS -->|52条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_GOV_AUDIT -->|50条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED

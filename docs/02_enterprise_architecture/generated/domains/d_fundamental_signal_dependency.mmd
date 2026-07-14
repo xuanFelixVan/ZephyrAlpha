@@ -1,5 +1,5 @@
 %% D_FUNDAMENTAL_SIGNAL 域全景依赖图
-%% 生成时间: 2026-07-15 00:49:03
+%% 生成时间: 2026-07-15 02:07:12
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 9, 依赖边数: 32
 
@@ -33,15 +33,15 @@ graph TD
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____apital_allocation_result_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_capital_capital_allocator_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
+    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
+    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
-    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
-    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_signal_aggregator_py
-    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
-    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
     D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_synth_signal_synthesizer_py
+    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental____efault_capital_allocator_py
+    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_signal_fundamental_strategy_capital_allocator_py
     D_SIGLEGACY[D_SIGLEGACY] -->|config_depends| src_zephyr_signal_fundamental_gen_aggregator_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
@@ -55,10 +55,10 @@ graph TD
     src_zephyr_signal_fundamental____efault_signal_aggregator_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental____efault_signal_aggregator_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_strategy_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_signal_fundamental_synth_signal_synthesizer_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_signal_fundamental____efault_capital_allocator_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 5 条

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 00:48:55
+> 最后更新: 2026-07-15 02:07:01
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -87,9 +87,9 @@ graph TD
     src_zephyr_pf_alloc_init_py -.->|config_depends / config_depends| src_zephyr_pf_alloc_strategy_lifecycle_event_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
@@ -112,10 +112,10 @@ graph TD
     subgraph D_PF_ALLOC["D_PF_ALLOC 组合分配"]
         src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     end
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
@@ -125,7 +125,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_default_equity_strategy_py production
-    class D_SHARED,D_INFRASTRUCTURE,D_GOVERNANCE,D_PF_CORE external_design
+    class D_INFRASTRUCTURE,D_SHARED,D_GOVERNANCE,D_PF_CORE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
