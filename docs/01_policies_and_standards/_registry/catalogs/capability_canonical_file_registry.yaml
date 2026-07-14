@@ -1642,6 +1642,24 @@ capabilities:
       - make_ch_final_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ch_version_col_gate
+    aliases:
+      - CH-VERSION-COL
+      - ch-version-col
+      - make_ch_version_col_gate
+      - ch_version_col_misuse_blocker
+    description: >-
+      CH version 列语义误用阻断门禁(CH-VERSION-COL, 裁定 #ARCH-CH-009 防复发).
+      diff 检测 staged .py/.md/.sql/.yaml/.yml 文件新增行中
+      ReplacingMergeTree(非DateTime列) 模式, 阻断 quality_flag/is_deleted/
+      is_active/status/version_num/revision 等非时序列作 version 参数.
+      违反裁定 #ARCH-CH-009 version 列语义(非 DateTime 列 100% 行值相同,
+      等同无参数 ReplacingMergeTree, 去重失效). tests/ 豁免,
+      git diff 不可达 fail-open, 检出违规则 fail-closed (passed=False). priority=38.
+    integrity_anchors:
+      - make_ch_version_col_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: speed_test
     aliases:
       - speed-test
@@ -4335,6 +4353,10 @@ creation_tokens:
     token: "auto-ch-final-gate-20260715"
     created_by: "session-sess-28192-20260715012043"
     capability: "ch_final_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py"
+    token: "auto-ch-version-col-gate-20260715"
+    created_by: "session-sess-2580-20260715033135"
+    capability: "ch_version_col_gate"
   - file: "src/zephyr/data/speed_tester.py"
     token: "auto-speed-tester-20260710"
     created_by: "session-sess-32844-20260710170551"
