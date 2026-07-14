@@ -262,20 +262,21 @@ class IntegratorScheduler:
     # ============== 任务执行 ==============
 
     def run_task(self, task_id: str) -> bool:
-        """执行单个任务。
+        """执行单个任务（含数据源 fallback 机制）。
 
-        流程（蓝图 §3.2 数据流）：
+        流程（数据韧性三层机制 §2）：
         1. 查任务定义
-        2. 获取 Provider + 策略
-        3. 查断点续传 last_key
-        4. 构造 FetchPayload
-        5. Provider.fetch -> FetchResult 迭代器
-        6. ch_writer.write_result
-        7. progress_store.save_progress
-        8. 失败 -> alerter.notify
+        2. 构造数据源尝试列表：主源 + fallback_sources
+        3. 逐源调用 _try_source
+        4. 不可恢复错误（配额/认证）→ 立即 fallback 到副源
+        5. 可恢复错误（超时/网络）→ 尝试下一个源
+        6. 全部源失败 → 返回 False
+
+        Args:
+            task_id: 任务标识。
 
         Returns:
-            是否成功。
+            是否成功（任一源成功即返回 True）。
         """
         # 查任务定义
         task = self._task_queue.get_task(task_id)
@@ -289,7 +290,72 @@ class IntegratorScheduler:
             log.error("未知任务: %s", task_id)
             return False
 
-        source = task["source"]
+        # 构造数据源尝试列表：主源 + 副源
+        sources_to_try: list[tuple[str, str | None]] = [
+            (task["source"], task.get("capability"))
+        ]
+        for fb in task.get("fallback_sources") or []:
+            sources_to_try.append(
+                (fb["source"], fb.get("capability", task.get("capability")))
+            )
+
+        last_error: str | None = None
+        for i, (source, capability) in enumerate(sources_to_try):
+            is_fallback = i > 0
+            if is_fallback:
+                log.info(
+                    "任务 %s fallback 到副源 %s (主源失败: %s)",
+                    task_id, source, last_error,
+                )
+                self._alerter.notify(
+                    task_id, f"主源失败({last_error}), fallback到 {source}",
+                    level=LEVEL_ERROR, source=source,
+                )
+            success, error = self._try_source(
+                task, task_id, source, capability, is_fallback
+            )
+            if success:
+                return True
+            last_error = error
+            if i < len(sources_to_try) - 1:
+                from zephyr.data.error_classifier import is_unrecoverable
+                if is_unrecoverable(error):
+                    log.info(
+                        "任务 %s 源 %s 不可恢复错误，立即fallback",
+                        task_id, source,
+                    )
+                else:
+                    log.info(
+                        "任务 %s 源 %s 失败，尝试下一个源",
+                        task_id, source,
+                    )
+        return False
+
+    def _try_source(
+        self, task: dict, task_id: str, source: str,
+        capability: str | None, is_fallback: bool = False,
+    ) -> tuple[bool, str | None]:
+        """尝试单个数据源执行任务（run_task 的核心逻辑）。
+
+        流程（蓝图 §3.2 数据流）：
+        1. 获取 Provider + 策略
+        2. 查断点续传 last_key
+        3. 构造 FetchPayload
+        4. Provider.fetch -> FetchResult 迭代器
+        5. ch_writer.write_result
+        6. progress_store.save_progress
+        7. 失败 -> alerter.notify
+
+        Args:
+            task: 任务定义 dict。
+            task_id: 任务标识。
+            source: 数据源标识。
+            capability: 能力标识（用于 provider 路由，来自 task 或 fallback_sources）。
+            is_fallback: 是否为 fallback 副源调用。
+
+        Returns:
+            (是否成功, 错误信息)。成功时 error 为 None。
+        """
         table = task["table"]
         incremental = task.get("incremental", True)
 
@@ -297,7 +363,7 @@ class IntegratorScheduler:
         provider = self._get_provider(source)
         if provider is None:
             self._alerter.notify(task_id, f"Provider {source} 不可用", level=LEVEL_ERROR, source=source)
-            return False
+            return False, f"Provider {source} 不可用"
 
         # 获取策略
         policy = self._policy_registry.get_policy(source)
@@ -309,7 +375,7 @@ class IntegratorScheduler:
                 task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
             )
             self._task_queue.mark_failed(task_id)
-            return False
+            return False, f"源 {source} 已熔断"
 
         # 查断点续传
         last_key = self._progress_store.get_last_key(task_id)
@@ -324,8 +390,8 @@ class IntegratorScheduler:
 
         # 构造 FetchPayload（capability 注入 extra 供 provider 路由）
         extra = dict(task.get("extra", {}) or {})
-        if task.get("capability"):
-            extra.setdefault("capability", task["capability"])
+        if capability:
+            extra.setdefault("capability", capability)
         payload = FetchPayload(
             table=table,
             symbols=task.get("symbols"),
@@ -340,8 +406,8 @@ class IntegratorScheduler:
         self._task_queue.mark_running(task_id)
         task_start_ts = time.time()
 
-        log.info("任务 %s 开始: source=%s table=%s start=%s end=%s",
-                 task_id, source, table, start, today)
+        log.info("任务 %s 开始: source=%s table=%s start=%s end=%s fallback=%s",
+                 task_id, source, table, start, today, is_fallback)
 
         total_rows = 0
         last_error: str | None = None
@@ -410,7 +476,7 @@ class IntegratorScheduler:
                 self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
                 self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=False)
-                return False
+                return False, last_error
             else:
                 self._progress_store.save_progress(
                     task_id, source, latest_key, "SUCCESS", total_rows
@@ -422,7 +488,7 @@ class IntegratorScheduler:
                 self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, total_rows)
                 self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=True)
-                return True
+                return True, None
 
         except Exception as e:
             last_error = str(e)
@@ -438,7 +504,7 @@ class IntegratorScheduler:
             self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
             self._metrics.flush()
             self._emit_event("task_completed", task_id=task_id, success=False)
-            return False
+            return False, last_error
 
     def run_schedule(self, schedule_name: str) -> dict[str, bool]:
         """执行某时段的所有任务（DAG 顺序）。
@@ -454,6 +520,12 @@ class IntegratorScheduler:
             from zephyr.data.backfill_checker import run_weekend_backfill
             result = run_weekend_backfill(self)
             return {"tick_backfill_weekly": result.get("success", False)}
+
+        # 每日数据完整性巡检：动态发现全表，检测当日数据是否达标
+        if schedule_name == "integrity_check":
+            from zephyr.data.integrity_checker import run_daily_check
+            result = run_daily_check(self)
+            return {"integrity_check_daily": result.get("success", False)}
 
         # 过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）
         schedule_tasks = [

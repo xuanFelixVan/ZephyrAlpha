@@ -44,8 +44,11 @@ tasks:
     dependencies: []  # kline_daily 独立，不依赖 hfq
     capability: kline_daily
     symbols: null
+    fallback_sources:
+      - source: baostock
+        capability: kline_daily
     extra:
-      description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据）"
+      description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据；baostock 作为 fallback）"
 
   - task_id: daily_valuation_incremental
     table: c1_market.daily_valuation
@@ -56,8 +59,11 @@ tasks:
     dependencies: ["kline_daily_incremental"]  # DAG: kline_daily -> daily_valuation
     capability: daily_valuation
     symbols: null
+    fallback_sources:
+      - source: akshare
+        capability: daily_valuation
     extra:
-      description: "每日估值（PE/PB/PS/PCF）增量（iFind THS_BasicData 逐指标查PE/PB/PS + i问财补齐PCF当天值；速度0.4851只/秒 快AKShare 2.35倍）"
+      description: "每日估值（PE/PB/PS/PCF）增量（iFind 主源；akshare 作为 fallback）"
 
   - task_id: kline_index_incremental
     table: c1_market.kline_index
@@ -141,8 +147,11 @@ tasks:
     dependencies: []
     capability: money_flow
     symbols: null
+    fallback_sources:
+      - source: akshare
+        capability: money_flow
     extra:
-      description: "资金流向增量（AKShare stock_individual_fund_flow）"
+      description: "资金流向增量（iFind 主源；akshare stock_individual_fund_flow 作为 fallback）"
 
   - task_id: hk_connect_flow_incremental
     table: c1_market.hk_connect_flow
@@ -1191,7 +1200,19 @@ tasks:
     capability: auction_data
     symbols: null
     extra:
-      description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累）"
+      description: "集合竞价数据快照（miniQMT get_full_tick，9:15-9:25实时积累，基础字段）"
+
+  - task_id: auction_book_snapshot
+    table: c1_market.auction_book
+    source: miniqmt
+    schedule: intraday_realtime
+    incremental: true
+    date_col: trade_date
+    dependencies: []
+    capability: auction_book
+    symbols: null
+    extra:
+      description: "集合竞价盘口快照（miniQMT get_full_tick 五档，9:15-9:25实时积累，用于主力挂撤单行为分析）"
 
   - task_id: futures_kline_qmt_incremental
     table: c1_market.futures_kline_qmt
