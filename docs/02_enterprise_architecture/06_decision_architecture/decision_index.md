@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-15T00:49:22
+> 生成时间: 2026-07-15T04:35:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -17,11 +17,11 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 179 |
+| Layer（层） | 180 |
 | Node（节点） | 214 |
 | Edge（边） | 213 |
 | 运营态 Layer（design_maturity=production） | 17 |
-| 设计态 Layer（design_maturity=design） | 57 |
+| 设计态 Layer（design_maturity=design） | 58 |
 | 原型态 Layer（design_maturity=prototype） | 105 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
@@ -516,6 +516,7 @@ flowchart TD
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_019["[prototype]MOD-GOV-019: MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>build: generated"]:::bsGenerated
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
+        LMOD_GOV_ALIGNMENT_LOOP["[design]MOD-GOV-ALIGNMENT-LOOP: MOD-GOV-ALIGNMENT-LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
         LMOD_GOV_REPAIR["[prototype]MOD-GOV-REPAIR: MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>build: generated"]:::bsGenerated
         LMOD_GOV_SCRIPTS["[prototype]MOD-GOV-SCRIPTS: MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>build: generated"]:::bsGenerated
@@ -695,7 +696,8 @@ flowchart TD
     LMOD_FEEDBACK_LOOP -.->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -.->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -.->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_DOCS
+    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_ALIGNMENT_LOOP
+    LMOD_GOV_ALIGNMENT_LOOP -.->|triggering| LMOD_GOV_DOCS
     LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -.->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -.->|triggering| LMOD_GOV_SCRIPTS_ARCH
@@ -1111,7 +1113,7 @@ flowchart TD
 
 ### 设计态全景图（仅 design_maturity=design 的 layer/node）
 
-> 仅展示蓝图规划中尚未实现的决策层/节点（共 57 层，137 边）。
+> 仅展示蓝图规划中尚未实现的决策层/节点（共 58 层，137 边）。
 
 ```mermaid
 flowchart TD
@@ -1418,6 +1420,7 @@ flowchart TD
         LMOD_FEEDBACK_LOOP["[design]MOD-FEEDBACK_LOOP: MOD-FEEDBACK_LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
+        LMOD_GOV_ALIGNMENT_LOOP["[design]MOD-GOV-ALIGNMENT-LOOP: MOD-GOV-ALIGNMENT-LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: generated"]:::bsGenerated
         LMOD_INF_005["[design]MOD-INF-005: MOD-INF-005<br/>build: planned"]:::bsPlanned
         LMOD_INF_009["[design]MOD-INF-009: MOD-INF-009<br/>build: planned"]:::bsPlanned
@@ -1475,7 +1478,8 @@ flowchart TD
     LMOD_DIGITAL_TWIN -.->|triggering| LMOD_FEEDBACK_LOOP
     LMOD_FEEDBACK_LOOP -.->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -.->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOVERNANCE
+    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_ALIGNMENT_LOOP
+    LMOD_GOV_ALIGNMENT_LOOP -.->|triggering| LMOD_GOVERNANCE
     LMOD_GOVERNANCE -.->|triggering| LMOD_INF_005
     LMOD_INF_005 -.->|triggering| LMOD_INF_009
     LMOD_INF_009 -.->|triggering| LMOD_INF_011
@@ -1706,6 +1710,7 @@ flowchart LR
     LMOD_GATE_ENGINE["[design] MOD-GATE_ENGINE MOD-GATE_ENGINE<br/>MOD-GATE_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_019["[prototype] MOD-GOV-019 MOD-GOV-019<br/>MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_ALIGN_PANORAMAS["[design] MOD-GOV-ALIGN-PANORAMAS MOD-GOV-ALIGN-PANORAMAS<br/>MOD-GOV-ALIGN-PANORAMAS<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_GOV_ALIGNMENT_LOOP["[design] MOD-GOV-ALIGNMENT-LOOP MOD-GOV-ALIGNMENT-LOOP<br/>MOD-GOV-ALIGNMENT-LOOP<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_DOCS["[production] MOD-GOV-DOCS MOD-GOV-DOCS<br/>MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_GOV_REPAIR["[prototype] MOD-GOV-REPAIR MOD-GOV-REPAIR<br/>MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_SCRIPTS["[prototype] MOD-GOV-SCRIPTS MOD-GOV-SCRIPTS<br/>MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1884,7 +1889,8 @@ flowchart LR
     LMOD_FEEDBACK_LOOP -->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -->|triggering| LMOD_GOV_DOCS
+    LMOD_GOV_ALIGN_PANORAMAS -->|triggering| LMOD_GOV_ALIGNMENT_LOOP
+    LMOD_GOV_ALIGNMENT_LOOP -->|triggering| LMOD_GOV_DOCS
     LMOD_GOV_DOCS -->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -->|triggering| LMOD_GOV_SCRIPTS_ARCH
@@ -2119,6 +2125,7 @@ flowchart TD
 | MOD-GATE_ENGINE | MOD-GATE_ENGINE | MOD-GATE_ENGINE | placeholder | MOD-GATE_ENGINE | docs__03_modules___cross_layer__gate_engine__blueprint_md | - | - | - | design | planned |
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | prototype | generated |
 | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | placeholder | MOD-GOV-ALIGN-PANORAMAS | - | - | - | - | design | stable |
+| MOD-GOV-ALIGNMENT-LOOP | MOD-GOV-ALIGNMENT-LOOP | MOD-GOV-ALIGNMENT-LOOP | placeholder | MOD-GOV-ALIGNMENT-LOOP | - | - | - | - | design | planned |
 | MOD-GOV-DOCS | MOD-GOV-DOCS | MOD-GOV-DOCS | placeholder | MOD-GOV-DOCS | - | - | - | - | production | generated |
 | MOD-GOV-REPAIR | MOD-GOV-REPAIR | MOD-GOV-REPAIR | placeholder | MOD-GOV-REPAIR | - | - | - | - | prototype | generated |
 | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | placeholder | MOD-GOV-SCRIPTS | - | - | - | - | prototype | generated |

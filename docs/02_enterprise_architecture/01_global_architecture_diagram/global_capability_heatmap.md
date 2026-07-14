@@ -129,23 +129,23 @@ ttl: permanent
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 55 | 7 | 3 | 45 | 1.25 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 58 | 9 | 3 | 46 | 1.25 | 🟡 部分覆盖 / Partial |
 | C2 | 因子研究 | 5 | 53 | 7 | 0 | 46 | 1.60 | 🟡 部分覆盖 / Partial |
 | C3 | 风险控制 | 2 | 43 | 9 | 0 | 34 | 1.50 | 🟡 部分覆盖 / Partial |
 | C4 | 策略决策 | 4 | 37 | 4 | 2 | 31 | 1.75 | 🟡 部分覆盖 / Partial |
 | C5 | 执行交易 | 4 | 81 | 31 | 1 | 49 | 1.75 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 12 | 0 | 1 | 11 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 15 | 1171 | 900 | 34 | 237 | 2.07 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 15 | 1173 | 904 | 32 | 237 | 2.07 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 214 | 106 | 0 | 108 | 1.20 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 1080 | 682 | 13 | 385 | 1.88 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 1032 | 637 | 13 | 382 | 1.88 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | prototype | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_DATA | data_source_integrator | C1 |  | 31 | 7 | 0 | 24 | 0 | L2 🟡 | 🟡 |
+| D_DATA | data_source_integrator | C1 |  | 34 | 9 | 0 | 25 | 0 | L2 🟡 | 🟡 |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 10 | 0 | 3 | 7 | 0 | L1 🔵 | 🟡 |
 | D_ASHARE_SIGNAL | ashare_signal | C2 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
@@ -173,10 +173,10 @@ ttl: permanent
 | D_FBL_DETECTORS | feedback_detectors | CC1 | L1_foundation | 65 | 59 | 0 | 6 | 0 | L2 🟡 | 🟡 |
 | D_FBL_DIAGNOSERS | feedback_diagnosers | CC1 | L1_foundation | 76 | 71 | 0 | 5 | 0 | L2 🟡 | 🟡 |
 | D_FBL_VERIFICATION | feedback_verification | CC1 | L1_foundation | 71 | 67 | 0 | 4 | 0 | L2 🟡 | 🟡 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L1_foundation | 124 | 109 | 0 | 15 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 212 | 140 | 3 | 69 | 1 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 102 | 68 | 2 | 32 | 0 | L2 🟡 | 🟡 |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 109 | 100 | 0 | 9 | 0 | L2 🟡 | 🟡 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L1_foundation | 124 | 110 | 0 | 14 | 0 | L2 🟡 | 🟡 |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 210 | 140 | 1 | 69 | 1 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 102 | 69 | 2 | 31 | 0 | L2 🟡 | 🟡 |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 113 | 102 | 0 | 11 | 0 | L2 🟡 | 🟡 |
 | D_GOV_DOCS | architecture_docs | CC1 | L2_domain | 96 | 68 | 28 | 0 | 0 | L2 🟡 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 73 | 67 | 1 | 5 | 0 | L2 🟡 | 🟡 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 34 | 17 | 0 | 17 | 1 | L3 🟢 | ✅ |
@@ -195,7 +195,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | CC3 | L0_infrastructure | 77 | 29 | 0 | 48 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
 | D_INFRA_RECOVERY | rollback_recovery | CC3 | L0_infrastructure | 54 | 48 | 0 | 6 | 0 | L2 🟡 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 245 | 144 | 3 | 98 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 245 | 145 | 3 | 97 | 0 | L2 🟡 | 🟡 |
 | D_INFRA_TELEMETRY | observability_profiling | CC3 | L0_infrastructure | 10 | 8 | 0 | 2 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 98 | 53 | 0 | 45 | 0 | L2 🟡 | 🟡 |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 2 | 1 | 0 | 1 | 0 | L2 🟡 | 🟡 |
@@ -204,7 +204,7 @@ ttl: permanent
 | D_OPS | telemetry | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 0 | L2 🟡 | 🟡 |
 | D_ORCHESTRATOR | agent_orchestrator | CC3 | L1_foundation | 73 | 59 | 0 | 14 | 0 | L2 🟡 | 🟡 |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 10 | 1 | 0 | 9 | 0 | L2 🟡 | 🟡 |
-| D_SHARED | shared_services | CC3 | L1_foundation | 237 | 155 | 0 | 82 | 0 | L2 🟡 | 🟡 |
+| D_SHARED | shared_services | CC3 | L1_foundation | 189 | 109 | 0 | 80 | 0 | L2 🟡 | 🟡 |
 
 ## 差距分析 / Gap Analysis
 
@@ -235,7 +235,7 @@ ttl: permanent
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | data_source_integrator | C1 | L2 | 31 |
+| D_DATA | data_source_integrator | C1 | L2 | 34 |
 | D_FACTOR | 因子 | C2 | L2 | 13 |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal | C2 | L2 | 9 |
 | D_SIGLEGACY | signal_legacy | C2 | L2 | 16 |
@@ -253,7 +253,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | feedback_verification | CC1 | L2 | 71 |
 | D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L2 | 124 |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2 | 102 |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L2 | 109 |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L2 | 113 |
 | D_GOV_DOCS | architecture_docs | CC1 | L2 | 96 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2 | 73 |
 | D_GOV_KB | knowledge_base_governance | CC1 | L2 | 31 |
@@ -275,11 +275,11 @@ ttl: permanent
 | D_OPS | telemetry | CC3 | L2 | 9 |
 | D_ORCHESTRATOR | agent_orchestrator | CC3 | L2 | 73 |
 | D_REPORTING | 报告 | CC3 | L2 | 10 |
-| D_SHARED | shared_services | CC3 | L2 | 237 |
+| D_SHARED | shared_services | CC3 | L2 | 189 |
 
 ### 已就绪（L3，生产已验证）/ Ready (L3, verified)
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | CC1 | L3 | 212 |
+| D_GOVERNANCE | registry_management | CC1 | L3 | 210 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 34 |

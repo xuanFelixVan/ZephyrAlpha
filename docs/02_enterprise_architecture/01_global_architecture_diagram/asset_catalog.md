@@ -25,7 +25,7 @@ ttl: permanent
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
 | 配置项 | 33 | config/*.yaml |
-| 数据流作业 | 180 | dataflow_graph_registry.yaml |
+| 数据流作业 | 64 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
 | **合计** | **258** | |
 
