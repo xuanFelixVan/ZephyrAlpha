@@ -59,7 +59,7 @@ class VectorMemoryProtocol(Protocol):
 class ChromaDbProvider(Protocol):
     """ChromaDB 客户端提供者 Protocol。"""
 
-    def get_client(self) -> Any: ...
+    def get_client(self) -> object: ...
 
 
 @runtime_checkable

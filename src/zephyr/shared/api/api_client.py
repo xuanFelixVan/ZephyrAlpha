@@ -49,12 +49,15 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum, unique
-from typing import Any, Protocol, Self
+from typing import TYPE_CHECKING, Any, Protocol, Self
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.io.serialization import to_dict
 from zephyr.shared.resilience.circuit_breaker import CircuitBreaker
 from zephyr.shared.resilience.retry import RetryConfig, async_retry
+
+if TYPE_CHECKING:
+    from zephyr.shared.infra.observer import Observer
 
 __all__ = [
     "AioHttpProvider",
@@ -160,7 +163,7 @@ class ApiClient:
         config: ApiClientConfig | None = None,
         *,
         circuit_breaker: CircuitBreaker | None = None,
-        observer: Any | None = None,
+        observer: Observer | None = None,
     ) -> None:
         self._provider = provider
         self._config = config or ApiClientConfig()

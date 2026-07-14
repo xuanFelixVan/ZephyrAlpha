@@ -195,7 +195,7 @@ class EventBusBackpressure:
         self._contract_rejected_count = 0
         self._contract_bus: Any | None = None
 
-    def set_contract_bus(self, contract_bus: Any) -> None:
+    def set_contract_bus(self, contract_bus: object) -> None:
         self._contract_bus = contract_bus
 
     def subscribe(self, topic: str, handler: Callable[[Event], None]):
@@ -224,7 +224,7 @@ class EventBusBackpressure:
     def emit(
         self,
         topic: str,
-        payload: Any,
+        payload: dict[str, Any],
         priority: EventPriority = EventPriority.NORMAL,
         *,
         contract_id: str | None = None,

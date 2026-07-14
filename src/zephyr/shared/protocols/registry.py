@@ -67,7 +67,7 @@ class ServiceRegistry:
             logger.debug("ServiceRegistry: registered '%s'", key)
 
     @classmethod
-    def get(cls, key: str) -> Any:
+    def get(cls, key: str) -> object:
         """获取服务实例（首次调用时惰性创建）。"""
         if key not in _VALID_KEYS:
             raise KeyError(f"Invalid service key '{key}'. Valid keys: {sorted(_VALID_KEYS)}")

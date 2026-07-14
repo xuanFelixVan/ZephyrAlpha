@@ -38,7 +38,7 @@ import threading
 import time
 from collections import OrderedDict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import yaml
 
@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 class _CacheEntry:
     __slots__ = ("access_time", "data", "mtime", "size_bytes")
 
-    def __init__(self, data: Any, size_bytes: int, mtime: float) -> None:
+    def __init__(self, data: object, size_bytes: int, mtime: float) -> None:
         self.data = data
         self.size_bytes = size_bytes
         self.mtime = mtime

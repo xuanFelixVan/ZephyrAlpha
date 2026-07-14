@@ -69,7 +69,7 @@ _REGISTRY_PATH = Path(__file__).parent / "_state-machine-registry.yaml"
 class InvalidTransitionError(ZephyrBaseError):
     error_code = "ZA-SH-0027"
 
-    def __init__(self, fsm_id: str, current: Any, target: Any, allowed: set[Any] | None = None, *, error_code: str | None = None):
+    def __init__(self, fsm_id: str, current: str, target: str, allowed: set[Any] | None = None, *, error_code: str | None = None):
         self.fsm_id = fsm_id
         self.current_state = current
         self.target_state = target
@@ -83,7 +83,7 @@ class InvalidTransitionError(ZephyrBaseError):
 class TransitionGuardError(ZephyrBaseError):
     error_code = "ZA-SH-0028"
 
-    def __init__(self, fsm_id: str, source: Any, target: Any, reason: str, *, error_code: str | None = None):
+    def __init__(self, fsm_id: str, source: str, target: str, reason: str, *, error_code: str | None = None):
         self.fsm_id = fsm_id
         self.source_state = source
         self.target_state = target

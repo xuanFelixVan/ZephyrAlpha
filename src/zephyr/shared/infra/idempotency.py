@@ -147,7 +147,7 @@ class IdempotencyStore:
         self._records[key] = record
         return record
 
-    def complete(self, key: str, result: Any) -> IdempotencyRecord:
+    def complete(self, key: str, result: object) -> IdempotencyRecord:
         record = self._records.get(key)
         if record is None:
             raise IdempotencyError(

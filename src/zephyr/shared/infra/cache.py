@@ -94,8 +94,8 @@ class CacheStats:
 class CacheProvider(Protocol):
     """缓存后端接口——获取/设置/删除/清空/统计。"""
 
-    async def get(self, key: str) -> Any | None: ...
-    async def set(self, key: str, value: Any, *, ttl_seconds: int = TTL_EXPIRED_DEFAULT_SECONDS) -> None: ...
+    async def get(self, key: str) -> object | None: ...
+    async def set(self, key: str, value: object, *, ttl_seconds: int = TTL_EXPIRED_DEFAULT_SECONDS) -> None: ...
     async def delete(self, key: str) -> bool: ...
     async def clear(self) -> None: ...
     def stats(self) -> CacheStats: ...
@@ -153,7 +153,7 @@ class MemoryCache:
         else:
             self._access_order[key] = None  # O(1)
 
-    async def get(self, key: str) -> Any | None:
+    async def get(self, key: str) -> object | None:
         self._evict_expired()
 
         entry = self._store.get(key)
@@ -165,7 +165,7 @@ class MemoryCache:
         self._touch(key)
         return entry.value
 
-    async def set(self, key: str, value: Any, *, ttl_seconds: int | None = None) -> None:
+    async def set(self, key: str, value: object, *, ttl_seconds: int | None = None) -> None:
         effective_ttl = ttl_seconds if ttl_seconds is not None else self._default_ttl
         expires_at = time.monotonic() + effective_ttl
 

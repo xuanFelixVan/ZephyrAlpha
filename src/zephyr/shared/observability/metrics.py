@@ -298,19 +298,19 @@ def subscribe_metrics_events() -> None:
 
         registry = get_registry()
 
-        def _on_f5_deadlock(payload: Any) -> None:
+        def _on_f5_deadlock(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_f5_deadlock_total")
             except Exception as e:
                 _logger.warning("suppressed error in metrics", exc_info=True)
 
-        def _on_fle_anomaly(payload: Any) -> None:
+        def _on_fle_anomaly(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_fle_anomaly_total")
             except Exception as e:
                 _logger.warning("suppressed error in metrics", exc_info=True)
 
-        def _on_audit_finding(payload: Any) -> None:
+        def _on_audit_finding(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_audit_finding_total")
             except Exception as e:

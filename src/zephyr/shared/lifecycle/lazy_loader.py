@@ -73,7 +73,7 @@ class LazyModuleRegistry:
                 is_core=is_core or name in self._core_modules,
             )
 
-    def load(self, name: str) -> Any:
+    def load(self, name: str) -> object:
         with self._lock:
             entry = self._entries.get(name)
             if entry is None:
@@ -111,7 +111,7 @@ class LazyModuleRegistry:
     def is_registered(self, name: str) -> bool:
         return name in self._entries
 
-    def get(self, name: str) -> Any:
+    def get(self, name: str) -> object:
         with self._lock:
             entry = self._entries.get(name)
             if entry is None:
