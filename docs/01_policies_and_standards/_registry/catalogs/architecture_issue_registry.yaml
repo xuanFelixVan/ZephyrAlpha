@@ -1826,8 +1826,53 @@ entries:
   adjudication: 'ARCH-CAP-002 v1.0.8 容量门禁实现，单域 production_nodes >150 硬阻断。'
   fix_phase: 已完成（门禁已注册）
   status: resolved
-  created: '2026-07-04'
-  last_updated: '2026-07-04'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
+# --- #ARCH-DEPGRAPH_ACCESS_CONTROL: depgraph 访问控制治本（角色分级+默认只读+commit门禁） ---
+- issue_id: '#ARCH-DEPGRAPH_ACCESS_CONTROL'
+  title: depgraph 访问控制治本——角色分级+默认只读+commit门禁三层防护
+  category: architecture_governance
+  severity: P1高
+  status: resolved
+  description: |
+    问题背景：get_depgraph_pg_connection() 原先返回完整读写连接（zephyr superuser），
+    任何代码都可直接执行 INSERT/UPDATE/DELETE 绕过 apply_depgraph.py 统一入口。
+    红蓝对抗测试发现可被绕过性风险——直接 SQL DELETE 可绕过所有治理门禁。
+
+    裁定：三层防护实现 depgraph 写入路径白名单制：
+    (L1) PostgreSQL 角色分级：depgraph_reader（SELECT only）+ depgraph_writer（DML）+ postgres（DDL）
+    (L2) 连接函数默认只读：get_depgraph_pg_connection(read_only=True) 默认 reader 角色
+    (L3) pre-commit 门禁：DEPGRAPH-WRITE-PATH gate 检测非白名单文件中的写入权限参数
+
+    白名单文件（5个）：
+    - scripts/governance/apply_depgraph.py（depgraph 修改唯一合法 CLI）
+    - scripts/governance/generate_project_depgraph.py（全量重建）
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（YAML→DB 同步）
+    - scripts/governance/_shared/constants.py（连接 wrapper）
+    - src/zephyr/governance/depgraph_schema.py（连接函数定义）
+  adjudication: |
+    6 项裁定：
+    (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色
+    (b) depgraph_schema.py 的 _build_pg_dsn 支持 read_only/superuser 参数
+    (c) _shared/constants.py wrapper 传递 read_only/superuser
+    (d) 3 个合法写入脚本适配 read_only=False/superuser=True
+    (e) 新增 DEPGRAPH-WRITE-PATH gate（priority=97）检测非白名单文件写入参数
+    (f) Phase 5 排查 68 个调用点：2 个只读不改、1 个 task_bound 已删除、
+        apply_decisiongraph/dataflowgraph 用独立连接函数不受影响
+  impact:
+  - scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql（新增角色创建DDL）
+  - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数）
+  - scripts/governance/_shared/constants.py（wrapper 传参）
+  - scripts/governance/generate_project_depgraph.py（read_only=False）
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（superuser=True）
+  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate）
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册gate）
+  - scripts/governance/repair/cleanup_arch_dir_orphans.py（删除，task_bound已完成）
+  fix_phase: 已完成（6 阶段全部完成 + 验证通过）
+  status: resolved
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
 
 # --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
 - issue_id: '#ARCH-BACKFILL-001'
