@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 04:53:07
+> 最后更新: 2026-07-15 05:28:25
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -153,10 +153,10 @@ graph TD
     end
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
@@ -166,8 +166,8 @@ graph TD
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     scripts_governance_meta_manage_kill_switch_py -.->|config_depends / config_depends| D_GOVERNANCE
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -208,6 +208,11 @@ graph TD
         tests_agent_rbac_test_vibe_coding_py["(原型态 / prototype) Vibe Coding / Novel Attack / Cybersec 2026 攻击...<br/>文件: test_vibe_coding.py"]
     end
     D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_kill_switch_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_identity_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_forensic_a_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_guard_layers_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
@@ -218,11 +223,6 @@ graph TD
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_rbac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_rbac_auto_lifecycle_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_vibe_coding_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -306,28 +306,28 @@ graph TD
         tests_agent_rbac_test_toctou_guard_agent_rbac_py["(原型态 / prototype) 测试 TOCTOU Guard — 竞态防护<br/>文件: test_toctou_guard_agent_rbac.py"]
         tests_agent_rbac_test_vibe_coding_py["(原型态 / prototype) Vibe Coding / Novel Attack / Cybersec 2026 攻击...<br/>文件: test_vibe_coding.py"]
     end
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_kill_switch_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py -.->|导入依赖 / import_depends| D_SECURITY
+    tests_agent_rbac_test_enhanced_security_py -.->|测试依赖 / test_depends| D_SECURITY
     src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
     tests_agent_rbac_test_dry_run_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_forensic_a_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_guard_layers_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_integration_root_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_intent_binder_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_observability_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_novel_attack_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_identity_py -.->|测试依赖 / test_depends| D_SECURITY
+    src_zephyr_autonomy_perm_red_blue_validator_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py,src_zephyr_autonomy_perm_init_py,src_zephyr_autonomy_perm_extensions_init_py,src_zephyr_autonomy_perm_api_init_py,src_zephyr_autonomy_perm_core_init_py,src_zephyr_autonomy_perm_infrastructure_init_py,src_zephyr_autonomy_perm_models_init_py,src_zephyr_autonomy_perm_red_blue_validator_init_py,src_zephyr_autonomy_perm_red_blue_validator_attack_registry_py,src_zephyr_autonomy_perm_red_blue_validator_bypass_recorder_py,src_zephyr_autonomy_perm_red_blue_validator_constitution_guard_py,src_zephyr_autonomy_perm_red_blue_validator_convergence_checker_py,src_zephyr_autonomy_perm_red_blue_validator_defense_runner_py,src_zephyr_autonomy_perm_red_blue_validator_game_day_runner_py,src_zephyr_autonomy_perm_services_init_py,tests_agent_rbac_conftest_py,tests_agent_rbac_test_abac_guard_agent_rbac_py,tests_agent_rbac_test_adversarial_agent_rbac_py,tests_agent_rbac_test_adversarial_resilience_py,tests_agent_rbac_test_cross_model_consistency_py,tests_agent_rbac_test_crosscut_d_py,tests_agent_rbac_test_cybersec_2026_py,tests_agent_rbac_test_decision_explainer_agent_rbac_py,tests_agent_rbac_test_decisions_py,tests_agent_rbac_test_derive_rbac_py,tests_agent_rbac_test_dry_run_agent_rbac_py,tests_agent_rbac_test_engine_degradation_agent_rbac_py,tests_agent_rbac_test_enhanced_security_py,tests_agent_rbac_test_exceptions_agent_rbac_py,tests_agent_rbac_test_forensic_a_py,tests_agent_rbac_test_forensic_b_py,tests_agent_rbac_test_forensic_c_py,tests_agent_rbac_test_guard_layers_agent_rbac_py,tests_agent_rbac_test_identity_py,tests_agent_rbac_test_immutable_core_agent_rbac_py,tests_agent_rbac_test_input_guard_agent_rbac_py,tests_agent_rbac_test_integration_agent_rbac_py,tests_agent_rbac_test_integration_root_py,tests_agent_rbac_test_integrity_agent_rbac_py,tests_agent_rbac_test_intent_binder_agent_rbac_py,tests_agent_rbac_test_kill_switch_agent_rbac_py,tests_agent_rbac_test_novel_attack_py,tests_agent_rbac_test_observability_agent_rbac_py,tests_agent_rbac_test_output_guard_agent_rbac_py,tests_agent_rbac_test_permission_guard_py,tests_agent_rbac_test_permissions_py,tests_agent_rbac_test_post_action_py,tests_agent_rbac_test_rbac_auto_lifecycle_py,tests_agent_rbac_test_rbac_guard_agent_rbac_py,tests_agent_rbac_test_redteam_adversarial_py,tests_agent_rbac_test_risk_mitigation_agent_rbac_py,tests_agent_rbac_test_sequence_guard_agent_rbac_py,tests_agent_rbac_test_toctou_guard_agent_rbac_py,tests_agent_rbac_test_vibe_coding_py design
-    class D_SECURITY external_design
+    class D_SECURITY external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

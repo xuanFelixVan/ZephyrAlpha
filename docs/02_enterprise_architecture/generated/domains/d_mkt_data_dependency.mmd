@@ -1,14 +1,13 @@
 %% D_MKT_DATA 域全景依赖图
-%% 生成时间: 2026-07-15 04:54:06
+%% 生成时间: 2026-07-15 05:29:21
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 10, 依赖边数: 1
+%% 模块数: 9, 依赖边数: 1
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_MKT_DATA[行情数据]
         docs_03_modules__cross_layer_d___ts_c1_market_clickhouse_md_["...b_blueprints/c1_market_clickhouse.md/ [design]"]
-        docs_03_modules__domain_data_data_acquisition_plan_md_["...domain_data/data_acquisition_plan.md/ [design]"]
         docs_03_modules__domain_data_d___source_operation_manual_md_["...data/data_source_operation_manual.md/ [design]"]
         src_zephyr_market_data___init___py["src/zephyr/market_data/__init__.py [prototype]"]
         src_zephyr_market_data__extensions___init___py["...r/market_data/_extensions/__init__.py [prototype]"]

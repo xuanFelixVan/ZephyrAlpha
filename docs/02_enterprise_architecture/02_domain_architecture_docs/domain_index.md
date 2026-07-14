@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 5008 |
-| 生产态模块 | 1738 |
+| 模块总数 | 5010 |
+| 生产态模块 | 1739 |
 | 设计态模块 | 64 |
-| 原型态模块 | 3206 |
+| 原型态模块 | 3207 |
 
 ## 域清单（按架构层分组）
 
@@ -81,7 +81,7 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 9 | 3 | 0 | 6 | 9/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
 | D_GOVERNANCE | registry_management / Lifecycle Management | 714 | 142 | 1 | 571 | 714/150 (超容) | [38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 276 | 69 | 2 | 205 | 276/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
-| D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 96 | 68 | 28 | 0 | 96/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
+| D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 97 | 69 | 28 | 0 | 97/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 82 | 17 | 0 | 65 | 82/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 17 | 0 | 14 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
@@ -107,6 +107,6 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 0 | 0 | 0 | 0 | 0/200 (OK) | [59_d_behavioral_audit.md](59_d_behavioral_audit.md) |
 | D_COMPLIANCE | compliance_gate / Compliance | 23 | 0 | 0 | 23 | 23/200 (OK) | [60_d_compliance.md](60_d_compliance.md) |
-| D_DATA | data_source_integrator / D_DATA | 59 | 9 | 0 | 50 | 59/200 (OK) | [61_d_data.md](61_d_data.md) |
+| D_DATA | data_source_integrator / D_DATA | 60 | 9 | 0 | 51 | 60/200 (OK) | [61_d_data.md](61_d_data.md) |
 | D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 61 | 9 | 0 | 52 | 61/200 (OK) | [62_d_infrastructure.md](62_d_infrastructure.md) |
 | D_SIGLEGACY | signal_legacy / Signal Legacy (Design) | 16 | 1 | 0 | 15 | 16/200 (OK) | [63_d_siglegacy.md](63_d_siglegacy.md) |
