@@ -33,7 +33,7 @@ class ArchiveResult:
 
 
 class MemoryWriter:
-    def archive_to_vms(self, task: Any, result: dict[str, Any] | None = None) -> ArchiveResult:
+    def archive_to_vms(self, task: object, result: dict[str, Any] | None = None) -> ArchiveResult:
         try:
             from zephyr.autonomy_core.context.vector_bridge import VectorBridge
             from zephyr.integration.vector_memory.in_memory_fake_vms import InMemoryFakeVMS
@@ -53,5 +53,5 @@ class MemoryWriter:
             return ArchiveResult(stored=0, status="degraded", error="internal error")
 
 
-def archive_to_vms(task: Any, result: dict[str, Any] | None = None) -> ArchiveResult:
+def archive_to_vms(task: object, result: dict[str, Any] | None = None) -> ArchiveResult:
     return MemoryWriter().archive_to_vms(task, result)
