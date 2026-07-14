@@ -1,16 +1,16 @@
-# 自动生成于 2026-07-14T19:02:54Z
+# 自动生成于 2026-07-14T20:35:25Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-14T19:02:54Z'
+generated_at: '2026-07-14T20:35:25Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 342
+total_scripts: 340
 with_manifest: 309
-missing_manifest: 33
+missing_manifest: 31
 categories:
   governance:_sync: 4
-  governance:_tasks: 5
+  governance:_tasks: 4
   governance: 17
   governance:d10_performance: 1
   governance:d11_compliance: 22
@@ -28,7 +28,7 @@ categories:
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 1
   governance:observability: 1
-  governance:repair: 8
+  governance:repair: 7
   governance:vms: 9
 scripts:
 - name: _sync/check_p0_status.py
@@ -104,16 +104,6 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
 - name: _tasks/tmp_update_tasks.py
-  owner: governance:_tasks
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
-- name: _tasks/tmp_verify_split.py
   owner: governance:_tasks
   dimensions: []
   priority: P2
@@ -4079,16 +4069,6 @@ scripts:
   tags:
   - Periodic
   - Quick
-- name: repair/cleanup_arch_dir_orphans.py
-  owner: governance:repair
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: repair/concurrent_commit_test.py
   owner: governance:repair
   dimensions:
