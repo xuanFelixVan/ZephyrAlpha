@@ -395,7 +395,7 @@ class OrphanJudge:
             from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult, GateViolation
         except ImportError:
             raise OrphanJudgeError(
-                "GateResult not available; ensure zephyr.governance.rule_enforcement.gate_types is importable"
+                "GateResult not available; ensure zephyr.gov_enforcement.rule_enforcement.gate_types is importable"
             )
 
         report = self.batch_judge(limit=50, dry_run=True)
