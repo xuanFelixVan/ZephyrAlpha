@@ -306,7 +306,7 @@ class ContractRegistry:
         self,
         contract_id: str,
         version: str,
-        adapter: Any,
+        adapter: object,
     ) -> None:
         """注册特定版本的契约适配器（VER-R4 双版本过渡期使用）。"""
         self._adapters.setdefault(contract_id, {})[version] = adapter
@@ -316,7 +316,7 @@ class ContractRegistry:
             version,
         )
 
-    def get_adapter(self, contract_id: str, current_version: str) -> Any | None:
+    def get_adapter(self, contract_id: str, current_version: str) -> object | None:
         """获取适配器——优先精确版本，回退到最新兼容版本。"""
         adapters_for_contract = self._adapters.get(contract_id, {})
         if current_version in adapters_for_contract:

@@ -149,7 +149,7 @@ def enforce_output(
 
     def decorator(func: F) -> F:
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: object, **kwargs: Any) -> object:
             result = func(*args, **kwargs)
 
             if result is None:
@@ -206,7 +206,7 @@ def enforce_input(
         sig = inspect.signature(func)
 
         @functools.wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: object, **kwargs: Any) -> object:
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
 
@@ -282,7 +282,7 @@ def enforce(
 
 
 def _validate_value(
-    value: Any,
+    value: object,
     contract_type: type[Any],
     contract_name: str,
     trace_required: bool,
@@ -331,7 +331,7 @@ def _validate_value(
 
 
 def _validate_dataclass_fields(
-    value: Any,
+    value: object,
     contract_type: type[Any],
     violations: list[str],
 ) -> None:
@@ -391,8 +391,8 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
 
 def _check_field_type(
     field_name: str,
-    value: Any,
-    declared_type: Any,
+    value: object,
+    declared_type: object,
     violations: list[str],
 ) -> None:
     """检查字段值的类型是否匹配声明类型。"""
@@ -434,7 +434,7 @@ def _is_required(fld: dataclasses.Field) -> bool:
     return True
 
 
-def _get_trace_context(value: Any) -> Any | None:
+def _get_trace_context(value: object) -> object | None:
     """从数据对象中提取 trace_context 字段。"""
 
     try:
@@ -444,7 +444,7 @@ def _get_trace_context(value: Any) -> Any | None:
 
 
 def _check_deep_mutable_nesting(
-    value: Any,
+    value: object,
     contract_type: type[Any],
     violations: list[str],
 ) -> None:

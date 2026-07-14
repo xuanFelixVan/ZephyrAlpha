@@ -28,10 +28,9 @@ from __future__ import annotations
 import importlib
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
 
 
-def _to_decimal(value: Any) -> Decimal:
+def _to_decimal(value: float | int | str | Decimal | None) -> Decimal:
     """Safe float/str/int -> Decimal 转换，禁止 float 直接传入。"""
     if isinstance(value, Decimal):
         return value
@@ -40,7 +39,7 @@ def _to_decimal(value: Any) -> Decimal:
     return Decimal(str(value)) if value is not None else Decimal("0")
 
 
-def _optional_decimal(value: Any) -> Decimal | None:
+def _optional_decimal(value: float | int | str | Decimal | None) -> Decimal | None:
     """Optional Decimal 转换——None -> None。"""
     if value is None:
         return None

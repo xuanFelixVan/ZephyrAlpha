@@ -47,19 +47,19 @@ class TaskRepositoryProtocol(Protocol):
 
     def create(
         self,
-        task: Any,
+        task: object,
         *,
         files: list[dict[str, str]] | None = None,
         allow_direct_create: bool = False,
-    ) -> Any: ...
+    ) -> object: ...
 
     # ------------------------------------------------------------------
     # READ
     # ------------------------------------------------------------------
 
-    def get(self, task_id: str) -> Any | None: ...
+    def get(self, task_id: str) -> object | None: ...
 
-    def get_or_raise(self, task_id: str) -> Any: ...
+    def get_or_raise(self, task_id: str) -> object: ...
 
     # ------------------------------------------------------------------
     # UPDATE
@@ -79,7 +79,7 @@ class TaskRepositoryProtocol(Protocol):
         files_in_scope: list[str] | None = None,
         tags: list[str] | None = None,
         model_rationale: str | None = None,
-    ) -> Any: ...
+    ) -> object: ...
 
     # ------------------------------------------------------------------
     # TRANSITION（状态机）
@@ -88,22 +88,22 @@ class TaskRepositoryProtocol(Protocol):
     def transition(
         self,
         task_id: str,
-        to_status: Any,
+        to_status: str,
         *,
         session_id: str | None = None,
         waiting_for: str | None = None,
         note: str | None = None,
-    ) -> Any: ...
+    ) -> object: ...
 
     # ------------------------------------------------------------------
     # PRIORITY GOVERNANCE
     # ------------------------------------------------------------------
 
-    def propose_priority_upgrade(self, task_id: str, proposed_priority: str) -> Any: ...
+    def propose_priority_upgrade(self, task_id: str, proposed_priority: str) -> object: ...
 
-    def approve_priority_upgrade(self, task_id: str) -> Any: ...
+    def approve_priority_upgrade(self, task_id: str) -> object: ...
 
-    def reject_priority_upgrade(self, task_id: str) -> Any: ...
+    def reject_priority_upgrade(self, task_id: str) -> object: ...
 
     # ------------------------------------------------------------------
     # ESCALATION / TIMEOUT GOVERNANCE
@@ -127,7 +127,7 @@ class TaskRepositoryProtocol(Protocol):
     # LIST 查询
     # ------------------------------------------------------------------
 
-    def list_by_status(self, status: Any) -> list[Any]: ...
+    def list_by_status(self, status: str) -> list[Any]: ...
 
     def list_by_phase(self, phase: int) -> list[Any]: ...
 
@@ -137,13 +137,13 @@ class TaskRepositoryProtocol(Protocol):
         self,
         *,
         phase: int | None = None,
-        status: Any | None = None,
+        status: str | None = None,
         session_id: str | None = None,
         file_path_glob: str | None = None,
         limit: int = 50,
     ) -> list[Any]: ...
 
-    def list_by_namespace(self, namespace: Any) -> list[Any]: ...
+    def list_by_namespace(self, namespace: str) -> list[Any]: ...
 
     def list_active(self) -> list[Any]: ...
 
@@ -171,19 +171,19 @@ class TaskRepositoryProtocol(Protocol):
     # SEQUENCE
     # ------------------------------------------------------------------
 
-    def next_seq(self, namespace: Any = None) -> int: ...
+    def next_seq(self, namespace: str | None = None) -> int: ...
 
     # ------------------------------------------------------------------
     # UPSERT
     # ------------------------------------------------------------------
 
-    def upsert(self, task: Any, *, files: list[dict[str, str]] | None = None) -> Any: ...
+    def upsert(self, task: object, *, files: list[dict[str, str]] | None = None) -> object: ...
 
     # ------------------------------------------------------------------
     # Multi-Worker Batch Coordination
     # ------------------------------------------------------------------
 
-    def claim_next(self, batch_id: str, worker_id: str) -> Any | None: ...
+    def claim_next(self, batch_id: str, worker_id: str) -> object | None: ...
 
     def recover_stale_claims(self, batch_id: str, timeout_minutes: int = 30) -> int: ...
 
@@ -193,7 +193,7 @@ class TaskRepositoryProtocol(Protocol):
     # Auto-split
     # ------------------------------------------------------------------
 
-    def auto_split_task(self, task_id_or_task: Any, *, session_id: str | None = None) -> list[Any]: ...
+    def auto_split_task(self, task_id_or_task: str | object, *, session_id: str | None = None) -> list[Any]: ...
 
     # ------------------------------------------------------------------
     # Drift / Hallucination
