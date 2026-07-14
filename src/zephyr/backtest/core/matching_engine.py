@@ -41,7 +41,7 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2 §5.1 §16.7
 from __future__ import annotations
 
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Optional
 
 from zephyr.backtest.core.matching_logic import (
     MatchingConfig,
@@ -135,7 +135,7 @@ class MatchingEngine:
         target_weights: dict[str, float],
         prices: dict[str, Decimal],
         portfolio: Portfolio,
-        date: Any,
+        date: object,
         prev_close: Optional[dict[str, Decimal]] = None,
     ) -> list[BacktestFill]:
         """根据目标权重生成成交记录（市价单，向后兼容接口）
@@ -183,7 +183,7 @@ class MatchingEngine:
         target_weights: dict[str, float],
         order_books: dict[str, OrderBookSnapshot],
         portfolio: Portfolio,
-        date: Any,
+        date: object,
         prev_close: Optional[dict[str, Decimal]] = None,
     ) -> list[BacktestFill]:
         """根据目标权重 + 5档盘口生成成交记录（Level 4 撮合）
@@ -219,7 +219,7 @@ class MatchingEngine:
         target_weights: dict[str, float],
         ticks: dict[str, TickSnapshot],
         portfolio: Portfolio,
-        date: Any,
+        date: object,
     ) -> list[BacktestFill]:
         """根据目标权重 + Tick快照生成成交记录（Tick级5档撮合，做T专用）
 
@@ -344,7 +344,7 @@ class MatchingEngine:
         target_weights: dict[str, float],
         order_books: dict[str, OrderBookSnapshot],
         portfolio: Portfolio,
-        date: Any,
+        date: object,
         prev_close: Optional[dict[str, Decimal]] = None,
         tick_mode: bool = False,
         ticks: Optional[dict[str, TickSnapshot]] = None,
@@ -464,7 +464,7 @@ class MatchingEngine:
             # 撮合失败（如盘口为空）视为未成交
             return None
 
-    def _to_backtest_fill(self, fill: MatchingFill, date: Any) -> BacktestFill:
+    def _to_backtest_fill(self, fill: MatchingFill, date: object) -> BacktestFill:
         """将 MatchingFill 转换为 BacktestFill（加 date 字段）
 
         使用 filled_quantity（实际成交数量）而非 quantity（委托数量），

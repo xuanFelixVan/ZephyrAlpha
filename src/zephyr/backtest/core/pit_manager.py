@@ -35,7 +35,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -78,7 +77,7 @@ class PITConfig:
     consistency_threshold: float = DEFAULT_CONSISTENCY_THRESHOLD
 
 
-def _to_serializable(idx_val: Any) -> Any:
+def _to_serializable(idx_val: object) -> object:
     """将索引值转换为可序列化对象(Timestamp->ISO字符串, 元组递归处理)"""
     if isinstance(idx_val, tuple):
         return [_to_serializable(v) for v in idx_val]

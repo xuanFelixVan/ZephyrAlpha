@@ -157,7 +157,7 @@ class TickReplayEngine:
 
     def __init__(
         self,
-        provider: Any,
+        provider: object,
         symbols: list[str],
         start: datetime,
         end: datetime,

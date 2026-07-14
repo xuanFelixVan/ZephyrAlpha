@@ -65,7 +65,7 @@ def _compute_evidence_hash(idempotency_key: str) -> str:
     return hashlib.sha256(idempotency_key.encode("utf-8")).hexdigest()[:16]
 
 
-def _json_serializable(obj: Any) -> Any:
+def _json_serializable(obj: object) -> object:
     """datetime -> ISO 字符串，用于 JSONB 序列化。"""
     if isinstance(obj, datetime):
         return obj.isoformat()

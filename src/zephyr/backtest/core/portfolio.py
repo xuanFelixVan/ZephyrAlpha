@@ -239,7 +239,7 @@ class Portfolio:
         if pos.quantity == 0:
             pos.avg_cost = Decimal("0")
 
-    def update_market_value(self, date: Any, prices: dict[str, Decimal]) -> float:
+    def update_market_value(self, date: object, prices: dict[str, Decimal]) -> float:
         """按当日价格更新市值,记录NAV
 
         Args:
