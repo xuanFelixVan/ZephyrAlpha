@@ -78,6 +78,7 @@ __all__ = [
     "make_depgraph_ops_reconciler",
     "make_drift_scan_reconciler",
     "make_drift_fix_reconciler",
+    "make_module_id_recommend_reconciler",
     "make_yaml_sync_reconciler",
     "make_precommit_id_uniqueness_reconciler",
     "make_vocab_change_reconciler",
@@ -152,6 +153,13 @@ SQL_INSERT_DRIFT_AUDIT_FINDING = (
     "INSERT INTO drift_audit_findings "
     "(finding_id, finding_time, drift_type, severity, file_path, detail, status) "
     "VALUES (?, ?, ?, ?, ?, ?, 'open')"
+)
+
+# S4: module_id_recommend SQL（§5.160.2 NO-BARE-SQL gate 合规）
+SQL_FIND_MODULE_BY_DIR = (
+    "SELECT DISTINCT blueprint_id FROM nodes "
+    "WHERE path LIKE %s AND blueprint_id IS NOT NULL AND blueprint_id != '' "
+    "LIMIT 1"
 )
 
 
@@ -598,8 +606,14 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 全量同步代码->DB（P1/P2 保护机制兜底，不覆盖手工字段，详见 §14.2.1）
+        # S3（裁定#209 阶段3）：scan_cache.json 已实现 content_hash 增量——
+        # --force 仅控制 DB 写入安全门禁（裁定#207 R2 C2），不影响 scan cache。
+        # AST 解析已为 O(变更文件)，DB 写入仍为全量 DELETE+INSERT（事务原子安全）。
         import time
         start = time.time()
+        _env = dict(os.environ)
+        _src = str(project_root / "src")
+        _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
         sync_result = _run_subprocess(
             [
                 sys.executable,
@@ -613,6 +627,7 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
             encoding="utf-8",
             errors="replace",
             timeout=300,  # 全量扫描，给足 5 分钟
+            env=_env,
         )
         elapsed = time.time() - start
         if sync_result.returncode != 0:
@@ -940,6 +955,126 @@ def make_drift_fix_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=150,
+    )
+
+
+def _module_id_infer_from_dir(file_rel: str) -> str | None:
+    """从同目录 depgraph 节点推断 module_id（S4 防蔓延）。
+
+    新建 .py 文件无 [BLUEPRINT] 头部时，查 depgraph 同目录下已有文件的
+    blueprint_id，推断该文件应属的 module_id。
+    """
+    from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+    file_rel = file_rel.replace("\\", "/")
+    dir_prefix = file_rel.rsplit("/", 1)[0] + "/%" if "/" in file_rel else "%"
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+        with conn.cursor() as cur:
+            cur.execute(SQL_FIND_MODULE_BY_DIR, (dir_prefix,))
+            row = cur.fetchone()
+        conn.close()
+        if row:
+            return row[0]
+    except Exception as e:
+        logger.warning("module_id_recommend: dir lookup failed for %s: %s", file_rel, e)
+    return None
+
+
+def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str) -> bool:
+    """在 .py 文件头部注入 [BLUEPRINT] 头部。"""
+    import os
+    abs_path = os.path.join(str(project_root), file_rel)
+    try:
+        with open(abs_path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except OSError:
+        return False
+    if "[BLUEPRINT]" in content[:500]:
+        return False
+    header = f"# [BLUEPRINT] {module_id} | (auto-injected by S4 reconciler) | §\n"
+    with open(abs_path, "w", encoding="utf-8") as f:
+        f.write(header + content)
+    return True
+
+
+def _classify_headerless_files(
+    committed_files: list[str], project_root: "Path",
+) -> tuple[list[tuple[str, str]], list[str]]:
+    """遍历 committed .py 文件，分类：无 [BLUEPRINT] 头部且可推断→injected，不可推断→skipped。"""
+    import os
+    import re
+    bp_re = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
+    injected: list[tuple[str, str]] = []
+    skipped: list[str] = []
+    for abs_path in committed_files:
+        rel = os.path.relpath(abs_path, str(project_root)).replace("\\", "/")
+        if not rel.endswith(".py"):
+            continue
+        try:
+            with open(abs_path, "r", encoding="utf-8") as f:
+                head = f.read(500)
+        except OSError:
+            continue
+        if bp_re.search(head):
+            continue
+        matched = _module_id_infer_from_dir(rel)
+        if matched and _module_id_inject_header(project_root, rel, matched):
+            injected.append((rel, matched))
+        else:
+            skipped.append(rel)
+    return injected, skipped
+
+
+def make_module_id_recommend_reconciler(gateway: "object") -> ReconcilerSpec:
+    """S4: 新建文件 module_id 自动推荐（MOD-GOV-ALIGNMENT-LOOP §4.S4）。
+
+    commit .py 文件后，检测无 [BLUEPRINT] 头部的新建文件：
+    - 从同目录 depgraph 节点推断 module_id → 自动注入 [BLUEPRINT] 头部 → auto_commit
+    - 无法推断 → 跳过（AI 需手动查蓝图）
+
+    防蔓延：新文件不再以"无头部"状态进入代码库，避免 ORPHAN drift 积累。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-MODULE-ID-RECOMMEND", priority=160)。
+    """
+    import os
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        injected, skipped = _classify_headerless_files(committed_files, project_root)
+        if not injected:
+            return ReconcileResult(action="clean", detail="no headerless files to fix")
+        abs_files = [str(project_root / f[0]) for f in injected]
+        inj_summary = "; ".join(f"{f}→{m}" for f, m in injected)
+        auto_msg = f"fix(alignment_loop): S4 auto-inject [BLUEPRINT] header ({inj_summary})"
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        skip_suffix = f", skipped {len(skipped)} (no module inferred)" if skipped else ""
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"auto-injected {len(injected)} [BLUEPRINT] header(s){skip_suffix}",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"injected {len(injected)} header(s) but auto-commit failed: {commit_result.message[:100]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-MODULE-ID-RECOMMEND",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=160,
     )
 
 

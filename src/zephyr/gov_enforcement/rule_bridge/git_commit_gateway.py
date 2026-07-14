@@ -52,6 +52,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_depgraph_ops_reconciler,
     make_drift_scan_reconciler,
     make_drift_fix_reconciler,
+    make_module_id_recommend_reconciler,
     make_yaml_sync_reconciler,
     make_vocab_change_reconciler,
     make_deprecated_directory_reconciler,
@@ -411,6 +412,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_depgraph_ops_reconciler(self))  # 裁定#209 阶段1
         self._reconciliation_registry.register(make_drift_scan_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S1
         self._reconciliation_registry.register(make_drift_fix_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S2
+        self._reconciliation_registry.register(make_module_id_recommend_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S4
         self._reconciliation_registry.register(make_yaml_sync_reconciler(self))
         # Phase 3 收敛：以下 3 个纯校验 reconciler 已升级为 pre-commit gate（见上方 _gate_registry）
         # make_precommit_id_uniqueness_reconciler / make_exempt_zone_frontmatter_reconciler /
