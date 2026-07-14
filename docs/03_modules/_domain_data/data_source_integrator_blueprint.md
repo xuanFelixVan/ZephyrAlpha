@@ -11,7 +11,6 @@ supersedes:
   - "MOD-L00-001 §3.1 Provider 抽象部分（接管）"
 depends_on:
   - "MOD-L00-002 数据源操作手册（策略参数来源）"
-  - "MOD-L00-003 数据获取需求清单（任务清单来源）"
 construction_progress: stage4_done
 language: zh
 description: 统一管理多个数据源的自动下载——Provider 抽象 + per-source 策略注册表 + APScheduler 调度编排 + 进度/告警统一管理
@@ -27,8 +26,8 @@ design_maturity: prototype
 > **与现有文档关系**：
 > - **接管** [blueprint.md](blueprint.md) §3.1 的 Provider 抽象部分（原蓝图声称"已实现"但 `src/zephyr/data/` 实际为空，本次一并重建）
 > - **消费** [data_source_operation_manual.md](data_source_operation_manual.md) 中每个数据源的限流/防爬/登录方式（抽取为 per-source 策略参数）
-> - **消费** [data_acquisition_plan.md](data_acquisition_plan.md) 的需求清单（转化为调度任务）
-> - **解决** [data_acquisition_plan.md](data_acquisition_plan.md) 暴露的"61 项手动触发、0 项自动更新"短板（matrix 由 `tmp/generate_acquisition_matrix.py` 派生）
+> - **消费** [data_inventory.md](../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md) 的"需补充"列（P0-P3需求，转化为调度任务）
+> - **解决** 原"61 项手动触发、0 项自动更新"短板（需求清单已迁移至 data_inventory.md 的"需补充"列）
 
 ---
 
@@ -92,7 +91,7 @@ src/zephyr/data/
 
 ### §1.1 背景
 
-[data_acquisition_plan.md](data_acquisition_plan.md) 暴露的核心问题：
+原数据获取需求清单（已迁移至 [data_inventory.md](../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md) 的"需补充"列）暴露的核心问题：
 
 - **61 项数据已有但需手动触发**——这是最大的自动化短板
 - **0 项自动更新**——没有任何定时任务

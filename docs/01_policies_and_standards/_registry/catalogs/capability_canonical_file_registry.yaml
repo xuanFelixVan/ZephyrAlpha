@@ -3964,6 +3964,12 @@ creation_tokens:
     created_by: "session-sess-35380-20260715040922"
     capability: "depgraph_write_path_gate"
 
+  # --- MOD-L00-004 交易日历守卫（2026-07-15）---
+  - file: "src/zephyr/data/trading_calendar.py"
+    token: "auto-trading-calendar-20260715"
+    created_by: "session-sess-30528-20260715045936"
+    capability: "data_source_provider_abstraction"
+
   # --- Phase E1: sync完整性校验脚本（2026-07-13）---
   - file: "scripts/governance/verify_sync_integrity.py"
     token: "auto-verify-sync-integrity-20260713"
@@ -4807,6 +4813,14 @@ creation_tokens:
   - file: "scripts/governance/d5_architecture/generators/generate_data_acquisition_flow.py"
     token: "auto-generate-data-acquisition-flow-20260709"
     created_by: "session-sess-6716-20260709171021"
+    capability: "domain_architecture_generators"
+  - file: "scripts/governance/d5_architecture/generators/generate_data_inventory.py"
+    token: "auto-generate-data-inventory-20260715"
+    created_by: "session-sess-5096-20260715050751"
+    capability: "domain_architecture_generators"
+  - file: "docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml"
+    token: "auto-data-acquisition-requirements-20260715"
+    created_by: "session-sess-5096-20260715050751"
     capability: "domain_architecture_generators"
   - file: "architecture_model/data/data_sources_registry.yaml"
     token: "auto-data-sources-registry-20260706"
