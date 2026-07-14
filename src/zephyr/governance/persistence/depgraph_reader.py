@@ -59,7 +59,7 @@ class _PgConnExecuteWrapper:
     def __init__(self, pg_conn: psycopg2.extensions.connection) -> None:
         self._pg_conn = pg_conn
 
-    def execute(self, sql: str, params: tuple = ()) -> Any:
+    def execute(self, sql: str, params: tuple = ()) -> object:
         cur = self._pg_conn.cursor(cursor_factory=RealDictCursor)
         cur.execute(sql, params)
         return cur

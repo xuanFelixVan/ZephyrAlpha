@@ -132,7 +132,7 @@ class MiniQmtProvider(DataSourceBase):
         self._subscribed_symbols: set[str] = set()
 
     @property
-    def _xtdata_mod(self) -> Any:
+    def _xtdata_mod(self) -> object:
         """懒加载 xtdata 模块"""
         if self._xtdata is None:
             try:
@@ -479,7 +479,7 @@ class MiniQmtProvider(DataSourceBase):
         }
 
     @staticmethod
-    def _safe_index(lst: Any, idx: int) -> Any:
+    def _safe_index(lst: object, idx: int) -> object:
         """安全索引（越界返回0）"""
         if lst is None:
             return 0

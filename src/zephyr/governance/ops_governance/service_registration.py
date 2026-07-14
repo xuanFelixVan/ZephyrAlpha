@@ -26,7 +26,6 @@ D-DATA -> ServiceRegistry 注册模块
 from __future__ import annotations
 
 import logging
-from typing import Any
 from zephyr.shared.io.paths import DB_PATH
 
 logger = logging.getLogger(__name__)
@@ -43,7 +42,7 @@ def register_services() -> None:
     from zephyr.shared.protocols.registry import ServiceRegistry
 
     # task_repo — TaskRepository 实例
-    def _make_task_repo() -> Any:
+    def _make_task_repo() -> object:
         from zephyr.governance.persistence.task_repo import TaskRepository
 
         return TaskRepository()
@@ -51,7 +50,7 @@ def register_services() -> None:
     ServiceRegistry.register("task_repo", _make_task_repo)
 
     # db_connection — sqlite3.Connection
-    def _make_db_connection() -> Any:
+    def _make_db_connection() -> object:
         from zephyr.governance.persistence.sqlite_schema import get_db_connection
 
         return get_db_connection()
@@ -59,7 +58,7 @@ def register_services() -> None:
     ServiceRegistry.register("db_connection", _make_db_connection)
 
     # db_path — Path
-    def _make_db_path() -> Any:
+    def _make_db_path() -> object:
         from zephyr.governance.persistence.sqlite_schema import DB_PATH
 
         return DB_PATH
@@ -67,7 +66,7 @@ def register_services() -> None:
     ServiceRegistry.register("db_path", _make_db_path)
 
     # vector-memory — InProcessVectorMemory
-    def _make_vector_memory() -> Any:
+    def _make_vector_memory() -> object:
         from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
         return InProcessVectorMemory()
@@ -75,7 +74,7 @@ def register_services() -> None:
     ServiceRegistry.register("vector-memory", _make_vector_memory)
 
     # reranker — Reranker instance
-    def _make_reranker() -> Any:
+    def _make_reranker() -> object:
         from zephyr.gov_kb.reranker import Reranker
 
         return Reranker()
@@ -83,7 +82,7 @@ def register_services() -> None:
     ServiceRegistry.register("reranker", _make_reranker)
 
     # collection_schemas — COLLECTION_SCHEMAS dict
-    def _make_collection_schemas() -> Any:
+    def _make_collection_schemas() -> object:
         from zephyr.integration.vector_memory.collection_manager import COLLECTION_SCHEMAS
 
         return COLLECTION_SCHEMAS

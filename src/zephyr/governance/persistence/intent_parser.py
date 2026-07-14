@@ -435,8 +435,8 @@ def plan_directive_chain(result: IntentResult, separator: str = "+") -> str:
 
 def inject_context_for(
     parser_result: IntentResult,
-    injector: Any,
-) -> Any:
+    injector: object,
+) -> object:
     """用 IntentResult 的 primary_domain 去 ContextInjector 拉 KE 注入。
 
     Parameters

@@ -78,8 +78,6 @@ PG 配置真源
 
 from __future__ import annotations
 
-from typing import Any
-
 import psycopg2
 
 # 复用 depgraph_schema 的 PG 配置（真源唯一，避免配置分裂）
@@ -252,7 +250,7 @@ def get_dataflowgraph_pg_connection(
     autocommit: bool = True,
     replica: bool = False,
     allow_design_delete: bool = False,
-) -> Any:
+) -> object:
     """返回 dataflowgraph (PostgreSQL) 连接。
 
     与 depgraph 同库不同表（共享 config/.env.postgres 配置）。
@@ -325,7 +323,7 @@ def init_dataflow_db(*, echo: bool = False) -> None:
         conn.close()
 
 
-def acquire_dataflow_write_lock(conn: Any) -> None:
+def acquire_dataflow_write_lock(conn: object) -> None:
     """获取 dataflowgraph 写入互斥锁（pg_advisory_lock）。
 
     与 depgraph 的 424242 锁互不干扰（key=424243）。
@@ -339,7 +337,7 @@ def acquire_dataflow_write_lock(conn: Any) -> None:
         conn.commit()
 
 
-def release_dataflow_write_lock(conn: Any) -> None:
+def release_dataflow_write_lock(conn: object) -> None:
     """释放 dataflowgraph 写入互斥锁。"""
     with conn.cursor() as cur:
         cur.execute("SELECT pg_advisory_unlock(%s)", (_DATAFLOW_ADVISORY_LOCK_KEY,))

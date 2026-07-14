@@ -158,10 +158,10 @@ class F5EventSubscriber:
 
     def bind_components(
         self,
-        escalation_engine: Any = None,
-        delegation_engine: Any = None,
-        deadlock_detector: Any = None,
-        arbitrator: Any = None,
+        escalation_engine: object = None,
+        delegation_engine: object = None,
+        deadlock_detector: object = None,
+        arbitrator: object = None,
     ) -> None:
         """绑定 F5 四组件 (来自 F5BootIntegration.on_startup)。"""
         if escalation_engine is not None:
@@ -180,7 +180,7 @@ class F5EventSubscriber:
             self._arbitrator is not None,
         )
 
-    def bind_feedback_loop(self, feedback_loop: Any) -> None:
+    def bind_feedback_loop(self, feedback_loop: object) -> None:
         """绑定 FeedbackLoop 用于事件驱动反馈。"""
         self._feedback_loop = feedback_loop
         logger.info("F5EventSubscriber: FeedbackLoop bound")
@@ -249,7 +249,7 @@ class F5EventSubscriber:
 
     # ── 事件处理器 (规则引擎绑定) ────────────────────────────────────────
 
-    def handle_deadlock(self, event: Any) -> EventHandlerResult:
+    def handle_deadlock(self, event: object) -> EventHandlerResult:
         """处理死锁事件 — 调用 DeadlockDetector.break_deadlock / preempt_lowest。
 
         事件 payload 期望字段:
@@ -291,7 +291,7 @@ class F5EventSubscriber:
         self._notify_feedback_loop("deadlock", payload, result)
         return result
 
-    def handle_escalation(self, event: Any) -> EventHandlerResult:
+    def handle_escalation(self, event: object) -> EventHandlerResult:
         """处理升级事件 — 调用 EscalationEngine.evaluate。
 
         事件 payload 期望字段:
@@ -338,7 +338,7 @@ class F5EventSubscriber:
         self._notify_feedback_loop("escalation", payload, result)
         return result
 
-    def handle_conflict(self, event: Any) -> EventHandlerResult:
+    def handle_conflict(self, event: object) -> EventHandlerResult:
         """处理冲突事件 — 调用 Arbitrator.arbitrate (A2A Protocol 事件驱动响应)。
 
         事件 payload 期望字段:
@@ -393,7 +393,7 @@ class F5EventSubscriber:
         return result
 
     @staticmethod
-    def _build_agent_meta(data: dict, AgentRole: Any) -> Any:
+    def _build_agent_meta(data: dict, AgentRole: object) -> object:
         """从字典构建 AgentMeta (延迟导入避免循环依赖)。"""
         from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import AgentMeta
         agent_id = data.get("agent_id", "unknown")
@@ -437,7 +437,7 @@ class F5EventSubscriber:
     # ── 工具方法 ─────────────────────────────────────────────────────────
 
     @staticmethod
-    def _extract_payload(event: Any) -> dict:
+    def _extract_payload(event: object) -> dict:
         """从 EventBus Event 或 dict 提取 payload (兼容多种事件格式)。"""
         if event is None:
             return {}
@@ -479,23 +479,23 @@ class F5EventSubscriber:
         return list(self._dispatch_log)
 
     @property
-    def escalation_engine(self) -> Any:
+    def escalation_engine(self) -> object:
         return self._escalation_engine
 
     @property
-    def delegation_engine(self) -> Any:
+    def delegation_engine(self) -> object:
         return self._delegation_engine
 
     @property
-    def deadlock_detector(self) -> Any:
+    def deadlock_detector(self) -> object:
         return self._deadlock_detector
 
     @property
-    def arbitrator(self) -> Any:
+    def arbitrator(self) -> object:
         return self._arbitrator
 
     @property
-    def feedback_loop(self) -> Any:
+    def feedback_loop(self) -> object:
         return self._feedback_loop
 
     def get_stats(self) -> dict:
@@ -553,11 +553,11 @@ class F5EventSubscriber:
 
 
 def create_f5_event_subscriber(
-    escalation_engine: Any = None,
-    delegation_engine: Any = None,
-    deadlock_detector: Any = None,
-    arbitrator: Any = None,
-    feedback_loop: Any = None,
+    escalation_engine: object = None,
+    delegation_engine: object = None,
+    deadlock_detector: object = None,
+    arbitrator: object = None,
+    feedback_loop: object = None,
     event_bus: EventBusBackpressure | None = None,
 ) -> F5EventSubscriber:
     """模块级便捷函数: 创建 F5EventSubscriber 并绑定组件。"""
@@ -602,27 +602,27 @@ def subscribe_eventbus() -> None:
         logger.warning("F5EventSubscriber: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
-def _on_budget_exceeded(payload: Any) -> None:
+def _on_budget_exceeded(payload: dict[str, Any]) -> None:
     """budget_exceeded 事件：预算超限触发升级评估。轻量handler。"""
     _dispatch_to_escalation(payload, "budget_exceeded")
 
 
-def _on_drift_detected(payload: Any) -> None:
+def _on_drift_detected(payload: dict[str, Any]) -> None:
     """drift_detected 事件：漂移检测触发升级评估。轻量handler。"""
     _dispatch_to_escalation(payload, "drift_detected")
 
 
-def _on_fix_completed(payload: Any) -> None:
+def _on_fix_completed(payload: dict[str, Any]) -> None:
     """fix_completed 事件：修复完成触发验证/升级。轻量handler。"""
     _dispatch_to_escalation(payload, "custom")
 
 
-def _on_fix_failed(payload: Any) -> None:
+def _on_fix_failed(payload: dict[str, Any]) -> None:
     """fix_failed 事件：修复失败触发升级。轻量handler。"""
     _dispatch_to_escalation(payload, "custom")
 
 
-def _dispatch_to_escalation(payload: Any, category: str) -> None:
+def _dispatch_to_escalation(payload: dict[str, Any], category: str) -> None:
     """将外部事件派发到 escalate_if_needed（已有公开方法）。"""
     try:
         from zephyr.governance.services.adapter import escalate_if_needed

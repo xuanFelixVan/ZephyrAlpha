@@ -182,7 +182,7 @@ class QueryMetrics:
         operation: str,
         duration_ms: float,
         sql: str,
-        params: Any = None,
+        params: object = None,
     ) -> None:
         if not self._enabled:
             return
@@ -239,7 +239,7 @@ class QueryMetrics:
             tracker = self._get_tracker(operation)
 
             @functools.wraps(func)
-            def wrapper(*args: Any, **kwargs: Any) -> Any:
+            def wrapper(*args: Any, **kwargs: Any) -> object:
                 if not self._enabled:
                     return func(*args, **kwargs)
 

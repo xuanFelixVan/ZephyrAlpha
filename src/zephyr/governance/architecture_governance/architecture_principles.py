@@ -86,7 +86,7 @@ def princpled_check(*principles: ArchPrinciple) -> Callable[[F], F]:
         func._zephyr_principles = list(principles)
 
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: Any, **kwargs: Any) -> object:
             return func(*args, **kwargs)
 
         return wrapper  # type: ignore[return-value]

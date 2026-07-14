@@ -45,7 +45,7 @@ class EscalationContracts:
             "priority": "P1" if result.status.value == "FAILED" else "P2",
         }
 
-    def on_budget_alert(self, alert: Any) -> dict[str, Any]:
+    def on_budget_alert(self, alert: object) -> dict[str, Any]:
         from zephyr.shared.contracts.escalation.budget_alert import BudgetAlert
 
         if not isinstance(alert, BudgetAlert):
@@ -66,7 +66,7 @@ class EscalationContracts:
 
         return response
 
-    def on_a2a_failure(self, communication: Any) -> dict[str, Any]:
+    def on_a2a_failure(self, communication: object) -> dict[str, Any]:
         return {
             "escalated": True,
             "a2a_id": getattr(communication, "a2a_id", ""),

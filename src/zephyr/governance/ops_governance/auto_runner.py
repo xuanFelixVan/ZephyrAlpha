@@ -231,7 +231,7 @@ class GovernanceAutoRunner:
         finally:
             conn.close()
 
-    def register_resource(self, resource: Any) -> None:
+    def register_resource(self, resource: object) -> None:
         """注册需要在关闭时释放的资源。"""
         self._resources.append(resource)
 
