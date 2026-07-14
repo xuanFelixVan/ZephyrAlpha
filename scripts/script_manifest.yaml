@@ -2808,7 +2808,7 @@ scripts:
   dimensions: []
 - name: governance/generators/check_gate_inventory_drift.py
   path: governance/generators/check_gate_inventory_drift.py
-  description: 检测 src/zephyr/governance/commit_gates/*.py 实际文件与
+  description: 检测 src/zephyr/gov_enforcement/commit_gates/*.py 实际文件与
   domain: governance
   execution_plane: hot-path
   status: registered
@@ -3952,7 +3952,7 @@ scripts:
   dimensions: []
 - name: kb/self_test.py
   path: kb/self_test.py
-  description: 实际实现位于 zephyr.governance.kb.self_test.SelfTest
+  description: 实际实现位于 zephyr.gov_kb.self_test.SelfTest
   domain: test
   execution_plane: warm-path
   status: registered
