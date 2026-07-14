@@ -67,7 +67,7 @@ class DryRunSimulator:
     def __init__(self) -> None:
         self._guard: Any = None
 
-    def set_guard(self, guard: Any) -> None:
+    def set_guard(self, guard: object) -> None:
         """设置权限守卫.
 
         Args:
@@ -75,7 +75,7 @@ class DryRunSimulator:
         """
         self._guard = guard
 
-    def simulate(self, agent: Any, operation: str, target: str = "") -> DryRunResult:
+    def simulate(self, agent: object, operation: str, target: str = "") -> DryRunResult:
         """模拟权限检查.
 
         Args:

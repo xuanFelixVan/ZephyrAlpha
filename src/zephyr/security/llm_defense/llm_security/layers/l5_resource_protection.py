@@ -60,7 +60,7 @@ class ResourceProtectionLayer:
         self._cost_usage[session_id] += cost_cents
         return True, "ok"
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """评估资源保护：检测成本不对称攻击。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
@@ -212,7 +212,7 @@ class CostAsymmetryDefender:
         }
 
     # 兼容旧接口
-    def detect_asymmetry(self, request: Any, response: Any) -> bool:
+    def detect_asymmetry(self, request: object, response: object) -> bool:
         return self.scan(str(request))["blocked"]
 
     def calculate_cost_ratio(self, input_tokens: int, output_tokens: int) -> float:
@@ -369,10 +369,10 @@ class SemanticCacheCollisionDefender:
         return hmac.compare_digest(sig, expected), value
 
     # 兼容旧接口
-    def detect_collision(self, cache_key: str, cached_value: Any, new_value: Any) -> bool:
+    def detect_collision(self, cache_key: str, cached_value: object, new_value: object) -> bool:
         return cached_value != new_value
 
-    def validate_cache_entry(self, key: str, value: Any) -> bool:
+    def validate_cache_entry(self, key: str, value: object) -> bool:
         return True
 
 

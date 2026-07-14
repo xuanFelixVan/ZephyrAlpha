@@ -26,7 +26,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 
 @dataclass
@@ -84,7 +83,7 @@ class ContractVerifier:
             ),
         }
 
-    def verify_gct001(self, identity: Any) -> ContractResult:
+    def verify_gct001(self, identity: object) -> ContractResult:
         """验证 G-CT-001 身份契约.
 
         Args:
@@ -102,7 +101,7 @@ class ContractVerifier:
             detail=f"agent_id={agent_id}, maturity={maturity}",
         )
 
-    def verify_gct004(self, decision: Any) -> ContractResult:
+    def verify_gct004(self, decision: object) -> ContractResult:
         """验证 G-CT-004 决策契约.
 
         Args:

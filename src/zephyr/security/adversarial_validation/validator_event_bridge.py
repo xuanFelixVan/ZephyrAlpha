@@ -65,7 +65,7 @@ def subscribe_eventbus() -> None:
         logger.warning("ValidatorEventBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
-def _get_validator() -> Any:
+def _get_validator() -> object:
     """懒加载 RedBlueValidator 单例。"""
     global _validator_instance
     if _validator_instance is None:

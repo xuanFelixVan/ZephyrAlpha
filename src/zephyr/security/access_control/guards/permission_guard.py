@@ -27,7 +27,6 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 from zephyr.security.access_control.identity import (
     ROLE_DEFAULT_PERMISSIONS,
@@ -103,7 +102,7 @@ class PermissionGuard:
             "target": result.target,
         }
 
-    def check(self, agent: Any, operation: str, target_path: str = "") -> GuardResult:
+    def check(self, agent: object, operation: str, target_path: str = "") -> GuardResult:
         """检查操作权限.
 
         Args:
@@ -119,7 +118,7 @@ class PermissionGuard:
         result.timing_ns = time.perf_counter_ns() - start_ns
         return result
 
-    def _evaluate(self, agent: Any, operation: str, target_path: str) -> GuardResult:
+    def _evaluate(self, agent: object, operation: str, target_path: str) -> GuardResult:
         """执行权限检查逻辑（内部方法）."""
         # L0: 不可变核心检查 — ALWAYS_BLOCKED_OPERATIONS 永远阻止
         if operation in ALWAYS_BLOCKED_OPERATIONS:

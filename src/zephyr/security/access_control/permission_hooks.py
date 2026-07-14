@@ -48,7 +48,7 @@ class PermissionHooks:
         self._hooks: dict[str, list[Callable[..., Any]]] = {}
         self._hook_ids: dict[str, list[str]] = {}
 
-    def register(self, event_type: str, hook_id: Any, hook: Callable[..., Any] = None) -> None:
+    def register(self, event_type: str, hook_id: str, hook: Callable[..., Any] = None) -> None:
         """注册钩子.
 
         Args:

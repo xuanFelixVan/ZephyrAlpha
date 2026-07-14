@@ -113,7 +113,7 @@ class PromptProtectionLayer:
     def layer_index(self) -> int:
         return 2
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """评估 prompt 安全：泄露尝试 -> DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision

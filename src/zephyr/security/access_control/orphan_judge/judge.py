@@ -150,7 +150,7 @@ class _CheckerProto(Protocol):
 class _DuplicateDetectorAdapter:
     """适配已有 DuplicateDetector.detect() -> LayerResult check() 协议"""
 
-    def __init__(self, detector: Any) -> None:
+    def __init__(self, detector: object) -> None:
         self._detector = detector
 
     def check(self, path: str) -> LayerResult:
@@ -168,7 +168,7 @@ class _DuplicateDetectorAdapter:
         )
 
 
-def _try_import_checker(module_path: str, class_name: str) -> Any:
+def _try_import_checker(module_path: str, class_name: str) -> object:
     try:
         mod = importlib.import_module(module_path)
         cls = getattr(mod, class_name, None)
@@ -179,7 +179,7 @@ def _try_import_checker(module_path: str, class_name: str) -> Any:
     return None
 
 
-def _create_l2_checker() -> Any:
+def _create_l2_checker() -> object:
     try:
         from zephyr.security.access_control.orphan_judge.duplicate_detector import DuplicateDetector
 
@@ -199,11 +199,11 @@ class OrphanJudge:
     def __init__(
         self,
         *,
-        l0_checker: Any | None = None,
-        l1_checker: Any | None = None,
-        l2_checker: Any | None = None,
-        l3_checker: Any | None = None,
-        l4_checker: Any | None = None,
+        l0_checker: object | None = None,
+        l1_checker: object | None = None,
+        l2_checker: object | None = None,
+        l3_checker: object | None = None,
+        l4_checker: object | None = None,
         jsonl_output: bool = False,
     ) -> None:
         self.jsonl_output = jsonl_output
@@ -385,7 +385,7 @@ class OrphanJudge:
             execution_time_ms=round(elapsed_ms, 2),
         )
 
-    def quick_scan(self) -> Any:
+    def quick_scan(self) -> object:
         """快速扫描（Phase Gate用，仅L0+L1快速路径判定）
 
         返回 GateResult:
@@ -425,7 +425,7 @@ class OrphanJudge:
         )
 
     @staticmethod
-    def _run_layer(checker: Any, path: str, layer_name: str) -> LayerResult:
+    def _run_layer(checker: object, path: str, layer_name: str) -> LayerResult:
         """执行单层判定，checker不可用时按蓝图§6降级原则返回默认值"""
         if checker is None:
             default = _DEGRADATION_DEFAULTS.get(layer_name, {"passed": False, "data": {}})

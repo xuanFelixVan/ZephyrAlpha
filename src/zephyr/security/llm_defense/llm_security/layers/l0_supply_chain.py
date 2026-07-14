@@ -548,7 +548,7 @@ class MCPDeepSupplyChainScanner:
         }
 
     # --- Legacy compat ---
-    def scan(self, component: Any) -> ScanResult:
+    def scan(self, component: object) -> ScanResult:
         return ScanResult(scan_type="mcp_deep")
 
     def scan_recursive(self, component_id: str, depth: int = 3) -> list[ScanResult]:

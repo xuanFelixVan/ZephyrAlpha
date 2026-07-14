@@ -93,7 +93,7 @@ class OutputSecurityLayer:
     def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
 
-    def validate_schema(self, data: Any, schema: type) -> SchemaValidationResult:
+    def validate_schema(self, data: object, schema: type) -> SchemaValidationResult:
         try:
             schema.model_validate(data)
             return SchemaValidationResult(valid=True, errors=[])
@@ -153,7 +153,7 @@ class OutputSecurityLayer:
     def layer_index(self) -> int:
         return 3
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """评估输出安全：含密钥/敏感数据/不安全内容 -> DENY。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
@@ -258,7 +258,7 @@ class AgentPublicInteractionGuard:
         return clean
 
     # 兼容旧接口
-    def validate_interaction(self, interaction: Any) -> bool:
+    def validate_interaction(self, interaction: object) -> bool:
         return True
 
     def check_public_safety(self, content: str) -> bool:

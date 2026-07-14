@@ -160,7 +160,7 @@ def scan_direct(text: str, patterns: list | None = None) -> list[dict[str, Any]]
     return hits
 
 
-def scan_indirect(text: str, context: Any = None) -> list[dict[str, Any]]:
+def scan_indirect(text: str, context: object = None) -> list[dict[str, Any]]:
     """Scan for indirect injection (RAG poisoning) + context overflow."""
     if not text:
         return []

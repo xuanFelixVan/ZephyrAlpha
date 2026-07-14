@@ -26,7 +26,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
 
 
 _DEFAULT_AUTO_GUARD_TIMEOUT = 600
@@ -83,11 +82,11 @@ class AutoGuard:
         self._mode = mode
         self._active_guards: dict[str, list[AutoGuardResult]] = {}
 
-    def evaluate(self, agent: Any, operation: str) -> AutoGuardResult:
+    def evaluate(self, agent: object, operation: str) -> AutoGuardResult:
         """评估操作是否可自动守卫."""
         return AutoGuardResult(approved=False, reason="auto-guard disabled")
 
-    def allow_with_guard(self, agent: Any, operation: str) -> AutoGuardResult:
+    def allow_with_guard(self, agent: object, operation: str) -> AutoGuardResult:
         """允许操作并设置自动守卫.
 
         Args:

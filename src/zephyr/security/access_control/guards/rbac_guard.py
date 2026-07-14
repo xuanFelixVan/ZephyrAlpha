@@ -95,7 +95,7 @@ class RBACGuard:
     根据角色和成熟度判断操作权限。
     """
 
-    def __init__(self, immutable_core: Any = None) -> None:
+    def __init__(self, immutable_core: object = None) -> None:
         self._immutable_core = immutable_core
 
     def check(

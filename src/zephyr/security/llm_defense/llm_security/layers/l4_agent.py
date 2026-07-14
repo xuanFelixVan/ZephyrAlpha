@@ -210,7 +210,7 @@ class AgentSecurityLayer:
     def set_approval_auto_mode(self, enabled: bool) -> None:
         self._auto_approve = enabled
 
-    async def evaluate(self, ctx: Any) -> Any:
+    async def evaluate(self, ctx: object) -> object:
         """评估 agent 工具调用：无工具调用 -> ALLOW，未知工具 -> DENY，已知且授权 -> ALLOW。"""
         from zephyr.security.llm_defense.llm_security.protocol import SecurityResult
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
@@ -290,10 +290,10 @@ class FinancialComplianceGate:
         }
 
     # 兼容旧接口
-    def check_compliance(self, action: Any) -> bool:
+    def check_compliance(self, action: object) -> bool:
         return not self.scan(str(action))["blocked"]
 
-    def validate_transaction(self, transaction: Any) -> bool:
+    def validate_transaction(self, transaction: object) -> bool:
         return True
 
 
