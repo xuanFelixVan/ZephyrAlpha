@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-15'
-total_scripts: 568
+total_scripts: 567
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3337,14 +3337,6 @@ scripts:
 - name: governance/repair/audit_design_completeness.py
   path: governance/repair/audit_design_completeness.py
   description: r"""
-  domain: governance
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/repair/cleanup_arch_dir_orphans.py
-  path: governance/repair/cleanup_arch_dir_orphans.py
-  description: 5.18.9 治本：arch_directory_tree 683 孤儿 domain_id 清理 + 补 FK
   domain: governance
   execution_plane: warm-path
   status: registered
