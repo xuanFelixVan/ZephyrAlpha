@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-007 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.governance.trading_contracts.portfolio.contracts.money
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.instrument

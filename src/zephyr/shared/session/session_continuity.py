@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-140 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.session.session_continuity
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.__init__

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-003 | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_kb.knowledge_engine
 # [DOMAIN] D_GOV_KB
 # [DEPENDENCIES] zephyr.governance.__init__

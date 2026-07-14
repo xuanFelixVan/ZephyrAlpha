@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-014 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.observability.notifier
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.shared.io.paths; zephyr.shared.event_bus

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-038 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.financial_governance.microstructure_defense
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.financial_governance.__init__

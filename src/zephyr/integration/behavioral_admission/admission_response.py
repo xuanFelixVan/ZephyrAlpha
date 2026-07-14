@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-145 | docs/03_modules/_domain_governance/blueprint.md | §3.9
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] zephyr.integration.behavioral_admission.admission_response
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.trading.__init__

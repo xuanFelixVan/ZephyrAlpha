@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-118 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] SH-MAIN-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.maintenance.handbook
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.maintenance.zero_config

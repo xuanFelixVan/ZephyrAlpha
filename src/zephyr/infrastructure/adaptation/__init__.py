@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-INF_adaptation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-082 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.adaptation
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval

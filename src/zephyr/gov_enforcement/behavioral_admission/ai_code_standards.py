@@ -1,6 +1,6 @@
 from typing import Final
 
-# [BLUEPRINT] SRC-020 | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_enforcement.behavioral_admission.ai_code_standards
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]

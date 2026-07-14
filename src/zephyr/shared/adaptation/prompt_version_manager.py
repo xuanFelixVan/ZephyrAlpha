@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-084 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.adaptation.prompt_version_manager
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.adaptation.execution_tuner

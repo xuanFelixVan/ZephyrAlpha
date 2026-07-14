@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-078 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.protocols.ports
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol

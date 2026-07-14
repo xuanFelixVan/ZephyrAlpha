@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-012 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.architecture_governance.architecture_principles
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.governance.architecture_governance.__init__

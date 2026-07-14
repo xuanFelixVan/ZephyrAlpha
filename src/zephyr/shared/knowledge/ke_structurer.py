@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-105 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.knowledge.ke_structurer
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

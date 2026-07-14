@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-080 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/governance_core_blueprint.md
 # [MODULE] zephyr.shared.schema.task_types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
@@ -38,7 +38,7 @@ __all__ = [
     "normalize_execution_model",
 ]
 
-_SOURCE_MODULE = "zephyr.governance.rule_enforcement.task_types"
+_SOURCE_MODULE = "zephyr.gov_enforcement.rule_enforcement.task_types"
 _EXEC_MODEL_MODULE = "zephyr.integration.shared.schema.execution_model"
 
 _LAZY_IMPORTS = {

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-154 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.shared.contracts.approval_types
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]

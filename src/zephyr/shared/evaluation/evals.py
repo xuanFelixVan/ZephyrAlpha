@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-188 | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.shared.evaluation.evals
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES]

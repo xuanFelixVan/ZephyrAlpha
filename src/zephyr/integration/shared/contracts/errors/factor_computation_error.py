@@ -1,4 +1,4 @@
-# [BLUEPRINT] SRC-149 | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
+# [BLUEPRINT] MOD-INTEGRATION | docs/03_modules/_cross_layer/shared-core/contracts_blueprint.md
 # [MODULE] zephyr.integration.shared.contracts.errors.factor_computation_error
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
