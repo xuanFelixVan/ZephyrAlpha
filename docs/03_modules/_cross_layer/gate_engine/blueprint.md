@@ -178,6 +178,7 @@ build_status: planned
 | `commit_gates/blueprint_format_gate.py` | §0.1 | [BLUEPRINT]头部module_id格式阻断门禁（BLUEPRINT-FORMAT，裁定#214 Phase 0防蔓延，裁定#208双轨制MOD-/SH-前缀校验） | 已实现 | | 本模块 |
 | `commit_gates/ch_batch_size_gate.py` | §0.1 | CH批量写入防回退门禁（CH-BATCH-SIZE，§18.4防复发，AST检测write_result在循环内直接调用） | 已实现 | | 本模块 |
 | `commit_gates/ch_final_gate.py` | §0.1 | ch_writer.query()直接调用阻断门禁（CH-FINAL-GATE，裁定#ARCH-CH-007 B5防复发，强制走ch_reader.query()自动注入FINAL） | 已实现 | | 本模块 |
+| `commit_gates/ch_version_col_gate.py` | §0.1 | CH version列语义误用阻断门禁（CH-VERSION-COL，裁定#ARCH-CH-009防复发，diff检测ReplacingMergeTree非DateTime列作version参数） | 已实现 | | 本模块 |
 | `commit_gates/test_source_consistency_gate.py` | §0.1 | 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178防复发，检测tests/中import的符号在源码是否存在） | 已实现 | | 本模块 |
 | `commit_gates/data_task_completeness_gate.py` | §0.1 | 数据任务完整性warn级门禁（DATA-TASK-COMPLETENESS，提醒新增tasks.yaml任务配置fallback_sources，数据韧性三层机制） | 已实现 | | 本模块 |
 
