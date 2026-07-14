@@ -1773,7 +1773,9 @@ def sync_database_nodes(cur):
         # 构造 nodes 表字段
         # blueprint_id 用 infra_id（如 INFRA-DB-003），符合裁定#208 的 SYS-* 前缀扩展
         # path 指向 infrastructure_registry.yaml（SSoT 指针）
-        node_path = "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
+        # 每个 database 节点加 #infra_id 锚点区分，避免 idx_nodes_path 唯一约束冲突
+        # （infrastructure_registry.yaml 含多个 database 条目，共用同一 path 会违反唯一约束）
+        node_path = f"docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml#{infra_id}"
         node_name = f"{name} — database 节点 (ARCH-053)"
 
         # domain_id 用 D_INFRA_RUNTIME（运行时基础设施域，与 registry_adapter.py 一致）
