@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-15'
-total_scripts: 566
+total_scripts: 573
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -1808,6 +1808,14 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/generators/generate_data_acquisition_flow.py
   path: governance/d5_architecture/generators/generate_data_acquisition_flow.py
+  description: 真源链：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_data_inventory.py
+  path: governance/d5_architecture/generators/generate_data_inventory.py
   description: 真源链：
   domain: governance
   execution_plane: warm-path
@@ -3937,6 +3945,54 @@ scripts:
 - name: governance/_tasks/task_summary.py
   path: governance/_tasks/task_summary.py
   description: task_summary.py — 任务系统全局摘要 CLI
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_check_audit.py
+  path: governance/_tasks/tmp_check_audit.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_check_g7.py
+  path: governance/_tasks/tmp_check_g7.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_check_vs.py
+  path: governance/_tasks/tmp_check_vs.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_complete_tasks.py
+  path: governance/_tasks/tmp_complete_tasks.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_review.py
+  path: governance/_tasks/tmp_review.py
+  description: import sys
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_tasks/tmp_update_tasks.py
+  path: governance/_tasks/tmp_update_tasks.py
+  description: import sys
   domain: governance
   execution_plane: warm-path
   status: registered
