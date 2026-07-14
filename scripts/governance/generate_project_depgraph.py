@@ -1163,6 +1163,20 @@ def extract_py_imports(filepath: Path) -> list:
                             imports.append(dot_path)
                 elif node.module and (node.module.startswith("zephyr") or node.module.startswith("scripts")):
                     imports.append(node.module)
+                    # 解析 from package import module 格式中的子模块依赖
+                    # 例：from zephyr.data import ch_reader → 额外记录 zephyr.data.ch_reader
+                    for alias in node.names:
+                        if alias.name == "*":
+                            continue
+                        parts = node.module.split(".")
+                        if node.module.startswith("zephyr"):
+                            base_path = PROJECT_ROOT / "src" / Path(*parts)
+                        else:
+                            base_path = PROJECT_ROOT / Path(*parts)
+                        if (base_path / f"{alias.name}.py").exists() or (base_path / alias.name / "__init__.py").exists():
+                            sub_mod = f"{node.module}.{alias.name}"
+                            if sub_mod not in imports:
+                                imports.append(sub_mod)
     except Exception:
         pass
     return imports
