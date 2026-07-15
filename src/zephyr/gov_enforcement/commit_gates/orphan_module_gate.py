@@ -144,6 +144,146 @@ def _compute_module_path(rel_path: str) -> tuple[str, str]:
     return module_path, short_name
 
 
+def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
+    """获取 staged 新增 .py 文件（tests/ 豁免）的绝对路径列表 + worktree root。
+
+    Returns:
+        None=fail-open（调用方应返回 pass）；([], "")=无文件待检；
+        (abs_files, wt_root)=待检文件列表与 worktree 根目录。
+    """
+    # 1. 获取 staged 新增 .py 文件
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "ORPHAN-MODULE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+    # 2. 过滤 .py 文件 + tests/ 豁免
+    new_py_files = [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+    if not new_py_files:
+        return [], ""
+
+    # 3. 获取 worktree root
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            wt_root = toplevel_result.stdout.strip()
+        else:
+            wt_root = str(gateway.project_root)
+    except Exception:
+        wt_root = str(gateway.project_root)
+
+    # 4. 解析为绝对路径
+    abs_files = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    abs_files = [f for f in abs_files if os.path.isfile(f)]
+    return abs_files, wt_root
+
+
+def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] | None":
+    """检测孤儿模块列表。None=fail-open（调用方应返回 pass）。
+
+    对每个文件：读内容 → 入口豁免 → 计算 module path → git grep 搜索 import 引用 →
+    exit 0 有其他文件引用=非孤儿；exit 1 无匹配=孤儿；其他=错误 fail-open。
+    """
+    violations: list[str] = []
+    for abs_path in abs_files:
+        rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+        try:
+            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        except OSError as e:
+            logger.warning(
+                "ORPHAN-MODULE gate skip file %s: 读取失败(%s: %s)。",
+                abs_path, type(e).__name__, e,
+            )
+            continue
+
+        # 入口文件豁免
+        if _is_entry_point(rel_name, content):
+            continue
+
+        module_path, short_name = _compute_module_path(rel_name)
+        if not module_path or not short_name:
+            continue
+
+        # git grep 搜索 import 引用
+        # pattern: import {short_name} | from .* import {short_name} | from {module_path}
+        # P13 fix (2026-07-13): 添加 import {module_path} 模式，匹配
+        # `import <full.dotted.path> as <alias>` 形式（原 pattern 只匹配
+        # `import {short_name}` 和 `from ... import {short_name}`，
+        # 漏检 `import zephyr.pkg.mod as mod` 这种常见写法）
+        pattern = (
+            rf"import {short_name}\b|"
+            rf"from .* import {short_name}\b|"
+            rf"from {module_path}\b|"
+            rf"import {module_path}\b"
+        )
+        try:
+            grep_result = gateway._run_git(
+                ["git", "grep", "-l", "-E", pattern, "--", "src/**/*.py"],
+                cwd=wt_root,
+            )
+        except subprocess.TimeoutExpired:
+            logger.warning(
+                "ORPHAN-MODULE gate fail-open: git grep 超时(%ds)，检测器失效。",
+                _GREP_TIMEOUT,
+            )
+            return None
+        except Exception as e:
+            logger.warning(
+                "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。",
+                type(e).__name__, e, exc_info=True
+            )
+            return None
+
+        # git grep exit 0 = 有匹配；exit 1 = 无匹配；其他 = 错误
+        if grep_result.returncode == 0:
+            # 有匹配——但需排除文件自身（grep 可能匹配到 staged 文件本身）
+            matched_files = [
+                f for f in grep_result.stdout.strip().splitlines() if f
+            ]
+            # 过滤掉自身
+            others = [f for f in matched_files if f != rel_name and f != rel_name.replace("/", os.sep)]
+            if others:
+                continue  # 有其他文件引用，非孤儿
+            # 仅自身匹配 -> 孤儿
+        elif grep_result.returncode == 1:
+            # 无匹配 -> 孤儿
+            pass
+        else:
+            # git grep 错误（exit != 0 且 != 1）
+            logger.warning(
+                "ORPHAN-MODULE gate fail-open: git grep 错误(rc=%d)：%s",
+                grep_result.returncode,
+                (grep_result.stderr or "")[:200],
+            )
+            return None
+
+        violations.append(rel_name)
+    return violations
+
+
 def make_orphan_module_gate() -> GateSpec:
     """构造孤儿模块（无 import 引用）阻断门禁 GateSpec（硬阻断型）。
 
@@ -153,132 +293,15 @@ def make_orphan_module_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "ORPHAN-MODULE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        collected = _collect_staged_new_py_files(gateway)
+        if collected is None:
             return True, ""
-
-        # 2. 过滤 .py 文件 + tests/ 豁免
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
-        if not new_py_files:
-            return True, ""
-
-        # 3. 获取 worktree root
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
-
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        abs_files, wt_root = collected
         if not abs_files:
             return True, ""
-
-        # 5. 检测每个文件的 import 引用
-        violations: list[str] = []
-        for abs_path in abs_files:
-            rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning(
-                    "ORPHAN-MODULE gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            # 入口文件豁免
-            if _is_entry_point(rel_name, content):
-                continue
-
-            module_path, short_name = _compute_module_path(rel_name)
-            if not module_path or not short_name:
-                continue
-
-            # git grep 搜索 import 引用
-            # pattern: import {short_name} | from .* import {short_name} | from {module_path}
-            # P13 fix (2026-07-13): 添加 import {module_path} 模式，匹配
-            # `import <full.dotted.path> as <alias>` 形式（原 pattern 只匹配
-            # `import {short_name}` 和 `from ... import {short_name}`，
-            # 漏检 `import zephyr.pkg.mod as mod` 这种常见写法）
-            pattern = (
-                rf"import {short_name}\b|"
-                rf"from .* import {short_name}\b|"
-                rf"from {module_path}\b|"
-                rf"import {module_path}\b"
-            )
-            try:
-                grep_result = gateway._run_git(
-                    ["git", "grep", "-l", "-E", pattern, "--", "src/**/*.py"],
-                    cwd=wt_root,
-                )
-            except subprocess.TimeoutExpired:
-                logger.warning(
-                    "ORPHAN-MODULE gate fail-open: git grep 超时(%ds)，检测器失效。",
-                    _GREP_TIMEOUT,
-                )
-                return True, ""
-            except Exception as e:
-                logger.warning(
-                    "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。",
-                    type(e).__name__, e, exc_info=True
-                )
-                return True, ""
-
-            # git grep exit 0 = 有匹配；exit 1 = 无匹配；其他 = 错误
-            if grep_result.returncode == 0:
-                # 有匹配——但需排除文件自身（grep 可能匹配到 staged 文件本身）
-                matched_files = [
-                    f for f in grep_result.stdout.strip().splitlines() if f
-                ]
-                # 过滤掉自身
-                others = [f for f in matched_files if f != rel_name and f != rel_name.replace("/", os.sep)]
-                if others:
-                    continue  # 有其他文件引用，非孤儿
-                # 仅自身匹配 -> 孤儿
-            elif grep_result.returncode == 1:
-                # 无匹配 -> 孤儿
-                pass
-            else:
-                # git grep 错误（exit != 0 且 != 1）
-                logger.warning(
-                    "ORPHAN-MODULE gate fail-open: git grep 错误(rc=%d)：%s",
-                    grep_result.returncode,
-                    (grep_result.stderr or "")[:200],
-                )
-                return True, ""
-
-            violations.append(rel_name)
-
+        violations = _detect_orphans(gateway, abs_files, wt_root)
+        if violations is None:
+            return True, ""
         if violations:
             detail = "; ".join(violations[:5])
             return False, (
