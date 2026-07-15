@@ -18,6 +18,8 @@ import pytest
 from src.zephyr.data.ch_writer import (
     tsv_escape,
     write_tsv,
+    write_tsv_outcome,
+    WriteDisposition,
     write_result,
     delete_where,
     query,
@@ -185,6 +187,15 @@ class TestWriteTsv:
         ):
             ok = write_tsv("c1_market.kline_daily", "(col1)", b"v1\n")
         assert ok is False
+
+    def test_write_outcome_local_fallback_is_not_ch_commit(self):
+        """本地落盘成功必须可区分于 ClickHouse 已提交。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False), \
+             patch("src.zephyr.data.ch_writer._wsl_ch", side_effect=OSError("WSL down")), \
+             patch("zephyr.data.local_replay.save_fallback", return_value=True):
+            outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
+        assert outcome.disposition is WriteDisposition.LOCAL_DURABLE
+        assert outcome.is_ch_committed is False
 
     def test_write_auto_columns(self):
         """columns=None 时自动查询列清单。"""
