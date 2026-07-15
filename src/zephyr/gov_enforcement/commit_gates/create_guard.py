@@ -321,6 +321,24 @@ def _check_rule_yaml_naming(
     return True, ""
 
 
+def _filter_new_py_and_yaml(staged_new: list[str]) -> tuple[list[str], list[str]]:
+    """过滤 staged 新增文件为 (new_py_files, new_yaml_files)。
+
+    - new_py_files: .py 文件，排除 tests/ 豁免（真源：commit_gate_registry.is_test_exempt）
+    - new_yaml_files: .yaml 文件，排除 tests/ 豁免，排除 rules/ 目录（rules/ 已有命名检查）
+    """
+    new_py_files = [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+    new_yaml_files = [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".yaml") and not is_test_exempt(f)
+        and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
+    ]
+    return new_py_files, new_yaml_files
+
+
 def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     """ARCH-031 防复发：禁止 governance/ 根新增/rename .py 文件。
 
@@ -398,7 +416,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
             if _has_marker:
                 continue
             # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
-            # ARCH-034 遗留3治本：git grep 故障改 fail-closed
+            #ARCH-034 遗留3治本：git grep 故障改 fail-closed
             try:
                 _grep_res = gateway._run_git([
                     "git", "grep", "-l", f"^class {_node.name}\\b",
@@ -621,24 +639,15 @@ def make_create_guard() -> GateSpec:
         if staged_new is None:
             return False, detail
 
-        # ARCH-037：rules/ .yaml 命名格式硬阻断
+        #ARCH-037：rules/ .yaml 命名格式硬阻断
         passed, detail = _check_rule_yaml_naming(gateway, staged_new, commit_files_rel)
         if not passed:
             return False, detail
 
-        # 过滤 .py + 豁免 tests/（真源：commit_gate_registry.is_test_exempt）
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
-        # 过滤非 rules/ 目录的新增 .yaml 文件（rules/ 已有命名检查）
-        new_yaml_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".yaml") and not is_test_exempt(f)
-            and not f.replace("\\", "/").startswith(_RULES_DIR_PREFIX)
-        ]
+        # 过滤 .py / .yaml + 豁免 tests/（真源：commit_gate_registry.is_test_exempt）
+        new_py_files, new_yaml_files = _filter_new_py_and_yaml(staged_new)
 
-        # ARCH-031 防复发：governance/ 根检测 MUST 用 UNFILTERED new_py_files
+        #ARCH-031 防复发：governance/ 根检测 MUST 用 UNFILTERED new_py_files
         passed, detail = _check_governance_root(gateway, new_py_files)
         if not passed:
             return False, detail
@@ -653,7 +662,7 @@ def make_create_guard() -> GateSpec:
         if not new_py_files and not new_yaml_files:
             return True, ""
 
-        # ARCH-034：类名跨模块唯一性检测
+        #ARCH-034：类名跨模块唯一性检测
         passed, detail = _check_class_uniqueness(gateway, new_py_files)
         if not passed:
             return False, detail
@@ -663,12 +672,12 @@ def make_create_guard() -> GateSpec:
         if not passed:
             return False, detail
 
-        # ARCH-031：字段头部完整性检测
+        #ARCH-031：字段头部完整性检测
         passed, detail = _check_field_header(gateway, new_py_files)
         if not passed:
             return False, detail
 
-        # ARCH-031：basename 碰撞检测
+        #ARCH-031：basename 碰撞检测
         passed, detail = _check_basename_collision(gateway, new_py_files)
         if not passed:
             return False, detail
