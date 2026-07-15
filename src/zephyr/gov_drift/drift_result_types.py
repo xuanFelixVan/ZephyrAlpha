@@ -522,6 +522,55 @@ class DepVersionDriftResult:
     extra_in_requirements: list[str] = field(default_factory=list)
 
 
+def _find_requirements_file(project_root: str) -> Path | None:
+    """Locate ``requirements.txt``; fall back to glob search when absent at root."""
+    req_file = Path(project_root) / "requirements.txt"
+    if not req_file.exists():
+        candidates = list(Path(project_root).glob("**/requirements*.txt"))
+        req_file = candidates[0] if candidates else None
+    return req_file
+
+
+def _parse_requirements(req_file: Path) -> dict[str, str] | None:
+    """Parse ``requirements.txt`` into ``{package: constraint}``; ``None`` on failure."""
+    defined: dict[str, str] = {}
+    try:
+        for line in req_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or line.startswith("-"):
+                continue
+            match = re.match(r"^([a-zA-Z0-9_.-]+)\s*([><=!~]+.+)?", line)
+            if match:
+                pkg = match.group(1).lower().replace("_", "-")
+                constraint = match.group(2) or ""
+                defined[pkg] = constraint
+    except Exception:
+        return None
+    return defined
+
+
+def _get_installed_packages() -> dict[str, str] | None:
+    """Return ``{package: version}`` via ``pip freeze``; ``None`` on failure."""
+    installed: dict[str, str] = {}
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "freeze"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "==" in line:
+                pkg, ver = line.split("==", 1)
+                installed[pkg.lower().replace("_", "-")] = ver.strip()
+    except Exception:
+        return None
+    return installed
+
+
 def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
     """检测依赖版本漂移 — ``requirements.txt`` vs ``pip freeze`` 三方对账。
 
@@ -548,59 +597,19 @@ def detect_dep_version_drift(project_root: str) -> list[DriftEvent]:
 
     events: list[DriftEvent] = []
 
-    req_file = Path(project_root) / "requirements.txt"
+    req_file = _find_requirements_file(project_root)
 
-    if not req_file.exists():
-        candidates = list(Path(project_root).glob("**/requirements*.txt"))
-
-        req_file = candidates[0] if candidates else None
-
-        if not req_file:
-            return events
-
-    defined: dict[str, str] = {}
-
-    try:
-        for line in req_file.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-
-            if not line or line.startswith("#") or line.startswith("-"):
-                continue
-
-            match = re.match(r"^([a-zA-Z0-9_.-]+)\s*([><=!~]+.+)?", line)
-
-            if match:
-                pkg = match.group(1).lower().replace("_", "-")
-
-                constraint = match.group(2) or ""
-
-                defined[pkg] = constraint
-
-    except Exception:
+    if not req_file:
         return events
 
-    installed: dict[str, str] = {}
+    defined = _parse_requirements(req_file)
 
-    try:
-        result = subprocess.run(
-            [sys.executable, "-m", "pip", "freeze"],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
+    if defined is None:
+        return events
 
-        for line in result.stdout.splitlines():
-            line = line.strip()
+    installed = _get_installed_packages()
 
-            if not line or line.startswith("#"):
-                continue
-
-            if "==" in line:
-                pkg, ver = line.split("==", 1)
-
-                installed[pkg.lower().replace("_", "-")] = ver.strip()
-
-    except Exception:
+    if installed is None:
         return events
 
     for pkg_name, constraint in defined.items():
