@@ -149,6 +149,118 @@ def _filter_underscore_scripts(mapping: dict[str, list[str]]) -> dict[str, list[
     return mapping
 
 
+def _compute_discovery_mtime(gov_path: Path) -> float:
+    try:
+        return gov_path.stat().st_mtime if gov_path.is_dir() else 0.0
+    except OSError:
+        return 0.0
+
+
+def _scan_scripts_by_directory(gov_path: Path) -> dict[str, list[str]]:
+    mapping: dict[str, list[str]] = {}
+    py_files = list(gov_path.rglob("*.py"))
+    total = len(py_files)
+    for i, py_file in enumerate(py_files):
+        if (i + 1) % 200 == 0 or i == total - 1:
+            print(f"[PROGRESS] Filesystem scan {i + 1}/{total} files...", file=sys.stderr)
+        name = py_file.name
+        if name.startswith("_"):
+            continue
+        parent_dir = py_file.parent.name
+        dim_key = PipelineRunner._dir_to_dimension(parent_dir)
+        if dim_key is None:
+            continue
+        mapping.setdefault(dim_key, []).append(str(py_file))
+    return mapping
+
+
+def _scan_top_level_scripts(gov_path: Path, mapping: dict[str, list[str]]) -> None:
+    for py_file in gov_path.glob("*.py"):
+        name = py_file.name
+        if name.startswith("_"):
+            continue
+        if any(name in scripts for scripts in mapping.values()):
+            continue
+        dim_key = PipelineRunner._infer_dimension_from_name(name)
+        if dim_key:
+            mapping.setdefault(dim_key, []).append(str(py_file))
+
+
+def _merge_discovery_sources(
+    mapping: dict[str, list[str]],
+    sources: tuple[dict[str, list[str]], ...],
+) -> None:
+    for source in sources:
+        for dim, scripts in source.items():
+            existing = set(mapping.get(dim, []))
+            for sp in scripts:
+                if sp not in existing:
+                    mapping.setdefault(dim, []).append(sp)
+                    existing.add(sp)
+
+
+def _finalize_discovery_mapping(mapping: dict[str, list[str]]) -> None:
+    for dim in mapping:
+        mapping[dim] = [sp for sp in mapping[dim] if not Path(sp).name.startswith("_")]
+    for dim in mapping:
+        mapping[dim].sort()
+
+
+def _process_depgraph_edges(
+    edges: list[dict[str, object]],
+    import_adj: dict[str, set[str]],
+    owned_by_map: dict[str, list[str]],
+) -> None:
+    for i, edge in enumerate(edges):
+        if (i + 1) % 3000 == 0:
+            print(f"[PROGRESS] Edge analysis {i + 1}/{len(edges)}...", file=sys.stderr)
+        dep_type = edge.get("dep_type", "")
+        from_id = edge.get("from", "")
+        to_id = edge.get("to", "")
+        if dep_type == "imports" and from_id and to_id:
+            import_adj.setdefault(from_id, set()).add(to_id)
+        if dep_type == "owned_by" and from_id and to_id:
+            owned_by_map.setdefault(from_id, []).append(to_id)
+
+
+def _depgraph_dfs(
+    node: str,
+    import_adj: dict[str, set[str]],
+    node_list: list[str],
+    visited: set[str],
+    rec_stack: set[str],
+    cycle_nodes: set[str],
+) -> None:
+    visited.add(node)
+    rec_stack.add(node)
+    for neighbor in import_adj.get(node, set()):
+        if neighbor not in node_list:
+            continue
+        if neighbor not in visited:
+            _depgraph_dfs(neighbor, import_adj, node_list, visited, rec_stack, cycle_nodes)
+        elif neighbor in rec_stack:
+            cycle_nodes.add(node)
+            cycle_nodes.add(neighbor)
+    rec_stack.discard(node)
+
+
+def _count_orphan_nodes(
+    node_list: list[str],
+    nodes: dict[str, object],
+    owned_by_map: dict[str, list[str]],
+) -> int:
+    orphan_count = 0
+    for node_id in node_list:
+        node_data = nodes.get(node_id)
+        if not isinstance(node_data, dict):
+            continue
+        node_type = node_data.get("type", "")
+        if node_type in ("module", "script"):
+            if node_id not in owned_by_map:
+                orphan_count += 1
+    return orphan_count
+
+
 class PipelineRunner:
     _discovery_cache: dict[str, tuple[float, dict[str, list[str]]]] = {}
     _depgraph_cache: tuple[float, dict[str, object]] | None = None
@@ -244,10 +356,7 @@ class PipelineRunner:
     def _discover_scripts(self) -> dict[str, list[str]]:
         gov_path = Path(self.scripts_dir).resolve()
         cache_key = str(gov_path)
-        try:
-            current_mtime = gov_path.stat().st_mtime if gov_path.is_dir() else 0.0
-        except OSError:
-            current_mtime = 0.0
+        current_mtime = _compute_discovery_mtime(gov_path)
         cached = PipelineRunner._discovery_cache.get(cache_key)
         if cached is not None and cached[0] == current_mtime:
             return cached[1]
@@ -259,49 +368,17 @@ class PipelineRunner:
         print(f"[START] Discovering scripts in {gov_path}...", file=sys.stderr)
         t_start = time.perf_counter()
 
-        mapping: dict[str, list[str]] = {}
-
-        py_files = list(gov_path.rglob("*.py"))
-        total = len(py_files)
-        for i, py_file in enumerate(py_files):
-            if (i + 1) % 200 == 0 or i == total - 1:
-                print(f"[PROGRESS] Filesystem scan {i + 1}/{total} files...", file=sys.stderr)
-            name = py_file.name
-            if name.startswith("_"):
-                continue
-            parent_dir = py_file.parent.name
-            dim_key = self._dir_to_dimension(parent_dir)
-            if dim_key is None:
-                continue
-            mapping.setdefault(dim_key, []).append(str(py_file))
-
-        for py_file in gov_path.glob("*.py"):
-            name = py_file.name
-            if name.startswith("_"):
-                continue
-            if any(name in scripts for scripts in mapping.values()):
-                continue
-            dim_key = self._infer_dimension_from_name(name)
-            if dim_key:
-                mapping.setdefault(dim_key, []).append(str(py_file))
-
-        for source in (
-            self._discover_from_manifest(),
-            self._discover_from_depgraph(),
-            self._discover_from_gate_registry(),
-        ):
-            for dim, scripts in source.items():
-                existing = set(mapping.get(dim, []))
-                for sp in scripts:
-                    if sp not in existing:
-                        mapping.setdefault(dim, []).append(sp)
-                        existing.add(sp)
-
-        for dim in mapping:
-            mapping[dim] = [sp for sp in mapping[dim] if not Path(sp).name.startswith("_")]
-
-        for dim in mapping:
-            mapping[dim].sort()
+        mapping = _scan_scripts_by_directory(gov_path)
+        _scan_top_level_scripts(gov_path, mapping)
+        _merge_discovery_sources(
+            mapping,
+            (
+                self._discover_from_manifest(),
+                self._discover_from_depgraph(),
+                self._discover_from_gate_registry(),
+            ),
+        )
+        _finalize_discovery_mapping(mapping)
 
         elapsed = time.perf_counter() - t_start
         print(f"[DONE] Discovered {sum(len(v) for v in mapping.values())} scripts in {elapsed:.1f}s", file=sys.stderr)
@@ -984,37 +1061,14 @@ class PipelineRunner:
             import_adj.setdefault(node_id, set())
         print(f"[START] Analyzing depgraph {len(edges)} edges...", file=sys.stderr)
         t_start = time.perf_counter()
-        for i, edge in enumerate(edges):
-            if (i + 1) % 3000 == 0:
-                print(f"[PROGRESS] Edge analysis {i + 1}/{len(edges)}...", file=sys.stderr)
-            dep_type = edge.get("dep_type", "")
-            from_id = edge.get("from", "")
-            to_id = edge.get("to", "")
-            if dep_type == "imports" and from_id and to_id:
-                import_adj.setdefault(from_id, set()).add(to_id)
-            if dep_type == "owned_by" and from_id and to_id:
-                owned_by_map.setdefault(from_id, []).append(to_id)
+        _process_depgraph_edges(edges, import_adj, owned_by_map)
         node_list = list(import_adj.keys())[:1000]
         visited: set[str] = set()
         rec_stack: set[str] = set()
         cycle_nodes: set[str] = set()
-
-        def _dfs(node: str) -> None:
-            visited.add(node)
-            rec_stack.add(node)
-            for neighbor in import_adj.get(node, set()):
-                if neighbor not in node_list:
-                    continue
-                if neighbor not in visited:
-                    _dfs(neighbor)
-                elif neighbor in rec_stack:
-                    cycle_nodes.add(node)
-                    cycle_nodes.add(neighbor)
-            rec_stack.discard(node)
-
         for n in node_list:
             if n not in visited:
-                _dfs(n)
+                _depgraph_dfs(n, import_adj, node_list, visited, rec_stack, cycle_nodes)
         if cycle_nodes:
             sample = sorted(cycle_nodes)[:5]
             findings.append(
@@ -1030,15 +1084,7 @@ class PipelineRunner:
                     blast_radius=BlastRadius.system,
                 )
             )
-        orphan_count = 0
-        for node_id in node_list:
-            node_data = nodes.get(node_id)
-            if not isinstance(node_data, dict):
-                continue
-            node_type = node_data.get("type", "")
-            if node_type in ("module", "script"):
-                if node_id not in owned_by_map:
-                    orphan_count += 1
+        orphan_count = _count_orphan_nodes(node_list, nodes, owned_by_map)
         if orphan_count > 0:
             findings.append(
                 self._make_finding(
