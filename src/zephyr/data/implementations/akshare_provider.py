@@ -46,6 +46,24 @@ from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 log = logging.getLogger(__name__)
 
 
+# === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
+# 原 AKShareProvider.fetch 95行 McCabe=41（38个elif分支能力路由，均调用 self._fetch_{cap}(payload, policy)）。
+# 治本：提取为 frozenset + getattr 动态分发，主函数简化为编排（McCabe=2）。
+# 行为等价：所有路由调用签名/参数完全保留，unsupported capability 错误消息不变。
+_AKSHARE_CAPABILITIES = frozenset({
+    "macro_data", "daily_valuation", "margin_trading", "block_trade",
+    "dragon_tiger", "money_flow", "share_unlock", "audit_opinion",
+    "equity_pledge", "equity_pledge_summary", "dividend", "restricted_shares",
+    "stock_news_em", "news_cctv", "news_economic_baidu", "news_baidu",
+    "news_stock", "analyst_forecast", "rights_issue", "research_report",
+    "hk_connect_flow", "kline_futures", "limit_up_down", "share_change",
+    "st_stock_list", "concept_board", "stock_indicator", "block_trade_detail",
+    "top10_shareholders", "top10_circulating_shareholders", "disclosure_plan",
+    "repurchase", "convertible_bond_list", "etf_list", "lof_list",
+    "hk_stock_list", "hk_trade_calendar", "index_list", "etf_benchmark",
+})
+
+
 def safe_float(v) -> float | None:
     """安全转 float，失败返回 None。"""
     try:
@@ -147,93 +165,17 @@ class AKShareProvider(DataSourceBase):
         未知 capability -> yield FetchResult(error=...)。
         """
         cap = (payload.extra or {}).get("capability")
-        if cap == "macro_data":
-            yield from self._fetch_macro_data(payload, policy)
-        elif cap == "daily_valuation":
-            yield from self._fetch_daily_valuation(payload, policy)
-        elif cap == "margin_trading":
-            yield from self._fetch_margin_trading(payload, policy)
-        elif cap == "block_trade":
-            yield from self._fetch_block_trade(payload, policy)
-        elif cap == "dragon_tiger":
-            yield from self._fetch_dragon_tiger(payload, policy)
-        elif cap == "money_flow":
-            yield from self._fetch_money_flow(payload, policy)
-        elif cap == "share_unlock":
-            yield from self._fetch_share_unlock(payload, policy)
-        elif cap == "audit_opinion":
-            yield from self._fetch_audit_opinion(payload, policy)
-        elif cap == "equity_pledge":
-            yield from self._fetch_equity_pledge(payload, policy)
-        elif cap == "equity_pledge_summary":
-            yield from self._fetch_equity_pledge_summary(payload, policy)
-        elif cap == "dividend":
-            yield from self._fetch_dividend(payload, policy)
-        elif cap == "restricted_shares":
-            yield from self._fetch_restricted_shares(payload, policy)
-        elif cap == "stock_news_em":
-            yield from self._fetch_stock_news_em(payload, policy)
-        elif cap == "news_cctv":
-            yield from self._fetch_news_cctv(payload, policy)
-        elif cap == "news_economic_baidu":
-            yield from self._fetch_news_economic_baidu(payload, policy)
-        elif cap == "news_baidu":
-            yield from self._fetch_news_baidu(payload, policy)
-        elif cap == "news_stock":
-            yield from self._fetch_news_stock(payload, policy)
-        elif cap == "analyst_forecast":
-            yield from self._fetch_analyst_forecast(payload, policy)
-        elif cap == "rights_issue":
-            yield from self._fetch_rights_issue(payload, policy)
-        elif cap == "research_report":
-            yield from self._fetch_research_report(payload, policy)
-        elif cap == "hk_connect_flow":
-            yield from self._fetch_hk_connect_flow(payload, policy)
-        elif cap == "kline_futures":
-            yield from self._fetch_kline_futures(payload, policy)
-        elif cap == "limit_up_down":
-            yield from self._fetch_limit_up_down(payload, policy)
-        elif cap == "share_change":
-            yield from self._fetch_share_change(payload, policy)
-        elif cap == "st_stock_list":
-            yield from self._fetch_st_stock_list(payload, policy)
-        elif cap == "concept_board":
-            yield from self._fetch_concept_board(payload, policy)
-        elif cap == "stock_indicator":
-            yield from self._fetch_stock_indicator(payload, policy)
-        elif cap == "block_trade_detail":
-            yield from self._fetch_block_trade_detail(payload, policy)
-        elif cap == "top10_shareholders":
-            yield from self._fetch_top10_shareholders(payload, policy)
-        elif cap == "top10_circulating_shareholders":
-            yield from self._fetch_top10_circulating_shareholders(payload, policy)
-        elif cap == "disclosure_plan":
-            yield from self._fetch_disclosure_plan(payload, policy)
-        elif cap == "repurchase":
-            yield from self._fetch_repurchase(payload, policy)
-        elif cap == "convertible_bond_list":
-            yield from self._fetch_convertible_bond_list(payload, policy)
-        elif cap == "etf_list":
-            yield from self._fetch_etf_list(payload, policy)
-        elif cap == "lof_list":
-            yield from self._fetch_lof_list(payload, policy)
-        elif cap == "hk_stock_list":
-            yield from self._fetch_hk_stock_list(payload, policy)
-        elif cap == "hk_trade_calendar":
-            yield from self._fetch_hk_trade_calendar(payload, policy)
-        elif cap == "index_list":
-            yield from self._fetch_index_list(payload, policy)
-        elif cap == "etf_benchmark":
-            yield from self._fetch_etf_benchmark(payload, policy)
-        else:
-            yield FetchResult(
-                table=payload.table,
-                columns=[],
-                rows=[],
-                last_key="",
-                elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
-            )
+        if cap in _AKSHARE_CAPABILITIES:
+            yield from getattr(self, f"_fetch_{cap}")(payload, policy)
+            return
+        yield FetchResult(
+            table=payload.table,
+            columns=[],
+            rows=[],
+            last_key="",
+            elapsed_sec=0.0,
+            error=f"unsupported capability: {cap}",
+        )
 
     # ---- 宏观经济数据 ----
 
