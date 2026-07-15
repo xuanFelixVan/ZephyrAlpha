@@ -1,5 +1,5 @@
 ---
-module_id: MOD-013
+module_id: MOD-INF-016
 title: "Shared Contracts 蓝图 — 跨层数据契约 SSoT"
 doc_type: blueprint
 status: Active

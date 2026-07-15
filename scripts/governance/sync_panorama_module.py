@@ -107,6 +107,14 @@ _SQL_UPSERT_DECISION_PLACEHOLDER = (
     "module_id=EXCLUDED.module_id, domain_id=EXCLUDED.domain_id, "
     "design_maturity=EXCLUDED.design_maturity, build_status=EXCLUDED.build_status"
 )
+_SQL_QUERY_DECISION_PLACEHOLDERS = (
+    "SELECT layer_id FROM decision_layers WHERE track = 'placeholder'"
+)
+_SQL_DELETE_DECISION_LAYER = "DELETE FROM decision_layers WHERE layer_id = %s"
+_SQL_QUERY_DATAFLOW_PLACEHOLDERS = (
+    "SELECT job_name FROM dataflow_jobs WHERE entity_type = 'module_placeholder'"
+)
+_SQL_DELETE_DATAFLOW_JOB = "DELETE FROM dataflow_jobs WHERE job_name = %s"
 
 
 def _query_depgraph_module(conn, module_id: str) -> dict | None:
@@ -266,12 +274,95 @@ def sync_all_panorama() -> int:
     return 0 if failed == 0 else 1
 
 
+def prune_orphans() -> dict:
+    """删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）。
+
+    孤儿定义：
+    - decision_layers: track='placeholder' 且 layer_id 不在 depgraph.nodes.blueprint_id 中
+    - dataflow_jobs: entity_type='module_placeholder' 且 job_name 不在 depgraph.nodes.blueprint_id 中
+
+    根因：sync 只 UPSERT 不 DELETE，depgraph 删模块后 decision_layers/dataflow_jobs 残留占位记录。
+
+    幂等：删除孤儿后再次运行不会删除任何东西。
+
+    Returns:
+        {"deleted_decision": int, "deleted_dataflow": int,
+         "orphan_decision": list[str], "orphan_dataflow": list[str]}
+    """
+    # 1. 查询 depgraph 中所有 blueprint_id
+    depgraph_conn = get_depgraph_pg_connection()
+    try:
+        with depgraph_conn.cursor() as cur:
+            cur.execute(_SQL_QUERY_ALL_MODULES)
+            rows = cur.fetchall()
+        blueprint_ids = {row["blueprint_id"] if isinstance(row, dict) else row[0]
+                         for row in rows}
+    finally:
+        depgraph_conn.close()
+
+    # 2. 清理 decision_layers 孤儿占位层
+    decision_conn = get_decisiongraph_pg_connection(
+        allow_design_delete=True, read_only=False,
+    )
+    orphan_decision: list[str] = []
+    deleted_decision = 0
+    try:
+        with decision_conn.cursor() as cur:
+            cur.execute(_SQL_QUERY_DECISION_PLACEHOLDERS)
+            rows = cur.fetchall()
+            placeholders = [row["layer_id"] if isinstance(row, dict) else row[0]
+                            for row in rows]
+            orphan_decision = [lid for lid in placeholders if lid not in blueprint_ids]
+            for lid in orphan_decision:
+                cur.execute(_SQL_DELETE_DECISION_LAYER, (lid,))
+                deleted_decision += 1
+        decision_conn.commit()
+    finally:
+        decision_conn.close()
+
+    # 3. 清理 dataflow_jobs 孤儿占位记录（ARCH-058 扩展）
+    dataflow_conn = get_dataflowgraph_pg_connection(
+        allow_design_delete=True, read_only=False,
+    )
+    orphan_dataflow: list[str] = []
+    deleted_dataflow = 0
+    try:
+        with dataflow_conn.cursor() as cur:
+            cur.execute(_SQL_QUERY_DATAFLOW_PLACEHOLDERS)
+            rows = cur.fetchall()
+            placeholders = [row["job_name"] if isinstance(row, dict) else row[0]
+                            for row in rows]
+            orphan_dataflow = [jid for jid in placeholders if jid not in blueprint_ids]
+            for jid in orphan_dataflow:
+                cur.execute(_SQL_DELETE_DATAFLOW_JOB, (jid,))
+                deleted_dataflow += 1
+        dataflow_conn.commit()
+    finally:
+        dataflow_conn.close()
+
+    return {
+        "deleted_decision": deleted_decision,
+        "deleted_dataflow": deleted_dataflow,
+        "orphan_decision": orphan_decision,
+        "orphan_dataflow": orphan_dataflow,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="四图模块同步引擎（ARCH-056）")
     parser.add_argument("module_id", nargs="?", help="要同步的模块 ID（MOD-XXX）")
     parser.add_argument("--all", action="store_true", help="同步所有模块")
+    parser.add_argument("--prune-orphans", action="store_true",
+                        help="删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）")
     args = parser.parse_args()
 
+    if args.prune_orphans:
+        result = prune_orphans()
+        print(f"Prune orphans: decision deleted={result['deleted_decision']}, "
+              f"dataflow deleted={result['deleted_dataflow']}, "
+              f"orphan_decision={result['orphan_decision']}, "
+              f"orphan_dataflow={result['orphan_dataflow']}")
+        return 0
     if args.all:
         return sync_all_panorama()
     if args.module_id:
