@@ -96,6 +96,64 @@ COLLECTION_ALIASES: Final[dict[str, str]] = {
 }
 
 
+def _query_vms_collection(
+    vms_cm: CollectionManager, vms_collection: str, query: str, k: int
+) -> list[dict[str, Any]]:
+    """Query the VMS collection and return list of result dicts.
+
+    Extracted from BridgeLayer.search_both to reduce complexity.
+    """
+    results: list[dict[str, Any]] = []
+    try:
+        col = vms_cm.get_collection(vms_collection)
+        if col.count() > 0:
+            res = col.query(query_texts=[query], n_results=min(k, col.count()))
+            if res.get("ids") and res["ids"][0]:
+                for i, doc_id in enumerate(res["ids"][0]):
+                    results.append(
+                        {
+                            "id": doc_id,
+                            "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
+                            "source": "vms",
+                            "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
+                        }
+                    )
+    except Exception as e:
+        _logger.debug("BridgeLayer: VMS 检索失败: %s", e, exc_info=True)
+    return results
+
+
+def _query_kb_collection(
+    kb_client: Any, kb_collection_name: str, query: str, k: int
+) -> list[dict[str, Any]]:
+    """Query the kb/ collection and return list of result dicts.
+
+    Extracted from BridgeLayer.search_both to reduce complexity.
+    """
+    results: list[dict[str, Any]] = []
+    try:
+        existing = {c.name for c in kb_client.list_collections()}
+        if kb_collection_name in existing:
+            col = kb_client.get_collection(kb_collection_name)
+            if col.count() > 0:
+                res = col.query(query_texts=[query], n_results=min(k, col.count()))
+                if res.get("ids") and res["ids"][0]:
+                    for i, doc_id in enumerate(res["ids"][0]):
+                        results.append(
+                            {
+                                "id": f"kb::{doc_id}",
+                                "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
+                                "source": "kb",
+                                "distance": res.get("distances", [[0.0]])[0][i]
+                                if res.get("distances")
+                                else 0.0,
+                            }
+                        )
+    except Exception as e:
+        _logger.debug("BridgeLayer: kb/ 检索失败: %s", e, exc_info=True)
+    return results
+
+
 class BridgeLayer:
     MIGRATION_MAP: ClassVar[dict[str, dict[str, Any]]] = MIGRATION_MAP
     TOPIC_TO_COLLECTION: ClassVar[dict[str, str]] = TOPIC_TO_COLLECTION
@@ -123,25 +181,7 @@ class BridgeLayer:
         return self._kb_client
 
     def search_both(self, query: str, vms_collection: str, k: int = 5) -> dict[str, Any]:
-        vms_results: list[dict[str, Any]] = []
-        kb_results: list[dict[str, Any]] = []
-
-        try:
-            col = self._vms_cm.get_collection(vms_collection)
-            if col.count() > 0:
-                res = col.query(query_texts=[query], n_results=min(k, col.count()))
-                if res.get("ids") and res["ids"][0]:
-                    for i, doc_id in enumerate(res["ids"][0]):
-                        vms_results.append(
-                            {
-                                "id": doc_id,
-                                "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
-                                "source": "vms",
-                                "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
-                            }
-                        )
-        except Exception as e:
-            _logger.debug("BridgeLayer: VMS 检索失败: %s", e, exc_info=True)
+        vms_results = _query_vms_collection(self._vms_cm, vms_collection, query, k)
 
         kb_collection_name = None
         for kb_name, mapping in MIGRATION_MAP.items():
@@ -149,27 +189,9 @@ class BridgeLayer:
                 kb_collection_name = kb_name
                 break
 
+        kb_results: list[dict[str, Any]] = []
         if kb_collection_name and self.kb_client:
-            try:
-                existing = {c.name for c in self.kb_client.list_collections()}
-                if kb_collection_name in existing:
-                    col = self.kb_client.get_collection(kb_collection_name)
-                    if col.count() > 0:
-                        res = col.query(query_texts=[query], n_results=min(k, col.count()))
-                        if res.get("ids") and res["ids"][0]:
-                            for i, doc_id in enumerate(res["ids"][0]):
-                                kb_results.append(
-                                    {
-                                        "id": f"kb::{doc_id}",
-                                        "content": res.get("documents", [[""]])[0][i] if res.get("documents") else "",
-                                        "source": "kb",
-                                        "distance": res.get("distances", [[0.0]])[0][i]
-                                        if res.get("distances")
-                                        else 0.0,
-                                    }
-                                )
-            except Exception as e:
-                _logger.debug("BridgeLayer: kb/ 检索失败: %s", e, exc_info=True)
+            kb_results = _query_kb_collection(self.kb_client, kb_collection_name, query, k)
 
         merged = vms_results + kb_results
         merged.sort(key=lambda x: x.get("distance", 1.0))
