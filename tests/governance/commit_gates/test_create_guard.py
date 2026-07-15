@@ -562,3 +562,122 @@ class TestGovernanceSubdirNewPyNotAntiRelapse:
             assert "防复发" not in detail, (
                 f"governance 子目录新增 .py 不应触发 ARCH-031 防复发: {detail}"
             )
+
+
+# ===========================================================================
+# 裁定#216 回归测试覆盖先行：补充未覆盖分支测试（类名唯一性 + 字段头完整性）
+# 病根：原 21 测试覆盖 Block 1-7 + Block 9 (creation_token)，但 Block 8 (类名唯一性)
+# 和 Block 10 (字段头完整性) 的 violation 路径从未被测试。Extract Method 重构前
+# MUST 补充分支测试，确保重构后 violation 路径行为等价。
+# ===========================================================================
+
+class TestClassUniquenessBlocked:
+    """类名跨模块冲突 → 硬阻断（ARCH-034 CLASS-UNIQUENESS）。
+
+    Block 8 violation 路径覆盖：staged .py 定义与已 tracked 文件同名的 class。
+    """
+
+    def test_class_name_conflict_blocks(self, tmp_path: Path) -> None:
+        """staged .py 定义 class 与已 commit 文件同名 class → 阻断。"""
+        _init_git_repo(tmp_path)
+        # 1. 先 commit 一个已有文件，定义 _TestConflictClass20260715
+        existing = tmp_path / "src/zephyr/gov_enforcement/existing_module_for_test.py"
+        existing.parent.mkdir(parents=True, exist_ok=True)
+        existing.write_text(
+            "class _TestConflictClass20260715:\n    pass\n", encoding="utf-8"
+        )
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        subprocess.run(
+            ["git", "add", "src/zephyr/gov_enforcement/existing_module_for_test.py"],
+            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "add existing", "--no-verify"],
+            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+        )
+        # 2. Stage 新文件，定义同名 class（无 alias 标记）
+        f = _stage_file(
+            tmp_path,
+            "src/zephyr/gov_enforcement/commit_gates/__test_class_conflict_20260715__.py",
+            "class _TestConflictClass20260715:\n    pass\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"类名冲突应被阻断: {detail}"
+        assert "CLASS-UNIQUENESS" in detail or "类名" in detail
+
+    def test_class_name_with_alias_marker_passes(self, tmp_path: Path) -> None:
+        """staged .py 定义同名 class 但有 '# class-name-alias' 标记 → 通过（合法 re-export）。"""
+        _init_git_repo(tmp_path)
+        existing = tmp_path / "src/zephyr/gov_enforcement/existing_module_for_test2.py"
+        existing.parent.mkdir(parents=True, exist_ok=True)
+        existing.write_text(
+            "class _TestAliasedClass20260715:\n    pass\n", encoding="utf-8"
+        )
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        subprocess.run(
+            ["git", "add", "src/zephyr/gov_enforcement/existing_module_for_test2.py"],
+            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "add existing2", "--no-verify"],
+            cwd=str(tmp_path), capture_output=True, timeout=30, env=env,
+        )
+        # Stage 新文件，定义同名 class 但有 alias 标记
+        f = _stage_file(
+            tmp_path,
+            "src/zephyr/gov_enforcement/commit_gates/__test_class_alias_20260715__.py",
+            "# class-name-alias: legitimate re-export for testing\n"
+            "class _TestAliasedClass20260715:\n    pass\n",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        # 应通过类名检测（有 alias 标记），但可能被后续 token 检测阻断
+        # 关键断言：不因 CLASS-UNIQUENESS 被阻断
+        if not passed:
+            assert "CLASS-UNIQUENESS" not in detail, (
+                f"有 alias 标记的类名不应触发 CLASS-UNIQUENESS: {detail}"
+            )
+
+
+class TestFieldHeaderIncomplete:
+    """字段头部不完整 → 硬阻断（ARCH-031 14字段治本）。
+
+    Block 10 violation 路径覆盖：staged .py 文件头部缺字段标注。
+    需要先通过 Block 9 (creation_token)，所以 mock registry 登记该文件。
+    """
+
+    def test_missing_fields_blocks(self, tmp_path: Path, monkeypatch) -> None:
+        """staged .py 有 token 但缺字段头 → 阻断（ARCH-031 字段头完整性）。"""
+        _init_git_repo(tmp_path)
+        rel = "src/zephyr/gov_enforcement/commit_gates/__test_field_header_20260715__.py"
+        f = _stage_file(tmp_path, rel, "x = 1\n")  # 无任何字段标注
+        # mock registry 登记此文件（通过 Block 9 creation_token 检测）
+        registry_file = tmp_path / "registry.yaml"
+        registry_file.write_text(
+            f"creation_tokens:\n"
+            f"  - file: \"{rel}\"\n"
+            f"    token: \"auto-field-header-test-20260715\"\n"
+            f"    created_by: \"test\"\n"
+            f"    capability: \"test\"\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            registry_file,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is False, f"缺字段头应被阻断: {detail}"
+        assert "字段头部" in detail or "ARCH-031" in detail
