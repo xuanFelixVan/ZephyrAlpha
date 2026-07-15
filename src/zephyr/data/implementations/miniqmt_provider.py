@@ -38,6 +38,90 @@ from ..policy_registry import SourcePolicy
 from .. import ch_reader
 
 
+# === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
+# 原 MiniQMTProvider.fetch 166行 McCabe=42（~40个elif分支能力路由）。
+# 治本：提取为 dispatch table 模式（dict 映射 capability→handler），主函数简化为编排（McCabe≈7）。
+# 行为等价：所有路由调用签名/顺序/参数完全保留，LOF特殊处理提取到 _route_kline_capability。
+_KLINE_CAPABILITIES = {
+    "kline_daily": ("1d", "沪深A股"),
+    "kline_1min": ("1m", "沪深A股"),
+    "kline_5min": ("5m", "沪深A股"),
+    "kline_15min": ("15m", "沪深A股"),
+    "kline_30min": ("30m", "沪深A股"),
+    "kline_60min": ("1h", "沪深A股"),
+    "kline_etf_1min": ("1m", "沪深ETF"),
+    "kline_etf_5min": ("5m", "沪深ETF"),
+    "kline_etf_15min": ("15m", "沪深ETF"),
+    "kline_etf_30min": ("30m", "沪深ETF"),
+    "kline_etf_60min": ("1h", "沪深ETF"),
+    # miniQMT 无 LOF 独立板块，sector=None 标记从 c1_market.lof_list 表读标的
+    "kline_lof_1min": ("1m", None),
+    "kline_lof_5min": ("5m", None),
+    "kline_lof_15min": ("15m", None),
+    "kline_lof_30min": ("30m", None),
+    "kline_lof_60min": ("1h", None),
+}
+
+_FINANCIAL_CAPABILITIES = {
+    "balance_sheet": "Balance",
+    "income_statement": "Income",
+    "cashflow_statement": "CashFlow",
+    "financial_indicator": "Capital",
+    "main_business": "Income",
+}
+
+# 后复权日K：复用 _fetch_kline，传 dividend_type="back"
+_KLINE_PARAM_ROUTES = {
+    "kline_daily_hfq": ("1d", {"dividend_type": "back"}),
+}
+
+# 聚合K线（周/月）：miniQMT 不支持 1w/1M 周期，从日K聚合（pandas>=2.2 用 'ME' 替代 'M'）
+_AGGREGATED_KLINE_ROUTES = {
+    "kline_weekly": ("W", {}),
+    "kline_monthly": ("ME", {}),
+    "kline_weekly_hfq": ("W", {"dividend_type": "back"}),
+    "kline_monthly_hfq": ("ME", {"dividend_type": "back"}),
+}
+
+# 日K直接路由（无 sector 参数）
+_KLINE_1D_CAPABILITIES = frozenset({"kline_hk_daily", "kline_futures"})
+
+# 能力 → 方法名 直接路由表（31个能力，均调用 self.<method>(payload, policy)）
+_DIRECT_ROUTES = {
+    "adj_factor": "_fetch_adj_factor",
+    "index_constituent": "_fetch_index_constituent",
+    "kline_index": "_fetch_kline_index",
+    "futures_position": "_fetch_futures_position",
+    "shareholder": "_fetch_shareholder",
+    "earnings_forecast": "_fetch_earnings_forecast",
+    "express_report": "_fetch_express_report",
+    "dividend": "_fetch_dividend",
+    "option_iv_surface": "_fetch_option_iv_surface",
+    "convertible_bond_iv": "_fetch_convertible_bond_iv",
+    "futures_term_structure": "_fetch_futures_term_structure",
+    "tick_data": "_fetch_tick_data",
+    "auction_snapshot": "_fetch_auction_snapshot",
+    "index_quote": "_fetch_index_quote",
+    "stock_list": "_fetch_stock_list",
+    "kline_cb": "_fetch_kline_cb",
+    "option_kline": "_fetch_option_kline",
+    "option_greeks": "_fetch_option_greeks",
+    "index_weight": "_fetch_index_weight",
+    "sector_list": "_fetch_sector_list",
+    "l2_tick": "_fetch_l2_tick",
+    "auction_data": "_fetch_auction_data",
+    "auction_book": "_fetch_auction_book",
+    "futures_kline_qmt": "_fetch_kline_futures_qmt",
+    "hk_kline": "_fetch_hk_kline",
+    "kline_us_daily": "_fetch_us_kline",
+    "etf_nav": "_fetch_etf_nav",
+    "repurchase": "_fetch_repurchase",
+    "margin_trading_qmt": "_fetch_margin_trading_qmt",
+    "dragon_tiger_qmt": "_fetch_dragon_tiger_qmt",
+    "block_trade_qmt": "_fetch_block_trade_qmt",
+}
+
+
 class MiniQMTProvider(DataSourceBase):
     """miniQMT（迅投 xtquant）数据源 Provider。
 
@@ -188,160 +272,51 @@ class MiniQMTProvider(DataSourceBase):
         """
         extra = payload.extra or {}
         capability = extra.get("capability")
-        # K线类能力统一路由到 _fetch_kline，按 period 区分
-        _KLINE_CAPABILITIES = {
-            "kline_daily": ("1d", "沪深A股"),
-            "kline_1min": ("1m", "沪深A股"),
-            "kline_5min": ("5m", "沪深A股"),
-            "kline_15min": ("15m", "沪深A股"),
-            "kline_30min": ("30m", "沪深A股"),
-            "kline_60min": ("1h", "沪深A股"),
-            "kline_etf_1min": ("1m", "沪深ETF"),
-            "kline_etf_5min": ("5m", "沪深ETF"),
-            "kline_etf_15min": ("15m", "沪深ETF"),
-            "kline_etf_30min": ("30m", "沪深ETF"),
-            "kline_etf_60min": ("1h", "沪深ETF"),
-            # miniQMT 无 LOF 独立板块，sector=None 标记从 c1_market.lof_list 表读标的
-            "kline_lof_1min": ("1m", None),
-            "kline_lof_5min": ("5m", None),
-            "kline_lof_15min": ("15m", None),
-            "kline_lof_30min": ("30m", None),
-            "kline_lof_60min": ("1h", None),
-        }
-        # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
-        _FINANCIAL_CAPABILITIES = {
-            "balance_sheet": "Balance",
-            "income_statement": "Income",
-            "cashflow_statement": "CashFlow",
-            "financial_indicator": "Capital",
-            "main_business": "Income",
-        }
         if capability in _KLINE_CAPABILITIES:
             _period, _sector = _KLINE_CAPABILITIES[capability]
-            if _sector is None:
-                # miniQMT 无 LOF 板块，从 c1_market.lof_list 表读标的注入 payload
-                lof_symbols = self._load_symbols_from_table("c1_market.lof_list")
-                if not lof_symbols:
-                    yield FetchResult(
-                        table=payload.table or "", columns=[], rows=[],
-                        last_key="", elapsed_sec=0.0,
-                        error="c1_market.lof_list 表无标的，请先运行 lof_list_refresh 任务",
-                    )
-                    return
-                payload = dataclasses.replace(payload, symbols=lof_symbols)
-            yield from self._fetch_kline(payload, policy, _period, sector=_sector)
-        elif capability == "kline_daily_hfq":
-            # 后复权日K：复用 _fetch_kline，传 dividend_type="back"
-            yield from self._fetch_kline(payload, policy, "1d", dividend_type="back")
-        elif capability == "kline_weekly":
-            # 周K：miniQMT 不支持 1w 周期，从日K聚合
-            yield from self._fetch_kline_aggregated(payload, policy, "W")
-        elif capability == "kline_monthly":
-            # 月K：miniQMT 不支持 1M 周期，从日K聚合（pandas>=2.2 需用 'ME' 替代 'M'）
-            yield from self._fetch_kline_aggregated(payload, policy, "ME")
-        elif capability == "kline_weekly_hfq":
-            # 后复权周K：从后复权日K聚合
-            yield from self._fetch_kline_aggregated(payload, policy, "W", dividend_type="back")
-        elif capability == "kline_monthly_hfq":
-            # 后复权月K：从后复权日K聚合
-            yield from self._fetch_kline_aggregated(payload, policy, "ME", dividend_type="back")
-        elif capability == "adj_factor":
-            yield from self._fetch_adj_factor(payload, policy)
-        elif capability in _FINANCIAL_CAPABILITIES:
+            yield from self._route_kline_capability(payload, policy, _period, _sector)
+            return
+        if capability in _KLINE_PARAM_ROUTES:
+            _period, _kwargs = _KLINE_PARAM_ROUTES[capability]
+            yield from self._fetch_kline(payload, policy, _period, **_kwargs)
+            return
+        if capability in _AGGREGATED_KLINE_ROUTES:
+            _period, _kwargs = _AGGREGATED_KLINE_ROUTES[capability]
+            yield from self._fetch_kline_aggregated(payload, policy, _period, **_kwargs)
+            return
+        if capability in _KLINE_1D_CAPABILITIES:
+            yield from self._fetch_kline(payload, policy, "1d")
+            return
+        if capability in _FINANCIAL_CAPABILITIES:
             yield from self._fetch_financial_statement(payload, policy, _FINANCIAL_CAPABILITIES[capability])
-        elif capability == "index_constituent":
-            yield from self._fetch_index_constituent(payload, policy)
-        elif capability == "kline_index":
-            yield from self._fetch_kline_index(payload, policy)
-        # ---- 新增能力路由（MOD-L00-004 fetch 路由扩展）----
-        elif capability == "kline_hk_daily":
-            # 港股日K：复用 _fetch_kline，symbols 格式如 '00700.HK'
-            yield from self._fetch_kline(payload, policy, "1d")
-        elif capability == "kline_futures":
-            # 期货K线：复用 _fetch_kline，symbols 格式如 'IF2406.CF'
-            yield from self._fetch_kline(payload, policy, "1d")
-        elif capability == "futures_position":
-            yield from self._fetch_futures_position(payload, policy)
-        elif capability == "shareholder":
-            yield from self._fetch_shareholder(payload, policy)
-        elif capability == "earnings_forecast":
-            yield from self._fetch_earnings_forecast(payload, policy)
-        elif capability == "express_report":
-            yield from self._fetch_express_report(payload, policy)
-        elif capability == "dividend":
-            yield from self._fetch_dividend(payload, policy)
-        elif capability == "option_iv_surface":
-            yield from self._fetch_option_iv_surface(payload, policy)
-        elif capability == "convertible_bond_iv":
-            yield from self._fetch_convertible_bond_iv(payload, policy)
-        elif capability == "futures_term_structure":
-            yield from self._fetch_futures_term_structure(payload, policy)
-        elif capability == "tick_data":
-            yield from self._fetch_tick_data(payload, policy)
-        elif capability == "auction_snapshot":
-            yield from self._fetch_auction_snapshot(payload, policy)
-        elif capability == "index_quote":
-            yield from self._fetch_index_quote(payload, policy)
-        elif capability == "stock_list":
-            yield from self._fetch_stock_list(payload, policy)
-        # ---- 第二批新增能力路由（15 个数据下载能力）----
-        elif capability == "kline_cb":
-            # 可转债K线：get_market_data_ex，symbols 格式如 '113001.SH'
-            yield from self._fetch_kline_cb(payload, policy)
-        elif capability == "option_kline":
-            # 期权K线：get_market_data_ex，symbols 格式如 '10000001.SH'
-            yield from self._fetch_option_kline(payload, policy)
-        elif capability == "option_greeks":
-            # 期权Greeks：get_option_detail_data + 计算 delta/gamma/theta/vega
-            yield from self._fetch_option_greeks(payload, policy)
-        elif capability == "index_weight":
-            # 指数权重：get_index_weight
-            yield from self._fetch_index_weight(payload, policy)
-        elif capability == "sector_list":
-            # 板块列表：get_stock_list_in_sector / get_sector_list
-            yield from self._fetch_sector_list(payload, policy)
-        elif capability == "l2_tick":
-            # Level-2逐笔：get_l2_quote
-            yield from self._fetch_l2_tick(payload, policy)
-        elif capability == "auction_data":
-            # 集合竞价：get_full_tick 实时快照（写入 auction_snapshot 表，基础字段）
-            yield from self._fetch_auction_data(payload, policy)
-        elif capability == "auction_book":
-            # 集合竞价盘口：get_full_tick 五档快照（写入 auction_book 表，含五档）
-            yield from self._fetch_auction_book(payload, policy)
-        elif capability == "futures_kline_qmt":
-            # 期货K线：get_market_data_ex，symbols 格式如 'IF2407.CFFEX'
-            yield from self._fetch_kline_futures_qmt(payload, policy)
-        elif capability == "hk_kline":
-            # 港股K线：get_market_data_ex，symbols 格式如 '00700.HK'
-            yield from self._fetch_hk_kline(payload, policy)
-        elif capability == "kline_us_daily":
-            # 美股K线：get_market_data_ex，symbols 格式如 'AAPL.US'
-            yield from self._fetch_us_kline(payload, policy)
-        elif capability == "etf_nav":
-            # ETF净值：get_etf_info
-            yield from self._fetch_etf_nav(payload, policy)
-        elif capability == "repurchase":
-            # 回购数据：QMT 无直接接口，占位
-            yield from self._fetch_repurchase(payload, policy)
-        elif capability == "margin_trading_qmt":
-            # 融资融券：QMT 无直接接口，占位
-            yield from self._fetch_margin_trading_qmt(payload, policy)
-        elif capability == "dragon_tiger_qmt":
-            # 龙虎榜：QMT 无直接接口，占位
-            yield from self._fetch_dragon_tiger_qmt(payload, policy)
-        elif capability == "block_trade_qmt":
-            # 大宗交易：QMT 无直接接口，占位
-            yield from self._fetch_block_trade_qmt(payload, policy)
-        else:
-            yield FetchResult(
-                table=payload.table,
-                columns=[],
-                rows=[],
-                last_key="",
-                elapsed_sec=0.0,
-                error=f"未知 capability: {capability}",
-            )
+            return
+        if capability in _DIRECT_ROUTES:
+            yield from getattr(self, _DIRECT_ROUTES[capability])(payload, policy)
+            return
+        yield FetchResult(
+            table=payload.table,
+            columns=[],
+            rows=[],
+            last_key="",
+            elapsed_sec=0.0,
+            error=f"未知 capability: {capability}",
+        )
+
+    def _route_kline_capability(
+        self, payload: FetchPayload, policy: SourcePolicy, period: str, sector: str | None,
+    ) -> Iterator[FetchResult]:
+        """Kline 路由：处理 LOF 特殊情况（sector=None → 从 c1_market.lof_list 表加载标的）。"""
+        if sector is None:
+            lof_symbols = self._load_symbols_from_table("c1_market.lof_list")
+            if not lof_symbols:
+                yield FetchResult(
+                    table=payload.table or "", columns=[], rows=[],
+                    last_key="", elapsed_sec=0.0,
+                    error="c1_market.lof_list 表无标的，请先运行 lof_list_refresh 任务",
+                )
+                return
+            payload = dataclasses.replace(payload, symbols=lof_symbols)
+        yield from self._fetch_kline(payload, policy, period, sector=sector)
 
     # ============== 标的列表加载（从 CH 表读） ==============
 
