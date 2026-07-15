@@ -980,6 +980,103 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
 
 
 # ---------------------------------------------------------------------------
+# update() 辅助：前置校验 + 字段收集（Extract Method，降低 update 复杂度）
+# ---------------------------------------------------------------------------
+
+
+def _validate_update_preconditions(
+    repo: TaskRepository,
+    task_id: str,
+    post_sync_standard: list[str] | None,
+    post_sync_specific: list[str] | None,
+    rollback_instructions: str | None,
+) -> None:
+    """update() 前置校验：post_sync_standard / post_sync_specific / rollback_instructions。
+
+    在 _write_tx 事务外执行（subprocess 调用 --help 不应长占连接）；校验通过后
+    调用方才进入写事务。逻辑与原内联实现完全等价。
+    """
+    # DM-210625: post_sync_standard 校验在 _write_tx 外执行（subprocess 调用
+    # --help 不应在事务内长占连接）。校验通过后才进入写事务。
+    if post_sync_standard is not None:
+        repo._validate_post_sync_commands(task_id, post_sync_standard)
+    # W3: 孪生字段 SSoT 校验（事务外，与 post_sync_standard 同段）
+    if post_sync_specific is not None:
+        from zephyr.governance.architecture_governance.post_sync_validator import validate_post_sync_specific
+
+        for cmd in post_sync_specific:
+            reason = validate_post_sync_specific(cmd, REPO_ROOT)
+            if reason is not None:
+                raise PostSyncValidationError(task_id, cmd, reason)
+    if rollback_instructions is not None:
+        from zephyr.governance.architecture_governance.post_sync_validator import (
+            validate_rollback_instructions,
+        )
+
+        reason = validate_rollback_instructions(rollback_instructions, REPO_ROOT)
+        if reason is not None:
+            raise PostSyncValidationError(task_id, rollback_instructions, reason)
+
+
+def _collect_primary_field_updates(
+    title: str | None,
+    session_id: str | None,
+    waiting_for: str | None,
+    estimate_hours: float | None,
+    actual_hours: float | None,
+    deliverables: list[str] | None,
+    acceptance: list[str] | None,
+) -> list[tuple[str, object]]:
+    """收集 update() 前 7 个字段（标识/规划 + 交付/验收）为 (col, value) 对。"""
+    updates: list[tuple[str, object]] = []
+    if title is not None:
+        updates.append(("title", title))
+    if session_id is not None:
+        updates.append(("session_id", session_id))
+    if waiting_for is not None:
+        updates.append(("waiting_for", waiting_for))
+    if estimate_hours is not None:
+        updates.append(("estimate_hours", estimate_hours))
+    if actual_hours is not None:
+        updates.append(("actual_hours", actual_hours))
+    if deliverables is not None:
+        updates.append(("deliverables", json.dumps(deliverables, ensure_ascii=False)))
+    if acceptance is not None:
+        updates.append(("acceptance", json.dumps(acceptance, ensure_ascii=False)))
+    return updates
+
+
+def _collect_governance_field_updates(
+    files_in_scope: list[str] | None,
+    tags: list[str] | None,
+    model_rationale: str | None,
+    post_sync_standard: list[str] | None,
+    post_sync_specific: list[str] | None,
+    rollback_instructions: str | None,
+) -> list[tuple[str, object]]:
+    """收集 update() 后 6 个字段（scope 元数据 + 治理/回滚）为 (col, value) 对。"""
+    updates: list[tuple[str, object]] = []
+    if files_in_scope is not None:
+        updates.append(("files_in_scope", json.dumps(files_in_scope, ensure_ascii=False)))
+    if tags is not None:
+        updates.append(("tags", json.dumps(tags, ensure_ascii=False)))
+    if model_rationale is not None:
+        updates.append(("model_rationale", model_rationale))
+    if post_sync_standard is not None:
+        updates.append(
+            ("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False))
+        )
+    if post_sync_specific is not None:
+        updates.append(
+            ("post_sync_specific", json.dumps(post_sync_specific, ensure_ascii=False))
+        )
+    if rollback_instructions is not None:
+        # rollback_instructions 是 TEXT（非 JSON list），直接写字符串
+        updates.append(("rollback_instructions", rollback_instructions))
+    return updates
+
+
+# ---------------------------------------------------------------------------
 # TaskRepository
 # ---------------------------------------------------------------------------
 
@@ -1519,62 +1616,23 @@ class TaskRepository:
         """
         # DM-210625: post_sync_standard 校验在 _write_tx 外执行（subprocess 调用
         # --help 不应在事务内长占连接）。校验通过后才进入写事务。
-        if post_sync_standard is not None:
-            self._validate_post_sync_commands(task_id, post_sync_standard)
-        # W3: 孪生字段 SSoT 校验（事务外，与 post_sync_standard 同段）
-        if post_sync_specific is not None:
-            from zephyr.governance.architecture_governance.post_sync_validator import validate_post_sync_specific
-
-            for cmd in post_sync_specific:
-                reason = validate_post_sync_specific(cmd, REPO_ROOT)
-                if reason is not None:
-                    raise PostSyncValidationError(task_id, cmd, reason)
-        if rollback_instructions is not None:
-            from zephyr.governance.architecture_governance.post_sync_validator import (
-                validate_rollback_instructions,
-            )
-
-            reason = validate_rollback_instructions(rollback_instructions, REPO_ROOT)
-            if reason is not None:
-                raise PostSyncValidationError(task_id, rollback_instructions, reason)
+        _validate_update_preconditions(
+            self, task_id, post_sync_standard, post_sync_specific, rollback_instructions
+        )
 
         with self._write_tx() as conn:
             row = self._fetch_row(conn, task_id)
             if row is None:
                 raise TaskNotFoundError("任务不存在")
 
-            updates: list[tuple[str, object]] = []
-            if title is not None:
-                updates.append(("title", title))
-            if session_id is not None:
-                updates.append(("session_id", session_id))
-            if waiting_for is not None:
-                updates.append(("waiting_for", waiting_for))
-            if estimate_hours is not None:
-                updates.append(("estimate_hours", estimate_hours))
-            if actual_hours is not None:
-                updates.append(("actual_hours", actual_hours))
-            if deliverables is not None:
-                updates.append(("deliverables", json.dumps(deliverables, ensure_ascii=False)))
-            if acceptance is not None:
-                updates.append(("acceptance", json.dumps(acceptance, ensure_ascii=False)))
-            if files_in_scope is not None:
-                updates.append(("files_in_scope", json.dumps(files_in_scope, ensure_ascii=False)))
-            if tags is not None:
-                updates.append(("tags", json.dumps(tags, ensure_ascii=False)))
-            if model_rationale is not None:
-                updates.append(("model_rationale", model_rationale))
-            if post_sync_standard is not None:
-                updates.append(
-                    ("post_sync_standard", json.dumps(post_sync_standard, ensure_ascii=False))
-                )
-            if post_sync_specific is not None:
-                updates.append(
-                    ("post_sync_specific", json.dumps(post_sync_specific, ensure_ascii=False))
-                )
-            if rollback_instructions is not None:
-                # rollback_instructions 是 TEXT（非 JSON list），直接写字符串
-                updates.append(("rollback_instructions", rollback_instructions))
+            updates: list[tuple[str, object]] = _collect_primary_field_updates(
+                title, session_id, waiting_for, estimate_hours, actual_hours,
+                deliverables, acceptance,
+            )
+            updates += _collect_governance_field_updates(
+                files_in_scope, tags, model_rationale,
+                post_sync_standard, post_sync_specific, rollback_instructions,
+            )
 
             if not updates:
                 return _row_to_taskcard(row)
