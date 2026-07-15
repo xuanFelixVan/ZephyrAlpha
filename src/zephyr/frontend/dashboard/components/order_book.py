@@ -70,7 +70,7 @@ class OrderBookData:
         return sum(self.bid_vol) if self.bid_vol else 0
 
 
-def fetch_order_book(miniqmt_provider: Any, symbol: str) -> OrderBookData:
+def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
     """从 D_DATA MiniQmtProvider 获取5档盘口（纯函数，无副作用）
 
     蓝图 §16.7.3:

@@ -74,7 +74,7 @@ class ActPhaseHandler:
     cascading_rollback: CascadingRollbackAnalyzer = field(default_factory=CascadingRollbackAnalyzer)
     stochastic_verifier: StochasticDiagnosisVerifier = field(default_factory=StochasticDiagnosisVerifier)
 
-    def run_act(self, anomaly: Any, diagnosis: Any, snapshot: Any, run_id: str) -> ActResult:
+    def run_act(self, anomaly: object, diagnosis: object, snapshot: object, run_id: str) -> ActResult:
         action_record = None
         action_type = None
 

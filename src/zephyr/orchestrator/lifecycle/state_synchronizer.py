@@ -255,7 +255,7 @@ class StateSynchronizer:
 
     def _check_and_fix(
         self,
-        conn: Any,
+        conn: object,
         task_id: str,
         file_path: str,
         disk_exists: bool,

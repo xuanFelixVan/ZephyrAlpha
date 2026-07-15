@@ -1041,7 +1041,7 @@ def _render_daily_detail(data: BacktestPerformanceData) -> object:
 
 # ===== Tab 5: 信号分析 (bt-visualizer 风格) =====
 
-def _render_signal_analysis(data: BacktestPerformanceData) -> Any:
+def _render_signal_analysis(data: BacktestPerformanceData) -> object:
     """Tab 5 信号分析: K线 + 买卖点打点 + 频度切换 (bt-visualizer hover/click/zoom)"""
     items: list[Any] = []
 

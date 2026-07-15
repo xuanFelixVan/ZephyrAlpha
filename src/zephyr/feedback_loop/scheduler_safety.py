@@ -93,7 +93,7 @@ class SafetyGateManager:
 
         return results
 
-    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: Any, diagnosis: Any) -> bool:
+    def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: object, diagnosis: object) -> bool:
         if gate_id in self._fle_gate_cache:
             gate_instance = self._fle_gate_cache[gate_id]
         else:
