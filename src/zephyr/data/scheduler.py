@@ -59,6 +59,12 @@ log = logging.getLogger(__name__)
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
 
+# SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，裁定 #ARCH-CH-015）
+_SQL_FIND_PART = "SELECT database, table FROM system.parts WHERE name='{part_name}' AND active=1 LIMIT 1"
+_SQL_STOP_MERGES = "SYSTEM STOP MERGES"
+_SQL_START_MERGES = "SYSTEM START MERGES"
+_SQL_DETACH_PART = "ALTER TABLE {db}.{table} DETACH PART '{part_name}'"
+
 # 模块级调度器单例（供 APScheduler job 回调使用，避免 pickle 绑定方法+Lock 对象）
 _global_scheduler: "IntegratorScheduler | None" = None
 
@@ -333,6 +339,185 @@ class IntegratorScheduler:
         t = threading.Thread(target=_probe_loop, daemon=True, name="wsl-health-probe")
         t.start()
         log.info("WSL 健康探活线程已启动（间隔 60s，连续 3 次失败触发冷重启）")
+
+    # ============== 破损 part 自动检测+隔离（裁定 #ARCH-CH-015） ==============
+
+    def _start_corrupted_part_detector(self) -> None:
+        """启动破损 part 自动检测+隔离守护线程（裁定 #ARCH-CH-015）。
+
+        问题背景：WSL2 失稳致 CH 崩溃时，正在写入的 data part 被零字节覆盖，
+        形成 checksum 损坏的 active part。CH 后台 merge 线程反复尝试合并
+        包含这些 part 的任务，失败数百次（CHECKSUM_DOESNT_MATCH 718 次，
+        tmp_merge 清理 5142 次），形成无限循环，消耗大量 CPU/IO，
+        致 scheduler 探针超时。
+
+        Phase 0 未覆盖原因：Phase 0 清理的是"启动时检测到的 broken-on-start
+        part"，但 checksum 损坏的 part 在启动时不验证数据完整性，只在 merge
+        读取时才发现。
+
+        治本方案（裁定 #ARCH-CH-015）：
+        - 后台守护线程每 5 分钟检查 CH err.log 中的 CHECKSUM_DOESNT_MATCH
+        - 检测到破损 part 后自动隔离：
+          1. SYSTEM STOP MERGES（防止 merge 线程继续重试）
+          2. ALTER TABLE ... DETACH PART（CH 原生方式隔离破损 part 到 detached/）
+          3. SYSTEM START MERGES（恢复正常 merge）
+          4. 写入审计日志 + 告警
+        - 单次检测周期只处理一个破损 part（避免并发操作冲突）
+        - 处理后冷却 10 分钟（避免频繁操作）
+        - 已处理的 part 名称记录在内存集合中（避免重复处理）
+        """
+        import subprocess as _sp
+        import re as _re
+
+        _ERR_LOG_PATH = "/var/log/clickhouse-server/clickhouse-server.err.log"
+        _CHECK_INTERVAL = 300  # 5 分钟
+        _COOLDOWN = 600  # 处理后冷却 10 分钟
+        _AUDIT_LOG = REPO_ROOT / "data" / "local_fallback" / "corrupted_parts_audit.jsonl"
+
+        # err.log 中 CHECKSUM_DOESNT_MATCH 检测 + part 名称提取
+        _CHECKSUM_PATTERN = _re.compile(r"Checksum doesn't match", _re.IGNORECASE)
+        _PART_PATTERN = _re.compile(r"part\s+(\d{6}_[\w]+)", _re.IGNORECASE)
+        # part 名称安全校验（防 SQL 注入）
+        _PART_NAME_SAFE_RE = _re.compile(r"^[a-zA-Z0-9_-]+$")
+
+        def _read_err_log_tail() -> str:
+            """读取 CH err.log 最后 2000 行。"""
+            try:
+                r = _sp.run(
+                    ["wsl", "-d", "Ubuntu", "-u", "root", "--",
+                     "tail", "-n", "2000", _ERR_LOG_PATH],
+                    capture_output=True, timeout=15,
+                )
+                if r.returncode == 0:
+                    return r.stdout.decode("utf-8", errors="replace")
+                log.warning("读取 CH err.log 失败: rc=%s", r.returncode)
+                return ""
+            except Exception as e:
+                log.warning("读取 CH err.log 异常: %s", e)
+                return ""
+
+        def _detect_corrupted_parts(log_text: str) -> list[str]:
+            """从 err.log 文本中提取破损 part 名称列表。"""
+            if not log_text or not _CHECKSUM_PATTERN.search(log_text):
+                return []
+            parts: list[str] = []
+            for match in _PART_PATTERN.finditer(log_text):
+                name = match.group(1)
+                if name and name not in parts and _PART_NAME_SAFE_RE.match(name):
+                    parts.append(name)
+            return parts
+
+        def _find_part(part_name: str) -> tuple[str, str] | None:
+            """查询 part 所属的 (database, table)，None 表示 part 不在 active 列表。"""
+            try:
+                result = ch_reader.query(
+                    _SQL_FIND_PART.format(part_name=part_name),
+                    timeout=10,
+                )
+                result = result.strip()
+                if not result:
+                    return None
+                cols = result.split("\t")
+                if len(cols) >= 2:
+                    return cols[0], cols[1]
+                return None
+            except Exception:
+                return None
+
+        def _isolate_part(part_name: str, db: str, table: str) -> bool:
+            """隔离破损 part：STOP MERGES → DETACH PART → START MERGES → 验证。"""
+            ch_reader.query(_SQL_STOP_MERGES, timeout=10)
+            log.warning("已 SYSTEM STOP MERGES（隔离 %s.%s part %s）", db, table, part_name)
+            time.sleep(2)
+
+            ch_reader.query(
+                _SQL_DETACH_PART.format(db=db, table=table, part_name=part_name),
+                timeout=30,
+            )
+            time.sleep(3)
+
+            ch_reader.query(_SQL_START_MERGES, timeout=10)
+            log.info("已 SYSTEM START MERGES（隔离完成）")
+
+            # 验证 part 已不在 active 列表
+            return _find_part(part_name) is None
+
+        def _write_audit(part_name: str, db: str, table: str, success: bool) -> None:
+            """写入审计日志到 data/local_fallback/corrupted_parts_audit.jsonl。"""
+            try:
+                _AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
+                entry = {
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "part_name": part_name,
+                    "database": db,
+                    "table": table,
+                    "action": "detach",
+                    "success": success,
+                }
+                with open(_AUDIT_LOG, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            except Exception as e:
+                log.error("写入审计日志失败: %s", e)
+
+        def _detect_loop() -> None:
+            processed_parts: set[str] = set()
+            last_action_time: float = 0.0
+
+            while self._started:
+                # 冷却期跳过
+                if time.time() - last_action_time < _COOLDOWN:
+                    time.sleep(_CHECK_INTERVAL)
+                    continue
+
+                try:
+                    log_text = _read_err_log_tail()
+                    corrupted = _detect_corrupted_parts(log_text)
+
+                    if not corrupted:
+                        time.sleep(_CHECK_INTERVAL)
+                        continue
+
+                    new_parts = [p for p in corrupted if p not in processed_parts]
+                    if not new_parts:
+                        time.sleep(_CHECK_INTERVAL)
+                        continue
+
+                    target = new_parts[0]
+                    log.error(
+                        "检测到破损 part: %s（共 %d 个未处理，本次处理 1 个）",
+                        target, len(new_parts),
+                    )
+
+                    location = _find_part(target)
+                    if location is None:
+                        log.info("part %s 已不在 active 列表，跳过", target)
+                        processed_parts.add(target)
+                        time.sleep(_CHECK_INTERVAL)
+                        continue
+
+                    db, table = location
+                    success = _isolate_part(target, db, table)
+
+                    _write_audit(target, db, table, success)
+                    self._alerter.notify(
+                        "corrupted_part_isolated",
+                        f"破损 part 已隔离: {db}.{table} {target} (success={success})",
+                        level=LEVEL_CRITICAL,
+                        source="corrupted_part_detector",
+                    )
+
+                    processed_parts.add(target)
+                    last_action_time = time.time()
+
+                except Exception as e:
+                    log.error("破损 part 检测线程异常: %s", e)
+
+                time.sleep(_CHECK_INTERVAL)
+
+        t = threading.Thread(target=_detect_loop, daemon=True, name="corrupted-part-detector")
+        t.start()
+        log.info("破损 part 检测线程已启动（间隔 %ds，冷却 %ds）",
+                 _CHECK_INTERVAL, _COOLDOWN)
 
     # ============== 配置加载 ==============
 
@@ -855,6 +1040,8 @@ class IntegratorScheduler:
             self._start_local_replay()
             # 启动 WSL 健康探活 + 自动冷重启（裁定 #ARCH-CH-013 Phase 2）
             self._start_wsl_health_probe()
+            # 启动破损 part 自动检测+隔离（裁定 #ARCH-CH-015）
+            self._start_corrupted_part_detector()
             # 注册为全局单例（供 _run_schedule_callback 使用）
             global _global_scheduler
             _global_scheduler = self

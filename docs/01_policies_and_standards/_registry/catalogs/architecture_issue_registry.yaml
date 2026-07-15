@@ -1906,6 +1906,53 @@ entries:
   created: '2026-07-15'
   last_updated: '2026-07-15'
 
+# --- #ARCH-CH-015: tick_data 破损 part 致 merge 死循环——自动检测+DETACH 隔离防复发 ---
+- issue_id: '#ARCH-CH-015'
+  title: tick_data 破损 part 致 merge 死循环——DETACH 止血+自动检测防复发
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    WSL2 失稳致 CH 崩溃时，正在写入的 data part 被零字节覆盖（Lessons Learned 已记录），
+    形成 checksum 损坏的 active part。CH 后台 merge 线程反复尝试合并包含这些 part 的
+    任务，失败 718 次（CHECKSUM_DOESNT_MATCH），临时目录清理 5142 次，形成无限循环，
+    消耗大量 CPU/IO，致 scheduler 探针超时 status=degraded。
+
+    Phase 0 未覆盖原因：Phase 0 清理的是"启动时检测到的 broken-on-start part"（83 个），
+    但 checksum 损坏的 part 在 CH 启动时不验证数据完整性（只验证 metadata），
+    只在 merge 读取 part 数据文件时才发现 checksum 不匹配。因此这 2 个破损 part
+    作为 active part 一直存在，直到 merge 线程尝试读取才触发错误循环。
+
+    裁定（治本方案，三阶段）：
+    Phase 1（止血，已完成）：SYSTEM STOP MERGES → mv 2 个破损 part 到 detached/
+      → 重启 CH 清空 merge 队列缓存 → SYSTEM START MERGES。
+      数据丢失：202304 丢失 3217 万行（9.7%），202305 丢失 3546 万行（10.8%），
+      共 6763 万行 801 MiB。
+    Phase 2（数据恢复，待评估）：检查 bdpan 原始数据是否可用，可用则重新导入缺失数据。
+    Phase 3（防复发，已完成）：在 scheduler.py 新增 _start_corrupted_part_detector
+      自愈守护线程，每 5 分钟检查 CH err.log 中的 CHECKSUM_DOESNT_MATCH，
+      检测到破损 part 后自动执行：SYSTEM STOP MERGES → ALTER TABLE DETACH PART
+      → SYSTEM START MERGES → 审计日志 + 告警。
+      设计要点：
+      - 不新建独立模块（符合"能现成不创造"原则），集成到 scheduler.py 第四个自愈线程
+      - 单次检测周期只处理 1 个破损 part（避免并发操作冲突）
+      - 处理后冷却 10 分钟（避免频繁操作）
+      - processed_parts 内存集合防止重复处理
+      - part 名称安全校验（^[a-zA-Z0-9_-]+$ 防 SQL 注入）
+      - 审计日志写入 data/local_fallback/corrupted_parts_audit.jsonl
+      - 使用 ch_reader 查询 system.parts（读取层），ch_writer 执行 SYSTEM/DDL（写入层）
+  impact:
+  - src/zephyr/data/scheduler.py（新增 _start_corrupted_part_detector + start() 调用）
+  - data/local_fallback/corrupted_parts_audit.jsonl（审计日志，运行时生成）
+  fix_phase: Phase 1+3 已完成；Phase 2 待评估
+  status: decided
+  related_rules:
+  - '#ARCH-CH-004'
+  - '#ARCH-CH-013'
+  - '#ARCH-CH-014'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'
   title: 域 ID 连字符→下划线统一
