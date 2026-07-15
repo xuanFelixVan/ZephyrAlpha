@@ -87,6 +87,64 @@ class GhostTask:
     task_status: str
 
 
+def _is_state_acceptable(
+    disk_exists: bool,
+    frontmatter_status: str | None,
+    task_status: str,
+) -> bool:
+    """Return True when the three-state combination is consistent (no action needed)."""
+    if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
+        return True
+
+    if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
+        return True
+
+    if (
+        disk_exists
+        and frontmatter_status in ("accepted", "Active", "active")
+        and task_status in ("COMPLETED", "VERIFIED")
+    ):
+        return True
+
+    return False
+
+
+def _build_stale_task_result(task_id: str, file_path: str, task_status: str) -> SyncResult:
+    """Build SyncResult for accepted-file-but-task-still-PENDING (upgrade to VERIFIED)."""
+    return SyncResult(
+        task_id=task_id,
+        file_path=file_path,
+        action="STALE_TASK_WARNING",
+        old_status=task_status,
+        new_status="VERIFIED",
+        reason="File accepted but task still PENDING, upgrading to VERIFIED",
+    )
+
+
+def _build_missing_artifact_result(task_id: str, file_path: str, task_status: str) -> SyncResult:
+    """Build SyncResult for completed/verified task whose file is missing (revert to PENDING)."""
+    return SyncResult(
+        task_id=task_id,
+        file_path=file_path,
+        action="MISSING_ARTIFACT_ERROR",
+        old_status=task_status,
+        new_status="PENDING",
+        reason="Task completed/verified but file missing, reverting to PENDING",
+    )
+
+
+def _build_downgrade_result(task_id: str, file_path: str, task_status: str) -> SyncResult:
+    """Build SyncResult for draft-file-but-task-VERIFIED (downgrade to IN_PROGRESS)."""
+    return SyncResult(
+        task_id=task_id,
+        file_path=file_path,
+        action="DOWNGRADE_WARNING",
+        old_status=task_status,
+        new_status="IN_PROGRESS",
+        reason="File draft but task VERIFIED, downgrading to IN_PROGRESS",
+    )
+
+
 class StateSynchronizer:
     """
     同步 SQLite 状态与文件系统实际状态。
@@ -263,59 +321,25 @@ class StateSynchronizer:
         task_status: str,
         auto_fix: bool,
     ) -> SyncResult | None:
-        if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
-            return None
-
-        if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
-            return None
-
-        if (
-            disk_exists
-            and frontmatter_status in ("accepted", "Active", "active")
-            and task_status in ("COMPLETED", "VERIFIED")
-        ):
+        if _is_state_acceptable(disk_exists, frontmatter_status, task_status):
             return None
 
         if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status == "PENDING":
-            new_status = "VERIFIED"
-            result = SyncResult(
-                task_id=task_id,
-                file_path=file_path,
-                action="STALE_TASK_WARNING",
-                old_status=task_status,
-                new_status=new_status,
-                reason="File accepted but task still PENDING, upgrading to VERIFIED",
-            )
+            result = _build_stale_task_result(task_id, file_path, task_status)
             if auto_fix:
-                self._update_task_status(conn, task_id, new_status)
+                self._update_task_status(conn, task_id, result.new_status)
             return result
 
         if not disk_exists and task_status in ("COMPLETED", "VERIFIED"):
-            new_status = "PENDING"
-            result = SyncResult(
-                task_id=task_id,
-                file_path=file_path,
-                action="MISSING_ARTIFACT_ERROR",
-                old_status=task_status,
-                new_status=new_status,
-                reason="Task completed/verified but file missing, reverting to PENDING",
-            )
+            result = _build_missing_artifact_result(task_id, file_path, task_status)
             if auto_fix:
-                self._update_task_status(conn, task_id, new_status)
+                self._update_task_status(conn, task_id, result.new_status)
             return result
 
         if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "VERIFIED":
-            new_status = "IN_PROGRESS"
-            result = SyncResult(
-                task_id=task_id,
-                file_path=file_path,
-                action="DOWNGRADE_WARNING",
-                old_status=task_status,
-                new_status=new_status,
-                reason="File draft but task VERIFIED, downgrading to IN_PROGRESS",
-            )
+            result = _build_downgrade_result(task_id, file_path, task_status)
             if auto_fix:
-                self._update_task_status(conn, task_id, new_status)
+                self._update_task_status(conn, task_id, result.new_status)
             return result
 
         return None
