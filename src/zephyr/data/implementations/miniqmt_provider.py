@@ -28,12 +28,14 @@
 from __future__ import annotations
 
 import datetime
+import dataclasses
 import time
 import logging
 from typing import Iterator
 
 from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
 from ..policy_registry import SourcePolicy
+from .. import ch_reader
 
 
 class MiniQMTProvider(DataSourceBase):
@@ -194,16 +196,17 @@ class MiniQMTProvider(DataSourceBase):
             "kline_15min": ("15m", "沪深A股"),
             "kline_30min": ("30m", "沪深A股"),
             "kline_60min": ("1h", "沪深A股"),
-            "kline_etf_1min": ("1m", "ETF"),
-            "kline_etf_5min": ("5m", "ETF"),
-            "kline_etf_15min": ("15m", "ETF"),
-            "kline_etf_30min": ("30m", "ETF"),
-            "kline_etf_60min": ("1h", "ETF"),
-            "kline_lof_1min": ("1m", "LOF"),
-            "kline_lof_5min": ("5m", "LOF"),
-            "kline_lof_15min": ("15m", "LOF"),
-            "kline_lof_30min": ("30m", "LOF"),
-            "kline_lof_60min": ("1h", "LOF"),
+            "kline_etf_1min": ("1m", "沪深ETF"),
+            "kline_etf_5min": ("5m", "沪深ETF"),
+            "kline_etf_15min": ("15m", "沪深ETF"),
+            "kline_etf_30min": ("30m", "沪深ETF"),
+            "kline_etf_60min": ("1h", "沪深ETF"),
+            # miniQMT 无 LOF 独立板块，sector=None 标记从 c1_market.lof_list 表读标的
+            "kline_lof_1min": ("1m", None),
+            "kline_lof_5min": ("5m", None),
+            "kline_lof_15min": ("15m", None),
+            "kline_lof_30min": ("30m", None),
+            "kline_lof_60min": ("1h", None),
         }
         # 财务报表类能力统一路由到 _fetch_financial_statement，按 table_list 区分
         _FINANCIAL_CAPABILITIES = {
@@ -215,6 +218,17 @@ class MiniQMTProvider(DataSourceBase):
         }
         if capability in _KLINE_CAPABILITIES:
             _period, _sector = _KLINE_CAPABILITIES[capability]
+            if _sector is None:
+                # miniQMT 无 LOF 板块，从 c1_market.lof_list 表读标的注入 payload
+                lof_symbols = self._load_symbols_from_table("c1_market.lof_list")
+                if not lof_symbols:
+                    yield FetchResult(
+                        table=payload.table or "", columns=[], rows=[],
+                        last_key="", elapsed_sec=0.0,
+                        error="c1_market.lof_list 表无标的，请先运行 lof_list_refresh 任务",
+                    )
+                    return
+                payload = dataclasses.replace(payload, symbols=lof_symbols)
             yield from self._fetch_kline(payload, policy, _period, sector=_sector)
         elif capability == "kline_daily_hfq":
             # 后复权日K：复用 _fetch_kline，传 dividend_type="back"
@@ -328,6 +342,40 @@ class MiniQMTProvider(DataSourceBase):
                 elapsed_sec=0.0,
                 error=f"未知 capability: {capability}",
             )
+
+    # ============== 标的列表加载（从 CH 表读） ==============
+
+    def _load_symbols_from_table(self, table: str) -> list[str]:
+        """从 ClickHouse 表读取标的列表（如 c1_market.lof_list）。
+
+        miniQMT 无 LOF 独立板块，LOF 标的列表由 akshare 维护在 c1_market.lof_list 表。
+        本方法用 ch_reader 查询 code 列，返回标的代码列表。
+
+        Args:
+            table: 表名（如 "c1_market.lof_list"）
+
+        Returns:
+            标的代码列表（如 ["161725.SZ", "501050.SH", ...]），查询失败返回空列表
+        """
+        try:
+            tsv = ch_reader.query_table(table, columns="code")
+            if not tsv or not tsv.strip():
+                self._log.warning(f"_load_symbols_from_table({table}) 返回空")
+                return []
+            symbols = []
+            for line in tsv.strip().split("\n"):
+                code = line.strip()
+                if not code:
+                    continue
+                # lof_list.code 格式 "sh501001"，转 miniQMT 格式 "501001.SH"
+                if code.startswith(("sh", "sz")) and "." not in code:
+                    code = code[2:] + "." + code[:2].upper()
+                symbols.append(code)
+            self._log.info(f"_load_symbols_from_table({table}) 加载 {len(symbols)} 只标的")
+            return symbols
+        except Exception as e:
+            self._log.warning(f"_load_symbols_from_table({table}) 查询失败: {e}")
+            return []
 
     # ============== K线通用方法（日K/分钟K） ==============
 
@@ -3443,50 +3491,15 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个ETF一批
         """
-        from xtquant import xtdata
-
-        table = payload.table or "c1_market.etf_nav"
-        columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
-        trade_date = payload.end.isoformat()
-        symbols = payload.symbols or []
-        # symbols 为空时从沪深ETF板块获取前200只
-        if not symbols:
-            try:
-                etf_list = self._call_with_policy(
-                    xtdata.get_stock_list_in_sector, policy, "沪深ETF"
-                )
-                if etf_list:
-                    symbols = etf_list[:200]
-            except Exception as e:
-                self._log.warning(f"获取ETF列表失败: {e}")
-        last_key = self._date_to_str(payload.end)
-
-        for stock_code in symbols:
-            t0 = time.time()
-            try:
-                info = self._call_with_policy(
-                    xtdata.get_etf_info, policy, stock_code,
-                )
-                rows = []
-                if info:
-                    symbol = self._stock_to_symbol(stock_code)
-                    etf_code = info.get("etfCode", "")
-                    nav = self.safe_float(info.get("cashBalance"))
-                    cash_balance = self.safe_float(info.get("maxCashRatio"))
-                    rows.append((
-                        trade_date, symbol, etf_code, nav, cash_balance,
-                        "miniqmt",
-                    ))
-                yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                )
-            except Exception as e:
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                    error=f"{stock_code} ETF净值抓取失败: {e}",
-                )
+        # miniQMT get_etf_info 客户端不支持（function not realize，需升级投研版）
+        # 返回明确错误，避免每次调度 FAILED 浪费资源
+        yield FetchResult(
+            table=payload.table or "c1_market.etf_nav",
+            columns=[], rows=[],
+            last_key=self._date_to_str(payload.end),
+            elapsed_sec=0.0,
+            error="miniQMT get_etf_info 客户端不支持（function not realize，需升级投研版）；ETF净值请改用 akshare fund_etf_fund_info_em",
+        )
 
     # ============== 回购数据（占位） ==============
 
