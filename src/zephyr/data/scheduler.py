@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.scheduler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{ifind,miniqmt,akshare}_provider; apscheduler(pip)
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{ifind,miniqmt,akshare}_provider; zephyr.data.trading_calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -50,6 +50,8 @@ from . import ch_writer  # 相对导入：避免 depgraph 记录到 zephyr.data 
 from . import ch_reader  # 健康检查走 ch_reader 自动注入 FINAL（裁定 #ARCH-CH-007）
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.metrics import IntegratorMetrics, get_metrics
+from zephyr.data.trading_calendar import is_trading_day, TRADING_DAY_GUARDED_SCHEDULES
+from zephyr.data import local_replay
 from zephyr.shared.io.paths import REPO_ROOT
 
 log = logging.getLogger(__name__)
@@ -519,10 +521,10 @@ class IntegratorScheduler:
                     task_id, source, latest_key, "FAILED", total_rows, last_error
                 )
                 if run_id:
-                    self._progress_store.finish_run(run_id, "FAILED", total_rows, total_rows, last_error)
+                    self._progress_store.finish_run(run_id, "FAILED", total_rows, writer.total_flushed, last_error)
                 self._task_queue.mark_failed(task_id)
                 self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
-                self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
+                self._metrics.record_task(task_id, source, "FAILED", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=False)
                 return False, last_error
@@ -531,10 +533,10 @@ class IntegratorScheduler:
                     task_id, source, latest_key, "SUCCESS", total_rows
                 )
                 if run_id:
-                    self._progress_store.finish_run(run_id, "SUCCESS", total_rows, total_rows)
+                    self._progress_store.finish_run(run_id, "SUCCESS", total_rows, writer.total_flushed)
                 self._task_queue.mark_completed(task_id)
                 log.info("任务 %s 完成: rows=%d last_key=%s", task_id, total_rows, latest_key)
-                self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, total_rows)
+                self._metrics.record_task(task_id, source, "SUCCESS", task_elapsed, writer.total_flushed)
                 self._metrics.flush()
                 self._emit_event("task_completed", task_id=task_id, success=True)
                 return True, None
@@ -543,14 +545,15 @@ class IntegratorScheduler:
             last_error = str(e)
             log.error("任务 %s 异常: %s", task_id, e, exc_info=True)
             task_elapsed = time.time() - task_start_ts
+            rows_written = writer.total_flushed if 'writer' in locals() else 0
             self._progress_store.save_progress(
                 task_id, source, latest_key, "FAILED", total_rows, last_error
             )
             if run_id:
-                self._progress_store.finish_run(run_id, "FAILED", total_rows, total_rows, last_error)
+                self._progress_store.finish_run(run_id, "FAILED", total_rows, rows_written, last_error)
             self._task_queue.mark_failed(task_id)
             self._alerter.notify(task_id, last_error, level=LEVEL_ERROR, source=source)
-            self._metrics.record_task(task_id, source, "FAILED", task_elapsed, total_rows)
+            self._metrics.record_task(task_id, source, "FAILED", task_elapsed, rows_written)
             self._metrics.flush()
             self._emit_event("task_completed", task_id=task_id, success=False)
             return False, last_error
@@ -564,6 +567,13 @@ class IntegratorScheduler:
         Returns:
             {task_id: success_bool} 字典
         """
+        # 交易日历守卫：盘中/盘后/夜间/巡检时段在非交易日（节假日/调休）自动跳过
+        if schedule_name in TRADING_DAY_GUARDED_SCHEDULES:
+            today = datetime.date.today()
+            if not is_trading_day(today):
+                log.info("时段 %s 跳过：今日(%s)非A股交易日", schedule_name, today)
+                return {}
+
         # interval trigger 时间窗口过滤（集合竞价等高频场景）
         # IntervalTrigger 会 7×24 每隔 N 秒触发，需在此过滤非交易时段
         sched_config = self._schedules.get(schedule_name, {})
@@ -958,12 +968,13 @@ def main() -> None:
 
     # 日志落盘（RotatingFileHandler 轮转，避免无限增长）
     from logging.handlers import RotatingFileHandler
-    import pathlib
-    _log_path = pathlib.Path(__file__).resolve().parents[2] / "tmp" / "scheduler_run.log"
+    _log_path = REPO_ROOT / "tmp" / "scheduler_run.log"
     _log_path.parent.mkdir(parents=True, exist_ok=True)
     _fh = RotatingFileHandler(_log_path, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
     _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
-    logging.getLogger().addHandler(_fh)
+    _root = logging.getLogger()
+    _root.setLevel(logging.INFO)  # 确保 INFO 级别日志能写入文件（默认 WARNING 会过滤掉 INFO）
+    _root.addHandler(_fh)
     log.info("日志落盘: %s", _log_path)
 
     global _global_scheduler
