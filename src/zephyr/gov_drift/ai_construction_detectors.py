@@ -64,6 +64,113 @@ def _batch_read_module_sources(module_dir: str) -> dict[str, str]:
     return sources
 
 
+def _hallucination_events_for_import(
+    node: ast.Import, fname: str, stdlib: set[str] | frozenset[str], safe_prefixes: tuple[str, ...]
+) -> list[DriftEvent]:
+    events: list[DriftEvent] = []
+    for alias in node.names:
+        top = alias.name.split(".")[0]
+        if top in stdlib or top.startswith(".") or top.startswith(safe_prefixes):
+            continue
+        if importlib.util.find_spec(top) is None:
+            events.append(
+                DriftEvent(
+                    event_id=uuid.uuid4(),
+                    module_id="MOD-INF-023",
+                    detector_id="ai_hallucination_import",
+                    drift_dimension="AI_import_hallucination",
+                    baseline_version="0.1.0",
+                    state=DriftState.DETECTED,
+                    created_at=datetime.now(UTC),
+                    updated_at=datetime.now(UTC),
+                    resolution_detail=f"Hallucinated import: {alias.name} in {fname}",
+                )
+            )
+    return events
+
+
+def _hallucination_events_for_importfrom(
+    node: ast.ImportFrom, fname: str, stdlib: set[str] | frozenset[str]
+) -> list[DriftEvent]:
+    events: list[DriftEvent] = []
+    if node.module is None:
+        return events
+    if node.level and node.level > 0:
+        return events
+    top = node.module.split(".")[0]
+    if top in stdlib or top in ("__future__",):
+        return events
+    if importlib.util.find_spec(top) is None:
+        events.append(
+            DriftEvent(
+                event_id=uuid.uuid4(),
+                module_id="MOD-INF-023",
+                detector_id="ai_hallucination_import",
+                drift_dimension="AI_import_hallucination",
+                baseline_version="0.1.0",
+                state=DriftState.DETECTED,
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+                resolution_detail=f"Hallucinated from import: {node.module} in {fname}",
+            )
+        )
+    return events
+
+
+def _is_dead_body(stmts: list[ast.stmt]) -> bool:
+    return all(
+        isinstance(s, ast.Pass)
+        or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant) and s.value.value is Ellipsis)
+        for s in stmts
+    )
+
+
+def _class_style_flags(node: ast.ClassDef) -> tuple[bool, bool]:
+    has_dataclass = False
+    has_direct_init = False
+    for dec in node.decorator_list:
+        if isinstance(dec, ast.Name) and dec.id == "dataclass":
+            has_dataclass = True
+    if any(isinstance(n, ast.FunctionDef) and n.name == "__init__" for n in node.body):
+        has_direct_init = True
+    return has_dataclass, has_direct_init
+
+
+def _style_drift_events(
+    has_dataclass: bool, has_direct_init: bool, has_async: bool, has_sync_equivalent: bool
+) -> list[DriftEvent]:
+    events: list[DriftEvent] = []
+    if has_dataclass and has_direct_init:
+        events.append(
+            DriftEvent(
+                event_id=uuid.uuid4(),
+                module_id="MOD-INF-023",
+                detector_id="ai_session_style_drift",
+                drift_dimension="AI_style_drift",
+                baseline_version="0.1.0",
+                state=DriftState.DETECTED,
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+                resolution_detail="Style drift: dataclass and __init__ mixed",
+            )
+        )
+    if has_async and has_sync_equivalent:
+        events.append(
+            DriftEvent(
+                event_id=uuid.uuid4(),
+                module_id="MOD-INF-023",
+                detector_id="ai_session_style_drift",
+                drift_dimension="AI_style_drift",
+                baseline_version="0.1.0",
+                state=DriftState.DETECTED,
+                created_at=datetime.now(UTC),
+                updated_at=datetime.now(UTC),
+                resolution_detail="Style drift: async/sync mixed",
+            )
+        )
+    return events
+
+
 class AIConstructionDetectors:
     def detect_ai_hallucination_import(self, module_dir: str) -> list[DriftEvent]:
         """检测 AI 幻觉导入 — 导入不存在或无法解析的模块。
@@ -109,53 +216,13 @@ class AIConstructionDetectors:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
-                    for alias in node.names:
-                        top = alias.name.split(".")[0]
-
-                        if top in stdlib or top.startswith(".") or top.startswith(safe_prefixes):
-                            continue
-
-                        if importlib.util.find_spec(top) is None:
-                            events.append(
-                                DriftEvent(
-                                    event_id=uuid.uuid4(),
-                                    module_id="MOD-INF-023",
-                                    detector_id="ai_hallucination_import",
-                                    drift_dimension="AI_import_hallucination",
-                                    baseline_version="0.1.0",
-                                    state=DriftState.DETECTED,
-                                    created_at=datetime.now(UTC),
-                                    updated_at=datetime.now(UTC),
-                                    resolution_detail=f"Hallucinated import: {alias.name} in {fname}",
-                                )
-                            )
-
+                    events.extend(
+                        _hallucination_events_for_import(node, fname, stdlib, safe_prefixes)
+                    )
                 if isinstance(node, ast.ImportFrom):
-                    if node.module is None:
-                        continue
-
-                    if node.level and node.level > 0:
-                        continue
-
-                    top = node.module.split(".")[0]
-
-                    if top in stdlib or top in ("__future__",):
-                        continue
-
-                    if importlib.util.find_spec(top) is None:
-                        events.append(
-                            DriftEvent(
-                                event_id=uuid.uuid4(),
-                                module_id="MOD-INF-023",
-                                detector_id="ai_hallucination_import",
-                                drift_dimension="AI_import_hallucination",
-                                baseline_version="0.1.0",
-                                state=DriftState.DETECTED,
-                                created_at=datetime.now(UTC),
-                                updated_at=datetime.now(UTC),
-                                resolution_detail=f"Hallucinated from import: {node.module} in {fname}",
-                            )
-                        )
+                    events.extend(
+                        _hallucination_events_for_importfrom(node, fname, stdlib)
+                    )
 
         return events
 
@@ -207,11 +274,7 @@ class AIConstructionDetectors:
                     if not node.name.startswith("_"):
                         defined_funcs.add(node.name)
 
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and all(
-                    isinstance(s, ast.Pass)
-                    or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant) and s.value.value is Ellipsis)
-                    for s in node.body
-                ):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and _is_dead_body(node.body):
                     events.append(
                         DriftEvent(
                             event_id=uuid.uuid4(),
@@ -226,11 +289,7 @@ class AIConstructionDetectors:
                         )
                     )
 
-                if isinstance(node, ast.ClassDef) and all(
-                    isinstance(s, ast.Pass)
-                    or (isinstance(s, ast.Expr) and isinstance(s.value, ast.Constant) and s.value.value is Ellipsis)
-                    for s in node.body
-                ):
+                if isinstance(node, ast.ClassDef) and _is_dead_body(node.body):
                     events.append(
                         DriftEvent(
                             event_id=uuid.uuid4(),
@@ -449,11 +508,10 @@ class AIConstructionDetectors:
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
-                    for dec in node.decorator_list:
-                        if isinstance(dec, ast.Name) and dec.id == "dataclass":
-                            has_dataclass = True
-
-                    if any(isinstance(n, ast.FunctionDef) and n.name == "__init__" for n in node.body):
+                    dc, di = _class_style_flags(node)
+                    if dc:
+                        has_dataclass = True
+                    if di:
                         has_direct_init = True
 
                 if isinstance(node, ast.AsyncFunctionDef):
@@ -462,35 +520,9 @@ class AIConstructionDetectors:
                 if isinstance(node, ast.FunctionDef):
                     has_sync_equivalent = True
 
-        if has_dataclass and has_direct_init:
-            events.append(
-                DriftEvent(
-                    event_id=uuid.uuid4(),
-                    module_id="MOD-INF-023",
-                    detector_id="ai_session_style_drift",
-                    drift_dimension="AI_style_drift",
-                    baseline_version="0.1.0",
-                    state=DriftState.DETECTED,
-                    created_at=datetime.now(UTC),
-                    updated_at=datetime.now(UTC),
-                    resolution_detail="Style drift: dataclass and __init__ mixed",
-                )
-            )
-
-        if has_async and has_sync_equivalent:
-            events.append(
-                DriftEvent(
-                    event_id=uuid.uuid4(),
-                    module_id="MOD-INF-023",
-                    detector_id="ai_session_style_drift",
-                    drift_dimension="AI_style_drift",
-                    baseline_version="0.1.0",
-                    state=DriftState.DETECTED,
-                    created_at=datetime.now(UTC),
-                    updated_at=datetime.now(UTC),
-                    resolution_detail="Style drift: async/sync mixed",
-                )
-            )
+        events.extend(
+            _style_drift_events(has_dataclass, has_direct_init, has_async, has_sync_equivalent)
+        )
 
         return events
 
