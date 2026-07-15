@@ -513,6 +513,98 @@ def _backfill_tick_range(
 
 # ========== 主入口 ==========
 
+def _backfill_tick_table(
+    trade_dates: list[datetime.date], all_missing_tables: list[dict],
+) -> int:
+    """补下载 tick_data 表缺失日期，返回新增行数。
+
+    缺失日期对应的记录会被追加到 all_missing_tables。
+    """
+    missing = detect_missing_dates("tick_data", trade_dates, _TICK_THRESHOLD)
+    if not missing:
+        return 0
+    log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
+    rows = backfill_tick_data(missing)
+    all_missing_tables.append({
+        "table": "tick_data",
+        "missing_dates": [d.isoformat() for d in missing],
+        "rows_backfilled": rows,
+    })
+    # 验证
+    for d in missing:
+        d_str = d.isoformat()
+        cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table="tick_data", d_str=d_str))
+        log.info("  tick_data %s: %s行", d_str, cnt or "0")
+    return rows
+
+
+def _backfill_generic_table(
+    info: dict, trade_dates: list[datetime.date], scheduler,
+    all_missing_tables: list[dict],
+) -> None:
+    """检测并补下载通用表（非 tick_data）。缺失记录追加到 all_missing_tables。"""
+    table = info["table"]
+    date_col = info.get("date_column", "")
+    threshold = info.get("threshold", 0)
+    task_id = info.get("task_id", "")
+
+    # 其他表用通用检测
+    if not date_col or threshold <= 0:
+        log.debug("表 %s 跳过（无日期列或阈值为0）", table)
+        return
+
+    missing = detect_missing_dates_generic(table, date_col, trade_dates, threshold)
+    if not missing:
+        log.debug("表 %s 无缺失", table)
+        return
+
+    log.info("表 %s 缺失日期: %s", table, [d.isoformat() for d in missing])
+    all_missing_tables.append({
+        "table": table,
+        "missing_dates": [d.isoformat() for d in missing],
+        "rows_backfilled": 0,
+    })
+
+    # 通过 scheduler 重跑任务补下载
+    if scheduler is not None and task_id:
+        log.info("通过 scheduler.run_task(%s) 补下载 %s", task_id, table)
+        try:
+            success = scheduler.run_task(task_id)
+            if success:
+                log.info("表 %s 补下载成功", table)
+            else:
+                log.warning("表 %s 补下载失败", table)
+        except Exception as e:
+            log.error("表 %s 补下载异常: %s", table, e)
+
+
+def _record_backfill_progress(
+    scheduler, total_rows: int, all_missing_tables: list[dict],
+) -> None:
+    """记录补下载结果到 progress_store 并发送告警（scheduler 可用时）。"""
+    if scheduler is None:
+        return
+    try:
+        scheduler._progress_store.save_progress(
+            "tick_backfill_weekly", "backfill",
+            datetime.date.today().isoformat(),
+            "SUCCESS" if total_rows > 0 or not all_missing_tables else "PARTIAL",
+            total_rows,
+        )
+    except Exception:
+        pass
+
+    try:
+        scheduler._alerter.notify(
+            "tick_backfill_weekly",
+            f"L10补下载完成: 缺失表={len(all_missing_tables)} 行数={total_rows}",
+            level="INFO",
+            source="backfill",
+        )
+    except Exception:
+        pass
+
+
 def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> dict:
     """L10 周末补下载主入口（全表覆盖）。
 
@@ -552,79 +644,14 @@ def run_weekend_backfill(scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS) -> 
 
     for info in tables_info:
         table = info["table"]
-        date_col = info.get("date_column", "")
-        threshold = info.get("threshold", 0)
-        task_id = info.get("task_id", "")
-
         # tick_data 用专门的补下载逻辑（分时段+批量写入）
         if table == "tick_data" or table.endswith(".tick_data"):
-            missing = detect_missing_dates("tick_data", trade_dates, _TICK_THRESHOLD)
-            if missing:
-                log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
-                rows = backfill_tick_data(missing)
-                total_rows += rows
-                all_missing_tables.append({
-                    "table": "tick_data",
-                    "missing_dates": [d.isoformat() for d in missing],
-                    "rows_backfilled": rows,
-                })
-                # 验证
-                for d in missing:
-                    d_str = d.isoformat()
-                    cnt = _ch_query(_SQL_COUNT_BY_DATE.format(table="tick_data", d_str=d_str))
-                    log.info("  tick_data %s: %s行", d_str, cnt or "0")
+            total_rows += _backfill_tick_table(trade_dates, all_missing_tables)
             continue
-
-        # 其他表用通用检测
-        if not date_col or threshold <= 0:
-            log.debug("表 %s 跳过（无日期列或阈值为0）", table)
-            continue
-
-        missing = detect_missing_dates_generic(table, date_col, trade_dates, threshold)
-        if not missing:
-            log.debug("表 %s 无缺失", table)
-            continue
-
-        log.info("表 %s 缺失日期: %s", table, [d.isoformat() for d in missing])
-        all_missing_tables.append({
-            "table": table,
-            "missing_dates": [d.isoformat() for d in missing],
-            "rows_backfilled": 0,
-        })
-
-        # 通过 scheduler 重跑任务补下载
-        if scheduler is not None and task_id:
-            log.info("通过 scheduler.run_task(%s) 补下载 %s", task_id, table)
-            try:
-                success = scheduler.run_task(task_id)
-                if success:
-                    log.info("表 %s 补下载成功", table)
-                else:
-                    log.warning("表 %s 补下载失败", table)
-            except Exception as e:
-                log.error("表 %s 补下载异常: %s", table, e)
+        _backfill_generic_table(info, trade_dates, scheduler, all_missing_tables)
 
     # 4. 记录到 progress_store（如果 scheduler 可用）
-    if scheduler is not None:
-        try:
-            scheduler._progress_store.save_progress(
-                "tick_backfill_weekly", "backfill",
-                datetime.date.today().isoformat(),
-                "SUCCESS" if total_rows > 0 or not all_missing_tables else "PARTIAL",
-                total_rows,
-            )
-        except Exception:
-            pass
-
-        try:
-            scheduler._alerter.notify(
-                "tick_backfill_weekly",
-                f"L10补下载完成: 缺失表={len(all_missing_tables)} 行数={total_rows}",
-                level="INFO",
-                source="backfill",
-            )
-        except Exception:
-            pass
+    _record_backfill_progress(scheduler, total_rows, all_missing_tables)
 
     log.info("=" * 60)
     log.info("L10 周末补下载完成: 缺失表=%d 总行数=%d", len(all_missing_tables), total_rows)
