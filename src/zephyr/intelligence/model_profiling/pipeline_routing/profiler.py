@@ -358,61 +358,14 @@ class ModelProfiler:
         profile.total_tokens = total_tokens
         profile.total_time_ms = total_time
 
-        scores = [r.score for r in case_results] if case_results else [0.0]
-        profile.average_score = sum(scores) / len(scores)
-
-        if all_latencies:
-            sorted_lat = sorted(all_latencies)
-            profile.latency_p50_ms = self._percentile(sorted_lat, 0.50)
-            profile.latency_p95_ms = self._percentile(sorted_lat, 0.95)
-            profile.latency_p99_ms = self._percentile(sorted_lat, 0.99)
-
+        _set_average_score(profile, case_results)
+        _set_latency_stats(profile, all_latencies)
         profile.throughput_tokens_per_sec = (total_tokens / total_time * 1000) if total_time > 0 else 0.0
-
-        for cat, cat_cases in CATEGORY_MAP.items():
-            cat_results = [r for r in case_results if r.category == cat]
-            if cat_results:
-                cat_score = sum(r.score for r in cat_results) / len(cat_results)
-                profile.category_scores[cat] = round(cat_score, 3)
-
-        hallu_results = [r for r in case_results if r.category == "hallucination"]
-        if hallu_results:
-            profile.hallucination_rate = round(1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3)
-
-        profile.refusal_rate = round(
-            sum(
-                1
-                for r in case_results
-                if r.error
-                or (
-                    r.output_text
-                    and "不存在" not in r.output_text
-                    and "无法" not in r.output_text
-                    and len(r.output_text) < 5
-                )
-            )
-            / max(len(case_results), 1),
-            3,
-        )
-
-        json_cases = [
-            r
-            for r in case_results
-            if r.category in ("latency", "quality")
-            and any(
-                c.category == "quality" and c.subcategory == "json_format"
-                for c in ALL_BENCHMARK_CASES
-                if c.case_id == r.case_id
-            )
-        ]
-        if json_cases:
-            profile.json_validity_rate = round(
-                sum(1 for r in json_cases if _is_valid_json(r.output_text)) / len(json_cases), 3
-            )
-
-        code_cases = [r for r in case_results if r.category in ("code_generation", "code_fix")]
-        if code_cases:
-            profile.code_validity_rate = round(sum(r.score for r in code_cases) / len(code_cases), 3)
+        _set_category_scores(profile, case_results)
+        _set_hallucination_rate(profile, case_results)
+        _set_refusal_rate(profile, case_results)
+        _set_json_validity_rate(profile, case_results)
+        _set_code_validity_rate(profile, case_results)
 
     # ------------------------------------------------------------------
     # Ollama API 调用
@@ -645,3 +598,71 @@ def _is_valid_json(text: str) -> bool:
         except (json.JSONDecodeError, ValueError):
             pass
     return False
+
+
+def _set_average_score(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    scores = [r.score for r in case_results] if case_results else [0.0]
+    profile.average_score = sum(scores) / len(scores)
+
+
+def _set_latency_stats(profile: ModelProfile, all_latencies: list[float]) -> None:
+    if all_latencies:
+        sorted_lat = sorted(all_latencies)
+        profile.latency_p50_ms = ModelProfiler._percentile(sorted_lat, 0.50)
+        profile.latency_p95_ms = ModelProfiler._percentile(sorted_lat, 0.95)
+        profile.latency_p99_ms = ModelProfiler._percentile(sorted_lat, 0.99)
+
+
+def _set_category_scores(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    for cat, cat_cases in CATEGORY_MAP.items():
+        cat_results = [r for r in case_results if r.category == cat]
+        if cat_results:
+            cat_score = sum(r.score for r in cat_results) / len(cat_results)
+            profile.category_scores[cat] = round(cat_score, 3)
+
+
+def _set_hallucination_rate(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    hallu_results = [r for r in case_results if r.category == "hallucination"]
+    if hallu_results:
+        profile.hallucination_rate = round(1.0 - sum(r.score for r in hallu_results) / len(hallu_results), 3)
+
+
+def _set_refusal_rate(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    profile.refusal_rate = round(
+        sum(
+            1
+            for r in case_results
+            if r.error
+            or (
+                r.output_text
+                and "不存在" not in r.output_text
+                and "无法" not in r.output_text
+                and len(r.output_text) < 5
+            )
+        )
+        / max(len(case_results), 1),
+        3,
+    )
+
+
+def _set_json_validity_rate(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    json_cases = [
+        r
+        for r in case_results
+        if r.category in ("latency", "quality")
+        and any(
+            c.category == "quality" and c.subcategory == "json_format"
+            for c in ALL_BENCHMARK_CASES
+            if c.case_id == r.case_id
+        )
+    ]
+    if json_cases:
+        profile.json_validity_rate = round(
+            sum(1 for r in json_cases if _is_valid_json(r.output_text)) / len(json_cases), 3
+        )
+
+
+def _set_code_validity_rate(profile: ModelProfile, case_results: list[CaseResult]) -> None:
+    code_cases = [r for r in case_results if r.category in ("code_generation", "code_fix")]
+    if code_cases:
+        profile.code_validity_rate = round(sum(r.score for r in code_cases) / len(code_cases), 3)
