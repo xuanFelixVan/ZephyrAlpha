@@ -27,6 +27,18 @@ G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁
 
 SSoT: MOD-GATE_ENGINE gate-engine
 Version: 0.1.0
+
+裁定#216 Tier1 P3 重构（2026-07-15，Extract Method）
+----------------------------------------------------
+原 check_triple_alignment 212 行 McCabe=53（6 个 check 块在 per-module 循环内串联，
+P3 per-entry multi-check 模式）。治本：Extract Method 提取为 1 个 context builder +
+6 个 check helper（均 McCabe≤10），check_triple_alignment 简化为 ~40 行 pipeline
+（McCabe≈5）。行为等价契约：每个 check helper 接收 _ModuleCheckContext，返回
+list[AlignmentViolation]；caller 统一 add_violation。关键行为保持：
+  - blueprint_path_traversal 违规在 context builder 中生成（setup 阶段）
+  - Check 1-5 在 per-module 循环内按原始顺序执行
+  - Check 6（dep_map_orphan）在循环外单独执行
+  - warn_only 在最后覆盖 passed=True
 """
 
 from __future__ import annotations
@@ -152,6 +164,233 @@ def _extract_dep_map_depths(content: str) -> dict[str, str]:
     return depths
 
 
+# === 裁定#216 Tier1 P3 Extract Method 重构（2026-07-15） ===
+
+
+@dataclass
+class _ModuleCheckContext:
+    """Per-module check context（避免 6 个 helper 各自带 8+ 参数）。"""
+
+    mid: str
+    bp: dict
+    bp_path_str: str
+    bp_path: Path | None
+    bp_frontmatter: dict[str, Any]
+    source_path_str: str
+    code_path: Path | None
+    code_headers: dict[str, str]
+    dep_map_modules: dict[str, dict[str, str]]
+
+
+def _build_module_check_context(
+    mid: str, bp: dict, dep_map_modules: dict[str, dict[str, str]]
+) -> tuple[_ModuleCheckContext, list[AlignmentViolation]]:
+    """构建 per-module 检查上下文 + setup 阶段违规（blueprint_path_traversal）。
+
+    解析蓝图路径、加载 frontmatter、解析代码头部。路径穿越违规在此阶段生成。
+    """
+    violations: list[AlignmentViolation] = []
+    bp_path_str = bp.get("file_path", "")
+    # file_path 由 sync_registry_from_blueprints.py 生成，相对 REPO_ROOT/"docs"
+    bp_path = REPO_ROOT / "docs" / bp_path_str if bp_path_str else None
+    if bp_path:
+        try:
+            resolved_bp = bp_path.resolve()
+            if not resolved_bp.is_relative_to(BLUEPRINTS_DIR.resolve()):
+                violations.append(
+                    AlignmentViolation(
+                        check="blueprint_path_traversal",
+                        severity=Severity.ERROR,
+                        module_id=mid,
+                        source="blueprint_registry.yaml file_path",
+                        expected="path within docs/03_modules/",
+                        actual=f"PATH TRAVERSAL: {bp_path_str}",
+                    )
+                )
+                bp_path = None
+        except (OSError, ValueError):
+            bp_path = None
+
+    bp_frontmatter: dict[str, Any] = {}
+    if bp_path and bp_path.exists():
+        try:
+            text = bp_path.read_text(encoding="utf-8")
+            text = text.lstrip("\ufeff")
+            if text.startswith("---"):
+                end = text.find("---", 3)
+                if end > 0:
+                    bp_frontmatter = yaml.safe_load(text[3:end]) or {}
+        except Exception:
+            logger.warning("suppressed error in triple_alignment", exc_info=True)
+
+    source_path_str = bp_frontmatter.get("actual_disk_path", "")
+    first_source = source_path_str.split("+")[0].strip() if source_path_str else ""
+    code_path = REPO_ROOT / first_source if first_source else None
+    code_headers = _parse_code_headers(code_path) if code_path and code_path.exists() else {}
+
+    ctx = _ModuleCheckContext(
+        mid=mid, bp=bp, bp_path_str=bp_path_str, bp_path=bp_path,
+        bp_frontmatter=bp_frontmatter, source_path_str=source_path_str,
+        code_path=code_path, code_headers=code_headers,
+        dep_map_modules=dep_map_modules,
+    )
+    return ctx, violations
+
+
+def _check_module_id_alignment(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
+    """Check 1: module_id 三方一致（code [BLUEPRINT] vs blueprint registry vs depgraph）。"""
+    violations: list[AlignmentViolation] = []
+    code_bp_header = ctx.code_headers.get("BLUEPRINT", "")
+    code_mid_match = re.match(r"(MOD-INF-\d+)", code_bp_header)
+    code_mid = code_mid_match.group(1) if code_mid_match else ""
+    if ctx.code_path and ctx.code_path.exists() and code_mid and code_mid != ctx.mid:
+        violations.append(
+            AlignmentViolation(
+                check="module_id_code_vs_blueprint",
+                severity=Severity.ERROR,
+                module_id=ctx.mid,
+                source="code [BLUEPRINT] header",
+                expected=ctx.mid,
+                actual=code_mid,
+            )
+        )
+    if ctx.mid not in ctx.dep_map_modules:
+        violations.append(
+            AlignmentViolation(
+                check="module_id_dep_map_missing",
+                severity=Severity.WARN,
+                module_id=ctx.mid,
+                source="depgraph.nodes",
+                expected=ctx.mid,
+                actual="NOT FOUND",
+            )
+        )
+    return violations
+
+
+def _check_attr_alignment(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
+    """Check 2: 属性三方一致（stability/safety/ai_autonomy 蓝图 vs 代码头部）。"""
+    violations: list[AlignmentViolation] = []
+    for attr in ("stability", "safety_level", "ai_autonomy"):
+        bp_val = str(ctx.bp_frontmatter.get(attr, "")).lower()
+        header_key = attr.upper().replace("SAFETY_LEVEL", "SAFETY")
+        code_val = ctx.code_headers.get(header_key, "").lower()
+        if bp_val and code_val and bp_val != code_val:
+            sev = Severity.ERROR if attr == "stability" else Severity.WARN
+            violations.append(
+                AlignmentViolation(
+                    check=f"attr_{attr}_blueprint_vs_code",
+                    severity=sev,
+                    module_id=ctx.mid,
+                    source=f"blueprint frontmatter vs code [{header_key}]",
+                    expected=bp_val,
+                    actual=code_val,
+                )
+            )
+    return violations
+
+
+def _check_construction_progress(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
+    """Check 3: construction_progress 与代码实际状态（not_started 但代码已存在→stale）。"""
+    violations: list[AlignmentViolation] = []
+    progress = ctx.bp.get("construction_progress", "")
+    if progress in ("not_started", "") and ctx.code_path and ctx.code_path.exists():
+        code_size = ctx.code_path.stat().st_size
+        if code_size > 500:
+            violations.append(
+                AlignmentViolation(
+                    check="construction_progress_stale",
+                    severity=Severity.ERROR,
+                    module_id=ctx.mid,
+                    source="blueprint_registry.yaml",
+                    expected="partially_implemented or implemented",
+                    actual=f"not_started (but code exists: {code_size} bytes)",
+                )
+            )
+    return violations
+
+
+def _check_blueprint_file_exists(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
+    """Check 4: 蓝图文件路径存在性。"""
+    violations: list[AlignmentViolation] = []
+    if ctx.bp_path_str and (not ctx.bp_path or not ctx.bp_path.exists()):
+        violations.append(
+            AlignmentViolation(
+                check="blueprint_file_missing",
+                severity=Severity.ERROR,
+                module_id=ctx.mid,
+                source="blueprint_registry.yaml file_path",
+                expected=ctx.bp_path_str,
+                actual="FILE NOT FOUND",
+            )
+        )
+    return violations
+
+
+def _check_code_path_exists(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
+    """Check 5: 代码文件/目录存在性（含路径穿越检查）。"""
+    violations: list[AlignmentViolation] = []
+    progress_val = ctx.bp.get("construction_progress", "")
+    early_stage = progress_val in ("design_only", "not_started", "")
+    if not ctx.source_path_str:
+        return violations
+    for p in [s.strip() for s in ctx.source_path_str.split("+") if s.strip()]:
+        resolved = REPO_ROOT / p
+        try:
+            resolved_abs = resolved.resolve()
+            if not resolved_abs.is_relative_to(REPO_ROOT.resolve()):
+                violations.append(
+                    AlignmentViolation(
+                        check="code_path_traversal",
+                        severity=Severity.ERROR,
+                        module_id=ctx.mid,
+                        source="blueprint actual_disk_path",
+                        expected="path within REPO_ROOT",
+                        actual=f"PATH TRAVERSAL: {p}",
+                    )
+                )
+                continue
+        except (OSError, ValueError):
+            continue
+        if not resolved.exists():
+            sev = Severity.WARN if early_stage else Severity.ERROR
+            violations.append(
+                AlignmentViolation(
+                    check="code_path_missing",
+                    severity=sev,
+                    module_id=ctx.mid,
+                    source="blueprint actual_disk_path",
+                    expected=p,
+                    actual="PATH NOT FOUND",
+                )
+            )
+    return violations
+
+
+def _check_dep_map_orphans(
+    dep_map_modules: dict[str, dict[str, str]],
+    bp_entries: dict[str, dict],
+    specific_module: str | None,
+) -> list[AlignmentViolation]:
+    """Check 6: 依赖图有模块但蓝图没有（孤儿节点）。"""
+    violations: list[AlignmentViolation] = []
+    for dep_mid in dep_map_modules:
+        if dep_mid.startswith("MOD-INF-") and dep_mid not in bp_entries:
+            if specific_module and dep_mid != specific_module:
+                continue
+            violations.append(
+                AlignmentViolation(
+                    check="dep_map_orphan_module",
+                    severity=Severity.WARN,
+                    module_id=dep_mid,
+                    source="depgraph.nodes",
+                    expected="in blueprint_registry.yaml",
+                    actual="NOT FOUND",
+                )
+            )
+    return violations
+
+
 def check_triple_alignment(
     specific_module: str | None = None,
     warn_only: bool = False,
@@ -184,181 +423,21 @@ def check_triple_alignment(
         if specific_module and mid != specific_module:
             continue
         result.checked_modules += 1
+        ctx, setup_violations = _build_module_check_context(mid, bp, dep_map_modules)
+        all_violations = (
+            setup_violations
+            + _check_module_id_alignment(ctx)
+            + _check_attr_alignment(ctx)
+            + _check_construction_progress(ctx)
+            + _check_blueprint_file_exists(ctx)
+            + _check_code_path_exists(ctx)
+        )
+        for v in all_violations:
+            result.add_violation(v)
 
-        bp_path_str = bp.get("file_path", "")
-        # 修复: file_path 由 sync_registry_from_blueprints.py 的 make_registry_path 生成,
-        # 相对 REPO_ROOT/"docs" (如 "03_modules/_cross_layer/.../blueprint.md"),
-        # 不是相对 BLUEPRINTS_DIR。原 BLUEPRINTS_DIR / bp_path_str 会产生双重 03_modules 前缀。
-        bp_path = REPO_ROOT / "docs" / bp_path_str if bp_path_str else None
-        # 红蓝对抗修复：路径边界验证，防止路径穿越攻击
-        if bp_path:
-            try:
-                resolved_bp = bp_path.resolve()
-                if not resolved_bp.is_relative_to(BLUEPRINTS_DIR.resolve()):
-                    result.add_violation(
-                        AlignmentViolation(
-                            check="blueprint_path_traversal",
-                            severity=Severity.ERROR,
-                            module_id=mid,
-                            source="blueprint_registry.yaml file_path",
-                            expected="path within docs/03_modules/",
-                            actual=f"PATH TRAVERSAL: {bp_path_str}",
-                        )
-                    )
-                    bp_path = None
-            except (OSError, ValueError):
-                bp_path = None
-        bp_frontmatter: dict[str, Any] = {}
-        if bp_path and bp_path.exists():
-            try:
-                text = bp_path.read_text(encoding="utf-8")
-                # 防御性: 去除所有前导 BOM (部分文件可能因编辑器积累多个 BOM)
-                text = text.lstrip("\ufeff")
-                if text.startswith("---"):
-                    end = text.find("---", 3)
-                    if end > 0:
-                        fm_text = text[3:end]
-                        bp_frontmatter = yaml.safe_load(fm_text) or {}
-            except Exception as e:
-                logger.warning("suppressed error in triple_alignment", exc_info=True)
-
-        source_path_str = bp_frontmatter.get("actual_disk_path", "")
-        first_source = source_path_str.split("+")[0].strip() if source_path_str else ""
-        code_path = REPO_ROOT / first_source if first_source else None
-        code_headers = _parse_code_headers(code_path) if code_path and code_path.exists() else {}
-
-        # Check 1: module_id 三方一致
-        code_bp_header = code_headers.get("BLUEPRINT", "")
-        code_mid_match = re.match(r"(MOD-INF-\d+)", code_bp_header)
-        code_mid = code_mid_match.group(1) if code_mid_match else ""
-        dep_map_mid = mid in dep_map_modules
-
-        if code_path and code_path.exists() and code_mid and code_mid != mid:
-            result.add_violation(
-                AlignmentViolation(
-                    check="module_id_code_vs_blueprint",
-                    severity=Severity.ERROR,
-                    module_id=mid,
-                    source="code [BLUEPRINT] header",
-                    expected=mid,
-                    actual=code_mid,
-                )
-            )
-
-        if not dep_map_mid:
-            result.add_violation(
-                AlignmentViolation(
-                    check="module_id_dep_map_missing",
-                    severity=Severity.WARN,
-                    module_id=mid,
-                    source="depgraph.nodes",
-                    expected=mid,
-                    actual="NOT FOUND",
-                )
-            )
-
-        # Check 2: 属性三方一致 (stability/safety/ai_autonomy)
-        for attr in ("stability", "safety_level", "ai_autonomy"):
-            bp_val = str(bp_frontmatter.get(attr, "")).lower()
-            code_val = ""
-            header_key = attr.upper().replace("SAFETY_LEVEL", "SAFETY")
-            code_val = code_headers.get(header_key, "").lower()
-            dep_val = ""
-
-            if bp_val and code_val and bp_val != code_val:
-                sev = Severity.ERROR if attr == "stability" else Severity.WARN
-                result.add_violation(
-                    AlignmentViolation(
-                        check=f"attr_{attr}_blueprint_vs_code",
-                        severity=sev,
-                        module_id=mid,
-                        source=f"blueprint frontmatter vs code [{header_key}]",
-                        expected=bp_val,
-                        actual=code_val,
-                    )
-                )
-
-        # Check 3: construction_progress 与代码实际状态
-        progress = bp.get("construction_progress", "")
-        if progress in ("not_started", "") and code_path and code_path.exists():
-            code_size = code_path.stat().st_size
-            if code_size > 500:
-                result.add_violation(
-                    AlignmentViolation(
-                        check="construction_progress_stale",
-                        severity=Severity.ERROR,
-                        module_id=mid,
-                        source="blueprint_registry.yaml",
-                        expected="partially_implemented or implemented",
-                        actual=f"not_started (but code exists: {code_size} bytes)",
-                    )
-                )
-
-        # Check 4: 蓝图文件路径存在性
-        if bp_path_str and (not bp_path or not bp_path.exists()):
-            result.add_violation(
-                AlignmentViolation(
-                    check="blueprint_file_missing",
-                    severity=Severity.ERROR,
-                    module_id=mid,
-                    source="blueprint_registry.yaml file_path",
-                    expected=bp_path_str,
-                    actual="FILE NOT FOUND",
-                )
-            )
-
-        # Check 5: 代码文件/目录存在性（如果蓝图声明了 actual_disk_path）
-        progress_val = bp.get("construction_progress", "")
-        early_stage = progress_val in ("design_only", "not_started", "")
-        if source_path_str:
-            paths_to_check = [p.strip() for p in source_path_str.split("+") if p.strip()]
-            for p in paths_to_check:
-                resolved = REPO_ROOT / p
-                # 红蓝对抗修复：actual_disk_path 路径穿越检查
-                try:
-                    resolved_abs = resolved.resolve()
-                    if not resolved_abs.is_relative_to(REPO_ROOT.resolve()):
-                        result.add_violation(
-                            AlignmentViolation(
-                                check="code_path_traversal",
-                                severity=Severity.ERROR,
-                                module_id=mid,
-                                source="blueprint actual_disk_path",
-                                expected="path within REPO_ROOT",
-                                actual=f"PATH TRAVERSAL: {p}",
-                            )
-                        )
-                        continue
-                except (OSError, ValueError):
-                    continue
-                if not resolved.exists():
-                    sev = Severity.WARN if early_stage else Severity.ERROR
-                    result.add_violation(
-                        AlignmentViolation(
-                            check="code_path_missing",
-                            severity=sev,
-                            module_id=mid,
-                            source="blueprint actual_disk_path",
-                            expected=p,
-                            actual="PATH NOT FOUND",
-                        )
-                    )
-
-        # Check 6: 依赖图有模块但蓝图没有（孤儿节点）
-    for dep_mid in dep_map_modules:
-        if dep_mid.startswith("MOD-INF-") and dep_mid not in bp_entries:
-            if specific_module and dep_mid != specific_module:
-                continue
-            result.add_violation(
-                AlignmentViolation(
-                    check="dep_map_orphan_module",
-                    severity=Severity.WARN,
-                    module_id=dep_mid,
-                    source="depgraph.nodes",
-                    expected="in blueprint_registry.yaml",
-                    actual="NOT FOUND",
-                )
-            )
+    # Check 6: 依赖图有模块但蓝图没有（孤儿节点，循环外单独执行）
+    for v in _check_dep_map_orphans(dep_map_modules, bp_entries, specific_module):
+        result.add_violation(v)
 
     if warn_only:
         result.passed = True
