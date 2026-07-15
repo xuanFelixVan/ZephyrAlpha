@@ -56,6 +56,90 @@ class Reconciler:
         self.ghost_max_age_days = ghost_max_age_days
         self.root = root or REPO_ROOT
 
+    def _compare_scan_vs_index(
+        self,
+        scan_sha: dict[str, RawFileEntry],
+        class_by_path: dict[str, ClassifiedAsset],
+        index_assets: dict[str, ClassifiedAsset],
+        now: datetime,
+    ) -> tuple[int, list[ClassifiedAsset], list[DriftEntry]]:
+        """对比扫描结果与注册表索引，返回 (matched, orphans, drifts)。"""
+        matched = 0
+        orphans: list[ClassifiedAsset] = []
+        drifts: list[DriftEntry] = []
+        for path, entry in scan_sha.items():
+            cls = class_by_path.get(path)
+            mtime_dt = entry.mtime_utc.replace(tzinfo=UTC)
+            if path not in index_assets:
+                if mtime_dt.tzinfo is None:
+                    mtime_dt = mtime_dt.replace(tzinfo=UTC)
+                delta = now - mtime_dt
+                if delta < timedelta(hours=self.orphan_tolerance_hours):
+                    matched += 1
+                    continue
+                orphans.append(
+                    cls
+                    or ClassifiedAsset(
+                        relative_path=path,
+                        asset_type=cls.asset_type if cls else AssetType.UNKNOWN,
+                        size_bytes=entry.size_bytes,
+                        mtime_utc=entry.mtime_utc,
+                        sha256=entry.sha256,
+                    )
+                )
+                continue
+            idx = index_assets[path]
+            drift_types: list[DriftType] = []
+            if idx.sha256 != entry.sha256:
+                drift_types.append(DriftType.SHA256)
+            if idx.size_bytes != entry.size_bytes:
+                drift_types.append(DriftType.SIZE)
+            if drift_types:
+                drifts.append(
+                    DriftEntry(
+                        relative_path=path,
+                        registered_sha256=idx.sha256,
+                        disk_sha256=entry.sha256,
+                        drift_types=drift_types,
+                        registered_size=idx.size_bytes,
+                        disk_size=entry.size_bytes,
+                        registered_mtime=idx.mtime_utc,
+                        disk_mtime=entry.mtime_utc,
+                    )
+                )
+            else:
+                matched += 1
+        return matched, orphans, drifts
+
+    def _detect_ghosts(
+        self,
+        index_assets: dict[str, ClassifiedAsset],
+        scan_sha: dict[str, RawFileEntry],
+        existing_index: UnifiedAssetIndex | None,
+        now: datetime,
+    ) -> list[GhostEntry]:
+        """检测幽灵条目：注册表中存在但磁盘上不存在的资产。"""
+        ghosts: list[GhostEntry] = []
+        for path, idx in index_assets.items():
+            if path not in scan_sha:
+                p = self.root / path
+                ghost_days = 0.0
+                if existing_index and existing_index.last_reconciliation_at:
+                    ghost_days = (now - existing_index.last_reconciliation_at).total_seconds() / 86400.0
+                ghosts.append(
+                    GhostEntry(
+                        registry_id="unified-asset-index",
+                        registry_path=path,
+                        registered_type=idx.asset_type if hasattr(idx, "asset_type") else AssetType.UNKNOWN,
+                        cached_sha256=idx.sha256 if hasattr(idx, "sha256") else None,
+                        last_known_mtime=idx.mtime_utc if hasattr(idx, "mtime_utc") else None,
+                        ghost_since=now,
+                        days_ghost=round(ghost_days, 1),
+                        candidates_for_cleanup=ghost_days > self.ghost_max_age_days,
+                    )
+                )
+        return ghosts
+
     def reconcile(
         self,
         scan_result: ScanResult,
@@ -78,99 +162,15 @@ class Reconciler:
             for a in existing_index.assets:
                 index_assets[a.relative_path] = a
 
-        matched = 0
-        orphans: list[ClassifiedAsset] = []
-        ghosts: list[GhostEntry] = []
-        drifts: list[DriftEntry] = []
-
-        now_hours = now
-
-        for path, entry in scan_sha.items():
-            cls = class_by_path.get(path)
-            mtime_dt = entry.mtime_utc.replace(tzinfo=UTC)
-
-            if path not in index_assets:
-                if mtime_dt.tzinfo is None:
-                    mtime_dt = mtime_dt.replace(tzinfo=UTC)
-                delta = now - mtime_dt
-                if delta < timedelta(hours=self.orphan_tolerance_hours):
-                    matched += 1
-                    continue
-                orphans.append(
-                    cls
-                    or ClassifiedAsset(
-                        relative_path=path,
-                        asset_type=cls.asset_type if cls else AssetType.UNKNOWN,
-                        size_bytes=entry.size_bytes,
-                        mtime_utc=entry.mtime_utc,
-                        sha256=entry.sha256,
-                    )
-                )
-                continue
-
-            idx = index_assets[path]
-            drift_types: list[DriftType] = []
-            if idx.sha256 != entry.sha256:
-                drift_types.append(DriftType.SHA256)
-            if idx.size_bytes != entry.size_bytes:
-                drift_types.append(DriftType.SIZE)
-
-            if drift_types:
-                drifts.append(
-                    DriftEntry(
-                        relative_path=path,
-                        registered_sha256=idx.sha256,
-                        disk_sha256=entry.sha256,
-                        drift_types=drift_types,
-                        registered_size=idx.size_bytes,
-                        disk_size=entry.size_bytes,
-                        registered_mtime=idx.mtime_utc,
-                        disk_mtime=entry.mtime_utc,
-                    )
-                )
-            else:
-                matched += 1
-
-        for path, idx in index_assets.items():
-            if path not in scan_sha:
-                p = self.root / path
-                ghost_days = 0.0
-                if existing_index and existing_index.last_reconciliation_at:
-                    ghost_days = (now - existing_index.last_reconciliation_at).total_seconds() / 86400.0
-                ghosts.append(
-                    GhostEntry(
-                        registry_id="unified-asset-index",
-                        registry_path=path,
-                        registered_type=idx.asset_type if hasattr(idx, "asset_type") else AssetType.UNKNOWN,
-                        cached_sha256=idx.sha256 if hasattr(idx, "sha256") else None,
-                        last_known_mtime=idx.mtime_utc if hasattr(idx, "mtime_utc") else None,
-                        ghost_since=now,
-                        days_ghost=round(ghost_days, 1),
-                        candidates_for_cleanup=ghost_days > self.ghost_max_age_days,
-                    )
-                )
+        matched, orphans, drifts = self._compare_scan_vs_index(
+            scan_sha, class_by_path, index_assets, now
+        )
+        ghosts = self._detect_ghosts(index_assets, scan_sha, existing_index, now)
 
         total = matched + len(orphans) + len(ghosts) + len(drifts)
         orphan_before = (len(orphans) / total * 100) if total else 0.0
 
-        renames: list[RenameEvent] = []
-        ghost_by_sha: dict[str, GhostEntry] = {}
-        for g in ghosts:
-            if g.cached_sha256:
-                ghost_by_sha[g.cached_sha256] = g
-        for o in orphans[:]:
-            if o.sha256 in ghost_by_sha:
-                gh = ghost_by_sha[o.sha256]
-                renames.append(
-                    RenameEvent(
-                        old_path=gh.registry_path,
-                        new_path=o.relative_path,
-                        sha256=o.sha256,
-                        confidence=0.95,
-                    )
-                )
-                orphans.remove(o)
-                ghosts.remove(gh)
+        renames, orphans, ghosts = _detect_renames(orphans, ghosts)
 
         orphan_after = (len(orphans) / total * 100) if total else 0.0
 
@@ -220,6 +220,31 @@ class Reconciler:
 
         logger.info("对账报告已写入: %s", target)
         return Path(target)
+
+
+def _detect_renames(
+    orphans: list[ClassifiedAsset], ghosts: list[GhostEntry]
+) -> tuple[list[RenameEvent], list[ClassifiedAsset], list[GhostEntry]]:
+    """通过 sha256 匹配孤儿与幽灵，检测重命名事件，返回 (renames, remaining_orphans, remaining_ghosts)。"""
+    renames: list[RenameEvent] = []
+    ghost_by_sha: dict[str, GhostEntry] = {}
+    for g in ghosts:
+        if g.cached_sha256:
+            ghost_by_sha[g.cached_sha256] = g
+    for o in orphans[:]:
+        if o.sha256 in ghost_by_sha:
+            gh = ghost_by_sha[o.sha256]
+            renames.append(
+                RenameEvent(
+                    old_path=gh.registry_path,
+                    new_path=o.relative_path,
+                    sha256=o.sha256,
+                    confidence=0.95,
+                )
+            )
+            orphans.remove(o)
+            ghosts.remove(gh)
+    return renames, orphans, ghosts
 
 
 def _generate_report_id() -> str:
