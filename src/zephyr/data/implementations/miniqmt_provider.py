@@ -231,6 +231,91 @@ class _CbIvFetchCtx:
     policy: "SourcePolicy"
 
 
+# ============== Black-Scholes 数学函数（模块级，_fetch_option_iv_surface 使用） ==============
+
+
+def _bs_pdf(x: float) -> float:
+    """标准正态分布概率密度函数。"""
+    import math
+    return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+
+
+def _bs_cdf(x: float) -> float:
+    """标准正态分布累积分布函数。"""
+    import math
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def _bs_price(S, K, T, r, sigma, opt_type):
+    """Black-Scholes 期权理论价格。"""
+    import math
+    if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
+        return None
+    d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+    d2 = d1 - sigma * math.sqrt(T)
+    if opt_type == "call":
+        return S * _bs_cdf(d1) - K * math.exp(-r * T) * _bs_cdf(d2)
+    return K * math.exp(-r * T) * _bs_cdf(-d2) - S * _bs_cdf(-d1)
+
+
+def _solve_iv(S, K, T, r, market_price, opt_type):
+    """Newton-Raphson 迭代反解隐含波动率。
+
+    初始 IV=0.3，迭代 100 次，精度 1e-6。
+    不收敛或 vega 过小时返回 None。
+    """
+    import math
+    if (S is None or K is None or market_price is None
+            or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
+        return None
+    sigma = 0.3
+    for _ in range(100):
+        price = _bs_price(S, K, T, r, sigma, opt_type)
+        if price is None:
+            return None
+        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+        vega = S * _bs_pdf(d1) * math.sqrt(T)
+        if vega < 1e-8:
+            return None
+        diff = price - market_price
+        if abs(diff) < 1e-6:
+            return round(sigma, 6)
+        sigma = sigma - diff / vega
+        if sigma <= 0:
+            sigma = 1e-4
+        elif sigma > 5:
+            sigma = 5
+    return None
+
+
+def _parse_option_expiry(expiry) -> "datetime.date | None":
+    """解析期权到期日字符串（YYYYMMDD 或更长）为 date 对象。"""
+    import datetime
+    if not expiry:
+        return None
+    try:
+        exp_str = str(expiry)
+        if len(exp_str) >= 8:
+            return datetime.date(int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8]))
+    except Exception:
+        pass
+    return None
+
+
+@dataclasses.dataclass
+class _OptionCtx:
+    """期权计算上下文（参数对象，避免 _compute_iv_rows/_compute_greeks_rows 长参数列表）。"""
+    opt_df: object
+    ul_df: object
+    symbol: str
+    underlying: str
+    strike: "float | None"
+    expiry: str
+    opt_type: str
+    exp_date: "object | None"
+    r: float
+
+
 class MiniQMTProvider(DataSourceBase):
     """miniQMT（迅投 xtquant）数据源 Provider。
 
@@ -1252,8 +1337,6 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个合约一批
         """
-        from xtquant import xtdata
-
         table = payload.table or "c1_market.futures_position"
         columns = [
             "trade_date", "symbol", "long_position", "short_position",
@@ -1276,77 +1359,9 @@ class MiniQMTProvider(DataSourceBase):
         for stock_code in symbols:
             t0 = time.time()
             try:
-                from xtquant import xtdata
-                import pandas as pd
-                symbol = self._stock_to_symbol(stock_code)
-                # 1. 获取合约详情（exchange 等静态信息）
-                detail = self._call_with_policy(
-                    xtdata.get_instrument_detail, policy, stock_code,
+                rows = self._compute_futures_position_rows(
+                    stock_code, start_str, end_str, policy, payload.end,
                 )
-                exchange = ""
-                if detail:
-                    exchange = detail.get("ExchangeID", "")
-                # 2. 下载并获取历史日K线
-                try:
-                    self._call_with_policy(
-                        xtdata.download_history_data, policy,
-                        stock_code, "1d", start_str, end_str,
-                    )
-                except Exception as e:
-                    self._log.debug(f"download_history_data({stock_code}) 失败: {e}")
-                kline_data = self._call_with_policy(
-                    xtdata.get_market_data_ex, policy,
-                    [], [stock_code], "1d", start_str, end_str,
-                )
-                kline_df = kline_data.get(stock_code) if kline_data else None
-                rows = []
-                if kline_df is not None and len(kline_df) > 0:
-                    # 尝试从 K线获取持仓量字段
-                    oi_col = None
-                    for col in ("open_interest", "position", "Position"):
-                        if col in kline_df.columns:
-                            oi_col = col
-                            break
-                    if oi_col:
-                        for dt in kline_df.index:
-                            oi = self.safe_float(kline_df.loc[dt, oi_col])
-                            rows.append((
-                                pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                                symbol,
-                                int(oi) if oi is not None else None,
-                                None, None, None,
-                                exchange, "miniqmt",
-                            ))
-                    else:
-                        # K线无持仓量字段，fallback 到当前快照
-                        if detail:
-                            long_pos = self.safe_float(detail.get("LongPosition"))
-                            short_pos = self.safe_float(detail.get("ShortPosition"))
-                            long_vol = self.safe_float(detail.get("LongVolume"))
-                            short_vol = self.safe_float(detail.get("ShortVolume"))
-                            rows.append((
-                                payload.end.isoformat(), symbol,
-                                int(long_pos) if long_pos is not None else None,
-                                int(short_pos) if short_pos is not None else None,
-                                int(long_vol) if long_vol is not None else None,
-                                int(short_vol) if short_vol is not None else None,
-                                exchange, "miniqmt",
-                            ))
-                else:
-                    # 无 K线数据，fallback 到当前快照
-                    if detail:
-                        long_pos = self.safe_float(detail.get("LongPosition"))
-                        short_pos = self.safe_float(detail.get("ShortPosition"))
-                        long_vol = self.safe_float(detail.get("LongVolume"))
-                        short_vol = self.safe_float(detail.get("ShortVolume"))
-                        rows.append((
-                            payload.end.isoformat(), symbol,
-                            int(long_pos) if long_pos is not None else None,
-                            int(short_pos) if short_pos is not None else None,
-                            int(long_vol) if long_vol is not None else None,
-                            int(short_vol) if short_vol is not None else None,
-                            exchange, "miniqmt",
-                        ))
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1357,6 +1372,87 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key, elapsed_sec=time.time() - t0,
                     error=f"抓取失败: {e}",
                 )
+
+    def _compute_futures_position_rows(
+        self, stock_code: str, start_str: str, end_str: str,
+        policy: SourcePolicy, end_date,
+    ) -> list[tuple]:
+        """处理单个期货合约的持仓数据，返回行列表。"""
+        from xtquant import xtdata
+        import pandas as pd
+
+        symbol = self._stock_to_symbol(stock_code)
+        detail = self._call_with_policy(
+            xtdata.get_instrument_detail, policy, stock_code,
+        )
+        exchange = detail.get("ExchangeID", "") if detail else ""
+
+        try:
+            self._call_with_policy(
+                xtdata.download_history_data, policy,
+                stock_code, "1d", start_str, end_str,
+            )
+        except Exception as e:
+            self._log.debug(f"download_history_data({stock_code}) 失败: {e}")
+
+        kline_data = self._call_with_policy(
+            xtdata.get_market_data_ex, policy,
+            [], [stock_code], "1d", start_str, end_str,
+        )
+        kline_df = kline_data.get(stock_code) if kline_data else None
+
+        # 优先从K线获取持仓量字段
+        if kline_df is not None and len(kline_df) > 0:
+            kline_rows = self._build_futures_kline_rows(kline_df, symbol, exchange)
+            if kline_rows is not None:
+                return kline_rows
+
+        # K线无持仓量字段或无K线数据，fallback 到当前快照
+        if detail:
+            return [self._build_futures_snapshot_row(
+                detail, symbol, end_date.isoformat(), exchange,
+            )]
+        return []
+
+    @staticmethod
+    def _build_futures_kline_rows(kline_df, symbol: str, exchange: str) -> list[tuple] | None:
+        """从K线数据构建持仓行（若有 OI 字段），无 OI 字段返回 None。"""
+        import pandas as pd
+        oi_col = None
+        for col in ("open_interest", "position", "Position"):
+            if col in kline_df.columns:
+                oi_col = col
+                break
+        if not oi_col:
+            return None
+        rows = []
+        for dt in kline_df.index:
+            oi = MiniQMTProvider.safe_float(kline_df.loc[dt, oi_col])
+            rows.append((
+                pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                symbol,
+                int(oi) if oi is not None else None,
+                None, None, None,
+                exchange, "miniqmt",
+            ))
+        return rows
+
+    def _build_futures_snapshot_row(
+        self, detail: dict, symbol: str, trade_date: str, exchange: str,
+    ) -> tuple:
+        """从合约详情快照构建单行持仓数据。"""
+        long_pos = self.safe_float(detail.get("LongPosition"))
+        short_pos = self.safe_float(detail.get("ShortPosition"))
+        long_vol = self.safe_float(detail.get("LongVolume"))
+        short_vol = self.safe_float(detail.get("ShortVolume"))
+        return (
+            trade_date, symbol,
+            int(long_pos) if long_pos is not None else None,
+            int(short_pos) if short_pos is not None else None,
+            int(long_vol) if long_vol is not None else None,
+            int(short_vol) if short_vol is not None else None,
+            exchange, "miniqmt",
+        )
 
     # ============== 股东数据 ==============
 
@@ -1738,14 +1834,11 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个期权一批
         """
-        import math
-
         table = payload.table or "c1_market.option_iv_surface"
         columns = [
             "trade_date", "symbol", "underlying", "strike", "expiry",
             "opt_type", "iv", "data_source",
         ]
-        trade_date = payload.end.isoformat()
         symbols = payload.symbols or []
         last_key = self._date_to_str(payload.end)
 
@@ -1759,142 +1852,12 @@ class MiniQMTProvider(DataSourceBase):
             )
             return
 
-        # 标准正态分布 PDF / CDF
-        def _pdf(x):
-            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
-
-        def _cdf(x):
-            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
-
-        def _bs_price(S, K, T, r, sigma, opt_type):
-            """Black-Scholes 期权理论价格。"""
-            if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
-                return None
-            d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
-            d2 = d1 - sigma * math.sqrt(T)
-            if opt_type == "call":
-                return S * _cdf(d1) - K * math.exp(-r * T) * _cdf(d2)
-            return K * math.exp(-r * T) * _cdf(-d2) - S * _cdf(-d1)
-
-        def _solve_iv(S, K, T, r, market_price, opt_type):
-            """Newton-Raphson 迭代反解隐含波动率。
-
-            初始 IV=0.3，迭代 100 次，精度 1e-6。
-            不收敛或 vega 过小时返回 None。
-            """
-            if (S is None or K is None or market_price is None
-                    or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
-                return None
-            sigma = 0.3
-            for _ in range(100):
-                price = _bs_price(S, K, T, r, sigma, opt_type)
-                if price is None:
-                    return None
-                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
-                vega = S * _pdf(d1) * math.sqrt(T)
-                if vega < 1e-8:
-                    return None
-                diff = price - market_price
-                if abs(diff) < 1e-6:
-                    return round(sigma, 6)
-                sigma = sigma - diff / vega
-                # 防止 sigma 跑出合理范围
-                if sigma <= 0:
-                    sigma = 1e-4
-                elif sigma > 5:
-                    sigma = 5
-            return None
-
         for opt_code in symbols:
             t0 = time.time()
             try:
-                from xtquant import xtdata
-                # 使用 _get_option_detail_safe 绕过 xtquant get_option_detail_data bug
-                # （get_option_detail_data 内部 OptUndlUniCode 为 None 时崩溃）
-                detail = self._get_option_detail_safe(opt_code, policy)
-                rows = []
-                if detail:
-                    symbol = self._stock_to_symbol(opt_code)
-                    underlying = detail.get("Underlying", "")
-                    strike = self.safe_float(detail.get("ExercisePrice"))
-                    expiry = detail.get("EndDelivDate", "")
-                    opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
-                    r = 0.03
-                    # 解析到期日（T 在遍历时逐日计算）
-                    exp_date = None
-                    if expiry:
-                        try:
-                            exp_str = str(expiry)
-                            if len(exp_str) >= 8:
-                                exp_date = datetime.date(
-                                    int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8])
-                                )
-                        except Exception:
-                            pass
-                    # 1. 下载并获取期权历史收盘价
-                    try:
-                        self._call_with_policy(
-                            xtdata.download_history_data, policy,
-                            opt_code, "1d", start_str, end_str,
-                        )
-                    except Exception as e:
-                        self._log.debug(f"download_history_data({opt_code}) 失败: {e}")
-                    opt_data = self._call_with_policy(
-                        xtdata.get_market_data_ex, policy,
-                        [], [opt_code], "1d", start_str, end_str,
-                    )
-                    opt_df = opt_data.get(opt_code) if opt_data else None
-                    if opt_df is None or len(opt_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 2. 下载并获取标的 historical 收盘价
-                    ul_df = None
-                    if underlying:
-                        try:
-                            self._call_with_policy(
-                                xtdata.download_history_data, policy,
-                                underlying, "1d", start_str, end_str,
-                            )
-                        except Exception as e:
-                            self._log.debug(f"download_history_data({underlying}) 失败: {e}")
-                        ul_data = self._call_with_policy(
-                            xtdata.get_market_data_ex, policy,
-                            [], [underlying], "1d", start_str, end_str,
-                        )
-                        ul_df = ul_data.get(underlying) if ul_data else None
-                    if ul_df is None or len(ul_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 3. 对齐日期索引，遍历每个交易日计算 IV
-                    import pandas as pd
-                    common_dates = opt_df.index.intersection(ul_df.index)
-                    for dt in common_dates:
-                        opt_close = self.safe_float(opt_df.loc[dt, "close"])
-                        spot = self.safe_float(ul_df.loc[dt, "close"])
-                        if opt_close is None or opt_close <= 0 or spot is None or spot <= 0:
-                            continue
-                        # T 基于当前遍历日期计算
-                        if exp_date:
-                            cur_date = pd.Timestamp(dt).date()
-                            days = (exp_date - cur_date).days
-                            T = max(days / 365.0, 0.001)
-                        else:
-                            T = 0.25
-                        iv = _solve_iv(spot, strike, T, r, opt_close, opt_type)
-                        rows.append((
-                            pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                            symbol, underlying, strike,
-                            str(expiry)[:10] if expiry else None,
-                            opt_type,
-                            iv,
-                            "miniqmt",
-                        ))
+                rows = self._compute_iv_for_option(
+                    opt_code, start_str, end_str, policy,
+                )
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1903,6 +1866,61 @@ class MiniQMTProvider(DataSourceBase):
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} IV曲面抓取失败，跳过: {e}")
                 continue
+
+    def _compute_iv_for_option(
+        self, opt_code: str, start_str: str, end_str: str,
+        policy: SourcePolicy,
+    ) -> list[tuple]:
+        """处理单个期权合约的 IV 计算，返回行列表。"""
+        detail = self._get_option_detail_safe(opt_code, policy)
+        if not detail:
+            return []
+
+        symbol = self._stock_to_symbol(opt_code)
+        underlying = detail.get("Underlying", "")
+        strike = self.safe_float(detail.get("ExercisePrice"))
+        expiry = detail.get("EndDelivDate", "")
+        opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
+        r = 0.03
+        exp_date = _parse_option_expiry(expiry)
+
+        opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
+        if opt_df is None or len(opt_df) == 0:
+            return []
+
+        ul_df = self._download_underlying_price_df(underlying, start_str, end_str, policy)
+        if ul_df is None or len(ul_df) == 0:
+            return []
+
+        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
+                        expiry, opt_type, exp_date, r)
+        return MiniQMTProvider._compute_iv_rows(ctx)
+
+    @staticmethod
+    def _compute_iv_rows(ctx: _OptionCtx) -> list[tuple]:
+        """遍历对齐日期计算 IV 行。"""
+        import pandas as pd
+        rows = []
+        common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
+        for dt in common_dates:
+            opt_close = MiniQMTProvider.safe_float(ctx.opt_df.loc[dt, "close"])
+            spot = MiniQMTProvider.safe_float(ctx.ul_df.loc[dt, "close"])
+            if opt_close is None or opt_close <= 0 or spot is None or spot <= 0:
+                continue
+            if ctx.exp_date:
+                cur_date = pd.Timestamp(dt).date()
+                days = (ctx.exp_date - cur_date).days
+                T = max(days / 365.0, 0.001)
+            else:
+                T = 0.25
+            iv = _solve_iv(spot, ctx.strike, T, ctx.r, opt_close, ctx.opt_type)
+            rows.append((
+                pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                ctx.symbol, ctx.underlying, ctx.strike,
+                str(ctx.expiry)[:10] if ctx.expiry else None,
+                ctx.opt_type, iv, "miniqmt",
+            ))
+        return rows
 
     # ============== 可转债波动率 ==============
 
@@ -2793,107 +2811,9 @@ class MiniQMTProvider(DataSourceBase):
         for opt_code in symbols:
             t0 = time.time()
             try:
-                from xtquant import xtdata
-                import pandas as pd
-                # 使用 _get_option_detail_safe 绕过 xtquant get_option_detail_data bug
-                detail = self._get_option_detail_safe(opt_code, policy)
-                rows = []
-                if detail:
-                    symbol = self._stock_to_symbol(opt_code)
-                    underlying = detail.get("Underlying", "")
-                    strike = self.safe_float(detail.get("ExercisePrice"))
-                    expiry = detail.get("EndDelivDate", "")
-                    opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
-                    r = 0.03
-                    # 解析到期日
-                    exp_date = None
-                    if expiry:
-                        try:
-                            exp_str = str(expiry)
-                            if len(exp_str) >= 8:
-                                exp_date = datetime.date(
-                                    int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8])
-                                )
-                        except Exception:
-                            pass
-                    # 1. 下载并获取期权历史收盘价
-                    try:
-                        self._call_with_policy(
-                            xtdata.download_history_data, policy,
-                            opt_code, "1d", start_str, end_str,
-                        )
-                    except Exception as e:
-                        self._log.debug(f"download_history_data({opt_code}) 失败: {e}")
-                    opt_data = self._call_with_policy(
-                        xtdata.get_market_data_ex, policy,
-                        [], [opt_code], "1d", start_str, end_str,
-                    )
-                    opt_df = opt_data.get(opt_code) if opt_data else None
-                    if opt_df is None or len(opt_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 2. 下载并获取标的 historical 收盘价
-                    ul_df = None
-                    if underlying:
-                        try:
-                            self._call_with_policy(
-                                xtdata.download_history_data, policy,
-                                underlying, "1d", start_str, end_str,
-                            )
-                        except Exception as e:
-                            self._log.debug(f"download_history_data({underlying}) 失败: {e}")
-                        ul_data = self._call_with_policy(
-                            xtdata.get_market_data_ex, policy,
-                            [], [underlying], "1d", start_str, end_str,
-                        )
-                        ul_df = ul_data.get(underlying) if ul_data else None
-                    if ul_df is None or len(ul_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 3. 对齐日期索引，遍历每个交易日计算 Greeks
-                    # sigma 用标的 20 日历史波动率（年化）
-                    ul_close = ul_df["close"].astype(float)
-                    ul_ret = ul_close.pct_change()
-                    common_dates = opt_df.index.intersection(ul_df.index)
-                    for dt in common_dates:
-                        spot = self.safe_float(ul_df.loc[dt, "close"])
-                        if spot is None or spot <= 0:
-                            continue
-                        # T 基于当前遍历日期计算
-                        if exp_date:
-                            cur_date = pd.Timestamp(dt).date()
-                            days = (exp_date - cur_date).days
-                            T = max(days / 365.0, 0.001)
-                        else:
-                            T = 0.25
-                        # 历史波动率：截止当日的 20 日收益率标准差 × sqrt(244)
-                        pos = ul_df.index.get_loc(dt)
-                        if pos >= 20:
-                            hist_vol = ul_ret.iloc[pos - 19 : pos + 1].std()
-                            sigma = self.safe_float(hist_vol)
-                            if sigma is None or sigma <= 0:
-                                sigma = 0.3
-                            else:
-                                sigma = sigma * (244 ** 0.5)
-                        else:
-                            sigma = 0.3
-                        greeks = self._calc_bs_greeks(spot, strike, T, r, sigma, opt_type)
-                        if greeks:
-                            rows.append((
-                                pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                                symbol, underlying, strike,
-                                str(expiry)[:10] if expiry else None,
-                                opt_type,
-                                greeks["delta"], greeks["gamma"],
-                                greeks["theta"], greeks["vega"],
-                                "miniqmt",
-                            ))
+                rows = self._compute_greeks_for_option(
+                    opt_code, start_str, end_str, policy,
+                )
                 yield FetchResult(
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -2902,6 +2822,119 @@ class MiniQMTProvider(DataSourceBase):
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} Greeks抓取失败，跳过: {e}")
                 continue
+
+    def _compute_greeks_for_option(
+        self, opt_code: str, start_str: str, end_str: str,
+        policy: SourcePolicy,
+    ) -> list[tuple]:
+        """处理单个期权合约的 Greeks 计算，返回行列表。"""
+        detail = self._get_option_detail_safe(opt_code, policy)
+        if not detail:
+            return []
+
+        symbol = self._stock_to_symbol(opt_code)
+        underlying = detail.get("Underlying", "")
+        strike = self.safe_float(detail.get("ExercisePrice"))
+        expiry = detail.get("EndDelivDate", "")
+        opt_type = "call" if detail.get("OptType", 0) == 1 else "put"
+        r = 0.03
+        exp_date = _parse_option_expiry(expiry)
+
+        opt_df = self._download_option_price_df(opt_code, start_str, end_str, policy)
+        if opt_df is None or len(opt_df) == 0:
+            return []
+
+        ul_df = self._download_underlying_price_df(underlying, start_str, end_str, policy)
+        if ul_df is None or len(ul_df) == 0:
+            return []
+
+        ctx = _OptionCtx(opt_df, ul_df, symbol, underlying, strike,
+                        expiry, opt_type, exp_date, r)
+        return MiniQMTProvider._compute_greeks_rows(ctx)
+
+    @staticmethod
+    def _compute_greeks_rows(ctx: _OptionCtx) -> list[tuple]:
+        """遍历对齐日期计算 Greeks 行。"""
+        import pandas as pd
+        ul_close = ctx.ul_df["close"].astype(float)
+        ul_ret = ul_close.pct_change()
+        common_dates = ctx.opt_df.index.intersection(ctx.ul_df.index)
+        rows = []
+        for dt in common_dates:
+            spot = MiniQMTProvider.safe_float(ctx.ul_df.loc[dt, "close"])
+            if spot is None or spot <= 0:
+                continue
+            if ctx.exp_date:
+                cur_date = pd.Timestamp(dt).date()
+                days = (ctx.exp_date - cur_date).days
+                T = max(days / 365.0, 0.001)
+            else:
+                T = 0.25
+            sigma = MiniQMTProvider._calc_hist_vol(ctx.ul_df, ul_ret, dt)
+            greeks = MiniQMTProvider._calc_bs_greeks(spot, ctx.strike, T, ctx.r, sigma, ctx.opt_type)
+            if greeks:
+                rows.append((
+                    pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                    ctx.symbol, ctx.underlying, ctx.strike,
+                    str(ctx.expiry)[:10] if ctx.expiry else None,
+                    ctx.opt_type,
+                    greeks["delta"], greeks["gamma"],
+                    greeks["theta"], greeks["vega"],
+                    "miniqmt",
+                ))
+        return rows
+
+    @staticmethod
+    def _calc_hist_vol(ul_df, ul_ret, dt) -> float:
+        """计算截止当日的 20 日历史波动率（年化）。"""
+        pos = ul_df.index.get_loc(dt)
+        if pos >= 20:
+            hist_vol = ul_ret.iloc[pos - 19 : pos + 1].std()
+            sigma = MiniQMTProvider.safe_float(hist_vol)
+            if sigma is None or sigma <= 0:
+                return 0.3
+            return sigma * (244 ** 0.5)
+        return 0.3
+
+    def _download_option_price_df(
+        self, opt_code: str, start_str: str, end_str: str,
+        policy: SourcePolicy,
+    ):
+        """下载并获取期权历史日K收盘价 DataFrame。"""
+        from xtquant import xtdata
+        try:
+            self._call_with_policy(
+                xtdata.download_history_data, policy,
+                opt_code, "1d", start_str, end_str,
+            )
+        except Exception as e:
+            self._log.debug(f"download_history_data({opt_code}) 失败: {e}")
+        opt_data = self._call_with_policy(
+            xtdata.get_market_data_ex, policy,
+            [], [opt_code], "1d", start_str, end_str,
+        )
+        return opt_data.get(opt_code) if opt_data else None
+
+    def _download_underlying_price_df(
+        self, underlying: str, start_str: str, end_str: str,
+        policy: SourcePolicy,
+    ):
+        """下载并获取标的 historical 日K收盘价 DataFrame。"""
+        from xtquant import xtdata
+        if not underlying:
+            return None
+        try:
+            self._call_with_policy(
+                xtdata.download_history_data, policy,
+                underlying, "1d", start_str, end_str,
+            )
+        except Exception as e:
+            self._log.debug(f"download_history_data({underlying}) 失败: {e}")
+        ul_data = self._call_with_policy(
+            xtdata.get_market_data_ex, policy,
+            [], [underlying], "1d", start_str, end_str,
+        )
+        return ul_data.get(underlying) if ul_data else None
 
     @staticmethod
     def _calc_bs_greeks(S, K, T, r, sigma, opt_type):
