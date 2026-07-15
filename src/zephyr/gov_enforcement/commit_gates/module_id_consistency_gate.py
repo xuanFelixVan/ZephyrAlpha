@@ -35,6 +35,7 @@ import logging
 import os
 import re
 import subprocess
+from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -80,6 +81,94 @@ def _is_tracked_in_head(gateway, rel: str) -> bool:
         return True
 
 
+# === 裁定#217 Tier2 P1 Extract Method 重构（2026-07-15）===
+# 原 _check 99 行 McCabe=35（两段独立 append + 格式化返回，P1 gate-closure pattern）。
+# 治本：提取为 4 个模块级 helper（均 McCabe≤15），_check 简化为 ~8 行 pipeline（McCabe≈3）。
+# 行为等价契约：violations 顺序保持（先 registry 文件 → 后 cross-file 碰撞），消息格式不变。
+
+
+def _check_track_consistency(rel: str, content: str) -> list[str]:
+    """三声明轨道一致性校验（CFG/MOD/RULE 三轨道 module_id 是否一致）。"""
+    cfg_match = _RE_HEADER_CFG.search(content)
+    mod_match = _RE_ANCHOR_MOD.search(content)
+    rule_match = _RE_BODY_RULE.search(content)
+    cfg_id = cfg_match.group(1) if cfg_match else None
+    mod_id = mod_match.group(1) if mod_match else None
+    rule_id = rule_match.group(1) if rule_match else None
+    tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
+    if tracks_found < 2 and cfg_id:
+        return [
+            f"{rel}: incomplete_tracks (cfg={cfg_id}, mod={mod_id}, rule={rule_id}) — "
+            f"header CFG but only {tracks_found}/3 tracks"
+        ]
+    return []
+
+
+def _check_count_derivation(rel: str, content: str) -> list[str]:
+    """count 派生校验（声明 total vs 实际条目数，仅 3 个 registry 文件）。"""
+    if rel == _REGISTRY_REL:
+        actual = len(_RE_MODULE_ID_ENTRY.findall(content))
+        declared = _RE_TOTAL_REGISTERED.search(content)
+        label = "total_registered"
+    elif rel == _TEMPLATE_REGISTRY_REL:
+        actual = len(_RE_TEMPLATE_ENTRY.findall(content))
+        declared = _RE_TOTAL_TEMPLATES.search(content)
+        label = "total_templates"
+    elif rel == _DEP_REGISTRY_REL:
+        actual = len(_RE_DEP_ENTRY.findall(content))
+        declared = _RE_TOTAL_DEPS.search(content)
+        label = "total_dependencies"
+    else:
+        return []
+    if declared and int(declared.group(1)) != actual:
+        return [f"{rel}: count_mismatch {label}={declared.group(1)} but actual={actual}"]
+    return []
+
+
+def _check_cross_file_collision(gateway, files: list[str], project_root) -> list[str]:
+    """校验 staged .py 文件的 module_id 跨文件唯一性（git grep 全仓检测）。
+
+    历史豁免：仅对 NEWLY ADDED（不在 HEAD）的文件生效；HEAD 中已存在的
+    修改文件（M状态）属存量基线 DRY 违规，由去重任务处理，此处不阻断。
+    """
+    violations: list[str] = []
+    for f in files:
+        if not os.path.isfile(f) or not f.endswith(".py"):
+            continue
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if _is_tracked_in_head(gateway, rel):
+            continue
+        try:
+            content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        m = _RE_HEADER_MODULE_ID.search(content)
+        if not m:
+            continue
+        mid = m.group(1)
+        try:
+            result = gateway._run_git(["git", "grep", "-l", "-F", mid, "--", "*.py"])
+        except (subprocess.TimeoutExpired, OSError):
+            continue  # fail-open on git grep error
+        if result.returncode != 0:
+            continue  # no matches = no collision
+        matches = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+        others = [x for x in matches if x != rel]
+        if others:
+            violations.append(
+                f"{rel}: module_id_collision '{mid}' also declared in: {', '.join(others[:5])}"
+            )
+    return violations
+
+
+def _format_module_id_violations(violations: list[str]) -> tuple[bool, str]:
+    """格式化 module_id 一致性违规为阻断消息。"""
+    return False, (
+        f"MODULE-ID-CONSISTENCY: {len(violations)} violation(s):\n"
+        + "\n".join(f"  - {v}" for v in violations)
+    )
+
+
 def make_module_id_consistency_gate() -> GateSpec:
     """构造 module_id 一致性门禁 GateSpec（fail-closed 阻断型）。
 
@@ -89,11 +178,8 @@ def make_module_id_consistency_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        from pathlib import Path
-
         project_root = gateway.project_root
         violations: list[str] = []
-
         for f in files:
             if not os.path.isfile(f):
                 continue
@@ -101,91 +187,15 @@ def make_module_id_consistency_gate() -> GateSpec:
             if (rel != _REGISTRY_REL and rel != _TEMPLATE_REGISTRY_REL
                     and rel != _DEP_REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR)):
                 continue
-
             try:
                 content = Path(f).read_text(encoding="utf-8", errors="replace")
             except OSError:
                 continue
-
-            # === 三声明轨道一致性校验 ===
-            cfg_match = _RE_HEADER_CFG.search(content)
-            mod_match = _RE_ANCHOR_MOD.search(content)
-            rule_match = _RE_BODY_RULE.search(content)
-
-            cfg_id = cfg_match.group(1) if cfg_match else None
-            mod_id = mod_match.group(1) if mod_match else None
-            rule_id = rule_match.group(1) if rule_match else None
-
-            tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
-            if tracks_found < 2 and cfg_id:
-                violations.append(
-                    f"{rel}: incomplete_tracks (cfg={cfg_id}, mod={mod_id}, rule={rule_id}) — "
-                    f"header CFG but only {tracks_found}/3 tracks"
-                )
-
-            # === count 派生校验 ===
-            if rel == _REGISTRY_REL:
-                actual = len(_RE_MODULE_ID_ENTRY.findall(content))
-                declared = _RE_TOTAL_REGISTERED.search(content)
-                if declared and int(declared.group(1)) != actual:
-                    violations.append(
-                        f"{rel}: count_mismatch total_registered={declared.group(1)} but actual={actual}"
-                    )
-            elif rel == _TEMPLATE_REGISTRY_REL:
-                actual = len(_RE_TEMPLATE_ENTRY.findall(content))
-                declared = _RE_TOTAL_TEMPLATES.search(content)
-                if declared and int(declared.group(1)) != actual:
-                    violations.append(
-                        f"{rel}: count_mismatch total_templates={declared.group(1)} but actual={actual}"
-                    )
-            elif rel == _DEP_REGISTRY_REL:
-                actual = len(_RE_DEP_ENTRY.findall(content))
-                declared = _RE_TOTAL_DEPS.search(content)
-                if declared and int(declared.group(1)) != actual:
-                    violations.append(
-                        f"{rel}: count_mismatch total_dependencies={declared.group(1)} but actual={actual}"
-                    )
-
-        # === 跨文件 module_id 唯一性校验（治本 2026-07-03）===
-        # 原 gate 只检查单文件三声明轨道一致性 + count 派生，不检测跨文件 module_id 重复。
-        # 12 组撞车漏检根因。扩展：staged .py 含 module_id 头时，git grep 全仓检测重复。
-        # 历史豁免（门禁只检测staged新增文件diff-filter=A，不触碰存量基线违规）：
-        # cross-file 碰撞检查仅对 NEWLY ADDED（不在 HEAD）的文件生效；HEAD 中已存在的
-        # 修改文件（M状态）属存量基线 DRY 违规，由去重任务处理，此处不阻断。
-        for f in files:
-            if not os.path.isfile(f) or not f.endswith(".py"):
-                continue
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if _is_tracked_in_head(gateway, rel):
-                continue  # 修改文件（M）——存量基线违规，跳过碰撞检查
-            try:
-                content = Path(f).read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue
-            m = _RE_HEADER_MODULE_ID.search(content)
-            if not m:
-                continue
-            mid = m.group(1)
-            try:
-                result = gateway._run_git(
-                    ["git", "grep", "-l", "-F", mid, "--", "*.py"],
-                )
-            except (subprocess.TimeoutExpired, OSError):
-                continue  # fail-open on git grep error
-            if result.returncode != 0:
-                continue  # no matches = no collision
-            matches = [line.strip() for line in result.stdout.split("\n") if line.strip()]
-            others = [x for x in matches if x != rel]
-            if others:
-                violations.append(
-                    f"{rel}: module_id_collision '{mid}' also declared in: {', '.join(others[:5])}"
-                )
-
+            violations.extend(_check_track_consistency(rel, content))
+            violations.extend(_check_count_derivation(rel, content))
+        violations.extend(_check_cross_file_collision(gateway, files, project_root))
         if violations:
-            return False, (
-                f"MODULE-ID-CONSISTENCY: {len(violations)} violation(s):\n"
-                + "\n".join(f"  - {v}" for v in violations)
-            )
+            return _format_module_id_violations(violations)
         return True, "module_id consistency check passed"
 
     return GateSpec(gate_id="MODULE-ID-CONSISTENCY", check=_check, priority=88)
