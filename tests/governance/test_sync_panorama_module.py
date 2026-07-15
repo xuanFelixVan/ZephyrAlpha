@@ -201,7 +201,12 @@ class TestWeightedVoting:
 class TestPruneOrphans:
     def _mock_three_conns_for_prune(self, spm, monkeypatch,
                                      depgraph_rows, decision_rows, dataflow_rows):
-        """统一 mock prune_orphans 的三个 DB 连接。"""
+        """统一 mock prune_orphans 的三个 DB 连接。
+
+        get_depgraph_pg_connection 被调用两次：
+        1. read_only=True（默认）→ depgraph_conn（查询 blueprint_ids）
+        2. read_only=False → dataflow_conn（清理 dataflow_jobs，ARCH-058）
+        """
         depgraph_conn = MagicMock()
         dep_cursor = MagicMock()
         dep_cursor.fetchall.return_value = depgraph_rows
@@ -217,9 +222,13 @@ class TestPruneOrphans:
         df_cursor.fetchall.return_value = dataflow_rows
         dataflow_conn.cursor.return_value.__enter__.return_value = df_cursor
 
-        monkeypatch.setattr(spm, "get_depgraph_pg_connection", lambda **kw: depgraph_conn)
+        def _depgraph_side_effect(*args, **kwargs):
+            if kwargs.get('read_only', True):
+                return depgraph_conn
+            return dataflow_conn
+
+        monkeypatch.setattr(spm, "get_depgraph_pg_connection", _depgraph_side_effect)
         monkeypatch.setattr(spm, "get_decisiongraph_pg_connection", lambda **kw: decision_conn)
-        monkeypatch.setattr(spm, "get_dataflowgraph_pg_connection", lambda **kw: dataflow_conn)
         return dep_cursor, dec_cursor, df_cursor, decision_conn, dataflow_conn
 
     def test_prune_orphans_removes_orphan_decision_and_dataflow(self, spm, monkeypatch):
