@@ -191,8 +191,9 @@ class TestRunTask:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler._providers["mock"] = mock_provider
-        # mock ch_writer
-        with patch("src.zephyr.data.scheduler.ch_writer.write_result", return_value=True):
+        # 调度器经 BufferedWriter 写入；mock 该层以隔离真实 ClickHouse。
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is True
         # 进度应记录
@@ -235,7 +236,8 @@ class TestRunTask:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler._providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.ch_writer.write_result", return_value=False):
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False):
             ok = scheduler.run_task("kline_daily_incremental")
         assert ok is False
         status = scheduler._progress_store.get_task_status("kline_daily_incremental")
@@ -261,7 +263,8 @@ class TestRunTask:
         scheduler._providers["mock"] = mock_provider
         events = []
         scheduler.subscribe("task_completed", lambda **kw: events.append(kw))
-        with patch("src.zephyr.data.scheduler.ch_writer.write_result", return_value=True):
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             scheduler.run_task("kline_daily_incremental")
         assert len(events) == 1
         assert events[0]["success"] is True
@@ -289,7 +292,8 @@ class TestRunSchedule:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler._providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.ch_writer.write_result", return_value=True):
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 1
         assert results["kline_daily_incremental"] is True
@@ -318,7 +322,8 @@ class TestRunSchedule:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler._providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.ch_writer.write_result", return_value=True):
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 2
         assert all(results.values())
