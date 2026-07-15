@@ -4064,6 +4064,12 @@ creation_tokens:
     created_by: "session-sess-15816-20260706181615"
     capability: "any_abuse_scanner"
 
+  # --- 循环复杂度全量扫描器（裁定#214 Phase 4 引入，§5.158 暗债监控）---
+  - file: "scripts/governance/d7_code/scan_complexity.py"
+    token: "auto-scan-complexity-20260715"
+    created_by: "session-sess-1584-20260715113452"
+    capability: "complexity_scanner"
+
   # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
   - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
     token: "auto-create-guard-20260630"
