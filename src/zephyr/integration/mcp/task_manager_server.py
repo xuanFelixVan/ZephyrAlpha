@@ -701,117 +701,121 @@ def _split_tags(tags: list[str]) -> dict[str, object]:
     return {"tags_fn": fn, "tags_ly": ly, "tags_md": md_tag, "tags_st": st, "tags_mo": mo, "tags": extra}
 
 
-def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
-    lines = content.split("\n")
-    title = ""
-    kv: dict[str, str] = {}
-    description_lines: list[str] = []
-    upstream_files: list[str] = []
-    downstream_outputs: list[dict] = []
-    completed_gates: list[str] = []
-    blocked_gates: dict[str, str] = {}
-    created_at_str = ""
-    updated_at_str = ""
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 _parse_legacy_md_to_taskcard 127 行 McCabe=36（7 段 section dispatch + post-processing）。
+# 治本：提取为 _LegacyMdState + 4 个模块级 helper（均 McCabe≤15），主函数简化为 loop+build（McCabe≈5）。
+# 行为等价：section dispatch 顺序不变，各 section 解析规则不变，post-processing 默认值规则不变。
 
-    section: str = ""
-    for line in lines:
-        if line.startswith("# ") and not title:
-            title = line[2:].strip()
-            continue
 
-        if line.startswith("## "):
-            section = line[3:].strip()
-            continue
+class _LegacyMdState:
+    """legacy MD 解析中间状态（_parse_legacy_md_to_taskcard 专用）。"""
+    __slots__ = (
+        "title", "kv", "description_lines", "upstream_files", "downstream_outputs",
+        "completed_gates", "blocked_gates", "created_at_str", "updated_at_str", "section",
+    )
 
-        if section in ("描述", "目标"):
-            stripped = line.strip()
-            if stripped and not stripped.startswith("**"):
-                description_lines.append(stripped)
-            continue
+    def __init__(self) -> None:
+        self.title = ""
+        self.kv: dict[str, str] = {}
+        self.description_lines: list[str] = []
+        self.upstream_files: list[str] = []
+        self.downstream_outputs: list[dict] = []
+        self.completed_gates: list[str] = []
+        self.blocked_gates: dict[str, str] = {}
+        self.created_at_str = ""
+        self.updated_at_str = ""
+        self.section = ""
 
-        if section == "上游文件":
-            m = _MD_LIST_ITEM.match(line)
-            if m:
-                upstream_files.append(m.group(1).strip())
-            continue
 
-        if section == "下游产出":
-            m = _MD_LIST_ITEM.match(line)
-            if m:
-                item = m.group(1).strip()
-                if " — " in item:
-                    path_part, desc_part = item.split(" — ", 1)
-                    downstream_outputs.append({"path": path_part.strip(), "description": desc_part.strip()})
-                else:
-                    downstream_outputs.append({"path": item, "description": ""})
-            continue
+def _handle_gates_section(line: str, st: _LegacyMdState) -> None:
+    """解析门禁 section：已通过门禁列表 + 阻塞门禁 dict。"""
+    gm = re.search(r"已通过:\s*\[(.*?)\]", line)
+    if gm:
+        gates_str = gm.group(1).strip()
+        if gates_str:
+            st.completed_gates = [g.strip().strip("'\"") for g in gates_str.split(",") if g.strip()]
+    bm = re.search(r"阻塞:\s*(.+)$", line)
+    if bm:
+        try:
+            st.blocked_gates = json.loads(bm.group(1).strip().replace("'", '"'))
+        except (json.JSONDecodeError, TypeError):
+            pass
 
-        if section in ("门禁", "门禁状态"):
-            gm = re.search(r"已通过:\s*\[(.*?)\]", line)
-            if gm:
-                gates_str = gm.group(1).strip()
-                if gates_str:
-                    completed_gates = [g.strip().strip("'\"") for g in gates_str.split(",") if g.strip()]
-            bm = re.search(r"阻塞:\s*(.+)$", line)
-            if bm:
-                try:
-                    blocked_gates = json.loads(bm.group(1).strip().replace("'", '"'))
-                except (json.JSONDecodeError, TypeError):
-                    pass
-            continue
 
-        if section == "时间":
-            tm = re.match(r"^-\s*(创建|更新)[：:]\s*(.+)$", line)
-            if tm:
-                key = tm.group(1).strip()
-                val = tm.group(2).strip()
-                if key == "创建":
-                    created_at_str = val
-                elif key == "更新":
-                    updated_at_str = val
-            continue
+def _handle_time_section(line: str, st: _LegacyMdState) -> None:
+    """解析时间 section：创建/更新时间字符串。"""
+    tm = re.match(r"^-\s*(创建|更新)[：:]\s*(.+)$", line)
+    if tm:
+        key = tm.group(1).strip()
+        val = tm.group(2).strip()
+        if key == "创建":
+            st.created_at_str = val
+        elif key == "更新":
+            st.updated_at_str = val
 
-        if not section or section in ("描述", "目标"):
-            m = _MD_KV_PATTERN.match(line)
-            if m:
-                kv[m.group(1).strip()] = m.group(2).strip()
 
-    description = "\n".join(description_lines).strip()
+def _dispatch_section_line(line: str, st: _LegacyMdState) -> bool:
+    """按 section 分派行到对应处理器。返回 True=已处理（等价原 continue），False=未匹配 section。"""
+    section = st.section
+    if section in ("描述", "目标"):
+        stripped = line.strip()
+        if stripped and not stripped.startswith("**"):
+            st.description_lines.append(stripped)
+        return True
+    if section == "上游文件":
+        m = _MD_LIST_ITEM.match(line)
+        if m:
+            st.upstream_files.append(m.group(1).strip())
+        return True
+    if section == "下游产出":
+        m = _MD_LIST_ITEM.match(line)
+        if m:
+            item = m.group(1).strip()
+            if " — " in item:
+                path_part, desc_part = item.split(" — ", 1)
+                st.downstream_outputs.append({"path": path_part.strip(), "description": desc_part.strip()})
+            else:
+                st.downstream_outputs.append({"path": item, "description": ""})
+        return True
+    if section in ("门禁", "门禁状态"):
+        _handle_gates_section(line, st)
+        return True
+    if section == "时间":
+        _handle_time_section(line, st)
+        return True
+    return False
+
+
+def _build_taskcard_from_legacy_md(st: _LegacyMdState) -> TaskCard:
+    """从 _LegacyMdState 构建 TaskCard（post-processing + 默认值填充 + 构造）。"""
+    description = "\n".join(st.description_lines).strip()
     if not description:
-        description = kv.get("描述", title or "无描述")
-
+        description = st.kv.get("描述", st.title or "无描述")
     if len(description) < 3:
-        description = title + " — 自动恢复"
+        description = st.title + " — 自动恢复"
 
-    task_id = kv.get("task_id", "")
-
-    ns_str = kv.get("命名空间", "CP")
+    task_id = st.kv.get("task_id", "")
+    ns_str = st.kv.get("命名空间", "CP")
     ns = getattr(TaskNamespace, ns_str, TaskNamespace.CP) if ns_str else TaskNamespace.CP
-
-    status_str = kv.get("状态", "PENDING")
+    status_str = st.kv.get("状态", "PENDING")
     status = getattr(TaskStatus, status_str, TaskStatus.PENDING) if status_str else TaskStatus.PENDING
-
-    priority_str = kv.get("优先级", Priority.P2.value)
+    priority_str = st.kv.get("优先级", Priority.P2.value)
     priority = getattr(Priority, priority_str, Priority.P2) if priority_str else Priority.P2
-
-    phase = int(kv.get("Phase", "1"))
-    execution_model = kv.get("执行模型", "deepseek")
-    estimated_tokens = int(kv.get("预估 Token", "8000"))
-
-    source_parts = kv.get("源蓝图", "MOD-UNKNOWN §unknown").split(" §", 1)
+    phase = int(st.kv.get("Phase", "1"))
+    execution_model = st.kv.get("执行模型", "deepseek")
+    estimated_tokens = int(st.kv.get("预估 Token", "8000"))
+    source_parts = st.kv.get("源蓝图", "MOD-UNKNOWN §unknown").split(" §", 1)
     source_blueprint = source_parts[0].strip()
     source_section = source_parts[1].strip() if len(source_parts) > 1 else "unknown"
-
-    created_at = _parse_time(created_at_str)
-    updated_at = _parse_time(updated_at_str)
-
-    gates_list = [GateLevel(g) for g in completed_gates if g in GateLevel.__members__]
+    created_at = _parse_time(st.created_at_str)
+    updated_at = _parse_time(st.updated_at_str)
+    gates_list = [GateLevel(g) for g in st.completed_gates if g in GateLevel.__members__]
 
     return TaskCard(
         task_id=task_id,
         namespace=ns,
-        seq=int(kv.get("seq", "0") or "0") or 1,
-        title=title,
+        seq=int(st.kv.get("seq", "0") or "0") or 1,
+        title=st.title,
         status=status,
         priority=priority,
         phase=phase,
@@ -820,14 +824,32 @@ def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
         source_blueprint=source_blueprint,
         source_section=source_section,
         description=description,
-        upstream_files=upstream_files,
-        downstream_outputs=downstream_outputs,
+        upstream_files=st.upstream_files,
+        downstream_outputs=st.downstream_outputs,
         estimated_tokens=estimated_tokens,
         completed_gates=gates_list,
-        blocked_gates=blocked_gates,
+        blocked_gates=st.blocked_gates,
         created_at=created_at,
         updated_at=updated_at,
     )
+
+
+def _parse_legacy_md_to_taskcard(content: str) -> TaskCard | None:
+    st = _LegacyMdState()
+    for line in content.split("\n"):
+        if line.startswith("# ") and not st.title:
+            st.title = line[2:].strip()
+            continue
+        if line.startswith("## "):
+            st.section = line[3:].strip()
+            continue
+        if _dispatch_section_line(line, st):
+            continue
+        if not st.section or st.section in ("描述", "目标"):
+            m = _MD_KV_PATTERN.match(line)
+            if m:
+                st.kv[m.group(1).strip()] = m.group(2).strip()
+    return _build_taskcard_from_legacy_md(st)
 
 
 def _parse_time(s: str) -> datetime:
