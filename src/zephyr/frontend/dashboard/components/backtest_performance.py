@@ -668,38 +668,9 @@ def _fmt_pct(v: float, decimals: int = 2) -> str:
 
 # ===== Tab 1: 绩效概览 =====
 
-def _render_overview(data: BacktestPerformanceData) -> object:
-    """Tab 1 绩效概览: 信息横幅 + 6 KPI + 收益图 + 回撤图 + 日收益率图 + 16指标表"""
-    p = data.performance
-    items: list[Any] = []
 
-    # 信息横幅
-    banner = pn.pane.HTML(
-        f"<div style='background:{_CARD_BG};border:1px solid {_BORDER};border-radius:6px;"
-        f"padding:10px 16px;color:{_TEXT};font-size:13px;'>"
-        f"<b>回测时间 Backtest Period:</b> {data.start_date} ~ {data.end_date} &nbsp;|&nbsp; "
-        f"<b>期初资金 Initial Capital:</b> ¥{p.initial_asset:,.2f} &nbsp;|&nbsp; "
-        f"<b>基准 Benchmark:</b> {data.benchmark_symbol} &nbsp;|&nbsp; "
-        f"<b>状态 Status:</b> <span style='color:{_GREEN};'>已完成 Completed</span> &nbsp;|&nbsp; "
-        f"<b>交易天数 Trading Days:</b> {p.trading_days}"
-        f"</div>",
-        sizing_mode="stretch_width",
-    )
-    items.append(banner)
-
-    # 6 KPI 卡片
-    kpi_row1 = pn.Row(
-        _kpi_card("累计收益率", "Cumulative Return", _fmt_pct(p.cumulative_return), _GREEN if p.cumulative_return >= 0 else _RED),
-        _kpi_card("年化收益率", "Annual Return", _fmt_pct(p.annual_return), _GREEN if p.annual_return >= 0 else _RED),
-        _kpi_card("最大回撤", "Max Drawdown", _fmt_pct(p.max_drawdown), _RED),
-        _kpi_card("夏普比率", "Sharpe Ratio", f"{p.sharpe:.2f}", _BLUE),
-        _kpi_card("胜率", "Win Rate", _fmt_pct(p.win_rate), _YELLOW),
-        _kpi_card("盈亏比", "Profit/Loss Ratio", f"{data.trade_stats.profit_loss_ratio:.2f}", _ORANGE),
-        sizing_mode="stretch_width",
-    )
-    items.append(kpi_row1)
-
-    # 收益图 (3线: 策略收益/基准收益/超额收益)
+def _render_overview_performance_chart(data: BacktestPerformanceData, items: list[Any]) -> None:
+    """收益图: 策略收益 / 基准收益 / 超额收益 三线图"""
     if go is not None and data.strategy_yield:
         fig1 = go.Figure()
         fig1.add_trace(go.Scatter(
@@ -727,7 +698,9 @@ def _render_overview(data: BacktestPerformanceData) -> object:
         )
         items.append(pn.pane.Plotly(fig1, sizing_mode="stretch_width"))
 
-    # 回撤图 (2线: 策略回撤/基准回撤, 填充)
+
+def _render_overview_drawdown_chart(data: BacktestPerformanceData, items: list[Any]) -> None:
+    """回撤图: 策略回撤 / 基准回撤 填充图"""
     if go is not None and data.strategy_drawdown:
         fig2 = go.Figure()
         fig2.add_trace(go.Scatter(
@@ -748,7 +721,9 @@ def _render_overview(data: BacktestPerformanceData) -> object:
         )
         items.append(pn.pane.Plotly(fig2, sizing_mode="stretch_width"))
 
-    # 日收益率柱状图 (策略 vs 基准, 并排)
+
+def _render_overview_daily_returns_chart(data: BacktestPerformanceData, items: list[Any]) -> None:
+    """日收益率柱状图: 策略 vs 基准 (超过500点降采样)"""
     if go is not None and data.strategy_yield_daily:
         # 降采样: 超过500点用 FigureResampler
         if FigureResampler is not None and len(data.strategy_yield_daily) > 500:
@@ -774,8 +749,11 @@ def _render_overview(data: BacktestPerformanceData) -> object:
         )
         items.append(pn.pane.Plotly(fig3, sizing_mode="stretch_width"))
 
-    # 16 绩效指标表
+
+def _render_overview_metrics_table(data: BacktestPerformanceData, items: list[Any]) -> None:
+    """16 绩效指标明细表 (双列布局)"""
     if go is not None:
+        p = data.performance
         metrics_data = [
             ("期初资产 Initial Asset", f"¥{p.initial_asset:,.2f}"),
             ("期末资产 Final Asset", f"¥{p.final_asset:,.2f}"),
@@ -820,6 +798,44 @@ def _render_overview(data: BacktestPerformanceData) -> object:
         fig4.update_layout(template=_DARK_TEMPLATE, height=500, margin=dict(l=10, r=10, t=30, b=10))
         items.append(_section_header("绩效指标明细 Performance Metrics Detail"))
         items.append(pn.pane.Plotly(fig4, sizing_mode="stretch_width"))
+
+
+def _render_overview(data: BacktestPerformanceData) -> object:
+    """Tab 1 绩效概览: 信息横幅 + 6 KPI + 收益图 + 回撤图 + 日收益率图 + 16指标表"""
+    p = data.performance
+    items: list[Any] = []
+
+    # 信息横幅
+    banner = pn.pane.HTML(
+        f"<div style='background:{_CARD_BG};border:1px solid {_BORDER};border-radius:6px;"
+        f"padding:10px 16px;color:{_TEXT};font-size:13px;'>"
+        f"<b>回测时间 Backtest Period:</b> {data.start_date} ~ {data.end_date} &nbsp;|&nbsp; "
+        f"<b>期初资金 Initial Capital:</b> ¥{p.initial_asset:,.2f} &nbsp;|&nbsp; "
+        f"<b>基准 Benchmark:</b> {data.benchmark_symbol} &nbsp;|&nbsp; "
+        f"<b>状态 Status:</b> <span style='color:{_GREEN};'>已完成 Completed</span> &nbsp;|&nbsp; "
+        f"<b>交易天数 Trading Days:</b> {p.trading_days}"
+        f"</div>",
+        sizing_mode="stretch_width",
+    )
+    items.append(banner)
+
+    # 6 KPI 卡片
+    kpi_row1 = pn.Row(
+        _kpi_card("累计收益率", "Cumulative Return", _fmt_pct(p.cumulative_return), _GREEN if p.cumulative_return >= 0 else _RED),
+        _kpi_card("年化收益率", "Annual Return", _fmt_pct(p.annual_return), _GREEN if p.annual_return >= 0 else _RED),
+        _kpi_card("最大回撤", "Max Drawdown", _fmt_pct(p.max_drawdown), _RED),
+        _kpi_card("夏普比率", "Sharpe Ratio", f"{p.sharpe:.2f}", _BLUE),
+        _kpi_card("胜率", "Win Rate", _fmt_pct(p.win_rate), _YELLOW),
+        _kpi_card("盈亏比", "Profit/Loss Ratio", f"{data.trade_stats.profit_loss_ratio:.2f}", _ORANGE),
+        sizing_mode="stretch_width",
+    )
+    items.append(kpi_row1)
+
+    # 收益图 / 回撤图 / 日收益率图 / 16绩效指标表
+    _render_overview_performance_chart(data, items)
+    _render_overview_drawdown_chart(data, items)
+    _render_overview_daily_returns_chart(data, items)
+    _render_overview_metrics_table(data, items)
 
     return pn.Column(*items, sizing_mode="stretch_width") if pn is not None else {"tab": "overview"}
 
