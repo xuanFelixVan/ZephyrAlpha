@@ -55,6 +55,69 @@ _logger = logging.getLogger(__name__)
 __gate_id__ = "default-quality-gate"
 
 
+def _timestamp_penalty(
+    timestamp: datetime,
+    now: datetime,
+    max_stale_seconds: int,
+    failure_reason: QualityFailureReason | None,
+    failed_field: str | None,
+    recovery_hint: RecoveryHint,
+) -> tuple[float, QualityFailureReason | None, str | None, RecoveryHint]:
+    """Accumulate timestamp-related score delta and first-failure metadata."""
+    score_delta = 0.0
+    if timestamp.tzinfo is None:
+        timestamp = timestamp.replace(tzinfo=UTC)
+    lateness = (now - timestamp).total_seconds()
+    if lateness > max_stale_seconds:
+        score_delta -= 0.3
+        if failure_reason is None:
+            failure_reason = QualityFailureReason.STALE_DATA
+            failed_field = "timestamp"
+            recovery_hint = RecoveryHint.SWITCH_SOURCE
+    if timestamp > now + timedelta(seconds=60):
+        score_delta -= 0.5
+        failure_reason = QualityFailureReason.TIMESTAMP_FUTURE
+        failed_field = "timestamp"
+    return score_delta, failure_reason, failed_field, recovery_hint
+
+
+def _price_range_penalty(
+    high: Decimal,
+    low: Decimal,
+    failure_reason: QualityFailureReason | None,
+    failed_field: str | None,
+) -> tuple[float, QualityFailureReason | None, str | None]:
+    """Accumulate price-range (high/low validity + ordering) score delta."""
+    score_delta = 0.0
+    if high <= 0 or low <= 0:
+        score_delta -= 0.3
+        if failure_reason is None:
+            failure_reason = QualityFailureReason.MISSING_TICK
+            failed_field = "high" if high <= 0 else "low"
+    if high < low:
+        score_delta -= 0.5
+        failure_reason = QualityFailureReason.OUTLIER_PRICE
+        failed_field = "high_low"
+    return score_delta, failure_reason, failed_field
+
+
+def _price_change_penalty(
+    close: Decimal,
+    prev_close: Decimal | None,
+    max_price_change_pct: float,
+    failure_reason: QualityFailureReason | None,
+) -> tuple[float, QualityFailureReason | None]:
+    """Accumulate prev-close deviation (suspicion of suspension) score delta."""
+    score_delta = 0.0
+    if prev_close and prev_close > 0:
+        change_pct = abs(close - prev_close) / prev_close
+        if change_pct > max_price_change_pct:
+            score_delta -= 0.2
+            if failure_reason is None:
+                failure_reason = QualityFailureReason.SUSPENSION_DETECTED
+    return score_delta, failure_reason
+
+
 class DefaultQualityGate(DataQualityGate):
     """默认数据质量门禁——5 项质检规则"""
 
@@ -98,38 +161,20 @@ class DefaultQualityGate(DataQualityGate):
             )
 
         now = datetime.now(UTC)
-        if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=UTC)
-        lateness = (now - timestamp).total_seconds()
-        if lateness > self._max_stale_seconds:
-            score -= 0.3
-            if failure_reason is None:
-                failure_reason = QualityFailureReason.STALE_DATA
-                failed_field = "timestamp"
-                recovery_hint = RecoveryHint.SWITCH_SOURCE
+        ts_delta, failure_reason, failed_field, recovery_hint = _timestamp_penalty(
+            timestamp, now, self._max_stale_seconds, failure_reason, failed_field, recovery_hint
+        )
+        score += ts_delta
 
-        if timestamp > now + timedelta(seconds=60):
-            score -= 0.5
-            failure_reason = QualityFailureReason.TIMESTAMP_FUTURE
-            failed_field = "timestamp"
+        pr_delta, failure_reason, failed_field = _price_range_penalty(
+            high, low, failure_reason, failed_field
+        )
+        score += pr_delta
 
-        if high <= 0 or low <= 0:
-            score -= 0.3
-            if failure_reason is None:
-                failure_reason = QualityFailureReason.MISSING_TICK
-                failed_field = "high" if high <= 0 else "low"
-
-        if high < low:
-            score -= 0.5
-            failure_reason = QualityFailureReason.OUTLIER_PRICE
-            failed_field = "high_low"
-
-        if prev_close and prev_close > 0:
-            change_pct = abs(close - prev_close) / prev_close
-            if change_pct > self._max_price_change_pct:
-                score -= 0.2
-                if failure_reason is None:
-                    failure_reason = QualityFailureReason.SUSPENSION_DETECTED
+        pc_delta, failure_reason = _price_change_penalty(
+            close, prev_close, self._max_price_change_pct, failure_reason
+        )
+        score += pc_delta
 
         if volume == 0:
             score -= 0.4
