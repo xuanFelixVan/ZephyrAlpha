@@ -145,6 +145,133 @@ def _scan_sibling_functions(abs_path: str, exclude_path: str) -> dict[str, tuple
     return siblings
 
 
+def _get_staged_new_py_files(gateway) -> list[str] | None:
+    """获取 staged 新增 .py 文件（已过滤 tests/ 豁免）。
+
+    Args:
+        gateway: GitCommitGateway 实例（提供 _run_git / project_root）。
+
+    Returns:
+        新增 .py 文件相对路径列表（可能为空）；git diff 失败/异常时返回 None（fail-open）。
+    """
+    # 1. 获取 staged 新增 .py 文件
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "FUNCTION-DUP gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "FUNCTION-DUP gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+    # 2. 过滤 .py 文件 + tests/ 豁免
+    new_py_files = [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+    return new_py_files
+
+
+def _resolve_worktree_root(gateway) -> str:
+    """解析 worktree root，失败时降级为 gateway.project_root。
+
+    Args:
+        gateway: GitCommitGateway 实例。
+
+    Returns:
+        worktree 根目录绝对路径字符串。
+    """
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            return toplevel_result.stdout.strip()
+        return str(gateway.project_root)
+    except Exception:
+        return str(gateway.project_root)
+
+
+def _resolve_abs_files(new_py_files: list[str], wt_root: str) -> list[str]:
+    """将相对路径解析为绝对路径，并过滤掉不存在的文件。
+
+    Args:
+        new_py_files: 新增 .py 文件路径列表（可能相对或绝对）。
+        wt_root: worktree 根目录绝对路径。
+
+    Returns:
+        存在于磁盘上的绝对路径列表。
+    """
+    abs_files = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _collect_dup_violations(abs_files: list[str], wt_root: str) -> list[str]:
+    """扫描所有新增文件，收集同目录重复函数违规。
+
+    Args:
+        abs_files: 新增文件的绝对路径列表。
+        wt_root: worktree 根目录绝对路径（用于生成相对路径展示）。
+
+    Returns:
+        违规描述字符串列表。
+    """
+    all_violations: list[str] = []
+    for abs_path in abs_files:
+        try:
+            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        except OSError as e:
+            logger.warning(
+                "FUNCTION-DUP gate skip file %s: 读取失败(%s: %s)。",
+                abs_path, type(e).__name__, e,
+            )
+            continue
+
+        try:
+            tree = ast.parse(content, filename=abs_path)
+        except SyntaxError as e:
+            logger.warning(
+                "FUNCTION-DUP gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+                abs_path, type(e).__name__, e,
+            )
+            continue
+
+        new_funcs = _extract_top_level_functions(tree)
+        if not new_funcs:
+            continue  # 无顶层函数
+
+        # 扫描同目录其他 .py 文件
+        siblings = _scan_sibling_functions(abs_path, abs_path)
+        if not siblings:
+            continue  # 同目录无其他 .py 或无函数
+
+        rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+        for fname, fhash in new_funcs.items():
+            if fname in siblings:
+                other_path, other_hash = siblings[fname]
+                if fhash == other_hash and fhash:  # hash 相同且非空
+                    other_rel = os.path.relpath(other_path, wt_root).replace("\\", "/")
+                    all_violations.append(
+                        f"重复函数 {fname} 在 {other_rel} 已存在相同实现"
+                        f"（hash={fhash}，新文件 {rel_name}）"
+                    )
+    return all_violations
+
+
 def make_function_dup_gate() -> GateSpec:
     """构造重复函数实现阻断门禁 GateSpec（硬阻断型）。
 
@@ -154,97 +281,17 @@ def make_function_dup_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "FUNCTION-DUP gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "FUNCTION-DUP gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        new_py_files = _get_staged_new_py_files(gateway)
+        if not new_py_files:  # None（fail-open）或空列表均放行
             return True, ""
 
-        # 2. 过滤 .py 文件 + tests/ 豁免
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
-        if not new_py_files:
-            return True, ""
+        wt_root = _resolve_worktree_root(gateway)
 
-        # 3. 获取 worktree root
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
-
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        abs_files = _resolve_abs_files(new_py_files, wt_root)
         if not abs_files:
             return True, ""
 
-        # 5. AST 检测：同目录重复函数
-        all_violations: list[str] = []
-        for abs_path in abs_files:
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning(
-                    "FUNCTION-DUP gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            try:
-                tree = ast.parse(content, filename=abs_path)
-            except SyntaxError as e:
-                logger.warning(
-                    "FUNCTION-DUP gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            new_funcs = _extract_top_level_functions(tree)
-            if not new_funcs:
-                continue  # 无顶层函数
-
-            # 扫描同目录其他 .py 文件
-            siblings = _scan_sibling_functions(abs_path, abs_path)
-            if not siblings:
-                continue  # 同目录无其他 .py 或无函数
-
-            rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-            for fname, fhash in new_funcs.items():
-                if fname in siblings:
-                    other_path, other_hash = siblings[fname]
-                    if fhash == other_hash and fhash:  # hash 相同且非空
-                        other_rel = os.path.relpath(other_path, wt_root).replace("\\", "/")
-                        all_violations.append(
-                            f"重复函数 {fname} 在 {other_rel} 已存在相同实现"
-                            f"（hash={fhash}，新文件 {rel_name}）"
-                        )
-
+        all_violations = _collect_dup_violations(abs_files, wt_root)
         if all_violations:
             detail = "; ".join(all_violations[:5])
             return False, detail
