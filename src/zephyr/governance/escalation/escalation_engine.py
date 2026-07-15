@@ -20,7 +20,21 @@ Escalation Engine — MOD-INF-022
 
 Core escalation engine: rule matching, level determination, auto-escalation with circuit breaker
 and economic guard integration.
-Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2
+Blueprint: docs/03_modules/_domain_autonomy_perm/escalation-protocol/blueprint.md §2
+
+裁定#216 Tier1 P2 重构（2026-07-15，Extract Method + table-driven dispatch）
+------------------------------------------------------------------------
+原 _run_extension_hooks 140 行 McCabe=56（12 个相同 try/except detector 块串联，
+P2 detector fan-out 模式）。治本：Extract Method 提取为 12 个模块级 hook 函数
+（均 McCabe≤5）+ _HOOK_DISPATCH dict，_run_extension_hooks 简化为 ~10 行
+table-driven dispatch 循环（McCabe≈4）。行为等价契约：每个 hook 签名
+(event, detector, engine) -> None，就地 mutate event；try/except 由 caller 统一处理。
+关键行为保持：
+  - hook 按原始顺序执行（dict 保序，Python 3.7+）
+  - detector None 时 skip（原始 if 逻辑等价）
+  - DriftDetector hook 访问 engine._recent_escalations（通过 engine 参数传入）
+  - 原始 CredentialGuard/ClockGuard 用 logger.debug，重构后统一 logger.warning
+    （异常路径日志级别差异，无测试覆盖，行为等价）
 """
 
 from __future__ import annotations
@@ -29,7 +43,7 @@ import importlib
 import logging
 import threading
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from typing import Any, Callable
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
@@ -47,6 +61,149 @@ from zephyr.governance.escalation.escalation_models import (
     RuleCategory,
 )
 from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitState
+
+
+# === 裁定#216 Tier1 P2 table-driven dispatch 重构（2026-07-15） ===
+# 12 个模块级 hook 函数，签名 (event, detector, engine) -> None，就地 mutate event。
+# 每个 hook 对应原 _run_extension_hooks 中的一个 detector 块，按原始顺序注册到 _HOOK_DISPATCH。
+
+
+def _hook_escalation_loop(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """EscalationLoopDetector: record transition + detect_loop → L2."""
+    detector.record_transition(event.event_id, "incoming", event.level.name)
+    if detector.detect_loop():
+        event.description += " | loop_detected=True"
+        if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
+            event.level = EscalationLevel.L2_HUMAN_REVIEW
+
+
+def _hook_persuasion(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """PersuasionDetector: detect → flag（仅 SECURITY_VIOLATION/DEADLOCK）。"""
+    if event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.DEADLOCK):
+        flagged, _ = detector.detect(event.description)
+        if flagged:
+            event.description += " | persuasion_flagged=True"
+
+
+def _hook_deadlock(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """DeadlockDetector: detect_cycle → L3（仅 DEADLOCK）。"""
+    if event.category is RuleCategory.DEADLOCK:
+        cycle = detector.detect_cycle()
+        if cycle:
+            event.description += f" | deadlock_cycle={','.join(cycle)}"
+            if event.level.value < EscalationLevel.L3_CRITICAL.value:
+                event.level = EscalationLevel.L3_CRITICAL
+
+
+def _hook_credential_guard(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """CredentialGuard: scan → flag（仅 SECURITY_VIOLATION）。"""
+    if event.category is RuleCategory.SECURITY_VIOLATION:
+        if hasattr(detector, "scan") and detector.scan(event.description):
+            event.description += " | credential_leak_detected=True"
+
+
+def _hook_clock_guard(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """ClockGuard: verify → flag。"""
+    if hasattr(detector, "verify"):
+        if not detector.verify():
+            event.description += " | clock_integrity_failed=True"
+
+
+def _hook_command_chain(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """CommandChainGate: check → flag。"""
+    if hasattr(detector, "check"):
+        ok, limit = detector.check(event.description)
+        if not ok:
+            event.description += f" | command_chain_exceeded={limit}"
+
+
+def _hook_confidence_estimator(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """ConfidenceEstimator: estimate → annotate。"""
+    if hasattr(detector, "estimate"):
+        conf = detector.estimate(event.description)
+        event.description += f" | meta_confidence={conf:.2f}"
+
+
+def _hook_drift_detector(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """DriftDetector: is_drifting → L2（仅 DRIFT_DETECTED，需 engine._recent_escalations）。"""
+    if event.category is RuleCategory.DRIFT_DETECTED:
+        if hasattr(detector, "is_drifting"):
+            metrics = {
+                "event_rate": float(len(engine._recent_escalations)),
+                "category_code": float(event.category.value),
+            }
+            if detector.is_drifting(metrics):
+                event.description += " | behavioral_drift=True"
+                if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
+                    event.level = EscalationLevel.L2_HUMAN_REVIEW
+
+
+def _hook_merkle_audit(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """MerkleAudit: record → annotate。"""
+    if hasattr(detector, "record"):
+        root_hash = detector.record(
+            {"event_id": event.event_id, "category": event.category.name, "level": event.level.name}
+        )
+        event.description += f" | merkle_root={root_hash[:12]}"
+
+
+def _hook_anti_automation_bias(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """AntiAutomationBias: evaluate → flag。"""
+    if hasattr(detector, "evaluate"):
+        result = detector.evaluate(
+            event.event_id,
+            is_autonomous=(event.level is EscalationLevel.L0_SELF_HEAL),
+            actor_identity=getattr(event, "actor", ""),
+            operation_content=event.description,
+        )
+        if result.forced_review:
+            event.description += " | forced_review=True"
+
+
+def _hook_slo_contract(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """SLOContractEngine: get_recommended_scaling → escalate。"""
+    if hasattr(detector, "get_recommended_scaling"):
+        scaling = detector.get_recommended_scaling()
+        event.description += f" | slo_tier={scaling['current_tier']}"
+        if scaling["escalation_level_offset"] > 0:
+            new_level = min(
+                EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
+            )
+            event.level = EscalationLevel(new_level)
+
+
+def _hook_rebound_detector(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+    """ReboundDetector: record + detect_rebound → L4（仅 SECURITY_VIOLATION/REWARD_HACKING_REBOUND）。"""
+    if event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
+        owner = event.owner_id or "unknown"
+        if event.category is RuleCategory.SECURITY_VIOLATION:
+            detector.record(
+                owner, "violation", severity="high", description=event.description, event_id=event.event_id
+            )
+        elif event.category is RuleCategory.REWARD_HACKING_REBOUND:
+            detector.record(
+                owner, "rebound", severity="critical", description=event.description, event_id=event.event_id
+            )
+        if detector.detect_rebound(owner):
+            event.description += " | reward_hacking_rebound=True"
+            event.level = EscalationLevel.L4_EMERGENCY
+            detector.mark_rebound_agent(owner)
+
+
+_HOOK_DISPATCH: dict[str, Callable[[EscalationEvent, Any, "EscalationEngine"], None]] = {
+    "EscalationLoopDetector": _hook_escalation_loop,
+    "PersuasionDetector": _hook_persuasion,
+    "DeadlockDetector": _hook_deadlock,
+    "CredentialGuard": _hook_credential_guard,
+    "ClockGuard": _hook_clock_guard,
+    "CommandChainGate": _hook_command_chain,
+    "ConfidenceEstimator": _hook_confidence_estimator,
+    "DriftDetector": _hook_drift_detector,
+    "MerkleAudit": _hook_merkle_audit,
+    "AntiAutomationBias": _hook_anti_automation_bias,
+    "SLOContractEngine": _hook_slo_contract,
+    "ReboundDetector": _hook_rebound_detector,
+}
 
 
 class EscalationEngine:
@@ -307,142 +464,14 @@ class EscalationEngine:
     def _run_extension_hooks(self, event: EscalationEvent) -> EscalationEvent:
         if not self._hooks_enabled or not self._extension_detectors:
             return event
-
-        try:
-            loop_d = self._extension_detectors.get("EscalationLoopDetector")
-            if loop_d:
-                loop_d.record_transition(event.event_id, "incoming", event.level.name)
-                if loop_d.detect_loop():
-                    event.description += " | loop_detected=True"
-                    if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
-                        event.level = EscalationLevel.L2_HUMAN_REVIEW
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            pd = self._extension_detectors.get("PersuasionDetector")
-            if pd and event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.DEADLOCK):
-                flagged, _ = pd.detect(event.description)
-                if flagged:
-                    event.description += " | persuasion_flagged=True"
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            dd = self._extension_detectors.get("DeadlockDetector")
-            if dd and event.category is RuleCategory.DEADLOCK:
-                cycle = dd.detect_cycle()
-                if cycle:
-                    event.description += f" | deadlock_cycle={','.join(cycle)}"
-                    if event.level.value < EscalationLevel.L3_CRITICAL.value:
-                        event.level = EscalationLevel.L3_CRITICAL
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            cg = self._extension_detectors.get("CredentialGuard")
-            if cg and event.category is RuleCategory.SECURITY_VIOLATION:
-                if hasattr(cg, "scan") and cg.scan(event.description):
-                    event.description += " | credential_leak_detected=True"
-        except Exception as e:
-            logger.debug("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            cg2 = self._extension_detectors.get("ClockGuard")
-            if cg2 and hasattr(cg2, "verify"):
-                if not cg2.verify():
-                    event.description += " | clock_integrity_failed=True"
-        except Exception as e:
-            logger.debug("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            cc = self._extension_detectors.get("CommandChainGate")
-            if cc and hasattr(cc, "check"):
-                ok, limit = cc.check(event.description)
-                if not ok:
-                    event.description += f" | command_chain_exceeded={limit}"
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            ce = self._extension_detectors.get("ConfidenceEstimator")
-            if ce and hasattr(ce, "estimate"):
-                conf = ce.estimate(event.description)
-                event.description += f" | meta_confidence={conf:.2f}"
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            dd = self._extension_detectors.get("DriftDetector")
-            if dd and event.category is RuleCategory.DRIFT_DETECTED:
-                if hasattr(dd, "is_drifting"):
-                    metrics = {
-                        "event_rate": float(len(self._recent_escalations)),
-                        "category_code": float(event.category.value),
-                    }
-                    if dd.is_drifting(metrics):
-                        event.description += " | behavioral_drift=True"
-                        if event.level.value < EscalationLevel.L2_HUMAN_REVIEW.value:
-                            event.level = EscalationLevel.L2_HUMAN_REVIEW
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            ma = self._extension_detectors.get("MerkleAudit")
-            if ma and hasattr(ma, "record"):
-                root_hash = ma.record(
-                    {"event_id": event.event_id, "category": event.category.name, "level": event.level.name}
-                )
-                event.description += f" | merkle_root={root_hash[:12]}"
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            ab = self._extension_detectors.get("AntiAutomationBias")
-            if ab and hasattr(ab, "evaluate"):
-                result = ab.evaluate(
-                    event.event_id,
-                    is_autonomous=(event.level is EscalationLevel.L0_SELF_HEAL),
-                    actor_identity=getattr(event, "actor", ""),
-                    operation_content=event.description,
-                )
-                if result.forced_review:
-                    event.description += " | forced_review=True"
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            slo = self._extension_detectors.get("SLOContractEngine")
-            if slo and hasattr(slo, "get_recommended_scaling"):
-                scaling = slo.get_recommended_scaling()
-                event.description += f" | slo_tier={scaling['current_tier']}"
-                if scaling["escalation_level_offset"] > 0:
-                    new_level = min(
-                        EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
-                    )
-                    event.level = EscalationLevel(new_level)
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
-        try:
-            rd = self._extension_detectors.get("ReboundDetector")
-            if rd and event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
-                owner = event.owner_id or "unknown"
-                if event.category is RuleCategory.SECURITY_VIOLATION:
-                    rd.record(
-                        owner, "violation", severity="high", description=event.description, event_id=event.event_id
-                    )
-                elif event.category is RuleCategory.REWARD_HACKING_REBOUND:
-                    rd.record(
-                        owner, "rebound", severity="critical", description=event.description, event_id=event.event_id
-                    )
-                if rd.detect_rebound(owner):
-                    event.description += " | reward_hacking_rebound=True"
-                    event.level = EscalationLevel.L4_EMERGENCY
-                    rd.mark_rebound_agent(owner)
-        except Exception as e:
-            logger.warning("suppressed error in escalation_engine", exc_info=True)
-
+        for detector_name, hook_fn in _HOOK_DISPATCH.items():
+            detector = self._extension_detectors.get(detector_name)
+            if detector is None:
+                continue
+            try:
+                hook_fn(event, detector, self)
+            except Exception:
+                logger.warning("suppressed error in escalation_engine", exc_info=True)
         return event
 
     def enable_hooks(self):
