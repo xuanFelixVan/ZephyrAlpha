@@ -61,6 +61,76 @@ def _validate_table_name(table: str) -> str:
     return table
 
 
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 YamlListAdapter._parse_dict 84 行 McCabe=42（3 分支：tiers/dict-value/list-item，
+# dict-value 和 list-item 路径提取逻辑重复）。治本：提取为 2 个模块级 helper（均 McCabe≤15），
+# _parse_dict 简化为 dispatcher（McCabe≈5）。行为等价：tiers/dict/list 分支顺序不变，
+# asset_path 提取 fallback 链不变（asset_key→physical_path→path→look_like_path→first_str），
+# extra dict 过滤规则不变。
+
+
+def _parse_tiers_registries(data: dict, registry_id: str) -> list[RegistryEntry]:
+    """解析 registry_of_registries.yaml 的 tiers 结构（registry_id 缺省时回退 registry_id 参数）。"""
+    entries: list[RegistryEntry] = []
+    for tier in data["tiers"]:
+        for reg in tier.get("registries", []):
+            phys = reg.get("physical_path", "")
+            if phys:
+                entries.append(
+                    RegistryEntry(
+                        registry_id=reg.get("registry_id", registry_id),
+                        registry_path="",
+                        entry_path=phys,
+                        extra={k: v for k, v in reg.items() if v is not None and k != "physical_path"},
+                    )
+                )
+    return entries
+
+
+def _extract_asset_path(item: dict, asset_key: str) -> str | None:
+    """从 dict 条目提取 asset_path（3 步 fallback 链，与原 _parse_dict 行为一致）。
+
+    1. item[asset_key] or item["physical_path"] or item["path"]
+    2. 第一个 looks_like_path 的 str 值
+    3. 第一个 str 值
+    无命中返回 None。
+    """
+    asset_path = item.get(asset_key) or item.get("physical_path") or item.get("path")
+    if not asset_path:
+        for vv in item.values():
+            if isinstance(vv, str) and vv and ("/" in vv or "." in vv or "\\" in vv):
+                asset_path = vv
+                break
+    if not asset_path:
+        for vv in item.values():
+            if isinstance(vv, str):
+                asset_path = vv
+                break
+    return asset_path if asset_path else None
+
+
+def _build_entry_extra(item: dict, asset_path: str) -> dict:
+    """构造 RegistryEntry.extra（过滤 None + asset_path + physical_path，与原行为一致）。"""
+    return {
+        k: v
+        for k, v in item.items()
+        if v is not None and k != asset_path and k != "physical_path"
+    }
+
+
+def _extract_dict_entry(item: dict, asset_key: str, registry_id: str) -> RegistryEntry | None:
+    """从 dict 条目提取 asset_path 并构造 RegistryEntry（dict-value 和 list-item 共用）。"""
+    asset_path = _extract_asset_path(item, asset_key)
+    if not asset_path:
+        return None
+    return RegistryEntry(
+        registry_id=registry_id,
+        registry_path="",
+        entry_path=str(asset_path),
+        extra=_build_entry_extra(item, asset_path),
+    )
+
+
 class RegistryParseError(Exception):
     error_code = "ZA-IF-0006"
 
@@ -154,25 +224,13 @@ class YamlListAdapter(RegistryAdapter):
         return entries
 
     def _parse_dict(self, data: dict) -> list[RegistryEntry]:
-        entries: list[RegistryEntry] = []
+        # 裁定#217 Tier2 P3：提取为 _parse_tiers_registries + _extract_dict_entry 模块级 helper，
+        # 本方法简化为 dispatcher（McCabe≈12）。行为等价契约见 helper docstring。
         if data is None:
-            return entries
-
+            return []
         if "tiers" in data:
-            for tier in data["tiers"]:
-                for reg in tier.get("registries", []):
-                    phys = reg.get("physical_path", "")
-                    if phys:
-                        entries.append(
-                            RegistryEntry(
-                                registry_id=reg.get("registry_id", self._registry_id),
-                                registry_path="",
-                                entry_path=phys,
-                                extra={k: v for k, v in reg.items() if v is not None and k != "physical_path"},
-                            )
-                        )
-            return entries
-
+            return _parse_tiers_registries(data, self._registry_id)
+        entries: list[RegistryEntry] = []
         if isinstance(data, dict):
             for key, value in data.items():
                 if isinstance(value, str) and self._looks_like_path(value):
@@ -185,57 +243,15 @@ class YamlListAdapter(RegistryAdapter):
                         )
                     )
                 elif isinstance(value, dict):
-                    asset_path = value.get(self._asset_key) or value.get("physical_path") or value.get("path")
-                    if not asset_path:
-                        for vk, vv in value.items():
-                            if isinstance(vv, str) and self._looks_like_path(vv):
-                                asset_path = vv
-                                break
-                    if not asset_path:
-                        for vk, vv in value.items():
-                            if isinstance(vv, str):
-                                asset_path = vv
-                                break
-                    if asset_path:
-                        entries.append(
-                            RegistryEntry(
-                                registry_id=self._registry_id,
-                                registry_path="",
-                                entry_path=str(asset_path),
-                                extra={
-                                    k: v
-                                    for k, v in value.items()
-                                    if v is not None and k != asset_path and k != "physical_path"
-                                },
-                            )
-                        )
+                    e = _extract_dict_entry(value, self._asset_key, self._registry_id)
+                    if e is not None:
+                        entries.append(e)
                 elif isinstance(value, list):
                     for item in value:
                         if isinstance(item, dict):
-                            asset_path = item.get(self._asset_key) or item.get("physical_path") or item.get("path")
-                            if not asset_path:
-                                for vk, vv in item.items():
-                                    if isinstance(vv, str) and self._looks_like_path(vv):
-                                        asset_path = vv
-                                        break
-                            if not asset_path:
-                                for vk, vv in item.items():
-                                    if isinstance(vv, str):
-                                        asset_path = vv
-                                        break
-                            if asset_path:
-                                entries.append(
-                                    RegistryEntry(
-                                        registry_id=self._registry_id,
-                                        registry_path="",
-                                        entry_path=str(asset_path),
-                                        extra={
-                                            k: v
-                                            for k, v in item.items()
-                                            if v is not None and k != asset_path and k != "physical_path"
-                                        },
-                                    )
-                                )
+                            e = _extract_dict_entry(item, self._asset_key, self._registry_id)
+                            if e is not None:
+                                entries.append(e)
         return entries
 
     @staticmethod
