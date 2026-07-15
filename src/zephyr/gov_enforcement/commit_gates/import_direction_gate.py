@@ -123,6 +123,58 @@ def _collect_type_checking_imports(tree: ast.Module) -> set[int]:
     return exempt_ids
 
 
+def _resolve_abs_files(shared_files: list[str], wt_root: str) -> list[str]:
+    """将 shared 层相对路径解析为存在的绝对路径列表。
+
+    仅保留实际存在于文件系统的 staged 条目（跳过已删除/未落盘的文件）。
+    """
+    abs_files: list[str] = []
+    for rel in shared_files:
+        p = rel if os.path.isabs(rel) else os.path.join(wt_root, rel.replace("/", os.sep))
+        if os.path.isfile(p):
+            abs_files.append(p)
+    return abs_files
+
+
+def _find_violations_in_file(abs_path: str, wt_root: str) -> list[str]:
+    """解析单个 shared 层 .py 文件，返回向上依赖违规列表。
+
+    fail-open：OSError / SyntaxError 记 warning 并返回空列表（不阻断）。
+    TYPE_CHECKING 块内的 ImportFrom 通过 _collect_type_checking_imports 豁免。
+    """
+    try:
+        content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+    except OSError as e:
+        logger.warning("NO-UPWARD-IMPORT gate skip %s: %s", abs_path, e)
+        return []
+
+    try:
+        tree = ast.parse(content, filename=abs_path)
+    except SyntaxError as e:
+        logger.warning("NO-UPWARD-IMPORT gate skip %s: AST 解析失败(%s)", abs_path, e)
+        return []
+
+    # 收集 TYPE_CHECKING 块内的 import（豁免集）
+    exempt_ids = _collect_type_checking_imports(tree)
+
+    # 遍历所有 ImportFrom，排除豁免集
+    violations: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        if id(node) in exempt_ids:
+            continue
+        module = node.module or ""
+        if any(module.startswith(prefix) for prefix in _UPWARD_PREFIXES):
+            rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+            names = ", ".join(a.name for a in node.names)
+            violations.append(
+                f"{rel_name}:{node.lineno} from {module} import {names} "
+                f"—— shared 层禁止向上依赖（§5.152）"
+            )
+    return violations
+
+
 def make_import_direction_gate() -> GateSpec:
     """构造 shared 层向上依赖阻断 GateSpec（硬阻断型）。
 
@@ -168,46 +220,14 @@ def make_import_direction_gate() -> GateSpec:
             wt_root = str(gateway.project_root)
 
         # 4. 解析为绝对路径
-        abs_files = []
-        for rel in shared_files:
-            p = rel if os.path.isabs(rel) else os.path.join(wt_root, rel.replace("/", os.sep))
-            if os.path.isfile(p):
-                abs_files.append(p)
+        abs_files = _resolve_abs_files(shared_files, wt_root)
         if not abs_files:
             return True, ""
 
         # 5. AST 检测
         all_violations: list[str] = []
         for abs_path in abs_files:
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning("NO-UPWARD-IMPORT gate skip %s: %s", abs_path, e)
-                continue
-
-            try:
-                tree = ast.parse(content, filename=abs_path)
-            except SyntaxError as e:
-                logger.warning("NO-UPWARD-IMPORT gate skip %s: AST 解析失败(%s)", abs_path, e)
-                continue
-
-            # 收集 TYPE_CHECKING 块内的 import（豁免集）
-            exempt_ids = _collect_type_checking_imports(tree)
-
-            # 遍历所有 ImportFrom，排除豁免集
-            for node in ast.walk(tree):
-                if not isinstance(node, ast.ImportFrom):
-                    continue
-                if id(node) in exempt_ids:
-                    continue
-                module = node.module or ""
-                if any(module.startswith(prefix) for prefix in _UPWARD_PREFIXES):
-                    rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-                    names = ", ".join(a.name for a in node.names)
-                    all_violations.append(
-                        f"{rel_name}:{node.lineno} from {module} import {names} "
-                        f"—— shared 层禁止向上依赖（§5.152）"
-                    )
+            all_violations.extend(_find_violations_in_file(abs_path, wt_root))
 
         if all_violations:
             detail = "; ".join(all_violations[:5])
