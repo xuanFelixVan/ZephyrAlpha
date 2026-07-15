@@ -850,32 +850,48 @@ def _serialize_for_db(task: TaskCard) -> dict:
     return params
 
 
-def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
-    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 62 字段）。"""
-    d = dict(row)
-    # DM-100266: 过滤 DB 表额外字段（domain_id/assignee/blueprint_id/construction_targets 等旧版 schema 遗留），
-    # 避免 Pydantic extra='forbid' 抛 ValidationError。用 TaskCard.model_fields 作为白名单。
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 _row_to_taskcard 128 行 McCabe=37（10 段独立字段变换 pipeline）。
+# 治本：提取为 6 个模块级 helper（均 McCabe≤15），_row_to_taskcard 简化为 6 步 pipeline（McCabe≈1）。
+# 行为等价：各字段变换步骤顺序不变，JSON 解析/默认值/校验规则不变。
+
+_TASK_ID_PATTERN = __import__("re").compile(r"^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$")
+
+_JSON_ARRAY_FIELDS = (
+    "files_in_scope", "deliverables", "acceptance", "depends_on", "tags",
+    "upstream_files", "downstream_outputs", "allowed_touch", "forbidden_touch",
+    "applicable_rules", "context_assembly_manifest", "completed_gates",
+    "pipeline_modules", "blocked_by", "artifact_paths", "audit_findings",
+    "ke_entries", "autonomy_checklist", "post_sync_standard", "post_sync_specific",
+    "depgraph_nodes",
+)
+
+_LIST_OF_DICT_FIELDS = ("applicable_rules", "audit_findings", "downstream_outputs", "context_assembly_manifest")
+
+
+def _filter_taskcard_fields(d: dict) -> None:
+    """过滤 DB 表额外字段 + 移除内部列（DM-100266 白名单过滤）。"""
     _valid_fields = TaskCard.model_fields.keys()
-    d = {k: v for k, v in d.items() if k in _valid_fields}
+    d_filtered = {k: v for k, v in d.items() if k in _valid_fields}
+    d.clear()
+    d.update(d_filtered)
     for _internal_col in ("batch_id", "claimed_by", "claimed_at"):
         d.pop(_internal_col, None)
 
-    _datetime_nullable_fields = ("ready_at", "completed_at", "deleted_at")
-    for field in _datetime_nullable_fields:
+
+def _normalize_datetime_fields(d: dict) -> None:
+    """归一化 datetime 字段（nullable→None, required→now, updated_at<created_at 修正）。"""
+    for field in ("ready_at", "completed_at", "deleted_at"):
         raw = d.get(field)
         if isinstance(raw, str) and raw.strip() in ("", "None", "null"):
             d[field] = None
-
-    _datetime_required_fields = ("created_at", "updated_at")
-    for field in _datetime_required_fields:
+    for field in ("created_at", "updated_at"):
         raw = d.get(field)
         if isinstance(raw, str) and (not raw.strip() or raw.strip() in ("None", "null") or not raw[0:4].isdigit()):
             d[field] = datetime.now(_UTC).isoformat()
-
     if d.get("updated_at") and d.get("created_at"):
         try:
             from datetime import datetime as _dt
-
             ca = _dt.fromisoformat(str(d["created_at"]))
             ua = _dt.fromisoformat(str(d["updated_at"]))
             if ua < ca:
@@ -883,34 +899,12 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         except (ValueError, TypeError):
             d["updated_at"] = d["created_at"]
 
-    _json_array_fields = (
-        "files_in_scope",
-        "deliverables",
-        "acceptance",
-        "depends_on",
-        "tags",
-        "upstream_files",
-        "downstream_outputs",
-        "allowed_touch",
-        "forbidden_touch",
-        "applicable_rules",
-        "context_assembly_manifest",
-        "completed_gates",
-        "pipeline_modules",
-        "blocked_by",
-        "artifact_paths",
-        "audit_findings",
-        "ke_entries",
-        "autonomy_checklist",
-        "post_sync_standard",
-        "post_sync_specific",
-        "depgraph_nodes",
-    )
-    for field in _json_array_fields:
-        d[field] = _safe_parse_json_array(d.get(field, "[]"), field_name=field)
 
-    _json_dict_fields = ("blocked_gates",)
-    for field in _json_dict_fields:
+def _parse_json_fields(d: dict) -> None:
+    """解析 JSON array/dict 字段（str→Python 对象，解析失败→默认空值）。"""
+    for field in _JSON_ARRAY_FIELDS:
+        d[field] = _safe_parse_json_array(d.get(field, "[]"), field_name=field)
+    for field in ("blocked_gates",):
         raw = d.get(field, "{}")
         if isinstance(raw, str):
             try:
@@ -921,16 +915,20 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         elif not isinstance(raw, dict):
             d[field] = {}
 
-    _list_of_dict_fields = ("applicable_rules", "audit_findings", "downstream_outputs", "context_assembly_manifest")
-    for field in _list_of_dict_fields:
+
+def _filter_list_of_dict_fields(d: dict) -> None:
+    """过滤 list-of-dict 字段中的非 dict 脏数据。"""
+    for field in _LIST_OF_DICT_FIELDS:
         val = d.get(field, [])
         if isinstance(val, list):
-            d[field] = [item for item in val if isinstance(item, dict)]  # 丢弃非dict脏数据（旧数据字符串元素不包伪dict，避免pydantic校验失败）
+            d[field] = [item for item in val if isinstance(item, dict)]
 
+
+def _fix_scalar_fields(d: dict) -> None:
+    """修正标量字段默认值（idempotent/name→title/source_blueprint/section/description/tokens/timeout）。"""
     d["idempotent"] = bool(d.get("idempotent", 0))
     if "name" in d and "title" not in d:
         d["title"] = d.pop("name")
-
     if not d.get("source_blueprint", "").strip():
         d["source_blueprint"] = "unknown"
     if not d.get("source_section", "").strip():
@@ -942,42 +940,43 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
     if d.get("timeout_minutes", 30) < 5:
         d["timeout_minutes"] = 30
 
+
+def _validate_and_construct_taskcard(d: dict) -> TaskCard:
+    """schema_version 警告 + task_id 格式校验 + TaskCard 构造（model_validate 或 model_construct 兜底）。"""
+    import warnings
     schema_ver = d.get("schema_version", "")
     if schema_ver and schema_ver != "0.3.2":
-        import warnings
-
         warnings.warn(
             f"TaskCard {d.get('task_id', '?')} schema_version={schema_ver} 与当前 0.3.2 不匹配，"
             f"可能缺少新增字段（autonomy_checklist 等），数据完整性未经验证。",
-            UserWarning,
-            stacklevel=2,
+            UserWarning, stacklevel=2,
         )
-
-    import re as _re
-
-    _TASK_ID_PATTERN = _re.compile(r"^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$")
     tid = d.get("task_id", "")
     if not _TASK_ID_PATTERN.match(str(tid)):
-        import warnings
-
         warnings.warn(
             f"TaskCard task_id={tid!r} 不符合格式 NAMESPACE-SEQ，跳过 Pydantic 校验",
-            UserWarning,
-            stacklevel=2,
+            UserWarning, stacklevel=2,
         )
         try:
             return TaskCard.model_validate(d)
         except Exception:
             return TaskCard.model_construct(**d)
-
     try:
         return TaskCard.model_validate(d)
     except Exception as e:
-        # 旧脏数据 schema 不兼容（phase/enum 等字段值不符合当前 model）时用 model_construct 跳过校验
-        # 脏数据清洗应通过专门数据治理任务处理，此处仅保证查询不阻断
-        import warnings
         warnings.warn(f"TaskCard {tid!r} schema 不兼容，model_construct 跳过: {e}", UserWarning, stacklevel=2)
         return TaskCard.model_construct(**d)
+
+
+def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
+    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 62 字段）。"""
+    d = dict(row)
+    _filter_taskcard_fields(d)
+    _normalize_datetime_fields(d)
+    _parse_json_fields(d)
+    _filter_list_of_dict_fields(d)
+    _fix_scalar_fields(d)
+    return _validate_and_construct_taskcard(d)
 
 
 # ---------------------------------------------------------------------------
