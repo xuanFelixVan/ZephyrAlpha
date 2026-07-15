@@ -11,7 +11,8 @@ $taskName = "ZephyrAlpha_DataScheduler"
 $ps1Path = "d:\ZephyrAlpha\scripts\start_scheduler.ps1"
 
 # 创建动作（用 powershell.exe 启动 ps1 脚本，避免 .bat 不在 scripts/ 目录契约允许清单）
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$ps1Path`"" -WorkingDirectory "d:\ZephyrAlpha"
+$argString = '-NoProfile -ExecutionPolicy Bypass -File "' + $ps1Path + '"'
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $argString -WorkingDirectory "d:\ZephyrAlpha"
 
 # 创建触发器（开机自启）
 $trigger = New-ScheduledTaskTrigger -AtStartup
