@@ -218,6 +218,96 @@ class _DispatchFinalizeContext:
     _state: dict[str, Any]
 
 
+def _process_zone_warnings(
+    orch: PipelineOrchestrator,
+    task_card: TaskCard,
+    prev_module: str | None,
+    mod_id: str,
+    ct_warnings: list[str],
+) -> None:
+    """校验 zone 跨界；VIOLATION 抛错，其余告警追加到 ct_warnings。"""
+    if prev_module is None:
+        return
+    zone_warnings = orch._validate_zone_crossing(task_card, prev_module, mod_id)
+    for zw in zone_warnings:
+        if "VIOLATION" in zw:
+            raise ValueError(zw)
+        ct_warnings.append(zw)
+
+
+def _resolve_assigned_model(mod_id: str, pipeline: str, route: str) -> str:
+    """根据 pipeline/route 与模块 spec 决定本模块使用的模型。"""
+    spec = M_MODULE_SPECS[mod_id]
+    assigned_model = spec["model"]
+    if pipeline == "B" and route == "claude":
+        assigned_model = "claude"
+    elif spec.get("pipeline") == pipeline:
+        pass
+    else:
+        assigned_model = spec["model"]
+    return assigned_model
+
+
+def _record_skill_feedback(
+    skill_injection: SkillInjectionResult | None,
+    mr: ModuleResult,
+    task_card: TaskCard,
+) -> None:
+    """记录 skill 反馈到学习回路；失败仅 debug 日志，不影响主流程。"""
+    if not (_SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded):
+        return
+    try:
+        from zephyr.autonomy_core.skills.skill_feedback import SkillFeedback
+
+        fb = SkillFeedback()
+        for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
+            if skid:
+                fb.record_module_result(skid, mr, task_card.task_id)
+    except Exception:
+        # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
+        logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
+
+
+def _process_module_artifacts(
+    mr: ModuleResult,
+    mod_id: str,
+    manifest: PipelineArtifactManifest,
+    prior_artifacts: list[PipelineArtifact],
+) -> tuple[list[str], list[str]]:
+    """解析本模块产出/消费的 artifact，追加到 manifest；返回 (consumed_keys, produced_keys)。"""
+    consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
+    produced_keys: list[str] = []
+    for art_dict in mr.output.get("artifacts", []):
+        try:
+            artifact = PipelineArtifact(**art_dict)
+            manifest.artifacts.append(artifact)
+            produced_keys.append(artifact.artifact_key)
+        except Exception:
+            # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
+            logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
+
+    if mr.output.get("artifact_key") and mr.output.get("artifact_type"):
+        try:
+            artifact = PipelineArtifact(
+                artifact_key=mr.output["artifact_key"],
+                produced_by=mod_id,
+                artifact_type=mr.output["artifact_type"],
+                file_paths=mr.output.get("file_paths", []),
+                summary=str(mr.output.get("summary", ""))[:200],
+            )
+            manifest.artifacts.append(artifact)
+            produced_keys.append(artifact.artifact_key)
+        except Exception:
+            # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
+            logger.debug(
+                "artifact build failed for mod=%s key=%s",
+                mod_id,
+                mr.output.get("artifact_key"),
+                exc_info=True,
+            )
+    return consumed_keys, produced_keys
+
+
 class PipelineOrchestrator:
     """M1-M11 双管线模型路由 + 模块编排
 
@@ -949,22 +1039,9 @@ class PipelineOrchestrator:
         results: list[ModuleResult] = []
         prev_module: str | None = None
         for mod_id in modules:
-            if prev_module is not None:
-                zone_warnings = self._validate_zone_crossing(task_card, prev_module, mod_id)
-                for zw in zone_warnings:
-                    if "VIOLATION" in zw:
-                        raise ValueError(zw)
-                    ct_warnings.append(zw)
+            _process_zone_warnings(self, task_card, prev_module, mod_id, ct_warnings)
 
-            spec = M_MODULE_SPECS[mod_id]
-            assigned_model = spec["model"]
-
-            if pipeline == "B" and route == "claude":
-                assigned_model = "claude"
-            elif spec.get("pipeline") == pipeline:
-                pass
-            else:
-                assigned_model = spec["model"]
+            assigned_model = _resolve_assigned_model(mod_id, pipeline, route)
 
             prior_artifacts = [a for a in manifest.artifacts if a.produced_by != mod_id]
 
@@ -980,43 +1057,9 @@ class PipelineOrchestrator:
             )
             results.append(mr)
 
-            if _SKILL_BRIDGE_AVAILABLE and skill_injection is not None and skill_injection.loaded:
-                try:
-                    from zephyr.autonomy_core.skills.skill_feedback import SkillFeedback
+            _record_skill_feedback(skill_injection, mr, task_card)
 
-                    fb = SkillFeedback()
-                    for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
-                        if skid:
-                            fb.record_module_result(skid, mr, task_card.task_id)
-                except Exception:
-                    # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
-                    logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
-
-            consumed_keys = [a.artifact_key for a in prior_artifacts if a.produced_by != mod_id]
-            produced_keys: list[str] = []
-            for art_dict in mr.output.get("artifacts", []):
-                try:
-                    artifact = PipelineArtifact(**art_dict)
-                    manifest.artifacts.append(artifact)
-                    produced_keys.append(artifact.artifact_key)
-                except Exception:
-                    # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
-                    logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
-
-            if mr.output.get("artifact_key") and mr.output.get("artifact_type"):
-                try:
-                    artifact = PipelineArtifact(
-                        artifact_key=mr.output["artifact_key"],
-                        produced_by=mod_id,
-                        artifact_type=mr.output["artifact_type"],
-                        file_paths=mr.output.get("file_paths", []),
-                        summary=str(mr.output.get("summary", ""))[:200],
-                    )
-                    manifest.artifacts.append(artifact)
-                    produced_keys.append(artifact.artifact_key)
-                except Exception:
-                    # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
-                    logger.debug("artifact build failed for mod=%s key=%s", mod_id, mr.output.get("artifact_key"), exc_info=True)
+            consumed_keys, produced_keys = _process_module_artifacts(mr, mod_id, manifest, prior_artifacts)
 
             lineage_entry = PipelineLineageEntry(
                 module_id=mod_id,
