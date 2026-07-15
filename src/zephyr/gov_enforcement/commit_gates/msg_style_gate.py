@@ -180,6 +180,121 @@ def _filter_noqa_violations(
     return [v for v in violations if not _is_line_noqa(content, v[0])]
 
 
+# === 裁定#217 Tier2 P1 Extract Method 重构（2026-07-15）===
+# 原 _check 150 行 McCabe=35（preamble + for 循环内 new/modified 双分支 + 格式化）。
+# 治本：提取为 6 个模块级 helper（均 McCabe≤15），_check 简化为 ~30 行（McCabe≈12）。
+# 行为等价契约：新增文件全文件 AST，修改文件仅 diff 新增行，noqa 豁免一致，消息格式不变。
+
+
+def _get_staged_py_files(gateway) -> list[str] | None:
+    """获取 staged added/modified .py 文件列表（tests/ 豁免）。None=fail-open。"""
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "MSG-STYLE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_files = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "MSG-STYLE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True,
+        )
+        return None
+    return [f.replace("\\", "/") for f in staged_files if f.endswith(".py") and not is_test_exempt(f)]
+
+
+def _format_violation_entry(rel_path: str, lineno: int, exc_name: str, vtype: str, suffix: str = "") -> str:
+    """格式化单条违规为消息字符串。"""
+    desc = "Unicode 箭头 ->" if vtype == "unicode_arrow" else "中文句号 。 结尾"
+    return f"{rel_path}:{lineno} raise {exc_name}(...) [{vtype}: {desc}]{suffix}"
+
+
+def _scan_new_file(rel_path: str, abs_path: str, content: str) -> list[str]:
+    """扫描新增文件（全文件 AST 检测 + noqa 过滤）。"""
+    try:
+        tree = ast.parse(content, filename=abs_path)
+    except SyntaxError as e:
+        logger.warning(
+            "MSG-STYLE gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+            abs_path, type(e).__name__, e,
+        )
+        return []
+    violations = _filter_noqa_violations(content, _detect_msg_style(tree))
+    return [
+        _format_violation_entry(rel_path, lineno, exc_name, vtype)
+        for lineno, exc_name, vtype in violations
+    ]
+
+
+def _parse_diff_added_lines(diff_stdout: str) -> list[tuple[int, str]]:
+    """从 git diff --unified=0 输出解析新增行 (lineno, content)。"""
+    added_lines: list[tuple[int, str]] = []
+    cur_lineno = 0
+    for line in diff_stdout.splitlines():
+        if line.startswith("@@"):
+            try:
+                plus_part = line.split("+")[1].split("@@")[0].strip()
+                cur_lineno = int(plus_part.split(",")[0])
+            except (IndexError, ValueError):
+                cur_lineno = 0
+        elif line.startswith("+") and not line.startswith("+++"):
+            if cur_lineno > 0:
+                added_lines.append((cur_lineno, line[1:]))
+            cur_lineno += 1
+        elif line.startswith("-"):
+            pass  # 删除行不影响行号计数
+        else:
+            cur_lineno += 1
+    return added_lines
+
+
+def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> list[str]:
+    """扫描修改文件（只检测 diff 新增行范围内的违规 + 行级 noqa 豁免）。"""
+    try:
+        diff_content = gateway._run_git(
+            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+        )
+        if diff_content.returncode != 0:
+            return []
+    except Exception:
+        return []
+
+    added_lines_meta = _parse_diff_added_lines(diff_content.stdout)
+    if not added_lines_meta:
+        return []
+
+    added_line_nos = {ln for ln, _ in added_lines_meta}
+    added_content_map = {ln: lc for ln, lc in added_lines_meta}
+
+    try:
+        tree = ast.parse(content, filename=abs_path)
+    except SyntaxError:
+        return []
+
+    result: list[str] = []
+    for lineno, exc_name, vtype in _detect_msg_style(tree):
+        if lineno not in added_line_nos:
+            continue
+        if _NOQA_MARKER in added_content_map.get(lineno, ""):
+            continue
+        result.append(_format_violation_entry(rel_path, lineno, exc_name, vtype, " (modified)"))
+    return result
+
+
+def _format_msg_style_violations(violations: list[str]) -> tuple[bool, str]:
+    """格式化 MSG-STYLE 违规为阻断消息。"""
+    detail = "; ".join(violations[:5])
+    return False, (
+        f"错误消息标点/箭头风格违规（统一 ASCII -> + 无句号结尾，"
+        f"5.99.22 治本防复发）: {detail}"
+    )
+
+
 def make_msg_style_gate() -> GateSpec:
     """构造错误消息标点/箭头风格阻断门禁 GateSpec（硬阻断型）。
 
@@ -189,44 +304,18 @@ def make_msg_style_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增(A) + 修改(M) .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "MSG-STYLE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_files = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "MSG-STYLE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True,
-            )
-            return True, ""
-
-        # 2. 过滤 .py 文件 + tests/ 豁免
-        py_files = [
-            f.replace("\\", "/") for f in staged_files
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
+        py_files = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
 
-        # 3. 获取 worktree root
+        # worktree root
         try:
             toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
+            wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
         except Exception:
             wt_root = str(gateway.project_root)
 
-        # 4. 区分新增(A)和修改(M)
+        # added(A) set
         try:
             added_result = gateway._run_git(
                 ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
@@ -235,21 +324,13 @@ def make_msg_style_gate() -> GateSpec:
         except Exception:
             added_set = set()
 
-        # 5. 门禁文件自豁免：检测器本身含违规字符（文档字符串中的 -> 和 。）
         violations_all: list[str] = []
         for rel_path in py_files:
-            if os.path.isabs(rel_path):
-                abs_path = rel_path
-            else:
-                abs_path = os.path.join(wt_root, rel_path.replace("/", os.sep))
+            if "governance/commit_gates/" in rel_path.replace("\\", "/"):
+                continue  # 门禁文件自豁免
+            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
             if not os.path.isfile(abs_path):
                 continue
-
-            # 门禁文件自豁免
-            rel_normalized = rel_path.replace("\\", "/")
-            if "governance/commit_gates/" in rel_normalized:
-                continue
-
             try:
                 with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
                     content = f.read()
@@ -259,84 +340,13 @@ def make_msg_style_gate() -> GateSpec:
                     abs_path, type(e).__name__, e,
                 )
                 continue
-
-            is_new = rel_path in added_set
-            if is_new:
-                # 新增文件：全文件 AST 检测
-                try:
-                    tree = ast.parse(content, filename=abs_path)
-                except SyntaxError as e:
-                    logger.warning(
-                        "MSG-STYLE gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                        abs_path, type(e).__name__, e,
-                    )
-                    continue
-                violations = _detect_msg_style(tree)
-                violations = _filter_noqa_violations(content, violations)
-                for lineno, exc_name, vtype in violations:
-                    desc = "Unicode 箭头 ->" if vtype == "unicode_arrow" else "中文句号 。 结尾"
-                    violations_all.append(
-                        f"{rel_path}:{lineno} raise {exc_name}(...) [{vtype}: {desc}]"
-                    )
+            if rel_path in added_set:
+                violations_all.extend(_scan_new_file(rel_path, abs_path, content))
             else:
-                # 修改文件：只检测 diff 新增行范围内的违规
-                try:
-                    diff_content = gateway._run_git(
-                        ["git", "diff", "--cached", "--unified=0", "--", rel_path]
-                    )
-                    if diff_content.returncode != 0:
-                        continue
-                    added_lines_meta: list[tuple[int, str]] = []  # (lineno, line_content)
-                    cur_lineno = 0
-                    for line in diff_content.stdout.splitlines():
-                        if line.startswith("@@"):
-                            # @@ -a,b +c,d @@ -> c 是新增行起始行号
-                            try:
-                                plus_part = line.split("+")[1].split("@@")[0].strip()
-                                cur_lineno = int(plus_part.split(",")[0])
-                            except (IndexError, ValueError):
-                                cur_lineno = 0
-                        elif line.startswith("+") and not line.startswith("+++"):
-                            if cur_lineno > 0:
-                                added_lines_meta.append((cur_lineno, line[1:]))
-                            cur_lineno += 1
-                        elif line.startswith("-"):
-                            pass  # 删除行不影响行号计数
-                        else:
-                            cur_lineno += 1
-                except Exception:
-                    continue
-
-                if not added_lines_meta:
-                    continue
-
-                added_line_nos = {ln for ln, _ in added_lines_meta}
-                added_content_map = {ln: lc for ln, lc in added_lines_meta}
-
-                try:
-                    tree = ast.parse(content, filename=abs_path)
-                except SyntaxError:
-                    continue
-
-                violations = _detect_msg_style(tree)
-                for lineno, exc_name, vtype in violations:
-                    if lineno not in added_line_nos:
-                        continue  # 只关心 diff 新增行
-                    # 行级 noqa 豁免
-                    line_content = added_content_map.get(lineno, "")
-                    if _NOQA_MARKER in line_content:
-                        continue
-                    desc = "Unicode 箭头 ->" if vtype == "unicode_arrow" else "中文句号 。 结尾"
-                    violations_all.append(
-                        f"{rel_path}:{lineno} raise {exc_name}(...) [{vtype}: {desc}] (modified)"
-                    )
+                violations_all.extend(_scan_modified_file(gateway, rel_path, abs_path, content))
 
         if violations_all:
-            detail = "; ".join(violations_all[:5])
-            return False, (
-                f"错误消息标点/箭头风格违规（统一 ASCII -> + 无句号结尾，"
-                f"5.99.22 治本防复发）: {detail}"
-            )
+            return _format_msg_style_violations(violations_all)
         return True, ""
 
     return GateSpec(gate_id="MSG-STYLE", check=_check, priority=92)
