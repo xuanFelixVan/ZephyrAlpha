@@ -1009,18 +1009,31 @@ class IntegratorScheduler:
                     continue
                 if not cron_expr:
                     continue
-                # 解析 cron 表达式 "30 16 * * 1-5" -> minute/hour/day/month/day_of_week
+                # 解析 cron 表达式：
+                # - 5段："30 16 * * 1-5" -> minute/hour/day/month/day_of_week
+                # - 6段："*/3 15-25 9 * * 0-4" -> second/minute/hour/day/month/day_of_week
+                #   6段支持秒级触发（如集合竞价3秒高频层），替代 IntervalTrigger 全天唤醒刷屏日志
                 parts = cron_expr.split()
-                if len(parts) != 5:
-                    log.warning("cron 格式错误: %s", cron_expr)
+                if len(parts) == 5:
+                    cron_kwargs = {
+                        "minute": parts[0],
+                        "hour": parts[1],
+                        "day": parts[2],
+                        "month": parts[3],
+                        "day_of_week": parts[4],
+                    }
+                elif len(parts) == 6:
+                    cron_kwargs = {
+                        "second": parts[0],
+                        "minute": parts[1],
+                        "hour": parts[2],
+                        "day": parts[3],
+                        "month": parts[4],
+                        "day_of_week": parts[5],
+                    }
+                else:
+                    log.warning("cron 格式错误（需5或6段）: %s", cron_expr)
                     continue
-                cron_kwargs = {
-                    "minute": parts[0],
-                    "hour": parts[1],
-                    "day": parts[2],
-                    "month": parts[3],
-                    "day_of_week": parts[4],
-                }
                 self._scheduler.add_job(
                     _run_schedule_callback,
                     "cron",
