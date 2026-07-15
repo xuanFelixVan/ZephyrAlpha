@@ -86,17 +86,8 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         "errors": [],
     }
 
-    try:
-        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
-
-        bypass = HotfixBypass(project_root=_PROJECT_ROOT)
-        if commit_message and bypass.is_hotfix_commit(commit_message):
-            result["hotfix_bypass"] = True
-            result["recovery_status"] = "HOTFIX_BYPASSED"
-            logger.info("Drift recovery bypassed: hotfix commit detected for %s", module_id)
-            return result
-    except Exception as exc:
-        logger.debug("Hotfix bypass check failed (non-fatal): %s", exc, exc_info=True)
+    if _check_hotfix_bypass(result, module_id, commit_message):
+        return result
 
     try:
         from zephyr.gov_drift.drift_engine import (
@@ -113,17 +104,8 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
             result["recovery_status"] = "SCAN_FAILED"
             return result
 
-    try:
-        scan_result = asyncio.get_event_loop().run_until_complete(scan(level=level, scope=changed_files or None))
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        try:
-            scan_result = loop.run_until_complete(scan(level=level, scope=changed_files or None))
-        finally:
-            loop.close()
-    except Exception as exc:
-        result["errors"].append(f"scan failed: {exc}")
-        result["recovery_status"] = "SCAN_FAILED"
+    scan_result = _run_drift_scan(scan, level, changed_files, result)
+    if scan_result is None:
         return result
 
     result["scan_result"] = {
@@ -137,6 +119,80 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         result["recovery_status"] = "NO_DRIFT_FOUND"
         return result
 
+    if _detect_cascade_and_check_lockout(scan_result, module_id, result):
+        return result
+
+    try:
+        from zephyr.gov_drift.reconciler import AutoFixer
+
+        fixer = AutoFixer(project_root=_PROJECT_ROOT)
+    except ImportError as exc:
+        result["errors"].append(f"AutoFixer import failed: {exc}")
+        result["recovery_status"] = "FIXER_UNAVAILABLE"
+        return result
+
+    fix_results, fixed_count, failed_count = _run_auto_fixes(fixer, scan_result, changed_files)
+    result["fix_results"] = fix_results
+
+    if failed_count == 0:
+        result["recovery_status"] = "FULLY_RECOVERED"
+    elif fixed_count > 0:
+        result["recovery_status"] = "PARTIALLY_RECOVERED"
+    else:
+        result["recovery_status"] = "RECOVERY_FAILED"
+
+    logger.info(
+        "Drift recovery completed for %s: %d fixed, %d failed, status=%s",
+        module_id,
+        fixed_count,
+        failed_count,
+        result["recovery_status"],
+    )
+    return result
+
+
+def _check_hotfix_bypass(
+    result: dict[str, Any], module_id: str, commit_message: str
+) -> bool:
+    """检测 hotfix 旁路；命中时置位 result 并返回 True（调用方应直接 return）。"""
+    try:
+        from zephyr.gov_drift.drift_hotfix_bypass import HotfixBypass
+
+        bypass = HotfixBypass(project_root=_PROJECT_ROOT)
+        if commit_message and bypass.is_hotfix_commit(commit_message):
+            result["hotfix_bypass"] = True
+            result["recovery_status"] = "HOTFIX_BYPASSED"
+            logger.info("Drift recovery bypassed: hotfix commit detected for %s", module_id)
+            return True
+    except Exception as exc:
+        logger.debug("Hotfix bypass check failed (non-fatal): %s", exc, exc_info=True)
+    return False
+
+
+def _run_drift_scan(
+    scan_fn: Any, level: Any, changed_files: list[str], result: dict[str, Any]
+) -> Any:
+    """执行漂移扫描；失败时记录错误并返回 None（调用方应直接 return）。"""
+    try:
+        return asyncio.get_event_loop().run_until_complete(
+            scan_fn(level=level, scope=changed_files or None)
+        )
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        try:
+            return loop.run_until_complete(scan_fn(level=level, scope=changed_files or None))
+        finally:
+            loop.close()
+    except Exception as exc:
+        result["errors"].append(f"scan failed: {exc}")
+        result["recovery_status"] = "SCAN_FAILED"
+        return None
+
+
+def _detect_cascade_and_check_lockout(
+    scan_result: Any, module_id: str, result: dict[str, Any]
+) -> bool:
+    """级联检测；若 auto-fix 被暂停则置位 result 并返回 True（调用方应直接 return）。"""
     try:
         from zephyr.gov_drift.cascade_detector import detect_cascade, is_auto_fix_paused
 
@@ -166,19 +222,16 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
         if is_auto_fix_paused(module_id):
             result["recovery_status"] = "CASCADE_LOCKOUT"
             logger.warning("Auto-fix paused for %s due to cascade detection", module_id)
-            return result
+            return True
     except Exception as exc:
         logger.debug("Cascade detection failed (non-fatal): %s", exc, exc_info=True)
+    return False
 
-    try:
-        from zephyr.gov_drift.reconciler import AutoFixer
 
-        fixer = AutoFixer(project_root=_PROJECT_ROOT)
-    except ImportError as exc:
-        result["errors"].append(f"AutoFixer import failed: {exc}")
-        result["recovery_status"] = "FIXER_UNAVAILABLE"
-        return result
-
+def _run_auto_fixes(
+    fixer: Any, scan_result: Any, changed_files: list[str]
+) -> tuple[list[dict[str, Any]], int, int]:
+    """对每个漂移事件执行自动修复；返回 (fix_results, fixed_count, failed_count)。"""
     fix_results: list[dict[str, Any]] = []
     fixed_count = 0
     failed_count = 0
@@ -219,23 +272,7 @@ def trigger_recovery(payload: dict[str, Any]) -> dict[str, Any]:
                 }
             )
 
-    result["fix_results"] = fix_results
-
-    if failed_count == 0:
-        result["recovery_status"] = "FULLY_RECOVERED"
-    elif fixed_count > 0:
-        result["recovery_status"] = "PARTIALLY_RECOVERED"
-    else:
-        result["recovery_status"] = "RECOVERY_FAILED"
-
-    logger.info(
-        "Drift recovery completed for %s: %d fixed, %d failed, status=%s",
-        module_id,
-        fixed_count,
-        failed_count,
-        result["recovery_status"],
-    )
-    return result
+    return fix_results, fixed_count, failed_count
 
 
 def _fallback_to_rollback_handler(event: object) -> dict[str, Any]:
