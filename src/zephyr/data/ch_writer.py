@@ -163,7 +163,8 @@ def _get_client():
         # 策略1: 本地（WSL2 localhost 转发）
         for host in (_CH_LOCAL_HOST,):
             try:
-                c = Client(host=host, port=9000, connect_timeout=3)
+                c = Client(host=host, port=9000, connect_timeout=3,
+                           tcp_keepalive=True, sync_request_timeout=10)
                 c.execute("SELECT 1")
                 _ch_client = c
                 log.info("clickhouse-driver TCP 已连接 (%s:9000)", host)
@@ -174,7 +175,8 @@ def _get_client():
         wsl_ip = _discover_wsl_ip()
         if wsl_ip:
             try:
-                c = Client(host=wsl_ip, port=9000, connect_timeout=3)
+                c = Client(host=wsl_ip, port=9000, connect_timeout=3,
+                           tcp_keepalive=True, sync_request_timeout=10)
                 c.execute("SELECT 1")
                 _ch_client = c
                 log.info("clickhouse-driver TCP 已连接 (%s:9000)", wsl_ip)

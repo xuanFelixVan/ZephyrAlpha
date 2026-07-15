@@ -86,12 +86,11 @@ schedules:
     executor: default
     description: "每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警"
 
-  # L0 集合竞价高频层：9:15-9:25 每3秒抓取五档盘口（interval trigger）
+  # L0 集合竞价高频层：9:15-9:25 每3秒抓取五档盘口（cron 6段：second minute hour day month day_of_week）
   # 用于主力挂撤单行为分析，3秒与交易所Level-1推送频率一致
+  # 改用 cron 6 段（含 second）替代 interval trigger，避免 IntervalTrigger 全天每3秒唤醒刷屏日志
   auction_highfreq:
-    type: interval
-    seconds: 3
-    start_time: "09:15:00"
-    end_time: "09:25:00"
+    type: cron
+    cron: "*/3 15-25 9 * * 0-4"
     executor: realtime
     description: "集合竞价高频层——9:15-9:25每3秒抓取五档盘口快照，用于主力行为分析"
