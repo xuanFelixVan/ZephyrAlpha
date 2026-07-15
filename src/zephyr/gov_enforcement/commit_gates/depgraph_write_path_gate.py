@@ -71,6 +71,7 @@ _WHITELIST: frozenset[str] = frozenset({
     "scripts/governance/generate_project_depgraph.py",
     "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
     "scripts/governance/_shared/constants.py",
+    "scripts/governance/sync_panorama_module.py",
     "src/zephyr/governance/depgraph_schema.py",
 })
 
@@ -114,6 +115,7 @@ def make_depgraph_write_path_gate() -> GateSpec:
                 "    - scripts/governance/generate_project_depgraph.py\n"
                 "    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py\n"
                 "    - scripts/governance/_shared/constants.py\n"
+                "    - scripts/governance/sync_panorama_module.py\n"
                 "    - src/zephyr/governance/depgraph_schema.py\n"
                 + "\n".join(violations)
                 + "\n-> 如需写入 depgraph，请通过 apply_depgraph.py CLI 操作"
