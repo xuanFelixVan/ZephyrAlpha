@@ -1,5 +1,5 @@
 ---
-module_id: MOD-014
+module_id: MOD-INF-016
 title: "Governance Core 蓝图 — 治理核心模块"
 doc_type: blueprint
 status: Active
