@@ -75,6 +75,45 @@ class SpeedCheckResult:
     classifications: dict = field(default_factory=dict)
 
 
+def _is_relevant_python_process(proc_info: dict, project_root_str: str) -> bool:
+    """Return True if the process belongs to this project, is a Python process,
+    and is not a long-running daemon."""
+    cmdline_list = proc_info.get("cmdline") or []
+    cmdline = " ".join(cmdline_list)
+    cwd = proc_info.get("cwd") or ""
+    if not ((project_root_str in cmdline) or (project_root_str in cwd)):
+        return False
+    if proc_info["name"].lower() not in ("python", "python.exe", "python3"):
+        return False
+    if any(kw in cmdline.lower() for kw in _LONG_RUNNING_KEYWORDS):
+        return False
+    return True
+
+
+def _match_script_baseline(cmdline_list: list, baselines: dict):
+    """Find the first baseline script referenced in the command line."""
+    for cmd_part in cmdline_list:
+        for script_name, timeout in baselines.items():
+            if script_name in cmd_part:
+                return script_name, timeout
+    return None
+
+
+def _resolve_unmatched(runtime_s: float):
+    """Return a fallback (script, baseline) for unmatched long-running processes."""
+    if runtime_s > _UNMATCHED_RUNTIME_CRITICAL_S:
+        return "_unknown_", _UNMATCHED_DEFAULT_BASELINE_S
+    return None
+
+
+def _build_classifications(anomalies: list) -> dict:
+    return {
+        "slow": len([a for a in anomalies if a.category is SpeedCategory.SLOW]),
+        "very_slow": len([a for a in anomalies if a.category is SpeedCategory.VERY_SLOW]),
+        "critical_slow": len([a for a in anomalies if a.category is SpeedCategory.CRITICAL_SLOW]),
+    }
+
+
 class SpeedBaselineChecker:
     def __init__(self):
         self._manifest_path: Path = _MANIFEST_PATH
@@ -120,34 +159,18 @@ class SpeedBaselineChecker:
 
         for proc in psutil.process_iter(["pid", "name", "cmdline", "create_time", "cwd"]):
             try:
+                if not _is_relevant_python_process(proc.info, project_root_str):
+                    continue
                 cmdline_list = proc.info.get("cmdline") or []
                 cmdline = " ".join(cmdline_list)
-                cwd = proc.info.get("cwd") or ""
-                belongs_to_project = (project_root_str in cmdline) or (project_root_str in cwd)
-                if not belongs_to_project:
-                    continue
-                if proc.info["name"].lower() not in ("python", "python.exe", "python3"):
-                    continue
-                if any(kw in cmdline.lower() for kw in _LONG_RUNNING_KEYWORDS):
-                    continue
                 result.scanned += 1
                 runtime_s = time.time() - (proc.info.get("create_time") or time.time())
-                matched_script = None
-                matched_baseline = 60
-                for cmd_part in cmdline_list:
-                    for script_name, timeout in baselines.items():
-                        if script_name in cmd_part:
-                            matched_script = script_name
-                            matched_baseline = timeout
-                            break
-                    if matched_script:
-                        break
-                if not matched_script:
-                    if runtime_s > _UNMATCHED_RUNTIME_CRITICAL_S:
-                        matched_script = "_unknown_"
-                        matched_baseline = _UNMATCHED_DEFAULT_BASELINE_S
-                    else:
+                matched = _match_script_baseline(cmdline_list, baselines)
+                if matched is None:
+                    matched = _resolve_unmatched(runtime_s)
+                    if matched is None:
                         continue
+                matched_script, matched_baseline = matched
                 category = self._classify(runtime_s, matched_baseline)
                 if category is SpeedCategory.NORMAL:
                     continue
@@ -165,11 +188,7 @@ class SpeedBaselineChecker:
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
 
-        result.classifications = {
-            "slow": len([a for a in result.anomalies if a.category is SpeedCategory.SLOW]),
-            "very_slow": len([a for a in result.anomalies if a.category is SpeedCategory.VERY_SLOW]),
-            "critical_slow": len([a for a in result.anomalies if a.category is SpeedCategory.CRITICAL_SLOW]),
-        }
+        result.classifications = _build_classifications(result.anomalies)
         return result
 
 
