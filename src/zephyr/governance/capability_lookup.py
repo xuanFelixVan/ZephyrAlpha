@@ -397,28 +397,11 @@ class CapabilityLookup:
                 info.module_id = m.group(1).strip()
                 continue
             # docstring 首行提取（三引号后第一行非空内容）
-            if not in_docstring:
-                for quote in ('"""', "'''"):
-                    if quote in stripped:
-                        after = stripped.split(quote, 1)[1]
-                        # 单行 docstring（如 """xxx"""）
-                        if quote in after:
-                            inner = after.split(quote, 1)[0].strip()
-                            if inner and not info.docstring:
-                                info.docstring = inner
-                            break
-                        # 多行 docstring 开始
-                        in_docstring = True
-                        docstring_quote = quote
-                        if after.strip():
-                            docstring_collected.append(after.strip())
-                        break
-            else:
-                if docstring_quote in stripped:
-                    break
-                stripped_s = stripped.strip()
-                if stripped_s and len(docstring_collected) < 2:
-                    docstring_collected.append(stripped_s)
+            stop_loop, in_docstring, docstring_quote = _scan_header_docstring_step(
+                stripped, in_docstring, docstring_quote, docstring_collected, info
+            )
+            if stop_loop:
+                break
         if docstring_collected and not info.docstring:
             info.docstring = docstring_collected[0]
         return info
@@ -480,7 +463,7 @@ class CapabilityLookup:
             if override_header:
                 self._fill_from_header(cap, override_header)
             cap.duplicates = []
-            # ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
+            #ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
             # 同目录下的 .py 文件是包组件，不是 conflicting duplicates。
             # 病根：aliases 含包内模块 basename 时，auto-derive 把同目录模块
             # 误判为 conflicting（如 code_dedup_trackers 的 6 个 tracker 模块）。
@@ -530,7 +513,7 @@ class CapabilityLookup:
                 )
 
         cap.duplicates = []
-        # ARCH-031 治本（2026-07-01）：auto-derived canonical 是 __init__.py 时，
+        #ARCH-031 治本（2026-07-01）：auto-derived canonical 是 __init__.py 时，
         # 同目录 .py 文件是包组件，排除出 duplicates（同 override 分支逻辑）。
         _pkg_dir = self._package_dir_if_marker(canonical_path)
         for path, header in sorted_cands[1:]:
@@ -786,33 +769,10 @@ class CapabilityLookup:
             declared_paths = {cap.canonical_file}
             declared_paths.update(d.get("path", "") for d in cap.duplicates)
             declared_paths.update(d.get("path", "") for d in cap.removed_duplicates)
-            for path, header in self._disk_headers.items():
-                if path in declared_paths:
-                    continue
-                is_candidate = False
-                match_reason = ""
-                # 信号 1：module_id 与 canonical 相同（同 module_id 多文件 = 重复实现）
-                if canonical_module_id and header.module_id == canonical_module_id:
-                    is_candidate = True
-                    match_reason = f"same module_id={header.module_id}"
-                # 信号 2：module_path 与 canonical 相同
-                #   （如两文件 [MODULE] 都声称 zephyr.xxx.rollback_executor——头部错声明或真重复）
-                if canonical_module_path and header.module_path == canonical_module_path:
-                    is_candidate = True
-                    match_reason = (match_reason + "; " if match_reason else "") + \
-                                   f"same module_path={header.module_path}"
-                if is_candidate:
-                    cap.pending_candidates.append({
-                        "path": path,
-                        "module_id": header.module_id,
-                        "module_path": header.module_path,
-                        "blueprint_id": header.blueprint_id,
-                        "domain": header.domain,
-                        "maturity": header.maturity,
-                        "docstring": header.docstring,
-                        "match_reason": match_reason,
-                        "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
-                    })
+            _collect_pending_candidates(
+                cap, self._disk_headers, canonical_module_id,
+                canonical_module_path, declared_paths
+            )
 
     # ---- 查询 API ----
 
@@ -1108,7 +1068,7 @@ class CapabilityLookup:
             detail = ""
 
             if info is None:
-                # ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
+                #ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
                 # 追加磁盘 basename 碰撞检测（根vs子目录同名文件）。
                 # 病根：原直接 continue -> 新 AI 可在 governance/ 根目录重建子目录同名文件，
                 # basename 不撞 capability 但构成磁盘碰撞，三层门禁无一层检测。
@@ -1362,6 +1322,78 @@ def yaml_safe_load(path: Path) -> dict:
     """延迟 import yaml，避免 zephyr.governance.__init__ 加载顺序问题。"""
     import yaml
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def _scan_header_docstring_step(stripped: str, in_docstring: bool,
+                                docstring_quote: str, docstring_collected: list[str],
+                                info: HeaderInfo) -> tuple[bool, bool, str]:
+    """处理单行 docstring 跟踪（_parse_header_from_text 提取的内联步骤）。
+
+    返回 (stop_loop, in_docstring, docstring_quote)：
+      - stop_loop=True 表示遇到多行 docstring 结束三引号，外层应 break
+      - in_docstring / docstring_quote 为更新后的状态
+    info 与 docstring_collected 在原位被修改（与原内联逻辑等价）。
+    """
+    if not in_docstring:
+        for quote in ('"""', "'''"):
+            if quote in stripped:
+                after = stripped.split(quote, 1)[1]
+                # 单行 docstring（如 """xxx"""）
+                if quote in after:
+                    inner = after.split(quote, 1)[0].strip()
+                    if inner and not info.docstring:
+                        info.docstring = inner
+                    return (False, in_docstring, docstring_quote)
+                # 多行 docstring 开始
+                in_docstring = True
+                docstring_quote = quote
+                if after.strip():
+                    docstring_collected.append(after.strip())
+                return (False, in_docstring, docstring_quote)
+        return (False, in_docstring, docstring_quote)
+    if docstring_quote in stripped:
+        return (True, in_docstring, docstring_quote)
+    stripped_s = stripped.strip()
+    if stripped_s and len(docstring_collected) < 2:
+        docstring_collected.append(stripped_s)
+    return (False, in_docstring, docstring_quote)
+
+
+def _collect_pending_candidates(cap: CapabilityEntry, disk_headers: dict[str, HeaderInfo],
+                                canonical_module_id: str, canonical_module_path: str,
+                                declared_paths: set[str]) -> None:
+    """从磁盘头部中发现 pending 重复候选（同 module_id 或同 module_path）。
+
+    _reconcile 提取的内联步骤：遍历 disk_headers，跳过 declared_paths，
+    匹配 canonical_module_id / canonical_module_path，命中则 append 到 cap.pending_candidates。
+    """
+    for path, header in disk_headers.items():
+        if path in declared_paths:
+            continue
+        is_candidate = False
+        match_reason = ""
+        # 信号 1：module_id 与 canonical 相同（同 module_id 多文件 = 重复实现）
+        if canonical_module_id and header.module_id == canonical_module_id:
+            is_candidate = True
+            match_reason = f"same module_id={header.module_id}"
+        # 信号 2：module_path 与 canonical 相同
+        #   （如两文件 [MODULE] 都声称 zephyr.xxx.rollback_executor——头部错声明或真重复）
+        if canonical_module_path and header.module_path == canonical_module_path:
+            is_candidate = True
+            match_reason = (match_reason + "; " if match_reason else "") + \
+                           f"same module_path={header.module_path}"
+        if is_candidate:
+            cap.pending_candidates.append({
+                "path": path,
+                "module_id": header.module_id,
+                "module_path": header.module_path,
+                "blueprint_id": header.blueprint_id,
+                "domain": header.domain,
+                "maturity": header.maturity,
+                "docstring": header.docstring,
+                "match_reason": match_reason,
+                "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
+            })
 
 
 # ---------------------------------------------------------------------------
