@@ -117,6 +117,44 @@ class HealthStatus(BaseModel):
     evaluated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
+def _check_slo_threshold(
+    violations: list[SLOViolation],
+    metric: str,
+    value: float,
+    hard_threshold: float,
+    soft_threshold: float,
+    hard_breached: bool,
+    soft_breached: bool,
+) -> int:
+    """Append an SLO violation for ``metric`` when a hard/soft threshold is breached.
+
+    Returns 1 when the hard threshold is breached (so the caller can increment
+    ``hard_count``), otherwise 0. Mirrors the original ``if hard ... elif soft``
+    ladder by returning early after a hard violation so the soft branch is
+    skipped, preserving identical behavior.
+    """
+    if hard_breached:
+        violations.append(
+            SLOViolation(
+                metric=metric,
+                value=value,
+                threshold=hard_threshold,
+                severity="hard",
+            )
+        )
+        return 1
+    if soft_breached:
+        violations.append(
+            SLOViolation(
+                metric=metric,
+                value=value,
+                threshold=soft_threshold,
+                severity="soft",
+            )
+        )
+    return 0
+
+
 class AgentHealthMonitor:
     """三态 Agent 健康监控器，消费 OrchestrationResult 事件。
 
@@ -171,106 +209,54 @@ class AgentHealthMonitor:
 
         violations: list[SLOViolation] = []
         hard_count = 0
+        window_full = len(self._latencies) >= self._window
+        has_samples = len(self._latencies) > 0
 
-        if latency_p99 > self._slo.latency_p99_ms_hard:
-            violations.append(
-                SLOViolation(
-                    metric="latency_p99_ms",
-                    value=latency_p99,
-                    threshold=self._slo.latency_p99_ms_hard,
-                    severity="hard",
-                )
-            )
-            hard_count += 1
-        elif latency_p99 > self._slo.latency_p99_ms_soft:
-            violations.append(
-                SLOViolation(
-                    metric="latency_p99_ms",
-                    value=latency_p99,
-                    threshold=self._slo.latency_p99_ms_soft,
-                    severity="soft",
-                )
-            )
-
-        if error_rate > self._slo.error_rate_hard:
-            violations.append(
-                SLOViolation(
-                    metric="error_rate",
-                    value=error_rate,
-                    threshold=self._slo.error_rate_hard,
-                    severity="hard",
-                )
-            )
-            hard_count += 1
-        elif error_rate > self._slo.error_rate_soft:
-            violations.append(
-                SLOViolation(
-                    metric="error_rate",
-                    value=error_rate,
-                    threshold=self._slo.error_rate_soft,
-                    severity="soft",
-                )
-            )
-
-        if throughput < self._slo.throughput_per_min_hard and len(self._latencies) >= self._window:
-            violations.append(
-                SLOViolation(
-                    metric="throughput_per_min",
-                    value=throughput,
-                    threshold=self._slo.throughput_per_min_hard,
-                    severity="hard",
-                )
-            )
-            hard_count += 1
-        elif throughput < self._slo.throughput_per_min_soft and len(self._latencies) >= self._window:
-            violations.append(
-                SLOViolation(
-                    metric="throughput_per_min",
-                    value=throughput,
-                    threshold=self._slo.throughput_per_min_soft,
-                    severity="soft",
-                )
-            )
-
-        if hallu_rate > self._slo.hallucination_rate_hard:
-            violations.append(
-                SLOViolation(
-                    metric="hallucination_rate",
-                    value=hallu_rate,
-                    threshold=self._slo.hallucination_rate_hard,
-                    severity="hard",
-                )
-            )
-            hard_count += 1
-        elif hallu_rate > self._slo.hallucination_rate_soft:
-            violations.append(
-                SLOViolation(
-                    metric="hallucination_rate",
-                    value=hallu_rate,
-                    threshold=self._slo.hallucination_rate_soft,
-                    severity="soft",
-                )
-            )
-
-        if ctx_util < self._slo.context_utilization_hard and len(self._latencies) >= self._window:
-            violations.append(
-                SLOViolation(
-                    metric="context_utilization",
-                    value=ctx_util,
-                    threshold=self._slo.context_utilization_hard,
-                    severity="hard",
-                )
-            )
-            hard_count += 1
-        elif ctx_util < self._slo.context_utilization_soft and len(self._latencies) > 0:
-            violations.append(
-                SLOViolation(
-                    metric="context_utilization",
-                    value=ctx_util,
-                    threshold=self._slo.context_utilization_soft,
-                    severity="soft",
-                )
-            )
+        hard_count += _check_slo_threshold(
+            violations,
+            "latency_p99_ms",
+            latency_p99,
+            self._slo.latency_p99_ms_hard,
+            self._slo.latency_p99_ms_soft,
+            latency_p99 > self._slo.latency_p99_ms_hard,
+            latency_p99 > self._slo.latency_p99_ms_soft,
+        )
+        hard_count += _check_slo_threshold(
+            violations,
+            "error_rate",
+            error_rate,
+            self._slo.error_rate_hard,
+            self._slo.error_rate_soft,
+            error_rate > self._slo.error_rate_hard,
+            error_rate > self._slo.error_rate_soft,
+        )
+        hard_count += _check_slo_threshold(
+            violations,
+            "throughput_per_min",
+            throughput,
+            self._slo.throughput_per_min_hard,
+            self._slo.throughput_per_min_soft,
+            throughput < self._slo.throughput_per_min_hard and window_full,
+            throughput < self._slo.throughput_per_min_soft and window_full,
+        )
+        hard_count += _check_slo_threshold(
+            violations,
+            "hallucination_rate",
+            hallu_rate,
+            self._slo.hallucination_rate_hard,
+            self._slo.hallucination_rate_soft,
+            hallu_rate > self._slo.hallucination_rate_hard,
+            hallu_rate > self._slo.hallucination_rate_soft,
+        )
+        hard_count += _check_slo_threshold(
+            violations,
+            "context_utilization",
+            ctx_util,
+            self._slo.context_utilization_hard,
+            self._slo.context_utilization_soft,
+            ctx_util < self._slo.context_utilization_hard and window_full,
+            ctx_util < self._slo.context_utilization_soft and has_samples,
+        )
 
         if hard_count > 0:
             state = HealthState.UNHEALTHY
