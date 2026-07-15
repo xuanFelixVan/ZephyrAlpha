@@ -279,6 +279,36 @@ def _get_http_host() -> str:
         return ""
 
 
+def _invalidate_tcp_client(reason: str = "") -> None:
+    """清理已断开的 TCP 连接单例 + 设置冷却期（CH 重启自愈，裁定 #ARCH-CH-014）。
+
+    当 client.execute 失败时调用，确保下次 _get_client() 会重新创建连接。
+    不清理的话 _get_client 快速路径1返回旧 Client，冷却期机制完全失效。
+    """
+    global _ch_client, _tcp_fail_ts
+    import time as _time
+    with _connect_lock:
+        if _ch_client is not None:
+            try:
+                _ch_client.disconnect()
+            except Exception:
+                pass
+            _ch_client = None
+            _tcp_fail_ts = _time.time()
+            log.info("TCP 连接已失效（%s），%ds 冷却后重试", reason, _TCP_COOLDOWN_SEC)
+
+
+def _invalidate_http_host(reason: str = "") -> None:
+    """清理已断开的 HTTP host 单例 + 设置冷却期（CH 重启自愈，裁定 #ARCH-CH-014）。"""
+    global _ch_http_host, _http_fail_ts
+    import time as _time
+    with _connect_lock:
+        if _ch_http_host is not None:
+            _ch_http_host = None
+            _http_fail_ts = _time.time()
+            log.info("HTTP 连接已失效（%s），%ds 冷却后重试", reason, _HTTP_COOLDOWN_SEC)
+
+
 def _http_insert(
     sql: str,
     tsv_bytes: bytes,
@@ -315,6 +345,7 @@ def _http_insert(
         return False
     except Exception as e:
         log.error("HTTP insert 异常: %s", e)
+        _invalidate_http_host(f"insert HTTP 失败: {e}")
         return False
 
 
@@ -353,6 +384,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                 return ""
         except Exception as e:
             log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
+            _invalidate_tcp_client(f"query execute 失败: {e}")
 
     # 策略2: HTTP API（18123，不依赖 WSL subprocess）
     http_host = _get_http_host()
@@ -370,6 +402,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
             conn.close()
         except Exception as e:
             log.warning("HTTP query 失败，降级到 WSL: %s", e)
+            _invalidate_http_host(f"query HTTP 失败: {e}")
 
     # 策略3: WSL subprocess（最终 fallback）
     try:
