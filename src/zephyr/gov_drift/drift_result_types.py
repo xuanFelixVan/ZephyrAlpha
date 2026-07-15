@@ -325,6 +325,128 @@ class DBSchemaDriftResult:
     index_inconsistencies: list[dict[str, object]] = field(default_factory=list)
 
 
+def _parse_orm_models(orm_model_files: list[Path]) -> dict[str, set[str]]:
+    """解析 ORM 模型文件，提取 表名 -> 字段集合 映射。"""
+    orm_tables: dict[str, set[str]] = {}
+    for mf in orm_model_files:
+        try:
+            content = mf.read_text(encoding="utf-8")
+            for match in re.finditer(
+                r"class\s+(\w+)\s*\(.*?(?:Model|Base).*?\):",
+                content,
+                re.DOTALL,
+            ):
+                class_name = match.group(1)
+                pos = match.end()
+                depth = 0
+                body = ""
+                for ch in content[pos:]:
+                    body += ch
+                    if ch == ":":
+                        depth += 1
+                    elif ch == "\n" and depth == 0:
+                        break
+                fields: set[str] = set()
+                for fm in re.finditer(
+                    r"(\w+)\s*=\s*Column\(|(\w+)\s*:\s*Mapped\[",
+                    body,
+                ):
+                    fname = fm.group(1) or fm.group(2)
+                    if fname and not fname.startswith("_"):
+                        fields.add(fname)
+                orm_tables[class_name.lower()] = fields
+        except Exception as e:
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            continue
+    return orm_tables
+
+
+def _scan_db_schema_files(db_files: list[Path], orm_tables: dict[str, set[str]]) -> list[DriftEvent]:
+    """扫描 DB 文件，对比实际 schema 与 ORM 模型，返回 schema 不匹配事件。"""
+    events: list[DriftEvent] = []
+    for db_file in db_files:
+        # 5.49.4 修复：原 try/except 中 conn 仅在成功路径关闭，异常分支泄漏。
+        # 改用 try/finally 保证连接在所有路径下关闭。
+        conn = None
+        try:
+            conn = get_db_connection(str(db_file))
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
+            db_tables = {row[0].lower() for row in cursor.fetchall()}
+            for tbl in db_tables:
+                cursor.execute(f"PRAGMA table_info({tbl})")
+                db_cols = {row[1].lower() for row in cursor.fetchall()}
+                orm_cols = orm_tables.get(tbl, set())
+                if orm_cols and db_cols != orm_cols:
+                    db_only = db_cols - orm_cols
+                    orm_only = orm_cols - db_cols
+                    events.append(
+                        DriftEvent(
+                            event_id=f"drift-db-{tbl}-schema",
+                            detector_id="db_schema_drift",
+                            severity=Severity.MAJOR,
+                            source_file=str(db_file),
+                            description=(
+                                f"DB table {tbl}: schema mismatch. DB={len(db_cols)} cols, ORM={len(orm_cols)} cols"
+                            ),
+                            details=(f"DB only: {db_only}, ORM only: {orm_only}"),
+                            timestamp=datetime.now(UTC),
+                            state=DriftState.DETECTED,
+                            scan_level=ScanLevel.STANDARD,
+                            auto_fixable=False,
+                        )
+                    )
+                cursor.execute(f"PRAGMA index_list({tbl})")
+                db_indexes = {row[1].lower() for row in cursor.fetchall()}
+                for field_name, _field_set in orm_tables.items():
+                    if field_name == tbl:
+                        pass
+        except Exception as e:
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            continue
+        finally:
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception as e:
+                    logger.warning("conn close failed (%s: %s)", type(e).__name__, e, exc_info=True)
+    return events
+
+
+def _scan_migration_dirs(migration_dirs: list[Path], orm_tables: dict[str, set[str]]) -> list[DriftEvent]:
+    """扫描迁移目录，检查 ORM 表是否在最新迁移脚本中声明。"""
+    events: list[DriftEvent] = []
+    for mdir in migration_dirs:
+        try:
+            migration_files = sorted(
+                mdir.glob("*.py"),
+                key=lambda p: p.name,
+                reverse=True,
+            )
+            if migration_files:
+                latest = migration_files[0]
+                content = latest.read_text(encoding="utf-8")
+                for tbl_name in orm_tables:
+                    if tbl_name not in content.lower():
+                        events.append(
+                            DriftEvent(
+                                event_id=f"drift-mig-{tbl_name}-missing",
+                                detector_id="db_schema_drift",
+                                severity=Severity.MAJOR,
+                                source_file=str(latest),
+                                description=(f"ORM {tbl_name} missing from latest migration {latest.name}"),
+                                timestamp=datetime.now(UTC),
+                                state=DriftState.DETECTED,
+                                scan_level=ScanLevel.STANDARD,
+                                auto_fixable=False,
+                            )
+                        )
+        except Exception as e:
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            continue
+    return events
+
+
 def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
     """检测 DB Schema 三方对账漂移 — SQLite 实际 schema vs ORM 模型 vs 迁移脚本。
 
@@ -357,153 +479,12 @@ def detect_db_schema_drift(project_root: str) -> list[DriftEvent]:
 
 
     """
-
-    events: list[DriftEvent] = []
-
     db_files = list(Path(project_root).rglob("*.db"))
-
     orm_model_files = list(Path(project_root).rglob("**/models/*.py"))
-
     migration_dirs = list(Path(project_root).glob("**/migrations"))
-
-    orm_tables: dict[str, set[str]] = {}
-
-    for mf in orm_model_files:
-        try:
-            content = mf.read_text(encoding="utf-8")
-
-            for match in re.finditer(
-                r"class\s+(\w+)\s*\(.*?(?:Model|Base).*?\):",
-                content,
-                re.DOTALL,
-            ):
-                class_name = match.group(1)
-
-                pos = match.end()
-
-                depth = 0
-
-                body = ""
-
-                for ch in content[pos:]:
-                    body += ch
-
-                    if ch == ":":
-                        depth += 1
-
-                    elif ch == "\n" and depth == 0:
-                        break
-
-                fields: set[str] = set()
-
-                for fm in re.finditer(
-                    r"(\w+)\s*=\s*Column\(|(\w+)\s*:\s*Mapped\[",
-                    body,
-                ):
-                    fname = fm.group(1) or fm.group(2)
-
-                    if fname and not fname.startswith("_"):
-                        fields.add(fname)
-
-                orm_tables[class_name.lower()] = fields
-
-        except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            continue
-
-    for db_file in db_files:
-        # 5.49.4 修复：原 try/except 中 conn 仅在成功路径关闭，异常分支泄漏。
-        # 改用 try/finally 保证连接在所有路径下关闭。
-        conn = None
-        try:
-            conn = get_db_connection(str(db_file))
-
-            cursor = conn.cursor()
-
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
-
-            db_tables = {row[0].lower() for row in cursor.fetchall()}
-
-            for tbl in db_tables:
-                cursor.execute(f"PRAGMA table_info({tbl})")
-
-                db_cols = {row[1].lower() for row in cursor.fetchall()}
-
-                orm_cols = orm_tables.get(tbl, set())
-
-                if orm_cols and db_cols != orm_cols:
-                    db_only = db_cols - orm_cols
-
-                    orm_only = orm_cols - db_cols
-
-                    events.append(
-                        DriftEvent(
-                            event_id=f"drift-db-{tbl}-schema",
-                            detector_id="db_schema_drift",
-                            severity=Severity.MAJOR,
-                            source_file=str(db_file),
-                            description=(
-                                f"DB table {tbl}: schema mismatch. DB={len(db_cols)} cols, ORM={len(orm_cols)} cols"
-                            ),
-                            details=(f"DB only: {db_only}, ORM only: {orm_only}"),
-                            timestamp=datetime.now(UTC),
-                            state=DriftState.DETECTED,
-                            scan_level=ScanLevel.STANDARD,
-                            auto_fixable=False,
-                        )
-                    )
-
-                cursor.execute(f"PRAGMA index_list({tbl})")
-
-                db_indexes = {row[1].lower() for row in cursor.fetchall()}
-
-                for field_name, _field_set in orm_tables.items():
-                    if field_name == tbl:
-                        pass
-
-        except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            continue
-        finally:
-            if conn is not None:
-                try:
-                    conn.close()
-                except Exception as e:
-                    logger.warning("conn close failed (%s: %s)", type(e).__name__, e, exc_info=True)
-
-    for mdir in migration_dirs:
-        try:
-            migration_files = sorted(
-                mdir.glob("*.py"),
-                key=lambda p: p.name,
-                reverse=True,
-            )
-
-            if migration_files:
-                latest = migration_files[0]
-
-                content = latest.read_text(encoding="utf-8")
-
-                for tbl_name in orm_tables:
-                    if tbl_name not in content.lower():
-                        events.append(
-                            DriftEvent(
-                                event_id=f"drift-mig-{tbl_name}-missing",
-                                detector_id="db_schema_drift",
-                                severity=Severity.MAJOR,
-                                source_file=str(latest),
-                                description=(f"ORM {tbl_name} missing from latest migration {latest.name}"),
-                                timestamp=datetime.now(UTC),
-                                state=DriftState.DETECTED,
-                                scan_level=ScanLevel.STANDARD,
-                                auto_fixable=False,
-                            )
-                        )
-
-        except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            continue
-
+    orm_tables = _parse_orm_models(orm_model_files)
+    events = _scan_db_schema_files(db_files, orm_tables)
+    events.extend(_scan_migration_dirs(migration_dirs, orm_tables))
     return events
 
 
@@ -916,6 +897,108 @@ class DocCodeCoevolutionResult:
     interface_drifts: list[dict[str, str]] = field(default_factory=list)
 
 
+def _find_related_code_files(bp: Path, code_files: list[Path]) -> list[Path]:
+    """查找与蓝图相关的代码文件：路径前缀匹配 >=3 段，否则回退到名称关键字匹配。"""
+    bp_dir_parts = list(bp.parent.parts)
+    related_code: list[Path] = []
+    for cf in code_files:
+        cf_parts = list(cf.parent.parts)
+        common = sum(1 for a, b in zip(bp_dir_parts, cf_parts, strict=False) if a == b)
+        if common >= 3:
+            related_code.append(cf)
+    if not related_code:
+        bp_name_key = bp.parent.name.lower().replace("-detector", "").replace("_", "")
+        for cf in code_files:
+            if bp_name_key in str(cf).lower():
+                related_code.append(cf)
+    return related_code
+
+
+def _detect_temporal_drift(blueprint_files: list[Path], code_files: list[Path], seven_days: float) -> list[DriftEvent]:
+    """检测时序漂移：代码文件 mtime 比对应蓝图晚 >7 天则视为蓝图过期。"""
+    events: list[DriftEvent] = []
+    for bp in blueprint_files:
+        try:
+            bp_mtime = bp.stat().st_mtime
+            bp_mtime_dt = datetime.fromtimestamp(bp_mtime, tz=UTC)
+        except Exception as e:
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            continue
+        related_code = _find_related_code_files(bp, code_files)
+        for cf in related_code:
+            try:
+                cf_mtime = cf.stat().st_mtime
+                if cf_mtime > bp_mtime + seven_days:
+                    cf_mtime_dt = datetime.fromtimestamp(cf_mtime, tz=UTC)
+                    events.append(
+                        DriftEvent(
+                            event_id=(f"drift-doc-{bp.stem}-{cf.stem}-code-newer"),
+                            detector_id="doc_code_coevolution",
+                            severity=Severity.MAJOR,
+                            source_file=str(cf),
+                            description=(f"Code {cf.name} newer than blueprint {bp.name} >7 days"),
+                            details=(
+                                f"Blueprint mtime: {bp_mtime_dt.isoformat()}, Code mtime: {cf_mtime_dt.isoformat()}"
+                            ),
+                            timestamp=datetime.now(UTC),
+                            state=DriftState.DETECTED,
+                            scan_level=ScanLevel.STANDARD,
+                            auto_fixable=False,
+                        )
+                    )
+            except Exception as e:
+                logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+                continue
+    return events
+
+
+def _detect_interface_drift(blueprint_files: list[Path], code_files: list[Path]) -> list[DriftEvent]:
+    """检测接口漂移：蓝图中声明的函数签名在代码中找不到定义。"""
+    events: list[DriftEvent] = []
+    _BLUEPRINT_IFACE_ALL_RX: re.Pattern[str] = re.compile(
+        r"###\s+§\d+\.\d+\s+(\w+).*?\n(.*?)(?=\n###\s+§|\Z)",
+        re.DOTALL,
+    )
+    for bp in blueprint_files:
+        try:
+            bp_content = bp.read_text(encoding="utf-8")
+        except Exception as e:
+            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            continue
+        sections = _BLUEPRINT_IFACE_ALL_RX.findall(bp_content)
+        bp_module_name = bp.parent.name.lower().replace("-detector", "").replace("_", "")
+        for iface_name, iface_body in sections:
+            func_matches = re.findall(r"`(\w+)\(([^)]*)\)`", iface_body)
+            for func_name, _func_args in func_matches:
+                found_in_code = False
+                for cf in code_files:
+                    cf_key = str(cf).lower()
+                    if bp_module_name in cf_key or bp.stem in cf_key:
+                        try:
+                            cf_content = cf.read_text(encoding="utf-8")
+                            if f"def {func_name}" in cf_content:
+                                found_in_code = True
+                                break
+                        except Exception as e:
+                            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
+                            continue
+                if not found_in_code:
+                    events.append(
+                        DriftEvent(
+                            event_id=(f"drift-doc-iface-{func_name}-missing"),
+                            detector_id="doc_code_coevolution",
+                            severity=Severity.MAJOR,
+                            source_file=str(bp),
+                            description=(f"Blueprint interface {func_name}() not found in code"),
+                            timestamp=datetime.now(UTC),
+                            state=DriftState.DETECTED,
+                            scan_level=ScanLevel.STANDARD,
+                            auto_fixable=False,
+                        )
+                    )
+    return events
+
+
 def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
     """检测文档-代码共演化漂移 — 蓝图与代码的双向同步检查。
 
@@ -942,143 +1025,23 @@ def detect_doc_code_coevolution(project_root: str) -> list[DriftEvent]:
 
 
     """
-
-    events: list[DriftEvent] = []
-
     docs_root = Path(project_root) / "docs"
-
     src_root = Path(project_root) / "src"
-
     blueprint_files: list[Path] = []
-
     if docs_root.exists():
         blueprint_files = list(Path(project_root).rglob("**/blueprint.md"))
-
     code_files: list[Path] = []
-
     if src_root.exists():
         code_files = [
             p
             for p in Path(project_root).rglob("*.py")
             if all(s not in str(p).lower() for s in (".git", "__pycache__", ".venv", "venv"))
         ]
-
     if not blueprint_files:
-        return events
-
+        return []
     SEVEN_DAYS: float = 7.0 * 86400.0
-
-    for bp in blueprint_files:
-        try:
-            bp_mtime = bp.stat().st_mtime
-
-            bp_mtime_dt = datetime.fromtimestamp(bp_mtime, tz=UTC)
-
-        except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            continue
-
-        bp_dir_parts = list(bp.parent.parts)
-
-        related_code: list[Path] = []
-
-        for cf in code_files:
-            cf_parts = list(cf.parent.parts)
-
-            common = sum(1 for a, b in zip(bp_dir_parts, cf_parts, strict=False) if a == b)
-
-            if common >= 3:
-                related_code.append(cf)
-
-        if not related_code:
-            bp_name_key = bp.parent.name.lower().replace("-detector", "").replace("_", "")
-
-            for cf in code_files:
-                if bp_name_key in str(cf).lower():
-                    related_code.append(cf)
-
-        for cf in related_code:
-            try:
-                cf_mtime = cf.stat().st_mtime
-
-                if cf_mtime > bp_mtime + SEVEN_DAYS:
-                    cf_mtime_dt = datetime.fromtimestamp(cf_mtime, tz=UTC)
-
-                    events.append(
-                        DriftEvent(
-                            event_id=(f"drift-doc-{bp.stem}-{cf.stem}-code-newer"),
-                            detector_id="doc_code_coevolution",
-                            severity=Severity.MAJOR,
-                            source_file=str(cf),
-                            description=(f"Code {cf.name} newer than blueprint {bp.name} >7 days"),
-                            details=(
-                                f"Blueprint mtime: {bp_mtime_dt.isoformat()}, Code mtime: {cf_mtime_dt.isoformat()}"
-                            ),
-                            timestamp=datetime.now(UTC),
-                            state=DriftState.DETECTED,
-                            scan_level=ScanLevel.STANDARD,
-                            auto_fixable=False,
-                        )
-                    )
-
-            except Exception as e:
-                logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-                continue
-
-    _BLUEPRINT_IFACE_ALL_RX: re.Pattern[str] = re.compile(
-        r"###\s+§\d+\.\d+\s+(\w+).*?\n(.*?)(?=\n###\s+§|\Z)",
-        re.DOTALL,
-    )
-
-    for bp in blueprint_files:
-        try:
-            bp_content = bp.read_text(encoding="utf-8")
-
-        except Exception as e:
-            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            continue
-
-        sections = _BLUEPRINT_IFACE_ALL_RX.findall(bp_content)
-
-        bp_module_name = bp.parent.name.lower().replace("-detector", "").replace("_", "")
-
-        for iface_name, iface_body in sections:
-            func_matches = re.findall(r"`(\w+)\(([^)]*)\)`", iface_body)
-
-            for func_name, _func_args in func_matches:
-                found_in_code = False
-
-                for cf in code_files:
-                    cf_key = str(cf).lower()
-
-                    if bp_module_name in cf_key or bp.stem in cf_key:
-                        try:
-                            cf_content = cf.read_text(encoding="utf-8")
-
-                            if f"def {func_name}" in cf_content:
-                                found_in_code = True
-
-                                break
-
-                        except Exception as e:
-                            logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
-                            continue
-
-                if not found_in_code:
-                    events.append(
-                        DriftEvent(
-                            event_id=(f"drift-doc-iface-{func_name}-missing"),
-                            detector_id="doc_code_coevolution",
-                            severity=Severity.MAJOR,
-                            source_file=str(bp),
-                            description=(f"Blueprint interface {func_name}() not found in code"),
-                            timestamp=datetime.now(UTC),
-                            state=DriftState.DETECTED,
-                            scan_level=ScanLevel.STANDARD,
-                            auto_fixable=False,
-                        )
-                    )
-
+    events = _detect_temporal_drift(blueprint_files, code_files, SEVEN_DAYS)
+    events.extend(_detect_interface_drift(blueprint_files, code_files))
     return events
 
 
