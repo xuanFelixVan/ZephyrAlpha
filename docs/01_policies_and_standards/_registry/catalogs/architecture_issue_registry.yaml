@@ -1841,6 +1841,41 @@ entries:
   created: '2026-07-15'
   last_updated: '2026-07-15'
 
+# --- #ARCH-CH-014: ch_writer 连接断开后冷却期失效——单例不自愈缺陷 ---
+- issue_id: '#ARCH-CH-014'
+  title: ch_writer 连接断开后冷却期失效——单例不自愈缺陷
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    ch_writer 的 _ch_client (TCP) 和 _ch_http_host (HTTP) 单例在连接成功后被缓存。
+    当 CH 重启导致连接断开时，query()/_http_insert() 的 execute/请求失败路径
+    不清理单例 + 不设冷却期，导致下次调用 _get_client()/_get_http_host() 的快速路径1
+    返回已断开的旧单例，冷却期机制完全失效。表现：CH 重启后 scheduler 持续 degraded，
+    必须人工重启 scheduler 才能恢复，违反"永久系统必须全自动"硬约束。
+
+    裁定（治本方案）：
+    (1) 新增 _invalidate_tcp_client(reason) 函数：清理 _ch_client=None + 设 _tcp_fail_ts
+    (2) 新增 _invalidate_http_host(reason) 函数：清理 _ch_http_host=None + 设 _http_fail_ts
+    (3) query() TCP execute 失败时调用 _invalidate_tcp_client()
+    (4) query() HTTP 请求失败时调用 _invalidate_http_host()
+    (5) _http_insert() HTTP 请求失败时调用 _invalidate_http_host()
+    修复后自愈链路：execute 失败 → 清理单例+设冷却期 → 冷却期过后重试 → 成功
+
+    这是 #ARCH-CH-010（冷却期机制）的深化修复——原设计只处理"首次连接失败"场景，
+    未处理"连接成功后断开"场景。
+  impact:
+  - src/zephyr/data/ch_writer.py（新增 _invalidate_tcp_client + _invalidate_http_host + 3 处失败路径调用）
+  fix_phase: 已完成
+  status: resolved
+  related_rules:
+  - '#ARCH-CH-004'
+  - '#ARCH-CH-010'
+  - '#ARCH-CH-012'
+  - '#ARCH-CH-013'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
 # --- #ARCH-DATA-014: L2 行情权限缺失——优雅降级+权限预检 ---
 - issue_id: '#ARCH-DATA-014'
   title: L2 行情权限缺失——优雅降级到五档快照+权限预检机制
