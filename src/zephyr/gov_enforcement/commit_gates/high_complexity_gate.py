@@ -76,8 +76,25 @@ __all__ = ["make_high_complexity_gate"]
 _MAX_COMPLEXITY = 15
 
 
+def _walk_excluding_nested_funcs(node):
+    """遍历 AST 节点的所有后代，但不递归进入嵌套函数定义。
+
+    McCabe 复杂度应只计算函数自身的决策点，不包含嵌套函数体内的决策点。
+    嵌套函数由调用方（gate）独立检查，不计入父函数复杂度。
+
+    裁定#215 修复（2026-07-15）：原实现用 ast.walk(node) 递归进入嵌套函数体，
+    将嵌套函数的决策点计入父函数，导致复杂度虚高（如 make_create_guard wrapper
+    报告 105 实际 1，_read_config_file 报告 81 实际 3）。
+    """
+    for child in ast.iter_child_nodes(node):
+        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue  # 不递归进入嵌套函数
+        yield child
+        yield from _walk_excluding_nested_funcs(child)
+
+
 def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
-    """计算函数的循环复杂度（McCabe）。
+    """计算函数的循环复杂度（McCabe），不递归进入嵌套函数。
 
     基础复杂度=1，每个决策点+1：
     - If / IfExp
@@ -85,9 +102,11 @@ def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     - ExceptHandler
     - BoolOp(And/Or) 每个操作数（len(values)-1）
     - comprehension 的 if 子句
+
+    裁定#215：不递归进入嵌套函数体（嵌套函数由 gate 独立检查）。
     """
     complexity = 1
-    for child in ast.walk(node):
+    for child in _walk_excluding_nested_funcs(node):
         if isinstance(child, (ast.If, ast.IfExp)):
             complexity += 1
         elif isinstance(child, (ast.For, ast.AsyncFor, ast.While)):
