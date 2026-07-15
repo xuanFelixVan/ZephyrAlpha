@@ -160,7 +160,7 @@ src/zephyr/data/audit_logs/*
 src/zephyr/data/telemetry/*
 
 # P6b 治本：autonomy_core 运行时缓存/状态（代码运行时自动生成，不应入库）
-# ARCH-033: 文件迁移到 skills/ 子目录后更新路径
+#ARCH-033: 文件迁移到 skills/ 子目录后更新路径
 src/zephyr/autonomy_core/skills/_benchmark_history.json
 src/zephyr/autonomy_core/skills/_freshness.json
 src/zephyr/autonomy_core/skills/_skill_cache/
@@ -228,7 +228,7 @@ data/semantic_test/
 scripts/governance/meta/_backups/
 # Runtime-generated hash snapshot (validate_gate_engine_external.py L82)
 scripts/governance/meta/gate_engine_hashes.json
-# ARCH-041: backup_runtime_state.py 默认输出路径（治标，git history 是真源）
+#ARCH-041: backup_runtime_state.py 默认输出路径（治标，git history 是真源）
 tmp/runtime_backups/
 
 # tmp/ 全目录忽略（治本 2026-07-05，AI-03 审计 P13）
@@ -283,7 +283,7 @@ config/.env.postgres
 config/.env.clickhouse
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
-# ARCH-DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径（已迁移到 tmp/pg_backups/，与 backup_runtime_state.py 标杆对齐）
+# DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径（已迁移到 tmp/pg_backups/，与 backup_runtime_state.py 标杆对齐）
 data/databases/backups/
 
 # Model quick exam profiles (runtime data, regenerable; same policy as data/brain/passports/)

@@ -3205,7 +3205,7 @@ graph TD
 | 96 | test_code_simulator.py | → | D_GOV_CODE_QUALITY 代码质量治理: 代码模拟器——播放录制的克隆演化序列，stress-te... | 测试依赖 / test_depends |
 | 97 | test_function_discovery.py | → | D_GOV_CODE_QUALITY 代码质量治理: 共享函数主动发现 — 签名+语义双通道从被动到主动... | 测试依赖 / test_depends |
 | 98 | test_simplicity_auditor.py | → | D_GOV_CODE_QUALITY 代码质量治理: 引擎成本效益自审计器 — SAS 0-100 月度审计 + Ta... | 测试依赖 / test_depends |
-| 99 | test_arch_reference_gate.py — #ARCH-NNN 悬空引... | → | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN / #ARCH-DOM... | 测试依赖 / test_depends |
+| 99 | test_arch_reference_gate.py — #ARCH-NNN 悬空引... | → | D_GOV_CODE_QUALITY 代码质量治理: arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN | 测试依赖 / test_depends |
 | 100 | test_bare_getenv_gate.py — NO-BARE-GETENV 门禁... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_getenv_gate.py — 裸 os.getenv 读密钥阻断.... | 测试依赖 / test_depends |
 | 101 | test_bare_sql_gate.py — NO-BARE-SQL 门禁单测 (... | → | D_GOV_CODE_QUALITY 代码质量治理: bare_sql_gate.py — 裸SQL字面量阻断门禁（NO-BAR... | 测试依赖 / test_depends |
 | 102 | test_capability_overlap_gate.py — CAPABILITY-O... | → | D_GOV_CODE_QUALITY 代码质量治理: capability_overlap_gate.py — 新建 .py 文件 Cap... | 测试依赖 / test_depends |
