@@ -181,6 +181,38 @@ class AlphaSignalPipeline:
             idempotency_key=key,
         )
 
+        # Preflight: 契约检查 + 因子发现
+        early_return = self._run_preflight(result)
+        if early_return is not None:
+            return early_return
+
+        # Factor compute: 并行计算因子信号
+        result.stage = PipelineStage.FACTOR_COMPUTE
+        factor_signals = self._compute_factors(result, key)
+        if not factor_signals:
+            result.status = "no_signals"
+            return result
+
+        # Signal synthesis: 多因子加权聚合
+        result.stage = PipelineStage.SIGNAL_SYNTHESIS
+        synthesized = self._run_synthesis(factor_signals, key)
+        synthesized = self._flatten_signals(synthesized)
+
+        # Signal validation: 极端信号检测 + 置信度计算
+        extreme_signal_detected = self._detect_extreme_signals(synthesized)
+        self._finalize_confidence_and_degradation(result, synthesized, extreme_signal_detected)
+        self._record_degraded_errors(result)
+
+        # Capital allocation: 最终阶段
+        result.stage = PipelineStage.CAPITAL_ALLOCATION
+        result.status = "completed_with_errors" if result.errors else "completed"
+        result.completed_at = now_utc().isoformat()
+        return result
+
+    # ===== run() 各阶段辅助方法 =====
+
+    def _run_preflight(self, result: PipelineResult) -> PipelineResult | None:
+        """Preflight: 检查契约可用性和因子注册状态。返回 None=通过，PipelineResult=提前返回。"""
         if not _CONTRACTS_AVAILABLE:
             result.errors.append(
                 {
@@ -211,10 +243,11 @@ class AlphaSignalPipeline:
                 }
             )
             return result
+        return None
 
+    def _compute_factors(self, result: PipelineResult, key: str) -> list:
+        """并行计算所有因子，返回因子信号列表。"""
         factor_signals: list = []
-        result.stage = PipelineStage.FACTOR_COMPUTE
-
         builtins_snapshot = self._snapshot_builtins() if self._builtins_guard_enabled else frozenset()
 
         with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(self._factors))) as executor:
@@ -222,48 +255,58 @@ class AlphaSignalPipeline:
                 executor.submit(self._compute_single, factor_cls, key): factor_cls for factor_cls in self._factors
             }
             for future in as_completed(futures):
-                try:
-                    signals = future.result()
-                    if self._builtins_guard_enabled:
-                        violations = self._check_builtins_integrity(builtins_snapshot)
-                        if violations:
-                            result.factors_failed += 1
-                            result.errors.append(
-                                {
-                                    "stage": PipelineStage.FACTOR_COMPUTE.value,
-                                    "factor": futures[future].__name__,
-                                    "error": f"BUILTINS TAMPERED: {violations}",
-                                }
-                            )
-                            continue
-                    if signals:
-                        factor_signals.extend(signals if isinstance(signals, list) else [signals])
-                        result.factors_computed += 1
-                except Exception as e:
+                self._collect_factor_result(future, futures, factor_signals, builtins_snapshot, result)
+        return factor_signals
+
+    def _collect_factor_result(
+        self,
+        future: Any,
+        futures: dict,
+        factor_signals: list,
+        builtins_snapshot: frozenset,
+        result: PipelineResult,
+    ) -> None:
+        """收集单个因子计算结果。"""
+        try:
+            signals = future.result()
+            if self._builtins_guard_enabled:
+                violations = self._check_builtins_integrity(builtins_snapshot)
+                if violations:
                     result.factors_failed += 1
                     result.errors.append(
                         {
                             "stage": PipelineStage.FACTOR_COMPUTE.value,
                             "factor": futures[future].__name__,
-                            "error": str(e),
+                            "error": f"BUILTINS TAMPERED: {violations}",
                         }
                     )
+                    return
+            if signals:
+                factor_signals.extend(signals if isinstance(signals, list) else [signals])
+                result.factors_computed += 1
+        except Exception as e:
+            result.factors_failed += 1
+            result.errors.append(
+                {
+                    "stage": PipelineStage.FACTOR_COMPUTE.value,
+                    "factor": futures[future].__name__,
+                    "error": str(e),
+                }
+            )
 
-        if not factor_signals:
-            result.status = "no_signals"
-            return result
-
-        result.stage = PipelineStage.SIGNAL_SYNTHESIS
-        synthesized = self._run_synthesis(factor_signals, key)
-
+    @staticmethod
+    def _flatten_signals(synthesized: list) -> list:
+        """展平信号列表（处理嵌套列表）。"""
         flat_signals: list = []
         for item in synthesized:
             if isinstance(item, list):
                 flat_signals.extend(item)
             else:
                 flat_signals.append(item)
-        synthesized = flat_signals
+        return flat_signals
 
+    def _detect_extreme_signals(self, synthesized: list) -> bool:
+        """检测极端信号值和置信度，返回是否检测到极端信号。"""
         extreme_signal_detected = False
         for s in synthesized:
             sv = getattr(s, "signal_value", 0.0)
@@ -273,7 +316,15 @@ class AlphaSignalPipeline:
             meta_conf = getattr(s, "confidence", 0.0)
             if meta_conf > self._EXTREME_WEIGHT_THRESHOLD:
                 self._degraded_reasons.append(f"Extreme confidence={meta_conf:.4f} > {self._EXTREME_WEIGHT_THRESHOLD}")
+        return extreme_signal_detected
 
+    def _finalize_confidence_and_degradation(
+        self,
+        result: PipelineResult,
+        synthesized: list,
+        extreme_signal_detected: bool,
+    ) -> None:
+        """计算置信度并确定降级状态。"""
         result.signal_count = len(synthesized)
         raw_confidence = self._aggregate_confidence(synthesized)
 
@@ -293,28 +344,26 @@ class AlphaSignalPipeline:
                 f"Extreme weight detected: raw_confidence={raw_confidence:.4f} > {self._EXTREME_WEIGHT_THRESHOLD}"
             )
 
-        if result.degraded:
-            for reason in self._degraded_reasons:
-                result.errors.append(
-                    {
-                        "stage": PipelineStage.SIGNAL_VALIDATION.value,
-                        "message": reason,
-                        "confidence": result.confidence,
-                    }
-                )
-            if result.confidence < 0.5 and not self._degraded_reasons:
-                result.errors.append(
-                    {
-                        "stage": PipelineStage.SIGNAL_VALIDATION.value,
-                        "message": f"Signal degraded: confidence={result.confidence:.3f} < 0.5",
-                        "confidence": result.confidence,
-                    }
-                )
-
-        result.stage = PipelineStage.CAPITAL_ALLOCATION
-        result.status = "completed_with_errors" if result.errors else "completed"
-        result.completed_at = now_utc().isoformat()
-        return result
+    def _record_degraded_errors(self, result: PipelineResult) -> None:
+        """记录降级原因到错误列表。"""
+        if not result.degraded:
+            return
+        for reason in self._degraded_reasons:
+            result.errors.append(
+                {
+                    "stage": PipelineStage.SIGNAL_VALIDATION.value,
+                    "message": reason,
+                    "confidence": result.confidence,
+                }
+            )
+        if result.confidence < 0.5 and not self._degraded_reasons:
+            result.errors.append(
+                {
+                    "stage": PipelineStage.SIGNAL_VALIDATION.value,
+                    "message": f"Signal degraded: confidence={result.confidence:.3f} < 0.5",
+                    "confidence": result.confidence,
+                }
+            )
 
     def _compute_single(self, factor_cls: type, idempotency_key: str) -> list | None:
         instance = factor_cls()
