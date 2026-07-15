@@ -121,6 +121,31 @@ class TLBRecord:
     limit: int = 100
 
 
+def _check_maturity_gate(
+    maturity: Any, operation: str
+) -> tuple[bool, str] | None:
+    """成熟度门控：L0_INTERN 只能读，返回拒绝元组或 None（继续）."""
+    if maturity is MaturityLevel.L0_INTERN:
+        if not operation.startswith("read:"):
+            return (False, f"Maturity L0_INTERN cannot perform: {operation}")
+    return None
+
+
+def _check_sensitivity_gate(
+    sensitivity: SensitivityLabel, maturity: Any
+) -> tuple[bool, str] | None:
+    """敏感度门控，返回拒绝元组或 None（继续）."""
+    if sensitivity in SENSITIVITY_MIN_MATURITY:
+        required = SENSITIVITY_MIN_MATURITY[sensitivity]
+        levels = list(MaturityLevel)
+        if maturity and levels.index(maturity) < levels.index(required):
+            return (
+                False,
+                f"Sensitivity {sensitivity.value} requires maturity {required.value}",
+            )
+    return None
+
+
 class ABACGuard:
     """基于属性的权限守卫.
 
@@ -217,52 +242,27 @@ class ABACGuard:
             or operation.startswith("execute:")
         )
 
-    def check(self, agent: object, ctx: ABACContext) -> tuple[bool, str]:
-        """检查操作权限.
+    def _evaluate_tlb(
+        self, agent_id: str, maturity: Any
+    ) -> tuple[bool, str] | None:
+        """评估 TLB 限额，返回拒绝元组或 None（继续）."""
+        if agent_id in self._tlb:
+            record = self._tlb[agent_id]
+        else:
+            limit = MATURITY_TLB_LIMITS.get(
+                maturity.value if maturity else "L0_INTERN", 100
+            )
+            record = TLBRecord(agent_id=agent_id, counter=0, limit=limit)
+            self._tlb[agent_id] = record
+        record.counter += 1
+        if record.counter > record.limit:
+            return (False, f"TLB limit exceeded for {agent_id} (limit={record.limit})")
+        return None
 
-        Args:
-            agent: AgentIdentity 实例
-            ctx: ABAC 上下文
-
-        Returns:
-            tuple[bool, str]: (是否允许, 原因)
-        """
-        operation = getattr(ctx, "operation", "")
-        maturity = getattr(agent, "maturity", None)
-        agent_id = getattr(agent, "session_id", "")
-
-        # TLB 检查
-        if agent_id:
-            if agent_id in self._tlb:
-                record = self._tlb[agent_id]
-            else:
-                limit = MATURITY_TLB_LIMITS.get(
-                    maturity.value if maturity else "L0_INTERN", 100
-                )
-                record = TLBRecord(agent_id=agent_id, counter=0, limit=limit)
-                self._tlb[agent_id] = record
-            record.counter += 1
-            if record.counter > record.limit:
-                return (False, f"TLB limit exceeded for {agent_id} (limit={record.limit})")
-
-        # 成熟度检查 — L0_INTERN 只能读
-        if maturity is MaturityLevel.L0_INTERN:
-            if not operation.startswith("read:"):
-                return (False, f"Maturity L0_INTERN cannot perform: {operation}")
-
-        # 敏感度检查
-        sensitivity = getattr(ctx, "sensitivity", SensitivityLabel.INTERNAL)
-        if sensitivity in SENSITIVITY_MIN_MATURITY:
-            required = SENSITIVITY_MIN_MATURITY[sensitivity]
-            levels = list(MaturityLevel)
-            if maturity and levels.index(maturity) < levels.index(required):
-                return (
-                    False,
-                    f"Sensitivity {sensitivity.value} requires maturity {required.value}",
-                )
-
-        # 时间检查
-        temporal = getattr(ctx, "temporal", TemporalCategory.NORMAL)
+    def _check_temporal_gate(
+        self, temporal: TemporalCategory, maturity: Any, operation: str
+    ) -> tuple[bool, str] | None:
+        """时间门控，返回拒绝元组或 None（继续）."""
         if temporal in (TemporalCategory.OFF_HOURS, TemporalCategory.WEEKEND):
             if maturity is MaturityLevel.L0_INTERN:
                 if temporal is TemporalCategory.WEEKEND:
@@ -286,6 +286,44 @@ class ABACGuard:
                         False,
                         f"Heavy operation throttled during lunch peak for {maturity.value}",
                     )
+        return None
+
+    def check(self, agent: object, ctx: ABACContext) -> tuple[bool, str]:
+        """检查操作权限.
+
+        Args:
+            agent: AgentIdentity 实例
+            ctx: ABAC 上下文
+
+        Returns:
+            tuple[bool, str]: (是否允许, 原因)
+        """
+        operation = getattr(ctx, "operation", "")
+        maturity = getattr(agent, "maturity", None)
+        agent_id = getattr(agent, "session_id", "")
+
+        # TLB 检查
+        if agent_id:
+            result = self._evaluate_tlb(agent_id, maturity)
+            if result is not None:
+                return result
+
+        # 成熟度检查 — L0_INTERN 只能读
+        result = _check_maturity_gate(maturity, operation)
+        if result is not None:
+            return result
+
+        # 敏感度检查
+        sensitivity = getattr(ctx, "sensitivity", SensitivityLabel.INTERNAL)
+        result = _check_sensitivity_gate(sensitivity, maturity)
+        if result is not None:
+            return result
+
+        # 时间检查
+        temporal = getattr(ctx, "temporal", TemporalCategory.NORMAL)
+        result = self._check_temporal_gate(temporal, maturity, operation)
+        if result is not None:
+            return result
 
         # 默认允许
         return (True, "allowed by ABAC")
