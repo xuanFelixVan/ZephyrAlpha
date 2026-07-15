@@ -308,6 +308,51 @@ def _process_module_artifacts(
     return consumed_keys, produced_keys
 
 
+def _load_read_blueprint_ids(metrics_path: Path) -> set[str] | None:
+    """读取 blueprint_reads.jsonl，返回已读蓝图 ID 集合。
+
+    返回 None 表示读取失败（OSError），调用方据此生成 G6-BLOCKED 消息。
+    """
+    try:
+        read_blueprints: set[str] = set()
+        with open(metrics_path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    record = json.loads(line)
+                except Exception:
+                    continue
+                if record.get("event") == "blueprint_read":
+                    read_blueprints.add(record.get("blueprint_id", ""))
+    except OSError:
+        return None
+    return read_blueprints
+
+
+def _compute_missing_blueprint_ids(candidates: list[dict], read_blueprints: set[str]) -> list[str]:
+    """计算候选蓝图中尚未被读取的 blueprint_id 列表（取前 3 个）。"""
+    missing: list[str] = []
+    for c in candidates[:3]:
+        bpid = c.get("blueprint_id", "")
+        if bpid and bpid not in read_blueprints:
+            missing.append(bpid)
+    return missing
+
+
+def _format_g6_violation(missing: list[str], candidates: list[dict], task_desc: str) -> str:
+    """构造 G6 Phase 2 硬合规阻断消息。"""
+    hint = candidates[0].get("hint", "")
+    return (
+        f"G6 Phase 2 硬合规阻断: AI 未读取以下蓝图即尝试执行 Pipeline"
+        f"——{'·'.join(missing)}。"
+        f"Phase 2 hard_compliance=true -> dispatch REJECTED。"
+        f"Action: invoke find_relevant_blueprint('{task_desc[:60]}') -> read §1-§5 -> record_blueprint_read() -> retry。"
+        + (f" Hint: {hint}" if hint else "")
+    )
+
+
 class PipelineOrchestrator:
     """M1-M11 双管线模型路由 + 模块编排
 
@@ -2645,37 +2690,13 @@ class PipelineOrchestrator:
                 f"Top blueprint: {candidates[0].get('blueprint_id', 'N/A')}"
             )
 
-        try:
-            read_blueprints: set[str] = set()
-            with open(metrics_path, encoding="utf-8") as fh:
-                for line in fh:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        record = json.loads(line)
-                    except Exception:
-                        continue
-                    if record.get("event") == "blueprint_read":
-                        read_blueprints.add(record.get("blueprint_id", ""))
-        except OSError:
+        read_blueprints = _load_read_blueprint_ids(metrics_path)
+        if read_blueprints is None:
             return f"G6-BLOCKED: Cannot read {metrics_path}. Confirm blueprint_read instrumentation is active."
 
-        missing: list[str] = []
-        for c in candidates[:3]:
-            bpid = c.get("blueprint_id", "")
-            if bpid and bpid not in read_blueprints:
-                missing.append(bpid)
-
+        missing = _compute_missing_blueprint_ids(candidates, read_blueprints)
         if missing:
-            hint = candidates[0].get("hint", "")
-            return (
-                f"G6 Phase 2 硬合规阻断: AI 未读取以下蓝图即尝试执行 Pipeline"
-                f"——{'·'.join(missing)}。"
-                f"Phase 2 hard_compliance=true -> dispatch REJECTED。"
-                f"Action: invoke find_relevant_blueprint('{task_desc[:60]}') -> read §1-§5 -> record_blueprint_read() -> retry。"
-                + (f" Hint: {hint}" if hint else "")
-            )
+            return _format_g6_violation(missing, candidates, task_desc)
         return None
 
     # ------------------------------------------------------------------
