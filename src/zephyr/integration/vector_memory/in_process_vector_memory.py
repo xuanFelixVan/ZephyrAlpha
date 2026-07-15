@@ -68,6 +68,25 @@ from zephyr.integration.vector_memory.collection_manager import (
 _logger = logging.getLogger(__name__)
 
 
+def _results_to_hits(results: dict[str, Any]) -> list[dict[str, Any]]:
+    """将 ChromaDB query 结果转换为标准 hits 列表。
+
+    从 search 中抽取（Extract Method），保持原有字段填充逻辑不变。
+    """
+    hits: list[dict[str, Any]] = []
+    if results.get("ids") and results["ids"][0]:
+        for i, doc_id in enumerate(results["ids"][0]):
+            hit: dict[str, Any] = {"id": doc_id}
+            if results.get("documents") and results["documents"][0]:
+                hit["content"] = results["documents"][0][i]
+            if results.get("distances") and results["distances"][0]:
+                hit["distance"] = results["distances"][0][i]
+            if results.get("metadatas") and results["metadatas"][0]:
+                hit["metadata"] = results["metadatas"][0][i]
+            hits.append(hit)
+    return hits
+
+
 class InProcessVectorMemory:
     COLLECTION_NAMES: ClassVar[tuple[str, ...]] = COLLECTION_NAMES
     VMS_PERSIST_DIR: ClassVar[Path] = VMS_PERSIST_DIR
@@ -261,19 +280,17 @@ class InProcessVectorMemory:
             _logger.warning("VMS: 所有检索路径失败，降级到 InMemoryMemoryBackend (L3)")
         return self._in_memory_backend
 
-    def search(
+    def _search_via_hybrid_retriever(
         self,
-        collection_name: str,
         query: str,
-        k: int = 5,
-    ) -> list[dict[str, Any]]:
-        from zephyr.integration.vector_memory.bridge_layer import COLLECTION_ALIASES
+        collection_name: str,
+        k: int,
+    ) -> list[dict[str, Any]] | None:
+        """HybridRetriever 检索路径（Phase 3）。
 
-        collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
-        col = self._collection_manager.get_collection(collection_name)
-        if col.count() == 0:
-            return []
-
+        从 search 中抽取（Extract Method）。返回 hits 列表；若 HybridRetriever
+        不可用或检索失败，返回 None 以便调用方降级到原始 ChromaDB 检索。
+        """
         if self._hybrid_retriever is not None and self._started:
             try:
                 trace = self._hybrid_retriever.search(query, collection_name, k=k)
@@ -292,34 +309,54 @@ class InProcessVectorMemory:
                 return hits
             except Exception:
                 _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索", exc_info=True)
+        return None
+
+    def _query_chromadb(
+        self,
+        col: Any,
+        query: str,
+        collection_name: str,
+        k: int,
+    ) -> dict[str, Any]:
+        """执行 ChromaDB 查询（优先 embedding，失败回退 text 查询）。
+
+        从 search 中抽取（Extract Method），保持原有嵌入/文本查询分支与降级逻辑。
+        """
+        try:
+            if (
+                self._started and self._embedding_router.bge_m3_available
+            ) or self._embedding_router.bge_small_available:
+                query_embedding = self._embedding_router.embed(query, collection_name)
+                results = col.query(
+                    query_embeddings=[query_embedding.tolist()],
+                    n_results=min(k, col.count()),
+                )
+            else:
+                results = col.query(query_texts=[query], n_results=min(k, col.count()))
+        except Exception:
+            results = col.query(query_texts=[query], n_results=min(k, col.count()))
+        return results
+
+    def search(
+        self,
+        collection_name: str,
+        query: str,
+        k: int = 5,
+    ) -> list[dict[str, Any]]:
+        from zephyr.integration.vector_memory.bridge_layer import COLLECTION_ALIASES
+
+        collection_name = COLLECTION_ALIASES.get(collection_name, collection_name)
+        col = self._collection_manager.get_collection(collection_name)
+        if col.count() == 0:
+            return []
+
+        hits = self._search_via_hybrid_retriever(query, collection_name, k)
+        if hits is not None:
+            return hits
 
         try:
-            try:
-                if (
-                    self._started and self._embedding_router.bge_m3_available
-                ) or self._embedding_router.bge_small_available:
-                    query_embedding = self._embedding_router.embed(query, collection_name)
-                    results = col.query(
-                        query_embeddings=[query_embedding.tolist()],
-                        n_results=min(k, col.count()),
-                    )
-                else:
-                    results = col.query(query_texts=[query], n_results=min(k, col.count()))
-            except Exception:
-                results = col.query(query_texts=[query], n_results=min(k, col.count()))
-
-            hits: list[dict[str, Any]] = []
-            if results.get("ids") and results["ids"][0]:
-                for i, doc_id in enumerate(results["ids"][0]):
-                    hit: dict[str, Any] = {"id": doc_id}
-                    if results.get("documents") and results["documents"][0]:
-                        hit["content"] = results["documents"][0][i]
-                    if results.get("distances") and results["distances"][0]:
-                        hit["distance"] = results["distances"][0][i]
-                    if results.get("metadatas") and results["metadatas"][0]:
-                        hit["metadata"] = results["metadatas"][0][i]
-                    hits.append(hit)
-            return hits
+            results = self._query_chromadb(col, query, collection_name, k)
+            return _results_to_hits(results)
         except Exception:
             _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)", exc_info=True)
             return self._get_in_memory_backend().search(query, k=k)
