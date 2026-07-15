@@ -45,6 +45,7 @@ RUNNING: Final[str] = "RUNNING"
 SUCCESS: Final[str] = "SUCCESS"
 FAILED: Final[str] = "FAILED"
 BLOCKED: Final[str] = "BLOCKED"  # 前置失败，不可执行
+DEFERRED_PERSISTENCE: Final[str] = "DEFERRED_PERSISTENCE"  # 已本地持久化，待回灌
 
 
 # class-name-alias: MOD-L00-004 数据源集成器的 DAG 依赖图 + 优先级队列，与 infrastructure/queue/task_queue.py 的后台任务队列同名不同义，过渡期共存（阶段4退役旧版或重命名）
@@ -207,6 +208,17 @@ class TaskQueue:
             if task_id not in self._tasks:
                 raise KeyError("未知 task_id")
             self._status[task_id] = FAILED
+
+    def mark_deferred_persistence(self, task_id: str) -> None:
+        """标记数据已本地持久化但尚未提交 ClickHouse。
+
+        此状态不是 SUCCESS，依赖任务不能据此启动；回灌确认后由调度器转为
+        SUCCESS，避免把可恢复的存储延迟误判为数据丢失。
+        """
+        with self._lock:
+            if task_id not in self._tasks:
+                raise KeyError("未知 task_id")
+            self._status[task_id] = DEFERRED_PERSISTENCE
 
     def reset(self, task_id: str | None = None) -> None:
         """重置任务状态为 PENDING。task_id=None 重置全部。"""

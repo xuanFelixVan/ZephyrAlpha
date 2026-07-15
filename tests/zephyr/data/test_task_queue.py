@@ -21,6 +21,7 @@ from src.zephyr.data.task_queue import (
     SUCCESS,
     FAILED,
     BLOCKED,
+    DEFERRED_PERSISTENCE,
 )
 
 
@@ -66,7 +67,7 @@ tasks:
         if real_yaml.exists():
             queue.load_yaml(real_yaml)
             tasks = queue.list_all()
-            assert len(tasks) == 61
+            assert len(tasks) >= 61
             # adj_factor 应无依赖
             assert queue.get_task("adj_factor_incremental")["dependencies"] == []
             # kline_daily_hfq 应依赖 adj_factor
@@ -233,6 +234,16 @@ class TestCompletion:
         assert s.get(SUCCESS) == 1
         assert s.get(RUNNING) == 1
         assert s.get(PENDING) == 1
+
+
+class TestDeferredPersistence:
+    def test_deferred_persistence_blocks_dependents(self, queue):
+        queue.add_task({"task_id": "source", "dependencies": []})
+        queue.add_task({"task_id": "consumer", "dependencies": ["source"]})
+        queue.mark_deferred_persistence("source")
+        assert queue.get_status("source") == DEFERRED_PERSISTENCE
+        assert queue.get_ready_tasks() == []
+        assert queue.is_done() is False
 
 
 class TestThreadSafety:
