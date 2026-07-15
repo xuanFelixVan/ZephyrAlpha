@@ -92,6 +92,8 @@ layers:
     valid_backtest_start: "2022-01-01"
     hot_ttl: null  # 无TTL，永久保留
     cold_policy: "手动归档（≥2年后人工触发）"
+    classification_keywords: [tick, l2_tick, auction, realtime, index_quote]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.tick_data
       - c1_market.index_quote
@@ -108,6 +110,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "手动归档（≥5年后人工触发）"
+    classification_keywords: ["1min", "5min", "15min", "30min", "60min"]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.kline_1min
       - c1_market.kline_5min
@@ -125,6 +129,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "手动归档（≥10年后人工触发）"
+    classification_keywords: [kline_daily, kline_weekly, kline_monthly, adj_factor, daily_valuation, kline_index, kline_sector, etf_nav, index_weight, stock_indicator]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.kline_daily
       - c1_market.kline_daily_hfq
@@ -145,6 +151,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "手动归档（≥5年后人工触发）"
+    classification_keywords: [margin, block_trade, dragon_tiger, money_flow, hk_connect, limit_up_down]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.margin_trading
       - c1_market.block_trade
@@ -162,6 +170,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "不归档（体积小，永久Hot）"
+    classification_keywords: [balance_sheet, income_statement, cashflow, financial_indicator, main_business, earnings_forecast, express_report, audit_opinion, dividend, rights_issue, equity_pledge, shareholder, share_change, repurchase]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c3_fundamental.balance_sheet
       - c3_fundamental.income_statement
@@ -187,6 +197,8 @@ layers:
     valid_backtest_start: "2010-01-01"  # 受限于日K起点
     hot_ttl: null
     cold_policy: "不归档（体积小，永久Hot）"
+    classification_keywords: [news, share_unlock, analyst_forecast, disclosure, restricted_shares]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c3_fundamental.news_data
       - c3_fundamental.share_unlock
@@ -206,13 +218,14 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "不归档（关系图谱，体积小）"
+    classification_keywords: [industry_class, sector_constituent, concept_board_constituent, sector_kline]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c3_fundamental.industry_class
       - c3_fundamental.industry_class_ifind
       - c3_fundamental.sector_constituent
-      - c1_market.sector_kline
       - pending: c1_market.industry_chain_graph  # 万得产业链全景图（待接入）
-    note: "万得产业链全景图归此层；本质是关系图谱（节点+边），不是时间序列；新闻事件→产业链→上下游传导分析"
+    note: "万得产业链全景图归此层；本质是关系图谱（节点+边），不是时间序列；板块K线(kline_sector)已归L3非L7；新闻事件→产业链→上下游传导分析"
 
   # ── 信号层（续） ──
 
@@ -226,6 +239,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "手动归档（≥5年后人工触发）"
+    classification_keywords: [futures, option, convertible_bond_iv, kline_cb, hk_kline, kline_hk, us_daily, kline_us, us_index, kline_futures]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.futures_kline
       - c1_market.futures_position
@@ -246,6 +261,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "不归档（体积小，永久Hot）"
+    classification_keywords: [macro_data, edb_data]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.macro_data
 
@@ -261,6 +278,8 @@ layers:
     valid_backtest_start: "2010-01-01"
     hot_ttl: null
     cold_policy: "不归档（体积极小）"
+    classification_keywords: [stock_list, trade_calendar, index_constituent, index_list, etf_list, etf_benchmark, lof_list, convertible_bond_list, hk_stock_list, hk_trade_calendar, st_stock_list, sector_list, sector_meta, market_index_meta, concept_board, concept_sector]
+    # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c1_market.stock_list
       - c1_market.trade_calendar
