@@ -109,6 +109,81 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
     return SessionRegistry(root)
 
 
+def _sweep_one_dir(
+    manager: WorktreeManager,
+    registry: SessionRegistry,
+    d: Path,
+    now: float,
+    age_threshold: int,
+    active_sids: set,
+) -> tuple[int, int, list[str]]:
+    """处理单个 stale worktree 候选目录，返回 (swept_delta, skipped_delta, warnings)。
+
+    三重保护判据（任一不满足则跳过）：
+    1. 目录 age > age_threshold（太新的不动，防误清并发 AI 正在创建的）
+    2. session 不在 active 注册表（活跃 session 不动）
+    3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
+    """
+    sid = d.name
+    # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
+    try:
+        mtime = d.stat().st_mtime
+    except OSError:
+        return 0, 1, []
+    if (now - mtime) < age_threshold:
+        return 0, 1, []
+    # 判据 2：活跃 session
+    if sid in active_sids:
+        return 0, 1, []
+    # 判据 3：分支 tip 在 main（有未合并提交的不动）
+    branch = manager._branch_name(sid)
+    r_v = manager._run_git(["git", "rev-parse", "--verify", branch])
+    has_branch = r_v.returncode == 0
+    warnings: list[str] = []
+    if has_branch:
+        r_mb = manager._run_git(
+            ["git", "merge-base", "--is-ancestor", branch, "HEAD"]
+        )
+        if r_mb.returncode != 0:
+            warnings.append(
+                f"{sid}: 分支有未合并提交，需人工评估（已跳过）"
+            )
+            return 0, 1, warnings
+    # 通过三重保护——清理
+    swept = 0
+    try:
+        is_registered = manager._worktree_exists(sid)
+        if is_registered:
+            rm = manager._run_git(
+                ["git", "worktree", "remove", "--force", str(d)]
+            )
+            if rm.returncode != 0:
+                manager._run_git(["git", "worktree", "prune"])
+                if d.exists():
+                    _force_rmtree(d)
+                manager._run_git(["git", "worktree", "prune"])
+        else:
+            manager._run_git(["git", "worktree", "prune"])
+            if d.exists():
+                _force_rmtree(d)
+            manager._run_git(["git", "worktree", "prune"])
+        if has_branch:
+            manager._run_git(["git", "branch", "-D", branch])
+        try:
+            registry.unregister(sid)
+        except Exception as e:
+            logger.warning("suppressed error in session_worktree", exc_info=True)
+        swept = 1
+        logger.info(
+            "session_worktree sweep: 清理 stale %s (registered=%s)",
+            sid, is_registered,
+        )
+    except Exception as e:
+        warnings.append(f"{sid}: 清理异常 {e}")
+        return 0, 1, warnings
+    return swept, 0, warnings
+
+
 def _sweep_stale_worktrees(
     manager: WorktreeManager,
     registry: SessionRegistry,
@@ -138,9 +213,6 @@ def _sweep_stale_worktrees(
     """
     import time as _time
 
-    swept = 0
-    skipped = 0
-    warnings: list[str] = []
     drafts = manager._drafts_dir
     if not drafts.exists():
         return {"swept": 0, "skipped": 0, "warnings": []}
@@ -156,70 +228,20 @@ def _sweep_stale_worktrees(
     except Exception:
         active_sids = set()
 
+    swept = 0
+    skipped = 0
+    warnings: list[str] = []
     try:
         with _WorktreeLock(manager.repo_root):
             for d in drafts.iterdir():
                 if not d.is_dir() or not d.name.startswith("sess-"):
                     continue
-                sid = d.name
-                # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
-                try:
-                    mtime = d.stat().st_mtime
-                except OSError:
-                    skipped += 1
-                    continue
-                if (now - mtime) < age_threshold:
-                    skipped += 1
-                    continue
-                # 判据 2：活跃 session
-                if sid in active_sids:
-                    skipped += 1
-                    continue
-                # 判据 3：分支 tip 在 main（有未合并提交的不动）
-                branch = manager._branch_name(sid)
-                r_v = manager._run_git(["git", "rev-parse", "--verify", branch])
-                has_branch = r_v.returncode == 0
-                if has_branch:
-                    r_mb = manager._run_git(
-                        ["git", "merge-base", "--is-ancestor", branch, "HEAD"]
-                    )
-                    if r_mb.returncode != 0:
-                        warnings.append(
-                            f"{sid}: 分支有未合并提交，需人工评估（已跳过）"
-                        )
-                        skipped += 1
-                        continue
-                # 通过三重保护——清理
-                try:
-                    is_registered = manager._worktree_exists(sid)
-                    if is_registered:
-                        rm = manager._run_git(
-                            ["git", "worktree", "remove", "--force", str(d)]
-                        )
-                        if rm.returncode != 0:
-                            manager._run_git(["git", "worktree", "prune"])
-                            if d.exists():
-                                _force_rmtree(d)
-                            manager._run_git(["git", "worktree", "prune"])
-                    else:
-                        manager._run_git(["git", "worktree", "prune"])
-                        if d.exists():
-                            _force_rmtree(d)
-                        manager._run_git(["git", "worktree", "prune"])
-                    if has_branch:
-                        manager._run_git(["git", "branch", "-D", branch])
-                    try:
-                        registry.unregister(sid)
-                    except Exception as e:
-                        logger.warning("suppressed error in session_worktree", exc_info=True)
-                    swept += 1
-                    logger.info(
-                        "session_worktree sweep: 清理 stale %s (registered=%s)",
-                        sid, is_registered,
-                    )
-                except Exception as e:
-                    warnings.append(f"{sid}: 清理异常 {e}")
-                    skipped += 1
+                d_swept, d_skipped, d_warnings = _sweep_one_dir(
+                    manager, registry, d, now, age_threshold, active_sids
+                )
+                swept += d_swept
+                skipped += d_skipped
+                warnings.extend(d_warnings)
     except Exception as e:
         warnings.append(f"sweep 整体异常（已中止）: {e}")
 
@@ -1069,6 +1091,75 @@ def _pre_merge_gate_check(
         return True, []
 
 
+def _execute_merge_and_build_msg(
+    manager: WorktreeManager,
+    session_id: str,
+    auto_cleaned: int,
+    skipped_files: list,
+) -> tuple[bool, bool, str]:
+    """执行 merge 并构建结果消息，返回 (merged, cleaned, msg)。
+
+    merge 成功后验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
+    merge 成功但清理失败时 cleaned=False（worktree 残留——session 保留供重试，
+    防孤儿 worktree 累积）。
+    """
+    merged = False
+    cleaned = False
+    msg = ""
+    try:
+        merged = manager.merge_session_worktree(session_id, delete_after=True)
+        if merged:
+            parts = ["merge 成功"]
+            if auto_cleaned > 0:
+                parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
+            if skipped_files:
+                parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
+            # 验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
+            # merge 成功但清理失败时 worktree 残留——此时不注销 session，
+            # 保留供重试 cleanup_session_worktree / abort（防孤儿 worktree 累积）。
+            wt_path = manager._wt_path(session_id)
+            if manager._worktree_exists(session_id) or wt_path.exists():
+                parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
+                msg = "".join(parts)
+                cleaned = False
+            else:
+                parts.append("，worktree 已清理")
+                msg = "".join(parts)
+                cleaned = True
+        else:
+            if skipped_files:
+                msg = (
+                    f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
+                    f"请手动处理：{skipped_files}"
+                )
+            else:
+                msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
+    except WorktreeError as e:
+        msg = f"merge 失败: {e}"
+    except Exception as e:
+        msg = f"unexpected: {e}"
+    return merged, cleaned, msg
+
+
+def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
+    """merge 后触发 reconciler 验证，返回 reconcile_results。
+
+    无变更文件时跳过；触发异常时降级为 warn 项（不阻断）。
+    """
+    reconcile_results: list[dict] = []
+    try:
+        committed_files = _get_merge_files(root)
+        if committed_files:
+            print(f"[RECONCILER] merge 后触发 reconciler 验证（{len(committed_files)} 个文件）...")
+            reconcile_results = _run_reconcilers_after_merge(committed_files, session_id, root)
+        else:
+            print("[RECONCILER] 无变更文件，跳过 reconciler")
+    except Exception as e:
+        print(f"[RECONCILER] 触发失败: {e}")
+        reconcile_results = [{"action": "warn", "detail": str(e)}]
+    return reconcile_results
+
+
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
@@ -1118,42 +1209,9 @@ def session_worktree_merge(
             "reconcile_results": [],
         }
 
-    merged = False
-    cleaned = False
-    msg = ""
-
-    try:
-        merged = manager.merge_session_worktree(session_id, delete_after=True)
-        if merged:
-            parts = ["merge 成功"]
-            if auto_cleaned > 0:
-                parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
-            if skipped_files:
-                parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
-            # 验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
-            # merge 成功但清理失败时 worktree 残留——此时不注销 session，
-            # 保留供重试 cleanup_session_worktree / abort（防孤儿 worktree 累积）。
-            wt_path = manager._wt_path(session_id)
-            if manager._worktree_exists(session_id) or wt_path.exists():
-                parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
-                msg = "".join(parts)
-                cleaned = False
-            else:
-                parts.append("，worktree 已清理")
-                msg = "".join(parts)
-                cleaned = True
-        else:
-            if skipped_files:
-                msg = (
-                    f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
-                    f"请手动处理：{skipped_files}"
-                )
-            else:
-                msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
-    except WorktreeError as e:
-        msg = f"merge 失败: {e}"
-    except Exception as e:
-        msg = f"unexpected: {e}"
+    merged, cleaned, msg = _execute_merge_and_build_msg(
+        manager, session_id, auto_cleaned, skipped_files
+    )
 
     # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
     unregistered = False
@@ -1166,16 +1224,7 @@ def session_worktree_merge(
     # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
     reconcile_results: list[dict] = []
     if reconcile_verify and merged and cleaned:
-        try:
-            committed_files = _get_merge_files(root)
-            if committed_files:
-                print(f"[RECONCILER] merge 后触发 reconciler 验证（{len(committed_files)} 个文件）...")
-                reconcile_results = _run_reconcilers_after_merge(committed_files, session_id, root)
-            else:
-                print("[RECONCILER] 无变更文件，跳过 reconciler")
-        except Exception as e:
-            print(f"[RECONCILER] 触发失败: {e}")
-            reconcile_results = [{"action": "warn", "detail": str(e)}]
+        reconcile_results = _run_post_merge_reconcile(root, session_id)
 
     return {
         "session_id": session_id,
@@ -1185,6 +1234,91 @@ def session_worktree_merge(
         "unregistered": unregistered,
         "reconcile_results": reconcile_results,
     }
+
+
+def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:
+    """将 files 规范化为相对 root 的相对路径列表（/ 分隔）。"""
+    rel_files: list[str] = []
+    for f in files:
+        p = Path(f)
+        if p.is_absolute():
+            try:
+                rel = p.relative_to(root)
+                rel_files.append(str(rel).replace("\\", "/"))
+            except ValueError:
+                rel_files.append(str(p).replace("\\", "/"))
+        else:
+            rel_files.append(str(p).replace("\\", "/"))
+    return rel_files
+
+
+def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
+    """批量查询 rel_files 中被 git tracked 的文件集合。"""
+    tracked_r = subprocess.run(
+        ["git", "ls-files", "--"] + rel_files,
+        cwd=str(root), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=60,
+    )
+    if tracked_r.returncode == 0 and tracked_r.stdout.strip():
+        return {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
+    return set()
+
+
+def _safe_unlink_main_file(main_file: Path) -> bool:
+    """尽力删除文件：先直接 unlink，失败时降权限重试（untracked 文件清理）。"""
+    try:
+        main_file.unlink()
+        return True
+    except OSError:
+        try:
+            os.chmod(str(main_file), 0o644)
+            main_file.unlink()
+            return True
+        except OSError:
+            return False
+
+
+def _dispose_main_workdir_files(
+    root: Path, rel_files: list[str], tracked_files: set[str],
+) -> int:
+    """分类处置主工作区文件：tracked 加入 checkout 列表，untracked 物理删除。
+
+    Returns:
+        清理的文件数（tracked 计数 + 成功删除的 untracked 计数）。
+    """
+    to_checkout: list[str] = []
+    cleaned = 0
+    for rel_file in rel_files:
+        main_file = root / rel_file
+        if rel_file in tracked_files:
+            # tracked 文件——用 git checkout 恢复到 HEAD（仅当有改动时才需要）
+            to_checkout.append(rel_file)
+            cleaned += 1
+        elif main_file.exists():
+            # untracked 文件——物理删除
+            if _safe_unlink_main_file(main_file):
+                cleaned += 1
+
+    if to_checkout:
+        subprocess.run(
+            ["git", "checkout", "--"] + to_checkout,
+            cwd=str(root), capture_output=True,
+        )
+    return cleaned
+
+
+def _clean_main_workdir_on_abort(files: list[str], root: Path) -> int:
+    """清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）。
+
+    tracked 文件用 git checkout -- 恢复到 HEAD（丢弃 AI 修改）；
+    untracked 文件物理删除（丢弃 AI 创建的新文件）。
+
+    Returns:
+        清理的文件数。
+    """
+    rel_files = _normalize_abort_files_to_rel(files, root)
+    tracked_files = _query_tracked_files(root, rel_files)
+    return _dispose_main_workdir_files(root, rel_files, tracked_files)
 
 
 def session_worktree_abort(
@@ -1226,53 +1360,7 @@ def session_worktree_abort(
 
     # 清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）
     if files:
-        rel_files: list[str] = []
-        for f in files:
-            p = Path(f)
-            if p.is_absolute():
-                try:
-                    rel = p.relative_to(root)
-                    rel_files.append(str(rel).replace("\\", "/"))
-                except ValueError:
-                    rel_files.append(str(p).replace("\\", "/"))
-            else:
-                rel_files.append(str(p).replace("\\", "/"))
-
-        # 批量查询 tracked 文件
-        tracked_r = subprocess.run(
-            ["git", "ls-files", "--"] + rel_files,
-            cwd=str(root), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=60,
-        )
-        tracked_files: set[str] = set()
-        if tracked_r.returncode == 0 and tracked_r.stdout.strip():
-            tracked_files = {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
-
-        to_checkout: list[str] = []
-        for rel_file in rel_files:
-            main_file = root / rel_file
-            if rel_file in tracked_files:
-                # tracked 文件——用 git checkout 恢复到 HEAD（仅当有改动时才需要）
-                to_checkout.append(rel_file)
-                main_cleaned += 1
-            elif main_file.exists():
-                # untracked 文件——物理删除
-                try:
-                    main_file.unlink()
-                    main_cleaned += 1
-                except OSError:
-                    try:
-                        os.chmod(str(main_file), 0o644)
-                        main_file.unlink()
-                        main_cleaned += 1
-                    except OSError:
-                        pass  # 尽力而为
-
-        if to_checkout:
-            subprocess.run(
-                ["git", "checkout", "--"] + to_checkout,
-                cwd=str(root), capture_output=True,
-            )
+        main_cleaned = _clean_main_workdir_on_abort(files, root)
 
     try:
         aborted = manager.cleanup_session_worktree(session_id)
