@@ -102,6 +102,40 @@ class LockBackend(ABC):
         ...
 
 
+def _collect_memory_conflicts(
+    task_id: str,
+    file_paths: list[str],
+    layer_locks: list[str] | None,
+    file_locks: dict[str, str],
+    layer_locks_map: dict[str, str],
+) -> list[str]:
+    """收集 MemoryLockBackend 的层锁/文件锁冲突 owner 列表（去重，保序）。
+
+    从 try_acquire 抽取——纯数据计算，不依赖 self。
+    """
+    conflicts: list[str] = []
+
+    for lyr in layer_locks or []:
+        owner = layer_locks_map.get(lyr)
+        if owner and owner != task_id:
+            if owner not in conflicts:
+                conflicts.append(owner)
+
+    for fp in file_paths:
+        owner = file_locks.get(fp)
+        if owner and owner != task_id:
+            if owner not in conflicts:
+                conflicts.append(owner)
+            continue
+
+        for lyr, layer_owner in layer_locks_map.items():
+            if lyr in fp and layer_owner and layer_owner != task_id:
+                if layer_owner not in conflicts:
+                    conflicts.append(layer_owner)
+
+    return conflicts
+
+
 class MemoryLockBackend(LockBackend):
     """内存锁后端——测试 + 单进程场景。"""
 
@@ -118,25 +152,13 @@ class MemoryLockBackend(LockBackend):
         layer_locks: list[str] | None = None,
     ) -> LockResult:
         with self._lock:
-            conflicts: list[str] = []
-
-            for lyr in layer_locks or []:
-                owner = self._layer_locks.get(lyr)
-                if owner and owner != task_id:
-                    if owner not in conflicts:
-                        conflicts.append(owner)
-
-            for fp in file_paths:
-                owner = self._file_locks.get(fp)
-                if owner and owner != task_id:
-                    if owner not in conflicts:
-                        conflicts.append(owner)
-                    continue
-
-                for lyr, layer_owner in self._layer_locks.items():
-                    if lyr in fp and layer_owner and layer_owner != task_id:
-                        if layer_owner not in conflicts:
-                            conflicts.append(layer_owner)
+            conflicts = _collect_memory_conflicts(
+                task_id,
+                file_paths,
+                layer_locks,
+                self._file_locks,
+                self._layer_locks,
+            )
 
             if conflicts:
                 return LockResult(
@@ -285,6 +307,18 @@ class FileLockBackend(LockBackend):
     def _ensure_root(self) -> None:
         os.makedirs(self._lock_root, exist_ok=True)
 
+    def _record_conflict_from_dir(
+        self, lock_dir: str, task_id: str, conflicts: list[str]
+    ) -> None:
+        """读取锁目录 owner 并按需记录冲突任务（去重）。
+
+        从 try_acquire 抽取——3 处重复的冲突记录逻辑。
+        """
+        owner = self._read_owner(lock_dir)
+        conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
+        if conflict_task != task_id and conflict_task not in conflicts:
+            conflicts.append(conflict_task)
+
     def try_acquire(
         self,
         task_id: str,
@@ -305,10 +339,7 @@ class FileLockBackend(LockBackend):
                     if self._is_stale(lock_dir):
                         self._cleanup_stale(lock_dir)
                     else:
-                        owner = self._read_owner(lock_dir)
-                        conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
-                        if conflict_task != task_id and conflict_task not in conflicts:
-                            conflicts.append(conflict_task)
+                        self._record_conflict_from_dir(lock_dir, task_id, conflicts)
                         continue
 
                 try:
@@ -321,15 +352,9 @@ class FileLockBackend(LockBackend):
                             os.makedirs(lock_dir, exist_ok=False)
                             self._write_owner(lock_dir, task_id)
                         except FileExistsError:
-                            owner = self._read_owner(lock_dir)
-                            conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
-                            if conflict_task != task_id and conflict_task not in conflicts:
-                                conflicts.append(conflict_task)
+                            self._record_conflict_from_dir(lock_dir, task_id, conflicts)
                     else:
-                        owner = self._read_owner(lock_dir)
-                        conflict_task = owner.get("task_id", "unknown") if owner else "unknown"
-                        if conflict_task != task_id and conflict_task not in conflicts:
-                            conflicts.append(conflict_task)
+                        self._record_conflict_from_dir(lock_dir, task_id, conflicts)
 
             if conflicts:
                 return LockResult(
