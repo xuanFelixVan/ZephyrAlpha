@@ -87,6 +87,73 @@ class DedupExtractor(BaseFixer):
         stripped = [l.strip() for l in lines if l.strip() and not l.strip().startswith("#")]
         return "\n".join(stripped)
 
+    def _collect_function_bodies(
+        self, content: str, tree: ast.AST
+    ) -> dict[str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]]:
+        function_bodies: dict[
+            str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]
+        ] = defaultdict(list)
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                body_lines = ast.get_source_segment(content, node)
+                if body_lines and len(body_lines.strip()) > 50:
+                    normalized = self._normalize_code(body_lines)
+                    h = hashlib.sha256(normalized.encode()).hexdigest()[:16]
+                    function_bodies[h].append((content, node))
+        return function_bodies
+
+    def _build_shared_function(
+        self,
+        content: str,
+        first_func: ast.FunctionDef | ast.AsyncFunctionDef,
+        shared_name: str,
+    ) -> str | None:
+        body_source = ast.get_source_segment(content, first_func)
+        if not body_source:
+            return None
+        shared_func = f"def {shared_name}(*args, **kwargs):\n"
+        for line in body_source.split("\n")[1:]:
+            shared_func += f"    {line.strip()}\n" if line.strip() else "\n"
+        return shared_func
+
+    def _replace_duplicate_functions(
+        self,
+        content: str,
+        function_bodies: dict[str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]],
+    ) -> tuple[list[str], str, int]:
+        new_functions: list[str] = []
+        replacements_made = 0
+        for h, funcs in function_bodies.items():
+            if len(funcs) < self._min_occurrences:
+                continue
+            first_func = funcs[0][1]
+            shared_name = f"_shared_{first_func.name}_{h[:6]}"
+            shared_func = self._build_shared_function(content, first_func, shared_name)
+            if shared_func is None:
+                continue
+            new_functions.append(shared_func)
+            for _, func_node in funcs[1:]:
+                old_call = ast.get_source_segment(content, func_node)
+                if old_call:
+                    new_call = f"def {func_node.name}(*args, **kwargs):\n    return {shared_name}(*args, **kwargs)"
+                    content = content.replace(old_call, new_call)
+                    replacements_made += 1
+        return new_functions, content, replacements_made
+
+    def _persist_fix(self, target: str, content: str) -> bool:
+        tmp_path = f"{target}.{os.getpid()}.tmp"
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                f.write(content)
+            os.replace(tmp_path, target)
+            return True
+        except PermissionError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+            return False
+
     def fix(self, target: str, dry_run: bool = False) -> FixAction:
         action = FixAction(
             action_type=self.action_type,
@@ -102,34 +169,10 @@ class DedupExtractor(BaseFixer):
             content = target_path.read_text(encoding="utf-8")
             original = content
             tree = ast.parse(content)
-            function_bodies: dict[str, list[tuple[str, ast.FunctionDef | ast.AsyncFunctionDef]]] = defaultdict(list)
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    body_lines = ast.get_source_segment(content, node)
-                    if body_lines and len(body_lines.strip()) > 50:
-                        normalized = self._normalize_code(body_lines)
-                        h = hashlib.sha256(normalized.encode()).hexdigest()[:16]
-                        function_bodies[h].append((content, node))
-            new_functions: list[str] = []
-            replacements_made = 0
-            for h, funcs in function_bodies.items():
-                if len(funcs) < self._min_occurrences:
-                    continue
-                first_func = funcs[0][1]
-                shared_name = f"_shared_{first_func.name}_{h[:6]}"
-                body_source = ast.get_source_segment(content, first_func)
-                if not body_source:
-                    continue
-                shared_func = f"def {shared_name}(*args, **kwargs):\n"
-                for line in body_source.split("\n")[1:]:
-                    shared_func += f"    {line.strip()}\n" if line.strip() else "\n"
-                new_functions.append(shared_func)
-                for _, func_node in funcs[1:]:
-                    old_call = ast.get_source_segment(content, func_node)
-                    if old_call:
-                        new_call = f"def {func_node.name}(*args, **kwargs):\n    return {shared_name}(*args, **kwargs)"
-                        content = content.replace(old_call, new_call)
-                        replacements_made += 1
+            function_bodies = self._collect_function_bodies(content, tree)
+            new_functions, content, replacements_made = self._replace_duplicate_functions(
+                content, function_bodies
+            )
             if new_functions and replacements_made > 0:
                 insert_pos = content.find("\n\nclass ") if "\nclass " in content else len(content)
                 for func_def in new_functions:
@@ -139,16 +182,7 @@ class DedupExtractor(BaseFixer):
                 action.metadata["shared_functions"] = len(new_functions)
                 action.metadata["replacements"] = replacements_made
                 if not dry_run:
-                    tmp_path = f"{target}.{os.getpid()}.tmp"
-                    try:
-                        with open(tmp_path, "w", encoding="utf-8") as f:
-                            f.write(content)
-                        os.replace(tmp_path, target)
-                    except PermissionError:
-                        try:
-                            os.remove(tmp_path)
-                        except OSError:
-                            pass
+                    if not self._persist_fix(target, content):
                         action.status = FixStatus.FAILED
                         return action
                 action.status = FixStatus.COMPLETED
