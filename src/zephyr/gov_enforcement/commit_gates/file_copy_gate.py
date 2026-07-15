@@ -81,6 +81,107 @@ _DUP_SCRIPT = os.path.join(
 _THRESHOLD = 0.7
 
 
+def _get_staged_new_py_files(gateway) -> list[str]:
+    """获取 staged 新增 .py 文件（非 tests/ 豁免）。
+
+    fail-open 情形（git diff 失败/异常）记录告警并返回 []——
+    与「无新增 .py 文件」在调用侧同走 (True, "") 放行路径。
+    """
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "FILE-COPY gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return []
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "FILE-COPY gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return []
+    return [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+
+
+def _resolve_abs_files(new_py_files, repo_root):
+    """解析相对路径为绝对路径（对标 gateway.project_root 主仓库根），
+    过滤不存在的文件（防御性）。"""
+    abs_files = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(repo_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _run_dup_checker(abs_files, repo_root):
+    """subprocess 调用 check_code_duplication.py --files --ast --threshold。
+
+    返回 CompletedProcess；fail-open 情形（脚本缺失/超时/异常）记录告警并返回 None。
+    """
+    if not os.path.isfile(_DUP_SCRIPT):
+        logger.warning(
+            "FILE-COPY gate fail-open: check_code_duplication.py 不存在(%s)，检测器失效。",
+            _DUP_SCRIPT,
+        )
+        return None
+    try:
+        return subprocess.run(
+            [sys.executable, _DUP_SCRIPT,
+             "--files"] + abs_files +
+            ["--ast", "--threshold", str(_THRESHOLD)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=repo_root,
+            timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning(
+            "FILE-COPY gate fail-open: check_code_duplication.py 超时(120s)，检测器失效。"
+        )
+        return None
+    except Exception as e:
+        logger.warning(
+            "FILE-COPY gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+
+def _parse_dup_result(result) -> tuple[bool, str]:
+    """解析 check_code_duplication.py 退出码。
+
+    exit 0 = 无违规（放行）；exit 2 = 脚本异常（fail-open）；
+    exit 1 = 检出违规（硬阻断，提取相似度行作 detail）。
+    """
+    if result.returncode == 0:
+        return True, ""
+    if result.returncode == 2:
+        logger.warning(
+            "FILE-COPY gate fail-open: check_code_duplication.py 异常(exit 2)：%s",
+            result.stderr[:200] if result.stderr else "",
+        )
+        return True, ""
+    # exit 1 = 检出违规，硬阻断；解析输出提取违规详情（相似度行）
+    details: list[str] = []
+    for line in (result.stdout + result.stderr).splitlines():
+        line = line.strip()
+        if line and not line.startswith("FILE COPY") and not line.startswith("新文件") and not line.startswith("---"):
+            details.append(line)
+    detail_str = "; ".join(details[:5]) if details else "文件复制检测违规（见 check_code_duplication.py 输出）"
+    return False, f"新增 .py 文件与已有同名文件 AST 相似度>{_THRESHOLD:.0%}: {detail_str}"
+
+
 def make_file_copy_gate() -> GateSpec:
     """构造新增 .py 文件复制检测阻断门禁 GateSpec（硬阻断型）。
 
@@ -90,29 +191,8 @@ def make_file_copy_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "FILE-COPY gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "FILE-COPY gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
-            return True, ""
-
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
+        # 1. 获取 staged 新增 .py 文件（fail-open 时返回 []）
+        new_py_files = _get_staged_new_py_files(gateway)
         if not new_py_files:
             return True, ""
 
@@ -121,69 +201,17 @@ def make_file_copy_gate() -> GateSpec:
         #    新文件在主仓库工作树存在（AI 用 Write/Edit 写项目根）。
         #    主仓库路径使 script 的 new_resolved 排除集正确排除新文件自身。
         repo_root = str(gateway.project_root)
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(repo_root, rel.replace("/", os.sep)))
-
-        # 过滤不存在的文件（防御性）
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        abs_files = _resolve_abs_files(new_py_files, repo_root)
         if not abs_files:
             return True, ""
 
         # 3. subprocess 调用 check_code_duplication.py --files --ast --threshold 0.7
-        if not os.path.isfile(_DUP_SCRIPT):
-            logger.warning(
-                "FILE-COPY gate fail-open: check_code_duplication.py 不存在(%s)，检测器失效。",
-                _DUP_SCRIPT,
-            )
+        #    fail-open（脚本缺失/超时/异常）时返回 None → 放行
+        result = _run_dup_checker(abs_files, repo_root)
+        if result is None:
             return True, ""
 
-        try:
-            result = subprocess.run(
-                [sys.executable, _DUP_SCRIPT,
-                 "--files"] + abs_files +
-                ["--ast", "--threshold", str(_THRESHOLD)],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                cwd=repo_root,
-                timeout=120,
-            )
-        except subprocess.TimeoutExpired:
-            logger.warning(
-                "FILE-COPY gate fail-open: check_code_duplication.py 超时(120s)，检测器失效。"
-            )
-            return True, ""
-        except Exception as e:
-            logger.warning(
-                "FILE-COPY gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
-            return True, ""
-
-        # 4. 解析结果
-        # exit 0 = 无违规；exit 1 = 有违规（EXIT_FINDINGS）；exit 2 = 脚本异常（EXIT_ERROR）
-        if result.returncode == 0:
-            return True, ""  # 无违规
-        if result.returncode == 2:
-            logger.warning(
-                "FILE-COPY gate fail-open: check_code_duplication.py 异常(exit 2)：%s",
-                result.stderr[:200] if result.stderr else "",
-            )
-            return True, ""  # 脚本异常，fail-open
-
-        # exit 1 = 检出违规，硬阻断
-        # 解析输出提取违规详情（相似度行）
-        details: list[str] = []
-        for line in (result.stdout + result.stderr).splitlines():
-            line = line.strip()
-            if line and not line.startswith("FILE COPY") and not line.startswith("新文件") and not line.startswith("---"):
-                details.append(line)
-        detail_str = "; ".join(details[:5]) if details else "文件复制检测违规（见 check_code_duplication.py 输出）"
-        return False, f"新增 .py 文件与已有同名文件 AST 相似度>{_THRESHOLD:.0%}: {detail_str}"
+        # 4. 解析结果（exit 0 放行 / exit 1 阻断 / exit 2 fail-open）
+        return _parse_dup_result(result)
 
     return GateSpec(gate_id="FILE-COPY", check=_check, priority=85)
