@@ -73,8 +73,20 @@ class ComplexityFinding:
         )
 
 
+def _walk_excluding_nested_funcs(node):
+    """遍历 AST 节点的所有后代，但不递归进入嵌套函数定义。
+
+    裁定#215：McCabe 复杂度只计算函数自身决策点，不含嵌套函数体。
+    """
+    for child in ast.iter_child_nodes(node):
+        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        yield child
+        yield from _walk_excluding_nested_funcs(child)
+
+
 def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
-    """计算函数的循环复杂度（McCabe）。
+    """计算函数的循环复杂度（McCabe），不递归进入嵌套函数。
 
     与 high_complexity_gate.py._cyclomatic_complexity 算法完全一致：
     基础复杂度=1，每个决策点+1：
@@ -83,9 +95,11 @@ def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     - ExceptHandler
     - BoolOp(And/Or) 每个操作数（len(values)-1）
     - comprehension 的 if 子句
+
+    裁定#215：不递归进入嵌套函数体（嵌套函数独立检查）。
     """
     complexity = 1
-    for child in ast.walk(node):
+    for child in _walk_excluding_nested_funcs(node):
         if isinstance(child, (ast.If, ast.IfExp)):
             complexity += 1
         elif isinstance(child, (ast.For, ast.AsyncFor, ast.While)):
