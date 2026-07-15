@@ -775,6 +775,21 @@ class IntegratorScheduler:
 
             # flush 缓冲区残留数据
             if last_error is None and not writer.flush():
+                if (
+                    writer.last_outcome is not None
+                    and writer.last_outcome.disposition is ch_writer.WriteDisposition.LOCAL_DURABLE
+                ):
+                    detail = f"数据已本地持久化，待回灌: {table}"
+                    self._progress_store.save_progress(
+                        task_id, source, latest_key, "DEFERRED_PERSISTENCE", total_rows, detail
+                    )
+                    if run_id:
+                        self._progress_store.finish_run(
+                            run_id, "DEFERRED_PERSISTENCE", total_rows, writer.total_flushed, detail
+                        )
+                    self._task_queue.mark_deferred_persistence(task_id)
+                    self._emit_event("task_completed", task_id=task_id, success=False, deferred=True)
+                    return True, None
                 last_error = f"ClickHouse 写入失败(flush): {table}"
                 log.error("任务 %s CH flush 失败", task_id)
 

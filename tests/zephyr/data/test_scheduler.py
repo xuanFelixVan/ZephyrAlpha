@@ -19,6 +19,7 @@ import pytest
 
 from src.zephyr.data.scheduler import IntegratorScheduler
 from src.zephyr.data.provider_base import FetchPayload, FetchResult, DataSourceBase, DataSourceMeta
+from src.zephyr.data.ch_writer import WriteDisposition, WriteOutcome
 
 
 # ============== 测试用 Mock Provider ==============
@@ -242,6 +243,20 @@ class TestRunTask:
         assert ok is False
         status = scheduler._progress_store.get_task_status("kline_daily_incremental")
         assert status["last_status"] == "FAILED"
+
+    def test_run_task_local_durable_is_deferred(self, scheduler):
+        """本地落盘成功不得被误报为 CH 成功或数据丢失失败。"""
+        scheduler._load_config()
+        provider = _MockProvider()
+        provider.connect()
+        scheduler._providers["mock"] = provider
+        outcome = WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
+        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=False), \
+             patch.object(IntegratorScheduler.__module__ and __import__("src.zephyr.data.scheduler", fromlist=["BufferedWriter"]).BufferedWriter, "last_outcome", new_callable=PropertyMock, return_value=outcome):
+            ok = scheduler.run_task("kline_daily_incremental")
+        assert ok is True
+        assert scheduler._progress_store.get_task_status("kline_daily_incremental")["last_status"] == "DEFERRED_PERSISTENCE"
 
     def test_run_task_provider_exception(self, scheduler):
         """Provider.fetch 抛异常。"""
