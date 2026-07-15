@@ -102,6 +102,7 @@ class PanoramaNode:
     design_maturity: str | None
     build_status: str | None
     domain_id: str | None
+    construction_progress: str | None = None  # ARCH-059: 蓝图先行判断用
 
 
 @dataclass
@@ -514,6 +515,7 @@ def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
             design_maturity=fm.get("design_maturity") or None,
             build_status=fm.get("build_status") or None,
             domain_id=fm.get("responsibility_domain") or None,
+            construction_progress=fm.get("construction_progress") or None,
         ))
     return nodes
 
@@ -531,11 +533,27 @@ def _group_by_module_id(all_nodes: list[PanoramaNode]) -> dict[str, list[Panoram
     return grouped
 
 
+def _is_blueprint_not_started(nodes: list[PanoramaNode]) -> bool:
+    """判断是否为蓝图先行模块（ARCH-059）。
+
+    蓝图先行：仅在 blueprint 图存在 + construction_progress=not_started。
+    此类模块尚未施工，depgraph 无节点是正常状态，不报告为孤儿/设计态孤立。
+
+    Returns:
+        True 如果是蓝图先行模块（应豁免孤儿检测）
+    """
+    graphs = {n.graph for n in nodes}
+    if graphs != {"blueprint"}:
+        return False
+    return any(n.construction_progress == "not_started" for n in nodes)
+
+
 def _detect_orphans(all_nodes: list[PanoramaNode],
                     exempt_list: set[str] | None = None) -> list[dict]:
     """孤儿：仅在一图存在的 module_id。
 
     exempt_list 中的 module_id 跳过检测（历史归档豁免）。
+    蓝图先行模块（仅 blueprint + construction_progress=not_started）自动豁免（ARCH-059）。
     """
     exempt = exempt_list or set()
     grouped = _group_by_module_id(all_nodes)
@@ -546,6 +564,9 @@ def _detect_orphans(all_nodes: list[PanoramaNode],
         graphs = {n.graph for n in nodes}
         if len(graphs) == 1:
             g = next(iter(graphs))
+            # ARCH-059: 蓝图先行模块自动豁免
+            if g == "blueprint" and _is_blueprint_not_started(nodes):
+                continue
             for n in nodes:
                 orphans.append({
                     "module_id": mid,
@@ -618,18 +639,24 @@ def _detect_domain_mismatches(all_nodes: list[PanoramaNode]) -> list[dict]:
 
 
 def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
-    """设计态孤立：design 状态仅出现在一图，其它三图无对应。"""
+    """设计态孤立：design 状态仅出现在一图，其它三图无对应。
+
+    蓝图先行模块（仅 blueprint + construction_progress=not_started）自动豁免（ARCH-059）。
+    """
     grouped = _group_by_module_id(all_nodes)
     design_only: list[dict] = []
     for mid, nodes in grouped.items():
         graphs = {n.graph for n in nodes}
         if len(graphs) != 1:
             continue  # 多图存在就不算孤立
+        g = next(iter(graphs))
+        # ARCH-059: 蓝图先行模块自动豁免
+        if g == "blueprint" and _is_blueprint_not_started(nodes):
+            continue
         # 检查是否有 design 状态节点
         has_design = any(n.design_maturity == "design" for n in nodes)
         if not has_design:
             continue
-        g = next(iter(graphs))
         for n in nodes:
             if n.design_maturity == "design":
                 design_only.append({
