@@ -1701,6 +1701,12 @@ entries:
       AGENTS.md §4.3 登记蓝图先行豁免。
     Phase 2（验证）：generate_project_depgraph.py 门禁通过；
       align_panoramas 问题总数=0；pytest 全绿；grep 无 # ARCH-XXX 绕过格式残留。
+    Phase 2.1（批量规范化，commit 736e8471d0）：42 个文件 96 处 # ARCH-XXX -> #ARCH-XXX。
+    Phase 3（未登记引用治理，commit 7a3446f69f）：回溯登记 ARCH-CH-011/ARCH-CAP-005；
+      修复 61_d_data.md 表格截断 #ARCH-C... -> #ARCH-CH-003（3处）；
+      修复 16_d_gov_code_quality.md 表格截断 #ARCH-DOM... -> #ARCH-DOMAIN-NNN（6处）；
+      directory_contract.yaml 描述性标签 #ARCH-DEBT-BACKUP-CLEANUP: -> # DEBT-BACKUP-CLEANUP:（2处）。
+      剩余 ARCH-NNN/XXX 占位符模板为描述性文本非引用，无需治理。
   related_adjudication: '#ARCH-058, #ARCH-059'
   created: '2026-07-16'
   last_updated: '2026-07-16'
