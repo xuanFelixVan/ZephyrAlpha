@@ -85,6 +85,55 @@ class SimulationResult:
         return self.status != SimulationStatus.BLOCKED
 
 
+def _scan_dangerous_patterns(
+    content: str,
+    target: str,
+    dangerous_patterns: list[str],
+    result: SimulationResult,
+) -> None:
+    for pattern in dangerous_patterns:
+        if pattern.lower() in content.lower() or pattern.lower() in target.lower():
+            result.warnings.append(f"检测到危险操作模式: {pattern}")
+            result.risk = SimulationRisk.CRITICAL
+            result.status = SimulationStatus.BLOCKED
+            break
+
+
+def _scan_sensitive_paths(
+    target: str,
+    sensitive_paths: list[str],
+    result: SimulationResult,
+) -> None:
+    for sensitive in sensitive_paths:
+        if sensitive.replace("\\", "/") in target.replace("\\", "/"):
+            result.warnings.append(f"操作涉及敏感路径: {sensitive}")
+            if _RISK_ORDER[result.risk.value] < _RISK_ORDER[SimulationRisk.HIGH.value]:
+                result.risk = SimulationRisk.HIGH
+
+
+def _check_write_permissions(
+    target: str,
+    op_type: str,
+    check_permissions: bool,
+    result: SimulationResult,
+) -> None:
+    if check_permissions and op_type in ("file_write", "file_delete"):
+        target_path = Path(target) if target else None
+        if target_path and target_path.exists():
+            if not os.access(str(target_path), os.W_OK):
+                result.errors.append(f"无写入权限: {target}")
+                result.status = SimulationStatus.BLOCKED
+                result.risk = SimulationRisk.HIGH
+
+
+def _finalize_risk_and_status(result: SimulationResult) -> None:
+    if result.risk is SimulationRisk.NONE and result.warnings:
+        result.risk = SimulationRisk.LOW
+
+    if result.warnings and result.status == SimulationStatus.PASSED:
+        result.status = SimulationStatus.PASSED_WITH_WARNINGS
+
+
 class DryRunSimulator:
     """干运行模拟器
 
@@ -140,32 +189,10 @@ class DryRunSimulator:
         if op_type in ("file_write", "file_delete", "file_move", "dir_create", "dir_delete"):
             result.affected_files.append(target)
 
-        for pattern in self._DANGEROUS_PATTERNS:
-            if pattern.lower() in content.lower() or pattern.lower() in target.lower():
-                result.warnings.append(f"检测到危险操作模式: {pattern}")
-                result.risk = SimulationRisk.CRITICAL
-                result.status = SimulationStatus.BLOCKED
-                break
-
-        for sensitive in self._SENSITIVE_PATHS:
-            if sensitive.replace("\\", "/") in target.replace("\\", "/"):
-                result.warnings.append(f"操作涉及敏感路径: {sensitive}")
-                if _RISK_ORDER[result.risk.value] < _RISK_ORDER[SimulationRisk.HIGH.value]:
-                    result.risk = SimulationRisk.HIGH
-
-        if check_permissions and op_type in ("file_write", "file_delete"):
-            target_path = Path(target) if target else None
-            if target_path and target_path.exists():
-                if not os.access(str(target_path), os.W_OK):
-                    result.errors.append(f"无写入权限: {target}")
-                    result.status = SimulationStatus.BLOCKED
-                    result.risk = SimulationRisk.HIGH
-
-        if result.risk is SimulationRisk.NONE and result.warnings:
-            result.risk = SimulationRisk.LOW
-
-        if result.warnings and result.status == SimulationStatus.PASSED:
-            result.status = SimulationStatus.PASSED_WITH_WARNINGS
+        _scan_dangerous_patterns(content, target, self._DANGEROUS_PATTERNS, result)
+        _scan_sensitive_paths(target, self._SENSITIVE_PATHS, result)
+        _check_write_permissions(target, op_type, check_permissions, result)
+        _finalize_risk_and_status(result)
 
         if op_type in ("file_write", "file_delete") and target:
             result.rollback_plan = f"restore from backup: {target}"
