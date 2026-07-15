@@ -232,130 +232,198 @@ class EvolutionEngine:
         for e in entries:
             all_tags.extend(e.tags)
 
-        # --- L1: low-score aggregation -----------------------------------
-        low_scores = [e for e in entries if e.score < self._thresholds["low_score_threshold"]]
-        if low_scores:
-            for e in low_scores:
-                if self._on_low_score is not None:
-                    self._on_low_score(e)
+        # L1: 低分聚合检测
+        self._detect_low_score_aggregation(entries, report, owner_approved, dry_run)
+        # L2: 标签模式检测
+        report.l2_triggered = self._detect_tag_patterns(
+            entries, all_tags, report, owner_approved, dry_run
+        )
+        # L3: 架构级分数漂移检测（平均分漂移 + 低分率上升）
+        self._check_avg_score_drift(scores, report, baseline_avg_score, owner_approved, dry_run)
+        self._check_low_score_rate_rise(scores, report, baseline_low_score_rate, owner_approved, dry_run)
 
-            low_ids = list({e.task_id for e in low_scores})
-            severity = Severity.HIGH if len(low_ids) >= 3 else Severity.MEDIUM
+        self._lsg_scan_proposals(report)
+
+        # 应用提案
+        self._apply_proposals(report, dry_run, owner_approved)
+
+        return report
+
+    # ===== evolve() 各分层辅助方法 =====
+
+    def _detect_low_score_aggregation(
+        self,
+        entries: list[Any],
+        report: EvolutionReport,
+        owner_approved: bool,
+        dry_run: bool,
+    ) -> None:
+        """L1: 低分聚合检测 — 识别低分任务并触发回调与提案。"""
+        low_scores = [e for e in entries if e.score < self._thresholds["low_score_threshold"]]
+        if not low_scores:
+            return
+
+        for e in low_scores:
+            if self._on_low_score is not None:
+                self._on_low_score(e)
+
+        low_ids = list({e.task_id for e in low_scores})
+        severity = Severity.HIGH if len(low_ids) >= 3 else Severity.MEDIUM
+        report.proposals.append(
+            EvolutionProposal(
+                proposal_id=f"EP-L1-{self._now().strftime('%Y%m%d-%H%M%S')}",
+                signal=EvolutionSignal.ACCEPTANCE_DRIFT,
+                layer=FeedbackLayer.L1_TASK,
+                severity=severity,
+                title="Low-score acceptance drift detected",
+                rationale=f"{len(low_ids)} task(s) below score threshold",
+                evidence=[f"Task {tid}: score={e.score}" for tid, e in zip(low_ids, low_scores, strict=False)],
+                affected_task_ids=list(low_ids),
+                recommended_action="Review low-scoring tasks and adjust thresholds",
+                estimated_impact="Reduced pipeline quality",
+                requires_owner_approval=False,
+                owner_approved=owner_approved,
+                dry_run=dry_run,
+                created_at=self._now(),
+            )
+        )
+        report.l1_triggered = 1
+
+    def _detect_tag_patterns(
+        self,
+        entries: list[Any],
+        all_tags: list[str],
+        report: EvolutionReport,
+        owner_approved: bool,
+        dry_run: bool,
+    ) -> int:
+        """L2: 标签模式检测 — 基于标签聚合识别重复模式。"""
+        tag_counter = Counter(all_tags)
+        l2_triggered = 0
+        threshold_key_map = {
+            EvolutionSignal.HIGH_RETRY_RATE: "pattern_min_count",
+            EvolutionSignal.CONTEXT_OVERFLOW: "context_overflow_threshold",
+            EvolutionSignal.DEPENDENCY_BOTTLENECK: "dependency_bottleneck_threshold",
+            EvolutionSignal.LOW_KNOWLEDGE_HIT: "low_knowledge_hit_threshold",
+        }
+        for signal, tag_set in _PATTERN_TAG_GROUPS.items():
+            matched_count = sum(tag_counter.get(t, 0) for t in tag_set)
+            threshold_key = threshold_key_map.get(signal, "pattern_min_count")
+            if matched_count < self._thresholds[threshold_key]:
+                continue
             report.proposals.append(
                 EvolutionProposal(
-                    proposal_id=f"EP-L1-{self._now().strftime('%Y%m%d-%H%M%S')}",
-                    signal=EvolutionSignal.ACCEPTANCE_DRIFT,
-                    layer=FeedbackLayer.L1_TASK,
-                    severity=severity,
-                    title="Low-score acceptance drift detected",
-                    rationale=f"{len(low_ids)} task(s) below score threshold",
-                    evidence=[f"Task {tid}: score={e.score}" for tid, e in zip(low_ids, low_scores, strict=False)],
-                    affected_task_ids=list(low_ids),
-                    recommended_action="Review low-scoring tasks and adjust thresholds",
-                    estimated_impact="Reduced pipeline quality",
-                    requires_owner_approval=False,
+                    proposal_id=f"EP-L2-{signal.value}-{self._now().strftime('%Y%m%d-%H%M%S')}",
+                    signal=signal,
+                    layer=FeedbackLayer.L2_PATTERN,
+                    severity=Severity.HIGH,
+                    title=f"Pattern detected: {signal.value}",
+                    rationale=f"Aggregated {matched_count} tag(s) matching {signal.value}",
+                    evidence=[f"Matched tags: {tag_set} -> count={matched_count}"],
+                    affected_task_ids=[e.task_id for e in entries if set(e.tags) & tag_set],
+                    recommended_action=f"Investigate {signal.value} pattern",
+                    estimated_impact="Recurring pattern may affect stability",
+                    requires_owner_approval=True,
                     owner_approved=owner_approved,
                     dry_run=dry_run,
                     created_at=self._now(),
                 )
             )
-            report.l1_triggered = 1
+            l2_triggered += 1
+        return l2_triggered
 
-        # --- L2: tag-based pattern detection -----------------------------
-        tag_counter = Counter(all_tags)
-        l2_triggered = 0
-        for signal, tag_set in _PATTERN_TAG_GROUPS.items():
-            matched_count = sum(tag_counter.get(t, 0) for t in tag_set)
-            threshold_key = {
-                EvolutionSignal.HIGH_RETRY_RATE: "pattern_min_count",
-                EvolutionSignal.CONTEXT_OVERFLOW: "context_overflow_threshold",
-                EvolutionSignal.DEPENDENCY_BOTTLENECK: "dependency_bottleneck_threshold",
-                EvolutionSignal.LOW_KNOWLEDGE_HIT: "low_knowledge_hit_threshold",
-            }.get(signal, "pattern_min_count")
-            if matched_count >= self._thresholds[threshold_key]:
-                report.proposals.append(
-                    EvolutionProposal(
-                        proposal_id=f"EP-L2-{signal.value}-{self._now().strftime('%Y%m%d-%H%M%S')}",
-                        signal=signal,
-                        layer=FeedbackLayer.L2_PATTERN,
-                        severity=Severity.HIGH,
-                        title=f"Pattern detected: {signal.value}",
-                        rationale=f"Aggregated {matched_count} tag(s) matching {signal.value}",
-                        evidence=[f"Matched tags: {tag_set} -> count={matched_count}"],
-                        affected_task_ids=[e.task_id for e in entries if set(e.tags) & tag_set],
-                        recommended_action=f"Investigate {signal.value} pattern",
-                        estimated_impact="Recurring pattern may affect stability",
-                        requires_owner_approval=True,
-                        owner_approved=owner_approved,
-                        dry_run=dry_run,
-                        created_at=self._now(),
-                    )
-                )
-                l2_triggered += 1
-        report.l2_triggered = l2_triggered
+    def _check_avg_score_drift(
+        self,
+        scores: list[float],
+        report: EvolutionReport,
+        baseline_avg_score: float | None,
+        owner_approved: bool,
+        dry_run: bool,
+    ) -> None:
+        """L3a: 平均分漂移检测 — 与基线对比识别架构级质量回归。"""
+        if baseline_avg_score is None:
+            return
+        current_avg = sum(scores) / len(scores)
+        delta = baseline_avg_score - current_avg
+        if delta <= self._thresholds["drift_delta_threshold"]:
+            return
+        report.proposals.append(
+            EvolutionProposal(
+                proposal_id=f"EP-L3-{self._now().strftime('%Y%m%d-%H%M%S')}",
+                signal=EvolutionSignal.ACCEPTANCE_DRIFT,
+                layer=FeedbackLayer.L3_ARCHITECTURE,
+                severity=self._severity_for_drift(delta),
+                title="KBG reaudit triggered by score drift",
+                rationale=f"Average score dropped from {baseline_avg_score} to {current_avg:.2f}",
+                evidence=[f"Delta: {delta:.2f} > threshold {self._thresholds['drift_delta_threshold']}"],
+                recommended_action="Reaudit architecture decision records",
+                estimated_impact="Systemic quality regression possible",
+                requires_owner_approval=True,
+                owner_approved=owner_approved,
+                dry_run=dry_run,
+                created_at=self._now(),
+            )
+        )
+        report.l3_triggered = 1
 
-        # --- L3: architecture-level score drift --------------------------
-        if baseline_avg_score is not None:
-            current_avg = sum(scores) / len(scores)
-            delta = baseline_avg_score - current_avg
-            if delta > self._thresholds["drift_delta_threshold"]:
-                report.proposals.append(
-                    EvolutionProposal(
-                        proposal_id=f"EP-L3-{self._now().strftime('%Y%m%d-%H%M%S')}",
-                        signal=EvolutionSignal.ACCEPTANCE_DRIFT,
-                        layer=FeedbackLayer.L3_ARCHITECTURE,
-                        severity=Severity.HIGH if delta > 1.5 else Severity.CRITICAL if delta > 2.0 else Severity.HIGH,
-                        title="KBG reaudit triggered by score drift",
-                        rationale=f"Average score dropped from {baseline_avg_score} to {current_avg:.2f}",
-                        evidence=[f"Delta: {delta:.2f} > threshold {self._thresholds['drift_delta_threshold']}"],
-                        recommended_action="Reaudit architecture decision records",
-                        estimated_impact="Systemic quality regression possible",
-                        requires_owner_approval=True,
-                        owner_approved=owner_approved,
-                        dry_run=dry_run,
-                        created_at=self._now(),
-                    )
-                )
-                report.l3_triggered = 1
+    @staticmethod
+    def _severity_for_drift(delta: float) -> Severity:
+        """根据漂移量决定严重级别。"""
+        return Severity.HIGH if delta > 1.5 else Severity.CRITICAL if delta > 2.0 else Severity.HIGH
 
-        if baseline_low_score_rate is not None:
-            low_count = sum(1 for s in scores if s < self._thresholds["low_score_threshold"])
-            current_rate = low_count / len(scores) if scores else 0.0
-            if current_rate - baseline_low_score_rate > self._thresholds["low_score_rate_rise_threshold"]:
-                if not report.l3_triggered:
-                    report.proposals.append(
-                        EvolutionProposal(
-                            proposal_id=f"EP-L3R-{self._now().strftime('%Y%m%d-%H%M%S')}",
-                            signal=EvolutionSignal.ACCEPTANCE_DRIFT,
-                            layer=FeedbackLayer.L3_ARCHITECTURE,
-                            severity=Severity.HIGH,
-                            title="Low-score rate rise triggers KBG reaudit",
-                            rationale=f"Low-score rate rose from {baseline_low_score_rate:.2f} to {current_rate:.2f}",
-                            evidence=[f"Rate delta: {current_rate - baseline_low_score_rate:.2f}"],
-                            recommended_action="Reaudit architecture decisions",
-                            estimated_impact="Quality regression trend",
-                            requires_owner_approval=True,
-                            owner_approved=owner_approved,
-                            dry_run=dry_run,
-                            created_at=self._now(),
-                        )
-                    )
-                    report.l3_triggered = 1
+    def _check_low_score_rate_rise(
+        self,
+        scores: list[float],
+        report: EvolutionReport,
+        baseline_low_score_rate: float | None,
+        owner_approved: bool,
+        dry_run: bool,
+    ) -> None:
+        """L3b: 低分率上升检测 — 与基线对比识别低分率上升趋势。"""
+        if baseline_low_score_rate is None:
+            return
+        low_count = sum(1 for s in scores if s < self._thresholds["low_score_threshold"])
+        current_rate = low_count / len(scores) if scores else 0.0
+        if current_rate - baseline_low_score_rate <= self._thresholds["low_score_rate_rise_threshold"]:
+            return
+        if report.l3_triggered:
+            return
+        report.proposals.append(
+            EvolutionProposal(
+                proposal_id=f"EP-L3R-{self._now().strftime('%Y%m%d-%H%M%S')}",
+                signal=EvolutionSignal.ACCEPTANCE_DRIFT,
+                layer=FeedbackLayer.L3_ARCHITECTURE,
+                severity=Severity.HIGH,
+                title="Low-score rate rise triggers KBG reaudit",
+                rationale=f"Low-score rate rose from {baseline_low_score_rate:.2f} to {current_rate:.2f}",
+                evidence=[f"Rate delta: {current_rate - baseline_low_score_rate:.2f}"],
+                recommended_action="Reaudit architecture decisions",
+                estimated_impact="Quality regression trend",
+                requires_owner_approval=True,
+                owner_approved=owner_approved,
+                dry_run=dry_run,
+                created_at=self._now(),
+            )
+        )
+        report.l3_triggered = 1
 
-        self._lsg_scan_proposals(report)
-
-        # --- Apply proposals ---------------------------------------------
-        if not dry_run and owner_approved and self._apply_fn is not None:
-            for p in report.proposals:
-                if p.requires_owner_approval and not owner_approved:
-                    continue
-                try:
-                    if self._apply_fn(p):
-                        report.applied_count += 1
-                except Exception as e:
-                    logger.warning("suppressed error in evolution_engine", exc_info=True)
-
-        return report
+    def _apply_proposals(
+        self,
+        report: EvolutionReport,
+        dry_run: bool,
+        owner_approved: bool,
+    ) -> None:
+        """应用提案 — 仅在非 dry_run 且 owner_approved 时执行。"""
+        if dry_run or not owner_approved or self._apply_fn is None:
+            return
+        for p in report.proposals:
+            if p.requires_owner_approval and not owner_approved:
+                continue
+            try:
+                if self._apply_fn(p):
+                    report.applied_count += 1
+            except Exception:
+                logger.warning("suppressed error in evolution_engine", exc_info=True)
 
     def _lsg_scan_proposals(self, report: EvolutionReport) -> None:
         try:
