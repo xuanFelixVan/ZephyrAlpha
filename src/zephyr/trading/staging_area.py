@@ -278,6 +278,85 @@ def _check_overlap(old_lines: Sequence[str], new_lines: Sequence[str]) -> bool:
     return False
 
 
+def _write_atomic_or_raise(target: Path, content: str, error_message: str) -> None:
+    """原子写入 target；PermissionError 转为 StagingError。"""
+    tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(content)
+        _atomic_replace(tmp, target)
+    except PermissionError:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise StagingError(error_message, details={"target_path": str(target)})
+
+
+def _build_conflict_result(
+    file_path: str,
+    draft: Path,
+    locked_mtime: str,
+    locked_hash: str,
+    current_lines: list[str],
+    draft_lines: list[str],
+    message: str,
+) -> CommitResult:
+    """构造 CONFLICT_NEEDS_OWNER 的 CommitResult。"""
+    return CommitResult(
+        status=CommitStatus.CONFLICT_NEEDS_OWNER,
+        file_path=file_path,
+        conflict=ConflictInfo(
+            file_path=file_path,
+            draft_mtime=_file_mtime(draft),
+            current_mtime=locked_mtime,
+            draft_hash=_file_hash(draft),
+            current_hash=locked_hash,
+            diff_lines=_compute_diff_lines(current_lines, draft_lines),
+        ),
+        message=message,
+    )
+
+
+def _apply_three_way_merge(
+    local_baseline: list[str],
+    draft_lines: list[str],
+    current_lines: list[str],
+    current_vs_baseline_overlap: bool,
+) -> tuple[list[str], bool]:
+    """三方合并：将 draft 相对 baseline 的改动 rebase 到 current。
+
+    返回 (merged_lines, has_conflict)。has_conflict=True 表示遇到
+    replace+overlap，需要 owner 介入（此时 merged_lines 为空占位）。
+    """
+    from difflib import SequenceMatcher
+
+    sm = SequenceMatcher(None, local_baseline, draft_lines)
+    merged: list[str] = list(current_lines)
+    offset = 0
+    for op, i1, i2, j1, j2 in sm.get_opcodes():
+        if op == "equal":
+            continue
+        elif op == "insert":
+            insert_pos = i1 + offset
+            for j in range(j1, j2):
+                merged.insert(insert_pos, draft_lines[j])
+                offset += 1
+        elif op == "delete":
+            del merged[i1 + offset : i2 + offset]
+            offset -= i2 - i1
+        elif op == "replace":
+            if current_vs_baseline_overlap:
+                return [], True
+            replace_pos = i1 + offset
+            del merged[replace_pos : i2 + offset]
+            for j in range(j1, j2):
+                merged.insert(replace_pos, draft_lines[j])
+                replace_pos += 1
+            offset += j2 - j1 - (i2 - i1)
+    return merged, False
+
+
 class StagingArea:
     """多AI并发草稿写入+提交+冲突检测模块。"""
 
@@ -506,8 +585,6 @@ class StagingArea:
         baseline_content = self._read_baseline_content(draft, orig_hash)
         draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
 
-        from difflib import SequenceMatcher
-
         with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path):
             current_lines = _read_file_robust(target).splitlines(keepends=True)
 
@@ -515,20 +592,7 @@ class StagingArea:
             locked_hash = _file_hash(target)
             if locked_mtime == orig_mtime and locked_hash == orig_hash:
                 draft_text = draft.read_text(encoding="utf-8")
-                tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
-                try:
-                    with open(tmp, "w", encoding="utf-8") as f:
-                        f.write(draft_text)
-                    _atomic_replace(tmp, target)
-                except PermissionError:
-                    try:
-                        os.remove(tmp)
-                    except OSError:
-                        pass
-                    raise StagingError(
-                        "Cannot auto-merge",
-                        details={"target_path": str(target)},
-                    )
+                _write_atomic_or_raise(target, draft_text, "Cannot auto-merge")
                 self._cleanup_draft(session_id, file_path)
                 return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")
 
@@ -540,72 +604,24 @@ class StagingArea:
             current_vs_baseline_overlap = _check_overlap(local_baseline, current_lines)
 
             if draft_vs_baseline_overlap and current_vs_baseline_overlap:
-                diff_lines = _compute_diff_lines(current_lines, draft_lines)
-                return CommitResult(
-                    status=CommitStatus.CONFLICT_NEEDS_OWNER,
-                    file_path=file_path,
-                    conflict=ConflictInfo(
-                        file_path=file_path,
-                        draft_mtime=_file_mtime(draft),
-                        current_mtime=locked_mtime,
-                        draft_hash=_file_hash(draft),
-                        current_hash=locked_hash,
-                        diff_lines=diff_lines,
-                    ),
-                    message="overlapping changes — needs owner resolution",
+                return _build_conflict_result(
+                    file_path, draft, locked_mtime, locked_hash,
+                    current_lines, draft_lines,
+                    "overlapping changes — needs owner resolution",
                 )
 
-            sm = SequenceMatcher(None, local_baseline, draft_lines)
-            merged: list[str] = list(current_lines)
-            offset = 0
-            for op, i1, i2, j1, j2 in sm.get_opcodes():
-                if op == "equal":
-                    continue
-                elif op == "insert":
-                    insert_pos = i1 + offset
-                    for j in range(j1, j2):
-                        merged.insert(insert_pos, draft_lines[j])
-                        offset += 1
-                elif op == "delete":
-                    del merged[i1 + offset : i2 + offset]
-                    offset -= i2 - i1
-                elif op == "replace":
-                    if current_vs_baseline_overlap:
-                        return CommitResult(
-                            status=CommitStatus.CONFLICT_NEEDS_OWNER,
-                            file_path=file_path,
-                            conflict=ConflictInfo(
-                                file_path=file_path,
-                                draft_mtime=_file_mtime(draft),
-                                current_mtime=locked_mtime,
-                                draft_hash=_file_hash(draft),
-                                current_hash=locked_hash,
-                                diff_lines=_compute_diff_lines(current_lines, draft_lines),
-                            ),
-                            message="overlapping replace — needs owner resolution",
-                        )
-                    replace_pos = i1 + offset
-                    del merged[replace_pos : i2 + offset]
-                    for j in range(j1, j2):
-                        merged.insert(replace_pos, draft_lines[j])
-                        replace_pos += 1
-                    offset += j2 - j1 - (i2 - i1)
+            merged, has_conflict = _apply_three_way_merge(
+                local_baseline, draft_lines, current_lines, current_vs_baseline_overlap
+            )
+            if has_conflict:
+                return _build_conflict_result(
+                    file_path, draft, locked_mtime, locked_hash,
+                    current_lines, draft_lines,
+                    "overlapping replace — needs owner resolution",
+                )
 
             merged_content = "".join(merged)
-            tmp = target.with_suffix(target.suffix + f".{uuid.uuid4().hex}.tmp")
-            try:
-                with open(tmp, "w", encoding="utf-8") as f:
-                    f.write(merged_content)
-                _atomic_replace(tmp, target)
-            except PermissionError:
-                try:
-                    os.remove(tmp)
-                except OSError:
-                    pass
-                raise StagingError(
-                    "Cannot auto-merge",
-                    details={"target_path": str(target)},
-                )
+            _write_atomic_or_raise(target, merged_content, "Cannot auto-merge")
 
         self._cleanup_draft(session_id, file_path)
         return CommitResult(status=CommitStatus.MERGED, file_path=file_path, message="auto-merged successfully")
