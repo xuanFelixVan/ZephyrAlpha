@@ -586,19 +586,7 @@ class DecisionGate:
                 "reason": f"参数{param_name}扫描数据为空",
             }
 
-        # 校验元素结构并转为(value, float(sharpe))
-        points: list[tuple[Any, float]] = []
-        for item in param_values:
-            if not (isinstance(item, tuple) and len(item) == 2):
-                raise DecisionGateError(
-                    f"参数{param_name}的扫描点必须是(value, sharpe)二元组: {item!r}"
-                )
-            try:
-                points.append((item[0], float(item[1])))
-            except (TypeError, ValueError) as exc:
-                raise DecisionGateError(
-                    f"参数{param_name}的sharpe非数值: {item[1]!r}"
-                ) from exc
+        points = self._validate_scan_points(param_name, param_values)
 
         # 找高原中心(Sharpe最大的点)
         center_idx = max(range(len(points)), key=lambda i: points[i][1])
@@ -622,7 +610,68 @@ class DecisionGate:
             range(len(sorted_points)), key=lambda i: sorted_points[i][1]
         )
 
-        # 收集±10%窗口内的点(仅数值型center)
+        window_points = self._collect_window_points(
+            sorted_points, center_value, center_sharpe, center_sorted_idx
+        )
+
+        # 稳定高原判定:窗口内Sharpe相对变化
+        if len(window_points) < 2:
+            return {
+                "is_plateau": False,
+                "is_cliff": False,
+                "center_value": center_value,
+                "reason": f"参数{param_name}相邻扫描点不足,无法判定高原",
+            }
+
+        is_plateau, plateau_detail = self._check_plateau(window_points)
+        is_cliff, cliff_detail = self._check_cliff(
+            sorted_points, center_sorted_idx, center_sharpe
+        )
+
+        # 综合原因
+        if is_cliff:
+            reason = f"参数{param_name}为悬崖型参数: {cliff_detail}"
+        elif is_plateau:
+            reason = f"参数{param_name}处于稳定高原: {plateau_detail}"
+        else:
+            reason = f"参数{param_name}非稳定高原: {plateau_detail}"
+
+        return {
+            "is_plateau": is_plateau,
+            "is_cliff": is_cliff,
+            "center_value": center_value,
+            "reason": reason,
+        }
+
+    # ===== check_stability_plateau() 辅助方法 =====
+
+    @staticmethod
+    def _validate_scan_points(
+        param_name: str, param_values: list
+    ) -> list[tuple[Any, float]]:
+        """校验元素结构并转为 (value, float(sharpe)) 列表。"""
+        points: list[tuple[Any, float]] = []
+        for item in param_values:
+            if not (isinstance(item, tuple) and len(item) == 2):
+                raise DecisionGateError(
+                    f"参数{param_name}的扫描点必须是(value, sharpe)二元组: {item!r}"
+                )
+            try:
+                points.append((item[0], float(item[1])))
+            except (TypeError, ValueError) as exc:
+                raise DecisionGateError(
+                    f"参数{param_name}的sharpe非数值: {item[1]!r}"
+                ) from exc
+        return points
+
+    @staticmethod
+    def _collect_window_points(
+        sorted_points: list[tuple[Any, float]],
+        center_value: Any,
+        center_sharpe: float,
+        center_sorted_idx: int,
+    ) -> list[tuple[Any, float]]:
+        """收集 ±10% 窗口内的点；窗口不足时回退到 center 相邻扫描点。"""
         window_points: list[tuple[Any, float]] = []
         if isinstance(center_value, (int, float)) and not isinstance(center_value, bool):
             lo = center_value * 0.9
@@ -642,63 +691,47 @@ class DecisionGate:
                 window_points.append(sorted_points[center_sorted_idx - 1])
             if center_sorted_idx < len(sorted_points) - 1:
                 window_points.append(sorted_points[center_sorted_idx + 1])
+        return window_points
 
-        # 稳定高原判定:窗口内Sharpe相对变化
-        if len(window_points) < 2:
-            return {
-                "is_plateau": False,
-                "is_cliff": False,
-                "center_value": center_value,
-                "reason": f"参数{param_name}相邻扫描点不足,无法判定高原",
-            }
-
+    def _check_plateau(
+        self, window_points: list[tuple[Any, float]]
+    ) -> tuple[bool, str]:
+        """稳定高原判定：窗口内 Sharpe 相对变化是否在容忍度内。"""
         sharpes = [s for _, s in window_points]
         max_s = max(sharpes)
         min_s = min(sharpes)
         if max_s <= 0:
-            is_plateau = False
-            plateau_detail = "窗口内Sharpe均<=0"
-        else:
-            rel_change = (max_s - min_s) / max_s
-            is_plateau = rel_change < self.config.stability_plateau_tolerance
-            plateau_detail = (
-                f"窗口内Sharpe相对变化={rel_change:.4f} "
-                f"(容忍度{self.config.stability_plateau_tolerance})"
-            )
+            return False, "窗口内Sharpe均<=0"
+        rel_change = (max_s - min_s) / max_s
+        is_plateau = rel_change < self.config.stability_plateau_tolerance
+        detail = (
+            f"窗口内Sharpe相对变化={rel_change:.4f} "
+            f"(容忍度{self.config.stability_plateau_tolerance})"
+        )
+        return is_plateau, detail
 
-        # 悬崖型参数判定:center相邻点的Sharpe下降是否超阈值
-        is_cliff = False
-        cliff_detail = ""
-        if center_sharpe > 0:
-            for neighbor_idx in (
-                center_sorted_idx - 1,
-                center_sorted_idx + 1,
-            ):
-                if 0 <= neighbor_idx < len(sorted_points):
-                    neighbor_sharpe = sorted_points[neighbor_idx][1]
-                    drop = (center_sharpe - neighbor_sharpe) / center_sharpe
-                    if drop > self.config.cliff_sharpe_drop:
-                        is_cliff = True
-                        cliff_detail = (
-                            f"相邻参数Sharpe下降{drop:.2%}超过悬崖阈值"
-                            f"{self.config.cliff_sharpe_drop:.0%}"
-                        )
-                        break
-
-        # 综合原因
-        if is_cliff:
-            reason = f"参数{param_name}为悬崖型参数: {cliff_detail}"
-        elif is_plateau:
-            reason = f"参数{param_name}处于稳定高原: {plateau_detail}"
-        else:
-            reason = f"参数{param_name}非稳定高原: {plateau_detail}"
-
-        return {
-            "is_plateau": is_plateau,
-            "is_cliff": is_cliff,
-            "center_value": center_value,
-            "reason": reason,
-        }
+    def _check_cliff(
+        self,
+        sorted_points: list[tuple[Any, float]],
+        center_sorted_idx: int,
+        center_sharpe: float,
+    ) -> tuple[bool, str]:
+        """悬崖型参数判定：center 相邻点的 Sharpe 下降是否超阈值。"""
+        if center_sharpe <= 0:
+            return False, ""
+        for neighbor_idx in (
+            center_sorted_idx - 1,
+            center_sorted_idx + 1,
+        ):
+            if 0 <= neighbor_idx < len(sorted_points):
+                neighbor_sharpe = sorted_points[neighbor_idx][1]
+                drop = (center_sharpe - neighbor_sharpe) / center_sharpe
+                if drop > self.config.cliff_sharpe_drop:
+                    return True, (
+                        f"相邻参数Sharpe下降{drop:.2%}超过悬崖阈值"
+                        f"{self.config.cliff_sharpe_drop:.0%}"
+                    )
+        return False, ""
 
     def monitor_backtest_live_deviation(
         self,
