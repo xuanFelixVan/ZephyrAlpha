@@ -47,6 +47,8 @@ import os
 import subprocess
 import threading
 import urllib.parse
+from dataclasses import dataclass
+from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -79,6 +81,26 @@ _cache_lock = threading.Lock()
 
 # 本地 ClickHouse 主机（用 IP 避免 NO-HARDCODED-URL gate）
 _CH_LOCAL_HOST = "127.0.0.1"
+
+
+class WriteDisposition(str, Enum):
+    """一次写入尝试的真实持久化位置。"""
+
+    CH_COMMITTED = "ch_committed"
+    LOCAL_DURABLE = "local_durable"
+    NOT_DURABLE = "not_durable"
+
+
+@dataclass(frozen=True)
+class WriteOutcome:
+    """写入结果；禁止把本地持久化伪装成 ClickHouse 已提交。"""
+
+    disposition: WriteDisposition
+    detail: str = ""
+
+    @property
+    def is_ch_committed(self) -> bool:
+        return self.disposition is WriteDisposition.CH_COMMITTED
 
 
 def _is_wsl_mirrored_mode() -> bool:
@@ -551,12 +573,12 @@ def is_replacing_engine(table: str) -> bool:
     return "Replacing" in engine
 
 
-def write_tsv(
+def write_tsv_outcome(
     table: str,
     columns: str | None,
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
-) -> bool:
+) -> WriteOutcome:
     """TSV 批量写入表。
 
     传输优先级（2026-07-12 修订）：
@@ -570,17 +592,18 @@ def write_tsv(
         timeout: 超时秒数
 
     Returns:
-        是否成功。
+        真实投递结果。LOCAL_DURABLE 表示数据已安全落盘、待回灌，
+        但尚未提交到 ClickHouse。
     """
     if not tsv_bytes:
         log.warning("write_tsv(%s): 空数据，跳过", table)
-        return False
+        return WriteOutcome(WriteDisposition.NOT_DURABLE, "empty payload")
     cols_clause = columns if columns else _get_insert_columns(table)
     sql = f"INSERT INTO {table} {cols_clause} FORMAT TSV"
 
     # 策略1: HTTP API（主路径，不依赖 WSL）
     if _http_insert(sql, tsv_bytes, timeout=timeout):
-        return True
+        return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
     log.warning("write_tsv(%s): HTTP API 失败，降级到 WSL subprocess", table)
 
     # 策略2: WSL subprocess（fallback）
@@ -595,7 +618,7 @@ def write_tsv(
                 r.stderr.decode("utf-8", errors="replace"),
             )
         else:
-            return True
+            return WriteOutcome(WriteDisposition.CH_COMMITTED, "wsl")
     except subprocess.TimeoutExpired:
         log.error("CH insert 超时(%ds): %s", timeout, table)
     except Exception as e:
@@ -604,8 +627,22 @@ def write_tsv(
     # 策略3: 本地落盘兜底（裁定 #ARCH-CH-013，WSL 全挂时数据不丢失）
     # 三级 WSL 路径全部失败，数据写入本地 TSV 文件，待 WSL 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
-    save_fallback(table, cols_clause, tsv_bytes)
-    return False
+    if save_fallback(table, cols_clause, tsv_bytes):
+        return WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
+    return WriteOutcome(WriteDisposition.NOT_DURABLE, "local_fallback_failed")
+
+
+def write_tsv(
+    table: str,
+    columns: str | None,
+    tsv_bytes: bytes,
+    timeout: int = _DEFAULT_TIMEOUT,
+) -> bool:
+    """兼容旧调用方：仅 ClickHouse 已提交才返回 ``True``。
+
+    新调用方必须使用 :func:`write_tsv_outcome`，以区别本地持久化和入库成功。
+    """
+    return write_tsv_outcome(table, columns, tsv_bytes, timeout).is_ch_committed
 
 
 def write_result(
