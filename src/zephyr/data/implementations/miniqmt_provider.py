@@ -583,20 +583,7 @@ class MiniQMTProvider(DataSourceBase):
         default_table = "c1_market.kline_daily_hfq" if is_hfq else "c1_market.kline_daily"
         table = payload.table or default_table
         is_daily = (period == "1d")
-        if is_daily:
-            if is_hfq:
-                # kline_daily_hfq 表列为 OCLH 顺序；amplitude/pct_change/change/turnover/data_source 有 DEFAULT 不返回
-                columns = ["trade_date", "symbol", "open", "close", "high", "low", "volume", "amount"]
-            else:
-                columns = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
-        elif "kline_1min" in table:
-            # kline_1min 表有 pct_change/amplitude（无 DEFAULT），需补充；data_source 有 DEFAULT
-            columns = ["trade_date", "trade_time", "symbol", "open", "close", "high", "low", "volume", "amount", "pct_change", "amplitude"]
-        elif "kline_5min" in table:
-            # kline_5min 表无 trade_date，data_source 无 DEFAULT 需补充
-            columns = ["trade_time", "symbol", "open", "high", "low", "close", "volume", "amount", "data_source"]
-        else:
-            columns = ["trade_date", "trade_time", "symbol", "open", "high", "low", "close", "volume", "amount"]
+        columns = self._kline_columns(table, is_daily, is_hfq)
 
         try:
             start_str = self._date_to_str(payload.start)
@@ -642,100 +629,8 @@ class MiniQMTProvider(DataSourceBase):
                 )
 
                 # 3. DataFrame -> tuple 列表
-                rows = []
                 df = data.get(stock_code) if data else None
-                if df is not None and len(df) > 0:
-                    symbol = self._stock_to_symbol(stock_code)
-                    # xtquant DataFrame 索引为 numpy.int64：
-                    #   日K索引为 YYYYMMDD 格式整数（如 20260703）
-                    #   分钟K索引为 YYYYMMDDHHMMSS 格式整数（如 20260703093000）
-                    times = [int(ts) for ts in df.index]
-                    opens = df["open"].tolist()
-                    highs = df["high"].tolist()
-                    lows = df["low"].tolist()
-                    closes = df["close"].tolist()
-                    volumes = df["volume"].tolist()
-                    amounts = df["amount"].tolist()
-                    for i in range(len(times)):
-                        s = str(times[i])
-                        if is_daily:
-                            # 日K：YYYYMMDD（8 位）-> YYYY-MM-DD
-                            trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-                            # volume 在 ClickHouse 中是 UInt64，需转 int
-                            vol = self.safe_float(volumes[i])
-                            vol = int(vol) if vol is not None else None
-                            if is_hfq:
-                                # kline_daily_hfq 表列为 OCLH 顺序
-                                rows.append((
-                                    trade_date,
-                                    symbol,
-                                    self.safe_float(opens[i]),
-                                    self.safe_float(closes[i]),
-                                    self.safe_float(highs[i]),
-                                    self.safe_float(lows[i]),
-                                    vol,
-                                    self.safe_float(amounts[i]),
-                                ))
-                            else:
-                                rows.append((
-                                    trade_date,
-                                    symbol,
-                                    self.safe_float(opens[i]),
-                                    self.safe_float(highs[i]),
-                                    self.safe_float(lows[i]),
-                                    self.safe_float(closes[i]),
-                                    vol,
-                                    self.safe_float(amounts[i]),
-                                ))
-                        else:
-                            # 分钟K：YYYYMMDDHHMMSS（14 位）-> 拆分 date 和 datetime
-                            trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
-                            trade_time = (
-                                f"{s[:4]}-{s[4:6]}-{s[6:8]} "
-                                f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
-                            )
-                            vol = self.safe_float(volumes[i])
-                            vol = int(vol) if vol is not None else None
-                            if "kline_1min" in table:
-                                # kline_1min: 补充 pct_change=0, amplitude=0
-                                rows.append((
-                                    trade_date,
-                                    trade_time,
-                                    symbol,
-                                    self.safe_float(opens[i]),
-                                    self.safe_float(closes[i]),
-                                    self.safe_float(highs[i]),
-                                    self.safe_float(lows[i]),
-                                    vol,
-                                    self.safe_float(amounts[i]),
-                                    0,  # pct_change（miniQMT 不提供）
-                                    0,  # amplitude（miniQMT 不提供）
-                                ))
-                            elif "kline_5min" in table:
-                                # kline_5min: 无 trade_date，补充 data_source
-                                rows.append((
-                                    trade_time,
-                                    symbol,
-                                    self.safe_float(opens[i]),
-                                    self.safe_float(highs[i]),
-                                    self.safe_float(lows[i]),
-                                    self.safe_float(closes[i]),
-                                    vol,
-                                    self.safe_float(amounts[i]),
-                                    "miniqmt",  # data_source
-                                ))
-                            else:
-                                rows.append((
-                                    trade_date,
-                                    trade_time,
-                                    symbol,
-                                    self.safe_float(opens[i]),
-                                    self.safe_float(highs[i]),
-                                    self.safe_float(lows[i]),
-                                    self.safe_float(closes[i]),
-                                    vol,
-                                    self.safe_float(amounts[i]),
-                                ))
+                rows = self._build_kline_rows(df, stock_code, table, is_daily, is_hfq)
 
                 yield FetchResult(
                     table=table,
@@ -755,6 +650,128 @@ class MiniQMTProvider(DataSourceBase):
                 )
 
     # ============== 财务报表 ==============
+
+    @staticmethod
+    def _kline_columns(table: str, is_daily: bool, is_hfq: bool) -> list[str]:
+        """根据表名/周期/复权类型选择 K线表的列顺序。
+
+        kline_daily_hfq 列为 OCLH 顺序；kline_1min 补充 pct_change/amplitude；
+        kline_5min 无 trade_date，补充 data_source。
+        """
+        if is_daily:
+            if is_hfq:
+                # kline_daily_hfq 表列为 OCLH 顺序；amplitude/pct_change/change/turnover/data_source 有 DEFAULT 不返回
+                return ["trade_date", "symbol", "open", "close", "high", "low", "volume", "amount"]
+            return ["trade_date", "symbol", "open", "high", "low", "close", "volume", "amount"]
+        if "kline_1min" in table:
+            # kline_1min 表有 pct_change/amplitude（无 DEFAULT），需补充；data_source 有 DEFAULT
+            return ["trade_date", "trade_time", "symbol", "open", "close", "high", "low", "volume", "amount", "pct_change", "amplitude"]
+        if "kline_5min" in table:
+            # kline_5min 表无 trade_date，data_source 无 DEFAULT 需补充
+            return ["trade_time", "symbol", "open", "high", "low", "close", "volume", "amount", "data_source"]
+        return ["trade_date", "trade_time", "symbol", "open", "high", "low", "close", "volume", "amount"]
+
+    @staticmethod
+    def _build_kline_rows(df, stock_code: str, table: str, is_daily: bool, is_hfq: bool) -> list[tuple]:
+        """从 xtquant DataFrame 构造 K线行列表（日K/分钟K，含表特定列顺序）。
+
+        xtquant DataFrame 索引为 numpy.int64：
+          日K索引为 YYYYMMDD 格式整数（如 20260703）
+          分钟K索引为 YYYYMMDDHHMMSS 格式整数（如 20260703093000）
+        df 为 None 或空时返回空列表。
+        """
+        rows = []
+        if df is None or len(df) == 0:
+            return rows
+        symbol = MiniQMTProvider._stock_to_symbol(stock_code)
+        times = [int(ts) for ts in df.index]
+        opens = df["open"].tolist()
+        highs = df["high"].tolist()
+        lows = df["low"].tolist()
+        closes = df["close"].tolist()
+        volumes = df["volume"].tolist()
+        amounts = df["amount"].tolist()
+        for i in range(len(times)):
+            s = str(times[i])
+            if is_daily:
+                # 日K：YYYYMMDD（8 位）-> YYYY-MM-DD
+                trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                # volume 在 ClickHouse 中是 UInt64，需转 int
+                vol = MiniQMTProvider.safe_float(volumes[i])
+                vol = int(vol) if vol is not None else None
+                if is_hfq:
+                    # kline_daily_hfq 表列为 OCLH 顺序
+                    rows.append((
+                        trade_date,
+                        symbol,
+                        MiniQMTProvider.safe_float(opens[i]),
+                        MiniQMTProvider.safe_float(closes[i]),
+                        MiniQMTProvider.safe_float(highs[i]),
+                        MiniQMTProvider.safe_float(lows[i]),
+                        vol,
+                        MiniQMTProvider.safe_float(amounts[i]),
+                    ))
+                else:
+                    rows.append((
+                        trade_date,
+                        symbol,
+                        MiniQMTProvider.safe_float(opens[i]),
+                        MiniQMTProvider.safe_float(highs[i]),
+                        MiniQMTProvider.safe_float(lows[i]),
+                        MiniQMTProvider.safe_float(closes[i]),
+                        vol,
+                        MiniQMTProvider.safe_float(amounts[i]),
+                    ))
+            else:
+                # 分钟K：YYYYMMDDHHMMSS（14 位）-> 拆分 date 和 datetime
+                trade_date = f"{s[:4]}-{s[4:6]}-{s[6:8]}"
+                trade_time = (
+                    f"{s[:4]}-{s[4:6]}-{s[6:8]} "
+                    f"{s[8:10]}:{s[10:12]}:{s[12:14]}"
+                )
+                vol = MiniQMTProvider.safe_float(volumes[i])
+                vol = int(vol) if vol is not None else None
+                if "kline_1min" in table:
+                    # kline_1min: 补充 pct_change=0, amplitude=0
+                    rows.append((
+                        trade_date,
+                        trade_time,
+                        symbol,
+                        MiniQMTProvider.safe_float(opens[i]),
+                        MiniQMTProvider.safe_float(closes[i]),
+                        MiniQMTProvider.safe_float(highs[i]),
+                        MiniQMTProvider.safe_float(lows[i]),
+                        vol,
+                        MiniQMTProvider.safe_float(amounts[i]),
+                        0,  # pct_change（miniQMT 不提供）
+                        0,  # amplitude（miniQMT 不提供）
+                    ))
+                elif "kline_5min" in table:
+                    # kline_5min: 无 trade_date，补充 data_source
+                    rows.append((
+                        trade_time,
+                        symbol,
+                        MiniQMTProvider.safe_float(opens[i]),
+                        MiniQMTProvider.safe_float(highs[i]),
+                        MiniQMTProvider.safe_float(lows[i]),
+                        MiniQMTProvider.safe_float(closes[i]),
+                        vol,
+                        MiniQMTProvider.safe_float(amounts[i]),
+                        "miniqmt",  # data_source
+                    ))
+                else:
+                    rows.append((
+                        trade_date,
+                        trade_time,
+                        symbol,
+                        MiniQMTProvider.safe_float(opens[i]),
+                        MiniQMTProvider.safe_float(highs[i]),
+                        MiniQMTProvider.safe_float(lows[i]),
+                        MiniQMTProvider.safe_float(closes[i]),
+                        vol,
+                        MiniQMTProvider.safe_float(amounts[i]),
+                    ))
+        return rows
 
     def _fetch_financial_statement(
         self,
