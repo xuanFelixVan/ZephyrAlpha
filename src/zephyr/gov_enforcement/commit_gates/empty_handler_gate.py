@@ -159,6 +159,95 @@ def _is_empty_handler_body(func: ast.FunctionDef | ast.AsyncFunctionDef) -> bool
     return True  # 全部都是空壳语句
 
 
+def _get_staged_new_py_files(gateway) -> list[str] | None:
+    """获取 staged 新增 .py 文件（tests/ 豁免）。返回 None 表示 fail-open。"""
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "EMPTY-HANDLER gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "EMPTY-HANDLER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+    return [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+
+
+def _resolve_worktree_root(gateway) -> str:
+    """获取 worktree root（失败回退到 project_root）。"""
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            return toplevel_result.stdout.strip()
+        return str(gateway.project_root)
+    except Exception:
+        return str(gateway.project_root)
+
+
+def _resolve_abs_files(new_py_files: list[str], wt_root: str) -> list[str]:
+    """将相对路径解析为存在的绝对路径。"""
+    abs_files = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _read_file_content(abs_path: str) -> str | None:
+    """读取文件内容，失败返回 None 并记录 warning。"""
+    try:
+        return open(abs_path, "r", encoding="utf-8", errors="replace").read()
+    except OSError as e:
+        logger.warning(
+            "EMPTY-HANDLER gate skip file %s: 读取失败(%s: %s)。",
+            abs_path, type(e).__name__, e,
+        )
+        return None
+
+
+def _parse_ast_tree(content: str, abs_path: str) -> ast.Module | None:
+    """AST 解析，失败返回 None 并记录 warning。"""
+    try:
+        return ast.parse(content, filename=abs_path)
+    except SyntaxError as e:
+        logger.warning(
+            "EMPTY-HANDLER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+            abs_path, type(e).__name__, e,
+        )
+        return None
+
+
+def _collect_file_violations(tree: ast.Module, abs_path: str, wt_root: str) -> list[str]:
+    """收集单个文件中的空 handler 违规（最多 5 条）。"""
+    rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+    file_violations: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if not _is_handler(node):
+            continue
+        if _is_empty_handler_body(node):
+            file_violations.append(
+                f"空 handler 函数 {node.name} 仅含 logger/pass/return 无实际逻辑（{rel_name}）"
+            )
+    return file_violations[:5]
+
+
 def make_empty_handler_gate() -> GateSpec:
     """构造空事件 handler 函数阻断门禁 GateSpec（硬阻断型）。
 
@@ -169,88 +258,30 @@ def make_empty_handler_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "EMPTY-HANDLER gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "EMPTY-HANDLER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        new_py_files = _get_staged_new_py_files(gateway)
+        if new_py_files is None:
             return True, ""
-
-        # 2. 过滤 .py 文件 + tests/ 豁免
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
         if not new_py_files:
             return True, ""
 
-        # 3. 获取 worktree root
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
+        # 2. 获取 worktree root
+        wt_root = _resolve_worktree_root(gateway)
 
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        # 3. 解析为绝对路径
+        abs_files = _resolve_abs_files(new_py_files, wt_root)
         if not abs_files:
             return True, ""
 
-        # 5. AST 检测：handler 函数体空壳
+        # 4. AST 检测：handler 函数体空壳
         all_violations: list[str] = []
         for abs_path in abs_files:
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning(
-                    "EMPTY-HANDLER gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
-                )
+            content = _read_file_content(abs_path)
+            if content is None:
                 continue
-
-            try:
-                tree = ast.parse(content, filename=abs_path)
-            except SyntaxError as e:
-                logger.warning(
-                    "EMPTY-HANDLER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                    abs_path, type(e).__name__, e,
-                )
+            tree = _parse_ast_tree(content, abs_path)
+            if tree is None:
                 continue
-
-            rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-            file_violations: list[str] = []
-            for node in ast.walk(tree):
-                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    continue
-                if not _is_handler(node):
-                    continue
-                if _is_empty_handler_body(node):
-                    file_violations.append(
-                        f"空 handler 函数 {node.name} 仅含 logger/pass/return 无实际逻辑（{rel_name}）"
-                    )
-            all_violations.extend(file_violations[:5])
+            all_violations.extend(_collect_file_violations(tree, abs_path, wt_root))
 
         if all_violations:
             detail = "; ".join(all_violations[:5])
