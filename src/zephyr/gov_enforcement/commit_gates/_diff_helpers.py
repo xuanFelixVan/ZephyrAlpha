@@ -2,11 +2,11 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates._diff_helpers
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] —
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate; zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate; zephyr.gov_enforcement.commit_gates.bare_sql_gate; zephyr.gov_enforcement.commit_gates.hardcoded_url_gate; zephyr.gov_enforcement.commit_gates.high_complexity_gate
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似
-# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None
+# [INVARIANTS] gate 共享 diff 解析工具模块——提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate / bare_sql_gate / hardcoded_url_gate / high_complexity_gate 公共 diff 解析函数，消除 FUNCTION-DUP 重复定义；纯函数无副作用；不可达路径 fail-open（返回空集/空列表/None）；_extract_docstring_lines 用 ast 精确识别 docstring（R95 治本），不再用正则近似；_extract_sql_constant_lines 用 ast 精确识别 SQL_*/_SQL_* 常量定义行范围（R96 治本），替代 bare_sql_gate 的 _SQL_CONSTANT_DEF_RE 正则近似
+# [MODIFY-GUARD] 函数签名：_is_exempt_line(str)->bool, _extract_docstring_lines(str)->set[int], _extract_sql_constant_lines(str)->set[int], _parse_diff_with_line_numbers(str)->list[tuple[int,str]], _read_staged_file(gateway,str)->str|None, _read_head_file(gateway,str)->str|None, _collect_function_names(str)->set[str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -57,6 +57,8 @@ __all__ = [
     "_extract_sql_constant_lines",
     "_parse_diff_with_line_numbers",
     "_read_staged_file",
+    "_read_head_file",
+    "_collect_function_names",
     "_get_staged_py_files",
     "_get_added_lines",
 ]
@@ -267,3 +269,39 @@ def _get_added_lines(
     except Exception as e:
         logger.warning("%s: git diff 失败 file=%s, %s", gate_name, py_file, e)
         return []
+
+
+def _read_head_file(gateway, py_file: str) -> str | None:
+    """读取 HEAD 版本的文件内容（``git show HEAD:path``）。
+
+    用于区分"新增函数"与"修改函数"——裁定#214 治本：
+    NO-HIGH-COMPLEXITY gate 设计意图是"只检测新增函数"，
+    但原实现 ``node.lineno in added_lines`` 捕获了修改签名的已有函数。
+    本函数读取 HEAD 版本，供 gate 判断函数是否已存在。
+
+    fail-open：文件不存在于 HEAD（新增文件）或 git 命令失败时返回 None。
+    """
+    try:
+        result = gateway._run_git(["git", "show", "HEAD:" + py_file])
+        if result.returncode == 0:
+            return result.stdout
+    except Exception:
+        pass
+    return None
+
+
+def _collect_function_names(file_content: str) -> set[str]:
+    """收集文件中所有函数名（FunctionDef / AsyncFunctionDef 的 name 属性）。
+
+    用于判断 staged 版本中的函数是否在 HEAD 版本中已存在（修改 vs 新增）。
+    fail-open：ast.parse 失败时返回空集合（所有函数都视为"新增"——安全方向）。
+    """
+    try:
+        tree = ast.parse(file_content)
+    except SyntaxError:
+        return set()
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            names.add(node.name)
+    return names
