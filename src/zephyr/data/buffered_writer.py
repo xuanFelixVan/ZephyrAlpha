@@ -76,8 +76,8 @@ class BufferedWriter:
             max_seconds: 最大缓冲时间（秒），达到后触发 flush
         """
         self._table = table
-        self._max_rows = max_rows
-        self._max_seconds = max_seconds
+        self._max_rows = max(max_rows, 1)
+        self._max_seconds = max(max_seconds, 1)
         self._buffer: list[tuple] = []
         self._cols_clause: str | None = None
         self._keep_indices: list[int] | None = None
