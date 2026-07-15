@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import datetime
 import dataclasses
+import math
 import time
 import logging
 from typing import Iterator
@@ -120,6 +121,114 @@ _DIRECT_ROUTES = {
     "dragon_tiger_qmt": "_fetch_dragon_tiger_qmt",
     "block_trade_qmt": "_fetch_block_trade_qmt",
 }
+
+
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 _fetch_convertible_bond_iv 262行 McCabe=36（嵌套数学函数 + akshare详情 + 逐可转债循环）。
+# 治本：提取数学函数到模块级 + 逐可转债处理提取到 _process_single_cb，主函数简化为编排（McCabe≈4）。
+# 行为等价：所有计算逻辑/调用顺序/参数完全保留，_solve_cb_iv 参数校验提取到 _cb_iv_invalid_params 降低复杂度。
+
+def _cb_pdf(x: float) -> float:
+    """标准正态分布 PDF。"""
+    return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+
+
+def _cb_cdf(x: float) -> float:
+    """标准正态分布 CDF。"""
+    return 0.5 * (1 + math.erf(x / math.sqrt(2)))
+
+
+def _cb_bs_call(S: float, K: float, T: float, r: float, sigma: float) -> float | None:
+    """Black-Scholes 看涨期权理论价格。"""
+    if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
+        return None
+    d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
+    d2 = d1 - sigma * math.sqrt(T)
+    return S * _cb_cdf(d1) - K * math.exp(-r * T) * _cb_cdf(d2)
+
+
+def _cb_bond_value(coupon_rate: float, T: float, r: float, face_value: float = 100.0) -> float:
+    """纯债价值：现金流贴现（票面利率年化，到期还本100元）。"""
+    if T <= 0:
+        return face_value
+    annual_coupon = coupon_rate * face_value
+    n = max(1, int(math.ceil(T)))
+    if r <= 0:
+        return face_value + annual_coupon * n
+    pv = 0.0
+    for t in range(1, n + 1):
+        pv += annual_coupon / ((1 + r) ** t)
+    pv += face_value / ((1 + r) ** n)
+    return pv
+
+
+def _cb_iv_invalid_params(S, K, T, market_price) -> bool:
+    """可转债 IV 求解器参数有效性检查。"""
+    return (S is None or K is None or market_price is None
+            or S <= 0 or K <= 0 or T <= 0 or market_price <= 0)
+
+
+def _cb_solve_iv(S, K, T, r, market_price, coupon_rate):
+    """Newton-Raphson 反解可转债隐含波动率，并计算 BS Greeks。
+
+    模型：理论价 = max(纯债价值, 转换价值) + BS_call(S, K, T, r, σ)
+    初始 σ=0.3，迭代 100 次，精度 1e-6。
+    vega = S * sqrt(T) * N'(d1)（原始 dPrice/dσ，不除100）。
+    不收敛或 vega 过小时 iv 返回 None。
+
+    Returns:
+        tuple: (iv, bond_value, convert_value, delta, gamma, theta, vega)
+        其中 Greeks 基于收敛后的 σ 计算；iv=None 时 Greeks 也为 None。
+    """
+    if _cb_iv_invalid_params(S, K, T, market_price):
+        return None, None, None, None, None, None, None
+    bond_val = _cb_bond_value(coupon_rate, T, r)
+    convert_val = S / K * 100.0  # 转换价值 = 正股价 / 转股价 × 100
+    floor_value = max(bond_val, convert_val)
+    sigma = 0.3
+    sqrt_T = math.sqrt(T)
+    for _ in range(100):
+        opt_price = _cb_bs_call(S, K, T, r, sigma)
+        if opt_price is None:
+            return None, bond_val, convert_val, None, None, None, None
+        theory_price = floor_value + opt_price
+        d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * sqrt_T)
+        d2 = d1 - sigma * sqrt_T
+        pdf_d1 = _cb_pdf(d1)
+        vega_raw = S * pdf_d1 * sqrt_T  # 原始 vega，不除100
+        if vega_raw < 1e-8:
+            return None, bond_val, convert_val, None, None, None, None
+        diff = theory_price - market_price
+        if abs(diff) < 1e-6:
+            delta = _cb_cdf(d1)
+            denom = S * sigma * sqrt_T
+            gamma = pdf_d1 / denom if denom > 0 else None
+            theta = (-S * pdf_d1 * sigma / (2 * sqrt_T)) - r * K * math.exp(-r * T) * _cb_cdf(d2)
+            return (round(sigma, 6), bond_val, convert_val,
+                    round(delta, 6), round(gamma, 6) if gamma is not None else None,
+                    round(theta, 6), round(vega_raw, 6))
+        sigma = sigma - diff / vega_raw
+        if sigma <= 0:
+            sigma = 1e-4
+        elif sigma > 5:
+            sigma = 5
+    return None, bond_val, convert_val, None, None, None, None
+
+
+# 可转债 IV 模型默认参数（miniQMT/akshare 均不提供，使用固定默认值）
+_CB_R = 0.03  # 无风险利率
+_CB_COUPON_RATE = 0.005  # 票面利率 0.5%
+
+
+@dataclasses.dataclass
+class _CbIvFetchCtx:
+    """可转债 IV 抓取上下文（封装跨方法共享的请求参数，治本 NO-LONG-PARAM-LIST）。"""
+    table: str
+    columns: list
+    start_str: str
+    end_str: str
+    last_key: str
+    policy: "SourcePolicy"
 
 
 class MiniQMTProvider(DataSourceBase):
@@ -1820,8 +1929,6 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每只可转债一批
         """
-        import math
-
         table = payload.table or "c1_market.convertible_bond_iv"
         columns = [
             "trade_date", "symbol", "underlying", "iv",
@@ -1842,83 +1949,17 @@ class MiniQMTProvider(DataSourceBase):
             )
             return
 
-        # 标准正态分布 PDF / CDF
-        def _pdf(x):
-            return math.exp(-x ** 2 / 2) / math.sqrt(2 * math.pi)
+        cb_details_map = self._load_cb_details_map(policy)
+        ctx = _CbIvFetchCtx(
+            table=table, columns=columns,
+            start_str=start_str, end_str=end_str,
+            last_key=last_key, policy=policy,
+        )
+        for cb_code in symbols:
+            yield from self._process_single_cb(cb_code, cb_details_map, ctx)
 
-        def _cdf(x):
-            return 0.5 * (1 + math.erf(x / math.sqrt(2)))
-
-        def _bs_call(S, K, T, r, sigma):
-            """Black-Scholes 看涨期权理论价格。"""
-            if S <= 0 or K <= 0 or T <= 0 or sigma <= 0:
-                return None
-            d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * math.sqrt(T))
-            d2 = d1 - sigma * math.sqrt(T)
-            return S * _cdf(d1) - K * math.exp(-r * T) * _cdf(d2)
-
-        def _bond_value(coupon_rate, T, r, face_value=100.0):
-            """纯债价值：现金流贴现（票面利率年化，到期还本100元）。"""
-            if T <= 0:
-                return face_value
-            annual_coupon = coupon_rate * face_value
-            n = max(1, int(math.ceil(T)))
-            if r <= 0:
-                return face_value + annual_coupon * n
-            pv = 0.0
-            for t in range(1, n + 1):
-                pv += annual_coupon / ((1 + r) ** t)
-            pv += face_value / ((1 + r) ** n)
-            return pv
-
-        def _solve_cb_iv(S, K, T, r, market_price, coupon_rate):
-            """Newton-Raphson 反解可转债隐含波动率，并计算 BS Greeks。
-
-            模型：理论价 = max(纯债价值, 转换价值) + BS_call(S, K, T, r, σ)
-            初始 σ=0.3，迭代 100 次，精度 1e-6。
-            vega = S * sqrt(T) * N'(d1)（原始 dPrice/dσ，不除100）。
-            不收敛或 vega 过小时 iv 返回 None。
-
-            Returns:
-                tuple: (iv, bond_value, convert_value, delta, gamma, theta, vega)
-                其中 Greeks 基于收敛后的 σ 计算；iv=None 时 Greeks 也为 None。
-            """
-            if (S is None or K is None or market_price is None
-                    or S <= 0 or K <= 0 or T <= 0 or market_price <= 0):
-                return None, None, None, None, None, None, None
-            bond_val = _bond_value(coupon_rate, T, r)
-            convert_val = S / K * 100.0  # 转换价值 = 正股价 / 转股价 × 100
-            floor_value = max(bond_val, convert_val)
-            sigma = 0.3
-            sqrt_T = math.sqrt(T)
-            for _ in range(100):
-                opt_price = _bs_call(S, K, T, r, sigma)
-                if opt_price is None:
-                    return None, bond_val, convert_val, None, None, None, None
-                theory_price = floor_value + opt_price
-                d1 = (math.log(S / K) + (r + sigma ** 2 / 2) * T) / (sigma * sqrt_T)
-                d2 = d1 - sigma * sqrt_T
-                pdf_d1 = _pdf(d1)
-                vega_raw = S * pdf_d1 * sqrt_T  # 原始 vega，不除100
-                if vega_raw < 1e-8:
-                    return None, bond_val, convert_val, None, None, None, None
-                diff = theory_price - market_price
-                if abs(diff) < 1e-6:
-                    delta = _cdf(d1)
-                    denom = S * sigma * sqrt_T
-                    gamma = pdf_d1 / denom if denom > 0 else None
-                    theta = (-S * pdf_d1 * sigma / (2 * sqrt_T)) - r * K * math.exp(-r * T) * _cdf(d2)
-                    return (round(sigma, 6), bond_val, convert_val,
-                            round(delta, 6), round(gamma, 6) if gamma is not None else None,
-                            round(theta, 6), round(vega_raw, 6))
-                sigma = sigma - diff / vega_raw
-                if sigma <= 0:
-                    sigma = 1e-4
-                elif sigma > 5:
-                    sigma = 5
-            return None, bond_val, convert_val, None, None, None, None
-
-        # 从 akshare 获取可转债详情（转股价/正股代码），miniQMT 不提供这些字段
+    def _load_cb_details_map(self, policy: SourcePolicy) -> dict:
+        """从 akshare 获取可转债详情（转股价/正股代码），miniQMT 不提供这些字段。"""
         cb_details_map = {}
         try:
             import akshare as ak
@@ -1942,123 +1983,131 @@ class MiniQMTProvider(DataSourceBase):
             self._log.info(f"获取 {len(cb_details_map)} 只可转债详情（akshare bond_zh_cov）")
         except Exception as e:
             self._log.warning(f"akshare bond_zh_cov 失败: {e}")
+        return cb_details_map
 
-        for cb_code in symbols:
-            t0 = time.time()
-            try:
-                from xtquant import xtdata
-                detail = self._call_with_policy(
-                    xtdata.get_instrument_detail, policy, cb_code,
-                )
-                rows = []
-                if detail:
-                    symbol = self._stock_to_symbol(cb_code)
-                    # miniQMT 字段名是 ExpireDate（非 EndDate）
-                    end_date = detail.get("ExpireDate", "")
-                    # 从 akshare 映射获取转股价和正股代码
-                    code_6 = cb_code.split(".")[0]
-                    cb_info = cb_details_map.get(code_6, {})
-                    convert_price = cb_info.get("convert_price")
-                    underlying = cb_info.get("underlying", "")
-                    # coupon_rate miniQMT/akshare 均不提供，使用默认值 0.5%
-                    coupon_rate = 0.005
-                    r = 0.03
-                    # 解析到期日（T 在遍历时逐日计算）
-                    exp_date = None
-                    if end_date:
-                        try:
-                            ed_str = str(end_date)
-                            if len(ed_str) >= 8:
-                                exp_date = datetime.date(
-                                    int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8])
-                                )
-                        except Exception:
-                            pass
-                    # 1. 下载并获取可转债历史收盘价
+    def _fetch_cb_price_df(self, symbol: str, start_str: str, end_str: str, policy: SourcePolicy):
+        """下载并获取指定标的的历史收盘价 DataFrame。"""
+        from xtquant import xtdata
+        try:
+            self._call_with_policy(
+                xtdata.download_history_data, policy,
+                symbol, "1d", start_str, end_str,
+            )
+        except Exception as e:
+            self._log.debug(f"download_history_data({symbol}) 失败: {e}")
+        data = self._call_with_policy(
+            xtdata.get_market_data_ex, policy,
+            [], [symbol], "1d", start_str, end_str,
+        )
+        return data.get(symbol) if data else None
+
+    def _compute_cb_iv_rows(
+        self, cb_df, ul_df, convert_price: float, underlying: str,
+        symbol: str, exp_date,
+    ) -> list:
+        """对齐日期索引，遍历每个交易日计算 IV 并构建数据行。"""
+        import pandas as pd
+        rows = []
+        common_dates = cb_df.index.intersection(ul_df.index)
+        for dt in common_dates:
+            cb_price = self.safe_float(cb_df.loc[dt, "close"])
+            spot = self.safe_float(ul_df.loc[dt, "close"])
+            if cb_price is None or cb_price <= 0 or spot is None or spot <= 0:
+                continue
+            if exp_date:
+                cur_date = pd.Timestamp(dt).date()
+                days = (exp_date - cur_date).days
+                T = max(days / 365.0, 0.001)
+            else:
+                T = 0.25
+            iv, bond_val, convert_val, delta, gamma, theta, vega_val = _cb_solve_iv(
+                spot, convert_price, T, _CB_R, cb_price, _CB_COUPON_RATE,
+            )
+            # 转股溢价率 = (可转债价 / 转换价值 - 1) × 100
+            if convert_val and convert_val > 0:
+                conversion_premium = round((cb_price / convert_val - 1) * 100, 4)
+            else:
+                conversion_premium = None
+            rows.append((
+                pd.Timestamp(dt).strftime("%Y-%m-%d"),
+                symbol, underlying, iv,
+                delta, gamma, theta, vega_val,
+                conversion_premium, "miniqmt",
+            ))
+        return rows
+
+    def _process_single_cb(
+        self, cb_code: str, cb_details_map: dict, ctx: "_CbIvFetchCtx",
+    ) -> Iterator[FetchResult]:
+        """处理单只可转债：获取详情→下载价格→计算IV→yield结果。"""
+        import datetime as _dt
+        t0 = time.time()
+        try:
+            from xtquant import xtdata
+            detail = self._call_with_policy(
+                xtdata.get_instrument_detail, ctx.policy, cb_code,
+            )
+            rows = []
+            if detail:
+                symbol = self._stock_to_symbol(cb_code)
+                # miniQMT 字段名是 ExpireDate（非 EndDate）
+                end_date = detail.get("ExpireDate", "")
+                # 从 akshare 映射获取转股价和正股代码
+                code_6 = cb_code.split(".")[0]
+                cb_info = cb_details_map.get(code_6, {})
+                convert_price = cb_info.get("convert_price")
+                underlying = cb_info.get("underlying", "")
+                # 解析到期日（T 在遍历时逐日计算）
+                exp_date = None
+                if end_date:
                     try:
-                        self._call_with_policy(
-                            xtdata.download_history_data, policy,
-                            cb_code, "1d", start_str, end_str,
-                        )
-                    except Exception as e:
-                        self._log.debug(f"download_history_data({cb_code}) 失败: {e}")
-                    cb_data = self._call_with_policy(
-                        xtdata.get_market_data_ex, policy,
-                        [], [cb_code], "1d", start_str, end_str,
-                    )
-                    cb_df = cb_data.get(cb_code) if cb_data else None
-                    if cb_df is None or len(cb_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 2. 下载并获取正股 historical 收盘价
-                    ul_df = None
-                    if underlying:
-                        try:
-                            self._call_with_policy(
-                                xtdata.download_history_data, policy,
-                                underlying, "1d", start_str, end_str,
+                        ed_str = str(end_date)
+                        if len(ed_str) >= 8:
+                            exp_date = _dt.date(
+                                int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8])
                             )
-                        except Exception as e:
-                            self._log.debug(f"download_history_data({underlying}) 失败: {e}")
-                        ul_data = self._call_with_policy(
-                            xtdata.get_market_data_ex, policy,
-                            [], [underlying], "1d", start_str, end_str,
-                        )
-                        ul_df = ul_data.get(underlying) if ul_data else None
-                    if ul_df is None or len(ul_df) == 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 3. 转股价必须 > 0
-                    if convert_price is None or convert_price <= 0:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=[],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        continue
-                    # 4. 对齐日期索引，遍历每个交易日计算 IV
-                    import pandas as pd
-                    common_dates = cb_df.index.intersection(ul_df.index)
-                    for dt in common_dates:
-                        cb_price = self.safe_float(cb_df.loc[dt, "close"])
-                        spot = self.safe_float(ul_df.loc[dt, "close"])
-                        if cb_price is None or cb_price <= 0 or spot is None or spot <= 0:
-                            continue
-                        if exp_date:
-                            cur_date = pd.Timestamp(dt).date()
-                            days = (exp_date - cur_date).days
-                            T = max(days / 365.0, 0.001)
-                        else:
-                            T = 0.25
-                        iv, bond_val, convert_val, delta, gamma, theta, vega_val = _solve_cb_iv(
-                            spot, convert_price, T, r, cb_price, coupon_rate,
-                        )
-                        # 转股溢价率 = (可转债价 / 转换价值 - 1) × 100
-                        if convert_val and convert_val > 0:
-                            conversion_premium = round((cb_price / convert_val - 1) * 100, 4)
-                        else:
-                            conversion_premium = None
-                        rows.append((
-                            pd.Timestamp(dt).strftime("%Y-%m-%d"),
-                            symbol, underlying, iv,
-                            delta, gamma, theta, vega_val,
-                            conversion_premium, "miniqmt",
-                        ))
-                yield FetchResult(
-                    table=table, columns=columns, rows=rows,
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+                    except Exception:
+                        pass
+                # 1. 下载并获取可转债历史收盘价
+                cb_df = self._fetch_cb_price_df(cb_code, ctx.start_str, ctx.end_str, ctx.policy)
+                if cb_df is None or len(cb_df) == 0:
+                    yield FetchResult(
+                        table=ctx.table, columns=ctx.columns, rows=[],
+                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                    )
+                    return
+                # 2. 下载并获取正股 historical 收盘价
+                ul_df = None
+                if underlying:
+                    ul_df = self._fetch_cb_price_df(underlying, ctx.start_str, ctx.end_str, ctx.policy)
+                if ul_df is None or len(ul_df) == 0:
+                    yield FetchResult(
+                        table=ctx.table, columns=ctx.columns, rows=[],
+                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                    )
+                    return
+                # 3. 转股价必须 > 0
+                if convert_price is None or convert_price <= 0:
+                    yield FetchResult(
+                        table=ctx.table, columns=ctx.columns, rows=[],
+                        last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                    )
+                    return
+                # 4. 对齐日期索引，遍历每个交易日计算 IV
+                rows = self._compute_cb_iv_rows(
+                    cb_df, ul_df, convert_price, underlying,
+                    symbol, exp_date,
                 )
-            except Exception as e:
-                yield FetchResult(
-                    table=table, columns=columns, rows=[],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
-                    error=f"{cb_code} 可转债IV抓取失败: {e}",
-                )
+            yield FetchResult(
+                table=ctx.table, columns=ctx.columns, rows=rows,
+                last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:
+            yield FetchResult(
+                table=ctx.table, columns=ctx.columns, rows=[],
+                last_key=ctx.last_key, elapsed_sec=time.time() - t0,
+                error=f"{cb_code} 可转债IV抓取失败: {e}",
+            )
 
     # ============== 期货期限结构 ==============
 
