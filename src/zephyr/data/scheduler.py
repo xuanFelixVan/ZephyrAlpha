@@ -603,7 +603,10 @@ class IntegratorScheduler:
 
             # BufferedWriter 批量聚合写入（裁定 #ARCH-CH-003）：
             # 攒批后一次性 write_tsv，避免逐个 FetchResult = 1 次 INSERT 导致 data parts 爆炸
-            writer = BufferedWriter(table)
+            # per-task buffer_max_seconds 配置（裁定 #ARCH-CH-013 Phase 4 防复发）：
+            # news_data 等高频小批任务配置 buffer_max_seconds=300，减少 flush 频率 10x
+            buffer_max_seconds = task.get("buffer_max_seconds", 30)
+            writer = BufferedWriter(table, max_seconds=buffer_max_seconds)
             for result in provider.fetch(payload, policy):
                 if result.error:
                     last_error = result.error
@@ -615,7 +618,7 @@ class IntegratorScheduler:
                     from zephyr.data.news_dedup import dedup_news_result
                     result = dedup_news_result(result)
 
-                # 攒批写入 ClickHouse（达 50000 行或 30 秒自动 flush）
+                # 攒批写入 ClickHouse（达 50000 行或 buffer_max_seconds 自动 flush）
                 if not writer.add(result):
                     last_error = f"ClickHouse 写入失败: {result.table}"
                     log.error("任务 %s CH写入失败", task_id)

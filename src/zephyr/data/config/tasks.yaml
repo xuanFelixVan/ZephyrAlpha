@@ -458,6 +458,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_data
     symbols: null  # 默认 12 个财经 RSS 源（2直连+10 RSSHub）
@@ -902,6 +903,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_data
     symbols: null
@@ -914,6 +916,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_data
     symbols: null
@@ -926,6 +929,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_data
     symbols: null
@@ -938,6 +942,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: stock_news_em
     symbols: null
@@ -950,6 +955,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_cctv
     symbols: null
@@ -962,6 +968,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_economic_baidu
     symbols: null
@@ -974,6 +981,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_baidu
     symbols: null
@@ -986,6 +994,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_stock
     symbols: null
@@ -999,6 +1008,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: news_data
     symbols: null
@@ -1026,6 +1036,7 @@ tasks:
     schedule: event_driven
     incremental: true
     date_col: publish_time
+    buffer_max_seconds: 300  # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
     dependencies: []
     capability: research_report
     symbols: null
