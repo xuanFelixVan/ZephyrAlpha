@@ -627,7 +627,11 @@ def write_tsv_outcome(
     # 策略3: 本地落盘兜底（裁定 #ARCH-CH-013，WSL 全挂时数据不丢失）
     # 三级 WSL 路径全部失败，数据写入本地 TSV 文件，待 WSL 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
-    if save_fallback(table, cols_clause, tsv_bytes):
+    # cols_clause=="*" 意味着 _get_insert_columns 在 CH 不可用时返回的未校验值，
+    # 回灌时 "INSERT INTO t * FORMAT TSV" 非法；存 None 让回灌时重新查询表列
+    # （裁定 #ARCH-CH-013 Phase 1 根因修复）
+    fallback_cols = None if cols_clause == "*" else cols_clause
+    if save_fallback(table, fallback_cols, tsv_bytes):
         return WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
     return WriteOutcome(WriteDisposition.NOT_DURABLE, "local_fallback_failed")
 
@@ -693,8 +697,10 @@ def write_result(
                 rows = result.rows
             cols_clause = "(" + ", ".join(common_cols) + ")"
         else:
-            # 查询失败，用 result.columns 原样
-            cols_clause = "(" + ", ".join(result.columns) + ")"
+            # CH 不可用：无法校验列，落盘 None 让回灌时（CH 已恢复）重新查询表列
+            # 原样用 result.columns 会固化不可信列名（如 Provider 占位符 col1），
+            # 回灌时 INSERT 失败永久卡死（裁定 #ARCH-CH-013 Phase 1 根因修复）
+            cols_clause = None
             rows = result.rows
     else:
         cols_clause = None  # write_tsv 内部自动查询

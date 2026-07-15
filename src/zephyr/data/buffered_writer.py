@@ -143,9 +143,11 @@ class BufferedWriter:
                     )
                 return
             log.error("BufferedWriter(%s): result.columns 与表列无交集", self._table)
-        # fallback：用 result.columns 原样
+        # CH 不可用 fallback：不固化不可信的 result.columns（可能含占位符列名 col1），
+        # 落盘 None 让回灌时（CH 已恢复）重新查询表列构造正确的 cols_clause
+        # （裁定 #ARCH-CH-013 Phase 1 根因修复）
         if result.columns:
-            self._cols_clause = "(" + ", ".join(result.columns) + ")"
+            self._cols_clause = None
             self._keep_indices = list(range(len(result.columns)))
         else:
             self._cols_clause = None  # write_tsv 内部自动查询
