@@ -3761,6 +3761,12 @@ capabilities:
       task_queue.py（DAG 依赖图 + 优先级队列）、alerter.py（告警管理）、
       metrics.py（阶段3 Prometheus 文本格式指标采集，6 指标 + 累积直方图桶）、
       config/{policies,tasks,schedule}.yaml（8 源 per-source 策略 + 61 任务清单 + 5档时段）。
+      运维外壳（保证 scheduler 进程在 9:15-9:25 集合竞价窗口在线）：
+      scripts/start_scheduler.ps1（while-true 自动重启守护 + 单实例锁 + 防疯狂重启）、
+      scripts/register_scheduler_task.ps1（Windows 计划任务注册，需管理员）、
+      启动文件夹 .bat（开机自启，不入库——directory_contract.yaml 禁止 scripts/ 下 .bat）。
+      新 AI 想做"scheduler 守护/开机自启/进程自动重启"前，MUST 反查本 capability，
+      扩展上述运维外壳脚本，禁止新建同类守护脚本。
       与 governance/intelligence_governance/provider_base.py 的 LLM Provider
       同名不同义（class-name-alias 标记豁免），过渡期共存，阶段4 退役旧版。
 
