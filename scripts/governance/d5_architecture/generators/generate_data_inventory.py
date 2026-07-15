@@ -111,28 +111,30 @@ _LAYER_INFO: dict[str, dict] = {
     "L10": {"name": "静态元数据层",     "category": "基础", "freq": "月/年",      "desc": "标的列表/交易日历/指数成分，所有层的基础设施"},
 }
 
-# 表名 → 层的推断规则（按优先级从高到低匹配，基于 data_retention_contract.yaml 真源）
-_LAYER_RULES: list[tuple[str, tuple[str, ...]]] = [
-    ("L1",  ("tick", "l2_tick", "auction", "realtime", "index_quote")),
-    ("L2",  ("1min", "5min", "15min", "30min", "60min")),
-    ("L3",  ("kline_daily", "kline_weekly", "kline_monthly", "adj_factor", "daily_valuation", "kline_index", "kline_sector")),
-    ("L4",  ("margin", "block_trade", "dragon_tiger", "money_flow", "hk_connect", "limit_up_down", "stock_indicator")),
-    ("L5",  ("balance_sheet", "income_statement", "cashflow", "financial_indicator", "main_business",
-             "earnings_forecast", "express_report", "audit_opinion", "dividend", "rights_issue",
-             "equity_pledge", "shareholder", "share_change", "repurchase")),
-    ("L6",  ("news", "share_unlock", "analyst_forecast", "disclosure")),
-    # L7 只匹配关联关系/行业分类/板块K线，不匹配列表/元数据（那些归 L10）
-    ("L7",  ("industry_class", "sector_constituent", "concept_board_constituent", "sector_kline")),
-    ("L8",  ("futures", "option", "convertible_bond", "kline_cb", "hk_kline", "kline_hk",
-             "us_daily", "kline_us", "us_index", "kline_futures")),
-    ("L9",  ("macro_data", "edb_data")),
-    # L10 匹配所有列表/元数据/日历类表
-    ("L10", ("stock_list", "trade_calendar", "index_constituent", "index_list", "index_weight",
-             "etf_list", "etf_benchmark", "etf_nav", "lof_list", "convertible_bond_list",
-             "hk_stock_list", "hk_trade_calendar", "st_stock_list",
-             "sector_list", "sector_meta", "market_index_meta",
-             "concept_board", "concept_sector")),
-]
+# 分类关键词真源路径（data_retention_contract.yaml §2）
+_LAYER_CONTRACT_PATH = (
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "contracts" / "data_retention_contract.yaml"
+)
+
+
+def _load_layer_rules() -> list[tuple[str, tuple[str, ...]]]:
+    """从 data_retention_contract.yaml §2 读取 classification_keywords，构建分层规则。
+
+    真源链：data_retention_contract.yaml (layers[].classification_keywords) → 本函数 → _LAYER_RULES
+    单真源：分类关键词只在YAML定义，Python不硬编码。改分类规则改YAML，不改Python。
+    """
+    with open(_LAYER_CONTRACT_PATH, "r", encoding="utf-8") as f:
+        contract = yaml.safe_load(f)
+    rules = []
+    for layer in contract.get("layers", []):
+        layer_id = layer["layer_id"]
+        keywords = tuple(layer.get("classification_keywords", []))
+        rules.append((layer_id, keywords))
+    return rules
+
+
+# 分层规则（从真源YAML派生，禁止在此硬编码——改分类规则改 data_retention_contract.yaml）
+_LAYER_RULES: list[tuple[str, tuple[str, ...]]] = _load_layer_rules()
 
 
 def _infer_layer(table_name: str) -> str:
