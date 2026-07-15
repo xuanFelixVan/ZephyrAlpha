@@ -73,6 +73,118 @@ _SCRIPT_PATH = (
 _VOCAB_SCRIPT = os.path.join(_SCRIPT_PATH, "scripts", "governance", "d3_metadata", "check_vocab_hardcode.py")
 
 
+def _get_staged_new_py_files(gateway) -> list[str] | None:
+    """获取 staged 新增 .py 文件列表（去除 tests/ 豁免）。
+
+    git diff 失败或异常时记录告警并返回 None（fail-open 信号）；
+    正常时返回新增 .py 文件列表（可能为空）。
+    """
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "VOCAB-HARDCODE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+    return [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".py") and not is_test_exempt(f)
+    ]
+
+
+def _resolve_worktree_root(gateway) -> str:
+    """获取 worktree root 路径；解析失败回退 gateway.project_root。"""
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            return toplevel_result.stdout.strip()
+        return str(gateway.project_root)
+    except Exception:
+        return str(gateway.project_root)
+
+
+def _resolve_abs_files(new_py_files: list[str], wt_root: str) -> list[str]:
+    """将相对路径解析为绝对路径（相对 worktree root），过滤不存在的文件。"""
+    abs_files = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _run_vocab_script(abs_files: list[str], wt_root: str):
+    """subprocess 调用 check_vocab_hardcode.py --files --ci。
+
+    脚本缺失/超时/异常时记录告警并返回 None（fail-open 信号）；
+    正常时返回 subprocess.CompletedProcess。
+    """
+    if not os.path.isfile(_VOCAB_SCRIPT):
+        logger.warning(
+            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 不存在(%s)，检测器失效。",
+            _VOCAB_SCRIPT,
+        )
+        return None
+    try:
+        return subprocess.run(
+            [sys.executable, _VOCAB_SCRIPT, "--files"] + abs_files + ["--ci"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=wt_root,
+            timeout=60,
+        )
+    except subprocess.TimeoutExpired:
+        logger.warning(
+            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。"
+        )
+        return None
+    except Exception as e:
+        logger.warning(
+            "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+
+def _parse_vocab_result(result) -> tuple[bool, str]:
+    """解析 check_vocab_hardcode.py 退出码与输出，返回 (passed, msg)。
+
+    exit 0 = 无违规；exit 2 = 脚本异常 fail-open；exit 1 = 检出违规硬阻断。
+    """
+    if result.returncode == 0:
+        return True, ""
+    if result.returncode == 2:
+        logger.warning(
+            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 异常(exit 2)：%s",
+            result.stderr[:200] if result.stderr else "",
+        )
+        return True, ""
+    # exit 1 = 检出违规，硬阻断
+    # 解析输出提取违规详情
+    details: list[str] = []
+    for line in (result.stdout + result.stderr).splitlines():
+        line = line.strip()
+        if line.startswith("WARN:"):
+            details.append(line[5:].strip())
+    detail_str = "; ".join(details[:5]) if details else "词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    return False, f"新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: {detail_str}"
+
+
 def make_vocab_hardcode_gate() -> GateSpec:
     """构造新增 .py 文件词表硬编码阻断门禁 GateSpec（硬阻断型）。
 
@@ -83,105 +195,25 @@ def make_vocab_hardcode_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "VOCAB-HARDCODE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
-            return True, ""
-
-        new_py_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".py") and not is_test_exempt(f)
-        ]
-        if not new_py_files:
+        new_py_files = _get_staged_new_py_files(gateway)
+        if new_py_files is None or not new_py_files:
             return True, ""
 
         # 2. 获取 worktree root（worktree 模式下 cwd 是 worktree，文件在 worktree 文件系统）
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
+        wt_root = _resolve_worktree_root(gateway)
 
-        # 3. 解析为绝对路径（相对 worktree root）
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-
-        # 过滤不存在的文件（防御性）
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        # 3. 解析为绝对路径（相对 worktree root）；过滤不存在的文件（防御性）
+        abs_files = _resolve_abs_files(new_py_files, wt_root)
         if not abs_files:
             return True, ""
 
         # 4. subprocess 调用 check_vocab_hardcode.py --files --ci
-        if not os.path.isfile(_VOCAB_SCRIPT):
-            logger.warning(
-                "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 不存在(%s)，检测器失效。",
-                _VOCAB_SCRIPT,
-            )
-            return True, ""
-
-        try:
-            result = subprocess.run(
-                [sys.executable, _VOCAB_SCRIPT, "--files"] + abs_files + ["--ci"],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                cwd=wt_root,
-                timeout=60,
-            )
-        except subprocess.TimeoutExpired:
-            logger.warning(
-                "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。"
-            )
-            return True, ""
-        except Exception as e:
-            logger.warning(
-                "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        result = _run_vocab_script(abs_files, wt_root)
+        if result is None:
             return True, ""
 
         # 5. 解析结果
         # exit 0 = 无违规；exit 1 = 有违规（EXIT_FINDINGS）；exit 2 = 脚本异常（EXIT_ERROR）
-        if result.returncode == 0:
-            return True, ""  # 无违规
-        if result.returncode == 2:
-            logger.warning(
-                "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 异常(exit 2)：%s",
-                result.stderr[:200] if result.stderr else "",
-            )
-            return True, ""  # 脚本异常，fail-open
-
-        # exit 1 = 检出违规，硬阻断
-        # 解析输出提取违规详情
-        details: list[str] = []
-        for line in (result.stdout + result.stderr).splitlines():
-            line = line.strip()
-            if line.startswith("WARN:"):
-                details.append(line[5:].strip())
-        detail_str = "; ".join(details[:5]) if details else "词表硬编码违规（见 check_vocab_hardcode.py 输出）"
-        return False, f"新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: {detail_str}"
+        return _parse_vocab_result(result)
 
     return GateSpec(gate_id="VOCAB-HARDCODE", check=_check, priority=80)
