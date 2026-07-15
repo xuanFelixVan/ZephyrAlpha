@@ -17,10 +17,6 @@ requirements:
     priority: P1
     need: "Level2 Tick数据（逐笔成交+委托队列）"
     availability: "需付费(QMT Level2行情)"
-  realtime_snapshot:
-    priority: P1
-    need: "实时快照（盘中全市场快照）"
-    availability: "API可用(QMT subscribe_quote)"
 
   # === L9 宏观层空表 ===
   edb_data:
