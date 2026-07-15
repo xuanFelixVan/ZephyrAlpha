@@ -634,6 +634,18 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 2. 在 `data/capability_cards/` 下创建对应的 YAML
 3. 如果有自动化工作，创建 WorkDAG 并注册到 WorkOrchestrator
 4. 写入 AiAuditLogger 记录注册事件
+5. **四图注册（ARCH-057 裁定）**：新模块 MUST 按以下顺序注册四图（depgraph/dataflow/decision/blueprint）：
+   ```bash
+   # 1. depgraph 登记（真源）——apply_depgraph.py 或 generate_project_depgraph.py
+   python scripts/governance/apply_depgraph.py --add-design-node --path <源码路径> --blueprint-id <MOD-XXX> --domain-id <D_XXX>
+   # 2. 四图同步——sync_panorama_module.py 自动派生到 dataflow/decision/blueprint
+   python scripts/governance/sync_panorama_module.py <MOD-XXX>
+   # 3. 对齐验证——align_panoramas.py 生成报告，问题总数应为 0
+   python scripts/governance/d5_architecture/generators/align_panoramas.py
+   # 4. 孤儿清理（定期）——清理 decision_layers 中 depgraph 已删模块的残留占位层
+   python scripts/governance/sync_panorama_module.py --prune-orphans
+   ```
+   禁止跳过步骤 1-2 直接创建蓝图文件（会导致 blueprint 图孤儿）。详细机制见 [panorama_alignment_engine 蓝图](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md)。
 
 如果不注册，ModuleOnboardingScanner 会在扫描时发现并自动触发接入流程。
 

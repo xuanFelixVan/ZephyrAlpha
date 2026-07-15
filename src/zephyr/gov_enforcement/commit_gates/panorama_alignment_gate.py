@@ -66,6 +66,7 @@ _TRIGGER_PATTERNS = (
     "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/decision_layers_registry.yaml",
     "scripts/governance/d5_architecture/generators/align_panoramas.py",
+    "docs/03_modules/",
 )
 
 # 告警阈值
