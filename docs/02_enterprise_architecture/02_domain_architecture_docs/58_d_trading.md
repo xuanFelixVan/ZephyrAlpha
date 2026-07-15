@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 12:13:15
+> 最后更新: 2026-07-15 12:39:56
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -208,19 +208,19 @@ graph TD
     src_zephyr_trading_runtime_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_runtime_async_runtime_py
     src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
-    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
+    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_init_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
@@ -234,15 +234,15 @@ graph TD
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_runtime_async_runtime_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_speed_baseline_checker_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
+    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
     D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -252,6 +252,8 @@ graph TD
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
     D_GOV_REPAIR["(原型态 / prototype) D_GOV_REPAIR"]
     D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
@@ -263,15 +265,13 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_init_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py production
     class src_zephyr_trading_extensions_init_py,src_zephyr_trading_api_init_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_core_init_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_infrastructure_init_py,src_zephyr_trading_models_init_py,src_zephyr_trading_runtime_init_py,src_zephyr_trading_services_init_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_init_py,src_zephyr_trading_trading_contracts_execution_init_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_init_py,src_zephyr_trading_trading_contracts_market_factor_monitor_report_py design
-    class D_GOVERNANCE,D_SHARED,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL,D_INTEGRATION external_prod
+    class D_GOVERNANCE,D_SHARED,D_INFRA_RUNTIME,D_INTEGRATION,D_FUNDAMENTAL_SIGNAL external_prod
     class D_ORCHESTRATOR,D_EX_CORE,D_GOV_REPAIR,D_GOV_AUDIT,D_ML_TRAIN external_design
 ```
 
@@ -312,8 +312,8 @@ graph TD
         tests_trading_test_bulkhead_manager_py["(原型态 / prototype) test_bulkhead_manager.py"]
     end
     src_zephyr_trading_trading_contracts_portfolio_contracts_money_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
-    src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_money_py
     src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py
+    src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_money_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
@@ -336,8 +336,8 @@ graph TD
     tests_trading_test_backpressure_types_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_behavioral_admission_py -.->|测试依赖 / test_depends| D_SHARED
     tests_trading_test_blind_spot_closure_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_boot_hooks_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_benchmark_runner_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_boot_hooks_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_bulkhead_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
@@ -416,12 +416,12 @@ graph TD
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     tests_trading_test_l06_trade_execution_py -.->|测试依赖 / test_depends| D_EX_CORE
     tests_trading_test_l06_trade_execution_py -.->|测试依赖 / test_depends| D_EX_CORE
+    tests_trading_test_dead_letter_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_finalizer_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_dream_cycle_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_PF_CORE["(生产态 / production) D_PF_CORE"]
     tests_trading_test_l05_portfolio_construction_py -.->|测试依赖 / test_depends| D_PF_CORE
     tests_trading_test_circuit_breaker_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_dead_letter_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_design_decisions_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_feature_flag_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_fault_types_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
@@ -463,13 +463,13 @@ graph TD
     tests_trading_test_work_dag_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_trading_test_state_synchronizer_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_system_transfer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_stop_gate_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_schema_migration_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_status_dashboard_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_system_transfer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_stability_guard_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
@@ -523,13 +523,14 @@ graph TD
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_runtime_async_runtime_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_INTEGRATION
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
@@ -537,7 +538,6 @@ graph TD
     src_zephyr_trading_ide_health_daemon_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_conductor_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SIGLEGACY["(生产态 / production) D_SIGLEGACY"]
     D_SIGLEGACY -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
@@ -558,13 +558,13 @@ graph TD
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_init_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_market_factor_signal_py,src_zephyr_trading_trading_contracts_market_market_data_py,src_zephyr_trading_trading_contracts_market_synthesized_signal_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py production
-    class D_GOVERNANCE,D_SHARED,D_INTEGRATION,D_INFRASTRUCTURE,D_SIGLEGACY,D_FUNDAMENTAL_SIGNAL,D_RISK,D_INFRA_RUNTIME external_prod
+    class D_GOVERNANCE,D_SHARED,D_INFRASTRUCTURE,D_INTEGRATION,D_SIGLEGACY,D_FUNDAMENTAL_SIGNAL,D_RISK,D_INFRA_RUNTIME external_prod
     class D_GOV_REPAIR,D_EX_CORE external_design
 ```
 
@@ -668,17 +668,17 @@ graph TD
     end
     src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_macro_factor_signal_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py
-    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_macro_factor_signal_py
     src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
@@ -695,12 +695,12 @@ graph TD
     tests_trading_test_status_dashboard_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_work_dag_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_l06_trade_execution_py -.->|测试依赖 / test_depends| D_EX_CORE
+    tests_trading_test_dead_letter_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     tests_trading_test_state_synchronizer_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_finalizer_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_dream_cycle_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_system_transfer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_macro_factor_signal_py

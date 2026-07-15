@@ -1,7 +1,7 @@
 %% D_SIGLEGACY 域全景依赖图
-%% 生成时间: 2026-07-15 12:13:18
+%% 生成时间: 2026-07-15 12:39:59
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 16, 依赖边数: 24
+%% 模块数: 16, 依赖边数: 25
 
 graph TD
 
@@ -38,21 +38,22 @@ graph TD
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_signal_fundamental_pipeline_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_SIGLEGACY -> D_FACTOR (1 条)
+    %% D_SIGLEGACY -> D_FACTOR (2 条)
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_FACTOR[D_FACTOR]
+    src_zephyr_signal_fundamental___init___py -->|contract| D_FACTOR[D_FACTOR]
     %% D_SIGLEGACY -> D_FUNDAMENTAL_SIGNAL (14 条)
     src_zephyr_signal_fundamental_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner_impl___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner_impl___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_strategy___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_synth___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_gen___init___py -->|config_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     %% D_SIGLEGACY -> D_SHARED (2 条)
@@ -66,4 +67,4 @@ graph TD
     %% 统计
     %% 域内依赖: 0 条
     %% 跨域入边: 4 条
-    %% 跨域出边: 20 条
+    %% 跨域出边: 21 条

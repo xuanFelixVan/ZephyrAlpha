@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-15 12:13:10
+> 最后更新: 2026-07-15 12:39:52
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -88,7 +88,7 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) Re-export wrapper: strategy_registry has migrat...<br/>文件: strategy_registry.py"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_strategy_registry_py
+    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_risk_limits_py
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -.->|导入依赖 / import_depends| D_PF_ALLOC
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -157,7 +157,7 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) Re-export wrapper: strategy_registry has migrat...<br/>文件: strategy_registry.py"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_strategy_registry_py
+    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_risk_limits_py
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -.->|导入依赖 / import_depends| D_PF_ALLOC
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
