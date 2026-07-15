@@ -2540,7 +2540,7 @@ capabilities:
     aliases:
       - model_drift_detector
     description: >-
-      LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021-model_drift_detector。
+      LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021。
       功能: 建立基线feature vector → 定期采样 → KL/JS散度 → 超阈值→exit 34。 解决发现性：新AI
       搜 "model_drift_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查。
   - capability_id: drift_detection_naming_magic_checker
@@ -5009,6 +5009,13 @@ creation_tokens:
     token: "auto-integrity-checker-20260715"
     created_by: "session-sess-33176-20260715021455"
     capability: "integrity_checker"
+
+  # --- Hyper-V ClickHouse 迁移 Phase 0 影响清单（2026-07-15）---
+  # 机器可读全量影响清单，WSL→Hyper-V 迁移施工基线
+  - file: "docs/_working/hyperv_migration_impact_inventory.yaml"
+    token: "auto-hyperv-migration-inventory-20260716"
+    created_by: "session-sess-15304-20260716000605"
+    capability: "hyperv_migration_impact_inventory"
 
 # ============================================================================
 # 维护日志
