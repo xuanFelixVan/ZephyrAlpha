@@ -1,5 +1,5 @@
 ---
-module_id: MOD-015
+module_id: MOD-INF-016
 title: "Shared Infrastructure 蓝图 — 跨层共享基础设施"
 doc_type: blueprint
 status: Active

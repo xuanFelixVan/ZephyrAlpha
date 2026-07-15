@@ -196,3 +196,68 @@ class TestWeightedVoting:
         conn.cursor.return_value.__enter__.return_value = cursor
         result = spm._query_depgraph_module(conn, "MOD-T")
         assert result["domain_id"] == "D_GOV_SCRIPTS"
+
+
+class TestPruneOrphans:
+    def _mock_three_conns_for_prune(self, spm, monkeypatch,
+                                     depgraph_rows, decision_rows, dataflow_rows):
+        """统一 mock prune_orphans 的三个 DB 连接。"""
+        depgraph_conn = MagicMock()
+        dep_cursor = MagicMock()
+        dep_cursor.fetchall.return_value = depgraph_rows
+        depgraph_conn.cursor.return_value.__enter__.return_value = dep_cursor
+
+        decision_conn = MagicMock()
+        dec_cursor = MagicMock()
+        dec_cursor.fetchall.return_value = decision_rows
+        decision_conn.cursor.return_value.__enter__.return_value = dec_cursor
+
+        dataflow_conn = MagicMock()
+        df_cursor = MagicMock()
+        df_cursor.fetchall.return_value = dataflow_rows
+        dataflow_conn.cursor.return_value.__enter__.return_value = df_cursor
+
+        monkeypatch.setattr(spm, "get_depgraph_pg_connection", lambda **kw: depgraph_conn)
+        monkeypatch.setattr(spm, "get_decisiongraph_pg_connection", lambda **kw: decision_conn)
+        monkeypatch.setattr(spm, "get_dataflowgraph_pg_connection", lambda **kw: dataflow_conn)
+        return dep_cursor, dec_cursor, df_cursor, decision_conn, dataflow_conn
+
+    def test_prune_orphans_removes_orphan_decision_and_dataflow(self, spm, monkeypatch):
+        """prune_orphans 删除 decision_layers + dataflow_jobs 中的孤儿占位记录。"""
+        _, dec_cursor, df_cursor, decision_conn, dataflow_conn = \
+            self._mock_three_conns_for_prune(
+                spm, monkeypatch,
+                depgraph_rows=[{"blueprint_id": "MOD-A"}, {"blueprint_id": "MOD-B"}],
+                decision_rows=[{"layer_id": "MOD-A"}, {"layer_id": "MOD-DEC-ORPHAN"}],
+                dataflow_rows=[{"job_name": "MOD-A"}, {"job_name": "MOD-DF-ORPHAN"}],
+            )
+
+        result = spm.prune_orphans()
+
+        assert result["deleted_decision"] == 1
+        assert result["orphan_decision"] == ["MOD-DEC-ORPHAN"]
+        assert result["deleted_dataflow"] == 1
+        assert result["orphan_dataflow"] == ["MOD-DF-ORPHAN"]
+        dec_cursor.execute.assert_any_call(
+            spm._SQL_DELETE_DECISION_LAYER, ("MOD-DEC-ORPHAN",)
+        )
+        df_cursor.execute.assert_any_call(
+            spm._SQL_DELETE_DATAFLOW_JOB, ("MOD-DF-ORPHAN",)
+        )
+        decision_conn.commit.assert_called_once()
+        dataflow_conn.commit.assert_called_once()
+
+    def test_prune_orphans_idempotent_no_orphans(self, spm, monkeypatch):
+        """prune_orphans 幂等：无孤儿时 deleted=0。"""
+        self._mock_three_conns_for_prune(
+            spm, monkeypatch,
+            depgraph_rows=[{"blueprint_id": "MOD-A"}],
+            decision_rows=[{"layer_id": "MOD-A"}],
+            dataflow_rows=[{"job_name": "MOD-A"}],
+        )
+
+        result = spm.prune_orphans()
+        assert result["deleted_decision"] == 0
+        assert result["deleted_dataflow"] == 0
+        assert result["orphan_decision"] == []
+        assert result["orphan_dataflow"] == []
