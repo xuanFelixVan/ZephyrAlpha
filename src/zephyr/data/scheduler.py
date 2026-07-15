@@ -282,31 +282,31 @@ class IntegratorScheduler:
         - wsl bash -c 'clickhouse-client ...' 返回 Wsl/Service/E_UNEXPECTED 灾难性故障
         - wsl --shutdown + wsl -d Ubuntu 返回 STATUS_DLL_INIT_FAILED
 
-        治本方案（裁定 #ARCH-CH-013 Phase 2）：
-        - 后台守护线程每 60 秒探活 WSL（wsl -d Ubuntu -e echo ok，timeout=10s）
-        - 连续 3 次失败（3 分钟 WSL 不可达）→ 自动冷重启 WSL
-        - 冷重启流程：wsl --shutdown → sleep 10s → wsl -d Ubuntu -e echo ok
-        - 冷重启后重置失败计数器，等待下个周期继续探活
-        - 单次冷重启间隔 ≥ 3 分钟（避免频繁 shutdown 导致 WSL 服务异常）
+        治本方案（裁定 #ARCH-CH-013 Phase 2+3）：
+    - 后台守护线程每 60 秒探活 WSL（wsl -d Ubuntu -e echo ok，timeout=10s）
+    - _classify_wsl_probe_result 区分故障类型（Phase 3）：
+      · systemd 用户会话降级（VM 存活）→ 抑制冷重启，只告警
+      · 真正 VM 故障（E_UNEXPECTED）→ 冷重启恢复
+    - 冷重启流程：wsl --shutdown → sleep 10s → wsl -d Ubuntu -e echo ok
+    - 冷重启后重置失败计数器，等待下个周期继续探活
 
         注意：此探活独立于 _start_ch_health_probe（后者只查 CH 不查 WSL），
         二者分工——CH 探活发现 CH 进程死，WSL 探活发现 WSL VM 死。
         """
         import subprocess as _sp
 
-        def _probe_wsl() -> bool:
-            """探活 WSL（wsl -d Ubuntu -e echo ok），5 秒内成功返回 True。"""
+        def _probe_wsl() -> tuple[bool, str]:
+            """探活 WSL，返回 (ok, classification)。"""
             try:
                 r = _sp.run(
                     ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
                     capture_output=True, timeout=10,
                 )
-                ok, _ = self._classify_wsl_probe_result(
+                return self._classify_wsl_probe_result(
                     r.returncode, r.stdout, r.stderr,
                 )
-                return ok
             except Exception:
-                return False
+                return False, "probe_exception"
 
         def _cold_restart_wsl() -> bool:
             """冷重启 WSL：shutdown → wait → boot。"""
@@ -333,34 +333,53 @@ class IntegratorScheduler:
 
         def _probe_loop() -> None:
             fail_count = 0
+            last_class = "unknown"
             while self._started:
-                ok = _probe_wsl()
+                ok, cls = _probe_wsl()
                 if ok:
                     if fail_count > 0:
                         log.info("WSL 探活恢复（前 %d 次失败）", fail_count)
                     fail_count = 0
                 else:
                     fail_count += 1
-                    log.warning("WSL 探活失败（连续 %d 次）", fail_count)
+                    last_class = cls
+                    log.warning("WSL 探活失败（连续 %d 次，分类=%s）", fail_count, cls)
                     if fail_count >= 3:
-                        log.error(
-                            "WSL 连续 %d 次探活失败；为保护进行中的 ClickHouse 写入，"
-                            "已抑制自动 wsl --shutdown",
-                            fail_count,
-                        )
-                        self._alerter.notify(
-                            "wsl_unavailable_no_auto_shutdown",
-                            f"WSL2 连续 {fail_count} 次探活失败；自动关机已抑制，"
-                            "请检查宿主 WSL 服务",
-                            level=LEVEL_CRITICAL,
-                            source="wsl_health_probe",
-                        )
-                        fail_count = 0  # 告警限流；不主动中断 WSL/ClickHouse
+                        if last_class == "systemd_user_session_degraded":
+                            # systemd 用户会话故障：VM 存活，CH 可能仍在运行
+                            # 抑制冷重启，避免误杀 CH 写入
+                            log.error(
+                                "WSL 连续 %d 次探活失败（systemd 用户会话降级）；"
+                                "为保护进行中的 ClickHouse 写入，已抑制自动 wsl --shutdown",
+                                fail_count,
+                            )
+                            self._alerter.notify(
+                                "wsl_systemd_degraded_no_shutdown",
+                                f"WSL2 连续 {fail_count} 次探活失败（systemd 用户会话降级）；"
+                                "自动关机已抑制，请检查宿主 WSL 服务",
+                                level=LEVEL_CRITICAL,
+                                source="wsl_health_probe",
+                            )
+                        else:
+                            # 真正 VM 故障（E_UNEXPECTED / probe_exception 等）
+                            # VM 已死，CH 已死，必须冷重启恢复
+                            log.error(
+                                "WSL 连续 %d 次探活失败（分类=%s）；VM 故障，触发冷重启",
+                                fail_count, last_class,
+                            )
+                            self._alerter.notify(
+                                "wsl_vm_failure_cold_restart",
+                                f"WSL2 连续 {fail_count} 次探活失败（{last_class}），自动冷重启",
+                                level=LEVEL_CRITICAL,
+                                source="wsl_health_probe",
+                            )
+                            _cold_restart_wsl()
+                        fail_count = 0
                 time.sleep(60)
 
         t = threading.Thread(target=_probe_loop, daemon=True, name="wsl-health-probe")
         t.start()
-        log.info("WSL 健康探活线程已启动（间隔 60s，连续 3 次失败触发冷重启）")
+        log.info("WSL 健康探活线程已启动（间隔 60s，连续 3 次失败按故障分类决策）")
 
     # ============== 破损 part 自动检测+隔离（裁定 #ARCH-CH-015） ==============
 

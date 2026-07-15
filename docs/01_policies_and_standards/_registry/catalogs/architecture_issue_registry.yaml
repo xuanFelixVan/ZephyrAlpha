@@ -1819,6 +1819,11 @@ entries:
     scheduler 启动时 + 每 30 分钟自动回灌（local_replay.replay_batch），CH 恢复后数据回流。
     Phase 2（代码层）：scheduler 新增 WSL 健康探活线程（每 60s 探活 wsl -d Ubuntu -e echo ok），
     连续 3 次失败自动冷重启（wsl --shutdown → sleep 10s → wsl -d Ubuntu）。
+    Phase 3（代码层，2026-07-15）：Phase 2 的"连续 3 次失败自动冷重启"存在误杀缺陷——
+    systemd 用户会话故障（VM 存活、CH 可能仍在运行）被误判为 VM 崩溃，触发 wsl --shutdown
+    误杀 CH 写入。Phase 3 新增 _classify_wsl_probe_result 区分故障类型：
+    systemd 故障→抑制冷重启+告警；真正 VM 故障（E_UNEXPECTED）→保留冷重启。
+    _probe_wsl 返回 (bool, classification) 供 _probe_loop 按分类决策。
     Phase 0（物理层，用户手动）：清理 C 盘 + 压缩 vhdx + 清理 83 个 broken-on-start part +
     修复 systemd 配置（RestartSec=30, 恢复 watchdog）。
     Phase 4（CH 稳定后）：OPTIMIZE TABLE c3_fundamental.news_data FINAL 消除 13721 parts 合并风暴。
@@ -1830,9 +1835,9 @@ entries:
   impact:
   - src/zephyr/data/local_replay.py（新建——本地落盘+回灌）
   - src/zephyr/data/ch_writer.py（write_tsv 新增第四级降级）
-  - src/zephyr/data/scheduler.py（新增 _start_local_replay + _start_wsl_health_probe）
+  - src/zephyr/data/scheduler.py（新增 _start_local_replay + _start_wsl_health_probe + _classify_wsl_probe_result Phase3 分类决策）
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（local_replay.py creation_token 登记）
-  fix_phase: Phase 1+2 已完成（代码层）；Phase 0 待用户手动执行；Phase 4 待 CH 稳定后执行
+  fix_phase: Phase 1+2+3 已完成（代码层）；Phase 0 待用户手动执行；Phase 4 待 CH 稳定后执行
   status: decided
   related_rules:
   - '#ARCH-CH-004'
