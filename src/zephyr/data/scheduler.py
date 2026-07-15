@@ -259,6 +259,21 @@ class IntegratorScheduler:
 
     # ============== WSL 健康探活 + 自动重启（裁定 #ARCH-CH-013 Phase 2） ==============
 
+    @staticmethod
+    def _classify_wsl_probe_result(
+        returncode: int, stdout: bytes, stderr: bytes,
+    ) -> tuple[bool, str]:
+        """区分 WSL VM 故障与 systemd 用户会话故障，避免误杀 VM。"""
+        if returncode == 0 and b"ok" in stdout:
+            return True, "ok"
+        detail = stderr.decode("utf-8", errors="replace")
+        if (
+            "Failed to start the systemd user session" in detail
+            and "Wsl/Service/E_UNEXPECTED" not in detail
+        ):
+            return True, "systemd_user_session_degraded"
+        return False, detail
+
     def _start_wsl_health_probe(self) -> None:
         """启动 WSL2 健康探活 + 自动重启守护线程。
 
@@ -286,7 +301,10 @@ class IntegratorScheduler:
                     ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
                     capture_output=True, timeout=10,
                 )
-                return r.returncode == 0 and b"ok" in r.stdout
+                ok, _ = self._classify_wsl_probe_result(
+                    r.returncode, r.stdout, r.stderr,
+                )
+                return ok
             except Exception:
                 return False
 
@@ -325,15 +343,19 @@ class IntegratorScheduler:
                     fail_count += 1
                     log.warning("WSL 探活失败（连续 %d 次）", fail_count)
                     if fail_count >= 3:
-                        log.error("WSL 连续 %d 次探活失败，触发冷重启", fail_count)
+                        log.error(
+                            "WSL 连续 %d 次探活失败；为保护进行中的 ClickHouse 写入，"
+                            "已抑制自动 wsl --shutdown",
+                            fail_count,
+                        )
                         self._alerter.notify(
-                            "wsl_cold_restart",
-                            f"WSL2 连续 {fail_count} 次探活失败，自动冷重启",
+                            "wsl_unavailable_no_auto_shutdown",
+                            f"WSL2 连续 {fail_count} 次探活失败；自动关机已抑制，"
+                            "请检查宿主 WSL 服务",
                             level=LEVEL_CRITICAL,
                             source="wsl_health_probe",
                         )
-                        _cold_restart_wsl()
-                        fail_count = 0  # 重置计数器（冷重启后给 WSL 时间恢复）
+                        fail_count = 0  # 告警限流；不主动中断 WSL/ClickHouse
                 time.sleep(60)
 
         t = threading.Thread(target=_probe_loop, daemon=True, name="wsl-health-probe")

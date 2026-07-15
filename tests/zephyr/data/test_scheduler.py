@@ -98,6 +98,23 @@ class TestInit:
         assert "task_completed" in scheduler._event_handlers
 
 
+class TestWslProbeClassification:
+    """WSL 探活必须避免将 systemd 用户会话故障误判为 VM 崩溃。"""
+
+    @pytest.mark.parametrize(
+        ("returncode", "stdout", "stderr", "expected"),
+        [
+            (0, b"ok\n", b"", (True, "ok")),
+            (1, b"", b"wsl: Failed to start the systemd user session for 'root'.", (True, "systemd_user_session_degraded")),
+            (1, b"", b"Wsl/Service/E_UNEXPECTED", (False, "Wsl/Service/E_UNEXPECTED")),
+        ],
+    )
+    def test_classifies_wsl_probe_result(self, returncode, stdout, stderr, expected):
+        assert IntegratorScheduler._classify_wsl_probe_result(
+            returncode, stdout, stderr,
+        ) == expected
+
+
 class TestEventSubscribe:
     """事件订阅测试。"""
 
