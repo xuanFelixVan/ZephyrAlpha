@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] subprocess(标准库); http.client(标准库); clickhouse-driver(pip); clickhouse-client(via WSL,系统工具)
+# [DEPENDENCIES] subprocess(标准库); http.client(标准库); clickhouse-driver(pip); clickhouse-client(via WSL,系统工具); zephyr.data.local_replay
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 混合传输：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(18123,http.client) 优先，WSL subprocess fallback; 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client（非 urllib，裁定 #ARCH-CH-010 Phase 3，urllib 在 WSL2 mirrored 模式下 ConnectionRefused 间歇性失败）; _discover_wsl_ip 在 mirrored 模式下返回空字符串（localhost 直通）; health_check() 提供三级传输路径健康诊断
+# [INVARIANTS] 混合传输四级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(18123)→WSL subprocess→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client（非 urllib，裁定 #ARCH-CH-010 Phase 3）; WSL 全挂时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; health_check() 提供传输路径健康诊断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -559,14 +559,18 @@ def write_tsv(
                 table,
                 r.stderr.decode("utf-8", errors="replace"),
             )
-            return False
-        return True
+        else:
+            return True
     except subprocess.TimeoutExpired:
         log.error("CH insert 超时(%ds): %s", timeout, table)
-        return False
     except Exception as e:
         log.error("CH insert 异常(%s): %s", table, e)
-        return False
+
+    # 策略3: 本地落盘兜底（裁定 #ARCH-CH-013，WSL 全挂时数据不丢失）
+    # 三级 WSL 路径全部失败，数据写入本地 TSV 文件，待 WSL 恢复后自动回灌
+    from zephyr.data.local_replay import save_fallback
+    save_fallback(table, cols_clause, tsv_bytes)
+    return False
 
 
 def write_result(

@@ -143,6 +143,30 @@ class MiniQMTProvider(DataSourceBase):
             self._log.warning(f"miniQMT health_check 失败: {e}")
             return False
 
+    def _probe_l2_permission(self) -> bool:
+        """探测当前账号是否有 L2 行情权限（裁定 #ARCH-DATA-014）。
+
+        对单只股票调用 get_l2_quote，成功（含空数据）=有权限，
+        异常=无权限。结果缓存在 self._has_l2 避免重复探测。
+
+        Returns:
+            True=有L2权限, False=无L2权限
+        """
+        if self._has_l2 is not None:
+            return self._has_l2
+        try:
+            from xtquant import xtdata
+            import datetime as _dt
+            today = _dt.date.today().strftime("%Y%m%d")
+            # 对平安银行探测，只需验证 API 可调用（返回空也算有权限）
+            xtdata.get_l2_quote([], "000001.SZ", today, today, -1)
+            self._has_l2 = True
+            self._log.info("L2 行情权限探测通过")
+        except Exception as e:
+            self._has_l2 = False
+            self._log.warning(f"L2 行情权限探测失败（账号可能无L2权限）: {e}")
+        return self._has_l2
+
     def disconnect(self) -> None:
         """断开连接。xtquant 无显式登出，仅重置状态标记。"""
         self._connected = False
@@ -2990,6 +3014,17 @@ class MiniQMTProvider(DataSourceBase):
         Yields:
             FetchResult: 每个标的一批
         """
+        # L2 权限预检（裁定 #ARCH-DATA-014）：无权限时直接 yield error，
+        # scheduler 的 fallback 机制会自动降级到 tick_snapshot（五档快照）
+        if not self._probe_l2_permission():
+            yield FetchResult(
+                table=payload.table or "c1_market.l2_tick",
+                columns=[], rows=[], last_key="",
+                elapsed_sec=0.0,
+                error="L2行情权限缺失，已自动降级到tick_snapshot五档快照",
+            )
+            return
+
         from xtquant import xtdata
         import numpy as np
 

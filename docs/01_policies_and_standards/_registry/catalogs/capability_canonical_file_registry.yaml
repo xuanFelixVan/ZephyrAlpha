@@ -3970,6 +3970,12 @@ creation_tokens:
     created_by: "session-sess-30528-20260715045936"
     capability: "data_source_provider_abstraction"
 
+  # --- MOD-L00-004 本地落盘兜底+回灌（裁定 #ARCH-CH-013，2026-07-15）---
+  - file: "src/zephyr/data/local_replay.py"
+    token: "auto-local-replay-20260715"
+    created_by: "session-sess-30860-20260715104757"
+    capability: "data_source_provider_abstraction"
+
   # --- Phase E1: sync完整性校验脚本（2026-07-13）---
   - file: "scripts/governance/verify_sync_integrity.py"
     token: "auto-verify-sync-integrity-20260713"

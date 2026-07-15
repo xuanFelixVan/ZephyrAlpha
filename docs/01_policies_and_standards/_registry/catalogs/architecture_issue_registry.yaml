@@ -1801,6 +1801,76 @@ entries:
   created: '2026-07-15'
   last_updated: '2026-07-15'
 
+# --- #ARCH-CH-013: WSL2 失稳治本——本地落盘兜底+回灌+WSL 自愈 ---
+- issue_id: '#ARCH-CH-013'
+  title: WSL2 失稳致 CH 崩溃循环——本地落盘兜底+自动回灌+WSL 健康探活自愈
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    WSL2 虚拟机每 ~30 秒非正常停机一次（dmesg journal 腐蚀），导致 CH 进程被杀 +
+    systemd 重启循环（单日 102 次重启）。根因：C 盘 93% 满（vhdx 宿主盘仅剩 15G）+
+    WSL2 自身稳定性问题。表现为 wsl bash -c 返回 Wsl/Service/E_UNEXPECTED 灾难性故障。
+    ch_writer.write_tsv 三级降级链（TCP→HTTP→WSL subprocess）全部失败时数据被丢弃。
+
+    裁定（治本方案，三阶段）：
+    Phase 1（代码层）：ch_writer.write_tsv 新增第四级降级——本地落盘兜底
+    （local_replay.save_fallback），将 TSV 写入 data/local_fallback/*.tsv + JSONL manifest。
+    scheduler 启动时 + 每 30 分钟自动回灌（local_replay.replay_batch），CH 恢复后数据回流。
+    Phase 2（代码层）：scheduler 新增 WSL 健康探活线程（每 60s 探活 wsl -d Ubuntu -e echo ok），
+    连续 3 次失败自动冷重启（wsl --shutdown → sleep 10s → wsl -d Ubuntu）。
+    Phase 0（物理层，用户手动）：清理 C 盘 + 压缩 vhdx + 清理 83 个 broken-on-start part +
+    修复 systemd 配置（RestartSec=30, 恢复 watchdog）。
+    Phase 4（CH 稳定后）：OPTIMIZE TABLE c3_fundamental.news_data FINAL 消除 13721 parts 合并风暴。
+
+    设计要点：
+    - local_replay 原子写入（.tmp→rename）+ manifest 追加模式（JSONL）+ 线程安全（Lock）
+    - 回灌复用 ch_writer.write_tsv，CH 可用时立即成功，失败保留待重试
+    - WSL 探活独立于 CH 探活（后者只查 CH 不查 WSL），二者分工
+  impact:
+  - src/zephyr/data/local_replay.py（新建——本地落盘+回灌）
+  - src/zephyr/data/ch_writer.py（write_tsv 新增第四级降级）
+  - src/zephyr/data/scheduler.py（新增 _start_local_replay + _start_wsl_health_probe）
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（local_replay.py creation_token 登记）
+  fix_phase: Phase 1+2 已完成（代码层）；Phase 0 待用户手动执行；Phase 4 待 CH 稳定后执行
+  status: decided
+  related_rules:
+  - '#ARCH-CH-004'
+  - '#ARCH-CH-010'
+  - '#ARCH-CH-012'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
+# --- #ARCH-DATA-014: L2 行情权限缺失——优雅降级+权限预检 ---
+- issue_id: '#ARCH-DATA-014'
+  title: L2 行情权限缺失——优雅降级到五档快照+权限预检机制
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    l2_tick 任务使用 miniQMT get_l2_quote 拉取逐笔行情，但该接口需 L2 行情权限。
+    L2 权限绑定券商账号（资金门槛 50 万+），非 API key/订阅权限；部分券商 miniQMT 不支持 L2。
+    当前账号无 L2 权限，导致 l2_tick 表 0 行。
+
+    裁定（治本方案）：
+    (1) miniqmt_provider 新增 _probe_l2_permission() 方法，启动时探测 L2 权限（结果缓存）；
+    (2) _fetch_l2_tick 开头预检 L2 权限，无权限时 yield FetchResult(error="...降级...") 并 return；
+    (3) tasks.yaml l2_tick_snapshot 任务配置 fallback_sources（降级到 tick_snapshot/get_full_tick 五档快照，
+        写入 tick_data 表，免费）；
+    (4) 代码层面无法"修复"权限缺失（需用户开通券商 L2 权限），但可优雅降级避免任务持续失败。
+
+    设计要点：
+    - 权限探测结果缓存在 self._has_l2，避免重复探测开销
+    - 降级路径写入 tick_data 表（get_full_tick 三秒快照含五档），非 l2_tick 表
+    - 任务级 fallback_sources 配置允许数据韧性三层机制自动切换
+  impact:
+  - src/zephyr/data/implementations/miniqmt_provider.py（_probe_l2_permission + _fetch_l2_tick 预检）
+  - src/zephyr/data/config/tasks.yaml（l2_tick_snapshot fallback_sources + requires_permission）
+  fix_phase: 已完成（代码层降级）；用户开通 L2 权限后可恢复原 l2_tick 拉取
+  status: decided
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'
   title: 域 ID 连字符→下划线统一
