@@ -2297,79 +2297,107 @@ class TaskRepository:
 
         return {"task_id": task_id, "round": current_round, "total_issues": total_issues, "passed": total_issues == 0, "consecutive_zero": consecutive_zero, "dimensions": dimensions_result}
 
-    def _evaluate_review_dimension(self, task: Task, dimension: str) -> list[str]:
-        """执行单个维度的审查，返回问题列表。"""
+    def _normalize_blocked_by(self, task: Task) -> list[str]:
+        """Normalize blocked_by to list (handles both list[str] and JSON string)."""
         import json
 
-        issues: list[str] = []
-
-        def _blocked_by_list() -> list[str]:
-            """Normalize blocked_by to list (handles both list[str] and JSON string)."""
-            if not task.blocked_by:
-                return []
-            if isinstance(task.blocked_by, list):
-                return task.blocked_by
-            if isinstance(task.blocked_by, str):
-                try:
-                    return json.loads(task.blocked_by)
-                except (json.JSONDecodeError, TypeError):
-                    return []
+        if not task.blocked_by:
             return []
+        if isinstance(task.blocked_by, list):
+            return task.blocked_by
+        if isinstance(task.blocked_by, str):
+            try:
+                return json.loads(task.blocked_by)
+            except (json.JSONDecodeError, TypeError):
+                return []
+        return []
 
-        if dimension == "checklist_completeness":
-            if not task.files_in_scope:
-                issues.append("files_in_scope为空")
-            if not task.deliverables:
-                issues.append("deliverables为空")
-            if not task.acceptance:
-                issues.append("acceptance为空")
-            if not task.rollback_instructions or len(task.rollback_instructions) < 20:
-                issues.append("rollback_instructions过短(<20字)")
-
-        elif dimension == "solution_completeness":
-            required_kw = ("根因", "治根", "施工步骤", "验收标准")
-            missing = [kw for kw in required_kw if kw not in task.description]
-            if missing:
-                issues.append(f"description缺少结构词: {missing}")
-            if len(task.description) < 100:
-                issues.append(f"description过短({len(task.description)}<100字)")
-
-        elif dimension == "code_correctness":
-            bl = _blocked_by_list()
-            if task.blocked_by and not bl:
-                issues.append("blocked_by不是有效JSON")
-
-        elif dimension == "causal_chain_validity":
-            bl = _blocked_by_list()
-            for dep_id in bl:
-                try:
-                    with self._write_tx() as conn:
-                        row = conn.execute(SQL_SELECT_TASKS_BY_ID_3, (dep_id,)).fetchone()
-                    if row is None:
-                        issues.append(f"blocked_by引用不存在的任务: {dep_id}")
-                except Exception:
-                    issues.append(f"无法验证依赖任务: {dep_id}")
-
-        elif dimension == "data_consistency":
-            bl = _blocked_by_list()
-            if bl and task.status != TaskStatus.BLOCKED:
-                issues.append(f"有blocked_by但status={task.status}(应BLOCKED)")
-            if not bl and task.status == TaskStatus.BLOCKED:
-                issues.append("无blocked_by但status=BLOCKED")
-
-        elif dimension == "omission_risk":
-            if len(task.files_in_scope) > 3:
-                issues.append(f"files_in_scope={len(task.files_in_scope)}>3(粒度风险)")
-            if not task.applicable_rules:
-                issues.append("applicable_rules为空(未声明适用规则)")
-
-        elif dimension == "drift_risk":
-            if not task.source_blueprint or task.source_blueprint == "unknown":
-                issues.append("source_blueprint为空或unknown(蓝图漂移风险)")
-            if not task.allowed_touch:
-                issues.append("allowed_touch为空(修改范围未限定)")
-
+    def _check_checklist_completeness(self, task: Task) -> list[str]:
+        """审查 checklist_completeness 维度。"""
+        issues: list[str] = []
+        if not task.files_in_scope:
+            issues.append("files_in_scope为空")
+        if not task.deliverables:
+            issues.append("deliverables为空")
+        if not task.acceptance:
+            issues.append("acceptance为空")
+        if not task.rollback_instructions or len(task.rollback_instructions) < 20:
+            issues.append("rollback_instructions过短(<20字)")
         return issues
+
+    def _check_solution_completeness(self, task: Task) -> list[str]:
+        """审查 solution_completeness 维度。"""
+        issues: list[str] = []
+        required_kw = ("根因", "治根", "施工步骤", "验收标准")
+        missing = [kw for kw in required_kw if kw not in task.description]
+        if missing:
+            issues.append(f"description缺少结构词: {missing}")
+        if len(task.description) < 100:
+            issues.append(f"description过短({len(task.description)}<100字)")
+        return issues
+
+    def _check_code_correctness(self, task: Task) -> list[str]:
+        """审查 code_correctness 维度。"""
+        bl = self._normalize_blocked_by(task)
+        if task.blocked_by and not bl:
+            return ["blocked_by不是有效JSON"]
+        return []
+
+    def _check_causal_chain_validity(self, task: Task) -> list[str]:
+        """审查 causal_chain_validity 维度。"""
+        issues: list[str] = []
+        bl = self._normalize_blocked_by(task)
+        for dep_id in bl:
+            try:
+                with self._write_tx() as conn:
+                    row = conn.execute(SQL_SELECT_TASKS_BY_ID_3, (dep_id,)).fetchone()
+                if row is None:
+                    issues.append(f"blocked_by引用不存在的任务: {dep_id}")
+            except Exception:
+                issues.append(f"无法验证依赖任务: {dep_id}")
+        return issues
+
+    def _check_data_consistency(self, task: Task) -> list[str]:
+        """审查 data_consistency 维度。"""
+        issues: list[str] = []
+        bl = self._normalize_blocked_by(task)
+        if bl and task.status != TaskStatus.BLOCKED:
+            issues.append(f"有blocked_by但status={task.status}(应BLOCKED)")
+        if not bl and task.status == TaskStatus.BLOCKED:
+            issues.append("无blocked_by但status=BLOCKED")
+        return issues
+
+    def _check_omission_risk(self, task: Task) -> list[str]:
+        """审查 omission_risk 维度。"""
+        issues: list[str] = []
+        if len(task.files_in_scope) > 3:
+            issues.append(f"files_in_scope={len(task.files_in_scope)}>3(粒度风险)")
+        if not task.applicable_rules:
+            issues.append("applicable_rules为空(未声明适用规则)")
+        return issues
+
+    def _check_drift_risk(self, task: Task) -> list[str]:
+        """审查 drift_risk 维度。"""
+        issues: list[str] = []
+        if not task.source_blueprint or task.source_blueprint == "unknown":
+            issues.append("source_blueprint为空或unknown(蓝图漂移风险)")
+        if not task.allowed_touch:
+            issues.append("allowed_touch为空(修改范围未限定)")
+        return issues
+
+    def _evaluate_review_dimension(self, task: Task, dimension: str) -> list[str]:
+        """执行单个维度的审查，返回问题列表。"""
+        dispatch = {
+            "checklist_completeness": self._check_checklist_completeness,
+            "solution_completeness": self._check_solution_completeness,
+            "code_correctness": self._check_code_correctness,
+            "causal_chain_validity": self._check_causal_chain_validity,
+            "data_consistency": self._check_data_consistency,
+            "omission_risk": self._check_omission_risk,
+            "drift_risk": self._check_drift_risk,
+        }
+        handler = dispatch.get(dimension)
+        return handler(task) if handler else []
 
     def get_review_status(self, task_id: str) -> dict:
         """查询任务卡的审查状态。"""
