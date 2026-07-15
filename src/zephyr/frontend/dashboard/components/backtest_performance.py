@@ -1087,6 +1087,17 @@ def _render_daily_detail(data: BacktestPerformanceData) -> object:
     return pn.Column(*items, sizing_mode="stretch_width")
 
 
+def _collect_filtered_trades(trades, side, ts_set):
+    """按方向收集交易并过滤到K线显示范围内, 返回 (ts, price, qty, amount) 元组列表。"""
+    filtered = []
+    for t in trades:
+        if t.side == side:
+            ts = t.timestamp.split(" ")[0]
+            if ts in ts_set:
+                filtered.append((ts, t.price, t.quantity, t.amount))
+    return filtered
+
+
 # ===== Tab 5: 信号分析 (bt-visualizer 风格) =====
 
 def _render_signal_analysis(data: BacktestPerformanceData) -> object:
@@ -1172,21 +1183,10 @@ def _render_signal_analysis(data: BacktestPerformanceData) -> object:
             opacity=0.5,
         ), row=2, col=1)
 
-        # 买卖点打点 (bt-visualizer 核心: hover 交易信息)
-        buy_ts = [t.timestamp.split(" ")[0] for t in data.trades if t.side == "buy"]
-        buy_pr = [t.price for t in data.trades if t.side == "buy"]
-        buy_qty = [t.quantity for t in data.trades if t.side == "buy"]
-        buy_amt = [t.amount for t in data.trades if t.side == "buy"]
-
-        sell_ts = [t.timestamp.split(" ")[0] for t in data.trades if t.side == "sell"]
-        sell_pr = [t.price for t in data.trades if t.side == "sell"]
-        sell_qty = [t.quantity for t in data.trades if t.side == "sell"]
-        sell_amt = [t.amount for t in data.trades if t.side == "sell"]
-
-        # 过滤到K线显示范围内
+        # 买卖点打点 (bt-visualizer 核心: hover 交易信息) — 过滤到K线显示范围内
         ts_set = set(ts_list)
-        buy_filtered = [(t, p, q, a) for t, p, q, a in zip(buy_ts, buy_pr, buy_qty, buy_amt) if t in ts_set]
-        sell_filtered = [(t, p, q, a) for t, p, q, a in zip(sell_ts, sell_pr, sell_qty, sell_amt) if t in ts_set]
+        buy_filtered = _collect_filtered_trades(data.trades, "buy", ts_set)
+        sell_filtered = _collect_filtered_trades(data.trades, "sell", ts_set)
 
         if buy_filtered:
             fig.add_trace(go.Scatter(
