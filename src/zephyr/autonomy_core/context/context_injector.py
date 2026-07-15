@@ -268,6 +268,38 @@ def _lsg_scan_context(context: ValidatedContext) -> bool:
         return False
 
 
+def _record_layer_metadata(
+    layer_name: str,
+    context: ValidatedContext,
+    text: str,
+    sources: list[str],
+    provenances: list[str],
+    layer_count: dict[str, int],
+) -> None:
+    """Record per-layer sources, provenances, and counts (extracted from inject)."""
+    if layer_name == "system":
+        layer_count[layer_name] = len(context.system_rules)
+        sources.append("AGENTS.md")
+        provenances.append("root:AGENTS.md:§0")
+    elif layer_name == "rules":
+        layer_count[layer_name] = len(context.contracts)
+        for c in context.contracts:
+            if ":" in c:
+                sources.append(c.split(":")[0])
+            else:
+                sources.append(c[:50])
+        provenances.extend(context.contracts[:10])
+    elif layer_name == "knowledge":
+        layer_count[layer_name] = min(len(context.ke_entries), len(text.split("\n")))
+        for ke in context.ke_entries:
+            if ":" in ke:
+                provenances.append(ke.split("\n")[0] if "\n" in ke else ke[:80])
+        provenances.extend(context.ke_entries[:5])
+    elif layer_name == "examples":
+        layer_count[layer_name] = len(context.examples)
+        provenances.extend([f"example:{i}" for i in range(len(context.examples))])
+
+
 def inject(
     context: ValidatedContext,
     *,
@@ -360,27 +392,7 @@ def inject(
         total_tokens += layer_tokens_val
         layer_tokens[layer_name] = layer_tokens_val
 
-        if layer_name == "system":
-            layer_count[layer_name] = len(context.system_rules)
-            sources.append("AGENTS.md")
-            provenances.append("root:AGENTS.md:§0")
-        elif layer_name == "rules":
-            layer_count[layer_name] = len(context.contracts)
-            for c in context.contracts:
-                if ":" in c:
-                    sources.append(c.split(":")[0])
-                else:
-                    sources.append(c[:50])
-            provenances.extend(context.contracts[:10])
-        elif layer_name == "knowledge":
-            layer_count[layer_name] = min(len(context.ke_entries), len(text.split("\n")))
-            for ke in context.ke_entries:
-                if ":" in ke:
-                    provenances.append(ke.split("\n")[0] if "\n" in ke else ke[:80])
-            provenances.extend(context.ke_entries[:5])
-        elif layer_name == "examples":
-            layer_count[layer_name] = len(context.examples)
-            provenances.extend([f"example:{i}" for i in range(len(context.examples))])
+        _record_layer_metadata(layer_name, context, text, sources, provenances, layer_count)
 
     budget_remaining = max(0, session_limit - total_tokens)
 
