@@ -178,6 +178,94 @@ class ExamJudge:
         )
 
 
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 DeterministicJudge.judge 102 行 McCabe=32（keyword + tool_axis + structure + length 四段评分）。
+# 治本：提取为 5 个模块级 helper（均 McCabe≤15），judge 简化为编排（McCabe≈1）。
+# 行为等价：评分公式不变，tool_axis 合并逻辑不变，reasoning 格式不变。
+
+
+def _score_keyword_coverage(text_lower: str, expected_contains: list) -> float:
+    """关键词覆盖率评分（无关键词要求时给中性分 0.5）。"""
+    if expected_contains:
+        hits = sum(1 for kw in expected_contains if kw.lower() in text_lower)
+        return hits / len(expected_contains)
+    return 0.5
+
+
+def _score_func_args(text: str, text_lower: str, func_args: dict) -> float:
+    """function_args 评分：key 出现 + value 子串命中（key+val=1分, key_only=0.5分）。"""
+    if not func_args:
+        return 0.0
+    arg_hits = 0.0
+    for k, v in func_args.items():
+        key_ok = k in text or k.lower() in text_lower
+        val_ok = bool(v) and (str(v).lower() in text_lower)
+        if key_ok and val_ok:
+            arg_hits += 1
+        elif key_ok:
+            arg_hits += 0.5
+    return arg_hits / len(func_args)
+
+
+def _score_tool_seq(text_lower: str, tool_seq: list) -> float:
+    """tool_sequence 评分：相对顺序匹配（按序查找，找到后从后续位置继续）。"""
+    if not tool_seq:
+        return 0.0
+    seq_hits = 0
+    search_from = 0
+    for t in tool_seq:
+        idx = text_lower.find(t.lower(), search_from)
+        if idx >= 0:
+            seq_hits += 1
+            search_from = idx + len(t)
+    return seq_hits / len(tool_seq)
+
+
+def _score_tool_axis(
+    text: str, text_lower: str, func_args: dict, tool_seq: list,
+    expected_contains: list, keyword_cov: float,
+) -> tuple[float, str]:
+    """Tool 轴评分 + 并入 keyword_cov。返回 (updated_keyword_cov, tool_diag)。"""
+    if not func_args and not tool_seq:
+        return keyword_cov, ""
+    arg_score = _score_func_args(text, text_lower, func_args)
+    seq_score = _score_tool_seq(text_lower, tool_seq)
+    parts: list[str] = []
+    if func_args:
+        parts.append(f"args={arg_score:.2f}")
+    if tool_seq:
+        parts.append(f"seq={seq_score:.2f}")
+    if func_args and tool_seq:
+        tool_score = 0.5 * arg_score + 0.5 * seq_score
+    elif func_args:
+        tool_score = arg_score
+    else:
+        tool_score = seq_score
+    tool_diag = " ".join(parts)
+    if expected_contains:
+        keyword_cov = 0.5 * keyword_cov + 0.5 * tool_score
+    else:
+        keyword_cov = tool_score
+    return keyword_cov, tool_diag
+
+
+def _score_structure(text: str, text_lower: str, expected_keys: list) -> float:
+    """结构完整性评分（无结构要求时给中性分 0.5）。"""
+    if expected_keys:
+        hits = sum(1 for k in expected_keys if k in text or k.lower() in text_lower)
+        return hits / len(expected_keys)
+    return 0.5
+
+
+def _score_length(length: int, min_len: int, max_len: int) -> float:
+    """长度合理性评分（太短线性衰减到 0~0.5，太长衰减但不归零，合理区间=1.0）。"""
+    if length < min_len:
+        return (length / min_len) * 0.5
+    if length > max_len:
+        return max(0.5, 1.0 - (length - max_len) / 20_000)
+    return 1.0
+
+
 class DeterministicJudge:
     """P1-4: 确定性裁判 — 无 LLM judge_chat 时的 judge 轨回退。
 
@@ -212,84 +300,25 @@ class DeterministicJudge:
         Returns:
             JudgeResult 多维评分 (reasoning 含诊断明细)
         """
+        # 裁定#217 Tier2 P3：提取为 5 个模块级 helper，本方法简化为编排（McCabe≈1）。
         text = candidate_answer or ""
         text_lower = text.lower()
 
-        # 1. 关键词覆盖率 (0-1)
         expected_contains = getattr(case, "expected_contains", []) or []
-        if expected_contains:
-            hits = sum(1 for kw in expected_contains if kw.lower() in text_lower)
-            keyword_cov = hits / len(expected_contains)
-        else:
-            keyword_cov = 0.5  # 无关键词要求时给中性分
+        keyword_cov = _score_keyword_coverage(text_lower, expected_contains)
 
-        # 1b. Tool 轴字段评分 (P类 ROADMAP-02) — function_args / tool_sequence
-        # function_calling: 检查参数 key 是否出现, value 子串是否命中
         func_args = getattr(case, "expected_function_args", {}) or {}
         tool_seq = getattr(case, "expected_tool_sequence", []) or []
-        tool_diag = ""
-        if func_args or tool_seq:
-            parts = []
-            if func_args:
-                arg_hits = 0
-                for k, v in func_args.items():
-                    key_ok = k in text or k.lower() in text_lower
-                    val_ok = bool(v) and (str(v).lower() in text_lower)
-                    if key_ok and val_ok:
-                        arg_hits += 1
-                    elif key_ok:
-                        arg_hits += 0.5
-                arg_score = arg_hits / len(func_args) if func_args else 0.0
-                parts.append(f"args={arg_score:.2f}")
-            else:
-                arg_score = 0.0
-            if tool_seq:
-                # 检查工具是否按序出现 (相对顺序匹配)
-                seq_hits = 0
-                search_from = 0
-                for t in tool_seq:
-                    idx = text_lower.find(t.lower(), search_from)
-                    if idx >= 0:
-                        seq_hits += 1
-                        search_from = idx + len(t)
-                seq_score = seq_hits / len(tool_seq) if tool_seq else 0.0
-                parts.append(f"seq={seq_score:.2f}")
-            else:
-                seq_score = 0.0
-            # 合成 tool_score: 有 args 用 args, 有 seq 用 seq, 都有用均值
-            if func_args and tool_seq:
-                tool_score = 0.5 * arg_score + 0.5 * seq_score
-            elif func_args:
-                tool_score = arg_score
-            else:
-                tool_score = seq_score
-            tool_diag = " ".join(parts)
-            # tool 字段并入 correctness (与 keyword_cov 取均值, 无 keyword 时直接用 tool_score)
-            if expected_contains:
-                keyword_cov = 0.5 * keyword_cov + 0.5 * tool_score
-            else:
-                keyword_cov = tool_score
+        keyword_cov, tool_diag = _score_tool_axis(
+            text, text_lower, func_args, tool_seq, expected_contains, keyword_cov
+        )
 
-        # 2. 结构完整性 (0-1) — 检查 expected_structure_keys 是否在文本中出现
         expected_keys = getattr(case, "expected_structure_keys", []) or []
-        if expected_keys:
-            hits = sum(1 for k in expected_keys if k in text or k.lower() in text_lower)
-            structure_score = hits / len(expected_keys)
-        else:
-            structure_score = 0.5  # 无结构要求时给中性分
+        structure_score = _score_structure(text, text_lower, expected_keys)
 
-        # 3. 长度合理性 (0-1)
         length = len(text)
-        if length < self._MIN_LEN:
-            # 太短: 0~50 字 -> 0~0.5 线性
-            length_score = (length / self._MIN_LEN) * 0.5
-        elif length > self._MAX_LEN:
-            # 太长: >10000 字 -> 衰减但不归零
-            length_score = max(0.5, 1.0 - (length - self._MAX_LEN) / 20_000)
-        else:
-            length_score = 1.0
+        length_score = _score_length(length, self._MIN_LEN, self._MAX_LEN)
 
-        # 加权综合 (关键词 0.5 + 结构 0.3 + 长度 0.2)
         overall = 0.5 * keyword_cov + 0.3 * structure_score + 0.2 * length_score
 
         return JudgeResult(
