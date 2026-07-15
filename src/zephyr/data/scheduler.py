@@ -738,47 +738,15 @@ class IntegratorScheduler:
         table = task["table"]
         incremental = task.get("incremental", True)
 
-        # 获取 Provider
-        provider = self._get_provider(source)
-        if provider is None:
-            self._alerter.notify(task_id, f"Provider {source} 不可用", level=LEVEL_ERROR, source=source)
-            return False, f"Provider {source} 不可用"
+        # 获取 Provider + 策略 + 熔断检查
+        provider, policy, error = self._validate_provider_and_policy(task_id, source)
+        if error:
+            return False, error
 
-        # 获取策略
-        policy = self._policy_registry.get_policy(source)
-
-        # 熔断检查（CLI `integrator pause <source>` 生效点）
-        if not policy.enabled:
-            log.warning("任务 %s 跳过：数据源 %s 已熔断", task_id, source)
-            self._alerter.notify(
-                task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
-            )
-            self._task_queue.mark_failed(task_id)
-            return False, f"源 {source} 已熔断"
-
-        # 查断点续传
-        last_key = self._progress_store.get_last_key(task_id)
+        # 查断点续传 + 构造 FetchPayload
+        start, latest_key = self._compute_start_date(task_id, incremental)
         today = datetime.date.today()
-        if incremental and last_key:
-            try:
-                start = datetime.date.fromisoformat(last_key)
-            except ValueError:
-                start = today
-        else:
-            start = today.replace(day=1)  # 全量从月初开始
-
-        # 构造 FetchPayload（capability 注入 extra 供 provider 路由）
-        extra = dict(task.get("extra", {}) or {})
-        if capability:
-            extra.setdefault("capability", capability)
-        payload = FetchPayload(
-            table=table,
-            symbols=task.get("symbols"),
-            start=start,
-            end=today,
-            incremental=incremental,
-            extra=extra,
-        )
+        payload = self._build_fetch_payload(task, start, today, incremental, capability)
 
         # 记录运行开始
         run_id = self._progress_store.start_run(task_id)
@@ -790,23 +758,10 @@ class IntegratorScheduler:
 
         total_rows = 0
         last_error: str | None = None
-        latest_key = last_key or ""
 
         try:
-            # MergeTree 幂等性：写入前 DELETE WHERE date_col IN (start..end)
-            # date_col 来自 tasks.yaml（SSoT），避免硬编码列名导致 AI 猜错
-            date_col = task.get("date_col")
-            if date_col and incremental and not ch_writer.is_replacing_engine(table):
-                dates_to_clean = []
-                d = start
-                while d <= today:
-                    dates_to_clean.append(d.isoformat())
-                    d += datetime.timedelta(days=1)
-                if dates_to_clean:
-                    date_list = ", ".join(f"toDate('{dd}')" for dd in dates_to_clean)
-                    log.info("任务 %s 幂等DELETE: %s WHERE toDate(%s) IN (%d dates)",
-                             task_id, table, date_col, len(dates_to_clean))
-                    ch_writer.delete_where(table, f"toDate({date_col}) IN ({date_list})")
+            # 幂等性清理
+            self._cleanup_for_idempotency(task, task_id, table, start, today, incremental)
 
             # BufferedWriter 批量聚合写入（裁定 #ARCH-CH-003）：
             # 攒批后一次性 write_tsv，避免逐个 FetchResult = 1 次 INSERT 导致 data parts 爆炸
@@ -814,31 +769,9 @@ class IntegratorScheduler:
             # news_data 等高频小批任务配置 buffer_max_seconds=300，减少 flush 频率 10x
             buffer_max_seconds = task.get("buffer_max_seconds", 30)
             writer = BufferedWriter(table, max_seconds=buffer_max_seconds)
-            for result in provider.fetch(payload, policy):
-                if result.error:
-                    last_error = result.error
-                    log.error("任务 %s FetchResult.error: %s", task_id, result.error)
-                    break
-
-                # 新闻数据去重（基于标题MD5哈希）
-                if "news_data" in (result.table or ""):
-                    from zephyr.data.news_dedup import dedup_news_result
-                    result = dedup_news_result(result)
-
-                # 攒批写入 ClickHouse（达 50000 行或 buffer_max_seconds 自动 flush）
-                if not writer.add(result):
-                    last_error = f"ClickHouse 写入失败: {result.table}"
-                    log.error("任务 %s CH写入失败", task_id)
-                    break
-
-                total_rows += result.rows_fetched
-                if result.last_key:
-                    latest_key = result.last_key
-
-                # 更新进度（每批）
-                self._progress_store.save_progress(
-                    task_id, source, latest_key, "RUNNING", total_rows
-                )
+            total_rows, last_error, latest_key = self._fetch_and_write(
+                provider.fetch(payload, policy), writer, task_id, source, latest_key
+            )
 
             # flush 缓冲区残留数据
             if last_error is None and not writer.flush():
@@ -888,6 +821,119 @@ class IntegratorScheduler:
             self._metrics.flush()
             self._emit_event("task_completed", task_id=task_id, success=False)
             return False, last_error
+
+    # ===== _try_source() 辅助方法 =====
+
+    def _validate_provider_and_policy(
+        self, task_id: str, source: str,
+    ) -> tuple[object, object | None, str | None]:
+        """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。"""
+        provider = self._get_provider(source)
+        if provider is None:
+            self._alerter.notify(task_id, f"Provider {source} 不可用", level=LEVEL_ERROR, source=source)
+            return None, None, f"Provider {source} 不可用"
+
+        policy = self._policy_registry.get_policy(source)
+        # 熔断检查（CLI `integrator pause <source>` 生效点）
+        if not policy.enabled:
+            log.warning("任务 %s 跳过：数据源 %s 已熔断", task_id, source)
+            self._alerter.notify(
+                task_id, f"源 {source} 已熔断，任务跳过", level=LEVEL_ERROR, source=source
+            )
+            self._task_queue.mark_failed(task_id)
+            return None, None, f"源 {source} 已熔断"
+
+        return provider, policy, None
+
+    def _compute_start_date(
+        self, task_id: str, incremental: bool,
+    ) -> tuple[datetime.date, str]:
+        """计算起始日期和初始 latest_key（断点续传或月初）。"""
+        last_key = self._progress_store.get_last_key(task_id)
+        today = datetime.date.today()
+        if incremental and last_key:
+            try:
+                return datetime.date.fromisoformat(last_key), last_key
+            except ValueError:
+                return today, last_key
+        # 全量从月初开始
+        return today.replace(day=1), last_key or ""
+
+    @staticmethod
+    def _build_fetch_payload(
+        task: dict, start: datetime.date, today: datetime.date,
+        incremental: bool, capability: str | None,
+    ) -> FetchPayload:
+        """构造 FetchPayload（capability 注入 extra 供 provider 路由）。"""
+        extra = dict(task.get("extra", {}) or {})
+        if capability:
+            extra.setdefault("capability", capability)
+        return FetchPayload(
+            table=task["table"],
+            symbols=task.get("symbols"),
+            start=start,
+            end=today,
+            incremental=incremental,
+            extra=extra,
+        )
+
+    def _cleanup_for_idempotency(
+        self, task: dict, task_id: str, table: str,
+        start: datetime.date, today: datetime.date, incremental: bool,
+    ) -> None:
+        """幂等性清理：写入前 DELETE 已有日期范围数据。
+
+        MergeTree 幂等性：date_col 来自 tasks.yaml（SSoT），避免硬编码列名导致 AI 猜错。
+        """
+        date_col = task.get("date_col")
+        if not date_col or not incremental or ch_writer.is_replacing_engine(table):
+            return
+        dates_to_clean = []
+        d = start
+        while d <= today:
+            dates_to_clean.append(d.isoformat())
+            d += datetime.timedelta(days=1)
+        if not dates_to_clean:
+            return
+        date_list = ", ".join(f"toDate('{dd}')" for dd in dates_to_clean)
+        log.info("任务 %s 幂等DELETE: %s WHERE toDate(%s) IN (%d dates)",
+                 task_id, table, date_col, len(dates_to_clean))
+        ch_writer.delete_where(table, f"toDate({date_col}) IN ({date_list})")
+
+    def _fetch_and_write(
+        self, fetch_iter: object, writer: BufferedWriter,
+        task_id: str, source: str, latest_key: str,
+    ) -> tuple[int, str | None, str]:
+        """执行 fetch + 批量写入循环。返回 (total_rows, last_error, latest_key)。"""
+        total_rows = 0
+        last_error: str | None = None
+        latest = latest_key
+        for result in fetch_iter:
+            if result.error:
+                last_error = result.error
+                log.error("任务 %s FetchResult.error: %s", task_id, result.error)
+                break
+
+            # 新闻数据去重（基于标题MD5哈希）
+            if "news_data" in (result.table or ""):
+                from zephyr.data.news_dedup import dedup_news_result
+                result = dedup_news_result(result)
+
+            # 攒批写入 ClickHouse（达 50000 行或 buffer_max_seconds 自动 flush）
+            if not writer.add(result):
+                last_error = f"ClickHouse 写入失败: {result.table}"
+                log.error("任务 %s CH写入失败", task_id)
+                break
+
+            total_rows += result.rows_fetched
+            if result.last_key:
+                latest = result.last_key
+
+            # 更新进度（每批）
+            self._progress_store.save_progress(
+                task_id, source, latest, "RUNNING", total_rows
+            )
+        return total_rows, last_error, latest
 
     def run_schedule(self, schedule_name: str) -> dict[str, bool]:
         """执行某时段的所有任务（DAG 顺序）。
