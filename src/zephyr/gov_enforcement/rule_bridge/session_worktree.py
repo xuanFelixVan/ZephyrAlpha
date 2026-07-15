@@ -750,6 +750,119 @@ def session_worktree_commit(
     return _git_commit_in_worktree(wt_path, message, session_id)
 
 
+def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
+    """获取 worktree branch 相对 merge-base 的变更文件列表。"""
+    merge_base_r = subprocess.run(
+        ["git", "merge-base", "HEAD", branch],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if merge_base_r.returncode != 0:
+        return []
+    merge_base = merge_base_r.stdout.strip()
+    changed_r = subprocess.run(
+        ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if changed_r.returncode != 0:
+        return []
+    return [f.strip() for f in changed_r.stdout.strip().split("\n") if f.strip()]
+
+
+def _get_dirty_files(root: Path) -> set[str] | None:
+    """获取主工作区未提交改动文件（staged + unstaged），失败返回 None。"""
+    dirty_r = subprocess.run(
+        ["git", "diff", "--name-only", "HEAD"],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if dirty_r.returncode != 0:
+        return None
+    return {f.strip() for f in dirty_r.stdout.strip().split("\n") if f.strip()}
+
+
+def _collect_tracked_cleanups(
+    root: Path, branch: str, changed_files: list[str], dirty_files: set[str],
+) -> tuple[int, list[str], list[str]]:
+    """收集 tracked dirty 文件的清理操作——返回 (cleaned, skipped, to_checkout)。"""
+    cleaned = 0
+    skipped: list[str] = []
+    to_checkout: list[str] = []
+    for rel_file in changed_files:
+        if rel_file not in dirty_files:
+            continue
+        main_file = root / rel_file
+        if not main_file.exists():
+            skipped.append(rel_file)
+            continue
+        main_content = main_file.read_bytes()
+        wt_content_r = subprocess.run(
+            ["git", "show", f"{branch}:{rel_file}"],
+            cwd=str(root), capture_output=True,
+        )
+        if wt_content_r.returncode != 0:
+            skipped.append(rel_file)
+            continue
+        if main_content == wt_content_r.stdout:
+            to_checkout.append(rel_file)
+            cleaned += 1
+        else:
+            skipped.append(rel_file)
+    return cleaned, skipped, to_checkout
+
+
+def _collect_untracked_cleanups(
+    root: Path, branch: str, changed_files: list[str],
+) -> tuple[int, list[str], list[str]]:
+    """收集 untracked 文件的清理操作——返回 (cleaned, skipped, to_unlink)。"""
+    untracked_r = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard"],
+        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    )
+    if untracked_r.returncode != 0 or not untracked_r.stdout.strip():
+        return 0, [], []
+    untracked_files = {f.strip() for f in untracked_r.stdout.strip().split("\n") if f.strip()}
+    cleaned = 0
+    skipped: list[str] = []
+    to_unlink: list[str] = []
+    for rel_file in changed_files:
+        if rel_file not in untracked_files:
+            continue
+        main_file = root / rel_file
+        if not main_file.exists():
+            continue
+        main_content = main_file.read_bytes()
+        wt_content_r = subprocess.run(
+            ["git", "show", f"{branch}:{rel_file}"],
+            cwd=str(root), capture_output=True,
+        )
+        if wt_content_r.returncode != 0:
+            skipped.append(rel_file)
+            continue
+        if main_content == wt_content_r.stdout:
+            to_unlink.append(rel_file)
+            cleaned += 1
+        else:
+            skipped.append(rel_file)
+    return cleaned, skipped, to_unlink
+
+
+def _execute_cleanups(root: Path, to_checkout: list[str], to_unlink: list[str]) -> None:
+    """执行批量 checkout tracked dirty 文件 + 删除 untracked 文件。"""
+    if to_checkout:
+        subprocess.run(
+            ["git", "checkout", "--"] + to_checkout,
+            cwd=str(root), capture_output=True,
+        )
+    for rel_file in to_unlink:
+        try:
+            (root / rel_file).unlink()
+        except OSError:
+            try:
+                os.chmod(str(root / rel_file), 0o644)
+                (root / rel_file).unlink()
+            except OSError:
+                pass  # 尽力而为
+
+
 def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
     """Pre-merge 自动清理：消除 merge 失败根因，处理两类冗余文件。
 
@@ -775,118 +888,20 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
         - skipped_files: 内容不一致或无法比较，跳过的文件列表
     """
     branch = f"session/{session_id}"
-
-    # 1. 获取 worktree branch 相对 merge-base 的变更文件列表
-    merge_base_r = subprocess.run(
-        ["git", "merge-base", "HEAD", branch],
-        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
-    )
-    if merge_base_r.returncode != 0:
-        return 0, []
-    merge_base = merge_base_r.stdout.strip()
-
-    changed_r = subprocess.run(
-        ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
-        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
-    )
-    if changed_r.returncode != 0:
-        return 0, []
-    changed_files = [f.strip() for f in changed_r.stdout.strip().split("\n") if f.strip()]
-
+    changed_files = _get_branch_changed_files(root, branch)
     if not changed_files:
         return 0, []
-
-    # 2. 获取主工作区有未提交改动的文件（staged + unstaged，相对 HEAD）
-    dirty_r = subprocess.run(
-        ["git", "diff", "--name-only", "HEAD"],
-        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
-    )
-    if dirty_r.returncode != 0:
+    dirty_files = _get_dirty_files(root)
+    if dirty_files is None:
         return 0, []
-    dirty_files = set(f.strip() for f in dirty_r.stdout.strip().split("\n") if f.strip())
-
-    # 3. 对同时在 changed_files 和 dirty_files 中的文件，比较内容
-    cleaned = 0
-    skipped: list[str] = []
-    to_checkout: list[str] = []
-
-    for rel_file in changed_files:
-        if rel_file not in dirty_files:
-            continue  # 主工作区没有未提交改动，无需清理
-
-        main_file = root / rel_file
-        if not main_file.exists():
-            # 文件在主工作区被删除——无法比较内容，跳过（删除同步由 commit 处理）
-            skipped.append(rel_file)
-            continue
-
-        # 比较主工作区内容与 worktree branch HEAD 内容
-        main_content = main_file.read_bytes()
-        wt_content_r = subprocess.run(
-            ["git", "show", f"{branch}:{rel_file}"],
-            cwd=str(root), capture_output=True,
-        )
-        if wt_content_r.returncode != 0:
-            # worktree branch 中没有该文件——跳过
-            skipped.append(rel_file)
-            continue
-
-        if main_content == wt_content_r.stdout:
-            # 内容一致——安全 checkout（discard 冗余的未提交改动）
-            to_checkout.append(rel_file)
-            cleaned += 1
-        else:
-            # 内容不一致——AI 可能做了额外编辑，不自动清理
-            skipped.append(rel_file)
-
-    # 3b. 处理 untracked 文件（worktree branch 新增的文件在主工作区可能作为 untracked 存在）
-    # 场景：AI 用 Write 创建新文件 -> session_worktree_commit 复制到 worktree 并 commit
-    # -> 主工作区文件仍为 untracked -> merge 时 git 拒绝覆盖 untracked 文件
-    # 修复：untracked 文件内容与 worktree branch 一致时，物理删除让 merge 可以创建
-    untracked_r = subprocess.run(
-        ["git", "ls-files", "--others", "--exclude-standard"],
-        cwd=str(root), capture_output=True, text=True, encoding="utf-8",
+    cleaned_t, skipped_t, to_checkout = _collect_tracked_cleanups(
+        root, branch, changed_files, dirty_files,
     )
-    to_unlink: list[str] = []
-    if untracked_r.returncode == 0 and untracked_r.stdout.strip():
-        untracked_files = {f.strip() for f in untracked_r.stdout.strip().split("\n") if f.strip()}
-        for rel_file in changed_files:
-            if rel_file not in untracked_files:
-                continue
-            main_file = root / rel_file
-            if not main_file.exists():
-                continue
-            main_content = main_file.read_bytes()
-            wt_content_r = subprocess.run(
-                ["git", "show", f"{branch}:{rel_file}"],
-                cwd=str(root), capture_output=True,
-            )
-            if wt_content_r.returncode != 0:
-                skipped.append(rel_file)
-                continue
-            if main_content == wt_content_r.stdout:
-                to_unlink.append(rel_file)
-                cleaned += 1
-            else:
-                skipped.append(rel_file)
-
-    # 4. 批量 checkout tracked dirty 文件 + 删除 untracked 文件
-    if to_checkout:
-        subprocess.run(
-            ["git", "checkout", "--"] + to_checkout,
-            cwd=str(root), capture_output=True,
-        )
-    for rel_file in to_unlink:
-        try:
-            (root / rel_file).unlink()
-        except OSError:
-            try:
-                os.chmod(str(root / rel_file), 0o644)
-                (root / rel_file).unlink()
-            except OSError:
-                pass  # 尽力而为
-
-    return cleaned, skipped
+    cleaned_u, skipped_u, to_unlink = _collect_untracked_cleanups(
+        root, branch, changed_files,
+    )
+    _execute_cleanups(root, to_checkout, to_unlink)
+    return cleaned_t + cleaned_u, skipped_t + skipped_u
 
 
 def _get_merge_files(root: Path) -> list[str]:
