@@ -371,6 +371,255 @@ def session_worktree_start(
         }
 
 
+# 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）
+# 原 session_worktree_commit 388行 McCabe=47（7段顺序编排 + 共享状态）。
+# 治本：提取为 6 个模块级 helper（均 McCabe≤15），主函数简化为编排（McCabe≈10）。
+# 行为等价：所有 return dict 字段不变，gate/subprocess 调用顺序不变。
+
+
+def _normalize_commit_files(files: list[str], wt_path: Path, root: Path) -> list[str]:
+    """归一化文件路径为相对 worktree 的路径（git add 在 worktree cwd 下执行）。"""
+    rel_files: list[str] = []
+    for f in files:
+        p = Path(f)
+        if p.is_absolute():
+            try:
+                rel = p.relative_to(wt_path)
+                rel_files.append(str(rel).replace("\\", "/"))
+            except ValueError:
+                try:
+                    rel_to_root = p.relative_to(root)
+                    rel_files.append(str(rel_to_root).replace("\\", "/"))
+                except ValueError:
+                    rel_files.append(str(p).replace("\\", "/"))
+        else:
+            rel_files.append(str(p).replace("\\", "/"))
+    return rel_files
+
+
+def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict | None:
+    """HELD-OVERLAP 硬阻断 + auto-claim。返回阻断 dict 或 None（通过）。"""
+    claimed_files: list[str] = []
+    overlap_files: list[str] = []
+    for rf in rel_files:
+        try:
+            if registry.claim_file(session_id, rf):
+                claimed_files.append(rf)
+            else:
+                overlap_files.append(rf)
+        except Exception:
+            pass
+    if not overlap_files:
+        return None
+    for cf in claimed_files:
+        try:
+            registry.release_file(session_id, cf)
+        except Exception:
+            logger.warning("suppressed error in session_worktree", exc_info=True)
+    return {
+        "session_id": session_id,
+        "status": "FAILED",
+        "message": (
+            f"HELD_OVERLAP_VIOLATION: 以下文件被其他活跃 session 持有 "
+            f"（等待对方 merge/abort 释放后重试，或用 allow_overlap=True 逃生）: "
+            f"{overlap_files}"
+        ),
+        "commit_hash": "",
+        "held_overlap": True,
+    }
+
+
+def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | None:
+    """DCR 检测（对标 GitCommitGateway DIRECTORY-CONTRACT gate）。返回阻断 dict 或 None。"""
+    check_script = root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+    if not check_script.is_file():
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"check_directory_contract.py not found: {check_script} (fail-closed)",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    _MAX_INLINE_FILES = 200
+    if len(rel_files) > _MAX_INLINE_FILES:
+        dcr_cmd = [sys.executable, str(check_script), "--all-files"]
+    else:
+        dcr_cmd = [sys.executable, str(check_script)] + rel_files
+    try:
+        dcr_result = subprocess.run(
+            dcr_cmd, capture_output=True, cwd=str(root), timeout=60,
+        )
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"check_directory_contract.py execution failed (fail-closed): {e}",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    if dcr_result.returncode != 0:
+        detail = dcr_result.stderr.decode("utf-8", errors="replace").strip()
+        if not detail:
+            detail = dcr_result.stdout.decode("utf-8", errors="replace").strip()
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"DIRECTORY_CONTRACT_VIOLATION: {detail or 'unknown violation'}",
+            "commit_hash": "",
+            "directory_contract_violation": True,
+        }
+    return None
+
+
+def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
+    """删除 worktree 内文件（带只读兜底 + git rm --cached 兜底）。"""
+    try:
+        dst.unlink()
+    except OSError:
+        try:
+            os.chmod(str(dst), 0o644)
+            dst.unlink()
+        except OSError:
+            subprocess.run(
+                ["git", "rm", "--cached", "--", rel_file],
+                cwd=str(wt_path), capture_output=True, timeout=30,
+            )
+
+
+def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> None:
+    """同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根）。"""
+    import shutil
+
+    tracked_r = subprocess.run(
+        ["git", "ls-files", "--"] + rel_files,
+        cwd=str(wt_path), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=60,
+    )
+    tracked_files: set[str] = set()
+    if tracked_r.returncode == 0 and tracked_r.stdout.strip():
+        tracked_files = {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
+
+    for rel_file in rel_files:
+        src = root / rel_file
+        dst = wt_path / rel_file
+        if src.exists() and src.is_file():
+            if dst.exists() and dst.is_file():
+                try:
+                    if src.read_bytes() == dst.read_bytes():
+                        continue
+                except OSError:
+                    pass
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(src), str(dst))
+        elif not src.exists() and dst.exists() and rel_file in tracked_files:
+            _delete_worktree_file(dst, rel_file, wt_path)
+
+
+def _run_pre_commit_gates(
+    root: Path, wt_path: Path, rel_files: list[str],
+    session_id: str, allow_promote: bool, allow_migration: bool,
+) -> dict | None:
+    """pre-commit gate 检查（对标 GitCommitGateway，worktree 兼容）。返回阻断 dict 或 None。"""
+    try:
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+            GitCommitGateway, _GATEWAY_ENV,
+        )
+        _gw = GitCommitGateway(project_root=root)
+        _orig_run_git = _gw._run_git
+
+        def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
+            _env = os.environ.copy()
+            _env[_env_var] = "1"
+            if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
+                    and not getattr(_gw, "_in_commit_flow", False)):
+                return subprocess.CompletedProcess(
+                    cmd, 1, "", "git commit blocked in worktree gate check"
+                )
+            _effective_cwd = cwd if cwd is not None else _wt
+            return subprocess.run(
+                cmd, cwd=_effective_cwd, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=60, env=_env,
+            )
+
+        _gw._run_git = _wt_run_git
+        try:
+            _staged_abs = [str((root / rf).resolve()) for rf in rel_files]
+            _gate_results = _gw._gate_registry.check_all(
+                _gw, _staged_abs, session_id=session_id,
+                allow_promote=allow_promote,
+            )
+        finally:
+            _gw._run_git = _orig_run_git
+        _skip_gates = _WORKTREE_SKIP_GATES
+        if allow_migration:
+            _skip_gates = _skip_gates | frozenset({"FILE-COPY", "ORPHAN-MODULE", "TEST-SOURCE-CONSISTENCY"})
+        _blocking = [
+            gr for gr in _gate_results
+            if not gr.passed and gr.gate_id not in _skip_gates
+        ]
+        if _blocking:
+            _details = "; ".join(f"{gr.gate_id}: {gr.detail}" for gr in _blocking)
+            return {
+                "session_id": session_id,
+                "status": "GATE_VIOLATION",
+                "message": (
+                    f"pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）: {_details}"
+                ),
+                "commit_hash": "",
+                "gate_violation": True,
+                "gate_results": [
+                    {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
+                ],
+            }
+    except Exception as _e:
+        logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
+    return None
+
+
+def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dict:
+    """在 worktree 内执行 git commit 并返回结果 dict。"""
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".msg", delete=False, encoding="utf-8"
+    ) as msg_file:
+        msg_file.write(f"{message}\n\n[GW:{session_id}:worktree]")
+        msg_file_path = msg_file.name
+    try:
+        commit_cmd = ["git", "commit", "--no-verify", "-F", msg_file_path]
+        commit_r = subprocess.run(
+            commit_cmd, cwd=str(wt_path), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=120,
+        )
+    finally:
+        try:
+            os.unlink(msg_file_path)
+        except OSError:
+            pass
+
+    if commit_r.returncode != 0:
+        return {
+            "session_id": session_id,
+            "status": "FAILED",
+            "message": f"git commit failed: {commit_r.stderr.strip()}",
+            "commit_hash": "",
+        }
+
+    sha_r = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        cwd=str(wt_path), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=30,
+    )
+    commit_hash = sha_r.stdout.strip() if sha_r.returncode == 0 else ""
+
+    return {
+        "session_id": session_id,
+        "status": "OK",
+        "message": "committed in worktree",
+        "commit_hash": commit_hash,
+    }
+
+
 def session_worktree_commit(
     session_id: str,
     files: list[str],
@@ -432,7 +681,6 @@ def session_worktree_commit(
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)
 
-    # 检测 worktree 是否存在
     if not manager._worktree_exists(session_id):
         return {
             "session_id": session_id,
@@ -444,13 +692,11 @@ def session_worktree_commit(
 
     wt_path = manager._wt_path(session_id)
 
-    # 心跳续期（commit 时顺带续期，防 TTL 过期）
     try:
         _get_registry(root).heartbeat(session_id)
     except Exception:
-        pass  # 心跳失败不阻断 commit
+        pass
 
-    # git add（在 worktree 内执行）
     if not files:
         return {
             "session_id": session_id,
@@ -459,162 +705,19 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
-    # 归一化文件路径为相对 worktree 的路径（git add 在 worktree cwd 下执行）
-    rel_files: list[str] = []
-    for f in files:
-        p = Path(f)
-        if p.is_absolute():
-            try:
-                rel = p.relative_to(wt_path)
-                rel_files.append(str(rel).replace("\\", "/"))
-            except ValueError:
-                # 不在 worktree 内的绝对路径——可能是主仓库路径，转换为 worktree 内等价路径
-                try:
-                    rel_to_root = p.relative_to(root)
-                    rel_files.append(str(rel_to_root).replace("\\", "/"))
-                except ValueError:
-                    rel_files.append(str(p).replace("\\", "/"))
-        else:
-            rel_files.append(str(p).replace("\\", "/"))
+    rel_files = _normalize_commit_files(files, wt_path, root)
 
-    # HELD-OVERLAP 硬阻断 + auto-claim（2026-07-02 加硬）
-    # 对标 GitCommitGateway 的 HELD-OVERLAP gate，使 worktree 模式下的文件锁一样硬。
-    # 原子 check-and-claim（claim_file 内部加锁，防 TOCTOU 竞态）：
-    #   - 文件被其他活跃 session 持有 -> claim_file 返回 False -> 硬阻断
-    #   - 文件未被持有或已被自己持有 -> claim_file 返回 True -> claim 成功
-    # claim 是 session 级（不 per-commit 释放），merge/abort 时 unregister 自动释放。
-    # allow_overlap=True 时跳过检查（逃生通道，对标 GitCommitGateway --allow-overlap）。
     if not allow_overlap:
-        registry = _get_registry(root)
-        claimed_files: list[str] = []  # 已成功 claim（失败时回滚）
-        overlap_files: list[str] = []  # 被其他 session 持有的文件
-        for rf in rel_files:
-            try:
-                if registry.claim_file(session_id, rf):
-                    claimed_files.append(rf)
-                else:
-                    overlap_files.append(rf)
-            except Exception:
-                pass  # claim 异常时 best-effort 继续（不阻断）
+        err = _check_held_overlap(_get_registry(root), session_id, rel_files)
+        if err:
+            return err
 
-        if overlap_files:
-            # 回滚已 claim 的文件（避免 dangling claim 阻塞其他 session）
-            for cf in claimed_files:
-                try:
-                    registry.release_file(session_id, cf)
-                except Exception as e:
-                    logger.warning("suppressed error in session_worktree", exc_info=True)
-            return {
-                "session_id": session_id,
-                "status": "FAILED",
-                "message": (
-                    f"HELD_OVERLAP_VIOLATION: 以下文件被其他活跃 session 持有 "
-                    f"（等待对方 merge/abort 释放后重试，或用 allow_overlap=True 逃生）: "
-                    f"{overlap_files}"
-                ),
-                "commit_hash": "",
-                "held_overlap": True,
-            }
+    err = _run_dcr_check(root, rel_files, session_id)
+    if err:
+        return err
 
-    # ── DCR 检测（对标 GitCommitGateway 的 DIRECTORY-CONTRACT gate）──────────
-    # 治本(ARCH-041): session_worktree_commit 绕过 GitCommitGateway，导致 directory_contract
-    # 检测（含 _backups 禁止、DCR-001~007）不触发。此处补强，subprocess 调用真源
-    # check_directory_contract.py，fail-closed（checker 缺失/超时也阻断）。
-    # 与 directory_contract_gate.py L78-137 保持一致（复用真源，禁止复制 DCR 逻辑）。
-    check_script = root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
-    if not check_script.is_file():
-        return {
-            "session_id": session_id,
-            "status": "FAILED",
-            "message": f"check_directory_contract.py not found: {check_script} (fail-closed)",
-            "commit_hash": "",
-            "directory_contract_violation": True,
-        }
-    # 文件数过多时改用 --all-files（避免 WinError 206 命令行长度限制）
-    _MAX_INLINE_FILES = 200
-    if len(rel_files) > _MAX_INLINE_FILES:
-        dcr_cmd = [sys.executable, str(check_script), "--all-files"]
-    else:
-        dcr_cmd = [sys.executable, str(check_script)] + rel_files
-    try:
-        dcr_result = subprocess.run(
-            dcr_cmd, capture_output=True, cwd=str(root), timeout=60,
-        )
-    except (subprocess.TimeoutExpired, OSError) as e:
-        return {
-            "session_id": session_id,
-            "status": "FAILED",
-            "message": f"check_directory_contract.py execution failed (fail-closed): {e}",
-            "commit_hash": "",
-            "directory_contract_violation": True,
-        }
-    if dcr_result.returncode != 0:
-        detail = dcr_result.stderr.decode("utf-8", errors="replace").strip()
-        if not detail:
-            detail = dcr_result.stdout.decode("utf-8", errors="replace").strip()
-        return {
-            "session_id": session_id,
-            "status": "FAILED",
-            "message": f"DIRECTORY_CONTRACT_VIOLATION: {detail or 'unknown violation'}",
-            "commit_hash": "",
-            "directory_contract_violation": True,
-        }
-    # ── DCR 检测结束 ──────────────────────────────────────────────────────
+    _sync_files_to_worktree(root, wt_path, rel_files)
 
-    # 同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根，
-    # worktree 内文件是创建时的旧版本，需同步才能 stage 到最新内容）
-    # 覆盖三种场景：文件修改/新增（copy2 同步）+ 文件删除（unlink 同步删除）
-    # + 直接写入 worktree 的新文件（未跟踪，不删除）
-    import shutil
-
-    # 批量查询哪些 rel_file 是 git 跟踪的（区分"跟踪文件被删除"vs"直接写入 worktree 的新文件"）
-    tracked_r = subprocess.run(
-        ["git", "ls-files", "--"] + rel_files,
-        cwd=str(wt_path), capture_output=True, text=True,
-        encoding="utf-8", errors="replace", timeout=60,
-    )
-    tracked_files: set[str] = set()
-    if tracked_r.returncode == 0 and tracked_r.stdout.strip():
-        tracked_files = {line.strip() for line in tracked_r.stdout.strip().split("\n") if line.strip()}
-
-    for rel_file in rel_files:
-        src = root / rel_file
-        dst = wt_path / rel_file
-        if src.exists() and src.is_file():
-            if dst.exists() and dst.is_file():
-                # 内容比较——治本(2026-07-05): 替代 mtime 比较逻辑
-                # 原因：mtime 比较依赖文件系统元数据，受 copy2 保留 mtime/touch/git checkout
-                # 影响，导致同步缺失 bug（commit 1877f8df06 仅 L6 入库，L1/L15 丢失）。
-                # 内容比较 100% 可靠，代码文件 <100KB 时 I/O <1ms 可忽略。
-                # 设计依据：AGENTS.md L392"Edit/Write 工作区固定为项目根"——
-                # AI 不会直接编辑 worktree，mtime 保护场景在设计上不存在。
-                try:
-                    if src.read_bytes() == dst.read_bytes():
-                        continue  # 内容相同，无需复制
-                except OSError:
-                    pass  # 读取失败则走默认 copy2（安全降级）
-            # dst 不存在 或 内容不同——同步最新内容到 worktree（正常情况：AI 写项目根）
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(str(src), str(dst))
-        elif not src.exists() and dst.exists() and rel_file in tracked_files:
-            # 文件在主工作区被删除且被 git 跟踪——同步删除到 worktree（物理删除，
-            # 后续 git add -A 会 stage 删除操作）
-            # 排除直接写入 worktree 的未跟踪新文件（src 不存在但 dst 存在且未跟踪）
-            try:
-                dst.unlink()
-            except OSError:
-                try:
-                    # 只读文件兜底：清除只读位后重试
-                    os.chmod(str(dst), 0o644)
-                    dst.unlink()
-                except OSError:
-                    # gitlink/special file 无法 unlink，用 git rm --cached stage 删除
-                    subprocess.run(
-                        ["git", "rm", "--cached", "--", rel_file],
-                        cwd=str(wt_path), capture_output=True, timeout=30,
-                    )
-
-    # git add -A 同时 stage 新增/修改/删除（替代原 git add，确保文件删除被 stage）
     add_cmd = ["git", "add", "-A", "--"] + rel_files
     add_r = subprocess.run(
         add_cmd, cwd=str(wt_path), capture_output=True, text=True,
@@ -628,13 +731,11 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
-    # 检查是否有 staged 改动
     diff_r = subprocess.run(
         ["git", "diff", "--cached", "--quiet"],
         cwd=str(wt_path), capture_output=True, timeout=30,
     )
     if diff_r.returncode == 0:
-        # 无 staged 改动
         return {
             "session_id": session_id,
             "status": "NOTHING_TO_COMMIT",
@@ -642,123 +743,11 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
-    # ── pre-commit gate 检查（治本 --no-verify 绕过，对标 GitCommitGateway）──
-    # session_worktree 用 --no-verify 绕过 git pre-commit hook，且绕过 GitCommitGateway。
-    # 但文件内容/路径类 gate 不能绕过——在 commit 前执行 7 个 worktree-compatible gate。
-    # 跳过 HELD-OVERLAP/CLAIM-REQUIRED（session_worktree 有自己的 held_files 机制，见 L332-337）。
-    #
-    # 关键适配：gate 的 git 命令（git diff --cached 等）默认在主仓库 root 执行，但
-    # worktree 模式下文件 staged 在 worktree index——主仓库 git diff --cached 返回空，
-    # gate 误判无新文件。修复：临时 monkeypatch _run_git 重定向 cwd 到 worktree，
-    # 使 git 命令查 worktree index；文件路径操作仍用 gateway.project_root（主仓库路径）。
-    #
-    # 降级策略：gate 基础设施异常降级为 warn（不卡死 commit）；gate 检出违规则阻断。
-    # 治本第1期前置依赖（architecture_debt_registry.md §六 第1期）：确保新 AST 门禁
-    # 注册到 commit_gate_registry 后，worktree 路径也生效，不被 --no-verify 绕过。
-    try:
-        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
-            GitCommitGateway, _GATEWAY_ENV,
-        )
-        _gw = GitCommitGateway(project_root=root)
-        # 临时让 git 命令在 worktree 内执行（查 worktree index 的 staged 状态）
-        _orig_run_git = _gw._run_git
+    err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration)
+    if err:
+        return err
 
-        def _wt_run_git(cmd, cwd=None, _wt=str(wt_path), _env_var=_GATEWAY_ENV):
-            _env = os.environ.copy()
-            _env[_env_var] = "1"
-            # 阻断 git commit（同 _run_git 守卫，gate 检查不应触发 commit）
-            if (len(cmd) >= 2 and cmd[0] == "git" and cmd[1] == "commit"
-                    and not getattr(_gw, "_in_commit_flow", False)):
-                return subprocess.CompletedProcess(
-                    cmd, 1, "", "git commit blocked in worktree gate check"
-                )
-            _effective_cwd = cwd if cwd is not None else _wt
-            return subprocess.run(
-                cmd, cwd=_effective_cwd, capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=60, env=_env,
-            )
-
-        _gw._run_git = _wt_run_git
-        try:
-            _staged_abs = [str((root / rf).resolve()) for rf in rel_files]
-            _gate_results = _gw._gate_registry.check_all(
-                _gw, _staged_abs, session_id=session_id,
-                allow_promote=allow_promote,
-            )
-        finally:
-            _gw._run_git = _orig_run_git
-        _skip_gates = _WORKTREE_SKIP_GATES
-        if allow_migration:
-            # P14 fix (2026-07-13): 迁移场景跳过 FILE-COPY（迁移文件天然与旧路径
-            # 同名文件高度相似）、ORPHAN-MODULE（迁移过程中 import 引用可能尚未
-            # 完全更新）和 TEST-SOURCE-CONSISTENCY（worktree 环境下模块路径检测
-            # 误报）。仅限合法迁移操作使用。
-            _skip_gates = _skip_gates | frozenset({"FILE-COPY", "ORPHAN-MODULE", "TEST-SOURCE-CONSISTENCY"})
-        _blocking = [
-            gr for gr in _gate_results
-            if not gr.passed and gr.gate_id not in _skip_gates
-        ]
-        if _blocking:
-            _details = "; ".join(f"{gr.gate_id}: {gr.detail}" for gr in _blocking)
-            return {
-                "session_id": session_id,
-                "status": "GATE_VIOLATION",
-                "message": (
-                    f"pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）: {_details}"
-                ),
-                "commit_hash": "",
-                "gate_violation": True,
-                "gate_results": [
-                    {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
-                ],
-            }
-    except Exception as _e:
-        # gate 基础设施异常降级为 warn（不阻断）——session_worktree 不应因 gate 框架
-        # 自身 bug 卡死业务流程；gate 检出违规则由上方 return 阻断。
-        logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
-
-    # git commit（用 -F 从临时文件读 message，避免 PowerShell 特殊字符问题，对标 RULE-TWENTY 裁定2）
-    # --no-verify: 绕过 git pre-commit hooks（hook 已由上方 commit_gate_registry 检查替代）。
-    import tempfile
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".msg", delete=False, encoding="utf-8"
-    ) as msg_file:
-        msg_file.write(f"{message}\n\n[GW:{session_id}:worktree]")
-        msg_file_path = msg_file.name
-    try:
-        commit_cmd = ["git", "commit", "--no-verify", "-F", msg_file_path]
-        commit_r = subprocess.run(
-            commit_cmd, cwd=str(wt_path), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=120,
-        )
-    finally:
-        try:
-            os.unlink(msg_file_path)
-        except OSError:
-            pass
-
-    if commit_r.returncode != 0:
-        return {
-            "session_id": session_id,
-            "status": "FAILED",
-            "message": f"git commit failed: {commit_r.stderr.strip()}",
-            "commit_hash": "",
-        }
-
-    # 获取 commit SHA
-    sha_r = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"],
-        cwd=str(wt_path), capture_output=True, text=True,
-        encoding="utf-8", errors="replace", timeout=30,
-    )
-    commit_hash = sha_r.stdout.strip() if sha_r.returncode == 0 else ""
-
-    return {
-        "session_id": session_id,
-        "status": "OK",
-        "message": "committed in worktree",
-        "commit_hash": commit_hash,
-    }
+    return _git_commit_in_worktree(wt_path, message, session_id)
 
 
 def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
