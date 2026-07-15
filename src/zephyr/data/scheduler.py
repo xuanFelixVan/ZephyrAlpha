@@ -83,6 +83,116 @@ def _run_schedule_callback(schedule_name: str) -> None:
         log.error("_run_schedule_callback: _global_scheduler 未设置")
 
 
+def _schedule_should_skip(schedule_name: str, sched_config: dict) -> bool:
+    """交易日历守卫 + interval 时间窗口过滤。返回 True 表示该时段应跳过（返回空字典）。
+
+    - 交易日历守卫：盘中/盘后/夜间/巡检时段在非交易日（节假日/调休）自动跳过
+    - interval trigger 时间窗口过滤（集合竞价等高频场景）：
+      IntervalTrigger 会 7×24 每隔 N 秒触发，需在此过滤非交易时段
+    """
+    if schedule_name in TRADING_DAY_GUARDED_SCHEDULES:
+        today = datetime.date.today()
+        if not is_trading_day(today):
+            log.info("时段 %s 跳过：今日(%s)非A股交易日", schedule_name, today)
+            return True
+    if sched_config.get("type") == "interval":
+        now = datetime.datetime.now()
+        # 周末不执行（0=周一 ... 6=周日）
+        if now.weekday() >= 5:
+            return True
+        # 时间窗口检查（如 9:15-9:25）
+        start_time = sched_config.get("start_time")
+        end_time = sched_config.get("end_time")
+        if start_time and end_time:
+            now_str = now.strftime("%H:%M:%S")
+            if not (start_time <= now_str <= end_time):
+                return True
+    return False
+
+
+def _run_special_schedule(
+    scheduler: "IntegratorScheduler", schedule_name: str,
+) -> dict[str, bool] | None:
+    """处理 weekend_backfill / integrity_check 特殊时段。
+
+    返回结果字典表示已处理；返回 None 表示非特殊时段，交给常规 DAG 流程。
+    """
+    # L10 周末补下载层：不走常规 run_task，调用 backfill_checker 独立处理
+    if schedule_name == "weekend_backfill":
+        from zephyr.data.backfill_checker import run_weekend_backfill
+        result = run_weekend_backfill(scheduler)
+        return {"tick_backfill_weekly": result.get("success", False)}
+    # 每日数据完整性巡检：动态发现全表，检测当日数据是否达标
+    if schedule_name == "integrity_check":
+        from zephyr.data.integrity_checker import run_daily_check
+        result = run_daily_check(scheduler)
+        return {"integrity_check_daily": result.get("success", False)}
+    return None
+
+
+def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
+    """过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）。"""
+    return [
+        t for t in tasks
+        if t.get("schedule") == schedule_name
+        and not (t.get("extra") or {}).get("disabled")
+    ]
+
+
+def _run_schedule_dag(
+    scheduler: "IntegratorScheduler",
+    schedule_name: str,
+    schedule_tasks: list[dict],
+) -> dict[str, bool]:
+    """加载任务到 TaskQueue，按 DAG 顺序并行执行，并汇总结果与失败率。"""
+    # 加载到 TaskQueue
+    scheduler._task_queue = TaskQueue()
+    for t in schedule_tasks:
+        scheduler._task_queue.add_task(t)
+
+    # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    results: dict[str, bool] = {}
+    while not scheduler._task_queue.is_done():
+        ready = scheduler._task_queue.get_ready_tasks()
+        if not ready:
+            # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
+            blocked = scheduler._task_queue.list_by_status("BLOCKED")
+            if blocked:
+                log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
+            break
+        if len(ready) == 1:
+            # 单任务直接执行（避免线程池开销）
+            results[ready[0]] = scheduler.run_task(ready[0])
+        else:
+            # 多任务并行执行（利用线程池，最多8并发）
+            max_workers = min(len(ready), 8)
+            with ThreadPoolExecutor(max_workers=max_workers) as pool:
+                future_map = {
+                    pool.submit(scheduler.run_task, tid): tid
+                    for tid in ready
+                }
+                for future in as_completed(future_map):
+                    tid = future_map[future]
+                    try:
+                        results[tid] = future.result()
+                    except Exception as e:
+                        log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
+                        results[tid] = False
+
+    # 汇总
+    success_count = sum(1 for v in results.values() if v)
+    failed_count = len(results) - success_count
+    log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
+
+    # 检查失败率
+    if results:
+        scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
+
+    return results
+
+
 class IntegratorScheduler:
     """数据源集成器调度器。
 
@@ -978,99 +1088,25 @@ class IntegratorScheduler:
         Returns:
             {task_id: success_bool} 字典
         """
-        # 交易日历守卫：盘中/盘后/夜间/巡检时段在非交易日（节假日/调休）自动跳过
-        if schedule_name in TRADING_DAY_GUARDED_SCHEDULES:
-            today = datetime.date.today()
-            if not is_trading_day(today):
-                log.info("时段 %s 跳过：今日(%s)非A股交易日", schedule_name, today)
-                return {}
-
-        # interval trigger 时间窗口过滤（集合竞价等高频场景）
-        # IntervalTrigger 会 7×24 每隔 N 秒触发，需在此过滤非交易时段
         sched_config = self._schedules.get(schedule_name, {})
-        if sched_config.get("type") == "interval":
-            now = datetime.datetime.now()
-            # 周末不执行（0=周一 ... 6=周日）
-            if now.weekday() >= 5:
-                return {}
-            # 时间窗口检查（如 9:15-9:25）
-            start_time = sched_config.get("start_time")
-            end_time = sched_config.get("end_time")
-            if start_time and end_time:
-                now_str = now.strftime("%H:%M:%S")
-                if not (start_time <= now_str <= end_time):
-                    return {}
+        if _schedule_should_skip(schedule_name, sched_config):
+            return {}
 
-        # L10 周末补下载层：不走常规 run_task，调用 backfill_checker 独立处理
-        if schedule_name == "weekend_backfill":
-            from zephyr.data.backfill_checker import run_weekend_backfill
-            result = run_weekend_backfill(self)
-            return {"tick_backfill_weekly": result.get("success", False)}
-
-        # 每日数据完整性巡检：动态发现全表，检测当日数据是否达标
-        if schedule_name == "integrity_check":
-            from zephyr.data.integrity_checker import run_daily_check
-            result = run_daily_check(self)
-            return {"integrity_check_daily": result.get("success", False)}
+        # 特殊时段（weekend_backfill / integrity_check）独立处理
+        special = _run_special_schedule(self, schedule_name)
+        if special is not None:
+            return special
 
         # 过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）
-        schedule_tasks = [
-            t for t in self._tasks
-            if t.get("schedule") == schedule_name
-            and not (t.get("extra") or {}).get("disabled")
-        ]
+        schedule_tasks = _filter_schedule_tasks(self._tasks, schedule_name)
         if not schedule_tasks:
             log.warning("时段 %s 无任务", schedule_name)
             return {}
 
         log.info("时段 %s 开始: %d 个任务", schedule_name, len(schedule_tasks))
 
-        # 加载到 TaskQueue
-        self._task_queue = TaskQueue()
-        for t in schedule_tasks:
-            self._task_queue.add_task(t)
-
-        # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
-        results: dict[str, bool] = {}
-        while not self._task_queue.is_done():
-            ready = self._task_queue.get_ready_tasks()
-            if not ready:
-                # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
-                blocked = self._task_queue.list_by_status("BLOCKED")
-                if blocked:
-                    log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
-                break
-            if len(ready) == 1:
-                # 单任务直接执行（避免线程池开销）
-                results[ready[0]] = self.run_task(ready[0])
-            else:
-                # 多任务并行执行（利用线程池，最多8并发）
-                max_workers = min(len(ready), 8)
-                with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                    future_map = {
-                        pool.submit(self.run_task, tid): tid
-                        for tid in ready
-                    }
-                    for future in as_completed(future_map):
-                        tid = future_map[future]
-                        try:
-                            results[tid] = future.result()
-                        except Exception as e:
-                            log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
-                            results[tid] = False
-
-        # 汇总
-        success_count = sum(1 for v in results.values() if v)
-        failed_count = len(results) - success_count
-        log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
-
-        # 检查失败率
-        if results:
-            self._alerter.check_daily_failure_rate(len(results), failed_count)
-
-        return results
+        # 加载到 TaskQueue + DAG 并行执行 + 汇总与失败率检查
+        return _run_schedule_dag(self, schedule_name, schedule_tasks)
 
     # ============== APScheduler 生命周期 ==============
 
