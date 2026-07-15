@@ -322,7 +322,9 @@ def prune_orphans() -> dict:
 
     # 3. 清理 dataflow_jobs 孤儿占位记录（ARCH-058 扩展）
     #    使用 get_depgraph_pg_connection(read_only=False) 获取 writer 角色：
-    #    get_dataflowgraph_pg_connection 不支持 read_only=False，始终用 reader 角色（无 DELETE 权限）
+    #    get_dataflowgraph_pg_connection 不支持 read_only=False，始终用 reader 角色（无 DELETE 权限）。
+    #    手动 SET app.allow_design_maturity_delete = on 绕过 protect_dataflow_design_maturity 触发器
+    #    （等价于 get_dataflowgraph_pg_connection(allow_design_delete=True)，但补齐 writer 角色）。
     dataflow_conn = get_depgraph_pg_connection(
         read_only=False, autocommit=False,
     )
@@ -330,6 +332,7 @@ def prune_orphans() -> dict:
     deleted_dataflow = 0
     try:
         with dataflow_conn.cursor() as cur:
+            cur.execute("SET app.allow_design_maturity_delete = on")
             cur.execute(_SQL_QUERY_DATAFLOW_PLACEHOLDERS)
             rows = cur.fetchall()
             placeholders = [row["job_name"] if isinstance(row, dict) else row[0]
