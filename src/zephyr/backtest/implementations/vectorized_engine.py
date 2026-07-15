@@ -217,7 +217,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
         else:
             return sorted(data.index.unique())
 
-    def _get_day_prices(self, data: pd.DataFrame, date: Any) -> dict[str, Decimal]:
+    def _get_day_prices(self, data: pd.DataFrame, date: object) -> dict[str, Decimal]:
         """获取指定日期的所有symbol收盘价
 
         Args:
@@ -268,7 +268,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
 
         return prices
 
-    def _get_day_signals(self, signals: pd.DataFrame, date: Any) -> dict[str, float]:
+    def _get_day_signals(self, signals: pd.DataFrame, date: object) -> dict[str, float]:
         """获取指定日期的信号(目标权重)
 
         Args:

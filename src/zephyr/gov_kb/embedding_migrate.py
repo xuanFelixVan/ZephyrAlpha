@@ -219,7 +219,7 @@ class EmbeddingMigrator:
         self,
         plan: MigrationPlan,
         *,
-        embed_fn: Any | None = None,
+        embed_fn: Callable[[list[str]], list[float] | None] | None = None,
         dry_run: bool = False,
     ) -> MigrationResult:
         started = datetime.now(UTC)

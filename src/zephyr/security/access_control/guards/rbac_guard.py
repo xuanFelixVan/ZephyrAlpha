@@ -100,7 +100,7 @@ class RBACGuard:
 
     def check(
         self,
-        agent: Any,
+        agent: object,
         operation: str,
         target_path: str | None = None,
     ) -> PermissionResult:

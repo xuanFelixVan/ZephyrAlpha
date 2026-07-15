@@ -217,7 +217,7 @@ class ABACGuard:
             or operation.startswith("execute:")
         )
 
-    def check(self, agent: Any, ctx: ABACContext) -> tuple[bool, str]:
+    def check(self, agent: object, ctx: ABACContext) -> tuple[bool, str]:
         """检查操作权限.
 
         Args:

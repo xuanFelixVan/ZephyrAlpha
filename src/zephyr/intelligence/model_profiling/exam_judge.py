@@ -203,7 +203,7 @@ class DeterministicJudge:
     def __init__(self) -> None:
         pass  # 无状态, 纯函数式
 
-    def judge(self, case: Any, candidate_answer: str) -> JudgeResult:
+    def judge(self, case: object, candidate_answer: str) -> JudgeResult:
         """对候选答案进行确定性评分。
 
         Args:
