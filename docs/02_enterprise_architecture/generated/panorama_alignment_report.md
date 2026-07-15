@@ -1,30 +1,21 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-15 04:35:47
+- 生成时间: 2026-07-16 01:14:37
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=163 / dataflow=76 / decision=324 / blueprint=75
-- 问题总数: 7
-  - 孤儿（仅一图）: 6
-  - 状态漂移（blueprint 缺 design_maturity）: 1
+- 四图节点数: depgraph=165 / dataflow=73 / decision=319 / blueprint=72
+- 问题总数: 0
+  - 孤儿（仅一图）: 0
+  - 状态漂移（blueprint 缺 design_maturity）: 0
   - 域不一致（domain_id 不一致）: 0
   - 设计态孤立（design 仅一图）: 0
 
 ## 1. 孤儿节点（仅一图存在）
 
-| module_id | graph | entity_name |
-|---|---|---|
-| MOD-004 | blueprint | _cross_layer/_b_track_interfaces/feedback_loop_engine_interface.md |
-| INFRA-DB-001 | decision | layer:INFRA-DB-001 |
-| INFRA-DB-002 | decision | layer:INFRA-DB-002 |
-| INFRA-DB-003 | decision | layer:INFRA-DB-003 |
-| INFRA-DB-006 | decision | layer:INFRA-DB-006 |
-| MOD-BIZ-002 | decision | layer:MOD-BIZ-002 |
+> 无孤儿节点，四图在 module_id 维度对齐。
 
 ## 2. 状态漂移（blueprint 缺 design_maturity 字段）
 
-| module_id | depgraph | dataflow | decision | blueprint |
-|---|---|---|---|---|
-| MOD-004 | - | - | - | - |
+> 无状态漂移。
 
 ## 3. 域不一致（domain_id 不一致）
 

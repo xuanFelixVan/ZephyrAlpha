@@ -647,6 +647,8 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
    ```
    禁止跳过步骤 1-2 直接创建蓝图文件（会导致 blueprint 图孤儿）。详细机制见 [panorama_alignment_engine 蓝图](file:///d:/ZephyrAlpha/docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md)。
 
+   **蓝图先行模块豁免（ARCH-059）**：`construction_progress=not_started` 的模块属于**蓝图先行**状态——模块仅在 blueprint 图存在，depgraph/dataflow/decision 三图无节点（尚未施工）。这是合理的设计态，非孤儿。`align_panoramas` 自动识别蓝图先行模块，不报告为孤儿或设计态孤立。当模块开始施工（`construction_progress` 改为 `in_progress`/`done`）后，MUST 按上述步骤 1-2 在 depgraph 登记节点，否则将报告为孤儿。`frontmatter.construction_progress` 取值：`not_started`=蓝图先行(自动豁免) / `in_progress`=施工中(应登记 depgraph planned) / `done`=施工完成(应登记 depgraph production)。
+
 如果不注册，ModuleOnboardingScanner 会在扫描时发现并自动触发接入流程。
 
 ## 10. Git 命令封装约定（绕过 Trae 批准弹窗）

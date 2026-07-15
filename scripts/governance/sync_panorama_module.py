@@ -14,7 +14,7 @@
 # [ERROR_CONTRACT] depgraph无此模块→exit 3;DB异常→exit 4
 # [TESTS] tests/governance/test_sync_panorama_module.py
 # [TTL] permanent
-# [ARCH-REF] #ARCH-056
+# [ARCH-REF] #ARCH-056 #ARCH-058
 """sync_panorama_module.py — 四图模块同步引擎（ARCH-056）
 
 从 depgraph.nodes 读取模块核心字段，单向派生到：

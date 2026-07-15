@@ -10,7 +10,7 @@
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] test_align_panoramas.py
 # [TTL] permanent
-# [ARCH-REF] #ARCH-053 #ARCH-056
+# [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 """test_align_panoramas.py — align_panoramas.py 单元测试
 
 覆盖：
