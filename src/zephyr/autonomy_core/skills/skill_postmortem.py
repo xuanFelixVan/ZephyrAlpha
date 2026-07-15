@@ -78,6 +78,89 @@ _WHY_PROBES = [
 ]
 
 
+def _load_skill_registry() -> Any:
+    """Load the skill registry cache, returning None on failure."""
+    try:
+        from zephyr.autonomy_core.skills.skill_loader import SkillLoader
+
+        loader = SkillLoader()
+        return loader._load_registry()
+    except Exception:
+        logger.warning("suppressed error in skill_postmortem", exc_info=True)
+        return None
+
+
+def _find_skill_data(layer_registry_cache: Any, skill_id: str) -> dict[str, Any] | None:
+    """Locate the skill entry matching skill_id within the registry cache."""
+    if not layer_registry_cache:
+        return None
+    skill_data: dict[str, Any] | None = None
+    for cat in ("domain", "role"):
+        for sid, data in (layer_registry_cache.get("skills", {}).get(cat, {})).items():
+            if sid == skill_id or skill_id in sid:
+                skill_data = {"skill_id": sid, **data}
+                break
+    return skill_data
+
+
+def _layer1_reason_evidence(
+    symptom_category: str, skill_id: str, error_message: str
+) -> tuple[str, list[str]]:
+    """Build the reason and evidence for the layer-1 probe."""
+    evidence: list[str] = []
+    if symptom_category == "registration":
+        reason = f"Skill '{skill_id}' was not registered or could not be loaded"
+        evidence.append(f"Error: {error_message[:200]}")
+    elif symptom_category == "budget":
+        reason = f"Skill '{skill_id}' exceeded token budget during loading"
+    elif symptom_category == "gate":
+        reason = f"Gate rejected execution for skill '{skill_id}'"
+    elif symptom_category == "drift":
+        reason = f"Skill '{skill_id}' content diverged from blueprint"
+    elif symptom_category == "performance":
+        reason = f"Skill '{skill_id}' loading exceeded latency threshold"
+    else:
+        reason = f"Unexpected failure in skill '{skill_id}': {error_message[:150]}"
+    return reason, evidence
+
+
+def _build_layer_reason_evidence(
+    layer_num: int,
+    symptom_category: str,
+    skill_id: str,
+    error_message: str,
+    skill_data: dict[str, Any] | None,
+) -> tuple[str, list[str]]:
+    """Build the reason and evidence for a single why-probe layer."""
+    evidence: list[str] = []
+    if layer_num == 1:
+        reason, ev = _layer1_reason_evidence(symptom_category, skill_id, error_message)
+        evidence.extend(ev)
+        return reason, evidence
+    if layer_num == 2:
+        if symptom_category == "registration":
+            reason = "Skill was expected to be auto-discovered but no discovery mechanism caught its absence"
+        else:
+            reason = "Pre-execution validation did not exist or was misconfigured"
+        if skill_data and not skill_data.get("references"):
+            evidence.append("No dependency references found in registry")
+        return reason, evidence
+    if layer_num == 3:
+        reason = "The skill's constraint documentation was incomplete or absent"
+        if skill_data and not skill_data.get("description"):
+            evidence.append("Skill has no description in registry")
+        return reason, evidence
+    if layer_num == 4:
+        reason = "The skill was not refresh-triggered after its upstream dependency changed"
+        evidence.append("No freshness boost was triggered")
+        return reason, evidence
+    if layer_num == 5:
+        reason = "No feedback loop existed to capture this failure pattern and prevent recurrence"
+        evidence.append("Postmortem engine was not invoked on first occurrence")
+        return reason, evidence
+    return "", evidence
+
+
 class SkillPostmortem:
     """追问到底根因分析器"""
 
@@ -107,67 +190,16 @@ class SkillPostmortem:
     ) -> list[dict[str, Any]]:
         responses: list[dict[str, Any]] = []
 
-        layer_registry_cache = None
-        try:
-            from zephyr.autonomy_core.skills.skill_loader import SkillLoader
-
-            loader = SkillLoader()
-            layer_registry_cache = loader._load_registry()
-        except Exception as e:
-            logger.warning("suppressed error in skill_postmortem", exc_info=True)
-
-        skill_data = None
-        if layer_registry_cache:
-            for cat in ("domain", "role"):
-                for sid, data in (layer_registry_cache.get("skills", {}).get(cat, {})).items():
-                    if sid == skill_id or skill_id in sid:
-                        skill_data = {"skill_id": sid, **data}
-                        break
+        layer_registry_cache = _load_skill_registry()
+        skill_data = _find_skill_data(layer_registry_cache, skill_id)
 
         for probe in _WHY_PROBES:
-            layer_num = probe["layer"]
-            reason = ""
-            evidence: list[str] = []
-
-            if layer_num == 1:
-                if symptom_category == "registration":
-                    reason = f"Skill '{skill_id}' was not registered or could not be loaded"
-                    evidence.append(f"Error: {error_message[:200]}")
-                elif symptom_category == "budget":
-                    reason = f"Skill '{skill_id}' exceeded token budget during loading"
-                elif symptom_category == "gate":
-                    reason = f"Gate rejected execution for skill '{skill_id}'"
-                elif symptom_category == "drift":
-                    reason = f"Skill '{skill_id}' content diverged from blueprint"
-                elif symptom_category == "performance":
-                    reason = f"Skill '{skill_id}' loading exceeded latency threshold"
-                else:
-                    reason = f"Unexpected failure in skill '{skill_id}': {error_message[:150]}"
-
-            elif layer_num == 2:
-                if symptom_category == "registration":
-                    reason = "Skill was expected to be auto-discovered but no discovery mechanism caught its absence"
-                else:
-                    reason = "Pre-execution validation did not exist or was misconfigured"
-                if skill_data and not skill_data.get("references"):
-                    evidence.append("No dependency references found in registry")
-
-            elif layer_num == 3:
-                reason = "The skill's constraint documentation was incomplete or absent"
-                if skill_data and not skill_data.get("description"):
-                    evidence.append("Skill has no description in registry")
-
-            elif layer_num == 4:
-                reason = "The skill was not refresh-triggered after its upstream dependency changed"
-                evidence.append("No freshness boost was triggered")
-
-            elif layer_num == 5:
-                reason = "No feedback loop existed to capture this failure pattern and prevent recurrence"
-                evidence.append("Postmortem engine was not invoked on first occurrence")
-
+            reason, evidence = _build_layer_reason_evidence(
+                probe["layer"], symptom_category, skill_id, error_message, skill_data
+            )
             responses.append(
                 {
-                    "layer": layer_num,
+                    "layer": probe["layer"],
                     "question": probe["question"],
                     "reason": reason,
                     "evidence": evidence,
