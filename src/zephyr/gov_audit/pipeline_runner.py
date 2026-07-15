@@ -91,6 +91,64 @@ class PipelineResult(BaseModel):
     dimension_results: dict[str, DimensionResult] = Field(default_factory=dict)
 
 
+def _build_owned_by_map(edges: list[dict[str, object]]) -> dict[str, list[str]]:
+    owned_by_map: dict[str, list[str]] = {}
+    for edge in edges:
+        if edge.get("dep_type") == "owned_by":
+            from_id = edge.get("from", "")
+            to_id = edge.get("to", "")
+            if from_id and to_id:
+                owned_by_map.setdefault(from_id, []).append(to_id)
+    return owned_by_map
+
+
+def _resolve_depgraph_node_dimension(
+    node_id: str, owned_by_map: dict[str, list[str]], script_path: str
+) -> str | None:
+    dim = None
+    for owner_id in owned_by_map.get(node_id, []):
+        for part in owner_id.split("__"):
+            dim = PipelineRunner._dir_to_dimension(part)
+            if dim:
+                break
+        if dim:
+            break
+    if dim is None:
+        for part in Path(script_path).parts:
+            dim = PipelineRunner._dir_to_dimension(part)
+            if dim:
+                break
+    return dim
+
+
+def _build_depgraph_script_mapping(
+    nodes: dict[str, object],
+    owned_by_map: dict[str, list[str]],
+    project_root: Path,
+) -> dict[str, list[str]]:
+    mapping: dict[str, list[str]] = {}
+    for node_id, node_data in nodes.items():
+        if not isinstance(node_data, dict) or node_data.get("type") != "script":
+            continue
+        script_path = node_data.get("path", "")
+        if not script_path:
+            continue
+        dim = _resolve_depgraph_node_dimension(node_id, owned_by_map, script_path)
+        if dim is None:
+            continue
+        abs_path = project_root / script_path
+        if not abs_path.is_file():
+            continue
+        mapping.setdefault(dim, []).append(str(abs_path))
+    return mapping
+
+
+def _filter_underscore_scripts(mapping: dict[str, list[str]]) -> dict[str, list[str]]:
+    for dim in mapping:
+        mapping[dim] = [sp for sp in mapping[dim] if not Path(sp).name.startswith("_")]
+    return mapping
+
+
 class PipelineRunner:
     _discovery_cache: dict[str, tuple[float, dict[str, list[str]]]] = {}
     _depgraph_cache: tuple[float, dict[str, object]] | None = None
@@ -303,43 +361,11 @@ class PipelineRunner:
         if not data or "nodes" not in data or "edges" not in data:
             return {}
         project_root = self._project_root()
-        owned_by_map: dict[str, list[str]] = {}
-        for edge in data.get("edges", []):
-            if edge.get("dep_type") == "owned_by":
-                from_id = edge.get("from", "")
-                to_id = edge.get("to", "")
-                if from_id and to_id:
-                    owned_by_map.setdefault(from_id, []).append(to_id)
-        mapping: dict[str, list[str]] = {}
-        nodes = data.get("nodes", {})
-        for node_id, node_data in nodes.items():
-            if not isinstance(node_data, dict) or node_data.get("type") != "script":
-                continue
-            script_path = node_data.get("path", "")
-            if not script_path:
-                continue
-            dim = None
-            for owner_id in owned_by_map.get(node_id, []):
-                for part in owner_id.split("__"):
-                    dim = self._dir_to_dimension(part)
-                    if dim:
-                        break
-                if dim:
-                    break
-            if dim is None:
-                for part in Path(script_path).parts:
-                    dim = self._dir_to_dimension(part)
-                    if dim:
-                        break
-            if dim is None:
-                continue
-            abs_path = project_root / script_path
-            if not abs_path.is_file():
-                continue
-            mapping.setdefault(dim, []).append(str(abs_path))
-        for dim in mapping:
-            mapping[dim] = [sp for sp in mapping[dim] if not Path(sp).name.startswith("_")]
-        return mapping
+        owned_by_map = _build_owned_by_map(data.get("edges", []))
+        mapping = _build_depgraph_script_mapping(
+            data.get("nodes", {}), owned_by_map, project_root
+        )
+        return _filter_underscore_scripts(mapping)
 
     def _discover_from_gate_registry(self) -> dict[str, list[str]]:
         data = self._load_gate_registry()
