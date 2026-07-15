@@ -455,6 +455,71 @@ class CsvAdapter(RegistryAdapter):
         return entries
 
 
+# === 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）===
+# 原 TomlAdapter.parse 67 行 McCabe=34（list/dict 双分支 + 路径提取重复）。
+# 治本：提取为 3 个模块级 helper（均 McCabe≤15），parse 简化为 import+loads+dispatch（McCabe≈9）。
+# 行为等价：list/dict 分支顺序不变，asset_path fallback 链不变（relative_path→path→physical_path→look_like_path），
+# extra 过滤规则不变（仅过滤 None + asset_path，不过滤 physical_path）。
+# 注意：TomlAdapter 的 path 检查是 "/" or "." 不含 "\\"，与 YamlListAdapter 不同，故独立实现。
+
+
+def _extract_toml_asset_path(item: dict) -> str | None:
+    """从 TOML dict 条目提取 asset_path（relative_path→path→physical_path→look_like_path fallback）。"""
+    asset_path = item.get("relative_path") or item.get("path") or item.get("physical_path")
+    if not asset_path:
+        for v in item.values():
+            if isinstance(v, str) and ("/" in v or "." in v):
+                asset_path = v
+                break
+    return asset_path or None
+
+
+def _parse_toml_list(target: list, registry_id: str) -> list[RegistryEntry]:
+    """解析 TOML list target（每个 item 为 dict，提取 asset_path 构造 RegistryEntry）。"""
+    entries: list[RegistryEntry] = []
+    for item in target:
+        if not isinstance(item, dict):
+            continue
+        asset_path = _extract_toml_asset_path(item)
+        if asset_path:
+            entries.append(
+                RegistryEntry(
+                    registry_id=registry_id,
+                    registry_path="",
+                    entry_path=str(asset_path),
+                    extra={k: v for k, v in item.items() if v is not None and k != asset_path},
+                )
+            )
+    return entries
+
+
+def _parse_toml_dict(target: dict, registry_id: str) -> list[RegistryEntry]:
+    """解析 TOML dict target（str value→path entry，dict value→extract asset_path）。"""
+    entries: list[RegistryEntry] = []
+    for key, value in target.items():
+        if isinstance(value, str) and ("/" in value or "." in value):
+            entries.append(
+                RegistryEntry(
+                    registry_id=registry_id,
+                    registry_path="",
+                    entry_path=value,
+                    extra={"key": key},
+                )
+            )
+        elif isinstance(value, dict):
+            asset_path = _extract_toml_asset_path(value)
+            if asset_path:
+                entries.append(
+                    RegistryEntry(
+                        registry_id=registry_id,
+                        registry_path="",
+                        entry_path=str(asset_path),
+                        extra={k: v for k, v in value.items() if v is not None and k != asset_path},
+                    )
+                )
+    return entries
+
+
 class TomlAdapter(RegistryAdapter):
     def __init__(self, registry_id: str, key: str = "assets") -> None:
         self._registry_id = registry_id
@@ -468,6 +533,8 @@ class TomlAdapter(RegistryAdapter):
         return file_path.lower().endswith(".toml")
 
     def parse(self, raw_content: str) -> list[RegistryEntry]:
+        # 裁定#217 Tier2 P3：提取为 _extract_toml_asset_path/_parse_toml_list/_parse_toml_dict
+        # 模块级 helper，本方法简化为 import+loads+dispatch（McCabe≈9）。行为等价。
         try:
             import tomllib
         except ImportError:
@@ -475,65 +542,18 @@ class TomlAdapter(RegistryAdapter):
                 import tomli as tomllib
             except ImportError:
                 return []
-
         try:
             data = tomllib.loads(raw_content)
         except Exception:
             return []
-
         if not isinstance(data, dict):
             return []
-
-        entries: list[RegistryEntry] = []
         target = data.get(self._key, data)
-
         if isinstance(target, list):
-            for idx, item in enumerate(target):
-                if not isinstance(item, dict):
-                    continue
-                asset_path = item.get("relative_path") or item.get("path") or item.get("physical_path")
-                if not asset_path:
-                    for v in item.values():
-                        if isinstance(v, str) and ("/" in v or "." in v):
-                            asset_path = v
-                            break
-                if asset_path:
-                    entries.append(
-                        RegistryEntry(
-                            registry_id=self._registry_id,
-                            registry_path="",
-                            entry_path=str(asset_path),
-                            extra={k: v for k, v in item.items() if v is not None and k != asset_path},
-                        )
-                    )
-        elif isinstance(target, dict):
-            for key, value in target.items():
-                if isinstance(value, str) and ("/" in value or "." in value):
-                    entries.append(
-                        RegistryEntry(
-                            registry_id=self._registry_id,
-                            registry_path="",
-                            entry_path=value,
-                            extra={"key": key},
-                        )
-                    )
-                elif isinstance(value, dict):
-                    asset_path = value.get("relative_path") or value.get("path") or value.get("physical_path")
-                    if not asset_path:
-                        for v in value.values():
-                            if isinstance(v, str) and ("/" in v or "." in v):
-                                asset_path = v
-                                break
-                    if asset_path:
-                        entries.append(
-                            RegistryEntry(
-                                registry_id=self._registry_id,
-                                registry_path="",
-                                entry_path=str(asset_path),
-                                extra={k: v for k, v in value.items() if v is not None and k != asset_path},
-                            )
-                        )
-        return entries
+            return _parse_toml_list(target, self._registry_id)
+        if isinstance(target, dict):
+            return _parse_toml_dict(target, self._registry_id)
+        return []
 
 
 class SqliteAdapter(RegistryAdapter):
