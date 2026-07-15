@@ -1625,6 +1625,85 @@ entries:
     Phase 4: 自验证+commit+merge
   created: '2026-07-09'
   last_updated: '2026-07-09'
+- issue_id: '#ARCH-058'
+  title: 幽灵模块治理 prune_orphans 扩展（dataflow_jobs + decision_layers 孤儿清理 + writer 角色 + 触发器绕过）
+  severity: P2中
+  status: decided
+  adjudication: |
+    ARCH-058 扩展 sync_panorama_module.prune_orphans 的清理范围与权限模型：
+    (1) 清理范围从仅 decision_layers 扩展到 dataflow_jobs，覆盖四图孤儿占位记录；
+    (2) 修复 get_dataflowgraph_pg_connection 不支持 read_only=False 的权限缺陷——
+        始终用 reader 角色（无 DELETE 权限），改用 get_depgraph_pg_connection(read_only=False)
+        获取 writer 角色；
+    (3) 修复 protect_dataflow_design_maturity 触发器阻断 DELETE design_maturity=design 记录的问题，
+        通过 SET app.allow_design_maturity_delete = on 绕过（等价于
+        get_dataflowgraph_pg_connection(allow_design_delete=True) 但补齐 writer 角色）。
+    清理目标：MOD-013/MOD-015 ghost 模块在 dataflow_jobs 的 placeholder 记录。
+    根因：MOD-013/MOD-015 是历史编号，frontmatter 已统一为 MOD-INF-016，但 dataflow_jobs
+    残留 placeholder 记录未清理，align_panoramas 误报为孤儿。
+  fix_phase: |
+    Phase 2.1 数据修复（已完成）：apply_depgraph.py --delete-nodes 删除 depgraph 节点
+      1799263(MOD-013) / 1799264(MOD-015)；frontmatter 统一 MOD-013/015 → MOD-INF-016。
+    Phase 2.2 系统修复（已完成）：prune_orphans 扩展覆盖 dataflow_jobs；
+      get_depgraph_pg_connection(read_only=False) 替换 get_dataflowgraph_pg_connection；
+      SET app.allow_design_maturity_delete = on 绕过触发器。
+    验证：dataflow_jobs 删除 3 条（MOD-013/MOD-015/MOD-GOV-ALIGNMENT-LOOP），
+      align_panoramas 问题总数=0。
+  related_adjudication: '#ARCH-056'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+- issue_id: '#ARCH-059'
+  title: 蓝图先行模块自动豁免（construction_progress=not_started 不报告孤儿/设计态孤立）
+  severity: P3低
+  status: decided
+  adjudication: |
+    ARCH-059 解决蓝图先行模块被 align_panoramas 误报为孤儿/设计态孤立的问题：
+    (1) PanoramaNode 新增 construction_progress 字段；
+    (2) _fetch_blueprint_nodes 解析 frontmatter.construction_progress；
+    (3) _is_blueprint_not_started 辅助函数判断"仅 blueprint 图 + construction_progress=not_started"；
+    (4) _detect_orphans 和 _detect_design_only_in_one 对蓝图先行模块自动豁免。
+    设计依据：蓝图先行（construction_progress=not_started）是合理的设计态——模块尚未施工，
+    仅在 blueprint 图存在是正常状态，非孤儿。当 construction_progress 改为 in_progress/done 后，
+    应在 depgraph 登记节点，否则报告为孤儿。
+    frontmatter.construction_progress 取值语义：not_started=蓝图先行(自动豁免) /
+    in_progress=施工中(应登记 depgraph planned) / done=施工完成(应登记 depgraph production)。
+  fix_phase: |
+    单次修复（已完成）：align_panoramas.py 新增 construction_progress 字段 +
+      _is_blueprint_not_started + 两处豁免逻辑；test_align_panoramas.py 新增 4 个测试。
+    验证：MOD-GOV-ALIGNMENT-LOOP 不再误报为孤儿，align_panoramas 问题总数=0。
+  related_adjudication: '#ARCH-053, #ARCH-056'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+- issue_id: '#ARCH-060'
+  title: ARCH 编号登记边界与引用规范化（登记强制 + 编号冲突消解 + 禁止绕过格式）
+  severity: P2中
+  status: decided
+  adjudication: |
+    ARCH-060 确立 ARCH 编号登记边界与引用规范（治本 ARCH-058/059 未登记问题）：
+    (R1) 登记边界：任何产生实质性架构变更（删除节点/修改逻辑/新增机制）的裁定，必须登记
+         architecture_issue_registry.yaml。代码中任何格式的 ARCH-XXX 引用（含 # ARCH-XXX、
+         ARCH-XXX、#ARCH-XXX）必须有对应登记条目。
+    (R2) 编号冲突治理：同一编号不得指向不同语义。ARCH-058 曾被 pipeline_roadmap.py 用作
+         路径迁移注释（trading/orchestrator -> orchestrator/），与孤儿治理 ARCH-058 语义冲突——
+         消解方式：路径迁移注释改为非编号描述，孤儿治理占用 ARCH-058。
+    (R3) 引用格式规范：代码头部 [ARCH-REF] 必须声明所有该文件涉及的 #ARCH-XXX 正式引用；
+         代码内注释可使用 #ARCH-XXX（无空格，触发门禁校验）或非编号描述（不使用 ARCH 编号）；
+         禁止 # ARCH-XXX（# 后有空格）的绕过格式（绕过 _validate_arch_references 正则）。
+    (R4) AGENTS.md 同步：产生架构约定变更的裁定，必须在 AGENTS.md 对应章节登记设计意图。
+         蓝图先行豁免机制（ARCH-059）已登记到 §4.3。
+    (R5) 追溯登记：ARCH-058/059 本次补登，ARCH-060 为本裁定自身。
+    这是防幻觉/防漂移体系 L5（裁定可发现性）规则——未登记的裁定对 AI 不可见=等同于不存在。
+  fix_phase: |
+    Phase 1（本次）：登记 ARCH-058/059/060 到 registry；
+      消解 pipeline_roadmap.py ARCH-058 冲突；
+      规范化 4 个文件 [ARCH-REF] 头部；
+      规范化代码内注释格式；
+      AGENTS.md §4.3 登记蓝图先行豁免。
+    Phase 2（验证）：generate_project_depgraph.py 门禁通过；
+      align_panoramas 问题总数=0；pytest 全绿；grep 无 # ARCH-XXX 绕过格式残留。
+  related_adjudication: '#ARCH-058, #ARCH-059'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
 - issue_id: '#ARCH-MM-001'
   title: '[MATURITY]标记与depgraph design_maturity关系裁定——声明vs验证'
   severity: P1中

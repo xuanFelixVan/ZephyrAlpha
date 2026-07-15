@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] depgraph不存在→exit 1;三图任一为空→exit 2(blueprint图不参与此检查)
 # [TESTS] tests/test_align_panoramas.py
 # [TTL] permanent
-# [ARCH-REF] #ARCH-053 #ARCH-056
+# [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 # 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
 # 并从 docs/03_modules/ 下的 blueprint.md / 模块文件 frontmatter 采集第四张图（blueprint），
 # 生成四图对齐报告（孤儿/状态漂移/域不一致/设计态孤立）。
@@ -102,7 +102,7 @@ class PanoramaNode:
     design_maturity: str | None
     build_status: str | None
     domain_id: str | None
-    construction_progress: str | None = None  # ARCH-059: 蓝图先行判断用
+    construction_progress: str | None = None  #ARCH-059: 蓝图先行判断用
 
 
 @dataclass
@@ -564,7 +564,7 @@ def _detect_orphans(all_nodes: list[PanoramaNode],
         graphs = {n.graph for n in nodes}
         if len(graphs) == 1:
             g = next(iter(graphs))
-            # ARCH-059: 蓝图先行模块自动豁免
+            #ARCH-059: 蓝图先行模块自动豁免
             if g == "blueprint" and _is_blueprint_not_started(nodes):
                 continue
             for n in nodes:
@@ -650,7 +650,7 @@ def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
         if len(graphs) != 1:
             continue  # 多图存在就不算孤立
         g = next(iter(graphs))
-        # ARCH-059: 蓝图先行模块自动豁免
+        #ARCH-059: 蓝图先行模块自动豁免
         if g == "blueprint" and _is_blueprint_not_started(nodes):
             continue
         # 检查是否有 design 状态节点

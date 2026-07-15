@@ -8,6 +8,7 @@
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/governance/test_sync_panorama_module.py
 # [TTL] task_bound
+# [ARCH-REF] #ARCH-056 #ARCH-058
 """test_sync_panorama_module.py — 四图模块同步引擎单测（ARCH-056 Phase 2）
 
 覆盖：
