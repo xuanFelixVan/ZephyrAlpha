@@ -145,7 +145,7 @@ class CommitStatus(str, Enum):
     REPO_ROOT_VIOLATION = "REPO_ROOT_VIOLATION"
     PURE_ASSERTION_VIOLATION = "PURE_ASSERTION_VIOLATION"
     HELD_OVERLAP_VIOLATION = "HELD_OVERLAP_VIOLATION"
-    FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  # ARCH-054 外来变更检测
+    FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  #ARCH-054 外来变更检测
     CLAIM_REQUIRED_VIOLATION = "CLAIM_REQUIRED_VIOLATION"
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"
     STASH_CONFLICT = "STASH_CONFLICT"  # 阶段3 已弃用，保留向后兼容
@@ -289,7 +289,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
-        self._gate_registry.register(make_foreign_change_gate())  # ARCH-054 priority=45 外来变更检测（claim 时基线快照，commit 时对比）
+        self._gate_registry.register(make_foreign_change_gate())  #ARCH-054 priority=45 外来变更检测（claim 时基线快照，commit 时对比）
         self._gate_registry.register(make_session_required_gate())  # priority=30 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
@@ -336,7 +336,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_depgraph_write_path_gate())  # priority=97 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
-        # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
+        #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
         # commit 时 FOREIGN-CHANGE-DETECTION gate 对比检测搭便车变更。
         self._claim_snapshots: dict[str, dict[str, str]] = {}
 
@@ -357,7 +357,7 @@ class GitCommitGateway:
         for f in files:
             if self._registry.claim_file(session_id, f):
                 claimed.append(f)
-                # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
+                #ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
                     baseline = self._capture_baseline_diff(abs_f)
@@ -385,7 +385,7 @@ class GitCommitGateway:
                     "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
                     f, session_id,
                 )
-        # ARCH-054: 清理 session 的基线快照
+        #ARCH-054: 清理 session 的基线快照
         try:
             self._claim_snapshots.pop(session_id, None)
         except Exception:
@@ -436,7 +436,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_session_log_index_reconciler(self))  # session_logs/index.yaml 派生（AI-03 审计 P3）
         self._reconciliation_registry.register(make_arch_diagram_reconciler(self))  # 议题3: 02_enterprise_architecture 下 9 个架构图生成器自动重生（decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation）
         self._reconciliation_registry.register(make_constraint_detect_reconciler(self))  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
-        self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  # ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
+        self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  #ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
 
     # ------------------------------------------------------------------
@@ -462,7 +462,7 @@ class GitCommitGateway:
                     return CommitResult(status=CommitStatus.HELD_OVERLAP_VIOLATION, message=gr.detail)
                 if gr.gate_id == "CLAIM-REQUIRED":
                     return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
-                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  # ARCH-054
+                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  #ARCH-054
                     return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
                 if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
                     return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
@@ -693,105 +693,144 @@ class GitCommitGateway:
                 #    分离 existing 和 deleted——git add 对 delete 文件失败（pathspec
                 #    did not match），需用 git rm 替代（治本 ARCH-030：staged/unstaged
                 #    delete 文件 git add 报错导致整个 commit 流程中断）
-                add_ok = True
-                if normal_files:
-                    existing_files = [f for f in normal_files if os.path.isfile(f)]
-                    deleted_files = [f for f in normal_files if not os.path.isfile(f)]
-                    # 3a. git add existing_files（modify/new/rename 目标）
-                    if existing_files:
-                        add_pathspec_file = self._write_pathspec_file(existing_files)
-                        try:
-                            add_result = self._run_git(
-                                ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
-                            )
-                            add_ok = add_result.returncode == 0
-                            if not add_ok:
-                                logger.warning("GitCommitGateway: git add 失败: %s", add_result.stderr.strip())
-                                result = CommitResult(
-                                    status=CommitStatus.COMMIT_FAILED,
-                                    message=f"git add failed: {add_result.stderr.strip()}",
-                                )
-                        finally:
-                            try:
-                                os.remove(add_pathspec_file)
-                            except OSError:
-                                pass
-                    # 3b. git rm deleted_files（delete 文件用 git rm 替代 git add）
-                    # --ignore-unmatch 跳过已 staged delete（git rm 幂等）
-                    # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
-                    if add_ok and deleted_files:
-                        del_pathspec = self._write_pathspec_file(deleted_files)
-                        try:
-                            rm_result = self._run_git(
-                                ["git", "rm", "--cached", "--ignore-unmatch",
-                                 f"--pathspec-from-file={del_pathspec}"]
-                            )
-                        finally:
-                            try:
-                                os.remove(del_pathspec)
-                            except OSError:
-                                pass
-                        add_ok = rm_result.returncode == 0
-                        if not add_ok:
-                            logger.warning("GitCommitGateway: git rm 失败: %s", rm_result.stderr.strip())
-                            result = CommitResult(
-                                status=CommitStatus.COMMIT_FAILED,
-                                message=f"git rm failed: {rm_result.stderr.strip()}",
-                            )
-                if add_ok:
-                    # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
-                    has_gitignored = self._should_use_no_pathspec(files, normal_files)
-                    # 5. 检查 staged 变更
-                    diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
-                    if diff_result.returncode == 0:
-                        logger.info("GitCommitGateway: files 无 staged 变更，跳过 commit")
-                        result = CommitResult(
-                            status=CommitStatus.NOTHING_TO_COMMIT,
-                            message="no staged changes in files_in_scope",
-                        )
-                    else:
-                        # 6. commit（rename 检测内置到 _commit_with_file_message）
-                        pathspec_for_commit = None if has_gitignored else pathspec_file
-                        commit_hash, commit_err = self._commit_with_file_message(
-                            full_message, pathspec_for_commit, files
-                        )
-                        if commit_hash is None:
-                            result = CommitResult(
-                                status=CommitStatus.COMMIT_FAILED,
-                                message=f"git commit failed: {commit_err}",
-                            )
-                        else:
-                            os.environ[_GATEWAY_ENV] = "1"
-                            logger.info(
-                                "GitCommitGateway: commit 成功 hash=%s marker=%s files=%d",
-                                commit_hash, gw_marker, len(files),
-                            )
-                            result = CommitResult(
-                                status=CommitStatus.OK,
-                                message=f"committed {len(files)} files",
-                                commit_hash=commit_hash,
-                            )
+                add_ok, add_fail = self._add_and_remove_normal_files(normal_files)
+                if not add_ok:
+                    result = add_fail
+                else:
+                    # 4-6. 检查 staged 变更并 commit
+                    result = self._resolve_commit_result(
+                        files, normal_files, full_message, pathspec_file, gw_marker
+                    )
         finally:
-            # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 -> 写异步触发记录
-            if result.status == CommitStatus.OK:
-                try:
-                    self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
-                except Exception as e:
-                    logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e, exc_info=True)
-            # P4-T2: session shutdown handoff（crash recovery）
-            if result.status == CommitStatus.OK:
-                try:
-                    from zephyr.governance.ops_governance.phase_manager import session_shutdown
-                    session_shutdown(session_id, summary=full_message)
-                except Exception as e:
-                    logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
-            if pathspec_file:
-                try:
-                    os.remove(pathspec_file)
-                except OSError:
-                    pass
-            os.environ.pop(_GATEWAY_ENV, None)
+            self._commit_locked_finalize(
+                result, files, session_id, full_message, pathspec_file
+            )
         return result
+
+    def _add_and_remove_normal_files(
+        self, normal_files: list[str],
+    ) -> tuple[bool, CommitResult | None]:
+        """步骤3：git add existing + git rm deleted（delete 文件 git add 报错，用 git rm 替代）。
+
+        分离 existing 和 deleted——git add 对 delete 文件失败（pathspec did not match），
+        需用 git rm 替代（治本 ARCH-030）。--ignore-unmatch 跳过已 staged delete（git rm 幂等）。
+        P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)。
+        返回 (add_ok, failure_result)：add_ok=True 时 failure_result 为 None。
+        """
+        add_ok = True
+        failure: CommitResult | None = None
+        if normal_files:
+            existing_files = [f for f in normal_files if os.path.isfile(f)]
+            deleted_files = [f for f in normal_files if not os.path.isfile(f)]
+            # 3a. git add existing_files（modify/new/rename 目标）
+            if existing_files:
+                add_pathspec_file = self._write_pathspec_file(existing_files)
+                try:
+                    add_result = self._run_git(
+                        ["git", "add", f"--pathspec-from-file={add_pathspec_file}"]
+                    )
+                    add_ok = add_result.returncode == 0
+                    if not add_ok:
+                        logger.warning("GitCommitGateway: git add 失败: %s", add_result.stderr.strip())
+                        failure = CommitResult(
+                            status=CommitStatus.COMMIT_FAILED,
+                            message=f"git add failed: {add_result.stderr.strip()}",
+                        )
+                finally:
+                    try:
+                        os.remove(add_pathspec_file)
+                    except OSError:
+                        pass
+            # 3b. git rm deleted_files（delete 文件用 git rm 替代 git add）
+            if add_ok and deleted_files:
+                del_pathspec = self._write_pathspec_file(deleted_files)
+                try:
+                    rm_result = self._run_git(
+                        ["git", "rm", "--cached", "--ignore-unmatch",
+                         f"--pathspec-from-file={del_pathspec}"]
+                    )
+                finally:
+                    try:
+                        os.remove(del_pathspec)
+                    except OSError:
+                        pass
+                add_ok = rm_result.returncode == 0
+                if not add_ok:
+                    logger.warning("GitCommitGateway: git rm 失败: %s", rm_result.stderr.strip())
+                    failure = CommitResult(
+                        status=CommitStatus.COMMIT_FAILED,
+                        message=f"git rm failed: {rm_result.stderr.strip()}",
+                    )
+        return add_ok, failure
+
+    def _resolve_commit_result(
+        self,
+        files: list[str],
+        normal_files: list[str],
+        full_message: str,
+        pathspec_file: str,
+        gw_marker: str,
+    ) -> CommitResult:
+        """步骤4-6：判断 no-pathspec -> 检查 staged 变更 -> commit（rename 检测内置）。"""
+        # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
+        has_gitignored = self._should_use_no_pathspec(files, normal_files)
+        # 5. 检查 staged 变更
+        diff_result = self._run_git(["git", "diff", "--cached", "--quiet"])
+        if diff_result.returncode == 0:
+            logger.info("GitCommitGateway: files 无 staged 变更，跳过 commit")
+            return CommitResult(
+                status=CommitStatus.NOTHING_TO_COMMIT,
+                message="no staged changes in files_in_scope",
+            )
+        # 6. commit（rename 检测内置到 _commit_with_file_message）
+        pathspec_for_commit = None if has_gitignored else pathspec_file
+        commit_hash, commit_err = self._commit_with_file_message(
+            full_message, pathspec_for_commit, files
+        )
+        if commit_hash is None:
+            return CommitResult(
+                status=CommitStatus.COMMIT_FAILED,
+                message=f"git commit failed: {commit_err}",
+            )
+        os.environ[_GATEWAY_ENV] = "1"
+        logger.info(
+            "GitCommitGateway: commit 成功 hash=%s marker=%s files=%d",
+            commit_hash, gw_marker, len(files),
+        )
+        return CommitResult(
+            status=CommitStatus.OK,
+            message=f"committed {len(files)} files",
+            commit_hash=commit_hash,
+        )
+
+    def _commit_locked_finalize(
+        self,
+        result: CommitResult,
+        files: list[str],
+        session_id: str,
+        full_message: str,
+        pathspec_file: str | None,
+    ) -> None:
+        """finally：红蓝触发 + session shutdown handoff + pathspec 清理 + 环境变量复位。"""
+        # 事件驱动红蓝触发 (MOD-INF-030)：正式脚本/模块提交 -> 写异步触发记录
+        if result.status == CommitStatus.OK:
+            try:
+                self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
+            except Exception as e:
+                logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e, exc_info=True)
+        # P4-T2: session shutdown handoff（crash recovery）
+        if result.status == CommitStatus.OK:
+            try:
+                from zephyr.governance.ops_governance.phase_manager import session_shutdown
+                session_shutdown(session_id, summary=full_message)
+            except Exception as e:
+                logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
+        if pathspec_file:
+            try:
+                os.remove(pathspec_file)
+            except OSError:
+                pass
+        os.environ.pop(_GATEWAY_ENV, None)
 
     def _post_commit_red_blue_trigger(
         self, files: list[str], session_id: str, commit_hash: str,
