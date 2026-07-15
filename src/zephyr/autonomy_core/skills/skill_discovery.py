@@ -190,6 +190,20 @@ class SkillDiscovery:
 
     @staticmethod
     def _extract_module_name(content: str, bp_file: Path) -> str:
+        name = SkillDiscovery._find_mod_id_in_header(content)
+        if name:
+            return name
+        name = SkillDiscovery._find_mod_id_in_blueprint_line(content)
+        if name:
+            return name
+        name = SkillDiscovery._derive_from_parent_dir(bp_file)
+        if name:
+            return name
+        return SkillDiscovery._derive_from_path_parts(bp_file)
+
+    @staticmethod
+    def _find_mod_id_in_header(content: str) -> str:
+        """策略1：从 `# ... MOD-XXX` 头部行提取 MOD- ID。"""
         for line in content.split("\n"):
             ls = line.strip()
             if ls.startswith("# ") and "MOD-" in ls:
@@ -197,6 +211,11 @@ class SkillDiscovery:
                 for p in parts:
                     if p.startswith("MOD-"):
                         return p
+        return ""
+
+    @staticmethod
+    def _find_mod_id_in_blueprint_line(content: str) -> str:
+        """策略2：从 `# 蓝图/Blueprint` 行提取 MOD- 或名称前缀。"""
         for line in content.split("\n"):
             ls = line.strip()
             if ls.startswith("# ") and ("蓝图" in ls or "Blueprint" in ls):
@@ -206,13 +225,22 @@ class SkillDiscovery:
                 name = ls.lstrip("# ").strip().split(":")[0].strip()
                 if len(name) > 2 and len(name) < 60 and "[" not in name:
                     return name
+        return ""
 
+    @staticmethod
+    def _derive_from_parent_dir(bp_file: Path) -> str:
+        """策略3：从父目录名派生模块名（排除通用目录名）。"""
         parent_dir = bp_file.parent.name
         if parent_dir and parent_dir not in ("03_modules", "module", "blueprints", "docs"):
             clean = parent_dir.replace("_", "-").strip()
             if len(clean) > 1 and not any(c in clean for c in ("[", "]", ":", "(", ")")):
                 return clean
+        return ""
 
+    @staticmethod
+    def _derive_from_path_parts(bp_file: Path) -> str:
+        """策略4：从路径片段 `l*_` 模式派生，回退到父目录名。"""
+        parent_dir = bp_file.parent.name
         for part in bp_file.parts:
             if part.startswith("l") and "_" in part:
                 for p in bp_file.parent.parts:
@@ -228,7 +256,6 @@ class SkillDiscovery:
                         if len(clean) > 1 and not any(c in clean for c in ("[", "]", ":", "(", ")")):
                             return clean
                 return parent_dir
-
         return ""
 
     @staticmethod
