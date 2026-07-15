@@ -259,66 +259,67 @@ class BacktestPerformanceData:
 
 # ===== Mock 数据生成器 (掘金风格示例) =====
 
-def generate_demo_performance_data() -> BacktestPerformanceData:
-    """生成掘金风格示例回测数据 (2019-01-01 ~ 2020-12-31, 488交易日)
+# 裁定#217 Tier2 P3 Extract Method 重构（2026-07-15）
+# 原 generate_demo_performance_data 308行 McCabe=34（13段顺序数据生成）。
+# 治本：提取为 12 个模块级 helper（均 McCabe≤15），主函数简化为编排（McCabe≈1）。
+# 行为等价：rng 调用顺序完全保留（daily_ret→benchmark→trades→ohlc→positions→daily_capital），
+# 浮点运算 bit-identical（sum/mean 预计算不改变 IEEE754 结果）。
 
-    参照掘金3截图:
-      期初资产: 10,000,000.00  期末资产: 28,158,840.64
-      累计收益率: 181.59%  年化收益率: 69.96%  最大回撤: -17.09%
-      夏普比率: 12.40  交易天数: 488
-    """
-    rng = random.Random(42)  # 固定种子保证可复现
-    start = datetime(2019, 1, 2)
-    end = datetime(2020, 12, 31)
+_DEMO_SYMBOLS = ["000001.SZ", "600000.SH", "000300.SH", "600519.SH", "000858.SZ"]
 
-    # 生成交易日列表 (跳过周末)
+
+def _gen_trading_dates(start: datetime, end: datetime) -> list[datetime]:
+    """生成交易日列表 (跳过周末)。"""
     dates: list[datetime] = []
     d = start
     while d <= end:
-        if d.weekday() < 5:  # 周一到周五
+        if d.weekday() < 5:
             dates.append(d)
         d += timedelta(days=1)
-    n = len(dates)
-    timestamps = [dt.strftime("%Y-%m-%d") for dt in dates]
+    return dates
 
-    # 模拟策略日收益率 (年化~70%, 日均~0.20%, 波动~28%)
-    # 用 AR(1) + noise 模拟趋势性 (参数校准: 522交易日 -> nav~2.8 -> 累计~181%)
+
+def _gen_strategy_daily_ret(rng: random.Random, n: int) -> list[float]:
+    """模拟策略日收益率 (AR(1) + noise + 大跌)。"""
     daily_ret: list[float] = []
     prev = 0.0
     for i in range(n):
-        base = 0.0010  # 日均收益 (校准: AR+noise复合后 nav≈2.8)
-        ar = 0.15 * prev  # 轻微自回归
-        noise = rng.gauss(0, 0.013)  # 日波动
+        base = 0.0010
+        ar = 0.15 * prev
+        noise = rng.gauss(0, 0.013)
         r = base + ar + noise
-        # 加入几次大跌 (模拟最大回撤 -17%)
         if i in (180, 181, 182, 350, 351):
             r -= 0.025
         daily_ret.append(r)
         prev = r
+    return daily_ret
 
-    # 累计净值
+
+def _compute_nav_yield_drawdown(
+    daily_ret: list[float], n: int,
+) -> tuple[list[float], list[float], list[float], list[float]]:
+    """计算累计净值、累计收益率%、每日收益率%、回撤%。"""
     nav = [1.0]
     for r in daily_ret:
         nav.append(nav[-1] * (1 + r))
-    nav = nav[1:]  # 去掉初始 1.0, 对齐 dates
-    # 重新对齐长度
+    nav = nav[1:]
     if len(nav) != n:
         nav = nav[:n]
-
-    # 累计收益率 %
     strategy_yield = [(v - 1) * 100 for v in nav]
-    # 每日收益率 %
     strategy_yield_daily = [r * 100 for r in daily_ret]
-
-    # 回撤 %
     strategy_drawdown: list[float] = []
     peak = nav[0]
     for v in nav:
         peak = max(peak, v)
         strategy_drawdown.append((v / peak - 1) * 100)
+    return nav, strategy_yield, strategy_yield_daily, strategy_drawdown
 
-    # 基准 (沪深300, 累计收益~73%)
-    bench_ret = []
+
+def _simulate_benchmark(
+    rng: random.Random, n: int,
+) -> tuple[list[float], list[float], list[float], list[float], list[float], list[float]]:
+    """模拟基准 (沪深300)。返回 (bench_ret, bench_nav, price, yield, yield_daily, drawdown)。"""
+    bench_ret: list[float] = []
     prev_b = 0.0
     for i in range(n):
         r = 0.0005 + 0.1 * prev_b + rng.gauss(0, 0.013)
@@ -329,8 +330,7 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
         bench_nav.append(bench_nav[-1] * (1 + r))
     bench_nav = bench_nav[1:n+1] if len(bench_nav) >= n else bench_nav + [bench_nav[-1]] * (n - len(bench_nav))
     bench_nav = bench_nav[:n]
-
-    benchmark_price = [3500 * v for v in bench_nav]  # 沪深300 起始3500点
+    benchmark_price = [3500 * v for v in bench_nav]
     benchmark_yield = [(v - 1) * 100 for v in bench_nav]
     benchmark_yield_daily = [r * 100 for r in bench_ret]
     benchmark_drawdown: list[float] = []
@@ -338,28 +338,27 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
     for v in bench_nav:
         bp = max(bp, v)
         benchmark_drawdown.append((v / bp - 1) * 100)
+    return bench_ret, bench_nav, benchmark_price, benchmark_yield, benchmark_yield_daily, benchmark_drawdown
 
-    # 期末资产
+
+def _compute_perf_metrics(
+    nav: list[float], daily_ret: list[float], bench_ret: list[float],
+    bench_nav: list[float], n: int, max_dd: float,
+) -> PerformanceMetrics:
+    """计算绩效指标 (16指标, 参照掘金截图)。"""
     final_asset = 10_000_000.0 * nav[-1]
-
-    # 绩效指标 (参照掘金截图)
     cum_ret = (nav[-1] - 1) * 100
     bench_ret_total = (bench_nav[-1] - 1) * 100
     excess = cum_ret - bench_ret_total
-    # 年化收益率 (复利法)
     annual_ret = (nav[-1] ** (250.0 / n) - 1) * 100
-    # 最大回撤
-    max_dd = min(strategy_drawdown)
-    # 年化波动率 (单位: %, 与 annual_ret 同单位)
     vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in daily_ret) / n - (sum(daily_ret) / n) ** 2)) * 100
-    # Sharpe (无风险 2%, annual_ret/vol 均为 % 单位, 直接相除)
     sharpe = (annual_ret - 2.0) / vol if vol > 0 else 0
-    # Beta
-    cov = sum((daily_ret[i] - sum(daily_ret) / n) * (bench_ret[i] - sum(bench_ret) / n) for i in range(n)) / n
-    var_b = sum((r - sum(bench_ret) / n) ** 2 for r in bench_ret) / n
+    mean_dr = sum(daily_ret) / n
+    mean_br = sum(bench_ret) / n
+    cov = sum((daily_ret[i] - mean_dr) * (bench_ret[i] - mean_br) for i in range(n)) / n
+    var_b = sum((r - mean_br) ** 2 for r in bench_ret) / n
     beta = cov / var_b if var_b > 0 else 1.0
     alpha = annual_ret - 2.0 - beta * (bench_ret_total * (250.0 / n) / 100 * 100 - 2.0)
-    # 简化 Sortino/Calmar/IR/Treynor
     downside = [min(r, 0) for r in daily_ret]
     downside_vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in downside) / n)) * 100
     sortino = (annual_ret - 2.0) / downside_vol if downside_vol > 0 else 0
@@ -368,8 +367,7 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
     excess_vol = math.sqrt(250) * (math.sqrt(sum(r ** 2 for r in excess_daily) / n - (sum(excess_daily) / n) ** 2)) * 100
     ir = (annual_ret - bench_ret_total) / excess_vol if excess_vol > 0 else 0
     treynor = (annual_ret - 2.0) / beta if beta != 0 else 0
-
-    perf = PerformanceMetrics(
+    return PerformanceMetrics(
         initial_asset=10_000_000.0,
         final_asset=final_asset,
         cumulative_pnl=final_asset - 10_000_000.0,
@@ -392,10 +390,14 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
         trading_days=n,
     )
 
-    # 交易统计 (28指标)
+
+def _compute_trade_stats(
+    daily_ret: list[float], strategy_yield_daily: list[float],
+    n: int, max_dd: float,
+) -> TradeStatistics:
+    """计算交易统计 (28指标)。"""
     up_days = sum(1 for r in daily_ret if r > 0)
     down_days = sum(1 for r in daily_ret if r < 0)
-    # 最大连续上涨/下跌
     max_up = max_dn = cur_up = cur_dn = 0
     for r in daily_ret:
         if r > 0:
@@ -406,8 +408,7 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
             cur_up = 0
         max_up = max(max_up, cur_up)
         max_dn = max(max_dn, cur_dn)
-
-    trade_stats = TradeStatistics(
+    return TradeStatistics(
         trading_days=n,
         up_days=up_days,
         down_days=down_days,
@@ -436,13 +437,14 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
         annual_turnover=12.5,
     )
 
-    # 生成交易记录 (每隔~20天一次交易)
-    symbols = ["000001.SZ", "600000.SH", "000300.SH", "600519.SH", "000858.SZ"]
+
+def _gen_trades(rng: random.Random, dates: list[datetime], n: int) -> list[PerfTradeRecord]:
+    """生成交易记录 (每4天一笔)。"""
     trades: list[PerfTradeRecord] = []
-    for i in range(0, n, 4):  # 每4天一笔
+    for i in range(0, n, 4):
         dt = dates[i]
         side = "buy" if i % 8 == 0 else "sell"
-        sym = symbols[i % len(symbols)]
+        sym = _DEMO_SYMBOLS[i % len(_DEMO_SYMBOLS)]
         price = 10 + rng.random() * 50
         qty = 1000 + rng.randint(0, 5000)
         trades.append(PerfTradeRecord(
@@ -454,8 +456,11 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
             amount=round(price * qty, 2),
             fee=round(price * qty * 0.0003, 2),
         ))
+    return trades
 
-    # K线数据 (日线, 用模拟的价格序列)
+
+def _gen_ohlc_daily(rng: random.Random, dates: list[datetime], daily_ret: list[float]) -> list[OHLCBar]:
+    """生成K线数据 (日线, 用模拟的价格序列)。"""
     ohlc_daily: list[OHLCBar] = []
     base_price = 15.0
     for i, dt in enumerate(dates):
@@ -473,10 +478,13 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
             volume=vol,
         ))
         base_price = close
+    return ohlc_daily
 
-    # 持仓快照 (每周一次, 3-5个标的)
+
+def _gen_positions(rng: random.Random, dates: list[datetime], n: int) -> list[PerfPositionSnapshot]:
+    """生成持仓快照 (每周一次, 3个标的)。"""
     positions: list[PerfPositionSnapshot] = []
-    pos_symbols = symbols[:3]
+    pos_symbols = _DEMO_SYMBOLS[:3]
     for i in range(0, n, 5):
         dt = dates[i]
         for sym in pos_symbols:
@@ -495,8 +503,14 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
                 market_value=round(mv, 2),
                 floating_pnl=round(fpnl, 2),
             ))
+    return positions
 
-    # 每日资金 (前100天 + 每周采样)
+
+def _gen_daily_capital(
+    rng: random.Random, dates: list[datetime], nav: list[float],
+    daily_ret: list[float], n: int,
+) -> list[DailyCapitalRow]:
+    """生成每日资金 (每3天采样)。"""
     daily_capital: list[DailyCapitalRow] = []
     for i in range(0, n, 3):
         dt = dates[i]
@@ -516,8 +530,11 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
             sell_close_amount=round(rng.random() * 500000, 2) if i % 8 == 4 else 0,
             fee=round(rng.random() * 2000, 2),
         ))
+    return daily_capital
 
-    # 委托记录 (前50笔)
+
+def _gen_orders(trades: list[PerfTradeRecord]) -> list[OrderRecord]:
+    """生成委托记录 (前50笔)。"""
     orders: list[OrderRecord] = []
     for t in trades[:50]:
         orders.append(OrderRecord(
@@ -533,22 +550,53 @@ def generate_demo_performance_data() -> BacktestPerformanceData:
             fee=t.fee,
             status="FILLED",
         ))
+    return orders
 
-    # 月度收益矩阵 [2019, 2020] x [1-12月]
+
+def _compute_monthly_returns(dates: list[datetime], daily_ret: list[float]) -> list[list[float]]:
+    """计算月度收益矩阵 [2019, 2020] x [1-12月]。"""
     monthly_returns = [[0.0] * 12 for _ in range(2)]
     for i, dt in enumerate(dates):
         yr = dt.year - 2019
         mo = dt.month - 1
         if 0 <= yr < 2 and 0 <= mo < 12:
             monthly_returns[yr][mo] += daily_ret[i] * 100
+    return monthly_returns
 
+
+def generate_demo_performance_data() -> BacktestPerformanceData:
+    """生成掘金风格示例回测数据 (2019-01-01 ~ 2020-12-31, 488交易日)
+
+    参照掘金3截图:
+      期初资产: 10,000,000.00  期末资产: 28,158,840.64
+      累计收益率: 181.59%  年化收益率: 69.96%  最大回撤: -17.09%
+      夏普比率: 12.40  交易天数: 488
+    """
+    rng = random.Random(42)  # 固定种子保证可复现
+    start = datetime(2019, 1, 2)
+    end = datetime(2020, 12, 31)
+    dates = _gen_trading_dates(start, end)
+    n = len(dates)
+    timestamps = [dt.strftime('%Y-%m-%d') for dt in dates]
+    daily_ret = _gen_strategy_daily_ret(rng, n)
+    nav, strategy_yield, strategy_yield_daily, strategy_drawdown = _compute_nav_yield_drawdown(daily_ret, n)
+    bench_ret, bench_nav, benchmark_price, benchmark_yield, benchmark_yield_daily, benchmark_drawdown = _simulate_benchmark(rng, n)
+    max_dd = min(strategy_drawdown)
+    perf = _compute_perf_metrics(nav, daily_ret, bench_ret, bench_nav, n, max_dd)
+    trade_stats = _compute_trade_stats(daily_ret, strategy_yield_daily, n, max_dd)
+    trades = _gen_trades(rng, dates, n)
+    ohlc_daily = _gen_ohlc_daily(rng, dates, daily_ret)
+    positions = _gen_positions(rng, dates, n)
+    daily_capital = _gen_daily_capital(rng, dates, nav, daily_ret, n)
+    orders = _gen_orders(trades)
+    monthly_returns = _compute_monthly_returns(dates, daily_ret)
     return BacktestPerformanceData(
-        backtest_id="demo-perf-001",
-        strategy_id="行业轮动替换fundamental",
-        start_date="2019-01-02",
-        end_date="2020-12-31",
+        backtest_id='demo-perf-001',
+        strategy_id='行业轮动替换fundamental',
+        start_date='2019-01-02',
+        end_date='2020-12-31',
         initial_asset=10_000_000.0,
-        benchmark_symbol="沪深300",
+        benchmark_symbol='沪深300',
         timestamps=timestamps,
         nav_curve=nav,
         strategy_yield=strategy_yield,
