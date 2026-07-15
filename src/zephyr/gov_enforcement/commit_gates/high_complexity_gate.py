@@ -31,12 +31,19 @@ architecture_debt §5.158：10 处长函数（复杂度 30+/17/16 等），
   2. 过滤 tests/ 豁免
   3. 对每个文件解析 diff，获取 added 行号集合
   4. AST 解析 staged 文件，找到所有 FunctionDef/AsyncFunctionDef
-  5. 仅检测 lineno 在 added 行号集合中的函数（新增函数）
-  6. 循环复杂度 > 15 -> 硬阻断
+  5. 读取 HEAD 版本，收集已有函数名集合
+  6. 仅检测 lineno 在 added 行号集合 **且** 不在 HEAD 函数名集合中的函数（真正新增的函数）
+  7. 循环复杂度 > 15 -> 硬阻断
+
+裁定#214 修复（2026-07-15）
+---------------------------
+原实现 ``node.lineno in added_lines`` 捕获了**修改签名的已有函数**（如 Any→object 类型注解修复），
+与 docstring 声明的"只检测新增函数"不一致。修复：读取 HEAD 版本函数名集合，
+仅对 HEAD 中不存在的函数名检测复杂度。已有函数的复杂度增加由全量扫描脚本补充监控。
 
 设计权衡
 --------
-1. **只检测新增函数**：存量高复杂度由人工排查，gate 只防新增。
+1. **只检测新增函数**：存量高复杂度由人工排查+全量扫描脚本补充，gate 只防新增。
 2. **AST-based McCabe**：统计 If/For/While/ExceptHandler/BoolOp/comprehension-if。
 3. **阈值=15**：与 §5.158 裁定一致（>15 即反模式）。
 4. **priority=85**：在 NO-GOD-CLASS(86) 之前，FILE-COPY(85) 同级。
@@ -54,8 +61,10 @@ import ast
 import logging
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _collect_function_names,
     _get_added_lines,
     _get_staged_py_files,
+    _read_head_file,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -113,8 +122,17 @@ def make_high_complexity_gate() -> GateSpec:
                 tree = ast.parse(file_content, filename=py_file)
             except SyntaxError:
                 continue
+            # 裁定#214：读取 HEAD 版本函数名集合，区分"新增函数"与"修改函数"
+            # 只对 HEAD 中不存在的函数名检测复杂度（gate 设计意图："只检测新增函数"）
+            head_content = _read_head_file(gateway, py_file)
+            head_func_names: set[str] = set()
+            if head_content is not None:
+                head_func_names = _collect_function_names(head_content)
             for node in ast.walk(tree):
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
+                    # 跳过已存在于 HEAD 的函数（修改函数，非新增函数）
+                    if node.name in head_func_names:
+                        continue
                     complexity = _cyclomatic_complexity(node)
                     if complexity > _MAX_COMPLEXITY:
                         violations.append(
