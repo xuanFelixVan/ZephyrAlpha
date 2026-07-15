@@ -131,6 +131,29 @@ def _extract_dict_entry(item: dict, asset_key: str, registry_id: str) -> Registr
     )
 
 
+def _resolve_list_asset_path(item: dict, effective_key: str, candidates: tuple[str, ...]) -> str:
+    """从 list item 中三级 fallback 解析资产路径。"""
+    asset_path = ""
+    if effective_key:
+        asset_path = item.get(effective_key, "")
+    if not asset_path:
+        for candidate in candidates:
+            v = item.get(candidate)
+            if v and isinstance(v, str) and ("/" in v or "." in v or "\\" in v):
+                asset_path = v
+                break
+    if not asset_path:
+        if effective_key:
+            asset_path = str(item.get(effective_key, ""))
+        else:
+            for candidate in candidates:
+                v = item.get(candidate)
+                if v and isinstance(v, str):
+                    asset_path = v
+                    break
+    return asset_path
+
+
 class RegistryParseError(Exception):
     error_code = "ZA-IF-0006"
 
@@ -190,29 +213,9 @@ class YamlListAdapter(RegistryAdapter):
         for idx, item in enumerate(data):
             if not isinstance(item, dict):
                 continue
-
-            asset_path = ""
-            if effective_key:
-                asset_path = item.get(effective_key, "")
-            if not asset_path:
-                for candidate in self._ASSET_KEY_CANDIDATES:
-                    v = item.get(candidate)
-                    if v and isinstance(v, str) and ("/" in v or "." in v or "\\" in v):
-                        asset_path = v
-                        break
-            if not asset_path:
-                if effective_key:
-                    asset_path = str(item.get(effective_key, ""))
-                else:
-                    for candidate in self._ASSET_KEY_CANDIDATES:
-                        v = item.get(candidate)
-                        if v and isinstance(v, str):
-                            asset_path = v
-                            break
+            asset_path = _resolve_list_asset_path(item, effective_key, self._ASSET_KEY_CANDIDATES)
             if not asset_path:
                 continue
-
-            entry_id = item.get(self._id_key) or f"{self._registry_id}-{idx}"
             entries.append(
                 RegistryEntry(
                     registry_id=self._registry_id,
@@ -273,6 +276,51 @@ class YamlDictAdapter(RegistryAdapter):
         fp_lower = file_path.lower()
         return fp_lower.endswith(self._path_pattern)
 
+    def _parse_scripts_array(self, data: dict) -> list[RegistryEntry]:
+        """解析 REG-SCRIPT-001 scripts 数组。"""
+        if self._registry_id != "REG-SCRIPT-001":
+            return []
+        entries: list[RegistryEntry] = []
+        for item in data.get("scripts", []):
+            if isinstance(item, dict):
+                path_val = item.get("path", "")
+                entries.append(
+                    RegistryEntry(
+                        registry_id=self._registry_id,
+                        registry_path="",
+                        entry_path=str(path_val),
+                        extra={
+                            k: v
+                            for k, v in item.items()
+                            if v is not None and k not in (self._asset_key, "physical_path", "path", "id")
+                        },
+                    )
+                )
+        return entries
+
+    def _parse_dict_entries(self, data: dict) -> list[RegistryEntry]:
+        """解析通用 dict 条目（value 为 dict 的 key）。"""
+        entries: list[RegistryEntry] = []
+        for value in data.values():
+            if not isinstance(value, dict):
+                continue
+            path_val = value.get(self._asset_key) or value.get("physical_path")
+            if not path_val:
+                continue
+            entries.append(
+                RegistryEntry(
+                    registry_id=self._registry_id,
+                    registry_path="",
+                    entry_path=str(path_val),
+                    extra={
+                        k: v
+                        for k, v in value.items()
+                        if v is not None and k not in (self._asset_key, "physical_path")
+                    },
+                )
+            )
+        return entries
+
     def parse(self, raw_content: str) -> list[RegistryEntry]:
         import yaml
 
@@ -285,41 +333,9 @@ class YamlDictAdapter(RegistryAdapter):
             return []
 
         entries: list[RegistryEntry] = []
-        if self._registry_id == "REG-SCRIPT-001" and isinstance(data, dict):
-            scripts = data.get("scripts", [])
-            for idx, item in enumerate(scripts):
-                if isinstance(item, dict):
-                    path_val = item.get("path", "")
-                    entries.append(
-                        RegistryEntry(
-                            registry_id=self._registry_id,
-                            registry_path="",
-                            entry_path=str(path_val),
-                            extra={
-                                k: v
-                                for k, v in item.items()
-                                if v is not None and k not in (self._asset_key, "physical_path", "path", "id")
-                            },
-                        )
-                    )
-
         if isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, dict):
-                    path_val = value.get(self._asset_key) or value.get("physical_path")
-                    if path_val:
-                        entries.append(
-                            RegistryEntry(
-                                registry_id=self._registry_id,
-                                registry_path="",
-                                entry_path=str(path_val),
-                                extra={
-                                    k: v
-                                    for k, v in value.items()
-                                    if v is not None and k not in (self._asset_key, "physical_path")
-                                },
-                            )
-                        )
+            entries.extend(self._parse_scripts_array(data))
+            entries.extend(self._parse_dict_entries(data))
         return entries
 
 
