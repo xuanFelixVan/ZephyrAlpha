@@ -151,23 +151,7 @@ class TransitionMixin:
 
                 # GateEngine 接受外部 conn，不再管理独立事务
 
-                gate_result: GateResult | None = None
-
-                if to_status == TaskStatus.IN_PROGRESS and self._enable_gate and self._gate_engine is not None:
-                    task_obj = _row_to_taskcard(row)
-
-                    gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
-
-                    if not gate_result.passed:
-                        raise GateViolationError(gate_result)
-
-                if to_status == TaskStatus.COMPLETED and self._enable_gate and self._gate_engine is not None:
-                    task_obj = _row_to_taskcard(row)
-
-                    gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
-
-                    if not gate_result.passed:
-                        raise GateViolationError(gate_result)
+                self._evaluate_transition_gate(conn, row, to_status)
 
                 from_status = TaskStatus(row["status"])
 
@@ -176,47 +160,7 @@ class TransitionMixin:
                         f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
                     )
 
-                now = now_iso()
-
-                set_ready_at = to_status == TaskStatus.READY
-
-                set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
-
-                increment_block_count = to_status == TaskStatus.BLOCKED
-
-                conn.execute(
-                    """
-
-                    UPDATE tasks
-
-                    SET status = ?, session_id = COALESCE(?, session_id),
-
-                        waiting_for = ?,
-
-                        ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
-
-                        completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
-
-                        block_sessions_count = CASE WHEN ? THEN block_sessions_count + 1 ELSE block_sessions_count END,
-
-                        updated_at = ?
-
-                    WHERE task_id = ?
-
-                    """,
-                    (
-                        to_status.value,
-                        session_id,
-                        waiting_for,
-                        1 if set_ready_at else 0,
-                        now if set_ready_at else None,
-                        1 if set_completed_at else 0,
-                        now if set_completed_at else None,
-                        1 if increment_block_count else 0,
-                        now,
-                        task_id,
-                    ),
-                )
+                self._apply_status_update(conn, task_id, to_status, session_id, waiting_for)
 
                 self._record_event(
                     conn,
@@ -258,6 +202,64 @@ class TransitionMixin:
         )
 
         return _row_to_taskcard(updated_row)
+
+    def _evaluate_transition_gate(self, conn, row, to_status):
+        """评估 PENDING->IN_PROGRESS (G1) 与 *->COMPLETED (G7) 门禁。
+
+        门禁未启用或不适用时直接返回；评估未通过时抛出 GateViolationError，
+        由 transition() 的 except 块统一持久化失败结果。
+        """
+        if not self._enable_gate or self._gate_engine is None:
+            return
+
+        if to_status == TaskStatus.IN_PROGRESS:
+            gate_id = _STARTUP_GATE_ID
+        elif to_status == TaskStatus.COMPLETED:
+            gate_id = "G7"
+        else:
+            return
+
+        task_obj = _row_to_taskcard(row)
+
+        gate_result = self._gate_engine.evaluate(task_obj, gate_id, conn=conn)
+
+        if not gate_result.passed:
+            raise GateViolationError(gate_result)
+
+    def _apply_status_update(self, conn, task_id, to_status, session_id, waiting_for):
+        """落盘状态转换 UPDATE，按目标状态设置 ready_at / completed_at / block_sessions_count。"""
+        now = now_iso()
+
+        set_ready_at = to_status == TaskStatus.READY
+
+        set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
+
+        increment_block_count = to_status == TaskStatus.BLOCKED
+
+        conn.execute(
+            """
+            UPDATE tasks
+            SET status = ?, session_id = COALESCE(?, session_id),
+                waiting_for = ?,
+                ready_at = CASE WHEN ? THEN ? ELSE ready_at END,
+                completed_at = CASE WHEN ? THEN COALESCE(completed_at, ?) ELSE completed_at END,
+                block_sessions_count = CASE WHEN ? THEN block_sessions_count + 1 ELSE block_sessions_count END,
+                updated_at = ?
+            WHERE task_id = ?
+            """,
+            (
+                to_status.value,
+                session_id,
+                waiting_for,
+                1 if set_ready_at else 0,
+                now if set_ready_at else None,
+                1 if set_completed_at else 0,
+                now if set_completed_at else None,
+                1 if increment_block_count else 0,
+                now,
+                task_id,
+            ),
+        )
 
     def _recalculate_dependent_status(
         self,
