@@ -249,7 +249,7 @@ def _check_encoding(
 def _detect_mojibake(file_path: Path) -> bool:
     """Detect GBK-as-UTF-8 double-encoding mojibake.
 
-    Detection methods:
+    Detection methods (short-circuit, first match wins):
     1. Known mojibake character sequences (high confidence)
     2. Round-trip via GBK on CJK segments (2a: clean, 2b: with U+FFFD)
     3. U+FFFD in CJK context (replacement chars adjacent to CJK)
@@ -261,87 +261,107 @@ def _detect_mojibake(file_path: Path) -> bool:
         return False
     if not content.strip():
         return False
-    # Method 1: known markers
-    MOJIBAKE_MARKERS = [
-        "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake
-        "\u93d4\u63d2\u53c2",
-        "\u93d4\u659c\u7280\u6362",
-        "\u93d4\u529c\u00b0\u20ac",
-        "\u94c6\u003f",
-    ]
-    if any(m in content for m in MOJIBAKE_MARKERS):
-        return True
-    # Method 2: round-trip via GBK (CJK segments only)
-    import re as _re
+    # 裁定#217 Tier2 P1 Extract Method：5 个检测方法提取为模块级 helper（均 McCabe≤15），
+    # _detect_mojibake 简化为 short-circuit or 链（McCabe≈4）。行为等价：方法顺序 + 短路不变。
+    return (
+        _check_mojibake_markers(content)
+        or _check_gbk_roundtrip_clean(content)
+        or _check_gbk_roundtrip_with_replacement(content)
+        or _check_fffd_in_cjk_context(content)
+        or _check_statistical_fallback(content)
+    )
 
-    # 2a: test segments WITHOUT U+FFFD
+
+# === 裁定#217 Tier2 P1 Extract Method 重构（2026-07-15）===
+# 原 _detect_mojibake 96 行 McCabe=40（4 段检测方法串联，P2 detector fan-out pattern）。
+# 治本：提取为 5 个模块级 helper（均 McCabe≤15），_detect_mojibake 简化为 short-circuit or 链。
+
+_MOJIBAKE_MARKERS = [
+    "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake
+    "\u93d4\u63d2\u53c2",
+    "\u93d4\u659c\u7280\u6362",
+    "\u93d4\u529c\u00b0\u20ac",
+    "\u94c6\u003f",
+]
+
+
+def _check_mojibake_markers(content: str) -> bool:
+    """Method 1: 已知 mojibake 字符序列（高置信度）。"""
+    return any(m in content for m in _MOJIBAKE_MARKERS)
+
+
+def _gbk_roundtrip_density_check(seg: str) -> bool | None:
+    """GBK round-trip 密度检查：返回 True=mojibake, False=非 mojibake, None=解码失败。"""
+    try:
+        gbk_bytes = seg.encode("gbk")
+    except UnicodeEncodeError:
+        return None
+    try:
+        roundtrip = gbk_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    if roundtrip == seg:
+        return False
+    orig_cjk = sum(1 for c in seg if 0x4E00 <= ord(c) <= 0x9FFF)
+    rt_cjk = sum(1 for c in roundtrip if 0x4E00 <= ord(c) <= 0x9FFF)
+    if rt_cjk == 0 or orig_cjk == 0:
+        return False
+    return (rt_cjk / len(roundtrip)) >= (orig_cjk / len(seg))
+
+
+def _check_gbk_roundtrip_clean(content: str) -> bool:
+    """Method 2a: GBK round-trip 检测不含 U+FFFD 的 CJK 段（含 partial decode fallback）。"""
     clean_content = content.replace("\ufffd", "")
-    if clean_content.strip():
-        cjk_segments = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]+", clean_content)
-        for seg in cjk_segments:
-            if len(seg) < 2:
-                continue
+    if not clean_content.strip():
+        return False
+    for seg in re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]+", clean_content):
+        if len(seg) < 2:
+            continue
+        result = _gbk_roundtrip_density_check(seg)
+        if result:
+            return True
+        if result is None:
+            # partial decode fallback（UTF-8 解码失败时检查 replace 模式的 CJK 密度）
             try:
                 gbk_bytes = seg.encode("gbk")
-                try:
-                    roundtrip = gbk_bytes.decode("utf-8")
-                    if roundtrip != seg:
-                        orig_cjk = sum(1 for c in seg if 0x4E00 <= ord(c) <= 0x9FFF)
-                        rt_cjk = sum(1 for c in roundtrip if 0x4E00 <= ord(c) <= 0x9FFF)
-                        if rt_cjk > 0 and orig_cjk > 0:
-                            rt_cjk_density = rt_cjk / len(roundtrip)
-                            orig_cjk_density = orig_cjk / len(seg)
-                            if rt_cjk_density >= orig_cjk_density:
-                                return True
-                except UnicodeDecodeError:
-                    # Partial decode may reveal mojibake
-                    try:
-                        partial_rt = gbk_bytes.decode("utf-8", errors="replace")
-                        partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
-                        if partial_cjk >= 3:
-                            return True
-                    except Exception as e:
-                        logger.warning("suppressed error in gate_engine", exc_info=True)
-            except UnicodeEncodeError:
-                pass
-    # 2b: test segments WITH U+FFFD — split at U+FFFD and test sub-segments
-    if "\ufffd" in content:
-        cjk_with_replacement = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+", content)
-        for seg in cjk_with_replacement:
-            if "\ufffd" not in seg:
-                continue
-            sub_segs = [s for s in seg.split("\ufffd") if len(s) >= 2]
-            for sub in sub_segs:
-                try:
-                    gbk_bytes = sub.encode("gbk")
-                    try:
-                        roundtrip = gbk_bytes.decode("utf-8")
-                        if roundtrip != sub:
-                            orig_cjk = sum(1 for c in sub if 0x4E00 <= ord(c) <= 0x9FFF)
-                            rt_cjk = sum(1 for c in roundtrip if 0x4E00 <= ord(c) <= 0x9FFF)
-                            if rt_cjk > 0 and orig_cjk > 0:
-                                rt_cjk_density = rt_cjk / len(roundtrip)
-                                orig_cjk_density = orig_cjk / len(sub)
-                                if rt_cjk_density >= orig_cjk_density:
-                                    return True
-                    except UnicodeDecodeError:
-                        pass
-                except UnicodeEncodeError:
-                    pass
-    # Method 3: U+FFFD in CJK context
-    if "\ufffd" in content:
-        cjk_context = _re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]", content)
-        if len(cjk_context) >= 2:
-            return True
-    # Method 4: statistical fallback
+                partial_rt = gbk_bytes.decode("utf-8", errors="replace")
+                partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
+                if partial_cjk >= 3:
+                    return True
+            except Exception:
+                logger.warning("suppressed error in gate_engine", exc_info=True)
+    return False
+
+
+def _check_gbk_roundtrip_with_replacement(content: str) -> bool:
+    """Method 2b: GBK round-trip 检测含 U+FFFD 的 CJK 段（拆分后检测子段）。"""
+    if "\ufffd" not in content:
+        return False
+    for seg in re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf\ufffd]+", content):
+        if "\ufffd" not in seg:
+            continue
+        for sub in [s for s in seg.split("\ufffd") if len(s) >= 2]:
+            if _gbk_roundtrip_density_check(sub):
+                return True
+    return False
+
+
+def _check_fffd_in_cjk_context(content: str) -> bool:
+    """Method 3: U+FFFD 出现在 CJK 上下文中（替换字符紧邻 CJK）。"""
+    if "\ufffd" not in content:
+        return False
+    cjk_context = re.findall(r"[\u4e00-\u9fff\u3400-\u4dbf]\ufffd|\ufffd[\u4e00-\u9fff\u3400-\u4dbf]", content)
+    return len(cjk_context) >= 2
+
+
+def _check_statistical_fallback(content: str) -> bool:
+    """Method 4: 统计回退（异常 CJK 分布——GBK 扩展区占比过高 + 常用区占比过低）。"""
     total_cjk = sum(1 for c in content if 0x4E00 <= ord(c) <= 0x9FFF)
     if total_cjk < 50:
         return False
     common_cjk = sum(1 for c in content if 0x4E00 <= ord(c) <= 0x77FF)
     gbk_ext_cjk = sum(1 for c in content if 0x9400 <= ord(c) <= 0x9FFF)
-    if gbk_ext_cjk / total_cjk > 0.50 and common_cjk / total_cjk < 0.30:
-        return True
-    return False
+    return gbk_ext_cjk / total_cjk > 0.50 and common_cjk / total_cjk < 0.30
 
 
 def _check_line_ending(
