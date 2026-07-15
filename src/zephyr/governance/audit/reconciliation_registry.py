@@ -3395,14 +3395,66 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
                 return True
         return False
 
+    def _is_target_file(rel: str) -> bool:
+        """判断文件是否为本 reconciler 的目标治理文件。"""
+        return (rel == _REGISTRY_REL or rel == _TEMPLATE_REGISTRY_REL
+                or rel == _DEP_REGISTRY_REL or rel.startswith(_CONTRACTS_DIR))
+
+    def _check_track_consistency(content: str, rel: str, violations: list) -> None:
+        """三声明轨道一致性校验（P8-FIX-S0）：CFG/MOD/rule 互补不冲突。"""
+        cfg_match = _RE_HEADER_CFG.search(content)
+        mod_match = _RE_ANCHOR_MOD.search(content)
+        rule_match = _RE_BODY_RULE.search(content)
+
+        cfg_id = cfg_match.group(1) if cfg_match else None
+        mod_id = mod_match.group(1) if mod_match else None
+        rule_id = rule_match.group(1) if rule_match else None
+
+        tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
+        if tracks_found < 2 and cfg_id:
+            violations.append({
+                "file": rel,
+                "issue": "incomplete_tracks",
+                "cfg_id": cfg_id,
+                "mod_id": mod_id,
+                "rule_id": rule_id,
+                "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 声明轨声明",
+            })
+
+    def _check_count_mismatch(
+        rel: str, content: str, violations: list,
+        find_regex, declared_regex, field_name: str, entry_desc: str,
+    ) -> None:
+        """单文件 count 派生校验：统计条目数与声明的 count 比对。"""
+        actual_count = len(find_regex.findall(content))
+        declared = declared_regex.search(content)
+        declared_count = int(declared.group(1)) if declared else None
+        if declared_count is not None and declared_count != actual_count:
+            violations.append({
+                "file": rel,
+                "issue": "count_mismatch",
+                "field": field_name,
+                "declared": declared_count,
+                "actual": actual_count,
+                "detail": f"{field_name}={declared_count} 但实际 {entry_desc} 有 {actual_count} 条",
+            })
+
+    def _check_count_derivation(rel: str, content: str, violations: list) -> None:
+        """count 派生校验路由（P8-FIX-S1）：按文件类型分发到对应 count 校验。"""
+        if rel == _REGISTRY_REL:
+            _check_count_mismatch(rel, content, violations, _RE_MODULE_ID_ENTRY, _RE_TOTAL_REGISTERED, "total_registered", "registered_ids")
+        elif rel == _TEMPLATE_REGISTRY_REL:
+            _check_count_mismatch(rel, content, violations, _RE_TEMPLATE_ENTRY, _RE_TOTAL_TEMPLATES, "total_templates", "templates")
+        elif rel == _DEP_REGISTRY_REL:
+            _check_count_mismatch(rel, content, violations, _RE_DEP_ENTRY, _RE_TOTAL_DEPS, "total_dependencies", "dependencies")
+
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         violations = []
         checked = 0
 
         for f in committed_files:
             rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if (rel != _REGISTRY_REL and rel != _TEMPLATE_REGISTRY_REL
-                    and rel != _DEP_REGISTRY_REL and not rel.startswith(_CONTRACTS_DIR)):
+            if not _is_target_file(rel):
                 continue
 
             abs_path = project_root / rel
@@ -3417,65 +3469,9 @@ def make_module_id_consistency_reconciler(gateway: "object") -> ReconcilerSpec:
             checked += 1
 
             # === 三声明轨道一致性校验（P8-FIX-S0） ===
-            cfg_match = _RE_HEADER_CFG.search(content)
-            mod_match = _RE_ANCHOR_MOD.search(content)
-            rule_match = _RE_BODY_RULE.search(content)
-
-            cfg_id = cfg_match.group(1) if cfg_match else None
-            mod_id = mod_match.group(1) if mod_match else None
-            rule_id = rule_match.group(1) if rule_match else None
-
-            tracks_found = sum(1 for x in [cfg_id, mod_id, rule_id] if x)
-            if tracks_found < 2 and cfg_id:
-                violations.append({
-                    "file": rel,
-                    "issue": "incomplete_tracks",
-                    "cfg_id": cfg_id,
-                    "mod_id": mod_id,
-                    "rule_id": rule_id,
-                    "detail": f"文件有 header CFG-{cfg_id} 但仅 {tracks_found}/3 声明轨声明",
-                })
-
+            _check_track_consistency(content, rel, violations)
             # === count 派生校验（P8-FIX-S1） ===
-            if rel == _REGISTRY_REL:
-                actual_count = len(_RE_MODULE_ID_ENTRY.findall(content))
-                declared = _RE_TOTAL_REGISTERED.search(content)
-                declared_count = int(declared.group(1)) if declared else None
-                if declared_count is not None and declared_count != actual_count:
-                    violations.append({
-                        "file": rel,
-                        "issue": "count_mismatch",
-                        "field": "total_registered",
-                        "declared": declared_count,
-                        "actual": actual_count,
-                        "detail": f"total_registered={declared_count} 但实际 registered_ids 有 {actual_count} 条",
-                    })
-            elif rel == _TEMPLATE_REGISTRY_REL:
-                actual_count = len(_RE_TEMPLATE_ENTRY.findall(content))
-                declared = _RE_TOTAL_TEMPLATES.search(content)
-                declared_count = int(declared.group(1)) if declared else None
-                if declared_count is not None and declared_count != actual_count:
-                    violations.append({
-                        "file": rel,
-                        "issue": "count_mismatch",
-                        "field": "total_templates",
-                        "declared": declared_count,
-                        "actual": actual_count,
-                        "detail": f"total_templates={declared_count} 但实际 templates 有 {actual_count} 条",
-                    })
-            elif rel == _DEP_REGISTRY_REL:
-                actual_count = len(_RE_DEP_ENTRY.findall(content))
-                declared = _RE_TOTAL_DEPS.search(content)
-                declared_count = int(declared.group(1)) if declared else None
-                if declared_count is not None and declared_count != actual_count:
-                    violations.append({
-                        "file": rel,
-                        "issue": "count_mismatch",
-                        "field": "total_dependencies",
-                        "declared": declared_count,
-                        "actual": actual_count,
-                        "detail": f"total_dependencies={declared_count} 但实际 dependencies 有 {actual_count} 条",
-                    })
+            _check_count_derivation(rel, content, violations)
 
         report = {
             "gate_id": "GATE-MODULE-ID-CONSISTENCY",
