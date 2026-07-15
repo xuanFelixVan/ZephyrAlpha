@@ -1195,8 +1195,13 @@ tasks:
     dependencies: []
     capability: l2_tick
     symbols: null  # 需指定标的（L2数据量大）
+    fallback_sources:
+      - source: miniqmt
+        capability: tick_snapshot
+        description: "L2权限缺失时降级到get_full_tick五档快照（写入tick_data表）"
     extra:
-      description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限）"
+      description: "Level-2逐笔行情增量（miniQMT get_l2_quote，需L2行情权限，无权限时自动降级到五档快照）"
+      requires_permission: L2
 
   - task_id: auction_data_snapshot
     table: c1_market.auction_snapshot

@@ -213,6 +213,127 @@ class IntegratorScheduler:
         t.start()
         log.info("ClickHouse 健康探活线程已启动（间隔 %ds，timeout=3s）", self._ch_health_interval)
 
+    # ============== 本地落盘回灌（裁定 #ARCH-CH-013 Phase 1） ==============
+
+    def _start_local_replay(self) -> None:
+        """启动本地落盘回灌后台守护线程。
+
+        问题背景：WSL2 失稳时 ch_writer.write_tsv 三级降级链全部失败，
+        数据写入 data/local_fallback/*.tsv 本地文件（local_replay.save_fallback）。
+        若不回灌，数据将永久滞留本地，造成数据丢失。
+
+        治本方案（裁定 #ARCH-CH-013 Phase 1）：
+        - 启动后台守护线程，每 30 分钟检查并回灌积压文件
+        - 启动时立即检查一次（避免启动后 30 分钟空窗）
+        - 回灌复用 ch_writer.write_tsv（CH 可用时立即成功）
+        - 单次回灌上限 100 文件（避免长时间阻塞）
+        """
+        def _replay_loop() -> None:
+            # 启动时立即检查一次
+            try:
+                if local_replay.has_backlog():
+                    summary = local_replay.get_backlog_summary()
+                    log.info("local_replay: 启动时检测到积压 %s，开始回灌", summary)
+                    local_replay.replay_batch(max_files=100)
+            except Exception as e:
+                log.error("local_replay: 启动时回灌异常: %s", e)
+
+            while self._started:
+                time.sleep(1800)  # 30 分钟
+                try:
+                    if local_replay.has_backlog():
+                        result = local_replay.replay_batch(max_files=100)
+                        log.info("local_replay: 周期回灌 %s", result)
+                except Exception as e:
+                    log.error("local_replay: 周期回灌异常: %s", e)
+
+        t = threading.Thread(target=_replay_loop, daemon=True, name="local-replay")
+        t.start()
+        log.info("本地落盘回灌线程已启动（间隔 1800s）")
+
+    # ============== WSL 健康探活 + 自动重启（裁定 #ARCH-CH-013 Phase 2） ==============
+
+    def _start_wsl_health_probe(self) -> None:
+        """启动 WSL2 健康探活 + 自动重启守护线程。
+
+        问题背景：WSL2 虚拟机每 ~30 秒非正常停机一次（dmesg journal 腐蚀），
+        导致 CH 进程被杀 + systemd 重启循环。表现为：
+        - wsl bash -c 'clickhouse-client ...' 返回 Wsl/Service/E_UNEXPECTED 灾难性故障
+        - wsl --shutdown + wsl -d Ubuntu 返回 STATUS_DLL_INIT_FAILED
+
+        治本方案（裁定 #ARCH-CH-013 Phase 2）：
+        - 后台守护线程每 60 秒探活 WSL（wsl -d Ubuntu -e echo ok，timeout=10s）
+        - 连续 3 次失败（3 分钟 WSL 不可达）→ 自动冷重启 WSL
+        - 冷重启流程：wsl --shutdown → sleep 10s → wsl -d Ubuntu -e echo ok
+        - 冷重启后重置失败计数器，等待下个周期继续探活
+        - 单次冷重启间隔 ≥ 3 分钟（避免频繁 shutdown 导致 WSL 服务异常）
+
+        注意：此探活独立于 _start_ch_health_probe（后者只查 CH 不查 WSL），
+        二者分工——CH 探活发现 CH 进程死，WSL 探活发现 WSL VM 死。
+        """
+        import subprocess as _sp
+
+        def _probe_wsl() -> bool:
+            """探活 WSL（wsl -d Ubuntu -e echo ok），5 秒内成功返回 True。"""
+            try:
+                r = _sp.run(
+                    ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
+                    capture_output=True, timeout=10,
+                )
+                return r.returncode == 0 and b"ok" in r.stdout
+            except Exception:
+                return False
+
+        def _cold_restart_wsl() -> bool:
+            """冷重启 WSL：shutdown → wait → boot。"""
+            try:
+                _sp.run(["wsl", "--shutdown"], capture_output=True, timeout=15)
+                log.warning("WSL 冷重启：已 shutdown，等待 10s 后重启")
+                time.sleep(10)
+                # 启动 WSL（启动后等 5 秒让 systemd 初始化）
+                r = _sp.run(
+                    ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
+                    capture_output=True, timeout=30,
+                )
+                if r.returncode == 0 and b"ok" in r.stdout:
+                    log.info("WSL 冷重启成功")
+                    # WSL 启动后 CH 还需要时间初始化，多等 15 秒
+                    time.sleep(15)
+                    return True
+                log.error("WSL 冷重启后探活仍失败: rc=%s stderr=%s",
+                          r.returncode, r.stderr.decode("utf-8", errors="replace"))
+                return False
+            except Exception as e:
+                log.error("WSL 冷重启异常: %s", e)
+                return False
+
+        def _probe_loop() -> None:
+            fail_count = 0
+            while self._started:
+                ok = _probe_wsl()
+                if ok:
+                    if fail_count > 0:
+                        log.info("WSL 探活恢复（前 %d 次失败）", fail_count)
+                    fail_count = 0
+                else:
+                    fail_count += 1
+                    log.warning("WSL 探活失败（连续 %d 次）", fail_count)
+                    if fail_count >= 3:
+                        log.error("WSL 连续 %d 次探活失败，触发冷重启", fail_count)
+                        self._alerter.notify(
+                            "wsl_cold_restart",
+                            f"WSL2 连续 {fail_count} 次探活失败，自动冷重启",
+                            level=LEVEL_CRITICAL,
+                            source="wsl_health_probe",
+                        )
+                        _cold_restart_wsl()
+                        fail_count = 0  # 重置计数器（冷重启后给 WSL 时间恢复）
+                time.sleep(60)
+
+        t = threading.Thread(target=_probe_loop, daemon=True, name="wsl-health-probe")
+        t.start()
+        log.info("WSL 健康探活线程已启动（间隔 60s，连续 3 次失败触发冷重启）")
+
     # ============== 配置加载 ==============
 
     def _load_config(self) -> None:
@@ -727,6 +848,10 @@ class IntegratorScheduler:
             self._started = True
             # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
             self._start_ch_health_probe()
+            # 启动本地落盘回灌线程（裁定 #ARCH-CH-013 Phase 1）
+            self._start_local_replay()
+            # 启动 WSL 健康探活 + 自动冷重启（裁定 #ARCH-CH-013 Phase 2）
+            self._start_wsl_health_probe()
             # 注册为全局单例（供 _run_schedule_callback 使用）
             global _global_scheduler
             _global_scheduler = self
