@@ -28,6 +28,75 @@ from zephyr.feedback_loop.security.wireheading_prevention import WireheadingPrev
 from zephyr.shared.io.paths import GATES_DIR
 
 
+def _load_fle_gate_instance(cache: dict[str, Any], gate_id: str, gate_file: str) -> Any:
+    if gate_id in cache:
+        return cache[gate_id]
+    rel_path = gate_file.replace("../", "").replace("/", ".").replace(".py", "")
+    module_path = f"zephyr.{rel_path}"
+    try:
+        import importlib
+
+        module = importlib.import_module(module_path)
+    except ImportError:
+        return None
+    class_name = "".join(p.capitalize() for p in gate_id.lower().replace("fle-", "").split("_"))
+    gate_class = getattr(module, class_name, None)
+    if gate_class is None:
+        for attr_name in dir(module):
+            attr = getattr(module, attr_name)
+            if isinstance(attr, type) and attr_name == class_name:
+                gate_class = attr
+                break
+    if gate_class is None:
+        candidates = [a for a in dir(module) if isinstance(getattr(module, a), type) and not a.startswith("_")]
+        if not candidates:
+            return None
+        gate_class = getattr(module, candidates[0])
+    try:
+        gate_instance = gate_class()
+    except TypeError:
+        gate_instance = gate_class
+    cache[gate_id] = gate_instance
+    return gate_instance
+
+
+def _evaluate_gate_method(method: Any, method_name: str, action_id: str) -> bool:
+    import inspect
+
+    sig = inspect.signature(method)
+    params = list(sig.parameters.keys())
+    if method_name == "evaluate":
+        from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext
+
+        ctx = ActionContext(
+            action_id=action_id,
+            action_type="fle_action",
+            severity=1,
+            autonomy_level=1,
+            timestamp=time.time(),
+        )
+        result = method(ctx)
+        if hasattr(result, "verdict"):
+            from zephyr.feedback_loop.gates.safety_gate_l1_l27 import GateVerdict
+
+            return result.verdict is not GateVerdict.REJECT
+        return bool(result)
+    elif len(params) == 0:
+        result = method()
+        if isinstance(result, dict):
+            return result.get("allowed", result.get("passed", result.get("ok", True)))
+        return bool(result)
+    elif len(params) >= 2:
+        return True
+    else:
+        result = method("fle_action")
+        if isinstance(result, bool):
+            return result
+        if isinstance(result, dict):
+            return result.get("allowed", result.get("passed", result.get("ok", True)))
+        return True
+
+
 @dataclass
 class SafetyGateManager:
     numerical_guard: NumericalStabilityGuard = field(default_factory=NumericalStabilityGuard)
@@ -94,35 +163,9 @@ class SafetyGateManager:
         return results
 
     def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: object, diagnosis: object) -> bool:
-        if gate_id in self._fle_gate_cache:
-            gate_instance = self._fle_gate_cache[gate_id]
-        else:
-            rel_path = gate_file.replace("../", "").replace("/", ".").replace(".py", "")
-            module_path = f"zephyr.{rel_path}"
-            try:
-                import importlib
-
-                module = importlib.import_module(module_path)
-            except ImportError:
-                return True
-            class_name = "".join(p.capitalize() for p in gate_id.lower().replace("fle-", "").split("_"))
-            gate_class = getattr(module, class_name, None)
-            if gate_class is None:
-                for attr_name in dir(module):
-                    attr = getattr(module, attr_name)
-                    if isinstance(attr, type) and attr_name == class_name:
-                        gate_class = attr
-                        break
-            if gate_class is None:
-                candidates = [a for a in dir(module) if isinstance(getattr(module, a), type) and not a.startswith("_")]
-                if not candidates:
-                    return True
-                gate_class = getattr(module, candidates[0])
-            try:
-                gate_instance = gate_class()
-            except TypeError:
-                gate_instance = gate_class
-            self._fle_gate_cache[gate_id] = gate_instance
+        gate_instance = _load_fle_gate_instance(self._fle_gate_cache, gate_id, gate_file)
+        if gate_instance is None:
+            return True
 
         action_id = getattr(anomaly, "anomaly_id", "unknown") if anomaly else "unknown"
         for method_name in ("check", "gate", "audit", "evaluate", "validate"):
@@ -130,40 +173,7 @@ class SafetyGateManager:
             if method is None:
                 continue
             try:
-                import inspect
-
-                sig = inspect.signature(method)
-                params = list(sig.parameters.keys())
-                if method_name == "evaluate":
-                    from zephyr.feedback_loop.gates.safety_gate_l1_l27 import ActionContext
-
-                    ctx = ActionContext(
-                        action_id=action_id,
-                        action_type="fle_action",
-                        severity=1,
-                        autonomy_level=1,
-                        timestamp=time.time(),
-                    )
-                    result = method(ctx)
-                    if hasattr(result, "verdict"):
-                        from zephyr.feedback_loop.gates.safety_gate_l1_l27 import GateVerdict
-
-                        return result.verdict is not GateVerdict.REJECT
-                    return bool(result)
-                elif len(params) == 0:
-                    result = method()
-                    if isinstance(result, dict):
-                        return result.get("allowed", result.get("passed", result.get("ok", True)))
-                    return bool(result)
-                elif len(params) >= 2:
-                    return True
-                else:
-                    result = method("fle_action")
-                    if isinstance(result, bool):
-                        return result
-                    if isinstance(result, dict):
-                        return result.get("allowed", result.get("passed", result.get("ok", True)))
-                    return True
+                return _evaluate_gate_method(method, method_name, action_id)
             except Exception:
                 return True
         return True
