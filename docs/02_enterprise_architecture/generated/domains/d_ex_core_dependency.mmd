@@ -1,5 +1,5 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-15 11:32:24
+%% 生成时间: 2026-07-15 11:54:04
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 23, 依赖边数: 39
 
@@ -54,10 +54,10 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_EX_CORE -> D_AUTONOMY_CORE (6 条)
     tests_ce_test_ce_bootstrap_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_ce_test_ce_cache_invalidation_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_ce_test_ce_explain_cli_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_integrity_check_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_ce_test_ce_cache_invalidation_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_playground_v2_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_ce_test_ce_explain_cli_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_vibe_shortcuts_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_EX_CORE -> D_BACKTEST (2 条)
     src_zephyr_ex_core_adapters_miniqmt_broker_py_ -->|import_depends| D_BACKTEST[D_BACKTEST]
@@ -67,13 +67,13 @@ graph TD
     src_zephyr_ex_core_broker_interface_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters_broker_interface_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters_simulation_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters_broker_interface_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_EX_CORE -> D_INFRASTRUCTURE (4 条)
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
