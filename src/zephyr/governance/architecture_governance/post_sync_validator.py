@@ -135,51 +135,30 @@ def validate_rollback_instructions(text: str, repo_root: Path) -> str | None:
     return None
 
 
-def _validate_single_sub_cmd(cmd: str, repo_root: Path) -> str | None:
-    """校验单条 post_sync_standard 子命令（不含 && / || 链式操作符）。
+def _check_pytest_py_compile_shortcut(parts: list[str], repo_root: Path) -> str | None:
+    """pytest / py_compile 命令的 flag 校验短路处理。
 
-    返回 None 表示通过；返回字符串表示失败原因。
-    仅校验含 .py 脚本的命令；非 .py（echo/git 等）跳过。
+    pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag；
+    py_compile 的目标 .py 是编译目标，不是可执行脚本。
+    仍校验 .py 文件存在性，但不校验 flag，直接返回 None（通过）。
     """
-    # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
-    try:
-        parts = [t.strip("'\"") for t in shlex.split(cmd, posix=False)]
-    except ValueError as exc:
-        return f"shell 解析失败: {exc}"
-    if not parts:
-        return None
-
-    # 1.5 pytest / py_compile 命令跳过 flag 校验
-    # pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag
-    # py_compile 的目标 .py 是编译目标，不是可执行脚本
-    parts_lower = [p.lower() for p in parts]
-    if "-m" in parts_lower:
-        idx = parts_lower.index("-m")
-        if idx + 1 < len(parts_lower) and parts_lower[idx + 1] in ("pytest", "py_compile"):
-            # 仍校验 .py 文件存在性，但不校验 flag
-            script_path = next((t for t in parts if t.endswith(".py")), None)
-            if script_path is not None:
-                p = Path(script_path)
-                if not p.is_absolute():
-                    p = repo_root / p
-                if not p.exists():
-                    return f"文件不存在: {script_path}（解析为 {p}）"
-            return None  # pytest/py_compile flag 由模块自身管理，跳过
-
-    # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
+    # 仍校验 .py 文件存在性，但不校验 flag
     script_path = next((t for t in parts if t.endswith(".py")), None)
-    if script_path is None:
-        # 非 .py 命令（echo/git 等），无法内省，跳过
-        return None
+    if script_path is not None:
+        p = Path(script_path)
+        if not p.is_absolute():
+            p = repo_root / p
+        if not p.exists():
+            return f"文件不存在: {script_path}（解析为 {p}）"
+    return None  # pytest/py_compile flag 由模块自身管理，跳过
 
-    # 3. 脚本存在性（相对路径基于 repo_root 解析）
-    p = Path(script_path)
-    if not p.is_absolute():
-        p = repo_root / p
-    if not p.exists():
-        return f"脚本不存在: {script_path}（解析为 {p}）"
 
-    # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
+def _validate_flags_via_help(parts: list[str], script_path_obj: Path) -> str | None:
+    """提取 --flag 参数，通过 ``<脚本> --help`` 输出校验 flag 是否在 argparse 注册。
+
+    处理 ``--flag=value`` 格式：只取 = 前面的 flag 名（argparse 合法语法）。
+    --help 超时/异常/非零退出码均不阻断（视为通过，跳过 flag 校验）。
+    """
     # 处理 --flag=value 格式：只取 = 前面的 flag 名（argparse 合法语法）
     flags = [t.split("=")[0] for t in parts if t.startswith("--")]
     if not flags:
@@ -187,7 +166,7 @@ def _validate_single_sub_cmd(cmd: str, repo_root: Path) -> str | None:
 
     try:
         result = subprocess.run(
-            [sys.executable, str(p), "--help"],
+            [sys.executable, str(script_path_obj), "--help"],
             capture_output=True,
             text=True,
             timeout=15,
@@ -209,3 +188,43 @@ def _validate_single_sub_cmd(cmd: str, repo_root: Path) -> str | None:
         )
 
     return None
+
+
+def _validate_single_sub_cmd(cmd: str, repo_root: Path) -> str | None:
+    """校验单条 post_sync_standard 子命令（不含 && / || 链式操作符）。
+
+    返回 None 表示通过；返回字符串表示失败原因。
+    仅校验含 .py 脚本的命令；非 .py（echo/git 等）跳过。
+    """
+    # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
+    try:
+        parts = [t.strip("'\"") for t in shlex.split(cmd, posix=False)]
+    except ValueError as exc:
+        return f"shell 解析失败: {exc}"
+    if not parts:
+        return None
+
+    # 1.5 pytest / py_compile 命令跳过 flag 校验
+    # pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag
+    # py_compile 的目标 .py 是编译目标，不是可执行脚本
+    parts_lower = [p.lower() for p in parts]
+    if "-m" in parts_lower:
+        idx = parts_lower.index("-m")
+        if idx + 1 < len(parts_lower) and parts_lower[idx + 1] in ("pytest", "py_compile"):
+            return _check_pytest_py_compile_shortcut(parts, repo_root)
+
+    # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
+    script_path = next((t for t in parts if t.endswith(".py")), None)
+    if script_path is None:
+        # 非 .py 命令（echo/git 等），无法内省，跳过
+        return None
+
+    # 3. 脚本存在性（相对路径基于 repo_root 解析）
+    p = Path(script_path)
+    if not p.is_absolute():
+        p = repo_root / p
+    if not p.exists():
+        return f"脚本不存在: {script_path}（解析为 {p}）"
+
+    # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
+    return _validate_flags_via_help(parts, p)
