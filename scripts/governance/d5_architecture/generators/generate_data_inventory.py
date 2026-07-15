@@ -633,13 +633,9 @@ def _gen_footer() -> list[str]:
         "- **标的数**：自动检测标的字段（优先级：symbol > ts_code > stock_code > news_id > code > etf_code > sector_code > ...）的 `uniq()` 近似值（秒级查询）。",
         "  无标的字段的表（如交易日历、资金渠道汇总）显示 —。",
         "- **总行数**：从 `system.tables` 元数据获取的 `total_rows`（秒级查询，不扫描实际数据）。",
-        "- **需补充**：数据获取需求优先级+内容（P0紧急/P1重要/P2一般/P3远期），来自 `data_acquisition_requirements.yaml`。",
-        "  无需求的表显示 —。通用需求（全部已有表增量更新）见下方。",
+        "- **需补充**：数据获取缺口（仅空表登记），来自 `data_acquisition_requirements.yaml`。",
+        "  已有数据的表显示 —。仅行数为 0 的空表才登记需求。",
         "- **可获取性**：数据获取方式验证状态，来自 `data_acquisition_requirements.yaml`。",
-        "",
-        "## 通用需求",
-        "",
-        "> 全部已有表（截止2025.11）需增量更新至最新日期。获取方式：iFind+QMT均已验证可用。",
     ]
 
 
