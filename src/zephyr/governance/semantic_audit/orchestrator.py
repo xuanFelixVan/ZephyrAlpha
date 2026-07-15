@@ -147,18 +147,11 @@ class SemanticAuditor:
         输出: SemanticAuditReport 含所有触发+对齐+修复结果
         核心逻辑: 9阶段管道顺序执行
         """
-        from zephyr.governance.semantic_audit.models import (
-            AlignmentReport,
-            HealResult,
-            LLMFixResult,
-            SemanticAuditReport,
-            TriggerResult,
-        )
+        from zephyr.governance.semantic_audit.models import SemanticAuditReport
 
         start_time = time.monotonic()
         doc_path = Path(doc_path)
         audit_id = f"audit-{uuid.uuid4().hex[:8]}"
-        total_token = 0
 
         if not doc_path.exists():
             logger.warning("Document not found: %s", doc_path)
@@ -167,6 +160,44 @@ class SemanticAuditor:
                 rule_document=str(doc_path),
                 duration_ms=0,
             )
+
+        # Stages 1-3: extract + trigger + safety filter
+        _references, _triggers, filtered_triggers = self._run_detection(doc_path)
+        # Stage 4: alignment
+        alignments = self._run_alignment(doc_path, mode)
+        # Stages 6-7: LLM fix + self heal
+        fixes, heals, stage6_token = self._run_llm_and_heal(mode, filtered_triggers, doc_path)
+        total_token = stage6_token
+
+        # Stage 8: IssueAggregator (最终聚合，需等待 fixes/heals 完成)
+        report = SemanticAuditReport(audit_id=audit_id, rule_document=str(doc_path))
+        if self._aggregator is not None:
+            try:
+                duration_ms = int((time.monotonic() - start_time) * 1000)
+                report = self._aggregator.aggregate(
+                    audit_id=audit_id,
+                    rule_document=str(doc_path),
+                    triggers=filtered_triggers,
+                    alignments=alignments,
+                    fixes=fixes,
+                    heals=heals,
+                    duration_ms=duration_ms,
+                    token_used=total_token,
+                )
+            except Exception as exc:
+                logger.warning("Stage 5 aggregate failed for %s: %s", doc_path, exc, exc_info=True)
+
+        return report
+
+    # ===== audit() 各阶段辅助方法 =====
+
+    def _run_detection(self, doc_path: Path) -> tuple:
+        """Stages 1-3: ReferenceExtractor + TriggerEngine + SafetyBoundary。
+
+        Returns:
+            (references, triggers, filtered_triggers) 三元组。
+        """
+        from zephyr.governance.semantic_audit.models import TriggerResult
 
         # Stage 1: ReferenceExtractor
         references = None
@@ -194,7 +225,12 @@ class SemanticAuditor:
             except Exception as exc:
                 logger.warning("Stage 3 safety filter failed for %s: %s", doc_path, exc, exc_info=True)
 
-        # Stage 4: AlignmentEngine
+        return references, triggers, filtered_triggers
+
+    def _run_alignment(self, doc_path: Path, mode: str) -> list:
+        """Stage 4: AlignmentEngine — 注册表↔磁盘双向对齐（detect-only 模式跳过）。"""
+        from zephyr.governance.semantic_audit.models import AlignmentReport
+
         alignments: list[AlignmentReport] = []
         if self._alignment_engine is not None and mode != "detect-only":
             try:
@@ -204,9 +240,19 @@ class SemanticAuditor:
                     alignments = [report]
             except Exception as exc:
                 logger.warning("Stage 4 alignment failed for %s: %s", doc_path, exc, exc_info=True)
+        return alignments
+
+    def _run_llm_and_heal(self, mode: str, filtered_triggers: list, doc_path: Path) -> tuple:
+        """Stages 6-7: LLMBridge 修复文本生成 + SelfHealer 自愈闭环。
+
+        Returns:
+            (fixes, heals, total_token) 三元组。
+        """
+        from zephyr.governance.semantic_audit.models import HealResult, LLMFixResult
 
         # Stage 6: LLMBridge (skip in detect-only mode)
         fixes: list[LLMFixResult] = []
+        total_token = 0
         if mode != "detect-only" and self._llm_bridge is not None and filtered_triggers:
             try:
                 fixes = self._llm_bridge.generate_fix_batch(filtered_triggers)
@@ -229,25 +275,7 @@ class SemanticAuditor:
             except Exception as exc:
                 logger.warning("Stage 7 self heal failed for %s: %s", doc_path, exc, exc_info=True)
 
-        # Stage 8: IssueAggregator (最终聚合，需等待 fixes/heals 完成)
-        report = SemanticAuditReport(audit_id=audit_id, rule_document=str(doc_path))
-        if self._aggregator is not None:
-            try:
-                duration_ms = int((time.monotonic() - start_time) * 1000)
-                report = self._aggregator.aggregate(
-                    audit_id=audit_id,
-                    rule_document=str(doc_path),
-                    triggers=filtered_triggers,
-                    alignments=alignments,
-                    fixes=fixes,
-                    heals=heals,
-                    duration_ms=duration_ms,
-                    token_used=total_token,
-                )
-            except Exception as exc:
-                logger.warning("Stage 5 aggregate failed for %s: %s", doc_path, exc, exc_info=True)
-
-        return report
+        return fixes, heals, total_token
 
     def audit_batch(self, doc_paths: list[Path | str], mode: str = "incremental") -> list[BaseModel]:
         """批量审计(增量模式默认).
