@@ -442,6 +442,55 @@ class GitCommitGateway:
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------
+    def _filter_existing_files(self, abs_files: list[str]) -> list[str]:
+        """过滤不存在且未 git 跟踪的文件（保留 deletion commit / staged delete 场景）。"""
+        existing: list[str] = []
+        for f in abs_files:
+            if os.path.isfile(f):
+                existing.append(f)
+            else:
+                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
+                if self._is_git_tracked(rel) or self._is_staged_delete(rel):
+                    existing.append(f)
+        return existing
+
+    def _check_gate_results(self, gate_results: list) -> CommitResult | None:
+        """检查门禁结果，返回 CommitResult 表示阻断、None 表示全部通过。"""
+        for gr in gate_results:
+            if not gr.passed:
+                if gr.gate_id == "HELD-OVERLAP":
+                    return CommitResult(status=CommitStatus.HELD_OVERLAP_VIOLATION, message=gr.detail)
+                if gr.gate_id == "CLAIM-REQUIRED":
+                    return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
+                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  # ARCH-054
+                    return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
+                if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
+                    return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
+                return CommitResult(
+                    status=CommitStatus.COMMIT_FAILED,
+                    message=f"门禁 {gr.gate_id} 阻断: {gr.detail}",
+                )
+        return None
+
+    def _run_post_commit_reconcile(
+        self, existing: list[str], session_id: str, result: CommitResult
+    ) -> None:
+        """Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）。"""
+        if result.status != CommitStatus.OK:
+            return
+        try:
+            reconcile_results = self._reconciliation_registry.reconcile_for(existing, session_id)
+            result.reconcile = reconcile_results
+            for rr in reconcile_results:
+                if rr.action == "auto_committed":
+                    logger.info("GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail)
+                elif rr.action == "warn":
+                    logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
+                elif rr.action == "clean":
+                    print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
+        except Exception as e:
+            logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
+
     def commit(
         self,
         session_id: str,
@@ -458,15 +507,7 @@ class GitCommitGateway:
 
         # 归一化为绝对路径（用 abspath 而非 resolve()——保留传入大小写与 git index 一致）
         abs_files = [os.path.abspath(f) for f in files]
-        # 过滤不存在且未 git 跟踪的文件（保留 deletion commit / staged delete 场景）
-        existing: list[str] = []
-        for f in abs_files:
-            if os.path.isfile(f):
-                existing.append(f)
-            else:
-                rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
-                if self._is_git_tracked(rel) or self._is_staged_delete(rel):
-                    existing.append(f)
+        existing = self._filter_existing_files(abs_files)
         if not existing:
             return CommitResult(
                 status=CommitStatus.NOTHING_TO_COMMIT,
@@ -496,20 +537,9 @@ class GitCommitGateway:
             self, existing, session_id=session_id, allow_overlap=allow_overlap,
             allow_promote=allow_promote,
         )
-        for gr in gate_results:
-            if not gr.passed:
-                if gr.gate_id == "HELD-OVERLAP":
-                    return CommitResult(status=CommitStatus.HELD_OVERLAP_VIOLATION, message=gr.detail)
-                if gr.gate_id == "CLAIM-REQUIRED":
-                    return CommitResult(status=CommitStatus.CLAIM_REQUIRED_VIOLATION, message=gr.detail)
-                if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  # ARCH-054
-                    return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
-                if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
-                    return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
-                return CommitResult(
-                    status=CommitStatus.COMMIT_FAILED,
-                    message=f"门禁 {gr.gate_id} 阻断: {gr.detail}",
-                )
+        blocked = self._check_gate_results(gate_results)
+        if blocked is not None:
+            return blocked
 
         gw_marker = _GW_MARKER_FMT.format(session_id=session_id)
         full_message = f"{message}\n\n{gw_marker}"
@@ -522,20 +552,7 @@ class GitCommitGateway:
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
 
-        # Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）
-        if result.status == CommitStatus.OK:
-            try:
-                reconcile_results = self._reconciliation_registry.reconcile_for(existing, session_id)
-                result.reconcile = reconcile_results
-                for rr in reconcile_results:
-                    if rr.action == "auto_committed":
-                        logger.info("GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail)
-                    elif rr.action == "warn":
-                        logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
-                    elif rr.action == "clean":
-                        print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
-            except Exception as e:
-                logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
+        self._run_post_commit_reconcile(existing, session_id, result)
         return result
 
     def _is_git_tracked(self, rel_path: str) -> bool:
