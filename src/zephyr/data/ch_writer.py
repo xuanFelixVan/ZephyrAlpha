@@ -65,7 +65,7 @@ SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
 _ch_client = None
 # TCP 失败冷却时间戳（避免每次 query 都重试 TCP 连接）
 _tcp_fail_ts: float = 0
-_TCP_COOLDOWN_SEC = 60  # TCP 连接失败后 60 秒内不再重试
+_TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试（缩短冷却期减少偶发降级时间）
 
 # 线程安全锁（run_schedule 并行化后多任务共用 ch_writer 全局状态）
 # clickhouse-driver Client 非线程安全（TCP 长连接并发 execute 会导致协议错乱）
@@ -217,7 +217,7 @@ _CH_HTTP_PORT = 18123
 _ch_http_host: str | None = None  # 懒初始化：先本地，失败则 WSL2 IP
 # HTTP 失败冷却时间戳（避免 HTTP 不可用时每次都重复超时等待）
 _http_fail_ts: float = 0
-_HTTP_COOLDOWN_SEC = 60  # HTTP 失败后 60 秒内不再重试（缩短冷却期避免长时间静默失败）
+_HTTP_COOLDOWN_SEC = 15  # HTTP 失败后 15 秒内不再重试（缩短冷却期减少偶发降级时间）
 
 
 def _get_http_host() -> str:
