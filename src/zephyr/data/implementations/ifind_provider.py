@@ -42,6 +42,41 @@ from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourc
 from ..policy_registry import SourcePolicy
 
 
+def _money_flow_col_val(col_data, key, idx, safe_float):
+    """从 col_data 取指定 key 第 idx 个值并安全转 float；缺失返回 None。
+
+    提取自 _parse_iwencai_money_flow（等价重构，降低圈复杂度）。
+    """
+    vals = col_data.get(key)
+    if not vals or idx >= len(vals):
+        return None
+    return safe_float(vals[idx])
+
+
+def _build_money_flow_row(date_iso, symbol, col_data, idx, safe_float):
+    """构建 money_flow 单行 15-元组（提取自 _parse_iwencai_money_flow）。
+
+    各数值列缺失或为 falsy 时填 0.0，行为与原实现一致。
+    """
+    return (
+        date_iso,
+        symbol,
+        _money_flow_col_val(col_data, "close", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "pct_change", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "main_net_inflow", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "main_net_inflow_pct", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "super_large_net_inflow", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "super_large_net_inflow_pct", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "large_net_inflow", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "large_net_inflow_pct", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "medium_net_inflow", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "medium_net_inflow_pct", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "small_net_inflow", idx, safe_float) or 0.0,
+        _money_flow_col_val(col_data, "small_net_inflow_pct", idx, safe_float) or 0.0,
+        "ifind_iwencai",
+    )
+
+
 class IFindProvider(DataSourceBase):
     """同花顺 iFind 数据源 Provider。
 
@@ -788,30 +823,9 @@ class IFindProvider(DataSourceBase):
             symbol = self._ts_code_to_money_flow_symbol(ts_code)
             if not symbol:
                 continue
-
-            def get_val(key, idx):
-                vals = col_data.get(key)
-                if not vals or idx >= len(vals):
-                    return None
-                return self.safe_float(vals[idx])
-
-            rows.append((
-                date_iso,
-                symbol,
-                get_val("close", i) or 0.0,
-                get_val("pct_change", i) or 0.0,
-                get_val("main_net_inflow", i) or 0.0,
-                get_val("main_net_inflow_pct", i) or 0.0,
-                get_val("super_large_net_inflow", i) or 0.0,
-                get_val("super_large_net_inflow_pct", i) or 0.0,
-                get_val("large_net_inflow", i) or 0.0,
-                get_val("large_net_inflow_pct", i) or 0.0,
-                get_val("medium_net_inflow", i) or 0.0,
-                get_val("medium_net_inflow_pct", i) or 0.0,
-                get_val("small_net_inflow", i) or 0.0,
-                get_val("small_net_inflow_pct", i) or 0.0,
-                "ifind_iwencai",
-            ))
+            rows.append(
+                _build_money_flow_row(date_iso, symbol, col_data, i, self.safe_float)
+            )
 
         return rows
 
