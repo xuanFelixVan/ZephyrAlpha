@@ -55,6 +55,22 @@ from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 a
     config = PipelineOrchestratorConfig(max_retries=3, claude_rescue_threshold=3)
     orchestrator = PipelineOrchestrator(config, task_repo=repo)
     result = orchestrator.dispatch(task_card)
+
+裁定#216 Tier1 P4 重构（2026-07-15，Extract Method）
+----------------------------------------------------
+原 dispatch 305 行 McCabe=51（orchestrator state machine，try/except/finally
+内 ~25+ 分支串联，P4 orchestrator pattern）。治本：Extract Method 提取为 4 个
+helper（_resolve_pipeline_and_modules / _setup_lock_and_skills /
+_finalize_and_build_result / _handle_dispatch_exception，均 McCabe≤10），dispatch
+简化为 ~80 行 skeleton（McCabe≈11）。行为等价契约：
+  - _state dict {"lock_acquired": bool, "final_status": PipelineStatus|None}
+    替代原局部变量，跨 try/except/finally 共享可变状态
+  - 前置检查（幂等/rollback/RBAC/impact/experiment）保持 inline（仅 5 分支）
+  - 管线解析（hints None vs CT-PIPE）提取到 _resolve_pipeline_and_modules
+  - 锁/SOD/token/preempt/G6/skill 提取到 _setup_lock_and_skills
+  - 状态终结/结果构建提取到 _finalize_and_build_result
+  - 异常处理提取到 _handle_dispatch_exception
+  - finally 块保持原样（discard + 条件 release lock）
 """
 
 from __future__ import annotations
@@ -69,6 +85,7 @@ import os
 import random
 import threading
 import time
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -175,6 +192,30 @@ if TYPE_CHECKING:
     from zephyr.shared.lifecycle.hooks import LifecycleManager
 
 __all__ = ["PipelineOrchestrator"]
+
+
+# === 裁定#216 Tier1 P4 参数对象（2026-07-15）===
+# _finalize_and_build_result 原 16 参数（>7，违反 NO-LONG-PARAM-LIST）。
+# 治本：用 dataclass 封装 15 个非 task_card 参数，签名降为 (task_card, ctx) 2 参数。
+@dataclass
+class _DispatchFinalizeContext:
+    """_finalize_and_build_result 参数对象（避免 >7 参数列表，§5.150）。"""
+
+    pipeline: str
+    execution_mode: Any
+    route: str
+    results: list[ModuleResult]
+    dry_run: bool
+    ct_decision: Any
+    ct_warnings: list[str]
+    manifest: PipelineArtifactManifest
+    lineage_chain: PipelineLineageChain
+    impact: Any
+    skill_injection: Any
+    task_type: str
+    night_shift_log: list
+    _dispatch_start: Any
+    _state: dict[str, Any]
 
 
 class PipelineOrchestrator:
@@ -416,7 +457,7 @@ class PipelineOrchestrator:
             "INFO", f"dispatch[{task_card.task_id}] started pipeline={task_card.assigned_pipeline} dry_run={dry_run}"
         )
 
-        # --- 前置检查（幂等/rollback/RBAC）---
+        # --- 前置检查（幂等/rollback/RBAC/impact/experiment）---
         idempotency_result = self._check_idempotency(task_card, dry_run)
         if idempotency_result is not None:
             return idempotency_result
@@ -443,6 +484,80 @@ class PipelineOrchestrator:
                 f"AB-EXPERIMENT: experiment={experiment_route.experiment_id} variant={experiment_route.variant.value}"
             )
 
+        # --- 管线解析（裁定#216 P4：提取到 _resolve_pipeline_and_modules）---
+        resolve_result = self._resolve_pipeline_and_modules(task_card, hints, dry_run, ct_warnings)
+        if isinstance(resolve_result, PipelineResult):
+            return resolve_result
+        pipeline, modules, ct_decision = resolve_result
+
+        tw = self._transition(task_card.task_id, TaskStatus.IN_PROGRESS)
+        if tw:
+            ct_warnings.append(tw)
+
+        lineage_chain = PipelineLineageChain(run_id=task_card.task_id)
+
+        # 5.142.1 修复: 用 _state dict 跨 try/except/finally 共享 lock_acquired/final_status
+        _state: dict[str, Any] = {"lock_acquired": False, "final_status": None}
+        try:
+            setup = self._setup_lock_and_skills(
+                task_card, hints, ct_decision, ct_warnings, dry_run, modules, _state
+            )
+            if isinstance(setup, PipelineResult):
+                return setup
+            route, execution_mode, night_shift_log, task_type, skill_injection = setup
+
+            manifest = PipelineArtifactManifest(run_id=task_card.task_id)
+            executed_module_ids: list[str] = []
+            results = self._execute_modules_loop(
+                task_card, modules, pipeline, route, manifest,
+                lineage_chain, executed_module_ids, skill_injection,
+                dry_run, ct_warnings,
+            )
+
+            return self._finalize_and_build_result(
+                task_card,
+                _DispatchFinalizeContext(
+                    pipeline=pipeline,
+                    execution_mode=execution_mode,
+                    route=route,
+                    results=results,
+                    dry_run=dry_run,
+                    ct_decision=ct_decision,
+                    ct_warnings=ct_warnings,
+                    manifest=manifest,
+                    lineage_chain=lineage_chain,
+                    impact=impact,
+                    skill_injection=skill_injection,
+                    task_type=task_type,
+                    night_shift_log=night_shift_log,
+                    _dispatch_start=_dispatch_start,
+                    _state=_state,
+                ),
+            )
+        except Exception as exc:
+            self._handle_dispatch_exception(task_card, exc, _state, ct_warnings)
+        finally:
+            self._active_dispatches.discard(task_card.task_id)
+            # 5.142.1 修复: 锁释放移入 finally, 用标志位避免双重释放
+            if _state["lock_acquired"]:
+                self._release_pipeline_lock(task_card.task_id)
+
+    # ------------------------------------------------------------------
+    # 裁定#216 Tier1 P4 Extract Method helpers（2026-07-15）
+    # ------------------------------------------------------------------
+
+    def _resolve_pipeline_and_modules(
+        self,
+        task_card: TaskCard,
+        hints: Any,
+        dry_run: bool,
+        ct_warnings: list[str],
+    ) -> tuple[str, list[str], Any] | PipelineResult:
+        """解析管线与模块切片（hints None → 整链；否则 CT-PIPE 路由）。
+
+        裁定#216 P4：从 dispatch 提取。返回 (pipeline, modules, ct_decision)
+        或 PipelineResult（路由失败 early exit）。ct_warnings 就地扩展。
+        """
         if hints is None:
             pipeline = task_card.assigned_pipeline
             if pipeline not in ("A", "B"):
@@ -456,244 +571,273 @@ class PipelineOrchestrator:
                     is_dry_run=dry_run,
                 )
             modules = [m for m in M_MODULES if M_MODULE_SPECS[m]["pipeline"] == pipeline]
-        else:
-            try:
-                ct_decision = self._resolve_ct_pipe(hints)
-                pipeline, modules = modules_slice_from_node(ct_decision.node_id)
-            except PipelineRoutingInputsError as exc:
-                self._active_dispatches.discard(task_card.task_id)
-                return PipelineResult(
-                    task_id=task_card.task_id,
-                    pipeline=task_card.assigned_pipeline,
-                    overall_status=PipelineStatus.FAILURE,
-                    modules_executed=[],
-                    finished_at=now_utc().isoformat(),
-                    is_dry_run=dry_run,
-                    ct_pipe_route=None,
-                    ct_pipe_warnings=[str(exc)],
-                )
-            if task_card.assigned_pipeline not in ("A", "B"):
-                ct_warnings.append(
-                    f"assigned_pipeline={task_card.assigned_pipeline!r} 非 A/B；"
-                    f"CT-PIPE 已强制使用 {pipeline} 区自 {ct_decision.node_id}"
-                )
-            elif task_card.assigned_pipeline != pipeline:
-                ct_warnings.append(
-                    f"CT-PIPE 区段 {pipeline} 与 assigned_pipeline={task_card.assigned_pipeline} 不一致——以 CT-PIPE 为准"
-                )
-
-        tw = self._transition(task_card.task_id, TaskStatus.IN_PROGRESS)
-        if tw:
-            ct_warnings.append(tw)
-
-        lineage_chain = PipelineLineageChain(run_id=task_card.task_id)
-
-        # 5.142.1 修复: 用 _pipeline_lock_acquired 标志位避免双重释放; 用 _pipeline_final_status 跟踪是否已成功
-        _pipeline_lock_acquired = False
-        _pipeline_final_status: PipelineStatus | None = None
+            return pipeline, modules, None
         try:
-            route = self._route_model(task_card)
-            execution_mode = self._resolve_execution_mode(task_card)
-            night_shift_log: list[NightShiftAmbiguityLogEntry] = []
+            ct_decision = self._resolve_ct_pipe(hints)
+            pipeline, modules = modules_slice_from_node(ct_decision.node_id)
+        except PipelineRoutingInputsError as exc:
+            self._active_dispatches.discard(task_card.task_id)
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.FAILURE,
+                modules_executed=[],
+                finished_at=now_utc().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_route=None,
+                ct_pipe_warnings=[str(exc)],
+            )
+        if task_card.assigned_pipeline not in ("A", "B"):
+            ct_warnings.append(
+                f"assigned_pipeline={task_card.assigned_pipeline!r} 非 A/B；"
+                f"CT-PIPE 已强制使用 {pipeline} 区自 {ct_decision.node_id}"
+            )
+        elif task_card.assigned_pipeline != pipeline:
+            ct_warnings.append(
+                f"CT-PIPE 区段 {pipeline} 与 assigned_pipeline={task_card.assigned_pipeline} 不一致——以 CT-PIPE 为准"
+            )
+        return pipeline, modules, ct_decision
 
-            task_type = (
-                getattr(task_card, "pipeline_task_type", None)
-                or (hints.task_type if hints else None)
-                or task_card.assigned_pipeline
-                or "unknown"
-            ).lower()
-            node_id = ct_decision.node_id if ct_decision and ct_decision.node_id else modules[0]
-            self._record_telemetry_decision(task_type, node_id)
+    def _setup_lock_and_skills(
+        self,
+        task_card: TaskCard,
+        hints: Any,
+        ct_decision: Any,
+        ct_warnings: list[str],
+        dry_run: bool,
+        modules: list[str],
+        _state: dict[str, Any],
+    ) -> tuple[str, Any, list, str, Any] | PipelineResult:
+        """执行模型路由/SOD/token/preempt/lock/G6/skill injection 设置。
 
-            sod_warnings = self._check_separation_of_duties(task_card)
-            ct_warnings.extend(sod_warnings)
+        裁定#216 P4：从 dispatch 提取。返回 (route, execution_mode, night_shift_log,
+        task_type, skill_injection) 或 PipelineResult（lock/G6 失败 early exit）。
+        _state["lock_acquired"] 在锁获取成功后置 True。
+        """
+        route = self._route_model(task_card)
+        execution_mode = self._resolve_execution_mode(task_card)
+        night_shift_log: list[NightShiftAmbiguityLogEntry] = []
 
-            token_budget_ok, budget_warning = self._check_token_budget(task_card)
-            if not token_budget_ok:
-                ct_warnings.append(budget_warning)
+        task_type = (
+            getattr(task_card, "pipeline_task_type", None)
+            or (hints.task_type if hints else None)
+            or task_card.assigned_pipeline
+            or "unknown"
+        ).lower()
+        node_id = ct_decision.node_id if ct_decision and ct_decision.node_id else modules[0]
+        self._record_telemetry_decision(task_type, node_id)
 
-            preemptions = self._preempt_mgr.preempt(task_card)
-            for pr in preemptions:
-                ct_warnings.append(
-                    f"PREEMPT: {pr.preempted_task_id} (P={pr.preempted_priority}) "
-                    f"suspended by {task_card.task_id} (P={task_card.priority})"
-                )
+        sod_warnings = self._check_separation_of_duties(task_card)
+        ct_warnings.extend(sod_warnings)
 
-            lock_result = self._acquire_pipeline_lock(task_card, hints)
-            if lock_result is not None and not lock_result.acquired:
-                self._active_dispatches.discard(task_card.task_id)
-                return PipelineResult(
-                    task_id=task_card.task_id,
-                    pipeline=task_card.assigned_pipeline,
-                    overall_status=PipelineStatus.LOCKED,
-                    modules_executed=[],
-                    finished_at=now_utc().isoformat(),
-                    is_dry_run=dry_run,
-                    ct_pipe_route=ct_decision,
-                    ct_pipe_warnings=ct_warnings
-                    + [f"LOCK: files={lock_result.locked_files} conflict_with={lock_result.conflict_tasks}"],
-                )
+        token_budget_ok, budget_warning = self._check_token_budget(task_card)
+        if not token_budget_ok:
+            ct_warnings.append(budget_warning)
 
-            # 5.142.1 修复: 标记锁已获取, finally 块统一释放
-            _pipeline_lock_acquired = True
-
-            results: list[ModuleResult] = []
-            manifest = PipelineArtifactManifest(run_id=task_card.task_id)
-            executed_module_ids: list[str] = []
-
-            g6_violation = self._check_g6_blueprint_compliance(task_card, modules)
-            if g6_violation is not None:
-                self._active_dispatches.discard(task_card.task_id)
-                # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
-                return PipelineResult(
-                    task_id=task_card.task_id,
-                    pipeline=task_card.assigned_pipeline,
-                    overall_status=PipelineStatus.G6_BLOCKED,
-                    modules_executed=[],
-                    finished_at=now_utc().isoformat(),
-                    is_dry_run=dry_run,
-                    ct_pipe_route=ct_decision,
-                    ct_pipe_warnings=ct_warnings + [g6_violation],
-                )
-
-            skill_injection: SkillInjectionResult | None = None
-            if self._skill_bridge is not None:
-                stage_hint = (hints.target_layer if hints and hints.target_layer else None) or "construction"
-                task_desc = (
-                    (getattr(task_card, "description", "") or "")
-                    + " "
-                    + (getattr(task_card, "title", "") or "")
-                    + " "
-                    + (", ".join(getattr(task_card, "tags", []) or []))
-                )
-                try:
-                    skill_injection = self._skill_bridge.inject_for_task(
-                        task_description=task_desc,
-                        stage=stage_hint,
-                    )
-                    if skill_injection.loaded:
-                        ct_warnings.append(
-                            f"SKILL-LOADED: domain={skill_injection.domain_skill_id} "
-                            f"role={skill_injection.role_skill_id} "
-                            f"tokens={skill_injection.token_budget.get('total_tokens', '?')}"
-                        )
-                except Exception:
-                    # 5.12.1 修复：原 except: pass 静默吞 skill injection 失败（技能增强静默失效）
-                    logger.debug("skill injection failed for task=%s", task_card.task_id, exc_info=True)
-
-            results = self._execute_modules_loop(
-                task_card, modules, pipeline, route, manifest,
-                lineage_chain, executed_module_ids, skill_injection,
-                dry_run, ct_warnings,
+        preemptions = self._preempt_mgr.preempt(task_card)
+        for pr in preemptions:
+            ct_warnings.append(
+                f"PREEMPT: {pr.preempted_task_id} (P={pr.preempted_priority}) "
+                f"suspended by {task_card.task_id} (P={task_card.priority})"
             )
 
-            rescue = self._check_claude_rescue(task_card, results)
+        lock_result = self._acquire_pipeline_lock(task_card, hints)
+        if lock_result is not None and not lock_result.acquired:
+            self._active_dispatches.discard(task_card.task_id)
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.LOCKED,
+                modules_executed=[],
+                finished_at=now_utc().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_route=ct_decision,
+                ct_pipe_warnings=ct_warnings
+                + [f"LOCK: files={lock_result.locked_files} conflict_with={lock_result.conflict_tasks}"],
+            )
 
-            collapse_alert = self._verify_model_diversity(results, task_card)
+        # 5.142.1 修复: 标记锁已获取, finally 块统一释放
+        _state["lock_acquired"] = True
 
-            status = self._determine_status(results)
-            if rescue.triggered:
-                status = PipelineStatus.CLAUDE_RESCUE
-
-            passed = sum(1 for r in results if r.status == ModuleStatus.SUCCESS)
-            partial = passed > 0 and passed < len(results)
-            if status == PipelineStatus.SUCCESS and partial:
-                status = PipelineStatus.PARTIAL_FAILURE
-
-            total_tokens = sum(r.tokens_used for r in results if r.tokens_used > 0)
-            if total_tokens > 0:
-                self._token_budget_consumed[task_card.task_id] = total_tokens
-            uw = self._update_runtime_metrics(task_card.task_id, total_tokens)
-            if uw:
-                ct_warnings.append(uw)
-
-            if status in (PipelineStatus.SUCCESS, PipelineStatus.PARTIAL_FAILURE):
-                tw = self._transition(task_card.task_id, TaskStatus.COMPLETED)
-            else:
-                tw = self._transition(task_card.task_id, TaskStatus.FAILED)
-            if tw:
-                ct_warnings.append(tw)
-
-            # 5.142.1 修复: 记录已成功的 status, 防止后续异常导致 except 块误转 FAILED
-            _pipeline_final_status = status
+        g6_violation = self._check_g6_blueprint_compliance(task_card, modules)
+        if g6_violation is not None:
+            self._active_dispatches.discard(task_card.task_id)
             # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
-
-            _latency_ms = (now_utc() - _dispatch_start).total_seconds() * 1000
-            self._record_telemetry_latency(task_type, _latency_ms)
-
-            cost_records = self._cost_tracker.records
-
-            emergency_fallback = self._emergency_fallback(results, task_card)
-            dead_letter = self._dlq.enqueue(task_card, results, status, self._cfg.max_retries)
-            cb_state = self._cb_manager.status(task_card.task_id).get(task_card.task_id)
-
-            bridge_result = None
-            if self._agent_orchestrator is not None:
-                try:
-                    from zephyr.infrastructure.pipeline.pipeline_agent_bridge import PipelineAgentBridge
-
-                    bridge = PipelineAgentBridge(self._agent_orchestrator)
-                    bridge_result = bridge.bridge(
-                        PipelineResult(
-                            task_id=task_card.task_id,
-                            pipeline=pipeline,
-                            modules_executed=results,
-                            overall_status=status,
-                        ),
-                        token_budget=total_tokens if total_tokens > 0 else None,
-                    )
-                except Exception:
-                    self._log("WARN", f"dispatch[{task_card.task_id}] bridge failed")
-
-            self._write_audit_event(
-                task_card.task_id,
-                f"pipeline.{pipeline}",
-                status.value,
-                {"modules_executed": len(results), "cost_total_usd": sum(c.cost_usd for c in cost_records)},
+            return PipelineResult(
+                task_id=task_card.task_id,
+                pipeline=task_card.assigned_pipeline,
+                overall_status=PipelineStatus.G6_BLOCKED,
+                modules_executed=[],
+                finished_at=now_utc().isoformat(),
+                is_dry_run=dry_run,
+                ct_pipe_route=ct_decision,
+                ct_pipe_warnings=ct_warnings + [g6_violation],
             )
-            return self._build_dispatch_result(
-                task_card=task_card, pipeline=pipeline, execution_mode=execution_mode,
-                results=results, status=status, rescue=rescue, collapse_alert=collapse_alert,
-                dry_run=dry_run, ct_decision=ct_decision, ct_warnings=ct_warnings,
-                manifest=manifest, lineage_chain=lineage_chain, impact=impact,
-                skill_injection=skill_injection, cost_records=cost_records,
-                emergency_fallback=emergency_fallback, dead_letter=dead_letter,
-                cb_state=cb_state, bridge_result=bridge_result, night_shift_log=night_shift_log,
+
+        skill_injection = self._inject_skill(task_card, hints, ct_warnings)
+
+        return route, execution_mode, night_shift_log, task_type, skill_injection
+
+    def _inject_skill(
+        self,
+        task_card: TaskCard,
+        hints: Any,
+        ct_warnings: list[str],
+    ) -> SkillInjectionResult | None:
+        """技能注入（裁定#216 P4：从 _setup_lock_and_skills 提取以降低复杂度）。
+
+        _skill_bridge 为 None 时返回 None；注入失败时记录 debug 日志并返回 None。
+        """
+        if self._skill_bridge is None:
+            return None
+        stage_hint = (hints.target_layer if hints and hints.target_layer else None) or "construction"
+        task_desc = (
+            (getattr(task_card, "description", "") or "")
+            + " "
+            + (getattr(task_card, "title", "") or "")
+            + " "
+            + (", ".join(getattr(task_card, "tags", []) or []))
+        )
+        try:
+            skill_injection = self._skill_bridge.inject_for_task(
+                task_description=task_desc,
+                stage=stage_hint,
             )
-        except Exception as exc:
-            self._log("ERROR", f"dispatch[{task_card.task_id}] failed with exception")
+            if skill_injection.loaded:
+                ct_warnings.append(
+                    f"SKILL-LOADED: domain={skill_injection.domain_skill_id} "
+                    f"role={skill_injection.role_skill_id} "
+                    f"tokens={skill_injection.token_budget.get('total_tokens', '?')}"
+                )
+            return skill_injection
+        except Exception:
+            # 5.12.1 修复：原 except: pass 静默吞 skill injection 失败（技能增强静默失效）
+            logger.debug("skill injection failed for task=%s", task_card.task_id, exc_info=True)
+            return None
+
+    def _finalize_and_build_result(
+        self,
+        task_card: TaskCard,
+        ctx: _DispatchFinalizeContext,
+    ) -> PipelineResult:
+        """执行状态终结 + 构建 PipelineResult。
+
+        裁定#216 P4：从 dispatch 提取。计算 rescue/collapse_alert/status，执行状态流转，
+        记录 telemetry，构建并返回 PipelineResult。ctx._state["final_status"] 记录最终状态。
+        """
+        rescue = self._check_claude_rescue(task_card, ctx.results)
+        collapse_alert = self._verify_model_diversity(ctx.results, task_card)
+
+        status = self._determine_status(ctx.results)
+        if rescue.triggered:
+            status = PipelineStatus.CLAUDE_RESCUE
+
+        passed = sum(1 for r in ctx.results if r.status == ModuleStatus.SUCCESS)
+        partial = passed > 0 and passed < len(ctx.results)
+        if status == PipelineStatus.SUCCESS and partial:
+            status = PipelineStatus.PARTIAL_FAILURE
+
+        total_tokens = sum(r.tokens_used for r in ctx.results if r.tokens_used > 0)
+        if total_tokens > 0:
+            self._token_budget_consumed[task_card.task_id] = total_tokens
+        uw = self._update_runtime_metrics(task_card.task_id, total_tokens)
+        if uw:
+            ctx.ct_warnings.append(uw)
+
+        if status in (PipelineStatus.SUCCESS, PipelineStatus.PARTIAL_FAILURE):
+            tw = self._transition(task_card.task_id, TaskStatus.COMPLETED)
+        else:
+            tw = self._transition(task_card.task_id, TaskStatus.FAILED)
+        if tw:
+            ctx.ct_warnings.append(tw)
+
+        # 5.142.1 修复: 记录已成功的 status, 防止后续异常导致 except 块误转 FAILED
+        ctx._state["final_status"] = status
+        # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
+
+        _latency_ms = (now_utc() - ctx._dispatch_start).total_seconds() * 1000
+        self._record_telemetry_latency(ctx.task_type, _latency_ms)
+
+        cost_records = self._cost_tracker.records
+
+        emergency_fallback = self._emergency_fallback(ctx.results, task_card)
+        dead_letter = self._dlq.enqueue(task_card, ctx.results, status, self._cfg.max_retries)
+        cb_state = self._cb_manager.status(task_card.task_id).get(task_card.task_id)
+
+        bridge_result = None
+        if self._agent_orchestrator is not None:
             try:
-                from datetime import UTC, datetime
+                from zephyr.infrastructure.pipeline.pipeline_agent_bridge import PipelineAgentBridge
 
-                from zephyr.shared.event_bus import EventBusBackpressure
-
-                EventBusBackpressure().emit(
-                    "pipeline_failed",
-                    payload={
-                        "timestamp": datetime.now(UTC).isoformat(),
-                        "pipeline_id": task_card.task_id,
-                        "error_type": type(exc).__name__,
-                        "error_detail": f"dispatch[{task_card.task_id}] failed: {exc}",
-                    },
+                bridge = PipelineAgentBridge(self._agent_orchestrator)
+                bridge_result = bridge.bridge(
+                    PipelineResult(
+                        task_id=task_card.task_id,
+                        pipeline=ctx.pipeline,
+                        modules_executed=ctx.results,
+                        overall_status=status,
+                    ),
+                    token_budget=total_tokens if total_tokens > 0 else None,
                 )
             except Exception:
-                # 5.12.1 修复：原 except: pass 静默吞 EventBus 失败事件发布失败（故障信号丢失）
-                logger.warning("EventBus pipeline_failed emit failed for task=%s", task_card.task_id, exc_info=True)
-            # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
-            self._active_dispatches.discard(task_card.task_id)
-            # 5.142.1 修复: 若 pipeline 已成功(SUCCESS/PARTIAL_FAILURE), 后续异常不应误转 FAILED
-            if _pipeline_final_status not in (PipelineStatus.SUCCESS, PipelineStatus.PARTIAL_FAILURE):
-                tw = self._transition(task_card.task_id, TaskStatus.FAILED)
-                if tw:
-                    self._failure_log[f"dispatch_exc_{task_card.task_id}"] = (
-                        self._failure_log.get(f"dispatch_exc_{task_card.task_id}", 0) + 1
-                    )
-            raise
-        finally:
-            self._active_dispatches.discard(task_card.task_id)
-            # 5.142.1 修复: 锁释放移入 finally, 用标志位避免双重释放
-            if _pipeline_lock_acquired:
-                self._release_pipeline_lock(task_card.task_id)
+                self._log("WARN", f"dispatch[{task_card.task_id}] bridge failed")
+
+        self._write_audit_event(
+            task_card.task_id,
+            f"pipeline.{ctx.pipeline}",
+            status.value,
+            {"modules_executed": len(ctx.results), "cost_total_usd": sum(c.cost_usd for c in cost_records)},
+        )
+        return self._build_dispatch_result(
+            task_card=task_card, pipeline=ctx.pipeline, execution_mode=ctx.execution_mode,
+            results=ctx.results, status=status, rescue=rescue, collapse_alert=collapse_alert,
+            dry_run=ctx.dry_run, ct_decision=ctx.ct_decision, ct_warnings=ctx.ct_warnings,
+            manifest=ctx.manifest, lineage_chain=ctx.lineage_chain, impact=ctx.impact,
+            skill_injection=ctx.skill_injection, cost_records=cost_records,
+            emergency_fallback=emergency_fallback, dead_letter=dead_letter,
+            cb_state=cb_state, bridge_result=bridge_result, night_shift_log=ctx.night_shift_log,
+        )
+
+    def _handle_dispatch_exception(
+        self,
+        task_card: TaskCard,
+        exc: Exception,
+        _state: dict[str, Any],
+        ct_warnings: list[str],
+    ) -> None:
+        """处理 dispatch 异常：记录日志/发布事件/条件性 FAILED 流转/重抛。
+
+        裁定#216 P4：从 dispatch 提取。读取 _state["final_status"] 判断是否已成功
+        （避免误转 FAILED）。始终 raise。
+        """
+        self._log("ERROR", f"dispatch[{task_card.task_id}] failed with exception")
+        try:
+            from datetime import UTC, datetime
+
+            from zephyr.shared.event_bus import EventBusBackpressure
+
+            EventBusBackpressure().emit(
+                "pipeline_failed",
+                payload={
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "pipeline_id": task_card.task_id,
+                    "error_type": type(exc).__name__,
+                    "error_detail": f"dispatch[{task_card.task_id}] failed: {exc}",
+                },
+            )
+        except Exception:
+            # 5.12.1 修复：原 except: pass 静默吞 EventBus 失败事件发布失败（故障信号丢失）
+            logger.warning("EventBus pipeline_failed emit failed for task=%s", task_card.task_id, exc_info=True)
+        # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
+        self._active_dispatches.discard(task_card.task_id)
+        # 5.142.1 修复: 若 pipeline 已成功(SUCCESS/PARTIAL_FAILURE), 后续异常不应误转 FAILED
+        if _state["final_status"] not in (PipelineStatus.SUCCESS, PipelineStatus.PARTIAL_FAILURE):
+            tw = self._transition(task_card.task_id, TaskStatus.FAILED)
+            if tw:
+                self._failure_log[f"dispatch_exc_{task_card.task_id}"] = (
+                    self._failure_log.get(f"dispatch_exc_{task_card.task_id}", 0) + 1
+                )
+        raise
 
     # ------------------------------------------------------------------
     # dispatch 子方法（5.140.1 修复：从 461 行 dispatch 中提取）
