@@ -1866,6 +1866,177 @@ class TaskRepository:
     # TRANSITION（状态机）
     # ------------------------------------------------------------------
 
+    # === 裁定#217 Tier2 P4 Extract Method 重构（2026-07-15）===
+    # 原 transition 222行 McCabe=39（9段顺序状态机转换逻辑）。
+    # 治本：提取为 6 个模块级 helper（均 McCabe≤15），主函数简化为编排（McCabe≈7）。
+    # 行为等价：所有异常/事件/事务/门禁逻辑完全保留，GateViolationError 处理保留在主函数。
+
+    def _normalize_transition_input(
+        self, to_status: TaskStatus | str, note: str | None, task_id: str,
+    ) -> TaskStatus:
+        """规范化 to_status 并执行 FAILED 根因检查（MTH-006）。"""
+        if isinstance(to_status, str):
+            to_status = TaskStatus(to_status)
+        if to_status == TaskStatus.FAILED:
+            if not note or not note.strip():
+                raise RootCauseRequiredError(task_id)
+        return to_status
+
+    def _pre_circular_acceptance(self, to_status: TaskStatus, task_id: str) -> None:
+        """COMPLETED 转换前执行循环验收（5.15.1：移到写事务之前避免事务内 subprocess 持锁）。"""
+        if to_status != TaskStatus.COMPLETED:
+            return
+        with self._read_tx() as read_conn:
+            _pre_row = self._fetch_row(read_conn, task_id)
+        if _pre_row is not None:
+            _pre_task = _row_to_taskcard(_pre_row)
+            _pre_cmds = getattr(_pre_task, "post_sync_standard", []) or []
+            if _pre_cmds:
+                self._run_circular_acceptance(task_id, _pre_cmds)
+
+    def _check_transition_gates(
+        self, conn, row, to_status: TaskStatus, task_id: str,
+    ) -> None:
+        """G1 门禁（IN_PROGRESS）+ G7 门禁（COMPLETED）+ 批量审查检查（COMPLETED）。"""
+        if to_status == TaskStatus.IN_PROGRESS and self._should_evaluate_gate(_STARTUP_GATE_ID):
+            task_obj = _row_to_taskcard(row)
+            gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
+            if not gate_result.passed:
+                raise GateViolationError(gate_result)
+        if to_status == TaskStatus.COMPLETED and self._should_evaluate_gate("G7"):
+            task_obj = _row_to_taskcard(row)
+            gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
+            if not gate_result.passed:
+                raise GateViolationError(gate_result)
+        if to_status == TaskStatus.COMPLETED:
+            review_status = self.get_review_status(task_id)
+            if not review_status.get("reviewed", False):
+                raise BatchReviewRequiredError(
+                    task_id,
+                    "未执行任何审查(batch_review从未调用)",
+                )
+            if not review_status.get("review_complete", False):
+                raise BatchReviewRequiredError(
+                    task_id,
+                    f"审查未完成: consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
+                )
+
+    def _apply_transition_update(
+        self, conn, task_id: str, to_status: TaskStatus,
+        session_id: str | None, waiting_for: str | None, note: str | None,
+    ) -> None:
+        """构建 UPDATE 参数并执行状态转换 SQL。"""
+        now = now_iso()
+        set_ready_at = to_status == TaskStatus.READY
+        set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
+        increment_block_count = to_status == TaskStatus.BLOCKED
+        extra_updates = ""
+        extra_params: list[object] = []
+        if to_status == TaskStatus.FAILED and note:
+            extra_updates = ", root_cause_analysis = ?"
+            extra_params.append(note)
+        conn.execute(
+            SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS.format(extra_updates=extra_updates),
+            (
+                to_status.value,
+                session_id,
+                waiting_for,
+                1 if set_ready_at else 0,
+                now if set_ready_at else None,
+                1 if set_completed_at else 0,
+                now if set_completed_at else None,
+                1 if increment_block_count else 0,
+                now,
+                now,
+                *extra_params,
+                task_id,
+            ),
+        )
+
+    def _record_transition_events(
+        self, conn, task_id: str, from_status: TaskStatus, to_status: TaskStatus,
+        session_id: str | None, note: str | None,
+    ) -> None:
+        """记录 state_transition 事件 + COMPLETED 时记录 git_commit_pending 事件。"""
+        self._record_event(
+            conn,
+            "state_transition",
+            {
+                "from": from_status.value,
+                "to": to_status.value,
+                "task_id": task_id,
+                "note": note or "",
+            },
+            task_id=task_id,
+            session_id=session_id,
+        )
+        # 5.15.2 修复：COMPLETED 时记录 git_commit_pending 事件，与状态转换原子落盘
+        # 若后续 git commit 失败，该事件保留为 pending，可被 reconciler 重试（Outbox 模式）
+        # 5.178 修复: event_type 改为 task_event（events表CHECK约束仅允许7种枚举值）
+        if to_status == TaskStatus.COMPLETED:
+            self._record_event(
+                conn,
+                "task_event",
+                {"task_id": task_id},
+                task_id=task_id,
+                session_id=session_id,
+            )
+
+    def _post_completion_actions(
+        self, task_id: str, to_status: TaskStatus,
+        session_id: str | None, updated_row,
+    ) -> None:
+        """COMPLETED 后的自动 git commit + 提醒剩余 IN_PROGRESS 任务。"""
+        if to_status != TaskStatus.COMPLETED:
+            return
+        # DM-202918: transition(COMPLETED)后自动git commit files_in_scope
+        # 5.15.2 修复：记录 git commit 结果事件；失败时 pending 事件保留可被 reconciler 重试
+        try:
+            task_obj = _row_to_taskcard(updated_row)
+            self._auto_commit_on_completion(task_id, task_obj)
+            with self._write_tx() as ev_conn:
+                self._record_event(
+                    ev_conn,
+                    "task_event",  # 5.178: git_commit_completed→task_event（CHECK约束）
+                    {"task_id": task_id},
+                    task_id=task_id,
+                    session_id=session_id,
+                )
+        except Exception as exc:
+            logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc, exc_info=True)
+            with self._write_tx() as ev_conn:
+                self._record_event(
+                    ev_conn,
+                    "task_event",  # 5.178: git_commit_failed→task_event（CHECK约束）
+                    {"task_id": task_id, "error": str(exc)[:500]},
+                    task_id=task_id,
+                    session_id=session_id,
+                )
+        # DM-400/DM-401: transition(COMPLETED)后提醒剩余IN_PROGRESS任务
+        try:
+            all_in_progress = len(self.list_by_status("IN_PROGRESS"))
+            if all_in_progress > 0:
+                if session_id:
+                    same_session = self._count_by_status_and_session("IN_PROGRESS", session_id)
+                    logger.warning(
+                        "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭"
+                        "（当前 session %s: %d 个）。"
+                        " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
+                        task_id,
+                        all_in_progress,
+                        session_id,
+                        same_session,
+                    )
+                else:
+                    logger.warning(
+                        "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭。"
+                        " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
+                        task_id,
+                        all_in_progress,
+                    )
+        except Exception:
+            logger.warning("suppressed error in task_repo", exc_info=True)
+
     def transition(
         self,
         task_id: str,
@@ -1875,8 +2046,7 @@ class TaskRepository:
         waiting_for: str | None = None,
         note: str | None = None,
     ) -> Task:
-        """
-        执行状态机转换。
+        """执行状态机转换。
 
         参数
         ----
@@ -1899,123 +2069,28 @@ class TaskRepository:
         Task
             转换后重新读取的 Task 对象。
         """
-        if isinstance(to_status, str):
-            to_status = TaskStatus(to_status)
-
-        # FAILED 根因检查（MTH-006）
-        if to_status == TaskStatus.FAILED:
-            if not note or not note.strip():
-                raise RootCauseRequiredError(task_id)
-
-        # 5.15.1 修复：循环验收移到写事务之前——先全部验收，再开短事务落盘
-        # 避免事务内 subprocess.run 持 RESERVED 锁 240s+（根因5：事务边界与IO混合）
-        if to_status == TaskStatus.COMPLETED:
-            with self._read_tx() as read_conn:
-                _pre_row = self._fetch_row(read_conn, task_id)
-            if _pre_row is not None:
-                _pre_task = _row_to_taskcard(_pre_row)
-                _pre_cmds = getattr(_pre_task, "post_sync_standard", []) or []
-                if _pre_cmds:
-                    self._run_circular_acceptance(task_id, _pre_cmds)
+        to_status = self._normalize_transition_input(to_status, note, task_id)
+        self._pre_circular_acceptance(to_status, task_id)
 
         try:
             with self._write_tx() as conn:
                 row = self._fetch_row(conn, task_id)
                 if row is None:
                     raise TaskNotFoundError("任务不存在")
-
-                # G1 门禁检查在写事务内执行，与状态转换原子落盘
-                # GateEngine 接受外部 conn，不再管理独立事务
-                gate_result: GateResult | None = None
-                if to_status == TaskStatus.IN_PROGRESS and self._should_evaluate_gate(_STARTUP_GATE_ID):
-                    task_obj = _row_to_taskcard(row)
-                    gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
-                    if not gate_result.passed:
-                        raise GateViolationError(gate_result)
-
-                if to_status == TaskStatus.COMPLETED and self._should_evaluate_gate("G7"):
-                    task_obj = _row_to_taskcard(row)
-                    gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
-                    if not gate_result.passed:
-                        raise GateViolationError(gate_result)
-
-                # DM-200921 修复: task_001_batch_review_protocol 代码强制
-                # transition(COMPLETED) 前必须验证审查记录(连续2次0问题)
-                if to_status == TaskStatus.COMPLETED:
-                    review_status = self.get_review_status(task_id)
-                    if not review_status.get("reviewed", False):
-                        raise BatchReviewRequiredError(
-                            task_id,
-                            "未执行任何审查(batch_review从未调用)",
-                        )
-                    if not review_status.get("review_complete", False):
-                        raise BatchReviewRequiredError(
-                            task_id,
-                            f"审查未完成: consecutive_zero={review_status.get('consecutive_zero', 0)}/2",
-                        )
-
+                self._check_transition_gates(conn, row, to_status, task_id)
                 from_status = TaskStatus(row["status"])
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
                         f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
                     )
-
-                # 5.15.1 修复：循环验收已移到写事务之前（见上方），此处不再重复执行
-
-                now = now_iso()
-                set_ready_at = to_status == TaskStatus.READY
-                set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
-                increment_block_count = to_status == TaskStatus.BLOCKED
-
-                # FAILED 时保存根因分析到 root_cause_analysis 字段
-                extra_updates = ""
-                extra_params: list[object] = []
-                if to_status == TaskStatus.FAILED and note:
-                    extra_updates = ", root_cause_analysis = ?"
-                    extra_params.append(note)
-
-                conn.execute(
-                    SQL_UPDATE_TASKS_COUNT_BY_ID_STATUS.format(extra_updates=extra_updates),
-                    (
-                        to_status.value,
-                        session_id,
-                        waiting_for,
-                        1 if set_ready_at else 0,
-                        now if set_ready_at else None,
-                        1 if set_completed_at else 0,
-                        now if set_completed_at else None,
-                        1 if increment_block_count else 0,
-                        now,
-                        *extra_params,
-                        task_id,
-                    ),
+                self._apply_transition_update(
+                    conn, task_id, to_status, session_id, waiting_for, note,
                 )
-                self._record_event(
-                    conn,
-                    "state_transition",
-                    {
-                        "from": from_status.value,
-                        "to": to_status.value,
-                        "task_id": task_id,
-                        "note": note or "",
-                    },
-                    task_id=task_id,
-                    session_id=session_id,
+                self._record_transition_events(
+                    conn, task_id, from_status, to_status, session_id, note,
                 )
-                # 5.15.2 修复：COMPLETED 时记录 git_commit_pending 事件，与状态转换原子落盘
-                # 若后续 git commit 失败，该事件保留为 pending，可被 reconciler 重试（Outbox 模式）
-                # 5.178 修复: event_type 改为 task_event（events表CHECK约束仅允许7种枚举值）
-                if to_status == TaskStatus.COMPLETED:
-                    self._record_event(
-                        conn,
-                        "task_event",
-                        {"task_id": task_id},
-                        task_id=task_id,
-                        session_id=session_id,
-                    )
                 self._recalculate_dependent_status(conn, task_id, to_status)
                 updated_row = self._fetch_row(conn, task_id)
-
         except GateViolationError as exc:
             # 写事务 ROLLBACK 会撤销同 conn 下的 gates INSERT；用独立连接再写一条，保证失败可审计。
             if self._gate_engine is not None:
@@ -2036,56 +2111,7 @@ class TaskRepository:
             )
         )
 
-        # DM-202918: transition(COMPLETED)后自动git commit files_in_scope
-        # 5.15.2 修复：记录 git commit 结果事件；失败时 pending 事件保留可被 reconciler 重试
-        if to_status == TaskStatus.COMPLETED:
-            try:
-                task_obj = _row_to_taskcard(updated_row)
-                self._auto_commit_on_completion(task_id, task_obj)
-                with self._write_tx() as ev_conn:
-                    self._record_event(
-                        ev_conn,
-                        "task_event",  # 5.178: git_commit_completed→task_event（CHECK约束）
-                        {"task_id": task_id},
-                        task_id=task_id,
-                        session_id=session_id,
-                    )
-            except Exception as exc:
-                logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc, exc_info=True)
-                with self._write_tx() as ev_conn:
-                    self._record_event(
-                        ev_conn,
-                        "task_event",  # 5.178: git_commit_failed→task_event（CHECK约束）
-                        {"task_id": task_id, "error": str(exc)[:500]},
-                        task_id=task_id,
-                        session_id=session_id,
-                    )
-
-        # DM-400/DM-401: transition(COMPLETED)后提醒剩余IN_PROGRESS任务
-        if to_status == TaskStatus.COMPLETED:
-            try:
-                all_in_progress = len(self.list_by_status("IN_PROGRESS"))
-                if all_in_progress > 0:
-                    if session_id:
-                        same_session = self._count_by_status_and_session("IN_PROGRESS", session_id)
-                        logger.warning(
-                            "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭"
-                            "（当前 session %s: %d 个）。"
-                            " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
-                            task_id,
-                            all_in_progress,
-                            session_id,
-                            same_session,
-                        )
-                    else:
-                        logger.warning(
-                            "DM-401 提醒: 任务 %s 已关闭，仍有 %d 个 IN_PROGRESS 任务未关闭。"
-                            " 请在 session 关门前执行 transition(COMPLETED) 或 recover_stale_claims()。",
-                            task_id,
-                            all_in_progress,
-                        )
-            except Exception as e:
-                logger.warning("suppressed error in task_repo", exc_info=True)
+        self._post_completion_actions(task_id, to_status, session_id, updated_row)
 
         return _row_to_taskcard(updated_row)
 
