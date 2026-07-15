@@ -455,6 +455,89 @@ class MCPGateway(BaseMCPServer):
             },
         )
 
+    def _check_circuit_breaker(
+        self, routed_sid: str, tool_name: str, session_id: str, req_id: Any, t0: float
+    ) -> dict[str, Any] | None:
+        """检查熔断器状态，返回错误响应 dict 或 None（允许通过）。"""
+        cb = self._circuit_breakers.get(routed_sid)
+        if cb and not cb.allow():
+            server = self._server_instances.get(routed_sid)
+            degraded_msg = (
+                f"circuit breaker OPEN for {routed_sid!r} — "
+                f"{'server unavailable' if server is None else 'degraded service'}"
+            )
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="circuit_open",
+                error_code=ERR_GATE_FAILED,
+                duration_ms=int((time.monotonic() - t0) * 1000),
+            )
+            return self._err(req_id, ERR_GATE_FAILED, degraded_msg)
+        return None
+
+    def _try_gateway_local_tool(
+        self, routed_sid: str, tool_name: str, params: dict[str, Any],
+        req_id: Any, session_id: str, t0: float,
+    ) -> dict[str, Any] | None:
+        """处理 gateway 自身工具（mcp_gateway），返回响应 dict 或 None（非本地工具）。"""
+        if routed_sid != "mcp_gateway":
+            return None
+        tdef = self._tools.get(tool_name)
+        if tdef is None:
+            return None
+        try:
+            args = params.get("arguments", {}) or {}
+            result_data = tdef.handler(**args) if args else tdef.handler()
+            content_text = json.dumps(result_data, ensure_ascii=False)
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="success",
+                duration_ms=int((time.perf_counter() - t0) * 1000),
+            )
+            return self._ok(req_id, {"content": [{"type": "text", "text": content_text}]})
+        except Exception as exc:
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="error",
+                error_code=ERR_INTERNAL_ERROR,
+                error_message="internal error",
+                duration_ms=int((time.perf_counter() - t0) * 1000),
+            )
+            return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
+
+    def _audit_and_track(
+        self, error: dict | None, tool_name: str, arguments: dict,
+        session_id: str, cb: Any, duration_ms: int,
+    ) -> None:
+        """记录审计日志并更新熔断器状态。"""
+        status = "error" if error else "success"
+        arg_hash = self._audit.hash_args(arguments) if hasattr(self._audit, "hash_args") else ""
+        if error:
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                arguments_hash=arg_hash,
+                result_status=status,
+                error_code=error.get("code"),
+                error_message=error.get("message"),
+                duration_ms=duration_ms,
+            )
+            if cb:
+                cb.failure()
+        else:
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                arguments_hash=arg_hash,
+                result_status=status,
+                duration_ms=duration_ms,
+            )
+            if cb:
+                cb.success()
+
     def _handle_tools_call_with_pipeline(
         self,
         request: dict[str, Any],
@@ -507,62 +590,26 @@ class MCPGateway(BaseMCPServer):
         if safety_result is not None:
             return safety_result
 
+        cb_err = self._check_circuit_breaker(routed_sid, tool_name, session_id, req_id, t0)
+        if cb_err is not None:
+            return cb_err
+
         cb = self._circuit_breakers.get(routed_sid)
-        if cb and not cb.allow():
-            server = self._server_instances.get(routed_sid)
-            degraded_msg = (
-                f"circuit breaker OPEN for {routed_sid!r} — "
-                f"{'server unavailable' if server is None else 'degraded service'}"
-            )
-            self._audit.log_call(
-                client_session_id=session_id,
-                tool_name=tool_name,
-                result_status="circuit_open",
-                error_code=ERR_GATE_FAILED,
-                duration_ms=int((time.monotonic() - t0) * 1000),
-            )
-            return self._err(req_id, ERR_GATE_FAILED, degraded_msg)
+        local_result = self._try_gateway_local_tool(routed_sid, tool_name, params, req_id, session_id, t0)
+        if local_result is not None:
+            return local_result
 
         srv = self._server_instances.get(routed_sid)
-
-        # gateway 自身工具本地处理
-        if routed_sid == "mcp_gateway":
-            tdef = self._tools.get(tool_name)
-            if tdef is not None:
-                try:
-                    args = params.get("arguments", {}) or {}
-                    result_data = tdef.handler(**args) if args else tdef.handler()
-                    content_text = json.dumps(result_data, ensure_ascii=False)
-                    self._audit.log_call(
-                        client_session_id=session_id,
-                        tool_name=tool_name,
-                        result_status="success",
-                        duration_ms=int((time.perf_counter() - t0) * 1000),
-                    )
-                    return self._ok(req_id, {"content": [{"type": "text", "text": content_text}]})
-                except Exception as exc:
-                    self._audit.log_call(
-                        client_session_id=session_id,
-                        tool_name=tool_name,
-                        result_status="error",
-                        error_code=ERR_INTERNAL_ERROR,
-                        error_message="internal error",
-                        duration_ms=int((time.perf_counter() - t0) * 1000),
-                    )
-                    return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
+        arguments = params.get("arguments", {})
 
         try:
-            final_params = dict(params)
-            final_params.pop("name", None)
-            final_params.pop("_session_id", None)
-
             inner_req: dict[str, Any] = {
                 "jsonrpc": "2.0",
                 "id": req_id or 1,
                 "method": "tools/call",
                 "params": {
                     "name": tool_name,
-                    "arguments": params.get("arguments", {}),
+                    "arguments": arguments,
                 },
             }
             resp = (
@@ -573,33 +620,9 @@ class MCPGateway(BaseMCPServer):
 
             error = resp.get("error")
             result = resp.get("result")
-
             duration_ms = int((time.perf_counter() - t0) * 1000)
-            status = "error" if error else "success"
-            arg_hash = self._audit.hash_args(params.get("arguments", {})) if hasattr(self._audit, "hash_args") else ""
 
-            if error:
-                self._audit.log_call(
-                    client_session_id=session_id,
-                    tool_name=tool_name,
-                    arguments_hash=arg_hash,
-                    result_status=status,
-                    error_code=error.get("code"),
-                    error_message=error.get("message"),
-                    duration_ms=duration_ms,
-                )
-                if cb:
-                    cb.failure()
-            else:
-                self._audit.log_call(
-                    client_session_id=session_id,
-                    tool_name=tool_name,
-                    arguments_hash=arg_hash,
-                    result_status=status,
-                    duration_ms=duration_ms,
-                )
-                if cb:
-                    cb.success()
+            self._audit_and_track(error, tool_name, arguments, session_id, cb, duration_ms)
 
             out = {"jsonrpc": "2.0", "id": req_id}
             if error:
