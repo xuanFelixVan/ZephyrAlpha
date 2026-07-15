@@ -85,6 +85,7 @@ class BufferedWriter:
         self._total_flushed: int = 0
         self._total_added: int = 0
         self._flush_count: int = 0
+        self._last_outcome = None
 
     def add(self, result: "FetchResult") -> bool:
         """添加 FetchResult 到缓冲区。达阈值时自动 flush。
@@ -164,7 +165,10 @@ class BufferedWriter:
             tsv_lines.append("\t".join(ch_writer.tsv_escape(v) for v in row))
         tsv_bytes = "\n".join(tsv_lines).encode("utf-8")
 
-        ok = ch_writer.write_tsv(self._table, self._cols_clause, tsv_bytes)
+        self._last_outcome = ch_writer.write_tsv_outcome(
+            self._table, self._cols_clause, tsv_bytes,
+        )
+        ok = self._last_outcome.is_ch_committed
         if ok:
             self._total_flushed += len(self._buffer)
             self._flush_count += 1
@@ -201,3 +205,8 @@ class BufferedWriter:
     def pending_rows(self) -> int:
         """当前缓冲区中待 flush 的行数。"""
         return len(self._buffer)
+
+    @property
+    def last_outcome(self):
+        """最后一次 flush 的真实投递结果。"""
+        return self._last_outcome
