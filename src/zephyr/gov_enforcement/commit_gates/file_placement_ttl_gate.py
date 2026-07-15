@@ -173,6 +173,60 @@ def _load_placement_ssot(project_root):
     )
 
 
+def _check_rule1_permanent_admission(
+    rel, is_new_file, in_permanent, exempt_subdirs, allow_promote
+):
+    """规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件。
+
+    返回违规消息字符串；无违规则返回 None。
+    """
+    if is_new_file and in_permanent and not any(
+        rel.startswith(ex) for ex in exempt_subdirs
+    ):
+        if not allow_promote:
+            return (
+                f"PROMOTION_BLOCKED: {rel} 位于永久区，需 allow_promote=True 准入"
+                f"（或落入 exempt_subdirs 生成器豁免）"
+            )
+    return None
+
+
+def _check_rule2_ttl_zone_consistency(rel, ttl, in_permanent, in_temporary):
+    """规则2：TTL↔zone 一致性（对所有文件，TTL 合法值已通过 fail-closed 校验）。
+
+    返回违规消息字符串；无违规则返回 None。
+    """
+    if ttl == "permanent" and in_temporary:
+        return (
+            f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=permanent 但在临时区，"
+            f"应迁移到永久区或改 ttl=task_bound"
+        )
+    if ttl == "task_bound" and in_permanent:
+        return (
+            f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=task_bound 但在永久区，"
+            f"应改 ttl=permanent 或迁移到临时区（docs/_working/）"
+        )
+    return None
+
+
+def _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs):
+    """规则3：根目录子目录准入（防止 audit_assignment/ 这类乱建子目录）——只对新增文件。
+
+    返回违规消息字符串；无违规则返回 None。
+    """
+    if is_new_file and "/" in rel:
+        first_seg = rel.split("/")[0] + "/"
+        # 豁免：以 . 开头的目录（.git/.aidrafts/.github/.trae 等工具内部目录）
+        if not first_seg.startswith("."):
+            if first_seg not in allowed_root_subdirs:
+                return (
+                    f"FILE-PLACEMENT-TTL: {rel} 位于未登记的根目录子目录 '{first_seg}'，"
+                    f"允许的子目录: {sorted(allowed_root_subdirs)}。"
+                    f"临时文件请落 docs/_working/，永久文件需裁定归属域"
+                )
+    return None
+
+
 def make_file_placement_ttl_gate() -> GateSpec:
     """构造 FILE-PLACEMENT-TTL 门禁 GateSpec（fail-closed，阻断型）。
 
@@ -234,36 +288,21 @@ def make_file_placement_ttl_gate() -> GateSpec:
             is_new_file = not gateway._is_git_tracked(rel)
 
             # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
-            if is_new_file and in_permanent and not any(rel.startswith(ex) for ex in exempt_subdirs):
-                if not allow_promote:
-                    violations.append(
-                        f"PROMOTION_BLOCKED: {rel} 位于永久区，需 allow_promote=True 准入"
-                        f"（或落入 exempt_subdirs 生成器豁免）"
-                    )
+            v1 = _check_rule1_permanent_admission(
+                rel, is_new_file, in_permanent, exempt_subdirs, allow_promote
+            )
+            if v1 is not None:
+                violations.append(v1)
 
             # 规则2：TTL↔zone 一致性（对所有文件，TTL 合法值已通过 fail-closed 校验）
-            if ttl == "permanent" and in_temporary:
-                violations.append(
-                    f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=permanent 但在临时区，"
-                    f"应迁移到永久区或改 ttl=task_bound"
-                )
-            elif ttl == "task_bound" and in_permanent:
-                violations.append(
-                    f"FILE-PLACEMENT-TTL: {rel} frontmatter.ttl=task_bound 但在永久区，"
-                    f"应改 ttl=permanent 或迁移到临时区（docs/_working/）"
-                )
+            v2 = _check_rule2_ttl_zone_consistency(rel, ttl, in_permanent, in_temporary)
+            if v2 is not None:
+                violations.append(v2)
 
             # 规则3：根目录子目录准入（防止 audit_assignment/ 这类乱建子目录）——只对新增文件
-            if is_new_file and "/" in rel:
-                first_seg = rel.split("/")[0] + "/"
-                # 豁免：以 . 开头的目录（.git/.aidrafts/.github/.trae 等工具内部目录）
-                if not first_seg.startswith("."):
-                    if first_seg not in allowed_root_subdirs:
-                        violations.append(
-                            f"FILE-PLACEMENT-TTL: {rel} 位于未登记的根目录子目录 '{first_seg}'，"
-                            f"允许的子目录: {sorted(allowed_root_subdirs)}。"
-                            f"临时文件请落 docs/_working/，永久文件需裁定归属域"
-                        )
+            v3 = _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs)
+            if v3 is not None:
+                violations.append(v3)
 
         if violations:
             return False, "\n".join(violations)
