@@ -36,7 +36,7 @@ import os
 import time
 import logging
 import datetime
-from typing import Iterator
+from typing import Any, Iterator
 
 from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
 from ..policy_registry import SourcePolicy
@@ -236,35 +236,85 @@ class IFindProvider(DataSourceBase):
                 error=f"未知 capability: {capability}",
             )
 
+    def _build_snapshot_dates(self, payload: FetchPayload) -> list[str]:
+        """从 payload.extra 获取 snapshot_dates，为空时从 start/end 自动生成。"""
+        extra = payload.extra or {}
+        snapshot_dates = extra.get("snapshot_dates", [])
+        if not snapshot_dates and payload.start and payload.end:
+            cur = payload.start
+            while cur <= payload.end:
+                snapshot_dates.append(cur.isoformat())
+                cur += datetime.timedelta(days=1)
+        return snapshot_dates
+
+    def _fetch_valuation_for_symbol(
+        self, ts_code: str, date: str, policy: SourcePolicy
+    ) -> tuple[dict[str, float], str | None]:
+        """抓取单个标的单个日期的估值指标（PE/PB/PS/PCF）。
+
+        THS_BD 不支持分号多指标，逐个查询。PCF 用 i问财补齐。
+        Returns: (vals, fatal_error) — fatal_error 非 None 时表示配额/连接错误。
+        """
+        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
+
+        vals: dict[str, float] = {}
+        fatal_error = None
+        for ind_name, col_name in self._VALUATION_INDICATOR_LIST:
+            params = f"{date},100"
+            try:
+                raw = self._call_with_policy(
+                    THS_BasicData, policy, ts_code, ind_name, params,
+                )
+            except Exception as e:
+                self._log.error(f"THS_BasicData 调用异常 {ts_code}@{date}/{ind_name}: {e}")
+                fatal_error = str(e)
+                break
+
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    fatal_error = f"iFind配额耗尽: {code}"
+                    self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                    break
+                elif code == -209 and col_name == "pcf_ncf_ttm":
+                    self._log.debug(f"PCF THS_BD 不支持(-209) {ts_code}@{date}，将用 i问财补齐")
+                    continue
+                else:
+                    fatal_error = f"iFind错误: {code} {msg}".strip()
+                    self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
+                    break
+
+            try:
+                df = THS_Trans2DataFrame(raw)
+                if df is not None and len(df) > 0:
+                    vals[col_name] = self.safe_float(df.iloc[0].get(ind_name))
+            except Exception as e:
+                self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}/{ind_name}: {e}")
+
+        # PCF 用 i问财补齐（THS_BD 不支持 ths_pcf_stock_ttm，i问财可查当天值）
+        if "pcf_ncf_ttm" not in vals and not fatal_error:
+            today_str = datetime.date.today().isoformat()
+            if date == today_str:
+                try:
+                    pcf_val = self._fetch_pcf_via_iwencai(ts_code, policy)
+                    if pcf_val is not None:
+                        vals["pcf_ncf_ttm"] = pcf_val
+                except Exception as e:
+                    self._log.warning(f"i问财查 PCF 失败 {ts_code}: {e}")
+
+        return vals, fatal_error
+
     def _fetch_daily_valuation(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """拉取日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation。
 
         THS_BD 不支持分号分隔多指标（返回 -209），需逐个指标单独查询后合并。
-
-        输入：
-            payload.symbols: ts_code 列表，如 ["000001.SZ","000002.SZ"]
-            payload.extra["snapshot_dates"]: 日期字符串列表，如 ["2024-12-31","2024-06-30"]
-
-        输出列顺序: ["trade_date","symbol","pe_ttm","pb_mrq","ps_ttm","pcf_ncf_ttm"]
         每 500 行 yield 一个 FetchResult；last_key 为当前处理的 date。
-
         遇到配额耗尽（-4318/-4309）或其他 iFind 错误码时，yield 错误结果并 return。
         """
-        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
-
         symbols = payload.symbols or []
-        extra = payload.extra or {}
-        snapshot_dates = extra.get("snapshot_dates", [])
-
-        # snapshot_dates 为空时，自动从 payload.start/end 生成（每日一条）
-        if not snapshot_dates and payload.start and payload.end:
-            cur = payload.start
-            while cur <= payload.end:
-                # 简单按日生成（含非交易日，THS_BD 对非交易日返回空值，不影响）
-                snapshot_dates.append(cur.isoformat())
-                cur += datetime.timedelta(days=1)
+        snapshot_dates = self._build_snapshot_dates(payload)
 
         if not symbols or not snapshot_dates:
             yield FetchResult(
@@ -282,55 +332,7 @@ class IFindProvider(DataSourceBase):
 
         for date in snapshot_dates:
             for ts_code in symbols:
-                # THS_BD 不支持分号多指标，逐个查询
-                vals: dict[str, float] = {}
-                fatal_error = None
-                for ind_name, col_name in self._VALUATION_INDICATOR_LIST:
-                    params = f"{date},100"
-                    try:
-                        raw = self._call_with_policy(
-                            THS_BasicData, policy,
-                            ts_code, ind_name, params,
-                        )
-                    except Exception as e:
-                        self._log.error(f"THS_BasicData 调用异常 {ts_code}@{date}/{ind_name}: {e}")
-                        fatal_error = str(e)
-                        break
-
-                    # 检查 iFind 错误码
-                    is_error, code, msg = self._check_ifind_error(raw)
-                    if is_error:
-                        if code in (-4318, -4309):
-                            fatal_error = f"iFind配额耗尽: {code}"
-                            self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
-                            break
-                        elif code == -209 and col_name == "pcf_ncf_ttm":
-                            # PCF 在 THS_BD 中不支持(-209)，跳过，稍后用 i问财补齐
-                            self._log.debug(f"PCF THS_BD 不支持(-209) {ts_code}@{date}，将用 i问财补齐")
-                            continue
-                        else:
-                            fatal_error = f"iFind错误: {code} {msg}".strip()
-                            self._log.error(f"{ts_code}@{date}/{ind_name} {fatal_error}")
-                            break
-
-                    # 转 DataFrame 提取值
-                    try:
-                        df = THS_Trans2DataFrame(raw)
-                        if df is not None and len(df) > 0:
-                            vals[col_name] = self.safe_float(df.iloc[0].get(ind_name))
-                    except Exception as e:
-                        self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}/{ind_name}: {e}")
-
-                # PCF 用 i问财补齐（THS_BD 不支持 ths_pcf_stock_ttm，i问财可查当天值）
-                if "pcf_ncf_ttm" not in vals and not fatal_error:
-                    today_str = datetime.date.today().isoformat()
-                    if date == today_str:
-                        try:
-                            pcf_val = self._fetch_pcf_via_iwencai(ts_code, policy)
-                            if pcf_val is not None:
-                                vals["pcf_ncf_ttm"] = pcf_val
-                        except Exception as e:
-                            self._log.warning(f"i问财查 PCF 失败 {ts_code}: {e}")
+                vals, fatal_error = self._fetch_valuation_for_symbol(ts_code, date, policy)
 
                 # 致命错误（配额/连接）→ yield error 并 return
                 if fatal_error and ("配额" in fatal_error or "-4318" in fatal_error):
@@ -404,25 +406,85 @@ class IFindProvider(DataSourceBase):
 
     # ============== kline_daily 能力 ==============
 
+    def _fetch_kline_for_symbol(
+        self, ts_code: str, policy: SourcePolicy, start_str: str, end_str: str
+    ) -> tuple[Any, str | None]:
+        """调用 THS_HistoryQuotes 获取单标的K线数据。
+
+        Returns: (df_or_None, error_msg_or_None) — error_msg 非 None 表示配额耗尽。
+        """
+        from iFinDPy import THS_HistoryQuotes, THS_Trans2DataFrame
+
+        try:
+            raw = self._call_with_policy(
+                THS_HistoryQuotes, policy,
+                ts_code, self._KLINE_INDICATORS, self._KLINE_PARAMS,
+                start_str, end_str,
+            )
+        except Exception as e:
+            self._log.warning(f"THS_HistoryQuotes 调用失败 {ts_code}: {e}")
+            return None, None
+
+        is_error, code, msg = self._check_ifind_error(raw)
+        if is_error:
+            if code in (-4318, -4309):
+                return None, f"iFind配额耗尽: {code}"
+            self._log.warning(f"{ts_code} iFind错误: {code} {msg}")
+            return None, None
+
+        try:
+            df = THS_Trans2DataFrame(raw)
+        except Exception as e:
+            self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
+            return None, None
+
+        if df is None or len(df) == 0:
+            return None, None
+        return df, None
+
+    def _parse_kline_row(self, row, symbol: str, idx) -> tuple | None:
+        """从 DataFrame 行构建 K线结果行，日期无效时返回 None。"""
+        trade_date = self._extract_date(idx, row)
+        if not trade_date:
+            return None
+
+        pre_close = self.safe_float(row.get("preClose"))
+        open_ = self.safe_float(row.get("open"))
+        close = self.safe_float(row.get("close"))
+        high = self.safe_float(row.get("high"))
+        low = self.safe_float(row.get("low"))
+        volume = self.safe_float(row.get("volume"))
+        amount = self.safe_float(row.get("amount"))
+        change = self.safe_float(row.get("change"))
+        pct_change = self.safe_float(row.get("changeRatio"))
+        turnover = self.safe_float(row.get("turnoverRatio"))
+
+        # amplitude = (high - low) / preClose * 100
+        if pre_close and pre_close != 0 and high is not None and low is not None:
+            amplitude = round((high - low) / pre_close * 100, 4)
+        else:
+            amplitude = 0.0
+
+        return (
+            trade_date, symbol,
+            open_ or 0.0, close or 0.0, high or 0.0, low or 0.0,
+            int(volume) if volume else 0,
+            amount or 0.0,
+            amplitude,
+            pct_change or 0.0,
+            change or 0.0,
+            turnover or 0.0,
+            "ifind_qfq",
+        )
+
     def _fetch_kline_daily(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """拉取日K线（前复权），写入 c1_market.kline_daily。
 
         使用 THS_HistoryQuotes（Interval:D, CPS:1 前复权）。
-        指标: preClose/open/high/low/close/change/changeRatio/volume/turnoverRatio/amount
-        amplitude 由 (high-low)/preClose*100 计算。
-
-        Args:
-            payload: symbols 为 iFind ts_code 列表（如 ["600000.SH"]）；
-                     None 时通过 THS_DataPool 获取全部A股。
-            policy: 调用策略
-
-        Yields:
-            FetchResult: 每 500 行一批
+        每 500 行 yield 一批。配额耗尽时 yield error 并 return。
         """
-        from iFinDPy import THS_HistoryQuotes, THS_Trans2DataFrame
-
         symbols = payload.symbols
         if not symbols:
             symbols = self._get_all_a_share_codes(policy)
@@ -441,78 +503,24 @@ class IFindProvider(DataSourceBase):
         start_ts = time.time()
 
         for ts_code in symbols:
-            # 调用 THS_HistoryQuotes
-            try:
-                raw = self._call_with_policy(
-                    THS_HistoryQuotes, policy,
-                    ts_code, self._KLINE_INDICATORS, self._KLINE_PARAMS,
-                    start_str, end_str,
+            df, err = self._fetch_kline_for_symbol(ts_code, policy, start_str, end_str)
+            if err:
+                yield FetchResult(
+                    table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
+                    rows=[], last_key=last_key,
+                    elapsed_sec=time.time() - start_ts,
+                    error=err,
                 )
-            except Exception as e:
-                self._log.warning(f"THS_HistoryQuotes 调用失败 {ts_code}: {e}")
+                return
+            if df is None:
                 continue
 
-            # 检查错误码
-            is_error, code, msg = self._check_ifind_error(raw)
-            if is_error:
-                if code in (-4318, -4309):
-                    yield FetchResult(
-                        table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
-                        rows=[], last_key=last_key,
-                        elapsed_sec=time.time() - start_ts,
-                        error=f"iFind配额耗尽: {code}",
-                    )
-                    return
-                self._log.warning(f"{ts_code} iFind错误: {code} {msg}")
-                continue
-
-            # 转 DataFrame
-            try:
-                df = THS_Trans2DataFrame(raw)
-            except Exception as e:
-                self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
-                continue
-
-            if df is None or len(df) == 0:
-                continue
-
-            symbol = self._ts_code_to_symbol(ts_code)  # "600000.SH" -> "600000"
-
+            symbol = self._ts_code_to_symbol(ts_code)
             for idx, row in df.iterrows():
-                # 日期：DataFrame index 或 "time" 列
-                trade_date = self._extract_date(idx, row)
-                if not trade_date:
+                parsed = self._parse_kline_row(row, symbol, idx)
+                if parsed is None:
                     continue
-
-                pre_close = self.safe_float(row.get("preClose"))
-                open_ = self.safe_float(row.get("open"))
-                close = self.safe_float(row.get("close"))
-                high = self.safe_float(row.get("high"))
-                low = self.safe_float(row.get("low"))
-                volume = self.safe_float(row.get("volume"))
-                amount = self.safe_float(row.get("amount"))
-                change = self.safe_float(row.get("change"))
-                pct_change = self.safe_float(row.get("changeRatio"))
-                turnover = self.safe_float(row.get("turnoverRatio"))
-
-                # amplitude = (high - low) / preClose * 100
-                if pre_close and pre_close != 0 and high is not None and low is not None:
-                    amplitude = round((high - low) / pre_close * 100, 4)
-                else:
-                    amplitude = 0.0
-
-                batch_rows.append((
-                    trade_date, symbol,
-                    open_ or 0.0, close or 0.0, high or 0.0, low or 0.0,
-                    int(volume) if volume else 0,
-                    amount or 0.0,
-                    amplitude,
-                    pct_change or 0.0,
-                    change or 0.0,
-                    turnover or 0.0,
-                    "ifind_qfq",
-                ))
-
+                batch_rows.append(parsed)
                 if len(batch_rows) >= self._BATCH_SIZE:
                     yield FetchResult(
                         table=self._KLINE_TABLE, columns=self._KLINE_COLUMNS,
@@ -529,8 +537,6 @@ class IFindProvider(DataSourceBase):
                 rows=batch_rows[:], last_key=last_key,
                 elapsed_sec=time.time() - start_ts,
             )
-
-    # ============== kline_index 能力 ==============
 
     def _fetch_kline_index(
         self, payload: FetchPayload, policy: SourcePolicy
