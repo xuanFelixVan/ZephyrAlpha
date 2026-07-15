@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-GOV_SCRIPTS-001 | scripts/governance/d7_code/scan_complexity.py | §
+# [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/scan_complexity.py | §
 # [MODULE] scripts.governance.d7_code.scan_complexity
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] stdlib(ast/pathlib/dataclasses/argparse/statistics)

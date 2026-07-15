@@ -1,5 +1,5 @@
 ---
-module_id: MOD-004
+module_id: MOD-FEEDBACK_LOOP
 title: Feedback Loop Engine Interface / 反馈闭环引擎接口规范
 doc_type: architecture_view
 status: Active
@@ -36,6 +36,9 @@ mod_master_contracts:
   - "CT-FLE-ORC-001"
   - "CT-FLE-DB-001"
   - "CT-TELE-FLE-001"
+responsibility_domain: D_FEEDBACK_LOOP
+design_maturity: design
+build_status: planned
 ---
 
 # Feedback Loop Engine Interface / 反馈闭环引擎接口规范
