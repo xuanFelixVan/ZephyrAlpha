@@ -201,111 +201,94 @@ class ParameterizedSafetyGate:
 
     def _evaluate_rule(self, rule: dict[str, Any], ctx: ActionContext) -> GateResult:
         layer = rule["layer"]
-
         gtype = GateType(rule.get("gate_type", "HARD"))
-
         rtype = rule.get("type", "always_pass")
-
         reject_reason = rule.get("reject_reason", f"{layer} check failed")
 
         if rtype == "always_pass":
             return GateResult(layer, GateVerdict.PASS, gtype, rule.get("pass_reason", ""))
-
         if rtype == "threshold":
-            field_name = rule["field"]
-
-            threshold = rule["threshold"]
-
-            op = rule.get("op", "gt")
-
-            val = getattr(ctx, field_name, None)
-
-            if val is not None and _OPS.get(op, lambda a, b: False)(val, threshold):
-                fmt_reason = reject_reason.format(value=val, threshold=threshold)
-
-                return GateResult(layer, GateVerdict.REJECT, gtype, fmt_reason)
-
-            return GateResult(layer, GateVerdict.PASS, gtype)
-
+            return self._eval_threshold(rule, ctx, layer, gtype, reject_reason)
         if rtype == "boolean":
-            field_name = rule["field"]
-
-            val = getattr(ctx, field_name, None)
-
-            expected = rule.get("expected", True)
-
-            reject_on = rule.get("reject_on", "mismatch")
-
-            if reject_on == "mismatch" and val != expected:
-                return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
-
-            if reject_on == "match" and val == expected:
-                return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
-
-            return GateResult(layer, GateVerdict.PASS, gtype)
-
+            return self._eval_boolean(rule, ctx, layer, gtype, reject_reason)
         if rtype == "frequency":
-            key_field = rule.get("key_field", "action_type")
-
-            key = getattr(ctx, key_field, "default")
-
-            limit = rule.get("limit", 10)
-
-            self.frequency_counters[key] = self.frequency_counters.get(key, 0) + 1
-
-            if self.frequency_counters[key] > limit:
-                return GateResult(
-                    layer,
-                    GateVerdict.REJECT,
-                    gtype,
-                    reject_reason.format(count=self.frequency_counters[key], limit=limit),
-                )
-
-            return GateResult(layer, GateVerdict.PASS, gtype)
-
+            return self._eval_frequency(rule, ctx, layer, gtype, reject_reason)
         if rtype == "enum":
-            field_name = rule["field"]
-
-            val = getattr(ctx, field_name, None)
-
-            allowed = rule.get("allowed_values", [])
-
-            if val is not None and allowed and str(val) not in [str(v) for v in allowed]:
-                return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
-
-            return GateResult(layer, GateVerdict.PASS, gtype)
-
+            return self._eval_enum(rule, ctx, layer, gtype, reject_reason)
         if rtype == "observe":
-            field_name = rule.get("field", "")
-
-            val = getattr(ctx, field_name, None) if field_name else None
-
-            if val and ((isinstance(val, list) and len(val) > 0) or (isinstance(val, bool) and val)):
-                return GateResult(layer, GateVerdict.OBSERVE_ONLY, gtype, reject_reason.format(value=val))
-
-            return GateResult(layer, GateVerdict.PASS, gtype)
-
+            return self._eval_observe(rule, ctx, layer, gtype, reject_reason)
         if rtype == "custom":
-            handler_path = rule.get("handler", "")
-
-            if handler_path:
-                try:
-                    module_path, func_name = handler_path.rsplit(".", 1)
-
-                    import importlib
-
-                    mod = importlib.import_module(module_path)
-
-                    handler = getattr(mod, func_name)
-
-                    return handler(ctx, gtype, rule)
-
-                except Exception as e:
-                    logger.warning("suppressed error in parameterized_safety_gate", exc_info=True)
-
-            return GateResult(layer, GateVerdict.PASS, gtype, "Custom handler not found, defaulting to PASS")
-
+            return self._eval_custom(rule, ctx, layer, gtype, reject_reason)
         return GateResult(layer, GateVerdict.PASS, gtype, f"Unknown rule type: {rtype}")
+
+    # ===== _evaluate_rule() 各规则类型辅助方法 =====
+
+    def _eval_threshold(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """threshold 规则：字段值与阈值比较（op=gt/lt/gte/lte/eq/ne）。"""
+        field_name = rule["field"]
+        threshold = rule["threshold"]
+        op = rule.get("op", "gt")
+        val = getattr(ctx, field_name, None)
+        if val is not None and _OPS.get(op, lambda a, b: False)(val, threshold):
+            fmt_reason = reject_reason.format(value=val, threshold=threshold)
+            return GateResult(layer, GateVerdict.REJECT, gtype, fmt_reason)
+        return GateResult(layer, GateVerdict.PASS, gtype)
+
+    def _eval_boolean(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """boolean 规则：字段值与期望值匹配/不匹配时拒绝。"""
+        field_name = rule["field"]
+        val = getattr(ctx, field_name, None)
+        expected = rule.get("expected", True)
+        reject_on = rule.get("reject_on", "mismatch")
+        if reject_on == "mismatch" and val != expected:
+            return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
+        if reject_on == "match" and val == expected:
+            return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
+        return GateResult(layer, GateVerdict.PASS, gtype)
+
+    def _eval_frequency(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """frequency 规则：按 key 字段计数，超限拒绝。"""
+        key_field = rule.get("key_field", "action_type")
+        key = getattr(ctx, key_field, "default")
+        limit = rule.get("limit", 10)
+        self.frequency_counters[key] = self.frequency_counters.get(key, 0) + 1
+        if self.frequency_counters[key] > limit:
+            return GateResult(
+                layer, GateVerdict.REJECT, gtype,
+                reject_reason.format(count=self.frequency_counters[key], limit=limit),
+            )
+        return GateResult(layer, GateVerdict.PASS, gtype)
+
+    def _eval_enum(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """enum 规则：字段值不在允许值列表中时拒绝。"""
+        field_name = rule["field"]
+        val = getattr(ctx, field_name, None)
+        allowed = rule.get("allowed_values", [])
+        if val is not None and allowed and str(val) not in [str(v) for v in allowed]:
+            return GateResult(layer, GateVerdict.REJECT, gtype, reject_reason.format(value=val))
+        return GateResult(layer, GateVerdict.PASS, gtype)
+
+    def _eval_observe(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """observe 规则：字段有值时标记为 OBSERVE_ONLY（非阻断）。"""
+        field_name = rule.get("field", "")
+        val = getattr(ctx, field_name, None) if field_name else None
+        if val and ((isinstance(val, list) and len(val) > 0) or (isinstance(val, bool) and val)):
+            return GateResult(layer, GateVerdict.OBSERVE_ONLY, gtype, reject_reason.format(value=val))
+        return GateResult(layer, GateVerdict.PASS, gtype)
+
+    def _eval_custom(self, rule, ctx, layer, gtype, reject_reason) -> GateResult:
+        """custom 规则：动态加载 handler 函数执行自定义判定。"""
+        handler_path = rule.get("handler", "")
+        if handler_path:
+            try:
+                module_path, func_name = handler_path.rsplit(".", 1)
+                import importlib
+                mod = importlib.import_module(module_path)
+                handler = getattr(mod, func_name)
+                return handler(ctx, gtype, rule)
+            except Exception:
+                logger.warning("suppressed error in parameterized_safety_gate", exc_info=True)
+        return GateResult(layer, GateVerdict.PASS, gtype, "Custom handler not found, defaulting to PASS")
 
     @property
     def is_blocked(self) -> bool:
