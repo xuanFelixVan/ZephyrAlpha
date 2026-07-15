@@ -2044,8 +2044,31 @@ entries:
   adjudication: '2026-06-26 裁定：6 个域 ID 从连字符格式改为下划线格式（如 D-SIG-LEGACY→D_SIGLEGACY），符合项目 snake_case 命名铁律。'
   fix_phase: 已完成（6 个域 ID 已重命名，depgraph 已同步）
   status: resolved
-  created: '2026-06-26'
-  last_updated: '2026-06-26'
+  created: '2026-07-15'
+  last_updated: '2026-07-15'
+
+# --- #ARCH-CH-011: ClickHouse 健康探活后台守护线程（回溯登记） ---
+- issue_id: '#ARCH-CH-011'
+  title: ClickHouse 健康探活后台守护线程——/health 端点非阻塞治本
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    /health 端点原同步调用 ch_reader.query("SELECT 1")，当 ClickHouse 连接异常时
+    三级降级链（TCP→HTTP→WSL）逐个超时，最坏情况 _DEFAULT_TIMEOUT=600s，
+    导致 /health 请求阻塞 10 分钟。
+
+    治本方案：
+    - 后台守护线程每 _ch_health_interval 秒探活一次
+    - 探活用独立短超时 timeout=3（禁止使用 _DEFAULT_TIMEOUT=600）
+    - get_health() 只读缓存（非阻塞），保证 100ms 内响应
+    - 缓存超过 3 个间隔未更新 → 判定探活线程死亡
+  impact:
+  - src/zephyr/data/scheduler.py（新增 _start_ch_health_probe + _probe_loop + get_health 读缓存）
+  fix_phase: 已完成
+  status: decided
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
 
 # --- #ARCH-CAP-001/002: 容量治理裁定（回溯登记） ---
 - issue_id: '#ARCH-CAP-001'
@@ -2064,6 +2087,26 @@ entries:
   status: resolved
   created: '2026-07-15'
   last_updated: '2026-07-15'
+
+# --- #ARCH-CAP-005: 域映射迁移到 depgraph.db（回溯登记） ---
+- issue_id: '#ARCH-CAP-005'
+  title: 域映射迁移到 depgraph.db（抽屉式扩展）
+  severity: P2中
+  category: architecture_governance
+  adjudication: |
+    域映射从硬编码 DOMAIN_NAME_TO_LAYER / NON_SRC_DOMAIN_MAP / UNREGISTERED_SRC_MAP
+    迁移到 depgraph.db 的 domains/domain_mapping 表（抽屉式扩展）。
+
+    - domain_id → layer_id: domains 表 layer_id 字段（per-domain，比原 group-based 更精确）
+    - path_prefix → (domain_id, subdomain_id): domain_mapping 表
+      （mapping_type='non_src'/'unregistered_src'）
+    - 新增域只需 INSERT domains/domain_mapping 表，无需修改生成器代码
+  impact:
+  - scripts/governance/generate_project_depgraph.py（新增 _load_domain_mappings_from_db）
+  fix_phase: 已完成
+  status: decided
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
 
 # --- #ARCH-DEPGRAPH_ACCESS_CONTROL: depgraph 访问控制治本（角色分级+默认只读+commit门禁） ---
 - issue_id: '#ARCH-DEPGRAPH_ACCESS_CONTROL'
