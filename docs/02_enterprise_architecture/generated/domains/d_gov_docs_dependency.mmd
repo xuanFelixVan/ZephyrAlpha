@@ -1,7 +1,7 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-15 12:39:58
+%% 生成时间: 2026-07-15 23:33:43
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 95, 依赖边数: 42
+%% 模块数: 95, 依赖边数: 10
 
 graph TD
 
@@ -111,20 +111,6 @@ graph TD
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_pipeline_blueprint_md
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_AUTONOMY_CORE -> D_GOV_DOCS (5 条)
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__cross_layer_pipeline_blueprint_md
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|contract| docs_03_modules__cross_layer_shared_core_blueprint_md
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
-    %% D_COMPLIANCE -> D_GOV_DOCS (1 条)
-    D_COMPLIANCE[D_COMPLIANCE] -->|contract| docs_03_modules__cross_layer_shared_core_blueprint_md
-    %% D_GOVERNANCE -> D_GOV_DOCS (5 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_autono___ollback_system_blueprint_md
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
-    D_GOVERNANCE[D_GOVERNANCE] -->|contract| docs_03_modules__cross_layer_shared_core_blueprint_md
-    D_GOVERNANCE[D_GOVERNANCE] -->|data| docs_03_modules__cross_layer_shared_core_blueprint_md
     %% D_GOV_AUDIT -> D_GOV_DOCS (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_red_blue_validator_blueprint_md
     %% D_GOV_DRIFT -> D_GOV_DOCS (2 条)
@@ -132,43 +118,13 @@ graph TD
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_DOCS -> D_AUTONOMY_CORE (2 条)
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    %% D_GOV_DOCS -> D_COMPLIANCE (3 条)
-    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|contract| D_COMPLIANCE[D_COMPLIANCE]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_COMPLIANCE[D_COMPLIANCE]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_COMPLIANCE[D_COMPLIANCE]
-    %% D_GOV_DOCS -> D_FBL_VERIFICATION (3 条)
-    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    %% D_GOV_DOCS -> D_FEEDBACK_LOOP (1 条)
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    %% D_GOV_DOCS -> D_GOVERNANCE (6 条)
-    docs_03_modules__domain_govern___nce_automation_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    docs_03_modules__domain_govern___nce_automation_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|data| D_GOVERNANCE[D_GOVERNANCE]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_GOV_DOCS -> D_GOV_AUDIT (1 条)
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOV_DOCS -> D_GOV_DRIFT (2 条)
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_DOCS -> D_INFRA_RUNTIME (1 条)
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D_GOV_DOCS -> D_INTEGRATION (2 条)
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_INTEGRATION[D_INTEGRATION]
-    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_INTEGRATION[D_INTEGRATION]
-    %% D_GOV_DOCS -> D_SECURITY (2 条)
-    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_SECURITY[D_SECURITY]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_SECURITY[D_SECURITY]
-    %% D_GOV_DOCS -> D_SECURITY_LLM (1 条)
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_SECURITY_LLM[D_SECURITY_LLM]
 
     %% 统计
     %% 域内依赖: 4 条
-    %% 跨域入边: 14 条
-    %% 跨域出边: 24 条
+    %% 跨域入边: 3 条
+    %% 跨域出边: 3 条
