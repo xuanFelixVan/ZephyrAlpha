@@ -88,117 +88,117 @@ def _cmd_pool_stats(_args: argparse.Namespace) -> int:
     return 0
 
 
+def _audit_integrity_trail() -> tuple[str, Any]:
+    try:
+        from zephyr.governance.integrity import IntegrityVerifier
+
+        verifier = IntegrityVerifier()
+        chain = verifier.verify_chain()
+        return ("ok" if chain["status"] == "valid" else "fail"), chain
+    except ImportError as exc:
+        return "unavailable", str(exc)
+    except Exception as exc:
+        return "error", str(exc)
+
+
+def _audit_semantic_auditor() -> tuple[str, Any]:
+    try:
+        from zephyr.governance.semantic_audit.kb_gate import KBAuditGate
+
+        gate = KBAuditGate()
+        return "ok", {"kb_gate": "loaded"}
+    except ImportError as exc:
+        return "unavailable", str(exc)
+    except Exception as exc:
+        return "error", str(exc)
+
+
+def _audit_orphan_judge(scope: str) -> tuple[str, Any]:
+    try:
+        from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
+
+        judge = OrphanJudge()
+        if scope == "all":
+            sample_file = "src/zephyr/integration/zephyr/__init__.py"
+            judgment = judge.judge(sample_file, dry_run=True)
+            return "ok", {
+                "mode": "sample",
+                "sample_file": sample_file,
+                "verdict": judgment.verdict.value if hasattr(judgment, "verdict") else str(judgment),
+                "reason": judgment.reason if hasattr(judgment, "reason") else "",
+                "note": "全量扫描请使用 dedicated scanner；此处为健康快速检查",
+            }
+        else:
+            judgment = judge.judge(scope, dry_run=True)
+            return "ok", {
+                "mode": "single",
+                "verdict": judgment.verdict.value if hasattr(judgment, "verdict") else str(judgment),
+            }
+    except ImportError as exc:
+        return "unavailable", str(exc)
+    except Exception as exc:
+        return "error", str(exc)
+
+
+def _audit_red_blue_validator() -> tuple[str, Any]:
+    try:
+        from zephyr.security.adversarial_validation.validator import RedBlueValidator
+
+        validator = RedBlueValidator()
+        report = validator.run_adversarial_session(session_name="cli-orchestrator")
+        return "ok", {
+            "session_id": report.session_id,
+            "total": report.total,
+            "blocked": report.blocked,
+            "bypassed": report.bypassed,
+            "blocked_rate": report.blocked_rate,
+        }
+    except ImportError as exc:
+        return "unavailable", str(exc)
+    except Exception as exc:
+        return "error", str(exc)
+
+
+def _audit_behavioral_auditor(level: str) -> tuple[str, Any]:
+    try:
+        import asyncio
+
+        from zephyr.gov_drift.drift_engine import ScanLevel, scan
+
+        level_enum = ScanLevel[level.upper()]
+        # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文
+        _prev_loop = asyncio.get_event_loop_policy().get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            scan_result = loop.run_until_complete(scan(level=level_enum))
+        finally:
+            loop.close()
+            asyncio.set_event_loop(_prev_loop)
+        return "ok", {
+            "scan_id": scan_result.scan_id,
+            "detectors_run": scan_result.detectors_run,
+            "drift_events": scan_result.total_drift_events,
+        }
+    except ImportError as exc:
+        return "unavailable", str(exc)
+    except Exception as exc:
+        return "error", str(exc)
+
+
 def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any]:
     result: dict[str, Any] = {"module": module_name, "status": "skipped", "detail": None}
 
     if module_name == "audit-trail":
-        try:
-            from zephyr.governance.integrity import IntegrityVerifier
-
-            verifier = IntegrityVerifier()
-            chain = verifier.verify_chain()
-            result["status"] = "ok" if chain["status"] == "valid" else "fail"
-            result["detail"] = chain
-        except ImportError as exc:
-            result["status"] = "unavailable"
-            result["detail"] = str(exc)
-        except Exception as exc:
-            result["status"] = "error"
-            result["detail"] = str(exc)
-
+        result["status"], result["detail"] = _audit_integrity_trail()
     elif module_name == "semantic-auditor":
-        try:
-            from zephyr.governance.semantic_audit.kb_gate import KBAuditGate
-
-            gate = KBAuditGate()
-            result["status"] = "ok"
-            result["detail"] = {"kb_gate": "loaded"}
-        except ImportError as exc:
-            result["status"] = "unavailable"
-            result["detail"] = str(exc)
-        except Exception as exc:
-            result["status"] = "error"
-            result["detail"] = str(exc)
-
+        result["status"], result["detail"] = _audit_semantic_auditor()
     elif module_name == "orphan-judge":
-        try:
-            from zephyr.security.access_control.orphan_judge.judge import OrphanJudge
-
-            judge = OrphanJudge()
-            if scope == "all":
-                sample_file = "src/zephyr/integration/zephyr/__init__.py"
-                judgment = judge.judge(sample_file, dry_run=True)
-                result["status"] = "ok"
-                result["detail"] = {
-                    "mode": "sample",
-                    "sample_file": sample_file,
-                    "verdict": judgment.verdict.value if hasattr(judgment, "verdict") else str(judgment),
-                    "reason": judgment.reason if hasattr(judgment, "reason") else "",
-                    "note": "全量扫描请使用 dedicated scanner；此处为健康快速检查",
-                }
-            else:
-                judgment = judge.judge(scope, dry_run=True)
-                result["status"] = "ok"
-                result["detail"] = {
-                    "mode": "single",
-                    "verdict": judgment.verdict.value if hasattr(judgment, "verdict") else str(judgment),
-                }
-        except ImportError as exc:
-            result["status"] = "unavailable"
-            result["detail"] = str(exc)
-        except Exception as exc:
-            result["status"] = "error"
-            result["detail"] = str(exc)
-
+        result["status"], result["detail"] = _audit_orphan_judge(scope)
     elif module_name == "red-blue-validator":
-        try:
-            from zephyr.security.adversarial_validation.validator import RedBlueValidator
-
-            validator = RedBlueValidator()
-            report = validator.run_adversarial_session(session_name="cli-orchestrator")
-            result["status"] = "ok"
-            result["detail"] = {
-                "session_id": report.session_id,
-                "total": report.total,
-                "blocked": report.blocked,
-                "bypassed": report.bypassed,
-                "blocked_rate": report.blocked_rate,
-            }
-        except ImportError as exc:
-            result["status"] = "unavailable"
-            result["detail"] = str(exc)
-        except Exception as exc:
-            result["status"] = "error"
-            result["detail"] = str(exc)
-
+        result["status"], result["detail"] = _audit_red_blue_validator()
     elif module_name == "behavioral-auditor":
-        try:
-            import asyncio
-
-            from zephyr.gov_drift.drift_engine import ScanLevel, scan
-
-            level_enum = ScanLevel[level.upper()]
-            # 5.100.18 修复: 保存原 loop 并在 finally 中恢复, 避免污染调用方 loop 上下文
-            _prev_loop = asyncio.get_event_loop_policy().get_event_loop()
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                scan_result = loop.run_until_complete(scan(level=level_enum))
-            finally:
-                loop.close()
-                asyncio.set_event_loop(_prev_loop)
-            result["status"] = "ok"
-            result["detail"] = {
-                "scan_id": scan_result.scan_id,
-                "detectors_run": scan_result.detectors_run,
-                "drift_events": scan_result.total_drift_events,
-            }
-        except ImportError as exc:
-            result["status"] = "unavailable"
-            result["detail"] = str(exc)
-        except Exception as exc:
-            result["status"] = "error"
-            result["detail"] = str(exc)
+        result["status"], result["detail"] = _audit_behavioral_auditor(level)
 
     return result
 
