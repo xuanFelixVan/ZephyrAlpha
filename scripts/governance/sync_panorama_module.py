@@ -321,8 +321,10 @@ def prune_orphans() -> dict:
         decision_conn.close()
 
     # 3. 清理 dataflow_jobs 孤儿占位记录（ARCH-058 扩展）
-    dataflow_conn = get_dataflowgraph_pg_connection(
-        allow_design_delete=True, read_only=False,
+    #    使用 get_depgraph_pg_connection(read_only=False) 获取 writer 角色：
+    #    get_dataflowgraph_pg_connection 不支持 read_only=False，始终用 reader 角色（无 DELETE 权限）
+    dataflow_conn = get_depgraph_pg_connection(
+        read_only=False, autocommit=False,
     )
     orphan_dataflow: list[str] = []
     deleted_dataflow = 0
