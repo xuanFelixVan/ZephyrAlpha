@@ -1076,6 +1076,47 @@ def _collect_governance_field_updates(
     return updates
 
 
+def _parse_depends_on(deps_raw: object) -> list:
+    """将 depends_on 原始值解析为列表（供 _unblock_downstream_dependents 使用）。"""
+    deps_raw = deps_raw or "[]"
+    try:
+        deps = json.loads(deps_raw) if isinstance(deps_raw, str) else deps_raw
+    except (json.JSONDecodeError, TypeError):
+        deps = []
+    if not isinstance(deps, list):
+        deps = [deps] if deps else []
+    return deps
+
+
+def _check_all_deps_met(conn: sqlite3.Connection, deps: list) -> bool:
+    """当所有真值依赖均处于 COMPLETED/VERIFIED 时返回 True。"""
+    if not deps:
+        return True
+    return all(
+        conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()["status"]
+        in ("COMPLETED", "VERIFIED")
+        for d in deps
+        if d
+    )
+
+
+def _collect_unmet_blockers(conn: sqlite3.Connection, deps: list) -> list:
+    """收集未完成/缺失的依赖 id（作为 blocked_by 回填源）。"""
+    unmet_blockers: list = []
+    for d in deps:
+        if d:
+            dep_row = conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()
+            if dep_row is None:
+                # 依赖不存在于tasks表 -> 也视为阻塞源
+                unmet_blockers.append(d)
+            elif dep_row["status"] not in (
+                TaskStatus.COMPLETED.value,
+                TaskStatus.VERIFIED.value,
+            ):
+                unmet_blockers.append(d)
+    return unmet_blockers
+
+
 # ---------------------------------------------------------------------------
 # TaskRepository
 # ---------------------------------------------------------------------------
@@ -2659,79 +2700,7 @@ class TaskRepository:
 
         unblocked_count = 0
         for ds_row in downstream_rows:
-            ds_id = ds_row["task_id"]
-            current_blocked_by = json.loads(ds_row["blocked_by"] or "[]")
-            if task_id in current_blocked_by:
-                current_blocked_by.remove(task_id)
-
-            new_blocked_by = json.dumps(current_blocked_by)
-
-            if not current_blocked_by:
-                deps_raw = ds_row["depends_on"] or "[]"
-                try:
-                    deps = json.loads(deps_raw) if isinstance(deps_raw, str) else deps_raw
-                except (json.JSONDecodeError, TypeError):
-                    deps = []
-                if not isinstance(deps, list):
-                    deps = [deps] if deps else []
-
-                all_deps_met = (
-                    all(
-                        conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()["status"]
-                        in ("COMPLETED", "VERIFIED")
-                        for d in deps
-                        if d
-                    )
-                    if deps
-                    else True
-                )
-
-                if all_deps_met and ds_row["status"] == "BLOCKED":
-                    conn.execute(
-                        SQL_UPDATE_TASKS_BY_ID_STATUS,
-                        (TaskStatus.READY.value, new_blocked_by, now, ds_id),
-                    )
-                    self._record_event(
-                        conn,
-                        "state_transition",
-                        {
-                            "from": "BLOCKED",
-                            "to": TaskStatus.READY.value,
-                            "task_id": ds_id,
-                            "note": f"上游任务 {task_id} 已完成/释放，依赖全满足，自动解锁",
-                        },
-                        task_id=ds_id,
-                    )
-                    unblocked_count += 1
-                else:
-                    # blocked_by清空但depends_on未全满足 -> 回填所有未完成/缺失依赖到blocked_by
-                    unmet_blockers = []
-                    for d in deps:
-                        if d:
-                            dep_row = conn.execute(SQL_SELECT_TASKS_BY_ID_2, (d,)).fetchone()
-                            if dep_row is None:
-                                # 依赖不存在于tasks表 -> 也视为阻塞源
-                                unmet_blockers.append(d)
-                            elif dep_row["status"] not in (
-                                TaskStatus.COMPLETED.value,
-                                TaskStatus.VERIFIED.value,
-                            ):
-                                unmet_blockers.append(d)
-                    if unmet_blockers:
-                        refilled_blocked_by = json.dumps(unmet_blockers)
-                    else:
-                        # 不应到达此处（all_deps_met=False但所有依赖都COMPLETED/VERIFIED/不存在）
-                        # 保持blocked_by为空，状态仍BLOCKED（语义：被未知原因阻塞）
-                        refilled_blocked_by = new_blocked_by
-                    conn.execute(
-                        SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
-                        (refilled_blocked_by, now, ds_id),
-                    )
-            else:
-                conn.execute(
-                    SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
-                    (new_blocked_by, now, ds_id),
-                )
+            unblocked_count += self._unblock_one_dependent(conn, task_id, ds_row, now)
 
         if unblocked_count:
             logger.info(
@@ -2740,6 +2709,62 @@ class TaskRepository:
                 unblocked_count,
             )
         return unblocked_count
+
+    def _unblock_one_dependent(
+        self,
+        conn: sqlite3.Connection,
+        task_id: str,
+        ds_row: sqlite3.Row,
+        now: str,
+    ) -> int:
+        """处理单个下游依赖行：更新 blocked_by 并在依赖全满足时恢复 READY。返回 1 表示已解锁，否则 0。"""
+        ds_id = ds_row["task_id"]
+        current_blocked_by = json.loads(ds_row["blocked_by"] or "[]")
+        if task_id in current_blocked_by:
+            current_blocked_by.remove(task_id)
+
+        new_blocked_by = json.dumps(current_blocked_by)
+
+        if not current_blocked_by:
+            deps = _parse_depends_on(ds_row["depends_on"])
+            all_deps_met = _check_all_deps_met(conn, deps)
+
+            if all_deps_met and ds_row["status"] == "BLOCKED":
+                conn.execute(
+                    SQL_UPDATE_TASKS_BY_ID_STATUS,
+                    (TaskStatus.READY.value, new_blocked_by, now, ds_id),
+                )
+                self._record_event(
+                    conn,
+                    "state_transition",
+                    {
+                        "from": "BLOCKED",
+                        "to": TaskStatus.READY.value,
+                        "task_id": ds_id,
+                        "note": f"上游任务 {task_id} 已完成/释放，依赖全满足，自动解锁",
+                    },
+                    task_id=ds_id,
+                )
+                return 1
+
+            # blocked_by清空但depends_on未全满足 -> 回填所有未完成/缺失依赖到blocked_by
+            unmet_blockers = _collect_unmet_blockers(conn, deps)
+            if unmet_blockers:
+                refilled_blocked_by = json.dumps(unmet_blockers)
+            else:
+                # 不应到达此处（all_deps_met=False但所有依赖都COMPLETED/VERIFIED/不存在）
+                # 保持blocked_by为空，状态仍BLOCKED（语义：被未知原因阻塞）
+                refilled_blocked_by = new_blocked_by
+            conn.execute(
+                SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
+                (refilled_blocked_by, now, ds_id),
+            )
+        else:
+            conn.execute(
+                SQL_UPDATE_TASKS_BY_ID_BLOCKED_BY_2,
+                (new_blocked_by, now, ds_id),
+            )
+        return 0
 
     # ------------------------------------------------------------------
     # ESCALATION GOVERNANCE（GOV-TASK-004 §2.7）
