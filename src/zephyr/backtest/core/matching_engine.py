@@ -70,6 +70,54 @@ class MatchingError(Exception):
 _SYNTHETIC_DEPTH = Decimal("99999999")
 
 
+def _build_target_orders(
+    engine: MatchingEngine,
+    target_weights: dict[str, float],
+    order_books: dict[str, OrderBookSnapshot],
+    portfolio: Portfolio,
+    total_nav: Decimal,
+    prev_close: Optional[dict[str, Decimal]],
+    tick_mode: bool,
+) -> list[dict]:
+    orders: list[dict] = []
+    for symbol, weight in target_weights.items():
+        if weight <= 0:
+            continue
+
+        ob = order_books.get(symbol)
+        if ob is None or ob.last_price <= 0:
+            continue  # 停牌或无数据
+
+        # 涨跌停检查（Tick 模式跳过，Tick 内已含状态）
+        if not tick_mode and prev_close and engine._is_price_limit(
+            symbol, ob.last_price, prev_close.get(symbol)
+        ):
+            continue
+
+        # 计算目标数量（100股整数倍）
+        target_value = total_nav * Decimal(str(weight))
+        target_qty = (
+            int(target_value / ob.last_price / engine._config.lot_size)
+            * engine._config.lot_size
+        )
+
+        # 当前持仓
+        current_pos = portfolio.get_position(symbol)
+        current_qty = current_pos.quantity if current_pos else Decimal("0")
+
+        # 差额
+        diff = Decimal(target_qty) - current_qty
+        if diff > 0:
+            orders.append(
+                {"side": "BUY", "symbol": symbol, "quantity": diff}
+            )
+        elif diff < 0:
+            orders.append(
+                {"side": "SELL", "symbol": symbol, "quantity": abs(diff)}
+            )
+    return orders
+
+
 class MatchingEngine:
     """回测撮合引擎（v1.1.0 重构：委托 MatchingLogic）
 
@@ -368,42 +416,15 @@ class MatchingEngine:
             raise MatchingError(f"总 NAV 必须 > 0, got {total_nav}")
 
         # 计算目标持仓和差额
-        orders: list[dict] = []
-        for symbol, weight in target_weights.items():
-            if weight <= 0:
-                continue
-
-            ob = order_books.get(symbol)
-            if ob is None or ob.last_price <= 0:
-                continue  # 停牌或无数据
-
-            # 涨跌停检查（Tick 模式跳过，Tick 内已含状态）
-            if not tick_mode and prev_close and self._is_price_limit(
-                symbol, ob.last_price, prev_close.get(symbol)
-            ):
-                continue
-
-            # 计算目标数量（100股整数倍）
-            target_value = total_nav * Decimal(str(weight))
-            target_qty = (
-                int(target_value / ob.last_price / self._config.lot_size)
-                * self._config.lot_size
-            )
-
-            # 当前持仓
-            current_pos = portfolio.get_position(symbol)
-            current_qty = current_pos.quantity if current_pos else Decimal("0")
-
-            # 差额
-            diff = Decimal(target_qty) - current_qty
-            if diff > 0:
-                orders.append(
-                    {"side": "BUY", "symbol": symbol, "quantity": diff}
-                )
-            elif diff < 0:
-                orders.append(
-                    {"side": "SELL", "symbol": symbol, "quantity": abs(diff)}
-                )
+        orders: list[dict] = _build_target_orders(
+            self,
+            target_weights,
+            order_books,
+            portfolio,
+            total_nav,
+            prev_close,
+            tick_mode,
+        )
 
         # 先卖后买（避免现金不足）
         orders.sort(key=lambda o: 0 if o["side"] == "SELL" else 1)
