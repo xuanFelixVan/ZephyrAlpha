@@ -10,6 +10,8 @@
 # [ERROR_CONTRACT] ImportError->skip_module;AttributeError->skip_test
 # [TESTS] test_l09_research_innovation.py
 # [TTL] task_bound
+# [HISTORY] 2026-07-16 ARCH-MIGRATION-CLOSE: 修复 import 路径漂移（zephyr.research → zephyr.backtest）
+#          + 补全 BacktestResult 新增必填字段 idempotency_key/timestamp（迁移后契约变更）。
 
 from __future__ import annotations
 
@@ -19,19 +21,40 @@ import pytest
 
 l09 = pytest.importorskip("zephyr.simulation", reason="l09-research-innovation not importable")
 
-from zephyr.research.backtest_base import (
+from zephyr.backtest.core.engine_base import (
     BacktestEngineBase,
     BacktestResult,
     FactorDiscovery,
 )
 
 
+def _make_result(**overrides) -> BacktestResult:
+    """构造 BacktestResult 测试实例——集中补全必填字段，避免 7 处重复。
+
+    迁移后 BacktestResult 新增 2 个必填字段（idempotency_key/timestamp），
+    旧测试未传导致 TypeError。统一通过此辅助函数构造。
+    """
+    defaults = {
+        "strategy_id": "test_strat",
+        "start_date": "2026-01-01",
+        "end_date": "2026-03-31",
+        "total_return": 0.10,
+        "annual_return": 0.40,
+        "sharpe_ratio": 1.2,
+        "max_drawdown": 0.05,
+        "win_rate": 0.55,
+        "trades_count": 200,
+        "idempotency_key": "test-key-001",
+        "timestamp": datetime(2026, 1, 1),
+    }
+    defaults.update(overrides)
+    return BacktestResult(**defaults)
+
+
 class _ConcreteBacktestEngine(BacktestEngineBase):
     def run(self, signals, prices):
-        return BacktestResult(
+        return _make_result(
             strategy_id="test_strat",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
             total_return=0.12,
             annual_return=0.48,
             sharpe_ratio=1.5,
@@ -43,10 +66,8 @@ class _ConcreteBacktestEngine(BacktestEngineBase):
 
 class _NegativeReturnEngine(BacktestEngineBase):
     def run(self, signals, prices):
-        return BacktestResult(
+        return _make_result(
             strategy_id="bad_strat",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
             total_return=-0.15,
             annual_return=-0.45,
             sharpe_ratio=-0.8,
@@ -58,77 +79,55 @@ class _NegativeReturnEngine(BacktestEngineBase):
 
 class TestBacktestResult:
     def test_creation_required_fields(self):
-        r = BacktestResult(
-            strategy_id="s1",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
-            total_return=0.10,
-            annual_return=0.40,
-            sharpe_ratio=1.2,
-            max_drawdown=0.05,
-            win_rate=0.55,
-            trades_count=200,
-        )
+        r = _make_result(strategy_id="s1", total_return=0.10, sharpe_ratio=1.2)
         assert r.strategy_id == "s1"
         assert r.total_return == 0.10
         assert r.sharpe_ratio == 1.2
 
     def test_frozen(self):
-        r = BacktestResult(
-            strategy_id="s1",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
-            total_return=0.10,
-            annual_return=0.40,
-            sharpe_ratio=1.2,
-            max_drawdown=0.05,
-            win_rate=0.55,
-            trades_count=200,
-        )
+        r = _make_result()
         with pytest.raises(AttributeError):
             r.strategy_id = "other"
 
-    def test_default_timestamp(self):
-        r = BacktestResult(
-            strategy_id="s1",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
-            total_return=0.10,
-            annual_return=0.40,
-            sharpe_ratio=1.2,
-            max_drawdown=0.05,
-            win_rate=0.55,
-            trades_count=200,
-        )
-        assert isinstance(r.timestamp, datetime)
+    def test_timestamp_required(self):
+        """迁移后 timestamp 是必填字段（无默认值）——不传应 TypeError。"""
+        with pytest.raises(TypeError):
+            BacktestResult(
+                strategy_id="s1",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+                total_return=0.10,
+                annual_return=0.40,
+                sharpe_ratio=1.2,
+                max_drawdown=0.05,
+                win_rate=0.55,
+                trades_count=200,
+                idempotency_key="k1",
+            )
+
+    def test_idempotency_key_required(self):
+        """迁移后 idempotency_key 是必填字段——不传应 TypeError。"""
+        with pytest.raises(TypeError):
+            BacktestResult(
+                strategy_id="s1",
+                start_date="2026-01-01",
+                end_date="2026-03-31",
+                total_return=0.10,
+                annual_return=0.40,
+                sharpe_ratio=1.2,
+                max_drawdown=0.05,
+                win_rate=0.55,
+                trades_count=200,
+                timestamp=datetime(2026, 1, 1),
+            )
 
     def test_negative_return(self):
-        r = BacktestResult(
-            strategy_id="s1",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
-            total_return=-0.20,
-            annual_return=-0.60,
-            sharpe_ratio=-1.5,
-            max_drawdown=0.30,
-            win_rate=0.30,
-            trades_count=10,
-        )
+        r = _make_result(total_return=-0.20, annual_return=-0.60, sharpe_ratio=-1.5, max_drawdown=0.30, win_rate=0.30, trades_count=10)
         assert r.total_return < 0
         assert r.sharpe_ratio < 0
 
     def test_zero_trades(self):
-        r = BacktestResult(
-            strategy_id="s1",
-            start_date="2026-01-01",
-            end_date="2026-03-31",
-            total_return=0.0,
-            annual_return=0.0,
-            sharpe_ratio=0.0,
-            max_drawdown=0.0,
-            win_rate=0.0,
-            trades_count=0,
-        )
+        r = _make_result(total_return=0.0, annual_return=0.0, sharpe_ratio=0.0, max_drawdown=0.0, win_rate=0.0, trades_count=0)
         assert r.trades_count == 0
 
 

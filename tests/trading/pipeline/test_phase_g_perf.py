@@ -63,10 +63,10 @@ from zephyr.governance.audit.default_tca_engine import DefaultTCAEngine
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
 from zephyr.risk.risk_manager import RiskLimits
 from zephyr.signal_fundamental.gen.implementations.default_signal_aggregator import DefaultSignalAggregator
-from zephyr.research.backtest_base import (
+from zephyr.backtest.core.engine_base import (
     BacktestResult,
 )
-from zephyr.research.default_backtest_engine import (
+from zephyr.backtest.implementations.vectorized_engine import (
     BacktestConfig,
     DefaultBacktestEngine,
 )
