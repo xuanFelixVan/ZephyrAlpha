@@ -442,6 +442,16 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_constraint_detect_reconciler(self))  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
         self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  #ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
+        # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
+        try:
+            import sys as _sys
+            _backup_dir = str(self.project_root / "scripts" / "backup")
+            if _backup_dir not in _sys.path:
+                _sys.path.insert(0, _backup_dir)
+            from backup_reconciler import make_backup_reconciler
+            self._reconciliation_registry.register(make_backup_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("backup_reconciler not registered: %s", e)
 
     # ------------------------------------------------------------------
     # 公开 API
