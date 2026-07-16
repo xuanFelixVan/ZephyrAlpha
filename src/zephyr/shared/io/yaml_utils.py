@@ -46,6 +46,88 @@ DEFAULT_VOCAB_DIR: Final[Path] = (
 )
 
 
+def _resolve_vocab_path(vocab_file, vocab_dir):
+    """解析 vocabulary YAML 路径：vocab_file 非绝对路径时拼接 vocab_dir/DEFAULT_VOCAB_DIR。"""
+    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
+    p = Path(vocab_file)
+    if not p.is_absolute():
+        p = vdir / p
+    return p
+
+
+def _load_vocab_data(p, strict, missing_msg, non_dict_msg):
+    """加载 vocabulary YAML 并校验顶层 dict 结构。
+
+    strict=True 时 fail-fast（FileNotFoundError/yaml.YAMLError/ValueError）；
+    strict=False 时宽容返回 None（调用方据 None 返回空集合）。
+    """
+    if not p.exists():
+        if strict:
+            raise FileNotFoundError(missing_msg)
+        return None
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        if strict:
+            raise
+        return None
+    if not isinstance(data, dict):
+        if strict:
+            raise ValueError(non_dict_msg)
+        return None
+    return data
+
+
+def _collect_vocab_values(data, fallback_key):
+    """从 vocabulary YAML data 收集合法值集合（value 键，缺则回退 fallback_key）。"""
+    result: set[str] = set()
+    for entry in data.get("values", []) or []:
+        if not isinstance(entry, dict):
+            continue
+        val = entry.get("value")
+        if not val and fallback_key:
+            val = entry.get(fallback_key)
+        if val is not None:
+            result.add(str(val))
+    return result
+
+
+def _collect_vocab_entries(data, fallback_key):
+    """从 vocabulary YAML data 收集 value+definition 列表（缺 definition 回退空串）。"""
+    entries: list[dict] = []
+    for entry in data.get("values", []) or []:
+        if not isinstance(entry, dict):
+            continue
+        val = entry.get("value")
+        if not val and fallback_key:
+            val = entry.get(fallback_key)
+        if val is not None:
+            entries.append({
+                "value": str(val),
+                "definition": str(entry.get("definition", "")),
+            })
+    return entries
+
+
+def _collect_deprecated_map(data, deprecated_key, migrated_to_key):
+    """从 vocabulary YAML data 收集废弃值->迁移目标映射。"""
+    result: dict[str, str | None] = {}
+    for v in data.get(deprecated_key, []) or []:
+        if not isinstance(v, dict):
+            continue
+        val = v.get("value", "")
+        if not val:
+            continue
+        mt = v.get(migrated_to_key)
+        if isinstance(mt, str) and mt and not mt.startswith("N/A"):
+            result[str(val)] = str(mt)
+        elif isinstance(mt, list) and len(mt) == 1 and mt[0] and not str(mt[0]).startswith("N/A"):
+            result[str(val)] = str(mt[0])
+        else:
+            result[str(val)] = None
+    return result
+
+
 def load_vocabulary_values(
     vocab_file: str | Path,
     *,
@@ -82,38 +164,17 @@ def load_vocabulary_values(
         yaml.YAMLError: ``strict=True`` 且 YAML 解析失败
         ValueError: ``strict=True`` 且 YAML 顶层非 dict 结构
     """
-    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
-    p = Path(vocab_file)
-    if not p.is_absolute():
-        p = vdir / p
-    if not p.exists():
-        if strict:
-            raise FileNotFoundError(
-                f"vocabulary YAML 不存在: {p}\n"
-                f"提示：检查文件名拼写（误拼会导致合规检查变空集->DoS漂移）。"
-                f"如需测试隔离/渐进迁移，传 strict=False。"
-            )
+    p = _resolve_vocab_path(vocab_file, vocab_dir)
+    data = _load_vocab_data(
+        p, strict,
+        f"vocabulary YAML 不存在: {p}\n"
+        f"提示：检查文件名拼写（误拼会导致合规检查变空集->DoS漂移）。"
+        f"如需测试隔离/渐进迁移，传 strict=False。",
+        f"vocabulary YAML 顶层非 dict 结构: {p}",
+    )
+    if data is None:
         return set()
-    try:
-        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError:
-        if strict:
-            raise
-        return set()  # R6: strict=False 宽容模式，YAML 格式错误返回空 set
-    if not isinstance(data, dict):
-        if strict:
-            raise ValueError(f"vocabulary YAML 顶层非 dict 结构: {p}")
-        return set()  # R6: strict=False 宽容模式
-    result: set[str] = set()
-    for entry in data.get("values", []) or []:
-        if not isinstance(entry, dict):
-            continue
-        val = entry.get("value")
-        if not val and fallback_key:
-            val = entry.get(fallback_key)
-        if val is not None:
-            result.add(str(val))
-    return result
+    return _collect_vocab_values(data, fallback_key)
 
 
 def load_vocabulary_entries(
@@ -145,40 +206,16 @@ def load_vocabulary_entries(
         yaml.YAMLError: ``strict=True`` 且 YAML 解析失败
         ValueError: ``strict=True`` 且 YAML 顶层非 dict 结构
     """
-    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
-    p = Path(vocab_file)
-    if not p.is_absolute():
-        p = vdir / p
-    if not p.exists():
-        if strict:
-            raise FileNotFoundError(
-                f"vocabulary YAML 不存在: {p}\n"
-                f"提示：检查文件名拼写。如需测试隔离/渐进迁移，传 strict=False。"
-            )
+    p = _resolve_vocab_path(vocab_file, vocab_dir)
+    data = _load_vocab_data(
+        p, strict,
+        f"vocabulary YAML 不存在: {p}\n"
+        f"提示：检查文件名拼写。如需测试隔离/渐进迁移，传 strict=False。",
+        f"vocabulary YAML 顶层非 dict 结构: {p}",
+    )
+    if data is None:
         return []
-    try:
-        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError:
-        if strict:
-            raise
-        return []
-    if not isinstance(data, dict):
-        if strict:
-            raise ValueError(f"vocabulary YAML 顶层非 dict 结构: {p}")
-        return []
-    entries: list[dict] = []
-    for entry in data.get("values", []) or []:
-        if not isinstance(entry, dict):
-            continue
-        val = entry.get("value")
-        if not val and fallback_key:
-            val = entry.get(fallback_key)
-        if val is not None:
-            entries.append({
-                "value": str(val),
-                "definition": str(entry.get("definition", "")),
-            })
-    return entries
+    return _collect_vocab_entries(data, fallback_key)
 
 
 def load_vocabulary_deprecated_map(
@@ -206,28 +243,11 @@ def load_vocabulary_deprecated_map(
     Raises:
         FileNotFoundError: 文件不存在
     """
-    vdir = Path(vocab_dir) if vocab_dir else DEFAULT_VOCAB_DIR
-    p = Path(vocab_file)
-    if not p.is_absolute():
-        p = vdir / p
+    p = _resolve_vocab_path(vocab_file, vocab_dir)
     if not p.exists():
         raise FileNotFoundError(f"vocabulary YAML 不存在: {p}")
     data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
-    result: dict[str, str | None] = {}
-    for v in data.get(deprecated_key, []) or []:
-        if not isinstance(v, dict):
-            continue
-        val = v.get("value", "")
-        if not val:
-            continue
-        mt = v.get(migrated_to_key)
-        if isinstance(mt, str) and mt and not mt.startswith("N/A"):
-            result[str(val)] = str(mt)
-        elif isinstance(mt, list) and len(mt) == 1 and mt[0] and not str(mt[0]).startswith("N/A"):
-            result[str(val)] = str(mt[0])
-        else:
-            result[str(val)] = None  # 多值/N/A -> 需人工判定
-    return result
+    return _collect_deprecated_map(data, deprecated_key, migrated_to_key)
 
 
 def load_decision_tree(
