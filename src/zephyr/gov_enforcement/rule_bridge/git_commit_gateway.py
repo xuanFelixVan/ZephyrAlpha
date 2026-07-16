@@ -603,6 +603,32 @@ class GitCommitGateway:
                         ignored_rels.add(line.strip().lower())
         return [f for f, rel in zip(files, rels) if rel.lower() in ignored_rels]
 
+    def _run_pathspec_git_cmd(
+        self,
+        tracked: list[str],
+        git_args: list[str],
+        error_prefix: str,
+    ) -> str | None:
+        """通过 --pathspec-from-file 执行 git 命令暂存 tracked 文件。
+
+        P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)，
+        大批量 gitignored 文件（如 _backups 1036 个）直接传命令行会超长。
+        返回错误字符串（含 stderr）或 None（成功/空批）。
+        """
+        if not tracked:
+            return None
+        pathspec = self._write_pathspec_file(tracked)
+        try:
+            r = self._run_git(git_args + [f"--pathspec-from-file={pathspec}"])
+        finally:
+            try:
+                os.remove(pathspec)
+            except OSError:
+                pass
+        if r.returncode != 0:
+            return f"{error_prefix}: {r.stderr.strip()}"
+        return None
+
     def _stage_gitignored_tracked(
         self, files: list[str]
     ) -> tuple[bool, str, list[str]]:
@@ -622,22 +648,13 @@ class GitCommitGateway:
                 for f in deleted
             ]
             del_tracked = [f for f, rel in zip(deleted, del_rels) if self._is_git_tracked(rel)]
-            if del_tracked:
-                # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
-                # 大批量 gitignored+deleted 文件（如 _backups 1036 个）直接传命令行会超长
-                del_pathspec = self._write_pathspec_file(del_tracked)
-                try:
-                    r = self._run_git(
-                        ["git", "rm", "--cached", "--ignore-unmatch",
-                         f"--pathspec-from-file={del_pathspec}"]
-                    )
-                finally:
-                    try:
-                        os.remove(del_pathspec)
-                    except OSError:
-                        pass
-                if r.returncode != 0:
-                    return False, f"git rm --cached failed: {r.stderr.strip()}", normal_files
+            err = self._run_pathspec_git_cmd(
+                del_tracked,
+                ["git", "rm", "--cached", "--ignore-unmatch"],
+                "git rm --cached failed",
+            )
+            if err is not None:
+                return False, err, normal_files
         if existing:
             ex_rels = [
                 os.path.relpath(f, str(self.project_root)).replace("\\", "/")
@@ -647,20 +664,13 @@ class GitCommitGateway:
                 f for f, rel in zip(existing, ex_rels)
                 if self._is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
-            if ex_tracked:
-                # P8-fix: 用 --pathspec-from-file 绕过 Windows CLI 长度限制 (WinError 206)
-                ex_pathspec = self._write_pathspec_file(ex_tracked)
-                try:
-                    r = self._run_git(
-                        ["git", "add", "-f", f"--pathspec-from-file={ex_pathspec}"]
-                    )
-                finally:
-                    try:
-                        os.remove(ex_pathspec)
-                    except OSError:
-                        pass
-                if r.returncode != 0:
-                    return False, f"git add -f failed: {r.stderr.strip()}", normal_files
+            err = self._run_pathspec_git_cmd(
+                ex_tracked,
+                ["git", "add", "-f"],
+                "git add -f failed",
+            )
+            if err is not None:
+                return False, err, normal_files
         return True, "", normal_files
 
     # ------------------------------------------------------------------
@@ -961,15 +971,8 @@ class GitCommitGateway:
             except OSError:
                 pass
 
-    def _commit_auto(
-        self, session_id: str, files: list[str], message: str,
-    ) -> CommitResult:
-        """reconciler auto-commit 唯一入口（锁 + DIRECTORY-CONTRACT gate + commit，不触发 reconciler）。阶段3 仅保留 DIRECTORY-CONTRACT gate；禁止 reconciler 裸调 git commit。"""
-        if not files:
-            return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
-        if not session_id:
-            session_id = "unknown"
-
+    def _resolve_auto_commit_files(self, files: list[str]) -> list[str]:
+        """将 files 解析为绝对路径并过滤出存在或已跟踪的文件（_commit_auto 用）。"""
         abs_files = [
             os.path.abspath(f) if os.path.isabs(f) else str(self.project_root / f)
             for f in files
@@ -982,6 +985,44 @@ class GitCommitGateway:
                 rel = os.path.relpath(f, str(self.project_root)).replace("\\", "/")
                 if self._is_git_tracked(rel):
                     existing.append(f)
+        return existing
+
+    def _run_auto_commit_gate(
+        self,
+        gate_name: str,
+        existing: list[str],
+        session_id: str,
+        violation_prefix: str,
+        warning_msg: str,
+        check_kwargs: dict | None = None,
+    ) -> CommitResult | None:
+        """运行 _commit_auto 的单个门禁。
+
+        真源复用：gate_registry.get，不复制门禁逻辑。命中违规返回 CommitResult，
+        通过或未注册返回 None（未注册时记 warning，与原内联 else 分支一致）。
+        """
+        spec = self._gate_registry.get(gate_name)
+        if spec is None:
+            logger.warning(warning_msg, session_id, len(existing))
+            return None
+        passed, detail = spec.check(self, existing, **(check_kwargs or {}))
+        if not passed:
+            return CommitResult(
+                status=CommitStatus.NAMING_VIOLATION,
+                message=f"{violation_prefix}: {detail}",
+            )
+        return None
+
+    def _commit_auto(
+        self, session_id: str, files: list[str], message: str,
+    ) -> CommitResult:
+        """reconciler auto-commit 唯一入口（锁 + DIRECTORY-CONTRACT gate + commit，不触发 reconciler）。阶段3 仅保留 DIRECTORY-CONTRACT gate；禁止 reconciler 裸调 git commit。"""
+        if not files:
+            return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
+        if not session_id:
+            session_id = "unknown"
+
+        existing = self._resolve_auto_commit_files(files)
         if not existing:
             return CommitResult(
                 status=CommitStatus.NOTHING_TO_COMMIT,
@@ -989,55 +1030,36 @@ class GitCommitGateway:
             )
 
         # DIRECTORY-CONTRACT gate 校验（真源复用：gate_registry.get，不复制 DCR 逻辑）
-        dcr_spec = self._gate_registry.get("DIRECTORY-CONTRACT")
-        if dcr_spec is not None:
-            dcr_passed, dcr_detail = dcr_spec.check(self, existing)
-            if not dcr_passed:
-                return CommitResult(
-                    status=CommitStatus.NAMING_VIOLATION,
-                    message=f"目录契约违规（auto-commit）: {dcr_detail}",
-                )
-        else:
-            logger.warning(
-                "_commit_auto: DIRECTORY-CONTRACT gate 未注册，跳过 DCR 校验"
-                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
-                session_id, len(existing),
-            )
+        dcr_result = self._run_auto_commit_gate(
+            "DIRECTORY-CONTRACT", existing, session_id,
+            "目录契约违规（auto-commit）",
+            "_commit_auto: DIRECTORY-CONTRACT gate 未注册，跳过 DCR 校验"
+            "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+        )
+        if dcr_result is not None:
+            return dcr_result
 
         # TTL-METADATA gate (subprocess reuse, same pattern as DCR gate)
-        ttl_spec = self._gate_registry.get("TTL-METADATA")
-        if ttl_spec is not None:
-            ttl_passed, ttl_detail = ttl_spec.check(self, existing)
-            if not ttl_passed:
-                return CommitResult(
-                    status=CommitStatus.NAMING_VIOLATION,
-                    message=f"ttl metadata violation (auto-commit): {ttl_detail}",
-                )
-        else:
-            logger.warning(
-                "_commit_auto: TTL-METADATA gate 未注册，跳过 ttl 校验"
-                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
-                session_id, len(existing),
-            )
+        ttl_result = self._run_auto_commit_gate(
+            "TTL-METADATA", existing, session_id,
+            "ttl metadata violation (auto-commit)",
+            "_commit_auto: TTL-METADATA gate 未注册，跳过 ttl 校验"
+            "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+        )
+        if ttl_result is not None:
+            return ttl_result
 
         # FILE-PLACEMENT-TTL gate（ARCH-049，与 TTL-METADATA 同模式覆盖 _commit_auto 路径）
         # reconciler auto-commit 传 allow_promote=True（reconciler 是受信任自动流程，exempt_subdirs 生成器输出豁免）
-        fpt_spec = self._gate_registry.get("FILE-PLACEMENT-TTL")
-        if fpt_spec is not None:
-            fpt_passed, fpt_detail = fpt_spec.check(
-                self, existing, allow_promote=True,
-            )
-            if not fpt_passed:
-                return CommitResult(
-                    status=CommitStatus.NAMING_VIOLATION,
-                    message=f"file placement ttl violation (auto-commit): {fpt_detail}",
-                )
-        else:
-            logger.warning(
-                "_commit_auto: FILE-PLACEMENT-TTL gate 未注册，跳过文件放置校验"
-                "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
-                session_id, len(existing),
-            )
+        fpt_result = self._run_auto_commit_gate(
+            "FILE-PLACEMENT-TTL", existing, session_id,
+            "file placement ttl violation (auto-commit)",
+            "_commit_auto: FILE-PLACEMENT-TTL gate 未注册，跳过文件放置校验"
+            "（session=%s, files=%d）——检查 __init__ 的 gate 注册",
+            check_kwargs={"allow_promote": True},
+        )
+        if fpt_result is not None:
+            return fpt_result
 
         gw_marker = f"[GW:{session_id}:auto]"
         full_message = f"{message}\n\n{gw_marker}"
