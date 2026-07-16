@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4954 |
-| 生产态模块 | 1735 |
+| 模块总数 | 4959 |
+| 生产态模块 | 1739 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3157 |
+| 原型态模块 | 3158 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 325 | 144 | 1 | 180 | 325/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 329 | 148 | 1 | 180 | 329/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 17 | 0 | 14 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 18 | 3 | 0 | 15 | 18/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 452 | 12 | 2 | 438 | 452/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 453 | 12 | 2 | 439 | 453/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 21 | 0 | 88 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 38 | 0 | 2 | 36 | 38/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |

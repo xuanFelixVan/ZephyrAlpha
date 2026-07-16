@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 LLM防御（D_SECURITY_LLM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 00:08:26
+> 最后更新: 2026-07-17 00:14:00
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -164,9 +164,9 @@ graph TD
         tests_llm_security_test_isolation_py["(原型态 / prototype) test_isolation.py"]
         tests_llm_security_test_l0_supply_chain_py["(原型态 / prototype) test_l0_supply_chain.py"]
     end
+    src_zephyr_security_llm_defense_llm_security_red_team_corpus_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_init_py
     src_zephyr_security_llm_defense_llm_security_payloads_injection_payloads_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     src_zephyr_security_llm_defense_llm_security_payloads_leak_probe_phrases_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
-    src_zephyr_security_llm_defense_llm_security_red_team_corpus_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_init_py
     src_zephyr_security_llm_defense_llm_security_payloads_red_team_payloads_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     src_zephyr_security_llm_defense_llm_security_payloads_tool_call_payloads_yaml -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
@@ -193,9 +193,9 @@ graph TD
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
     D_SECURITY -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
     D_SECURITY -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_layers_init_py
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_patterns_init_py
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_payloads_init_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -243,29 +243,30 @@ graph TD
         tests_llm_security_test_security_secrets_py["(原型态 / prototype) test_security_secrets.py"]
         tests_llm_security_test_security_ssot_guard_py["(原型态 / prototype) test_security_ssot_guard.py"]
     end
+    D_SHARED["(生产态 / production) D_SHARED"]
+    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l2a_process_sandbox_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l2_prompt_protection_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l2_prompt_protection_py -.->|测试依赖 / test_depends| D_SECURITY
-    D_SHARED["(生产态 / production) D_SHARED"]
     tests_llm_security_test_l2_prompt_protection_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_llm_security_test_l1_input_defense_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l3_output_security_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l3_output_security_py -.->|测试依赖 / test_depends| D_SHARED
     tests_llm_security_test_l3_output_security_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l4_agent_security_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_llm_security_test_l4_agent_security_py -.->|测试依赖 / test_depends| D_SHARED
     tests_llm_security_test_l4_agent_security_py -.->|测试依赖 / test_depends| D_SECURITY
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_llm_security_test_llm_cost_accounting_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_llm_security_test_l7_red_team_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_llm_security_test_l5_resource_protection_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_llm_security_test_l1_input_defense_py,tests_llm_security_test_l2_prompt_protection_py,tests_llm_security_test_l2a_process_sandbox_py,tests_llm_security_test_l3_output_security_py,tests_llm_security_test_l4_agent_security_py,tests_llm_security_test_l5_resource_protection_py,tests_llm_security_test_l6_observability_py,tests_llm_security_test_l7_red_team_py,tests_llm_security_test_l7_validation_py,tests_llm_security_test_l8_multi_agent_py,tests_llm_security_test_llm_cost_accounting_py,tests_llm_security_test_llm_cost_router_py,tests_llm_security_test_llm_fix_adapter_py,tests_llm_security_test_llm_gateway_py,tests_llm_security_test_llm_provider_integrity_py,tests_llm_security_test_llm_quality_regression_py,tests_llm_security_test_llm_security_py,tests_llm_security_test_metric_prompt_scanner_py,tests_llm_security_test_models_root_py,tests_llm_security_test_orphan_detector_py,tests_llm_security_test_process_sandbox_llm_security_py,tests_llm_security_test_remote_attestation_py,tests_llm_security_test_runtime_interceptor_py,tests_llm_security_test_scaffold_registrar_py,tests_llm_security_test_secret_rotation_py,tests_llm_security_test_secrets_py,tests_llm_security_test_security_py,tests_llm_security_test_security_capability_py,tests_llm_security_test_security_secrets_py,tests_llm_security_test_security_ssot_guard_py design
-    class D_SECURITY,D_SHARED external_prod
+    class D_SHARED,D_SECURITY,D_FEEDBACK_LOOP external_prod
 ```
 
 #### 第 3 页 / 共 3 页
