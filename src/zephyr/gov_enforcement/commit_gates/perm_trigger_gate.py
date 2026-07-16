@@ -97,6 +97,21 @@ def _has_permanent_ttl(content: str) -> bool:
     return "[ttl] permanent" in head
 
 
+def _is_time_trigger_call(node: ast.AST) -> bool:
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if isinstance(func, ast.Attribute) and func.attr == "sleep":
+        return True
+    if isinstance(func, ast.Attribute):
+        root = func
+        while isinstance(root, ast.Attribute):
+            root = root.value
+        if isinstance(root, ast.Name) and root.id == "schedule":
+            return True
+    return False
+
+
 def _detect_time_trigger(tree: ast.AST) -> bool:
     """AST 中是否存在时间触发模式。
 
@@ -111,18 +126,8 @@ def _detect_time_trigger(tree: ast.AST) -> bool:
         if isinstance(node, ast.While) and isinstance(node.test, ast.Constant) and node.test.value is True:
             return True
         # time.sleep(...) / xxx.sleep(...)
-        if isinstance(node, ast.Call):
-            func = node.func
-            if isinstance(func, ast.Attribute) and func.attr == "sleep":
-                return True
-            # schedule.run_pending() / schedule.every() 等任何 schedule.xxx 调用
-            if isinstance(func, ast.Attribute):
-                # 追溯到 schedule 标识符
-                root = func
-                while isinstance(root, ast.Attribute):
-                    root = root.value
-                if isinstance(root, ast.Name) and root.id == "schedule":
-                    return True
+        if _is_time_trigger_call(node):
+            return True
         # schedule.xxx 属性访问（非调用）
         if isinstance(node, ast.Attribute):
             if isinstance(node.value, ast.Name) and node.value.id == "schedule":
