@@ -4379,6 +4379,27 @@ Phase 3（治理层收敛，治本存量）       ← 依赖Phase 2完成 + 人�
 - 5.104 ABC抽象方法完整性（33项）
 - 5.2-5.30 初轮核心维度（永久系统触发 / 新AI可发现性 / DB全景图 / 文档引用断裂 / 三方对齐等）
 
+#### 6.4.1 仪表盘驱动修复（Phase 0→Phase 2 闭环，2026-07-17 启动）
+
+Phase 0 仪表盘（§6.2）落地后，Phase 2 首次获得自动化违规清单，启动"仪表盘检测→治本修复→防复发约束"闭环。
+
+**首项修复：M11 PG域引用一致性（165→0）**
+- 病根：`decision_layers.domain_id` 165 条空字符串脏数据（历史 schema default='' 残留）
+- 治本修复：`UPDATE decision_layers SET domain_id = NULL WHERE domain_id = ''`（空字符串→NULL，NULL 是"无域"的正确标记）
+- 防复发：`ALTER TABLE decision_layers ADD CONSTRAINT chk_decision_layers_domain_id_not_empty CHECK (domain_id IS NULL OR domain_id <> '')`——DB 级约束，未来 INSERT/UPDATE 无法再写入空字符串
+- 验证：仪表盘 M11 指标从 165→0，CHECK 约束已就位
+- SSoT 合规：架构数据真源是 PostgreSQL DB，直接写 DB（非 YAML），符合 TRAE-062
+
+**后续仪表盘驱动修复队列**（按 count 升序，治本优先）：
+| 指标 | 当前值 | 治本路径 | 防复发机制 |
+|------|--------|----------|------------|
+| M01 词表硬编码 | 7 | SSoT 函数替换 | check_vocab_hardcode.py 已是门禁 |
+| M04 GATE未登记capability | 16 | 批量登记到 capability registry | M04 指标本身 |
+| M10 时间触发残留 | 25 | 逐条审查+重构 | M10 指标 + PERM-TRIGGER gate |
+| M03 重复簇函数 | 516 | Extract Method 重构 | M03 指标 |
+| M07 死代码 | 988 | 审查+清理（含 false positive） | M07 指标 + ORPHAN-MODULE gate |
+| M02 manual-only永久脚本 | 308 | 逐条评估触发方式 | M02 指标 + PERM-TRIGGER gate |
+
 ### 6.5 Phase 3：治理层收敛（治本存量，未开始）
 
 **状态**：❌ 未开始
