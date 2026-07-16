@@ -160,10 +160,26 @@ class TextToFindingAdapter:
         return findings
 
     def _parse_line(self, line: str) -> ParsedLine | None:
+        if self._is_skip_line(line):
+            return None
+
+        result = self._match_tag_patterns(line)
+        if result is not None:
+            return result
+
+        result = self._match_failure_patterns(line)
+        if result is not None:
+            return result
+
+        return self._match_structural_patterns(line)
+
+    def _is_skip_line(self, line: str) -> bool:
         for skip_re in self._SKIP_PATTERNS:
             if skip_re.match(line):
-                return None
+                return True
+        return False
 
+    def _match_tag_patterns(self, line: str) -> ParsedLine | None:
         m = self._SEVERITY_TAG_RE.match(line)
         if m:
             return self._build_parsed(m.group(1), m.group(2), line)
@@ -188,6 +204,9 @@ class TextToFindingAdapter:
         if m:
             return self._build_parsed(m.group(1), m.group(2), line)
 
+        return None
+
+    def _match_failure_patterns(self, line: str) -> ParsedLine | None:
         m = self._FAILED_EXCEPTION_RE.match(line)
         if m:
             keyword = m.group(1).upper()
@@ -203,6 +222,9 @@ class TextToFindingAdapter:
             priority = self._COUNT_SEVERITY_MAP.get(count_type, "LOW")
             return self._build_parsed(priority, line.strip(), line)
 
+        return None
+
+    def _match_structural_patterns(self, line: str) -> ParsedLine | None:
         m = self._FILE_LINE_RE.match(line)
         if m:
             return self._build_parsed(
