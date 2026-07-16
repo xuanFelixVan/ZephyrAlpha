@@ -37,6 +37,79 @@ from datetime import UTC, datetime
 from typing import Any
 
 
+def _build_dependency_graph(
+    skills: list[str],
+    deps: dict[str, list[str]],
+) -> tuple[dict[str, list[str]], dict[str, int]]:
+    adj: dict[str, list[str]] = defaultdict(list)
+    indegree: dict[str, int] = defaultdict(int)
+
+    for sid in skills:
+        indegree[sid] = indegree.get(sid, 0)
+
+    for sid, prereqs in deps.items():
+        for p in prereqs:
+            adj[p].append(sid)
+            indegree[sid] = indegree.get(sid, 0) + 1
+
+    return adj, indegree
+
+
+def _topological_sort(
+    skills: list[str],
+    adj: dict[str, list[str]],
+    indegree: dict[str, int],
+) -> list[str]:
+    topo: list[str] = []
+    queue = [s for s in skills if indegree.get(s, 0) == 0]
+
+    while queue:
+        node = queue.pop(0)
+        topo.append(node)
+        for neighbor in adj.get(node, []):
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+
+    return topo
+
+
+def _detect_cycle(
+    topo: list[str],
+    skills: list[str],
+    indegree: dict[str, int],
+) -> list[str] | None:
+    if len(topo) != len(skills):
+        return [s for s in skills if indegree.get(s, 0) > 0]
+    return None
+
+
+def _compute_parallel_levels(
+    skills: list[str],
+    deps: dict[str, list[str]],
+    adj: dict[str, list[str]],
+    parallel_groups: list[list[str]] | None,
+) -> list[list[str]]:
+    if parallel_groups:
+        return parallel_groups
+
+    levels: list[list[str]] = []
+    indegree_level = defaultdict(int)
+    for sid, prereqs in deps.items():
+        indegree_level[sid] = max(0, len(prereqs))
+    while skills:
+        level = [s for s in skills if indegree_level.get(s, 0) == 0]
+        if not level:
+            break
+        levels.append(level)
+        for s in level:
+            skills.remove(s)
+            for neighbor in adj.get(s, []):
+                indegree_level[neighbor] -= 1
+
+    return levels
+
+
 class SkillWorkflow:
     """多 Skill 工作流编排器"""
 
@@ -53,30 +126,11 @@ class SkillWorkflow:
     ) -> dict[str, Any]:
         deps = dependencies or {}
 
-        adj: dict[str, list[str]] = defaultdict(list)
-        indegree: dict[str, int] = defaultdict(int)
+        adj, indegree = _build_dependency_graph(skills, deps)
+        topo = _topological_sort(skills, adj, indegree)
 
-        for sid in skills:
-            indegree[sid] = indegree.get(sid, 0)
-
-        for sid, prereqs in deps.items():
-            for p in prereqs:
-                adj[p].append(sid)
-                indegree[sid] = indegree.get(sid, 0) + 1
-
-        topo: list[str] = []
-        queue = [s for s in skills if indegree.get(s, 0) == 0]
-
-        while queue:
-            node = queue.pop(0)
-            topo.append(node)
-            for neighbor in adj.get(node, []):
-                indegree[neighbor] -= 1
-                if indegree[neighbor] == 0:
-                    queue.append(neighbor)
-
-        if len(topo) != len(skills):
-            cycle = [s for s in skills if indegree.get(s, 0) > 0]
+        cycle = _detect_cycle(topo, skills, indegree)
+        if cycle is not None:
             return {
                 "workflow_id": workflow_id,
                 "status": "invalid",
@@ -84,22 +138,7 @@ class SkillWorkflow:
                 "cycle_skills": cycle,
             }
 
-        levels: list[list[str]] = []
-        if parallel_groups:
-            levels = parallel_groups
-        else:
-            indegree_level = defaultdict(int)
-            for sid, prereqs in deps.items():
-                indegree_level[sid] = max(0, len(prereqs))
-            while skills:
-                level = [s for s in skills if indegree_level.get(s, 0) == 0]
-                if not level:
-                    break
-                levels.append(level)
-                for s in level:
-                    skills.remove(s)
-                    for neighbor in adj.get(s, []):
-                        indegree_level[neighbor] -= 1
+        levels = _compute_parallel_levels(skills, deps, adj, parallel_groups)
 
         self._workflows[workflow_id] = {
             "workflow_id": workflow_id,
