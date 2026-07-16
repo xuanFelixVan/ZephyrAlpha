@@ -83,6 +83,15 @@ def safe_int(v) -> int | None:
         return None
 
 
+def _build_valuation_col_map(df, norm_date_fn, start_str, end_str):
+    col_map = {}
+    for _, row in df.iterrows():
+        d = norm_date_fn(row.get("date"))
+        if d and start_str <= d <= end_str:
+            col_map[d] = safe_float(row.get("value"))
+    return col_map
+
+
 # CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
 SQL_STOCK_CODE_FROM_LIST = (
     "SELECT splitByChar('.', ts_code)[1] AS code "
@@ -424,11 +433,7 @@ class AKShareProvider(DataSourceBase):
                     continue
                 if df is None or len(df) == 0:
                     continue
-                col_map = {}
-                for _, row in df.iterrows():
-                    d = self._norm_date_str(row.get("date"))
-                    if d and start_str <= d <= end_str:
-                        col_map[d] = safe_float(row.get("value"))
+                col_map = _build_valuation_col_map(df, self._norm_date_str, start_str, end_str)
                 if col_map:
                     val_data[col_name] = col_map
 
