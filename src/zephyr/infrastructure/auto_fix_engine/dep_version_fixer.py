@@ -38,6 +38,52 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 
+def _collect_pkg_versions(lines, is_higher):
+    pkg_versions: dict[str, str] = {}
+    for line in lines:
+        match = re.match(r"^([A-Za-z0-9_\-]+)\s*([><=!~]+)\s*([0-9][0-9A-Za-z.\-]*)", line.strip())
+        if match:
+            pkg, _, ver = match.groups()
+            existing = pkg_versions.get(pkg.lower())
+            if existing is None or is_higher(ver, existing):
+                pkg_versions[pkg.lower()] = ver
+    return pkg_versions
+
+
+def _rewrite_version_lines(lines, pkg_versions, is_higher):
+    new_lines: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            new_lines.append(line)
+            continue
+        match = re.match(r"^([A-Za-z0-9_\-]+)\s*([><=!~]+)\s*([0-9][0-9A-Za-z.\-]*)", stripped)
+        if match:
+            pkg, op, ver = match.groups()
+            target_ver = pkg_versions.get(pkg.lower(), ver)
+            if ver != target_ver and is_higher(target_ver, ver):
+                new_line = line.replace(f"{op}{ver}", f"=={target_ver}")
+                new_lines.append(new_line)
+                continue
+        new_lines.append(line)
+    return new_lines
+
+
+def _write_file_atomic(target, content):
+    tmp_path = f"{target}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        os.replace(tmp_path, target)
+        return True
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        return False
+
+
 class DepVersionFixer(BaseFixer):
 
     def __init__(self) -> None:
@@ -119,45 +165,15 @@ class DepVersionFixer(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             original = content
-            pkg_versions: dict[str, str] = {}
             lines = content.splitlines()
-            for line in lines:
-                match = re.match(r"^([A-Za-z0-9_\-]+)\s*([><=!~]+)\s*([0-9][0-9A-Za-z.\-]*)", line.strip())
-                if match:
-                    pkg, _, ver = match.groups()
-                    existing = pkg_versions.get(pkg.lower())
-                    if existing is None or self._is_higher(ver, existing):
-                        pkg_versions[pkg.lower()] = ver
-            new_lines: list[str] = []
-            for line in lines:
-                stripped = line.strip()
-                if not stripped or stripped.startswith("#"):
-                    new_lines.append(line)
-                    continue
-                match = re.match(r"^([A-Za-z0-9_\-]+)\s*([><=!~]+)\s*([0-9][0-9A-Za-z.\-]*)", stripped)
-                if match:
-                    pkg, op, ver = match.groups()
-                    target_ver = pkg_versions.get(pkg.lower(), ver)
-                    if ver != target_ver and self._is_higher(target_ver, ver):
-                        new_line = line.replace(f"{op}{ver}", f"=={target_ver}")
-                        new_lines.append(new_line)
-                        continue
-                new_lines.append(line)
+            pkg_versions = _collect_pkg_versions(lines, self._is_higher)
+            new_lines = _rewrite_version_lines(lines, pkg_versions, self._is_higher)
             content = "\n".join(new_lines)
             if content != original:
                 action.before = original
                 action.after = content
                 if not dry_run:
-                    tmp_path = f"{target}.{os.getpid()}.tmp"
-                    try:
-                        with open(tmp_path, "w", encoding="utf-8") as f:
-                            f.write(content)
-                        os.replace(tmp_path, target)
-                    except PermissionError:
-                        try:
-                            os.remove(tmp_path)
-                        except OSError:
-                            pass
+                    if not _write_file_atomic(target, content):
                         action.status = FixStatus.FAILED
                         return action
                 action.status = FixStatus.COMPLETED
