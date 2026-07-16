@@ -18,6 +18,7 @@
 - TestTestExempt: tests/ 下文件豁免 → 通过
 - TestIncrementalOnly: HEAD 已有引用 → 通过（增量检测不阻断历史）
 - TestGateSpecFields: gate_id / priority 字段正确
+- TestMultiSegmentRef: 多段式域前缀（#ARCH-GOV-SHIM-001 等）检测（2026-07-17 治本 ARCH-GOV-SHIM-001 漏检）
 """
 from __future__ import annotations
 
@@ -31,7 +32,7 @@ from zephyr.gov_enforcement.commit_gates.arch_reference_gate import (
 )
 
 
-# 测试用 registry YAML：含 #ARCH-008 和 #ARCH-019，不含 #ARCH-999
+# 测试用 registry YAML：含 #ARCH-008 / #ARCH-019 / #ARCH-GOV-SHIM-001，不含 #ARCH-999
 _REGISTRY_YAML = """\
 module_id: REG-ARCH-ISSUE-001
 entries:
@@ -40,6 +41,9 @@ entries:
     status: open
   - issue_id: '#ARCH-019'
     title: test issue 019
+    status: decided
+  - issue_id: '#ARCH-GOV-SHIM-001'
+    title: test multi-segment issue
     status: decided
 """
 
@@ -166,3 +170,79 @@ class TestGateSpecFields:
     def test_priority(self):
         gate = make_arch_reference_gate()
         assert gate.priority == 75
+
+
+class TestMultiSegmentRef:
+    """多段式域前缀（#ARCH-GOV-SHIM-001 等）检测。
+
+    治本 ARCH-GOV-SHIM-001 漏检（2026-07-17）：旧正则
+    ``#ARCH-([A-Z]+-\\d+|\\d+)`` 只匹配两段式（#ARCH-CH-007）和纯数字（#ARCH-008），
+    三段式 #ARCH-GOV-SHIM-001 漏检导致未登记编号可绕过门禁。
+    扩展为 ``#ARCH-([A-Z]+(?:-[A-Z]+)*-\\d+|\\d+)`` 支持任意段数域前缀。
+    """
+
+    def test_unregistered_multi_segment_blocked(self, tmp_path):
+        """新增未登记三段式 #ARCH-GOV-SHIM-999 引用 → 阻断（核心治本点）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-GOV-SHIM-999 for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "ARCH_REFERENCE_VIOLATION" in detail
+        assert "GOV-SHIM-999" in detail
+
+    def test_registered_multi_segment_passes(self, tmp_path):
+        """已登记三段式 #ARCH-GOV-SHIM-001 引用 → 通过。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-GOV-SHIM-001 for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed
+
+    def test_four_segment_supported(self, tmp_path):
+        """四段式 #ARCH-A-B-C-001 未登记 → 阻断（验证任意段数支持）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-A-B-C-001 for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "A-B-C-001" in detail
+
+    def test_two_segment_still_works(self, tmp_path):
+        """两段式 #ARCH-CH-999 未登记 → 阻断（验证向后兼容）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-CH-999 for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "CH-999" in detail
+
+    def test_pure_number_still_works(self, tmp_path):
+        """纯数字 #ARCH-999 未登记 → 阻断（验证纯数字向后兼容）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        target.write_text("# see #ARCH-999 for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert not passed
+        assert "999" in detail
+
+    def test_no_digit_suffix_not_matched(self, tmp_path):
+        """无数字后缀的 #ARCH-GOV-SHIM 不被正则匹配 → 通过（正则要求尾部数字）。"""
+        _write_registry(tmp_path)
+        gw = _make_gateway(tmp_path)
+        gate = make_arch_reference_gate()
+        target = tmp_path / "module.py"
+        # #ARCH-GOV-SHIM 无尾部数字，正则不匹配，视为无引用 → 通过
+        target.write_text("# see #ARCH-GOV-SHIM for details\n", encoding="utf-8")
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed
