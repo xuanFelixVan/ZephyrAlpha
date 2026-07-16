@@ -10,7 +10,7 @@ ttl: permanent
 
 # 数据流图（dataflowgraph）索引
 
-> 生成时间: 2026-07-17T03:02:57
+> 生成时间: 2026-07-17T03:03:59
 > 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）
 > 数据库: depgraph (PostgreSQL)
 
