@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-16T18:40:22Z'
+generated_at: '2026-07-16T18:56:00Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 159
@@ -1348,7 +1348,7 @@ files:
   title: Blueprint Construction Template
   doc_type: template
   status: draft
-  version: 2.0.0
+  version: 2.1.0
   rule_form: structural
   scope: global
   stability: evolving
@@ -1573,7 +1573,7 @@ files:
   title: 架构议题注册表
   doc_type: register
   status: active
-  version: 1.3.3
+  version: 1.3.4
   rule_form: ''
   scope: ''
   stability: ''
