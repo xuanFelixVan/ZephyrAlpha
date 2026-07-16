@@ -347,7 +347,7 @@ body: |
 
     - cross_layer_contracts.yaml（v3.0——31 条契约完整定义）
 
-    - session-logs/index.yaml（了解完整施工历史）
+    - session_logs/index.yaml（了解完整施工历史）
 
   - **注意事项**：
 

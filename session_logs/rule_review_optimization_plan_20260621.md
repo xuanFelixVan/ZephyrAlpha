@@ -1,3 +1,8 @@
+---
+doc_type: audit_report
+ttl: permanent
+---
+
 # 规则文档审查优化方案
 
 > **方案日期**: 2026-06-21

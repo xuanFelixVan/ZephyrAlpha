@@ -127,7 +127,7 @@ body: |
 
   | 编辑 | src/zephyr/l10-compliance/__init__.py |
 
-  | 编辑 | session-logs/index.yaml |
+  | 编辑 | session_logs/index.yaml |
 
 
 

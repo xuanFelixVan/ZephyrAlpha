@@ -1,4 +1,6 @@
 ---
+doc_type: audit_report
+ttl: permanent
 session_id: "session-20260505-016"
 date: "2026-05-05"
 agent: "DeepSeek-V4-Pro"
@@ -7,15 +9,15 @@ status: completed
 
 summary: |
   建成 GATE-BS（盲点现实对账闸门），自动检测 "已施工但忘改状态" 的假 open 盲点。
-  并修正 session-logs/index.yaml 中 2 个遗留假 open。
+  并修正 session_logs/index.yaml 中 2 个遗留假 open。
 
 decisions:
   - decision_id: "DEC-016-001"
     type: governance
     subject: "新建 GATE-BS 盲点现实对账闸门"
     rationale: |
-      病根：session-logs/index.yaml 的盲点状态纯手动维护，施工完成后 agent 不会
-      自动回头改状态。架构模型（architecture-model/index.yaml）和 session-logs/index.yaml
+      病根：session_logs/index.yaml 的盲点状态纯手动维护，施工完成后 agent 不会
+      自动回头改状态。架构模型（architecture-model/index.yaml）和 session_logs/index.yaml
       是两套独立维护的索引，缺一个交叉对账机制。
     action: |
       1. 创建 validate_blind_spot_status.py（scripts/governance/d5_architecture/）
@@ -32,7 +34,7 @@ files_created:
     lines: 233
 
 files_modified:
-  - path: "session-logs/index.yaml"
+  - path: "session_logs/index.yaml"
     changes:
       - "B-SHADOW: open→resolved (L05/L06 文件已存在)"
       - "BLIND-L04-MISSING-VAR: open→resolved (VaR/CVaR 已实现)"

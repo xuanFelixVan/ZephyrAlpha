@@ -21,6 +21,8 @@
 # =====
 # index_version: 1.0  — 初始建立，覆盖 2026-05-04 的五轮架构审计 session
 
+doc_type: index
+ttl: permanent
 index_version: '1.4'
 created: '2026-05-04'
 last_updated: '2026-07-05'

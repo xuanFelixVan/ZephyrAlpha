@@ -93,7 +93,7 @@ body: |
 
   | 编辑 | architecture-model/layers/l13_experimentation.yaml |
 
-  | 编辑 | session-logs/index.yaml |
+  | 编辑 | session_logs/index.yaml |
 
 
 
@@ -175,7 +175,7 @@ body: |
 
 
 
-  约 90k tokens，读取了全部 14 层的 __init__.py + 14 层 YAML + 骨架源码 + session-logs/index.yaml。
+  约 90k tokens，读取了全部 14 层的 __init__.py + 14 层 YAML + 骨架源码 + session_logs/index.yaml。
 
 
 
@@ -195,7 +195,7 @@ body: |
 
     - gates/_registry.yaml（13/13 active 门禁状态）
 
-    - session-logs/index.yaml（Phase A + B 完成 → Phase C）
+    - session_logs/index.yaml（Phase A + B 完成 → Phase C）
 
   - **注意事项**：
 

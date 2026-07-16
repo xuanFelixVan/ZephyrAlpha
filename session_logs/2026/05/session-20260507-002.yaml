@@ -1,4 +1,6 @@
 ---
+doc_type: audit_report
+ttl: permanent
 session_id: session-20260507-002
 dialogue_number: "03"
 start_time: "2026-05-07T00:30:00+08:00"
