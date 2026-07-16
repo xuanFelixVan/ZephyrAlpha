@@ -129,6 +129,52 @@ class SkillsBenchRunner:
         }
 
 
+def _run_checks(
+    checks: list[str],
+    l1: dict[str, Any],
+    l2: str,
+    tokens: int,
+) -> tuple[list[dict[str, Any]], int]:
+    results: list[dict[str, Any]] = []
+    passed_count = 0
+    for check in checks:
+        if check == "metadata_completeness":
+            ok = bool(l1.get("skill_id")) and bool(l1.get("name"))
+            results.append({"check": check, "passed": ok, "detail": str(l1.get("name", "?"))})
+            if ok:
+                passed_count += 1
+
+        elif check == "body_non_empty":
+            ok = len(l2) > 10
+            results.append({"check": check, "passed": ok, "detail": f"{len(l2)} chars"})
+            if ok:
+                passed_count += 1
+
+        elif check == "token_budget_compliance":
+            ok = tokens <= 500
+            results.append({"check": check, "passed": ok, "detail": f"{tokens}/500 tokens"})
+            if ok:
+                passed_count += 1
+
+        elif check == "tool_allowlist_present":
+            tools = l1.get("allowed_tools", [])
+            ok = len(tools) > 0
+            results.append({"check": check, "passed": ok, "detail": f"{len(tools)} tools"})
+            if ok:
+                passed_count += 1
+
+        elif check == "frontmatter_valid":
+            ok = bool(l1.get("skill_id"))
+            results.append({"check": check, "passed": ok})
+            if ok:
+                passed_count += 1
+
+        else:
+            results.append({"check": check, "passed": True, "detail": "auto_pass"})
+            passed_count += 1
+    return results, passed_count
+
+
 class SkillEfficacyCalibrator:
     """Skill 效能实证校准器"""
 
@@ -149,8 +195,6 @@ class SkillEfficacyCalibrator:
             "frontmatter_valid",
         ]
 
-        results: list[dict[str, Any]] = []
-        passed_count = 0
         total_latency_ms = 0.0
 
         try:
@@ -168,41 +212,7 @@ class SkillEfficacyCalibrator:
             load_latency = (t1 - t0).total_seconds() * 1000
             total_latency_ms += load_latency
 
-            for check in checks:
-                if check == "metadata_completeness":
-                    ok = bool(l1.get("skill_id")) and bool(l1.get("name"))
-                    results.append({"check": check, "passed": ok, "detail": str(l1.get("name", "?"))})
-                    if ok:
-                        passed_count += 1
-
-                elif check == "body_non_empty":
-                    ok = len(l2) > 10
-                    results.append({"check": check, "passed": ok, "detail": f"{len(l2)} chars"})
-                    if ok:
-                        passed_count += 1
-
-                elif check == "token_budget_compliance":
-                    ok = tokens <= 500
-                    results.append({"check": check, "passed": ok, "detail": f"{tokens}/500 tokens"})
-                    if ok:
-                        passed_count += 1
-
-                elif check == "tool_allowlist_present":
-                    tools = l1.get("allowed_tools", [])
-                    ok = len(tools) > 0
-                    results.append({"check": check, "passed": ok, "detail": f"{len(tools)} tools"})
-                    if ok:
-                        passed_count += 1
-
-                elif check == "frontmatter_valid":
-                    ok = bool(l1.get("skill_id"))
-                    results.append({"check": check, "passed": ok})
-                    if ok:
-                        passed_count += 1
-
-                else:
-                    results.append({"check": check, "passed": True, "detail": "auto_pass"})
-                    passed_count += 1
+            results, passed_count = _run_checks(checks, l1, l2, tokens)
 
             accuracy = (passed_count / len(checks)) * 100.0 if checks else 100.0
             score = round(accuracy, 1)
