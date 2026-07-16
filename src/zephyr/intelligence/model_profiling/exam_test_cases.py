@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] TestCaseError
 # [TESTS] tests/test_exam_test_cases.py
-# [A_module] module_id=MOD-RSC_exam_test_cases | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_module] module_id=MOD-INF-034-exam_test_cases | layer=module | stability=stable | safety=L | ai_autonomy=human_gated
 # [TTL] permanent
 
 """

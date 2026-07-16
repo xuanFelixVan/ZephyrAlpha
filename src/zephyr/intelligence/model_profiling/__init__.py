@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-RSC_model_profiling | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-034 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling
 # [INVARIANTS] 模型能力评测;能力护照;红蓝对抗评测

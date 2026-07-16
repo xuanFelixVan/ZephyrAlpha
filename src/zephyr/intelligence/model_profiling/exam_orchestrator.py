@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] ExamError;InferenceError
 # [TESTS] tests/test_model_profiler/
-# [A_module] module_id=MOD-RSC_exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-034-exam_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

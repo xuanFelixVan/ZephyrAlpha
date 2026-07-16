@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-RSC_experiment_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-036-experiment_tracker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.experiment_tracker
 # [INVARIANTS] pending_review

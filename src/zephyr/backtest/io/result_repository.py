@@ -46,6 +46,7 @@ from zephyr.backtest.io.backtest_result_sink import (
     DrawdownPoint,
     BenchmarkPoint,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.utils.time_utils import now_utc
 
 
@@ -89,8 +90,8 @@ class BacktestRunArtifact:
 
 
 def _default_storage_path() -> Path:
-    """默认存储路径: data/backtest_artifacts/"""
-    return Path("data") / "backtest_artifacts"
+    """默认存储路径: REPO_ROOT/data/backtest_artifacts/ (绝对路径, SSoT: zephyr.shared.io.paths)"""
+    return REPO_ROOT / "data" / "backtest_artifacts"
 
 
 def _artifact_to_dict(artifact: BacktestRunArtifact) -> dict[str, Any]:
