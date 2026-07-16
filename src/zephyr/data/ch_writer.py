@@ -67,6 +67,7 @@ _DEFAULT_TIMEOUT = 600
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
 SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
+SQL_INSERT_TSV = "INSERT INTO {table} {cols_clause} SETTINGS max_partitions_per_insert_block=0 FORMAT TSV"
 
 # clickhouse-driver TCP 客户端单例
 _ch_client = None
@@ -480,7 +481,7 @@ def write_tsv_outcome(
         log.warning("write_tsv(%s): 空数据，跳过", table)
         return WriteOutcome(WriteDisposition.NOT_DURABLE, "empty payload")
     cols_clause = columns if columns else _get_insert_columns(table)
-    sql = f"INSERT INTO {table} {cols_clause} FORMAT TSV"
+    sql = SQL_INSERT_TSV.format(table=table, cols_clause=cols_clause)
 
     # 策略1: HTTP API（主路径）
     if _http_insert(sql, tsv_bytes, timeout=timeout):
