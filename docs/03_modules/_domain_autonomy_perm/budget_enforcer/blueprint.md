@@ -14,6 +14,8 @@ created_by: human_plus_agent
 date: 2026-05-05
 valid_from: 2026-05-05
 ttl: permanent
+last_updated: "2026-07-16"
+generation: 1
 construction_progress: partially_implemented
 belongs_to: MOD-MASTER_BLUEPRINT
 summary: ZephyrAlpha Token/Cost/Time 三维预算强制执行蓝图 v0.7.0——终极取证补丁。前6轮补齐68项功能性盲点，本轮补充3个结构面缺陷：①信任根——AI构建的Budget Enforcer谁来审计？引入Runtime Trust Rings（Ring 0-3）+ Tamper-Evident Audit Trail（append-only hash chain）+ Budget Policy Signing；②抗对抗——前6轮假设agents是合作的，Forcepoint X-Labs 2026披露10种IPI攻击载荷可在<300ms绕过guardrails。引入IPI-Aware Budget Defense + Cold Start Anti-Abuse + Adversarial Testing Mandate；③故障模式——Budget Enforcer崩溃时fail-open还是fail-closed？引入Formal Fail-Mode Specification + Bootstrapping Calibration Phase（Day 0→30渐进收紧）。对标补充：Forcepoint X-Labs IPI十大攻击载荷 (2026.4) + Oktsec Kill Chain (2026.3) + Okta Agent Bypass研究 (2026.5) + Microsoft Agent Governance Toolkit Runtime Rings + Gravitee AI Agent Security 2026。v0.3.0 20+v0.4.0 23+v0.5.0 13+v0.6.0 12+v0.7.0 10=78项盲点全量补齐。这并不是增加更多功能——而是补上'一个AI构建的系统如何可信地约束AI'这个根本性问题。

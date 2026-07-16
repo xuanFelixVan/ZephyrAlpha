@@ -1,5 +1,5 @@
 registry:
-  version: 2.7.9
+  version: 2.7.10
   created: '2026-05-02'
   last_updated: '2026-07-16'
   total_blueprints: 60
@@ -436,8 +436,8 @@ blueprints:
   blueprint_level: module
   priority: P2
   version: 0.7.0
-  generation: ''
-  last_updated: 2026-05-05
+  generation: 1
+  last_updated: '2026-07-16'
   file_path: 03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
   construction_progress: partially_implemented
 - module_id: MOD-INF-025
@@ -663,8 +663,8 @@ blueprints:
   blueprint_level: module
   priority: P2
   version: 0.1.0
-  generation: ''
-  last_updated: ''
+  generation: 1
+  last_updated: '2026-07-16'
   file_path: 03_modules/_domain_integration/blueprint.md
   construction_progress: scaffold
 - module_id: MOD-KB-001
@@ -1022,6 +1022,13 @@ summary:
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
   last_recomputed: '2026-07-16'
 changelog:
+- version: 2.7.10
+  date: '2026-07-16'
+  changes:
+  - '[manual-fix] AI-18 第二轮检查修复——补全 3 处空字段（治理本源 frontmatter + 派生 registry 同步）'
+  - 'MOD-INF-024(budget_enforcer).frontmatter: 新增 generation=1, last_updated=2026-07-16；registry.generation: [] → [1]'
+  - 'MOD-INF-042(_domain_integration).frontmatter: 新增 date=2026-06-23, last_updated=2026-07-16, generation=1；registry.generation: [] → [1]; registry.last_updated: [] → [2026-07-16]'
+  - '遵循 SSoT 铁律：物理 frontmatter 是真源，registry 由 sync_registry_from_blueprints.py 单向派生'
 - version: 2.7.9
   date: '2026-07-16'
   changes:
@@ -1320,4 +1327,4 @@ changelog:
   - 施工进度评估：3 份未动工 / 1 份已合并施工内容 / 1 份 30% 部分完工
   - 完整度评估：范围 70%-90%，平均 79%
   - 排除 llm-gateway（deferred design）和 trigger-router（RI 子模块接线文档）
-registry_version: 2.7.9
+registry_version: 2.7.10

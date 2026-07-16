@@ -6,6 +6,9 @@ summary: 本地模型推理基础设施——BGE-M3文本嵌入+Ollama本地推�
 version: 0.1.0
 status: Active
 layer: L0_infrastructure
+date: "2026-06-23"
+last_updated: "2026-07-16"
+generation: 1
 belongs_to: "MOD-MASTER_BLUEPRINT"
 construction_progress: scaffold
 actual_disk_path: src/zephyr/integration/local_model/
