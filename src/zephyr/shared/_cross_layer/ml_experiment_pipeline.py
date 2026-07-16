@@ -46,6 +46,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+import importlib
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -67,8 +68,8 @@ __all__ = [
 ]
 
 try:
-    from zephyr.ml_train.inference_base import InferenceEngineBase
-    from zephyr.ml_train.trainer_base import ModelMetadata, ModelTrainerBase
+    importlib.import_module("zephyr.ml_train.inference_base")
+    importlib.import_module("zephyr.ml_train.trainer_base")
     from zephyr.simulation.pipeline_base import (
         ExperimentConfig,
         ExperimentMetric,
@@ -105,6 +106,55 @@ class ExperimentResult:
     started_at: str = field(default_factory=lambda: now_utc().isoformat())
     completed_at: str | None = None
     idempotency_key: str = field(default_factory=lambda: str(uuid.uuid4()))
+
+
+def _run_inference_stage(
+    pipeline: MLExperimentPipeline,
+    result: ExperimentResult,
+    test_features: dict[str, Any],
+    idempotency_key: str,
+) -> list[dict[str, Any]]:
+    predictions: list[dict[str, Any]] = []
+    builtins_snapshot = pipeline._snapshot_builtins()  # 5.12.10 修复：移除死分支条件（guard始终启用）
+
+    with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(pipeline._models))) as executor:
+        futures = {}
+        for model in pipeline._models:
+            engine = pipeline._find_engine(model.model_id)
+            if engine:
+                futures[executor.submit(pipeline._run_inference, engine, model, test_features, idempotency_key)] = (
+                    engine.__name__,
+                    model.model_id,
+                )
+
+        for future in as_completed(futures):
+            try:
+                pred = future.result()
+                # 5.12.10 修复：移除 if self._BUILTINS_GUARD_ENABLED: 死分支（guard始终启用）
+                violations = pipeline._check_and_restore_builtins(builtins_snapshot)
+                if violations:
+                    result.inferences_failed += 1
+                    result.errors.append(
+                        {
+                            "stage": PipelineStage.INFERENCE_EXEC.value,
+                            "model": futures[future][1],
+                            "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
+                        }
+                    )
+                    continue
+                if pred:
+                    predictions.append(pred)
+                    result.inferences_run += 1
+            except Exception as e:
+                result.inferences_failed += 1
+                result.errors.append(
+                    {
+                        "stage": PipelineStage.INFERENCE_EXEC.value,
+                        "model": futures[future][1],
+                        "error": str(e),
+                    }
+                )
+    return predictions
 
 
 class MLExperimentPipeline:
@@ -205,11 +255,12 @@ class MLExperimentPipeline:
         result.stage = PipelineStage.MODEL_DISCOVERY
         if not self._models:
             try:
-                from zephyr.ml_train.trainer_base import ModelTrainerBase as MTB
-
+                _trainer_mod = importlib.import_module("zephyr.ml_train.trainer_base")
+                MTB = getattr(_trainer_mod, "ModelTrainerBase")
+                _ModelMetadata = getattr(_trainer_mod, "ModelMetadata")
                 registry = getattr(MTB, "_registry", {})
                 discovered = [
-                    ModelMetadata(
+                    _ModelMetadata(
                         model_id=name,
                         model_version="latest",
                         model_type="unknown",
@@ -235,48 +286,9 @@ class MLExperimentPipeline:
             return result
 
         result.stage = PipelineStage.INFERENCE_EXEC
-        predictions: list[dict[str, Any]] = []
         test_features = features or {"dummy": [1.0]}
 
-        builtins_snapshot = self._snapshot_builtins()  # 5.12.10 修复：移除死分支条件（guard始终启用）
-
-        with ThreadPoolExecutor(max_workers=min(_MAX_WORKERS, len(self._models))) as executor:
-            futures = {}
-            for model in self._models:
-                engine = self._find_engine(model.model_id)
-                if engine:
-                    futures[executor.submit(self._run_inference, engine, model, test_features, key)] = (
-                        engine.__name__,
-                        model.model_id,
-                    )
-
-            for future in as_completed(futures):
-                try:
-                    pred = future.result()
-                    # 5.12.10 修复：移除 if self._BUILTINS_GUARD_ENABLED: 死分支（guard始终启用）
-                    violations = self._check_and_restore_builtins(builtins_snapshot)
-                    if violations:
-                        result.inferences_failed += 1
-                        result.errors.append(
-                            {
-                                "stage": PipelineStage.INFERENCE_EXEC.value,
-                                "model": futures[future][1],
-                                "error": f"BUILTINS TAMPERED AND RESTORED: {violations}",
-                            }
-                        )
-                        continue
-                    if pred:
-                        predictions.append(pred)
-                        result.inferences_run += 1
-                except Exception as e:
-                    result.inferences_failed += 1
-                    result.errors.append(
-                        {
-                            "stage": PipelineStage.INFERENCE_EXEC.value,
-                            "model": futures[future][1],
-                            "error": str(e),
-                        }
-                    )
+        predictions = _run_inference_stage(self, result, test_features, key)
 
         if not predictions:
             result.status = "no_predictions"
@@ -313,8 +325,8 @@ class MLExperimentPipeline:
         if matched:
             return matched[0]
         try:
-            from zephyr.ml_train.inference_base import InferenceEngineBase as IEB
-
+            _inf_mod = importlib.import_module("zephyr.ml_train.inference_base")
+            IEB = getattr(_inf_mod, "InferenceEngineBase")
             registry = getattr(IEB, "_registry", {})
             for name, cls in registry.items():
                 if model_id.lower() in name.lower():
