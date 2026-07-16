@@ -439,14 +439,7 @@ class ModelProfiler:
             penalty = violations / len(case.forbidden_patterns) * 0.5
             score = max(0.0, score - penalty)
 
-        if case.expected_output_type == "json":
-            if _is_valid_json(output):
-                score = max(score, 0.7)
-            else:
-                score *= 0.3
-        elif case.expected_output_type == "code":
-            if output.count("\n") >= 2 and ("def " in output or "class " in output or "async " in output):
-                score = max(score, 0.5)
+        score = _score_output_type(case, output, score)
 
         if case.reference_answer and output:
             ref_words = set(case.reference_answer.lower().split())
@@ -573,6 +566,17 @@ def _is_valid_json(text: str) -> bool:
         except (json.JSONDecodeError, ValueError):
             pass
     return False
+
+
+def _score_output_type(case: BenchmarkCase, output: str, score: float) -> float:
+    if case.expected_output_type == "json":
+        if _is_valid_json(output):
+            return max(score, 0.7)
+        return score * 0.3
+    if case.expected_output_type == "code":
+        if output.count("\n") >= 2 and ("def " in output or "class " in output or "async " in output):
+            return max(score, 0.5)
+    return score
 
 
 def _set_latency_percentiles(
