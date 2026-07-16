@@ -77,6 +77,7 @@ import yaml
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.yaml_utils import load_vocabulary_values
 
 # ---------------------------------------------------------------------------
 # 受控词表动态加载（VOCAB-HARDCODE gate 治本：禁止硬编码词表值）
@@ -103,11 +104,10 @@ def load_edge_type_values() -> set[str]:
 
     真源：docs/01_policies_and_standards/_registry/vocabularies/decision_edge_type_vocabulary.yaml
     4值：triggering / informing / constraining / approving（DEC-INV-003）。
+
+    治本（M01 #1）：改用 SSoT 函数 load_vocabulary_values，消除复制 yaml.safe_load 逻辑。
     """
-    vocab_path = _VOCAB_DIR / "decision_edge_type_vocabulary.yaml"
-    with open(vocab_path, encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    return {v["value"] for v in data.get("values", [])}
+    return load_vocabulary_values("decision_edge_type_vocabulary.yaml")
 
 
 def load_node_type_values() -> set[str]:

@@ -48,6 +48,7 @@ from typing import ClassVar
 
 from zephyr.infrastructure.pipeline.ct_pipe_routing import CtPipeRoutingHints, _make_decision
 from zephyr.infrastructure.pipeline.models import M_MODULE_SPECS, M_MODULES, PipelineRouteDecision
+from zephyr.shared.io.yaml_utils import load_vocabulary_section_list
 
 __all__ = [
     "DEFAULT_PLUGINS",
@@ -62,9 +63,11 @@ __all__ = [
     "TaskTypeFilter",
 ]
 
-# 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001 + target_layer_vocabulary.yaml v1.0.0
-# foundation_domains（D_MKT_DATA/D_INFRA_OPS/D_GOV_ENFORCEMENT -> M5）
-_FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
+# 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001 + target_layer_vocabulary.yaml
+# foundation_domains 段（SSoT 动态加载，治本 M01 #4）
+_FOUNDATION_LAYERS = frozenset(
+    load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains")
+)
 
 _NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {
     "M1": frozenset({"MODEL_BUILD"}),

@@ -146,7 +146,7 @@ AGGREGATE_NODE_TYPES = {
 }
 
 # 层级排序：编号按此顺序分组分配
-LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
+LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]  # noqa: gate-vocab  显示排序用，含历史遗留 L1_platform（layer_vocabulary v2.0.0 已移除，保留仅为兼容旧域文档分组）
 
 # 层级中文显示名映射（合并自 generate_domain_architecture_diagram.py）
 LAYER_DISPLAY = {

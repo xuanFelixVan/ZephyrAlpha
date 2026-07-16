@@ -3,7 +3,7 @@
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin, zephyr.data.ch_config
 # [CONSUMERS]
-# [STARTUP] auto
+# [STARTUP] imported
 # [MATURITY] stable
 # [INVARIANTS]
 # [MODIFY-GUARD]

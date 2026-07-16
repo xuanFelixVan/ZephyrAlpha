@@ -50,6 +50,7 @@ _GOV_DIR = str(Path(__file__).resolve().parent)
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置（治本 M01 #5）
 import psycopg2  # noqa: E402
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
@@ -3740,7 +3741,7 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
     #   职责分离（2026-07-04 治本）：removed 由 GATE-DELETE-AUDIT reconciler（post-commit
     #   自动触发，_backup_depgraph_for_autoclean + apply_depgraph.py --cleanup-orphan-nodes）
     #   负责清理；本函数只负责"是否需要重建"，不负责清理。removed 超 WARNING 阈值时告警提示。
-    _GHOST_WARNING_THRESHOLD = 50  # 与 reconciliation_registry.py _GHOST_AUTO_CLEAN_THRESHOLD 对齐
+    _GHOST_WARNING_THRESHOLD = get_thresholds_safe().get("scanning", {}).get("depgraph_ghost_warning", 50)  # 治本 M01 #5：阈值外置到 thresholds.yaml
     if not changed and not stale:
         print("[DEPGRAPH][INCREMENTAL] 无阻断性变更（content_hash 全部匹配），跳过 DB 重建")
         if added:
