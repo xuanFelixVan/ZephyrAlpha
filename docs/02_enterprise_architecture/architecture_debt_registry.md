@@ -2154,11 +2154,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > 维度说明：循环依赖、跨层引用、API边界模糊、re-export壳等架构级耦合问题。
 
 #### 5.60.1 [HIGH] 循环依赖——governance ↔ trading（双向导入）
-- **文件**：[broker_interface.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py#L40) (governance→trading), [trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py#L20) (trading→governance)
-- **证据**：governance导入trading的Fill/Order/PositionSnapshot；trading_contracts导入governance的ComplianceRule/PerformanceAttributionReport——双向循环
+- **文件**：[governance/adapters/simulation_broker.py](file:///D:/ZephyrAlpha/src/zephyr/governance/adapters/simulation_broker.py#L54) (governance→trading), [trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py#L20) (trading→governance)
+- **证据**：governance/adapters/simulation_broker.py L54 `from zephyr.trading.trading_contracts.broker_interface import BrokerInterface`（governance→trading，原 broker_interface.py 已从 governance 迁移至 trading，ARCH-GOV-SHIM-001）；trading_contracts/__init__.py L20 `from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule`（trading→governance）——双向循环仍存在
 - **问题**：import顺序敏感；trading_contracts不再是纯数据契约包（违反自身不变量声明）
 - **修复**：将ComplianceRule等从trading_contracts导出中移除
 - **状态**：STILL_VALID（保留）— 需将ComplianceRule等从trading_contracts导出中移除，影响双向循环依赖
+- **路径更新**：2026-07-17 ARCH-GOV-SHIM-001 将 broker_interface.py 从 governance/trading_contracts/ 迁移至 trading/trading_contracts/；governance→trading 方向的 import 来源由 broker_interface.py（原 governance 内）改为 governance/adapters/simulation_broker.py（从 trading 导入）
 
 #### 5.60.2 [MEDIUM] 循环依赖——governance → orchestrator（延迟导入）
 - **文件**：[phase_check_registry.py](file:///D:/ZephyrAlpha/src/zephyr/governance/ops_governance/phase_check_registry.py#L402)
@@ -2168,12 +2169,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **状态**：STILL_VALID（保留）— 需定义抽象接口（Protocol），orchestrator实现该接口
 - **路径更新**：2026-07-12 裁定#200 将 orchestrator 从 trading.orchestrator 移至顶层 zephyr.orchestrator，contract_registry 路径由 zephyr.orchestrator.contract_registry 变更为 zephyr.orchestrator.contracts.contract_registry
 
-#### 5.60.3 [HIGH] 跨层引用——shared(L1) → trading(L2)，违反分层架构
+#### 5.60.3 [HIGH] 跨层引用——shared(L1) → trading(L2)，违反分层架构（已修复 RESOLVED）
 - **文件**：[order.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/order.py#L8), [enforcer.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/core/enforcer.py#L41)
-- **证据**：`from zephyr.trading.trading_contracts.execution.order import OrderSide`——基础层导入领域层（逆向依赖）；同目录orchestration_protocol.py注释明确写着"MUST NOT import from zephyr.trading"
-- **问题**：shared层无法独立编译/测试
-- **修复**：OrderSide等定义下沉到shared，trading层从shared导入
-- **状态**：STILL_VALID（保留）— 需OrderSide等定义下沉到shared，影响分层架构
+- **证据**：~~`from zephyr.trading.trading_contracts.execution.order import OrderSide`~~——已修复：OrderSide/OrderStatus/OrderType 下沉到 `zephyr.shared.contracts.enums.order_enums`，shared/contracts/order.py L24 改为 `from zephyr.shared.contracts.enums.order_enums import OrderSide`；enforcer.py 不再 import from zephyr.trading（grep 验证 0 匹配）
+- **问题**：~~shared层无法独立编译/测试~~ 已消除
+- **修复**：OrderSide等定义下沉到shared，trading层从shared导入（已完成）
+- **状态**：RESOLVED（2026-07-17 AI-05 验证修复）— OrderSide 已下沉到 shared.contracts.enums.order_enums；trading/trading_contracts/execution/order.py 改为 re-export wrapper 从 shared 导入
 
 #### 5.60.4 [MEDIUM] 跨层引用——shared(L1) → governance(L2) + ops + import *
 - **文件**：[protocols.py](file:///D:/ZephyrAlpha/src/zephyr/shared/contracts/protocols.py#L31), [metrics.py](file:///D:/ZephyrAlpha/src/zephyr/backtest/core/metrics.py#L25), [health.py](file:///D:/ZephyrAlpha/src/zephyr/shared/lifecycle/health.py#L25), [logging.py](file:///D:/ZephyrAlpha/src/zephyr/shared/utils/logging.py#L25)
@@ -2189,19 +2190,19 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **修复**：定义抽象接口或考虑将governance_server.py移到governance层
 - **状态**：STILL_VALID（保留）— 需定义抽象接口或移动governance_server.py，影响分层
 
-#### 5.60.6 [HIGH] 跨域直接依赖具体实现——ex_core → governance（BrokerInterface定义在错误的层）
-- **文件**：[order_manager.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py#L47)
-- **证据**：`from zephyr.governance.broker_interface import BrokerInterface`——执行核心的端口定义在治理层，违反DIP
-- **问题**：ex_core无法脱离governance独立复用
-- **修复**：BrokerInterface移到ex_core或shared.contracts
-- **状态**：STILL_VALID（保留）— 需BrokerInterface移到ex_core或shared.contracts
+#### 5.60.6 [HIGH] 跨域直接依赖具体实现——ex_core → governance（BrokerInterface定义在错误的层）（已修复 RESOLVED）
+- **文件**：[order_manager.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py#L48)
+- **证据**：~~`from zephyr.governance.broker_interface import BrokerInterface`~~——已修复：ARCH-GOV-SHIM-001 将 BrokerInterface 从 governance/trading_contracts/ 迁移至 trading/trading_contracts/（canonical 路径）；order_manager.py L48 改为 `from zephyr.trading.trading_contracts.broker_interface import BrokerInterface`
+- **问题**：~~ex_core无法脱离governance独立复用~~ 已消除
+- **修复**：BrokerInterface移到ex_core或shared.contracts（已迁移至 trading.trading_contracts，ARCH-GOV-SHIM-001 裁定）
+- **状态**：RESOLVED（2026-07-17 AI-05 验证修复）— BrokerInterface canonical 路径为 src/zephyr/trading/trading_contracts/broker_interface.py
 
-#### 5.60.7 [MEDIUM] API三重导出——trading_contracts在三个包重复暴露
-- **文件**：[trading/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py), [governance/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/governance/trading_contracts/__init__.py), [ex_core/adapters/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/adapters/__init__.py#L5)
-- **证据**：governance/trading_contracts/__init__.py前25行与trading/trading_contracts/__init__.py完全一致（相同import/docstring/module_id）
-- **问题**：消费者不知道从哪导入；修改后副本可能不同步
-- **修复**：删除governance/trading_contracts/目录
-- **状态**：STILL_VALID（保留）— 需删除governance/trading_contracts/目录，影响消费者导入路径
+#### 5.60.7 [MEDIUM] API三重导出——trading_contracts在三个包重复暴露（已修复 RESOLVED）
+- **文件**：~~[governance/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/governance/trading_contracts/__init__.py)~~（已删除）, [trading/trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py), [ex_core/adapters/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/adapters/__init__.py#L5)
+- **证据**：~~governance/trading_contracts/__init__.py前25行与trading/trading_contracts/__init__.py完全一致~~——已修复：ARCH-GOV-SHIM-001 删除 governance/trading_contracts/ 目录（Glob 验证 0 匹配）；ex_core/adapters/__init__.py 改为从 canonical 路径 import
+- **问题**：~~消费者不知道从哪导入；修改后副本可能不同步~~ 已消除
+- **修复**：删除governance/trading_contracts/目录（已完成）
+- **状态**：RESOLVED（2026-07-17 AI-05 验证修复）— governance/trading_contracts/ 目录已不存在，三重导出降为双重（trading canonical + ex_core/adapters re-export）
 
 #### 5.60.8 [MEDIUM] compliance包整体为governance的re-export壳（15个模块import *）
 - **文件**：[compliance/](file:///D:/ZephyrAlpha/src/zephyr/compliance/) 下15个文件
@@ -2225,6 +2226,8 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 | MEDIUM | 4 | 5.60.2/5.60.4/5.60.7/5.60.8 |
 | LOW | 1 | 5.60.9 |
 | **合计** | **9** | |
+
+> **2026-07-17 AI-05 修复更新**：5.60.3（HIGH）、5.60.6（HIGH）、5.60.7（MEDIUM）经 ARCH-GOV-SHIM-001 + OrderSide 下沉修复后验证为 RESOLVED。当前 STILL_VALID=6（5.60.1/5.60.2/5.60.4/5.60.5/5.60.8/5.60.9），RESOLVED=3（5.60.3/5.60.6/5.60.7）。
 
 ---
 
