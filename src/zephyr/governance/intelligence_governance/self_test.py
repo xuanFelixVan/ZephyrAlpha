@@ -57,102 +57,115 @@ class SelfTestReport:
     duration_ms: float = 0.0
 
 
-def run_self_test() -> SelfTestReport:
-    t0 = time.perf_counter()
-    report = SelfTestReport()
-
-    check_results: list[CheckResult] = []
-
+def _check_import_chain() -> CheckResult:
     # Check 1: Import chain
-    t1 = time.perf_counter()
     try:
-        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
-        from zephyr.governance.escalation.escalation_engine import EscalationEngine
-        from zephyr.governance.escalation.escalation_models import (
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine  # noqa: F401
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine  # noqa: F401
+        from zephyr.governance.escalation.escalation_models import (  # noqa: F401
             DelegationStrategy,
             EconomicGuard,
             EscalationLevel,
             EscalationState,
             RuleCategory,
         )
-        from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitState
+        from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitState  # noqa: F401
 
-        check_results.append(CheckResult("import_chain", True, detail="All core symbols importable"))
+        return CheckResult("import_chain", True, detail="All core symbols importable")
     except ImportError as e:
-        check_results.append(CheckResult("import_chain", False, HealthLevel.CRITICAL, str(e)))
-    latency = (time.perf_counter() - t1) * 1000
+        return CheckResult("import_chain", False, HealthLevel.CRITICAL, str(e))
 
+
+def _check_engine_init():
     # Check 2: Engine initialization
-    t1 = time.perf_counter()
     try:
+        from zephyr.governance.escalation.escalation_engine import EscalationEngine
+
         engine = EscalationEngine("self-test", hooks_enabled=False)
         rule_count = len(engine._rules)
         if rule_count < 5:
-            check_results.append(
-                CheckResult("engine_init", False, HealthLevel.DEGRADED, f"Only {rule_count} rules loaded")
+            return (
+                CheckResult("engine_init", False, HealthLevel.DEGRADED, f"Only {rule_count} rules loaded"),
+                engine,
             )
-        else:
-            check_results.append(CheckResult("engine_init", True, detail=f"{rule_count} rules loaded"))
+        return CheckResult("engine_init", True, detail=f"{rule_count} rules loaded"), engine
     except Exception as e:
-        check_results.append(CheckResult("engine_init", False, HealthLevel.CRITICAL, str(e)))
+        return CheckResult("engine_init", False, HealthLevel.CRITICAL, str(e)), None
 
+
+def _check_evaluate(engine) -> CheckResult:
     # Check 3: Basic evaluate
     try:
+        from zephyr.governance.escalation.escalation_models import RuleCategory
+
         ev = engine.evaluate(RuleCategory.SECURITY_VIOLATION, "self_test_probe")
         if ev is None:
-            check_results.append(CheckResult("evaluate", False, HealthLevel.DEGRADED, "evaluate() returned None"))
+            return CheckResult("evaluate", False, HealthLevel.DEGRADED, "evaluate() returned None")
         elif ev.level is None:
-            check_results.append(CheckResult("evaluate", False, HealthLevel.DEGRADED, "event has no level"))
+            return CheckResult("evaluate", False, HealthLevel.DEGRADED, "event has no level")
         else:
-            check_results.append(CheckResult("evaluate", True, detail=f"level={ev.level.name}"))
+            return CheckResult("evaluate", True, detail=f"level={ev.level.name}")
     except Exception as e:
-        check_results.append(CheckResult("evaluate", False, HealthLevel.CRITICAL, str(e)))
+        return CheckResult("evaluate", False, HealthLevel.CRITICAL, str(e))
 
+
+def _check_circuit_breaker(engine) -> CheckResult:
     # Check 4: Circuit breaker state
     try:
+        from zephyr.governance.resilience_governance.circuit_breaker import CircuitState
+
         cb_state = engine.get_circuit_state()
         if cb_state is CircuitState.OPEN:
-            check_results.append(CheckResult("circuit_breaker", False, HealthLevel.DEGRADED, "Circuit is OPEN"))
+            return CheckResult("circuit_breaker", False, HealthLevel.DEGRADED, "Circuit is OPEN")
         else:
-            check_results.append(CheckResult("circuit_breaker", True, detail=f"state={cb_state.name}"))
+            return CheckResult("circuit_breaker", True, detail=f"state={cb_state.name}")
     except Exception as e:
-        check_results.append(CheckResult("circuit_breaker", False, HealthLevel.CRITICAL, str(e)))
+        return CheckResult("circuit_breaker", False, HealthLevel.CRITICAL, str(e))
 
+
+def _check_economic_guard(engine) -> CheckResult:
     # Check 5: Economic guard status
     try:
         status = engine.get_economic_status()
         if status.get("hard_limit_reached"):
-            check_results.append(CheckResult("economic_guard", False, HealthLevel.DEGRADED, "Hard limit reached"))
+            return CheckResult("economic_guard", False, HealthLevel.DEGRADED, "Hard limit reached")
         else:
-            check_results.append(
-                CheckResult(
-                    "economic_guard", True, detail=f"consumed={status['consumed_today']}/{status['daily_budget']}"
-                )
+            return CheckResult(
+                "economic_guard", True, detail=f"consumed={status['consumed_today']}/{status['daily_budget']}"
             )
     except Exception as e:
-        check_results.append(CheckResult("economic_guard", False, HealthLevel.CRITICAL, str(e)))
+        return CheckResult("economic_guard", False, HealthLevel.CRITICAL, str(e))
 
+
+def _check_delegation(engine) -> CheckResult:
     # Check 6: Delegation engine
     try:
+        from zephyr.governance.intelligence_governance.delegation_engine import DelegationEngine
+        from zephyr.governance.escalation.escalation_models import DelegationStrategy, RuleCategory
+
         de = DelegationEngine()
         de.register_delegate("_self_test_probe")
         ev_probe = engine.evaluate(RuleCategory.TIMEOUT, "self_test_delegate_probe")
         record = de.delegate(ev_probe, DelegationStrategy.LOAD_BALANCED, "self_test_task")
         if record is None:
-            check_results.append(CheckResult("delegation", False, HealthLevel.DEGRADED, "delegate() returned None"))
+            return CheckResult("delegation", False, HealthLevel.DEGRADED, "delegate() returned None")
         else:
             de.unregister_delegate("_self_test_probe")
-            check_results.append(CheckResult("delegation", True, detail=f"delegated to {record.to_delegate}"))
+            return CheckResult("delegation", True, detail=f"delegated to {record.to_delegate}")
     except Exception as e:
-        check_results.append(CheckResult("delegation", False, HealthLevel.CRITICAL, str(e)))
+        return CheckResult("delegation", False, HealthLevel.CRITICAL, str(e))
 
+
+def _check_active_count(engine) -> CheckResult:
     # Check 7: Active escalation count
     try:
         active = engine.get_active_count()
-        check_results.append(CheckResult("active_count", True, detail=f"{active} active"))
+        return CheckResult("active_count", True, detail=f"{active} active")
     except Exception as e:
-        check_results.append(CheckResult("active_count", False, HealthLevel.DEGRADED, str(e)))
+        return CheckResult("active_count", False, HealthLevel.DEGRADED, str(e))
 
+
+def _check_extensions() -> CheckResult:
     # Check 8: Extension detectors (optional — degraded if missing)
     try:
         from zephyr.governance.escalation.escalation_engine import EscalationEngine as EE
@@ -160,14 +173,14 @@ def run_self_test() -> SelfTestReport:
         engine_with_hooks = EE("self-test-hooks", hooks_enabled=True)
         detector_count = len(engine_with_hooks._extension_detectors)
         if detector_count == 0:
-            check_results.append(
-                CheckResult("extensions", False, HealthLevel.DEGRADED, "No extension detectors loaded")
-            )
+            return CheckResult("extensions", False, HealthLevel.DEGRADED, "No extension detectors loaded")
         else:
-            check_results.append(CheckResult("extensions", True, detail=f"{detector_count} detectors"))
+            return CheckResult("extensions", True, detail=f"{detector_count} detectors")
     except Exception as e:
-        check_results.append(CheckResult("extensions", False, HealthLevel.DEGRADED, str(e)))
+        return CheckResult("extensions", False, HealthLevel.DEGRADED, str(e))
 
+
+def _finalize_report(report: SelfTestReport, check_results: list[CheckResult], t0: float) -> SelfTestReport:
     report.checks = check_results
     report.total_passed = sum(1 for c in check_results if c.passed)
     report.total_failed = sum(1 for c in check_results if not c.passed)
@@ -183,6 +196,26 @@ def run_self_test() -> SelfTestReport:
 
     report.duration_ms = (time.perf_counter() - t0) * 1000
     return report
+
+
+def run_self_test() -> SelfTestReport:
+    t0 = time.perf_counter()
+    report = SelfTestReport()
+
+    check_results: list[CheckResult] = []
+    check_results.append(_check_import_chain())
+
+    engine_result, engine = _check_engine_init()
+    check_results.append(engine_result)
+
+    check_results.append(_check_evaluate(engine))
+    check_results.append(_check_circuit_breaker(engine))
+    check_results.append(_check_economic_guard(engine))
+    check_results.append(_check_delegation(engine))
+    check_results.append(_check_active_count(engine))
+    check_results.append(_check_extensions())
+
+    return _finalize_report(report, check_results, t0)
 
 
 def main():
