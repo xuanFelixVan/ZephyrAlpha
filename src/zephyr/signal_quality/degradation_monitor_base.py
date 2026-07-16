@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-SIGQC-001 | docs/03_modules/_domain_signal_quality/blueprint.md
+# [BLUEPRINT] MOD-SIGQC-001 | docs/03_modules/_domain_signal_quality/blueprint.md
 # [MODULE] zephyr.signal_quality.degradation_monitor_base
 # [DOMAIN] D_SIGQC
 # [DEPENDENCIES] zephyr.trading.trading_contracts.market.signal_degradation_warning; zephyr.trading.trading_contracts.market.synthesized_signal

@@ -1,4 +1,4 @@
-﻿# [A_test] module_id: SRC-TST-1205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-1205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md | §test
 # [MODULE] zephyr.signal
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme

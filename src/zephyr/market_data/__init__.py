@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-MKT_DATA | (pending)
+# [BLUEPRINT] MOD-MKT_DATA | (pending)
 # [MODULE] zephyr.market_data
 # [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] zephyr.shared.contracts.market_data

@@ -1,4 +1,4 @@
-﻿# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen.implementations.default_signal_aggregator
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal

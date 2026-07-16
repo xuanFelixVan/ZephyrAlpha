@@ -1,4 +1,4 @@
-﻿# [A_test] module_id: SRC-TST-0167 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-0167 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-324 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_e2e_pipeline
 # [STABILITY] evolving
