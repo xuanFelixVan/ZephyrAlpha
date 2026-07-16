@@ -63,6 +63,38 @@ class ScanResult:
     sanitized_output: str = ""
 
 
+def _classify_layer_decision(name, result, fail_open_layers):
+    if result.decision is SecurityDecision.DENY:
+        if name not in fail_open_layers:
+            return ("deny", True, SecurityDecision.DENY)
+        return ("deny", False, None)
+    elif result.decision is SecurityDecision.BLOCK:
+        if name not in fail_open_layers:
+            return ("deny", True, SecurityDecision.BLOCK)
+        return ("deny", False, None)
+    elif result.decision is SecurityDecision.FLAG:
+        return ("flag", False, None)
+    else:
+        return ("pass", False, None)
+
+
+def _maybe_grant_runtime_allowance(final_decision, mode, request_id):
+    # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
+    # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
+    # 令牌 TTL 30s，使合法的“LSG 扫描通过 -> 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
+    if final_decision is SecurityDecision.ALLOW and mode in (
+        ScanMode.INPUT_ONLY,
+        ScanMode.FULL,
+        ScanMode.AGENT_ONLY,
+    ):
+        try:
+            _grant_runtime_allowance(request_id=request_id)
+        except Exception:
+            # 颁发失败绝不影响 LSG 主流程——最坏情况是合法调用被运行时 Gate 拦
+            # （此时业务侧会收到 BareLLMCallError，需检查 runtime_interceptor 状态）
+            pass
+
+
 class LSGSecurityGateway:
     """LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.
 
@@ -277,22 +309,20 @@ class LSGSecurityGateway:
                 )
                 layer_results[name] = result
 
-                if result.decision is SecurityDecision.DENY:
+                kind, should_break, decision_to_set = _classify_layer_decision(
+                    name, result, self.FAIL_OPEN_LAYERS
+                )
+                if kind == "deny":
                     denied += 1
-                    if name not in self.FAIL_OPEN_LAYERS:
-                        final_decision = SecurityDecision.DENY
-                        blocked_by = name
-                        break
-                elif result.decision is SecurityDecision.BLOCK:
-                    denied += 1
-                    if name not in self.FAIL_OPEN_LAYERS:
-                        final_decision = SecurityDecision.BLOCK
-                        blocked_by = name
-                        break
-                elif result.decision is SecurityDecision.FLAG:
+                elif kind == "flag":
                     flagged += 1
                 else:
                     passed += 1
+                if decision_to_set is not None:
+                    final_decision = decision_to_set
+                    blocked_by = name
+                if should_break:
+                    break
 
                 min_score = min(min_score, result.score)
 
@@ -353,20 +383,7 @@ class LSGSecurityGateway:
             blocked_by=blocked_by,
         )
 
-        # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
-        # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
-        # 令牌 TTL 30s，使合法的“LSG 扫描通过 -> 发起 LLM 调用”链路畅通（见 runtime_interceptor）。
-        if final_decision is SecurityDecision.ALLOW and mode in (
-            ScanMode.INPUT_ONLY,
-            ScanMode.FULL,
-            ScanMode.AGENT_ONLY,
-        ):
-            try:
-                _grant_runtime_allowance(request_id=ctx.request_id)
-            except Exception:
-                # 颁发失败绝不影响 LSG 主流程——最坏情况是合法调用被运行时 Gate 拦
-                # （此时业务侧会收到 BareLLMCallError，需检查 runtime_interceptor 状态）
-                pass
+        _maybe_grant_runtime_allowance(final_decision, mode, ctx.request_id)
 
         return scan_result
 
