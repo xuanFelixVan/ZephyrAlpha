@@ -2054,6 +2054,39 @@ entries:
   created: '2026-07-15'
   last_updated: '2026-07-15'
 
+# --- #ARCH-CH-016: task_queue 并发竞态——调度周期串行化锁 ---
+- issue_id: '#ARCH-CH-016'
+  title: task_queue 并发竞态致 KeyError('未知 task_id')——_schedule_dag_lock 串行化
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    _run_schedule_dag 第155行 scheduler._task_queue = TaskQueue() 每个调度周期重建队列。
+    多个 cron 时段并发触发时（如 event_driven 每15分钟 + daily_event 19:00 同时触发），
+    后到的调度周期重建 _task_queue 覆盖前一个，导致正在执行的任务调用 mark_completed
+    时抛 KeyError('未知 task_id')（task_queue.py mark_completed 检查 task_id in _tasks，
+    新队列不含旧 task_id）。
+
+    根因分析：
+    APScheduler max_instances=1 只限制同一 job 不并发，但不同 schedule 的 job 可并发。
+    event_driven（interval 15min）与 daily_event（cron 19:00）在 19:00 同时触发，
+    两个 _run_schedule_dag 线程并发执行，竞态覆盖 _task_queue。
+
+    治本方案：
+    新增模块级 _schedule_dag_lock = threading.Lock()，_run_schedule_dag 全函数体
+    with _schedule_dag_lock: 串行化。多个调度周期排队执行，避免 _task_queue 竞态覆盖。
+    代价：调度周期串行，但单次调度内部仍并行（ThreadPoolExecutor max_workers=8），
+    性能影响可忽略（调度周期本身是 IO 密集，串行等待无瓶颈）。
+  impact:
+  - src/zephyr/data/scheduler.py（新增 _schedule_dag_lock + _run_schedule_dag 加锁）
+  fix_phase: 已完成
+  status: decided
+  related_rules:
+  - '#ARCH-CH-013'
+  - '#ARCH-CH-014'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'
   title: 域 ID 连字符→下划线统一

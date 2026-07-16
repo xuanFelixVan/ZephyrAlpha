@@ -74,6 +74,13 @@ _SQL_TEXT_LOG_CHECKSUM = (
 # 模块级调度器单例（供 APScheduler job 回调使用，避免 pickle 绑定方法+Lock 对象）
 _global_scheduler: "IntegratorScheduler | None" = None
 
+# 调度周期串行化锁（裁定 #ARCH-CH-016）
+# 根因：_run_schedule_dag 第155行 scheduler._task_queue = TaskQueue() 会重新创建队列，
+# 多个调度周期并发时（如 event_driven 每15分钟 + daily_event 19:00 同时触发），
+# 后创建的队列覆盖前一个，导致正在执行的任务 mark_completed 时抛 KeyError('未知 task_id')。
+# 修复：全局锁确保同一时间只有一个调度周期在操作 _task_queue。
+_schedule_dag_lock = threading.Lock()
+
 
 def _run_schedule_callback(schedule_name: str) -> None:
     """APScheduler job 回调（模块级函数，可 pickle）。
@@ -150,53 +157,60 @@ def _run_schedule_dag(
     schedule_name: str,
     schedule_tasks: list[dict],
 ) -> dict[str, bool]:
-    """加载任务到 TaskQueue，按 DAG 顺序并行执行，并汇总结果与失败率。"""
-    # 加载到 TaskQueue
-    scheduler._task_queue = TaskQueue()
-    for t in schedule_tasks:
-        scheduler._task_queue.add_task(t)
+    """加载任务到 TaskQueue，按 DAG 顺序并行执行，并汇总结果与失败率。
 
-    # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
-    from concurrent.futures import ThreadPoolExecutor, as_completed
+    线程安全：用 _schedule_dag_lock 串行化调度周期（裁定 #ARCH-CH-016）。
+    多个 cron 时段并发触发时（如 event_driven + daily_event 同时 19:00），
+    若不加锁，后到的调度会重建 _task_queue 覆盖前一个，导致 mark_completed
+    抛 KeyError('未知 task_id')。加锁后调度周期串行，避免竞态。
+    """
+    with _schedule_dag_lock:
+        # 加载到 TaskQueue
+        scheduler._task_queue = TaskQueue()
+        for t in schedule_tasks:
+            scheduler._task_queue.add_task(t)
 
-    results: dict[str, bool] = {}
-    while not scheduler._task_queue.is_done():
-        ready = scheduler._task_queue.get_ready_tasks()
-        if not ready:
-            # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
-            blocked = scheduler._task_queue.list_by_status("BLOCKED")
-            if blocked:
-                log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
-            break
-        if len(ready) == 1:
-            # 单任务直接执行（避免线程池开销）
-            results[ready[0]] = scheduler.run_task(ready[0])
-        else:
-            # 多任务并行执行（利用线程池，最多8并发）
-            max_workers = min(len(ready), 8)
-            with ThreadPoolExecutor(max_workers=max_workers) as pool:
-                future_map = {
-                    pool.submit(scheduler.run_task, tid): tid
-                    for tid in ready
-                }
-                for future in as_completed(future_map):
-                    tid = future_map[future]
-                    try:
-                        results[tid] = future.result()
-                    except Exception as e:
-                        log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
-                        results[tid] = False
+        # DAG 并行执行——同一批就绪任务并行，批次间串行（保证依赖）
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
-    # 汇总
-    success_count = sum(1 for v in results.values() if v)
-    failed_count = len(results) - success_count
-    log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
+        results: dict[str, bool] = {}
+        while not scheduler._task_queue.is_done():
+            ready = scheduler._task_queue.get_ready_tasks()
+            if not ready:
+                # 无就绪任务但未完成 -> 可能有 BLOCKED 任务
+                blocked = scheduler._task_queue.list_by_status("BLOCKED")
+                if blocked:
+                    log.warning("时段 %s 有 %d 个 BLOCKED 任务", schedule_name, len(blocked))
+                break
+            if len(ready) == 1:
+                # 单任务直接执行（避免线程池开销）
+                results[ready[0]] = scheduler.run_task(ready[0])
+            else:
+                # 多任务并行执行（利用线程池，最多8并发）
+                max_workers = min(len(ready), 8)
+                with ThreadPoolExecutor(max_workers=max_workers) as pool:
+                    future_map = {
+                        pool.submit(scheduler.run_task, tid): tid
+                        for tid in ready
+                    }
+                    for future in as_completed(future_map):
+                        tid = future_map[future]
+                        try:
+                            results[tid] = future.result()
+                        except Exception as e:
+                            log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
+                            results[tid] = False
 
-    # 检查失败率
-    if results:
-        scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
+        # 汇总
+        success_count = sum(1 for v in results.values() if v)
+        failed_count = len(results) - success_count
+        log.info("时段 %s 完成: %d 成功, %d 失败", schedule_name, success_count, failed_count)
 
-    return results
+        # 检查失败率
+        if results:
+            scheduler._alerter.check_daily_failure_rate(len(results), failed_count)
+
+        return results
 
 
 class IntegratorScheduler:

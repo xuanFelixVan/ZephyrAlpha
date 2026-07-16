@@ -19,7 +19,7 @@
 在 Provider 和 ch_writer 之间插入缓冲层，攒批后一次性写入 ClickHouse。
 
 背景（裁定 #ARCH-CH-001）：
-    ch_writer.write_result 每个 FetchResult（1 只股票 ~3 行）= 1 次 WSL 进程启动
+    ch_writer.write_result 每个 FetchResult（1 只股票 ~3 行）= 1 次 HTTP INSERT 请求
     + 1 次 INSERT + 1 个 data part。5204 只股票 = 5204 个 data parts，
     CH 后台 merge 跟不上 → CPU 饱和 → 写入失败。
 
