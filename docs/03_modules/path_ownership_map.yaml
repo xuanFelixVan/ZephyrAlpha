@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-07-16T11:13:27Z'
+  generated_at: '2026-07-16T11:17:00Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 4566
   total_ssot_claims: 16
@@ -891,7 +891,7 @@ ownership:
   - path: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: '未实现'
     ownership_judgment: '本模块'
 
@@ -8248,35 +8248,35 @@ ownership:
   - path: 'tests/audit/test_audit_dim_d5_d8_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'tests/audit/test_audit_dim_d9_d12_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'tests/audit/test_audit_dim_d1_d4_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'tests/audit/test_audit_full_closure_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'tests/audit/test_audit_full_pipeline_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -8325,7 +8325,7 @@ ownership:
   - path: 'tests/audit/test_audit_orchestrator_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -8346,7 +8346,7 @@ ownership:
   - path: 'tests/audit/test_audit_registry_gate_e2e.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -13281,7 +13281,7 @@ ownership:
   - path: 'tests/governance/audit/test_orchestrator.py'
     owner_blueprint: 'MOD-INF-027'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
