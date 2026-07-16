@@ -1100,6 +1100,11 @@ def _run_migration(
         )
 
 
+def _log(echo: bool, message: str) -> None:
+    if echo:
+        print(message)
+
+
 def init_db(
     db_path: Path | str | None = None,
     *,
@@ -1138,15 +1143,13 @@ def init_db(
         # 步骤 2：检测当前版本
         current = _get_current_version(conn)
 
-        if echo:
-            print(f"[sqlite_schema] current version: {current}")
+        _log(echo, f"[sqlite_schema] current version: {current}")
 
         # 步骤 3：处理旧数据库（有表但无 _schema_version）
         if current < 0:
             # current == -6 表示 v6 之前的迁移已通过 IF NOT EXISTS 完成
             bootstrapped = abs(current)
-            if echo:
-                print(f"[sqlite_schema] bootstrapping legacy DB -> marking v1–v{abs(current)} as applied")
+            _log(echo, f"[sqlite_schema] bootstrapping legacy DB -> marking v1–v{abs(current)} as applied")
             from datetime import UTC, datetime
 
             now = datetime.now(UTC).isoformat()
@@ -1164,8 +1167,7 @@ def init_db(
         # PRAGMA writable_schema 不能在 transaction 中使用，且表重建在 foreign_keys=ON
         # 时会触发 task_reviews 的 ON DELETE NO ACTION。故在 BEGIN 前单独执行。
         if current < 30 and not _tasks_lacks_domain_id(conn):
-            if echo:
-                print("[sqlite_schema] executing migration v30 (pre-tx): DM-P3001")
+            _log(echo, "[sqlite_schema] executing migration v30 (pre-tx): DM-P3001")
             _drop_tasks_domain_id(conn)
             from datetime import UTC, datetime
 
@@ -1195,8 +1197,7 @@ def init_db(
                             (30, now, description),
                         )
                     continue
-                if echo:
-                    print(f"[sqlite_schema] executing migration v{version}: {description}")
+                _log(echo, f"[sqlite_schema] executing migration v{version}: {description}")
                 _run_migration(conn, version, description, statements)
             conn.execute("COMMIT")
         except Exception:
