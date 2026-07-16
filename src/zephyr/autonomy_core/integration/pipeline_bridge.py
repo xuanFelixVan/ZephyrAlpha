@@ -137,6 +137,26 @@ class SkillContextInjector:
             )
 
 
+def _resolve_construction_stage(stage_map, stage):
+    construction_stage = None
+    if stage:
+        stage_lower = stage.lower()
+        construction_stage = stage_map.get(stage_lower)
+        if construction_stage is None:
+            for key, val in stage_map.items():
+                if key in stage_lower:
+                    construction_stage = val
+                    break
+    return construction_stage
+
+
+def _find_skill_id(category_skills, name):
+    for sid, data in category_skills.items():
+        if data.get("name") == name or sid.endswith(name):
+            return sid
+    return None
+
+
 class PipelineSkillBridge:
     def __init__(self):
         self._router = TriggerRouter()
@@ -161,31 +181,15 @@ class PipelineSkillBridge:
         stage: str | None = None,
         load_l3: bool = False,
     ) -> SkillInjectionResult:
-        construction_stage = None
-        if stage:
-            stage_lower = stage.lower()
-            construction_stage = self._stage_map.get(stage_lower)
-            if construction_stage is None:
-                for key, val in self._stage_map.items():
-                    if key in stage_lower:
-                        construction_stage = val
-                        break
+        construction_stage = _resolve_construction_stage(self._stage_map, stage)
 
         role, domain = self._router.route(construction_stage, task_description)
 
         if domain and role:
             registry = self._injector._loader._load_registry()
             skills = registry.get("skills", {})
-            domain_skill_id = None
-            role_skill_id = None
-            for sid, data in skills.get("domain", {}).items():
-                if data.get("name") == domain or sid.endswith(domain):
-                    domain_skill_id = sid
-                    break
-            for sid, data in skills.get("role", {}).items():
-                if data.get("name") == role or sid.endswith(role):
-                    role_skill_id = sid
-                    break
+            domain_skill_id = _find_skill_id(skills.get("domain", {}), domain)
+            role_skill_id = _find_skill_id(skills.get("role", {}), role)
 
             if domain_skill_id and role_skill_id:
                 return self._injector.inject(domain_skill_id, role_skill_id, load_l3=load_l3)
