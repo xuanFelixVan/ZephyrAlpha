@@ -8,7 +8,7 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.2
+version: 1.3.3
 created: '2026-06-26'
 last_updated: '2026-07-17'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
@@ -2512,7 +2512,7 @@ entries:
     5. 包导出更新：persistence/__init__.py __all__ 移除 olap_engine
 
     注：b_db.yaml history 字段 + persistence/__init__.py 注释中以描述性标签 "ARCH-OLAP-RETIRE" 标注
-    （非 #ARCH-NNN 形式引用，ARCH-REFERENCE gate 正则 #ARCH-([A-Z]+-\d+|\d+) 不匹配）。
+    （非 #ARCH-NNN 形式引用，ARCH-REFERENCE gate 正则 #ARCH-([A-Z]+(?:-[A-Z]+)*-\d+|\d+) 不匹配）。
     正式编号 #ARCH-OLAP-001 为本议题唯一引用标识。
 
     commit: 24e5fd15ca（olap_engine 退役）
@@ -2521,3 +2521,40 @@ entries:
   related_adjudication: 同日执行 backtest_base 迁移闭环（blueprint 同步，commit 49fc8c29ba）
   created: '2026-07-16'
   last_updated: '2026-07-16'
+
+# --- #ARCH-GOV-SHIM-001: governance/trading_contracts shim 层退役——broker_interface 迁回 trading/trading_contracts/ ---
+- issue_id: '#ARCH-GOV-SHIM-001'
+  title: governance/trading_contracts shim 层退役——broker_interface 迁回 trading/trading_contracts/（消除 governance→trading 跨域反向依赖）
+  severity: P1高
+  adjudication: |
+    背景：governance/trading_contracts/ 下 broker_interface.py 等是历史遗留 shim 层，为 governance
+    域提供 trading 契约的转发访问。但 governance→trading 是跨域反向依赖（trading 是 governance
+    的下游，上游不应 import 下游契约），违反单向依赖铁律。同时 ex_core/pf_core 等 trading
+    子系统的 lazy loader 仍指向 shim 路径，导致真源分裂（shim vs trading/trading_contracts/）。
+
+    裁定（2026-07-17）：彻底退役 governance/trading_contracts/ shim 层，broker_interface 迁回
+    trading/trading_contracts/（契约归属的物理域），治本跨域反向依赖 + 真源分裂。三阶段执行：
+    阶段1 设计态登记：apply_depgraph.py 将 broker_interface 节点归属从 governance 迁至 trading
+      （status=planned，依赖关系先行铁律 L1），同步登记 trading/trading_contracts/ 与 trading
+      子系统的契约关系。
+    阶段2 消费者迁移：5 个源码消费者（ex_core/order_manager.py、ex_core/adapters/miniqmt_broker.py、
+      pf_core/* 等）+ 3 个测试消费者 import 路径从 governance.trading_contracts 改为
+      trading.trading_contracts；2 个 lazy loader（ex_core/__init__.py、pf_core/__init__.py）
+      同步迁移。
+    阶段3 shim 物理删除：删除整个 governance/trading_contracts/ 目录 + 3 个纯 shim 文件
+      （broker_interface.py 等）。depgraph 同步将 status 从 planned→production。
+
+    验证：所有 import 正常，52 个测试通过，post-commit reconciler 0 drift。
+
+    commit: 809eca3183（governance/trading_contracts shim 层退役，20 文件变更）
+
+    关联发现（治理盲区）：本次退役 commit 引用了 #ARCH-GOV-SHIM-001 三段式编号，但
+    ARCH-REFERENCE gate 旧正则 #ARCH-([A-Z]+-\d+|\d+) 只匹配两段式（#ARCH-CH-007）
+    和纯数字（#ARCH-008），三段式 #ARCH-GOV-SHIM-001 漏检，导致未登记编号可绕过门禁。
+    治本：扩展正则为 #ARCH-([A-Z]+(?:-[A-Z]+)*-\d+|\d+)，支持任意段数域前缀
+    （GOV-SHIM-NNN / DOMAIN-SUB-NNN 等）+尾部数字。本条目即正则扩展后的回溯补登。
+  fix_phase: 已执行（shim 层彻底退役 + 正则扩展 + 本条目回溯补登，2026-07-17）
+  status: decided
+  related_adjudication: 正则扩展治本 ARCH-REFERENCE gate 三段式格式漏检（arch_reference_gate.py）
+  created: '2026-07-17'
+  last_updated: '2026-07-17'

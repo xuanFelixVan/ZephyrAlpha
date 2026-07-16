@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
+# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；正则支持纯数字/两段式/多段式域前缀（#ARCH-008 / #ARCH-CH-007 / #ARCH-GOV-SHIM-001，2026-07-17 多段式支持治本 ARCH-GOV-SHIM-001 漏检）；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
 # [MODIFY-GUARD] gate_id="ARCH-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,7 +16,8 @@
 # [TTL] permanent
 """arch_reference_gate.py — #ARCH-NNN / #ARCH-DOMAIN-NNN 悬空引用自动检测门禁（ARCH-REFERENCE）
 
-检测 staged 文件中**新增的** ``#ARCH-NNN`` / ``#ARCH-CH-NNN`` / ``#ARCH-MM-NNN`` 等引用
+检测 staged 文件中**新增的** ``#ARCH-NNN`` / ``#ARCH-CH-NNN`` / ``#ARCH-MM-NNN`` /
+``#ARCH-GOV-SHIM-NNN`` 等引用（支持纯数字、两段式域前缀和多段式域前缀）
 是否在 architecture_issue_registry.yaml 中登记。命中则阻断 commit（``ARCH_REFERENCE_VIOLATION``）。
 
 病根（第一性原理）
@@ -40,9 +41,11 @@ architecture_issue_registry.yaml 编号铁律#6 规定："任何 #ARCH-XXX 引�
 3. **issue_id 从工作区 registry 提取**：commit 后 registry 的新真源即工作区版本。
 4. **priority=75**：紧跟 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前
    ——同属"引用完整性"类检查，集中执行。
-5. **正则提取**：``#ARCH-([A-Z]+-\\d+|\\d+)`` 匹配 ``#ARCH-008`` / ``#ARCH-037`` /
-   ``#ARCH-CH-007`` / ``#ARCH-MM-001`` 等，捕获组为编号后缀（纯数字或域前缀-数字）。
-   registry 中 issue_id 形如 ``'#ARCH-008'`` 或 ``'#ARCH-CH-007'``，提取后缀后比较。
+5. **正则提取**：``#ARCH-([A-Z]+(?:-[A-Z]+)*-\\d+|\\d+)`` 匹配 ``#ARCH-008`` /
+   ``#ARCH-037`` / ``#ARCH-CH-007`` / ``#ARCH-MM-001`` / ``#ARCH-GOV-SHIM-001`` 等，
+   捕获组为编号后缀（纯数字、两段式域前缀-数字、或多段式域前缀-数字）。
+   registry 中 issue_id 形如 ``'#ARCH-008'`` / ``'#ARCH-CH-007'`` / ``'#ARCH-GOV-SHIM-001'``，
+   提取后缀后比较。多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）。
 6. **不扫 commit message**：只扫 ``files`` 参数（commit 目标文件）。
 
 Usage::
@@ -70,9 +73,11 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["make_arch_reference_gate"]
 
-# #ARCH-NNN / #ARCH-DOMAIN-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-CH-007" 等
-# 捕获组为编号后缀（纯数字 "008" 或域前缀-数字 "CH-007"）
-_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+-\d+|\d+)")
+# #ARCH-NNN / #ARCH-DOMAIN-NNN 引用检测正则：匹配 "#ARCH-008" / "#ARCH-CH-007" /
+# "#ARCH-GOV-SHIM-001" 等（支持纯数字、两段式域前缀和多段式域前缀）
+# 捕获组为编号后缀（纯数字 "008"、域前缀-数字 "CH-007"、或多段式 "GOV-SHIM-001"）
+# 多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）
+_ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+(?:-[A-Z]+)*-\d+|\d+)")
 
 # 扫描的文件扩展名（可能含 #ARCH-NNN 引用的文件类型）
 _SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
