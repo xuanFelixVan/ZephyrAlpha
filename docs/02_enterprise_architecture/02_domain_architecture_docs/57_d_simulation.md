@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:12:34
+> 最后更新: 2026-07-17 03:14:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -31,9 +31,9 @@ ttl: permanent
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 8 | Prototype Modules | 8 |
-| 生产态模块 | 2 | Production Modules | 2 |
-| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
+| 原型态模块 | 9 | Prototype Modules | 9 |
+| 生产态模块 | 1 | Production Modules | 1 |
+| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
 
 ## 模块分层清单 / Module Layered List
@@ -50,7 +50,7 @@ ttl: permanent
 | 4 | src/zephyr/simulation/api/__init__.py | __init__.py | 原型态 / prototype |  |
 | 5 | src/zephyr/simulation/core/__init__.py | __init__.py | 原型态 / prototype |  |
 | 6 | src/zephyr/simulation/implementations/__init__.py | 实验 — Experimentation Concrete Implementations | 原型态 / prototype | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
-| 7 | src/zephyr/simulation/implementations/default_experiment_... | 实验 — Default Experiment Pipeline | 生产态 / production | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
+| 7 | src/zephyr/simulation/implementations/default_experiment_... | 实验 — Default Experiment Pipeline | 原型态 / prototype | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
 | 8 | src/zephyr/simulation/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 9 | src/zephyr/simulation/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 10 | src/zephyr/simulation/pipeline_base.py | 实验 — Experimentation Pipeline Layer | 生产态 / production | [MOD-L13-001](../../03_modules/_domain_simulation/blueprint.md) |
@@ -69,7 +69,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 11 个模块（生产态 2 + 设计态 1 + 原型态 8），标签标注成熟度。
+> 展示全部 11 个模块（生产态 1 + 设计态 1 + 原型态 9），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -80,16 +80,16 @@ graph TD
         src_zephyr_simulation_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_core_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_implementations_init_py["(原型态 / prototype) 实验 — Experimentation Concrete Implementations<br/>文件: __init__.py"]
-        src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>文件: default_experiment_pipeline.py"]
+        src_zephyr_simulation_implementations_default_experiment_pipeline_py["(原型态 / prototype) 实验 — Default Experiment Pipeline<br/>文件: default_experiment_pipeline.py"]
         src_zephyr_simulation_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>文件: pipeline_base.py"]
         src_zephyr_simulation_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_simulation_implementations_init_py -.->|config_depends / config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_simulation_implementations_default_experiment_pipeline_py -.->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_simulation_pipeline_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(生产态 / production) D_SHARED"]
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -99,25 +99,23 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
-    class D_INFRASTRUCTURE,D_SHARED external_prod
-    class D_GOVERNANCE external_design
+    class src_zephyr_simulation_pipeline_base_py production
+    class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
+    class D_SHARED external_prod
+    class D_INFRASTRUCTURE,D_GOVERNANCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 2 个，1 条域内依赖）。
+> 仅展示已上线运行的模块（共 1 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_SIMULATION["D_SIMULATION 仿真"]
-        src_zephyr_simulation_implementations_default_experiment_pipeline_py["(生产态 / production) 实验 — Default Experiment Pipeline<br/>文件: default_experiment_pipeline.py"]
         src_zephyr_simulation_pipeline_base_py["(生产态 / production) 实验 — Experimentation Pipeline Layer<br/>文件: pipeline_base.py"]
     end
-    src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_simulation_pipeline_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(生产态 / production) D_SHARED"]
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_simulation_pipeline_base_py
@@ -125,8 +123,9 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class D_INFRASTRUCTURE,D_SHARED external_prod
+    class src_zephyr_simulation_pipeline_base_py production
+    class D_SHARED external_prod
+    class D_INFRASTRUCTURE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -147,7 +146,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 9 个，1 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -157,17 +156,19 @@ graph TD
         src_zephyr_simulation_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_core_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_implementations_init_py["(原型态 / prototype) 实验 — Experimentation Concrete Implementations<br/>文件: __init__.py"]
+        src_zephyr_simulation_implementations_default_experiment_pipeline_py["(原型态 / prototype) 实验 — Default Experiment Pipeline<br/>文件: default_experiment_pipeline.py"]
         src_zephyr_simulation_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_simulation_services_init_py["(原型态 / prototype) __init__.py"]
     end
+    src_zephyr_simulation_implementations_init_py -.->|config_depends / config_depends| src_zephyr_simulation_implementations_default_experiment_pipeline_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_simulation_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
+    class src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
     class D_GOVERNANCE external_design
 ```
 

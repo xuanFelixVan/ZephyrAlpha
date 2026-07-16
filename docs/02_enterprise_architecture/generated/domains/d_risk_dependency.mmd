@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-17 03:12:53
+%% 生成时间: 2026-07-17 03:14:11
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 29, 依赖边数: 41
 
@@ -16,8 +16,8 @@ graph TD
         src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
         src_zephyr_risk_implementations___init___py["...phyr/risk/implementations/__init__.py [prototype]"]
         src_zephyr_risk_implementation___t_position_limit_checker_py["...ons/default_position_limit_checker.py [prototype]"]
-        src_zephyr_risk_implementation___t_risk_limits_calculator_py["...ons/default_risk_limits_calculator.py [production]"]
-        src_zephyr_risk_implementation___isk_manager_orchestrator_py[".../default_risk_manager_orchestrator.py [production]"]
+        src_zephyr_risk_implementation___t_risk_limits_calculator_py["...ons/default_risk_limits_calculator.py [prototype]"]
+        src_zephyr_risk_implementation___isk_manager_orchestrator_py[".../default_risk_manager_orchestrator.py [prototype]"]
         src_zephyr_risk_implementations_default_risk_validator_py["...ementations/default_risk_validator.py [production]"]
         src_zephyr_risk_implementations_default_stop_loss_engine_py["...entations/default_stop_loss_engine.py [prototype]"]
         src_zephyr_risk_infrastructure___init___py["...ephyr/risk/infrastructure/__init__.py [prototype]"]
@@ -45,15 +45,15 @@ graph TD
     src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_limits_py
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
-    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_risk_limits_calculator_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_risk_validator_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     tests_risk_test_ml_experiment_pipeline_py -->|test_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
     tests_risk_test_l04_risk_management_py -->|test_depends| src_zephyr_risk_risk_manager_py
     tests_risk_test_l04_risk_management_py -->|test_depends| src_zephyr_risk_risk_manager_base_py
@@ -75,8 +75,8 @@ graph TD
     %% D_RISK -> D_GOVERNANCE (1 条)
     tests_risk_test_risk_matrix_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_RISK -> D_GOV_CODE_QUALITY (2 条)
-    tests_risk_test_risk_mitigator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_risk_test_risk_mitigation_tracker_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_risk_test_risk_mitigator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     %% D_RISK -> D_GOV_RULE (1 条)
     tests_risk_test_risk_ssot_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_RISK -> D_INFRASTRUCTURE (3 条)

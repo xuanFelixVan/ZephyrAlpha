@@ -13,7 +13,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 data_source_integrator（D_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:11:14
+> 最后更新: 2026-07-17 03:13:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -199,22 +199,22 @@ graph TD
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     scripts_register_scheduler_task_ps1 -.->|config_depends / config_depends| D_GOVERNANCE
     scripts_start_scheduler_ps1 -.->|config_depends / config_depends| D_GOVERNANCE
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_BACKTEST -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
     D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -.->|导入依赖 / import_depends| src_zephyr_data_capability_validator_py
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_data_ch_config_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_error_classifier_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_integrity_checker_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_cli_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_ch_reader_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_cli_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_integrity_checker_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_error_classifier_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -222,7 +222,7 @@ graph TD
     class src_zephyr_data_init_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml,src_zephyr_data_error_classifier_py,src_zephyr_data_integrity_checker_py production
     class schemas_categories_market_tick_py,scripts_register_scheduler_task_ps1,scripts_start_scheduler_ps1,src_zephyr_data_main_py,src_zephyr_data_alerter_py,src_zephyr_data_backfill_checker_py,src_zephyr_data_buffered_writer_py,src_zephyr_data_capability_validator_py,src_zephyr_data_ch_config_py,src_zephyr_data_ch_reader_py,src_zephyr_data_ch_writer_py,src_zephyr_data_implementations_init_py,src_zephyr_data_implementations_akshare_provider_py,src_zephyr_data_implementations_baostock_provider_py,src_zephyr_data_implementations_cls_provider_py,src_zephyr_data_implementations_eastmoney_news_provider_py,src_zephyr_data_implementations_ifind_provider_py,src_zephyr_data_implementations_miniqmt_provider_py,src_zephyr_data_implementations_rss_provider_py,src_zephyr_data_implementations_tdx_provider_py,src_zephyr_data_implementations_tickflow_provider_py,src_zephyr_data_implementations_tushare_provider_py,src_zephyr_data_local_replay_py design
     class D_SHARED,D_BACKTEST external_prod
-    class D_GOVERNANCE,D_GOV_SCRIPTS,D_GOV_CODE_QUALITY,D_INFRA_RUNTIME external_design
+    class D_GOVERNANCE,D_GOV_CODE_QUALITY,D_INFRA_RUNTIME,D_GOV_SCRIPTS external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -291,8 +291,8 @@ graph TD
     tests_data_test_data_volume_growth_monitor_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
     tests_data_test_data_source_reliability_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     tests_db_conftest_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_db_test_db_integration_py -.->|测试依赖 / test_depends| D_SHARED
     tests_db_test_db_integration_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    tests_db_test_db_integration_py -.->|测试依赖 / test_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_db_test_db_bridge_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_provider_base_py
@@ -364,20 +364,20 @@ graph TD
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_cli_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_policy_registry_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_data_policy_registry_py
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_data_init_py
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    D_BACKTEST -->|导入依赖 / import_depends| src_zephyr_data_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_data_init_py,src_zephyr_data_cli_py,src_zephyr_data_config_policies_yaml,src_zephyr_data_config_schedule_yaml,src_zephyr_data_config_tasks_yaml,src_zephyr_data_error_classifier_py,src_zephyr_data_integrity_checker_py,src_zephyr_data_policy_registry_py,src_zephyr_data_tick_subscriber_py production
     class D_BACKTEST external_prod
-    class D_SHARED,D_GOVERNANCE,D_GOV_SCRIPTS external_design
+    class D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

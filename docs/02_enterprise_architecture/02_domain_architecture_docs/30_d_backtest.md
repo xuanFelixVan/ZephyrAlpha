@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:11:14
+> 最后更新: 2026-07-17 03:13:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -262,11 +262,11 @@ graph TD
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    D_DATA["(生产态 / production) D_DATA"]
-    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
-    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_DATA
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_DATA["(原型态 / prototype) D_DATA"]
+    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_DATA
+    src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
@@ -294,8 +294,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_backtest_core_data_handler_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_core_matching_engine_py,src_zephyr_backtest_core_matching_logic_py,src_zephyr_backtest_core_portfolio_py,src_zephyr_backtest_core_tick_replay_py,src_zephyr_backtest_implementations_event_driven_engine_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_io_decisiongraph_adapter_py production
-    class D_DATA,D_SHARED,D_GOVERNANCE external_prod
-    class D_INFRA_RUNTIME,D_AUDITTEST,D_INTELLIGENCE,D_EX_CORE external_design
+    class D_SHARED,D_GOVERNANCE external_prod
+    class D_INFRA_RUNTIME,D_DATA,D_AUDITTEST,D_INTELLIGENCE,D_EX_CORE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
