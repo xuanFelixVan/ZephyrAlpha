@@ -586,7 +586,7 @@ class AutoRuntimeCore:
                 # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
                 logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
         try:
-            from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+            from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
             ResourceOptimizationEngine().stop_monitor()
         except Exception:

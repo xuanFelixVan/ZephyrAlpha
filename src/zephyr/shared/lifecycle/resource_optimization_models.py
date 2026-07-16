@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.lifecycle.resource_optimization_models
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES]
-# [CONSUMERS] shared.io.io_cache; shared.infra.process_pool; runtime.resource_optimization; shared.lifecycle.resource_optimization_engine
+# [CONSUMERS] shared.io.io_cache; shared.infra.process_pool; runtime.resource_optimization
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
