@@ -3593,6 +3593,163 @@ capabilities:
     integrity_anchors:
       - make_capability_consistency_gate  # gate 工厂(删则 gate 不注册)
 
+  # --------------------------------------------------------------------------
+  # M04 治本批量登记（2026-07-17，16 个 commit gate 反查补登记）
+  # 病根：commit_gates/ 下 16 个 gate 文件未在 capability registry 登记，
+  # 新 AI 搜不到已有 gate → 重复造轮子。批量补登记 capability_id + aliases + description。
+  # canonical_override 显式指向 src/zephyr/gov_enforcement/commit_gates/ 下的真源文件。
+  # --------------------------------------------------------------------------
+
+  - capability_id: bare_sql_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py
+    aliases:
+      - NO-BARE-SQL
+      - bare_sql
+    description: >-
+      NO-BARE-SQL 裸 SQL 字面量阻断门禁（§5.160.2 防复发）。
+      检测代码中直接写入 SQL 字符串字面量（绕过 DatabaseService 参数化查询），
+      commit 时硬阻断。canonical = src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py。
+      解决发现性：新 AI 搜 "裸SQL/SQL注入/bare sql/NO-BARE-SQL" 可定位真源。
+
+  - capability_id: blueprint_format_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
+    aliases:
+      - BLUEPRINT-FORMAT
+      - blueprint_format
+    description: >-
+      BLUEPRINT-FORMAT [BLUEPRINT] 头部 module_id 格式阻断门禁（裁定#214 Phase 0 防蔓延）。
+      检测 .py 文件 [BLUEPRINT] 头部 module_id 是否符合三轨制格式
+      （MOD-{LAYER}-{SEQ}/MOD-{DOMAIN}[-NNN]/SH-{ABBR}-{NNN}），
+      SRC-XXX/DOM-GOV-XXX/空值均视为无效。canonical 同上路径。
+
+  - capability_id: ch_batch_size_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/ch_batch_size_gate.py
+    aliases:
+      - CH-BATCH-SIZE
+      - ch_batch_size
+    description: >-
+      CH-BATCH-SIZE ClickHouse 批量写入防回退门禁（§18.4 防复发）。
+      检测 ch_writer 调用是否使用批量写入模式（防止回退到逐行插入）。
+
+  - capability_id: ch_final_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py
+    aliases:
+      - CH-FINAL-GATE
+      - ch_final
+    description: >-
+      CH-FINAL-GATE ch_writer.query() 直接调用阻断门禁（裁定 #ARCH-CH-007 B5）。
+      检测代码中直接调用 ch_writer.query() 绕过批量写入抽象层。
+
+  - capability_id: ch_version_col_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py
+    aliases:
+      - CH-VERSION-COL
+      - ch_version_col
+    description: >-
+      CH-VERSION-COL ClickHouse version 列语义误用阻断门禁（裁定 #ARCH-CH-009）。
+      检测代码中对 CH version 列的语义误用模式。
+
+  - capability_id: data_task_completeness_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/data_task_completeness_gate.py
+    aliases:
+      - DATA-TASK-COMPLETENESS
+      - data_task_completeness
+    description: >-
+      DATA-TASK-COMPLETENESS 数据任务完整性门禁（warn 级，提醒型）。
+      检测数据任务是否声明了完整的输出契约字段。
+
+  - capability_id: datetime_now_forbidden_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py
+    aliases:
+      - DATETIME-NOW-FORBIDDEN
+      - datetime_now_forbidden
+    description: >-
+      DATETIME-NOW-FORBIDDEN 生成器代码 datetime.now() 硬阻断门禁。
+      检测生成器/构建脚本中使用 datetime.now()（应使用确定性时间源），
+      commit 时硬阻断。
+
+  - capability_id: depgraph_write_path_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py
+    aliases:
+      - DEPGRAPH-WRITE-PATH
+      - depgraph_write_path
+    description: >-
+      DEPGRAPH-WRITE-PATH depgraph 写入路径白名单门禁。
+      检测 depgraph 写入操作是否来自白名单路径（防止非授权脚本直接写 DB）。
+
+  - capability_id: foreign_change_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
+    aliases:
+      - FOREIGN-CHANGE-DETECTION
+      - foreign_change
+    description: >-
+      FOREIGN-CHANGE-DETECTION 外来变更检测门禁（ARCH-054 治本）。
+      检测 commit 中是否包含外来（非项目 AI 生成）的变更。
+
+  - capability_id: god_class_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/god_class_gate.py
+    aliases:
+      - NO-GOD-CLASS
+      - god_class
+    description: >-
+      NO-GOD-CLASS God Class 阻断门禁（§5.150 防复发）。
+      检测类的方法数/属性数是否超过 God Class 阈值。
+
+  - capability_id: hardcoded_url_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py
+    aliases:
+      - NO-HARDCODED-URL
+      - hardcoded_url
+    description: >-
+      NO-HARDCODED-URL 硬编码 localhost URL 阻断门禁（§5.160.9 防复发）。
+      检测代码中硬编码 localhost/127.0.0.1 URL（应从配置读取）。
+
+  - capability_id: high_complexity_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py
+    aliases:
+      - NO-HIGH-COMPLEXITY
+      - high_complexity
+    description: >-
+      NO-HIGH-COMPLEXITY 高循环复杂度阻断门禁（§5.158 防复发）。
+      检测函数圈复杂度是否超过阈值（默认 15），commit 时硬阻断。
+
+  - capability_id: import_direction_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py
+    aliases:
+      - NO-UPWARD-IMPORT
+      - import_direction
+    description: >-
+      NO-UPWARD-IMPORT shared 层向上依赖阻断门禁（§5.152 防复发）。
+      检测 shared/infrastructure 层是否向上 import domain/application 层。
+
+  - capability_id: long_param_list_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py
+    aliases:
+      - NO-LONG-PARAM-LIST
+      - long_param_list
+    description: >-
+      NO-LONG-PARAM-LIST 长参数列表阻断门禁（§5.150 防复发）。
+      检测函数参数个数是否超过阈值，commit 时硬阻断。
+
+  - capability_id: test_source_consistency_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py
+    aliases:
+      - TEST-SOURCE-CONSISTENCY
+      - test_source_consistency
+    description: >-
+      TEST-SOURCE-CONSISTENCY 测试-源码符号一致性门禁（§5.178 防复发）。
+      检测 tests/ 文件中 from zephyr.* import 的符号在源码中是否存在，
+      防止测试引用已删除/重命名的符号（只防新增符号漂移）。
+
+  - capability_id: tests_coverage_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py
+    aliases:
+      - META-TESTS-COVERAGE
+      - tests_coverage
+    description: >-
+      META-TESTS-COVERAGE Gate 测试覆盖率校验 meta-gate（#ARCH-057）。
+      检测 commit gate 自身是否有对应测试覆盖（meta 层：gate 的 gate）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
