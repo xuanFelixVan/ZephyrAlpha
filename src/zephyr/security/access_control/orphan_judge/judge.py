@@ -189,6 +189,74 @@ def _create_l2_checker() -> object:
         return None
 
 
+def _decision_route_duplicate_path(
+    l3: LayerResult,
+) -> tuple[Verdict, Confidence, str] | None:
+    """Route decision for the duplicate-detected branch (is_dup=True).
+
+    Mirrors the original ``is_dup and ...`` rows of the 12-row decision table.
+    Returns ``None`` when no row matches (kept for parity with the table).
+    """
+    has_unique = l3.data.get("has_unique", False)
+    l3_uncertain = l3.data.get("is_uncertain", False)
+
+    if l3_uncertain:
+        return Verdict.ESCALATE, Confidence.LOW, "Duplicate with uncertain unique value"
+
+    if has_unique:
+        if l3.data.get("unique_confidence") == "low":
+            return (
+                Verdict.EXTRACT_AND_MERGE,
+                Confidence.MEDIUM,
+                "Duplicate with few unique elements, extract and merge with deprecation",
+            )
+        return (
+            Verdict.EXTRACT_AND_MERGE,
+            Confidence.HIGH,
+            "Duplicate with unique elements, extract and merge",
+        )
+
+    if not has_unique:
+        return Verdict.DELETE, Confidence.HIGH, "Duplicate with no unique value"
+
+    return None
+
+
+def _decision_route_nonduplicate_path(
+    l4: LayerResult,
+) -> tuple[Verdict, Confidence, str] | None:
+    """Route decision for the non-duplicate branch (is_dup=False).
+
+    Mirrors the original ``not is_dup and ...`` rows of the 12-row decision table.
+    Returns ``None`` when no row matches (kept for parity with the table).
+    """
+    has_value = l4.data.get("has_value", False)
+    l4_uncertain = l4.data.get("is_uncertain", False)
+    value_confidence = l4.data.get("value_confidence", "low")
+
+    if l4_uncertain:
+        return Verdict.ESCALATE, Confidence.LOW, "Not duplicate but standalone value uncertain"
+
+    if has_value and value_confidence in ("high", "medium"):
+        return (
+            Verdict.KEEP,
+            Confidence.HIGH,
+            "Not duplicate with standalone value, needs registration",
+        )
+
+    if has_value and value_confidence == "low":
+        return (
+            Verdict.DEPRECATE,
+            Confidence.MEDIUM,
+            "Not duplicate with low-confidence value, deprecate first",
+        )
+
+    if not has_value:
+        return Verdict.DELETE, Confidence.MEDIUM, "Not duplicate with no standalone value"
+
+    return None
+
+
 class OrphanJudge:
     """孤儿判定主控类——五层判定->决策路由->安全围栏->处置建议
 
@@ -467,53 +535,17 @@ class OrphanJudge:
         """
         is_dup = l2.data.get("is_duplicate", False)
         l2_uncertain = l2.data.get("is_uncertain", False)
-        has_unique = l3.data.get("has_unique", False)
-        l3_uncertain = l3.data.get("is_uncertain", False)
-        has_value = l4.data.get("has_value", False)
-        l4_uncertain = l4.data.get("is_uncertain", False)
-        value_confidence = l4.data.get("value_confidence", "low")
 
         if l2_uncertain:
             return Verdict.ESCALATE, Confidence.LOW, "L2 duplicate detection uncertain"
 
-        if is_dup and l3_uncertain:
-            return Verdict.ESCALATE, Confidence.LOW, "Duplicate with uncertain unique value"
+        if is_dup:
+            result = _decision_route_duplicate_path(l3)
+        else:
+            result = _decision_route_nonduplicate_path(l4)
 
-        if is_dup and has_unique:
-            if l3.data.get("unique_confidence") == "low":
-                return (
-                    Verdict.EXTRACT_AND_MERGE,
-                    Confidence.MEDIUM,
-                    "Duplicate with few unique elements, extract and merge with deprecation",
-                )
-            return (
-                Verdict.EXTRACT_AND_MERGE,
-                Confidence.HIGH,
-                "Duplicate with unique elements, extract and merge",
-            )
-
-        if is_dup and not has_unique:
-            return Verdict.DELETE, Confidence.HIGH, "Duplicate with no unique value"
-
-        if not is_dup and l4_uncertain:
-            return Verdict.ESCALATE, Confidence.LOW, "Not duplicate but standalone value uncertain"
-
-        if not is_dup and has_value and value_confidence in ("high", "medium"):
-            return (
-                Verdict.KEEP,
-                Confidence.HIGH,
-                "Not duplicate with standalone value, needs registration",
-            )
-
-        if not is_dup and has_value and value_confidence == "low":
-            return (
-                Verdict.DEPRECATE,
-                Confidence.MEDIUM,
-                "Not duplicate with low-confidence value, deprecate first",
-            )
-
-        if not is_dup and not has_value:
-            return Verdict.DELETE, Confidence.MEDIUM, "Not duplicate with no standalone value"
+        if result is not None:
+            return result
 
         return (
             Verdict.ESCALATE,
