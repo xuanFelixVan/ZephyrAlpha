@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-15T04:35:30
+> 生成时间: 2026-07-16T22:48:56
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -17,12 +17,12 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 180 |
+| Layer（层） | 175 |
 | Node（节点） | 214 |
 | Edge（边） | 213 |
-| 运营态 Layer（design_maturity=production） | 17 |
-| 设计态 Layer（design_maturity=design） | 58 |
-| 原型态 Layer（design_maturity=prototype） | 105 |
+| 运营态 Layer（design_maturity=production） | 16 |
+| 设计态 Layer（design_maturity=design） | 55 |
+| 原型态 Layer（design_maturity=prototype） | 104 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
 
@@ -488,18 +488,14 @@ flowchart TD
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LD_GOV_ENFORCEMENT["[prototype]D-GOV-ENFORCEMENT: D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>build: generated"]:::bsGenerated
-        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>build: stable"]:::bsStable
-        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
-        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
-        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
-        LMOD_013["[design]MOD-013: MOD-013<br/>build: planned"]:::bsPlanned
-        LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
-        LMOD_015["[design]MOD-015: MOD-015<br/>build: stable"]:::bsStable
+        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
         LMOD_ALT_DATA["[prototype]MOD-ALT_DATA: MOD-ALT_DATA<br/>蓝图: MOD-ALT_DATA<br/>build: generated"]:::bsGenerated
         LMOD_ARCH_BIZDB["[design]MOD-ARCH-BIZDB: MOD-ARCH-BIZDB<br/>build: planned"]:::bsPlanned
         LMOD_AUTONOMY_CORE["[production]MOD-AUTONOMY_CORE: MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>build: generated"]:::bsGenerated
         LMOD_AUTONOMY_PERM["[prototype]MOD-AUTONOMY_PERM: MOD-AUTONOMY_PERM<br/>蓝图: MOD-AUTONOMY_PERM<br/>build: generated"]:::bsGenerated
-        LMOD_BIZ_002["[prototype]MOD-BIZ-002: MOD-BIZ-002<br/>蓝图: MOD-BIZ-002<br/>build: generated"]:::bsGenerated
         LMOD_BT_001["[design]MOD-BT-001: MOD-BT-001<br/>build: generated"]:::bsGenerated
         LMOD_C1_MARKETCH["[design]MOD-C1-MARKETCH: MOD-C1-MARKETCH<br/>build: planned"]:::bsPlanned
         LMOD_CONTEXT_ENGINE["[design]MOD-CONTEXT_ENGINE: MOD-CONTEXT_ENGINE<br/>build: planned"]:::bsPlanned
@@ -516,7 +512,6 @@ flowchart TD
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_019["[prototype]MOD-GOV-019: MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>build: generated"]:::bsGenerated
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
-        LMOD_GOV_ALIGNMENT_LOOP["[design]MOD-GOV-ALIGNMENT-LOOP: MOD-GOV-ALIGNMENT-LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
         LMOD_GOV_REPAIR["[prototype]MOD-GOV-REPAIR: MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>build: generated"]:::bsGenerated
         LMOD_GOV_SCRIPTS["[prototype]MOD-GOV-SCRIPTS: MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>build: generated"]:::bsGenerated
@@ -672,15 +667,11 @@ flowchart TD
     LL3 -.->|triggering| LL4
     LL4 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
-    LL6 -.->|triggering| LMOD_013
-    LMOD_013 -.->|triggering| LMOD_014
-    LMOD_014 -.->|triggering| LMOD_015
-    LMOD_015 -.->|triggering| LMOD_ALT_DATA
+    LL6 -.->|triggering| LMOD_ALT_DATA
     LMOD_ALT_DATA -.->|triggering| LMOD_ARCH_BIZDB
     LMOD_ARCH_BIZDB -.->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -.->|triggering| LMOD_AUTONOMY_PERM
-    LMOD_AUTONOMY_PERM -.->|triggering| LMOD_BIZ_002
-    LMOD_BIZ_002 -.->|triggering| LMOD_BT_001
+    LMOD_AUTONOMY_PERM -.->|triggering| LMOD_BT_001
     LMOD_BT_001 -.->|triggering| LMOD_C1_MARKETCH
     LMOD_C1_MARKETCH -.->|triggering| LMOD_CONTEXT_ENGINE
     LMOD_CONTEXT_ENGINE -.->|triggering| LMOD_CROSS_ASSET
@@ -696,8 +687,7 @@ flowchart TD
     LMOD_FEEDBACK_LOOP -.->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -.->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -.->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_ALIGNMENT_LOOP
-    LMOD_GOV_ALIGNMENT_LOOP -.->|triggering| LMOD_GOV_DOCS
+    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_DOCS
     LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -.->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -.->|triggering| LMOD_GOV_SCRIPTS_ARCH
@@ -1056,7 +1046,7 @@ flowchart TD
 
 ### 运营态全景图（仅 design_maturity=production 的 layer/node）
 
-> 仅展示已实现稳定运行的决策层/节点（共 17 层，0 边）。
+> 仅展示已实现稳定运行的决策层/节点（共 16 层，0 边）。
 
 ```mermaid
 flowchart TD
@@ -1076,11 +1066,10 @@ flowchart TD
         LCFG_rule_registry_collection["[production]CFG-rule-registry-collection: CFG-rule-registry-collection<br/>蓝图: 规则注册表集 / Rule Registry Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_scripts_registry["[production]CFG-scripts-registry: CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
         LCFG_test_suite_registry["[production]CFG-test-suite-registry: CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>build: stable"]:::bsStable
-        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>build: stable"]:::bsStable
-        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>build: stable"]:::bsStable
-        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>build: stable"]:::bsStable
-        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>build: stable"]:::bsStable
-        LMOD_014["[production]MOD-014: MOD-014<br/>蓝图: MOD-014<br/>build: generated"]:::bsGenerated
+        LINFRA_DB_001["[production]INFRA-DB-001: INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_002["[production]INFRA-DB-002: INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_003["[production]INFRA-DB-003: INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
+        LINFRA_DB_006["[production]INFRA-DB-006: INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>build: stable"]:::bsStable
         LMOD_AUTONOMY_CORE["[production]MOD-AUTONOMY_CORE: MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>build: generated"]:::bsGenerated
         LMOD_GOV_DOCS["[production]MOD-GOV-DOCS: MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>build: generated"]:::bsGenerated
         LMOD_GOV_worktree_manager["[production]MOD-GOV-worktree_manager: MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>build: generated"]:::bsGenerated
@@ -1097,8 +1086,7 @@ flowchart TD
     LINFRA_DB_006 -.->|triggering| LL0
     LL0 -.->|triggering| LL1
     LL1 -.->|triggering| LL4
-    LL4 -.->|triggering| LMOD_014
-    LMOD_014 -.->|triggering| LMOD_AUTONOMY_CORE
+    LL4 -.->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -.->|triggering| LMOD_GOV_DOCS
     LMOD_GOV_DOCS -.->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -.->|triggering| LMOD_SECURITY_LLM
@@ -1113,7 +1101,7 @@ flowchart TD
 
 ### 设计态全景图（仅 design_maturity=design 的 layer/node）
 
-> 仅展示蓝图规划中尚未实现的决策层/节点（共 58 层，137 边）。
+> 仅展示蓝图规划中尚未实现的决策层/节点（共 55 层，137 边）。
 
 ```mermaid
 flowchart TD
@@ -1409,8 +1397,6 @@ flowchart TD
     subgraph track_emergency["应急保命轨（Emergency Track）"]
     end
     subgraph track_placeholder["占位轨（Placeholder Track）"]
-        LMOD_013["[design]MOD-013: MOD-013<br/>build: planned"]:::bsPlanned
-        LMOD_015["[design]MOD-015: MOD-015<br/>build: stable"]:::bsStable
         LMOD_ARCH_BIZDB["[design]MOD-ARCH-BIZDB: MOD-ARCH-BIZDB<br/>build: planned"]:::bsPlanned
         LMOD_BT_001["[design]MOD-BT-001: MOD-BT-001<br/>build: generated"]:::bsGenerated
         LMOD_C1_MARKETCH["[design]MOD-C1-MARKETCH: MOD-C1-MARKETCH<br/>build: planned"]:::bsPlanned
@@ -1420,7 +1406,6 @@ flowchart TD
         LMOD_FEEDBACK_LOOP["[design]MOD-FEEDBACK_LOOP: MOD-FEEDBACK_LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GATE_ENGINE["[design]MOD-GATE_ENGINE: MOD-GATE_ENGINE<br/>build: planned"]:::bsPlanned
         LMOD_GOV_ALIGN_PANORAMAS["[design]MOD-GOV-ALIGN-PANORAMAS: MOD-GOV-ALIGN-PANORAMAS<br/>build: stable"]:::bsStable
-        LMOD_GOV_ALIGNMENT_LOOP["[design]MOD-GOV-ALIGNMENT-LOOP: MOD-GOV-ALIGNMENT-LOOP<br/>build: planned"]:::bsPlanned
         LMOD_GOVERNANCE["[design]MOD-GOVERNANCE: MOD-GOVERNANCE<br/>build: generated"]:::bsGenerated
         LMOD_INF_005["[design]MOD-INF-005: MOD-INF-005<br/>build: planned"]:::bsPlanned
         LMOD_INF_009["[design]MOD-INF-009: MOD-INF-009<br/>build: planned"]:::bsPlanned
@@ -1467,9 +1452,7 @@ flowchart TD
     LL2D -.->|triggering| LL3
     LL3 -.->|triggering| LL5
     LL5 -.->|triggering| LL6
-    LL6 -.->|triggering| LMOD_013
-    LMOD_013 -.->|triggering| LMOD_015
-    LMOD_015 -.->|triggering| LMOD_ARCH_BIZDB
+    LL6 -.->|triggering| LMOD_ARCH_BIZDB
     LMOD_ARCH_BIZDB -.->|triggering| LMOD_BT_001
     LMOD_BT_001 -.->|triggering| LMOD_C1_MARKETCH
     LMOD_C1_MARKETCH -.->|triggering| LMOD_CONTEXT_ENGINE
@@ -1478,8 +1461,7 @@ flowchart TD
     LMOD_DIGITAL_TWIN -.->|triggering| LMOD_FEEDBACK_LOOP
     LMOD_FEEDBACK_LOOP -.->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -.->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOV_ALIGNMENT_LOOP
-    LMOD_GOV_ALIGNMENT_LOOP -.->|triggering| LMOD_GOVERNANCE
+    LMOD_GOV_ALIGN_PANORAMAS -.->|triggering| LMOD_GOVERNANCE
     LMOD_GOVERNANCE -.->|triggering| LMOD_INF_005
     LMOD_INF_005 -.->|triggering| LMOD_INF_009
     LMOD_INF_009 -.->|triggering| LMOD_INF_011
@@ -1672,10 +1654,10 @@ flowchart LR
     LCFG_scripts_registry["[production] CFG-scripts-registry CFG-scripts-registry<br/>CFG-scripts-registry<br/>蓝图: 脚本集 / Script Collection — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LCFG_test_suite_registry["[production] CFG-test-suite-registry CFG-test-suite-registry<br/>CFG-test-suite-registry<br/>蓝图: 测试集 / Test Suite — ARCH-052 聚合节点 production<br/>成熟度: production<br/>build: stable"]:::bsStable
     LD_GOV_ENFORCEMENT["[prototype] D-GOV-ENFORCEMENT D-GOV-ENFORCEMENT<br/>D-GOV-ENFORCEMENT<br/>蓝图: D-GOV-ENFORCEMENT<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: INFRA-DB-001<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: INFRA-DB-002<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: INFRA-DB-003<br/>成熟度: production<br/>build: stable"]:::bsStable
-    LINFRA_DB_006["[production] INFRA-DB-006 INFRA-DB-006<br/>INFRA-DB-006<br/>蓝图: INFRA-DB-006<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_001["[production] INFRA-DB-001 INFRA-DB-001<br/>INFRA-DB-001<br/>蓝图: zephyr-sqlite-task-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_002["[production] INFRA-DB-002 INFRA-DB-002<br/>INFRA-DB-002<br/>蓝图: zephyr-chroma-vector-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_003["[production] INFRA-DB-003 INFRA-DB-003<br/>INFRA-DB-003<br/>蓝图: zephyr-depgraph-db — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LINFRA_DB_006["[production] INFRA-DB-006 INFRA-DB-006<br/>INFRA-DB-006<br/>蓝图: zephyr-clickhouse-c1-market — database 节点 (ARCH-053)<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL0["[production] L0 数据接入与预处理层<br/>Data Ingestion & Preprocessing<br/>蓝图: MOD-MKT_DATA<br/>功能: miniQMT + iFind + t…<br/>频率: tick<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL1["[production] L1 因子计算层<br/>Factor Calculation<br/>蓝图: MOD-L02-001<br/>功能: 因子工厂全生命周期管理 → 盘前全量/…<br/>频率: daily<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL2A["[design] L2A 信号层<br/>Signal Generation<br/>功能: 信号工厂 → 多策略投票 → 收益率条…<br/>频率: daily<br/>成熟度: design<br/>build: planned"]:::bsPlanned
@@ -1686,14 +1668,10 @@ flowchart LR
     LL4["[production] L4 风控层<br/>Risk Control<br/>蓝图: MOD-L04-001<br/>功能: Pre/Post-Trade 风控校验…<br/>频率: realtime<br/>成熟度: production<br/>build: stable"]:::bsStable
     LL5["[design] L5 学习层<br/>Learning & Optimization<br/>功能: 7阶段学习流水线 → 模块工厂 → 知…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LL6["[design] L6 自评估层<br/>Self Evaluation<br/>功能: LLM 自评估(Judge+交叉验证)…<br/>频率: weekly<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_013["[design] MOD-013 MOD-013<br/>MOD-013<br/>成熟度: design<br/>build: planned"]:::bsPlanned
-    LMOD_014["[production] MOD-014 MOD-014<br/>MOD-014<br/>蓝图: MOD-014<br/>成熟度: production<br/>build: generated"]:::bsGenerated
-    LMOD_015["[design] MOD-015 MOD-015<br/>MOD-015<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_ALT_DATA["[prototype] MOD-ALT_DATA MOD-ALT_DATA<br/>MOD-ALT_DATA<br/>蓝图: MOD-ALT_DATA<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_ARCH_BIZDB["[design] MOD-ARCH-BIZDB MOD-ARCH-BIZDB<br/>MOD-ARCH-BIZDB<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_AUTONOMY_CORE["[production] MOD-AUTONOMY_CORE MOD-AUTONOMY_CORE<br/>MOD-AUTONOMY_CORE<br/>蓝图: MOD-AUTONOMY_CORE<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_AUTONOMY_PERM["[prototype] MOD-AUTONOMY_PERM MOD-AUTONOMY_PERM<br/>MOD-AUTONOMY_PERM<br/>蓝图: MOD-AUTONOMY_PERM<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_BIZ_002["[prototype] MOD-BIZ-002 MOD-BIZ-002<br/>MOD-BIZ-002<br/>蓝图: MOD-BIZ-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_BT_001["[design] MOD-BT-001 MOD-BT-001<br/>MOD-BT-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_C1_MARKETCH["[design] MOD-C1-MARKETCH MOD-C1-MARKETCH<br/>MOD-C1-MARKETCH<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_CONTEXT_ENGINE["[design] MOD-CONTEXT_ENGINE MOD-CONTEXT_ENGINE<br/>MOD-CONTEXT_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
@@ -1710,7 +1688,6 @@ flowchart LR
     LMOD_GATE_ENGINE["[design] MOD-GATE_ENGINE MOD-GATE_ENGINE<br/>MOD-GATE_ENGINE<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_019["[prototype] MOD-GOV-019 MOD-GOV-019<br/>MOD-GOV-019<br/>蓝图: MOD-GOV-019<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_ALIGN_PANORAMAS["[design] MOD-GOV-ALIGN-PANORAMAS MOD-GOV-ALIGN-PANORAMAS<br/>MOD-GOV-ALIGN-PANORAMAS<br/>成熟度: design<br/>build: stable"]:::bsStable
-    LMOD_GOV_ALIGNMENT_LOOP["[design] MOD-GOV-ALIGNMENT-LOOP MOD-GOV-ALIGNMENT-LOOP<br/>MOD-GOV-ALIGNMENT-LOOP<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_DOCS["[production] MOD-GOV-DOCS MOD-GOV-DOCS<br/>MOD-GOV-DOCS<br/>蓝图: MOD-GOV-DOCS<br/>成熟度: production<br/>build: generated"]:::bsGenerated
     LMOD_GOV_REPAIR["[prototype] MOD-GOV-REPAIR MOD-GOV-REPAIR<br/>MOD-GOV-REPAIR<br/>蓝图: MOD-GOV-REPAIR<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_SCRIPTS["[prototype] MOD-GOV-SCRIPTS MOD-GOV-SCRIPTS<br/>MOD-GOV-SCRIPTS<br/>蓝图: MOD-GOV-SCRIPTS<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -1865,15 +1842,11 @@ flowchart LR
     LL3 -->|triggering| LL4
     LL4 -->|triggering| LL5
     LL5 -->|triggering| LL6
-    LL6 -->|triggering| LMOD_013
-    LMOD_013 -->|triggering| LMOD_014
-    LMOD_014 -->|triggering| LMOD_015
-    LMOD_015 -->|triggering| LMOD_ALT_DATA
+    LL6 -->|triggering| LMOD_ALT_DATA
     LMOD_ALT_DATA -->|triggering| LMOD_ARCH_BIZDB
     LMOD_ARCH_BIZDB -->|triggering| LMOD_AUTONOMY_CORE
     LMOD_AUTONOMY_CORE -->|triggering| LMOD_AUTONOMY_PERM
-    LMOD_AUTONOMY_PERM -->|triggering| LMOD_BIZ_002
-    LMOD_BIZ_002 -->|triggering| LMOD_BT_001
+    LMOD_AUTONOMY_PERM -->|triggering| LMOD_BT_001
     LMOD_BT_001 -->|triggering| LMOD_C1_MARKETCH
     LMOD_C1_MARKETCH -->|triggering| LMOD_CONTEXT_ENGINE
     LMOD_CONTEXT_ENGINE -->|triggering| LMOD_CROSS_ASSET
@@ -1889,8 +1862,7 @@ flowchart LR
     LMOD_FEEDBACK_LOOP -->|triggering| LMOD_GATE_ENGINE
     LMOD_GATE_ENGINE -->|triggering| LMOD_GOV_019
     LMOD_GOV_019 -->|triggering| LMOD_GOV_ALIGN_PANORAMAS
-    LMOD_GOV_ALIGN_PANORAMAS -->|triggering| LMOD_GOV_ALIGNMENT_LOOP
-    LMOD_GOV_ALIGNMENT_LOOP -->|triggering| LMOD_GOV_DOCS
+    LMOD_GOV_ALIGN_PANORAMAS -->|triggering| LMOD_GOV_DOCS
     LMOD_GOV_DOCS -->|triggering| LMOD_GOV_REPAIR
     LMOD_GOV_REPAIR -->|triggering| LMOD_GOV_SCRIPTS
     LMOD_GOV_SCRIPTS -->|triggering| LMOD_GOV_SCRIPTS_ARCH
@@ -2087,10 +2059,10 @@ flowchart TD
 | CFG-scripts-registry | CFG-scripts-registry | CFG-scripts-registry | placeholder | CFG-scripts-registry | 脚本集 / Script Collection — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | CFG-test-suite-registry | CFG-test-suite-registry | CFG-test-suite-registry | placeholder | CFG-test-suite-registry | 测试集 / Test Suite — ARCH-052 聚合节点 production | - | - | - | production | stable |
 | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | D-GOV-ENFORCEMENT | placeholder | D-GOV-ENFORCEMENT | - | - | - | - | prototype | generated |
-| INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | - | - | - | - | production | stable |
-| INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | - | - | - | - | production | stable |
-| INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | - | - | - | - | production | stable |
-| INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | - | - | - | - | production | stable |
+| INFRA-DB-001 | INFRA-DB-001 | INFRA-DB-001 | placeholder | INFRA-DB-001 | zephyr-sqlite-task-db — database 节点 (ARCH-053) | - | - | - | production | stable |
+| INFRA-DB-002 | INFRA-DB-002 | INFRA-DB-002 | placeholder | INFRA-DB-002 | zephyr-chroma-vector-db — database 节点 (ARCH-053) | - | - | - | production | stable |
+| INFRA-DB-003 | INFRA-DB-003 | INFRA-DB-003 | placeholder | INFRA-DB-003 | zephyr-depgraph-db — database 节点 (ARCH-053) | - | - | - | production | stable |
+| INFRA-DB-006 | INFRA-DB-006 | INFRA-DB-006 | placeholder | INFRA-DB-006 | zephyr-clickhouse-c1-market — database 节点 (ARCH-053) | - | - | - | production | stable |
 | L0 | 数据接入与预处理层 | Data Ingestion & Preprocessing | model_driven | MOD-MKT_DATA | - | - | miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储 产出：tick_data / ohlc_bar / factor_input_data | tick | production | stable |
 | L1 | 因子计算层 | Factor Calculation | model_driven | MOD-L02-001 | - | - | 因子工厂全生命周期管理 → 盘前全量/盘中增量双模计算 → 因子池 产出：factor_value（带 PIT 合规标记） | daily | production | stable |
 | L2A | 信号层 | Signal Generation | model_driven | - | - | - | 信号工厂 → 多策略投票 → 收益率条件密度预测 → Transformer/Mamba时序增强 → 共形预测 产出：signal（Insight: direction/confidence/horizon） | daily | design | planned |
@@ -2101,14 +2073,10 @@ flowchart TD
 | L4 | 风控层 | Risk Control | model_driven | MOD-L04-001 | - | - | Pre/Post-Trade 风控校验 + Kill Switch 熔断 + 止损评估 产出：risk_check（RiskDecision: approve/veto/adjust） | realtime | production | stable |
 | L5 | 学习层 | Learning & Optimization | model_driven | - | - | - | 7阶段学习流水线 → 模块工厂 → 知识采集 → 反馈闭环 产出：learning_feedback（策略优化建议） | weekly | design | planned |
 | L6 | 自评估层 | Self Evaluation | model_driven | - | - | - | LLM 自评估(Judge+交叉验证) + 多模态金融推理 + VeNRA零幻觉锚定 产出：self_evaluation（决策质量评估） | weekly | design | planned |
-| MOD-013 | MOD-013 | MOD-013 | placeholder | MOD-013 | - | - | - | - | design | planned |
-| MOD-014 | MOD-014 | MOD-014 | placeholder | MOD-014 | - | - | - | - | production | generated |
-| MOD-015 | MOD-015 | MOD-015 | placeholder | MOD-015 | - | - | - | - | design | stable |
 | MOD-ALT_DATA | MOD-ALT_DATA | MOD-ALT_DATA | placeholder | MOD-ALT_DATA | - | - | - | - | prototype | generated |
 | MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | MOD-ARCH-BIZDB | placeholder | MOD-ARCH-BIZDB | - | - | - | - | design | planned |
 | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | MOD-AUTONOMY_CORE | placeholder | MOD-AUTONOMY_CORE | - | - | - | - | production | generated |
 | MOD-AUTONOMY_PERM | MOD-AUTONOMY_PERM | MOD-AUTONOMY_PERM | placeholder | MOD-AUTONOMY_PERM | - | - | - | - | prototype | generated |
-| MOD-BIZ-002 | MOD-BIZ-002 | MOD-BIZ-002 | placeholder | MOD-BIZ-002 | - | - | - | - | prototype | generated |
 | MOD-BT-001 | MOD-BT-001 | MOD-BT-001 | placeholder | MOD-BT-001 | - | - | - | - | design | generated |
 | MOD-C1-MARKETCH | MOD-C1-MARKETCH | MOD-C1-MARKETCH | placeholder | MOD-C1-MARKETCH | - | - | - | - | design | planned |
 | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | placeholder | MOD-CONTEXT_ENGINE | docs__03_modules___cross_layer__context_engine__blueprint_md | - | - | - | design | planned |
@@ -2125,7 +2093,6 @@ flowchart TD
 | MOD-GATE_ENGINE | MOD-GATE_ENGINE | MOD-GATE_ENGINE | placeholder | MOD-GATE_ENGINE | docs__03_modules___cross_layer__gate_engine__blueprint_md | - | - | - | design | planned |
 | MOD-GOV-019 | MOD-GOV-019 | MOD-GOV-019 | placeholder | MOD-GOV-019 | - | - | - | - | prototype | generated |
 | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | MOD-GOV-ALIGN-PANORAMAS | placeholder | MOD-GOV-ALIGN-PANORAMAS | - | - | - | - | design | stable |
-| MOD-GOV-ALIGNMENT-LOOP | MOD-GOV-ALIGNMENT-LOOP | MOD-GOV-ALIGNMENT-LOOP | placeholder | MOD-GOV-ALIGNMENT-LOOP | - | - | - | - | design | planned |
 | MOD-GOV-DOCS | MOD-GOV-DOCS | MOD-GOV-DOCS | placeholder | MOD-GOV-DOCS | - | - | - | - | production | generated |
 | MOD-GOV-REPAIR | MOD-GOV-REPAIR | MOD-GOV-REPAIR | placeholder | MOD-GOV-REPAIR | - | - | - | - | prototype | generated |
 | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | MOD-GOV-SCRIPTS | placeholder | MOD-GOV-SCRIPTS | - | - | - | - | prototype | generated |

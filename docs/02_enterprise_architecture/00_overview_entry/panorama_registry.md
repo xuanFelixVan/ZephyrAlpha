@@ -30,16 +30,16 @@
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
 | 依赖图 depgraph | `domains` | 63 | 功能域清单——63 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5009 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5009 个 |
-| 依赖图 depgraph | `edges` | 6155 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6155 条 |
+| 依赖图 depgraph | `nodes` | 4983 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），4983 个 |
+| 依赖图 depgraph | `edges` | 6146 | 依赖边——节点间的依赖关系（import/契约/事件订阅），6146 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
-| 数据流图 dataflowgraph | `dataflow_jobs` | 64 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
+| 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets_metadata` | 0 | Dataset 扩展属性——physical_type/pit_policy/contract_ref，0 行（0=未填，AI 查 dataflow 会幻觉物理类型） |
 | 数据流图 dataflowgraph | `dataflow_jobs_metadata` | 0 | Job 扩展属性——source_code_ref/trigger_type/run_context，0 行（0=未填，AI 查 job 找不到源码） |
 | 数据流图 dataflowgraph | `dataflow_runs` | 0 | 运行记录——job 执行历史（status/耗时/参数），0 行（0=无运行时观测，依赖观测系统回填） |
 | 决策流图 decisiongraph | `decision_tracks` | 5 | 决策轨——5 条正交决策轨（价值/动量/风险/组合），优先级+激活条件 |
-| 决策流图 decisiongraph | `decision_layers` | 180 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
+| 决策流图 decisiongraph | `decision_layers` | 175 | 决策层——L0-L6 七层决策链（如 L0 信号源 / L3 组合优化 / L6 执行），承载决策节点的分层归属 |
 | 决策流图 decisiongraph | `decision_nodes` | 214 | 决策节点——每层内的具体决策点（如因子合成/风险检查/订单生成），含 path/module_id/evidence_hash |
 | 决策流图 decisiongraph | `decision_edges` | 213 | 决策边——节点间的决策传递关系（L0→L1→...→L6 链路），213 条 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `contracts` | 65 | 跨层契约——P0/P1 契约的 ID/提供方/消费方/字段定义，真源 cross_layer_contracts.yaml，65 条 |

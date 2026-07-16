@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOVERNANCE | registry_management | L2_domain | 142 | 150 | 94.7% | 接近超容 |
 | D_GOV_AUDIT | audit_orchestration | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D_GOV_CODE_QUALITY | code_quality_governance | L1_foundation | 102 | 150 | 68.0% | 正常 |
-| D_GOV_DOCS | architecture_docs | L2_domain | 68 | 150 | 45.3% | 正常 |
+| D_GOV_DOCS | architecture_docs | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D_GOV_DRIFT | drift_detection | L2_domain | 71 | 150 | 47.3% | 正常 |
 | D_GOV_ENFORCEMENT | rule_enforcement | L2_domain | 17 | 150 | 11.3% | 正常 |
 | D_GOV_KB | knowledge_base_governance | L2_domain | 17 | 150 | 11.3% | 正常 |
