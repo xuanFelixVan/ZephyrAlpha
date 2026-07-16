@@ -316,6 +316,13 @@ class _OptionCtx:
     r: float
 
 
+def _resolve_kline_aggregated_table(freq, payload, dividend_type):
+    is_hfq = (dividend_type == "back")
+    if freq == "W":
+        return payload.table or ("c1_market.kline_weekly_hfq" if is_hfq else "c1_market.kline_weekly")
+    return payload.table or ("c1_market.kline_monthly_hfq" if is_hfq else "c1_market.kline_monthly")
+
+
 class MiniQMTProvider(DataSourceBase):
     """miniQMT（迅投 xtquant）数据源 Provider。
 
@@ -1218,11 +1225,7 @@ class MiniQMTProvider(DataSourceBase):
         from xtquant import xtdata
         import pandas as pd
 
-        is_hfq = (dividend_type == "back")
-        if freq == "W":
-            table = payload.table or ("c1_market.kline_weekly_hfq" if is_hfq else "c1_market.kline_weekly")
-        else:
-            table = payload.table or ("c1_market.kline_monthly_hfq" if is_hfq else "c1_market.kline_monthly")
+        table = _resolve_kline_aggregated_table(freq, payload, dividend_type)
 
         columns = [
             "trade_date", "symbol", "open", "close", "high", "low",
