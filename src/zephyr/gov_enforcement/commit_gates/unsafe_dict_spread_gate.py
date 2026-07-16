@@ -76,6 +76,73 @@ _UNSAFE_SPREAD_RE = re.compile(r"\b(\w+)\(\*\*([A-Za-z_]\w*)\s*\)")
 
 # 行级豁免：注释 / import
 # hunk header: @@ -old_start,old_count +new_start,new_count @@
+def _get_staged_py_files(gateway):
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "UNSAFE-DICT-SPREAD gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
+    except Exception as e:
+        logger.warning(
+            "UNSAFE-DICT-SPREAD gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+    return [f for f in staged if f.endswith(".py") and not is_test_exempt(f)]
+
+
+def _collect_unsafe_spread_warnings(gateway, py_file):
+    file_content = _read_staged_file(gateway, py_file)
+    docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+    try:
+        file_diff = gateway._run_git(
+            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+        )
+    except Exception as e:
+        logger.warning(
+            "UNSAFE-DICT-SPREAD gate: git diff 失败 file=%s, %s",
+            py_file, e, exc_info=True,
+        )
+        return []
+    if file_diff.returncode != 0:
+        return []
+    added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
+    warnings: list[str] = []
+    for line_no, content in added_lines:
+        if line_no in docstring_lines:
+            continue
+        if _is_exempt_line(content):
+            continue
+        m = _UNSAFE_SPREAD_RE.search(content)
+        if not m:
+            continue
+        cls_name, var_name = m.group(1), m.group(2)
+        if var_name in _SAFE_KWARGS_NAMES:
+            continue
+        warnings.append(
+            f"  {py_file}:{line_no}: {cls_name}(**{var_name}) -> {content.strip()}"
+        )
+    return warnings
+
+
+def _format_unsafe_spread_detail(warnings):
+    return (
+        "UNSAFE-DICT-SPREAD warn（不阻断）：检测到 **data 直接展开模式，\n"
+        "  schema 演进时会触发 TypeError（5.147.5/5.147.12 同族债务）。\n"
+        + "\n".join(warnings)
+        + "\n-> 建议改用 filter_dataclass_fields(Cls, data) 过滤未知字段：\n"
+        "    from zephyr.shared.io.serialization import filter_dataclass_fields\n"
+        "    obj = Cls(**filter_dataclass_fields(Cls, data))\n"
+        "-> 若确为 **kwargs 透传或 dict(**other) 合法用法，可忽略本告警。"
+    )
+
+
 def make_unsafe_dict_spread_gate() -> GateSpec:
     """构造 ``**data`` 直接展开 warn 级 GateSpec。
 
@@ -86,85 +153,17 @@ def make_unsafe_dict_spread_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged added/modified .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "UNSAFE-DICT-SPREAD gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-        except Exception as e:
-            logger.warning(
-                "UNSAFE-DICT-SPREAD gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
-            return True, ""
-
-        py_files = [f for f in staged if f.endswith(".py") and not is_test_exempt(f)]
+        py_files = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
-
-        # 2. 检测每个 staged .py 文件的 added 行
         warnings: list[str] = []
         for py_file in py_files:
-            # 2a. 读取 staged 完整文件，预计算 docstring 行号集合（豁免 docstring 示例）
-            file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
-
-            # 2b. 解析 diff，获取 added 行及行号
-            try:
-                file_diff = gateway._run_git(
-                    ["git", "diff", "--cached", "--unified=0", "--", py_file]
-                )
-            except Exception as e:
-                logger.warning(
-                    "UNSAFE-DICT-SPREAD gate: git diff 失败 file=%s, %s",
-                    py_file, e, exc_info=True,
-                )
-                continue
-            if file_diff.returncode != 0:
-                continue
-
-            added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
-            for line_no, content in added_lines:
-                # 豁免：docstring 内的行（多行 docstring 跟踪）
-                if line_no in docstring_lines:
-                    continue
-                # 豁免：注释 / import
-                if _is_exempt_line(content):
-                    continue
-                m = _UNSAFE_SPREAD_RE.search(content)
-                if not m:
-                    continue
-                cls_name, var_name = m.group(1), m.group(2)
-                # 豁免 **kwargs / **kwds（显式关键字参数透传，合法）
-                if var_name in _SAFE_KWARGS_NAMES:
-                    continue
-                warnings.append(
-                    f"  {py_file}:{line_no}: {cls_name}(**{var_name}) -> {content.strip()}"
-                )
-
-        # 3. warn 级：不阻断 commit，仅 stderr + logger 告警
+            warnings.extend(_collect_unsafe_spread_warnings(gateway, py_file))
         if warnings:
-            detail = (
-                "UNSAFE-DICT-SPREAD warn（不阻断）：检测到 **data 直接展开模式，\n"
-                "  schema 演进时会触发 TypeError（5.147.5/5.147.12 同族债务）。\n"
-                + "\n".join(warnings)
-                + "\n-> 建议改用 filter_dataclass_fields(Cls, data) 过滤未知字段：\n"
-                "    from zephyr.shared.io.serialization import filter_dataclass_fields\n"
-                "    obj = Cls(**filter_dataclass_fields(Cls, data))\n"
-                "-> 若确为 **kwargs 透传或 dict(**other) 合法用法，可忽略本告警。"
-            )
-            # stderr 输出（用户可见）+ logger 记录
+            detail = _format_unsafe_spread_detail(warnings)
             print(f"[GATE] UNSAFE-DICT-SPREAD warn:\n{detail}", file=sys.stderr)
             logger.warning("UNSAFE-DICT-SPREAD gate warn:\n%s", detail)
             return True, detail
-
         return True, ""
 
     return GateSpec(gate_id="UNSAFE-DICT-SPREAD", check=_check, priority=66)
