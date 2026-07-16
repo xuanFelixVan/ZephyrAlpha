@@ -1117,6 +1117,102 @@ def _collect_unmet_blockers(conn: sqlite3.Connection, deps: list) -> list:
     return unmet_blockers
 
 
+def _check_pytest_py_compile_path(
+    task_id: str, cmd: str, parts: list[str], parts_lower: list[str]
+) -> bool:
+    """处理 ``-m pytest`` / ``-m py_compile`` 子命令：仅校验 .py 文件存在性，跳过 flag 校验。
+
+    返回 True 表示命令已命中并被处理（调用方应直接返回），False 表示未命中。
+    pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag；
+    py_compile 的目标 .py 是编译目标，不是可执行脚本。
+    """
+    if "-m" not in parts_lower:
+        return False
+    idx = parts_lower.index("-m")
+    if not (
+        idx + 1 < len(parts_lower)
+        and parts_lower[idx + 1] in ("pytest", "py_compile")
+    ):
+        return False
+    # 仍校验 .py 文件存在性，但不校验 flag
+    script_path = next((t for t in parts if t.endswith(".py")), None)
+    if script_path is not None:
+        p = Path(script_path)
+        if not p.is_absolute():
+            p = REPO_ROOT / p
+        if not p.exists():
+            raise PostSyncValidationError(
+                task_id,
+                cmd,
+                f"文件不存在: {script_path}（解析为 {p}）",
+            )
+    return True  # pytest/py_compile flag 由模块自身管理，跳过
+
+
+def _resolve_post_sync_script_path(
+    task_id: str, cmd: str, parts: list[str]
+) -> Path | None:
+    """定位 .py 脚本（可能是 'python script.py' 或 'script.py'）并校验存在性。
+
+    相对路径基于 REPO_ROOT 解析。返回解析后的 Path；无 .py 脚本时返回 None。
+    """
+    script_path = next((t for t in parts if t.endswith(".py")), None)
+    if script_path is None:
+        # 非 .py 命令（echo/git 等），无法内省，跳过
+        return None
+    p = Path(script_path)
+    if not p.is_absolute():
+        p = REPO_ROOT / p
+    if not p.exists():
+        raise PostSyncValidationError(
+            task_id,
+            cmd,
+            f"脚本不存在: {script_path}（解析为 {p}）",
+        )
+    return p
+
+
+def _validate_post_sync_script_flags(
+    task_id: str, cmd: str, parts: list[str], script_path: Path
+) -> None:
+    """提取 --flag 参数，通过 ``--help`` 输出校验是否注册。
+
+    处理 --flag=value 格式：只取 = 前面的 flag 名（argparse 合法语法）。
+    --help 超时/异常/非零退出均跳过（不阻断建卡）。
+    """
+    import subprocess
+    import sys
+
+    flags = [t.split("=")[0] for t in parts if t.startswith("--")]
+    if not flags:
+        return
+
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script_path), "--help"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+    except (subprocess.TimeoutExpired, Exception):
+        # --help 超时或异常无法校验，跳过（不阻断建卡）
+        return
+
+    if result.returncode != 0:
+        # --help 自身失败（脚本可能有 import 错误等），跳过 flag 校验
+        return
+
+    help_text = result.stdout + result.stderr
+    missing = [f for f in flags if f not in help_text]
+    if missing:
+        raise PostSyncValidationError(
+            task_id,
+            cmd,
+            f"argparse 未注册 flag {missing}（--help 输出中未找到；"
+            f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
+        )
+
+
 # ---------------------------------------------------------------------------
 # TaskRepository
 # ---------------------------------------------------------------------------
@@ -1346,8 +1442,6 @@ class TaskRepository:
     def _validate_post_sync_sub_cmd(self, task_id: str, cmd: str) -> None:
         """校验单条 post_sync_standard 子命令（不含 && / || 链式操作符）。"""
         import shlex
-        import subprocess
-        import sys
 
         # 1. shell 解析（posix=False 保留 Windows 反斜杠路径；strip 引号）
         try:
@@ -1361,70 +1455,16 @@ class TaskRepository:
         # pytest 的 --tb/--timeout 等 flag 由 pytest 自身管理，不是 test 文件的 argparse flag
         # py_compile 的目标 .py 是编译目标，不是可执行脚本
         parts_lower = [p.lower() for p in parts]
-        if "-m" in parts_lower:
-            idx = parts_lower.index("-m")
-            if idx + 1 < len(parts_lower) and parts_lower[idx + 1] in ("pytest", "py_compile"):
-                # 仍校验 .py 文件存在性，但不校验 flag
-                script_path = next((t for t in parts if t.endswith(".py")), None)
-                if script_path is not None:
-                    p = Path(script_path)
-                    if not p.is_absolute():
-                        p = REPO_ROOT / p
-                    if not p.exists():
-                        raise PostSyncValidationError(
-                            task_id,
-                            cmd,
-                            f"文件不存在: {script_path}（解析为 {p}）",
-                        )
-                return  # pytest/py_compile flag 由模块自身管理，跳过
+        if _check_pytest_py_compile_path(task_id, cmd, parts, parts_lower):
+            return  # pytest/py_compile flag 由模块自身管理，跳过
 
-        # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）
-        script_path = next((t for t in parts if t.endswith(".py")), None)
+        # 2. 定位 .py 脚本（可能是 'python script.py' 或 'script.py'）并校验存在性
+        script_path = _resolve_post_sync_script_path(task_id, cmd, parts)
         if script_path is None:
-            # 非 .py 命令（echo/git 等），无法内省，跳过
             return
 
-        # 3. 脚本存在性（相对路径基于 REPO_ROOT 解析）
-        p = Path(script_path)
-        if not p.is_absolute():
-            p = REPO_ROOT / p
-        if not p.exists():
-            raise PostSyncValidationError(
-                task_id,
-                cmd,
-                f"脚本不存在: {script_path}（解析为 {p}）",
-            )
-
-        # 4. 提取 --flag 参数，通过 --help 输出校验是否注册
-        # 处理 --flag=value 格式：只取 = 前面的 flag 名（argparse 合法语法）
-        flags = [t.split("=")[0] for t in parts if t.startswith("--")]
-        if not flags:
-            return
-
-        try:
-            result = subprocess.run(
-                [sys.executable, str(p), "--help"],
-                capture_output=True,
-                text=True,
-                timeout=15,
-            )
-        except (subprocess.TimeoutExpired, Exception):
-            # --help 超时或异常无法校验，跳过（不阻断建卡）
-            return
-
-        if result.returncode != 0:
-            # --help 自身失败（脚本可能有 import 错误等），跳过 flag 校验
-            return
-
-        help_text = result.stdout + result.stderr
-        missing = [f for f in flags if f not in help_text]
-        if missing:
-            raise PostSyncValidationError(
-                task_id,
-                cmd,
-                f"argparse 未注册 flag {missing}（--help 输出中未找到；"
-                f"疑似臆造 flag，请对照 '<脚本> --help' 实际输出）",
-            )
+        # 3. 提取 --flag 参数，通过 --help 输出校验是否注册
+        _validate_post_sync_script_flags(task_id, cmd, parts, script_path)
 
     @staticmethod
     def _count_construction_targets(description: str) -> int:
@@ -3251,18 +3291,8 @@ class TaskRepository:
             return []
 
         created: list[TaskCard] = []
-        for sub_task in sub_tasks:
-            try:
-                card = self.create(sub_task, allow_direct_create=True)
-                created.append(card)
-            except Exception:
-                logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id, exc_info=True)
-                for c in created:
-                    try:
-                        self.hard_delete(c.task_id)
-                    except Exception as e:
-                        logger.warning("suppressed error in task_repo", exc_info=True)
-                return []
+        if not self._create_sub_cards(sub_tasks, created):
+            return []
 
         for i in range(1, len(created)):
             prev_id = created[i - 1].task_id
@@ -3285,6 +3315,25 @@ class TaskRepository:
                 pass
 
         return created
+
+    def _create_sub_cards(
+        self,
+        sub_tasks: list[Task],
+        created: list[TaskCard],
+    ) -> bool:
+        for sub_task in sub_tasks:
+            try:
+                card = self.create(sub_task, allow_direct_create=True)
+                created.append(card)
+            except Exception:
+                logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id, exc_info=True)
+                for c in created:
+                    try:
+                        self.hard_delete(c.task_id)
+                    except Exception as e:
+                        logger.warning("suppressed error in task_repo", exc_info=True)
+                return False
+        return True
 
     def _determine_split_strategy(self, violations: list[str], requested: str) -> str:
         """根据违规项和请求策略确定拆分方式。"""
