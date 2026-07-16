@@ -1153,6 +1153,12 @@ capabilities:
       basename arch_reference_gate 匹配 capability_id，可 auto 派生。
       解决发现性：新 AI 搜 "ARCH 引用/arch reference/编号铁律/phantom arch id" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类 #ARCH-NNN 引用检测脚本。
+      L1+L2 治本增强（2026-07-17）：L1 编号空洞检测（ARCH_GAP_WARNING，不阻断）——
+      按域前缀分组（ARCH-CH-NNN/ARCH-MM-NNN）检测编号连续性，发现空洞发 WARNING
+      提醒人工核查；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION，硬阻断）——
+      新引用不在 HEAD registry 时要求 architecture_issue_registry.yaml 同 commit
+      提交，否则阻断（防 commit 后 HEAD registry 仍缺条目）；L2 非 git 仓库
+      （如测试 tmp_path）经 git rev-parse HEAD 检查返回 None 跳过，避免误阻断。
     integrity_anchors:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
 

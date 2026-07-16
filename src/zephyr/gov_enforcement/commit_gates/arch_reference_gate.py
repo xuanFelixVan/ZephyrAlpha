@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）
+# [INVARIANTS] 只检测 staged 文件中**新增的** #ARCH-NNN 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——registry 缺失或 git 异常时阻断；跳过 tests/ 豁免区；扫描文件类型 .py/.yaml/.yml/.md；issue_id 从工作区 architecture_issue_registry.yaml 提取（commit 后的新真源）；L1 编号空洞检测（ARCH_GAP_WARNING）——按域前缀分组检测编号连续性，WARNING 不阻断；L2 同提交原子性门禁（ARCH_ATOMICITY_VIOLATION）——新引用不在 HEAD registry 时要求 registry 同 commit，否则硬阻断；L2 非 git 仓库（如测试 tmp_path）跳过检测返回 None，避免误阻断
 # [MODIFY-GUARD] gate_id="ARCH-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
