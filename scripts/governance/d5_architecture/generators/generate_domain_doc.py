@@ -886,7 +886,7 @@ def _display_width(s: str) -> int:
 
 
 def _truncate(text: str, max_len: int = 40) -> str:
-    """截断文本到指定显示宽度，超出则加'...'。"""
+    """截断文本到指定显示宽度，超出则加'...'。保护 #ARCH-XXX 引用不被截断。"""
     if not text:
         return ""
     if _display_width(text) <= max_len:
@@ -900,6 +900,12 @@ def _truncate(text: str, max_len: int = 40) -> str:
             break
         result += ch
         w += cw
+    # 保护 #ARCH-XXX 引用：截断点落在引用中间时回退到引用之前
+    m = re.search(r'#ARCH-[A-Z0-9-]*$', result)
+    if m:
+        full = re.match(r'#ARCH-[A-Z0-9-]+', text[m.start():])
+        if full and full.group() != m.group():
+            result = result[:m.start()].rstrip()
     return result + "..."
 
 

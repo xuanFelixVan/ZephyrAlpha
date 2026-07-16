@@ -5,8 +5,8 @@
 # [CONSUMERS] DM-314任务卡
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 剪切粘贴模式(shutil.move); 从migration-registry.yaml读取映射; 按子目录分批; 移动后更新import+头部字段; 更新迁移登记表status; 全局更新外部引用
-# [MODIFY-GUARD] migration-registry.yaml格式变更需同步
+# [INVARIANTS] 剪切粘贴模式(shutil.move); 从migration_registry.yaml读取映射; 按子目录分批; 移动后更新import+头部字段; 更新迁移登记表status; 全局更新外部引用
+# [MODIFY-GUARD] migration_registry.yaml格式变更需同步
 # [STABILITY] volatile
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -44,13 +44,13 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT as PROJECT_ROOT  # noqa: E402
 
-REGISTRY_FILE = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
+REGISTRY_FILE = PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml"
 
 OLD_PREFIX = "zephyr.infra_ops."
 OLD_PATH_PREFIX = "src/zephyr/infra_ops/"
 
 # Mapping: old subdir under infra_ops -> new module prefix
-# Derived from migration-registry.yaml entries
+# Derived from migration_registry.yaml entries
 SUBDIR_TO_NEW_MODULE_PREFIX = {
     # Direct subdirs
     "asset-inventory": "zephyr.infrastructure.asset_inventory.",
