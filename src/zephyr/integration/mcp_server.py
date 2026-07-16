@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-DAT_mcp_server | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """AssetInventory MCP Server — MOD-INF-026 蓝图 §21
@@ -160,7 +160,7 @@ def list_registry_ids() -> str:
     )
 
 
-MCP_TOOLS: Final[set] = {
+MCP_TOOLS: Final[dict] = {
     "get_asset_summary": {
         "description": "获取项目资产盘点总览：总数、健康评分、孤儿率/幽灵率/漂移率、按类型/层级/状态分布",
         "function": get_asset_summary,
@@ -199,7 +199,7 @@ MCP_TOOLS: Final[set] = {
     },
 }
 
-MCP_RESOURCES: Final[set] = {
+MCP_RESOURCES: Final[dict] = {
     "asset_index://unified": {
         "description": "统一的资产索引 YAML 文件——项目 SSoT（单一事实来源）",
         "path": str(INDEX_PATH),

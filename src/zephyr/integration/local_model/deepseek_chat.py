@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] API失败时抛RuntimeError;JSON解析失败返回空dict
 # [TESTS] tests/test_integration/test_deepseek_chat.py
-# [A_module] module_id=MOD-INT_deepseek_chat | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

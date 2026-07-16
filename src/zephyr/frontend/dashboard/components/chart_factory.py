@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ChartFactoryError
 # [TESTS]
-# [A_module] module_id=MOD-L08-001-chart_factory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L08-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """chart_factory · 图表统一工厂（v3.0.0新增, #ARCH-047）
 

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_zephyr | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infra_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr
 # [INVARIANTS] pending_review
@@ -220,7 +220,6 @@ register_lazy("ml_train", "zephyr.ml_train")  # MOD-L11-001 ML Training domain
 # orchestration/portfolio/resilience/semantic_auditor/signal/testing），
 # 补入 signal_fundamental（D-SIGNAL 拆分3兄弟之一，原遗漏）
 __all__ = [  # noqa: gate-vocab  __all__ 子包导出列表，非 domain 分类
-    "autonomy_perm",
     "compliance",
     "cross_asset",
     "ex_core",

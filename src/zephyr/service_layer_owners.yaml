@@ -4,7 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
-# ttl: task_bound
+# ttl: permanent
 # --- 治理锚定结束 ---
 # service-layer-owners.yaml — 服务层模块技术 Owner 登记
 # schema_version: "1.0.0"  |  updated: "2026-05-06"
@@ -18,35 +18,34 @@ primary_owner: ZephyrAlpha
 
 modules:
   mcp:
-    - task_manager:       src/zephyr/mcp/task_manager_server.py
-    - knowledge_base:     src/zephyr/mcp/knowledge_base_server.py
-    - gate_engine:        src/zephyr/mcp/gate_engine_server.py
-    - session_handoff:    src/zephyr/mcp/doc_guard_server.py
-    - intent_router:      src/zephyr/mcp/sentinel_server.py
-    - blueprint_search:   src/zephyr/mcp/blueprint_search_server.py
+    - task_manager:       src/zephyr/integration/mcp/task_manager_server.py
+    - knowledge_base:     src/zephyr/integration/mcp/knowledge_base_server.py
+    - gate_engine:        src/zephyr/integration/mcp/gate_engine_server.py
+    - session_handoff:    src/zephyr/integration/mcp/doc_guard_server.py
+    - intent_router:      src/zephyr/integration/mcp/sentinel_server.py
+    - blueprint_search:   src/zephyr/integration/mcp/blueprint_search_server.py
 
   pipeline:
-    - orchestrator:       src/zephyr/pipeline/pipeline_orchestrator.py
-    - ct_pipe_routing:    src/zephyr/pipeline/ct_pipe_routing.py
+    - orchestrator:       src/zephyr/integration/pipeline_orchestrator.py
+    - ct_pipe_routing:    src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
 
   knowledge_gates:
-    - G1_ingest:          src/zephyr/kb/ingest.py
-    - G2_triage:          src/zephyr/kb/triage.py
-    - G3_analyze:         src/zephyr/kb/analyze.py
-    - G4_activate:        src/zephyr/kb/activate.py
-    - G5_extract:         src/zephyr/kb/extract.py
+    - G1_ingest:          src/zephyr/gov_kb/ingest.py
+    - G3_analyze:         src/zephyr/gov_kb/pipeline/analyze.py
+    - G4_activate:        src/zephyr/gov_kb/pipeline/activate.py
+    - G5_extract:         src/zephyr/gov_kb/pipeline/extract.py
 
   feedback_loop:
-    - evolution:          src/zephyr/feedback-loop/evolution_engine.py
-    - backpressure:       src/zephyr/feedback-loop/backpressure_bridge.py
-    - metrics:            src/zephyr/feedback-loop/metrics_collector.py
-    - eval_harness:       src/zephyr/feedback-loop/eval_harness.py
-    - fitness:            src/zephyr/feedback-loop/fitness_functions.py
-    - collector:          src/zephyr/feedback-loop/feedback_collector.py
-    - auto_evolution:     src/zephyr/feedback-loop/auto_evolution.py
+    - evolution:          src/zephyr/feedback_loop/evolution_engine.py
+    - backpressure:       src/zephyr/feedback_loop/backpressure_bridge.py
+    - metrics:            src/zephyr/feedback_loop/metrics_collector.py
+    - eval_harness:       src/zephyr/feedback_loop/eval_harness.py
+    - fitness:            src/zephyr/feedback_loop/fitness_functions.py
+    - collector:          src/zephyr/feedback_loop/feedback_collector.py
+    - auto_evolution:     src/zephyr/feedback_loop/auto_evolution.py
 
   vector_memory:
-    - adapter:            src/zephyr/vector-memory/
+    - adapter:            src/zephyr/integration/vector_memory/
 
   telemetry:
-    - contract_metrics:   src/zephyr/system-telemetry/contract_metrics.py
+    - contract_metrics:   src/zephyr/infrastructure/system_telemetry/contract_metrics.py

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INT_vector_memory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md
 # [TTL] permanent
 """Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
@@ -78,7 +78,6 @@ __all__ = [
     "cross_collection_retriever",
     "delegated_vector_memory",
     "design_principles",
-    "embedding_router",
     "faiss_collection_manager",
     "get_unified_memory_api",
     "hybrid_retriever",
@@ -96,4 +95,6 @@ __all__ = [
     "vector_bridge",
     "vms_errors",
     "vms_schemas",
-'context_ingest', 'vector_writer']
+    "context_ingest",
+    "vector_writer",
+]

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.local_model.embedding_router
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
-# [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.governance.data_source_router.embedding_router; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.integration.vector_memory.embedding_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.trading.auto_runtime_core; tests.unit.vector_memory.test_vector_memory
+# [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.trading.auto_runtime_core; tests.unit.vector_memory.test_vector_memory
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INT_embedding_router | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

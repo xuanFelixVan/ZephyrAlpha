@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-ORC_prompt_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # AI-generated: YAML-driven prompt template registry with version management and token budget
@@ -55,7 +55,7 @@ from __future__ import annotations
 
 import re
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -103,7 +103,9 @@ class _SafeFormatter(string.Formatter):
 _safe_formatter = _SafeFormatter()
 
 # 5.160.20 修复：SEMVER正则统一为共享常量（SEMVER_PATTERN 见 imports）
-_STABILITY_VALUES: frozenset[str] = frozenset({"experimental", "beta", "stable", "frozen"})
+# SSoT: _STABILITY_VALUES 从 skill_registry.py 导入，禁止重复定义
+from zephyr.autonomy_core.skills.skill_registry import _STABILITY_VALUES  # noqa: E402
+
 _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
 
 # ---------------------------------------------------------------------------
@@ -184,7 +186,7 @@ class PromptVersion(BaseModel):
     model_config = BASE_CONFIG
 
     version: str = Field(description="Semver 版本号，如 1.0.0")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     changelog: str = Field(default="", description="该版本变更说明")
     stability: str = Field(
         default="experimental",

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] module import failures degrade gracefully with _AVAILABLE flags; registry load failure returns empty dict
 # [TESTS] tests/agent-spec/test_registry.py
-# [A_module] module_id=MOD-ORC_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """G-CT-003: Agent Spec -> RBAC capability check.

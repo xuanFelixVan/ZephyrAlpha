@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用返回status=degraded+stored_count=0; 空blocks返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
-# [A_module] module_id=MOD-ORC_vector_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """CE 向量写入器 — vectorize_and_store() 生产者
 

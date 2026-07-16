@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] immutable_core
 # [ERROR_CONTRACT] ValueError on invalid enum value
 # [TESTS] tests/test_schemas.py
-# [A_module] module_id=MOD-SHR_severity_types | layer=module | stability=frozen | safety=L | ai_autonomy=immutable_core
+# [A_module] module_id=MOD-INF-016 | layer=module | stability=frozen | safety=L | ai_autonomy=immutable_core
 # [TTL] permanent
 
 from __future__ import annotations

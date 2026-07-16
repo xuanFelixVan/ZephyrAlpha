@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用回退in-memory; 空records返回0
 # [TESTS] scripts/connect/ce_vms.py --trigger
-# [A_module] module_id=MOD-INT_context_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """VMS 上下文注入器 — ingest_context() 消费者
 
