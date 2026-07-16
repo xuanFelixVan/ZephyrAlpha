@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合分配（D_PF_ALLOC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 19:26:09
+> 最后更新: 2026-07-16 22:42:52
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -85,13 +85,13 @@ graph TD
         src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     end
     src_zephyr_pf_alloc_init_py -.->|config_depends / config_depends| src_zephyr_pf_alloc_strategy_lifecycle_event_py
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_SHARED
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -100,7 +100,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_default_equity_strategy_py production
     class src_zephyr_pf_alloc,src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py design
-    class D_GOVERNANCE,D_SHARED,D_INFRASTRUCTURE,D_PF_CORE external_design
+    class D_INFRASTRUCTURE external_prod
+    class D_GOVERNANCE,D_SHARED,D_PF_CORE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -161,14 +162,14 @@ graph TD
         src_zephyr_pf_alloc_strategy_lifecycle_event_py["(原型态 / prototype) strategy_lifecycle_event.py"]
     end
     src_zephyr_pf_alloc_init_py -.->|config_depends / config_depends| src_zephyr_pf_alloc_strategy_lifecycle_event_py
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_alloc_init_py,src_zephyr_pf_alloc_extensions_init_py,src_zephyr_pf_alloc_api_init_py,src_zephyr_pf_alloc_core_init_py,src_zephyr_pf_alloc_infrastructure_init_py,src_zephyr_pf_alloc_models_init_py,src_zephyr_pf_alloc_services_init_py,src_zephyr_pf_alloc_strategy_lifecycle_event_py design
-    class D_SHARED external_design
+    class D_INFRASTRUCTURE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -178,8 +179,8 @@ graph TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
-| 2 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 3 | strategy_lifecycle_event.py | → | D_SHARED 共享服务: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 2 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
 | 4 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -195,13 +196,13 @@ graph TD
 ```mermaid
 graph LR
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
-    D_SHARED["D_SHARED<br/>共享服务"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]
-    D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_SHARED
+    D_PF_ALLOC -->|2条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_GOVERNANCE
-    D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_PF_ALLOC -->|1条 导入依赖 / import_depends| D_SHARED
     D_PF_CORE -->|1条 导入依赖 / import_depends| D_PF_ALLOC
 ```
 

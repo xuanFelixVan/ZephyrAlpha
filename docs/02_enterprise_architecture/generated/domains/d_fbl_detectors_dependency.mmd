@@ -1,7 +1,7 @@
 %% D_FBL_DETECTORS 域全景依赖图
-%% 生成时间: 2026-07-16 19:26:16
+%% 生成时间: 2026-07-16 22:43:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 65, 依赖边数: 79
+%% 模块数: 65, 依赖边数: 78
 
 graph TD
 
@@ -102,8 +102,8 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ty_autoscale_remediation_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___lity_blast_radius_budget_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___nishing_returns_detector_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___lation_ensemble_detector_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___nomaly_flapping_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___adual_poisoning_detector_py
@@ -115,8 +115,8 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_otel_adapter_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____placebo_action_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ositive_feedback_defense_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___iagnosis_trust_evaluator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_regulatory_audit_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___iagnosis_trust_evaluator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ility_resolution_tracker_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ation_rumor_noise_filter_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_runbook_executor_py
@@ -138,8 +138,6 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_detectors_guard_self_audit_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_detec___nosis_data_leak_detector_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_detectors_guard_self_ha_py
-    %% D_GOV_DOCS -> D_FBL_DETECTORS (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_detectors_anomaly___init___py
     %% D_GOV_ENFORCEMENT -> D_FBL_DETECTORS (3 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_detec___bility_capacity_forecast_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_detec___d_guard_cascade_detector_py
@@ -174,5 +172,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 5 条
-    %% 跨域入边: 71 条
+    %% 跨域入边: 70 条
     %% 跨域出边: 3 条

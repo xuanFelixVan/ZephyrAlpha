@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仓位管理（D_POSITION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 19:26:09
+> 最后更新: 2026-07-16 22:42:52
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -81,17 +81,17 @@ graph TD
         src_zephyr_position_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_position_init_py -.->|config_depends / config_depends| src_zephyr_position_position_reconciler_py
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
     D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_position_position_reconciler_py production
     class src_zephyr_position_init_py,src_zephyr_position_extensions_init_py,src_zephyr_position_api_init_py,src_zephyr_position_core_init_py,src_zephyr_position_infrastructure_init_py,src_zephyr_position_models_init_py,src_zephyr_position_services_init_py design
-    class D_SHARED,D_INFRA_RECOVERY external_design
+    class D_INFRA_RECOVERY,D_SHARED external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -103,16 +103,16 @@ graph TD
     subgraph D_POSITION["D_POSITION 仓位管理"]
         src_zephyr_position_position_reconciler_py["(生产态 / production) Position Reconciler — v0.10.1 持仓对账: execut...<br/>文件: position_reconciler.py"]
     end
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
     D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_position_position_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_position_position_reconciler_py production
-    class D_SHARED,D_INFRA_RECOVERY external_design
+    class D_INFRA_RECOVERY,D_SHARED external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

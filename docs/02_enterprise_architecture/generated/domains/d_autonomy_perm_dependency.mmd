@@ -1,7 +1,7 @@
 %% D_AUTONOMY_PERM 域全景依赖图
-%% 生成时间: 2026-07-16 19:26:16
+%% 生成时间: 2026-07-16 22:43:06
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 42, 依赖边数: 123
+%% 模块数: 41, 依赖边数: 123
 
 graph TD
 
@@ -9,7 +9,6 @@ graph TD
     subgraph D_AUTONOMY_PERM[budget_enforcement]
         scripts_arch_guard_fitness_fun___heck_kill_switch_latency_py["...unctions/check_kill_switch_latency.py [prototype]"]
         scripts_governance_meta_manage_kill_switch_py["...governance/meta/manage_kill_switch.py [prototype]"]
-        src_zephyr_autonomy_perm_models___init___py["...phyr/autonomy_perm/models/__init__.py [prototype]"]
         tests_agent_rbac_conftest_py["tests/agent_rbac/conftest.py [prototype]"]
         tests_agent_rbac_test_abac_guard_agent_rbac_py["...nt_rbac/test_abac_guard_agent_rbac.py [prototype]"]
         tests_agent_rbac_test_adversarial_agent_rbac_py["...t_rbac/test_adversarial_agent_rbac.py [prototype]"]
@@ -67,17 +66,17 @@ graph TD
     %% D_AUTONOMY_PERM -> D_SECURITY (118 条)
     tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_abac_guard_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_adversarial_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_adversarial_resilience_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_cybersec_2026_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_crosscut_d_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_decisions_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_cybersec_2026_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_decision_explainer_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
@@ -85,12 +84,12 @@ graph TD
     tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_cross_model_consistency_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_derive_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_agent_rbac_test_derive_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_dry_run_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_dry_run_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_dry_run_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_engine_degradation_agent_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_derive_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_agent_rbac_test_derive_rbac_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_enhanced_security_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_enhanced_security_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_enhanced_security_py -->|test_depends| D_SECURITY[D_SECURITY]

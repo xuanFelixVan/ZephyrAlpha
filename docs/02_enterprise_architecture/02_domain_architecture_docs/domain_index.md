@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4984 |
-| 生产态模块 | 1742 |
+| 模块总数 | 4977 |
+| 生产态模块 | 1736 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3180 |
+| 原型态模块 | 3179 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 330 | 149 | 1 | 180 | 330/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 325 | 145 | 1 | 179 | 325/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -62,7 +62,7 @@ ttl: permanent
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 212 | 101 | 0 | 111 | 212/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 63 | 5 | 0 | 58 | 63/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
-| D_SHARED | shared_services / Shared Services | 298 | 109 | 0 | 189 | 298/150 (超容) | [26_d_shared.md](26_d_shared.md) |
+| D_SHARED | shared_services / Shared Services | 297 | 109 | 0 | 188 | 297/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
 ### L2 业务域层 / L2 Domain (32 个域 / 32 domains)
 
@@ -70,7 +70,7 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ASHARE_SIGNAL | ashare_signal / A-Share Signal | 8 | 0 | 0 | 8 | 8/150 (OK) | [27_d_ashare_signal.md](27_d_ashare_signal.md) |
 | D_AUDITTEST | audit_test_suite / Audit Test Suite | 10 | 1 | 0 | 9 | 10/150 (OK) | [28_d_audittest.md](28_d_audittest.md) |
-| D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 42 | 0 | 0 | 42 | 42/150 (OK) | [29_d_autonomy_perm.md](29_d_autonomy_perm.md) |
+| D_AUTONOMY_PERM | budget_enforcement / Autonomy Protection | 41 | 0 | 0 | 41 | 41/150 (OK) | [29_d_autonomy_perm.md](29_d_autonomy_perm.md) |
 | D_BACKTEST | 回测 / Backtest | 33 | 9 | 8 | 16 | 33/150 (OK) | [30_d_backtest.md](30_d_backtest.md) |
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 1 | 1 | 6 | 8/150 (OK) | [31_d_cross_asset.md](31_d_cross_asset.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 8 | 0 | 1 | 7 | 8/150 (OK) | [32_d_digital_twin.md](32_d_digital_twin.md) |
@@ -85,10 +85,10 @@ ttl: permanent
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 82 | 17 | 0 | 65 | 82/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 17 | 0 | 14 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
-| D_GOV_REPAIR | rollback / Governance Repair | 21 | 4 | 0 | 17 | 21/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
+| D_GOV_REPAIR | rollback / Governance Repair | 21 | 3 | 0 | 18 | 21/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 452 | 12 | 2 | 438 | 452/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
-| D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
+| D_INTELLIGENCE | context_management / Context Management | 109 | 21 | 0 | 88 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 38 | 0 | 2 | 36 | 38/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
 | D_ML_TRAIN | model_evaluation / Training | 6 | 0 | 1 | 5 | 6/150 (OK) | [50_d_ml_train.md](50_d_ml_train.md) |

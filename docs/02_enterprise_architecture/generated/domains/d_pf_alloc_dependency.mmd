@@ -1,5 +1,5 @@
 %% D_PF_ALLOC 域全景依赖图
-%% 生成时间: 2026-07-16 19:26:17
+%% 生成时间: 2026-07-16 22:43:07
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 6
 
@@ -29,10 +29,10 @@ graph TD
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_PF_ALLOC -> D_GOVERNANCE (1 条)
     src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_PF_ALLOC -> D_INFRASTRUCTURE (1 条)
+    %% D_PF_ALLOC -> D_INFRASTRUCTURE (2 条)
+    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    %% D_PF_ALLOC -> D_SHARED (2 条)
-    src_zephyr_pf_alloc_strategy_lifecycle_event_py -->|import_depends| D_SHARED[D_SHARED]
+    %% D_PF_ALLOC -> D_SHARED (1 条)
     src_zephyr_pf_core_default_equity_strategy_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
