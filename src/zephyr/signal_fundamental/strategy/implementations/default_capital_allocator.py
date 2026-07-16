@@ -1,7 +1,7 @@
 ﻿# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.strategy.implementations.default_capital_allocator
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.execution.capital_allocation_result; zephyr.trading.trading_contracts.market.synthesized_signal
+# [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.execution.capital_allocation_result; zephyr.shared.contracts.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -80,6 +80,9 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
 
         valid = [s for s in signals if abs(s.signal_value) > self._min_signal_threshold]
         n = len(valid)
+        if n == 0:
+            # 所有信号低于阈值——降级空分配，PIT 仍取自首个信号
+            return self._empty_allocation(idempotency_key, as_of_timestamp=signals[0].as_of_timestamp)
 
         if self._method is AllocationMethod.EQUAL:
             weights = self._equal_alloc(valid, n)
@@ -95,8 +98,9 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
         strategy_allocations = {s.signal_id: w for s, w in zip(valid, weights, strict=False)}
         total_allocated = sum(strategy_allocations.values())
 
+        # PIT 一致性：allocation_date 须取自合成信号 as_of_timestamp，禁止 wall-clock（回测时会注入未来信息）
         return CapitalAllocationResult(
-            allocation_date=datetime.now(UTC).strftime("%Y-%m-%d"),
+            allocation_date=valid[0].as_of_timestamp.strftime("%Y-%m-%d"),
             total_allocated_weight=total_allocated,
             allocation_method=self._method,
             idempotency_key=idempotency_key,
@@ -129,9 +133,13 @@ class DefaultCapitalAllocator(CapitalAllocatorBase):
             return self._equal_alloc(signals, n)
         return [min(iv / total, self._max_per_strategy) for iv in inv_vols]
 
-    def _empty_allocation(self, idempotency_key: str) -> CapitalAllocationResult:
+    def _empty_allocation(
+        self, idempotency_key: str, as_of_timestamp: datetime | None = None
+    ) -> CapitalAllocationResult:
+        # PIT 一致性：优先用信号时间戳；无信号时回退 wall-clock（仅实时路径）
+        allocation_dt = as_of_timestamp if as_of_timestamp is not None else datetime.now(UTC)
         return CapitalAllocationResult(
-            allocation_date=datetime.now(UTC).strftime("%Y-%m-%d"),
+            allocation_date=allocation_dt.strftime("%Y-%m-%d"),
             total_allocated_weight=0.0,
             allocation_method=self._method,
             idempotency_key=idempotency_key,

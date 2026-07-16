@@ -1,7 +1,7 @@
 ﻿# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen.implementations.default_signal_aggregator
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
+# [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -78,7 +78,8 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         valid = [s for s in factor_signals if s.is_valid and (s.confidence or 1.0) >= self._min_confidence]
         if len(valid) < self._min_factors:
             _logger.warning("Insufficient valid factors: %d/%d for symbol=%s", len(valid), len(factor_signals), symbol)
-            return self._empty_signal(symbol, idempotency_key, t0)
+            # PIT 一致性：降级路径仍须用因子信号时间戳，禁止 wall-clock（回测时会注入未来信息）
+            return self._empty_signal(symbol, idempotency_key, t0, as_of_date=factor_signals[0].as_of_date)
 
         if self._method == "equal_weight":
             signal_value, contributions, confidence = self._equal_weight(valid)
@@ -96,7 +97,8 @@ class DefaultSignalAggregator(SignalAggregatorBase):
         return SynthesizedSignal(
             signal_id=f"syn-{symbol}-{uuid.uuid4().hex[:8]}",
             symbol=symbol,
-            as_of_timestamp=datetime.now(UTC),
+            # PIT 一致性：as_of_timestamp 须取自因子信号 as_of_date，禁止 wall-clock（回测时 datetime.now 会注入未来信息）
+            as_of_timestamp=valid[0].as_of_date,
             signal_value=signal_value,
             signal_direction=direction,
             confidence=confidence,
@@ -131,11 +133,14 @@ class DefaultSignalAggregator(SignalAggregatorBase):
     def _ic_weight(self, signals: list[FactorSignal]) -> tuple[float, list[dict], float]:
         return self._equal_weight(signals)
 
-    def _empty_signal(self, symbol: str, idempotency_key: str, t0: float) -> SynthesizedSignal:
+    def _empty_signal(
+        self, symbol: str, idempotency_key: str, t0: float, as_of_date: datetime | None = None
+    ) -> SynthesizedSignal:
         return SynthesizedSignal(
             signal_id=f"syn-empty-{symbol}-{uuid.uuid4().hex[:8]}",
             symbol=symbol,
-            as_of_timestamp=datetime.now(UTC),
+            # PIT 一致性：优先用因子信号时间戳；无因子信号时回退 wall-clock（仅实时路径）
+            as_of_timestamp=as_of_date if as_of_date is not None else datetime.now(UTC),
             signal_value=0.0,
             signal_direction="NEUTRAL",
             confidence=0.0,
