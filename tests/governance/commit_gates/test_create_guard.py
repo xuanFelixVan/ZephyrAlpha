@@ -156,16 +156,44 @@ class TestTestsDirExempt:
 
 
 class TestNonPyFileNotBlocked:
-    """非 .py 文件不检测。"""
+    """非 .py 文件检测（阶段 2 治本 ARCH-TTL-DOC-001：全 7 格式覆盖）。"""
 
-    def test_md_file_not_blocked(self, tmp_path: Path) -> None:
-        """staged 新增 .md 文件不触发 create_guard → 通过。"""
+    def test_md_file_blocked_without_token(self, tmp_path: Path) -> None:
+        """staged 新增 .md 文件无 creation_token → 硬阻断（阶段 2 治本）。"""
         _init_git_repo(tmp_path)
-        f = _stage_file(tmp_path, "docs/readme.md", "# readme\n")
+        f = _stage_file(tmp_path, "docs/__create_guard_test_md_fake_20260717__.md", "# readme\n")
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
-        assert passed is True, f"非 .py 文件不应被阻断: {detail}"
+        assert passed is False, f"无 token 的新增 .md 应被阻断: {detail}"
+        assert "creation_token" in detail
+        assert "造第二真源" in detail
+
+    def test_md_file_passes_with_token(self, tmp_path: Path, monkeypatch) -> None:
+        """staged 新增 .md 文件有 creation_token → 通过（阶段 2 治本）。"""
+        _init_git_repo(tmp_path)
+        f = _stage_file(tmp_path, "docs/__create_guard_test_md_registered_20260717__.md", "# readme\n")
+        import yaml
+        registry_data = {
+            "creation_tokens": [
+                {
+                    "file": "docs/__create_guard_test_md_registered_20260717__.md",
+                    "token": "auto-test-md-20260717",
+                    "created_by": "test",
+                    "capability": "test_md",
+                }
+            ]
+        }
+        reg_path = tmp_path / "test_registry.yaml"
+        reg_path.write_text(yaml.dump(registry_data), encoding="utf-8")
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            reg_path,
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        passed, detail = gate.check(gw, [str(f)])
+        assert passed is True, f"有 token 的新增 .md 应通过: {detail}"
 
 
 # ===========================================================================

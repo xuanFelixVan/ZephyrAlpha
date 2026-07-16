@@ -138,6 +138,7 @@ _TRAEO60_MARKER = "trae_060-reviewed"
 _RULES_DIR_PREFIX = "docs/01_policies_and_standards/rules/"
 _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
 _ALIAS_MARKER = "class-name-alias"
+_OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json")
 
 
 def _compute_commit_files_rel(gateway, files: list[str]) -> set[str]:
@@ -339,6 +340,15 @@ def _filter_new_py_and_yaml(staged_new: list[str]) -> tuple[list[str], list[str]
     return new_py_files, new_yaml_files
 
 
+def _filter_new_other_formats(staged_new: list[str]) -> list[str]:
+    """过滤 .md/.sh/.ps1/.mmd/.json 格式（阶段 2，ARCH-TTL-DOC-001 全 7 格式覆盖）。"""
+    return [
+        f.replace("\\", "/") for f in staged_new
+        if any(f.endswith(ext) for ext in _OTHER_FORMAT_EXTENSIONS)
+        and not is_test_exempt(f)
+    ]
+
+
 def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     """ARCH-031 防复发：禁止 governance/ 根新增/rename .py 文件。
 
@@ -451,7 +461,8 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
 
 
 def _check_creation_token(
-    gateway, new_py_files: list[str], new_yaml_files: list[str]
+    gateway, new_py_files: list[str], new_yaml_files: list[str],
+    new_other_files: list[str] | None = None,
 ) -> tuple[bool, str]:
     """检测新增 .py/.yaml 文件是否登记了 creation_token（trae_060 §2 唯一真源）。
 
@@ -520,6 +531,18 @@ def _check_creation_token(
             f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
             f"created_by: \"session-xxx\"  capability: \"xxx\""
         )
+    # 阶段 2 治本（ARCH-TTL-DOC-001）：检测新增 .md/.sh/.ps1/.mmd/.json 文件
+    if new_other_files:
+        unregistered_other = [f for f in new_other_files if f not in registered_files]
+        if unregistered_other:
+            return False, (
+                f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered_other}. "
+                f"commit 新建 .md/.sh/.ps1/.mmd/.json 文件前 MUST 在 "
+                f"capability_canonical_file_registry.yaml 的 creation_tokens 字段登记 token"
+                f"（声明创建意图 + 关联 capability）。"
+                f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
+                f"created_by: \"session-xxx\"  capability: \"xxx\""
+            )
     return True, ""
 
 
@@ -646,20 +669,22 @@ def make_create_guard() -> GateSpec:
 
         # 过滤 .py / .yaml + 豁免 tests/（真源：commit_gate_registry.is_test_exempt）
         new_py_files, new_yaml_files = _filter_new_py_and_yaml(staged_new)
+        new_other_files = _filter_new_other_formats(staged_new)
 
         #ARCH-031 防复发：governance/ 根检测 MUST 用 UNFILTERED new_py_files
         passed, detail = _check_governance_root(gateway, new_py_files)
         if not passed:
             return False, detail
 
-        if not new_py_files and not new_yaml_files:
+        if not new_py_files and not new_yaml_files and not new_other_files:
             return True, ""
 
         # 治本 2026-06-30：只检测 commit 文件中的新增 .py（gateway 选择性提交）
         new_py_files = [f for f in new_py_files if f in commit_files_rel]
         new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
+        new_other_files = [f for f in new_other_files if f in commit_files_rel]
 
-        if not new_py_files and not new_yaml_files:
+        if not new_py_files and not new_yaml_files and not new_other_files:
             return True, ""
 
         #ARCH-034：类名跨模块唯一性检测
@@ -667,8 +692,10 @@ def make_create_guard() -> GateSpec:
         if not passed:
             return False, detail
 
-        # creation_token 检测（trae_060 §2 唯一真源）
-        passed, detail = _check_creation_token(gateway, new_py_files, new_yaml_files)
+        # creation_token 检测（trae_060 §2 唯一真源）——阶段 2：覆盖全 7 格式
+        passed, detail = _check_creation_token(
+            gateway, new_py_files, new_yaml_files, new_other_files
+        )
         if not passed:
             return False, detail
 
