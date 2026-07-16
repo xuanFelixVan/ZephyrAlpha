@@ -182,6 +182,41 @@ class BypassState(BaseModel):
     is_expired: bool = False
 
 
+def _load_override_yaml(override_path: Path) -> dict | None:
+    if not override_path.exists():
+        return None
+    import yaml
+    try:
+        data = yaml.safe_load(override_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if data is None or not isinstance(data, dict):
+        return None
+    return data
+
+
+def _parse_override_datetime(value) -> datetime | None:
+    if value:
+        try:
+            return datetime.fromisoformat(str(value))
+        except ValueError:
+            pass
+    return None
+
+
+def _is_bypass_expired(
+    activated_at: datetime | None,
+    expires_at_cfg: datetime | None,
+    max_hours: int,
+) -> bool:
+    now = datetime.now(UTC)
+    if expires_at_cfg and now > expires_at_cfg:
+        return True
+    if activated_at and (now - activated_at).total_seconds() > max_hours * 3600:
+        return True
+    return False
+
+
 class BypassManager:
     """紧急旁路协议——inventory_override.yaml -> 强制 GREEN + 自动过期 24h。"""
 
@@ -196,43 +231,14 @@ class BypassManager:
             self._override_path = self._DEFAULT_OVERRIDE_PATH
 
     def get_bypass_state(self) -> BypassState:
-        if not self._override_path.exists():
+        data = _load_override_yaml(self._override_path)
+        if data is None:
             return BypassState()
 
-        import yaml
+        activated_at = _parse_override_datetime(data.get("activated_at"))
+        expires_at_cfg = _parse_override_datetime(data.get("expires_at"))
 
-        try:
-            data = yaml.safe_load(self._override_path.read_text(encoding="utf-8"))
-        except Exception:
-            return BypassState()
-
-        if data is None or not isinstance(data, dict):
-            return BypassState()
-
-        activated_str = data.get("activated_at")
-        expires_str = data.get("expires_at")
-
-        activated_at: datetime | None = None
-        expires_at_cfg: datetime | None = None
-
-        if activated_str:
-            try:
-                activated_at = datetime.fromisoformat(str(activated_str))
-            except ValueError:
-                pass
-
-        if expires_str:
-            try:
-                expires_at_cfg = datetime.fromisoformat(str(expires_str))
-            except ValueError:
-                pass
-
-        now = datetime.now(UTC)
-
-        if expires_at_cfg and now > expires_at_cfg:
-            return BypassState(is_expired=True)
-
-        if activated_at and (now - activated_at).total_seconds() > self.MAX_BYPASS_HOURS * 3600:
+        if _is_bypass_expired(activated_at, expires_at_cfg, self.MAX_BYPASS_HOURS):
             return BypassState(is_expired=True)
 
         enabled = data.get("enabled", True)
