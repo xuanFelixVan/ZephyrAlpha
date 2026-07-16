@@ -38,6 +38,73 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 
+def _is_scan_excluded(py_file: Path) -> bool:
+    s = str(py_file)
+    return "site-packages" in s or ".venv" in s
+
+
+def _check_import_from_node(
+    node: ast.ImportFrom, src_root: Path, py_file: Path
+) -> dict[str, Any] | None:
+    if not node.module or not node.module.startswith("zephyr."):
+        return None
+    parts = node.module.split(".")
+    if len(parts) < 2:
+        return None
+    pkg_path = src_root / Path(*parts[:-1]) if len(parts) > 2 else src_root / parts[0]
+    init_file = pkg_path / "__init__.py"
+    if init_file.exists() or (src_root / Path(*parts)).exists():
+        return None
+    return {
+        "file": str(py_file),
+        "line": node.lineno,
+        "module": node.module,
+        "type": "broken_import",
+    }
+
+
+def _check_import_node(
+    node: ast.Import, src_root: Path, py_file: Path
+) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    for alias in node.names:
+        if not alias.name.startswith("zephyr."):
+            continue
+        parts = alias.name.split(".")
+        mod_path = src_root / Path(*parts) / "__init__.py"
+        if mod_path.exists():
+            continue
+        mod_path2 = src_root / Path(*parts[:-1]) / f"{parts[-1]}.py"
+        if mod_path2.exists():
+            continue
+        findings.append(
+            {
+                "file": str(py_file),
+                "line": node.lineno,
+                "module": alias.name,
+                "type": "broken_import",
+            }
+        )
+    return findings
+
+
+def _scan_file_imports(py_file: Path, src_root: Path) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    try:
+        content = py_file.read_text(encoding="utf-8")
+        tree = ast.parse(content)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ImportFrom):
+                finding = _check_import_from_node(node, src_root, py_file)
+                if finding:
+                    findings.append(finding)
+            elif isinstance(node, ast.Import):
+                findings.extend(_check_import_node(node, src_root, py_file))
+    except Exception:
+        pass
+    return findings
+
+
 class ImportFixer(BaseFixer):
 
     def __init__(self) -> None:
@@ -51,48 +118,11 @@ class ImportFixer(BaseFixer):
 
     def scan(self) -> list[dict[str, Any]]:
         findings: list[dict[str, Any]] = []
-        repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
-        src_root = repo_root / "src"
-        for py_file in repo_root.rglob("*.py"):
-            if "site-packages" in str(py_file) or ".venv" in str(py_file):
+        src_root = REPO_ROOT / "src"  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+        for py_file in REPO_ROOT.rglob("*.py"):
+            if _is_scan_excluded(py_file):
                 continue
-            try:
-                content = py_file.read_text(encoding="utf-8")
-                tree = ast.parse(content)
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.ImportFrom):
-                        if node.module and node.module.startswith("zephyr."):
-                            parts = node.module.split(".")
-                            if len(parts) >= 2:
-                                pkg_path = src_root / Path(*parts[:-1]) if len(parts) > 2 else src_root / parts[0]
-                                init_file = pkg_path / "__init__.py"
-                                if not init_file.exists() and not (src_root / Path(*parts)).exists():
-                                    findings.append(
-                                        {
-                                            "file": str(py_file),
-                                            "line": node.lineno,
-                                            "module": node.module,
-                                            "type": "broken_import",
-                                        }
-                                    )
-                    elif isinstance(node, ast.Import):
-                        for alias in node.names:
-                            if alias.name.startswith("zephyr."):
-                                parts = alias.name.split(".")
-                                mod_path = src_root / Path(*parts) / "__init__.py"
-                                if not mod_path.exists():
-                                    mod_path2 = src_root / Path(*parts[:-1]) / f"{parts[-1]}.py"
-                                    if not mod_path2.exists():
-                                        findings.append(
-                                            {
-                                                "file": str(py_file),
-                                                "line": node.lineno,
-                                                "module": alias.name,
-                                                "type": "broken_import",
-                                            }
-                                        )
-            except Exception:
-                continue
+            findings.extend(_scan_file_imports(py_file, src_root))
         return findings
 
     def fix(self, target: str, dry_run: bool = False) -> FixAction:
