@@ -221,38 +221,33 @@ def _new_id(prefix: str = "") -> str:
     return f"{prefix}{uid}" if prefix else uid
 
 
-def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
-    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 62 字段）。"""
+_JSON_ARRAY_FIELDS = (
+    "files_in_scope",
+    "deliverables",
+    "acceptance",
+    "depends_on",
+    "tags",
+    "upstream_files",
+    "downstream_outputs",
+    "allowed_touch",
+    "forbidden_touch",
+    "applicable_rules",
+    "context_assembly_manifest",
+    "completed_gates",
+    "pipeline_modules",
+    "blocked_by",
+    "artifact_paths",
+    "audit_findings",
+    "ke_entries",
+    "autonomy_checklist",
+)
 
-    d = dict(row)
 
-    for _internal_col in ("batch_id", "claimed_by", "claimed_at"):
-        d.pop(_internal_col, None)
+def _parse_json_array_fields(d: dict) -> None:
+    """就地解析 d 中需要为 JSON 数组的字段（5.48.2 修复：json.loads 后类型校验）。"""
 
-    _json_array_fields = (
-        "files_in_scope",
-        "deliverables",
-        "acceptance",
-        "depends_on",
-        "tags",
-        "upstream_files",
-        "downstream_outputs",
-        "allowed_touch",
-        "forbidden_touch",
-        "applicable_rules",
-        "context_assembly_manifest",
-        "completed_gates",
-        "pipeline_modules",
-        "blocked_by",
-        "artifact_paths",
-        "audit_findings",
-        "ke_entries",
-        "autonomy_checklist",
-    )
-
-    for field in _json_array_fields:
+    for field in _JSON_ARRAY_FIELDS:
         raw = d.get(field, "[]")
-        # 5.48.2 修复：json.loads 后添加类型校验
         if isinstance(raw, str):
             parsed = json.loads(raw)
             if not isinstance(parsed, list):
@@ -263,11 +258,12 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
         else:
             d[field] = raw
 
-    _json_dict_fields = ("blocked_gates",)
 
-    for field in _json_dict_fields:
+def _parse_json_dict_fields(d: dict) -> None:
+    """就地解析 d 中需要为 JSON 对象的字段（5.48.2 修复：json.loads 后类型校验）。"""
+
+    for field in ("blocked_gates",):
         raw = d.get(field, "{}")
-        # 5.48.2 修复：json.loads 后添加类型校验
         if isinstance(raw, str):
             parsed = json.loads(raw)
             if not isinstance(parsed, dict):
@@ -277,6 +273,19 @@ def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
             d[field] = parsed
         else:
             d[field] = raw
+
+
+def _row_to_taskcard(row: sqlite3.Row) -> TaskCard:
+    """将 sqlite3.Row 转换为 TaskCard Pydantic 模型（含全部 62 字段）。"""
+
+    d = dict(row)
+
+    for _internal_col in ("batch_id", "claimed_by", "claimed_at"):
+        d.pop(_internal_col, None)
+
+    _parse_json_array_fields(d)
+
+    _parse_json_dict_fields(d)
 
     d["idempotent"] = bool(d.get("idempotent", 0))
 
