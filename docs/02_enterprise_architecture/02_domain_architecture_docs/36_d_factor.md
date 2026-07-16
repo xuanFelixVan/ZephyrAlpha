@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 因子（D_FACTOR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:30:58
+> 最后更新: 2026-07-17 03:51:25
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,21 @@ ttl: permanent
 | 域ID | D_FACTOR | Domain ID | D_FACTOR |
 | 域名称 | 因子 | Domain Name | Factor |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 13 | Module Count | 13 |
+| 模块数 | 11 | Module Count | 11 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
-| 跨域入边 | 2 | Cross-domain Incoming | 2 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 10 | Prototype Modules | 10 |
+| 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 3 | Production Modules | 3 |
 | 容量 | 3/150 (正常) | Capacity | 3/150 (正常) |
 | 描述 | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 | Description | 因子计算、因子库、因子评价、因子正交化。Alpha挖掘引擎。 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 13 个模块 / 13 modules）。
+> 按 architecture_layer 分组的模块清单（共 11 个模块 / 11 modules）。
 
-### L2 领域层 / Domain Layer (13 modules)
+### L2 领域层 / Domain Layer (11 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -50,13 +50,11 @@ ttl: permanent
 | 4 | src/zephyr/factor/api/__init__.py | __init__.py | 原型态 / prototype |  |
 | 5 | src/zephyr/factor/bus_factor_defense.py | bus_factor_defense.py | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
 | 6 | src/zephyr/factor/core/__init__.py | __init__.py | 原型态 / prototype |  |
-| 7 | src/zephyr/factor/ctr_001_consumer/__init__.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 8 | src/zephyr/factor/engine/__init__.py | D_FACTOR — Factors Package | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 9 | src/zephyr/factor/factor_base.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 10 | src/zephyr/factor/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
-| 11 | src/zephyr/factor/momentum_factor.py | D_FACTOR — Momentum Factor | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
-| 12 | src/zephyr/factor/services/__init__.py | __init__.py | 原型态 / prototype |  |
-| 13 | src/zephyr/factor/value_factor.py | D_FACTOR — Value Factor | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
+| 7 | src/zephyr/factor/factor_base.py | ZephyrAlpha — D_FACTOR Alpha Factor Layer | 生产态 / production | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
+| 8 | src/zephyr/factor/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
+| 9 | src/zephyr/factor/momentum_factor.py | D_FACTOR — Momentum Factor | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
+| 10 | src/zephyr/factor/services/__init__.py | __init__.py | 原型态 / prototype |  |
+| 11 | src/zephyr/factor/value_factor.py | D_FACTOR — Value Factor | 原型态 / prototype | [MOD-L02-001](../../03_modules/_domain_factor/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -71,7 +69,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 13 个模块（生产态 3 + 设计态 0 + 原型态 10），标签标注成熟度。
+> 展示全部 11 个模块（生产态 3 + 设计态 0 + 原型态 8），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -82,8 +80,6 @@ graph TD
         src_zephyr_factor_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_factor_bus_factor_defense_py["(生产态 / production) bus_factor_defense.py"]
         src_zephyr_factor_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_factor_ctr_001_consumer_init_py["(原型态 / prototype) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: __init__.py"]
-        src_zephyr_factor_engine_init_py["(原型态 / prototype) D_FACTOR — Factors Package<br/>文件: __init__.py"]
         src_zephyr_factor_factor_base_py["(生产态 / production) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: factor_base.py"]
         src_zephyr_factor_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_factor_momentum_factor_py["(原型态 / prototype) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
@@ -98,6 +94,7 @@ graph TD
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
     D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -105,7 +102,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_init_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_factor_base_py production
-    class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
+    class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_FUNDAMENTAL_SIGNAL,D_GOV_REPAIR external_prod
     class D_GOV_OPS_RESILIENCE external_design
 ```
@@ -123,16 +120,18 @@ graph TD
     end
     src_zephyr_factor_init_py -->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
     src_zephyr_factor_init_py -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
-    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
-    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_factor_init_py,src_zephyr_factor_bus_factor_defense_py,src_zephyr_factor_factor_base_py production
-    class D_GOV_REPAIR external_prod
+    class D_GOV_REPAIR,D_FUNDAMENTAL_SIGNAL external_prod
     class D_GOV_OPS_RESILIENCE external_design
 ```
 
@@ -144,7 +143,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 10 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 8 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -153,8 +152,6 @@ graph TD
         src_zephyr_factor_alpha_signal_pipeline_py["(原型态 / prototype) alpha_signal_pipeline.py"]
         src_zephyr_factor_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_factor_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_factor_ctr_001_consumer_init_py["(原型态 / prototype) ZephyrAlpha — D_FACTOR Alpha Factor Layer<br/>文件: __init__.py"]
-        src_zephyr_factor_engine_init_py["(原型态 / prototype) D_FACTOR — Factors Package<br/>文件: __init__.py"]
         src_zephyr_factor_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_factor_momentum_factor_py["(原型态 / prototype) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
         src_zephyr_factor_services_init_py["(原型态 / prototype) __init__.py"]
@@ -166,7 +163,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_ctr_001_consumer_init_py,src_zephyr_factor_engine_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
+    class src_zephyr_factor_extensions_init_py,src_zephyr_factor_alpha_signal_pipeline_py,src_zephyr_factor_api_init_py,src_zephyr_factor_core_init_py,src_zephyr_factor_infrastructure_init_py,src_zephyr_factor_momentum_factor_py,src_zephyr_factor_services_init_py,src_zephyr_factor_value_factor_py design
     class D_FUNDAMENTAL_SIGNAL external_prod
 ```
 
@@ -176,18 +173,19 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | alpha_signal_pipeline.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: pipeline.py | 导入依赖 / import_depends |
+| 1 | alpha_signal_pipeline.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_OPS_RESILIENCE 运维弹性治理: bus_factor_defense.py | → | bus_factor_defense.py | 导入依赖 / import_depends |
-| 2 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
+| 2 | D_GOV_OPS_RESILIENCE 运维弹性治理: bus_factor_defense.py | → | bus_factor_defense.py | 导入依赖 / import_depends |
+| 3 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 1 条 + 入边 2 条 = 3 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 1 条 + 入边 3 条 = 4 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -196,6 +194,7 @@ graph LR
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
     D_FACTOR -->|1条 导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    D_FUNDAMENTAL_SIGNAL -->|1条 导入依赖 / import_depends| D_FACTOR
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_FACTOR
     D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_FACTOR
 ```

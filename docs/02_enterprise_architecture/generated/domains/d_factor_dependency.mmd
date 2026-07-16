@@ -1,7 +1,7 @@
 %% D_FACTOR 域全景依赖图
-%% 生成时间: 2026-07-17 03:33:21
+%% 生成时间: 2026-07-17 03:52:23
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 13, 依赖边数: 8
+%% 模块数: 11, 依赖边数: 8
 
 graph TD
 
@@ -13,8 +13,6 @@ graph TD
         src_zephyr_factor_api___init___py["src/zephyr/factor/api/__init__.py [prototype]"]
         src_zephyr_factor_bus_factor_defense_py["src/zephyr/factor/bus_factor_defense.py [production]"]
         src_zephyr_factor_core___init___py["src/zephyr/factor/core/__init__.py [prototype]"]
-        src_zephyr_factor_ctr_001_consumer___init___py["...r/factor/ctr_001_consumer/__init__.py [prototype]"]
-        src_zephyr_factor_engine___init___py["src/zephyr/factor/engine/__init__.py [prototype]"]
         src_zephyr_factor_factor_base_py["src/zephyr/factor/factor_base.py [production]"]
         src_zephyr_factor_infrastructure___init___py["...hyr/factor/infrastructure/__init__.py [prototype]"]
         src_zephyr_factor_momentum_factor_py["src/zephyr/factor/momentum_factor.py [prototype]"]
@@ -23,8 +21,8 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -->|import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor___init___py -->|import_depends| src_zephyr_factor_bus_factor_defense_py
     src_zephyr_factor___init___py -->|import_depends| src_zephyr_factor_factor_base_py
 
