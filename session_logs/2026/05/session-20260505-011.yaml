@@ -235,7 +235,7 @@ body: |
 
     - src/zephyr/l10-compliance/artifact_scanner.py（6 category artifact scanner）
 
-    - session-logs/index.yaml（15 sessions）
+    - session_logs/index.yaml（15 sessions）
 
     - docs/02_enterprise_architecture/target-architecture/architecture-model/（完整架构模型）
 
