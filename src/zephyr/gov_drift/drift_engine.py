@@ -216,6 +216,31 @@ def _split_bulk_to_individual(bulk: BulkDriftEvent, events: list[DriftEvent]) ->
 # ── Scan Core ───────────────────────────────────────────────
 
 
+def _prepare_scan_context(
+    resume_from: dict[str, object] | None,
+    detectors: list[Detector],
+    level: ScanLevel,
+    scope: list[str] | None,
+) -> tuple[list[str], list[Detector], uuid.UUID]:
+    if resume_from is not None:
+        completed_ids: list[str] = resume_from.get("completed_detectors", []) or []
+
+        remaining = [d for d in detectors if d.id not in completed_ids]
+
+        scan_id = uuid.UUID(str(resume_from.get("scan_id", str(uuid.uuid4()))))
+
+        filtered = _filter_detectors_by_level(remaining, level, scope)
+
+    else:
+        completed_ids = []
+
+        filtered = _filter_detectors_by_level(detectors, level, scope)
+
+        scan_id = uuid.uuid4()
+
+    return list(completed_ids), filtered, scan_id
+
+
 async def scan(
     level: ScanLevel = ScanLevel.STANDARD,
     scope: list[str] | None = None,
@@ -240,27 +265,9 @@ async def scan(
 
     detectors = load_detector_registry(registry_path)
 
-    if resume_from is not None:
-        completed_ids: list[str] = resume_from.get("completed_detectors", []) or []
-
-        remaining = [d for d in detectors if d.id not in completed_ids]
-
-        scan_id = uuid.UUID(str(resume_from.get("scan_id", str(uuid.uuid4()))))
-
-    else:
-        completed_ids = []
-
-        filtered = _filter_detectors_by_level(detectors, level, scope)
-
-        remaining = filtered
-
-        scan_id = uuid.uuid4()
-
-    filtered = _filter_detectors_by_level(remaining, level, scope) if resume_from is not None else remaining
+    completed, filtered, scan_id = _prepare_scan_context(resume_from, detectors, level, scope)
 
     events: list[DriftEvent] = []
-
-    completed: list[str] = list(completed_ids)
 
     scan_start = (
         resume_from.get("scan_start_time", datetime.now(UTC).isoformat())
