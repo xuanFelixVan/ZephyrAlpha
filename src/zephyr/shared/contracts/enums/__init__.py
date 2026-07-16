@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.contracts.enums
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.shared.contracts.order; zephyr.trading.trading_contracts.execution.order; zephyr.governance.trading_contracts
+# [CONSUMERS] zephyr.shared.contracts.order; zephyr.trading.trading_contracts.execution.order
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 跨切面枚举真源——被 shared/trading/governance 三层消费，MUST定义在shared层

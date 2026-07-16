@@ -28,7 +28,6 @@ __all__ = [
     "OrderAction",
     "OrderManager",
     "adapters",
-    "broker_interface",
     "execution_engine",
     "order_manager",
 ]
@@ -38,13 +37,14 @@ _LAZY_IMPORTS = {
     "ExecutionEngineRunRecord": ("zephyr.ex_core.execution_engine", "ExecutionEngineRunRecord"),
     "ExecutionConfig": ("zephyr.ex_core.execution_engine", "ExecutionConfig"),
     "AlgoType": ("zephyr.ex_core.execution_engine", "AlgoType"),
-    "BrokerInterface": ("zephyr.ex_core.broker_interface", "BrokerInterface"),
-    "FillCallback": ("zephyr.ex_core.broker_interface", "FillCallback"),
+    # ARCH-GOV-SHIM-001 阶段2：直接指向 canonical 路径（原 ex_core.broker_interface shim 已删除）
+    "BrokerInterface": ("zephyr.trading.trading_contracts.broker_interface", "BrokerInterface"),
+    "FillCallback": ("zephyr.trading.trading_contracts.broker_interface", "FillCallback"),
     "OrderManager": ("zephyr.ex_core.order_manager", "OrderManager"),
     "OrderAction": ("zephyr.ex_core.order_manager", "OrderAction"),
 }
 
-_SUBMODULES = ["execution_engine", "order_manager", "broker_interface", "adapters"]
+_SUBMODULES = ["execution_engine", "order_manager", "adapters"]
 
 
 def __getattr__(name):

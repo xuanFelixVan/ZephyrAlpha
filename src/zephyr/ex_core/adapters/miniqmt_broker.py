@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.miniqmt_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.governance.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.governance.data_governance.miniqmt_provider
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.governance.data_governance.miniqmt_provider
 # [CONSUMERS] zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.position_monitor
 # [STARTUP] manual
 # [MATURITY] production
@@ -61,7 +61,7 @@ from zephyr.backtest.core.matching_logic import (
     MatchOrderInput,
     OrderBookSnapshot,
 )
-from zephyr.governance.trading_contracts.broker_interface import (
+from zephyr.trading.trading_contracts.broker_interface import (
     BrokerInterface,
     FillCallback,
 )

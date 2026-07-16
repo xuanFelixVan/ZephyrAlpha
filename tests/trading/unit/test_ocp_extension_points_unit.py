@@ -21,7 +21,7 @@ from decimal import Decimal
 import pandas as pd
 import pytest
 
-from zephyr.ex_core.adapters.broker_interface import BrokerInterface
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
 from zephyr.pf_core.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType

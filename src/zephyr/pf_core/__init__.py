@@ -27,7 +27,6 @@ __all__ = [
     "compliance_rule",
     "default_equity_strategy",
     "performance_attribution_report",
-    "risk_limits",
     "strategy_base",
     "strategy_registry",
 ]
@@ -41,11 +40,11 @@ _LAZY_IMPORTS = {
     "RebalanceMode": ("zephyr.pf_core.default_equity_strategy", "RebalanceMode"),
     "ComplianceRule": ("zephyr.pf_core.compliance_rule", "ComplianceRule"),
     "PerformanceAttributionReport": ("zephyr.shared.contracts.performance_attribution_report", "PerformanceAttributionReport"),
-    "RiskLimits": ("zephyr.pf_core.risk_limits", "RiskLimits"),
+    # ARCH-GOV-SHIM-001 阶段2：RiskLimits 直接指向 canonical 路径（原 pf_core.risk_limits shim 已删除）
+    "RiskLimits": ("zephyr.trading.trading_contracts.risk.risk_limits", "RiskLimits"),
 }
 
 _SUBMODULES = [
-    "risk_limits",
     "strategy_registry",
     "compliance_rule",
     "default_equity_strategy",

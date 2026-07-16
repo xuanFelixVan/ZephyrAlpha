@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.governance.trading_contracts.broker_interface; zephyr.governance.adapters.risk_validation_bridge; zephyr.governance.adapters.simulation_broker; zephyr.ex_core.adapters.miniqmt_broker
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.governance.adapters.risk_validation_bridge; zephyr.governance.adapters.simulation_broker; zephyr.ex_core.adapters.miniqmt_broker
 # [CONSUMERS] zephyr.ex_core.execution_engine; zephyr.ex_core.order_manager
 # [STARTUP] imported
 # [MATURITY] production
@@ -16,14 +16,15 @@
 # [TTL] permanent
 """D_EX_CORE adapters — 券商/风控适配器 re-export wrapper
 
-聚合 governance.trading_contracts.broker_interface、governance.adapters.* 与
+聚合 trading.trading_contracts.broker_interface、governance.adapters.* 与
 ex_core.adapters.miniqmt_broker，提供统一 import 入口。
 
-真源: governance.trading_contracts.broker_interface（BrokerInterface 契约真源）
+真源: trading.trading_contracts.broker_interface（BrokerInterface 契约真源）
       ex_core.adapters.miniqmt_broker（MiniQmtBroker 实现真源）
 """
 
-from zephyr.governance.trading_contracts.broker_interface import BrokerInterface, FillCallback
+# ARCH-GOV-SHIM-001 阶段2：broker_interface import 迁移至 canonical 路径
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface, FillCallback
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationBridge,
     RiskValidationPort,

@@ -29,7 +29,7 @@ from zephyr.ex_core.execution_engine import (
 )
 from zephyr.ex_core.order_manager import OrderAction, OrderManager
 
-from zephyr.ex_core.adapters.broker_interface import BrokerInterface
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.risk.risk_validator_protocol import (
     ViolationDetail,

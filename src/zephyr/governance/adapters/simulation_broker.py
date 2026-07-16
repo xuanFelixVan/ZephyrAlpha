@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.governance.adapters.simulation_broker
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -50,7 +50,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from zephyr.governance.trading_contracts.broker_interface import BrokerInterface
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.contracts.position import PositionSnapshot

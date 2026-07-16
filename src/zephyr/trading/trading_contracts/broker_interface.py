@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
-# [MODULE] zephyr.governance.trading_contracts.broker_interface
-# [DOMAIN] D_GOVERNANCE
+# [MODULE] zephyr.trading.trading_contracts.broker_interface
+# [DOMAIN] D_TRADING
 # [DEPENDENCIES] zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.trading.trading_contracts.execution.position
 # [CONSUMERS]
 # [STARTUP] imported
@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-EXE_broker_interface | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# ARCH-GOV-SHIM-001 阶段2：从 governance/trading_contracts/broker_interface.py 迁移至 canonical 路径
 
 # ---
 # domain: ex_core
