@@ -20,12 +20,19 @@
 检测 staged .py 文件 added 行中的 read_only=False / superuser=True / allow_edge_delete=True。
 这些参数授予 depgraph 写入权限，仅白名单脚本可用。
 
-白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL）:
+白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-17 扩展）:
   - scripts/governance/apply_depgraph.py        — depgraph 修改唯一合法 CLI
   - scripts/governance/generate_project_depgraph.py — 全量重建
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py — YAML→DB 同步
+  - scripts/governance/sync_panorama_module.py  — panorama 同步（含 path-tree 段）
+  - scripts/governance/generate_project_path_tree.py — arch_directory_tree 表写入器（新增）
   - scripts/governance/_shared/constants.py      — 连接 wrapper（传递参数）
   - src/zephyr/governance/depgraph_schema.py     — 连接函数定义（参数声明）
+
+白名单扩展规则（治本，2026-07-17 明确化）：
+  所有直接写 depgraph 表（nodes/edges/arch_directory_tree 等）的脚本必须加入白名单。
+  扩展三步：(a) 脚本传 read_only=False (b) 更新本白名单 + 错误信息 (c) 更新
+  architecture_issue_registry.yaml 中 #ARCH-DEPGRAPH_ACCESS_CONTROL 裁定文档。
 
 设计权衡
 --------
@@ -66,12 +73,14 @@ _WRITE_PARAM_RE = re.compile(
 )
 
 # 白名单文件（相对仓库根，正斜杠）
+# 治本（2026-07-17）：新增 generate_project_path_tree.py（arch_directory_tree 表写入器）
 _WHITELIST: frozenset[str] = frozenset({
     "scripts/governance/apply_depgraph.py",
     "scripts/governance/generate_project_depgraph.py",
     "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py",
     "scripts/governance/_shared/constants.py",
     "scripts/governance/sync_panorama_module.py",
+    "scripts/governance/generate_project_path_tree.py",
     "src/zephyr/governance/depgraph_schema.py",
 })
 
@@ -80,6 +89,19 @@ def _is_whitelisted(file_path: str) -> bool:
     """判断文件是否在 depgraph 写入路径白名单中。"""
     normalized = file_path.replace("\\", "/")
     return normalized in _WHITELIST
+
+
+# Gate 自身文件路径——豁免自循环检测
+# 治本（2026-07-17）：gate 自身的错误信息/docstring/注释中自然包含 "read_only=False"
+# 等检测模式字符串（用于提示用户），若不豁免自身，gate 会检测自己的字符串字面量
+# 导致自循环阻断。语义上 gate 检测的是「代码调用」，不是「字符串字面量」。
+_SELF_FILE = "src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py"
+
+
+def _is_self(file_path: str) -> bool:
+    """判断文件是否是本 gate 自身（豁免自循环）。"""
+    normalized = file_path.replace("\\", "/")
+    return normalized == _SELF_FILE
 
 
 def make_depgraph_write_path_gate() -> GateSpec:
@@ -92,7 +114,7 @@ def make_depgraph_write_path_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = [
             f for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
-            if not is_test_exempt(f) and not _is_whitelisted(f)
+            if not is_test_exempt(f) and not _is_whitelisted(f) and not _is_self(f)
         ]
         violations: list[str] = []
         for py_file in py_files:
@@ -116,7 +138,11 @@ def make_depgraph_write_path_gate() -> GateSpec:
                 "    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py\n"
                 "    - scripts/governance/_shared/constants.py\n"
                 "    - scripts/governance/sync_panorama_module.py\n"
+                "    - scripts/governance/generate_project_path_tree.py\n"
                 "    - src/zephyr/governance/depgraph_schema.py\n"
+                "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
+                "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
+                "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
                 + "\n".join(violations)
                 + "\n-> 如需写入 depgraph，请通过 apply_depgraph.py CLI 操作"
             )

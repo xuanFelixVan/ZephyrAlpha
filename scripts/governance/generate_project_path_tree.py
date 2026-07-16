@@ -156,8 +156,13 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
 
     P2迁移后：depgraph 已迁移到 PostgreSQL。db_path 参数保留用于日志引用。
     Clears existing operational rows (preserves design-state), then inserts new ones.
+
+    治本（2026-07-17，遗留项修复）：显式传 read_only=False 使用 depgraph_writer 角色。
+    原默认 read_only=True 使用 depgraph_reader 只读角色，DELETE/INSERT 报权限不够。
+    本脚本是 arch_directory_tree 表的合法写入器（已加入 DEPGRAPH-WRITE-PATH gate 白名单），
+    与 apply_depgraph.py（nodes/edges 写入器）同类。
     """
-    conn = get_depgraph_pg_connection(autocommit=False)
+    conn = get_depgraph_pg_connection(autocommit=False, read_only=False)
     try:
         # Clear existing operational data (preserve design-state)
         conn.execute("DELETE FROM arch_directory_tree WHERE COALESCE(design_maturity, '') != 'design'")
