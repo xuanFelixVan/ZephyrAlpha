@@ -1,5 +1,5 @@
 %% D_COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-07-17 03:17:26
+%% 生成时间: 2026-07-17 03:24:38
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 23, 依赖边数: 83
 
@@ -111,8 +111,8 @@ graph TD
     %% D_COMPLIANCE -> D_INFRA_RUNTIME (1 条)
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_COMPLIANCE -> D_SECURITY (7 条)
-    src_zephyr_compliance_implementations___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_compliance_compliance_gate_a6___init___py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_compliance_implementations___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_compliance_behavioral_auditor___init___py -->|import_depends| D_SECURITY[D_SECURITY]

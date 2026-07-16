@@ -1,5 +1,5 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-17 03:17:26
+%% 生成时间: 2026-07-17 03:24:38
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 46, 依赖边数: 83
 
@@ -68,6 +68,7 @@ graph TD
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_olap_trend_py
     src_zephyr_frontend_dashboard_app_py -->|import_depends| src_zephyr_frontend_dashboard_components_task_progress_py
     src_zephyr_frontend_dashboard_components_gate_statistics_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_olap_trend_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_gate_statistics_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard____nents_knowledge_overview_py
@@ -79,9 +80,9 @@ graph TD
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
-    src_zephyr_frontend_dashboard_components_olap_trend_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_order_book_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_position_monitor_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard___init___py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
@@ -89,7 +90,6 @@ graph TD
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     src_zephyr_frontend_dashboard_components___init___py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
-    src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
@@ -119,21 +119,21 @@ graph TD
     src_zephyr_frontend_dashboard____onents_position_monitor_py_ -->|import_depends| D_EX_CORE[D_EX_CORE]
     src_zephyr_frontend_dashboard_components_trade_panel_py_ -->|import_depends| D_EX_CORE[D_EX_CORE]
     %% D_FRONTEND -> D_FBL_DETECTORS (3 条)
-    tests_fle_test_fle_chaos_engineering_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
     tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
+    tests_fle_test_fle_chaos_engineering_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
     tests_fle_test_fle_performance_regression_detector_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
     %% D_FRONTEND -> D_FBL_DIAGNOSERS (2 条)
     tests_fle_test_fle_dogfood_monitor_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     tests_fle_test_fle_self_slo_metrics_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     %% D_FRONTEND -> D_FEEDBACK_LOOP (15 条)
     src_zephyr_frontend_dashboard____onents_fitness_functions_py -->|import_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_config_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_fle_test_fle_anomaly_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_feedback_collector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    tests_fle_test_fle_generator_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_exceptions_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    tests_fle_test_fle_generator_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_protocols_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_metrics_collector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     tests_fle_test_fle_regime_detector_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]

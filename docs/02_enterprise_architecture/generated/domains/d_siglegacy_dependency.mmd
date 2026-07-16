@@ -1,5 +1,5 @@
 %% D_SIGLEGACY 域全景依赖图
-%% 生成时间: 2026-07-17 03:17:27
+%% 生成时间: 2026-07-17 03:24:40
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 15, 依赖边数: 12
 
@@ -34,15 +34,15 @@ graph TD
     %% D_SIGLEGACY -> D_FACTOR (1 条)
     src_zephyr_signal_fundamental___init___py -->|contract| D_FACTOR[D_FACTOR]
     %% D_SIGLEGACY -> D_FUNDAMENTAL_SIGNAL (10 条)
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner_impl___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_combiner_impl___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental_capital___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_strategy___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
-    src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_synth___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
+    src_zephyr_signal_fundamental____implementations___init___py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     src_zephyr_signal_fundamental_gen___init___py -->|config_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
 
     %% 统计
