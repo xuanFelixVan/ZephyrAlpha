@@ -99,6 +99,65 @@ def _to_int(v: object, default: int = 0) -> int:
         return default
 
 
+def _extract_snapshot_fields(snapshot: object) -> tuple:
+    """从持仓快照对象提取字段（fetch_position_monitor 辅助，Extract Method）。
+
+    返回 (cash, holdings, market_values, total_mv, portfolio_id, as_of)。
+    """
+    cash = _to_float(getattr(snapshot, "cash", 0.0))
+    holdings = getattr(snapshot, "holdings", {}) or {}
+    market_values = getattr(snapshot, "market_values", {}) or {}
+    total_mv = _to_float(getattr(snapshot, "total_market_value", 0.0))
+    if total_mv == 0.0 and hasattr(snapshot, "total_nav"):
+        total_mv = _to_float(getattr(snapshot, "total_nav", 0.0))
+    portfolio_id = getattr(snapshot, "portfolio_id", "") or getattr(snapshot, "idempotency_key", "")
+    as_of = getattr(snapshot, "as_of_timestamp", None) or getattr(snapshot, "current_date", None)
+    return cash, holdings, market_values, total_mv, portfolio_id, as_of
+
+
+def _build_position_item(
+    symbol: str,
+    qty_raw: object,
+    market_values: dict[str, float],
+    last_prices: dict[str, float],
+    cost_prices: dict[str, float],
+    today_bought_map: dict[str, int],
+    symbol_names: dict[str, str],
+) -> Optional[PositionItem]:
+    """从单条持仓构建 PositionItem（fetch_position_monitor 辅助，Extract Method）。
+
+    qty <= 0 返回 None（调用方跳过），与原 continue 语义一致。
+    """
+    qty = _to_int(qty_raw)
+    if qty <= 0:
+        return None
+
+    mv = _to_float(market_values.get(symbol, 0.0))
+    last_price = _to_float(last_prices.get(symbol), mv / qty if qty > 0 else 0.0)
+    cost_price = _to_float(cost_prices.get(symbol), last_price)
+    today_bought = _to_int(today_bought_map.get(symbol, 0))
+
+    available = max(0, qty - today_bought)
+    frozen = qty - available
+
+    unrealized_pnl = (last_price - cost_price) * qty
+    pnl_pct = ((last_price - cost_price) / cost_price) if cost_price > 0 else 0.0
+
+    return PositionItem(
+        symbol=symbol,
+        name=symbol_names.get(symbol, symbol),
+        quantity=qty,
+        available_quantity=available,
+        frozen_quantity=frozen,
+        today_bought=today_bought,
+        cost_price=cost_price,
+        last_price=last_price,
+        unrealized_pnl=unrealized_pnl,
+        unrealized_pnl_pct=pnl_pct,
+        is_t_plus_1_locked=(today_bought > 0),
+    )
+
+
 def fetch_position_monitor(
     miniqmt_broker: object,
     today_bought_map: Optional[dict[str, int]] = None,
@@ -124,14 +183,7 @@ def fetch_position_monitor(
     if snapshot is None:
         return PositionMonitorData()
 
-    cash = _to_float(getattr(snapshot, "cash", 0.0))
-    holdings = getattr(snapshot, "holdings", {}) or {}
-    market_values = getattr(snapshot, "market_values", {}) or {}
-    total_mv = _to_float(getattr(snapshot, "total_market_value", 0.0))
-    if total_mv == 0.0 and hasattr(snapshot, "total_nav"):
-        total_mv = _to_float(getattr(snapshot, "total_nav", 0.0))
-    portfolio_id = getattr(snapshot, "portfolio_id", "") or getattr(snapshot, "idempotency_key", "")
-    as_of = getattr(snapshot, "as_of_timestamp", None) or getattr(snapshot, "current_date", None)
+    cash, holdings, market_values, total_mv, portfolio_id, as_of = _extract_snapshot_fields(snapshot)
 
     today_bought_map = today_bought_map or {}
     last_prices = last_prices or {}
@@ -140,34 +192,11 @@ def fetch_position_monitor(
 
     positions: list[PositionItem] = []
     for symbol, qty_raw in holdings.items():
-        qty = _to_int(qty_raw)
-        if qty <= 0:
-            continue
-
-        mv = _to_float(market_values.get(symbol, 0.0))
-        last_price = _to_float(last_prices.get(symbol), mv / qty if qty > 0 else 0.0)
-        cost_price = _to_float(cost_prices.get(symbol), last_price)
-        today_bought = _to_int(today_bought_map.get(symbol, 0))
-
-        available = max(0, qty - today_bought)
-        frozen = qty - available
-
-        unrealized_pnl = (last_price - cost_price) * qty
-        pnl_pct = ((last_price - cost_price) / cost_price) if cost_price > 0 else 0.0
-
-        positions.append(PositionItem(
-            symbol=symbol,
-            name=symbol_names.get(symbol, symbol),
-            quantity=qty,
-            available_quantity=available,
-            frozen_quantity=frozen,
-            today_bought=today_bought,
-            cost_price=cost_price,
-            last_price=last_price,
-            unrealized_pnl=unrealized_pnl,
-            unrealized_pnl_pct=pnl_pct,
-            is_t_plus_1_locked=(today_bought > 0),
-        ))
+        item = _build_position_item(
+            symbol, qty_raw, market_values, last_prices, cost_prices, today_bought_map, symbol_names
+        )
+        if item is not None:
+            positions.append(item)
 
     ts_str = str(as_of) if as_of else ""
 
