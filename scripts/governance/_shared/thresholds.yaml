@@ -55,6 +55,11 @@ scanning:
   # ScanCache LRU 缓存容量——1500 模块下文件数可能超过 50,000
   scan_cache_max_entries: 10000
 
+  # depgraph 幽灵节点告警阈值（removed 节点数超过此值 → WARNING 级别告警）
+  # 与 reconciliation_registry.py _GHOST_AUTO_CLEAN_THRESHOLD 对齐
+  # 治本 M01 #5：从 generate_project_depgraph.py 硬编码外置到此（2026-07-17）
+  depgraph_ghost_warning: 50
+
 # ═══════════════════════════════════════════════════════════════════
 # 二、Finding 质量相关阈值
 # ═══════════════════════════════════════════════════════════════════

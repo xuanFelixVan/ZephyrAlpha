@@ -48,6 +48,7 @@ from zephyr.infrastructure.pipeline.models import (
 )
 from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
 from zephyr.shared.foundation.models import TaskCard
+from zephyr.shared.io.yaml_utils import load_vocabulary_section_list
 
 __all__ = [
     "CtPipeRoutingHints",
@@ -61,9 +62,11 @@ __all__ = [
 _CT_PIPE_TAG_PREFIX = "ct_pipe."
 
 # 蓝图决策树隐含的低层路由（foundation domains）— 对齐 SSoT: blueprint_baseline.md §CT-PIPE-ORC-001
-# + target_layer_vocabulary.yaml v1.0.0 foundation_domains
-# target_layer ∈ {D_MKT_DATA, D_INFRA_OPS, D_GOV_ENFORCEMENT} -> M5；其余域 -> M6
-_FOUNDATION_LAYERS = frozenset({"D_MKT_DATA", "D_INFRA_OPS", "D_GOV_ENFORCEMENT"})
+# + target_layer_vocabulary.yaml foundation_domains 段（SSoT 动态加载，治本 M01 #3）
+# target_layer ∈ foundation_domains -> M5；其余域 -> M6
+_FOUNDATION_LAYERS = frozenset(
+    load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains")
+)
 
 # node_id -> (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
 _NODE_PROFILE: dict[str, tuple[str, str, str]] = {

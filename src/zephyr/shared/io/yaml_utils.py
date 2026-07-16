@@ -218,6 +218,54 @@ def load_vocabulary_entries(
     return _collect_vocab_entries(data, fallback_key)
 
 
+def load_vocabulary_section_list(
+    vocab_file: str | Path,
+    section_key: str,
+    *,
+    vocab_dir: str | Path | None = None,
+    strict: bool = True,
+) -> set[str]:
+    """从 vocabulary YAML 加载顶层列表段（如 foundation_domains）为字符串集合（SSoT 唯一真源）。
+
+    治本（M01 #3/#4，2026-07-17）：补充 load_vocabulary_values 不支持顶层列表段的缺口。
+    load_vocabulary_values 只加载 ``values:`` 列表（取 ``value`` 键），
+    本函数加载其他顶层列表段（如 ``foundation_domains:``）——列表项为裸字符串。
+
+    替换 ct_pipe_routing._FOUNDATION_LAYERS / routing_plugins._FOUNDATION_LAYERS 硬编码。
+
+    Args:
+        vocab_file: YAML 文件名（如 ``"target_layer_vocabulary.yaml"``）或绝对路径
+        section_key: 顶层列表段键名（如 ``"foundation_domains"``）
+        vocab_dir: YAML 所在目录；默认词表目录
+        strict: True=fail-fast（默认）；False=宽容模式（返回空 set 而非崩溃）
+
+    Returns:
+        合法值 ``set[str]``；段不存在或为空时返回空 set
+
+    Raises:
+        FileNotFoundError: ``strict=True`` 且文件不存在
+        yaml.YAMLError: ``strict=True`` 且 YAML 解析失败
+        ValueError: ``strict=True`` 且 YAML 顶层非 dict 结构或段非列表
+    """
+    p = _resolve_vocab_path(vocab_file, vocab_dir)
+    data = _load_vocab_data(
+        p, strict,
+        f"vocabulary YAML 不存在: {p}\n"
+        f"提示：检查文件名拼写。如需测试隔离，传 strict=False。",
+        f"vocabulary YAML 顶层非 dict 结构: {p}",
+    )
+    if data is None:
+        return set()
+    section = data.get(section_key) or []
+    if not isinstance(section, list):
+        if strict:
+            raise ValueError(
+                f"vocabulary YAML 段 '{section_key}' 不是列表: {p}"
+            )
+        return set()
+    return {str(v) for v in section if v}
+
+
 def load_vocabulary_deprecated_map(
     vocab_file: str | Path,
     *,

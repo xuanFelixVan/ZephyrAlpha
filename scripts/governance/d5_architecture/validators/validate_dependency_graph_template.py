@@ -70,7 +70,7 @@ NODE_TYPES = {  # noqa: gate-vocab  node_type 枚举，非 file_category
     "aggregate",
 }
 
-LAYERS = {
+LAYERS = {  # noqa: gate-vocab  4 词表值 + 4 模板结构值（shared/contracts/meta/domain_integration 非层 ID，是依赖图模板的结构分类）
     "L0_infrastructure",
     "L1_foundation",
     "L2_domain",
