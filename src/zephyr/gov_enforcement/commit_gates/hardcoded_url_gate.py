@@ -77,6 +77,68 @@ _SSoT_EXEMPT_FILE = "src/zephyr/shared/foundation/constants.py"
 _HARDCODED_LOCALHOST_RE = re.compile(r"https?://localhost:")
 
 
+def _collect_staged_py_files(gateway):
+    # 1. 获取 staged added/modified .py 文件
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "NO-HARDCODED-URL gate fail-open: git diff 失败(rc=%d)。",
+                diff_result.returncode,
+            )
+            return None
+        staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
+    except Exception as e:
+        logger.warning(
+            "NO-HARDCODED-URL gate fail-open: git diff 异常(%s: %s)。",
+            type(e).__name__, e, exc_info=True,
+        )
+        return None
+
+    # 2. 过滤 .py 文件 + tests/ 豁免 + SSoT 豁免
+    py_files = [
+        f for f in staged
+        if f.endswith(".py")
+        and not is_test_exempt(f)
+        and f != _SSoT_EXEMPT_FILE
+    ]
+    return py_files
+
+
+def _scan_file_violations(gateway, py_file):
+    # 3a. 读取 staged 完整文件，预计算 docstring 行号集合
+    file_content = _read_staged_file(gateway, py_file)
+    docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+
+    # 3b. 解析 diff，获取 added 行及行号
+    try:
+        file_diff = gateway._run_git(
+            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+        )
+    except Exception as e:
+        logger.warning("NO-HARDCODED-URL gate: git diff 失败 file=%s, %s", py_file, e)
+        return []
+    if file_diff.returncode != 0:
+        return []
+
+    added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
+    violations = []
+    for line_no, content in added_lines:
+        # 豁免：docstring 内的行
+        if line_no in docstring_lines:
+            continue
+        # 豁免：注释 / import
+        if _is_exempt_line(content):
+            continue
+        if _HARDCODED_LOCALHOST_RE.search(content):
+            violations.append(
+                f"  {py_file}:{line_no}: {content.strip()}"
+            )
+    return violations
+
+
 def make_hardcoded_url_gate() -> GateSpec:
     """构造硬编码 localhost URL 阻断 GateSpec（硬阻断型）。
 
@@ -85,65 +147,14 @@ def make_hardcoded_url_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged added/modified .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "NO-HARDCODED-URL gate fail-open: git diff 失败(rc=%d)。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-        except Exception as e:
-            logger.warning(
-                "NO-HARDCODED-URL gate fail-open: git diff 异常(%s: %s)。",
-                type(e).__name__, e, exc_info=True,
-            )
-            return True, ""
-
-        # 2. 过滤 .py 文件 + tests/ 豁免 + SSoT 豁免
-        py_files = [
-            f for f in staged
-            if f.endswith(".py")
-            and not is_test_exempt(f)
-            and f != _SSoT_EXEMPT_FILE
-        ]
+        py_files = _collect_staged_py_files(gateway)
         if not py_files:
             return True, ""
 
         # 3. 检测每个文件的 added 行
         violations: list[str] = []
         for py_file in py_files:
-            # 3a. 读取 staged 完整文件，预计算 docstring 行号集合
-            file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
-
-            # 3b. 解析 diff，获取 added 行及行号
-            try:
-                file_diff = gateway._run_git(
-                    ["git", "diff", "--cached", "--unified=0", "--", py_file]
-                )
-            except Exception as e:
-                logger.warning("NO-HARDCODED-URL gate: git diff 失败 file=%s, %s", py_file, e)
-                continue
-            if file_diff.returncode != 0:
-                continue
-
-            added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
-            for line_no, content in added_lines:
-                # 豁免：docstring 内的行
-                if line_no in docstring_lines:
-                    continue
-                # 豁免：注释 / import
-                if _is_exempt_line(content):
-                    continue
-                if _HARDCODED_LOCALHOST_RE.search(content):
-                    violations.append(
-                        f"  {py_file}:{line_no}: {content.strip()}"
-                    )
+            violations.extend(_scan_file_violations(gateway, py_file))
 
         # 4. 硬阻断
         if violations:
