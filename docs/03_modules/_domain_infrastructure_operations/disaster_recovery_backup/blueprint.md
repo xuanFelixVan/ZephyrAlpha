@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-027
+module_id: MOD-INF-040
 submodule_path: scripts/backup
 title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告"
 doc_type: blueprint
@@ -13,7 +13,7 @@ language: zh
 created_by: human_plus_agent
 date: "2026-07-09"
 ttl: permanent
-construction_progress: planned
+construction_progress: not_started
 actual_disk_path: "scripts/backup/"
 last_updated: "2026-07-09"
 last_verified: "2026-07-09"
