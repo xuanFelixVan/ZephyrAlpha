@@ -66,6 +66,54 @@ _SKILL_PAIRS_COMPAT: dict[str, dict[str, float]] = {
 }
 
 
+def _match_skills(task_lower: str) -> tuple[list[str], list[str]]:
+    keyword_map = {
+        "database": "database-specialist",
+        "migration": "database-specialist",
+        "sql": "database-specialist",
+        "mcp": "mcp-specialist",
+        "tool": "mcp-specialist",
+        "feedback": "feedback-specialist",
+        "gate": "gate-specialist",
+        "permission": "agent-specialist",
+        "rbac": "agent-specialist",
+        "audit": "drift-detector",
+        "drift": "drift-detector",
+        "rollback": "rollback-specialist",
+        "knowledge": "knowledge-specialist",
+        "security": "lsg-security",
+        "injection": "lsg-security",
+        "dedu": "code-dedup-engine",
+        "fix": "auto-fix-engine",
+        "repair": "auto-fix-engine",
+        "context": "context-specialist",
+        "vector": "vector-memory",
+        "memory": "vector-memory",
+        "a2a": "a2a-protocol",
+    }
+    skills_matched: list[str] = []
+    keywords: list[str] = []
+    for kw, skill in keyword_map.items():
+        if kw in task_lower:
+            keywords.append(kw)
+            if skill not in skills_matched:
+                skills_matched.append(skill)
+    return keywords, skills_matched
+
+
+def _build_rationale(best_coverage: float, best_compat: float, skills_matched: list[str]) -> str:
+    rationale_parts: list[str] = []
+    if best_coverage > 0.6:
+        rationale_parts.append(f"high coverage ({best_coverage:.0%})")
+    if best_compat > 0.7:
+        rationale_parts.append(f"high compatibility ({best_compat:.0%})")
+    if skills_matched:
+        rationale_parts.append(f"{len(skills_matched)} skills matched")
+    if not rationale_parts:
+        rationale_parts.append("default_first_three")
+    return ", ".join(rationale_parts)
+
+
 class SkillTeamOptimizer:
     @classmethod
     def _compat_score(cls, skill_a: str, skill_b: str) -> float:
@@ -113,37 +161,7 @@ class SkillTeamOptimizer:
         max_team_size: int = 3,
     ) -> dict[str, Any]:
         task_lower = task_description.lower()
-        keyword_map = {
-            "database": "database-specialist",
-            "migration": "database-specialist",
-            "sql": "database-specialist",
-            "mcp": "mcp-specialist",
-            "tool": "mcp-specialist",
-            "feedback": "feedback-specialist",
-            "gate": "gate-specialist",
-            "permission": "agent-specialist",
-            "rbac": "agent-specialist",
-            "audit": "drift-detector",
-            "drift": "drift-detector",
-            "rollback": "rollback-specialist",
-            "knowledge": "knowledge-specialist",
-            "security": "lsg-security",
-            "injection": "lsg-security",
-            "dedu": "code-dedup-engine",
-            "fix": "auto-fix-engine",
-            "repair": "auto-fix-engine",
-            "context": "context-specialist",
-            "vector": "vector-memory",
-            "memory": "vector-memory",
-            "a2a": "a2a-protocol",
-        }
-        skills_matched: list[str] = []
-        keywords: list[str] = []
-        for kw, skill in keyword_map.items():
-            if kw in task_lower:
-                keywords.append(kw)
-                if skill not in skills_matched:
-                    skills_matched.append(skill)
+        keywords, skills_matched = _match_skills(task_lower)
 
         candidates = available_skills or skills_matched
         if len(candidates) < 3:
@@ -182,15 +200,7 @@ class SkillTeamOptimizer:
                         best_coverage = coverage
                         best_team = list(team)
 
-        rationale_parts: list[str] = []
-        if best_coverage > 0.6:
-            rationale_parts.append(f"high coverage ({best_coverage:.0%})")
-        if best_compat > 0.7:
-            rationale_parts.append(f"high compatibility ({best_compat:.0%})")
-        if skills_matched:
-            rationale_parts.append(f"{len(skills_matched)} skills matched")
-        if not rationale_parts:
-            rationale_parts.append("default_first_three")
+        rationale = _build_rationale(best_coverage, best_compat, skills_matched)
 
         return {
             "task_keywords": keywords,
@@ -198,7 +208,7 @@ class SkillTeamOptimizer:
             "team_score": round(best_score, 2),
             "compatibility": round(best_compat, 2),
             "coverage": round(best_coverage, 2),
-            "rationale": ", ".join(rationale_parts),
+            "rationale": rationale,
             "alternatives": (
                 [{"team": best_team[:2], "score": round(best_score * 0.85, 2)}] if len(best_team) == 3 else []
             ),
