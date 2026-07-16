@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——git diff/AST 解析异常降级为 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
-# [TESTS] tests/governance/commit_gates/test_capability_consistency_gate.py
+# [TESTS] tests/zephyr/data/test_capability_validator.py
 # [A_module] module_id=MOD-GOV-capability_consistency_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """capability_consistency_gate.py — Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase 4.4）
