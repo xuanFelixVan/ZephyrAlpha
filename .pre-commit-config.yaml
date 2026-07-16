@@ -45,7 +45,7 @@
 #     当前违规数: 待扫描确认
 #
 #   GATE-22 (AI加载路径完整性)  → 目标 2026-Q3 转硬阻断
-#     依赖: AGENTS.md §8.2 路径映射 100% 准确
+#     依赖: AGENTS.md §8.2 路径映射（待补建）100% 准确
 #     当前违规数: 待扫描确认
 #
 # 执行: 转硬阻断时只需将 args 中的 --warn-only 改为 --ci
@@ -291,21 +291,21 @@ repos:
         files: "^docs/01_policies_and_standards/.*\\.(md|yaml|yml)$"
         description: "架构合规校验——从 architecture_contract.yaml machine_check 动态读取 VR-008/009/011 定义执行（governance policy→declarative / operational policy→procedural / procedural→verifiability≠inspection）"
 
-      # ── GATE-17: 孤儿.py文件检测（AGENTS.md §6.5）──
-      # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定）
+      # ── GATE-17: 孤儿.py文件检测（AGENTS.md §9）──
+      # 权威依据：AGENTS.md §9（脚本自创入库强制约定）
       # 真源声明：Session 20260502-005 根因审计产出
       # 检测范围：项目根目录（）一级目录下的所有 .py 文件
       # 检测内容：任何出现在根目录的 .py 文件视为违规（.py只能放在 scripts/governance/ / src/zephyr/ / tests/）
       # 模式：--fix 自动删除孤儿文件
       - id: gate-17-orphan-py
-        name: "GATE-17: 孤儿.py文件检测（§6.5 根目录零.py）"
+        name: "GATE-17: 孤儿.py文件检测（§9 根目录零.py）"
         entry: python scripts/governance/d1_structure/detect_orphan_py.py
         args: ["--fix"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^.*\\.py$"
-        description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §6.5 — .py只允许在合法三目录中）"
+        description: "项目根目录孤儿.py检测+自动清理（AGENTS.md §9 — .py只允许在合法三目录中）"
 
       # ── GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）──
       # 权威依据：GOV-DOC-018 文件夹平铺容量阈值协议（T_hard=60/T_soft=120）
@@ -485,8 +485,8 @@ repos:
         files: "^scripts/governance/.*\\.py$"
         description: "脚本质量合并门禁——GATE-SQ(八维度质量 warn-only) + GATE-DD07(_shared API 本地重定义)，run_gate_chain 顺序执行"
 
-      # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §6.5 K8s Admission Controller 落地）──
-      # 权威依据：AGENTS.md §6.5（脚本自创入库强制约定——任何.py创建必须通过准入审核）
+      # ── GATE-ADM: Manifest 准入控制器（AGENTS.md §9 K8s Admission Controller 落地）──
+      # 权威依据：AGENTS.md §9（脚本自创入库强制约定——任何.py创建必须通过准入审核）
       # 真源声明：Session 20260502-005 Manifest Admission Controller 创建 → 接入 pre-commit → 零例外
       # 检测范围：script-manifest.yaml 变更时触发
       # 检测内容：git diff HEAD -- script-manifest.yaml → 发现新条目 →
@@ -500,7 +500,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^scripts/governance/script_manifest\\.yaml$"
-        description: "新脚本 Manifest 准入审核（git diff 检测新条目→质量扫描→违规拒绝准入），AGENTS.md §6.5 准入控制器落地"
+        description: "新脚本 Manifest 准入审核（git diff 检测新条目→质量扫描→违规拒绝准入），AGENTS.md §9 准入控制器落地"
 
       # ── GATE-IDX 已合并到 GATE-REG-BL（见上 gate-reg-bl）──
 
@@ -550,7 +550,7 @@ repos:
       # ── GATE-SCHEMA-HEALTH 已合并到 GATE-C2（见上 gate-c2）──
 
       # ── GATE-22: AI加载路径完整性（AI加载路径不可漂移铁律 自动化执行层）──
-      # 权威依据：AI加载路径不可漂移铁律——§8.2 路径映射必须永久准确
+      # 权威依据：AI加载路径不可漂移铁律——§8.2 路径映射（待补建）必须永久准确
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_load_path_integrity.py + 接入 pre-commit
       # 模式：warn-only（骨架阶段；§8.2 待补建，当前 SKIP；§8.2 建成后转硬阻断）
       - id: gate-22-load-path-integrity

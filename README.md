@@ -50,7 +50,7 @@ python scripts/demos/demo_e2e_pipeline.py
 ## 技术栈
 
 - **语言**: Python 3.12+（与 `pyproject.toml` 一致）
-- **数据库**: 见 [infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（PostgreSQL/ClickHouse/DuckDB/ChromaDB/SQLite，真源唯一）
+- **数据库**: 见 [infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（PostgreSQL/ClickHouse/ChromaDB/SQLite，真源唯一）
 - **异步**: asyncio
 - **验证**: Pydantic v2
 
