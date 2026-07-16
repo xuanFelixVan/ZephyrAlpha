@@ -85,6 +85,49 @@ class CircularDependencyResult(BaseModel):
     detected_at: str = ""
 
 
+def _detect_amplification_loops(
+    agent_id: str,
+    action_scores: dict[str, list[float]],
+    amplification_threshold: float,
+) -> list[SelfReinforcementResult]:
+    results: list[SelfReinforcementResult] = []
+
+    for action, scores in action_scores.items():
+        if len(scores) < 3:
+            continue
+
+        first_third = scores[: len(scores) // 3]
+
+        last_third = scores[-(len(scores) // 3) :]
+
+        if not first_third or not last_third:
+            continue
+
+        avg_first = sum(first_third) / len(first_third)
+
+        avg_last = sum(last_third) / len(last_third)
+
+        if avg_first > 0:
+            amplification = avg_last / avg_first
+
+            if amplification >= amplification_threshold:
+                results.append(
+                    SelfReinforcementResult(
+                        is_self_reinforcing=True,
+                        loop_nodes=[agent_id, action],
+                        loop_length=2,
+                        amplification_factor=round(amplification, 4),
+                        description=(
+                            f"Agent {agent_id} action '{action}' shows self-reinforcing feedback: "
+                            f"score amplified {amplification:.2f}x (early={avg_first:.3f}, recent={avg_last:.3f})"
+                        ),
+                        detected_at=datetime.now(UTC).isoformat(),
+                    )
+                )
+
+    return results
+
+
 class FeedbackSelfAuditor:
     def __init__(self, amplification_threshold: float = 2.0) -> None:
         self._amplification_threshold = amplification_threshold
@@ -115,38 +158,11 @@ class FeedbackSelfAuditor:
             if action:
                 action_scores[action].append(float(score))
 
-        for action, scores in action_scores.items():
-            if len(scores) < 3:
-                continue
-
-            first_third = scores[: len(scores) // 3]
-
-            last_third = scores[-(len(scores) // 3) :]
-
-            if not first_third or not last_third:
-                continue
-
-            avg_first = sum(first_third) / len(first_third)
-
-            avg_last = sum(last_third) / len(last_third)
-
-            if avg_first > 0:
-                amplification = avg_last / avg_first
-
-                if amplification >= self._amplification_threshold:
-                    results.append(
-                        SelfReinforcementResult(
-                            is_self_reinforcing=True,
-                            loop_nodes=[agent_id, action],
-                            loop_length=2,
-                            amplification_factor=round(amplification, 4),
-                            description=(
-                                f"Agent {agent_id} action '{action}' shows self-reinforcing feedback: "
-                                f"score amplified {amplification:.2f}x (early={avg_first:.3f}, recent={avg_last:.3f})"
-                            ),
-                            detected_at=datetime.now(UTC).isoformat(),
-                        )
-                    )
+        results.extend(
+            _detect_amplification_loops(
+                agent_id, action_scores, self._amplification_threshold
+            )
+        )
 
         self_actions = set()
 
