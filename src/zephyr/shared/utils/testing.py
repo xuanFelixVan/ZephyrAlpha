@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-SHR_testing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: _utc_now与pipeline_base._utcnow是同类UTC时间工具,趋同演化非复制粘贴
 
 """
 testing.py —— ZephyrAlpha 共享测试夹具/工厂

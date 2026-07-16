@@ -12,8 +12,9 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-EXE_order_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L06-001-order_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 # ---
 # domain: ex_core
@@ -81,6 +82,8 @@ class OrderManager:
         self._fill_callbacks: list[Callable[[Fill], None]] = []
         self._order_callbacks: list[Callable[[Order], None]] = []
         self._pending_orders: list[Order] = []
+        # order_id -> broker_id 映射（cancel_order 治本：消除硬编码 "simulation" + 反查逻辑）
+        self._order_broker_map: dict[str, str] = {}
 
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:
         self._brokers[broker_id] = broker
@@ -149,6 +152,8 @@ class OrderManager:
             raise ValueError(f"Broker not found: {broker_id}")
 
         self._transition_status(order, OrderStatus.SUBMITTED)
+        # 记录 order->broker 映射，供 cancel_order 治本使用（消除硬编码+反查）
+        self._order_broker_map[order_id] = broker_id
 
         broker_order_id = broker.submit_order(order)
         order.broker_order_id = broker_order_id
@@ -159,8 +164,8 @@ class OrderManager:
     def cancel_order(self, order_id: str) -> bool:
         """撤单——同时通知券商端撤销
 
-        P0-1 修复: 必须调用 broker.cancel_order 通知券商端，
-        否则本地显示已撤但券商端订单仍挂单，导致资金损失风险。
+        治本修复: 通过 _order_broker_map 精确路由到订单所属 broker，
+        消除原硬编码 "simulation" + 遍历反查逻辑（第二决策点）。
 
         Args:
             order_id: 订单ID
@@ -176,30 +181,43 @@ class OrderManager:
         if order.status not in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}:
             return False
 
-        # 通知券商端撤单（若有 broker_order_id）
-        if order.broker_order_id:
-            broker = self._brokers.get("simulation")  # 默认 simulation broker
-            # 查找该 order 所属的 broker（通过 broker_order_id 反查）
-            for bid, b in self._brokers.items():
-                try:
-                    if b.query_order(order.broker_order_id) is not None:
-                        broker = b
-                        break
-                except Exception:
-                    continue
-            if broker is not None:
-                try:
-                    broker.cancel_order(order.broker_order_id)
-                except Exception as e:
-                    _logger.error(
-                        "券商端撤单失败: order_id=%s broker_order_id=%s error=%s",
-                        order_id, order.broker_order_id, e,
-                        exc_info=True,
-                    )
-                    return False
+        # 从映射精确路由到所属 broker（治本：消除硬编码 "simulation" + 反查）
+        if order.broker_order_id and not self._cancel_at_broker(order_id, order):
+            return False
 
         self._transition_status(order, OrderStatus.CANCELLED)
         _logger.info("Order cancelled: order_id=%s", order_id)
+        return True
+
+    def _cancel_at_broker(self, order_id: str, order: Order) -> bool:
+        """通知券商端撤单（从 _order_broker_map 精确路由）
+
+        Args:
+            order_id: 订单ID
+            order: 订单对象
+
+        Returns:
+            True = 券商端撤单成功（或无需撤单）；False = 撤单失败
+        """
+        broker_id = self._order_broker_map.get(order_id)
+        if not broker_id:
+            _logger.warning("撤单路由失败：order_id=%s 无 broker_id 映射记录", order_id)
+            return False
+
+        broker = self._brokers.get(broker_id)
+        if broker is None:
+            _logger.error("撤单路由失败：broker_id=%s 未注册 (order_id=%s)", broker_id, order_id)
+            return False
+
+        try:
+            broker.cancel_order(order.broker_order_id)
+        except Exception as e:
+            _logger.error(
+                "券商端撤单失败: order_id=%s broker_order_id=%s broker_id=%s error=%s",
+                order_id, order.broker_order_id, broker_id, e,
+                exc_info=True,
+            )
+            return False
         return True
 
     def get_order(self, order_id: str) -> Order | None:

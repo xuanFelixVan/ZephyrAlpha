@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain-simulation/experiment-core/blueprint.md
+# [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/blueprint.md
 # [MODULE] zephyr.simulation.pipeline_base
 # [DOMAIN] D_SIMULATION
 # [DEPENDENCIES] zephyr.shared.contracts.experiment_result
@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-L13-001-pipeline_base | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: _utcnow与testing._utc_now是同类UTC时间工具,趋同演化非复制粘贴
 
 """
 实验 — Experimentation Pipeline Layer

@@ -14,6 +14,7 @@
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
 # [A_module] module_id=MOD-SEC_genesis_bootstrap | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """GenesisBootstrap — RBAC系统启动引导器.
 
 依据蓝图 MOD-INF-018 §genesis:

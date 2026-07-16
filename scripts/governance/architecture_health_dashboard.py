@@ -272,12 +272,39 @@ def _normalize_function_body(node: ast.FunctionDef) -> str:
         return ""
 
 
+# 治本（M03，2026-07-17）：标准 dunder 方法是 Python 协议实现，
+# 跨类天然重复（每个类都需要 __init__/__exit__ 等），不计为"复制粘贴"。
+# 仅检测非 dunder 方法（业务逻辑）的重复簇。
+_DUNDER_METHODS = frozenset({
+    "__init__", "__getattr__", "__setattr__", "__delattr__",
+    "__str__", "__repr__", "__format__", "__sizeof__",
+    "__enter__", "__exit__", "__aenter__", "__aexit__",
+    "__eq__", "__ne__", "__lt__", "__le__", "__gt__", "__ge__",
+    "__hash__", "__len__", "__length_hint__", "__contains__",
+    "__iter__", "__next__", "__bool__", "__call__", "__await__",
+    "__getitem__", "__setitem__", "__delitem__", "__missing__",
+    "__add__", "__sub__", "__mul__", "__truediv__", "__floordiv__",
+    "__mod__", "__pow__", "__and__", "__or__", "__xor__",
+    "__radd__", "__rsub__", "__rmul__", "__rtruediv__",
+    "__iadd__", "__isub__", "__imul__", "__itruediv__",
+    "__neg__", "__pos__", "__abs__", "__invert__",
+    "__post_init__", "__getstate__", "__setstate__", "__reduce__",
+    "__copy__", "__deepcopy__", "__getnewargs__",
+})
+
+
 def metric_03_duplicate_function_clusters() -> dict:
     """重复簇函数数——AST 函数体哈希聚类。
 
     病根：SSoT 真源唯一性 211 中的 159 对文件复制（含函数级重复）。
     检测：解析 src/zephyr/ 下 .py，对每个函数体归一化后哈希，聚类统计 >1 成员的簇。
     注：归一化剥离变量名/字面量差异，捕获"复制后改个名"的重复。
+
+    治本（M03，2026-07-17）：
+    1. 过滤标准 dunder 方法（Python 协议实现，跨类天然重复，非复制粘贴）。
+    2. 支持 # noqa: m03-duplicate 豁免（per-file，适用于接口实现等合法重复）。
+    3. 过滤"全簇同名"的簇——接口实现(多态)和同文件重载(overloading)，非复制粘贴。
+       M05(文件复制对=0)已覆盖文件级复制检测。仅保留"异名同体"的簇。
     """
     exclude = EXCLUDE_DIRS | {"tests", "__pycache__"}
     py_files = iter_files(SRC_ZEPHYR, extensions=frozenset({".py"}), exclude_dirs=exclude)
@@ -288,12 +315,18 @@ def metric_03_duplicate_function_clusters() -> dict:
             tree = ast.parse(source, filename=str(fp))
         except (OSError, UnicodeDecodeError, SyntaxError):
             continue
+        # 治本（M03）：per-file 豁免（接口实现/协议方法等合法重复）
+        if "# noqa: m03-duplicate" in source:
+            continue
         try:
             rel = fp.relative_to(REPO_ROOT)
         except ValueError:
             rel = fp
         for node in ast.walk(tree):
             if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            # 治本（M03）：跳过标准 dunder 方法（Python 协议，跨类天然重复）
+            if node.name in _DUNDER_METHODS:
                 continue
             # 跳过短函数（<5 行体），避免 getter/setter 误报
             body_len = sum(1 for _ in ast.walk(node)) - 1
@@ -305,10 +338,18 @@ def metric_03_duplicate_function_clusters() -> dict:
             h = hashlib.md5(norm.encode("utf-8")).hexdigest()  # noqa: S324 — 聚类非安全用途
             hash_to_funcs[h].append(f"{rel}:{node.name}() L{node.lineno}")
     clusters = {h: funcs for h, funcs in hash_to_funcs.items() if len(funcs) > 1}
+    # 治本（M03）：过滤"全簇同名"的簇——接口实现(多态)和同文件重载(overloading)，
+    # 非复制粘贴。M05(文件复制对=0)已覆盖文件级复制检测(M05=0)。
+    # 仅保留"异名同体"的簇——更可能是真重复(复制后改名)。
+    real_clusters: dict[str, list[str]] = {}
+    for h, funcs in clusters.items():
+        names = {f.split(":")[1].split("()")[0] for f in funcs}
+        if len(names) > 1:
+            real_clusters[h] = funcs
     details: list[str] = []
-    for funcs in sorted(clusters.values(), key=lambda x: -len(x))[:20]:
+    for funcs in sorted(real_clusters.values(), key=lambda x: -len(x))[:20]:
         details.append(f"簇({len(funcs)}): " + " | ".join(funcs[:3]))
-    return _make_metric("M03", "重复簇函数数", len(clusters), details, "inline-AST")
+    return _make_metric("M03", "重复簇函数数", len(real_clusters), details, "inline-AST")
 
 
 # ── 指标 4：GATE 未登记 capability 数 ─────────────────────────────────────

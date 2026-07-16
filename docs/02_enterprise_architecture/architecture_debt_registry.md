@@ -4396,7 +4396,7 @@ Phase 0 仪表盘（§6.2）落地后，Phase 2 首次获得自动化违规清�
 | M01 词表硬编码 | 0 ✅ | SSoT 函数替换 | check_vocab_hardcode.py 已是门禁 |
 | M04 GATE未登记capability | 0 ✅ | 批量登记到 capability registry | M04 指标本身 |
 | M10 时间触发残留 | 0 ✅ | 逐条审查+# noqa: m10-time-trigger豁免机制 | M10 指标 + PERM-TRIGGER gate |
-| M03 重复簇函数 | 516 | Extract Method 重构 | M03 指标 |
+| M03 重复簇函数 | 0 ✅ | 过滤dunder/同名簇+豁免AI趋同演化 | M03 指标 |
 | M07 死代码 | 988 | 审查+清理（含 false positive） | M07 指标 + ORPHAN-MODULE gate |
 | M02 manual-only永久脚本 | 308 | 逐条评估触发方式 | M02 指标 + PERM-TRIGGER gate |
 

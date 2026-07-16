@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_gate_override | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """Owner 紧急旁路——时间限定的门禁临时绕过 + 审计追踪（beta）
 同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链。"""

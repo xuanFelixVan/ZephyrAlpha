@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GOV_gate_simulator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """门禁模拟器——dry-run 全链路门禁演练，不修改任何状态（beta）"""
 

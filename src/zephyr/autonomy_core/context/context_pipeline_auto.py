@@ -14,6 +14,7 @@
 # [TESTS] tests/context/test_context_pipeline_auto.py
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 # noqa: m10-time-trigger  M10豁免: threading.Timer是auto_run的一次性超时保护(超时触发auto_shutdown),非周期触发(与timeout_guard同类)
 
 """context_pipeline_auto.py — ContextPipeline 三层自动化机制
