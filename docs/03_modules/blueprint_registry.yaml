@@ -508,7 +508,7 @@ blueprints:
   priority: P1
   version: 1.1.0
   generation: 1
-  last_updated: '2026-07-16'
+  last_updated: '2026-07-09'
   file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
   construction_progress: not_started
 - module_id: MOD-INF-028
