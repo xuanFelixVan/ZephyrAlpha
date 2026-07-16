@@ -651,6 +651,38 @@ DirectiveChain = list[tuple[str, str, dict[str, Any]]]
 # agent_orchestrator.py 位于 src/zephyr/orchestrator/ -> 仓库根为 parents[3]
 
 
+def _run_directive_chain(orchestrator, directive_chain):
+    calls: list[ToolCallRecord] = []
+    errors: list[str] = []
+    chain_ok = True
+
+    directives = [d.strip() for d in directive_chain.split("+") if d.strip()]
+    for did in directives:
+        steps = orchestrator._mapping.get(did, [])
+        if not steps:
+            calls.append(
+                ToolCallRecord(
+                    directive=did,
+                    tool_name="<unmapped>",
+                    arguments={},
+                    success=False,
+                    latency_ms=0,
+                    error=f"directive {did} 未在 directive_mapping 中注册",
+                )
+            )
+            errors.append(f"unmapped_directive: {did}")
+            chain_ok = False
+            continue
+        for tool_name, args in steps:
+            record = orchestrator._invoke_tool(did, tool_name, args)
+            calls.append(record)
+            if not record.success:
+                chain_ok = False
+                errors.append(f"tool_failed: {tool_name}")
+                break  # 当前 directive 失败则进入下一个 directive
+    return calls, errors, chain_ok
+
+
 class AgentOrchestrator:
     """Orchestrator Agent：将 directive 序列编排为 MCP 工具链，并运行 CoVe post-hook。
 
@@ -786,34 +818,7 @@ class AgentOrchestrator:
                 self._monitor.record(result)
                 return result
 
-        calls: list[ToolCallRecord] = []
-        errors: list[str] = []
-        chain_ok = True
-
-        directives = [d.strip() for d in directive_chain.split("+") if d.strip()]
-        for did in directives:
-            steps = self._mapping.get(did, [])
-            if not steps:
-                calls.append(
-                    ToolCallRecord(
-                        directive=did,
-                        tool_name="<unmapped>",
-                        arguments={},
-                        success=False,
-                        latency_ms=0,
-                        error=f"directive {did} 未在 directive_mapping 中注册",
-                    )
-                )
-                errors.append(f"unmapped_directive: {did}")
-                chain_ok = False
-                continue
-            for tool_name, args in steps:
-                record = self._invoke_tool(did, tool_name, args)
-                calls.append(record)
-                if not record.success:
-                    chain_ok = False
-                    errors.append(f"tool_failed: {tool_name}")
-                    break  # 当前 directive 失败则进入下一个 directive
+        calls, errors, chain_ok = _run_directive_chain(self, directive_chain)
 
         budget = token_budget if token_budget is not None else self._default_budget
         latency_ms = int((time.perf_counter() - started) * 1000)
