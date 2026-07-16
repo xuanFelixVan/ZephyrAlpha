@@ -2397,6 +2397,75 @@ entries:
   created: '2026-07-16'
   last_updated: '2026-07-16'
 
+# --- #ARCH-CH-022: CapabilityContract 机器可执行契约——"注释契约"升级为启动时强制校验（治本 ARCH-CH-018 漂移根源） ---
+- issue_id: '#ARCH-CH-022'
+  title: Provider Capability 行为契约从"注释契约"升级为"机器可执行契约"——scheduler 启动时强制校验 task.capability 与 provider.meta 一致性
+  severity: P1高
+  category: architecture_governance
+  adjudication: |
+    问题背景：
+    #ARCH-CH-018 事故：akshare 10 个支持 symbols=null 的能力（dividend/restricted_shares/daily_valuation/
+    money_flow/stock_news_em/research_report/share_change/stock_indicator/top10_shareholders/
+    top10_circulating_shareholders）在 tasks.yaml 声明 symbols=null，但 provider.meta.capabilities
+    仅为字符串列表（["dividend", ...]），无行为契约标注。Provider 实现内部有 _get_all_a_symbols fallback
+    支持 symbols=None，但该行为仅为"注释契约"（docstring + 代码注释），无机器可执行校验。
+    当 AI 修改 tasks.yaml 时，无法从契约层面感知"该 capability 支持 symbols=null"，凭记忆推断导致漂移。
+
+    核心矛盾（architecture_debt_registry line 365）：
+    "规则:执行 ≈ 10:1。100% AI 开发场景下，建议性规则是反模式——AI 没有自觉，只有被阻断。"
+    病根3（architecture_debt_registry）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
+    漂移案例同源。注释契约在 100% AI 开发模式下遵守率约 10%，AI 凭记忆推断契约=幻觉/漂移温床。
+
+    契约三形态演进：
+    L0 注释契约（~10% 遵守率）：docstring + 代码注释，无校验
+    L1 docstring 契约（~30% 遵守率）：结构化 docstring，可被 AST 解析但无强制消费
+    L2 机器可执行契约（~100% 遵守率）：dataclass + 启动时校验 + fail-closed 阻断
+
+    治本方案（Phase 4，裁定 #ARCH-CH-022）：
+    1. CapabilityContract dataclass（provider_base.py）：声明 supports_symbols_null/
+       supports_incremental/supports_full_refresh/requires_date_range 四个行为标志
+    2. DataSourceMeta 扩展：capabilities 字段接受 list[str | CapabilityContract]，
+       __post_init__ 调用 _normalize_capabilities 归一化为 list[CapabilityContract]，
+       字符串自动转为默认契约（向后兼容现有声明）
+    3. capability_validator.py 启动时校验器（3 规则）：
+       - CAP-NOT-FOUND (ERROR 阻断)：task.capability 必须在 provider.meta.capability_contracts 中
+       - CAP-NULL-SYMBOLS (WARN)：task.symbols=null 时 capability 应声明 supports_symbols_null=True
+       - CAP-INCREMENTAL (WARN)：task.incremental=true 时 capability 应声明 supports_incremental=True
+    4. scheduler.start() 插入 _validate_capability_contracts()：有 ERROR 级违规则 raise RuntimeError 阻断启动
+    5. 渐进式收紧：初期 WARN-only 收集数据，逐步收紧为 ERROR（100% AI 模式下只有阻断才能 ~100% 遵守）
+
+    遵循 architecture_debt_registry 裁定1："暂停新增规则文档6个月，新违规一律转化为AST门禁或reconciler"。
+    本次不新增 .md 规则文档，转化为启动时校验（reconciler 式 fail-closed）。
+
+    本次施工修复的 8 条 ERROR 级 CAP-NOT-FOUND 违规（校验器首次运行即发现的历史漂移）：
+    - miniqmt provider.meta 遗漏 kline_15min/kline_30min/kline_60min（_KLINE_CAPABILITIES 路由字典有，
+      meta 声明只有 kline_1min/kline_5min）
+    - miniqmt provider.meta 遗漏 balance_sheet/income_statement/cashflow_statement/financial_indicator/
+      main_business（_FINANCIAL_CAPABILITIES 路由字典有，meta 声明为死声明 financial_statement——
+      路由字典无此 key，无 task 使用，本次删除并补全 5 个细分能力）
+    - 8 个能力均声明 CapabilityContract(supports_symbols_null=True)（_fetch_kline 第569行 +
+      _fetch_financial_statement 第811行均支持 symbols=None fallback 到沪深A股板块）
+
+    校验器修复：task_id 读取 bug——tasks.yaml 用 task_id 字段，校验器原读 task.get("id")，
+    已修复为 task.get("task_id") or task.get("id") or "?"（兼容两种字段名）。
+
+    验证结果（2026-07-16）：119 个 task 校验通过，0 ERROR 阻断，84 条 WARN（CAP-NULL-SYMBOLS，
+    渐进式收紧预期行为，不阻断启动）。
+  impact:
+  - src/zephyr/data/provider_base.py（新增 CapabilityContract dataclass + _normalize_capabilities + DataSourceMeta 扩展）
+  - src/zephyr/data/capability_validator.py（新增启动时契约校验器，3 规则）
+  - src/zephyr/data/scheduler.py（start() 插入 _validate_capability_contracts 调用）
+  - src/zephyr/data/implementations/akshare_provider.py（10 个 symbols=null 能力声明 CapabilityContract）
+  - src/zephyr/data/implementations/miniqmt_provider.py（8 个遗漏能力补全 + 删除死声明 financial_statement）
+  fix_phase: 'Phase 4.1 CapabilityContract schema 定义 + DataSourceMeta 扩展；Phase 4.2 启动时强制校验 + 8 条 ERROR 修复；Phase 4.3-4.5（Provider 自校验/commit gate/契约测试）P2 可延后'
+  status: decided
+  related_rules:
+  - '#ARCH-CH-018'
+  - architecture_debt_registry_裁定1
+  - RULE-SSOT-CLASSIFICATION
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
 # --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
 - issue_id: '#ARCH-OLAP-001'
   title: olap_engine.py 孤儿模块退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代后业务侧零调用

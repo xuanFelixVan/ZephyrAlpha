@@ -39,6 +39,7 @@ from ..provider_base import (
     DataSourceMeta,
     FetchPayload,
     FetchResult,
+    CapabilityContract,
 )
 from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
@@ -132,22 +133,34 @@ class AKShareProvider(DataSourceBase):
         thread_safety="shared",
         rate_limit_default=60,
         capabilities=[
-            "macro_data", "dividend", "restricted_shares", "equity_pledge",
-            "daily_valuation", "margin_trading", "block_trade",
-            "dragon_tiger", "money_flow", "share_unlock",
+            "macro_data",
+            # 10 个支持 symbols=null 的能力（裁定 #ARCH-CH-018/#ARCH-CH-022）
+            # Provider 内部调用 _get_all_a_symbols 做 fallback（akshare→CH stock_list）
+            CapabilityContract("dividend", supports_symbols_null=True),
+            CapabilityContract("restricted_shares", supports_symbols_null=True),
+            CapabilityContract("daily_valuation", supports_symbols_null=True),
+            CapabilityContract("money_flow", supports_symbols_null=True),
+            CapabilityContract("stock_news_em", supports_symbols_null=True),
+            CapabilityContract("research_report", supports_symbols_null=True),
+            CapabilityContract("share_change", supports_symbols_null=True),
+            CapabilityContract("stock_indicator", supports_symbols_null=True),
+            CapabilityContract("top10_shareholders", supports_symbols_null=True),
+            CapabilityContract("top10_circulating_shareholders", supports_symbols_null=True),
+            # 以下能力需 task 显式传入 symbols 或不支持 symbols=null
+            "equity_pledge", "margin_trading", "block_trade",
+            "dragon_tiger", "share_unlock",
             "audit_opinion", "equity_pledge_summary",
             # 新闻数据
-            "stock_news_em", "news_cctv", "news_economic_baidu",
+            "news_cctv", "news_economic_baidu",
             "news_baidu", "news_stock",
             # 分析师预期 & 配股
             "analyst_forecast", "rights_issue",
             # 研报 & 北向资金 & 期货主力合约
-            "research_report", "hk_connect_flow", "kline_futures",
+            "hk_connect_flow", "kline_futures",
             # 涨跌停 & 股本变动 & ST股票 & 概念板块 & 指标 & 大宗交易明细
-            "limit_up_down", "share_change", "st_stock_list",
-            "concept_board", "stock_indicator", "block_trade_detail",
-            # 十大股东 & 披露计划（淘宝历史数据持续更新）
-            "top10_shareholders", "top10_circulating_shareholders",
+            "limit_up_down", "st_stock_list",
+            "concept_board", "block_trade_detail",
+            # 披露计划（淘宝历史数据持续更新）
             "disclosure_plan",
             # 回购数据
             "repurchase",

@@ -97,6 +97,46 @@ class FetchResult:
 
 # class-name-alias: MOD-L00-004 数据源 Provider 元数据，与 governance/provider_base.py 的 LLM Provider 同名不同义，过渡期共存（阶段4退役旧版）
 @dataclass
+class CapabilityContract:
+    """单个 capability 的行为契约（裁定 #ARCH-CH-022）。
+
+    把"注释契约"升级为"机器可执行契约"。scheduler 启动时校验 task 声明
+    与 provider 实现的契约一致性，不一致则阻断启动（fail-closed）。
+
+    Attributes:
+        capability_id: 能力标识（如 "top10_shareholders"），与 tasks.yaml 的 capability 字段对应
+        supports_symbols_null: symbols=None 时是否自动获取全市场标的（裁定 #ARCH-CH-018）
+            True: Provider 内部调用 _get_all_a_symbols 等 fallback（如 10 个 akshare 能力）
+            False: 必须由 task 显式传入 symbols 列表（如指数成分股等场景）
+        supports_incremental: 是否支持增量模式（payload.incremental=True）
+        supports_full_refresh: 是否支持全量刷新（payload.incremental=False）
+        requires_date_range: 是否需要 start/end 日期（宏观数据可能不需要）
+    """
+    capability_id: str
+    supports_symbols_null: bool = False
+    supports_incremental: bool = True
+    supports_full_refresh: bool = True
+    requires_date_range: bool = True
+
+
+def _normalize_capabilities(items: list) -> list[CapabilityContract]:
+    """将 list[str | CapabilityContract] 归一化为 list[CapabilityContract]。
+
+    向后兼容：字符串自动转为默认 CapabilityContract（所有行为标志取默认值）。
+    这样现有 capabilities=["kline_daily", ...] 声明继续工作，无需立即迁移。
+    """
+    result: list[CapabilityContract] = []
+    for item in items:
+        if isinstance(item, CapabilityContract):
+            result.append(item)
+        elif isinstance(item, str):
+            result.append(CapabilityContract(capability_id=item))
+        else:
+            raise TypeError(f"capabilities 元素必须是 str 或 CapabilityContract，得到 {type(item)}")
+    return result
+
+
+@dataclass
 class DataSourceMeta:
     """数据源元数据（静态描述）。
 
@@ -107,7 +147,8 @@ class DataSourceMeta:
         requires_process: 是否需要外部进程在跑（QMT 需 XtMiniQmt.exe）
         thread_safety: 线程安全模型（"thread_local"/"shared"/"single_thread"）
         rate_limit_default: 默认 RPM（0=不限或配额制）
-        capabilities: 支持的能力列表（如 ["kline_daily","financial_statement"]）
+        capabilities: 支持的能力列表（list[str | CapabilityContract]，裁定 #ARCH-CH-022）
+            字符串自动归一化为默认 CapabilityContract；需声明行为契约时用 CapabilityContract 显式构造
         known_issues: 已知问题（如 ["月度配额-4318","试用账号不支持沪深港通"]）
     """
     name: str
@@ -116,8 +157,28 @@ class DataSourceMeta:
     requires_process: bool
     thread_safety: str
     rate_limit_default: int
-    capabilities: list[str] = field(default_factory=list)
+    capabilities: list = field(default_factory=list)
     known_issues: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        """归一化 capabilities 为 list[CapabilityContract]（裁定 #ARCH-CH-022）。"""
+        self._capabilities_normalized = _normalize_capabilities(self.capabilities)
+
+    @property
+    def capability_contracts(self) -> list[CapabilityContract]:
+        """归一化后的行为契约列表（机器可执行契约，裁定 #ARCH-CH-022）。"""
+        return self._capabilities_normalized
+
+    def capabilities_as_strings(self) -> list[str]:
+        """返回 capability_id 字符串列表（向后兼容旧代码）。"""
+        return [c.capability_id for c in self._capabilities_normalized]
+
+    def get_capability_contract(self, capability_id: str) -> CapabilityContract | None:
+        """按 capability_id 查询行为契约。不存在返回 None。"""
+        for c in self._capabilities_normalized:
+            if c.capability_id == capability_id:
+                return c
+        return None
 
 
 # ============== 抽象基类 ==============

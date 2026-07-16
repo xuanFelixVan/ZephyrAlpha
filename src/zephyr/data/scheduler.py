@@ -587,6 +587,53 @@ class IntegratorScheduler:
         """热更新策略（手动调用或 config_changed 事件触发）。"""
         return self._policy_registry.maybe_reload(force=True)
 
+    def _validate_capability_contracts(self) -> None:
+        """启动时校验 task.capability 与 provider 行为契约一致性（裁定 #ARCH-CH-022）。
+
+        把"注释契约"升级为"机器可执行契约"。从 tasks.yaml 读取所有涉及的 source，
+        通过 Provider 类的 meta 类属性（无需实例化）校验 task 声明与契约一致性。
+
+        - ERROR 级违规 → raise（阻断启动，fail-closed）
+        - WARN 级违规 → log.warning（记录但不阻断，渐进式收紧）
+        """
+        from zephyr.data.capability_validator import (
+            validate_task_capability_contracts,
+            has_blocking_violations,
+            format_violations,
+        )
+        # 收集 tasks 涉及的所有 source，通过类属性读取 meta（无需实例化）
+        metas: dict[str, Any] = {}
+        source_to_meta = {
+            "akshare": ("zephyr.data.implementations.akshare_provider", "AKShareProvider"),
+            "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQMTProvider"),
+            "ifind": ("zephyr.data.implementations.ifind_provider", "IFindProvider"),
+        }
+        import importlib
+        for task in self._tasks:
+            source = task.get("source")
+            if not source or source in metas or source not in source_to_meta:
+                continue
+            module_path, class_name = source_to_meta[source]
+            try:
+                mod = importlib.import_module(module_path)
+                cls = getattr(mod, class_name)
+                if hasattr(cls, "meta") and cls.meta is not None:
+                    metas[source] = cls.meta
+            except Exception as e:
+                log.warning("读取 %s.meta 失败（跳过契约校验）: %s", source, e)
+        violations = validate_task_capability_contracts(self._tasks, metas)
+        if violations:
+            log.warning("Capability 契约校验发现 %d 条违规:\n%s",
+                        len(violations), format_violations(violations))
+        else:
+            log.info("Capability 契约校验通过（0 违规，裁定 #ARCH-CH-022）")
+        if has_blocking_violations(violations):
+            blocking = [v for v in violations if v.severity == "ERROR"]
+            raise RuntimeError(
+                f"Capability 契约校验发现 {len(blocking)} 条 ERROR 级违规，阻断启动（裁定 #ARCH-CH-022）。"
+                f"请修复 tasks.yaml 的 capability 声明或 Provider 的 meta.capabilities。"
+            )
+
     # ============== Provider 管理 ==============
 
     def _get_provider(self, source: str) -> DataSourceBase | None:
@@ -1009,6 +1056,7 @@ class IntegratorScheduler:
 
         try:
             self._load_config()
+            self._validate_capability_contracts()
             self._init_scheduler()
 
             # 注册 cron/interval job（每个时段一个 job）

@@ -34,7 +34,7 @@ import time
 import logging
 from typing import Iterator
 
-from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta
+from ..provider_base import DataSourceBase, FetchPayload, FetchResult, DataSourceMeta, CapabilityContract
 from ..policy_registry import SourcePolicy
 from .. import ch_reader
 
@@ -343,7 +343,18 @@ class MiniQMTProvider(DataSourceBase):
             "kline_daily",
             "kline_1min",
             "kline_5min",
-            "financial_statement",
+            # 分钟K线全市场批量（symbols=null fallback 到沪深A股板块，裁定 #ARCH-CH-022）
+            # _fetch_kline 第569行：若 symbols 为 None，取指定板块全部标的
+            CapabilityContract("kline_15min", supports_symbols_null=True),
+            CapabilityContract("kline_30min", supports_symbols_null=True),
+            CapabilityContract("kline_60min", supports_symbols_null=True),
+            # 财务报表全市场批量（symbols=null fallback，_fetch_financial_statement 第811行支持）
+            # 路由按细分名 balance_sheet/income_statement/...（见 _FINANCIAL_CAPABILITIES 字典）
+            CapabilityContract("balance_sheet", supports_symbols_null=True),
+            CapabilityContract("income_statement", supports_symbols_null=True),
+            CapabilityContract("cashflow_statement", supports_symbols_null=True),
+            CapabilityContract("financial_indicator", supports_symbols_null=True),
+            CapabilityContract("main_business", supports_symbols_null=True),
             "index_constituent",
             "kline_index",
             "adj_factor",
