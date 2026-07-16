@@ -4,7 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
-# ttl: task_bound
+# ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-INF-002
 scripts:

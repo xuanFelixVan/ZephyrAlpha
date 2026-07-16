@@ -7,7 +7,6 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 # ---
-# module_id: ERROR_BUDGET-001
 # title: Error Budget 状态
 # status: active
 # version: "1.0.0"

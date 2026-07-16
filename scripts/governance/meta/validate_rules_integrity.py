@@ -82,9 +82,9 @@ _STATIC_MANIFEST: list[dict] = [
     {"path": "AGENTS.md", "critical": True, "desc": "AI Agent 全局行为约束"},
     {"path": "scripts/governance/quickstart.md", "critical": True, "desc": "AI Session 冷启动卡片"},
     {"path": "scripts/governance/_shared/thresholds.yaml", "critical": True, "desc": "关键阈值 SSoT"},
-    {"path": "scripts/governance/meta/kill_switch_state.yaml", "critical": True, "desc": "Kill Switch 状态"},
-    {"path": "scripts/governance/meta/shadow_mode_state.yaml", "critical": False, "desc": "Shadow Mode 状态"},
-    {"path": "scripts/governance/meta/error_budget_state.yaml", "critical": True, "desc": "Error Budget 状态"},
+    {"path": "config/runtime/kill_switch_state.yaml", "critical": True, "desc": "Kill Switch 状态"},
+    {"path": "config/runtime/shadow_mode_state.yaml", "critical": False, "desc": "Shadow Mode 状态"},
+    {"path": "config/runtime/error_budget_state.yaml", "critical": True, "desc": "Error Budget 状态"},
     {"path": "scripts/governance/quality_standard.md", "critical": True, "desc": "脚本质量标准"},
     {"path": "scripts/governance/script_manifest.yaml", "critical": True, "desc": "脚本注册表"},
     {
