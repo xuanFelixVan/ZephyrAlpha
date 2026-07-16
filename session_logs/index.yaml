@@ -25,7 +25,7 @@ doc_type: index
 ttl: permanent
 index_version: '1.4'
 created: '2026-05-04'
-last_updated: '2026-07-05'
+last_updated: '2026-07-17'
 total_sessions: 29
 stats:
   total_files_created: 104
