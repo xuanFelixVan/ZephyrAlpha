@@ -39,8 +39,11 @@
 """
 from __future__ import annotations
 
+import ast
 import logging
+import re
 from dataclasses import dataclass
+from pathlib import Path
 
 from zephyr.data.provider_base import DataSourceMeta
 
@@ -194,3 +197,233 @@ def format_violations(violations: list[Violation]) -> str:
     for v in violations:
         lines.append(f"  [{v.severity}] {v.rule_id} task={v.task_id} cap={v.capability_id}: {v.message}")
     return "\n".join(lines)
+
+
+# ============== Provider 路由-meta 一致性校验（Phase 4.3/4.4 共用，裁定 #ARCH-CH-022） ==============
+# 治本本次 8 条 ERROR 根因："fetch 路由支持某 capability 但 meta.capabilities 遗漏声明"。
+# AST 解析 provider 文件，提取路由能力集（字典/frozenset/if-elif）+ meta.capabilities，
+# 对比一致性。Phase 4.3 运行时 WARN（scheduler 启动），Phase 4.4 commit gate ERROR 阻断。
+
+# 路由能力集变量名约定：_*_CAPABILITIES 或 _*_ROUTES（如 _KLINE_CAPABILITIES / _DIRECT_ROUTES / _ROUTES）
+# 匹配 _ 开头 + 以 CAPABILITIES 或 ROUTES 结尾的变量名（覆盖 _ROUTES / _KLINE_CAPABILITIES 等所有变体）
+_ROUTE_VAR_PATTERN = re.compile(r'^_.*(CAPABILITIES|ROUTES)$')
+
+
+def _extract_str_constant(node: ast.AST, out: set[str]) -> None:
+    """从 AST 节点提取字符串常量（非字符串则跳过）。"""
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        out.add(node.value)
+
+
+def _extract_str_from_container(node: ast.AST, out: set[str]) -> None:
+    """从 Set/Tuple 容器节点提取所有字符串常量。"""
+    if isinstance(node, (ast.Set, ast.Tuple)):
+        for elt in node.elts:
+            _extract_str_constant(elt, out)
+
+
+def _extract_route_keys_from_value(value: ast.expr, out: set[str]) -> None:
+    """从赋值值提取路由能力 key（dict keys / set elts / frozenset elts）。"""
+    if isinstance(value, ast.Dict):
+        for key in value.keys:
+            _extract_str_constant(key, out)
+    elif isinstance(value, ast.Set):
+        for elt in value.elts:
+            _extract_str_constant(elt, out)
+    elif (isinstance(value, ast.Call) and isinstance(value.func, ast.Name)
+          and value.func.id == "frozenset" and value.args):
+        # frozenset({...}) — akshare _AKSHARE_CAPABILITIES 模式
+        if isinstance(value.args[0], ast.Set):
+            for elt in value.args[0].elts:
+                _extract_str_constant(elt, out)
+
+
+def _route_caps_from_tree(tree: ast.Module) -> set[str]:
+    """从已解析的 AST 提取路由能力集（pure AST，无文件 I/O）。
+
+    检测模式：
+    1. 模块级赋值，变量名匹配 _*_CAPABILITIES / _*_ROUTES：
+       - dict 字面量 {key: ...}: 提取 keys
+       - set/frozenset({...}): 提取 elts
+    2. fetch 方法体内 ``capability == "xxx"`` / ``capability in {...}``: 提取字符串常量
+
+    覆盖三 provider 路由模式：
+    - akshare: frozenset(_AKSHARE_CAPABILITIES)
+    - miniqmt: 多个 dict(_KLINE_CAPABILITIES/_FINANCIAL_CAPABILITIES/_DIRECT_ROUTES/...)
+    - ifind: if-elif 链(capability == "xxx")
+    """
+    route_caps: set[str] = set()
+
+    # 模式1: 模块级 _*_CAPABILITIES / _*_ROUTES 赋值
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if not isinstance(target, ast.Name):
+                continue
+            if not _ROUTE_VAR_PATTERN.match(target.id):
+                continue
+            _extract_route_keys_from_value(node.value, route_caps)
+
+    # 模式2: fetch 方法体内 capability == "xxx" / capability in {...}
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Compare):
+            continue
+        if not (isinstance(node.left, ast.Name) and node.left.id == "capability"):
+            continue
+        if len(node.ops) != 1 or len(node.comparators) != 1:
+            continue
+        op, cmp = node.ops[0], node.comparators[0]
+        if isinstance(op, ast.Eq):
+            _extract_str_constant(cmp, route_caps)
+        elif isinstance(op, ast.In):
+            _extract_str_from_container(cmp, route_caps)
+
+    return route_caps
+
+
+def extract_route_capabilities(file_path: Path) -> set[str] | None:
+    """AST 解析 provider 文件，提取所有路由能力集。
+
+    文件不存在/解析失败返回 None（fail-open）。
+    内容解析逻辑委托给 ``_route_caps_from_tree``（pure AST）。
+
+    Args:
+        file_path: provider .py 文件路径
+
+    Returns:
+        路由能力全集；文件不存在/解析失败返回 None（fail-open）
+    """
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    try:
+        tree = ast.parse(content)
+    except SyntaxError:
+        return None
+    return _route_caps_from_tree(tree)
+
+
+def _extract_caps_from_meta_call(call: ast.Call, out: set[str]) -> None:
+    """从 DataSourceMeta(...) 调用的 capabilities keyword 提取 capability_id。"""
+    for kw in call.keywords:
+        if kw.arg != "capabilities" or not isinstance(kw.value, ast.List):
+            continue
+        for elt in kw.value.elts:
+            if isinstance(elt, ast.Constant) and isinstance(elt.value, str):
+                out.add(elt.value)
+            elif (isinstance(elt, ast.Call) and isinstance(elt.func, ast.Name)
+                  and elt.func.id == "CapabilityContract" and elt.args):
+                _extract_str_constant(elt.args[0], out)
+
+
+def _meta_caps_from_tree(tree: ast.Module) -> set[str]:
+    """从已解析的 AST 提取 DataSourceMeta(capabilities=[...]) 的 capability_id 集合（pure AST）。
+
+    检测 ``meta = DataSourceMeta(..., capabilities=[...])`` 中的：
+    - ``"xxx"`` 字符串字面量
+    - ``CapabilityContract("xxx", ...)`` 构造调用的第一个参数
+
+    同时检测 AnnAssign（类属性 ``meta: DataSourceMeta = DataSourceMeta(...)``）、
+    Assign with Name target（类属性 ``meta = DataSourceMeta(...)`` 无注解）、
+    和 Assign with Attribute target（实例级 ``self.meta = DataSourceMeta(...)``）。
+    """
+    meta_caps: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.AnnAssign):
+            if not (isinstance(node.target, ast.Name) and node.target.id == "meta"):
+                continue
+            if isinstance(node.value, ast.Call):
+                _extract_caps_from_meta_call(node.value, meta_caps)
+        elif isinstance(node, ast.Assign):
+            has_meta_target = any(
+                (isinstance(t, ast.Attribute) and t.attr == "meta")
+                or (isinstance(t, ast.Name) and t.id == "meta")
+                for t in node.targets
+            )
+            if not has_meta_target:
+                continue
+            if isinstance(node.value, ast.Call):
+                _extract_caps_from_meta_call(node.value, meta_caps)
+    return meta_caps
+
+
+def extract_meta_capabilities(file_path: Path) -> set[str] | None:
+    """AST 解析 provider 文件，提取 DataSourceMeta(capabilities=[...]) 的 capability_id 集合。
+
+    文件不存在/解析失败返回 None（fail-open）。
+    内容解析逻辑委托给 ``_meta_caps_from_tree``（pure AST）。
+
+    Args:
+        file_path: provider .py 文件路径
+
+    Returns:
+        meta 能力集；文件不存在/解析失败返回 None（fail-open）
+    """
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    try:
+        tree = ast.parse(content)
+    except SyntaxError:
+        return None
+    return _meta_caps_from_tree(tree)
+
+
+def check_route_meta_consistency_content(content: str) -> list[str]:
+    """校验 provider 文件内容（字符串）的路由-meta 一致性（裁定 #ARCH-CH-022 Phase 4.4）。
+
+    Phase 4.4 commit gate 的入口：gate 从 staged index 读取文件内容后调用本函数，
+    无需写临时文件。与 ``check_route_meta_consistency(file_path)`` 共享同一比较逻辑
+    （真源唯一），仅输入形态不同（content vs file_path）。
+
+    Args:
+        content: provider .py 文件完整内容（UTF-8 字符串）
+
+    Returns:
+        违规描述列表（空列表=一致或解析失败 fail-open）：
+        - 路由支持但 meta 未声明（本次 8 条 ERROR 根因）
+        - meta 声明但路由不支持（死声明，如 financial_statement）
+    """
+    try:
+        tree = ast.parse(content)
+    except SyntaxError:
+        return []  # 解析失败，fail-open
+    route_caps = _route_caps_from_tree(tree)
+    meta_caps = _meta_caps_from_tree(tree)
+
+    violations: list[str] = []
+    route_not_in_meta = route_caps - meta_caps
+    if route_not_in_meta:
+        violations.append(
+            f"路由支持但 meta.capabilities 未声明: {sorted(route_not_in_meta)}"
+        )
+    meta_not_in_route = meta_caps - route_caps
+    if meta_not_in_route:
+        violations.append(
+            f"meta.capabilities 声明但路由不支持（死声明）: {sorted(meta_not_in_route)}"
+        )
+    return violations
+
+
+def check_route_meta_consistency(file_path: Path) -> list[str]:
+    """校验 provider 文件的路由能力集 vs meta.capabilities 一致性（裁定 #ARCH-CH-022）。
+
+    治本本次 8 条 ERROR 根因：fetch 路由支持某 capability 但 meta.capabilities 遗漏声明。
+    文件读取后委托给 ``check_route_meta_consistency_content``（真源唯一）。
+
+    Args:
+        file_path: provider .py 文件路径
+
+    Returns:
+        违规描述列表（空列表=一致或解析失败 fail-open）：
+        - 路由支持但 meta 未声明（本次 8 条 ERROR 根因）
+        - meta 声明但路由不支持（死声明，如 financial_statement）
+    """
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return []  # 文件不可读，fail-open
+    return check_route_meta_consistency_content(content)

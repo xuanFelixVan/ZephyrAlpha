@@ -118,6 +118,7 @@ from zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate import (
 from zephyr.gov_enforcement.commit_gates.tests_coverage_gate import make_tests_coverage_gate
 from zephyr.gov_enforcement.commit_gates.blueprint_format_gate import make_blueprint_format_gate
 from zephyr.gov_enforcement.commit_gates.data_task_completeness_gate import make_data_task_completeness_gate
+from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import make_capability_consistency_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -336,6 +337,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_blueprint_format_gate())  # priority=77 治本[BLUEPRINT]头部module_id格式（裁定#214 Phase0防蔓延，diff检测新增/修改的[BLUEPRINT]行）
         self._gate_registry.register(make_data_task_completeness_gate())  # priority=80 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources）
         self._gate_registry.register(make_depgraph_write_path_gate())  # priority=97 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
+        self._gate_registry.register(make_capability_consistency_gate())  # priority=98 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
