@@ -1,3 +1,10 @@
+---
+ttl: permanent
+archived_at: 2026-07-16
+archived_from: docs/_working/2026-07-15-panorama_orphan_governance_spec.md
+archive_reason: ARCH-057 四图孤儿治理已完成（问题总数=0），spec 已落地
+---
+
 # 四图孤儿治理与同步闭环设计文档 (ARCH-057)
 
 > **Status**: Draft
