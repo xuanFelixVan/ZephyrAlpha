@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-16T18:18:00Z
+# 自动生成于 2026-07-16T18:40:10Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-16T18:18:00Z'
+generated_at: '2026-07-16T18:40:10Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 342
+total_scripts: 343
 with_manifest: 310
-missing_manifest: 32
+missing_manifest: 33
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -17,7 +17,7 @@ categories:
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 22
+  governance:d3_metadata: 23
   governance:d4_paths: 4
   governance:d5_architecture: 103
   governance:d6_security: 14
@@ -967,6 +967,16 @@ scripts:
   description: GATE-11 命名规范门禁 — 全类型命名检测。
   tags:
   - Quick
+- name: d3_metadata/check_pure_assertion.py
+  owner: governance:d3_metadata
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d3_metadata/check_registry_consistency.py
   owner: governance:d3_metadata
   dimensions:
