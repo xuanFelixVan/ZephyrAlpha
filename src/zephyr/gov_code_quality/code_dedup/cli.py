@@ -113,6 +113,49 @@ def main() -> None:
         _cmd_benchmark(args)
 
 
+def _count_duplicate_severity(duplicates: list) -> tuple[int, int, int]:
+    """按相似度将重复组分为高/中/低三档并计数。"""
+    high = sum(1 for d in duplicates if d.similarity >= 0.9)
+    med = sum(1 for d in duplicates if 0.8 <= d.similarity < 0.9)
+    low = sum(1 for d in duplicates if d.similarity < 0.8)
+    return high, med, low
+
+
+def _print_scan_summary(
+    duplicates: list,
+    high_count: int,
+    med_count: int,
+    low_count: int,
+    skipped: int,
+    quiet: bool,
+) -> None:
+    """输出扫描结果摘要（受 --quiet 控制）。"""
+    if not quiet:
+        print(
+            f"[SCAN] Found {len(duplicates)} duplicate groups "
+            f"(high:{high_count} med:{med_count} low:{low_count}, skipped:{skipped})"
+        )
+        for dup in duplicates[:20]:
+            print(f"  {dup.group_id}: {len(dup.members)} members, sim={dup.similarity:.3f}")
+        if len(duplicates) > 20:
+            print(f"  ... and {len(duplicates) - 20} more")
+
+
+def _determine_scan_exit_code(
+    args: argparse.Namespace, high_count: int, med_count: int
+) -> ExitCode:
+    """根据重复严重度与开关裁定 scan 子命令退出码。"""
+    if args.fail_on_duplicates and high_count > 0:
+        return ExitCode.ERROR
+    if args.warn_only:
+        return ExitCode.WARN
+    if high_count > 0:
+        return ExitCode.ERROR
+    if med_count > 0:
+        return ExitCode.WARN
+    return ExitCode.PASS
+
+
 def _cmd_scan(args: argparse.Namespace) -> None:
     target = args.single_file or args.target
     files = _collect_py_files(target)
@@ -134,29 +177,9 @@ def _cmd_scan(args: argparse.Namespace) -> None:
             print(f"[SCAN] No duplicates found. (skipped {skipped} files)")
         sys.exit(ExitCode.PASS)
 
-    high_count = sum(1 for d in duplicates if d.similarity >= 0.9)
-    med_count = sum(1 for d in duplicates if 0.8 <= d.similarity < 0.9)
-    low_count = sum(1 for d in duplicates if d.similarity < 0.8)
-
-    if not args.quiet:
-        print(
-            f"[SCAN] Found {len(duplicates)} duplicate groups "
-            f"(high:{high_count} med:{med_count} low:{low_count}, skipped:{skipped})"
-        )
-        for dup in duplicates[:20]:
-            print(f"  {dup.group_id}: {len(dup.members)} members, sim={dup.similarity:.3f}")
-        if len(duplicates) > 20:
-            print(f"  ... and {len(duplicates) - 20} more")
-
-    if args.fail_on_duplicates and high_count > 0:
-        sys.exit(ExitCode.ERROR)
-    if args.warn_only:
-        sys.exit(ExitCode.WARN)
-    if high_count > 0:
-        sys.exit(ExitCode.ERROR)
-    if med_count > 0:
-        sys.exit(ExitCode.WARN)
-    sys.exit(ExitCode.PASS)
+    high_count, med_count, low_count = _count_duplicate_severity(duplicates)
+    _print_scan_summary(duplicates, high_count, med_count, low_count, skipped, args.quiet)
+    sys.exit(_determine_scan_exit_code(args, high_count, med_count))
 
 
 def _cmd_fix(args: argparse.Namespace) -> None:
