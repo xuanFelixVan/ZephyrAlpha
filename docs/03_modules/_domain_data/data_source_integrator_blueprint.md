@@ -48,7 +48,8 @@ design_maturity: prototype
 ```
 src/zephyr/data/
 ├── __init__.py
-├── provider_base.py              # DataSourceBase 抽象 + DataSourceMeta
+├── provider_base.py              # DataSourceBase 抽象 + DataSourceMeta + CapabilityContract（裁定 #ARCH-CH-022）
+├── capability_validator.py       # Provider 行为契约校验器（裁定 #ARCH-CH-022，3 规则 + AST 路由-meta 一致性）
 ├── policy_registry.py            # SourcePolicy + per-source 策略注册表
 ├── scheduler.py                  # APScheduler 调度器封装
 ├── task_queue.py                 # 任务依赖图 + 优先级队列
