@@ -230,6 +230,9 @@ def calculate_ic_ir(
 
 # 默认试错次数(用于多重测试偏差修正,multiple testing bias)
 # 来源:Bailey & López de Prado (2014)
+# 注意: 此默认值(10)仅为fallback, 调用方MUST传入实际试错次数(策略数/参数组合数).
+# 若实际试错次数>10而未显式传入, DSR会偏乐观(undercorrected).
+# 对于参数搜索/网格优化的场景, n_trials应=参数组合总数.
 DEFAULT_N_TRIALS = 10
 
 
