@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: start_periodic_profile的while True+sleep是模型性能benchmark周期触发(可选,periodic_profile_interval_s>0才启用),非reconciler时间触发;用于模型漂移检测
 """
 PipelineOrchestrator — M1-M11 管线协调器
 =========================================

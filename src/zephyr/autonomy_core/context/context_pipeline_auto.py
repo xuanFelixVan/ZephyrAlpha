@@ -14,6 +14,7 @@
 # [TESTS] tests/context/test_context_pipeline_auto.py
 # [A_module] module_id=MOD-CONTEXT_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: threading.Timer是auto_run的一次性超时保护(超时触发auto_shutdown),非周期触发(与timeout_guard同类)
 
 """context_pipeline_auto.py — ContextPipeline 三层自动化机制
 

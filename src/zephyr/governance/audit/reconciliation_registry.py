@@ -14,6 +14,7 @@
 # [TESTS] tests/test_reconciliation_registry.py (P3-T1)
 # [A_module] module_id=MOD-GOV-reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "cron"在注释中说明reconciler是事件触发(非cron/manual)
 """reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
 
 把 ``_post_commit_reconcile`` 单线硬编码升级为声明式 registry：每个被

@@ -1,5 +1,6 @@
 # [A_config] module_id=CFG-derived-identifier-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 module_id: REG-DERIVED-ID-001
+ttl: permanent
 title: 派生标识符关系表
 doc_type: register
 registry_id: REG-DERIVED-ID-001

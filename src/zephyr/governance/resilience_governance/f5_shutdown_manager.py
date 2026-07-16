@@ -14,6 +14,7 @@
 # [TESTS] tests/test_f5_auto_shutdown.py
 # [A_module] module_id=MOD-RES_f5_shutdown_manager | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 """
 F5ShutdownManager — F5 自动关闭/状态持久化/信号处理 (MOD-INF-022 §2).
 

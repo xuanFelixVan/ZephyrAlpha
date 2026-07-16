@@ -14,6 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_perm_trigger_gate.py
 # [A_module] module_id=MOD-GOV-perm_trigger_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: 本文件是PERM-TRIGGER检测器自身,源码含检测模式字符串(while True/time.sleep/APScheduler等)用于AST匹配,非实际时间触发
 """perm_trigger_gate.py — 永久系统脚本时间触发模式无事件订阅阻断门禁（PERM-TRIGGER）
 
 检测 staged 新增 .py 文件中 [TTL] permanent 头标的脚本是否使用时间触发模式

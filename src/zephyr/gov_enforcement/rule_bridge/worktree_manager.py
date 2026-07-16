@@ -14,6 +14,7 @@
 # [TESTS] tests/test_worktree_manager.py
 # [A_module] module_id=MOD-GOV-worktree_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: while True+time.sleep是worktree锁等待循环，非周期触发
 """worktree_manager.py — session worktree 物理隔离管理器（阶段3 治本 stash 循环）
 
 根因（2026-06-30 A/A/A 决策）

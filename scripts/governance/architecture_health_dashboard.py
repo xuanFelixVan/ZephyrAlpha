@@ -574,6 +574,11 @@ def metric_10_time_trigger_residuals() -> dict:
             if sm and sm.group(1).strip().lower() == "manual":
                 continue  # manual 脚本不计入时间触发（已在 M02 统计）
             # 检测 time-trigger 模式
+            # 治本（M10，2026-07-17）：支持 # noqa: m10-time-trigger 豁免
+            # 适用于：schema 中 "cron" 枚举值/注释提及 "cron"/锁等待 while True+sleep/
+            # perm_trigger_gate 自身（检测器含模式字符串）/ threading.Timer 超时（非周期触发）
+            if "# noqa: m10-time-trigger" in source:
+                continue
             hit_patterns: list[str] = []
             for pat in _TIME_TRIGGER_PATTERNS:
                 if pat.search(source):

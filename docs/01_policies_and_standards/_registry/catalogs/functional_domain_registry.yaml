@@ -1,5 +1,6 @@
 # [A_config] module_id=CFG-functional-domain-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 module_id: REG-FUNC-DOMAIN-001
+ttl: permanent
 title: 功能域注册表
 doc_type: register
 registry_id: REG-FUNC-DOMAIN-001

@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-GCQ_integrations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "cron"在注释/文档字符串中，非实际cron调用
 
 """集成管理——预提交钩子+CI-only 扫描+超时边界."""
 

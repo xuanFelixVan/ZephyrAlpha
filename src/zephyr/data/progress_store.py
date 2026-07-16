@@ -14,6 +14,7 @@
 # [TESTS] tests/zephyr/data/test_progress_store.py
 # [A_module] module_id=MOD-L00-004-progress_store | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "APScheduler"仅出现在L29注释中(解释check_same_thread=False因APScheduler线程池共用),本文件无任何调度逻辑,是纯SQLite进度存储
 """统一进度存储（MOD-L00-004 §7）。
 
 取代 13 个 per-script JSON 文件（tmp/_ds_progress/fill_*.json），提供：

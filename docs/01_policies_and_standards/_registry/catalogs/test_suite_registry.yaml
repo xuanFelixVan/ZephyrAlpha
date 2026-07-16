@@ -1,4 +1,5 @@
 module_id: CFG-test-suite-registry
+ttl: permanent
 collection_id: TEST_SUITE
 collection_name: 测试集 / Test Suite
 collection_path: tests/

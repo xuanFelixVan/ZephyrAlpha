@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; scripts.ops.verify_header_completeness; scripts.governance.d3_metadata.check_frontmatter_metadata; scripts.governance.d3_metadata.backfill_ttl_metadata
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 本文件是所有文件头部格式解析的唯一真源（SSoT）；6 格式：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta；PY_HEADER_PATTERN 正则也在此定义；新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器
+# [INVARIANTS] 本文件是所有文件头部格式解析的唯一真源（SSoT）；6 格式：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta；PY_HEADER_PATTERN 正则也在此定义；新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器；B_yaml 支持两种子格式（注释锚定块优先，YAML 顶层字段 fallback，用于 rules/trae_NNN_*.yaml）
 # [MODIFY-GUARD] trae_047_engineering_file_header.yaml; capability_canonical_file_registry.yaml capability_id=file_header_parser
 # [STABILITY] stable
 # [SAFETY] M
@@ -23,7 +23,7 @@
 | A_full  | .py（code/script）     | parse_py_header      | # [FIELD] value 注释行 |
 | A_test  | .py（test）            | parse_py_header      | # [FIELD] value 注释行 |
 | E_shell | .sh / .ps1 / .mmd      | parse_py_header      | # [FIELD] value 注释行 |
-| B_yaml  | .yaml                  | parse_byaml_anchor   | # --- 治理锚定 --- 块  |
+| B_yaml  | .yaml                  | parse_byaml_anchor   | 注释锚定块 或 YAML 顶层字段 |
 | C_json  | .json（contract/schema）| parse_json_meta     | {"_meta": {...}} 字段  |
 
 A_full/A_test/E_shell 共用 parse_py_header——三者都是 `# [FIELD] value` 注释行格式，
@@ -116,33 +116,35 @@ def parse_py_header_from_file(filepath) -> dict | None:
 
 
 # ── .yaml 文件治理锚定块解析（B_yaml 格式）──
-# 格式：
-#   # --- 治理锚定 ---
-#   # blueprint: {module_id} | {blueprint_path} | §{N}
-#   # module_id: {module_id}
-#   # stability: {frozen|stable|evolving|volatile}
-#   # safety_level: {H|M|L}
-#   # ai_autonomy: {immutable_core|human_gated|ai_modifiable}
-#   # ttl: {permanent|task_bound}
-#   # --- 治理锚定结束 ---
+# 支持两种子格式：
+#   子格式 1（注释锚定块，传统格式）：
+#     # --- 治理锚定 ---
+#     # blueprint: {module_id} | {blueprint_path} | §{N}
+#     # module_id: {module_id}
+#     # stability: {frozen|stable|evolving|volatile}
+#     # safety_level: {H|M|L}
+#     # ai_autonomy: {immutable_core|human_gated|ai_modifiable}
+#     # ttl: {permanent|task_bound}
+#     # --- 治理锚定结束 ---
+#   子格式 2（YAML 顶层字段，用于 rules/trae_NNN_*.yaml 等规则文件）：
+#     module_id: TRAE-001
+#     ttl: permanent
+#     stability: frozen
+#     ...
 _BYAML_ANCHOR_START = "治理锚定"
 _BYAML_ANCHOR_END = "治理锚定结束"
+_BYAML_TOP_LEVEL_KEYS = ("module_id", "blueprint_id", "rule_id", "stability", "safety_level", "ai_autonomy", "ttl")
+_BYAML_IDENTITY_KEYS = ("ttl", "module_id", "rule_id", "blueprint_id")
 
 
-def parse_byaml_anchor(content: str) -> dict | None:
-    """解析 .yaml 文件的治理锚定块（B_yaml 格式）。
+def _parse_byaml_anchor_block(content: str) -> dict | None:
+    """解析 .yaml 文件的注释锚定块（B_yaml 子格式 1：注释块）。
 
     扫描前 30 行，定位 `# --- 治理锚定 ---` 到 `# --- 治理锚定结束 ---` 之间的注释块，
     提取 blueprint/module_id/stability/safety_level/ai_autonomy/ttl 字段。
 
     注意：必须先检查 END 再检查 START——"治理锚定"是"治理锚定结束"的子串，
     若先检查 START 会把结束行误判为开始行（子串 bug 修复）。
-
-    Args:
-        content: 文件内容字符串。
-
-    Returns:
-        字段 dict（无锚定块时返回 None）。
     """
     info: dict[str, str] = {}
     in_anchor = False
@@ -170,6 +172,52 @@ def parse_byaml_anchor(content: str) -> dict | None:
             if key in ("module_id", "stability", "safety_level", "ai_autonomy", "ttl"):
                 info[key] = val
     return info if info else None
+
+
+def _parse_byaml_top_level_fields(content: str) -> dict | None:
+    """从 YAML 顶层字段提取治理元数据（B_yaml 子格式 2：顶层字段）。
+
+    用于 rules/trae_NNN_*.yaml 等规则文件，治理元数据直接作为 YAML 顶层字段出现。
+    只有存在身份字段（ttl/module_id/rule_id/blueprint_id）之一才判定为治理头部，
+    避免把含 safety_level 等字段的业务 YAML（如 mock fixtures）误判为有头部。
+    rule_id 是规则文件的身份字段，若无 blueprint_id 则用 rule_id 作为 blueprint_id。
+    """
+    try:
+        data = yaml.safe_load(content)
+    except (yaml.YAMLError, TypeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    info: dict[str, str] = {}
+    for key in _BYAML_TOP_LEVEL_KEYS:
+        val = data.get(key)
+        if val is not None:
+            info[key] = str(val)
+    # 只有存在身份字段才判定为治理头部
+    if not any(k in info for k in _BYAML_IDENTITY_KEYS):
+        return None
+    # rule_id 作为 blueprint_id 的 fallback
+    if "rule_id" in info and "blueprint_id" not in info:
+        info["blueprint_id"] = info["rule_id"]
+    return info if info else None
+
+
+def parse_byaml_anchor(content: str) -> dict | None:
+    """解析 .yaml 文件的治理元数据（B_yaml 格式，支持两种子格式）。
+
+    优先尝试子格式 1（注释锚定块），失败后 fallback 到子格式 2（YAML 顶层字段）。
+    子格式 2 用于 rules/trae_NNN_*.yaml 等规则文件，治理元数据直接作为顶层字段。
+
+    Args:
+        content: 文件内容字符串。
+
+    Returns:
+        字段 dict（无治理元数据时返回 None）。
+    """
+    info = _parse_byaml_anchor_block(content)
+    if info:
+        return info
+    return _parse_byaml_top_level_fields(content)
 
 
 def parse_byaml_anchor_from_file(filepath) -> dict | None:

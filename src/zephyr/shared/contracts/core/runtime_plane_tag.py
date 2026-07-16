@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-SHR_runtime_plane_tag | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "cron"在tag/枚举定义中，非实际cron调用
 
 """
 ZephyrAlpha — shared/contracts/runtime_plane_tag.py

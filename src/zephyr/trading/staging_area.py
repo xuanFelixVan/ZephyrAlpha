@@ -14,6 +14,7 @@
 # [TESTS] tests/test_staging_area.py
 # [A_module] module_id=MOD-ORC_staging_area | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: _CrossProcessLock.__enter__的while True+time.sleep是跨进程文件锁获取等待循环,非周期触发(与_GlobalCommitLock同类)
 """
 StagingArea — 多AI并发草稿写入+提交+冲突检测模块（CT-SESSION-CONFLICT-002）
 

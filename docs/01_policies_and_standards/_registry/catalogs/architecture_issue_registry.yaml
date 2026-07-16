@@ -1,5 +1,6 @@
 # [A_config] module_id=CFG-architecture-issue-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
 module_id: REG-ARCH-ISSUE-001
+ttl: permanent
 title: 架构议题注册表
 doc_type: register
 registry_id: REG-ARCH-ISSUE-001

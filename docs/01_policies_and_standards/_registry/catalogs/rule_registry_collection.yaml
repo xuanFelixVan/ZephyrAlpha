@@ -1,4 +1,5 @@
 module_id: CFG-rule-registry-collection
+ttl: permanent
 collection_id: RULE_REGISTRY_COLLECTION
 collection_name: 规则注册表集 / Rule Registry Collection
 collection_path: src/zephyr/governance/

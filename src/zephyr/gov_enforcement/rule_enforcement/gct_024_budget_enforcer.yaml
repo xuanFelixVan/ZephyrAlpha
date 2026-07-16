@@ -6,6 +6,7 @@ status: active
 scope: global
 execution_plane: warm
 module_id: MOD-INF-024
+ttl: permanent
 blueprint: "docs/03_modules/infra_ops/budget-enforcer/blueprint.md"
 construction_progress: "core_implemented"
 rule_ids:

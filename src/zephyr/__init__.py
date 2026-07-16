@@ -10,6 +10,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 """
 ZephyrAlpha 核心包索引 + 模块懒加载器 (M-04)
 

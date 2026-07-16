@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-DAT_database_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "cron"在注释中，非实际cron调用
 
 """
 DatabaseManager — 连接池 + 健康检查 + 自动备份 + WAL checkpoint（SH-DB-001 v2.0）

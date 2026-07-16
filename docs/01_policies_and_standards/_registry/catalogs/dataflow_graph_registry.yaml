@@ -1,4 +1,5 @@
 module_id: MOD-GOVERNANCE
+ttl: permanent
 schema_version: '1.0'
 registry_id: REG-DATAFLOW-001
 name: 数据流图注册表

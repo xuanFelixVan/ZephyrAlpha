@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: acquire()的while True+time.sleep是TokenBucket阻塞等待token可用,非周期触发(类似锁等待循环)
 
 """MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。
 

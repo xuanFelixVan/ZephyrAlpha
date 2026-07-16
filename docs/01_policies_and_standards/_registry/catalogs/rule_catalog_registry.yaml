@@ -1,5 +1,6 @@
 schema_version: 1.0.0
 module_id: PS-REG-018
+ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active

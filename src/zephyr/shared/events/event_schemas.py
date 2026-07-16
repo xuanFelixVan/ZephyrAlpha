@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-SHR_event_schemas | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: "cron"是TimeEventPayload schema的trigger_kind枚举值，非实际cron调用
 
 """
 event_schemas.py —— Observer 事件体 Pydantic V2 Schema（盲点 B6/B10 修复）
