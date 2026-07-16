@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; WSL subprocess 写入tick_data; 查询走ch_reader自动注入FINAL
+# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -19,7 +19,7 @@
 设计理念（裁定 #ARCH-BACKFILL-001）：
   - 不依赖 last_key：直接查 ClickHouse 实际行数，发现真实缺口
   - 只补缺失：不重复下载已有数据，节省带宽
-  - WSL subprocess 写入：避免 WSL2 localhost 转发不稳定（clickhouse_driver TCP 间歇性失败）
+  - 写入走 ch_writer 统一通道（TCP→HTTP→本地落盘，Hyper-V 迁移 2026-07-16）
 
 与现有机制的关系：
   - L1-L7（盘中/盘后增量）：依赖 last_key，scheduler 中断时 last_key 不更新
@@ -35,7 +35,6 @@ from __future__ import annotations
 
 import datetime
 import logging
-import subprocess
 import time
 from pathlib import Path
 from time import sleep
@@ -43,6 +42,7 @@ from time import sleep
 import yaml
 
 from zephyr.data import ch_reader
+from zephyr.data import ch_writer
 from zephyr.data.tick_subscriber import _safe_int
 
 log = logging.getLogger(__name__)
@@ -59,13 +59,6 @@ _DEFAULT_BACKFILL_DAYS = 7
 _BATCH_SYMBOLS = 50
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
-_SQL_INSERT_CMD = (
-    "clickhouse-client --database c1_market --query "
-    "'INSERT INTO tick_data "
-    "(trade_date,timestamp,symbol,market_type,price,volume,amount,"
-    "direction,data_source,bid_price,ask_price,bid_volume,ask_volume) "
-    "FORMAT TSV'"
-)
 _SQL_TRADE_CALENDAR = (
     "SELECT cal_date FROM c1_market.trade_calendar "
     "WHERE cal_date >= toDate('{start}') AND cal_date <= toDate('{today}') "
@@ -81,37 +74,38 @@ _SQL_COUNT_BY_DATE = (
     "WHERE trade_date=toDate('{d_str}')"
 )
 
+# tick_data 表写入列子句（用于 ch_writer.write_tsv）
+_TICK_DATA_COLS = (
+    "(trade_date,timestamp,symbol,market_type,price,volume,amount,"
+    "direction,data_source,bid_price,ask_price,bid_volume,ask_volume)"
+)
+_TICK_DATA_TABLE = "c1_market.tick_data"
+
 
 # ========== ClickHouse 查询（统一走 ch_reader，自动注入 FINAL） ==========
 
 def _ch_query(query: str, timeout: int = 30) -> str | None:
-    """通过 ch_reader 查询单值（自动注入 FINAL，三级降级 TCP→HTTP→WSL）。"""
+    """通过 ch_reader 查询单值（自动注入 FINAL，二级降级 TCP→HTTP）。"""
     result = ch_reader.query(query, timeout=timeout)
     return result.strip() or None
 
 
 def _ch_insert_tsv(tsv_lines: list[str], retries: int = 3) -> bool:
-    """通过 WSL subprocess 写入 TSV（bytes 模式，避免 \\r\\n）。"""
+    """通过 ch_writer 写入 TSV（二级降级 TCP→HTTP，本地落盘兜底）。"""
     tsv_data = "\n".join(tsv_lines) + "\n"
     tsv_bytes = tsv_data.encode("utf-8")
-    cmd = ["wsl", "-d", "Ubuntu", "--exec", "bash", "-c", _SQL_INSERT_CMD]
 
     for i in range(retries):
         try:
-            result = subprocess.run(
-                cmd, input=tsv_bytes, capture_output=True, timeout=120,
+            ok = ch_writer.write_tsv(
+                _TICK_DATA_TABLE, _TICK_DATA_COLS, tsv_bytes, timeout=120,
             )
-            if result.returncode == 0:
+            if ok:
                 return True
-            err = result.stderr.decode("utf-8", errors="replace")[:200]
-            log.warning("CH写入失败(%d/%d): %s", i + 1, retries, err)
-            sleep(2)
-        except subprocess.TimeoutExpired:
-            log.warning("CH写入超时(%d/%d)", i + 1, retries)
-            sleep(2)
+            log.warning("CH写入失败(%d/%d)", i + 1, retries)
         except Exception as e:
             log.warning("CH写入异常(%d/%d): %s", i + 1, retries, e)
-            sleep(2)
+        sleep(2)
     return False
 
 
@@ -416,7 +410,7 @@ def _parse_tick_df(df, stock_code: str) -> list[str]:
 def backfill_tick_data(dates: list[datetime.date]) -> int:
     """补下载指定日期的 tick 数据。
 
-    通过 QMT xtdata 下载 + WSL subprocess 写入 ClickHouse。
+    通过 QMT xtdata 下载 + ch_writer 写入 ClickHouse。
     每天分 09:30-10:00 和 10:00-15:30 两个时段（避免单次数据过大）。
 
     Args:

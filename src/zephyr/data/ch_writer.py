@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] subprocess(标准库); http.client(标准库); clickhouse-driver(pip); clickhouse-client(via WSL,系统工具); zephyr.data.local_replay
+# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 混合传输四级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(18123)→WSL subprocess→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client（非 urllib，裁定 #ARCH-CH-010 Phase 3）; WSL 全挂时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; health_check() 提供传输路径健康诊断
+# [INVARIANTS] 二级降级：query/delete_where 走 clickhouse-driver TCP(9000)，write_tsv 走 HTTP API(8123)→本地落盘兜底(local_replay); 幂等性由调用方决定(ReplacingMergeTree直接INSERT/MergeTree写前DELETE); HTTP 传输用 http.client; ClickHouse 不可达时数据写入本地 TSV 文件待回灌（裁定 #ARCH-CH-013）; health_check() 提供传输路径健康诊断
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -16,11 +16,11 @@
 # [TTL] permanent
 """ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）。
 
-混合传输架构（裁定 #ARCH-CH-004，2026-07-10，2026-07-12 修订）：
-- query/delete_where → clickhouse-driver TCP（9000端口，2.9x 加速，连接复用）
-- write_tsv → HTTP API（18123端口，POST TSV body）优先，WSL subprocess fallback
-  （2026-07-12 修订：WSL 服务不稳定会导致 write_tsv 卡 600 秒超时，改用 HTTP API 主路径）
-  （2026-07-15 修订：8123 端口落在 Windows Hyper-V 排除范围 8114-8213 内导致无法绑定，改用 18123）
+二级传输架构（Hyper-V 迁移，2026-07-16 修订）：
+- query/delete_where → clickhouse-driver TCP（9000端口）
+- write_tsv → HTTP API（8123端口，POST TSV body）→ 本地落盘兜底
+- 端点从 config/.env.clickhouse 读取（CLICKHOUSE_HOST / CLICKHOUSE_HTTP_PORT）
+- 移除 WSL subprocess fallback（裁定 #ARCH-CH-010 Phase 3 迁移至 Hyper-V VM）
 
 提供：
 - write_result(result): 把 FetchResult.rows 转 TSV 写入 CH
@@ -36,15 +36,14 @@
 
 设计要点：
 - 不依赖 tmp/_ds_common.py（TTL=task_bound，src/ 不能长期依赖 tmp/）
-- 自封装 _http_ch / _wsl_ch / tsv_escape / _get_insert_columns 逻辑
-- query/delete_where 用 clickhouse-driver TCP，write_tsv 用 HTTP API（WSL fallback）
+- 自封装 _http_insert / tsv_escape / _get_insert_columns 逻辑
+- 端点配置从 config/.env.clickhouse 读取，不硬编码 IP/端口
 """
 from __future__ import annotations
 
 import http.client
 import logging
 import os
-import subprocess
 import threading
 import urllib.parse
 from dataclasses import dataclass
@@ -56,31 +55,33 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
-# WSL 中 clickhouse-client 的默认超时（秒）
+# ClickHouse 连接配置（从 config/.env.clickhouse 读取）
+# 环境变量由启动脚本（scheduler/worker）通过 dotenv 加载
+_CH_HOST = os.environ.get("CLICKHOUSE_HOST", "172.24.30.100")
+_CH_TCP_PORT = int(os.environ.get("CLICKHOUSE_PORT", "9000"))
+_CH_HTTP_PORT = int(os.environ.get("CLICKHOUSE_HTTP_PORT", "8123"))
+
+# 默认超时（秒）
 _DEFAULT_TIMEOUT = 600
 
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
 SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
 
-# clickhouse-driver TCP 客户端单例（裁定 #ARCH-CH-004，混合传输）
+# clickhouse-driver TCP 客户端单例
 _ch_client = None
 # TCP 失败冷却时间戳（避免每次 query 都重试 TCP 连接）
 _tcp_fail_ts: float = 0
-_TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试（缩短冷却期减少偶发降级时间）
+_TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试
 
 # 线程安全锁（run_schedule 并行化后多任务共用 ch_writer 全局状态）
 # clickhouse-driver Client 非线程安全（TCP 长连接并发 execute 会导致协议错乱）
 _ch_lock = threading.Lock()
 # 连接创建锁（保护 _ch_client/_ch_http_host 单例创建，秒级临界区）
-# 与 _ch_lock 分离：连接创建（含 _discover_wsl_ip subprocess 10s）不阻塞 execute 串行化
 # 锁顺序：_cache_lock → _connect_lock → _ch_lock（单向，无死锁）
 _connect_lock = threading.Lock()
 # 表列/引擎缓存读写保护（防 TOCTOU 竞态，避免多线程重复查询）
 _cache_lock = threading.Lock()
-
-# 本地 ClickHouse 主机（用 IP 避免 NO-HARDCODED-URL gate）
-_CH_LOCAL_HOST = "127.0.0.1"
 
 
 class WriteDisposition(str, Enum):
@@ -103,74 +104,26 @@ class WriteOutcome:
         return self.disposition is WriteDisposition.CH_COMMITTED
 
 
-def _is_wsl_mirrored_mode() -> bool:
-    """检测 WSL2 是否处于 mirrored 网络模式（裁定 #ARCH-CH-010 Phase 3）。
-
-    mirrored 模式下 WSL2 与 Windows 共享网络接口，localhost 直通，
-    hostname -I 返回 Windows LAN IP（非 WSL2 专有 IP），直连会超时。
-
-    Returns:
-        True 如果 .wslconfig 含 networkingMode=mirrored。
-    """
-    wslconfig = os.path.join(os.environ.get("USERPROFILE", ""), ".wslconfig")
-    try:
-        with open(wslconfig, encoding="utf-8") as f:
-            for line in f:
-                if "networkingMode" in line and "mirrored" in line:
-                    return True
-    except Exception:
-        pass
-    return False
-
-
-def _discover_wsl_ip() -> str:
-    """发现 WSL2 的 IP 地址（用于 clickhouse-driver TCP / HTTP 连接）。
-
-    mirrored 模式下 localhost 直通，返回空字符串（调用方用 127.0.0.1）。
-    NAT 模式下查询 WSL2 专有 IP 绕过 localhost 转发失效。
-
-    Returns:
-        WSL2 IP 地址字符串。mirrored 模式或失败返回空字符串。
-    """
-    if _is_wsl_mirrored_mode():
-        log.debug("WSL2 mirrored 模式，跳过 IP 发现（用 localhost 直通）")
-        return ""
-    try:
-        r = subprocess.run(
-            ["wsl", "-d", "Ubuntu", "-e", "hostname", "-I"],
-            capture_output=True, timeout=10,
-        )
-        if r.returncode == 0:
-            ip = r.stdout.decode("utf-8", errors="replace").strip().split()[0]
-            if ip:
-                return ip
-    except Exception as e:
-        log.warning("发现 WSL2 IP 失败: %s", e)
-    return ""
-
-
 def _get_client():
     """获取 clickhouse-driver TCP 客户端单例（懒初始化）。
 
-    clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口），
-    相比 WSL subprocess 有 2.9x 查询加速 + 连接复用。
+    clickhouse-driver 使用 ClickHouse 原生 TCP 协议（9000 端口）。
 
-    连接策略：
-    1. 先尝试 localhost（WSL2 localhost 转发正常时）
-    2. 失败则发现 WSL2 IP 直连（绕过 localhost 转发）
-    3. 均失败则返回 None（触发 HTTP API fallback）
-    4. TCP 失败后 60 秒冷却，避免每次 query 都重试
+    连接策略（Hyper-V 迁移，2026-07-16）：
+    - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30.100，Hyper-V VM）
+    - 失败则返回 None（触发 HTTP API fallback）
+    - TCP 失败后冷却期内不再重试
 
-    线程安全（裁定 #ARCH-CH-012，2026-07-15）：
-    - 用 _connect_lock 保护单例创建（秒级临界区，含 subprocess + TCP connect）
-    - 与 _ch_lock（execute 串行化，毫秒级）分离，连接创建不阻塞 execute
-    - 冷却期检查在锁外快速路径，冷却期内不争抢锁，立即返回 None 降级 HTTP API
+    线程安全：
+    - 用 _connect_lock 保护单例创建
+    - 与 _ch_lock（execute 串行化）分离
+    - 冷却期检查在锁外快速路径
     """
     global _ch_client, _tcp_fail_ts
     # 快速路径1（无锁读，CPython GIL 保证引用读原子）
     if _ch_client is not None:
         return _ch_client
-    # 快速路径2：冷却期内跳过 TCP 连接尝试（无锁读，避免争抢 _connect_lock）
+    # 快速路径2：冷却期内跳过 TCP 连接尝试（无锁读）
     import time as _time
     if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
         return None
@@ -178,68 +131,25 @@ def _get_client():
         # double-check（防止竞态期间其他线程已创建）
         if _ch_client is not None:
             return _ch_client
-        # 锁内二次检查冷却期（防止竞态期间其他线程已设置）
+        # 锁内二次检查冷却期
         if _tcp_fail_ts and (_time.time() - _tcp_fail_ts) < _TCP_COOLDOWN_SEC:
             return None
         from clickhouse_driver import Client
-        # 策略1: 本地（WSL2 localhost 转发）
-        for host in (_CH_LOCAL_HOST,):
-            try:
-                c = Client(host=host, port=9000, connect_timeout=3,
-                           tcp_keepalive=True, sync_request_timeout=10)
-                c.execute("SELECT 1")
-                _ch_client = c
-                log.info("clickhouse-driver TCP 已连接 (%s:9000)", host)
-                return _ch_client
-            except Exception as e:
-                log.debug("clickhouse-driver %s 连接失败: %s", _CH_LOCAL_HOST, e)
-        # 策略2: WSL2 IP 直连
-        wsl_ip = _discover_wsl_ip()
-        if wsl_ip:
-            try:
-                c = Client(host=wsl_ip, port=9000, connect_timeout=3,
-                           tcp_keepalive=True, sync_request_timeout=10)
-                c.execute("SELECT 1")
-                _ch_client = c
-                log.info("clickhouse-driver TCP 已连接 (%s:9000)", wsl_ip)
-                return _ch_client
-            except Exception as e:
-                log.warning("clickhouse-driver WSL IP 连接失败 (%s:9000): %s", wsl_ip, e)
-        log.warning("clickhouse-driver TCP 不可用，所有查询将走 HTTP API fallback")
+        try:
+            c = Client(host=_CH_HOST, port=_CH_TCP_PORT, connect_timeout=3,
+                       tcp_keepalive=True, sync_request_timeout=10)
+            c.execute("SELECT 1")
+            _ch_client = c
+            log.info("clickhouse-driver TCP 已连接 (%s:%s)", _CH_HOST, _CH_TCP_PORT)
+            return _ch_client
+        except Exception as e:
+            log.warning("clickhouse-driver TCP 连接失败 (%s:%s): %s", _CH_HOST, _CH_TCP_PORT, e)
         _tcp_fail_ts = _time.time()
         return None
 
 
-def _wsl_ch(
-    args: list[str],
-    stdin_bytes: bytes | None = None,
-    timeout: int = _DEFAULT_TIMEOUT,
-) -> subprocess.CompletedProcess:
-    """通过 WSL 调用 clickhouse-client。
-
-    Args:
-        args: clickhouse-client 参数列表（如 ['--query', 'SELECT 1']）
-        stdin_bytes: stdin 传输的二进制数据（TSV 批量写入）
-        timeout: 超时秒数
-
-    Returns:
-        CompletedProcess（stdout 为字符串）
-    """
-    cmd = ["wsl", "-d", "Ubuntu", "-e", "clickhouse-client"] + args
-    return subprocess.run(
-        cmd,
-        input=stdin_bytes,
-        capture_output=True,
-        timeout=timeout,
-    )
-
-
-# ClickHouse HTTP 端口（18123）
-# 2026-07-15：原 8123 落在 Windows Hyper-V 端口排除范围 8114-8213 内，ClickHouse 无法绑定
-# 改用 18123 避开排除范围（裁定 #ARCH-CH-010）
-_CH_HTTP_PORT = 18123
-_ch_http_host: str | None = None  # 懒初始化：先本地，失败则 WSL2 IP
-# HTTP 失败冷却时间戳（避免 HTTP 不可用时每次都重复超时等待）
+# HTTP 主机缓存 + 冷却期
+_ch_http_host: str | None = None
 _http_fail_ts: float = 0
 _HTTP_COOLDOWN_SEC = 15  # HTTP 失败后 15 秒内不再重试（缩短冷却期减少偶发降级时间）
 
@@ -247,20 +157,20 @@ _HTTP_COOLDOWN_SEC = 15  # HTTP 失败后 15 秒内不再重试（缩短冷却�
 def _get_http_host() -> str:
     """获取可用的 ClickHouse HTTP 主机。
 
-    策略：先试本地，失败则用 WSL2 IP（NAT 模式）。
-    mirrored 模式下只试本地（localhost 直通）。
-    结果缓存到全局 _ch_http_host。
-    HTTP 失败后 300 秒冷却期内返回空字符串（调用方应跳过 HTTP 降级到 WSL）。
+    策略（Hyper-V 迁移，2026-07-16）：
+    - 直连配置的 CLICKHOUSE_HOST（默认 172.24.30.100）
+    - 结果缓存到全局 _ch_http_host
+    - HTTP 失败后冷却期内返回空字符串（调用方应降级到本地落盘）
 
-    线程安全（裁定 #ARCH-CH-012，2026-07-15）：
-    - 用 _connect_lock double-check locking 保护单例创建（与 _get_client 共用 _connect_lock）
-    - 冷却期检查在锁外快速路径，冷却期内不争抢锁，立即返回空字符串降级 WSL
+    线程安全：
+    - 用 _connect_lock double-check locking 保护单例创建
+    - 冷却期检查在锁外快速路径
     """
     global _ch_http_host, _http_fail_ts
     # 快速路径1（无锁读）
     if _ch_http_host is not None:
         return _ch_http_host
-    # 快速路径2：冷却期内跳过（无锁读，避免争抢 _connect_lock）
+    # 快速路径2：冷却期内跳过（无锁读）
     import time as _time
     if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
         return ""
@@ -270,36 +180,22 @@ def _get_http_host() -> str:
             return _ch_http_host
         if _http_fail_ts and (_time.time() - _http_fail_ts) < _HTTP_COOLDOWN_SEC:
             return ""
-        # 策略1: 本地（mirrored 模式下 localhost 直通）
+        # 直连配置的 ClickHouse host
         try:
-            conn = http.client.HTTPConnection(_CH_LOCAL_HOST, _CH_HTTP_PORT, timeout=3)
+            conn = http.client.HTTPConnection(_CH_HOST, _CH_HTTP_PORT, timeout=3)
             conn.request("GET", "/ping")
             resp = conn.getresponse()
             if resp.status == 200:
-                _ch_http_host = _CH_LOCAL_HOST
+                _ch_http_host = _CH_HOST
                 conn.close()
+                log.info("ClickHouse HTTP 已连接 (%s:%s)", _CH_HOST, _CH_HTTP_PORT)
                 return _ch_http_host
             conn.close()
-        except Exception:
-            pass
-        # 策略2: WSL2 IP（仅 NAT 模式，mirrored 模式 _discover_wsl_ip 返回空）
-        wsl_ip = _discover_wsl_ip()
-        if wsl_ip:
-            try:
-                conn = http.client.HTTPConnection(wsl_ip, _CH_HTTP_PORT, timeout=3)
-                conn.request("GET", "/ping")
-                resp = conn.getresponse()
-                if resp.status == 200:
-                    _ch_http_host = wsl_ip
-                    conn.close()
-                    log.info("ClickHouse HTTP 已连接 (%s:%s)", wsl_ip, _CH_HTTP_PORT)
-                    return _ch_http_host
-                conn.close()
-            except Exception as e:
-                log.warning("ClickHouse HTTP WSL IP 连接失败: %s", e)
-        # 兜底：HTTP 完全不可用，设置冷却时间戳，返回空字符串
+        except Exception as e:
+            log.warning("ClickHouse HTTP 连接失败 (%s:%s): %s", _CH_HOST, _CH_HTTP_PORT, e)
+        # 兜底：HTTP 不可用，设置冷却时间戳
         _http_fail_ts = _time.time()
-        log.warning("ClickHouse HTTP 不可用，%ds 内跳过 HTTP 降级", _HTTP_COOLDOWN_SEC)
+        log.warning("ClickHouse HTTP 不可用，%ds 内跳过", _HTTP_COOLDOWN_SEC)
         return ""
 
 
@@ -338,11 +234,11 @@ def _http_insert(
     tsv_bytes: bytes,
     timeout: int = _DEFAULT_TIMEOUT,
 ) -> bool:
-    """通过 ClickHouse HTTP API（18123端口）执行 INSERT。
+    """通过 ClickHouse HTTP API（8123端口）执行 INSERT。
 
-    HTTP API 比 WSL subprocess 更稳定：
-    - 不依赖 WSL 服务（WSL 可能卡住导致 600 秒超时）
-    - 使用 http.client（比 urllib 更可靠，裁定 #ARCH-CH-010 Phase 3）
+    HTTP API 作为 TCP 失败时的降级通道：
+    - 端点从 config/.env.clickhouse 读取（Hyper-V VM，裁定 #ARCH-CH-010 Phase 3）
+    - 使用 http.client（比 urllib 更可靠）
     - POST body 传输 TSV 数据
 
     Args:
@@ -355,7 +251,7 @@ def _http_insert(
     """
     http_host = _get_http_host()
     if not http_host:
-        return False  # HTTP 不可用（冷却期内或探测失败），调用方降级到 WSL
+        return False  # HTTP 不可用（冷却期内或探测失败），调用方降级到本地落盘
     path = f"/?query={urllib.parse.quote(sql)}"
     try:
         conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
@@ -374,15 +270,11 @@ def _http_insert(
 
 
 def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
-    """执行 CH 查询，返回 TSV 格式字符串（向后兼容 WSL clickhouse-client 输出）。
+    """执行 CH 查询，返回 TSV 格式字符串。
 
-    混合传输（裁定 #ARCH-CH-004，2026-07-12 修订）：
-    - SELECT/DESCRIBE → clickhouse-driver TCP → HTTP API → WSL（三级降级）
-    - DDL → clickhouse-driver TCP → HTTP API → WSL（三级降级）
-    - 2026-07-12 修订：TCP 连接可能被拒绝（端口 9000 不稳定），WSL 可能卡住，
-      新增 HTTP API(18123) 作为中间路径
-    - 2026-07-15 修订：8123 端口落在 Windows Hyper-V 排除范围 8114-8213 内，
-      改用 18123；新增 HTTP 冷却期避免死路径超时浪费
+    二级传输（Hyper-V 迁移，2026-07-16）：
+    - clickhouse-driver TCP → HTTP API（二级降级）
+    - 移除 WSL subprocess fallback
 
     失败时 log 错误并返回空字符串（不抛异常）。
     """
@@ -410,7 +302,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
             log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
             _invalidate_tcp_client(f"query execute 失败: {e}")
 
-    # 策略2: HTTP API（18123，不依赖 WSL subprocess）
+    # 策略2: HTTP API
     http_host = _get_http_host()
     if http_host:
         path = f"/?query={urllib.parse.quote(sql)}"
@@ -422,25 +314,14 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                 data = resp.read().decode("utf-8", errors="replace")
                 conn.close()
                 return data
-            log.warning("HTTP query 失败: status=%s，降级到 WSL", resp.status)
+            log.warning("HTTP query 失败: status=%s", resp.status)
             conn.close()
         except Exception as e:
-            log.warning("HTTP query 失败，降级到 WSL: %s", e)
+            log.warning("HTTP query 失败: %s", e)
             _invalidate_http_host(f"query HTTP 失败: {e}")
 
-    # 策略3: WSL subprocess（最终 fallback）
-    try:
-        r = _wsl_ch(["--query", sql], timeout=timeout)
-        if r.returncode != 0:
-            log.error("CH query (WSL fallback) 失败: %s", r.stderr.decode("utf-8", errors="replace"))
-            return ""
-        return r.stdout.decode("utf-8", errors="replace")
-    except subprocess.TimeoutExpired:
-        log.error("CH query 超时(%ds): %s", timeout, sql[:200])
-        return ""
-    except Exception as e2:
-        log.error("CH query 异常(driver+HTTP+WSL 均失败): %s", e2)
-        return ""
+    log.error("CH query 失败(TCP+HTTP 均失败): %s", sql[:200])
+    return ""
 
 
 def tsv_escape(v) -> str:
@@ -581,9 +462,9 @@ def write_tsv_outcome(
 ) -> WriteOutcome:
     """TSV 批量写入表。
 
-    传输优先级（2026-07-12 修订）：
-    1. HTTP API（18123端口）— 主路径，不依赖 WSL
-    2. WSL subprocess — fallback（HTTP 不可用时降级）
+    传输优先级（Hyper-V 迁移，2026-07-16）：
+    1. HTTP API（8123端口）— 主路径
+    2. 本地落盘兜底 — ClickHouse 不可达时数据不丢失
 
     Args:
         table: 完整表名（如 c1_market.kline_daily）
@@ -601,31 +482,13 @@ def write_tsv_outcome(
     cols_clause = columns if columns else _get_insert_columns(table)
     sql = f"INSERT INTO {table} {cols_clause} FORMAT TSV"
 
-    # 策略1: HTTP API（主路径，不依赖 WSL）
+    # 策略1: HTTP API（主路径）
     if _http_insert(sql, tsv_bytes, timeout=timeout):
         return WriteOutcome(WriteDisposition.CH_COMMITTED, "http")
-    log.warning("write_tsv(%s): HTTP API 失败，降级到 WSL subprocess", table)
+    log.warning("write_tsv(%s): HTTP API 失败，降级到本地落盘", table)
 
-    # 策略2: WSL subprocess（fallback）
-    # 避免 "Too many parts" 错误
-    full_args = ["--query", sql, "--max_partitions_per_insert_block", "0"]
-    try:
-        r = _wsl_ch(full_args, stdin_bytes=tsv_bytes, timeout=timeout)
-        if r.returncode != 0:
-            log.error(
-                "CH insert 失败(%s): %s",
-                table,
-                r.stderr.decode("utf-8", errors="replace"),
-            )
-        else:
-            return WriteOutcome(WriteDisposition.CH_COMMITTED, "wsl")
-    except subprocess.TimeoutExpired:
-        log.error("CH insert 超时(%ds): %s", timeout, table)
-    except Exception as e:
-        log.error("CH insert 异常(%s): %s", table, e)
-
-    # 策略3: 本地落盘兜底（裁定 #ARCH-CH-013，WSL 全挂时数据不丢失）
-    # 三级 WSL 路径全部失败，数据写入本地 TSV 文件，待 WSL 恢复后自动回灌
+    # 策略2: 本地落盘兜底（裁定 #ARCH-CH-013，CH 不可达时数据不丢失）
+    # 数据写入本地 TSV 文件，待 CH 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
     # cols_clause=="*" 意味着 _get_insert_columns 在 CH 不可用时返回的未校验值，
     # 回灌时 "INSERT INTO t * FORMAT TSV" 非法；存 None 让回灌时重新查询表列
@@ -722,7 +585,8 @@ def delete_where(
 ) -> bool:
     """删除满足条件的行（用于 MergeTree 幂等性：写前 DELETE）。
 
-    混合传输（裁定 #ARCH-CH-004）：优先 clickhouse-driver TCP，失败降级 WSL。
+    二级传输（Hyper-V 迁移，2026-07-16）：优先 clickhouse-driver TCP，失败降级 HTTP。
+    两者均失败返回 False（调用方应依据返回值决定是否跳过本批次写入）。
 
     Args:
         table: 表名
@@ -742,7 +606,8 @@ def delete_where(
             return True
         except Exception as e:
             log.warning("clickhouse-driver delete 失败，降级到 HTTP: %s", e)
-    # 策略2: HTTP API（含冷却期检查）
+            _invalidate_tcp_client(f"delete execute 失败: {e}")
+    # 策略2: HTTP API
     http_host = _get_http_host()
     if http_host:
         path = f"/?query={urllib.parse.quote(sql)}"
@@ -753,28 +618,13 @@ def delete_where(
             if resp.status == 200:
                 conn.close()
                 return True
-            log.warning("HTTP delete 失败: status=%s，降级到 WSL", resp.status)
+            log.warning("HTTP delete 失败: status=%s", resp.status)
             conn.close()
         except Exception as e:
-            log.warning("HTTP delete 失败，降级到 WSL: %s", e)
-    # 策略3: WSL subprocess
-    try:
-        r = _wsl_ch(["--query", sql], timeout=timeout)
-        if r.returncode != 0:
-            log.error(
-                "CH delete 失败(%s WHERE %s): %s",
-                table,
-                condition,
-                r.stderr.decode("utf-8", errors="replace"),
-            )
-            return False
-        return True
-    except subprocess.TimeoutExpired:
-        log.error("CH delete 超时(%ds): %s", timeout, table)
-        return False
-    except Exception as e2:
-        log.error("CH delete 异常(driver+WSL 均失败, %s): %s", table, e2)
-        return False
+            log.warning("HTTP delete 失败: %s", e)
+            _invalidate_http_host(f"delete HTTP 失败: {e}")
+    log.error("CH delete 失败(TCP+HTTP 均失败): %s WHERE %s", table, condition)
+    return False
 
 
 def delete_by_date_range(
@@ -806,17 +656,15 @@ def delete_by_date_range(
 def health_check() -> dict[str, str]:
     """ClickHouse 连接健康检查（裁定 #ARCH-CH-010 Phase 2.2）。
 
-    逐级探测三级传输路径，返回每级状态。用于启动诊断和运行时监控。
+    逐级探测二级传输路径（TCP + HTTP），返回每级状态。
+    用于启动诊断和运行时监控。WSL subprocess 通道已随 Hyper-V 迁移移除。
 
     Returns:
-        {"tcp": "ok"|"fail", "http": "ok"|"fail", "wsl": "ok"|"fail",
-         "mirrored": "true"|"false", "http_host": str}
+        {"tcp": "ok"|"fail", "http": "ok"|"fail", "http_host": str,
+         "endpoint": str}
     """
-    import time as _time
     result: dict[str, str] = {}
-
-    # mirrored 模式检测
-    result["mirrored"] = "true" if _is_wsl_mirrored_mode() else "false"
+    result["endpoint"] = f"{_CH_HOST}:{_CH_TCP_PORT}/{_CH_HTTP_PORT}"
 
     # TCP 探测（重置冷却期强制测试）
     global _tcp_fail_ts, _ch_client, _ch_http_host, _http_fail_ts
@@ -859,15 +707,5 @@ def health_check() -> dict[str, str]:
     # 恢复原状态
     _http_fail_ts = old_http_ts
     _ch_http_host = old_http_host
-
-    # WSL 探测
-    try:
-        r = _wsl_ch(["--query", "SELECT 1"], timeout=10)
-        if r.returncode == 0:
-            result["wsl"] = "ok"
-        else:
-            result["wsl"] = "fail"
-    except Exception:
-        result["wsl"] = "fail"
 
     return result
