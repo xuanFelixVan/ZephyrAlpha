@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] CacheCorruptionError
 # [TESTS] tests/test_gate_cache.py
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: while True用于文件分块读取(f.read+break),非daemon常驻服务;一次性CLI工具
 
 from __future__ import annotations
 

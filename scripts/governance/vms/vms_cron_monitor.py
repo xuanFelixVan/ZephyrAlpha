@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: VMS cron监控daemon(python scripts/governance/vms/vms_cron_monitor.py),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 """
 VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224
 ===============================================

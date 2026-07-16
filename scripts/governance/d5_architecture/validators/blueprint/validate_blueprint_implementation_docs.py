@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: while True用于字符串搜索(content.find+break),非daemon常驻服务;一次性CLI验证工具
 """
 AGENTS.md 6.4 铁律五 + 铁律六：construction_progress 必须 LS 磁盘验证，
 蓝图中声称的文件路径必须在磁盘上真实存在。

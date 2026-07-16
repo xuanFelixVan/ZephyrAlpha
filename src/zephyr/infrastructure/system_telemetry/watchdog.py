@@ -14,6 +14,7 @@
 # [TESTS] tests/system-telemetry/test_watchdog.py
 # [A_module] module_id=MOD-INF_watchdog | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: 系统遥测watchdog常驻服务(python -m zephyr.infrastructure.system_telemetry.watchdog),CLI触发启动,启动后自动运行;非reconciler无需事件触发
 
 """三冗余 Watchdog（CT-WATCHDOG-001）——互检+Panic Mode+Dead Man's Switch。
 

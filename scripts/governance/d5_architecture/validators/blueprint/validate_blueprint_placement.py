@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: while True用于belongs_to链遍历(含break退出),非daemon常驻服务;一次性CLI验证工具
 """蓝图物理位置与归属链完整性校验器 (Blueprint Placement & BelongsTo Validator)
 
 对标: P0-2 (cross_layer 物理错位) / P0-3 (belongs_to 全部缺失) / P0-4 (金字塔缺腰)

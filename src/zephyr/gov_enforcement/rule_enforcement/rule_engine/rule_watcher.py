@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors to stdout
 # [TESTS] tests/test_rule_watcher.py
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: 规则文件watchdog常驻服务(python -m zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher),CLI触发启动,启动后自动轮询;非reconciler无需事件触发
 
 """
 RuleWatcher — YAML 规则文件变更检测与自动同步

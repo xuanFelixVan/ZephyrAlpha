@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_windows_service | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: Windows服务常驻入口(sc create ZephyrAlpha),由Windows SCM触发启动,启动后自动运行;非reconciler无需事件触发
 
 """
 WindowsService — Windows Service 包装器
