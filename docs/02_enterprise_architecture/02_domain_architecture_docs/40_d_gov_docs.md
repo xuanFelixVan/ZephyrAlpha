@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:13:30
+> 最后更新: 2026-07-17 03:16:08
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,9 +27,9 @@ ttl: permanent
 | 域名称 | 架构文档治理 | Domain Name | Architecture Docs Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 95 | Module Count | 95 |
-| 域内依赖 | 31 | Internal Dependencies | 31 |
-| 跨域入边 | 9 | Cross-domain Incoming | 9 |
-| 跨域出边 | 12 | Cross-domain Outgoing | 12 |
+| 域内依赖 | 5 | Internal Dependencies | 5 |
+| 跨域入边 | 3 | Cross-domain Incoming | 3 |
+| 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 26 | Design Modules | 26 |
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 69 | Production Modules | 69 |
@@ -283,70 +283,26 @@ graph TD
         docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_trigger_config_yaml["(生产态 / production) trigger_config.yaml"]
     end
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_auto_fix_engine_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_orphan_judge_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_semantic_auditor_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data / data| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_governance_code_dedup_engine_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract / contract| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
-    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_GOV_AUDIT
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| D_GOV_AUDIT
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    D_KNOWLEDGE["(设计态 / design) D_KNOWLEDGE"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|contract / contract| D_KNOWLEDGE
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract / contract| D_GOV_DRIFT
-    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| D_ML_TRAIN
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
-    D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
-    D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    D_GOV_AUDIT -.->|contract / contract| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
-    D_FRONTEND["(设计态 / design) D_FRONTEND"]
-    D_FRONTEND -.->|runtime / runtime| docs_03_modules_domain_governance_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_rules_trae_060_inward_consolidation_yaml,docs_01_policies_and_standards_rules_trae_061_decisiongraph_access_protocol_yaml,docs_01_policies_and_standards_rules_trae_062_ssot_classification_yaml,docs_01_policies_and_standards_rules_trae_063_data_ops_discipline_yaml,docs_02_enterprise_architecture_05_dataflow_architecture_data_acquisition_requirements_yaml,docs_03_modules_cross_layer_database_business_data_categories_yaml,docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_arbitration_rules_yaml,docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_trigger_config_yaml production
     class docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md design
-    class D_INFRA_RUNTIME,D_GOV_AUDIT,D_GOV_DRIFT,D_KNOWLEDGE,D_ML_TRAIN,D_FRONTEND external_design
+    class D_GOV_DRIFT,D_INFRA_RUNTIME,D_GOV_AUDIT external_design
 ```
 
 #### 第 4 页 / 共 4 页
@@ -454,7 +410,7 @@ graph TD
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
-> 仅展示蓝图阶段、代码未写的设计态模块（共 26 个，31 条域内依赖）。
+> 仅展示蓝图阶段、代码未写的设计态模块（共 26 个，5 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -487,69 +443,25 @@ graph TD
         docs_03_modules_system_master_blueprint_md["(设计态 / design) "]
     end
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_auto_fix_engine_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_orphan_judge_blueprint_md
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_semantic_auditor_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data / data| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_governance_code_dedup_engine_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_gate_engine_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract / contract| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_context_engine_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|data / data| docs_03_modules_cross_layer_database_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_feedback_loop_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_cross_layer_shared_core_blueprint_md
-    docs_03_modules_domain_governance_code_dedup_engine_blueprint_md -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
-    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
-    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
-    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_GOV_AUDIT
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| D_GOV_AUDIT
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    D_KNOWLEDGE["(设计态 / design) D_KNOWLEDGE"]
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|contract / contract| D_KNOWLEDGE
-    docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|contract / contract| D_GOV_DRIFT
-    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
-    docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md -.->|data / data| D_ML_TRAIN
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
-    D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
-    D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_database_blueprint_md
-    D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_gate_engine_blueprint_md
-    D_GOV_AUDIT -.->|contract / contract| docs_03_modules_cross_layer_shared_core_blueprint_md
+    D_GOV_AUDIT["(设计态 / design) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
-    D_FRONTEND["(设计态 / design) D_FRONTEND"]
-    D_FRONTEND -.->|runtime / runtime| docs_03_modules_domain_governance_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_master_blueprint_blueprint_agent_spec_md,docs_03_modules_master_blueprint_blueprint_baseline_md,docs_03_modules_master_blueprint_blueprint_capacity_md,docs_03_modules_system_master_blueprint_md design
-    class D_INFRA_RUNTIME,D_GOV_AUDIT,D_GOV_DRIFT,D_KNOWLEDGE,D_ML_TRAIN,D_FRONTEND external_design
+    class D_GOV_DRIFT,D_INFRA_RUNTIME,D_GOV_AUDIT external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -564,54 +476,32 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | blueprint.md | → | D_GOV_AUDIT 审计追踪: blueprint.md | contract / contract |
-| 2 | blueprint.md | → | D_GOV_AUDIT 审计追踪: blueprint.md | contract / contract |
-| 3 | blueprint.md | → | D_GOV_AUDIT 审计追踪: blueprint.md | runtime / runtime |
-| 4 | blueprint.md | → | D_GOV_AUDIT 审计追踪: blueprint.md | runtime / runtime |
-| 5 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 6 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 7 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 8 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | contract / contract |
-| 9 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
-| 10 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
-| 11 | blueprint.md | → | D_KNOWLEDGE 知识管理: blueprint.md | contract / contract |
-| 12 | blueprint.md | → | D_ML_TRAIN 训练: blueprint.md | data / data |
+| 1 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
+| 2 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
+| 3 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FRONTEND 前端:  | → | blueprint.md | runtime / runtime |
-| 2 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | runtime / runtime |
-| 3 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | runtime / runtime |
-| 4 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | runtime / runtime |
-| 5 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | contract / contract |
-| 6 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
-| 7 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
-| 8 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
-| 9 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
+| 1 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | runtime / runtime |
+| 2 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
+| 3 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 6 个外部域直接连接（出边 12 条 + 入边 9 条 = 21 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 3 条 + 入边 3 条 = 6 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
-    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
-    D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
-    D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
-    D_FRONTEND["D_FRONTEND<br/>前端"]
-    D_GOV_DOCS -->|4条 contract / contract, runtime / runtime| D_GOV_AUDIT
-    D_GOV_DOCS -->|4条 contract / contract, runtime / runtime| D_GOV_DRIFT
-    D_GOV_DOCS -->|2条 runtime / runtime| D_INFRA_RUNTIME
-    D_GOV_DOCS -->|1条 contract / contract| D_KNOWLEDGE
-    D_GOV_DOCS -->|1条 data / data| D_ML_TRAIN
-    D_GOV_AUDIT -->|4条 contract / contract, runtime / runtime| D_GOV_DOCS
-    D_GOV_DRIFT -->|4条 runtime / runtime| D_GOV_DOCS
-    D_FRONTEND -->|1条 runtime / runtime| D_GOV_DOCS
+    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
+    D_GOV_DOCS -->|2条 runtime / runtime| D_GOV_DRIFT
+    D_GOV_DOCS -->|1条 runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DRIFT -->|2条 runtime / runtime| D_GOV_DOCS
+    D_GOV_AUDIT -->|1条 runtime / runtime| D_GOV_DOCS
 ```
 
 ## 说明 / Notes
