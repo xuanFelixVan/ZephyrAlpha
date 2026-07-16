@@ -32,6 +32,58 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 
+def _prepare_shadow_file(
+    shadow_dir: str,
+    action: FixAction,
+    project_root: str | None,
+) -> str | ShadowResult:
+    """Create the shadow dir, validate the target exists, and write the patched file.
+
+    Returns the shadow file path on success, or a ``ShadowResult`` (not safe)
+    when the target file is missing.
+    """
+    os.makedirs(shadow_dir, exist_ok=True)
+    target_path = Path(action.target)
+    if not target_path.exists():
+        return ShadowResult(safe_to_apply=False, error="Target not found", shadow_dir=shadow_dir)
+    rel_path = target_path.relative_to(project_root or str(REPO_ROOT)) if project_root else target_path.name  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+    shadow_file = os.path.join(shadow_dir, str(rel_path))
+    os.makedirs(os.path.dirname(shadow_file), exist_ok=True)
+    with open(shadow_file, "w", encoding="utf-8") as f:
+        f.write(action.after)
+    return shadow_file
+
+
+def _run_validation_checks(
+    ws: ShadowWorkspace,
+    shadow_dir: str,
+    shadow_file: str,
+    project_root: str | None,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None, dict[str, Any] | None, bool]:
+    """Run the enabled pytest/mypy/ruff checks against the shadow file.
+
+    Returns ``(test_result, type_result, lint_result, all_passed)``.
+    """
+    is_py = shadow_file.endswith(".py")
+    test_result: dict[str, Any] | None = None
+    type_result: dict[str, Any] | None = None
+    lint_result: dict[str, Any] | None = None
+    all_passed = True
+    if ws._run_pytest and is_py:
+        test_result = ws._run_test(shadow_dir, project_root)
+        if test_result and not test_result.get("passed", False):
+            all_passed = False
+    if ws._run_mypy and is_py:
+        type_result = ws._run_type_check(shadow_file, project_root)
+        if type_result and not type_result.get("passed", False):
+            all_passed = False
+    if ws._run_ruff and is_py:
+        lint_result = ws._run_lint(shadow_file, project_root)
+        if lint_result and not lint_result.get("passed", False):
+            all_passed = False
+    return test_result, type_result, lint_result, all_passed
+
+
 class ShadowWorkspace:
     def __init__(self, config: dict[str, Any] | None = None) -> None:
         config = config or {}
@@ -44,31 +96,12 @@ class ShadowWorkspace:
     def preflight(self, action: FixAction, project_root: str | None = None) -> ShadowResult:
         shadow_dir = os.path.join(self._base_dir, action.action_id)
         try:
-            os.makedirs(shadow_dir, exist_ok=True)
-            target_path = Path(action.target)
-            if not target_path.exists():
-                return ShadowResult(safe_to_apply=False, error="Target not found", shadow_dir=shadow_dir)
-            rel_path = target_path.relative_to(project_root or str(REPO_ROOT)) if project_root else target_path.name  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
-            shadow_file = os.path.join(shadow_dir, str(rel_path))
-            os.makedirs(os.path.dirname(shadow_file), exist_ok=True)
-            with open(shadow_file, "w", encoding="utf-8") as f:
-                f.write(action.after)
-            test_result = None
-            type_result = None
-            lint_result = None
-            all_passed = True
-            if self._run_pytest and shadow_file.endswith(".py"):
-                test_result = self._run_test(shadow_dir, project_root)
-                if test_result and not test_result.get("passed", False):
-                    all_passed = False
-            if self._run_mypy and shadow_file.endswith(".py"):
-                type_result = self._run_type_check(shadow_file, project_root)
-                if type_result and not type_result.get("passed", False):
-                    all_passed = False
-            if self._run_ruff and shadow_file.endswith(".py"):
-                lint_result = self._run_lint(shadow_file, project_root)
-                if lint_result and not lint_result.get("passed", False):
-                    all_passed = False
+            shadow_file = _prepare_shadow_file(shadow_dir, action, project_root)
+            if isinstance(shadow_file, ShadowResult):
+                return shadow_file
+            test_result, type_result, lint_result, all_passed = _run_validation_checks(
+                self, shadow_dir, shadow_file, project_root
+            )
             return ShadowResult(
                 safe_to_apply=all_passed,
                 test_result=test_result,
