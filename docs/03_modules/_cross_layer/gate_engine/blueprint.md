@@ -156,7 +156,7 @@ build_status: planned
 | `commit_gates/capability_overlap_gate.py` | §0.1 | capability重叠门禁 | 已实现 | | 本模块 |
 | `commit_gates/create_guard.py` | §0.1 | 新建文件守卫门禁 | 已实现 | | 本模块 |
 | `commit_gates/dangling_reference_gate.py` | §0.1 | 悬空引用门禁 | 已实现 | | 本模块 |
-| `commit_gates/arch_reference_gate.py` | §0.1 | ARCH-NNN引用门禁 | 已实现 | | 本模块 |
+| `commit_gates/arch_reference_gate.py` | §0.1 | ARCH-NNN引用门禁（含 L1 编号空洞检测 ARCH_GAP_WARNING 不阻断 + L2 同提交原子性门禁 ARCH_ATOMICITY_VIOLATION 硬阻断） | 已实现 | | 本模块 |
 | `commit_gates/session_required_gate.py` | §0.1 | session要求门禁 | 已实现 | | 本模块 |
 | `commit_gates/file_placement_ttl_gate.py` | §0.1 | 文件放置与TTL一致性门禁（ARCH-049） | 已实现 | | 本模块 |
 | `commit_gates/foreign_change_gate.py` | §0.1 | 外来变更检测门禁（ARCH-054） | 已实现 | | 本模块 |
