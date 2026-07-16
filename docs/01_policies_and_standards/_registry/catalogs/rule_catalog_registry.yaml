@@ -3,10 +3,10 @@ module_id: PS-REG-018
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-16T14:55:12Z'
+generated_at: '2026-07-16T15:00:09Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 158
+total_files: 159
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1322,6 +1322,25 @@ files:
   - 真源分类
   - YAML vs DB
   - ssot_classification
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml
+  module_id: TRAE-063
+  title: 数据库破坏性操作纪律（RULE-DATA-OPS）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: data_ops_discipline
+  stability: frozen
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-DATA-OPS
+  - 数据库破坏性操作纪律
+  - destructive_ops_discipline
+  - data_ops_discipline
   section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
