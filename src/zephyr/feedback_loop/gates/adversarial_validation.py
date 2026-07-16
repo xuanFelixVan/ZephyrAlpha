@@ -49,6 +49,34 @@ class AdversarialResult:
     error: str = ""
 
 
+def _evaluate_red_blue_scenario(scenario, claim, DefenseRunner, ConstitutionGuard, BypassRecorder):
+    runner = DefenseRunner()
+    try:
+        result = runner.evaluate(scenario)
+    except Exception:
+        result = None
+
+    guard = ConstitutionGuard()
+    try:
+        guard.validate_all()
+        v_list = guard.get_violations()
+    except Exception:
+        v_list = []
+
+    counter_claim = f"'{claim}' survives {scenario.name}"
+    recorder = BypassRecorder()
+    try:
+        entry = recorder.record(
+            scenario_id=scenario.scenario_id or "unknown",
+            scenario_name=scenario.name,
+            counter_claim=counter_claim,
+        )
+    except Exception:
+        entry = None
+
+    return result, v_list, entry
+
+
 @dataclass
 class AdversarialValidation:
     def challenge(self, claim: str) -> list[str]:
@@ -130,29 +158,9 @@ class AdversarialValidation:
         for i in range(min(attempts, len(scenarios))):
             scenario = scenarios[i]
 
-            runner = DefenseRunner()
-            try:
-                result = runner.evaluate(scenario)
-            except Exception:
-                result = None
-
-            guard = ConstitutionGuard()
-            try:
-                guard.validate_all()
-                v_list = guard.get_violations()
-            except Exception:
-                v_list = []
-
-            counter_claim = f"'{claim}' survives {scenario.name}"
-            recorder = BypassRecorder()
-            try:
-                entry = recorder.record(
-                    scenario_id=scenario.scenario_id or "unknown",
-                    scenario_name=scenario.name,
-                    counter_claim=counter_claim,
-                )
-            except Exception:
-                entry = None
+            result, v_list, entry = _evaluate_red_blue_scenario(
+                scenario, claim, DefenseRunner, ConstitutionGuard, BypassRecorder
+            )
 
             if result is not None:
                 if result.result_class is ResultClass.ATTACKER_WIN:
