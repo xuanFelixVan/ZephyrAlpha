@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen.aggregator_base
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.capital_allocation_result; zephyr.trading.trading_contracts.market.signal_degradation_warning; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
+# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.capital_allocation_result; zephyr.trading.trading_contracts.market.signal_degradation_warning; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
