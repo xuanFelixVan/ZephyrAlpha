@@ -57,24 +57,29 @@ _KEY_IMPLEMENTED_MODULES = [
 ]
 
 
+def _compute_counts(source: str):
+    lines = [l for l in source.split("\n") if l.strip() and not l.strip().startswith("#")]
+    line_count = len(lines)
+    tree = ast.parse(source)
+    classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
+    functions = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])
+    ]
+    class_count = len(classes)
+    method_count = 0
+    for cls in classes:
+        cls_methods = [n.name for n in cls.body if isinstance(n, ast.FunctionDef)]
+        method_count += len(cls_methods)
+    all_func_count = len([n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)])
+    return line_count, class_count, method_count, all_func_count
+
+
 def _analyze_py_file(file_path: Path) -> StubAnalysis:
     try:
         source = file_path.read_text(encoding="utf-8")
-        lines = [l for l in source.split("\n") if l.strip() and not l.strip().startswith("#")]
-        line_count = len(lines)
-        tree = ast.parse(source)
-        classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
-        functions = [
-            n
-            for n in ast.walk(tree)
-            if isinstance(n, ast.FunctionDef) and not any(isinstance(p, ast.ClassDef) for p in [])
-        ]
-        class_count = len(classes)
-        method_count = 0
-        for cls in classes:
-            cls_methods = [n.name for n in cls.body if isinstance(n, ast.FunctionDef)]
-            method_count += len(cls_methods)
-        all_func_count = len([n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)])
+        line_count, class_count, method_count, all_func_count = _compute_counts(source)
 
         is_empty_stub = False
         reason = ""
