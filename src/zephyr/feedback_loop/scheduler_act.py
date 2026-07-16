@@ -54,6 +54,80 @@ class ActResult:
     skipped: bool = False
 
 
+def _gate_action(
+    handler: ActPhaseHandler, anomaly: object, diagnosis: object, snapshot: object
+) -> ActResult | None:
+    throttle = handler.throttle_defense.request_action(
+        anomaly.anomaly_id,
+        "system",
+        priority=diagnosis.severity_level if hasattr(diagnosis, "severity_level") else 3,
+    )
+    if not throttle["allowed"] and not throttle.get("queued"):
+        return ActResult(skipped=True)
+
+    resource_check = handler.degradation_planner.evaluate_degradation(
+        snapshot.system_cpu * 100,
+        snapshot.memory_usage_pct * 100,
+    )
+    if resource_check["level"] != "FULL" and (
+        diagnosis.severity_level > 1 if hasattr(diagnosis, "severity_level") else True
+    ):
+        return ActResult(skipped=True)
+
+    return None
+
+
+def _validate_action_type(handler: ActPhaseHandler, action_type: object) -> ActResult | None:
+    if str(action_type) in ("SELF_UPGRADE", "PROMPT_EVOLVE", "KNOWLEDGE_INJECT"):
+        mod_check = handler.mod_rate_limiter.request_modification(str(action_type), "warning")
+        if not mod_check["allowed"]:
+            return ActResult(skipped=True)
+
+    oscillation_check = handler.oscillation_damping.is_allowed(str(action_type))
+    if not oscillation_check:
+        return ActResult(skipped=True)
+
+    return None
+
+
+def _record_action_outcomes(
+    handler: ActPhaseHandler,
+    anomaly: object,
+    action_type: object,
+    action_record: object,
+    run_id: str,
+) -> None:
+    if action_record is not None:
+        handler.action_interaction_detector.record_action(
+            anomaly.anomaly_id,
+            str(action_type),
+            1.0 if action_record.success else -1.0,
+        )
+        handler.toil_tracker.record_action(
+            str(action_type),
+            success=action_record.success,
+            human_intervention_required=False,
+        )
+        handler.action_decay.record_outcome(str(action_type), action_record.success)
+        handler.placebo_detector.record_action_outcome(
+            str(action_type),
+            1.0 if action_record.success else 0.0,
+        )
+        handler.composition_health.record_composition_outcome(
+            f"{run_id}_{action_type}",
+            (str(action_type),),
+            action_record.success,
+        )
+        handler.composition_health.record_independent_outcome(str(action_type), action_record.success)
+
+    if action_record and not action_record.success:
+        handler.cascading_rollback.record_action_dependency(
+            anomaly.anomaly_id,
+            [str(action_type)],
+        )
+        handler._escalate_on_failure(anomaly, action_type)
+
+
 @dataclass
 class ActPhaseHandler:
     throttle_defense: SelfAPIThrottleDefense
@@ -79,66 +153,19 @@ class ActPhaseHandler:
         action_type = None
 
         if self.action_selector is not None:
-            throttle = self.throttle_defense.request_action(
-                anomaly.anomaly_id,
-                "system",
-                priority=diagnosis.severity_level if hasattr(diagnosis, "severity_level") else 3,
-            )
-            if not throttle["allowed"] and not throttle.get("queued"):
-                return ActResult(skipped=True)
-
-            resource_check = self.degradation_planner.evaluate_degradation(
-                snapshot.system_cpu * 100,
-                snapshot.memory_usage_pct * 100,
-            )
-            if resource_check["level"] != "FULL" and (
-                diagnosis.severity_level > 1 if hasattr(diagnosis, "severity_level") else True
-            ):
-                return ActResult(skipped=True)
+            skip = _gate_action(self, anomaly, diagnosis, snapshot)
+            if skip is not None:
+                return skip
 
             action_type = self.action_selector.select_action(diagnosis)
             if action_type is not None:
-                if str(action_type) in ("SELF_UPGRADE", "PROMPT_EVOLVE", "KNOWLEDGE_INJECT"):
-                    mod_check = self.mod_rate_limiter.request_modification(str(action_type), "warning")
-                    if not mod_check["allowed"]:
-                        return ActResult(skipped=True)
-
-                oscillation_check = self.oscillation_damping.is_allowed(str(action_type))
-                if not oscillation_check:
-                    return ActResult(skipped=True)
+                skip = _validate_action_type(self, action_type)
+                if skip is not None:
+                    return skip
 
                 action_record = self.action_selector.execute(anomaly, diagnosis, action_type)
                 self.action_selector.record_result(action_type, action_record.success if action_record else False)
-
-                if action_record is not None:
-                    self.action_interaction_detector.record_action(
-                        anomaly.anomaly_id,
-                        str(action_type),
-                        1.0 if action_record.success else -1.0,
-                    )
-                    self.toil_tracker.record_action(
-                        str(action_type),
-                        success=action_record.success,
-                        human_intervention_required=False,
-                    )
-                    self.action_decay.record_outcome(str(action_type), action_record.success)
-                    self.placebo_detector.record_action_outcome(
-                        str(action_type),
-                        1.0 if action_record.success else 0.0,
-                    )
-                    self.composition_health.record_composition_outcome(
-                        f"{run_id}_{action_type}",
-                        (str(action_type),),
-                        action_record.success,
-                    )
-                    self.composition_health.record_independent_outcome(str(action_type), action_record.success)
-
-                if action_record and not action_record.success:
-                    self.cascading_rollback.record_action_dependency(
-                        anomaly.anomaly_id,
-                        [str(action_type)],
-                    )
-                    self._escalate_on_failure(anomaly, action_type)
+                _record_action_outcomes(self, anomaly, action_type, action_record, run_id)
 
         self.bottleneck_detector.record_stage_latency(PipelineStage.ACT, 0.0)
 
