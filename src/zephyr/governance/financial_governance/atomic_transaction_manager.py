@@ -166,6 +166,46 @@ def _now_iso() -> str:
     return datetime.now(UTC).isoformat()
 
 
+def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
+    renamed: list[tuple[Path, Path, Path | None]] = []
+    try:
+        for target, tmp, bak in tx._staged_files:
+            os.replace(tmp, target)
+            renamed.append((target, tmp, bak))
+
+        dirs_to_fsync = {t.parent for t, _, _ in renamed}
+        for d in dirs_to_fsync:
+            try:
+                _fsync_dir(d)
+            except OSError:
+                pass
+
+        for _, _, bak in renamed:
+            if bak is not None and bak.exists():
+                try:
+                    bak.unlink()
+                except OSError:
+                    logger.warning("[%s] failed to unlink .bak: %s", tx.tx_id, bak)
+
+    except OSError as exc:
+        logger.error(
+            "[%s] post-COMMIT file rename failed; writing compensation event: %s",
+            tx.tx_id,
+            exc,
+        )
+        write_compensation_event(tx)
+        for target, _tmp, bak in renamed:
+            if bak is not None and bak.exists():
+                try:
+                    os.replace(bak, target)
+                except OSError:
+                    pass
+        raise TransactionError(
+            "file rename phase failed after SQLite COMMIT",
+            details={"tx_id": tx.tx_id, "error": str(exc)},
+        ) from exc
+
+
 class TransactionScope:
     """单次事务作用域。对 ATM 外部不可直接构造。"""
 
@@ -517,43 +557,7 @@ class AtomicTransactionManager:
             pass  # 尽力更新，失败不影响事务已提交的事实
 
         # 文件 rename 阶段
-        renamed: list[tuple[Path, Path, Path | None]] = []
-        try:
-            for target, tmp, bak in tx._staged_files:
-                os.replace(tmp, target)
-                renamed.append((target, tmp, bak))
-
-            dirs_to_fsync = {t.parent for t, _, _ in renamed}
-            for d in dirs_to_fsync:
-                try:
-                    _fsync_dir(d)
-                except OSError:
-                    pass
-
-            for _, _, bak in renamed:
-                if bak is not None and bak.exists():
-                    try:
-                        bak.unlink()
-                    except OSError:
-                        logger.warning("[%s] failed to unlink .bak: %s", tx.tx_id, bak)
-
-        except OSError as exc:
-            logger.error(
-                "[%s] post-COMMIT file rename failed; writing compensation event: %s",
-                tx.tx_id,
-                exc,
-            )
-            self._write_compensation_event(tx)
-            for target, _tmp, bak in renamed:
-                if bak is not None and bak.exists():
-                    try:
-                        os.replace(bak, target)
-                    except OSError:
-                        pass
-            raise TransactionError(
-                "file rename phase failed after SQLite COMMIT",
-                details={"tx_id": tx.tx_id, "error": str(exc)},
-            ) from exc
+        _apply_post_commit_file_renames(tx, self._write_compensation_event)
 
         tx._committed = True
         self._active_tx = None
