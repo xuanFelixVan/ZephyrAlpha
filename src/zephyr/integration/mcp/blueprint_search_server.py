@@ -89,6 +89,56 @@ BLUEPRINT_REGISTRY_PATH: Final[Path] = REPO_ROOT / "docs" / "03_modules" / "blue
 # ---------------------------------------------------------------------------
 
 
+def _score_routes(
+    routes: list[dict[str, Any]],
+    task_lower: str,
+    include_retired: bool,
+) -> list[tuple[int, dict[str, Any]]]:
+    scored: list[tuple[int, dict[str, Any]]] = []
+    for route in routes:
+        if not route.get("enabled", True):
+            continue
+        if not include_retired and route.get("enabled") is False:
+            continue
+
+        keywords: list[str] = route.get("task_keywords", []) or []
+        score = 0
+        for kw in keywords:
+            kw_lower = kw.lower()
+            if kw_lower in task_lower:
+                score += 5
+            elif any(word in task_lower for word in kw_lower.split()):
+                score += 2
+
+        if score > 0:
+            scored.append((score, route))
+
+    return scored
+
+
+def _build_search_results(
+    top_n: list[tuple[int, dict[str, Any]]],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    results: list[dict[str, Any]] = []
+    cross_read_hints: list[str] = []
+    for score, route in top_n:
+        results.append(
+            {
+                "blueprint_id": route.get("blueprint_id", ""),
+                "blueprint_level": route.get("blueprint_level", "module"),
+                "route_id": route.get("route_id", ""),
+                "relevance_score": score,
+                "priority": route.get("priority", 50),
+                "description": route.get("description", ""),
+                "path_patterns": route.get("path_patterns", []),
+            }
+        )
+        cross_hint = route.get("cross_read_hint", "")
+        if cross_hint:
+            cross_read_hints.append(cross_hint)
+    return results, cross_read_hints
+
+
 class BlueprintSearchServer(BaseMCPServer):
     """MCP server for discovering relevant blueprint documents.
 
@@ -175,46 +225,12 @@ class BlueprintSearchServer(BaseMCPServer):
             return {"results": [], "count": 0, "source": "blueprint_routing.yaml", "error": "no_routes_loaded"}
 
         task_lower = task_description.lower()
-        scored: list[tuple[int, dict[str, Any]]] = []
-
-        for route in routes:
-            if not route.get("enabled", True):
-                continue
-            if not include_retired and route.get("enabled") is False:
-                continue
-
-            keywords: list[str] = route.get("task_keywords", []) or []
-            score = 0
-            for kw in keywords:
-                kw_lower = kw.lower()
-                if kw_lower in task_lower:
-                    score += 5
-                elif any(word in task_lower for word in kw_lower.split()):
-                    score += 2
-
-            if score > 0:
-                scored.append((score, route))
+        scored = _score_routes(routes, task_lower, include_retired)
 
         scored.sort(key=lambda x: x[0], reverse=True)
         top_n = scored[: max(1, num_results)]
 
-        results = []
-        cross_read_hints = []
-        for score, route in top_n:
-            results.append(
-                {
-                    "blueprint_id": route.get("blueprint_id", ""),
-                    "blueprint_level": route.get("blueprint_level", "module"),
-                    "route_id": route.get("route_id", ""),
-                    "relevance_score": score,
-                    "priority": route.get("priority", 50),
-                    "description": route.get("description", ""),
-                    "path_patterns": route.get("path_patterns", []),
-                }
-            )
-            cross_hint = route.get("cross_read_hint", "")
-            if cross_hint:
-                cross_read_hints.append(cross_hint)
+        results, cross_read_hints = _build_search_results(top_n)
 
         result = {
             "results": results,
