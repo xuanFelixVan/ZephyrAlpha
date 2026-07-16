@@ -103,6 +103,16 @@ MEDIUM_RISK_KEYWORDS: Final[set[str]] = {
 }
 
 
+def _extract_impacted_modules(diff: str) -> set[str]:
+    impacted_modules: set[str] = set()
+    for line in diff.splitlines():
+        if line.startswith("diff --git") or line.startswith("--- a/") or line.startswith("+++ b/"):
+            path = line.split(" b/")[-1] if " b/" in line else line.replace("--- a/", "").replace("+++ b/", "")
+            if "/" in path:
+                impacted_modules.add(path.split("/")[0])
+    return impacted_modules
+
+
 class LLMImpactAnalyzer:
     def __init__(self, project_root: Path | None = None, use_llm: bool = False) -> None:
         self._project_root = project_root or Path.cwd()
@@ -118,7 +128,6 @@ class LLMImpactAnalyzer:
     def _rule_based_analyze(self, commit_sha: str, diff: str) -> ImpactAnalysis:
         risk_score = 0.0
         key_changes: list[str] = []
-        impacted_modules: set[str] = set()
 
         for keyword in HIGH_RISK_KEYWORDS:
             if keyword in diff:
@@ -141,11 +150,7 @@ class LLMImpactAnalyzer:
         else:
             risk_level = RiskLevel.P3_LOW
 
-        for line in diff.splitlines():
-            if line.startswith("diff --git") or line.startswith("--- a/") or line.startswith("+++ b/"):
-                path = line.split(" b/")[-1] if " b/" in line else line.replace("--- a/", "").replace("+++ b/", "")
-                if "/" in path:
-                    impacted_modules.add(path.split("/")[0])
+        impacted_modules = _extract_impacted_modules(diff)
 
         recommendation = "safe_to_proceed"
         if risk_level in (RiskLevel.P0_CRITICAL, RiskLevel.P1_HIGH):
