@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "2.2.1"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -13,8 +13,8 @@ classification: confidential
 language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
-last_updated: "2026-07-05"
-last_verified: "2026-05-15"
+last_updated: "2026-07-17"
+last_verified: "2026-07-17"
 valid_from: "2026-05-05"
 ttl: permanent
 construction_progress: partially_implemented

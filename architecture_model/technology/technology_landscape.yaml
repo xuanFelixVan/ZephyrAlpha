@@ -458,10 +458,10 @@ technologies:
     name: "Idempotency Key 引擎 / 幂等键生成"
     quadrant: build
     category: core-engine
-    physical_path: src/zephyr/ex_core/idempotency/
-    build_reason: "量化业务特定 Key 生成公式（SHA-256 over 8 字段）+ Redis SETNX + append-only JSONL journal"
+    physical_path: src/zephyr/shared/contracts/order.py
+    build_reason: "幂等键作为 Order.idempotency_key 字段实现（CTR-004），由 INV-007 不变量保证；原计划独立 idempotency 模块已合并入 Order 契约"
     design_doc: "idempotency-design.md"
-    status: planned
+    status: implemented
 
   - id: T-B05
     name: "OTel Bootstrap / 可观测性初始化"

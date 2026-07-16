@@ -948,7 +948,7 @@ contracts:
     domain: D_EX_CORE
     registry: null
     autodiscover: null
-    physical_path: src/zephyr/ex_core/broker_interface.py
+    physical_path: src/zephyr/trading/trading_contracts/broker_interface.py
     related_kb_ref: KBG-0004
     description: "Execution 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:

@@ -59,7 +59,7 @@ aggregate_roots:
     name: "Order / 委托订单"
     layer: l06
     bounded_context: "Trade Execution 域"
-    physical_path: src/zephyr/ex_core/domain/order.py
+    physical_path: src/zephyr/shared/contracts/order.py
     description: "订单全生命周期管理、委托路由、成交汇总。"
     contains_entities: [ENT-001]
     fields:
@@ -508,8 +508,8 @@ value_objects:
 # 代码包映射
 # =============================================================================
 code_package_mapping:
-  AGG-001: src/zephyr/ex_core/domain/
-  AGG-002: src/zephyr/ex_core/domain/
+  AGG-001: src/zephyr/shared/contracts/
+  AGG-002: src/zephyr/shared/contracts/
   AGG-003: src/zephyr/pf_core/domain/
   AGG-004: src/zephyr/pf_core/domain/
   AGG-005: src/zephyr/factor/domain/

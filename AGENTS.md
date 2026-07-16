@@ -166,6 +166,29 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 **关键契约**：CTR-ERR-003（SignalDegradationWarning，source_domain=D_SIGQC，[`cross_layer_contracts.yaml`](file:///d:/ZephyrAlpha/architecture_model/contracts/cross_layer_contracts.yaml) L421）。
 **capability 反查**：`factor_base_abstraction` / `alpha_signal_pipeline` / `signal_synthesizer_base` / `degradation_monitor_base`（[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)）。新 AI 实现因子/信号/降级监视器前 MUST 反查此 4 项 capability，禁止重复造轮子。
 
+### 执行模拟域（D_EX_CORE / D_EX_SOR / D_EXEC_SIM / D_CROSS_ASSET / D_DIGITAL_TWIN，2026-07-17 AI-05 补登）
+
+5 个执行/模拟相关平级域（域注册表 `architecture_model/index.yaml` L162-L188）。**仅 D_EX_CORE 已施工**，其余 4 域为规划态占位（planning stub，无蓝图/无代码/无消费者）。
+
+| 域 | ssot_path | 状态 | 关键入口 |
+|----|-----------|------|----------|
+| D_EX_CORE | `src/zephyr/ex_core/` | partially_implemented | [`execution_engine.py`](file:///d:/ZephyrAlpha/src/zephyr/ex_core/execution_engine.py)（ExecutionEngine，broker 选择+订单分发）/ [`order_manager.py`](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py)（OrderManager，订单状态机+撤单路由）/ [`adapters/miniqmt_broker.py`](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py)（MiniQmtBroker，迅投 xttrader 实盘适配器，threading.Lock 线程安全） |
+| D_EX_SOR | `src/zephyr/ex_sor/` | design (planning stub) | 待施工：执行路由（SMART Order Routing） |
+| D_EXEC_SIM | `src/zephyr/execution_simulation/` | design (planning stub) | 待施工：执行仿真 |
+| D_CROSS_ASSET | `src/zephyr/cross_asset/` | design (planning stub) | 待施工：跨资产 |
+| D_DIGITAL_TWIN | `src/zephyr/digital_twin/` | design (planning stub) | 待施工：数字孪生 |
+
+**关键契约**：
+- [`broker_interface.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py)（BrokerInterface 抽象基类，canonical 路径 `src/zephyr/trading/trading_contracts/`，ARCH-GOV-SHIM-001 迁移）
+- [`matching_logic.py`](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/matching_logic.py)（MatchingLogic 共享模块，回测-实盘一致性 B 方案：MiniQmtBroker.submit_order 复用 match_market_order/match_limit_order 预校验）
+- [`order.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/order.py)（Order dataclass，CTR-004 codegen，SSoT=cross_layer_contracts.yaml）
+
+**线程安全**：MiniQmtBroker 用 `threading.Lock` 保护所有 xttrader 调用与共享状态（`_connected`/`_xttrader`/`_account_id`）。新 AI 实现券商适配器 MUST 继承 BrokerInterface 并在所有 xttrader 调用点加锁。
+
+**撤单路由治本（2026-07-17）**：OrderManager 维护 `_order_broker_map`（order_id→broker_id），submit_order/create_order 时记录，cancel_order 时精确路由。禁止硬编码 broker_id 或遍历反查。
+
+**蓝图**：[`_domain_execution_core/blueprint.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_execution_core/blueprint.md)（MOD-L06-001，version 2.2.1）/ [`_domain_simulation/blueprint.md`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_simulation/blueprint.md)（MOD-L13-001）。4 个 planning stub 域无蓝图，施工前 MUST 先创建 blueprint.md。
+
 ### config/ 发现契约（ARCH-038 P2）
 
 新 AI 需发现 `config/` 下有哪些配置文件、用途线索、消费者时，运行：

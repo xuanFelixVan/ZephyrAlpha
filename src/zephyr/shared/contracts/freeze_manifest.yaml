@@ -301,7 +301,7 @@ frozen_layer_interfaces:
     note: "Phase B 对齐 OCP-002 codegen"
 
   D_EXECUTION_CORE:
-    file: "src/zephyr/ex_core/broker_interface.py"
+    file: "src/zephyr/trading/trading_contracts/broker_interface.py"
     classes: ["BrokerInterface"]
     version: "1.1"
     status: "skeleton_frozen"
