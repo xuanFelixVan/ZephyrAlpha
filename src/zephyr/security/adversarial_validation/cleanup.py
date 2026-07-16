@@ -40,6 +40,30 @@ CLEANUP_DIRS: Final[list[Path]] = [
 ]
 
 
+def _scan_residue() -> list[str]:
+    residue: list[str] = []
+    for pattern in CLEANUP_PATTERNS:
+        for p in Path().glob(pattern):
+            residue.append(str(p))
+    for d in CLEANUP_DIRS:
+        if d.exists():
+            for f in d.glob("_attack_*"):
+                residue.append(str(f))
+    return residue
+
+
+def _remove_residue(residue: list[str]) -> None:
+    for p in residue:
+        try:
+            path = Path(p)
+            if path.is_file():
+                path.unlink()
+            elif path.is_dir():
+                shutil.rmtree(path)
+        except OSError:
+            pass
+
+
 class CleanupVerificationError(RuntimeError):
     error_code = "ZA-SC-0010"
 
@@ -74,35 +98,13 @@ class Cleanup:
             logger.info("cleanup_artifact path=%s", str(artifact_path))
 
     def ensure_clean(self) -> bool:
-        residue: list[str] = []
-        for pattern in CLEANUP_PATTERNS:
-            for p in Path().glob(pattern):
-                residue.append(str(p))
-        for d in CLEANUP_DIRS:
-            if d.exists():
-                for f in d.glob("_attack_*"):
-                    residue.append(str(f))
+        residue = _scan_residue()
 
         if residue:
             logger.warning("cleanup_residue_found residue=%s", residue)
-            for p in residue:
-                try:
-                    path = Path(p)
-                    if path.is_file():
-                        path.unlink()
-                    elif path.is_dir():
-                        shutil.rmtree(path)
-                except OSError:
-                    pass
+            _remove_residue(residue)
 
-        residue_after = []
-        for pattern in CLEANUP_PATTERNS:
-            for p in Path().glob(pattern):
-                residue_after.append(str(p))
-        for d in CLEANUP_DIRS:
-            if d.exists():
-                for f in d.glob("_attack_*"):
-                    residue_after.append(str(f))
+        residue_after = _scan_residue()
 
         if residue_after:
             raise CleanupVerificationError(f"Residue remains after cleanup: {residue_after}")
