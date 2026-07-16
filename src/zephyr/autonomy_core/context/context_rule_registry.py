@@ -50,6 +50,28 @@ class ContextRule:
             raise ValueError(f"HOT level max_tokens must be ≤{_HOT_MAX_TOKENS}, got {self.max_tokens}")
 
 
+def _condition_matches_task_type(cond_task_type: str, task_type: str) -> bool:
+    return bool(cond_task_type and task_type and cond_task_type == task_type)
+
+
+def _condition_matches_tags(cond_tags: list[Any], tags: list[str]) -> bool:
+    return bool(cond_tags and tags and (set(cond_tags) & set(tags)))
+
+
+def _condition_matches_keywords(cond_keywords: list[Any], input_text: str) -> bool:
+    if not cond_keywords or not input_text:
+        return False
+    input_lower = input_text.lower()
+    for kw in cond_keywords:
+        if kw.lower() in input_lower:
+            return True
+    return False
+
+
+def _condition_matches_on_demand(on_demand: Any, kwargs: dict[str, Any]) -> bool:
+    return bool(on_demand and kwargs.get("include_cold", False))
+
+
 class ContextRuleRegistry:
     def __init__(self) -> None:
         self._rules: dict[str, ContextRule] = {}
@@ -155,27 +177,21 @@ class ContextRuleRegistry:
             return True
 
         cond_task_type = conditions.get("task_type", "")
-        if cond_task_type and task_type:
-            if cond_task_type == task_type:
-                return True
-
         cond_tags = conditions.get("tags", [])
-        if cond_tags and tags:
-            if set(cond_tags) & set(tags):
-                return True
-
         cond_keywords = conditions.get("keywords", [])
-        if cond_keywords and input_text:
-            input_lower = input_text.lower()
-            for kw in cond_keywords:
-                if kw.lower() in input_lower:
-                    return True
-
         on_demand = conditions.get("on_demand", False)
-        if on_demand:
-            demand_requested = kwargs.get("include_cold", False)
-            if demand_requested:
-                return True
+
+        if _condition_matches_task_type(cond_task_type, task_type):
+            return True
+
+        if _condition_matches_tags(cond_tags, tags):
+            return True
+
+        if _condition_matches_keywords(cond_keywords, input_text):
+            return True
+
+        if _condition_matches_on_demand(on_demand, kwargs):
+            return True
 
         if not cond_task_type and not cond_tags and not cond_keywords and not on_demand:
             return True
