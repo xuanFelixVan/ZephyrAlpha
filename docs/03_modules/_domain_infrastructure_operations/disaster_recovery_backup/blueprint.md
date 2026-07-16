@@ -1,5 +1,5 @@
 ---
-module_id: MOD-INF-040
+module_id: MOD-INF-043
 submodule_path: scripts/backup
 title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告"
 doc_type: blueprint
@@ -42,7 +42,7 @@ responsibility_domain:
 build_status: planned
 design_maturity: design
 ---
-> module_id: MOD-INF-027 | version: 1.1.0 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-043 | version: 1.1.0 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: planned
 
 # 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告

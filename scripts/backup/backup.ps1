@@ -2,7 +2,7 @@
 .SYNOPSIS
     灾备备份系统主脚本——六阶段流水线
 .DESCRIPTION
-    [BLUEPRINT] MOD-INF-027 | §3.2
+    [BLUEPRINT] MOD-INF-043 | §3.2
     阶段: 预检 -> DB dump -> Restic备份 -> 保留清理 -> 校验 -> 报告
     自动触发: backup_reconciler.py post-commit调用
     手动触发: 双击 一键备份.bat (带 -Force 跳过间隔保护)

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-027 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.1
+# [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.1
 # [MODULE] scripts.backup.backup_reconciler
 # [DOMAIN] D_INFRASTRUCTURE
 # [DEPENDENCIES] zephyr.gov_enforcement.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] _reconcile异常降级为warn ReconcileResult，不阻断其他reconciler
 # [TESTS] tests/scripts/backup/test_backup_reconciler.py
-# [A_module] module_id=MOD-INF-027-reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-043-reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """backup_reconciler.py — 灾备备份系统事件触发器（post-commit reconciler）
 
