@@ -262,36 +262,12 @@ class ExamOrchestrator:
         n_samples = self._depth_samples_per_case
 
         for case in cases:
-            # 多次采样收集 per-sample 指标
-            sample_ps: list[float] = []
-            sample_rs: list[float] = []
-            sample_eds: list[float] = []
-            sample_ems: list[int] = []
-            sample_tws: list[float] = []
-            oly_overalls: list[float] = []  # OLYMPIAD 题每次采样的 overall 分
-
-            for _ in range(n_samples):
-                p, r, ed, em, tw, oly_ov = self._score_case_once(case)
-                sample_ps.append(p)
-                sample_rs.append(r)
-                sample_eds.append(ed)
-                sample_ems.append(em)
-                sample_tws.append(tw)
-                if oly_ov is not None:
-                    oly_overalls.append(oly_ov)
-
-            # 聚合: p/r/ed/tw 取均值; em 用多数投票 (>=50% 视为 exact)
-            precisions.append(statistics.mean(sample_ps) if sample_ps else 0.0)
-            recalls.append(statistics.mean(sample_rs) if sample_rs else 0.0)
-            edit_distances.append(statistics.mean(sample_eds) if sample_eds else 0.0)
-            time_weights.append(statistics.mean(sample_tws) if sample_tws else 1.0)
-            exact_matches.append(1 if (statistics.mean(sample_ems) >= 0.5) else 0)
-
-            # OLYMPIAD: 用均值 overall 判定 pass, 仅 append 一次 (不按采样次数膨胀)
-            if case.difficulty is Difficulty.OLYMPIAD:
-                mean_oly = statistics.mean(oly_overalls) if oly_overalls else 0.0
-                self._olympiad_case_results.append(mean_oly >= _OLYMPIAD_CASE_PASS_THRESHOLD)
-
+            p, r, ed, em, tw = self._collect_case_metrics(case, n_samples)
+            precisions.append(p)
+            recalls.append(r)
+            edit_distances.append(ed)
+            exact_matches.append(em)
+            time_weights.append(tw)
             weights.append(_DIFFICULTY_WEIGHTS.get(case.difficulty, 1))
 
         n = len(cases)
@@ -314,6 +290,50 @@ class ExamOrchestrator:
             time_weight_avg=round(avg_tw, 3),
             samples_per_case=n_samples,
         )
+
+    def _collect_case_metrics(
+        self,
+        case: ExamTestCase,
+        n_samples: int,
+    ) -> tuple[float, float, float, int, float]:
+        """多次采样单个 case 并聚合 per-case 指标。
+
+        OLYMPIAD 题在此处完成 pass 判定并 append 到 _olympiad_case_results
+        (仅一次, 不按采样次数膨胀)。
+
+        Returns:
+            (precision, recall, edit_distance, exact_match, time_weight)
+        """
+        sample_ps: list[float] = []
+        sample_rs: list[float] = []
+        sample_eds: list[float] = []
+        sample_ems: list[int] = []
+        sample_tws: list[float] = []
+        oly_overalls: list[float] = []  # OLYMPIAD 题每次采样的 overall 分
+
+        for _ in range(n_samples):
+            p, r, ed, em, tw, oly_ov = self._score_case_once(case)
+            sample_ps.append(p)
+            sample_rs.append(r)
+            sample_eds.append(ed)
+            sample_ems.append(em)
+            sample_tws.append(tw)
+            if oly_ov is not None:
+                oly_overalls.append(oly_ov)
+
+        # 聚合: p/r/ed/tw 取均值; em 用多数投票 (>=50% 视为 exact)
+        precision = statistics.mean(sample_ps) if sample_ps else 0.0
+        recall = statistics.mean(sample_rs) if sample_rs else 0.0
+        edit_distance = statistics.mean(sample_eds) if sample_eds else 0.0
+        time_weight = statistics.mean(sample_tws) if sample_tws else 1.0
+        exact_match = 1 if (statistics.mean(sample_ems) >= 0.5) else 0
+
+        # OLYMPIAD: 用均值 overall 判定 pass, 仅 append 一次 (不按采样次数膨胀)
+        if case.difficulty is Difficulty.OLYMPIAD:
+            mean_oly = statistics.mean(oly_overalls) if oly_overalls else 0.0
+            self._olympiad_case_results.append(mean_oly >= _OLYMPIAD_CASE_PASS_THRESHOLD)
+
+        return precision, recall, edit_distance, exact_match, time_weight
 
     def _score_case_once(
         self,
@@ -887,6 +907,20 @@ class ExamOrchestrator:
         chat_cls = type(self._chat).__name__.lower()
 
         # 1. 优先从 chat 对象类名判断 (最可靠)
+        chat_mode = self._detect_mode_from_chat_class(chat_cls)
+        if chat_mode is not None:
+            return chat_mode
+
+        # 2. 从 model_id 关键字匹配
+        id_mode = self._detect_mode_from_model_id(model_id)
+        if id_mode is not None:
+            return id_mode
+
+        # 3. 默认本地 (Ollama 等本地推理, 成本≈0)
+        return ("local", "local")
+
+    def _detect_mode_from_chat_class(self, chat_cls: str) -> tuple[str, str] | None:
+        """从 chat 对象类名判断 (provider, mode)；无匹配返回 None。"""
         if "ollama" in chat_cls:
             return ("local", "local")
         if "deepseek" in chat_cls:
@@ -897,8 +931,10 @@ class ExamOrchestrator:
             return ("openai_azure", "api")
         if "zhipu" in chat_cls or "glm" in chat_cls:
             return ("zhipu", "api")
+        return None
 
-        # 2. 从 model_id 关键字匹配
+    def _detect_mode_from_model_id(self, model_id: str) -> tuple[str, str] | None:
+        """从 model_id 关键字匹配 (provider, mode)；无匹配返回 None。"""
         if "deepseek" in model_id:
             return ("deepseek", "api")
         if "claude" in model_id or "anthropic" in model_id:
@@ -907,9 +943,7 @@ class ExamOrchestrator:
             return ("openai_azure", "api")
         if "glm" in model_id or "zhipu" in model_id:
             return ("zhipu", "api")
-
-        # 3. 默认本地 (Ollama 等本地推理, 成本≈0)
-        return ("local", "local")
+        return None
 
     def _lookup_cost_per_1k(self, provider: str) -> tuple[float, float]:
         """从 provider_data.py 查询供应商定价。
