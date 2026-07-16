@@ -203,7 +203,7 @@ body: |
 
 
 
-  约 80k tokens，读取了 12 个契约文件 + 7 个实现文件 + test 文件 + session-logs/index.yaml + architecture-model/index.yaml。
+  约 80k tokens，读取了 12 个契约文件 + 7 个实现文件 + test 文件 + session_logs/index.yaml + architecture-model/index.yaml。
 
 
 
@@ -247,4 +247,4 @@ body: |
 
     - architecture-model/index.yaml（当前 8 层 phase_c_implemented）
 
-    - session-logs/index.yaml
+    - session_logs/index.yaml

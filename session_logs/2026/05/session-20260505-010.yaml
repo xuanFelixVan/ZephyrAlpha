@@ -209,7 +209,7 @@ body: |
 
     - cross_layer_contracts.yaml（全量 33 CTR）
 
-    - session-logs/index.yaml
+    - session_logs/index.yaml
 
   - **注意事项**：
 

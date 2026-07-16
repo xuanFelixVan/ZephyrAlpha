@@ -247,7 +247,7 @@ body: |
 
   - **下一个 session 需要读取**:
 
-    - session-logs/index.yaml（16 sessions）
+    - session_logs/index.yaml（16 sessions）
 
     - data/databases/governance.db（knowledge 表——33 ADR entries）
 
