@@ -10,7 +10,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0; EXIT_ERROR=2
-# [TTL] task_bound
+# [TTL] permanent
 """基于内容关键词的 ttl 精细分类审查脚本。
 
 与 backfill_ttl_metadata.py 的区别：

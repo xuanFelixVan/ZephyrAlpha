@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [A_module] module_id=MOD-GOV-cleanup_stash | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """cleanup_stash.py — git stash 堆积治理（OPS-2026062501 治本）
 
 对标：OPS-2026062501 病根3（stash 堆积无清理机制）

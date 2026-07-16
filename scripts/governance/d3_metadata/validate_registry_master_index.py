@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """登记表总索引自校验门禁 (Registry Master Index Self-Check Gate · V-18).
 
 任务 T-V4-001：扫描 registry-master-index.yaml，校验登记表文件存在性、

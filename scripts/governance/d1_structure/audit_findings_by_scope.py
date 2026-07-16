@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """audit_findings_by_scope.py — 按目录范围筛选 Finding 报告
 

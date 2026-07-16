@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-git_commit_cli | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """git_commit.py — GitCommitGateway CLI 封装（OPS-2026062512）
 
 全项目唯一合法 git commit 命令行入口。封装 GitCommitGateway，串行化所有 commit。

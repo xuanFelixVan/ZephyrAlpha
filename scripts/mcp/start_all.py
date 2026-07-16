@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # DEPRECATED: 合并到 launcher.py (2026-05-17)
 # 进程生命周期由 ProcessLifecycleGateway 统一管理。
 # MCP Server 启动请使用: python scripts/mcp/launcher.py

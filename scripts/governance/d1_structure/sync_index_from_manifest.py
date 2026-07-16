@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """sync_index_from_manifest.py — 从 script_manifest.yaml (SSoT) 自动同步 index.md 的脚本数量。
 
 

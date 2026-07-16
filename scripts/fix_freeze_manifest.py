@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Fix freezemanifest.yaml - comprehensive repair of all corrupted desc fields."""
 
 from pathlib import Path

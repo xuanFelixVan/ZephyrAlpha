@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 fix_shared_bypass.py - D-D-07 auto-fix tool (validate_script_quality.py --fix companion)
 Aligns with AGENTS.md section 6.5 (script self-creation repository mandatory convention)

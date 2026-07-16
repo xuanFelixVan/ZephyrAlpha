@@ -11,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无错误）；EXIT_FINDINGS=1（有文件未能回填）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：dry-run + 全量回填 + GATE-15 校验归零
-# [TTL] task_bound
+# [TTL] permanent
 """批量回填/重判 ttl 字段（6 格式统一入口，GATE-15 存量治理 + GATE-VOCAB-CHANGE 纠偏）
 
 对 docs/ + src/ + scripts/ + tests/ 下所有有头部的文件（6 格式），按

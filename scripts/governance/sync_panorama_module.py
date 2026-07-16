@@ -42,7 +42,11 @@ for _p in (str(_REPO_ROOT), str(_SRC_DIR), str(_GOV_DIR)):
         sys.path.insert(0, _p)
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
-from zephyr.governance.persistence.dataflowgraph_schema import get_dataflowgraph_pg_connection  # noqa: E402
+from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
+    acquire_dataflow_write_lock,
+    get_dataflowgraph_pg_connection,
+    release_dataflow_write_lock,
+)
 from zephyr.governance.persistence.decisiongraph_schema import get_decisiongraph_pg_connection  # noqa: E402
 
 try:
@@ -320,19 +324,18 @@ def prune_orphans() -> dict:
     finally:
         decision_conn.close()
 
-    # 3. 清理 dataflow_jobs 孤儿占位记录（ARCH-058 扩展）
-    #    使用 get_depgraph_pg_connection(read_only=False) 获取 writer 角色：
-    #    get_dataflowgraph_pg_connection 不支持 read_only=False，始终用 reader 角色（无 DELETE 权限）。
-    #    手动 SET app.allow_design_maturity_delete = on 绕过 protect_dataflow_design_maturity 触发器
-    #    （等价于 get_dataflowgraph_pg_connection(allow_design_delete=True)，但补齐 writer 角色）。
-    dataflow_conn = get_depgraph_pg_connection(
-        read_only=False, autocommit=False,
+    # 3. 清理 dataflow_jobs 孤儿占位记录（ARCH-058 扩展，治本 2026-07-16）
+    #    走 dataflow 连接工厂（责任边界对齐）+ WRITER 角色（read_only=False，DELETE 权限）
+    #    + allow_design_delete（绕过 protect_dataflow_design_maturity 触发器，ARCH-053）
+    #    + acquire_dataflow_write_lock（pg_advisory_lock 424243，并发互斥）
+    dataflow_conn = get_dataflowgraph_pg_connection(
+        read_only=False, autocommit=False, allow_design_delete=True,
     )
     orphan_dataflow: list[str] = []
     deleted_dataflow = 0
     try:
+        acquire_dataflow_write_lock(dataflow_conn)
         with dataflow_conn.cursor() as cur:
-            cur.execute("SET app.allow_design_maturity_delete = on")
             cur.execute(_SQL_QUERY_DATAFLOW_PLACEHOLDERS)
             rows = cur.fetchall()
             placeholders = [row["job_name"] if isinstance(row, dict) else row[0]
@@ -343,6 +346,7 @@ def prune_orphans() -> dict:
                 deleted_dataflow += 1
         dataflow_conn.commit()
     finally:
+        release_dataflow_write_lock(dataflow_conn)
         dataflow_conn.close()
 
     return {

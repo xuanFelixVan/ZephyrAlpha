@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 validate_commit_message.py — Conventional Commits 校验（commit-msg hook）+ AI 归因 trailer 检测（warn-only）
 

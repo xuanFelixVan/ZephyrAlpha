@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_idempotency.py — 幂等性缺失检查（HC-9）
 
 对标：GOV-AI-009 HC-9（幂等性缺失——D_EXECUTION_CORE 执行层代码缺少幂等 Key）

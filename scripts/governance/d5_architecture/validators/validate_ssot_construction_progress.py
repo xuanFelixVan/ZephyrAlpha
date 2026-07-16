@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 validate_ssot_construction_progress.py — G8 SSoT 一致性门禁强制执行脚本
 =========================================================================

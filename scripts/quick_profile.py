@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 护照不存在→exit 2;未知模式→exit 3
 # [TESTS] tests/test_quick_profile.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。
 

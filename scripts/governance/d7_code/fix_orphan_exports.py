@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """fix_orphan_exports.py — 批量修复孤儿模块导出（RULE-TWO 防线 2 修复器）
 
 扫描 src/zephyr/ 下所有 .py 文件，检测未被父包 __init__.py 导出的孤儿模块，

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 对标：target_layer_vocabulary.yaml v1.0.0——target_layer 字段值体系多真源不一致修复
 职责：校验代码/测试中的 target_layer 赋值是否使用 target_layer_vocabulary.yaml 合法值

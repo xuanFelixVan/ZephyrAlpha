@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # P0-P3 任务优先级——业务常量（非治理词表），无 priority_vocabulary.yaml。
 # 治本说明（2026-06-30）：若未来纳入词表管理，改用 load_vocabulary_values("priority_vocabulary.yaml")。
 # 当前 GATE-VOCAB 检测1 漏检（PRIORITIES 不在后缀正则），检测4 值匹配漏检（无 priority 词表）。

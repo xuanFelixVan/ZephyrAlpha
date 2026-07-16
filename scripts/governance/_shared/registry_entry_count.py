@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """登记表主条目计数——与 generate_registry_master_index 单一真源对齐。
 
 validate_registry_master_index 等门禁必须使用本模块，禁止用「YAML 中最长 list」启发式。

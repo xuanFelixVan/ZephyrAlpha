@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 VMS Phase 回滚方案 — MOD-INF-011 · TASK-INF-0217
 ===================================================

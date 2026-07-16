@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """蓝图物理位置与归属链完整性校验器 (Blueprint Placement & BelongsTo Validator)
 
 对标: P0-2 (cross_layer 物理错位) / P0-3 (belongs_to 全部缺失) / P0-4 (金字塔缺腰)

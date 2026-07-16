@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 A2A 多 Agent 聊天演示 - Alpha 和 Beta 讨论项目评估
 """

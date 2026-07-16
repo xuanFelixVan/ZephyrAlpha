@@ -6,7 +6,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
 
 用于 pre-commit hook 合并：将多个 GATE 脚本合并为单 hook 时使用。

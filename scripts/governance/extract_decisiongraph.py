@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 连接失败->exit 1; 参数无效->exit 3
 # [TESTS] tests/test_extract_decisiongraph.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 extract_decisiongraph - decisiongraph on-demand extraction tool
 

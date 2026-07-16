@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] exit 0=合并提交放行; exit 1=裸commit阻断; exit 2=脚本错误
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-GOV-validate_commit_gateway | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """validate_commit_gateway.py — GATE-COMMIT-GW 门禁（OPS-2026062513）
 
 检测裸 git commit，强制走 GitCommitGateway（根治幽灵提交）。

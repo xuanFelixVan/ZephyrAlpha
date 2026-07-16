@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] exit 0=PASS; exit 1=VIOLATION (--ci mode)
 # [TESTS] none
-# [TTL] task_bound
+# [TTL] permanent
 #
 # GATE-VMS-SSOT: VMS 单一真源门禁（三重检测：governance/vector_memory 漂移副本 + snapshot 方法重建 + faiss dead code 重建）
 #

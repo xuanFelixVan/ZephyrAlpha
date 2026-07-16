@@ -4334,7 +4334,7 @@ creation_tokens:
     token: "auto-arch031-gov-split-20260702"
     created_by: "session-arch031-p0-build"
     capability: "governance_root_split"
-  - file: "docs/02_enterprise_architecture/migration-registry.yaml"
+  - file: "docs/02_enterprise_architecture/migration_registry.yaml"
     token: "auto-arch031-mig-registry-20260702"
     created_by: "session-arch031-p0-build"
     capability: "governance_root_split"

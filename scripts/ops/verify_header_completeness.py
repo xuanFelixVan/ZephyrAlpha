@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=全部完整或无文件; exit 1=有缺失
 # [TESTS] 手动验证：全量扫描 + 格式路由
-# [TTL] task_bound
+# [TTL] permanent
 """文件头部完整性校验（6 格式统一入口）
 
 对标 trae_047 GOV-ENG-002：按扩展名路由到 SSoT 解析器，校验每种格式的必填字段。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 对标 06-security_architecture.md §6.3 L3-Audit：
   周扫描全库 secret 泄漏，Finding 写 docs/_working/audit/findings/。

@@ -23,6 +23,7 @@ last_updated: '2026-07-15'
 # 5. 编号预留：#ARCH-001/003 永久保留为预留段（未立项任何议题，登记为 deprecated 条目以占位）；#ARCH-002/004/005/006/007 已回溯补录（2026-07-05，源自 dependency_path_panorama.md 裁定#203 早期议题）
 # 6. 登记强制：任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
 # 7. 域前缀编号：跨子系统的专题裁定使用 #ARCH-{DOMAIN}-NNN 格式（如 #ARCH-CH-007 ClickHouse、#ARCH-MM-001 Maturity、#ARCH-REN-001 域重命名、#ARCH-CAP-001 容量、#ARCH-BACKFILL-001 补下载）。DOMAIN 为大写字母子系统工程缩写，各 DOMAIN 内 NNN 独立连续分配。纯数字 #ARCH-NNN 保留给全局架构议题
+# 8. 物理排列规则：entries 列表按**登记时间顺序**追加（新条目追加在末尾），不按编号顺序排列。编号连续性由铁律#1保证（按立项时间连续分配），物理排列顺序不影响 YAML list 语义。禁止为"排序"重排历史条目（高风险且无语义价值）。检索时按 issue_id 字段查找，不依赖物理位置。
 
 unique_key:
 - issue_id
@@ -535,7 +536,7 @@ entries:
   related_rules:
   - TRAE-060
   created: '2026-06-30'
-- issue_id: '#ARCH-035'
+- issue_id: '#ARCH-061'
   title: depgraph 手动 add-file-node 登记生成器扫描范围内的文件——门禁缺失导致 AI 误操作
   severity: P1中
   adjudication: |
@@ -559,7 +560,7 @@ entries:
     (1) apply_depgraph.py 添加 _check_scan_scope() 函数 + add_file_node() 门禁检查
     (2) 新增 --force-add-file-node 逃生通道参数
     (3) capability_canonical_file_registry.yaml 登记 depgraph_scope_gate capability
-    (4) architecture_issue_registry.yaml 登记 ARCH-035
+    (4) architecture_issue_registry.yaml 登记 ARCH-061
     P1 无（门禁已治本）
     P2 可选：在 generate_project_depgraph.py --force 失败时自动提示检查 design edge
   status: resolved
@@ -1644,11 +1645,21 @@ entries:
   fix_phase: |
     Phase 2.1 数据修复（已完成）：apply_depgraph.py --delete-nodes 删除 depgraph 节点
       1799263(MOD-013) / 1799264(MOD-015)；frontmatter 统一 MOD-013/015 → MOD-INF-016。
-    Phase 2.2 系统修复（已完成）：prune_orphans 扩展覆盖 dataflow_jobs；
+    Phase 2.2 系统修复（已完成，过渡方案）：prune_orphans 扩展覆盖 dataflow_jobs；
       get_depgraph_pg_connection(read_only=False) 替换 get_dataflowgraph_pg_connection；
       SET app.allow_design_maturity_delete = on 绕过触发器。
-    验证：dataflow_jobs 删除 3 条（MOD-013/MOD-015/MOD-GOV-ALIGNMENT-LOOP），
+      验证：dataflow_jobs 删除 3 条（MOD-013/MOD-015/MOD-GOV-ALIGNMENT-LOOP），
       align_panoramas 问题总数=0。
+    Phase 2.3 责任边界治本（已完成，2026-07-16 AI-20 审计修复）：
+      过渡方案绕道 depgraph 连接工厂写 dataflow 表，违反"dataflow 表操作走 dataflow
+      连接工厂"的责任边界原则。治本：扩展 get_dataflowgraph_pg_connection 原生支持
+      read_only=False（对齐 depgraph_schema.get_depgraph_pg_connection 的角色分级模式，
+      READER/WRITER/superuser 三级），prune_orphans 改回走 dataflow 连接工厂：
+        get_dataflowgraph_pg_connection(read_only=False, autocommit=False,
+                                        allow_design_delete=True)
+      并新增 acquire_dataflow_write_lock/release_dataflow_write_lock（pg_advisory_lock
+      424243，session 级互斥）防止并发写冲突。测试 mock 同步适配三分发 + 写锁 noop。
+      capability 反查：panorama_module_sync_engine（含 prune_orphans alias）。
   related_adjudication: '#ARCH-056'
   created: '2026-07-16'
   last_updated: '2026-07-16'
@@ -1745,7 +1756,7 @@ entries:
   related_rules:
   - maturity_vocabulary.yaml v1.1.0
   - trae_047_engineering_file_header.yaml v1.2.1
-  - architecture_issue_registry.yaml#ARCH-035（生成器是运营态唯一真源）
+  - architecture_issue_registry.yaml#ARCH-061（生成器是运营态唯一真源）
   created: '2026-07-06'
   last_updated: '2026-07-06'
 

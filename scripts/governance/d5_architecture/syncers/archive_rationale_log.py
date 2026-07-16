@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """对标 HDEBT-01：rationale-log.md 体积 >150KB / 行数 >300 时，
 将已完成 Stage 移至 archive/ 子目录，主文件仅保留最近 3 个 Stage。
 

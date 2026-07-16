@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=0残留; exit 1=有残留; exit 2=参数错误/DB错误
 # [TESTS] tests/infrastructure/test_audit_rename_completeness.py
-# [TTL] task_bound
+# [TTL] permanent
 """audit_rename_completeness.py — 改名完整性审计（裁定#207 R1）。
 
 扫描 depgraph 所有表的所有 TEXT 列，检测旧标识符残留。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 check_fe_acl_boundary.py — INV-006 前端 ACL（仓库内有前端树则启用）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 解析失败返回 None（不抛异常）；文件不存在返回 None
 # [TESTS] tests/test_frontmatter_ssot.py
-# [TTL] task_bound
+# [TTL] permanent
 """文件头部格式解析 SSoT（Single Source of Truth）
 
 6 种文件头部格式的统一解析入口（对标 trae_047 GOV-ENG-002）：

@@ -14,7 +14,7 @@
 # [ERROR_CONTRACT] exit 0=无冲突或仅警告; 永不 exit 1（不阻断 checkout）
 # [TESTS] tests/red_blue/test_concurrency_guard_red_blue.py
 # [A_script] module_id=MOD-GOV_post_checkout_guard | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 Post-checkout Guard — 事后检测 checkout 是否覆盖了其他 session 的文件锁。
 

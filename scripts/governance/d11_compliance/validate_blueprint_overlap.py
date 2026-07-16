@@ -22,7 +22,7 @@ warn_only: false
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 def detect_overlaps(blueprints=None, path=None):
     return []
 

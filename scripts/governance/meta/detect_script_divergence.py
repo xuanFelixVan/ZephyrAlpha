@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 detect_script_divergence.py — 脚本实现与蓝图规范分歧检测（蓝图 §27.3 B81）
 

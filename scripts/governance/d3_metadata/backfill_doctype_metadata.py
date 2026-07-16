@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无错误）；EXIT_FINDINGS=1（有文件异常）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：dry-run + 全量回填 + 抽样验证
-# [TTL] task_bound
+# [TTL] permanent
 """批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1）
 
 对有 frontmatter 但缺 doc_type 字段的 .md 文件，按无歧义路径规则注入 doc_type。

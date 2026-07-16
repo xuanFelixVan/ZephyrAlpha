@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 detect_absolute_path_hardcoding.py — 绝对路径硬编码检测（蓝图 §34.1 操作陷阱）
 

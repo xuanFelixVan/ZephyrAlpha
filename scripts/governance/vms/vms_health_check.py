@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 VMS Health Check 脚本 — MOD-INF-011 · Phase 3 运维自动化
 ===========================================================

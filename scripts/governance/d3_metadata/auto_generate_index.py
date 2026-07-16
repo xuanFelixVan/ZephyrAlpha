@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=通过;exit 1=发现漂移
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """GATE-INDEX: Validate and auto-fix index.md factual accuracy.
 Eliminates manual index maintenance—the root cause of INDEX-REALITY DRIFT.

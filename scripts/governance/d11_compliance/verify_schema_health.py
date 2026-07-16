@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 漂移→exit 1; 健康→exit 0; 脚本自身错误→exit 2
 # [TESTS] tests/test_verify_schema_health.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁（#ARCH-016 治本）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """从蓝图§0.1聚合生成 path_ownership_map.yaml 路径归属声明。
 
 对标: CODEOWNERS + Bazel visibility。

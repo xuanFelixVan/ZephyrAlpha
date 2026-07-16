@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """测试 DeepSeek API 连通性 — 验证 deepseek-v4-flash 和 deepseek-v4-pro 可用"""
 import os
 import sys

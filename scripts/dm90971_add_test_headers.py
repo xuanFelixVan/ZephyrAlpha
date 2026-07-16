@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """DM-90971: Batch add module_id scope prefix + governance anchor headers to test files.
 
 Usage:

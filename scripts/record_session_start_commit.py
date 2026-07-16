@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] git 不可用 → exit 1; session_id 为空 → exit 1
 # [TESTS] tests/test_post_doc_review.py
 # [A_module] module_id=MOD-SCRIPT-record_session_start_commit | layer=script | stability=stable | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """
 记录 session 起点 commit hash——R1 防御数据流起点。
 

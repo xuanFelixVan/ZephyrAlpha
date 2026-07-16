@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_log_secret_leak.py — R2 日志不写 secret 适应度函数
 
 对标 architecture_principles.md §1 R2（日志不写 secret）。

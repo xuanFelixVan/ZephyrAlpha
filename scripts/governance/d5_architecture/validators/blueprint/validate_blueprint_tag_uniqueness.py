@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-TAG-UNIQUE - Blueprint tag uniqueness validation gate."""
 
 from __future__ import annotations

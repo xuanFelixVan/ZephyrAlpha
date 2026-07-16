@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_false_negatives.py — 假阴性检测引擎 (Fitness Functions)
 
 对标 B17（False Negative 检测）+ 《Building Evolutionary Architectures》Fitness Functions

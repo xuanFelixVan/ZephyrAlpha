@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] exit 0=全部PASS; exit 1=有FAIL; exit 2=脚本错误
 # [TESTS] tests/test_git_commit_concurrent.py
 # [A_module] module_id=MOD-GOV-concurrent_commit_test | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """concurrent_commit_test.py — 幽灵提交红蓝对抗脚本（OPS-2026062514）
 
 10 场景验证 GitCommitGateway 根治幽灵提交（本 session 修改被并发 session commit 一并提交）。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """sync_audit_protocol_numbers.py — 从 SSoT 注册表自动同步审计协议中的硬编码数字。
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """scaffold.py — ZephyrAlpha 唯一创建入口（RULE-TWO 强制执行器）
 
 所有新文件 MUST 通过本脚本创建，禁止直接用 IDE Write/SearchReplace 写入新文件。

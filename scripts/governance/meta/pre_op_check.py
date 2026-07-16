@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """AI操作前准入控制器 — 写/删文件前的机械门禁检查.
 
 本脚本是 RULE-ZERO~EIGHT 的代码级强制执行层。

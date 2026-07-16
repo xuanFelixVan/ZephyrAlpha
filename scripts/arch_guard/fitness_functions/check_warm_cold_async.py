@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_warm_cold_async.py — INV-019 Warm→Cold 异步通信检查
 
 对标 runtime_planes.yaml WARM_COLD_ASYNC_ONLY + invariants.yaml INV-019。

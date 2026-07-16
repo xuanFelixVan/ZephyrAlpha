@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """检测文档/数据文件中的断链与幽灵引用。
 
 治本背景（2026-06-29）：

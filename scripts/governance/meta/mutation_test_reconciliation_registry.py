@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 无异常抛出——变异应用失败记为 SETUP_ERROR 并跳过；阈值不达标返回 1
 # [TESTS] 自身即测试（oracle: scripts/governance/meta/verify_reconciliation_registry.py 6 项不变量）
 # [A_module] module_id=MOD-GOV-mutation_test_rr | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """mutation_test_reconciliation_registry.py — ReconciliationRegistry SSoT 变异测试（P3-T2）
 
 目的：机械注入源码变异到 ``reconciliation_registry.py`` 的副本，复用

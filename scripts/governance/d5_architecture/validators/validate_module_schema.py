@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_module_schema.py — 模块 Schema 校验（INJ-003/004/005/006）
 
 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-003（契约已定义）、INJ-004（生命周期状态合法）、

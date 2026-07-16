@@ -204,9 +204,10 @@ class TestPruneOrphans:
                                      depgraph_rows, decision_rows, dataflow_rows):
         """统一 mock prune_orphans 的三个 DB 连接。
 
-        get_depgraph_pg_connection 被调用两次：
-        1. read_only=True（默认）→ depgraph_conn（查询 blueprint_ids）
-        2. read_only=False → dataflow_conn（清理 dataflow_jobs，ARCH-058）
+        get_depgraph_pg_connection → depgraph_conn（查询 blueprint_ids）
+        get_decisiongraph_pg_connection → decision_conn（清理 decision_layers）
+        get_dataflowgraph_pg_connection → dataflow_conn（清理 dataflow_jobs，ARCH-058）
+        acquire/release_dataflow_write_lock → noop（pg_advisory_lock mock）
         """
         depgraph_conn = MagicMock()
         dep_cursor = MagicMock()
@@ -223,13 +224,11 @@ class TestPruneOrphans:
         df_cursor.fetchall.return_value = dataflow_rows
         dataflow_conn.cursor.return_value.__enter__.return_value = df_cursor
 
-        def _depgraph_side_effect(*args, **kwargs):
-            if kwargs.get('read_only', True):
-                return depgraph_conn
-            return dataflow_conn
-
-        monkeypatch.setattr(spm, "get_depgraph_pg_connection", _depgraph_side_effect)
+        monkeypatch.setattr(spm, "get_depgraph_pg_connection", lambda **kw: depgraph_conn)
         monkeypatch.setattr(spm, "get_decisiongraph_pg_connection", lambda **kw: decision_conn)
+        monkeypatch.setattr(spm, "get_dataflowgraph_pg_connection", lambda **kw: dataflow_conn)
+        monkeypatch.setattr(spm, "acquire_dataflow_write_lock", lambda conn: None)
+        monkeypatch.setattr(spm, "release_dataflow_write_lock", lambda conn: None)
         return dep_cursor, dec_cursor, df_cursor, decision_conn, dataflow_conn
 
     def test_prune_orphans_removes_orphan_decision_and_dataflow(self, spm, monkeypatch):

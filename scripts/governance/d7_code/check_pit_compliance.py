@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_pit_compliance.py — PIT 合规检查（HC-10）
 
 对标：GOV-AI-009 HC-10（PIT 铁律绕过——回测代码访问了未来数据）

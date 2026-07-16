@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_registry_consistency — 跨登记表一致性校验。
 
 读取 registry_consistency_contract.yaml，按 cross_registry_rules 比对多登记表共享字段。

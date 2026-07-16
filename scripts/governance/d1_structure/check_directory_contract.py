@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0; EXIT_FINDINGS=1（error 级违规）; EXIT_ERROR=2（脚本异常）
 # [TESTS] none
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-DIRECTORY-CONTRACT: Directory Contract validation gate.
 
 Consumes directory_contract.yaml（目录维度约束的唯一真源，合并原先分散在

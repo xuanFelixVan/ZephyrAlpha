@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/__init__.py | §
-# [TTL] task_bound
+# [TTL] permanent
 """D3 元数据合规 — Markdown/YAML 文档元数据（frontmatter）合规性审计。
 
 检查项：

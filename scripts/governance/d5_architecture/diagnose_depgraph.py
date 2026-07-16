@@ -14,7 +14,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_diagnose_depgraph.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 
 __manifest__ = """

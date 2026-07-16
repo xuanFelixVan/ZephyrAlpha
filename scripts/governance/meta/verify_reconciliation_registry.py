@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] PASS=0；--warn-only 始终 0；非 warn-only 且有 FAIL=1；SSoT 加载失败=1（warn-only 时 0）
 # [TESTS] P3-T1 dry-run + 实际 run（8 case 全 detected）
 # [A_module] module_id=MOD-GOV-verify_reconciliation_registry | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """verify_reconciliation_registry.py — ReconciliationRegistry 轻量结构 audit（P3-T1）
 
 被 ``validate_mutation_testing.py`` 的

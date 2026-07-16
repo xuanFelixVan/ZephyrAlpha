@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 [BLUEPRINT] | scripts/governance/repair/concurrent_write_test.py | §1
 [MODULE] 无（独立测试脚本）

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """rewrite_imports.py — 批量重写 Python import 路径（AST-based）
 
 当文件从 old_path 移到 new_path 时，扫描所有 .py 文件的 import 语句，

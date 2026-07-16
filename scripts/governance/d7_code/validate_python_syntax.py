@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_python_syntax.py — Python 语法完整性校验
 
 对标：AUDIT-09 病根分析（连字符损坏 / 语法错误）

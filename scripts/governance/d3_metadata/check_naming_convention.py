@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] exit 0=clean; exit 1=violations found; exit 2=usage error
 # [TESTS] tests/test_gate11_naming_convention.py
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-11 命名规范门禁 — 全类型命名检测。
 
 权威依据：docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml v1.5.0 (GOV-DOC-003 命名规则真源;N-16 见 §gov_doc_003_filename_uniqueness,豁免清单真源 §n16_config)

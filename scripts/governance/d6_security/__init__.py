@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d6_security/__init__.py | §
-# [TTL] task_bound
+# [TTL] permanent
 """D6 安全漏洞 — 代码/配置/依赖安全风险审计。
 
 检查项：

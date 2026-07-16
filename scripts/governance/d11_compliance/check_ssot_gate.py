@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS, exit 1=BLOCK, exit 2=ERROR
 # [TESTS] tests/test_ssot_gate.py
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。
 
 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：

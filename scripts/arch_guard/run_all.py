@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Architecture Guard 编排器
 
 读取 manifest.yaml，执行所有 status=active 的 fitness function。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """Generate complete script_manifest.yaml from scripts/ tree scan."""
 # 双 manifest 体系说明（P1-T4 校正，2026-06-26）
 # 本生成器 → scripts/script_manifest.yaml（全树 563 脚本，简单 desc 提取）
