@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-16T16:08:45Z
+# 自动生成于 2026-07-16T16:14:18Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-16T16:08:45Z'
+generated_at: '2026-07-16T16:14:18Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 341
-with_manifest: 309
+total_scripts: 342
+with_manifest: 310
 missing_manifest: 32
 categories:
   governance:_sync: 4
@@ -24,6 +24,7 @@ categories:
   governance:d7_code: 35
   governance:d8_doc_sync: 9
   governance:d9_knowledge: 2
+  governance:data_quality: 1
   governance:generators: 9
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 1
@@ -3193,6 +3194,26 @@ scripts:
   tags:
   - AI-Generated
   - Periodic
+- name: data_quality/check_tick_duplication.py
+  owner: governance:data_quality
+  dimensions:
+  - D1
+  - D5
+  priority: P1
+  timeout_seconds: 120
+  args:
+  - --month
+  - --market-type
+  - --limit
+  - --json
+  warn_only: false
+  description: 'tick_data 表真重复检查工具——按全字段 GROUP BY HAVING count() > 1 查找真重复行。 RULE-DATA-OPS（TRAE-063）配套工具，防止
+    AI 误用 count()-uniqExact(排序键) 算"重复"。
+
+    '
+  tags:
+  - Critical
+  - Quick
 - name: extract_decisiongraph.py
   owner: governance
   dimensions:
