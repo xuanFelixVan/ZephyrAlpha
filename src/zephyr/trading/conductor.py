@@ -47,6 +47,26 @@ logger = logging.getLogger(__name__)
 __all__ = ["Conductor"]
 
 
+def _coerce_field_to_list(value, wrap_string_on_error):
+    if not isinstance(value, str):
+        return value
+    try:
+        parsed = json.loads(value)
+    except (json.JSONDecodeError, TypeError):
+        return [value] if (wrap_string_on_error and value) else []
+    if not isinstance(parsed, list):
+        return []
+    return parsed
+
+
+def _collect_downstream_paths(do):
+    paths: set[str] = set()
+    for item in do:
+        if isinstance(item, dict) and "path" in item:
+            paths.add(str(item["path"]))
+    return paths
+
+
 class Conductor:
     """全自动指挥官 —— 认领 + 冲突检测 + 并行分组 + 状态管理。"""
 
@@ -156,40 +176,14 @@ class Conductor:
         """提取任务涉及的所有文件路径（files_in_scope + allowed_touch）。"""
         files: set[str] = set()
 
-        fis = getattr(task, "files_in_scope", None) or []
-        if isinstance(fis, str):
-            try:
-                fis = json.loads(fis)
-            except (json.JSONDecodeError, TypeError):
-                fis = [fis] if fis else []
-            # 5.48.2 修复：json.loads 后添加类型校验
-            if not isinstance(fis, list):
-                fis = []
+        fis = _coerce_field_to_list(getattr(task, "files_in_scope", None) or [], True)
         files.update(str(f) for f in fis)
 
-        at = getattr(task, "allowed_touch", None) or []
-        if isinstance(at, str):
-            try:
-                at = json.loads(at)
-            except (json.JSONDecodeError, TypeError):
-                at = [at] if at else []
-            # 5.48.2 修复：json.loads 后添加类型校验
-            if not isinstance(at, list):
-                at = []
+        at = _coerce_field_to_list(getattr(task, "allowed_touch", None) or [], True)
         files.update(str(f) for f in at)
 
-        do = getattr(task, "downstream_outputs", None) or []
-        if isinstance(do, str):
-            try:
-                do = json.loads(do)
-            except (json.JSONDecodeError, TypeError):
-                do = []
-            # 5.48.2 修复：json.loads 后添加类型校验
-            if not isinstance(do, list):
-                do = []
-        for item in do:
-            if isinstance(item, dict) and "path" in item:
-                files.add(str(item["path"]))
+        do = _coerce_field_to_list(getattr(task, "downstream_outputs", None) or [], False)
+        files.update(_collect_downstream_paths(do))
 
         return files
 
