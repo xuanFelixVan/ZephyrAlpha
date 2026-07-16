@@ -220,11 +220,7 @@ def _cmd_list(args: argparse.Namespace) -> int:
     return 0
 
 
-def _cmd_status(args: argparse.Namespace) -> int:
-    ok = True
-
-    issues: list[str] = []
-
+def _status_check_registry(ok: bool) -> bool:
     try:
         from zephyr.gov_drift.drift_engine import load_detector_registry
 
@@ -234,19 +230,15 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
         print(f"  registry        OK  ({active}/{len(detectors)} active, {len(detectors)} total)")
 
+        return ok
+
     except Exception as exc:
         print(f"  registry        FAIL  {exc}")
 
-        ok = False
+        return False
 
-    try:
-        print("  drift_engine    OK  (scan + build_report + budget)")
 
-    except Exception as exc:
-        print(f"  drift_engine    FAIL  {exc}")
-
-        ok = False
-
+def _status_check_self_test(ok: bool) -> bool:
     try:
         from zephyr.gov_drift.self_test_verifier import SelfTestVerifier
 
@@ -259,13 +251,17 @@ def _cmd_status(args: argparse.Namespace) -> int:
         print(f"  self_test       {status_text}  ({r.summary})")
 
         if r.summary != "8/8 checks passed":
-            ok = False
+            return False
+
+        return ok
 
     except Exception as exc:
         print(f"  self_test       FAIL  {exc}")
 
-        ok = False
+        return False
 
+
+def _status_check_self_check(ok: bool) -> bool:
     try:
         from zephyr.gov_drift.self_check import bootstrap_self_check
 
@@ -274,15 +270,36 @@ def _cmd_status(args: argparse.Namespace) -> int:
         if bc:
             print("  self_check      OK  (integrity + bootstrap)")
 
-        else:
-            print(f"  self_check      DEGRADED  (bootstrap={bc})")
+            return ok
 
-            ok = False
+        print(f"  self_check      DEGRADED  (bootstrap={bc})")
+
+        return False
 
     except Exception as exc:
         print(f"  self_check      FAIL  {exc}")
 
+        return False
+
+
+def _cmd_status(args: argparse.Namespace) -> int:
+    ok = True
+
+    issues: list[str] = []
+
+    ok = _status_check_registry(ok)
+
+    try:
+        print("  drift_engine    OK  (scan + build_report + budget)")
+
+    except Exception as exc:
+        print(f"  drift_engine    FAIL  {exc}")
+
         ok = False
+
+    ok = _status_check_self_test(ok)
+
+    ok = _status_check_self_check(ok)
 
     try:
         print("  cold_start      OK  (session_entry_activate + detect_missing_env)")
