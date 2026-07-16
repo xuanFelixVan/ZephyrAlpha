@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 generate_gate_registry.py — 门禁登记表自动生成器
 

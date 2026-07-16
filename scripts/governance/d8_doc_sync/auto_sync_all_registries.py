@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """全自动注册表同步器
 =====================================
 扫描变更→更新所有相关注册表→零孤儿

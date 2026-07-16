@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 detect_config_deviation.py — 配置文件结构完整性检测（蓝图 §28 B65 + B87）
 

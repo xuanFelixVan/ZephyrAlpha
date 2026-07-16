@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] launch_all 返回 dict[server_id, bool]；dry_run 返回 int (0=成功)；check_server_health 返回 dict[server_id, bool]；restart_server 返回 bool
 # [TESTS] tests/test_mcp_launcher.py
 # [A_module] module_id=MOD-INF-013 | layer=script | stability=stable | safety=M | ai_autonomy=human_gated
-# [TTL] task_bound
+# [TTL] permanent
 
 """MCP DAG 编排启动器（MOD-INF-013 §14 拓扑排序 + ProcessLifecycleGateway 管理）。
 

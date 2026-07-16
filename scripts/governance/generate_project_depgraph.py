@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_generate_project_depgraph.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 
 from __future__ import annotations

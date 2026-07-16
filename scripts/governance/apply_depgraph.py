@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 [BLUEPRINT] | scripts/governance/apply_depgraph.py | §1
 [MODULE] scripts.governance.apply_depgraph

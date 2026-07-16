@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] returns (bool, str); 不抛异常
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 
 r"""
 module_id / domain_id / submodule_id 格式校验真源（裁定#208 双轨制 + R2 治本修订）

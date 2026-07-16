@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CacheCorruptionError
 # [TESTS] tests/test_gate_cache.py
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

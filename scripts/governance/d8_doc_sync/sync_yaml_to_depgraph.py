@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 # 真源说明：本脚本同步的是【规则数据】（trae_*.yaml/契约/门禁/词汇表）YAML→DB。
 # 【架构数据】（nodes/edges）不通过本脚本同步，其真源在 DB，用 apply_depgraph.py 写入。
 # 详见 AGENTS.md §真源分类（11.0.2）。

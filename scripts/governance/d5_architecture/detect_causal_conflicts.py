@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] CausalChainBrokenError
 # [TESTS] tests/test_detect_causal_conflicts.py
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

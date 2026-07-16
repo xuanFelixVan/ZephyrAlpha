@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 compute_sla_metrics.py — SLA/SLO 指标计算引擎（蓝图 §8.4）
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAML 缺失→exit 1; 解析失败→exit 2; DB 写入失败→exit 4
 # [TESTS] tests/test_generate_decision_graph.py
-# [TTL] task_bound
+# [TTL] permanent
 # 真源说明：本脚本同步 decision_graph_model.yaml 的【schema 定义】（tracks/layers/node_types/edge_types/invariants）到 DB。
 # 【架构数据】（decision_nodes/decision_edges）的真源在 DB，不通过本脚本同步，用 apply_decisiongraph.py 写入。
 # 禁止在本脚本新增 nodes/edges 同步逻辑。

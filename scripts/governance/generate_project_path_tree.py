@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PanoramaLoadError
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """从磁盘扫描生成路径全景图的tree段（运营态目录结构）。
 
 核心变更（DM-283/DM-310）:

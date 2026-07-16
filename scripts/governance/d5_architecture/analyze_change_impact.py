@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DependencyGraphError
 # [TESTS] tests/test_analyze_change_impact.py
-# [TTL] task_bound
+# [TTL] permanent
 
 from __future__ import annotations
 

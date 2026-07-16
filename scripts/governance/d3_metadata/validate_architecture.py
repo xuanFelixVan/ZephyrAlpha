@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 validate_architecture.py - Validate rule files against architecture_contract.yaml
 Reads architecture_contract.yaml and validates all .md/.yaml files under

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 违反不变量→exit 1; 状态迁移非法→exit 1; DB 写入失败→exit 4
 # [TESTS] tests/test_apply_decisiongraph.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 [BLUEPRINT] | scripts/governance/apply_decisiongraph.py | §decisiongraph
 [MODULE] scripts.governance.apply_decisiongraph

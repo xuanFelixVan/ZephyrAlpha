@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 检测失败→exit 1+violation清单; 成功→exit 0; 环境异常→exit 2
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_rule_four_way_alignment.py —— 规则四方对齐门禁（ARCH-020 补建）
 
 对标：ARCH-020 — check_rule_four_way_alignment.py 文件不存在，四方对齐门禁缺失
