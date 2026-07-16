@@ -4269,3 +4269,184 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - `scripts/governance/apply_depgraph.py` L93-94（新增 import）、L136-137（SQL 常量）、L568-663（函数参数化）、L3750-3757（CLI 参数）、L4062（处理逻辑）
 
 **关联规则**：trae_060 §2（唯一真源）、trae_056 §phase_2_design_state（设计态先行）、trae_054 RULE-SIXTEEN（程序化访问）
+
+---
+
+## 六、治本施工方案（4期）
+
+> **本章节性质**：4期治本施工纲领，基于裁定1-5制定。所有Phase的执行MUST遵循本章节顺序与依赖关系。
+> **制定依据**：裁定1（先执行闭环再规则扩展）+ 裁定3（强制消费链做AST门禁）+ 裁定4（必须建仪表盘）+ 裁定5（DEFERRED-PERMANENT分类）。
+> **核心矛盾治本**：项目规则:执行 ≈ 10:1（裁定1 [L544-554](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L544-L554)）。100%AI开发场景下"建议性规则"是反模式——AI没有"自觉"，只有"被阻断"。4期施工把建议性规则转化为强制消费链。
+
+### 6.1 总体顺序与依赖关系
+
+```
+Phase 0（仪表盘，数据基座）         ← 治根因1（静态快照→动态实时）
+   ↓
+Phase 1（AST门禁，防复发层）—— 贯穿全程   ← 治根因5（执行断层）
+   ↓
+Phase 2（批量修复，治标存量）         ← 依赖Phase 0生成清单 + Phase 1防复发
+   ↓
+Phase 3（治理层收敛，治本存量）       ← 依赖Phase 2完成 + 人类架构决策
+```
+
+**依赖铁律**：
+- Phase 2完整推进依赖Phase 0仪表盘自动生成违规清单——约40个未跟踪维度无法人工展开（尤其5.135异常粒度697项 / 5.168异常信息泄露142项）
+- Phase 3 DEFERRED-PERMANENT项解锁条件=人类架构师发起专项工程，AI禁止自行attempt（裁定5 [L683](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L683)）
+- Phase 1不阻塞其他Phase，作为防复发层贯穿全程；每完成一类存量修复MUST配套落地对应AST门禁，形成"修复+防复发"闭环
+
+### 6.2 Phase 0：架构健康度仪表盘（最高优先级基础设施，尚未实现）
+
+**状态**：❌ 尚未实现（[L10](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L10)明示"架构健康度仪表盘为第0期交付物，尚未实现"）
+
+**目标**：把trae_060 §5的"静态快照"变成"动态实时"——每次commit自动生成全维度违规清单。
+
+**治本根因**：
+- 直接治根因1（trae_060违规清单是静态快照，未随项目演进动态更新）
+- 间接治根因3（CapabilityLookup从"warn-only"变成"可见违规数"）
+- 治根因5（规则丰富但执行断层——仪表盘把离散报告变成趋势曲线，可量化治理进度）
+
+**交付物**：commit hook触发的自动调研脚本，输出以下指标（裁定4 [L609-619](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L609-L619)）：
+
+| # | 指标 | 数据来源 | 目标值 |
+|---|---|---|---|
+| 1 | 词表硬编码违规数 | GATE-VOCAB实时扫描 | 0 |
+| 2 | manual-only永久脚本数 | [STARTUP] manual且无boot_hooks注册 | 0 |
+| 3 | 重复簇函数数 | atomic_write/load_yaml/parse_frontmatter等磁盘计数 | 1（每簇） |
+| 4 | GATE未登记capability数 | 52 GATE - 已登记数 | 0 |
+| 5 | 文件复制对数 | 同内容不同路径AST共享行≥60% | 0 |
+| 6 | reconciler健康度 | 17 reconciler最近执行状态+报告落盘数 | 全green |
+| 7 | 死代码数 | git tracked但0 import引用 | 0 |
+| 8 | 路径漂移数 | 蓝图声明路径vs实际代码路径 | 0 |
+| 9 | 三方对齐违规数 | depgraph ↔ 蓝图 ↔ 代码头部 | 0 |
+| 10 | 时间触发残留数 | CircadianScheduler/cron/Timer模式扫描 | 0 |
+
+**全自动约束**（硬约束：永久系统必须全自动）：commit hook自动触发、自动运行、自动落盘报告，禁止手工干预。无事件订阅的触发会被PERM-TRIGGER gate阻断；空handler函数体会被EMPTY-HANDLER gate阻断。
+
+**解锁效果**：仪表盘落地后，约40个未跟踪维度（5.2-5.30 / 5.49 / 5.51 / 5.55 / 5.82-5.137等）的违规清单可自动生成，Phase 2才能完整推进。
+
+### 6.3 Phase 1：AST门禁（防复发层，已大量落地）
+
+**状态**：✅ 大量已落地，作为防复发层持续运行
+
+**目标**：把建议性规则转化为强制消费链——AST门禁在commit时阻断，不依赖AI记忆。这是100%AI开发场景下唯一可靠的执行层（裁定3 [L582-598](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L582-L598)）。
+
+**优先级（裁定3，按ROI排序）**：
+1. **P0**：manual-only永久脚本检测器（影响96处，违规后果=功能遗忘漂移）
+2. **P0**：词表硬编码语义级检测器（影响41处+60处盲区，已有GATE-VOCAB基础可扩展）
+3. **P1**：新GATE创建MUST登记capability的hook（影响40个无反查GATE）
+4. **P1**：重复簇新建阻断门禁（atomic_write/load_yaml/parse_frontmatter等同basename函数新建即阻断）
+5. **P2**：文件复制对检测器（同内容文件并存阻断）
+6. **P2**：空handler检测器（事件订阅handler仅logger.info/pass即阻断）
+
+**已落地门禁清单**（截至本文档，持续补充）：
+- GATE-VOCAB（词表硬编码，Phase 1基础）
+- GATE-ANY-ABUSE（类型注解Any滥用，R70）
+- GATE-DEBT-BRIDGE（代码异味，R67-68）
+- NO-HIGH-COMPLEXITY（函数复杂度≤15，priority=85）
+- NO-BARE-SQL（裸SQL字面量，priority=87）
+- NO-UPWARD-IMPORT（shared层向上依赖，priority=93）
+- NO-HARDCODED-URL（硬编码URL，priority=94）
+- META-TESTS-COVERAGE（[TESTS]头部可校验契约，priority=95）
+- TEST-SOURCE-CONSISTENCY（测试-源码符号漂移，priority=96）
+- MSG-EXPOSURE（错误消息敏感信息泄露，priority=83）
+- ARCH-REFERENCE（架构编号引用合法性 + L1空洞检测 + L2同提交原子性，priority=75）
+- BLUEPRINT-FORMAT（[BLUEPRINT]头部module_id命名，priority=70）
+- TTL-METADATA（文件TTL元数据，priority=32）
+- FUNCTION-DUP / ORPHAN-MODULE / EMPTY-HANDLER / DOC-REF-BROKEN / SSoT-REDEFINITION-GATE 等
+
+**执行规则**：每完成一类存量修复（Phase 2），MUST配套落地对应AST门禁（Phase 1），形成"修复+防复发"闭环。新门禁MUST登记capability定义 + creation_tokens到capability_canonical_file_registry.yaml，否则会被"新GATE创建MUST登记capability"hook阻断。
+
+### 6.4 Phase 2：批量修复（治标存量，部分完成）
+
+**状态**：🔄 部分完成——已跟踪43维度全部清零（STILL_VALID=0），约40维度未启动逐条跟踪
+
+**目标**：修复存量违规点（治标），配合Phase 1门禁防复发。
+
+**治标/治本分类**（裁定2 [L556-580](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L556-L580)）：3193个问题中约80%治标（修个别违规点），20%治本（建强制消费链）。
+
+**执行规则**（裁定5 [L681-685](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L681-L685)）：
+1. AI在债务修复cycle中**MUST优先选DEFERRED项**（正常债务~251项，有明确修复路径，AI可自行完成）
+2. AI**禁止自行修复DEFERRED-PERMANENT项**——尝试即浪费上下文（架构重构需全局视角，单文件修改无效；设计决策需人类判断）
+3. 每轮修复后更新维度状态行：`DEFERRED=N` / `DEFERRED-PERMANENT=M`
+4. 修复MUST通过session_worktree_commit提交（worktree君子协定），禁止裸git commit；commit前过pre-commit门禁
+
+**已完成**：5.1 / 5.31-5.42 / 5.46 / 5.52 / 5.57 / 5.58 / 5.60-5.62 / 5.64 / 5.71 / 5.80 / 5.93 / 5.94 / 5.96 / 5.97 / 5.99 / 5.100 / 5.101 / 5.114 / 5.138-5.140 / 5.143-5.147 / 5.150 / 5.152 / 5.153 / 5.155-5.160 / 5.165 / 5.169 / 5.171 / 5.174 / 5.176 / 5.178 / 5.179共43维度全部清零（STILL_VALID=0）。
+
+**待完成**：约40个未跟踪维度（依赖Phase 0仪表盘生成清单），重点大体量项：
+- 5.135 异常粒度过粗（697项）
+- 5.168 异常信息泄露（142项）
+- 5.104 ABC抽象方法完整性（33项）
+- 5.2-5.30 初轮核心维度（永久系统触发 / 新AI可发现性 / DB全景图 / 文档引用断裂 / 三方对齐等）
+
+### 6.5 Phase 3：治理层收敛（治本存量，未开始）
+
+**状态**：❌ 未开始
+
+**目标**：DEFERRED-PERMANENT项清理（约142项），需人类架构师发起专项工程。
+
+**分类**（裁定5 [L666-671](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L666-L671)）：
+
+| 类别 | 数量 | 代表维度 | 为什么是PERMANENT |
+|---|:---:|---|---|
+| 架构重构 | ~130 | 5.1 SSoT真源（159对文件复制）/ 5.2 永久系统全自动触发 / 5.60 模块耦合度 / 5.16 并发线程安全 / 5.61 事务隔离ACID / 5.152 跨层依赖下沉 / 5.153 全仓命名统一 | 需重新设计模块边界/数据流/并发模型——AI修改单文件无法解决，需全局架构重构 |
+| 设计决策 | ~12 | 5.38 特性开关策略 / 5.35 API版本管理 / 5.33 容灾备份策略 / 反思1 L5治理层14→5-6功能收敛 | 需人类架构师做技术选型/取舍决策——AI不应替人类做架构决策 |
+
+**解锁条件**（裁定5 [L684](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L684)）：人类架构师发起专项工程（ARCH-XXX架构裁定 + 蓝图 + 专项施工计划）。
+
+**元问题反思**（反思1/2/3 [L621-653](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L621-L653)）：
+- **反思1**：L5治理层14功能应收敛为5-6功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产），F34/F35设计态直接删除
+- **反思2**：52 GATE + 17 reconciler + 34词表 + 48注册表 = 151治理组件，治理组件数 > 被治理组件数时，治理体系自身就是最大漂移源。实测：trae_060 §5快照已失效（25 vs 96 manual），GATE-VOCAB有60处盲区，40 GATE无capability反查——治理体系自身漂移已被实证
+- **反思3**：100%AI开发场景下"建议性规则"是反模式，AI没有"自觉"只有"被阻断"，应用强制消费链替代建议性规则
+
+**战略建议**（裁定1 [L554](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L554)）：暂停新增规则文档6个月。新发现违规点一律转化为AST门禁或reconciler，不再加.md规则段落。让规则密度下降，让执行密度上升。
+
+---
+
+## 七、客观立场声明
+
+> **本章节性质**：审核客观性保证声明，确保本文档每条结论可追溯、可验证、无AI幻觉。
+
+### 7.1 审核员身份与方法
+
+**审核员**：客观专业架构师（非项目开发AI，基于多轮深度调研的真实文件证据）。
+
+**审核方法**（[L6](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L6)）：
+- 4个并行子agent读真实文件
+- Grep真实结果（非AI记忆推断）
+- AST共享行百分比判定（文件复制对≥60%阈值）
+
+**验证规模**：31轮深度调研，第32轮验证5.1-5.55 + 5.172-5.177共1013个问题的逐条代码验证（9批45个并行子代理）。
+
+### 7.2 数据来源与真源约束
+
+**数据来源**：所有结论基于实际读取/检索/验证（Grep/Read/AST），禁止凭AI记忆推断。
+
+**真源约束**（SSoT铁律 TRAE-062）：
+- 规则数据（trae_*.yaml / 契约 / 门禁 / 词汇表 / 注册表）→ 真源是YAML文件，sync_yaml_to_depgraph.py单向同步到DB（DB只读缓存）
+- 架构数据（depgraph.nodes/edges、decision_nodes/edges、dataflow节点）→ 真源是PostgreSQL DB，apply_depgraph.py / apply_decisiongraph.py / apply_dataflowgraph.py直接写入
+- 本文档由手动调研派生（架构健康度仪表盘为第0期交付物，尚未实现，详见§6.2），违规清单部分需通过调研脚本生成，禁止手工编辑
+
+### 7.3 客观性保证机制
+
+1. **绝对路径**：所有文件引用使用绝对路径，禁止相对路径
+2. **术语中英并列**：中文输出，术语中英并列，便于跨语言AI可发现
+3. **DRIFTED标记机制**：代码变化后原债务描述失效时标记DRIFTED而非删除，保留历史可追溯
+4. **DEFERRED-PERMANENT裁定基于第一性原理验证**：每项裁定包含5维度验证——(A)代码验证 (B)问题本质 (C)100%AI开发模式特殊性 (D)成本/收益 (E)防复发策略
+5. **状态行透明**：每维度维护`第XX轮修复状态`行，FIXED/DRIFTED/DEFERRED/DEFERRED-PERMANENT/STILL_VALID计数公开可查
+6. **编号铁律**：任何#ARCH-XXX引用MUST在architecture_issue_registry.yaml有对应条目，ARCH-REFERENCE门禁L2要求新增引用与registry更新在同一commit提交
+
+### 7.4 局限性声明
+
+1. **仪表盘未实现前**：本文档违规清单为手动调研派生，存在调研滞后风险（代码变化后清单可能过期，依赖DRIFTED标记机制缓解）。这是Phase 0仪表盘（§6.2）要治本的根本局限
+2. **约40维度未展开逐条跟踪**：受人工调研成本限制，5.2-5.30 / 5.49 / 5.51 / 5.55 / 5.82-5.137等维度仅有执行摘要计数，无逐条修复状态行——待Phase 0仪表盘落地后自动生成
+3. **3193个问题归因5个病根**：病根分析基于证据链，但病根本身的治理（规则文档膨胀、治理体系自身漂移）属元问题，需Phase 3治理层收敛解决
+4. **100%AI开发场景特殊性**：所有裁定考虑AI上下文有限约束，"建议性规则必然失效"是核心假设——若未来引入人类开发者参与，部分裁定需重新评估
+
+### 7.5 维护规则
+
+- 本文档当前由手动调研派生，**禁止手工编辑违规清单部分**（需通过调研脚本生成，详见[L10](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/architecture_debt_registry.md#L10)）
+- 状态行（`第XX轮修复状态`）由修复cycle更新，每轮修复后MUST更新对应维度状态行
+- 新增维度MUST遵循命名规范（5.X序列），新增问题MUST归因5个病根之一（详见§三）
+- 文档自身漂移检测：路径漂移 / 数字漂移 / 引用断裂由对应AST门禁（DOC-REF-BROKEN等）防复发
+- §六治本施工方案为执行纲领，Phase推进顺序MUST遵循§6.1依赖铁律，禁止跳序
