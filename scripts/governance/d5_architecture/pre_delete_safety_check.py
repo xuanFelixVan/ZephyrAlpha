@@ -72,7 +72,7 @@ _REGISTRY_FILES: list[Path] = [
     _PROJECT_ROOT / "docs" / "03_modules" / "blueprint_registry.yaml",
     _PROJECT_ROOT / "docs" / "03_modules" / "template-registry.yaml",
     _PROJECT_ROOT / "docs" / "03_modules" / "system-pathway-registry.yaml",
-    _PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml",
+    _PROJECT_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml",
     _PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "script-health-registry.md",
 ]
 

@@ -676,7 +676,7 @@ def add_design_node(
 
 
 def _check_scan_scope(path: str) -> tuple[bool, list[str]]:
-    """检查 path 是否在 depgraph 生成器扫描范围内（ARCH-035 门禁）。
+    """检查 path 是否在 depgraph 生成器扫描范围内（ARCH-061 门禁）。
 
     读取 depgraph_scan_exclusions.yaml 的 scan_dirs 配置。
     返回: (in_scope, scan_dirs) — in_scope=True 表示在扫描范围内（不应手动添加节点）
@@ -713,7 +713,7 @@ def add_file_node(
     - path 必须不以 / 结尾（文件路径）
     - 文件必须存在于磁盘
     - domain_id 必须在 domains 表中存在
-    - ARCH-035 门禁：path 在生成器扫描范围内时硬阻断（force=True 可逃生）
+    - ARCH-061 门禁：path 在生成器扫描范围内时硬阻断（force=True 可逃生）
     写入字段：design_maturity='production', granularity='file', build_status='generated'
     """
     if path.endswith("/"):
@@ -726,12 +726,12 @@ def add_file_node(
         print(f"ERROR: 文件不存在: {full_path}", file=sys.stderr)
         return -1
 
-    # ARCH-035 门禁：扫描范围内的文件由生成器自动登记，禁止手动 add-file-node
+    # ARCH-061 门禁：扫描范围内的文件由生成器自动登记，禁止手动 add-file-node
     if not force:
         in_scope, scan_dirs = _check_scan_scope(path)
         if in_scope:
             print(
-                f"ERROR [GATE-DEPGRAPH-SCOPE / ARCH-035]: path '{path}' 在 depgraph 生成器扫描范围内。\n"
+                f"ERROR [GATE-DEPGRAPH-SCOPE / ARCH-061]: path '{path}' 在 depgraph 生成器扫描范围内。\n"
                 f"  生成器会自动扫描登记该文件，手动 add-file-node 是多余且有害的\n"
                 f"  （干扰生成器 --force 重建，导致 design edge 保护冲突）。\n"
                 f"  正确做法：python scripts/governance/generate_project_depgraph.py --output-db depgraph --force\n"
@@ -3934,7 +3934,7 @@ def main() -> None:
         type=str,
         nargs="+",
         metavar="ARG",
-        help="ARCH-035 逃生通道：强制添加扫描范围内的文件节点（仅在生成器故障时使用）: PATH BLUEPRINT_ID DOMAIN_ID",
+        help="ARCH-061 逃生通道：强制添加扫描范围内的文件节点（仅在生成器故障时使用）: PATH BLUEPRINT_ID DOMAIN_ID",
     )
     # F5 合规豁免：域/路径/依赖迁移命令（ARCH-CAP-005）
     parser.add_argument(

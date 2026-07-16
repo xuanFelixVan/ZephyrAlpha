@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] orchestrator pattern; delegates import rewrite to ast_import_rewriter (inward convergence); cut-paste via shutil.move (delete source); idempotent; dry-run supported; atomic write (tmp + os.replace)
-# [MODIFY-GUARD] migration-registry.yaml format changes require sync with ast_import_rewriter.MoveEntry fields
+# [MODIFY-GUARD] migration_registry.yaml format changes require sync with ast_import_rewriter.MoveEntry fields
 # [STABILITY] volatile
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
@@ -22,7 +22,7 @@ Cut-paste mode: ``shutil.move()`` moves files from ``src/zephyr/governance/<root
 to ``src/zephyr/governance/<subdir>/<root>.py``. After move:
   - import rewrite + [MODULE] header update: delegated to ast_import_rewriter
   - [BLUEPRINT] path update: handled locally via re.sub
-  - registry status update: mark entries as ``done`` in migration-registry.yaml
+  - registry status update: mark entries as ``done`` in migration_registry.yaml
 
 Usage::
 
@@ -36,7 +36,7 @@ Usage::
     # Fix external refs across whole project (consumers of moved modules)
     python scripts/migration/governance_root_split.py --fix-external-refs
 
-Registry format (``docs/02_enterprise_architecture/migration-registry.yaml``)::
+Registry format (``docs/02_enterprise_architecture/migration_registry.yaml``)::
 
     entries:
       - old_module: zephyr.governance.escalation_api
@@ -67,7 +67,7 @@ from typing import Optional
 # ---------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-REGISTRY_FILE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "migration-registry.yaml"
+REGISTRY_FILE = REPO_ROOT / "docs" / "02_enterprise_architecture" / "migration_registry.yaml"
 
 OLD_PATH_PREFIX = "src/zephyr/governance/"
 
@@ -138,7 +138,7 @@ class MigrationEntry:
 # ---------------------------------------------------------------------------
 
 def load_registry() -> dict:
-    """Load migration-registry.yaml. Exit on missing/invalid."""
+    """Load migration_registry.yaml. Exit on missing/invalid."""
     try:
         import yaml
     except ImportError:
@@ -466,7 +466,7 @@ def main(argv: list[str] | None = None) -> int:
                              "(equivalent to --rewrite-imports; kept for "
                              "task-card CLI parity)")
     parser.add_argument("--update-registry-status", action="store_true",
-                        help="Mark entries as done in migration-registry.yaml")
+                        help="Mark entries as done in migration_registry.yaml")
     parser.add_argument("--force", action="store_true",
                         help="Force overwrite if target exists with different content")
     parser.add_argument("--quiet", action="store_true",

@@ -1,3 +1,18 @@
+# [BLUEPRINT] MOD-INF-MIGRATION-REG | docs/02_enterprise_architecture/migration_registry.yaml | §0
+# [MODULE] docs.02_enterprise_architecture.migration_registry
+# [DOMAIN] D_GOVERNANCE
+# [DEPENDENCIES] none（数据文件）
+# [CONSUMERS] scripts/migration/governance_root_split.py, scripts/migration/dm311_autonomy_core_split.py, scripts/migration/dm314_infra_ops_split.py
+# [STARTUP] passive
+# [MATURITY] deprecated
+# [INVARIANTS] ARCH-031 迁移登记表；旧路径→新路径映射；status: done/pending；功能与 depgraph edges 表重叠，已冻结不再新增条目（registry_of_registries REG-MIGRATION-001 maintenance=frozen）
+# [MODIFY-GUARD] 禁止新增条目（已冻结）；仅允许将 pending→done 状态流转
+# [STABILITY] frozen
+# [SAFETY] L
+# [AI_AUTONOMY] ai_read_only
+# [TTL] permanent（ARCH-031 迁移登记表，maintenance=frozen；待全量 pending 条目完成后手动退役删除）
+# 本文件原命名 migration-registry.yaml（连字符）违反 snake_case 铁律，2026-07-16 重命名为 migration_registry.yaml。
+# registry_of_registries.yaml REG-MIGRATION-001 原 status=deleted 与文件实际存在矛盾，已修正为 deprecated。
 entries:
 - old_module: zephyr.governance.default_attribution_engine
   new_module: zephyr.governance.audit.default_attribution_engine

@@ -1047,7 +1047,7 @@ entries:
         planned→connected（按铁律2"存在=运营态"逻辑）
 
     【关联】
-    - ARCH-035（GATE-DEPGRAPH-SCOPE）——生成器扫描范围限制，与铁律3"生成器不碰 infrastructure_components"互补
+    - ARCH-061（GATE-DEPGRAPH-SCOPE）——生成器扫描范围限制，与铁律3"生成器不碰 infrastructure_components"互补
     - 2026-07-01 03:00 裁定——首次明确"数据库实体在 infrastructure_components 表，不在 nodes 表"
     - ARCH-046 是该裁定的规则化固化（从一次性裁定升级为项目硬约束）
 
