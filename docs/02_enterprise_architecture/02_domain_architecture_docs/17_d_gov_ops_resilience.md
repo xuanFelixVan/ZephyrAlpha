@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 运维弹性治理（D_GOV_OPS_RESILIENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:01:33
+> 最后更新: 2026-07-17 03:03:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -283,30 +283,30 @@ graph TD
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
     src_zephyr_governance_resilience_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    D_GOV_KB["(原型态 / prototype) D_GOV_KB"]
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_GOV_KB
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_OPS["(生产态 / production) D_OPS"]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_OPS
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    src_zephyr_governance_resilience_governance_blast_radius_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_governance_resilience_governance_bus_factor_defense_py -.->|导入依赖 / import_depends| D_FACTOR
-    D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    src_zephyr_governance_resilience_governance_circuit_breaker_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_ORCHESTRATOR
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_INTEGRATION
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
+    src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| D_INFRA_A2A
+    src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_degradation_manager_py
     D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
     D_GOV_REPAIR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_degradation_manager_py
@@ -315,7 +315,6 @@ graph TD
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_maintenance_window_adapter_py
     D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_governance_ops_governance_error_budget_burst_limiter_py
@@ -330,8 +329,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_ops_governance_degradation_manager_py,src_zephyr_governance_ops_governance_error_budget_burst_limiter_py,src_zephyr_governance_ops_governance_event_hook_py,src_zephyr_governance_ops_governance_interrupt_handler_py,src_zephyr_governance_ops_governance_maintenance_window_adapter_py,src_zephyr_governance_ops_governance_ops_foundation_py,src_zephyr_governance_ops_governance_parent_child_attributor_py,src_zephyr_governance_ops_governance_phase_check_registry_py,src_zephyr_governance_ops_governance_phase_manager_py,src_zephyr_governance_ops_governance_roi_calculator_py,src_zephyr_governance_ops_governance_self_budget_tracker_py,src_zephyr_governance_ops_governance_startup_shutdown_cli_py,src_zephyr_governance_ops_governance_stream_abort_guard_py,src_zephyr_governance_ops_governance_tco_model_py,src_zephyr_governance_ops_governance_time_sync_py,src_zephyr_governance_ops_governance_timeout_guard_py,src_zephyr_governance_resilience_governance_account_isolator_py,src_zephyr_governance_resilience_governance_blast_radius_py,src_zephyr_governance_resilience_governance_broker_resilience_py,src_zephyr_governance_resilience_governance_circuit_breaker_py,src_zephyr_governance_resilience_governance_deadlock_detector_py,src_zephyr_governance_resilience_governance_decision_fatigue_py,src_zephyr_governance_resilience_governance_decision_fatigue_cli_py,src_zephyr_governance_resilience_governance_engine_sandbox_py,src_zephyr_governance_resilience_governance_f5_boot_integration_py production
     class src_zephyr_governance_ops_governance_environment_manager_py,src_zephyr_governance_ops_governance_service_registration_py,src_zephyr_governance_ops_governance_startup_shutdown_py,src_zephyr_governance_resilience_governance_init_py,src_zephyr_governance_resilience_governance_bus_factor_defense_py design
-    class D_SHARED,D_INTEGRATION,D_GOVERNANCE,D_SECURITY,D_FACTOR,D_OPS,D_ORCHESTRATOR,D_GOV_AUDIT,D_GOV_REPAIR external_prod
-    class D_GOV_KB,D_INFRA_RUNTIME external_design
+    class D_GOVERNANCE,D_OPS,D_GOV_AUDIT,D_FACTOR,D_INTEGRATION,D_ORCHESTRATOR,D_SHARED,D_INFRA_A2A,D_GOV_REPAIR external_prod
+    class D_INFRA_RUNTIME external_design
 ```
 
 #### 第 3 页 / 共 4 页

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识库治理（D_GOV_KB）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:01:32
+> 最后更新: 2026-07-17 03:03:09
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 31 | Module Count | 31 |
 | 域内依赖 | 15 | Internal Dependencies | 15 |
-| 跨域入边 | 35 | Cross-domain Incoming | 35 |
-| 跨域出边 | 32 | Cross-domain Outgoing | 32 |
+| 跨域入边 | 37 | Cross-domain Incoming | 37 |
+| 跨域出边 | 33 | Cross-domain Outgoing | 33 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 14 | Prototype Modules | 14 |
 | 生产态模块 | 17 | Production Modules | 17 |
@@ -322,6 +322,8 @@ graph TD
     src_zephyr_gov_kb_storage_unified_memory_api_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_storage_backend_protocol_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_integrity_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|runtime / runtime| D_INFRA_RUNTIME
     src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
@@ -337,6 +339,9 @@ graph TD
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_kb_engine_kb_gate_task_py
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_migration_kb_gate_task_py
+    D_GOVERNANCE -.->|runtime / runtime| src_zephyr_gov_kb_pipeline_batch_ingest_py
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_gov_kb_pipeline_batch_ingest_py
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_pipeline_batch_ingest_py
     D_GOVERNANCE -.->|config_depends / config_depends| src_zephyr_gov_kb_storage_backend_protocol_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -345,7 +350,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_kb_init_py,src_zephyr_gov_kb_batch_ingest_py,src_zephyr_gov_kb_filing_nlp_engine_init_py,src_zephyr_gov_kb_integrity_py,src_zephyr_gov_kb_kb_engine_kb_gate_task_py,src_zephyr_gov_kb_migration_kb_gate_task_py,src_zephyr_gov_kb_pipeline_activate_py,src_zephyr_gov_kb_pipeline_batch_ingest_py,src_zephyr_gov_kb_reranker_py,src_zephyr_gov_kb_sentiment_engine_init_py,src_zephyr_gov_kb_storage_backend_protocol_py,src_zephyr_gov_kb_storage_unified_memory_api_py,src_zephyr_gov_kb_supply_chain_graph_engine_init_py,src_zephyr_gov_kb_unified_memory_api_py design
     class D_SHARED,D_GOV_RULE,D_INTEGRATION external_prod
-    class D_GOV_OPS_RESILIENCE,D_GOVERNANCE external_design
+    class D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_GOV_DOCS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -364,28 +369,29 @@ graph TD
 | 8 | G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
 | 9 | G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
 | 10 | G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
-| 11 | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
-| 12 | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | D_INTEGRATION 管线路由: severity_types.py | 导入依赖 / import_depends |
-| 13 | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | D_INTEGRATION 管线路由: BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
-| 14 | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 15 | 紧急冻结/解冻/安全模式断路器 (freeze.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 16 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 17 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
-| 18 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephy... | 导入依赖 / import_depends |
-| 19 | G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 20 | SHA256源码manifest + CI防篡改检测 (integrity.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 21 | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
-| 22 | SQLite墓碑表 + G2向量去重 (ke_tombstone.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 23 | 承重KE不可变性 + 承重墙自检 (load_bearing.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 24 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
-| 25 | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
-| 26 | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 27 | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 28 | 冷静期引擎 + 魔鬼代言人 + 影响评估 (safety_brak... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 29 | KB 13项一键体检 + --self-test入口 (self_test.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 30 | KB 13项一键体检 + --self-test入口 (self_test.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 31 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Contro... | 导入依赖 / import_depends |
-| 32 | 确定性事实核查 — 取代AI猜测 (verify.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 11 | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
+| 12 | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | → | D_INTEGRATION 管线路由: schemas.py | 导入依赖 / import_depends |
+| 13 | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | D_INTEGRATION 管线路由: severity_types.py | 导入依赖 / import_depends |
+| 14 | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | D_INTEGRATION 管线路由: BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
+| 15 | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 16 | 紧急冻结/解冻/安全模式断路器 (freeze.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 17 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 18 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
+| 19 | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | → | D_SHARED 共享服务: db_utils.py — SQLite 连接公共 API（SSoT: zephy... | 导入依赖 / import_depends |
+| 20 | G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 21 | SHA256源码manifest + CI防篡改检测 (integrity.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 22 | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | → | D_SHARED 共享服务: task_types — 任务系统核心类型 re-export 层 (ta... | 导入依赖 / import_depends |
+| 23 | SQLite墓碑表 + G2向量去重 (ke_tombstone.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 24 | 承重KE不可变性 + 承重墙自检 (load_bearing.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 25 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
+| 26 | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | → | D_SHARED 共享服务: schemas.py | 导入依赖 / import_depends |
+| 27 | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 28 | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 29 | 冷静期引擎 + 魔鬼代言人 + 影响评估 (safety_brak... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 30 | KB 13项一键体检 + --self-test入口 (self_test.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 31 | KB 13项一键体检 + --self-test入口 (self_test.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 32 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Contro... | 导入依赖 / import_depends |
+| 33 | 确定性事实核查 — 取代AI猜测 (verify.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -397,39 +403,41 @@ graph TD
 | 4 | D_GOVERNANCE 生命周期管理: kb.migration — auto-generated package init. (_... | → | Re-export shim — 真源在 zephyr.gov_kb.kb_gate_... | config_depends / config_depends |
 | 5 | D_GOVERNANCE 生命周期管理: kb.pipeline — auto-generated package init. (__... | → | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | config_depends / config_depends |
 | 6 | D_GOVERNANCE 生命周期管理: kb.storage — auto-generated package init. (__i... | → | Backend protocol & shared data classes for the ... | config_depends / config_depends |
-| 7 | D_GOVERNANCE 生命周期管理: test_load_bearing.py | → | 承重KE不可变性 + 承重墙自检 (load_bearing.py) | 测试依赖 / test_depends |
-| 8 | D_GOVERNANCE 生命周期管理: test_quiet_period_monitor.py | → | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | 测试依赖 / test_depends |
-| 9 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | 导入依赖 / import_depends |
-| 10 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
-| 11 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
-| 12 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | knowledge_engine.py | 导入依赖 / import_depends |
-| 13 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
-| 14 | D_INTEGRATION 管线路由: Vector Memory Service (VMS) — MOD-INF-011 · v... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
-| 15 | D_INTEGRATION 管线路由: DelegatedVectorMemory — VectorMemoryBase 的 RI... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
-| 16 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
-| 17 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 导入依赖 / import_depends |
-| 18 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 导入依赖 / import_depends |
-| 19 | D_KNOWLEDGE 知识管理: test_kb_analyze.py | → | G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | 测试依赖 / test_depends |
-| 20 | D_KNOWLEDGE 知识管理: test_kb_bootstrap.py | → | 冷启动引导引擎 — 从存量文档自动生成首批KE（T-M... | 测试依赖 / test_depends |
-| 21 | D_KNOWLEDGE 知识管理: test_kb_embedding_migrate.py | → | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | 测试依赖 / test_depends |
-| 22 | D_KNOWLEDGE 知识管理: test_kb_extract.py | → | G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | 测试依赖 / test_depends |
-| 23 | D_KNOWLEDGE 知识管理: test_kb_freeze.py | → | 紧急冻结/解冻/安全模式断路器 (freeze.py) | 测试依赖 / test_depends |
-| 24 | D_KNOWLEDGE 知识管理: test_kb_gate_task.py | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 测试依赖 / test_depends |
-| 25 | D_KNOWLEDGE 知识管理: test_kb_graph_validator.py | → | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | 测试依赖 / test_depends |
-| 26 | D_KNOWLEDGE 知识管理: test_kb_migration_embedding.py | → | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | 测试依赖 / test_depends |
-| 27 | D_KNOWLEDGE 知识管理: test_kb_migration_gate.py | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 测试依赖 / test_depends |
-| 28 | D_KNOWLEDGE 知识管理: test_kb_self_test.py | → | KB 13项一键体检 + --self-test入口 (self_test.py) | 测试依赖 / test_depends |
-| 29 | D_KNOWLEDGE 知识管理: test_kb_storage_backend.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
-| 30 | D_KNOWLEDGE 知识管理: test_kb_unified_memory_api.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
-| 31 | D_KNOWLEDGE 知识管理: test_kb_verify.py | → | 确定性事实核查 — 取代AI猜测 (verify.py) | 测试依赖 / test_depends |
-| 32 | D_KNOWLEDGE 知识管理: test_kb_vms_memory_backend.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
-| 33 | D_KNOWLEDGE 知识管理: test_kb_vms_memory_backend.py | → | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 测试依赖 / test_depends |
-| 34 | D_KNOWLEDGE 知识管理: test_ke_tombstone.py | → | SQLite墓碑表 + G2向量去重 (ke_tombstone.py) | 测试依赖 / test_depends |
-| 35 | D_SECURITY 对抗验证: test_safety_brake.py | → | 冷静期引擎 + 魔鬼代言人 + 影响评估 (safety_brak... | 测试依赖 / test_depends |
+| 7 | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | → | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | runtime / runtime |
+| 8 | D_GOVERNANCE 生命周期管理: test_load_bearing.py | → | 承重KE不可变性 + 承重墙自检 (load_bearing.py) | 测试依赖 / test_depends |
+| 9 | D_GOVERNANCE 生命周期管理: test_quiet_period_monitor.py | → | 每日静默期检测 + 管道健康自检 (quiet_period_mon... | 测试依赖 / test_depends |
+| 10 | D_GOV_DOCS 架构文档治理: blueprint.md | → | 批量入库 — scaffold P0/P1 知识候选批量入库（T-... | runtime / runtime |
+| 11 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | 导入依赖 / import_depends |
+| 12 | D_GOV_OPS_RESILIENCE 运维弹性治理: G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
+| 13 | D_GOV_OPS_RESILIENCE 运维弹性治理: D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
+| 14 | D_GOV_REPAIR 治理修复: Agent 治理八件套 · Governance Domain — DOM-GO... | → | knowledge_engine.py | 导入依赖 / import_depends |
+| 15 | D_INTEGRATION 管线路由: KnowledgeBaseServer: 知识库语义检索 MCP Server ... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
+| 16 | D_INTEGRATION 管线路由: Vector Memory Service (VMS) — MOD-INF-011 · v... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
+| 17 | D_INTEGRATION 管线路由: DelegatedVectorMemory — VectorMemoryBase 的 RI... | → | SRC-0042: Re-export shim -> 真源在 kb/storage/u... | 导入依赖 / import_depends |
+| 18 | D_INTELLIGENCE 上下文管理: G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
+| 19 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 导入依赖 / import_depends |
+| 20 | D_INTELLIGENCE 上下文管理: UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 导入依赖 / import_depends |
+| 21 | D_KNOWLEDGE 知识管理: test_kb_analyze.py | → | G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | 测试依赖 / test_depends |
+| 22 | D_KNOWLEDGE 知识管理: test_kb_bootstrap.py | → | 冷启动引导引擎 — 从存量文档自动生成首批KE（T-M... | 测试依赖 / test_depends |
+| 23 | D_KNOWLEDGE 知识管理: test_kb_embedding_migrate.py | → | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | 测试依赖 / test_depends |
+| 24 | D_KNOWLEDGE 知识管理: test_kb_extract.py | → | G5 Extract 门禁 — 知识升格（T-2-13-E） (extrac... | 测试依赖 / test_depends |
+| 25 | D_KNOWLEDGE 知识管理: test_kb_freeze.py | → | 紧急冻结/解冻/安全模式断路器 (freeze.py) | 测试依赖 / test_depends |
+| 26 | D_KNOWLEDGE 知识管理: test_kb_gate_task.py | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 测试依赖 / test_depends |
+| 27 | D_KNOWLEDGE 知识管理: test_kb_graph_validator.py | → | 知识图谱完整性校验器（T-2-11-C） (graph_validat... | 测试依赖 / test_depends |
+| 28 | D_KNOWLEDGE 知识管理: test_kb_migration_embedding.py | → | EmbeddingMigrate · Embedding 版本管理 + 迁移管... | 测试依赖 / test_depends |
+| 29 | D_KNOWLEDGE 知识管理: test_kb_migration_gate.py | → | KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 测试依赖 / test_depends |
+| 30 | D_KNOWLEDGE 知识管理: test_kb_self_test.py | → | KB 13项一键体检 + --self-test入口 (self_test.py) | 测试依赖 / test_depends |
+| 31 | D_KNOWLEDGE 知识管理: test_kb_storage_backend.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
+| 32 | D_KNOWLEDGE 知识管理: test_kb_unified_memory_api.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
+| 33 | D_KNOWLEDGE 知识管理: test_kb_verify.py | → | 确定性事实核查 — 取代AI猜测 (verify.py) | 测试依赖 / test_depends |
+| 34 | D_KNOWLEDGE 知识管理: test_kb_vms_memory_backend.py | → | Re-export shim — 真源在 zephyr.gov_kb.storage.... | 测试依赖 / test_depends |
+| 35 | D_KNOWLEDGE 知识管理: test_kb_vms_memory_backend.py | → | VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 测试依赖 / test_depends |
+| 36 | D_KNOWLEDGE 知识管理: test_ke_tombstone.py | → | SQLite墓碑表 + G2向量去重 (ke_tombstone.py) | 测试依赖 / test_depends |
+| 37 | D_SECURITY 对抗验证: test_safety_brake.py | → | 冷静期引擎 + 魔鬼代言人 + 影响评估 (safety_brak... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 10 个外部域直接连接（出边 32 条 + 入边 35 条 = 67 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 12 个外部域直接连接（出边 33 条 + 入边 37 条 = 70 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -438,22 +446,26 @@ graph LR
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_GOV_KB -->|18条 导入依赖 / import_depends| D_SHARED
     D_GOV_KB -->|8条 导入依赖 / import_depends| D_GOV_RULE
     D_GOV_KB -->|4条 导入依赖 / import_depends| D_INTEGRATION
     D_GOV_KB -->|2条 导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_KB -->|1条 runtime / runtime| D_INFRA_RUNTIME
     D_KNOWLEDGE -->|16条 测试依赖 / test_depends| D_GOV_KB
-    D_GOVERNANCE -->|7条 config_depends / config_depends, 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_KB
+    D_GOVERNANCE -->|8条 config_depends / config_depends, 导入依赖 / import_depends, runtime / runtime, 测试依赖 / test_depends| D_GOV_KB
+    D_INTEGRATION -->|3条 导入依赖 / import_depends| D_GOV_KB
     D_INTELLIGENCE -->|3条 导入依赖 / import_depends| D_GOV_KB
     D_GOV_OPS_RESILIENCE -->|3条 导入依赖 / import_depends| D_GOV_KB
-    D_INTEGRATION -->|3条 导入依赖 / import_depends| D_GOV_KB
     D_SECURITY -->|1条 测试依赖 / test_depends| D_GOV_KB
+    D_GOV_DOCS -->|1条 runtime / runtime| D_GOV_KB
     D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_GOV_KB
     D_AUTONOMY_CORE -->|1条 导入依赖 / import_depends| D_GOV_KB
 ```
