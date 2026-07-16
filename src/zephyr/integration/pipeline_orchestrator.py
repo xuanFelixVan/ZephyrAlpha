@@ -1666,13 +1666,10 @@ class PipelineOrchestrator:
     # Claude 特种救援 — GOV-AI-002 §三
     # ------------------------------------------------------------------
 
-    def _check_claude_rescue(self, task_card: TaskCard, results: list[ModuleResult]) -> ClaudeRescueTrigger:
-        """判断是否触发 Claude 救援。
-
-        tags 检查与 _route_model() 共享规则集——新增 tag 需同步修改两处。
-        """
-        trigger = ClaudeRescueTrigger()
-
+    def _populate_claude_trigger_flags(
+        self, trigger: ClaudeRescueTrigger, task_card: TaskCard
+    ) -> None:
+        """Set tag/owner-based flags on the trigger object."""
         if "experimental" in (task_card.tags or ()):
             trigger.is_experimental = True
         if "security" in (task_card.tags or ()):
@@ -1680,11 +1677,13 @@ class PipelineOrchestrator:
         if task_card.ai_autonomy_level == "unsafe":
             trigger.is_owner_critical = True
 
-        deepseek_fail = sum(1 for r in results if r.model == "deepseek" and r.status == ModuleStatus.FAILURE)
-        glm_reject = sum(1 for r in results if r.model == "glm" and r.status == ModuleStatus.FAILURE)
-        trigger.deepseek_failure_count = deepseek_fail
-        trigger.glm_rejection_count = glm_reject
-
+    def _build_claude_rescue_reasons(
+        self,
+        trigger: ClaudeRescueTrigger,
+        deepseek_fail: int,
+        glm_reject: int,
+    ) -> list[str]:
+        """Build human-readable reasons list for Claude rescue trigger."""
         reasons: list[str] = []
 
         if deepseek_fail >= self._cfg.claude_rescue_threshold:
@@ -1702,6 +1701,22 @@ class PipelineOrchestrator:
         if trigger.is_experimental:
             reasons.append("Experimental tag detected")
 
+        return reasons
+
+    def _check_claude_rescue(self, task_card: TaskCard, results: list[ModuleResult]) -> ClaudeRescueTrigger:
+        """判断是否触发 Claude 救援。
+
+        tags 检查与 _route_model() 共享规则集——新增 tag 需同步修改两处。
+        """
+        trigger = ClaudeRescueTrigger()
+        self._populate_claude_trigger_flags(trigger, task_card)
+
+        deepseek_fail = sum(1 for r in results if r.model == "deepseek" and r.status == ModuleStatus.FAILURE)
+        glm_reject = sum(1 for r in results if r.model == "glm" and r.status == ModuleStatus.FAILURE)
+        trigger.deepseek_failure_count = deepseek_fail
+        trigger.glm_rejection_count = glm_reject
+
+        reasons = self._build_claude_rescue_reasons(trigger, deepseek_fail, glm_reject)
         if reasons:
             trigger.triggered = True
             trigger.reason = "; ".join(reasons)
@@ -1715,6 +1730,67 @@ class PipelineOrchestrator:
     # B154 响应缓存——静态方法 _call_model 需要类属性访问
     _response_cache: dict[str, tuple[float, dict]] = {}
     _response_cache_ttl_s: float = 3600.0
+
+    @staticmethod
+    def _build_skill_context(skill_injection: PipelineSkillBridge | None) -> str:
+        """Build agent skill context string from the skill injection bridge."""
+        if skill_injection is None:
+            return ""
+        if hasattr(skill_injection, "injection_context") and skill_injection.injection_context:
+            return skill_injection.injection_context
+        if not hasattr(skill_injection, "l2_domain_body"):
+            return ""
+        parts: list[str] = []
+        if skill_injection.l2_domain_body:
+            parts.append(f"[Domain Skill: {skill_injection.domain_skill_id}]\n{skill_injection.l2_domain_body}")
+        if hasattr(skill_injection, "l2_role_body") and skill_injection.l2_role_body:
+            parts.append(f"[Role Skill: {skill_injection.role_skill_id}]\n{skill_injection.l2_role_body}")
+        return "\n\n".join(parts)
+
+    @staticmethod
+    def _call_llm_gateway(messages: list[dict], model: str):
+        """Call LLM gateway; return response or None on ImportError."""
+        # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
+        #   Model -> API ID: DeepSeek-V4-Pro/deepseek -> deepseek-chat, GLM-5.1/glm -> glm-4-flash
+        #   Provider config (base_url, api_key_env, default_model) defined in
+        #   zephyr.infrastructure.pipeline.llm_gateway._PROVIDERS.
+        try:
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
+            from zephyr.shared.contracts.llm_gateway_protocol import LLMResponse
+
+            return LLMGateway.call(
+                messages,
+                provider=model if model in LLMGateway.list_providers() else "deepseek",
+                max_tokens=4096,
+                temperature=0.3,
+            )
+        except ImportError:
+            return None
+
+    @staticmethod
+    def _compute_simulated_fields(
+        task: TaskCard,
+        token_divisor: int,
+        model: str,
+        pipeline: str,
+        module_id: str,
+        model_version: str,
+        sanitized_title: str,
+    ) -> tuple:
+        """Compute simulated (non-real-LLM) response fields.
+
+        Returns (tokens_used, cost_usd, summary_content, simulated, provider_used).
+        """
+        tokens_used = task.estimated_tokens // max(token_divisor, 1)
+        # SRC-0022 fix: use ModelRouter constants directly (was self._cost_tracker.estimate_cost
+        # which crashes in @staticmethod — self is not defined)
+        cost_usd = round(
+            (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
+            + (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0),
+            6,
+        )
+        summary_content = f"[{pipeline}区] {model}({model_version}) -> {module_id}: {sanitized_title[:60]}"
+        return tokens_used, cost_usd, summary_content, True, model
 
     @staticmethod
     def _call_model(
@@ -1740,17 +1816,7 @@ class PipelineOrchestrator:
         v0.10.0 新增：
           - skill_injection: PipelineSkillBridge 注入的 Domain+Role Skill 上下文
         """
-        skill_context = ""
-        if skill_injection is not None:
-            if hasattr(skill_injection, "injection_context") and skill_injection.injection_context:
-                skill_context = skill_injection.injection_context
-            elif hasattr(skill_injection, "l2_domain_body"):
-                parts = []
-                if skill_injection.l2_domain_body:
-                    parts.append(f"[Domain Skill: {skill_injection.domain_skill_id}]\n{skill_injection.l2_domain_body}")
-                if hasattr(skill_injection, "l2_role_body") and skill_injection.l2_role_body:
-                    parts.append(f"[Role Skill: {skill_injection.role_skill_id}]\n{skill_injection.l2_role_body}")
-                skill_context = "\n\n".join(parts)
+        skill_context = PipelineOrchestrator._build_skill_context(skill_injection)
 
         model_version = ModelRouter.MODEL_VERSION_MAP.get(model, model)
         context_limit = ModelRouter.MODEL_CONTEXT_LIMITS.get(model, 128_000)
@@ -1813,22 +1879,7 @@ class PipelineOrchestrator:
             {"role": "user", "content": user_msg},
         ]
 
-        # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
-        #   Model -> API ID: DeepSeek-V4-Pro/deepseek -> deepseek-chat, GLM-5.1/glm -> glm-4-flash
-        #   Provider config (base_url, api_key_env, default_model) defined in
-        #   zephyr.infrastructure.pipeline.llm_gateway._PROVIDERS.
-        try:
-            from zephyr.shared.contracts.llm_gateway_protocol import LLMGatewayProtocol as LLMGateway
-            from zephyr.shared.contracts.llm_gateway_protocol import LLMResponse
-
-            llm_resp: LLMResponse = LLMGateway.call(
-                messages,
-                provider=model if model in LLMGateway.list_providers() else "deepseek",
-                max_tokens=4096,
-                temperature=0.3,
-            )
-        except ImportError:
-            llm_resp = None
+        llm_resp = PipelineOrchestrator._call_llm_gateway(messages, model)
 
         if llm_resp is not None and not llm_resp.simulated:
             tokens_used = llm_resp.tokens_input + llm_resp.tokens_output
@@ -1837,17 +1888,15 @@ class PipelineOrchestrator:
             simulated = False
             provider_used = llm_resp.provider
         else:
-            tokens_used = task.estimated_tokens // max(token_divisor, 1)
-            # SRC-0022 fix: use ModelRouter constants directly (was self._cost_tracker.estimate_cost
-            # which crashes in @staticmethod — self is not defined)
-            cost_usd = round(
-                (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_INPUT.get(model, 0.0)
-                + (tokens_used / 1000.0) * ModelRouter.MODEL_COST_PER_1K_OUTPUT.get(model, 0.0),
-                6,
+            (
+                tokens_used,
+                cost_usd,
+                summary_content,
+                simulated,
+                provider_used,
+            ) = PipelineOrchestrator._compute_simulated_fields(
+                task, token_divisor, model, pipeline, module_id, model_version, sanitized_title
             )
-            summary_content = f"[{pipeline}区] {model}({model_version}) -> {module_id}: {sanitized_title[:60]}"
-            simulated = True
-            provider_used = model
 
         artifact_keys = [a.artifact_key for a in (prior_artifacts or [])]
         raw_output = {
