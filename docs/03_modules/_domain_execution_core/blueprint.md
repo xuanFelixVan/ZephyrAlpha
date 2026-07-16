@@ -571,7 +571,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 BrokerInterface |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\broker_interface.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\trading\trading_contracts\broker_interface.py` |
 | 验收标准 | BrokerInterface ABC 定义完整，submit_order/cancel_order 抽象方法 |
 | 验证命令 | `python -m pytest tests/ -k broker_interface -v` |
 | G7 检查项 | 上游 D_PORTFOLIO_CORE Order 引用正确？下游 D_REPORTING Fill 产出路径精确？ |
@@ -1129,7 +1129,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | broker_interface.py | `D:\ZephyrAlpha\src\zephyr\ex_core\broker_interface.py` | 修改 | RiskValidator ABC 注入解耦 |
+| 1 | broker_interface.py | `D:\ZephyrAlpha\src\zephyr\trading\trading_contracts\broker_interface.py` | 修改 | RiskValidator ABC 注入解耦 |
 | 2 | execution_engine.py | `D:\ZephyrAlpha\src\zephyr\ex_core\execution_engine.py` | 修改 | ExecutionReport 产出 + RiskValidator 解耦 |
 | 3 | order_manager.py | `D:\ZephyrAlpha\src\zephyr\ex_core\order_manager.py` | 读取 | 订单状态机参考 |
 | 4 | adapters/simulation_broker.py | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\simulation_broker.py` | 读取 | 模拟券商参考 |
