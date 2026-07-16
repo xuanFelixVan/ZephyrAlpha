@@ -1,6 +1,6 @@
-# [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.pipeline
-# [DOMAIN] D_SIGLEGACY
+# [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.signal_fundamental.synth.signal_synthesizer; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] manual

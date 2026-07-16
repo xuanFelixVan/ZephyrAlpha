@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.capital.capital_allocation_result
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.trading.trading_contracts.execution.capital_allocation_result
 # [CONSUMERS] signal
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -14,19 +14,15 @@
 # [TESTS]
 # [A_module] module_id=MOD-UNK_capital_allocation_result | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# ==== BEGIN CODGEN:CTR-P1-003 ====
-from dataclasses import dataclass, field
+"""D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult re-export shim
 
+向后兼容入口。真源在 ``zephyr.trading.trading_contracts.execution.capital_allocation_result``
+（CTR-P1-003 跨层契约 SSoT）。本文件原为完整定义副本，与真源完全相同导致多真源漂移风险，
+已收敛为 re-export shim。禁止在此重复定义契约类型——多真源同步漂移根因。
+"""
 
-@dataclass(frozen=True)
-class CapitalAllocationResult:
-    allocation_date: str
-    total_allocated_weight: float
-    allocation_method: str
-    idempotency_key: str
-    strategy_allocations: dict[str, float] = field(default_factory=dict)
-    rebalance_threshold: float = 0.05
-    schema_version: str = "1.0"
+from __future__ import annotations
 
+from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
 
-# ==== END CODGEN:CTR-P1-003 ====
+__all__ = ["CapitalAllocationResult"]
