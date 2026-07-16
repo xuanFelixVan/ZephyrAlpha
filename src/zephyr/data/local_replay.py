@@ -52,6 +52,11 @@ _FALLBACK_DIR = REPO_ROOT / "data" / "local_fallback"
 _MANIFEST_PATH = _FALLBACK_DIR / "_manifest.jsonl"
 _manifest_lock = Lock()
 
+# 默认库名（从环境变量读取，与 config/.env.clickhouse 的 CLICKHOUSE_DATABASE 一致）
+# 用途：历史积压 manifest 可能有不带 db. 前缀的裸表名，回灌时补全为 <db>.<table>
+# 治本：不再硬编码 "c1_market."，支持未来 c3_fundamental 等多库场景（裁定 #ARCH-CH-013 Phase 2）
+_DEFAULT_DB = os.environ.get("CLICKHOUSE_DATABASE", "c1_market")
+
 
 def _ensure_dir() -> Path:
     """确保落盘目录存在。"""
@@ -189,10 +194,11 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
         # 回灌时始终传 None 作为 cols_clause，强制 ch_writer 重新查询表列
         # 原因：落盘时 CH 可能不可用，cols_clause 可能为空/"*"/过期列清单，
         # 直接使用会导致 INSERT 语法错误或列不匹配（裁定 #ARCH-CH-013 Phase 1 根因修复）
-        # 表名前缀修正：历史积压可能有不带 db. 前缀的表名，补全为 c1_market. 前缀
+        # 表名前缀修正：历史积压可能有不带 db. 前缀的裸表名，补全为默认库前缀
+        # （裁定 #ARCH-CH-013 Phase 2：从 CLICKHOUSE_DATABASE 读取，不再硬编码 c1_market.）
         replay_table = entry["table"]
         if "." not in replay_table:
-            replay_table = f"c1_market.{replay_table}"
+            replay_table = f"{_DEFAULT_DB}.{replay_table}"
         ok = ch_writer_mod.write_tsv(
             replay_table,
             None,
