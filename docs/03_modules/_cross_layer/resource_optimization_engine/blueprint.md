@@ -736,7 +736,7 @@ class DegradationMatrix(BaseModel):
 
 | 产出物 | 绝对路径 |
 |--------|---------|
-| 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_engine.py` |
+| 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py` |
 | 守护线程注册表（升级版） | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` |
 | I/O 缓存层 | `D:\ZephyrAlpha\src\zephyr\shared\io\io_cache.py` |
 | 流式读取工具 | `D:\ZephyrAlpha\src\zephyr\shared\io\streaming_reader.py` |
@@ -856,7 +856,7 @@ class DegradationMatrix(BaseModel):
 **实施步骤**：
 
 1. **读**：阅读 `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` 现有实现
-2. **做**：创建 `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_engine.py`
+2. **做**：创建 `D:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py`
    - 实现 `ResourceOptimizationEngine` 类（单例）
    - 实现 `snapshot_resources()` 采集 CPU/内存/进程/磁盘 I/O
    - 实现 `_classify_pressure()` 压力分级（NORMAL/WARNING/CRITICAL/EMERGENCY）
@@ -1204,7 +1204,7 @@ STEP 3: 拆分后验证
 
 | # | 文件/目录 | 完整绝对路径 | 关系 | 变更类型 |
 |---|---------|------------|------|---------|
-| 1 | 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_engine.py` | 新建 | 新建 |
+| 1 | 资源优化引擎主模块 | `D:\ZephyrAlpha\src\zephyr\trading\resource_optimization.py` | 新建 | 新建 |
 | 1a | 数据模型 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\resource_optimization_models.py` | 新建 | 新建 |
 | 2 | 守护线程注册表 | `D:\ZephyrAlpha\src\zephyr\shared\lifecycle\daemon_registry.py` | 读取+修改 | 修改 |
 | 3 | I/O 缓存层 | `D:\ZephyrAlpha\src\zephyr\shared\io\io_cache.py` | 新建 | 新建 |
