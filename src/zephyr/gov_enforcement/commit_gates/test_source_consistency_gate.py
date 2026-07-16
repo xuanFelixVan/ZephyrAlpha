@@ -137,6 +137,26 @@ def _module_to_path(module_path: str) -> Path | None:
     return None
 
 
+def _collect_node_symbol(node: ast.AST, symbols: set[str]) -> None:
+    if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+        symbols.add(node.name)
+    elif isinstance(node, ast.Assign):
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                symbols.add(target.id)
+    elif isinstance(node, ast.AnnAssign):
+        if isinstance(node.target, ast.Name):
+            symbols.add(node.target.id)
+    elif isinstance(node, ast.ImportFrom):
+        for alias in node.names:
+            if alias.name == "*":
+                continue
+            symbols.add(alias.asname or alias.name)
+    elif isinstance(node, ast.Import):
+        for alias in node.names:
+            symbols.add(alias.asname or alias.name.split(".")[0])
+
+
 def _extract_source_symbols(file_path: Path) -> set[str] | None:
     """从源码文件 AST 提取所有顶层符号集合。
 
@@ -169,23 +189,7 @@ def _extract_source_symbols(file_path: Path) -> set[str] | None:
 
     symbols: set[str] = set()
     for node in tree.body:
-        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
-            symbols.add(node.name)
-        elif isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name):
-                    symbols.add(target.id)
-        elif isinstance(node, ast.AnnAssign):
-            if isinstance(node.target, ast.Name):
-                symbols.add(node.target.id)
-        elif isinstance(node, ast.ImportFrom):
-            for alias in node.names:
-                if alias.name == "*":
-                    continue
-                symbols.add(alias.asname or alias.name)
-        elif isinstance(node, ast.Import):
-            for alias in node.names:
-                symbols.add(alias.asname or alias.name.split(".")[0])
+        _collect_node_symbol(node, symbols)
     return symbols
 
 
