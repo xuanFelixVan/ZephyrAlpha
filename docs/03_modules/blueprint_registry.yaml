@@ -2,7 +2,7 @@ registry:
   version: 2.7.10
   created: '2026-05-02'
   last_updated: '2026-07-16'
-  total_blueprints: 60
+  total_blueprints: 61
   scope: 03_modules/
   note: Auto-synced from 60 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
@@ -179,6 +179,20 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
+  construction_progress: not_started
+- module_id: MOD-GOV-ALIGNMENT-LOOP
+  name: alignment_loop
+  title: 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
+  summary: 蓝图-代码对齐长效闭环引擎——编排检测(drift_detector)→修复(auto_fix_engine)→同步(panorama_alignment_engine)的无人值守闭环。S1-S5五子任务。
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 1.0.0
+  generation: 1
+  last_updated: '2026-07-14'
+  file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
   construction_progress: not_started
 - module_id: MOD-GOVERNANCE
   name: _domain_governance
@@ -492,7 +506,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.1.1
+  version: 1.1.0
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
