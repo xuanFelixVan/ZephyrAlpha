@@ -475,11 +475,19 @@ def metric_07_dead_code() -> dict:
     检测：AST 解析 src/zephyr/ 下 .py 的 import 语句，收集被引用的模块名/符号名，
     若某模块 basename 不被任何 import 引用且非入口，则为 orphan。
     排除 __init__.py / __main__.py / conftest.py / setup.py / _ 前缀私有模块（按相对导入）。
+
+    治本（M07，2026-07-17）：
+    1. 支持 # noqa: m07-orphan 豁免（per-file）。
+    2. 检测动态引用：收集所有字符串字面量，模块 stem 出现在字符串中视为被引用
+       （importlib.import_module / __import__ / 注册表字符串引用 / 配置文件引用）。
+    3. 跳过有 [STARTUP] 头的文件（有定义的加载机制，非 orphan）。
+    4. 扫描 scripts/ 目录的 import 和字符串字面量（跨目录引用检测）。
     """
     exclude = EXCLUDE_DIRS | {"tests", "__pycache__"}
     py_files = iter_files(SRC_ZEPHYR, extensions=frozenset({".py"}), exclude_dirs=exclude)
     all_modules: dict[str, Path] = {}
     all_trees: list[tuple[Path, ast.AST | None, str]] = []
+    all_string_literals: set[str] = set()
     for fp in py_files:
         if fp.name in ("__init__.py", "__main__.py", "conftest.py", "setup.py"):
             continue
@@ -489,8 +497,47 @@ def metric_07_dead_code() -> dict:
         except (OSError, UnicodeDecodeError, SyntaxError):
             tree = None
             src = ""
+        # 治本（M07）：per-file 豁免
+        if "# noqa: m07-orphan" in src:
+            continue
+        # 治本（M07）：跳过有 [STARTUP] 头的文件（有加载机制）
+        if re.search(r"^#\s*\[STARTUP\]", src, re.MULTILINE):
+            continue
         all_modules[fp.stem] = fp
         all_trees.append((fp, tree, src))
+        # 治本（M07）：收集所有字符串字面量（用于检测动态引用）
+        if tree is not None:
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    all_string_literals.add(node.value)
+    # 治本（M07）：也扫描 scripts/ 下的 import 和字符串（跨目录引用）
+    scripts_dir = REPO_ROOT / "scripts"
+    if scripts_dir.exists():
+        script_files = iter_files(
+            scripts_dir, extensions=frozenset({".py"}),
+            exclude_dirs=exclude,
+        )
+        for sfp in script_files:
+            try:
+                ssrc = sfp.read_text(encoding="utf-8")
+                stree = ast.parse(ssrc, filename=str(sfp))
+            except (OSError, UnicodeDecodeError, SyntaxError):
+                continue
+            if stree is None:
+                continue
+            for snode in ast.walk(stree):
+                if isinstance(snode, ast.Import):
+                    for alias in snode.names:
+                        if alias.name:
+                            all_string_literals.add(alias.name.split(".")[-1])
+                elif isinstance(snode, ast.ImportFrom):
+                    if snode.module:
+                        all_string_literals.add(snode.module.split(".")[-1])
+                    for alias in snode.names:
+                        if alias.name and alias.name != "*":
+                            all_string_literals.add(alias.name)
+                elif isinstance(snode, ast.Constant) and isinstance(snode.value, str):
+                    all_string_literals.add(snode.value)
     # AST 精确解析 import：收集模块路径末段 + import 的符号名
     imported_names: set[str] = set()
     for _, tree, _ in all_trees:
@@ -516,6 +563,9 @@ def metric_07_dead_code() -> dict:
     orphans: list[str] = []
     for stem, fp in sorted(all_modules.items()):
         if stem in imported_names:
+            continue
+        # 治本（M07）：模块 stem 出现在字符串字面量中 → 动态引用，非 orphan
+        if stem in all_string_literals:
             continue
         try:
             rel = fp.relative_to(REPO_ROOT)
