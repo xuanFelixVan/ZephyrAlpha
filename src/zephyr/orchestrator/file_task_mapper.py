@@ -155,6 +155,44 @@ class SyncReport:
     inconsistencies: list[SyncInconsistency] = field(default_factory=list)
 
 
+def _check_consistency_is_ignored(
+    disk_exists: bool,
+    frontmatter_status: str | None,
+    task_status: str,
+) -> bool:
+    if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
+        return True
+
+    if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
+        return True
+
+    if (
+        disk_exists
+        and frontmatter_status in ("accepted", "Active", "active")
+        and task_status in ("COMPLETED", "VERIFIED")
+    ):
+        return True
+
+    return False
+
+
+def _check_consistency_build_issue(
+    disk_exists: bool,
+    frontmatter_status: str | None,
+    task_status: str,
+) -> str | None:
+    if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status == "PENDING":
+        return "STALE_TASK_WARNING: file accepted but task still PENDING"
+
+    if not disk_exists and task_status in ("COMPLETED", "VERIFIED"):
+        return "MISSING_ARTIFACT_ERROR: task completed/verified but file missing"
+
+    if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "VERIFIED":
+        return "DOWNGRADE_WARNING: file draft but task VERIFIED"
+
+    return None
+
+
 class FileTaskMapper:
     """
     文件路径 ↔ Task N:N 映射器。
@@ -381,47 +419,18 @@ class FileTaskMapper:
         frontmatter_status: str | None,
         task_status: str,
     ) -> SyncInconsistency | None:
-        if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
+        if _check_consistency_is_ignored(disk_exists, frontmatter_status, task_status):
             return None
 
-        if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
-            return None
-
-        if (
-            disk_exists
-            and frontmatter_status in ("accepted", "Active", "active")
-            and task_status in ("COMPLETED", "VERIFIED")
-        ):
-            return None
-
-        if disk_exists and frontmatter_status in ("accepted", "Active", "active") and task_status == "PENDING":
+        issue = _check_consistency_build_issue(disk_exists, frontmatter_status, task_status)
+        if issue is not None:
             return SyncInconsistency(
                 task_id=task_id,
                 file_path=file_path,
                 disk_exists=disk_exists,
                 frontmatter_status=frontmatter_status,
                 task_status=task_status,
-                issue="STALE_TASK_WARNING: file accepted but task still PENDING",
-            )
-
-        if not disk_exists and task_status in ("COMPLETED", "VERIFIED"):
-            return SyncInconsistency(
-                task_id=task_id,
-                file_path=file_path,
-                disk_exists=disk_exists,
-                frontmatter_status=frontmatter_status,
-                task_status=task_status,
-                issue="MISSING_ARTIFACT_ERROR: task completed/verified but file missing",
-            )
-
-        if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "VERIFIED":
-            return SyncInconsistency(
-                task_id=task_id,
-                file_path=file_path,
-                disk_exists=disk_exists,
-                frontmatter_status=frontmatter_status,
-                task_status=task_status,
-                issue="DOWNGRADE_WARNING: file draft but task VERIFIED",
+                issue=issue,
             )
 
         return None
