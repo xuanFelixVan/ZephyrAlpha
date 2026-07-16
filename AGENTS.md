@@ -138,6 +138,19 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 
 > **永久系统四要素**：所有基础设施永久系统必须满足自动触发/自动运行/自动维护/自动关闭。禁止时间触发（cron/Timer/sleep-loop），所有 reconciler 必须事件触发。启动接线见 [`boot_hooks.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/boot_hooks.py)（`register_boot_hooks()`）。
 
+> **代码归类表（C 类边界显式化，2026-07-17 治本）**：审查 0.5 节改动分类时，按此表判定代码归属，禁止凭印象推断。C 类"永久系统/常驻服务"特指**有状态+需持续运行+需自动维护/关闭**的基础设施系统。
+
+| 代码类型 | 归类 | 判定依据 |
+|---------|------|---------|
+| reconciler（post-commit 自动修复） | C 类·永久系统 | 有状态+持续运行+需自动维护/关闭 |
+| scheduler/watchdog（常驻守护） | C 类·永久系统 | 有状态+常驻内存 |
+| boot_hooks 事件钩子 | C 类·永久系统 | 永久注册+自动触发 |
+| commit gate（pre-commit 检查函数） | B 类·事件触发无状态函数 | 无状态+事件触发+运行即结束，无"关闭"概念 |
+| 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
+| 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
+
+> **审查跳过条款真源引用铁律（2026-07-17 治本）**：审查报告 0.5 节跳过条款时，跳过理由 MUST 引用真源文件路径+行号+原文摘录证明分类正确，禁止"仅 X 类，本次非 X 类"循环论证。合规格式示例：跳过 1.4-1.6（仅 C 类）——依据 [`trae_060` §3 L122](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml)"永久性系统/功能脚本"+ AGENTS.md 代码归类表，commit gate 属 B 类事件触发无状态函数，非 C 类。
+
 > MCP 服务器完整定义（工具清单/角色权限/熔断配置）见 [`config/mcp.json`](file:///d:/ZephyrAlpha/config/mcp.json)。触发器路由表（6 触发器+处理器+安全等级）见 [`config/trigger_router.yaml`](file:///d:/ZephyrAlpha/config/trigger_router.yaml)。
 
 ### 因子信号域（D_FACTOR / D_FUNDAMENTAL_SIGNAL / D_SIGQC，2026-07-06 AI-08 补登）
