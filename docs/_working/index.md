@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: index
 completes_when: _working 目录被清空或重构
 ---
 

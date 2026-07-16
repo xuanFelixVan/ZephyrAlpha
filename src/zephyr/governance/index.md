@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-INF-005
 ttl: task_bound
+doc_type: index
 ---
 
 # 治理域模块索引（AI受众优先）

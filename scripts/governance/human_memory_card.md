@@ -1,6 +1,7 @@
 ---
 blueprint_id: MOD-INF-005
 ttl: task_bound
+doc_type: index
 ---
 
 # 脚本系统 — 人类维护者速览卡片
