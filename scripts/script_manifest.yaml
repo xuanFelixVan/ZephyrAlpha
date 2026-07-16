@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-17'
-total_scripts: 569
+total_scripts: 570
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -426,6 +426,14 @@ scripts:
   path: arch_guard/_tools/patch_p1_paths.py
   description: CTR-P1-001~009 的 physical_path 均为 null，导致 generate_contracts.py 无法生成 Python dataclass。
   domain: arch_guard
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: backup/backup_reconciler.py
+  path: backup/backup_reconciler.py
+  description: 职责：注册为 ReconciliationRegistry 的 reconciler，post-commit 自动触发。
+  domain: backup
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
