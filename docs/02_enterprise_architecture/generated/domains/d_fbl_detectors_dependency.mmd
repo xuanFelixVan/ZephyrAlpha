@@ -1,7 +1,7 @@
 %% D_FBL_DETECTORS 域全景依赖图
-%% 生成时间: 2026-07-17 02:39:43
+%% 生成时间: 2026-07-17 02:55:27
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 65, 依赖边数: 78
+%% 模块数: 65, 依赖边数: 79
 
 graph TD
 
@@ -90,40 +90,40 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
-    %% D_FEEDBACK_LOOP -> D_FBL_DETECTORS (33 条)
+    %% D_FEEDBACK_LOOP -> D_FBL_DETECTORS (34 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___rt_desensitization_curve_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___omaly_anomaly_clustering_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___rt_desensitization_curve_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ty_autoscale_remediation_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___lity_blast_radius_budget_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___nishing_returns_detector_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___lation_ensemble_detector_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_ebpf_monitor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___nomaly_flapping_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___adual_poisoning_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___omaly_heisenbug_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___y_infinite_loop_detector_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____maintenance_coordinator_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___metric_cardinality_guard_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____placebo_action_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_otel_adapter_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____placebo_action_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ositive_feedback_defense_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_regulatory_audit_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___iagnosis_trust_evaluator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ility_resolution_tracker_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_runbook_executor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ation_rumor_noise_filter_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_runbook_executor_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___lent_corruption_detector_py
     %% D_FRONTEND -> D_FBL_DETECTORS (3 条)
-    D_FRONTEND[D_FRONTEND] -->|test_depends| src_zephyr_feedback_loop_detec___bility_chaos_engineering_py
     D_FRONTEND[D_FRONTEND] -->|test_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py
+    D_FRONTEND[D_FRONTEND] -->|test_depends| src_zephyr_feedback_loop_detec___bility_chaos_engineering_py
     D_FRONTEND[D_FRONTEND] -->|test_depends| src_zephyr_feedback_loop_detec___ance_regression_detector_py
     %% D_GOVERNANCE -> D_FBL_DETECTORS (1 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_feedback_loop_detec___w_contamination_detector_py
@@ -160,8 +160,8 @@ graph TD
     %% D_RISK -> D_FBL_DETECTORS (1 条)
     D_RISK[D_RISK] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_blast_radius_py
     %% D_SHARED -> D_FBL_DETECTORS (3 条)
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec____cross_system_correlator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec___n_cross_signal_validator_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec____cross_system_correlator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec____multi_signal_correlator_py
 
     %% 跨域依赖（出）- 最多显示 30 条
@@ -172,5 +172,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 5 条
-    %% 跨域入边: 70 条
+    %% 跨域入边: 71 条
     %% 跨域出边: 3 条

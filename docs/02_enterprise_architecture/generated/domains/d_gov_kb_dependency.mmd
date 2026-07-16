@@ -1,5 +1,5 @@
 %% D_GOV_KB 域全景依赖图
-%% 生成时间: 2026-07-17 02:39:44
+%% 生成时间: 2026-07-17 02:55:27
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 31, 依赖边数: 82
 
@@ -45,16 +45,17 @@ graph TD
     src_zephyr_gov_kb_bootstrap_py -->|import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_ingest_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_unified_memory_api_py -->|import_depends| src_zephyr_gov_kb_storage_unified_memory_api_py
+    src_zephyr_gov_kb_vms_memory_backend_py -->|import_depends| src_zephyr_gov_kb__backend_protocol_py
     src_zephyr_gov_kb__backend_protocol_py -->|import_depends| src_zephyr_gov_kb_storage__backend_protocol_py
     src_zephyr_gov_kb_kb_engine_kb_gate_task_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_vms_memory_backend_py -->|import_depends| src_zephyr_gov_kb__backend_protocol_py
     src_zephyr_gov_kb_migration_kb_gate_task_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_batch_ingest_py -->|import_depends| src_zephyr_gov_kb_ingest_py
-    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_extract_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_storage_unified_memory_api_py -->|import_depends| src_zephyr_gov_kb_storage__backend_protocol_py
     src_zephyr_gov_kb_storage_unified_memory_api_py -->|import_depends| src_zephyr_gov_kb_vms_memory_backend_py
+    src_zephyr_gov_kb___init___py -->|config_depends| src_zephyr_gov_kb_batch_ingest_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_GOV_KB (1 条)
@@ -65,8 +66,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_kb_load_bearing_py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_kb_engine_kb_gate_task_py
     D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_migration_kb_gate_task_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_pipeline_activate_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_storage_unified_memory_api_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_pipeline_batch_ingest_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| src_zephyr_gov_kb_storage__backend_protocol_py
     %% D_GOV_OPS_RESILIENCE -> D_GOV_KB (3 条)
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_kb_ingest_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
@@ -83,27 +84,25 @@ graph TD
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_gov_kb_vms_memory_backend_py
     %% D_KNOWLEDGE -> D_GOV_KB (16 条)
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_pipeline_analyze_py
-    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_bootstrap_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_bootstrap_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_freeze_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_graph_validator_py
-    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
-    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_self_test_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_kb_gate_task_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb__backend_protocol_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb__backend_protocol_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_verify_py
+    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_self_test_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb__backend_protocol_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_vms_memory_backend_py
-    D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb__backend_protocol_py
     D_KNOWLEDGE[D_KNOWLEDGE] -->|test_depends| src_zephyr_gov_kb_ke_tombstone_py
     %% D_SECURITY -> D_GOV_KB (1 条)
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_gov_kb_safety_brake_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_KB -> D_AUTONOMY_CORE (1 条)
-    src_zephyr_gov_kb___init___py -->|config_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_GOV_KB -> D_GOVERNANCE (2 条)
     src_zephyr_gov_kb_ke_tombstone_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_kb_self_test_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -112,36 +111,36 @@ graph TD
     src_zephyr_gov_kb_ingest_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_gov_kb_pipeline_extract_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_gov_kb_pipeline_extract_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_GOV_KB -> D_INTEGRATION (4 条)
     src_zephyr_gov_kb_embedding_migrate_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_gov_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_gov_kb_vms_memory_backend_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_GOV_KB -> D_SHARED (18 条)
-    src_zephyr_gov_kb_integrity_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_freeze_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_integrity_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_ingest_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_ke_tombstone_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_load_bearing_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_verify_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_safety_brake_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_verify_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_pipeline_batch_ingest_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_storage_unified_memory_api_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 14 条
+    %% 域内依赖: 15 条
     %% 跨域入边: 35 条
-    %% 跨域出边: 33 条
+    %% 跨域出边: 32 条

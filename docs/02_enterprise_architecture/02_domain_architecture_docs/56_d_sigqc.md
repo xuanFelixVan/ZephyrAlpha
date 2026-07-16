@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号质量控制（D_SIGQC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:39:40
+> 最后更新: 2026-07-17 02:55:25
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -138,8 +138,8 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: signal_degradation_warning.py | 导入依赖 / import_depends |
-| 2 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: synthesized_signal.py | 导入依赖 / import_depends |
+| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 2 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

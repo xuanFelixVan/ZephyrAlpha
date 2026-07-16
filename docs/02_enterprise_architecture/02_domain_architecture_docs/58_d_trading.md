@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 交易运营（D_TRADING）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:39:41
+> 最后更新: 2026-07-17 02:55:25
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,21 +26,21 @@ ttl: permanent
 | 域ID | D_TRADING | Domain ID | D_TRADING |
 | 域名称 | 交易运营 | Domain Name | Trading Operations |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 109 | Module Count | 109 |
-| 域内依赖 | 77 | Internal Dependencies | 77 |
-| 跨域入边 | 45 | Cross-domain Incoming | 45 |
-| 跨域出边 | 109 | Cross-domain Outgoing | 109 |
+| 模块数 | 103 | Module Count | 103 |
+| 域内依赖 | 63 | Internal Dependencies | 63 |
+| 跨域入边 | 42 | Cross-domain Incoming | 42 |
+| 跨域出边 | 122 | Cross-domain Outgoing | 122 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 84 | Prototype Modules | 84 |
-| 生产态模块 | 25 | Production Modules | 25 |
-| 容量 | 25/150 (正常) | Capacity | 25/150 (正常) |
+| 原型态模块 | 81 | Prototype Modules | 81 |
+| 生产态模块 | 22 | Production Modules | 22 |
+| 容量 | 22/150 (正常) | Capacity | 22/150 (正常) |
 | 描述 | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D-GOV_ENFORCEMENT门禁层执行。 | Description | 交易会话、交易接口、交易日志、交易复盘。交易运营中枢。合规检查由D-GOV_ENFORCEMENT门禁层执行。 |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 109 个模块 / 109 modules）。
+> 按 architecture_layer 分组的模块清单（共 103 个模块 / 103 modules）。
 
-### L2 领域层 / Domain Layer (109 modules)
+### L2 领域层 / Domain Layer (103 modules)
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
@@ -74,85 +74,79 @@ ttl: permanent
 | 28 | src/zephyr/trading/trading_contracts/execution/position.py | position.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
 | 29 | src/zephyr/trading/trading_contracts/factories.py | trading-contracts/factories.py — 交易域数据契... | 原型态 / prototype |  |
 | 30 | src/zephyr/trading/trading_contracts/market/__init__.py | trading-contracts.market — market data and sig... | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 31 | src/zephyr/trading/trading_contracts/market/factor_monito... | factor_monitor_report.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 32 | src/zephyr/trading/trading_contracts/market/factor_signal.py | factor_signal.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 33 | src/zephyr/trading/trading_contracts/market/instrument.py | instrument.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 34 | src/zephyr/trading/trading_contracts/market/macro_factor_... | macro_factor_signal.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 35 | src/zephyr/trading/trading_contracts/market/market_data.py | market_data.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 36 | src/zephyr/trading/trading_contracts/market/signal_degrad... | signal_degradation_warning.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 37 | src/zephyr/trading/trading_contracts/market/synthesized_s... | synthesized_signal.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 38 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | __init__.py | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 39 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | money.py | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 40 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | Re-export shim — 真源已收敛至 zephyr.shared.co... | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 41 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | strategy_lifecycle_event.py | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
-| 42 | src/zephyr/trading/trading_contracts/risk/__init__.py | trading-contracts.risk — risk management domai... | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 43 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | compliance_rule.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 44 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | risk_dashboard_snapshot.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 45 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | risk_limit_violation_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 46 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | risk_limits.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 47 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | risk_metrics.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 48 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | risk_validator_protocol.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 49 | src/zephyr/trading/trading_contracts/risk/trading_kill_sw... | trading_kill_switch.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 50 | src/zephyr/trading/verdict_engine.py | verdict_engine.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 51 | src/zephyr/trading/zombie_scanner.py | zombie_scanner.py — 僵尸 Python 进程检测与自动处置 | 原型态 / prototype | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 52 | tests/trading/integration/test_trading_contracts.py | test_trading_contracts.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
-| 53 | tests/trading/pipeline/test_l03_signal_generation.py | test_l03_signal_generation.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 54 | tests/trading/pipeline/test_l05_portfolio_construction.py | test_l05_portfolio_construction.py | 原型态 / prototype | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
-| 55 | tests/trading/pipeline/test_l06_trade_execution.py | test_l06_trade_execution.py | 原型态 / prototype | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 56 | tests/trading/pipeline/test_l07_post_trade_analytics.py | test_l07_post_trade_analytics.py | 原型态 / prototype | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
-| 57 | tests/trading/root/test_design_decisions_root.py | test_design_decisions_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 58 | tests/trading/root/test_dlq_manager_root.py | test_dlq_manager_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 59 | tests/trading/root/test_state_propagation_root.py | test_state_propagation_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 60 | tests/trading/root/test_state_synchronizer_root.py | test_state_synchronizer_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 61 | tests/trading/test_admission_controller.py | test_admission_controller.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 62 | tests/trading/test_backpressure_manager.py | test_backpressure_manager.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 63 | tests/trading/test_backpressure_types.py | test_backpressure_types.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 64 | tests/trading/test_batch_orchestrator.py | test_batch_orchestrator.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 65 | tests/trading/test_behavioral_admission.py | test_behavioral_admission.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 66 | tests/trading/test_benchmark_runner.py | test_benchmark_runner.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 67 | tests/trading/test_blind_spot_closure.py | test_blind_spot_closure.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 68 | tests/trading/test_boot_cron_jobs.py | test_boot_cron_jobs.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 69 | tests/trading/test_boot_hooks.py | test_boot_hooks.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 70 | tests/trading/test_bulkhead_manager.py | test_bulkhead_manager.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 71 | tests/trading/test_circuit_breaker_manager.py | test_circuit_breaker_manager.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 72 | tests/trading/test_conductor.py | Conductor 单元测试——覆盖核心编排接口。 | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 73 | tests/trading/test_construction_guide.py | test_construction_guide.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 74 | tests/trading/test_dead_letter_queue.py | test_dead_letter_queue.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 75 | tests/trading/test_degrade_cascade.py | test_degrade_cascade.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 76 | tests/trading/test_disk_guard.py | test_disk_guard.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 77 | tests/trading/test_dream_cycle.py | test_dream_cycle.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 78 | tests/trading/test_fault_types.py | test_fault_types.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 79 | tests/trading/test_feature_flag.py | test_feature_flag.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 80 | tests/trading/test_finalizer.py | test_finalizer.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 81 | tests/trading/test_finding_bridge.py | test_finding_bridge.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 82 | tests/trading/test_gpu_consensus_scheduler.py | test_gpu_consensus_scheduler.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 83 | tests/trading/test_housekeeping.py | test_housekeeping.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 84 | tests/trading/test_ide_health_daemon.py | IdeHealthDaemon 测试. | 原型态 / prototype | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
-| 85 | tests/trading/test_incident_postmortem.py | test_incident_postmortem.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 86 | tests/trading/test_integration_registry.py | test_integration_registry.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 87 | tests/trading/test_lean_scanner.py | test_lean_scanner.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 88 | tests/trading/test_lifecycle_manager.py | test_lifecycle_manager.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 89 | tests/trading/test_module_onboarding_scanner.py | test_module_onboarding_scanner.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 90 | tests/trading/test_network_partition.py | test_network_partition.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 91 | tests/trading/test_night_shift_queue.py | test_night_shift_queue.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 92 | tests/trading/test_protection_index.py | test_protection_index.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
-| 93 | tests/trading/test_reconciliation_loop.py | test_reconciliation_loop.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 94 | tests/trading/test_rolling_upgrade.py | test_rolling_upgrade.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 95 | tests/trading/test_routing_plugins.py | test_routing_plugins.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
-| 96 | tests/trading/test_runtime_config.py | test_runtime_config.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 97 | tests/trading/test_schema_migration.py | test_schema_migration.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 98 | tests/trading/test_stability_guard.py | test_stability_guard.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 99 | tests/trading/test_staging_area.py | test_staging_area.py | 原型态 / prototype |  |
-| 100 | tests/trading/test_startup_sequencer.py | test_startup_sequencer.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 101 | tests/trading/test_status_dashboard.py | test_status_dashboard.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 102 | tests/trading/test_stop_gate.py | test_stop_gate.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 103 | tests/trading/test_system_transfer.py | test_system_transfer.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 104 | tests/trading/test_teardown_manager.py | test_teardown_manager.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 105 | tests/trading/test_trading_kill_switch.py | test_trading_kill_switch.py | 原型态 / prototype | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
-| 106 | tests/trading/test_trading_session_lifecycle.py | tests.test_trading_session_lifecycle — F1 Sess... | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 107 | tests/trading/test_version_manifest.py | test_version_manifest.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
-| 108 | tests/trading/test_work_dag.py | test_work_dag.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
-| 109 | tests/trading/test_work_orchestrator.py | test_work_orchestrator.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 31 | src/zephyr/trading/trading_contracts/market/instrument.py | instrument.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 32 | src/zephyr/trading/trading_contracts/market/signal_degrad... | signal_degradation_warning.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 33 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | __init__.py | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 34 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | money.py | 生产态 / production | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 35 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | Re-export shim — 真源已收敛至 zephyr.shared.co... | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 36 | src/zephyr/trading/trading_contracts/portfolio/contracts/... | strategy_lifecycle_event.py | 原型态 / prototype | [MOD-L00-001](../../03_modules/_domain_data/blueprint.md) |
+| 37 | src/zephyr/trading/trading_contracts/risk/__init__.py | trading-contracts.risk — risk management domai... | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 38 | src/zephyr/trading/trading_contracts/risk/compliance_rule.py | compliance_rule.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 39 | src/zephyr/trading/trading_contracts/risk/risk_dashboard_... | risk_dashboard_snapshot.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 40 | src/zephyr/trading/trading_contracts/risk/risk_limit_viol... | risk_limit_violation_error.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 41 | src/zephyr/trading/trading_contracts/risk/risk_limits.py | risk_limits.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 42 | src/zephyr/trading/trading_contracts/risk/risk_metrics.py | risk_metrics.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 43 | src/zephyr/trading/trading_contracts/risk/risk_validator_... | risk_validator_protocol.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 44 | src/zephyr/trading/trading_contracts/risk/trading_kill_sw... | trading_kill_switch.py | 生产态 / production | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 45 | src/zephyr/trading/verdict_engine.py | verdict_engine.py | 生产态 / production | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 46 | tests/trading/integration/test_trading_contracts.py | test_trading_contracts.py | 原型态 / prototype | [MOD-INF-016](../../03_modules/_cross_layer/shared_core/blueprint.md) |
+| 47 | tests/trading/pipeline/test_l03_signal_generation.py | test_l03_signal_generation.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 48 | tests/trading/pipeline/test_l05_portfolio_construction.py | test_l05_portfolio_construction.py | 原型态 / prototype | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
+| 49 | tests/trading/pipeline/test_l06_trade_execution.py | test_l06_trade_execution.py | 原型态 / prototype | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
+| 50 | tests/trading/pipeline/test_l07_post_trade_analytics.py | test_l07_post_trade_analytics.py | 原型态 / prototype | [MOD-L07-001](../../03_modules/_domain_reporting/blueprint.md) |
+| 51 | tests/trading/root/test_design_decisions_root.py | test_design_decisions_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 52 | tests/trading/root/test_dlq_manager_root.py | test_dlq_manager_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 53 | tests/trading/root/test_state_propagation_root.py | test_state_propagation_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 54 | tests/trading/root/test_state_synchronizer_root.py | test_state_synchronizer_root.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 55 | tests/trading/test_admission_controller.py | test_admission_controller.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 56 | tests/trading/test_backpressure_manager.py | test_backpressure_manager.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 57 | tests/trading/test_backpressure_types.py | test_backpressure_types.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 58 | tests/trading/test_batch_orchestrator.py | test_batch_orchestrator.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 59 | tests/trading/test_behavioral_admission.py | test_behavioral_admission.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 60 | tests/trading/test_benchmark_runner.py | test_benchmark_runner.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 61 | tests/trading/test_blind_spot_closure.py | test_blind_spot_closure.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 62 | tests/trading/test_boot_cron_jobs.py | test_boot_cron_jobs.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 63 | tests/trading/test_boot_hooks.py | test_boot_hooks.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 64 | tests/trading/test_bulkhead_manager.py | test_bulkhead_manager.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 65 | tests/trading/test_circuit_breaker_manager.py | test_circuit_breaker_manager.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 66 | tests/trading/test_conductor.py | Conductor 单元测试——覆盖核心编排接口。 | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 67 | tests/trading/test_construction_guide.py | test_construction_guide.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 68 | tests/trading/test_dead_letter_queue.py | test_dead_letter_queue.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 69 | tests/trading/test_degrade_cascade.py | test_degrade_cascade.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 70 | tests/trading/test_disk_guard.py | test_disk_guard.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 71 | tests/trading/test_dream_cycle.py | test_dream_cycle.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 72 | tests/trading/test_fault_types.py | test_fault_types.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 73 | tests/trading/test_feature_flag.py | test_feature_flag.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 74 | tests/trading/test_finalizer.py | test_finalizer.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 75 | tests/trading/test_finding_bridge.py | test_finding_bridge.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 76 | tests/trading/test_gpu_consensus_scheduler.py | test_gpu_consensus_scheduler.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 77 | tests/trading/test_housekeeping.py | test_housekeeping.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 78 | tests/trading/test_ide_health_daemon.py | IdeHealthDaemon 测试. | 原型态 / prototype | [MOD-RESOURCE_OPTIMIZATION_ENGINE](../../03_modules/_cross_layer/resource_optimization_engine/blueprint.md) |
+| 79 | tests/trading/test_incident_postmortem.py | test_incident_postmortem.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 80 | tests/trading/test_integration_registry.py | test_integration_registry.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 81 | tests/trading/test_lean_scanner.py | test_lean_scanner.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 82 | tests/trading/test_lifecycle_manager.py | test_lifecycle_manager.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 83 | tests/trading/test_module_onboarding_scanner.py | test_module_onboarding_scanner.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 84 | tests/trading/test_network_partition.py | test_network_partition.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 85 | tests/trading/test_night_shift_queue.py | test_night_shift_queue.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 86 | tests/trading/test_protection_index.py | test_protection_index.py | 原型态 / prototype | [MOD-INF-033](../../03_modules/_cross_layer/behavioral_auditor/blueprint.md) |
+| 87 | tests/trading/test_reconciliation_loop.py | test_reconciliation_loop.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 88 | tests/trading/test_rolling_upgrade.py | test_rolling_upgrade.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 89 | tests/trading/test_routing_plugins.py | test_routing_plugins.py | 原型态 / prototype | [MOD-INF-009](../../03_modules/_cross_layer/pipeline/blueprint.md) |
+| 90 | tests/trading/test_runtime_config.py | test_runtime_config.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 91 | tests/trading/test_schema_migration.py | test_schema_migration.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 92 | tests/trading/test_stability_guard.py | test_stability_guard.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 93 | tests/trading/test_staging_area.py | test_staging_area.py | 原型态 / prototype |  |
+| 94 | tests/trading/test_startup_sequencer.py | test_startup_sequencer.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 95 | tests/trading/test_status_dashboard.py | test_status_dashboard.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 96 | tests/trading/test_stop_gate.py | test_stop_gate.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 97 | tests/trading/test_system_transfer.py | test_system_transfer.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 98 | tests/trading/test_teardown_manager.py | test_teardown_manager.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 99 | tests/trading/test_trading_kill_switch.py | test_trading_kill_switch.py | 原型态 / prototype | [MOD-INF-021](../../03_modules/_domain_autonomy_core/rollback_system/blueprint.md) |
+| 100 | tests/trading/test_trading_session_lifecycle.py | tests.test_trading_session_lifecycle — F1 Sess... | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 101 | tests/trading/test_version_manifest.py | test_version_manifest.py | 原型态 / prototype | [MOD-INF-039](../../03_modules/_cross_layer/agent_orchestrator/blueprint.md) |
+| 102 | tests/trading/test_work_dag.py | test_work_dag.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
+| 103 | tests/trading/test_work_orchestrator.py | test_work_orchestrator.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -167,7 +161,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 109 个模块（生产态 25 + 设计态 0 + 原型态 84），标签标注成熟度。
+> 展示全部 103 个模块（生产态 22 + 设计态 0 + 原型态 81），标签标注成熟度。
 
 #### 第 1 页 / 共 4 页
 
@@ -208,64 +202,60 @@ graph TD
     src_zephyr_trading_conductor_py -->|导入依赖 / import_depends| src_zephyr_trading_autopilot_py
     src_zephyr_trading_runtime_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_runtime_async_runtime_py
     src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_init_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
+    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
+    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
     src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_trading_runtime_async_runtime_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_speed_baseline_checker_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_init_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_report_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_trading_runtime_async_runtime_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
+    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py
+    D_SIGLEGACY["(原型态 / prototype) D_SIGLEGACY"]
+    D_SIGLEGACY -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
     D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_GOV_REPAIR["(原型态 / prototype) D_GOV_REPAIR"]
     D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
     D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
-    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_trading_autopilot_py
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    D_ML_TRAIN -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_FRONTEND["(生产态 / production) D_FRONTEND"]
-    D_FRONTEND -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -273,8 +263,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_trading_init_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py production
     class src_zephyr_trading_extensions_init_py,src_zephyr_trading_api_init_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_core_init_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_infrastructure_init_py,src_zephyr_trading_models_init_py,src_zephyr_trading_runtime_init_py,src_zephyr_trading_services_init_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_init_py,src_zephyr_trading_trading_contracts_execution_init_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_init_py design
-    class D_GOVERNANCE,D_INFRA_RUNTIME,D_INTELLIGENCE,D_FRONTEND,D_INTEGRATION external_prod
-    class D_INFRASTRUCTURE,D_SHARED,D_ORCHESTRATOR,D_EX_CORE,D_GOV_REPAIR,D_AUTONOMY_CORE,D_ML_TRAIN,D_AUDITTEST external_design
+    class D_INFRASTRUCTURE,D_FUNDAMENTAL_SIGNAL,D_INFRA_RUNTIME external_prod
+    class D_SHARED,D_SIGLEGACY,D_SIGQC,D_EX_CORE,D_GOVERNANCE,D_GOV_REPAIR external_design
 ```
 
 #### 第 2 页 / 共 4 页
@@ -282,13 +272,8 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
-        src_zephyr_trading_trading_contracts_market_factor_monitor_report_py["(原型态 / prototype) factor_monitor_report.py"]
-        src_zephyr_trading_trading_contracts_market_factor_signal_py["(生产态 / production) factor_signal.py"]
         src_zephyr_trading_trading_contracts_market_instrument_py["(原型态 / prototype) instrument.py"]
-        src_zephyr_trading_trading_contracts_market_macro_factor_signal_py["(原型态 / prototype) macro_factor_signal.py"]
-        src_zephyr_trading_trading_contracts_market_market_data_py["(生产态 / production) market_data.py"]
         src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(原型态 / prototype) signal_degradation_warning.py"]
-        src_zephyr_trading_trading_contracts_market_synthesized_signal_py["(生产态 / production) synthesized_signal.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(生产态 / production) money.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(原型态 / prototype) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
@@ -302,7 +287,6 @@ graph TD
         src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py["(生产态 / production) risk_validator_protocol.py"]
         src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py["(生产态 / production) trading_kill_switch.py"]
         src_zephyr_trading_verdict_engine_py["(生产态 / production) verdict_engine.py"]
-        src_zephyr_trading_zombie_scanner_py["(原型态 / prototype) zombie_scanner.py — 僵尸 Python 进程检测与自动处置<br/>文件: zombie_scanner.py"]
         tests_trading_integration_test_trading_contracts_py["(原型态 / prototype) test_trading_contracts.py"]
         tests_trading_pipeline_test_l03_signal_generation_py["(原型态 / prototype) test_l03_signal_generation.py"]
         tests_trading_pipeline_test_l05_portfolio_construction_py["(原型态 / prototype) test_l05_portfolio_construction.py"]
@@ -312,6 +296,12 @@ graph TD
         tests_trading_root_test_dlq_manager_root_py["(原型态 / prototype) test_dlq_manager_root.py"]
         tests_trading_root_test_state_propagation_root_py["(原型态 / prototype) test_state_propagation_root.py"]
         tests_trading_root_test_state_synchronizer_root_py["(原型态 / prototype) test_state_synchronizer_root.py"]
+        tests_trading_test_admission_controller_py["(原型态 / prototype) test_admission_controller.py"]
+        tests_trading_test_backpressure_manager_py["(原型态 / prototype) test_backpressure_manager.py"]
+        tests_trading_test_backpressure_types_py["(原型态 / prototype) test_backpressure_types.py"]
+        tests_trading_test_batch_orchestrator_py["(原型态 / prototype) test_batch_orchestrator.py"]
+        tests_trading_test_behavioral_admission_py["(原型态 / prototype) test_behavioral_admission.py"]
+        tests_trading_test_benchmark_runner_py["(原型态 / prototype) test_benchmark_runner.py"]
     end
     src_zephyr_trading_trading_contracts_portfolio_contracts_money_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
     src_zephyr_trading_trading_contracts_risk_compliance_rule_py -.->|config_depends / config_depends| src_zephyr_trading_trading_contracts_risk_init_py
@@ -322,61 +312,50 @@ graph TD
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
-    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
-    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
+    tests_trading_test_admission_controller_py -.->|测试依赖 / test_depends| src_zephyr_trading_verdict_engine_py
     tests_trading_pipeline_test_l06_trade_execution_py -.->|测试依赖 / test_depends| src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
+    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_trading_test_backpressure_types_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_trading_root_test_dlq_manager_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_REPORTING["(生产态 / production) D_REPORTING"]
     tests_trading_pipeline_test_l07_post_trade_analytics_py -.->|测试依赖 / test_depends| D_REPORTING
-    tests_trading_root_test_state_propagation_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_EX_CORE["(生产态 / production) D_EX_CORE"]
     tests_trading_pipeline_test_l06_trade_execution_py -.->|测试依赖 / test_depends| D_EX_CORE
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_trading_root_test_state_synchronizer_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_trading_zombie_scanner_py -.->|导入依赖 / import_depends| D_SHARED
-    tests_trading_root_test_design_decisions_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_pipeline_test_l07_post_trade_analytics_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_PF_CORE["(生产态 / production) D_PF_CORE"]
-    tests_trading_pipeline_test_l05_portfolio_construction_py -.->|测试依赖 / test_depends| D_PF_CORE
+    tests_trading_test_backpressure_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_root_test_dlq_manager_root_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_RISK["(生产态 / production) D_RISK"]
     D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
-    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
-    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
-    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
-    D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
-    D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
-    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
-    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     D_RISK -.->|测试依赖 / test_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
-    D_SIGLEGACY["(原型态 / prototype) D_SIGLEGACY"]
-    D_SIGLEGACY -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
+    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_trading_verdict_engine_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
+    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
+    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
+    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_trading_contracts_market_factor_signal_py,src_zephyr_trading_trading_contracts_market_market_data_py,src_zephyr_trading_trading_contracts_market_synthesized_signal_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py production
-    class src_zephyr_trading_trading_contracts_market_factor_monitor_report_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_macro_factor_signal_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_init_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_init_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_zombie_scanner_py,tests_trading_integration_test_trading_contracts_py,tests_trading_pipeline_test_l03_signal_generation_py,tests_trading_pipeline_test_l05_portfolio_construction_py,tests_trading_pipeline_test_l06_trade_execution_py,tests_trading_pipeline_test_l07_post_trade_analytics_py,tests_trading_root_test_design_decisions_root_py,tests_trading_root_test_dlq_manager_root_py,tests_trading_root_test_state_propagation_root_py,tests_trading_root_test_state_synchronizer_root_py design
-    class D_GOV_AUDIT,D_ORCHESTRATOR,D_INTEGRATION,D_REPORTING,D_EX_CORE,D_SHARED,D_PF_CORE,D_RISK,D_FUNDAMENTAL_SIGNAL external_prod
-    class D_INFRASTRUCTURE,D_GOV_ENFORCEMENT,D_SIGQC,D_SIGLEGACY,D_GOVERNANCE external_design
+    class src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py production
+    class src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_init_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_init_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,tests_trading_integration_test_trading_contracts_py,tests_trading_pipeline_test_l03_signal_generation_py,tests_trading_pipeline_test_l05_portfolio_construction_py,tests_trading_pipeline_test_l06_trade_execution_py,tests_trading_pipeline_test_l07_post_trade_analytics_py,tests_trading_root_test_design_decisions_root_py,tests_trading_root_test_dlq_manager_root_py,tests_trading_root_test_state_propagation_root_py,tests_trading_root_test_state_synchronizer_root_py,tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py design
+    class D_INFRASTRUCTURE,D_INFRA_RUNTIME,D_GOV_AUDIT,D_REPORTING,D_EX_CORE,D_ORCHESTRATOR,D_INTEGRATION,D_RISK external_prod
+    class D_GOV_ENFORCEMENT,D_GOVERNANCE,D_SIGQC,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 #### 第 3 页 / 共 4 页
@@ -384,12 +363,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
-        tests_trading_test_admission_controller_py["(原型态 / prototype) test_admission_controller.py"]
-        tests_trading_test_backpressure_manager_py["(原型态 / prototype) test_backpressure_manager.py"]
-        tests_trading_test_backpressure_types_py["(原型态 / prototype) test_backpressure_types.py"]
-        tests_trading_test_batch_orchestrator_py["(原型态 / prototype) test_batch_orchestrator.py"]
-        tests_trading_test_behavioral_admission_py["(原型态 / prototype) test_behavioral_admission.py"]
-        tests_trading_test_benchmark_runner_py["(原型态 / prototype) test_benchmark_runner.py"]
         tests_trading_test_blind_spot_closure_py["(原型态 / prototype) test_blind_spot_closure.py"]
         tests_trading_test_boot_cron_jobs_py["(原型态 / prototype) test_boot_cron_jobs.py"]
         tests_trading_test_boot_hooks_py["(原型态 / prototype) test_boot_hooks.py"]
@@ -414,30 +387,36 @@ graph TD
         tests_trading_test_lifecycle_manager_py["(原型态 / prototype) test_lifecycle_manager.py"]
         tests_trading_test_module_onboarding_scanner_py["(原型态 / prototype) test_module_onboarding_scanner.py"]
         tests_trading_test_network_partition_py["(原型态 / prototype) test_network_partition.py"]
+        tests_trading_test_night_shift_queue_py["(原型态 / prototype) test_night_shift_queue.py"]
+        tests_trading_test_protection_index_py["(原型态 / prototype) test_protection_index.py"]
+        tests_trading_test_reconciliation_loop_py["(原型态 / prototype) test_reconciliation_loop.py"]
+        tests_trading_test_rolling_upgrade_py["(原型态 / prototype) test_rolling_upgrade.py"]
+        tests_trading_test_routing_plugins_py["(原型态 / prototype) test_routing_plugins.py"]
+        tests_trading_test_runtime_config_py["(原型态 / prototype) test_runtime_config.py"]
     end
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_module_onboarding_scanner_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_backpressure_types_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_trading_test_blind_spot_closure_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_backpressure_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_bulkhead_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_dream_cycle_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_dead_letter_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_runtime_config_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_housekeeping_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_incident_postmortem_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_rolling_upgrade_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_integration_registry_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_module_onboarding_scanner_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_night_shift_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_boot_hooks_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py,tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_disk_guard_py,tests_trading_test_dream_cycle_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py design
-    class D_INFRA_RUNTIME,D_ORCHESTRATOR external_prod
+    class tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_disk_guard_py,tests_trading_test_dream_cycle_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py,tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py design
+    class D_ORCHESTRATOR,D_INFRA_RUNTIME external_prod
 ```
 
 #### 第 4 页 / 共 4 页
@@ -445,12 +424,6 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_TRADING["D_TRADING 交易运营"]
-        tests_trading_test_night_shift_queue_py["(原型态 / prototype) test_night_shift_queue.py"]
-        tests_trading_test_protection_index_py["(原型态 / prototype) test_protection_index.py"]
-        tests_trading_test_reconciliation_loop_py["(原型态 / prototype) test_reconciliation_loop.py"]
-        tests_trading_test_rolling_upgrade_py["(原型态 / prototype) test_rolling_upgrade.py"]
-        tests_trading_test_routing_plugins_py["(原型态 / prototype) test_routing_plugins.py"]
-        tests_trading_test_runtime_config_py["(原型态 / prototype) test_runtime_config.py"]
         tests_trading_test_schema_migration_py["(原型态 / prototype) test_schema_migration.py"]
         tests_trading_test_stability_guard_py["(原型态 / prototype) test_stability_guard.py"]
         tests_trading_test_staging_area_py["(原型态 / prototype) test_staging_area.py"]
@@ -465,36 +438,36 @@ graph TD
         tests_trading_test_work_dag_py["(原型态 / prototype) test_work_dag.py"]
         tests_trading_test_work_orchestrator_py["(原型态 / prototype) test_work_orchestrator.py"]
     end
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_trading_test_stability_guard_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_startup_sequencer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_status_dashboard_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_status_dashboard_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_teardown_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_version_manifest_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_work_dag_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_test_system_transfer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_trading_test_stop_gate_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_runtime_config_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_stability_guard_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     tests_trading_test_trading_session_lifecycle_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
-    tests_trading_test_rolling_upgrade_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_SHARED["(生产态 / production) D_SHARED"]
     tests_trading_test_trading_session_lifecycle_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_work_orchestrator_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_night_shift_queue_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_startup_sequencer_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_schema_migration_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_trading_test_staging_area_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py,tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_status_dashboard_py,tests_trading_test_stop_gate_py,tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py design
-    class D_INFRA_RUNTIME,D_ORCHESTRATOR,D_GOV_ENFORCEMENT,D_SHARED external_prod
+    class tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_status_dashboard_py,tests_trading_test_stop_gate_py,tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py design
+    class D_ORCHESTRATOR,D_INFRA_RUNTIME,D_GOV_ENFORCEMENT,D_SHARED external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 25 个，4 条域内依赖）。
+> 仅展示已上线运行的模块（共 22 个，4 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -514,9 +487,6 @@ graph TD
         src_zephyr_trading_trading_contracts_execution_model_serving_request_py["(生产态 / production) model_serving_request.py"]
         src_zephyr_trading_trading_contracts_execution_order_py["(生产态 / production) order.py"]
         src_zephyr_trading_trading_contracts_execution_position_py["(生产态 / production) position.py"]
-        src_zephyr_trading_trading_contracts_market_factor_signal_py["(生产态 / production) factor_signal.py"]
-        src_zephyr_trading_trading_contracts_market_market_data_py["(生产态 / production) market_data.py"]
-        src_zephyr_trading_trading_contracts_market_synthesized_signal_py["(生产态 / production) synthesized_signal.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_money_py["(生产态 / production) money.py"]
         src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py["(生产态 / production) risk_dashboard_snapshot.py"]
         src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py["(生产态 / production) risk_limit_violation_error.py"]
@@ -529,56 +499,52 @@ graph TD
     src_zephyr_trading_gpu_consensus_scheduler_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_protection_index_py -->|导入依赖 / import_depends| src_zephyr_trading_verdict_engine_py
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| src_zephyr_trading_protection_index_py
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_trading_runtime_async_runtime_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_trading_autopilot_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_trading_verdict_engine_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_trading_ide_health_daemon_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_trading_ide_health_daemon_py -.->|导入依赖 / import_depends| D_SHARED
-    D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_GOV_REPAIR["(原型态 / prototype) D_GOV_REPAIR"]
-    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
-    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
-    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    src_zephyr_trading_ide_health_daemon_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_trading_contracts_broker_interface_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_gpu_consensus_scheduler_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_trading_autopilot_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_trading_admission_controller_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_trading_autopilot_py
-    D_RISK["(生产态 / production) D_RISK"]
-    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py
-    D_RISK -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    D_ML_TRAIN -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
-    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
-    D_INTELLIGENCE -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_model_serving_request_py
-    D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_synthesized_signal_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_ide_health_daemon_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_trading_verdict_engine_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_trading_init_py
+    D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE -->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
+    D_GOV_REPAIR["(原型态 / prototype) D_GOV_REPAIR"]
+    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_init_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_market_factor_signal_py,src_zephyr_trading_trading_contracts_market_market_data_py,src_zephyr_trading_trading_contracts_market_synthesized_signal_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py production
-    class D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_RUNTIME,D_INTEGRATION,D_RISK,D_FUNDAMENTAL_SIGNAL,D_INTELLIGENCE external_prod
-    class D_INFRASTRUCTURE,D_SHARED,D_EX_CORE,D_GOV_REPAIR,D_AUTONOMY_CORE,D_ML_TRAIN external_design
+    class src_zephyr_trading_init_py,src_zephyr_trading_admission_controller_py,src_zephyr_trading_autopilot_py,src_zephyr_trading_conductor_py,src_zephyr_trading_gpu_consensus_scheduler_py,src_zephyr_trading_ide_health_daemon_py,src_zephyr_trading_protection_index_py,src_zephyr_trading_runtime_async_runtime_py,src_zephyr_trading_trading_contracts_broker_interface_py,src_zephyr_trading_trading_contracts_execution_capital_allocation_result_py,src_zephyr_trading_trading_contracts_execution_execution_report_py,src_zephyr_trading_trading_contracts_execution_fill_py,src_zephyr_trading_trading_contracts_execution_model_serving_request_py,src_zephyr_trading_trading_contracts_execution_order_py,src_zephyr_trading_trading_contracts_execution_position_py,src_zephyr_trading_trading_contracts_portfolio_contracts_money_py,src_zephyr_trading_trading_contracts_risk_risk_dashboard_snapshot_py,src_zephyr_trading_trading_contracts_risk_risk_limit_violation_error_py,src_zephyr_trading_trading_contracts_risk_risk_metrics_py,src_zephyr_trading_trading_contracts_risk_risk_validator_protocol_py,src_zephyr_trading_trading_contracts_risk_trading_kill_switch_py,src_zephyr_trading_verdict_engine_py production
+    class D_GOVERNANCE,D_GOV_AUDIT,D_INFRA_RUNTIME,D_INTEGRATION,D_EX_CORE external_prod
+    class D_SHARED,D_INFRASTRUCTURE,D_AUTONOMY_CORE,D_GOV_REPAIR external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -589,7 +555,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 84 个，17 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 81 个，13 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -609,9 +575,7 @@ graph TD
         src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py["(原型态 / prototype) execution_rejection_error.py"]
         src_zephyr_trading_trading_contracts_factories_py["(原型态 / prototype) trading-contracts/factories.py — 交易域数据契...<br/>文件: factories.py"]
         src_zephyr_trading_trading_contracts_market_init_py["(原型态 / prototype) trading-contracts.market — market data and sig...<br/>文件: __init__.py"]
-        src_zephyr_trading_trading_contracts_market_factor_monitor_report_py["(原型态 / prototype) factor_monitor_report.py"]
         src_zephyr_trading_trading_contracts_market_instrument_py["(原型态 / prototype) instrument.py"]
-        src_zephyr_trading_trading_contracts_market_macro_factor_signal_py["(原型态 / prototype) macro_factor_signal.py"]
         src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py["(原型态 / prototype) signal_degradation_warning.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py["(原型态 / prototype) Re-export shim — 真源已收敛至 zephyr.shared.co...<br/>文件: performance_attribution_report.py"]
@@ -619,7 +583,6 @@ graph TD
         src_zephyr_trading_trading_contracts_risk_init_py["(原型态 / prototype) trading-contracts.risk — risk management domai...<br/>文件: __init__.py"]
         src_zephyr_trading_trading_contracts_risk_compliance_rule_py["(原型态 / prototype) compliance_rule.py"]
         src_zephyr_trading_trading_contracts_risk_risk_limits_py["(原型态 / prototype) risk_limits.py"]
-        src_zephyr_trading_zombie_scanner_py["(原型态 / prototype) zombie_scanner.py — 僵尸 Python 进程检测与自动处置<br/>文件: zombie_scanner.py"]
         tests_trading_integration_test_trading_contracts_py["(原型态 / prototype) test_trading_contracts.py"]
         tests_trading_pipeline_test_l03_signal_generation_py["(原型态 / prototype) test_l03_signal_generation.py"]
         tests_trading_pipeline_test_l05_portfolio_construction_py["(原型态 / prototype) test_l05_portfolio_construction.py"]
@@ -680,53 +643,55 @@ graph TD
         tests_trading_test_work_orchestrator_py["(原型态 / prototype) test_work_orchestrator.py"]
     end
     src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_factories_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
-    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_macro_factor_signal_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py
     src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
-    src_zephyr_trading_trading_contracts_execution_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py
     src_zephyr_trading_trading_contracts_risk_compliance_rule_py -.->|config_depends / config_depends| src_zephyr_trading_trading_contracts_risk_init_py
     src_zephyr_trading_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py
-    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_factor_monitor_report_py
     src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
-    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_macro_factor_signal_py
     src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     src_zephyr_trading_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_factories_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_trading_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
+    tests_trading_pipeline_test_l03_signal_generation_py -.->|测试依赖 / test_depends| D_INFRASTRUCTURE
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_trading_test_routing_plugins_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_trading_test_teardown_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_version_manifest_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    tests_trading_test_stop_gate_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_module_onboarding_scanner_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_test_backpressure_types_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_blind_spot_closure_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_trading_test_backpressure_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
-    src_zephyr_trading_auto_dispatcher_py -.->|导入依赖 / import_depends| D_SHARED
-    tests_trading_test_lifecycle_manager_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_test_runtime_config_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_SIGLEGACY["(原型态 / prototype) D_SIGLEGACY"]
+    D_SIGLEGACY -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
     D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_init_py
     D_SIGQC -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_trading_gpu_monitor_py
-    D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
     D_FUNDAMENTAL_SIGNAL -.->|导入依赖 / import_depends| src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_trading_extensions_init_py,src_zephyr_trading_api_init_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_core_init_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_infrastructure_init_py,src_zephyr_trading_models_init_py,src_zephyr_trading_runtime_init_py,src_zephyr_trading_services_init_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_init_py,src_zephyr_trading_trading_contracts_execution_init_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_init_py,src_zephyr_trading_trading_contracts_market_factor_monitor_report_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_macro_factor_signal_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_init_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_init_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,src_zephyr_trading_zombie_scanner_py,tests_trading_integration_test_trading_contracts_py,tests_trading_pipeline_test_l03_signal_generation_py,tests_trading_pipeline_test_l05_portfolio_construction_py,tests_trading_pipeline_test_l06_trade_execution_py,tests_trading_pipeline_test_l07_post_trade_analytics_py,tests_trading_root_test_design_decisions_root_py,tests_trading_root_test_dlq_manager_root_py,tests_trading_root_test_state_propagation_root_py,tests_trading_root_test_state_synchronizer_root_py,tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py,tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_disk_guard_py,tests_trading_test_dream_cycle_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py,tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py,tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_status_dashboard_py,tests_trading_test_stop_gate_py,tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py design
-    class D_INFRA_RUNTIME,D_ORCHESTRATOR,D_GOVERNANCE external_prod
-    class D_SHARED,D_SIGQC,D_FUNDAMENTAL_SIGNAL external_design
+    class src_zephyr_trading_extensions_init_py,src_zephyr_trading_api_init_py,src_zephyr_trading_auto_dispatcher_py,src_zephyr_trading_core_init_py,src_zephyr_trading_gpu_monitor_py,src_zephyr_trading_infrastructure_init_py,src_zephyr_trading_models_init_py,src_zephyr_trading_runtime_init_py,src_zephyr_trading_services_init_py,src_zephyr_trading_speed_baseline_checker_py,src_zephyr_trading_trading_contracts_init_py,src_zephyr_trading_trading_contracts_execution_init_py,src_zephyr_trading_trading_contracts_execution_execution_rejection_error_py,src_zephyr_trading_trading_contracts_factories_py,src_zephyr_trading_trading_contracts_market_init_py,src_zephyr_trading_trading_contracts_market_instrument_py,src_zephyr_trading_trading_contracts_market_signal_degradation_warning_py,src_zephyr_trading_trading_contracts_portfolio_contracts_init_py,src_zephyr_trading_trading_contracts_portfolio_contracts_performance_attribution_report_py,src_zephyr_trading_trading_contracts_portfolio_contracts_strategy_lifecycle_event_py,src_zephyr_trading_trading_contracts_risk_init_py,src_zephyr_trading_trading_contracts_risk_compliance_rule_py,src_zephyr_trading_trading_contracts_risk_risk_limits_py,tests_trading_integration_test_trading_contracts_py,tests_trading_pipeline_test_l03_signal_generation_py,tests_trading_pipeline_test_l05_portfolio_construction_py,tests_trading_pipeline_test_l06_trade_execution_py,tests_trading_pipeline_test_l07_post_trade_analytics_py,tests_trading_root_test_design_decisions_root_py,tests_trading_root_test_dlq_manager_root_py,tests_trading_root_test_state_propagation_root_py,tests_trading_root_test_state_synchronizer_root_py,tests_trading_test_admission_controller_py,tests_trading_test_backpressure_manager_py,tests_trading_test_backpressure_types_py,tests_trading_test_batch_orchestrator_py,tests_trading_test_behavioral_admission_py,tests_trading_test_benchmark_runner_py,tests_trading_test_blind_spot_closure_py,tests_trading_test_boot_cron_jobs_py,tests_trading_test_boot_hooks_py,tests_trading_test_bulkhead_manager_py,tests_trading_test_circuit_breaker_manager_py,tests_trading_test_conductor_py,tests_trading_test_construction_guide_py,tests_trading_test_dead_letter_queue_py,tests_trading_test_degrade_cascade_py,tests_trading_test_disk_guard_py,tests_trading_test_dream_cycle_py,tests_trading_test_fault_types_py,tests_trading_test_feature_flag_py,tests_trading_test_finalizer_py,tests_trading_test_finding_bridge_py,tests_trading_test_gpu_consensus_scheduler_py,tests_trading_test_housekeeping_py,tests_trading_test_ide_health_daemon_py,tests_trading_test_incident_postmortem_py,tests_trading_test_integration_registry_py,tests_trading_test_lean_scanner_py,tests_trading_test_lifecycle_manager_py,tests_trading_test_module_onboarding_scanner_py,tests_trading_test_network_partition_py,tests_trading_test_night_shift_queue_py,tests_trading_test_protection_index_py,tests_trading_test_reconciliation_loop_py,tests_trading_test_rolling_upgrade_py,tests_trading_test_routing_plugins_py,tests_trading_test_runtime_config_py,tests_trading_test_schema_migration_py,tests_trading_test_stability_guard_py,tests_trading_test_staging_area_py,tests_trading_test_startup_sequencer_py,tests_trading_test_status_dashboard_py,tests_trading_test_stop_gate_py,tests_trading_test_system_transfer_py,tests_trading_test_teardown_manager_py,tests_trading_test_trading_kill_switch_py,tests_trading_test_trading_session_lifecycle_py,tests_trading_test_version_manifest_py,tests_trading_test_work_dag_py,tests_trading_test_work_orchestrator_py design
+    class D_INFRASTRUCTURE,D_INFRA_RUNTIME,D_FUNDAMENTAL_SIGNAL external_prod
+    class D_SIGLEGACY,D_SIGQC external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -746,104 +711,117 @@ graph TD
 | 9 | zephyr.trading.trading_contracts — trading-dom... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
 | 10 | trading-contracts.risk — risk management domai... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
 | 11 | tests.test_trading_session_lifecycle — F1 Sess... | → | D_GOV_ENFORCEMENT 规则执行: session_lifecycle.py | 测试依赖 / test_depends |
-| 12 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 13 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 14 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 15 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: position.py | 导入依赖 / import_depends |
-| 16 | __init__.py | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 17 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 18 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE: strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 19 | risk_limit_violation_error.py | → | D_INFRASTRUCTURE: trace_context.py | 导入依赖 / import_depends |
-| 20 | risk_validator_protocol.py | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
-| 21 | test_l07_post_trade_analytics.py | → | D_INFRASTRUCTURE: performance_attribution_report.py | 测试依赖 / test_depends |
-| 22 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
-| 23 | test_backpressure_manager.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline — Backpressure Manager (backpressure_... | 测试依赖 / test_depends |
-| 24 | test_backpressure_manager.py | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure s... | 测试依赖 / test_depends |
-| 25 | test_backpressure_types.py | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure s... | 测试依赖 / test_depends |
-| 26 | test_boot_hooks.py | → | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | 测试依赖 / test_depends |
-| 27 | test_circuit_breaker_manager.py | → | D_INFRA_RUNTIME 运行时集成: CircuitBreakerManager -- standalone circuit bre... | 测试依赖 / test_depends |
-| 28 | test_circuit_breaker_manager.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 29 | test_dead_letter_queue.py | → | D_INFRA_RUNTIME 运行时集成: DeadLetterQueue — 死信队列 (dead_letter_queue.py) | 测试依赖 / test_depends |
-| 30 | test_dead_letter_queue.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 31 | test_dream_cycle.py | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
-| 32 | test_finalizer.py | → | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | 测试依赖 / test_depends |
-| 33 | test_integration_registry.py | → | D_INFRA_RUNTIME 运行时集成: IntegrationRegistry — 集成注册表 (integration_... | 测试依赖 / test_depends |
-| 34 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | 测试依赖 / test_depends |
-| 35 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
-| 36 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | 测试依赖 / test_depends |
-| 37 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
-| 38 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: IntegrationRegistry — 集成注册表 (integration_... | 测试依赖 / test_depends |
-| 39 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | 测试依赖 / test_depends |
-| 40 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | 测试依赖 / test_depends |
-| 41 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | 测试依赖 / test_depends |
-| 42 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
-| 43 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (capability_... | 测试依赖 / test_depends |
-| 44 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | 测试依赖 / test_depends |
-| 45 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: ModuleOnboardingScanner — 模块接入扫描器 (modu... | 测试依赖 / test_depends |
-| 46 | test_night_shift_queue.py | → | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | 测试依赖 / test_depends |
-| 47 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由... | 测试依赖 / test_depends |
-| 48 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 49 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline Routing Plugin System — K8s Schedulin... | 测试依赖 / test_depends |
-| 50 | test_runtime_config.py | → | D_INFRA_RUNTIME 运行时集成: runtime_config.py | 测试依赖 / test_depends |
-| 51 | test_staging_area.py | → | D_INFRA_RUNTIME 运行时集成: StagingArea — 多AI并发草稿写入+提交+冲突检测模... | 测试依赖 / test_depends |
-| 52 | test_status_dashboard.py | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
-| 53 | test_status_dashboard.py | → | D_INFRA_RUNTIME 运行时集成: StatusDashboard — 实时状态面板 (status_dashboa... | 测试依赖 / test_depends |
-| 54 | test_stop_gate.py | → | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | 测试依赖 / test_depends |
-| 55 | test_work_dag.py | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
-| 56 | test_work_orchestrator.py | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
-| 57 | test_work_orchestrator.py | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
-| 58 | verdict_engine.py | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
-| 59 | test_lifecycle_manager.py | → | D_INTEGRATION 管线路由: runtime_types.py | 测试依赖 / test_depends |
-| 60 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (task... | 导入依赖 / import_depends |
-| 61 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: Orc->CE 上下文桥接 — request_context() 生产者 ... | 导入依赖 / import_depends |
-| 62 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (s... | 导入依赖 / import_depends |
-| 63 | test_design_decisions_root.py | → | D_ORCHESTRATOR 代理编排器: design_decisions.py | 测试依赖 / test_depends |
-| 64 | test_dlq_manager_root.py | → | D_ORCHESTRATOR 代理编排器: DLQ 管理器（Dead Letter Queue Manager — CT-DLQ... | 测试依赖 / test_depends |
-| 65 | test_state_propagation_root.py | → | D_ORCHESTRATOR 代理编排器: 全局状态传播链（State Propagation Chain） (stat... | 测试依赖 / test_depends |
-| 66 | test_state_synchronizer_root.py | → | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统... | 测试依赖 / test_depends |
-| 67 | test_batch_orchestrator.py | → | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（... | 测试依赖 / test_depends |
-| 68 | test_benchmark_runner.py | → | D_ORCHESTRATOR 代理编排器: benchmark_runner.py | 测试依赖 / test_depends |
-| 69 | test_blind_spot_closure.py | → | D_ORCHESTRATOR 代理编排器: blind_spot_closure.py | 测试依赖 / test_depends |
-| 70 | test_bulkhead_manager.py | → | D_ORCHESTRATOR 代理编排器: bulkhead_manager.py | 测试依赖 / test_depends |
-| 71 | test_construction_guide.py | → | D_ORCHESTRATOR 代理编排器: 施工指南引擎（Construction Guide） (constructio... | 测试依赖 / test_depends |
-| 72 | test_degrade_cascade.py | → | D_ORCHESTRATOR 代理编排器: degrade_cascade.py | 测试依赖 / test_depends |
-| 73 | test_disk_guard.py | → | D_ORCHESTRATOR 代理编排器: disk_guard.py | 测试依赖 / test_depends |
-| 74 | test_fault_types.py | → | D_ORCHESTRATOR 代理编排器: Fault type registry and preset templates for ch... | 测试依赖 / test_depends |
-| 75 | test_feature_flag.py | → | D_ORCHESTRATOR 代理编排器: FeatureFlag 管理器（CT-FEATUREFLAG-001）——CT-... | 测试依赖 / test_depends |
-| 76 | test_finding_bridge.py | → | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (finding_bridge.py) | 测试依赖 / test_depends |
-| 77 | test_housekeeping.py | → | D_ORCHESTRATOR 代理编排器: 文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文... | 测试依赖 / test_depends |
-| 78 | test_incident_postmortem.py | → | D_ORCHESTRATOR 代理编排器: 事件复盘管理器（CT-INCIDENT）——incident记录+t... | 测试依赖 / test_depends |
-| 79 | test_lean_scanner.py | → | D_ORCHESTRATOR 代理编排器: 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三... | 测试依赖 / test_depends |
-| 80 | test_network_partition.py | → | D_ORCHESTRATOR 代理编排器: 网络分区容忍（CT-NETWORK-PARTITION）——CAP定理... | 测试依赖 / test_depends |
-| 81 | test_reconciliation_loop.py | → | D_ORCHESTRATOR 代理编排器: reconciliation_loop.py | 测试依赖 / test_depends |
-| 82 | test_rolling_upgrade.py | → | D_ORCHESTRATOR 代理编排器: 零停机滚动升级（CT-DEPLOY）——graceful shutdow... | 测试依赖 / test_depends |
-| 83 | test_schema_migration.py | → | D_ORCHESTRATOR 代理编排器: 数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——... | 测试依赖 / test_depends |
-| 84 | test_stability_guard.py | → | D_ORCHESTRATOR 代理编排器: API 稳定性守护（CT-STABILITY）——public API签.... | 测试依赖 / test_depends |
-| 85 | test_startup_sequencer.py | → | D_ORCHESTRATOR 代理编排器: startup_sequencer.py | 测试依赖 / test_depends |
-| 86 | test_system_transfer.py | → | D_ORCHESTRATOR 代理编排器: 系统移交恢复（CT-TRANSFER）——系统Owner变更+配... | 测试依赖 / test_depends |
-| 87 | test_teardown_manager.py | → | D_ORCHESTRATOR 代理编排器: teardown_manager.py | 测试依赖 / test_depends |
-| 88 | test_version_manifest.py | → | D_ORCHESTRATOR 代理编排器: version_manifest.py | 测试依赖 / test_depends |
-| 89 | test_l05_portfolio_construction.py | → | D_PF_CORE 组合核心: Re-export wrapper: strategy_base has migrated t... | 测试依赖 / test_depends |
-| 90 | test_l07_post_trade_analytics.py | → | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (anal... | 测试依赖 / test_depends |
-| 91 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 92 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 93 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 94 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 95 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 96 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
-| 97 | Conductor — AI session 全自动指挥官。 (conduct... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 98 | Conductor — AI session 全自动指挥官。 (conduct... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
-| 99 | gpu_consensus_scheduler.py | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 100 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
-| 101 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 102 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 103 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 104 | async_runtime.py | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 105 | speed_baseline_checker.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 106 | order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
-| 107 | zombie_scanner.py — 僵尸 Python 进程检测与自动... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 108 | test_behavioral_admission.py | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
-| 109 | tests.test_trading_session_lifecycle — F1 Sess... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 12 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: factor_monitor_report.py | 导入依赖 / import_depends |
+| 13 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
+| 14 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: macro_factor_signal.py | 导入依赖 / import_depends |
+| 15 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: market_data.py | 导入依赖 / import_depends |
+| 16 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
+| 17 | zephyr.trading.trading_contracts — trading-dom... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 18 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
+| 19 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
+| 20 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: position.py | 导入依赖 / import_depends |
+| 21 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
+| 22 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 23 | trading-contracts.market — market data and sig... | → | D_INFRASTRUCTURE: factor_monitor_report.py | 导入依赖 / import_depends |
+| 24 | trading-contracts.market — market data and sig... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
+| 25 | trading-contracts.market — market data and sig... | → | D_INFRASTRUCTURE: macro_factor_signal.py | 导入依赖 / import_depends |
+| 26 | trading-contracts.market — market data and sig... | → | D_INFRASTRUCTURE: market_data.py | 导入依赖 / import_depends |
+| 27 | trading-contracts.market — market data and sig... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 28 | __init__.py | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
+| 29 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
+| 30 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 31 | risk_limit_violation_error.py | → | D_INFRASTRUCTURE: trace_context.py | 导入依赖 / import_depends |
+| 32 | risk_validator_protocol.py | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
+| 33 | test_l03_signal_generation.py | → | D_INFRASTRUCTURE: factor_signal.py | 测试依赖 / test_depends |
+| 34 | test_l03_signal_generation.py | → | D_INFRASTRUCTURE: synthesized_signal.py | 测试依赖 / test_depends |
+| 35 | test_l07_post_trade_analytics.py | → | D_INFRASTRUCTURE: performance_attribution_report.py | 测试依赖 / test_depends |
+| 36 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
+| 37 | test_backpressure_manager.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline — Backpressure Manager (backpressure_... | 测试依赖 / test_depends |
+| 38 | test_backpressure_manager.py | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure s... | 测试依赖 / test_depends |
+| 39 | test_backpressure_types.py | → | D_INFRA_RUNTIME 运行时集成: backpressure_types.py - Pipeline backpressure s... | 测试依赖 / test_depends |
+| 40 | test_boot_hooks.py | → | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | 测试依赖 / test_depends |
+| 41 | test_circuit_breaker_manager.py | → | D_INFRA_RUNTIME 运行时集成: CircuitBreakerManager -- standalone circuit bre... | 测试依赖 / test_depends |
+| 42 | test_circuit_breaker_manager.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 43 | test_dead_letter_queue.py | → | D_INFRA_RUNTIME 运行时集成: DeadLetterQueue — 死信队列 (dead_letter_queue.py) | 测试依赖 / test_depends |
+| 44 | test_dead_letter_queue.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 45 | test_dream_cycle.py | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
+| 46 | test_finalizer.py | → | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | 测试依赖 / test_depends |
+| 47 | test_integration_registry.py | → | D_INFRA_RUNTIME 运行时集成: IntegrationRegistry — 集成注册表 (integration_... | 测试依赖 / test_depends |
+| 48 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | 测试依赖 / test_depends |
+| 49 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: DreamCycle — 知识固化引擎 (dream_cycle.py) | 测试依赖 / test_depends |
+| 50 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: Finalizer — 优雅清理器 (finalizer.py) | 测试依赖 / test_depends |
+| 51 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
+| 52 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: IntegrationRegistry — 集成注册表 (integration_... | 测试依赖 / test_depends |
+| 53 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | 测试依赖 / test_depends |
+| 54 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | 测试依赖 / test_depends |
+| 55 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | 测试依赖 / test_depends |
+| 56 | test_lifecycle_manager.py | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
+| 57 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityCard — 能力卡片数据模型 (capability_... | 测试依赖 / test_depends |
+| 58 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: CapabilityRegistry — 能力注册中心 (capability_... | 测试依赖 / test_depends |
+| 59 | test_module_onboarding_scanner.py | → | D_INFRA_RUNTIME 运行时集成: ModuleOnboardingScanner — 模块接入扫描器 (modu... | 测试依赖 / test_depends |
+| 60 | test_night_shift_queue.py | → | D_INFRA_RUNTIME 运行时集成: NightShiftQueue — 夜班登记表持久化 (night_shif... | 测试依赖 / test_depends |
+| 61 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: CT-PIPE-ORC-001 — TaskCard -> 管线入口节点路由... | 测试依赖 / test_depends |
+| 62 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 63 | test_routing_plugins.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline Routing Plugin System — K8s Schedulin... | 测试依赖 / test_depends |
+| 64 | test_runtime_config.py | → | D_INFRA_RUNTIME 运行时集成: runtime_config.py | 测试依赖 / test_depends |
+| 65 | test_staging_area.py | → | D_INFRA_RUNTIME 运行时集成: StagingArea — 多AI并发草稿写入+提交+冲突检测模... | 测试依赖 / test_depends |
+| 66 | test_status_dashboard.py | → | D_INFRA_RUNTIME 运行时集成: HealthMonitor — 健康监控 + 自愈 (health_monito... | 测试依赖 / test_depends |
+| 67 | test_status_dashboard.py | → | D_INFRA_RUNTIME 运行时集成: StatusDashboard — 实时状态面板 (status_dashboa... | 测试依赖 / test_depends |
+| 68 | test_stop_gate.py | → | D_INFRA_RUNTIME 运行时集成: StopGate — 质量闸门 (stop_gate.py) | 测试依赖 / test_depends |
+| 69 | test_work_dag.py | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
+| 70 | test_work_orchestrator.py | → | D_INFRA_RUNTIME 运行时集成: WorkDAG + WorkItem — 工作编排数据模型 (work_da... | 测试依赖 / test_depends |
+| 71 | test_work_orchestrator.py | → | D_INFRA_RUNTIME 运行时集成: work_orchestrator.py | 测试依赖 / test_depends |
+| 72 | verdict_engine.py | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
+| 73 | test_lifecycle_manager.py | → | D_INTEGRATION 管线路由: runtime_types.py | 测试依赖 / test_depends |
+| 74 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (task... | 导入依赖 / import_depends |
+| 75 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: Orc->CE 上下文桥接 — request_context() 生产者 ... | 导入依赖 / import_depends |
+| 76 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: Orc->Script 脚本执行器 — run_audit() 生产者 (s... | 导入依赖 / import_depends |
+| 77 | test_design_decisions_root.py | → | D_ORCHESTRATOR 代理编排器: design_decisions.py | 测试依赖 / test_depends |
+| 78 | test_dlq_manager_root.py | → | D_ORCHESTRATOR 代理编排器: DLQ 管理器（Dead Letter Queue Manager — CT-DLQ... | 测试依赖 / test_depends |
+| 79 | test_state_propagation_root.py | → | D_ORCHESTRATOR 代理编排器: 全局状态传播链（State Propagation Chain） (stat... | 测试依赖 / test_depends |
+| 80 | test_state_synchronizer_root.py | → | D_ORCHESTRATOR 代理编排器: StateSynchronizer — 同步 SQLite 状态与文件系统... | 测试依赖 / test_depends |
+| 81 | test_batch_orchestrator.py | → | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（... | 测试依赖 / test_depends |
+| 82 | test_benchmark_runner.py | → | D_ORCHESTRATOR 代理编排器: benchmark_runner.py | 测试依赖 / test_depends |
+| 83 | test_blind_spot_closure.py | → | D_ORCHESTRATOR 代理编排器: blind_spot_closure.py | 测试依赖 / test_depends |
+| 84 | test_bulkhead_manager.py | → | D_ORCHESTRATOR 代理编排器: bulkhead_manager.py | 测试依赖 / test_depends |
+| 85 | test_construction_guide.py | → | D_ORCHESTRATOR 代理编排器: 施工指南引擎（Construction Guide） (constructio... | 测试依赖 / test_depends |
+| 86 | test_degrade_cascade.py | → | D_ORCHESTRATOR 代理编排器: degrade_cascade.py | 测试依赖 / test_depends |
+| 87 | test_disk_guard.py | → | D_ORCHESTRATOR 代理编排器: disk_guard.py | 测试依赖 / test_depends |
+| 88 | test_fault_types.py | → | D_ORCHESTRATOR 代理编排器: Fault type registry and preset templates for ch... | 测试依赖 / test_depends |
+| 89 | test_feature_flag.py | → | D_ORCHESTRATOR 代理编排器: FeatureFlag 管理器（CT-FEATUREFLAG-001）——CT-... | 测试依赖 / test_depends |
+| 90 | test_finding_bridge.py | → | D_ORCHESTRATOR 代理编排器: CT-ORC-SCRIPT-001 运行时桥接 (finding_bridge.py) | 测试依赖 / test_depends |
+| 91 | test_housekeeping.py | → | D_ORCHESTRATOR 代理编排器: 文件卫生保洁管理器（CT-HOUSEKEEPING）——临时文... | 测试依赖 / test_depends |
+| 92 | test_incident_postmortem.py | → | D_ORCHESTRATOR 代理编排器: 事件复盘管理器（CT-INCIDENT）——incident记录+t... | 测试依赖 / test_depends |
+| 93 | test_lean_scanner.py | → | D_ORCHESTRATOR 代理编排器: 死代码/孤儿文件/僵尸引用三扫描（CT-LEAN）——三... | 测试依赖 / test_depends |
+| 94 | test_network_partition.py | → | D_ORCHESTRATOR 代理编排器: 网络分区容忍（CT-NETWORK-PARTITION）——CAP定理... | 测试依赖 / test_depends |
+| 95 | test_reconciliation_loop.py | → | D_ORCHESTRATOR 代理编排器: reconciliation_loop.py | 测试依赖 / test_depends |
+| 96 | test_rolling_upgrade.py | → | D_ORCHESTRATOR 代理编排器: 零停机滚动升级（CT-DEPLOY）——graceful shutdow... | 测试依赖 / test_depends |
+| 97 | test_schema_migration.py | → | D_ORCHESTRATOR 代理编排器: 数据库 Schema 演化契约（CT-SCHEMA-MIGRATE）——... | 测试依赖 / test_depends |
+| 98 | test_stability_guard.py | → | D_ORCHESTRATOR 代理编排器: API 稳定性守护（CT-STABILITY）——public API签.... | 测试依赖 / test_depends |
+| 99 | test_startup_sequencer.py | → | D_ORCHESTRATOR 代理编排器: startup_sequencer.py | 测试依赖 / test_depends |
+| 100 | test_system_transfer.py | → | D_ORCHESTRATOR 代理编排器: 系统移交恢复（CT-TRANSFER）——系统Owner变更+配... | 测试依赖 / test_depends |
+| 101 | test_teardown_manager.py | → | D_ORCHESTRATOR 代理编排器: teardown_manager.py | 测试依赖 / test_depends |
+| 102 | test_version_manifest.py | → | D_ORCHESTRATOR 代理编排器: version_manifest.py | 测试依赖 / test_depends |
+| 103 | test_l05_portfolio_construction.py | → | D_PF_CORE 组合核心: Re-export wrapper: strategy_base has migrated t... | 测试依赖 / test_depends |
+| 104 | test_l07_post_trade_analytics.py | → | D_REPORTING 报告: D_REPORTING — Post-Trade Analytics Layer (anal... | 测试依赖 / test_depends |
+| 105 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 106 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 107 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 108 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 109 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 110 | AutoPilot — AI session 自动找活干、认领任务。 ... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
+| 111 | Conductor — AI session 全自动指挥官。 (conduct... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 112 | Conductor — AI session 全自动指挥官。 (conduct... | → | D_SHARED 共享服务: ZephyrAlpha 任务系统核心数据模型 (models.py) | 导入依赖 / import_depends |
+| 113 | gpu_consensus_scheduler.py | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 114 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: TaskRepositoryProtocol — TaskRepository 的 Pro... | 导入依赖 / import_depends |
+| 115 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 116 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 117 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 118 | async_runtime.py | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 119 | speed_baseline_checker.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 120 | order.py | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
+| 121 | test_behavioral_admission.py | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
+| 122 | tests.test_trading_session_lifecycle — F1 Sess... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 测试依赖 / test_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -858,54 +836,51 @@ graph TD
 | 7 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘.... | → | position.py | 导入依赖 / import_depends |
 | 8 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (order_manage... | → | D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
 | 9 | D_FRONTEND 前端: trade_panel · 实盘交易面板组件（v3.0.0 Panel+H... | → | order.py | 导入依赖 / import_depends |
-| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | capital_allocation_result.py | 导入依赖 / import_depends |
-| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | factor_signal.py | 导入依赖 / import_depends |
-| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | signal_degradation_warning.py | 导入依赖 / import_depends |
-| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | synthesized_signal.py | 导入依赖 / import_depends |
-| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (default_... | → | factor_signal.py | 导入依赖 / import_depends |
-| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (default_... | → | synthesized_signal.py | 导入依赖 / import_depends |
+| 10 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | → | capital_allocation_result.py | 导入依赖 / import_depends |
+| 11 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | capital_allocation_result.py | 导入依赖 / import_depends |
+| 12 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 13 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | → | signal_degradation_warning.py | 导入依赖 / import_depends |
+| 14 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (default_... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 15 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
 | 16 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Capital Allocator（兼容导出） (capi... | → | capital_allocation_result.py | 导入依赖 / import_depends |
 | 17 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (default_... | → | capital_allocation_result.py | 导入依赖 / import_depends |
-| 18 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (default_... | → | synthesized_signal.py | 导入依赖 / import_depends |
-| 19 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | factor_signal.py | 导入依赖 / import_depends |
-| 20 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | synthesized_signal.py | 导入依赖 / import_depends |
-| 21 | D_GOVERNANCE 生命周期管理: IDE健康守护进程CLI包装器 (ide_health_service.py) | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
-| 22 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
-| 23 | D_GOVERNANCE 生命周期管理: test_verdict_engine.py | → | verdict_engine.py | 测试依赖 / test_depends |
-| 24 | D_GOV_AUDIT 审计追踪: F21 自动运行测试 — DM-201250 (test_f21_auto_ru... | → | __init__.py | 测试依赖 / test_depends |
-| 25 | D_GOV_AUDIT 审计追踪: F21 自动关闭测试 — DM-201250 (test_f21_auto_sh... | → | __init__.py | 测试依赖 / test_depends |
-| 26 | D_GOV_AUDIT 审计追踪: F21 自动启动测试 — DM-201250 (test_f21_auto_st... | → | __init__.py | 测试依赖 / test_depends |
-| 27 | D_GOV_REPAIR 治理修复: __init__.py | → | D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
-| 28 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
-| 29 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (gpu_mo... | 导入依赖 / import_depends |
-| 30 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
-| 31 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | __init__.py | 测试依赖 / test_depends |
-| 32 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | __init__.py | 测试依赖 / test_depends |
-| 33 | D_INTEGRATION 管线路由: admission_response.py | → | admission_controller.py | 导入依赖 / import_depends |
-| 34 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | model_serving_request.py | 导入依赖 / import_depends |
-| 35 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (default... | → | model_serving_request.py | 导入依赖 / import_depends |
-| 36 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | → | model_serving_request.py | 导入依赖 / import_depends |
-| 37 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_dashboard_snapshot.py | 导入依赖 / import_depends |
-| 38 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_limit_violation_error.py | 导入依赖 / import_depends |
-| 39 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_metrics.py | 导入依赖 / import_depends |
-| 40 | D_RISK 风控: test_l04_risk_management.py | → | risk_limit_violation_error.py | 测试依赖 / test_depends |
-| 41 | D_SIGLEGACY 信号遗留设计态: D_SIGNAL Signal Combiner (__init__.py) | → | synthesized_signal.py | 导入依赖 / import_depends |
-| 42 | D_SIGLEGACY 信号遗留设计态: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | factor_signal.py | 导入依赖 / import_depends |
-| 43 | D_SIGLEGACY 信号遗留设计态: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | synthesized_signal.py | 导入依赖 / import_depends |
-| 44 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor B... | → | signal_degradation_warning.py | 导入依赖 / import_depends |
-| 45 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor B... | → | synthesized_signal.py | 导入依赖 / import_depends |
+| 18 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (default_... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 19 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 20 | D_GOVERNANCE 生命周期管理: IDE健康守护进程CLI包装器 (ide_health_service.py) | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
+| 21 | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
+| 22 | D_GOVERNANCE 生命周期管理: test_verdict_engine.py | → | verdict_engine.py | 测试依赖 / test_depends |
+| 23 | D_GOV_AUDIT 审计追踪: F21 自动运行测试 — DM-201250 (test_f21_auto_ru... | → | __init__.py | 测试依赖 / test_depends |
+| 24 | D_GOV_AUDIT 审计追踪: F21 自动关闭测试 — DM-201250 (test_f21_auto_sh... | → | __init__.py | 测试依赖 / test_depends |
+| 25 | D_GOV_AUDIT 审计追踪: F21 自动启动测试 — DM-201250 (test_f21_auto_st... | → | __init__.py | 测试依赖 / test_depends |
+| 26 | D_GOV_REPAIR 治理修复: __init__.py | → | D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
+| 27 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
+| 28 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | gpu_monitor.py — NVIDIA GPU 状态采集器 (gpu_mo... | 导入依赖 / import_depends |
+| 29 | D_INFRA_RUNTIME 运行时集成: resource_optimization.py - MAPE-K autonomic res... | → | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | 导入依赖 / import_depends |
+| 30 | D_INFRA_RUNTIME 运行时集成: DM-202910: MCP boot_hooks 集成测试——验证10进.... | → | __init__.py | 测试依赖 / test_depends |
+| 31 | D_INFRA_RUNTIME 运行时集成: DM-202914: MCP boot→FLE→MCP→shutdown全链路E2... | → | __init__.py | 测试依赖 / test_depends |
+| 32 | D_INTEGRATION 管线路由: admission_response.py | → | admission_controller.py | 导入依赖 / import_depends |
+| 33 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | model_serving_request.py | 导入依赖 / import_depends |
+| 34 | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (default... | → | model_serving_request.py | 导入依赖 / import_depends |
+| 35 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | → | model_serving_request.py | 导入依赖 / import_depends |
+| 36 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_dashboard_snapshot.py | 导入依赖 / import_depends |
+| 37 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_limit_violation_error.py | 导入依赖 / import_depends |
+| 38 | D_RISK 风控: ZephyrAlpha — D_RISK Risk Management Layer — ... | → | risk_metrics.py | 导入依赖 / import_depends |
+| 39 | D_RISK 风控: test_l04_risk_management.py | → | risk_limit_violation_error.py | 测试依赖 / test_depends |
+| 40 | D_SIGLEGACY 信号遗留设计态: D_SIGNAL Signal Combiner (__init__.py) | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 41 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor B... | → | trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 42 | D_SIGQC 信号质量控制: D_SIGQC — Signal Quality Degradation Monitor B... | → | signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 22 个外部域直接连接（出边 109 条 + 入边 45 条 = 154 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 22 个外部域直接连接（出边 122 条 + 入边 42 条 = 164 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_TRADING["D_TRADING<br/>交易运营"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
-    D_SHARED["D_SHARED<br/>共享服务"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
@@ -916,18 +891,18 @@ graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_RISK["D_RISK<br/>风控"]
-    D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态"]
-    D_SIGQC["D_SIGQC<br/>信号质量控制"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
+    D_SIGQC["D_SIGQC<br/>信号质量控制"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_FRONTEND["D_FRONTEND<br/>前端"]
     D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
+    D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态"]
     D_TRADING -->|36条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_TRADING -->|29条 导入依赖 / import_depends, 测试依赖 / test_depends| D_ORCHESTRATOR
-    D_TRADING -->|19条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
-    D_TRADING -->|10条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|24条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRASTRUCTURE
+    D_TRADING -->|18条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SHARED
     D_TRADING -->|4条 导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_TRADING -->|2条 测试依赖 / test_depends| D_EX_CORE
@@ -936,21 +911,21 @@ graph LR
     D_TRADING -->|1条 测试依赖 / test_depends| D_PF_CORE
     D_TRADING -->|1条 测试依赖 / test_depends| D_REPORTING
     D_TRADING -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_FUNDAMENTAL_SIGNAL -->|11条 导入依赖 / import_depends| D_TRADING
+    D_FUNDAMENTAL_SIGNAL -->|10条 导入依赖 / import_depends| D_TRADING
     D_EX_CORE -->|6条 导入依赖 / import_depends| D_TRADING
     D_INFRA_RUNTIME -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_TRADING
     D_RISK -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_TRADING
-    D_SIGLEGACY -->|3条 导入依赖 / import_depends| D_TRADING
     D_GOV_AUDIT -->|3条 测试依赖 / test_depends| D_TRADING
     D_GOVERNANCE -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_TRADING
-    D_SIGQC -->|2条 导入依赖 / import_depends| D_TRADING
     D_ML_TRAIN -->|2条 导入依赖 / import_depends| D_TRADING
+    D_SIGQC -->|2条 导入依赖 / import_depends| D_TRADING
     D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_TRADING
     D_AUTONOMY_CORE -->|1条 测试依赖 / test_depends| D_TRADING
     D_FRONTEND -->|1条 导入依赖 / import_depends| D_TRADING
     D_AUDITTEST -->|1条 测试依赖 / test_depends| D_TRADING
     D_INTEGRATION -->|1条 导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE -->|1条 导入依赖 / import_depends| D_TRADING
+    D_SIGLEGACY -->|1条 导入依赖 / import_depends| D_TRADING
 ```
 
 ## 说明 / Notes
