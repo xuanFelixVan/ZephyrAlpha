@@ -387,9 +387,13 @@ class TestNewReconcilerMarker:
         assert passed is True, f"修改已有 reconciler 不新增函数应通过: {detail}"
 
     def test_no_reconciler_file_passes(self, tmp_path: Path) -> None:
-        """commit 不含 reconciliation_registry.py → 通过（不触发检测）。"""
+        """commit 不含 reconciliation_registry.py → 通过（不触发检测）。
+
+        用 .txt 占位——阶段 2 治本（ARCH-TTL-DOC-001）后 .md/.sh/.ps1/.mmd/.json
+        新建需 creation_token，.txt 不在 CREATE-GUARD 检测范围。
+        """
         _init_git_repo(tmp_path)
-        f = _stage_file(tmp_path, "docs/readme.md", "# readme\n")
+        f = _stage_file(tmp_path, "docs/readme.txt", "readme\n")
         gw = GitCommitGateway(project_root=tmp_path)
         gate = make_create_guard()
         passed, detail = gate.check(gw, [str(f)])
