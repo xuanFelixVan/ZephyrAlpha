@@ -1,16 +1,16 @@
-# 自动生成于 2026-07-16T16:46:44Z
+# 自动生成于 2026-07-16T17:37:43Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-16T16:46:44Z'
+generated_at: '2026-07-16T17:37:43Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 343
+total_scripts: 342
 with_manifest: 310
-missing_manifest: 33
+missing_manifest: 32
 categories:
   governance:_sync: 4
-  governance:_tasks: 5
+  governance:_tasks: 4
   governance: 17
   governance:d10_performance: 1
   governance:d11_compliance: 22
@@ -104,16 +104,6 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: _tasks/tmp_commit_arch_gov_shim_stage23.py
-  owner: governance:_tasks
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: _tasks/tmp_update_tasks.py
   owner: governance:_tasks
   dimensions: []
