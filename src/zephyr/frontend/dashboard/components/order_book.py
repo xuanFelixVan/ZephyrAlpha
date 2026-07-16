@@ -70,6 +70,43 @@ class OrderBookData:
         return sum(self.bid_vol) if self.bid_vol else 0
 
 
+def _get_raw_field(raw: object, key: str) -> object:
+    return raw.get(key) if isinstance(raw, dict) else getattr(raw, key, [])
+
+
+def _extract_book_fields(
+    raw: object,
+) -> tuple[list[float], list[float], list[int], list[int]]:
+    ask_p = [float(v) for v in (_get_raw_field(raw, "ask_price") or [])]
+    bid_p = [float(v) for v in (_get_raw_field(raw, "bid_price") or [])]
+    ask_v = [int(v) for v in (_get_raw_field(raw, "ask_vol") or [])]
+    bid_v = [int(v) for v in (_get_raw_field(raw, "bid_vol") or [])]
+    return ask_p, bid_p, ask_v, bid_v
+
+
+def _extract_last_price(raw: object) -> float:
+    last_price = 0.0
+    if isinstance(raw, dict):
+        last_price = float(raw.get("last_price", 0.0) or 0.0)
+    elif hasattr(raw, "last_price"):
+        last_price = float(getattr(raw, "last_price", 0.0) or 0.0)
+    return last_price
+
+
+def _extract_timestamp(raw: object) -> str:
+    if isinstance(raw, dict):
+        ts_val = raw.get("timestamp", "")
+    else:
+        ts_val = getattr(raw, "timestamp", "")
+    return str(ts_val) if ts_val else ""
+
+
+def _compute_pressure(ask_v: list[int], bid_v: list[int]) -> float:
+    ask_total = sum(ask_v) if ask_v else 0
+    bid_total = sum(bid_v) if bid_v else 0
+    return (bid_total / ask_total) if ask_total > 0 else 0.0
+
+
 def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
     """从 D_DATA MiniQmtProvider 获取5档盘口（纯函数，无副作用）
 
@@ -88,30 +125,10 @@ def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
     if not raw:
         return OrderBookData(symbol=symbol)
 
-    def _get_field(key: str) -> object:
-        return raw.get(key) if isinstance(raw, dict) else getattr(raw, key, [])
-
-    ask_p = [float(v) for v in (_get_field("ask_price") or [])]
-    bid_p = [float(v) for v in (_get_field("bid_price") or [])]
-    ask_v = [int(v) for v in (_get_field("ask_vol") or [])]
-    bid_v = [int(v) for v in (_get_field("bid_vol") or [])]
-
-    last_price = 0.0
-    if isinstance(raw, dict):
-        last_price = float(raw.get("last_price", 0.0) or 0.0)
-    elif hasattr(raw, "last_price"):
-        last_price = float(getattr(raw, "last_price", 0.0) or 0.0)
-
-    ts = ""
-    if isinstance(raw, dict):
-        ts_val = raw.get("timestamp", "")
-    else:
-        ts_val = getattr(raw, "timestamp", "")
-    ts = str(ts_val) if ts_val else ""
-
-    ask_total = sum(ask_v) if ask_v else 0
-    bid_total = sum(bid_v) if bid_v else 0
-    pressure = (bid_total / ask_total) if ask_total > 0 else 0.0
+    ask_p, bid_p, ask_v, bid_v = _extract_book_fields(raw)
+    last_price = _extract_last_price(raw)
+    ts = _extract_timestamp(raw)
+    pressure = _compute_pressure(ask_v, bid_v)
 
     return OrderBookData(
         symbol=symbol,
