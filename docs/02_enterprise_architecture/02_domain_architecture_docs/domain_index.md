@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4948 |
-| 生产态模块 | 1737 |
+| 模块总数 | 4952 |
+| 生产态模块 | 1740 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3149 |
+| 原型态模块 | 3150 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 326 | 144 | 1 | 181 | 326/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 330 | 148 | 1 | 181 | 330/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -108,5 +108,5 @@ ttl: permanent
 | D_BEHAVIORAL_AUDIT | drift_detector_core / Behavioral Audit | 0 | 0 | 0 | 0 | 0/200 (OK) | [59_d_behavioral_audit.md](59_d_behavioral_audit.md) |
 | D_COMPLIANCE | compliance_gate / Compliance | 23 | 0 | 0 | 23 | 23/200 (OK) | [60_d_compliance.md](60_d_compliance.md) |
 | D_DATA | data_source_integrator / D_DATA | 65 | 9 | 0 | 56 | 65/200 (OK) | [61_d_data.md](61_d_data.md) |
-| D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 62 | 13 | 0 | 49 | 62/200 (OK) | [62_d_infrastructure.md](62_d_infrastructure.md) |
+| D_INFRASTRUCTURE | shared_contracts / D_INFRASTRUCTURE | 62 | 12 | 0 | 50 | 62/200 (OK) | [62_d_infrastructure.md](62_d_infrastructure.md) |
 | D_SIGLEGACY | signal_legacy / Signal Legacy (Design) | 14 | 0 | 0 | 14 | 14/200 (OK) | [63_d_siglegacy.md](63_d_siglegacy.md) |

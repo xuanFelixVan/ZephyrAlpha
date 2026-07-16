@@ -1,5 +1,5 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-17 03:52:24
+%% 生成时间: 2026-07-17 03:59:22
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 9, 依赖边数: 59
 
@@ -19,8 +19,8 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUTONOMY_CORE -> D_OPS (1 条)
@@ -66,9 +66,9 @@ graph TD
     %% D_INTELLIGENCE -> D_OPS (13 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py

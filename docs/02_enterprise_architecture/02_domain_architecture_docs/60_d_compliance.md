@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 合规（D_COMPLIANCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:51:23
+> 最后更新: 2026-07-17 03:58:33
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 |  | Layer |  |
 | 模块数 | 23 | Module Count | 23 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 70 | Cross-domain Outgoing | 70 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 23 | Prototype Modules | 23 |
@@ -110,7 +110,7 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_artifact_scanner_py
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -128,13 +128,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_DRIFT external_prod
-    class D_SECURITY external_design
+    class D_SECURITY,D_GOV_DOCS external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -180,7 +182,7 @@ graph TD
         src_zephyr_compliance_services_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
-    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_aisg_sandbox_py
+    src_zephyr_compliance_init_py -.->|config_depends / config_depends| src_zephyr_compliance_artifact_scanner_py
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
@@ -198,13 +200,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_init_py,src_zephyr_compliance_extensions_init_py,src_zephyr_compliance_aisg_sandbox_py,src_zephyr_compliance_api_init_py,src_zephyr_compliance_artifact_scanner_py,src_zephyr_compliance_audit_orchestrator_init_py,src_zephyr_compliance_audit_trail_init_py,src_zephyr_compliance_audit_trail_bridges_init_py,src_zephyr_compliance_behavioral_admission_init_py,src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_compliance_gate_a6_init_py,src_zephyr_compliance_compliance_manager_py,src_zephyr_compliance_core_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_evidence_pack_py,src_zephyr_compliance_financial_compliance_py,src_zephyr_compliance_implementations_init_py,src_zephyr_compliance_infrastructure_init_py,src_zephyr_compliance_integrity_py,src_zephyr_compliance_models_init_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_services_init_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_DRIFT external_prod
-    class D_SECURITY external_design
+    class D_SECURITY,D_GOV_DOCS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -271,7 +275,7 @@ graph TD
 | 56 | __init__.py | → | D_GOV_DRIFT 漂移检测: Tamper-Proof Audit — 防篡改审计 D-023-37 · §... | 导入依赖 / import_depends |
 | 57 | __init__.py | → | D_GOV_DRIFT 漂移检测: Test Fixture Checker — 测试夹具漂移检测 D-023-... | 导入依赖 / import_depends |
 | 58 | __init__.py | → | D_GOV_DRIFT 漂移检测: Trend Analyzer — trend_analyzer.py (trend_anal... | 导入依赖 / import_depends |
-| 59 | Re-export wrapper: integrity has migrated to ze... | → | D_GOV_DRIFT 漂移检测: integrity.py | 导入依赖 / import_depends |
+| 59 | Re-export wrapper: integrity has migrated to ze... | → | D_GOV_DRIFT 漂移检测: governance.integrity — 兼容垫片层。 (integrity.py) | 导入依赖 / import_depends |
 | 60 | Re-export wrapper: behavioral-admission has mig... | → | D_GOV_ENFORCEMENT 规则执行: __init__.py | 导入依赖 / import_depends |
 | 61 | default_security_gateway.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | 导入依赖 / import_depends |
 | 62 | security_gateway_base.py | → | D_GOV_OPS_RESILIENCE 运维弹性治理: D_COMPLIANCE — Governance & Compliance Layer (... | 导入依赖 / import_depends |
@@ -286,11 +290,13 @@ graph TD
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | D_GOV_DOCS 架构文档治理: blueprint.md | → | default_security_gateway.py | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 7 个外部域直接连接（出边 70 条 + 入边 0 条 = 70 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 8 个外部域直接连接（出边 70 条 + 入边 1 条 = 71 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -302,6 +308,7 @@ graph LR
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_COMPLIANCE -->|45条 导入依赖 / import_depends| D_GOV_DRIFT
     D_COMPLIANCE -->|11条 导入依赖 / import_depends| D_GOV_AUDIT
     D_COMPLIANCE -->|7条 导入依赖 / import_depends| D_SECURITY
@@ -309,6 +316,7 @@ graph LR
     D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_DOCS -->|1条 runtime / runtime| D_COMPLIANCE
 ```
 
 ## 说明 / Notes
