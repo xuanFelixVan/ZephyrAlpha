@@ -169,7 +169,7 @@ ttl: permanent
 | `config/capacity_params.yaml` | 7.2 | 2026-06-24 |
 | `config/capacity_slo.yaml` | 4.6 | 2026-07-10 |
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
-| `config/context_rules.yaml` | 5.6 | 2026-06-29 |
+| `config/context_rules.yaml` | 5.7 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
 | `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |

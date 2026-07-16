@@ -1,10 +1,10 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-16 22:49:12
+- 生成时间: 2026-07-17 03:03:17
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=165 / dataflow=25 / decision=319 / blueprint=72
-- 问题总数: 2
-  - 孤儿（仅一图）: 2
+- 四图节点数: depgraph=168 / dataflow=25 / decision=319 / blueprint=72
+- 问题总数: 4
+  - 孤儿（仅一图）: 4
   - 状态漂移（blueprint 缺 design_maturity）: 0
   - 域不一致（domain_id 不一致）: 0
   - 设计态孤立（design 仅一图）: 0
@@ -14,7 +14,9 @@
 | module_id | graph | entity_name |
 |---|---|---|
 | MOD-AUTONOMY_PERM | decision | layer:MOD-AUTONOMY_PERM |
-| MOD-GOV-DQ-001 | depgraph | scripts/governance/data_quality/check_tick_duplication.py |
+| MOD-GOV-029 | depgraph | scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py |
+| MOD-GOV_DQ | depgraph | scripts/governance/data_quality/check_tick_duplication.py |
+| MOD-INF-040 | depgraph | src/zephyr/signal_quality/__init__.py |
 
 ## 2. 状态漂移（blueprint 缺 design_maturity 字段）
 
