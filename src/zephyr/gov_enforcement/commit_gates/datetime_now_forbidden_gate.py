@@ -102,6 +102,83 @@ def _is_generator_file(py_file: str) -> bool:
     return basename.startswith(_GENERATOR_FILE_PREFIX)
 
 
+def _get_staged_files(gateway) -> list[str] | None:
+    # 获取 staged added/modified .py 文件；失败返回 None（fail-open）
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        return [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
+    except Exception as e:
+        logger.warning(
+            "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+
+def _filter_generator_py_files(staged: list[str]) -> list[str]:
+    # 过滤到生成器 .py 文件 + tests/ 豁免
+    return [
+        f for f in staged
+        if f.endswith(".py")
+        and not is_test_exempt(f)
+        and _is_generator_file(f)
+    ]
+
+
+def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
+    # 检测单个生成器文件的 added 行，返回违规列表
+    violations: list[str] = []
+    # 3a. 读取 staged 完整文件，预计算 docstring 行号集合（豁免 docstring）
+    file_content = _read_staged_file(gateway, py_file)
+    docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+
+    # 3b. 解析 diff，获取 added 行及行号
+    try:
+        file_diff = gateway._run_git(
+            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+        )
+    except Exception as e:
+        logger.warning(
+            "DATETIME-NOW-FORBIDDEN gate: git diff 失败 file=%s, %s",
+            py_file, e, exc_info=True,
+        )
+        return violations
+    if file_diff.returncode != 0:
+        return violations
+
+    added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
+    for line_no, content in added_lines:
+        # 豁免：docstring 内的行
+        if line_no in docstring_lines:
+            continue
+        # 豁免：注释 / import
+        if _is_exempt_line(content):
+            continue
+        if _DATETIME_NOW_RE.search(content):
+            violations.append(
+                f"  {py_file}:{line_no}: datetime.now() 调用 -> {content.strip()}"
+            )
+    return violations
+
+
+def _format_violation_detail(violations: list[str]) -> str:
+    # 硬阻断：检出违规则 fail-closed
+    return (
+        "DATETIME-NOW-FORBIDDEN：生成器代码中检测到 datetime.now() 调用，\n"
+        "  违反 AGENTS.md §11.1.1 时间戳约定（生成器输出必须幂等，禁止实时时间源）。\n"
+        + "\n".join(violations)
+        + "\n-> 移除 datetime.now() 调用，改用 git log 时间戳或固定占位符。"
+    )
+
+
 def make_datetime_now_forbidden_gate() -> GateSpec:
     """构造生成器代码 ``datetime.now()`` 硬阻断 GateSpec。
 
@@ -112,76 +189,23 @@ def make_datetime_now_forbidden_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged added/modified .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-        except Exception as e:
-            logger.warning(
-                "DATETIME-NOW-FORBIDDEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        staged = _get_staged_files(gateway)
+        if staged is None:
             return True, ""
 
         # 2. 过滤到生成器 .py 文件 + tests/ 豁免
-        gen_files = [
-            f for f in staged
-            if f.endswith(".py")
-            and not is_test_exempt(f)
-            and _is_generator_file(f)
-        ]
+        gen_files = _filter_generator_py_files(staged)
         if not gen_files:
             return True, ""
 
         # 3. 检测每个生成器文件的 added 行
         violations: list[str] = []
         for py_file in gen_files:
-            # 3a. 读取 staged 完整文件，预计算 docstring 行号集合（豁免 docstring）
-            file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
-
-            # 3b. 解析 diff，获取 added 行及行号
-            try:
-                file_diff = gateway._run_git(
-                    ["git", "diff", "--cached", "--unified=0", "--", py_file]
-                )
-            except Exception as e:
-                logger.warning(
-                    "DATETIME-NOW-FORBIDDEN gate: git diff 失败 file=%s, %s",
-                    py_file, e, exc_info=True,
-                )
-                continue
-            if file_diff.returncode != 0:
-                continue
-
-            added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
-            for line_no, content in added_lines:
-                # 豁免：docstring 内的行
-                if line_no in docstring_lines:
-                    continue
-                # 豁免：注释 / import
-                if _is_exempt_line(content):
-                    continue
-                if _DATETIME_NOW_RE.search(content):
-                    violations.append(
-                        f"  {py_file}:{line_no}: datetime.now() 调用 -> {content.strip()}"
-                    )
+            violations.extend(_scan_file_for_violations(gateway, py_file))
 
         # 4. 硬阻断：检出违规则 fail-closed
         if violations:
-            detail = (
-                "DATETIME-NOW-FORBIDDEN：生成器代码中检测到 datetime.now() 调用，\n"
-                "  违反 AGENTS.md §11.1.1 时间戳约定（生成器输出必须幂等，禁止实时时间源）。\n"
-                + "\n".join(violations)
-                + "\n-> 移除 datetime.now() 调用，改用 git log 时间戳或固定占位符。"
-            )
+            detail = _format_violation_detail(violations)
             logger.error("DATETIME-NOW-FORBIDDEN gate block:\n%s", detail)
             return False, detail
 
