@@ -136,21 +136,21 @@ class TestGateExecutionFailure:
     """红队：gate 执行异常。蓝队：_execute_gate 捕获异常不崩溃。"""
 
     def test_gate_throws_exception(self) -> None:
-        """gate 抛异常时 _execute_gate 返回 True（不阻断）。"""
+        """gate 抛异常时 _execute_gate 返回 False（fail-closed 不静默放行）。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.side_effect = RuntimeError("gate exploded")
             result = runner._execute_gate("gate_broken")
-            assert result is True  # 异常不阻断
+            assert result is False  # fail-closed: 异常时不视为通过
 
     def test_gate_returns_none(self) -> None:
         """gate 返回 None 时 _execute_gate 捕获。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = None
             result = runner._execute_gate("gate_none")
             # None != GateResult.GREEN → 返回 False，但不应崩溃
@@ -161,32 +161,32 @@ class TestGateExecutionFailure:
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.return_value = "INVALID_STRING"
             result = runner._execute_gate("gate_invalid")
             assert isinstance(result, bool)
 
     def test_gate_import_error(self) -> None:
-        """phase_check_registry 导入失败时不崩溃。"""
+        """phase_check_registry 导入失败时 fail-closed 返回 False。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch.dict("sys.modules", {"zephyr.infrastructure.rollback.phase_check_registry": None}):
+        with patch.dict("sys.modules", {"zephyr.governance.ops_governance.phase_check_registry": None}):
             result = runner._execute_gate("gate_any")
-            assert result is True  # 导入失败视为通过
+            assert result is False  # fail-closed: 导入失败不视为通过
 
     def test_run_with_all_gates_failing(self) -> None:
-        """所有 gate 都抛异常时 run() 仍完成。"""
+        """所有 gate 都抛异常时 run() 仍完成（fail-closed: 全部计入 failed_gates）。"""
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         runner = GovernanceAutoRunner()
-        with patch("zephyr.infrastructure.rollback.phase_check_registry.run_check") as mock_check:
+        with patch("zephyr.governance.ops_governance.phase_check_registry.run_check") as mock_check:
             mock_check.side_effect = Exception("all gates broken")
             result = runner.run()
             assert result.cleanup_done is True
             assert result.audit_logged is True
-            # 所有 gate 异常 → 视为通过（_execute_gate 返回 True）
-            assert result.passed_gates > 0
+            # fail-closed: 所有 gate 异常 → 全部 failed，passed_gates=0
+            assert result.passed_gates == 0
 
 
 # ============================================================================
