@@ -1359,6 +1359,28 @@ capabilities:
       - make_pure_shim_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: pure_assertion_gate
+    aliases:
+      - PURE-ASSERTION
+      - pure-assertion
+      - make_pure_assertion_gate
+      - pure_assertion_blocker
+      - no_pure_assertion_gate
+      - GOV-DOC-016-inprocess
+    description: >-
+      纯陈述原则 in-process 阻断门禁（PURE-ASSERTION，priority=69，GOV-DOC-016 治本）。
+      对标 PURE-SHIM 模式：thin wrapper subprocess 调 check_pure_assertion.py --ci
+      （检测逻辑 SSoT 在 check_pure_assertion.py，本 gate 不重复检测逻辑）。
+      弥补 --no-verify 绕过 pre-commit hooks 的缺口——本 gate 在 GitCommitGateway
+      pre-commit 阶段（in-process）注册，--no-verify 绕不过。检测 staged .md 文件
+      added 行含纯陈述违规（"已废止""之前是X现在改为Y"等过渡文本）。
+      fail-open：脚本故障（exit 2/超时/缺失）时不阻断；fail-closed：检出违规
+      （exit 1）时硬阻断（PURE_ASSERTION_VIOLATION）。
+      priority=69（紧随 PURE-SHIM=68 之后、DANGLING-REFERENCE=70 之前）。
+    integrity_anchors:
+      - make_pure_assertion_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -4634,6 +4656,10 @@ creation_tokens:
     token: "auto-pure-assertion-checker-20260717"
     created_by: "session-sess-24736-20260717023222"
     capability: "pure_assertion_checker"
+  - file: "src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py"
+    token: "auto-pure-assertion-gate-20260717"
+    created_by: "session-sess-24736-20260717023222"
+    capability: "pure_assertion_gate"
 
 # ============================================================================
 # 维护日志
