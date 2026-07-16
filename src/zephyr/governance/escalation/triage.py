@@ -146,6 +146,64 @@ class TriageResult:
     details: dict[str, Any] = field(default_factory=dict)
 
 
+def _frontmatter_score(fm: dict[str, Any]) -> float:
+    score = 0.0
+    if fm.get("module_id"):
+        score += 0.15
+    if fm.get("title"):
+        score += 0.10
+    if fm.get("category"):
+        score += 0.10
+    if fm.get("layer"):
+        score += 0.05
+    if fm.get("doc_type"):
+        score += 0.05
+    if fm.get("date") or fm.get("created_at") or fm.get("valid_from"):
+        score += 0.05
+    return score
+
+
+def _body_length_score(text: str) -> float:
+    body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
+    body_len = len(body)
+    if body_len > 500:
+        return 0.15
+    if body_len > 200:
+        return 0.10
+    if body_len > 100:
+        return 0.05
+    return 0.0
+
+
+def _classification_score(classification: str) -> float:
+    if classification in ("BLUEPRINT", "STRATEGY", "KNOWLEDGE_ENTRY"):
+        return 0.15
+    if classification in ("GOVERNANCE_STD", "MODULE_SPEC"):
+        return 0.10
+    return 0.05
+
+
+def _high_value_pattern_score(text: str) -> float:
+    high_value_patterns = [
+        r"设计决策",
+        r"根因",
+        r"接口定义",
+        r"design\s+decision",
+        r"root\s+cause",
+    ]
+    for pat in high_value_patterns:
+        if re.search(pat, text, re.IGNORECASE):
+            return 0.05
+    return 0.0
+
+
+def _colloquial_penalty(text: str) -> float:
+    colloquial_hits = sum(1 for cp in _COLLOQUIAL_RES if cp.search(text))
+    if colloquial_hits > 0:
+        return min(0.3, colloquial_hits * 0.1)
+    return 0.0
+
+
 class TriageGate:
     def __init__(
         self,
@@ -261,59 +319,11 @@ class TriageGate:
 
     def _compute_triage_score(self, fm: dict[str, Any], text: str, classification: str) -> float:
         score = 0.0
-
-        has_module_id = bool(fm.get("module_id"))
-        has_title = bool(fm.get("title"))
-        has_category = bool(fm.get("category"))
-        has_layer = bool(fm.get("layer"))
-        has_doc_type = bool(fm.get("doc_type"))
-        has_date = bool(fm.get("date") or fm.get("created_at") or fm.get("valid_from"))
-
-        if has_module_id:
-            score += 0.15
-        if has_title:
-            score += 0.10
-        if has_category:
-            score += 0.10
-        if has_layer:
-            score += 0.05
-        if has_doc_type:
-            score += 0.05
-        if has_date:
-            score += 0.05
-
-        body = re.sub(r"^---\n.*?\n---\n?", "", text, flags=re.DOTALL).strip()
-        body_len = len(body)
-        if body_len > 500:
-            score += 0.15
-        elif body_len > 200:
-            score += 0.10
-        elif body_len > 100:
-            score += 0.05
-
-        if classification in ("BLUEPRINT", "STRATEGY", "KNOWLEDGE_ENTRY"):
-            score += 0.15
-        elif classification in ("GOVERNANCE_STD", "MODULE_SPEC"):
-            score += 0.10
-        else:
-            score += 0.05
-
-        high_value_patterns = [
-            r"设计决策",
-            r"根因",
-            r"接口定义",
-            r"design\s+decision",
-            r"root\s+cause",
-        ]
-        for pat in high_value_patterns:
-            if re.search(pat, text, re.IGNORECASE):
-                score += 0.05
-                break
-
-        colloquial_hits = sum(1 for cp in _COLLOQUIAL_RES if cp.search(text))
-        if colloquial_hits > 0:
-            score -= min(0.3, colloquial_hits * 0.1)
-
+        score += _frontmatter_score(fm)
+        score += _body_length_score(text)
+        score += _classification_score(classification)
+        score += _high_value_pattern_score(text)
+        score -= _colloquial_penalty(text)
         return min(1.0, max(0.0, score))
 
     def _score_to_priority(self, score: float) -> str:
