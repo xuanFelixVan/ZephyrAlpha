@@ -218,10 +218,6 @@ error_codes:
   class: TransactionTimeoutError
   module: zephyr.governance.financial_governance.atomic_transaction_manager
   file: src/zephyr/governance/financial_governance/atomic_transaction_manager.py
-- code: ZA-GV-0023
-  class: OLAPEngineError
-  module: zephyr.governance.persistence.olap_engine
-  file: src/zephyr/governance/persistence/olap_engine.py
 - code: ZA-GV-0024
   class: TaskRepositoryError
   module: zephyr.governance.persistence.base_repo
