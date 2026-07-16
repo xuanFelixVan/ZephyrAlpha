@@ -1,5 +1,5 @@
 %% D_INFRASTRUCTURE 域全景依赖图
-%% 生成时间: 2026-07-16 00:46:01
+%% 生成时间: 2026-07-16 19:26:16
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 61, 依赖边数: 148
 
@@ -123,10 +123,10 @@ graph TD
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_REPORTING -> D_INFRASTRUCTURE (9 条)
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
@@ -194,9 +194,9 @@ graph TD
     tests_contracts_test_rbac_guard_root_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_INFRASTRUCTURE -> D_SHARED (56 条)
     src_zephyr_shared_contracts_experiment_result_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_market_data_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_factor_signal_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_fill_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_market_data_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_position_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 治理修复（D_GOV_REPAIR）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 00:45:28
+> 最后更新: 2026-07-16 19:25:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 21 | Module Count | 21 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 17 | Cross-domain Incoming | 17 |
+| 跨域入边 | 18 | Cross-domain Incoming | 18 |
 | 跨域出边 | 172 | Cross-domain Outgoing | 172 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 17 | Prototype Modules | 17 |
@@ -110,43 +110,43 @@ graph TD
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     src_zephyr_governance_data_governance_init_py -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_lifecycle_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    src_zephyr_governance_context_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_governance_financial_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_FACTOR
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
-    src_zephyr_governance_init_py -.->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
+    src_zephyr_governance_lifecycle_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_KB["(生产态 / production) D_GOV_KB"]
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_KB
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_DATA["(原型态 / prototype) D_DATA"]
+    D_DATA -.->|测试依赖 / test_depends| src_zephyr_governance_observability_governance_init_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -154,8 +154,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_init_py,src_zephyr_governance_financial_governance_budget_enforcement_py,src_zephyr_governance_observability_governance_init_py,src_zephyr_governance_persistence_init_py production
     class src_zephyr_governance_adapters_init_py,src_zephyr_governance_agent_spec_init_py,src_zephyr_governance_architecture_governance_init_py,src_zephyr_governance_bridges_init_py,src_zephyr_governance_context_governance_init_py,src_zephyr_governance_data_governance_init_py,src_zephyr_governance_engine_init_py,src_zephyr_governance_financial_governance_init_py,src_zephyr_governance_intelligence_governance_init_py,src_zephyr_governance_lifecycle_governance_init_py,src_zephyr_governance_services_init_py,src_zephyr_governance_strategies_init_py,src_zephyr_governance_trading_contracts_init_py,src_zephyr_governance_trading_contracts_execution_init_py,src_zephyr_governance_trading_contracts_market_init_py,src_zephyr_governance_trading_contracts_portfolio_contracts_init_py,src_zephyr_governance_trading_contracts_risk_init_py design
-    class D_GOVERNANCE,D_FACTOR,D_INFRA_RUNTIME,D_GOV_AUDIT,D_GOV_OPS_RESILIENCE,D_OPS external_prod
-    class D_GOV_CODE_QUALITY,D_GOV_SCRIPTS,D_AUTONOMY_CORE external_design
+    class D_GOVERNANCE,D_INFRA_RUNTIME,D_FACTOR,D_GOV_OPS_RESILIENCE,D_GOV_KB external_prod
+    class D_INFRASTRUCTURE,D_TRADING,D_GOV_SCRIPTS,D_DATA external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -171,43 +171,42 @@ graph TD
         src_zephyr_governance_persistence_init_py["(生产态 / production) __init__.py"]
     end
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_FACTOR["(生产态 / production) D_FACTOR"]
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_FACTOR
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
-    src_zephyr_governance_init_py -.->|导入依赖 / import_depends| D_GOV_CODE_QUALITY
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_governance_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_KB["(生产态 / production) D_GOV_KB"]
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_KB
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_init_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
+    src_zephyr_governance_persistence_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_governance_init_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_DATA["(原型态 / prototype) D_DATA"]
+    D_DATA -.->|测试依赖 / test_depends| src_zephyr_governance_observability_governance_init_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_financial_governance_budget_enforcement_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_governance_init_py
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_governance_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -215,8 +214,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_init_py,src_zephyr_governance_financial_governance_budget_enforcement_py,src_zephyr_governance_observability_governance_init_py,src_zephyr_governance_persistence_init_py production
-    class D_GOVERNANCE,D_FACTOR,D_INFRA_RUNTIME,D_GOV_AUDIT,D_GOV_OPS_RESILIENCE,D_OPS external_prod
-    class D_GOV_CODE_QUALITY,D_GOV_SCRIPTS,D_AUTONOMY_CORE external_design
+    class D_INFRA_RUNTIME,D_GOVERNANCE,D_FACTOR,D_GOV_OPS_RESILIENCE,D_GOV_KB,D_GOV_DRIFT external_prod
+    class D_GOV_SCRIPTS,D_DATA external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -251,31 +250,31 @@ graph TD
         src_zephyr_governance_trading_contracts_risk_init_py["(原型态 / prototype) __init__.py"]
     end
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_lifecycle_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_governance_context_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(原型态 / prototype) D_TRADING"]
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_governance_financial_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_governance_lifecycle_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
+    src_zephyr_governance_intelligence_governance_init_py -.->|config_depends / config_depends| D_GOVERNANCE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_governance_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_trading_contracts_risk_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_governance_trading_contracts_portfolio_contracts_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_governance_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_trading_contracts_market_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
+    src_zephyr_governance_trading_contracts_init_py -.->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_adapters_init_py,src_zephyr_governance_agent_spec_init_py,src_zephyr_governance_architecture_governance_init_py,src_zephyr_governance_bridges_init_py,src_zephyr_governance_context_governance_init_py,src_zephyr_governance_data_governance_init_py,src_zephyr_governance_engine_init_py,src_zephyr_governance_financial_governance_init_py,src_zephyr_governance_intelligence_governance_init_py,src_zephyr_governance_lifecycle_governance_init_py,src_zephyr_governance_services_init_py,src_zephyr_governance_strategies_init_py,src_zephyr_governance_trading_contracts_init_py,src_zephyr_governance_trading_contracts_execution_init_py,src_zephyr_governance_trading_contracts_market_init_py,src_zephyr_governance_trading_contracts_portfolio_contracts_init_py,src_zephyr_governance_trading_contracts_risk_init_py design
-    class D_GOVERNANCE,D_INFRASTRUCTURE external_prod
-    class D_TRADING,D_SHARED external_design
+    class D_GOVERNANCE external_prod
+    class D_INFRASTRUCTURE,D_TRADING,D_GOV_ENFORCEMENT external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -319,17 +318,17 @@ graph TD
 | 33 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | 导入依赖 / import_depends |
 | 34 | __init__.py | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
 | 35 | Agent Spec — MOD-INF-019 (__init__.py) | → | D_GOVERNANCE 生命周期管理: G-CT-003 契约：Agent Spec -> RBAC 能力检查. (re... | 导入依赖 / import_depends |
-| 36 | __init__.py | → | D_GOVERNANCE 生命周期管理: G-CT-006 — BudgetAlert re-exported from shared... | config_depends / config_depends |
-| 37 | __init__.py | → | D_GOVERNANCE 生命周期管理: Command Chain Length Gate — v0.13.0 命令体积De... | config_depends / config_depends |
+| 36 | __init__.py | → | D_GOVERNANCE 生命周期管理: G-CT-007 — Audit.record_agent_spec() 记录 Agen... | config_depends / config_depends |
+| 37 | __init__.py | → | D_GOVERNANCE 生命周期管理: context_budget.py —— 上下文预算管理与超预算截... | config_depends / config_depends |
 | 38 | __init__.py | → | D_GOVERNANCE 生命周期管理: MiniQMT 实盘行情 Provider（Tick + 5档盘口） (mi... | 导入依赖 / import_depends |
 | 39 | D_FACTOR — Factors Package (__init__.py) | → | D_GOVERNANCE 生命周期管理: 实验 — Experimentation Pipeline Layer (pipelin... | config_depends / config_depends |
 | 40 | __init__.py | → | D_GOVERNANCE 生命周期管理: Arbitrage Asymmetry Detector — v0.11.0 跨交易.... | config_depends / config_depends |
 | 41 | budget_enforcement.py | → | D_GOVERNANCE 生命周期管理: model_router.py | 导入依赖 / import_depends |
-| 42 | __init__.py | → | D_GOVERNANCE 生命周期管理: AISG Sandbox Testing — AI Security Gateway 沙.... | config_depends / config_depends |
-| 43 | __init__.py | → | D_GOVERNANCE 生命周期管理: paper_live_transition.py | config_depends / config_depends |
+| 42 | __init__.py | → | D_GOVERNANCE 生命周期管理: ai_self_diagnosis.py | config_depends / config_depends |
+| 43 | __init__.py | → | D_GOVERNANCE 生命周期管理: api_lifecycle.py | config_depends / config_depends |
 | 44 | __init__.py | → | D_GOVERNANCE 生命周期管理: dataflowgraph Schema DDL + 连接入口 (dataflowgr... | 导入依赖 / import_depends |
-| 45 | __init__.py | → | D_GOVERNANCE 生命周期管理: Cross-Session Correlator — v0.9.0 跨会话Corese... | config_depends / config_depends |
-| 46 | Re-export wrapper: true source is zephyr.pf_cor... | → | D_GOVERNANCE 生命周期管理: StrategyRegistry 卫星模块（OCP-002） (strategy_... | config_depends / config_depends |
+| 45 | __init__.py | → | D_GOVERNANCE 生命周期管理: Memory Provenance — v0.9.0 记忆溯源追踪: 每条m... | config_depends / config_depends |
+| 46 | Re-export wrapper: true source is zephyr.pf_cor... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | config_depends / config_depends |
 | 47 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
 | 48 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
 | 49 | __init__.py | → | D_GOVERNANCE 生命周期管理: Re-export shim — 真源已合并至 zephyr.trading.t... | 导入依赖 / import_depends |
@@ -465,23 +464,24 @@ graph TD
 | 2 | D_DATA: test_db_query.py | → | __init__.py | 测试依赖 / test_depends |
 | 3 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
 | 4 | D_GOVERNANCE 生命周期管理: scaffold.py — ZephyrAlpha 唯一创建入口（RULE-T... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 5 | D_GOVERNANCE 生命周期管理: test_ssot_redefinition_gate.py — SSoT 符号重复... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
-| 6 | D_GOVERNANCE 生命周期管理: test_governance_result_types.py | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
-| 7 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 8 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phase 3... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 9 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 (vms_mi... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 10 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 11 | D_GOV_SCRIPTS 脚本治理: verify_schema_health.py — depgraph (PostgreSQL... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 12 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须.... | → | budget_enforcement.py | 导入依赖 / import_depends |
-| 13 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 14 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phase 3... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 15 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 (vms_mi... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 16 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
-| 17 | D_INFRA_RUNTIME 运行时集成: test_temporal_drift_tracker.py | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
+| 5 | D_GOVERNANCE 生命周期管理: GitCommitGateway — 全项目唯一合法 git commit .... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 6 | D_GOVERNANCE 生命周期管理: test_ssot_redefinition_gate.py — SSoT 符号重复... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
+| 7 | D_GOVERNANCE 生命周期管理: test_governance_result_types.py | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
+| 8 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 9 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phase 3... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 10 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 (vms_mi... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 11 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 12 | D_GOV_SCRIPTS 脚本治理: verify_schema_health.py — depgraph (PostgreSQL... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 13 | D_GOV_SCRIPTS 脚本治理: [INVARIANTS] 预算健康检查不可跳过;检查结果必须.... | → | budget_enforcement.py | 导入依赖 / import_depends |
+| 14 | D_GOV_SCRIPTS 脚本治理: VMS Cron 监控器 — MOD-INF-011 · TASK-INF-0224... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 15 | D_GOV_SCRIPTS 脚本治理: VMS Health Check 脚本 — MOD-INF-011 · Phase 3... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 16 | D_GOV_SCRIPTS 脚本治理: VMS Phase 2 数据迁移脚本 — MOD-INF-011 (vms_mi... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 17 | D_GOV_SCRIPTS 脚本治理: VMS 迁移 dry-run 脚本 — MOD-INF-011 Phase 2 前... | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 导入依赖 / import_depends |
+| 18 | D_INFRA_RUNTIME 运行时集成: test_temporal_drift_tracker.py | → | Agent 治理八件套 · Governance Domain — DOM-GO... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 19 个外部域直接连接（出边 172 条 + 入边 17 条 = 189 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 172 条 + 入边 18 条 = 190 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -523,7 +523,7 @@ graph LR
     D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_GOV_KB
     D_GOV_REPAIR -->|1条 导入依赖 / import_depends| D_INFRA_A2A
     D_GOV_SCRIPTS -->|10条 导入依赖 / import_depends| D_GOV_REPAIR
-    D_GOVERNANCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_REPAIR
+    D_GOVERNANCE -->|5条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_REPAIR
     D_AUTONOMY_CORE -->|1条 测试依赖 / test_depends| D_GOV_REPAIR
     D_DATA -->|1条 测试依赖 / test_depends| D_GOV_REPAIR
     D_INFRA_RUNTIME -->|1条 测试依赖 / test_depends| D_GOV_REPAIR

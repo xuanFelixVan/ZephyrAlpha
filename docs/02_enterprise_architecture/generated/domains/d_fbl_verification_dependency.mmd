@@ -1,7 +1,7 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-16 00:46:01
+%% 生成时间: 2026-07-16 19:26:16
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 71, 依赖边数: 200
+%% 模块数: 71, 依赖边数: 201
 
 graph TD
 
@@ -82,20 +82,20 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
 
@@ -108,22 +108,22 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_validator_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_checkpoint_manager_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates___ent_change_deconfliction_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_checkpoint_manager_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_ci_cd_pre_scanner_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_config_governance_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_config_complexity_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_conflict_arbitration_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_config_complexity_budget_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_cve_scanner_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_data_quality_gate_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_db_integrity_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_emergency_takeover_py
-    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_data_quality_gate_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_emergency_takeover_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_federated_security_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_flag_lifecycle_manager_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_gates_license_compliance_py
@@ -135,11 +135,11 @@ graph TD
     D_DATA[D_DATA] -->|test_depends| src_zephyr_feedback_loop_gates_data_quality_gate_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_feedback_loop_gates_db_integrity_py
     %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (43 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verif___cading_rollback_analyzer_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verif___astic_diagnosis_verifier_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates__governance_gates_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates__operational_gates_py
@@ -176,16 +176,18 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
+    %% D_GOV_DOCS -> D_FBL_VERIFICATION (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_gates_config_governance_py
     %% D_GOV_ENFORCEMENT -> D_FBL_VERIFICATION (14 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_ci_cd_pre_scanner_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates___ent_change_deconfliction_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_conflict_arbitration_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_federated_security_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_cve_scanner_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_emergency_takeover_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_flag_lifecycle_manager_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_federated_security_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_flag_lifecycle_manager_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_dynamic_llm_cost_router_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_emergency_takeover_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_meta_performance_gate_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_merkle_audit_root_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_feedback_loop_gates_license_compliance_py
@@ -205,34 +207,34 @@ graph TD
     %% D_SECURITY -> D_FBL_VERIFICATION (36 条)
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py
     D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py
+    D_SECURITY[D_SECURITY] -->|test_depends| src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py
     %% D_SECURITY_LLM -> D_FBL_VERIFICATION (1 条)
     D_SECURITY_LLM[D_SECURITY_LLM] -->|test_depends| src_zephyr_feedback_loop_gates_llm_cost_router_py
     %% D_SHARED -> D_FBL_VERIFICATION (3 条)
@@ -248,5 +250,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 17 条
-    %% 跨域入边: 181 条
+    %% 跨域入边: 182 条
     %% 跨域出边: 2 条
