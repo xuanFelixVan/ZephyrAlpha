@@ -104,6 +104,103 @@ def _find_broken_refs(content: str, md_dir: str) -> list[str]:
     return broken
 
 
+def _get_staged_new_md_files(gateway) -> list[str] | None:
+    """获取 staged 新增 .md 文件列表（fail-open：出错返回 None 表示检测器失效）。
+
+    Args:
+        gateway: GitCommitGateway 实例（提供 ``_run_git``）。
+
+    Returns:
+        新增 .md 文件相对路径列表（正斜杠归一化）；git diff 失败/异常时返回 None。
+    """
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "DOC-REF-BROKEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        staged_new = diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "DOC-REF-BROKEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+    # 过滤 .md 文件（.md 文件无需 tests/ 豁免，但保留 is_test_exempt 检查防御性）
+    return [
+        f.replace("\\", "/") for f in staged_new
+        if f.endswith(".md") and not is_test_exempt(f)
+    ]
+
+
+def _get_worktree_root(gateway) -> str:
+    """获取 worktree 根目录（fail-open：失败回退 ``gateway.project_root``）。"""
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            return toplevel_result.stdout.strip()
+    except Exception:
+        pass
+    return str(gateway.project_root)
+
+
+def _resolve_abs_md_files(new_md_files: list[str], wt_root: str) -> list[str]:
+    """将相对路径解析为存在的绝对路径 .md 文件列表。"""
+    abs_files: list[str] = []
+    for rel in new_md_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _dedup_broken_targets(broken: list[str]) -> list[str]:
+    """去重断裂引用目标列表，保持首次出现顺序。"""
+    seen: set[str] = set()
+    unique: list[str] = []
+    for b in broken:
+        if b not in seen:
+            seen.add(b)
+            unique.append(b)
+    return unique
+
+
+def _detect_md_file_violation(abs_path: str, wt_root: str) -> str | None:
+    """检测单个 .md 文件的断裂引用。
+
+    Args:
+        abs_path: .md 文件绝对路径。
+        wt_root: worktree 根目录（用于生成相对路径描述）。
+
+    Returns:
+        违规描述字符串；读取失败返回 None（跳过），无断链返回 None。
+    """
+    try:
+        content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+    except OSError as e:
+        logger.warning(
+            "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",
+            abs_path, type(e).__name__, e,
+        )
+        return None
+
+    md_dir = os.path.dirname(abs_path)
+    broken = _find_broken_refs(content, md_dir)
+    if not broken:
+        return None
+    rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+    unique_broken = _dedup_broken_targets(broken)
+    refs_str = "; ".join(unique_broken[:5])
+    return f"文档引用断裂 {rel_name}: {refs_str}"
+
+
 def make_doc_ref_broken_gate() -> GateSpec:
     """构造文档相对路径断裂引用阻断门禁 GateSpec（硬阻断型）。
 
@@ -113,85 +210,28 @@ def make_doc_ref_broken_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .md 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "DOC-REF-BROKEN gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "DOC-REF-BROKEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
-            return True, ""
-
-        # 2. 过滤 .md 文件（.md 文件无需 tests/ 豁免，但保留 is_test_exempt 检查防御性）
-        new_md_files = [
-            f.replace("\\", "/") for f in staged_new
-            if f.endswith(".md") and not is_test_exempt(f)
-        ]
+        # 1. 获取 staged 新增 .md 文件（None 表示 fail-open 检测器失效）
+        new_md_files = _get_staged_new_md_files(gateway)
         if not new_md_files:
             return True, ""
 
-        # 3. 获取 worktree root
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
+        # 2. 获取 worktree root
+        wt_root = _get_worktree_root(gateway)
 
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_md_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        # 3. 解析为绝对路径
+        abs_files = _resolve_abs_md_files(new_md_files, wt_root)
         if not abs_files:
             return True, ""
 
-        # 5. 检测每个 .md 文件的断裂引用
+        # 4. 检测每个 .md 文件的断裂引用
         all_violations: list[str] = []
         for abs_path in abs_files:
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning(
-                    "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            md_dir = os.path.dirname(abs_path)
-            broken = _find_broken_refs(content, md_dir)
-            if broken:
-                rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-                # 去重并取前 5 个
-                seen: set[str] = set()
-                unique_broken: list[str] = []
-                for b in broken:
-                    if b not in seen:
-                        seen.add(b)
-                        unique_broken.append(b)
-                refs_str = "; ".join(unique_broken[:5])
-                all_violations.append(f"文档引用断裂 {rel_name}: {refs_str}")
+            violation = _detect_md_file_violation(abs_path, wt_root)
+            if violation:
+                all_violations.append(violation)
 
         if all_violations:
-            detail = "; ".join(all_violations[:5])
-            return False, detail
+            return False, "; ".join(all_violations[:5])
         return True, ""
 
     return GateSpec(gate_id="DOC-REF-BROKEN", check=_check, priority=88)
