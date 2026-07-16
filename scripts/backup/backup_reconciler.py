@@ -168,6 +168,17 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
         )
 
     try:
+        # 从config/.env.restic读取RESTIC_PASSWORD（自动触发时环境变量不可用）
+        restic_env = _project_root / "config" / ".env.restic"
+        if restic_env.exists() and not os.environ.get("RESTIC_PASSWORD"):
+            try:
+                with open(restic_env, encoding="utf-8") as f:
+                    for line in f:
+                        if line.strip().startswith("RESTIC_PASSWORD="):
+                            os.environ["RESTIC_PASSWORD"] = line.strip().split("=", 1)[1]
+                            break
+            except OSError:
+                pass  # 读取失败不阻断，backup.ps1会报错
         result = subprocess.run(
             [
                 "powershell", "-ExecutionPolicy", "Bypass",

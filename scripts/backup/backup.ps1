@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     灾备备份系统主脚本——六阶段流水线
 .DESCRIPTION
@@ -25,6 +25,23 @@ function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 # ── 加载配置 ──
 if (-not (Test-Path $ConfigFile)) { Write-Err "config not found: $ConfigFile"; exit 1 }
 $yamlContent = Get-Content $ConfigFile -Raw -Encoding UTF8
+
+# 从config/.env.restic读取RESTIC_PASSWORD（自动触发时环境变量不可用）
+$resticEnvFile = "$ProjectRoot\config\.env.restic"
+if (-not $env:RESTIC_PASSWORD -and (Test-Path $resticEnvFile)) {
+    $envContent = Get-Content $resticEnvFile -Encoding UTF8
+    foreach ($line in $envContent) {
+        if ($line -match '^RESTIC_PASSWORD=(.+)$') {
+            $env:RESTIC_PASSWORD = $matches[1].Trim()
+            break
+        }
+    }
+}
+if (-not $env:RESTIC_PASSWORD) {
+    Write-Err "RESTIC_PASSWORD not set. Set env var or create config/.env.restic"
+    exit 1
+}
+
 # 简单解析（避免依赖powershell-yaml模块）
 $RepoPath = "F:\restic-zephyr"
 $DumpDir = "D:\tmp_db_dumps"
@@ -45,7 +62,6 @@ Write-OK "restic found: $($restic.Source)"
 # 首次初始化仓库
 if (-not (Test-Path "$RepoPath\config")) {
     Write-Stage "Initializing restic repository..."
-    $env:RESTIC_PASSWORD = Read-Host "Enter restic repository password (for encryption)" -AsSecureString | ConvertFrom-SecureString -AsPlainText
     restic init --repo $RepoPath
     if ($LASTEXITCODE -ne 0) { Write-Err "restic init failed"; exit 1 }
     Write-OK "Repository initialized at $RepoPath"
@@ -83,24 +99,26 @@ if ($pgDump) {
 
 # SQLite
 $sqlite3 = Get-Command sqlite3 -ErrorAction SilentlyContinue
-if ($sqlite3) {
-    $sqliteDbs = @(
-        @{src="$ProjectRoot\data\databases\governance.db"; dump="governance_backup.db"},
-        @{src="$ProjectRoot\data\databases\session_continuity.db"; dump="session_backup.db"}
-    )
-    $sqliteOk = 0
-    foreach ($db in $sqliteDbs) {
-        if (Test-Path $db.src) {
+$sqliteDbs = @(
+    @{src="$ProjectRoot\data\databases\governance.db"; dump="governance_backup.db"},
+    @{src="$ProjectRoot\data\databases\session_continuity.db"; dump="session_backup.db"}
+)
+$sqliteOk = 0
+foreach ($db in $sqliteDbs) {
+    if (Test-Path $db.src) {
+        if ($sqlite3) {
             & sqlite3 $db.src ".backup $($DumpDir)\$($db.dump)" 2>&1 | Out-Null
-            if ($LASTEXITCODE -eq 0) { $sqliteOk++ } else { Write-Warn "SQLite backup failed: $($db.src)" }
+            if ($LASTEXITCODE -eq 0) { $sqliteOk++ } else { Write-Warn "sqlite3 backup failed: $($db.src), trying Python fallback" }
+        }
+        # Python fallback（sqlite3不可用或失败时）
+        if (-not $sqlite3 -or $LASTEXITCODE -ne 0) {
+            $pyResult = & python -c "import sqlite3; src=r'$($db.src)'; dst=r'$DumpDir\$($db.dump)'; con=sqlite3.connect(src); con.backup(sqlite3.connect(dst)); con.close(); print('ok')" 2>&1
+            if ($pyResult -match 'ok') { $sqliteOk++ } else { Write-Warn "Python SQLite backup also failed: $($db.src)" }
         }
     }
-    $dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$sqliteOk}
-    Write-OK "SQLite dump: $sqliteOk databases"
-} else {
-    $dbStatus.sqlite = @{status="skipped"; reason="sqlite3 not found"}
-    Write-Warn "sqlite3 not found, skipping SQLite"
 }
+$dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$sqliteOk}
+Write-OK "SQLite dump: $sqliteOk databases"
 
 # ClickHouse
 $chPort = 9000
