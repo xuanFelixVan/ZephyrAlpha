@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
+# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.bus_factor_defense
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.governance.__init__
@@ -6,13 +6,13 @@
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 升级裁决;四级约束;Kill Switch
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/escalation-engine/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_domain_factor/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] EscalationError;TimeoutError
-# [TESTS] tests/test_escalation_engine/
-# [A_module] module_id=MOD-RES_bus_factor_defense | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] tests/governance/trading/test_bus_factor_defense.py
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 from __future__ import annotations

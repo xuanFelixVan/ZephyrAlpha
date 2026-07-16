@@ -1147,20 +1147,9 @@ entries:
   - 幻觉检测
   stability: evolving
   ai_autonomy: ai_modifiable
-# 裁定#204: D-SIGNAL→D_SIGLEGACY（旧版信号管线，设计态保留）
-- domain: D_SIGLEGACY
-  subdomain: signal_legacy
-  ssot_module: MOD-INF-002
-  ssot_path: src/zephyr/signal_fundamental/
-  covers:
-  - 旧版信号管线（裁定#204改名D-SIGNAL→D_SIGLEGACY）
-  - 信号合成与集成(pipeline)
-  aliases:
-  - signal legacy
-  - 信号遗留
-  - legacy signal
-  stability: evolving
-  ai_autonomy: ai_modifiable
+# ARCH-045 裁定：D_SIGLEGACY 已删除（signal 层拆分为 D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC 3 个平级子域）。
+# 历史依据：裁定#204 D-SIGNAL→D_SIGLEGACY 保留为占位域 → ARCH-045 推翻该决定，清理 deprecated 条目。
+# 旧 signal_fundamental/pipeline.py 的 [DOMAIN] D_SIGLEGACY 同步修正为 D_FUNDAMENTAL_SIGNAL（2026-07-17 AI-08 审计修复）。
 # 补注册: D_BEHAVIORAL_AUDIT（drift_detector_core 7-file subset, MOD-INF-023）
 - domain: D_BEHAVIORAL_AUDIT
   subdomain: drift_detector_core
