@@ -1,0 +1,149 @@
+rule_id: TRAE-063
+title: 数据库破坏性操作纪律（RULE-DATA-OPS）
+name: 数据库破坏性操作纪律（RULE-DATA-OPS）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-063
+priority: 50
+depends_on:
+- TRAE-062
+tags:
+- TRAE
+- data_ops_discipline
+- L1_foundation
+- destructive_ops
+- backup_first
+- full_field_duplication_check
+- RULE-DATA-OPS
+ttl: permanent
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-DATA-OPS
+- 数据库破坏性操作纪律
+- destructive_ops_discipline
+- data_ops_discipline
+severity: critical
+scope: data_ops_discipline
+domain: TRAE
+triggers:
+- operation: db_delete
+- operation: db_replace_partition
+- operation: db_truncate
+- operation: db_alter_delete
+- operation: db_alter_replace
+- operation: db_optimize_final
+- operation: db_insert_group_by_with_replace
+- operation: destructive_data_modification
+sections:
+  data_ops_discipline:
+    section_type: procedure
+    title: 数据库破坏性操作纪律（RULE-DATA-OPS）
+    original_rules:
+    - RULE-DATA-OPS
+    conditions:
+    - type: trigger
+      check: 任何对业务数据库的破坏性操作（DELETE / REPLACE PARTITION / TRUNCATE / ALTER DELETE / ALTER REPLACE / OPTIMIZE FINAL / INSERT GROUP BY + REPLACE PARTITION）
+      pass: 执行前完成三步验证（必要性 + 真实性 + 可逆性）并留存证据
+      fail: 跳过验证直接执行 → 误判数据为"重复/脏数据"→ 删除有效数据 → 数据丢失
+    - type: constraint
+      check: 破坏性操作执行前 MUST 完成三步验证——必要性、真实性、可逆性
+      pass: 三步全部通过且证据留档，方可执行
+      fail: 任一步未通过或未留证 → 禁止执行
+    - type: constraint
+      check: 真实性验证必须查看具体数据内容，禁止仅凭聚合数字（如 count() - uniqExact(排序键)）判定"重复"
+      pass: 按全字段 GROUP BY HAVING count() > 1 查看实际重复行
+      fail: 用 count() - uniqExact(排序键) 算"重复" → 同一键不同维度记录被误判 → 有效数据被删
+    actions:
+    - type: mandatory
+      step: '三步验证铁律（执行前 MUST 全部完成）: STEP 1 必要性验证——为什么需要此操作？数据问题的根因是什么？是否真的需要破坏性操作？能否用非破坏性方式（如 INSERT 补偿、UPDATE 标记）替代？STEP 2 真实性验证——必须查看具体数据内容，不能只看聚合数字。"重复"验证：MUST 按全字段 GROUP BY HAVING count() > 1，确认有全字段相同的行才算真重复。禁止用 count() - uniqExact(排序键) 作为"重复"判据——排序键是表设计选择，不含全部业务字段，同排序键不同维度的有效记录会被误判为"重复"。STEP 3 可逆性验证——操作前必须有备份/快照，或可从数据源恢复。无备份 = 禁止执行'
+    - type: mandatory
+      step: '真实性验证查询模板（ClickHouse）: SELECT trade_date, timestamp, symbol, market_type, price, volume, amount, direction, data_source, bid_price, ask_price, bid_volume, ask_volume, quality_flag, count() AS dup_cnt FROM tick_data WHERE trade_date = 20260701 GROUP BY trade_date, timestamp, symbol, market_type, price, volume, amount, direction, data_source, bid_price, ask_price, bid_volume, ask_volume, quality_flag HAVING dup_cnt > 1 ORDER BY dup_cnt DESC LIMIT 20。MUST 查看实际重复行的具体内容，禁止只看 dup_count 数字。完整工具：scripts/governance/data_quality/check_tick_duplication.py --month YYYYMM'
+    - type: mandatory
+      step: '禁止判据: ❌ count() - uniqExact(market_type, symbol, trade_date, timestamp)——排序键不全，同时间戳不同价位的有效记录被算成"重复"。❌ count() - uniqExact(任意排序键)——排序键是 ReplacingMergeTree 去重键，不含全部业务字段。❌ 仅凭"行数大于唯一键数"就判定有重复——必须 GROUP BY 全字段验证。✅ 正确做法：GROUP BY 全字段 HAVING count() > 1，查看具体重复行内容'
+    - type: mandatory
+      step: '可逆性验证清单: (a) 操作前 pg_dump / clickhouse-backup 备份目标表；(b) 或确认可从原始数据源（如百度云归档）重新导入；(c) 或使用 CREATE TABLE _backup AS SELECT * 旁路备份；(d) 或使用 REPLACE PARTITION 前先 ALTER TABLE ... FREEZE PARTITION 创建快照。无以上任一 = 禁止执行'
+    - type: mandatory
+      step: '执行前证据留档: 在任务卡 description 中记录 (1) 三步验证结果 (2) 真实性验证查询 SQL+结果 (3) 备份位置/恢复方案 (4) 操作影响行数预估。证据缺失 = 违反 RULE-DATA-OPS'
+    - type: forbidden
+      step: '禁止: 用 count() - uniqExact(排序键) 作为"重复"判据——排序键不含全部业务字段，同排序键不同维度的有效记录会被误判为"重复"'
+    - type: forbidden
+      step: '禁止: 仅凭聚合数字（行数差、count 差）判定"有重复数据"——必须 GROUP BY 全字段查看具体重复行内容'
+    - type: forbidden
+      step: '禁止: 跳过三步验证直接执行破坏性操作（DELETE / REPLACE PARTITION / TRUNCATE / ALTER DELETE / ALTER REPLACE / OPTIMIZE FINAL）'
+    - type: forbidden
+      step: '禁止: 无备份/无恢复方案就执行破坏性操作——可逆性验证未通过 = 禁止执行'
+    - type: forbidden
+      step: '禁止: 用 INSERT GROUP BY + REPLACE PARTITION "去重"——GROUP BY 丢失同键不同维度记录，REPLACE PARTITION 用聚合后数据覆盖原分区，破坏性且不可逆'
+    - type: forbidden
+      step: '禁止: 把 ReplacingMergeTree 的 ORDER BY 键当作"业务唯一键"——ORDER BY 是表引擎去重键，不等于业务唯一性定义'
+    invariants:
+    - id: DATA-OPS-INV-001
+      title: 三步验证前置
+      description: 任何破坏性数据库操作（DELETE/REPLACE/TRUNCATE/ALTER DELETE/ALTER REPLACE/OPTIMIZE FINAL/INSERT GROUP BY+REPLACE）执行前 MUST 完成必要性+真实性+可逆性三步验证并留档
+      enforcement: 人工审查 + AI 操作前必读 AGENTS.md RULE-DATA-OPS 段 + 任务卡 description 强制记录
+      violation_action: reject_write
+    - id: DATA-OPS-INV-002
+      title: 全字段重复验证
+      description: '"重复"判定 MUST 按全字段 GROUP BY HAVING count() > 1 查看实际重复行。禁止用 count() - uniqExact(排序键) 算"重复"'
+      enforcement: 标准化检查工具 scripts/governance/data_quality/check_tick_duplication.py + 人工审查
+      violation_action: reject_change
+    - id: DATA-OPS-INV-003
+      title: 可逆性强制
+      description: 破坏性操作前 MUST 有备份/快照或可从数据源恢复的方案。无备份 = 禁止执行
+      enforcement: 人工审查 + 操作前 pg_dump/clickhouse-backup 强制
+      violation_action: reject_write
+    examples:
+    - scenario: 误判重复数据（2026-07-16 事故）
+      wrong_action: 用 count() - uniqExact(market_type, symbol, trade_date, timestamp) 算 tick_data "重复数"，执行 INSERT GROUP BY + REPLACE PARTITION 删除 21 个月有效数据
+      correct_action: 用 GROUP BY 全字段 HAVING count() > 1 查看实际重复行，发现无全字段重复 → 判定无真重复 → 不执行破坏性操作
+      root_cause: ORDER BY 不含 price，同时间戳不同价位的有效记录被 ReplacingMergeTree 视为"重复"合并；AI 误用排序键判"重复"，未验证全字段
+    - scenario: 正确的"重复"验证
+      query: 'SELECT trade_date, timestamp, symbol, market_type, price, volume, amount, direction, data_source, bid_price, ask_price, bid_volume, ask_volume, quality_flag, count() AS dup_cnt FROM tick_data WHERE trade_date = 20260701 GROUP BY trade_date, timestamp, symbol, market_type, price, volume, amount, direction, data_source, bid_price, ask_price, bid_volume, quality_flag HAVING dup_cnt > 1'
+      interpretation: 返回 0 行 = 无真重复；返回 N 行 = 真重复，需进一步排查数据源问题（非破坏性删除）
+    common_mistakes:
+    - '❌ 用 count() - uniqExact(排序键) 算"重复数"——排序键不含全部业务字段，同排序键不同维度的有效记录被算成"重复"'
+    - '❌ 仅凭 count(*) > uniqExact(键) 就判定有重复——必须 GROUP BY 全字段查看具体重复行'
+    - '❌ 把 ReplacingMergeTree 的 ORDER BY 键当作业务唯一键——ORDER BY 是引擎去重键，不等于业务唯一性'
+    - '❌ 跳过三步验证直接执行 DELETE/REPLACE PARTITION——破坏性操作不可逆，必须先验证'
+    - '❌ 用 INSERT GROUP BY + REPLACE PARTITION "去重"——GROUP BY 丢失同键不同维度记录，破坏性且不可逆'
+    - '❌ 无备份就执行破坏性操作——可逆性验证未通过 = 禁止执行'
+    background:
+      incident_date: '2026-07-16'
+      summary: AI 用 count() - uniqExact(market_type, symbol, trade_date, timestamp) 算 tick_data "重复数"，把同一时间戳不同价位的有效记录算成"重复"，执行 INSERT GROUP BY + REPLACE PARTITION 删除了 21 个月有效数据
+      root_cause: tick_data 表 ORDER BY 不含 price 字段（仅 market_type, symbol, trade_date, timestamp），导致 ReplacingMergeTree 在后台 merge 时把同一时间戳不同价位的有效记录视为"重复"合并。AI 误用排序键作为"重复"判据，未按全字段 GROUP BY 验证实际重复行，直接执行破坏性操作
+      impact: 21 个月 index 数据被删除（同一时间戳不同价位的有效记录）
+      related_arch: '#ARCH-CH-020'
+references:
+  rule_ids:
+  - TRAE-062
+  - TRAE-054
+  - TRAE-001
+  scripts:
+  - scripts/governance/data_quality/check_tick_duplication.py
+  modules:
+  - MOD-GOV_DQ
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §11.0.2 SSoT真源分类铁律
+  - AGENTS.md RULE-DATA-OPS 段
+enforcement:
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - task_card_description_audit
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-CH-020'
+provenance:
+  extracted_at: '2026-07-16'
+  extracted_by: session-20260716-data-ops-discipline
+  reason: 2026-07-16 tick_data 21 个月数据被误删事故治本——显化"破坏性数据库操作三步验证"铁律，防止 AI 误用排序键判"重复"导致有效数据被删
+  source: 事故复盘 + AGENTS.md §11.0.2 SSoT真源分类铁律
