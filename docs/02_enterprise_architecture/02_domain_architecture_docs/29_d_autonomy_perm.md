@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 00:45:49
+> 最后更新: 2026-07-17 01:36:11
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -140,19 +140,19 @@ graph TD
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     scripts_governance_meta_manage_kill_switch_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_resilience_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_cybersec_2026_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_decisions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_resilience_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -186,14 +186,14 @@ graph TD
     tests_agent_rbac_test_vibe_coding_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
@@ -267,6 +267,7 @@ graph TD
         tests_agent_rbac_test_vibe_coding_py["(原型态 / prototype) Vibe Coding / Novel Attack / Cybersec 2026 攻击...<br/>文件: test_vibe_coding.py"]
     end
     D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_integration_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_input_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_integration_root_py -.->|测试依赖 / test_depends| D_SECURITY
@@ -276,12 +277,11 @@ graph TD
     tests_agent_rbac_test_vibe_coding_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_novel_attack_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
