@@ -37,6 +37,50 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 
+def _strip_zombie_references(content: str, target: str) -> str:
+    """移除 content 中指向不存在文件的僵尸引用，返回清理后的内容。
+
+    按 target 扩展名选择引用模式：.yaml 走键值引用模式，.py 走字符串字面量模式。
+    仅删除指向不存在文件且非绝对路径的引用行；.py 模式额外排除 site-packages / lib/python。
+    """
+    repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
+    if target.endswith(".yaml"):
+        path_refs = re.findall(
+            r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
+        )
+        for ref in path_refs:
+            if not (repo_root / ref).exists() and not Path(ref).is_absolute():
+                lines = content.split("\n")
+                new_lines = [l for l in lines if ref not in l]
+                content = "\n".join(new_lines)
+    elif target.endswith(".py"):
+        path_refs = re.findall(r'["\']([A-Za-z0-9_/\\]+\.(?:py|yaml|json))["\']', content)
+        for ref in path_refs:
+            clean_ref = ref.replace("\\", "/")
+            if not (repo_root / clean_ref).exists() and not Path(ref).is_absolute():
+                if "site-packages" not in clean_ref and "lib/python" not in clean_ref:
+                    lines = content.split("\n")
+                    new_lines = [l for l in lines if ref not in l]
+                    content = "\n".join(new_lines)
+    return content
+
+
+def _atomic_write(target: str, content: str) -> bool:
+    """原子写：先写 tmp 再 os.replace；PermissionError 时清理 tmp 并返回 False。"""
+    tmp_path = f"{target}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        os.replace(tmp_path, target)
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        return False
+    return True
+
+
 class ZombieCleaner(BaseFixer):
 
     def __init__(self) -> None:
@@ -90,39 +134,12 @@ class ZombieCleaner(BaseFixer):
         try:
             content = target_path.read_text(encoding="utf-8")
             original = content
-            repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
-            if target.endswith(".yaml"):
-                path_refs = re.findall(
-                    r'(?:path|file|src|location)\s*[:=]\s*["\']?([^\s"\'\]]+\.(?:py|yaml|json|md))["\']?', content
-                )
-                for ref in path_refs:
-                    if not (repo_root / ref).exists() and not Path(ref).is_absolute():
-                        lines = content.split("\n")
-                        new_lines = [l for l in lines if ref not in l]
-                        content = "\n".join(new_lines)
-            elif target.endswith(".py"):
-                path_refs = re.findall(r'["\']([A-Za-z0-9_/\\]+\.(?:py|yaml|json))["\']', content)
-                for ref in path_refs:
-                    clean_ref = ref.replace("\\", "/")
-                    if not (repo_root / clean_ref).exists() and not Path(ref).is_absolute():
-                        if "site-packages" not in clean_ref and "lib/python" not in clean_ref:
-                            lines = content.split("\n")
-                            new_lines = [l for l in lines if ref not in l]
-                            content = "\n".join(new_lines)
+            content = _strip_zombie_references(content, target)
             if content != original:
                 action.before = original
                 action.after = content
                 if not dry_run:
-                    tmp_path = f"{target}.{os.getpid()}.tmp"
-                    try:
-                        with open(tmp_path, "w", encoding="utf-8") as f:
-                            f.write(content)
-                        os.replace(tmp_path, target)
-                    except PermissionError:
-                        try:
-                            os.remove(tmp_path)
-                        except OSError:
-                            pass
+                    if not _atomic_write(target, content):
                         action.status = FixStatus.FAILED
                         return action
                 action.status = FixStatus.COMPLETED
