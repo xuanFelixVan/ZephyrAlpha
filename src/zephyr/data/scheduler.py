@@ -14,6 +14,7 @@
 # [TESTS] tests/zephyr/data/test_scheduler.py
 # [A_module] module_id=MOD-L00-004-scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: APScheduler常驻服务,由cli.py启动,启动后自动运行;非reconciler无需事件触发
 """数据源调度编排层（MOD-L00-004 §6）。
 
 APScheduler 常驻进程，按 cron 时段触发任务批次，管理 DAG 依赖，

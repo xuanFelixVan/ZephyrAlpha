@@ -14,6 +14,7 @@
 # [TESTS] tests/zephyr/data/test_cli.py
 # [A_module] module_id=MOD-L00-004-cli | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: CLI启动的常驻scheduler入口(python -m zephyr.data.cli start),由CLI触发启动,启动后自动运行;非reconciler无需事件触发
 """数据源集成器 CLI（MOD-L00-004 §8.4）。
 
 7 个子命令（蓝图 §8.4）+ speed-test（§8.5）：

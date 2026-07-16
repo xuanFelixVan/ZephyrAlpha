@@ -14,6 +14,7 @@
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_generate_project_depgraph.py
 # [TTL] permanent
+# noqa: m02-manual  M02豁免: while True用于Tarjan SCC算法(含break退出),非daemon常驻服务;一次性CLI工具
 """
 
 from __future__ import annotations
