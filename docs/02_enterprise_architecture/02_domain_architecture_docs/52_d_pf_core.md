@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 组合核心（D_PF_CORE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:24:17
+> 最后更新: 2026-07-17 03:32:55
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -31,9 +31,9 @@ ttl: permanent
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 4 | Cross-domain Outgoing | 4 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 10 | Prototype Modules | 10 |
-| 生产态模块 | 1 | Production Modules | 1 |
-| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 原型态模块 | 9 | Prototype Modules | 9 |
+| 生产态模块 | 2 | Production Modules | 2 |
+| 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
 | 描述 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 | Description | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
 
 ## 模块分层清单 / Module Layered List
@@ -47,7 +47,7 @@ ttl: permanent
 | 1 | src/zephyr/pf_core/__init__.py | D_PORTFOLIO_CORE Portfolio Construction — Pack... | 原型态 / prototype | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
 | 2 | src/zephyr/pf_core/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
 | 3 | src/zephyr/pf_core/api/__init__.py | __init__.py | 原型态 / prototype |  |
-| 4 | src/zephyr/pf_core/compliance_rule.py | Re-export wrapper: compliance_rule has migrated... | 原型态 / prototype | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
+| 4 | src/zephyr/pf_core/compliance_rule.py | Re-export wrapper: compliance_rule has migrated... | 生产态 / production | [MOD-L05-001](../../03_modules/_domain_portfolio_core/blueprint.md) |
 | 5 | src/zephyr/pf_core/core/__init__.py | __init__.py | 原型态 / prototype |  |
 | 6 | src/zephyr/pf_core/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 7 | src/zephyr/pf_core/services/__init__.py | __init__.py | 原型态 / prototype |  |
@@ -69,7 +69,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 11 个模块（生产态 1 + 设计态 0 + 原型态 10），标签标注成熟度。
+> 展示全部 11 个模块（生产态 2 + 设计态 0 + 原型态 9），标签标注成熟度。
 
 ```mermaid
 graph TD
@@ -77,7 +77,7 @@ graph TD
         src_zephyr_pf_core_init_py["(原型态 / prototype) D_PORTFOLIO_CORE Portfolio Construction — Pack...<br/>文件: __init__.py"]
         src_zephyr_pf_core_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_pf_core_compliance_rule_py["(原型态 / prototype) Re-export wrapper: compliance_rule has migrated...<br/>文件: compliance_rule.py"]
+        src_zephyr_pf_core_compliance_rule_py["(生产态 / production) Re-export wrapper: compliance_rule has migrated...<br/>文件: compliance_rule.py"]
         src_zephyr_pf_core_core_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_services_init_py["(原型态 / prototype) __init__.py"]
@@ -92,7 +92,7 @@ graph TD
     src_zephyr_pf_core_strategy_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -.->|导入依赖 / import_depends| D_PF_ALLOC
     D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_base_py
@@ -100,30 +100,34 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_strategy_base_py production
-    class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_PF_ALLOC,D_TRADING external_design
+    class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_strategy_base_py production
+    class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
+    class D_PF_ALLOC external_prod
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_TRADING external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 1 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 2 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_PF_CORE["D_PF_CORE 组合核心"]
+        src_zephyr_pf_core_compliance_rule_py["(生产态 / production) Re-export wrapper: compliance_rule has migrated...<br/>文件: compliance_rule.py"]
         src_zephyr_pf_core_strategy_base_py["(生产态 / production) Re-export wrapper: strategy_base has migrated t...<br/>文件: strategy_base.py"]
     end
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_strategy_base_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
     D_TRADING["(原型态 / prototype) D_TRADING"]
     D_TRADING -.->|测试依赖 / test_depends| src_zephyr_pf_core_strategy_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_strategy_base_py production
-    class D_GOVERNANCE,D_TRADING external_design
+    class src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_strategy_base_py production
+    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_TRADING external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -134,7 +138,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 10 个，1 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 9 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -142,7 +146,6 @@ graph TD
         src_zephyr_pf_core_init_py["(原型态 / prototype) D_PORTFOLIO_CORE Portfolio Construction — Pack...<br/>文件: __init__.py"]
         src_zephyr_pf_core_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_pf_core_compliance_rule_py["(原型态 / prototype) Re-export wrapper: compliance_rule has migrated...<br/>文件: compliance_rule.py"]
         src_zephyr_pf_core_core_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_pf_core_services_init_py["(原型态 / prototype) __init__.py"]
@@ -150,19 +153,17 @@ graph TD
         src_zephyr_pf_core_strategy_engine_init_py["(原型态 / prototype) D_PORTFOLIO_CORE — Portfolio Construction Stra...<br/>文件: __init__.py"]
         src_zephyr_pf_core_strategy_registry_py["(原型态 / prototype) Re-export wrapper: strategy_registry has migrat...<br/>文件: strategy_registry.py"]
     end
-    src_zephyr_pf_core_init_py -.->|config_depends / config_depends| src_zephyr_pf_core_compliance_rule_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_pf_core_strategy_registry_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
-    src_zephyr_pf_core_compliance_rule_py -.->|导入依赖 / import_depends| D_GOV_ENFORCEMENT
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
+    D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     src_zephyr_pf_core_strategy_engine_init_py -.->|导入依赖 / import_depends| D_PF_ALLOC
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_compliance_rule_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
-    class D_GOVERNANCE,D_GOV_ENFORCEMENT,D_PF_ALLOC external_design
+    class src_zephyr_pf_core_init_py,src_zephyr_pf_core_extensions_init_py,src_zephyr_pf_core_api_init_py,src_zephyr_pf_core_core_init_py,src_zephyr_pf_core_infrastructure_init_py,src_zephyr_pf_core_services_init_py,src_zephyr_pf_core_strategies_init_py,src_zephyr_pf_core_strategy_engine_init_py,src_zephyr_pf_core_strategy_registry_py design
+    class D_PF_ALLOC external_prod
+    class D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

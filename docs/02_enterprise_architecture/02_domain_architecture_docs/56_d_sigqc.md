@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号质量控制（D_SIGQC）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 03:24:23
+> 最后更新: 2026-07-17 03:33:02
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 8 | Module Count | 8 |
 | 域内依赖 | 1 | Internal Dependencies | 1 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
+| 跨域出边 | 2 | Cross-domain Outgoing | 2 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 8 | Prototype Modules | 8 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -48,7 +48,7 @@ ttl: permanent
 | 2 | src/zephyr/signal_quality/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
 | 3 | src/zephyr/signal_quality/api/__init__.py | __init__.py | 原型态 / prototype |  |
 | 4 | src/zephyr/signal_quality/core/__init__.py | __init__.py | 原型态 / prototype |  |
-| 5 | src/zephyr/signal_quality/degradation_monitor_base.py | degradation_monitor_base.py | 原型态 / prototype |  |
+| 5 | src/zephyr/signal_quality/degradation_monitor_base.py | D_SIGQC — Signal Quality Degradation Monitor Base | 原型态 / prototype |  |
 | 6 | src/zephyr/signal_quality/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 7 | src/zephyr/signal_quality/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 8 | src/zephyr/signal_quality/services/__init__.py | __init__.py | 原型态 / prototype |  |
@@ -75,17 +75,25 @@ graph TD
         src_zephyr_signal_quality_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) degradation_monitor_base.py"]
+        src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
         src_zephyr_signal_quality_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SIGLEGACY["(原型态 / prototype) D_SIGLEGACY"]
+    D_SIGLEGACY -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_quality_init_py,src_zephyr_signal_quality_extensions_init_py,src_zephyr_signal_quality_api_init_py,src_zephyr_signal_quality_core_init_py,src_zephyr_signal_quality_degradation_monitor_base_py,src_zephyr_signal_quality_infrastructure_init_py,src_zephyr_signal_quality_models_init_py,src_zephyr_signal_quality_services_init_py design
+    class D_INFRASTRUCTURE external_prod
+    class D_TRADING,D_SIGLEGACY external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -111,34 +119,56 @@ graph TD
         src_zephyr_signal_quality_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) degradation_monitor_base.py"]
+        src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
         src_zephyr_signal_quality_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_quality_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SIGLEGACY["(原型态 / prototype) D_SIGLEGACY"]
+    D_SIGLEGACY -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_quality_init_py,src_zephyr_signal_quality_extensions_init_py,src_zephyr_signal_quality_api_init_py,src_zephyr_signal_quality_core_init_py,src_zephyr_signal_quality_degradation_monitor_base_py,src_zephyr_signal_quality_infrastructure_init_py,src_zephyr_signal_quality_models_init_py,src_zephyr_signal_quality_services_init_py design
+    class D_INFRASTRUCTURE external_prod
+    class D_TRADING,D_SIGLEGACY external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 2 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | D_SIGLEGACY 信号遗留设计态: D_SIGNAL Signal Combiner (__init__.py) | → | D_SIGQC — Signal Quality Degradation Monitor B... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 2 条 + 入边 1 条 = 3 条）。只显示直接连接的域，不展开具体节点。
 
-> （无跨域依赖 / No cross-domain dependencies）
+```mermaid
+graph LR
+    D_SIGQC["D_SIGQC<br/>信号质量控制"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_TRADING["D_TRADING<br/>交易运营"]
+    D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态"]
+    D_SIGQC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_SIGQC -->|1条 导入依赖 / import_depends| D_TRADING
+    D_SIGLEGACY -->|1条 导入依赖 / import_depends| D_SIGQC
+```
 
 ## 说明 / Notes
 
