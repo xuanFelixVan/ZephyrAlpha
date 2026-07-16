@@ -125,6 +125,21 @@ class TradePanelData:
 
 # ----- 风控校验（纯函数，便于测试） -----
 
+def _check_grey_constraints(
+    sub: OrderSubmission,
+    grey_capital: float,
+    grey_max_qty: int,
+) -> str | None:
+    """灰度约束校验，返回错误消息或 None（通过）。"""
+    if sub.quantity > grey_max_qty:
+        return f"灰度模式: 单笔数量 > {grey_max_qty}（{grey_max_qty}股灰度上限）"
+    if sub.side == "buy":
+        est_amount = sub.estimated_amount if sub.order_type == "limit" else sub.quantity * sub.price
+        if est_amount > grey_capital:
+            return f"灰度模式: 预估金额 {est_amount:.2f} > {grey_capital:.2f}（1万元灰度上限）"
+    return None
+
+
 def validate_order_submission(
     sub: OrderSubmission,
     available_cash: float = 0.0,
@@ -155,12 +170,9 @@ def validate_order_submission(
 
     # 灰度约束
     if enable_grey:
-        if sub.quantity > grey_max_qty:
-            return False, f"灰度模式: 单笔数量 > {grey_max_qty}（{grey_max_qty}股灰度上限）"
-        if sub.side == "buy":
-            est_amount = sub.estimated_amount if sub.order_type == "limit" else sub.quantity * sub.price
-            if est_amount > grey_capital:
-                return False, f"灰度模式: 预估金额 {est_amount:.2f} > {grey_capital:.2f}（1万元灰度上限）"
+        err = _check_grey_constraints(sub, grey_capital, grey_max_qty)
+        if err is not None:
+            return False, err
 
     # 资金校验（仅买入）
     if sub.side == "buy" and available_cash > 0:
