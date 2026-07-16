@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] detect_formal_files MUST be ms-cost (no YAML/import); write_trigger_record MUST be atomic; consumer thread MUST fail-closed on gate
-# [MODIFY-GUARD] formal header regex per project_memory 红蓝触发条件; poll interval MUST NOT < 10s
+# [INVARIANTS] detect_formal_files MUST be ms-cost (no YAML/import); write_trigger_record MUST be atomic; consumer MUST fail-closed on gate
+# [MODIFY-GUARD] formal header regex per project_memory 红蓝触发条件; event-driven via red_blue.trigger.queued topic
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] detect_formal_files swallows OSError; consumer thread swallows all + logs; CircuitBreakerOpenError->skip+retry
+# [ERROR_CONTRACT] detect_formal_files swallows OSError; consumer swallows all + logs; CircuitBreakerOpenError->skip+retry
 # [TESTS] tests/red_blue/test_commit_trigger.py
 # [A_module] module_id=MOD-SEC_commit_trigger | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -23,10 +23,10 @@ CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-INF-030).
 设计要点（对齐 .trae/documents/event_driven_red_blue_trigger_plan.md）:
   - **锁内轻量 emit**：detect_formal_files + write_trigger_record 毫秒级，
     不跑对抗、不调 SteadyState、不调 cleanup（避免破坏性 unlink 阻塞 commit 锁）。
-  - **文件队列异步媒介**：不用 EventBusBackpressure（其 emit 同步派发 handler，
-    在 commit 锁内会阻塞全局 commit 锁 TTL=1800s）。改用持久 JSON 队列文件。
-  - **消费线程锁外执行**：RedBlueTriggerConsumer daemon 线程轮询队列，门禁达标时
-    跑 TIER_1 对抗，受 CircuitBreaker 频率保护。
+  - **文件队列异步媒介**：不用 EventBusBackpressure emit 派发 handler（在 commit
+    锁内会阻塞全局 commit 锁 TTL=1800s）。改用持久 JSON 队列文件 + 事件订阅通知。
+  - **事件驱动消费**：RedBlueTriggerConsumer 订阅 "red_blue.trigger.queued" 事件，
+    事件触发时消费队列，门禁达标时跑 TIER_1 对抗，受 CircuitBreaker 频率保护。
   - **就位 + 门禁激活**：钩子代码始终就位（emit 总发生）；门禁 env var
     ZEPHYR_RED_BLUE_AUTO_ENABLED=1 时才实跑，否则只 log + 清队列（fail-closed）。
   - **唯一触发路径**：CircadianScheduler 定时调度已废除（2026-06-26），
@@ -53,7 +53,6 @@ import json
 import logging
 import os
 import re
-import threading
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -158,10 +157,10 @@ def write_trigger_record(
 
 
 class RedBlueTriggerConsumer:
-    """守护线程：轮询 trigger_queue，门禁达标时跑 TIER_1 对抗验证。
+    """事件驱动消费者：订阅 "red_blue.trigger.queued" 事件，门禁达标时跑 TIER_1 对抗验证。
 
     就位 + 门禁激活:
-      - 始终轮询（就位：即使门禁未达标，钩子仍会 emit 记录到此队列）。
+      - 始终订阅（就位：即使门禁未达标，钩子仍会 emit 记录到此队列）。
       - ZEPHYR_RED_BLUE_AUTO_ENABLED != "1" 时：log + 删队列文件（不累积，
         留可见性，fail-closed）。
       - == "1" 时：CircuitBreaker.before_run -> 跑 TIER_1 全量 14 场景
@@ -173,50 +172,47 @@ class RedBlueTriggerConsumer:
       30s 后 HALF_OPEN 重试。
     """
 
-    POLL_INTERVAL_S: int = 30  # 对齐 [MODIFY-GUARD] poll interval MUST NOT < 10s
-
     def __init__(self, queue_dir: Path | None = None) -> None:
         self._queue_dir: Path = queue_dir if queue_dir is not None else _QUEUE_DIR
-        self._thread: threading.Thread | None = None
-        self._stop = threading.Event()
+        self._started = False
         # 懒加载，避免 __init__ 触发重 import 链
         self._circuit = None  # type: ignore[assignment]
         self._validator = None  # type: ignore[assignment]
 
     # ── 生命周期 ──────────────────────────────────────────────────────
     def start(self) -> None:
-        """幂等启动 daemon 线程。"""
-        if self._thread is not None and self._thread.is_alive():
+        """幂等启动：订阅 red_blue.trigger.queued 事件。"""
+        if self._started:
             return
-        self._stop.clear()
-        self._thread = threading.Thread(
-            target=self._loop,
-            daemon=True,
-            name="RedBlueTriggerConsumer",
-        )
-        self._thread.start()
-        logger.info("RedBlueTriggerConsumer: started (poll=%ds)", self.POLL_INTERVAL_S)
+        from zephyr.shared.event_bus import bus as _bus
+        _bus.subscribe("red_blue.trigger.queued", self._on_trigger_queued)
+        self._started = True
+        logger.info("RedBlueTriggerConsumer: started (event-driven)")
 
-    def stop(self, timeout: float = 5.0) -> None:
-        self._stop.set()
-        if self._thread is not None:
-            self._thread.join(timeout=timeout)
+    def stop(self) -> None:
+        if not self._started:
+            return
+        from zephyr.shared.event_bus import bus as _bus
+        _bus.unsubscribe("red_blue.trigger.queued", self._on_trigger_queued)
+        self._started = False
         logger.info("RedBlueTriggerConsumer: stopped")
 
-    # ── 主循环 ────────────────────────────────────────────────────────
-    def _loop(self) -> None:
-        while not self._stop.is_set():
-            try:
-                self._drain_queue()
-            except Exception as e:  # noqa: BLE001 — 消费线程永不退出
-                logger.warning("RedBlueTriggerConsumer: drain failed: %s", e, exc_info=True)
-            self._stop.wait(self.POLL_INTERVAL_S)
+    # ── 事件回调 ──────────────────────────────────────────────────────
+    def _on_trigger_queued(self, event) -> None:
+        try:
+            self._drain_queue()
+        except Exception as e:  # noqa: BLE001 — 消费者永不退出
+            logger.warning("RedBlueTriggerConsumer: drain failed: %s", e, exc_info=True)
+
+    def drain_now(self) -> None:
+        """CI batch fallback：手动触发消费队列。"""
+        self._drain_queue()
 
     def _drain_queue(self) -> None:
         if not self._queue_dir.exists():
             return
         for qf in sorted(self._queue_dir.glob("*.json")):
-            if self._stop.is_set():
+            if not self._started:
                 break
             try:
                 self._process_one(qf)

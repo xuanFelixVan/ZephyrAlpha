@@ -107,6 +107,11 @@ Phase 0-4 蓝图格式统一化任务将 drift 从 683 降至 0，但这一成�
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-GOV-ALIGNMENT-LOOP`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **完整文件清单 SSoT**：`python scripts/governance/extract_depgraph.py --modules GOV-ALIGNMENT-LOOP`
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |

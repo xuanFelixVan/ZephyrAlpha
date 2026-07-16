@@ -1,32 +1,32 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "d056cc7cde074ea2",
+      "hash": "f961fc9a04859a5a",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
     "scripts/governance/quickstart.md": {
-      "hash": "32c6021ef1ac7203",
+      "hash": "68e56cb90423bf80",
       "critical": true,
       "desc": "AI Session 冷启动卡片"
     },
     "scripts/governance/_shared/thresholds.yaml": {
-      "hash": "e221d3faa3fe389a",
+      "hash": "1e740af6b08ae17f",
       "critical": true,
       "desc": "关键阈值 SSoT"
     },
-    "scripts/governance/meta/kill_switch_state.yaml": {
-      "hash": "5f6ba75ff3fbbfac",
+    "config/runtime/kill_switch_state.yaml": {
+      "hash": "4fe45049f1d26627",
       "critical": true,
       "desc": "Kill Switch 状态"
     },
-    "scripts/governance/meta/shadow_mode_state.yaml": {
-      "hash": "fb878afae35054e4",
+    "config/runtime/shadow_mode_state.yaml": {
+      "hash": "faefef61380e5201",
       "critical": false,
       "desc": "Shadow Mode 状态"
     },
-    "scripts/governance/meta/error_budget_state.yaml": {
-      "hash": "6f274fbf3875e112",
+    "config/runtime/error_budget_state.yaml": {
+      "hash": "9e9dbb9c2a5ab4f6",
       "critical": true,
       "desc": "Error Budget 状态"
     },
@@ -36,36 +36,36 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "f2f4a09fe32e00c9",
+      "hash": "2080b381542c7a3a",
       "critical": true,
       "desc": "脚本注册表"
     },
     "scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py": {
-      "hash": "6a98ee4bcdd2952f",
+      "hash": "c26f30f98c526bba",
       "critical": true,
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "96986484de5474de",
+      "hash": "410ca9ddfaf26031",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "bb78d2253fba4579",
+      "hash": "7392f151c1852f91",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "c7886fe4cb08e4fc",
+      "hash": "36fc78c8297773a8",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "d069c791b90e146b",
+      "hash": "567744b821790de6",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-07-14T18:32:50.334486+00:00",
+  "registered_at": "2026-07-16T19:18:14.671701+00:00",
   "last_check_at": "2026-07-12T05:07:45.509500+00:00"
 }

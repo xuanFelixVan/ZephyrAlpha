@@ -759,3 +759,30 @@ except VMStorageError:
 | 2026-04-24 | 1.0.0 | 初版（B-a-1 首稿）。基于 Kimi §7.5.2 + Qwen 选型 #4-6。 |
 | 2026-04-24 | 1.1.0 | 用户反馈吸收一轮：库化优先 + `.runtime/chromadb/` 锁定 + Collection + multi_search + bulk_bootstrap + update cascade 三场景 + 前置条件/文件清单/P0 测试章节 + 瘦身 "缺口→原因→解法" 三段式。 |
 | 2026-04-24 | 1.2.0 | 用户反馈吸收二轮（定稿为 5 份接口的共享模板）：① §1.3 引入 `VectorMemoryProtocol` 抽象基类 + `InProcessVectorMemory` / `RemoteVectorMemory` 双实现；② 所有 API 改为 `async`，锁用 `asyncio.Lock` + `filelock`（严禁 `threading.Lock`）；③ 新增 `sync_document(file_path, event)` 增量同步 API（git hook 主入口）；④ CASCADE 新增 merge 场景（第 4 种）+ `CASCADE_SCENARIOS` 完整表；⑤ multi_search 默认 `merge_strategy="rrf"`（Cormack 2009），weighted 降为高级选项；⑥ §0 新增"本文档不是"；⑦ §9 补 **DEGRADE-001** P0 级降级条款 + 调用方强制契约 + 降级日志；⑧ §10 新增冷启动 SLO（总冷启动 ≤ 10s）；⑨ §11 补 merge / 冷启动 / 降级路径 P0 测试；⑩ `vibe_config.yaml::runtime_root` 支持环境变量覆盖。 |
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-011`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-011` 的 37 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-011` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-011 | MOD-INF-011 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 37 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -219,30 +219,65 @@ def metric_01_vocab_hardcode() -> dict:
 _STARTUP_RE = re.compile(r"^#\s*\[STARTUP\]\s*(\S+)", re.MULTILINE)
 _TTL_RE = re.compile(r"^#\s*\[TTL\]\s*(\S+)", re.MULTILINE)
 
+# 治本（M02，2026-07-17）：常驻服务特征模式——用于识别"真正的永久系统"。
+# 原检测把所有 [STARTUP]=manual [TTL]=permanent 视为违规，但：
+#   - [TTL]=permanent 表示"代码永久保留"（非一次性工具），不是"进程永久运行"
+#   - [STARTUP]=manual 对 CLI 工具是正确的（人/AI/CI 手动调用）
+#   - 真正的违规：含常驻服务特征的文件标记为 manual（如 while True/signal.signal/daemon）
+# 检测目标：含常驻服务特征 + [STARTUP]=manual [TTL]=permanent + 未豁免
+_DAEMON_FEATURE_PATTERNS = [
+    r"\bwhile\s+True\s*:",                  # 主循环（常驻服务标志）
+    r"\bsignal\.signal\s*\(",               # 信号处理（守护进程优雅退出）
+    r"\bdaemon\s*=\s*True",                 # 守护线程
+    r"\bAPScheduler",                       # APScheduler
+    r"\bschedule\.every",                   # schedule 库
+    r"\bthreading\.Thread\s*\([^)]*daemon", # 守护线程
+    r"\bBackgroundScheduler",               # APScheduler Background
+    r"\bBlockingScheduler",                 # APScheduler Blocking
+    r"\bloop\.run_forever",                 # asyncio 事件循环
+    r"\bsubprocess\.Popen\s*\([^)]*daemon", # 守护子进程
+]
+_DAEMON_FEATURE_RE = re.compile("|".join(_DAEMON_FEATURE_PATTERNS))
+
 
 def metric_02_manual_only_permanent() -> dict:
-    """manual-only 永久脚本数——[STARTUP] manual + [TTL] permanent 组合违规。
+    """manual-only 永久脚本数——常驻服务特征 + [STARTUP] manual + [TTL] permanent 组合违规。
 
     病根：永久系统全自动触发（铁律）——永久系统必须自动触发/运行/维护/关闭。
-    manual-only 永久脚本=永久存在但需手动触发，违反全自动铁律。
-    检测：扫描 scripts/governance/ 下 .py 文件头部 [STARTUP]/[TTL] 标记。
+    治本（M02，2026-07-17）：
+      1. 原检测把 [TTL]=permanent 误判为"进程永久运行"——实际 [TTL]=permanent 表示
+         "代码永久保留"（非一次性工具），CLI 工具运行后退出，不是永久系统。
+      2. 真正的违规：含常驻服务特征（while True/signal.signal/daemon=True/APScheduler 等）
+         + [STARTUP]=manual + [TTL]=permanent 的文件。
+      3. 扫描范围扩大到 src/zephyr/ + scripts/governance/（原仅扫描 scripts/governance/）。
+      4. 支持 # noqa: m02-manual per-file 豁免（合理的 CLI 启动常驻服务，如交易主入口）。
     """
     exclude = EXCLUDE_DIRS | {"_archive", "tests", "__pycache__"}
-    py_files = iter_files(SCRIPTS_GOVERNANCE, extensions=frozenset({".py"}), exclude_dirs=exclude)
+    scan_dirs = [SCRIPTS_GOVERNANCE, SRC_ZEPHYR]
     violations: list[str] = []
-    for fp in py_files:
-        try:
-            # 只读头部 30 行（标记锚定区）
-            source = fp.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+    for scan_dir in scan_dirs:
+        if not scan_dir.exists():
             continue
-        sm = _STARTUP_RE.search(source)
-        tm = _TTL_RE.search(source)
-        if not sm or not tm:
-            continue
-        startup = sm.group(1).strip()
-        ttl = tm.group(1).strip()
-        if startup.lower() == "manual" and ttl.lower() == "permanent":
+        py_files = iter_files(scan_dir, extensions=frozenset({".py"}), exclude_dirs=exclude)
+        for fp in py_files:
+            try:
+                source = fp.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            sm = _STARTUP_RE.search(source)
+            tm = _TTL_RE.search(source)
+            if not sm or not tm:
+                continue
+            startup = sm.group(1).strip()
+            ttl = tm.group(1).strip()
+            if startup.lower() != "manual" or ttl.lower() != "permanent":
+                continue
+            # 治本（M02）：per-file 豁免（合理的 CLI 启动常驻服务）
+            if "# noqa: m02-manual" in source:
+                continue
+            # 治本（M02）：只检测含常驻服务特征的文件（排除纯 CLI 工具）
+            if not _DAEMON_FEATURE_RE.search(source):
+                continue
             try:
                 rel = fp.relative_to(REPO_ROOT)
             except ValueError:

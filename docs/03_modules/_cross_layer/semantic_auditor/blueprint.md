@@ -113,6 +113,11 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-028`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
@@ -163,6 +168,35 @@ SemanticAuditor 是 ZephyrAlpha 的纯语义审计引擎——它解决"规则�
 | v4.0.0 (基线) | 7 个已有文件（spec_auditor/compliance_map/supply_chain/feedback_self_audit/kb_gate/privacy/__init__） | 9 阶段管道核心组件 | 待施工 |
 | v5.0.0 (容量升级) | — | 增量审计/全局索引/缓存/异步队列 | 待施工 |
 | v6.1.0 (模板对齐v3.5) | 21/26 文件已实现 | token_budget.py, cross_session.py, system_state_registry.yaml, llm_bridge_prompt.yaml | LLM API 未接通, 暂不施工 |
+
+---
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-028`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-028` 的 25 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-028` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-028 | MOD-INF-028 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 25 文件 | 26 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 

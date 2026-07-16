@@ -30,8 +30,8 @@ Task Queue — 后台任务队列 + 自动 Dispatch。
 
 from __future__ import annotations
 
+import logging
 import threading
-import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -39,6 +39,8 @@ from enum import Enum
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
+
+logger = logging.getLogger(__name__)
 
 
 class QueueItemStatus(str, Enum):
@@ -73,7 +75,6 @@ class TaskQueue:
         self._items: list[QueueItem] = []
         self._config = QueueConfig()
         self._running = False
-        self._thread: threading.Thread | None = None
         self._dispatch_handler: Callable[[QueueItem], bool] | None = None
         self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
 
@@ -84,7 +85,16 @@ class TaskQueue:
             priority=priority,
         )
         self._items.append(item)
+        self._emit_task_created(task_id, priority)
         return item
+
+    @staticmethod
+    def _emit_task_created(task_id: str, priority: str) -> None:
+        try:
+            from zephyr.shared.event_bus import bus as _bus
+            _bus.emit("task.created", {"task_id": task_id, "priority": priority})
+        except Exception:
+            logger.exception("TaskQueue: emit task.created failed", exc_info=True)
 
     def dequeue_next(self) -> QueueItem | None:
         ready = [
@@ -107,30 +117,38 @@ class TaskQueue:
         self._dispatch_handler = handler
 
     def start_polling(self) -> None:
-        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发创建多个线程
+        # 5.142.6 修复: 加锁保护 check-then-act, 防止并发订阅
         with self._lifecycle_lock:
             if self._running:
                 return
-
+            from zephyr.shared.event_bus import bus as _bus
+            _bus.subscribe("task.created", self._on_task_created)
             self._running = True
-            self._thread = threading.Thread(target=self._poll_loop, daemon=True)
-            self._thread.start()
 
     def stop_polling(self) -> None:
         # 5.142.6 修复: 加锁保护 _running 写入, 防止与 start_polling() 竞争
         with self._lifecycle_lock:
+            if not self._running:
+                return
+            from zephyr.shared.event_bus import bus as _bus
+            _bus.unsubscribe("task.created", self._on_task_created)
             self._running = False
 
-    def _poll_loop(self) -> None:
-        while self._running:
-            if self._config.auto_dispatch:
-                item = self.dequeue_next()
-                if item and self._dispatch_handler:
-                    item.status = QueueItemStatus.RUNNING
-                    success = self._dispatch_handler(item)
-                    item.status = QueueItemStatus.COMPLETED if success else QueueItemStatus.FAILED
+    def _on_task_created(self, event) -> None:
+        try:
+            self.dispatch_now()
+        except Exception:
+            logger.exception("TaskQueue: dispatch on task.created failed", exc_info=True)
 
-            time.sleep(self._config.poll_interval_s)
+    def dispatch_now(self) -> None:
+        """CI batch fallback：同步出队并 dispatch 一个 item。"""
+        if not self._config.auto_dispatch:
+            return
+        item = self.dequeue_next()
+        if item and self._dispatch_handler:
+            item.status = QueueItemStatus.RUNNING
+            success = self._dispatch_handler(item)
+            item.status = QueueItemStatus.COMPLETED if success else QueueItemStatus.FAILED
 
     def get_stats(self) -> dict[str, int]:
         stats: dict[str, int] = {s.value: 0 for s in QueueItemStatus}

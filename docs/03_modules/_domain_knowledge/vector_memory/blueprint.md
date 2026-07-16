@@ -171,6 +171,11 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-011`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 

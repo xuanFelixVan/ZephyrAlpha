@@ -131,6 +131,11 @@ design_maturity: design
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-017`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
@@ -249,6 +254,35 @@ design_maturity: design
 | `data/cache/dedup_*.yaml`                          | 去重引擎运行时数据               | 无    | ✅ 唯一 |
 
 ***
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-017`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-017` 的 130 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-017` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-017 | MOD-INF-017 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 130 文件 | 68 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
+---
 
 ## §1 设计背景与目标
 

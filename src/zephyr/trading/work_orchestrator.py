@@ -101,7 +101,7 @@ class WorkOrchestrator:
         with self._lock:
             self._items[work.item_id] = work
             if not work.depends_on:
-                work.status = "READY"
+                work.status = TaskStatus.READY
         return work.item_id
 
     def submit_dag(self, dag_id: str, params: dict | None = None) -> str:
@@ -130,7 +130,7 @@ class WorkOrchestrator:
                 layer=layer,
                 priority=priority,
                 depends_on=deps,
-                status="READY" if not deps else "PENDING",
+                status=TaskStatus.READY if not deps else TaskStatus.PENDING,
             )
             iid = self.submit(item)
             node_items[node.node_id] = iid
@@ -140,7 +140,7 @@ class WorkOrchestrator:
         ready: list[WorkItem] = []
         with self._lock:
             for item in self._items.values():
-                if item.status == "READY":
+                if item.status == TaskStatus.READY:
                     # 5.85.4 修复: 返回深拷贝避免外部修改内部调度状态
                     ready.append(item.model_copy(deep=True))
         ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 1))
@@ -157,10 +157,6 @@ class WorkOrchestrator:
             if self._slots_used.get(layer, 0) < self._slots.get(layer, 0):
                 self._slots_used[layer] = self._slots_used.get(layer, 0) + 1
                 return True
-            for low_layer in ["api", "local", "trae"]:
-                if low_layer != layer and self._slots_used.get(low_layer, 0) < self._slots.get(low_layer, 0):
-                    if {"P0": 0, "P1": 1, "P2": 2}.get(layer, 1) < {"P0": 0, "P1": 1, "P2": 2}.get(low_layer, 1):
-                        pass
             return False
 
     def release_slot(self, layer: str) -> None:
@@ -176,22 +172,22 @@ class WorkOrchestrator:
             item = self._items.get(item_id)
             if item is None:
                 return
-            item.status = "COMPLETED" if error is None else "FAILED"
+            item.status = TaskStatus.COMPLETED if error is None else TaskStatus.FAILED
             item.completed_at = now_utc().isoformat()
             item.result = result
             item.error = error
             self._slots_used[item.layer] = max(0, self._slots_used.get(item.layer, 0) - 1)
 
             for other in self._items.values():
-                if other.status == "PENDING" and item_id in other.depends_on:
+                if other.status == TaskStatus.PENDING and item_id in other.depends_on:
                     all_done = True
                     for dep_id in other.depends_on:
                         dep = self._items.get(dep_id)
-                        if dep is None or dep.status not in ("COMPLETED",):
+                        if dep is None or dep.status not in (TaskStatus.COMPLETED,):
                             all_done = False
                             break
                     if all_done:
-                        other.status = "READY"
+                        other.status = TaskStatus.READY
 
             self._cleanup_completed()
 
@@ -199,11 +195,11 @@ class WorkOrchestrator:
         """5.65.3 修复：清理已完成且无PENDING依赖的item，防止_items无界增长。"""
         pending_deps: set[str] = set()
         for other in self._items.values():
-            if other.status == "PENDING":
+            if other.status == TaskStatus.PENDING:
                 pending_deps.update(other.depends_on)
         stale = [
             iid for iid, it in self._items.items()
-            if it.status in ("COMPLETED", "FAILED") and iid not in pending_deps
+            if it.status in (TaskStatus.COMPLETED, TaskStatus.FAILED) and iid not in pending_deps
         ]
         for iid in stale:
             del self._items[iid]
@@ -216,7 +212,7 @@ class WorkOrchestrator:
         counts: dict[str, int] = {"trae": 0, "local": 0, "api": 0}
         with self._lock:
             for item in self._items.values():
-                if item.status in ("PENDING", "READY"):
+                if item.status in (TaskStatus.PENDING, TaskStatus.READY):
                     counts[item.layer] = counts.get(item.layer, 0) + 1
         return counts
 

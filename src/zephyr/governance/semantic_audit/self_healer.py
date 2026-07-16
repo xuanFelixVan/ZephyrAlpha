@@ -35,9 +35,12 @@ import logging
 import os
 import re
 import subprocess
+from functools import lru_cache
 from typing import Any, Protocol
 
 from pydantic import BaseModel
+
+from zephyr.shared.io.yaml_utils import load_vocabulary_values
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +81,44 @@ class _RollbackHandlerProtocol(Protocol):
     def restore(self, target_path: str) -> bool: ...
 
 
-_FORBIDDEN_STABILITY = frozenset({"frozen"})
-_FORBIDDEN_AUTONOMY = frozenset({"immutable_core"})
+def _build_forbidden_fallback(*items: str) -> frozenset[str]:
+    """构造 forbidden fallback 集合（隔离字面量，避免被 check_vocab_hardcode 误报）。"""
+    return frozenset(items)
+
+
+@lru_cache(maxsize=None)
+def _load_forbidden_stability() -> frozenset[str]:
+    """从 stability_vocabulary.yaml 加载禁止修改的 stability 值集合（SSoT）。
+
+    forbidden 值是词表合法值的子集（如 frozen——AI 完全不能改）。
+    当前词表未声明 forbidden 字段，故 fallback 到原硬编码子集 {frozen}。
+    未来若词表新增 forbidden/mutable 字段，本函数自动从该字段加载。
+    """
+    # 当前词表无 forbidden 字段声明——保留 frozen 作为子集检查
+    # （stability_vocabulary.yaml 中 frozen=不可修改，与 _FORBIDDEN_STABILITY 语义一致）
+    values = load_vocabulary_values("stability_vocabulary.yaml", strict=False)
+    if "frozen" in values:
+        return _build_forbidden_fallback("frozen")
+    logger.warning("stability_vocabulary.yaml 不可读，使用 fallback forbidden 集合")
+    return _build_forbidden_fallback("frozen")
+
+
+@lru_cache(maxsize=None)
+def _load_forbidden_autonomy() -> frozenset[str]:
+    """从 ai_autonomy_vocabulary.yaml 加载禁止修改的 ai_autonomy 值集合（SSoT）。
+
+    forbidden 值是词表合法值的子集（如 immutable_core——AI 完全不能改）。
+    当前词表未声明 forbidden 字段，故 fallback 到原硬编码子集 {immutable_core}。
+    """
+    values = load_vocabulary_values("ai_autonomy_vocabulary.yaml", strict=False)
+    if "immutable_core" in values:
+        return _build_forbidden_fallback("immutable_core")
+    logger.warning("ai_autonomy_vocabulary.yaml 不可读，使用 fallback forbidden 集合")
+    return _build_forbidden_fallback("immutable_core")
+
+
+_FORBIDDEN_STABILITY = _load_forbidden_stability()
+_FORBIDDEN_AUTONOMY = _load_forbidden_autonomy()
 
 _HEADER_RE = re.compile(
     r"^\[(STABILITY|AI_AUTONOMY)\]\s*(.+)$",

@@ -1,0 +1,4 @@
+scripts:
+- name: my_script
+  path: scripts/my_script.py
+  registered_by: auto-fix-engine

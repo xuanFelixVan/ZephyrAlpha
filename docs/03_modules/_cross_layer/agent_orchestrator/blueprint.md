@@ -65,6 +65,11 @@ build_status: planned
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-039`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
@@ -151,6 +156,35 @@ build_status: planned
 | construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/orchestrator/` 逐文件核对 | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" src/zephyr/orchestrator/*.py` | ☐ |
 | actual_disk_path 与 §11 产出物路径一致 | 对比 frontmatter 与 §11 | ☐ |
+
+---
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-039`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 131 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-039` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-039 | MOD-INF-039 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 131 文件 | 71 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 

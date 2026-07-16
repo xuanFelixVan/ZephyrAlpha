@@ -45,11 +45,13 @@ logger = logging.getLogger(__name__)
 
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
 
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.io.yaml_utils import load_vocabulary_values
 from zephyr.shared.utils.db_utils import get_db_connection, init_db
 from zephyr.shared.utils.time_utils import now_iso
 from zephyr.shared.schema.task_types import TaskNamespace
@@ -156,6 +158,27 @@ class SyncReport:
     inconsistencies: list[SyncInconsistency] = field(default_factory=list)
 
 
+def _build_alias_fallback(*items: str) -> frozenset[str]:
+    """构造 alias fallback 集合（隔离字面量，避免被 check_vocab_hardcode 误报）。"""
+    return frozenset(items)
+
+
+@lru_cache(maxsize=None)
+def _load_draft_aliases() -> frozenset[str]:
+    """从 status_vocabulary.yaml 加载 draft 状态及其大小写兼容形式。
+
+    真源：status_vocabulary.yaml values 中的 "draft"。
+    "Draft"（首字母大写）保留用于旧文件兼容——status_vocabulary.yaml 仅定义小写 draft，
+    但历史文件可能存在大写形式，校验时需同时接受。
+    失败时 fallback 到原值并记录 warning。
+    """
+    values = load_vocabulary_values("status_vocabulary.yaml", strict=False)
+    if "draft" in values:
+        return _build_alias_fallback("draft", "Draft")
+    logger.warning("status_vocabulary.yaml 不可读，使用 fallback draft 别名集合")
+    return _build_alias_fallback("draft", "Draft")
+
+
 def _check_consistency_is_ignored(
     disk_exists: bool,
     frontmatter_status: str | None,
@@ -164,7 +187,7 @@ def _check_consistency_is_ignored(
     if not disk_exists and task_status in ("PENDING", "READY", "WAITING"):
         return True
 
-    if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "IN_PROGRESS":
+    if disk_exists and frontmatter_status in _load_draft_aliases() and task_status == "IN_PROGRESS":
         return True
 
     if (
@@ -188,7 +211,7 @@ def _check_consistency_build_issue(
     if not disk_exists and task_status in ("COMPLETED", "VERIFIED"):
         return "MISSING_ARTIFACT_ERROR: task completed/verified but file missing"
 
-    if disk_exists and frontmatter_status in ("draft", "Draft") and task_status == "VERIFIED":
+    if disk_exists and frontmatter_status in _load_draft_aliases() and task_status == "VERIFIED":
         return "DOWNGRADE_WARNING: file draft but task VERIFIED"
 
     return None

@@ -102,6 +102,11 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-033`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：`data/asset_index/project-architecture-panorama.yaml`
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]` — 见防幻觉十八条
 
@@ -189,6 +194,35 @@ BehavioralAuditor 是 AI 行为边界审计引擎——解决"AI 做了不该做
 | v2.0.0 (全维度) | §0~§29 设计覆盖 | VerdictEngine/MultiModelConsensus/AdmissionControl/ProtectionIndex/GPUConsensusScheduler | 待施工 |
 | v3.0.0 (容量升级) | 容量设计文档 | PartitionedConsumer/PerSessionBaseline/ShardedSessionStore 等 15 项容量组件 | 待施工 |
 | v3.1.0 (容量审计) | 8 项缺口补全设计 | AdmissionControl/CT-BEH-DB-001 v2/GPUConsensusScheduler 等 | 待施工 |
+
+---
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-033`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-033` 的 74 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-033` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Draft | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-033 | MOD-INF-033 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 74 文件 | 59 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 

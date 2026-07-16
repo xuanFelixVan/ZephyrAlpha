@@ -79,18 +79,15 @@ class FileWatcher:
         self._poll_interval = poll_interval
         self._on_change = on_change
         self._snapshot: dict[Path, str] = {}
-        self._thread: threading.Thread | None = None
-        self._stop_event = threading.Event()
         self._lock = threading.Lock()
         self._started = False
 
     def start(self) -> None:
         if self._started:
             return
+        from zephyr.shared.event_bus import bus as _bus
+        _bus.subscribe("file.changed", self._on_file_changed)
         self._snapshot = self._build_snapshot()
-        self._stop_event.clear()
-        self._thread = threading.Thread(target=self._poll_loop, daemon=True, name="FileWatcher")
-        self._thread.start()
         self._started = True
         logger.info(
             "FileWatcher started: dir=%s patterns=%s interval=%.0fs tracked=%d",
@@ -103,15 +100,27 @@ class FileWatcher:
     def stop(self) -> None:
         if not self._started:
             return
-        self._stop_event.set()
-        if self._thread and self._thread.is_alive():
-            self._thread.join(timeout=5.0)
+        from zephyr.shared.event_bus import bus as _bus
+        _bus.unsubscribe("file.changed", self._on_file_changed)
         self._started = False
         logger.info("FileWatcher stopped: dir=%s", self._watch_dir)
 
+    def _on_file_changed(self, event) -> None:
+        try:
+            events = self.scan_once()
+            for ev in events:
+                logger.info("File change detected: %s %s", ev.event_type.value, ev.path)
+                if self._on_change:
+                    try:
+                        self._on_change(ev)
+                    except Exception:
+                        logger.exception("on_change callback failed for %s", ev.path, exc_info=True)
+        except Exception:
+            logger.exception("FileWatcher _on_file_changed error", exc_info=True)
+
     @property
     def is_running(self) -> bool:
-        return self._started and not self._stop_event.is_set()
+        return self._started
 
     @property
     def tracked_count(self) -> int:
@@ -160,20 +169,6 @@ class FileWatcher:
                 events.append(FileChangeEvent(path=p, event_type=FileChangeType.MODIFIED))
 
         return events
-
-    def _poll_loop(self) -> None:
-        while not self._stop_event.wait(timeout=self._poll_interval):
-            try:
-                events = self.scan_once()
-                for event in events:
-                    logger.info("File change detected: %s %s", event.event_type.value, event.path)
-                    if self._on_change:
-                        try:
-                            self._on_change(event)
-                        except Exception:
-                            logger.exception("on_change callback failed for %s", event.path, exc_info=True)
-            except Exception:
-                logger.exception("FileWatcher poll loop error", exc_info=True)
 
 
 class BlueprintWatcher:

@@ -52,6 +52,12 @@ PARAM_MAX_CHANGE_THRESHOLD = 0.30
 GEN_POSITIVE_RATIO_THRESHOLD = 0.60
 GEN_CV_THRESHOLD = 1.50
 
+# 默认 OOS/IS Sharpe 比率否决阈值(单真源, P0-9, §16.7)
+# 样本外 Sharpe < 70% 样本内 Sharpe -> 否决上线
+# decision_gate.DecisionGateConfig.oos_sharpe_ratio_threshold 通过单向导入使用此常量,
+# 禁止在其他位置重复定义 0.70/0.7 等等价字面量(SSoT 单真源原则)
+DEFAULT_OOS_SHARPE_THRESHOLD_RATIO: float = 0.70
+
 
 class OverfittingError(Exception):
     """过拟合检测错误"""
@@ -62,6 +68,24 @@ class OverfittingError(Exception):
         super().__init__(*args)
         if error_code is not None:
             self.error_code = error_code
+
+
+class OverfittingGateError(OverfittingError):
+    """SIM-56 上线前自动门禁阻断错误
+
+    当 BacktestConfig.strict_overfitting_gate=True 且检测到过拟合
+    (metrics['is_overfitting']=True)时, 引擎 run() 末尾抛出此错误,
+    阻断上线流程, 防止过拟合策略进入生产环境。
+
+    蓝图 §16.7 SIM-56 + P0-9 双重否决语义:
+      - is_overfitting=True(三维度任一不稳定或样本外 Sharpe < 70% 样本内)
+      - 严格门禁启用(strict_overfitting_gate=True)
+    """
+
+    error_code = "ZA-BT-0010"
+
+    def __init__(self, *args, error_code: str | None = None) -> None:
+        super().__init__(*args, error_code=error_code)
 
 
 @dataclass(frozen=True)
@@ -76,7 +100,7 @@ class OverfittingConfig:
     """
 
     parameter_perturbation_pct: float = 0.10
-    oos_sharpe_threshold_ratio: float = 0.70
+    oos_sharpe_threshold_ratio: float = DEFAULT_OOS_SHARPE_THRESHOLD_RATIO
     cross_validation_folds: int = 5
 
     def __post_init__(self):
@@ -420,6 +444,8 @@ __all__ = [
     "OverfittingConfig",
     "OverfittingDetector",
     "OverfittingError",
+    "OverfittingGateError",
+    "DEFAULT_OOS_SHARPE_THRESHOLD_RATIO",
     "WF_POSITIVE_RATIO_THRESHOLD",
     "WF_CV_THRESHOLD",
     "WF_DISASTER_SHARPE",

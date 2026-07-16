@@ -119,6 +119,11 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py, reconciler=blueprint_frontmatter_reconciler.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-027`
+> 以下手写内容保留职责描述（depgraph 无此信息），文件列表以 depgraph 为准。
+
 > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]` — 见防幻觉十八条
 
@@ -176,6 +181,35 @@ Audit Orchestrator 是 ZephyrAlpha 的全维度系统自证清白引擎，基于
 | v4.0.0 (基线) | 7 个文件（cli/pipeline_runner/admission_controller/resource_pool/__init__/__main__/text_to_finding） | — | — |
 | v5.0.0 (容量升级) | 无 | ResourceAwarePool/ScriptRouter/SessionAuditManager/ScriptDiscovery/HashCacheDB/ScriptDAG/FullScanOrchestrator/GPUMonitor/LiveScoreboard/PatternDB/AdmissionController/Coalescer/CheckpointManager/CapacityPlanner/ProtectionIndex/ModuleLock | 待施工 Phase 0-3 |
 | v6.1.0 (模板对齐v3.5) | 同 v4.0.0 | 26 个文件标记为blueprint寄生(从未创建) + 容量升级组件 16 个 | 蓝图膨胀：宣称31个文件"已实现"实际只有7个存在 |
+
+---
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-027`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-027` 的 9 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-027` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-027 | MOD-INF-027 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 9 文件 | 33 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 

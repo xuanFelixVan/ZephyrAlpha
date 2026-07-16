@@ -16,8 +16,8 @@
 """
 [BLUEPRINT] DOM-GOV-001 | D:\\ZephyrAlpha\\docs\03_modules\\_domain-governance\blueprint.md | §3
 [MODULE] scripts.governance.check_blueprint_compliance
-[INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v2.0.0 COMPLIANCE_CHECKLIST 一致
-[MODIFY-GUARD] __init__.py;script_manifest.yaml;蓝图模板v2.0.0
+[INVARIANTS] REQUIRED_SECTIONS 必须与蓝图+施工图模板 v2.1.0 COMPLIANCE_CHECKLIST 一致
+[MODIFY-GUARD] __init__.py;script_manifest.yaml;蓝图模板v2.1.0
 [CONSUMERS] CI pipeline;governance gate
 [STABILITY] stable
 [SAFETY] M
@@ -88,22 +88,22 @@ REQUIRED_SECTIONS = {
     "§6": ("错误处理", "主章节"),
     "§6.1": ("可观测性", "子章节"),
     "§6.2": ("退化矩阵", "子章节"),
-    "§8": ("安全考量", "主章节"),
-    "§9": ("测试策略", "主章节"),
-    "§10": ("依赖关系", "主章节"),
-    "§10.5": ("概念重叠声明", "子章节"),  # v2.0.0 补齐
-    "§10.6": ("依赖链风险评级", "子章节"),  # v2.0.0 补齐
-    "§11": ("产出物", "主章节"),
-    "§12": ("集成目标", "主章节"),
-    "§13": ("需要更新", "主章节"),
-    "§14": ("风险", "主章节"),
-    "§16": ("施工指引", "主章节"),
-    "§16.7": ("参考实现规格", "子章节"),
-    "§16.8": ("施工参考卡", "子章节"),
-    "§16.10": ("故障与操作", "子章节"),
-    "§16.12": ("并发操作", "子章节"),
-    "§17": ("容量升级", "主章节"),
-    "§18": ("决策记录", "主章节"),
+    "§7": ("安全考量", "主章节"),
+    "§8": ("测试策略", "主章节"),
+    "§9": ("依赖关系", "主章节"),
+    "§9.5": ("概念重叠声明", "子章节"),  # v2.0.0 补齐
+    "§9.6": ("依赖链风险评级", "子章节"),  # v2.0.0 补齐
+    "§10": ("产出物", "主章节"),
+    "§11": ("集成目标", "主章节"),
+    "§12": ("需要更新", "主章节"),
+    "§13": ("风险", "主章节"),
+    "§14": ("施工指引", "主章节"),
+    "§14.7": ("参考实现规格", "子章节"),
+    "§14.8": ("施工参考卡", "子章节"),
+    "§14.10": ("故障与操作", "子章节"),
+    "§14.12": ("并发操作", "子章节"),
+    "§15": ("容量升级", "主章节"),
+    "§16": ("决策记录", "主章节"),
     "glossary": ("术语表", "主章节"),
     "blindspots": ("已知问题", "主章节"),
     "maturity": ("成熟度", "主章节"),
@@ -163,6 +163,8 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
     main_missing = [s for s in missing_sections if s[2] == "主章节"]
     sub_missing = [s for s in missing_sections if s[2] == "子章节"]
     pre_missing = [s for s in missing_sections if s[2] == "前置章节"]
+    total_main = sum(1 for v in REQUIRED_SECTIONS.values() if v[1] == "主章节")
+    total_sub = sum(1 for v in REQUIRED_SECTIONS.values() if v[1] == "子章节")
     total_pre = sum(1 for v in REQUIRED_SECTIONS.values() if v[1] == "前置章节")
 
     if pre_missing:
@@ -174,20 +176,20 @@ def check_blueprint(blueprint_path: str, warn_only: bool = False) -> int:
         print(f"  ✅ 前置章节: {total_pre}/{total_pre}")
 
     if main_missing:
-        print(f"  ❌ 主章节缺失 ({len(main_missing)}/19):")
+        print(f"  ❌ 主章节缺失 ({len(main_missing)}/{total_main}):")
         for sid, kw, _ in main_missing:
             print(f"    ❌ {sid}: {kw}")
         errors += len(main_missing)
     else:
-        print("  ✅ 主章节: 19/19")
+        print(f"  ✅ 主章节: {total_main}/{total_main}")
 
     if sub_missing:
-        print(f"  ⚠️ 子章节缺失 ({len(sub_missing)}/22):")
+        print(f"  ⚠️ 子章节缺失 ({len(sub_missing)}/{total_sub}):")
         for sid, kw, _ in sub_missing:
             print(f"    ❌ {sid}: {kw}")
         warnings += len(sub_missing)
     else:
-        print("  ✅ 子章节: 22/22")
+        print(f"  ✅ 子章节: {total_sub}/{total_sub}")
 
     total = len(REQUIRED_SECTIONS) + len(REQUIRED_FRONTMATTER)
     passed = total - errors - warnings

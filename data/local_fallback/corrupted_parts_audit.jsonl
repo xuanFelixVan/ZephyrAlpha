@@ -1,0 +1,3 @@
+{"timestamp": "2026-07-15T17:35:21.198048", "part_name": "202305_21083_21105_1_34064", "database": "c1_market", "table": "tick_data", "action": "detach", "success": true}
+{"timestamp": "2026-07-15T21:19:51.641006", "part_name": "202304_34470_34470_1", "database": "c1_market", "table": "tick_data", "action": "detach", "success": true}
+{"timestamp": "2026-07-15T21:54:57.924466", "part_name": "202305_34484_34484_1_34959", "database": "c1_market", "table": "tick_data", "action": "detach", "success": true}
