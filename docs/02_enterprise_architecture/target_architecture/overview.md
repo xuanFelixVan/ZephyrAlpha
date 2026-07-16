@@ -50,8 +50,6 @@ ttl: permanent
 
 > **注（v2.1.0）**：原"6 大 Vibe Coding 2.0 核心服务施工中"状态描述已移除——6大服务接口规范真源在 [`docs/03_modules/_cross_layer/_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/)，状态以接口规范文档为准。
 
-**System Identity**: ZephyrAlpha is an AI-native personal quantitative investment system. 53-domain unique physical classification (derived from depgraph panorama). Python full-stack, Vibe Coding driven. The legacy 14-layer (L00-L13) has been demoted to a domain attribute (`layer_id`) per §2.1 ruling — single classification eliminates AI hallucination from dual-taxonomy ambiguity.
-
 ---
 
 ## 1. Architecture approach / 架构方法论
@@ -86,7 +84,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 |------|------|------|
 | **功能域物理分类** | ✅ **已定义** | depgraph `domains` 表为SSoT |
 | **5 大核心服务（VMS/CE/Orc/FLE/LSG）** | — | 接口规范真源：[`_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/) |
-| **17 项技术选型** | ✅ **已定稿** | 见 [`technology_landscape.yaml`](../../../architecture_model/technology/technology_landscape.yaml)（SSoT）|
+| **技术选型** | ✅ **已定稿** | 见 [`technology_landscape.yaml`](../../../architecture_model/technology/technology_landscape.yaml)（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
 | **设计态→运营态迁移** | 🔧 **进行中** | design_maturity 分布详见 generated/ 派生视图 |
 
@@ -94,29 +92,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 ## 2. TOGAF four layers / TOGAF 四层结构
 
-> **📊 TOGAF 四层堆叠图**：见 [`diagrams/togaf_layer_stack.mmd`](diagrams/togaf_layer_stack.mmd)
-
-```
-┌────────────────────────────────────────────────────────────┐
-│  01. Business Architecture (BA) / 业务架构                  │
-│      Who we serve, what we do, core processes, NFR         │
-└────────────────────────────────────────────────────────────┘
-                        ↓ drives / 驱动
-┌────────────────────────────────────────────────────────────┐
-│  02. Information Architecture (IA) / 信息架构               │
-│      What information assets exist, how organized          │
-└────────────────────────────────────────────────────────────┘
-                        ↓ drives / 驱动
-┌────────────────────────────────────────────────────────────┐
-│  03. Application Architecture (AA) / 应用架构               │
-│      What modules/services exist, how they interact        │
-└────────────────────────────────────────────────────────────┘
-                        ↓ drives / 驱动
-┌────────────────────────────────────────────────────────────┐
-│  04. Technology Architecture (TA) / 技术架构                │
-│      What technology stack underpins everything            │
-└────────────────────────────────────────────────────────────┘
-```
+文档按 TOGAF 四层组织：BA(业务) → IA(信息) → AA(应用) → TA(技术)，上层驱动下层。
 
 > **注**：TOGAF四层是**视图分类方法**，不是物理代码分层。物理代码组织以功能域为准（见§1.2裁定）。
 
@@ -128,10 +104,10 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | Level / 级别 | Focus / 关注点 | Usage in this project / 本项目用法 |
 |-------------|--------------|----------------------------------|
-| **L1 — System Context** | System's position in the external world | ✅ Required → `diagrams/c4_l1_system_context.mmd` |
-| **L2 — Container** | Independent deployable units inside the system | ✅ Required → `diagrams/c4_l2_containers.mmd` |
-| **L3 — Component** | Components inside a container | 🟡 As needed, in blueprints |
-| **L4 — Code** | Class/function level | ❌ Not drawn (code itself is documentation)|
+| **L1 — System Context** | System's position in the external world | ✅ 必画 |
+| **L2 — Container** | Independent deployable units inside the system | ✅ 必画 |
+| **L3 — Component** | Components inside a container | 🟡 按需，在蓝图内 |
+| **L4 — Code** | Class/function level | ❌ 不画（代码即文档）|
 
 ---
 
@@ -143,8 +119,6 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 | `src/` | Application Architecture | C4-L1 系统上下文 + C4-L2 容器图 + 域依赖图 | `application_architecture.md` |
 | `scripts/` | Application Architecture (sub-view) | 治理代码拓扑图 + pre-commit/CI 钩子流程图 | `application_architecture.md §4` |
 
-> **v2.0.0变更**：原"14层代码分层图"改为"域依赖图"，由`generate_domain_dependency_diagram.py`从depgraph派生。
-
 ---
 
 ## 5. Key KB 决策记录 summary / 关键 KB 决策记录 汇总
@@ -153,16 +127,16 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 | KB 决策记录 | Decision / 决策 | Impact / 影响 |
 |-----|----------------|--------------|
-| KBG-0001 | `docs/` is the single canonical source of truth | 所有文档归属 |
-| KBG-0002 | Single frontmatter schema + phased required fields | 所有文档 frontmatter |
-| KBG-0003 | Dual/multi AI collaboration workflow | 文档生产方式 |
-| KBG-0015 | Context Engine：NetworkX + JSON + 本地 LLM 压缩 | 5 大核心服务之一 |
-| KBG-0016 | Vector Memory：ChromaDB 0.6 + BGE-M3 ONNX + 递归分块 | 5 大核心服务之一 |
-| KBG-0017 | Agent Orchestrator：SQLite + asyncio.Queue 起步 | 5 大核心服务之一 |
-| KBG-0018 | Agent Sandbox：Windows ACL + 只读挂载 | Orchestrator 配套 |
-| KBG-0019 | Feedback Loop Engine：SQLite 时间序列 + EMA 异常检测 | 5 大核心服务之一 |
-| KBG-0020 | LLM Security Gateway：OWASP LLM Top 10 + fail-closed | 5 大核心服务之一 |
-| KBG-0021 | SSoT Validator：scaffold 唯一任务，阻塞下游 | scaffold 门禁 |
+| KBG-0001 | `docs/` 唯一真源 | 所有文档归属 |
+| KBG-0002 | 统一 frontmatter schema | 所有文档 frontmatter |
+| KBG-0003 | 多 AI 协作工作流 | 文档生产方式 |
+| KBG-0015 | Context Engine | 5 大核心服务之一 |
+| KBG-0016 | Vector Memory | 5 大核心服务之一 |
+| KBG-0017 | Agent Orchestrator | 5 大核心服务之一 |
+| KBG-0018 | Agent Sandbox | Orchestrator 配套 |
+| KBG-0019 | Feedback Loop Engine | 5 大核心服务之一 |
+| KBG-0020 | LLM Security Gateway | 5 大核心服务之一 |
+| KBG-0021 | SSoT Validator | scaffold 门禁 |
 
 > **注（v2.1.0）**：5 大核心服务的详细架构图 / 服务间依赖 DAG / 降级协调矩阵真源在 [`application_architecture.md §4A`](./application_architecture.md) 及各服务接口规范文档。
 
