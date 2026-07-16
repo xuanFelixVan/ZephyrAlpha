@@ -1848,13 +1848,13 @@ entries:
   impact:
   - /etc/clickhouse-server/config.d/enable_http.xml（http_port 18123）
   - src/zephyr/data/ch_writer.py（_CH_HTTP_PORT 18123 + _http_fail_ts 冷却期 + delete_where bug 修复）
-  - src/zephyr/data/ch_writer.py（_discover_wsl_ip mirrored 兼容，Phase 3 待施工）
-  fix_phase: 'Phase 0.1+0.2 已完成；Phase 3 待施工'
-  status: in_progress
+  - src/zephyr/data/ch_writer.py（_discover_wsl_ip 已随 2026-07-16 Hyper-V 迁移移除，Phase 3 不再需要）
+  fix_phase: '已完成（Phase 0.1+0.2 HTTP 端口迁移+冷却期；Phase 3 通过 2026-07-16 Hyper-V 迁移替代 WSL2，_discover_wsl_ip 函数已移除，不再需要 mirrored 兼容）'
+  status: resolved
   related_rules:
   - '#ARCH-CH-005'
   created: '2026-07-15'
-  last_updated: '2026-07-15'
+  last_updated: '2026-07-16'
 
 # --- #ARCH-CH-012: ch_writer 锁分层——连接创建锁与 execute 串行化锁分离 ---
 - issue_id: '#ARCH-CH-012'
@@ -1918,18 +1918,18 @@ entries:
     - 回灌复用 ch_writer.write_tsv，CH 可用时立即成功，失败保留待重试
     - WSL 探活独立于 CH 探活（后者只查 CH 不查 WSL），二者分工
   impact:
-  - src/zephyr/data/local_replay.py（新建——本地落盘+回灌）
-  - src/zephyr/data/ch_writer.py（write_tsv 新增第四级降级）
-  - src/zephyr/data/scheduler.py（新增 _start_local_replay + _start_wsl_health_probe + _classify_wsl_probe_result Phase3 分类决策）
+  - src/zephyr/data/local_replay.py（新建——本地落盘+回灌，保留并适用任意 CH 故障）
+  - src/zephyr/data/ch_writer.py（write_tsv 新增第四级降级，保留）
+  - src/zephyr/data/scheduler.py（_start_local_replay 保留；_start_wsl_health_probe + _classify_wsl_probe_result 已随 2026-07-16 Hyper-V 迁移移除）
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（local_replay.py creation_token 登记）
-  fix_phase: Phase 1+2+3 已完成（代码层）；Phase 0 待用户手动执行；Phase 4 待 CH 稳定后执行
-  status: decided
+  fix_phase: 已完成（Phase 1 local_replay 保留；Phase 2+3 WSL 健康探活已随 2026-07-16 Hyper-V 迁移移除；Phase 0 根因已通过 Hyper-V 迁移治本消除；Phase 4 OPTIMIZE TABLE FINAL 待执行）
+  status: resolved
   related_rules:
   - '#ARCH-CH-004'
   - '#ARCH-CH-010'
   - '#ARCH-CH-012'
   created: '2026-07-15'
-  last_updated: '2026-07-15'
+  last_updated: '2026-07-16'
 
 # --- #ARCH-CH-014: ch_writer 连接断开后冷却期失效——单例不自愈缺陷 ---
 - issue_id: '#ARCH-CH-014'
