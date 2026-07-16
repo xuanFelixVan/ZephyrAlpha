@@ -1,12 +1,12 @@
 registry:
-  version: 2.7.0
+  version: 2.7.9
   created: '2026-05-02'
-  last_updated: '2026-07-13'
-  total_blueprints: 57
+  last_updated: '2026-07-16'
+  total_blueprints: 60
   scope: 03_modules/
-  note: Auto-synced from 57 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 60 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-13'
+  generated_at: '2026-07-16'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -176,8 +176,8 @@ blueprints:
   blueprint_level: module
   priority: P2
   version: 1.1.0
-  generation: ''
-  last_updated: ''
+  generation: 1
+  last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
   construction_progress: not_started
 - module_id: MOD-GOVERNANCE
@@ -482,7 +482,7 @@ blueprints:
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/audit_orchestrator/blueprint.md
   construction_progress: partially_implemented
-- module_id: MOD-INF-027
+- module_id: MOD-INF-040
   name: disaster_recovery_backup
   title: 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
   summary: 灾备备份系统——事件触发的Restic去重备份流水线，post-commit reconciler自动驱动（重要文件变更+8小时间隔保护，日均1-2次），覆盖代码+配置+数据库+不可替代数据，目标盘F:(SanDisk
@@ -492,11 +492,11 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.1.0
+  version: 1.1.1
   generation: 1
-  last_updated: '2026-07-09'
+  last_updated: '2026-07-16'
   file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
-  construction_progress: planned
+  construction_progress: not_started
 - module_id: MOD-INF-028
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
@@ -510,7 +510,7 @@ blueprints:
   generation: 5
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/semantic_auditor/blueprint.md
-  construction_progress: mostly_implemented
+  construction_progress: partially_implemented
 - module_id: MOD-INF-029
   name: orphan_judge
   title: Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
@@ -902,6 +902,49 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint.md
   construction_progress: partially_implemented
+- module_id: MOD-MASTER-001
+  name: _master_blueprint_agent_spec
+  title: Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
+  summary: CBAC能力访问控制矩阵——12系统×12系统完整授权关系、违规响应、离线更新流程、编排器特权声明、Skill路由接口定义。
+  layer: L1_foundation
+  functional_domain: infrastructure
+  blueprint_status: Active
+  blueprint_level: domain
+  priority: P0
+  version: 1.3.0
+  generation: 2
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_master_blueprint/blueprint_agent_spec.md
+  construction_progress: completed
+- module_id: MOD-MASTER-002
+  name: _master_blueprint_baseline
+  title: Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
+  summary: MOD-MASTER_BLUEPRINT 基线蓝图 v0.9.2。12 系统拓扑 + 63 条 CT-* 集成契约 + 共享 Schema + 全局状态传播
+    + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息。
+  layer: L1_foundation
+  functional_domain: infrastructure
+  blueprint_status: Active
+  blueprint_level: domain
+  priority: P0
+  version: 0.9.2
+  generation: 1
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_master_blueprint/blueprint_baseline.md
+  construction_progress: completed
+- module_id: MOD-MASTER-003
+  name: _master_blueprint_capacity
+  title: Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计
+  summary: 容量升级设计蓝图。§-2二次容量审计识别12个体系级缺口（GAP-M01~M12），§-1十个升级章完整设计方案。设计上限：10,000治理脚本/1,500模块/100AI并发。
+  layer: L1_foundation
+  functional_domain: infrastructure
+  blueprint_status: Active
+  blueprint_level: domain
+  priority: P0
+  version: 1.3.0
+  generation: 3
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_master_blueprint/blueprint_capacity.md
+  construction_progress: partially_implemented
 - module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   name: resource_optimization_engine
   title: 资源优化引擎蓝图
@@ -961,26 +1004,36 @@ blueprints:
   file_path: 03_modules/_system_master/blueprint.md
   construction_progress: completed
 summary:
-  total: 57
+  total: 60
   by_blueprint_status:
-    Active: 51
+    Active: 54
     Draft: 6
   by_layer:
     L2_domain: 11
-    L1_foundation: 28
+    L1_foundation: 31
     L0_infrastructure: 17
     L3_application: 1
   by_construction_progress:
     partially_implemented: 34
     design_only: 8
-    not_started: 1
-    completed: 10
-    planned: 1
-    mostly_implemented: 1
+    not_started: 2
+    completed: 12
     scaffold: 2
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
-  last_recomputed: '2026-07-13'
+  last_recomputed: '2026-07-16'
 changelog:
+- version: 2.7.9
+  date: '2026-07-16'
+  changes:
+  - '[manual-fix] AI-18 审计修复——MOD-INF-027 ID 重复治理 + 词表归一 + 字段补全 + MASTER 子蓝图登记'
+  - 'MOD-INF-027(disaster_recovery_backup).module_id: [MOD-INF-027] → [MOD-INF-040]（消除与 audit_orchestrator 的 ID 冲突）'
+  - 'MOD-INF-027(disaster_recovery_backup).construction_progress: [planned] → [not_started]（planned 非受控词表）'
+  - 'MOD-INF-028(semantic_auditor).construction_progress: [mostly_implemented] → [partially_implemented]（mostly_implemented 非受控词表）'
+  - 'MOD-GOV-SYNC-PANORAMA.generation: [] → [1]; last_updated: [] → [2026-07-16]（补全空字段）'
+  - '新增 MOD-MASTER-001 → 03_modules/_master_blueprint/blueprint_agent_spec.md'
+  - '新增 MOD-MASTER-002 → 03_modules/_master_blueprint/blueprint_baseline.md'
+  - '新增 MOD-MASTER-003 → 03_modules/_master_blueprint/blueprint_capacity.md'
+  - 'registry.version: [2.7.0] → [2.7.9]; registry_version(尾) 对齐为 2.7.9（消除三处版本号冲突）'
 - version: 2.7.8
   date: '2026-07-13'
   changes:
@@ -1267,4 +1320,4 @@ changelog:
   - 施工进度评估：3 份未动工 / 1 份已合并施工内容 / 1 份 30% 部分完工
   - 完整度评估：范围 70%-90%，平均 79%
   - 排除 llm-gateway（deferred design）和 trigger-router（RI 子模块接线文档）
-registry_version: 6.1.0
+registry_version: 2.7.9

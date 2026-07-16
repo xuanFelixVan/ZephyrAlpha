@@ -8,7 +8,15 @@ ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-responsibility_domain: 
+responsibility_domain: panorama_alignment
+owner: ZephyrAlpha-Owner
+created_by: human_plus_agent
+date: "2026-07-13"
+last_updated: "2026-07-16"
+last_verified: "2026-07-16"
+generation: 1
+priority: P2
+blueprint_level: module
 tags:
   - panorama-alignment
   - four-way-alignment

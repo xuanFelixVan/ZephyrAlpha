@@ -22,7 +22,7 @@ codification_at: "2026-05-14"
 last_verified: "2026-05-14"
 last_updated: "2026-05-14"
 generation: 5
-construction_progress: mostly_implemented
+construction_progress: partially_implemented
 actual_disk_path: 'D:\ZephyrAlpha\src\zephyr\governance\semantic_auditor\'
 rule_form: structural
 scope: global

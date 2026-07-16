@@ -366,16 +366,16 @@ tiers:
         excluded_node_types: doc, policy, standard, template, diagram, data
 
       - registry_id: REG-MIGRATION-001
-        name: 迁移登记表（已删除）
-        description: 每个需要迁移的文件的旧路径→新路径映射。从 depgraph 设计态节点自动生成。原文件 2026-06-30 删除（commit 20b7264ea4），历史可通过 git log 查询 docs/02_enterprise_architecture/migration_registry.yaml。功能与 depgraph edges 表重叠，不再独立维护。
+        name: 迁移登记表（已冻结）
+        description: ARCH-031 迁移任务登记表。旧路径→新路径映射。功能与 depgraph edges 表重叠，已冻结不再新增条目。原文件 2026-06-30 曾删除（commit 20b7264ea4），后因 ARCH-031 task_bound 脚本仍引用而恢复，2026-07-16 从连字符命名 migration-registry.yaml 重命名为 snake_case migration_registry.yaml。待 ARCH-031 全量 pending 条目完成后退役删除。
         owner: MOD-INF-037
         physical_path: docs/02_enterprise_architecture/migration_registry.yaml
         format: yaml
         tier: tier_1_governance
-        maintenance: deleted
-        entry_count: 2574
-        status: deleted
-        ssoT_for: migration_mapping（已废弃，功能由 depgraph edges 表取代）
+        maintenance: frozen
+        entry_count: 52
+        status: deprecated
+        ssoT_for: migration_mapping（已冻结，功能由 depgraph edges 表取代）
 
       - registry_id: REG-ARCH-ISSUE-001
         name: 架构议题注册表
@@ -478,8 +478,8 @@ tiers:
         format: yaml
         maintenance: manual
         entry_count: 31
-        status: active
-        description: 31 个系统通道（v1.2.1 手动种子版 — 已恢复有效 YAML）
+        status: deprecated
+        description: "[DEPRECATED 2026-07-16] 功能已被 REG-BLUEPRINT-001 (blueprint_registry.yaml) + REG-PATH-OWN-001 (path_ownership_map.yaml) 覆盖。停留在 v1.2.1/2026-05-07，保留作历史参考。"
 
       - registry_id: REG-MOD-ID-001
         name: 模块 ID 注册表（EA 级）
@@ -585,6 +585,6 @@ summary:
   pending_scan: 5
   broken: 1
   by_tier:
-    tier_0_core: 10
-    tier_1_governance: 17
-    tier_2_runtime: 9
+    tier_0_core: 12
+    tier_1_governance: 28
+    tier_2_runtime: 12

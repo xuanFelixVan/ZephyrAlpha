@@ -39,7 +39,7 @@ depends_on:
   - target: "MOD-MASTER-003"
     at: "全篇"
     why: "容量设计蓝图——v1.1.0 升级章"
-  - target: "MOD-MASTER_BLUEPRINT"
+  - target: "MOD-MASTER-001"
     at: "全篇"
     why: "Agent Spec接口蓝图——§十五CBAC+Skill路由"
 references:

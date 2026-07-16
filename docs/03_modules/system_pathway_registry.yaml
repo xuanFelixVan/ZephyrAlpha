@@ -1,22 +1,28 @@
-# [A_config] module_id=CFG-system-pathway-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# [A_config] module_id=CFG-system-pathway-registry | layer=config | stability=deprecated | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
 # blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # module_id: MOD-GOVERNANCE
-# stability: evolving
+# stability: deprecated
 # safety_level: L
-# ai_autonomy: ai_modifiable
+# ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
 # ============================================================================
-# ZephyrAlpha 全系统路径地图 — 唯一真源（System Pathway Registry SSoT）
+# [DEPRECATED 2026-07-16] 本文件已废弃，功能由以下两个真源覆盖：
+#   - blueprint_registry.yaml（module_id ↔ file_path 映射，自动同步）
+#   - path_ownership_map.yaml（path ↔ owner_blueprint 映射，自动生成，4577 条）
+# 本文件停留在 v1.2.1/2026-05-07，3 个月未同步，存在路径错误和废弃 module_id。
+# 保留仅作历史参考，禁止作为决策真源。AI 查询路径归属请使用 path_ownership_map.yaml。
 # ============================================================================
-# 版本: 1.2.1 | 创建: 2026-05-04 | 更新: 2026-05-07 (B 轨 8 模块 blueprint 对齐 _cross_layer Phase 5)
+# ZephyrAlpha 全系统路径地图 — [DEPRECATED] 历史参考
+# ============================================================================
+# 版本: 1.2.1 (deprecated) | 创建: 2026-05-04 | 更新: 2026-05-07 | 废弃: 2026-07-16
 # owner: ZephyrAlpha-Owner
 #
 # 对标: Google Monorepo 自动索引（Piper/CitC 文件级可见性）
 #       + ITIL SACM CMDB（每个 CI 一条记录，含路径/依赖/状态）
 #
-# 用途: 全系统所有模块的文件路径汇总表。
+# 用途: [DEPRECATED] 全系统所有模块的文件路径汇总表。
 #       一张表看清每个 module 的源码/蓝图/测试/配置文件的磁盘位置。
 #
 # 生成策略:
@@ -35,11 +41,13 @@ registry:
   version: "1.2.1"
   created: "2026-05-04"
   updated: "2026-05-07"
+  deprecated: "2026-07-16"
   generation: "manual_seed_phase_b"
   auto_generated_by: "scripts/generate_pathway_registry.py"
   last_updated: "2026-05-07"
   total_modules: 32
-  note: "Phase B 全层路径补全——覆盖全部 C 轨（域体系）和 B 轨核心模块"
+  status: deprecated
+  note: "[DEPRECATED] 功能已被 path_ownership_map.yaml + blueprint_registry.yaml 覆盖。停留在 2026-05-07，禁止作为决策真源。"
 
 pathways:
   # ──── C-Track: 业务脊柱 ────
