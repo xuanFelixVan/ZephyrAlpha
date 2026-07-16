@@ -111,41 +111,62 @@ class CapabilityRegistry:
             return
         with open(CAPABILITIES_YAML_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        if not data or "rules" not in data:
+        if not data:
             import warnings
 
             warnings.warn(
-                "capabilities.yaml empty or missing 'rules' key — registry empty, all operations denied",
+                "capabilities.yaml empty — registry empty, all operations denied",
                 stacklevel=2,
             )
             return
-        for rule_data in data["rules"]:
-            cap = Capability(
-                name=rule_data.get("name", ""),
-                description=rule_data.get("description", ""),
-                allow=rule_data.get("allow", []),
-                deny=rule_data.get("deny", []),
-            )
-            if not cap.allow and not cap.deny:
-                import warnings
-
-                warnings.warn(
-                    f"Capability rule '{cap.name}' has empty allow and deny — dead rule (matches nothing)",
-                    stacklevel=2,
+        # 治本(2026-07-17): 适配 capabilities.yaml 双模式 schema
+        # 模式1: CBAC rules（data["rules"] 列表，每项含 name/allow/deny）—— 未来扩展
+        # 模式2: 功能开关（顶层模块名作 key，含 enabled/description）—— 当前实际 schema
+        if "rules" in data:
+            for rule_data in data["rules"]:
+                cap = Capability(
+                    name=rule_data.get("name", ""),
+                    description=rule_data.get("description", ""),
+                    allow=rule_data.get("allow", []),
+                    deny=rule_data.get("deny", []),
                 )
-            for patterns, field_name in [(cap.allow, "allow"), (cap.deny, "deny")]:
-                for pat in patterns:
-                    if "{" in pat or "}" in pat:
-                        import warnings
+                if not cap.allow and not cap.deny:
+                    import warnings
 
-                        warnings.warn(
-                            f"Capability rule '{cap.name}' {field_name} pattern '{pat}' "
-                            f"contains {{ or }} — brace expansion not supported by fnmatch. "
-                            f"The pattern will match literal curly braces only (effectively dead). "
-                            f"Expand into multiple independent patterns instead.",
-                            stacklevel=2,
+                    warnings.warn(
+                        f"Capability rule '{cap.name}' has empty allow and deny — dead rule (matches nothing)",
+                        stacklevel=2,
+                    )
+                for patterns, field_name in [(cap.allow, "allow"), (cap.deny, "deny")]:
+                    for pat in patterns:
+                        if "{" in pat or "}" in pat:
+                            import warnings
+
+                            warnings.warn(
+                                f"Capability rule '{cap.name}' {field_name} pattern '{pat}' "
+                                f"contains {{ or }} — brace expansion not supported by fnmatch. "
+                                f"The pattern will match literal curly braces only (effectively dead). "
+                                f"Expand into multiple independent patterns instead.",
+                                stacklevel=2,
+                            )
+                self._capabilities.append(cap)
+        else:
+            # 降级模式：将功能开关加载为 capability
+            # enabled=true → allow=["**"]（允许所有路径）
+            # enabled=false → 不加载（default_deny 生效）
+            # budget 等非功能开关字段（无 enabled 键）跳过
+            for key, val in data.items():
+                if not isinstance(val, dict) or "enabled" not in val:
+                    continue
+                if val.get("enabled", False):
+                    self._capabilities.append(
+                        Capability(
+                            name=key,
+                            description=val.get("description", ""),
+                            allow=["**"],
+                            deny=[],
                         )
-            self._capabilities.append(cap)
+                    )
 
     @classmethod
     def reset(cls) -> None:

@@ -58,7 +58,7 @@ if _GOV_DIR not in sys.path:
 
 from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
-_KILL_SWITCH_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "kill_switch_state.yaml"
+_KILL_SWITCH_PATH = _REPO_ROOT / "config" / "runtime" / "kill_switch_state.yaml"
 
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")

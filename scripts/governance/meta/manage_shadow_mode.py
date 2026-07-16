@@ -53,7 +53,7 @@ from pathlib import Path
 import yaml
 
 _REPO_ROOT = REPO_ROOT
-_SHADOW_STATE_PATH = _REPO_ROOT / "scripts" / "governance" / "meta" / "shadow_mode_state.yaml"
+_SHADOW_STATE_PATH = _REPO_ROOT / "config" / "runtime" / "shadow_mode_state.yaml"
 
 PHASE_ORDER = {"phase1": 1, "phase2": 2, "phase3": 3}
 NEXT_PHASE = {"phase1": "phase2", "phase2": "phase3", "phase3": "phase3"}

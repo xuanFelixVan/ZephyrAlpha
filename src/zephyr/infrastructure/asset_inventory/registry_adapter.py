@@ -647,11 +647,11 @@ class RegistryManager:
             "REG-GATE-001", "_registry.yaml", asset_key="gate_id"
         )
         self._known["scripts/script-manifest.yaml"] = YamlDictAdapter("REG-SCRIPT-001", "script-manifest.yaml")
-        self._known["config/risk-register.yaml"] = YamlListAdapter(
-            "REG-RISK-001", "risk-register.yaml", asset_key="risk_id"
+        self._known["config/risk_register.yaml"] = YamlListAdapter(
+            "REG-RISK-001", "risk_register.yaml", asset_key="risk_id"
         )
-        self._known["config/asset-inventory.yaml"] = YamlListAdapter(
-            "REG-ASSET-001", "asset-inventory.yaml", asset_key="relative_path"
+        self._known["config/asset_inventory.yaml"] = YamlListAdapter(
+            "REG-ASSET-001", "asset_inventory.yaml", asset_key="relative_path"
         )
         self._known["config/embedding_model_registry.yaml"] = YamlListAdapter(
             "REG-EMBED-001", "embedding_model_registry.yaml", asset_key="model_id"
@@ -659,8 +659,8 @@ class RegistryManager:
         self._known["src/zephyr/pipeline/routemanifest.yaml"] = YamlListAdapter(
             "REG-PIPE-001", "routemanifest.yaml", asset_key="route_id"
         )
-        self._known["config/tech_stackmanifest.yaml"] = YamlListAdapter(
-            "REG-CAP-001", "tech_stackmanifest.yaml", asset_key="tech_id"
+        self._known["config/tech_stack_manifest.yaml"] = YamlListAdapter(
+            "REG-CAP-001", "tech_stack_manifest.yaml", asset_key="tech_id"
         )
 
         self._known["docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml"] = YamlListAdapter(

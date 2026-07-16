@@ -60,7 +60,7 @@ for f in sorted(glob.glob("scripts/governance/meta/baselines/*.jsonl")):
 
 print()
 print("=== Shadow mode ===")
-with open("scripts/governance/meta/shadow_mode_state.yaml", encoding="utf-8") as f:
+with open("config/runtime/shadow_mode_state.yaml", encoding="utf-8") as f:
     d = yaml.safe_load(f)
 scripts = d.get("scripts", {})
 print(f"  Registered scripts: {len(scripts)}")

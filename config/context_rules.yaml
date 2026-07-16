@@ -4,6 +4,7 @@
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
+# ttl: permanent
 # --- 治理锚定结束 ---
 module_id: MOD-INF-002
 version: "1.0.0"
@@ -18,15 +19,19 @@ implementation_status: "operational — CTX-001~006 consumed by context_budget_t
 description: "15 context management rules for AI agent sessions covering token budget allocation, priority decay, and window sliding strategies"
 
 rules:
-  - id: CR-001
-    name: token_budget_allocation
+  - id: CTX-001
+    name: token_budget_tiers
     condition: "Session starts with a defined token budget"
     action: "Allocate 40% to system prompt, 30% to working context, 20% to output buffer, 10% to reserve"
     priority: P0
     verifiable: true
     verification_method: "Verify token allocation ratios at session start"
+    parameters:
+      l1_warning_ratio: 0.80
+      l2_compress_ratio: 0.90
+      l3_hard_cutoff_ratio: 0.95
 
-  - id: CR-002
+  - id: CTX-002
     name: context_window_sliding
     condition: "Working context exceeds 80% of allocated token budget"
     action: "Slide window: evict lowest-priority items first, preserve P0 items always"
@@ -34,7 +39,7 @@ rules:
     verifiable: true
     verification_method: "Trigger context >80% and verify eviction order"
 
-  - id: CR-003
+  - id: CTX-003
     name: priority_decay_with_time
     condition: "Context item has not been referenced for N turns"
     action: "Decay priority by 0.1 per turn; items below 0.2 are eviction candidates"
@@ -42,7 +47,7 @@ rules:
     verifiable: true
     verification_method: "Track reference count and verify decay calculation"
 
-  - id: CR-004
+  - id: CTX-004
     name: p0_item_pin
     condition: "Item is classified as P0 (safety invariants, active task spec)"
     action: "Pin item in context; never evict regardless of recency or token pressure"
@@ -50,7 +55,7 @@ rules:
     verifiable: true
     verification_method: "Attempt to evict P0 item and verify it remains"
 
-  - id: CR-005
+  - id: CTX-005
     name: task_context_preload
     condition: "New task is assigned to session"
     action: "Preload task-related documents (blueprint, KB decision records, relevant KEs) into working context"
@@ -58,7 +63,7 @@ rules:
     verifiable: true
     verification_method: "Verify task documents loaded within 2 turns of assignment"
 
-  - id: CR-006
+  - id: CTX-006
     name: cross_reference_resolution
     condition: "Document references another document not in context"
     action: "Load referenced document summary (not full content) into context if token budget allows"

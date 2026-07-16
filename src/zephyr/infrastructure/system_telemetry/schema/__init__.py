@@ -25,12 +25,17 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 class SchemaSubsystem:
     _CONFIG_PATH = REPO_ROOT / "config" / "metrics_schema.yaml"
-    _VERSION = "0.9.0"
+    _FALLBACK_VERSION = "0.0.0"
 
     def __init__(self, module_id: str = "", test_mode: bool = False):
         self._module_id = module_id
         self._test_mode = test_mode
         self._schema: dict = self._load_schema() if self._CONFIG_PATH.exists() else {}
+
+    @property
+    def _VERSION(self) -> str:
+        # 治本(2026-07-17): 版本号真源是 metrics_schema.yaml，禁止代码硬编码
+        return str(self._schema.get("version", self._FALLBACK_VERSION))
 
     def _load_schema(self) -> dict:
         try:

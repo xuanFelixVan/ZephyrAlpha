@@ -17,6 +17,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any
+
+try:
+    import yaml
+except ImportError:
+    yaml = None  # type: ignore[assignment]
+
+try:
+    from zephyr.shared.io.paths import REPO_ROOT
+except ImportError:
+    REPO_ROOT = Path(__file__).resolve().parents[4]  # fallback
+
+_DEGRADATION_CONFIG_PATH: Path = REPO_ROOT / "config" / "degradation_chain.yaml"
 
 
 class DegradationLevel(Enum):
@@ -37,6 +51,29 @@ class DegradationChain:
     def __init__(self):
         self._nodes: dict[str, DegradationNode] = {}
         self._edges: dict[str, list[str]] = {}
+        # 治本(2026-07-17): 加载 config/degradation_chain.yaml 配置
+        self._config: dict[str, Any] = self._load_config()
+
+    @staticmethod
+    def _load_config() -> dict[str, Any]:
+        # 治本(2026-07-17): 消费 config/degradation_chain.yaml 真源
+        if yaml is None or not _DEGRADATION_CONFIG_PATH.exists():
+            return {}
+        try:
+            with open(_DEGRADATION_CONFIG_PATH, encoding="utf-8") as f:
+                return yaml.safe_load(f) or {}
+        except Exception:
+            return {}
+
+    @property
+    def config(self) -> dict[str, Any]:
+        return self._config
+
+    def get_chain(self, chain_id: str) -> dict[str, Any] | None:
+        for chain in self._config.get("chains", []):
+            if chain.get("chain_id") == chain_id:
+                return chain
+        return None
 
     def add_component(self, name: str) -> None:
         self._nodes[name] = DegradationNode(name, DegradationLevel.NORMAL)

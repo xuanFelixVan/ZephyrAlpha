@@ -7,7 +7,6 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 # ---
-# module_id: KILL_SWITCH-001
 # title: 脚本 Kill Switch 状态
 # status: active
 # version: "1.0.0"
