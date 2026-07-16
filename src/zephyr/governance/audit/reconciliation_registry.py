@@ -1208,6 +1208,21 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+def _collect_csv_refs(content: str, is_path_fn) -> list[str]:
+    import csv
+    refs: list[str] = []
+    try:
+        reader = csv.reader(content.splitlines())
+        for row in reader:
+            for cell in row:
+                cell = cell.strip().strip('"').strip("'")
+                if "/" in cell and "." in cell and is_path_fn(cell):
+                    refs.append(cell)
+    except Exception:
+        pass  # CSV 解析失败回退到正则结果
+    return refs
+
+
 def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False) -> dict:
     """递归扫描 docs/_working/ 下工作文档的幽灵引用并归档有幽灵引用的文档。
 
@@ -1316,15 +1331,7 @@ def scan_and_archive_working_docs(project_root: "object", dry_run: bool = False)
                 refs.append(r)
         # CSV 专用：逐单元格提取（更精确，避免正则误匹配 CSV 结构）
         if source_ext == ".csv":
-            try:
-                reader = csv.reader(content.splitlines())
-                for row in reader:
-                    for cell in row:
-                        cell = cell.strip().strip('"').strip("'")
-                        if "/" in cell and "." in cell and _looks_like_path(cell):
-                            refs.append(cell)
-            except Exception:
-                pass  # CSV 解析失败回退到正则结果
+            refs.extend(_collect_csv_refs(content, _looks_like_path))
         # 去重保序
         seen: set[str] = set()
         unique: list[str] = []
@@ -1708,6 +1715,39 @@ def _audit_commit_history(
     return violations, rv_uses, None
 
 
+def _migrate_deprecated_files(items, dep_path, target_base, project_root) -> list[dict]:
+    import shutil
+    migrated: list[dict] = []
+    for item in items:
+        rel_to_dep = item.relative_to(dep_path)
+        target = target_base / rel_to_dep
+        src_rel = str(item.relative_to(project_root)).replace("\\", "/")
+        dst_rel = str(target.relative_to(project_root)).replace("\\", "/")
+        if target.exists():
+            migrated.append({"src": src_rel, "dst": dst_rel, "status": "skipped_exists"})
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(item), str(target))
+            migrated.append({"src": src_rel, "dst": dst_rel, "status": "moved"})
+    return migrated
+
+
+def _remove_empty_subdirs(dep_path, project_root) -> list[str]:
+    import os
+    from pathlib import Path
+    removed_dirs: list[str] = []
+    for root, _dirs, _files in os.walk(dep_path, topdown=False):
+        try:
+            if not os.listdir(root):
+                os.rmdir(root)
+                removed_dirs.append(
+                    str(Path(root).relative_to(project_root)).replace("\\", "/")
+                )
+        except OSError:
+            pass  # 目录非空或权限不足，跳过
+    return removed_dirs
+
+
 def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-DEPRECATED-DIR post-commit reconciler（09_audit 治本加固）。
 
@@ -1769,10 +1809,6 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
 
         消灭"只告警不消除"——无论脚本如何 mkdir，下一次 commit 后自动清理。
         """
-        import shutil  # 局部导入（避免模块级依赖膨胀）
-        import os
-        from pathlib import Path
-
         # 合规目标目录：docs/09_audit/ -> docs/_working/audit/
         _COMPLIANT_MAP: dict[str, str] = {
             "docs/09_audit": "docs/_working/audit",
@@ -1790,30 +1826,10 @@ def make_deprecated_directory_reconciler(gateway: "object") -> ReconcilerSpec:
             # 自动迁移：将文件迁移到合规目录（不覆盖已有文件）
             target_base_rel = _COMPLIANT_MAP.get(dep_dir, dep_dir.replace("09_audit", "_working/audit"))
             target_base = project_root / target_base_rel
-            migrated: list[dict] = []
-            for item in items:
-                rel_to_dep = item.relative_to(dep_path)
-                target = target_base / rel_to_dep
-                src_rel = str(item.relative_to(project_root)).replace("\\", "/")
-                dst_rel = str(target.relative_to(project_root)).replace("\\", "/")
-                if target.exists():
-                    migrated.append({"src": src_rel, "dst": dst_rel, "status": "skipped_exists"})
-                else:
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.move(str(item), str(target))
-                    migrated.append({"src": src_rel, "dst": dst_rel, "status": "moved"})
+            migrated = _migrate_deprecated_files(items, dep_path, target_base, project_root)
 
             # 删除空目录（从最深层开始，bottom-up）
-            removed_dirs: list[str] = []
-            for root, _dirs, _files in os.walk(dep_path, topdown=False):
-                try:
-                    if not os.listdir(root):
-                        os.rmdir(root)
-                        removed_dirs.append(
-                            str(Path(root).relative_to(project_root)).replace("\\", "/")
-                        )
-                except OSError:
-                    pass  # 目录非空或权限不足，跳过
+            removed_dirs = _remove_empty_subdirs(dep_path, project_root)
 
             still_exists = dep_path.exists()
             moved_count = sum(1 for m in migrated if m["status"] == "moved")
