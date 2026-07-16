@@ -12,10 +12,7 @@ created_by: AI
 date: "2026-05-05"
 ttl: permanent
 summary: "code-dedup-engine/ 模块目录索引。全生命周期代码去重系统——从生成时预防到进化沉淀的六阶段闭环。覆盖函数/常量/类/import/部分重复/参数化模板等10+检测维度。增量缓存加速pre-commit。自动修复+SSoT注册+Feedback Loop进化。"
-depends_on:
-  - target: 03_modules/_domain_infrastructure_operations/index.md
-    at: module-list
-    why: "本模块在基础设施域中登记"
+depends_on: []
 ---
 
 # code-dedup-engine — 代码去重引擎

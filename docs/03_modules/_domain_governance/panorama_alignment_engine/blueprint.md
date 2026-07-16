@@ -32,6 +32,7 @@ summary: >
   单模块同步+全量同步+transition 触发+blueprint 缺失标记+多数投票聚合。
 design_maturity: prototype
 build_status: generated
+construction_progress: not_started
 ---
 
 # 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
