@@ -115,6 +115,30 @@ class IngestResult:
     details: dict[str, Any] = field(default_factory=dict)
 
 
+def _validate_frontmatter(
+    gate: IngestGate, text: str, ext: str
+) -> tuple[dict[str, Any] | None, str | None]:
+    fm_err = gate._check_frontmatter(text, ext)
+    if fm_err:
+        return None, fm_err
+    fm = gate._parse_frontmatter(text, ext)
+    if fm is None:
+        return None, "frontmatter 解析失败"
+    missing = [f for f in REQUIRED_FRONTMATTER_FIELDS if f not in fm]
+    if missing:
+        return None, f"frontmatter 缺少必填字段 {missing}"
+    return fm, None
+
+
+def _collect_gate_violations(
+    gate_result: GateResult | None,
+) -> tuple[bool, list[str], dict[str, Any] | None]:
+    if gate_result and not gate_result.passed:
+        out = [f"[{v.severity}] {v.message}" for v in gate_result.violations]
+        return True, out, {"gate_result": gate_result.summary()}
+    return False, [], None
+
+
 class IngestGate:
     def __init__(
         self,
@@ -162,19 +186,9 @@ class IngestGate:
             violations.append(lsg_err)
             return IngestResult(passed=False, violations=violations)
 
-        fm_err = self._check_frontmatter(text, ext)
+        fm, fm_err = _validate_frontmatter(self, text, ext)
         if fm_err:
             violations.append(fm_err)
-            return IngestResult(passed=False, violations=violations)
-
-        fm = self._parse_frontmatter(text, ext)
-        if fm is None:
-            violations.append("frontmatter 解析失败")
-            return IngestResult(passed=False, violations=violations)
-
-        missing = [f for f in REQUIRED_FRONTMATTER_FIELDS if f not in fm]
-        if missing:
-            violations.append(f"frontmatter 缺少必填字段 {missing}")
             return IngestResult(passed=False, violations=violations)
 
         length_err = self._check_content_length(text)
@@ -188,13 +202,13 @@ class IngestGate:
             return IngestResult(passed=False, violations=violations)
 
         gate_result = self._run_gate(source_path)
-        if gate_result and not gate_result.passed:
-            for v in gate_result.violations:
-                violations.append(f"[{v.severity}] {v.message}")
+        gate_failed, gv, gd = _collect_gate_violations(gate_result)
+        if gate_failed:
+            violations.extend(gv)
             return IngestResult(
                 passed=False,
                 violations=violations,
-                details={"gate_result": gate_result.summary()},
+                details=gd,
             )
 
         ke_id = fm.get("module_id", "")
