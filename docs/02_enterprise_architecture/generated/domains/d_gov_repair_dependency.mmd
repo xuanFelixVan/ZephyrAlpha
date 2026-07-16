@@ -1,7 +1,7 @@
 %% D_GOV_REPAIR 域全景依赖图
-%% 生成时间: 2026-07-17 00:14:06
+%% 生成时间: 2026-07-17 00:46:33
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 18, 依赖边数: 171
+%% 模块数: 16, 依赖边数: 144
 
 graph TD
 
@@ -23,8 +23,6 @@ graph TD
         src_zephyr_governance_persistence___init___py["...yr/governance/persistence/__init__.py [production]"]
         src_zephyr_governance_services___init___py["...ephyr/governance/services/__init__.py [prototype]"]
         src_zephyr_governance_strategies___init___py["...hyr/governance/strategies/__init__.py [prototype]"]
-        src_zephyr_governance_trading_contracts___init___py["...ernance/trading_contracts/__init__.py [prototype]"]
-        src_zephyr_governance_trading_contracts_risk___init___py["...ce/trading_contracts/risk/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -60,11 +58,11 @@ graph TD
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_GOV_REPAIR -> D_FACTOR (1 条)
     src_zephyr_governance___init___py -->|import_depends| D_FACTOR[D_FACTOR]
-    %% D_GOV_REPAIR -> D_GOVERNANCE (46 条)
-    src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    %% D_GOV_REPAIR -> D_GOVERNANCE (44 条)
     src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_agent_spec___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_governance___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -126,12 +124,11 @@ graph TD
     src_zephyr_governance___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_GOV_REPAIR -> D_GOV_ENFORCEMENT (5 条)
+    %% D_GOV_REPAIR -> D_GOV_ENFORCEMENT (4 条)
     src_zephyr_governance___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOV_REPAIR -> D_GOV_KB (1 条)
     src_zephyr_governance___init___py -->|import_depends| D_GOV_KB[D_GOV_KB]
     %% D_GOV_REPAIR -> D_GOV_OPS_RESILIENCE (21 条)
@@ -158,14 +155,6 @@ graph TD
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_GOV_REPAIR -> D_GOV_RULE (1 条)
     src_zephyr_governance___init___py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    %% D_GOV_REPAIR -> D_INFRASTRUCTURE (7 条)
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_GOV_REPAIR -> D_INFRA_A2A (1 条)
     src_zephyr_governance___init___py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
     %% D_GOV_REPAIR -> D_INFRA_RECOVERY (2 条)
@@ -188,28 +177,10 @@ graph TD
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_OPS[D_OPS]
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_OPS[D_OPS]
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_OPS[D_OPS]
-    %% D_GOV_REPAIR -> D_SHARED (2 条)
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    %% D_GOV_REPAIR -> D_TRADING (16 条)
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_governance_trading_contracts___init___py -->|import_depends| D_TRADING[D_TRADING]
+    %% D_GOV_REPAIR -> D_TRADING (1 条)
+    src_zephyr_governance_adapters___init___py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 3 条
     %% 跨域入边: 17 条
-    %% 跨域出边: 151 条
+    %% 跨域出边: 124 条
