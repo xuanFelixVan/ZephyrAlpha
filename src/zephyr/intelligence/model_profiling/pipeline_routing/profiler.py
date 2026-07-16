@@ -441,31 +441,9 @@ class ModelProfiler:
         if not output:
             return 0.0
 
-        score = 0.0
-        if case.expected_patterns:
-            matched = sum(1 for p in case.expected_patterns if re.search(p, output, re.IGNORECASE))
-            score = matched / len(case.expected_patterns) * 0.6
-
-        if case.forbidden_patterns:
-            violations = sum(1 for p in case.forbidden_patterns if re.search(p, output, re.IGNORECASE))
-            penalty = violations / len(case.forbidden_patterns) * 0.5
-            score = max(0.0, score - penalty)
-
-        if case.expected_output_type == "json":
-            if _is_valid_json(output):
-                score = max(score, 0.7)
-            else:
-                score *= 0.3
-        elif case.expected_output_type == "code":
-            if output.count("\n") >= 2 and ("def " in output or "class " in output or "async " in output):
-                score = max(score, 0.5)
-
-        if case.reference_answer and output:
-            ref_words = set(case.reference_answer.lower().split())
-            out_words = set(output.lower().split())
-            if ref_words:
-                overlap = len(ref_words & out_words) / len(ref_words)
-                score = 0.4 * score + 0.6 * overlap
+        score = _score_pattern_match(case, output)
+        score = _score_output_type(case, output, score)
+        score = _score_reference_answer(case, output, score)
 
         return round(min(1.0, max(0.0, score)), 4)
 
@@ -574,6 +552,44 @@ class ModelProfiler:
                 f"P50={scored[0].latency_p50_ms:.0f}ms, "
                 f"throughput={scored[0].throughput_tokens_per_sec:.0f} tok/s)"
             )
+
+
+def _score_pattern_match(case: BenchmarkCase, output: str) -> float:
+    score = 0.0
+    if case.expected_patterns:
+        matched = sum(1 for p in case.expected_patterns if re.search(p, output, re.IGNORECASE))
+        score = matched / len(case.expected_patterns) * 0.6
+
+    if case.forbidden_patterns:
+        violations = sum(1 for p in case.forbidden_patterns if re.search(p, output, re.IGNORECASE))
+        penalty = violations / len(case.forbidden_patterns) * 0.5
+        score = max(0.0, score - penalty)
+
+    return score
+
+
+def _score_output_type(case: BenchmarkCase, output: str, score: float) -> float:
+    if case.expected_output_type == "json":
+        if _is_valid_json(output):
+            score = max(score, 0.7)
+        else:
+            score *= 0.3
+    elif case.expected_output_type == "code":
+        if output.count("\n") >= 2 and ("def " in output or "class " in output or "async " in output):
+            score = max(score, 0.5)
+
+    return score
+
+
+def _score_reference_answer(case: BenchmarkCase, output: str, score: float) -> float:
+    if case.reference_answer and output:
+        ref_words = set(case.reference_answer.lower().split())
+        out_words = set(output.lower().split())
+        if ref_words:
+            overlap = len(ref_words & out_words) / len(ref_words)
+            score = 0.4 * score + 0.6 * overlap
+
+    return score
 
 
 def _is_valid_json(text: str) -> bool:
