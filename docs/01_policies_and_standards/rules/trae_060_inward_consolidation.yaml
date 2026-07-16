@@ -124,6 +124,7 @@ sections:
       时间触发(cron/Timer/sleep-loop/periodic/进程内调度器)等于要人指令触发,没达成自动,禁止。
       禁止使用 CircadianScheduler 及任何进程内定时调度器（register_task/start/stop/save_state 均为 no-op）。
       定时不全量兜底由CI定期job(.github/workflows schedule)承担。
+      代码归类表（C 类边界显式化）见 AGENTS.md"永久系统四要素"章节——commit gate 属 B 类事件触发无状态函数非 C 类，reconciler/scheduler/watchdog/boot_hooks 属 C 类。
     original_rules:
     - "永久性脚本MUST事件触发(event/hook/push/文件变更/状态变更),自动运行+自动维护+自动关闭"
     - "禁止时间触发:CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内调度器/进程内轮询守护"
