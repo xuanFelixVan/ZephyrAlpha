@@ -102,7 +102,7 @@ aggregate_roots:
     name: "Position / 持仓"
     layer: l06
     bounded_context: "Position Tracking 域（L06/L04 共享）"
-    physical_path: src/zephyr/ex_core/domain/position.py
+    physical_path: src/zephyr/shared/contracts/position.py
     description: "持仓快照、盈亏计算基础、风控监控输入。"
     contains_entities: [ENT-002]
     fields:

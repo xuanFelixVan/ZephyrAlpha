@@ -2154,7 +2154,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > 维度说明：循环依赖、跨层引用、API边界模糊、re-export壳等架构级耦合问题。
 
 #### 5.60.1 [HIGH] 循环依赖——governance ↔ trading（双向导入）
-- **文件**：[broker_interface.py](file:///D:/ZephyrAlpha/src/zephyr/ex_core/broker_interface.py#L40) (governance→trading), [trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py#L20) (trading→governance)
+- **文件**：[broker_interface.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py#L40) (governance→trading), [trading_contracts/__init__.py](file:///D:/ZephyrAlpha/src/zephyr/trading/trading_contracts/__init__.py#L20) (trading→governance)
 - **证据**：governance导入trading的Fill/Order/PositionSnapshot；trading_contracts导入governance的ComplianceRule/PerformanceAttributionReport——双向循环
 - **问题**：import顺序敏感；trading_contracts不再是纯数据契约包（违反自身不变量声明）
 - **修复**：将ComplianceRule等从trading_contracts导出中移除
@@ -3403,7 +3403,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 8. **[MEDIUM]** `src/zephyr/governance/strategy_engine/__init__.py:21` — governance→pf_core（导入default_equity_strategy）
 9. **[MEDIUM]** `src/zephyr/governance/adapters/simulation_broker.py:54-56` — governance→trading（导入`Fill/Order/PositionSnapshot`）
 10. **[MEDIUM]** `src/zephyr/governance/observability_governance/analytics_base.py:49-51` — governance→trading（导入`ExecutionReport/Fill/Order`）
-11. **[MEDIUM]** `src/zephyr/ex_core/broker_interface.py:40-42` — governance→trading（导入`Fill/Order/PositionSnapshot`）
+11. **[MEDIUM]** `src/zephyr/trading/trading_contracts/broker_interface.py:40-42` — governance→trading（导入`Fill/Order/PositionSnapshot`）
 12. **[MEDIUM]** `src/zephyr/governance/default_tca_engine.py:43-45` — governance→trading（导入`ExecutionReport/Fill/Order`）
 13. **[MEDIUM]** `src/zephyr/governance/strategies/default_equity_strategy.py:50` — governance→trading（导入`Order/OrderSide/OrderType`）
 

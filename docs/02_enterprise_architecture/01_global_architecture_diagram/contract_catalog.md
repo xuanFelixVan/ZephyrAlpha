@@ -1001,4 +1001,4 @@ ttl: permanent
 - **状态**: design
 - **描述**: Execution 券商接口契约。所有券商适配器必须实现此接口。支持同时接入多家券商，通过 SOR 路由。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)
 
-- **物理路径**: `src/zephyr/ex_core/broker_interface.py`
+- **物理路径**: `src/zephyr/trading/trading_contracts/broker_interface.py`

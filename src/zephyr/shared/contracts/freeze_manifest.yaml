@@ -252,7 +252,7 @@ extension_contracts:
   - contract_id: "OCP-003"
     name: "BrokerInterface"
     desc: "券商接口扩展 D_EXECUTION_CORE 适配器基类"
-    physical_path: "src/zephyr/ex_core/broker_interface.py"
+    physical_path: "src/zephyr/trading/trading_contracts/broker_interface.py"
     status: "frozen"
 
 # ── 外部系统合约 ──

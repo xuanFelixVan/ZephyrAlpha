@@ -191,7 +191,7 @@ def check_b_shadow(_repo: Path) -> tuple[bool, str]:
     """B-SHADOW: D_PORTFOLIO_CORE/D_EXECUTION_CORE skeleton base 文件是否被 codegen 覆盖"""
     files_to_check = [
         "src/zephyr/pf_core/strategy_base.py",
-        "src/zephyr/ex_core/broker_interface.py",
+        "src/zephyr/trading/trading_contracts/broker_interface.py",
     ]
     missing = []
     for f in files_to_check:
