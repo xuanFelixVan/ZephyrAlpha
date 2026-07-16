@@ -1,6 +1,6 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-027 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.3
-# module_id: MOD-INF-027
+# blueprint: MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.3
+# module_id: MOD-INF-043
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable

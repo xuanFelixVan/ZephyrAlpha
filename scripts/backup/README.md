@@ -1,6 +1,6 @@
 # 灾备备份系统使用说明
 
-> module_id: MOD-INF-027 | blueprint v1.1.0
+> module_id: MOD-INF-043 | blueprint v1.1.0
 
 ## 自动触发机制
 

@@ -2,7 +2,7 @@
 .SYNOPSIS
     灾备恢复脚本——查看/验证/灾难恢复
 .DESCRIPTION
-    [BLUEPRINT] MOD-INF-027 | §3.5
+    [BLUEPRINT] MOD-INF-043 | §3.5
     子命令:
       list              - 列出所有快照
       verify <id>       - 恢复到 D:\restore_test\ 供验证
