@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_emergency_bypass_log.py — 应急绕过审计脚本
 
 MOD-INF-005 §13.2 — 验证应急绕过（--no-verify）是否合规：

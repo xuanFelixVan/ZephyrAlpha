@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/__init__.py | §
-# [TTL] task_bound
+# [TTL] permanent
 """D7 代码质量 — Python 代码静态分析与质量合规审计。
 
 检查项：

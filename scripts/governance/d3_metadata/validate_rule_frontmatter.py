@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS;exit 1=FINDINGS;exit 2=ERROR
 # [TESTS] tests/test_validate_rule_frontmatter.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 GATE-RULE-FM: 校验所有 trae_XXX.yaml 的 frontmatter 7标准字段+顺序+枚举值合法性。
 

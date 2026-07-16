@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """从 cross_layer_contracts.yaml 生成 OCP 冻结契约指纹（INV-009）。"""
 
 from __future__ import annotations

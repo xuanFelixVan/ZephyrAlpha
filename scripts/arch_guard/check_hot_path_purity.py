@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 check_hot_path_purity.py — INV-012 Hot 路径 Python 禁 asyncio（配置驱动）
 

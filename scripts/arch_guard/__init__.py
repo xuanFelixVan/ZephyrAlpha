@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/arch_guard/__init__.py | §
-# [TTL] task_bound
+# [TTL] permanent
 """Architecture Guard — 不变量自动强制执行基础设施
 
 对标 Google Tricorder / Netflix Conformity Monkey / ArchUnit。

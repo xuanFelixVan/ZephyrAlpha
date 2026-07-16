@@ -12,14 +12,14 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 validate_script_naming.py — 审计脚本命名规范门禁
 
 对标 SCRIPT-QUALITY-001 §1.3 术语定义（审计脚本命名前缀受控词汇表）
 
 检测内容：
-- 脚本文件名是否符合合法前缀模式（validate_/detect_/audit_/check_/generate_/measure_/sync_/manage_/fix_/assign_/batch_/score_/scan_/archive_/reset_）
+- 脚本文件名是否符合合法前缀模式（validate_/detect_/audit_/check_/generate_/measure_/sync_/manage_/fix_/assign_/batch_/score_/scan_/archive_/reset_/analyze_/merge_/inject_/refresh_/arbitrate_/trace_/track_/run_/apply_/extract_/align_）
 - 不符合任何合法前缀的脚本报告为违规
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -75,6 +75,9 @@ LEGAL_PREFIXES = (
     "trace_",
     "track_",
     "run_",
+    "apply_",     # ARCH-060: 全景图写入工具（apply_depgraph/apply_decisiongraph/apply_dataflowgraph）
+    "extract_",   # ARCH-060: 全景图只读提取（extract_depgraph/extract_decisiongraph）
+    "align_",     # ARCH-060: 全景图对齐检测（align_panoramas）
 )
 
 EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures"})

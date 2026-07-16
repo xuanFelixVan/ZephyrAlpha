@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_scaffold_exit_gates.py — scaffold→experimental 安全门禁检查
 
 对标 architecture_model/cross_cutting/invariants.yaml 安全不变量。

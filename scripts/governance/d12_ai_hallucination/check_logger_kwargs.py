@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """========================================================
 
 病根（Root Cause）：项目存在双日志系统（structlog + 标准 logging），

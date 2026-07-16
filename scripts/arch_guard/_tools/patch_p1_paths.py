@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """一次性工具——为 9 个 P1 契约补齐 physical_path 并运行 codegen。
 CTR-P1-001~009 的 physical_path 均为 null，导致 generate_contracts.py 无法生成 Python dataclass。
 """

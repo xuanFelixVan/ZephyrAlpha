@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] scan_dir 不存在 → stderr 警告并返回空列表
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """Scan docs/01_policies_and_standards and emit _registry/catalogs/rule_catalog_registry.yaml.
 

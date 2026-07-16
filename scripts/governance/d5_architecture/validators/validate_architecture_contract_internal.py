@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-CONTRACT: CI gate for architecture_contract.yaml internal consistency.
 Prevents internal inconsistencies (regex conflicts, doc_type gaps, VR skew)
 from reaching the codebase—closes the root cause of 3 CRITICAL issues in

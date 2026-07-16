@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """trace_finding_lifecycle.py — Finding C1→C5 全链路追踪引擎
 
 对标 B56（C1→C5 全链路 Tracing）+ OpenTelemetry distributed tracing 概念。

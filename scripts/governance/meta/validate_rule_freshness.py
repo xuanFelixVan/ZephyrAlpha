@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 validate_rule_freshness.py — AI Session 注入文件新鲜度检查（蓝图 §22.3 + B62）
 

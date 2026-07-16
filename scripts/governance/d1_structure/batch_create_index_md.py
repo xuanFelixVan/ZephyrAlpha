@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """Batch create index.md for all directories under docs/ that lack one."""
 

@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] 导入失败时打印明确错误信息并exit 1;--status守护进程未运行时exit 0并打印stopped
 # [TESTS]
 # [A_module] module_id=MOD-SCR_ide_health_service | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [TTL] task_bound
+# [TTL] permanent
 """IDE健康守护进程CLI包装器
 
 包装 src/zephyr/trading/ide_health_daemon.py，提供 --status/--start CLI 接口。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """env_check.py — 环境就绪检查门禁 (Environment Readiness Gate)
 
 对标：12-Factor App §Dependencies（显式声明 + 隔离验证）

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """v1.0.0 -- 2026-05-03
 
 GATE-A 代码↔YAML 对齐的根治层：

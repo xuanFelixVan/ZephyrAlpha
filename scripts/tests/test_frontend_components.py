@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
-# [TTL] task_bound
+# [TTL] permanent
 """5个前端组件综合验证脚本（TTL=task_bound，施工完成后退役）
 
 验证组件:

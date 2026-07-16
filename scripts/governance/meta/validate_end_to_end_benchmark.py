@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_end_to_end_benchmark.py — END-TO-END 基准测试引擎
 
 对标 B59（END-TO-END 基准测试）+ Kayenta Score Computation。

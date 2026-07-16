@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 Blueprint Provenance Gate - V-12: validate provenance triples in blueprint frontmatter
 Task: T-V2-001 (Wave 0 final review R73)

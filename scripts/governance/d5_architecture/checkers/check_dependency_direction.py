@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_dependency_direction.py — 依赖方向校验（INJ-002/008）
 
 对标：GOV-MOD-ALPHA_SIGNAL_DOMAIN INJ-002（依赖可解析）、INJ-008（依赖方向合法）

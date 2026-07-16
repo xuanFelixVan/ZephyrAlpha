@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_code_yaml_alignment.py — GATE-A: 实际代码 ↔ YAML SSoT 对账
 
 

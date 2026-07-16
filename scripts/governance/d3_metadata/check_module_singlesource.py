@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS, exit 1=VIOLATION, exit 2=ERROR
 # [TESTS] tests/test_check_module_singlesource.py
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-SSOT-SINGLESOURCE: SSoT 单一真源门禁（Phase 7 治本防复发）。
 
 防止考试系统受保护文件名在非声明 SSoT 路径下重复出现。

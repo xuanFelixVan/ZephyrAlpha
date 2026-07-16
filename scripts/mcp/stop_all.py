@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """MCP 全 Server 停止脚本（MOD-INF-013 §14）。
 
 通过 PID 文件精准停止 MCP Server 进程，避免误杀其他 Python 进程。

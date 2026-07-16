@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """manage_kill_switch.py — Kill Switch 管理工具
 
 对标 B25（Kill Switch）+ ITIL 4 Emergency Change Management。

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """sync_registry_from_blueprints.py -- 从 blueprint.md frontmatter 同步 blueprint_registry.yaml
 
 对标: Problem IX -- blueprint_registry.yaml 大面积不同步

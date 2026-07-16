@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 初始化任务系统数据库 + 创建任务系统自身的施工任务卡（吃狗粮）
 ===========================================================

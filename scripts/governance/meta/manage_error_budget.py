@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """manage_error_budget.py — Error Budget + Burn Rate 管理引擎
 
 对标 B14（Error Budget + Burn Rate）+ Google SRE Ch.5-6。

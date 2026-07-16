@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 透传SelfTest.cli()的退出码
 # [TESTS] tests/kb/test_kb_self_test.py
-# [TTL] task_bound
+# [TTL] permanent
 """KB 13项一键体检 — CLI入口薄包装
 
 实际实现位于 zephyr.gov_kb.self_test.SelfTest

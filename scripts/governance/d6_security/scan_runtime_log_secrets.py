@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 对标 architecture_principles.md §1bis R2 安全红线：
   "日志输出禁止包含密钥/Token/Secret 值"

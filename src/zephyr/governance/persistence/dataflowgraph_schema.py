@@ -249,6 +249,7 @@ _DATAFLOW_ADVISORY_LOCK_KEY: int = 424243
 def get_dataflowgraph_pg_connection(
     *,
     superuser: bool = False,
+    read_only: bool = True,  # ARCH-058: 对齐 depgraph/decisiongraph 角色分级，默认只读
     autocommit: bool = True,
     replica: bool = False,
     allow_design_delete: bool = False,
@@ -258,7 +259,14 @@ def get_dataflowgraph_pg_connection(
     与 depgraph 同库不同表（共享 config/.env.postgres 配置）。
     所有 dataflowgraph 连接必须经此入口（统一 PG 配置，防止散点连接绕过连接池配置）。
 
+    裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 角色分级访问控制（对齐 depgraph/decisiongraph）
+    - 默认 read_only=True 使用 depgraph_reader 只读角色（技术阻断写入）
+    - 仅白名单脚本可传 read_only=False 使用 depgraph_writer 读写角色（如需 DELETE）
+
     :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
+        （优先级最高，覆盖 read_only）
+    :param read_only: True（默认）使用 depgraph_reader 只读角色；
+        False 使用 depgraph_writer 读写角色（仅白名单脚本可用）
     :param autocommit: True 启用自动提交（默认）；False 需显式 conn.commit()
     :param replica: True 设置 session_replication_role='replica' 禁用所有触发器和 FK
         （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True）
@@ -272,7 +280,7 @@ def get_dataflowgraph_pg_connection(
     if replica:
         superuser = True  # session_replication_role 需要超级用户
 
-    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser))
+    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser, read_only=read_only))
     conn.autocommit = autocommit
 
     if replica:

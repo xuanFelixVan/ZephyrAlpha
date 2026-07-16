@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_threshold_changes.py — 阈值变更审计日志
 
 对标 B16（关键阈值变更审计）+ ITIL 4 Configuration Change Audit。

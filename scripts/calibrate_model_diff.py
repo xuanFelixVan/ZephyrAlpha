@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 护照不存在→exit 2;分母为0→exit 3
 # [TESTS] tests/test_calibrate_model_diff.py
-# [TTL] task_bound
+# [TTL] permanent
 """
 模型能力差异校准脚本（P1-3 治本）。
 

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """fix_orphan_all.py — 自动修复 __init__.py __all__ 孤儿模块
 
 遍历 src/zephyr/ 下所有包，将不在 __all__ 中的 .py 模块添加进去。

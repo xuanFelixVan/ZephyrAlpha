@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 AGENTS.md 6.4 铁律五 + 铁律六：construction_progress 必须 LS 磁盘验证，
 蓝图中声称的文件路径必须在磁盘上真实存在。

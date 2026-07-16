@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """libcst_docstring_adder.py — Lossless docstring addition using LibCST.
 
 Uses Concrete Syntax Tree (CST) instead of ast.unparse() to preserve

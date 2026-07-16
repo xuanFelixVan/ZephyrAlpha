@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """validate_cross_references.py — 架构模型 YAML + 治理文档跨引用完整性闸门（GATE-XREF）
 v2.0.0 — 2026-05-03

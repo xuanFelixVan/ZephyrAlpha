@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_protected_paths.py — 受保护路径写入检查（IRN-010）
 
 对标：GOV-MOD-002 IRN-010（受保护路径不可写）

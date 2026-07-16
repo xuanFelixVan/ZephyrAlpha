@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """validate_adr_frontmatter_consistency.py — ADR frontmatter 一致性闸门（GATE-ADR-FM）
 v1.0.0 — 2026-05-03

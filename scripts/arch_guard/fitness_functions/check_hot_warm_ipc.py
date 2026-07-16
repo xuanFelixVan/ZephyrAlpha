@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """check_hot_warm_ipc.py — INV-018 Hot↔Warm IPC 协议检查
 
 对标 runtime_planes.yaml HOT_WARM_IPC_ONLY + invariants.yaml INV-018。

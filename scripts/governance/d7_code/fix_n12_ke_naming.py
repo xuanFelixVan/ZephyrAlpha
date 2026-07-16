@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功; exit 1=部分失败
 # [TESTS] 无
-# [TTL] task_bound
+# [TTL] permanent
 """N-12 KE 条目命名格式批量修复脚本。
 
 修复内容:

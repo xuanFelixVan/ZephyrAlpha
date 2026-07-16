@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """MCP 全 Server 状态检查脚本（MOD-INF-013 §14）。"""
 
 from __future__ import annotations

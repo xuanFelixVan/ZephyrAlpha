@@ -11,7 +11,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（无违规或 warn-only）；EXIT_FINDINGS=1（--ci 模式有违规）；EXIT_ERROR=2（脚本异常）
 # [TESTS] 手动测试：全量扫描 exit 0；已知违规文件被检出
-# [TTL] task_bound
+# [TTL] permanent
 """GATE-VOCAB: 词表合法值硬编码检测（trae_060 §2）
 
 检测 src/ 与 scripts/ 下 .py 文件中硬编码的词表合法值集合。

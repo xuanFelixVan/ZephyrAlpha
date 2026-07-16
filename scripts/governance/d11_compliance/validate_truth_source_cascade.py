@@ -22,7 +22,7 @@ warn_only: false
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 class RationaleDecision:
     def __init__(self, decision_id="", source="", target="", rationale="", confidence=0.0):
         self.decision_id = decision_id

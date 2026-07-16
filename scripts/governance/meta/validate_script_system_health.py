@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """validate_script_system_health.py — 脚本系统健康自检（Meta 维度 / 第 13 维度）
 
 对标 MOD-INF-005 §13.1（系统健康自检）+ B25（Kill Switch）+ B14（Error Budget）。

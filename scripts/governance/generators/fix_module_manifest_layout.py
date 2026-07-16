@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 r"""
 fix_module_manifest_layout.py — 校正治理脚本模块 docstring 与 ``__manifest__`` 的顺序
 

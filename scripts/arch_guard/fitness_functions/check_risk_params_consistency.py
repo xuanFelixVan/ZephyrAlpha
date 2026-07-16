@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """
 check_risk_params_consistency.py — 风控参数真源 (INV-013) + 与 INV-002 声明对齐
 

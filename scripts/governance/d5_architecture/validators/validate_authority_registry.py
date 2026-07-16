@@ -22,7 +22,7 @@ warn_only: false
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 class AuthorityEntry:
     def __init__(self, name="", role="", scope="", level=0, description=""):
         self.name = name

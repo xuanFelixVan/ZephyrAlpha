@@ -692,6 +692,16 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > - **三图对齐检测器**：[`align_panoramas.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/align_panoramas.py)（只读，manual 启动）。从三图读取节点，用 `module_id` 作为对齐 key（depgraph 用 `blueprint_id` 派生），检测 4 类问题：孤儿（仅一图）/ 状态漂移（design_maturity 不一致）/ 域不一致（domain_id 不一致）/ 设计态孤立（design 仅一图）。输出 `docs/02_enterprise_architecture/generated/panorama_alignment_report.md`。退出码：0=成功 / 1=错误 / 2=三图任一为空（检测无意义）。
 > - **GATE-ARCH-DIAGRAM 触发器盲点修复**：`apply_dataflowgraph.py` 已加入 `_PG_WRITE_SCRIPTS` 触发列表，DB 写入后自动重生架构图。
 > - **capability 反查入口**：`panorama_alignment_detection`（aliases: align_panoramas/panorama_alignment/three_panoramas_alignment/ARCH-053/design_maturity_alignment）+ `design_maturity_trigger_protection`（aliases: protect_design_maturity/design_maturity_delete_protection/allow_design_maturity_delete/ARCH-053-trigger）。
+> - **ARCH-056 四图模块同步引擎 + 门禁阻断升级（2026-07-09）**：
+>   - **同步引擎**：[`sync_panorama_module.py`](file:///d:/ZephyrAlpha/scripts/governance/sync_panorama_module.py) 从 depgraph.nodes 读取模块核心字段（module_id/domain_id/design_maturity/build_status），单向派生到 dataflow_jobs（占位 `entity_type='module_placeholder'`）+ decision_layers（占位 `track='placeholder'`）+ blueprint.md frontmatter。触发：`generate_project_depgraph.py`（sync_all）+ `apply_depgraph.py`（sync_module）执行后自动调用。
+>   - **蓝图 frontmatter 对齐**：[`blueprint_frontmatter_reconciler.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py) 只更新 4 个核心字段（module_id/responsibility_domain/design_maturity/build_status），文档内容不动，蓝图不存在则跳过。
+>   - **门禁阻断升级**：`GATE-PANORAMA-ALIGNMENT`（priority=830）原 warn-only，现升级为 **domain_mismatches>0 阻断**（passed=False）；orphans/state_drifts 保持 warn-only。修复入口：`python scripts/governance/sync_panorama_module.py --all`。
+>   - **capability 反查入口**：`panorama_module_sync`（aliases: sync_panorama_module/four_panoramas_sync/ARCH-056/module_panorama_sync）+ `panorama_module_sync_engine`（aliases: sync_panorama_module/panorama_sync/prune_orphans/ARCH-056/ARCH-058，2026-07-16 治本登记）。
+
+> **ARCH-058 prune_orphans 责任边界治本（2026-07-16 AI-20 审计修复）**：
+> - **问题**：Phase 2.2 过渡方案让 `prune_orphans` 绕道 `get_depgraph_pg_connection(read_only=False)` 写 dataflow_jobs 表，违反"dataflow 表操作走 dataflow 连接工厂"的责任边界原则。
+> - **治本**：① 扩展 [`get_dataflowgraph_pg_connection`](file:///d:/ZephyrAlpha/src/zephyr/governance/persistence/dataflowgraph_schema.py) 原生支持 `read_only=False`（对齐 depgraph_schema 角色分级 READER/WRITER/superuser 三级模式）；② `prune_orphans` 改回走 dataflow 连接工厂 `get_dataflowgraph_pg_connection(read_only=False, autocommit=False, allow_design_delete=True)`；③ 新增 `acquire_dataflow_write_lock`/`release_dataflow_write_lock`（`pg_advisory_lock 424243`，session 级互斥）防止并发写冲突。commit 互斥不释放，需显式 unlock（finally 块保证）。
+> - **capability 反查**：`panorama_module_sync_engine`（aliases 含 prune_orphans/ARCH-058）。
 
 > depgraph 是唯一全景真源（PostgreSQL 16，localhost:5432），禁止创建派生 YAML 副本。连接配置见 `config/.env.postgres`，连接入口 `zephyr.governance.depgraph_schema.get_depgraph_pg_connection()`。遇到 depgraph 相关问题，直接问工具：
 

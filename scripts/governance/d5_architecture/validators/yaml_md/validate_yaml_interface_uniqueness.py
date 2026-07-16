@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 #!/usr/bin/env python3
 """validate_yaml_interface_uniqueness.py — YAML 模块接口唯一性闸门（GATE-IFACE-UNIQ）
 v1.0.0 — 2026-05-03
