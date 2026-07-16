@@ -25,7 +25,7 @@ tags:
 - 5-core-services
 - domain-driven
 - depgraph-derived
-summary: 架构文档组的总览视图。v2.1.0：瘦身后保留方法论导航与关键决策记录，派生机制/惯例/修订记录/5大服务定位移交 SSoT 真源。v2.0.0：基于§2.1裁定，14层降级为域属性，53域成为唯一物理分类体系。结构化数据由depgraph全景图派生。
+summary: 架构文档组的总览视图。v2.1.0：瘦身后保留方法论导航与关键决策记录，派生机制/惯例/修订记录/5大服务定位移交 SSoT 真源。v2.0.0：基于§2.1裁定，14层降级为域属性，功能域成为唯一物理分类体系。结构化数据由depgraph全景图派生。
 date: '2026-07-04'
 ttl: permanent
 ---
@@ -37,16 +37,16 @@ ttl: permanent
 
 ## 0. Executive Summary / 高管摘要
 
-**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用**53域唯一物理分类体系**（基于depgraph全景图），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
+**系统定位**：ZephyrAlpha 是个人量化投资系统的 AI-native 重构，采用功能域唯一物理分类体系（基于depgraph全景图派生），Python 全栈，Vibe Coding 驱动（Cursor + Trae 双 AI IDE）。
 
 **核心架构决策**（v2.0.0 基于§2.1裁定）：
-- **53域唯一分类**：原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。两个并行分类=AI每次判断用哪个=幻觉温床，故14层信息保留方式改为域属性。
+- **功能域唯一分类**：功能域是唯一物理分类体系，逻辑层作为域的`layer_id`属性而非并行分类（双分类=AI幻觉温床）。
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）由`depgraph (PostgreSQL)`派生，禁止在MD中硬编码。
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 正交划分开发态和运行态关注点
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ Phase 退出准入双门协议门禁
 - **安全红线**：4 条不可撤销（详见 [architecture_principles.md](../04_architecture_principles_decisions/architecture_principles.md) §1）
-- **技术栈**：Python >=3.11 + Pydantic v2 + SQLite WAL + ChromaDB + FastAPI 原型 + MCP 协议
-- **当前阶段**：experimental 启动，53域已定义，模块边界待定
+- **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议（具体版本以 technology_landscape.yaml 为准）
+- **当前阶段**：experimental 启动，功能域已定义，模块边界待定
 
 > **注（v2.1.0）**：原"6 大 Vibe Coding 2.0 核心服务施工中"状态描述已移除——6大服务接口规范真源在 [`docs/03_modules/_cross_layer/_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/)，状态以接口规范文档为准。
 
@@ -68,25 +68,15 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 ### 1.2 唯一物理分类体系裁定（§2.1）
 
-**裁定**：53域是唯一物理分类体系。原14层逻辑层(L00-L13)取消作为并行分类，降级为域的`layer_id`属性。
+**裁定**：功能域是唯一物理分类体系。逻辑层作为域的`layer_id`属性，不作为并行分类。
 
 | 裁定项 | 结论 | 理由 |
 |--------|------|------|
-| 14层 vs 53域 | **53域唯一** | 两个并行分类=AI每次判断用哪个=幻觉温床 |
-| 14层信息保留方式 | 作为域的`layer_id`属性 | 属性不是分类，不产生二元性 |
-| L00-L13层YAML文件 | 废弃，信息合并入depgraph域定义 | 避免SSoT分裂 |
+| 逻辑层 vs 功能域 | **功能域唯一** | 两个并行分类=AI每次判断用哪个=幻觉温床 |
+| 逻辑层信息保留方式 | 作为域的`layer_id`属性 | 属性不是分类，不产生二元性 |
+| 逻辑层YAML文件 | 废弃，信息合并入depgraph域定义 | 避免SSoT分裂 |
 
-**当前域层级分布**（数据源：depgraph `domains` 表）：
-
-| layer_id | 域数量 | 说明 |
-|----------|:---:|------|
-| `L0_infrastructure` | 5 | D_INFRA_A2A, D_INFRA_OPS, D_INFRA_RECOVERY, D_INFRA_RUNTIME, D_INFRA_TELEMETRY |
-| `L1_foundation` | 15 | D_ALT_DATA, D_AUTONOMY_CORE, D_BEHAVIORAL_AUDIT, D_DATA_ENG, D_DATA_GOV... |
-| `L2_domain` | 32 | D_ASHARE_SIGNAL, D_AUDITTEST, D_AUTONOMY_PERM, D_BACKTEST, D_COMPLIANCE... |
-| `unassigned` | 1 | D_GOV_REPAIR |
-
-
-**域总数**：53 | **节点总数**：6501 | **依赖边总数**：7191
+**当前域层级分布**：由 depgraph `domains` 表派生，详见 [`generated/domains/index.md`](../generated/domains/index.md)。禁止在本文硬编码域数量/节点数/边数。
 
 > **注（v2.1.0）**：派生工具链与派生产出目录的真源在 [`docs/02_enterprise_architecture/generated/`](../generated/) 目录及 AGENTS.md，不再于此硬编码。
 
@@ -94,11 +84,11 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 
 | 维度 | 状态 | 说明 |
 |------|------|------|
-| **53域物理分类** | ✅ **已定义** | depgraph `domains` 表为SSoT |
+| **功能域物理分类** | ✅ **已定义** | depgraph `domains` 表为SSoT |
 | **5 大核心服务（VMS/CE/Orc/FLE/LSG）** | — | 接口规范真源：[`_b_track_interfaces/`](../../03_modules/_cross_layer/_b_track_interfaces/) |
 | **17 项技术选型** | ✅ **已定稿** | 见 [`technology_landscape.yaml`](../../../architecture_model/technology/technology_landscape.yaml)（SSoT）|
 | **模块内部边界** | ⏳ **讨论中** | experimental 落地时细化 |
-| **设计态→运营态迁移** | 🔧 **进行中** | design_maturity: design(89) / prototype(5008) / production(1404) |
+| **设计态→运营态迁移** | 🔧 **进行中** | design_maturity 分布详见 generated/ 派生视图 |
 
 ---
 
@@ -128,7 +118,7 @@ ZephyrAlpha 2.0 adopts a composite of three internationally recognized standards
 └────────────────────────────────────────────────────────────┘
 ```
 
-> **注**：TOGAF四层是**视图分类方法**，不是物理代码分层。物理代码组织以53域为准（见§1.2裁定）。
+> **注**：TOGAF四层是**视图分类方法**，不是物理代码分层。物理代码组织以功能域为准（见§1.2裁定）。
 
 ---
 
@@ -159,6 +149,8 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 ## 5. Key KB 决策记录 summary / 关键 KB 决策记录 汇总
 
+> **真源**：KB 决策记录系统。本表为关键决策导航，非穷举，新增决策以 KB 系统为准。
+
 | KB 决策记录 | Decision / 决策 | Impact / 影响 |
 |-----|----------------|--------------|
 | KBG-0001 | `docs/` is the single canonical source of truth | 所有文档归属 |
@@ -182,12 +174,11 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 ### §6.1 各视图 Runway 章节快速导航
 
-| 视图 | Runway 章节 | 条目数 | 主要覆盖域 |
-|------|------------|--------|----------|
-| [01-BA 业务架构](./business_architecture.md) | §8 Architecture Runway | 5 条 | 战略层 |
-| [02-IA 信息架构](./information_architecture.md) | §11 Architecture Runway | 3 条 | 信息/数据层 |
-| [03-AA 应用架构](./application_architecture.md) | §11 Architecture Runway | 22 条 | 应用组件层 |
-| [04-TA 技术架构](./technology_architecture.md) | §14 Architecture Runway | 7 条 | 基础设施层 |
-| **合计** | — | **37 条** | 全层覆盖 |
+| 视图 | Runway 章节 | 主要覆盖域 |
+|------|------------|----------|
+| [01-BA 业务架构](./business_architecture.md) | §8 Architecture Runway | 战略层 |
+| [02-IA 信息架构](./information_architecture.md) | §11 Architecture Runway | 信息/数据层 |
+| [03-AA 应用架构](./application_architecture.md) | §11 Architecture Runway | 应用组件层 |
+| [04-TA 技术架构](./technology_architecture.md) | §14 Architecture Runway | 基础设施层 |
 
 > **注（v2.1.0）**：本节 Runway 导航依赖 BA/IA/AA/TA 四大视图文件的存在。若视图文件在后续治理中被删除，本导航表需同步调整。
