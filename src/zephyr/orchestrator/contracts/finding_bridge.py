@@ -60,13 +60,29 @@ _SEVERITY_MAP: dict[str, str] = {
 }
 
 
-def finding_to_audit_finding(finding: object) -> AuditFinding:
+def _normalize_dimension(finding: object) -> str:
     dim = getattr(finding, "dimension", None)
-    dimension_str = dim.value if dim is not None and hasattr(dim, "value") else str(dim or "unknown")
+    return dim.value if dim is not None and hasattr(dim, "value") else str(dim or "unknown")
 
+
+def _normalize_severity(finding: object) -> str:
     sev = getattr(finding, "severity", None)
     sev_str = sev.value if sev is not None and hasattr(sev, "value") else str(sev or "medium")
-    sev_normalized = _SEVERITY_MAP.get(sev_str, "medium")
+    return _SEVERITY_MAP.get(sev_str, "medium")
+
+
+def _compute_suggested_fix(finding: object, evidence: str) -> str:
+    suggested_fix = evidence
+    if hasattr(finding, "remediation_action"):
+        ra = getattr(finding, "remediation_action", None)
+        if ra is not None:
+            suggested_fix = f"[{ra.value}] {evidence}" if hasattr(ra, "value") else str(ra)
+    return suggested_fix
+
+
+def finding_to_audit_finding(finding: object) -> AuditFinding:
+    dimension_str = _normalize_dimension(finding)
+    sev_normalized = _normalize_severity(finding)
 
     desc = getattr(finding, "description", "") or str(finding)
     target = getattr(finding, "target_file", "") or ""
@@ -74,11 +90,7 @@ def finding_to_audit_finding(finding: object) -> AuditFinding:
     fid = getattr(finding, "finding_id", "") or ""
     category = getattr(finding, "category", "") or ""
 
-    suggested_fix = evidence
-    if hasattr(finding, "remediation_action"):
-        ra = getattr(finding, "remediation_action", None)
-        if ra is not None:
-            suggested_fix = f"[{ra.value}] {evidence}" if hasattr(ra, "value") else str(ra)
+    suggested_fix = _compute_suggested_fix(finding, evidence)
 
     metadata = {
         "source_file": target,
