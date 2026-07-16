@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_factor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor
 # [INVARIANTS] pending_review
@@ -39,6 +39,15 @@ CTR 契约依赖声明（承重墙标记）
 from __future__ import annotations
 
 # 5.143.5 修复: 补充 __all__ 声明的符号导入, 避免调用方 ImportError
+from zephyr.factor.bus_factor_defense import (
+    BusFactorRisk,
+    DecisionLog,
+    ModuleOwnership,
+    OpsRunbook,
+    create_decision_log,
+    evaluate_bus_factor,
+    generate_runbook,
+)
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry, autodiscover_factors
 
 __all__ = [

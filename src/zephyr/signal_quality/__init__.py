@@ -1,5 +1,5 @@
-# [A_module] module_id=MOD-UNK_signal_quality | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-SIGQC-001 | docs/03_modules/_domain_signal_quality/blueprint.md
+# [A_module] module_id=MOD-INF-040 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-040 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_quality
 # [DOMAIN] D_SIGQC
 # [TTL] permanent
