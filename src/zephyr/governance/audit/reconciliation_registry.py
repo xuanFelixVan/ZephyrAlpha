@@ -238,6 +238,17 @@ class ReconciliationRegistry:
                 if not spec.trigger(committed_files):
                     continue
                 result = spec.reconcile(committed_files, session_id)
+                # Defensive: 某些 reconciler 可能返回 dict 而非 ReconcileResult，
+                # 转换为 ReconcileResult 防止 _run_reconcilers_after_merge 级联失败。
+                if isinstance(result, dict):
+                    logger.warning(
+                        "ReconciliationRegistry: reconciler %s returned dict, converting",
+                        spec.gate_id,
+                    )
+                    result = ReconcileResult(
+                        action=result.get("action", "warn"),
+                        detail=result.get("detail", ""),
+                    )
                 results.append(result)
             except (Exception, KeyboardInterrupt) as e:  # noqa: BLE001 — drift 对账非阻断；KeyboardInterrupt 也降级（commit 已入库，reconciler 中断不应 crash 进程，治本 #2026-0701）
                 logger.warning(
