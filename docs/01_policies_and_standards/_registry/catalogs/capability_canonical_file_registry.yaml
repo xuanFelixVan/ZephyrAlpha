@@ -3532,6 +3532,63 @@ capabilities:
       解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
 
+  # --------------------------------------------------------------------------
+  - capability_id: provider_capability_validation
+    canonical_override: src/zephyr/data/capability_validator.py
+    aliases:
+      - CAP-NOT-FOUND
+      - CAP-NULL-SYMBOLS
+      - CAP-INCREMENTAL
+      - capability_validator
+      - validate_task_capability_contracts
+      - check_route_meta_consistency
+      - check_route_meta_consistency_content
+      - extract_route_capabilities
+      - extract_meta_capabilities
+      - 路由meta一致性校验
+      - provider行为契约校验
+    description: >-
+      Provider Capability 行为契约校验器（裁定 #ARCH-CH-022，MOD-L00-004）。
+      把"注释契约"升级为"机器可执行契约"——在 scheduler 启动时校验 tasks.yaml
+      的 task 声明与 provider.meta.capability_contracts 一致性。3 条规则：
+      CAP-NOT-FOUND（capability 不存在→ERROR 阻断）/ CAP-NULL-SYMBOLS
+      （symbols=null 未声明 supports_symbols_null=True→WARN）/ CAP-INCREMENTAL
+      （incremental=true 未声明 supports_incremental=True→WARN）。
+      Phase 4.3 扩展：AST 路由-meta 一致性校验（check_route_meta_consistency），
+      解析 provider 文件提取路由能力集（_*_CAPABILITIES/_*_ROUTES 变量 + if-elif 链）
+      与 meta.capabilities 对比，治本"fetch 路由支持但 meta 遗漏声明"的 8 条 ERROR
+      根因。content-based API（check_route_meta_consistency_content）供 commit gate
+      使用。canonical = src/zephyr/data/capability_validator.py。
+      解决发现性：新 AI 搜 "capability 校验/路由 meta 不一致/CAP-NOT-FOUND" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重复创建 capability 校验器。
+
+  # --------------------------------------------------------------------------
+  - capability_id: capability_consistency_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/capability_consistency_gate.py
+    aliases:
+      - CAP-CONSISTENCY
+      - cap-consistency
+      - make_capability_consistency_gate
+      - provider_route_meta_consistency_blocker
+      - 路由meta一致性commit门禁
+    description: >-
+      CAP-CONSISTENCY in-process Provider 路由-meta 一致性 commit 门禁
+      （裁定 #ARCH-CH-022 Phase 4.4，2026-07-17 治本）。
+      治本"fetch 路由支持某 capability 但 meta.capabilities 遗漏声明"：Phase 4.3
+      运行时 WARN（不阻断生产实例），本 gate 在 commit 时 ERROR 阻断新违规（渐进式
+      收紧）。检测 staged *_provider.py 文件，AST 提取路由能力集 + meta.capabilities，
+      对比一致性（委托 check_route_meta_consistency_content，content-based 无需临时文件）。
+      注册到 GitCommitGateway（in-process，--no-verify 绕不过），priority=98。
+      fail-open on AST/IO error，fail-closed on violations。
+      与 capability_validator 分离：validator=校验逻辑真源（运行时 + content API），
+      gate=门禁包装（thin wrapper 调用 content API）。
+      canonical basename capability_consistency_gate 匹配 capability_id，canonical
+      在 src/zephyr/ 下需 canonical_override 显式声明。
+      解决发现性：新 AI 搜 "CAP-CONSISTENCY/路由 meta commit 阻断/provider 一致性门禁" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重复创建 provider 路由-meta 一致性门禁。
+    integrity_anchors:
+      - make_capability_consistency_gate  # gate 工厂(删则 gate 不注册)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4296,6 +4353,18 @@ creation_tokens:
     token: "auto-check-tick-duplication-20260716"
     created_by: "session-sess-7800-20260716235624"
     capability: "tick_duplication_checker"
+
+  # --- #ARCH-CH-022 Phase 4 CapabilityContract 机器可执行契约（2026-07-17）---
+  # capability_validator.py: 行为契约校验器（3 规则 + AST 路由-meta 一致性），retroactive 登记
+  # capability_consistency_gate.py: CAP-CONSISTENCY commit gate（priority=98）
+  - file: "src/zephyr/data/capability_validator.py"
+    token: "auto-capability-validator-20260717"
+    created_by: "session-sess-24256-20260717003348"
+    capability: "provider_capability_validation"
+  - file: "src/zephyr/gov_enforcement/commit_gates/capability_consistency_gate.py"
+    token: "auto-capability-consistency-gate-20260717"
+    created_by: "session-sess-24256-20260717003348"
+    capability: "capability_consistency_gate"
 
 # ============================================================================
 # 维护日志

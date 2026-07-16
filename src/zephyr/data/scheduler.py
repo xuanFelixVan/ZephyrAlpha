@@ -593,6 +593,12 @@ class IntegratorScheduler:
         把"注释契约"升级为"机器可执行契约"。从 tasks.yaml 读取所有涉及的 source，
         通过 Provider 类的 meta 类属性（无需实例化）校验 task 声明与契约一致性。
 
+        Phase 4.3（裁定 #ARCH-CH-022 延伸）：追加 provider 路由-meta 一致性校验，
+        AST 解析 provider 文件，对比"fetch 路由能力集"与"meta.capabilities 声明集"，
+        不一致则 WARN 纳入日志（治本本次 8 条 ERROR 根因：路由支持但 meta 遗漏声明）。
+        Phase 4.4 的 commit gate 把同一检查升级为 ERROR 阻断；运行时此处保持 WARN
+        以免阻断已在运行的生产实例（渐进式收紧）。
+
         - ERROR 级违规 → raise（阻断启动，fail-closed）
         - WARN 级违规 → log.warning（记录但不阻断，渐进式收紧）
         """
@@ -600,6 +606,7 @@ class IntegratorScheduler:
             validate_task_capability_contracts,
             has_blocking_violations,
             format_violations,
+            check_route_meta_consistency,
         )
         # 收集 tasks 涉及的所有 source，通过类属性读取 meta（无需实例化）
         metas: dict[str, Any] = {}
@@ -607,6 +614,12 @@ class IntegratorScheduler:
             "akshare": ("zephyr.data.implementations.akshare_provider", "AKShareProvider"),
             "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQMTProvider"),
             "ifind": ("zephyr.data.implementations.ifind_provider", "IFindProvider"),
+        }
+        # provider 文件路径映射（Phase 4.3 路由-meta 一致性校验用）
+        source_to_path = {
+            "akshare": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "akshare_provider.py",
+            "miniqmt": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "miniqmt_provider.py",
+            "ifind": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "ifind_provider.py",
         }
         import importlib
         for task in self._tasks:
@@ -633,6 +646,24 @@ class IntegratorScheduler:
                 f"Capability 契约校验发现 {len(blocking)} 条 ERROR 级违规，阻断启动（裁定 #ARCH-CH-022）。"
                 f"请修复 tasks.yaml 的 capability 声明或 Provider 的 meta.capabilities。"
             )
+        # Phase 4.3: provider 路由-meta 一致性校验（WARN，不阻断启动）
+        # 治本本次 8 条 ERROR 根因：fetch 路由支持某 capability 但 meta.capabilities 遗漏声明
+        route_meta_warnings: list[str] = []
+        for source, path in source_to_path.items():
+            if not path.exists():
+                continue
+            file_violations = check_route_meta_consistency(path)
+            for v in file_violations:
+                route_meta_warnings.append(f"[{source}] {v}")
+        if route_meta_warnings:
+            log.warning(
+                "Provider 路由-meta 一致性校验发现 %d 条 WARN（Phase 4.3，裁定 #ARCH-CH-022）:\n%s"
+                "\n注：运行时仅 WARN 不阻断；commit gate（CAP-CONSISTENCY priority=98）会阻断新违规。",
+                len(route_meta_warnings),
+                "\n".join(route_meta_warnings),
+            )
+        else:
+            log.info("Provider 路由-meta 一致性校验通过（0 违规，Phase 4.3）")
 
     # ============== Provider 管理 ==============
 
