@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INTELLIGENCE 上下文管理架构文档
 version: "1.0"
 status: active
-date: 2026-07-16
+date: 2026-07-17
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 上下文管理（D_INTELLIGENCE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 22:48:17
+> 最后更新: 2026-07-17 00:01:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -27,13 +27,13 @@ ttl: permanent
 | 域名称 | 上下文管理 | Domain Name | Context Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 109 | Module Count | 109 |
-| 域内依赖 | 56 | Internal Dependencies | 56 |
+| 域内依赖 | 55 | Internal Dependencies | 55 |
 | 跨域入边 | 38 | Cross-domain Incoming | 38 |
-| 跨域出边 | 94 | Cross-domain Outgoing | 94 |
+| 跨域出边 | 95 | Cross-domain Outgoing | 95 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 87 | Prototype Modules | 87 |
-| 生产态模块 | 22 | Production Modules | 22 |
-| 容量 | 22/150 (正常) | Capacity | 22/150 (正常) |
+| 原型态模块 | 88 | Prototype Modules | 88 |
+| 生产态模块 | 21 | Production Modules | 21 |
+| 容量 | 21/150 (正常) | Capacity | 21/150 (正常) |
 | 描述 | 上下文预算管理(context_budget/token_budget) | Description | 上下文预算管理(context_budget/token_budget) |
 
 ## 模块分层清单 / Module Layered List
@@ -95,7 +95,7 @@ ttl: permanent
 | 49 | src/zephyr/ml_train/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 50 | src/zephyr/ml_train/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 51 | src/zephyr/ml_train/services/__init__.py | __init__.py | 原型态 / prototype |  |
-| 52 | src/zephyr/research/__init__.py | MOD-L09-001 Research Innovation Core. | 生产态 / production |  |
+| 52 | src/zephyr/research/__init__.py | MOD-L09-001 Research Innovation Core. | 原型态 / prototype |  |
 | 53 | tests/ai/test_ai_audit_logger.py | test_ai_audit_logger.py | 原型态 / prototype | [MOD-INF-035](../../03_modules/_cross_layer/auto_runtime_core/blueprint.md) |
 | 54 | tests/ai/test_ai_capability_guard.py | test_ai_capability_guard.py | 原型态 / prototype | [MOD-GATE_ENGINE](../../03_modules/_cross_layer/gate_engine/blueprint.md) |
 | 55 | tests/ai/test_ai_comment_veracity.py | test_ai_comment_veracity.py | 原型态 / prototype | [MOD-FEEDBACK_LOOP](../../03_modules/_cross_layer/feedback_loop/blueprint.md) |
@@ -167,7 +167,7 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 109 个模块（生产态 22 + 设计态 0 + 原型态 87），标签标注成熟度。
+> 展示全部 109 个模块（生产态 21 + 设计态 0 + 原型态 88），标签标注成熟度。
 
 #### 第 1 页 / 共 4 页
 
@@ -221,7 +221,19 @@ graph TD
     scripts_quick_profile_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     scripts_quick_profile_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     scripts_quick_profile_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_AUTONOMY_CORE
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|导入依赖 / import_depends| D_BACKTEST
     D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_intelligence_model_profiling_case_assembler_py -.->|导入依赖 / import_depends| D_SHARED
+    scripts_quick_profile_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_intelligence_model_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_KB
@@ -231,44 +243,34 @@ graph TD
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|导入依赖 / import_depends| D_BACKTEST
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
     src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_ML_TRAIN -.->|config_depends / config_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_calibrate_model_diff_py,src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_judge_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_job_matcher_py production
     class scripts_quick_profile_py,src_zephyr_intelligence_init_py,src_zephyr_intelligence_extensions_init_py,src_zephyr_intelligence_api_init_py,src_zephyr_intelligence_core_init_py,src_zephyr_intelligence_infrastructure_init_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_evaluation_target_lib_init_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_case_assembler_py,src_zephyr_intelligence_model_profiling_exam_executor_py,src_zephyr_intelligence_model_profiling_exam_rubric_py design
-    class D_SHARED,D_GOV_KB,D_GOV_RULE,D_BACKTEST,D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME external_prod
-    class D_ML_TRAIN,D_SECURITY external_design
+    class D_AUTONOMY_CORE,D_INTEGRATION,D_GOVERNANCE,D_BACKTEST,D_SHARED,D_GOV_KB,D_GOV_RULE,D_INFRA_RUNTIME external_prod
+    class D_ML_TRAIN,D_SECURITY,D_KNOWLEDGE,D_GOV_AUDIT external_design
 ```
 
 #### 第 2 页 / 共 4 页
@@ -297,7 +299,7 @@ graph TD
         src_zephyr_ml_train_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_train_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_train_services_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_research_init_py["(生产态 / production) MOD-L09-001 Research Innovation Core.<br/>文件: __init__.py"]
+        src_zephyr_research_init_py["(原型态 / prototype) MOD-L09-001 Research Innovation Core.<br/>文件: __init__.py"]
         tests_ai_test_ai_audit_logger_py["(原型态 / prototype) test_ai_audit_logger.py"]
         tests_ai_test_ai_capability_guard_py["(原型态 / prototype) test_ai_capability_guard.py"]
         tests_ai_test_ai_comment_veracity_py["(原型态 / prototype) test_ai_comment_veracity.py"]
@@ -318,50 +320,52 @@ graph TD
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
+    src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_intelligence_model_profiling_model_discovery_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| D_SHARED
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_train_init_py -.->|config_depends / config_depends| D_ML_TRAIN
-    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     tests_ai_test_ai_audit_logger_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_ai_test_ai_capability_guard_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_ai_test_ai_capability_guard_py -.->|测试依赖 / test_depends| D_SHARED
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_ai_test_ai_construction_detectors_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_ai_test_ai_construction_detectors_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_ai_test_ai_comment_veracity_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_FRONTEND["(生产态 / production) D_FRONTEND"]
+    tests_ai_test_l08_human_ai_interface_py -.->|测试依赖 / test_depends| D_FRONTEND
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_ai_test_ai_context_injector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
+    D_OPS["(生产态 / production) D_OPS"]
+    tests_budget_test_budget_engine_root_py -.->|测试依赖 / test_depends| D_OPS
+    tests_ai_test_ai_construction_detectors_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_ai_test_ai_capability_guard_py -.->|测试依赖 / test_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_model_discovery_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py,src_zephyr_research_init_py production
-    class src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_task_model_learner_py,src_zephyr_intelligence_models_init_py,src_zephyr_intelligence_services_init_py,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,tests_ai_test_ai_audit_logger_py,tests_ai_test_ai_capability_guard_py,tests_ai_test_ai_comment_veracity_py,tests_ai_test_ai_construction_detectors_py,tests_ai_test_ai_context_injector_py,tests_ai_test_l08_human_ai_interface_py,tests_budget_test_budget_enforcer_rbac_bridge_py,tests_budget_test_budget_engine_root_py design
-    class D_INFRA_RUNTIME,D_GOV_RULE,D_GOV_DRIFT,D_FBL_VERIFICATION,D_GOVERNANCE,D_INTEGRATION external_prod
-    class D_SHARED,D_ML_TRAIN,D_GOV_AUDIT,D_AUTONOMY_CORE external_design
+    class src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py production
+    class src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_task_model_learner_py,src_zephyr_intelligence_models_init_py,src_zephyr_intelligence_services_init_py,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,src_zephyr_research_init_py,tests_ai_test_ai_audit_logger_py,tests_ai_test_ai_capability_guard_py,tests_ai_test_ai_comment_veracity_py,tests_ai_test_ai_construction_detectors_py,tests_ai_test_ai_context_injector_py,tests_ai_test_l08_human_ai_interface_py,tests_budget_test_budget_enforcer_rbac_bridge_py,tests_budget_test_budget_engine_root_py design
+    class D_INFRA_RUNTIME,D_GOV_RULE,D_FBL_VERIFICATION,D_FRONTEND,D_GOV_DRIFT,D_OPS,D_INTEGRATION,D_GOVERNANCE external_prod
+    class D_SHARED,D_ML_TRAIN,D_AUTONOMY_CORE,D_GOV_AUDIT external_design
 ```
 
 #### 第 3 页 / 共 4 页
@@ -400,32 +404,34 @@ graph TD
         tests_model_test_model_drift_monitor_py["(原型态 / prototype) test_model_drift_monitor.py"]
         tests_model_test_model_health_py["(原型态 / prototype) test_model_health.py"]
     end
-    D_OPS["(生产态 / production) D_OPS"]
-    tests_budget_test_budget_handler_py -.->|测试依赖 / test_depends| D_OPS
-    D_SHARED["(生产态 / production) D_SHARED"]
-    tests_budget_test_budget_handler_py -.->|测试依赖 / test_depends| D_SHARED
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_budget_test_budget_forecaster_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_budget_test_budget_event_driven_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_event_driven_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_event_driven_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_budget_test_budget_profile_manager_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_lifecycle_e2e_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_lifecycle_e2e_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_models_py -.->|测试依赖 / test_depends| D_OPS
-    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_OPS
+    D_BACKTEST["(生产态 / production) D_BACKTEST"]
+    tests_model_test_l09_research_innovation_py -.->|测试依赖 / test_depends| D_BACKTEST
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_OPS
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_budget_test_error_budget_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_FBL_DIAGNOSERS["(生产态 / production) D_FBL_DIAGNOSERS"]
+    tests_model_test_model_health_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
+    D_OPS["(生产态 / production) D_OPS"]
+    tests_budget_test_budget_models_py -.->|测试依赖 / test_depends| D_OPS
+    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_OPS
+    tests_model_test_model_drift_monitor_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_budget_test_budget_handler_py -.->|测试依赖 / test_depends| D_OPS
+    tests_budget_test_budget_event_driven_py -.->|测试依赖 / test_depends| D_OPS
+    tests_budget_test_budget_tracker_py -.->|测试依赖 / test_depends| D_OPS
+    tests_budget_test_budget_tracker_py -.->|测试依赖 / test_depends| D_OPS
+    tests_decision_test_decision_engine_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_decision_test_decision_engine_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_budget_test_budget_event_driven_py,tests_budget_test_budget_forecaster_py,tests_budget_test_budget_handler_py,tests_budget_test_budget_lifecycle_e2e_py,tests_budget_test_budget_models_py,tests_budget_test_budget_profile_manager_py,tests_budget_test_budget_shutdown_py,tests_budget_test_budget_telemetry_bridge_py,tests_budget_test_budget_tracker_py,tests_budget_test_error_budget_py,tests_decision_test_decision_auditor_py,tests_decision_test_decision_engine_py,tests_decision_test_decision_explainer_root_py,tests_decision_test_decision_provenance_py,tests_decision_test_decision_registry_py,tests_model_test_benchmark_suite_py,tests_model_test_calibrate_model_diff_py,tests_model_test_cli_py,tests_model_test_deepseek_v4_chat_py,tests_model_test_exam_orchestrator_py,tests_model_test_exam_test_cases_py,tests_model_test_job_matcher_py,tests_model_test_l09_research_innovation_py,tests_model_test_l11_ml_platform_py,tests_model_test_local_model_py,tests_model_test_model_capability_exam_py,tests_model_test_model_discovery_py,tests_model_test_model_drift_detector_py,tests_model_test_model_drift_monitor_py,tests_model_test_model_health_py design
-    class D_OPS,D_SHARED,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT external_prod
+    class D_BACKTEST,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME,D_FEEDBACK_LOOP,D_FBL_DIAGNOSERS,D_OPS external_prod
 ```
 
 #### 第 4 页 / 共 4 页
@@ -455,37 +461,37 @@ graph TD
     end
     D_FBL_DIAGNOSERS["(生产态 / production) D_FBL_DIAGNOSERS"]
     tests_model_test_model_rotation_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
-    tests_model_test_model_rotation_v2_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_model_test_model_version_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_model_test_model_router_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_model_test_model_version_semantic_drift_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
+    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_lock_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_roadmap_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_models_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_SIGLEGACY["(生产态 / production) D_SIGLEGACY"]
     tests_pipeline_test_alpha_signal_pipeline_py -.->|测试依赖 / test_depends| D_SIGLEGACY
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_pipeline_test_integration_test_pipeline_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     tests_pipeline_test_pipeline_bridge_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
     tests_pipeline_test_pipeline_bridge_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
+    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_model_test_model_router_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_pipeline_test_integration_test_pipeline_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_pipeline_test_pipeline_cost_tracker_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_pipeline_test_pipeline_cost_tracker_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_pipeline_test_pipeline_lock_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    tests_model_test_model_version_detector_py -.->|测试依赖 / test_depends| D_GOVERNANCE
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    tests_pipeline_test_pipeline_orchestrator_root_py -.->|测试依赖 / test_depends| D_INTEGRATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_model_test_model_rotation_py,tests_model_test_model_rotation_v2_py,tests_model_test_model_router_py,tests_model_test_model_version_detector_py,tests_model_test_model_version_semantic_drift_py,tests_model_test_profiler_py,tests_model_test_provider_data_py,tests_model_test_results_writer_py,tests_pipeline_conftest_py,tests_pipeline_test_alpha_signal_pipeline_py,tests_pipeline_test_integration_test_pipeline_py,tests_pipeline_test_pipeline_agent_bridge_py,tests_pipeline_test_pipeline_bridge_py,tests_pipeline_test_pipeline_cost_tracker_py,tests_pipeline_test_pipeline_lock_py,tests_pipeline_test_pipeline_models_py,tests_pipeline_test_pipeline_orchestrator_auto_py,tests_pipeline_test_pipeline_orchestrator_root_py,tests_pipeline_test_pipeline_roadmap_py design
-    class D_FBL_DIAGNOSERS,D_GOVERNANCE,D_INFRA_RUNTIME,D_SIGLEGACY,D_FEEDBACK_LOOP,D_AUTONOMY_CORE,D_ORCHESTRATOR external_prod
+    class D_FBL_DIAGNOSERS,D_INFRA_RUNTIME,D_SIGLEGACY,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOVERNANCE,D_INTEGRATION external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 22 个，12 条域内依赖）。
+> 仅展示已上线运行的模块（共 21 个，12 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -511,67 +517,68 @@ graph TD
         src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py["(生产态 / production) ModelTaskMatrix — 任务×模型性能学习引擎<br/>文件: task_model_learner.py"]
         src_zephyr_intelligence_model_profiling_provider_data_py["(生产态 / production) provider_data.py"]
         src_zephyr_intelligence_model_profiling_results_writer_py["(生产态 / production) Results Writer — 持久化 benchmark 结果，支持历...<br/>文件: results_writer.py"]
-        src_zephyr_research_init_py["(生产态 / production) MOD-L09-001 Research Innovation Core.<br/>文件: __init__.py"]
     end
     src_zephyr_intelligence_model_profiling_cli_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
-    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    src_zephyr_intelligence_model_profiling_model_discovery_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_judge_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
+    src_zephyr_intelligence_model_profiling_exam_orchestrator_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_job_matcher_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_model_discovery_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py
     scripts_calibrate_model_diff_py -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_intelligence_model_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_job_matcher_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_results_writer_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
-    src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_KB
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
+    src_zephyr_intelligence_model_profiling_capability_passport_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_intelligence_model_evaluation_activate_py -->|导入依赖 / import_depends| D_GOV_RULE
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_inference_base_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -->|导入依赖 / import_depends| D_TRADING
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_GOV_KB
+    src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_ML_TRAIN
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_intelligence_model_evaluation_unified_memory_api_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_intelligence_model_profiling_capability_passport_py -->|导入依赖 / import_depends| D_SHARED
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
-    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_ML_TRAIN -.->|config_depends / config_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_unified_memory_api_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_results_writer_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_KNOWLEDGE["(原型态 / prototype) D_KNOWLEDGE"]
+    D_KNOWLEDGE -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_reranker_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_reranker_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_test_cases_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_orchestrator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_evaluation_inference_base_py
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_intelligence_model_profiling_capability_passport_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_provider_data_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_calibrate_model_diff_py,src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_judge_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_job_matcher_py,src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py,src_zephyr_research_init_py production
-    class D_SHARED,D_GOV_KB,D_GOV_RULE,D_TRADING,D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION,D_INFRA_RUNTIME external_prod
-    class D_ML_TRAIN,D_SECURITY external_design
+    class scripts_calibrate_model_diff_py,src_zephyr_intelligence_model_drift_detector_py,src_zephyr_intelligence_model_evaluation_activate_py,src_zephyr_intelligence_model_evaluation_implementations_default_inference_engine_py,src_zephyr_intelligence_model_evaluation_inference_base_py,src_zephyr_intelligence_model_evaluation_reranker_py,src_zephyr_intelligence_model_evaluation_unified_memory_api_py,src_zephyr_intelligence_model_profiling_capability_passport_py,src_zephyr_intelligence_model_profiling_cli_py,src_zephyr_intelligence_model_profiling_deepseek_v4_chat_py,src_zephyr_intelligence_model_profiling_exam_judge_py,src_zephyr_intelligence_model_profiling_exam_orchestrator_py,src_zephyr_intelligence_model_profiling_exam_test_cases_py,src_zephyr_intelligence_model_profiling_job_matcher_py,src_zephyr_intelligence_model_profiling_model_discovery_py,src_zephyr_intelligence_model_profiling_pipeline_routing_benchmark_suite_py,src_zephyr_intelligence_model_profiling_pipeline_routing_profiler_py,src_zephyr_intelligence_model_profiling_pipeline_routing_results_writer_py,src_zephyr_intelligence_model_profiling_pipeline_routing_task_model_learner_py,src_zephyr_intelligence_model_profiling_provider_data_py,src_zephyr_intelligence_model_profiling_results_writer_py production
+    class D_SHARED,D_GOV_KB,D_GOV_RULE,D_TRADING,D_INFRA_RUNTIME,D_INTEGRATION external_prod
+    class D_ML_TRAIN,D_SECURITY,D_GOVERNANCE,D_AUTONOMY_CORE,D_KNOWLEDGE,D_GOV_AUDIT external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -582,7 +589,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 87 个，5 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 88 个，5 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -617,6 +624,7 @@ graph TD
         src_zephyr_ml_train_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_train_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_train_services_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_research_init_py["(原型态 / prototype) MOD-L09-001 Research Innovation Core.<br/>文件: __init__.py"]
         tests_ai_test_ai_audit_logger_py["(原型态 / prototype) test_ai_audit_logger.py"]
         tests_ai_test_ai_capability_guard_py["(原型态 / prototype) test_ai_capability_guard.py"]
         tests_ai_test_ai_comment_veracity_py["(原型态 / prototype) test_ai_comment_veracity.py"]
@@ -677,43 +685,46 @@ graph TD
     end
     src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
     src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_benchmark_suite_py
-    src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_profiler_py
+    src_zephyr_intelligence_model_profiling_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
     src_zephyr_intelligence_model_profiling_pipeline_routing_init_py -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py -.->|导入依赖 / import_depends| D_BACKTEST
-    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_AUTONOMY_CORE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    src_zephyr_intelligence_model_evaluation_sync_engine_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_intelligence_model_profiling_case_assembler_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_evaluation_notebook_integration_init_py -.->|导入依赖 / import_depends| D_BACKTEST
-    src_zephyr_intelligence_model_evaluation_implementations_init_py -.->|导入依赖 / import_depends| D_BACKTEST
+    tests_model_test_l09_research_innovation_py -.->|测试依赖 / test_depends| D_BACKTEST
+    D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_intelligence_model_profiling_profiler_py -.->|导入依赖 / import_depends| D_SHARED
-    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_train_init_py -.->|config_depends / config_depends| D_ML_TRAIN
-    src_zephyr_ml_train_implementations_init_py -.->|导入依赖 / import_depends| D_ML_TRAIN
-    scripts_quick_profile_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     tests_ai_test_ai_audit_logger_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_ai_test_ai_capability_guard_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_ai_test_ai_capability_guard_py -.->|测试依赖 / test_depends| D_SHARED
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
+    tests_budget_test_budget_shutdown_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_budget_test_error_budget_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_FBL_DIAGNOSERS["(生产态 / production) D_FBL_DIAGNOSERS"]
+    tests_model_test_model_rotation_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
+    tests_pipeline_test_pipeline_agent_bridge_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_lock_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_roadmap_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_pipeline_test_pipeline_models_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_SIGLEGACY["(生产态 / production) D_SIGLEGACY"]
+    tests_pipeline_test_alpha_signal_pipeline_py -.->|测试依赖 / test_depends| D_SIGLEGACY
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    tests_pipeline_test_pipeline_bridge_py -.->|测试依赖 / test_depends| D_AUTONOMY_CORE
     D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_task_model_learner_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_exam_rubric_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_profiling_init_py
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_intelligence_model_evaluation_sync_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class scripts_quick_profile_py,src_zephyr_intelligence_init_py,src_zephyr_intelligence_extensions_init_py,src_zephyr_intelligence_api_init_py,src_zephyr_intelligence_core_init_py,src_zephyr_intelligence_infrastructure_init_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_evaluation_target_lib_init_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_case_assembler_py,src_zephyr_intelligence_model_profiling_exam_executor_py,src_zephyr_intelligence_model_profiling_exam_rubric_py,src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_task_model_learner_py,src_zephyr_intelligence_models_init_py,src_zephyr_intelligence_services_init_py,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,tests_ai_test_ai_audit_logger_py,tests_ai_test_ai_capability_guard_py,tests_ai_test_ai_comment_veracity_py,tests_ai_test_ai_construction_detectors_py,tests_ai_test_ai_context_injector_py,tests_ai_test_l08_human_ai_interface_py,tests_budget_test_budget_enforcer_rbac_bridge_py,tests_budget_test_budget_engine_root_py,tests_budget_test_budget_event_driven_py,tests_budget_test_budget_forecaster_py,tests_budget_test_budget_handler_py,tests_budget_test_budget_lifecycle_e2e_py,tests_budget_test_budget_models_py,tests_budget_test_budget_profile_manager_py,tests_budget_test_budget_shutdown_py,tests_budget_test_budget_telemetry_bridge_py,tests_budget_test_budget_tracker_py,tests_budget_test_error_budget_py,tests_decision_test_decision_auditor_py,tests_decision_test_decision_engine_py,tests_decision_test_decision_explainer_root_py,tests_decision_test_decision_provenance_py,tests_decision_test_decision_registry_py,tests_model_test_benchmark_suite_py,tests_model_test_calibrate_model_diff_py,tests_model_test_cli_py,tests_model_test_deepseek_v4_chat_py,tests_model_test_exam_orchestrator_py,tests_model_test_exam_test_cases_py,tests_model_test_job_matcher_py,tests_model_test_l09_research_innovation_py,tests_model_test_l11_ml_platform_py,tests_model_test_local_model_py,tests_model_test_model_capability_exam_py,tests_model_test_model_discovery_py,tests_model_test_model_drift_detector_py,tests_model_test_model_drift_monitor_py,tests_model_test_model_health_py,tests_model_test_model_rotation_py,tests_model_test_model_rotation_v2_py,tests_model_test_model_router_py,tests_model_test_model_version_detector_py,tests_model_test_model_version_semantic_drift_py,tests_model_test_profiler_py,tests_model_test_provider_data_py,tests_model_test_results_writer_py,tests_pipeline_conftest_py,tests_pipeline_test_alpha_signal_pipeline_py,tests_pipeline_test_integration_test_pipeline_py,tests_pipeline_test_pipeline_agent_bridge_py,tests_pipeline_test_pipeline_bridge_py,tests_pipeline_test_pipeline_cost_tracker_py,tests_pipeline_test_pipeline_lock_py,tests_pipeline_test_pipeline_models_py,tests_pipeline_test_pipeline_orchestrator_auto_py,tests_pipeline_test_pipeline_orchestrator_root_py,tests_pipeline_test_pipeline_roadmap_py design
-    class D_BACKTEST,D_AUTONOMY_CORE,D_GOVERNANCE,D_INTEGRATION,D_SHARED,D_INFRA_RUNTIME,D_GOV_RULE external_prod
-    class D_ML_TRAIN external_design
+    class scripts_quick_profile_py,src_zephyr_intelligence_init_py,src_zephyr_intelligence_extensions_init_py,src_zephyr_intelligence_api_init_py,src_zephyr_intelligence_core_init_py,src_zephyr_intelligence_infrastructure_init_py,src_zephyr_intelligence_model_evaluation_experiment_tracker_init_py,src_zephyr_intelligence_model_evaluation_implementations_init_py,src_zephyr_intelligence_model_evaluation_notebook_integration_init_py,src_zephyr_intelligence_model_evaluation_sync_engine_py,src_zephyr_intelligence_model_evaluation_target_lib_init_py,src_zephyr_intelligence_model_profiling_init_py,src_zephyr_intelligence_model_profiling_benchmark_suite_py,src_zephyr_intelligence_model_profiling_case_assembler_py,src_zephyr_intelligence_model_profiling_exam_executor_py,src_zephyr_intelligence_model_profiling_exam_rubric_py,src_zephyr_intelligence_model_profiling_pipeline_routing_init_py,src_zephyr_intelligence_model_profiling_pipeline_routing_cli_py,src_zephyr_intelligence_model_profiling_profiler_py,src_zephyr_intelligence_model_profiling_task_model_learner_py,src_zephyr_intelligence_models_init_py,src_zephyr_intelligence_services_init_py,src_zephyr_ml_train_init_py,src_zephyr_ml_train_extensions_init_py,src_zephyr_ml_train_api_init_py,src_zephyr_ml_train_core_init_py,src_zephyr_ml_train_implementations_init_py,src_zephyr_ml_train_infrastructure_init_py,src_zephyr_ml_train_models_init_py,src_zephyr_ml_train_services_init_py,src_zephyr_research_init_py,tests_ai_test_ai_audit_logger_py,tests_ai_test_ai_capability_guard_py,tests_ai_test_ai_comment_veracity_py,tests_ai_test_ai_construction_detectors_py,tests_ai_test_ai_context_injector_py,tests_ai_test_l08_human_ai_interface_py,tests_budget_test_budget_enforcer_rbac_bridge_py,tests_budget_test_budget_engine_root_py,tests_budget_test_budget_event_driven_py,tests_budget_test_budget_forecaster_py,tests_budget_test_budget_handler_py,tests_budget_test_budget_lifecycle_e2e_py,tests_budget_test_budget_models_py,tests_budget_test_budget_profile_manager_py,tests_budget_test_budget_shutdown_py,tests_budget_test_budget_telemetry_bridge_py,tests_budget_test_budget_tracker_py,tests_budget_test_error_budget_py,tests_decision_test_decision_auditor_py,tests_decision_test_decision_engine_py,tests_decision_test_decision_explainer_root_py,tests_decision_test_decision_provenance_py,tests_decision_test_decision_registry_py,tests_model_test_benchmark_suite_py,tests_model_test_calibrate_model_diff_py,tests_model_test_cli_py,tests_model_test_deepseek_v4_chat_py,tests_model_test_exam_orchestrator_py,tests_model_test_exam_test_cases_py,tests_model_test_job_matcher_py,tests_model_test_l09_research_innovation_py,tests_model_test_l11_ml_platform_py,tests_model_test_local_model_py,tests_model_test_model_capability_exam_py,tests_model_test_model_discovery_py,tests_model_test_model_drift_detector_py,tests_model_test_model_drift_monitor_py,tests_model_test_model_health_py,tests_model_test_model_rotation_py,tests_model_test_model_rotation_v2_py,tests_model_test_model_router_py,tests_model_test_model_version_detector_py,tests_model_test_model_version_semantic_drift_py,tests_model_test_profiler_py,tests_model_test_provider_data_py,tests_model_test_results_writer_py,tests_pipeline_conftest_py,tests_pipeline_test_alpha_signal_pipeline_py,tests_pipeline_test_integration_test_pipeline_py,tests_pipeline_test_pipeline_agent_bridge_py,tests_pipeline_test_pipeline_bridge_py,tests_pipeline_test_pipeline_cost_tracker_py,tests_pipeline_test_pipeline_lock_py,tests_pipeline_test_pipeline_models_py,tests_pipeline_test_pipeline_orchestrator_auto_py,tests_pipeline_test_pipeline_orchestrator_root_py,tests_pipeline_test_pipeline_roadmap_py design
+    class D_BACKTEST,D_INFRA_RUNTIME,D_GOV_RULE,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_FEEDBACK_LOOP,D_FBL_DIAGNOSERS,D_SIGLEGACY,D_AUTONOMY_CORE external_prod
+    class D_SHARED,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -728,94 +739,95 @@ graph TD
 | 4 | D_RESEARCH — Research & Innovation Concrete Im... | → | D_BACKTEST 回测: L_BACKTEST — Vectorized Backtest Engine (vecto... | 导入依赖 / import_depends |
 | 5 | Intelligence — Model Evaluation Concrete Imple... | → | D_BACKTEST 回测: L_BACKTEST — Vectorized Backtest Engine (vecto... | 导入依赖 / import_depends |
 | 6 | D_RESEARCH Research & Innovation (__init__.py) | → | D_BACKTEST 回测: L_BACKTEST — Backtest Engine Layer (engine_bas... | 导入依赖 / import_depends |
-| 7 | test_cli.py | → | D_EX_CORE 执行核心: D_EXECUTION_CORE Trade Execution — Re-export w... | 测试依赖 / test_depends |
-| 8 | test_decision_provenance.py | → | D_FBL_DETECTORS: Decision Provenance — v0.12.0 R166 (decision_p... | 测试依赖 / test_depends |
-| 9 | test_model_health.py | → | D_FBL_DIAGNOSERS: Model Health Monitor — v0.5.0 R40 (model_healt... | 测试依赖 / test_depends |
-| 10 | test_model_rotation.py | → | D_FBL_DIAGNOSERS: Model Rotation — v0.9.0 R125 (model_rotation.py) | 测试依赖 / test_depends |
-| 11 | test_model_rotation_v2.py | → | D_FBL_DIAGNOSERS: Model Rotation v2 — v0.10.0 R140 (model_rotati... | 测试依赖 / test_depends |
-| 12 | test_model_version_semantic_drift.py | → | D_FBL_DIAGNOSERS: Model Version Semantic Drift Monitor — v0.39.0... | 测试依赖 / test_depends |
-| 13 | test_ai_comment_veracity.py | → | D_FBL_VERIFICATION 反馈验证: AI Comment Veracity — v0.37.0 R459 (ai_comment... | 测试依赖 / test_depends |
-| 14 | test_error_budget.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Error Budget 状态机——monthly budget + burn_ra... | 测试依赖 / test_depends |
-| 15 | test_decision_engine.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Decision Engine (decision_engine.py) | 测试依赖 / test_depends |
-| 16 | test_decision_engine.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
-| 17 | test_integration_test_pipeline.py | → | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | 测试依赖 / test_depends |
-| 18 | test_l08_human_ai_interface.py | → | D_FRONTEND 前端: D_FRONTEND — Human-AI Interface Layer Skeleton... | 测试依赖 / test_depends |
-| 19 | KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 20 | test_budget_enforcer_rbac_bridge.py | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. (rbac_b... | 测试依赖 / test_depends |
-| 21 | test_model_version_detector.py | → | D_GOVERNANCE 生命周期管理: Model Version Detector — v0.10.0 模型版本突变.... | 测试依赖 / test_depends |
-| 22 | test_decision_auditor.py | → | D_GOV_CODE_QUALITY 代码质量治理: 决策审计链 — DecisionFingerprint 不可变追加日... | 测试依赖 / test_depends |
-| 23 | test_ai_construction_detectors.py | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 施工检测器 — ai_construction... | 测试依赖 / test_depends |
-| 24 | test_ai_construction_detectors.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (dri... | 测试依赖 / test_depends |
-| 25 | test_ai_context_injector.py | → | D_GOV_DRIFT 漂移检测: AI Context Injector — 施工前预检D-023-16 · §... | 测试依赖 / test_depends |
-| 26 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_GOV_DRIFT 漂移检测: spiral_ews.py | 测试依赖 / test_depends |
-| 27 | test_model_drift_monitor.py | → | D_GOV_DRIFT 漂移检测: model_drift_monitor.py | 测试依赖 / test_depends |
-| 28 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_KB 知识库治理: KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
-| 29 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_GOV_KB 知识库治理: Re-export shim — 真源在 zephyr.gov_kb.storage.... | 导入依赖 / import_depends |
-| 30 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_GOV_KB 知识库治理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 导入依赖 / import_depends |
-| 31 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ipi_defense.py | 测试依赖 / test_depends |
-| 32 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 33 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
-| 34 | test_ai_capability_guard.py | → | D_GOV_RULE 规则治理: ZephyrAlpha — gates/ai_capability_guard.py (ai... | 测试依赖 / test_depends |
-| 35 | ModelTaskMatrix — 任务×模型性能学习引擎 (task... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 导入依赖 / import_depends |
-| 36 | test_ai_audit_logger.py | → | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | 测试依赖 / test_depends |
-| 37 | test_budget_forecaster.py | → | D_INFRA_RUNTIME 运行时集成: budget_forecaster.py — Token 预算预测 (DD120-e... | 测试依赖 / test_depends |
-| 38 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | 测试依赖 / test_depends |
-| 39 | test_model_router.py | → | D_INFRA_RUNTIME 运行时集成: ModelRouter — 模型路由与降级链管理 (model_rout... | 测试依赖 / test_depends |
-| 40 | test_pipeline_agent_bridge.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 41 | test_pipeline_agent_bridge.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline -> Agent Bridge — 双编排器桥接层 (pip... | 测试依赖 / test_depends |
-| 42 | test_pipeline_cost_tracker.py | → | D_INFRA_RUNTIME 运行时集成: CostTracker —— LLM 调用成本追踪器（SRC-0025）... | 测试依赖 / test_depends |
-| 43 | test_pipeline_cost_tracker.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 44 | test_pipeline_lock.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline Lock — 双管线并发锁 (pipeline_lock.py) | 测试依赖 / test_depends |
-| 45 | test_pipeline_models.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 46 | DM-202010: PipelineOrchestrator 自动启动/周期运... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
-| 47 | test_pipeline_roadmap.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 未来版本路线图——v0.10.0 -> v0.12.0 .... | 测试依赖 / test_depends |
-| 48 | 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。... | → | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
-| 49 | KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | D_INTEGRATION 管线路由: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
-| 50 | DM-202010: PipelineOrchestrator 自动启动/周期运... | → | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
-| 51 | test_pipeline_orchestrator_root.py | → | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
-| 52 | D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
-| 53 | D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
-| 54 | inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
-| 55 | inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
-| 56 | D_ML_TRAIN — ML Training Domain (__init__.py) | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | config_depends / config_depends |
-| 57 | D_ML_TRAIN — ML Training Concrete Implementati... | → | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (default... | 导入依赖 / import_depends |
-| 58 | test_budget_engine_root.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 59 | test_budget_engine_root.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 60 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 61 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 62 | test_budget_handler.py | → | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
-| 63 | DM-201505: F4 自动化集成测试——完整生命周期端... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 64 | DM-201505: F4 自动化集成测试——完整生命周期端... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 65 | test_budget_models.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 66 | test_budget_profile_manager.py | → | D_OPS 反馈循环: budget_profile_manager.py | 测试依赖 / test_depends |
-| 67 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 68 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 69 | test_budget_tracker.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
-| 70 | test_budget_tracker.py | → | D_OPS 反馈循环: budget_tracker.py | 测试依赖 / test_depends |
-| 71 | test_pipeline_agent_bridge.py | → | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | 测试依赖 / test_depends |
-| 72 | test_decision_explainer_root.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
-| 73 | test_decision_registry.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
-| 74 | ModelDriftDetector — LLM 模型行为漂移检测。 (m... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 75 | D_ML_TRAIN — Default Inference Engine (default... | → | D_SHARED 共享服务: model_serving_response.py | 导入依赖 / import_depends |
-| 76 | D_ML_TRAIN — Default Inference Engine (default... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 77 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Contro... | 导入依赖 / import_depends |
-| 78 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 79 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 80 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 81 | 真实多文件注入装配器（Phase 3 极限深度）。 (cas... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 82 | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 83 | JobMatcher --- 模型岗位匹配器 (job_matcher.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 84 | ModelDiscovery — 枚举所有本地 Ollama 模型 + 远... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 85 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 86 | Results Writer — 持久化 benchmark 结果，支持历... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 87 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 88 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 89 | Results Writer — 持久化 benchmark 结果，支持历... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 90 | test_ai_capability_guard.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
-| 91 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 测试依赖 / test_depends |
-| 92 | test_budget_handler.py | → | D_SHARED 共享服务: budget_alert.py | 测试依赖 / test_depends |
-| 93 | test_alpha_signal_pipeline.py | → | D_SIGLEGACY 信号遗留设计态: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | 测试依赖 / test_depends |
-| 94 | D_ML_TRAIN — Default Inference Engine (default... | → | D_TRADING 交易运营: model_serving_request.py | 导入依赖 / import_depends |
+| 7 | test_l09_research_innovation.py | → | D_BACKTEST 回测: L_BACKTEST — Backtest Engine Layer (engine_bas... | 测试依赖 / test_depends |
+| 8 | test_cli.py | → | D_EX_CORE 执行核心: D_EXECUTION_CORE Trade Execution — Re-export w... | 测试依赖 / test_depends |
+| 9 | test_decision_provenance.py | → | D_FBL_DETECTORS: Decision Provenance — v0.12.0 R166 (decision_p... | 测试依赖 / test_depends |
+| 10 | test_model_health.py | → | D_FBL_DIAGNOSERS: Model Health Monitor — v0.5.0 R40 (model_healt... | 测试依赖 / test_depends |
+| 11 | test_model_rotation.py | → | D_FBL_DIAGNOSERS: Model Rotation — v0.9.0 R125 (model_rotation.py) | 测试依赖 / test_depends |
+| 12 | test_model_rotation_v2.py | → | D_FBL_DIAGNOSERS: Model Rotation v2 — v0.10.0 R140 (model_rotati... | 测试依赖 / test_depends |
+| 13 | test_model_version_semantic_drift.py | → | D_FBL_DIAGNOSERS: Model Version Semantic Drift Monitor — v0.39.0... | 测试依赖 / test_depends |
+| 14 | test_ai_comment_veracity.py | → | D_FBL_VERIFICATION 反馈验证: AI Comment Veracity — v0.37.0 R459 (ai_comment... | 测试依赖 / test_depends |
+| 15 | test_error_budget.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Error Budget 状态机——monthly budget + burn_ra... | 测试依赖 / test_depends |
+| 16 | test_decision_engine.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Decision Engine (decision_engine.py) | 测试依赖 / test_depends |
+| 17 | test_decision_engine.py | → | D_FEEDBACK_LOOP 反馈循环引擎: protocols.py | 测试依赖 / test_depends |
+| 18 | test_integration_test_pipeline.py | → | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | 测试依赖 / test_depends |
+| 19 | test_l08_human_ai_interface.py | → | D_FRONTEND 前端: D_FRONTEND — Human-AI Interface Layer Skeleton... | 测试依赖 / test_depends |
+| 20 | KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
+| 21 | test_budget_enforcer_rbac_bridge.py | → | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. (rbac_b... | 测试依赖 / test_depends |
+| 22 | test_model_version_detector.py | → | D_GOVERNANCE 生命周期管理: Model Version Detector — v0.10.0 模型版本突变.... | 测试依赖 / test_depends |
+| 23 | test_decision_auditor.py | → | D_GOV_CODE_QUALITY 代码质量治理: 决策审计链 — DecisionFingerprint 不可变追加日... | 测试依赖 / test_depends |
+| 24 | test_ai_construction_detectors.py | → | D_GOV_DRIFT 漂移检测: Drift Detector AI 施工检测器 — ai_construction... | 测试依赖 / test_depends |
+| 25 | test_ai_construction_detectors.py | → | D_GOV_DRIFT 漂移检测: Drift Detector 数据模型 — drift_models.py (dri... | 测试依赖 / test_depends |
+| 26 | test_ai_context_injector.py | → | D_GOV_DRIFT 漂移检测: AI Context Injector — 施工前预检D-023-16 · §... | 测试依赖 / test_depends |
+| 27 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_GOV_DRIFT 漂移检测: spiral_ews.py | 测试依赖 / test_depends |
+| 28 | test_model_drift_monitor.py | → | D_GOV_DRIFT 漂移检测: model_drift_monitor.py | 测试依赖 / test_depends |
+| 29 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_KB 知识库治理: KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
+| 30 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_GOV_KB 知识库治理: Re-export shim — 真源在 zephyr.gov_kb.storage.... | 导入依赖 / import_depends |
+| 31 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_GOV_KB 知识库治理: VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后.... | 导入依赖 / import_depends |
+| 32 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: ipi_defense.py | 测试依赖 / test_depends |
+| 33 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 34 | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
+| 35 | test_ai_capability_guard.py | → | D_GOV_RULE 规则治理: ZephyrAlpha — gates/ai_capability_guard.py (ai... | 测试依赖 / test_depends |
+| 36 | ModelTaskMatrix — 任务×模型性能学习引擎 (task... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 导入依赖 / import_depends |
+| 37 | test_ai_audit_logger.py | → | D_INFRA_RUNTIME 运行时集成: AiAuditLogger — AI 行为审计日志 (ai_audit_logg... | 测试依赖 / test_depends |
+| 38 | test_budget_forecaster.py | → | D_INFRA_RUNTIME 运行时集成: budget_forecaster.py — Token 预算预测 (DD120-e... | 测试依赖 / test_depends |
+| 39 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | 测试依赖 / test_depends |
+| 40 | test_model_router.py | → | D_INFRA_RUNTIME 运行时集成: ModelRouter — 模型路由与降级链管理 (model_rout... | 测试依赖 / test_depends |
+| 41 | test_pipeline_agent_bridge.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 42 | test_pipeline_agent_bridge.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline -> Agent Bridge — 双编排器桥接层 (pip... | 测试依赖 / test_depends |
+| 43 | test_pipeline_cost_tracker.py | → | D_INFRA_RUNTIME 运行时集成: CostTracker —— LLM 调用成本追踪器（SRC-0025）... | 测试依赖 / test_depends |
+| 44 | test_pipeline_cost_tracker.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 45 | test_pipeline_lock.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline Lock — 双管线并发锁 (pipeline_lock.py) | 测试依赖 / test_depends |
+| 46 | test_pipeline_models.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 47 | DM-202010: PipelineOrchestrator 自动启动/周期运... | → | D_INFRA_RUNTIME 运行时集成: Pipeline 数据模型 (models.py) | 测试依赖 / test_depends |
+| 48 | test_pipeline_roadmap.py | → | D_INFRA_RUNTIME 运行时集成: Pipeline 未来版本路线图——v0.10.0 -> v0.12.0 .... | 测试依赖 / test_depends |
+| 49 | 模型快速能力画像脚本 (P2 三级模式 Quick 入口)。... | → | D_INTEGRATION 管线路由: OllamaChat — 通过 Ollama HTTP API 进行本地 LLM... | 导入依赖 / import_depends |
+| 50 | KB->VMS 同步引擎 — sync_to_vms() 生产者 (sync_... | → | D_INTEGRATION 管线路由: InMemoryFakeVMS — MOD-INF-011 · 零依赖测试双... | 导入依赖 / import_depends |
+| 51 | DM-202010: PipelineOrchestrator 自动启动/周期运... | → | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
+| 52 | test_pipeline_orchestrator_root.py | → | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | 测试依赖 / test_depends |
+| 53 | D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
+| 54 | D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
+| 55 | inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
+| 56 | inference_base.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
+| 57 | D_ML_TRAIN — ML Training Domain (__init__.py) | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | config_depends / config_depends |
+| 58 | D_ML_TRAIN — ML Training Concrete Implementati... | → | D_ML_TRAIN 训练: D_ML_TRAIN — Default Inference Engine (default... | 导入依赖 / import_depends |
+| 59 | test_budget_engine_root.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 60 | test_budget_engine_root.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 61 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 62 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 63 | test_budget_handler.py | → | D_OPS 反馈循环: G-CT-006 消费端 — Escalation.on_budget_alert()... | 测试依赖 / test_depends |
+| 64 | DM-201505: F4 自动化集成测试——完整生命周期端... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 65 | DM-201505: F4 自动化集成测试——完整生命周期端... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 66 | test_budget_models.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 67 | test_budget_profile_manager.py | → | D_OPS 反馈循环: budget_profile_manager.py | 测试依赖 / test_depends |
+| 68 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 69 | DM-201504: F4 BudgetEngine自动关闭——shutdown.... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 70 | test_budget_tracker.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 测试依赖 / test_depends |
+| 71 | test_budget_tracker.py | → | D_OPS 反馈循环: budget_tracker.py | 测试依赖 / test_depends |
+| 72 | test_pipeline_agent_bridge.py | → | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | 测试依赖 / test_depends |
+| 73 | test_decision_explainer_root.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
+| 74 | test_decision_registry.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
+| 75 | ModelDriftDetector — LLM 模型行为漂移检测。 (m... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 76 | D_ML_TRAIN — Default Inference Engine (default... | → | D_SHARED 共享服务: model_serving_response.py | 导入依赖 / import_depends |
+| 77 | D_ML_TRAIN — Default Inference Engine (default... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 78 | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | → | D_SHARED 共享服务: CBAC 能力检查器 (Capability-Based Access Contro... | 导入依赖 / import_depends |
+| 79 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 80 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 81 | CapabilityPassport --- AI 模型能力护照 (capabil... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 82 | 真实多文件注入装配器（Phase 3 极限深度）。 (cas... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 83 | DeepSeekV4Chat --- DeepSeek V4 系列模型 API 客... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 84 | JobMatcher --- 模型岗位匹配器 (job_matcher.py) | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 85 | ModelDiscovery — 枚举所有本地 Ollama 模型 + 远... | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 86 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 87 | Results Writer — 持久化 benchmark 结果，支持历... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 88 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 89 | ModelProfiler — 核心性能分析引擎 (profiler.py) | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 90 | Results Writer — 持久化 benchmark 结果，支持历... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 91 | test_ai_capability_guard.py | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 测试依赖 / test_depends |
+| 92 | DM-201503: F4 事件驱动预算执行——超限/IPI/螺旋... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 测试依赖 / test_depends |
+| 93 | test_budget_handler.py | → | D_SHARED 共享服务: budget_alert.py | 测试依赖 / test_depends |
+| 94 | test_alpha_signal_pipeline.py | → | D_SIGLEGACY 信号遗留设计态: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | 测试依赖 / test_depends |
+| 95 | D_ML_TRAIN — Default Inference Engine (default... | → | D_TRADING 交易运营: model_serving_request.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -856,13 +868,13 @@ graph TD
 | 33 | D_KNOWLEDGE 知识管理: test_kb_pipeline_activate.py | → | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | 测试依赖 / test_depends |
 | 34 | D_KNOWLEDGE 知识管理: test_kb_reranker.py | → | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 测试依赖 / test_depends |
 | 35 | D_KNOWLEDGE 知识管理: test_kb_unified_memory_api.py | → | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | 测试依赖 / test_depends |
-| 36 | D_ML_TRAIN 训练: Intelligence — Model Evaluation Domain (__init... | → | G4 Activate 门禁 — 人工激活（T-2-13-D） (activ... | config_depends / config_depends |
+| 36 | D_ML_TRAIN 训练: Intelligence — Model Evaluation Domain (__init... | → | Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | config_depends / config_depends |
 | 37 | D_SECURITY 对抗验证: kb_bridge.py | → | UnifiedMemoryAPI — RI-02 统一记忆 API（M2 跨模... | 导入依赖 / import_depends |
 | 38 | D_SHARED 共享服务: test_cross_layer.py | → | inference_base.py | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 26 个外部域直接连接（出边 94 条 + 入边 38 条 = 132 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 26 个外部域直接连接（出边 95 条 + 入边 38 条 = 133 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -872,11 +884,11 @@ graph LR
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
-    D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_BACKTEST["D_BACKTEST<br/>回测"]
     D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
+    D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
-    D_BACKTEST["D_BACKTEST<br/>回测"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_KB["D_GOV_KB<br/>知识库治理"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
@@ -898,11 +910,11 @@ graph LR
     D_INTELLIGENCE -->|13条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INTELLIGENCE -->|6条 config_depends / config_depends, 导入依赖 / import_depends| D_ML_TRAIN
     D_INTELLIGENCE -->|5条 测试依赖 / test_depends| D_GOV_DRIFT
-    D_INTELLIGENCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INTEGRATION
+    D_INTELLIGENCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_BACKTEST
     D_INTELLIGENCE -->|4条 测试依赖 / test_depends| D_FBL_DIAGNOSERS
     D_INTELLIGENCE -->|4条 测试依赖 / test_depends| D_FEEDBACK_LOOP
+    D_INTELLIGENCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INTEGRATION
     D_INTELLIGENCE -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_AUTONOMY_CORE
-    D_INTELLIGENCE -->|3条 导入依赖 / import_depends| D_BACKTEST
     D_INTELLIGENCE -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOVERNANCE
     D_INTELLIGENCE -->|3条 导入依赖 / import_depends| D_GOV_KB
     D_INTELLIGENCE -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_GOV_RULE

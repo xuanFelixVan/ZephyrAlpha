@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_INTEGRATION_GATEWAY 集成网关架构文档
 version: "1.0"
 status: active
-date: 2026-07-16
+date: 2026-07-17
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 集成网关（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 22:48:17
+> 最后更新: 2026-07-17 00:01:28
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -74,16 +74,16 @@ graph TD
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -131,16 +131,16 @@ graph TD
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000

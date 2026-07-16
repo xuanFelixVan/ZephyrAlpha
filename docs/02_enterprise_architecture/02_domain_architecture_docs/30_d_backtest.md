@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_BACKTEST 回测架构文档
 version: "1.0"
 status: active
-date: 2026-07-16
+date: 2026-07-17
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回测（D_BACKTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 22:47:26
+> 最后更新: 2026-07-17 00:00:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 33 | Module Count | 33 |
 | 域内依赖 | 44 | Internal Dependencies | 44 |
-| 跨域入边 | 20 | Cross-domain Incoming | 20 |
+| 跨域入边 | 21 | Cross-domain Incoming | 21 |
 | 跨域出边 | 8 | Cross-domain Outgoing | 8 |
 | 设计态模块 | 8 | Design Modules | 8 |
 | 原型态模块 | 16 | Prototype Modules | 16 |
@@ -139,77 +139,77 @@ graph TD
     src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    src_zephyr_backtest_implementations_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_event_driven_engine_py
     src_zephyr_backtest_io_backtest_result_sink_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_implementations_vectorized_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
-    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_data_handler_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
+    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_data_handler_py
+    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
-    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
-    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
+    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
-    src_zephyr_backtest_core_data_handler_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_backtest_core_tick_replay_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_backtest_core_data_handler_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_DATA["(生产态 / production) D_DATA"]
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_DATA
-    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
-    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py_1
     D_FRONTEND["(设计态 / design) D_FRONTEND"]
     D_FRONTEND -.->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py_1
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_io_decisiongraph_adapter_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_portfolio_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_backtest_core_data_handler_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_core_matching_engine_py,src_zephyr_backtest_core_matching_logic_py,src_zephyr_backtest_core_portfolio_py,src_zephyr_backtest_core_tick_replay_py,src_zephyr_backtest_implementations_event_driven_engine_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_io_decisiongraph_adapter_py production
     class src_zephyr_backtest_init_py,src_zephyr_backtest_extensions_init_py,src_zephyr_backtest_api_init_py,src_zephyr_backtest_core_init_py,src_zephyr_backtest_core_data_handler_py_1,src_zephyr_backtest_core_decision_gate_py,src_zephyr_backtest_core_matching_engine_py_1,src_zephyr_backtest_core_matching_logic_py_1,src_zephyr_backtest_core_metrics_py,src_zephyr_backtest_core_metrics_py_1,src_zephyr_backtest_core_overfitting_detector_py,src_zephyr_backtest_core_pit_manager_py,src_zephyr_backtest_core_portfolio_py_1,src_zephyr_backtest_core_tick_replay_py_1,src_zephyr_backtest_core_walk_forward_py,src_zephyr_backtest_implementations_init_py,src_zephyr_backtest_infrastructure_init_py,src_zephyr_backtest_io_init_py,src_zephyr_backtest_io_backtest_result_sink_py,src_zephyr_backtest_io_backtest_result_sink_py_1,src_zephyr_backtest_io_result_repository_py design
-    class D_SHARED,D_DATA external_prod
+    class D_DATA,D_SHARED external_prod
     class D_GOVERNANCE,D_INFRA_RUNTIME,D_EX_CORE,D_FRONTEND,D_INTELLIGENCE,D_AUDITTEST external_design
 ```
 
@@ -252,40 +252,40 @@ graph TD
     src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_core_matching_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_core_tick_replay_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
-    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
     src_zephyr_backtest_implementations_vectorized_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_engine_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_tick_replay_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_core_portfolio_py
+    src_zephyr_backtest_implementations_event_driven_engine_py -->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_DATA["(原型态 / prototype) D_DATA"]
     src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_DATA
     src_zephyr_backtest_core_data_handler_py -->|导入依赖 / import_depends| D_DATA
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_backtest_core_engine_base_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_backtest_io_decisiongraph_adapter_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_AUDITTEST["(原型态 / prototype) D_AUDITTEST"]
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
-    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
-    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_data_handler_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
     D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_logic_py
+    D_INTELLIGENCE["(原型态 / prototype) D_INTELLIGENCE"]
+    D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_core_engine_base_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    D_INTELLIGENCE -.->|测试依赖 / test_depends| src_zephyr_backtest_core_engine_base_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_matching_engine_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
+    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_portfolio_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_core_tick_replay_py
-    D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_implementations_event_driven_engine_py
     D_AUDITTEST -.->|测试依赖 / test_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_backtest_implementations_vectorized_engine_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -294,7 +294,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_backtest_core_data_handler_py,src_zephyr_backtest_core_engine_base_py,src_zephyr_backtest_core_matching_engine_py,src_zephyr_backtest_core_matching_logic_py,src_zephyr_backtest_core_portfolio_py,src_zephyr_backtest_core_tick_replay_py,src_zephyr_backtest_implementations_event_driven_engine_py,src_zephyr_backtest_implementations_vectorized_engine_py,src_zephyr_backtest_io_decisiongraph_adapter_py production
     class D_SHARED,D_GOVERNANCE external_prod
-    class D_INFRA_RUNTIME,D_DATA,D_AUDITTEST,D_INTELLIGENCE,D_EX_CORE external_design
+    class D_INFRA_RUNTIME,D_DATA,D_AUDITTEST,D_EX_CORE,D_INTELLIGENCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -318,8 +318,8 @@ graph TD
     src_zephyr_backtest_core_matching_engine_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_matching_logic_py
     src_zephyr_backtest_io_result_repository_py -.->|import / import| src_zephyr_backtest_io_backtest_result_sink_py
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
-    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_backtest_core_tick_replay_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_backtest_core_data_handler_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_FRONTEND["(设计态 / design) D_FRONTEND"]
     D_FRONTEND -.->|import / import| src_zephyr_backtest_io_result_repository_py
     D_EX_CORE["(设计态 / design) D_EX_CORE"]
@@ -358,12 +358,12 @@ graph TD
         src_zephyr_backtest_services_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_backtest_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_init_py
-    src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_decision_gate_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_metrics_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_overfitting_detector_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_pit_manager_py
     src_zephyr_backtest_core_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_core_walk_forward_py
+    src_zephyr_backtest_io_result_repository_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_backtest_result_sink_py
     src_zephyr_backtest_io_init_py -.->|导入依赖 / import_depends| src_zephyr_backtest_io_result_repository_py
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -415,10 +415,11 @@ graph TD
 | 18 | D_INTELLIGENCE 上下文管理: D_RESEARCH — Research & Innovation Concrete Im... | → | L_BACKTEST — Vectorized Backtest Engine (vecto... | 导入依赖 / import_depends |
 | 19 | D_INTELLIGENCE 上下文管理: Intelligence — Model Evaluation Concrete Imple... | → | L_BACKTEST — Vectorized Backtest Engine (vecto... | 导入依赖 / import_depends |
 | 20 | D_INTELLIGENCE 上下文管理: D_RESEARCH Research & Innovation (__init__.py) | → | L_BACKTEST — Backtest Engine Layer (engine_bas... | 导入依赖 / import_depends |
+| 21 | D_INTELLIGENCE 上下文管理: test_l09_research_innovation.py | → | L_BACKTEST — Backtest Engine Layer (engine_bas... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 8 个外部域直接连接（出边 8 条 + 入边 20 条 = 28 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 8 个外部域直接连接（出边 8 条 + 入边 21 条 = 29 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -436,7 +437,7 @@ graph LR
     D_BACKTEST -->|2条 导入依赖 / import_depends| D_SHARED
     D_BACKTEST -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_AUDITTEST -->|13条 测试依赖 / test_depends| D_BACKTEST
-    D_INTELLIGENCE -->|3条 导入依赖 / import_depends| D_BACKTEST
+    D_INTELLIGENCE -->|4条 导入依赖 / import_depends, 测试依赖 / test_depends| D_BACKTEST
     D_EX_CORE -->|2条 导入依赖 / import_depends| D_BACKTEST
     D_FRONTEND -->|2条 import / import, 导入依赖 / import_depends| D_BACKTEST
 ```

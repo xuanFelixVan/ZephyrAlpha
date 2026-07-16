@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_AUTONOMY_PERM 自治保护架构文档
 version: "1.0"
 status: active
-date: 2026-07-16
+date: 2026-07-17
 owner: auto-generator
 ttl: permanent
 ---
@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 22:47:25
+> 最后更新: 2026-07-17 00:00:51
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -138,21 +138,21 @@ graph TD
         tests_agent_rbac_test_observability_agent_rbac_py["(原型态 / prototype) 测试 L6 Observability — 指标上报与异常检测<br/>文件: test_observability_agent_rbac.py"]
     end
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -.->|config_depends / config_depends| D_GOVERNANCE
     scripts_governance_meta_manage_kill_switch_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_resilience_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_decisions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_cybersec_2026_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_decision_explainer_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_decisions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -181,12 +181,6 @@ graph TD
         tests_agent_rbac_test_vibe_coding_py["(原型态 / prototype) Vibe Coding / Novel Attack / Cybersec 2026 攻击...<br/>文件: test_vibe_coding.py"]
     end
     D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_agent_rbac_test_output_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_post_action_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_permission_guard_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_permission_guard_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_permission_guard_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_rbac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_rbac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
@@ -194,14 +188,21 @@ graph TD
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -.->|测试依赖 / test_depends| D_SECURITY
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    tests_agent_rbac_test_rbac_auto_lifecycle_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_agent_rbac_test_vibe_coding_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_vibe_coding_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_redteam_adversarial_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_agent_rbac_test_output_guard_agent_rbac_py,tests_agent_rbac_test_permission_guard_py,tests_agent_rbac_test_permissions_py,tests_agent_rbac_test_post_action_py,tests_agent_rbac_test_rbac_auto_lifecycle_py,tests_agent_rbac_test_rbac_guard_agent_rbac_py,tests_agent_rbac_test_redteam_adversarial_py,tests_agent_rbac_test_risk_mitigation_agent_rbac_py,tests_agent_rbac_test_sequence_guard_agent_rbac_py,tests_agent_rbac_test_toctou_guard_agent_rbac_py,tests_agent_rbac_test_vibe_coding_py design
-    class D_SECURITY external_prod
+    class D_SECURITY,D_GOV_OPS_RESILIENCE external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -265,30 +266,28 @@ graph TD
         tests_agent_rbac_test_toctou_guard_agent_rbac_py["(原型态 / prototype) 测试 TOCTOU Guard — 竞态防护<br/>文件: test_toctou_guard_agent_rbac.py"]
         tests_agent_rbac_test_vibe_coding_py["(原型态 / prototype) Vibe Coding / Novel Attack / Cybersec 2026 攻击...<br/>文件: test_vibe_coding.py"]
     end
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    scripts_arch_guard_fitness_functions_check_kill_switch_latency_py -.->|config_depends / config_depends| D_GOVERNANCE
-    scripts_governance_meta_manage_kill_switch_py -.->|config_depends / config_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_agent_rbac_test_forensic_c_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_resilience_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_decisions_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cybersec_2026_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_decision_explainer_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_exceptions_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_enhanced_security_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_forensic_a_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_rbac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_arch_guard_fitness_functions_check_kill_switch_latency_py,scripts_governance_meta_manage_kill_switch_py,tests_agent_rbac_conftest_py,tests_agent_rbac_test_abac_guard_agent_rbac_py,tests_agent_rbac_test_adversarial_agent_rbac_py,tests_agent_rbac_test_adversarial_resilience_py,tests_agent_rbac_test_cross_model_consistency_py,tests_agent_rbac_test_crosscut_d_py,tests_agent_rbac_test_cybersec_2026_py,tests_agent_rbac_test_decision_explainer_agent_rbac_py,tests_agent_rbac_test_decisions_py,tests_agent_rbac_test_derive_rbac_py,tests_agent_rbac_test_dry_run_agent_rbac_py,tests_agent_rbac_test_engine_degradation_agent_rbac_py,tests_agent_rbac_test_enhanced_security_py,tests_agent_rbac_test_exceptions_agent_rbac_py,tests_agent_rbac_test_forensic_a_py,tests_agent_rbac_test_forensic_b_py,tests_agent_rbac_test_forensic_c_py,tests_agent_rbac_test_guard_layers_agent_rbac_py,tests_agent_rbac_test_identity_py,tests_agent_rbac_test_immutable_core_agent_rbac_py,tests_agent_rbac_test_input_guard_agent_rbac_py,tests_agent_rbac_test_integration_agent_rbac_py,tests_agent_rbac_test_integration_root_py,tests_agent_rbac_test_integrity_agent_rbac_py,tests_agent_rbac_test_intent_binder_agent_rbac_py,tests_agent_rbac_test_kill_switch_agent_rbac_py,tests_agent_rbac_test_novel_attack_py,tests_agent_rbac_test_observability_agent_rbac_py,tests_agent_rbac_test_output_guard_agent_rbac_py,tests_agent_rbac_test_permission_guard_py,tests_agent_rbac_test_permissions_py,tests_agent_rbac_test_post_action_py,tests_agent_rbac_test_rbac_auto_lifecycle_py,tests_agent_rbac_test_rbac_guard_agent_rbac_py,tests_agent_rbac_test_redteam_adversarial_py,tests_agent_rbac_test_risk_mitigation_agent_rbac_py,tests_agent_rbac_test_sequence_guard_agent_rbac_py,tests_agent_rbac_test_toctou_guard_agent_rbac_py,tests_agent_rbac_test_vibe_coding_py design
     class D_SECURITY external_prod
-    class D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

@@ -1,5 +1,5 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-16 22:48:32
+%% 生成时间: 2026-07-17 00:01:38
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 9, 依赖边数: 59
 
@@ -33,8 +33,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
@@ -64,19 +64,19 @@ graph TD
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     %% D_INTELLIGENCE -> D_OPS (13 条)
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     %% D_SHARED -> D_OPS (1 条)
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
 
