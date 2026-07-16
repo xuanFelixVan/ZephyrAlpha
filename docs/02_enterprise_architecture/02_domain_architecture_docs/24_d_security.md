@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 对抗验证（D_SECURITY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-16 22:44:03
+> 最后更新: 2026-07-16 22:48:21
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -322,52 +322,50 @@ graph TD
     src_zephyr_security_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_init_py
     src_zephyr_security_access_control_build_sanitizer_py -.->|config_depends / config_depends| src_zephyr_security_access_control_init_py
     src_zephyr_security_access_control_cascading_failure_isolator_py -.->|config_depends / config_depends| src_zephyr_security_access_control_init_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_governance_implementations_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_reconciler_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_runbook_generator_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_state_machine_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_scanners_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_drift_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_drift_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_analysis_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_infrastructure_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_drift_state_machine_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_compliance_gate_a6_init_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_implementations_init_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_alert_router_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_events_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_runbook_generator_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_state_machine_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_events_py
+    D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
+    D_INFRA_RECOVERY -->|导入依赖 / import_depends| src_zephyr_gov_drift_events_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
     D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
     D_INFRA_A2A -.->|测试依赖 / test_depends| src_zephyr_security_access_control_a2a_check_py
-    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_canary_rollout_manager_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_gov_drift_events_py
-    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_implementations_init_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_state_machine_py
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_gov_drift_events_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_init_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_security_access_control_init_py
-    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
-    D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_security_access_control_canary_rollout_manager_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_adversarial_resilience_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_agent_creation_policy_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_auto_maintenance_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_drift_events_py,src_zephyr_security_access_control_init_py,src_zephyr_security_access_control_a2a_check_py,src_zephyr_security_access_control_adversarial_resilience_py,src_zephyr_security_access_control_agent_creation_policy_py,src_zephyr_security_access_control_approver_check_py,src_zephyr_security_access_control_asymmetric_audit_py,src_zephyr_security_access_control_auto_maintenance_py,src_zephyr_security_access_control_blueprint_fidelity_py,src_zephyr_security_access_control_bootstrap_superadmin_py,src_zephyr_security_access_control_cache_invalidation_py,src_zephyr_security_access_control_canary_rollout_manager_py,src_zephyr_security_access_control_capability_check_py production
     class src_zephyr_gov_drift_main_py,src_zephyr_gov_drift_analysis_py,src_zephyr_gov_drift_core_py,src_zephyr_gov_drift_drift_py,src_zephyr_gov_drift_infrastructure_py,src_zephyr_gov_drift_scanners_py,src_zephyr_gov_drift_alert_router_py,src_zephyr_gov_drift_cold_start_py,src_zephyr_gov_drift_reconciler_py,src_zephyr_gov_drift_runbook_generator_py,src_zephyr_gov_drift_state_machine_py,src_zephyr_governance_compliance_gate_a6_init_py,src_zephyr_governance_implementations_init_py,src_zephyr_security_init_py,src_zephyr_security_extensions_init_py,src_zephyr_security_access_control_build_sanitizer_py,src_zephyr_security_access_control_cascading_failure_isolator_py design
-    class D_SHARED,D_GOV_DRIFT external_prod
-    class D_INFRA_A2A,D_AUTONOMY_PERM,D_GOVERNANCE,D_COMPLIANCE,D_GOV_AUDIT,D_INFRA_RECOVERY external_design
+    class D_SHARED,D_GOV_DRIFT,D_INFRA_RECOVERY external_prod
+    class D_GOVERNANCE,D_COMPLIANCE,D_INFRA_A2A external_design
 ```
 
 #### 第 2 页 / 共 8 页
@@ -412,26 +410,23 @@ graph TD
     src_zephyr_security_access_control_guards_anti_pattern_guard_py -.->|config_depends / config_depends| src_zephyr_security_access_control_guards_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_security_access_control_guards_abac_guard_py -->|导入依赖 / import_depends| D_SHARED
-    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_decision_registry_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_engine_degradation_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_engine_degradation_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_input_guard_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_detectors_context_drift_detector_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_genesis_bootstrap_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_abac_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_detectors_shell_dialect_detector_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_engine_degradation_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guard_layers_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_abac_guard_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_genesis_bootstrap_py
+    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_detectors_cross_session_detector_py
-    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_security_access_control_cold_start_lock_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_escalation_handler_py
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
-    D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guard_layers_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_abac_guard_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_decision_registry_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_cybersec_2026_guard_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_decision_explainer_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_derive_rbac_roles_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_detectors_anomaly_detector_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_engine_degradation_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_dry_run_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_exceptions_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_detectors_cross_session_detector_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_emergency_override_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_genesis_bootstrap_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -439,7 +434,7 @@ graph TD
     class src_zephyr_security_access_control_cold_start_lock_py,src_zephyr_security_access_control_contracts_py,src_zephyr_security_access_control_cross_cutting_py,src_zephyr_security_access_control_decision_explainer_py,src_zephyr_security_access_control_decision_registry_py,src_zephyr_security_access_control_dependency_auditor_py,src_zephyr_security_access_control_derive_rbac_roles_py,src_zephyr_security_access_control_detectors_anomaly_detector_py,src_zephyr_security_access_control_detectors_context_drift_detector_py,src_zephyr_security_access_control_detectors_cross_session_detector_py,src_zephyr_security_access_control_detectors_false_completion_detector_py,src_zephyr_security_access_control_detectors_multi_agent_collusion_detector_py,src_zephyr_security_access_control_detectors_shell_dialect_detector_py,src_zephyr_security_access_control_dry_run_py,src_zephyr_security_access_control_emergency_override_py,src_zephyr_security_access_control_engine_degradation_py,src_zephyr_security_access_control_escalation_handler_py,src_zephyr_security_access_control_exceptions_py,src_zephyr_security_access_control_genesis_bootstrap_py,src_zephyr_security_access_control_guard_layers_py,src_zephyr_security_access_control_guards_abac_guard_py,src_zephyr_security_access_control_guards_audit_log_guard_py,src_zephyr_security_access_control_guards_cybersec_2026_guard_py,src_zephyr_security_access_control_guards_input_guard_py production
     class src_zephyr_security_access_control_compliance_matrix_py,src_zephyr_security_access_control_defense_depth_py,src_zephyr_security_access_control_detectors_init_py,src_zephyr_security_access_control_environment_manager_py,src_zephyr_security_access_control_guards_init_py,src_zephyr_security_access_control_guards_anti_pattern_guard_py design
     class D_SHARED,D_INFRA_RUNTIME external_prod
-    class D_AUTONOMY_PERM,D_GOVERNANCE,D_AUTONOMY_CORE,D_GOV_ENFORCEMENT external_design
+    class D_AUTONOMY_PERM external_design
 ```
 
 #### 第 3 页 / 共 8 页
@@ -478,14 +473,14 @@ graph TD
         src_zephyr_security_access_control_orphan_judge_config_loader_py["(原型态 / prototype) config_loader.py"]
         src_zephyr_security_access_control_orphan_judge_db_py["(原型态 / prototype) db.py"]
     end
-    src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
+    src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
+    src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
+    src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_config_loader_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_db_py
-    src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_main_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_security_access_control_immutable_core_py -->|导入依赖 / import_depends| D_SHARED
@@ -493,31 +488,31 @@ graph TD
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_security_access_control_orphan_judge_db_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_security_access_control_orphan_judge_main_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_access_control_guards_permission_guard_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_access_control_guards_permission_guard_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_non_repudiation_py
+    D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_security_access_control_kill_switch_py
     D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_replay_attack_guard_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_monotonic_clock_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_non_repudiation_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_immutable_core_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_integrity_self_check_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_permission_guard_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_path_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_immutable_core_py
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_path_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_replay_attack_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_memory_guard_py
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_native_api_guard_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_access_control_guards_memory_guard_py,src_zephyr_security_access_control_guards_memory_provenance_guard_py,src_zephyr_security_access_control_guards_native_api_guard_py,src_zephyr_security_access_control_guards_novel_attack_guard_py,src_zephyr_security_access_control_guards_output_guard_py,src_zephyr_security_access_control_guards_path_guard_py,src_zephyr_security_access_control_guards_permission_guard_py,src_zephyr_security_access_control_guards_rbac_guard_py,src_zephyr_security_access_control_guards_replay_attack_guard_py,src_zephyr_security_access_control_guards_rule_injection_guard_py,src_zephyr_security_access_control_guards_sequence_guard_py,src_zephyr_security_access_control_guards_toctou_guard_py,src_zephyr_security_access_control_guards_vibe_coding_guard_py,src_zephyr_security_access_control_identity_py,src_zephyr_security_access_control_immutable_core_py,src_zephyr_security_access_control_integration_py,src_zephyr_security_access_control_integrity_self_check_py,src_zephyr_security_access_control_intent_binder_py,src_zephyr_security_access_control_kill_switch_py,src_zephyr_security_access_control_legal_audit_chain_py,src_zephyr_security_access_control_microstructure_defense_py,src_zephyr_security_access_control_monotonic_clock_py,src_zephyr_security_access_control_non_repudiation_py,src_zephyr_security_access_control_observability_py,src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py production
     class src_zephyr_security_access_control_key_hierarchy_py,src_zephyr_security_access_control_orphan_judge_init_py,src_zephyr_security_access_control_orphan_judge_main_py,src_zephyr_security_access_control_orphan_judge_config_loader_py,src_zephyr_security_access_control_orphan_judge_db_py design
-    class D_SHARED,D_GOVERNANCE external_prod
-    class D_AUTONOMY_PERM,D_INFRASTRUCTURE external_design
+    class D_SHARED,D_GOVERNANCE,D_INFRA_RUNTIME external_prod
+    class D_AUTONOMY_PERM external_design
 ```
 
 #### 第 4 页 / 共 8 页
@@ -558,65 +553,62 @@ graph TD
     end
     src_zephyr_security_access_control_orphan_judge_mcp_integration_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_models_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
-    src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
     src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py
+    src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_decision_table_py
     src_zephyr_security_access_control_orphan_judge_orphan_collector_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_safety_fence_py
-    src_zephyr_security_access_control_orphan_judge_registration_checker_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
+    src_zephyr_security_access_control_orphan_judge_registration_checker_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_unique_analyzer_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     src_zephyr_security_access_control_verifiers_bootstrap_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_DRIFT["(原型态 / prototype) D_GOV_DRIFT"]
     src_zephyr_security_access_control_orphan_judge_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
-    src_zephyr_security_access_control_orphan_judge_kb_bridge_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_security_access_control_orphan_judge_escalation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    src_zephyr_security_access_control_orphan_judge_mcp_integration_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     src_zephyr_security_access_control_orphan_judge_feedback_bridge_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
+    src_zephyr_security_access_control_orphan_judge_kb_bridge_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    src_zephyr_security_access_control_orphan_judge_mcp_integration_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_security_access_control_orphan_judge_judge_py -->|导入依赖 / import_depends| D_GOV_RULE
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
+    src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_permission_hooks_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_rollback_sandbox_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_permission_hooks_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_risk_mitigation_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_security_access_control_orphan_judge_safety_fence_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_session_lifecycle_py
     D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_permission_hooks_py
-    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_orphan_judge_orphan_detector_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_access_control_orphan_judge_decision_table_py,src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py,src_zephyr_security_access_control_orphan_judge_judge_py,src_zephyr_security_access_control_orphan_judge_orphan_detector_py,src_zephyr_security_access_control_orphan_judge_safety_fence_py,src_zephyr_security_access_control_permission_hooks_py,src_zephyr_security_access_control_risk_mitigation_py,src_zephyr_security_access_control_rollback_sandbox_py,src_zephyr_security_access_control_session_concurrency_py,src_zephyr_security_access_control_session_lifecycle_py production
     class src_zephyr_security_access_control_orphan_judge_drift_bridge_py,src_zephyr_security_access_control_orphan_judge_duplicate_detector_py,src_zephyr_security_access_control_orphan_judge_escalation_bridge_py,src_zephyr_security_access_control_orphan_judge_feedback_bridge_py,src_zephyr_security_access_control_orphan_judge_kb_bridge_py,src_zephyr_security_access_control_orphan_judge_mcp_integration_py,src_zephyr_security_access_control_orphan_judge_models_py,src_zephyr_security_access_control_orphan_judge_orphan_collector_py,src_zephyr_security_access_control_orphan_judge_rbac_bridge_py,src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py,src_zephyr_security_access_control_orphan_judge_registration_checker_py,src_zephyr_security_access_control_orphan_judge_report_generator_py,src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py,src_zephyr_security_access_control_orphan_judge_swid_tag_py,src_zephyr_security_access_control_orphan_judge_unique_analyzer_py,src_zephyr_security_access_control_permission_mode_manager_py,src_zephyr_security_access_control_phase_executor_py,src_zephyr_security_access_control_secrets_lifecycle_py,src_zephyr_security_access_control_verifiers_init_py,src_zephyr_security_access_control_verifiers_bootstrap_verifier_py design
-    class D_SHARED,D_INFRA_RUNTIME,D_INTELLIGENCE,D_GOV_OPS_RESILIENCE,D_FEEDBACK_LOOP,D_GOV_RULE,D_GOV_ENFORCEMENT external_prod
-    class D_GOV_DRIFT,D_GOV_AUDIT,D_GOV_SCRIPTS,D_GOVERNANCE,D_AUTONOMY_PERM,D_AUTONOMY_CORE,D_SECURITY_LLM external_design
+    class D_GOV_OPS_RESILIENCE,D_SHARED,D_FEEDBACK_LOOP,D_INTELLIGENCE,D_GOV_RULE external_prod
+    class D_GOV_DRIFT,D_INFRA_RUNTIME,D_GOV_AUDIT,D_GOV_ENFORCEMENT,D_GOVERNANCE,D_GOV_SCRIPTS,D_AUTONOMY_PERM external_design
 ```
 
 #### 第 5 页 / 共 8 页
@@ -655,100 +647,98 @@ graph TD
         src_zephyr_security_adversarial_validation_validator_py["(原型态 / prototype) validator.py"]
         src_zephyr_security_adversarial_validation_validator_event_bridge_py["(原型态 / prototype) ValidatorEventBridge — 红蓝验证器事件桥接 (MOD...<br/>文件: validator_event_bridge.py"]
     end
-    src_zephyr_security_adversarial_validation_async_monitor_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_async_monitor_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_async_monitor_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cleanup_py
-    src_zephyr_security_adversarial_validation_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_bypass_recorder_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_async_monitor_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_blast_radius_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cold_start_py
-    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
-    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
-    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_bypass_recorder_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_constitution_engine_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_constitution_guard_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cold_start_py
+    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
+    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
+    src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_convergence_checker_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_game_day_scheduler_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
-    src_zephyr_security_adversarial_validation_injection_engine_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
+    src_zephyr_security_adversarial_validation_game_day_scheduler_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
+    src_zephyr_security_adversarial_validation_injection_engine_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_scenario_loader_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
+    src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_steady_state_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_validator_event_bridge_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_main_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
-    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cleanup_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_ai_attack_generator_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_async_monitor_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_attack_registry_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_async_monitor_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cleanup_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cold_start_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_constitution_engine_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_constitution_guard_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_scheduler_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_injection_engine_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_mcp_endpoints_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_scenario_registry_yaml -.->|config_depends / config_depends| src_zephyr_security_adversarial_validation_init_py
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_security_adversarial_validation_constitution_guard_py -.->|导入依赖 / import_depends| D_GOV_RULE
-    src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_GOV_RULE
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_GOV_RULE
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_security_adversarial_validation_defense_runner_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_adversarial_validation_validator_event_bridge_py -.->|导入依赖 / import_depends| D_SHARED
-    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_verifiers_contract_verifier_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| D_SHARED
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     D_FBL_VERIFICATION -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_init_py
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_verifiers_contract_verifier_py
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
+    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
+    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_verifiers_contract_verifier_py
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_security_access_control_verifiers_contract_verifier_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_access_control_verifiers_contract_verifier_py,src_zephyr_security_adversarial_validation_scenario_registry_yaml,src_zephyr_security_adversarial_validation_async_monitor_py,src_zephyr_security_adversarial_validation_circuit_breaker_py,src_zephyr_security_adversarial_validation_constitution_engine_py,src_zephyr_security_adversarial_validation_game_day_scheduler_py,src_zephyr_security_adversarial_validation_models_py production
     class src_zephyr_security_access_control_verifiers_continuous_verifier_py,src_zephyr_security_access_control_verifiers_micro_verifier_py,src_zephyr_security_access_control_verifiers_post_action_verifier_py,src_zephyr_security_adversarial_validation_init_py,src_zephyr_security_adversarial_validation_main_py,src_zephyr_security_adversarial_validation_ai_attack_generator_py,src_zephyr_security_adversarial_validation_attack_registry_py,src_zephyr_security_adversarial_validation_blast_radius_py,src_zephyr_security_adversarial_validation_bypass_recorder_py,src_zephyr_security_adversarial_validation_cleanup_py,src_zephyr_security_adversarial_validation_cli_py,src_zephyr_security_adversarial_validation_cold_start_py,src_zephyr_security_adversarial_validation_commit_trigger_py,src_zephyr_security_adversarial_validation_constitution_guard_py,src_zephyr_security_adversarial_validation_convergence_checker_py,src_zephyr_security_adversarial_validation_defense_runner_py,src_zephyr_security_adversarial_validation_game_day_runner_py,src_zephyr_security_adversarial_validation_injection_engine_py,src_zephyr_security_adversarial_validation_mcp_endpoints_py,src_zephyr_security_adversarial_validation_scenario_loader_py,src_zephyr_security_adversarial_validation_steady_state_py,src_zephyr_security_adversarial_validation_validator_py,src_zephyr_security_adversarial_validation_validator_event_bridge_py design
-    class D_GOV_RULE,D_SHARED,D_INTEGRATION,D_FBL_VERIFICATION,D_INFRA_RUNTIME,D_GOV_ENFORCEMENT external_prod
-    class D_GOV_AUDIT,D_AUTONOMY_PERM,D_GOVERNANCE,D_INFRASTRUCTURE external_design
+    class D_GOV_RULE,D_SHARED,D_INTEGRATION,D_FBL_VERIFICATION,D_GOV_ENFORCEMENT,D_INFRA_RUNTIME external_prod
+    class D_GOV_AUDIT,D_AUTONOMY_PERM,D_INFRASTRUCTURE external_design
 ```
 
 #### 第 6 页 / 共 8 页
@@ -790,89 +780,91 @@ graph TD
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l1_input_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
     src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l1_input_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
+    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l1_input_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_patterns_secrets_py
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py
     src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
-    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
-    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_patterns_secrets_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
-    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
-    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| D_SHARED
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_security_llm_defense_llm_security_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_protocol_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_process_sandbox_py
-    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
-    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
-    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
-    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l1_input_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
+    src_zephyr_security_llm_defense_llm_security_dashboard_app_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py
-    D_SECURITY_LLM -.->|测试依赖 / test_depends| src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
+    D_ORCHESTRATOR -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py
+    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
+    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_process_sandbox_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py,src_zephyr_security_llm_defense_llm_security_gateway_py,src_zephyr_security_llm_defense_llm_security_input_sanitizer_py,src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py,src_zephyr_security_llm_defense_llm_security_layers_l1_input_py,src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py,src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_layers_l3_output_py,src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py,src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py,src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py,src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py,src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py,src_zephyr_security_llm_defense_llm_security_patterns_secrets_py,src_zephyr_security_llm_defense_llm_security_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_protocol_py,src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py,src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py,src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py,src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py,src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py,src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py production
     class src_zephyr_security_api_init_py,src_zephyr_security_core_init_py,src_zephyr_security_infrastructure_init_py,src_zephyr_security_llm_defense_llm_security_dashboard_app_py,src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py,src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py,src_zephyr_security_models_init_py,src_zephyr_security_services_init_py design
-    class D_SHARED,D_GOV_AUDIT,D_GOV_OPS_RESILIENCE,D_ORCHESTRATOR,D_INTEGRATION,D_FEEDBACK_LOOP external_prod
+    class D_SHARED,D_GOV_AUDIT,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOV_OPS_RESILIENCE,D_GOVERNANCE,D_INTEGRATION,D_ORCHESTRATOR external_prod
     class D_SECURITY_LLM external_design
 ```
 
@@ -915,27 +907,28 @@ graph TD
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_safety_test_attack_simulator_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_SHARED["(生产态 / production) D_SHARED"]
+    tests_safety_test_commit_trigger_py -.->|测试依赖 / test_depends| D_SHARED
     tests_safety_test_game_day_scheduler_py -.->|测试依赖 / test_depends| D_SHARED
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     tests_safety_test_phase_manager_integration_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    D_GOV_KB["(生产态 / production) D_GOV_KB"]
+    tests_safety_test_safety_brake_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_safety_test_safety_gate_l1_l27_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     tests_safety_test_safety_gate_l28_l29_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l54_l55_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l54_l55_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l56_l57_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l56_l57_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l58_l59_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l58_l59_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l60_l61_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l28_l29_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l36_l37_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l36_l37_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l38_l39_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l38_l39_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     tests_safety_test_safety_gate_l40_l41_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l46_l47_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l52_l53_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l46_l47_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l40_l41_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_safety_test_safety_gate_l42_l43_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_safety_test_async_monitor_py,tests_safety_test_attack_simulator_py,tests_safety_test_circuit_breaker_py,tests_safety_test_commit_trigger_py,tests_safety_test_constitution_engine_py,tests_safety_test_defense_runner_py,tests_safety_test_event_integration_py,tests_safety_test_game_day_scheduler_py,tests_safety_test_injection_engine_py,tests_safety_test_phase_manager_integration_py,tests_safety_test_red_blue_validator_py,tests_safety_test_red_blue_validator_tests_py,tests_safety_test_safety_brake_py,tests_safety_test_safety_gate_l1_l27_py,tests_safety_test_safety_gate_l28_l29_py,tests_safety_test_safety_gate_l36_l37_py,tests_safety_test_safety_gate_l38_l39_py,tests_safety_test_safety_gate_l40_l41_py,tests_safety_test_safety_gate_l42_l43_py,tests_safety_test_safety_gate_l44_l45_py,tests_safety_test_safety_gate_l46_l47_py,tests_safety_test_safety_gate_l48_l49_py,tests_safety_test_safety_gate_l50_l51_py,tests_safety_test_safety_gate_l52_l53_py,tests_safety_test_safety_gate_l54_l55_py,tests_safety_test_safety_gate_l56_l57_py,tests_safety_test_safety_gate_l58_l59_py,tests_safety_test_safety_gate_l60_l61_py,tests_safety_test_safety_gate_l62_l63_py,tests_safety_test_safety_gate_l64_l65_py design
-    class D_FBL_VERIFICATION,D_SHARED,D_GOV_OPS_RESILIENCE external_prod
+    class D_FBL_VERIFICATION,D_SHARED,D_GOV_OPS_RESILIENCE,D_GOV_KB external_prod
 ```
 
 #### 第 8 页 / 共 8 页
@@ -946,17 +939,17 @@ graph TD
         tests_safety_test_safety_gate_l66_l67_py["(原型态 / prototype) test_safety_gate_l66_l67.py"]
         tests_safety_test_scheduler_safety_py["(原型态 / prototype) test_scheduler_safety.py"]
     end
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_safety_test_scheduler_safety_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_safety_test_safety_gate_l66_l67_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     tests_safety_test_safety_gate_l66_l67_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
-    tests_safety_test_scheduler_safety_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_safety_test_safety_gate_l66_l67_py,tests_safety_test_scheduler_safety_py design
-    class D_FBL_VERIFICATION,D_FEEDBACK_LOOP external_prod
+    class D_FEEDBACK_LOOP,D_FBL_VERIFICATION external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -1075,83 +1068,86 @@ graph TD
     src_zephyr_security_access_control_genesis_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
     src_zephyr_security_access_control_genesis_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_kill_switch_py
     src_zephyr_security_access_control_guards_abac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
-    src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
+    src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_permission_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_immutable_core_py
+    src_zephyr_security_access_control_guards_rbac_guard_py -->|导入依赖 / import_depends| src_zephyr_security_access_control_identity_py
     src_zephyr_security_adversarial_validation_async_monitor_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_circuit_breaker_py
     src_zephyr_security_adversarial_validation_circuit_breaker_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_adversarial_validation_constitution_engine_py -->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_models_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l1_input_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l3_output_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py
-    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py
+    src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py
     src_zephyr_security_llm_defense_llm_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py
     src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l1_input_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
     src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py
-    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
+    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_security_access_control_immutable_core_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_patterns_secrets_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_access_control_guards_abac_guard_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_security_access_control_orphan_judge_orphan_detector_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    src_zephyr_security_access_control_orphan_judge_judge_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    src_zephyr_security_access_control_orphan_judge_judge_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py -.->|导入依赖 / import_depends| D_SECURITY_LLM
-    src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_security_llm_defense_llm_security_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_protocol_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_security_llm_defense_llm_security_layers_l1_input_py -->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_process_sandbox_py
-    D_SECURITY_LLM -.->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_protocol_py
-    D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
+    src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_security_llm_defense_llm_security_layers_l3_output_py -->|导入依赖 / import_depends| D_SHARED
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_events_py
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_access_control_guards_permission_guard_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_input_sanitizer_py
+    D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_security_llm_defense_llm_security_gateway_py
+    D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
-    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
-    D_INFRA_A2A -.->|测试依赖 / test_depends| src_zephyr_security_access_control_a2a_check_py
-    D_AUTONOMY_PERM["(原型态 / prototype) D_AUTONOMY_PERM"]
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_monotonic_clock_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_non_repudiation_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_decision_registry_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_identity_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_immutable_core_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_integrity_self_check_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_permission_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_rbac_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_engine_degradation_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_guards_path_guard_py
-    D_AUTONOMY_PERM -.->|测试依赖 / test_depends| src_zephyr_security_access_control_verifiers_contract_verifier_py
+    D_GOV_ENFORCEMENT -->|导入依赖 / import_depends| src_zephyr_security_access_control_session_concurrency_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_drift_events_py,src_zephyr_security_access_control_init_py,src_zephyr_security_access_control_a2a_check_py,src_zephyr_security_access_control_adversarial_resilience_py,src_zephyr_security_access_control_agent_creation_policy_py,src_zephyr_security_access_control_approver_check_py,src_zephyr_security_access_control_asymmetric_audit_py,src_zephyr_security_access_control_auto_maintenance_py,src_zephyr_security_access_control_blueprint_fidelity_py,src_zephyr_security_access_control_bootstrap_superadmin_py,src_zephyr_security_access_control_cache_invalidation_py,src_zephyr_security_access_control_canary_rollout_manager_py,src_zephyr_security_access_control_capability_check_py,src_zephyr_security_access_control_cold_start_lock_py,src_zephyr_security_access_control_contracts_py,src_zephyr_security_access_control_cross_cutting_py,src_zephyr_security_access_control_decision_explainer_py,src_zephyr_security_access_control_decision_registry_py,src_zephyr_security_access_control_dependency_auditor_py,src_zephyr_security_access_control_derive_rbac_roles_py,src_zephyr_security_access_control_detectors_anomaly_detector_py,src_zephyr_security_access_control_detectors_context_drift_detector_py,src_zephyr_security_access_control_detectors_cross_session_detector_py,src_zephyr_security_access_control_detectors_false_completion_detector_py,src_zephyr_security_access_control_detectors_multi_agent_collusion_detector_py,src_zephyr_security_access_control_detectors_shell_dialect_detector_py,src_zephyr_security_access_control_dry_run_py,src_zephyr_security_access_control_emergency_override_py,src_zephyr_security_access_control_engine_degradation_py,src_zephyr_security_access_control_escalation_handler_py,src_zephyr_security_access_control_exceptions_py,src_zephyr_security_access_control_genesis_bootstrap_py,src_zephyr_security_access_control_guard_layers_py,src_zephyr_security_access_control_guards_abac_guard_py,src_zephyr_security_access_control_guards_audit_log_guard_py,src_zephyr_security_access_control_guards_cybersec_2026_guard_py,src_zephyr_security_access_control_guards_input_guard_py,src_zephyr_security_access_control_guards_memory_guard_py,src_zephyr_security_access_control_guards_memory_provenance_guard_py,src_zephyr_security_access_control_guards_native_api_guard_py,src_zephyr_security_access_control_guards_novel_attack_guard_py,src_zephyr_security_access_control_guards_output_guard_py,src_zephyr_security_access_control_guards_path_guard_py,src_zephyr_security_access_control_guards_permission_guard_py,src_zephyr_security_access_control_guards_rbac_guard_py,src_zephyr_security_access_control_guards_replay_attack_guard_py,src_zephyr_security_access_control_guards_rule_injection_guard_py,src_zephyr_security_access_control_guards_sequence_guard_py,src_zephyr_security_access_control_guards_toctou_guard_py,src_zephyr_security_access_control_guards_vibe_coding_guard_py,src_zephyr_security_access_control_identity_py,src_zephyr_security_access_control_immutable_core_py,src_zephyr_security_access_control_integration_py,src_zephyr_security_access_control_integrity_self_check_py,src_zephyr_security_access_control_intent_binder_py,src_zephyr_security_access_control_kill_switch_py,src_zephyr_security_access_control_legal_audit_chain_py,src_zephyr_security_access_control_microstructure_defense_py,src_zephyr_security_access_control_monotonic_clock_py,src_zephyr_security_access_control_non_repudiation_py,src_zephyr_security_access_control_observability_py,src_zephyr_security_access_control_orphan_judge_cascade_analyzer_py,src_zephyr_security_access_control_orphan_judge_decision_table_py,src_zephyr_security_access_control_orphan_judge_deprecation_tracker_py,src_zephyr_security_access_control_orphan_judge_judge_py,src_zephyr_security_access_control_orphan_judge_orphan_detector_py,src_zephyr_security_access_control_orphan_judge_safety_fence_py,src_zephyr_security_access_control_permission_hooks_py,src_zephyr_security_access_control_risk_mitigation_py,src_zephyr_security_access_control_rollback_sandbox_py,src_zephyr_security_access_control_session_concurrency_py,src_zephyr_security_access_control_session_lifecycle_py,src_zephyr_security_access_control_verifiers_contract_verifier_py,src_zephyr_security_adversarial_validation_scenario_registry_yaml,src_zephyr_security_adversarial_validation_async_monitor_py,src_zephyr_security_adversarial_validation_circuit_breaker_py,src_zephyr_security_adversarial_validation_constitution_engine_py,src_zephyr_security_adversarial_validation_game_day_scheduler_py,src_zephyr_security_adversarial_validation_models_py,src_zephyr_security_llm_defense_llm_security_behavior_audit_logger_py,src_zephyr_security_llm_defense_llm_security_gateway_py,src_zephyr_security_llm_defense_llm_security_input_sanitizer_py,src_zephyr_security_llm_defense_llm_security_layers_l0_supply_chain_py,src_zephyr_security_llm_defense_llm_security_layers_l1_input_py,src_zephyr_security_llm_defense_llm_security_layers_l2_prompt_protection_py,src_zephyr_security_llm_defense_llm_security_layers_l2a_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_layers_l3_output_py,src_zephyr_security_llm_defense_llm_security_layers_l4_agent_py,src_zephyr_security_llm_defense_llm_security_layers_l5_resource_protection_py,src_zephyr_security_llm_defense_llm_security_layers_l6_observability_py,src_zephyr_security_llm_defense_llm_security_layers_l8_multi_agent_py,src_zephyr_security_llm_defense_llm_security_patterns_injection_patterns_py,src_zephyr_security_llm_defense_llm_security_patterns_secrets_py,src_zephyr_security_llm_defense_llm_security_process_sandbox_py,src_zephyr_security_llm_defense_llm_security_protocol_py,src_zephyr_security_llm_defense_llm_security_runtime_interceptor_py,src_zephyr_security_llm_defense_llm_security_self_protection_adversarial_mutator_py,src_zephyr_security_llm_defense_llm_security_self_protection_code_integrity_py,src_zephyr_security_llm_defense_llm_security_self_protection_isolation_py,src_zephyr_security_llm_defense_llm_security_self_protection_l7_validation_py,src_zephyr_security_llm_defense_llm_security_self_protection_red_team_scanner_py production
-    class D_SHARED,D_GOV_AUDIT,D_GOV_ENFORCEMENT external_prod
-    class D_SECURITY_LLM,D_INFRA_A2A,D_AUTONOMY_PERM external_design
+    class D_SHARED,D_INFRA_RUNTIME,D_GOV_RULE,D_AUTONOMY_CORE,D_FEEDBACK_LOOP,D_GOVERNANCE,D_GOV_OPS_RESILIENCE external_prod
+    class D_GOV_AUDIT,D_COMPLIANCE,D_GOV_ENFORCEMENT external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -1293,25 +1289,25 @@ graph TD
     src_zephyr_security_access_control_orphan_judge_swid_tag_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_verifiers_continuous_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_access_control_verifiers_bootstrap_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
-    src_zephyr_security_access_control_verifiers_micro_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_access_control_verifiers_post_action_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
+    src_zephyr_security_access_control_verifiers_micro_verifier_py -.->|config_depends / config_depends| src_zephyr_security_access_control_verifiers_init_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_config_loader_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_db_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_duplicate_detector_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_models_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_orphan_collector_py
-    src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_registration_checker_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py
+    src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_registration_checker_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_report_generator_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_swid_tag_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_unique_analyzer_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py
     src_zephyr_security_access_control_orphan_judge_init_py -.->|导入依赖 / import_depends| src_zephyr_security_access_control_orphan_judge_main_py
+    src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cold_start_py
     src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
     src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
     src_zephyr_security_adversarial_validation_cli_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
-    src_zephyr_security_adversarial_validation_commit_trigger_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
     src_zephyr_security_adversarial_validation_game_day_runner_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
@@ -1319,75 +1315,71 @@ graph TD
     src_zephyr_security_adversarial_validation_mcp_endpoints_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_validator_event_bridge_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
     src_zephyr_security_adversarial_validation_main_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
-    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cleanup_py
-    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
+    src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_validator_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_ai_attack_generator_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_attack_registry_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_blast_radius_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_bypass_recorder_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cleanup_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cold_start_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_constitution_guard_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_cli_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_convergence_checker_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_injection_engine_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_game_day_runner_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_injection_engine_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_mcp_endpoints_py
-    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_scenario_loader_py
+    src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_defense_runner_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_steady_state_py
     src_zephyr_security_adversarial_validation_init_py -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_governance_implementations_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_security_access_control_orphan_judge_report_generator_py -.->|导入依赖 / import_depends| D_SHARED
-    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
-    tests_safety_test_attack_simulator_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_game_day_scheduler_py -.->|测试依赖 / test_depends| D_SHARED
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    tests_safety_test_phase_manager_integration_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
-    tests_safety_test_safety_gate_l28_l29_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l54_l55_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l54_l55_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l56_l57_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l56_l57_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l58_l59_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l58_l59_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
-    tests_safety_test_safety_gate_l60_l61_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_gov_drift_cold_start_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_reconciler_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_runbook_generator_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_state_machine_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_main_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_core_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_drift_scanners_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_compliance_gate_a6_init_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_governance_implementations_init_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_state_machine_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_alert_router_py
-    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_runbook_generator_py
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     D_FBL_VERIFICATION -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_init_py
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    D_SECURITY_LLM -.->|config_depends / config_depends| src_zephyr_security_llm_defense_llm_security_dashboard_app_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_validator_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    D_INFRA_RUNTIME -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_runbook_generator_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_state_machine_py
     D_GOV_ENFORCEMENT["(生产态 / production) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
+    D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_drift_reconciler_py
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_cold_start_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_drift_main_py,src_zephyr_gov_drift_analysis_py,src_zephyr_gov_drift_core_py,src_zephyr_gov_drift_drift_py,src_zephyr_gov_drift_infrastructure_py,src_zephyr_gov_drift_scanners_py,src_zephyr_gov_drift_alert_router_py,src_zephyr_gov_drift_cold_start_py,src_zephyr_gov_drift_reconciler_py,src_zephyr_gov_drift_runbook_generator_py,src_zephyr_gov_drift_state_machine_py,src_zephyr_governance_compliance_gate_a6_init_py,src_zephyr_governance_implementations_init_py,src_zephyr_security_init_py,src_zephyr_security_extensions_init_py,src_zephyr_security_access_control_build_sanitizer_py,src_zephyr_security_access_control_cascading_failure_isolator_py,src_zephyr_security_access_control_compliance_matrix_py,src_zephyr_security_access_control_defense_depth_py,src_zephyr_security_access_control_detectors_init_py,src_zephyr_security_access_control_environment_manager_py,src_zephyr_security_access_control_guards_init_py,src_zephyr_security_access_control_guards_anti_pattern_guard_py,src_zephyr_security_access_control_key_hierarchy_py,src_zephyr_security_access_control_orphan_judge_init_py,src_zephyr_security_access_control_orphan_judge_main_py,src_zephyr_security_access_control_orphan_judge_config_loader_py,src_zephyr_security_access_control_orphan_judge_db_py,src_zephyr_security_access_control_orphan_judge_drift_bridge_py,src_zephyr_security_access_control_orphan_judge_duplicate_detector_py,src_zephyr_security_access_control_orphan_judge_escalation_bridge_py,src_zephyr_security_access_control_orphan_judge_feedback_bridge_py,src_zephyr_security_access_control_orphan_judge_kb_bridge_py,src_zephyr_security_access_control_orphan_judge_mcp_integration_py,src_zephyr_security_access_control_orphan_judge_models_py,src_zephyr_security_access_control_orphan_judge_orphan_collector_py,src_zephyr_security_access_control_orphan_judge_rbac_bridge_py,src_zephyr_security_access_control_orphan_judge_reference_graph_engine_py,src_zephyr_security_access_control_orphan_judge_registration_checker_py,src_zephyr_security_access_control_orphan_judge_report_generator_py,src_zephyr_security_access_control_orphan_judge_standalone_evaluator_py,src_zephyr_security_access_control_orphan_judge_swid_tag_py,src_zephyr_security_access_control_orphan_judge_unique_analyzer_py,src_zephyr_security_access_control_permission_mode_manager_py,src_zephyr_security_access_control_phase_executor_py,src_zephyr_security_access_control_secrets_lifecycle_py,src_zephyr_security_access_control_verifiers_init_py,src_zephyr_security_access_control_verifiers_bootstrap_verifier_py,src_zephyr_security_access_control_verifiers_continuous_verifier_py,src_zephyr_security_access_control_verifiers_micro_verifier_py,src_zephyr_security_access_control_verifiers_post_action_verifier_py,src_zephyr_security_adversarial_validation_init_py,src_zephyr_security_adversarial_validation_main_py,src_zephyr_security_adversarial_validation_ai_attack_generator_py,src_zephyr_security_adversarial_validation_attack_registry_py,src_zephyr_security_adversarial_validation_blast_radius_py,src_zephyr_security_adversarial_validation_bypass_recorder_py,src_zephyr_security_adversarial_validation_cleanup_py,src_zephyr_security_adversarial_validation_cli_py,src_zephyr_security_adversarial_validation_cold_start_py,src_zephyr_security_adversarial_validation_commit_trigger_py,src_zephyr_security_adversarial_validation_constitution_guard_py,src_zephyr_security_adversarial_validation_convergence_checker_py,src_zephyr_security_adversarial_validation_defense_runner_py,src_zephyr_security_adversarial_validation_game_day_runner_py,src_zephyr_security_adversarial_validation_injection_engine_py,src_zephyr_security_adversarial_validation_mcp_endpoints_py,src_zephyr_security_adversarial_validation_scenario_loader_py,src_zephyr_security_adversarial_validation_steady_state_py,src_zephyr_security_adversarial_validation_validator_py,src_zephyr_security_adversarial_validation_validator_event_bridge_py,src_zephyr_security_api_init_py,src_zephyr_security_core_init_py,src_zephyr_security_infrastructure_init_py,src_zephyr_security_llm_defense_llm_security_dashboard_app_py,src_zephyr_security_llm_defense_llm_security_layers_l6_data_flow_py,src_zephyr_security_llm_defense_llm_security_layers_l8_compliance_py,src_zephyr_security_models_init_py,src_zephyr_security_services_init_py,tests_safety_test_async_monitor_py,tests_safety_test_attack_simulator_py,tests_safety_test_circuit_breaker_py,tests_safety_test_commit_trigger_py,tests_safety_test_constitution_engine_py,tests_safety_test_defense_runner_py,tests_safety_test_event_integration_py,tests_safety_test_game_day_scheduler_py,tests_safety_test_injection_engine_py,tests_safety_test_phase_manager_integration_py,tests_safety_test_red_blue_validator_py,tests_safety_test_red_blue_validator_tests_py,tests_safety_test_safety_brake_py,tests_safety_test_safety_gate_l1_l27_py,tests_safety_test_safety_gate_l28_l29_py,tests_safety_test_safety_gate_l36_l37_py,tests_safety_test_safety_gate_l38_l39_py,tests_safety_test_safety_gate_l40_l41_py,tests_safety_test_safety_gate_l42_l43_py,tests_safety_test_safety_gate_l44_l45_py,tests_safety_test_safety_gate_l46_l47_py,tests_safety_test_safety_gate_l48_l49_py,tests_safety_test_safety_gate_l50_l51_py,tests_safety_test_safety_gate_l52_l53_py,tests_safety_test_safety_gate_l54_l55_py,tests_safety_test_safety_gate_l56_l57_py,tests_safety_test_safety_gate_l58_l59_py,tests_safety_test_safety_gate_l60_l61_py,tests_safety_test_safety_gate_l62_l63_py,tests_safety_test_safety_gate_l64_l65_py,tests_safety_test_safety_gate_l66_l67_py,tests_safety_test_scheduler_safety_py design
-    class D_SHARED,D_FBL_VERIFICATION,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_ENFORCEMENT external_prod
-    class D_COMPLIANCE,D_GOVERNANCE,D_SECURITY_LLM external_design
+    class D_SHARED,D_GOV_DRIFT,D_FBL_VERIFICATION,D_GOV_AUDIT,D_GOV_ENFORCEMENT external_prod
+    class D_GOVERNANCE,D_COMPLIANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -1677,118 +1669,116 @@ graph TD
 | 136 | D_GOVERNANCE 生命周期管理: git_commit.py — GitCommitGateway CLI 封装（OPS... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
 | 137 | D_GOVERNANCE 生命周期管理: G-CT-007 契约：Budget -> RBAC 配额限制. (rbac_b... | → | PermissionGuard — 七层权限编排器. (permission_... | 导入依赖 / import_depends |
 | 138 | D_GOVERNANCE 生命周期管理: Delegation Engine — MOD-INF-022 (delegation_en... | → | gateway.py | 导入依赖 / import_depends |
-| 139 | D_GOVERNANCE 生命周期管理: GitCommitGateway — 全项目唯一合法 git commit .... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 140 | D_GOVERNANCE 生命周期管理: GitCommitGateway — 全项目唯一合法 git commit .... | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
-| 141 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 ... | 导入依赖 / import_depends |
-| 142 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | PermissionGuard — 七层权限编排器. (permission_... | 导入依赖 / import_depends |
-| 143 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 (test_ses... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 测试依赖 / test_depends |
-| 144 | D_GOVERNANCE 生命周期管理: test_capability_check.py | → | Stub module: zephyr.security.access_control.cap... | 测试依赖 / test_depends |
-| 145 | D_GOVERNANCE 生命周期管理: test_context_drift_detector.py | → | ContextDriftDetector — 上下文漂移与范围蔓延检... | 测试依赖 / test_depends |
-| 146 | D_GOVERNANCE 生命周期管理: test_governance_drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
-| 147 | D_GOVERNANCE 生命周期管理: test_session_worktree.py — worktree 物理隔离端... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 测试依赖 / test_depends |
-| 148 | D_GOVERNANCE 生命周期管理: test_governance_a2a_check.py | → | Stub module: zephyr.security.access_control.a2a... | 测试依赖 / test_depends |
-| 149 | D_GOVERNANCE 生命周期管理: test_governance_approver_check.py | → | Stub module: zephyr.security.access_control.app... | 测试依赖 / test_depends |
-| 150 | D_GOVERNANCE 生命周期管理: test_governance_bootstrap_superadmin.py | → | BootstrapSuperadmin — Superadmin 账户启动器. (... | 测试依赖 / test_depends |
-| 151 | D_GOVERNANCE 生命周期管理: test_governance_capability_check.py | → | Stub module: zephyr.security.access_control.cap... | 测试依赖 / test_depends |
-| 152 | D_GOVERNANCE 生命周期管理: test_governance_contracts.py | → | Stub module: zephyr.security.access_control.con... | 测试依赖 / test_depends |
-| 153 | D_GOV_AUDIT 审计追踪: cli.py | → | judge.py | 导入依赖 / import_depends |
-| 154 | D_GOV_AUDIT 审计追踪: cli.py | → | validator.py | 导入依赖 / import_depends |
-| 155 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 156 | D_GOV_AUDIT 审计追踪: test_audit_log_guard.py | → | Stub module: zephyr.security.access_control.gua... | 测试依赖 / test_depends |
-| 157 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | cascade_analyzer.py | 测试依赖 / test_depends |
-| 158 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | decision_table.py | 测试依赖 / test_depends |
-| 159 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | deprecation_tracker.py | 测试依赖 / test_depends |
-| 160 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | judge.py | 测试依赖 / test_depends |
-| 161 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | safety_fence.py | 测试依赖 / test_depends |
-| 162 | D_GOV_AUDIT 审计追踪: test_events_ba.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
-| 163 | D_GOV_AUDIT 审计追踪: test_ba_events.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
-| 164 | D_GOV_AUDIT 审计追踪: test_drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
-| 165 | D_GOV_AUDIT 审计追踪: test_self_heal_agent.py | → | zephyr.security.access_control — Agent RBAC 权... | 测试依赖 / test_depends |
-| 166 | D_GOV_DRIFT 漂移检测: ProbeHierarchy - K8s 3-Probe + Terraform Reconc... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 ... | 导入依赖 / import_depends |
-| 167 | D_GOV_DRIFT 漂移检测: Drift Detector — MOD-GOV_DRIFT_bridges (__init... | → | Auto Reconciler — reconciler.py (reconciler.py) | 导入依赖 / import_depends |
-| 168 | D_GOV_DRIFT 漂移检测: Drift Detector — MOD-GOV_DRIFT_bridges (__init... | → | Drift State Machine — state_machine.py (state_... | 导入依赖 / import_depends |
-| 169 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
-| 170 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | Auto Reconciler — reconciler.py (reconciler.py) | 导入依赖 / import_depends |
-| 171 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 172 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
-| 173 | D_GOV_ENFORCEMENT 规则执行: session_claim.py — AI 对话并发声明 helper（FP-... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 174 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔.... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 175 | D_GOV_ENFORCEMENT 规则执行: test_guard_layers_root.py | → | GuardLayers — 权限守卫层组件. (guard_layers.py) | 测试依赖 / test_depends |
-| 176 | D_GOV_ENFORCEMENT 规则执行: test_rule_injection_guard.py | → | RuleInjectionGuard — 规则注入守卫. (rule_injec... | 测试依赖 / test_depends |
-| 177 | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation_en... | → | gateway.py | 导入依赖 / import_depends |
-| 178 | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. ... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 179 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | → | gateway.py | 导入依赖 / import_depends |
-| 180 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
-| 181 | D_GOV_SCRIPTS 脚本治理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 182 | D_GOV_SCRIPTS 脚本治理: test_blueprint_fidelity.py | → | BlueprintFidelity — 蓝图保真度检查. (blueprint... | 测试依赖 / test_depends |
-| 183 | D_GOV_SCRIPTS 脚本治理: test_dependency_auditor.py | → | Stub module: zephyr.security.access_control.dep... | 测试依赖 / test_depends |
-| 184 | D_INFRASTRUCTURE: test_abac_guard_root.py | → | ABACGuard — 基于属性的权限守卫. (abac_guard.py) | 测试依赖 / test_depends |
-| 185 | D_INFRASTRUCTURE: test_contract_verifier.py | → | ContractVerifier — 契约验证器. (contract_verif... | 测试依赖 / test_depends |
-| 186 | D_INFRASTRUCTURE: test_rbac_guard_root.py | → | RBACGuard — 基于角色的权限守卫. (rbac_guard.py) | 测试依赖 / test_depends |
-| 187 | D_INFRA_A2A A2A通信: test_a2a_check.py | → | Stub module: zephyr.security.access_control.a2a... | 测试依赖 / test_depends |
-| 188 | D_INFRA_RECOVERY 回滚恢复: drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
-| 189 | D_INFRA_RECOVERY 回滚恢复: test_canary_rollout_manager.py | → | CanaryRolloutManager — 灰度发布管理器. (canary... | 测试依赖 / test_depends |
-| 190 | D_INFRA_RECOVERY 回滚恢复: test_rollback_sandbox.py | → | Stub module: zephyr.security.access_control.rol... | 测试依赖 / test_depends |
-| 191 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | GenesisBootstrap — RBAC系统启动引导器. (genesi... | 导入依赖 / import_depends |
-| 192 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | GenesisBootstrap — RBAC系统启动引导器. (genesi... | 导入依赖 / import_depends |
-| 193 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | KillSwitch — 熔断器. (kill_switch.py) | 导入依赖 / import_depends |
-| 194 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | NonRepudiation — 不可抵赖性审计签名. (non_repu... | 导入依赖 / import_depends |
-| 195 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
-| 196 | D_INFRA_RUNTIME 运行时集成: test_cold_start_lock.py | → | ColdStartLock — 冷启动锁. (cold_start_lock.py) | 测试依赖 / test_depends |
-| 197 | D_INFRA_RUNTIME 运行时集成: test_cold_start_lock.py | → | ImmutableCore — 不可变核心验证器. (immutable_c... | 测试依赖 / test_depends |
-| 198 | D_INFRA_RUNTIME 运行时集成: test_observability_root.py | → | ObservabilityReporter — 指标上报与异常检测. (o... | 测试依赖 / test_depends |
-| 199 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | gateway.py | 导入依赖 / import_depends |
-| 200 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | protocol.py | 导入依赖 / import_depends |
-| 201 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | gateway.py | 导入依赖 / import_depends |
-| 202 | D_INTELLIGENCE 上下文管理: test_decision_explainer_root.py | → | Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
-| 203 | D_INTELLIGENCE 上下文管理: test_decision_registry.py | → | Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
-| 204 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | gateway.py | 导入依赖 / import_depends |
-| 205 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
-| 206 | D_SECURITY_LLM LLM防御: __init__.py | → | behavior_audit_logger.py | 导入依赖 / import_depends |
-| 207 | D_SECURITY_LLM LLM防御: __init__.py | → | gateway.py | 导入依赖 / import_depends |
-| 208 | D_SECURITY_LLM LLM防御: __init__.py | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
-| 209 | D_SECURITY_LLM LLM防御: __init__.py | → | L2a ProcessSandbox — subprocess 路径白名单沙箱... | 导入依赖 / import_depends |
-| 210 | D_SECURITY_LLM LLM防御: __init__.py | → | protocol.py | 导入依赖 / import_depends |
-| 211 | D_SECURITY_LLM LLM防御: LLM Security Gateway Dashboard Module. (__init_... | → | LLM Security Gateway - Streamlit Dashboard. (ap... | config_depends / config_depends |
-| 212 | D_SECURITY_LLM LLM防御: test_adversarial_mutator.py | → | adversarial_mutator.py | 测试依赖 / test_depends |
-| 213 | D_SECURITY_LLM LLM防御: test_behavior_audit_logger.py | → | behavior_audit_logger.py | 测试依赖 / test_depends |
-| 214 | D_SECURITY_LLM LLM防御: test_code_integrity.py | → | code_integrity.py | 测试依赖 / test_depends |
-| 215 | D_SECURITY_LLM LLM防御: test_db.py | → | InputSanitizer: path whitelist + command whitel... | 测试依赖 / test_depends |
-| 216 | D_SECURITY_LLM LLM防御: test_fail_closed.py | → | gateway.py | 测试依赖 / test_depends |
-| 217 | D_SECURITY_LLM LLM防御: test_fail_closed.py | → | protocol.py | 测试依赖 / test_depends |
-| 218 | D_SECURITY_LLM LLM防御: test_gateway_e2e.py | → | gateway.py | 测试依赖 / test_depends |
-| 219 | D_SECURITY_LLM LLM防御: test_injection_patterns.py | → | injection_patterns.py | 测试依赖 / test_depends |
-| 220 | D_SECURITY_LLM LLM防御: test_input_sanitizer_llm_security.py | → | InputSanitizer: path whitelist + command whitel... | 测试依赖 / test_depends |
-| 221 | D_SECURITY_LLM LLM防御: test_isolation.py | → | isolation.py | 测试依赖 / test_depends |
-| 222 | D_SECURITY_LLM LLM防御: test_l0_supply_chain.py | → | l0_supply_chain.py | 测试依赖 / test_depends |
-| 223 | D_SECURITY_LLM LLM防御: test_l0_supply_chain.py | → | protocol.py | 测试依赖 / test_depends |
-| 224 | D_SECURITY_LLM LLM防御: test_l1_input_defense.py | → | l1_input.py | 测试依赖 / test_depends |
-| 225 | D_SECURITY_LLM LLM防御: test_l1_input_defense.py | → | protocol.py | 测试依赖 / test_depends |
-| 226 | D_SECURITY_LLM LLM防御: test_l2_prompt_protection.py | → | l2_prompt_protection.py | 测试依赖 / test_depends |
-| 227 | D_SECURITY_LLM LLM防御: test_l2_prompt_protection.py | → | protocol.py | 测试依赖 / test_depends |
-| 228 | D_SECURITY_LLM LLM防御: test_l2a_process_sandbox.py | → | l2a_process_sandbox.py | 测试依赖 / test_depends |
-| 229 | D_SECURITY_LLM LLM防御: test_l3_output_security.py | → | l3_output.py | 测试依赖 / test_depends |
-| 230 | D_SECURITY_LLM LLM防御: test_l3_output_security.py | → | protocol.py | 测试依赖 / test_depends |
-| 231 | D_SECURITY_LLM LLM防御: test_l4_agent_security.py | → | l4_agent.py | 测试依赖 / test_depends |
-| 232 | D_SECURITY_LLM LLM防御: test_l4_agent_security.py | → | protocol.py | 测试依赖 / test_depends |
-| 233 | D_SECURITY_LLM LLM防御: test_l5_resource_protection.py | → | l5_resource_protection.py | 测试依赖 / test_depends |
-| 234 | D_SECURITY_LLM LLM防御: test_l5_resource_protection.py | → | protocol.py | 测试依赖 / test_depends |
-| 235 | D_SECURITY_LLM LLM防御: test_l6_observability.py | → | L6 Observability Layer — security event loggin... | 测试依赖 / test_depends |
-| 236 | D_SECURITY_LLM LLM防御: test_l6_observability.py | → | protocol.py | 测试依赖 / test_depends |
-| 237 | D_SECURITY_LLM LLM防御: test_l7_red_team.py | → | red_team_scanner.py | 测试依赖 / test_depends |
-| 238 | D_SECURITY_LLM LLM防御: test_l7_validation.py | → | l7_validation.py | 测试依赖 / test_depends |
-| 239 | D_SECURITY_LLM LLM防御: test_l8_multi_agent.py | → | l8_multi_agent.py | 测试依赖 / test_depends |
-| 240 | D_SECURITY_LLM LLM防御: test_l8_multi_agent.py | → | protocol.py | 测试依赖 / test_depends |
-| 241 | D_SECURITY_LLM LLM防御: test_orphan_detector.py | → | [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐 (o... | 测试依赖 / test_depends |
-| 242 | D_SECURITY_LLM LLM防御: test_process_sandbox_llm_security.py | → | L2a ProcessSandbox — subprocess 路径白名单沙箱... | 测试依赖 / test_depends |
-| 243 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | gateway.py | 测试依赖 / test_depends |
-| 244 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | protocol.py | 测试依赖 / test_depends |
-| 245 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | runtime_interceptor.py — 运行时 LLM 裸调拦截器... | 测试依赖 / test_depends |
-| 246 | D_SECURITY_LLM LLM防御: test_secrets.py | → | secrets.py | 测试依赖 / test_depends |
-| 247 | D_SHARED 共享服务: test_cross_cutting.py | → | CrossCutting — 横切面权限组件. (cross_cutting.py) | 测试依赖 / test_depends |
-| 248 | D_SHARED 共享服务: test_cross_session_detector.py | → | CrossSessionDetector — 跨 Session 检测器. (cro... | 测试依赖 / test_depends |
-| 249 | D_SHARED 共享服务: test_multi_agent_collusion_detector.py | → | MultiAgentCollusionDetector — 多 agent 合谋检... | 测试依赖 / test_depends |
-| 250 | D_SHARED 共享服务: test_path_guard.py | → | PathGuard — 路径守卫. (path_guard.py) | 测试依赖 / test_depends |
+| 139 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 ... | 导入依赖 / import_depends |
+| 140 | D_GOVERNANCE 生命周期管理: GovernanceServer: 治理域统一MCP入口 (governance... | → | PermissionGuard — 七层权限编排器. (permission_... | 导入依赖 / import_depends |
+| 141 | D_GOVERNANCE 生命周期管理: session 隔离 stash 红蓝对抗极限测试。 (test_ses... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 测试依赖 / test_depends |
+| 142 | D_GOVERNANCE 生命周期管理: test_capability_check.py | → | Stub module: zephyr.security.access_control.cap... | 测试依赖 / test_depends |
+| 143 | D_GOVERNANCE 生命周期管理: test_context_drift_detector.py | → | ContextDriftDetector — 上下文漂移与范围蔓延检... | 测试依赖 / test_depends |
+| 144 | D_GOVERNANCE 生命周期管理: test_governance_drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
+| 145 | D_GOVERNANCE 生命周期管理: test_session_worktree.py — worktree 物理隔离端... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 测试依赖 / test_depends |
+| 146 | D_GOVERNANCE 生命周期管理: test_governance_a2a_check.py | → | Stub module: zephyr.security.access_control.a2a... | 测试依赖 / test_depends |
+| 147 | D_GOVERNANCE 生命周期管理: test_governance_approver_check.py | → | Stub module: zephyr.security.access_control.app... | 测试依赖 / test_depends |
+| 148 | D_GOVERNANCE 生命周期管理: test_governance_bootstrap_superadmin.py | → | BootstrapSuperadmin — Superadmin 账户启动器. (... | 测试依赖 / test_depends |
+| 149 | D_GOVERNANCE 生命周期管理: test_governance_capability_check.py | → | Stub module: zephyr.security.access_control.cap... | 测试依赖 / test_depends |
+| 150 | D_GOVERNANCE 生命周期管理: test_governance_contracts.py | → | Stub module: zephyr.security.access_control.con... | 测试依赖 / test_depends |
+| 151 | D_GOV_AUDIT 审计追踪: cli.py | → | judge.py | 导入依赖 / import_depends |
+| 152 | D_GOV_AUDIT 审计追踪: cli.py | → | validator.py | 导入依赖 / import_depends |
+| 153 | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 154 | D_GOV_AUDIT 审计追踪: test_audit_log_guard.py | → | Stub module: zephyr.security.access_control.gua... | 测试依赖 / test_depends |
+| 155 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | cascade_analyzer.py | 测试依赖 / test_depends |
+| 156 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | decision_table.py | 测试依赖 / test_depends |
+| 157 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | deprecation_tracker.py | 测试依赖 / test_depends |
+| 158 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | judge.py | 测试依赖 / test_depends |
+| 159 | D_GOV_AUDIT 审计追踪: [INVARIANTS] E2E tests cover DecisionTable 12-r... | → | safety_fence.py | 测试依赖 / test_depends |
+| 160 | D_GOV_AUDIT 审计追踪: test_events_ba.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
+| 161 | D_GOV_AUDIT 审计追踪: test_ba_events.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
+| 162 | D_GOV_AUDIT 审计追踪: test_drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 测试依赖 / test_depends |
+| 163 | D_GOV_AUDIT 审计追踪: test_self_heal_agent.py | → | zephyr.security.access_control — Agent RBAC 权... | 测试依赖 / test_depends |
+| 164 | D_GOV_DRIFT 漂移检测: ProbeHierarchy - K8s 3-Probe + Terraform Reconc... | → | Cold Start Bootstrapper — 冷启动引导 §6.31。 ... | 导入依赖 / import_depends |
+| 165 | D_GOV_DRIFT 漂移检测: Drift Detector — MOD-GOV_DRIFT_bridges (__init... | → | Auto Reconciler — reconciler.py (reconciler.py) | 导入依赖 / import_depends |
+| 166 | D_GOV_DRIFT 漂移检测: Drift Detector — MOD-GOV_DRIFT_bridges (__init... | → | Drift State Machine — state_machine.py (state_... | 导入依赖 / import_depends |
+| 167 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
+| 168 | D_GOV_DRIFT 漂移检测: Gate-side Drift Detector Recovery — zephyr.gov... | → | Auto Reconciler — reconciler.py (reconciler.py) | 导入依赖 / import_depends |
+| 169 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 170 | D_GOV_ENFORCEMENT 规则执行: GitCommitGateway — 全项目唯一合法 git commit .... | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
+| 171 | D_GOV_ENFORCEMENT 规则执行: session_claim.py — AI 对话并发声明 helper（FP-... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 172 | D_GOV_ENFORCEMENT 规则执行: session_worktree.py — AI 对话 worktree 物理隔.... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 173 | D_GOV_ENFORCEMENT 规则执行: test_guard_layers_root.py | → | GuardLayers — 权限守卫层组件. (guard_layers.py) | 测试依赖 / test_depends |
+| 174 | D_GOV_ENFORCEMENT 规则执行: test_rule_injection_guard.py | → | RuleInjectionGuard — 规则注入守卫. (rule_injec... | 测试依赖 / test_depends |
+| 175 | D_GOV_OPS_RESILIENCE 运维弹性治理: Escalation Engine — MOD-INF-022 (escalation_en... | → | gateway.py | 导入依赖 / import_depends |
+| 176 | D_GOV_OPS_RESILIENCE 运维弹性治理: Phase Manager — ZephyrAlpha 施工阶段门控引擎. ... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 177 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | → | gateway.py | 导入依赖 / import_depends |
+| 178 | D_GOV_OPS_RESILIENCE 运维弹性治理: DefaultSecurityGateway — SecurityGateway 三层.... | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
+| 179 | D_GOV_SCRIPTS 脚本治理: AI写入前强制门禁钩子: lock协议检查+GateEngine P... | → | Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 180 | D_GOV_SCRIPTS 脚本治理: test_blueprint_fidelity.py | → | BlueprintFidelity — 蓝图保真度检查. (blueprint... | 测试依赖 / test_depends |
+| 181 | D_GOV_SCRIPTS 脚本治理: test_dependency_auditor.py | → | Stub module: zephyr.security.access_control.dep... | 测试依赖 / test_depends |
+| 182 | D_INFRASTRUCTURE: test_abac_guard_root.py | → | ABACGuard — 基于属性的权限守卫. (abac_guard.py) | 测试依赖 / test_depends |
+| 183 | D_INFRASTRUCTURE: test_contract_verifier.py | → | ContractVerifier — 契约验证器. (contract_verif... | 测试依赖 / test_depends |
+| 184 | D_INFRASTRUCTURE: test_rbac_guard_root.py | → | RBACGuard — 基于角色的权限守卫. (rbac_guard.py) | 测试依赖 / test_depends |
+| 185 | D_INFRA_A2A A2A通信: test_a2a_check.py | → | Stub module: zephyr.security.access_control.a2a... | 测试依赖 / test_depends |
+| 186 | D_INFRA_RECOVERY 回滚恢复: drift_fix.py | → | G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
+| 187 | D_INFRA_RECOVERY 回滚恢复: test_canary_rollout_manager.py | → | CanaryRolloutManager — 灰度发布管理器. (canary... | 测试依赖 / test_depends |
+| 188 | D_INFRA_RECOVERY 回滚恢复: test_rollback_sandbox.py | → | Stub module: zephyr.security.access_control.rol... | 测试依赖 / test_depends |
+| 189 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | GenesisBootstrap — RBAC系统启动引导器. (genesi... | 导入依赖 / import_depends |
+| 190 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | GenesisBootstrap — RBAC系统启动引导器. (genesi... | 导入依赖 / import_depends |
+| 191 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | KillSwitch — 熔断器. (kill_switch.py) | 导入依赖 / import_depends |
+| 192 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | NonRepudiation — 不可抵赖性审计签名. (non_repu... | 导入依赖 / import_depends |
+| 193 | D_INFRA_RUNTIME 运行时集成: boot_hooks.py | → | CommitTrigger — 事件驱动红蓝对抗触发器 (MOD-IN... | 导入依赖 / import_depends |
+| 194 | D_INFRA_RUNTIME 运行时集成: test_cold_start_lock.py | → | ColdStartLock — 冷启动锁. (cold_start_lock.py) | 测试依赖 / test_depends |
+| 195 | D_INFRA_RUNTIME 运行时集成: test_cold_start_lock.py | → | ImmutableCore — 不可变核心验证器. (immutable_c... | 测试依赖 / test_depends |
+| 196 | D_INFRA_RUNTIME 运行时集成: test_observability_root.py | → | ObservabilityReporter — 指标上报与异常检测. (o... | 测试依赖 / test_depends |
+| 197 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | gateway.py | 导入依赖 / import_depends |
+| 198 | D_INTEGRATION 管线路由: MCP Gateway 集中式治理节点（MOD-INF-013 §12 Ph... | → | protocol.py | 导入依赖 / import_depends |
+| 199 | D_INTEGRATION 管线路由: PipelineOrchestrator — M1-M11 管线协调器 (pipe... | → | gateway.py | 导入依赖 / import_depends |
+| 200 | D_INTELLIGENCE 上下文管理: test_decision_explainer_root.py | → | Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
+| 201 | D_INTELLIGENCE 上下文管理: test_decision_registry.py | → | Stub module: zephyr.security.access_control.dec... | 测试依赖 / test_depends |
+| 202 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | gateway.py | 导入依赖 / import_depends |
+| 203 | D_ORCHESTRATOR 代理编排器: AgentOrchestrator · 多角色 Agent 路由、工具链.... | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
+| 204 | D_SECURITY_LLM LLM防御: __init__.py | → | behavior_audit_logger.py | 导入依赖 / import_depends |
+| 205 | D_SECURITY_LLM LLM防御: __init__.py | → | gateway.py | 导入依赖 / import_depends |
+| 206 | D_SECURITY_LLM LLM防御: __init__.py | → | InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
+| 207 | D_SECURITY_LLM LLM防御: __init__.py | → | L2a ProcessSandbox — subprocess 路径白名单沙箱... | 导入依赖 / import_depends |
+| 208 | D_SECURITY_LLM LLM防御: __init__.py | → | protocol.py | 导入依赖 / import_depends |
+| 209 | D_SECURITY_LLM LLM防御: LLM Security Gateway Dashboard Module. (__init_... | → | LLM Security Gateway - Streamlit Dashboard. (ap... | config_depends / config_depends |
+| 210 | D_SECURITY_LLM LLM防御: test_adversarial_mutator.py | → | adversarial_mutator.py | 测试依赖 / test_depends |
+| 211 | D_SECURITY_LLM LLM防御: test_behavior_audit_logger.py | → | behavior_audit_logger.py | 测试依赖 / test_depends |
+| 212 | D_SECURITY_LLM LLM防御: test_code_integrity.py | → | code_integrity.py | 测试依赖 / test_depends |
+| 213 | D_SECURITY_LLM LLM防御: test_db.py | → | InputSanitizer: path whitelist + command whitel... | 测试依赖 / test_depends |
+| 214 | D_SECURITY_LLM LLM防御: test_fail_closed.py | → | gateway.py | 测试依赖 / test_depends |
+| 215 | D_SECURITY_LLM LLM防御: test_fail_closed.py | → | protocol.py | 测试依赖 / test_depends |
+| 216 | D_SECURITY_LLM LLM防御: test_gateway_e2e.py | → | gateway.py | 测试依赖 / test_depends |
+| 217 | D_SECURITY_LLM LLM防御: test_injection_patterns.py | → | injection_patterns.py | 测试依赖 / test_depends |
+| 218 | D_SECURITY_LLM LLM防御: test_input_sanitizer_llm_security.py | → | InputSanitizer: path whitelist + command whitel... | 测试依赖 / test_depends |
+| 219 | D_SECURITY_LLM LLM防御: test_isolation.py | → | isolation.py | 测试依赖 / test_depends |
+| 220 | D_SECURITY_LLM LLM防御: test_l0_supply_chain.py | → | l0_supply_chain.py | 测试依赖 / test_depends |
+| 221 | D_SECURITY_LLM LLM防御: test_l0_supply_chain.py | → | protocol.py | 测试依赖 / test_depends |
+| 222 | D_SECURITY_LLM LLM防御: test_l1_input_defense.py | → | l1_input.py | 测试依赖 / test_depends |
+| 223 | D_SECURITY_LLM LLM防御: test_l1_input_defense.py | → | protocol.py | 测试依赖 / test_depends |
+| 224 | D_SECURITY_LLM LLM防御: test_l2_prompt_protection.py | → | l2_prompt_protection.py | 测试依赖 / test_depends |
+| 225 | D_SECURITY_LLM LLM防御: test_l2_prompt_protection.py | → | protocol.py | 测试依赖 / test_depends |
+| 226 | D_SECURITY_LLM LLM防御: test_l2a_process_sandbox.py | → | l2a_process_sandbox.py | 测试依赖 / test_depends |
+| 227 | D_SECURITY_LLM LLM防御: test_l3_output_security.py | → | l3_output.py | 测试依赖 / test_depends |
+| 228 | D_SECURITY_LLM LLM防御: test_l3_output_security.py | → | protocol.py | 测试依赖 / test_depends |
+| 229 | D_SECURITY_LLM LLM防御: test_l4_agent_security.py | → | l4_agent.py | 测试依赖 / test_depends |
+| 230 | D_SECURITY_LLM LLM防御: test_l4_agent_security.py | → | protocol.py | 测试依赖 / test_depends |
+| 231 | D_SECURITY_LLM LLM防御: test_l5_resource_protection.py | → | l5_resource_protection.py | 测试依赖 / test_depends |
+| 232 | D_SECURITY_LLM LLM防御: test_l5_resource_protection.py | → | protocol.py | 测试依赖 / test_depends |
+| 233 | D_SECURITY_LLM LLM防御: test_l6_observability.py | → | L6 Observability Layer — security event loggin... | 测试依赖 / test_depends |
+| 234 | D_SECURITY_LLM LLM防御: test_l6_observability.py | → | protocol.py | 测试依赖 / test_depends |
+| 235 | D_SECURITY_LLM LLM防御: test_l7_red_team.py | → | red_team_scanner.py | 测试依赖 / test_depends |
+| 236 | D_SECURITY_LLM LLM防御: test_l7_validation.py | → | l7_validation.py | 测试依赖 / test_depends |
+| 237 | D_SECURITY_LLM LLM防御: test_l8_multi_agent.py | → | l8_multi_agent.py | 测试依赖 / test_depends |
+| 238 | D_SECURITY_LLM LLM防御: test_l8_multi_agent.py | → | protocol.py | 测试依赖 / test_depends |
+| 239 | D_SECURITY_LLM LLM防御: test_orphan_detector.py | → | [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐 (o... | 测试依赖 / test_depends |
+| 240 | D_SECURITY_LLM LLM防御: test_process_sandbox_llm_security.py | → | L2a ProcessSandbox — subprocess 路径白名单沙箱... | 测试依赖 / test_depends |
+| 241 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | gateway.py | 测试依赖 / test_depends |
+| 242 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | protocol.py | 测试依赖 / test_depends |
+| 243 | D_SECURITY_LLM LLM防御: test_runtime_interceptor.py — 运行时 LLM 裸调.... | → | runtime_interceptor.py — 运行时 LLM 裸调拦截器... | 测试依赖 / test_depends |
+| 244 | D_SECURITY_LLM LLM防御: test_secrets.py | → | secrets.py | 测试依赖 / test_depends |
+| 245 | D_SHARED 共享服务: test_cross_cutting.py | → | CrossCutting — 横切面权限组件. (cross_cutting.py) | 测试依赖 / test_depends |
+| 246 | D_SHARED 共享服务: test_cross_session_detector.py | → | CrossSessionDetector — 跨 Session 检测器. (cro... | 测试依赖 / test_depends |
+| 247 | D_SHARED 共享服务: test_multi_agent_collusion_detector.py | → | MultiAgentCollusionDetector — 多 agent 合谋检... | 测试依赖 / test_depends |
+| 248 | D_SHARED 共享服务: test_path_guard.py | → | PathGuard — 路径守卫. (path_guard.py) | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

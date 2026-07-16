@@ -1,7 +1,7 @@
 %% D_GOV_DRIFT 域全景依赖图
-%% 生成时间: 2026-07-16 22:44:13
+%% 生成时间: 2026-07-16 22:48:31
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 77, 依赖边数: 273
+%% 模块数: 77, 依赖边数: 274
 
 graph TD
 
@@ -99,10 +99,10 @@ graph TD
     src_zephyr_gov_drift_brain_integration_py -->|import_depends| src_zephyr_gov_drift_forensics_engine_py
     src_zephyr_gov_drift_detector_dispatcher_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_infrastructure_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_drift_engine_py -->|import_depends| src_zephyr_gov_drift_drift_infrastructure_py
-    src_zephyr_gov_drift_drift_engine_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_result_types_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_result_types_py -->|import_depends| src_zephyr_gov_drift_drift_engine_py
+    src_zephyr_gov_drift_drift_engine_py -->|import_depends| src_zephyr_gov_drift_drift_infrastructure_py
+    src_zephyr_gov_drift_drift_engine_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_training_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_headless_scanner_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_scan_mutex_py -->|import_depends| src_zephyr_gov_drift_drift_models_py
@@ -112,7 +112,7 @@ graph TD
     src_zephyr_gov_enforcement_rul___forcement_drift_detector_py -->|import_depends| src_zephyr_gov_drift_drift_engine_py
     src_zephyr_gov_enforcement_rul___forcement_drift_detector_py -->|import_depends| src_zephyr_gov_drift_drift_hotfix_bypass_py
     src_zephyr_gov_enforcement_rul___forcement_drift_detector_py -->|import_depends| src_zephyr_gov_drift_cascade_detector_py
-    src_zephyr_gov_drift___init___py -->|config_depends| src_zephyr_gov_drift_ai_context_injector_py
+    src_zephyr_gov_drift___init___py -->|config_depends| src_zephyr_gov_drift_absence_manager_py
     src_zephyr_gov_drift_detector_core___init___py -->|config_depends| src_zephyr_gov_drift_detector_core_benchmark_integrity_py
     src_zephyr_gov_drift_migration_plan_yaml -->|config_depends| src_zephyr_gov_drift___init___py
 
@@ -175,14 +175,14 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_gov_audit_self_monitor_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_absence_manager_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_integrity_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_backcompat_checker_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_baseline_manager_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_core_benchmark_integrity_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_backcompat_checker_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_baseline_poisoning_guard_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_brain_integration_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_cascade_detector_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_credibility_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_correlation_engine_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_credibility_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_dispatcher_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_drift_models_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_forensics_engine_py
@@ -193,8 +193,8 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_incremental_scanner_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_core_ml_engineering_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_naming_magic_checker_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_core_performance_baseline_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_orphan_scanner_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_core_performance_baseline_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_gov_drift_detector_core_regime_detector_py
     %% D_GOV_DOCS -> D_GOV_DRIFT (2 条)
     D_GOV_DOCS[D_GOV_DOCS] -->|runtime| docs_03_modules__domain_govern___drift_detector_blueprint_md
@@ -203,8 +203,8 @@ graph TD
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___breaking_change_detector_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_health_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_rul___ine_gate_integrity_guard_py
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_drift_gate_persistence_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul____gate_engine_gate_health_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_drift_gate_persistence_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_gov_enforcement_rul___ine_gate_integrity_guard_py
     %% D_GOV_OPS_RESILIENCE -> D_GOV_DRIFT (1 条)
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_gov_drift_chaos_injector_py
@@ -254,6 +254,9 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_self_test_verifier_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_infrastructure_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_self_check_py
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_engine_py
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_models_py
+    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_config_consistency_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_incremental_scanner_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_naming_magic_checker_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_orphan_scanner_py
@@ -261,9 +264,6 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_scan_mutex_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_symlink_checker_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_test_fixture_checker_py
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_engine_py
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_models_py
-    D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_config_consistency_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_contract_drift_detector_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_hotfix_bypass_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_gov_drift_drift_infrastructure_py
@@ -286,11 +286,11 @@ graph TD
     %% D_GOV_DRIFT -> D_GOVERNANCE (7 条)
     src_zephyr_gov_drift_correlation_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_drift_dashboard_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_gov_drift_drift_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_drift_drift_result_types_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_gov_drift_drift_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_drift_gate_persistence_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_gov_drift_tamper_proof_audit_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_drift_trend_analyzer_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_gov_drift_tamper_proof_audit_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_DRIFT -> D_GOV_AUDIT (6 条)
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_integrity_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
@@ -298,7 +298,8 @@ graph TD
     src_zephyr_gov_drift_drift_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_drift_drift_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_gov_enforcement_rul___t_truth_source_validator_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_DRIFT -> D_GOV_DOCS (1 条)
+    %% D_GOV_DRIFT -> D_GOV_DOCS (2 条)
+    docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOV_DOCS[D_GOV_DOCS]
     docs_03_modules__domain_govern___drift_detector_blueprint_md -->|runtime| D_GOV_DOCS[D_GOV_DOCS]
     %% D_GOV_DRIFT -> D_GOV_SCRIPTS (1 条)
     scripts_governance_d5_architec___validators_validate_ssot_py -->|import_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
@@ -323,16 +324,16 @@ graph TD
     src_zephyr_gov_drift_brain_integration_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_brain_integration_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_drift_detector_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_drift_drift_models_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_drift_infrastructure_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_drift_drift_models_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_drift_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_forensics_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_gate_persistence_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_gate_persistence_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_handoff_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_drift_trend_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_drift_trend_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_tamper_proof_audit_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_drift_trend_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_drift_trend_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___t_truth_source_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_rul___02_enforcement_validator_py -->|import_depends| D_SHARED[D_SHARED]
@@ -340,4 +341,4 @@ graph TD
     %% 统计
     %% 域内依赖: 28 条
     %% 跨域入边: 200 条
-    %% 跨域出边: 45 条
+    %% 跨域出边: 46 条
