@@ -13,6 +13,7 @@ language: zh
 created_by: AI-session-20260519-001
 date: "2026-07-07"
 valid_from: "2026-05-19"
+last_updated: "2026-07-07"
 ttl: permanent
 rule_form: structural
 belongs_to: "MOD-MASTER_BLUEPRINT"
