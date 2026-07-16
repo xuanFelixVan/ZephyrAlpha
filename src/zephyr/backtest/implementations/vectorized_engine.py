@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-UNK_default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-BT-001-default_backtest_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """L_BACKTEST — Vectorized Backtest Engine
@@ -52,7 +52,7 @@ from zephyr.backtest.core.engine_base import (
 from zephyr.backtest.core.matching_engine import MatchingConfig, MatchingEngine
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
 from zephyr.backtest.core.portfolio import Portfolio
-from zephyr.backtest.core.overfitting_detector import OverfittingDetector
+from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
 from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 
@@ -78,6 +78,7 @@ class BacktestConfig:
     slippage_bps: Decimal = Decimal("1")
     benchmark_symbol: str = "000300"
     risk_free_rate: float = DEFAULT_RISK_FREE_RATE
+    strict_overfitting_gate: bool = False
 
 
 class DefaultBacktestEngine(BacktestEngineBase):
@@ -206,6 +207,14 @@ class DefaultBacktestEngine(BacktestEngineBase):
             result.total_return * 100,
             result.trades_count,
         )
+
+        # SIM-56 上线前自动门禁: 严格模式下检测到过拟合则阻断上线
+        if getattr(self._config, "strict_overfitting_gate", False) and result.overfitting_flag:
+            raise OverfittingGateError(
+                f"SIM-56 上线前自动门禁阻断: 过拟合检测否决 "
+                f"(result_id={result_id}, is_overfitting=True). "
+                f"蓝图 §16.7 P0-9: 样本外Sharpe<70%样本内Sharpe 或 三维度任一不稳定"
+            )
         return result
 
     def _get_sorted_dates(self, data: pd.DataFrame) -> list[Any]:

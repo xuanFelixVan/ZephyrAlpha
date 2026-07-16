@@ -43,6 +43,7 @@ __all__ = [
     "PITConfig",
     "PITManager",
     "PITError",
+    "INSTRUMENT_COLUMN_CANDIDATES",
 ]
 
 # Embargo默认隔离交易日数
@@ -51,6 +52,8 @@ DEFAULT_EMBARGO_DAYS = 5
 DEFAULT_CONSISTENCY_THRESHOLD = 0.01
 # 相对偏差分母保护下限, 防止除零
 _EPSILON = 1e-12
+# 标的列名候选(词表单真源, 避免在代码中硬编码 "symbol"/"ticker" 等字面量)
+INSTRUMENT_COLUMN_CANDIDATES: tuple[str, ...] = ("symbol", "ticker", "code", "instrument")
 
 
 class PITError(Exception):
@@ -162,7 +165,7 @@ class PITManager:
         # 仅在显式提供 available_time_col(表明数据带版本)时执行去重
         if available_time_col is not None and available_time_col != event_time_col:
             group_cols = [event_time_col] + [
-                c for c in ("symbol", "ticker", "code", "instrument")
+                c for c in INSTRUMENT_COLUMN_CANDIDATES
                 if c in visible.columns
             ]
             # 按 available_time 升序后, 每组保留最后一行(即最大可用时间版本)

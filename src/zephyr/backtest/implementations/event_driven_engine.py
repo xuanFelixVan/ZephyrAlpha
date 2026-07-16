@@ -67,7 +67,7 @@ from zephyr.backtest.core.tick_replay import (
     TickReplayConfig,
     TickReplayEngine,
 )
-from zephyr.backtest.core.overfitting_detector import OverfittingDetector
+from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.walk_forward import WalkForwardAnalyzer, WalkForwardConfig
 from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 
@@ -317,6 +317,14 @@ class EventDrivenEngine(BacktestEngineBase):
             result.trades_count,
             ticks_processed,
         )
+
+        # SIM-56 上线前自动门禁: 严格模式下检测到过拟合则阻断上线
+        if getattr(self._config, "strict_overfitting_gate", False) and result.overfitting_flag:
+            raise OverfittingGateError(
+                f"SIM-56 上线前自动门禁阻断: 过拟合检测否决 "
+                f"(result_id={result_id}, is_overfitting=True). "
+                f"蓝图 §16.7 P0-9: 样本外Sharpe<70%样本内Sharpe 或 三维度任一不稳定"
+            )
         return result
 
     @property

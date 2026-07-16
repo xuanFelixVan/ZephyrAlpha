@@ -36,6 +36,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from zephyr.backtest.core.overfitting_detector import (
+    DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
+)
+
 
 class DecisionGateError(Exception):
     """决策门控错误"""
@@ -68,7 +72,7 @@ class DecisionGateConfig:
 
     is_sharpe_threshold: float = 0.5
     wfa_sharpe_threshold: float = 0.0
-    oos_sharpe_ratio_threshold: float = 0.7
+    oos_sharpe_ratio_threshold: float = DEFAULT_OOS_SHARPE_THRESHOLD_RATIO
     wfa_majority_pct: float = 0.5
     disaster_max_drawdown: float = 0.5
     stability_plateau_tolerance: float = 0.20

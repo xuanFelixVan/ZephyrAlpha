@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] VMS不可用返回degraded; 空增量返回0
 # [TESTS] scripts/connect/kb_vms.py --trigger
-# [A_module] module_id=MOD-RSC_sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-036-sync_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """KB->VMS 同步引擎 — sync_to_vms() 生产者"""
 

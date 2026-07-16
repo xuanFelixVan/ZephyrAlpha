@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-RSC_pipeline_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-034-pipeline_routing | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md
 # [MODULE] zephyr.intelligence.model_profiling.pipeline_routing
 # [INVARIANTS] pipeline routing variant of model profiler
@@ -18,7 +18,6 @@ from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import
     BenchmarkCase,
 )
 from zephyr.intelligence.model_profiling.model_discovery import (
-    DEFAULT_OLLAMA_URL,
     DiscoveredModel,
     ModelDiscovery,
 )
@@ -35,12 +34,16 @@ from zephyr.intelligence.model_profiling.pipeline_routing.task_model_learner imp
     TaskRecommendation,
 )
 
-from . import cli
+# DEFAULT_OLLAMA_URL 已下沉到 zephyr.shared.foundation.constants (§5.160 SSoT),
+# 不再从 model_discovery 重新导出, 避免引入死代码 import
+try:
+    from zephyr.intelligence.model_profiling.pipeline_routing import cli  # noqa: F401
+except ImportError:
+    pass
 
 __all__ = [
     "ALL_BENCHMARK_CASES",
     "CATEGORY_MAP",
-    "DEFAULT_OLLAMA_URL",
     "MAX_OLLAMA_MODELS",
     "SKIP_MODEL_PATTERNS",
     "BenchmarkCase",
