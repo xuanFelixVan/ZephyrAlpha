@@ -1,7 +1,7 @@
 %% D_GOV_REPAIR 域全景依赖图
-%% 生成时间: 2026-07-17 00:01:37
+%% 生成时间: 2026-07-17 00:08:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 21, 依赖边数: 193
+%% 模块数: 18, 依赖边数: 171
 
 graph TD
 
@@ -24,9 +24,6 @@ graph TD
         src_zephyr_governance_services___init___py["...ephyr/governance/services/__init__.py [prototype]"]
         src_zephyr_governance_strategies___init___py["...hyr/governance/strategies/__init__.py [prototype]"]
         src_zephyr_governance_trading_contracts___init___py["...ernance/trading_contracts/__init__.py [prototype]"]
-        src_zephyr_governance_trading____racts_execution___init___py["...ading_contracts/execution/__init__.py [prototype]"]
-        src_zephyr_governance_trading_contracts_market___init___py[".../trading_contracts/market/__init__.py [prototype]"]
-        src_zephyr_governance_trading____folio_contracts___init___py["...racts/portfolio/contracts/__init__.py [prototype]"]
         src_zephyr_governance_trading_contracts_risk___init___py["...ce/trading_contracts/risk/__init__.py [prototype]"]
     end
 
@@ -63,7 +60,7 @@ graph TD
     src_zephyr_governance_financia___nance_budget_enforcement_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_GOV_REPAIR -> D_FACTOR (1 条)
     src_zephyr_governance___init___py -->|import_depends| D_FACTOR[D_FACTOR]
-    %% D_GOV_REPAIR -> D_GOVERNANCE (68 条)
+    %% D_GOV_REPAIR -> D_GOVERNANCE (46 条)
     src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_governance_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -215,4 +212,4 @@ graph TD
     %% 统计
     %% 域内依赖: 3 条
     %% 跨域入边: 17 条
-    %% 跨域出边: 173 条
+    %% 跨域出边: 151 条

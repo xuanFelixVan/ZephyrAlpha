@@ -1,5 +1,5 @@
 %% D_INFRASTRUCTURE 域全景依赖图
-%% 生成时间: 2026-07-17 00:01:37
+%% 生成时间: 2026-07-17 00:08:32
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 61, 依赖边数: 150
 
@@ -125,14 +125,14 @@ graph TD
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_REPORTING -> D_INFRASTRUCTURE (9 条)
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_RISK -> D_INFRASTRUCTURE (3 条)
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
@@ -154,11 +154,11 @@ graph TD
     D_SIMULATION[D_SIMULATION] -->|import_depends| src_zephyr_shared_contracts_experiment_result_py
     %% D_TRADING -> D_INFRASTRUCTURE (7 条)
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_trace_context_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
 
     %% 跨域依赖（出）- 最多显示 30 条
@@ -197,12 +197,12 @@ graph TD
     tests_contracts_test_rbac_guard_root_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_INFRASTRUCTURE -> D_SHARED (55 条)
     src_zephyr_shared_contracts_experiment_result_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_fill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_factor_signal_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_fill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_market_data_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_position_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_risk_limits_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_synthesized_signal_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| D_SHARED[D_SHARED]
