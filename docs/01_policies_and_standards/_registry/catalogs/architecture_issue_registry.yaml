@@ -2345,8 +2345,8 @@ entries:
   created: '2026-07-15'
   last_updated: '2026-07-15'
 
-# --- #ARCH-CH-017: tick_data 表 ORDER BY 设计缺陷致 21 个月有效数据被误删（RULE-DATA-OPS 治本） ---
-- issue_id: '#ARCH-CH-017'
+# --- #ARCH-CH-020: tick_data 表 ORDER BY 设计缺陷致 21 个月有效数据被误删（RULE-DATA-OPS 治本） ---
+- issue_id: '#ARCH-CH-020'
   title: tick_data 表 ORDER BY 设计缺陷导致有效数据被 ReplacingMergeTree 合并
   severity: P1高
   category: data_architecture

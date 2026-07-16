@@ -221,6 +221,115 @@ def _format_violations_detail(violations: list[tuple[str, list[str]]]) -> str:
     )
 
 
+def _load_head_registered_nums(project_root: Path) -> set[str] | None:
+    """获取 HEAD 版本 registry 中已登记的编号集合（L2 同提交原子性检查用）。
+
+    Returns:
+        HEAD 版本编号集合；registry 不在 HEAD 返回空集合；git 异常返回 None。
+    """
+    try:
+        head_content = _get_head_content(project_root, _REGISTRY_REL)
+    except OSError:
+        return None
+    if head_content is None:
+        return set()
+    try:
+        import yaml
+        data = yaml.safe_load(head_content)
+    except Exception:
+        return None
+    if not isinstance(data, dict):
+        return None
+    return _extract_registered_nums(data)
+
+
+def _collect_new_refs_by_file(
+    project_root: Path, files: list[str], head_nums: set[str]
+) -> dict[str, set[str]]:
+    """收集 staged 文件中不在 HEAD registry 的新增引用（L2 同提交原子性检查用）。
+
+    排除 registry 自身——registry 文件引用自己的 issue_id 不算"新增引用"。
+    """
+    result: dict[str, set[str]] = {}
+    for f in files:
+        if not os.path.isfile(f):
+            continue
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if is_test_exempt(rel) or not rel.endswith(_SCANNABLE_EXTS):
+            continue
+        if rel == _REGISTRY_REL:
+            continue  # registry 自身不检查
+        try:
+            content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        new_refs = _extract_refs(content) - head_nums
+        if new_refs:
+            result[rel] = new_refs
+    return result
+
+
+def _check_atomicity(
+    new_refs_by_file: dict[str, set[str]], registry_in_commit: bool
+) -> list[tuple[str, list[str]]]:
+    """L2 同提交原子性检查：新引用不在 HEAD registry 时，要求 registry 同 commit。"""
+    if registry_in_commit:
+        return []
+    return [(rel, sorted(refs)) for rel, refs in new_refs_by_file.items()]
+
+
+def _detect_id_gaps(registered_nums: set[str]) -> dict[str, list[int]]:
+    """L1 编号空洞检测：检测每个域前缀的编号连续性。
+
+    Returns:
+        {domain_prefix: [missing_numbers]} 字典，如 {"CH": [6, 8]}。
+    """
+    from collections import defaultdict
+    by_domain: dict[str, list[int]] = defaultdict(list)
+    for num in registered_nums:
+        parts = num.split("-")
+        if len(parts) == 2 and parts[0].isalpha() and parts[1].isdigit():
+            by_domain[parts[0]].append(int(parts[1]))
+        elif num.isdigit():
+            by_domain[""].append(int(num))
+    gaps: dict[str, list[int]] = {}
+    for domain, nums in by_domain.items():
+        if len(nums) < 2:
+            continue
+        unique_sorted = sorted(set(nums))
+        full_range = set(range(unique_sorted[0], unique_sorted[-1] + 1))
+        missing = sorted(full_range - set(unique_sorted))
+        if missing:
+            gaps[domain] = missing
+    return gaps
+
+
+def _format_atomicity_detail(violations: list[tuple[str, list[str]]]) -> str:
+    lines = [f"  - {rel}: #ARCH-{', #ARCH-'.join(nums)}" for rel, nums in violations]
+    return (
+        "同提交原子性违规（ARCH_ATOMICITY_VIOLATION）——"
+        "以下文件引用了 HEAD registry 中不存在的新编号，"
+        "但 architecture_issue_registry.yaml 不在本次 commit 中：\n"
+        + "\n".join(lines)
+        + "\n修复：将 architecture_issue_registry.yaml 的对应条目更新"
+        "加入同一 commit（git add 后一起提交）。"
+    )
+
+
+def _format_gap_warning(gaps: dict[str, list[int]]) -> str:
+    parts = []
+    for domain, missing in gaps.items():
+        prefix = f"ARCH-{domain}-" if domain else "ARCH-"
+        parts.append(f"{prefix}{missing}")
+    return (
+        "⚠️ 编号空洞检测（ARCH_GAP_WARNING，不阻断）——"
+        "以下 ARCH 编号域存在编号空洞：\n  "
+        + "\n  ".join(parts)
+        + "\n建议：确认空洞编号是否为已删除/合并的条目，"
+        "如是则无需处理；如为分配错误则补登或重新分配。"
+    )
+
+
 def make_arch_reference_gate() -> GateSpec:
     """构造 #ARCH-NNN 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
 
@@ -243,6 +352,26 @@ def make_arch_reference_gate() -> GateSpec:
 
         if violations:
             return False, _format_violations_detail(violations)
+
+        # L2: 同提交原子性检查——新引用不在 HEAD registry 时，要求 registry 同 commit
+        # 防止"引用了新编号但 registry 没同提交登记"导致 commit 后 HEAD registry 仍缺条目
+        head_nums = _load_head_registered_nums(project_root)
+        if head_nums is not None:
+            new_refs_by_file = _collect_new_refs_by_file(project_root, files, head_nums)
+            if new_refs_by_file:
+                registry_rel = _REGISTRY_REL.replace("\\", "/")
+                registry_in_commit = any(
+                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel
+                    for f in files
+                )
+                atomicity_violations = _check_atomicity(new_refs_by_file, registry_in_commit)
+                if atomicity_violations:
+                    return False, _format_atomicity_detail(atomicity_violations)
+
+        # L1: 编号空洞检测（WARNING，不阻断）——发现编号空洞时通过但不报错
+        gaps = _detect_id_gaps(registered_nums)
+        if gaps:
+            return True, _format_gap_warning(gaps)
         return True, ""
 
     return GateSpec(gate_id="ARCH-REFERENCE", check=_check, priority=75)
