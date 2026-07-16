@@ -76,6 +76,66 @@ STATUS_BY_DIR: dict[str, AssetStatus] = {
 }
 
 
+def _resolve_asset_type(
+    relative_path: str,
+    extension: str,
+    type_mapping: list[tuple[str, list[str], AssetType]],
+) -> AssetType:
+    asset_type = AssetType.UNKNOWN
+    for prefix, extensions, atype in type_mapping:
+        if relative_path.startswith(prefix) and extension in extensions:
+            asset_type = atype
+            break
+    if relative_path.endswith(tuple(REGISTRY_PATTERNS)):
+        asset_type = AssetType.REGISTRY
+    return asset_type
+
+
+def _resolve_asset_layer(relative_path: str) -> AssetLayer:
+    asset_layer = AssetLayer.CROSS_LAYER
+    for prefix, layer in LAYER_BY_DIR.items():
+        if relative_path.startswith(prefix):
+            asset_layer = layer
+            break
+    return asset_layer
+
+
+def _resolve_asset_status(relative_path: str) -> AssetStatus:
+    asset_status = AssetStatus.ACTIVE
+    for suffix, status in STATUS_BY_DIR.items():
+        if suffix in relative_path:
+            asset_status = status
+            break
+    return asset_status
+
+
+def _scan_candidate_dirs(
+    relative_path: str,
+    extension: str,
+    type_mapping: list[tuple[str, list[str], AssetType]],
+) -> None:
+    candidate_dirs = [p for p, _, _ in type_mapping]
+    for prefix in sorted(candidate_dirs, key=len, reverse=True):
+        if relative_path.startswith(prefix):
+            if any(
+                True
+                for _, exts, _ in type_mapping
+                if prefix in relative_path and extension in exts
+            ):
+                pass
+            break
+    else:
+        if any(relative_path.startswith(d) for d in candidate_dirs):
+            pass
+
+
+def _check_yaml_registry(relative_path: str, extension: str) -> None:
+    if extension in (".yaml",):
+        for pat in REGISTRY_PATTERNS:
+            if relative_path.endswith(pat):
+                break
+
+
 class Classifier:
     """基于类型映射的资产自动分类器——Phase 1 实现（蓝图 §3.2）。"""
 
@@ -129,54 +189,20 @@ class Classifier:
         )
 
     def _classify_one(self, entry: RawFileEntry) -> ClassifiedAsset:
-        asset_type = AssetType.UNKNOWN
-        asset_layer = AssetLayer.CROSS_LAYER
-        asset_status = AssetStatus.ACTIVE
-        priority = Priority.P3
-
-        for prefix, extensions, atype in self.type_mapping:
-            if entry.relative_path.startswith(prefix) and entry.extension in extensions:
-                asset_type = atype
-                break
-
-        if entry.relative_path.endswith(tuple(REGISTRY_PATTERNS)):
-            asset_type = AssetType.REGISTRY
-
-        for prefix, layer in LAYER_BY_DIR.items():
-            if entry.relative_path.startswith(prefix):
-                asset_layer = layer
-                break
-
-        for suffix, status in STATUS_BY_DIR.items():
-            if suffix in entry.relative_path:
-                asset_status = status
-                break
-
-        candidate_dirs = [p for p, _, _ in self.type_mapping]
-        for prefix in sorted(candidate_dirs, key=len, reverse=True):
-            if entry.relative_path.startswith(prefix):
-                if any(
-                    True
-                    for _, exts, _ in self.type_mapping
-                    if prefix in entry.relative_path and entry.extension in exts
-                ):
-                    pass
-                break
-        else:
-            if any(entry.relative_path.startswith(d) for d in candidate_dirs):
-                pass
-
-        if entry.extension in (".yaml",):
-            for pat in REGISTRY_PATTERNS:
-                if entry.relative_path.endswith(pat):
-                    break
+        asset_type = _resolve_asset_type(
+            entry.relative_path, entry.extension, self.type_mapping
+        )
+        asset_layer = _resolve_asset_layer(entry.relative_path)
+        asset_status = _resolve_asset_status(entry.relative_path)
+        _scan_candidate_dirs(entry.relative_path, entry.extension, self.type_mapping)
+        _check_yaml_registry(entry.relative_path, entry.extension)
 
         return ClassifiedAsset(
             relative_path=entry.relative_path,
             asset_type=asset_type,
             layer=asset_layer,
             status=asset_status,
-            priority=priority,
+            priority=Priority.P3,
             size_bytes=entry.size_bytes,
             mtime_utc=entry.mtime_utc,
             sha256=entry.sha256,
