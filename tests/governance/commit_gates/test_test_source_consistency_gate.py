@@ -261,6 +261,51 @@ class TestExtractSourceSymbols:
         f.write_text("def broken(:\n", encoding="utf-8")
         assert _extract_source_symbols(f) is None
 
+    def test_extracts_import_from_symbols(self, tmp_path):
+        """ImportFrom 引入的符号也提取（re-export 模式）。
+
+        设计意图（P7b AI-15 审计）：resource_optimization.py 通过
+        ``from xxx import CacheStats`` 引入符号并在 __all__ 中声明，
+        gate 应识别这些符号为顶层可访问，避免误报测试 import 漂移。
+        """
+        f = tmp_path / "mod.py"
+        f.write_text(
+            "from zephyr.shared.models import CacheStats, HealthCheckResult\n"
+            '__all__ = ["CacheStats", "HealthCheckResult"]\n',
+            encoding="utf-8",
+        )
+        syms = _extract_source_symbols(f)
+        assert "CacheStats" in syms
+        assert "HealthCheckResult" in syms
+
+    def test_extracts_import_from_asname(self, tmp_path):
+        """ImportFrom 带 asname 时提取 asname（``from x import y as z`` -> z）。"""
+        f = tmp_path / "mod.py"
+        f.write_text("from zephyr.shared.models import Foo as Bar\n", encoding="utf-8")
+        syms = _extract_source_symbols(f)
+        assert "Bar" in syms
+        assert "Foo" not in syms
+
+    def test_extracts_plain_import_symbols(self, tmp_path):
+        """Import 引入的符号也提取（取 asname 或首段模块名）。"""
+        f = tmp_path / "mod.py"
+        f.write_text(
+            "import os\n"
+            "import zephyr.shared.models as models\n",
+            encoding="utf-8",
+        )
+        syms = _extract_source_symbols(f)
+        assert "os" in syms
+        assert "models" in syms
+
+    def test_wildcard_import_not_extracted(self, tmp_path):
+        """``from x import *`` 不提取具体符号（无法静态分析）。"""
+        f = tmp_path / "mod.py"
+        f.write_text("from zephyr.shared.models import *\n", encoding="utf-8")
+        syms = _extract_source_symbols(f)
+        # star import 不引入可静态分析的符号名
+        assert "*" not in syms
+
 
 # ---------------------------------------------------------------------------
 # TestExtractAllList
@@ -443,6 +488,30 @@ class TestGatewayIntegration:
         )
         test_file = "tests/test_foo.py"
         test_content = "from zephyr.mod.foo import PRIVATE\n"
+        gw = _make_gateway(
+            staged_files=[test_file], file_contents={test_file: test_content}
+        )
+        passed, msg = make_test_source_consistency_gate().check(gw, [])
+        assert passed is True
+        assert msg == ""
+
+    def test_reexport_import_passes(self, tmp_path, monkeypatch):
+        """源码 re-export 模式（import 引入符号）→ 测试 import 放行。
+
+        P7b AI-15 审计修复：resource_optimization.py 通过
+        ``from xxx import CacheStats`` 引入符号，测试 import CacheStats
+        应放行（ImportFrom 引入的符号也是顶层可访问符号）。
+        """
+        monkeypatch.setattr(_gate_mod, "_SRC_ROOT", tmp_path)
+        src_dir = tmp_path / "zephyr" / "mod"
+        src_dir.mkdir(parents=True)
+        (src_dir / "foo.py").write_text(
+            "from zephyr.shared.models import CacheStats, HealthCheckResult\n"
+            '__all__ = ["CacheStats", "HealthCheckResult"]\n',
+            encoding="utf-8",
+        )
+        test_file = "tests/test_foo.py"
+        test_content = "from zephyr.mod.foo import CacheStats, HealthCheckResult\n"
         gw = _make_gateway(
             staged_files=[test_file], file_contents={test_file: test_content}
         )
