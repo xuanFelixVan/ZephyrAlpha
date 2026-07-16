@@ -83,6 +83,7 @@ import argparse
 import ast
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -94,6 +95,12 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+# 确保 zephyr 包可导入（_shared.constants 依赖 zephyr.shared.io.paths）——
+# 使脚本自包含：手动运行与 post-commit reconciler subprocess 均无需外部 PYTHONPATH=src
+# 治本 #AD-HEALTH-001：reconciler subprocess 未设 PYTHONPATH 导致 dashboard 启动即 ModuleNotFoundError
+_SRC_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "src" / "zephyr").exists()) / "src")
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
 
 from _shared.constants import EXCLUDE_DIRS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
@@ -106,7 +113,7 @@ ensure_utf8_stdout()
 # ── 路径常量 ──────────────────────────────────────────────────────────────
 SRC_ZEPHYR = REPO_ROOT / "src" / "zephyr"
 SCRIPTS_GOVERNANCE = REPO_ROOT / "scripts" / "governance"
-COMMIT_GATES_DIR = SRC_ZEPHYR / "governance" / "commit_gates"
+COMMIT_GATES_DIR = SRC_ZEPHYR / "gov_enforcement" / "commit_gates"
 CAPABILITY_REGISTRY = (
     REPO_ROOT
     / "docs"
@@ -128,8 +135,14 @@ def _run_script(script_path: Path, args: list[str] | None = None, timeout: int =
     """运行治理脚本，返回 (exit_code, stdout, stderr)。
 
     统一 cwd=REPO_ROOT，捕获输出供解析。超时降级为 error。
+
+    治本 #AD-HEALTH-002：子进程 env 显式注入 PYTHONPATH=src，确保子脚本
+    （check_vocab_hardcode.py 等）能 `import zephyr.*`，否则子进程静默
+    ModuleNotFoundError 返回 0 计数，dashboard 误报"已治理"。
+    parent sys.path 修改不会继承到 subprocess env，必须显式传 env。
     """
     cmd = [sys.executable, str(script_path)] + (args or [])
+    child_env = {**os.environ, "PYTHONPATH": str(REPO_ROOT / "src")}
     try:
         result = subprocess.run(
             cmd,
@@ -138,6 +151,7 @@ def _run_script(script_path: Path, args: list[str] | None = None, timeout: int =
             encoding="utf-8",
             errors="replace",
             cwd=str(REPO_ROOT),
+            env=child_env,
             timeout=timeout,
         )
         return result.returncode, result.stdout, result.stderr
