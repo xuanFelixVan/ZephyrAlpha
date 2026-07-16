@@ -92,6 +92,22 @@ def _build_valuation_col_map(df, norm_date_fn, start_str, end_str):
     return col_map
 
 
+def _build_top10_shareholder_row(row, sym, qe, ratio_col, type_col):
+    return (
+        sym,
+        qe,
+        qe,
+        str(row.get("股东名称", "") or ""),
+        safe_float(row.get("持股数")),
+        safe_float(row.get(ratio_col)),
+        safe_float(row.get("变动比率")),
+        str(row.get("增减", "") or ""),
+        str(row.get(type_col, "") or ""),
+        "akshare",
+        1,
+    )
+
+
 # CH fallback: 从 stock_list 获取 A 股 6 位代码（SQL_ 前缀豁免 NO-BARE-SQL gate）
 SQL_STOCK_CODE_FROM_LIST = (
     "SELECT splitByChar('.', ts_code)[1] AS code "
@@ -2132,18 +2148,8 @@ class AKShareProvider(DataSourceBase):
                 if df is None or len(df) == 0:
                     continue
                 for _, row in df.iterrows():
-                    batch_rows.append((
-                        sym,
-                        qe,
-                        qe,
-                        str(row.get("股东名称", "") or ""),
-                        safe_float(row.get("持股数")),
-                        safe_float(row.get("占总股本持股比例")),
-                        safe_float(row.get("变动比率")),
-                        str(row.get("增减", "") or ""),
-                        str(row.get("股份类型", "") or ""),
-                        "akshare",
-                        1,
+                    batch_rows.append(_build_top10_shareholder_row(
+                        row, sym, qe, "占总股本持股比例", "股份类型",
                     ))
                     if len(batch_rows) >= 500:
                         yield FetchResult(
@@ -2210,18 +2216,8 @@ class AKShareProvider(DataSourceBase):
                 if df is None or len(df) == 0:
                     continue
                 for _, row in df.iterrows():
-                    batch_rows.append((
-                        sym,
-                        qe,
-                        qe,
-                        str(row.get("股东名称", "") or ""),
-                        safe_float(row.get("持股数")),
-                        safe_float(row.get("占总流通股本持股比例")),
-                        safe_float(row.get("变动比率")),
-                        str(row.get("增减", "") or ""),
-                        str(row.get("股东性质", "") or ""),
-                        "akshare",
-                        1,
+                    batch_rows.append(_build_top10_shareholder_row(
+                        row, sym, qe, "占总流通股本持股比例", "股东性质",
                     ))
                     if len(batch_rows) >= 500:
                         yield FetchResult(
