@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-INTEGRATION | (auto-injected by S4 reconciler) | §
 # [A_module] module_id=MOD-INTEGRATION | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
