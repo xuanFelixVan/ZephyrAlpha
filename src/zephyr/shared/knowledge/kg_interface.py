@@ -65,6 +65,29 @@ class KnowledgeGraphInterface(Protocol):
     def stats(self) -> dict[str, int]: ...
 
 
+def _expand_subgraph_frontier(
+    frontier: set[str],
+    entity_ids: set[str],
+    relation_ids: set[str],
+    outgoing: dict[str, list[str]],
+    incoming: dict[str, list[str]],
+    relations: dict[str, KGRelation],
+) -> set[str]:
+    next_frontier: set[str] = set()
+    for eid in frontier:
+        for rid in outgoing.get(eid, []):
+            rel = relations.get(rid)
+            if rel and rel.target_id not in entity_ids:
+                next_frontier.add(rel.target_id)
+                relation_ids.add(rid)
+        for rid in incoming.get(eid, []):
+            rel = relations.get(rid)
+            if rel and rel.source_id not in entity_ids:
+                next_frontier.add(rel.source_id)
+                relation_ids.add(rid)
+    return next_frontier
+
+
 class InMemoryKnowledgeGraph:
     def __init__(self) -> None:
         self._entities: dict[str, KGEntity] = {}
@@ -188,18 +211,9 @@ class InMemoryKnowledgeGraph:
             frontier: set[str] = {center_id}
 
             for _ in range(depth):
-                next_frontier: set[str] = set()
-                for eid in frontier:
-                    for rid in self._outgoing.get(eid, []):
-                        rel = self._relations.get(rid)
-                        if rel and rel.target_id not in entity_ids:
-                            next_frontier.add(rel.target_id)
-                            relation_ids.add(rid)
-                    for rid in self._incoming.get(eid, []):
-                        rel = self._relations.get(rid)
-                        if rel and rel.source_id not in entity_ids:
-                            next_frontier.add(rel.source_id)
-                            relation_ids.add(rid)
+                next_frontier = _expand_subgraph_frontier(
+                    frontier, entity_ids, relation_ids, self._outgoing, self._incoming, self._relations
+                )
                 entity_ids.update(next_frontier)
                 frontier = next_frontier
 
