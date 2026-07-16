@@ -1342,7 +1342,7 @@ tasks:
     date_col: announce_date
     dependencies: []
     capability: top10_shareholders
-    symbols: null  # null=全市场（scheduler从stock_list取标的列表）
+    symbols: null  # null=全市场（Provider 通过 _get_all_a_symbols 自动获取：akshare→CH stock_list fallback，裁定 #ARCH-CH-018）
     extra:
       description: "十大股东增量（AKShare stock_gdfx_top_10_em，逐股票逐季度拉取，季报披露后更新）"
 
@@ -1354,7 +1354,7 @@ tasks:
     date_col: announce_date
     dependencies: []
     capability: top10_circulating_shareholders
-    symbols: null
+    symbols: null  # null=全市场（Provider 通过 _get_all_a_symbols 自动获取，裁定 #ARCH-CH-018）
     extra:
       description: "十大流通股东增量（AKShare stock_gdfx_free_top_10_em，逐股票逐季度拉取）"
 

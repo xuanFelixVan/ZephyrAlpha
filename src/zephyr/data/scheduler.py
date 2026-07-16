@@ -1317,6 +1317,11 @@ def main() -> None:
     import signal
     import sys
 
+    # 显式加载 CH 配置（裁定 #ARCH-CH-017：启动入口必须加载 .env.clickhouse）
+    # ch_writer 模块级已加载一次，此处幂等调用确保启动序列明确
+    from zephyr.data.ch_config import ensure_ch_env_loaded
+    ensure_ch_env_loaded()
+
     # 日志落盘（RotatingFileHandler 轮转，避免无限增长）
     from logging.handlers import RotatingFileHandler
     _log_path = REPO_ROOT / "tmp" / "scheduler_run.log"

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.database_service
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin
+# [DEPENDENCIES] zephyr.governance.__init__, zephyr.shared.database.database_crud_mixin, zephyr.data.ch_config
 # [CONSUMERS]
 # [STARTUP] auto
 # [MATURITY] stable
@@ -46,27 +46,30 @@ from psycopg2.extras import RealDictCursor
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.database.database_crud_mixin import DatabaseCRUDMixin
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
-from zephyr.shared.security.secrets import get_secret_from_file_or_default
+from zephyr.shared.io.paths import DB_PATH
 
 
-# ClickHouse 连接配置文件路径（P1-7 修复：消除硬编码，与 .env.postgres 同模式）
-_CH_ENV_PATH: Path = REPO_ROOT / "config" / ".env.clickhouse"
+# ClickHouse 连接配置：委托给 zephyr.data.ch_config（裁定 #ARCH-CH-017 / #ARCH-CH-019）
+# 消除本模块的默认值 "localhost" 与 ch_writer 默认值 "172.24.30.100" 分裂，
+# 统一由 ch_config.load_ch_config() 提供，真源为 config/.env.clickhouse。
+from zephyr.data.ch_config import load_ch_config as _load_ch_config_from_ch_config
 
 
 def _load_clickhouse_config() -> dict[str, str]:
-    """从 config/.env.clickhouse 加载 ClickHouse 连接参数。
+    """从 config/.env.clickhouse 加载 ClickHouse 连接参数（裁定 #ARCH-CH-017/#ARCH-CH-019）。
 
-    P1-7 修复：消除 host/port/user/password/database 硬编码。
-    优先级：os.environ > config/.env.clickhouse > 默认值（localhost:9000/default/空/c1_market）。
-    文件不存在时全走默认值（开发环境友好），生产环境应创建该文件覆盖默认值。
+    委托给 zephyr.data.ch_config.load_ch_config()，消除本模块与 ch_writer 的默认值分裂。
+    优先级：os.environ > config/.env.clickhouse > 抛 CHConfigError（fail-closed）。
+    CLICKHOUSE_HOST 缺失时抛 CHConfigError，禁止静默用 localhost 默认值。
     """
+    cfg = _load_ch_config_from_ch_config()
+    # ch_config 返回 http_port，database_service 不需要它，但保留其余字段
     return {
-        "host": get_secret_from_file_or_default("CLICKHOUSE_HOST", _CH_ENV_PATH, "localhost"),
-        "port": get_secret_from_file_or_default("CLICKHOUSE_PORT", _CH_ENV_PATH, "9000"),
-        "user": get_secret_from_file_or_default("CLICKHOUSE_USER", _CH_ENV_PATH, "default"),
-        "password": get_secret_from_file_or_default("CLICKHOUSE_PASSWORD", _CH_ENV_PATH, ""),
-        "database": get_secret_from_file_or_default("CLICKHOUSE_DATABASE", _CH_ENV_PATH, "c1_market"),
+        "host": cfg["host"],
+        "port": cfg["port"],
+        "user": cfg["user"],
+        "password": cfg["password"],
+        "database": cfg["database"],
     }
 
 

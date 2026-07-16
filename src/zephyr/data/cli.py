@@ -49,21 +49,25 @@ log = logging.getLogger(__name__)
 
 
 def _load_dotenv() -> None:
-    """从项目根 .env 加载环境变量（IFIND_USERNAME 等）。
+    """从项目根 .env 加载环境变量（IFIND_USERNAME 等）+ .env.clickhouse（CH 连接配置）。
 
     使用 os.environ.setdefault 避免覆盖已有环境变量。
+    .env.clickhouse 加载委托给 ch_config.ensure_ch_env_loaded()（裁定 #ARCH-CH-017）。
     """
     from pathlib import Path
 
     env_file = Path(__file__).resolve().parents[3] / ".env"
-    if not env_file.exists():
-        return
-    for line in env_file.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+    # CH 配置单真源加载（裁定 #ARCH-CH-017）
+    from zephyr.data.ch_config import ensure_ch_env_loaded
+    ensure_ch_env_loaded()
 
 
 # ============== 输出格式化 ==============

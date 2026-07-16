@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.ch_writer
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay
+# [DEPENDENCIES] http.client(标准库); clickhouse-driver(pip); zephyr.data.local_replay; zephyr.data.ch_config
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -55,9 +55,12 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
-# ClickHouse 连接配置（从 config/.env.clickhouse 读取）
-# 环境变量由启动脚本（scheduler/worker）通过 dotenv 加载
-_CH_HOST = os.environ.get("CLICKHOUSE_HOST", "172.24.30.100")
+# ClickHouse 连接配置（裁定 #ARCH-CH-017：真源为 config/.env.clickhouse）
+# 由 ch_config.ensure_ch_env_loaded() 主动加载到 os.environ，禁止硬编码 IP 默认值。
+# 配置缺失时 _CH_HOST 为空字符串，连接时 fail-closed（Client(host="") 会失败）。
+from zephyr.data.ch_config import ensure_ch_env_loaded as _ensure_ch_env_loaded
+_ensure_ch_env_loaded()
+_CH_HOST = os.environ.get("CLICKHOUSE_HOST", "")
 _CH_TCP_PORT = int(os.environ.get("CLICKHOUSE_PORT", "9000"))
 _CH_HTTP_PORT = int(os.environ.get("CLICKHOUSE_HTTP_PORT", "8123"))
 

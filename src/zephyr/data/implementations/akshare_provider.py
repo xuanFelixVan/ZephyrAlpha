@@ -394,9 +394,12 @@ class AKShareProvider(DataSourceBase):
 
         symbols = payload.symbols
         if not symbols:
+            # symbols=null 契约（裁定 #ARCH-CH-018）：自动获取全 A 股标的列表
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
-                elapsed_sec=0.0, error="未提供标的列表（需通过 payload.symbols 传入）",
+                elapsed_sec=0.0, error="daily_valuation 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
 
@@ -653,6 +656,7 @@ class AKShareProvider(DataSourceBase):
         close/pct_change 接口未提供，填 None。
         """
         import requests
+        import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
 
         table = "c1_market.money_flow"
         columns = [
@@ -669,9 +673,12 @@ class AKShareProvider(DataSourceBase):
 
         symbols = payload.symbols
         if not symbols:
+            # symbols=null 契约（裁定 #ARCH-CH-018）：自动获取全 A 股标的列表
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
-                elapsed_sec=0.0, error="资金流向需指定 symbols",
+                elapsed_sec=0.0, error="money_flow 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
 
@@ -2094,9 +2101,12 @@ class AKShareProvider(DataSourceBase):
         ]
         symbols = payload.symbols or []
         if not symbols:
+            # symbols=null 契约（裁定 #ARCH-CH-018）：自动获取全 A 股标的列表
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="symbols 为空，需指定股票列表",
+                elapsed_sec=0.0, error="top10_shareholders 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
 
@@ -2170,9 +2180,12 @@ class AKShareProvider(DataSourceBase):
         ]
         symbols = payload.symbols or []
         if not symbols:
+            # symbols=null 契约（裁定 #ARCH-CH-018）：自动获取全 A 股标的列表
+            symbols = self._get_all_a_symbols(ak, policy)
+        if not symbols:
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
-                elapsed_sec=0.0, error="symbols 为空，需指定股票列表",
+                elapsed_sec=0.0, error="top10_circulating_shareholders 无法获取标的列表（akshare + CH stock_list 均为空）",
             )
             return
 

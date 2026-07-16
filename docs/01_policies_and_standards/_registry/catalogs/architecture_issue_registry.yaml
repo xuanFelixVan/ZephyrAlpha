@@ -8,9 +8,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.0
+version: 1.3.1
 created: '2026-06-26'
-last_updated: '2026-07-15'
+last_updated: '2026-07-16'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -2087,6 +2087,116 @@ entries:
   created: '2026-07-16'
   last_updated: '2026-07-16'
 
+# --- #ARCH-CH-017: CH 连接配置单真源化（Hyper-V 迁移后配置完整性） ---
+- issue_id: '#ARCH-CH-017'
+  title: CH 连接配置单真源化——ch_writer 硬编码 IP 默认值 + scheduler 不加载 .env.clickhouse
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    Hyper-V 迁移后，config/.env.clickhouse 已更新 CLICKHOUSE_HOST=172.24.30.100，
+    但 ch_writer.py 用 os.environ.get("CLICKHOUSE_HOST", "172.24.30.100") 硬编码默认值，
+    database_service.py 用 get_secret_from_file_or_default(..., "localhost") 默认值，
+    两者默认值不一致且都不主动加载 .env.clickhouse。scheduler.main() / cli._load_dotenv()
+    也不加载该文件（cli 只加载项目根 .env）。当前 ch_writer 能连上 CH 纯属硬编码默认值
+    巧合等于 .env.clickhouse 的值，CH 再迁移一次就会暴露。
+
+    根因分析（第一性原理——100% AI 开发模式约束）：
+    AI 写的代码只会 os.environ.get(...)，不会主动 load_dotenv(".env.clickhouse")。
+    配置文件加载必须由"启动入口"显式承担，否则配置真源形同虚设。ch_writer 的硬编码
+    默认值是"巧合成功"——它掩盖了配置真源的违反。
+
+    治本方案：
+    1. 新增 zephyr.data.ch_config 模块作为 CH 配置单真源加载器：
+       - ensure_ch_env_loaded(): 幂等加载 .env.clickhouse 到 os.environ
+       - load_ch_config(): 返回配置字典，CLICKHOUSE_HOST 缺失抛 CHConfigError（fail-closed）
+    2. ch_writer.py 模块级调用 ensure_ch_env_loaded()，删除硬编码 IP 默认值
+       （_CH_HOST 默认空字符串，连接时 fail-closed）
+    3. database_service.py 委托给 ch_config.load_ch_config()，删除本地 "localhost" 默认值
+    4. scheduler.main() 显式调用 ensure_ch_env_loaded()（启动入口明确声明）
+    5. cli._load_dotenv() 增加调用 ensure_ch_env_loaded()
+  impact:
+  - src/zephyr/data/ch_config.py（新增）
+  - src/zephyr/data/ch_writer.py（删除硬编码 IP，改用 ch_config）
+  - src/zephyr/infrastructure/database_service.py（委托 ch_config，删除 localhost 默认值）
+  - src/zephyr/data/scheduler.py（main() 显式加载）
+  - src/zephyr/data/cli.py（_load_dotenv 加载 .env.clickhouse）
+  fix_phase: 已完成
+  status: decided
+  related_rules:
+  - '#ARCH-CH-010'
+  - '#ARCH-CH-013'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
+# --- #ARCH-CH-018: symbols=null 契约可执行化（akshare 4 个 A 类能力 fallback） ---
+- issue_id: '#ARCH-CH-018'
+  title: symbols=null 契约未实现——akshare 4 个 A 类能力直接报错不 fallback
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    tasks.yaml 注释 "# null=全市场（scheduler从stock_list取标的列表）" 是未实现的契约。
+    scheduler._build_fetch_payload 只是 symbols=task.get("symbols") 透传 None，
+    没有"从 stock_list 取标的"逻辑。akshare_provider 中 4 个 A 类能力
+    （daily_valuation/money_flow/top10_shareholders/top10_circulating_shareholders）
+    在 symbols=None 时直接 yield error，没有调用 _get_all_a_symbols 做 fallback。
+    而另外 6 个 B 类能力（dividend/restricted_shares/stock_news_em/research_report/
+    share_change/stock_indicator）正确实现了 fallback。这是设计不一致。
+
+    根因分析（第一性原理——100% AI 开发模式约束）：
+    AI 不会主动实现"注释里的契约"。tasks.yaml 注释对 AI 而言只是一行注释，
+    AI 不会自动把它翻译成代码。契约必须用"机器可执行的真源"表达，不能依赖注释。
+    此外，akshare_provider 内部 A/B 两类实现不一致，AI 在新增能力时不知道该模仿哪一类。
+
+    治本方案：
+    1. 修改 akshare_provider.py 4 个 A 类能力，统一走 _get_all_a_symbols fallback：
+       - _fetch_daily_valuation (line 395-401)
+       - _fetch_money_flow (line 670-676)
+       - _fetch_top10_shareholders (line 2095-2101)
+       - _fetch_top10_circulating_shareholders (line 2171-2177)
+       每个能力改为：if not symbols: symbols = self._get_all_a_symbols(ak, policy)
+       然后追加 if not symbols: yield error 兜底（参考 stock_news_em line 1097-1101 模式）
+    2. 修正 tasks.yaml top10_shareholders 注释：从错误的"scheduler从stock_list取标的列表"
+       改为"Provider 通过 _get_all_a_symbols 自动获取：akshare→CH stock_list fallback"
+    3. _fetch_money_flow 需新增 import akshare as ak（原仅 import requests）
+
+    长期战略（Phase 4，未实施）：
+    引入 capability schema 校验，声明每个 capability 是否支持 symbols=null，
+    scheduler 启动时校验 Provider 实现与声明一致。把"注释契约"升级为"机器可执行契约"。
+  impact:
+  - src/zephyr/data/implementations/akshare_provider.py（4 个 A 类能力补 fallback）
+  - src/zephyr/data/config/tasks.yaml（修正 top10_shareholders/top10_circulating 注释）
+  fix_phase: 已完成
+  status: decided
+  related_rules: []
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
+# --- #ARCH-CH-019: database_service 默认值统一（消除 localhost/172.24.30.100 分裂） ---
+- issue_id: '#ARCH-CH-019'
+  title: database_service 默认值 localhost 与 ch_writer 默认值 172.24.30.100 分裂
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    database_service.py _load_clickhouse_config() 默认值 "localhost"，
+    ch_writer.py 默认值 "172.24.30.100"，两者不一致。虽然 .env.clickhouse 存在时
+    两者都读对，但默认值不一致是配置真源分裂的征兆，违反 SSoT 原则。
+
+    治本方案：
+    database_service._load_clickhouse_config() 委托给 ch_config.load_ch_config()，
+    消除本地默认值。CLICKHOUSE_HOST 缺失时统一抛 CHConfigError（fail-closed），
+    而非各自设定不同的 localhost/172.24.30.100 默认值。
+  impact:
+  - src/zephyr/infrastructure/database_service.py（委托 ch_config，删除 localhost 默认值）
+  fix_phase: 已完成
+  status: decided
+  related_rules:
+  - '#ARCH-CH-017'
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
 # --- #ARCH-REN-001: 域 ID 命名统一裁定（回溯登记自 dependency_path_panorama.md §20.13） ---
 - issue_id: '#ARCH-REN-001'
   title: 域 ID 连字符→下划线统一
@@ -2234,3 +2344,85 @@ entries:
   - tasks.yaml tick_backfill_weekly
   created: '2026-07-15'
   last_updated: '2026-07-15'
+
+# --- #ARCH-CH-017: tick_data 表 ORDER BY 设计缺陷致 21 个月有效数据被误删（RULE-DATA-OPS 治本） ---
+- issue_id: '#ARCH-CH-017'
+  title: tick_data 表 ORDER BY 设计缺陷导致有效数据被 ReplacingMergeTree 合并
+  severity: P1高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    tick_data 表使用 ReplacingMergeTree 引擎，ORDER BY 为 (market_type, symbol, trade_date, timestamp)，
+    不含 price 字段。同一时间戳不同价位的有效Tick记录（如指数同一秒的多笔成交）因排序键相同，
+    被ReplacingMergeTree 后台 merge 视为"重复"合并，导致数据丢失。
+
+    2026-07-16 事故：
+    AI 用 count() - uniqExact(market_type, symbol, trade_date, timestamp) 算 tick_data "重复数"，
+    把同一时间戳不同价位的有效记录算成"重复"（行数差 > 0 但实为排序键合并，非真重复）。
+    AI 未按全字段 GROUP BY 验证实际重复行，直接执行 INSERT GROUP BY + REPLACE PARTITION
+    "去重"，删除了 21 个月 index 数据（同一时间戳不同价位的有效记录）。
+
+    根因分析：
+    (a) 表设计根因：ORDER BY 不含 price，同一时间戳不同价位的有效记录排序键相同，
+        ReplacingMergeTree merge 时合并（保留最新版本，丢弃其他），违反业务唯一性。
+    (b) AI 操作根因：误用排序键作为"重复"判据——count() - uniqExact(排序键) 只能反映
+        "排序键相同的行数"，不能判定"全字段相同的真重复"。未执行全字段 GROUP BY 验证。
+    (c) 流程根因：未执行破坏性操作三步验证（必要性/真实性/可逆性），无备份直接执行
+        INSERT GROUP BY + REPLACE PARTITION。
+
+    治本方案（三阶段）：
+    阶段1规则修复（本次）：新增 RULE-DATA-OPS 铁律（TRAE-063）+ 标准化重复检查工具
+        （check_tick_duplication.py）+ 本议题登记。
+    阶段2表结构修复：修改 ORDER BY 为 (market_type, symbol, trade_date, timestamp, price)，
+        重建表（CREATE TABLE new AS SELECT * + RENAME），确保同时间戳不同价位记录不被合并。
+    阶段3数据恢复：从百度云归档重新导入 21 个月 index 数据（2025-10 至 2026-06）。
+
+    真重复定义（铁律）：所有 14 个业务字段完全相同的行才算真重复。
+    - trade_date, timestamp, symbol, market_type, price, volume, amount, direction,
+      data_source, bid_price, ask_price, bid_volume, ask_volume, quality_flag
+    验证方法：GROUP BY 全字段 HAVING count() > 1，查看实际重复行内容。
+    禁止判据：count() - uniqExact(排序键)。
+  impact:
+  - docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml（新增 RULE-DATA-OPS 铁律）
+  - scripts/governance/data_quality/check_tick_duplication.py（新增标准化重复检查工具）
+  - AGENTS.md（新增 RULE-DATA-OPS 章节）
+  - src/zephyr/data/（阶段2：tick_data 表 ORDER BY 重建，待施工）
+  - data/databases/backups/（阶段3：从百度云恢复 21 个月 index 数据，待施工）
+  fix_phase: '阶段1规则修复（RULE-DATA-OPS铁律+检查工具+议题登记）；阶段2表结构修复（重建表ORDER BY加price）；阶段3数据恢复（从百度云重新导入21个月index数据）'
+  status: decided
+  related_rules:
+  - TRAE-063
+  - RULE-DATA-OPS
+  - RULE-SSOT-CLASSIFICATION
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
+# --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
+- issue_id: '#ARCH-OLAP-001'
+  title: olap_engine.py 孤儿模块退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代后业务侧零调用
+  severity: P2中
+  adjudication: |
+    背景：DuckDB OLAP 层（olap_engine.py，MOD-INF-015）原为 SQLite+DuckDB 双引擎持久化方案（CT-DB-003 OLAPEngine 契约）。
+    2026-07-01 ClickHouse（Hyper-V VM）上线后，OLAP 分析能力迁移至 ClickHouse c1_market 仓库，
+    olap_engine.py 在 src/ 业务侧 consumer count=0（depgraph 确认），成为孤儿模块。
+
+    裁定（2026-07-16）：退役删除 olap_engine.py + 相关测试 + 契约登记（治本，非保留）。
+    1. 物理删除：src/zephyr/governance/persistence/olap_engine.py（683行）
+       + tests/db/test_olap_engine_db.py（295行）
+       + tests/governance/data_layer/test_olap_engine_unit.py（297行）
+    2. 契约退役：b_db.yaml 删除 CT-DB-003 OLAPEngine 契约 + error_code_registry.yaml 删除 ZA-GV-0023 OLAPEngineError
+    3. 依赖清理：pyproject.toml 删除 duckdb>=0.10.0,<2.0.0 依赖
+    4. depgraph 同步：apply_depgraph.py 删除 node 3575262（olap_engine.py, MOD-INF-015, generated, production）
+       + edge 4303071（olap→sqlite_schema import_depends）+ edge 4303072（olap→shared/io/paths import_depends）
+    5. 包导出更新：persistence/__init__.py __all__ 移除 olap_engine
+
+    注：b_db.yaml history 字段 + persistence/__init__.py 注释中以描述性标签 "ARCH-OLAP-RETIRE" 标注
+    （非 #ARCH-NNN 形式引用，ARCH-REFERENCE gate 正则 #ARCH-([A-Z]+-\d+|\d+) 不匹配）。
+    正式编号 #ARCH-OLAP-001 为本议题唯一引用标识。
+
+    commit: 24e5fd15ca（olap_engine 退役）
+  fix_phase: 已执行（olap_engine.py + 测试 + 契约 + 依赖 + depgraph 全部清理完成，2026-07-16）
+  status: decided
+  related_adjudication: 同日执行 backtest_base 迁移闭环（blueprint 同步，commit 49fc8c29ba）
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
