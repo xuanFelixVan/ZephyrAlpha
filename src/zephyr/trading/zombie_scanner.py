@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_zombie_scanner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: _kill_process的time.sleep是kill信号间等待(SIGTERM->terminate->kill升级),非周期轮询
 
 """
 zombie_scanner.py — 僵尸 Python 进程检测与自动处置
