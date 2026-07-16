@@ -1645,11 +1645,21 @@ entries:
   fix_phase: |
     Phase 2.1 数据修复（已完成）：apply_depgraph.py --delete-nodes 删除 depgraph 节点
       1799263(MOD-013) / 1799264(MOD-015)；frontmatter 统一 MOD-013/015 → MOD-INF-016。
-    Phase 2.2 系统修复（已完成）：prune_orphans 扩展覆盖 dataflow_jobs；
+    Phase 2.2 系统修复（已完成，过渡方案）：prune_orphans 扩展覆盖 dataflow_jobs；
       get_depgraph_pg_connection(read_only=False) 替换 get_dataflowgraph_pg_connection；
       SET app.allow_design_maturity_delete = on 绕过触发器。
-    验证：dataflow_jobs 删除 3 条（MOD-013/MOD-015/MOD-GOV-ALIGNMENT-LOOP），
+      验证：dataflow_jobs 删除 3 条（MOD-013/MOD-015/MOD-GOV-ALIGNMENT-LOOP），
       align_panoramas 问题总数=0。
+    Phase 2.3 责任边界治本（已完成，2026-07-16 AI-20 审计修复）：
+      过渡方案绕道 depgraph 连接工厂写 dataflow 表，违反"dataflow 表操作走 dataflow
+      连接工厂"的责任边界原则。治本：扩展 get_dataflowgraph_pg_connection 原生支持
+      read_only=False（对齐 depgraph_schema.get_depgraph_pg_connection 的角色分级模式，
+      READER/WRITER/superuser 三级），prune_orphans 改回走 dataflow 连接工厂：
+        get_dataflowgraph_pg_connection(read_only=False, autocommit=False,
+                                        allow_design_delete=True)
+      并新增 acquire_dataflow_write_lock/release_dataflow_write_lock（pg_advisory_lock
+      424243，session 级互斥）防止并发写冲突。测试 mock 同步适配三分发 + 写锁 noop。
+      capability 反查：panorama_module_sync_engine（含 prune_orphans alias）。
   related_adjudication: '#ARCH-056'
   created: '2026-07-16'
   last_updated: '2026-07-16'

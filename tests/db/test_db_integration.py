@@ -1,5 +1,12 @@
-"""
-DM-100019: 双库集成测试+四方对齐验证
+# [A_test] module_id: SRC-TST-0117 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
+# [MODULE] tests.db.test_db_integration
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TESTS] —
+# [TTL] permanent
+"""DM-100019: 双库集成测试+四方对齐验证
 
 验证内容：
 1. governance.db 的 domains.domain_id → depgraph 的 nodes.domain_id 一致性
@@ -9,29 +16,30 @@ DM-100019: 双库集成测试+四方对齐验证
 
 注：market.duckdb（INFRA-DB-005）已于2026-07-01删除/废弃，当前为2库架构：
     depgraph（PostgreSQL）+ governance.db（SQLite）
-"""
 
+测试隔离：本测试为 E2E 集成测试，连接生产库执行只读 SELECT 查询；
+         路径通过 governance_db_path fixture 派生（真源：zephyr.shared.io.paths.DB_PATH）。
+"""
 import sqlite3
 import sys
 from pathlib import Path
 
 import psycopg2
+import pytest
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-# 数据库路径
-GOVERNANCE_DB = REPO_ROOT / "data" / "databases" / "governance.db"
-# 注：depgraph 已迁移到 PostgreSQL（P2迁移），DEPGRAPH_DB 路径常量已移除
 PROJECT_ROOT = REPO_ROOT  # alias 真源
 
 
-def test_cross_db_domain_consistency():
+@pytest.mark.e2e
+def test_cross_db_domain_consistency(governance_db_path: Path):
     """测试跨库 domain_id 一致性（governance.db domains → depgraph nodes）"""
     print("\n[TEST] 跨库 domain_id 一致性验证")
 
     # 从 governance.db domains 表获取所有 domain_id（P3-1后 tasks.domain_id 已删除）
-    gov_conn = sqlite3.connect(GOVERNANCE_DB)
+    gov_conn = sqlite3.connect(governance_db_path)
     gov_cursor = gov_conn.cursor()
     gov_cursor.execute("SELECT domain_id FROM domains")
     gov_domains = {row[0] for row in gov_cursor.fetchall()}
@@ -67,6 +75,7 @@ def test_cross_db_domain_consistency():
     print("  ✓ PASS: 所有 governance domain 在 depgraph 中均存在")
 
 
+@pytest.mark.e2e
 def test_directory_tree_filesystem_alignment():
     """测试 depgraph arch_directory_tree 与实际文件系统对齐（P2迁移后：PostgreSQL）"""
     print("\n[TEST] arch_directory_tree 与实际文件系统对齐验证")
@@ -98,14 +107,15 @@ def test_directory_tree_filesystem_alignment():
     print("  ✓ PASS: 所有文件路径在文件系统中均存在")
 
 
-def test_schema_version_consistency():
+@pytest.mark.e2e
+def test_schema_version_consistency(governance_db_path: Path):
     """测试双库 schema 版本一致性"""
     print("\n[TEST] 双库 schema 版本一致性验证")
 
     versions = {}
 
     # governance.db
-    gov_conn = sqlite3.connect(GOVERNANCE_DB)
+    gov_conn = sqlite3.connect(governance_db_path)
     gov_cursor = gov_conn.cursor()
     try:
         gov_cursor.execute("SELECT version, applied_at FROM _schema_version ORDER BY applied_at DESC LIMIT 1")
@@ -136,12 +146,13 @@ def test_schema_version_consistency():
         # 不是错误，只是警告
 
 
-def test_data_integrity():
+@pytest.mark.e2e
+def test_data_integrity(governance_db_path: Path):
     """测试双库数据完整性"""
     print("\n[TEST] 双库数据完整性验证")
 
     # governance.db - 检查表是否存在（数据迁移是独立任务）
-    gov_conn = sqlite3.connect(GOVERNANCE_DB)
+    gov_conn = sqlite3.connect(governance_db_path)
     gov_cursor = gov_conn.cursor()
     gov_cursor.execute("SELECT COUNT(*) FROM tasks")
     task_count = gov_cursor.fetchone()[0]
@@ -176,15 +187,18 @@ def test_data_integrity():
 
 
 def main():
+    """脚本入口：直接运行时执行 E2E 测试（需生产库可用）。"""
+    from zephyr.shared.io.paths import DB_PATH
+
     print("=" * 80)
     print("DM-100019: 双库集成测试+四方对齐验证")
     print("=" * 80)
 
     # 检查数据库文件是否存在（注：depgraph 已迁移到 PostgreSQL，通过 get_depgraph_pg_connection() 验证）
-    if not GOVERNANCE_DB.exists():
-        print(f"\n✗ FAIL: governance.db 不存在: {GOVERNANCE_DB}")
+    if not DB_PATH.exists():
+        print(f"\n✗ FAIL: governance.db 不存在: {DB_PATH}")
         return 1
-    print(f"✓ governance.db 存在: {GOVERNANCE_DB}")
+    print(f"✓ governance.db 存在: {DB_PATH}")
 
     # 验证 depgraph (PostgreSQL) 可连接
     try:
@@ -195,12 +209,12 @@ def main():
         print(f"\n✗ FAIL: depgraph (PostgreSQL) 连接失败: {e}")
         return 1
 
-    # 运行测试
+    # 运行测试（脚本模式下直接传 DB_PATH）
     tests = [
-        test_cross_db_domain_consistency,
+        lambda: test_cross_db_domain_consistency(DB_PATH),
         test_directory_tree_filesystem_alignment,
-        test_schema_version_consistency,
-        test_data_integrity,
+        lambda: test_schema_version_consistency(DB_PATH),
+        lambda: test_data_integrity(DB_PATH),
     ]
 
     results = []
