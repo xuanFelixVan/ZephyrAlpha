@@ -25,8 +25,7 @@ completes_when: _working 目录被清空或重构
 
 | 子目录 | 用途 | 文件数 |
 |--------|------|--------|
-| `03_governance_reports/` | 治理报告 | 1 |
-| `module_migration/` | 模块迁移任务卡 | 4 |
+| `module_migration/` | 模块迁移任务卡 | 6 |
 | `p2_review_reports/` | P2 评审报告 | 1 |
 | `research_notes/` | 研究笔记 | 4 |
 
@@ -40,6 +39,7 @@ completes_when: _working 目录被清空或重构
 | `2026-07-15-panorama_orphan_governance_spec.md` | ARCH-057 spec 已落地 | `docs/_archive/` |
 | `hyperv_clickhouse_migration_2026_07_15.md` | Hyper-V 迁移已完成验收 | `docs/_archive/` |
 | `hyperv_migration_impact_inventory.yaml` | 迁移完成并归档 | `docs/_archive/` |
+| `03_governance_reports/index.md` | 引用断裂（9个文档不存在），目录已删除 | 已删除 |
 
 ## AI 使用方式
 
