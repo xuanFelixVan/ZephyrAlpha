@@ -1,16 +1,15 @@
-"""ch_writer 单测（MOD-L00-004 阶段2）。
+"""ch_writer 单测（MOD-L00-004 阶段2，Hyper-V 迁移后修订 2026-07-16）。
 
 测试内容：
 - tsv_escape（纯函数）
-- write_tsv（mock _wsl_ch）
-- write_result（mock _wsl_ch + FetchResult）
-- delete_where（mock _wsl_ch）
-- query（mock _wsl_ch）
+- write_tsv（mock _http_insert）
+- write_result（mock _http_insert + FetchResult）
+- delete_where（mock _get_client + _get_http_host）
+- query（mock _get_client + _get_http_host）
 - _get_insert_columns（mock query）
 
-不依赖真实 WSL/clickhouse-client，用 unittest.mock.patch 替换 _wsl_ch。
+不依赖真实 ClickHouse，用 unittest.mock.patch 替换 TCP/HTTP 传输层。
 """
-import subprocess
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -68,12 +67,13 @@ class TestTsvEscape:
 
 
 class TestQuery:
-    """query 函数测试（混合传输：clickhouse-driver TCP + WSL fallback）。"""
+    """query 函数测试（二级传输：clickhouse-driver TCP + HTTP fallback）。"""
 
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
         cw._ch_client = None
+        cw._ch_http_host = None
 
     def test_query_select_success(self):
         """SELECT 查询通过 clickhouse-driver 返回 TSV 格式。"""
@@ -111,105 +111,91 @@ class TestQuery:
             result = query("SELECT 1 WHERE 0")
         assert result == ""
 
-    def test_query_driver_fails_fallback_wsl(self):
-        """clickhouse-driver 不可用时（返回 None）降级到 WSL subprocess。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stdout = b"fallback_result\n"
-        mock_proc.stderr = b""
+    def test_query_driver_fails_fallback_http(self):
+        """clickhouse-driver 不可用时（返回 None）降级到 HTTP API。"""
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read.return_value = b"fallback_result\n"
+        mock_conn = MagicMock()
+        mock_conn.getresponse.return_value = mock_resp
         with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
-                result = query("SELECT 1")
+            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+                with patch("http.client.HTTPConnection", return_value=mock_conn):
+                    result = query("SELECT 1")
         assert result == "fallback_result\n"
 
-    def test_query_driver_exception_fallback_wsl(self):
-        """clickhouse-driver execute 异常时降级到 WSL subprocess。"""
+    def test_query_driver_exception_fallback_http(self):
+        """clickhouse-driver execute 异常时降级到 HTTP API。"""
         mock_client = MagicMock()
         mock_client.execute.side_effect = Exception("query failed")
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stdout = b"fallback_result\n"
-        mock_proc.stderr = b""
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_resp.read.return_value = b"fallback_result\n"
+        mock_conn = MagicMock()
+        mock_conn.getresponse.return_value = mock_resp
         with patch("src.zephyr.data.ch_writer._get_client", return_value=mock_client):
-            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
-                result = query("SELECT 1")
+            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+                with patch("http.client.HTTPConnection", return_value=mock_conn):
+                    result = query("SELECT 1")
         assert result == "fallback_result\n"
 
     def test_query_both_fail_returns_empty(self):
-        """driver 不可用且 WSL 也失败时返回空字符串。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 1
-        mock_proc.stdout = b""
-        mock_proc.stderr = b"error"
+        """driver 不可用且 HTTP 也不可用时返回空字符串。"""
         with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+            with patch("src.zephyr.data.ch_writer._get_http_host", return_value=""):
                 result = query("SELECT 1")
         assert result == ""
 
 
 class TestWriteTsv:
-    """write_tsv 函数测试（mock _wsl_ch）。"""
+    """write_tsv 函数测试（mock _http_insert）。"""
 
     def test_write_success(self):
         """成功写入返回 True。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
             ok = write_tsv("c1_market.kline_daily", "(col1, col2)", b"v1\tv2\n")
         assert ok is True
-        mock_ch.assert_called_once()
-        # 验证 SQL 包含表名和列
-        args = mock_ch.call_args[0][0]  # 第一个位置参数是 args list
-        assert any("c1_market.kline_daily" in a for a in args)
+        mock_http.assert_called_once()
 
     def test_write_empty_data(self):
         """空数据返回 False。"""
-        with patch("src.zephyr.data.ch_writer._wsl_ch") as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
             ok = write_tsv("c1_market.kline_daily", "(col1)", b"")
         assert ok is False
-        mock_ch.assert_not_called()
+        mock_http.assert_not_called()
 
-    def test_write_failure(self):
-        """写入失败返回 False。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 1
-        mock_proc.stderr = b"Too many parts"
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
-            ok = write_tsv("c1_market.kline_daily", "(col1)", b"v1\n")
-        assert ok is False
-
-    def test_write_timeout(self):
-        """超时返回 False。"""
-        with patch(
-            "src.zephyr.data.ch_writer._wsl_ch",
-            side_effect=subprocess.TimeoutExpired(cmd="wsl", timeout=1),
-        ):
-            ok = write_tsv("c1_market.kline_daily", "(col1)", b"v1\n")
-        assert ok is False
+    def test_write_failure_http_local_fallback(self):
+        """HTTP 失败后本地落盘也成功，write_tsv 返回 False（非 CH 已提交）。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+            with patch("zephyr.data.local_replay.save_fallback", return_value=True):
+                ok = write_tsv("c1_market.kline_daily", "(col1)", b"v1\n")
+        assert ok is False  # 本地落盘不等于 CH 已提交
 
     def test_write_outcome_local_fallback_is_not_ch_commit(self):
         """本地落盘成功必须可区分于 ClickHouse 已提交。"""
-        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False), \
-             patch("src.zephyr.data.ch_writer._wsl_ch", side_effect=OSError("WSL down")), \
-             patch("zephyr.data.local_replay.save_fallback", return_value=True):
-            outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=False):
+            with patch("zephyr.data.local_replay.save_fallback", return_value=True):
+                outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
         assert outcome.disposition is WriteDisposition.LOCAL_DURABLE
         assert outcome.is_ch_committed is False
 
+    def test_write_outcome_ch_committed(self):
+        """HTTP 成功时 outcome 为 CH_COMMITTED。"""
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True):
+            outcome = write_tsv_outcome("c1_market.kline_daily", "(col1)", b"v1\n")
+        assert outcome.disposition is WriteDisposition.CH_COMMITTED
+        assert outcome.is_ch_committed is True
+
     def test_write_auto_columns(self):
         """columns=None 时自动查询列清单。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
             with patch("src.zephyr.data.ch_writer._get_insert_columns", return_value="(a, b)"):
                 ok = write_tsv("c1_market.kline_daily", None, b"v1\tv2\n")
         assert ok is True
 
 
 class TestWriteResult:
-    """write_result 函数测试（mock _wsl_ch）。"""
+    """write_result 函数测试（mock _http_insert）。"""
 
     def test_write_result_success(self):
         """成功写入 FetchResult。"""
@@ -220,17 +206,14 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=1.0,
         )
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
             ok = write_result(result)
         assert ok is True
         # 验证 TSV 数据正确构造
-        call_args = mock_ch.call_args
-        stdin_data = call_args[1]["stdin_bytes"]  # keyword arg
-        assert b"000001\t2026-07-05\t10.5" in stdin_data
-        assert b"000002\t2026-07-05\t20.3" in stdin_data
+        call_args = mock_http.call_args
+        tsv_bytes = call_args[0][1]  # 第二个位置参数是 tsv_bytes
+        assert b"000001\t2026-07-05\t10.5" in tsv_bytes
+        assert b"000002\t2026-07-05\t20.3" in tsv_bytes
 
     def test_write_result_with_error(self):
         """FetchResult.error 非 None 时跳过。"""
@@ -242,10 +225,10 @@ class TestWriteResult:
             elapsed_sec=0,
             error="连接超时",
         )
-        with patch("src.zephyr.data.ch_writer._wsl_ch") as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
             ok = write_result(result)
         assert ok is False
-        mock_ch.assert_not_called()
+        mock_http.assert_not_called()
 
     def test_write_result_empty_rows(self):
         """无数据行返回 True（跳过但视为成功）。"""
@@ -256,10 +239,10 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=0,
         )
-        with patch("src.zephyr.data.ch_writer._wsl_ch") as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert") as mock_http:
             ok = write_result(result)
         assert ok is True
-        mock_ch.assert_not_called()
+        mock_http.assert_not_called()
 
     def test_write_result_none_values(self):
         """None 值转 \\N。"""
@@ -270,23 +253,21 @@ class TestWriteResult:
             last_key="",
             elapsed_sec=0,
         )
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stderr = b""
-        with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
+        with patch("src.zephyr.data.ch_writer._http_insert", return_value=True) as mock_http:
             ok = write_result(result)
         assert ok is True
-        stdin_data = mock_ch.call_args[1]["stdin_bytes"]
-        assert b"\\N\t1" in stdin_data
+        tsv_bytes = mock_http.call_args[0][1]
+        assert b"\\N\t1" in tsv_bytes
 
 
 class TestDeleteWhere:
-    """delete_where 函数测试（混合传输：clickhouse-driver TCP + WSL fallback）。"""
+    """delete_where 函数测试（二级传输：clickhouse-driver TCP + HTTP fallback）。"""
 
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
         cw._ch_client = None
+        cw._ch_http_host = None
 
     def test_delete_success_via_driver(self):
         """通过 clickhouse-driver 成功删除。"""
@@ -296,25 +277,22 @@ class TestDeleteWhere:
         assert ok is True
         mock_client.execute.assert_called_once()
 
-    def test_delete_driver_fails_fallback_wsl(self):
-        """clickhouse-driver 不可用时（返回 None）降级到 WSL 并成功。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 0
-        mock_proc.stderr = b""
+    def test_delete_driver_fails_fallback_http(self):
+        """clickhouse-driver 不可用时（返回 None）降级到 HTTP 并成功。"""
+        mock_resp = MagicMock()
+        mock_resp.status = 200
+        mock_conn = MagicMock()
+        mock_conn.getresponse.return_value = mock_resp
         with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc) as mock_ch:
-                ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
+            with patch("src.zephyr.data.ch_writer._get_http_host", return_value="172.24.30.100"):
+                with patch("http.client.HTTPConnection", return_value=mock_conn):
+                    ok = delete_where("c1_market.kline_daily", "date = '2026-07-05'")
         assert ok is True
-        args = mock_ch.call_args[0][0]
-        assert any("ALTER TABLE" in a and "DELETE" in a for a in args)
 
     def test_delete_both_fail_returns_false(self):
-        """driver 不可用且 WSL 也失败时返回 False。"""
-        mock_proc = MagicMock()
-        mock_proc.returncode = 1
-        mock_proc.stderr = b"Unknown table"
+        """driver 不可用且 HTTP 也不可用时返回 False。"""
         with patch("src.zephyr.data.ch_writer._get_client", return_value=None):
-            with patch("src.zephyr.data.ch_writer._wsl_ch", return_value=mock_proc):
+            with patch("src.zephyr.data.ch_writer._get_http_host", return_value=""):
                 ok = delete_where("nonexistent", "1=1")
         assert ok is False
 

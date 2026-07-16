@@ -16,7 +16,7 @@
 # [TTL] permanent
 """本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phase 1）。
 
-当 ClickHouse 三级降级链（TCP→HTTP→WSL subprocess）全部失败时（WSL2 崩溃），
+当 ClickHouse 二级降级链（TCP→HTTP）全部失败时（VM/CH 不可达），
 ch_writer.write_tsv 将数据写入本地 TSV 文件而非丢弃。
 scheduler 启动时 + 每 30 分钟检查并回灌积压文件到 CH。
 
@@ -68,7 +68,7 @@ def _table_dir(table: str) -> Path:
 
 
 def save_fallback(table: str, cols_clause: str | None, tsv_bytes: bytes) -> bool:
-    """将 TSV 数据落盘到本地文件（WSL 全挂时的第四级降级）。
+    """将 TSV 数据落盘到本地文件（TCP+HTTP 均失败时的第三级降级）。
 
     原子写入：先写 .tmp 文件，再 rename 为 .tsv，避免半写文件。
     追加 manifest 条目（JSONL 格式，加锁防并发冲突）。

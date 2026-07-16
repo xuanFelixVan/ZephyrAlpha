@@ -64,6 +64,12 @@ _SQL_FIND_PART = "SELECT database, table FROM system.parts WHERE name='{part_nam
 _SQL_STOP_MERGES = "SYSTEM STOP MERGES"
 _SQL_START_MERGES = "SYSTEM START MERGES"
 _SQL_DETACH_PART = "ALTER TABLE {db}.{table} DETACH PART '{part_name}'"
+_SQL_TEXT_LOG_CHECKSUM = (
+    "SELECT message FROM system.text_log "
+    "WHERE event_time > now() - INTERVAL 1 HOUR "
+    "AND level <= 3 AND message ILIKE '%Checksum%' "
+    "ORDER BY event_time DESC LIMIT 2000"
+)
 
 # 模块级调度器单例（供 APScheduler job 回调使用，避免 pickle 绑定方法+Lock 对象）
 _global_scheduler: "IntegratorScheduler | None" = None
@@ -292,7 +298,7 @@ class IntegratorScheduler:
         """启动 ClickHouse 健康探活后台守护线程。
 
         问题背景：/health 端点原同步调用 ch_reader.query("SELECT 1")，
-        当 ClickHouse 连接异常时三级降级链（TCP→HTTP→WSL）逐个超时，
+        当 ClickHouse 连接异常时二级降级链（TCP→HTTP）逐个超时，
         最坏情况 _DEFAULT_TIMEOUT=600s，导致 /health 请求阻塞 10 分钟。
 
         治本方案（裁定 #ARCH-CH-011）：
@@ -334,7 +340,7 @@ class IntegratorScheduler:
     def _start_local_replay(self) -> None:
         """启动本地落盘回灌后台守护线程。
 
-        问题背景：WSL2 失稳时 ch_writer.write_tsv 三级降级链全部失败，
+        问题背景：CH/VM 不可达时 ch_writer.write_tsv 二级降级链全部失败，
         数据写入 data/local_fallback/*.tsv 本地文件（local_replay.save_fallback）。
         若不回灌，数据将永久滞留本地，造成数据丢失。
 
@@ -367,136 +373,12 @@ class IntegratorScheduler:
         t.start()
         log.info("本地落盘回灌线程已启动（间隔 1800s）")
 
-    # ============== WSL 健康探活 + 自动重启（裁定 #ARCH-CH-013 Phase 2） ==============
-
-    @staticmethod
-    def _classify_wsl_probe_result(
-        returncode: int, stdout: bytes, stderr: bytes,
-    ) -> tuple[bool, str]:
-        """区分 WSL VM 故障与 systemd 用户会话故障，避免误杀 VM。"""
-        if returncode == 0 and b"ok" in stdout:
-            return True, "ok"
-        detail = stderr.decode("utf-8", errors="replace")
-        if (
-            "Failed to start the systemd user session" in detail
-            and "Wsl/Service/E_UNEXPECTED" not in detail
-        ):
-            return True, "systemd_user_session_degraded"
-        return False, detail
-
-    def _start_wsl_health_probe(self) -> None:
-        """启动 WSL2 健康探活 + 自动重启守护线程。
-
-        问题背景：WSL2 虚拟机每 ~30 秒非正常停机一次（dmesg journal 腐蚀），
-        导致 CH 进程被杀 + systemd 重启循环。表现为：
-        - wsl bash -c 'clickhouse-client ...' 返回 Wsl/Service/E_UNEXPECTED 灾难性故障
-        - wsl --shutdown + wsl -d Ubuntu 返回 STATUS_DLL_INIT_FAILED
-
-        治本方案（裁定 #ARCH-CH-013 Phase 2+3）：
-    - 后台守护线程每 60 秒探活 WSL（wsl -d Ubuntu -e echo ok，timeout=10s）
-    - _classify_wsl_probe_result 区分故障类型（Phase 3）：
-      · systemd 用户会话降级（VM 存活）→ 抑制冷重启，只告警
-      · 真正 VM 故障（E_UNEXPECTED）→ 冷重启恢复
-    - 冷重启流程：wsl --shutdown → sleep 10s → wsl -d Ubuntu -e echo ok
-    - 冷重启后重置失败计数器，等待下个周期继续探活
-
-        注意：此探活独立于 _start_ch_health_probe（后者只查 CH 不查 WSL），
-        二者分工——CH 探活发现 CH 进程死，WSL 探活发现 WSL VM 死。
-        """
-        import subprocess as _sp
-
-        def _probe_wsl() -> tuple[bool, str]:
-            """探活 WSL，返回 (ok, classification)。"""
-            try:
-                r = _sp.run(
-                    ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
-                    capture_output=True, timeout=10,
-                )
-                return self._classify_wsl_probe_result(
-                    r.returncode, r.stdout, r.stderr,
-                )
-            except Exception:
-                return False, "probe_exception"
-
-        def _cold_restart_wsl() -> bool:
-            """冷重启 WSL：shutdown → wait → boot。"""
-            try:
-                _sp.run(["wsl", "--shutdown"], capture_output=True, timeout=15)
-                log.warning("WSL 冷重启：已 shutdown，等待 10s 后重启")
-                time.sleep(10)
-                # 启动 WSL（启动后等 5 秒让 systemd 初始化）
-                r = _sp.run(
-                    ["wsl", "-d", "Ubuntu", "-e", "echo", "ok"],
-                    capture_output=True, timeout=30,
-                )
-                if r.returncode == 0 and b"ok" in r.stdout:
-                    log.info("WSL 冷重启成功")
-                    # WSL 启动后 CH 还需要时间初始化，多等 15 秒
-                    time.sleep(15)
-                    return True
-                log.error("WSL 冷重启后探活仍失败: rc=%s stderr=%s",
-                          r.returncode, r.stderr.decode("utf-8", errors="replace"))
-                return False
-            except Exception as e:
-                log.error("WSL 冷重启异常: %s", e)
-                return False
-
-        def _probe_loop() -> None:
-            fail_count = 0
-            last_class = "unknown"
-            while self._started:
-                ok, cls = _probe_wsl()
-                if ok:
-                    if fail_count > 0:
-                        log.info("WSL 探活恢复（前 %d 次失败）", fail_count)
-                    fail_count = 0
-                else:
-                    fail_count += 1
-                    last_class = cls
-                    log.warning("WSL 探活失败（连续 %d 次，分类=%s）", fail_count, cls)
-                    if fail_count >= 3:
-                        if last_class == "systemd_user_session_degraded":
-                            # systemd 用户会话故障：VM 存活，CH 可能仍在运行
-                            # 抑制冷重启，避免误杀 CH 写入
-                            log.error(
-                                "WSL 连续 %d 次探活失败（systemd 用户会话降级）；"
-                                "为保护进行中的 ClickHouse 写入，已抑制自动 wsl --shutdown",
-                                fail_count,
-                            )
-                            self._alerter.notify(
-                                "wsl_systemd_degraded_no_shutdown",
-                                f"WSL2 连续 {fail_count} 次探活失败（systemd 用户会话降级）；"
-                                "自动关机已抑制，请检查宿主 WSL 服务",
-                                level=LEVEL_CRITICAL,
-                                source="wsl_health_probe",
-                            )
-                        else:
-                            # 真正 VM 故障（E_UNEXPECTED / probe_exception 等）
-                            # VM 已死，CH 已死，必须冷重启恢复
-                            log.error(
-                                "WSL 连续 %d 次探活失败（分类=%s）；VM 故障，触发冷重启",
-                                fail_count, last_class,
-                            )
-                            self._alerter.notify(
-                                "wsl_vm_failure_cold_restart",
-                                f"WSL2 连续 {fail_count} 次探活失败（{last_class}），自动冷重启",
-                                level=LEVEL_CRITICAL,
-                                source="wsl_health_probe",
-                            )
-                            _cold_restart_wsl()
-                        fail_count = 0
-                time.sleep(60)
-
-        t = threading.Thread(target=_probe_loop, daemon=True, name="wsl-health-probe")
-        t.start()
-        log.info("WSL 健康探活线程已启动（间隔 60s，连续 3 次失败按故障分类决策）")
-
     # ============== 破损 part 自动检测+隔离（裁定 #ARCH-CH-015） ==============
 
     def _start_corrupted_part_detector(self) -> None:
         """启动破损 part 自动检测+隔离守护线程（裁定 #ARCH-CH-015）。
 
-        问题背景：WSL2 失稳致 CH 崩溃时，正在写入的 data part 被零字节覆盖，
+        问题背景：CH 崩溃时正在写入的 data part 被零字节覆盖，
         形成 checksum 损坏的 active part。CH 后台 merge 线程反复尝试合并
         包含这些 part 的任务，失败数百次（CHECKSUM_DOESNT_MATCH 718 次，
         tmp_merge 清理 5142 次），形成无限循环，消耗大量 CPU/IO，
@@ -506,8 +388,9 @@ class IntegratorScheduler:
         part"，但 checksum 损坏的 part 在启动时不验证数据完整性，只在 merge
         读取时才发现。
 
-        治本方案（裁定 #ARCH-CH-015）：
-        - 后台守护线程每 5 分钟检查 CH err.log 中的 CHECKSUM_DOESNT_MATCH
+        治本方案（裁定 #ARCH-CH-015，Hyper-V 迁移后修订 2026-07-16）：
+        - 后台守护线程每 5 分钟查询 system.text_log 中 CHECKSUM_DOESNT_MATCH
+          （替代原 WSL subprocess tail err.log，通过 ch_reader 统一查询通道）
         - 检测到破损 part 后自动隔离：
           1. SYSTEM STOP MERGES（防止 merge 线程继续重试）
           2. ALTER TABLE ... DETACH PART（CH 原生方式隔离破损 part 到 detached/）
@@ -517,38 +400,28 @@ class IntegratorScheduler:
         - 处理后冷却 10 分钟（避免频繁操作）
         - 已处理的 part 名称记录在内存集合中（避免重复处理）
         """
-        import subprocess as _sp
         import re as _re
 
-        _ERR_LOG_PATH = "/var/log/clickhouse-server/clickhouse-server.err.log"
         _CHECK_INTERVAL = 300  # 5 分钟
         _COOLDOWN = 600  # 处理后冷却 10 分钟
         _AUDIT_LOG = REPO_ROOT / "data" / "local_fallback" / "corrupted_parts_audit.jsonl"
 
-        # err.log 中 CHECKSUM_DOESNT_MATCH 检测 + part 名称提取
+        # text_log 中 CHECKSUM_DOESNT_MATCH 检测 + part 名称提取
         _CHECKSUM_PATTERN = _re.compile(r"Checksum doesn't match", _re.IGNORECASE)
         _PART_PATTERN = _re.compile(r"part\s+(\d{6}_[\w]+)", _re.IGNORECASE)
         # part 名称安全校验（防 SQL 注入）
         _PART_NAME_SAFE_RE = _re.compile(r"^[a-zA-Z0-9_-]+$")
 
-        def _read_err_log_tail() -> str:
-            """读取 CH err.log 最后 2000 行。"""
+        def _query_corrupted_log_entries() -> str:
+            """查询 system.text_log 中最近 1 小时的 Checksum 错误日志。"""
             try:
-                r = _sp.run(
-                    ["wsl", "-d", "Ubuntu", "-u", "root", "--",
-                     "tail", "-n", "2000", _ERR_LOG_PATH],
-                    capture_output=True, timeout=15,
-                )
-                if r.returncode == 0:
-                    return r.stdout.decode("utf-8", errors="replace")
-                log.warning("读取 CH err.log 失败: rc=%s", r.returncode)
-                return ""
+                return ch_reader.query(_SQL_TEXT_LOG_CHECKSUM, timeout=15)
             except Exception as e:
-                log.warning("读取 CH err.log 异常: %s", e)
+                log.warning("查询 system.text_log 异常: %s", e)
                 return ""
 
         def _detect_corrupted_parts(log_text: str) -> list[str]:
-            """从 err.log 文本中提取破损 part 名称列表。"""
+            """从 text_log 查询结果中提取破损 part 名称列表。"""
             if not log_text or not _CHECKSUM_PATTERN.search(log_text):
                 return []
             parts: list[str] = []
@@ -621,7 +494,7 @@ class IntegratorScheduler:
                     continue
 
                 try:
-                    log_text = _read_err_log_tail()
+                    log_text = _query_corrupted_log_entries()
                     corrupted = _detect_corrupted_parts(log_text)
 
                     if not corrupted:
@@ -1189,8 +1062,6 @@ class IntegratorScheduler:
             self._start_ch_health_probe()
             # 启动本地落盘回灌线程（裁定 #ARCH-CH-013 Phase 1）
             self._start_local_replay()
-            # 启动 WSL 健康探活 + 自动冷重启（裁定 #ARCH-CH-013 Phase 2）
-            self._start_wsl_health_probe()
             # 启动破损 part 自动检测+隔离（裁定 #ARCH-CH-015）
             self._start_corrupted_part_detector()
             # 注册为全局单例（供 _run_schedule_callback 使用）
