@@ -123,7 +123,8 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 ## 5. Key KB 决策记录 summary / 关键 KB 决策记录 汇总
 
-> **真源**：KB 决策记录系统。本表为关键决策导航，非穷举，新增决策以 KB 系统为准。
+> **真源**：KB 决策记录系统。本表是关键决策的入口导航（非穷举），完整决策以 KB 系统为准。
+> KB 决策记录 = 架构层面的"立法记录"，记录了为什么这样定、定了什么。
 
 | KB 决策记录 | Decision / 决策 | Impact / 影响 |
 |-----|----------------|--------------|
@@ -144,7 +145,7 @@ TOGAF resolves "vertical layering". C4 Model resolves "how to visualize the insi
 
 ## 6. Architecture Runway Index / 架构预留通道总览
 
-> Architecture Runway（架构跑道）记录了系统未来 36 个月以上的 P3 能力挂载点。
+> Architecture Runway（架构跑道）= 给未来留的扩展位。记录了系统未来 36 个月以上的 P3 能力挂载点（现在不建，但位置留好，以后能挂上去）。
 
 ### §6.1 各视图 Runway 章节快速导航
 
