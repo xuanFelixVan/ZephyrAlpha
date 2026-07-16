@@ -1,5 +1,5 @@
 %% D_FBL_DETECTORS 域全景依赖图
-%% 生成时间: 2026-07-17 02:17:42
+%% 生成时间: 2026-07-17 02:39:43
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 65, 依赖边数: 78
 
@@ -109,14 +109,14 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___adual_poisoning_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___omaly_heisenbug_detector_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___y_infinite_loop_detector_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____maintenance_coordinator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____maintenance_coordinator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___metric_cardinality_guard_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_otel_adapter_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec____placebo_action_detector_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_otel_adapter_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ositive_feedback_defense_py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___iagnosis_trust_evaluator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_regulatory_audit_py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___iagnosis_trust_evaluator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ility_resolution_tracker_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ability_runbook_executor_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|test_depends| src_zephyr_feedback_loop_detec___ation_rumor_noise_filter_py
@@ -160,8 +160,8 @@ graph TD
     %% D_RISK -> D_FBL_DETECTORS (1 条)
     D_RISK[D_RISK] -->|test_depends| src_zephyr_feedback_loop_detec___reliability_blast_radius_py
     %% D_SHARED -> D_FBL_DETECTORS (3 条)
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec___n_cross_signal_validator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec____cross_system_correlator_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec___n_cross_signal_validator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_feedback_loop_detec____multi_signal_correlator_py
 
     %% 跨域依赖（出）- 最多显示 30 条
