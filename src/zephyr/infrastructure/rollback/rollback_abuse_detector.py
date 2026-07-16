@@ -49,6 +49,34 @@ class AbuseReport:
     recommendation: str
 
 
+def _count_rollback_entries(
+    entries: list[dict[str, Any]],
+    now: datetime,
+) -> tuple[int, int, dict[str, int]]:
+    count_1h = 0
+    count_24h = 0
+    file_rollback_count: dict[str, int] = defaultdict(int)
+
+    for entry in entries:
+        try:
+            ts = datetime.fromisoformat(entry.get("timestamp_utc", ""))
+            delta = now - ts
+
+            if delta <= timedelta(hours=1):
+                count_1h += 1
+            if delta <= timedelta(hours=24):
+                count_24h += 1
+
+            details = entry.get("details", {})
+            if isinstance(details, dict) and "files" in details:
+                for f in details.get("files", []):
+                    file_rollback_count[f] += 1
+        except (ValueError, TypeError):
+            continue
+
+    return count_1h, count_24h, file_rollback_count
+
+
 class RollbackAbuseDetector:
     EXIT_CODE_ABUSE: int = 44
     MAX_ROLLBACKS_PER_HOUR: int = 5
@@ -85,26 +113,7 @@ class RollbackAbuseDetector:
         entries = self._read_audit_entries()
         now = datetime.now(UTC)
 
-        count_1h = 0
-        count_24h = 0
-        file_rollback_count: dict[str, int] = defaultdict(int)
-
-        for entry in entries:
-            try:
-                ts = datetime.fromisoformat(entry.get("timestamp_utc", ""))
-                delta = now - ts
-
-                if delta <= timedelta(hours=1):
-                    count_1h += 1
-                if delta <= timedelta(hours=24):
-                    count_24h += 1
-
-                details = entry.get("details", {})
-                if isinstance(details, dict) and "files" in details:
-                    for f in details.get("files", []):
-                        file_rollback_count[f] += 1
-            except (ValueError, TypeError):
-                continue
+        count_1h, count_24h, file_rollback_count = _count_rollback_entries(entries, now)
 
         target_abuse = [f for f, count in file_rollback_count.items() if count >= self.MAX_SAME_FILE_CONSECUTIVE]
 
