@@ -183,6 +183,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 - [`broker_interface.py`](file:///d:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py)（BrokerInterface 抽象基类，canonical 路径 `src/zephyr/trading/trading_contracts/`，ARCH-GOV-SHIM-001 迁移）
 - [`matching_logic.py`](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/matching_logic.py)（MatchingLogic 共享模块，回测-实盘一致性 B 方案：MiniQmtBroker.submit_order 复用 match_market_order/match_limit_order 预校验）
 - [`order.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/order.py)（Order dataclass，CTR-004 codegen，SSoT=cross_layer_contracts.yaml）
+- 5 个核心数据契约（market_data/factor_signal/factor_monitor_report/macro_factor_signal/synthesized_signal）canonical 路径 `src/zephyr/shared/contracts/`（codegen SSoT，ARCH-DATA-SSOT-001 归一，详见 architecture_issue_registry.yaml）
 
 **线程安全**：MiniQmtBroker 用 `threading.Lock` 保护所有 xttrader 调用与共享状态（`_connected`/`_xttrader`/`_account_id`）。新 AI 实现券商适配器 MUST 继承 BrokerInterface 并在所有 xttrader 调用点加锁。
 
