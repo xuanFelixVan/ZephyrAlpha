@@ -456,27 +456,7 @@ class CapabilityLookup:
 
         # 优先级 1：canonical_override（人工裁定）
         if cap.canonical_override:
-            norm_override = _normalize_path(cap.canonical_override)
-            cap.canonical_file = norm_override
-            cap.derivation_note = "canonical_override (人工裁定)"
-            override_header = self._disk_headers.get(norm_override)
-            if override_header:
-                self._fill_from_header(cap, override_header)
-            cap.duplicates = []
-            #ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
-            # 同目录下的 .py 文件是包组件，不是 conflicting duplicates。
-            # 病根：aliases 含包内模块 basename 时，auto-derive 把同目录模块
-            # 误判为 conflicting（如 code_dedup_trackers 的 6 个 tracker 模块）。
-            # 治本：canonical 是 __init__.py 时，排除同目录候选（包组件模式）。
-            _pkg_dir = self._package_dir_if_marker(norm_override)
-            for path, header in candidates:
-                if path == norm_override:
-                    continue
-                if _pkg_dir and path.startswith(_pkg_dir + "/"):
-                    continue  # 包组件，非 duplicate
-                cap.duplicates.append(
-                    self._make_duplicate_entry(path, header, override_header)
-                )
+            _apply_canonical_override(self, cap, candidates)
             return
 
         # 优先级 2/3：无候选 / 单候选 / 多候选排序
@@ -1394,6 +1374,32 @@ def _collect_pending_candidates(cap: CapabilityEntry, disk_headers: dict[str, He
                 "match_reason": match_reason,
                 "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
             })
+
+
+def _apply_canonical_override(lookup: CapabilityLookup, cap: CapabilityEntry,
+                              candidates: list[tuple[str, HeaderInfo]]) -> None:
+    """优先级 1：canonical_override（人工裁定）派生（_derive_canonical_and_duplicates 提取）。"""
+    norm_override = _normalize_path(cap.canonical_override)
+    cap.canonical_file = norm_override
+    cap.derivation_note = "canonical_override (人工裁定)"
+    override_header = lookup._disk_headers.get(norm_override)
+    if override_header:
+        lookup._fill_from_header(cap, override_header)
+    cap.duplicates = []
+    #ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
+    # 同目录下的 .py 文件是包组件，不是 conflicting duplicates。
+    # 病根：aliases 含包内模块 basename 时，auto-derive 把同目录模块
+    # 误判为 conflicting（如 code_dedup_trackers 的 6 个 tracker 模块）。
+    # 治本：canonical 是 __init__.py 时，排除同目录候选（包组件模式）。
+    _pkg_dir = lookup._package_dir_if_marker(norm_override)
+    for path, header in candidates:
+        if path == norm_override:
+            continue
+        if _pkg_dir and path.startswith(_pkg_dir + "/"):
+            continue  # 包组件，非 duplicate
+        cap.duplicates.append(
+            lookup._make_duplicate_entry(path, header, override_header)
+        )
 
 
 # ---------------------------------------------------------------------------
