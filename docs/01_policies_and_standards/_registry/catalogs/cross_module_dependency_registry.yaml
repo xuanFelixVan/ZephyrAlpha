@@ -1263,6 +1263,26 @@ dependencies:
   contract_anchor: data_source_integrator_blueprint.md §0.1
   direction: upstream
   valid_since: '2026-07-06'
+- dep_id: DEP-096
+  source: MOD-INF-043
+  source_name: disaster-recovery-backup
+  target: MOD-INF-016
+  target_name: database-service
+  type: runtime
+  strength: hard
+  description: 灾备备份系统通过DatabaseService获取PG/SQLite/ClickHouse连接参数，执行数据库dump。
+  direction: upstream
+  valid_since: '2026-07-17'
+- dep_id: DEP-097
+  source: MOD-INF-043
+  source_name: disaster-recovery-backup
+  target: MOD-INF-026
+  target_name: asset-inventory
+  type: runtime
+  strength: medium
+  description: 灾备备份系统参考AssetInventory资产分类，为备份内容裁定提供依据。
+  direction: upstream
+  valid_since: '2026-07-17'
 dependency_graph:
   forward:
     SYS-MASTER-001:
