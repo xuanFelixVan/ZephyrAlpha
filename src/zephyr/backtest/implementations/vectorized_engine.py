@@ -236,35 +236,12 @@ class DefaultBacktestEngine(BacktestEngineBase):
             except KeyError:
                 return prices
 
-            # day_data的index是symbol
-            if hasattr(day_data, "index") and day_data.index.name == "symbol":
-                for symbol, row in day_data.iterrows():
-                    close = row.get("close")
-                    if close is not None and pd.notna(close):
-                        prices[str(symbol)] = Decimal(str(close))
-            else:
-                # 尝试symbol列
-                if "symbol" in day_data.columns:
-                    for _, row in day_data.iterrows():
-                        symbol = str(row["symbol"])
-                        close = row.get("close")
-                        if close is not None and pd.notna(close):
-                            prices[symbol] = Decimal(str(close))
+            _collect_day_prices_multiindex(day_data, prices)
         elif "date" in data.columns and "symbol" in data.columns:
-            day_data = data[data["date"] == date]
-            for _, row in day_data.iterrows():
-                symbol = str(row["symbol"])
-                close = row.get("close")
-                if close is not None and pd.notna(close):
-                    prices[symbol] = Decimal(str(close))
+            _collect_day_prices_columns(data, date, prices)
         else:
             # 单symbol,index就是date
-            try:
-                close = data.loc[date, "close"]
-                if pd.notna(close):
-                    prices["default"] = Decimal(str(close))
-            except (KeyError, TypeError):
-                pass
+            _collect_day_prices_single(data, date, prices)
 
         return prices
 
@@ -288,26 +265,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
             else:
                 return weights
 
-            if day_signals is None or (hasattr(day_signals, "empty") and day_signals.empty):
-                return weights
-
-            # dropna并过滤>0的
-            day_signals = day_signals.dropna() if hasattr(day_signals, "dropna") else day_signals
-            day_signals = day_signals[day_signals > 0] if hasattr(day_signals, "__gt__") else day_signals
-
-            total = float(day_signals.sum()) if hasattr(day_signals, "sum") else 0.0
-            if total <= 0:
-                return weights
-
-            # 归一化为权重
-            if hasattr(day_signals, "items"):
-                for symbol, val in day_signals.items():
-                    weights[str(symbol)] = float(val) / total
-            elif isinstance(day_signals, dict):
-                for symbol, val in day_signals.items():
-                    if val > 0:
-                        weights[str(symbol)] = float(val) / total
-
+            _normalize_day_signals(day_signals, weights)
         except (KeyError, TypeError):
             pass
 
@@ -467,6 +425,79 @@ class DefaultBacktestEngine(BacktestEngineBase):
                 "max_drawdown": md,
             })
         return gate_results
+
+
+def _collect_day_prices_multiindex(
+    day_data: pd.DataFrame, prices: dict[str, Decimal]
+) -> None:
+    """从MultiIndex切片中收集symbol->close价格到prices。
+
+    day_data的index可能是symbol,也可能含symbol列。
+    """
+    if hasattr(day_data, "index") and day_data.index.name == "symbol":
+        for symbol, row in day_data.iterrows():
+            close = row.get("close")
+            if close is not None and pd.notna(close):
+                prices[str(symbol)] = Decimal(str(close))
+    else:
+        # 尝试symbol列
+        if "symbol" in day_data.columns:
+            for _, row in day_data.iterrows():
+                symbol = str(row["symbol"])
+                close = row.get("close")
+                if close is not None and pd.notna(close):
+                    prices[symbol] = Decimal(str(close))
+
+
+def _collect_day_prices_columns(
+    data: pd.DataFrame, date: object, prices: dict[str, Decimal]
+) -> None:
+    """从date/symbol列布局中收集指定日期的symbol->close价格到prices。"""
+    day_data = data[data["date"] == date]
+    for _, row in day_data.iterrows():
+        symbol = str(row["symbol"])
+        close = row.get("close")
+        if close is not None and pd.notna(close):
+            prices[symbol] = Decimal(str(close))
+
+
+def _collect_day_prices_single(
+    data: pd.DataFrame, date: object, prices: dict[str, Decimal]
+) -> None:
+    """从单symbol(以date为index)布局中收集close价格到prices['default']。"""
+    try:
+        close = data.loc[date, "close"]
+        if pd.notna(close):
+            prices["default"] = Decimal(str(close))
+    except (KeyError, TypeError):
+        pass
+
+
+def _normalize_day_signals(day_signals: Any, weights: dict[str, float]) -> None:
+    """对单日信号做dropna/过滤>0/归一化,结果写入weights。
+
+    等价于原_get_day_signals中获取day_signals之后的归一化逻辑:
+    早期返回等价于原函数的 return weights(此时weights保持当前状态)。
+    """
+    if day_signals is None or (hasattr(day_signals, "empty") and day_signals.empty):
+        return
+
+    # dropna并过滤>0的
+    day_signals = day_signals.dropna() if hasattr(day_signals, "dropna") else day_signals
+    day_signals = day_signals[day_signals > 0] if hasattr(day_signals, "__gt__") else day_signals
+
+    total = float(day_signals.sum()) if hasattr(day_signals, "sum") else 0.0
+    if total <= 0:
+        return
+
+    # 归一化为权重
+    if hasattr(day_signals, "items"):
+        for symbol, val in day_signals.items():
+            weights[str(symbol)] = float(val) / total
+    elif isinstance(day_signals, dict):
+        for symbol, val in day_signals.items():
+            if val > 0:
+                weights[str(symbol)] = float(val) / total
 
 
 __all__ = ["BacktestConfig", "DefaultBacktestEngine"]
