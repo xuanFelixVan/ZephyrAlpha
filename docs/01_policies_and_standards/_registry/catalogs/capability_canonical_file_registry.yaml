@@ -457,7 +457,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: completes_when_validator
-    canonical_override: src/zephyr/governance/rule_bridge/git_commit_gateway.py
+    canonical_override: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
     aliases:
       - completes_when_check
       - _check_working_docs_completes_when
@@ -1704,7 +1704,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: test_exempt_checker
-    canonical_override: src/zephyr/governance/rule_bridge/commit_gate_registry.py
+    canonical_override: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py
     aliases:
       - is_test_exempt
       - TEST_EXEMPT_PREFIXES
@@ -1714,10 +1714,10 @@ capabilities:
       - commit_gate_test_exempt
     description: >-
       commit_gates 中 tests/ 目录豁免的唯一真源（SSoT，2026-06-30 治本2 收拢点）。
-      真源实现：src/zephyr/governance/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
+      真源实现：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
       常量 + is_test_exempt(file_path) 函数（归一化反斜杠后 startswith 比对，消除
       Windows 路径漂移）。create_guard / capability_overlap_gate 等 gate 通过
-      from zephyr.governance.rule_bridge.commit_gate_registry import is_test_exempt 引用。
+      from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用。
       禁止在 commit_gates/*.py 中硬编码 "tests/" 字面量（GATE-VOCAB 检测7 阻断，
       治本红攻发现2 is_test_exempt 漂移——新AI 可能直接硬编码绕过 SSoT）。
       canonical basename commit_gate_registry 不匹配任何 alias，无法 auto 派生，
@@ -3943,22 +3943,22 @@ creation_tokens:
     capability: "secret_rotation"
 
   # --- governance/ 核心文件（示例条目） ---
-  - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
     token: "auto-git-commit-gateway-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "completes_when_validator"
 
-  - file: "src/zephyr/governance/rule_bridge/worktree_manager.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py"
     token: "auto-worktree-manager-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "session_worktree_isolation"
 
-  - file: "src/zephyr/governance/rule_bridge/session_worktree.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
     token: "auto-session-worktree-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_worktree_lifecycle"
 
-  - file: "src/zephyr/governance/rule_bridge/session_claim.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/session_claim.py"
     token: "auto-session-claim-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_claim_helper"
@@ -3968,7 +3968,7 @@ creation_tokens:
     created_by: "session-trae-fp-iso-4c"
     capability: "session_required_gate"
 
-  - file: "src/zephyr/governance/rule_bridge/commit_gate_registry.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py"
     token: "auto-commit-gate-registry-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "commit_gate_registry"
@@ -4002,7 +4002,7 @@ creation_tokens:
     token: "auto-audit-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "audit_package_marker"
-  - file: "src/zephyr/governance/rule_bridge/__init__.py"
+  - file: "src/zephyr/gov_enforcement/rule_bridge/__init__.py"
     token: "auto-rule-bridge-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "rule_bridge_package_marker"
