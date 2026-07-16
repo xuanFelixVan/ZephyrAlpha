@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INT_local_model_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-042 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -179,7 +179,7 @@ class LocalModelScheduler:
             self._running = True
             self._thread = threading.Thread(target=self._run, daemon=True, name="LocalModelScheduler")
             self._thread.start()
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         try:
             ResourceOptimizationEngine().register_daemon(

@@ -90,7 +90,7 @@ from zephyr.shared.contracts.portfolio.money import (
     MoneyPrecisionError,
 )
 from zephyr.shared.contracts.portfolio.performance_attribution_report import PerformanceAttributionReport
-from zephyr.shared.contracts.portfolio.strategy_lifecycle_event import StrategyLifecycleEvent
+from zephyr.shared.contracts.strategy_lifecycle_event import StrategyLifecycleEvent
 from zephyr.shared.contracts.skill_protocol import (
     SkillLoaderProtocol,
     SkillRouterProtocol,
