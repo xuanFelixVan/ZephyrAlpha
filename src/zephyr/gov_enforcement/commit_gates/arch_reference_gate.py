@@ -225,8 +225,20 @@ def _load_head_registered_nums(project_root: Path) -> set[str] | None:
     """获取 HEAD 版本 registry 中已登记的编号集合（L2 同提交原子性检查用）。
 
     Returns:
-        HEAD 版本编号集合；registry 不在 HEAD 返回空集合；git 异常返回 None。
+        HEAD 版本编号集合；registry 不在 HEAD 返回空集合；非 git 仓库或 git 异常返回 None（跳过 L2）。
     """
+    # 先检查是否是 git 仓库——非 git 仓库（如测试 tmp_path）跳过 L2，避免误阻断
+    try:
+        rev_result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            cwd=str(project_root),
+            timeout=_GIT_SHOW_TIMEOUT,
+        )
+        if rev_result.returncode != 0:
+            return None  # 非git仓库，跳过L2
+    except (subprocess.TimeoutExpired, OSError):
+        return None
     try:
         head_content = _get_head_content(project_root, _REGISTRY_REL)
     except OSError:
