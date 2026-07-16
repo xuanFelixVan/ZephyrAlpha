@@ -248,6 +248,56 @@ def _sweep_stale_worktrees(
     return {"swept": swept, "skipped": skipped, "warnings": warnings}
 
 
+def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
+    """治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断 + 逃生通道。
+
+    返回阻断 dict（调用方直接 return）或 None（放行）。异常 fail-open 降级放行。
+    """
+    if allow_concurrent:
+        return None
+    registry_pre = _get_registry(root)
+    try:
+        if breaking_change:
+            # breaking_change=True：检查是否有任何其他活跃 session
+            others = [s for s in registry_pre.list_active() if s.session_id != sid]
+            if others:
+                other_ids = [s.session_id for s in others]
+                return {
+                    "session_id": sid,
+                    "worktree_path": "",
+                    "branch": f"session/{sid}",
+                    "registered": False,
+                    "created": False,
+                    "error": (
+                        f"BREAKING_CHANGE_CONCURRENCY_BLOCKED: 治本变更期间禁止并发 AI 对话"
+                        f"（AGENTS.md L391/L394）。当前活跃 session: {other_ids}。"
+                        f"逃生通道：allow_concurrent=True。"
+                    ),
+                    "blocked_by": other_ids,
+                }
+        else:
+            # breaking_change=False：检查是否有其他活跃 session 声明了 breaking_change
+            blocker = registry_pre.find_breaking_change_session(exclude_session_id=sid)
+            if blocker is not None:
+                return {
+                    "session_id": sid,
+                    "worktree_path": "",
+                    "branch": f"session/{sid}",
+                    "registered": False,
+                    "created": False,
+                    "error": (
+                        f"BREAKING_CHANGE_AVOIDANCE_BLOCKED: 活跃 session '{blocker.session_id}'"
+                        f" 声明了 breaking_change（治本变更进行中，AGENTS.md L391/L394）。"
+                        f"逃生通道：allow_concurrent=True。"
+                    ),
+                    "blocked_by": [blocker.session_id],
+                }
+    except Exception as e:
+        # fail-open：并发检测异常不阻断 start（对标 held_overlap_gate fail-open）
+        logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e, exc_info=True)
+    return None
+
+
 def session_worktree_start(
     session_id: str | None = None,
     project_root: str | Path | None = None,
@@ -286,47 +336,9 @@ def session_worktree_start(
     # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
     #    双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
     #    逃生通道：allow_concurrent=True 跳过阻断（对标 allow_overlap）
-    if not allow_concurrent:
-        registry_pre = _get_registry(root)
-        try:
-            if breaking_change:
-                # breaking_change=True：检查是否有任何其他活跃 session
-                others = [s for s in registry_pre.list_active() if s.session_id != sid]
-                if others:
-                    other_ids = [s.session_id for s in others]
-                    return {
-                        "session_id": sid,
-                        "worktree_path": "",
-                        "branch": f"session/{sid}",
-                        "registered": False,
-                        "created": False,
-                        "error": (
-                            f"BREAKING_CHANGE_CONCURRENCY_BLOCKED: 治本变更期间禁止并发 AI 对话"
-                            f"（AGENTS.md L391/L394）。当前活跃 session: {other_ids}。"
-                            f"逃生通道：allow_concurrent=True。"
-                        ),
-                        "blocked_by": other_ids,
-                    }
-            else:
-                # breaking_change=False：检查是否有其他活跃 session 声明了 breaking_change
-                blocker = registry_pre.find_breaking_change_session(exclude_session_id=sid)
-                if blocker is not None:
-                    return {
-                        "session_id": sid,
-                        "worktree_path": "",
-                        "branch": f"session/{sid}",
-                        "registered": False,
-                        "created": False,
-                        "error": (
-                            f"BREAKING_CHANGE_AVOIDANCE_BLOCKED: 活跃 session '{blocker.session_id}'"
-                            f" 声明了 breaking_change（治本变更进行中，AGENTS.md L391/L394）。"
-                            f"逃生通道：allow_concurrent=True。"
-                        ),
-                        "blocked_by": [blocker.session_id],
-                    }
-        except Exception as e:
-            # fail-open：并发检测异常不阻断 start（对标 held_overlap_gate fail-open）
-            logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e, exc_info=True)
+    block_r = _check_concurrency_block(sid, allow_concurrent, breaking_change, root)
+    if block_r is not None:
+        return block_r
 
     # 1. 注册 session（held_files 留空——worktree 模式下文件隔离由 worktree 物理保证，
     #    不依赖 held_files claim 机制）
