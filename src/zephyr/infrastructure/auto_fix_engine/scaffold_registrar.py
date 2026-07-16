@@ -37,6 +37,58 @@ from zephyr.shared.io.paths import REPO_ROOT
 logger = logging.getLogger(__name__)
 
 
+def _load_registered_scripts(manifest_path: Path) -> set[str]:
+    """从 script-manifest.yaml 加载已注册脚本路径集合。"""
+    registered_scripts: set[str] = set()
+    if manifest_path.exists():
+        try:
+            import yaml
+
+            data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            if data and "scripts" in data:
+                for entry in data["scripts"]:
+                    if isinstance(entry, dict) and "path" in entry:
+                        registered_scripts.add(entry["path"])
+        except Exception:
+            logger.debug("suppressed error in scaffold_registrar", exc_info=True)
+    return registered_scripts
+
+
+def _scan_unregistered_scripts(repo_root: Path, registered_scripts: set[str]) -> list[dict[str, Any]]:
+    """扫描 scripts 目录中未注册的脚本。"""
+    findings: list[dict[str, Any]] = []
+    for script in (repo_root / "scripts").rglob("*.py"):
+        if script.name.startswith("_"):
+            continue
+        rel = str(script.relative_to(repo_root)).replace("\\", "/")
+        if rel not in registered_scripts:
+            findings.append({"file": str(script), "relative_path": rel, "type": "unregistered_script"})
+    return findings
+
+
+def _scan_unregistered_modules(repo_root: Path) -> list[dict[str, Any]]:
+    """扫描 src/zephyr 下未注册到 __init__.py 的模块。"""
+    findings: list[dict[str, Any]] = []
+    for py_file in (repo_root / "src" / "zephyr").rglob("*.py"):
+        if py_file.name.startswith("_") and py_file.name != "__init__.py":
+            continue
+        if py_file.name == "__init__.py":
+            continue
+        pkg_dir = py_file.parent
+        init_file = pkg_dir / "__init__.py"
+        if init_file.exists():
+            try:
+                content = init_file.read_text(encoding="utf-8")
+                module_name = py_file.stem
+                if module_name not in content:
+                    findings.append(
+                        {"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"}
+                    )
+            except Exception:
+                logger.warning("suppressed error in scaffold_registrar", exc_info=True)
+    return findings
+
+
 class ScaffoldRegistrar(BaseFixer):
 
     def __init__(self) -> None:
@@ -49,44 +101,11 @@ class ScaffoldRegistrar(BaseFixer):
         )
 
     def scan(self) -> list[dict[str, Any]]:
-        findings: list[dict[str, Any]] = []
         repo_root = REPO_ROOT  # 5.12.5 修复：改用 REPO_ROOT 真源（原 os.getcwd() 硬假设cwd是项目根）
         manifest_path = repo_root / "scripts" / "script-manifest.yaml"
-        registered_scripts: set[str] = set()
-        if manifest_path.exists():
-            try:
-                import yaml
-
-                data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
-                if data and "scripts" in data:
-                    for entry in data["scripts"]:
-                        if isinstance(entry, dict) and "path" in entry:
-                            registered_scripts.add(entry["path"])
-            except Exception as e:
-                logger.debug("suppressed error in scaffold_registrar", exc_info=True)
-        for script in (repo_root / "scripts").rglob("*.py"):
-            if script.name.startswith("_"):
-                continue
-            rel = str(script.relative_to(repo_root)).replace("\\", "/")
-            if rel not in registered_scripts:
-                findings.append({"file": str(script), "relative_path": rel, "type": "unregistered_script"})
-        for py_file in (repo_root / "src" / "zephyr").rglob("*.py"):
-            if py_file.name.startswith("_") and py_file.name != "__init__.py":
-                continue
-            if py_file.name == "__init__.py":
-                continue
-            pkg_dir = py_file.parent
-            init_file = pkg_dir / "__init__.py"
-            if init_file.exists():
-                try:
-                    content = init_file.read_text(encoding="utf-8")
-                    module_name = py_file.stem
-                    if module_name not in content:
-                        findings.append(
-                            {"file": str(py_file), "init_file": str(init_file), "type": "unregistered_module"}
-                        )
-                except Exception as e:
-                    logger.warning("suppressed error in scaffold_registrar", exc_info=True)
+        registered_scripts = _load_registered_scripts(manifest_path)
+        findings = _scan_unregistered_scripts(repo_root, registered_scripts)
+        findings.extend(_scan_unregistered_modules(repo_root))
         return findings
 
     def fix(self, target: str, dry_run: bool = False) -> FixAction:
