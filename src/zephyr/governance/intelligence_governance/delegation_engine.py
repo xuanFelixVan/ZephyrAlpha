@@ -81,41 +81,18 @@ class DelegationEngine:
 
         depth_key = task_id or event.event_id or ""
         current_depth = self._delegation_depth.get(depth_key, 0)
-        if current_depth >= self.MAX_DELEGATION_DEPTH:
-            record = DelegationRecord(
-                from_owner=event.owner_id or "",
-                task_id=task_id,
-                strategy=strategy,
-                expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
-            )
-            record.depth_exceeded = True
+
+        record = _check_depth_exceeded(self, current_depth, event, task_id, strategy)
+        if record is not None:
             return record
 
-        if self._deadlock_detector is not None:
-            try:
-                cycle = self._deadlock_detector.detect_cycle(event.owner_id or "", None)
-                if cycle:
-                    record = DelegationRecord(
-                        from_owner=event.owner_id or "",
-                        task_id=task_id,
-                        strategy=strategy,
-                        expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
-                    )
-                    record.deadlock_detected = True
-                    return record
-            except Exception as e:
-                logger.warning("suppressed error in delegation_engine", exc_info=True)
+        record = _check_deadlock(self, event, task_id, strategy)
+        if record is not None:
+            return record
 
         delegate_id = self._select_delegate(event, strategy)
-        if delegate_id is None or delegate_id == event.owner_id:
-            record = DelegationRecord(
-                from_owner=event.owner_id or "",
-                task_id=task_id,
-                strategy=strategy,
-                expires_at=datetime.now(UTC) + timedelta(hours=self.DELEGATION_TIMEOUT_HOURS),
-            )
-            if delegate_id is not None and delegate_id == event.owner_id:
-                record.to_delegate = ""
+        record = _handle_no_delegate(self, delegate_id, event, task_id, strategy)
+        if record is not None:
             return record
 
         record = DelegationRecord(
@@ -253,3 +230,48 @@ class DelegationEngine:
                 raise PermissionError(f"LSG blocked delegation: {result.decision.value}")
         except ImportError:
             pass
+
+
+def _check_depth_exceeded(engine, current_depth, event, task_id, strategy):
+    if current_depth >= engine.MAX_DELEGATION_DEPTH:
+        record = DelegationRecord(
+            from_owner=event.owner_id or "",
+            task_id=task_id,
+            strategy=strategy,
+            expires_at=datetime.now(UTC) + timedelta(hours=engine.DELEGATION_TIMEOUT_HOURS),
+        )
+        record.depth_exceeded = True
+        return record
+    return None
+
+
+def _check_deadlock(engine, event, task_id, strategy):
+    if engine._deadlock_detector is not None:
+        try:
+            cycle = engine._deadlock_detector.detect_cycle(event.owner_id or "", None)
+            if cycle:
+                record = DelegationRecord(
+                    from_owner=event.owner_id or "",
+                    task_id=task_id,
+                    strategy=strategy,
+                    expires_at=datetime.now(UTC) + timedelta(hours=engine.DELEGATION_TIMEOUT_HOURS),
+                )
+                record.deadlock_detected = True
+                return record
+        except Exception as e:
+            logger.warning("suppressed error in delegation_engine", exc_info=True)
+    return None
+
+
+def _handle_no_delegate(engine, delegate_id, event, task_id, strategy):
+    if delegate_id is None or delegate_id == event.owner_id:
+        record = DelegationRecord(
+            from_owner=event.owner_id or "",
+            task_id=task_id,
+            strategy=strategy,
+            expires_at=datetime.now(UTC) + timedelta(hours=engine.DELEGATION_TIMEOUT_HOURS),
+        )
+        if delegate_id is not None and delegate_id == event.owner_id:
+            record.to_delegate = ""
+        return record
+    return None
