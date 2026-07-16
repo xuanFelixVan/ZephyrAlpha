@@ -29,7 +29,7 @@ from __future__ import annotations
 import time
 from unittest.mock import MagicMock, patch
 
-from zephyr.shared.lifecycle.resource_optimization_engine import (
+from zephyr.trading.resource_optimization import (
     CacheStats,
     CircuitBreaker,
     CircuitBreakerState,

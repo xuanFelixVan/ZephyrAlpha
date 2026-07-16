@@ -21,7 +21,7 @@ from unittest.mock import MagicMock, patch
 
 import yaml
 
-from zephyr.shared.lifecycle.resource_optimization_engine import (
+from zephyr.trading.resource_optimization import (
     OptimizationStrategy,
     PressureLevel,
     ResourceOptimizationEngine,

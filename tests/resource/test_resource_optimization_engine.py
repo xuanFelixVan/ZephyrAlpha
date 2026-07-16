@@ -18,7 +18,7 @@ import time
 import pytest
 
 from zephyr.shared.lifecycle.daemon_registry import DaemonRegistry
-from zephyr.shared.lifecycle.resource_optimization_engine import (
+from zephyr.trading.resource_optimization import (
     CircuitBreaker,
     CircuitBreakerState,
     OptimizationStrategy,

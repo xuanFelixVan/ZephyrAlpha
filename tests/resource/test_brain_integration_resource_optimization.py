@@ -26,17 +26,17 @@ from zephyr.trading.health_monitor import HealthMonitor, PressureLevel
 
 class TestHealthMonitorDelegation:
     def setup_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         ResourceOptimizationEngine.reset()
 
     def teardown_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         ResourceOptimizationEngine.reset()
 
     def test_pressure_level_delegates_to_roe(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
@@ -47,7 +47,7 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.ELEVATED
 
     def test_pressure_level_mapping_critical(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
@@ -58,7 +58,7 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.HIGH
 
     def test_pressure_level_mapping_emergency(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
@@ -69,7 +69,7 @@ class TestHealthMonitorDelegation:
         assert level == PressureLevel.CRITICAL
 
     def test_pressure_level_mapping_normal(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
@@ -90,12 +90,12 @@ class TestHealthMonitorDelegation:
 
 class TestAutoRuntimeCoreLifecycle:
     def setup_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         ResourceOptimizationEngine.reset()
 
     def teardown_method(self):
-        from zephyr.shared.lifecycle.resource_optimization_engine import ResourceOptimizationEngine
+        from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
         ResourceOptimizationEngine.reset()
 
