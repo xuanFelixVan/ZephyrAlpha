@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0167 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0167 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-324 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_e2e_pipeline
 # [STABILITY] evolving
@@ -84,7 +84,7 @@ from zephyr.trading.trading_contracts.execution.capital_allocation_result import
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 UNIVERSE_CSI300 = [
     "600519",

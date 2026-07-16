@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0174 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0174 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-331 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_e_main_flow
 # [STABILITY] evolving
@@ -52,9 +52,9 @@ from zephyr.trading.trading_contracts.execution.execution_report import Executio
 from zephyr.trading.trading_contracts.execution.fill import Fill
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.factor_signal import FactorSignal
+from zephyr.shared.contracts.market_data import NormalizedMarketData
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 TEST_SYMBOLS = ["600519", "000858", "601318", "600036", "000333"]
 

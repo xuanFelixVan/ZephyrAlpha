@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-1205 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md | §test
 # [MODULE] zephyr.signal
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
@@ -29,8 +29,8 @@ SignalSynthesizerBase = signal_synthesizer.SignalSynthesizerBase
 
 try:
     from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-    from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-    from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+    from zephyr.shared.contracts.factor_signal import FactorSignal
+    from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
     HAS_CONTRACTS = True
 except Exception:

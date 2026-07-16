@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_market | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_module] module_id=MOD-UNK_market | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.trading.trading_contracts.market
 # [STABILITY] evolving
@@ -13,8 +13,8 @@
 
 """trading-contracts.market — market data and signal domain contracts."""
 
-from zephyr.trading.trading_contracts.market.factor_monitor_report import FactorMonitorReport
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
+from zephyr.shared.contracts.factor_monitor_report import FactorMonitorReport
+from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.trading.trading_contracts.market.instrument import (
     ETF,
     FX,
@@ -33,10 +33,10 @@ from zephyr.trading.trading_contracts.market.instrument import (
     Stock,
     TradingCalendarName,
 )
-from zephyr.trading.trading_contracts.market.macro_factor_signal import MacroFactorSignal
-from zephyr.trading.trading_contracts.market.market_data import NormalizedMarketData
+from zephyr.shared.contracts.macro_factor_signal import MacroFactorSignal
+from zephyr.shared.contracts.market_data import NormalizedMarketData
 from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 __all__ = [
     "ETF",

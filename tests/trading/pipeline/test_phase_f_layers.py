@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0175 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-0175 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-332 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_f_layers
 # [STABILITY] evolving
@@ -96,7 +96,7 @@ from zephyr.simulation.pipeline_base import (
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
 from zephyr.trading.trading_contracts.execution.execution_report import ExecutionReport
 from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
 

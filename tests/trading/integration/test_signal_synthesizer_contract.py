@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-2065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_test] module_id: SRC-TST-2065 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] SRC-682 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_signal_synthesizer_contract
 # [STABILITY] evolving
@@ -15,8 +15,8 @@ import uuid
 from datetime import UTC, datetime
 
 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.factor_signal import FactorSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 
 class _EqualWeightTestSynthesizer(SignalSynthesizerBase):

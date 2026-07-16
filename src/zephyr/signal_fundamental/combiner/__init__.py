@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_combiner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+﻿# [A_module] module_id=MOD-UNK_combiner | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.combiner
 # [INVARIANTS] pending_review
@@ -25,7 +25,7 @@ from zephyr.signal_fundamental.strategy.capital_allocator import (
     CapitalAllocatorBase,
 )
 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 # DegradationMonitorBase 真源已迁移至 D_SIGQC 域（2026-07-06 域边界修正）。
 # 通过 __getattr__ 跨域 re-export 向后兼容，避免直接 import 已迁移的符号导致 ImportError。

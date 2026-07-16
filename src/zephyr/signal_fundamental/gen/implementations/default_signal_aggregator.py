@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
+﻿# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen.implementations.default_signal_aggregator
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [DEPENDENCIES] zephyr.signal_fundamental.gen.aggregator_base; zephyr.trading.trading_contracts.market.factor_signal; zephyr.trading.trading_contracts.market.synthesized_signal
@@ -41,8 +41,8 @@ import uuid
 from datetime import UTC, datetime
 
 from zephyr.signal_fundamental.gen.aggregator_base import SignalAggregatorBase
-from zephyr.trading.trading_contracts.market.factor_signal import FactorSignal
-from zephyr.trading.trading_contracts.market.synthesized_signal import SynthesizedSignal
+from zephyr.shared.contracts.factor_signal import FactorSignal
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 _logger = logging.getLogger(__name__)
 
