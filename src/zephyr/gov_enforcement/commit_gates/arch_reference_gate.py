@@ -142,6 +142,85 @@ def _get_head_content(project_root: Path, rel_path: str) -> str | None:
     return result.stdout.decode("utf-8", errors="replace")
 
 
+def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
+    registry_yaml = project_root / _REGISTRY_REL
+    # fail-closed：registry 不存在是环境异常，必须阻断
+    if not registry_yaml.is_file():
+        return False, (
+            f"architecture_issue_registry.yaml not found (ARCH-REFERENCE fail-closed)——"
+            f"无法提取已登记编号，禁止放行以防门禁静默失效。"
+            f"路径：{registry_yaml}"
+        ), set()
+    # 加载 registry 并提取已登记编号（工作区版本 = commit 后的新真源）
+    try:
+        import yaml
+        registry_data = yaml.safe_load(registry_yaml.read_text(encoding="utf-8"))
+    except Exception as e:
+        return False, f"registry 解析失败 (fail-closed): {type(e).__name__}: {e}", set()
+    if not isinstance(registry_data, dict):
+        return False, "registry 顶层非 dict（结构异常，fail-closed）。", set()
+    registered_nums = _extract_registered_nums(registry_data)
+    if not registered_nums:
+        return False, (
+            "registry 无任何已登记 ARCH 编号（ARCH-REFERENCE fail-closed）——"
+            "文件可能损坏或 entries 为空，请检查 architecture_issue_registry.yaml。"
+        ), set()
+    return True, "", registered_nums
+
+
+def _scan_file_violations(
+    project_root: Path, files: list[str], registered_nums: set[str]
+) -> tuple[list[tuple[str, list[str]]], str | None]:
+    # 检测 staged 文件中新增的悬空引用
+    violations: list[tuple[str, list[str]]] = []
+    for f in files:
+        if not os.path.isfile(f):
+            continue  # deletion commit：文件不存在，跳过
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if is_test_exempt(rel):
+            continue  # tests/ 豁免区
+        if not rel.endswith(_SCANNABLE_EXTS):
+            continue  # 非可扫描文件类型
+        # 读取当前工作区版本
+        try:
+            current_content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue  # 读取失败跳过
+        current_refs = _extract_refs(current_content)
+        if not current_refs:
+            continue  # 无 #ARCH-NNN 引用
+        # 获取 HEAD 版本，计算新增引用
+        try:
+            head_content = _get_head_content(project_root, rel)
+        except OSError as e:
+            return [], f"git show failed for {rel} (fail-closed): {e}"
+        if head_content is None:
+            new_refs = current_refs  # 新文件：所有引用都是新增
+        else:
+            head_refs = _extract_refs(head_content)
+            new_refs = current_refs - head_refs
+        if not new_refs:
+            continue  # 无新增引用
+        # 检查新增引用是否悬空
+        dangling = sorted(new_refs - registered_nums)
+        if dangling:
+            violations.append((rel, dangling))
+    return violations, None
+
+
+def _format_violations_detail(violations: list[tuple[str, list[str]]]) -> str:
+    detail_lines = []
+    for rel, nums in violations:
+        detail_lines.append(f"  - {rel}: #ARCH-{', #ARCH-'.join(nums)}")
+    return (
+        "新增 #ARCH-NNN 悬空引用（ARCH_REFERENCE_VIOLATION）——"
+        "以下文件引用了 architecture_issue_registry.yaml 中未登记的编号：\n"
+        + "\n".join(detail_lines)
+        + "\n修复：在 architecture_issue_registry.yaml 中补登对应条目，"
+        "或移除/修正引用。（注：本门禁只检测新增引用，历史悬空引用不阻断。）"
+    )
+
+
 def make_arch_reference_gate() -> GateSpec:
     """构造 #ARCH-NNN 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
 
@@ -153,84 +232,17 @@ def make_arch_reference_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         project_root = gateway.project_root
-        registry_yaml = project_root / _REGISTRY_REL
 
-        # fail-closed：registry 不存在是环境异常，必须阻断
-        if not registry_yaml.is_file():
-            return False, (
-                f"architecture_issue_registry.yaml not found (ARCH-REFERENCE fail-closed)——"
-                f"无法提取已登记编号，禁止放行以防门禁静默失效。"
-                f"路径：{registry_yaml}"
-            )
+        ok, detail, registered_nums = _load_registered_nums(project_root)
+        if not ok:
+            return False, detail
 
-        # 加载 registry 并提取已登记编号（工作区版本 = commit 后的新真源）
-        try:
-            import yaml
-            registry_data = yaml.safe_load(registry_yaml.read_text(encoding="utf-8"))
-        except Exception as e:
-            return False, f"registry 解析失败 (fail-closed): {type(e).__name__}: {e}"
-        if not isinstance(registry_data, dict):
-            return False, "registry 顶层非 dict（结构异常，fail-closed）。"
-
-        registered_nums = _extract_registered_nums(registry_data)
-        if not registered_nums:
-            return False, (
-                "registry 无任何已登记 ARCH 编号（ARCH-REFERENCE fail-closed）——"
-                "文件可能损坏或 entries 为空，请检查 architecture_issue_registry.yaml。"
-            )
-
-        # 检测 staged 文件中新增的悬空引用
-        violations: list[tuple[str, list[str]]] = []
-        for f in files:
-            if not os.path.isfile(f):
-                continue  # deletion commit：文件不存在，跳过
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if is_test_exempt(rel):
-                continue  # tests/ 豁免区
-            if not rel.endswith(_SCANNABLE_EXTS):
-                continue  # 非可扫描文件类型
-
-            # 读取当前工作区版本
-            try:
-                current_content = Path(f).read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue  # 读取失败跳过
-
-            current_refs = _extract_refs(current_content)
-            if not current_refs:
-                continue  # 无 #ARCH-NNN 引用
-
-            # 获取 HEAD 版本，计算新增引用
-            try:
-                head_content = _get_head_content(project_root, rel)
-            except OSError as e:
-                return False, f"git show failed for {rel} (fail-closed): {e}"
-
-            if head_content is None:
-                new_refs = current_refs  # 新文件：所有引用都是新增
-            else:
-                head_refs = _extract_refs(head_content)
-                new_refs = current_refs - head_refs
-
-            if not new_refs:
-                continue  # 无新增引用
-
-            # 检查新增引用是否悬空
-            dangling = sorted(new_refs - registered_nums)
-            if dangling:
-                violations.append((rel, dangling))
+        violations, error = _scan_file_violations(project_root, files, registered_nums)
+        if error is not None:
+            return False, error
 
         if violations:
-            detail_lines = []
-            for rel, nums in violations:
-                detail_lines.append(f"  - {rel}: #ARCH-{', #ARCH-'.join(nums)}")
-            return False, (
-                "新增 #ARCH-NNN 悬空引用（ARCH_REFERENCE_VIOLATION）——"
-                "以下文件引用了 architecture_issue_registry.yaml 中未登记的编号：\n"
-                + "\n".join(detail_lines)
-                + "\n修复：在 architecture_issue_registry.yaml 中补登对应条目，"
-                "或移除/修正引用。（注：本门禁只检测新增引用，历史悬空引用不阻断。）"
-            )
+            return False, _format_violations_detail(violations)
         return True, ""
 
     return GateSpec(gate_id="ARCH-REFERENCE", check=_check, priority=75)
