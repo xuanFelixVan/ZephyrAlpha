@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_ml_train | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L11-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] zephyr.ml_train
 # [INVARIANTS] pending_review
