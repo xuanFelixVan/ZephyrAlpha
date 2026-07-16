@@ -66,16 +66,57 @@ class DifferentialReport:
     table_changes: dict[str, int] = field(default_factory=dict)
 
 
+def _collect_g0_targets(project_root: Path, files: list[str] | None) -> list[str]:
+    if files:
+        return files
+    py_files = list(project_root.glob("src/**/*.py"))
+    yaml_files = list(project_root.glob("**/*.yaml"))
+    return [str(p) for p in py_files + yaml_files]
+
+
+def _verify_python_file(f_path: Path, f_path_str: str, syntax_errors: list[str], lint_issues: list[str]) -> None:
+    try:
+        source = f_path.read_text(encoding="utf-8")
+        ast.parse(source)
+    except SyntaxError as e:
+        syntax_errors.append(f"{f_path_str}: {e}")
+    if f_path.name != "__init__.py":
+        if "def " in source or "class " in source:
+            if '"""' not in source[:5] and "'''" not in source[:5]:
+                lint_issues.append(f"{f_path_str}: missing module docstring")
+
+
+def _verify_yaml_file(f_path: Path, f_path_str: str, syntax_errors: list[str]) -> None:
+    try:
+        import yaml
+
+        yaml.safe_load(f_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        syntax_errors.append(f"{f_path_str}: YAML parse error: {e}")
+
+
+def _verify_json_file(f_path: Path, f_path_str: str, syntax_errors: list[str]) -> None:
+    try:
+        json.loads(f_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        syntax_errors.append(f"{f_path_str}: JSON parse error: {e}")
+
+
+def _verify_g0_file(f_path: Path, f_path_str: str, syntax_errors: list[str], lint_issues: list[str]) -> None:
+    if f_path.suffix == ".py":
+        _verify_python_file(f_path, f_path_str, syntax_errors, lint_issues)
+    elif f_path.suffix in (".yaml", ".yml"):
+        _verify_yaml_file(f_path, f_path_str, syntax_errors)
+    elif f_path.suffix == ".json":
+        _verify_json_file(f_path, f_path_str, syntax_errors)
+
+
 class RollbackVerifier:
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
     def g0_verify(self, files: list[str] | None = None) -> G0Report:
-        target_files = files or []
-        if not target_files:
-            py_files = list(self._project_root.glob("src/**/*.py"))
-            yaml_files = list(self._project_root.glob("**/*.yaml"))
-            target_files = [str(p) for p in py_files + yaml_files]
+        target_files = _collect_g0_targets(self._project_root, files)
 
         missing: list[str] = []
         syntax_errors: list[str] = []
@@ -86,35 +127,9 @@ class RollbackVerifier:
             if not f_path.exists():
                 missing.append(f_path_str)
                 continue
+            _verify_g0_file(f_path, f_path_str, syntax_errors, lint_issues)
 
-            if f_path.suffix == ".py":
-                try:
-                    source = f_path.read_text(encoding="utf-8")
-                    ast.parse(source)
-                except SyntaxError as e:
-                    syntax_errors.append(f"{f_path_str}: {e}")
-
-                if f_path.name != "__init__.py":
-                    source = f_path.read_text(encoding="utf-8")
-                    if "def " in source or "class " in source:
-                        if '"""' not in source[:5] and "'''" not in source[:5]:
-                            lint_issues.append(f"{f_path_str}: missing module docstring")
-
-            elif f_path.suffix in (".yaml", ".yml"):
-                try:
-                    import yaml
-
-                    yaml.safe_load(f_path.read_text(encoding="utf-8"))
-                except Exception as e:
-                    syntax_errors.append(f"{f_path_str}: YAML parse error: {e}")
-
-            elif f_path.suffix == ".json":
-                try:
-                    json.loads(f_path.read_text(encoding="utf-8"))
-                except json.JSONDecodeError as e:
-                    syntax_errors.append(f"{f_path_str}: JSON parse error: {e}")
-
-        passed = len(missing) == 0 and len(syntax_errors) == 0 and len(lint_issues) == 0
+        passed = not missing and not syntax_errors and not lint_issues
         return G0Report(
             passed=passed,
             missing_files=missing,
