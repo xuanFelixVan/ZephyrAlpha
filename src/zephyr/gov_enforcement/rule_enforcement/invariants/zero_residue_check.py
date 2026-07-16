@@ -50,6 +50,20 @@ class ResidueReport:
         )
 
 
+def _should_skip_line(stripped: str) -> bool:
+    if not stripped:
+        return True
+    if stripped.startswith("===") or stripped.startswith("---"):
+        return True
+    if "[TEMP-FILES]" in stripped or "[RESIDUAL]" in stripped or "[RUINS-SCAN]" in stripped:
+        return True
+    if "[ORPHAN-PY]" in stripped or "[ORPHAN-DOC]" in stripped:
+        return True
+    if "Scanned " in stripped and " files" in stripped:
+        return True
+    return False
+
+
 class ZeroResidueScanner:
     def __init__(self, project_root: Path | None = None) -> None:
         if project_root is None:
@@ -106,15 +120,7 @@ class ZeroResidueScanner:
         issues: list[str] = []
         for line in stderr.split("\n"):
             stripped = line.strip()
-            if not stripped:
-                continue
-            if stripped.startswith("===") or stripped.startswith("---"):
-                continue
-            if "[TEMP-FILES]" in stripped or "[RESIDUAL]" in stripped or "[RUINS-SCAN]" in stripped:
-                continue
-            if "[ORPHAN-PY]" in stripped or "[ORPHAN-DOC]" in stripped:
-                continue
-            if "Scanned " in stripped and " files" in stripped:
+            if _should_skip_line(stripped):
                 continue
             if (stripped.startswith("[") and "]" in stripped[:6]) or len(stripped) > 5:
                 issues.append(stripped)
