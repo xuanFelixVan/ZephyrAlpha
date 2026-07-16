@@ -121,7 +121,7 @@ pathways:
     layer: "L2_domain"
     blueprint: "docs/03_modules/_domain_execution_core/blueprint.md"
     source_dir: "src/zephyr/ex_core/"
-    interface_file: "src/zephyr/ex_core/broker_interface.py"
+    interface_file: "src/zephyr/trading/trading_contracts/broker_interface.py"
     test_dir: "tests/"
     config: ""
     status: "skeleton"
