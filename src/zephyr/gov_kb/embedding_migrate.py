@@ -118,6 +118,46 @@ class MigrationCheckpoint(BaseModel):
     saved_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
+def _migrate_collection(
+    client: Any,
+    collection_name: str,
+    embed_fn: Callable[[list[str]], list[float] | None] | None,
+    dry_run: bool,
+) -> tuple[int, int, int, int]:
+    """迁移单个 ChromaDB collection，返回 (total, migrated, failed, processed) 计数。"""
+    try:
+        col = client.get_collection(name=collection_name)
+    except Exception:
+        return (0, 0, 0, 0)
+
+    existing = col.get()
+    ids = existing.get("ids", [])
+    docs = existing.get("documents", [])
+    metas = existing.get("metadatas", [])
+
+    total = len(ids)
+
+    if dry_run:
+        return (total, total, 0, 1)
+
+    if embed_fn is not None and docs:
+        try:
+            new_embeddings = embed_fn(docs)
+            if new_embeddings is not None:
+                col.delete(ids=ids)
+                col.add(
+                    ids=ids,
+                    documents=docs,
+                    embeddings=new_embeddings if isinstance(new_embeddings, list) else None,
+                    metadatas=metas,
+                )
+            return (total, total, 0, 1)
+        except Exception:
+            return (total, 0, total, 1)
+
+    return (total, total, 0, 1)
+
+
 class EmbeddingMigrator:
     """Embedding 版本管理 + 迁移管线。
 
@@ -238,41 +278,13 @@ class EmbeddingMigrator:
         for collection_name in plan.collections:
             if self._client is None:
                 continue
-            try:
-                col = self._client.get_collection(name=collection_name)
-            except Exception:
-                continue
-
-            existing = col.get()
-            ids = existing.get("ids", [])
-            docs = existing.get("documents", [])
-            metas = existing.get("metadatas", [])
-
-            total_docs += len(ids)
-
-            if dry_run:
-                migrated_docs += len(ids)
-                collections_processed += 1
-                continue
-
-            if embed_fn is not None and docs:
-                try:
-                    new_embeddings = embed_fn(docs)
-                    if new_embeddings is not None:
-                        col.delete(ids=ids)
-                        col.add(
-                            ids=ids,
-                            documents=docs,
-                            embeddings=new_embeddings if isinstance(new_embeddings, list) else None,
-                            metadatas=metas,
-                        )
-                    migrated_docs += len(ids)
-                except Exception:
-                    failed_docs += len(ids)
-            else:
-                migrated_docs += len(ids)
-
-            collections_processed += 1
+            c_total, c_migrated, c_failed, c_processed = _migrate_collection(
+                self._client, collection_name, embed_fn, dry_run
+            )
+            total_docs += c_total
+            migrated_docs += c_migrated
+            failed_docs += c_failed
+            collections_processed += c_processed
 
         if not dry_run and self._client is not None:
             source_ver = self._versions.get(plan.source_model)
