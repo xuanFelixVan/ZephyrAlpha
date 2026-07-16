@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check 永不抛异常——subprocess 异常降级为 fail-open；检出违规则 fail-closed
 # [TESTS] tests/governance/commit_gates/test_pure_assertion_gate.py
-# [A_module] module_id=MOD-GOV-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """pure_assertion_gate.py — 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016 治本）
 
