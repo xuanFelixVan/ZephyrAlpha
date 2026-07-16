@@ -23,9 +23,9 @@ body: |
 
   - [x] 第5次深度审计——架构自审发现 2 个盲点（GATE-E + GATE-SUM）
 
-  - [x] 设计 session-logs/ 体系（位置/与知识库绑定/规模设计）
+  - [x] 设计 session_logs/ 体系（位置/与知识库绑定/规模设计）
 
-  - [x] 创建 session-logs/ 目录 + index.yaml + 5 条种子 log
+  - [x] 创建 session_logs/ 目录 + index.yaml + 5 条种子 log
 
   - [x] 修复 module_id_registry.yaml 计数 68→67
 
@@ -43,19 +43,19 @@ body: |
 
   |------|---------|
 
-  | 创建 | session-logs/index.yaml |
+  | 创建 | session_logs/index.yaml |
 
-  | 创建 | session-logs/README.yaml |
+  | 创建 | session_logs/README.yaml |
 
-  | 创建 | session-logs/2026/05/session-20260504-001.yaml |
+  | 创建 | session_logs/2026/05/session-20260504-001.yaml |
 
-  | 创建 | session-logs/2026/05/session-20260504-002.yaml |
+  | 创建 | session_logs/2026/05/session-20260504-002.yaml |
 
-  | 创建 | session-logs/2026/05/session-20260504-003.yaml |
+  | 创建 | session_logs/2026/05/session-20260504-003.yaml |
 
-  | 创建 | session-logs/2026/05/session-20260504-004.yaml |
+  | 创建 | session_logs/2026/05/session-20260504-004.yaml |
 
-  | 创建 | session-logs/2026/05/session-20260504-005.yaml |
+  | 创建 | session_logs/2026/05/session-20260504-005.yaml |
 
   | 编辑 | docs/02_enterprise_architecture/target-architecture/architecture-model/module_id_registry.yaml |
 
@@ -81,7 +81,7 @@ body: |
 
 
 
-  - session-logs/ 放项目根目录——GATE-E 期望路径，且独立于 docs/ 的文档版本管理
+  - session_logs/ 放项目根目录——GATE-E 期望路径，且独立于 docs/ 的文档版本管理
 
   - 与知识库深度绑定：通过 PS-REG-011 登记 + GOV-AI-007 schema + context generator 注入
 
@@ -117,7 +117,7 @@ body: |
 
 
 
-  - GATE-E（session-logs/ 缺失）——在 100% vibe coding 中这是 AI 审计的根基
+  - GATE-E（session_logs/ 缺失）——在 100% vibe coding 中这是 AI 审计的根基
 
   - GATE-SUM（注册表 68 vs 67）——幽灵条目或僵尸注册的前兆信号
 
@@ -157,7 +157,7 @@ body: |
 
     - gates/_registry.yaml（13/13 active 门禁状态）
 
-    - session-logs/index.yaml（了解历史 session 的发现）
+    - session_logs/index.yaml（了解历史 session 的发现）
 
   - **注意事项**：
 
@@ -165,4 +165,4 @@ body: |
 
     2. Phase B 是层骨架生成——不是层实现
 
-    3. 遇到新盲点必须写入 session-logs/ 并更新 index.yaml
+    3. 遇到新盲点必须写入 session_logs/ 并更新 index.yaml

@@ -1,3 +1,7 @@
+---
+doc_type: derived
+ttl: permanent
+---
 auto_generated_version: '1.1'
 generated_at: '2026-07-05 14:54:11'
 generated_by: validate_session_log_index_integrity.py --generate
@@ -9,7 +13,7 @@ blind_spot_timeline:
   discovered: '2026-05-05'
   discovered_in_session: captured-in-index-v1.0
   description: L05/L06 的 skeleton base 文件（strategy_base.py / broker_interface.py）由
-    codegen 在更早 session 生成——但未记录在 session-logs/ 中
+    codegen 在更早 session 生成——但未记录在 session_logs/ 中
   severity: medium
   status: resolved
   resolution: GATE-BS 自动对账确认：L05 strategy_base.py 和 L06 broker_interface.py 均存在已完成

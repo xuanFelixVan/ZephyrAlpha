@@ -180,9 +180,10 @@ def write_blind_spot_timeline(timeline: list[dict], resolved: int, open_count: i
         "open": open_count,
         "blind_spot_timeline": timeline,
     }
+    frontmatter = "---\ndoc_type: derived\nttl: permanent\n---\n"
     atomic_write_safe(
         BLIND_SPOT_FILE,
-        yaml.dump(content, allow_unicode=True, default_flow_style=False, sort_keys=False),
+        frontmatter + yaml.dump(content, allow_unicode=True, default_flow_style=False, sort_keys=False),
     )
 
 

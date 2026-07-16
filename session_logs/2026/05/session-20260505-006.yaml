@@ -1,4 +1,6 @@
 ---
+doc_type: audit_report
+ttl: permanent
 phase: experimental
 
 session_id: 06

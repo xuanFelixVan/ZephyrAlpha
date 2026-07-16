@@ -1,4 +1,6 @@
 ---
+doc_type: audit_report
+ttl: permanent
 session_id: session-20260506-001
 date: 2026-05-06
 type: audit_fix

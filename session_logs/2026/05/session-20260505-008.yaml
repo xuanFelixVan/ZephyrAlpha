@@ -195,4 +195,4 @@ body: |
 
     - cross_layer_contracts.yaml (CTR-003 RiskLimits)
 
-    - session-logs/index.yaml
+    - session_logs/index.yaml

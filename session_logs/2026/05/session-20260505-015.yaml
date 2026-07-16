@@ -1,4 +1,6 @@
 ---
+doc_type: audit_report
+ttl: permanent
 session_id: "session-20260505-015"
 date: "2026-05-05"
 agent: "DeepSeek-V4-Pro"
