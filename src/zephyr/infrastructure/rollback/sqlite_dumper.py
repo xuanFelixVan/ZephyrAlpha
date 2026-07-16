@@ -82,6 +82,16 @@ def _validate_table_name(table: str) -> str:
     return table
 
 
+def _read_dump_lines(source_path: Path) -> list[str]:
+    lines: list[str] = []
+    with open(source_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                lines.append(line)
+    return lines
+
+
 @dataclass
 class DumpResult:
     output_path: Path
@@ -301,12 +311,7 @@ class SqliteDumper:
         if not source_path.exists():
             raise FileNotFoundError(f"Dump file not found: {source_path}")
 
-        lines: list[str] = []
-        with open(source_path, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    lines.append(line)
+        lines = _read_dump_lines(source_path)
 
         if len(lines) < 2:
             raise ValueError(f"Invalid dump file: {source_path} — insufficient lines")
