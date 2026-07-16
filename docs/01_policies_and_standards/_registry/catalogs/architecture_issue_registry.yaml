@@ -9,7 +9,7 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.3
+version: 1.3.4
 created: '2026-06-26'
 last_updated: '2026-07-17'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
@@ -2557,5 +2557,53 @@ entries:
   fix_phase: 已执行（shim 层彻底退役 + 正则扩展 + 本条目回溯补登，2026-07-17）
   status: decided
   related_adjudication: 正则扩展治本 ARCH-REFERENCE gate 三段式格式漏检（arch_reference_gate.py）
+  created: '2026-07-17'
+  last_updated: '2026-07-17'
+
+
+# --- #ARCH-DATA-SSOT-001: 5个核心数据契约多真源治本（SSoT归一） ---
+- issue_id: '#ARCH-DATA-SSOT-001'
+  title: 5个核心数据契约（market_data/factor_signal/factor_monitor_report/macro_factor_signal/synthesized_signal）多真源消除——归一至shared/contracts/根目录
+  severity: P0高
+  category: data_architecture
+  adjudication: |
+    问题背景：
+    5个核心数据契约存在三处真源分裂：
+    ① shared/contracts/{xxx}.py（codegen生成的canonical真源，cross_layer_contracts.yaml
+       CTR-001~CTR-005声明 physical_path: src/zephyr/shared/contracts/{xxx}.py）
+    ② trading/trading_contracts/market/{xxx}.py（重复定义，与codegen版本内容相同但路径不同）
+    ③ shared/contracts/market/{xxx}.py（backward-compat shim，通过__getattr__重定向到
+       trading版本——真源方向矛盾：shim指向trading，但canonical真源在shared/contracts/根目录）
+
+    根因分析（第一性原理）：
+    数据契约是跨层共享的SSoT资产，其真源由cross_layer_contracts.yaml声明。但实际代码中
+    存在三处定义，导致：
+    a) 修改契约时需同步3处，违反"真源唯一"铁律
+    b) shared/contracts/market/{xxx}.py shim指向trading版本，与canonical声明方向矛盾
+       （canonical说真源在shared/contracts/，shim却说真源在trading/）
+    c) 消费者import路径混乱：有的从trading导入，有的从shared.contracts导入，有的从
+       shared.contracts.market导入
+
+    裁定（2026-07-17）：
+    cross_layer_contracts.yaml为数据契约真源唯一声明。5个契约canonical路径归一至
+    src/zephyr/shared/contracts/根目录（codegen SSoT）。三阶段治本：
+    阶段1 删除重复定义：删除trading/trading_contracts/market/下5个重复文件
+      （market_data.py/factor_signal.py/factor_monitor_report.py/macro_factor_signal.py/
+       synthesized_signal.py），trading/__init__.py改为从shared.contracts re-export。
+    阶段2 删除方向矛盾shim：删除shared/contracts/market/下5个shim文件，仅保留
+      instrument shim（instrument真源在trading域，shim方向正确shared→trading）。
+    阶段3 消费者迁移：17个消费者文件36处import从
+      zephyr.trading.trading_contracts.market.{xxx} 改为 zephyr.shared.contracts.{xxx}。
+
+    验证：所有import正常，0残留trading版本import，0残留shared.contracts.market.{xxx}
+    import（已删除shim无消费者），24个测试通过。
+    闭环：check_blueprint_code_alignment.py 0条HIGH drift。
+
+    commit: 5bcbbe1292（29文件变更，数据契约多真源治本）
+    commit: 80107bb8（market_data [DEPENDENCIES]填充 + AGENTS.md登记）
+    commit: b270ff92（BOM清理——剥离PowerShell引入的UTF-8 BOM，19文件）
+  fix_phase: 已执行（5契约归一+重复删除+shim消除+消费者迁移+BOM清理，2026-07-17）
+  status: decided
+  related_adjudication: cross_layer_contracts.yaml CTR-001~CTR-005 数据契约真源声明
   created: '2026-07-17'
   last_updated: '2026-07-17'
