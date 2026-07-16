@@ -1,5 +1,6 @@
 # [A_config] module_id=CFG-domain-naming-rules | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 module_id: REG-DOMAIN-NAMING-001
+ttl: permanent
 title: 域命名规则表
 doc_type: register
 registry_id: REG-DOMAIN-NAMING-001

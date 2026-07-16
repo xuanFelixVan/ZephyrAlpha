@@ -81,6 +81,7 @@
 
 schema_version: "1.1.0"
 module_id: PS-REG-021
+ttl: permanent
 doc_type: gate
 title: "能力→真源文件反查注册表"
 status: active
@@ -4552,6 +4553,12 @@ creation_tokens:
     token: "auto-backup-readme-20260717"
     created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_documentation"
+
+  # --- GOV-DOC-016 纯陈述原则检测真源（PURE-ASSERTION gate SSoT checker）---
+  - file: "scripts/governance/d3_metadata/check_pure_assertion.py"
+    token: "auto-pure-assertion-checker-20260717"
+    created_by: "session-sess-24736-20260717023222"
+    capability: "pure_assertion_checker"
 
 # ============================================================================
 # 维护日志

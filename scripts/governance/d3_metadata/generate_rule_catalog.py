@@ -217,6 +217,7 @@ def generate_catalog(entries: list[dict], output_path: str) -> None:
     catalog = {
         "schema_version": "1.0.0",
         "module_id": "PS-REG-018",
+        "ttl": "permanent",
         "doc_type": "register",
         # title 含「唯一真源(SSoT)」声明：让新AI第一眼识别这是规则索引真源
         # （向内收4原则之"新AI可发现性"——无歧义标记真源性质）

@@ -1,4 +1,5 @@
 module_id: CFG-scripts-registry
+ttl: permanent
 collection_id: SCRIPT_COLLECTION
 collection_name: 脚本集 / Script Collection
 collection_path: scripts/governance/
