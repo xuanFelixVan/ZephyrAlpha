@@ -4,6 +4,7 @@ title: Reports Directory
 description: 本地报告目录治理流水线与调试中间产物归档
 blueprint_id: MOD-INF-005
 ttl: task_bound
+doc_type: index
 ---
 
 
