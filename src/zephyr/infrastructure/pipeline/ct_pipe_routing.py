@@ -43,6 +43,7 @@ from zephyr.infrastructure.pipeline.models import (
     AFFINITY_CONSTRAINTS,
     M_MODULE_SPECS,
     AffinityWeight,
+    PipelineAffinityConstraint,
     PipelineRouteDecision,
 )
 from zephyr.shared.schema.schemas import BASE_CONFIG, Priority
@@ -210,6 +211,46 @@ def resolve_ct_pipe_orc001(hints: CtPipeRoutingHints) -> PipelineRouteDecision:
     raise PipelineRoutingInputsError(f"CT-PIPE: 未支持的 task_type={tt!r}")
 
 
+def _check_model_affinity(
+    constraint: PipelineAffinityConstraint,
+    active: dict[str, str],
+) -> list[str]:
+    """检查 model 亲和性约束——返回 0 或 1 条警告/ABORT 信息。"""
+    node_a_model = active.get(constraint.node_a, M_MODULE_SPECS.get(constraint.node_a, {}).get("model", ""))
+    if constraint.node_b:
+        node_b_model = active.get(constraint.node_b, M_MODULE_SPECS.get(constraint.node_b, {}).get("model", ""))
+        if node_a_model and node_b_model and node_a_model == node_b_model:
+            return [f"ABORT: {constraint.description} ({constraint.node_a}={node_a_model}, {constraint.node_b}={node_b_model})"]
+        if node_a_model and node_b_model and node_a_model != node_b_model:
+            return []
+        if constraint.weight is AffinityWeight.SOFT:
+            return [f"WARN: {constraint.description} (insufficient model info)"]
+    elif constraint.weight is AffinityWeight.SOFT:
+        return [f"WARN: {constraint.description}"]
+    return []
+
+
+def _check_sandbox_affinity(
+    constraint: PipelineAffinityConstraint,
+    decision: PipelineRouteDecision,
+) -> list[str]:
+    """检查 sandbox 约束——M1-M4 必须在 full/standard 沙箱执行。"""
+    if constraint.node_a.startswith("M") and decision.node_id in ("M1", "M2", "M3", "M4"):
+        if decision.sandbox_profile not in ("full", "standard"):
+            return [f"ABORT: {constraint.description} (current={decision.sandbox_profile})"]
+    return []
+
+
+def _check_pipeline_affinity(
+    constraint: PipelineAffinityConstraint,
+    decision: PipelineRouteDecision,
+) -> list[str]:
+    """检查 pipeline 流向约束——A区->B区穿越需经 M5/M6。"""
+    if decision.node_id not in ("M5", "M6"):
+        return [f"WARN: {constraint.description} — A区->B区穿越需经M5/M6"]
+    return []
+
+
 def enforce_affinity(
     decision: PipelineRouteDecision,
     active_nodes: dict[str, str] | None = None,
@@ -229,26 +270,10 @@ def enforce_affinity(
 
     for constraint in AFFINITY_CONSTRAINTS:
         if constraint.constraint_type == "model":
-            node_a_model = active.get(constraint.node_a, M_MODULE_SPECS.get(constraint.node_a, {}).get("model", ""))
-            if constraint.node_b:
-                node_b_model = active.get(constraint.node_b, M_MODULE_SPECS.get(constraint.node_b, {}).get("model", ""))
-                if node_a_model and node_b_model and node_a_model == node_b_model:
-                    msg = f"ABORT: {constraint.description} ({constraint.node_a}={node_a_model}, {constraint.node_b}={node_b_model})"
-                    warnings.append(msg)
-                elif node_a_model and node_b_model and node_a_model != node_b_model:
-                    pass
-                elif constraint.weight is AffinityWeight.SOFT:
-                    warnings.append(f"WARN: {constraint.description} (insufficient model info)")
-            else:
-                if constraint.weight is AffinityWeight.SOFT:
-                    warnings.append(f"WARN: {constraint.description}")
+            warnings.extend(_check_model_affinity(constraint, active))
         elif constraint.constraint_type == "sandbox":
-            if constraint.node_a.startswith("M") and decision.node_id in ("M1", "M2", "M3", "M4"):
-                if decision.sandbox_profile not in ("full", "standard"):
-                    msg = f"ABORT: {constraint.description} (current={decision.sandbox_profile})"
-                    warnings.append(msg)
+            warnings.extend(_check_sandbox_affinity(constraint, decision))
         elif constraint.constraint_type == "pipeline":
-            if decision.node_id not in ("M5", "M6"):
-                warnings.append(f"WARN: {constraint.description} — A区->B区穿越需经M5/M6")
+            warnings.extend(_check_pipeline_affinity(constraint, decision))
 
     return warnings
