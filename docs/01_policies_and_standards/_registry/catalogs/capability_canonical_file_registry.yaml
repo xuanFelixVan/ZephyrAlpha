@@ -237,7 +237,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: blueprint_path_query
-    canonical_override: src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py
+    canonical_override: src/zephyr/governance/rule_enforcement/sys_master_compliance.py
     aliases:
       - SYS_MASTER_PATH
       - MOD_MASTER_PATH
@@ -428,7 +428,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: working_docs_ghost_ref_archiver
-    canonical_override: src/zephyr/gov_audit/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - GATE-WORKING-DOCS
       - working_docs_reconciler
@@ -456,7 +456,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: completes_when_validator
-    canonical_override: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    canonical_override: src/zephyr/governance/rule_bridge/git_commit_gateway.py
     aliases:
       - completes_when_check
       - _check_working_docs_completes_when
@@ -581,10 +581,7 @@ capabilities:
       - generate_domain_dependency_diagram
       - generate_contracts
       - generate_project_depgraph
-      # generate_panorama_registry 已从 aliases 移除（2026-07-09）：
-      # 集合 capability（13 生成器）的 _derive_canonical_and_duplicates 只支持单 canonical，
-      # 新增生成器 basename 匹配 aliases → 被派生为 duplicate → CREATE-GUARD GATE-SSOT L2 阻断。
-      # 发现性由 description（按名提及）+ outputs 字段 + creation_tokens 三重保障，不依赖 aliases。
+      - generate_panorama_registry
     description: >-
       depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（13 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
@@ -650,43 +647,30 @@ capabilities:
       输出报告到 docs/02_enterprise_architecture/generated/panorama_alignment_report.md。
       定位：只读检测器（不自动修复），由人工或后续工具根据报告处理。
       canonical = scripts/governance/d5_architecture/generators/align_panoramas.py。
-      门禁集成（ARCH-056 升级）：panorama_alignment_gate 在 pre-commit 阶段调用
-      run_alignment()，domain_mismatches>0 时**阻断** commit（passed=False），
-      orphans/state_drifts 保持 warn-only。修复入口：sync_panorama_module.py --all。
       注意区别：本能力是"三图间 module_id 对齐检测"（depgraph/dataflow/decision
       三大全景图横向对齐），与 rule_four_way_alignment_gate（规则 YAML↔DB↔code↔path
       四方纵向对齐）职责不同，勿混淆。
 
   # --------------------------------------------------------------------------
-  - capability_id: panorama_module_sync
+  - capability_id: panorama_module_sync_engine
     aliases:
       - sync_panorama_module
-      - four_panoramas_sync
-      - ARCH-056
+      - panorama_sync
       - module_panorama_sync
+      - prune_orphans
+      - ARCH-056
+      - ARCH-058
     description: >-
-      四图模块同步引擎（ARCH-056）。从 depgraph.nodes 读取模块核心字段
-      （module_id/domain_id/design_maturity/build_status），单向派生到
-      dataflow_jobs（占位记录 entity_type='module_placeholder'）和
-      decision_layers（占位记录 track='placeholder'）。
-      触发：generate_project_depgraph.py / apply_depgraph.py 执行后自动调用。
+      四图模块同步引擎（ARCH-056 Phase 2 + ARCH-058 治本）。从 depgraph.nodes
+      读取模块清单，单向派生到 dataflow_jobs / decision_layers 占位记录
+      （sync_module_panorama：UPSERT 不覆盖真实 job 核心字段）；
+      prune_orphans 清理 decision_layers + dataflow_jobs 中的孤儿占位记录
+      （ARCH-058：走 dataflow 连接工厂 read_only=False + allow_design_delete +
+      acquire_dataflow_write_lock pg_advisory_lock 424243 并发互斥）。
+      与 align_panoramas（只读检测器）职责分离：本引擎写派生+清理，检测器只读报告。
       canonical = scripts/governance/sync_panorama_module.py。
-      与 panorama_alignment_detection 区别：本能力是"自动同步"（写入），
-      alignment_detection 是"只读检测"（报告）。
-
-  # --------------------------------------------------------------------------
-  - capability_id: yaml_db_sync_validation
-    aliases:
-      - verify_sync_integrity
-      - sync_integrity_check
-      - yaml_db_consistency_check
-    description: >-
-      YAML→DB 同步完整性校验工具（Phase E1，2026-07-13）。验证规则数据
-      （trae_*.yaml/契约/门禁/词汇表/注册表）从 YAML 同步到 depgraph (PostgreSQL)
-      的一致性。4维校验：①YAML→DB完整性（每个YAML域在DB存在）②ssot_path非空
-      ③arch_path_mappings同步 ④域计数一致性。canonical = scripts/governance/verify_sync_integrity.py。
-      与 panorama_module_sync 区别：本能力是"只读校验"（不写入），
-      panorama_module_sync 是"自动同步"（写入 depgraph/dataflow/decision）。
+      与 sync_yaml_to_depgraph（规则 YAML→DB 单向同步）不同：本引擎是架构数据
+      depgraph→dataflow/decision 派生同步，非规则数据同步。
 
   # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection
@@ -968,67 +952,32 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: commit_gateway_audit_reconciler
-    canonical_override: src/zephyr/gov_audit/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - GATE-COMMIT-GW-AUDIT
       - make_commit_gateway_audit_reconciler
-      - make_integrity_audit_reconciler
       - commit_audit_reconciler
       - non_gw_commit_detector
-      - concurrent_breaking_change_conflict_detector
     description: >-
-      post-commit 审计 reconciler（GATE-COMMIT-GW-AUDIT，C级 缺口4；2026-07-12 升级并入
-      make_integrity_audit_reconciler 3-way 合并）。每次 commit 后审计最近 20 个 commit，
-      标记无 [GW: 标记的裸 commit（merge commit 跳过），报告落盘
-      .runtime/reconcile_reports/commit_gateway_audit_<ts>.json。非阻断（warn），供追责。
-      检测逻辑：git log -20 --oneline → 逐行检查 subject 是否含 [GW: → 不含则记为 violation。
+      post-commit 审计 reconciler（GATE-COMMIT-GW-AUDIT，C级 缺口4）。
+      每次 commit 后审计最近 20 个 commit，标记无 [GW: 标记的裸 commit
+      （merge commit 跳过），报告落盘 .runtime/reconcile_reports/commit_gateway_audit_<ts>.json。
+      非阻断（warn），供追责。检测逻辑：git log -20 --oneline → 逐行检查 subject
+      是否含 [GW: → 不含则记为 violation。
       与 gate_commit_gw 互补：gate_commit_gw 是 pre-commit 拦截（可被 --no-verify 绕过），
       本 reconciler 是 post-commit 审计（不可绕过，但非阻断）。
-      治本升级（2026-07-12，遗留项2根因）：审计发现 violations 时联动 SessionRegistry
-      检测活跃 breaking_change session，命中则报告 CONCURRENT_BREAKING_CHANGE_CONFLICT
-      （判定并发违规：治本变更期间发生裸 commit，违反"治本变更未提交前禁止并发AI对话"铁律）。
-      fail-open：SessionRegistry 异常时不阻断审计主流程。报告新增 concurrent_conflict +
-      conflict_sessions 字段。
-      解决发现性：新 AI 搜 "commit审计/裸commit检测/non-GW commit/并发冲突检测" 可定位真源。
+      解决发现性：新 AI 搜 "commit审计/裸commit检测/non-GW commit" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重建同类审计 reconciler。
     # 治本（2026-06-30 病根1 看门人无人看）：reconciler 工厂函数 A 层 AST 锚点保护。
     # 红蓝对抗发现 commit_gateway_audit_reconciler 无 integrity_anchors——篡改
     # make_commit_gateway_audit_reconciler 后 A 层不检测，裸 commit 审计可被静默关闭。
     integrity_anchors:
       - make_commit_gateway_audit_reconciler  # reconciler工厂(删则reconciler不注册,裸commit审计失效)
-      - make_integrity_audit_reconciler       # 3-way合并入口(2026-07-12升级,删则GATE-COMMIT-GW-AUDIT不注册)
       - _audit_commit_history                  # 审计逻辑真源(git log -20扫描,删则检测逻辑失效)
-      - _reconcile_commit_gw_audit             # 并发冲突检测分支(2026-07-12升级,删则CONCURRENT_BREAKING_CHANGE_CONFLICT漏报)
-
-  # --------------------------------------------------------------------------
-  - capability_id: tmp_cleanup_reconciler
-    canonical_override: src/zephyr/gov_audit/reconciliation_registry.py
-    aliases:
-      - GATE-TMP-CLEANUP
-      - make_tmp_cleanup_reconciler
-      - tmp_ttl_cleanup
-      - tmp_dir_auto_cleanup
-      - tmp_residual_cleaner
-    description: >-
-      tmp/ 目录 TTL 自动清理 reconciler（GATE-TMP-CLEANUP，2026-07-12 治本 249+ 文件残留）。
-      post-commit 事件驱动（trigger=always True）：扫描 tmp/ 下所有文件，删除 mtime > 7 天
-      的文件（_PROTECTED_NAMES={".gitkeep"} 跳过）。对标 make_runtime_cleanup_reconciler
-      （GATE-RUNTIME-CLEANUP priority=50 清理 .runtime/），priority=49 在其之前执行。
-      病根（遗留项1根因）：tmp/ 在 directory_contract.yaml 属 neutral zone
-      （default_ttl=null, gate=none），.gitignore L228-232 全目录忽略——无自动清理机制，
-      依赖 AI 自觉删除 task_bound 脚本。100% AI 开发模式下"依赖AI自觉"反模式最终必被违反，
-      导致 tmp/ 堆积 249+ 历史残留文件。本 reconciler 将"依赖AI自觉"转为"自动事件触发"，
-      对标 trae_060 §2.2 向内收原则（自动触发+自动维护+自动关闭）。
-      与 make_runtime_cleanup_reconciler 互补：runtime/ 清理 7 天 mtime（priority=50），
-      tmp/ 清理 7 天 mtime（priority=49）——两套 TTL 清理覆盖所有 neutral zone 瞬态目录。
-      解决发现性：新 AI 搜 "tmp清理/TTL cleanup/tmp残留" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 tmp 清理 reconciler。
-    integrity_anchors:
-      - make_tmp_cleanup_reconciler  # reconciler工厂(删则reconciler不注册,tmp/残留无人清)
 
   # --------------------------------------------------------------------------
   - capability_id: asset_index_reconciler
-    canonical_override: src/zephyr/gov_audit/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - GATE-ASSET-INDEX
       - make_index_generator_reconciler
@@ -1162,29 +1111,6 @@ capabilities:
       - make_held_overlap_gate     # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
-  - capability_id: foreign_change_gate
-    aliases:
-      - FOREIGN-CHANGE-DETECTION
-      - foreign-change-detection
-      - make_foreign_change_gate
-      - foreign_change_detector
-      - ghost_commit_content_blocker
-      - dirty_baseline_blocker
-    description: >-
-      外来变更检测门禁（FOREIGN-CHANGE-DETECTION，ARCH-054 治本，2026-07-09）。
-      检测 commit 中是否包含 claim 时已存在的"外来变更"（其他 session 的未提交修改）——
-      防止搭便车提交（ARCH-031 根因治本）。病根：session A 修改文件 X 未 commit，
-      session B claim_files(X) 时 HELD-OVERLAP 因 X 未被 claim 而放行，B commit 将 A 的
-      修改一并提交。FOREIGN-CHANGE-DETECTION 在 claim_files 时捕获 git diff HEAD 基线快照，
-      commit 时对比：基线非空则阻断（FOREIGN_CHANGE_VIOLATION）。
-      priority=45（在 CLAIM-REQUIRED(40) 后、HELD-OVERLAP(50) 前）。allow_overlap=True
-      逃生通道放行。canonical basename foreign_change_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "外来变更/搭便车内容/ghost commit content/dirty baseline" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类防护脚本。
-    integrity_anchors:
-      - make_foreign_change_gate    # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
   - capability_id: dangling_reference_gate
     aliases:
       - DANGLING-REFERENCE
@@ -1229,30 +1155,6 @@ capabilities:
       解决防重建：check_file_canonical() 反查阻止重建同类 #ARCH-NNN 引用检测脚本。
     integrity_anchors:
       - make_arch_reference_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: gate_inventory_sync_reconciler
-    aliases:
-      - GATE-MODULE-INVENTORY-SYNC
-      - gate-module-inventory-sync
-      - make_gate_inventory_sync_reconciler
-      - check_gate_inventory_drift
-      - gate_inventory_drift_checker
-    description: >-
-      commit_gates 模块清单漂移正向检测 post-commit reconciler（ARCH-055，2026-07-09 治本）。
-      GitCommitGateway post-commit 阶段触发（priority=820，在 GATE-AGENTS-MD-REFS(810) 之后）。
-      commit 含 src/zephyr/gov_enforcement/commit_gates/*.py 变更时，subprocess 调
-      check_gate_inventory_drift.py 对比 commit_gates/*.py 实际文件集合 vs
-      blueprint.md §0.1 正则提取的登记集合，输出 missing/extra 漂移列表。
-      warn-only（不阻断 commit）：漂移是文档同步滞后非代码错误，阻断会形成死循环
-      （blueprint.md 未同步→阻断 gate 代码 commit→无法 commit blueprint.md 补登记）。
-      病根：blueprint.md §0.1 模块清单靠手工维护，100% AI 开发模式下漂移率 20.7%（6/29）。
-      治本：补正向检测（代码→文档），现有 GATE-AGENTS-MD-REFS 是反向检测（文档→代码）不覆盖。
-      解决发现性：新 AI 搜 "gate inventory drift/模块清单漂移/commit_gates 同步" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 commit_gates 清单漂移检测脚本。
-    integrity_anchors:
-      - make_gate_inventory_sync_reconciler  # reconciler 工厂(删则 reconciler 不注册)
-      - check_gate_inventory_drift           # 检测脚本(删则 reconciler 无检测逻辑)
 
   # --------------------------------------------------------------------------
   - capability_id: rule_four_way_alignment_gate
@@ -1406,322 +1308,28 @@ capabilities:
       - make_unsafe_dict_spread_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
-  - capability_id: diff_helpers
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py
+  - capability_id: pure_shim_gate
     aliases:
-      - DIFF-HELPERS
-      - diff-helpers
-      - _diff_helpers
-      - gate_diff_helpers
-      - commit_gate_diff_helpers
-      - _is_exempt_line
-      - _extract_docstring_lines
-      - _parse_diff_with_line_numbers
-      - _read_staged_file
+      - PURE-SHIM
+      - pure-shim
+      - make_pure_shim_gate
+      - pure_reexport_shim_blocker
+      - no_pure_shim_gate
+      - GATE-NO-PURE-SHIM-inprocess
     description: >-
-      gate 共享 diff 解析工具模块（_diff_helpers，2026-07-09 FUNCTION-DUP 治本提取）。
-      提取 unsafe_dict_spread_gate / datetime_now_forbidden_gate 公共 diff 解析函数
-      （_is_exempt_line/_extract_docstring_lines/_parse_diff_with_line_numbers/
-      _read_staged_file），消除 FUNCTION-DUP gate 阻断（同目录同 name+body hash 重复
-      函数）。纯函数无副作用，不可达路径 fail-open（返回空集/空列表/None）。
-      canonical_override 显式声明——basename _diff_helpers.py 含前导下划线，与
-      capability_id diff_helpers 不完全匹配，ssot_redefinition_gate 不 auto-derive
-      canonical 路径，必须显式提供 canonical_override 否则 gate 跳过此 capability。
-      解决发现性：新 AI 搜 "gate diff 解析/_diff_helpers/commit gate 共享工具" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 diff 解析工具模块。
+      纯 re-export shim 文件 in-process 阻断门禁（PURE-SHIM，priority=68，P6 治本
+      2026-07-09）。弥补 --no-verify 绕过 GATE-NO-PURE-SHIM pre-commit hook 的缺口——
+      check_pure_shim.py 是 pre-commit hook，git commit --no-verify 绕过所有
+      pre-commit hooks。本 gate 在 GitCommitGateway pre-commit 阶段（in-process）
+      注册，--no-verify 绕不过。检测所有 staged .py（新增+修改），因修改文件也可能
+      被退化为 shim。subprocess 调 check_pure_shim.py --ci（检测逻辑 SSoT 在
+      check_pure_shim.py，本 gate 是 thin wrapper 不重复检测逻辑）。tests/ 豁免；
+      __init__.py 豁免由 check_pure_shim.is_pure_reexport_shim() 内部处理。
+      fail-open：脚本故障（exit 2/超时/缺失）时不阻断（环境异常非违规）；
+      fail-closed：检出违规（exit 1）时硬阻断（PURE_SHIM_VIOLATION）。
+      priority=68（紧随 unsafe_dict_spread=66 之后、dangling_reference=70 之前）。
     integrity_anchors:
-      - _is_exempt_line  # 行级豁免判定
-      - _extract_docstring_lines  # docstring 行号集合
-      - _parse_diff_with_line_numbers  # git diff 解析
-      - _read_staged_file  # staged 文件读取
-
-  # --------------------------------------------------------------------------
-  - capability_id: datetime_now_forbidden_gate
-    aliases:
-      - DATETIME-NOW-FORBIDDEN
-      - datetime-now-forbidden
-      - make_datetime_now_forbidden_gate
-      - generator_datetime_now_blocker
-      - datetime_now_hard_blocker
-    description: >-
-      生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN，2026-07-09 治本
-      AGENTS.md §11.1.1）。检测 staged 生成器代码(.py)新增行中的 datetime.now() 调用
-      ——违反时间戳约定（生成器输出必须幂等，禁止实时时间源）。生成器判定：路径含
-      /generators/ 或文件名以 generate_ 开头；tests/ 豁免；import/注释/docstring 豁免；
-      非生成器文件豁免；检出违规则 fail-closed 阻断（passed=False）。hard-block（非
-      warn）——datetime.now() 在生成器中是确定性违规（违反 §11.1.1），应硬阻断。
-      priority=34（在 FILE-PLACEMENT-TTL=33 之后、R5-DIGIT-SUFFIX=35 之前）。
-      canonical basename datetime_now_forbidden_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "datetime.now 阻断/生成器时间戳门禁/DATETIME-NOW" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 datetime.now() 检测脚本。
-    integrity_anchors:
-      - make_datetime_now_forbidden_gate  # gate 工厂(删则 gate 不注册)
-      - _is_generator_file  # 生成器文件判定
-
-  # --------------------------------------------------------------------------
-  - capability_id: hardcoded_url_gate
-    aliases:
-      - NO-HARDCODED-URL
-      - no-hardcoded-url
-      - make_hardcoded_url_gate
-      - hardcoded_localhost_blocker
-    description: >-
-      硬编码 localhost URL 阻断门禁（NO-HARDCODED-URL，§5.160.9 防复发）。检测 staged
-      .py 文件 added 行中的 http://localhost: / https://localhost: 字面量——违反
-      DEFAULT_OLLAMA_URL SSoT 原则（§5.160.9），应改用 from zephyr.shared.foundation.constants
-      import DEFAULT_OLLAMA_URL。shared/foundation/constants.py 豁免（SSoT 定义位置）；
-      tests/ 豁免；import/注释/docstring 豁免；检出违规则 fail-closed 阻断（passed=False）。
-      priority=94（在 NO-UPWARD-IMPORT=93 之后）。
-      canonical basename hardcoded_url_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "硬编码URL阻断/localhost门禁/NO-HARDCODED-URL" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 URL 检测脚本。
-    integrity_anchors:
-      - make_hardcoded_url_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: test_source_consistency_gate
-    aliases:
-      - TEST-SOURCE-CONSISTENCY
-      - test-source-consistency
-      - make_test_source_consistency_gate
-      - test_symbol_drift_blocker
-    description: >-
-      测试-源码符号漂移阻断门禁（TEST-SOURCE-CONSISTENCY，§5.178 防复发）。检测 staged
-      tests/ .py 文件中 from zephyr.* import yyy 的 yyy 符号在源码中是否存在——不存在
-      则硬阻断 commit（名称漂移检测）。module-level pytest.skip/importorskip 豁免（已标记
-      漂移的测试文件不重复检测）；检查所有顶层符号（class/def/assign/annassign），不依赖
-      __all__（Python 允许显式 import 任何顶层符号）；源码文件不存在/解析失败 fail-open；
-      相对导入/通配符 import 跳过。priority=96（在 TESTS-COVERAGE=95 之后）。
-      canonical basename test_source_consistency_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "测试符号漂移/import符号不存在/TEST-SOURCE-CONSISTENCY" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类测试-源码一致性检测脚本。
-    integrity_anchors:
-      - make_test_source_consistency_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: import_direction_gate
-    aliases:
-      - NO-UPWARD-IMPORT
-      - no-upward-import
-      - make_import_direction_gate
-      - shared_upward_dependency_blocker
-    description: >-
-      shared 层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152 防复发）。检测 staged
-      shared 层（src/zephyr/shared/）.py 文件中是否含向上依赖 import——违反架构
-      分层原则（L0 shared 禁止依赖 L2 governance / L3 trading 等上层域）。TYPE_CHECKING
-      块内 import 豁免（类型检查专用无运行时导入）；tests/ 豁免；AST/git 异常 fail-open
-      （logger.warning）；检出违规则 fail-closed 阻断（passed=False）。priority=93。
-      canonical basename import_direction_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "shared向上依赖/shared层import门禁/NO-UPWARD-IMPORT" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 import 方向检测脚本。
-    integrity_anchors:
-      - make_import_direction_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: tests_coverage_gate
-    aliases:
-      - META-TESTS-COVERAGE
-      - meta-tests-coverage
-      - make_tests_coverage_gate
-      - gate_tests_coverage_checker
-    description: >-
-      Gate 测试覆盖率校验 meta-gate（META-TESTS-COVERAGE，#ARCH-057 防复发）。检测
-      src/zephyr/gov_enforcement/commit_gates/*.py 的 [TESTS] 头部声明的测试文件路径是否
-      实际存在——"声明但不兑现"的系统性缺口治本。守卫者的守卫者（quis custodiet
-      ipsos custodes）。trigger 条件：staged 文件含 commit_gates/*.py 变更时扫描
-      整个 gate 目录。[TESTS] — / 空 / none 豁免；_*.py 前缀文件豁免（helpers）。
-      文件系统异常 fail-open（logger.warning）；检出违规则 fail-closed 阻断
-      （passed=False）。priority=95（meta-gate 最后运行）。canonical basename
-      tests_coverage_gate 匹配 capability_id，可 auto 派生。
-      解决发现性：新 AI 搜 "gate测试覆盖率/[TESTS]头部校验/META-TESTS-COVERAGE" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止重建同类 gate 测试覆盖率检测脚本。
-    integrity_anchors:
-      - make_tests_coverage_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: long_param_list_gate
-    aliases:
-      - NO-LONG-PARAM-LIST
-      - no-long-param-list
-      - make_long_param_list_gate
-      - long_param_list_blocker
-    description: >-
-      长参数列表阻断门禁(NO-LONG-PARAM-LIST, 5.150 防复发). 检测 staged .py
-      文件中新增函数参数数 > 7 (排除 self/cls). 违反 5.150 Long Parameter List
-      反模式. AST-based 检测, tests/ 豁免, AST 解析失败 fail-open,
-      检出违规则 fail-closed (passed=False). priority=88.
-      canonical basename long_param_list_gate 匹配 capability_id, 可 auto 派生.
-    integrity_anchors:
-      - make_long_param_list_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: bare_sql_gate
-    aliases:
-      - NO-BARE-SQL
-      - no-bare-sql
-      - make_bare_sql_gate
-      - bare_sql_literal_blocker
-    description: >-
-      裸 SQL 字面量阻断门禁(NO-BARE-SQL, 5.160.2 防复发). 检测 staged .py
-      added 行中的裸 SQL 字面量(SELECT...FROM/INSERT INTO/UPDATE...SET/DELETE FROM).
-      违反 5.160 SQL 集中化原则. diff-based 检测, tests/ 豁免,
-      docstring/注释/import 豁免, git diff 不可达 fail-open,
-      检出违规则 fail-closed (passed=False). priority=87.
-    integrity_anchors:
-      - make_bare_sql_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: depgraph_write_path_gate
-    aliases:
-      - DEPGRAPH-WRITE-PATH
-      - depgraph-write-path
-      - make_depgraph_write_path_gate
-      - depgraph_write_path_whitelist
-    description: >-
-      depgraph 写入路径白名单门禁(DEPGRAPH-WRITE-PATH, 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL).
-      检测 staged .py added 行中的 depgraph 写入权限参数(read-only disabled /
-      superuser / edge-delete enabled). 非白名单文件使用这些参数时阻断 commit.
-      白名单: apply_depgraph.py/generate_project_depgraph.py/sync_yaml_to_depgraph.py/
-      _shared/constants.py/depgraph_schema.py. diff-based 检测, tests/ 豁免,
-      docstring/注释/import 豁免, git diff 不可达 fail-open, 检出违规则 fail-closed.
-      priority=97.
-    integrity_anchors:
-      - make_depgraph_write_path_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: blueprint_format_gate
-    aliases:
-      - BLUEPRINT-FORMAT
-      - blueprint-format
-      - make_blueprint_format_gate
-      - blueprint_header_module_id_validator
-    description: >-
-      [BLUEPRINT] 头部 module_id 格式阻断门禁(BLUEPRINT-FORMAT, 裁定#214 Phase 0 防蔓延).
-      检测 staged .py added 行中的 [BLUEPRINT] 头部, 校验 module_id 格式是否符合
-      裁定#208 双轨制(MOD-/SH- 前缀). diff-based 检测, tests/ 豁免,
-      存量基线违规 grandfathered(只检 added 行), git diff 不可达 fail-open,
-      检出违规则 fail-closed (passed=False). priority=77.
-    integrity_anchors:
-      - make_blueprint_format_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: data_task_completeness_gate
-    aliases:
-      - DATA-TASK-COMPLETENESS
-      - data-task-completeness
-      - make_data_task_completeness_gate
-      - fallback_sources_warning_gate
-      - tasks_yaml_completeness_checker
-    description: >-
-      数据任务完整性门禁(DATA-TASK-COMPLETENESS, 数据韧性三层机制§4, 2026-07-15).
-      warn 级(不阻断 commit)检测 tasks.yaml 新增 task_id 是否配置 fallback_sources.
-      git diff HEAD 提取新增 task_id, 解析 tasks.yaml 检查 fallback_sources 字段.
-      未配置则返回 passed=True + WARN detail(提醒型, 不阻碍开发——有些表确实无副源).
-      病根: AI 新增表时容易遗漏 fallback_sources(认知盲区), 无门禁提醒→遗漏直到
-      数据源故障才发现无 fallback→数据缺失. 治本: warn 在 commit 输出形成
-      "AI增加表→门禁提醒→AI补充fallback_sources"闭环. priority=80.
-      canonical basename data_task_completeness_gate 匹配 capability_id, 可 auto 派生.
-      解决发现性: 新 AI 搜 "fallback_sources/tasks.yaml完整性/数据韧性门禁" 可定位真源.
-      解决防重建: check_file_canonical() 反查阻止重建同类 tasks.yaml 完整性检测脚本.
-    integrity_anchors:
-      - make_data_task_completeness_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: ch_batch_size_gate
-    aliases:
-      - CH-BATCH-SIZE
-      - ch-batch-size
-      - make_ch_batch_size_gate
-      - ch_batch_write_prevention
-    description: >-
-      CH 批量写入防回退门禁(CH-BATCH-SIZE, #ARCH-CH-004 防复发). AST 检测
-      staged .py 文件中 write_result 在 for/async for 循环体内直接调用
-      (无 BufferedWriter 中间层). 违反裁定 #ARCH-CH-003 批量聚合层要求.
-      AST parent map 精确检测, tests/ 豁免, ch_writer.py/buffered_writer.py
-      自身豁免, ast.parse 失败 fail-open, git diff 不可达 fail-open,
-      检出违规则 fail-closed (passed=False). priority=36.
-    integrity_anchors:
-      - make_ch_batch_size_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: ch_final_gate
-    aliases:
-      - CH-FINAL-GATE
-      - ch-final-gate
-      - make_ch_final_gate
-      - ch_writer_query_blocker
-    description: >-
-      ch_writer.query() 直接调用阻断门禁(CH-FINAL-GATE, 裁定 #ARCH-CH-007 B5
-      防复发). AST 检测 staged .py 文件中直接调用 ch_writer.query() 的代码,
-      阻断并提示改用 ch_reader.query() 自动注入 FINAL. ch_reader.py/ch_writer.py
-      豁免, tests/ 豁免, AST/git 异常 fail-open,
-      检出违规则 fail-closed (passed=False). priority=37.
-    integrity_anchors:
-      - make_ch_final_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: ch_version_col_gate
-    aliases:
-      - CH-VERSION-COL
-      - ch-version-col
-      - make_ch_version_col_gate
-      - ch_version_col_misuse_blocker
-    description: >-
-      CH version 列语义误用阻断门禁(CH-VERSION-COL, 裁定 #ARCH-CH-009 防复发).
-      diff 检测 staged .py/.md/.sql/.yaml/.yml 文件新增行中
-      ReplacingMergeTree(非DateTime列) 模式, 阻断 quality_flag/is_deleted/
-      is_active/status/version_num/revision 等非时序列作 version 参数.
-      违反裁定 #ARCH-CH-009 version 列语义(非 DateTime 列 100% 行值相同,
-      等同无参数 ReplacingMergeTree, 去重失效). tests/ 豁免,
-      git diff 不可达 fail-open, 检出违规则 fail-closed (passed=False). priority=38.
-    integrity_anchors:
-      - make_ch_version_col_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: speed_test
-    aliases:
-      - speed-test
-      - speed_tester
-      - run_speed_tests
-      - speed_test_one
-    description: >-
-      数据源测速器(speed_test, MOD-L00-004 §8.5). 对每个数据能力×每个可用源
-      做小样本测速, 记录 rows/sec/symbols/sec/error_rate. 用于主备源选型
-      和数据源健康监控. 结果写入 c0_meta.fetch_perf 表.
-      CLI: integrator speed-test [--source] [--capability].
-    integrity_anchors:
-      - run_speed_tests  # 批量测速入口(删则 CLI speed-test 不可用)
-
-  # --------------------------------------------------------------------------
-  - capability_id: god_class_gate
-    aliases:
-      - NO-GOD-CLASS
-      - no-god-class
-      - make_god_class_gate
-      - god_class_blocker
-    description: >-
-      God Class 阻断门禁(NO-GOD-CLASS, 5.150 防复发). 检测 staged .py
-      文件中新增类的方法数 > 20. 违反 5.150 God Class 反模式. AST-based 检测,
-      tests/ 豁免, AST 解析失败 fail-open, git diff 不可达 fail-open,
-      检出违规则 fail-closed (passed=False). priority=86.
-    integrity_anchors:
-      - make_god_class_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
-  - capability_id: high_complexity_gate
-    aliases:
-      - NO-HIGH-COMPLEXITY
-      - no-high-complexity
-      - make_high_complexity_gate
-      - cyclomatic_complexity_blocker
-    description: >-
-      高循环复杂度阻断门禁(NO-HIGH-COMPLEXITY, 5.158 防复发). 检测 staged .py
-      文件中新增函数的循环复杂度(McCabe) > 15. 违反 5.158 循环复杂度反模式.
-      AST-based McCabe 检测(统计 If/For/While/ExceptHandler/BoolOp/comprehension-if),
-      tests/ 豁免, AST 解析失败 fail-open, git diff 不可达 fail-open,
-      检出违规则 fail-closed (passed=False). priority=85.
-    integrity_anchors:
-      - make_high_complexity_gate  # gate 工厂(删则 gate 不注册)
+      - make_pure_shim_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
   - capability_id: create_guard
@@ -1768,7 +1376,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: vocab_hardcode_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/vocab_hardcode_gate.py
     aliases:
       - VOCAB-HARDCODE
       - vocab-hardcode
@@ -1793,7 +1401,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: file_copy_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/file_copy_gate.py
     aliases:
       - FILE-COPY
       - file-copy
@@ -1820,7 +1428,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: file_placement_ttl_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/file_placement_ttl_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/file_placement_ttl_gate.py
     aliases:
       - FILE-PLACEMENT-TTL
       - file-placement-ttl
@@ -1850,7 +1458,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: id_uniqueness_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/id_uniqueness_gate.py
     aliases:
       - ID-UNIQUENESS
       - id-uniqueness
@@ -1873,7 +1481,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: exempt_zone_frontmatter_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py
     aliases:
       - EXEMPT-ZONE-FM
       - exempt-zone-fm
@@ -1895,7 +1503,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: module_id_consistency_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/module_id_consistency_gate.py
     aliases:
       - MODULE-ID-CONSISTENCY
       - module-id-consistency
@@ -1921,7 +1529,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: perm_trigger_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/perm_trigger_gate.py
     aliases:
       - PERM-TRIGGER
       - perm-trigger
@@ -1939,7 +1547,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: msg_exposure_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/msg_exposure_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/msg_exposure_gate.py
     aliases:
       - MSG-EXPOSURE
       - msg-exposure
@@ -1961,7 +1569,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: msg_style_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/msg_style_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/msg_style_gate.py
     aliases:
       - MSG-STYLE
       - msg-style
@@ -1982,7 +1590,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: empty_handler_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/empty_handler_gate.py
     aliases:
       - EMPTY-HANDLER
       - empty-handler
@@ -1998,7 +1606,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: orphan_module_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/orphan_module_gate.py
     aliases:
       - ORPHAN-MODULE
       - orphan-module
@@ -2014,7 +1622,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: doc_ref_broken_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/doc_ref_broken_gate.py
     aliases:
       - DOC-REF-BROKEN
       - doc-ref-broken
@@ -2030,7 +1638,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: function_dup_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/function_dup_gate.py
     aliases:
       - FUNCTION-DUP
       - function-dup
@@ -2046,7 +1654,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: bare_getenv_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py
+    canonical_override: src/zephyr/governance/commit_gates/bare_getenv_gate.py
     aliases:
       - NO-BARE-GETENV
       - no-bare-getenv
@@ -2085,7 +1693,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: test_exempt_checker
-    canonical_override: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py
+    canonical_override: src/zephyr/governance/rule_bridge/commit_gate_registry.py
     aliases:
       - is_test_exempt
       - TEST_EXEMPT_PREFIXES
@@ -2095,10 +1703,10 @@ capabilities:
       - commit_gate_test_exempt
     description: >-
       commit_gates 中 tests/ 目录豁免的唯一真源（SSoT，2026-06-30 治本2 收拢点）。
-      真源实现：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
+      真源实现：src/zephyr/governance/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
       常量 + is_test_exempt(file_path) 函数（归一化反斜杠后 startswith 比对，消除
       Windows 路径漂移）。create_guard / capability_overlap_gate 等 gate 通过
-      from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用。
+      from zephyr.governance.rule_bridge.commit_gate_registry import is_test_exempt 引用。
       禁止在 commit_gates/*.py 中硬编码 "tests/" 字面量（GATE-VOCAB 检测7 阻断，
       治本红攻发现2 is_test_exempt 漂移——新AI 可能直接硬编码绕过 SSoT）。
       canonical basename commit_gate_registry 不匹配任何 alias，无法 auto 派生，
@@ -2116,7 +1724,7 @@ capabilities:
   # 向内收原则①能现成不创造：模块已存在，只需登记发现性
 
   - capability_id: drift_detection_absence_manager
-    canonical_override: src/zephyr/gov_drift/absence_manager.py
+    canonical_override: src/zephyr/governance/drift_detection/absence_manager.py
     aliases:
       - absence_manager
     description: >-
@@ -2125,7 +1733,7 @@ capabilities:
       roduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "abse
       nce_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_ai_construction_detectors
-    canonical_override: src/zephyr/gov_drift/ai_construction_detectors.py
+    canonical_override: src/zephyr/governance/drift_detection/ai_construction_detectors.py
     aliases:
       - ai_construction_detectors
     description: >-
@@ -2135,7 +1743,7 @@ capabilities:
       uction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "ai_cons
       truction_detectors" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_ai_context_injector
-    canonical_override: src/zephyr/gov_drift/ai_context_injector.py
+    canonical_override: src/zephyr/governance/drift_detection/ai_context_injector.py
     aliases:
       - ai_context_injector
     description: >-
@@ -2144,7 +1752,7 @@ capabilities:
       : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "a
       i_context_injector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_alert_router
-    canonical_override: src/zephyr/gov_drift/alert_router.py
+    canonical_override: src/zephyr/governance/drift_detection/alert_router.py
     aliases:
       - alert_router
     description: >-
@@ -2153,7 +1761,7 @@ capabilities:
       ft_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "alert_router" 可定位本模块。 解
       决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_architecture_contracts
-    canonical_override: src/zephyr/gov_drift/architecture_contracts.py
+    canonical_override: src/zephyr/governance/drift_detection/architecture_contracts.py
     aliases:
       - architecture_contracts
     description: >-
@@ -2171,7 +1779,7 @@ capabilities:
       OD-GATE_ENGINE;MOD-INF-021;MOD-INF-020。 解决发现性：新AI 搜 "architecture_principles" 可定
       位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_backcompat_checker
-    canonical_override: src/zephyr/gov_drift/backcompat_checker.py
+    canonical_override: src/zephyr/governance/drift_detection/backcompat_checker.py
     aliases:
       - backcompat_checker
     description: >-
@@ -2181,7 +1789,7 @@ capabilities:
       er。 解决发现性：新AI 搜 "backcompat_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI
       准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_baseline_manager
-    canonical_override: src/zephyr/gov_drift/baseline_manager.py
+    canonical_override: src/zephyr/governance/drift_detection/baseline_manager.py
     aliases:
       - baseline_manager
     description: >-
@@ -2190,7 +1798,7 @@ capabilities:
       duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "baseli
       ne_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_baseline_poisoning_guard
-    canonical_override: src/zephyr/gov_drift/baseline_poisoning_guard.py
+    canonical_override: src/zephyr/governance/drift_detection/baseline_poisoning_guard.py
     aliases:
       - baseline_poisoning_guard
     description: >-
@@ -2209,7 +1817,7 @@ capabilities:
       AI 搜 "benchmark_integrity" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
       引导到本模块。
   - capability_id: drift_detection_brain_integration
-    canonical_override: src/zephyr/gov_drift/brain_integration.py
+    canonical_override: src/zephyr/governance/drift_detection/brain_integration.py
     aliases:
       - brain_integration
     description: >-
@@ -2219,7 +1827,7 @@ capabilities:
       t_router。 解决发现性：新AI 搜 "brain_integration" 可定位本模块。 解决防重建：check_file_canonical() 反
       查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_canary_controller
-    canonical_override: src/zephyr/gov_drift/canary_controller.py
+    canonical_override: src/zephyr/governance/drift_detection/canary_controller.py
     aliases:
       - canary_controller
     description: >-
@@ -2228,7 +1836,7 @@ capabilities:
       度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
       canary_controller" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_cascade_detector
-    canonical_override: src/zephyr/gov_drift/cascade_detector.py
+    canonical_override: src/zephyr/governance/drift_detection/cascade_detector.py
     aliases:
       - cascade_detector
     description: >-
@@ -2238,7 +1846,7 @@ capabilities:
       新AI 搜 "cascade_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导
       到本模块。
   - capability_id: drift_detection_chaos_injector
-    canonical_override: src/zephyr/gov_drift/chaos_injector.py
+    canonical_override: src/zephyr/governance/drift_detection/chaos_injector.py
     aliases:
       - chaos_injector
     description: >-
@@ -2247,7 +1855,7 @@ capabilities:
       roduction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "chao
       s_injector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_code_review_ai
-    canonical_override: src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py
+    canonical_override: src/zephyr/governance/drift_detection/code_review_ai.py
     aliases:
       - code_review_ai
     description: >-
@@ -2256,7 +1864,7 @@ capabilities:
       AI 搜 "code_review_ai" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
       块。
   - capability_id: drift_detection_cold_start
-    canonical_override: src/zephyr/gov_drift/cold_start.py
+    canonical_override: src/zephyr/governance/drift_detection/cold_start.py
     aliases:
       - cold_start
     description: >-
@@ -2265,7 +1873,7 @@ capabilities:
       消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cold_start" 可定位
       本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_config_consistency
-    canonical_override: src/zephyr/gov_drift/config_consistency.py
+    canonical_override: src/zephyr/governance/drift_detection/config_consistency.py
     aliases:
       - config_consistency
     description: >-
@@ -2275,7 +1883,7 @@ capabilities:
       现性：新AI 搜 "config_consistency" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能
       前会被引导到本模块。
   - capability_id: drift_detection_contract_drift_detector
-    canonical_override: src/zephyr/gov_drift/contract_drift_detector.py
+    canonical_override: src/zephyr/governance/drift_detection/contract_drift_detector.py
     aliases:
       - contract_drift_detector
     description: >-
@@ -2285,7 +1893,7 @@ capabilities:
       act_metrics.py(委托调用)。 解决发现性：新AI 搜 "contract_drift_detector" 可定位本模块。 解决防重建：check_
       file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_correlation_engine
-    canonical_override: src/zephyr/gov_drift/correlation_engine.py
+    canonical_override: src/zephyr/governance/drift_detection/correlation_engine.py
     aliases:
       - correlation_engine
     description: >-
@@ -2294,7 +1902,7 @@ capabilities:
        production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "co
       rrelation_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_credibility_engine
-    canonical_override: src/zephyr/gov_drift/credibility_engine.py
+    canonical_override: src/zephyr/governance/drift_detection/credibility_engine.py
     aliases:
       - credibility_engine
     description: >-
@@ -2303,7 +1911,7 @@ capabilities:
        production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cr
       edibility_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_cross_env_consistency
-    canonical_override: src/zephyr/gov_drift/cross_env_consistency.py
+    canonical_override: src/zephyr/governance/drift_detection/cross_env_consistency.py
     aliases:
       - cross_env_consistency
     description: >-
@@ -2312,7 +1920,7 @@ capabilities:
       AI 搜 "cross_env_consistency" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前
       会被引导到本模块。
   - capability_id: drift_detection_cross_module_score
-    canonical_override: src/zephyr/gov_drift/cross_module_score.py
+    canonical_override: src/zephyr/governance/drift_detection/cross_module_score.py
     aliases:
       - cross_module_score
     description: >-
@@ -2321,7 +1929,7 @@ capabilities:
        production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "cr
       oss_module_score" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_dashboard
-    canonical_override: src/zephyr/gov_drift/dashboard.py
+    canonical_override: src/zephyr/governance/drift_detection/dashboard.py
     aliases:
       - dashboard
     description: >-
@@ -2330,7 +1938,7 @@ capabilities:
       on。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "dashboard" 
       可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_data_classification
-    canonical_override: src/zephyr/gov_drift/data_classification.py
+    canonical_override: src/zephyr/governance/drift_detection/data_classification.py
     aliases:
       - data_classification
     description: >-
@@ -2340,7 +1948,7 @@ capabilities:
       现性：新AI 搜 "data_classification" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功
       能前会被引导到本模块。
   - capability_id: drift_detection_data_lifecycle
-    canonical_override: src/zephyr/gov_drift/data_lifecycle.py
+    canonical_override: src/zephyr/governance/drift_detection/data_lifecycle.py
     aliases:
       - data_lifecycle
     description: >-
@@ -2349,7 +1957,7 @@ capabilities:
       AI 搜 "data_lifecycle" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模
       块。
   - capability_id: drift_detection_data_source_reliability
-    canonical_override: src/zephyr/gov_drift/data_source_reliability.py
+    canonical_override: src/zephyr/governance/drift_detection/data_source_reliability.py
     aliases:
       - data_source_reliability
     description: >-
@@ -2358,7 +1966,7 @@ capabilities:
       AI 搜 "data_source_reliability" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功
       能前会被引导到本模块。
   - capability_id: drift_detection_dependency_manager
-    canonical_override: src/zephyr/gov_drift/dependency_manager.py
+    canonical_override: src/zephyr/governance/drift_detection/dependency_manager.py
     aliases:
       - dependency_manager
     description: >-
@@ -2367,7 +1975,7 @@ capabilities:
       AI 搜 "dependency_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引
       导到本模块。
   - capability_id: drift_detection_detector_dispatcher
-    canonical_override: src/zephyr/gov_drift/detector_dispatcher.py
+    canonical_override: src/zephyr/governance/drift_detection/detector_dispatcher.py
     aliases:
       - detector_dispatcher
     description: >-
@@ -2377,7 +1985,7 @@ capabilities:
       detector_dispatcher" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
       。
   - capability_id: drift_detection_drift_engine
-    canonical_override: src/zephyr/gov_drift/drift_engine.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_engine.py
     aliases:
       - drift_engine
     description: >-
@@ -2386,7 +1994,7 @@ capabilities:
       tion。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "drift_eng
       ine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_drift_hotfix_bypass
-    canonical_override: src/zephyr/gov_drift/drift_hotfix_bypass.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_hotfix_bypass.py
     aliases:
       - drift_hotfix_bypass
     description: >-
@@ -2396,7 +2004,7 @@ capabilities:
       drift_hotfix_bypass" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
       。
   - capability_id: drift_detection_drift_infrastructure
-    canonical_override: src/zephyr/gov_drift/drift_infrastructure.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_infrastructure.py
     aliases:
       - drift_infrastructure
     description: >-
@@ -2406,7 +2014,7 @@ capabilities:
       决发现性：新AI 搜 "drift_infrastructure" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造
       同类功能前会被引导到本模块。
   - capability_id: drift_detection_drift_models
-    canonical_override: src/zephyr/gov_drift/drift_models.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_models.py
     aliases:
       - drift_models
     description: >-
@@ -2415,7 +2023,7 @@ capabilities:
       uction。 消费者: drift_engine;detector_dispatcher;correlation_engine。 解决发现性：新AI 搜 "d
       rift_models" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_drift_result_types
-    canonical_override: src/zephyr/gov_drift/drift_result_types.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_result_types.py
     aliases:
       - drift_result_types
     description: >-
@@ -2425,7 +2033,7 @@ capabilities:
       uter。 解决发现性：新AI 搜 "drift_result_types" 可定位本模块。 解决防重建：check_file_canonical() 反查，新
       AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_drift_training
-    canonical_override: src/zephyr/gov_drift/drift_training.py
+    canonical_override: src/zephyr/governance/drift_detection/drift_training.py
     aliases:
       - drift_training
     description: >-
@@ -2435,7 +2043,7 @@ capabilities:
       er。 解决发现性：新AI 搜 "drift_training" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
       类功能前会被引导到本模块。
   - capability_id: drift_detection_events
-    canonical_override: src/zephyr/gov_drift/events.py
+    canonical_override: src/zephyr/governance/drift_detection/events.py
     aliases:
       - events
     description: >-
@@ -2443,7 +2051,7 @@ capabilities:
       。 成熟度: prototype。 消费者: behavioral_auditor包内所有模块。 解决发现性：新AI 搜 "events" 可定位本模块。 解决
       防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_file_attr_checker
-    canonical_override: src/zephyr/gov_drift/file_attr_checker.py
+    canonical_override: src/zephyr/governance/drift_detection/file_attr_checker.py
     aliases:
       - file_attr_checker
     description: >-
@@ -2452,7 +2060,7 @@ capabilities:
       : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "f
       ile_attr_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_forensics_engine
-    canonical_override: src/zephyr/gov_drift/forensics_engine.py
+    canonical_override: src/zephyr/governance/drift_detection/forensics_engine.py
     aliases:
       - forensics_engine
     description: >-
@@ -2461,7 +2069,7 @@ capabilities:
       duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "forens
       ics_engine" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_gate_persistence
-    canonical_override: src/zephyr/gov_drift/gate_persistence.py
+    canonical_override: src/zephyr/governance/drift_detection/gate_persistence.py
     aliases:
       - gate_persistence
     description: >-
@@ -2470,7 +2078,7 @@ capabilities:
       duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "gate_p
       ersistence" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_git_bisector
-    canonical_override: src/zephyr/gov_drift/git_bisector.py
+    canonical_override: src/zephyr/governance/drift_detection/git_bisector.py
     aliases:
       - git_bisector
     description: >-
@@ -2479,7 +2087,7 @@ capabilities:
        消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "git_bisector" 
       可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_gitignore_auditor
-    canonical_override: src/zephyr/gov_drift/gitignore_auditor.py
+    canonical_override: src/zephyr/governance/drift_detection/gitignore_auditor.py
     aliases:
       - gitignore_auditor
     description: >-
@@ -2489,7 +2097,7 @@ capabilities:
       uter。 解决发现性：新AI 搜 "gitignore_auditor" 可定位本模块。 解决防重建：check_file_canonical() 反查，新A
       I准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_handoff_manager
-    canonical_override: src/zephyr/gov_drift/handoff_manager.py
+    canonical_override: src/zephyr/governance/drift_detection/handoff_manager.py
     aliases:
       - handoff_manager
     description: >-
@@ -2499,7 +2107,7 @@ capabilities:
       现性：新AI 搜 "handoff_manager" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
       引导到本模块。
   - capability_id: drift_detection_headless_scanner
-    canonical_override: src/zephyr/gov_drift/headless_scanner.py
+    canonical_override: src/zephyr/governance/drift_detection/headless_scanner.py
     aliases:
       - headless_scanner
     description: >-
@@ -2508,7 +2116,7 @@ capabilities:
       duction。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "headle
       ss_scanner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_incremental_scanner
-    canonical_override: src/zephyr/gov_drift/incremental_scanner.py
+    canonical_override: src/zephyr/governance/drift_detection/incremental_scanner.py
     aliases:
       - incremental_scanner
     description: >-
@@ -2540,11 +2148,11 @@ capabilities:
     aliases:
       - model_drift_detector
     description: >-
-      LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021。
+      LLM模型行为漂移检测器。 域: D_INTELLIGENCE。 module_id: MOD-INF-021-model_drift_detector。
       功能: 建立基线feature vector → 定期采样 → KL/JS散度 → 超阈值→exit 34。 解决发现性：新AI
       搜 "model_drift_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查。
   - capability_id: drift_detection_naming_magic_checker
-    canonical_override: src/zephyr/gov_drift/naming_magic_checker.py
+    canonical_override: src/zephyr/governance/drift_detection/naming_magic_checker.py
     aliases:
       - naming_magic_checker
     description: >-
@@ -2553,7 +2161,7 @@ capabilities:
       production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "nam
       ing_magic_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_orphan_scanner
-    canonical_override: src/zephyr/gov_drift/orphan_scanner.py
+    canonical_override: src/zephyr/governance/drift_detection/orphan_scanner.py
     aliases:
       - orphan_scanner
     description: >-
@@ -2571,7 +2179,7 @@ capabilities:
       AI 搜 "performance_baseline" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会
       被引导到本模块。
   - capability_id: drift_detection_python_compat
-    canonical_override: src/zephyr/gov_drift/python_compat.py
+    canonical_override: src/zephyr/governance/drift_detection/python_compat.py
     aliases:
       - python_compat
     description: >-
@@ -2581,7 +2189,7 @@ capabilities:
       ter。 解决发现性：新AI 搜 "python_compat" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同
       类功能前会被引导到本模块。
   - capability_id: drift_detection_reconciler
-    canonical_override: src/zephyr/gov_drift/reconciler.py
+    canonical_override: src/zephyr/governance/drift_detection/reconciler.py
     aliases:
       - reconciler
     description: >-
@@ -2599,7 +2207,7 @@ capabilities:
       AI 搜 "regime_detector" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本
       模块。
   - capability_id: drift_detection_resource_guard
-    canonical_override: src/zephyr/gov_drift/resource_guard.py
+    canonical_override: src/zephyr/governance/drift_detection/resource_guard.py
     aliases:
       - resource_guard
     description: >-
@@ -2608,7 +2216,7 @@ capabilities:
       度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
       resource_guard" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_roi_engine
-    canonical_override: src/zephyr/gov_drift/roi_engine.py
+    canonical_override: src/zephyr/governance/drift_detection/roi_engine.py
     aliases:
       - roi_engine
     description: >-
@@ -2617,7 +2225,7 @@ capabilities:
       : drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "roi_engine" 可定位本模块
       。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_rollback_bridge
-    canonical_override: src/zephyr/gov_drift/rollback_bridge.py
+    canonical_override: src/zephyr/governance/drift_detection/rollback_bridge.py
     aliases:
       - rollback_bridge
     description: >-
@@ -2626,7 +2234,7 @@ capabilities:
       决发现性：新AI 搜 "rollback_bridge" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前
       会被引导到本模块。
   - capability_id: drift_detection_runbook_generator
-    canonical_override: src/zephyr/gov_drift/runbook_generator.py
+    canonical_override: src/zephyr/governance/drift_detection/runbook_generator.py
     aliases:
       - runbook_generator
     description: >-
@@ -2635,7 +2243,7 @@ capabilities:
       pe。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "runbook_gen
       erator" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_scan_mutex
-    canonical_override: src/zephyr/gov_drift/scan_mutex.py
+    canonical_override: src/zephyr/governance/drift_detection/scan_mutex.py
     aliases:
       - scan_mutex
     description: >-
@@ -2644,7 +2252,7 @@ capabilities:
       : drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "scan_mutex" 可定位本模块
       。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_self_check
-    canonical_override: src/zephyr/gov_drift/self_check.py
+    canonical_override: src/zephyr/governance/drift_detection/self_check.py
     aliases:
       - self_check
     description: >-
@@ -2653,7 +2261,7 @@ capabilities:
       n。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "self_check" 
       可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_self_test_verifier
-    canonical_override: src/zephyr/gov_drift/self_test_verifier.py
+    canonical_override: src/zephyr/governance/drift_detection/self_test_verifier.py
     aliases:
       - self_test_verifier
     description: >-
@@ -2662,7 +2270,7 @@ capabilities:
        production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "se
       lf_test_verifier" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_state_machine
-    canonical_override: src/zephyr/gov_drift/state_machine.py
+    canonical_override: src/zephyr/governance/drift_detection/state_machine.py
     aliases:
       - state_machine
     description: >-
@@ -2672,7 +2280,7 @@ capabilities:
       ;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "state_machine" 可定位本模块。 解决防重建：che
       ck_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_suppression_learner
-    canonical_override: src/zephyr/gov_drift/suppression_learner.py
+    canonical_override: src/zephyr/governance/drift_detection/suppression_learner.py
     aliases:
       - suppression_learner
     description: >-
@@ -2682,7 +2290,7 @@ capabilities:
       suppression_learner" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块
       。
   - capability_id: drift_detection_symlink_checker
-    canonical_override: src/zephyr/gov_drift/symlink_checker.py
+    canonical_override: src/zephyr/governance/drift_detection/symlink_checker.py
     aliases:
       - symlink_checker
     description: >-
@@ -2691,7 +2299,7 @@ capabilities:
       : production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "s
       ymlink_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_tamper_proof_audit
-    canonical_override: src/zephyr/gov_drift/tamper_proof_audit.py
+    canonical_override: src/zephyr/governance/drift_detection/tamper_proof_audit.py
     aliases:
       - tamper_proof_audit
     description: >-
@@ -2700,7 +2308,7 @@ capabilities:
       度: production。 消费者: drift_engine;detector_dispatcher;alert_router。 解决发现性：新AI 搜 "
       tamper_proof_audit" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被引导到本模块。
   - capability_id: drift_detection_test_fixture_checker
-    canonical_override: src/zephyr/gov_drift/test_fixture_checker.py
+    canonical_override: src/zephyr/governance/drift_detection/test_fixture_checker.py
     aliases:
       - test_fixture_checker
     description: >-
@@ -2710,7 +2318,7 @@ capabilities:
       I 搜 "test_fixture_checker" 可定位本模块。 解决防重建：check_file_canonical() 反查，新AI准备造同类功能前会被
       引导到本模块。
   - capability_id: drift_detection_trend_analyzer
-    canonical_override: src/zephyr/gov_drift/trend_analyzer.py
+    canonical_override: src/zephyr/governance/drift_detection/trend_analyzer.py
     aliases:
       - trend_analyzer
     description: >-
@@ -3013,7 +2621,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: secret_rotation
-    canonical_override: src/zephyr/feedback_loop/security/secret_rotation.py
+    canonical_override: src/zephyr/trading/feedback_loop/security/secret_rotation.py
     aliases:
       - SecretRotation
       - SecretEntry
@@ -3088,7 +2696,7 @@ capabilities:
       反查阻止新 AI 重新造检测脚本。
 
   - capability_id: architecture_health_reconciler
-    canonical_override: src/zephyr/gov_audit/reconciliation_registry.py
+    canonical_override: src/zephyr/governance/audit/reconciliation_registry.py
     aliases:
       - make_architecture_health_reconciler
       - GATE-ARCH-HEALTH
@@ -3302,8 +2910,8 @@ capabilities:
       扫描 src/ 和 tests/ 下 .py 文件中 target_layer 赋值，校验值是否在
       target_layer_vocabulary.yaml 合法值集合（37个）或废弃值集合（9个）中。
       发现未知值 → exit 1 阻断（CI/CD 消费）。真源：target_layer_vocabulary.yaml
-      （TaskCard.target_layer 字段唯一真源）。对标原 layer_boundary_check.py 的
-      架构层校验设计（该脚本已删除 2026-07-09，14层架构废弃）。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
+      （TaskCard.target_layer 字段唯一真源）。对标 layer_boundary_check.py 的
+      架构层校验设计。解决发现性：新 AI 搜 "target_layer 校验/D_MKT_DATA 未知值"
       可定位真源。解决防重建：check_file_canonical() 反查阻止新 AI 重建校验脚本。
 
   # --------------------------------------------------------------------------
@@ -3761,12 +3369,6 @@ capabilities:
       task_queue.py（DAG 依赖图 + 优先级队列）、alerter.py（告警管理）、
       metrics.py（阶段3 Prometheus 文本格式指标采集，6 指标 + 累积直方图桶）、
       config/{policies,tasks,schedule}.yaml（8 源 per-source 策略 + 61 任务清单 + 5档时段）。
-      运维外壳（保证 scheduler 进程在 9:15-9:25 集合竞价窗口在线）：
-      scripts/start_scheduler.ps1（while-true 自动重启守护 + 单实例锁 + 防疯狂重启）、
-      scripts/register_scheduler_task.ps1（Windows 计划任务注册，需管理员）、
-      启动文件夹 .bat（开机自启，不入库——directory_contract.yaml 禁止 scripts/ 下 .bat）。
-      新 AI 想做"scheduler 守护/开机自启/进程自动重启"前，MUST 反查本 capability，
-      扩展上述运维外壳脚本，禁止新建同类守护脚本。
       与 governance/intelligence_governance/provider_base.py 的 LLM Provider
       同名不同义（class-name-alias 标记豁免），过渡期共存，阶段4 退役旧版。
 
@@ -3774,20 +3376,20 @@ capabilities:
   # kb 模块核心能力（P2-11，2026-07-06 审计补登——三真源重复治本）
   # --------------------------------------------------------------------------
   - capability_id: kb_gate_eval_task
-    canonical_override: src/zephyr/gov_kb/kb_gate_task.py
+    canonical_override: src/zephyr/governance/kb/kb_gate_task.py
     aliases:
       - kb_gate_task
       - build_kb_gate_eval_task
       - kb_gate_eval
     description: >-
       KB 五阶段门禁 evaluate 用的最小合法 TaskCard 构造器。
-      canonical = src/zephyr/gov_kb/kb_gate_task.py 的 build_kb_gate_eval_task()。
+      canonical = src/zephyr/governance/kb/kb_gate_task.py 的 build_kb_gate_eval_task()。
       kb_engine/kb_gate_task.py 和 migration/kb_gate_task.py 是 re-export shim。
       解决发现性：新 AI 搜 "kb gate/kb门禁/kb evaluate task" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 门禁 TaskCard 构造器。
 
   - capability_id: kb_batch_ingest
-    canonical_override: src/zephyr/gov_kb/pipeline/batch_ingest.py
+    canonical_override: src/zephyr/governance/kb/pipeline/batch_ingest.py
     aliases:
       - batch_ingest
       - BatchIngestor
@@ -3796,13 +3398,13 @@ capabilities:
       - kb_batch
     description: >-
       KB 批量入库引擎——scaffold P0/P1 知识候选批量入库。
-      canonical = src/zephyr/gov_kb/pipeline/batch_ingest.py 的 BatchIngestor。
+      canonical = src/zephyr/governance/kb/pipeline/batch_ingest.py 的 BatchIngestor。
       kb/batch_ingest.py 是 re-export shim。
       解决发现性：新 AI 搜 "批量入库/batch ingest/kb ingest" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 批量入库引擎。
 
   - capability_id: kb_unified_memory
-    canonical_override: src/zephyr/gov_kb/storage/unified_memory_api.py
+    canonical_override: src/zephyr/governance/kb/storage/unified_memory_api.py
     aliases:
       - unified_memory_api
       - UnifiedMemoryAPI
@@ -3813,7 +3415,7 @@ capabilities:
       - VMSMemoryBackend
     description: >-
       KB 统一记忆 API——MemoryBackend Protocol + 统一记忆接口。
-      canonical = src/zephyr/gov_kb/storage/unified_memory_api.py。
+      canonical = src/zephyr/governance/kb/storage/unified_memory_api.py。
       kb/_backend_protocol.py 和 kb/unified_memory_api.py 是 re-export shim。
       解决发现性：新 AI 搜 "unified memory/memory backend/kb storage" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 统一记忆 API。
@@ -3924,23 +3526,11 @@ capabilities:
       解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
 
-  - capability_id: realtime_tick_ingestion
-    aliases:
-      - tick_subscriber
-      - TickSubscriber
-    description: >-
-      实时 Tick 数据订阅与落盘——QMT subscribe_quote 回调 → queue.Queue 解耦 →
-      BufferedWriter 攒批 → ClickHouse c1_market.tick_data（3秒粒度，14字段）。
-      canonical = src/zephyr/data/tick_subscriber.py（auto 派生：basename
-      tick_subscriber 匹配 alias）。区别于 governance/data_governance/
-      miniqmt_provider.py 的 subscribe_realtime（回测/盘口展示用，24字段 DataFrame），
-      本能力专注高频落盘（14字段 tuple，queue 解耦 callback 线程）。
-
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
 # 用途:
-#   CREATE-GUARD 门禁（zephyr.gov_enforcement.commit_gates.create_guard）在 commit 时
+#   CREATE-GUARD 门禁（zephyr.governance.commit_gates.create_guard）在 commit 时
 #   检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在此登记。未登记 → 硬阻断
 #   （禁止造第二真源，trae_060 §2）。已登记 → 放行。
 #   .yaml 扩展（2026-07-01）：非 rules/ .yaml 亦需登记 token（.yaml 是 YAML→DB
@@ -3963,72 +3553,6 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
-
-  # --- ARCH-DEPGRAPH_ACCESS_CONTROL depgraph 写入路径白名单门禁（2026-07-15）---
-  - file: "src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py"
-    token: "auto-depgraph-write-path-gate-20260715"
-    created_by: "session-sess-35380-20260715040922"
-    capability: "depgraph_write_path_gate"
-
-  # --- MOD-L00-004 交易日历守卫（2026-07-15）---
-  - file: "src/zephyr/data/trading_calendar.py"
-    token: "auto-trading-calendar-20260715"
-    created_by: "session-sess-30528-20260715045936"
-    capability: "data_source_provider_abstraction"
-
-  # --- MOD-L00-004 本地落盘兜底+回灌（裁定 #ARCH-CH-013，2026-07-15）---
-  - file: "src/zephyr/data/local_replay.py"
-    token: "auto-local-replay-20260715"
-    created_by: "session-sess-30860-20260715104757"
-    capability: "data_source_provider_abstraction"
-
-  # --- Phase E1: sync完整性校验脚本（2026-07-13）---
-  - file: "scripts/governance/verify_sync_integrity.py"
-    token: "auto-verify-sync-integrity-20260713"
-    created_by: "session-sess-2600-20260713050906"
-    capability: "yaml_db_sync_validation"
-
-  # --- ARCH-056 四图模块同步引擎（2026-07-09）---
-  - file: "scripts/governance/sync_panorama_module.py"
-    token: "auto-sync-panorama-module-20260709"
-    created_by: "session-sess-17744-20260709162729"
-    capability: "panorama_module_sync"
-  - file: "tests/governance/test_sync_panorama_module.py"
-    token: "auto-test-sync-panorama-module-20260709"
-    created_by: "session-sess-17744-20260709162729"
-    capability: "panorama_module_sync"
-  - file: "scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py"
-    token: "auto-blueprint-frontmatter-reconciler-20260709"
-    created_by: "session-sess-17744-20260709162729"
-    capability: "panorama_module_sync"
-  - file: "tests/governance/test_blueprint_frontmatter_reconciler.py"
-    token: "auto-test-blueprint-frontmatter-reconciler-20260709"
-    created_by: "session-sess-17744-20260709162729"
-    capability: "panorama_module_sync"
-  - file: "scripts/governance/d5_architecture/panorama_common.py"
-    token: "auto-panorama-common-20260710"
-    created_by: "session-sess-20780-20260710024721"
-    capability: "panorama_alignment_detection"
-  - file: "tests/governance/test_panorama_common.py"
-    token: "auto-test-panorama-common-20260710"
-    created_by: "session-sess-20780-20260710024721"
-    capability: "panorama_alignment_detection"
-  - file: "docs/01_policies_and_standards/_registry/catalogs/panorama_exempt_list.yaml"
-    token: "auto-panorama-exempt-list-20260710"
-    created_by: "session-sess-19716-20260710033125"
-    capability: "panorama_alignment_detection"
-
-  # --- ARCH-055 commit_gates 模块清单漂移检测（2026-07-09）---
-  - file: "scripts/governance/generators/check_gate_inventory_drift.py"
-    token: "auto-check-gate-inventory-drift-20260709"
-    created_by: "session-sess-18012-20260709031852"
-    capability: "gate_inventory_sync_reconciler"
-
-  # --- 全景图清单总表生成器（2026-07-09，GATE-ARCH-DIAGRAM reconciler 第11个生成器）---
-  - file: "scripts/governance/d5_architecture/generators/generate_panorama_registry.py"
-    token: "auto-generate-panorama-registry-20260709"
-    created_by: "session-sess-22040-20260709012115"
-    capability: "domain_architecture_generators"
 
   # --- DatabaseCRUDMixin 专项工程（2026-07-06 P-PLAN，抽取两个 DatabaseService 类共享的 9 个 CRUD 方法）---
   - file: "src/zephyr/shared/database/database_crud_mixin.py"
@@ -4070,126 +3594,115 @@ creation_tokens:
     created_by: "session-sess-15816-20260706181615"
     capability: "any_abuse_scanner"
 
-  # --- 循环复杂度全量扫描器（裁定#214 Phase 4 引入，§5.158 暗债监控）---
-  - file: "scripts/governance/d7_code/scan_complexity.py"
-    token: "auto-scan-complexity-20260715"
-    created_by: "session-sess-1584-20260715113452"
-    capability: "complexity_scanner"
-
   # --- commit_gates/ 门禁文件（CREATE-GUARD 自身 + 已有 4 gate） ---
-  - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
+  - file: "src/zephyr/governance/commit_gates/create_guard.py"
     token: "auto-create-guard-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "create_guard"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py"
+  - file: "src/zephyr/governance/commit_gates/capability_overlap_gate.py"
     token: "auto-capability-overlap-gate-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "capability_overlap_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py"
+  - file: "src/zephyr/governance/commit_gates/claim_required_gate.py"
     token: "auto-claim-required-gate-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "claim_required_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/directory_contract_gate.py"
+  - file: "src/zephyr/governance/commit_gates/directory_contract_gate.py"
     token: "auto-directory-contract-gate-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "directory_contract_checker"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py"
+  - file: "src/zephyr/governance/commit_gates/held_overlap_gate.py"
     token: "auto-held-overlap-gate-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "held_overlap_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py"
-    token: "auto-foreign-change-gate-20260709"
-    created_by: "session-arch054-foreign-change"
-    capability: "foreign_change_gate"
-
-  - file: "src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py"
+  - file: "src/zephyr/governance/commit_gates/dangling_reference_gate.py"
     token: "auto-dangling-reference-gate-20260701"
     created_by: "session-trae-dangling-ref-gate"
     capability: "dangling_reference_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py"
+  - file: "src/zephyr/governance/commit_gates/r5_digit_suffix_gate.py"
     token: "auto-r5-digit-suffix-gate-20260702"
     created_by: "session-arch033-c5-fix"
     capability: "r5_digit_suffix_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py"
+  - file: "src/zephyr/governance/commit_gates/vocab_hardcode_gate.py"
     token: "auto-vocab-hardcode-gate-20260703"
     created_by: "session-phase1-ast-gate"
     capability: "vocab_hardcode_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py"
+  - file: "src/zephyr/governance/commit_gates/file_copy_gate.py"
     token: "auto-file-copy-gate-20260703"
     created_by: "session-phase1-ast-gate"
     capability: "file_copy_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/file_placement_ttl_gate.py"
+  - file: "src/zephyr/governance/commit_gates/file_placement_ttl_gate.py"
     token: "auto-file-placement-ttl-gate-20260705"
     created_by: "session-sess-25000-20260705004324"
     capability: "file_placement_ttl_gate"
 
   # --- Phase 3 reconciler→gate 收敛（2026-07-03，session-sess-29412） ---
-  - file: "src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py"
+  - file: "src/zephyr/governance/commit_gates/id_uniqueness_gate.py"
     token: "auto-id-uniqueness-gate-20260703"
     created_by: "session-sess-29412-20260703185648"
     capability: "id_uniqueness_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py"
+  - file: "src/zephyr/governance/commit_gates/exempt_zone_frontmatter_gate.py"
     token: "auto-exempt-zone-fm-gate-20260703"
     created_by: "session-sess-29412-20260703185648"
     capability: "exempt_zone_frontmatter_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py"
+  - file: "src/zephyr/governance/commit_gates/module_id_consistency_gate.py"
     token: "auto-module-id-consistency-gate-20260703"
     created_by: "session-sess-29412-20260703185648"
     capability: "module_id_consistency_gate"
 
   # --- Phase 1 AST 门禁扩展（DM-202953，session-sess-31148） ---
-  - file: "src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py"
+  - file: "src/zephyr/governance/commit_gates/perm_trigger_gate.py"
     token: "auto-perm-trigger-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "perm_trigger_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/msg_exposure_gate.py"
+  - file: "src/zephyr/governance/commit_gates/msg_exposure_gate.py"
     token: "auto-msg-exposure-gate-20260706"
     created_by: "session-sess-21036-20260706205027"
     capability: "msg_exposure_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/msg_style_gate.py"
+  - file: "src/zephyr/governance/commit_gates/msg_style_gate.py"
     token: "auto-msg-style-gate-20260707"
     created_by: "session-sess-29416-20260707203645"
     capability: "msg_style_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py"
+  - file: "src/zephyr/governance/commit_gates/empty_handler_gate.py"
     token: "auto-empty-handler-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "empty_handler_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py"
+  - file: "src/zephyr/governance/commit_gates/orphan_module_gate.py"
     token: "auto-orphan-module-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "orphan_module_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py"
+  - file: "src/zephyr/governance/commit_gates/doc_ref_broken_gate.py"
     token: "auto-doc-ref-broken-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "doc_ref_broken_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py"
+  - file: "src/zephyr/governance/commit_gates/function_dup_gate.py"
     token: "auto-function-dup-gate-20260703"
     created_by: "session-sess-31148-20260703185158"
     capability: "function_dup_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py"
+  - file: "src/zephyr/governance/commit_gates/bare_getenv_gate.py"
     token: "auto-bare-getenv-gate-20260703"
     created_by: "session-sess-20844-20260703190715"
     capability: "bare_getenv_gate"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/rule_four_way_alignment_gate.py"
+  - file: "src/zephyr/governance/commit_gates/rule_four_way_alignment_gate.py"
     token: "auto-rule-four-way-align-gate-20260704"
     created_by: "session-sess-11632-20260704044247"
     capability: "rule_four_way_alignment_gate"
@@ -4199,38 +3712,38 @@ creation_tokens:
     created_by: "session-sess-11632-20260704044247"
     capability: "rule_four_way_alignment_checker"
 
-  - file: "src/zephyr/feedback_loop/security/secret_rotation.py"
+  - file: "src/zephyr/trading/feedback_loop/security/secret_rotation.py"
     token: "auto-secret-rotation-20260703"
     created_by: "session-sess-20844-20260703190715"
     capability: "secret_rotation"
 
   # --- governance/ 核心文件（示例条目） ---
-  - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
+  - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
     token: "auto-git-commit-gateway-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "completes_when_validator"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py"
+  - file: "src/zephyr/governance/rule_bridge/worktree_manager.py"
     token: "auto-worktree-manager-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "session_worktree_isolation"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
+  - file: "src/zephyr/governance/rule_bridge/session_worktree.py"
     token: "auto-session-worktree-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_worktree_lifecycle"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/session_claim.py"
+  - file: "src/zephyr/governance/rule_bridge/session_claim.py"
     token: "auto-session-claim-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_claim_helper"
 
-  - file: "src/zephyr/gov_enforcement/commit_gates/session_required_gate.py"
+  - file: "src/zephyr/governance/commit_gates/session_required_gate.py"
     token: "auto-session-required-gate-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_required_gate"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py"
+  - file: "src/zephyr/governance/rule_bridge/commit_gate_registry.py"
     token: "auto-commit-gate-registry-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "commit_gate_registry"
@@ -4260,11 +3773,11 @@ creation_tokens:
     capability: "service_registration"
 
   # --- ARCH-031 P0: __init__.py 包标记（audit/observability/rule_bridge 子目录包初始化） ---
-  - file: "src/zephyr/gov_audit/__init__.py"
+  - file: "src/zephyr/governance/audit/__init__.py"
     token: "auto-audit-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "audit_package_marker"
-  - file: "src/zephyr/gov_enforcement/rule_bridge/__init__.py"
+  - file: "src/zephyr/governance/rule_bridge/__init__.py"
     token: "auto-rule-bridge-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "rule_bridge_package_marker"
@@ -4300,27 +3813,27 @@ creation_tokens:
     capability: "code_dedup_trackers"
 
   # --- GOV-DOC-018 orchestrator/ 拆分：6个新建子目录 __init__.py 包标记 ---
-  - file: "src/zephyr/orchestrator/contracts/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/contracts/__init__.py"
     token: "auto-orch-contracts-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_contracts_package_marker"
-  - file: "src/zephyr/orchestrator/execution/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/execution/__init__.py"
     token: "auto-orch-execution-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_execution_package_marker"
-  - file: "src/zephyr/orchestrator/fault_tolerance/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/fault_tolerance/__init__.py"
     token: "auto-orch-fault-tolerance-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_fault_tolerance_package_marker"
-  - file: "src/zephyr/orchestrator/governance/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/governance/__init__.py"
     token: "auto-orch-governance-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_governance_package_marker"
-  - file: "src/zephyr/orchestrator/lifecycle/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/lifecycle/__init__.py"
     token: "auto-orch-lifecycle-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_lifecycle_package_marker"
-  - file: "src/zephyr/orchestrator/quality/__init__.py"
+  - file: "src/zephyr/trading/orchestrator/quality/__init__.py"
     token: "auto-orch-quality-init-20260702"
     created_by: "session-p3-phase2-orch-split"
     capability: "orchestrator_quality_package_marker"
@@ -4344,78 +3857,25 @@ creation_tokens:
     token: "auto-rule-patterns-20260702"
     created_by: "session-arch033-ssot"
     capability: "rule_patterns_ssot"
-  - file: "src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py"
+  - file: "src/zephyr/governance/commit_gates/ssot_redefinition_gate.py"
     token: "auto-ssot-redef-gate-20260702"
     created_by: "session-arch033-ssot"
     capability: "rule_patterns_ssot"
-  - file: "src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py"
+  - file: "src/zephyr/governance/commit_gates/unsafe_dict_spread_gate.py"
     token: "auto-unsafe-dict-spread-gate-20260706"
     created_by: "session-r69-5-147-12-gate"
     capability: "unsafe_dict_spread_gate"
-  # --- DATETIME-NOW-FORBIDDEN gate + _diff_helpers 共享模块（2026-07-09，FUNCTION-DUP 治本提取 + §11.1.1 强制）---
-  - file: "src/zephyr/gov_enforcement/commit_gates/_diff_helpers.py"
-    token: "auto-diff-helpers-20260709"
-    created_by: "session-sess-18616-20260709045132"
-    capability: "diff_helpers"
-  - file: "src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py"
-    token: "auto-datetime-now-forbidden-gate-20260709"
-    created_by: "session-sess-18616-20260709045132"
-    capability: "datetime_now_forbidden_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py"
-    token: "auto-hardcoded-url-gate-20260709"
-    created_by: "session-sess-28892-20260709052442"
-    capability: "hardcoded_url_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py"
-    token: "auto-import-direction-gate-20260709"
-    created_by: "session-sess-28892-20260709052442"
-    capability: "import_direction_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py"
-    token: "auto-tests-coverage-gate-20260709"
-    created_by: "session-sess-21156-20260709165417"
-    capability: "tests_coverage_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py"
-    token: "auto-test-source-consistency-gate-20260713"
-    created_by: "session-sess-50808-20260713002135"
-    capability: "test_source_consistency_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py"
-    token: "auto-long-param-list-gate-20260709"
-    created_by: "session-sess-15832-20260709055056"
-    capability: "long_param_list_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py"
-    token: "auto-bare-sql-gate-20260709"
-    created_by: "session-sess-15832-20260709055056"
-    capability: "bare_sql_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/god_class_gate.py"
-    token: "auto-god-class-gate-20260709"
-    created_by: "session-sess-15832-20260709055056"
-    capability: "god_class_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py"
-    token: "auto-high-complexity-gate-20260709"
-    created_by: "session-sess-15832-20260709055056"
-    capability: "high_complexity_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/ch_batch_size_gate.py"
-    token: "auto-ch-batch-size-gate-20260710"
-    created_by: "session-sess-14956-20260710111553"
-    capability: "ch_batch_size_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py"
-    token: "auto-ch-final-gate-20260715"
-    created_by: "session-sess-28192-20260715012043"
-    capability: "ch_final_gate"
-  - file: "src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py"
-    token: "auto-ch-version-col-gate-20260715"
-    created_by: "session-sess-2580-20260715033135"
-    capability: "ch_version_col_gate"
-  - file: "src/zephyr/data/speed_tester.py"
-    token: "auto-speed-tester-20260710"
-    created_by: "session-sess-32844-20260710170551"
-    capability: "speed_test"
+  - file: "src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py"
+    token: "auto-pure-shim-gate-20260709"
+    created_by: "session-p6-ai15-audit"
+    capability: "pure_shim_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
-  - file: "src/zephyr/gov_enforcement/rule_enforcement/gate_engine/__init__.py"
+  - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
     token: "auto-arch042-gate-engine-init-20260702"
     created_by: "session-arch042-phase1"
     capability: "gate_engine_package_marker"
-  - file: "src/zephyr/gov_enforcement/rule_enforcement/rule_engine/__init__.py"
+  - file: "src/zephyr/governance/rule_enforcement/rule_engine/__init__.py"
     token: "auto-arch042-rule-engine-init-20260702"
     created_by: "session-arch042-phase1"
     capability: "rule_engine_package_marker"
@@ -4774,20 +4234,10 @@ creation_tokens:
     token: "auto-align-panoramas-20260706"
     created_by: "session-sess-41912-20260706173706"
     capability: "panorama_alignment_detection"
-
-  # --- 四图模块对齐项目 Step 4+5（2026-07-09，ARCH-053/056 配套）---
-  # panorama_alignment_gate.py：align_panoramas 的 in-process gate 封装
-  # 触发条件：commit 含 depgraph/dataflow/decision 相关变更
-  # 阻断策略（ARCH-056 升级）：domain_mismatches>0 阻断；orphans/state_drifts warn-only
-  - file: "src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py"
-    token: "auto-panorama-alignment-gate-20260709"
-    created_by: "session-sess-28836-20260709052022"
-    capability: "panorama_alignment_detection"
-  # query_module_panorama.py：模块全景查询入口（--all 全项目模块表 / 单模块三图记录）
-  - file: "scripts/governance/query_module_panorama.py"
-    token: "auto-query-module-panorama-20260709"
-    created_by: "session-sess-28836-20260709052022"
-    capability: "panorama_alignment_detection"
+  - file: "scripts/governance/sync_panorama_module.py"
+    token: "auto-sync-panorama-module-20260716"
+    created_by: "session-sess-29636-20260716185504"
+    capability: "panorama_module_sync_engine"
 
   # --- ARCH-052: 聚合节点 SSoT 指针 registry（gate_rule_set/script_collection/test_suite/rule_registry_collection 聚合节点展开用）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml"
@@ -4807,14 +4257,6 @@ creation_tokens:
     created_by: "session-sess-37316-20260706155138"
     capability: "rule_registry_collection_registry"
 
-  # --- P2-2: module_id 全仓一致性扫描脚本（2026-07-13）---
-  # check_module_id_consistency.py：--scan-existing 模式扫描全仓所有 .py 文件的 module_id 冲突
-  # 冲突分类: Type A(__init__复制)/B(跨域副本)/C(bridges副本)/D(其他) + 游离声明行检测
-  - file: "scripts/governance/d7_code/check_module_id_consistency.py"
-    token: "auto-check-module-id-consistency-20260713"
-    created_by: "session-sess-25680-20260713053523"
-    capability: "module_id_consistency_gate"
-
   # --- 全景图修复批次:契约目录+资产清单生成器（2026-07-06）---
   - file: "scripts/governance/d5_architecture/generators/generate_contract_catalog.py"
     token: "auto-generate-contract-catalog-20260706"
@@ -4823,22 +4265,6 @@ creation_tokens:
   - file: "scripts/governance/d5_architecture/generators/generate_asset_catalog.py"
     token: "auto-generate-asset-catalog-20260706"
     created_by: "session-sess-44960-20260706204645"
-    capability: "domain_architecture_generators"
-  - file: "scripts/governance/d5_architecture/generators/generate_policies.py"
-    token: "auto-generate-policies-20260709"
-    created_by: "session-sess-17012-20260709045429"
-    capability: "domain_architecture_generators"
-  - file: "scripts/governance/d5_architecture/generators/generate_data_acquisition_flow.py"
-    token: "auto-generate-data-acquisition-flow-20260709"
-    created_by: "session-sess-6716-20260709171021"
-    capability: "domain_architecture_generators"
-  - file: "scripts/governance/d5_architecture/generators/generate_data_inventory.py"
-    token: "auto-generate-data-inventory-20260715"
-    created_by: "session-sess-5096-20260715050751"
-    capability: "domain_architecture_generators"
-  - file: "docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml"
-    token: "auto-data-acquisition-requirements-20260715"
-    created_by: "session-sess-5096-20260715050751"
     capability: "domain_architecture_generators"
   - file: "architecture_model/data/data_sources_registry.yaml"
     token: "auto-data-sources-registry-20260706"
@@ -4858,164 +4284,6 @@ creation_tokens:
     token: "auto-interface-contract-registry-20260706"
     created_by: "session-sess-9032-20260706163221"
     capability: "interface_contract_registry"
-
-  # --- 5.93.7 修复：__init__.py 业务代码迁移到 app_config.py 子模块 ---
-  - file: "src/zephyr/infrastructure/config/app_config.py"
-    token: "auto-config-app-config-20260709"
-    created_by: "session-sess-11488-20260709185510"
-    capability: "app_config_management"
-
-  # --- ARCH-CH-003 BufferedWriter 批量聚合层（2026-07-10）---
-  - file: "src/zephyr/data/buffered_writer.py"
-    token: "auto-buffered-writer-20260710"
-    created_by: "session-sess-21108-20260710100906"
-    capability: "ch_batch_write"
-
-  # --- MOD-L00-004 新闻数据源扩展（2026-07-10，全部免费新闻源+去重机制）---
-  - file: "src/zephyr/data/implementations/cls_provider.py"
-    token: "auto-cls-provider-20260710"
-    created_by: "session-sess-22344-20260710222800"
-    capability: "data_source_provider_abstraction"
-  - file: "src/zephyr/data/implementations/eastmoney_news_provider.py"
-    token: "auto-eastmoney-news-provider-20260710"
-    created_by: "session-sess-22344-20260710222800"
-    capability: "data_source_provider_abstraction"
-  - file: "src/zephyr/data/news_dedup.py"
-    token: "auto-news-dedup-20260710"
-    created_by: "session-sess-22344-20260710222800"
-    capability: "data_source_provider_abstraction"
-
-  # --- Phase 2 Batch 1: behavioral_admission physical migration (2026-07-13) ---
-  # 迁移文件（从 src/zephyr/gov_enforcement/behavioral_admission/ -> src/zephyr/gov_enforcement/behavioral_admission/）
-  # 不是新建能力，是物理路径迁移。token 登记满足 CREATE-GUARD 要求。
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/__init__.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/admission_response.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/ai_code_standards.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/code_review_ai.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/gate_event_adapter.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/mcp_result_push.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/post_process.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/protection_index.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/session_lifecycle.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py"
-    token: "migration-batch1-behavioral-admission-20260713"
-    created_by: "session-fix-batch1-full"
-    capability: "behavioral_admission"
-  - file: "src/zephyr/gov_enforcement/__init__.py"
-    token: "migration-domain-init-gov-enforcement-20260713"
-    created_by: "session-fix-phase2-remainder"
-    capability: "gov_enforcement"
-
-  # --- Phase 2 Batch 11: domain package init for gov_rule/ and gov_code_quality/ (2026-07-13) ---
-  - file: "src/zephyr/gov_code_quality/__init__.py"
-    token: "migration-batch11-gov-code-quality-init-20260713"
-    created_by: "session-sess-30428-20260713044652"
-    capability: "code_quality_governance"
-  - file: "src/zephyr/gov_rule/__init__.py"
-    token: "migration-batch11-gov-rule-init-20260713"
-    created_by: "session-sess-30428-20260713044652"
-    capability: "rule_governance"
-
-  # --- tick_subscriber: 实时 Tick 订阅落盘（2026-07-13）---
-  - file: "src/zephyr/data/tick_subscriber.py"
-    token: "auto-tick-subscriber-20260713"
-    created_by: "session-sess-36780-20260713111728"
-    capability: "realtime_tick_ingestion"
-
-  # --- granularity 词表真源（2026-07-13，trae_060 §2 治本）---
-  # add_design_node granularity 硬编码 bug 修复配套：新建词表消除三处硬编码
-  - file: "docs/01_policies_and_standards/_registry/vocabularies/granularity_vocabulary.yaml"
-    token: "auto-granularity-vocab-20260713"
-    created_by: "session-sess-36780-20260713111728"
-    capability: "depgraph_granularity_vocab"
-
-  # --- BLUEPRINT-FORMAT commit gate（裁定#214 Phase 0 防蔓延，2026-07-14）---
-  - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py"
-    token: "auto-blueprint-format-gate-20260714"
-    created_by: "session-sess-25580-20260714144742"
-    capability: "blueprint_format_gate"
-
-  # --- 数据保留与回测分层契约（PS-CTR-003，2026-07-14）---
-  # 10层量化数据分层体系 + Hot/Cold/Delete 策略 + 多频共振策略架构
-  # 被 data_source_integrator_blueprint.md §19 引用
-  - file: "docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml"
-    token: "auto-data-retention-contract-20260714"
-    created_by: "session-sess-9444-20260714212810"
-    capability: "data_retention_contract"
-  - file: "docs/03_modules/_domain_governance/alignment_loop/blueprint.md"
-    token: "auto-alignment-loop-blueprint-20260714"
-    created_by: "session-sess-30596-20260714230339"
-    capability: "alignment_loop_blueprint"
-  # --- ch_reader 统一查询层（裁定 #ARCH-CH-007，2026-07-15）---
-  # 对 ReplacingMergeTree 表自动注入 FINAL，消除 AI 遗漏 FINAL 的风险
-  - file: "src/zephyr/data/ch_reader.py"
-    token: "auto-ch-reader-20260715"
-    created_by: "session-sess-33112-20260715005712"
-    capability: "ch_reader"
-  # --- backfill_checker L10 周末补下载检测器（裁定 #ARCH-BACKFILL-001）---
-  # 查 CH 实际行数发现缺口，走 ch_reader 统一查询层自动注入 FINAL
-  - file: "src/zephyr/data/backfill_checker.py"
-    token: "auto-backfill-checker-20260715"
-    created_by: "session-sess-33112-20260715005712"
-    capability: "backfill_checker"
-  # --- error_classifier 数据源错误分类器（数据韧性三层机制§1, 2026-07-15）---
-  # 不可恢复错误（配额/认证）立即fallback，可恢复错误（超时/网络）重试用完才fallback
-  - file: "src/zephyr/data/error_classifier.py"
-    token: "auto-error-classifier-20260715"
-    created_by: "session-sess-33176-20260715021455"
-    capability: "error_classifier"
-  # --- integrity_checker 每日盘后数据完整性巡检（数据韧性三层机制§3, 2026-07-15）---
-  # 动态发现 tasks.yaml 全表，检测当日数据行数是否达标，不达标告警
-  - file: "src/zephyr/data/integrity_checker.py"
-    token: "auto-integrity-checker-20260715"
-    created_by: "session-sess-33176-20260715021455"
-    capability: "integrity_checker"
-
-  # --- Hyper-V ClickHouse 迁移 Phase 0 影响清单（2026-07-15）---
-  # 机器可读全量影响清单，WSL→Hyper-V 迁移施工基线
-  - file: "docs/_working/hyperv_migration_impact_inventory.yaml"
-    token: "auto-hyperv-migration-inventory-20260716"
-    created_by: "session-sess-15304-20260716000605"
-    capability: "hyperv_migration_impact_inventory"
 
 # ============================================================================
 # 维护日志
