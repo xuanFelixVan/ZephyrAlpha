@@ -186,9 +186,16 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
         return "skipped"
     try:
         tsv_bytes = file_path.read_bytes()
+        # 回灌时始终传 None 作为 cols_clause，强制 ch_writer 重新查询表列
+        # 原因：落盘时 CH 可能不可用，cols_clause 可能为空/"*"/过期列清单，
+        # 直接使用会导致 INSERT 语法错误或列不匹配（裁定 #ARCH-CH-013 Phase 1 根因修复）
+        # 表名前缀修正：历史积压可能有不带 db. 前缀的表名，补全为 c1_market. 前缀
+        replay_table = entry["table"]
+        if "." not in replay_table:
+            replay_table = f"c1_market.{replay_table}"
         ok = ch_writer_mod.write_tsv(
-            entry["table"],
-            entry.get("cols_clause"),
+            replay_table,
+            None,
             tsv_bytes,
             timeout=120,
         )
