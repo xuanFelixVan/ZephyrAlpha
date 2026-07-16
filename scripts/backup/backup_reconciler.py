@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.1
 # [MODULE] scripts.backup.backup_reconciler
 # [DOMAIN] D_INFRASTRUCTURE
-# [DEPENDENCIES] zephyr.gov_enforcement.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -31,7 +31,7 @@
 
 Usage::
 
-    from zephyr.gov_enforcement.audit.reconciliation_registry import ReconciliationRegistry
+    from zephyr.governance.audit.reconciliation_registry import ReconciliationRegistry
     from backup_reconciler import make_backup_reconciler
 
     registry = ReconciliationRegistry()
@@ -155,7 +155,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
     返回 ReconcileResult（auto_committed 或 warn）。
     """
     try:
-        from zephyr.gov_enforcement.audit.reconciliation_registry import ReconcileResult
+        from zephyr.governance.audit.reconciliation_registry import ReconcileResult
     except ImportError:
         # 测试环境无zephyr模块时，返回简单dict
         ReconcileResult = dict  # type: ignore
@@ -234,7 +234,7 @@ def make_backup_reconciler(project_root: Path | None = None):
         _STATE_FILE = _project_root / "data" / "databases" / "backup_state.json"
 
     try:
-        from zephyr.gov_enforcement.audit.reconciliation_registry import ReconcilerSpec
+        from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
     except ImportError:
         # 测试环境无zephyr模块时，使用fallback类（避开ARCH-034 CLASS-UNIQUENESS冲突）
         class _ReconcilerSpecFallback:  # type: ignore
