@@ -13,7 +13,7 @@ created_by: human_plus_agent
 date: "2026-05-05"
 ttl: permanent
 construction_progress: design_only
-actual_disk_path: "src/zephyr/research/"
+actual_disk_path: "src/zephyr/research/"  # ARCH-MIGRATION-CLOSE(2026-07-16): 空壳目录。实际实现已迁移至 src/zephyr/backtest/（core/engine_base.py + implementations/vectorized_engine.py），见 §0.1 与 §16.7 迁移说明
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 generation: 2
@@ -525,9 +525,9 @@ class BacktestConfig:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\research\implementations\default_backtest_engine.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\backtest\implementations\vectorized_engine.py`（ARCH-MIGRATION-CLOSE 2026-07-16：已从 `zephyr.research.implementations.default_backtest_engine` 迁移） |
 | 验收标准 | import成功，run返回BacktestResult |
-| 验证命令 | `python -c "from zephyr.research.implementations.default_backtest_engine import DefaultBacktestEngine"` |
+| 验证命令 | `python -c "from zephyr.backtest.implementations.vectorized_engine import DefaultBacktestEngine"` |
 | G7 检查项 | 上游backtest_base.py存在，下游实验可消费 |
 | AI 自治范围 | ai_modifiable |
 | 检查点 | DefaultBacktestEngine可实例化 |
@@ -537,7 +537,7 @@ class BacktestConfig:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §3.3 |
-| 产出位置 | `D:\ZephyrAlpha\src\zephyr\research\backtest_base.py` |
+| 产出位置 | `D:\ZephyrAlpha\src\zephyr\backtest\core\engine_base.py`（ARCH-MIGRATION-CLOSE 2026-07-16：已从 `zephyr.research.backtest_base` 迁移） |
 | 验收标准 | candidate→validated→promoted/rejected状态转换正确 |
 | 验证命令 | `python -m pytest tests/ -k factor_discovery` |
 | G7 检查项 | 状态守卫条件完整 |
@@ -595,7 +595,7 @@ class BacktestConfig:
 
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
-| 1 | 命令 | `python -c "from zephyr.research.backtest_base import BacktestEngineBase"` | 验证基类可导入 | — | 无报错 |
+| 1 | 命令 | `python -c "from zephyr.backtest.core.engine_base import BacktestEngineBase"` | 验证基类可导入（ARCH-MIGRATION-CLOSE 2026-07-16：路径已迁移） | — | 无报错 |
 | 2 | 配置 | `BacktestConfig` → `initial_capital` | 初始资金 | Decimal, 默认1000000 | >0 |
 | 3 | 配置 | `BacktestConfig` → `commission_rate` | 佣金率 | Decimal, 默认0.0003 | >0 |
 
