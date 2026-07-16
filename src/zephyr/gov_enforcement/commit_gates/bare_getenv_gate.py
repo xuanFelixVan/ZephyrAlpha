@@ -137,6 +137,90 @@ class _BareGetenvVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
 
+def _get_staged_added_files(gateway) -> list[str] | None:
+    """获取 staged 新增文件列表（git diff --cached --diff-filter=A）。
+
+    Returns:
+        新增文件路径列表；None 表示 fail-open（git 失败/异常，检测器降级放行）。
+    """
+    try:
+        diff_result = gateway._run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "NO-BARE-GETENV gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                diff_result.returncode,
+            )
+            return None
+        return diff_result.stdout.strip().splitlines()
+    except Exception as e:
+        logger.warning(
+            "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            type(e).__name__, e, exc_info=True
+        )
+        return None
+
+
+def _resolve_worktree_root(gateway) -> str:
+    """解析 worktree 根目录（git rev-parse --show-toplevel），失败回退 project_root。"""
+    try:
+        toplevel_result = gateway._run_git(
+            ["git", "rev-parse", "--show-toplevel"]
+        )
+        if toplevel_result.returncode == 0:
+            return toplevel_result.stdout.strip()
+        return str(gateway.project_root)
+    except Exception:
+        return str(gateway.project_root)
+
+
+def _resolve_abs_paths(new_py_files: list[str], wt_root: str) -> list[str]:
+    """将相对路径解析为绝对路径，并过滤出实际存在的文件。"""
+    abs_files: list[str] = []
+    for rel in new_py_files:
+        if os.path.isabs(rel):
+            abs_files.append(rel)
+        else:
+            abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
+    return [f for f in abs_files if os.path.isfile(f)]
+
+
+def _collect_violations(abs_paths: list[str], wt_root: str) -> list[str]:
+    """AST 扫描所有文件，收集裸 getenv/os.environ 读密钥违规描述列表。"""
+    all_violations: list[str] = []
+    for abs_path in abs_paths:
+        try:
+            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        except OSError as e:
+            logger.warning(
+                "NO-BARE-GETENV gate skip file %s: 读取失败(%s: %s)。",
+                abs_path, type(e).__name__, e,
+            )
+            continue
+
+        try:
+            tree = ast.parse(content, filename=abs_path)
+        except SyntaxError as e:
+            logger.warning(
+                "NO-BARE-GETENV gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+                abs_path, type(e).__name__, e,
+            )
+            continue
+
+        visitor = _BareGetenvVisitor()
+        visitor.visit(tree)
+
+        if visitor.violations:
+            rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
+            for lineno, pattern, key in visitor.violations:
+                all_violations.append(
+                    f"{rel_name}:{lineno} {pattern}(\"{key}\") "
+                    f"—— 应改用 get_secret/get_secret_or_default（SecretProvider SSoT）"
+                )
+    return all_violations
+
+
 def make_bare_getenv_gate() -> GateSpec:
     """构造裸 os.getenv 读密钥阻断门禁 GateSpec（硬阻断型）。
 
@@ -146,23 +230,9 @@ def make_bare_getenv_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        try:
-            diff_result = gateway._run_git(
-                ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
-            )
-            if diff_result.returncode != 0:
-                logger.warning(
-                    "NO-BARE-GETENV gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
-                )
-                return True, ""
-            staged_new = diff_result.stdout.strip().splitlines()
-        except Exception as e:
-            logger.warning(
-                "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True
-            )
+        # 1. 获取 staged 新增文件（fail-open on git 错误）
+        staged_new = _get_staged_added_files(gateway)
+        if staged_new is None:
             return True, ""
 
         # 2. 过滤 .py 文件 + tests/ 豁免
@@ -174,60 +244,15 @@ def make_bare_getenv_gate() -> GateSpec:
             return True, ""
 
         # 3. 获取 worktree root
-        try:
-            toplevel_result = gateway._run_git(
-                ["git", "rev-parse", "--show-toplevel"]
-            )
-            if toplevel_result.returncode == 0:
-                wt_root = toplevel_result.stdout.strip()
-            else:
-                wt_root = str(gateway.project_root)
-        except Exception:
-            wt_root = str(gateway.project_root)
+        wt_root = _resolve_worktree_root(gateway)
 
-        # 4. 解析为绝对路径
-        abs_files = []
-        for rel in new_py_files:
-            if os.path.isabs(rel):
-                abs_files.append(rel)
-            else:
-                abs_files.append(os.path.join(wt_root, rel.replace("/", os.sep)))
-        abs_files = [f for f in abs_files if os.path.isfile(f)]
+        # 4. 解析为绝对路径（过滤不存在的文件）
+        abs_files = _resolve_abs_paths(new_py_files, wt_root)
         if not abs_files:
             return True, ""
 
         # 5. AST 检测
-        all_violations: list[str] = []
-        for abs_path in abs_files:
-            try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
-            except OSError as e:
-                logger.warning(
-                    "NO-BARE-GETENV gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            try:
-                tree = ast.parse(content, filename=abs_path)
-            except SyntaxError as e:
-                logger.warning(
-                    "NO-BARE-GETENV gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
-                    abs_path, type(e).__name__, e,
-                )
-                continue
-
-            visitor = _BareGetenvVisitor()
-            visitor.visit(tree)
-
-            if visitor.violations:
-                rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
-                for lineno, pattern, key in visitor.violations:
-                    all_violations.append(
-                        f"{rel_name}:{lineno} {pattern}(\"{key}\") "
-                        f"—— 应改用 get_secret/get_secret_or_default（SecretProvider SSoT）"
-                    )
-
+        all_violations = _collect_violations(abs_files, wt_root)
         if all_violations:
             detail = "; ".join(all_violations[:5])
             return False, f"裸 os.getenv/os.environ 读密钥（§5.17.10）: {detail}"
