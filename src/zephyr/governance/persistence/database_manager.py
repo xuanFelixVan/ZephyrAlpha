@@ -101,6 +101,31 @@ def _validate_table_name(table: str) -> str:
     return table
 
 
+def _check_db_integrity(conn):
+    integrity_ok = True
+    integrity_error = None
+    try:
+        cursor = conn.execute("PRAGMA integrity_check")
+        row = cursor.fetchone()
+        if row and row[0] != "ok":
+            integrity_ok = False
+            integrity_error = row[0]
+    except sqlite3.Error as exc:
+        integrity_ok = False
+        integrity_error = str(exc)
+
+    try:
+        cursor = conn.execute("PRAGMA quick_check")
+        row = cursor.fetchone()
+        if row and row[0] != "ok" and integrity_ok:
+            integrity_ok = False
+            integrity_error = f"quick_check failed: {row[0]}"
+    except sqlite3.Error:
+        pass
+
+    return integrity_ok, integrity_error
+
+
 class DatabaseManagerError(RuntimeError):
     """DatabaseManager 基础异常。"""
     error_code = "ZA-GV-0029"
@@ -308,26 +333,7 @@ class DatabaseManager:
         try:
             conn = get_db_connection(self._db_path)
 
-            integrity_ok = True
-            integrity_error = None
-            try:
-                cursor = conn.execute("PRAGMA integrity_check")
-                row = cursor.fetchone()
-                if row and row[0] != "ok":
-                    integrity_ok = False
-                    integrity_error = row[0]
-            except sqlite3.Error as exc:
-                integrity_ok = False
-                integrity_error = str(exc)
-
-            try:
-                cursor = conn.execute("PRAGMA quick_check")
-                row = cursor.fetchone()
-                if row and row[0] != "ok" and integrity_ok:
-                    integrity_ok = False
-                    integrity_error = f"quick_check failed: {row[0]}"
-            except sqlite3.Error:
-                pass
+            integrity_ok, integrity_error = _check_db_integrity(conn)
 
             ver = schema_version(self._db_path)
 
