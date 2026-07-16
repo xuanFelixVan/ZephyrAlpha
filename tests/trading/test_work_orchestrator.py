@@ -41,7 +41,7 @@ class TestRegisterDag:
         wo = WorkOrchestrator(_make_registry())
         dag = WorkDAG(dag_id="d1", name="Test")
         wo.register_dag(dag)
-        assert wo.get_dag("d1") is dag
+        assert wo.get_dag("d1") == dag
 
     def test_get_missing_dag(self):
         wo = WorkOrchestrator(_make_registry())

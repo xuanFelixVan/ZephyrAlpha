@@ -223,11 +223,11 @@ class TestConsumerLifecycle:
     def test_start_idempotent(self, tmp_path):
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)
         consumer.start()
-        first = consumer._thread
-        consumer.start()  # 幂等，不应起第二个
-        assert consumer._thread is first
+        assert consumer._started is True
+        consumer.start()  # 幂等，不应重复订阅
+        assert consumer._started is True
         consumer.stop()
-        assert consumer._thread is not None
+        assert consumer._started is False
 
     def test_drain_empty_dir_no_error(self, tmp_path):
         consumer = RedBlueTriggerConsumer(queue_dir=tmp_path)

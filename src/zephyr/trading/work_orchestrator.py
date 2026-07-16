@@ -35,6 +35,7 @@ import yaml
 
 from zephyr.trading.capability_registry import CapabilityRegistry
 from zephyr.trading.work_dag import WorkDAG, WorkItem
+from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -189,17 +190,23 @@ class WorkOrchestrator:
                     if all_done:
                         other.status = TaskStatus.READY
 
-            self._cleanup_completed()
+            self._cleanup_completed(just_completed_id=item_id)
 
-    def _cleanup_completed(self) -> None:
-        """5.65.3 修复：清理已完成且无PENDING依赖的item，防止_items无界增长。"""
+    def _cleanup_completed(self, just_completed_id: str | None = None) -> None:
+        """5.65.3 修复：清理已完成且无PENDING依赖的item，防止_items无界增长。
+
+        just_completed_id: 本次 complete_item 刚完成的 item_id，跳过不删，
+        确保调用方可立即通过 status() 查询完成状态。
+        """
         pending_deps: set[str] = set()
         for other in self._items.values():
             if other.status == TaskStatus.PENDING:
                 pending_deps.update(other.depends_on)
         stale = [
             iid for iid, it in self._items.items()
-            if it.status in (TaskStatus.COMPLETED, TaskStatus.FAILED) and iid not in pending_deps
+            if it.status in (TaskStatus.COMPLETED, TaskStatus.FAILED)
+            and iid not in pending_deps
+            and iid != just_completed_id
         ]
         for iid in stale:
             del self._items[iid]

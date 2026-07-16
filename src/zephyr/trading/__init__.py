@@ -15,7 +15,6 @@ __all__ = [
     "capability_sync",
     "conductor",
     "dream_cycle",
-    "feedback_loop",
     "finalizer",
     "gpu_consensus_scheduler",
     "gpu_monitor",
