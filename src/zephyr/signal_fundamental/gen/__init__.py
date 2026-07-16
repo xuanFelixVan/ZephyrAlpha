@@ -1,5 +1,5 @@
 # [A_module] module_id=MOD-UNK_gen | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain-signal/signal-generation-core/blueprint.md
+# [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.gen
 # [STABILITY] evolving
 # [SAFETY] L

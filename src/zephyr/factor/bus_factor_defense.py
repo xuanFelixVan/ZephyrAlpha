@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.bus_factor_defense
 # [DOMAIN] D_FACTOR
-# [DEPENDENCIES] zephyr.governance.__init__
+# [DEPENDENCIES]
 # [CONSUMERS] MOD-INF-027;MOD-INF-020;MOD-INF-018
 # [STARTUP] imported
 # [MATURITY] prototype
