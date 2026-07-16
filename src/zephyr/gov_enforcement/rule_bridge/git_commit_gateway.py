@@ -85,6 +85,7 @@ from zephyr.gov_enforcement.commit_gates.arch_reference_gate import make_arch_re
 from zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
 from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
 from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
+from zephyr.gov_enforcement.commit_gates.pure_shim_gate import make_pure_shim_gate
 from zephyr.gov_enforcement.commit_gates.datetime_now_forbidden_gate import make_datetime_now_forbidden_gate
 from zephyr.gov_enforcement.commit_gates.vocab_hardcode_gate import make_vocab_hardcode_gate
 from zephyr.gov_enforcement.commit_gates.file_copy_gate import make_file_copy_gate
@@ -303,6 +304,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_unsafe_dict_spread_gate())  # priority=66 warn 级 防复发 5.147.5/5.147.12 **data 直接展开模式（schema 演进会 TypeError，SSoT filter_dataclass_fields 已治本，gate 防新 AI 制造同类债务）
+        self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
         self._gate_registry.register(make_datetime_now_forbidden_gate())  # priority=34 治本生成器代码 datetime.now() 硬阻断（AGENTS.md §11.1.1，生成器输出幂等性强制）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）

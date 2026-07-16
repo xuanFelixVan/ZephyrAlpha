@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS | scripts/governance/d7_code/check_pure_shim.py | §
 # [MODULE] scripts.governance.d7_code.check_pure_shim
-# [DOMAIN] D_GOV_SCRIPTS
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d7_code.__init__
 # [CONSUMERS] GATE-NO-PURE-SHIM pre-commit hook; GitCommitGateway._check_pure_shim（--no-verify 补偿校验）
 # [STARTUP] manual
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] --ci 模式发现纯 shim 返回 EXIT_FINDINGS(2)；--warn-only 模式返回 EXIT_PASS(0)+告警
 # [TESTS] python scripts/governance/d7_code/check_pure_shim.py --ci <staged_files>
-# [TTL] task_bound
+# [TTL] permanent
 """
 check_pure_shim.py — GATE-NO-PURE-SHIM 检测器（治本漏洞1 2026-06-29）
 
