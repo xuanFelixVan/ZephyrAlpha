@@ -281,6 +281,41 @@ def enforce(
     return decorator
 
 
+def _validate_pydantic_value(
+    value: object,
+    contract_type: type[Any],
+    contract_name: str,
+    trace_required: bool,
+) -> list[str] | None:
+    """校验 Pydantic BaseModel 值。
+
+    返回违规列表（可能为空）当 contract_type 是 Pydantic BaseModel 子类；
+    若不是 Pydantic 分支则返回 None，由调用方继续走常规校验路径。
+    """
+
+    if not (inspect.isclass(contract_type) and issubclass(contract_type, PydanticBaseModel)):
+        return None
+
+    violations: list[str] = []
+
+    if not isinstance(value, contract_type):
+        violations.append(
+            f"类型不匹配: 期望 {contract_name} 或其子类，实际收到 {type(value).__qualname__}",
+        )
+        return violations
+    try:
+        contract_type.model_validate(value.model_dump(mode="python"))
+    except ValidationError as exc:
+        for err in exc.errors():
+            loc = ".".join(str(x) for x in err.get("loc", ()))
+            violations.append(f"Pydantic [{loc}]: {err.get('msg')}")
+    if trace_required:
+        trace_ctx = _get_trace_context(value)
+        if trace_ctx is None:
+            violations.append("缺少 TraceContext: CTR-TRACE-001 强制要求非空 trace_context 字段")
+    return violations
+
+
 def _validate_value(
     value: object,
     contract_type: type[Any],
@@ -289,25 +324,13 @@ def _validate_value(
 ) -> list[str]:
     """校验单个值是否符合契约定义。返回违规描述列表（空列表 = 通过）。"""
 
-    violations: list[str] = []
+    pydantic_violations = _validate_pydantic_value(
+        value, contract_type, contract_name, trace_required,
+    )
+    if pydantic_violations is not None:
+        return pydantic_violations
 
-    if inspect.isclass(contract_type) and issubclass(contract_type, PydanticBaseModel):
-        if not isinstance(value, contract_type):
-            violations.append(
-                f"类型不匹配: 期望 {contract_name} 或其子类，实际收到 {type(value).__qualname__}",
-            )
-            return violations
-        try:
-            contract_type.model_validate(value.model_dump(mode="python"))
-        except ValidationError as exc:
-            for err in exc.errors():
-                loc = ".".join(str(x) for x in err.get("loc", ()))
-                violations.append(f"Pydantic [{loc}]: {err.get('msg')}")
-        if trace_required:
-            trace_ctx = _get_trace_context(value)
-            if trace_ctx is None:
-                violations.append("缺少 TraceContext: CTR-TRACE-001 强制要求非空 trace_context 字段")
-        return violations
+    violations: list[str] = []
 
     if not isinstance(value, contract_type):
         actual_type_name = type(value).__qualname__
@@ -482,6 +505,38 @@ def _check_deep_mutable_nesting(
         )
 
 
+def _match_param_annotation(
+    anno: Any,
+    contract_type: type[Any],
+    contract_name: str,
+) -> bool:
+    """判断参数注解是否匹配契约类型。
+
+    处理 PEP 563 字符串注解、普通类（issubclass）、以及泛型/Union 注解。
+    与原 _find_param_by_type 内联逻辑等价：anno 为 str 走字符串匹配；
+    anno 与 contract_type 均为 class 时走 issubclass（TypeError 视为不匹配）；
+    否则走 get_origin/get_args 的泛型匹配。
+    """
+
+    if isinstance(anno, str):
+        return contract_name in anno or anno.replace(" | None", "").strip() == contract_name
+    if inspect.isclass(anno) and inspect.isclass(contract_type):
+        try:
+            return issubclass(anno, contract_type)
+        except TypeError:
+            return False
+    origin = get_origin(anno)
+    if origin is not None:
+        args = get_args(anno)
+        if contract_type in args or contract_type is origin:
+            return True
+    if origin is Union or origin is types.UnionType:
+        args = get_args(anno)
+        if contract_type in args:
+            return True
+    return False
+
+
 def _find_param_by_type(
     arguments: dict[str, Any],
     contract_type: type[Any],
@@ -502,26 +557,8 @@ def _find_param_by_type(
         contract_name = getattr(contract_type, "__name__", str(contract_type))
         for name, param in sig.parameters.items():
             if param.annotation is not inspect.Parameter.empty:
-                anno = param.annotation
-                if isinstance(anno, str):
-                    if contract_name in anno or anno.replace(" | None", "").strip() == contract_name:
-                        return name
-                elif inspect.isclass(anno) and inspect.isclass(contract_type):
-                    try:
-                        if issubclass(anno, contract_type):
-                            return name
-                    except TypeError:
-                        pass
-                else:
-                    origin = get_origin(anno)
-                    if origin is not None:
-                        args = get_args(anno)
-                        if contract_type in args or contract_type is origin:
-                            return name
-                    if origin is Union or origin is types.UnionType:
-                        args = get_args(anno)
-                        if contract_type in args:
-                            return name
+                if _match_param_annotation(param.annotation, contract_type, contract_name):
+                    return name
 
     return None
 
