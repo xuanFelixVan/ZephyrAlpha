@@ -112,6 +112,35 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
     module_to_file: dict[str, str] = {}
     resolved_adjacency: dict[str, set[str]] = {}
 
+    graph.edges.extend(_extract_entry_edges(
+        scan_entries, project_root, extractor,
+        importer_count, importee_count, adjacency,
+    ))
+
+    _build_graph_nodes(scan_entries, importer_count, importee_count, graph.nodes)
+
+    graph.total_edges = len(graph.edges)
+    graph.most_depended_upon = sorted(
+        [n.file_path for n in graph.nodes.values() if n.imported_by_count > 0],
+        key=lambda fp: graph.nodes[fp].imported_by_count,
+        reverse=True,
+    )[:10]
+
+    graph.orphan_imports = _find_orphan_imports(graph.edges, graph.nodes)
+    graph.circular_dependencies = _detect_cycles(graph.nodes, resolved_adjacency)
+
+    return graph
+
+
+def _extract_entry_edges(
+    scan_entries: list,
+    project_root: Path,
+    extractor: DependencyExtractor,
+    importer_count: dict[str, int],
+    importee_count: dict[str, int],
+    adjacency: dict[str, set[str]],
+) -> list[DependencyEdge]:
+    edges_to_add: list[DependencyEdge] = []
     for entry in scan_entries:
         if isinstance(entry, dict):
             fp = entry.get("relative_path", "")
@@ -130,7 +159,7 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
             continue
 
         edges = extractor.extract(fp, code)
-        graph.edges.extend(edges)
+        edges_to_add.extend(edges)
 
         modules_imported: set[str] = set()
         for e in edges:
@@ -139,7 +168,15 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
 
         importee_count[fp] = len(modules_imported)
         adjacency[fp] = modules_imported
+    return edges_to_add
 
+
+def _build_graph_nodes(
+    scan_entries: list,
+    importer_count: dict[str, int],
+    importee_count: dict[str, int],
+    nodes: dict[str, DependencyNode],
+) -> None:
     for entry in scan_entries:
         if isinstance(entry, dict):
             fp = entry.get("relative_path", "")
@@ -148,7 +185,7 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
         if not fp.endswith(".py"):
             continue
         layer = _infer_layer(fp)
-        graph.nodes[fp] = DependencyNode(
+        nodes[fp] = DependencyNode(
             file_path=fp,
             layer=layer,
             imported_by_count=importer_count.get(fp, 0),
@@ -157,18 +194,16 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
             is_root=importer_count.get(fp, 0) == 0,
         )
 
-    graph.total_edges = len(graph.edges)
-    graph.most_depended_upon = sorted(
-        [n.file_path for n in graph.nodes.values() if n.imported_by_count > 0],
-        key=lambda fp: graph.nodes[fp].imported_by_count,
-        reverse=True,
-    )[:10]
 
+def _find_orphan_imports(
+    edges: list[DependencyEdge],
+    nodes: dict[str, DependencyNode],
+) -> list[str]:
     unresolved: set[str] = set()
-    for e in graph.edges:
+    for e in edges:
         top = e.to_module.split(".")[0]
         resolved = False
-        for fp in graph.nodes:
+        for fp in nodes:
             if fp.endswith(e.to_module.replace(".", "/") + ".py") or fp.endswith(
                 e.to_module.replace(".", "/") + "/__init__.py"
             ):
@@ -179,11 +214,7 @@ def build_dependency_graph(scan_entries: list, project_root: Path) -> Dependency
                 break
         if not resolved:
             unresolved.add(e.to_module)
-    graph.orphan_imports = sorted(unresolved)
-
-    graph.circular_dependencies = _detect_cycles(graph.nodes, resolved_adjacency)
-
-    return graph
+    return sorted(unresolved)
 
 
 def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) -> str | None:
