@@ -4366,6 +4366,32 @@ creation_tokens:
     created_by: "session-sess-24256-20260717003348"
     capability: "capability_consistency_gate"
 
+  # --- MOD-INF-027 灾备备份系统（2026-07-17，Restic去重备份+post-commit reconciler）---
+  - file: "scripts/backup/backup_config.yaml"
+    token: "auto-backup-config-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_config"
+  - file: "scripts/backup/backup_reconciler.py"
+    token: "auto-backup-reconciler-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_reconciler"
+  - file: "scripts/backup/backup.ps1"
+    token: "auto-backup-ps1-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_script"
+  - file: "scripts/backup/一键备份.bat"
+    token: "auto-backup-bat-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_manual_trigger"
+  - file: "scripts/backup/restore.ps1"
+    token: "auto-restore-ps1-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_restore_script"
+  - file: "scripts/backup/README.md"
+    token: "auto-backup-readme-20260717"
+    created_by: "session-sess-backup-mod-inf-027"
+    capability: "backup_documentation"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

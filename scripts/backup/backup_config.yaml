@@ -1,0 +1,73 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-027 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3.3
+# module_id: MOD-INF-027
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+
+# 灾备备份系统配置 v1.0.0
+# 消费者: scripts/backup/backup_reconciler.py + backup.ps1
+
+repository:
+  path: "F:\\restic-zephyr"
+  target_drive: "F:"
+
+dump_dir: "D:\\tmp_db_dumps"
+
+retention:
+  keep_daily: 7
+  keep_weekly: 4
+  keep_monthly: 3
+
+trigger:
+  min_interval_seconds: 28800  # 8小时间隔保护
+  important_prefixes:
+    - "src/"
+    - "config/"
+    - "docs/"
+    - "scripts/"
+    - "tests/"
+    - "architecture_model/"
+    - "data/databases/"
+    - "data/raw/bdpan/"
+    - "data/vector_db/"
+  important_files:
+    - "AGENTS.md"
+    - "pyproject.toml"
+    - "docker-compose.yml"
+  state_file: "data/databases/backup_state.json"
+
+databases:
+  postgres:
+    db_name: depgraph
+    host: "localhost"
+    port: 5432
+    user: "postgres"
+    dump_file: "depgraph.dump"
+  sqlite:
+    - {src: "data\\databases\\governance.db", dump: "governance_backup.db"}
+    - {src: "data\\databases\\session_continuity.db", dump: "session_backup.db"}
+  clickhouse:
+    db_name: c1_market
+    host: "localhost"
+    port: 9000
+    skip_if_down: true
+
+excludes:
+  - "**/__pycache__/"
+  - "**/.pytest_cache/"
+  - "**/.mypy_cache/"
+  - "**/.ruff_cache/"
+  - "**/*.pyc"
+  - ".aidrafts/"
+  - ".runtime/"
+  - "tmp/"
+  - "logs/*.log"
+  - "logs/*.log.*"
+  - ".venv/"
+  - "node_modules/"
+
+report:
+  output_dir: "logs"
