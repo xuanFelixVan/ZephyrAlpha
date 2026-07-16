@@ -1,3 +1,6 @@
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# [MODULE] zephyr.governance.persistence
+# [TTL] permanent
 # zephyr.governance.persistence 包
 #
 # ARCH-OLAP-RETIRE（2026-07-16）：olap_engine.py 已退役删除。

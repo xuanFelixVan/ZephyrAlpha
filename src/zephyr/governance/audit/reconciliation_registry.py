@@ -981,7 +981,16 @@ def _module_id_infer_from_dir(file_rel: str) -> str | None:
 
 
 def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str) -> bool:
-    """在 .py 文件头部注入 [BLUEPRINT] 头部。"""
+    """在 .py 文件头部注入 [BLUEPRINT] + [TTL] 完整头部。
+
+    治本（2026-07-17，遗留项修复）：注入模板补全 [TTL] permanent 字段。
+    原模板仅含 [BLUEPRINT] 导致 auto-commit 被 TTL-METADATA gate 阻断（hard block：
+    文件有头部但缺 required ttl 字段）。
+
+    自动兜底机制完整性原则：注入器必须遵守后续校验器的所有规则，禁止注入半成品。
+    默认 permanent：S4 处理的 src/scripts/ 下文件按 ttl_vocabulary.yaml decision_tree
+    Q3 判定属永久区路径；task_bound 文件应由 AI 创建时显式声明，不应依赖兜底注入。
+    """
     import os
     abs_path = os.path.join(str(project_root), file_rel)
     try:
@@ -991,7 +1000,10 @@ def _module_id_inject_header(project_root: "Path", file_rel: str, module_id: str
         return False
     if "[BLUEPRINT]" in content[:500]:
         return False
-    header = f"# [BLUEPRINT] {module_id} | (auto-injected by S4 reconciler) | §\n"
+    header = (
+        f"# [BLUEPRINT] {module_id} | (auto-injected by S4 reconciler) | §\n"
+        f"# [TTL] permanent\n"
+    )
     with open(abs_path, "w", encoding="utf-8") as f:
         f.write(header + content)
     return True

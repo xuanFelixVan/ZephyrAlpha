@@ -8,9 +8,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.1
+version: 1.3.2
 created: '2026-06-26'
-last_updated: '2026-07-16'
+last_updated: '2026-07-17'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -2290,6 +2290,25 @@ entries:
     - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（YAML→DB 同步）
     - scripts/governance/_shared/constants.py（连接 wrapper）
     - src/zephyr/governance/depgraph_schema.py（连接函数定义）
+
+    白名单扩展规则（2026-07-17 补登，治本）：
+    原裁定未明确白名单扩展流程，导致后续新增 sync_panorama_module.py 和
+    generate_project_path_tree.py 时仅改代码未同步裁定文档，造成文档与代码漂移。
+    现明确扩展三步：
+    (a) 脚本传 read_only=False/superuser=True/allow_edge_delete=True
+    (b) 更新 depgraph_write_path_gate.py _WHITELIST + docstring + 错误信息
+    (c) 更新本裁定文档（追加白名单条目 + last_updated）
+    判定原则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree 等）的
+    脚本必须加入白名单——与 apply_depgraph.py（nodes/edges 写入器）同类。
+
+    白名单扩展历史：
+    - 2026-07-15 初版：5 个文件（apply_depgraph/generate_project_depgraph/
+      sync_yaml_to_depgraph/_shared.constants/depgraph_schema）
+    - 2026-07-16 补登：scripts/governance/sync_panorama_module.py（panorama 同步，
+      含 path-tree 段，遗漏未同步裁定文档）
+    - 2026-07-17 补登：scripts/governance/generate_project_path_tree.py
+      （arch_directory_tree 表写入器，原 _write_tree_to_db 调用未传 read_only=False，
+      导致 path_tree sync failed reconciler 警告——本次治本修复）
   adjudication: |
     6 项裁定：
     (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色
@@ -2299,19 +2318,26 @@ entries:
     (e) 新增 DEPGRAPH-WRITE-PATH gate（priority=97）检测非白名单文件写入参数
     (f) Phase 5 排查 68 个调用点：2 个只读不改、1 个 task_bound 已删除、
         apply_decisiongraph/dataflowgraph 用独立连接函数不受影响
+
+    2026-07-17 补登裁定（治本遗留项）：
+    (g) generate_project_path_tree.py 加入白名单——本质是 arch_directory_tree
+        表的写入器，与 apply_depgraph.py（nodes/edges 写入器）同类
+    (h) _write_tree_to_db 显式传 read_only=False（原 SQLite→PG 迁移遗漏）
+    (i) 明确白名单扩展规则（治本文档漂移，三步流程）
   impact:
   - scripts/governance/migrate_sqlite_to_pg/04_create_roles.sql（新增角色创建DDL）
   - src/zephyr/governance/depgraph_schema.py（连接函数添加 read_only 参数）
   - scripts/governance/_shared/constants.py（wrapper 传参）
   - scripts/governance/generate_project_depgraph.py（read_only=False）
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（superuser=True）
-  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate）
+  - src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py（新增gate + 2026-07-17 白名单扩展）
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册gate）
   - scripts/governance/repair/cleanup_arch_dir_orphans.py（删除，task_bound已完成）
-  fix_phase: 已完成（6 阶段全部完成 + 验证通过）
+  - scripts/governance/generate_project_path_tree.py（2026-07-17 修复：read_only=False）
+  fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本）
   status: resolved
   created: '2026-07-15'
-  last_updated: '2026-07-15'
+  last_updated: '2026-07-17'
 
 # --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
 - issue_id: '#ARCH-BACKFILL-001'
@@ -2393,6 +2419,75 @@ entries:
   related_rules:
   - TRAE-063
   - RULE-DATA-OPS
+  - RULE-SSOT-CLASSIFICATION
+  created: '2026-07-16'
+  last_updated: '2026-07-16'
+
+# --- #ARCH-CH-022: CapabilityContract 机器可执行契约——"注释契约"升级为启动时强制校验（治本 ARCH-CH-018 漂移根源） ---
+- issue_id: '#ARCH-CH-022'
+  title: Provider Capability 行为契约从"注释契约"升级为"机器可执行契约"——scheduler 启动时强制校验 task.capability 与 provider.meta 一致性
+  severity: P1高
+  category: architecture_governance
+  adjudication: |
+    问题背景：
+    #ARCH-CH-018 事故：akshare 10 个支持 symbols=null 的能力（dividend/restricted_shares/daily_valuation/
+    money_flow/stock_news_em/research_report/share_change/stock_indicator/top10_shareholders/
+    top10_circulating_shareholders）在 tasks.yaml 声明 symbols=null，但 provider.meta.capabilities
+    仅为字符串列表（["dividend", ...]），无行为契约标注。Provider 实现内部有 _get_all_a_symbols fallback
+    支持 symbols=None，但该行为仅为"注释契约"（docstring + 代码注释），无机器可执行校验。
+    当 AI 修改 tasks.yaml 时，无法从契约层面感知"该 capability 支持 symbols=null"，凭记忆推断导致漂移。
+
+    核心矛盾（architecture_debt_registry line 365）：
+    "规则:执行 ≈ 10:1。100% AI 开发场景下，建议性规则是反模式——AI 没有自觉，只有被阻断。"
+    病根3（architecture_debt_registry）："CapabilityLookup 是建议性反查而非强制性消费"——与本次 #ARCH-CH-018
+    漂移案例同源。注释契约在 100% AI 开发模式下遵守率约 10%，AI 凭记忆推断契约=幻觉/漂移温床。
+
+    契约三形态演进：
+    L0 注释契约（~10% 遵守率）：docstring + 代码注释，无校验
+    L1 docstring 契约（~30% 遵守率）：结构化 docstring，可被 AST 解析但无强制消费
+    L2 机器可执行契约（~100% 遵守率）：dataclass + 启动时校验 + fail-closed 阻断
+
+    治本方案（Phase 4，裁定 #ARCH-CH-022）：
+    1. CapabilityContract dataclass（provider_base.py）：声明 supports_symbols_null/
+       supports_incremental/supports_full_refresh/requires_date_range 四个行为标志
+    2. DataSourceMeta 扩展：capabilities 字段接受 list[str | CapabilityContract]，
+       __post_init__ 调用 _normalize_capabilities 归一化为 list[CapabilityContract]，
+       字符串自动转为默认契约（向后兼容现有声明）
+    3. capability_validator.py 启动时校验器（3 规则）：
+       - CAP-NOT-FOUND (ERROR 阻断)：task.capability 必须在 provider.meta.capability_contracts 中
+       - CAP-NULL-SYMBOLS (WARN)：task.symbols=null 时 capability 应声明 supports_symbols_null=True
+       - CAP-INCREMENTAL (WARN)：task.incremental=true 时 capability 应声明 supports_incremental=True
+    4. scheduler.start() 插入 _validate_capability_contracts()：有 ERROR 级违规则 raise RuntimeError 阻断启动
+    5. 渐进式收紧：初期 WARN-only 收集数据，逐步收紧为 ERROR（100% AI 模式下只有阻断才能 ~100% 遵守）
+
+    遵循 architecture_debt_registry 裁定1："暂停新增规则文档6个月，新违规一律转化为AST门禁或reconciler"。
+    本次不新增 .md 规则文档，转化为启动时校验（reconciler 式 fail-closed）。
+
+    本次施工修复的 8 条 ERROR 级 CAP-NOT-FOUND 违规（校验器首次运行即发现的历史漂移）：
+    - miniqmt provider.meta 遗漏 kline_15min/kline_30min/kline_60min（_KLINE_CAPABILITIES 路由字典有，
+      meta 声明只有 kline_1min/kline_5min）
+    - miniqmt provider.meta 遗漏 balance_sheet/income_statement/cashflow_statement/financial_indicator/
+      main_business（_FINANCIAL_CAPABILITIES 路由字典有，meta 声明为死声明 financial_statement——
+      路由字典无此 key，无 task 使用，本次删除并补全 5 个细分能力）
+    - 8 个能力均声明 CapabilityContract(supports_symbols_null=True)（_fetch_kline 第569行 +
+      _fetch_financial_statement 第811行均支持 symbols=None fallback 到沪深A股板块）
+
+    校验器修复：task_id 读取 bug——tasks.yaml 用 task_id 字段，校验器原读 task.get("id")，
+    已修复为 task.get("task_id") or task.get("id") or "?"（兼容两种字段名）。
+
+    验证结果（2026-07-16）：119 个 task 校验通过，0 ERROR 阻断，84 条 WARN（CAP-NULL-SYMBOLS，
+    渐进式收紧预期行为，不阻断启动）。
+  impact:
+  - src/zephyr/data/provider_base.py（新增 CapabilityContract dataclass + _normalize_capabilities + DataSourceMeta 扩展）
+  - src/zephyr/data/capability_validator.py（新增启动时契约校验器，3 规则）
+  - src/zephyr/data/scheduler.py（start() 插入 _validate_capability_contracts 调用）
+  - src/zephyr/data/implementations/akshare_provider.py（10 个 symbols=null 能力声明 CapabilityContract）
+  - src/zephyr/data/implementations/miniqmt_provider.py（8 个遗漏能力补全 + 删除死声明 financial_statement）
+  fix_phase: 'Phase 4.1 CapabilityContract schema 定义 + DataSourceMeta 扩展；Phase 4.2 启动时强制校验 + 8 条 ERROR 修复；Phase 4.3-4.5（Provider 自校验/commit gate/契约测试）P2 可延后'
+  status: decided
+  related_rules:
+  - '#ARCH-CH-018'
+  - architecture_debt_registry_裁定1
   - RULE-SSOT-CLASSIFICATION
   created: '2026-07-16'
   last_updated: '2026-07-16'
