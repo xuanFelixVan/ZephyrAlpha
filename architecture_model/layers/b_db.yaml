@@ -19,10 +19,9 @@ modules:
     status: implemented
     priority: P0
     runtime_plane: warm
-    description: SQLite + DuckDB 双引擎元数据持久化——ATM v2.0 �?SQLite/文件系统两阶段提�?+ tx_idempotency 幂等去重 + compensating_transaction 补偿 + 事务超时控制
+    description: SQLite 元数据持久化——ATM v2.0 SQLite/文件系统两阶段提交 + tx_idempotency 幂等去重 + compensating_transaction 补偿 + 事务超时控制（ARCH-OLAP-RETIRE 2026-07-16：DuckDB OLAP 层已退役，OLAP 分析迁移至 ClickHouse Hyper-V VM）
     files:
       - atomic_transaction_manager.py
-      - olap_engine.py
       - sqlite_schema.py
       - task_repo.py
       - database_manager.py
@@ -35,9 +34,6 @@ modules:
       - contract_id: CT-DB-002
         role: producer
         description: ATM 事务契约——AtomicTransactionManager(BEGIN IMMEDIATE/tx_timeout 30s/tx_idempotency/compensating_transaction)
-      - contract_id: CT-DB-003
-        role: producer
-        description: OLAP 查询契约——OLAPEngine(task_progress_trend/compliance_rate_trend/knowledge_activation_trend/archive_events/query_unified_events)
       - contract_id: CT-DB-004
         role: producer
         description: 运维管理契约——DatabaseManager(health_check/backup/maintenance/stats)
@@ -47,7 +43,6 @@ modules:
     test_coverage:
       tested:
         - atomic_transaction_manager.py (tests/test_atomic_transaction_manager.py)
-        - olap_engine.py (tests/test_olap_engine.py)
         - sqlite_schema.py (tests/test_sqlite_schema.py)
         - task_repo.py (tests/test_task_repo.py)
         - database_manager.py (tests/test_database_manager.py)
@@ -55,6 +50,7 @@ modules:
         - query_metrics.py (tests/test_query_metrics.py)
       untested_p1: []
       untested_p2: []
+    history: "ARCH-OLAP-RETIRE(2026-07-16): CT-DB-003/OLAPEngine 契约退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代，olap_engine.py 业务侧零调用，已删除"
 
   - id: db-depgraph-pg
     module_id: MOD-DB_DEPGRAPH_PG
