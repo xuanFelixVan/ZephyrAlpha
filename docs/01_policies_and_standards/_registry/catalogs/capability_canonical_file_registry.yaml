@@ -4285,6 +4285,12 @@ creation_tokens:
     created_by: "session-sess-9032-20260706163221"
     capability: "interface_contract_registry"
 
+  # --- tick_data 真重复检查工具（RULE-DATA-OPS / TRAE-063 配套，2026-07-16 数据误删事故治本）---
+  - file: "scripts/governance/data_quality/check_tick_duplication.py"
+    token: "auto-check-tick-duplication-20260716"
+    created_by: "session-sess-7800-20260716235624"
+    capability: "tick_duplication_checker"
+
 # ============================================================================
 # 维护日志
 # ============================================================================

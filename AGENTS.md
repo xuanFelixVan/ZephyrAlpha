@@ -80,6 +80,19 @@
 > **常见错误**：❌ 误以为"YAML 是真源"适用于所有数据（实际只适用规则数据，架构数据真源在 DB）。
 > **判定流程**：拿到数据 → 先问"规则数据还是架构数据？" → 规则数据改 YAML→sync 到 DB；架构数据用 apply_*.py 直接写 DB。边界模糊查 §11.0.2。
 
+## RULE-DATA-OPS：第六件事（数据库破坏性操作纪律，2026-07-16 事故治本，#ARCH-CH-020）
+
+> **破坏性数据库操作（DELETE/REPLACE PARTITION/TRUNCATE/ALTER DELETE/OPTIMIZE FINAL/INSERT GROUP BY+REPLACE）执行前 MUST 完成三步验证**——必要性 + 真实性 + 可逆性。规则真源：[`trae_063_data_ops_discipline.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml)。
+>
+> **三步验证铁律**：
+> 1. **必要性**——为什么需要此操作？根因是什么？能否用非破坏性方式（INSERT 补偿、UPDATE 标记）替代？
+> 2. **真实性**——MUST 查看具体数据内容，禁止仅凭聚合数字判定。"重复"验证 MUST 按全字段 `GROUP BY HAVING count() > 1`。禁止用 `count() - uniqExact(排序键)` 算"重复"——排序键是 ReplacingMergeTree 去重键，不含全部业务字段，同排序键不同维度的有效记录会被误判。
+> 3. **可逆性**——操作前 MUST 有备份/快照或可从数据源恢复。无备份 = 禁止执行。
+>
+> **标准化工具**：[`check_tick_duplication.py`](file:///d:/ZephyrAlpha/scripts/governance/data_quality/check_tick_duplication.py) `--month YYYYMM`（全字段 GROUP BY 查真重复）。
+>
+> **事故背景**（2026-07-16）：AI 用 `count() - uniqExact(排序键)` 算 tick_data "重复数"，把同时间戳不同价位的有效记录误判为"重复"，执行 INSERT GROUP BY + REPLACE PARTITION 删除 21 个月有效数据。根因：tick_data ORDER BY 不含 price（#ARCH-CH-020）。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
