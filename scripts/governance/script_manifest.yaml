@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-16T17:37:43Z
+# 自动生成于 2026-07-16T17:45:09Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-16T17:37:43Z'
+generated_at: '2026-07-16T17:45:09Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 342
@@ -104,7 +104,7 @@ scripts:
   warn_only: false
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
-- name: _tasks/tmp_update_tasks.py
+- name: _tasks/tmp_audit_all_stashes.py
   owner: governance:_tasks
   dimensions: []
   priority: P2
