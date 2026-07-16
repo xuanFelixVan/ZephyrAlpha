@@ -140,12 +140,16 @@ def _module_to_path(module_path: str) -> Path | None:
 def _extract_source_symbols(file_path: Path) -> set[str] | None:
     """从源码文件 AST 提取所有顶层符号集合。
 
-    提取所有顶层定义的符号（Python 允许显式 import 任何顶层符号，
+    提取所有顶层可访问的符号（Python 允许显式 import 任何顶层符号，
     不受 __all__ 限制）：
     - class 名称
     - def/async def 名称
     - 顶层赋值目标名称（常量/变量）
     - 顶层带注解赋值目标名称
+    - ImportFrom 引入的符号（``from x import y [as z]``）——re-export 模式下
+      符号通过 import 引入而非本地定义，但仍是顶层可访问符号，应被 gate 识别
+      （P7b AI-15 审计：resource_optimization.py re-export CacheStats 等符号）
+    - Import 引入的符号（``import x [as z]``）——取 asname 或首段模块名
 
     Args:
         file_path: 源码 .py 文件路径。
@@ -174,6 +178,14 @@ def _extract_source_symbols(file_path: Path) -> set[str] | None:
         elif isinstance(node, ast.AnnAssign):
             if isinstance(node.target, ast.Name):
                 symbols.add(node.target.id)
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                if alias.name == "*":
+                    continue
+                symbols.add(alias.asname or alias.name)
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                symbols.add(alias.asname or alias.name.split(".")[0])
     return symbols
 
 
