@@ -1,5 +1,5 @@
 %% D_ML_TRAIN 域全景依赖图
-%% 生成时间: 2026-07-17 02:55:27
+%% 生成时间: 2026-07-17 03:02:23
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 6, 依赖边数: 16
 
@@ -29,7 +29,7 @@ graph TD
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_implementa___default_inference_engine_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|config_depends| src_zephyr_ml_train_trainer_base_py
+    D_INTELLIGENCE[D_INTELLIGENCE] -->|config_depends| src_zephyr_ml_train_inference_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_ML_TRAIN -> D_INTELLIGENCE (1 条)

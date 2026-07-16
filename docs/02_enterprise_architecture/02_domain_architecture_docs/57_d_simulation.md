@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 仿真（D_SIMULATION）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:55:25
+> 最后更新: 2026-07-17 03:02:18
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -90,8 +90,8 @@ graph TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    D_SHARED -.->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_simulation_init_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_simulation_pipeline_base_py
@@ -101,8 +101,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
     class src_zephyr_simulation,src_zephyr_simulation_init_py,src_zephyr_simulation_extensions_init_py,src_zephyr_simulation_api_init_py,src_zephyr_simulation_core_init_py,src_zephyr_simulation_implementations_init_py,src_zephyr_simulation_infrastructure_init_py,src_zephyr_simulation_models_init_py,src_zephyr_simulation_services_init_py design
-    class D_INFRASTRUCTURE external_prod
-    class D_SHARED,D_GOVERNANCE external_design
+    class D_INFRASTRUCTURE,D_SHARED external_prod
+    class D_GOVERNANCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -118,16 +118,15 @@ graph TD
     src_zephyr_simulation_implementations_default_experiment_pipeline_py -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_simulation_pipeline_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    D_SHARED -.->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
+    D_SHARED["(生产态 / production) D_SHARED"]
+    D_SHARED -->|导入依赖 / import_depends| src_zephyr_simulation_pipeline_base_py
     D_SHARED -.->|测试依赖 / test_depends| src_zephyr_simulation_pipeline_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_simulation_implementations_default_experiment_pipeline_py,src_zephyr_simulation_pipeline_base_py production
-    class D_INFRASTRUCTURE external_prod
-    class D_SHARED external_design
+    class D_INFRASTRUCTURE,D_SHARED external_prod
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）

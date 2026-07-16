@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 跨资产（D_CROSS_ASSET）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:38:39
+> 最后更新: 2026-07-17 03:02:22
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -31,9 +31,9 @@ ttl: permanent
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
 | 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 1 | Design Modules | 1 |
-| 原型态模块 | 6 | Prototype Modules | 6 |
-| 生产态模块 | 1 | Production Modules | 1 |
-| 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
+| 原型态模块 | 7 | Prototype Modules | 7 |
+| 生产态模块 | 0 | Production Modules | 0 |
+| 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
 | 描述 | 跨资产策略与配置 | Description | 跨资产策略与配置 |
 
 ## 模块分层清单 / Module Layered List
@@ -45,7 +45,7 @@ ttl: permanent
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
 | 1 | src/zephyr/cross_asset/ | 跨资产域 | 设计态 / design |  |
-| 2 | src/zephyr/cross_asset/__init__.py | __init__.py | 生产态 / production |  |
+| 2 | src/zephyr/cross_asset/__init__.py | __init__.py | 原型态 / prototype |  |
 | 3 | src/zephyr/cross_asset/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
 | 4 | src/zephyr/cross_asset/api/__init__.py | __init__.py | 原型态 / prototype |  |
 | 5 | src/zephyr/cross_asset/core/__init__.py | __init__.py | 原型态 / prototype |  |
@@ -66,13 +66,13 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 8 个模块（生产态 1 + 设计态 1 + 原型态 6），标签标注成熟度。
+> 展示全部 8 个模块（生产态 0 + 设计态 1 + 原型态 7），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
         src_zephyr_cross_asset["(设计态 / design) 跨资产域"]
-        src_zephyr_cross_asset_init_py["(生产态 / production) __init__.py"]
+        src_zephyr_cross_asset_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_core_init_py["(原型态 / prototype) __init__.py"]
@@ -84,25 +84,14 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_cross_asset_init_py production
-    class src_zephyr_cross_asset,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py design
+    class src_zephyr_cross_asset,src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
 
-> 仅展示已上线运行的模块（共 1 个，0 条域内依赖）。
+> 仅展示已上线运行的模块（共 0 个，0 条域内依赖）。
 
-```mermaid
-graph TD
-    subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
-        src_zephyr_cross_asset_init_py["(生产态 / production) __init__.py"]
-    end
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_cross_asset_init_py production
-```
+> （无运营态模块 / No production modules）
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
 
@@ -122,11 +111,12 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 6 个，0 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 7 个，0 条域内依赖）。
 
 ```mermaid
 graph TD
     subgraph D_CROSS_ASSET["D_CROSS_ASSET 跨资产"]
+        src_zephyr_cross_asset_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_api_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_cross_asset_core_init_py["(原型态 / prototype) __init__.py"]
@@ -138,7 +128,7 @@ graph TD
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py design
+    class src_zephyr_cross_asset_init_py,src_zephyr_cross_asset_extensions_init_py,src_zephyr_cross_asset_api_init_py,src_zephyr_cross_asset_core_init_py,src_zephyr_cross_asset_infrastructure_init_py,src_zephyr_cross_asset_models_init_py,src_zephyr_cross_asset_services_init_py design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

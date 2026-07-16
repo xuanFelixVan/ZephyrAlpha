@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号遗留设计态（D_SIGLEGACY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:55:25
+> 最后更新: 2026-07-17 03:02:18
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,8 +28,8 @@ ttl: permanent
 | 层级 |  | Layer |  |
 | 模块数 | 15 | Module Count | 15 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 1 | Cross-domain Incoming | 1 |
-| 跨域出边 | 15 | Cross-domain Outgoing | 15 |
+| 跨域入边 | 4 | Cross-domain Incoming | 4 |
+| 跨域出边 | 5 | Cross-domain Outgoing | 5 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 15 | Prototype Modules | 15 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -44,21 +44,21 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_fundamental/__init__.py | D_SIGNAL Signal Domain | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 1 | src/zephyr/signal_fundamental/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 | 2 | src/zephyr/signal_fundamental/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
 | 3 | src/zephyr/signal_fundamental/api/__init__.py | __init__.py | 原型态 / prototype |  |
-| 4 | src/zephyr/signal_fundamental/capital/__init__.py | Signal Capital Allocation sub-package | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 5 | src/zephyr/signal_fundamental/combiner/__init__.py | D_SIGNAL Signal Combiner | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 6 | src/zephyr/signal_fundamental/combiner/impl/__init__.py | D_SIGNAL — Signal Combiner Concrete Implementa... | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 4 | src/zephyr/signal_fundamental/capital/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 5 | src/zephyr/signal_fundamental/combiner/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 6 | src/zephyr/signal_fundamental/combiner/impl/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 | 7 | src/zephyr/signal_fundamental/core/__init__.py | __init__.py | 原型态 / prototype |  |
-| 8 | src/zephyr/signal_fundamental/gen/__init__.py | Signal Generation sub-package | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 9 | src/zephyr/signal_fundamental/gen/implementations/__init_... | D_SIGNAL — Signal Generation Concrete Implemen... | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 8 | src/zephyr/signal_fundamental/gen/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 9 | src/zephyr/signal_fundamental/gen/implementations/__init_... | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 | 10 | src/zephyr/signal_fundamental/infrastructure/__init__.py | __init__.py | 原型态 / prototype |  |
 | 11 | src/zephyr/signal_fundamental/models/__init__.py | __init__.py | 原型态 / prototype |  |
 | 12 | src/zephyr/signal_fundamental/services/__init__.py | __init__.py | 原型态 / prototype |  |
-| 13 | src/zephyr/signal_fundamental/strategy/__init__.py | Signal Strategy sub-package | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 14 | src/zephyr/signal_fundamental/strategy/implementations/__... | Signal Strategy Concrete Implementations | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
-| 15 | src/zephyr/signal_fundamental/synth/__init__.py | Signal Synthesis sub-package | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 13 | src/zephyr/signal_fundamental/strategy/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 14 | src/zephyr/signal_fundamental/strategy/implementations/__... | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
+| 15 | src/zephyr/signal_fundamental/synth/__init__.py | __init__.py | 原型态 / prototype | [MOD-L03-001](../../03_modules/_domain_signal/blueprint.md) |
 
 ## 域内依赖图 / Internal Dependency Diagram
 
@@ -78,49 +78,41 @@ ttl: permanent
 ```mermaid
 graph TD
     subgraph D_SIGLEGACY["D_SIGLEGACY 信号遗留设计态"]
-        src_zephyr_signal_fundamental_init_py["(原型态 / prototype) D_SIGNAL Signal Domain<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_capital_init_py["(原型态 / prototype) Signal Capital Allocation sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_combiner_init_py["(原型态 / prototype) D_SIGNAL Signal Combiner<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_combiner_impl_init_py["(原型态 / prototype) D_SIGNAL — Signal Combiner Concrete Implementa...<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_capital_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_combiner_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_combiner_impl_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_gen_init_py["(原型态 / prototype) Signal Generation sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_gen_implementations_init_py["(原型态 / prototype) D_SIGNAL — Signal Generation Concrete Implemen...<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_gen_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_gen_implementations_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_services_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_strategy_init_py["(原型态 / prototype) Signal Strategy sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) Signal Strategy Concrete Implementations<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) Signal Synthesis sub-package<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_strategy_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_TRADING
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
-    src_zephyr_signal_fundamental_synth_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_gen_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_strategy_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_impl_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_impl_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_gen_implementations_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_synth_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_FACTOR["(原型态 / prototype) D_FACTOR"]
     src_zephyr_signal_fundamental_init_py -.->|contract / contract| D_FACTOR
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_capital_init_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_signal_fundamental_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_capital_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_strategy_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_extensions_init_py,src_zephyr_signal_fundamental_api_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_core_init_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_infrastructure_init_py,src_zephyr_signal_fundamental_models_init_py,src_zephyr_signal_fundamental_services_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
     class D_FUNDAMENTAL_SIGNAL external_prod
-    class D_TRADING,D_FACTOR,D_GOVERNANCE external_design
+    class D_FACTOR,D_GOVERNANCE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -142,49 +134,41 @@ graph TD
 ```mermaid
 graph TD
     subgraph D_SIGLEGACY["D_SIGLEGACY 信号遗留设计态"]
-        src_zephyr_signal_fundamental_init_py["(原型态 / prototype) D_SIGNAL Signal Domain<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_extensions_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_api_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_capital_init_py["(原型态 / prototype) Signal Capital Allocation sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_combiner_init_py["(原型态 / prototype) D_SIGNAL Signal Combiner<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_combiner_impl_init_py["(原型态 / prototype) D_SIGNAL — Signal Combiner Concrete Implementa...<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_capital_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_combiner_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_combiner_impl_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_core_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_gen_init_py["(原型态 / prototype) Signal Generation sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_gen_implementations_init_py["(原型态 / prototype) D_SIGNAL — Signal Generation Concrete Implemen...<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_gen_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_gen_implementations_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_infrastructure_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_signal_fundamental_services_init_py["(原型态 / prototype) __init__.py"]
-        src_zephyr_signal_fundamental_strategy_init_py["(原型态 / prototype) Signal Strategy sub-package<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) Signal Strategy Concrete Implementations<br/>文件: __init__.py"]
-        src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) Signal Synthesis sub-package<br/>文件: __init__.py"]
+        src_zephyr_signal_fundamental_strategy_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) __init__.py"]
+        src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) __init__.py"]
     end
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_TRADING
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
-    src_zephyr_signal_fundamental_synth_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_gen_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_strategy_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_impl_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_impl_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_gen_implementations_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
+    src_zephyr_signal_fundamental_synth_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    src_zephyr_signal_fundamental_capital_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_FACTOR["(原型态 / prototype) D_FACTOR"]
     src_zephyr_signal_fundamental_init_py -.->|contract / contract| D_FACTOR
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_capital_init_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_signal_fundamental_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_capital_init_py
+    D_FUNDAMENTAL_SIGNAL -.->|config_depends / config_depends| src_zephyr_signal_fundamental_strategy_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_init_py,src_zephyr_signal_fundamental_extensions_init_py,src_zephyr_signal_fundamental_api_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_core_init_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_infrastructure_init_py,src_zephyr_signal_fundamental_models_init_py,src_zephyr_signal_fundamental_services_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
     class D_FUNDAMENTAL_SIGNAL external_prod
-    class D_TRADING,D_FACTOR,D_GOVERNANCE external_design
+    class D_FACTOR,D_GOVERNANCE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -193,42 +177,34 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_SIGNAL Signal Domain (__init__.py) | → | D_FACTOR 因子: D_FACTOR — Momentum Factor (momentum_factor.py) | contract / contract |
-| 2 | Signal Capital Allocation sub-package (__init__... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | 导入依赖 / import_depends |
-| 3 | Signal Capital Allocation sub-package (__init__... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Capital Allocator（兼容 re-export s... | 导入依赖 / import_depends |
-| 4 | Signal Capital Allocation sub-package (__init__... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator（兼容 re-... | 导入依赖 / import_depends |
-| 5 | D_SIGNAL Signal Combiner (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | 导入依赖 / import_depends |
-| 6 | D_SIGNAL Signal Combiner (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Capital Allocator（兼容导出） (capi... | 导入依赖 / import_depends |
-| 7 | D_SIGNAL Signal Combiner (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (signal_synthesi... | 导入依赖 / import_depends |
-| 8 | D_SIGNAL — Signal Combiner Concrete Implementa... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (default_... | 导入依赖 / import_depends |
-| 9 | D_SIGNAL — Signal Combiner Concrete Implementa... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (default_... | 导入依赖 / import_depends |
-| 10 | Signal Generation sub-package (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Generation Layer (aggregator... | config_depends / config_depends |
-| 11 | D_SIGNAL — Signal Generation Concrete Implemen... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Signal Aggregator (default_... | 导入依赖 / import_depends |
-| 12 | Signal Strategy sub-package (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Capital Allocator（兼容导出） (capi... | 导入依赖 / import_depends |
-| 13 | Signal Strategy Concrete Implementations (__ini... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Default Capital Allocator (default_... | 导入依赖 / import_depends |
-| 14 | Signal Synthesis sub-package (__init__.py) | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL — Signal Synthesizer (signal_synthesi... | 导入依赖 / import_depends |
-| 15 | D_SIGNAL Signal Combiner (__init__.py) | → | D_TRADING 交易运营: trading-contracts.market — market data and sig... | 导入依赖 / import_depends |
+| 1 | __init__.py | → | D_FACTOR 因子: D_FACTOR — Momentum Factor (momentum_factor.py) | contract / contract |
+| 2 | __init__.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: aggregator_base.py | config_depends / config_depends |
+| 3 | __init__.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: default_signal_aggregator.py | config_depends / config_depends |
+| 4 | __init__.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: default_capital_allocator.py | config_depends / config_depends |
+| 5 | __init__.py | → | D_FUNDAMENTAL_SIGNAL 基本面信号: signal_synthesizer.py | config_depends / config_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | D_SIGNAL Signal Domain (__init__.py) | 导入依赖 / import_depends |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: capital_allocator.py | → | __init__.py | config_depends / config_depends |
+| 2 | D_FUNDAMENTAL_SIGNAL 基本面信号: default_capital_allocator.py | → | __init__.py | config_depends / config_depends |
+| 3 | D_FUNDAMENTAL_SIGNAL 基本面信号: capital_allocator.py | → | __init__.py | config_depends / config_depends |
+| 4 | D_GOVERNANCE 生命周期管理: C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | __init__.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 15 条 + 入边 1 条 = 16 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 3 个外部域直接连接（出边 5 条 + 入边 4 条 = 9 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_SIGLEGACY["D_SIGLEGACY<br/>信号遗留设计态"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_FACTOR["D_FACTOR<br/>因子"]
-    D_TRADING["D_TRADING<br/>交易运营"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_SIGLEGACY -->|13条 config_depends / config_depends, 导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
+    D_SIGLEGACY -->|4条 config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     D_SIGLEGACY -->|1条 contract / contract| D_FACTOR
-    D_SIGLEGACY -->|1条 导入依赖 / import_depends| D_TRADING
+    D_FUNDAMENTAL_SIGNAL -->|3条 config_depends / config_depends| D_SIGLEGACY
     D_GOVERNANCE -->|1条 导入依赖 / import_depends| D_SIGLEGACY
 ```
 

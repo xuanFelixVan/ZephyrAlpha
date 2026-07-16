@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 A股特色信号（D_ASHARE_SIGNAL）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:38:33
+> 最后更新: 2026-07-17 03:02:14
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -44,7 +44,7 @@ ttl: permanent
 
 | # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
 |:--:|---------|---------|:---:|:---:|
-| 1 | src/zephyr/signal_ashare/__init__.py | __init__.py | 原型态 / prototype |  |
+| 1 | src/zephyr/signal_ashare/__init__.py | __init__.py | 原型态 / prototype | [MOD-INF-038](../../03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md) |
 | 2 | src/zephyr/signal_ashare/_extensions/__init__.py | __init__.py | 原型态 / prototype |  |
 | 3 | src/zephyr/signal_ashare/api/__init__.py | __init__.py | 原型态 / prototype |  |
 | 4 | src/zephyr/signal_ashare/core/__init__.py | __init__.py | 原型态 / prototype |  |

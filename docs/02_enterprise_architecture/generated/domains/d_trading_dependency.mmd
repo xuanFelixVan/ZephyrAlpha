@@ -1,7 +1,7 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-17 02:55:28
+%% 生成时间: 2026-07-17 03:02:24
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 103, 依赖边数: 227
+%% 模块数: 108, 依赖边数: 220
 
 graph TD
 
@@ -37,8 +37,13 @@ graph TD
         src_zephyr_trading_trading_contracts_execution_position_py["...ading_contracts/execution/position.py [production]"]
         src_zephyr_trading_trading_contracts_factories_py["...rading/trading_contracts/factories.py [prototype]"]
         src_zephyr_trading_trading_contracts_market___init___py[".../trading_contracts/market/__init__.py [prototype]"]
+        src_zephyr_trading_trading_con___et_factor_monitor_report_py["...racts/market/factor_monitor_report.py [prototype]"]
+        src_zephyr_trading_trading_contracts_market_factor_signal_py["...ing_contracts/market/factor_signal.py [production]"]
         src_zephyr_trading_trading_contracts_market_instrument_py["...rading_contracts/market/instrument.py [prototype]"]
+        src_zephyr_trading_trading_con___rket_macro_factor_signal_py["...ntracts/market/macro_factor_signal.py [prototype]"]
+        src_zephyr_trading_trading_contracts_market_market_data_py["...ading_contracts/market/market_data.py [production]"]
         src_zephyr_trading_trading_con___gnal_degradation_warning_py[".../market/signal_degradation_warning.py [prototype]"]
+        src_zephyr_trading_trading_con___arket_synthesized_signal_py["...ontracts/market/synthesized_signal.py [production]"]
         src_zephyr_trading_trading_con___folio_contracts___init___py["...racts/portfolio/contracts/__init__.py [prototype]"]
         src_zephyr_trading_trading_con___ortfolio_contracts_money_py["...ontracts/portfolio/contracts/money.py [production]"]
         src_zephyr_trading_trading_con___mance_attribution_report_py["...cts/performance_attribution_report.py [prototype]"]
@@ -102,12 +107,7 @@ graph TD
         tests_trading_test_staging_area_py["tests/trading/test_staging_area.py [prototype]"]
         tests_trading_test_startup_sequencer_py["tests/trading/test_startup_sequencer.py [prototype]"]
         tests_trading_test_status_dashboard_py["tests/trading/test_status_dashboard.py [prototype]"]
-        tests_trading_test_stop_gate_py["tests/trading/test_stop_gate.py [prototype]"]
-        tests_trading_test_system_transfer_py["tests/trading/test_system_transfer.py [prototype]"]
-        tests_trading_test_teardown_manager_py["tests/trading/test_teardown_manager.py [prototype]"]
-        tests_trading_test_trading_kill_switch_py["...s/trading/test_trading_kill_switch.py [prototype]"]
-        tests_trading_test_trading_session_lifecycle_py["...ing/test_trading_session_lifecycle.py [prototype]"]
-        %% ... 还有 3 个模块未显示
+        %% ... 还有 8 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -117,17 +117,11 @@ graph TD
     src_zephyr_trading_verdict_engine_py -->|import_depends| src_zephyr_trading_protection_index_py
     src_zephyr_trading_runtime___init___py -->|import_depends| src_zephyr_trading_runtime_async_runtime_py
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
-    src_zephyr_trading_trading_con___ortfolio_contracts_money_py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading___init___py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_factories_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
@@ -137,8 +131,13 @@ graph TD
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___et_factor_monitor_report_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___ortfolio_contracts_money_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___strategy_lifecycle_event_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
@@ -146,10 +145,23 @@ graph TD
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
+    src_zephyr_trading_trading_contracts_execution___init___py -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
+    src_zephyr_trading_trading_con___ortfolio_contracts_money_py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
     src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___ortfolio_contracts_money_py
     src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| src_zephyr_trading_trading_con___strategy_lifecycle_event_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___et_factor_monitor_report_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
     src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___rket_macro_factor_signal_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_contracts_market_market_data_py
     src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
+    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con____risk_dashboard_snapshot_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
@@ -159,13 +171,15 @@ graph TD
     tests_trading_test_admission_controller_py -->|test_depends| src_zephyr_trading_verdict_engine_py
     tests_trading_test_boot_cron_jobs_py -->|test_depends| src_zephyr_trading___init___py
     tests_trading_test_conductor_py -->|test_depends| src_zephyr_trading_conductor_py
+    tests_trading_test_ide_health_daemon_py -->|test_depends| src_zephyr_trading_ide_health_daemon_py
     tests_trading_test_gpu_consensus_scheduler_py -->|test_depends| src_zephyr_trading_gpu_consensus_scheduler_py
     tests_trading_test_gpu_consensus_scheduler_py -->|test_depends| src_zephyr_trading_verdict_engine_py
-    tests_trading_test_ide_health_daemon_py -->|test_depends| src_zephyr_trading_ide_health_daemon_py
     tests_trading_test_protection_index_py -->|test_depends| src_zephyr_trading_protection_index_py
     tests_trading_test_protection_index_py -->|test_depends| src_zephyr_trading_verdict_engine_py
     tests_trading_test_trading_kill_switch_py -->|test_depends| src_zephyr_trading_trading_con___risk_trading_kill_switch_py
     tests_trading_pipeline_test_l03_signal_generation_py -->|test_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
+    tests_trading_pipeline_test_l03_signal_generation_py -->|test_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    tests_trading_pipeline_test_l03_signal_generation_py -->|test_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
     tests_trading_pipeline_test_l07_post_trade_analytics_py -->|test_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
     tests_trading_pipeline_test_l07_post_trade_analytics_py -->|test_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     tests_trading_pipeline_test_l07_post_trade_analytics_py -->|test_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -189,17 +203,10 @@ graph TD
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     %% D_FRONTEND -> D_TRADING (1 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
-    %% D_FUNDAMENTAL_SIGNAL -> D_TRADING (10 条)
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
+    %% D_FUNDAMENTAL_SIGNAL -> D_TRADING (3 条)
+    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market_factor_signal_py
+    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
-    D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
     %% D_GOVERNANCE -> D_TRADING (3 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_trading_ide_health_daemon_py
@@ -228,11 +235,9 @@ graph TD
     D_RISK[D_RISK] -->|import_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
     D_RISK[D_RISK] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     D_RISK[D_RISK] -->|test_depends| src_zephyr_trading_trading_con___sk_limit_violation_error_py
-    %% D_SIGLEGACY -> D_TRADING (1 条)
-    D_SIGLEGACY[D_SIGLEGACY] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
     %% D_SIGQC -> D_TRADING (2 条)
     D_SIGQC[D_SIGQC] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
-    D_SIGQC[D_SIGQC] -->|import_depends| src_zephyr_trading_trading_contracts_market___init___py
+    D_SIGQC[D_SIGQC] -->|import_depends| src_zephyr_trading_trading_con___arket_synthesized_signal_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_TRADING -> D_EX_CORE (2 条)
@@ -251,62 +256,49 @@ graph TD
     src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_trading_trading_contracts_risk___init___py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_trading_test_trading_session_lifecycle_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_TRADING -> D_INFRASTRUCTURE (24 条)
+    %% D_TRADING -> D_INFRASTRUCTURE (11 条)
     src_zephyr_trading_trading_contracts_broker_interface_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_contracts_broker_interface_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_contracts_broker_interface_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_factories_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_trading_trading_contracts_execution_order_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con___mance_attribution_report_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con___strategy_lifecycle_event_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con___folio_contracts___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_contracts_market___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_con___sk_limit_violation_error_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con____risk_validator_protocol_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    tests_trading_pipeline_test_l03_signal_generation_py -->|test_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    tests_trading_pipeline_test_l03_signal_generation_py -->|test_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_trading_trading_con___sk_limit_violation_error_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     tests_trading_pipeline_test_l07_post_trade_analytics_py -->|test_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_TRADING -> D_INFRA_RUNTIME (36 条)
     src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_backpressure_types_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_backpressure_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_backpressure_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_circuit_breaker_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_circuit_breaker_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_boot_hooks_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_circuit_breaker_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_circuit_breaker_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_dead_letter_queue_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_dead_letter_queue_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_dream_cycle_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_finalizer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_integration_registry_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_module_onboarding_scanner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_module_onboarding_scanner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_module_onboarding_scanner_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_night_shift_queue_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_lifecycle_manager_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_routing_plugins_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_routing_plugins_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    tests_trading_test_routing_plugins_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_runtime_config_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_trading_test_staging_area_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_status_dashboard_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_status_dashboard_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_trading_test_routing_plugins_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_TRADING -> D_INTEGRATION (2 条)
     src_zephyr_trading_verdict_engine_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     tests_trading_test_lifecycle_manager_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
@@ -318,13 +310,13 @@ graph TD
     tests_trading_test_benchmark_runner_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_blind_spot_closure_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_bulkhead_manager_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
-    tests_trading_test_degrade_cascade_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_construction_guide_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
+    tests_trading_test_degrade_cascade_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_disk_guard_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_feature_flag_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
-    tests_trading_test_housekeeping_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_fault_types_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_finding_bridge_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
+    tests_trading_test_housekeeping_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_incident_postmortem_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_lean_scanner_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
     tests_trading_test_network_partition_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
@@ -365,6 +357,6 @@ graph TD
     tests_trading_test_trading_session_lifecycle_py -->|test_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 63 条
-    %% 跨域入边: 42 条
-    %% 跨域出边: 122 条
+    %% 域内依赖: 77 条
+    %% 跨域入边: 34 条
+    %% 跨域出边: 109 条

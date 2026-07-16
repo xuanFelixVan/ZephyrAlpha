@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 集成网关（D_INTEGRATION_GATEWAY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:55:16
+> 最后更新: 2026-07-17 03:01:59
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -69,7 +69,8 @@ graph TD
         src_zephyr_integration_mcp_tool_contracts_yaml["(生产态 / production) tool_contracts.yaml"]
     end
     src_zephyr_integration_mcp_tool_contracts_yaml -.->|config_depends / config_depends| src_zephyr_integration_mcp_init_py
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
@@ -84,7 +85,6 @@ graph TD
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -92,8 +92,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_integration_mcp_tool_contracts_yaml production
     class src_zephyr_integration_mcp_init_py design
-    class D_GOVERNANCE external_prod
-    class D_INTEGRATION external_design
+    class D_INTEGRATION,D_GOVERNANCE external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -127,7 +126,8 @@ graph TD
     subgraph D_INTEGRATION_GATEWAY["D_INTEGRATION_GATEWAY 集成网关"]
         src_zephyr_integration_mcp_init_py["(原型态 / prototype) ZephyrAlpha MCP (Model Context Protocol) 子包。<br/>文件: __init__.py"]
     end
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
+    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
@@ -142,15 +142,13 @@ graph TD
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_integration_mcp_init_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_integration_mcp_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_integration_mcp_init_py design
-    class D_GOVERNANCE external_prod
-    class D_INTEGRATION external_design
+    class D_INTEGRATION,D_GOVERNANCE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

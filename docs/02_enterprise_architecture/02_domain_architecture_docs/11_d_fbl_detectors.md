@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 feedback_detectors（D_FBL_DETECTORS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 02:38:41
+> 最后更新: 2026-07-17 03:02:24
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -28,7 +28,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 65 | Module Count | 65 |
 | 域内依赖 | 5 | Internal Dependencies | 5 |
-| 跨域入边 | 70 | Cross-domain Incoming | 70 |
+| 跨域入边 | 71 | Cross-domain Incoming | 71 |
 | 跨域出边 | 3 | Cross-domain Outgoing | 3 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 6 | Prototype Modules | 6 |
@@ -163,12 +163,12 @@ graph TD
     end
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_anomaly_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_correlation_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
@@ -179,20 +179,19 @@ graph TD
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py,src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py,src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py,src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py,src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py,src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py,src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py,src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py,src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py,src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py,src_zephyr_feedback_loop_detectors_anomaly_temporal_pattern_py,src_zephyr_feedback_loop_detectors_correlation_action_efficacy_decay_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_side_effect_cumulative_detector_py,src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py,src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py,src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py,src_zephyr_feedback_loop_detectors_correlation_decision_provenance_py,src_zephyr_feedback_loop_detectors_correlation_dependency_freshness_monitor_py,src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py,src_zephyr_feedback_loop_detectors_correlation_external_health_py,src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py,src_zephyr_feedback_loop_detectors_correlation_fle_performance_regression_detector_py,src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py,src_zephyr_feedback_loop_detectors_correlation_rumor_noise_filter_py,src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py,src_zephyr_feedback_loop_detectors_correlation_traffic_replay_validator_py production
     class src_zephyr_feedback_loop_detectors_init_py,src_zephyr_feedback_loop_detectors_anomaly_init_py,src_zephyr_feedback_loop_detectors_correlation_init_py design
-    class D_FEEDBACK_LOOP external_prod
-    class D_FRONTEND,D_AUTONOMY_CORE,D_GOV_AUDIT external_design
+    class D_FEEDBACK_LOOP,D_FRONTEND,D_AUTONOMY_CORE,D_GOV_AUDIT external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -233,32 +232,32 @@ graph TD
     end
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_concept_drift_py
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_config_drift_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py
     D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
     D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_cascade_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
     D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_detectors_drift_concept_drift_py,src_zephyr_feedback_loop_detectors_drift_config_drift_py,src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py,src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py,src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py,src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py,src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py,src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py,src_zephyr_feedback_loop_detectors_guard_guard_cascade_detector_py,src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py,src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py,src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py,src_zephyr_feedback_loop_detectors_guard_recursive_diagnosis_trust_evaluator_py,src_zephyr_feedback_loop_detectors_guard_self_audit_py,src_zephyr_feedback_loop_detectors_guard_self_diagnosis_data_leak_detector_py,src_zephyr_feedback_loop_detectors_guard_self_ha_py,src_zephyr_feedback_loop_detectors_guard_temporal_coherence_of_self_model_py,src_zephyr_feedback_loop_detectors_reliability_autoscale_remediation_py,src_zephyr_feedback_loop_detectors_reliability_blast_radius_py,src_zephyr_feedback_loop_detectors_reliability_blast_radius_budget_py,src_zephyr_feedback_loop_detectors_reliability_capacity_forecast_py,src_zephyr_feedback_loop_detectors_reliability_chaos_engineering_py,src_zephyr_feedback_loop_detectors_reliability_ebpf_monitor_py,src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py,src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py,src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py,src_zephyr_feedback_loop_detectors_reliability_openfeature_py production
     class src_zephyr_feedback_loop_detectors_drift_init_py,src_zephyr_feedback_loop_detectors_guard_init_py,src_zephyr_feedback_loop_detectors_reliability_init_py design
-    class D_GOV_AUDIT,D_INFRASTRUCTURE,D_GOVERNANCE,D_FEEDBACK_LOOP,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE external_design
+    class D_GOV_AUDIT,D_FEEDBACK_LOOP,D_INFRASTRUCTURE,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_AUTONOMY_CORE external_design
 ```
 
 #### 第 3 页 / 共 3 页
@@ -273,10 +272,10 @@ graph TD
         src_zephyr_feedback_loop_detectors_reliability_version_migrator_py["(生产态 / production) Version Migrator — v0.12.0 R169<br/>文件: version_migrator.py"]
     end
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_version_migrator_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -356,36 +355,35 @@ graph TD
     end
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py
-    D_INFRA_RECOVERY["(原型态 / prototype) D_INFRA_RECOVERY"]
-    D_INFRA_RECOVERY -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_chaos_engineering_py
+    src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -.->|导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py
     D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_self_ha_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
-    D_INTEGRATION -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_external_health_py
-    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py
-    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_reliability_openfeature_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py
+    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py
+    D_FEEDBACK_LOOP -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py
+    D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
+    D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_concept_drift_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     D_INFRASTRUCTURE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_config_drift_py
-    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
-    D_GOV_ENFORCEMENT -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    D_SHARED -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py
-    D_INTEGRATION -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py,src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py,src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py,src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py,src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py,src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py,src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py,src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py,src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py,src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py,src_zephyr_feedback_loop_detectors_anomaly_temporal_pattern_py,src_zephyr_feedback_loop_detectors_correlation_action_efficacy_decay_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_side_effect_cumulative_detector_py,src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py,src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py,src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py,src_zephyr_feedback_loop_detectors_correlation_decision_provenance_py,src_zephyr_feedback_loop_detectors_correlation_dependency_freshness_monitor_py,src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py,src_zephyr_feedback_loop_detectors_correlation_external_health_py,src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py,src_zephyr_feedback_loop_detectors_correlation_fle_performance_regression_detector_py,src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py,src_zephyr_feedback_loop_detectors_correlation_rumor_noise_filter_py,src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py,src_zephyr_feedback_loop_detectors_correlation_traffic_replay_validator_py,src_zephyr_feedback_loop_detectors_drift_concept_drift_py,src_zephyr_feedback_loop_detectors_drift_config_drift_py,src_zephyr_feedback_loop_detectors_drift_context_window_contamination_detector_py,src_zephyr_feedback_loop_detectors_drift_diminishing_returns_detector_py,src_zephyr_feedback_loop_detectors_drift_ensemble_drift_py,src_zephyr_feedback_loop_detectors_drift_gradual_poisoning_detector_py,src_zephyr_feedback_loop_detectors_drift_trend_cycle_separator_py,src_zephyr_feedback_loop_detectors_guard_alert_desensitization_curve_py,src_zephyr_feedback_loop_detectors_guard_guard_cascade_detector_py,src_zephyr_feedback_loop_detectors_guard_guard_oscillation_detector_py,src_zephyr_feedback_loop_detectors_guard_placebo_action_detector_py,src_zephyr_feedback_loop_detectors_guard_positive_feedback_defense_py,src_zephyr_feedback_loop_detectors_guard_recursive_diagnosis_trust_evaluator_py,src_zephyr_feedback_loop_detectors_guard_self_audit_py,src_zephyr_feedback_loop_detectors_guard_self_diagnosis_data_leak_detector_py,src_zephyr_feedback_loop_detectors_guard_self_ha_py,src_zephyr_feedback_loop_detectors_guard_temporal_coherence_of_self_model_py,src_zephyr_feedback_loop_detectors_reliability_autoscale_remediation_py,src_zephyr_feedback_loop_detectors_reliability_blast_radius_py,src_zephyr_feedback_loop_detectors_reliability_blast_radius_budget_py,src_zephyr_feedback_loop_detectors_reliability_capacity_forecast_py,src_zephyr_feedback_loop_detectors_reliability_chaos_engineering_py,src_zephyr_feedback_loop_detectors_reliability_ebpf_monitor_py,src_zephyr_feedback_loop_detectors_reliability_flag_lifecycle_py,src_zephyr_feedback_loop_detectors_reliability_maintenance_coordinator_py,src_zephyr_feedback_loop_detectors_reliability_metric_cardinality_guard_py,src_zephyr_feedback_loop_detectors_reliability_openfeature_py,src_zephyr_feedback_loop_detectors_reliability_otel_adapter_py,src_zephyr_feedback_loop_detectors_reliability_regulatory_audit_py,src_zephyr_feedback_loop_detectors_reliability_resolution_tracker_py,src_zephyr_feedback_loop_detectors_reliability_runbook_executor_py,src_zephyr_feedback_loop_detectors_reliability_version_migrator_py production
-    class D_FEEDBACK_LOOP,D_INFRA_RECOVERY,D_GOV_AUDIT,D_INTEGRATION,D_INFRASTRUCTURE,D_GOV_ENFORCEMENT,D_SHARED,D_AUTONOMY_CORE external_design
+    class D_FEEDBACK_LOOP,D_GOV_AUDIT,D_SHARED,D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_INFRASTRUCTURE,D_GOVERNANCE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -419,6 +417,7 @@ graph TD
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -448,73 +447,74 @@ graph TD
 | 5 | D_AUTONOMY_CORE 自治核心: test_fl_anomaly_detector.py | → | anomaly_detector.py | 测试依赖 / test_depends |
 | 6 | D_AUTONOMY_CORE 自治核心: test_fl_scheduler_act.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
 | 7 | D_AUTONOMY_CORE 自治核心: test_fl_scheduler_collect_detect.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
-| 8 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 9 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | anomaly_detector.py | 导入依赖 / import_depends |
-| 10 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 11 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 12 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 13 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 14 | D_FEEDBACK_LOOP 反馈循环引擎: test_alert_desensitization_curve.py | → | Alert Desensitization Curve — v0.37.0 R492 (al... | 测试依赖 / test_depends |
-| 15 | D_FEEDBACK_LOOP 反馈循环引擎: test_anomaly_clustering.py | → | Anomaly Clustering — v0.9.0 R119 (anomaly_clus... | 测试依赖 / test_depends |
-| 16 | D_FEEDBACK_LOOP 反馈循环引擎: test_autoscale_remediation.py | → | Autoscale Remediation — v0.13.0 R174 (autoscal... | 测试依赖 / test_depends |
-| 17 | D_FEEDBACK_LOOP 反馈循环引擎: test_blast_radius_budget.py | → | Blast Radius Budget — v0.13.0 R178 (blast_radi... | 测试依赖 / test_depends |
-| 18 | D_FEEDBACK_LOOP 反馈循环引擎: test_diminishing_returns_detector.py | → | R528: DiminishingReturnsDetector (diminishing_r... | 测试依赖 / test_depends |
-| 19 | D_FEEDBACK_LOOP 反馈循环引擎: test_ebpf_monitor.py | → | eBPF Monitor — v0.6.0 R64 (ebpf_monitor.py) | 测试依赖 / test_depends |
-| 20 | D_FEEDBACK_LOOP 反馈循环引擎: test_ensemble_detector.py | → | Ensemble Detector — v0.4.0 R21 (ensemble_detec... | 测试依赖 / test_depends |
-| 21 | D_FEEDBACK_LOOP 反馈循环引擎: test_ensemble_drift.py | → | Ensemble Drift — v0.5.0 R43 (ensemble_drift.py) | 测试依赖 / test_depends |
-| 22 | D_FEEDBACK_LOOP 反馈循环引擎: test_flapping_detector.py | → | Flapping Detector — v0.40.0 R494 (flapping_det... | 测试依赖 / test_depends |
-| 23 | D_FEEDBACK_LOOP 反馈循环引擎: test_gradual_poisoning_detector.py | → | Gradual Poisoning Detector — v0.15.0 R210 (gra... | 测试依赖 / test_depends |
-| 24 | D_FEEDBACK_LOOP 反馈循环引擎: test_heisenbug_detector.py | → | Heisenbug Detector — v0.38.0 R470 (heisenbug_d... | 测试依赖 / test_depends |
-| 25 | D_FEEDBACK_LOOP 反馈循环引擎: test_infinite_loop_detector.py | → | Infinite Loop Detector — v0.15.0 R219 (infinit... | 测试依赖 / test_depends |
-| 26 | D_FEEDBACK_LOOP 反馈循环引擎: test_log_anomaly.py | → | Log Anomaly Detector — v0.6.0 R61 (log_anomaly.py) | 测试依赖 / test_depends |
-| 27 | D_FEEDBACK_LOOP 反馈循环引擎: test_maintenance_coordinator.py | → | Maintenance Coordinator — v0.12.0 R168 (mainte... | 测试依赖 / test_depends |
-| 28 | D_FEEDBACK_LOOP 反馈循环引擎: test_metric_cardinality_guard.py | → | Metric Cardinality Guard — v0.40.0 R495 (metri... | 测试依赖 / test_depends |
-| 29 | D_FEEDBACK_LOOP 反馈循环引擎: test_otel_adapter.py | → | OTel Adapter — v0.12.0 R170 (otel_adapter.py) | 测试依赖 / test_depends |
-| 30 | D_FEEDBACK_LOOP 反馈循环引擎: test_placebo_action_detector.py | → | R508: PlaceboActionDetector (placebo_action_det... | 测试依赖 / test_depends |
-| 31 | D_FEEDBACK_LOOP 反馈循环引擎: test_positive_feedback_defense.py | → | Positive Feedback Defense — v0.4.0 R28 (positi... | 测试依赖 / test_depends |
-| 32 | D_FEEDBACK_LOOP 反馈循环引擎: test_recursive_diagnosis_trust_evaluator.py | → | R517: RecursiveDiagnosisTrustEvaluator (recursi... | 测试依赖 / test_depends |
-| 33 | D_FEEDBACK_LOOP 反馈循环引擎: test_regulatory_audit.py | → | Regulatory Audit Detector — v0.13.0 R184 (regu... | 测试依赖 / test_depends |
-| 34 | D_FEEDBACK_LOOP 反馈循环引擎: test_resolution_tracker.py | → | Resolution Tracker — v0.12.0 R165 (resolution_... | 测试依赖 / test_depends |
-| 35 | D_FEEDBACK_LOOP 反馈循环引擎: test_rumor_noise_filter.py | → | Rumor Noise Filter — v0.37.0 R460 (rumor_noise... | 测试依赖 / test_depends |
-| 36 | D_FEEDBACK_LOOP 反馈循环引擎: test_runbook_executor.py | → | Runbook Executor — v0.13.0 R186a (runbook_exec... | 测试依赖 / test_depends |
-| 37 | D_FEEDBACK_LOOP 反馈循环引擎: test_scheduler_collect_detect.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
-| 38 | D_FEEDBACK_LOOP 反馈循环引擎: test_silent_corruption_detector.py | → | Silent Corruption Detector — v0.40.0 R499 (sil... | 测试依赖 / test_depends |
-| 39 | D_FEEDBACK_LOOP 反馈循环引擎: test_synthetic_anomaly_generator.py | → | Synthetic Anomaly Generator — v0.9.0 R112 (syn... | 测试依赖 / test_depends |
-| 40 | D_FEEDBACK_LOOP 反馈循环引擎: test_trend_cycle_separator.py | → | Trend-Cycle Separator — v0.9.0 R113 (trend_cyc... | 测试依赖 / test_depends |
-| 41 | D_FRONTEND 前端: test_fle_anomaly_detector.py | → | anomaly_detector.py | 测试依赖 / test_depends |
-| 42 | D_FRONTEND 前端: test_fle_chaos_engineering.py | → | Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
-| 43 | D_FRONTEND 前端: test_fle_performance_regression_detector.py | → | R532: FLEPerformanceRegressionDetector (fle_per... | 测试依赖 / test_depends |
-| 44 | D_GOVERNANCE 生命周期管理: test_context_window_contamination_detector.py | → | Context Window Contamination Detector — v0.38.... | 测试依赖 / test_depends |
-| 45 | D_GOV_AUDIT 审计追踪: test_emergent_behavior_detector.py | → | Emergent Behavior Detector — v0.38.0 R473 (eme... | 测试依赖 / test_depends |
-| 46 | D_GOV_AUDIT 审计追踪: test_intermittent_failure_pattern.py | → | Intermittent Failure Pattern Detector — v0.40.... | 测试依赖 / test_depends |
-| 47 | D_GOV_AUDIT 审计追踪: test_traffic_replay_validator.py | → | Traffic Replay Validator — v0.14.0 R202 (traff... | 测试依赖 / test_depends |
-| 48 | D_GOV_AUDIT 审计追踪: test_concept_drift.py | → | Concept Drift Detector — v0.5.0 R42 (concept_d... | 测试依赖 / test_depends |
-| 49 | D_GOV_AUDIT 审计追踪: test_version_migrator.py | → | Version Migrator — v0.12.0 R169 (version_migra... | 测试依赖 / test_depends |
-| 50 | D_GOV_AUDIT 审计追踪: test_flag_lifecycle.py | → | Flag Lifecycle Detector — v0.13.0 R180 (flag_l... | 测试依赖 / test_depends |
-| 51 | D_GOV_AUDIT 审计追踪: test_openfeature.py | → | OpenFeature Integration — v0.13.0 R181 (openfe... | 测试依赖 / test_depends |
-| 52 | D_GOV_AUDIT 审计追踪: test_self_audit.py | → | Self Audit — v0.13.0 R183 (self_audit.py) | 测试依赖 / test_depends |
-| 53 | D_GOV_AUDIT 审计追踪: test_self_diagnosis_data_leak_detector.py | → | R530: SelfDiagnosisDataLeakDetector (self_diagn... | 测试依赖 / test_depends |
-| 54 | D_GOV_AUDIT 审计追踪: test_self_ha.py | → | Self HA — v0.13.0 R173 (self_ha.py) | 测试依赖 / test_depends |
-| 55 | D_GOV_ENFORCEMENT 规则执行: test_capacity_forecast.py | → | Capacity Forecast — v0.13.0 R186b (capacity_fo... | 测试依赖 / test_depends |
-| 56 | D_GOV_ENFORCEMENT 规则执行: test_guard_cascade_detector.py | → | R520: GuardCascadeDetector (guard_cascade_detec... | 测试依赖 / test_depends |
-| 57 | D_GOV_ENFORCEMENT 规则执行: test_guard_oscillation_detector.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
-| 58 | D_GOV_SCRIPTS 脚本治理: test_dependency_freshness_monitor.py | → | Dependency Freshness Monitor — v0.38.0 R474 (d... | 测试依赖 / test_depends |
-| 59 | D_INFRASTRUCTURE: test_config_drift.py | → | Config Drift Detector — v0.13.0 R182 (config_d... | 测试依赖 / test_depends |
-| 60 | D_INFRA_RECOVERY 回滚恢复: test_chaos_engineering.py | → | Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
-| 61 | D_INFRA_RUNTIME 运行时集成: test_trace_causal_bridge.py | → | Trace Causal Bridge — v0.6.0 R62 (trace_causal... | 测试依赖 / test_depends |
-| 62 | D_INFRA_RUNTIME 运行时集成: test_temporal_coherence_of_self_model.py | → | R525: TemporalCoherenceOfSelfModel (temporal_co... | 测试依赖 / test_depends |
-| 63 | D_INFRA_RUNTIME 运行时集成: test_temporal_pattern.py | → | Temporal Pattern Detector — v0.12.0 R164 (temp... | 测试依赖 / test_depends |
-| 64 | D_INTEGRATION 管线路由: test_external_health.py | → | External Health Monitor — v0.14.0 R193 (extern... | 测试依赖 / test_depends |
-| 65 | D_INTEGRATION 管线路由: test_external_validation_checkpoint.py | → | R524: ExternalValidationCheckpoint (external_va... | 测试依赖 / test_depends |
-| 66 | D_INTELLIGENCE 上下文管理: test_decision_provenance.py | → | Decision Provenance — v0.12.0 R166 (decision_p... | 测试依赖 / test_depends |
-| 67 | D_RISK 风控: test_blast_radius_detector.py | → | Blast Radius Detector — v0.12.0 R167 (blast_ra... | 测试依赖 / test_depends |
-| 68 | D_SHARED 共享服务: test_cross_signal_validator.py | → | Cross-Signal Validator — v0.6.0 R63 (cross_sig... | 测试依赖 / test_depends |
-| 69 | D_SHARED 共享服务: test_cross_system_correlator.py | → | Cross-System Correlator — v0.13.0 R185 (cross_... | 测试依赖 / test_depends |
-| 70 | D_SHARED 共享服务: test_multi_signal_correlator.py | → | Multi-Signal Correlator — v0.4.0 R22 (multi_si... | 测试依赖 / test_depends |
+| 8 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | __init__.py | runtime / runtime |
+| 9 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 10 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | anomaly_detector.py | 导入依赖 / import_depends |
+| 11 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 12 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 13 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 14 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 15 | D_FEEDBACK_LOOP 反馈循环引擎: test_alert_desensitization_curve.py | → | Alert Desensitization Curve — v0.37.0 R492 (al... | 测试依赖 / test_depends |
+| 16 | D_FEEDBACK_LOOP 反馈循环引擎: test_anomaly_clustering.py | → | Anomaly Clustering — v0.9.0 R119 (anomaly_clus... | 测试依赖 / test_depends |
+| 17 | D_FEEDBACK_LOOP 反馈循环引擎: test_autoscale_remediation.py | → | Autoscale Remediation — v0.13.0 R174 (autoscal... | 测试依赖 / test_depends |
+| 18 | D_FEEDBACK_LOOP 反馈循环引擎: test_blast_radius_budget.py | → | Blast Radius Budget — v0.13.0 R178 (blast_radi... | 测试依赖 / test_depends |
+| 19 | D_FEEDBACK_LOOP 反馈循环引擎: test_diminishing_returns_detector.py | → | R528: DiminishingReturnsDetector (diminishing_r... | 测试依赖 / test_depends |
+| 20 | D_FEEDBACK_LOOP 反馈循环引擎: test_ebpf_monitor.py | → | eBPF Monitor — v0.6.0 R64 (ebpf_monitor.py) | 测试依赖 / test_depends |
+| 21 | D_FEEDBACK_LOOP 反馈循环引擎: test_ensemble_detector.py | → | Ensemble Detector — v0.4.0 R21 (ensemble_detec... | 测试依赖 / test_depends |
+| 22 | D_FEEDBACK_LOOP 反馈循环引擎: test_ensemble_drift.py | → | Ensemble Drift — v0.5.0 R43 (ensemble_drift.py) | 测试依赖 / test_depends |
+| 23 | D_FEEDBACK_LOOP 反馈循环引擎: test_flapping_detector.py | → | Flapping Detector — v0.40.0 R494 (flapping_det... | 测试依赖 / test_depends |
+| 24 | D_FEEDBACK_LOOP 反馈循环引擎: test_gradual_poisoning_detector.py | → | Gradual Poisoning Detector — v0.15.0 R210 (gra... | 测试依赖 / test_depends |
+| 25 | D_FEEDBACK_LOOP 反馈循环引擎: test_heisenbug_detector.py | → | Heisenbug Detector — v0.38.0 R470 (heisenbug_d... | 测试依赖 / test_depends |
+| 26 | D_FEEDBACK_LOOP 反馈循环引擎: test_infinite_loop_detector.py | → | Infinite Loop Detector — v0.15.0 R219 (infinit... | 测试依赖 / test_depends |
+| 27 | D_FEEDBACK_LOOP 反馈循环引擎: test_log_anomaly.py | → | Log Anomaly Detector — v0.6.0 R61 (log_anomaly.py) | 测试依赖 / test_depends |
+| 28 | D_FEEDBACK_LOOP 反馈循环引擎: test_maintenance_coordinator.py | → | Maintenance Coordinator — v0.12.0 R168 (mainte... | 测试依赖 / test_depends |
+| 29 | D_FEEDBACK_LOOP 反馈循环引擎: test_metric_cardinality_guard.py | → | Metric Cardinality Guard — v0.40.0 R495 (metri... | 测试依赖 / test_depends |
+| 30 | D_FEEDBACK_LOOP 反馈循环引擎: test_otel_adapter.py | → | OTel Adapter — v0.12.0 R170 (otel_adapter.py) | 测试依赖 / test_depends |
+| 31 | D_FEEDBACK_LOOP 反馈循环引擎: test_placebo_action_detector.py | → | R508: PlaceboActionDetector (placebo_action_det... | 测试依赖 / test_depends |
+| 32 | D_FEEDBACK_LOOP 反馈循环引擎: test_positive_feedback_defense.py | → | Positive Feedback Defense — v0.4.0 R28 (positi... | 测试依赖 / test_depends |
+| 33 | D_FEEDBACK_LOOP 反馈循环引擎: test_recursive_diagnosis_trust_evaluator.py | → | R517: RecursiveDiagnosisTrustEvaluator (recursi... | 测试依赖 / test_depends |
+| 34 | D_FEEDBACK_LOOP 反馈循环引擎: test_regulatory_audit.py | → | Regulatory Audit Detector — v0.13.0 R184 (regu... | 测试依赖 / test_depends |
+| 35 | D_FEEDBACK_LOOP 反馈循环引擎: test_resolution_tracker.py | → | Resolution Tracker — v0.12.0 R165 (resolution_... | 测试依赖 / test_depends |
+| 36 | D_FEEDBACK_LOOP 反馈循环引擎: test_rumor_noise_filter.py | → | Rumor Noise Filter — v0.37.0 R460 (rumor_noise... | 测试依赖 / test_depends |
+| 37 | D_FEEDBACK_LOOP 反馈循环引擎: test_runbook_executor.py | → | Runbook Executor — v0.13.0 R186a (runbook_exec... | 测试依赖 / test_depends |
+| 38 | D_FEEDBACK_LOOP 反馈循环引擎: test_scheduler_collect_detect.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
+| 39 | D_FEEDBACK_LOOP 反馈循环引擎: test_silent_corruption_detector.py | → | Silent Corruption Detector — v0.40.0 R499 (sil... | 测试依赖 / test_depends |
+| 40 | D_FEEDBACK_LOOP 反馈循环引擎: test_synthetic_anomaly_generator.py | → | Synthetic Anomaly Generator — v0.9.0 R112 (syn... | 测试依赖 / test_depends |
+| 41 | D_FEEDBACK_LOOP 反馈循环引擎: test_trend_cycle_separator.py | → | Trend-Cycle Separator — v0.9.0 R113 (trend_cyc... | 测试依赖 / test_depends |
+| 42 | D_FRONTEND 前端: test_fle_anomaly_detector.py | → | anomaly_detector.py | 测试依赖 / test_depends |
+| 43 | D_FRONTEND 前端: test_fle_chaos_engineering.py | → | Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
+| 44 | D_FRONTEND 前端: test_fle_performance_regression_detector.py | → | R532: FLEPerformanceRegressionDetector (fle_per... | 测试依赖 / test_depends |
+| 45 | D_GOVERNANCE 生命周期管理: test_context_window_contamination_detector.py | → | Context Window Contamination Detector — v0.38.... | 测试依赖 / test_depends |
+| 46 | D_GOV_AUDIT 审计追踪: test_emergent_behavior_detector.py | → | Emergent Behavior Detector — v0.38.0 R473 (eme... | 测试依赖 / test_depends |
+| 47 | D_GOV_AUDIT 审计追踪: test_intermittent_failure_pattern.py | → | Intermittent Failure Pattern Detector — v0.40.... | 测试依赖 / test_depends |
+| 48 | D_GOV_AUDIT 审计追踪: test_traffic_replay_validator.py | → | Traffic Replay Validator — v0.14.0 R202 (traff... | 测试依赖 / test_depends |
+| 49 | D_GOV_AUDIT 审计追踪: test_concept_drift.py | → | Concept Drift Detector — v0.5.0 R42 (concept_d... | 测试依赖 / test_depends |
+| 50 | D_GOV_AUDIT 审计追踪: test_version_migrator.py | → | Version Migrator — v0.12.0 R169 (version_migra... | 测试依赖 / test_depends |
+| 51 | D_GOV_AUDIT 审计追踪: test_flag_lifecycle.py | → | Flag Lifecycle Detector — v0.13.0 R180 (flag_l... | 测试依赖 / test_depends |
+| 52 | D_GOV_AUDIT 审计追踪: test_openfeature.py | → | OpenFeature Integration — v0.13.0 R181 (openfe... | 测试依赖 / test_depends |
+| 53 | D_GOV_AUDIT 审计追踪: test_self_audit.py | → | Self Audit — v0.13.0 R183 (self_audit.py) | 测试依赖 / test_depends |
+| 54 | D_GOV_AUDIT 审计追踪: test_self_diagnosis_data_leak_detector.py | → | R530: SelfDiagnosisDataLeakDetector (self_diagn... | 测试依赖 / test_depends |
+| 55 | D_GOV_AUDIT 审计追踪: test_self_ha.py | → | Self HA — v0.13.0 R173 (self_ha.py) | 测试依赖 / test_depends |
+| 56 | D_GOV_ENFORCEMENT 规则执行: test_capacity_forecast.py | → | Capacity Forecast — v0.13.0 R186b (capacity_fo... | 测试依赖 / test_depends |
+| 57 | D_GOV_ENFORCEMENT 规则执行: test_guard_cascade_detector.py | → | R520: GuardCascadeDetector (guard_cascade_detec... | 测试依赖 / test_depends |
+| 58 | D_GOV_ENFORCEMENT 规则执行: test_guard_oscillation_detector.py | → | R519: GuardOscillationDetector (guard_oscillati... | 测试依赖 / test_depends |
+| 59 | D_GOV_SCRIPTS 脚本治理: test_dependency_freshness_monitor.py | → | Dependency Freshness Monitor — v0.38.0 R474 (d... | 测试依赖 / test_depends |
+| 60 | D_INFRASTRUCTURE: test_config_drift.py | → | Config Drift Detector — v0.13.0 R182 (config_d... | 测试依赖 / test_depends |
+| 61 | D_INFRA_RECOVERY 回滚恢复: test_chaos_engineering.py | → | Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
+| 62 | D_INFRA_RUNTIME 运行时集成: test_trace_causal_bridge.py | → | Trace Causal Bridge — v0.6.0 R62 (trace_causal... | 测试依赖 / test_depends |
+| 63 | D_INFRA_RUNTIME 运行时集成: test_temporal_coherence_of_self_model.py | → | R525: TemporalCoherenceOfSelfModel (temporal_co... | 测试依赖 / test_depends |
+| 64 | D_INFRA_RUNTIME 运行时集成: test_temporal_pattern.py | → | Temporal Pattern Detector — v0.12.0 R164 (temp... | 测试依赖 / test_depends |
+| 65 | D_INTEGRATION 管线路由: test_external_health.py | → | External Health Monitor — v0.14.0 R193 (extern... | 测试依赖 / test_depends |
+| 66 | D_INTEGRATION 管线路由: test_external_validation_checkpoint.py | → | R524: ExternalValidationCheckpoint (external_va... | 测试依赖 / test_depends |
+| 67 | D_INTELLIGENCE 上下文管理: test_decision_provenance.py | → | Decision Provenance — v0.12.0 R166 (decision_p... | 测试依赖 / test_depends |
+| 68 | D_RISK 风控: test_blast_radius_detector.py | → | Blast Radius Detector — v0.12.0 R167 (blast_ra... | 测试依赖 / test_depends |
+| 69 | D_SHARED 共享服务: test_cross_signal_validator.py | → | Cross-Signal Validator — v0.6.0 R63 (cross_sig... | 测试依赖 / test_depends |
+| 70 | D_SHARED 共享服务: test_cross_system_correlator.py | → | Cross-System Correlator — v0.13.0 R185 (cross_... | 测试依赖 / test_depends |
+| 71 | D_SHARED 共享服务: test_multi_signal_correlator.py | → | Multi-Signal Correlator — v0.4.0 R22 (multi_si... | 测试依赖 / test_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 14 个外部域直接连接（出边 3 条 + 入边 70 条 = 73 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 14 个外部域直接连接（出边 3 条 + 入边 71 条 = 74 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -534,7 +534,7 @@ graph LR
     D_RISK["D_RISK<br/>风控"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_FBL_DETECTORS -->|3条 导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_FEEDBACK_LOOP -->|33条 导入依赖 / import_depends, 测试依赖 / test_depends| D_FBL_DETECTORS
+    D_FEEDBACK_LOOP -->|34条 导入依赖 / import_depends, runtime / runtime, 测试依赖 / test_depends| D_FBL_DETECTORS
     D_GOV_AUDIT -->|10条 测试依赖 / test_depends| D_FBL_DETECTORS
     D_AUTONOMY_CORE -->|7条 测试依赖 / test_depends| D_FBL_DETECTORS
     D_SHARED -->|3条 测试依赖 / test_depends| D_FBL_DETECTORS

@@ -1,7 +1,7 @@
 %% D_DATA_SEC 域全景依赖图
-%% 生成时间: 2026-07-17 02:55:27
+%% 生成时间: 2026-07-17 03:02:22
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 7, 依赖边数: 0
+%% 模块数: 7, 依赖边数: 1
 
 graph TD
 
@@ -19,10 +19,12 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %% D_FEEDBACK_LOOP -> D_DATA_SEC (1 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|runtime| src_zephyr_data_security___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 0 条
+    %% 跨域入边: 1 条
     %% 跨域出边: 0 条
