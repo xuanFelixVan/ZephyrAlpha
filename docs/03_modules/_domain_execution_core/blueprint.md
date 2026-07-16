@@ -34,9 +34,6 @@ tags: [trade-execution, l06, phase-1-partial, execution-engine, order-management
 priority: P0
 runtime_plane: hot
 depends_on:
-  - target: "docs/03_modules/_domain_execution_core/blueprint.md"
-    at: "全篇"
-    why: "本蓝图即SSoT（旧YAML已迁移至35域架构）"
   - target: "MOD-L05-001"
     at: "CTR-004"
     why: "消费 Order"

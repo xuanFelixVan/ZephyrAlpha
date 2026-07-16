@@ -30,9 +30,6 @@ stability: evolving
 design_maturity: prototype
 verifiability: manual
 depends_on:
-  - target: "docs/03_modules/_domain_risk/blueprint.md"
-    at: "全篇"
-    why: "本蓝图即SSoT（旧YAML已迁移至35域架构）"
   - target: "MOD-L02-001"
     at: "CTR-002"
     why: "消费 FactorSignal"
