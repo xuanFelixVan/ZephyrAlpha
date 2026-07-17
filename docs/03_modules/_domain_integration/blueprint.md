@@ -71,7 +71,7 @@ design_maturity: prototype
 | 1 | 嵌入路由架构（双后端+降级链） | ✅ | ❌ | — |
 | 2 | Ollama HTTP API 契约 | ❌ | ✅ | runtime_config.py |
 | 3 | 嵌入维度与Collection映射 | ❌ | ✅ | MOD-INF-011 blueprint §3.1 |
-| 4 | BGE-M3 模型权重文件 | ✅ | ❌ | models/bge-m3/ |
+| 4 | BGE-M3 模型权重文件 | ✅ | ❌ | data/models/local_model/bge-m3/ |
 
 ### §0.5 代码目录唯一性声明
 
@@ -197,7 +197,7 @@ design_maturity: prototype
 ```
 消费者(agent-spec/pipeline/runtime/VMS)
   └── EmbeddingRouter.embed(text, collection)
-        ├── backend=local → SentenceTransformer("models/bge-m3") → np.ndarray(1024,)
+        ├── backend=local → SentenceTransformer("data/models/local_model/bge-m3") → np.ndarray(1024,)
         └── backend=ollama → OllamaEmbedder → HTTP API → np.ndarray(1024,)
   └── LocalModelScheduler.dispatch(task_type, payload)
         ├── vector_embedding → EmbeddingRouter
@@ -237,8 +237,8 @@ design_maturity: prototype
 
 | # | 约束 | 值 | 原因 |
 |---|------|-----|------|
-| 1 | BGE-M3 模型路径 | `models/bge-m3/` | SentenceTransformer加载路径 |
-| 2 | bge-small 模型路径 | `models/bge-small-zh-v1.5/` | 降级备选 |
+| 1 | BGE-M3 模型路径 | `data/models/local_model/bge-m3/` | SentenceTransformer加载路径 |
+| 2 | bge-small 模型路径 | `data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2/` | 降级备选 |
 | 3 | Ollama 默认地址 | `http://localhost:11434` | runtime_config.py |
 | 4 | 嵌入缓存目录 | `data/vector_db/_embedding_cache/` | 与VMS共享 |
 | 5 | 单次嵌入超时 | 30s | 防阻塞 |
@@ -291,7 +291,7 @@ design_maturity: prototype
 |---------|------|-------------|
 | 代码 | `src/zephyr/local-model/` | agent-spec, pipeline, runtime, vector_memory |
 | 测试 | `tests/` | CI |
-| 模型权重 | `models/bge-m3/`, `models/bge-small-zh-v1.5/` | EmbeddingRouter |
+| 模型权重 | `data/models/local_model/bge-m3/`, `data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2/` | EmbeddingRouter |
 | 缓存 | `data/vector_db/_embedding_cache/` | CacheLayer |
 
 ## §12 集成目标 {temporal_type=permanent}

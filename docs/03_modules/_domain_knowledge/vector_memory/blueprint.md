@@ -206,11 +206,10 @@ VMS 是全系统统一向量记忆体——所有系统（Orc、KB、CE、FLE）
 | 21 | ollama_chat.py | §17 | Ollama 本地 LLM 推理 | 已迁移 | MOD-INF-039 |
 | 22 | local_model_scheduler.py | §17 | 本地模型调度循环 | 已迁移 | MOD-INF-039 |
 | 23 | migrate_chroma_to_faiss.py | §17 | ChromaDB→FAISS 迁移 | 已实现 | |
-| 24 | vms_config.yaml | §5.1 | VMS 环境配置 Schema | 已实现 | |
-| 25 | __init__.py | §2 | VMS 架构归属+8 Collection docstring | 已实现 | |
-| 26 | bm25_index.py | §3.2 | BM25 稀疏检索索引 | 已实现 | |
-| 27 | vms_errors.py | §6 | 异常层级 SSoT | 已实现 | |
-| 28 | design_principles.py | §5 | 设计原则校验 SSoT | 已实现 | |
+| 24 | __init__.py | §2 | VMS 架构归属+8 Collection docstring | 已实现 | |
+| 25 | bm25_index.py | §3.2 | BM25 稀疏检索索引 | 已实现 | |
+| 26 | vms_errors.py | §6 | 异常层级 SSoT | 已实现 | |
+| 27 | design_principles.py | §5 | 设计原则校验 SSoT | 已实现 | |
 
 ### §0.2 对齐验证矩阵
 
@@ -685,7 +684,7 @@ class FeedbackEntry(BaseModel):
 | 6 | 批量大小 | 16（1024d）/ 32（512d） |
 | 7 | 距离度量 | cosine |
 | 8 | 混合检索 | Vector(HNSW) + BM25 + RRF融合(k=60) |
-| 9 | 配置入口 | vms_config.yaml（禁止硬编码） |
+| 9 | 配置入口 | embedding_router.py 常量 + config/embedding_model_registry.yaml（禁止硬编码） |
 | 10 | ChromaDB 遥测 | MUST 禁用（CHROMA_TELEMETRY_IMPL=none） |
 
 ### §5.2 容量估算
@@ -751,7 +750,7 @@ class FeedbackEntry(BaseModel):
 | 1 | 编码模式 | 同一 Collection 内混用维度 | Collection 创建时锁定维度 | 检索不可比 |
 | 2 | 编码模式 | 跳过 WriteTrace 直接写入 | MUST 通过 write() → ProvenanceEnforcer | 审计链断裂 |
 | 3 | 编码模式 | AI 擅自变更 Collection Schema | 须经 Owner 审批 + 更新蓝图 §2 | 治理失控 |
-| 4 | 编码模式 | 硬编码配置 | vms_config.yaml | 配置漂移 |
+| 4 | 编码模式 | 硬编码配置 | embedding_router.py 常量 / embedding_model_registry.yaml | 配置漂移 |
 | 5 | 编码模式 | ChromaDB 遥测开启 | MUST 禁用 | 隐私合规 |
 | 6 | 导入源 | zephyr.vector_memory 导入 zephyr.kb.* | 通过 BridgeLayer 间接访问 | 分层约束 |
 
@@ -927,12 +926,12 @@ class FeedbackEntry(BaseModel):
 | 产出物类型 | 存放完整绝对路径 | 说明 |
 |----------|---------------|------|
 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\vector_memory\blueprint.md` | 本文件 |
-| 业务代码 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` | VMS 源码（25 个 .py + 1 个 .yaml） |
+| 业务代码 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` | VMS 源码（25 个 .py） |
 | 过渡期代码 | `D:\ZephyrAlpha\src\zephyr\kb\chromadb_init.py` + `unified_memory_api.py` | 现有实现——Phase 2 后冻结 |
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\vector_memory\` | 单元测试 |
 | ChromaDB 数据 | `D:\ZephyrAlpha\data\vector_db\` | ChromaDB 持久化目录 |
-| 嵌入模型缓存 | `D:\ZephyrAlpha\models\bge-m3\` | BGE-M3 ONNX 模型文件 |
-| 轻量模型缓存 | `D:\ZephyrAlpha\models\bge-small-zh-v1.5\` | 512d 轻量嵌入模型 |
+| 嵌入模型缓存 | `D:\ZephyrAlpha\data\models\local_model\bge-m3\` | BGE-M3 模型文件 |
+| 轻量模型缓存 | `D:\ZephyrAlpha\data\models\local_model\bge-small-zh-v1.5\` | 512d 轻量嵌入模型 |
 | 嵌入缓存 | `D:\ZephyrAlpha\data\vector_db\_embedding_cache\` | Embedding memoization 持久化 |
 
 ---
@@ -984,7 +983,7 @@ class FeedbackEntry(BaseModel):
 | R12 | 敏感数据泄露到向量索引中 | 低 | 🔴 致命 | 写入前 input_sanitizer 扫描 + rules/knowledge 人类审查 | 风险 |
 | R13 | Collection 数量失控膨胀 | 中 | 中 | 新增 Collection 须经 Owner 审批 + 更新蓝图 §2 | 风险 |
 | R14 | 迁移期间数据不一致 | 高 | 高 | BridgeLayer 双读阶段；迁移完成后 kb/ 标记 deprecated | 风险 |
-| NC1 | ChromaDB + BGE-M3 + bge-small 三依赖——部署复杂度增加 | 高 | 中 | 统一安装脚本 + vms_config.yaml 校验 | 负面后果 |
+| NC1 | ChromaDB + BGE-M3 + bge-small 三依赖——部署复杂度增加 | 高 | 中 | 统一安装脚本 + embedding_model_registry.yaml 校验 | 负面后果 |
 | NC2 | 向量检索不确定性——语义相似 ≠ 语义相同 | 中 | 中 | 混合检索 + RRF 缓解 | 负面后果 |
 | NC3 | 双模型增加资源占用（~2GB+300MB） | 高 | 中 | 按需加载 + 降级策略 | 负面后果 |
 
@@ -1062,7 +1061,6 @@ class FeedbackEntry(BaseModel):
 | delegated_vector_memory.py | RI-02 落地适配器 | VectorMemoryBase→UnifiedMemoryAPI 映射 |
 | vms_errors.py | 异常层级 SSoT | VMSError/DesignPrincipleError/ProvenanceMissingError/DimensionError |
 | design_principles.py | 设计原则校验 SSoT | validate_dimension()/validate_provenance()/validate_chunk_strategy()/validate_ttl() |
-| vms_config.yaml | VMS 环境配置 Schema | persist_dir/model_dir/telemetry/batch_size |
 
 #### Phase 3：检索质量闭环（✅ 已完成）
 
@@ -1149,13 +1147,13 @@ class FeedbackEntry(BaseModel):
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |
 |---|:----:|------|----------|----------|----------|
 | 1 | 命令 | `python -m zephyr.vector_memory` | VMS 模块入口 | — | — |
-| 2 | 配置 | `vms_config.yaml` | VMS 环境配置 | persist_dir/model_dir/telemetry | MUST 在启动时校验 |
+| 2 | 配置 | `config/embedding_model_registry.yaml` | 嵌入模型登记表（REG-EMBED-001） | name/dimension/local_path | L8/L9/L10 门禁校验 |
 
 ### 16.10 故障与操作手册
 
 | # | 阶段 | 场景 | 触发条件 | 诊断/操作 | 恢复/产出 | 验证/回退 |
 |---|:----:|------|---------|----------|----------|----------|
-| 1 | 运行 | BGE-M3 加载失败 | 模型文件损坏/缺失 | 检查 models/bge-m3/ 目录 | 降级为 bge-small | health_check() 确认 |
+| 1 | 运行 | BGE-M3 加载失败 | 模型文件损坏/缺失 | 检查 data/models/local_model/bge-m3/ 目录 | 降级为 bge-small | health_check() 确认 |
 | 2 | 运行 | ChromaDB SQLite 锁冲突 | 多进程同时写入 | 检查是否有多个 VMS 实例 | 统一为单例访问 | write() 成功 |
 | 3 | 运行 | 索引漂移 | 蓝图与磁盘 Collection 不一致 | detect_drift() | auto_repair() 或手动同步 | check_all() 确认 |
 | 4 | 运行 | TTL 过期未清理 | HealthMonitor 异常 | check_ttl_expiry() | purge_expired() | 过期记录数=0 |
@@ -1368,7 +1366,7 @@ class FeedbackEntry(BaseModel):
 | 6 | **CBAC 校验不可绕过**——AI 自治级别绑定到 Collection | 越权操作 |
 | 7 | **混合检索不可降级为纯向量**——除非 RRF 融合精度低于纯向量（需 benchmark 证据） | 检索质量退化 |
 | 8 | **IndexHealthMonitor 不可禁用**——启动时漂移检测 + 定期健康检查 | 漂移无感知 |
-| 9 | **vms_config.yaml 是唯一配置入口**——禁止硬编码配置 | 配置漂移 |
+| 9 | **embedding_model_registry.yaml + embedding_router 常量是模型配置唯一入口**——禁止硬编码配置 | 配置漂移 |
 | 10 | **迁移脚本必须 dry-run**——先输出映射表 → Owner 审核 → 执行 | 数据损坏 |
 | 11 | **construction_progress 必须与代码实际状态一致** | 重复造轮子或跳过施工 |
 | 12 | **actual_disk_path 必须与 §11 产出物路径一致** | 搜索失败、导入错误 |
@@ -1442,8 +1440,8 @@ class FeedbackEntry(BaseModel):
 | 1 | VMS 源码 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\` | 修改 | 接口实现 |
 | 2 | kb/ 遗留 | `D:\ZephyrAlpha\src\zephyr\kb\` | 读取 | 迁移源 |
 | 3 | 单元测试 | `D:\ZephyrAlpha\tests\unit\vector_memory\` | 修改 | 测试覆盖 |
-| 4 | 配置 | `D:\ZephyrAlpha\src\zephyr\integration\vector_memory\vms_config.yaml` | 读取 | 配置校验 |
-| 5 | 嵌入模型 | `D:\ZephyrAlpha\models\bge-m3\` + `models\bge-small-zh-v1.5\` | 读取 | 模型加载 |
+| 4 | 配置 | `D:\ZephyrAlpha\config\embedding_model_registry.yaml` | 读取 | 模型登记校验 |
+| 5 | 嵌入模型 | `D:\ZephyrAlpha\data\models\local_model\bge-m3\` + `data\models\local_model\bge-small-zh-v1.5\` | 读取 | 模型加载 |
 | 6 | 向量数据 | `D:\ZephyrAlpha\data\vector_db\` | 修改 | 持久化 |
 | 7 | 蓝图 | `D:\ZephyrAlpha\docs\03_modules\_domain_knowledge\vector_memory\` | 修改 | 本文件 |
 
