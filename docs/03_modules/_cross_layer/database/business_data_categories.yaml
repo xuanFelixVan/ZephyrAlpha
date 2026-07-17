@@ -321,7 +321,7 @@
   blueprint: null
 
 - category_id: market_etf_list
-  name: "ETF列表（全量ETF基础信息）"
+  name: "ETF列表（全量ETF基础信息，setup_date/list_date=1970-01-01表示未成立/未上市）"
   engine: clickhouse
   database: c1_market
   table: etf_list
@@ -485,7 +485,7 @@
   blueprint: null
 
 - category_id: market_cb_list
-  name: "可转债列表（全量可转债基础信息，delist_date=1970-01-01表示未退市）"
+  name: "可转债列表（全量可转债基础信息，各日期列=1970-01-01表示该事件未发生：delist_date=未退市/list_date=未上市/stop_convert=未停转/convert_start=未开始转股）"
   engine: clickhouse
   database: c1_market
   table: convertible_bond_list
@@ -1328,7 +1328,7 @@
   blueprint: null
 
 - category_id: fund_financial_indicator
-  name: "财务指标"
+  name: "财务指标（announce_date=1970-01-01表示公告日期缺失）"
   engine: clickhouse
   database: c3_fundamental
   table: financial_indicator
@@ -1344,7 +1344,7 @@
   blueprint: null
 
 - category_id: fund_dividend
-  name: "分红送股"
+  name: "分红送股（announce_date=1970-01-01表示公告日期缺失）"
   engine: clickhouse
   database: c3_fundamental
   table: dividend
