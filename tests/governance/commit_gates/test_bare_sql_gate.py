@@ -97,7 +97,7 @@ class TestGateSpecFields:
         assert make_bare_sql_gate().gate_id == "NO-BARE-SQL"
 
     def test_priority(self):
-        assert make_bare_sql_gate().priority == 87
+        assert make_bare_sql_gate().priority == 94
 
 
 # ---------------------------------------------------------------------------

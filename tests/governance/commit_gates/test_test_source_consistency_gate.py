@@ -123,8 +123,8 @@ class TestGateSpecFields:
     def test_gate_id(self):
         assert make_test_source_consistency_gate().gate_id == "TEST-SOURCE-CONSISTENCY"
 
-    def test_priority_is_96(self):
-        assert make_test_source_consistency_gate().priority == 96
+    def test_priority_is_102(self):
+        assert make_test_source_consistency_gate().priority == 102
 
     def test_check_is_callable(self):
         assert callable(make_test_source_consistency_gate().check)

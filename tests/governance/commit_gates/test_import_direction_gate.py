@@ -41,8 +41,8 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates.import_direction_gate import (  # noqa: E402
-    _UPWARD_PREFIXES,
     _collect_type_checking_imports,
+    _is_upward_import,
     make_import_direction_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
@@ -132,7 +132,7 @@ class TestGateSpecFields:
         assert make_import_direction_gate().gate_id == "NO-UPWARD-IMPORT"
 
     def test_priority(self):
-        assert make_import_direction_gate().priority == 93
+        assert make_import_direction_gate().priority == 97
 
 
 # ---------------------------------------------------------------------------
@@ -195,7 +195,7 @@ class TestGatewayIntegration:
         gw = _make_gateway(tmp_path, staged_files=[red])
         passed, msg = make_import_direction_gate().check(gw, [])
         assert not passed
-        assert "zephyr.governance" in msg
+        assert "zephyr.gov_enforcement" in msg
 
     def test_safe_shared_import_passes(self, tmp_path):
         blue = "src/zephyr/shared/types.py"

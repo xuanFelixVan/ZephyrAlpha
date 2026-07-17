@@ -95,7 +95,7 @@ class TestGateSpecFields:
         assert make_long_param_list_gate().gate_id == "NO-LONG-PARAM-LIST"
 
     def test_priority(self):
-        assert make_long_param_list_gate().priority == 88
+        assert make_long_param_list_gate().priority == 95
 
 
 # ---------------------------------------------------------------------------

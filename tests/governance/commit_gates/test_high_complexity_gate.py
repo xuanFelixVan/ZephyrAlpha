@@ -103,7 +103,7 @@ class TestGateSpecFields:
         assert make_high_complexity_gate().gate_id == "NO-HIGH-COMPLEXITY"
 
     def test_priority(self):
-        assert make_high_complexity_gate().priority == 85
+        assert make_high_complexity_gate().priority == 92
 
 
 # ---------------------------------------------------------------------------

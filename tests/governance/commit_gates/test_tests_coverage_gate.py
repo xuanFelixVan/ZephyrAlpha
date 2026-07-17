@@ -94,9 +94,9 @@ class TestGateSpecFields:
         spec = make_tests_coverage_gate()
         assert spec.gate_id == "META-TESTS-COVERAGE"
 
-    def test_priority_is_95(self):
+    def test_priority_is_99(self):
         spec = make_tests_coverage_gate()
-        assert spec.priority == 95
+        assert spec.priority == 99
 
     def test_check_is_callable(self):
         spec = make_tests_coverage_gate()
@@ -317,7 +317,7 @@ class TestGatewayIntegration:
         _write_gate_file(gate_dir, "foo_gate", "tests/nonexistent/test_foo.py")
         gw = _make_gateway(str(tmp_path))
         spec = make_tests_coverage_gate()
-        win_path = "src\\zephyr\\governance\\commit_gates\\foo_gate.py"
+        win_path = "src\\zephyr\\gov_enforcement\\commit_gates\\foo_gate.py"
         ok, msg = spec.check(gw, files=[win_path])
         assert ok is False
         assert "foo_gate.py" in msg
