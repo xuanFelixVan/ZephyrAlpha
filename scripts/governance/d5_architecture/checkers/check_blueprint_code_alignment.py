@@ -48,8 +48,8 @@ from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT, get_depg
 from _shared.walk import iter_files
 
 __manifest__ = """
-args: [--warn-only, --json, --package]
-description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)
+args: [--warn-only, --json, --package, --scan-root]
+description: 蓝图↔代码双向对齐检测——代码[BLUEPRINT]头部module_id双源验证(registry+depgraph)+蓝图§4文件清单depgraph派生(裁定#211)；--scan-root 用于 #ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断（扫描 worktree session 分支代码，DB 配置留 main）
 dimensions:
 - D5
 - D1
@@ -146,9 +146,27 @@ def load_module_registry() -> dict[str, str]:
     return pkg_to_modid
 
 
-def scan_code_blueprint_headers(package_filter: str | None = None) -> list[dict]:
+def scan_code_blueprint_headers(
+    package_filter: str | None = None,
+    scan_root: str | Path | None = None,
+) -> list[dict]:
+    """扫描代码 [BLUEPRINT] 头部。
+
+    :param package_filter: 限定扫描单个包名（如 "governance"）。
+    :param scan_root: 扫描根目录（#ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断用）。
+        给定时扫描 ``<scan_root>/src/zephyr`` 而非默认 ``SRC_DIR``（main REPO_ROOT），
+        且 ``file`` 字段相对 ``scan_root`` 计算（保持与 depgraph 路径格式一致，
+        如 ``src/zephyr/...``）。DB 配置和蓝图注册表仍用 main REPO_ROOT——pre-merge
+        检查的语义是「session 分支代码相对 production depgraph 的漂移」。
+        默认 None 时行为完全不变（向后兼容）。
+    """
     findings: list[dict] = []
-    packages = sorted(p for p in SRC_DIR.iterdir() if p.is_dir() and not p.name.startswith("_"))
+    base_root: Path = Path(scan_root) if scan_root else REPO_ROOT
+    src_dir: Path = base_root / "src" / "zephyr"
+    if not src_dir.is_dir():
+        # scan_root 下无 src/zephyr（如空 worktree 或路径错误）——返回空，避免 iterdir 抛错
+        return findings
+    packages = sorted(p for p in src_dir.iterdir() if p.is_dir() and not p.name.startswith("_"))
     if package_filter:
         packages = [p for p in packages if p.name == package_filter]
 
@@ -161,7 +179,7 @@ def scan_code_blueprint_headers(package_filter: str | None = None) -> list[dict]
         if not m:
             return None
         header_modid = m.group(1)
-        return {"file": str(py_file.relative_to(REPO_ROOT)), "package": pkg_name, "header_modid": header_modid}
+        return {"file": str(py_file.relative_to(base_root)), "package": pkg_name, "header_modid": header_modid}
 
     for pkg in packages:
         py_files = list(pkg.rglob("*.py"))
@@ -271,12 +289,21 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--package", type=str, help="限定扫描单个包")
+    parser.add_argument(
+        "--scan-root", type=str, default=None,
+        help="扫描根目录（#ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断用）："
+             "给定时扫描 <scan-root>/src/zephyr 而非默认 SRC_DIR，"
+             "DB 配置和蓝图注册表仍用 main REPO_ROOT。用于 session_worktree "
+             "pre-merge 检查 worktree session 分支代码相对 production depgraph 的漂移。",
+    )
     args = parser.parse_args()
 
     blueprint_registry = load_blueprint_registry()
     pkg_to_modid = load_module_registry()
 
-    code_headers = scan_code_blueprint_headers(package_filter=args.package)
+    code_headers = scan_code_blueprint_headers(
+        package_filter=args.package, scan_root=args.scan_root,
+    )
 
     # 裁定#211：加载 depgraph 模块索引（ORPHAN 验证 + 文件清单派生）
     depgraph_module_ids, depgraph_files_by_module = load_depgraph_module_index()
