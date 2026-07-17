@@ -31,7 +31,7 @@ Phase 2 阶段0治标清零的数据源生成器（architecture_debt_registry.md
 1. **全量扫描**（非staged增量）：遍历src/zephyr/所有.py文件，生成存量清单。
 2. **复用检测逻辑**：5.168直接import _detect_msg_exposure，保证与commit gate一致。
 3. **noqa豁免**：5.135检测 ``# noqa`` 任意标记（BLE001/MSG-EXPOSURE等均豁免）；
-   5.168复用gate的 ``# noqa: MSG-EXPOSURE`` 行级豁免。
+   5.168复用gate的 ``noqa: MSG-EXPOSURE`` 行级豁免。
 4. **tests/豁免**：与commit gate一致，tests/目录不扫描。
 5. **门禁自豁免**：governance/commit_gates/路径不扫描5.168（与gate一致）。
 
@@ -74,7 +74,7 @@ except ImportError:
 # === 5.135 异常粒度过粗检测 ===
 
 def _has_noqa(line_content: str) -> bool:
-    """检查行是否含任意 noqa 标记（# noqa / # noqa: XXX 均算豁免）。"""
+    """检查行是否含任意 noqa 标记（# noqa / noqa: XXX 均算豁免）。"""
     return "noqa" in line_content.lower()
 
 

@@ -3525,7 +3525,7 @@ def cmd_update_domain_layer(
     """
     # 域层级 ID 合法值（非词表，是 cmd_update_domain_layer 函数参数校验；
     # 无对应 vocabulary YAML，是架构层级概念而非受控词表。GATE-VOCAB noqa 豁免）
-    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}  # noqa: gate-vocab
+    ALLOWED_LAYERS = {"L0_infrastructure", "L1_foundation", "L2_domain", "L3_application"}  # noqa: gate-vocab  gate-vocab豁免: 架构层级概念非受控词表
     if layer_id not in ALLOWED_LAYERS:
         print(f"ERROR: layer_id 必须是 {ALLOWED_LAYERS} 之一，实际: {layer_id}", file=sys.stderr)
         return False
@@ -3629,7 +3629,7 @@ def cmd_insert_domain_mapping(
     """
     # domain_mapping 表 mapping_type 合法值（非词表，是 cmd_insert_domain_mapping 函数参数校验；
     # 无对应 vocabulary YAML，是 schema 字段类型而非受控词表。GATE-VOCAB noqa 豁免）
-    ALLOWED_TYPES = {"non_src", "unregistered_src"}  # noqa: gate-vocab
+    ALLOWED_TYPES = {"non_src", "unregistered_src"}  # noqa: gate-vocab  gate-vocab豁免: schema字段类型非受控词表
     if mapping_type not in ALLOWED_TYPES:
         print(
             f"ERROR: mapping_type 必须是 {ALLOWED_TYPES} 之一，实际: {mapping_type}",

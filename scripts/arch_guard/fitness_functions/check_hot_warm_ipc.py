@@ -39,7 +39,7 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 HOT_MODULES = {"risk", "ex_core"}
-WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}  # noqa: gate-vocab  温模块业务子集
+WARM_MODULES = {"factor", "signal", "pf_core", "compliance", "ml_train", "observability"}  # noqa: gate-vocab  温模块业务子集  gate-vocab豁免: 温模块业务子集非词表
 
 def main() -> int:
     print("INV-018 Hot↔Warm IPC 协议检查\n")

@@ -99,6 +99,33 @@ markers:
     created: "2026-07-17"
     created_by: "ARCH-NOQA-GOV-001"
 
+  - marker: "MSG-EXPOSURE"
+    metric_id: null  # 非 dashboard 指标，是 msg_exposure_gate 行级豁免
+    description: "MSG-EXPOSURE gate 行级豁免——raise 语句异常消息含敏感变量名的合规特殊情况"
+    applicable_conditions:
+      - "raise 语句的异常消息含变量名，但该变量非敏感数据（如状态机状态名/schema 版本号/注入目标标签）"
+      - "SQL 迁移调试上下文（DDL/DML 语句非用户数据）"
+      - "错误立即被 except 捕获不外泄（如注入引擎测试）"
+    reason_required: true
+    reason_format: "MSG-EXPOSURE豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"  # 行级豁免（不同于 M 系列的 per-file）
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+  - marker: "MSG-STYLE"
+    metric_id: null  # 非 dashboard 指标，是 msg_style_gate 行级豁免
+    description: "MSG-STYLE gate 行级豁免——raise 语句异常消息含 Unicode 箭头/中文句号的合规特殊情况"
+    applicable_conditions:
+      - "raise 语句的异常消息含 Unicode 箭头 ->（U+2192）但语义正确（如数学描述）"
+      - "raise 语句的异常消息以中文句号。结尾但符合该处语境"
+    reason_required: true
+    reason_format: "MSG-STYLE豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"  # 行级豁免（不同于 M 系列的 per-file）
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

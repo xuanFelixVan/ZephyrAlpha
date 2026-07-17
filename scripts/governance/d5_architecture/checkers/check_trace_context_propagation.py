@@ -66,7 +66,7 @@ ensure_utf8_stdout()
 
 import argparse
 
-PRODUCER_LAYERS = {  # noqa: gate-vocab  生产者层业务子集
+PRODUCER_LAYERS = {  # noqa: gate-vocab  生产者层业务子集  gate-vocab豁免: 生产者层业务子集非词表
     "data",
     "factor",
     "signal",

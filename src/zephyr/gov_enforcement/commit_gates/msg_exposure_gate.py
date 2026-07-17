@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息 f-string 中含敏感变量名（tx_id/path/file_path/password/secret/token 等）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `# noqa: MSG-EXPOSURE` 注释的单行豁免
+# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息 f-string 中含敏感变量名（tx_id/path/file_path/password/secret/token 等）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-EXPOSURE` 注释的单行豁免
 # [MODIFY-GUARD] gate_id="MSG-EXPOSURE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -52,7 +52,7 @@
    与 PERM-TRIGGER 一致，新增文件(A)查全文件 AST，修改文件(M)只查 diff 新增行。
 2. **in-process AST**：纯 ast.parse + ast.walk，自包含无 subprocess。
 3. **fail-open on AST error**：语法错误文件不阻断，由其他 gate 负责。
-4. **行级豁免**：单行可用 ``# noqa: MSG-EXPOSURE`` 注释豁免（用于误报或合规的特殊情况）。
+4. **行级豁免**：单行可用 ``noqa: MSG-EXPOSURE`` 注释豁免（用于误报或合规的特殊情况）。
 5. **priority=83**：在 PERM-TRIGGER(82) 之后、EMPTY-HANDLER(84) 之前。
 
 Usage::
@@ -210,7 +210,7 @@ def _is_line_noqa(content: str, lineno: int) -> bool:
         lineno: 1-based 行号。
 
     Returns:
-        True 表示该行有 ``# noqa: MSG-EXPOSURE`` 标记。
+        True 表示该行有 ``noqa: MSG-EXPOSURE`` 标记。
     """
     lines = content.splitlines()
     if lineno < 1 or lineno > len(lines):

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 ->（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `# noqa: MSG-STYLE` 注释的单行豁免
+# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 ->（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-STYLE` 注释的单行豁免
 # [MODIFY-GUARD] gate_id="MSG-STYLE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -43,7 +43,7 @@
    与 MSG-EXPOSURE 一致，新增文件(A)查全文件 AST，修改文件(M)只查 diff 新增行。
 2. **in-process AST**：纯 ast.parse + ast.walk，自包含无 subprocess。
 3. **fail-open on AST error**：语法错误文件不阻断，由其他 gate 负责。
-4. **行级豁免**：单行可用 ``# noqa: MSG-STYLE`` 注释豁免（用于误报或合规的特殊情况）。
+4. **行级豁免**：单行可用 ``noqa: MSG-STYLE`` 注释豁免（用于误报或合规的特殊情况）。
 5. **priority=96**：在 NO-LONG-PARAM-LIST(95) 之后、NO-UPWARD-IMPORT(97) 之前。
 
 Usage::
