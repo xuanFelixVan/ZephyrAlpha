@@ -39,6 +39,7 @@ import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -90,7 +91,7 @@ def _sha256_file(filepath: str) -> str:
         with open(filepath, "rb") as f:
             return hashlib.sha256(f.read()).hexdigest()
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return ""
 
 
@@ -129,7 +130,7 @@ def build_handoff_package(
         try:
             snapshot[fpath] = Path(fpath).read_text(encoding="utf-8")[:200]
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             snapshot[fpath] = ""
 
     baseline_diff: dict[str, list[str]] = {}
@@ -216,7 +217,7 @@ def load_package(filepath: str) -> HandoffPackage | None:
         with open(filepath, encoding="utf-8") as f:
             data = json.loads(f.read())
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
     integrity_raw = data.get("file_integrity", [])
@@ -334,25 +335,106 @@ def abort_handoff(
     }
 
 
+@dataclass
 class HandoffRecord:
-    def __init__(self, record_id="", from_agent="", to_agent="", timestamp=None, context=None, status="pending"):
-        self.record_id = record_id
-        self.from_agent = from_agent
-        self.to_agent = to_agent
-        self.timestamp = timestamp
-        self.context = context or {}
-        self.status = status
+    """跨 Agent 任务交接记录——治本（裁定#18 F3）：对齐 test_handoff_manager.py 契约。
+
+    旧桩仅含 record_id/from_agent/to_agent/timestamp/context/status，缺 task_id/reason/
+    acknowledged 字段与 to_dict 方法。现补齐对齐测试契约，同时保留旧字段向后兼容。
+
+    构造：HandoffRecord(from_agent="a", to_agent="b", task_id="t1", reason="shift")
+    + 默认 acknowledged=False。
+    """
+
+    record_id: str = ""
+    from_agent: str = ""
+    to_agent: str = ""
+    task_id: str = ""
+    reason: str = ""
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    context: dict[str, Any] = field(default_factory=dict)
+    status: str = "pending"
+    acknowledged: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        """序列化为字典——对齐 test_handoff_manager.py 契约。
+
+        返回 from/to/task_id/reason/acknowledged/timestamp 键（from→from_agent 映射）。
+        """
+        return {
+            "from": self.from_agent,
+            "to": self.to_agent,
+            "task_id": self.task_id,
+            "reason": self.reason,
+            "acknowledged": self.acknowledged,
+            "timestamp": self.timestamp,
+        }
 
 
 class HandoffManager:
-    def __init__(self, config=None):
-        self.config = config or {}
-        self._records = []
+    """跨 Agent 任务交接管理器——治本（裁定#18 F3）：对齐 test_handoff_manager.py 契约。
 
-    def create_handoff(self, from_agent, to_agent, context=None):
-        record = HandoffRecord(from_agent=from_agent, to_agent=to_agent, context=context)
+    旧桩仅含 create_handoff/get_pending，缺 handoff/get_active_handoffs/acknowledge 方法。
+    现补齐新 API，同时保留旧 API 向后兼容（behavioral_auditor 等可能使用）。
+    """
+
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
+        self.config = config or {}
+        self._records: list[HandoffRecord] = []
+
+    def get_active_handoffs(self) -> list[HandoffRecord]:
+        """返回所有未确认（active）的交接记录。"""
+        return [r for r in self._records if not r.acknowledged]
+
+    def handoff(
+        self,
+        from_agent: str,
+        to_agent: str,
+        task_id: str,
+        reason: str = "",
+    ) -> HandoffRecord:
+        """创建一条交接记录并存储。返回创建的 HandoffRecord。"""
+        rec = HandoffRecord(
+            from_agent=from_agent,
+            to_agent=to_agent,
+            task_id=task_id,
+            reason=reason,
+        )
+        self._records.append(rec)
+        return rec
+
+    def acknowledge(self, to_agent: str, task_id: str) -> bool:
+        """确认交接——确认最新一条匹配 (to_agent, task_id) 的未确认记录。
+
+        Returns:
+            True 表示找到并确认了一条记录；False 表示无匹配记录。
+        """
+        for rec in reversed(self._records):
+            if (
+                rec.to_agent == to_agent
+                and rec.task_id == task_id
+                and not rec.acknowledged
+            ):
+                rec.acknowledged = True
+                return True
+        return False
+
+    # ------------------------------------------------------------------
+    # 旧 API（向后兼容，behavioral_auditor 等可能使用）
+    # ------------------------------------------------------------------
+    def create_handoff(
+        self,
+        from_agent: str,
+        to_agent: str,
+        context: dict[str, Any] | None = None,
+    ) -> HandoffRecord:
+        record = HandoffRecord(
+            from_agent=from_agent,
+            to_agent=to_agent,
+            context=context or {},
+        )
         self._records.append(record)
         return record
 
-    def get_pending(self):
+    def get_pending(self) -> list[HandoffRecord]:
         return [r for r in self._records if r.status == "pending"]
