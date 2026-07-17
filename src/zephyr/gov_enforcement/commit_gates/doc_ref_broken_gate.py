@@ -43,7 +43,7 @@
 2. **in-process 正则**：无 subprocess，纯 re.findall + os.path.exists，自包含。
 3. **fail-open on IO error**：文件读取失败不阻断。
 4. **URL 豁免**：网络 URL 不在本地检查（可能暂时不可达但 URL 有效）。
-5. **priority=88**：在 ORPHAN-MODULE(86) 之后、FUNCTION-DUP(90) 之前。
+5. **priority=91**：在 FUNCTION-DUP(90) 之后、NO-HIGH-COMPLEXITY(92) 之前。
 
 Usage::
 
@@ -206,8 +206,8 @@ def make_doc_ref_broken_gate() -> GateSpec:
     """构造文档相对路径断裂引用阻断门禁 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="DOC-REF-BROKEN", priority=88)。
-        priority=88——在 ORPHAN-MODULE(86) 之后、FUNCTION-DUP(90) 之前。
+        GateSpec(gate_id="DOC-REF-BROKEN", priority=91)。
+        priority=91——在 FUNCTION-DUP(90) 之后、NO-HIGH-COMPLEXITY(92) 之前。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -235,4 +235,4 @@ def make_doc_ref_broken_gate() -> GateSpec:
             return False, "; ".join(all_violations[:5])
         return True, ""
 
-    return GateSpec(gate_id="DOC-REF-BROKEN", check=_check, priority=88)
+    return GateSpec(gate_id="DOC-REF-BROKEN", check=_check, priority=91)

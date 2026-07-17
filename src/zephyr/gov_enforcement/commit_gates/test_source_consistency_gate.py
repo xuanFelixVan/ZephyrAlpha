@@ -42,7 +42,7 @@ architecture_debt §5.178：源码进化后测试未同步更新（名称漂移�
    或 ``pytest.importorskip`` 标记的文件不重复检测。
 4. **检查所有顶层符号**：Python 允许显式 import 任何顶层符号（不受 __all__
    限制），故检查 class/def/assign/annassign 而非仅 __all__。
-5. **priority=96**：在 TESTS-COVERAGE(95) 之后，作为最高优先级 gate。
+5. **priority=102**：在 CAP-CONSISTENCY(101) 之后，作为 commit 流程末段执行的 gate 之一。
 
 Usage::
 
@@ -303,7 +303,7 @@ def make_test_source_consistency_gate() -> GateSpec:
     """构造测试-源码符号一致性 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="TEST-SOURCE-CONSISTENCY", priority=96)。
+        GateSpec(gate_id="TEST-SOURCE-CONSISTENCY", priority=102)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -347,5 +347,5 @@ def make_test_source_consistency_gate() -> GateSpec:
     return GateSpec(
         gate_id="TEST-SOURCE-CONSISTENCY",
         check=_check,
-        priority=96,
+        priority=102,
     )

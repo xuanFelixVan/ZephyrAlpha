@@ -44,7 +44,7 @@
 2. **in-process AST**：纯 ast.parse + ast.walk，自包含无 subprocess。
 3. **fail-open on AST error**：语法错误文件不阻断，由其他 gate 负责。
 4. **行级豁免**：单行可用 ``# noqa: MSG-STYLE`` 注释豁免（用于误报或合规的特殊情况）。
-5. **priority=92**：在 DOC-REF-BROKEN(91) 之后，作为最新门禁。
+5. **priority=96**：在 NO-LONG-PARAM-LIST(95) 之后、NO-UPWARD-IMPORT(97) 之前。
 
 Usage::
 
@@ -299,8 +299,8 @@ def make_msg_style_gate() -> GateSpec:
     """构造错误消息标点/箭头风格阻断门禁 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="MSG-STYLE", priority=92)。
-        priority=92——在 DOC-REF-BROKEN(91) 之后，作为最新门禁。
+        GateSpec(gate_id="MSG-STYLE", priority=96)。
+        priority=96——在 NO-LONG-PARAM-LIST(95) 之后、NO-UPWARD-IMPORT(97) 之前。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -349,4 +349,4 @@ def make_msg_style_gate() -> GateSpec:
             return _format_msg_style_violations(violations_all)
         return True, ""
 
-    return GateSpec(gate_id="MSG-STYLE", check=_check, priority=92)
+    return GateSpec(gate_id="MSG-STYLE", check=_check, priority=96)

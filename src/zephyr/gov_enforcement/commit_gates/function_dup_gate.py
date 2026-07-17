@@ -42,7 +42,7 @@ name + body hash 的实现——重复代码违反 DRY 原则，应扩展现有�
    内复制粘贴），跨目录重复由其他 gate（如 SSOT-REDEFINITION）覆盖。
 3. **body hash 而非全文比较**：ast.unparse 标准化空白/注释，hash 比较稳健。
 4. **fail-open on AST error**：语法错误文件不阻断。
-5. **priority=90**：在 DOC-REF-BROKEN(88) 之后（最后执行，重复检测最贵）。
+5. **priority=90**：在 ORPHAN-MODULE(89) 之后、DOC-REF-BROKEN(91) 之前。
 
 Usage::
 
@@ -277,7 +277,7 @@ def make_function_dup_gate() -> GateSpec:
 
     Returns:
         GateSpec(gate_id="FUNCTION-DUP", priority=90)。
-        priority=90——在 DOC-REF-BROKEN(88) 之后（最后执行，重复检测最贵）。
+        priority=90——在 ORPHAN-MODULE(89) 之后、DOC-REF-BROKEN(91) 之前。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:

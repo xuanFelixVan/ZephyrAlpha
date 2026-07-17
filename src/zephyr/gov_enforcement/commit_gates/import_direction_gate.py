@@ -45,7 +45,7 @@ architecture_debt §5.152：shared 层（L0）向上 import trading/governance �
 3. **只检测 ImportFrom**：``from zephyr.trading.xxx import YYY`` 是主要违规模式。
    ``import zephyr.trading.xxx`` 极罕见，暂不检测（可后续扩展）。
 4. **fail-open on AST error**：语法错误文件不阻断（由其他 gate 管语法）。
-5. **priority=93**：在现有 gate 之后（最高 92），作为架构方向性 gate。
+5. **priority=97**：在现有 gate 之后（最高 92），作为架构方向性 gate。
 
 Usage::
 
@@ -179,7 +179,7 @@ def make_import_direction_gate() -> GateSpec:
     """构造 shared 层向上依赖阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-UPWARD-IMPORT", priority=93)。
+        GateSpec(gate_id="NO-UPWARD-IMPORT", priority=97)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -234,4 +234,4 @@ def make_import_direction_gate() -> GateSpec:
             return False, f"shared 层向上依赖 import（§5.152 防复发）: {detail}"
         return True, ""
 
-    return GateSpec(gate_id="NO-UPWARD-IMPORT", check=_check, priority=93)
+    return GateSpec(gate_id="NO-UPWARD-IMPORT", check=_check, priority=97)

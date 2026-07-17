@@ -28,13 +28,13 @@
 ``ClaimRequiredGate`` 放行 -> claim 机制形同虚设 -> 编辑期覆盖无法在 commit 时拦截。
 
 本 gate 在 session 未注册时**阻断**（而非放行），强制 AI 注册 session。
-priority=30 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)：先检查 session
+priority=31 优先于 CLAIM-REQUIRED(40) 和 HELD-OVERLAP(50)：先检查 session
 注册，再检查 claim，最后检查 overlap。
 
 与 ClaimRequiredGate 的关系
 ---------------------------
 - ``ClaimRequiredGate``（priority=40）：session 已注册但文件未 claim -> 阻断
-- ``SessionRequiredGate``（priority=30，本 gate）：session 未注册 -> 阻断
+- ``SessionRequiredGate``（priority=31，本 gate）：session 未注册 -> 阻断
 - 二者互补：本 gate 堵住"session 未注册->放行"缺口，ClaimRequiredGate 堵住
   "session 已注册但文件未 claim"缺口。allow_overlap=True 同时放行二者。
 
@@ -59,8 +59,8 @@ def make_session_required_gate() -> GateSpec:
     """构造 session 注册强制门禁 GateSpec。
 
     Returns:
-        GateSpec(gate_id="SESSION-REQUIRED", priority=30)。
-        priority=30 优先于 CLAIM-REQUIRED(40)，先检查 session 注册再检查 claim。
+        GateSpec(gate_id="SESSION-REQUIRED", priority=31)。
+        priority=31 优先于 CLAIM-REQUIRED(40)，先检查 session 注册再检查 claim。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -96,4 +96,4 @@ def make_session_required_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(gate_id="SESSION-REQUIRED", check=_check, priority=30)
+    return GateSpec(gate_id="SESSION-REQUIRED", check=_check, priority=31)

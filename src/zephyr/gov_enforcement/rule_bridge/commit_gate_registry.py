@@ -145,7 +145,20 @@ class CommitGateRegistry:
         self._specs: dict[str, GateSpec] = {}
 
     def register(self, spec: GateSpec) -> None:
-        """注册门禁（幂等，同 gate_id 覆盖）。"""
+        """注册门禁（幂等，同 gate_id 覆盖；同 priority 不同 gate_id 告警）。
+
+        治本（2026-07-17）：同 priority 不同 gate_id 会导致 sorted() 稳定排序
+        后执行顺序依赖 dict 插入顺序（非显式），违反"显式优于隐式"原则。
+        检测到 priority 重复时记录 WARNING（不阻断注册，兼容存量）。
+        """
+        for existing_id, existing_spec in self._specs.items():
+            if existing_spec.priority == spec.priority and existing_id != spec.gate_id:
+                logger.warning(
+                    "CommitGateRegistry: priority=%s 冲突——gate '%s' 与已注册的 '%s' 同 priority，"
+                    "执行顺序依赖注册顺序（非显式）。建议分配唯一 priority。",
+                    spec.priority, spec.gate_id, existing_id,
+                )
+                break
         self._specs[spec.gate_id] = spec
 
     def check_all(self, gateway: object, files: list[str], **kwargs: Any) -> list[GateResult]:

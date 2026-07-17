@@ -39,7 +39,7 @@
 1. **只检测 added 行**：存量调用由 Phase 5 排查，gate 只防新增。
 2. **diff-based**：与 bare_sql_gate 一致的检测模式。
 3. **正则匹配**：覆盖 read_only=False / superuser=True / allow_edge_delete=True。
-4. **priority=97**：在 test_source_consistency(96) 之后，检测 depgraph 写入路径白名单。
+4. **priority=100**：在 test_source_consistency(96) 之后，检测 depgraph 写入路径白名单。
 
 Usage::
 
@@ -108,7 +108,7 @@ def make_depgraph_write_path_gate() -> GateSpec:
     """构造 depgraph 写入路径白名单 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="DEPGRAPH-WRITE-PATH", priority=95)。
+        GateSpec(gate_id="DEPGRAPH-WRITE-PATH", priority=100)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -150,4 +150,4 @@ def make_depgraph_write_path_gate() -> GateSpec:
             return False, detail
         return True, ""
 
-    return GateSpec(gate_id="DEPGRAPH-WRITE-PATH", check=_check, priority=97)
+    return GateSpec(gate_id="DEPGRAPH-WRITE-PATH", check=_check, priority=100)

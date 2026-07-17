@@ -44,7 +44,7 @@
    commit 都扫描 gate 目录（性能）。
 2. **扫描整个目录而非仅 staged 文件**：确保存量 gate 的测试覆盖也持续校验。
 3. **跳过 _ 前缀文件**：``_diff_helpers.py`` 等 helper 不是 gate，无 [TESTS]。
-4. **priority=95**：在所有业务 gate（最高 94）之后执行——meta-gate 最后运行。
+4. **priority=99**：在所有业务 gate（最高 98）之后执行——meta-gate 最后运行。
 5. **fail-open on FS error**：文件系统异常不阻断（环境问题非违规）。
 
 Usage::
@@ -79,7 +79,7 @@ def make_tests_coverage_gate() -> GateSpec:
     """构造 Gate 测试覆盖率校验 meta-gate（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="META-TESTS-COVERAGE", priority=95)。
+        GateSpec(gate_id="META-TESTS-COVERAGE", priority=99)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -151,4 +151,4 @@ def make_tests_coverage_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(gate_id="META-TESTS-COVERAGE", check=_check, priority=95)
+    return GateSpec(gate_id="META-TESTS-COVERAGE", check=_check, priority=99)
