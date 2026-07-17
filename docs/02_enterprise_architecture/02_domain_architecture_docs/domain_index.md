@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4977 |
-| 生产态模块 | 1752 |
+| 模块总数 | 4971 |
+| 生产态模块 | 1747 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3163 |
+| 原型态模块 | 3162 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 91 | 48 | 0 | 43 | 91/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 331 | 149 | 1 | 181 | 331/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 327 | 145 | 1 | 181 | 327/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -54,7 +54,7 @@ ttl: permanent
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 124 | 108 | 0 | 16 | 124/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 94 | 82 | 0 | 12 | 94/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
-| D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 53 | 0 | 39 | 92/150 (OK) | [18_d_integration.md](18_d_integration.md) |
+| D_INTEGRATION | pipeline_routing / Pipeline Routing | 91 | 52 | 0 | 39 | 91/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 18 | 0 | 13 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 16 | 3 | 0 | 13 | 16/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 453 | 13 | 2 | 438 | 453/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 452 | 13 | 2 | 437 | 452/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 21 | 0 | 88 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 38 | 0 | 2 | 36 | 38/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
