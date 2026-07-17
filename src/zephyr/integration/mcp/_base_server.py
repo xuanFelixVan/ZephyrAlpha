@@ -483,7 +483,9 @@ class BaseMCPServer:
             content = [{"type": "text", "text": json.dumps(result, ensure_ascii=False)}]
             return self._ok(req_id, {"content": content, "isError": False})
         except TypeError as exc:
-            return self._err(req_id, ERR_INVALID_PARAMS, f"Invalid params: {exc}")
+            # 5.168治本（#ARCH-SEC-001）：异常详情不跨信任边界返客户端，细节入服务端日志
+            self._log.warning("invalid_params", tool=tool_name, error=str(exc))
+            return self._err(req_id, ERR_INVALID_PARAMS, f"Invalid params for tool {tool_name!r}")
         except MCPError as exc:
             return self._err(req_id, exc.code, exc.message, exc.data)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch

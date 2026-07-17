@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 11 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件
+# [INVARIANTS] 14 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 11 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 14 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（14 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -129,6 +129,16 @@ NOQA_EXEMPT_REGISTRY = (
     / "_registry"
     / "catalogs"
     / "noqa_exempt_registry.yaml"
+)
+# M13 扫描面 SSoT（#ARCH-SEC-001）：仅扫描信任边界 surface（对外协议响应面），
+# 同信任域（commit gates/CLI/内部服务/本地 dashboard）返异常详情属 debuggability 特性非泄露
+TRUST_BOUNDARY_REGISTRY = (
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "trust_boundary_surface_registry.yaml"
 )
 OUTPUT_DIR = REPO_ROOT / "data" / "architecture_health"
 
@@ -853,9 +863,354 @@ def metric_11_pg_domain_consistency() -> dict:
             conn.close()
 
 
+# ── 指标 12/13/14 共享：生产 .py 文件 AST 扫描 ─────────────────────────────
+
+
+def _iter_prod_py_files() -> list[Path]:
+    """生产 .py 文件清单（src/zephyr + scripts/governance，排除 tests/_archive）。"""
+    exclude = EXCLUDE_DIRS | {"_archive", "tests", "__pycache__"}
+    files: list[Path] = []
+    for scan_dir in (SRC_ZEPHYR, SCRIPTS_GOVERNANCE):
+        if scan_dir.exists():
+            files.extend(iter_files(scan_dir, extensions=frozenset({".py"}), exclude_dirs=exclude))
+    return files
+
+
+def _scan_py_file_ast(fp: Path) -> tuple[ast.Module | None, list[str]]:
+    """读取并 AST 解析 .py 文件，返回 (tree, lines)；失败返回 (None, [])。"""
+    try:
+        source = fp.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None, []
+    try:
+        return ast.parse(source, filename=str(fp)), source.splitlines()
+    except SyntaxError:
+        return None, []
+
+
+def _walk_no_nested_scope(node: ast.AST):
+    """walk（含节点自身）但不下钻嵌套作用域（FunctionDef/AsyncFunctionDef/Lambda/ClassDef）。"""
+    stack = [node]
+    while stack:
+        n = stack.pop()
+        yield n
+        if n is not node and isinstance(
+            n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef)
+        ):
+            continue
+        stack.extend(ast.iter_child_nodes(n))
+
+
+# ── 指标 12：异常粒度过粗（5.135）─────────────────────────────────────────
+
+_BROAD_EXCEPT_NAMES = frozenset({"Exception", "BaseException"})
+
+
+def _is_broad_except(handler: ast.ExceptHandler) -> bool:
+    """宽泛判定：bare except 或 except Exception/BaseException。"""
+    if handler.type is None:
+        return True
+    return isinstance(handler.type, ast.Name) and handler.type.id in _BROAD_EXCEPT_NAMES
+
+
+def _is_logger_call_stmt(stmt: ast.stmt) -> bool:
+    """判定语句是否为 logger.* 调用（logger.warning(...) 等）。"""
+    if not isinstance(stmt, ast.Expr) or not isinstance(stmt.value, ast.Call):
+        return False
+    func = stmt.value.func
+    return (
+        isinstance(func, ast.Attribute)
+        and isinstance(func.value, ast.Name)
+        and func.value.id in ("logger", "_logger", "log", "LOGGER")
+    )
+
+
+def _classify_swallow(handler: ast.ExceptHandler) -> str | None:
+    """分类宽泛 except 的吞没模式。返回 None=非吞没（有 raise/return 或正常降级）。"""
+    body = handler.body
+    if all(isinstance(s, ast.Pass) for s in body):
+        return "except-pass"
+    if all(isinstance(s, ast.Continue) for s in body):
+        return "except-continue"
+    has_reraise_or_return = any(
+        isinstance(n, (ast.Raise, ast.Return)) for s in body for n in _walk_no_nested_scope(s)
+    )
+    if has_reraise_or_return:
+        return None
+    # logged-but-swallowed：body 仅由 logger.* 调用组成（记了日志但吞没异常）
+    if body and all(_is_logger_call_stmt(s) for s in body):
+        return "logged-swallowed"
+    return None
+
+
+def _has_ble001_noqa(lines: list[str], node: ast.ExceptHandler) -> bool:
+    """检查 handler 行范围是否含 `# noqa: BLE001`（ruff 标准码豁免——项目既有
+    "已审视宽泛捕获"约定，noqa_validation_gate 对标准码跳过不校验登记）。"""
+    end = node.end_lineno or node.lineno
+    for ln in range(node.lineno, end + 1):
+        if 1 <= ln <= len(lines) and "noqa: BLE001" in lines[ln - 1]:
+            return True
+    return False
+
+
+def metric_12_broad_except_swallow() -> dict:
+    """异常粒度过粗违规数（5.135）——宽泛 except 吞没模式 AST 检测。
+
+    病根：5.135 异常粒度过粗（手动快照 697 项）——except Exception:pass /
+    except:continue / logged-but-swallowed 吞没异常，故障被静默掩盖。
+    检测：AST 扫描 except Exception/BaseException/bare 且 body 为
+    pass-only / continue-only / 仅 logger 调用（无 raise/return）的 handler。
+    豁免：`# noqa: BLE001`（ruff 标准码，项目既有"已审视宽泛捕获"约定）。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, lines = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ExceptHandler) or not _is_broad_except(node):
+                continue
+            kind = _classify_swallow(node)
+            if kind is None or _has_ble001_noqa(lines, node):
+                continue
+            violations.append(f"{rel}:{node.lineno} {kind}")
+    return _make_metric("M12", "异常粒度过粗(吞没型)", len(violations), violations, "inline")
+
+
+# ── 指标 13：异常信息泄露（5.168）─────────────────────────────────────────
+
+
+def _return_leaks_exc(ret_value: ast.AST, exc_names: frozenset) -> str | None:
+    """检测 return 值是否泄露异常内容：str(e)/repr(e)/f-string插值e/traceback.format_exc()。"""
+    for n in _walk_no_nested_scope(ret_value):
+        if isinstance(n, ast.Call):
+            if isinstance(n.func, ast.Attribute) and n.func.attr == "format_exc":
+                return "traceback.format_exc"
+            if isinstance(n.func, ast.Name) and n.func.id in ("str", "repr") and n.args:
+                a0 = n.args[0]
+                if isinstance(a0, ast.Name) and a0.id in exc_names:
+                    return f"{n.func.id}({a0.id})"
+        if isinstance(n, ast.JoinedStr):
+            for v in n.values:
+                if (
+                    isinstance(v, ast.FormattedValue)
+                    and isinstance(v.value, ast.Name)
+                    and v.value.id in exc_names
+                ):
+                    return f"f-string{{{v.value.id}}}"
+    return None
+
+
+# M13 HTTP 外发汇点（#ARCH-SEC-001）：except handler 内调用此类方法把异常详情
+# 写进 HTTP 响应体（BaseHTTPRequestHandler 系/本项目 _MonitorHandler 封装），
+# 与 return 泄露等价——return 检测覆盖不了 handler 直接 _send_json(...) 的场景
+_HTTP_EMIT_SINKS = frozenset({"_send_json", "_send", "send_json", "send_error"})
+
+
+def _load_trust_boundary_files() -> list[Path] | None:
+    """从 trust_boundary_surface_registry.yaml 加载信任边界 surface 文件清单（SSoT）。
+
+    #ARCH-SEC-001：M13 扫描面限定为对外协议响应面（MCP stdio / 监控 HTTP 等跨
+    进程·跨机器零信任边界）。fail-closed：registry 缺失/损坏/条目异常返回 None，
+    调用方转为 error 状态（指标报 error 而非假绿）。
+    """
+    try:
+        data = load_yaml_safe(TRUST_BOUNDARY_REGISTRY)
+        surfaces = data.get("surfaces") or []
+        if not surfaces:
+            return None
+        files: list[Path] = []
+        for s in surfaces:
+            rel = s.get("path")
+            if not rel:
+                return None
+            base = REPO_ROOT / rel
+            if s.get("kind") == "directory":
+                files.extend(sorted(base.glob(s.get("glob") or "*.py")))
+            else:
+                files.append(base)
+        result = [f for f in files if f.exists() and f.suffix == ".py"]
+        return result or None
+    except Exception:  # noqa: BLE001 — fail-closed：任何加载异常都转为 error 状态
+        return None
+
+
+def _check_emit_sink_call(rel: Path, call: ast.Call, exc_names: frozenset) -> str | None:
+    """检测 HTTP 外发汇点调用（_send_json/send_error 等）参数含异常引用，命中返回违规串。"""
+    if not (isinstance(call.func, ast.Attribute) and call.func.attr in _HTTP_EMIT_SINKS):
+        return None
+    for arg in call.args:
+        leak = _return_leaks_exc(arg, exc_names)
+        if leak:
+            return f"{rel}:{call.lineno} {call.func.attr}() 外发泄露 {leak}"
+    return None
+
+
+def _collect_m13_handler_violations(rel: Path, tree: ast.Module) -> list[str]:
+    """收集单文件全部 except handler 的 M13 泄露违规（return 泄露 + HTTP 外发泄露）。"""
+    found: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ExceptHandler):
+            continue
+        exc_names = frozenset({node.name}) if node.name else frozenset()
+        for stmt in node.body:
+            for sub in _walk_no_nested_scope(stmt):
+                if isinstance(sub, ast.Return) and sub.value is not None:
+                    leak = _return_leaks_exc(sub.value, exc_names)
+                    if leak:
+                        found.append(f"{rel}:{sub.lineno} return 泄露 {leak}")
+                elif isinstance(sub, ast.Call):
+                    hit = _check_emit_sink_call(rel, sub, exc_names)
+                    if hit:
+                        found.append(hit)
+    return found
+
+
+def metric_13_exception_info_leak() -> dict:
+    """异常信息泄露违规数（5.168）——except 块内 return/HTTP外发 泄露异常内容跨信任边界。
+
+    病根：5.168 异常信息泄露（手动快照 142 项）——MCP/handler 的通用异常
+    处理器把 str(exc)/f-string 插值异常/traceback 直返客户端，泄露内部实现
+    （路径/凭据片段/SQL）。检测：AST 扫描 except handler 内 (a) return 语句、
+    (b) HTTP 外发汇点调用（_send_json/send_error 等，见 _HTTP_EMIT_SINKS）含
+    str(exc_var) / repr(exc_var) / f-string 插值 exc_var / traceback.format_exc()。
+    不下钻嵌套函数作用域（嵌套函数的 return 非 handler 直返）。
+
+    #ARCH-SEC-001 校准（2026-07-18）：扫描面由 trust_boundary_surface_registry.yaml
+    限定为对外协议响应面——异常详情跨信任边界到达不可信消费方才是 5.168 定义的
+    "泄露"；同信任域（commit gates/CLI/内部服务/本地 dashboard）返异常详情属
+    debuggability 特性非泄露。registry 加载失败 fail-closed 报 error。
+    """
+    boundary_files = _load_trust_boundary_files()
+    if boundary_files is None:
+        return _make_metric(
+            "M13", "异常信息泄露(返客户端)", 0,
+            error="trust_boundary_surface_registry.yaml 加载失败（fail-closed）",
+            source="inline",
+        )
+    violations: list[str] = []
+    for fp in boundary_files:
+        tree, _lines = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        violations.extend(_collect_m13_handler_violations(rel, tree))
+    return _make_metric("M13", "异常信息泄露(返客户端)", len(violations), violations, "inline")
+
+
+# ── 指标 14：ABC 抽象方法完整性（5.104）────────────────────────────────────
+
+_ABSTRACT_DECO_NAMES = frozenset(
+    {"abstractmethod", "abstractproperty", "abstractclassmethod", "abstractstaticmethod"}
+)
+
+
+def _is_abc_class(cls: ast.ClassDef) -> bool:
+    """判定 ClassDef 是否 ABC（继承 ABC 或 metaclass=ABCMeta）。"""
+    for base in cls.bases:
+        name = base.id if isinstance(base, ast.Name) else (
+            base.attr if isinstance(base, ast.Attribute) else None
+        )
+        if name in ("ABC", "ABCMeta"):
+            return True
+    return any(
+        kw.arg == "metaclass"
+        and isinstance(kw.value, ast.Name)
+        and kw.value.id == "ABCMeta"
+        for kw in cls.keywords
+    )
+
+
+def _abstract_methods(cls: ast.ClassDef) -> dict[str, ast.FunctionDef]:
+    """提取类内 @abstractmethod 系装饰器方法 {name: node}。"""
+    result: dict[str, ast.FunctionDef] = {}
+    for stmt in cls.body:
+        if not isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for deco in stmt.decorator_list:
+            name = deco.id if isinstance(deco, ast.Name) else (
+                deco.attr if isinstance(deco, ast.Attribute) else None
+            )
+            if name in _ABSTRACT_DECO_NAMES:
+                result[stmt.name] = stmt
+                break
+    return result
+
+
+def _class_methods(cls: ast.ClassDef) -> dict[str, ast.FunctionDef]:
+    """提取类内全部方法 {name: node}。"""
+    return {
+        s.name: s for s in cls.body if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+
+
+def _positional_params(fn: ast.FunctionDef) -> list[str]:
+    """提取位置参数名（排除 self/cls，含 kwonly，排除 *args/**kwargs）。"""
+    args = fn.args
+    names = [a.arg for a in list(args.posonlyargs) + list(args.args)]
+    if names and names[0] in ("self", "cls"):
+        names = names[1:]
+    return names + [a.arg for a in args.kwonlyargs]
+
+
+def _check_subclass_against_abc(rel: Path, sub: ast.ClassDef, abc: ast.ClassDef) -> list[str]:
+    """比对单个子类与 ABC：缺失覆写 + 签名漂移（中间抽象类缺失覆写属合法，由人工甄别）。"""
+    found: list[str] = []
+    sub_methods = _class_methods(sub)
+    for name, abs_fn in _abstract_methods(abc).items():
+        impl = sub_methods.get(name)
+        if impl is None:
+            found.append(f"{rel}:{sub.lineno} {sub.name} 未覆写 {abc.name}.{name}")
+            continue
+        impl_params = _positional_params(impl)
+        abc_params = _positional_params(abs_fn)
+        if impl_params != abc_params:
+            found.append(
+                f"{rel}:{impl.lineno} {sub.name}.{name} 签名漂移 impl={impl_params} vs abc={abc_params}"
+            )
+    return found
+
+
+def metric_14_abc_completeness() -> dict:
+    """ABC 抽象方法完整性违规数（5.104）——同文件 ABC/子类 AST 签名比对。
+
+    病根：5.104 ABC抽象方法完整性（手动快照 33 项）——ABC 签名与实现不匹配
+    （LSP 违规）/ ABC 定义但实现类未覆写。同文件内可 AST 精确检测。
+    检测：同文件 ABC（含 @abstractmethod 系方法）+ 同文件子类（bases 引用
+    ABC 名），比对每个抽象方法是否覆写、覆写签名位置参数是否漂移。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _lines = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        classes = [n for n in ast.walk(tree) if isinstance(n, ast.ClassDef)]
+        abcs = {c.name: c for c in classes if _is_abc_class(c) and _abstract_methods(c)}
+        if not abcs:
+            continue
+        for cls in classes:
+            if cls.name in abcs:
+                continue
+            base_names = {b.id for b in cls.bases if isinstance(b, ast.Name)}
+            for abc_name in base_names & set(abcs):
+                violations.extend(_check_subclass_against_abc(rel, cls, abcs[abc_name]))
+    return _make_metric("M14", "ABC抽象方法完整性", len(violations), violations, "inline")
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 11 项指标注册表（id → 检测函数）
+# 14 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -868,6 +1223,9 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M09", "三方对齐违规数", metric_09_three_way_alignment),
     ("M10", "时间触发残留数", metric_10_time_trigger_residuals),
     ("M11", "PG域引用一致性违规数", metric_11_pg_domain_consistency),
+    ("M12", "异常粒度过粗(吞没型)", metric_12_broad_except_swallow),
+    ("M13", "异常信息泄露(返客户端)", metric_13_exception_info_leak),
+    ("M14", "ABC抽象方法完整性", metric_14_abc_completeness),
 ]
 
 
@@ -943,7 +1301,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（14 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")

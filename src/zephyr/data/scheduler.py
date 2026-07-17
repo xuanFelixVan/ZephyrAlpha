@@ -334,15 +334,16 @@ class IntegratorScheduler:
                             "last_check": time.time(),
                             "latency_ms": round(latency, 1),
                         }
-                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                except Exception as e:  # noqa: BLE001 — CH 探活降级：缓存 error 状态，细节入日志
                     latency = (time.time() - t0) * 1000
                     with self._ch_health_lock:
+                        # 5.168治本（#ARCH-SEC-001）：异常详情不经 /health 跨信任边界外发，细节入日志
                         self._ch_health_cache = {
-                            "status": f"error: {e}",
+                            "status": "error",
                             "last_check": time.time(),
                             "latency_ms": round(latency, 1),
                         }
-                    log.warning("CH 健康探活失败: %s", e)
+                    log.warning("CH 健康探活失败: %s", e, exc_info=True)
                 # 等待下次探活（用 Event 实现可中断的 sleep 更优雅，但此处简单实现）
                 time.sleep(self._ch_health_interval)
 
@@ -1338,8 +1339,10 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
         try:
             health = self.scheduler.get_health()
             self._send_json(200, health)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._send_json(500, {"status": "error", "error": str(e)})
+        except Exception as e:  # noqa: BLE001 — /health 降级：返通用错误，细节入日志
+            # 5.168治本（#ARCH-SEC-001）：异常详情不经 HTTP 跨信任边界外发
+            log.warning("/health 处理失败: %s", e, exc_info=True)
+            self._send_json(500, {"status": "error", "error": "internal error"})
 
     def _handle_status(self) -> None:
         """输出调度器基本状态 JSON。"""
@@ -1349,8 +1352,10 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
         try:
             status = self.scheduler.get_status()
             self._send_json(200, status)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._send_json(500, {"error": str(e)})
+        except Exception as e:  # noqa: BLE001 — /status 降级：返通用错误，细节入日志
+            # 5.168治本（#ARCH-SEC-001）：异常详情不经 HTTP 跨信任边界外发
+            log.warning("/status 处理失败: %s", e, exc_info=True)
+            self._send_json(500, {"error": "internal error"})
 
     def _send_json(self, code: int, obj: object) -> None:
         body = json.dumps(obj, ensure_ascii=False, default=str)

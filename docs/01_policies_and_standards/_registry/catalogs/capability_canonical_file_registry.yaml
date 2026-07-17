@@ -1482,6 +1482,26 @@ capabilities:
       - forbidden_markers  # 顶层 forbidden_markers 列表（删则无禁止标记）
 
   # --------------------------------------------------------------------------
+  - capability_id: trust_boundary_surface_registry
+    aliases:
+      - TRUST-BOUNDARY-SURFACE-REGISTRY
+      - trust-boundary-surface-registry
+      - trust_boundary_registry
+      - trust_boundary_ssot
+      - m13_scan_scope_registry
+    description: >-
+      信任边界 surface 登记表（SSoT，2026-07-18 治本 #ARCH-SEC-001）。登记全部对外
+      协议响应面（MCP stdio servers / 监控 HTTP endpoint 等跨进程·跨机器零信任边界
+      文件清单）。作为 architecture_health_dashboard.py M13 指标（异常信息泄露检测）
+      的扫描范围唯一真源——异常详情跨信任边界到达不可信消费方才是 5.168 定义的
+      "泄露"；同信任域（commit gates/CLI/内部服务/本地 dashboard）返异常详情属
+      debuggability 特性非泄露。登记铁律：新增任何对外协议入口 MUST 先在本清单登记，
+      登记后 M13 自动纳入扫描，无需改检测器代码。规则数据真源（TRAE-062），单向
+      派生到检测器（registry YAML -> M13 扫描面），禁止反向写入。
+    integrity_anchors:
+      - surfaces  # 顶层 surfaces 列表（删则无扫描面，M13 fail-closed 报 error）
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -4363,6 +4383,10 @@ creation_tokens:
     token: "auto-noqa-exempt-registry-20260717"
     created_by: "session-arch-noqa-gov-001"
     capability: "noqa_exempt_registry"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml"
+    token: "auto-trust-boundary-registry-20260718"
+    created_by: "session-arch-sec-001"
+    capability: "trust_boundary_surface_registry"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
@@ -4857,6 +4881,15 @@ creation_tokens:
     created_by: "session-sweep-fix-20260717"
     capability: "session_worktree_cli"
 
+  # GATE-WORKTREE-LIFECYCLE reconciler: 事件驱动 stale worktree 自动清理（治本遗留项#2 P2, 2026-07-17）
+  # 病根：原 P1 仅在 session_worktree_start 内被动触发 sweep——无新 session 启动时 stale 永久堆积。
+  # 治本：reconciler 在任何 commit/merge 后自动触发 session_worktree_sweep（priority=800）。
+  # capability 反查：新 AI 搜 "worktree 清理/stale worktree/sweep 自动" 可定位此 reconciler。
+  - file: "src/zephyr/governance/audit/reconciliation_registry.py"
+    token: "auto-worktree-lifecycle-reconciler-20260717"
+    created_by: "session-sweep-fix-20260717"
+    capability: "worktree_lifecycle_reconciler"
+
 # ============================================================================
 # 维护日志
 # ============================================================================
@@ -4935,3 +4968,12 @@ creation_tokens:
 #   - scheduler.py _create_provider 路由扩展：3 源 → 8 源（ifind/miniqmt/akshare/
 #     baostock/tushare/tickflow/tdx/rss）
 #   - session: sess-10136-20260706065810
+
+# 2026-07-18 治本遗留项#2 文档同步（5 项缺口闭环）：
+#   - G1 rule_catalog_registry.yaml 补登 AGENTS.md（module_id=PS-AGENTS-001，aliases 含 RULE-WORKTREE/FP-ISO.4C/PRE-MERGE-TOPO-CHECK/GATE-WORKTREE-LIFECYCLE）
+#   - G2 architecture_issue_registry.yaml 补登 #ARCH-WORKTREE-001（治本遗留项#2，P1+P2 已完成，第三期待定）
+#   - G3 AGENTS.md L558 追加 P2 reconciler 文档（GATE-WORKTREE-LIFECYCLE 注册激活点+触发覆盖）
+#   - G4 blueprint.md Q2/Q3 修正（Q2 改为 reconciler 方案，废弃 worktree_gc.py 守护进程；Q3 责任组件改为 session_worktree.py）
+#   - G5 本条新增 creation_token: worktree_lifecycle_reconciler（reconciliation_registry.py make_worktree_lifecycle_reconciler）
+#   - 治本根因：5 项文档缺口使新 AI 无法通过 capability/registry/AGENTS.md 反查发现 P2 reconciler，可能重复造轮子
+#   - session: sess-39824-20260718031108
