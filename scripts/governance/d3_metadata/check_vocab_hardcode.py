@@ -108,7 +108,7 @@ _STARTUP_MARKER_PATTERN = re.compile(r"^#\s*\[STARTUP\]\s*(\w+)")
 # ── 检测5：_load_xxx 函数体复制 yaml 词表读取逻辑（R4 治本 2026-06-30）──
 # 匹配 _load_ 前缀 + 词表相关关键词的函数名（如 _load_ttl_values, _load_legal_values）
 # 命中后检查函数体是否包含 yaml.safe_load 调用 → 疑似复制词表加载逻辑
-# 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免
+# 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 noqa: gate-vocab 豁免
 _VOCAB_LOAD_FUNC_PATTERN = re.compile(
     r"^_load_[a-z_]*?(value|values|vocab|legal|valid|status|ttl|type|layer|safety|stability|autonomy|classification)$"
 )
@@ -117,7 +117,7 @@ _VOCAB_LOAD_FUNC_PATTERN = re.compile(
 # 匹配含 THRESHOLD/DEADLINE/TIMEOUT/QUARANTINE/LIMIT 的变量名，
 # 若赋值为数值字面量/数值集合（非 _get_threshold() 调用）→ 疑似硬编码。
 # 阈值变量理应从 thresholds.yaml 通过 _get_threshold() 读取，硬编码=第二真源=必漂移。
-# 豁免：合理不接入 SSoT 的阈值（如实验性/脚本专用）加 # noqa: gate-vocab。
+# 豁免：合理不接入 SSoT 的阈值（如实验性/脚本专用）加 noqa: gate-vocab。
 _THRESHOLD_VAR_PATTERN = re.compile(
     r"^[A-Z_]*?(THRESHOLD|DEADLINE|TIMEOUT|QUARANTINE|LIMIT)[A-Z_]*$"
 )
@@ -527,7 +527,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
         # _load_doc_type_suffixes 等非标准命名），改为行为检测——任何函数体内含
         # yaml.safe_load 且引用 vocabulary 相关路径/字符串 → 疑似复制词表加载。
         # SSoT 真源文件（yaml_utils.py）白名单豁免。
-        # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 # noqa: gate-vocab 豁免。
+        # 合理不收敛的函数（SSoT 不支持的批量/分组模式）加 noqa: gate-vocab 豁免。
         elif isinstance(node, ast.FunctionDef):
             # SSoT 真源文件豁免（自身必须用 yaml.safe_load 读词表）
             if filepath.name in _SSOT_EXEMPT_FILES:
@@ -603,7 +603,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     # 检测6：生成器数据库名硬编码（治本 2026-06-30，红攻1治本）
     # 生成器产物里的数据库名必须从 _common.DB_DISPLAY_NAME 引用，禁止硬编码字面量。
     # 范围：仅 scripts/governance/d5_architecture/generators/*.py（排除 _common.py 真源定义）
-    # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
+    # 排除：docstring（模块/函数/类 body[0]）+ noqa: gate-vocab 豁免
     # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
     generators_dir = REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "generators"
     try:
@@ -639,7 +639,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     # 禁止硬编码 "tests/" 字面量——真源漂移风险（新AI可能直接硬编码绕过 SSoT，
     # 导致 Windows 路径归一化等治本逻辑被绕过）。
     # 范围：仅 src/zephyr/gov_enforcement/commit_gates/*.py
-    # 排除：docstring（模块/函数/类 body[0]）+ # noqa: gate-vocab 豁免
+    # 排除：docstring（模块/函数/类 body[0]）+ noqa: gate-vocab 豁免
     # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
     # 真源：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
     commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
@@ -674,7 +674,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
 
 
 def _has_noqa_exempt(source: str, lineno: int) -> bool:
-    """检查指定行是否有 ``# noqa: gate-vocab`` 内联豁免。
+    """检查指定行是否有 ``noqa: gate-vocab`` 内联豁免。
 
     Args:
         source: 文件源码
@@ -697,7 +697,7 @@ def _collect_noqa_exemptions(source: str) -> list[tuple[int, str]]:
     约束（向内收）：扩展现有 main() 输出，不新建 reconciler/YAML。
 
     精确识别（v1 治本）：用 ``tokenize`` 模块识别真正的 COMMENT token，
-    自动排除 docstring/字符串字面量/文档嵌套引用中的 ``# noqa: gate-vocab``
+    自动排除 docstring/字符串字面量/文档嵌套引用中的 ``noqa: gate-vocab``
     文字——避免审计自身脚本文档时误报。
 
     Args:

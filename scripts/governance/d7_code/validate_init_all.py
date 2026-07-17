@@ -57,7 +57,7 @@ ensure_utf8_stdout()
 
 from _shared.constants import EXIT_PASS, REPO_ROOT, SRC_DIR
 
-SKELETON_PACKAGES = {  # noqa: gate-vocab  骨架包列表业务子集
+SKELETON_PACKAGES = {  # noqa: gate-vocab  骨架包列表业务子集  gate-vocab豁免: 骨架包列表业务子集非词表
     "signal",
     "risk",
     "pf_core",
