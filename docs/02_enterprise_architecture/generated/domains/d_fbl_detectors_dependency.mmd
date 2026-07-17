@@ -1,7 +1,7 @@
 %% D_FBL_DETECTORS 域全景依赖图
-%% 生成时间: 2026-07-17 11:45:48
+%% 生成时间: 2026-07-17 12:19:01
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 65, 依赖边数: 78
+%% 模块数: 65, 依赖边数: 79
 
 graph TD
 
@@ -90,7 +90,7 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___anomaly_anomaly_detector_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_feedback_loop_detec___ard_oscillation_detector_py
-    %% D_FEEDBACK_LOOP -> D_FBL_DETECTORS (33 条)
+    %% D_FEEDBACK_LOOP -> D_FBL_DETECTORS (34 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_detectors___init___py
@@ -172,5 +172,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 5 条
-    %% 跨域入边: 70 条
+    %% 跨域入边: 71 条
     %% 跨域出边: 3 条

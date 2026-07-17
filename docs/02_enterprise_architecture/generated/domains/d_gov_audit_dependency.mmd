@@ -1,7 +1,7 @@
 %% D_GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-07-17 11:45:48
+%% 生成时间: 2026-07-17 12:19:02
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 276, 依赖边数: 510
+%% 模块数: 276, 依赖边数: 511
 
 graph TD
 
@@ -249,6 +249,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_audit_query_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_audit___init___py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| src_zephyr_gov_audit_integrity_py
+    %% D_GOV_DOCS -> D_GOV_AUDIT (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_semantic_audit_compliance_map_py
     %% D_GOV_DRIFT -> D_GOV_AUDIT (6 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_audit_models_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_audit_merkle_hourly_py
@@ -587,5 +589,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 101 条
-    %% 跨域入边: 141 条
+    %% 跨域入边: 142 条
     %% 跨域出边: 268 条
