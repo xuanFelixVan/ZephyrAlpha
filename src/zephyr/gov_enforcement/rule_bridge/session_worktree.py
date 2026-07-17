@@ -69,6 +69,7 @@ __all__ = [
     "session_worktree_merge",
     "session_worktree_abort",
     "session_worktree_status",
+    "session_worktree_sweep",
     "generate_session_id",
 ]
 
@@ -211,6 +212,20 @@ def _sweep_stale_worktrees(
     Returns:
         {"swept": int, "skipped": int, "warnings": list[str]}
     """
+    # 防御性类型校验（治本遗留项#2，2026-07-17）：manager 必须是 WorktreeManager 实例。
+    # 病根：AI 曾误调 _sweep_stale_worktrees(REPO_ROOT, reg) 传入 Path 对象，
+    # 导致 AttributeError: 'WindowsPath' object has no attribute '_drafts_dir'。
+    # fail-closed 返回 error dict 而非抛异常（对标本模块所有函数返回 dict 不抛异常的契约）。
+    if not isinstance(manager, WorktreeManager):
+        return {
+            "swept": 0,
+            "skipped": 0,
+            "warnings": [
+                f"参数类型错误: manager 必须是 WorktreeManager 实例, 实际是 "
+                f"{type(manager).__name__}。请调用公开函数 session_worktree_sweep() "
+                f"而非私有 _sweep_stale_worktrees()。"
+            ],
+        }
     import time as _time
 
     drafts = manager._drafts_dir
@@ -246,6 +261,36 @@ def _sweep_stale_worktrees(
         warnings.append(f"sweep 整体异常（已中止）: {e}")
 
     return {"swept": swept, "skipped": skipped, "warnings": warnings}
+
+
+def session_worktree_sweep(
+    project_root: str | Path | None = None,
+    max_age_minutes: int = 30,
+) -> dict:
+    """公开入口：on-demand 清理 stale session worktree 残留（治本遗留项#2，2026-07-17）。
+
+    包装私有 ``_sweep_stale_worktrees``，提供 AI/CLI 可调用的清理 API。
+    病根：原 ``_sweep_stale_worktrees`` 是私有函数，仅在 ``session_worktree_start``
+    内部调用。当 AI 累积 stale worktree（来自崩溃/放弃的 session）且无新 session
+    启动时，无公开入口可清理，AI 被迫误调私有函数传入 Path 对象导致
+    AttributeError。本函数消除该 API 完整性缺口。
+
+    三重保护判据（由 ``_sweep_stale_worktrees`` 实现，本函数不改变）：
+      1. 目录 age > max_age_minutes（太新的不动，防误清并发 AI 正在创建的）
+      2. session 不在 active 注册表（活跃 session 不动）
+      3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
+
+    Args:
+        project_root: 项目根目录（默认 REPO_ROOT）。
+        max_age_minutes: 目录年龄阈值（分钟），默认 30。
+
+    Returns:
+        ``{"swept": int, "skipped": int, "warnings": list[str]}``。
+    """
+    root = Path(project_root) if project_root else REPO_ROOT
+    manager = _get_manager(root)
+    registry = _get_registry(root)
+    return _sweep_stale_worktrees(manager, registry, max_age_minutes=max_age_minutes)
 
 
 def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):

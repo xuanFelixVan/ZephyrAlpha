@@ -2881,3 +2881,24 @@ entries:
   status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+# --- #ARCH-DEP-001: L1 铁律依赖关系先行 pre-merge 强制（治本遗留项#1, 2026-07-17） ---
+- issue_id: '#ARCH-DEP-001'
+  title: L1 铁律"依赖关系先行"当前为君子协定——pre-merge 拓扑硬阻断待落地
+  severity: P1高
+  adjudication: >-
+    遗留项#1 治本裁定（2026-07-17）：L1 铁律文本声称"未登记依赖在拓扑验证时自动阻断"，
+    但实际 check_blueprint_code_alignment.py 将 CODE_NOT_IN_DEPGRAPH 定级为 LOW（暂态容忍），
+    且未注册为 commit gate——L1 当前是君子协定，不是技术强制。S4-C commit cdaa33f6e6
+    全程未通过 apply_depgraph.py 登记设计态即成功 merge，为治理幻觉的铁证。
+    治本分三期：第一期（已完成 2026-07-17）文档诚实化——修正 AGENTS.md L49"自动阻断"
+    为"君子协定 + post-merge reconciler 兜底"，引用本裁定。第二期（待施工）pre-merge
+    拓扑硬阻断——在 session_worktree._pre_merge_gate_check 注册 PRE-MERGE-TOPO-CHECK
+    gate，subprocess 调 check_blueprint_code_alignment.py --strict，HIGH drift 阻断
+    merge（非 commit，避免 DB 依赖）。第三期（可选长期）commit-time 轻量预检——
+    depgraph YAML 镜像 + commit gate 检查 [DEPENDENCIES] 头部声明在镜像中存在。
+  fix_phase: 第一期已完成（文档诚实化）；第二期待施工（pre-merge gate）
+  status: decided
+  related_adjudication: 遗留项#1治本
+  created: '2026-07-17'
+  last_updated: '2026-07-17'
