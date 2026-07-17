@@ -758,7 +758,7 @@ def make_drift_scan_reconciler(gateway: "object") -> ReconcilerSpec:
             )
             conn.commit()
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift_scan_reconciler: DB write failed: %s", e)
 
         if total == 0:
@@ -798,7 +798,7 @@ def _drift_fix_find_module(file_rel: str) -> str | None:
         conn.close()
         if row:
             return row[0]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("drift_fix: depgraph lookup failed for %s: %s", file_rel, e)
     return None
 
@@ -840,7 +840,7 @@ def _drift_fix_log_audit(project_root: "Path", finding: dict) -> None:
         )
         conn.commit()
         conn.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("drift_fix: audit finding log failed: %s", e)
 
 
@@ -988,7 +988,7 @@ def _module_id_infer_from_dir(file_rel: str) -> str | None:
         conn.close()
         if row:
             return row[0]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("module_id_recommend: dir lookup failed for %s: %s", file_rel, e)
     return None
 
@@ -1243,7 +1243,7 @@ def _collect_csv_refs(content: str, is_path_fn) -> list[str]:
                 cell = cell.strip().strip('"').strip("'")
                 if "/" in cell and "." in cell and is_path_fn(cell):
                     refs.append(cell)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass  # CSV 解析失败回退到正则结果
     return refs
 
@@ -2177,7 +2177,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
 
     try:
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None, f"import depgraph_schema failed: {e}"
 
     ts = int(time.time())
@@ -2194,7 +2194,7 @@ def _backup_depgraph_for_autoclean(project_root: "object", session_id: str) -> "
         # 治本（2026-07-08）：保留策略——清理过期 ghost_autoclean 备份（对标 backup_pg_depgraph）
         _cleanup_old_ghost_backups(project_root, max_backups=10)
         return backup_dir, ""
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None, str(e)
     finally:
         conn.close()
@@ -2245,7 +2245,7 @@ def _cleanup_old_ghost_backups(project_root: "object", max_backups: int = 10) ->
                 except OSError:
                     pass  # fail-open，不阻断主流程
         return len(to_remove)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return 0  # fail-open，保留策略失败不阻断主备份流程
 
 
@@ -2932,7 +2932,7 @@ def make_rule_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                     iid = entry.get("issue_id", "")
                     if isinstance(iid, str) and iid:
                         registered_ids.add(iid)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ReconcileResult(action="warn", detail=f"failed to parse architecture_issue_registry: {e}")
 
         # 扫描 committed_files 中所有 #ARCH-XXX 引用
@@ -3259,7 +3259,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
                     # 额外列出所有活跃 session
                     active = registry.list_active()
                     conflict_sessions = [s.session_id for s in active if s.session_id != session_id]
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass  # fail-open：SessionRegistry 异常不阻断审计
 
         # 3. 报告落盘
@@ -3338,7 +3338,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
         try:
             import zephyr.governance.audit.reconciliation_registry as reg_module
             available = set(reg_module.__all__)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ReconcileResult(action="warn", detail=f"failed to load reconciliation_registry: {e}")
 
         # 失效引用（AGENTS.md 引用了但不在 __all__ 中）
@@ -4232,7 +4232,7 @@ def _auto_fix_gate_inventory(project_root) -> dict:
         sys.path.insert(0, scripts_gen)
     try:
         from check_gate_inventory_drift import detect_drift
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"fixed": False, "detail": f"cannot import detect_drift: {e}"}
 
     missing, _extra = detect_drift()

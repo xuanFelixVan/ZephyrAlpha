@@ -395,7 +395,7 @@ class GitCommitGateway:
                 s for s in self._registry.list_active()
                 if s.session_id != session_id
             ]
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             other_active = []
         if other_active:
             other_ids = [s.session_id for s in other_active]
@@ -429,7 +429,7 @@ class GitCommitGateway:
                     self._claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
                     # S3-C: 持久化到磁盘（进程崩溃后可恢复）
                     self._save_session_snapshot(session_id)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
                         f, session_id, exc_info=True,
@@ -456,7 +456,7 @@ class GitCommitGateway:
         try:
             self._claim_snapshots.pop(session_id, None)
             self._delete_session_snapshot(session_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
     def _capture_baseline_diff(self, abs_file: str) -> str:
@@ -503,12 +503,12 @@ class GitCommitGateway:
                     snapshots = data.get("snapshots", {})
                     if isinstance(snapshots, dict):
                         self._claim_snapshots[sid] = snapshots
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning(
                         "GitCommitGateway: claim snapshot file corrupt, skipped — %s",
                         snap_file, exc_info=True,
                     )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "GitCommitGateway: _load_claim_snapshots_from_disk failed", exc_info=True,
             )
@@ -532,7 +532,7 @@ class GitCommitGateway:
             tmp_path = snap_path.with_suffix(".json.tmp")
             tmp_path.write_text(payload, encoding="utf-8")
             os.replace(tmp_path, snap_path)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "GitCommitGateway: _save_session_snapshot failed — session=%s",
                 session_id, exc_info=True,
@@ -546,7 +546,7 @@ class GitCommitGateway:
         try:
             snap_path = self._claim_snapshots_dir / f"{session_id}.json"
             snap_path.unlink(missing_ok=True)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug(
                 "GitCommitGateway: _delete_session_snapshot failed — session=%s",
                 session_id, exc_info=True,
@@ -640,7 +640,7 @@ class GitCommitGateway:
                     logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
                 elif rr.action == "clean":
                     print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
 
     def commit(
@@ -670,7 +670,7 @@ class GitCommitGateway:
         # S3-D 治本（2026-07-17）：非 worktree commit + 有其他活跃 session → WARN（并发风险）
         try:
             wt_session = self._get_worktree_manager().get_current_worktree()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_session = None
         self._warn_non_worktree_commit(session_id, wt_session)
 
@@ -969,14 +969,14 @@ class GitCommitGateway:
         if result.status == CommitStatus.OK:
             try:
                 self._post_commit_red_blue_trigger(files, session_id, result.commit_hash)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("GitCommitGateway: red-blue trigger emit failed: %s", e, exc_info=True)
         # P4-T2: session shutdown handoff（crash recovery）
         if result.status == CommitStatus.OK:
             try:
                 from zephyr.governance.ops_governance.phase_manager import session_shutdown
                 session_shutdown(session_id, summary=full_message)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("GitCommitGateway: session_shutdown handoff failed: %s", e, exc_info=True)
         if pathspec_file:
             try:
@@ -1016,7 +1016,7 @@ class GitCommitGateway:
             from zephyr.shared.event_bus import bus as _bus
 
             _bus.emit(topic, payload)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("GitCommitGateway: emit %s failed: %s", topic, e, exc_info=True)
 
     def _has_staged_renames(self, target_files: list[str]) -> bool:
