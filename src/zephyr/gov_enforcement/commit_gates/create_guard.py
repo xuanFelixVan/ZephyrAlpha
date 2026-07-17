@@ -460,15 +460,8 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
     return True, ""
 
 
-def _check_creation_token(
-    gateway, new_py_files: list[str], new_yaml_files: list[str],
-    new_other_files: list[str] | None = None,
-) -> tuple[bool, str]:
-    """检测新增 .py/.yaml 文件是否登记了 creation_token（trae_060 §2 唯一真源）。
-
-    fail-closed：YAML 不可达时阻断（防删 registry 绕过 token 检查）。
-    P-2 修复：registry 路径随 gateway.project_root 解析（支持 worktree 路径）。
-    """
+def _load_capability_registry(gateway) -> tuple[dict | None, str]:
+    """加载 capability registry（fail-closed）。返回 (data, error_detail)。"""
     from zephyr.governance.capability_lookup import REGISTRY_YAML
 
     _registry_yaml = (
@@ -480,7 +473,7 @@ def _check_creation_token(
         _registry_yaml = REGISTRY_YAML  # 回退到全局真源
 
     if not _registry_yaml.exists():
-        return False, (
+        return None, (
             f"CREATE-GUARD fail-closed: capability registry 不可达（文件缺失: {_registry_yaml}）。"
             f"禁止放行——防删 registry 绕过 creation_token 检查。"
             f"修复：git checkout HEAD -- {_registry_yaml} 恢复 registry 后重试。"
@@ -488,19 +481,22 @@ def _check_creation_token(
     try:
         data = yaml.safe_load(_registry_yaml.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        return False, (
+        return None, (
             f"CREATE-GUARD fail-closed: capability registry 解析失败"
             f"({type(e).__name__}: {e})。禁止放行——registry 是 creation_token 真源，"
             f"语法错误=检测器失效。修复：修正 {_registry_yaml} 的 YAML 语法后重试。"
         )
 
     if not isinstance(data, dict):
-        return False, (
+        return None, (
             f"CREATE-GUARD fail-closed: registry YAML 顶层非 dict（结构异常）。"
             f"禁止放行——结构异常=检测器失效。修复：检查 {_registry_yaml} 顶层结构后重试。"
         )
+    return data, ""
 
-    # 构建 creation_tokens 文件索引（相对路径 -> token 条目）
+
+def _collect_registered_files(data: dict) -> set[str]:
+    """构建 creation_tokens 文件索引（相对路径集合，归一化为正斜杠）。"""
     tokens = data.get("creation_tokens", []) or []
     registered_files: set[str] = set()
     if isinstance(tokens, list):
@@ -510,39 +506,47 @@ def _check_creation_token(
             token_file = entry.get("file", "")
             if isinstance(token_file, str) and token_file:
                 registered_files.add(token_file.replace("\\", "/"))
+    return registered_files
+
+
+def _no_token_detail(unregistered: list[str], file_kind: str) -> str:
+    """creation_token 缺失阻断消息（.py/.yaml/其他格式共用模板）。"""
+    return (
+        f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered}. "
+        f"commit 新建 {file_kind} 文件前 MUST 在 capability_canonical_file_registry.yaml "
+        f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
+        f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
+        f"created_by: \"session-xxx\"  capability: \"xxx\""
+    )
+
+
+def _check_creation_token(
+    gateway, new_py_files: list[str], new_yaml_files: list[str],
+    new_other_files: list[str] | None = None,
+) -> tuple[bool, str]:
+    """检测新增 .py/.yaml 文件是否登记了 creation_token（trae_060 §2 唯一真源）。
+
+    fail-closed：YAML 不可达时阻断（防删 registry 绕过 token 检查）。
+    P-2 修复：registry 路径随 gateway.project_root 解析（支持 worktree 路径）。
+    """
+    data, detail = _load_capability_registry(gateway)
+    if data is None:
+        return False, detail
+    registered_files = _collect_registered_files(data)
 
     # 检测新增 .py 文件是否登记了 creation_token
     unregistered = [f for f in new_py_files if f not in registered_files]
     if unregistered:
-        return False, (
-            f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered}. "
-            f"commit 新建 .py 文件前 MUST 在 capability_canonical_file_registry.yaml "
-            f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
-            f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
-            f"created_by: \"session-xxx\"  capability: \"xxx\""
-        )
+        return False, _no_token_detail(unregistered, ".py")
     # 检测新增非 rules/ .yaml 文件是否登记了 creation_token
     unregistered_yaml = [f for f in new_yaml_files if f not in registered_files]
     if unregistered_yaml:
-        return False, (
-            f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered_yaml}. "
-            f"commit 新建 .yaml 文件前 MUST 在 capability_canonical_file_registry.yaml "
-            f"的 creation_tokens 字段登记 token（声明创建意图 + 关联 capability）。"
-            f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
-            f"created_by: \"session-xxx\"  capability: \"xxx\""
-        )
+        return False, _no_token_detail(unregistered_yaml, ".yaml")
     # 阶段 2 治本（ARCH-TTL-DOC-001）：检测新增 .md/.sh/.ps1/.mmd/.json 文件
     if new_other_files:
         unregistered_other = [f for f in new_other_files if f not in registered_files]
         if unregistered_other:
-            return False, (
-                f"无 creation_token，禁止造第二真源（trae_060 §2）: {unregistered_other}. "
-                f"commit 新建 .md/.sh/.ps1/.mmd/.json 文件前 MUST 在 "
-                f"capability_canonical_file_registry.yaml 的 creation_tokens 字段登记 token"
-                f"（声明创建意图 + 关联 capability）。"
-                f"格式: - file: \"<相对路径>\"  token: \"auto-xxx\"  "
-                f"created_by: \"session-xxx\"  capability: \"xxx\""
-            )
+            return False, _no_token_detail(unregistered_other, ".md/.sh/.ps1/.mmd/.json")
     return True, ""
 
 
@@ -638,6 +642,39 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
     return True, ""
 
 
+def _filter_to_commit_files(
+    new_py_files: list[str], new_yaml_files: list[str],
+    new_other_files: list[str], commit_files_rel: set[str],
+) -> tuple[list[str], list[str], list[str]]:
+    """治本 2026-06-30：只检测 commit 文件中的新增文件（gateway 选择性提交）。"""
+    return (
+        [f for f in new_py_files if f in commit_files_rel],
+        [f for f in new_yaml_files if f in commit_files_rel],
+        [f for f in new_other_files if f in commit_files_rel],
+    )
+
+
+def _run_file_registration_checks(
+    gateway, new_py_files: list[str], new_yaml_files: list[str],
+    new_other_files: list[str],
+) -> tuple[bool, str]:
+    """文件登记类检测链：creation_token → 字段头部 → basename 碰撞。"""
+    # creation_token 检测（trae_060 §2 唯一真源）——阶段 2：覆盖全 7 格式
+    passed, detail = _check_creation_token(
+        gateway, new_py_files, new_yaml_files, new_other_files
+    )
+    if not passed:
+        return False, detail
+
+    #ARCH-031：字段头部完整性检测
+    passed, detail = _check_field_header(gateway, new_py_files)
+    if not passed:
+        return False, detail
+
+    #ARCH-031：basename 碰撞检测
+    return _check_basename_collision(gateway, new_py_files)
+
+
 def make_create_guard() -> GateSpec:
     """构造新建 .py 文件 creation_token 阻断门禁 GateSpec（硬阻断型）。
 
@@ -680,9 +717,9 @@ def make_create_guard() -> GateSpec:
             return True, ""
 
         # 治本 2026-06-30：只检测 commit 文件中的新增 .py（gateway 选择性提交）
-        new_py_files = [f for f in new_py_files if f in commit_files_rel]
-        new_yaml_files = [f for f in new_yaml_files if f in commit_files_rel]
-        new_other_files = [f for f in new_other_files if f in commit_files_rel]
+        new_py_files, new_yaml_files, new_other_files = _filter_to_commit_files(
+            new_py_files, new_yaml_files, new_other_files, commit_files_rel
+        )
 
         if not new_py_files and not new_yaml_files and not new_other_files:
             return True, ""
@@ -692,23 +729,9 @@ def make_create_guard() -> GateSpec:
         if not passed:
             return False, detail
 
-        # creation_token 检测（trae_060 §2 唯一真源）——阶段 2：覆盖全 7 格式
-        passed, detail = _check_creation_token(
+        # 文件登记类检测链（creation_token / 字段头部 / basename 碰撞）
+        return _run_file_registration_checks(
             gateway, new_py_files, new_yaml_files, new_other_files
         )
-        if not passed:
-            return False, detail
-
-        #ARCH-031：字段头部完整性检测
-        passed, detail = _check_field_header(gateway, new_py_files)
-        if not passed:
-            return False, detail
-
-        #ARCH-031：basename 碰撞检测
-        passed, detail = _check_basename_collision(gateway, new_py_files)
-        if not passed:
-            return False, detail
-
-        return True, ""
 
     return GateSpec(gate_id="CREATE-GUARD", check=_check, priority=60)
