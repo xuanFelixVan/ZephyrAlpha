@@ -242,6 +242,18 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
             )
     except UnicodeDecodeError:
         pass
+    # .ps1 files must be ASCII-only: PowerShell 5.1 decodes non-BOM .ps1 as ANSI
+    # codepage (GBK on Chinese Windows), causing multi-byte UTF-8 to misparse.
+    # The Edit tool strips BOM, so .ps1 cannot reliably keep BOM — ASCII-only is
+    # the only safe option.
+    if p.suffix == ".ps1":
+        check_bytes = raw[3:] if raw.startswith(BOM) else raw
+        non_ascii_count = sum(1 for b in check_bytes if b > 127)
+        if non_ascii_count > 0:
+            findings.append(
+                f"INJ-007 FAIL: file '{filepath}' has {non_ascii_count} non-ASCII bytes — "
+                f".ps1 files must be ASCII-only (PowerShell 5.1 ANSI decoding issue)"
+            )
     return findings, warnings
 
 
@@ -254,7 +266,7 @@ def check_dir_encoding(dirpath: str) -> tuple[list[str], list[str]]:
         findings.append(f"INJ-007 FAIL: directory '{dirpath}' does not exist")
         return findings, warnings
     for f in p.rglob("*"):
-        if f.suffix in (".py", ".md", ".yaml", ".yml", ".json", ".toml"):
+        if f.suffix in (".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ps1"):
             f_findings, f_warnings = check_file_encoding(str(f))
             findings.extend(f_findings)
             warnings.extend(f_warnings)
@@ -286,7 +298,7 @@ def main() -> None:
     if args.scan:
         mojibake_count = 0
         for f in REPO_ROOT.rglob("*"):
-            if f.suffix not in (".py", ".md", ".yaml", ".yml", ".json", ".toml"):
+            if f.suffix not in (".py", ".md", ".yaml", ".yml", ".json", ".toml", ".ps1"):
                 continue
             if "__pycache__" in str(f) or ".git" in str(f):
                 continue

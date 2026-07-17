@@ -1,13 +1,13 @@
 <#
 .SYNOPSIS
-    灾备恢复脚本——查看/验证/灾难恢复
+    Disaster recovery script -- list/verify/restore
 .DESCRIPTION
-    [BLUEPRINT] MOD-INF-043 | §3.5
-    子命令:
-      list              - 列出所有快照
-      verify <id>       - 恢复到 D:\restore_test\ 供验证
-      latest            - 灾难恢复最新快照到 D:\ZephyrAlpha\
-      latest -target X  - 恢复到指定目录
+    [BLUEPRINT] MOD-INF-043 | Section 3.5
+    Subcommands:
+      list              - List all snapshots
+      verify <id>       - Restore to D:\restore_test\ for verification
+      latest            - Disaster-recover latest snapshot to D:\ZephyrAlpha\
+      latest -target X  - Restore to specified directory
 #>
 param(
     [Parameter(Position=0)]
