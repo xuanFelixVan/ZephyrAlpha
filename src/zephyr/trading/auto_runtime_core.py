@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-ORC_auto_runtime_core | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: boot/shutdown阶段的一次性等待(time.sleep等待ollama启动稳定/proc.wait(timeout)等待子进程终止),非周期轮询循环
 """
 AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 ==================================================

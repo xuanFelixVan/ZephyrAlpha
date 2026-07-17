@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-ORC___main__ | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 交易系统主入口常驻服务(python -m zephyr.trading),CLI触发启动,启动后自动运行reconcile循环;非reconciler无需事件触发
+# noqa: m10-time-trigger  M10豁免: CLI主入口的reconcile轮询循环(time.sleep(poll_interval))是系统心跳设计,手动启动后自动运行;转为纯事件驱动需重构AutoRuntimeCore内部架构,属独立架构倡议
 
 """
 python -m zephyr.trading — AutoRuntime Core 入口
