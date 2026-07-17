@@ -528,8 +528,11 @@ class TestRulesYamlNamingBlocked:
 
 # ===========================================================================
 # ARCH-031 防复发（2026-07-02）：governance/ 根禁止新增 .py 文件
-# 病根：ARCH-031 治本前 governance/ 根平铺 32 个 .py 文件，治本后迁移 24 文件到
-# 12 子目录，仅保留 8 个高风险核心模块。防复发：禁止在 governance/ 根直接新增 .py。
+# 病根：ARCH-031 治本前 governance/ 根平铺 32 个 .py 文件，治本后迁移到子目录，
+# 仅保留高风险核心模块（__init__/capability_lookup/depgraph_schema/evidence_pack/
+# integrity/rule_patterns）。2026-07-17 shim 消除 commit 213be2b5a3 删除
+# base/merkle_hourly/performance_attribution_report，当前根 .py 文件数稳定为 6（含 __init__）。
+# 防复发：禁止在 governance/ 根直接新增 .py（清单随治本进化，真源在磁盘现有文件）。
 # 治本：扩展已有 create_guard 检测范围（不新增门禁，规避自指递归——同 reconciler 先例）。
 # ===========================================================================
 

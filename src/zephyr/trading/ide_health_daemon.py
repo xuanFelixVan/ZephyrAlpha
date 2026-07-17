@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RESOURCE_OPTIMIZATION_ENGINE | docs/03_modules/_cross_layer/resource_optimization_engine/blueprint.md | §new-IDE
 # [MODULE] zephyr.trading.ide_health_daemon
 # [DOMAIN] D_TRADING
-# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.lifecycle.daemon_registry; zephyr.governance.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.gov_kb.pipeline.activate; zephyr.feedback_loop.auto_evolution; zephyr.gov_enforcement.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.integration.mcp.audit_logger
+# [DEPENDENCIES] zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.shared.lifecycle.daemon_registry; zephyr.gov_enforcement.rule_enforcement.compliance_rule; docs.03_modules._cross_layer.mcp_servers.blueprint.md; zephyr.gov_kb.pipeline.activate; zephyr.feedback_loop.auto_evolution; zephyr.gov_enforcement.rule_enforcement.adaptive_threshold; docs.03_modules._domain_governance.audit_trail.blueprint.md; docs.03_modules._domain_governance.drift_detector.blueprint.md; docs.03_modules._domain_autonomy_perm.budget_enforcer.blueprint.md; docs.03_modules._domain_autonomy_core.agent_spec.blueprint.md; zephyr.integration.mcp.audit_logger
 # [CONSUMERS] zephyr.shared.lifecycle.daemon_registry; zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -120,7 +120,7 @@ def _get_window_configs_from_cmdlines(pids: list[int]) -> dict[str, set[int]]:
             if match:
                 config_id = match.group(1)
                 windows.setdefault(config_id, set()).add(pid)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
     return windows
 
@@ -151,7 +151,7 @@ def _get_visible_window_configs() -> set[str]:
         )
         for match in re.finditer(r"vscode-window-config=vscode:([a-f0-9-]+)", result.stdout):
             visible.add(match.group(1))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in ide_health_daemon", exc_info=True)
     return visible
 
@@ -187,7 +187,7 @@ def _get_mainwindow_handle_map() -> dict[int, int]:
                     handle_map[pid] = handle
                 except ValueError:
                     continue
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in ide_health_daemon", exc_info=True)
     return handle_map
 
@@ -249,7 +249,7 @@ def kill_ghost_windows(ghosts: list[dict[str, Any]] | None = None) -> list[int]:
                     psutil.Process(pid).terminate()
                     killed.append(pid)
                     logger.info("ide_health_daemon: psutil-terminated ghost PID %d", pid)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("ide_health_daemon: failed to kill PID %d", pid, exc_info=True)
 
     return killed
@@ -276,7 +276,7 @@ def _force_kill_pid(pid: int) -> bool:
 
             psutil.Process(pid).terminate()
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_force_kill_pid: failed to terminate process %s (%s: %s)", pid, type(e).__name__, e, exc_info=True)
             return False
 
@@ -308,7 +308,7 @@ def _list_completed_tasks(repo: object, statuses: list[str]) -> list[Any]:
     for s in statuses:
         try:
             tasks.extend(repo.list_by_status(s))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in ide_health_daemon list_by_status(%s)", s, exc_info=True)
     return tasks
 
@@ -322,7 +322,7 @@ def cleanup_completed_tasks(task_repo: TaskRepositoryProtocol | None = None) -> 
 
             repo = TaskRepository()
         tasks = _list_completed_tasks(repo, _COMPLETED_STATUSES)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("ide_health_daemon: TaskRepository unavailable for cleanup", exc_info=True)
         return results
 
@@ -369,7 +369,7 @@ class IdeHealthDaemon:
                 bus.subscribe("task.failed", lambda _: self.scan_tick())
                 bus.subscribe("ide.health.check.request", lambda _: self.scan_tick())
                 logger.info("IdeHealthDaemon: started (event-driven, no daemon thread)")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("IdeHealthDaemon: EventBus subscribe failed: %s", e, exc_info=True)
 
     def stop(self) -> None:
@@ -396,14 +396,14 @@ class IdeHealthDaemon:
                 if killed:
                     logger.info("IdeHealthDaemon: auto-killed %d processes", len(killed))
             self._ghost_count = len(ghosts)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("IdeHealthDaemon: scan tick failed", exc_info=True)
         # P1-DAE: 每 10 轮采集一次 drift 健康指标
         self._loop_count += 1
         if self._loop_count % 10 == 0:
             try:
                 self._collect_drift_metrics()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("IdeHealthDaemon: drift metrics collection failed", exc_info=True)
 
     def _collect_drift_metrics(self) -> None:
@@ -470,7 +470,7 @@ class IdeHealthDaemon:
                     cwd=str(self._project_root),
                     capture_output=True, text=True, timeout=60,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("drift health: stash auto-cleanup failed", exc_info=True)
         if metrics["worktree_changes"] is not None and metrics["worktree_changes"] > 50:
             logger.warning("drift health: worktree_changes=%d > 50", metrics["worktree_changes"])
@@ -503,6 +503,6 @@ def register_daemon() -> None:
         )
         registry.start("ide_health_daemon")
         logger.info("IdeHealthDaemon: registered and auto-started in DaemonRegistry")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("IdeHealthDaemon: DaemonRegistry unavailable, starting standalone", exc_info=True)
         _daemon_instance.start()

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L05-001
 # [MODULE] zephyr.pf_core.compliance_rule
 # [DOMAIN] D_PF_CORE
-# [DEPENDENCIES] zephyr.governance.compliance_rule
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.compliance_rule
 # [CONSUMERS] tests.integration.test_phase_f_layers
 # [STARTUP] imported
 # [MATURITY] production

@@ -2304,18 +2304,16 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
 你是项目审计 AI-13，负责审计以下区域（治理-其余）：
 
 d:\ZephyrAlpha\src\zephyr\governance\ 其余子目录：
-  - adapters/ agent_spec/ alt_data_connector/ api/ architecture_governance/
-  - bridges/ code_dedup/ constitutional_update/ context_governance/ core/
-  - data_governance/ drift_detection/ drift_detector_core/ engine/ escalation/
-  - financial_governance/ implementations/ infrastructure/ intelligence_governance/
-  - kb/ lifecycle_governance/ observability/ observability_governance/ ops_governance/
-  - persistence/ registry_management/ satellite_geospatial_engine/ script_governance/
-  - services/ strategies/ strategy_engine/ trading_contracts/
+  - adapters/ agent_spec/ architecture_governance/ audit/ bridges/
+  - compliance_gate_a6/ context_governance/ data_governance/ engine/ escalation/
+  - financial_governance/ implementations/ intelligence_governance/ lifecycle_governance/
+  - observability_governance/ ops_governance/ persistence/ resilience_governance/
+  - security_governance/ semantic_audit/ services/ strategies/
 d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
-  - __init__.py base.py capability_lookup.py depgraph_schema.py
-  - evidence_pack.py index.md integrity.py merkle_hourly.py rule_patterns.py
+  - __init__.py capability_lookup.py depgraph_schema.py
+  - evidence_pack.py index.md integrity.py rule_patterns.py
 
-审计重点：governance 根目录禁止新增 .py（CREATE-GUARD）、9个核心模块清单完整性、code_dedup 去重、kb 知识引擎、drift_detection 迁移。
+审计重点：governance 根目录禁止新增 .py（CREATE-GUARD ARCH-031 防复发）、6 个核心模块清单完整性（__init__/capability_lookup/depgraph_schema/evidence_pack/integrity/rule_patterns；2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后稳定为 6）、shim re-export 残留检测。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
