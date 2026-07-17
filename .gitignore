@@ -210,6 +210,17 @@ _tmp_*.md
 _temp*.txt
 _temp*.md
 
+# Root-only tmp_* files (AI 会话产生的测试输出/临时文件，ARCH-TTL-DOC-001 治本 2026-07-17)
+# 前导 / 限定根目录，不影响子目录（如 tmp/ 退役区由 tmp/* 规则管理）
+/tmp_*.xml
+/tmp_*.txt
+/tmp_*.py
+/tmp_*.md
+/tmp_*.json
+/tmp_*.sh
+/tmp_*.ps1
+/tmp_*.log
+
 # AI tool directories
 .roo/
 

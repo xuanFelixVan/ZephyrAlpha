@@ -123,6 +123,56 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
             p.unlink()
 
 
+def _create_gate_source_stubs(repo: Path) -> None:
+    """创建 fail-closed gate 源文件 stub（session_worktree_commit pre-commit gate 需要）。
+
+    3 个 fail-closed gates 在 pre-commit 阶段运行，源文件缺失会阻断 commit：
+    - FILE-PLACEMENT-TTL: 需要 directory_contract.yaml（directory_zones 结构）+
+      ttl_vocabulary.yaml（values 含 permanent/task_bound，gate L259 fail-closed 校验）
+    - DANGLING-REFERENCE: 需要 AGENTS.md（含至少一个 ## N 章节号）
+    - ARCH-REFERENCE: 需要 architecture_issue_registry.yaml（含至少一个 entry）
+    - DIRECTORY-CONTRACT: 需要 check_directory_contract.py（subprocess 调用）
+    - TTL-METADATA: 需要 check_frontmatter_metadata.py（subprocess 调用，pre-merge gate 需要）
+
+    stub 内容最小化，仅满足 gate "源文件存在且非空" 的 fail-closed 要求。
+    gate 的实际校验逻辑由各自单元测试覆盖，此处不重复。
+    """
+    # AGENTS.md stub（DANGLING-REFERENCE gate 需要 ## N 章节号）
+    (repo / "AGENTS.md").write_text("# AGENTS.md (test stub)\n## 1 Test Section\n", encoding="utf-8")
+    # directory_contract.yaml stub（FILE-PLACEMENT-TTL gate 需要 directory_zones）
+    dc_dir = repo / "docs" / "01_policies_and_standards" / "_registry" / "contracts"
+    dc_dir.mkdir(parents=True, exist_ok=True)
+    (dc_dir / "directory_contract.yaml").write_text(
+        "directory_zones:\n  permanent:\n    paths:\n      - docs/\n    exempt_subdirs: []\n"
+        "  temporary:\n    paths:\n      - docs/_working/\n"
+        "  neutral:\n    paths:\n      - src/\n      - tests/\n      - scripts/\n"
+        "root_directory_whitelist:\n  files:\n    - AGENTS.md\n    - .gitignore\n    - .gitkeep\n",
+        encoding="utf-8",
+    )
+    # ttl_vocabulary.yaml stub（FILE-PLACEMENT-TTL gate fail-closed 校验需要 values 含 permanent/task_bound）
+    tv_dir = repo / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+    tv_dir.mkdir(parents=True, exist_ok=True)
+    (tv_dir / "ttl_vocabulary.yaml").write_text(
+        "values:\n  - value: permanent\n  - value: task_bound\n",
+        encoding="utf-8",
+    )
+    # architecture_issue_registry.yaml stub（ARCH-REFERENCE gate 需要 entries）
+    arch_dir = repo / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+    arch_dir.mkdir(parents=True, exist_ok=True)
+    (arch_dir / "architecture_issue_registry.yaml").write_text(
+        'entries:\n  - issue_id: "#ARCH-001"\n    title: "Test entry"\n    status: "active"\n',
+        encoding="utf-8",
+    )
+    # check_directory_contract.py stub（DIRECTORY-CONTRACT gate subprocess 调用）
+    checker_stub = repo / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+    checker_stub.parent.mkdir(parents=True, exist_ok=True)
+    checker_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+    # check_frontmatter_metadata.py stub（TTL-METADATA gate subprocess 调用，pre-merge gate 需要）
+    fm_stub = repo / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+    fm_stub.parent.mkdir(parents=True, exist_ok=True)
+    fm_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+
+
 @pytest.fixture(scope="module")
 def _isolated_repo(tmp_path_factory):
     """创建独立临时 git 仓库，测试完全隔离不污染主工作区。
@@ -139,6 +189,15 @@ def _isolated_repo(tmp_path_factory):
     (repo / ".gitkeep").write_text("", encoding="utf-8")
     subprocess.run(["git", "add", ".gitkeep"], cwd=repo, capture_output=True)
     subprocess.run(["git", "commit", "-m", "init"], cwd=repo, capture_output=True)
+    # 创建 fail-closed gate 源文件 stub（pre-commit + pre-merge gate 需要）
+    # 关键：stub 必须 commit 到 HEAD，因为 pre-merge gate 在 worktree 路径下运行，
+    # worktree 从 HEAD 创建，只有 committed 文件才会出现在 worktree 中。
+    _create_gate_source_stubs(repo)
+    subprocess.run(["git", "add", "-A"], cwd=repo, capture_output=True)
+    subprocess.run(
+        ["git", "commit", "--no-verify", "-m", "test: add gate source stubs"],
+        cwd=repo, capture_output=True,
+    )
     return repo
 
 
