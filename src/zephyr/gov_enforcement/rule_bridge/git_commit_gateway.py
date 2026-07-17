@@ -69,6 +69,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_arch_diagram_reconciler,
     make_constraint_detect_reconciler,
     make_gate_inventory_sync_reconciler,
+    make_gate_registry_sync_reconciler,
     make_tmp_cleanup_reconciler,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
@@ -106,6 +107,7 @@ from zephyr.gov_enforcement.commit_gates.bare_getenv_gate import make_bare_geten
 from zephyr.gov_enforcement.commit_gates.msg_style_gate import make_msg_style_gate
 from zephyr.gov_enforcement.commit_gates.hardcoded_url_gate import make_hardcoded_url_gate
 from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import make_test_source_consistency_gate
+from zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate import make_no_import_side_effect_gate
 from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
 from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
@@ -353,6 +355,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_data_task_completeness_gate())  # priority=41 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources；原78与GATE-DOMAIN-FK冲突，迁移到41，裁定#ARCH-DRIFT-PREVENTION-001）
         self._gate_registry.register(make_depgraph_write_path_gate())  # priority=100 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
         self._gate_registry.register(make_capability_consistency_gate())  # priority=101 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
+        self._gate_registry.register(make_no_import_side_effect_gate())  # priority=103 治本模块导入零副作用（S4-C 2026-07-17，AST检测staged src/ .py added行的模块级I/O/网络/subprocess/DB调用+急切单例实例化，对标S4-A的telemetry.py/rollback/__init__.py修复防回归）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
@@ -579,6 +582,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_arch_diagram_reconciler(self))  # 议题3: 02_enterprise_architecture 下 9 个架构图生成器自动重生（decision/dataflow/integration/cross_domain/constraint/capacity/capability/navigation）
         self._reconciliation_registry.register(make_constraint_detect_reconciler(self))  # 补齐断链: 5 类违规检测器（跨域/容量/硬上限/孤儿/层级），写 PG arch_constraints 表，在 GATE-ARCH-DIAGRAM 之前跑
         self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  #ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
+        self._reconciliation_registry.register(make_gate_registry_sync_reconciler(self))  #ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:

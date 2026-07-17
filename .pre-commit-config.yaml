@@ -519,8 +519,8 @@ repos:
         language: system
         pass_filenames: false
         always_run: false
-        files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
-        description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.2 静态清单自动生成铁律"
+        files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml|src/zephyr/gov_enforcement/commit_gates/.*\\.py)$"
+        description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.2 静态清单自动生成铁律。files 扩展 commit_gates/*.py（ARCH-GATE-REGISTRY-SYNC-001 双保险：reconciler 失效时兜底检测）"
 
       # ── GATE-20: 裸调 LLM API 检测（RULE-LSG-001 强制执行层 + COND-30 存量）──
       # 权威依据：RULE-LSG-001 — 所有 LLM 调用必须经过 LSGSecurityGateway

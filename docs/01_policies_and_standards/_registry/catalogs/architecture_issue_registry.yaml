@@ -2800,3 +2800,60 @@ entries:
   status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+# --- #ARCH-GATE-REGISTRY-SYNC-001: gate_registry.yaml 自动同步 reconciler 治本 ---
+- issue_id: '#ARCH-GATE-REGISTRY-SYNC-001'
+  title: gate_registry.yaml 漂移治本——新增 post-commit reconciler 自动重生成
+  severity: P2中
+  category: governance_mechanism_gap
+  adjudication: |
+    问题背景：
+    gate_registry.yaml（门禁登记表，三源合并：pre-commit hooks + CommitGates + MANUAL_GATES）
+    在并发会话提交新 CommitGate 代码（encoding_gate.py / noqa_validation_gate.py /
+    no_import_side_effect_gate.py）后未自动重生成，导致漂移（磁盘 87 ≠ 实际 89，缺失
+    NO-IMPORT-SIDE-EFFECT + NOQA-VALIDATION）。GATE-21 validator 正确检测到漂移。
+
+    根因分析（第一性原理）：
+    (1) 主因——机制缺失：无 reconciler 在 commit_gates/*.py 变更后自动重生成
+        gate_registry.yaml。对比 script_manifest.yaml 有 make_manifest_reconciler（priority=100）
+        完整覆盖自动同步+auto_commit。make_gate_inventory_sync_reconciler（priority=820）名字
+        相近但只修 blueprint.md §0.1 模块清单（文档层），不修 gate_registry.yaml（数据层）——
+        命名混淆导致的职责遗漏。
+    (2) 检测失效——GATE-21 两重失效：①files 过滤器不匹配 commit_gates/*.py，提交新 gate
+        代码时 GATE-21 不触发（只在 registry yaml 自身被提交时触发，那时漂移已发生）；
+        ②GitCommitGateway 用 --no-verify 系统性绕过 pre-commit（含 GATE-21）。
+    (3) 触发条件——并发会话合并缺口：三个并发分支提交的 gate 代码合并到 dev 后，文件系统
+        同时有新 gate 文件，但 gate_registry.yaml 仍是旧版本，无任何机制在合并后触发重生成。
+
+    裁定（治本策略选择）：
+    (1) 采用策略 B（post-commit 修复型）——新增 make_gate_registry_sync_reconciler
+        （gate_id=GATE-GATE-REGISTRY-SYNC, priority=830），完全对标 make_manifest_reconciler，
+        在 post-commit 自动重生成 gate_registry.yaml + auto_commit。漂移窗口=单次 commit 的
+        post-commit 阶段（毫秒级），符合 100% AI 开发的并发场景。
+    (2) 否决策略 A（pre-commit 阻断型）——阻断会导致 AI 无法 commit 新 gate 代码（清单未同步
+        →阻断→无法 commit→死循环），与 make_gate_inventory_sync_reconciler ADP-4 裁定一致。
+    (3) 职责边界明确——make_gate_inventory_sync_reconciler 修 blueprint.md §0.1（文档层），
+        make_gate_registry_sync_reconciler 修 gate_registry.yaml（数据层），两者职责分离，
+        不合并（不改名避免破坏性变更）。
+    (4) trigger 覆盖三源——commit_gates/*.py + .pre-commit-config.yaml + generate_gate_registry.py。
+    (5) GATE-21 files 过滤器扩展 commit_gates/*.py（双保险）——reconciler 失效时兜底检测
+        （CI 全量扫描 + 裸 git commit 路径），虽 GitCommitGateway --no-verify 绕过 pre-commit，
+        但 GATE-21 在 CI 和裸 git commit 路径仍有价值。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - AI 并发会话是常态（本案例就是并发会话导致漂移），reconciler 在 GitCommitGateway 和
+      session_worktree 两条路径都触发（session_worktree_merge 复用 GitCommitGateway 的 reconciler）。
+    - AI 可发现性：capability registry 登记 gate_registry_generation 能力 + 治本机制描述。
+    - AI 可绕过性：reconciler 是 post-commit 自动触发，AI 无法绕过（除非不用 GitCommitGateway）。
+  impact:
+  - src/zephyr/governance/audit/reconciliation_registry.py（新增 make_gate_registry_sync_reconciler + __all__ 导出）
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册 make_gate_registry_sync_reconciler）
+  - .pre-commit-config.yaml（GATE-21 files 过滤器扩展 commit_gates/*.py）
+  - AGENTS.md（§6.2 记录 gate_registry.yaml post-commit 自动同步机制）
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（gate_registry_generation 描述更新 + 3 生成器登记）
+  - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（P0 重生成 87→89 修复当前漂移）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-GATE-REGISTRY-SYNC-001 登记）
+  fix_phase: 已完成
+  status: resolved
+  created: '2026-07-17'
+  last_updated: '2026-07-17'

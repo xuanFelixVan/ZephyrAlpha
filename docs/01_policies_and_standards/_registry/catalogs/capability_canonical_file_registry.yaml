@@ -722,10 +722,11 @@ capabilities:
       exit 1=漂移）。canonical = scripts/governance/generators/generate_gate_registry.py
       （basename 自动匹配 capability_id，auto 派生）。调用者：GATE-21
       （validate_static_manifest_drift.py --check 调本生成器检测漂移）+ 手动重生成。
-      治本缺口（2026-07-17 调研裁定 ARCH-GATE-REGISTRY-SYNC-001）：无 reconciler 在
-      commit_gates/*.py 变更后自动重生成——对比 script_manifest 有 make_manifest_reconciler
-      自动同步+auto_commit。make_gate_inventory_sync_reconciler 名字相近但只修 blueprint.md
-      §0.1 模块清单，不修 gate_registry.yaml。解决发现性：新AI搜 "gate registry 生成/
+      治本（2026-07-17 裁定 ARCH-GATE-REGISTRY-SYNC-001）：新增 make_gate_registry_sync_reconciler
+      （priority=830，对标 make_manifest_reconciler）在 post-commit 自动重生成 + auto_commit。
+      trigger 覆盖三源（commit_gates/*.py + .pre-commit-config.yaml + generate_gate_registry.py）。
+      职责边界：make_gate_inventory_sync_reconciler 修 blueprint.md §0.1（文档层），本 reconciler
+      修 gate_registry.yaml（数据层）。解决发现性：新AI搜 "gate registry 生成/
       门禁清单同步/gate_catalog" 可定位真源。解决防重建：阻止新AI重复造 gate 清单生成脚本。
 
   # --------------------------------------------------------------------------
@@ -3965,6 +3966,26 @@ capabilities:
     integrity_anchors:
       - make_rename_depgraph_sync_gate
 
+  # --------------------------------------------------------------------------
+  - capability_id: no_import_side_effect_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py
+    aliases:
+      - NO-IMPORT-SIDE-EFFECT
+      - no-import-side-effect
+      - make_no_import_side_effect_gate
+      - module_import_side_effect_blocker
+      - eager_singleton_blocker
+    description: >-
+      NO-IMPORT-SIDE-EFFECT in-process 模块导入零副作用阻断门禁（S4-C 治本防复发，2026-07-17）。
+      检测 staged src/ .py 文件 added 行中的模块级副作用调用（open/subprocess.run/requests.get/
+      duckdb.connect/Path().read_text 等 I/O/网络/subprocess/DB 调用）和急切单例实例化
+      （UPPER_SNAKE 目标 = Capitalized 调用，如 TELEMETRY = InventorySelfMetrics()）。
+      只检测 added 行（grandfather 存量 2288 文件）；tests/ + __main__.py 豁免；
+      if __name__ == "__main__" guard 块豁免；FunctionDef/ClassDef 体豁免。
+      priority=103。对标 S4-A 的 telemetry.py/rollback/__init__.py 修复防回归。
+    integrity_anchors:
+      - make_no_import_side_effect_gate
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4829,6 +4850,11 @@ creation_tokens:
     token: "auto-blueprint-amodule-consistency-gate-20260717"
     created_by: "session-sess-21384-20260717125744"
     capability: "blueprint_amodule_consistency_gate"
+  # no_import_side_effect_gate.py: NO-IMPORT-SIDE-EFFECT 模块导入零副作用（S4-C, priority=103）
+  - file: "src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py"
+    token: "auto-no-import-side-effect-gate-20260717"
+    created_by: "session-sess-5024-20260717175302"
+    capability: "no_import_side_effect_gate"
 
 # ============================================================================
 # 维护日志
