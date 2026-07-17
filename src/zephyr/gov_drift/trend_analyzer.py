@@ -83,7 +83,11 @@ class TrendAnalyzer:
 
         os.makedirs(self._db_dir, exist_ok=True)
 
-        self._db_path = str(DB_PATH)
+        # 治本（裁定#18 F5）：原 self._db_path = str(DB_PATH) 指向共享 governance.db，
+        # 其 drift_events 表 schema 与测试契约不符（缺 drift_dimension/baseline_version/
+        # resolved_by/auto_fixed/rollback_verified 列）。改为从 project_root 派生独立
+        # db_path，使测试隔离 + 生产使用独立 drift_audit.db。
+        self._db_path = os.path.join(self._db_dir, "drift_audit.db")
 
         self._archive_dir = os.path.join(self._db_dir, "archive")
 

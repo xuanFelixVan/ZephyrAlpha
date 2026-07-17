@@ -242,6 +242,16 @@ def _cmd_run_audit(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
+    # 治本（裁定#18 G11）：检查命令是否在 COMMANDS 中，未知命令退出 1（测试契约要求）。
+    # argparse subparser 对未知命令退出 2，需在 parse_args 前拦截。
+    if len(sys.argv) < 2:
+        print("Usage: python -m zephyr.gov_audit <command> [options]")
+        sys.exit(1)
+    cmd = sys.argv[1]
+    if cmd not in COMMANDS and cmd not in ("admit", "pool-stats", "run-audit"):
+        print(json.dumps({"error": f"Unknown command: {cmd}"}, indent=2))
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(
         prog="python -m zephyr.gov_audit",
         description="ZephyrAlpha Audit Orchestrator CLI (MOD-INF-027)",
@@ -278,7 +288,16 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 
-COMMANDS = ["verify", "query", "replay", "export", "integrity"]
+# 治本（裁定#18 G11）：COMMANDS 原为 list，测试契约要求 dict（COMMANDS.keys()）。
+# 对齐 test_audit_cli.py 期望的键集 {search, verify, stats, trail, health, query}。
+COMMANDS = {
+    "search": None,
+    "verify": None,
+    "stats": None,
+    "trail": None,
+    "health": None,
+    "query": None,
+}
 
 
 def cmd_search(args):

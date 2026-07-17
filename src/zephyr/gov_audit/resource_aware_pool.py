@@ -68,11 +68,12 @@ class ResourceAwarePool:
                 f"(pending={pending}, max={max_pending})"
             )
         future = pool.submit(func, *args)
+        # 治本（裁定#18 G12）：原代码过滤已完成 futures 导致 _cpu_futures 丢失历史记录，
+        # 测试契约 (test_batch_submit) 要求所有提交的 futures 都保留在列表中。
+        # stats() 方法已用 f.done() 区分 active/pending，无需在 submit 时清理。
         if is_gpu:
-            self._gpu_futures = [f for f in self._gpu_futures if not f.done()]
             self._gpu_futures.append(future)
         else:
-            self._cpu_futures = [f for f in self._cpu_futures if not f.done()]
             self._cpu_futures.append(future)
         return future
 

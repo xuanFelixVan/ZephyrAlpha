@@ -18,6 +18,11 @@
 from enum import Enum
 from typing import Any, Protocol
 
+# 治本（裁定#18 G8）：AgentCapability 原为桩类（name/level/description），与测试契约
+# (agent_id/capabilities/version + Pydantic model_dump) 完全不符。现改为从
+# zephyr.shared.contracts.protocols 重新导出正确的 Pydantic BaseModel 版本。
+from zephyr.shared.contracts.protocols import AgentCapability  # noqa: F401 — re-export
+
 
 class ActionType(str, Enum):
     NOTIFY_OWNER = "NOTIFY_OWNER"
@@ -30,13 +35,3 @@ class ActionType(str, Enum):
 
 class FeedbackProtocolAdapter(Protocol):
     def dispatch_action(self, action_type: ActionType, payload: dict[str, Any]) -> bool: ...
-
-
-class AgentCapability:
-    def __init__(self, name="", level=0, description=""):
-        self.name = name
-        self.level = level
-        self.description = description
-
-    def __repr__(self):
-        return f"AgentCapability({self.name}, level={self.level})"
