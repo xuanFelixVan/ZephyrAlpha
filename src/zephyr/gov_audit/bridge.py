@@ -22,8 +22,30 @@ logger = logging.getLogger(__name__)
 __all__ = ["OrchestratorBridge", "write_to_core"]
 
 
-def write_to_core(channel: str, payload: dict[str, Any]) -> None:
-    logger.info("write_to_core channel=%s payload_keys=%s", channel, list(payload.keys()))
+def write_to_core(channel: str, payload: dict[str, Any]) -> str | None:
+    """写入核心审计链——治本（裁定#18 G7）：对齐 test_audit_bridge.py 契约。
+
+    旧实现是 no-op（仅 log），_get_writer 恒返回 None，导致：
+    - writer 可用时未写入也未返回 chain_hash
+    - event_type / agent_id 默认逻辑缺失
+
+    现委托到 _get_writer() 返回的全局 writer，处理：
+    - writer 为 None → 返回 None
+    - event_type 设为 channel，agent_id 缺失时用 channel 兜底
+    - writer 异常 → 返回 None（不传播）
+    """
+    writer = _get_writer()
+    if writer is None:
+        return None
+    event: dict[str, Any] = dict(payload)
+    event["event_type"] = channel
+    if "agent_id" not in event:
+        event["agent_id"] = channel
+    try:
+        return writer.write(event)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("write_to_core failed channel=%s", channel, exc_info=True)
+        return None
 
 
 class OrchestratorBridge:
@@ -41,42 +63,42 @@ class OrchestratorBridge:
             from zephyr.gov_audit.drift_bridge import DriftBridge
 
             self._drift_bridge = DriftBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("DriftBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.feedback_bridge import FeedbackBridge
 
             self._feedback_bridge = FeedbackBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.delegation_bridge import DelegationBridge
 
             self._delegation_bridge = DelegationBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("DelegationBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.merkle_hourly import MerkleHourlyBridge
 
             self._merkle_bridge = MerkleHourlyBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("MerkleHourlyBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.trust_bridge import TrustBridge
 
             self._trust_bridge = TrustBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TrustBridge init failed: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.tiered_storage_bridge import TieredStorageBridge
 
             self._storage_bridge = TieredStorageBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TieredStorageBridge init failed: %s", exc, exc_info=True)
 
     def check_drift(self, metrics: dict[str, float]) -> dict[str, Any]:
@@ -110,8 +132,15 @@ class OrchestratorBridge:
         }
 
 
-def _get_writer(backend: str | None = None) -> None:
-    return None
+def _get_writer(backend: str | None = None):
+    """获取全局 writer——治本（裁定#18 G7）：供 write_to_core 委托。
+
+    旧实现恒返回 None（桩），现路由到 writer._GLOBAL_WRITER。
+    测试通过 patch ``bridge._get_writer`` 注入 mock。
+    """
+    from zephyr.gov_audit import writer as _writer_mod
+
+    return _writer_mod._GLOBAL_WRITER
 
 
 _AVAILABLE = ["writer", "query", "replay", "integrity"]

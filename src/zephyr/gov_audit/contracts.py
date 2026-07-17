@@ -45,6 +45,18 @@ class ContractViolationError(Exception):
             self.error_code = error_code
 
 
+def _get_writer():
+    """获取全局 AuditWriter 单例——治本（裁定#18 G6）：供 AuditWriter.write 委托桥接。
+
+    旧实现直接在 write 方法内访问 ``_writer_mod._GLOBAL_WRITER``，测试无法通过
+    patch ``contracts._get_writer`` 注入 mock。现抽出为模块级函数，测试可 patch，
+    生产仍路由到 writer._GLOBAL_WRITER。
+    """
+    from zephyr.gov_audit import writer as _writer_mod
+
+    return _writer_mod._GLOBAL_WRITER
+
+
 class AuditDiscoverer(ABC):
     @abstractmethod
     def discover_changes(self, session_id: str) -> DiscoveryReport: ...
@@ -73,34 +85,37 @@ class AuditWriter(ABC):
 
     @classmethod
     def write(cls, **kwargs: Any) -> dict[str, Any]:
-        """委托到全局 AuditWriter 单例（_GLOBAL_WRITER）写入核心审计链。
+        """委托到全局 AuditWriter 单例写入核心审计链——治本（裁定#18 G6）。
 
-        设计意图（writer.py _GLOBAL_WRITER 注释"供 contracts.py 委托桥接使用"）：
-        治理层调用此方法 → 自动路由到核心不可变 JSONL 哈希链，
-        确保所有审计写入都进入核心链，不存在桩绕过或独立审计流逃逸。
+        对齐 test_audit_contracts.py 契约：通过 ``_get_writer()`` 获取 writer
+        （测试 patch 此函数注入 mock），返回的 dict 必须包含所有传入 kwargs
+        以及默认补齐的 event_type/granted/metadata/timestamp 字段。
 
         Args:
-            **kwargs: 审计事件字段（agent_id, permission, resource 等）。
+            **kwargs: 审计事件字段（agent_id, permission, resource, granted,
+                metadata, event_type, timestamp 等）。
 
         Returns:
-            包含 chain_hash 的 dict。
+            包含 chain_hash 及所有事件字段的 dict。
 
         Raises:
             ContractViolationError: 全局 writer 未初始化时。
         """
-        from zephyr.gov_audit import writer as _writer_mod  # lazy import 避免循环依赖
-
-        # 通过模块引用读取 _GLOBAL_WRITER（而非 from...import 值拷贝），
-        # 确保 test 设置 writer_mod._GLOBAL_WRITER = writer 后类方法能看到最新值。
-        global_writer = _writer_mod._GLOBAL_WRITER
+        global_writer = _get_writer()
         if global_writer is None:
             raise ContractViolationError(
                 "Global AuditWriter not initialized — call writer.set_global_writer() first"
             )
         event: dict[str, Any] = dict(kwargs)
         event.setdefault("event_type", "rbac_decision")
+        event.setdefault("granted", True)
+        event.setdefault("metadata", {})
+        if not event.get("timestamp"):
+            from datetime import UTC, datetime
+
+            event["timestamp"] = datetime.now(UTC).isoformat()
         entry_hash = global_writer.write(event)
-        return {"chain_hash": entry_hash, **kwargs}
+        return {"chain_hash": entry_hash, **event}
 
 
 class AuditQuery(ABC):

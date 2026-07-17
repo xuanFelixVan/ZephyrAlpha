@@ -78,7 +78,11 @@ class TestCorrelationEngineInit:
     def test_default_db_path(self):
         engine = CorrelationEngine()
         assert engine._db_path is not None
-        assert "drift_events.db" in engine._db_path
+        # 治本（裁定#18 G9）：生产真源是 governance.db——磁盘实际存在且含 drift_events 表
+        # （386 行真实数据）。blueprint 第900行提及的 drift_events.db 文件从未创建
+        # （生产合并进 governance.db）。旧 oracle 期望 drift_events.db 是过期约定。
+        # brain_integration.py:411 调 CorrelationEngine() 无参依赖此默认指向真实库。
+        assert "governance.db" in engine._db_path
 
     def test_custom_db_path(self):
         engine = CorrelationEngine(db_path="/tmp/test.db")
