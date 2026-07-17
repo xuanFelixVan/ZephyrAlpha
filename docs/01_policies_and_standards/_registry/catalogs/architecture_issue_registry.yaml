@@ -2685,3 +2685,52 @@ entries:
   related_adjudication: '#ARCH-055, #ARCH-057, #ARCH-060, TRAE-062 SSoT 分类铁律, 裁定#208 双轨制 module_id'
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+# --- #ARCH-NOQA-GOV-001: 自定义 noqa 豁免机制无规则化无门禁（治本） ---
+- issue_id: '#ARCH-NOQA-GOV-001'
+  title: 5种自定义 noqa 标记（m02-manual/m03-duplicate/m07-orphan/m10-time-trigger/gate-vocab）散落221处使用但无正式文档定义、无门禁阻断滥用、无统一抽象
+  category: architecture_governance
+  severity: P2中
+  status: decided
+  description: |
+    审查本会话首条至当前全部工作时，发现遗留1个问题：`# noqa: m10-time-trigger`
+    豁免机制全仓32处使用但无正式文档定义，新AI发现不了、门禁拦不住滥用。同理
+    m02-manual/m03-duplicate/m07-orphan/gate-vocab 共5种自定义标记散落221处。
+    根因（第一性原理分析）：
+    (a) 无SSoT——5种标记零散定义在4处inline代码（dashboard.py等），无YAML真源
+    (b) 无门禁——M系列指标是warn-only metric不阻断commit，标记使用无强制校验
+    (c) 无文档——AGENTS.md仅文档化gate-vocab 1/5，其余4种新AI无法发现
+    (d) 无抽象——4处inline `if "# noqa: xxx" in source: continue`散落，重复造轮子
+    影响：新AI无法发现合法标记清单→要么不用（漏防复发）要么乱用（污染代码库），
+    违反"刚进项目AI必须通过capability registry/AGENTS.md/索引文件发现功能"约束。
+  adjudication: |
+    治本方案（四阶段，2026-07-17执行）：
+    Phase 1 SSoT化：新建 noqa_exempt_registry.yaml（5种标记+2种forbidden），
+      作为合法标记清单唯一真源（规则数据，TRAE-062），检测器动态加载而非硬编码。
+    Phase 2 门禁化：新建 noqa_validation_gate.py（priority=71），在 GitCommitGateway
+      pre-commit 阶段硬阻断——staged .py 文件含未登记或无理由的自定义 noqa 标记时
+      阻断 commit。ruff/flake8 标准码跳过，registry 加载失败 fail-open。
+      在 git_commit_gateway.py 注册 import+register，在 capability_canonical_file_registry.yaml
+      登记 capability 条目+file mapping。
+    Phase 3 统一抽象：dashboard.py 重构 _check_noqa helper，替换4处inline检测，
+      消除重复造轮子。
+    Phase 4 文档化：AGENTS.md 补登 noqa 机制说明段（5种标记+格式+使用场景），
+      确保新AI可发现。
+    不回溯原则：gate只检staged .py（增量检测），现存221处违规 grandfather不阻断。
+    fail-open边界：YAML读取/IO异常→PASS（环境异常非违规）；检出违规→FAIL（硬阻断）。
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml  # 新建，SSoT
+    - src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py  # 新建，priority=71门禁
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py  # 注册gate（import+register）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml  # 登记capability
+    - scripts/governance/architecture_health_dashboard.py  # Phase 3 重构 _check_noqa helper
+    - AGENTS.md  # Phase 4 补登noqa机制说明段
+  fix_phase: |
+    Phase 1（已完成）：noqa_exempt_registry.yaml SSoT化
+    Phase 2（执行中）：noqa_validation_gate.py + capability登记 + gate注册
+    Phase 3（待施工）：dashboard.py _check_noqa helper 统一抽象
+    Phase 4（待施工）：AGENTS.md 文档化
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, RULE-SSOT-CLASSIFICATION, 裁定#208 module_id三轨制'
+  related_rules: [TRAE-062, RULE-SSOT-CLASSIFICATION]
+  created: '2026-07-17'
+  last_updated: '2026-07-17'
