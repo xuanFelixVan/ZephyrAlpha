@@ -465,6 +465,11 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
 
 def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | None:
     """DCR 检测（对标 GitCommitGateway DIRECTORY-CONTRACT gate）。返回阻断 dict 或 None。"""
+    # 过滤删除场景：磁盘不存在的文件跳过 DCR 检查
+    # （对标 directory_contract_gate.py L92-93 deletion commit 豁免设计）
+    existing_files = [f for f in rel_files if (root / f).is_file()]
+    if not existing_files:
+        return None  # 全部是删除/缺失，跳过 DCR
     check_script = root / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
     if not check_script.is_file():
         return {
@@ -475,10 +480,10 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
             "directory_contract_violation": True,
         }
     _MAX_INLINE_FILES = 200
-    if len(rel_files) > _MAX_INLINE_FILES:
+    if len(existing_files) > _MAX_INLINE_FILES:
         dcr_cmd = [sys.executable, str(check_script), "--all-files"]
     else:
-        dcr_cmd = [sys.executable, str(check_script)] + rel_files
+        dcr_cmd = [sys.executable, str(check_script)] + existing_files
     try:
         dcr_result = subprocess.run(
             dcr_cmd, capture_output=True, cwd=str(root), timeout=60,
