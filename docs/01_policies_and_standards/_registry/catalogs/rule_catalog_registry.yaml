@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-17T05:32:35Z'
+generated_at: '2026-07-17T07:08:00Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 159
+total_files: 160
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1847,6 +1847,21 @@ files:
   rule_form: ''
   scope: ''
   stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml
+  module_id: CFG-NOQA-REGISTRY-001
+  title: ''
+  doc_type: ''
+  status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: stable
   layer: ''
   superseded_by: ''
   severity: ''
