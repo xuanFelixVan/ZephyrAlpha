@@ -191,7 +191,6 @@ class BlueprintFrontmatter:
     responsibility_domain: str
     design_maturity: str
     build_status: str
-    construction_progress: str
     status: str  # frontmatter.status（Active/Draft 等）
     file_path: Path
     content: str
@@ -421,7 +420,6 @@ def _fetch_blueprint(module_id: str) -> BlueprintFrontmatter | None:
         responsibility_domain=fm.get("responsibility_domain", ""),
         design_maturity=fm.get("design_maturity", ""),
         build_status=fm.get("build_status", ""),
-        construction_progress=fm.get("construction_progress", ""),
         status=fm.get("status", ""),
         file_path=bp_path,
         content=content,
@@ -478,11 +476,14 @@ def _decision_status_str(info: DecisionModuleInfo) -> str:
 
 
 def _blueprint_status_str(bp: BlueprintFrontmatter) -> str:
-    """blueprint 行的状态列：frontmatter.status（Active/Draft）。"""
+    """blueprint 行的状态列：frontmatter.status（Active/Draft）。
+
+    ARCH-FRONTMATTER-STATE-001 Phase 3：退役 construction_progress 后，
+    无 status 时统一返回 Draft（原 construction_progress == "not_started" 检查
+    与 build_status 语义重复，且为陈旧状态陷阱）。
+    """
     s = bp.status.strip()
-    if not s:
-        return "Draft" if bp.construction_progress == "not_started" else "Active"
-    return s
+    return s if s else "Draft"
 
 
 def _render_position_table(pan: ModulePanorama) -> str:

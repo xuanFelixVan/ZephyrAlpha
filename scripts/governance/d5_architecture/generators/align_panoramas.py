@@ -102,7 +102,6 @@ class PanoramaNode:
     design_maturity: str | None
     build_status: str | None
     domain_id: str | None
-    construction_progress: str | None = None  #ARCH-059: 蓝图先行判断用
 
 
 @dataclass
@@ -515,7 +514,6 @@ def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
             design_maturity=fm.get("design_maturity") or None,
             build_status=fm.get("build_status") or None,
             domain_id=fm.get("responsibility_domain") or None,
-            construction_progress=fm.get("construction_progress") or None,
         ))
     return nodes
 
@@ -534,18 +532,20 @@ def _group_by_module_id(all_nodes: list[PanoramaNode]) -> dict[str, list[Panoram
 
 
 def _is_blueprint_not_started(nodes: list[PanoramaNode]) -> bool:
-    """判断是否为蓝图先行模块（ARCH-059）。
+    """判断是否为蓝图先行模块（ARCH-059，ARCH-FRONTMATTER-STATE-001 Phase 3 退役 construction_progress）。
 
-    蓝图先行：仅在 blueprint 图存在 + construction_progress=not_started。
+    蓝图先行：仅在 blueprint 图存在（不在 depgraph/dataflow/decision）。
     此类模块尚未施工，depgraph 无节点是正常状态，不报告为孤儿/设计态孤立。
+
+    2026-07-18 退役 construction_progress 字段后，蓝图先行判断纯靠 graph 检查——
+    module 仅在 blueprint 图存在 = 无代码 = 蓝图先行。原 construction_progress ==
+    "not_started" 检查是冗余安全（且为陈旧状态陷阱：手工维护易漂移）。
 
     Returns:
         True 如果是蓝图先行模块（应豁免孤儿检测）
     """
     graphs = {n.graph for n in nodes}
-    if graphs != {"blueprint"}:
-        return False
-    return any(n.construction_progress == "not_started" for n in nodes)
+    return graphs == {"blueprint"}
 
 
 def _detect_orphans(all_nodes: list[PanoramaNode],

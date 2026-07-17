@@ -179,7 +179,6 @@ def build_registry_entry(filepath: Path, fm: dict[str, Any]) -> dict[str, Any]:
         "generation": fm.get("generation", ""),
         "last_updated": fm.get("last_updated", fm.get("date", "")),
         "file_path": rel_path,
-        "construction_progress": fm.get("construction_progress", "not_started"),
     }
 
 
@@ -214,7 +213,6 @@ def collect_registry_diff_bullets(
         "last_updated",
         "layer",
         "file_path",
-        "construction_progress",
         "priority",
         "blueprint_level",
         "blueprint_status",
@@ -281,14 +279,12 @@ def rebuild_summary(entries: list[dict[str, Any]]) -> dict[str, Any]:
         by_status[s] = by_status.get(s, 0) + 1
         ly = str(e.get("layer", ""))
         by_layer[ly] = by_layer.get(ly, 0) + 1
-        cp = str(e.get("construction_progress", "not_started"))
-        by_cp[cp] = by_cp.get(cp, 0) + 1
+        # ARCH-FRONTMATTER-STATE-001 Phase 3: construction_progress 退役，by_construction_progress 不再派生
     return {
         "total": len(entries),
         "by_blueprint_status": by_status,
         "by_layer": by_layer,
-        "by_construction_progress": by_cp,
-        "note": "由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准",
+        "note": "由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress 已于 2026-07-18 退役）",
         "last_recomputed": datetime.now(UTC).strftime("%Y-%m-%d"),
     }
 
@@ -304,7 +300,6 @@ def run_dry_run(registry: dict[str, Any], new_entries: list[dict[str, Any]], fil
         "last_updated",
         "layer",
         "file_path",
-        "construction_progress",
         "priority",
         "blueprint_level",
     )
