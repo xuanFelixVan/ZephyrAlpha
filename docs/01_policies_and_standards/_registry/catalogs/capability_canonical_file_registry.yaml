@@ -4006,6 +4006,36 @@ capabilities:
     integrity_anchors:
       - make_no_import_side_effect_gate
 
+  # --------------------------------------------------------------------------
+  - capability_id: adversarial_validation
+    canonical_override: src/zephyr/security/adversarial_validation/validator.py
+    aliases:
+      - red_blue_validator
+      - red-blue-validator
+      - RedBlueValidator
+      - adversarial_validation
+      - red_blue
+      - red-blue
+      - redblocker
+    description: >-
+      红蓝对抗验证器（裁定#18 P0 治本主索引补登，2026-07-18）。
+      真源 src/zephyr/security/adversarial_validation/（MOD-INF-030，blueprint
+      docs/03_modules/_cross_layer/red_blue_validator/blueprint.md）。canonical =
+      validator.py（RedBlueValidator 主类入口）。__init__.py re-export 全部子模块。
+      shim src/zephyr/red_blue_validator/__init__.py 仅为兼容旧 import 路径保留
+      （裁定#18 G10 + import_time，2026-07-17），re-export 自真源。
+      治本根因：原 capability 主索引缺失，新 AI 搜 "RedBlueValidator /
+      red_blue_validator / adversarial_validation" 无法定位真源，可能重复造轮子。
+      补登后 capability_overlap_gate 可反查 canonical，发现性闭环。
+    duplicates_manual:
+      - path: src/zephyr/red_blue_validator/__init__.py
+        relation: re_export
+        note: >-
+          历史连字符目录 src/zephyr/red-blue-validator/ 已删除（裁定#18 P0-1，
+          commit 13d42068ee）。shim 改为下划线路径 src/zephyr/red_blue_validator/
+          __init__.py，re-export 自 src/zephyr/security/adversarial_validation/
+          真源。非重复实现，是兼容性 re-export 垫片。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
