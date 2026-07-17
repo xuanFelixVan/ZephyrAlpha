@@ -707,6 +707,70 @@ capabilities:
       #ARCH-024 治本：原 rules/_index.yaml 手工索引已删除，catalog 由本生成器自动派生。
 
   # --------------------------------------------------------------------------
+  - capability_id: gate_registry_generation
+    aliases:
+      - generate_gate_registry
+      - gate_registry_generator
+      - gate_catalog_generation
+      - gate_registry_sync
+      - commit_gate_registry_sync
+    description: >-
+      gate_registry.yaml 自动生成器（三源合并）。三源：①.pre-commit-config.yaml
+      hooks（GATE-XXX）②commit_gates/*.py 的 GateSpec（正则匹配 gate_id="..."）③
+      MANUAL_GATES 硬编码锚点。输出 docs/01_policies_and_standards/_registry/catalogs/
+      gate_registry.yaml（total_gates + 条目列表）。支持 --check 模式（漂移检测，
+      exit 1=漂移）。canonical = scripts/governance/generators/generate_gate_registry.py
+      （basename 自动匹配 capability_id，auto 派生）。调用者：GATE-21
+      （validate_static_manifest_drift.py --check 调本生成器检测漂移）+ 手动重生成。
+      治本缺口（2026-07-17 调研裁定 ARCH-GATE-REGISTRY-SYNC-001）：无 reconciler 在
+      commit_gates/*.py 变更后自动重生成——对比 script_manifest 有 make_manifest_reconciler
+      自动同步+auto_commit。make_gate_inventory_sync_reconciler 名字相近但只修 blueprint.md
+      §0.1 模块清单，不修 gate_registry.yaml。解决发现性：新AI搜 "gate registry 生成/
+      门禁清单同步/gate_catalog" 可定位真源。解决防重建：阻止新AI重复造 gate 清单生成脚本。
+
+  # --------------------------------------------------------------------------
+  - capability_id: script_manifest_generation
+    aliases:
+      - generate_manifest
+      - script_manifest_generator
+      - generate_script_manifest
+      - GATE-19-manifest
+      - make_manifest_reconciler
+    description: >-
+      script_manifest.yaml 自动生成器。扫描 scripts/ 下所有 .py 文件 frontmatter，
+      聚合为 scripts/script_manifest.yaml。GATE-19-manifest reconciler
+      （make_manifest_reconciler，priority=100）在 commit scripts/*.py 变更后自动
+      触发重生成 + auto_commit 修复（对标 gate_registry 治本缺口的对立面——本生成器
+      有完整 reconciler 自动同步机制）。canonical = scripts/generate_manifest.py
+      （basename 自动匹配 capability_id，auto 派生）。解决发现性：新AI搜
+      "脚本清单生成/script manifest 同步/GATE-19-manifest" 可定位真源。
+      解决防重建：阻止新AI重复造脚本清单生成脚本。
+
+  # --------------------------------------------------------------------------
+  - capability_id: static_manifest_drift_detection
+    aliases:
+      - validate_static_manifest_drift
+      - GATE-21
+      - gate-21-manifest-drift
+      - manifest_drift_validator
+      - static_manifest_check
+      - manifest_drift_detection
+    description: >-
+      静态清单漂移检测 validator（GATE-21）。聚合 3 类检查：①script_manifest.yaml
+      漂移（调 generate_manifest.py --check）②gate_registry.yaml 漂移（调
+      generate_gate_registry.py --check）③catalogs/*.yaml 内部一致性（条目计数 vs
+      total_gates 字段）。canonical = scripts/governance/d5_architecture/validators/
+      validate_static_manifest_drift.py（basename 自动匹配 capability_id，auto 派生）。
+      接入：.pre-commit-config.yaml gate-21-manifest-drift hook（args: --check）。
+      已知缺口（2026-07-17 调研）：①files 过滤器不匹配 src/zephyr/gov_enforcement/
+      commit_gates/*.py，导致提交新 gate 代码时 GATE-21 不触发（只在 registry yaml
+      自身被提交时触发，那时漂移已发生）②GitCommitGateway 用 --no-verify 系统性
+      绕过 pre-commit（含 GATE-21）。治本方向：新增 gate_registry reconciler（对标
+      make_manifest_reconciler）+ files 过滤器扩展 commit_gates/ 路径 + GitCommitGateway
+      内嵌等价 CommitGate。解决发现性：新AI搜 "清单漂移检测/GATE-21/manifest drift" 可定位真源。
+      解决防重建：阻止新AI重复造静态清单漂移检测脚本。
+
+  # --------------------------------------------------------------------------
   - capability_id: capability_lookup
     aliases:
       - CapabilityLookup
