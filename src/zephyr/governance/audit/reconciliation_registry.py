@@ -4534,3 +4534,81 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
         reconcile=_reconcile,
         priority=49,  # 在 GATE-RUNTIME-CLEANUP(50) 之前执行——先清理 tmp/
     )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架。worktree 残留清理对标 make_tmp_cleanup_reconciler
+# 的 post-commit TTL 模式，复用 ReconciliationRegistry 框架（第26个 reconciler）。病根：stale
+# worktree 清理依赖君子协定（仅 start 被动触发），违反永久系统全自动铁律。治本：post-commit/merge
+# 事件触发 session_worktree_sweep（P1 已落地公开 API），事件驱动自动清理。
+def make_worktree_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-WORKTREE-LIFECYCLE post-commit worktree 残留事件驱动清理 reconciler。
+
+    病根（治本遗留项#2，2026-07-17）：session_worktree 是永久系统，但其 stale
+    worktree 清理依赖君子协定——仅在 session_worktree_start 内部被动触发
+    （_sweep_stale_worktrees）。当 AI 累积 stale worktree（来自崩溃/放弃/心跳
+    TTL 过期的 session）且无新 session 启动时，残留 worktree 永久堆积，违反
+    「永久系统必须全自动」铁律（事件触发→自动运行→自动维护→自动关闭）。
+
+    治本（事件驱动，对标 make_tmp_cleanup_reconciler 的 post-commit TTL 模式）：
+    - trigger: 任何非空 committed_files 触发（sweep 安全且成本低——无 stale
+      worktree 时立即返回，三重保护判据防误清活跃 session）
+    - reconcile: 调公开函数 session_worktree_sweep(project_root, max_age_minutes=30)，
+      清理 .aidrafts/ 下 stale session worktree 残留
+    - 自维护/自关闭：每次 commit/merge 后自动清理，无需 AI 干预
+
+    触发路径覆盖（P2 有效性保证）：
+    1. GitCommitGateway commit 后（main worktree auto-reconciler 自提交等）
+    2. session_worktree_merge 后——_run_reconcilers_after_merge 创建临时
+       GitCommitGateway 实例，__init__ 注册本 reconciler，reconcile_for 触发执行
+
+    向内收：扩展 ReconciliationRegistry 框架，复用 session_worktree_sweep 公开
+    API（P1 已落地），零新真源。lazy import 避免 reconciliation_registry →
+    session_worktree 的 import-time 耦合。
+
+    为什么 trigger 不做文件过滤：worktree 残留与具体 committed_files 无关——任何
+    commit 都意味着 AI 活跃，是清理 stale 残留的合适时机；sweep 三重保护
+    （age / active session / branch ancestor）确保安全。
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return bool(committed_files)  # 任何有文件的 commit 都触发（sweep 安全且成本低）
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # lazy import 避免 import-time 耦合（reconciliation_registry 不应在模块加载时
+        # 依赖 gov_enforcement.rule_bridge.session_worktree）
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_sweep
+
+        try:
+            result = session_worktree_sweep(
+                project_root=project_root, max_age_minutes=30,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: reconciler 容错降级
+            return ReconcileResult(
+                action="warn",
+                detail=f"worktree lifecycle sweep 异常（降级告警）: {e}",
+            )
+        swept = result.get("swept", 0)
+        skipped = result.get("skipped", 0)
+        warnings = result.get("warnings", [])
+        if warnings:
+            return ReconcileResult(
+                action="warn",
+                detail=(
+                    f"worktree lifecycle sweep: swept={swept}, skipped={skipped}, "
+                    f"warnings={len(warnings)}; first: {(warnings[0] if warnings else '')[:200]}"
+                ),
+            )
+        if swept > 0:
+            return ReconcileResult(
+                action="clean",
+                detail=f"worktree lifecycle sweep: swept={swept} stale worktree(s), skipped={skipped}",
+            )
+        return ReconcileResult(action="skip", detail="worktree lifecycle sweep: 无 stale 残留")
+
+    return ReconcilerSpec(
+        gate_id="GATE-WORKTREE-LIFECYCLE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=800,  # 在 GATE-GATE-REGISTRY-SYNC(830) 之前——worktree 清理是基础设施级
+    )

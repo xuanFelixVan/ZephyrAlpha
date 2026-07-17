@@ -71,6 +71,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_gate_inventory_sync_reconciler,
     make_gate_registry_sync_reconciler,
     make_tmp_cleanup_reconciler,
+    make_worktree_lifecycle_reconciler,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -584,6 +585,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_gate_inventory_sync_reconciler(self))  #ARCH-055 commit_gates 模块清单漂移正向检测（post-commit warn-only，priority=820）
         self._reconciliation_registry.register(make_gate_registry_sync_reconciler(self))  #ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
+        self._reconciliation_registry.register(make_worktree_lifecycle_reconciler(self))  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
