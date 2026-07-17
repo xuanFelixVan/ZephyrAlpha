@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4967 |
-| 生产态模块 | 1751 |
+| 模块总数 | 4978 |
+| 生产态模块 | 1753 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3154 |
+| 原型态模块 | 3163 |
 
 ## 域清单（按架构层分组）
 
@@ -34,8 +34,8 @@ ttl: permanent
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
-| D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 330 | 149 | 1 | 180 | 330/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 91 | 48 | 0 | 43 | 91/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 331 | 149 | 1 | 181 | 331/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -50,10 +50,10 @@ ttl: permanent
 | D_FBL_DETECTORS | feedback_detectors / Feedback Detectors | 65 | 59 | 0 | 6 | 65/150 (OK) | [11_d_fbl_detectors.md](11_d_fbl_detectors.md) |
 | D_FBL_DIAGNOSERS | feedback_diagnosers / Feedback Diagnosers | 76 | 71 | 0 | 5 | 76/150 (OK) | [12_d_fbl_diagnosers.md](12_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
-| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 229 | 110 | 0 | 119 | 229/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
+| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 231 | 112 | 0 | 119 | 231/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 124 | 108 | 0 | 16 | 124/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
-| D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 92 | 82 | 0 | 10 | 92/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
+| D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 94 | 82 | 0 | 12 | 94/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 53 | 0 | 39 | 92/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
@@ -79,8 +79,8 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 11 | 3 | 0 | 8 | 11/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 10 | 4 | 0 | 6 | 10/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 701 | 143 | 1 | 557 | 701/150 (超容) | [38_d_governance.md](38_d_governance.md) |
-| D_GOV_AUDIT | audit_orchestration / Audit Trail | 276 | 69 | 2 | 205 | 276/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 703 | 143 | 1 | 559 | 703/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOV_AUDIT | audit_orchestration / Audit Trail | 278 | 69 | 2 | 207 | 278/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 97 | 69 | 28 | 0 | 97/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 83 | 17 | 0 | 66 | 83/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
