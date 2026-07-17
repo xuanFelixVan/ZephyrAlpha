@@ -1,5 +1,5 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-17 22:16:10
+%% 生成时间: 2026-07-17 22:22:35
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 21, 依赖边数: 35
 
@@ -48,9 +48,9 @@ graph TD
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_EX_CORE -> D_AUTONOMY_CORE (6 条)
+    tests_ce_test_ce_bootstrap_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_cache_invalidation_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_explain_cli_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_ce_test_ce_bootstrap_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_integrity_check_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_playground_v2_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_ce_test_ce_vibe_shortcuts_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
