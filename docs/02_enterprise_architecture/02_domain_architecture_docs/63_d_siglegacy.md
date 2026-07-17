@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 信号遗留设计态（D_SIGLEGACY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-18 03:10:50
+> 最后更新: 2026-07-18 03:22:54
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -92,12 +92,12 @@ graph TD
         src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) Signal Strategy Concrete Implementations<br/>文件: __init__.py"]
         src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) Signal Synthesis sub-package<br/>文件: __init__.py"]
     end
+    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_SIGQC
     D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_signal_fundamental_strategy_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_SIGQC
     src_zephyr_signal_fundamental_gen_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_synth_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
@@ -116,7 +116,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_extensions_init_py,src_zephyr_signal_fundamental_api_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_core_init_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_infrastructure_init_py,src_zephyr_signal_fundamental_models_init_py,src_zephyr_signal_fundamental_services_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
     class D_INFRASTRUCTURE external_prod
-    class D_FUNDAMENTAL_SIGNAL,D_SIGQC external_design
+    class D_SIGQC,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -153,12 +153,12 @@ graph TD
         src_zephyr_signal_fundamental_strategy_implementations_init_py["(原型态 / prototype) Signal Strategy Concrete Implementations<br/>文件: __init__.py"]
         src_zephyr_signal_fundamental_synth_init_py["(原型态 / prototype) Signal Synthesis sub-package<br/>文件: __init__.py"]
     end
+    D_SIGQC["(原型态 / prototype) D_SIGQC"]
+    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_SIGQC
     D_FUNDAMENTAL_SIGNAL["(原型态 / prototype) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_signal_fundamental_strategy_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_gen_init_py -.->|config_depends / config_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_strategy_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
-    D_SIGQC["(原型态 / prototype) D_SIGQC"]
-    src_zephyr_signal_fundamental_combiner_init_py -.->|导入依赖 / import_depends| D_SIGQC
     src_zephyr_signal_fundamental_gen_implementations_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     src_zephyr_signal_fundamental_synth_init_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
@@ -177,7 +177,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_signal_fundamental_extensions_init_py,src_zephyr_signal_fundamental_api_init_py,src_zephyr_signal_fundamental_capital_init_py,src_zephyr_signal_fundamental_combiner_init_py,src_zephyr_signal_fundamental_combiner_impl_init_py,src_zephyr_signal_fundamental_core_init_py,src_zephyr_signal_fundamental_gen_init_py,src_zephyr_signal_fundamental_gen_implementations_init_py,src_zephyr_signal_fundamental_infrastructure_init_py,src_zephyr_signal_fundamental_models_init_py,src_zephyr_signal_fundamental_services_init_py,src_zephyr_signal_fundamental_strategy_init_py,src_zephyr_signal_fundamental_strategy_implementations_init_py,src_zephyr_signal_fundamental_synth_init_py design
     class D_INFRASTRUCTURE external_prod
-    class D_FUNDAMENTAL_SIGNAL,D_SIGQC external_design
+    class D_SIGQC,D_FUNDAMENTAL_SIGNAL external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
