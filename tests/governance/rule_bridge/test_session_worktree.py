@@ -452,6 +452,41 @@ def test_worktree_abort_stashes_tracked_files(_isolated_repo):
         )
 
 
+def test_breaking_change_error_references_section_9_7(_isolated_repo):
+    """S3-C: BREAKING_CHANGE 阻断消息引用 §9.7 治本标签（非陈旧行号 L391/L394）。
+
+    陈旧行号引用（L391/L394）随 AGENTS.md 增长而失效——改为 §9.7 治本标签（与
+    `_check_concurrency_block` docstring + AGENTS.md L554 内部标签一致）。
+    故意不带 "AGENTS.md " 前缀：DANGLING-REFERENCE gate 正则
+    `AGENTS\.md\s*§(\d+(?:\.\d+)*)` 只检测带 "AGENTS.md" 前缀的 §X.Y 引用，
+    §9.7 在 AGENTS.md 中是内部治本标签（非 `### 9.7` 章节头），加前缀会被
+    gate 误判为悬空引用阻断 commit。标签本身在 docstring + AGENTS.md L554
+    已建立语义锚点，无需 AGENTS.md 前缀也能被 grep 定位。
+    """
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _check_concurrency_block
+    from zephyr.security.access_control.session_concurrency import SessionRegistry
+    import os as _os
+
+    repo = _isolated_repo
+    # 先注册一个活跃 session（PID=当前进程，alive）
+    reg = SessionRegistry(project_root=repo)
+    reg.register("sess-blocker", pid=_os.getpid())
+
+    # 用 breaking_change=True 启动新 session → 应被 sess-blocker 阻断
+    result = _check_concurrency_block(
+        sid="sess-new",
+        allow_concurrent=False,
+        breaking_change=True,
+        root=repo,
+    )
+    assert result is not None, "应被阻断（有活跃 session）"
+    error_msg = result.get("error", "")
+    # S3-C 核心断言：引用 §9.7（稳定章节号），不引用 L391/L394（陈旧行号）
+    assert "§9.7" in error_msg, f"错误消息未引用 §9.7: {error_msg!r}"
+    assert "L391" not in error_msg, f"错误消息仍含陈旧行号 L391: {error_msg!r}"
+    assert "L394" not in error_msg, f"错误消息仍含陈旧行号 L394: {error_msg!r}"
+
+
 def test_worktree_commit_held_overlap_blocks():
     """HELD-OVERLAP 硬阻断：A commit 文件后（auto-claim），B commit 同文件被阻断。"""
     # Session A commit _TEST_FILE_A（auto-claim）

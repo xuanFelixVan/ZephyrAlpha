@@ -19,9 +19,11 @@
 - TestNoSessionIdPasses: 无 session_id → 放行
 - TestSnapshotExceptionSafe: _claim_snapshots 读取异常安全降级（不阻断）
 - TestGateSpecFields: gate_id / priority 字段正确
+- TestSnapshotDiskPersistence: S3-C 治本——claim 快照磁盘持久化 + 崩溃恢复
 """
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -30,6 +32,7 @@ from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.gov_enforcement.commit_gates.foreign_change_gate import (
     make_foreign_change_gate,
 )
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
 
 
 def _make_gateway(
@@ -189,3 +192,102 @@ class TestGateSpecFields:
         assert isinstance(spec, GateSpec)
         assert spec.gate_id == "FOREIGN-CHANGE-DETECTION"
         assert spec.priority == 45  # 在 CLAIM-REQUIRED(40) 后、HELD-OVERLAP(50) 前
+
+
+# ---------------------------------------------------------------------------
+# S3-C 治本（2026-07-17）：claim 快照磁盘持久化测试
+# ---------------------------------------------------------------------------
+
+def _make_minimal_gateway(project_root: Path) -> GitCommitGateway:
+    """构造最小化 GitCommitGateway（跳过 __init__ 的重量级注册），仅设置快照相关属性。
+
+    用于测试 _save/_load/_delete_session_snapshot 磁盘持久化 helper。
+    """
+    gw = GitCommitGateway.__new__(GitCommitGateway)
+    gw.project_root = project_root
+    gw._claim_snapshots = {}
+    gw._claim_snapshots_dir = project_root / ".runtime" / "claim_snapshots"
+    return gw
+
+
+class TestSnapshotDiskPersistence:
+    """S3-C: claim 快照磁盘持久化——_save/_load/_delete helper 测试。"""
+
+    def test_save_session_snapshot_writes_json(self, tmp_path):
+        """_save_session_snapshot 将快照写入 .runtime/claim_snapshots/{session_id}.json。"""
+        gw = _make_minimal_gateway(tmp_path)
+        gw._claim_snapshots["sess-test"] = {"/abs/file.py": "diff content"}
+        gw._save_session_snapshot("sess-test")
+        snap_file = gw._claim_snapshots_dir / "sess-test.json"
+        assert snap_file.exists(), "快照文件未创建"
+        data = json.loads(snap_file.read_text(encoding="utf-8"))
+        assert data["session_id"] == "sess-test"
+        assert data["snapshots"]["/abs/file.py"] == "diff content"
+
+    def test_load_claim_snapshots_from_disk_recovers(self, tmp_path):
+        """新 gateway __init__ 从磁盘恢复快照（崩溃恢复核心场景）。"""
+        # 第一个 gateway 写入快照
+        gw1 = _make_minimal_gateway(tmp_path)
+        gw1._claim_snapshots["sess-crash"] = {"/abs/a.py": "baseline diff"}
+        gw1._save_session_snapshot("sess-crash")
+        # 模拟进程崩溃：新 gateway 实例从磁盘加载
+        gw2 = _make_minimal_gateway(tmp_path)
+        gw2._load_claim_snapshots_from_disk()
+        assert "sess-crash" in gw2._claim_snapshots
+        assert gw2._claim_snapshots["sess-crash"]["/abs/a.py"] == "baseline diff"
+
+    def test_delete_session_snapshot_removes_file(self, tmp_path):
+        """_delete_session_snapshot 删除磁盘快照文件。"""
+        gw = _make_minimal_gateway(tmp_path)
+        gw._claim_snapshots["sess-del"] = {"/abs/x.py": "diff"}
+        gw._save_session_snapshot("sess-del")
+        snap_file = gw._claim_snapshots_dir / "sess-del.json"
+        assert snap_file.exists()
+        gw._delete_session_snapshot("sess-del")
+        assert not snap_file.exists(), "快照文件未删除"
+
+    def test_delete_nonexistent_snapshot_is_silent(self, tmp_path):
+        """_delete_session_snapshot 对不存在的文件静默（不抛异常）。"""
+        gw = _make_minimal_gateway(tmp_path)
+        # 不应抛异常
+        gw._delete_session_snapshot("sess-ghost")
+
+    def test_load_skips_corrupt_snapshot_file(self, tmp_path):
+        """损坏的 JSON 文件被跳过（不崩溃，log warning）。"""
+        gw = _make_minimal_gateway(tmp_path)
+        gw._claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+        # 写入正常快照
+        (gw._claim_snapshots_dir / "sess-good.json").write_text(
+            json.dumps({"session_id": "sess-good", "snapshots": {"/a": "diff"}}),
+            encoding="utf-8",
+        )
+        # 写入损坏快照
+        (gw._claim_snapshots_dir / "sess-corrupt.json").write_text(
+            "{invalid json!!!", encoding="utf-8",
+        )
+        gw._load_claim_snapshots_from_disk()
+        assert "sess-good" in gw._claim_snapshots
+        assert "sess-corrupt" not in gw._claim_snapshots
+
+    def test_load_from_empty_dir_is_safe(self, tmp_path):
+        """空快照目录加载安全（不抛异常）。"""
+        gw = _make_minimal_gateway(tmp_path)
+        gw._load_claim_snapshots_from_disk()  # 目录不存在
+        assert gw._claim_snapshots == {}
+
+    def test_snapshot_round_trip_preserves_dirty_baseline(self, tmp_path):
+        """完整往返：save → load → 验证脏基线被保留（FOREIGN_CHANGE gate 可用）。"""
+        gw1 = _make_minimal_gateway(tmp_path)
+        dirty_baseline = "-old line\n+foreign modification"
+        gw1._claim_snapshots["sess-rt"] = {"/abs/dirty.py": dirty_baseline}
+        gw1._save_session_snapshot("sess-rt")
+
+        gw2 = _make_minimal_gateway(tmp_path)
+        gw2._load_claim_snapshots_from_disk()
+
+        # 模拟 FOREIGN_CHANGE gate 读取快照
+        snapshots = gw2._claim_snapshots.get("sess-rt", {})
+        assert "/abs/dirty.py" in snapshots
+        assert snapshots["/abs/dirty.py"] == dirty_baseline
+        # 非空基线 → gate 会 BLOCK（搭便车检测生效）
+        assert snapshots["/abs/dirty.py"] != ""

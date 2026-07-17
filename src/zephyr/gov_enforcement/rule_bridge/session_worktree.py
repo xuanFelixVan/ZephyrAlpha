@@ -270,7 +270,7 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
                     "created": False,
                     "error": (
                         f"BREAKING_CHANGE_CONCURRENCY_BLOCKED: 治本变更期间禁止并发 AI 对话"
-                        f"（AGENTS.md L391/L394）。当前活跃 session: {other_ids}。"
+                        f"（§9.7 治本变更并发阻断）。当前活跃 session: {other_ids}。"
                         f"逃生通道：allow_concurrent=True。"
                     ),
                     "blocked_by": other_ids,
@@ -287,7 +287,7 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
                     "created": False,
                     "error": (
                         f"BREAKING_CHANGE_AVOIDANCE_BLOCKED: 活跃 session '{blocker.session_id}'"
-                        f" 声明了 breaking_change（治本变更进行中，AGENTS.md L391/L394）。"
+                        f" 声明了 breaking_change（治本变更进行中，§9.7 治本变更并发阻断）。"
                         f"逃生通道：allow_concurrent=True。"
                     ),
                     "blocked_by": [blocker.session_id],
