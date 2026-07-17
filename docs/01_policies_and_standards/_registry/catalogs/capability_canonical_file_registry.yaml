@@ -1379,6 +1379,26 @@ capabilities:
       - make_noqa_validation_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: encoding_gate
+    aliases:
+      - ENCODING-SAFETY
+      - encoding-safety
+      - make_encoding_gate
+      - encoding_checker_gate
+      - ps1_ascii_enforcer_gate
+    description: >-
+      编码安全校验门禁（ENCODING-SAFETY，priority=42，2026-07-17 治本 F-05 防御断层）。
+      弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口。通过 subprocess 调用
+      check_encoding.py 复用真源（禁止在 gateway 内复制检测逻辑）。fail-open on env
+      error（2026-07-17 裁定治本，与 pure_shim_gate/vocab_hardcode_gate/pure_assertion_gate
+      一致）：checker 缺失/超时/exit 2 时不阻断，exit 1（检出违规）时硬阻断。
+      检测 .ps1 非 ASCII 字节及 .py/.md/.yaml/.yml/.json/.toml 编码问题。
+      priority=42（在 RENAME-DEPGRAPH-SYNC=39 之后、FOREIGN-CHANGE=45 之前；
+      priority=40 被 CLAIM-REQUIRED 占用，priority=41 预留给 DATA-TASK-COMPLETENESS 迁移）。
+    integrity_anchors:
+      - make_encoding_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: noqa_exempt_registry
     aliases:
       - NOQA-EXEMPT-REGISTRY
@@ -3952,6 +3972,12 @@ creation_tokens:
     created_by: "session-sess-36852-20260717130749"
     capability: "exception_debt_scanner"
 
+  # --- 5.135 批量治标清零脚本（Phase 2 阶段0，为 except Exception 行添加 noqa 标记）---
+  - file: "scripts/governance/batch_fix_5135.py"
+    token: "auto-batch-fix-5135-20260717"
+    created_by: "session-sess-44296-20260717151910"
+    capability: "exception_debt_batch_fixer"
+
   # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
   - file: "scripts/governance/d7_code/check_any_abuse.py"
     token: "auto-check-any-abuse-20260706"
@@ -4241,6 +4267,10 @@ creation_tokens:
     token: "auto-noqa-validation-gate-20260717"
     created_by: "session-arch-noqa-gov-001"
     capability: "noqa_validation_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/encoding_gate.py"
+    token: "auto-encoding-gate-20260717"
+    created_by: "session-arch-ttl-doc-001"
+    capability: "encoding_gate"
   - file: "docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml"
     token: "auto-noqa-exempt-registry-20260717"
     created_by: "session-arch-noqa-gov-001"
