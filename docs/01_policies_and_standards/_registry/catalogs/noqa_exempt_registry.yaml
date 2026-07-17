@@ -1,0 +1,105 @@
+# [A_config] module_id=CFG-noqa-exempt-registry | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GATE_ENGINE
+# module_id: CFG-NOQA-REGISTRY-001
+# stability: stable
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# noqa_exempt_registry.yaml — 自定义 noqa 豁免标记登记表（SSoT）
+#
+# 真源：本 YAML 文件（规则数据，TRAE-062）
+# 派生：architecture_health_dashboard.py 检测器动态加载合法标记清单；
+#       noqa_validation_gate.py（priority=71）校验 staged 文件的 noqa 标记合规性
+# 禁止：检测器内硬编码标记字符串（MUST 从本 registry 动态加载）
+#
+# 用途：登记项目自定义的 `# noqa: <marker>` 标记，作为豁免机制的唯一真源。
+#       新标记 MUST 先在本 registry 登记，否则被 noqa_validation_gate 硬阻断。
+#       标记使用 MUST 附理由（格式：`# noqa: <marker>  <METRIC>豁免: <理由>`，双空格分隔，理由>=10字符）。
+#
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-17
+# 关联裁定：#ARCH-NOQA-GOV-001
+#
+# 标记命名规范：`<metric_id_lower>-<语义>`，如 `m02-manual` / `m10-time-trigger`
+
+markers:
+  - marker: "m02-manual"
+    metric_id: "M02"
+    description: "manual-only 永久脚本豁免——常驻服务特征检测"
+    applicable_conditions:
+      - "CLI 启动的常驻服务（如交易主入口 python -m zephyr.trading）"
+      - "启动后自动运行 reconcile 循环，非 reconciler 无需事件触发"
+      - "Windows SCM 服务（windows_service.py）"
+      - "CI 兜底监控脚本（vms_cron_monitor.py）"
+    reason_required: true
+    reason_format: "M02豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+  - marker: "m03-duplicate"
+    metric_id: "M03"
+    description: "重复簇函数豁免——AI 趋同演化非复制粘贴"
+    applicable_conditions:
+      - "不同模块为相似问题生成相似代码（趋同演化），非复制粘贴"
+      - "M05（文件复制对=0）已覆盖文件级复制检测"
+      - "接口实现/协议方法等合法重复（per-file 豁免）"
+    reason_required: true
+    reason_format: "M03豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+  - marker: "m07-orphan"
+    metric_id: "M07"
+    description: "死代码/orphan 模块豁免——动态引用无法被静态扫描发现"
+    applicable_conditions:
+      - "动态引用（importlib/reflection）无法被静态扫描发现"
+      - "entry point 模块（被外部调用而非内部 import）"
+    reason_required: true
+    reason_format: "M07豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+  - marker: "m10-time-trigger"
+    metric_id: "M10"
+    description: "时间触发残留豁免——注释/枚举值/锁等待等非真实时间触发"
+    applicable_conditions:
+      - "schema 中 'cron' 枚举值/注释提及 'cron'（非实际 cron 代码）"
+      - "锁等待 while True+sleep（非周期触发，是等待锁释放）"
+      - "perm_trigger_gate 自身（检测器含模式字符串）"
+      - "threading.Timer 超时（非周期触发，是单次超时）"
+      - "CI 定期 job 兜底调用（非进程内 daemon，如 rollback_scheduler.schedule_drill）"
+      - "time.sleep 长睡眠（如 reconcile 心跳轮询，手动启动后自动运行）"
+    reason_required: true
+    reason_format: "M10豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+  - marker: "gate-vocab"
+    metric_id: null  # 非 dashboard 指标，是 GATE-VOCAB 门禁豁免
+    description: "GATE-VOCAB 词表硬编码豁免——DDL-as-Code 枚举/schema 合法值"
+    applicable_conditions:
+      - "DDL-as-Code 的 CHECK 枚举（DDL 本身就是词表定义）"
+      - "schema 定义中的合法值集合（YAML schema 的 enum 字段）"
+      - "词表加载器自身（vocabulary_loader.py 等需要引用词表名）"
+    reason_required: true
+    reason_format: "gate-vocab豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-17"
+    created_by: "ARCH-NOQA-GOV-001"
+
+# 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
+forbidden_markers:
+  - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
+  - ""            # 空 marker code，禁止

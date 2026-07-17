@@ -1359,6 +1359,44 @@ capabilities:
       - make_pure_assertion_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: noqa_validation_gate
+    aliases:
+      - NOQA-VALIDATION
+      - noqa-validation
+      - make_noqa_validation_gate
+      - noqa_marker_blocker
+      - noqa_exempt_enforcer
+    description: >-
+      自定义 noqa 标记合规性门禁（NOQA-VALIDATION，priority=71，2026-07-17 治本
+      #ARCH-NOQA-GOV-001）。检测 staged .py 文件中的 `# noqa: <marker>` 标记：
+      ①跳过 ruff/flake8 标准码（格式 ^[A-Z]+\d+$，如 E402/BLE001/S324）；
+      ②自定义标记 MUST 在 noqa_exempt_registry.yaml 预登记（5 种合法标记：
+      m02-manual/m03-duplicate/m07-orphan/m10-time-trigger/gate-vocab）；
+      ③标记行 MUST 附理由（marker 后同行文本 >= 10 字符，阻断裸豁免）。
+      in-process 检测（非 subprocess），registry 加载失败 fail-open，检出违规 fail-closed。
+      priority=71（紧随 DANGLING-REFERENCE=70 之后、BLUEPRINT-FORMAT=77 之前）。
+    integrity_anchors:
+      - make_noqa_validation_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
+  - capability_id: noqa_exempt_registry
+    aliases:
+      - NOQA-EXEMPT-REGISTRY
+      - noqa-exempt-registry
+      - noqa_exempt_registry_yaml
+      - noqa_marker_ssoT
+    description: >-
+      自定义 noqa 豁免标记登记表（SSoT，2026-07-17 治本 #ARCH-NOQA-GOV-001）。
+      登记5种合法自定义标记（m02-manual/m03-duplicate/m07-orphan/m10-time-trigger/
+      gate-vocab）及2种forbidden（noqa/空字符串）。作为 noqa_validation_gate.py
+      （priority=71）和 architecture_health_dashboard.py 检测器的动态加载真源——
+      检测器 MUST 从本 registry 加载合法标记清单，禁止硬编码。规则数据真源（TRAE-062），
+      单向派生到检测器（registry YAML -> 检测器内存），禁止反向写入。
+    integrity_anchors:
+      - markers  # 顶层 markers 列表（删则无合法标记）
+      - forbidden_markers  # 顶层 forbidden_markers 列表（删则无禁止标记）
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -4199,6 +4237,14 @@ creation_tokens:
     token: "auto-pure-assertion-gate-20260717"
     created_by: "session-m03-m04-fix"
     capability: "pure_assertion_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py"
+    token: "auto-noqa-validation-gate-20260717"
+    created_by: "session-arch-noqa-gov-001"
+    capability: "noqa_validation_gate"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml"
+    token: "auto-noqa-exempt-registry-20260717"
+    created_by: "session-arch-noqa-gov-001"
+    capability: "noqa_exempt_registry"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"
