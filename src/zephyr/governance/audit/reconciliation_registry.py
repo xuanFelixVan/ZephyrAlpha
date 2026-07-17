@@ -4485,6 +4485,11 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
     project_root = gateway.project_root
     _TTL_SECONDS = 7 * 86400  # 7 天（对标 make_runtime_cleanup_reconciler）
     _PROTECTED_NAMES = {".gitkeep"}
+    # 豁免有自治轮转机制的子系统（防止 tmp_cleanup 与其轮转逻辑冲突）：
+    # - pg_backups/: backup_runtime_state.py 自治轮转（max_backups=10，行203-209）
+    # - scheduler_*: scheduler.py RotatingFileHandler 自治轮转（10MB/5备份，行1406-1413）
+    _PROTECTED_DIRS = {"pg_backups"}
+    _PROTECTED_PREFIXES = ("scheduler_",)
 
     def _trigger(committed_files: list[str]) -> bool:
         return True  # tmp/ 清理与每次 commit 正相关（commit 意味着任务推进）
@@ -4498,9 +4503,16 @@ def make_tmp_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
         deleted = 0
         errors = 0
         for dirpath, _dirnames, filenames in os.walk(tmp_dir):
+            # 豁免自治轮转子目录（pg_backups/由 backup_runtime_state.py max_backups=10 自治）
+            rel_dir = os.path.relpath(dirpath, str(tmp_dir)).replace("\\", "/")
+            if any(rel_dir == d or rel_dir.startswith(f"{d}/") for d in _PROTECTED_DIRS):
+                continue
             for filename in filenames:
                 filepath = os.path.join(dirpath, filename)
                 try:
+                    # 豁免自治轮转前缀（scheduler_*由 scheduler.py RotatingFileHandler 自治）
+                    if filename.startswith(_PROTECTED_PREFIXES):
+                        continue
                     mtime = os.path.getmtime(filepath)
                     if now - mtime < _TTL_SECONDS:
                         continue  # 仍在 TTL 内（可能当前任务使用中）
