@@ -233,15 +233,22 @@ def sync_module_panorama(module_id: str) -> int:
     finally:
         depgraph_conn.close()
 
+    # ARCH-FRONTMATTER-STATE-001 Phase 2：dataflow/decision 同步失败不阻断 frontmatter 对齐。
+    # 三个下游 sync 目标（dataflow/decision/blueprint）相互独立，
+    # 环境级权限问题（InsufficientPrivilege on dataflow_jobs）不应让 frontmatter reconciler 失效。
     dataflow_conn = get_dataflowgraph_pg_connection(allow_design_delete=True)
     try:
         _sync_to_dataflow(dataflow_conn, module)
+    except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
+        print(f"[WARN] dataflow 同步失败（不阻断 frontmatter 对齐）: {e}", file=sys.stderr)
     finally:
         dataflow_conn.close()
 
     decision_conn = get_decisiongraph_pg_connection(allow_design_delete=True)
     try:
         _sync_to_decision(decision_conn, module)
+    except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
+        print(f"[WARN] decision 同步失败（不阻断 frontmatter 对齐）: {e}", file=sys.stderr)
     finally:
         decision_conn.close()
 
