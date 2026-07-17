@@ -120,8 +120,9 @@ def make_data_task_completeness_gate() -> GateSpec:
     """构造数据任务完整性门禁 GateSpec（warn 级，提醒型）。
 
     Returns:
-        GateSpec(gate_id="DATA-TASK-COMPLETENESS", priority=78)。
-        priority=78——在 BLUEPRINT-FORMAT(77) 之后、VOCAB-HARDCODE(80) 之前。
+        GateSpec(gate_id="DATA-TASK-COMPLETENESS", priority=41)。
+        priority=41——在 CLAIM-REQUIRED(40) 之后、FOREIGN-CHANGE(45) 之前。
+        原78与 GATE-DOMAIN-FK 冲突，迁移到41（裁定#ARCH-DRIFT-PREVENTION-001）。
         始终返回 passed=True（warn 级，不阻断 commit）。
     """
 
@@ -183,5 +184,5 @@ def make_data_task_completeness_gate() -> GateSpec:
         return True, warning
 
     return GateSpec(
-        gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=78
+        gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=41
     )
