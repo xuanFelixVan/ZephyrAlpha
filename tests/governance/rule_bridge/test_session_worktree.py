@@ -393,6 +393,65 @@ def test_worktree_abort_cleans_main_workdir():
     assert not new_path.exists(), "主工作区 untracked 文件未被清理"
 
 
+def test_worktree_abort_stashes_tracked_files(_isolated_repo):
+    """S3-B: abort 对 tracked 文件用 git stash push 保存（可恢复），不再用 git checkout -- 永久丢弃。
+
+    场景：AI 修改了主工作区的 tracked 文件（uncommitted），用户调用 abort 放弃。
+    原 git checkout -- 永久丢弃修改（双份数据丢失：worktree commit 也被 abort 丢弃）；
+    S3-B 改用 git stash push 保存到 stash 栈，文件还原到 HEAD，用户可通过
+    ``git stash list`` / ``git stash pop`` 恢复 AI 的修改。
+    """
+    repo = _isolated_repo
+    sid = "sess-pytest-abort-stash"
+    # .gitkeep 由 _isolated_repo fixture commit，是已 tracked 的文件
+    tracked_file = ".gitkeep"
+    tracked_path = repo / tracked_file
+    original_content = tracked_path.read_text(encoding="utf-8")  # fixture 设为 ""
+
+    try:
+        # 1. start session
+        r = session_worktree_start(sid)
+        assert r.get("worktree_path"), f"start 失败: {r}"
+
+        # 2. 模拟 AI 修改主工作区的 tracked 文件（uncommitted）
+        modified_content = "AI modified content for stash test\n"
+        tracked_path.write_text(modified_content, encoding="utf-8")
+        assert tracked_path.read_text(encoding="utf-8") == modified_content
+
+        # 3. abort with files——应 stash 保存 tracked 修改（不永久丢弃）
+        a = session_worktree_abort(sid, files=[tracked_file])
+        assert a.get("aborted"), f"abort 失败: {a}"
+        assert a.get("main_cleaned") == 1, f"应 stash 1 个 tracked 文件: {a}"
+
+        # 4. 文件应还原到 HEAD（original_content）
+        assert tracked_path.read_text(encoding="utf-8") == original_content, \
+            "tracked 文件未还原到 HEAD（stash 应使工作区回到 HEAD 状态）"
+
+        # 5. stash 栈应有 1 个条目，message 含 session_id（S3-B 核心断言：可恢复）
+        stash_list = subprocess.run(
+            ["git", "stash", "list"], cwd=repo, capture_output=True, text=True
+        ).stdout.strip()
+        assert "session_worktree_abort" in stash_list, \
+            f"stash 栈未包含 abort 保存的修改: {stash_list!r}"
+        assert sid in stash_list, \
+            f"stash message 未含 session_id 溯源: {stash_list!r}"
+
+        # 6. 验证可恢复性：stash 内容确实包含 AI 修改
+        stash_show = subprocess.run(
+            ["git", "stash", "show", "-p", "stash@{0}"],
+            cwd=repo, capture_output=True, text=True,
+        ).stdout
+        assert "AI modified content" in stash_show, \
+            f"stash 内容不含 AI 修改（不可恢复）: {stash_show!r}"
+    finally:
+        # 清理 stash + 还原 .gitkeep（避免污染其他测试）
+        subprocess.run(["git", "stash", "clear"], cwd=repo, capture_output=True)
+        subprocess.run(
+            ["git", "checkout", "--", tracked_file],
+            cwd=repo, capture_output=True,
+        )
+
+
 def test_worktree_commit_held_overlap_blocks():
     """HELD-OVERLAP 硬阻断：A commit 文件后（auto-claim），B commit 同文件被阻断。"""
     # Session A commit _TEST_FILE_A（auto-claim）

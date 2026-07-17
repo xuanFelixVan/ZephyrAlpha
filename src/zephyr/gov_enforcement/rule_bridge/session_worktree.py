@@ -171,14 +171,14 @@ def _sweep_one_dir(
             manager._run_git(["git", "branch", "-D", branch])
         try:
             registry.unregister(sid)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in session_worktree", exc_info=True)
         swept = 1
         logger.info(
             "session_worktree sweep: 清理 stale %s (registered=%s)",
             sid, is_registered,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         warnings.append(f"{sid}: 清理异常 {e}")
         return 0, 1, warnings
     return swept, 0, warnings
@@ -225,7 +225,7 @@ def _sweep_stale_worktrees(
     try:
         active_list = registry.list_active()
         active_sids = {getattr(info, "session_id", "") for info in active_list}
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         active_sids = set()
 
     swept = 0
@@ -242,7 +242,7 @@ def _sweep_stale_worktrees(
                 swept += d_swept
                 skipped += d_skipped
                 warnings.extend(d_warnings)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         warnings.append(f"sweep 整体异常（已中止）: {e}")
 
     return {"swept": swept, "skipped": skipped, "warnings": warnings}
@@ -292,7 +292,7 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
                     ),
                     "blocked_by": [blocker.session_id],
                 }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         # fail-open：并发检测异常不阻断 start（对标 held_overlap_gate fail-open）
         logger.warning("session_worktree_start: 并发检测异常（降级放行）: %s", e, exc_info=True)
     return None
@@ -347,7 +347,7 @@ def session_worktree_start(
     try:
         registry.register(sid, pid=os.getpid(), held_files=[], is_breaking_change=breaking_change)
         registered = True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
             "session_id": sid,
             "worktree_path": "",
@@ -367,7 +367,7 @@ def session_worktree_start(
                 "session_worktree sweep: swept=%s skipped=%s warnings=%s",
                 sweep_r.get("swept"), sweep_r.get("skipped"), sweep_r.get("warnings"),
             )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e, exc_info=True)
     try:
         # 检测是否已存在（幂等）
@@ -394,7 +394,7 @@ def session_worktree_start(
             "created": False,
             "error": f"create worktree failed: {e}",
         }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
             "session_id": sid,
             "worktree_path": "",
@@ -441,14 +441,14 @@ def _check_held_overlap(registry, session_id: str, rel_files: list[str]) -> dict
                 claimed_files.append(rf)
             else:
                 overlap_files.append(rf)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
     if not overlap_files:
         return None
     for cf in claimed_files:
         try:
             registry.release_file(session_id, cf)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in session_worktree", exc_info=True)
     return {
         "session_id": session_id,
@@ -610,7 +610,7 @@ def _run_pre_commit_gates(
                     {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
                 ],
             }
-    except Exception as _e:
+    except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree_commit: gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
     return None
 
@@ -733,7 +733,7 @@ def session_worktree_commit(
 
     try:
         _get_registry(root).heartbeat(session_id)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
 
     if not files:
@@ -952,7 +952,7 @@ def _get_merge_files(root: Path) -> list[str]:
         )
         if result.returncode == 0 and result.stdout.strip():
             return [f.strip() for f in result.stdout.strip().split("\n") if f.strip()]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in session_worktree", exc_info=True)
     return []
 
@@ -976,7 +976,7 @@ def _run_reconcilers_after_merge(
             summary.append({"action": r.action, "detail": r.detail})
             print(f"[RECONCILER] {r.action}" + (f" - {r.detail}" if r.detail else ""))
         return summary
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"[RECONCILER] 触发失败: {e}")
         return [{"action": "warn", "detail": str(e)}]
 
@@ -1136,7 +1136,7 @@ def _pre_merge_gate_check(
                 ["git", "reset", "--soft", orig_head],
                 cwd=str(wt_path), capture_output=True, text=True, timeout=30,
             )
-    except Exception as _e:
+    except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         # gate 基础设施异常降级为 warn（不阻断）
         logger.warning("pre-merge gate 检查异常降级（不阻断）: %s", _e, exc_info=True)
         return True, []
@@ -1187,7 +1187,7 @@ def _execute_merge_and_build_msg(
                 msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
     except WorktreeError as e:
         msg = f"merge 失败: {e}"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         msg = f"unexpected: {e}"
     return merged, cleaned, msg
 
@@ -1205,7 +1205,7 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
             reconcile_results = _run_reconcilers_after_merge(committed_files, session_id, root)
         else:
             print("[RECONCILER] 无变更文件，跳过 reconciler")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"[RECONCILER] 触发失败: {e}")
         reconcile_results = [{"action": "warn", "detail": str(e)}]
     return reconcile_results
@@ -1269,7 +1269,7 @@ def session_worktree_merge(
     if merged and cleaned:
         try:
             unregistered = registry.unregister(session_id)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in session_worktree", exc_info=True)
 
     # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
@@ -1331,45 +1331,82 @@ def _safe_unlink_main_file(main_file: Path) -> bool:
 
 def _dispose_main_workdir_files(
     root: Path, rel_files: list[str], tracked_files: set[str],
+    session_id: str | None = None,
 ) -> int:
-    """分类处置主工作区文件：tracked 加入 checkout 列表，untracked 物理删除。
+    """分类处置主工作区文件：tracked 用 git stash push 保存（可恢复），untracked 物理删除。
+
+    S3-B 治本（2026-07-17）：tracked 文件原用 ``git checkout --`` 静默丢弃修改，
+    但 abort 路径下 worktree commit 也被丢弃，双份数据同时丢失=无恢复路径
+    （41 例并发丢失案例中模式 A "git stash/reset/checkout 冲掉工作区"占 51%）。
+    改为 ``git stash push -- <files>`` 将修改压入 stash 栈，文件还原到 HEAD，
+    用户事后可通过 ``git stash list`` / ``git stash pop`` 恢复 AI 的修改。
+
+    untracked 文件行为不变（物理删除）——abort 场景的 untracked 通常是 AI
+    新建的临时文件，物理删除符合预期；如需保留可事后从 worktree 分支恢复
+    （worktree 分支在 abort 时由 cleanup_session_worktree 保留为 orphan 分支）。
+
+    边界：tracked 文件无修改时 ``git stash push`` 返回非零（"No local changes"），
+    不创建 stash 但文件已在 HEAD，状态正确——``capture_output=True`` 吞掉噪声。
+
+    Args:
+        root: 主仓库根目录。
+        rel_files: 待处置的相对路径文件列表。
+        tracked_files: git tracked 文件集合（用于分类）。
+        session_id: 用于 stash message 的 session 标识（可恢复溯源）。
 
     Returns:
         清理的文件数（tracked 计数 + 成功删除的 untracked 计数）。
     """
-    to_checkout: list[str] = []
+    to_stash: list[str] = []
     cleaned = 0
     for rel_file in rel_files:
         main_file = root / rel_file
         if rel_file in tracked_files:
-            # tracked 文件——用 git checkout 恢复到 HEAD（仅当有改动时才需要）
-            to_checkout.append(rel_file)
+            # tracked 文件——用 git stash push 保存修改（可恢复），文件还原到 HEAD
+            to_stash.append(rel_file)
             cleaned += 1
         elif main_file.exists():
-            # untracked 文件——物理删除
+            # untracked 文件——物理删除（行为不变）
             if _safe_unlink_main_file(main_file):
                 cleaned += 1
 
-    if to_checkout:
+    if to_stash:
+        # S3-B: git stash push 替代 git checkout --
+        # stash 保留修改（可恢复 via git stash pop），checkout -- 永久丢弃（不可恢复）
+        stash_msg = (
+            f"session_worktree_abort: {session_id}"
+            if session_id else "session_worktree_abort"
+        )
         subprocess.run(
-            ["git", "checkout", "--"] + to_checkout,
+            ["git", "stash", "push", "-m", stash_msg, "--"] + to_stash,
             cwd=str(root), capture_output=True,
+        )
+        logger.info(
+            "session_worktree_abort: stashed %d tracked file(s) for session=%s "
+            "(recoverable via 'git stash pop')", len(to_stash), session_id or "?",
         )
     return cleaned
 
 
-def _clean_main_workdir_on_abort(files: list[str], root: Path) -> int:
+def _clean_main_workdir_on_abort(
+    files: list[str], root: Path, session_id: str | None = None,
+) -> int:
     """清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）。
 
-    tracked 文件用 git checkout -- 恢复到 HEAD（丢弃 AI 修改）；
-    untracked 文件物理删除（丢弃 AI 创建的新文件）。
+    S3-B 治本（2026-07-17）：tracked 文件改用 git stash push 保存（可恢复），
+    不再用 git checkout -- 永久丢弃；untracked 文件物理删除（行为不变）。
+
+    Args:
+        files: AI 修改/创建的文件列表（相对路径或绝对路径）。
+        root: 主仓库根目录。
+        session_id: session 标识，用于 stash message 溯源。
 
     Returns:
         清理的文件数。
     """
     rel_files = _normalize_abort_files_to_rel(files, root)
     tracked_files = _query_tracked_files(root, rel_files)
-    return _dispose_main_workdir_files(root, rel_files, tracked_files)
+    return _dispose_main_workdir_files(root, rel_files, tracked_files, session_id)
 
 
 def session_worktree_abort(
@@ -1383,7 +1420,8 @@ def session_worktree_abort(
 
     君子协定模式下，AI 的 Edit/Write 改动留在主工作区（项目根）。abort 只清理
     worktree 不会自动清理主工作区残留。传入 files 参数可同时清理主工作区：
-    - tracked 文件：git checkout -- 恢复到 HEAD（丢弃 AI 的修改）
+    - tracked 文件：git stash push 保存到 stash 栈（可恢复 via git stash pop）
+      + 文件还原到 HEAD（S3-B 治本，2026-07-17，原 git checkout -- 永久丢弃）
     - untracked 文件：物理删除（丢弃 AI 创建的新文件）
 
     Args:
@@ -1411,7 +1449,7 @@ def session_worktree_abort(
 
     # 清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）
     if files:
-        main_cleaned = _clean_main_workdir_on_abort(files, root)
+        main_cleaned = _clean_main_workdir_on_abort(files, root, session_id)
 
     try:
         aborted = manager.cleanup_session_worktree(session_id)
@@ -1424,13 +1462,13 @@ def session_worktree_abort(
             msg = "worktree 不存在或清理失败"
     except WorktreeError as e:
         msg = f"cleanup 失败: {e}"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         msg = f"unexpected: {e}"
 
     unregistered = False
     try:
         unregistered = registry.unregister(session_id)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("suppressed error in session_worktree", exc_info=True)
 
     return {
@@ -1477,7 +1515,7 @@ def session_worktree_status(
     try:
         info = registry.get_session(session_id)
         registered = info is not None
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in session_worktree", exc_info=True)
 
     return {
