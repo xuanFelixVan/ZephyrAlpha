@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-17T19:31:08Z
+# 自动生成于 2026-07-17T19:43:00Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-17T19:31:08Z'
+generated_at: '2026-07-17T19:43:00Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 344
-with_manifest: 309
+total_scripts: 343
+with_manifest: 308
 missing_manifest: 35
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 23
   governance:d4_paths: 4
-  governance:d5_architecture: 103
+  governance:d5_architecture: 102
   governance:d6_security: 14
   governance:d7_code: 35
   governance:d8_doc_sync: 9
@@ -2374,17 +2374,6 @@ scripts:
   args: []
   warn_only: false
   description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
-  tags:
-  - Critical
-- name: d5_architecture/validators/validate_ssot_construction_progress.py
-  owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args: []
-  warn_only: false
-  description: G8 SSoT一致性门禁——frontmatter↔registry construction_progress三向校验
   tags:
   - Critical
 - name: d5_architecture/validators/validate_static_manifest_drift.py
