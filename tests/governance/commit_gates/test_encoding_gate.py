@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV-commit_gates | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] task_bound
 """test_encoding_gate.py — 编码安全校验门禁单元测试。
 
