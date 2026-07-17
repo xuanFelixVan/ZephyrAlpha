@@ -2801,6 +2801,30 @@ entries:
   created: '2026-07-17'
   last_updated: '2026-07-17'
 
+# --- #ARCH-TTL-DOC-001: tmp_ 前缀文件 gitignore 规则治本 ---
+- issue_id: '#ARCH-TTL-DOC-001'
+  title: tmp_ 前缀文件 gitignore 规则治本——AI 会话临时产物不入库
+  severity: P2中
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    AI 会话在根目录产生大量 tmp_* 前缀临时文件（测试输出/调试产物），
+    随时间积累成为可见性黑洞（git 跟踪 → 噪音 diff → 搭便车提交风险）。
+    原无统一规则，AI 靠自觉清理 = 反模式。
+
+    裁定：
+    .gitignore 行 213-222 新增 /tmp_* 规则集（前导 / 限定根目录，不影响子目录
+    如 tmp/ 退役区由 tmp/* 规则管理），覆盖 .xml/.txt/.py/.md/.json/.sh/.ps1/.log
+    共 8 种后缀。治本：根目录 tmp_* 文件一律 .gitignore，AI 无需手工清理 git 追踪。
+    tmp/ 退役区内的文件由 tmp/* 规则（.gitignore L249）+ GATE-TMP-CLEANUP
+    reconciler（7 天 TTL post-commit 自动清理）双重治理，不在本条范围。
+  impact:
+  - .gitignore（行 213-222，/tmp_* 规则集）
+  fix_phase: 已完成
+  status: resolved
+  created: '2026-07-17'
+  last_updated: '2026-07-17'
+
 # --- #ARCH-GATE-REGISTRY-SYNC-001: gate_registry.yaml 自动同步 reconciler 治本 ---
 - issue_id: '#ARCH-GATE-REGISTRY-SYNC-001'
   title: gate_registry.yaml 漂移治本——新增 post-commit reconciler 自动重生成
