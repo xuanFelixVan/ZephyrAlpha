@@ -157,7 +157,7 @@ class TransitionMixin:
 
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
+                        f"非法转换 {from_status.value} -> {to_status.value}"
                     )
 
                 self._apply_status_update(conn, task_id, to_status, session_id, waiting_for)

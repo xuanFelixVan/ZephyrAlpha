@@ -166,7 +166,7 @@ def migrate_task(data: dict[str, Any], to_version: str | None = None) -> dict[st
 
     path = _find_path(current_version, target)
     if not path:
-        raise MigrationError(
+        raise MigrationError(  # noqa: MSG-EXPOSURE — target是schema版本号非敏感信息
             f"找不到从 {current_version} 到 {target} 的迁移路径。\n"
             f"  已注册的版本: {sorted(MIGRATIONS.keys())}\n"
             f"  当前最新版本: {latest_schema_version()}"

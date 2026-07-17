@@ -152,9 +152,9 @@ class StateMachineConfig(Generic[S]):
             raise StateMachineRegistryError(f"[{self.fsm_id}] initial state {self.initial!r} not in defined states")
         for t in self.transitions:
             if t.source not in state_values:
-                raise StateMachineRegistryError(f"[{self.fsm_id}] transition source {t.source!r} not in defined states")
+                raise StateMachineRegistryError(f"[{self.fsm_id}] transition source not in defined states")  # noqa: MSG-EXPOSURE — source是状态机状态名非敏感信息
             if t.target not in state_values:
-                raise StateMachineRegistryError(f"[{self.fsm_id}] transition target {t.target!r} not in defined states")
+                raise StateMachineRegistryError(f"[{self.fsm_id}] transition target not in defined states")  # noqa: MSG-EXPOSURE — target是状态机状态名非敏感信息
 
     @property
     def state_names(self) -> set[str]:

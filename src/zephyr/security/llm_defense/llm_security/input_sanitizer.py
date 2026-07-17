@@ -209,7 +209,7 @@ class InputSanitizer:
                     break
             if not allowed:
                 raise PathTraversalError(
-                    f"Write path not in allowed dirs: {path} (allowed: {self._allowed_write_dirs})"
+                    f"Write path not in allowed dirs (allowed: {self._allowed_write_dirs})"
                 )
 
         return resolved

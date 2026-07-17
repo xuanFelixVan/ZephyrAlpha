@@ -259,7 +259,7 @@ class ChaosEngine:
         if os.environ.get("CHAOS_CRASH_CONFIRMED") != "yes":
             raise ChaosInjectError(
                 "Crash injection requires CHAOS_CRASH_CONFIRMED=yes env var. "
-                f"Refusing to crash without explicit confirmation. target={target}"  # 5.99.13 修复: %格式化改f-string统一
+                f"Refusing to crash without explicit confirmation"  # 5.168治本:移除target敏感变量
             )
 
         return InjectionResult(

@@ -1541,7 +1541,7 @@ class TaskRepository:
             overlap = new_files & existing_files
             if overlap:
                 raise ValueError(
-                    f"files_in_scope 冲突: 新任务 {task.task_id!r} 与活跃任务 "
+                    f"files_in_scope 冲突: 新任务与活跃任务 "
                     f"{existing_task_id!r} 共享文件 {sorted(overlap)}"
                 )
 
@@ -1570,7 +1570,7 @@ class TaskRepository:
         source_bp = getattr(task, "source_blueprint", "") or ""
         if not allow_direct_create and (not source_bp.strip() or source_bp.strip().lower() == "unknown"):
             raise ValueError(
-                f"RULE-ZERO-TASK 违规: 任务 {task.task_id!r} 的 source_blueprint 为空或 'unknown'。"
+                f"RULE-ZERO-TASK 违规: 任务的 source_blueprint 为空或 'unknown'。"
                 f"蓝图任务建卡路径 = BlueprintDecomposer.decompose(blueprint_path)（MOD-TASK_SYSTEM）。"
                 f"非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。"
                 f"RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
@@ -2220,7 +2220,7 @@ class TaskRepository:
                 from_status = TaskStatus(row["status"])
                 if not _is_valid_transition(from_status, to_status):
                     raise InvalidTransitionError(
-                        f"非法转换 {from_status.value} -> {to_status.value}（task_id={task_id!r}）"
+                        f"非法转换 {from_status.value} -> {to_status.value}"
                     )
                 self._apply_transition_update(
                     conn, task_id, to_status, session_id, waiting_for, note,

@@ -266,7 +266,7 @@ class ApiClient:
                 )
                 await self._emit_call_metrics(metrics)
                 raise ApiCallError(
-                    f"request timed out after {effective_timeout}s: {method.value} {url}",
+                    f"request timed out after {effective_timeout}s: {method.value}",
                     details={"url": url, "method": method.value, "timeout_seconds": effective_timeout},
                 )
 
@@ -291,7 +291,7 @@ class ApiClient:
 
             if not resp.is_success:
                 raise ApiCallError(
-                    f"API returned {resp.status_code}: {method.value} {url}",
+                    f"API returned {resp.status_code}: {method.value}",
                     details={
                         "url": url,
                         "method": method.value,
