@@ -86,6 +86,65 @@ CATEGORY_MAP = {
 }
 
 
+# CommitGate 治本（2026-07-17）：CommitGates 在 GitCommitGateway 的 CommitGateRegistry
+# 运行时注册（GateSpec 闭包），原生成器只读 .pre-commit-config.yaml 漏掉全部 ~50 个
+# CommitGates。本函数复用 commit_gates/*.py 中已声明的 GateSpec(gate_id=, priority=)
+# + 模块 docstring 提取元数据，不引入新真源（向内收）。
+COMMIT_GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
+
+# GateSpec(gate_id="XXX", priority=NN) 声明提取
+# 每个 gate 文件含 3 处 gate_id="..." 匹配（[MODIFY-GUARD] 头部 + docstring + GateSpec 构造器），
+# .search() 取首个——已验证 [MODIFY-GUARD] gate_id 与 GateSpec gate_id 一致（抽样验证
+# PURE-ASSERTION/PURE-SHIM/CREATE-GUARD 均一致）。
+_RE_GATE_ID = re.compile(r'gate_id\s*=\s*"([^"]+)"')
+_RE_PRIORITY = re.compile(r'priority\s*=\s*(\d+)')
+# 模块 docstring 第一行格式："""xxx.py — 描述..."""
+_RE_DOCSTRING_FIRST_LINE = re.compile(r'^"""[^\n]*?—\s*(.+?)$', re.MULTILINE)
+
+
+def extract_commit_gates() -> list[dict]:
+    """扫描 commit_gates/*.py，从 GateSpec 声明 + docstring 提取 CommitGate 元数据。
+
+    复用已存在的 gate_id/priority 声明（[MODIFY-GUARD] 头部 + GateSpec 构造器），
+    不引入新真源。无 GateSpec 的辅助模块（gate_repo.py 等）自动跳过。
+
+    Returns:
+        CommitGate 条目列表，每条含 gate_id/name/entry/description/files_trigger/
+        always_run/category/status/source 字段。
+    """
+    gates: list[dict] = []
+    if not COMMIT_GATES_DIR.is_dir():
+        return gates
+    for py in sorted(COMMIT_GATES_DIR.glob("*.py")):
+        if py.name in ("__init__.py", "_diff_helpers.py"):
+            continue
+        text = py.read_text(encoding="utf-8", errors="replace")
+        m_id = _RE_GATE_ID.search(text)
+        if not m_id:
+            continue  # 辅助模块（如 gate_repo.py）无 GateSpec，跳过
+        gate_id = m_id.group(1)
+        m_pri = _RE_PRIORITY.search(text)
+        priority = int(m_pri.group(1)) if m_pri else 100
+        m_doc = _RE_DOCSTRING_FIRST_LINE.search(text)
+        desc = m_doc.group(1).strip() if m_doc else gate_id
+        gates.append(
+            {
+                "gate_id": gate_id,
+                "name": f"{gate_id}: {desc}（CommitGate, priority={priority}）",
+                "entry": "in-process (GitCommitGateway)",
+                "description": desc,
+                # CommitGates 触发逻辑在闭包内（如 _get_staged_md_files 只检 .md），
+                # 无法从文本可靠提取；description 列含文件类型描述信息供 AI 参考。
+                "files_trigger": "",
+                "always_run": False,
+                "category": "commit_gate",
+                "status": "active",
+                "source": "commit-gate",
+            }
+        )
+    return gates
+
+
 # 已合并/退役门禁的手动覆盖条目（ARCH-018 治本，2026-07-04）
 # 这些条目不再作为活跃 hook 存在于 .pre-commit-config.yaml，但需在 registry 中保留
 # 供历史引用可追溯。生成器每次运行时将这些条目 merge 到自动生成的 gates 列表末尾。
@@ -151,11 +210,17 @@ def generate(entry_count: int | None = None) -> dict:
     """generate implementation."""
     pcc = load_yaml(PRE_COMMIT_PATH)
     gates = extract_gates(pcc)
+    for g in gates:
+        g["source"] = "pre-commit"
+    # CommitGate 治本（2026-07-17）：合并 CommitGates（~50 个 in-process gate）
+    # 源=src/zephyr/gov_enforcement/commit_gates/*.py 的 GateSpec 声明
+    gates.extend(extract_commit_gates())
     # ARCH-018 治本：merge 手动覆盖条目（已合并/退役门禁的重定向锚点）
     # 避免生成器覆盖手动添加的 GATE-SCHEMA-HEALTH 等重定向条目
     auto_ids = {g["gate_id"] for g in gates}
     for mg in MANUAL_GATES:
         if mg["gate_id"] not in auto_ids:
+            mg["source"] = "manual"
             gates.append(mg)
     if entry_count is not None:
         for g in gates:
@@ -171,7 +236,8 @@ def generate(entry_count: int | None = None) -> dict:
         # maintenance 字段治本（2026-06-29）：声明 auto 让 generate_registry_master_index.py
         # 正确标记本表为自动维护——原缺省填 manual 是标记滞后根因（catalogs/index.md L47 误标 manual）
         "maintenance": "auto",
-        "source": ".pre-commit-config.yaml",
+        # CommitGate 治本（2026-07-17）：三源合并（pre-commit hooks + CommitGates + MANUAL_GATES）
+        "source": ".pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES",
         "total_gates": len(gates),
         "gates": gates,
     }
@@ -192,7 +258,7 @@ def main() -> None:
         if existing.get("total_gates") != output["total_gates"]:
             print(f"DRIFT: 磁盘 {existing.get('total_gates', 0)} 门禁 ≠ 生成 {output['total_gates']} 门禁")
             sys.exit(EXIT_FINDINGS)
-        print("OK: 门禁登记表与 .pre-commit-config.yaml 一致")
+        print("OK: 门禁登记表与三源（.pre-commit-config.yaml + commit_gates/ + MANUAL_GATES）一致")
         return
 
     # .md 文件用 --- frontmatter 格式（GATE-15 要求 .md 必须有 frontmatter）
