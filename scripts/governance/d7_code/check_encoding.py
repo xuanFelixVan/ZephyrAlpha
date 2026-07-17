@@ -45,6 +45,7 @@ warn_only: false
 """
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -59,7 +60,15 @@ ensure_utf8_stdout()
 
 BOM = b"\xef\xbb\xbf"
 CRLF = b"\r\n"
-AUTO_GUESS_PATTERNS = [b"autoGuessEncoding", b"auto_guess_encoding", b"files.autoGuessEncoding"]
+# autoGuessEncoding 真违规：truthy 设置（:true/=true），不匹配裸提及/:false/注释/pattern 定义。
+# 治本（2026-07-17）：原用字面量列表 `if pattern in raw` 匹配任何字面量出现，导致自指误报——
+# check_encoding.py 自身（pattern 定义 + docstring）+ .pre-commit-config.yaml（gate 描述注释）
+# 含 "autoGuessEncoding" 字面量被误判为违规。改为 regex 只匹配 truthy 设置，消除自指误报。
+# `files.autoGuessEncoding: true` 也被匹配（autoGuessEncoding: true 是其子串）。
+AUTO_GUESS_VIOLATION_RE = re.compile(
+    rb"(?:autoGuessEncoding|auto_guess_encoding)\s*[:=]\s*true",
+    re.IGNORECASE,
+)
 MOJIBAKE_MARKERS = [
     "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake (impossible in normal text)
     "\u93d4\u63d2\u53c2",  # 镹插叆 — extremely rare in normal text
@@ -224,16 +233,23 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
     if CRLF in raw:
         crlf_count = raw.count(CRLF)
         warnings.append(f"INJ-007 WARNING: file '{filepath}' has {crlf_count} CRLF line endings — should use LF")
-    # 规则文件豁免：docs/01_policies_and_standards/rules/ 下的文件描述规则时
-    # 引用 autoGuessEncoding 属合理引用，非违规（如 trae_028 描述 files.autoGuessEncoding=false）
+    # autoGuessEncoding 检测（治本 2026-07-17）：
+    # regex 只匹配 truthy 设置（:true/=true），且跳过注释行（# 开头）——
+    # 注释中的 autoGuessEncoding: true 属描述/文档，非实际 VS Code 设置。
+    # 跳过注释行消除自指误报（check_encoding.py 自身注释引用 regex 匹配模式）。
+    # rules 文件豁免保留：trae_028 等规则文件的 YAML value 含 autoGuessEncoding=true
+    # 描述历史 incident（非注释但非实际设置），属合法引用。
     _filepath_norm = str(p).replace("\\", "/")
     _is_rules_file = "docs/01_policies_and_standards/rules/" in _filepath_norm
     if not _is_rules_file:
-        for pattern in AUTO_GUESS_PATTERNS:
-            if pattern in raw:
-                findings.append(
-                    f"INJ-007 FAIL: file '{filepath}' contains '{pattern.decode()}' — autoGuessEncoding must be false"
-                )
+        # 跳过注释行（lstrip 后 # 开头），在非注释行中搜索 truthy 设置
+        _non_comment = b"\n".join(
+            line for line in raw.split(b"\n") if not line.lstrip().startswith(b"#")
+        )
+        if AUTO_GUESS_VIOLATION_RE.search(_non_comment):
+            findings.append(
+                f"INJ-007 FAIL: file '{filepath}' enables autoGuessEncoding (must be false)"
+            )
     try:
         content = raw.decode("utf-8")
         if _detect_mojibake(content):
