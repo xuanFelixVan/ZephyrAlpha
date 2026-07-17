@@ -4855,6 +4855,11 @@ creation_tokens:
     token: "auto-no-import-side-effect-gate-20260717"
     created_by: "session-sess-5024-20260717175302"
     capability: "no_import_side_effect_gate"
+  # session_worktree_cli.py: session worktree on-demand 清理 CLI（治本遗留项#2, 2026-07-17）
+  - file: "scripts/governance/session_worktree_cli.py"
+    token: "auto-session-worktree-cli-20260717"
+    created_by: "session-sweep-fix-20260717"
+    capability: "session_worktree_cli"
 
 # ============================================================================
 # 维护日志

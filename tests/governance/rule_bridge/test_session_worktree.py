@@ -42,6 +42,7 @@ from zephyr.gov_enforcement.rule_bridge.session_worktree import (
     session_worktree_merge,
     session_worktree_start,
     session_worktree_status,
+    session_worktree_sweep,
 )
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -747,3 +748,24 @@ def test_worktree_start_breaking_change_allow_concurrent_escape():
     # cleanup: A + B abort
     session_worktree_abort("sess-pytest-A")
     session_worktree_abort("sess-pytest-B")
+
+
+def test_session_worktree_sweep_public_wrapper():
+    """session_worktree_sweep 公开包装函数返回 dict 且不抛异常。"""
+    r = session_worktree_sweep(project_root=REPO_ROOT, max_age_minutes=30)
+    assert isinstance(r, dict)
+    assert "swept" in r
+    assert "skipped" in r
+    assert "warnings" in r
+    assert isinstance(r["warnings"], list)
+
+
+def test_sweep_type_validation_rejects_path():
+    """_sweep_stale_worktrees 传入 Path（非 WorktreeManager）返回 error dict 而非 AttributeError。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_stale_worktrees
+    r = _sweep_stale_worktrees(REPO_ROOT, None, max_age_minutes=30)
+    assert r["swept"] == 0
+    assert r["skipped"] == 0
+    assert len(r["warnings"]) == 1
+    assert "WorktreeManager" in r["warnings"][0]
+    assert "session_worktree_sweep" in r["warnings"][0]
