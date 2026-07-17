@@ -108,6 +108,25 @@ if ($pgDumpCmd) {
             $dbStatus.postgres = @{status="failed"; error="pg_dump exit $LASTEXITCODE"}
             Write-Warn "PostgreSQL dump failed (exit $LASTEXITCODE)"
         }
+        # Dump cluster globals (roles) - pg_dumpall -g requires superuser (zephyr has no pg_authid
+        # access), so generate CREATE ROLE from the public pg_roles view. Passwords are masked in
+        # pg_roles; restore runbook: reset passwords from config/.env.postgres after restore.
+        $psqlCmd = $pgDumpCmd -replace 'pg_dump\.exe$', 'psql.exe'
+        if (Test-Path $psqlCmd) {
+            $roleQuery = "SELECT 'CREATE ROLE ' || quote_ident(rolname) || ' WITH ' || CASE WHEN rolcanlogin THEN 'LOGIN' ELSE 'NOLOGIN' END || CASE WHEN rolsuper THEN ' SUPERUSER' ELSE '' END || CASE WHEN rolcreatedb THEN ' CREATEDB' ELSE '' END || CASE WHEN rolcreaterole THEN ' CREATEROLE' ELSE '' END || ';' FROM pg_roles WHERE rolname !~ '^pg_' AND rolname <> 'postgres' ORDER BY rolname;"
+            $globalsOut = & $psqlCmd -h localhost -U $pgUser -d postgres -t -A -c $roleQuery 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                $globalsHeader = "-- PG cluster roles from pg_roles (passwords masked; reset from config/.env.postgres after restore)"
+                [System.IO.File]::WriteAllText("$DumpDir\pg_globals.sql", "$globalsHeader`n$($globalsOut -join "`n")`n", (New-Object System.Text.UTF8Encoding($false)))
+                $dbStatus.postgres_globals = @{status="ok"}
+                Write-OK "PostgreSQL globals dump: ok"
+            } else {
+                $dbStatus.postgres_globals = @{status="failed"; error="psql exit $LASTEXITCODE"}
+                Write-Warn "PostgreSQL globals dump failed (exit $LASTEXITCODE)"
+            }
+        } else {
+            $dbStatus.postgres_globals = @{status="skipped"; reason="psql not found"}
+        }
     } catch {
         $dbStatus.postgres = @{status="error"; error=$_.Exception.Message}
         Write-Warn "PostgreSQL dump error: $($_.Exception.Message)"

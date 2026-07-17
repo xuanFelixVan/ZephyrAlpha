@@ -359,10 +359,14 @@ $env:PGPASSWORD = $pgPassword
 # pg_dump resolution: PATH first, fallback to C:\Program Files\PostgreSQL\*\bin\pg_dump.exe (highest version)
 # (backup.ps1 Stage 2 resolves $pgDumpCmd before this call; PG bin not in PATH on this machine)
 & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump"
+# Cluster globals (roles) - pg_dumpall -g needs superuser (zephyr lacks pg_authid access);
+# generate CREATE ROLE from public pg_roles instead (passwords masked; reset post-restore from config/.env.postgres)
+$psqlCmd = $pgDumpCmd -replace 'pg_dump\.exe$', 'psql.exe'
+& $psqlCmd -t -A -c "SELECT 'CREATE ROLE ' || quote_ident(rolname) || ' WITH ' || ... FROM pg_roles WHERE rolname !~ '^pg_' AND rolname <> 'postgres';" > "$DumpDir\pg_globals.sql"
 ```
 
-- 输出：`depgraph.dump`（~48MB，压缩格式）
-- 恢复：`pg_restore -d depgraph depgraph.dump`
+- 输出：`depgraph.dump`（压缩格式）+ `pg_globals.sql`（集群角色：zephyr / depgraph_reader / depgraph_writer）
+- 恢复：①`psql -f pg_globals.sql -d postgres`（建角色）②按 `config/.env.postgres` `ALTER ROLE zephyr PASSWORD '...'`（pg_roles 不含密码）③`pg_restore -d depgraph depgraph.dump`
 
 ### §4.2 SQLite（governance.db / session_continuity.db）
 

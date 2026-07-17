@@ -70,6 +70,21 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 
 ## 灾难恢复
 
+### 0. 新机器环境清单（开箱即用前提）
+
+备份只含数据和代码，不含软件本体。恢复前必须先装好：
+
+| 软件 | 版本 | 安装方式 | 用途 |
+|------|------|----------|------|
+| Restic | 近期版 | `winget install restic.restic` | 恢复引擎 |
+| PostgreSQL | 16 | 官方安装包（含 pg_restore） | depgraph 库 |
+| Python | ≥3.12（pyproject.toml requires-python） | python.org | 项目运行时 |
+| 项目依赖 | - | `pip install -r requirements.txt -r requirements-dev.txt` | venv 重建 |
+| SQLite | 任意 | `winget install SQLite.SQLite` | 可选（有 Python fallback） |
+| ClickHouse | 按需 | 当前机器未安装；行情可从 `data/raw/bdpan` 重建 | 可选 |
+
+还需准备：外置盘 F:（或拷贝出的仓库目录）+ `RESTIC_PASSWORD`（**仓库外离线副本**，密码在加密仓库内部，无副本则备份无法解开）。
+
 ### 查看快照
 
 ```powershell
@@ -92,7 +107,7 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 
 ### 数据库恢复
 
-- PostgreSQL：`pg_restore -d depgraph D:\tmp_db_dumps\depgraph.dump`
+- PostgreSQL：①`psql -f D:\tmp_db_dumps\pg_globals.sql -d postgres`（恢复 zephyr / depgraph_reader / depgraph_writer 角色）②按 `config/.env.postgres` 执行 `ALTER ROLE zephyr PASSWORD '...'`（pg_roles 导出不含密码）③`pg_restore -d depgraph D:\tmp_db_dumps\depgraph.dump`
 - SQLite：覆盖 `data/databases/governance.db` 等
 - ClickHouse：`RESTORE DATABASE c1_market FROM Disk('backups', 'c1_market_YYYYMMDD.zip')`
 
@@ -118,6 +133,6 @@ restic -r F:\restic-zephyr check --read-data
 | `backup_config.yaml` | 配置SSoT（路径/保留/排除/触发条件） |
 | `backup_reconciler.py` | 事件触发器（post-commit reconciler） |
 | `backup.ps1` | 主备份脚本（六阶段流水线） |
-| `一键备份.bat` | 手动兜底触发入口 |
+| `backup_manual.ps1` | 手动兜底触发入口（-Force 模式） |
 | `restore.ps1` | 恢复脚本（查看/验证/灾难恢复） |
 | `README.md` | 本文档 |
