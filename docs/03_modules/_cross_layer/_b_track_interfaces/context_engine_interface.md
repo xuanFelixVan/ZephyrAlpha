@@ -581,7 +581,7 @@ context_engine = [
 ### 8.3 Feedback Loop 单向依赖（Protocol 引用，不硬编码）
 
 ```python
-# src/zephyr/observability/feedback_loop/actions.py（FLE 侧，不在本文档实现）
+# src/zephyr/feedback_loop/actions.py（FLE 侧，不在本文档实现）
 
 from typing import Protocol
 

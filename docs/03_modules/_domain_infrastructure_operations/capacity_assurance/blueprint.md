@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.0
+version: 3.1.1
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -1646,105 +1646,60 @@ STEP 3: 拆分后验证
 
 ## 20. 已实现代码完整路径索引
 
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > **与 §0.1 的关系**：§0.1 代码文件清单是当前对齐状态的权威来源（存在性=已实现/已阻塞）。本节保留历史模块状态和测试路径等 §0.1 未覆盖的信息。两者冲突时以 §0.1 为准。
 
-### 19.1 蓝图内模块（M-01~M-27）已实现文件
+### 20.1 源码文件
 
-| 模块ID | 模块名称 | 实现状态 | 源码路径 | 测试路径 | 配置/数据路径 |
-|--------|---------|:-------:|---------|---------|-------------|
-| M-01 | CTR-001修复 | ✅ 已完成 | 已归档 | — | — |
-| M-02 | 源码树统一 | ✅ 已完成 | `src/zephyr/` | — | — |
-| M-03 | validate_ssot.py | ✅ 已实现 | `scripts/governance/d5_architecture/validate_ssot.py` | — | — |
-| M-04 | lazy_loader.py | ❌ 未实现 | — | — | — |
-| M-05 | pre-commit分层 | ⚠️ 部分实现 | `.pre-commit-config.yaml` | — | — |
-| M-06 | dmypy配置 | ❌ 未实现 | — | — | — |
-| M-07 | event_bus背压 | ❌ 未实现 | — | — | — |
-| M-08 | import-linter | ✅ 已实现 | — | — | — |
-| M-09 | ContractBus接口 | ❌ 未实现 | — | — | — |
-| M-10 | ZephyrLogger+OTel | ❌ 未实现 | — | — | — |
-| M-11 | contract_tester.py | ❌ 未实现 | — | — | — |
-| M-12 | config_validator.py | ❌ 未实现 | — | — | — |
-| M-13 | fault_isolator.py | ❌ 未实现 | — | — | — |
-| M-14 | warm_hot_gate.py | ❌ 未实现 | — | — | — |
-| M-15 | pydantic_v2_migrator.py | ❌ 未实现 | — | — | — |
-| M-16 | event_bus_upgrade.py | ❌ 未实现 | — | — | — |
-| M-17 | ai_audit_guard.py | ⚠️ 部分实现 | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py`（日志已有）| `tests/test_ai_behavior_audit_logger.py` | — |
-| M-18 | capacity_slo.yaml | ⚠️ 首版已落地 | `config/capacity_slo.yaml` | `scripts/arch_guard/fitness_functions/check_capacity_slo_ssot.py` | arch_guard |
-| M-19 | capacity_governance_loop.py | ❌ 未实现 | — | — | — |
-| M-20 | ttl_cleanup_engine.py | ❌ 未实现 | — | — | — |
-| M-21 | error_budget_tracker.py | ❌ 未实现 | — | — | — |
-| M-22 | kill_switch.py | ❌ 未实现 | — | — | — |
-| M-23 | sandbox_executor.py | ❌ 未实现 | — | — | — |
-| M-24 | degradation_chain.py | ❌ 未实现 | — | — | — |
-| M-25 | reasoning_spans.py | ❌ 未实现 | — | — | — |
-| M-26 | cost_estimator.py | ❌ 未实现 | — | — | — |
-| M-27 | semantic_cache.py | ❌ 未实现 | — | — | — |
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/infrastructure/capacity_assurance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/budget_forecaster.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/capacity_assurance/contracts/batch1_infra.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/contracts/batch2_governance.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/contracts/batch3_integration.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/contracts/contract_bus.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/cross_module_integration.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/host_resource_governor.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/kill_switch.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/schema.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/sli_instrumentation.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/tech_stack.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/capacity_assurance/token_budget.py` | ✅ 已实现 | |
+| `src/zephyr/integration/budget_enforcer/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/capacity_governance_loop.py` | ✅ 已实现 | |
 
-### 19.2 蓝图外已有实现（由其他蓝图管理，本蓝图引用）
+### 20.2 测试文件
 
-| 能力 | 源码路径 | 测试路径 | 配置路径 | 归属蓝图 |
-|------|---------|---------|---------|---------|
-| Token 预算管理器（L1/L2/L3 三级阈值） | `src/zephyr/orchestration/context_management/context_budget_tracker.py` | `tests/test_doc_compressor.py`（集成测试） | `config/context-rules.yaml` | context_engine |
-| 上下文压缩器（DocCompressor） | `src/zephyr/orchestration/context_management/doc_compressor.py` | `tests/test_doc_compressor.py` | — | context_engine |
-| 熔断器（CBGManager + L08 注册表） | `src/zephyr/gov_enforcement/rule_enforcement/circuit_breaker.py` | `tests/test_circuit_breaker.py` | — | gate_engine |
-| Agent SLO 监控（5 项 SLO + 三态健康） | `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | `tests/test_agent_health_monitor.py` | — | orchestrator |
-| AI 行为审计日志（4 种事件 + JSONL） | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | `tests/test_ai_behavior_audit_logger.py` | — | llm_security |
-| 输入消毒器（InputSanitizer） | `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | — | — | llm_security |
-| 任务反馈收集器 | `src/zephyr/observability/feedback_loop/feedback_collector.py` | `tests/test_feedback_collector.py` | — | feedback_loop |
-| 原子事务管理器（ATM） | `src/zephyr/data/persistence/atomic_transaction_manager.py` | `tests/test_atomic_transaction_manager.py` | — | database |
-| SQLite Schema DDL + init_db | `src/zephyr/data/persistence/sqlite_schema.py` | — | — | database |
-| MCP 工具限流（声明式 rate_limit_qps） | `src/zephyr/mcp/tool-contracts.yaml` | — | — | mcp_servers |
-| 遥测 Metrics 骨架 | `src/zephyr/infrastructure/runtime_integration/system_telemetry/metrics/__init__.py` | — | — | system_telemetry |
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/capacity/test_batch1_infra.py` | ✅ 已实现 | |
+| `tests/capacity/test_batch2_governance.py` | ✅ 已实现 | |
+| `tests/capacity/test_batch3_integration.py` | ✅ 已实现 | |
+| `tests/capacity/test_capacity_assurance.py` | ✅ 已实现 | |
+| `tests/capacity/test_tech_stack.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_bus.py` | ✅ 已实现 | |
+| `tests/risk/test_risk_mitigation_root.py` | ✅ 已实现 | |
 
-### 19.3 治理脚本（已实现）
-
-| 脚本名称 | 完整路径 | 功能 | 对应蓝图模块 |
-|---------|---------|------|------------|
-| validate_ssot.py | `scripts/governance/d5_architecture/validate_ssot.py` | SSoT 矛盾扫描器，扫描 docs/ 下所有 Markdown frontmatter 检测跨文件字段矛盾 | M-03 |
-| validate_blueprint_provenance.py | `scripts/governance/d3_metadata/validate_blueprint_provenance.py` | 蓝图真源准入门禁，校验蓝图目录必须包含 provenance 三件套 | M-17（Provenance Chain） |
-
-### 19.4 配置文件（已存在）
-
-| 配置名称 | 完整路径 | 功能 | 消费者 |
-|---------|---------|------|--------|
-| context-rules.yaml | `config/context-rules.yaml` | 15 条上下文管理规则（token 预算分配/窗口滑动/优先级衰减/P0 钉住/输出缓冲/预留守卫） | `context_budget_tracker.py` |
-| tool-contracts.yaml | `src/zephyr/mcp/tool-contracts.yaml` | 5 个 MCP Server 工具契约 + rate_limit_qps + 429 错误码 | MCP 运行时（待实现） |
-
-### 19.5 注册表文件（已存在，蓝图引用）
-
-| 注册表名称 | 完整路径 | 功能 | 对应蓝图模块 |
-|-----------|---------|------|------------|
-| infrastructure-registry.md | `docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md` | 8 个基础设施组件 SLA 声明 | M-18（基础设施维度） |
-| ai-risk-registry.md | `docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md` | 8 项 AI 操作风险登记 | M-17（风险维度） |
-| cross-module-dependency-registry.yaml | `docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml` | 跨模块依赖登记（含 DEP-001: runtime_integration → capacity_assurance） | 全局引用 |
-| blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | 模块生命周期登记表 SSoT | 全局引用 |
-| blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | 蓝图深度评估登记表 | 全局引用 |
-| domain_events.yaml | `architecture_model/events/domain_events.yaml` | 22 条领域事件（含 SystemDegraded / 容量扩展触发条件） | M-07 / M-19 |
-
-### 19.6 蓝图自身文件
-
-| 文件 | 完整路径 | 说明 |
-|------|---------|------|
-| 蓝图本体 | `docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md` | 本文件（唯一真源） |
-| 目录索引 | `docs/03_modules/_domain_infrastructure_operations/capacity_assurance/index.md` | 模块目录索引 |
-| 历史施工图 | `docs/03_modules/_domain_infrastructure_operations/capacity_assurance/delivery/construction-plan-v3.1-archived.md` | 已归档，内容已合并至蓝图 |
-| delivery 索引 | `docs/03_modules/_domain_infrastructure_operations/capacity_assurance/delivery/index.md` | delivery 目录索引 |
-
-### 19.7 路径索引使用指南
+### 20.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
-1. 读本蓝图 §19（本节）→ 知道"哪些已实现、在哪里"
-2. 读 §6（模块分解）→ 知道"每个模块的职责和 AI 自治权限"
-3. 读 §7.2（Phase 路线图）→ 知道"下一步该做什么"
-4. 按需读 §8~§13（具体能力设计）→ 知道"怎么做"
+1. 读本蓝图 §20（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
+- 所有路径相对于 `D:\ZephyrAlpha\\`
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
-- 注册表在 `docs/01_policies_and_standards/_registry/catalogs/` 下
+
 
 ---
 

@@ -4,7 +4,7 @@ title: "Task System 蓝图 — 全链路任务卡生命周期管理"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "0.9.5"
+version: "0.9.6"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -61,7 +61,7 @@ build_status: generated
 
 # Task System 蓝图 — 全链路任务卡生命周期管理
 
-> module_id: MOD-TASK_SYSTEM | version: 0.9.5 | status: active | layer: L0_infrastructure
+> module_id: MOD-TASK_SYSTEM | version: 0.9.6 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/governance/task_repo.py | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1443,99 +1443,27 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 任务系统——v0.3.0融合最优，experimental待重写
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/shared_services/adaptation/execution_tuner.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/adaptation/prompt_version_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/blueprint_code_sync.py` | ✅ 已实现 | |
-| `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/compensation/saga_compensator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/context_engine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/dependency/dependency-graph.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/draft/draft_assistant.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/events/event_bus.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/events/event_reactor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/events/event_store.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/events/hook_dispatcher.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/healthcheck_service.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/impact/impact_propagator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/impact/llm_impact_analyzer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/knowledge/ke_linker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/knowledge/ke_structurer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/knowledge/kms_interface.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/lifecycle/scope_guard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/lifecycle/task_lifecycle_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/maintenance/autonomy_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/maintenance/dogfooding.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/maintenance/handbook.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/maintenance/zero_config.py` | ✅ 已实现 | |
-| `src/zephyr/shared/shared_services/models.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/observability/cli_summary.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/observability/cost_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/observability/failure_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/observability/notifier.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/observability/trace_decorator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/quality/quality_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/queue/task_queue.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/queue/task_scheduler.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/reliability/circuit_breaker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/reliability/context_guard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/reliability/diff_planner.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/reliability/retry_handler.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/session/session_boundary.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/session/session_continuity.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/session_continuity.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/sla/sla_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/shared_services/sync/blueprint_code_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/backpressure_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/cost_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_consumer_registry.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_router.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/llm_gateway.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/benchmark_suite.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/capability_passport.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/cli.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/deepseek_v4_chat.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_orchestrator.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_test_cases.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/model_discovery.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/profiler.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/results_writer.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/task_model_learner.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/model_router.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/models.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_lock.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py` | ✅ 已实现 | |
-| `src/zephyr/pipeline/route-manifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/pipeline/routemanifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py` | ✅ 已实现 | |
-| `src/zephyr/governance/task_repo.py` | ✅ 已实现 | |
-| `src/zephyr/data/persistence/sqlite_schema.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/architecture_governance/post_sync_validator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/transition.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/base_repo.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/intent_keyword_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/intent_parser.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/task_repo.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_task_repo.py` | ✅ 已实现 | |
-| `tests/test_sqlite_schema.py` | ✅ 已实现 | |
-| `tests/test_mcp_servers.py` | ✅ 已实现 | |
-| `tests/test_pipeline_orchestrator.py` | ✅ 已实现 | |
-| `tests/test_task_completion_gate.py` | ✅ 已实现 | |
-| `tests/adversarial/test_task_system_red_team.py` | ✅ 已实现 | |
+| `tests/db/test_dm400_stale_task_fix.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -1550,6 +1478,7 @@ STEP 3: 拆分后验证
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

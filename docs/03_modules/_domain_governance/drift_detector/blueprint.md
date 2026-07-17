@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.0"
+version: "3.1.1"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -78,7 +78,7 @@ build_status: planned
 design_maturity: design
 ---
 
-> module_id: MOD-INF-023 | version: 3.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-INF-023 | version: 3.1.1 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_drift/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
@@ -1289,6 +1289,110 @@ detector_dimensions:
 | 25 | 6.25 | 漂移事件流 | drift_events DB + 状态机守卫 | events.py | ✅ |
 | 26 | 6.26 | 漂移预算门禁 | SRE 式预算 + 施工阻断 | gate_persistence.py | ✅ |
 | 27 | 6.27 | 混沌注入 | 主动注入 + 自动回滚 + 检测器健康验证 | chaos_injector.py | ✅ |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/gov_drift/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/absence_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/ai_construction_detectors.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/ai_context_injector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/alert_router.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/backcompat_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/baseline_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/baseline_poisoning_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/brain_integration.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/canary_controller.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/cascade_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/chaos_injector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/cold_start.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/config_consistency.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/contract_drift_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/correlation_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/credibility_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/cross_module_score.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_core/benchmark_integrity.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_core/ml_engineering.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_core/model_drift_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_core/performance_baseline.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_core/regime_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/detector_dispatcher.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_hotfix_bypass.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_infrastructure.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_models.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_result_types.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/drift_training.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/events.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/file_attr_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/forensics_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/gate_persistence.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/git_bisector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/gitignore_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/handoff_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/headless_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/incremental_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/naming_magic_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/orphan_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/python_compat.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/reconciler.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/resource_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/roi_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/rollback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/runbook_generator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/scan_mutex.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/self_check.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/self_test_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/state_machine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/suppression_learner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/symlink_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/tamper_proof_audit.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/test_fixture_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/trend_analyzer.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/audit/test_architecture_contracts.py` | ✅ 已实现 | |
+| `tests/audit/test_architecture_principles.py` | ✅ 已实现 | |
+| `tests/audit/test_benchmark_integrity.py` | ✅ 已实现 | |
+| `tests/audit/test_ml_engineering.py` | ✅ 已实现 | |
+| `tests/audit/test_performance_baseline.py` | ✅ 已实现 | |
+| `tests/audit/test_regime_detector.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_data_lifecycle.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_dependency_manager.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_env_consistency.py` | ✅ 已实现 | |
+| `tests/data/test_data_lifecycle.py` | ✅ 已实现 | |
+| `tests/data/test_data_source_reliability.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_manager.py` | ✅ 已实现 | |
+| `tests/model/test_model_drift_monitor.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

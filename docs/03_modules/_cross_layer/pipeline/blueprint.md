@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.1"
+version: "0.39.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -39,7 +39,7 @@ build_status: planned
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.1 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.2 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -1012,48 +1012,57 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 任务管线——pipeline_orchestrator+models骨架完成
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/runtime_integration/pipeline/backpressure_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/cost_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_consumer_registry.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/layer_router.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/llm_gateway.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/benchmark_suite.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/capability_passport.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/cli.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/deepseek_v4_chat.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_orchestrator.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/exam_test_cases.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/model_discovery.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/profiler.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/results_writer.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/model-profiler/task_model_learner.py` | ✅ 已迁移至顶层包 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/model_router.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/models.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_lock.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/preemption_manager.py` | ✅ 已实现 | |
-| `src/zephyr/integration/route-manifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/integration/routemanifest.yaml` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime_integration/pipeline/routing_plugins.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/pipeline/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/pipeline/activate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/pipeline/analyze.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/pipeline/batch_ingest.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/pipeline/extract.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/backpressure_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/backpressure_types.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/circuit_breaker_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/cost_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/ct_pipe_routing.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/dead_letter_queue.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/llm_gateway.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/model_router.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_agent_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_lock.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/pipeline_roadmap.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/preemption_manager.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pipeline/routing_plugins.py` | ✅ 已实现 | |
+| `src/zephyr/integration/pipeline_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/integration/ports.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_pipeline_orchestrator.py` | ✅ 已实现 | |
+| `tests/contracts/test_ct_pipe_routing_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_preemption_manager.py` | ✅ 已实现 | |
+| `tests/llm_security/test_llm_gateway.py` | ✅ 已实现 | |
+| `tests/model/test_model_router.py` | ✅ 已实现 | |
+| `tests/pipeline/conftest.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_agent_bridge.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_cost_tracker.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_lock.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_models.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_roadmap.py` | ✅ 已实现 | |
+| `tests/trading/test_backpressure_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_backpressure_types.py` | ✅ 已实现 | |
+| `tests/trading/test_circuit_breaker_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_dead_letter_queue.py` | ✅ 已实现 | |
+| `tests/trading/test_routing_plugins.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -1068,6 +1077,7 @@ STEP 3: 拆分后验证
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

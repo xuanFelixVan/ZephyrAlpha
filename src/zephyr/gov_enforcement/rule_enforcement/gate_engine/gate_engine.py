@@ -276,12 +276,14 @@ def _detect_mojibake(file_path: Path) -> bool:
 # 原 _detect_mojibake 96 行 McCabe=40（4 段检测方法串联，P2 detector fan-out pattern）。
 # 治本：提取为 5 个模块级 helper（均 McCabe≤15），_detect_mojibake 简化为 short-circuit or 链。
 
+# 标记必须以 \uXXXX 转义书写（禁止字面乱码字符）——否则本文件自身会被
+# ENCODING-SAFETY(INJ-007) 门禁检出含 mojibake 序列（自引用阻断，2026-07-17 实测）。
 _MOJIBAKE_MARKERS = [
-    "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake
+    "\u951f\u65a4\u62f7",  # kun-jin-kao — classic GBK mojibake（治本2026-07-17：原 \u9516 为 typo，正确 \u951f，错字致经典标记从未命中）
     "\u93d4\u63d2\u53c2",
     "\u93d4\u659c\u7280\u6362",
     "\u93d4\u529c\u00b0\u20ac",
-    "\u94c6\u003f",
+    "\u94c6?",
 ]
 
 
@@ -310,7 +312,15 @@ def _gbk_roundtrip_density_check(seg: str) -> bool | None:
 
 
 def _check_gbk_roundtrip_clean(content: str) -> bool:
-    """Method 2a: GBK round-trip 检测不含 U+FFFD 的 CJK 段（含 partial decode fallback）。"""
+    """Method 2a: GBK round-trip 检测不含 U+FFFD 的 CJK 段（含 U+FFFD 占比判据的 partial decode fallback）。
+
+    fallback 判据治本（2026-07-17 假阳性根除）：原判据「容错解码出 ≥3 CJK 即判」
+    对正常中文短段不稳定（GBK 字节流按 UTF-8 容错解码碰巧产生 CJK 字符，实测
+    task_system/blueprint.md「语义化版本存储」3 段误报）。两类样本的分离特征是
+    U+FFFD 占比：正常中文的 GBK 字节流在 UTF-8 视角下大概率非法 → U+FFFD 占比高
+    （实测 0.62）；真 mojibake 的字节流基本是合法 UTF-8（少量损坏）→ U+FFFD 占比
+    低（实测 0.09）。阈值 0.5 安全分离两类。
+    """
     clean_content = content.replace("\ufffd", "")
     if not clean_content.strip():
         return False
@@ -321,12 +331,14 @@ def _check_gbk_roundtrip_clean(content: str) -> bool:
         if result:
             return True
         if result is None:
-            # partial decode fallback（UTF-8 解码失败时检查 replace 模式的 CJK 密度）
+            # partial decode fallback（严格 UTF-8 解码失败时，以 U+FFFD 占比区分
+            # 真 mojibake（<0.5，字节基本合法）与正常中文巧合（≥0.5，大量非法字节））
             try:
                 gbk_bytes = seg.encode("gbk")
                 partial_rt = gbk_bytes.decode("utf-8", errors="replace")
                 partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
-                if partial_cjk >= 3:
+                fffd_ratio = partial_rt.count("\ufffd") / len(partial_rt) if partial_rt else 1.0
+                if partial_cjk >= 3 and fffd_ratio < 0.5:
                     return True
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in gate_engine", exc_info=True)

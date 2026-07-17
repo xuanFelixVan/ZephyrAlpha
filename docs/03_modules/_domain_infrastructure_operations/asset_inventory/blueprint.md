@@ -5,7 +5,7 @@ title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "3.1.0"
+version: "3.1.1"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ responsibility_domain:
 build_status: generated
 design_maturity: prototype
 ---
-> module_id: MOD-INF-026 | version: 3.1.0 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-026 | version: 3.1.1 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -3838,3 +3838,64 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 
 ## Consumers
 - zephyr.asset_inventory (internal)
+
+---
+
+## 40. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 40.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/infrastructure/asset_inventory/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/classifier.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/dependency.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/index_generator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/mcp_server.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/metadata.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/reconciler.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/registry_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/scanner.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/telemetry.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/asset_inventory/trust_anchor.py` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp_server.py` | ✅ 已实现 | |
+
+### 40.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/asset_inventory/test_asset_inventory.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_classifier_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_dashboard_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_index_generator_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_lifecycle_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_metadata.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_reconciler_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_registry_adapter_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_scanner_root.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_telemetry.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_trust_anchor_root.py` | ✅ 已实现 | |
+
+### 40.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §40（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

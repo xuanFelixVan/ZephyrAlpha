@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.1.1"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -49,7 +49,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.0 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.1 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -938,6 +938,48 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 | 6 | l05_portfolio_construction.yaml | `D:\ZephyrAlpha\architecture_model\layers\l05_portfolio_construction.yaml` | 修改 | ARB-20 统一 + source_layer 修正 |
 | 7 | blueprint_registry.yaml | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 更新 |
 | 8 | cross_layer_contracts.yaml | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认 CTR-004/CTR-007/CTR-P1-006 状态 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/governance/strategies/strategy_base.py` | ✅ 已实现 | |
+| `src/zephyr/governance/strategies/strategy_registry.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/compliance_rule.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/default_equity_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategy_base.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/strategy_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/pf_core/strategy_registry.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/trading/pipeline/test_l05_portfolio_construction.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

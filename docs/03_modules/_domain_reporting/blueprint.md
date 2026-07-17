@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.1.1"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -46,7 +46,7 @@ build_status: generated
 design_maturity: prototype
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.0 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.1 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -829,6 +829,47 @@ class PerformanceAttributionReport:
 |---|---------|------------|------|---------|
 | 1 | analytics_base.py | `D:\ZephyrAlpha\src\zephyr\reporting\analytics_base.py` | 读取 | 无变更 |
 | 2 | implementations/ | `D:\ZephyrAlpha\src\zephyr\reporting\implementations\` | 修改 | 完善实现（C轨开放后） |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/governance/audit/default_attribution_engine.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/audit/default_tca_engine.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/observability_governance/analytics_base.py` | ⚠️ 骨架 | |
+| `src/zephyr/reporting/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/analytics_base.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/default_attribution_engine.py` | ✅ 已实现 | |
+| `src/zephyr/reporting/default_tca_engine.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/trading/pipeline/test_l07_post_trade_analytics.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

@@ -5,7 +5,7 @@ submodule_path: src/zephyr/shared
 title: "State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理"
 doc_type: blueprint
 status: Draft
-version: "0.1.0"
+version: "0.1.1"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -436,3 +436,33 @@ STEP 9: 更新 REG-SM-001 entry_count
 | v0.1.0 | 基类+注册表 | StateMachine[S] + REG-SM-001 |
 | v0.2.0 | 首批迁移 | MOD-TASK_SYSTEM/023/021 迁移完成 |
 | v1.0.0 | 全量迁移 | 11+ 状态机迁移完成 + 命名冲突消除 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/shared/lifecycle/state_machine.py` | ✅ 已实现 | |
+| `src/zephyr/signal_ashare/__init__.py` | ⚠️ 骨架 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

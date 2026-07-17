@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.1.1"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -65,7 +65,7 @@ design_maturity: design
 build_status: planned
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.0 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.1 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -1694,6 +1694,168 @@ class LamportClockV2:
 | 施工步骤微调 | AI 可自主修改 | 下游更新产出物引用 | 更新配置文件 |
 | 非关键补充 | AI 可自主修改 | — | — |
 | 容量升级方案新增(§17) | 需 Owner 审批 | 下游评估影响 | 更新容量预算 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/compliance/audit_trail/bridges/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/_orchestrator_compat.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/agent_signer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/anomaly.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/api_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/audit_admission_controller.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/audit_schema.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_anomaly.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_contracts.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_delegation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_drift_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_feedback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_tiered_storage_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/bridges/audit_trust_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/changelog_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/cli.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/code_archaeology.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/cold_start.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/compliance_map.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/contracts.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/corporate_actions.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/delegation_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/delegation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/dora_metrics.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/drift_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/event_store.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/evidence_pack.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/external_tool_audit.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/feedback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/feedback_policy.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/feedback_self_audit.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/finding_ingest.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/finding_model.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/genesis.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/glossary_matrix.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/incremental_review.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/indexer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/integrity.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/kb_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/log_rotation.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/merkle_hourly.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/models.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/observability_dashboard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/pipeline_runner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/privacy.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/provenance_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/query.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/replay_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/resource_aware_pool.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/retention.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/sbom_generator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/self_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/spec_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/supply_chain.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/supply_chain_security.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/text_to_finding_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/tiered_storage.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/tiered_storage_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/trust_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/trust_engine.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/wqa_scorer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/writer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/audit/snapshot_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/bridges/spec_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/evidence_pack.py` | ✅ 已实现 | |
+| `src/zephyr/governance/integrity.py` | ✅ 已实现 | |
+| `src/zephyr/governance/observability_governance/projection_engine.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/agent/test_agent_signer.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_anomaly.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_api_lifecycle.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_bridge.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_cli.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_contracts.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_financial_compliance.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_incremental_review.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_indexer.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_integrity.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_models.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_observability_dashboard.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_provenance_tracker.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_spec_auditor.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_supply_chain_security.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_anomaly.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_contracts.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_delegation_bridge.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_drift_bridge.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_feedback_bridge.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_spec_auditor.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_tiered_storage_bridge.py` | ✅ 已实现 | |
+| `tests/bridges/test_bridges_trust_bridge.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_bridge.py` | ✅ 已实现 | |
+| `tests/external/test_external_tool_audit.py` | ✅ 已实现 | |
+| `tests/feedback/test_feedback_bridge.py` | ✅ 已实现 | |
+| `tests/feedback/test_feedback_policy.py` | ✅ 已实现 | |
+| `tests/feedback/test_feedback_self_audit.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_anomaly.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_bridge.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_changelog_manager.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_code_archaeology.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_compliance_map.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_corporate_actions.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_delegation_auditor.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_delegation_bridge.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_dora_metrics.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_evidence_pack.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_genesis.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_glossary_matrix.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_indexer.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_integrity_root.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_log_rotation.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_merkle_hourly.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_privacy.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_query.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_replay_engine.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_retention.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_sbom_generator.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_spec_auditor.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_supply_chain.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_tiered_storage.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_tiered_storage_bridge.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_trust_bridge.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_trust_engine.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_wqa_scorer.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_writer.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_gate.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_monitor.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.0"
+version: "4.0.1"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -65,7 +65,7 @@ design_maturity: design
 
 # Data Source Core 蓝图+施工图 — 数据接入层
 
-> module_id: MOD-L00-001 | version: 4.0.0 | status: active | domain: data
+> module_id: MOD-L00-001 | version: 4.0.1 | status: active | domain: data
 > actual_disk_path: src/zephyr/data/ | generation: 4 | construction_progress: partially_implemented
 
 > ⚠️ **职责拆分通知（2026-07-06）**
@@ -1101,6 +1101,51 @@ class MiniQmtProvider(DataSourceBase):
 | 2 | quality_gate.py | `D:\ZephyrAlpha\src\zephyr\data\quality_gate.py` | 读取 | 无变更 |
 | 3 | implementations/ | `D:\ZephyrAlpha\src\zephyr\data\implementations\` | 读取 | 无变更 |
 | 4 | 测试代码 | `D:\ZephyrAlpha\tests\unit\data\` | 读取 | 无变更 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/data/satellite_geospatial_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/default_quality_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/quality_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/akshare_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/miniqmt_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/memory_provider.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/provider_base.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/performance_attribution_report.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/data/test_l00_data_source.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

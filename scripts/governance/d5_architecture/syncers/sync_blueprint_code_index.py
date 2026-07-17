@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/sync_blueprint_code_index.py | §
 # [MODULE] scripts.governance.d5_architecture.syncers.sync_blueprint_code_index
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__
+# [DEPENDENCIES] scripts.governance.d5_architecture.syncers.__init__, scripts.governance._shared.constants (get_depgraph_pg_connection — depgraph.nodes 运营态真源查询)
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -21,8 +21,12 @@
 
 功能：
   1. 扫描所有蓝图，为缺少「已实现代码完整路径索引」章节的蓝图自动补齐
-  2. 更新蓝图 frontmatter version（patch +1）
-  3. 检测蓝图 §19 中声称的幽灵路径并标记
+  2. 已有章节幂等更新：从 depgraph.nodes 运营态（build_status=generated）单向派生
+     重新生成，与现有内容比对，漂移则替换（治本：原"已有章节直接跳过"导致目录
+     迁移后旧表永久残留，如 feedback_loop 308 处 observability/ 幽灵前缀）
+  3. 数据源优先级：frontmatter module_id → depgraph.nodes（真源）→
+     BLUEPRINT_MODULE_MAP（fallback）；map 无条目但 depgraph 有节点亦可生成
+  4. 更新蓝图 frontmatter version（patch +1，仅实际改动时）
 
 用法：
   python scripts/governance/d5_architecture/sync_blueprint_code_index.py          # 实际写入
@@ -55,7 +59,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
@@ -71,8 +75,31 @@ SECTION_PATTERN = re.compile(
     re.MULTILINE,
 )
 
+SECTION_NUM_PATTERN = re.compile(
+    r"^##\s+(\d+)\.\s+已实现代码完整路径索引",
+    re.MULTILINE,
+)
+
+NEXT_SECTION_OR_RULE = re.compile(r"^##\s|^---\s*$", re.MULTILINE)
+
+FRONTMATTER_MODULE_ID_RE = re.compile(
+    r"^module_id:\s*[\"']?([A-Za-z0-9_\-]+)[\"']?\s*$",
+    re.MULTILINE,
+)
+
+_AUTOGEN_NOTE = (
+    "> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态"
+    "（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。"
+)
+
 PATH_IN_TABLE_PATTERN = re.compile(r"`([^`]+\.(?:py|yaml|yml|json|toml))`")
 PATH_MUST_HAVE_DIR = re.compile(r"[/\\]")
+
+# §5.160.2 SQL 集中化：depgraph.nodes 运营态查询（NO-BARE-SQL 门禁豁免的 _SQL_ 常量）
+_SQL_GET_GENERATED_NODES = (
+    "SELECT path, node_type FROM nodes "
+    "WHERE blueprint_id = %s AND build_status = 'generated'"
+)
 
 BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     "_master-blueprint": {
@@ -141,7 +168,7 @@ BLUEPRINT_MODULE_MAP: dict[str, dict] = {
     },
     "feedback-loop": {
         "module_id": "MOD-FEEDBACK_LOOP",
-        "source_dirs": ["src/zephyr/feedback-loop"],
+        "source_dirs": ["src/zephyr/feedback_loop"],
         "extra_source_files": [],
         "test_patterns": [
             "tests/feedback/test_metrics_collector.py",
@@ -370,6 +397,46 @@ def _scan_dir_for_files(rel_dir: str) -> list[str]:
     return results
 
 
+def _read_frontmatter_module_id(content: str) -> str | None:
+    """从蓝图 frontmatter 解析 module_id（depgraph blueprint_id 查询键）。"""
+    m = FRONTMATTER_MODULE_ID_RE.search(content)
+    return m.group(1) if m else None
+
+
+def _get_files_from_depgraph(module_id: str) -> dict[str, list[str]] | None:
+    """从 depgraph.nodes 运营态（build_status='generated'）派生文件清单。
+
+    真源铁律：架构数据真源在 PostgreSQL depgraph，蓝图路径索引是派生缓存，
+    必须从 depgraph 单向派生。node_type=module→source 组，node_type=test→test 组。
+    只列磁盘实际存在的文件（地址簿语义：蓝图声称 = 磁盘实际）。
+    返回 None 表示 DB 不可达或无运营态节点 → 调用方 fallback 到 BLUEPRINT_MODULE_MAP。
+    """
+    try:
+        conn = get_depgraph_pg_connection(read_only=True)
+        try:
+            rows = conn.execute(_SQL_GET_GENERATED_NODES, (module_id,)).fetchall()
+        finally:
+            conn.close()
+    except Exception:  # noqa: BLE001 — DB 不可达时 fallback 到硬编码 map，不阻断同步流程
+        return None
+    if not rows:
+        return None
+    files: dict[str, list[str]] = {"source": [], "test": [], "config": [], "governance": []}
+    for row in rows:
+        path = row["path"].replace("\\", "/")
+        if not (REPO_ROOT / path).is_file():
+            continue
+        if row["node_type"] == "test":
+            files["test"].append(path)
+        elif row["node_type"] == "module":
+            files["source"].append(path)
+    files["source"].sort()
+    files["test"].sort()
+    if not files["source"] and not files["test"]:
+        return None
+    return files
+
+
 def _check_file_exists(rel_path: str) -> bool:
     """_check_file_exists implementation."""
     return (REPO_ROOT / rel_path).exists()
@@ -397,9 +464,23 @@ def _determine_impl_status(rel_path: str) -> str:
     return "✅ 已实现"
 
 
-def _get_existing_files(module_name: str) -> dict[str, list[str]]:
-    """_get_existing_files implementation."""
+def _get_existing_files(module_name: str, module_id: str | None = None) -> dict[str, list[str]]:
+    """_get_existing_files implementation.
+
+    数据源优先级：depgraph.nodes 运营态（有 module_id 且有节点）→ BLUEPRINT_MODULE_MAP fallback。
+    config/governance 组 depgraph 无对应 node_type，始终从 map 补充。
+    """
     mapping = BLUEPRINT_MODULE_MAP.get(module_name, {})
+
+    if module_id:
+        dg_files = _get_files_from_depgraph(module_id)
+        if dg_files is not None:
+            for f in mapping.get("config_files", []):
+                dg_files["config"].append(f.replace("\\", "/"))
+            for f in mapping.get("governance_scripts", []):
+                dg_files["governance"].append(f.replace("\\", "/"))
+            return dg_files
+
     all_files: dict[str, list[str]] = {
         "source": [],
         "test": [],
@@ -456,11 +537,17 @@ def _bump_version(version_str: str) -> str:
     return version_str
 
 
-def _generate_path_index_section(section_num: int, module_name: str) -> str:
+def _generate_path_index_section(
+    section_num: int,
+    module_name: str,
+    module_id: str | None = None,
+    note: str | None = None,
+) -> str:
     """_generate_path_index_section implementation."""
     mapping = BLUEPRINT_MODULE_MAP.get(module_name, {})
-    note = mapping.get("note", "")
-    files = _get_existing_files(module_name)
+    if note is None:
+        note = mapping.get("note", "")
+    files = _get_existing_files(module_name, module_id)
 
     has_any_code = any(_check_file_exists(f) for category in files.values() for f in category)
 
@@ -469,6 +556,7 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
     lines.append("")
     lines.append("> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。")
     lines.append("> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。")
+    lines.append(_AUTOGEN_NOTE)
     lines.append(f"> {note}")
     lines.append("")
 
@@ -543,6 +631,80 @@ def _generate_path_index_section(section_num: int, module_name: str) -> str:
     return "\n".join(lines)
 
 
+def _extract_existing_section(content: str) -> tuple[int, int, int] | None:
+    """定位已有路径索引章节范围。返回 (start, end, section_num)；无章节返回 None。
+
+    end 为下一个二级标题或 --- 分隔线的起始位置（不含）。
+    """
+    m = SECTION_NUM_PATTERN.search(content)
+    if not m:
+        return None
+    section_num = int(m.group(1))
+    start = m.start()
+    nxt = NEXT_SECTION_OR_RULE.search(content, m.end())
+    end = nxt.start() if nxt else len(content)
+    return start, end, section_num
+
+
+def _extract_note(section_text: str) -> str:
+    """从现有章节提取人工 note 行（保留人工描述，更新模式不丢信息）。
+
+    note = blockquote 行中排除固定两行（AGENTS.md §6.1 / 蓝图声称）与 AUTOGEN 行后的第一条。
+    """
+    for line in section_text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith(">"):
+            continue
+        if "AGENTS.md §6.1" in stripped or "蓝图声称的文件必须" in stripped or "AUTOGEN" in stripped:
+            continue
+        return stripped.lstrip("> ").strip()
+    return ""
+
+
+def _bump_version_in_content(content: str, actions: list[str]) -> str:
+    """frontmatter version patch+1（仅在实际改动时调用）。"""
+    version_pattern = re.compile(r'^version:\s*["\']?([\d.]+)["\']?', re.MULTILINE)
+    version_match = version_pattern.search(content)
+    if version_match:
+        old_version = version_match.group(1)
+        new_version = _bump_version(old_version)
+        content = content.replace(f'version: "{old_version}"', f'version: "{new_version}"', 1)
+        content = content.replace(f"version: {old_version}", f"version: {new_version}", 1)
+        actions.append(f"📝 version: {old_version} → {new_version}")
+    return content
+
+
+def _update_existing_section(
+    bp_path: Path, content: str, rel_bp, check_only: bool, actions: list[str]
+) -> tuple[bool, str]:
+    """幂等更新模式：已有章节与 depgraph 真源重新生成结果比对，漂移则替换。
+
+    治本（原"已有章节直接跳过"病根）：目录迁移/文件增删后旧表永久残留，
+    syncer 必须具备缓存再生能力——存在即比对，漂移即替换，重跑幂等。
+    返回 (changed, new_content)。
+    """
+    start, end, section_num = _extract_existing_section(content)
+    module_name = bp_path.parent.name
+    module_id = _read_frontmatter_module_id(content)
+    existing_text = content[start:end]
+    note = _extract_note(existing_text)
+    regenerated = _generate_path_index_section(section_num, module_name, module_id, note or None)
+
+    if existing_text.strip() == regenerated.strip():
+        actions.append(f"✅ {rel_bp}: 路径索引与 depgraph 一致，无漂移")
+        return False, content
+
+    if check_only:
+        actions.append(f"🔴 {rel_bp}: 路径索引已漂移（需同步）")
+        return True, content
+
+    new_content = content[:start] + regenerated + "\n\n" + content[end:].lstrip("\n")
+    new_content = _bump_version_in_content(new_content, actions)
+    atomic_write_safe(bp_path, new_content)
+    actions.append(f"✅ {rel_bp}: 已更新 §{section_num} 路径索引（depgraph 单向派生）")
+    return True, new_content
+
+
 def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, list[str]]:
     """_process_blueprint implementation."""
     content = bp_path.read_text(encoding="utf-8")
@@ -550,13 +712,19 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
     actions: list[str] = []
 
     if SECTION_PATTERN.search(content):
-        actions.append(f"✅ {rel_bp}: 已有路径索引章节，无需更新")
-        return False, actions
+        changed, _ = _update_existing_section(bp_path, content, rel_bp, check_only, actions)
+        return changed, actions
 
     module_name = bp_path.parent.name
+    module_id = _read_frontmatter_module_id(content)
     if module_name not in BLUEPRINT_MODULE_MAP:
-        actions.append(f"⚠️ {rel_bp}: 模块名 '{module_name}' 不在映射表中，跳过")
-        return False, actions
+        # depgraph 驱动扩展：map 无条目（如 _domain_* 域蓝图）但 frontmatter 有
+        # module_id 且 depgraph 有运营态节点 → 从真源生成；无节点 → 生成
+        # "尚无已实现代码"空表（诚实声称 + 满足验证器章节存在要求，后续 depgraph
+        # 登记后重跑本脚本自动填充，幂等）。
+        if not module_id:
+            actions.append(f"⚠️ {rel_bp}: 模块名 '{module_name}' 不在映射表中且无 frontmatter module_id，跳过")
+            return False, actions
 
     if check_only:
         actions.append(f"🔴 {rel_bp}: 缺少路径索引章节（需同步）")
@@ -565,7 +733,7 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
     max_section = _find_max_section_number(content)
     next_section = max_section + 1
 
-    section_content = _generate_path_index_section(next_section, module_name)
+    section_content = _generate_path_index_section(next_section, module_name, module_id)
 
     changelog_pattern = re.compile(r"^##\s+变更记录", re.MULTILINE)
     governance_pattern = re.compile(r"^##\s+治理信息", re.MULTILINE)
@@ -577,14 +745,7 @@ def _process_blueprint(bp_path: Path, check_only: bool = False) -> tuple[bool, l
     else:
         content = content.rstrip() + "\n\n---\n\n" + section_content
 
-    version_pattern = re.compile(r'^version:\s*["\']?([\d.]+)["\']?', re.MULTILINE)
-    version_match = version_pattern.search(content)
-    if version_match:
-        old_version = version_match.group(1)
-        new_version = _bump_version(old_version)
-        content = content.replace(f'version: "{old_version}"', f'version: "{new_version}"', 1)
-        content = content.replace(f"version: {old_version}", f"version: {new_version}", 1)
-        actions.append(f"📝 version: {old_version} → {new_version}")
+    content = _bump_version_in_content(content, actions)
 
     atomic_write_safe(bp_path, content)
     actions.append(f"✅ {rel_bp}: 已添加 §{next_section} 已实现代码完整路径索引")

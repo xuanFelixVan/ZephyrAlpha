@@ -253,7 +253,7 @@ class ActionOutcome(BaseModel):
 ### 3.2 Anomaly → Action 静态路由表
 
 ```python
-# src/zephyr/observability/feedback_loop/action_router.py
+# src/zephyr/feedback_loop/action_router.py
 
 ANOMALY_ACTION_ROUTING = {
     # 指标名 → anomaly_kind → action_kind
@@ -390,7 +390,7 @@ class InProcessFeedbackLoop:  # implements FeedbackLoopProtocol
 ### 5.1 FLE 侧定义的下游 Protocol
 
 ```python
-# src/zephyr/observability/feedback_loop/action_protocols.py (FLE 侧定义)
+# src/zephyr/feedback_loop/action_protocols.py (FLE 侧定义)
 
 from typing import Protocol
 

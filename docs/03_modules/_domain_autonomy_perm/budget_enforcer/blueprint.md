@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
-version: 0.7.0
+version: 0.7.1
 layer: L0_infrastructure
 functional_domain: budget_enforcement
 owner: ZephyrAlpha-Owner
@@ -1418,6 +1418,131 @@ solo_maintainer_optimizations:
 | Model Tier | PREMIUM/STANDARD/ECONOMY/MINIMAL | ≠ Provider Tier(Anthropic 4-Tier) |
 | Burn Rate | 消耗速率(4窗口) | ≠ Spiral Score(结构扩张模式) |
 | Trust Ring | Ring 0-3 信任分级 | ≠ RBAC Role |
+
+---
+
+## 10. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 10.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/gov_audit/action_history.py` | ✅ 已实现 | |
+| `src/zephyr/gov_audit/trust_ring_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/bootstrapping_calibrator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/spiral_ews.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/output_quality_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/pre_flight_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/agent_spec/rbac_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/governance/bridges/alerts.py` | ⚠️ 骨架 | |
+| `src/zephyr/governance/context_governance/context_budget.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/context_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/context_recycling.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/context_waste_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/conversation_tax_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/instruction_bloat_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/context_governance/think_time_model.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/pricing_sync.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/budget_enforcement.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/model_provider_data.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/model_router.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/bandwidth_optimizer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/budget_engine.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/budget_models.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/budget_profile_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/budget_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/burn_rate_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/cost_attributor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/cost_budget.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/cost_router.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/daily_ops.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/degradation_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/ops_foundation.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/parent_child_attributor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/roi_calculator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/self_budget_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/service_registration.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/stream_abort_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/tco_model.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/time_sync.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/timeout_guard.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/token_budget.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/fail_mode_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/resilience_governance/policy_sandbox.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/adversarial_tester.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/ipi_defense.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/poison_cascade_detector.py` | ✅ 已实现 | |
+| `src/zephyr/governance/security_governance/tamper_evident_log.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/semantic_cache.py` | ✅ 已实现 | |
+
+### 10.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/action/test_action_history.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_enforcer_rbac_bridge.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_engine_root.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_event_driven.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_models.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_profile_manager.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_shutdown.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_tracker.py` | ✅ 已实现 | |
+| `tests/context/test_context_budget_root.py` | ✅ 已实现 | |
+| `tests/context/test_context_manager.py` | ✅ 已实现 | |
+| `tests/context/test_context_waste_detector.py` | ✅ 已实现 | |
+| `tests/contracts/test_alerts_bridge.py` | ✅ 已实现 | |
+| `tests/governance/access_control/test_rbac_bridge_bridge.py` | ✅ 已实现 | |
+| `tests/governance/adversarial/test_adversarial_tester.py` | ✅ 已实现 | |
+| `tests/governance/adversarial/test_poison_cascade_detector.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_alerts.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_tamper_evident_log.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_burn_rate_monitor.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_conversation_tax_detector.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_attributor.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_budget_root.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_router.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_degradation_manager.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_pre_flight_gate.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_roi_calculator.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_tco_model.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_parent_child_attributor.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_trust_ring_manager.py` | ✅ 已实现 | |
+| `tests/governance/integration/test_bandwidth_optimizer.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_bootstrapping_calibrator.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_time_sync.py` | ✅ 已实现 | |
+| `tests/governance/observability/test_instruction_bloat_detector.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_daily_ops.py` | ✅ 已实现 | |
+| `tests/governance/orchestrator/test_think_time_model.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_fail_mode_manager.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_policy_sandbox.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_spiral_ews.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_stream_abort_guard.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_timeout_guard.py` | ✅ 已实现 | |
+| `tests/governance/rule_enforcement/test_output_quality_gate.py` | ✅ 已实现 | |
+| `tests/governance/security/test_ipi_defense.py` | ✅ 已实现 | |
+| `tests/governance/trading/test_pricing_sync.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_budget_tracker.py` | ✅ 已实现 | |
+| `tests/semantic_auditor/test_semantic_cache.py` | ✅ 已实现 | |
+
+### 10.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §10（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

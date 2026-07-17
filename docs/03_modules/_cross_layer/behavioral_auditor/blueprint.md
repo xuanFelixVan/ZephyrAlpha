@@ -5,7 +5,7 @@ submodule_path: src/zephyr/compliance/behavioral_auditor
 title: "Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控"
 doc_type: blueprint
 status: Draft
-version: "3.3.0"
+version: "3.3.1"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -77,7 +77,7 @@ build_status: planned
 > **什么时候建**: 当 AuditTrail 事件积累 ≥1000 条且 ≥14 天，或 Owner 要求主动行为监控时。基线数据由 Audit Trail 自动积累，达到门槛后自动触发。
 > **自动化宿主**: FLE `_periodic_checks()` → `_behavioral_audit_check()` + CircadianScheduler `hour=6` → `_behavioral_baseline_update()`
 
-> module_id: MOD-INF-033 | version: 3.3.0 | status: draft | layer: cross_layer
+> module_id: MOD-INF-033 | version: 3.3.1 | status: draft | layer: cross_layer
 > actual_disk_path: src/zephyr/behavioral_audit/ | generation: 3 | construction_progress: partially_implemented
 
 ## 概述
@@ -1339,6 +1339,112 @@ STEP 3: 拆分后验证
 | 3 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\behavioral-auditor\blueprint.md` | 修改 | 本文件 |
 | 4 | Agent Skill | `D:\ZephyrAlpha\src\zephyr\agent-spec\skills\domain\` | 读取 | SKILL-DOM-BEH-001 |
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | 版本更新 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/compliance/behavioral_auditor/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/gpu_consensus_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/protection_index.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/session_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/behavioral_admission/verdict_engine.py` | ✅ 已实现 | |
+| `src/zephyr/trading/admission_controller.py` | ✅ 已实现 | |
+| `src/zephyr/trading/gpu_consensus_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/trading/protection_index.py` | ✅ 已实现 | |
+| `src/zephyr/trading/verdict_engine.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/ai/test_ai_construction_detectors.py` | ✅ 已实现 | |
+| `tests/ai/test_ai_context_injector.py` | ✅ 已实现 | |
+| `tests/audit/test_absence_manager.py` | ✅ 已实现 | |
+| `tests/audit/test_backcompat_checker.py` | ✅ 已实现 | |
+| `tests/audit/test_baseline_manager.py` | ✅ 已实现 | |
+| `tests/audit/test_baseline_poisoning_guard.py` | ✅ 已实现 | |
+| `tests/audit/test_brain_integration_root.py` | ✅ 已实现 | |
+| `tests/audit/test_cascade_detector.py` | ✅ 已实现 | |
+| `tests/audit/test_code_review_ai.py` | ✅ 已实现 | |
+| `tests/audit/test_correlation_engine.py` | ✅ 已实现 | |
+| `tests/audit/test_credibility_engine.py` | ✅ 已实现 | |
+| `tests/audit/test_detector_dispatcher.py` | ✅ 已实现 | |
+| `tests/audit/test_events_ba.py` | ✅ 已实现 | |
+| `tests/audit/test_forensics_engine.py` | ✅ 已实现 | |
+| `tests/audit/test_gitignore_auditor.py` | ✅ 已实现 | |
+| `tests/audit/test_headless_scanner.py` | ✅ 已实现 | |
+| `tests/audit/test_incremental_scanner.py` | ✅ 已实现 | |
+| `tests/audit/test_naming_magic_checker.py` | ✅ 已实现 | |
+| `tests/audit/test_orphan_scanner.py` | ✅ 已实现 | |
+| `tests/audit/test_python_compat.py` | ✅ 已实现 | |
+| `tests/audit/test_roi_engine.py` | ✅ 已实现 | |
+| `tests/audit/test_scan_mutex.py` | ✅ 已实现 | |
+| `tests/audit/test_state_machine.py` | ✅ 已实现 | |
+| `tests/audit/test_suppression_learner.py` | ✅ 已实现 | |
+| `tests/audit/test_symlink_checker.py` | ✅ 已实现 | |
+| `tests/audit/test_tamper_proof_audit.py` | ✅ 已实现 | |
+| `tests/audit/test_test_fixture_checker.py` | ✅ 已实现 | |
+| `tests/audit/test_trend_analyzer.py` | ✅ 已实现 | |
+| `tests/autonomy/test_behavioral_auditor_main.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_canary_controller.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_chaos_injector.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_dashboard.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_events.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_handoff_manager.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_integration_test_runner.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_main.py` | ✅ 已实现 | |
+| `tests/ba/test_ba_state_machine.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_controller.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_injector.py` | ✅ 已实现 | |
+| `tests/cold/test_cold_start.py` | ✅ 已实现 | |
+| `tests/config/test_config_consistency.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_drift_detector.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_module_score.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_engine.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_hotfix_bypass.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_infrastructure.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_models.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_result_types.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_training.py` | ✅ 已实现 | |
+| `tests/file/test_file_attr_checker.py` | ✅ 已实现 | |
+| `tests/gate/test_gate_persistence.py` | ✅ 已实现 | |
+| `tests/git/test_git_bisector.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_verdict_engine.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_runbook_generator.py` | ✅ 已实现 | |
+| `tests/governance/rule_enforcement/test_integration_test_runner.py` | ✅ 已实现 | |
+| `tests/resource/test_resource_guard.py` | ✅ 已实现 | |
+| `tests/rollback/test_rollback_bridge.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_check.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_test_verifier.py` | ✅ 已实现 | |
+| `tests/trading/test_admission_controller.py` | ✅ 已实现 | |
+| `tests/trading/test_behavioral_admission.py` | ✅ 已实现 | |
+| `tests/trading/test_gpu_consensus_scheduler.py` | ✅ 已实现 | |
+| `tests/trading/test_protection_index.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

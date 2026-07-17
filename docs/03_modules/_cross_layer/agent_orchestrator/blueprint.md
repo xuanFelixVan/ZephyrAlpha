@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.0"
+version: "1.0.1"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -50,7 +50,7 @@ build_status: planned
 
 本蓝图描述 Agent Orchestrator——ZephyrAlpha Vibe Coding 2.0 五大核心服务中的"任务引擎"。它接管 Agent 任务全生命周期——任务入队、Agent 拉取、沙箱执行、幻觉检测、指标上报、收尾归档。当前规模 55 顶层模块 + 14 子包模块，覆盖 state/ resilience/ core/ 三个子域。上游依赖 AutoRuntime Core（大脑调度 WorkDAG），下游消费 Pipeline 执行结果。
 
-> module_id: MOD-INF-039 | version: 1.0.0 | status: active | layer: cross_layer
+> module_id: MOD-INF-039 | version: 1.0.1 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/orchestrator/ | generation: 1 | construction_progress: completed
 > parent_module: MOD-INF-035（AutoRuntime Core）——从 MOD-INF-035 蓝图拆分独立
 >
@@ -590,6 +590,169 @@ class DetectionResult(BaseModel):
 |---------|------------------|------------------|
 | 新增/修改接口契约 | 下游检查接口兼容性 | 检查集成点兼容性 |
 | 修改模块边界 | 下游更新依赖声明 | 更新集成路由 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/integration/vector_memory/cache_layer.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/agent_health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/agent_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/contracts/construction_guide.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/contract_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/contract_router.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/design_decisions.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/finding_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/contracts/prompt_version.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/deferred_queue.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/execution/batch_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/context_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/data_lifecycle.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/dispatch_table.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/dlq_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/memory_writer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/phase_executor.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/reconciliation_loop.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/script_runner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/task_context_builder.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/trigger_router.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/wave_generator.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/failure_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/fault_tolerance/bulkhead_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/canary_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/chaos_engine.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/chaos_hooks.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/degrade_cascade.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/disk_guard.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/fault_types.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/network_partition.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/file_task_mapper.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/governance/autonomy_guard.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/capacity_budget.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/dependency_lock.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/feature_flag.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/model_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/path_index.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/governance/risk_registry.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/schema_migration.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/version_manifest.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/hallucination_detector.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/lifecycle/housekeeping.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/lifecycle/incident_postmortem.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/rolling_upgrade.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/session_conflict.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/session_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/startup_sequencer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/state_propagation.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/state_synchronizer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/system_transfer.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/lifecycle/teardown_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/quality/agent_quality.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/benchmark_runner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/blind_spot_closure.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/blueprint_scorer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/ke_quality.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/quality/knowledge_freshness.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/quality/lean_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/stability_guard.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/resilience/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/resilience/failure_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/rollback_manager.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/task_queue.py` | ✅ 已实现 | |
+| `src/zephyr/trading/auto_dispatcher.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/agent/test_agent_health_monitor_root.py` | ✅ 已实现 | |
+| `tests/agent/test_agent_orchestrator_root.py` | ✅ 已实现 | |
+| `tests/agent/test_agent_quality.py` | ✅ 已实现 | |
+| `tests/autonomy/test_autonomy_guard.py` | ✅ 已实现 | |
+| `tests/blueprint/test_blueprint_scorer.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_manager.py` | ✅ 已实现 | |
+| `tests/capacity/test_capacity_budget_root.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_engine.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_engine_ops.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_hooks.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_registry_root.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_router_root.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_lock.py` | ✅ 已实现 | |
+| `tests/file/test_file_task_mapper_root.py` | ✅ 已实现 | |
+| `tests/knowledge_engine/test_ke_quality.py` | ✅ 已实现 | |
+| `tests/knowledge_engine/test_knowledge_freshness.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_deferred_queue.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_data_lifecycle.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_failure_matcher.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_hallucination_detector.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_model_registry.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_rollback_manager.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_task_queue.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_trigger_router.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_wave_generator.py` | ✅ 已实现 | |
+| `tests/path/test_path_index.py` | ✅ 已实现 | |
+| `tests/phase/test_phase_executor_root.py` | ✅ 已实现 | |
+| `tests/prompt/test_prompt_version.py` | ✅ 已实现 | |
+| `tests/risk/test_risk_registry_root.py` | ✅ 已实现 | |
+| `tests/session/test_session_conflict.py` | ✅ 已实现 | |
+| `tests/session/test_session_manager.py` | ✅ 已实现 | |
+| `tests/trading/root/test_design_decisions_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_dlq_manager_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_state_propagation_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_state_synchronizer_root.py` | ✅ 已实现 | |
+| `tests/trading/test_batch_orchestrator.py` | ✅ 已实现 | |
+| `tests/trading/test_benchmark_runner.py` | ✅ 已实现 | |
+| `tests/trading/test_blind_spot_closure.py` | ✅ 已实现 | |
+| `tests/trading/test_bulkhead_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_construction_guide.py` | ✅ 已实现 | |
+| `tests/trading/test_degrade_cascade.py` | ✅ 已实现 | |
+| `tests/trading/test_disk_guard.py` | ✅ 已实现 | |
+| `tests/trading/test_fault_types.py` | ✅ 已实现 | |
+| `tests/trading/test_feature_flag.py` | ✅ 已实现 | |
+| `tests/trading/test_finding_bridge.py` | ✅ 已实现 | |
+| `tests/trading/test_housekeeping.py` | ✅ 已实现 | |
+| `tests/trading/test_incident_postmortem.py` | ✅ 已实现 | |
+| `tests/trading/test_lean_scanner.py` | ✅ 已实现 | |
+| `tests/trading/test_network_partition.py` | ✅ 已实现 | |
+| `tests/trading/test_reconciliation_loop.py` | ✅ 已实现 | |
+| `tests/trading/test_rolling_upgrade.py` | ✅ 已实现 | |
+| `tests/trading/test_schema_migration.py` | ✅ 已实现 | |
+| `tests/trading/test_stability_guard.py` | ✅ 已实现 | |
+| `tests/trading/test_startup_sequencer.py` | ✅ 已实现 | |
+| `tests/trading/test_system_transfer.py` | ✅ 已实现 | |
+| `tests/trading/test_teardown_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_version_manifest.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

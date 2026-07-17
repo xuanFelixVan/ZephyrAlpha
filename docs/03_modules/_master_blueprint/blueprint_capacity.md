@@ -1755,7 +1755,7 @@ construction_sequence:
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/concurrency_license.py", change: "新建——80slot许可证+优先级抢占", hours: 8}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/capacity_scheduler.py", change: "新建——4级优先级队列+公平分配", hours: 10}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/session_conflict.py", change: "新建——文件锁+乐观锁+冲突解决", hours: 6}
-    - {file: "src/zephyr/observability/feedback_loop/event_driver.py", change: "新建——事件驱动替换30s poll", hours: 8}
+    - {file: "src/zephyr/feedback_loop/event_driver.py", change: "新建——事件驱动替换30s poll", hours: 8}
     - {task: "验证：50 AI 同时工作→无死锁→冲突率<5%→增量<60s", hours: 4}
 
   P3_registry_upgrade:
@@ -1766,7 +1766,7 @@ construction_sequence:
 
   P4_production_hardening:
     - {file: "scripts/governance/_concurrency.py", change: "BulkheadExecutor 改 subprocess pool + 动态扩缩", hours: 8}
-    - {file: "src/zephyr/observability/feedback_loop/scheduler.py", change: "99组件→懒加载+5min基线poll", hours: 6}
+    - {file: "src/zephyr/feedback_loop/scheduler.py", change: "99组件→懒加载+5min基线poll", hours: 6}
     - {file: "src/zephyr/orchestration/runtime_core/orchestrator/deferred_queue.py", change: "内存EventBus→Redis Pub/Sub适配层(可插拔)", hours: 6}
     - {task: "全量压力测试：100 AI×30脚本→全链路验证→SLO达标", hours: 8}
     - {task: "7×24 稳定性运行→资源监控→无memory leak→无磁盘爆满", hours: 168}

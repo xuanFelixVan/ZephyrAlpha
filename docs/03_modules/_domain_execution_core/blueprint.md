@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.1"
+version: "2.2.2"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -1170,6 +1170,52 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | 5 | adapters/__init__.py | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\__init__.py` | 修改 | 新增适配器注册 |
 | 6 | __init__.py | `D:\ZephyrAlpha\src\zephyr\ex_core\__init__.py` | 修改 | CTR 声明更新 |
 | 7 | 契约目录 | `D:\ZephyrAlpha\src\zephyr\shared\contracts\execution\` | 修改 | CTR-P1-007 ExecutionReport 新增 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/ex_core/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/adapters/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/adapters/risk_validation_bridge.py` | ⚠️ 骨架 | |
+| `src/zephyr/ex_core/adapters/simulation_broker.py` | ⚠️ 骨架 | |
+| `src/zephyr/ex_core/execution_engine.py` | ✅ 已实现 | |
+| `src/zephyr/ex_core/order_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/adapters/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/adapters/risk_validation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/governance/adapters/simulation_broker.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/broker_interface.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/test_miniqmt_broker.py` | ✅ 已实现 | |
+| `tests/trading/pipeline/test_l06_trade_execution.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

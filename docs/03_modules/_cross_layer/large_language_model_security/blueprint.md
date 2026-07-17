@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/llm_defense/llm_security
 title: "LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则"
 doc_type: blueprint
 status: Active
-version: "2.0.1"
+version: "2.0.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -5827,15 +5827,19 @@ Encoding Defense Layers — LSG + LLM 协作
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > LLM安全网关——3文件骨架+input_sanitizer已实现
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/security/llm_defense/llm_security/adversarial_robustness.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/alignment_scorer.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/behavior_audit_logger.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/dashboard/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/dashboard/app.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/gateway.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/input_sanitizer.py` | ✅ 已实现 | |
@@ -5844,33 +5848,60 @@ Encoding Defense Layers — LSG + LLM 协作
 | `src/zephyr/security/llm_defense/llm_security/layers/l2_prompt_protection.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l3_output.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm_security/layers/l4_agent.py` | ✅ 已实现 | |
-| `src/zephyr/security/llm_defense/llm_security/layers/l5_resource_protection.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l6_data_flow.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l6_observability.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/layers/l8_compliance.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/layers/l8_multi_agent.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/lsg_pattern_tracker.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/patterns/injection_patterns.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/patterns/secrets.py` | ✅ 已实现 | |
-| `src/zephyr/llm_security/payloads/injection-payloads.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm_security/payloads/leak-probe-phrases.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm_security/payloads/red-team-payloads.yaml` | ✅ 已实现 | |
-| `src/zephyr/llm_security/payloads/tool-call-payloads.yaml` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/poisoning_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/process_sandbox.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/protocol.py` | ✅ 已实现 | |
-| `src/zephyr/llm_security/red-team-corpus.yaml` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/runtime_interceptor.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/sandbox/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/adversarial_mutator.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/code_integrity.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/isolation.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/l7_validation.py` | ✅ 已实现 | |
 | `src/zephyr/security/llm_defense/llm_security/self_protection/red_team_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/sensitivity_classifier.py` | ✅ 已实现 | |
+| `src/zephyr/security/llm_defense/llm_security/solo_dev_safety_net.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_input_sanitizer.py` | ✅ 已实现 | |
-| `tests/test_process_sandbox.py` | ✅ 已实现 | |
-| `tests/test_ai_behavior_audit_logger.py` | ✅ 已实现 | |
-| `tests/test_hallucination_interception.py` | ✅ 已实现 | |
+| `tests/llm_security/test_adversarial_mutator.py` | ✅ 已实现 | |
+| `tests/llm_security/test_behavior_audit_logger.py` | ✅ 已实现 | |
+| `tests/llm_security/test_code_integrity.py` | ✅ 已实现 | |
+| `tests/llm_security/test_cross_module_integration_llm_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_fail_closed.py` | ✅ 已实现 | |
+| `tests/llm_security/test_gateway_e2e.py` | ✅ 已实现 | |
+| `tests/llm_security/test_injection_patterns.py` | ✅ 已实现 | |
+| `tests/llm_security/test_input_sanitizer_llm_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_isolation.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l0_supply_chain.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l1_input_defense.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l2_prompt_protection.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l2a_process_sandbox.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l3_output_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l4_agent_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l5_resource_protection.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l6_observability.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l7_red_team.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l7_validation.py` | ✅ 已实现 | |
+| `tests/llm_security/test_l8_multi_agent.py` | ✅ 已实现 | |
+| `tests/llm_security/test_llm_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_process_sandbox_llm_security.py` | ✅ 已实现 | |
+| `tests/llm_security/test_runtime_interceptor.py` | ✅ 已实现 | |
+| `tests/llm_security/test_secrets.py` | ✅ 已实现 | |
+| `tests/safety/test_async_monitor.py` | ✅ 已实现 | |
+| `tests/safety/test_circuit_breaker.py` | ✅ 已实现 | |
+| `tests/safety/test_defense_runner.py` | ✅ 已实现 | |
+| `tests/safety/test_event_integration.py` | ✅ 已实现 | |
+| `tests/safety/test_game_day_scheduler.py` | ✅ 已实现 | |
+| `tests/safety/test_injection_engine.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -5885,6 +5916,7 @@ Encoding Defense Layers — LSG + LLM 协作
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

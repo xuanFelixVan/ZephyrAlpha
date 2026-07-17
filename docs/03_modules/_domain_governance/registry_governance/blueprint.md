@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/registry_governance
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.0"
+version: "0.2.1"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -140,7 +140,7 @@ END_REQUIRED_SECTIONS
 
 # Registry Governance 蓝图+施工图 — 注册表体系架构+功能域注册表+SSoT门禁
 
-> module_id: MOD-INF-037 | version: 0.2.0 | status: Draft | domain: infra_ops
+> module_id: MOD-INF-037 | version: 0.2.1 | status: Draft | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/ | generation: 1 | construction_progress: partially_implemented
 
 ## 概述
@@ -1095,6 +1095,59 @@ class OverlapResult:
 | construction_progress变更 | 需§0对齐验证通过 | 下游更新依赖状态 | 更新集成测试 |
 | 施工步骤微调 | AI可自主修改 | 下游更新产出物引用 | 更新配置文件 |
 | 非关键补充 | AI可自主修改 | — | — |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `data/asset_index/archive/migration_scripts/_migration_shared.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/comprehensive_import_fix.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/create_target_dirs.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/cross_domain_import_fix.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/domain_prefix_import_fix.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/execute_move.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/generate_path_migration_mapping.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/lock_batch.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/preflight_check.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/rollback_batch.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/shared_import_fix.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/test_import_fix.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/unnest_from_mcp_server.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/update_imports.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/update_non_import_refs.py` | ✅ 已实现 | |
+| `data/asset_index/archive/migration_scripts/verify_batch.py` | ✅ 已实现 | |
+| `src/zephyr/governance/capability_lookup.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/registry_governance.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_registry_governance_root.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.0"
+version: "4.0.1"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -219,7 +219,7 @@ build_status: generated
 
 # Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 4.0.0 | status: active | domain: factor
+> module_id: MOD-L02-001 | version: 4.0.1 | status: active | domain: factor
 > actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
@@ -1092,6 +1092,46 @@ class FactorMeta(BaseModel):
 | 施工步骤微调（命令、路径修正） | AI可自主修改 | 下游更新产出物引用 | 更新配置文件 |
 | 非关键补充（风险缓解、后果描述） | AI可自主修改 | — | — |
 | 容量升级方案新增（§17） | 需Owner审批 | 下游评估影响 | 更新容量预算 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/factor/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/factor/bus_factor_defense.py` | ✅ 已实现 | |
+| `src/zephyr/factor/factor_base.py` | ✅ 已实现 | |
+| `src/zephyr/factor/momentum_factor.py` | ✅ 已实现 | |
+| `src/zephyr/factor/value_factor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/engine/__init__.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/alpha_signal/test_l02_alpha_factor.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 
