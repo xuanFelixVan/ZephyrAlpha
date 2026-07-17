@@ -54,28 +54,34 @@ def _write_depgraph(path: Path, nodes: dict) -> None:
 
 
 def _make_depgraph_nodes() -> dict:
+    """治本（裁定#11）：path 与 imports 必须自洽——_module_path_from_file(path) 必须等于 imports 中的 key.
+
+    旧 fixture 用 `src/zephyr/governance/semantic_audit/models.py` (中划线) + `zephyr.governance.semantic_audit.models`
+    (下划线+governance前缀)，两者互相不匹配导致 _reverse_rels 查不到。
+    修正为：path 与 imports 模块路径严格对应。
+    """
     return {
         "node_a": {
             "id": "node_a",
-            "path": "src/zephyr/semantic-auditor/models.py",
+            "path": "src/zephyr/governance/semantic_audit/models.py",
             "type": "module",
             "imports": [],
         },
         "node_b": {
             "id": "node_b",
-            "path": "src/zephyr/semantic-auditor/blast_radius.py",
+            "path": "src/zephyr/governance/semantic_audit/blast_radius.py",
             "type": "module",
             "imports": ["zephyr.governance.semantic_audit.models"],
         },
         "node_c": {
             "id": "node_c",
-            "path": "src/zephyr/semantic-auditor/fix_prioritizer.py",
+            "path": "src/zephyr/governance/semantic_audit/fix_prioritizer.py",
             "type": "module",
             "imports": ["zephyr.governance.semantic_audit.models"],
         },
         "node_d": {
             "id": "node_d",
-            "path": "src/zephyr/semantic-auditor/self_healer.py",
+            "path": "src/zephyr/governance/semantic_audit/self_healer.py",
             "type": "module",
             "imports": ["zephyr.governance.semantic_audit.models", "zephyr.governance.resilience_governance.blast_radius"],
         },
@@ -83,22 +89,48 @@ def _make_depgraph_nodes() -> dict:
 
 
 class TestBlastRadiusAnalyzerInstantiation:
-    def test_instantiate_default(self):
-        analyzer = BlastRadiusAnalyzer()
+    """治本（裁定#11）：源代码 __init__ 强制 depgraph_path 必传（2026-06-27 治本改造：
+    删除默认路径常量防止污染）。不传 depgraph_path 必须抛 ValueError。"""
+
+    def test_instantiate_default_raises_without_depgraph_path(self):
+        # 不传 depgraph_path 必须抛 ValueError（治本：防止默认路径污染）
+        with pytest.raises(ValueError, match="depgraph_path 必须显式传入"):
+            BlastRadiusAnalyzer()
+
+    def test_instantiate_custom_max_depth_without_depgraph_raises(self):
+        # 只传 max_depth 不传 depgraph_path 必须抛 ValueError
+        with pytest.raises(ValueError, match="depgraph_path 必须显式传入"):
+            BlastRadiusAnalyzer(max_depth=3)
+
+    def test_instantiate_with_depgraph_and_default_max_depth(self, tmp_path):
+        # 传 depgraph_path 不传 max_depth 应该成功，默认 max_depth=5
+        depgraph = tmp_path / "dep.yaml"
+        _write_depgraph(depgraph, _make_depgraph_nodes())
+        analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
         assert analyzer is not None
         assert analyzer._max_depth == 5
 
-    def test_instantiate_custom_max_depth(self):
-        analyzer = BlastRadiusAnalyzer(max_depth=3)
+    def test_instantiate_with_depgraph_and_custom_max_depth(self, tmp_path):
+        # 传 depgraph_path 和 max_depth=3 应该成功
+        depgraph = tmp_path / "dep.yaml"
+        _write_depgraph(depgraph, _make_depgraph_nodes())
+        analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph, max_depth=3)
+        assert analyzer is not None
         assert analyzer._max_depth == 3
 
-    def test_instantiate_invalid_max_depth_zero(self):
-        with pytest.raises(ValueError, match="max_depth must be >= 1"):
-            BlastRadiusAnalyzer(max_depth=0)
+    def test_instantiate_invalid_max_depth_zero(self, tmp_path):
+        # 治本：max_depth < 1 抛 ValueError，消息为中文 "max_depth 必须 >= 1"
+        depgraph = tmp_path / "dep.yaml"
+        _write_depgraph(depgraph, _make_depgraph_nodes())
+        with pytest.raises(ValueError, match="max_depth 必须 >= 1"):
+            BlastRadiusAnalyzer(depgraph_path=depgraph, max_depth=0)
 
-    def test_instantiate_invalid_max_depth_negative(self):
-        with pytest.raises(ValueError, match="max_depth must be >= 1"):
-            BlastRadiusAnalyzer(max_depth=-1)
+    def test_instantiate_invalid_max_depth_negative(self, tmp_path):
+        # 治本：max_depth < 1 抛 ValueError，消息为中文 "max_depth 必须 >= 1"
+        depgraph = tmp_path / "dep.yaml"
+        _write_depgraph(depgraph, _make_depgraph_nodes())
+        with pytest.raises(ValueError, match="max_depth 必须 >= 1"):
+            BlastRadiusAnalyzer(depgraph_path=depgraph, max_depth=-1)
 
 
 class TestDepgraphLoadError:
@@ -144,9 +176,9 @@ class TestAnalyzeWithSourceLocation:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        finding = _make_finding(source_location="src/zephyr/semantic-auditor/models.py")
+        finding = _make_finding(source_location="src/zephyr/governance/semantic_audit/models.py")
         report = analyzer.analyze(finding)
-        assert report.source_path == "src/zephyr/semantic-auditor/models.py"
+        assert report.source_path == "src/zephyr/governance/semantic_audit/models.py"
         assert report.direct_dependents >= 2
         assert report.transitive_dependents >= 2
         assert report.cascade_depth >= 1
@@ -155,7 +187,7 @@ class TestAnalyzeWithSourceLocation:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        finding = _make_finding(source_location="src/zephyr/semantic-auditor/fix_prioritizer.py")
+        finding = _make_finding(source_location="src/zephyr/governance/semantic_audit/fix_prioritizer.py")
         report = analyzer.analyze(finding)
         assert report.direct_dependents >= 0
 
@@ -163,7 +195,7 @@ class TestAnalyzeWithSourceLocation:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        finding = _make_finding(finding_id="F-SEM-999", source_location="src/zephyr/semantic-auditor/models.py")
+        finding = _make_finding(finding_id="F-SEM-999", source_location="src/zephyr/governance/semantic_audit/models.py")
         report = analyzer.analyze(finding)
         assert report.finding_id == "F-SEM-999"
 
@@ -174,7 +206,7 @@ class TestAnalyzeBatch:
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
         findings = [
-            _make_finding(finding_id="F-SEM-001", source_location="src/zephyr/semantic-auditor/models.py"),
+            _make_finding(finding_id="F-SEM-001", source_location="src/zephyr/governance/semantic_audit/models.py"),
             _make_finding(finding_id="F-SEM-002", source_location=""),
         ]
         reports = analyzer.analyze_batch(findings)
@@ -216,7 +248,7 @@ class TestGetDependencyChain:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        chain = analyzer.get_dependency_chain("src/zephyr/semantic-auditor/models.py")
+        chain = analyzer.get_dependency_chain("src/zephyr/governance/semantic_audit/models.py")
         assert isinstance(chain, dict)
         if chain:
             assert "1" in chain
@@ -226,14 +258,14 @@ class TestGetDependencyChain:
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph)
-        chain = analyzer.get_dependency_chain("src/zephyr/semantic-auditor/fix_prioritizer.py")
+        chain = analyzer.get_dependency_chain("src/zephyr/governance/semantic_audit/fix_prioritizer.py")
         assert isinstance(chain, dict)
 
     def test_chain_custom_max_depth(self, tmp_path):
         depgraph = tmp_path / "dep.yaml"
         _write_depgraph(depgraph, _make_depgraph_nodes())
         analyzer = BlastRadiusAnalyzer(depgraph_path=depgraph, max_depth=1)
-        chain = analyzer.get_dependency_chain("src/zephyr/semantic-auditor/models.py", max_depth=1)
+        chain = analyzer.get_dependency_chain("src/zephyr/governance/semantic_audit/models.py", max_depth=1)
         assert isinstance(chain, dict)
 
 

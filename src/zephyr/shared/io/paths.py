@@ -78,6 +78,10 @@ VECTOR_INDEX_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "vector_index"
 MODELS_CACHE_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "models"
 VMS_PERSIST_DIR: Final[Path] = REPO_ROOT / "data" / "vector_db"
 
+# 治本（裁定#6 路径SSoT）：审计数据目录真源——所有审计模块（gov_audit.writer/integrity 等）
+# 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit-trail"`（违反"禁止相对路径"硬约束）。
+AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit-trail"
+
 
 def get_tmp_dir() -> Path:
     """返回运行时临时目录 REPO_ROOT / '.runtime' / 'tmp'，并确保目录存在。
@@ -113,6 +117,7 @@ def get_config_dir() -> Path:
 
 
 __all__ = [
+    "AUDIT_DATA_DIR",
     "DB_DIR",
     "DB_PATH",
     "GATES_DIR",

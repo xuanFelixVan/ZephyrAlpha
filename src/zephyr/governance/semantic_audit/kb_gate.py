@@ -106,7 +106,7 @@ class KBAuditGate:
 
         risk_score = 0.0
 
-        if trust - score < self._min_trust_score:
+        if trust_score < self._min_trust_score:
             reasons.append(f"Trust score {trust_score:.2f} below minimum {self._min_trust_score:.2f}")
 
             risk_score += 0.4
@@ -140,7 +140,7 @@ class KBAuditGate:
         result = KBWriteCheckResult(
             allowed=allowed,
             agent_id=agent_id,
-            trust_score=trust - score,
+            trust_score=trust_score,
             reasons=reasons,
             risk_score=round(min(1.0, risk_score), 4),
             checked_at=now,
