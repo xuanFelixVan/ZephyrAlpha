@@ -111,6 +111,71 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
     return SessionRegistry(root)
 
 
+# ── 阶段2治本（未合并提交陷阱，2026-07-18）：sweep 取代判定 ──
+# 病根：原 _sweep_one_dir 判据3 对"分支有未合并提交"一律跳过，导致死 session 的
+# worktree 永久堆积（100% AI 开发场景下高发：AI 提交后 session 死亡，相同修改
+# 通过其他路径合并，但原分支从未 merge）。治本：检测分支提交是否已被取代，
+# 全部被取代时安全清理。两维度检测：① patch-id 等价（git cherry '-'）② message
+# 主体匹配（HEAD 近 200 条历史中存在相同 subject，覆盖 cherry-pick 后 reword 场景）。
+
+def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]:
+    """获取 HEAD 近 N 条 commit subjects（message 匹配用，patch-id 的补充）。"""
+    r = manager._run_git(["git", "log", "--format=%s", f"-{count}", "HEAD"])
+    if r.returncode != 0:
+        return set()
+    return {line.strip() for line in r.stdout.splitlines() if line.strip()}
+
+
+def _count_message_superseded(
+    commit_hashes: list[str],
+    head_subjects: set[str],
+    manager: "WorktreeManager",
+) -> int:
+    """统计 commit_hashes 中 message 主体在 head_subjects 中存在的数量。
+
+    patch-id 未匹配时的补充检测：相同 message 主体暗示相同意图的修改
+    （cherry-pick 后 reword、或 AI 重新生成相同修复）。
+    """
+    count = 0
+    for h in commit_hashes:
+        r_msg = manager._run_git(["git", "log", "-1", "--format=%s", h])
+        if r_msg.returncode == 0 and r_msg.stdout.strip() in head_subjects:
+            count += 1
+    return count
+
+
+def _branch_commits_superseded(
+    branch: str,
+    manager: "WorktreeManager",
+) -> tuple[bool, str]:
+    """检测分支所有未合并提交是否已被取代（相同修改已通过其他路径合并到 HEAD）。
+
+    两维度检测（patch-id 优先，message 补充）：
+    1. patch-id 等价：git cherry 标记为 '-'（diff 内容等价于 HEAD 中某提交）
+    2. message 主体匹配：commit subject 在 HEAD 近 200 条历史中存在
+
+    全部分支提交被取代时返回 True（可安全清理 worktree）。
+    """
+    r_cherry = manager._run_git(["git", "cherry", "HEAD", branch])
+    if r_cherry.returncode != 0:
+        return False, f"git cherry failed: {r_cherry.stderr.strip()[:80]}"
+    lines = [line.strip() for line in r_cherry.stdout.splitlines() if line.strip()]
+    if not lines:
+        return True, "no unmerged commits"
+    not_superseded = [line[2:].strip() for line in lines if line.startswith("+ ")]
+    patch_id_ok = len(lines) - len(not_superseded)
+    if not not_superseded:
+        return True, f"all {len(lines)} patch-id equivalent"
+    head_subjects = _get_head_subjects(manager)
+    if not head_subjects:
+        return False, f"{len(not_superseded)}/{len(lines)} not superseded (no head_subjects)"
+    msg_ok = _count_message_superseded(not_superseded, head_subjects, manager)
+    total_ok = patch_id_ok + msg_ok
+    if total_ok == len(lines):
+        return True, f"all {len(lines)} superseded ({patch_id_ok} patch-id + {msg_ok} message)"
+    return False, f"only {total_ok}/{len(lines)} superseded"
+
+
 def _sweep_one_dir(
     manager: WorktreeManager,
     registry: SessionRegistry,
@@ -124,7 +189,8 @@ def _sweep_one_dir(
     三重保护判据（任一不满足则跳过）：
     1. 目录 age > age_threshold（太新的不动，防误清并发 AI 正在创建的）
     2. session 不在 active 注册表（活跃 session 不动）
-    3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
+    3. 分支 tip 在 HEAD 祖先或无分支；有未合并提交时检测是否已被取代
+       （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
     """
     sid = d.name
     # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
@@ -137,7 +203,7 @@ def _sweep_one_dir(
     # 判据 2：活跃 session
     if sid in active_sids:
         return 0, 1, []
-    # 判据 3：分支 tip 在 main（有未合并提交的不动）
+    # 判据 3：分支 tip 在 main（有未合并提交时检测是否已被取代）
     branch = manager._branch_name(sid)
     r_v = manager._run_git(["git", "rev-parse", "--verify", branch])
     has_branch = r_v.returncode == 0
@@ -147,10 +213,18 @@ def _sweep_one_dir(
             ["git", "merge-base", "--is-ancestor", branch, "HEAD"]
         )
         if r_mb.returncode != 0:
-            warnings.append(
-                f"{sid}: 分支有未合并提交，需人工评估（已跳过）"
-            )
-            return 0, 1, warnings
+            # 阶段2治本（未合并提交陷阱）：检测分支提交是否已被取代
+            all_superseded, reason = _branch_commits_superseded(branch, manager)
+            if all_superseded:
+                warnings.append(
+                    f"{sid}: 分支提交已全部被取代（{reason}），继续清理"
+                )
+                # fall through 到清理逻辑（分支可安全删除，修改已通过其他路径合并）
+            else:
+                warnings.append(
+                    f"{sid}: 分支有未合并提交且未被取代（{reason}），需人工评估（已跳过）"
+                )
+                return 0, 1, warnings
     # 通过三重保护——清理
     swept = 0
     try:
@@ -200,7 +274,8 @@ def _sweep_stale_worktrees(
     安全判据（三重保护，任一不满足则跳过）：
     1. 目录 age > max_age_minutes（太新的不动，防误清并发 AI 正在创建的）
     2. session 不在 active 注册表（活跃 session 不动；用 list_active 判定，不依赖 pid）
-    3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
+    3. 分支 tip 在 HEAD 祖先或无分支；有未合并提交时检测是否已被取代
+       （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
 
     异常不抛出（sweep 失败不阻断 start）。在独立 _WorktreeLock 周期内执行，
     退出锁后 caller 才调 create_session_worktree（避免锁重入死锁）。
