@@ -98,6 +98,7 @@ __all__ = [
     "make_session_log_index_reconciler",
     "make_arch_diagram_reconciler",
     "make_gate_inventory_sync_reconciler",
+    "make_gate_registry_sync_reconciler",
     "make_tmp_cleanup_reconciler",
     "scan_and_archive_working_docs",
 ]
@@ -4346,6 +4347,111 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=820,  # 在 GATE-AGENTS-MD-REFS(810) 之后
+    )
+
+
+# trae_060-reviewed: 该存在+不可合并进已有+治本。gate_registry.yaml 无任何 reconciler 自动重生成
+# （对比 script_manifest 有 make_manifest_reconciler 完整覆盖），机制缺失需补齐。
+# make_gate_inventory_sync_reconciler 名字相近但只修 blueprint.md §0.1（文档层），不修
+# gate_registry.yaml（数据层），职责不同不可合并。治本：post-commit 修复型对标
+# make_manifest_reconciler，trigger 覆盖三源，auto_commit 修复（ARCH-GATE-REGISTRY-SYNC-001）。
+def make_gate_registry_sync_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 gate_registry.yaml 自动重生成 post-commit reconciler（ARCH-GATE-REGISTRY-SYNC-001 治本）。
+
+    commit src/zephyr/gov_enforcement/commit_gates/*.py / .pre-commit-config.yaml /
+    generate_gate_registry.py 后，gate_registry.yaml 可能过时（新增/删除 gate 但登记表未同步）。
+    本 reconciler 在 post-commit 跑 generate_gate_registry.py 重生成 + auto_commit 修复。
+
+    治本策略选择（裁定 ARCH-GATE-REGISTRY-SYNC-001）：
+    - 采用策略 B（post-commit 修复型），对标 make_manifest_reconciler
+    - 否决策略 A（pre-commit 阻断型）：阻断会导致 AI 无法 commit 新 gate 代码（清单未同步→
+      阻断→无法 commit→死循环），与 make_gate_inventory_sync_reconciler ADP-4 裁定一致
+
+    职责边界（与 make_gate_inventory_sync_reconciler 分离）：
+    - make_gate_inventory_sync_reconciler：修 blueprint.md §0.1 模块清单（文档层）
+    - 本 reconciler：修 gate_registry.yaml 门禁登记表（数据层，三源合并）
+
+    trigger 覆盖三源（generate_gate_registry.py 三源合并机制）：
+    1. src/zephyr/gov_enforcement/commit_gates/*.py（CommitGates 源）
+    2. .pre-commit-config.yaml（pre-commit hooks 源）
+    3. scripts/governance/generators/generate_gate_registry.py（生成器自身 + MANUAL_GATES 硬编码）
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root + _run_git + _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-GATE-REGISTRY-SYNC", priority=830)。
+        priority=830——在 GATE-MODULE-INVENTORY-SYNC(820) 之后执行（gate_registry.yaml 依赖
+        commit_gates/*.py 扫描，需在 blueprint.md §0.1 同步后执行，避免竞争）。
+    """
+    import os
+    import sys
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            # 三源覆盖：CommitGates 源 + pre-commit hooks 源 + 生成器自身
+            if rel.startswith("src/zephyr/gov_enforcement/commit_gates/") and rel.endswith(".py"):
+                return True
+            if rel == ".pre-commit-config.yaml":
+                return True
+            if rel == "scripts/governance/generators/generate_gate_registry.py":
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # 1. 重生成 gate_registry.yaml（三源合并 SSoT）
+        gen_script = "scripts/governance/generators/generate_gate_registry.py"
+        gen_result = _run_subprocess(
+            [sys.executable, gen_script],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        if gen_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"gate_registry regeneration failed: {gen_result.stderr.strip()[:200]}",
+            )
+
+        # 2. 检测 gate_registry.yaml 变更
+        registry_rel = "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml"
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", registry_rel]
+        )
+        if diff_result.returncode == 0 and not diff_result.stdout.strip():
+            return ReconcileResult(action="clean", detail="gate_registry up to date")
+
+        # 3. 变更 -> 自动提交修复（经 _commit_auto 统一入口，gate 覆盖）
+        auto_msg = "chore(gate_registry): auto-regenerate by GitCommitGateway post-commit (ARCH-GATE-REGISTRY-SYNC-001)"
+        abs_files = [str(project_root / registry_rel)]
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail="gate_registry drift detected and auto-reconciled",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail="gate_registry no drift (auto-commit found no staged changes)",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"gate_registry drift detected, auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-GATE-REGISTRY-SYNC",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=830,  # 在 GATE-MODULE-INVENTORY-SYNC(820) 之后
     )
 
 
