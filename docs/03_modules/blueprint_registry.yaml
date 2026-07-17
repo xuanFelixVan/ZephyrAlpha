@@ -953,13 +953,7 @@ summary:
     L1_foundation: 31
     L0_infrastructure: 17
     L3_application: 1
-  by_construction_progress:
-    partially_implemented: 34
-    design_only: 8
-    not_started: 2
-    completed: 12
-    scaffold: 2
-  note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准
+  note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress 已于 2026-07-18 退役，ARCH-FRONTMATTER-STATE-001 Phase 3）
   last_recomputed: '2026-07-16'
 changelog:
 - version: 2.7.10
