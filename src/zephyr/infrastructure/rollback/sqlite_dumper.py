@@ -135,7 +135,10 @@ class SqliteDumper:
     ) -> None:
         self._db_path = db_path or DB_PATH
         self._output_dir = output_dir or (REPO_ROOT / "data" / "rollback" / "db_snapshots")
-        self._hmac_key = _resolve_hmac_key(hmac_key)  # 5.155.1 修复
+        # 治本（5.155.1）：原代码调用未导入的 _resolve_hmac_key（NameError）。
+        # 该函数定义在 gov_audit.writer，但其签名期望 str config 而非 bytes，
+        # 与本模块 hmac_key: bytes | None 契约不符。直接用模块级 HMAC_KEY_DEFAULT 兜底。
+        self._hmac_key = hmac_key if hmac_key is not None else HMAC_KEY_DEFAULT
 
     def _get_all_tables(self, conn: sqlite3.Connection) -> list[str]:
         rows = conn.execute(
@@ -187,8 +190,11 @@ class SqliteDumper:
         return hmac.new(self._hmac_key, data, hashlib.sha256).hexdigest()
 
     def check_sqlite_health(self) -> bool:
+        # 治本：原代码传 uri=True 给 get_db_connection（不支持该参数 → TypeError → 静默 return False）。
+        # 完整性检查只需只读连接执行 PRAGMA integrity_check，无需 get_db_connection 的 PRAGMA 配置，
+        # 直接用 sqlite3.connect 的 URI 只读模式打开。
         try:
-            conn = get_db_connection(f"file:{self._db_path}?mode=ro", uri=True)
+            conn = sqlite3.connect(f"file:{self._db_path}?mode=ro", uri=True)
             conn.execute("PRAGMA integrity_check")
             conn.close()
             return True
@@ -359,8 +365,10 @@ class SqliteDumper:
             conn.close()
 
             if tables_restored > 0 and target_db == self._db_path:
-                from zephyr.governance.persistence.sqlite_schema import get_db_connection
-
+                # 治本：移除局部 import——module-level 已从 sqlite_factory 导入 get_db_connection，
+                # sqlite_schema.get_db_connection 只是同一函数的 re-export shim。
+                # 原 `from ... import get_db_connection` 使 Python 将 get_db_connection 视为
+                # 整个 restore() 的局部变量，导致 line 325 的模块级引用触发 UnboundLocalError。
                 vconn = get_db_connection(target_db)
                 vconn.execute("PRAGMA integrity_check")
                 vconn.close()

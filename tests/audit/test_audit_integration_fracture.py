@@ -331,7 +331,7 @@ class TestCrossModuleAuditConsistency:
     def test_all_modules_share_same_chain(self, audit_env):
         tmp_path, data_dir = audit_env
         from zephyr.gov_audit.writer import AuditWriter
-        from zephyr.governance.integrity import IntegrityVerifier
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
         writer = AuditWriter(data_dir=data_dir)
 

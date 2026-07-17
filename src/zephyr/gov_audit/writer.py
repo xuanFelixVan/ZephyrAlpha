@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.gov_audit.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
-from zephyr.gov_audit.models import AuditIssue, GlobalAuditReport
+from zephyr.gov_audit.models import AuditEventType, AuditIssue, GlobalAuditReport
 from zephyr.shared.utils.time_utils import now_utc
 from typing import Final
 
@@ -38,6 +38,22 @@ __all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
 DEFAULT_REPORT_DIR: Final[Any] = Path.cwd() / "data" / "audit_history"
 DEFAULT_AUDIT_DIR: Final[Any] = Path.cwd() / "data" / "audit_trail"
 _GENESIS_HASH = "0" * 64
+
+# 治本（I9 核心模型强制消费）：已知事件类型白名单——AuditEventType 值（lowercase）
+# + 运行时桥接/执行器使用但未登记到 AuditEventType 的事件类型。
+# 不在白名单中的 event_type 会被规范化为 "unknown"，防止数据注入和日志污染。
+_KNOWN_EVENT_TYPES: frozenset[str] = frozenset(
+    getattr(AuditEventType, name).value.lower()
+    for name in dir(AuditEventType)
+    if name.isupper() and not name.startswith("_")
+) | frozenset({
+    # 运行时事件类型（来自 bridges/executors，尚未登记到 AuditEventType）
+    "rbac_decision", "rollback_discard", "rollback_nexus", "rollback_operation",
+    "drift_hotfix_bypass", "mcp_tool_call", "gate_audit", "skill_loaded",
+    "budget_enforcement", "delegation_create", "chain_cleared", "session_record",
+    "lifecycle_state_change", "feedback_loop_evolution",
+    "generic", "unknown", "file_detail",
+})
 
 # 5.17.1 修复：模块级单例（供 contracts.py 委托桥接使用）
 _GLOBAL_WRITER: "AuditWriter | None" = None
@@ -193,6 +209,13 @@ class AuditWriter:
             )
 
         event_type = event.get("event_type", "generic")
+        # 治本（I9 核心模型强制消费）：event_type 白名单规范化——不在 _KNOWN_EVENT_TYPES 中的
+        # event_type 会被规范化为 "unknown"，防止数据注入和日志污染。
+        if event_type not in _KNOWN_EVENT_TYPES:
+            event_type = "unknown"
+            event["event_type"] = "unknown"
+        # provenance 默认 "direct_agent"（直接写入，非委托/桥接）
+        event.setdefault("provenance", "direct_agent")
         prefix = "AUD-F" if event_type == "file_detail" else "AUD-T"
 
         with self._lock:

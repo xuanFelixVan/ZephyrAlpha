@@ -17,7 +17,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from zephyr.governance.integrity import IntegrityVerifier, MerkleAggregator
+from zephyr.gov_audit.integrity import IntegrityVerifier, MerkleAggregator
 
 
 class TestMerkleAggregatorBuild:
@@ -67,8 +67,9 @@ class TestMerkleAggregatorVerify:
 
 class TestIntegrityVerifierInit:
     def test_default_path(self):
+        from zephyr.shared.io.paths import AUDIT_DATA_DIR
         verifier = IntegrityVerifier()
-        assert verifier._event_log_path == Path("data/audit-trail/events.jsonl")
+        assert verifier._event_log_path == AUDIT_DATA_DIR / "events.jsonl"
 
     def test_custom_path(self, tmp_path):
         path = tmp_path / "custom.jsonl"

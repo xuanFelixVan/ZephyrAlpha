@@ -56,7 +56,7 @@ class TestAuditTrailImportSmoke:
     def test_import_integrity(self) -> None:
         """测试导入 IntegrityVerifier — 链式完整性验证."""
         _ensure_path()
-        from zephyr.governance.integrity import IntegrityVerifier
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
         assert IntegrityVerifier is not None
 
