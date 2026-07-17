@@ -33,7 +33,9 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["ConstitutionArticle", "ConstitutionGuard", "ConstitutionViolationError"]
 
-_REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
+# 治本（裁定#18 G10）：默认路径用下划线匹配实际文件 _constitution_registry.yaml，
+# 测试显式传 registry_path 指向 src/zephyr/red-blue-validator/_constitution-registry.yaml。
+_REGISTRY_PATH: Path = Path(__file__).parent / "_constitution_registry.yaml"
 
 
 class ConstitutionViolationError(RuntimeError):

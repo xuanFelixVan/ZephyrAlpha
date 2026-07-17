@@ -3957,6 +3957,16 @@ creation_tokens:
     created_by: "session-sess-44448-20260706204224"
     capability: "event_bus"
 
+  # --- red_blue_validator re-export shim + constitution-registry（2026-07-17 裁定#18 G10+import_time）---
+  - file: "src/zephyr/red_blue_validator/__init__.py"
+    token: "auto-red-blue-validator-shim-20260717"
+    created_by: "session-sess-2088-20260717162624"
+    capability: "adversarial_validation"
+  - file: "src/zephyr/red-blue-validator/_constitution-registry.yaml"
+    token: "auto-constitution-registry-hyphen-20260717"
+    created_by: "session-sess-2088-20260717162624"
+    capability: "adversarial_validation"
+
   # --- SLA target YAML化（2026-07-06 AI-14 审计修复 P3-24，SLA RTO/RPO 目标从硬编码改为 YAML SSoT）---
   - file: "config/sla_targets.yaml"
     token: "auto-sla-targets-yaml-20260706"
