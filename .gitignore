@@ -52,6 +52,10 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+# .pytest_tmp/ — AI 会话临时 pytest 工作区（原子操作脚本暂存，ARCH-TTL-DOC-001 治本 2026-07-17）
+# 病根：AI 用 .pytest_tmp/ 存放跨进程原子操作脚本（如 _atomic2.py / _verify_fixes.py），
+# 避免主工作区被并发 AI 覆盖。原 .gitignore 漏忽略，导致 git status 噪音 + 误入库风险。
+.pytest_tmp/
 
 # Translations
 *.mo
