@@ -2892,13 +2892,75 @@ entries:
     且未注册为 commit gate——L1 当前是君子协定，不是技术强制。S4-C commit cdaa33f6e6
     全程未通过 apply_depgraph.py 登记设计态即成功 merge，为治理幻觉的铁证。
     治本分三期：第一期（已完成 2026-07-17）文档诚实化——修正 AGENTS.md L49"自动阻断"
-    为"君子协定 + post-merge reconciler 兜底"，引用本裁定。第二期（待施工）pre-merge
-    拓扑硬阻断——在 session_worktree._pre_merge_gate_check 注册 PRE-MERGE-TOPO-CHECK
-    gate，subprocess 调 check_blueprint_code_alignment.py --strict，HIGH drift 阻断
-    merge（非 commit，避免 DB 依赖）。第三期（可选长期）commit-time 轻量预检——
-    depgraph YAML 镜像 + commit gate 检查 [DEPENDENCIES] 头部声明在镜像中存在。
-  fix_phase: 第一期已完成（文档诚实化）；第二期待施工（pre-merge gate）
-  status: decided
+    为"君子协定 + post-merge reconciler 兜底"，引用本裁定。第二期（已完成 2026-07-17）
+    pre-merge 拓扑硬阻断——在 session_worktree._pre_merge_gate_check 集成
+    _run_pre_merge_topo_check，subprocess 调 MAIN 副本 check_blueprint_code_alignment.py
+    --json --scan-root <worktree>，扫描 session 分支 src/zephyr，HIGH drift
+    （ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge；LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍
+    （与 L1 当前语义一致，post-merge reconciler 兜底）。机制要点（与原计划差异）：
+    (1) 用 --scan-root 而非 --strict——checker 无 --strict 参数，默认模式已 HIGH→exit 1
+    阻断，--json + 解析过滤实现「仅阻断 session 引入的 HIGH」；(2) 运行 MAIN 副本 checker
+    而非 worktree 副本——config/.env.postgres 被 gitignore，worktree 无 DB 配置会导致
+    depgraph_module_ids 为空误报 ORPHAN，MAIN 副本有 DB 配置，--scan-root 仅重定向代码扫描；
+    (3) 过滤到 session 变更文件（rel_files）——仅阻断 session 自身引入的 HIGH drift，不阻断
+    预存漂移；(4) 降级策略——checker 缺失 fail-closed 阻断，DB 不可用/超时/JSON 解析失败
+    fail-open 放行（DB 不可用时无法可靠拓扑检查，post-merge reconciler 兜底）。第三期
+    （可选长期）commit-time 轻量预检——depgraph YAML 镜像 + commit gate 检查
+    [DEPENDENCIES] 头部声明在镜像中存在。
+  fix_phase: 第一期已完成（文档诚实化）；第二期已完成（pre-merge 拓扑硬阻断）；第三期待定（commit-time 轻量预检，可选长期）
+  status: in_progress
   related_adjudication: 遗留项#1治本
+  created: '2026-07-17'
+  last_updated: '2026-07-17'
+
+# --- #ARCH-BENCH-LEAK-001: 周期 benchmark 线程泄漏 + 空 JSONL 文件泄漏治本 ---
+- issue_id: '#ARCH-BENCH-LEAK-001'
+  title: 周期 benchmark 线程无停止机制泄漏 + 空 profiles 写零字节 JSONL 治本
+  severity: P1高
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    data/model_profiles/ 下发现 1911 个零字节 benchmark_*.jsonl 文件（2026-06-23
+    单日 1Hz 频率生成）。双重根因：
+    (1) 线程泄漏——PipelineOrchestrator.start_periodic_profile() 原实现为
+        while True + time.sleep 无限循环，无 stop 标志、无线程引用、无 shutdown()，
+        线程一旦启动无法停止。测试/长驻进程场景下泄漏为 1Hz 写盘循环，进程不退出
+        文件持续累积。
+    (2) 空写入——write_benchmark_results() 对空 profiles 列表仍创建文件
+        （tmp 文件 + os.replace 原子写入 0 行），产生零字节 JSONL。空文件无消费
+        价值（漂移检测 detect_drift 需 ≥2 条记录，router 读空文件返回 0），且
+        benchmark_date 排序时会遮蔽最新有效结果。
+
+    裁定（三层治本）：
+    (1) 线程生命周期四要素补全——start_periodic_profile() 启动 → 周期运行 →
+        漂移检测维护 → shutdown() 停止。新增 _periodic_stop_flag 停止标志 +
+        _periodic_thread 线程引用 + stop_periodic_profile() 请求停止 +
+        shutdown(timeout) join 回收（daemon 属性兜底随进程退出）。
+        while True 改为 while not self._periodic_stop_flag，sleep 后二次检查
+        标志位避免退出延迟。M10 注释同步更新说明四要素完整。
+    (2) 空 profiles 契约——两个 results_writer.py（model_profiling/ 与
+        model_profiling/pipeline_routing/ 副本）write_benchmark_results() 入口
+        检查 not profiles → 跳过写入返回 ""。测试 test_empty_profiles 同步更新
+        断言 output_path == "" 且无文件生成。
+    (3) 测试隔离红线——tests/pipeline/test_pipeline_orchestrator_auto.py 周期
+        线程测试结尾必须 orch.shutdown(timeout=2.0) 并断言 _periodic_thread is None，
+        防止测试泄漏线程写盘污染生产路径 data/model_profiles/。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - AI 写周期线程必须四要素完整（启动/运行/维护/关闭），缺 shutdown = 文件泄漏
+      温床。本裁定作为周期线程类代码的审查标杆。
+    - 写盘函数对空结果集必须 fail-silent（跳过），禁止"创建文件再写 0 行"的
+      惯性思维——文件系统产物即契约，空文件是负资产。
+    - 存量 1911 个零字节文件已物理删除（git D 状态随本提交入库）。
+  impact:
+  - src/zephyr/integration/pipeline_orchestrator.py（_periodic_stop_flag/_periodic_thread/stop_periodic_profile()/shutdown() + M10 注释更新）
+  - src/zephyr/intelligence/model_profiling/results_writer.py（空 profiles 跳过写入）
+  - src/zephyr/intelligence/model_profiling/pipeline_routing/results_writer.py（空 profiles 跳过写入，副本同步）
+  - tests/model/test_results_writer.py（test_empty_profiles 契约更新）
+  - tests/pipeline/test_pipeline_orchestrator_auto.py（周期测试 shutdown 清理 + patch 路径修正）
+  - data/model_profiles/benchmark_*.jsonl（1911 个零字节文件删除）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-BENCH-LEAK-001 登记）
+  fix_phase: 已完成
+  status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
