@@ -4042,13 +4042,9 @@ creation_tokens:
     created_by: "session-sess-44448-20260706204224"
     capability: "event_bus"
 
-  # --- red_blue_validator re-export shim + constitution-registry（2026-07-17 裁定#18 G10+import_time）---
+  # --- red_blue_validator re-export shim（2026-07-17 裁定#18 G10+import_time；2026-07-18 多真源消除：删除连字符 YAML 副本条目）---
   - file: "src/zephyr/red_blue_validator/__init__.py"
     token: "auto-red-blue-validator-shim-20260717"
-    created_by: "session-sess-2088-20260717162624"
-    capability: "adversarial_validation"
-  - file: "src/zephyr/red-blue-validator/_constitution-registry.yaml"
-    token: "auto-constitution-registry-hyphen-20260717"
     created_by: "session-sess-2088-20260717162624"
     capability: "adversarial_validation"
 

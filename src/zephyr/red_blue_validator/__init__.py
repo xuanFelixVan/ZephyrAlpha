@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md
+# [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md
 # [MODULE] zephyr.red_blue_validator
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.adversarial_validation
@@ -12,10 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ImportError if adversarial_validation unavailable
 # [TESTS] tests/audit/test_audit_red_blue_e2e.py
-# [A_module] module_id=MOD-SEC-red_blue_validator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# 治本（裁定#18）：测试契约 (test_audit_red_blue_e2e.TestSteadyStateE2E) 直接调用
-# _import_time("zephyr.red_blue_validator")，需要该包可导入。本文件为 re-export shim，
+# 治本（裁定#18 + 2026-07-18 表头修正）：测试契约 (test_audit_red_blue_e2e.TestSteadyStateE2E)
+# 直接调用 ss._import_time("zephyr.red_blue_validator")，需要该包可导入。本文件为 re-export shim，
 # 从 zephyr.security.adversarial_validation 重新导出关键符号。
 """red_blue_validator — re-export shim for zephyr.security.adversarial_validation.
 

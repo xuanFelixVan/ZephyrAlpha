@@ -154,8 +154,9 @@ class TestConstitutionGuardE2E:
             REPO_ROOT
             / "src"
             / "zephyr"
-            / "red-blue-validator"
-            / "_constitution-registry.yaml"
+            / "security"
+            / "adversarial_validation"
+            / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path)
         articles = guard.load()
@@ -174,8 +175,9 @@ class TestConstitutionGuardE2E:
             REPO_ROOT
             / "src"
             / "zephyr"
-            / "red-blue-validator"
-            / "_constitution-registry.yaml"
+            / "security"
+            / "adversarial_validation"
+            / "_constitution_registry.yaml"
         )
         with GateEngine() as ge:
             guard = ConstitutionGuard(registry_path=registry_path, gate_engine=ge)
@@ -191,8 +193,9 @@ class TestConstitutionGuardE2E:
             REPO_ROOT
             / "src"
             / "zephyr"
-            / "red-blue-validator"
-            / "_constitution-registry.yaml"
+            / "security"
+            / "adversarial_validation"
+            / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()
@@ -246,8 +249,9 @@ class TestConstitutionGuardE2E:
             REPO_ROOT
             / "src"
             / "zephyr"
-            / "red-blue-validator"
-            / "_constitution-registry.yaml"
+            / "security"
+            / "adversarial_validation"
+            / "_constitution_registry.yaml"
         )
         guard = ConstitutionGuard(registry_path=registry_path, gate_engine=None)
         guard.load()

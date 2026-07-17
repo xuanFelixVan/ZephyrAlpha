@@ -684,7 +684,7 @@ SYS-MASTER-001 (本蓝图, Level 0)
 | Audit Orchestrator | MOD-INF-027 | 100% | 全域审计调度编排 | src/zephyr/audit-orchestrator/ | 26/26 文件已实现 |
 | Semantic Auditor | MOD-INF-028 | 100% | 语义级审计校验 | src/zephyr/semantic-auditor/ | 22/26 文件已实现 |
 | Orphan Judge | MOD-INF-029 | 100% | 资产生死判定引擎 | src/zephyr/orphan-judge/ | 25/25 文件已实现 |
-| Red-Blue Validator | MOD-INF-030 | 0% | 治理规则混沌工程引擎 | `src/zephyr/red-blue-validator/` | 空壳 |
+| Red-Blue Validator | MOD-INF-030 | partially | 治理规则混沌工程引擎 | `src/zephyr/security/adversarial_validation/` | 部分实现 |
 | Auto Fix Engine | MOD-INF-031 | 0% | 全链路自愈执行系统 | —（代码在code_dedup_engine/） | 空壳 |
 | Resource Optimization Engine | MOD-RESOURCE_OPTIMIZATION_ENGINE | 50% | 资源优化引擎 | `src/zephyr/lifecycle_manager/` | 部分实现 |
 | Behavioral Auditor | MOD-INF-033 | 0% | AI行为边界审计引擎 | — | 空壳 |

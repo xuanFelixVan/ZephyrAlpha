@@ -545,7 +545,7 @@ class GlobalAuditReport(BaseModel):
 | MOD-INF-028 SemanticAuditor | 必须 | 语义审计 peer 服务 | v4.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` |
 | MOD-INF-033 BehavioralAuditor | 必须 | 行为审计 peer 服务 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\behavioral-auditor\blueprint.md` |
 | MOD-INF-029 OrphanJudge | 必须 | 孤儿判定三决策树 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\orphan-judge\blueprint.md` |
-| MOD-INF-030 RedBlue Validator | 必须 | 红白对抗验证 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red-blue-validator\blueprint.md` |
+| MOD-INF-030 RedBlue Validator | 必须 | 红白对抗验证 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\red_blue_validator\blueprint.md` |
 | MOD-INF-031 AutoFix Engine | 必须 | 修复执行 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-fix-engine\blueprint.md` |
 | MOD-DATABASE Database v3.0 | 必须 | get_depgraph_pg_connection()（PG）+ get_db_connection()（SQLite）+ WriteBatcher（暂缓待 L 级） | v3.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\database\blueprint.md` |
 | MOD-INF-023 Drift Detector | 可选 | 漂移信号 | v1.0+ | `D:\ZephyrAlpha\docs\03_modules\_infra_ops\drift-detector\blueprint.md` |
