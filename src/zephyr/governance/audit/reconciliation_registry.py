@@ -101,6 +101,7 @@ __all__ = [
     "make_gate_inventory_sync_reconciler",
     "make_gate_registry_sync_reconciler",
     "make_tmp_cleanup_reconciler",
+    "make_worktree_lifecycle_reconciler",
     "scan_and_archive_working_docs",
 ]
 
