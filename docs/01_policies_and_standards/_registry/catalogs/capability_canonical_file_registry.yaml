@@ -4049,18 +4049,6 @@ creation_tokens:
     created_by: "session-sess-29992-20260706143221"
     capability: "architecture_debt_scanner"
 
-  # --- 异常债务扫描器（Phase 2 阶段0，5.135/5.168 违规清单生成）---
-  - file: "scripts/governance/scan_exception_debt.py"
-    token: "auto-scan-exception-debt-20260717"
-    created_by: "session-sess-36852-20260717130749"
-    capability: "exception_debt_scanner"
-
-  # --- 5.135 批量治标清零脚本（Phase 2 阶段0，为 except Exception 行添加 noqa 标记）---
-  - file: "scripts/governance/batch_fix_5135.py"
-    token: "auto-batch-fix-5135-20260717"
-    created_by: "session-sess-44296-20260717151910"
-    capability: "exception_debt_batch_fixer"
-
   # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
   - file: "scripts/governance/d7_code/check_any_abuse.py"
     token: "auto-check-any-abuse-20260706"
