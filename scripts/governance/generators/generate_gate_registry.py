@@ -55,7 +55,7 @@ args:
 warn_only: false
 description: >
   从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。
-  对标 §6.16 静态清单自动生成铁律。
+  对标 §6.2 静态清单自动生成铁律。
 """
 
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"
