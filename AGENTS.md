@@ -380,6 +380,18 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - **`session_logs/`**：Session Log 真源目录（snake_case），与 `session-logs/`（kebab-case，2026-07-05 AI-03 审计已删除）真源唯一；新 session yaml 落盘格式 `session_logs/YYYY/MM/session-YYYYMMDD-NNN.yaml`。
 - **`_journals/`**：AI 行为日志（`skill_telemetry.jsonl` / `skill_transitions.jsonl`），`.gitignore` 第 190 行整目录忽略，运行时写入不入库。
 
+### 6.2 静态清单自动生成铁律（GATE-21 自动化执行层）
+
+任何"条目列表 + 计数"性质的清单文件**必须**由生成器自动产出（Type A：从代码/配置派生）或以 schema 为输入（Type B），**禁止手工维护条目**——手工维护必然与真源漂移。本铁律原以 §6.16 引用（断头引用，§6 下并不存在 §6.16），2026-07-17 治本补建为 §6.2 并收敛全部引用。
+
+**覆盖清单（自动生成真源 → 派生缓存，单向）**：
+- `docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml`（门禁登记表）—— 真源三源合并：`.pre-commit-config.yaml`（pre-commit hooks）+ `src/zephyr/gov_enforcement/commit_gates/*.py`（CommitGate GateSpec 声明）+ `MANUAL_GATES`（已合并/退役门禁重定向锚点）。生成器：[`scripts/governance/generators/generate_gate_registry.py`](file:///d:/ZephyrAlpha/scripts/governance/generators/generate_gate_registry.py)。`total_gates` 由 [`scripts/context/generate_architecture_context.py`](file:///d:/ZephyrAlpha/scripts/context/generate_architecture_context.py) 消费为 AI 架构上下文数据源。
+- `scripts/governance/script_manifest.yaml`（脚本清单）—— 真源：`scripts/**` 下 `.py` 文件头部 `[BLUEPRINT]`/`__manifest__` 块。生成器：[`scripts/governance/generators/generate_script_manifest.py`](file:///d:/ZephyrAlpha/scripts/governance/generators/generate_script_manifest.py)。post-commit 由 GATE-MANIFEST reconciler 自动重生。
+
+**自动化执行层**：[`scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py)（GATE-21）顺序运行全部生成器 `--check` 模式，自动生成版 vs 磁盘版任何不一致 → 硬阻断（exit 1）。生成器 `import zephyr.*` 需 `src/` 在 `PYTHONPATH`——validator 自举 `sys.path` 含 `src/` 并向子进程注入 `PYTHONPATH=src`，不依赖调用方环境。
+
+**修复漂移**：运行对应生成器（不带 `--check`）重新生成，例如 `python scripts/governance/generators/generate_gate_registry.py`。
+
 ## 7. 代码规范
 
 - Python >=3.12, ruff lint, pydantic v2
@@ -771,7 +783,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 - **查 DB 数据** → `python scripts/governance/extract_depgraph.py --help`（场景速查表在 epilog）
 - **改 DB 节点/路径** → `python scripts/governance/apply_depgraph.py --help`（35+ 子命令）
-- **批量改 DB（多 op 原子事务）** → `python scripts/governance/apply_depgraph.py --batch changes.json`（先 `--dry-run` 预览）。op 清单运行 `--list-ops` 查看（从 `_DOMAIN_OPS`/`_NODE_OPS` 注册表自动派生，真源唯一——禁止手工同步到 docstring/AGENTS.md，§6.16 铁律）；所有 op 共享单一 PostgreSQL 事务，全部成功才 commit，任一失败全部 rollback。批量重命名域 ID 时**禁止**手写 `_tmp_batch_rename.py` 调 `--rename-domain` 单命令循环（失去原子性，部分失败留半成品数据）。
+- **批量改 DB（多 op 原子事务）** → `python scripts/governance/apply_depgraph.py --batch changes.json`（先 `--dry-run` 预览）。op 清单运行 `--list-ops` 查看（从 `_DOMAIN_OPS`/`_NODE_OPS` 注册表自动派生，真源唯一——禁止手工同步到 docstring/AGENTS.md，§6.2 铁律）；所有 op 共享单一 PostgreSQL 事务，全部成功才 commit，任一失败全部 rollback。批量重命名域 ID 时**禁止**手写 `_tmp_batch_rename.py` 调 `--rename-domain` 单命令循环（失去原子性，部分失败留半成品数据）。
 - **查哪些表不能手写** → `python scripts/governance/sync_yaml_to_depgraph.py --list-readonly-tables`
 - **文件结构变更后同步 DB** → 自动完成（GitCommitGateway post-commit GATE-PATH-TREE reconciler，无需手动）
 - **DB 变更后重生域文档** → 自动完成（GitCommitGateway post-commit GATE-REGENERATE reconciler（含原 DOMAIN-DOC 功能），无需手动）

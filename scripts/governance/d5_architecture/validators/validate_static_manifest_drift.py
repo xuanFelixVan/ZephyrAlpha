@@ -13,80 +13,80 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""Module docstring — see module-level docstring for details."""
-
-from __future__ import annotations
-
-import sys
-from pathlib import Path
-
-_SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-
-from _shared.encoding import ensure_utf8_stdout
-
-ensure_utf8_stdout()
-#!/usr/bin/env python3
 """
-GATE-19: validate_static_manifest_drift.py
-"""
+validate_static_manifest_drift.py — GATE-21 静态清单漂移阻断
 
-__manifest__ = """
-args:
-- {flag: --check, type: bool, description: "only detect drift (pre_commit mode)"}
-description: "run all generators --check, hard-block any drift between auto-generated vs disk. Anchored to AGENTS.md section 6.16"
-dimensions:
-- D5
-priority: P0
-timeout_seconds: 30
-warn_only: false
-"""
+顺序运行所有静态清单生成器的 --check 模式。自动生成版与磁盘版任何不一致
+均触发硬失败（exit 1）。
 
-"""
-Runs all static-manifest generators in --check mode.
-Any mismatch between auto-generated version and disk version
-triggers hard failure (exit 1).
+权威依据：AGENTS.md §6.2 静态清单自动生成铁律——任何"条目列表 + 计数"清单
+必须由生成器产出（Type A：从代码/配置派生）或以 schema 为输入（Type B），
+禁止手工维护条目（手工维护必然与真源漂移）。
 
-Authority: AGENTS.md section 6.16 -- any file whose primary content
-is 'entry list + count' must be auto-generated (Type A) or schema input (Type B).
+检查清单：
+  1. script_manifest.yaml — via generate_script_manifest.py --check
+  2. gate_registry.yaml   — via generate_gate_registry.py --check
 
-Checks:
-  1. script_manifest.yaml -- via generate_script_manifest.py --check
-  2. gate_registry.yaml    -- via generate_gate_registry.py --check
+治本（2026-07-17）：
+  - 清理代码退化结构（双 docstring / 重复 import / 游离 shebang / __manifest__ 块）
+  - CHECKS 补齐 gate_registry.yaml（原仅 script_manifest.yaml，漏检门禁登记表漂移）
+  - 输出消息 GATE-19 → GATE-21（2026-06-30 簇3合并重命名后消息未同步）
+  - §6.16 断头引用 → §6.2（AGENTS.md 原无 §6.16，本次治本补建 §6.2 并收敛引用）
+  - 自举 sys.path 含 src/ + 子进程注入 PYTHONPATH=src，消除对调用方环境的依赖
+    （原 validator 在未设 PYTHONPATH=src 的环境下崩溃 ModuleNotFoundError: No module named 'zephyr'）
 
 Usage:
     python validate_static_manifest_drift.py --check
 """
 
-import sys
-from pathlib import Path
+from __future__ import annotations
 
-_SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+# 自举 sys.path（顺序敏感）：
+#   1. scripts/governance/ —— import _shared.*
+#   2. <repo_root>/src      —— _shared.constants 内部 import zephyr.*（治本：原缺此行）
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists())
+_REPO_ROOT = _GOV_DIR.parent.parent  # scripts/governance -> scripts -> <repo_root>
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
+_SRC_DIR = _REPO_ROOT / "src"
+if str(_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(_SRC_DIR))
 
-SCRIPTS_DIR = Path(__file__).resolve().parents[1]
-GENERATORS_DIR = SCRIPTS_DIR.parent / "generators"
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
+from _shared.encoding import ensure_utf8_stdout  # noqa: E402
+
+ensure_utf8_stdout()
+
+# 子进程环境：生成器 import _shared.constants → import zephyr，需 src/ 在 PYTHONPATH。
+# 治本：原 subprocess.run 未传 env，子进程在未设 PYTHONPATH=src 的环境下崩溃。
+_pp_parts = [str(_SRC_DIR)]
+if os.environ.get("PYTHONPATH"):
+    _pp_parts.append(os.environ["PYTHONPATH"])
+_SUBPROCESS_ENV = {**os.environ, "PYTHONPATH": os.pathsep.join(_pp_parts)}
+
+GENERATORS_DIR = _GOV_DIR / "generators"
 
 CHECKS = [
     {
         "name": "script_manifest.yaml",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_script_manifest.py"), "--check"],
     },
+    {
+        "name": "gate_registry.yaml",
+        "cmd": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py"), "--check"],
+    },
 ]
 
 
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
+    # --check 是唯一模式（pre-commit / 手动调用均传 --check）；忽略其他参数。
     failures = []
     for check in CHECKS:
         result = subprocess.run(
@@ -94,7 +94,8 @@ def main() -> None:
             capture_output=True,
             text=True,
             encoding="utf-8",
-            cwd=str(SCRIPTS_DIR.parent.parent),
+            env=_SUBPROCESS_ENV,
+            cwd=str(_REPO_ROOT),
         )
         if result.returncode != 0:
             msg = (result.stdout + result.stderr).strip()
@@ -103,13 +104,15 @@ def main() -> None:
             print(f"PASS [{check['name']}]: {result.stdout.strip()}")
 
     if not failures:
-        print("\nGATE-19 PASS: all static manifests are consistent with their sources.")
+        print("\nGATE-21 PASS: all static manifests are consistent with their sources.")
         sys.exit(EXIT_PASS)
 
-    print(f"\nGATE-19 FAIL: {len(failures)} static manifest(s) have drifted:\n")
+    print(f"\nGATE-21 FAIL: {len(failures)} static manifest(s) have drifted:\n")
     for f in failures:
         print(f"  - {f}")
-    print("\nFix: cd D:\\ZephyrAlpha && python scripts/governance/generators/generate_script_manifest.py")
+    print("\nFix: 运行对应生成器（不带 --check）重新生成，例如：")
+    print("  python scripts/governance/generators/generate_script_manifest.py")
+    print("  python scripts/governance/generators/generate_gate_registry.py")
     sys.exit(EXIT_FINDINGS)
 
 

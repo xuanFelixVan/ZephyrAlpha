@@ -508,19 +508,19 @@ repos:
 
       # ── GATE-NO-PURE-SHIM 已合并到 GATE-SSOT-CODE（见上 gate-ssot-code）──
 
-      # ── GATE-21: 静态清单漂移阻断（AGENTS.md §6.16 自动化执行层）──
-      # 权威依据：AGENTS.md §6.16 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
+      # ── GATE-21: 静态清单漂移阻断（AGENTS.md §6.2 自动化执行层）──
+      # 权威依据：AGENTS.md §6.2 静态清单自动生成铁律——任何"条目+计数"清单必须由生成器产出
       # Session 20260504：三条AI架构铁律落地 → 新建 validate_static_manifest_drift.py + 接入 pre-commit
       # 2026-06-30 簇3合并：GATE-19(L308 静态清单漂移) 重命名为 GATE-21（消除与 L222 测试结构 GATE-19 同名冲突）
       - id: gate-21-manifest-drift
-        name: "GATE-21: 静态清单漂移阻断（§6.16）"
+        name: "GATE-21: 静态清单漂移阻断（§6.2）"
         entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
         args: ["--check"]
         language: system
         pass_filenames: false
         always_run: false
         files: "^(scripts/governance/script_manifest\\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\\.yaml|\\.pre-commit-config\\.yaml)$"
-        description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.16 静态清单自动生成铁律"
+        description: "运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.2 静态清单自动生成铁律"
 
       # ── GATE-20: 裸调 LLM API 检测（RULE-LSG-001 强制执行层 + COND-30 存量）──
       # 权威依据：RULE-LSG-001 — 所有 LLM 调用必须经过 LSGSecurityGateway
