@@ -121,7 +121,7 @@ def make_data_task_completeness_gate() -> GateSpec:
 
     Returns:
         GateSpec(gate_id="DATA-TASK-COMPLETENESS", priority=78)。
-        priority=78——在 ARCH-REFERENCE(75) 之后、TEST-SOURCE-CONSISTENCY(96) 之前。
+        priority=78——在 BLUEPRINT-FORMAT(77) 之后、VOCAB-HARDCODE(80) 之前。
         始终返回 passed=True（warn 级，不阻断 commit）。
     """
 
