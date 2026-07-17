@@ -22,7 +22,9 @@
 
 import pytest
 
-from zephyr.shared.foundation.migration import (
+# 治本：从真源导入（非 shim）。shim zephyr.shared.foundation.migration 用 import * 仅 re-export 公共符号，
+# 私有 _find_path/_register_bidirectional 未被重新导出。真源在 utils/migration.py。
+from zephyr.shared.utils.migration import (
     MIGRATIONS,
     MigrationError,
     _find_path,

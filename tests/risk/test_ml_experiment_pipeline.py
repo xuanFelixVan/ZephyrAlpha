@@ -34,14 +34,19 @@ class TestPipelineStage:
 
 
 class TestPipelineError:
+    # 治本（2026-07-17）：PipelineError 已 SSoT 化到 zephyr.shared.foundation.errors（5.76.1 修复）。
+    # 旧签名 PipelineError(stage, message, detail=None) + .stage/.detail 属性已废弃。
+    # 新签名 PipelineError(message, *, details=None, error_code=None) + .message/.details/.error_code 属性。
+    # stage 信息现编码到 message 字符串中（本模块不再 raise PipelineError，仅 re-export）。
     def test_instantiation(self):
-        err = PipelineError(PipelineStage.INFERENCE_EXEC, "test")
-        assert err.stage == PipelineStage.INFERENCE_EXEC
+        err = PipelineError("[inference_exec] test")
+        assert "[inference_exec]" in err.message
         assert "[inference_exec]" in str(err)
+        assert err.error_code == "ZA-SH-0007"
 
     def test_with_detail(self):
-        err = PipelineError(PipelineStage.MODEL_DISCOVERY, "fail", detail={"x": 1})
-        assert err.detail == {"x": 1}
+        err = PipelineError("[model_discovery] fail", details={"x": 1})
+        assert err.details == {"x": 1}
 
 
 class TestExperimentResult:

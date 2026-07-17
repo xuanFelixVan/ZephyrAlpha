@@ -19,7 +19,7 @@ test_doctype_missing_warn : 缺 doc_type, warn-only → 无 issues（WARN 输出
 test_doctype_missing_strict : 缺 doc_type, strict → issues 含 "missing required field 'doc_type'"
 test_doctype_invalid_strict : 非法 doc_type, strict → issues 含 "invalid doc_type="
 test_doctype_deprecated_warn : 废弃值 warn-only → 无 issues（WARN 含迁移目标）
-test_generic_loader       : _load_vocab_values("ttl_vocabulary.yaml") 回归验证
+test_generic_loader       : load_vocabulary_values("ttl_vocabulary.yaml") 回归验证
 """
 
 from __future__ import annotations
@@ -28,11 +28,14 @@ from pathlib import Path
 
 import pytest
 
+# 治本：_load_deprecated_values/load_vocabulary_values 已重构为共享 util（D-D-05：禁止复制 _load_xxx）。
+# 新函数 load_vocabulary_values/load_vocabulary_deprecated_map 在 _shared.yaml_utils，
+# 由 check_frontmatter_metadata 模块级 re-export，故从同一模块导入。
 from scripts.governance.d3_metadata.check_frontmatter_metadata import (
     _FIELD_RULES,
     _check_file,
-    _load_deprecated_values,
-    _load_vocab_values,
+    load_vocabulary_deprecated_map,
+    load_vocabulary_values,
 )
 
 
@@ -43,7 +46,7 @@ def vocab_cache():
     """预加载所有字段的词表缓存。"""
     cache = {}
     for field, rule in _FIELD_RULES.items():
-        cache[field] = _load_vocab_values(rule["vocab_file"])
+        cache[field] = load_vocabulary_values(rule["vocab_file"])
     return cache
 
 
@@ -53,8 +56,8 @@ def deprecated_cache():
     cache = {}
     for field, rule in _FIELD_RULES.items():
         if "deprecated_key" in rule:
-            cache[field] = _load_deprecated_values(
-                rule["vocab_file"], rule["deprecated_key"]
+            cache[field] = load_vocabulary_deprecated_map(
+                rule["vocab_file"], deprecated_key=rule["deprecated_key"]
             )
     return cache
 
@@ -138,13 +141,13 @@ def test_doctype_deprecated_warn(tmp_path, vocab_cache, deprecated_cache, capsys
 # ── 通用加载器回归测试 ──
 
 def test_generic_loader_ttl_regression():
-    """_load_vocab_values("ttl_vocabulary.yaml") 返回与旧 _load_ttl_values() 相同的集合。
+    """load_vocabulary_values("ttl_vocabulary.yaml") 返回与旧 _load_ttl_values() 相同的集合。
 
     旧 _load_ttl_values(): {v["value"] for v in data.get("values", [])}
-    新 _load_vocab_values(): 支持 dict（entry.get("value")）和 str 两种格式
+    新 load_vocabulary_values(): 支持 dict（entry.get("value")）和 str 两种格式
     ttl_vocabulary.yaml 使用 dict 格式，两者结果应一致。
     """
-    values = _load_vocab_values("ttl_vocabulary.yaml")
+    values = load_vocabulary_values("ttl_vocabulary.yaml")
     # ttl_vocabulary.yaml 的合法值至少包含 permanent 和 task_bound
     assert "permanent" in values
     assert "task_bound" in values
@@ -153,8 +156,8 @@ def test_generic_loader_ttl_regression():
 
 
 def test_generic_loader_doctype():
-    """_load_vocab_values("doc_type_vocabulary.yaml") 返回 doc_type 合法值。"""
-    values = _load_vocab_values("doc_type_vocabulary.yaml")
+    """load_vocabulary_values("doc_type_vocabulary.yaml") 返回 doc_type 合法值。"""
+    values = load_vocabulary_values("doc_type_vocabulary.yaml")
     # 验证几个已知合法值
     assert "policy" in values
     assert "policy" in values

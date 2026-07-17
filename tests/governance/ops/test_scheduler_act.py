@@ -13,13 +13,15 @@
 
 from unittest.mock import MagicMock
 
-from zephyr.ops.detectors.guard_oscillation_detector import GuardOscillationDetector
-from zephyr.ops.diagnosers.context_window_pressure_manager import ContextWindowPressureManager
-from zephyr.ops.diagnosers.self_bottleneck_detector import SelfBottleneckDetector
-from zephyr.ops.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
-from zephyr.ops.resilience.graceful_degradation_planner import GracefulDegradationPlanner
-from zephyr.ops.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
-from zephyr.ops.scheduler_act import ActPhaseHandler, ActResult
+# 治本：zephyr.ops 已迁移到 zephyr.feedback_loop（ARCH-032，ops/ 74 文件迁移到 trading/feedback_loop/）。
+# 子包结构重组：detectors.guard/、diagnosers.reliability/、diagnosers.health/ 等。
+from zephyr.feedback_loop.detectors.guard.guard_oscillation_detector import GuardOscillationDetector
+from zephyr.feedback_loop.diagnosers.reliability.context_window_pressure_manager import ContextWindowPressureManager
+from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import SelfBottleneckDetector
+from zephyr.feedback_loop.evolution.self_modification_rate_limiter import SelfModificationRateLimiter
+from zephyr.feedback_loop.resilience.graceful_degradation_planner import GracefulDegradationPlanner
+from zephyr.feedback_loop.resilience.self_api_throttle_defense import SelfAPIThrottleDefense
+from zephyr.feedback_loop.scheduler_act import ActPhaseHandler, ActResult
 
 
 class TestActResult:
