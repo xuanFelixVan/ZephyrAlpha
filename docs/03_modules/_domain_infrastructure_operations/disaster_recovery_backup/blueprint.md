@@ -39,8 +39,8 @@ references: []
 codification_level: L2
 codification_at: "2026-07-09"
 responsibility_domain: 
-build_status: planned
-design_maturity: design
+build_status: generated
+design_maturity: prototype
 ---
 > module_id: MOD-INF-043 | version: 1.2.0 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: planned
@@ -384,14 +384,19 @@ sqlite3 data\databases\session_continuity.db ".backup D:\tmp_db_dumps\session_ba
 # 检测服务运行
 $ch = Test-NetConnection -ComputerName localhost -Port 9000 -InformationLevel Quiet
 if ($ch) {
-    # 逐表导出为Parquet（按表分区，恢复灵活）
-    clickhouse-client --query="BACKUP DATABASE c1_market TO Disk('backups', 'c1_market.zip')"
+    # 原生 BACKUP 语句（21.8+，在线、MVCC一致），输出必须落到 $DumpDir 供 restic 捕获
+    # File() 路径在 CH 服务端解析：docker 部署需把 D:\tmp_db_dumps 卷映射到容器内同路径
+    clickhouse-client --query="BACKUP DATABASE c1_market TO File('$DumpDir/c1_market_yyyymmdd.zip')"
+    # 验证 zip 存在且非空（机构实践：备份必须验证，>60% 恢复失败源于跳过验证）
 } else {
-    Write-Warning "ClickHouse未运行，跳过dump（业务数据可从百度云包重建）"
+    Write-Warning "ClickHouse未运行，跳过dump"
 }
 ```
 
-- 服务未运行时warn跳过，不阻断备份（c1_market可从bdpan一次性包重建）
+- **裁定：c1_market 为开箱即用灾备资产**（非"可从bdpan重建"），必须纳入备份
+- 输出必须落 `$DumpDir`：`Disk('backups')` 写到 CH 服务端自有目录，restic 捕获不到（设计漏洞已修复）
+- 备份后验证 zip 存在且非空，失败标记 `failed` 而非静默跳过
+- 服务未运行时warn跳过，不阻断备份
 
 ---
 

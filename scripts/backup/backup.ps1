@@ -160,18 +160,27 @@ $dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$
 Write-OK "SQLite dump: $sqliteOk databases"
 
 # ClickHouse
+# Industry practice (ClickHouse official docs, 21.8+): native BACKUP statement - online,
+# MVCC-consistent. Output MUST land in $DumpDir so restic captures it: Disk('backups') would
+# write to the CH server's own data dir which restic cannot see (fixed via TO File()).
+# Decision: c1_market is a disaster-recovery (out-of-box) asset, not rebuildable-from-bdpan.
 $chPort = 9000
 $chAlive = (Test-NetConnection -ComputerName localhost -Port $chPort -InformationLevel Quiet -WarningAction SilentlyContinue)
 if ($chAlive) {
     $chClient = Get-Command clickhouse-client -ErrorAction SilentlyContinue
     if ($chClient) {
-        try {
-            & clickhouse-client --query="BACKUP DATABASE c1_market TO Disk('backups', 'c1_market_$(Get-Date -Format 'yyyyMMdd').zip')" 2>&1 | Out-Null
-            $dbStatus.clickhouse = @{status="ok"}
+        $chZipName = "c1_market_$(Get-Date -Format 'yyyyMMdd').zip"
+        $chZipPath = "$DumpDir\$chZipName"
+        # File() path resolves on the CH SERVER side: native/WSL deploys use the local path;
+        # docker deploys must volume-map D:\tmp_db_dumps to the same path in the container.
+        $chZipTarget = $chZipPath -replace '\\','/'
+        & clickhouse-client --query="BACKUP DATABASE c1_market TO File('$chZipTarget')" 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0 -and (Test-Path $chZipPath) -and ((Get-Item $chZipPath).Length -gt 0)) {
+            $dbStatus.clickhouse = @{status="ok"; method="BACKUP TO File"; file=$chZipName}
             Write-OK "ClickHouse dump: ok"
-        } catch {
-            $dbStatus.clickhouse = @{status="error"; error=$_.Exception.Message}
-            Write-Warn "ClickHouse dump error: $($_.Exception.Message)"
+        } else {
+            $dbStatus.clickhouse = @{status="failed"; error="exit $LASTEXITCODE or zip missing/empty"}
+            Write-Warn "ClickHouse dump failed (exit $LASTEXITCODE)"
         }
     } else {
         $dbStatus.clickhouse = @{status="skipped"; reason="clickhouse-client not found"}
@@ -179,7 +188,7 @@ if ($chAlive) {
     }
 } else {
     $dbStatus.clickhouse = @{status="skipped"; reason="service down"}
-    Write-Warn "ClickHouse not running (port $chPort), skipping (rebuildable from bdpan)"
+    Write-Warn "ClickHouse not running (port $chPort), skipping"
 }
 
 # -- Stage 3: Restic backup --
