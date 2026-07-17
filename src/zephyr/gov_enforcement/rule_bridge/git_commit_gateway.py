@@ -313,7 +313,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）
-        self._gate_registry.register(make_encoding_gate())  # priority=42 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-closed；40被CLAIM-REQUIRED占用，41预留给DATA-TASK迁移）
+        self._gate_registry.register(make_encoding_gate())  # priority=42 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-open on env error 裁定ARCH-TTL-DOC-001；40被CLAIM-REQUIRED占用，41预留给DATA-TASK迁移）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_unsafe_dict_spread_gate())  # priority=66 warn 级 防复发 5.147.5/5.147.12 **data 直接展开模式（schema 演进会 TypeError，SSoT filter_dataclass_fields 已治本，gate 防新 AI 制造同类债务）
         self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
