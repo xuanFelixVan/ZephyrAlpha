@@ -121,11 +121,29 @@ class InventorySelfMetrics:
             logger.warning("telemetry push_to_facade failed: %s", exc, exc_info=True)
 
 
-TELEMETRY = InventorySelfMetrics()
+# S4-A（2026-07-17）：模块导入零副作用——移除模块级 `TELEMETRY = InventorySelfMetrics()`
+# 急切实例化，改为首次访问时创建。`get_telemetry()` 是唯一创建入口；`TELEMETRY` 名字
+# 通过 PEP 562 `__getattr__` 惰性暴露（保持 `from ... import TELEMETRY` 向后兼容）。
+_TELEMETRY: InventorySelfMetrics | None = None
 
 
 def get_telemetry() -> InventorySelfMetrics:
-    return TELEMETRY
+    """惰性返回 InventorySelfMetrics 单例（首次调用时实例化）。"""
+    global _TELEMETRY
+    if _TELEMETRY is None:
+        _TELEMETRY = InventorySelfMetrics()
+    return _TELEMETRY
+
+
+def __getattr__(name: str):
+    """PEP 562: TELEMETRY 惰性访问（保持 `from ... import TELEMETRY` 向后兼容）。
+
+    asset_inventory/__init__.py 的 _LAZY_IMPORTS 注册表通过 importlib 拉取
+    `telemetry.TELEMETRY` → 触发此 __getattr__ → get_telemetry() 首次创建单例。
+    """
+    if name == "TELEMETRY":
+        return get_telemetry()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 # ============================================================================
