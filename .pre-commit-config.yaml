@@ -561,7 +561,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^AGENTS\\.md$"
-        description: "解析 AGENTS.md §8.2 任务菜单路径引用（§8.2 待补建，当前 SKIP）。warn-only骨架阶段，对标 AI加载路径不可漂移铁律"
+        description: "解析 AGENTS.md 任务菜单路径引用（§8.2 待补建，当前 SKIP）。warn-only骨架阶段，对标 AI加载路径不可漂移铁律"
 
       # ── Handoff: 交接日志（manual stage，按需运行）──
       # 说明：不在 pre-commit 默认阶段运行，避免每次提交刷 handoff 文件。
