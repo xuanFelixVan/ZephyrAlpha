@@ -214,11 +214,64 @@ class TestCrossFileUniqueness:
             "x = 1\n",
             encoding="utf-8",
         )
+        # 候选文件也声明相同 module_id（精确验证治本：必须 [A_*] 头声明才算碰撞）
+        other = tmp_path / "tests/other/test_other.py"
+        other.parent.mkdir(parents=True, exist_ok=True)
+        other.write_text(
+            "# [A_test] module_id: SRC-TST-9999 | layer=test\n"
+            "y = 2\n",
+            encoding="utf-8",
+        )
         passed, detail = gate.check(gw, [str(target)])
         assert not passed
         assert "module_id_collision" in detail
         assert "SRC-TST-9999" in detail
         assert "test_other.py" in detail
+
+    def test_blueprint_reference_not_collision(self, tmp_path, monkeypatch):
+        """test 文件 [BLUEPRINT] 引用源模块 id → 不算碰撞（精确验证治本 ARCH-TTL-DOC-001）。
+
+        场景：test 文件按约定在 [BLUEPRINT] 头引用源模块的 module_id（如
+        MOD-GOV-xxx），但 [A_test] 头声明自己的 SRC-TST-NNNN。git grep -F
+        纯文本搜索会匹配 [BLUEPRINT] 引用，但精确验证应排除——[BLUEPRINT]
+        是引用不是声明。
+        """
+        import zephyr.gov_enforcement.commit_gates.module_id_consistency_gate as mod
+
+        monkeypatch.setattr(mod, "_is_tracked_in_head", lambda gateway, rel: False)
+
+        gw = _make_gateway(tmp_path)
+
+        # mock: git grep 返回源文件（含 [BLUEPRINT] 引用，但 [A_module] 声明不同 id）
+        class _FakeResult:
+            returncode = 0
+            stdout = (
+                "tests/fake/test_current.py\n"
+                "src/zephyr/gov_enforcement/commit_gates/fake_gate.py\n"
+            )
+
+        gw._run_git.return_value = _FakeResult()
+        gate = make_module_id_consistency_gate()
+        target = tmp_path / "tests/fake/test_current.py"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            "# [A_test] module_id: SRC-TST-9999 | layer=test\n"
+            "# [BLUEPRINT] MOD-GOV-fake_gate | docs/...md | §0.1\n"
+            "x = 1\n",
+            encoding="utf-8",
+        )
+        # 源文件：[A_module] 声明 MOD-GOV-fake_gate（≠ SRC-TST-9999），
+        # [BLUEPRINT] 也引用 MOD-GOV-fake_gate（与 test 文件 [BLUEPRINT] 一致）
+        source = tmp_path / "src/zephyr/gov_enforcement/commit_gates/fake_gate.py"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(
+            "# [BLUEPRINT] MOD-GOV-fake_gate | docs/...md | §0.1\n"
+            "# [A_module] module_id=MOD-GOV-fake_gate | layer=module\n"
+            "z = 3\n",
+            encoding="utf-8",
+        )
+        passed, detail = gate.check(gw, [str(target)])
+        assert passed, f"[BLUEPRINT] 引用不应触发碰撞，但: {detail}"
 
     def test_unique_passes(self, tmp_path, monkeypatch):
         """新增文件（不在 HEAD），module_id 唯一 → 通过。"""

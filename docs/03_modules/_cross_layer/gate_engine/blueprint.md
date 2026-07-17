@@ -103,7 +103,7 @@ build_status: planned
 | 10 | adaptive_threshold.py | §3.1 | 自适应阈值——从历史FAIL/PASS数据学习门禁参数调整 | 已实现 | | 本模块 |
 | 11 | gate_integrity_guard.py | §3.1 | 门禁引擎完整性守卫——启动前自检SHA-256+信任根验证 | 已实现 | | 本模块 |
 | 12 | audit_chain_verifier.py | §3.1 | 审计链验证工具——独立重放+哈希链完整性校验 | 已实现 | | 本模块 |
-| 13 | ai_capability_guard.py | §3.1 | AI能力边界守卫——task操作在能力矩阵内 | 已实现 | | 本模块 |
+| 13 | ai_capability_guard.py | §3.1 | AI能力边界守卫——task操作在能力矩阵内（真源 config/ai_capability_matrix.yaml，2026-07-17 AI-02 审计 P2-2 治本） | 已实现 | | 本模块 |
 | 14 | kms/ g1~g5.yaml (5个) | §A.2 | KMS入库/分拣/评估/激活/提取门禁配置 | 已实现 | | 本模块 |
 | 15 | g6-blueprint-compliance.yaml | §A.1 | G6蓝图读取合规门禁 | 已实现 | | 本模块 |
 | 16 | g6-ctr-compliance.yaml | §A.1 | G6 CTR合规门禁 | 已实现 | | 本模块 |
@@ -187,6 +187,7 @@ build_status: planned
 | `commit_gates/ch_batch_size_gate.py` | §0.1 | CH批量写入防回退门禁（CH-BATCH-SIZE，§18.4防复发，AST检测write_result在循环内直接调用） | 已实现 | | 本模块 |
 | `commit_gates/ch_final_gate.py` | §0.1 | ch_writer.query()直接调用阻断门禁（CH-FINAL-GATE，裁定#ARCH-CH-007 B5防复发，强制走ch_reader.query()自动注入FINAL） | 已实现 | | 本模块 |
 | `commit_gates/ch_version_col_gate.py` | §0.1 | CH version列语义误用阻断门禁（CH-VERSION-COL，裁定#ARCH-CH-009防复发，diff检测ReplacingMergeTree非DateTime列作version参数） | 已实现 | | 本模块 |
+| `commit_gates/rename_depgraph_sync_gate.py` | §0.1 | 文件重命名depgraph未同步阻断门禁（RENAME-DEPGRAPH-SYNC，AI-14审计防复发，diff-filter=R检测重命名后depgraph nodes表无新路径记录，priority=39） | 已实现 | | 本模块 |
 | `commit_gates/test_source_consistency_gate.py` | §0.1 | 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178防复发，检测tests/中import的符号在源码是否存在） | 已实现 | | 本模块 |
 | `commit_gates/data_task_completeness_gate.py` | §0.1 | 数据任务完整性warn级门禁（DATA-TASK-COMPLETENESS，提醒新增tasks.yaml任务配置fallback_sources，数据韧性三层机制） | 已实现 | | 本模块 |
 | `commit_gates/capability_consistency_gate.py` | §0.1 | Provider路由-meta一致性门禁（CAP-CONSISTENCY，裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致，priority=101） | 已实现 | | 本模块 |
@@ -1423,7 +1424,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-003-dependency-compliance.yaml` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/mad-004-interface-definability.yaml` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/admission/mad_005_dependency_graph_template.yaml` | ✅ 已实现 | |
-| `src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_enforcement/rule_enforcement/ai_capability_guard.py` | ✅ 已实现 | 真源已迁移 config/ai_capability_matrix.yaml（2026-07-17 AI-02 审计 P2-2 治本）|
 | `src/zephyr/gov_enforcement/rule_enforcement/anti_pattern_guard.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/audit_chain_verifier.py` | ✅ 已实现 | |
 | `src/zephyr/gov_enforcement/rule_enforcement/breaking_change_detector.py` | ✅ 已实现 | |
