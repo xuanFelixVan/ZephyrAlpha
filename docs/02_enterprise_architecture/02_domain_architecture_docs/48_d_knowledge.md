@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 21:37:32
+> 最后更新: 2026-07-17 21:42:41
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -149,16 +149,16 @@ graph TD
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     tests_kb_test_kb_analyze_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_bootstrap_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_freeze_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_embedding_migrate_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_kb_test_kb_gate_task_py -.->|测试依赖 / test_depends| D_GOV_KB
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     tests_kb_test_kb_gate_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
-    tests_kb_test_kb_migration_gate_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_migration_gate_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_kb_test_kb_freeze_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_gate_task_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_integrity_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_graph_validator_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_pipeline_activate_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
