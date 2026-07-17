@@ -259,7 +259,7 @@ def check_code_not_in_blueprint(
                     "type": "CODE_NOT_IN_DEPGRAPH",
                     "severity": "LOW",
                     "file": entry["file"],
-                    "detail": f"代码文件有[BLUEPRINT]头部 {header_modid}，但不在 depgraph 该模块节点列表中（depgraph 可能未更新；若文件曾重命名，请运行 apply_depgraph.py 同步路径——裁定#ARCH-DRIFT-PREVENTION-001 ADP-5）",
+                    "detail": f"代码文件有[BLUEPRINT]头部 {header_modid}，但不在 depgraph 该模块节点列表中（depgraph 可能未更新；若文件曾重命名，请运行 apply_depgraph.py 同步路径——裁定#ARCH-DRIFT-PREVENTION-001 ADP-5）。若为新建文件后首次检查，此为 reconciler 同步暂态滞后，无需人工干预，等待下次 merge 周期自动修复",
                 }
             )
 
