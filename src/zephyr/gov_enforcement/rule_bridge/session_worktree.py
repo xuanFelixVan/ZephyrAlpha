@@ -294,6 +294,61 @@ def session_worktree_sweep(
     return _sweep_stale_worktrees(manager, registry, max_age_minutes=max_age_minutes)
 
 
+def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> dict:
+    """清理 .aidrafts/ 根目录下的孤儿临时脚本（P3 流程治本，2026-07-17）。
+
+    病根：AI 在调研/治本过程中常在 .aidrafts/ 根目录创建 ``_*`` 一次性辅助脚本
+    （如 _commit_adp4_adp5.py / _merge_adp45.py），用完未删则永久残留。P0 曾手工
+    清理 3 个此类孤儿。本 helper 在每次 session_worktree_start 时自动清理 age > 1h
+    的孤儿脚本，消除「治本代码自身成为残留」的递归问题（AI→治本→残留→AI→治本）。
+
+    安全判据：
+    1. 仅扫 .aidrafts/ 根目录（非递归），仅匹配 ``_*`` 前缀文件
+       （非 sess-* worktree 目录——worktree 由 _sweep_stale_worktrees 处理）
+    2. age > max_age_seconds（太新的不动，防误清 AI 正在使用的）
+    3. OSError 静默跳过（清理失败不阻断 start）
+
+    Returns:
+        ``{"deleted": int, "skipped": int, "warnings": list[str]}``
+    """
+    import time as _time
+
+    drafts = root / ".aidrafts"
+    if not drafts.exists():
+        return {"deleted": 0, "skipped": 0, "warnings": []}
+    now = _time.time()
+    deleted = 0
+    skipped = 0
+    warnings: list[str] = []
+    try:
+        for entry in drafts.iterdir():
+            # 仅匹配根目录 _* 文件（非目录，非 sess-* worktree）
+            if entry.is_dir():
+                continue
+            if not entry.name.startswith("_"):
+                continue
+            try:
+                mtime = entry.stat().st_mtime
+            except OSError:
+                skipped += 1
+                continue
+            if (now - mtime) < max_age_seconds:
+                skipped += 1
+                continue
+            try:
+                entry.unlink()
+                deleted += 1
+                logger.info(
+                    "session_worktree orphan cleanup: 删除过期辅助脚本 %s", entry.name,
+                )
+            except OSError as e:
+                warnings.append(f"{entry.name}: 删除异常 {e}")
+                skipped += 1
+    except OSError as e:
+        warnings.append(f".aidrafts 扫描异常: {e}")
+    return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
+
+
 def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
     """治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断 + 逃生通道。
 
@@ -415,6 +470,17 @@ def session_worktree_start(
             )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e, exc_info=True)
+    # 3. 清理 .aidrafts/ 根目录孤儿辅助脚本（P3 流程治本，2026-07-17）
+    #    病根：AI 创建的 _* 一次性脚本用完未删则永久残留。age > 1h 自动清理。
+    try:
+        orphan_r = _cleanup_orphan_draft_scripts(root)
+        if orphan_r.get("deleted") or orphan_r.get("warnings"):
+            logger.info(
+                "session_worktree orphan cleanup: deleted=%s skipped=%s warnings=%s",
+                orphan_r.get("deleted"), orphan_r.get("skipped"), orphan_r.get("warnings"),
+            )
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("session_worktree orphan cleanup 异常（不阻断 start）: %s", e, exc_info=True)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)
