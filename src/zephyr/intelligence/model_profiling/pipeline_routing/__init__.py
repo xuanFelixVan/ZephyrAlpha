@@ -38,9 +38,16 @@ from zephyr.intelligence.model_profiling.pipeline_routing.task_model_learner imp
 # 不再从 model_discovery 重新导出, 避免引入死代码 import
 try:
     from zephyr.intelligence.model_profiling.pipeline_routing import cli  # noqa: F401
+    _HAS_CLI = True
 except ImportError:
-    pass
+    _HAS_CLI = False
 
+# __all__ 治本原则: 只声明实际通过 from...import 导入的符号
+# 历史问题: 旧 __all__ 声明了 capability_passport/exam_orchestrator/exam_test_cases/
+# model_discovery 等模块名,但这些模块位于父目录 model_profiling/ 下,不在本包内,
+# 且本 __init__.py 未 import 它们 -> import * 时 AttributeError
+# 同理 benchmark_suite/results_writer/profiler/task_model_learner 是本包内模块,
+# 但只导入了它们的符号(如 BenchmarkCase),未导入模块本身,不应出现在 __all__
 __all__ = [
     "ALL_BENCHMARK_CASES",
     "CATEGORY_MAP",
@@ -55,13 +62,6 @@ __all__ = [
     "ModelTaskEntry",
     "ModelTaskMatrix",
     "TaskRecommendation",
-    "benchmark_suite",
-    "capability_passport",
-    "cli",
-    "exam_orchestrator",
-    "exam_test_cases",
-    "model_discovery",
-    "profiler",
-    "results_writer",
-    "task_model_learner",
 ]
+if _HAS_CLI:
+    __all__.append("cli")
