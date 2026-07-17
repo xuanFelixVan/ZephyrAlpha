@@ -32,6 +32,7 @@ audit-trail.integrity — MOD-INF-020 · 密码学完整性验证器
 
 from __future__ import annotations
 from zephyr.shared.io.serialization import dumps
+from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT：zephyr.shared.io.paths）
 
 import hashlib
 import hmac
@@ -99,10 +100,15 @@ class MerkleAggregator:
 class IntegrityVerifier:
     def __init__(
         self,
-        event_log_path: Path | str = Path.cwd() / "data" / "audit-trail" / "events.jsonl",
+        event_log_path: Path | str | None = None,
         hmac_key: str = "",
     ) -> None:
-        self._event_log_path = Path(event_log_path)
+        # 治本（裁定#6 路径SSoT）：默认路径必须为绝对路径（项目硬约束"禁止相对路径"），
+        # 真源为 zephyr.shared.io.paths.AUDIT_DATA_DIR。
+        if event_log_path is None:
+            self._event_log_path = AUDIT_DATA_DIR / "events.jsonl"
+        else:
+            self._event_log_path = Path(event_log_path)
         # 修复：原使用 AUDIT_HMAC_KEY 与 writer.py 的 ZEPHYR_AUDIT_HMAC_SECRET 不一致，
         # 导致验证方永远使用空密钥=不验证。统一为 ZEPHYR_AUDIT_HMAC_SECRET。
         if not hmac_key:
@@ -115,7 +121,13 @@ class IntegrityVerifier:
             return {"status": "no_data", "events_checked": 0, "issues": []}
 
         issues: list[str] = []
+        # 治本（裁定#10 双契约并存）：首条事件的 prev 字段接受 "" 或 "0"*64 两种约定。
+        # - writer 生产约定: prev_hash="0"*64 + HMAC(entry_hash)
+        # - legacy 单元约定: prev_entry_hash="" + HMAC(canonical(event \ {entry_hash, hmac_signature}))
+        # 两者安全等价：攻击者无 key 无法伪造任一形式；创世值不承载完整性保证
+        #   （真正的保护来自后续事件的哈希链接）。
         prev_hash = ""
+        genesis_seen = False
         event_count = 0
 
         with open(self._event_log_path, encoding="utf-8") as f:
@@ -127,7 +139,15 @@ class IntegrityVerifier:
                 event = json.loads(line)
 
                 stored_prev = event.get("prev_entry_hash", event.get("prev_hash", ""))
-                if stored_prev != prev_hash:
+                if not genesis_seen:
+                    # 创世哨兵：首条事件允许 "" 或 "0"*64 两种约定
+                    if stored_prev not in ("", "0" * 64):
+                        issues.append(
+                            f"event #{event_count}: genesis prev_hash must be '' or '0'*64, "
+                            f"got={stored_prev[:16]}..."
+                        )
+                    genesis_seen = True
+                elif stored_prev != prev_hash:
                     issues.append(
                         f"event #{event_count}: prev_entry_hash mismatch "
                         f"(expected={prev_hash[:16]}..., got={stored_prev[:16]}...)"
@@ -139,16 +159,8 @@ class IntegrityVerifier:
 
                 if self._hmac_key:
                     stored_hmac = event.get("hmac_signature", "")
-                    if stored_hmac:
-                        verify_event = {k: v for k, v in event.items() if k not in ("hmac_signature", "entry_hash")}
-                        verify_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
-                        expected_hmac = hmac.new(
-                            self._hmac_key,
-                            verify_str.encode("utf-8"),
-                            hashlib.sha256,
-                        ).hexdigest()
-                        if not hmac.compare_digest(expected_hmac, stored_hmac):
-                            issues.append(f"event #{event_count}: HMAC signature mismatch")
+                    if stored_hmac and not self._hmac_matches(event):
+                        issues.append(f"event #{event_count}: HMAC signature mismatch")
 
                 stored_agent_sig = event.get("signature", "")
                 if stored_agent_sig:
@@ -160,6 +172,33 @@ class IntegrityVerifier:
 
         status = "valid" if not issues else "compromised"
         return {"status": status, "events_checked": event_count, "issues": issues}
+
+    def _hmac_matches(self, event: dict[str, Any]) -> bool:
+        """验证 HMAC 签名——治本（裁定#10 双契约并存）：同时支持两种安全等价的签名约定。
+
+        1. writer 生产约定: HMAC-SHA256(key, entry_hash 字符串)
+        2. legacy 单元约定: HMAC-SHA256(key, canonical(event \ {entry_hash, hmac_signature}))
+
+        攻击者无 key 无法伪造任一形式；任一形式通过即视为验证通过。
+        """
+        stored_hmac = event.get("hmac_signature", "")
+        if not stored_hmac:
+            return True
+        # 尝试 writer 生产约定：HMAC over entry_hash 字符串
+        entry_hash_str = event.get("entry_hash", "")
+        if entry_hash_str:
+            expected_over_hash = hmac.new(
+                self._hmac_key, entry_hash_str.encode("utf-8"), hashlib.sha256
+            ).hexdigest()
+            if hmac.compare_digest(expected_over_hash, stored_hmac):
+                return True
+        # 回退 legacy 单元约定：HMAC over canonical(event \ {entry_hash, hmac_signature})
+        verify_event = {k: v for k, v in event.items() if k not in ("entry_hash", "hmac_signature")}
+        canonical_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
+        expected_over_event = hmac.new(
+            self._hmac_key, canonical_str.encode("utf-8"), hashlib.sha256
+        ).hexdigest()
+        return hmac.compare_digest(expected_over_event, stored_hmac)
 
     def verify_single(self, event_index: int) -> dict[str, Any]:
         if not self._event_log_path.exists():
