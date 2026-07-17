@@ -205,7 +205,7 @@ sections:
     - "禁止把同步复制当扩展"
     prohibitions:
     - "硬编码词表合法值:全量排查(2026-06-26)发现64处.py硬编码副本(12词表),其中4处已被GATE-VOCAB检出(VALID_SEMANTIC_TYPES×2/VALID_CONTRACT_STATUSES/VALID_MODULE_STATUSES),60处因变量名/形式不匹配GATE-VOCAB模式未检出(stability 14处/ai_autonomy 13处/ttl 8处/safety_level 5处/status 4处/其他16处)。完整清单见GATE-VOCAB审计输出。MUST动态加载"
-    - "sync真源收敛:construction_progress二真源(frontmatter+blueprint_registry.yaml)+validate_ssot_construction_progress.py双向校验,module_registry.yaml已删除(2026-07-01批次4)"
+    - "sync真源收敛(evidence):construction_progress字段已于2026-07-18 ARCH-FRONTMATTER-STATE-001 Phase 3退役——手动维护+不可自动派生+违反SSoT铁律+语义重复build_status,原二真源(frontmatter+blueprint_registry.yaml)+validate_ssot_construction_progress.py双向校验+G8门禁全部删除,蓝图先行检测改用graph-based(graphs=={blueprint}=模块仅在blueprint图=无代码=蓝图先行)"
     - "时间触发14处:CircadianScheduler系统(circadian_scheduler.py/boot_cron_jobs.py/lifecycle_manager.py/f5_boot_integration.py/auto_runtime_core.py)、drift_cron_scheduler.py:48、ops/scheduler.py、ide_health_service.py:212、governance_watchdog.py:141、vms_cron_monitor.py:108、auto_fix_cron.py:108、dedup-watch.yml:4、red-blue-validator.yml:75死条件,MUST改事件驱动或CI兜底"
     - "手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py、diagnose_depgraph.py等永久治理功能仅manual,MUST补事件注册"
     - "可合并6簇:atomic_write 22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL 10次、src侧forensic/metadata双份、scan_secret_leak双份,MUST收敛为唯一实现"

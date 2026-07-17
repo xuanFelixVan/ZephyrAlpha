@@ -19,7 +19,7 @@
 SYS-MASTER-001 Compliance Checker
 
 依据：SYS-MASTER-CMP gate——系统总蓝图合规门禁
-验证：蓝图存在/冷启动引用/依赖完整性/进度一致性/规则无回归/crosscheck健康
+验证：蓝图存在/冷启动引用/依赖完整性/规则无回归/crosscheck健康
 
 用法：python -m zephyr.gov_enforcement.rule_enforcement.sys_master_compliance [--json]
 exit: 0=pass, 1=findings
@@ -161,88 +161,6 @@ def check_depends_on_integrity() -> list[dict]:
             "detail": "MOD-MASTER_BLUEPRINT found in depends_on" if has_mod_master else "MOD-MASTER_BLUEPRINT NOT in depends_on",
         }
     ]
-
-
-def _missing_construction_progress_target(target_id, target_path):
-    if target_path is None:
-        return {"check_id": "SYS-C03", "label": f"{target_id} construction_progress_consistency", "status": "FAIL", "detail": f"{target_id} not found in blueprint_registry.yaml"}
-    if not target_path.exists():
-        return {
-            "check_id": "SYS-C03",
-            "label": f"{target_id} construction_progress_consistency",
-            "status": "FAIL",
-            "detail": f"{target_id} blueprint MISSING, cannot verify consistency",
-        }
-    return None
-
-
-def _lookup_registry_progress(target_id):
-    bp_reg = {}
-    mod_reg = {}
-    if BLUEPRINT_REGISTRY.exists():
-        bp_reg = yaml.safe_load(BLUEPRINT_REGISTRY.read_text(encoding="utf-8")) or {}
-    if MODULE_REGISTRY.exists():
-        mod_reg = yaml.safe_load(MODULE_REGISTRY.read_text(encoding="utf-8")) or {}
-
-    bp_progress = "unknown"
-    for bp in bp_reg.get("blueprints", []):
-        if bp.get("module_id") == target_id:
-            bp_progress = bp.get("construction_progress", "unknown")
-            break
-
-    mod_progress = "unknown"
-    for mod in mod_reg.get("modules", []):
-        if mod.get("module_id") == target_id:
-            mod_progress = mod.get("construction_plan", {}).get("status", "unknown")
-            break
-
-    return bp_progress, mod_progress
-
-
-def _build_construction_progress_result(target_id, fm_progress, bp_progress, mod_progress, valid_progress_values):
-    all_match = fm_progress == bp_progress == mod_progress
-    fm_valid = fm_progress in valid_progress_values
-    if not fm_valid:
-        return {
-            "check_id": "SYS-C03",
-            "label": f"{target_id} construction_progress_consistency",
-            "status": "FAIL",
-            "detail": f"frontmatter={fm_progress} (INVALID), blueprint-registry={bp_progress}, module-registry={mod_progress}",
-        }
-    elif not all_match:
-        return {
-            "check_id": "SYS-C03",
-            "label": f"{target_id} construction_progress_consistency",
-            "status": "FAIL",
-            "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
-        }
-    else:
-        return {
-            "check_id": "SYS-C03",
-            "label": f"{target_id} construction_progress_consistency",
-            "status": "PASS",
-            "detail": f"frontmatter={fm_progress}, blueprint-registry={bp_progress}, module-registry={mod_progress}",
-        }
-
-
-def check_construction_progress_consistency() -> list[dict]:
-    # 从 blueprint_registry.yaml 的 construction_progress_values 字段加载合法值（已有真源 v4.0.0，5值）
-    _bp_meta = yaml.safe_load(BLUEPRINT_REGISTRY.read_text(encoding="utf-8")) or {} if BLUEPRINT_REGISTRY.exists() else {}
-    VALID_PROGRESS_VALUES = set(_bp_meta.get("construction_progress_values", []))
-    results = []
-    for target_id, target_path, fm_key in [
-        ("SYS-MASTER-001", SYS_MASTER_PATH, "construction_progress"),
-        ("MOD-MASTER_BLUEPRINT", MOD_MASTER_PATH, "construction_progress"),
-    ]:
-        missing = _missing_construction_progress_target(target_id, target_path)
-        if missing is not None:
-            results.append(missing)
-            continue
-        fm = extract_frontmatter(target_path)
-        fm_progress = fm.get(fm_key, "unknown")
-        bp_progress, mod_progress = _lookup_registry_progress(target_id)
-        results.append(_build_construction_progress_result(target_id, fm_progress, bp_progress, mod_progress, VALID_PROGRESS_VALUES))
-    return results
 
 
 def check_ai_rules_count() -> list[dict]:
@@ -425,7 +343,6 @@ def main() -> int:
     all_checks.extend(check_blueprint_existence())
     all_checks.extend(check_cold_start_integration())
     all_checks.extend(check_depends_on_integrity())
-    all_checks.extend(check_construction_progress_consistency())
     all_checks.extend(check_version_consistency())
     all_checks.extend(check_ai_rules_count())
     all_checks.extend(check_gate_registry_entry())
@@ -456,7 +373,6 @@ class SysMasterCompliance:
         checks.extend(check_blueprint_existence())
         checks.extend(check_cold_start_integration())
         checks.extend(check_depends_on_integrity())
-        checks.extend(check_construction_progress_consistency())
         checks.extend(check_version_consistency())
         checks.extend(check_ai_rules_count())
         checks.extend(check_gate_registry_entry())

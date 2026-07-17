@@ -30,15 +30,18 @@ Version: 0.1.0
 
 裁定#216 Tier1 P3 重构（2026-07-15，Extract Method）
 ----------------------------------------------------
-原 check_triple_alignment 212 行 McCabe=53（6 个 check 块在 per-module 循环内串联，
+原 check_triple_alignment 212 行 McCabe=53（5 个 check 块在 per-module 循环内串联，
 P3 per-entry multi-check 模式）。治本：Extract Method 提取为 1 个 context builder +
-6 个 check helper（均 McCabe≤10），check_triple_alignment 简化为 ~40 行 pipeline
+5 个 check helper（均 McCabe≤10），check_triple_alignment 简化为 ~40 行 pipeline
 （McCabe≈5）。行为等价契约：每个 check helper 接收 _ModuleCheckContext，返回
 list[AlignmentViolation]；caller 统一 add_violation。关键行为保持：
   - blueprint_path_traversal 违规在 context builder 中生成（setup 阶段）
-  - Check 1-5 在 per-module 循环内按原始顺序执行
-  - Check 6（dep_map_orphan）在循环外单独执行
+  - Check 1-4 在 per-module 循环内按原始顺序执行
+  - Check 5（dep_map_orphan）在循环外单独执行
   - warn_only 在最后覆盖 passed=True
+
+注：原 Check 3（stale-state check）已随 ARCH-FRONTMATTER-STATE-001
+Phase 3 退役移除——相关字段已从蓝图 frontmatter 与 blueprint_registry.yaml 中删除。
 """
 
 from __future__ import annotations
@@ -169,7 +172,7 @@ def _extract_dep_map_depths(content: str) -> dict[str, str]:
 
 @dataclass
 class _ModuleCheckContext:
-    """Per-module check context（避免 6 个 helper 各自带 8+ 参数）。"""
+    """Per-module check context（避免 5 个 helper 各自带 8+ 参数）。"""
 
     mid: str
     bp: dict
@@ -290,28 +293,8 @@ def _check_attr_alignment(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
     return violations
 
 
-def _check_construction_progress(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
-    """Check 3: construction_progress 与代码实际状态（not_started 但代码已存在→stale）。"""
-    violations: list[AlignmentViolation] = []
-    progress = ctx.bp.get("construction_progress", "")
-    if progress in ("not_started", "") and ctx.code_path and ctx.code_path.exists():
-        code_size = ctx.code_path.stat().st_size
-        if code_size > 500:
-            violations.append(
-                AlignmentViolation(
-                    check="construction_progress_stale",
-                    severity=Severity.ERROR,
-                    module_id=ctx.mid,
-                    source="blueprint_registry.yaml",
-                    expected="partially_implemented or implemented",
-                    actual=f"not_started (but code exists: {code_size} bytes)",
-                )
-            )
-    return violations
-
-
 def _check_blueprint_file_exists(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
-    """Check 4: 蓝图文件路径存在性。"""
+    """Check 3: 蓝图文件路径存在性。"""
     violations: list[AlignmentViolation] = []
     if ctx.bp_path_str and (not ctx.bp_path or not ctx.bp_path.exists()):
         violations.append(
@@ -328,10 +311,12 @@ def _check_blueprint_file_exists(ctx: _ModuleCheckContext) -> list[AlignmentViol
 
 
 def _check_code_path_exists(ctx: _ModuleCheckContext) -> list[AlignmentViolation]:
-    """Check 5: 代码文件/目录存在性（含路径穿越检查）。"""
+    """Check 4: 代码文件/目录存在性（含路径穿越检查）。
+
+    注：原 early_stage 判定字段已随 ARCH-FRONTMATTER-STATE-001 Phase 3 退役，
+    无法再据其判断 early_stage，缺失代码路径默认按 WARN 处理。
+    """
     violations: list[AlignmentViolation] = []
-    progress_val = ctx.bp.get("construction_progress", "")
-    early_stage = progress_val in ("design_only", "not_started", "")
     if not ctx.source_path_str:
         return violations
     for p in [s.strip() for s in ctx.source_path_str.split("+") if s.strip()]:
@@ -353,7 +338,7 @@ def _check_code_path_exists(ctx: _ModuleCheckContext) -> list[AlignmentViolation
         except (OSError, ValueError):
             continue
         if not resolved.exists():
-            sev = Severity.WARN if early_stage else Severity.ERROR
+            sev = Severity.WARN
             violations.append(
                 AlignmentViolation(
                     check="code_path_missing",
@@ -372,7 +357,7 @@ def _check_dep_map_orphans(
     bp_entries: dict[str, dict],
     specific_module: str | None,
 ) -> list[AlignmentViolation]:
-    """Check 6: 依赖图有模块但蓝图没有（孤儿节点）。"""
+    """Check 5: 依赖图有模块但蓝图没有（孤儿节点）。"""
     violations: list[AlignmentViolation] = []
     for dep_mid in dep_map_modules:
         if dep_mid.startswith("MOD-INF-") and dep_mid not in bp_entries:
@@ -428,14 +413,13 @@ def check_triple_alignment(
             setup_violations
             + _check_module_id_alignment(ctx)
             + _check_attr_alignment(ctx)
-            + _check_construction_progress(ctx)
             + _check_blueprint_file_exists(ctx)
             + _check_code_path_exists(ctx)
         )
         for v in all_violations:
             result.add_violation(v)
 
-    # Check 6: 依赖图有模块但蓝图没有（孤儿节点，循环外单独执行）
+    # Check 5: 依赖图有模块但蓝图没有（孤儿节点，循环外单独执行）
     for v in _check_dep_map_orphans(dep_map_modules, bp_entries, specific_module):
         result.add_violation(v)
 

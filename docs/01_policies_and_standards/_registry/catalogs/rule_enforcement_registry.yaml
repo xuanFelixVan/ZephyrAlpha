@@ -686,7 +686,7 @@ items:
 - file: src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.yaml
   gate_id: SYS-MASTER-CMP
   title: SYS-MASTER-001 Compliance Gate
-  description: 系统总蓝图合规门禁——验证 SYS-MASTER-001（三级金字塔顶点）与 MOD-MASTER-001 的集成链路完整性、冷启动序列引用、construction_progress 一致性及 76 条 ai_role_instruction 规则无回归。
+  description: 系统总蓝图合规门禁——验证 SYS-MASTER-001（三级金字塔顶点）与 MOD-MASTER-001 的集成链路完整性、冷启动序列引用及 76 条 ai_role_instruction 规则无回归。
   rule_ids:
   - TRAE-013
   - TRAE-014

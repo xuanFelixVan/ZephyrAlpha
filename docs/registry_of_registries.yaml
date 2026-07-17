@@ -452,7 +452,7 @@ tiers:
         maintenance: manual
         entry_count: 1
         status: active
-        description: 三级金字塔顶点——102 章全覆盖，AI agent 冷启动第一站。version 0.13.0，construction_progress completed
+        description: 三级金字塔顶点——102 章全覆盖，AI agent 冷启动第一站。version 0.13.0，build_status completed
 
       - registry_id: REG-MOD-MASTER_BLUEPRINT
         name: 集成闭环总蓝图（MOD-MASTER_BLUEPRINT）
@@ -461,7 +461,7 @@ tiers:
         maintenance: manual
         entry_count: 1
         status: active
-        description: 12 基础设施系统间集成契约 SSoT——CT-* 契约定义，version 0.9.1，construction_progress phase_1_partial
+        description: 12 基础设施系统间集成契约 SSoT——CT-* 契约定义，version 0.9.1，build_status phase_1_partial
 
       - registry_id: REG-TEMPLATE-001
         name: 模板注册表

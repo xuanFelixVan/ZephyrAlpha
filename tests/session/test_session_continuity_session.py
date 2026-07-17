@@ -244,7 +244,7 @@ class TestSessionContinuity:
         bp_dir.mkdir(parents=True, exist_ok=True)
         bp_file = bp_dir / "blueprint.md"
         bp_file.write_text(
-            "---\nversion: '1.0'\nconstruction_progress: '80%'\ndepends_on: []\nai_role_instruction: 'Rule (1) Rule (2)'\n---\n\n### 0.2 AI Agent 分派表\n\n| 任务域 | 描述 |\n|-------|------|\n| A | desc |\n",
+            "---\nversion: '1.0'\ndepends_on: []\nai_role_instruction: 'Rule (1) Rule (2)'\n---\n\n### 0.2 AI Agent 分派表\n\n| 任务域 | 描述 |\n|-------|------|\n| A | desc |\n",
             encoding="utf-8",
         )
         result = sc.validate_sys_master_dispatch()

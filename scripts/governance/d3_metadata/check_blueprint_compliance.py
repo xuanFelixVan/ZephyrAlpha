@@ -118,7 +118,6 @@ REQUIRED_FRONTMATTER = [
     "status",
     "layer",
     "actual_disk_path",
-    "construction_progress",
     "belongs_to",
 ]
 
