@@ -200,9 +200,9 @@ class TestRunModelBenchmark:
         orch._model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
         ) as mock_write, patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.side_effect = lambda p: {
                 "model_name": p.model_name,
@@ -238,9 +238,9 @@ class TestRunModelBenchmark:
         orch._model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
         ), patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "test-model:latest", "task_scores": {}}
 
@@ -311,7 +311,7 @@ class TestGetBestModel:
         orch._model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "model-a:latest", "task_scores": {}}
 
@@ -353,7 +353,7 @@ class TestDetectModelDrift:
         orch = PipelineOrchestrator(config=config)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.load_benchmark_history"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.load_benchmark_history"
         ) as mock_load:
             mock_load.return_value = [{"average_score": 0.85}]  # 仅1条记录
 
@@ -374,9 +374,9 @@ class TestDetectModelDrift:
         ]
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.load_benchmark_history"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.load_benchmark_history"
         ) as mock_load, patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.detect_drift"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.detect_drift"
         ) as mock_detect:
             mock_load.return_value = history
             mock_detect.return_value = {
@@ -419,9 +419,9 @@ class TestProperties:
         orch._model_profiler = _make_mock_profiler([_FakeProfile()])
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
         ), patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "test"}
             orch.run_model_benchmark()
@@ -476,19 +476,20 @@ class TestEventDrivenStartup:
         orch = PipelineOrchestrator(config=config)
         orch._model_profiler = _make_mock_profiler([_FakeProfile()])
 
-        with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.write_benchmark_results"
-        ), patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
-            mock_convert.return_value = {"model_name": "new-model", "task_scores": {}}
+        def _slow_benchmark() -> list[dict[str, object]]:
+            # 慢速桩：mock 路径毫秒级完成会产生竞态（enumerate 时线程已退出），
+            # sleep 保证断言线程存在时线程仍存活；join 验证其正常结束。
+            time.sleep(0.5)
+            return [{"model_name": "new-model", "task_scores": {}}]
+
+        with patch.object(orch, "run_model_benchmark", side_effect=_slow_benchmark):
             orch.on_model_registered("new-model:latest")
 
-        threads = [t for t in threading.enumerate() if t.name == "model-profiler-event"]
-        assert len(threads) >= 1
-        assert threads[0].daemon is True
-        threads[0].join(timeout=5.0)
-        assert not threads[0].is_alive()
+            threads = [t for t in threading.enumerate() if t.name == "model-profiler-event"]
+            assert len(threads) >= 1
+            assert threads[0].daemon is True
+            threads[0].join(timeout=5.0)
+            assert not threads[0].is_alive()
 
     def test_event_on_model_registered_logs_info(self, capsys: pytest.CaptureFixture[str]) -> None:
         """on_model_registered() 输出 INFO 日志。"""
@@ -514,19 +515,20 @@ class TestEventDrivenStartup:
         orch = PipelineOrchestrator(config=config)
         orch._model_profiler = _make_mock_profiler([_FakeProfile()])
 
-        with patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.write_benchmark_results"
-        ), patch(
-            "zephyr.intelligence.model_profiling.pipeline.results_writer.to_model_benchmark_result"
-        ) as mock_convert:
-            mock_convert.return_value = {"model_name": "drift-model", "task_scores": {}}
+        def _slow_benchmark() -> list[dict[str, object]]:
+            # 慢速桩：mock 路径毫秒级完成会产生竞态（enumerate 时线程已退出），
+            # sleep 保证断言线程存在时线程仍存活；join 验证其正常结束。
+            time.sleep(0.5)
+            return [{"model_name": "drift-model", "task_scores": {}}]
+
+        with patch.object(orch, "run_model_benchmark", side_effect=_slow_benchmark):
             orch.on_drift_detected("drift-model:latest", {"drift_detected": True})
 
-        threads = [t for t in threading.enumerate() if t.name == "model-profiler-drift"]
-        assert len(threads) >= 1
-        assert threads[0].daemon is True
-        threads[0].join(timeout=5.0)
-        assert not threads[0].is_alive()
+            threads = [t for t in threading.enumerate() if t.name == "model-profiler-drift"]
+            assert len(threads) >= 1
+            assert threads[0].daemon is True
+            threads[0].join(timeout=5.0)
+            assert not threads[0].is_alive()
 
     def test_event_on_drift_detected_with_info_logs(self, capsys: pytest.CaptureFixture[str]) -> None:
         """on_drift_detected() 带 drift_info 输出 WARN 日志。"""
