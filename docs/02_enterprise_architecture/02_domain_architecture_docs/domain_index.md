@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4966 |
-| 生产态模块 | 1752 |
+| 模块总数 | 4967 |
+| 生产态模块 | 1751 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3152 |
+| 原型态模块 | 3154 |
 
 ## 域清单（按架构层分组）
 
@@ -62,7 +62,7 @@ ttl: permanent
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 213 | 101 | 0 | 112 | 213/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 63 | 5 | 0 | 58 | 63/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
-| D_SHARED | shared_services / Shared Services | 294 | 112 | 0 | 182 | 294/150 (超容) | [26_d_shared.md](26_d_shared.md) |
+| D_SHARED | shared_services / Shared Services | 294 | 111 | 0 | 183 | 294/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
 ### L2 业务域层 / L2 Domain (32 个域 / 32 domains)
 
@@ -75,20 +75,20 @@ ttl: permanent
 | D_CROSS_ASSET | 跨资产 / Cross Asset | 8 | 0 | 1 | 7 | 8/150 (OK) | [31_d_cross_asset.md](31_d_cross_asset.md) |
 | D_DIGITAL_TWIN | 数字孪生 / Digital Twin | 8 | 0 | 1 | 7 | 8/150 (OK) | [32_d_digital_twin.md](32_d_digital_twin.md) |
 | D_EXEC_SIM | 执行仿真 / Execution Simulation | 7 | 0 | 0 | 7 | 7/150 (OK) | [33_d_exec_sim.md](33_d_exec_sim.md) |
-| D_EX_CORE | 执行核心 / Execution Core | 21 | 4 | 1 | 16 | 21/150 (OK) | [34_d_ex_core.md](34_d_ex_core.md) |
+| D_EX_CORE | 执行核心 / Execution Core | 21 | 5 | 1 | 15 | 21/150 (OK) | [34_d_ex_core.md](34_d_ex_core.md) |
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 11 | 3 | 0 | 8 | 11/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 10 | 4 | 0 | 6 | 10/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 700 | 143 | 1 | 556 | 700/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 701 | 143 | 1 | 557 | 701/150 (超容) | [38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 276 | 69 | 2 | 205 | 276/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 97 | 69 | 28 | 0 | 97/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
-| D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 70 | 1 | 6 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
+| D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 83 | 17 | 0 | 66 | 83/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
-| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 19 | 0 | 12 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
+| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 18 | 0 | 13 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 16 | 3 | 0 | 13 | 16/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 453 | 13 | 2 | 438 | 453/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
-| D_INTELLIGENCE | context_management / Context Management | 109 | 22 | 0 | 87 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
+| D_INTELLIGENCE | context_management / Context Management | 109 | 21 | 0 | 88 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 38 | 0 | 2 | 36 | 38/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
 | D_ML_TRAIN | model_evaluation / Training | 6 | 0 | 1 | 5 | 6/150 (OK) | [50_d_ml_train.md](50_d_ml_train.md) |
