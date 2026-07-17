@@ -32,7 +32,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.gov_audit.writer import AuditWriter
-from zephyr.governance.integrity import IntegrityVerifier
+from zephyr.gov_audit.integrity import IntegrityVerifier
 
 
 @pytest.fixture
@@ -139,17 +139,28 @@ class TestChainStateTampering:
     """A5: 链状态篡改."""
 
     def test_chain_state_tamper_causes_integrity_failure(self, temp_audit_dir: Path):
-        """篡改 chain-state.json → 下次写入后验证应检测到不一致."""
+        """篡改链状态 → 下次写入后验证应检测到不一致.
+
+        治本：AuditWriter 没有 chain-state.json 持久化，链状态（_last_hash）从 events.jsonl
+        最后一条的 entry_hash 恢复。篡改 events.jsonl 最后一条的 entry_hash 会使 _load_state
+        恢复错误的 _last_hash，导致下次写入的 prev_hash 与实际链不匹配。
+        """
         writer = AuditWriter(temp_audit_dir)
-        h1 = writer.write({"event": "e1"})
+        writer.write({"event": "e1"})
 
-        writer._chain_state_path.write_text(
-            json.dumps({"chain_hash": "0000FFFF_TAMPERED", "updated_at": "2020-01-01"}),
-            encoding="utf-8",
-        )
-        writer.write({"event": "e2"})
+        # 篡改 events.jsonl 最后一条的 entry_hash（模拟链状态篡改）
+        log_path = writer._event_log_path
+        lines = log_path.read_text(encoding="utf-8").strip().split("\n")
+        last_entry = json.loads(lines[-1])
+        last_entry["entry_hash"] = "0" * 64
+        lines[-1] = json.dumps(last_entry, ensure_ascii=False)
+        log_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-        verifier = IntegrityVerifier(writer._event_log_path)
+        # 重新创建 writer，_load_state 会用篡改的 entry_hash 作为 _last_hash
+        writer2 = AuditWriter(temp_audit_dir)
+        writer2.write({"event": "e2"})
+
+        verifier = IntegrityVerifier(writer2._event_log_path)
         result = verifier.verify_chain()
         assert result["status"] == "compromised", f"Chain should be compromised after state tamper, got: {result}"
 
@@ -180,7 +191,7 @@ class TestMerkleForgery:
     """A7: Merkle 树伪造攻击."""
 
     def test_tampered_merkle_root_detected(self, temp_audit_dir: Path):
-        from zephyr.governance.integrity import MerkleAggregator
+        from zephyr.gov_audit.integrity import MerkleAggregator
 
         leaves = [hashlib.sha256(f"event-{i}".encode()).hexdigest() for i in range(8)]
         real_root = MerkleAggregator.build(leaves)
@@ -192,7 +203,7 @@ class TestMerkleForgery:
         assert MerkleAggregator.verify(leaves, fake_root) is False
 
     def test_modified_leaf_detected(self, temp_audit_dir: Path):
-        from zephyr.governance.integrity import MerkleAggregator
+        from zephyr.gov_audit.integrity import MerkleAggregator
 
         leaves = [hashlib.sha256(f"event-{i}".encode()).hexdigest() for i in range(8)]
         real_root = MerkleAggregator.build(leaves)
@@ -202,7 +213,7 @@ class TestMerkleForgery:
         assert MerkleAggregator.verify(tampered_leaves, real_root) is False
 
     def test_empty_leaves_merkle(self, temp_audit_dir: Path):
-        from zephyr.governance.integrity import MerkleAggregator
+        from zephyr.gov_audit.integrity import MerkleAggregator
 
         root = MerkleAggregator.build([])
         assert root == ""

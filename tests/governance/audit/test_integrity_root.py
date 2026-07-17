@@ -18,7 +18,7 @@ import hmac
 import json
 from pathlib import Path
 
-from zephyr.governance.integrity import IntegrityVerifier, MerkleAggregator
+from zephyr.gov_audit.integrity import IntegrityVerifier, MerkleAggregator
 
 
 def _sha256_hex(data: bytes) -> str:
