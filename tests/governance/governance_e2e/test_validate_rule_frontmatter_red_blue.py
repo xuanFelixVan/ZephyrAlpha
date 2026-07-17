@@ -31,8 +31,8 @@ from pathlib import Path
 
 import pytest
 
-# 将 scripts/governance 加入 path 以导入被测模块
-_SCRIPT_DIR = Path(__file__).resolve().parent.parent / "scripts" / "governance" / "d3_metadata"
+# 将 scripts/governance 加入 path 以导入被测模块（ARCH-029 迁移 tests/→tests/governance/governance_e2e/，需 4 级 parent）
+_SCRIPT_DIR = Path(__file__).resolve().parent.parent.parent.parent / "scripts" / "governance" / "d3_metadata"
 sys.path.insert(0, str(_SCRIPT_DIR))
 
 # 导入被测模块
