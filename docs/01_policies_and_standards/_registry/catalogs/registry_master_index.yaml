@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-17T05:15:48Z
+# 自动生成于 2026-07-17T05:27:26Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-17T05:15:48Z'
+generated_at: '2026-07-17T05:27:26Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 27
@@ -125,7 +125,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 33
+  entry_count: 86
   status: active
 - registry_id: CFG-hard-boundaries
   name: 硬边界登记表
