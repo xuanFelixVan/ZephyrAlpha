@@ -95,7 +95,8 @@ def _is_infra_exempt(rel_path: str) -> bool:
 def _check_new_file(abs_path: str, rel_path: str) -> str | None:
     """新增文件全文件 AST 检测，返回违规描述或 None。"""
     try:
-        content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read()
     except OSError as e:
         logger.warning("CH-FINAL-GATE skip %s: 读取失败(%s)", abs_path, e)
         return None

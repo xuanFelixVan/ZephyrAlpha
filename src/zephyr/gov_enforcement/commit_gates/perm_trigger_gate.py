@@ -329,7 +329,8 @@ def make_perm_trigger_gate() -> GateSpec:
                 continue
 
             try:
-                content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+                with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                    content = f.read()
             except OSError as e:
                 logger.warning(
                     "PERM-TRIGGER gate skip file %s: 读取失败(%s: %s)。",

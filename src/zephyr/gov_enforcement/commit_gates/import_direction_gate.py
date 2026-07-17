@@ -143,7 +143,8 @@ def _find_violations_in_file(abs_path: str, wt_root: str) -> list[str]:
     TYPE_CHECKING 块内的 ImportFrom 通过 _collect_type_checking_imports 豁免。
     """
     try:
-        content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read()
     except OSError as e:
         logger.warning("NO-UPWARD-IMPORT gate skip %s: %s", abs_path, e)
         return []

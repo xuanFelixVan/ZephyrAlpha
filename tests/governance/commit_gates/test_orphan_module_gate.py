@@ -163,7 +163,7 @@ class TestGateSpecFields:
         assert make_orphan_module_gate().gate_id == "ORPHAN-MODULE"
 
     def test_priority(self):
-        assert make_orphan_module_gate().priority == 86
+        assert make_orphan_module_gate().priority == 89
 
 
 # ---------------------------------------------------------------------------

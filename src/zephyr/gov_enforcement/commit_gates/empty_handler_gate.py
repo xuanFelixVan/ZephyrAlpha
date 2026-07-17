@@ -211,7 +211,8 @@ def _resolve_abs_files(new_py_files: list[str], wt_root: str) -> list[str]:
 def _read_file_content(abs_path: str) -> str | None:
     """读取文件内容，失败返回 None 并记录 warning。"""
     try:
-        return open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+            return f.read()
     except OSError as e:
         logger.warning(
             "EMPTY-HANDLER gate skip file %s: 读取失败(%s: %s)。",
