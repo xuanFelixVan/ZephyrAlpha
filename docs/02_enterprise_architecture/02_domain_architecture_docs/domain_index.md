@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4963 |
-| 生产态模块 | 1744 |
+| 模块总数 | 4965 |
+| 生产态模块 | 1751 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3157 |
+| 原型态模块 | 3152 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 327 | 145 | 1 | 181 | 327/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 330 | 149 | 1 | 180 | 330/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -43,16 +43,16 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ALT_DATA | 另类数据 / Alternative Data | 7 | 0 | 0 | 7 | 7/150 (OK) | [06_d_alt_data.md](06_d_alt_data.md) |
-| D_AUTONOMY_CORE | agent_lifecycle / Autonomy Core | 430 | 133 | 0 | 297 | 430/150 (超容) | [07_d_autonomy_core.md](07_d_autonomy_core.md) |
+| D_AUTONOMY_CORE | agent_lifecycle / Autonomy Core | 428 | 133 | 0 | 295 | 428/150 (超容) | [07_d_autonomy_core.md](07_d_autonomy_core.md) |
 | D_DATA_ENG | 数据工程 / Data Engineering | 7 | 0 | 0 | 7 | 7/150 (OK) | [08_d_data_eng.md](08_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 30 | 0 | 0 | 30 | 30/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |
 | D_FBL_DETECTORS | feedback_detectors / Feedback Detectors | 65 | 59 | 0 | 6 | 65/150 (OK) | [11_d_fbl_detectors.md](11_d_fbl_detectors.md) |
 | D_FBL_DIAGNOSERS | feedback_diagnosers / Feedback Diagnosers | 76 | 71 | 0 | 5 | 76/150 (OK) | [12_d_fbl_diagnosers.md](12_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
-| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 229 | 110 | 0 | 119 | 229/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
+| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 230 | 110 | 0 | 120 | 230/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
-| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 123 | 107 | 0 | 16 | 123/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 124 | 108 | 0 | 16 | 124/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 92 | 82 | 0 | 10 | 92/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 53 | 0 | 39 | 92/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
@@ -62,7 +62,7 @@ ttl: permanent
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 213 | 101 | 0 | 112 | 213/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 63 | 5 | 0 | 58 | 63/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
-| D_SHARED | shared_services / Shared Services | 294 | 110 | 0 | 184 | 294/150 (超容) | [26_d_shared.md](26_d_shared.md) |
+| D_SHARED | shared_services / Shared Services | 294 | 111 | 0 | 183 | 294/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
 ### L2 业务域层 / L2 Domain (32 个域 / 32 domains)
 
@@ -84,7 +84,7 @@ ttl: permanent
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 97 | 69 | 28 | 0 | 97/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
 | D_GOV_ENFORCEMENT | rule_enforcement / Rule Enforcement | 82 | 17 | 0 | 65 | 82/150 (OK) | [42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
-| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 17 | 0 | 14 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
+| D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 18 | 0 | 13 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 16 | 3 | 0 | 13 | 16/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
 | D_GOV_SCRIPTS | script_governance / Script Governance | 453 | 13 | 2 | 438 | 453/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
@@ -99,7 +99,7 @@ ttl: permanent
 | D_SELL_DECISION | 卖出决策 / Sell Decision | 7 | 0 | 0 | 7 | 7/150 (OK) | [55_d_sell_decision.md](55_d_sell_decision.md) |
 | D_SIGQC | signal_quality / Signal Quality Control | 8 | 0 | 0 | 8 | 8/150 (OK) | [56_d_sigqc.md](56_d_sigqc.md) |
 | D_SIMULATION | 仿真 / Simulation | 11 | 2 | 1 | 8 | 11/150 (OK) | [57_d_simulation.md](57_d_simulation.md) |
-| D_TRADING | 交易运营 / Trading Operations | 103 | 22 | 0 | 81 | 103/150 (OK) | [58_d_trading.md](58_d_trading.md) |
+| D_TRADING | 交易运营 / Trading Operations | 102 | 22 | 0 | 80 | 102/150 (OK) | [58_d_trading.md](58_d_trading.md) |
 
 ### 未分类 / 未分类 (5 个域 / 5 domains)
 
