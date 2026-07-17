@@ -28,7 +28,7 @@ generate_script_manifest.py — 脚本清单自动生成器
 2. 三引号单引号包裹的 YAML（同上，使用 `'`×3）
 3. 模块顶层的 `__manifest__ = { ... }` —— 仅限 dict / list / 常量等安全字面量（`ast` 解析）
 
-对标 §6.16 静态清单自动生成铁律。
+对标 §6.2 静态清单自动生成铁律。
 
 __manifest__ 块格式（推荐）：
     __manifest__ = \"\"\"
@@ -81,7 +81,7 @@ args:
 warn_only: false
 description: >
   扫描 scripts/governance/**/*.py 的 __manifest__ 块，自动生成 script_manifest.yaml。
-  对标 §6.16 静态清单自动生成铁律。
+  对标 §6.2 静态清单自动生成铁律。
 """
 
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"
