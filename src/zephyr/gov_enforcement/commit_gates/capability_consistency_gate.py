@@ -42,8 +42,8 @@
 2. **fail-open on 解析失败**：AST 解析失败时返回 passed=True（其他 gate 处理语法错误）。
 3. **pure AST，无文件 I/O**：直接用 staged index 内容做 AST 解析，不导入模块（避免
    副作用/SDK 依赖），不写临时文件（staged 内容可能与工作区不同）。
-4. **priority=101**：在 TEST-SOURCE-CONSISTENCY(96) / DEPGRAPH-WRITE-PATH(100) 之后，
-   作为最高优先级 gate 之一，在 commit 流程末段执行。
+4. **priority=101**：在 DEPGRAPH-WRITE-PATH(100) 之后、TEST-SOURCE-CONSISTENCY(102) 之前，
+   作为 commit 流程末段执行的 gate 之一。
 
 Usage::
 

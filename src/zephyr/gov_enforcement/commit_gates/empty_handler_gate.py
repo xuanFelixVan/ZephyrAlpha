@@ -44,7 +44,7 @@ staged 新增 .py 文件中的 handler 函数：
 2. **in-process AST**：纯 ast.walk，无 subprocess，自包含。
 3. **fail-open on AST error**：语法错误文件不阻断。
 4. **handler 识别宽松**：装饰器名或函数名匹配即认为是 handler——宁可误判也不漏检。
-5. **priority=84**：在 PERM-TRIGGER(82) 之后、ORPHAN-MODULE(86) 之前。
+5. **priority=84**：在 PERM-TRIGGER(82) 之后、FILE-COPY(85) 之前。
 
 Usage::
 
@@ -253,7 +253,7 @@ def make_empty_handler_gate() -> GateSpec:
 
     Returns:
         GateSpec(gate_id="EMPTY-HANDLER", priority=84)。
-        priority=84——在 PERM-TRIGGER(82) 之后、ORPHAN-MODULE(86) 之前。
+        priority=84——在 PERM-TRIGGER(82) 之后、FILE-COPY(85) 之前。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
