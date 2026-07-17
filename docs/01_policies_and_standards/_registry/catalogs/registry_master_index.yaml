@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-17T19:21:29Z
+# 自动生成于 2026-07-17T19:25:23Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-17T19:21:29Z'
+generated_at: '2026-07-17T19:25:23Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 29
+total_registries: 28
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -231,11 +231,3 @@ registries:
   maintenance: manual
   entry_count: 0
   status: unknown
-- registry_id: CFG-TRUST-BOUNDARY-001
-  name: 信任边界 surface 登记表
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml
-  format: yaml
-  maintenance: manual
-  entry_count: 0
-  status: active
