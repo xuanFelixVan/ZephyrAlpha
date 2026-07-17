@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-17T07:17:27Z
+# 自动生成于 2026-07-17T07:44:33Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-17T07:17:27Z'
+generated_at: '2026-07-17T07:44:33Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 344
-with_manifest: 310
-missing_manifest: 34
+total_scripts: 345
+with_manifest: 309
+missing_manifest: 36
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 18
+  governance: 19
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -151,6 +151,16 @@ scripts:
   tags:
   - Critical
 - name: ast_import_rewriter.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: batch_fix_5135.py
   owner: governance
   dimensions: []
   priority: P2
@@ -2387,19 +2397,14 @@ scripts:
   - Critical
 - name: d5_architecture/validators/validate_static_manifest_drift.py
   owner: governance:d5_architecture
-  dimensions:
-  - D5
-  priority: P0
-  timeout_seconds: 30
-  args:
-  - flag: --check
-    type: bool
-    description: only detect drift (pre_commit mode)
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
   warn_only: false
-  description: run all generators --check, hard-block any drift between auto-generated
-    vs disk. Anchored to AGENTS.md section 6.16
-  tags:
-  - Critical
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/validators/validate_target_layer.py
   owner: governance:d5_architecture
   dimensions:
