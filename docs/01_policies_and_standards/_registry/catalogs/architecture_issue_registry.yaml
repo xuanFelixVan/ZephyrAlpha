@@ -2760,6 +2760,102 @@ entries:
   created: '2026-07-17'
   last_updated: '2026-07-17'
 
+# --- #ARCH-WORKTREE-001: stale worktree 堆积治本（遗留项#2，三阶段） ---
+- issue_id: '#ARCH-WORKTREE-001'
+  title: stale session worktree 永久堆积——sweep 公开 API 缺失 + 无事件驱动自动清理
+  category: architecture_governance
+  severity: P2中
+  status: in_progress
+  description: |
+    治本遗留项#2（2026-07-17 发现）：原 _sweep_stale_worktrees 为私有函数，仅在
+    session_worktree_start 内被动触发——无新 session 启动时，崩溃/放弃 session 的
+    stale worktree（.aidrafts/sess-*）永久堆积，且无公开清理入口，AI 被迫误调私有
+    函数传入 Path 对象导致 AttributeError（'WindowsPath' object has no attribute
+    '_drafts_dir'）。
+    三阶段治本（本条由 sess-44232 依据 sess-39824-20260718031108 的维护日志计划
+    补登，原作者 session 可后续丰富）：
+    P1（已完成）：session_worktree_sweep() 公开 API + manager 参数防御性类型校验
+      （fail-closed 返回 error dict），消除 API 完整性缺口；
+    P2（已完成）：worktree_lifecycle_reconciler（GATE-WORKTREE-LIFECYCLE）事件驱动
+      自动清理——任何 commit/merge 后自动触发 session_worktree_sweep，符合"永久
+      系统全自动/事件触发"铁律（替代废弃的 worktree_gc.py 守护进程时间触发方案）；
+    第三期（待定）：残留分支/注册表条目与物理目录的三方一致性深度治理。
+  adjudication: |
+    裁定方向（sess-39824 记录，2026-07-18 补登）：
+    (1) sweep 能力公开化——session_worktree_sweep 作为 AI/CLI 可调用真源入口，
+        三重保护判据不变（age 阈值/活跃 session 保护/未合并分支保护）；
+    (2) 触发机制事件化——reconciler 挂载 post-commit 事件链（priority=800），
+        禁止时间触发（cron/Timer/sleep-loop），符合永久系统四要素；
+    (3) 发现性闭环——capability registry 登记 worktree_lifecycle_reconciler
+        creation_token + AGENTS.md 文档同步，新 AI 可反查发现，防重复造轮子。
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py  # P1: 公开 sweep API + 防御性校验
+    - src/zephyr/governance/audit/reconciliation_registry.py  # P2: make_worktree_lifecycle_reconciler
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml  # creation_token 登记
+    - AGENTS.md  # P2 reconciler 文档同步
+  fix_phase: |
+    P1（已完成 2026-07-17）：session_worktree_sweep 公开 API
+    P2（已完成 2026-07-18）：GATE-WORKTREE-LIFECYCLE reconciler 事件驱动
+    第三期（待定）：三方一致性深度治理
+  related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-DEP-001 PRE-MERGE-TOPO-CHECK'
+  related_rules: [TRAE-062]
+  created: '2026-07-18'
+  last_updated: '2026-07-18'
+
+# --- #ARCH-SEC-001: 5.168 异常信息泄露信任域裁定 + M13 扫描面校准 ---
+- issue_id: '#ARCH-SEC-001'
+  title: 5.168 异常信息泄露信任域裁定——跨信任边界泄露才是泄露；M13 扫描面校准为信任边界 surface 清单
+  category: security_governance
+  severity: P1高
+  status: resolved
+  description: |
+    5.168 异常信息泄露（手动快照 142 项）原定义为"MCP/handler 的通用异常处理器
+    把 str(exc)/f-string 插值异常/traceback 直返客户端"。M13 实时检测初版将扫描面
+    铺到全部生产代码（src/zephyr + scripts/governance），检出 243 项——远超手动
+    快照，需裁定全库 generic 化还是校准检测语义。
+    第一性原理分析：异常信息泄露的风险本质是内部实现细节（路径/凭据片段/SQL/
+    堆栈）跨越信任边界到达不可信消费方。逐域分析 243 项的信任域归属：
+    (a) 跨信任边界（真泄露，5 处）：MCP stdio servers（JSON-RPC 响应发外部
+        AI agent/IDE 客户端，零信任边界）2 处 + scheduler.py 监控 HTTP server
+        （绑定 0.0.0.0：/health 探活缓存外发 CH 连接异常详情 1 处 + _handle_health
+        /_handle_status except 块 _send_json(str(e)) 2 处）；
+    (b) 同信任域（非泄露，238 项）：commit gates/CLI 的错误消息返给执行 commit
+        的 AI/开发者本人——详细错误消息是 gate 的核心产品功能（AI 靠它自愈）；
+        内部服务/库的返回值在同进程内传递——进程内数据流非泄露；本地 dashboard
+        展示给运营者本人。全库 generic 化会主动损害 100% AI 开发项目的自愈能力，
+        且 238 处行为变更的 blast radius 远大于收益。
+  adjudication: |
+    裁定（2026-07-18）：
+    (1) 真泄露 5 处立即治本——通用错误消息跨边界外发 + 异常细节 logger(exc_info)
+        入服务端日志：_base_server.py（Invalid params 不再回显 TypeError 详情）、
+        knowledge_base_server.py（vms_error 改静态降级提示）、scheduler.py
+        （/health 的 ch_status 改 "error" 通用值 + _handle_health/_handle_status
+        的 _send_json(str(e)) 改 "internal error"）。
+    (2) M13 检测语义校准——扫描范围由新建的 trust_boundary_surface_registry.yaml
+        （规则数据 SSoT，TRAE-062）限定为对外协议响应面；清单加载失败 fail-closed
+        （指标报 error 而非假绿）。同信任域 238 项诚实记录为"经裁定非泄露"。
+    (3) M13 检测盲区补齐——初版仅检测 except handler 内 return 语句，漏检
+        _send_json(str(e)) 等 HTTP 外发汇点（scheduler.py 2 处实证）；新增
+        _HTTP_EMIT_SINKS 汇点集（_send_json/_send/send_json/send_error），
+        except handler 内调用汇点方法且参数含异常引用同等计违规。
+    (4) 防线不削弱反增强——边界内文件 M13 实时检测 + MSG-EXPOSURE commit gate
+        拦截新增敏感变量插值 + 登记铁律（新增对外协议入口 MUST 先登记 surface）。
+    (5) 指标口径变更留痕——M13 基线从"全库 243"变为"边界 5→0"，非作弊而是
+        校准实现使其符合 5.168 原定义（原定义本就写明"直返客户端"）。
+  impact:
+    - src/zephyr/integration/mcp/_base_server.py  # 治本：TypeError 详情不回显
+    - src/zephyr/integration/mcp/knowledge_base_server.py  # 治本：vms_error 静态降级
+    - src/zephyr/data/scheduler.py  # 治本：3 处 HTTP 外发通用化 + exc_info 入日志
+    - docs/01_policies_and_standards/_registry/catalogs/trust_boundary_surface_registry.yaml  # 新建，SSoT
+    - scripts/governance/architecture_health_dashboard.py  # M13 扫描面校准 + _HTTP_EMIT_SINKS 盲区补齐
+    - docs/02_enterprise_architecture/architecture_debt_registry.md  # M13 口径变更留痕
+  fix_phase: |
+    单阶段（已完成 2026-07-18）：5 处真泄露治本 + registry SSoT + M13 校准。
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, #ARCH-NOQA-GOV-001 豁免机制'
+  related_rules: [TRAE-062]
+  created: '2026-07-18'
+  last_updated: '2026-07-18'
+
 # --- #ARCH-062: ARC-0001 幻影引用清理 + work_orchestrator 头部元数据修复 ---
 - issue_id: '#ARCH-062'
   title: ARC-0001 幻影引用清理 + work_orchestrator 头部元数据漂移修复
@@ -2964,72 +3060,3 @@ entries:
   status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
-
-# --- #ARCH-FRONTMATTER-STATE-001: blueprint frontmatter 状态字段三级链路断裂治本 ---
-- issue_id: '#ARCH-FRONTMATTER-STATE-001'
-  title: blueprint frontmatter 状态字段（build_status/design_maturity/construction_progress）三级链路断裂治本
-  severity: P2中
-  category: architecture_metadata
-  adjudication: |
-    问题背景：
-    F-08（blueprint frontmatter 状态字段陈旧）+ F-09（depgraph production node
-    build_status=generated 为 scanner 默认）联合调研发现三条级联断裂链路：
-
-    Link A（code→depgraph 派生断裂）：derive_build_status 在 generate_project_depgraph.py:1751
-    被调用时 has_test 硬编码 False，导致 production+test→stable 分支为死代码。
-    design_maturity 有 L1912-1925 后处理补偿（升级 tested modules 为 production），
-    但 build_status 无任何补偿——99.1% production 节点（4899/4943）永久卡在
-    build_status=generated，仅 8 个手工标记的 stable。
-
-    Link B（depgraph→frontmatter 同步断裂）：blueprint_frontmatter_reconciler 未注册到
-    reconciliation_registry（26 个 reconciler 中无此条目），仅在 generate_project_depgraph.py
-    全量重建时以 try/except 静默调用（L4138-4142，失败不阻断）。抽样 9/9 blueprint
-    frontmatter 全部陈旧。
-
-    Link C（construction_progress 无自动写入路径）：跨 10 个 .py 文件搜索，无任何
-    reconciler/gate/generator 写入 frontmatter 的 construction_progress，纯人工维护。
-    4/9 blueprint 持有非法词表值 partially_implemented。
-
-    裁定（四条治本）：
-    (1) Link A 修复——提取 L1912-1925 为 upgrade_tested_modules 函数，在现有
-        design_maturity=production 升级基础上，补上 build_status=stable 升级
-       （derive_build_status("production", has_test=True)），激活死代码分支。
-    (2) Link B 修复——注册 blueprint_frontmatter_reconciler 为 post-commit reconciler
-        （reconciliation_registry，priority=135），消除人工 sync 依赖。
-    (3) Link C 退役——移除 construction_progress 字段（不可自动派生 + 已证失效 +
-        语义重复 build_status + 违反 SSoT 铁律），同步退役 validate_ssot_construction_progress
-        G8 门禁与词表。
-    (4) 门禁——check_blueprint_code_alignment.py 新增 FRONTMATTER_STATE_STALE 漂移类型，
-        阻断 frontmatter build_status/design_maturity 与 depgraph 不一致的提交。
-
-    针对 100% AI 开发的长远期战略考虑：
-    - 100% AI 项目中，无法自动维护的状态字段是自动复利的技术债——每个新模块增加
-      陈旧风险，无人类修正。唯一防线：每个字段必须可自动派生或自动同步，否则移除。
-    - 陈旧 frontmatter 是幻觉正反馈回路：新 AI 读 design/planned → 推断模块不存在
-      → 重新实现 → 漂移加剧。depgraph 至少有 reconciler 闭环，frontmatter 连闭环都没有。
-    - build_status 状态机（planned→generated→stable→deprecated）必须自动推进到 stable，
-      否则状态机形同虚设——99.1% 节点卡在 generated 证明状态机从未生效。
-
-    施工分四 Phase（从源头往外修）：
-    - Phase 1：Link A 修复（upgrade_tested_modules 提取 + build_status 补偿）——已完成 (d51a02b675)
-    - Phase 2：Link B 修复（reconciler 注册 + sync_panorama 容错）——已完成 (c9320342fb + 08b14705ce + 046a0847ee)
-    - Phase 3：Link C 退役（construction_progress 移除）——施工中
-    - Phase 4：门禁 + 存量修复——待施工
-
-    注意：本条目曾因并发会话 c2ae51cb58（#ARCH-DEP-001 topo timing 修复）误删，
-    本次恢复（2026-07-18）。
-  impact:
-  - scripts/governance/generate_project_depgraph.py（upgrade_tested_modules 提取 + build_status=stable 补偿，Phase 1，d51a02b675）
-  - src/zephyr/governance/audit/reconciliation_registry.py（frontmatter reconciler 注册 priority=135，Phase 2，c9320342fb）
-  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（reconciler 注册调用，Phase 2，c9320342fb）
-  - tests/governance/audit/test_blueprint_frontmatter_reconciler_post_commit.py（Phase 2 单测，08b14705ce）
-  - scripts/governance/sync_panorama_module.py（dataflow/decision 容错，Phase 2，046a0847ee）
-  - scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py（FRONTMATTER_STATE_STALE 门禁，Phase 4）
-  - scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py（G8 门禁退役，Phase 3）
-  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记 + 恢复）
-  - tests/governance/depgraph/test_upgrade_tested_modules.py（Phase 1 单测，d51a02b675）
-  fix_phase: Phase 1+2 已完成；Phase 3 施工中；Phase 4 待施工
-  status: in_progress
-  related_adjudication: F-08/F-09 治本
-  created: '2026-07-18'
-  last_updated: '2026-07-18'

@@ -4300,7 +4300,7 @@ Phase 3（治理层收敛，治本存量）       ← 依赖Phase 2完成 + 人�
 
 ### 6.2 Phase 0：架构健康度仪表盘（最高优先级基础设施，已实现prototype）
 
-**状态**：✅ 已实现prototype（[scripts/governance/architecture_health_dashboard.py](file:///d:/ZephyrAlpha/scripts/governance/architecture_health_dashboard.py)）——11项指标自动化检测基线，已注册post-commit reconciler（`make_architecture_health_reconciler`，reconciliation_registry.py L3719），每次commit自动生成快照到 `data/architecture_health/`
+**状态**：✅ 已实现prototype（[scripts/governance/architecture_health_dashboard.py](file:///d:/ZephyrAlpha/scripts/governance/architecture_health_dashboard.py)）——14项指标自动化检测基线，已注册post-commit reconciler（`make_architecture_health_reconciler`，reconciliation_registry.py L3719），每次commit自动生成快照到 `data/architecture_health/`
 
 **目标**：把trae_060 §5的"静态快照"变成"动态实时"——每次commit自动生成全维度违规清单。
 
@@ -4407,9 +4407,14 @@ Phase 0 仪表盘（§6.2）落地后，Phase 2 首次获得自动化违规清�
 | M09 三方对齐 | 0 ✅ | validate_three_way_consistency.py 已是门禁 | M09 指标 |
 | M10 时间触发残留 | 0 ✅ | 逐条审查+# noqa: m10-time-trigger豁免机制（rollback_scheduler: cron在注释非代码） | M10 指标 + PERM-TRIGGER gate |
 | M11 PG域引用一致性 | 0 ✅ | 见上方"首项修复" | DB CHECK 约束 + M11 指标 |
+| M12 异常粒度过粗(吞没型) | 87 🔄 | 实时AST基线（2026-07-17）：except-pass/continue/logged-swallowed；`# noqa: BLE001`已审视宽泛捕获豁免；分批治本：具体异常类型+日志+raise | M12 指标 |
+| M13 异常信息泄露(返客户端) | 0 ✅ | #ARCH-SEC-001 裁定（2026-07-18）：跨信任边界泄露才是泄露——扫描面校准为 trust_boundary_surface_registry.yaml（SSoT）；边界内 5 处真泄露已治本（通用错误消息外发+exc_info 入日志）；同信任域 238 项裁定非泄露（debuggability 特性）；_HTTP_EMIT_SINKS 补齐 _send_json 检测盲区 | M13 指标 + MSG-EXPOSURE gate |
+| M14 ABC抽象方法完整性 | 0 ✅ | 同文件ABC/子类AST签名比对=0；快照33项主体为跨文件（ABC与实现分离），依赖depgraph import边解析，列为专项 | M14 指标 |
+
+**M12/M13/M14 新增说明（2026-07-17）**：Phase 0→Phase 2 闭环第二批——为 5.135/5.168/5.104 三个最大未跟踪维度建立实时检测基线。M13 实时检出 243 > 手动快照 142，再次实证病根1（静态快照失效）。M14 同文件检测=0，快照 33 项主体为跨文件场景（ABC 定义与实现类分离），需 depgraph import 边解析，列为后续专项。
 
 **Phase 2 闭环完成状态（2026-07-17）**：
-- 11 项指标全部 = 0 ✅（自动化检出合计 = 0）
+- M01-M11 + M13 + M14 指标 = 0 ✅；M12=87 🔄（2026-07-17 新增实时检测，分批治本中）
 - 验证命令：`python scripts/governance/architecture_health_dashboard.py`
 - 治本原则：每项指标均建立"检测→治本修复→防复发约束"闭环，禁止"裸豁免"（每条豁免MUST附理由注释）
 - 提交记录：commit `4d605cb6d7`（M02 12文件豁免 + M03 self_healer豁免）+ commit `2adbfb1736`（M04 pure_assertion_gate登记 + M10 rollback_scheduler豁免）

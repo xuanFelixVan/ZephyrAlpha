@@ -1,0 +1,54 @@
+# [A_config] module_id=CFG-trust-boundary-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+# --- 治理锚定 ---
+# blueprint: MOD-GATE_ENGINE
+# module_id: CFG-TRUST-BOUNDARY-001
+# stability: stable
+# safety_level: M
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# trust_boundary_surface_registry.yaml — 信任边界 surface 登记表（SSoT）
+#
+# 真源：本 YAML 文件（规则数据，TRAE-062）
+# 消费方：architecture_health_dashboard.py M13 指标（异常信息泄露检测）动态加载，
+#         仅扫描本清单内的文件——异常详情跨信任边界到达不可信消费方才是 5.168
+#         定义的"泄露"；同信任域（commit gates/CLI/内部服务/本地 dashboard）
+#         返回异常详情属 debuggability 特性，非泄露（#ARCH-SEC-001 裁定）。
+# 登记铁律：新增任何对外协议入口（新 MCP server / HTTP endpoint / WebSocket /
+#         webhook 等跨进程·跨机器响应面）MUST 在本清单登记后方可施工；
+#         登记后 M13 自动纳入扫描，无需改检测器代码。
+#
+# 维护者：ZephyrAlpha-Owner
+# 版本：1.0.0
+# 创建日期：2026-07-18
+# 关联裁定：#ARCH-SEC-001
+
+module_id: CFG-TRUST-BOUNDARY-001
+schema_version: "1.0.0"
+doc_type: register
+title: 信任边界 surface 登记表
+status: active
+owner: ZephyrAlpha-Owner
+created: "2026-07-18"
+last_updated: "2026-07-18"
+ai_autonomy: human_gated
+ttl: permanent
+description: "信任边界 surface（对外协议响应面）清单——M13 异常信息泄露检测的扫描范围唯一真源"
+
+surfaces:
+  - id: TB-001
+    kind: directory
+    path: "src/zephyr/integration/mcp"
+    glob: "*.py"
+    protocol: "MCP / JSON-RPC 2.0 over stdio（ADR-0033，MOD-INF-013）"
+    consumer: "外部 MCP 客户端（AI agent / IDE），跨进程零信任边界"
+    note: "全部 MCP server 及响应构造基础设施（_base_server/providers 等）"
+    added: "2026-07-18"
+
+  - id: TB-002
+    kind: file
+    path: "src/zephyr/data/scheduler.py"
+    protocol: "HTTP monitor（_MonitorHandler，绑定 0.0.0.0，/metrics /health /status）"
+    consumer: "网络可达的监控拉取方（Prometheus/运维终端），跨机器零信任边界"
+    note: "内含 start_monitor() 启动的标准库 HTTP server；仅该类内监控响应路径属边界"
+    added: "2026-07-18"

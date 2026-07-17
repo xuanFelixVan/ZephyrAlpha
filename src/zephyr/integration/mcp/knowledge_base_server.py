@@ -280,9 +280,11 @@ class KnowledgeBaseServer(BaseMCPServer):
                     "total_scanned": len(hits_raw),
                     "latency_ms": elapsed,
                 }
-            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception:  # noqa: BLE001 — VMS 搜索降级：回退空结果保工具可用，细节入日志
+                # 5.168治本（#ARCH-SEC-001）：异常详情不跨信任边界返客户端，细节入服务端日志
+                logger.warning("vms search failed, fallback to empty hits", exc_info=True)
                 elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
-                return {"hits": [], "total_scanned": 0, "latency_ms": elapsed, "vms_error": str(exc)}
+                return {"hits": [], "total_scanned": 0, "latency_ms": elapsed, "vms_error": "search backend unavailable"}
 
         if collection in _LEGACY_COLLECTIONS:
             hits = []
