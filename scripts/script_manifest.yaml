@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-17'
-total_scripts: 572
+total_scripts: 571
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -683,14 +683,6 @@ scripts:
   description: 用于 pre-commit hook 合并：将多个 GATE 脚本合并为单 hook 时使用。
   domain: governance
   execution_plane: hot-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: governance/scan_exception_debt.py
-  path: governance/scan_exception_debt.py
-  description: Phase 2 阶段0治标清零的数据源生成器（architecture_debt_registry.md §6.4）。
-  domain: governance
-  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
