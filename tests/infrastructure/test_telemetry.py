@@ -24,6 +24,7 @@ from zephyr.infrastructure.asset_inventory.telemetry import (
     SmtpEmailChannel,
     get_telemetry,
 )
+import zephyr.infrastructure.asset_inventory.telemetry as telemetry_mod
 
 
 class TestMetricPoint:
@@ -140,6 +141,24 @@ class TestGetTelemetry:
     def test_returns_instance(self):
         t = get_telemetry()
         assert isinstance(t, InventorySelfMetrics)
+
+    def test_returns_singleton(self):
+        """S4-A: get_telemetry() 每次返回同一单例（惰性创建后缓存于 _TELEMETRY 全局）。"""
+        t1 = get_telemetry()
+        t2 = get_telemetry()
+        assert t1 is t2
+
+    def test_TELEMETRY_attr_lazy_via_pep562(self):
+        """S4-A: `telemetry.TELEMETRY` 通过 PEP 562 __getattr__ 返回与 get_telemetry() 相同单例。"""
+        assert telemetry_mod.TELEMETRY is get_telemetry()
+
+    def test_no_eager_TELEMETRY_in_module_dict(self):
+        """S4-A: 模块 __dict__ 不含大写 'TELEMETRY' 键——证明急切实例化已移除。
+
+        PEP 562 __getattr__ 不缓存到 __dict__，故 TELEMETRY 永不进入模块字典；
+        惰性单例缓存在私有 _TELEMETRY 全局中（键为 '_TELEMETRY'）。
+        """
+        assert "TELEMETRY" not in telemetry_mod.__dict__
 
 
 class TestConsoleChannel:
