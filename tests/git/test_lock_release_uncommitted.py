@@ -139,16 +139,29 @@ class TestWarnIfUncommitted:
         output = buf.getvalue()
         assert "WARNING" not in output
 
-    def test_no_crash_on_non_git_file(self, tmp_path: Path):
+    def test_no_crash_on_non_git_file(self, tmp_path: Path, monkeypatch):
         """非 git 仓库文件不崩溃."""
         f = tmp_path / "nogit.txt"
         f.write_text("content", encoding="utf-8")
+
+        # 模拟非 git 仓库环境：git status 返回非零退出码
+        # （真实非 git 目录中 git status 会失败；测试 tmp_path 可能在
+        # ZephyrAlpha repo 内导致 git status 成功，故 mock 确保测试隔离）
+        class _FakeResult:
+            returncode = 128  # git 在非 git 目录的退出码
+            stdout = ""
+            stderr = "fatal: not a git repository"
+
+        monkeypatch.setattr(
+            "subprocess.run", lambda *a, **kw: _FakeResult()
+        )
+
         buf = io.StringIO()
         with redirect_stdout(buf):
             lock_files._warn_if_uncommitted(str(f))
         output = buf.getvalue()
         # 非 git 仓库应静默跳过
-        assert "WARNING" not in output or "git" not in output.lower()
+        assert "WARNING" not in output
 
 
 class TestCmdReleaseWarning:

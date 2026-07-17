@@ -45,7 +45,7 @@ import validate_rule_frontmatter as vrf  # noqa: E402
 VALID_FRONTMATTER = """rule_id: TRAE-099
 title: 测试规则
 version: '1.0.0'
-layer: L1
+layer: L1_foundation
 module_id: TRAE-099
 depends_on: []
 tags:
@@ -118,7 +118,7 @@ def _run_validator_and_get_errors(path: Path) -> list[str]:
 def test_r1_missing_required_field_version(temp_rules_dir):
     """R1攻击：删除 version 字段。期望被检测。"""
     content = VALID_FRONTMATTER.replace("version: '1.0.0'\n", "")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("version" in e for e in errors), f"R1失败：未检测到缺失version字段。errors={errors}"
 
@@ -126,7 +126,7 @@ def test_r1_missing_required_field_version(temp_rules_dir):
 def test_r1b_missing_all_required_fields(temp_rules_dir):
     """R1b攻击：删除所有必填字段。期望全部被检测。"""
     content = "title: 只有标题\n"
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     required = [
         "rule_id",
@@ -156,15 +156,15 @@ def test_r2_field_order_wrong(temp_rules_dir):
     aliases_idx = next(i for i, l in enumerate(lines) if l.startswith("aliases:"))
     lines.insert(aliases_idx + 2, layer_line)  # aliases 后面有空列表项
     content = "\n".join(lines) + "\n"
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("顺序" in e or "order" in e.lower() for e in errors), f"R2失败：未检测到顺序错误。errors={errors}"
 
 
 def test_r3_invalid_layer_enum(temp_rules_dir):
     """R3攻击：layer=L5（非法枚举值）。期望被检测。"""
-    content = VALID_FRONTMATTER.replace("layer: L1", "layer: L5")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    content = VALID_FRONTMATTER.replace("layer: L1_foundation", "layer: L5")
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("layer" in e and "L5" in e for e in errors), f"R3失败：未检测到非法layer。errors={errors}"
 
@@ -172,7 +172,7 @@ def test_r3_invalid_layer_enum(temp_rules_dir):
 def test_r4_invalid_stability_enum(temp_rules_dir):
     """R4攻击：stability=super_stable（非法枚举值）。期望被检测。"""
     content = VALID_FRONTMATTER.replace("stability: evolving", "stability: super_stable")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("stability" in e and "super_stable" in e for e in errors), (
         f"R4失败：未检测到非法stability。errors={errors}"
@@ -182,7 +182,7 @@ def test_r4_invalid_stability_enum(temp_rules_dir):
 def test_r5_invalid_safety_level_enum(temp_rules_dir):
     """R5攻击：safety_level=X（非法枚举值）。期望被检测。"""
     content = VALID_FRONTMATTER.replace("safety_level: L", "safety_level: X")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("safety_level" in e and "X" in e for e in errors), f"R5失败：未检测到非法safety_level。errors={errors}"
 
@@ -190,7 +190,7 @@ def test_r5_invalid_safety_level_enum(temp_rules_dir):
 def test_r6_invalid_ai_autonomy_enum(temp_rules_dir):
     """R6攻击：ai_autonomy=full_auto（非法枚举值）。期望被检测。"""
     content = VALID_FRONTMATTER.replace("ai_autonomy: ai_modifiable", "ai_autonomy: full_auto")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("ai_autonomy" in e and "full_auto" in e for e in errors), (
         f"R6失败：未检测到非法ai_autonomy。errors={errors}"
@@ -205,7 +205,7 @@ def test_r6_invalid_ai_autonomy_enum(temp_rules_dir):
 def test_r7_rule_id_filename_mismatch(temp_rules_dir):
     """R7攻击：文件名trae_099但rule_id=TRAE-100。期望被检测。"""
     content = VALID_FRONTMATTER.replace("rule_id: TRAE-099", "rule_id: TRAE-100")
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     assert any("rule_id" in e and "不匹配" in e for e in errors), f"R7失败：未检测到rule_id不一致。errors={errors}"
 
@@ -217,7 +217,7 @@ def test_r7_rule_id_filename_mismatch(temp_rules_dir):
 
 def test_r8_empty_file(temp_rules_dir):
     """R8攻击：完全空的文件。期望被检测。"""
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", "")
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", "")
     errors = _run_validator_and_get_errors(path)
     assert len(errors) > 0, f"R8失败：空文件未报错。errors={errors}"
 
@@ -225,7 +225,7 @@ def test_r8_empty_file(temp_rules_dir):
 def test_r9_non_yaml_format(temp_rules_dir):
     """R9攻击：纯文本乱码（非YAML）。期望被检测。"""
     content = "这不是YAML格式\n只是一段普通文本\n没有key: value结构"
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     errors = _run_validator_and_get_errors(path)
     # 非 YAML 格式应该报错（缺少必填字段或解析失败）
     assert len(errors) > 0, f"R9失败：非YAML格式未报错。errors={errors}"
@@ -236,7 +236,7 @@ def test_r10_huge_file(temp_rules_dir):
     # 生成 1.5MB 的 YAML（重复 sections 内容）
     big_section = "  big_section_" + "x" * 1000 + ":\n    title: 大段内容\n    data: " + "y" * 1000 + "\n"
     content = VALID_FRONTMATTER + big_section * 500
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     # 不应崩溃（可能报错也可能PASS，关键是不能 hang）
     errors = _run_validator_and_get_errors(path)
     # 超大文件本身 frontmatter 合规，应该 PASS（sections 内容不影响）
@@ -245,7 +245,7 @@ def test_r10_huge_file(temp_rules_dir):
 
 def test_r11_binary_disguised_as_yaml(temp_rules_dir):
     """R11攻击：二进制内容伪装成.yaml。期望被检测（不崩溃）。"""
-    path = temp_rules_dir / "trae_099_test.yaml"
+    path = temp_rules_dir / "trae_099_test_rule.yaml"
     # 写入二进制内容
     path.write_bytes(b"\xff\xfe\x00\x01\x02\x03binary garbage here \x00\xff")
     vrf._errors.clear()
@@ -276,7 +276,7 @@ def test_r12_yaml_injection(temp_rules_dir):
 malicious: !!python/object/apply:os.system ["echo hacked"]
 """
     )
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", content)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", content)
     vrf._errors.clear()
     vrf._warnings.clear()
     # yaml.safe_load 会拒绝 !!python/object，所以应该报 YAML 解析失败
@@ -297,7 +297,7 @@ malicious: !!python/object/apply:os.system ["echo hacked"]
 
 def test_r13_valid_file_no_false_positive(temp_rules_dir):
     """R13正常用例：完全合规的文件。期望零错误（无误报）。"""
-    path = _write_rule_file(temp_rules_dir, "trae_099_test.yaml", VALID_FRONTMATTER)
+    path = _write_rule_file(temp_rules_dir, "trae_099_test_rule.yaml", VALID_FRONTMATTER)
     errors = _run_validator_and_get_errors(path)
     assert len(errors) == 0, f"R13失败：合规文件误报。errors={errors}"
 
