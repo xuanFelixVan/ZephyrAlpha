@@ -209,7 +209,7 @@ dual_storage:
     content: "元数据 + 血缘 + 质量 + 版本"
   consistency: "同一 Engine.compute() 驱动两种存储写入 → 消除15-25%偏差"
 responsibility_domain: 
-build_status: generated
+build_status: stable
 ---
 
 > ✅ **业务层可施工声明**：本蓝图所属C轨业务层已开放[ARCH-045 P0]，可施工。

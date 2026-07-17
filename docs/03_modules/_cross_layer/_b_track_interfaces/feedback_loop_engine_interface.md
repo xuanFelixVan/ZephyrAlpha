@@ -36,7 +36,7 @@ mod_master_contracts:
   - "CT-FLE-ORC-001"
   - "CT-FLE-DB-001"
   - "CT-TELE-FLE-001"
-responsibility_domain: D_FEEDBACK_LOOP
+responsibility_domain: 
 design_maturity: design
 build_status: planned
 ---

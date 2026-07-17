@@ -8,7 +8,7 @@ ttl: permanent
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
-responsibility_domain: panorama_alignment
+responsibility_domain: 
 owner: ZephyrAlpha-Owner
 created_by: human_plus_agent
 date: "2026-07-13"

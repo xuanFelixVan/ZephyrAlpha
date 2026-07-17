@@ -53,7 +53,7 @@ scope: global
 stability: evolving
 verifiability: hybrid
 responsibility_domain: 
-build_status: generated
+build_status: stable
 design_maturity: prototype
 ---
 
