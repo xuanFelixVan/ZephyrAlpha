@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/check_pure_assertion.py | §gate-pure-assertion
 # [MODULE] scripts.governance.d3_metadata.check_pure_assertion
-# [DOMAIN] D_GOV_DOC_QUALITY
+# [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] —
 # [CONSUMERS] zephyr.gov_enforcement.commit_gates.pure_assertion_gate (subprocess --ci)
 # [STARTUP] imported

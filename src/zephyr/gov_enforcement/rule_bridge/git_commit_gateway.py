@@ -122,6 +122,8 @@ from zephyr.gov_enforcement.commit_gates.blueprint_format_gate import make_bluep
 from zephyr.gov_enforcement.commit_gates.data_task_completeness_gate import make_data_task_completeness_gate
 from zephyr.gov_enforcement.commit_gates.capability_consistency_gate import make_capability_consistency_gate
 from zephyr.gov_enforcement.commit_gates.rename_depgraph_sync_gate import make_rename_depgraph_sync_gate
+from zephyr.gov_enforcement.commit_gates.domain_fk_gate import make_domain_fk_gate
+from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import make_blueprint_amodule_consistency_gate
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -295,7 +297,7 @@ class GitCommitGateway:
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
         self._gate_registry.register(make_foreign_change_gate())  #ARCH-054 priority=45 外来变更检测（claim 时基线快照，commit 时对比）
-        self._gate_registry.register(make_session_required_gate())  # priority=30 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
+        self._gate_registry.register(make_session_required_gate())  # priority=31 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
         self._gate_registry.register(make_claim_required_gate())
         self._gate_registry.register(make_capability_overlap_gate())
         self._gate_registry.register(make_directory_contract_gate())
@@ -326,23 +328,25 @@ class GitCommitGateway:
         self._gate_registry.register(make_doc_ref_broken_gate())  # priority=91 治本文档引用断裂 .md 相对路径不存在（病根：文档引用断裂26）——原88与module_id_consistency撞号，调整至91
         self._gate_registry.register(make_function_dup_gate())  # priority=90 治本重复函数同目录同名同 body hash（病根：SSoT真源唯一性211）
         self._gate_registry.register(make_bare_getenv_gate())  # priority=81 治本裸os.getenv读密钥绕过SecretProvider（§5.17.10防复发，AST检测SECRET_INDICATOR_PATTERNS）
-        self._gate_registry.register(make_msg_style_gate())  # priority=92 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
-        self._gate_registry.register(make_import_direction_gate())  # priority=93 治本shared层向上依赖（§5.152防复发）
-        self._gate_registry.register(make_hardcoded_url_gate())  # priority=94 治本硬编码localhost URL（§5.160.9防复发）
+        self._gate_registry.register(make_msg_style_gate())  # priority=96 治本错误消息标点/箭头风格不一致（5.99.22防复发：raise消息含->或。结尾阻断）
+        self._gate_registry.register(make_import_direction_gate())  # priority=97 治本shared层向上依赖（§5.152防复发）
+        self._gate_registry.register(make_hardcoded_url_gate())  # priority=98 治本硬编码localhost URL（§5.160.9防复发）
         self._gate_registry.register(make_panorama_alignment_gate())  # priority=830 domain_mismatches 阻断 + orphans/drifts warn-only（ARCH-056 升级）
-        self._gate_registry.register(make_long_param_list_gate())  # priority=88 治本长参数列表>7参数（§5.150防复发，AST检测新增函数参数数）
-        self._gate_registry.register(make_bare_sql_gate())  # priority=87 治本裸SQL字面量（§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE）
+        self._gate_registry.register(make_long_param_list_gate())  # priority=95 治本长参数列表>7参数（§5.150防复发，AST检测新增函数参数数）
+        self._gate_registry.register(make_bare_sql_gate())  # priority=94 治本裸SQL字面量（§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE）
         self._gate_registry.register(make_ch_batch_size_gate())  # priority=36 防回退CH批量写入（#ARCH-CH-004，AST检测write_result在for循环内直接调用，强制BufferedWriter中间层）
         self._gate_registry.register(make_ch_final_gate())  # priority=37 裁定 #ARCH-CH-007 B5 ch_writer.query 直接调用阻断（应改用 ch_reader.query 自动注入 FINAL）
         self._gate_registry.register(make_ch_version_col_gate())  # priority=38 裁定 #ARCH-CH-009 version列语义误用阻断（diff检测非DateTime列作version参数）
-        self._gate_registry.register(make_god_class_gate())  # priority=86 治本God Class方法数>20（§5.150防复发，AST检测新增类方法数）
-        self._gate_registry.register(make_high_complexity_gate())  # priority=85 治本高循环复杂度>15（§5.158防复发，AST检测McCabe复杂度）
-        self._gate_registry.register(make_tests_coverage_gate())  # priority=95 治本gate测试覆盖率校验（#ARCH-057，守卫者的守卫者——[TESTS]头部声明必须兑现）
-        self._gate_registry.register(make_test_source_consistency_gate())  # priority=96 治本测试-源码符号漂移（§5.178防复发，AST检测测试import的符号在源码中不存在）
+        self._gate_registry.register(make_god_class_gate())  # priority=93 治本God Class方法数>20（§5.150防复发，AST检测新增类方法数）
+        self._gate_registry.register(make_high_complexity_gate())  # priority=92 治本高循环复杂度>15（§5.158防复发，AST检测McCabe复杂度）
+        self._gate_registry.register(make_tests_coverage_gate())  # priority=99 治本gate测试覆盖率校验（#ARCH-057，守卫者的守卫者——[TESTS]头部声明必须兑现）
+        self._gate_registry.register(make_test_source_consistency_gate())  # priority=102 治本测试-源码符号漂移（§5.178防复发，AST检测测试import的符号在源码中不存在）
         self._gate_registry.register(make_blueprint_format_gate())  # priority=77 治本[BLUEPRINT]头部module_id格式（裁定#214 Phase0防蔓延，diff检测新增/修改的[BLUEPRINT]行）
-        self._gate_registry.register(make_data_task_completeness_gate())  # priority=80 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources）
-        self._gate_registry.register(make_depgraph_write_path_gate())  # priority=97 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
-        self._gate_registry.register(make_capability_consistency_gate())  # priority=98 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
+        self._gate_registry.register(make_domain_fk_gate())  # priority=78 治本[DOMAIN]头部域注册表FK校验（裁定#ARCH-DRIFT-PREVENTION-001 ADP-1，diff检测[DOMAIN]值在functional_domain_registry.yaml中存在）
+        self._gate_registry.register(make_blueprint_amodule_consistency_gate())  # priority=79 治本[A_module]格式一致性（裁定#ARCH-DRIFT-PREVENTION-001 ADP-3，diff检测层码后下划线+小写malformation）
+        self._gate_registry.register(make_data_task_completeness_gate())  # priority=78 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources；原78与GATE-DOMAIN-FK冲突，迁移到41）
+        self._gate_registry.register(make_depgraph_write_path_gate())  # priority=100 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
+        self._gate_registry.register(make_capability_consistency_gate())  # priority=101 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），

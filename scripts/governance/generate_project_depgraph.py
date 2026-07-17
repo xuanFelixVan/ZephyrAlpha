@@ -3047,6 +3047,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         node_count = 0
         skipped_invalid_blueprint = 0  # 治本 2026-07-02: 预过滤不合规blueprint_id计数
         failed_insert_count = 0  # 治本 2026-07-02: 逐节点INSERT失败计数
+        failed_inserts: list[dict] = []  # ADP-2: 收集全部INSERT失败详情用于ERROR摘要
         # P0-1 schema fix: 记录生成器node_id→path映射（用于edges表INSERT）
         # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
         # DB node_id是INTEGER自增，需要通过path建立映射
@@ -3167,7 +3168,13 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                     conn.rollback()
                     cursor = conn.cursor()
                 failed_insert_count += 1
-                if failed_insert_count <= 10:  # 只打印前10个warning
+                failed_inserts.append({
+                    "blueprint_id": bp_id,
+                    "path": node.get("path", ""),
+                    "domain_id": node.get("domain_id", ""),
+                    "error": str(node_err),
+                })
+                if failed_insert_count <= 10:  # 即时WARN前10个，完整ERROR摘要在循环后
                     print(
                         f"[DEPGRAPH-DB] WARN: 节点INSERT失败被跳过: "
                         f"blueprint_id={bp_id} path={node.get('path', '')} error={node_err}"
@@ -3179,7 +3186,18 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             )
         if failed_insert_count > 0:
             print(
-                f"[DEPGRAPH-DB] Phase 2.1 逐节点保护: {failed_insert_count} 个节点INSERT失败被跳过（未连累合规节点）"
+                f"[DEPGRAPH-DB] ERROR: {failed_insert_count} 个节点INSERT失败被跳过（未连累合规节点）"
+            )
+            print("[DEPGRAPH-DB] ERROR: INSERT失败完整列表（裁定#ARCH-DRIFT-PREVENTION-001 ADP-2）：")
+            for _i, _fi in enumerate(failed_inserts, 1):
+                print(
+                    f"  [{_i}/{failed_insert_count}] blueprint_id={_fi['blueprint_id']} "
+                    f"path={_fi['path']} domain_id={_fi['domain_id']} "
+                    f"error={_fi['error']}"
+                )
+            print(
+                "[DEPGRAPH-DB] ERROR: 常见根因——domain_id 不在 domains 表中（FK 违反），"
+                "请检查文件的 [DOMAIN] 头部是否在 functional_domain_registry.yaml 中注册"
             )
 
         # DM-012 Fix 2: Multi-tier architecture_layer backfill for ALL nodes

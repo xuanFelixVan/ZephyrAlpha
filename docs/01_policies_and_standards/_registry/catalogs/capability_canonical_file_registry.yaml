@@ -3650,6 +3650,21 @@ capabilities:
       commit 时硬阻断。canonical = src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py。
       解决发现性：新 AI 搜 "裸SQL/SQL注入/bare sql/NO-BARE-SQL" 可定位真源。
 
+  - capability_id: blueprint_amodule_consistency_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py
+    aliases:
+      - BLUEPRINT-AMODULE-CONSISTENCY
+      - blueprint_amodule_consistency
+      - make_blueprint_amodule_consistency_gate
+    description: >-
+      BLUEPRINT-AMODULE-CONSISTENCY [A_module] 头部 module_id 格式一致性门禁
+      （裁定 #ARCH-DRIFT-PREVENTION-001 ADP-3，priority=79）。
+      靶向检测 [A_module] module_id 的 malformation 模式 MOD-{UPPER}_{lowercase}
+      （层码后下划线+小写，如 MOD-INF_a2a_agent_blocklist），diff-based 只检 added 行。
+      关键设计：不使用 validate_module_id_naming.is_valid_module_id（其 track 2 正则要求
+      全大写，与项目小写文件名约定冲突，会误阻断合规名如 MOD-GOV-domain_fk_gate）。
+      canonical = src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py。
+
   - capability_id: blueprint_format_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
     aliases:
@@ -3715,6 +3730,21 @@ capabilities:
     description: >-
       DEPGRAPH-WRITE-PATH depgraph 写入路径白名单门禁。
       检测 depgraph 写入操作是否来自白名单路径（防止非授权脚本直接写 DB）。
+
+  - capability_id: domain_fk_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    aliases:
+      - GATE-DOMAIN-FK
+      - domain_fk
+      - make_domain_fk_gate
+    description: >-
+      GATE-DOMAIN-FK [DOMAIN] 头部域注册表 FK 校验门禁
+      （裁定 #ARCH-DRIFT-PREVENTION-001 ADP-1，priority=78）。
+      diff-based 检测 staged .py 文件中 [DOMAIN] 头部值，校验是否在
+      functional_domain_registry.yaml（YAML 真源，非 DB——避免连接开销和 sync 滞后）
+      中注册。未注册→硬阻断。真源选择依据 TRAE-062 SSoT 分类铁律：规则数据真源是 YAML。
+      fail-open 边界：YAML 读取异常→PASS；只检新增 [DOMAIN] 行（存量违规不阻断）。
+      canonical = src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py。
 
   - capability_id: foreign_change_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
@@ -3877,6 +3907,12 @@ creation_tokens:
     token: "auto-scan-debt-20260706"
     created_by: "session-sess-29992-20260706143221"
     capability: "architecture_debt_scanner"
+
+  # --- 异常债务扫描器（Phase 2 阶段0，5.135/5.168 违规清单生成）---
+  - file: "scripts/governance/scan_exception_debt.py"
+    token: "auto-scan-exception-debt-20260717"
+    created_by: "session-sess-36852-20260717130749"
+    capability: "exception_debt_scanner"
 
   # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
   - file: "scripts/governance/d7_code/check_any_abuse.py"
@@ -4634,6 +4670,18 @@ creation_tokens:
     token: "auto-rename-depgraph-sync-gate-20260717"
     created_by: "session-sess-ai14-20260717"
     capability: "rename_depgraph_sync_gate"
+
+  # --- #ARCH-DRIFT-PREVENTION-001 depgraph drift 防御体系（2026-07-17）---
+  # domain_fk_gate.py: GATE-DOMAIN-FK [DOMAIN]头部域注册表FK校验（ADP-1, priority=78）
+  - file: "src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py"
+    token: "auto-domain-fk-gate-20260717"
+    created_by: "session-sess-21384-20260717125744"
+    capability: "domain_fk_gate"
+  # blueprint_amodule_consistency_gate.py: BLUEPRINT-AMODULE-CONSISTENCY [A_module]格式一致性（ADP-3, priority=79）
+  - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py"
+    token: "auto-blueprint-amodule-consistency-gate-20260717"
+    created_by: "session-sess-21384-20260717125744"
+    capability: "blueprint_amodule_consistency_gate"
 
 # ============================================================================
 # 维护日志

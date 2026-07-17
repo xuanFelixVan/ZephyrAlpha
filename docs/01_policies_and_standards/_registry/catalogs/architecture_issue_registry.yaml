@@ -2607,3 +2607,81 @@ entries:
   related_adjudication: cross_layer_contracts.yaml CTR-001~CTR-005 数据契约真源声明
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+# --- #ARCH-DRIFT-PREVENTION-001: depgraph drift 防御体系——从检测驱动转向约束驱动 ---
+- issue_id: '#ARCH-DRIFT-PREVENTION-001'
+  title: depgraph drift 防御体系——从检测驱动转向约束驱动（100% AI 开发模式治本）
+  category: architecture_governance
+  severity: P1高
+  status: decided
+  description: |
+    pure_assertion_gate.py CODE_NOT_IN_DEPGRAPH drift 根因调查发现：depgraph 是依赖关系
+    唯一真源（L1 铁律），但 100% AI 开发模式下 drift 反复发生（[DOMAIN] 域 ID 未注册、
+    [A_module] module_id 格式错误、INSERT 失败静默吞没）。现有体系是"检测驱动"——
+    generate_project_depgraph.py 重建后由 check_blueprint_code_alignment.py 事后报告 drift，
+    但 drift 已形成（存量违规 822+），AI 无法在提交时被阻断。
+    根因（第一性原理）：
+    (a) [DOMAIN] 头部值无 FK 校验——AI 写入未注册域 ID 时 depgraph INSERT 触发 FK 违反，
+        但失败被静默 WARN 前 10 个，其余跳过，drift 永久存在
+    (b) [A_module] module_id 格式无 commit 阶段校验——validate_module_id_naming 正则
+        要求全大写，但项目约定使用小写文件名（MOD-GOV-domain_fk_gate），正则与约定冲突，
+        BLUEPRINT-FORMAT gate 用 is_valid_module_id 会误阻断所有合规小写名
+    (c) 派生数据（blueprint.md §0.1 模块清单）靠手工维护，GATE-MODULE-INVENTORY-SYNC
+        仅 warn-only，无 auto-fix，drift 持续累积
+    裁定：从"检测驱动"转向"约束驱动"——在 commit 阶段阻断 drift 源头，而非事后报告。
+  adjudication: |
+    5 项架构裁定（ADP-1~ADP-5）：
+    (ADP-1) 新增 GATE-DOMAIN-FK pre-commit 门禁（priority=78）——diff-based 检测
+            staged .py 文件中 [DOMAIN] 头部值，校验是否在 functional_domain_registry.yaml
+            （YAML 真源，非 DB——避免连接开销和 sync 滞后）中注册。未注册→硬阻断。
+            真源选择理由：TRAE-062 SSoT 分类铁律——规则数据真源是 YAML 文件，
+            functional_domain_registry.yaml 是域 ID 的 YAML 真源，domains 表是 DB 缓存
+            （sync_yaml_to_depgraph.py 同步产物）。读 YAML 真源=零滞后。
+            fail-open 边界：YAML 读取异常→PASS（不阻断 commit）；新增 [DOMAIN] 行才检测
+            （存量违规不阻断，避免一次性阻断 822 个违规）。
+    (ADP-2) generate_project_depgraph.py INSERT 失败从"WARN 前 10 个"升级为
+            "ERROR 完整摘要"——failed_inserts 列表收集所有失败节点，遍历打印
+            blueprint_id/path/domain_id/error 详情 + 根因提示（domain_id 不在 domains 表
+            = FK 违反，检查 [DOMAIN] 头部是否在 functional_domain_registry.yaml 注册）。
+            从源头暴露 FK 违反，不再静默吞没。SAVEPOINT 逐节点保护不变（合规节点不受影响）。
+    (ADP-3) 新增 GATE-BLUEPRINT-AMODULE-CONSISTENCY pre-commit 门禁（priority=79）——
+            靶向检测 [A_module] module_id 的 malformation 模式 MOD-{UPPER}_{lowercase}
+            （层码后下划线+小写，如 MOD-INF_a2a_agent_blocklist）。
+            关键设计决策：不使用 validate_module_id_naming.is_valid_module_id——其 track 2
+            正则要求全大写 [A-Z]{1,20}，但项目约定使用小写文件名（MOD-GOV-domain_fk_gate），
+            两者不兼容。用靶向 malformation 正则 ^MOD-[A-Z]+_[a-z] 精确检测唯一需要阻断的
+            格式错误（层码大写后紧跟下划线+小写），不误阻断合规小写名。
+            diff-based 检测新增 [A_module] 行，存量违规不阻断。
+    (ADP-4) GATE-MODULE-INVENTORY-SYNC（ARCH-055 post-commit reconciler）升级为
+            warn + auto-fix——检测到 commit_gates/*.py 新增文件未登记到 blueprint.md §0.1
+            时，自动追加表格行（warn-only 保留，auto-fix 作为补充）。P1 优先级，可延后施工。
+            理由：warn-only 依赖 AI 自觉同步文档，100% AI 开发模式下必然漂移；
+            auto-fix 消除人工同步环节。
+    (ADP-5) drift scan 报告（check_blueprint_code_alignment.py）增加重命名提示——
+            检测到 ORPHAN_MODULE_ID 可匹配时，提示反查 depgraph file→blueprint_id 并
+            修复 [BLUEPRINT] 头部。P2 优先级，后续施工。
+    设计原则：
+    - 约束驱动 > 检测驱动：在 commit 阶段阻断 drift 源头，而非事后报告
+    - diff-based 检测：只检 added 行，存量违规不阻断（避免一次性阻断 822 个违规导致开发停滞）
+    - YAML 真源优先：规则数据读 YAML 真源，避免 DB 连接开销和 sync 滞后
+    - 靶向 malformation 检测：不使用过严正则误阻断合规命名，精确检测唯一错误模式
+    - fail-open 边界明确：YAML 读取/diff 解析异常→PASS，检出违规→FAIL
+    这是防幻觉/防漂移体系 L1（depgraph 真源）的源头约束补强——L1 要求 depgraph 是依赖
+    唯一真源，但若源头（[DOMAIN]/[A_module] 头部）写入错误数据，真源就被污染。
+    ADP-1/ADP-3 在源头阻断，ADP-2 在生成时暴露，形成三道防线。
+  fix_phase: |
+    Phase 1（P0，已完成）：
+      (1.1) GATE-DOMAIN-FK 门禁创建+注册（domain_fk_gate.py, priority=78）
+      (1.2) generate_project_depgraph.py INSERT 失败 ERROR 完整摘要
+    Phase 2（P1，部分完成）：
+      (2.1) GATE-BLUEPRINT-AMODULE-CONSISTENCY 门禁创建+注册（blueprint_amodule_consistency_gate.py, priority=79）——已完成
+      (2.2) GATE-MODULE-INVENTORY-SYNC 升级为 warn + auto-fix——可延后
+    Phase 3（P2，未施工）：
+      drift scan 增加重命名提示
+    Phase 4（已完成）：存量修复
+      (4.1) check_pure_assertion.py [DOMAIN] D_GOV_DOC_QUALITY → D_GOV_CODE_QUALITY
+      (4.2) a2a_agent_blocklist.py [A_module] MOD-INF_a2a_agent_blocklist → MOD-A2A-a2a_agent_blocklist
+      (4.3) blueprint.md §0.1 表格追加两个新 gate 行 + 格式修复
+  related_adjudication: '#ARCH-055, #ARCH-057, #ARCH-060, TRAE-062 SSoT 分类铁律, 裁定#208 双轨制 module_id'
+  created: '2026-07-17'
+  last_updated: '2026-07-17'

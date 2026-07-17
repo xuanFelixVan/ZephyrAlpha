@@ -170,7 +170,7 @@ build_status: planned
 | `commit_gates/rule_four_way_alignment_gate.py` | §0.1 | 规则四方对齐门禁（ARCH-020补建） | 已实现 | | 本模块 |
 | `commit_gates/unsafe_dict_spread_gate.py` | §0.1 | 不安全字典展开门禁 | 已实现 | | 本模块 |
 | `commit_gates/pure_shim_gate.py` | §0.1 | 纯re-export shim阻断门禁（PURE-SHIM，P6治本--no-verify绕过） | 已实现 | | 本模块 |
-|`commit_gates/pure_assertion_gate.py` | §0.1 | 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016治本，subprocess调用check_pure_assertion --ci检测staged .md added行） | 已实现 | | 本模块 |
+| `commit_gates/pure_assertion_gate.py` | §0.1 | 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016治本，subprocess调用check_pure_assertion --ci检测staged .md added行） | 已实现 | | 本模块 |
 | `commit_gates/_diff_helpers.py` | §0.1 | gate共享diff解析工具模块（FUNCTION-DUP治本提取） | 已实现 | | 本模块 |
 | `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
 | `commit_gates/import_direction_gate.py` | §0.1 | shared层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152防复发） | 已实现 | | 本模块 |
@@ -191,6 +191,8 @@ build_status: planned
 | `commit_gates/test_source_consistency_gate.py` | §0.1 | 测试-源码符号一致性门禁（TEST-SOURCE-CONSISTENCY，§5.178防复发，检测tests/中import的符号在源码是否存在） | 已实现 | | 本模块 |
 | `commit_gates/data_task_completeness_gate.py` | §0.1 | 数据任务完整性warn级门禁（DATA-TASK-COMPLETENESS，提醒新增tasks.yaml任务配置fallback_sources，数据韧性三层机制） | 已实现 | | 本模块 |
 | `commit_gates/capability_consistency_gate.py` | §0.1 | Provider路由-meta一致性门禁（CAP-CONSISTENCY，裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致，priority=101） | 已实现 | | 本模块 |
+| `commit_gates/domain_fk_gate.py` | §0.1 | [DOMAIN]头部域注册表FK校验门禁（GATE-DOMAIN-FK，裁定#ARCH-DRIFT-PREVENTION-001 ADP-1，diff检测[DOMAIN]值在functional_domain_registry.yaml中存在，priority=78） | 已实现 | | 本模块 |
+| `commit_gates/blueprint_amodule_consistency_gate.py` | §0.1 | [A_module]格式一致性门禁（BLUEPRINT-AMODULE-CONSISTENCY，裁定#ARCH-DRIFT-PREVENTION-001 ADP-3，靶向检测MOD-{UPPER}_{lowercase} malformation，priority=79） | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
