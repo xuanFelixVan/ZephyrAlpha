@@ -77,8 +77,10 @@ class TestSqliteDumperInstantiation:
             m.assert_called_once()
 
     def test_none_output_dir_uses_default(self, tmp_db: Path) -> None:
+        from zephyr.shared.io.paths import REPO_ROOT
         d = SqliteDumper(db_path=tmp_db, output_dir=None)
-        assert d._output_dir == Path("data/rollback/db_snapshots")
+        # 治本（裁定#6 路径SSoT）：项目硬约束禁止相对路径，默认 output_dir 为 REPO_ROOT 绝对路径
+        assert d._output_dir == REPO_ROOT / "data" / "rollback" / "db_snapshots"
 
 
 class TestSqliteDumperDump:

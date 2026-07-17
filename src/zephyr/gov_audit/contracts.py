@@ -71,6 +71,37 @@ class AuditWriter(ABC):
     @abstractmethod
     def write_issue(self, issue: AuditIssue, report_dir: Path) -> Path: ...
 
+    @classmethod
+    def write(cls, **kwargs: Any) -> dict[str, Any]:
+        """委托到全局 AuditWriter 单例（_GLOBAL_WRITER）写入核心审计链。
+
+        设计意图（writer.py _GLOBAL_WRITER 注释"供 contracts.py 委托桥接使用"）：
+        治理层调用此方法 → 自动路由到核心不可变 JSONL 哈希链，
+        确保所有审计写入都进入核心链，不存在桩绕过或独立审计流逃逸。
+
+        Args:
+            **kwargs: 审计事件字段（agent_id, permission, resource 等）。
+
+        Returns:
+            包含 chain_hash 的 dict。
+
+        Raises:
+            ContractViolationError: 全局 writer 未初始化时。
+        """
+        from zephyr.gov_audit import writer as _writer_mod  # lazy import 避免循环依赖
+
+        # 通过模块引用读取 _GLOBAL_WRITER（而非 from...import 值拷贝），
+        # 确保 test 设置 writer_mod._GLOBAL_WRITER = writer 后类方法能看到最新值。
+        global_writer = _writer_mod._GLOBAL_WRITER
+        if global_writer is None:
+            raise ContractViolationError(
+                "Global AuditWriter not initialized — call writer.set_global_writer() first"
+            )
+        event: dict[str, Any] = dict(kwargs)
+        event.setdefault("event_type", "rbac_decision")
+        entry_hash = global_writer.write(event)
+        return {"chain_hash": entry_hash, **kwargs}
+
 
 class AuditQuery(ABC):
     @abstractmethod
