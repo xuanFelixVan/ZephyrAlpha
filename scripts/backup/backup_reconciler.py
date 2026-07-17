@@ -93,10 +93,25 @@ def _rel_path(file_path: str | Path) -> str:
         return str(file_path)
 
 
+def _get_state_file() -> Path:
+    """获取状态文件路径（从 backup_config.yaml §trigger.state_file 读取，fallback 到 _STATE_FILE）。
+
+    F-06 Track A 治本：state_file 真源从硬编码 _STATE_FILE 迁移到 YAML trigger.state_file，
+    硬编码常量仅作 YAML 缺失时的 fallback。
+    """
+    config = _load_config()
+    trigger_cfg = config.get("trigger", {}) if config else {}
+    state_file_rel = trigger_cfg.get("state_file")
+    if state_file_rel:
+        return _project_root / state_file_rel
+    return _STATE_FILE
+
+
 def _load_state() -> dict[str, Any]:
     """加载备份状态文件（INV-10）"""
+    state_file = _get_state_file()
     try:
-        with open(_STATE_FILE, encoding="utf-8") as f:
+        with open(state_file, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
@@ -104,10 +119,11 @@ def _load_state() -> dict[str, Any]:
 
 def _update_state(**kwargs: Any) -> None:
     """更新备份状态文件（INV-10）"""
+    state_file = _get_state_file()
     state = _load_state()
     state.update(kwargs)
-    _STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(_STATE_FILE, "w", encoding="utf-8") as f:
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(state_file, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
 
 
@@ -116,18 +132,29 @@ def _trigger(committed_files: list[str]) -> bool:
 
     条件1：committed_files 中存在重要文件
     条件2：距上次成功备份 ≥ 8小时（首次备份无状态时视为满足）
+
+    F-06 Track A 治本（2026-07-17）：触发参数（prefixes/files/min_interval）真源
+    从硬编码常量迁移到 backup_config.yaml §trigger（_load_config 加载），硬编码
+    常量仅作 YAML 缺失时的 fallback（消除 _load_config 定义但未调用的死代码）。
     """
-    # 条件1：检测重要文件变更
+    # 加载配置（YAML 真源 + 硬编码 fallback）
+    config = _load_config()
+    trigger_cfg = config.get("trigger", {}) if config else {}
+
+    # 条件1：检测重要文件变更（prefixes/files 从 YAML 读取，fallback 到硬编码）
+    prefixes = tuple(trigger_cfg.get("important_prefixes", _IMPORTANT_PREFIXES))
+    important_files = frozenset(trigger_cfg.get("important_files", _IMPORTANT_FILES))
     has_important = False
     for f in committed_files:
         rel = _rel_path(f)
-        if rel.startswith(_IMPORTANT_PREFIXES) or rel in _IMPORTANT_FILES:
+        if rel.startswith(prefixes) or rel in important_files:
             has_important = True
             break
     if not has_important:
         return False
 
-    # 条件2：检查最小间隔
+    # 条件2：检查最小间隔（min_interval_seconds 从 YAML 读取，fallback 到硬编码）
+    min_interval = trigger_cfg.get("min_interval_seconds", _MIN_INTERVAL_SECONDS)
     state = _load_state()
     last_backup_str = state.get("last_backup_time")
     if last_backup_str:
@@ -136,10 +163,10 @@ def _trigger(committed_files: list[str]) -> bool:
             if last_backup.tzinfo is None:
                 last_backup = last_backup.replace(tzinfo=timezone.utc)
             elapsed = (datetime.now(timezone.utc) - last_backup).total_seconds()
-            if elapsed < _MIN_INTERVAL_SECONDS:
+            if elapsed < min_interval:
                 logger.debug(
                     "backup_reconciler: skip (elapsed=%.0fs < %ds)",
-                    elapsed, _MIN_INTERVAL_SECONDS,
+                    elapsed, min_interval,
                 )
                 return False
         except (ValueError, TypeError):

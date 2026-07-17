@@ -5,7 +5,7 @@ title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.2.0"
+version: "1.3.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -272,7 +272,15 @@ restic -r F:\restic-zephyr stats
 
 ### §3.3 backup_config.yaml — 备份配置
 
-**职责**：集中管理路径、保留策略、排除规则、触发条件（backup_reconciler.py 和 backup.ps1 共同读取）。
+**职责**：集中管理路径、保留策略（文档参考）、触发条件（backup_reconciler.py 和 backup.ps1 共同读取）。
+
+**消费者映射**（F-06 Track B 治本，2026-07-17）：
+- `repository.path` → backup.ps1 L50（regex 读取 restic repo path）
+- `dump_dir` → backup.ps1 L51（regex 读取 DB dump 目录）
+- `trigger.*` → backup_reconciler.py `_trigger()` + `_get_state_file()`（`_load_config` 加载，F-06 Track A 治本）
+- `retention` → **DOCUMENTATION ONLY**（实际值硬编码在 backup.ps1 L49，YAML 非真源）
+
+**已删除死配置**（F-06 Track B，无消费者）：`databases` / `excludes` / `report`
 
 **关键字段**：
 ```yaml
@@ -280,10 +288,12 @@ repository:
   path: "F:\\restic-zephyr"
   target_drive: "F:"
 dump_dir: "D:\\tmp_db_dumps"  # 项目外临时目录，避免被tmp/排除规则冲突
+# --- DOCUMENTATION ONLY（非真源，不被任何脚本消费）---
+# 实际 retention 值硬编码在 backup.ps1 L49：$KeepDaily=7; $KeepWeekly=4; $KeepMonthly=3
 retention:
-  keep_daily: 7
-  keep_weekly: 4
-  keep_monthly: 3
+  keep_daily: 7    # = backup.ps1 $KeepDaily
+  keep_weekly: 4    # = backup.ps1 $KeepWeekly
+  keep_monthly: 3   # = backup.ps1 $KeepMonthly
 trigger:
   min_interval_seconds: 28800  # 8小时间隔保护
   important_prefixes:
@@ -301,27 +311,6 @@ trigger:
     - "pyproject.toml"
     - "docker-compose.yml"
   state_file: "data/databases/backup_state.json"
-databases:
-  # PostgreSQL credentials (user/password) read from config/.env.postgres at runtime
-  postgres:
-    db_name: depgraph
-    dump_file: "depgraph.dump"
-  sqlite:
-    - {src: "data\\databases\\governance.db", dump: "governance_backup.db"}
-    - {src: "data\\databases\\session_continuity.db", dump: "session_backup.db"}
-  clickhouse:
-    db_name: c1_market
-    skip_if_down: true
-excludes:
-  - "**/__pycache__/"
-  - "**/.pytest_cache/"
-  - ".aidrafts/"
-  - ".runtime/"
-  - "tmp/"
-  - "logs/*.log"
-  - ".venv/"
-report:
-  output_dir: "logs"
 ```
 
 ### §3.4 一键备份.bat — 手动兜底触发入口
@@ -535,8 +524,8 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 - **修改backup.ps1前**：必须确认六阶段流水线顺序不被破坏
 - **修改保留策略前**：必须评估快照数量是否满足RPO目标（1任务）
 - **新增排除项前**：必须确认被排除内容确属"可重新生成"类别
-- **修改 .ps1 文件前**：必须确保内容为纯 ASCII（禁止中文注释/非 ASCII 字符）——PowerShell 5.1 无 BOM 时按 ANSI 解码导致乱码，由 `check_encoding.py` (INJ-007) pre-commit GATE-ENCODING 强制检测
-- **修改 PostgreSQL 凭据**：必须改 `config/.env.postgres`（真源），禁止改 `backup_config.yaml` 的 databases.postgres 字段（仅文档参考，不被代码消费）
+- **修改 .ps1 文件前**：必须确保内容为纯 ASCII（禁止中文注释/非 ASCII 字符）——PowerShell 5.1 无 BOM 时按 ANSI 解码导致乱码，双层强制（F-05 治本，2026-07-17）：① pre-commit GATE-ENCODING（`check_encoding.py` INJ-007）② GitCommitGateway ENCODING-SAFETY gate（`encoding_gate.py`，priority=42，subprocess 调 check_encoding.py 复用真源，覆盖 --no-verify 绕过路径）
+- **修改 PostgreSQL 凭据**：必须改 `config/.env.postgres`（真源）。`backup_config.yaml` 的 `databases` 段已删除（F-06 Track B 死配置清理，2026-07-17），不再有第二决策点
 
 ---
 

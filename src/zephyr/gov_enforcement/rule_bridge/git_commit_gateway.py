@@ -137,6 +137,8 @@ _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800
 _LOCK_TIMEOUT_DEFAULT = 60.0
 _POLL_INTERVAL = 0.1
+# S3-C: claim 快照持久化目录（FOREIGN_CHANGE gate 崩溃恢复）
+_CLAIM_SNAPSHOTS_DIR = ".runtime/claim_snapshots"
 
 
 class CommitStatus(str, Enum):
@@ -311,7 +313,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）
-        self._gate_registry.register(make_encoding_gate())  # priority=40 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-closed）
+        self._gate_registry.register(make_encoding_gate())  # priority=42 治本 --no-verify 绕过 pre-commit GATE-ENCODING（F-05 防御断层，subprocess 调 check_encoding.py 复用真源，fail-closed；40被CLAIM-REQUIRED占用，41预留给DATA-TASK迁移）
         self._gate_registry.register(make_ssot_redefinition_gate())  # priority=65 治本 SSoT 符号重复定义（ARCH-033 P2，弥补 CREATE-GUARD 只管新建文件不管文件内重定义的缺口）
         self._gate_registry.register(make_unsafe_dict_spread_gate())  # priority=66 warn 级 防复发 5.147.5/5.147.12 **data 直接展开模式（schema 演进会 TypeError，SSoT filter_dataclass_fields 已治本，gate 防新 AI 制造同类债务）
         self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
@@ -348,14 +350,18 @@ class GitCommitGateway:
         self._gate_registry.register(make_blueprint_format_gate())  # priority=77 治本[BLUEPRINT]头部module_id格式（裁定#214 Phase0防蔓延，diff检测新增/修改的[BLUEPRINT]行）
         self._gate_registry.register(make_domain_fk_gate())  # priority=78 治本[DOMAIN]头部域注册表FK校验（裁定#ARCH-DRIFT-PREVENTION-001 ADP-1，diff检测[DOMAIN]值在functional_domain_registry.yaml中存在）
         self._gate_registry.register(make_blueprint_amodule_consistency_gate())  # priority=79 治本[A_module]格式一致性（裁定#ARCH-DRIFT-PREVENTION-001 ADP-3，diff检测层码后下划线+小写malformation）
-        self._gate_registry.register(make_data_task_completeness_gate())  # priority=78 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources；原78与GATE-DOMAIN-FK冲突，迁移到41）
+        self._gate_registry.register(make_data_task_completeness_gate())  # priority=41 warn级 数据任务完整性（数据韧性三层机制§4，检测新增任务是否配置fallback_sources；原78与GATE-DOMAIN-FK冲突，迁移到41，裁定#ARCH-DRIFT-PREVENTION-001）
         self._gate_registry.register(make_depgraph_write_path_gate())  # priority=100 治本depgraph写入路径白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params调用）
         self._gate_registry.register(make_capability_consistency_gate())  # priority=101 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
         # commit 时 FOREIGN-CHANGE-DETECTION gate 对比检测搭便车变更。
+        # S3-C 治本（2026-07-17）：快照持久化到 .runtime/claim_snapshots/，
+        # 进程崩溃后重启可恢复快照（原纯内存 dict 崩溃即丢失，gate 降级为 PASS）。
         self._claim_snapshots: dict[str, dict[str, str]] = {}
+        self._claim_snapshots_dir: Path = self.project_root / _CLAIM_SNAPSHOTS_DIR
+        self._load_claim_snapshots_from_disk()
 
     def _get_worktree_manager(self):
         """延迟获取 WorktreeManager 单例。"""
@@ -379,6 +385,8 @@ class GitCommitGateway:
                     abs_f = os.path.abspath(f)
                     baseline = self._capture_baseline_diff(abs_f)
                     self._claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
+                    # S3-C: 持久化到磁盘（进程崩溃后可恢复）
+                    self._save_session_snapshot(session_id)
                 except Exception:
                     logger.warning(
                         "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
@@ -402,9 +410,10 @@ class GitCommitGateway:
                     "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
                     f, session_id,
                 )
-        #ARCH-054: 清理 session 的基线快照
+        #ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
         try:
             self._claim_snapshots.pop(session_id, None)
+            self._delete_session_snapshot(session_id)
         except Exception:
             pass
 
@@ -426,6 +435,80 @@ class GitCommitGateway:
         if result.returncode != 0:
             return ""
         return result.stdout or ""
+
+    # ------------------------------------------------------------------
+    # S3-C 治本（2026-07-17）：claim 快照磁盘持久化
+    # ------------------------------------------------------------------
+    # 病根：_claim_snapshots 原为纯内存 dict，进程崩溃/重启后快照丢失，
+    # FOREIGN-CHANGE-DETECTION gate 降级为 PASS（无快照=不阻断），搭便车
+    # 变更检测失效。持久化到 .runtime/claim_snapshots/{session_id}.json
+    # 后，新 gateway 实例 __init__ 时从磁盘恢复，gate 可正常对比基线。
+    # 磁盘 I/O 异常不阻断主流程（内存 dict 仍为 primary，磁盘是 backup）。
+
+    def _load_claim_snapshots_from_disk(self) -> None:
+        """__init__ 时从磁盘恢复所有 session 的 claim 快照。
+
+        遍历 ``.runtime/claim_snapshots/*.json``，加载到 ``self._claim_snapshots``。
+        损坏文件跳过（log warning），不抛异常。
+        """
+        try:
+            if not self._claim_snapshots_dir.is_dir():
+                return
+            for snap_file in self._claim_snapshots_dir.glob("*.json"):
+                try:
+                    data = json.loads(snap_file.read_text(encoding="utf-8"))
+                    sid = data.get("session_id", snap_file.stem)
+                    snapshots = data.get("snapshots", {})
+                    if isinstance(snapshots, dict):
+                        self._claim_snapshots[sid] = snapshots
+                except Exception:
+                    logger.warning(
+                        "GitCommitGateway: claim snapshot file corrupt, skipped — %s",
+                        snap_file, exc_info=True,
+                    )
+        except Exception:
+            logger.warning(
+                "GitCommitGateway: _load_claim_snapshots_from_disk failed", exc_info=True,
+            )
+
+    def _save_session_snapshot(self, session_id: str) -> None:
+        """将单个 session 的快照持久化到 ``{session_id}.json``（原子写入）。
+
+        内存 dict 为 primary，磁盘为 backup——写入失败仅 log warning 不阻断。
+        """
+        snapshots = self._claim_snapshots.get(session_id)
+        if snapshots is None:
+            return
+        try:
+            self._claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+            payload = json.dumps(
+                {"session_id": session_id, "snapshots": snapshots},
+                ensure_ascii=False,
+            )
+            # 原子写入：tmp + os.replace（对标 SessionRegistry._save）
+            snap_path = self._claim_snapshots_dir / f"{session_id}.json"
+            tmp_path = snap_path.with_suffix(".json.tmp")
+            tmp_path.write_text(payload, encoding="utf-8")
+            os.replace(tmp_path, snap_path)
+        except Exception:
+            logger.warning(
+                "GitCommitGateway: _save_session_snapshot failed — session=%s",
+                session_id, exc_info=True,
+            )
+
+    def _delete_session_snapshot(self, session_id: str) -> None:
+        """删除 session 的磁盘快照文件（release_files 时调用）。
+
+        文件不存在或删除失败均静默（磁盘残留无害，下次 claim 会覆盖）。
+        """
+        try:
+            snap_path = self._claim_snapshots_dir / f"{session_id}.json"
+            snap_path.unlink(missing_ok=True)
+        except Exception:
+            logger.debug(
+                "GitCommitGateway: _delete_session_snapshot failed — session=%s",
+                session_id, exc_info=True,
+            )
 
     def _register_default_reconcilers(self) -> None:
         """注册默认 post-commit reconciler（声明式框架，P2-T1~T9 + 红蓝发现1 + P3收尾）。"""
