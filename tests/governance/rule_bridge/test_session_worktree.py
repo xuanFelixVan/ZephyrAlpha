@@ -172,6 +172,23 @@ def _create_gate_source_stubs(repo: Path) -> None:
     fm_stub = repo / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
     fm_stub.parent.mkdir(parents=True, exist_ok=True)
     fm_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+    # check_blueprint_code_alignment.py stub（PRE-MERGE-TOPO-CHECK subprocess 调用，
+    # #ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断）。stub 输出合法 clean JSON（0 findings，
+    # depgraph_module_ids=1 非 0 避免 DB-down fail-open 误判），使隔离仓库的 merge 测试
+    # 不被 topo check 阻断。真实 checker 逻辑由 test_pre_merge_topo_check_* 单元测试覆盖。
+    topo_stub = (
+        repo / "scripts" / "governance" / "d5_architecture" / "checkers"
+        / "check_blueprint_code_alignment.py"
+    )
+    topo_stub.parent.mkdir(parents=True, exist_ok=True)
+    topo_stub.write_text(
+        '#!/usr/bin/env python\n'
+        'import json, sys\n'
+        'print(json.dumps({"findings": [], "high": 0, "medium": 0, "low": 0,'
+        ' "depgraph_module_ids": 1}))\n'
+        'sys.exit(0)\n',
+        encoding="utf-8",
+    )
 
 
 @pytest.fixture(scope="module")
@@ -486,6 +503,9 @@ def test_breaking_change_error_references_section_9_7(_isolated_repo):
     assert "§9.7" in error_msg, f"错误消息未引用 §9.7: {error_msg!r}"
     assert "L391" not in error_msg, f"错误消息仍含陈旧行号 L391: {error_msg!r}"
     assert "L394" not in error_msg, f"错误消息仍含陈旧行号 L394: {error_msg!r}"
+    # 清理：注销 sess-blocker，避免污染模块级共享 _isolated_repo 的 registry，
+    # 导致后续 breaking_change 测试（test_worktree_start_breaking_change_*）误被阻断。
+    reg.unregister("sess-blocker")
 
 
 def test_worktree_commit_held_overlap_blocks():
@@ -769,3 +789,236 @@ def test_sweep_type_validation_rejects_path():
     assert len(r["warnings"]) == 1
     assert "WorktreeManager" in r["warnings"][0]
     assert "session_worktree_sweep" in r["warnings"][0]
+
+
+# ---------------------------------------------------------------------------
+# PRE-MERGE-TOPO-CHECK 单元测试（#ARCH-DEP-001 第二期，2026-07-17）
+# 验证 _run_pre_merge_topo_check 的阻断/放行/降级策略：
+#   - clean (0 HIGH) → 放行
+#   - session HIGH → 阻断
+#   - 预存 HIGH（不在 rel_files）→ 放行（过滤）
+#   - checker 缺失 → fail-closed 阻断
+#   - 超时 → fail-open 放行
+#   - DB down (depgraph_module_ids==0) → fail-open 放行
+#   - JSON 解析失败 → fail-open 放行
+#   - checker exit 2 (ERROR) → fail-open 放行
+#
+# 设计：monkeypatch subprocess.run 用「委托式 fake」——仅拦截 topo checker 命令返回
+# 预设响应，其余命令（含 autouse fixture teardown 的 git cleanup）委托真实 subprocess.run。
+# 这避免污染 fixture 清理流程（_clean_worktree_env teardown 在 monkeypatch 还原前执行）。
+# ---------------------------------------------------------------------------
+import zephyr.gov_enforcement.rule_bridge.session_worktree as _sw_mod  # noqa: E402 — 模块导入而非 from import：避免 TEST-SOURCE-CONSISTENCY gate 误判 session_worktree 为 __init__.py 的符号
+from zephyr.gov_enforcement.rule_bridge.session_worktree import _run_pre_merge_topo_check
+
+
+def _topo_checker_path(repo: Path) -> Path:
+    """返回临时仓库下 topo checker 的标准路径。"""
+    return (
+        repo / "scripts" / "governance" / "d5_architecture" / "checkers"
+        / "check_blueprint_code_alignment.py"
+    )
+
+
+def _ensure_topo_checker_stub(repo: Path) -> None:
+    """在临时仓库下创建 topo checker stub 文件（仅占位，实际执行被 mock）。"""
+    check_script = _topo_checker_path(repo)
+    check_script.parent.mkdir(parents=True, exist_ok=True)
+    check_script.write_text("# stub\n", encoding="utf-8")
+
+
+def _patch_topo_checker_run(monkeypatch, response) -> None:
+    """monkeypatch subprocess.run：拦截 topo checker 命令返回 response，其余委托真实 run。
+
+    response 可为：
+    - subprocess.CompletedProcess：直接返回
+    - Exception：抛出（模拟超时/OSError）
+    """
+    _real_run = subprocess.run
+
+    def _fake_run(cmd, *args, **kwargs):
+        cmd_str = " ".join(str(c) for c in cmd)
+        if "check_blueprint_code_alignment.py" in cmd_str:
+            if isinstance(response, Exception):
+                raise response
+            return response
+        return _real_run(cmd, *args, **kwargs)
+
+    monkeypatch.setattr(_sw_mod.subprocess, "run", _fake_run)
+
+
+def _topo_json(*findings, depgraph_module_ids: int = 149) -> str:
+    """构造 checker --json 输出。"""
+    high = sum(1 for f in findings if f.get("severity") == "HIGH")
+    low = sum(1 for f in findings if f.get("severity") == "LOW")
+    return json.dumps({
+        "total_findings": len(findings), "high": high, "medium": 0, "low": low,
+        "findings": list(findings), "code_headers_scanned": 100,
+        "blueprints_in_registry": 61, "depgraph_module_ids": depgraph_module_ids,
+    }, ensure_ascii=False)
+
+
+def test_pre_merge_topo_check_clean(_isolated_repo, monkeypatch):
+    """checker 返回 0 HIGH → 放行。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=0, stdout=_topo_json(), stderr="",
+    ))
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_blocks_session_high(_isolated_repo, monkeypatch):
+    """session 变更文件引入 HIGH drift（ORPHAN_MODULE_ID）→ 阻断 merge。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    high_finding = {
+        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
+        "detail": "[BLUEPRINT] 引用 MOD-XXX 不在 registry 或 depgraph 中",
+    }
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
+    ))
+    rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+    )
+    assert passed is False
+    assert len(violations) == 1
+    assert violations[0]["gate_id"] == "PRE-MERGE-TOPO-CHECK"
+    assert "HIGH drift 1 条" in violations[0]["detail"]
+    assert "ORPHAN_MODULE_ID" in violations[0]["detail"]
+
+
+def test_pre_merge_topo_check_blocks_session_module_id_drift(_isolated_repo, monkeypatch):
+    """session 变更文件引入 HIGH drift（MODULE_ID_DRIFT）→ 阻断 merge。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    high_finding = {
+        "type": "MODULE_ID_DRIFT", "severity": "HIGH",
+        "file": "src/zephyr/foo/bar.py",
+        "detail": "包 foo 应属 MOD-FOO，但 [BLUEPRINT] 标注 MOD-BAR",
+    }
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
+    ))
+    rel_files = ["src/zephyr/foo/bar.py"]
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+    )
+    assert passed is False
+    assert len(violations) == 1
+    assert "MODULE_ID_DRIFT" in violations[0]["detail"]
+
+
+def test_pre_merge_topo_check_passes_preexisting_high(_isolated_repo, monkeypatch):
+    """HIGH drift 不在 session 变更文件中（预存漂移）→ 放行（过滤到 rel_files）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    high_finding = {
+        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "file": "src/zephyr/some/other/file.py",  # 不在 rel_files——预存漂移
+        "detail": "预存漂移",
+    }
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=1, stdout=_topo_json(high_finding), stderr="",
+    ))
+    rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_low_drift_does_not_block(_isolated_repo, monkeypatch):
+    """LOW drift（CODE_NOT_IN_DEPGRAPH）不阻断（暂态容忍，post-merge reconciler 兜底）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    low_finding = {
+        "type": "CODE_NOT_IN_DEPGRAPH", "severity": "LOW",
+        "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
+        "detail": "代码文件不在 depgraph 模块节点列表中（暂态滞后）",
+    }
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=0, stdout=_topo_json(low_finding), stderr="",  # LOW→exit 0
+    ))
+    rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_missing_checker_fail_closed(_isolated_repo):
+    """checker 脚本缺失 → fail-closed 阻断（基础设施不完整不应放行拓扑检查）。"""
+    # 确保 stub 不存在（前序测试可能已创建，模块级 fixture 共享）
+    check_script = _topo_checker_path(_isolated_repo)
+    if check_script.exists():
+        check_script.unlink()
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is False
+    assert len(violations) == 1
+    assert violations[0]["gate_id"] == "PRE-MERGE-TOPO-CHECK"
+    assert "fail-closed" in violations[0]["detail"]
+
+
+def test_pre_merge_topo_check_timeout_fail_open(_isolated_repo, monkeypatch):
+    """checker 超时（TimeoutExpired）→ fail-open 放行（不卡死业务流程）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _patch_topo_checker_run(
+        monkeypatch, subprocess.TimeoutExpired(cmd=[], timeout=120),
+    )
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_db_down_fail_open(_isolated_repo, monkeypatch):
+    """DB 不可用（depgraph_module_ids==0）→ fail-open 放行（无法可靠拓扑检查）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    high_finding = {
+        "type": "ORPHAN_MODULE_ID", "severity": "HIGH",
+        "file": "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py",
+        "detail": "假阳性（DB down 导致 depgraph_module_ids 为空）",
+    }
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=1,
+        stdout=_topo_json(high_finding, depgraph_module_ids=0), stderr="[WARN] depgraph 连接失败",
+    ))
+    rel_files = ["src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"]
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", rel_files,
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_json_parse_fail_open(_isolated_repo, monkeypatch):
+    """checker 输出非 JSON → fail-open 放行（保留诊断 warning）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=0, stdout="not json at all", stderr="",
+    ))
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert violations == []
+
+
+def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
+    """checker exit 2 (ERROR) → fail-open 放行。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=2, stdout="", stderr="some internal error",
+    ))
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert violations == []
