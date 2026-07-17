@@ -312,7 +312,7 @@ class TestFailClosedGitDiffFailure:
 class TestNewReconcilerMarker:
     """新增 make_*_reconciler 需 # trae_060-reviewed 标记（元问题3治本）。"""
 
-    _RECONCILER_REL = "src/zephyr/gov_audit/reconciliation_registry.py"
+    _RECONCILER_REL = "src/zephyr/governance/audit/reconciliation_registry.py"
 
     def _setup_reconciler_registry(
         self, repo_dir: Path, head_content: str, staged_content: str
