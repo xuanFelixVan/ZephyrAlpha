@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4966 |
-| 生产态模块 | 1747 |
+| 模块总数 | 4969 |
+| 生产态模块 | 1748 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3157 |
+| 原型态模块 | 3159 |
 
 ## 域清单（按架构层分组）
 
@@ -60,7 +60,7 @@ ttl: permanent
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
 | D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 82 | 59 | 0 | 23 | 82/150 (OK) | [22_d_orchestrator.md](22_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 10 | 1 | 0 | 9 | 10/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
-| D_SECURITY | orphan_judge / Adversarial Validation | 212 | 101 | 0 | 111 | 212/150 (超容) | [24_d_security.md](24_d_security.md) |
+| D_SECURITY | orphan_judge / Adversarial Validation | 213 | 101 | 0 | 112 | 213/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 63 | 5 | 0 | 58 | 63/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
 | D_SHARED | shared_services / Shared Services | 294 | 110 | 0 | 184 | 294/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
@@ -79,7 +79,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 11 | 3 | 0 | 8 | 11/150 (OK) | [36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | fundamental_signal / Fundamental Signal | 10 | 4 | 0 | 6 | 10/150 (OK) | [37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | registry_management / Lifecycle Management | 698 | 142 | 1 | 555 | 698/150 (超容) | [38_d_governance.md](38_d_governance.md) |
+| D_GOVERNANCE | registry_management / Lifecycle Management | 699 | 143 | 1 | 555 | 699/150 (超容) | [38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | audit_orchestration / Audit Trail | 276 | 69 | 2 | 205 | 276/150 (超容) | [39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | architecture_docs / Architecture Docs Governance | 97 | 69 | 28 | 0 | 97/150 (OK) | [40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | drift_detection / Drift Detection | 77 | 71 | 1 | 5 | 77/150 (OK) | [41_d_gov_drift.md](41_d_gov_drift.md) |
@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 17 | 0 | 14 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 16 | 3 | 0 | 13 | 16/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 36 | 31 | 0 | 5 | 36/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 454 | 13 | 2 | 439 | 454/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 455 | 13 | 2 | 440 | 455/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 109 | 21 | 0 | 88 | 109/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 38 | 0 | 2 | 36 | 38/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
