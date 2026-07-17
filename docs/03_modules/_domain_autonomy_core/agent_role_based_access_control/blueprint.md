@@ -96,7 +96,7 @@ build_status: generated
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
-| 1 | `immutable_core.py` | §3 L0 | 不可变核心——保护路径+冷启动锁+Kill Switch+Engine降级 | 已实现 | |
+| 1 | `immutable_core.py` | §3 L0 | 不可变核心——保护路径+冷启动锁+Kill Switch+Engine降级（真源 config/immutable_core.yaml，2026-07-17 AI-02 审计 P2-1 治本） | 已实现 | |
 | 2 | `identity.py` | §3 L1 | Agent 身份注册与识别——AgentIdentity + MaturityLevel | 已实现 | |
 | 3 | `permission_guard.py` | §3 L0-L5 | 七层运行时权限检查编排 | 已实现 | |
 | 4 | `rbac_guard.py` | §3 L1 | RBAC 角色权限——ALLOW/AUTO_GUARD/BLOCKED | 已实现 | |
@@ -472,7 +472,11 @@ build_status: generated
 
 ```yaml
 immutable_core:
-  # ─── 保护路径（硬编码，不可通过任何 YAML 覆盖）───
+  # ─── 保护路径（真源 config/immutable_core.yaml，禁止代码硬编码——2026-07-17 AI-02 审计 P2-1 治本）───
+  # 原 L475 注释"硬编码，不可通过任何 YAML 覆盖"语义错误：保护路径列表本身是真源数据，
+  # 应收敛为 YAML SSoT（config/immutable_core.yaml）由 immutable_core.py 动态加载，
+  # 而非"硬编码在代码里"。下方 protected_paths 列表保留作蓝图设计参考，
+  # 运行时真源以 config/immutable_core.yaml 为准。
   protected_paths:
     - path: ".git/**"
       reason: "仓库状态——不可逆破坏"
