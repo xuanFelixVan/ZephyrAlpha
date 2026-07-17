@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SECURITY
 # [MODULE] zephyr.security.access_control.session_concurrency
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.infra.process_pool (is_pid_alive)
 # [CONSUMERS] tests.test_session_concurrency; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session TTL=3600s 自动过期；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略过期，供 session_worktree_start 双向阻断调用）
+# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定=PID liveness+TTL(3600s)双判据（S3-A 治本，对标 _GlobalCommitLock 零窗口期清理，死进程立即 reap 不等 TTL）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -53,6 +53,8 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
+from zephyr.shared.infra.process_pool import is_pid_alive
 
 logger = logging.getLogger(__name__)
 
@@ -187,6 +189,30 @@ class SessionInfo:
         )
 
 
+def _is_session_alive(info: SessionInfo, now: float) -> bool:
+    """判定 session 是否存活：PID liveness + 心跳 TTL 双判据（S3-A 治本）。
+
+    PID 已死 → 立即判失效（零窗口期清理，对标 _GlobalCommitLock 僵尸锁检测）。
+    PID 存活但心跳过期 → 判失效（TTL 兜底）。
+    两者都通过 → 存活。
+
+    治本根因（S3-A）：原仅靠 TTL(3600s) 过期判定，进程崩溃后 session 残留最长 1 小时，
+    持续阻塞并发检测/worktree 清理/held_files claim（实测：reconciler 子进程退出后
+    session 被 claim_file 刷新心跳但 PID 已死，breaking_change 阻断误触发）。
+    本函数在 TTL 检查前先查 PID 存活，死进程立即失效（零窗口期），
+    与 _GlobalCommitLock/lock_files.py 的 stale 清理对齐（真源 is_pid_alive）。
+
+    pid=0（缺失/旧版）→ 跳过 PID 检查，仅靠 TTL 判定（保守，不激进删除）。
+    """
+    # PID liveness 检查（零窗口期，对标 _GlobalCommitLock:231）
+    if info.pid and info.pid > 0 and not is_pid_alive(info.pid):
+        return False
+    # TTL 兜底
+    if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+        return False
+    return True
+
+
 class SessionRegistry:
     """Session 级注册表（P2-SES）。
 
@@ -237,7 +263,7 @@ class SessionRegistry:
         """查找是否有活跃 session 声明了 breaking_change（治本变更并发阻断，§9.7 治本 2026-07-04）。
 
         - 排除 exclude_session_id 自身
-        - 过期 session 忽略（不查不删，只读）
+        - 死/过期 session 忽略（不查不删，只读；S3-A: PID+TTL 双判据）
         - 返回第一个匹配的 SessionInfo，无则 None
 
         供 session_worktree_start 双向阻断逻辑调用：
@@ -250,8 +276,8 @@ class SessionRegistry:
             if sid == exclude_session_id:
                 continue
             info = SessionInfo.from_dict(d)
-            if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
-                continue  # 过期 session，忽略
+            if not _is_session_alive(info, now):
+                continue  # 死/过期 session，忽略（S3-A: PID+TTL 双判据）
             if info.is_breaking_change:
                 return info
         return None
@@ -278,7 +304,7 @@ class SessionRegistry:
             return True
 
     def list_active(self) -> list[SessionInfo]:
-        """列出所有活跃 session（自动清理过期）。"""
+        """列出所有活跃 session（自动清理死/过期——S3-A: PID+TTL 双判据）。"""
         with self._lock:
             data = self._load()
             now = time.time()
@@ -286,16 +312,19 @@ class SessionRegistry:
             expired: list[str] = []
             for sid, d in data.items():
                 info = SessionInfo.from_dict(d)
-                if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+                if not _is_session_alive(info, now):
                     expired.append(sid)
                 else:
                     active.append(info)
-            # 清理过期 session
+            # 清理死/过期 session（S3-A: PID 死亡立即 reap，不等 TTL）
             if expired:
                 for sid in expired:
                     del data[sid]
                 self._save(data)
-                logger.info("SessionRegistry: cleaned %d expired sessions", len(expired))
+                logger.info(
+                    "SessionRegistry: cleaned %d dead/expired sessions (S3-A PID+TTL)",
+                    len(expired),
+                )
             return active
 
     def find_session_by_file(self, file_path: str) -> SessionInfo | None:
@@ -310,23 +339,25 @@ class SessionRegistry:
     def get_session(self, session_id: str) -> SessionInfo | None:
         """只读查询某 session 信息（不做过期清理，不回写文件）。
 
-        过期 session 返回 None（但不删除——删除是 list_active 的职责）。
+        死/过期 session 返回 None（但不删除——删除是 list_active 的职责）。
         供 GitCommitGateway 等只读消费者使用，避免 list_active 的写副作用。
+        S3-A: PID 死亡也返回 None（零窗口期，与 TTL 过期同处理）。
         """
         data = self._load()
         if session_id not in data:
             return None
         info = SessionInfo.from_dict(data[session_id])
-        if time.time() - info.last_heartbeat > _SESSION_TTL_SECONDS:
-            return None  # 过期，视为不存在（不删除）
+        if not _is_session_alive(info, time.time()):
+            return None  # 死/过期，视为不存在（不删除——删除是 list_active 的职责）
         return info
 
     def other_held_files(self, session_id: str) -> set[str]:
         """返回其他活跃 session 持有的文件（归一化绝对路径集合），只读无写副作用。
 
         用于 session 隔离 stash 的强不变量：commit 时始终排除其他 session 持有的文件，
-        即使本 session 未注册（未 claim）。过期 session 的持有被忽略。
+        即使本 session 未注册（未 claim）。死/过期 session 的持有被忽略。
         供 GitCommitGateway._get_session_held_non_target 调用。
+        S3-A: PID 死亡的 session 持有也被忽略（零窗口期）。
         """
         data = self._load()
         now = time.time()
@@ -335,8 +366,8 @@ class SessionRegistry:
             if sid == session_id:
                 continue
             info = SessionInfo.from_dict(d)
-            if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
-                continue  # 过期 session，忽略其持有
+            if not _is_session_alive(info, now):
+                continue  # 死/过期 session，忽略其持有（S3-A: PID+TTL 双判据）
             for f in info.held_files:
                 held.add(_normalize_file_path(f, self._project_root))
         return held
@@ -356,11 +387,11 @@ class SessionRegistry:
             data = self._load()
             now = time.time()
 
-            # 懒注册：session 不存在或过期
+            # 懒注册：session 不存在或死/过期（S3-A: PID 死亡也触发懒注册，用当前 PID 覆盖）
             existing = data.get(session_id)
-            if existing is None or now - SessionInfo.from_dict(existing).last_heartbeat > _SESSION_TTL_SECONDS:
+            if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now):
                 logger.warning(
-                    "SessionRegistry: claim_file auto-registering session=%s (not registered or expired)",
+                    "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
                     session_id,
                 )
                 data[session_id] = SessionInfo(
@@ -374,8 +405,8 @@ class SessionRegistry:
                 if sid == session_id:
                     continue
                 other = SessionInfo.from_dict(d)
-                if now - other.last_heartbeat > _SESSION_TTL_SECONDS:
-                    continue  # 过期 session，忽略其 claim
+                if not _is_session_alive(other, now):
+                    continue  # 死/过期 session，忽略其 claim（S3-A: PID+TTL 双判据）
                 other_held_norm = [_normalize_file_path(f, self._project_root) for f in other.held_files]
                 if norm in other_held_norm:
                     logger.warning(
