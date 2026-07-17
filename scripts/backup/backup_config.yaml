@@ -7,8 +7,14 @@
 # ttl: permanent
 # --- 治理锚定结束 ---
 
-# 灾备备份系统配置 v1.0.0
-# 消费者: scripts/backup/backup_reconciler.py + backup.ps1
+# 灾备备份系统配置 v1.1.0
+# 消费者映射（F-06 Track B 治本，2026-07-17）：
+#   repository.path  -> backup.ps1 L50 (regex 读取 restic repo path)
+#   dump_dir         -> backup.ps1 L51 (regex 读取 DB dump 目录)
+#   trigger.*        -> backup_reconciler.py _trigger() + _get_state_file() (_load_config 加载)
+#
+# 已删除死配置（无消费者）：databases / excludes / report
+# retention 保留为文档参考（实际值硬编码在 backup.ps1 L49，YAML 非真源）
 
 repository:
   path: "F:\\restic-zephyr"
@@ -16,10 +22,13 @@ repository:
 
 dump_dir: "D:\\tmp_db_dumps"
 
+# --- DOCUMENTATION ONLY（非真源，不被任何脚本消费）---
+# 实际 retention 值硬编码在 backup.ps1 L49：$KeepDaily=7; $KeepWeekly=4; $KeepMonthly=3
+# 修改 retention 时 MUST 同步修改 backup.ps1 L49（backup.ps1 是 retention 真源）
 retention:
-  keep_daily: 7
-  keep_weekly: 4
-  keep_monthly: 3
+  keep_daily: 7    # = backup.ps1 $KeepDaily
+  keep_weekly: 4    # = backup.ps1 $KeepWeekly
+  keep_monthly: 3   # = backup.ps1 $KeepMonthly
 
 trigger:
   min_interval_seconds: 28800  # 8小时间隔保护
@@ -38,41 +47,3 @@ trigger:
     - "pyproject.toml"
     - "docker-compose.yml"
   state_file: "data/databases/backup_state.json"
-
-databases:
-  # PostgreSQL credentials (user/password) are read from config/.env.postgres at runtime.
-  # host/port are hardcoded in backup.ps1 (localhost:5432).
-  # This section only documents db_name/dump_file for reference (not consumed by backup.ps1).
-  postgres:
-    db_name: depgraph
-    dump_file: "depgraph.dump"
-  sqlite:
-    - {src: "data\\databases\\governance.db", dump: "governance_backup.db"}
-    - {src: "data\\databases\\session_continuity.db", dump: "session_backup.db"}
-  clickhouse:
-    db_name: c1_market
-    host: "localhost"
-    port: 9000
-    skip_if_down: true
-
-excludes:
-  - "**/__pycache__/"
-  - "**/.pytest_cache/"
-  - "**/.mypy_cache/"
-  - "**/.ruff_cache/"
-  - "**/*.pyc"
-  - ".aidrafts/"
-  - ".runtime/"
-  - "tmp/"
-  - "logs/*.log"
-  - "logs/*.log.*"
-  - ".venv/"
-  - "node_modules/"
-  - "metadata/"
-  - "access/"
-  - "preprocessed_configs/"
-  - "status"
-  - "uuid"
-
-report:
-  output_dir: "logs"
