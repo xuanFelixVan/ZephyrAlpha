@@ -2902,3 +2902,65 @@ entries:
   related_adjudication: 遗留项#1治本
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+# --- #ARCH-FRONTMATTER-STATE-001: blueprint frontmatter 状态字段三级链路断裂治本 ---
+- issue_id: '#ARCH-FRONTMATTER-STATE-001'
+  title: blueprint frontmatter 状态字段（build_status/design_maturity/construction_progress）三级链路断裂治本
+  severity: P2中
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    F-08（blueprint frontmatter 状态字段陈旧）+ F-09（depgraph production node
+    build_status=generated 为 scanner 默认）联合调研发现三条级联断裂链路：
+
+    Link A（code→depgraph 派生断裂）：derive_build_status 在 generate_project_depgraph.py:1751
+    被调用时 has_test 硬编码 False，导致 production+test→stable 分支为死代码。
+    design_maturity 有 L1912-1925 后处理补偿（升级 tested modules 为 production），
+    但 build_status 无任何补偿——99.1% production 节点（4899/4943）永久卡在
+    build_status=generated，仅 8 个手工标记的 stable。
+
+    Link B（depgraph→frontmatter 同步断裂）：blueprint_frontmatter_reconciler 未注册到
+    reconciliation_registry（26 个 reconciler 中无此条目），仅在 generate_project_depgraph.py
+    全量重建时以 try/except 静默调用（L4138-4142，失败不阻断）。抽样 9/9 blueprint
+    frontmatter 全部陈旧。
+
+    Link C（construction_progress 无自动写入路径）：跨 10 个 .py 文件搜索，无任何
+    reconciler/gate/generator 写入 frontmatter 的 construction_progress，纯人工维护。
+    4/9 blueprint 持有非法词表值 partially_implemented。
+
+    裁定（四条治本）：
+    (1) Link A 修复——提取 L1912-1925 为 upgrade_tested_modules 函数，在现有
+        design_maturity=production 升级基础上，补上 build_status=stable 升级
+       （derive_build_status("production", has_test=True)），激活死代码分支。
+    (2) Link B 修复——注册 blueprint_frontmatter_reconciler 为 post-commit reconciler
+        （reconciliation_registry，priority=135），消除人工 sync 依赖。
+    (3) Link C 退役——移除 construction_progress 字段（不可自动派生 + 已证失效 +
+        语义重复 build_status + 违反 SSoT 铁律），同步退役 validate_ssot_construction_progress
+        G8 门禁与词表。
+    (4) 门禁——check_blueprint_code_alignment.py 新增 FRONTMATTER_STATE_STALE 漂移类型，
+        阻断 frontmatter build_status/design_maturity 与 depgraph 不一致的提交。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - 100% AI 项目中，无法自动维护的状态字段是自动复利的技术债——每个新模块增加
+      陈旧风险，无人类修正。唯一防线：每个字段必须可自动派生或自动同步，否则移除。
+    - 陈旧 frontmatter 是幻觉正反馈回路：新 AI 读 design/planned → 推断模块不存在
+      → 重新实现 → 漂移加剧。depgraph 至少有 reconciler 闭环，frontmatter 连闭环都没有。
+    - build_status 状态机（planned→generated→stable→deprecated）必须自动推进到 stable，
+      否则状态机形同虚设——99.1% 节点卡在 generated 证明状态机从未生效。
+
+    施工分四 Phase（从源头往外修）：
+    - Phase 1：Link A 修复（upgrade_tested_modules 提取 + build_status 补偿）——本提交
+    - Phase 2：Link B 修复（reconciler 注册）
+    - Phase 3：Link C 退役（construction_progress 移除）
+    - Phase 4：门禁 + 存量修复
+  impact:
+  - scripts/governance/generate_project_depgraph.py（upgrade_tested_modules 提取 + build_status=stable 补偿，Phase 1）
+  - src/zephyr/governance/audit/reconciliation_registry.py（frontmatter reconciler 注册，Phase 2）
+  - scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py（FRONTMATTER_STATE_STALE 门禁，Phase 4）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  - tests/governance/depgraph/test_upgrade_tested_modules.py（Phase 1 单测）
+  fix_phase: Phase 1 施工中（Link A 修复）；Phase 2-4 待施工
+  status: in_progress
+  related_adjudication: F-08/F-09 治本
+  created: '2026-07-18'
+  last_updated: '2026-07-18'

@@ -941,6 +941,40 @@ def realization_detection(depgraph: dict) -> int:
     return updated
 
 
+def upgrade_tested_modules(nodes: dict, edges: list) -> set:
+    """升级有测试覆盖的模块的 design_maturity 和 build_status。
+
+    ARCH-FRONTMATTER-STATE-001 裁定（2026-07-18）：修复 derive_build_status 的
+    has_test 死代码——derive_build_status 在 L1751 被调用时 has_test 硬编码 False，
+    导致 production+test→stable 分支永不触发，99.1% production 节点卡在
+    build_status=generated。本函数在 edge 构建后补偿：对有测试覆盖的 CODE_TYPES
+    节点，将 build_status 升级为 stable（与 design_maturity=production 升级同位）。
+
+    逻辑（原 L1912-1925 内联，提取为函数以可单测）：
+    - 扫描 import_depends 边，识别 test→CODE_TYPES 边
+    - 将边升级为 test_depends（coupling_strength=optional）
+    - 将目标模块 design_maturity 升级为 production
+    - 将目标模块 build_status 升级为 stable（derive_build_status("production", True)）
+
+    Returns: 被升级的 node_id 集合
+    """
+    tested_modules = set()
+    for edge in edges:
+        if edge["dep_type"] == "import_depends":
+            from_type = nodes.get(edge["from"], {}).get("type", "")
+            to_type = nodes.get(edge["to"], {}).get("type", "")
+            if from_type == "test" and to_type in CODE_TYPES:
+                tested_modules.add(edge["to"])
+                # Upgrade test->module import_depends to test_depends
+                edge["dep_type"] = "test_depends"
+                edge["coupling_strength"] = "optional"
+    for nid in tested_modules:
+        if nid in nodes:
+            nodes[nid]["design_maturity"] = "production"
+            nodes[nid]["build_status"] = derive_build_status("production", has_test=True)
+    return tested_modules
+
+
 def derive_trust_zone(rel_path: str) -> str:
     rp = rel_path.replace("\\", "/")
     for prefix, zone in TRUST_ZONE_MAP:
@@ -1909,20 +1943,8 @@ def build_depgraph(
                             )  # H5 fix
                             edge_set.add(edge_key)
 
-    # Update design_maturity for modules with tests
-    tested_modules = set()
-    for edge in edges:
-        if edge["dep_type"] == "import_depends":
-            from_type = nodes.get(edge["from"], {}).get("type", "")
-            to_type = nodes.get(edge["to"], {}).get("type", "")
-            if from_type == "test" and to_type in CODE_TYPES:
-                tested_modules.add(edge["to"])
-                # Upgrade test->module import_depends to test_depends
-                edge["dep_type"] = "test_depends"
-                edge["coupling_strength"] = "optional"
-    for nid in tested_modules:
-        if nid in nodes:
-            nodes[nid]["design_maturity"] = "production"
+    # Update design_maturity and build_status for modules with tests (ARCH-FRONTMATTER-STATE-001)
+    upgrade_tested_modules(nodes, edges)
 
     # DM-012 Fix 3: Enhanced edge inference — reduce orphan nodes
     # For nodes with zero edges, infer edges based on co-location and domain membership.
