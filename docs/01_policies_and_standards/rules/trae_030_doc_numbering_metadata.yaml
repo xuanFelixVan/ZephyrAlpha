@@ -561,6 +561,13 @@ sections:
     rationale:
       why_pure_assertion: 否定陈述句增加 AI 上下文字符、降低效率、制造漂移风险。AI 读取"已废止"标注时需要额外处理旧规则与新规则的关系，增加幻觉概率。纯陈述句让 AI 直接看到当前有效规则，零歧义消费。
       why_git_log: 历史版本差异是 git log 的职责，不是正文的职责。正文只承载当前真实值。双源（正文+git log）会导致不一致和漂移。
+    enforcement:
+      gate: GATE-PURE-ASSERTION（CommitGate，priority=69，GitCommitGateway pre-commit in-process 阻断，--no-verify 绕不过）
+      detection_ssot: scripts/governance/d3_metadata/check_pure_assertion.py（检测逻辑唯一真源，gate 为 thin wrapper）
+      detection_mode: 增量检测——subprocess 调用 check_pure_assertion.py --ci 检测 staged .md 文件 added 行（现存违规 grandfather）；全量扫描由 --full-scan 覆盖 docs/ 下所有 .md
+      fail_policy: checker 缺失/超时/exit 2 时 fail-open（不阻断）；exit 1 时 fail-closed（硬阻断 commit）
+      fallback: rules_integrity_reconciler（post-commit 全量扫描 .md）作为兜底
+      exemption: 表格行/受控词表定义行/文件树行/词汇 bullet 定义行/生命周期枚举行豁免（当前态描述，非历史过渡）
   gov_doc_017_rule_abstraction:
     title: 规则抽象性原则 (GOV-DOC-017)
     section_type: rule

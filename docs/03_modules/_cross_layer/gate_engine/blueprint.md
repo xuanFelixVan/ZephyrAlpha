@@ -170,7 +170,7 @@ build_status: planned
 | `commit_gates/rule_four_way_alignment_gate.py` | §0.1 | 规则四方对齐门禁（ARCH-020补建） | 已实现 | | 本模块 |
 | `commit_gates/unsafe_dict_spread_gate.py` | §0.1 | 不安全字典展开门禁 | 已实现 | | 本模块 |
 | `commit_gates/pure_shim_gate.py` | §0.1 | 纯re-export shim阻断门禁（PURE-SHIM，P6治本--no-verify绕过） | 已实现 | | 本模块 |
-|`commit_gates/pure_assertion_gate.py` | §0.1 | 纟陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016治本，subprocess调用check_pure_assertion --ci检测staged .md added行） | 已实现 | | 本模块 |
+|`commit_gates/pure_assertion_gate.py` | §0.1 | 纯陈述原则阻断门禁（PURE-ASSERTION，GOV-DOC-016治本，subprocess调用check_pure_assertion --ci检测staged .md added行） | 已实现 | | 本模块 |
 | `commit_gates/_diff_helpers.py` | §0.1 | gate共享diff解析工具模块（FUNCTION-DUP治本提取） | 已实现 | | 本模块 |
 | `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
 | `commit_gates/import_direction_gate.py` | §0.1 | shared层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152防复发） | 已实现 | | 本模块 |
