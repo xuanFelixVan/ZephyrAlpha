@@ -15,13 +15,15 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from zephyr.security.access_control.auto_fix_engine_03.models import (
+# 治本：auto_fix_engine_03 已迁移到 zephyr.infrastructure.auto_fix_engine（ARCH 迁移）。
+# 旧路径 zephyr.security.access_control.auto_fix_engine_03 已删除。
+from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     FixConfidence,
     FixStatus,
     ValidationResult,
 )
-from zephyr.security.access_control.auto_fix_engine_03.self_heal_agent import SelfHealAgent
+from zephyr.infrastructure.auto_fix_engine.self_heal_agent import SelfHealAgent
 
 
 class TestSelfHealAgentInstantiation:

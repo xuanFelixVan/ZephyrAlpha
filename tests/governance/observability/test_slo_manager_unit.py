@@ -8,7 +8,8 @@
 # [TTL] task_bound
 """SLO 管理器单元测试。"""
 
-from zephyr.ops.slo_manager import SLOManager
+# 治本：zephyr.ops 已迁移到 zephyr.feedback_loop（ARCH-032）。
+from zephyr.feedback_loop.slo_manager import SLOManager
 
 
 def test_14_contracts_defined():

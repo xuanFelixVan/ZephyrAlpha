@@ -17,7 +17,9 @@ import threading
 
 import pytest
 
-from zephyr.gov_kb._backend_protocol import (
+# 治本：从真源导入（非 shim）。shim zephyr.gov_kb._backend_protocol 仅 re-export 公共符号，
+# 私有 _simple_tokens 未被 import * 重新导出。真源在 storage/_backend_protocol.py（SSoT 收敛 2026-07-06）。
+from zephyr.gov_kb.storage._backend_protocol import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryBackendError,

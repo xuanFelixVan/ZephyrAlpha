@@ -18,8 +18,9 @@ import pytest
 from zephyr.gov_kb._backend_protocol import (
     InMemoryMemoryBackend,
 )
+# 治本：DEFAULT_EMBEDDING_MODELS 已移除（嵌入模型选择改由运行时配置驱动，非模块级常量）。
+# 其余 7 个符号仍存在。test_default_embedding_models 已 xfail（测已移除的常量）。
 from zephyr.intelligence.model_evaluation.unified_memory_api import (
-    DEFAULT_EMBEDDING_MODELS,
     UNIFIED_COLLECTION,
     UnifiedMemoryAPI,
     WriteTrace,
@@ -169,6 +170,10 @@ class TestConstants:
     def test_unified_collection(self):
         assert UNIFIED_COLLECTION == "unified_memory"
 
+    @pytest.mark.xfail(
+        reason="DEFAULT_EMBEDDING_MODELS 已移除——嵌入模型选择改由运行时配置驱动",
+        strict=False,
+    )
     def test_default_embedding_models(self):
         assert isinstance(DEFAULT_EMBEDDING_MODELS, tuple)
         assert len(DEFAULT_EMBEDDING_MODELS) >= 1
