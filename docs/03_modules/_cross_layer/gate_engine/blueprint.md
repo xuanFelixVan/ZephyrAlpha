@@ -193,6 +193,8 @@ build_status: planned
 | `commit_gates/capability_consistency_gate.py` | §0.1 | Provider路由-meta一致性门禁（CAP-CONSISTENCY，裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致，priority=101） | 已实现 | | 本模块 |
 | `commit_gates/domain_fk_gate.py` | §0.1 | [DOMAIN]头部域注册表FK校验门禁（GATE-DOMAIN-FK，裁定#ARCH-DRIFT-PREVENTION-001 ADP-1，diff检测[DOMAIN]值在functional_domain_registry.yaml中存在，priority=78） | 已实现 | | 本模块 |
 | `commit_gates/blueprint_amodule_consistency_gate.py` | §0.1 | [A_module]格式一致性门禁（BLUEPRINT-AMODULE-CONSISTENCY，裁定#ARCH-DRIFT-PREVENTION-001 ADP-3，靶向检测MOD-{UPPER}_{lowercase} malformation，priority=79） | 已实现 | | 本模块 |
+| `commit_gates/encoding_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/noqa_validation_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
