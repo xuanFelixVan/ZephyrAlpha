@@ -18,7 +18,7 @@
 """
 WorkDAG + WorkItem — 工作编排数据模型
 ======================================
-蓝图: ARC-0001 §4.3
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Airflow DAG + Temporal Workflow + K8s Job
 """
 

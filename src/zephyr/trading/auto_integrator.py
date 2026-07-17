@@ -18,7 +18,7 @@
 """
 AutoIntegrator — 自动接入器
 =============================
-蓝图: ARC-0001 §5.5
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Claude Code Self-Improving + K8s Admission Controller
 临时启动 L3 高级模型分析是否接入。
 """

@@ -18,7 +18,7 @@
 """
 StatusDashboard — 实时状态面板
 ================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 TUI + JSON API 双模式。
 """
 

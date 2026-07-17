@@ -18,7 +18,7 @@
 """
 StopGate — 质量闸门
 ====================
-蓝图: ARC-0001 §4.1 (二阶)
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Claude Code 45天自主实验——被动质量闸门
 阻止 AI 什么都不做就退出。
 """

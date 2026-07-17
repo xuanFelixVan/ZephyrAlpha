@@ -18,7 +18,7 @@
 """
 DreamCycle — 知识固化引擎
 ==========================
-蓝图: ARC-0001 §4.2 (三阶)
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Claude Code Dream Cycle + Tulving 记忆分类
 归档->提取->遗忘->索引->commit
 """

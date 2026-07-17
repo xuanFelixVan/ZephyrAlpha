@@ -20,7 +20,7 @@
 """
 WindowsService — Windows Service 包装器
 =========================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 
 注册方式:
   sc create ZephyrAlpha binPath= "python -m zephyr.trading"

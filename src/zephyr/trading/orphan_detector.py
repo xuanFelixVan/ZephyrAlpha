@@ -18,7 +18,7 @@
 """
 OrphanDetector — 孤儿检测器
 =============================
-蓝图: ARC-0001 §5.6
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Orphan Pod Detection + Self-Improving Agent
 持续监控孤儿率，驱动大脑向终极目标靠近。
 """

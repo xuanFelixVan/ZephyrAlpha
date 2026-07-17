@@ -18,7 +18,7 @@
 """
 CapabilityCard — 能力卡片数据模型
 ==================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 对标: Google A2A AgentCard + Anthropic MCP Tool + Cursor Rules
 """
 
