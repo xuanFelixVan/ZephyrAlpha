@@ -329,25 +329,22 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 
 **N-16 扩展到 src/ 不可行**：src/zephyr/ 有 500 个同名 basename（含 499 个 __init__.py），豁免清单规模过大，维护成本高于收益。N-16 仍只覆盖 tests/ + docs/。
 
-### 4.6 governance/ 根目录防平铺门禁（ARCH-031 P3 防复发，2026-07-02）
+### 4.6 governance/ 根目录防平铺门禁（ARCH-031 P3 防复发，2026-07-02；2026-07-17 shim 消除同步）
 
-`src/zephyr/governance/` 根目录**禁止新增 .py 文件**（含 rename 到根目录）。治本前根目录平铺 33 个 .py 文件，治本后迁移 24 文件到 12 功能子目录，仅保留 9 个高风险核心模块：
+`src/zephyr/governance/` 根目录**禁止新增 .py 文件**（含 rename 到根目录）。治本前根目录平铺 33 个 .py 文件，治本后迁移 24 文件到 12 功能子目录，仅保留高风险核心模块。2026-07-17 shim 消除治本（commit 213be2b5a3）进一步删除 `base.py`/`merkle_hourly.py`/`performance_attribution_report.py` 三个 re-export shim 文件，根 .py 文件数从 9 降至 6：
 
 | 保留文件 | 原因 |
 |----------|------|
 | `__init__.py` | 包标记 |
-| `base.py` | 基类（被大量子目录 import） |
 | `capability_lookup.py` | 能力反查引擎（消费者 76+） |
 | `depgraph_schema.py` | depgraph schema（消费者 156+） |
 | `evidence_pack.py` | 审计证据包 |
 | `integrity.py` | 完整性校验（消费者 119+） |
-| `merkle_hourly.py` | Merkle 小时聚合（消费者 71+） |
-| `performance_attribution_report.py` | 绩效归因报告（消费者 71+） |
 | `rule_patterns.py` | 治理规则正则 + 安全审计模式唯一真源（SSoT，被 create_guard / r5_digit_suffix_gate / validate_directory_structure / validate_rule_frontmatter + 三包 kb_gate/privacy 共同 import；含 PIICategory/POISONING_INDICATORS/PII_PATTERNS，原 security_patterns.py 已合并 ARCH-033） |
 
-**门禁**：CREATE-GUARD 扩展检测（[`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py)）——staged 新增(A) + rename(R) .py 文件路径匹配 `src/zephyr/governance/<name>.py`（`path.count("/")==3`）→ **硬阻断**。错误信息含 "ARCH-031 防复发" + "新模块 MUST 放入子目录"。
+**门禁**：CREATE-GUARD 扩展检测（[`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/create_guard.py)）——staged 新增(A) + rename(R) .py 文件路径匹配 `src/zephyr/governance/<name>.py`（`path.count("/")==3`）→ **硬阻断**。错误信息含 "ARCH-031 防复发" + "新模块 MUST 放入子目录"。
 
-**新模块归属规则**：新 .py 文件 MUST 放入对应功能子目录（`audit/` `persistence/` `commit_gates/` `strategies/` `ops_governance/` `resilience_governance/` `context_governance/` `data_governance/` `engine/` `financial_governance/` `trading_contracts/` `rule_enforcement/`）。不确定归属时 Grep `src/zephyr/governance/` 下已有子目录选择最匹配的。
+**新模块归属规则**：新 .py 文件 MUST 放入对应功能子目录（`audit/` `persistence/` `strategies/` `ops_governance/` `resilience_governance/` `context_governance/` `data_governance/` `engine/` `financial_governance/`）。不确定归属时 Grep `src/zephyr/governance/` 下已有子目录选择最匹配的。注：`commit_gates/`/`trading_contracts/`/`rule_enforcement/` 已分别迁移至 `gov_enforcement/commit_gates/`、`trading/trading_contracts/`、`gov_enforcement/rule_enforcement/`（ARCH-031 P2 + ARCH-GOV-SHIM-001）。
 
 ### 4.7 目录平铺容量+前缀簇合规门禁（GOV-DOC-018 ARCH-043 Risk 2-B，2026-07-03）
 
@@ -389,7 +386,7 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - 所有新组件**必须**注册 CapabilityCard 到 CapabilityRegistry
 - 所有 AI 行为**必须**写入 AiAuditLogger
 - 详细编码约束见 [`.trae/rules/project_rules.md`](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)（四条铁律 + 写代码三条）和 [`trae_010_code_naming_organization.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)（GOV-ENG-001）
-- **.ps1 文件 MUST 纯 ASCII**——PowerShell 5.1 无 BOM 时按 ANSI codepage (GBK) 解码 .ps1，多字节 UTF-8 中文导致字节偏移→假语法错误；Edit 工具每次写入剥离 BOM 使"保留 BOM"方案不可行。强制方式：pre-commit hook **GATE-ENCODING**（[`check_encoding.py`](file:///d:/ZephyrAlpha/scripts/governance/d7_code/check_encoding.py) INJ-007，检测 .ps1 非 ASCII 字节，FAIL 级阻断提交）。规则真源见 [project_rules.md Rule 8](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)
+- **.ps1 文件 MUST 纯 ASCII**——PowerShell 5.1 无 BOM 时按 ANSI codepage (GBK) 解码 .ps1，多字节 UTF-8 中文导致字节偏移→假语法错误；Edit 工具每次写入剥离 BOM 使"保留 BOM"方案不可行。**强制方式双层（F-05 防御断层治本，2026-07-17）**：① pre-commit hook **GATE-ENCODING**（[`check_encoding.py`](file:///d:/ZephyrAlpha/scripts/governance/d7_code/check_encoding.py) INJ-007，检测 .ps1 非 ASCII 字节，FAIL 级阻断提交，但可被 `--no-verify` 绕过）；② **GitCommitGateway ENCODING-SAFETY gate**——[`encoding_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/encoding_gate.py)（gate_id="ENCODING-SAFETY", priority=42，subprocess 调 `check_encoding.py` 复用真源，gateway 内不复制检测逻辑），覆盖 `commit()` 和 `_commit_auto()` 路径——gateway 路径（用 `git commit --no-verify` 绕过 pre-commit 钩子）下编码校验不再失效（fail-closed：checker 缺失/执行失败时阻断）。规则真源见 [project_rules.md Rule 8](file:///d:/ZephyrAlpha/.trae/rules/project_rules.md)
 - **文件命名规范真源见 [`trae_028_doc_structure_naming.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml)（GOV-DOC-003 §N-16）**——创建新文件前 MUST 先 `Grep` 检查项目内是否已存在同名 basename；**N-16 文件名项目内唯一性检测为硬阻断**（不受 GATE-NAMING `--warn-only` 过渡期影响），覆盖 `tests/` + `docs/` 目录，commit 时 pre-commit 钩子自动检测；同名文件导致 AI 无法确定真源产生漂移（如 `capability_heatmap.md` 曾存在两个不同内容同名文件，19315 vs 11966 字节）；**N-16 豁免清单（conftest.py/__init__.py/index.md 等）真源为 §gov_doc_003_filename_uniqueness.n16_config，`check_naming_convention.py` 从此动态加载（非硬编码），改 YAML 即生效，禁止改代码豁免清单**；**临时沙箱目录（`tests/_tmp_*` / `docs/_tmp_*`，如并发红蓝对抗沙箱 `tests/_tmp_redblue_f2/`）由 `n16_config.skip_dir_prefixes` 豁免（`os.walk` 按目录名前缀 `_tmp_` 剪枝），防沙箱文件与正式文件撞名误触发 N-16 硬阻断卡死并发 commit**
 - **规则文件创建入口（ARCH-037，GOV-DOC-003 主题前缀条款）**——新建 `docs/.../rules/trae_XXX.yaml` MUST 经 `python scripts/scaffold.py rule <主题_描述>`（RULE-TWO 强制入口）。scaffold 检查1.5 强制文件名格式 `trae_NNN_<主题>_<描述>.yaml`——单段 name 阻断，新主题前缀仅警告。绕过 scaffold 直接 Write 规则文件 → 双层强制：① [`validate_rule_frontmatter.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/validate_rule_frontmatter.py) DIM-5 pre-commit 检测（可被 `--no-verify` 绕过）② [`create_guard.py`](file:///d:/ZephyrAlpha/src/zephyr/governance/commit_gates/create_guard.py) commit-time 强制（ARCH-037 B 选项，扩展现有 CREATE-GUARD gate 检测范围，`--no-verify` 绕不过）→ 非 trae 命名 + 单段 name 硬阻断（含 rename 检测）。主题前缀集合由 `scaffold.py::_derive_rule_theme_prefixes` 从现有文件名自动派生（无独立词表真源，符合向内收）。
 - **module_id/blueprint_id/domain_id/submodule_id 格式校验真源见 [`validate_module_id_naming.py`](file:///d:/ZephyrAlpha/scripts/governance/d3_metadata/validate_module_id_naming.py)（裁定#208 双轨制 + R2 治本修订）**——双轨正则（layer-master 轨 MOD-{LAYER}-NNN / 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN] / 跨域共享轨 SH-{ABBR}-NNN）唯一责任点；`is_valid_module_id(bp_id)`、`is_valid_domain_id(domain_id)` 和 `is_valid_submodule_id(submodule_id)` 三个公共函数供 `check_naming_convention.py`（GATE-NAMING N-06）和 `apply_depgraph.py`（NR-002/cmd_rename_domain/cmd_insert_domain）import 复用；**禁止在代码中定义本地 module_id 正则（防真源分裂）**；capability 反查 alias=`validate_module_id_naming`（`capability_canonical_file_registry.yaml` 注册 13 个 aliases 覆盖中英文关键词）

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 9 个高风险核心模块，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -199,7 +199,7 @@ def _check_reconciler_marker(gateway, commit_files_rel: set[str]) -> tuple[bool,
     try:
         staged_res = gateway._run_git(["git", "show", f":{_RECONCILER_REGISTRY_REL}"])
         head_res = gateway._run_git(["git", "show", f"HEAD:{_RECONCILER_REGISTRY_REL}"])
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         staged_res = head_res = None  # fail-open：git 故障时不阻断（避免误伤正常 commit）
 
     if staged_res is None or staged_res.returncode != 0:
@@ -250,7 +250,7 @@ def _get_staged_new_files(gateway) -> tuple[list[str] | None, str]:
                 f"修复：检查 git 状态（git status）确认仓库可用后重试。"
             )
         return diff_result.stdout.strip().splitlines(), ""
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None, (
             f"CREATE-GUARD fail-closed: git diff 异常({type(e).__name__}: {e})，"
             f"无法确定 staged 新增文件。禁止放行——检测器失效时漏放未登记 .py。"
@@ -277,7 +277,7 @@ def _collect_renamed_rule_files(gateway, commit_files_rel: set[str]) -> list[str
                             and new_path.endswith(".yaml")
                             and new_path in commit_files_rel):
                         renamed.append(new_path)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass  # fail-open：rename 检测故障不阻断
     return renamed
 
@@ -362,10 +362,10 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
     if _gov_root_new:
         return False, (
             f"ARCH-031 防复发: 禁止在 governance/ 根新增 .py 文件: {_gov_root_new}. "
-            f"governance/ 根仅保留 9 个高风险核心模块（__init__/base/capability_lookup/"
-            f"depgraph_schema/evidence_pack/integrity/merkle_hourly/"
-            f"performance_attribution_report/rule_patterns）。"
-            f"新模块 MUST 放入对应功能子目录（如 audit/ persistence/ commit_gates/ 等）。"
+            f"governance/ 根仅保留高风险核心模块（以磁盘现有文件为准，"
+            f"当前为 __init__/capability_lookup/depgraph_schema/evidence_pack/"
+            f"integrity/rule_patterns；清单随治本进化，不在此硬编码完整列表避免过期）。"
+            f"新模块 MUST 放入对应功能子目录（如 audit/ persistence/ 等）。"
             f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
         )
     # 检测②: rename(R) .py 到 governance/ 根（防 git mv 绕过 --diff-filter=A 漏检）
@@ -389,7 +389,7 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
                     f"{_gov_root_renamed}. 新模块 MUST 放入对应功能子目录。"
                     f"修复：将文件移动到 src/zephyr/governance/<subdir>/ 下。"
                 )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CREATE-GUARD: ARCH-031 rename 检测 git diff 失败: %s",
             e, exc_info=True,
@@ -411,7 +411,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
             with open(_abs_path, encoding="utf-8") as _f:
                 _src = _f.read()
             _tree = ast.parse(_src)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue  # 语法错误由其他 gate 检测，此处 fail-open
         _lines = _src.splitlines()
         for _node in ast.walk(_tree):
@@ -439,7 +439,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
                     ]
                     if _existing:
                         _class_violations.append((_py_file, _node.name, _existing))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return False, (
                     f"CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常"
                     f"({type(e).__name__}: {e})，无法检测 class '{_node.name}' 跨模块冲突。"
@@ -487,7 +487,7 @@ def _check_creation_token(
         )
     try:
         data = yaml.safe_load(_registry_yaml.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, (
             f"CREATE-GUARD fail-closed: capability registry 解析失败"
             f"({type(e).__name__}: {e})。禁止放行——registry 是 creation_token 真源，"
@@ -565,7 +565,7 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
         _field_specs = _rule_data["sections"]["gov_eng_002"]["field_specs"]
         _REQUIRED_FIELDS = _field_specs["a_full"]["required"]
         _INIT_MIN_FIELDS = _field_specs["init_min"]
-    except Exception as _e:
+    except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, (
             f"字段头部规范真源读取失败（trae_047.yaml field_specs）: {_e}. "
             f"修复：检查 {_TRAE_047_YAML} 是否存在且 field_specs 结构完整。"
@@ -579,7 +579,7 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
             _head = "\n".join(
                 _abs_path.read_text(encoding="utf-8", errors="replace").split("\n")[:30]
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug(
                 "CREATE-GUARD: 读取文件头失败 file=%s: %s",
                 _py_file, e, exc_info=True,
@@ -630,7 +630,7 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
                 f"能力重复/basename碰撞(GATE-SSOT L2): {_details}. "
                 f"{CAPABILITY_DUPLICATE_FIX_HINT}"
             )
-    except Exception as _e:
+    except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s",
             _e, exc_info=True

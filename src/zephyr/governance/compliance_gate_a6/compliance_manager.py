@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.governance.compliance_gate_a6.compliance_manager
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.compliance_rule
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.compliance_rule
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype

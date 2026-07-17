@@ -390,12 +390,36 @@ entries:
     P3: 防复发门禁——CREATE-GUARD扩展检测governance/根新增.py硬阻断(commit 4b2c2c0f)
     最终状态: governance根8个.py文件（__init__/base/capability_lookup/depgraph_schema/
       evidence_pack/integrity/merkle_hourly/performance_attribution_report），GOV-DOC-018 T_hard=60合规
+    2026-07-17 shim 消除治本同步（commit 213be2b5a3 后续文档/门禁同步）：
+      commit 213be2b5a3（2026-07-14）"eliminate 6 shim re-export files"删除 governance 根
+      base.py/merkle_hourly.py/performance_attribution_report.py 三个 re-export shim 文件
+      （canonical 真源分别在 factor/factor_base.py、gov_audit/merkle_hourly.py、
+      shared/contracts/performance_attribution_report.py）。根 .py 文件数从 9 降至 6
+      （__init__/capability_lookup/depgraph_schema/evidence_pack/integrity/rule_patterns）。
+      本日同步更新（消除"治本变更未联动同步文档/门禁"治理盲区，AI-13 审计发现）：
+      (a) create_guard.py L362-370 错误信息不再硬编码 9 模块清单（防再过期），改为
+          "以磁盘现有文件为准" + 列当前 6 个；
+      (b) create_guard.py L8 [INVARIANTS] 头部 "9 个" → "6 个" + 补 commit 213be2b5a3 上下文；
+      (c) AGENTS.md §4.6 表格删除 base/merkle_hourly/performance_attribution_report 三行；
+      (d) AGENTS.md §4.6 create_guard.py 路径修正 governance/commit_gates/ → gov_enforcement/commit_gates/；
+      (e) AGENTS.md §4.6 子目录清单删除 trading_contracts/rule_enforcement/commit_gates/ 三个迁出路径；
+      (f) governance/__init__.py L29 docstring 示例 base.py → rule_patterns.py；
+      (g) governance/__init__.py L121 import zephyr.governance.finding_ingest → zephyr.gov_audit.finding_ingest
+          （IngestResult 已迁至 gov_audit，保持包公共 API re-export 兼容）；
+      (h) governance/__init__.py L340 __all__ 删除 7 个失效条目（base/broker_interface/
+          compliance_rule/market_schema/merkle_hourly/performance_attribution_report/gate_repo），
+          其中 broker_interface/compliance_rule 是 capability 名非模块符号，gate_repo 从未存在；
+      (i) security_governance/security_gateway_base.py L4 + compliance_gate_a6/compliance_manager.py L4
+          [DEPENDENCIES] 头部 zephyr.governance.compliance_rule → zephyr.gov_enforcement.rule_enforcement.compliance_rule
+          （与实际 import 一致）。
+      验证：tests/governance/commit_gates/test_create_guard.py 全通过（测试仅断言 "ARCH-031" +
+      "防复发" 字符串，不依赖具体模块清单）。
   status: resolved
   related_rules:
   - TRAE-028
   - GOV-DOC-018
   created: '2026-07-01'
-  last_updated: '2026-07-02'
+  last_updated: '2026-07-17'
 - issue_id: '#ARCH-032'
   title: ops/ 目录向内收治理（向 trading/feedback_loop/ 迁移 + 死代码清理 + 防复发）
   severity: P1高
@@ -2673,15 +2697,16 @@ entries:
     Phase 1（P0，已完成）：
       (1.1) GATE-DOMAIN-FK 门禁创建+注册（domain_fk_gate.py, priority=78）
       (1.2) generate_project_depgraph.py INSERT 失败 ERROR 完整摘要
-    Phase 2（P1，部分完成）：
+    Phase 2（P1，已完成）：
       (2.1) GATE-BLUEPRINT-AMODULE-CONSISTENCY 门禁创建+注册（blueprint_amodule_consistency_gate.py, priority=79）——已完成
-      (2.2) GATE-MODULE-INVENTORY-SYNC 升级为 warn + auto-fix——可延后
-    Phase 3（P2，未施工）：
-      drift scan 增加重命名提示
+      (2.2) GATE-MODULE-INVENTORY-SYNC 升级为 warn + auto-fix——已完成（_auto_fix_gate_inventory 自动补齐 missing 文件行到 §0.1）
+    Phase 3（P2，已完成）：
+      drift scan 增加重命名提示——已完成（check_blueprint_code_alignment.py CODE_NOT_IN_DEPGRAPH detail 增加 apply_depgraph.py 同步路径提示）
     Phase 4（已完成）：存量修复
       (4.1) check_pure_assertion.py [DOMAIN] D_GOV_DOC_QUALITY → D_GOV_CODE_QUALITY
       (4.2) a2a_agent_blocklist.py [A_module] MOD-INF_a2a_agent_blocklist → MOD-A2A-a2a_agent_blocklist
       (4.3) blueprint.md §0.1 表格追加两个新 gate 行 + 格式修复
+    补充：DATA-TASK-COMPLETENESS priority 78→41 消除与 GATE-DOMAIN-FK 冲突（commit 32fc64460d）
   related_adjudication: '#ARCH-055, #ARCH-057, #ARCH-060, TRAE-062 SSoT 分类铁律, 裁定#208 双轨制 module_id'
   created: '2026-07-17'
   last_updated: '2026-07-17'

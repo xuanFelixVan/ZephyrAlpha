@@ -26,7 +26,7 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 
 文件归属规则（ARCH-031 命名约定，task_bound，对标 ARCH-029）：
   - 属于子模块的文件必须放在子目录（如 audit_trail/agent_signer.py）
-  - 根目录仅放跨模块桥接文件（如 __init__.py, capability_lookup.py, base.py）
+  - 根目录仅放跨模块桥接文件（如 __init__.py, capability_lookup.py, rule_patterns.py）
   - 判定标准：文件头 [MODULE] 标注属于子模块的，禁止在根目录创建副本
   - 同名歧义消除：根目录与子目录同名文件，canonical 在 [MODULE] 标注所属位置
   - 自动门禁（ARCH-031 局限1 调研结论，2026-07-01）：
@@ -118,7 +118,7 @@ try:
     from zephyr.gov_enforcement.rule_enforcement.dlq_retry_policy import RetryResult
     from zephyr.gov_audit.dora_metrics import DORATargets
     from zephyr.gov_audit.feedback_self_audit import FeedbackNode
-    from zephyr.governance.finding_ingest import IngestResult
+    from zephyr.gov_audit.finding_ingest import IngestResult
     from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
     from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
     from zephyr.gov_audit.glossary_matrix import GlossaryEntry
@@ -337,7 +337,26 @@ __all__ = [
     "startup_shutdown_cli",
     "strategy_portfolio",
     "vibe_coding_enforcer",
-'auto_runner', 'base', 'broker_interface', 'budget_enforcement', 'compliance_rule', 'database_manager', 'default_attribution_engine', 'default_tca_engine', 'depgraph_schema', 'evidence_pack', 'f5_boot_integration', 'f5_event_subscriber', 'f5_shutdown_manager', 'gate_repo', 'integrity', 'market_schema', 'merkle_hourly', 'performance_attribution_report', 'pipeline_base', 'strategy_base', 'strategy_registry']
+    # ARCH-031 残留模块名（2026-07-17 清理：删除 7 个失效条目 base/broker_interface/
+    # compliance_rule/market_schema/merkle_hourly/performance_attribution_report/gate_repo，
+    # 其中 base/merkle_hourly/performance_attribution_report/market_schema 已被 commit
+    # 213be2b5a3 删除，broker_interface/compliance_rule 是 capability 名非模块符号，
+    # gate_repo 从未存在）。剩余 14 项为子目录模块 basename，保留供 lazy loader 反查。
+    "auto_runner",
+    "budget_enforcement",
+    "database_manager",
+    "default_attribution_engine",
+    "default_tca_engine",
+    "depgraph_schema",
+    "evidence_pack",
+    "f5_boot_integration",
+    "f5_event_subscriber",
+    "f5_shutdown_manager",
+    "integrity",
+    "pipeline_base",
+    "strategy_base",
+    "strategy_registry",
+]
 
 __version__ = "0.2.0"
 __domain_id__ = "DOM-GOV-001"
