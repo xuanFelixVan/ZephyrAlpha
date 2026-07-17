@@ -356,8 +356,9 @@ if (Test-Path $pgEnvFile) {
     }
 }
 $env:PGPASSWORD = $pgPassword
-# Compressed format dump, supports selective restore (dump to project-external temp dir)
-& pg_dump -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump"
+# pg_dump resolution: PATH first, fallback to C:\Program Files\PostgreSQL\*\bin\pg_dump.exe (highest version)
+# (backup.ps1 Stage 2 resolves $pgDumpCmd before this call; PG bin not in PATH on this machine)
+& $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump"
 ```
 
 - 输出：`depgraph.dump`（~48MB，压缩格式）

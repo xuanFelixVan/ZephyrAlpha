@@ -76,8 +76,17 @@ New-Item -ItemType Directory -Path $DumpDir -Force | Out-Null
 $dbStatus = @{}
 
 # PostgreSQL
-$pgDump = Get-Command pg_dump -ErrorAction SilentlyContinue
-if ($pgDump) {
+# Resolve pg_dump: PATH first, fallback to standard install dirs (highest version wins)
+$pgDumpCmd = $null
+$pgDumpInPath = Get-Command pg_dump -ErrorAction SilentlyContinue
+if ($pgDumpInPath) {
+    $pgDumpCmd = $pgDumpInPath.Source
+} else {
+    $pgDumpCmd = Get-ChildItem "C:\Program Files\PostgreSQL\*\bin\pg_dump.exe" -ErrorAction SilentlyContinue |
+        Sort-Object { [int]($_.FullName -replace '.*\\PostgreSQL\\(\d+)\\.*', '$1') } -Descending |
+        Select-Object -First 1 -ExpandProperty FullName
+}
+if ($pgDumpCmd) {
     try {
         # Read PostgreSQL credentials from config/.env.postgres (avoid hardcoding)
         $pgEnvFile = "$ProjectRoot\config\.env.postgres"
@@ -90,7 +99,7 @@ if ($pgDump) {
             }
         }
         $env:PGPASSWORD = $pgPassword
-        & pg_dump -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
+        & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
         if ($LASTEXITCODE -eq 0) {
             $pgSize = (Get-Item "$DumpDir\depgraph.dump").Length
             $dbStatus.postgres = @{status="ok"; size_bytes=$pgSize}
@@ -222,12 +231,15 @@ Write-OK "Report saved: $LogFile"
 
 # Update state file
 $stateFile = "$ProjectRoot\data\databases\backup_state.json"
-$state = if (Test-Path $stateFile) { Get-Content $stateFile -Raw | ConvertFrom-Json } else { @{} }
-if (-not $state) { $state = @{} }
+# Note: $state must be PSCustomObject - ConvertTo-Json drops note properties attached to a hashtable
+$state = if (Test-Path $stateFile) { Get-Content $stateFile -Raw | ConvertFrom-Json } else { [PSCustomObject]@{} }
+if (-not $state) { $state = [PSCustomObject]@{} }
 $state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
 $state | Add-Member -NotePropertyName last_backup_snapshot_id -NotePropertyValue $snapshotId -Force
 $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue "ok" -Force
-$state | ConvertTo-Json -Depth 3 | Out-File $stateFile -Encoding UTF8
+# Write UTF-8 without BOM + LF (ENCODING-SAFETY INJ-007; PS5.1 Out-File -Encoding UTF8 emits BOM)
+$stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
+[System.IO.File]::WriteAllText($stateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
