@@ -1,0 +1,77 @@
+# --- 治理锚定 ---
+# blueprint: MOD-SEC-immutable_core | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §immutable_core
+# module_id: MOD-SEC-immutable_core
+# stability: stable
+# safety_level: H
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
+# immutable_core.yaml — 不可变核心验证器配置（SSoT 真源）
+# 真源说明：ALWAYS_BLOCKED_OPERATIONS / PROTECTED_PATHS 的唯一真源。
+# 代码 src/zephyr/security/access_control/immutable_core.py 必须从此文件加载，
+#   禁止在代码中硬编码操作名或路径列表。
+# 修改约束：safety_level=H + ai_autonomy=human_gated，修改需 owner 审批 + blueprint 同步更新。
+# 环境变量 ZEPHYR_IMMUTABLE_CORE_PATH 可覆盖路径。
+
+module_id: MOD-SEC-immutable_core
+config_version: "1.0.0"
+
+# 永远禁止的操作（无论调用者权限等级，均不允许）
+# 语义：normalized_operation_name in always_blocked_operations → 拒绝
+# 规范化规则：统一转小写，空格/连字符/冒号 → 下划线
+always_blocked_operations:
+  - delete_immutable_core
+  - modify_immutable_core
+  - modify_rule_registry
+  - bypass_permission_guard
+  - disable_kill_switch
+  - reset_kill_switch
+  - reset_audit_trail
+  - delete_audit_trail
+  - delete_audit_logs
+  - modify_cold_start_lock
+  - delete_cold_start_lock
+  - delete_governance_db
+  - modify_governance_db_schema
+  - modify_blueprint_id
+  - delete_blueprint
+  - bypass_genesis_bootstrap
+  - disable_genesis_bootstrap
+  - modify_superadmin_account
+  - delete_superadmin_account
+  - disable_rbac_system
+  - modify_rbac_invariants
+  - shell_true_execution
+  - spawn_new_agent_unsanctioned
+  - forge_agent_identity
+
+# 受保护路径（fnmatch 模式）
+# 语义：is_protected_path(path) 命中任一 pattern → True
+# 约束：列出的路径禁止 AI 修改（human_gated）
+protected_paths:
+  - .git/**
+  - .git/config
+  - .git/HEAD
+  - .env
+  - "**/.env*"
+  - AGENTS.md
+  - CLAUDE.md
+  - project_rules.md
+  - docs/01_policies_and_standards/rules/**
+  - docs/01_policies_and_standards/_registry/**
+  - src/zephyr/agent-rbac/**
+  - src/zephyr/security/access_control/immutable_core.py
+  - src/zephyr/security/access_control/kill_switch.py
+  - src/zephyr/security/access_control/cold_start_lock.py
+  - src/zephyr/security/access_control/genesis_bootstrap.py
+  - src/zephyr/security/access_control/bootstrap_superadmin.py
+  - config/rbac_roles.yaml
+  - config/blueprint_routing.yaml
+  - config/immutable_core.yaml
+  - data/databases/governance.db
+  - .ailocks/registry.json
+  - scripts/lock_files.py
+  - scripts/scaffold.py
+  - scripts/governance/d11_compliance/audit_registration.py
+  - src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml

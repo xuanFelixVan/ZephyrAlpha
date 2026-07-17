@@ -696,7 +696,7 @@ class PipelineOrchestrator:
         """
         if hints is None:
             pipeline = task_card.assigned_pipeline
-            if pipeline not in ("A", "B"):
+            if pipeline not in ("A", "B"):  # noqa: gate-vocab  业务逻辑：此调度路径仅支持 A/B 管线（C/D 家族不适用，非词表成员校验）
                 self._active_dispatches.discard(task_card.task_id)
                 return PipelineResult(
                     task_id=task_card.task_id,
@@ -723,7 +723,7 @@ class PipelineOrchestrator:
                 ct_pipe_route=None,
                 ct_pipe_warnings=[str(exc)],
             )
-        if task_card.assigned_pipeline not in ("A", "B"):
+        if task_card.assigned_pipeline not in ("A", "B"):  # noqa: gate-vocab  业务逻辑：此调度路径仅支持 A/B 管线（C/D 家族不适用，非词表成员校验）
             ct_warnings.append(
                 f"assigned_pipeline={task_card.assigned_pipeline!r} 非 A/B；"
                 f"CT-PIPE 已强制使用 {pipeline} 区自 {ct_decision.node_id}"

@@ -101,7 +101,7 @@ class CapabilitySync:
                     desc = sdata.get("description", f"Skill-derived capability: {name}")
                     cap_category = _SKILL_CATEGORY_MAP.get(name, CapabilityCategory.INFRA)
                     tier = sdata.get("tier", "L1")
-                    plane = "warm" if tier in ("L0", "L1") else "cold"
+                    plane = "warm" if tier in ("L0", "L1") else "cold"  # noqa: gate-vocab  业务逻辑：L0/L1 层映射 warm 运行面，其余 cold（非词表成员校验）
                     cap_card = CapabilityCard(
                         capability_id=cap_id,
                         name=f"Skill: {name}",

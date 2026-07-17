@@ -1997,7 +1997,7 @@ def build_depgraph(
                 if sib == nid:
                     continue
                 snode = nodes.get(sib, {})
-                if snode.get("type") in ("module", "script"):
+                if snode.get("type") in ("module", "script"):  # noqa: gate-vocab  业务逻辑：仅 module/script 节点可作为 config_depends 连接目标（非词表成员校验）
                     ek = (nid, sib, "config_depends")
                     if ek not in edge_set:
                         src_dom_b = node.get("domain_id", "")
@@ -2057,7 +2057,7 @@ def build_depgraph(
                 if sib == nid:
                     continue
                 snode = nodes.get(sib, {})
-                if snode.get("type") in ("module", "script"):
+                if snode.get("type") in ("module", "script"):  # noqa: gate-vocab  业务逻辑：仅 module/script 节点可作为 test_depends 连接目标（非词表成员校验）
                     ek = (nid, sib, "test_depends")
                     if ek not in edge_set:
                         src_dom_d = node.get("domain_id", "")

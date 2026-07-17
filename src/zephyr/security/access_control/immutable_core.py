@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -32,60 +33,66 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-ALWAYS_BLOCKED_OPERATIONS = [
-    "delete_immutable_core",
-    "modify_immutable_core",
-    "modify_rule_registry",
-    "bypass_permission_guard",
-    "disable_kill_switch",
-    "reset_kill_switch",
-    "reset_audit_trail",
-    "delete_audit_trail",
-    "delete_audit_logs",
-    "modify_cold_start_lock",
-    "delete_cold_start_lock",
-    "delete_governance_db",
-    "modify_governance_db_schema",
-    "modify_blueprint_id",
-    "delete_blueprint",
-    "bypass_genesis_bootstrap",
-    "disable_genesis_bootstrap",
-    "modify_superadmin_account",
-    "delete_superadmin_account",
-    "disable_rbac_system",
-    "modify_rbac_invariants",
-    "shell_true_execution",
-    "spawn_new_agent_unsanctioned",
-    "forge_agent_identity",
-]
+# 治本(2026-07-17): ALWAYS_BLOCKED_OPERATIONS / PROTECTED_PATHS 真源是
+# config/immutable_core.yaml，禁止在代码中硬编码操作名或路径列表。
+# 加载失败时回退空列表（fail-safe：无保护=允许通过；加载失败应被视为
+# 系统级故障，由调用方通过 verify_protected_paths_exist 检测）。
+_IMMUTABLE_CORE_CONFIG_PATH: Path = Path(
+    os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH", "")
+) if os.environ.get("ZEPHYR_IMMUTABLE_CORE_PATH") else (
+    REPO_ROOT / "config" / "immutable_core.yaml"
+)
 
-PROTECTED_PATHS = [
-    ".git/**",
-    ".git/config",
-    ".git/HEAD",
-    ".env",
-    "**/.env*",
-    "AGENTS.md",
-    "CLAUDE.md",
-    "project_rules.md",
-    "docs/01_policies_and_standards/rules/**",
-    "docs/01_policies_and_standards/_registry/**",
-    "src/zephyr/agent-rbac/**",
-    "src/zephyr/security/access_control/immutable_core.py",
-    "src/zephyr/security/access_control/kill_switch.py",
-    "src/zephyr/security/access_control/cold_start_lock.py",
-    "src/zephyr/security/access_control/genesis_bootstrap.py",
-    "src/zephyr/security/access_control/bootstrap_superadmin.py",
-    "config/rbac_roles.yaml",
-    "config/blueprint_routing.yaml",
-    "data/databases/governance.db",
-    ".ailocks/registry.json",
-    "scripts/lock_files.py",
-    "scripts/scaffold.py",
-    "scripts/governance/d11_compliance/audit_registration.py",
-    "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml",
-]
+
+def _load_immutable_core_config() -> dict[str, Any]:
+    """从 config/immutable_core.yaml 加载不可变核心配置（SSoT 真源）。
+
+    失败模式（fail-safe）:
+        - YAML 不存在或解析失败：返回空 dict，调用方回退空列表。
+          理由：safety_level=H 模块禁止 fail-open（默认允许），
+          调用方 verify_protected_paths_exist / verify_immutable_core_integrity
+          会检测配置缺失并报告 violation，避免静默漂移。
+    """
+    try:
+        import yaml
+
+        if not _IMMUTABLE_CORE_CONFIG_PATH.exists():
+            logger.warning(
+                "immutable_core.yaml missing at %s; falling back to empty lists",
+                _IMMUTABLE_CORE_CONFIG_PATH,
+            )
+            return {}
+        with open(_IMMUTABLE_CORE_CONFIG_PATH, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        if not isinstance(data, dict):
+            logger.warning("immutable_core.yaml top-level not dict; falling back")
+            return {}
+        return data
+    except Exception as exc:
+        logger.error(
+            "Failed to load immutable_core.yaml: %s", exc, exc_info=True
+        )
+        return {}
+
+
+_CONFIG_CACHE: dict[str, Any] = _load_immutable_core_config()
+
+
+def _load_always_blocked_operations() -> list[str]:
+    """从 SSoT 加载永远禁止的操作列表。"""
+    ops = _CONFIG_CACHE.get("always_blocked_operations") or []
+    return [str(op) for op in ops if isinstance(op, str)]
+
+
+def _load_protected_paths() -> list[str]:
+    """从 SSoT 加载受保护路径列表。"""
+    paths = _CONFIG_CACHE.get("protected_paths") or []
+    return [str(p) for p in paths if isinstance(p, str)]
+
+
+# 从 SSoT 动态加载（替代原 L35-88 硬编码字面量集合）
+ALWAYS_BLOCKED_OPERATIONS: list[str] = _load_always_blocked_operations()
+PROTECTED_PATHS: list[str] = _load_protected_paths()
 
 
 @dataclass

@@ -3796,6 +3796,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- 不可变核心配置 SSoT（2026-07-17 AI-02 审计 P2-1，ALWAYS_BLOCKED_OPERATIONS / PROTECTED_PATHS 真源归一）---
+  - file: "config/immutable_core.yaml"
+    token: "auto-immutable-core-yaml-20260717"
+    created_by: "session-sess-29448-20260717102258"
+    capability: "immutable_core_config"
+
   # --- A2A Agent 黑名单（2026-07-17 AI-14 审计 P5，重命名自 a2a_protocol_security.py 消除命名混淆）---
   - file: "src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_agent_blocklist.py"
     token: "auto-a2a-agent-blocklist-20260717"

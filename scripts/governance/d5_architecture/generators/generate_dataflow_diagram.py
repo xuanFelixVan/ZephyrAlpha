@@ -56,6 +56,11 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     get_dataflowgraph_pg_connection,
     init_dataflow_db,
 )
+from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
+
+# maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
+# strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
+_MATURITY_VALUES: set[str] = load_vocabulary_values("maturity_vocabulary.yaml", strict=False)
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture"
 
@@ -214,7 +219,7 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
 
 def _maturity_tag(maturity: str | None) -> str:
     """design_maturity 标签前缀，如 [design]/[production]/[prototype]。未设置返回空串。"""
-    if maturity in ("design", "production", "prototype"):
+    if maturity in _MATURITY_VALUES:
         return f"[{maturity}]"
     return ""
 

@@ -106,7 +106,7 @@ MATURITY_LEVELS: dict[str, dict] = {
 # - D_AUDITTEST: 审计测试套件(1720节点,非业务域)
 # - D_GOV_SCRIPTS: 治理脚本域(434节点,工具脚本非业务域)
 TEST_DOMAIN_PREFIXES = ("D-T3-", "D-T4-", "D-T5-", "D-T9-")
-TEST_DOMAIN_EXACT = ("D_AUDITTEST", "D_GOV_SCRIPTS")
+TEST_DOMAIN_EXACT = ("D_AUDITTEST", "D_GOV_SCRIPTS")  # noqa: gate-vocab  业务排除清单：测试/治理脚本域非业务域（非词表成员校验）
 
 
 def normalize_domain_id(domain_id: str) -> str:
@@ -427,7 +427,7 @@ def generate_heatmap() -> str:
     lines.append("")
     lines.append("| 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |")
     lines.append("|--------|--------|:---:|:---:|:---:|")
-    p0_domains = [d for d in domain_data if d["maturity_level"] in ("L0", "L1")]
+    p0_domains = [d for d in domain_data if d["maturity_level"] in ("L0", "L1")]  # noqa: gate-vocab  业务逻辑：L0/L1 成熟度= P0 短板（此处 maturity_level 是 L0-L3 简化体系，非 decision_layer 词表校验）
     if p0_domains:
         for d in p0_domains:
             cap_name = d["capability_id"] or "—"

@@ -29,7 +29,6 @@ canonical: src/zephyr/shared/io/yaml_utils.py
 
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import Final
 from pathlib import Path
 
@@ -176,6 +175,13 @@ def load_vocabulary_values(
     if data is None:
         return set()
     return _collect_vocab_values(data, fallback_key)
+
+
+# 治本(2026-07-17): ttl 合法值真源是 ttl_vocabulary.yaml，禁止代码硬编码字面量集合。
+# strict=False 容错：词表缺失时返回空 set，evaluate_ttl 回退 task_bound（安全默认）。
+_TTL_VALID_VALUES: Final[set[str]] = load_vocabulary_values(
+    "ttl_vocabulary.yaml", strict=False
+)
 
 
 def load_vocabulary_entries(
@@ -404,25 +410,6 @@ def _expand_criteria_sources(tree: dict, *, strict: bool = True) -> None:
         ]
 
 
-def _build_ttl_fallback(*items: str) -> frozenset[str]:
-    """构造 ttl fallback 集合（隔离字面量，避免被 check_vocab_hardcode 误报）。"""
-    return frozenset(items)
-
-
-@lru_cache(maxsize=None)
-def _ttl_valid_values() -> frozenset[str]:
-    """从 ttl_vocabulary.yaml 加载合法 ttl 值（用于 evaluate_ttl 叶子节点校验）。
-
-    SSoT 真源：ttl_vocabulary.yaml values 列表。
-    失败时 fallback 到原硬编码值并记录 warning。
-    """
-    values = load_vocabulary_values("ttl_vocabulary.yaml", strict=False)
-    if values:
-        return frozenset(values)
-    # fallback: 词表不可读时用原值（warn-only，不崩溃）
-    return _build_ttl_fallback("permanent", "task_bound")
-
-
 def evaluate_ttl(
     rel_path: str,
     frontmatter: dict | None,
@@ -472,7 +459,7 @@ def evaluate_ttl(
         else:
             current = node.get("no") or node.get(False)
 
-    if current in _ttl_valid_values():
+    if current in _TTL_VALID_VALUES:
         return current
     return "task_bound"  # 安全回退（task_bound 是 ttl_vocabulary.yaml 默认值）
 

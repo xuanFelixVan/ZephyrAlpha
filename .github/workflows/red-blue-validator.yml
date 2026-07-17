@@ -14,11 +14,22 @@ on:
       - "src/zephyr/agent_rbac/**"
       - "src/zephyr/circuit_breaker/**"
       - "src/zephyr/drift_detector/**"
+      - ".github/workflows/red-blue-validator.yml"
   pull_request:
     branches: [main, master]
     paths:
+      # 治本(2026-07-17): 修复 push/PR paths 不对称——原 PR 仅 2 条路径，
+      # 导致 PR 提交时 red_blue_validator 模块变更不触发对抗验证
       - "src/zephyr/red_blue_validator/**"
       - "src/zephyr/gov_enforcement/rule_enforcement/**"
+      - "src/zephyr/llm_security/**"
+      - "src/zephyr/escalation-engine/**"
+      - "src/zephyr/governance/**"
+      - "src/zephyr/feedback_loop/gates/**"
+      - "src/zephyr/agent_rbac/**"
+      - "src/zephyr/circuit_breaker/**"
+      - "src/zephyr/drift_detector/**"
+      - ".github/workflows/red-blue-validator.yml"
   workflow_dispatch:
 
 jobs:
@@ -49,7 +60,9 @@ jobs:
       - name: Red-Blue Adversarial Run
         id: adversarial
         run: python -m zephyr.red_blue_validator run --tier 1 --blast-radius FILE --format json
-        continue-on-error: true
+        # 治本(2026-07-17): 原 continue-on-error: true 使 workflow 永不阻断，
+        # 失去 CI 最后一道防线意义。改为 false 硬阻断。
+        continue-on-error: false
 
       - name: Generate Report
         if: always()

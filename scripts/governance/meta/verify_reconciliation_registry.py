@@ -199,7 +199,7 @@ def _check_004_priority_order(mod) -> CheckResult:
             spec_cls(gate_id=gid, trigger=lambda files: True, reconcile=_reconcile, priority=prio)
         )
     reg.reconcile_for(["x.py"], "sess")
-    if order != ["B", "A", "C"]:
+    if order != ["B", "A", "C"]:  # noqa: gate-vocab  测试断言：校验优先级排序输出 [B,A,C]（gate_id 测试夹具，非 governance_family 词表校验）
         return CheckResult("FN-RR-004", False, f"priority order wrong: {order} (expected B,A,C)")
     return CheckResult("FN-RR-004", True, f"priority ascending: {order}")
 

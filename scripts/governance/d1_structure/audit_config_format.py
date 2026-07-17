@@ -67,6 +67,11 @@ import argparse
 
 import yaml
 from _shared.constants import CONFIG_DIR, EXIT_PASS, REPO_ROOT
+from _shared.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05）
+
+# safety_level 合法值真源是 safety_level_vocabulary.yaml，禁止代码硬编码字面量集合。
+# strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
+_SAFETY_LEVEL_VALUES: set[str] = load_vocabulary_values("safety_level_vocabulary.yaml", strict=False)
 
 
 def report(issues, level, code, msg) -> None:
@@ -211,7 +216,7 @@ def main() -> None:
     if router_path.exists():
         for trigger_name, trigger_conf in router_data.get("triggers", {}).items():
             safety = trigger_conf.get("safety", "")
-            if safety not in ("L", "M", "H"):
+            if safety not in _SAFETY_LEVEL_VALUES:
                 report(
                     issues,
                     "ISSUE",

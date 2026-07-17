@@ -129,7 +129,7 @@ def _get_format_and_fields(filepath: Path) -> tuple[str, list[str]] | None:
 
 def _parse_header(filepath: Path, fmt: str) -> dict | None:
     """按格式路由到 SSoT 解析器。"""
-    if fmt in ("A_full", "A_test", "E_shell"):
+    if fmt in ("A_full", "A_test", "E_shell"):  # noqa: gate-vocab  业务逻辑：此三种格式路由到 Python 头部解析器（B_yaml/C_json 走不同解析器，非词表成员校验）
         return parse_py_header_from_file(filepath)
     if fmt == "B_yaml":
         return parse_byaml_anchor_from_file(filepath)
