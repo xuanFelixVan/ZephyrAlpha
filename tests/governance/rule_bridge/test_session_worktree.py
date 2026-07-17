@@ -718,6 +718,103 @@ def test_sweep_skips_recent_dirs():
 
 
 # ---------------------------------------------------------------------------
+# 阶段2治本测试：sweep 取代判定（未合并提交陷阱，2026-07-18）
+# 验证 _branch_commits_superseded 的两维度检测（patch-id + message）：
+#   全 patch-id 等价 / 混合 / 全未取代 / git cherry 失败 / 空分支
+# ---------------------------------------------------------------------------
+def _git_result(stdout: str = "", returncode: int = 0, stderr: str = "") -> subprocess.CompletedProcess:
+    """构造 _run_git 返回值（subprocess.CompletedProcess）。"""
+    return subprocess.CompletedProcess(args=[], returncode=returncode, stdout=stdout, stderr=stderr)
+
+
+class _MockManager:
+    """最小 WorktreeManager mock，仅实现 _run_git 供 _branch_commits_superseded 调用。"""
+
+    def __init__(self, responses: list[subprocess.CompletedProcess] | None = None):
+        self._responses = list(responses) if responses else []
+        self.calls: list[list[str]] = []
+
+    def _run_git(self, cmd: list[str]) -> subprocess.CompletedProcess:
+        self.calls.append(cmd)
+        if self._responses:
+            return self._responses.pop(0)
+        return _git_result()
+
+
+def test_branch_commits_superseded_all_patch_id():
+    """_branch_commits_superseded: 全部 patch-id 等价（git cherry 全 '-'）→ True。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    # git cherry 输出：'- abc123' '- def456'（两提交均等价于 HEAD 中某提交）
+    m = _MockManager([_git_result(stdout="- abc123\n- def456\n")])
+    result, reason = _branch_commits_superseded("test-branch", m)
+    assert result is True, f"全 patch-id 等价应返回 True: {reason}"
+    assert "patch-id equivalent" in reason
+
+
+def test_branch_commits_superseded_mixed_patch_and_message():
+    """_branch_commits_superseded: patch-id 部分匹配 + message 补充匹配 → 全取代 True。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    m = _MockManager([
+        _git_result(stdout="- abc123\n+ def456\n"),  # cherry: 1 patch-id ok, 1 not
+        _git_result(stdout="fix: patch-id ok commit\nfix: message matched commit\n"),  # HEAD subjects
+        _git_result(stdout="fix: message matched commit"),  # def456 的 subject
+    ])
+    result, reason = _branch_commits_superseded("test-branch", m)
+    assert result is True, f"混合匹配应全取代 True: {reason}"
+    assert "1 patch-id + 1 message" in reason
+
+
+def test_branch_commits_superseded_not_all():
+    """_branch_commits_superseded: 部分未取代 → False。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    m = _MockManager([
+        _git_result(stdout="+ abc123\n+ def456\n"),  # cherry: 全 '+'
+        _git_result(stdout="some other subject\n"),  # HEAD subjects
+        _git_result(stdout="abc123 subject"),  # abc123 的 subject → 不匹配
+        _git_result(stdout="def456 subject"),  # def456 的 subject → 不匹配
+    ])
+    result, reason = _branch_commits_superseded("test-branch", m)
+    assert result is False, f"全未取代应返回 False: {reason}"
+    assert "0/2 superseded" in reason
+
+
+def test_branch_commits_superseded_cherry_failed():
+    """_branch_commits_superseded: git cherry 失败 → False（安全保守）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    m = _MockManager([_git_result(returncode=1, stderr="fatal: bad revision")])
+    result, reason = _branch_commits_superseded("bad-branch", m)
+    assert result is False, f"git cherry 失败应返回 False: {reason}"
+    assert "git cherry failed" in reason
+
+
+def test_branch_commits_superseded_empty():
+    """_branch_commits_superseded: 无未合并提交 → True（空集，可清理）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    m = _MockManager([_git_result(stdout="")])  # cherry 无输出
+    result, reason = _branch_commits_superseded("empty-branch", m)
+    assert result is True, f"空分支应返回 True: {reason}"
+    assert "no unmerged commits" in reason
+
+
+def test_branch_commits_superseded_no_head_subjects():
+    """_branch_commits_superseded: head_subjects 获取失败 → False（保守跳过）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _branch_commits_superseded
+
+    m = _MockManager([
+        _git_result(stdout="+ abc123\n"),  # cherry: 1 未取代
+        _git_result(returncode=1, stdout=""),  # git log HEAD 失败
+    ])
+    result, reason = _branch_commits_superseded("test-branch", m)
+    assert result is False, f"head_subjects 失败应返回 False: {reason}"
+    assert "no head_subjects" in reason
+
+
+# ---------------------------------------------------------------------------
 # P3 orphan draft script auto-cleanup 测试（P3 流程治本，2026-07-17）
 # 验证 _cleanup_orphan_draft_scripts 的安全判据：
 #   空目录/无_前缀/age未到/age过期/OSError静默/sess-*目录不动
