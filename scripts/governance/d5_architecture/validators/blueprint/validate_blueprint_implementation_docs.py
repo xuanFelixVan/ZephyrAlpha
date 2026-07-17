@@ -15,8 +15,11 @@
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: while True用于字符串搜索(content.find+break),非daemon常驻服务;一次性CLI验证工具
 """
-AGENTS.md 6.4 铁律五 + 铁律六：construction_progress 必须 LS 磁盘验证，
-蓝图中声称的文件路径必须在磁盘上真实存在。
+AGENTS.md 6.4 铁律五 + 铁律六：蓝图中声称的文件路径必须在磁盘上真实存在。
+
+ARCH-FRONTMATTER-STATE-001 Phase 3（2026-07-18）：退役 construction_progress 字段后，
+本验证器简化为纯文件存在性检查——声称的代码文件必须在磁盘上真实存在，
+不再依赖 construction_progress 状态分支。
 
 用法：
   python scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py
@@ -51,8 +54,7 @@ from _shared.encoding import ensure_utf8_stdout
 from _shared.frontmatter import parse_frontmatter_from_file
 
 ensure_utf8_stdout()
-COMPLETED_PROGRESS_VALUES = {"phase_0_completed", "phase_1_complete", "phase_1_partial", "phase_2_complete"}
-NOT_STARTED_VALUES = {"not_started", "skeleton"}
+# ARCH-FRONTMATTER-STATE-001 Phase 3: construction_progress 退役，相关常量移除
 IMPLEMENTATION_SECTION_TITLES = [
     "实际代码实现情况",
     "Code Implementation Status",
@@ -115,13 +117,12 @@ def resolve_source_dir_from_claimed_paths(paths: list[str]) -> str | None:
 
 
 def check_blueprint(bp_path: Path) -> dict:
-    """Check compliance and report findings."""
-    fm = parse_frontmatter_from_file(bp_path)
+    """Check compliance and report findings.
+
+    ARCH-FRONTMATTER-STATE-001 Phase 3：退役 construction_progress 后，
+    不再读取 frontmatter 状态字段，仅检查声称的文件路径在磁盘上是否存在。
+    """
     content = bp_path.read_text(encoding="utf-8")
-    has_impl_section = bool(SECTION_RE.search(content))
-    c_progress = None
-    if fm:
-        c_progress = fm.get("construction_progress")
     rel = str(bp_path.relative_to(REPO_ROOT))
 
     claimed_paths = extract_claimed_file_paths(content)
@@ -133,8 +134,6 @@ def check_blueprint(bp_path: Path) -> dict:
 
     return {
         "rel": rel,
-        "progress": c_progress or "missing",
-        "has_impl": has_impl_section,
         "claimed_paths": claimed_paths,
         "disk_results": disk_results,
         "content": content,
@@ -175,70 +174,13 @@ def main() -> int:
     for bp in sorted(blueprints):
         result = check_blueprint(bp)
         bp_rel = result["rel"]
-        progress = result["progress"]
-        has_impl = result["has_impl"]
         claimed = result["claimed_paths"]
         disk = result["disk_results"]
         content = result["content"]
 
-        is_completed = progress in COMPLETED_PROGRESS_VALUES
-        is_not_started = progress in NOT_STARTED_VALUES
-        is_missing = progress == "missing"
-        has_nonstandard_progress = not is_completed and not is_not_started and not is_missing
-
-        if has_nonstandard_progress and has_impl:
-            msg = (
-                f"NON-STANDARD construction_progress: {bp_rel}\n"
-                f"  construction_progress = '{progress}' (non-standard value).\n"
-                f"  Standard values: not_started | skeleton | phase_1_partial | phase_1_complete | phase_2_complete\n"
-                f"  Hint: LS the source directory and set the correct value."
-            )
-            warnings.append(msg)
-
-        if is_completed and not has_impl:
-            msg = (
-                f"BLUEPRINT IMPL DOC MISSING: {bp_rel}\n"
-                f"  construction_progress = '{progress}' but no implementation status section found.\n"
-                f"  Required: ## 实际代码实现情况 (Code Implementation Status)"
-            )
-            errors.append(msg)
-
-        if is_not_started and has_impl and claimed:
-            existing_files = sum(1 for _, exists in disk if exists)
-            if existing_files > 0:
-                msg = (
-                    f"BLUEPRINT PROGRESS-CONTENT MISMATCH: {bp_rel}\n"
-                    f"  construction_progress = '{progress}' but implementation section lists code files.\n"
-                    f"  Disk verification: {existing_files}/{len(claimed)} claimed files actually exist on disk.\n"
-                    f"  Action: Set construction_progress to reflect actual state (phase_1_partial or phase_1_complete)."
-                )
-                errors.append(msg)
-
-        missing_files = [(p, exists) for p, exists in disk if not exists and not _has_negative_indicator(content, p)]
-        if missing_files and is_completed:
-            for mp, _ in missing_files:
-                msg = (
-                    f"BLUEPRINT PATH DRIFT: {bp_rel}\n"
-                    f"  construction_progress = '{progress}' but claimed file does NOT exist on disk:\n"
-                    f"    {mp}\n"
-                    f"  Either: (a) remove the non-existent file from the blueprint table,\n"
-                    f"          (b) create the file, or\n"
-                    f"          (c) downgrade construction_progress to reflect reality."
-                )
-                errors.append(msg)
-
-        if is_not_started and claimed:
-            existing_files = sum(1 for _, e in disk if e)
-            missing_files_count = len(missing_files)
-            if existing_files > 0:
-                msg = (
-                    f"BLUEPRINT NOT_STARTED WITH FILES: {bp_rel}\n"
-                    f"  construction_progress = 'not_started' but {existing_files}/{len(claimed)} claimed files exist on disk.\n"
-                    f"  Expected: 0 files on disk for not_started.\n"
-                    f"  Action: Set construction_progress to phase_1_partial or phase_1_complete."
-                )
-                errors.append(msg)
-
+        # ARCH-FRONTMATTER-STATE-001 Phase 3: 退役 construction_progress 后，
+        # 仅保留"声称的文件必须在磁盘上存在"检查（原 phantom_files 检查）。
+        # 不再根据 construction_progress 状态分支判断。
         phantom_files = [(p, e) for p, e in disk if not e and not _has_negative_indicator(content, p)]
         for pf, _ in phantom_files:
             msg = (
@@ -247,16 +189,6 @@ def main() -> int:
                 f"  Action: Remove from table or create the file."
             )
             warnings.append(msg)
-
-        if is_missing and claimed:
-            existing_files = sum(1 for _, e in disk if e)
-            if existing_files > 0:
-                msg = (
-                    f"BLUEPRINT MISSING construction_progress WITH CODE: {bp_rel}\n"
-                    f"  No construction_progress in frontmatter, but {existing_files}/{len(claimed)} claimed files exist on disk.\n"
-                    f"  Action: Add construction_progress to frontmatter (e.g., phase_1_partial or phase_1_complete)."
-                )
-                errors.append(msg)
 
     if errors:
         print(f"\n{'=' * 60}")
@@ -281,7 +213,7 @@ def main() -> int:
 
     if not errors and not warnings:
         print(
-            f"OK: All {len(blueprints)} blueprints have consistent construction_progress ↔ implementation documentation + verified file paths."
+            f"OK: All {len(blueprints)} blueprints have verified file paths (construction_progress retired per ARCH-FRONTMATTER-STATE-001 Phase 3)."
         )
         if args.jsonl:
             print(json.dumps(blob, ensure_ascii=False))

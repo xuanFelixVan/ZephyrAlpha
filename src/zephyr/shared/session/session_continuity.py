@@ -304,7 +304,6 @@ class SessionContinuity:
                 k, _, v = line.partition(":")
                 fm[k.strip()] = v.strip().strip("'\"")
         version = fm.get("version", "")
-        construction_progress = fm.get("construction_progress", "")
         ai_role = fm.get("ai_role_instruction", "")
         rule_count = len(re.findall(r"\(\d+\)", ai_role))
         # 解析分派表数据行数
@@ -318,7 +317,6 @@ class SessionContinuity:
         return {
             "valid": True,
             "version": version,
-            "construction_progress": construction_progress,
             "ai_rules_count": rule_count,
             "dispatch_domains": dispatch_domains,
         }
