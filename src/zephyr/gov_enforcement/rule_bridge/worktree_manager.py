@@ -350,7 +350,7 @@ class WorktreeManager:
                 )
                 if r2.returncode != 0:
                     raise WorktreeError(
-                        f"git worktree add 失败 (session={session_id}): "
+                        f"git worktree add 失败: "
                         f"{r2.stderr.strip() or r.stderr.strip()}"
                     )
             logger.info(
@@ -381,7 +381,7 @@ class WorktreeManager:
         with _WorktreeLock(self.repo_root):
             if not self._worktree_exists(session_id):
                 raise WorktreeError(
-                    f"session worktree 不存在 (session={session_id}): {wt_path}"
+                    f"session worktree 不存在: {wt_path}"
                 )
             # 在主工作目录执行 merge（--no-ff 保留 session 提交拓扑）
             # merge message 末尾追加 [GW:{sid}:merge] 标记，与 session_worktree_commit 的 [GW:{sid}:worktree] 设计对齐

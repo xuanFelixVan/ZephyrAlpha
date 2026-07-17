@@ -2822,6 +2822,27 @@ capabilities:
       解决发现性：新AI搜 "写入前门禁/pre write gate/mojibake检测/根目录污染" 可定位真源。
       解决防重建：阻止新AI重复造写入前检查脚本（对标 held_overlap_gate 的 overlap 检测在 commit 时自动保障）。
 
+  - capability_id: check_encoding
+    canonical_override: scripts/governance/d7_code/check_encoding.py
+    aliases:
+      - encoding_compliance_check
+      - ps1_ascii_check
+      - inj_007
+      - bom_detection
+      - crlf_detection
+      - non_ascii_detector
+    description: >-
+      独立编码合规校验脚本（INJ-007）。检测内容：UTF-8 BOM（FAIL）、CRLF（WARNING）、
+      auto-guess-encoding pattern（FAIL）、GBK-as-UTF-8 mojibake（FAIL）、.ps1 非 ASCII 字节（FAIL）。
+      .ps1 ASCII-only 规则：PowerShell 5.1 无 BOM 时按 ANSI codepage 解码，多字节 UTF-8
+      导致字节偏移→假语法错误；Edit 工具剥离 BOM 使"保留 BOM"不可行，故 .ps1 MUST 纯 ASCII。
+      CLI入口：python scripts/governance/d7_code/check_encoding.py --file <path> | --dir <path> | --scan。
+      强制方式：pre-commit hook GATE-ENCODING（.pre-commit-config.yaml 注册，FAIL 级阻断提交）。
+      与 pre_write_gate.py 的关系：pre_write_gate 是写入前手动诊断（含 mojibake 检测），
+      check_encoding.py 是提交时自动校验（独立脚本，覆盖 .ps1 + BOM + CRLF + mojibake 全格式）。
+      解决发现性：新AI搜 "编码检查/INJ-007/ps1 ASCII/BOM检测/mojibake" 可定位真源。
+      解决防重建：阻止新AI重复造编码检查脚本（对标 pre_write_gate 的 mojibake 检测在写入前手动保障）。
+
   - capability_id: pre_delete_safety_check
     canonical_override: scripts/governance/d5_architecture/pre_delete_safety_check.py
     aliases:
@@ -3629,6 +3650,21 @@ capabilities:
       commit 时硬阻断。canonical = src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py。
       解决发现性：新 AI 搜 "裸SQL/SQL注入/bare sql/NO-BARE-SQL" 可定位真源。
 
+  - capability_id: blueprint_amodule_consistency_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py
+    aliases:
+      - BLUEPRINT-AMODULE-CONSISTENCY
+      - blueprint_amodule_consistency
+      - make_blueprint_amodule_consistency_gate
+    description: >-
+      BLUEPRINT-AMODULE-CONSISTENCY [A_module] 头部 module_id 格式一致性门禁
+      （裁定 #ARCH-DRIFT-PREVENTION-001 ADP-3，priority=79）。
+      靶向检测 [A_module] module_id 的 malformation 模式 MOD-{UPPER}_{lowercase}
+      （层码后下划线+小写，如 MOD-INF_a2a_agent_blocklist），diff-based 只检 added 行。
+      关键设计：不使用 validate_module_id_naming.is_valid_module_id（其 track 2 正则要求
+      全大写，与项目小写文件名约定冲突，会误阻断合规名如 MOD-GOV-domain_fk_gate）。
+      canonical = src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py。
+
   - capability_id: blueprint_format_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
     aliases:
@@ -3694,6 +3730,21 @@ capabilities:
     description: >-
       DEPGRAPH-WRITE-PATH depgraph 写入路径白名单门禁。
       检测 depgraph 写入操作是否来自白名单路径（防止非授权脚本直接写 DB）。
+
+  - capability_id: domain_fk_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    aliases:
+      - GATE-DOMAIN-FK
+      - domain_fk
+      - make_domain_fk_gate
+    description: >-
+      GATE-DOMAIN-FK [DOMAIN] 头部域注册表 FK 校验门禁
+      （裁定 #ARCH-DRIFT-PREVENTION-001 ADP-1，priority=78）。
+      diff-based 检测 staged .py 文件中 [DOMAIN] 头部值，校验是否在
+      functional_domain_registry.yaml（YAML 真源，非 DB——避免连接开销和 sync 滞后）
+      中注册。未注册→硬阻断。真源选择依据 TRAE-062 SSoT 分类铁律：规则数据真源是 YAML。
+      fail-open 边界：YAML 读取异常→PASS；只检新增 [DOMAIN] 行（存量违规不阻断）。
+      canonical = src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py。
 
   - capability_id: foreign_change_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
@@ -3768,6 +3819,21 @@ capabilities:
       META-TESTS-COVERAGE Gate 测试覆盖率校验 meta-gate（#ARCH-057）。
       检测 commit gate 自身是否有对应测试覆盖（meta 层：gate 的 gate）。
 
+  - capability_id: rename_depgraph_sync_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py
+    aliases:
+      - RENAME-DEPGRAPH-SYNC
+      - rename-depgraph-sync
+      - make_rename_depgraph_sync_gate
+      - file_rename_depgraph_sync_blocker
+    description: >-
+      RENAME-DEPGRAPH-SYNC in-process 文件重命名 depgraph 同步阻断门禁（AI-14 审计 S1-1，2026-07-17）。
+      检测 staged .py 文件重命名（diff-filter=R）的新路径在 depgraph nodes 表无对应 file_path 记录。
+      文件改名后未重建 depgraph → 生成器读 stale depgraph → 产出 stale docs（幻觉温床）。
+      DB 不可达时 fail-open。priority=39。in-process DB 查询（不走 subprocess）。
+    integrity_anchors:
+      - make_rename_depgraph_sync_gate
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -3841,6 +3907,12 @@ creation_tokens:
     token: "auto-scan-debt-20260706"
     created_by: "session-sess-29992-20260706143221"
     capability: "architecture_debt_scanner"
+
+  # --- 异常债务扫描器（Phase 2 阶段0，5.135/5.168 违规清单生成）---
+  - file: "scripts/governance/scan_exception_debt.py"
+    token: "auto-scan-exception-debt-20260717"
+    created_by: "session-sess-36852-20260717130749"
+    capability: "exception_debt_scanner"
 
   # --- 类型注解 Any 滥用门禁（R70 引入，5.145 维度防复发）---
   - file: "scripts/governance/d7_code/check_any_abuse.py"
@@ -4592,6 +4664,24 @@ creation_tokens:
     token: "auto-pure-assertion-checker-20260717"
     created_by: "session-sess-24736-20260717023222"
     capability: "pure_assertion_checker"
+
+  # --- RENAME-DEPGRAPH-SYNC gate（AI-14 审计 S1-1，2026-07-17）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py"
+    token: "auto-rename-depgraph-sync-gate-20260717"
+    created_by: "session-sess-ai14-20260717"
+    capability: "rename_depgraph_sync_gate"
+
+  # --- #ARCH-DRIFT-PREVENTION-001 depgraph drift 防御体系（2026-07-17）---
+  # domain_fk_gate.py: GATE-DOMAIN-FK [DOMAIN]头部域注册表FK校验（ADP-1, priority=78）
+  - file: "src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py"
+    token: "auto-domain-fk-gate-20260717"
+    created_by: "session-sess-21384-20260717125744"
+    capability: "domain_fk_gate"
+  # blueprint_amodule_consistency_gate.py: BLUEPRINT-AMODULE-CONSISTENCY [A_module]格式一致性（ADP-3, priority=79）
+  - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py"
+    token: "auto-blueprint-amodule-consistency-gate-20260717"
+    created_by: "session-sess-21384-20260717125744"
+    capability: "blueprint_amodule_consistency_gate"
 
 # ============================================================================
 # 维护日志
