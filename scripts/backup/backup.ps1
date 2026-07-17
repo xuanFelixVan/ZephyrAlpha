@@ -11,7 +11,8 @@
 #>
 param([switch]$Force)
 
-$ErrorActionPreference = "Stop"
+# Note: 不用"Stop"——native command(restic/pg_dump)写stderr时会触发NativeCommandError终止脚本
+$ErrorActionPreference = "Continue"
 $ProjectRoot = "D:\ZephyrAlpha"
 $ConfigFile = "$ProjectRoot\scripts\backup\backup_config.yaml"
 $LogFile = "$ProjectRoot\logs\backup_report_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
@@ -163,10 +164,12 @@ $excludeArgs = @(
     "--exclude","node_modules/"
 )
 
-$backupResult = & restic -r $RepoPath backup $ProjectRoot $DumpDir @excludeArgs --json 2>&1 | ConvertFrom-Json
+# restic --json输出JSON到stdout，进度信息到stderr；不用2>&1避免stderr混入stdout导致ConvertFrom-Json失败
+$backupResult = & restic -r $RepoPath backup $ProjectRoot $DumpDir @excludeArgs --json | ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) { Write-Err "restic backup failed (exit $LASTEXITCODE)"; exit 1 }
 $snapshotId = ($backupResult | Where-Object { $_.message_type -eq "summary" } | Select-Object -Last 1).snapshot_id
 if (-not $snapshotId) {
-    Write-Err "restic backup failed - no snapshot_id"
+    Write-Err "restic backup failed - no snapshot_id in summary"
     exit 1
 }
 Write-OK "Snapshot created: $snapshotId"
