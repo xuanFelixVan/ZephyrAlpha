@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4952 |
-| 生产态模块 | 1740 |
+| 模块总数 | 4948 |
+| 生产态模块 | 1738 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3150 |
+| 原型态模块 | 3148 |
 
 ## 域清单（按架构层分组）
 
@@ -32,10 +32,10 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
-| D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
+| D_INFRA_A2A | a2a_communication / A2A Communication | 131 | 29 | 0 | 102 | 131/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 89 | 48 | 0 | 41 | 89/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 330 | 148 | 1 | 181 | 330/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 327 | 145 | 1 | 181 | 327/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -52,7 +52,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 229 | 110 | 0 | 119 | 229/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
-| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 116 | 102 | 0 | 14 | 116/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 117 | 103 | 0 | 14 | 117/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 92 | 82 | 0 | 10 | 92/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 92 | 53 | 0 | 39 | 92/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 2 | 1 | 0 | 1 | 2/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
