@@ -13,29 +13,49 @@
 
 ## 手动触发（兜底）
 
-双击 `一键备份.bat`，以 `-Force` 模式运行（跳过间隔保护）。
+右键 `scripts/backup/backup_manual.ps1` → "用PowerShell运行"，以 `-Force` 模式运行（跳过间隔保护）。
 
 或命令行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\backup\backup.ps1 -Force
+powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 ```
 
-## 首次使用
+## 首次使用（新环境配置）
 
-### 1. 安装 Restic
+### 1. 安装依赖
 
 ```powershell
+# Restic备份引擎
 winget install restic.restic
+
+# sqlite3（可选，不可用时自动用Python fallback）
+winget install SQLite.SQLite
 ```
 
-### 2. 确保F盘在线
+### 2. 创建密码文件
+
+创建 `config/.env.restic`（不进git，安全考虑），内容：
+
+```
+RESTIC_PASSWORD=<你的备份仓库密码>
+```
+
+**注意**：密码是加密密钥，忘记=数据无法恢复。与config/.env.postgres、config/.env.clickhouse同样不进git。
+
+同时确保 `config/.env.postgres` 存在（PostgreSQL连接密码）。
+
+### 3. 确保F盘在线
 
 外置盘 F:(SanDisk 2TB NTFS) 必须已挂载。
 
-### 3. 首次备份
+### 4. 首次备份
 
-双击 `一键备份.bat`，首次运行会提示输入 restic 仓库密码（用于加密）。
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
+```
+
+首次运行自动初始化restic仓库（`restic init`），后续直接增量备份。
 
 ## 备份内容
 
