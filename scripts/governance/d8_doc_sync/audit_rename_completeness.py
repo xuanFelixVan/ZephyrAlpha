@@ -73,7 +73,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +105,15 @@ NODE_PATH_OLD_PREFIXES = ["D-SIGNAL-"]
 # - path / blueprint_path: 阶段D 节点路径改名传播（重新编号，需保留原序号信息）
 # 不一致会导致误报：audit 漏排除 blueprint_id 时，MODULE ID 子串会被误判为 DOMAIN ID 残留
 EXCLUDE_COLUMNS = {"blueprint_id", "path", "blueprint_path"}
+
+# SQL 集中化（§5.160.2）——scan_file_rename_residual 专用查询
+# 检测 depgraph nodes.file_path 指向磁盘上不存在的文件（幽灵文件）
+SQL_SCAN_FILE_RENAME_RESIDUAL = (
+    "SELECT node_id, file_path, domain_id, build_status FROM nodes "
+    "WHERE file_path IS NOT NULL AND file_path != '' "
+    "AND build_status != 'deprecated' "
+    "ORDER BY file_path"
+)
 
 
 def _get_all_text_columns(conn: Any) -> dict[str, list[str]]:
@@ -247,6 +256,40 @@ def scan_files_residual(
     return residuals
 
 
+def scan_file_rename_residual(conn: Any) -> list[dict]:
+    """扫描 depgraph nodes 表中 file_path 指向磁盘上不存在的文件的残留（幽灵文件）。
+
+    文件重命名/删除后未重建 depgraph → depgraph 仍记录旧 file_path → 生成器读 stale
+    depgraph 产出 stale docs（AI-14 审计 a2a_protocol_security→a2a_agent_blocklist
+    重命名遗留 13 处 docs 残留引用的根因）。
+
+    治本（AI-14 S1-2）：post-hoc 审计——检测已存在的文件重命名残留债务。
+    与 RENAME-DEPGRAPH-SYNC commit gate（pre-commit 阻断）互补：
+    - gate 防止新增未同步重命名
+    - 本函数扫描已存在的未同步重命名（历史债务）
+
+    Args:
+        conn: depgraph PG 连接（PgConnExecuteWrapper 或 psycopg2 connection）。
+
+    Returns:
+        残留列表，每项: {file_path, node_id, domain_id, build_status}。
+    """
+    cur = conn.execute(SQL_SCAN_FILE_RENAME_RESIDUAL)
+    residuals: list[dict] = []
+    for r in cur.fetchall():
+        file_path = r["file_path"]
+        # 检查文件是否存在于磁盘
+        full_path = REPO_ROOT / file_path
+        if not full_path.exists():
+            residuals.append({
+                "node_id": r["node_id"],
+                "file_path": file_path,
+                "domain_id": r["domain_id"] or "",
+                "build_status": r["build_status"] or "",
+            })
+    return residuals
+
+
 def circular_review(
     db_path: str, old_ids: list[str], rounds: int = 2
 ) -> bool:
@@ -345,6 +388,14 @@ def main() -> int:
         "用于检查手动修改的活文档/脚本（排除历史文档和生成制品）。"
         "自动排除 MOD- 前缀的 MODULE ID 子串误匹配。",
     )
+    parser.add_argument(
+        "--check-file-renames",
+        action="store_true",
+        help="扫描 depgraph nodes.file_path 指向磁盘上不存在的文件（幽灵文件）。"
+        "文件重命名/删除后未重建 depgraph 时，旧 file_path 残留导致生成器产出 stale docs。"
+        "与 RENAME-DEPGRAPH-SYNC commit gate 互补：gate 防新增，本扫描查历史债务。"
+        "（AI-14 审计 S1-2 治本）",
+    )
     args = parser.parse_args()
 
     # P2迁移后：depgraph 已迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理，
@@ -367,6 +418,24 @@ def main() -> int:
         print(f"[FAIL] 发现 {total} 处文件残留:")
         for r in residuals:
             print(f"  {r['file']}:{r['line']}: {r['old_id']}")
+        return 1
+
+    # 文件重命名残留扫描模式（幽灵文件检测——AI-14 审计 S1-2 治本）
+    if args.check_file_renames:
+        conn = get_depgraph_pg_connection(autocommit=True)
+        try:
+            residuals = scan_file_rename_residual(conn)
+        finally:
+            conn.close()
+        total = len(residuals)
+        if total == 0:
+            print("[PASS] 0 幽灵文件——depgraph nodes.file_path 全部指向磁盘存在的文件")
+            return 0
+        print(f"[FAIL] 发现 {total} 个幽灵文件（depgraph 记录了磁盘上不存在的 file_path）:")
+        for r in residuals:
+            print(f"  node_id={r['node_id']} file_path={r['file_path']} "
+                  f"domain={r['domain_id']} build_status={r['build_status']}")
+        print("修复: python scripts/governance/generate_project_depgraph.py --force")
         return 1
 
     # 节点路径模式
