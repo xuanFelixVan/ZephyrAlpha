@@ -370,6 +370,48 @@ class GitCommitGateway:
             self._worktree_mgr = WorktreeManager(self.project_root)
         return self._worktree_mgr
 
+    def _warn_non_worktree_commit(self, session_id: str, wt_session: str | None) -> None:
+        """S3-D 治本（2026-07-17）：非 worktree commit 并发风险警告。
+
+        非 worktree commit 时检测是否有其他活跃 session：
+        - 有其他活跃 session → WARN（并发风险：共享工作区 commit 可能搭便车带入
+          其他 session WIP，FP-ISO.4C worktree 物理隔离能治本）
+        - 无其他活跃 session → INFO（solo 工作，无并发风险，向后兼容直接 commit）
+        - 在 worktree 内 → INFO（物理隔离生效，无风险）
+
+        设计决策：不阻断非 worktree commit（向后兼容 Trae IDE 无法自动触发
+        worktree 的场景），只在有并发风险时 WARN 提醒。对标 FP-ISO.4C 君子协定
+        ——AI 自觉使用 worktree，gate 不强制。
+        """
+        if wt_session is not None:
+            logger.info(
+                "GitCommitGateway: 在 session worktree 内 commit，物理隔离生效（session=%s, wt=%s）",
+                session_id, wt_session,
+            )
+            return
+        # 非 worktree commit——检查是否有其他活跃 session（并发风险判定）
+        try:
+            other_active = [
+                s for s in self._registry.list_active()
+                if s.session_id != session_id
+            ]
+        except Exception:
+            other_active = []
+        if other_active:
+            other_ids = [s.session_id for s in other_active]
+            logger.warning(
+                "GitCommitGateway: 非 worktree commit 且有其他活跃 session（session=%s, "
+                "others=%s）——并发风险：共享工作区 commit 可能搭便车带入其他 session WIP。"
+                "建议使用 session_worktree_start 实现物理隔离，或等待其他 session 完成后再 commit。",
+                session_id, other_ids,
+            )
+        else:
+            logger.info(
+                "GitCommitGateway: 不在 session worktree 内（session=%s，无其他活跃 session）——"
+                "建议使用 WorktreeManager.create_session_worktree 实现物理隔离，向后兼容直接 commit",
+                session_id,
+            )
+
     def claim_files(self, session_id: str, files: list[str]) -> list[str]:
         """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。
 
@@ -625,21 +667,12 @@ class GitCommitGateway:
             )
 
         # worktree 物理隔离检测（阶段3 治本 stash 循环）
+        # S3-D 治本（2026-07-17）：非 worktree commit + 有其他活跃 session → WARN（并发风险）
         try:
             wt_session = self._get_worktree_manager().get_current_worktree()
         except Exception:
             wt_session = None
-        if wt_session is not None:
-            logger.info(
-                "GitCommitGateway: 在 session worktree 内 commit，物理隔离生效（session=%s, wt=%s）",
-                session_id, wt_session,
-            )
-        else:
-            logger.info(
-                "GitCommitGateway: 不在 session worktree 内（session=%s）——"
-                "建议使用 WorktreeManager.create_session_worktree 实现物理隔离，向后兼容直接 commit",
-                session_id,
-            )
+        self._warn_non_worktree_commit(session_id, wt_session)
 
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
