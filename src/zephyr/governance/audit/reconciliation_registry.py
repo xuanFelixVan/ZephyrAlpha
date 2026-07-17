@@ -78,6 +78,7 @@ __all__ = [
     "make_path_tree_reconciler",
     "make_path_ownership_reconciler",
     "make_depgraph_ops_reconciler",
+    "make_blueprint_frontmatter_reconciler",
     "make_drift_scan_reconciler",
     "make_drift_fix_reconciler",
     "make_module_id_recommend_reconciler",
@@ -661,6 +662,132 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=130,
+    )
+
+
+# trae_060-reviewed: 通过§4元问题审查。①该存在：ARCH-FRONTMATTER-STATE-001 Link B 断链（frontmatter 无 post-commit 自动写路径，generate_project_depgraph.py:4139 try/except 静默调用失败即漂移）。②无法合并进 make_depgraph_ops_reconciler@130（职责不同：DB 同步 vs .md frontmatter 同步；且需 priority=135>130 读最新 depgraph）。③治本：修复根因（缓存层无自动写路径），非治标。
+def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 blueprint frontmatter post-commit 自动同步 reconciler
+    (ARCH-FRONTMATTER-STATE-001 Phase 2，修复 Link B)。
+
+    三层状态模型断链修复：
+        代码真源 (ground truth) → depgraph (运营态, scanner 派生) → blueprint frontmatter (缓存层)
+    Link B 断链：frontmatter 无 post-commit 自动写路径，原本只在
+    generate_project_depgraph.py 内 try/except 静默调用，失败即漂移。
+
+    本 reconciler 在 post-commit 把 depgraph → blueprint frontmatter 同步
+    明确化为独立 reconciler，事件触发、可见、可观测、可降级。
+
+    依赖顺序（priority 设计，确保 drift_scan@140 看到已同步状态）：
+        - priority=130 (depgraph_ops): 代码 → depgraph nodes/edges 运营态同步
+        - priority=135 (本 reconciler): depgraph → blueprint frontmatter 同步
+        - priority=140 (drift_scan): 检测代码↔blueprint↔depgraph 漂移
+
+    对标 make_depgraph_ops_reconciler 的 subprocess + auto_commit 模式：
+        - trigger 匹配 .py（代码变更触发 depgraph 更新→frontmatter 需重算）
+          或 docs/03_modules/ 下的 .md（蓝图本身被编辑，frontmatter 需重算）
+        - reconcile 跑 sync_panorama_module.py --all 同步全量 frontmatter
+        - 检测 docs/03_modules/ 下 .md 变更 → _commit_auto 自动提交
+        - 失败降级 warn，不阻断 commit
+
+    防递归：reconciler 提交的 .md 变更会再次触发本 reconciler，但此时
+    frontmatter 已同步，git diff 为空，返回 clean，无无限循环。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root / _run_git / _commit_auto）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-BLUEPRINT-FRONTMATTER-SYNC", priority=135)。
+    """
+    import os
+    import sys
+    import time
+
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.endswith(".py"):
+                return True
+            if rel.startswith("docs/03_modules/") and rel.endswith(".md"):
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        start = time.time()
+        _env = dict(os.environ)
+        _src = str(project_root / "src")
+        _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
+        sync_result = _run_subprocess(
+            [
+                sys.executable,
+                "scripts/governance/sync_panorama_module.py",
+                "--all",
+            ],
+            cwd=str(project_root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            env=_env,
+        )
+        elapsed = time.time() - start
+        if sync_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"frontmatter sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
+                       f"{sync_result.stderr.strip()[:200]}",
+            )
+
+        # 检测 docs/03_modules/ 下 .md frontmatter 变更（DB 同步不进 git，无需提交）
+        diff_result = gateway._run_git(
+            ["git", "diff", "--name-only", "--", "docs/03_modules/"]
+        )
+        if diff_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=f"frontmatter sync: git diff failed: {diff_result.stderr.strip()[:200]}",
+            )
+        changed_files = [
+            f.strip() for f in diff_result.stdout.strip().splitlines()
+            if f.strip() and f.strip().endswith(".md")
+        ]
+        if not changed_files:
+            return ReconcileResult(
+                action="clean",
+                detail=f"frontmatter sync: no drift in {elapsed:.1f}s (all consistent)",
+            )
+
+        # 变更 → 自动提交修复（_commit_auto 统一入口，DCR gate 覆盖）
+        abs_files = [str(project_root / f) for f in changed_files]
+        auto_msg = (
+            f"chore(frontmatter): auto-sync by GATE-BLUEPRINT-FRONTMATTER-SYNC "
+            f"post-commit (ARCH-FRONTMATTER-STATE-001 Phase 2)"
+        )
+        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+        if commit_result.status == "OK":
+            return ReconcileResult(
+                action="auto_committed",
+                detail=f"frontmatter sync: {len(changed_files)} files auto-reconciled in {elapsed:.1f}s",
+            )
+        if commit_result.status == "NOTHING_TO_COMMIT":
+            return ReconcileResult(
+                action="clean",
+                detail=f"frontmatter sync: {len(changed_files)} files but no staged changes in {elapsed:.1f}s",
+            )
+        return ReconcileResult(
+            action="warn",
+            detail=f"frontmatter sync: auto-commit failed ({commit_result.status}): "
+                   f"{commit_result.message[:200]}",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-BLUEPRINT-FRONTMATTER-SYNC",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=135,
     )
 
 
