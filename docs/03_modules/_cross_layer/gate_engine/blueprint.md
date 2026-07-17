@@ -195,6 +195,7 @@ build_status: planned
 | `commit_gates/blueprint_amodule_consistency_gate.py` | §0.1 | [A_module]格式一致性门禁（BLUEPRINT-AMODULE-CONSISTENCY，裁定#ARCH-DRIFT-PREVENTION-001 ADP-3，靶向检测MOD-{UPPER}_{lowercase} malformation，priority=79） | 已实现 | | 本模块 |
 | `commit_gates/encoding_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/noqa_validation_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/no_import_side_effect_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 
