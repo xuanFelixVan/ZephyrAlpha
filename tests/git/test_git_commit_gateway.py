@@ -1050,3 +1050,111 @@ class TestRunGitCommitGuard:
         assert gw._in_commit_flow is False
         result = gw._run_git(["git", "status", "--porcelain"])
         assert result.returncode == 0, f"git status 不应被守卫拦截: {result.stderr}"
+
+
+# ---------------------------------------------------------------------------
+# S3-D 治本（2026-07-17）：非 worktree commit 并发风险警告测试
+# ---------------------------------------------------------------------------
+
+import logging  # noqa: E402 — S3-D test 需要 logging 级别判定
+from unittest.mock import MagicMock  # noqa: E402 — S3-D test mock registry
+
+
+def _make_gateway_for_warning_test(
+    project_root: Path,
+    other_session_ids: list[str] | None = None,
+) -> GitCommitGateway:
+    """构造最小化 GitCommitGateway（跳过 __init__ 重量级注册），仅设置 _warn_non_worktree_commit 需要的属性。
+
+    Args:
+        project_root: 项目根目录（仅用于对象完整性，警告逻辑不读）。
+        other_session_ids: 模拟的其他活跃 session ID 列表。None=空列表（无其他 session）。
+    """
+    gw = GitCommitGateway.__new__(GitCommitGateway)
+    gw.project_root = project_root
+    # mock registry：list_active() 返回 Session 对象列表（带 session_id 属性）
+    mock_registry = MagicMock()
+    mock_sessions = []
+    for sid in (other_session_ids or []):
+        mock_s = MagicMock()
+        mock_s.session_id = sid
+        mock_sessions.append(mock_s)
+    mock_registry.list_active.return_value = mock_sessions
+    gw._registry = mock_registry
+    return gw
+
+
+class TestNonWorktreeCommitWarning:
+    """S3-D: 非 worktree commit 并发风险警告测试。
+
+    _warn_non_worktree_commit 三种场景：
+    - 在 worktree 内 → INFO（物理隔离生效）
+    - 非 worktree + 有其他活跃 session → WARN（并发风险）
+    - 非 worktree + 无其他活跃 session → INFO（solo，向后兼容）
+    """
+
+    def test_warns_when_other_active_sessions(self, tmp_path: Path, caplog) -> None:
+        """非 worktree commit + 有其他活跃 session → logger.warning。"""
+        gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=["sess-other-1"])
+        with caplog.at_level(
+            logging.WARNING,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 1, f"应有 1 条 WARNING，实际 {len(warnings)}: {warnings}"
+        assert "并发风险" in warnings[0].message, f"WARNING 消息应含 '并发风险': {warnings[0].message!r}"
+        assert "sess-other-1" in warnings[0].message, f"WARNING 应含其他 session ID: {warnings[0].message!r}"
+
+    def test_info_when_no_other_sessions(self, tmp_path: Path, caplog) -> None:
+        """非 worktree commit + 无其他活跃 session → logger.info（无 warning）。"""
+        gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=[])
+        with caplog.at_level(
+            logging.DEBUG,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+        # 不应有 WARNING 级别日志
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 0, f"不应有 WARNING，实际 {len(warnings)}: {warnings}"
+        # 应有 INFO 级别日志含 "无其他活跃 session"
+        infos = [r for r in caplog.records if r.levelno == logging.INFO]
+        assert any("无其他活跃 session" in r.message for r in infos), (
+            f"INFO 消息应含 '无其他活跃 session': {[r.message for r in infos]!r}"
+        )
+
+    def test_info_when_in_worktree(self, tmp_path: Path, caplog) -> None:
+        """worktree commit → logger.info（无 warning，物理隔离生效）。"""
+        # 即使有其他活跃 session，在 worktree 内也不 WARN（物理隔离）
+        gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=["sess-other-1"])
+        with caplog.at_level(
+            logging.DEBUG,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw._warn_non_worktree_commit("sess-current", wt_session="sess-current")
+        # 不应有 WARNING 级别日志
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 0, f"worktree 内不应有 WARNING: {warnings}"
+        # 应有 INFO 级别日志含 "物理隔离生效"
+        infos = [r for r in caplog.records if r.levelno == logging.INFO]
+        assert any("物理隔离生效" in r.message for r in infos), (
+            f"INFO 消息应含 '物理隔离生效': {[r.message for r in infos]!r}"
+        )
+
+    def test_registry_exception_degrades_to_info(self, tmp_path: Path, caplog) -> None:
+        """_registry.list_active() 异常 → 降级为 INFO（fail-open，不阻断 commit）。"""
+        gw = _make_gateway_for_warning_test(tmp_path, other_session_ids=[])
+        # 让 list_active 抛异常
+        gw._registry.list_active.side_effect = RuntimeError("registry corrupted")
+        with caplog.at_level(
+            logging.DEBUG,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw._warn_non_worktree_commit("sess-current", wt_session=None)
+        # 异常降级为 INFO（无其他 session），不应有 WARNING
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 0, f"registry 异常不应 WARN（fail-open）: {warnings}"
+        infos = [r for r in caplog.records if r.levelno == logging.INFO]
+        assert any("无其他活跃 session" in r.message for r in infos), (
+            f"异常降级应走 INFO 路径: {[r.message for r in infos]!r}"
+        )
