@@ -1259,11 +1259,11 @@ STEP 3: 拆分后验证
 | 逃生通道 | 环境变量 `ZEPHYR_ALLOW_MAIN_BRANCH=1` |
 | 验收 | 主目录 `git commit` 被拒；worktree 内 `git commit` 通过；`ZEPHYR_ALLOW_MAIN_BRANCH=1 git commit` 通过 |
 
-#### FP-ISO.4B 治本三件套设计（模式B：Trae IDE 适配——P2 防搭便车提交）【已废弃，superseded by FP-ISO.4C】
+#### FP-ISO.4B 治本三件套设计（模式B：Trae IDE 适配——P2 防搭便车提交）【弃用，superseded by FP-ISO.4C】
 
 > 🟡 **本节降级为 P2 方案**（2026-07-01 更新）。41 个并发丢失案例分析表明，FP-ISO.4B 的「软编辑+硬提交」只能防 Mode C（搭便车 commit，7%），无法防 Mode A（git stash/reset 冲掉工作区，51%）和 Mode B（直接编辑覆盖，17%）。治本方案已升级为 [FP-ISO.4C worktree 物理隔离](#fp-iso4c-治本方案worktree-物理隔离当前采用)。FP-ISO.4B 保留为 P2——SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate 防主工作目录直接 commit 的搭便车场景。
 >
-> ⚠️ **session_claim API 已废弃**（2026-07-04 更新）。`session_claim_start`/`add`/`check`/`heartbeat`/`end` 零实际调用方（死代码），claim 语义已被 `session_worktree_commit` 的 `HELD-OVERLAP` 硬阻断完全替代且更强。`generate_session_id` 保留（被 `session_worktree.py` 调用）。AI 对话启动请改用 `session_worktree_start`（FP-ISO.4C）。
+> ⚠️ **session_claim API 弃用**（2026-07-04 更新）。`session_claim_start`/`add`/`check`/`heartbeat`/`end` 零实际调用方（死代码），claim 语义已被 `session_worktree_commit` 的 `HELD-OVERLAP` 硬阻断完全替代且更强。`generate_session_id` 保留（被 `session_worktree.py` 调用）。AI 对话启动请改用 `session_worktree_start`（FP-ISO.4C）。
 
 ##### 件1改：GitCommitGateway commit 时强校验 claim（核心改动）
 

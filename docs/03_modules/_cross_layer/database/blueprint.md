@@ -72,7 +72,7 @@ build_status: planned
 
 本蓝图是 Database 模块的集成入口——聚合两个子蓝图：
 - **MOD-INF-012A Database Core**：SQLite+DuckDB 双引擎核心运营（13 个 .py 全部已实现，物理代码主位置 `src/zephyr/infrastructure/db/`）
-- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 从 SQLite 迁移到 PostgreSQL（P2 迁移已完成 2026-06-27，P2-T1~T6 全过，16/16 综合验证通过，5/5 红蓝测试 40并发写入验证通过，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收）
+- **MOD-INF-012B v3.0 Capacity Upgrade**：depgraph 使用 PostgreSQL（16/16 综合验证通过，5/5 红蓝测试 40并发写入验证通过，TC-PG-08/10 残留于 2026-06-29 清理完毕 4/4 验收）
 
 核心职责：为 AI 治理框架提供结构化数据持久化与查询能力——8 张核心表、10 状态任务机、ATM 两阶段原子事务、OLAP 分析、冷热数据分层。v3.0 目标支持 40+ AI 并发写入 + PostgreSQL MVCC。
 
@@ -97,11 +97,11 @@ build_status: planned
 >
 > **当前业务行情数据库真源**：[infrastructure_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) INFRA-DB-006（ClickHouse c1_market，status=connected）。统一入口：`DatabaseService.get_clickhouse_conn()`（readonly=1）。
 
-## 三层冷热架构定位（当前:ClickHouse+DuckDB双引擎 | 未来蓝图:Redis/FeatureStore/CQRS——门禁逻辑已废弃，见 #ARCH-048）
+## 三层冷热架构定位（当前:ClickHouse+DuckDB双引擎 | 未来蓝图:Redis/FeatureStore/CQRS——门禁逻辑不适用，见 #ARCH-048）
 
-> ⚠️ **门禁逻辑已废弃（#ARCH-048, 2026-07-05）**：本节原"需求门禁触发演进"逻辑已被母蓝图 MOD-ARCH-BIZDB §3.1 废弃，改为"硬性边界二元判定：能造现在就造"。Redis/EventStore 施工优先级降为 P2（待实盘需求触发）。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），不再受"AUM>200万"门禁约束。以下门禁表保留作为历史参考，**不作为当前施工依据**。
+> ⚠️ **门禁逻辑不适用（#ARCH-048, 2026-07-05）**：本节原"需求门禁触发演进"逻辑已被母蓝图 MOD-ARCH-BIZDB §3.1 弃用，改为"硬性边界二元判定：能造现在就造"。Redis/EventStore 施工优先级降为 P2（待实盘需求触发）。ClickHouse 已于 2026-07-01 部署（INFRA-DB-006），不再受"AUM>200万"门禁约束。以下门禁表保留作为历史参考，**不作为当前施工依据**。
 
-> **裁定依据**（已废弃，见 #ARCH-048）：设计文档(数据架构.md v6.0)自身有门禁分级。当前单人+无实盘，Hot层(Redis)的<5ms推理需求(DD-11-01)不存在。降级为未来蓝图使当前规范与实现一致，AI不混淆，且不阻塞未来。
+> **裁定依据**（不适用，见 #ARCH-048）：设计文档(数据架构.md v6.0)自身有门禁分级。当前单人+无实盘，Hot层(Redis)的<5ms推理需求(DD-11-01)不存在。降级为未来蓝图使当前规范与实现一致，AI不混淆，且不阻塞未来。
 
 | 架构组件 | 蓝图定位 | 门禁触发条件 | 理由 |
 |---------|:-------:|------------|------|

@@ -1735,7 +1735,7 @@ STEP 3: 拆分后验证
 
 > 门禁生命周期状态和转换规则见 §3.3。本节补充迁移策略和继承机制。
 
-**版本迁移策略**：PATCH→in-flight任务用新规则重评(不阻塞)；MINOR→新任务用新规则，in-flight沿用旧规则；MAJOR→全部in-flight任务暂停+通知Owner
+**版本迁移策略**：PATCH→in-flight任务用新规则重评(不阻塞)；MINOR→新任务用新规则，in-flight沿用原规则；MAJOR→全部in-flight任务暂停+通知Owner
 
 **门禁继承**：extends只追加，不删除/修改基类。示例：G1-MOD-TRADE-001 extends G1，追加G1-TRADE-C00 trade_data_format_valid
 

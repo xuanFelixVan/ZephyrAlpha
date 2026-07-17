@@ -177,7 +177,7 @@ build_status: stable
 > - **Baostock 最稳定**（10/10），不受VPN影响，A股K线+财务主力免费源
 > - **TickFlow 美股可用**（12/12），不受VPN影响，美股K线主力免费源（2026-07-03新发现，§7.5）
 > - **AKShare 宏观+新闻+研报可用**（11/16），但**VPN有害**——爬国内网站(东财/金十/商务部)，挂VPN后国内网站拒绝海外IP，**使用时必须断开VPN**
-> - yfinance/Stooq 已废弃（0%通过，VPN无效），详见 §7.4
+> - yfinance/Stooq 弃用（0%通过，VPN无效），详见 §7.4
 > - **财经RSS直连可用**（8/10通过，免费无Key，不受VPN影响）——国外新闻主力源，覆盖Yahoo/SeekingAlpha/MarketWatch/Bloomberg/FT/Investing/Forbes/CNBC
 > - **运维建议**：下载免费源数据时**断开VPN**（Baostock/TickFlow/财经RSS不受影响，AKShare必须断开）
 > - 免费源是 iFind 试用账号盲区的**补充**，不是替代。详见 §7。
@@ -1020,7 +1020,7 @@ data = xtdata.get_market_data_ex([], stocks, '1d', '20240101', '20250630')
 - 免费源覆盖 iFind 试用账号的 ❌ 盲区（A股K线历史/美股/国内外新闻/EDB宏观），使策略所需数据 100% 可获取。
 - 优先免费无Key源（Baostock/TickFlow/AKShare/财经RSS），需Key源作为深度补充（历史新闻归档/情感分析/实时报价）。
 
-> **免费源实测总览**：11源完整对比表+实测结论见 [§1.3 数据源总览](#13-免费开源源v130-实测验证vpn对比覆盖-ifind-试用盲区)。主力源：Baostock(A股) + TickFlow(美股) + 财经RSS(国外新闻) + AKShare(国内新闻/宏观)；需Key源：NewsAPI/AlphaVantage/Finnhub/Newsdata 新闻全部✅，Tiingo 日K线✅(News❌需付费)；yfinance/Stooq 已废弃（§7.4）。
+> **免费源实测总览**：11源完整对比表+实测结论见 [§1.3 数据源总览](#13-免费开源源v130-实测验证vpn对比覆盖-ifind-试用盲区)。主力源：Baostock(A股) + TickFlow(美股) + 财经RSS(国外新闻) + AKShare(国内新闻/宏观)；需Key源：NewsAPI/AlphaVantage/Finnhub/Newsdata 新闻全部✅，Tiingo 日K线✅(News❌需付费)；yfinance/Stooq 弃用（§7.4）。
 
 #### §7.1.1 API Key 清单（需免费注册源，用户已注册，2026-07-03）
 
@@ -1443,7 +1443,7 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 > 3. ❌ iFind THS_BD 分红指标（-209 全部失败，见 §2.4.6）
 > 4. ❌ iFind 问财 THS_WC（不适合个股明细查询，见 §2.4.6）
 
-### §7.4 已废弃数据源（yfinance + Stooq，实测0%通过，VPN无效）
+### §7.4 弃用数据源（yfinance + Stooq，实测0%通过，VPN无效）
 
 | 源 | 废弃原因 | 替代方案 |
 |----|---------|---------|
@@ -2497,7 +2497,7 @@ if __name__ == "__main__":
 5. **免费源接口失效时**：必须记录到 §7.6 风险与限制，并提供替代方案（多源备份）。
 6. **TickFlow 失效应急**：TickFlow 限流或失效时，立即切换到需API Key的 Alpha Vantage/Tiingo/Finnhub（见 §7.5 限制说明），并跟踪 TickFlow 官网修复进度。
 7. **交叉验证**：免费源与 iFind/QMT 关键数据（如宏观CPI）应交叉验证一致性；TDX 首次使用 K线/财务数据时与其他源交叉验证。
-8. **VPN 使用规则**：下载免费源数据前**必须断开 VPN**（Baostock/TickFlow/TDX/财经RSS 不受影响，AKShare 爬国内网站挂 VPN 会失败）；VPN 对 yfinance/Stooq 无效（已废弃）。
+8. **VPN 使用规则**：下载免费源数据前**必须断开 VPN**（Baostock/TickFlow/TDX/财经RSS 不受影响，AKShare 爬国内网站挂 VPN 会失败）；VPN 对 yfinance/Stooq 无效（弃用）。
 9. **TDX 接口失效时**：必须记录到 §8.5 对比表 + §8.8 运维规则，并提供替代方案。
 10. **TDX bestip 失效应急**：可手动指定服务器 IP:PORT（如 `Quotes.factory(market='std', server=('115.238.90.226', 7709))`），或切换到 Baostock 作为 A股 K线 backup。
 11. **C1 表填充状态变化时**：填充状态见 ClickHouse 实时扫描。

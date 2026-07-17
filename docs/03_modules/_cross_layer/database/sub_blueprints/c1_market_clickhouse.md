@@ -1370,9 +1370,9 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - **version 列修复**：新增 `ingest_ts DateTime DEFAULT now()` 作 version 列（quality_flag 语义误用修复）
 - **§4.0 引擎策略**：新增 #ARCH-CH-009 裁定说明 + version 列策略行
 - **§5.1 约束 #1**：从"全部 MergeTree 不需要去重"更新为"ReplacingMergeTree(ingest_ts)"
-- **§5.2 风险矩阵 #5**：MergeTree 不支持 UPSERT 标记为已废弃
+- **§5.2 风险矩阵 #5**：MergeTree 不支持 UPSERT 标记为弃用
 - **§16.4 并发模型**：MergeTree 追加写 → ReplacingMergeTree(ingest_ts) 去重
-- **§18 决策记录**：D-C1-01/D-C1-08 标记为已废弃，选中项更新
+- **§18 决策记录**：D-C1-01/D-C1-08 标记为弃用，选中项更新
 - **术语表**：ReplacingMergeTree(ingest_ts) 定义修正
 - **实际 DDL 已变更**：16 张表 ALTER TABLE + DETACH/ATTACH 元数据修复完成
 
@@ -1380,8 +1380,8 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - **契约对齐**：对接 data_retention_contract.yaml (PS-CTR-003) INV-RET-003 铁律"所有表 Hot 层无 TTL"
 - **蓝图修复**：删除 tick_data/index_quote DDL 中的 `TTL trade_date + INTERVAL 90 DAY` 行
 - **属性表修复**：TTL 列从"90天"改为"无TTL（永久保留，INV-RET-003 铁律）"
-- **决策记录**：D-C1-04 标记为"已废弃"，选中项改为"永久保留"
-- **异常场景/测试用例/GAP/风险表**：TTL 归档相关条目标记为"已废弃"
+- **决策记录**：D-C1-04 标记为"弃用"，选中项改为"永久保留"
+- **异常场景/测试用例/GAP/风险表**：TTL 归档相关条目标记为"弃用"
 - **待执行 DDL**（ClickHouse 服务恢复后执行）：
   ```sql
   ALTER TABLE c1_market.tick_data REMOVE TTL;

@@ -117,3 +117,69 @@ def test_walk_scope_files_finds_md(tmp_path):
     files = _mod._walk_scope_files(str(tmp_path))
     basenames = sorted(os.path.basename(f) for f in files)
     assert basenames == ["AGENTS.md", "blueprint.md"]
+
+
+# ---------------------------------------------------------------------------
+# 豁免测试（Task 5：表格行/受控词表/文件树/词汇 bullet/生命周期枚举）
+# ---------------------------------------------------------------------------
+
+def test_check_file_exempt_table_row_deprecated():
+    """表格行中的'已废弃'状态值豁免（当前态描述，非历史过渡）。"""
+    content = "| 模块A | §1 | 已废弃 | 备注 |\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_table_row_superseded():
+    """表格行中的'已被取代'状态值豁免（当前态描述）。"""
+    content = "| 旧蓝图 | §1-§10 | 已被取代的旧蓝图 |\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_controlled_vocab():
+    """受控词表定义行中的'已废弃'豁免。"""
+    content = "> **存在性状态受控词表**：`未实现` / `已实现` / `已阻塞` / `已废弃`\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_controlled_vocab_variant():
+    """受控词表变体行中的'已废弃'豁免（存在性：未实现/已实现...）。"""
+    content = "> 存在性：未实现/已实现/已阻塞（MUST注明原因）/已废弃（MUST在§5.3说明）\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_file_tree_line():
+    """文件树行中的'已废弃'当前态标签豁免。"""
+    content = "│   │   ├── validate_session_budget.py  — Session 操作预算校验（已废弃）\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_non_table_deprecated_still_caught():
+    """非表格行的'已废弃'仍被检测。"""
+    content = "这是已废弃的旧规则。\n"
+    v = _mod._check_file(content, None)
+    assert len(v) == 1 and "已废弃" in v[0]
+
+
+def test_check_file_table_row_migration_still_caught():
+    """表格行中的'从X迁移到Y'仍被检测（非状态值，是历史过渡）。"""
+    content = "| 从旧路径迁移到新路径 | 备注 |\n"
+    v = _mod._check_file(content, None)
+    assert len(v) == 1 and "迁移" in v[0]
+
+
+def test_check_file_exempt_vocab_bullet_backtick_deprecated():
+    """受控词表 bullet 定义行 '- `deprecated`：已废弃/已退役' 豁免。"""
+    content = "- `deprecated`：已废弃/已退役\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_vocab_bullet_backtick_deprecated_zh():
+    """受控词表 bullet 定义行 '> - `已废弃`：...' 豁免。"""
+    content = "> - `已废弃`：设计变更后不再需要 → MUST 在 §5.3 迁移方案中说明\n"
+    assert _mod._check_file(content, None) == []
+
+
+def test_check_file_exempt_lifecycle_arrow_enumeration():
+    """生命周期值枚举行 '...→已废弃' 豁免。"""
+    content = "1. 4 值覆盖域完整生命周期（生产运行→原型验证→纯设计态→已废弃）\n"
+    assert _mod._check_file(content, None) == []
