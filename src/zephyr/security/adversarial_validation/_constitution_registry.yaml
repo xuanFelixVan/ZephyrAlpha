@@ -1,16 +1,16 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/red-blue-validator/blueprint.md | §
-# module_id: MOD-INF-005
+# blueprint: MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1
+# module_id: MOD-INF-030
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: task_bound
 # --- 治理锚定结束 ---
-# Constitution-Based Defense Registry — MOD-INF-021 Rollback System v0.10.0
+# Constitution-Based Defense Registry — MOD-INF-030 Red-Blue Validator
 # Auto-maintained by ConstitutionEngine bypass learning
 # 生成日期: 2026-05-08
 
-module_id: MOD-INF-005
+module_id: MOD-INF-030
 registry_version: "1.0.0"
 total_articles: 34
 last_updated: "2026-05-08"

@@ -31002,10 +31002,10 @@ ownership:
     existence: 'generated'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/red-blue-validator/_constitution-registry.yaml'
-    owner_blueprint: 'MOD-INF-005'
+  - path: 'src/zephyr/security/adversarial_validation/_constitution_registry.yaml'
+    owner_blueprint: 'MOD-INF-030'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_governance/governance_automation/blueprint.md'
+    declared_in: 'docs/03_modules/_cross_layer/red_blue_validator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 

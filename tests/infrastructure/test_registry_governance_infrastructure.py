@@ -186,7 +186,7 @@ class TestFunctionalDomainRegistryRegister:
             domain="testing",
             subdomain="red_blue",
             ssot_module="MOD-INF-030",
-            ssot_path="src/zephyr/red-blue-validator/",
+            ssot_path="src/zephyr/security/adversarial_validation/",
         )
         r2 = FunctionalDomainRegistry(registry_path=sample_registry)
         r2.load()

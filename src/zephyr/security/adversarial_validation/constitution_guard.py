@@ -5,8 +5,8 @@
 # [CONSUMERS] validator.py; convergence_checker.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 34 articles loaded from _constitution-registry.yaml; ALL must pass per adversarial session; single failure = BLOCKED session
-# [MODIFY-GUARD] Adding articles MUST update _constitution-registry.yaml; article_id format MUST be CONST-NNN
+# [INVARIANTS] 34 articles loaded from _constitution_registry.yaml; ALL must pass per adversarial session; single failure = BLOCKED session
+# [MODIFY-GUARD] Adding articles MUST update _constitution_registry.yaml; article_id format MUST be CONST-NNN
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
@@ -33,8 +33,9 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["ConstitutionArticle", "ConstitutionGuard", "ConstitutionViolationError"]
 
-# 治本（裁定#18 G10）：默认路径用下划线匹配实际文件 _constitution_registry.yaml，
-# 测试显式传 registry_path 指向 src/zephyr/red-blue-validator/_constitution-registry.yaml。
+# 治本（裁定#18 G10 + 2026-07-18 多真源消除）：默认路径用下划线匹配实际文件
+# _constitution_registry.yaml（真源在 src/zephyr/security/adversarial_validation/）。
+# 测试显式传 registry_path 指向同一真源文件。
 _REGISTRY_PATH: Path = Path(__file__).parent / "_constitution_registry.yaml"
 
 
