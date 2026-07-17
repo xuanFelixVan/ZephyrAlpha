@@ -38,7 +38,7 @@ architecture_debt §5.160.2：apply_depgraph.py 174处裸SQL + file_task_mapper.
 1. **只检测 added 行**：存量裸SQL由人工排查，gate 只防新增。
 2. **diff-based**：与 hardcoded_url_gate 一致的检测模式。
 3. **正则匹配**：覆盖 SELECT...FROM / INSERT INTO / UPDATE...SET / DELETE FROM。
-4. **priority=87**：在 NO-LONG-PARAM-LIST(88) 之后，EXEMPT-ZONE-FM(87) 同级。
+4. **priority=94**：在 NO-LONG-PARAM-LIST(88) 之后，EXEMPT-ZONE-FM(87) 同级。
 
 Usage::
 
@@ -87,7 +87,7 @@ def make_bare_sql_gate() -> GateSpec:
     """构造裸SQL字面量阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-BARE-SQL", priority=87)。
+        GateSpec(gate_id="NO-BARE-SQL", priority=94)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -115,4 +115,4 @@ def make_bare_sql_gate() -> GateSpec:
             return False, detail
         return True, ""
 
-    return GateSpec(gate_id="NO-BARE-SQL", check=_check, priority=87)
+    return GateSpec(gate_id="NO-BARE-SQL", check=_check, priority=94)

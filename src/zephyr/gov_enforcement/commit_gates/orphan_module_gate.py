@@ -44,7 +44,7 @@
    且只搜 git 追踪的文件（不搜 .gitignore 排除的文件）。
 3. **fail-open on grep error**：git grep 超时/异常不阻断，环境异常非违规。
 4. **入口文件豁免**：``__main__.py`` 等入口文件本就不被 import。
-5. **priority=86**：在 EMPTY-HANDLER(84) 之后、DOC-REF-BROKEN(88) 之前。
+5. **priority=89**：在 EMPTY-HANDLER(84) 之后、DOC-REF-BROKEN(88) 之前。
 
 Usage::
 
@@ -288,8 +288,8 @@ def make_orphan_module_gate() -> GateSpec:
     """构造孤儿模块（无 import 引用）阻断门禁 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="ORPHAN-MODULE", priority=86)。
-        priority=86——在 EMPTY-HANDLER(84) 之后、DOC-REF-BROKEN(88) 之前。
+        GateSpec(gate_id="ORPHAN-MODULE", priority=89)。
+        priority=89——在 EMPTY-HANDLER(84) 之后、DOC-REF-BROKEN(88) 之前。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -310,4 +310,4 @@ def make_orphan_module_gate() -> GateSpec:
             )
         return True, ""
 
-    return GateSpec(gate_id="ORPHAN-MODULE", check=_check, priority=86)
+    return GateSpec(gate_id="ORPHAN-MODULE", check=_check, priority=89)

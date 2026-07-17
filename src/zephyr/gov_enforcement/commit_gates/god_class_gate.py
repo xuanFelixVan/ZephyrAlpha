@@ -40,7 +40,7 @@ auto_runtime_core 42方法 / action_dispatcher 22方法），职责过多。
 1. **只检测新增类**：存量 God Class 由人工排查，gate 只防新增。
 2. **AST-based**：准确统计类体内的方法数。
 3. **阈值=20**：与 §5.150 裁定一致（>20 即反模式）。
-4. **priority=86**：在 NO-BARE-SQL(87) 之后，ID-UNIQUENESS(86)/ORPHAN-MODULE(86) 同级。
+4. **priority=93**：在 ID-UNIQUENESS(86) 之后、NO-BARE-SQL(94) 之前。
 
 Usage::
 
@@ -80,7 +80,7 @@ def make_god_class_gate() -> GateSpec:
     """构造 God Class 阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-GOD-CLASS", priority=86)。
+        GateSpec(gate_id="NO-GOD-CLASS", priority=93)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -115,4 +115,4 @@ def make_god_class_gate() -> GateSpec:
             return False, detail
         return True, ""
 
-    return GateSpec(gate_id="NO-GOD-CLASS", check=_check, priority=86)
+    return GateSpec(gate_id="NO-GOD-CLASS", check=_check, priority=93)

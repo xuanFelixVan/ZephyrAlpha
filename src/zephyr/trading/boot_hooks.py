@@ -630,6 +630,25 @@ def register_boot_hooks(
     except Exception as e:
         logger.warning("HealthAggregator: subscribe failed: %s", e, exc_info=True)
 
+    # AI-11 审计修复：F5 永久系统启动/关闭钩子接线 — F5四组件自动初始化+自动关闭
+    # 审计发现：register_f5_boot_hook/register_f5_shutdown_hook 已定义但从未被 boot_hooks 调用，
+    # 导致 F5 启动初始化（DeadlockDetector/EscalationEngine/DelegationEngine/Arbitrator）
+    # 和关闭清理从未自动执行，违反 C类永久系统四要素（自动启动/关闭）。
+    _f5_integration = None
+    try:
+        from zephyr.governance.resilience_governance.f5_boot_integration import register_f5_boot_hook
+        _f5_integration = register_f5_boot_hook(project_root=REPO_ROOT)
+        logger.info("F5BootIntegration: registered startup hook (F5四组件 auto-init)")
+    except Exception as e:
+        logger.warning("F5BootIntegration: register failed: %s", e, exc_info=True)
+
+    try:
+        from zephyr.governance.resilience_governance.f5_shutdown_manager import register_f5_shutdown_hook
+        register_f5_shutdown_hook(integration=_f5_integration, project_root=REPO_ROOT)
+        logger.info("F5ShutdownManager: installed shutdown hook (F5 auto-shutdown)")
+    except Exception as e:
+        logger.warning("F5ShutdownManager: install failed: %s", e, exc_info=True)
+
     _subscribe_eventbus_consumers()
     _subscribe_skill_freshness_events()
 

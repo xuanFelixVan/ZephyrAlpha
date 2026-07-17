@@ -120,8 +120,8 @@ def make_data_task_completeness_gate() -> GateSpec:
     """构造数据任务完整性门禁 GateSpec（warn 级，提醒型）。
 
     Returns:
-        GateSpec(gate_id="DATA-TASK-COMPLETENESS", priority=80)。
-        priority=80——在 ARCH-REFERENCE(75) 之后、TEST-SOURCE-CONSISTENCY(96) 之前。
+        GateSpec(gate_id="DATA-TASK-COMPLETENESS", priority=78)。
+        priority=78——在 ARCH-REFERENCE(75) 之后、TEST-SOURCE-CONSISTENCY(96) 之前。
         始终返回 passed=True（warn 级，不阻断 commit）。
     """
 
@@ -183,5 +183,5 @@ def make_data_task_completeness_gate() -> GateSpec:
         return True, warning
 
     return GateSpec(
-        gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=80
+        gate_id="DATA-TASK-COMPLETENESS", check=_check, priority=78
     )

@@ -42,7 +42,7 @@
 2. **fail-open on 解析失败**：AST 解析失败时返回 passed=True（其他 gate 处理语法错误）。
 3. **pure AST，无文件 I/O**：直接用 staged index 内容做 AST 解析，不导入模块（避免
    副作用/SDK 依赖），不写临时文件（staged 内容可能与工作区不同）。
-4. **priority=98**：在 TEST-SOURCE-CONSISTENCY(96) / DEPGRAPH-WRITE-PATH(97) 之后，
+4. **priority=101**：在 TEST-SOURCE-CONSISTENCY(96) / DEPGRAPH-WRITE-PATH(100) 之后，
    作为最高优先级 gate 之一，在 commit 流程末段执行。
 
 Usage::
@@ -114,7 +114,7 @@ def make_capability_consistency_gate() -> GateSpec:
     """构造 Provider 路由-meta 一致性 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="CAP-CONSISTENCY", priority=98)。
+        GateSpec(gate_id="CAP-CONSISTENCY", priority=101)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -156,5 +156,5 @@ def make_capability_consistency_gate() -> GateSpec:
     return GateSpec(
         gate_id="CAP-CONSISTENCY",
         check=_check,
-        priority=98,
+        priority=101,
     )

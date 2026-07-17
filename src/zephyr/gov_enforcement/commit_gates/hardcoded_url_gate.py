@@ -44,7 +44,7 @@ architecture_debt §5.160.9：DEFAULT_OLLAMA_URL 原在 3 处重复定义，6 �
 3. **正则匹配**：``https?://localhost:`` 同时覆盖 http 和 https。
 4. **diff-based 检测**：使用 _diff_helpers 共享工具，与
    datetime_now_forbidden_gate 一致的检测模式。
-5. **priority=94**：在 NO-UPWARD-IMPORT(93) 之后。
+5. **priority=98**：在 NO-UPWARD-IMPORT(93) 之后。
 
 Usage::
 
@@ -143,7 +143,7 @@ def make_hardcoded_url_gate() -> GateSpec:
     """构造硬编码 localhost URL 阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-HARDCODED-URL", priority=94)。
+        GateSpec(gate_id="NO-HARDCODED-URL", priority=98)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -169,4 +169,4 @@ def make_hardcoded_url_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(gate_id="NO-HARDCODED-URL", check=_check, priority=94)
+    return GateSpec(gate_id="NO-HARDCODED-URL", check=_check, priority=98)

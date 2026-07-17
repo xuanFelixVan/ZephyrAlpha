@@ -41,7 +41,7 @@ architecture_debt §5.150：5 处 Long Parameter List（16/9/9 参数），
 2. **AST-based**：准确处理跨行参数列表、posonly/kwonly/vararg/kwarg。
 3. **排除 self/cls**：方法第一个参数是 self/cls，不计入业务参数。
 4. **阈值=7**：与 §5.150 裁定一致（>7 即反模式）。
-5. **priority=88**：在 DOC-REF-BROKEN(88) 同级，orphan_module_gate(86) 之前。
+5. **priority=95**：在 DOC-REF-BROKEN(88) 同级，orphan_module_gate(86) 之前。
 
 Usage::
 
@@ -90,7 +90,7 @@ def make_long_param_list_gate() -> GateSpec:
     """构造长参数列表阻断 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="NO-LONG-PARAM-LIST", priority=88)。
+        GateSpec(gate_id="NO-LONG-PARAM-LIST", priority=95)。
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
@@ -125,4 +125,4 @@ def make_long_param_list_gate() -> GateSpec:
             return False, detail
         return True, ""
 
-    return GateSpec(gate_id="NO-LONG-PARAM-LIST", check=_check, priority=88)
+    return GateSpec(gate_id="NO-LONG-PARAM-LIST", check=_check, priority=95)
