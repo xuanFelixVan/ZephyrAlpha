@@ -718,6 +718,146 @@ def test_sweep_skips_recent_dirs():
 
 
 # ---------------------------------------------------------------------------
+# P3 orphan draft script auto-cleanup 测试（P3 流程治本，2026-07-17）
+# 验证 _cleanup_orphan_draft_scripts 的安全判据：
+#   空目录/无_前缀/age未到/age过期/OSError静默/sess-*目录不动
+# ---------------------------------------------------------------------------
+def test_cleanup_orphan_draft_scripts_empty_dir():
+    """_cleanup_orphan_draft_scripts 在 .aidrafts/ 不存在时返回零值不抛异常。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    # temp repo（monkeypatched REPO_ROOT）初始无 .aidrafts/ → 返回零值
+    r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT))
+    assert r["deleted"] == 0, f"空目录不应删: {r}"
+    assert r["skipped"] == 0, f"空目录不应 skip: {r}"
+    assert r["warnings"] == [], f"空目录无 warnings: {r}"
+
+
+def test_cleanup_orphan_draft_scripts_no_underscore():
+    """_cleanup_orphan_draft_scripts 仅匹配 _* 前缀，非 _ 前缀文件不删（判据：name.startswith('_')）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    drafts = Path(REPO_ROOT) / ".aidrafts"
+    drafts.mkdir(parents=True, exist_ok=True)
+    # 非 _ 前缀文件——不应被删
+    keep = drafts / "keep_me.py"
+    keep.write_text("# keep", encoding="utf-8")
+    # 老化 mtime（超过 1h，确保满足 age 判据）
+    old = time.time() - 7200
+    os.utime(keep, (old, old))
+
+    try:
+        r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT), max_age_seconds=3600)
+        assert r["deleted"] == 0, f"不应删非 _ 前缀文件: {r}"
+        assert keep.exists(), f"非 _ 前缀文件被误删: {keep}"
+    finally:
+        if keep.exists():
+            keep.unlink()
+
+
+def test_cleanup_orphan_draft_scripts_skips_recent():
+    """_cleanup_orphan_draft_scripts 跳过 age < max_age_seconds 的 _* 文件（防误清正在使用的）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    drafts = Path(REPO_ROOT) / ".aidrafts"
+    drafts.mkdir(parents=True, exist_ok=True)
+    # 新创建的 _* 文件（age < 1h）——不应被删
+    fresh = drafts / "_fresh_helper.py"
+    fresh.write_text("# fresh", encoding="utf-8")
+    # 不老化 mtime（now），age < 3600s——判据应跳过
+
+    try:
+        r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT), max_age_seconds=3600)
+        assert r["deleted"] == 0, f"不应清新文件: {r}"
+        assert r["skipped"] >= 1, f"应跳过新文件: {r}"
+        assert fresh.exists(), f"新 _* 文件被误删: {fresh}"
+    finally:
+        if fresh.exists():
+            fresh.unlink()
+
+
+def test_cleanup_orphan_draft_scripts_deletes_expired():
+    """_cleanup_orphan_draft_scripts 删除 age > max_age_seconds 的 _* 文件（核心清理逻辑）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    drafts = Path(REPO_ROOT) / ".aidrafts"
+    drafts.mkdir(parents=True, exist_ok=True)
+    # 过期的 _* 文件（age > 1h）——应被删
+    expired = drafts / "_expired_helper.py"
+    expired.write_text("# expired", encoding="utf-8")
+    old = time.time() - 7200  # 2h ago
+    os.utime(expired, (old, old))
+
+    try:
+        r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT), max_age_seconds=3600)
+        assert r["deleted"] >= 1, f"应删过期 _* 文件: {r}"
+        assert not expired.exists(), f"过期 _* 文件未删: {expired}"
+    finally:
+        if expired.exists():
+            expired.unlink()
+
+
+def test_cleanup_orphan_draft_scripts_oserror_silent():
+    """_cleanup_orphan_draft_scripts OSError 静默跳过不抛异常（fail-open 不阻断 start）。
+
+    用 unittest.mock.patch.object 上下文管理器 monkeypatch Path.unlink——
+    作用域内 _oserror_helper.py 的 unlink 抛 OSError，上下文退出后自动还原，
+    不影响 fixture teardown 的 _cleanup_artifacts。
+    """
+    from unittest.mock import patch
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    drafts = Path(REPO_ROOT) / ".aidrafts"
+    drafts.mkdir(parents=True, exist_ok=True)
+    target = drafts / "_oserror_helper.py"
+    target.write_text("# oserror", encoding="utf-8")
+    old = time.time() - 7200
+    os.utime(target, (old, old))
+
+    original_unlink = Path.unlink
+
+    def _conditional_oserror(self, *args, **kwargs):
+        if self == target:
+            raise OSError("test mock: unlink blocked")
+        return original_unlink(self, *args, **kwargs)
+
+    try:
+        with patch.object(Path, "unlink", _conditional_oserror):
+            r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT), max_age_seconds=3600)
+        # patch 已还原——断言 OSError 被捕获
+        assert r["deleted"] == 0, f"OSError 时不应计入 deleted: {r}"
+        assert r["skipped"] >= 1, f"OSError 应计入 skipped: {r}"
+        assert any("oserror_helper" in w for w in r["warnings"]), f"warnings 应含文件名: {r['warnings']}"
+        assert target.exists(), f"OSError 时文件应保留（删除失败）: {target}"
+    finally:
+        # patch 上下文已退出，Path.unlink 已还原——可安全删除
+        if target.exists():
+            target.unlink()
+
+
+def test_cleanup_orphan_draft_scripts_skips_sess_dirs():
+    """_cleanup_orphan_draft_scripts 不动 sess-* 目录（由 _sweep_stale_worktrees 处理，职责区分）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _cleanup_orphan_draft_scripts
+
+    drafts = Path(REPO_ROOT) / ".aidrafts"
+    drafts.mkdir(parents=True, exist_ok=True)
+    # sess-* 目录（即使老化）——不应被 _cleanup_orphan_draft_scripts 清理
+    sess_dir = drafts / "sess-test-orphan-dir"
+    sess_dir.mkdir(parents=True, exist_ok=True)
+    (sess_dir / "marker").write_text("sess", encoding="utf-8")
+    old = time.time() - 7200
+    os.utime(sess_dir, (old, old))
+
+    try:
+        r = _cleanup_orphan_draft_scripts(Path(REPO_ROOT), max_age_seconds=3600)
+        assert r["deleted"] == 0, f"不应删 sess-* 目录: {r}"
+        assert sess_dir.exists(), f"sess-* 目录被误删: {sess_dir}"
+    finally:
+        if sess_dir.exists():
+            _force_rmtree(sess_dir)
+
+
+# ---------------------------------------------------------------------------
 # 治本变更并发阻断测试（§9.7 治本，2026-07-04）
 # 验证双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
 # ---------------------------------------------------------------------------
