@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 自治保护（D_AUTONOMY_PERM）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 11:27:30
+> 最后更新: 2026-07-17 11:45:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -142,11 +142,11 @@ graph TD
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_abac_guard_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_resilience_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
@@ -278,13 +278,13 @@ graph TD
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_crosscut_d_py -.->|测试依赖 / test_depends| D_SECURITY
-    tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_adversarial_agent_rbac_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_decisions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_permissions_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_agent_rbac_test_cybersec_2026_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_agent_rbac_test_cross_model_consistency_py -.->|测试依赖 / test_depends| D_SECURITY
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000

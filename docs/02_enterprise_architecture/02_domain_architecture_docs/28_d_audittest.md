@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 11:27:26
+> 最后更新: 2026-07-17 11:45:03
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -199,9 +199,9 @@ graph TD
     tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     D_TRADING["(生产态 / production) D_TRADING"]
     tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_TRADING
+    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
@@ -268,9 +268,9 @@ graph TD
     tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     D_TRADING["(生产态 / production) D_TRADING"]
     tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_TRADING
+    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
     tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST

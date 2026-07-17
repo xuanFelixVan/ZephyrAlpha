@@ -1,7 +1,7 @@
 %% D_KNOWLEDGE 域全景依赖图
-%% 生成时间: 2026-07-17 11:28:16
+%% 生成时间: 2026-07-17 11:45:48
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 38, 依赖边数: 39
+%% 模块数: 38, 依赖边数: 38
 
 graph TD
 
@@ -50,8 +50,6 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOV_DOCS -> D_KNOWLEDGE (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|contract| docs_03_modules__domain_knowle___knowledge_base_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_KNOWLEDGE -> D_AUTONOMY_CORE (1 条)
@@ -71,14 +69,14 @@ graph TD
     tests_kb_test_kb_integrity_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_KNOWLEDGE -> D_GOV_KB (16 条)
     tests_kb_test_kb_analyze_py -->|test_depends| D_GOV_KB[D_GOV_KB]
-    tests_kb_test_kb_embedding_migrate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_bootstrap_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_embedding_migrate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_extract_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_freeze_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_gate_task_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_graph_validator_py -->|test_depends| D_GOV_KB[D_GOV_KB]
-    tests_kb_test_kb_migration_gate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_migration_embedding_py -->|test_depends| D_GOV_KB[D_GOV_KB]
+    tests_kb_test_kb_migration_gate_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_storage_backend_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_self_test_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_kb_test_kb_unified_memory_api_py -->|test_depends| D_GOV_KB[D_GOV_KB]
@@ -89,8 +87,8 @@ graph TD
     %% D_KNOWLEDGE -> D_GOV_OPS_RESILIENCE (1 条)
     tests_kb_test_kb_triage_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_KNOWLEDGE -> D_GOV_RULE (4 条)
-    tests_kb_test_kb_activate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_kb_test_kb_analyze_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_kb_test_kb_activate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_kb_test_kb_extract_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_kb_test_kb_migration_gate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_KNOWLEDGE -> D_INFRA_RUNTIME (1 条)
@@ -106,5 +104,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 1 条
+    %% 跨域入边: 0 条
     %% 跨域出边: 38 条
