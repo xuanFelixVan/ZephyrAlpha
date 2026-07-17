@@ -62,7 +62,14 @@ _PROJECT_ROOT = REPO_ROOT
 # 辅助函数
 # ---------------------------------------------------------------------------
 def _init_repo(repo_dir: Path) -> None:
-    """初始化临时 git 仓库。"""
+    """初始化临时 git 仓库。
+
+    并创建 fail-closed gate 源文件 stub——多个 gate（DIRECTORY-CONTRACT/TTL-METADATA/
+    FILE-PLACEMENT-TTL/DANGLING-REFERENCE/ARCH-REFERENCE/ENCODING-SAFETY）fail-closed
+    设计要求源文件存在，否则阻断 commit。测试目的是测极端故障场景（锁/stash/并发），
+    不是测 gate 校验逻辑（gate 逻辑由各自单元测试覆盖）。stub 总是 exit 0（通过）。
+    与 test_git_commit_gateway.py _init_git_repo 保持一致。
+    """
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
     env["GIT_AUTHOR_NAME"] = "Ext-Test"
@@ -73,6 +80,47 @@ def _init_repo(repo_dir: Path) -> None:
     subprocess.run(["git", "config", "user.name", "Ext-Test"], cwd=str(repo_dir), capture_output=True, check=True)
     subprocess.run(["git", "config", "user.email", "ext@test.com"], cwd=str(repo_dir), capture_output=True, check=True)
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
+
+    # fail-closed gate 源文件 stub（与 test_git_commit_gateway.py _init_git_repo 一致）
+    # AGENTS.md stub（DANGLING-REFERENCE gate 需要 ## N 章节号）
+    (repo_dir / "AGENTS.md").write_text("# AGENTS.md (test stub)\n## 1 Test Section\n", encoding="utf-8")
+    # directory_contract.yaml stub（FILE-PLACEMENT-TTL gate 需要 directory_zones）
+    dc_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "contracts"
+    dc_dir.mkdir(parents=True, exist_ok=True)
+    (dc_dir / "directory_contract.yaml").write_text(
+        "directory_zones:\n  permanent:\n    paths:\n      - docs/\n    exempt_subdirs: []\n"
+        "  temporary:\n    paths:\n      - docs/_working/\n"
+        "  neutral:\n    paths:\n      - src/\n      - tests/\n      - scripts/\n      - build_artifacts/\n"
+        "root_directory_whitelist:\n  files:\n    - AGENTS.md\n    - .gitignore\n    - .gitkeep\n",
+        encoding="utf-8",
+    )
+    # ttl_vocabulary.yaml stub（FILE-PLACEMENT-TTL gate fail-closed 校验需要 values）
+    tv_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+    tv_dir.mkdir(parents=True, exist_ok=True)
+    (tv_dir / "ttl_vocabulary.yaml").write_text(
+        "values:\n  - value: permanent\n  - value: task_bound\n",
+        encoding="utf-8",
+    )
+    # architecture_issue_registry.yaml stub（ARCH-REFERENCE gate 需要 entries）
+    arch_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+    arch_dir.mkdir(parents=True, exist_ok=True)
+    (arch_dir / "architecture_issue_registry.yaml").write_text(
+        'entries:\n  - issue_id: "#ARCH-001"\n    title: "Test entry"\n    status: "active"\n',
+        encoding="utf-8",
+    )
+    # check_directory_contract.py stub（DIRECTORY-CONTRACT gate subprocess 调用）
+    dcr_stub = repo_dir / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
+    dcr_stub.parent.mkdir(parents=True, exist_ok=True)
+    dcr_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+    # check_frontmatter_metadata.py stub（TTL-METADATA gate subprocess 调用）
+    fm_stub = repo_dir / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+    fm_stub.parent.mkdir(parents=True, exist_ok=True)
+    fm_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+    # check_encoding.py stub（ENCODING-SAFETY gate subprocess 调用）
+    enc_stub = repo_dir / "scripts" / "governance" / "d7_code" / "check_encoding.py"
+    enc_stub.parent.mkdir(parents=True, exist_ok=True)
+    enc_stub.write_text("#!/usr/bin/env python\nimport sys\nsys.exit(0)\n", encoding="utf-8")
+
     subprocess.run(["git", "add", "."], cwd=str(repo_dir), capture_output=True, check=True)
     subprocess.run(["git", "commit", "-m", "init", "--no-verify"], cwd=str(repo_dir), capture_output=True, check=True)
 
@@ -118,7 +166,7 @@ class TestLockFailureInjection:
 
         # 修改文件并 commit——应能抢占过期锁
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
-        result = gw.commit("sess-stale", [str(tmp_path / "a.py")], "feat: reclaim stale lock")
+        result = gw.commit("sess-stale", [str(tmp_path / "a.py")], "feat: reclaim stale lock", allow_overlap=True)
 
         assert result.status == CommitStatus.OK, f"应能抢占过期锁: {result.message}"
         assert not lock_file.exists(), "commit 后锁应被释放"
@@ -138,7 +186,7 @@ class TestLockFailureInjection:
         lock_file.write_text("CORRUPTED_NOT_JSON{{{", encoding="utf-8")
 
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
-        result = gw.commit("sess-corrupt", [str(tmp_path / "a.py")], "feat: recover corrupted lock")
+        result = gw.commit("sess-corrupt", [str(tmp_path / "a.py")], "feat: recover corrupted lock", allow_overlap=True)
 
         assert result.status == CommitStatus.OK, f"应能恢复损坏锁: {result.message}"
 
@@ -153,22 +201,26 @@ class TestLockFailureInjection:
         lock_file.write_text("", encoding="utf-8")  # 空文件
 
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
-        result = gw.commit("sess-empty", [str(tmp_path / "a.py")], "feat: recover empty lock")
+        result = gw.commit("sess-empty", [str(tmp_path / "a.py")], "feat: recover empty lock", allow_overlap=True)
 
         assert result.status == CommitStatus.OK, f"应能恢复空锁: {result.message}"
 
     def test_lock_released_on_exception(self, tmp_path: Path) -> None:
-        """场景3: commit 过程中异常——锁必须释放（finally 保证）。"""
+        """场景3: commit 过程中异常——锁必须释放（finally 保证）。
+
+        Phase 3 移除 stash 后，改 mock _run_git 抛异常（原 mock _stash_other_files
+        已不存在）。测试不变量不变：异常后锁必须释放。
+        """
         _init_repo(tmp_path)
         _commit_file(tmp_path, "a.py", "a = 0\n")
         gw = GitCommitGateway(project_root=tmp_path)
 
-        # mock _stash_other_files 抛异常
-        with patch.object(gw, "_stash_other_files", side_effect=RuntimeError("injected crash")):
+        # mock _run_git 抛异常（Phase 3 替代原 _stash_other_files mock）
+        with patch.object(gw, "_run_git", side_effect=RuntimeError("injected crash")):
             (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
             # 不应抛异常（被 commit() 捕获），但锁应释放
             try:
-                gw.commit("sess-crash", [str(tmp_path / "a.py")], "feat: crash test")
+                gw.commit("sess-crash", [str(tmp_path / "a.py")], "feat: crash test", allow_overlap=True)
             except Exception:
                 pass  # commit 内部异常处理
 
@@ -194,7 +246,7 @@ class TestHighConcurrency:
         gw = GitCommitGateway(project_root=tmp_path)
 
         def commit(sess: str, rel: str):
-            r = gw.commit(sess, [str(tmp_path / rel)], f"feat: {sess}")
+            r = gw.commit(sess, [str(tmp_path / rel)], f"feat: {sess}", allow_overlap=True)
             return (sess, r.status, r.commit_hash)
 
         with ThreadPoolExecutor(max_workers=5) as ex:
@@ -222,7 +274,7 @@ class TestHighConcurrency:
 
         def commit(sess: str, val: int):
             (tmp_path / "shared.py").write_text(f"v = {val}\n", encoding="utf-8")
-            r = gw.commit(sess, [str(tmp_path / "shared.py")], f"feat: {sess}")
+            r = gw.commit(sess, [str(tmp_path / "shared.py")], f"feat: {sess}", allow_overlap=True)
             return (sess, r.status)
 
         with ThreadPoolExecutor(max_workers=8) as ex:
@@ -231,9 +283,11 @@ class TestHighConcurrency:
 
         ok_count = sum(1 for _, s in results if s == CommitStatus.OK)
         assert ok_count >= 1, "至少 1 个 commit 应成功"
-        # 文件内容应为某个 session 的值
+        # 文件内容应包含某个 session 的值（S4 reconciler 可能自动注入 [BLUEPRINT] 头部，
+        # 故检查 "v = " 存在于内容中而非 startswith）
         content = (tmp_path / "shared.py").read_text(encoding="utf-8")
-        assert content.startswith("v = "), f"文件内容异常: {content!r}"
+        assert any(line.startswith("v = ") for line in content.splitlines()), \
+            f"文件内容异常: {content!r}"
 
 
 # ---------------------------------------------------------------------------
@@ -258,7 +312,7 @@ class TestStashConflictAndDataSafety:
         # B 通过 gateway commit a.py（不同内容）
         # 先把 A 的修改 stash 走，再写 B 的内容
         (tmp_path / "a.py").write_text("a = B_COMMIT\n", encoding="utf-8")
-        result = gw.commit("B", [str(tmp_path / "a.py")], "feat: B")
+        result = gw.commit("B", [str(tmp_path / "a.py")], "feat: B", allow_overlap=True)
 
         # B commit 成功后，stash pop 会尝试恢复 A 的 "a = A_UNSTAGED"
         # 但此时 a.py 已是 "a = B_COMMIT"，可能冲突
@@ -278,10 +332,17 @@ class TestStashConflictAndDataSafety:
         else:
             pytest.fail(f"意外的 commit 状态: {result.status} {result.message}")
 
+    @pytest.mark.xfail(
+        reason="Phase 3 stash elimination—_stash_other_files removed, "
+               "worktree isolation replaces stash. Test scenario no longer applies.",
+        strict=False,
+    )
     def test_disk_full_stash_failure_no_data_loss(self, tmp_path: Path) -> None:
         """场景7: 磁盘满 mock（stash 写失败）——不丢数据。
 
-        模拟：_stash_other_files 返回 (False, "")，验证 commit 仍能执行或安全跳过。
+        Phase 3 移除 stash 逻辑后此场景不再适用——worktree 物理隔离替代 stash，
+        不存在"stash 写失败"路径。xfail 保留测试文档，待 Phase 3 worktree
+        等效测试补齐后删除。
         """
         _init_repo(tmp_path)
         _commit_file(tmp_path, "a.py", "a = 0\n")
@@ -293,14 +354,13 @@ class TestStashConflictAndDataSafety:
         # B commit a.py
         (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
 
-        # mock stash 失败（模拟磁盘满）
-        with patch.object(gw, "_stash_other_files", return_value=(False, "")):
-            result = gw.commit("B", [str(tmp_path / "a.py")], "feat: disk full")
+        # Phase 3: stash 已移除，commit 只提交指定文件，b.py 修改不受影响
+        result = gw.commit("B", [str(tmp_path / "a.py")], "feat: no stash needed", allow_overlap=True)
 
-        # 验证：commit 可能成功（a.py 提交了），b.py 修改应保留（没被 stash）
+        # 验证：commit 可能成功或失败（gate 阻断），b.py 修改应保留
         assert result.status in (CommitStatus.OK, CommitStatus.COMMIT_FAILED), \
-            f"磁盘满时应有明确状态: {result.status}"
-        # b.py 修改应仍在工作区（没被 stash 走）
+            f"应有明确状态: {result.status}"
+        # b.py 修改应仍在工作区（Phase 3 无 stash，不会动其他文件）
         assert (tmp_path / "b.py").read_text(encoding="utf-8") == "b = UNSTAGED\n", \
             "b.py 修改不应丢失"
 
@@ -326,7 +386,7 @@ class TestStashConflictAndDataSafety:
             return None, "injected commit failure"
 
         with patch.object(gw, "_commit_with_file_message", side_effect=failing_commit):
-            result = gw.commit("B", [str(tmp_path / "a.py")], "feat: commit fail")
+            result = gw.commit("B", [str(tmp_path / "a.py")], "feat: commit fail", allow_overlap=True)
 
         assert result.status == CommitStatus.COMMIT_FAILED, \
             f"commit 失败应返回 COMMIT_FAILED: {result.status}"
@@ -365,7 +425,7 @@ class TestTimeoutAndResourceExhaustion:
         with patch.object(gw, "_run_git", side_effect=timeout_git):
             # 不应卡死，应抛异常或返回失败
             try:
-                result = gw.commit("sess-timeout", [str(tmp_path / "a.py")], "feat: timeout")
+                result = gw.commit("sess-timeout", [str(tmp_path / "a.py")], "feat: timeout", allow_overlap=True)
                 # 如果没抛异常，状态应是失败类
                 assert result.status in (
                     CommitStatus.COMMIT_FAILED,
@@ -406,7 +466,7 @@ class TestTimeoutAndResourceExhaustion:
         gw = GitCommitGateway(project_root=tmp_path)
         with patch("zephyr.gov_enforcement.rule_bridge.git_commit_gateway._GlobalCommitLock", FastLock):
             (tmp_path / "a.py").write_text("a = 1\n", encoding="utf-8")
-            result = gw.commit("sess-wait", [str(tmp_path / "a.py")], "feat: lock wait")
+            result = gw.commit("sess-wait", [str(tmp_path / "a.py")], "feat: lock wait", allow_overlap=True)
 
         assert result.status == CommitStatus.LOCK_TIMEOUT, \
             f"锁被持有时应返回 LOCK_TIMEOUT: {result.status} {result.message}"
