@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 回滚恢复（D_INFRA_RECOVERY）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 12:19:48
+> 最后更新: 2026-07-17 13:17:34
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -29,7 +29,7 @@ ttl: permanent
 | 模块数 | 89 | Module Count | 89 |
 | 域内依赖 | 74 | Internal Dependencies | 74 |
 | 跨域入边 | 46 | Cross-domain Incoming | 46 |
-| 跨域出边 | 44 | Cross-domain Outgoing | 44 |
+| 跨域出边 | 43 | Cross-domain Outgoing | 43 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 41 | Prototype Modules | 41 |
 | 生产态模块 | 48 | Production Modules | 48 |
@@ -193,35 +193,35 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
     src_zephyr_infrastructure_rollback_manifest_py -.->|config_depends / config_depends| src_zephyr_infrastructure_rollback_init_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auditor_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_commit_quality_gate_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_checkpoint_gc_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_complexity_budget_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_cross_platform_shell_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_drift_fix_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_env_watcher_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_external_merkle_proof_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_forensic_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_kill_switch_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_bootstrap_py
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_budget_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_context_restorer_py
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_budget_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_boot_integration_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_external_merkle_proof_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_right_to_be_forgotten_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
@@ -230,34 +230,36 @@ graph TD
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_infrastructure_rollback_drift_fix_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_auditor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_credential_rotation_trigger_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forensic_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_commit_quality_gate_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_intent_archiver_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_contract_py
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_drift_fix_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_credential_rotation_trigger_py
     D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
     D_EX_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_kill_switch_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forensic_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
     D_OPS["(生产态 / production) D_OPS"]
     D_OPS -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_external_merkle_proof_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_contract_py
+    D_GOV_REPAIR["(生产态 / production) D_GOV_REPAIR"]
+    D_GOV_REPAIR -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_complexity_budget_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_rollback_agent_cooldown_py,src_zephyr_infrastructure_rollback_auditor_py,src_zephyr_infrastructure_rollback_auto_rollback_trigger_py,src_zephyr_infrastructure_rollback_checkpoint_gc_py,src_zephyr_infrastructure_rollback_commit_quality_gate_py,src_zephyr_infrastructure_rollback_contract_py,src_zephyr_infrastructure_rollback_credential_rotation_trigger_py,src_zephyr_infrastructure_rollback_cross_platform_shell_py,src_zephyr_infrastructure_rollback_drift_fix_py,src_zephyr_infrastructure_rollback_env_watcher_py,src_zephyr_infrastructure_rollback_external_merkle_proof_py,src_zephyr_infrastructure_rollback_forensic_py,src_zephyr_infrastructure_rollback_forward_fix_runner_py,src_zephyr_infrastructure_rollback_git_infra_snapshot_py,src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py production
     class src_zephyr_infrastructure_rollback_init_py,src_zephyr_infrastructure_rollback_manifest_py,src_zephyr_infrastructure_rollback_budget_tracker_py,src_zephyr_infrastructure_rollback_complexity_budget_py,src_zephyr_infrastructure_rollback_contracts_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py design
-    class D_GOV_AUDIT,D_SHARED,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_SECURITY,D_OPS external_prod
-    class D_GOV_SCRIPTS,D_GOVERNANCE,D_AUTONOMY_CORE,D_EX_CORE external_design
+    class D_GOV_AUDIT,D_INFRA_RUNTIME,D_GOV_OPS_RESILIENCE,D_SECURITY,D_OPS,D_GOV_RULE,D_GOV_REPAIR external_prod
+    class D_SHARED,D_AUTONOMY_CORE,D_GOVERNANCE,D_EX_CORE,D_INTEGRATION external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -302,14 +304,14 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_canary_test_canary_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_canary_test_canary_controller_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    tests_canary_test_canary_rollout_manager_py -.->|测试依赖 / test_depends| D_SECURITY
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     tests_canary_test_canary_register_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
+    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
+    tests_canary_test_canary_controller_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_canary_test_canary_repair_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    tests_canary_test_canary_rollout_manager_py -.->|测试依赖 / test_depends| D_SECURITY
     tests_chaos_test_chaos_engine_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_infrastructure_rollback_rollback_drill_py -.->|导入依赖 / import_depends| D_SHARED
@@ -320,15 +322,11 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_secret_rotation_aware_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_runbook_generator_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_topology_change_log_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
@@ -336,8 +334,12 @@ graph TD
     D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_semantic_similar_detector_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_venv_sync_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_temporal_context_adapter_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_warm_standby_py
     D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_submodule_sync_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_runbook_generator_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_warm_standby_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
@@ -347,7 +349,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py,src_zephyr_infrastructure_rollback_secret_rotation_aware_py,src_zephyr_infrastructure_rollback_semantic_rollback_tag_py,src_zephyr_infrastructure_rollback_semantic_similar_detector_py,src_zephyr_infrastructure_rollback_sqlite_dumper_py,src_zephyr_infrastructure_rollback_submodule_sync_py,src_zephyr_infrastructure_rollback_temporal_context_adapter_py,src_zephyr_infrastructure_rollback_topology_change_log_py,src_zephyr_infrastructure_rollback_venv_sync_py,src_zephyr_infrastructure_rollback_vulnerability_rescanner_py,src_zephyr_infrastructure_rollback_warm_standby_py production
     class tests_canary_test_canary_controller_py,tests_canary_test_canary_manager_py,tests_canary_test_canary_register_py,tests_canary_test_canary_repair_py,tests_canary_test_canary_rollout_manager_py,tests_chaos_test_chaos_engine_py design
-    class D_ORCHESTRATOR,D_GOV_DRIFT,D_SECURITY,D_GOV_CODE_QUALITY,D_FBL_VERIFICATION,D_INFRA_RUNTIME,D_GOV_AUDIT,D_FEEDBACK_LOOP,D_GOV_OPS_RESILIENCE external_prod
+    class D_ORCHESTRATOR,D_GOV_CODE_QUALITY,D_GOV_DRIFT,D_FBL_VERIFICATION,D_SECURITY,D_INFRA_RUNTIME,D_GOV_AUDIT,D_FEEDBACK_LOOP,D_GOV_OPS_RESILIENCE external_prod
     class D_SHARED,D_GOVERNANCE external_design
 ```
 
@@ -386,10 +388,10 @@ graph TD
         tests_rollback_test_rollback_verifier_root_py["(原型态 / prototype) test_rollback_verifier_root.py"]
         tests_rollback_test_rollback_wal_py["(原型态 / prototype) test_rollback_wal.py"]
     end
-    D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
-    tests_chaos_test_chaos_engineering_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_chaos_test_chaos_engine_ops_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
+    tests_chaos_test_chaos_engineering_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
     tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
@@ -408,7 +410,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class tests_chaos_test_chaos_engine_ops_py,tests_chaos_test_chaos_engineering_py,tests_chaos_test_chaos_hooks_py,tests_chaos_test_chaos_injector_py,tests_rollback_conftest_py,tests_rollback_test_concurrency_guard_py,tests_rollback_test_position_reconciler_py,tests_rollback_test_rollback_abuse_detector_py,tests_rollback_test_rollback_audit_nexus_py,tests_rollback_test_rollback_bootstrap_py,tests_rollback_test_rollback_bridge_py,tests_rollback_test_rollback_budget_py,tests_rollback_test_rollback_concurrent_extreme_py,tests_rollback_test_rollback_context_restorer_py,tests_rollback_test_rollback_dashboard_py,tests_rollback_test_rollback_drill_py,tests_rollback_test_rollback_executor_root_py,tests_rollback_test_rollback_integration_py,tests_rollback_test_rollback_integrity_py,tests_rollback_test_rollback_lock_py,tests_rollback_test_rollback_loop_detector_py,tests_rollback_test_rollback_partial_extreme_py,tests_rollback_test_rollback_sandbox_py,tests_rollback_test_rollback_scheduler_py,tests_rollback_test_rollback_simulator_py,tests_rollback_test_rollback_state_machine_py,tests_rollback_test_rollback_target_staleness_py,tests_rollback_test_rollback_verifier_root_py,tests_rollback_test_rollback_wal_py design
-    class D_FBL_DETECTORS,D_ORCHESTRATOR,D_GOV_DRIFT,D_POSITION,D_INFRA_RUNTIME,D_FBL_VERIFICATION,D_SECURITY external_prod
+    class D_ORCHESTRATOR,D_FBL_DETECTORS,D_GOV_DRIFT,D_POSITION,D_INFRA_RUNTIME,D_FBL_VERIFICATION,D_SECURITY external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -473,49 +475,52 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|导入依赖 / import_depends| D_GOV_AUDIT
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_infrastructure_rollback_rollback_integration_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_external_merkle_proof_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_right_to_be_forgotten_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
-    D_GOV_SCRIPTS -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_git_infra_snapshot_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_credential_rotation_trigger_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_secret_rotation_aware_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forensic_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_right_to_be_forgotten_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_runbook_generator_py
-    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_vulnerability_rescanner_py
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_integration_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_agent_cooldown_py
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_commit_quality_gate_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forward_fix_runner_py
+    D_GOV_AUDIT -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_drift_fix_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_credential_rotation_trigger_py
+    D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
+    D_EX_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_kill_switch_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_secret_rotation_aware_py
     D_INFRA_RUNTIME -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_topology_change_log_py
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
-    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_intent_archiver_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_forensic_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
+    D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auto_rollback_trigger_py
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_executor_py
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    D_INTEGRATION -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_external_merkle_proof_py
+    D_GOVERNANCE -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_auditor_py
+    D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
+    D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_rollback_agent_cooldown_py,src_zephyr_infrastructure_rollback_auditor_py,src_zephyr_infrastructure_rollback_auto_rollback_trigger_py,src_zephyr_infrastructure_rollback_checkpoint_gc_py,src_zephyr_infrastructure_rollback_commit_quality_gate_py,src_zephyr_infrastructure_rollback_contract_py,src_zephyr_infrastructure_rollback_credential_rotation_trigger_py,src_zephyr_infrastructure_rollback_cross_platform_shell_py,src_zephyr_infrastructure_rollback_drift_fix_py,src_zephyr_infrastructure_rollback_env_watcher_py,src_zephyr_infrastructure_rollback_external_merkle_proof_py,src_zephyr_infrastructure_rollback_forensic_py,src_zephyr_infrastructure_rollback_forward_fix_runner_py,src_zephyr_infrastructure_rollback_git_infra_snapshot_py,src_zephyr_infrastructure_rollback_hallucination_guard_py,src_zephyr_infrastructure_rollback_intent_archiver_py,src_zephyr_infrastructure_rollback_kill_switch_py,src_zephyr_infrastructure_rollback_knowngoodstate_ledger_py,src_zephyr_infrastructure_rollback_right_to_be_forgotten_py,src_zephyr_infrastructure_rollback_rollback_abuse_detector_py,src_zephyr_infrastructure_rollback_rollback_audit_nexus_py,src_zephyr_infrastructure_rollback_rollback_bootstrap_py,src_zephyr_infrastructure_rollback_rollback_budget_py,src_zephyr_infrastructure_rollback_rollback_context_restorer_py,src_zephyr_infrastructure_rollback_rollback_dashboard_py,src_zephyr_infrastructure_rollback_rollback_drill_py,src_zephyr_infrastructure_rollback_rollback_executor_py,src_zephyr_infrastructure_rollback_rollback_integration_py,src_zephyr_infrastructure_rollback_rollback_lock_py,src_zephyr_infrastructure_rollback_rollback_loop_detector_py,src_zephyr_infrastructure_rollback_rollback_scheduler_py,src_zephyr_infrastructure_rollback_rollback_simulator_py,src_zephyr_infrastructure_rollback_rollback_state_machine_py,src_zephyr_infrastructure_rollback_rollback_target_staleness_py,src_zephyr_infrastructure_rollback_rollback_verifier_py,src_zephyr_infrastructure_rollback_rollback_wal_py,src_zephyr_infrastructure_rollback_runbook_generator_py,src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py,src_zephyr_infrastructure_rollback_secret_rotation_aware_py,src_zephyr_infrastructure_rollback_semantic_rollback_tag_py,src_zephyr_infrastructure_rollback_semantic_similar_detector_py,src_zephyr_infrastructure_rollback_sqlite_dumper_py,src_zephyr_infrastructure_rollback_submodule_sync_py,src_zephyr_infrastructure_rollback_temporal_context_adapter_py,src_zephyr_infrastructure_rollback_topology_change_log_py,src_zephyr_infrastructure_rollback_venv_sync_py,src_zephyr_infrastructure_rollback_vulnerability_rescanner_py,src_zephyr_infrastructure_rollback_warm_standby_py production
-    class D_GOV_AUDIT external_prod
-    class D_SHARED,D_GOV_SCRIPTS,D_GOVERNANCE,D_INFRA_RUNTIME,D_AUTONOMY_CORE external_design
+    class D_GOV_AUDIT,D_FEEDBACK_LOOP,D_GOV_RULE external_prod
+    class D_SHARED,D_AUTONOMY_CORE,D_INFRA_RUNTIME,D_GOVERNANCE,D_EX_CORE,D_INTEGRATION external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -577,27 +582,27 @@ graph TD
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_budget_tracker_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_complexity_budget_py
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_boot_integration_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_SHARED
+    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
+    tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     tests_canary_test_canary_register_py -.->|测试依赖 / test_depends| D_GOV_CODE_QUALITY
-    D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
     tests_canary_test_canary_manager_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     tests_canary_test_canary_controller_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     tests_canary_test_canary_repair_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_SECURITY["(生产态 / production) D_SECURITY"]
     tests_canary_test_canary_rollout_manager_py -.->|测试依赖 / test_depends| D_SECURITY
+    tests_rollback_test_rollback_integrity_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_infrastructure_rollback_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     tests_chaos_test_chaos_engine_ops_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_chaos_test_chaos_engine_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
-    tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_FBL_DETECTORS["(生产态 / production) D_FBL_DETECTORS"]
     tests_chaos_test_chaos_engineering_py -.->|测试依赖 / test_depends| D_FBL_DETECTORS
-    tests_rollback_test_rollback_integrity_py -.->|测试依赖 / test_depends| D_FBL_VERIFICATION
+    tests_chaos_test_chaos_engine_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
+    tests_chaos_test_chaos_hooks_py -.->|测试依赖 / test_depends| D_ORCHESTRATOR
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     tests_chaos_test_chaos_injector_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
@@ -612,7 +617,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_rollback_init_py,src_zephyr_infrastructure_rollback_manifest_py,src_zephyr_infrastructure_rollback_budget_tracker_py,src_zephyr_infrastructure_rollback_complexity_budget_py,src_zephyr_infrastructure_rollback_contracts_py,src_zephyr_infrastructure_rollback_rollback_boot_integration_py,tests_canary_test_canary_controller_py,tests_canary_test_canary_manager_py,tests_canary_test_canary_register_py,tests_canary_test_canary_repair_py,tests_canary_test_canary_rollout_manager_py,tests_chaos_test_chaos_engine_py,tests_chaos_test_chaos_engine_ops_py,tests_chaos_test_chaos_engineering_py,tests_chaos_test_chaos_hooks_py,tests_chaos_test_chaos_injector_py,tests_rollback_conftest_py,tests_rollback_test_concurrency_guard_py,tests_rollback_test_position_reconciler_py,tests_rollback_test_rollback_abuse_detector_py,tests_rollback_test_rollback_audit_nexus_py,tests_rollback_test_rollback_bootstrap_py,tests_rollback_test_rollback_bridge_py,tests_rollback_test_rollback_budget_py,tests_rollback_test_rollback_concurrent_extreme_py,tests_rollback_test_rollback_context_restorer_py,tests_rollback_test_rollback_dashboard_py,tests_rollback_test_rollback_drill_py,tests_rollback_test_rollback_executor_root_py,tests_rollback_test_rollback_integration_py,tests_rollback_test_rollback_integrity_py,tests_rollback_test_rollback_lock_py,tests_rollback_test_rollback_loop_detector_py,tests_rollback_test_rollback_partial_extreme_py,tests_rollback_test_rollback_sandbox_py,tests_rollback_test_rollback_scheduler_py,tests_rollback_test_rollback_simulator_py,tests_rollback_test_rollback_state_machine_py,tests_rollback_test_rollback_target_staleness_py,tests_rollback_test_rollback_verifier_root_py,tests_rollback_test_rollback_wal_py design
-    class D_SHARED,D_GOV_CODE_QUALITY,D_ORCHESTRATOR,D_GOV_DRIFT,D_FBL_VERIFICATION,D_SECURITY,D_INFRA_RUNTIME,D_FBL_DETECTORS,D_GOV_OPS_RESILIENCE,D_OPS,D_GOV_REPAIR external_prod
+    class D_ORCHESTRATOR,D_GOV_CODE_QUALITY,D_SHARED,D_GOV_DRIFT,D_FBL_VERIFICATION,D_SECURITY,D_INFRA_RUNTIME,D_FBL_DETECTORS,D_GOV_OPS_RESILIENCE,D_OPS,D_GOV_REPAIR external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -624,47 +629,46 @@ graph TD
 | 1 | test_chaos_engineering.py | → | D_FBL_DETECTORS: Chaos Engineering — v0.13.0 R172 (chaos_engine... | 测试依赖 / test_depends |
 | 2 | test_canary_repair.py | → | D_FBL_VERIFICATION 反馈验证: Canary Repair — v0.8.0 R104b (canary_repair.py) | 测试依赖 / test_depends |
 | 3 | test_rollback_integrity.py | → | D_FBL_VERIFICATION 反馈验证: Rollback Integrity — v0.3.0 R18b (rollback_int... | 测试依赖 / test_depends |
-| 4 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_GOVERNANCE 生命周期管理: SQLite 元数据层 Schema DDL + 版本化迁移框架（T-... | 导入依赖 / import_depends |
-| 5 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | D_GOV_AUDIT 审计追踪: contracts.py | 导入依赖 / import_depends |
-| 6 | G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | → | D_GOV_AUDIT 审计追踪: anomaly.py | 导入依赖 / import_depends |
-| 7 | RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | D_GOV_AUDIT 审计追踪: query.py | 导入依赖 / import_depends |
-| 8 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
-| 9 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
-| 10 | test_canary_register.py | → | D_GOV_CODE_QUALITY 代码质量治理: 金丝雀注册表维护器 — 注册/过期/腐败检测. (cana... | 测试依赖 / test_depends |
-| 11 | test_canary_controller.py | → | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 ... | 测试依赖 / test_depends |
-| 12 | test_chaos_injector.py | → | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §... | 测试依赖 / test_depends |
-| 13 | test_rollback_bridge.py | → | D_GOV_DRIFT 漂移检测: G-CT-006 契约：Drift -> Rollback 漂移触发回滚. ... | 测试依赖 / test_depends |
-| 14 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
-| 15 | MOD-INF-021 Rollback System — ZephyrAlpha 回滚... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 导入依赖 / import_depends |
-| 16 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 导入依赖 / import_depends |
-| 17 | test_concurrency_guard.py | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 测试依赖 / test_depends |
-| 18 | test_canary_manager.py | → | D_ORCHESTRATOR 代理编排器: 金丝雀发布管理器（CT-CANARY）——权重分流+指标.... | 测试依赖 / test_depends |
-| 19 | test_chaos_engine.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
-| 20 | test_chaos_engine_ops.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
-| 21 | test_chaos_hooks.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
-| 22 | test_chaos_hooks.py | → | D_ORCHESTRATOR 代理编排器: ChaosHook — integrates ChaosEngine with the or... | 测试依赖 / test_depends |
-| 23 | test_position_reconciler.py | → | D_POSITION 仓位管理: Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
-| 24 | drift_fix.py | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
-| 25 | test_canary_rollout_manager.py | → | D_SECURITY 对抗验证: CanaryRolloutManager — 灰度发布管理器. (canary... | 测试依赖 / test_depends |
-| 26 | test_rollback_sandbox.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.rol... | 测试依赖 / test_depends |
-| 27 | AgentCooldown — Agent 冷却隔离器。 (agent_cool... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 28 | External Merkle Proof — 外部可验证回滚完整性证... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 29 | Forensic Engine — 取证基础设施（Phase 8 完整实... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新... | 导入依赖 / import_depends |
-| 30 | ForwardFixRunner — Forward-Fix 执行器。 (forwa... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 31 | Right to be Forgotten — GDPR 遗忘权合规检查器... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 32 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 33 | RollbackDrill — 定期回滚演练调度器 (DiRT-style... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 34 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 35 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 36 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 37 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 38 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 39 | RollbackVerifier — 回滚后验证器。 (rollback_ve... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 40 | S3 Snapshot Lifecycle Manager — 快照防生命周期... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 41 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 42 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
-| 43 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 44 | WarmStandby — 温备热切（git worktree 副本维护... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 4 | G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | D_GOV_AUDIT 审计追踪: contracts.py | 导入依赖 / import_depends |
+| 5 | G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | → | D_GOV_AUDIT 审计追踪: anomaly.py | 导入依赖 / import_depends |
+| 6 | RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | D_GOV_AUDIT 审计追踪: query.py | 导入依赖 / import_depends |
+| 7 | RollbackAuditNexus — 回滚审计记录聚合到 Nexus ... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
+| 8 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
+| 9 | test_canary_register.py | → | D_GOV_CODE_QUALITY 代码质量治理: 金丝雀注册表维护器 — 注册/过期/腐败检测. (cana... | 测试依赖 / test_depends |
+| 10 | test_canary_controller.py | → | D_GOV_DRIFT 漂移检测: Detector Canary Controller — 检测器金丝雀部署 ... | 测试依赖 / test_depends |
+| 11 | test_chaos_injector.py | → | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §... | 测试依赖 / test_depends |
+| 12 | test_rollback_bridge.py | → | D_GOV_DRIFT 漂移检测: G-CT-006 契约：Drift -> Rollback 漂移触发回滚. ... | 测试依赖 / test_depends |
+| 13 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_GOV_OPS_RESILIENCE 运维弹性治理: EventHook — 声明式任务系统事件订阅 (event_hook.py) | 导入依赖 / import_depends |
+| 14 | MOD-INF-021 Rollback System — ZephyrAlpha 回滚... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 导入依赖 / import_depends |
+| 15 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 导入依赖 / import_depends |
+| 16 | test_concurrency_guard.py | → | D_INFRA_RUNTIME 运行时集成: concurrency_guard — 回滚操作并发安全守卫。 (co... | 测试依赖 / test_depends |
+| 17 | test_canary_manager.py | → | D_ORCHESTRATOR 代理编排器: 金丝雀发布管理器（CT-CANARY）——权重分流+指标.... | 测试依赖 / test_depends |
+| 18 | test_chaos_engine.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
+| 19 | test_chaos_engine_ops.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
+| 20 | test_chaos_hooks.py | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 测试依赖 / test_depends |
+| 21 | test_chaos_hooks.py | → | D_ORCHESTRATOR 代理编排器: ChaosHook — integrates ChaosEngine with the or... | 测试依赖 / test_depends |
+| 22 | test_position_reconciler.py | → | D_POSITION 仓位管理: Position Reconciler — v0.10.1 持仓对账: execut... | 测试依赖 / test_depends |
+| 23 | drift_fix.py | → | D_SECURITY 对抗验证: G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM... | 导入依赖 / import_depends |
+| 24 | test_canary_rollout_manager.py | → | D_SECURITY 对抗验证: CanaryRolloutManager — 灰度发布管理器. (canary... | 测试依赖 / test_depends |
+| 25 | test_rollback_sandbox.py | → | D_SECURITY 对抗验证: Stub module: zephyr.security.access_control.rol... | 测试依赖 / test_depends |
+| 26 | AgentCooldown — Agent 冷却隔离器。 (agent_cool... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 27 | External Merkle Proof — 外部可验证回滚完整性证... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 28 | Forensic Engine — 取证基础设施（Phase 8 完整实... | → | D_SHARED 共享服务: file_utils.py —— 安全文件操作工具（Phase 3 新... | 导入依赖 / import_depends |
+| 29 | ForwardFixRunner — Forward-Fix 执行器。 (forwa... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 30 | Right to be Forgotten — GDPR 遗忘权合规检查器... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 31 | RollbackBootIntegration — 回滚系统自动启动/关.... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 32 | RollbackDrill — 定期回滚演练调度器 (DiRT-style... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 33 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 34 | RollbackExecutor — 回滚执行器核心封装。 (rollb... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 35 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 36 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 37 | Rollback Integration — executor 集成增强层。 (... | → | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 38 | RollbackVerifier — 回滚后验证器。 (rollback_ve... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 39 | S3 Snapshot Lifecycle Manager — 快照防生命周期... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 40 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 41 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: SQLite 连接工厂真源（SSoT） (sqlite_factory.py) | 导入依赖 / import_depends |
+| 42 | SqliteDumper — SQLite 双轨 Checkpoint 的 DB 层... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 43 | WarmStandby — 温备热切（git worktree 副本维护... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -719,7 +723,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 20 个外部域直接连接（出边 44 条 + 入边 46 条 = 90 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 20 个外部域直接连接（出边 43 条 + 入边 46 条 = 89 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -728,14 +732,14 @@ graph LR
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_FBL_DETECTORS["D_FBL_DETECTORS"]
     D_POSITION["D_POSITION<br/>仓位管理"]
+    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
@@ -748,11 +752,10 @@ graph LR
     D_INFRA_RECOVERY -->|5条 测试依赖 / test_depends| D_ORCHESTRATOR
     D_INFRA_RECOVERY -->|5条 导入依赖 / import_depends| D_GOV_AUDIT
     D_INFRA_RECOVERY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_SECURITY
-    D_INFRA_RECOVERY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INFRA_RECOVERY -->|3条 测试依赖 / test_depends| D_GOV_DRIFT
+    D_INFRA_RECOVERY -->|3条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INFRA_RECOVERY -->|2条 测试依赖 / test_depends| D_FBL_VERIFICATION
     D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_GOVERNANCE
     D_INFRA_RECOVERY -->|1条 测试依赖 / test_depends| D_GOV_CODE_QUALITY
     D_INFRA_RECOVERY -->|1条 测试依赖 / test_depends| D_FBL_DETECTORS
     D_INFRA_RECOVERY -->|1条 测试依赖 / test_depends| D_POSITION

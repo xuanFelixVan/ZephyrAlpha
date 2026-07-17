@@ -1,5 +1,5 @@
 %% D_REPORTING 域全景依赖图
-%% 生成时间: 2026-07-17 12:19:02
+%% 生成时间: 2026-07-17 13:17:55
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 16
 
@@ -21,8 +21,8 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
-    src_zephyr_reporting___init___py -->|import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -->|import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting___init___py -->|import_depends| src_zephyr_reporting_analytics_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_GOVERNANCE -> D_REPORTING (1 条)
@@ -40,10 +40,10 @@ graph TD
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_reporting_analytics_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_reporting_default_attribution_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_reporting___init___py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_reporting_default_tca_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
 
     %% 统计
     %% 域内依赖: 3 条
