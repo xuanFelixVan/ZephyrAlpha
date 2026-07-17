@@ -67,9 +67,9 @@ class TestGateSpecFields:
     def test_gate_id(self):
         assert make_msg_style_gate().gate_id == "MSG-STYLE"
 
-    def test_priority_is_92(self):
-        # 在 DOC-REF-BROKEN(91) 之后
-        assert make_msg_style_gate().priority == 92
+    def test_priority_is_96(self):
+        # 在 DOC-REF-BROKEN(91) 之后、NO-UPWARD-IMPORT(97) 之前
+        assert make_msg_style_gate().priority == 96
 
 
 # ---------------------------------------------------------------------------

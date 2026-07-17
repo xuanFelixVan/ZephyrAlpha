@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged shared 层 .py 文件含向上依赖 import（from zephyr.trading/governance/integration/infrastructure...）时阻断 commit（passed=False）；tests/ 豁免；TYPE_CHECKING 块内 import 豁免（类型检查专用无运行时导入）；AST/git 异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged shared 层 .py 文件含向上依赖 import（from zephyr.* 但非 zephyr.shared.*）时阻断 commit（passed=False）；否定检查替代枚举列表（治本 ARCH-TTL-DOC-001，新增域无需更新 gate）；tests/ 豁免；TYPE_CHECKING 块内 import 豁免（类型检查专用无运行时导入）；AST/git 异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="NO-UPWARD-IMPORT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -37,6 +37,12 @@ architecture_debt §5.152：shared 层（L0）向上 import trading/governance �
      zephyr.infrastructure / zephyr.intelligence / zephyr.backtest /
      zephyr.portfolio / zephyr.risk / zephyr.signal 等上层域开头 -> 违规
 
+     治本（ARCH-TTL-DOC-001 循环修复）：原用枚举前缀列表（_UPWARD_PREFIXES），
+     新增域时需手动更新——遗漏导致漏检（如 zephyr.gov_enforcement 等 gov_* 包
+     缺失，AI-14 审计发现 test_upward_governance_import_blocked 测试失败）。
+     改为否定检查：``zephyr.*`` 但非 ``zephyr.shared*`` 即为向上依赖，
+     无需维护枚举列表。
+
 设计权衡
 --------
 1. **只检测 shared 层文件**：向上依赖只在 shared→上层时违规，上层→上层不检测。
@@ -46,6 +52,8 @@ architecture_debt §5.152：shared 层（L0）向上 import trading/governance �
    ``import zephyr.trading.xxx`` 极罕见，暂不检测（可后续扩展）。
 4. **fail-open on AST error**：语法错误文件不阻断（由其他 gate 管语法）。
 5. **priority=97**：在 MSG-STYLE(96) 之后、NO-HARDCODED-URL(98) 之前，作为架构方向性 gate。
+6. **否定检查替代枚举列表**（治本 ARCH-TTL-DOC-001）：``_is_upward_import``
+   检查 ``zephyr.*`` 但非 ``zephyr.shared*``——新增域无需更新 gate 代码。
 
 Usage::
 
@@ -69,27 +77,28 @@ __all__ = ["make_import_direction_gate"]
 # shared 层路径标识
 _SHARED_PATH_PART = "src/zephyr/shared/"
 
-# 禁止的向上依赖前缀（L0 shared 不可依赖的上层域）
-_UPWARD_PREFIXES = (
-    "zephyr.trading",
-    "zephyr.governance",
-    "zephyr.integration",
-    "zephyr.infrastructure",
-    "zephyr.intelligence",
-    "zephyr.backtest",
-    "zephyr.portfolio",
-    "zephyr.risk",
-    "zephyr.signal",
-    "zephyr.autonomy",
-    "zephyr.data_eng",
-    "zephyr.reporting",
-    "zephyr.frontend",
-    "zephyr.knowledge",
-    "zephyr.ml_train",
-    "zephyr.ml_serve",
-    "zephyr.security",
-    "zephyr.ops",
-)
+# shared 层自身的前缀（L0 shared 只可依赖自身 + 标准库 + 第三方）
+_SHARED_MODULE_PREFIX = "zephyr.shared"
+
+
+def _is_upward_import(module: str) -> bool:
+    """判断 import module 是否为向上依赖（zephyr.* 但非 zephyr.shared.*）。
+
+    治本（ARCH-TTL-DOC-001 循环修复）：原实现用 _UPWARD_PREFIXES 枚举列表，
+    新增域时需手动更新列表——遗漏导致漏检（如 zephyr.gov_enforcement 等
+    gov_* 包缺失）。否定检查更治本：``zephyr.*`` 但非 ``zephyr.shared*``
+    即为向上依赖，无需维护枚举列表。
+
+    Args:
+        module: ImportFrom 的 module 字符串（如 ``zephyr.trading.enums``）。
+
+    Returns:
+        True=向上依赖（违规）；False=安全（shared 自身/标准库/第三方）。
+    """
+    if not module or not module.startswith("zephyr."):
+        return False
+    # zephyr.shared 或 zephyr.shared.xxx 是 shared 自身依赖，允许
+    return not (module == _SHARED_MODULE_PREFIX or module.startswith(_SHARED_MODULE_PREFIX + "."))
 
 
 def _collect_type_checking_imports(tree: ast.Module) -> set[int]:
@@ -166,7 +175,7 @@ def _find_violations_in_file(abs_path: str, wt_root: str) -> list[str]:
         if id(node) in exempt_ids:
             continue
         module = node.module or ""
-        if any(module.startswith(prefix) for prefix in _UPWARD_PREFIXES):
+        if _is_upward_import(module):
             rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
             names = ", ".join(a.name for a in node.names)
             violations.append(

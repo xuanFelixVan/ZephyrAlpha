@@ -64,7 +64,7 @@ class TestGateSpecFields:
         assert make_session_required_gate().gate_id == "SESSION-REQUIRED"
 
     def test_priority(self):
-        assert make_session_required_gate().priority == 30
+        assert make_session_required_gate().priority == 31
 
 
 # ---------------------------------------------------------------------------

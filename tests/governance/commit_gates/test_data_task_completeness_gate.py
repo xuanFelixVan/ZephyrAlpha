@@ -43,9 +43,9 @@ class TestGateSpecAttributes:
         spec = make_data_task_completeness_gate()
         assert spec.gate_id == "DATA-TASK-COMPLETENESS"
 
-    def test_priority_is_80(self):
+    def test_priority_is_78(self):
         spec = make_data_task_completeness_gate()
-        assert spec.priority == 80
+        assert spec.priority == 78
 
     def test_returns_gate_spec_instance(self):
         spec = make_data_task_completeness_gate()

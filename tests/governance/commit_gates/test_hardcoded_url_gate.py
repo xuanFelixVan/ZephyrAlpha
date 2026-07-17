@@ -100,7 +100,7 @@ class TestGateSpecFields:
         assert make_hardcoded_url_gate().gate_id == "NO-HARDCODED-URL"
 
     def test_priority(self):
-        assert make_hardcoded_url_gate().priority == 94
+        assert make_hardcoded_url_gate().priority == 98
 
 
 # ---------------------------------------------------------------------------

@@ -103,7 +103,7 @@ class TestGateSpecFields:
         assert make_god_class_gate().gate_id == "NO-GOD-CLASS"
 
     def test_priority(self):
-        assert make_god_class_gate().priority == 86
+        assert make_god_class_gate().priority == 93
 
 
 # ---------------------------------------------------------------------------

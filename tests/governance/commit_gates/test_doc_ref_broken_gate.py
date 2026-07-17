@@ -129,7 +129,7 @@ class TestGateSpecFields:
         assert make_doc_ref_broken_gate().gate_id == "DOC-REF-BROKEN"
 
     def test_priority(self):
-        assert make_doc_ref_broken_gate().priority == 88
+        assert make_doc_ref_broken_gate().priority == 91
 
 
 # ---------------------------------------------------------------------------
