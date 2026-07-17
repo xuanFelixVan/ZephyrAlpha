@@ -47,7 +47,7 @@ __manifest__ = """
 args: []
 description: >
   全流程导航表自动生成器——从 config/nav_table_mapping.yaml + registries
-  自动生成 AGENTS.md §5.2 七阶段导航表。对标 §6.16 静态清单自动生成铁律。
+  自动生成 AGENTS.md §5.2 七阶段导航表。对标 §6.2 静态清单自动生成铁律。
 dimensions:
 - D1
 priority: P2
