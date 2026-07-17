@@ -101,7 +101,11 @@ class TestIncrementalScanner:
     def test_extract_module_docs(self):
         scanner = IncrementalScanner()
         result = scanner._extract_module("docs/03_modules/_domain-infra_ops/file.md")
-        assert result == "l01-infrastructure"
+        # 治本（裁定#17）：_extract_module 语义是"从路径提取模块/域目录名"（parts[2]），
+        # 非"域→层映射"（后者职责在 generate_project_depgraph，需查 depgraph DB，破坏单测隔离）。
+        # DB 真值 layer_id 为 L0_infrastructure（非 l01-infrastructure），
+        # 测试旧 oracle l01-infrastructure 为过期约定。修正为与源码语义一致的域目录名。
+        assert result == "_domain-infra_ops"
 
     def test_extract_module_unknown(self):
         scanner = IncrementalScanner()

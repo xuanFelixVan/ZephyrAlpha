@@ -117,23 +117,11 @@ class BaselineManager:
         with open(fp, "rb") as fh:
             return hashlib.sha256(fh.read()).hexdigest()
 
-
-def _read_source_file(fp: str) -> tuple[str, str] | None:
-    try:
-        with open(fp, encoding="utf-8") as fh:
-            return (fp, fh.read())
-    except (UnicodeDecodeError, OSError):
-        return None
-
-
-def _read_config_file(fp: str):
-    if fp.endswith(".json"):
-        with open(fp, encoding="utf-8") as fh:
-            return json.load(fh)
-    else:
-        with open(fp, encoding="utf-8") as fh:
-            return yaml.safe_load(fh)
-
+    # 治本（裁定#18 G1）：辅助函数 _read_source_file/_read_config_file 原插在
+    # 类体中间（_hash_file 之后，模块级 0 缩进），导致 snapshot_interface 及后续
+    # 全部方法被嵌套进 _read_config_file 函数体（4 空格缩进落在函数体内），
+    # BaselineManager 实例无 snapshot_interface/capture/full_diff 等方法。
+    # 现将两个辅助函数移至文件末尾（模块级），类体恢复连续，方法归位。
     def snapshot_interface(self, module_dir: str) -> dict[str, list[str]]:
         signatures: dict[str, list[str]] = {}
 
@@ -232,8 +220,7 @@ def _read_config_file(fp: str):
         if not os.path.isdir(module_dir):
             return configs
 
-        for root, _dirs, files in os.walk(module_dir):
-            file_paths = []
+        file_paths: list[str] = []
         for root, _dirs, files in os.walk(module_dir):
             for fname in files:
                 if not (fname.endswith(".yaml") or fname.endswith(".yml") or fname.endswith(".json")):
@@ -521,3 +508,23 @@ def _read_config_file(fp: str):
 
             if os.path.exists(src):
                 shutil.move(src, dst)
+
+
+# 治本（裁定#18 G1）：模块级辅助函数——供 BaselineManager.snapshot_interface/
+# snapshot_import_graph/snapshot_config 的 ThreadPoolExecutor 调用。置于文件末尾
+# （模块级 0 缩进），避免打断 BaselineManager 类体。
+def _read_source_file(fp: str) -> tuple[str, str] | None:
+    try:
+        with open(fp, encoding="utf-8") as fh:
+            return (fp, fh.read())
+    except (UnicodeDecodeError, OSError):
+        return None
+
+
+def _read_config_file(fp: str):
+    if fp.endswith(".json"):
+        with open(fp, encoding="utf-8") as fh:
+            return json.load(fh)
+    else:
+        with open(fp, encoding="utf-8") as fh:
+            return yaml.safe_load(fh)
