@@ -4911,6 +4911,17 @@ creation_tokens:
     created_by: "session-sweep-fix-20260717"
     capability: "session_worktree_cli"
 
+  # session_worktree_sweep 公开 API（治本遗留项#2 P1, 2026-07-17 + 阶段2 取代判定, 2026-07-18）：
+  # 清理 .aidrafts/ 下 stale session worktree 残留。三重保护判据：
+  #   ① age > max_age_minutes ② session 不在 active registry ③ 分支 tip 在 HEAD 祖先或被取代
+  # 阶段2治本（2026-07-18）：判据3 扩展 _branch_commits_superseded 取代判定，
+  #   全部提交被取代（patch-id/message 两维度）时安全清理，治未合并提交陷阱。
+  # capability 反查：新 AI 搜 "worktree 清理/stale worktree/sweep/孤儿 worktree/未合并提交" 可定位此 API。
+  - file: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
+    token: "auto-session-worktree-sweep-20260717"
+    created_by: "session-sweep-fix-20260717"
+    capability: "session_worktree_sweep"
+
   # GATE-WORKTREE-LIFECYCLE reconciler: 事件驱动 stale worktree 自动清理（治本遗留项#2 P2, 2026-07-17）
   # 病根：原 P1 仅在 session_worktree_start 内被动触发 sweep——无新 session 启动时 stale 永久堆积。
   # 治本：reconciler 在任何 commit/merge 后自动触发 session_worktree_sweep（priority=800）。

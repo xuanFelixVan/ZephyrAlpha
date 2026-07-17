@@ -1691,7 +1691,7 @@ entries:
 - issue_id: '#ARCH-059'
   title: 蓝图先行模块自动豁免（construction_progress=not_started 不报告孤儿/设计态孤立）
   severity: P3低
-  status: decided
+  status: superseded
   adjudication: |
     ARCH-059 解决蓝图先行模块被 align_panoramas 误报为孤儿/设计态孤立的问题：
     (1) PanoramaNode 新增 construction_progress 字段；
@@ -1703,13 +1703,20 @@ entries:
     应在 depgraph 登记节点，否则报告为孤儿。
     frontmatter.construction_progress 取值语义：not_started=蓝图先行(自动豁免) /
     in_progress=施工中(应登记 depgraph planned) / done=施工完成(应登记 depgraph production)。
+    【2026-07-18 修订】本裁定被 #ARCH-FRONTMATTER-STATE-001 Phase 3 部分超越(superseded)——
+    construction_progress 字段因"手动维护+不可自动派生+违反SSoT铁律+语义重复build_status"
+    全项目退役。蓝图先行豁免机制保留，但判定逻辑改用 graph-based：
+    graphs == {"blueprint"} 即模块仅在 blueprint 图存在=无代码=蓝图先行，
+    不再依赖 frontmatter.construction_progress == "not_started"。
   fix_phase: |
     单次修复（已完成）：align_panoramas.py 新增 construction_progress 字段 +
       _is_blueprint_not_started + 两处豁免逻辑；test_align_panoramas.py 新增 4 个测试。
     验证：MOD-GOV-ALIGNMENT-LOOP 不再误报为孤儿，align_panoramas 问题总数=0。
-  related_adjudication: '#ARCH-053, #ARCH-056'
+    【2026-07-18 追加】Phase 3 退役施工：construction_progress 字段从 PanoramaNode 删除，
+      _is_blueprint_not_started 改用 graphs=={"blueprint"} 判定。详见 #ARCH-FRONTMATTER-STATE-001。
+  related_adjudication: '#ARCH-053, #ARCH-056, #ARCH-FRONTMATTER-STATE-001'
   created: '2026-07-16'
-  last_updated: '2026-07-16'
+  last_updated: '2026-07-18'
 - issue_id: '#ARCH-060'
   title: ARCH 编号登记边界与引用规范化（登记强制 + 编号冲突消解 + 禁止绕过格式）
   severity: P2中
@@ -2765,7 +2772,7 @@ entries:
   title: stale session worktree 永久堆积——sweep 公开 API 缺失 + 无事件驱动自动清理
   category: architecture_governance
   severity: P2中
-  status: in_progress
+  status: resolved
   description: |
     治本遗留项#2（2026-07-17 发现）：原 _sweep_stale_worktrees 为私有函数，仅在
     session_worktree_start 内被动触发——无新 session 启动时，崩溃/放弃 session 的
@@ -2779,7 +2786,10 @@ entries:
     P2（已完成）：worktree_lifecycle_reconciler（GATE-WORKTREE-LIFECYCLE）事件驱动
       自动清理——任何 commit/merge 后自动触发 session_worktree_sweep，符合"永久
       系统全自动/事件触发"铁律（替代废弃的 worktree_gc.py 守护进程时间触发方案）；
-    第三期（待定）：残留分支/注册表条目与物理目录的三方一致性深度治理。
+    第三期（已完成 2026-07-18）：未合并提交陷阱治本——_branch_commits_superseded
+      两维度取代判定（patch-id 等价 + message 主体匹配），全部提交被取代时安全清理
+      worktree，避免死 session 的未合并分支永久堆积（100% AI 开发场景高发）。
+      残留分支/注册表条目与物理目录的三方一致性深度治理由 reconciler 兜底。
   adjudication: |
     裁定方向（sess-39824 记录，2026-07-18 补登）：
     (1) sweep 能力公开化——session_worktree_sweep 作为 AI/CLI 可调用真源入口，
@@ -2789,14 +2799,15 @@ entries:
     (3) 发现性闭环——capability registry 登记 worktree_lifecycle_reconciler
         creation_token + AGENTS.md 文档同步，新 AI 可反查发现，防重复造轮子。
   impact:
-    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py  # P1: 公开 sweep API + 防御性校验
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py  # P1: 公开 sweep API + 防御性校验; 第三期: _branch_commits_superseded 取代判定
     - src/zephyr/governance/audit/reconciliation_registry.py  # P2: make_worktree_lifecycle_reconciler
+    - tests/governance/rule_bridge/test_session_worktree.py  # 第三期: 6 个取代判定单元测试
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml  # creation_token 登记
     - AGENTS.md  # P2 reconciler 文档同步
   fix_phase: |
     P1（已完成 2026-07-17）：session_worktree_sweep 公开 API
     P2（已完成 2026-07-18）：GATE-WORKTREE-LIFECYCLE reconciler 事件驱动
-    第三期（待定）：三方一致性深度治理
+    第三期（已完成 2026-07-18）：_branch_commits_superseded 取代判定治未合并提交陷阱
   related_adjudication: 'FP-ISO.4C worktree 君子协定, #ARCH-DEP-001 PRE-MERGE-TOPO-CHECK'
   related_rules: [TRAE-062]
   created: '2026-07-18'
@@ -3060,3 +3071,108 @@ entries:
   status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
+
+- issue_id: '#ARCH-FRONTMATTER-STATE-001'
+  title: 蓝图 frontmatter 状态三层模型——代码现实→depgraph→frontmatter 缓存同步
+  severity: P1高
+  status: in_progress
+  adjudication: |
+    ARCH-FRONTMATTER-STATE-001 确立蓝图 frontmatter 状态字段的三层模型与同步机制，
+    治本"frontmatter 状态字段失效导致幻觉"问题。
+
+    【三层状态模型】
+    (L1) 代码现实（ground truth）：模块是否真实存在于磁盘/有无测试/有无依赖——
+         由 generate_project_depgraph.py 扫描器派生为 depgraph 节点属性
+         （build_status/design_maturity/has_test 等）。
+    (L2) depgraph（verified）：扫描器派生的运营态真源，机器可查、零幻觉。
+    (L3) blueprint frontmatter（cache）：人/AI 声明的缓存字段，由 reconciler
+         从 depgraph 单向同步。frontmatter 是缓存非真源，stale 即被覆盖。
+
+    【construction_progress 退役裁定（Phase 3 Link C）】
+    construction_progress 字段全项目退役，理由（四重根因）：
+    (R1) 不可自动派生：construction_progress 是手动维护字段，无任何扫描器/
+         reconciler 自动写入路径 → 必然 stale。
+    (R2) 已证失效：24 处蓝图 frontmatter.construction_progress 与实际代码状态
+         不一致（标 not_started 但代码已存在 500+ bytes）。
+    (R3) 语义重复 build_status：build_status 是扫描器从代码现实派生的
+         {production/design/planned}，construction_progress 的
+         {not_started/in_progress/done} 语义与之 1:1 重复。
+    (R4) 违反 SSoT 铁律：construction_progress 二真源（frontmatter +
+         blueprint_registry.yaml）+ validate_ssot_construction_progress.py 双向校验
+         违反 TRAE-060 §2 唯一真源原则。
+
+    蓝图先行检测（原 ARCH-059 基于 construction_progress=not_started）改用
+    graph-based 判定：graphs == {"blueprint"} 即模块仅在 blueprint 图存在=无代码=
+    蓝图先行，不依赖任何手动维护字段。
+
+    【G8 门禁退役】
+    G8 门禁（validate_ssot_construction_progress.py）整体退役——其 4 项检查全部
+    基于 construction_progress 字段（frontmatter↔blueprint_registry、
+    frontmatter↔module-registry、registry 交叉一致性、受控词表），字段退役后
+    门禁失去存在依据。g8.yaml 定义文件 + validator 脚本 + _registry.yaml 条目
+    + rule_enforcement_registry 条目 + scripts_registry 条目 + path_ownership_map
+    条目 + audit_orchestrator blueprint 表格行全部删除。
+
+    【四阶段施工计划】
+    Phase 1（Link A，commit d51a02b675 已完成）：修复 derive_build_status has_test
+      死代码——扫描器正确派生 build_status，奠定 L2 真源可信度。
+    Phase 2（Link B，commits c9320342fb+08b14705ce+046a0847ee+a816983b1e 已完成）：
+      注册 blueprint_frontmatter_reconciler 为 post-commit reconciler，建立
+      L2→L3 单向同步通道（depgraph.build_status → frontmatter.build_status）。
+    Phase 3（Link C 退役，本次执行）：
+      Commit 1（306200e75d 已完成）：从 PanoramaNode/BlueprintFrontmatter 数据类、
+        _fetch_blueprint_nodes、sync_registry_from_blueprints、session_continuity、
+        validate_blueprint_implementation_docs 移除 construction_progress 字段
+        及相关分支逻辑。
+      Commit 2（01189ac76d+32052d289c+7f951c42bb 已完成）：删除 G8 validator 脚本 +
+        g8.yaml 门禁定义 + 7 个注册表/配置文件清理 + blueprint_registry.yaml 词表块/
+        61 处 per-entry 字段/summary 块 + 58 个 .md frontmatter 字段。
+      Commit 3（本次）：修复代码/测试文件（test_align_panoramas/sys_master_compliance/
+        triple_alignment/g9.yaml/check_blueprint_compliance/_e2e_check/session_continuity
+        tests/blueprint_construction_template.md）+ 规则/文档更新（trae_060 L208、
+        ARCH-059 标注 superseded、rule_enforcement_registry L689、registry_of_registries
+        L455/L464）。
+    Phase 4（待执行）：新增 FRONTMATTER_STATE_STALE 门禁到 check_blueprint_code_alignment.py
+      ——检测 frontmatter.build_status 与 depgraph.build_status 不一致并报告为
+      WARN（存量 9/9 stale 蓝图通过全量 depgraph 重建 + sync_all_panorama 修复）。
+      该门禁是 L3 cache 失效的机械检测层，与 Phase 2 reconciler 形成"检测+修复"闭环。
+
+    【向内收四原则符合性】
+    (1) 能现成不创造：build_status 字段已存在（扫描器派生），construction_progress
+        退役=收敛到现成字段，非新造。
+    (2) 创造必全自动：blueprint_frontmatter_reconciler 是 post-commit 事件触发
+        的全自动 reconciler（Phase 2），frontmatter 状态自动同步无需手工。
+    (3) 第一性原理治本：construction_progress 是"前自动同步时代"的手动维护遗物，
+        元问题本身不应存在——自动派生字段（build_status）已覆盖其全部语义。
+  fix_phase: |
+    Phase 1 已完成（commit d51a02b675）
+    Phase 2 已完成（commits c9320342fb+08b14705ce+046a0847ee+a816983b1e）
+    Phase 3 进行中：
+      Commit 1 已完成（306200e75d）
+      Commit 2 已完成（01189ac76d+32052d289c+7f951c42bb）
+      Commit 3 本次执行（代码/测试修复 + 规则/文档更新）
+    Phase 4 待执行（FRONTMATTER_STATE_STALE 门禁 + 存量修复）
+  impact:
+  - scripts/governance/d5_architecture/generators/align_panoramas.py（PanoramaNode 删除 construction_progress，_is_blueprint_not_started 改 graph-based）
+  - scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py（BlueprintFrontmatter 删除字段）
+  - scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py（registry 条目删除字段）
+  - src/zephyr/shared/session/session_continuity.py（handoff 包删除字段）
+  - scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_implementation_docs.py（简化为文件存在性检查）
+  - scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py（G8 validator 删除）
+  - src/zephyr/gov_enforcement/rule_enforcement/g8.yaml（G8 门禁定义删除）
+  - src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml（G8 条目删除，总数 94→93）
+  - docs/03_modules/blueprint_registry.yaml（词表块+61 per-entry 字段+summary 块删除）
+  - 58 个 docs/03_modules/**/*.md（frontmatter construction_progress 字段删除）
+  - tests/test_align_panoramas.py（_make_node/test calls/test method 移除）
+  - src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py/.yaml + test（check_construction_progress_consistency 删除）
+  - src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py + test + g9.yaml + gct_024_budget_enforcer.yaml（_check_construction_progress 删除）
+  - scripts/governance/d3_metadata/check_blueprint_compliance.py（REQUIRED_FRONTMATTER 删除字段）
+  - scripts/construction/_e2e_check.py（construction_progress 读取删除）
+  - tests/session/test_session_continuity_core_root.py + test_session_continuity_session.py（断言删除）
+  - docs/01_policies_and_standards/templates/blueprint_construction_template.md（12 处引用删除）
+  - docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml（L208 退役说明）
+  - docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml（L689 描述更新）
+  - docs/registry_of_registries.yaml（L455/L464 build_status 替换）
+  related_adjudication: '#ARCH-059, #ARCH-053, #ARCH-056, TRAE-060'
+  created: '2026-07-17'
+  last_updated: '2026-07-18'
