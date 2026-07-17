@@ -4322,9 +4322,15 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
                         action="auto_committed",
                         detail=f"inventory drift auto-fixed: {fix['detail']}",
                     )
+                if commit_result.status == "NOTHING_TO_COMMIT":
+                    return ReconcileResult(
+                        action="clean",
+                        detail=f"inventory auto-fix no staged changes (auto-commit): {fix['detail']}",
+                    )
                 return ReconcileResult(
                     action="warn",
-                    detail=f"auto-fix applied but commit failed: {commit_result.message[:100]}",
+                    detail=f"inventory drift auto-fix commit failed ({commit_result.status}): "
+                           f"{commit_result.message[:200]}",
                 )
             return ReconcileResult(
                 action="warn",
