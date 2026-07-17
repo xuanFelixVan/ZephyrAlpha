@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L06-001
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.simulation_broker
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] zephyr.governance.adapters.simulation_broker
@@ -13,6 +13,6 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""Re-export wrapper: simulation_broker has migrated to zephyr.execution.core.adapters.simulation_broker"""
+"""Re-export wrapper: simulation_broker 真源在 zephyr.governance.adapters.simulation_broker"""
 
 from zephyr.governance.adapters.simulation_broker import *  # noqa: F403
