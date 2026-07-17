@@ -125,11 +125,42 @@ def _check_count_derivation(rel: str, content: str) -> list[str]:
     return []
 
 
+def _candidate_declares_mid(candidate_abs: str, mid: str) -> bool:
+    """验证候选文件是否在 ``[A_*]`` 头部声明指定 module_id（非 ``[BLUEPRINT]`` 引用）。
+
+    精确性治本（ARCH-TTL-DOC-001 循环修复）：``git grep -F`` 纯文本搜索会匹配
+    ``[BLUEPRINT]`` 引用头中的 module_id（test 文件按约定引用源模块的
+    ``[BLUEPRINT]`` id），导致误判碰撞。本函数读取候选文件并用
+    ``_RE_HEADER_MODULE_ID`` 正则精确匹配 ``[A_*]`` 头部声明。
+
+    Args:
+        candidate_abs: 候选文件绝对路径。
+        mid: 要匹配的 module_id 字符串。
+
+    Returns:
+        True=候选文件在 ``[A_*]`` 头声明了相同 module_id（真碰撞）；
+        False=未声明/文件不存在/读取失败（排除误报）。
+    """
+    if not os.path.isfile(candidate_abs):
+        return False
+    try:
+        content = Path(candidate_abs).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+    for cm in _RE_HEADER_MODULE_ID.finditer(content):
+        if cm.group(1) == mid:
+            return True
+    return False
+
+
 def _check_cross_file_collision(gateway, files: list[str], project_root) -> list[str]:
     """校验 staged .py 文件的 module_id 跨文件唯一性（git grep 全仓检测）。
 
     历史豁免：仅对 NEWLY ADDED（不在 HEAD）的文件生效；HEAD 中已存在的
     修改文件（M状态）属存量基线 DRY 违规，由去重任务处理，此处不阻断。
+
+    精确性治本：grep 后调用 ``_candidate_declares_mid`` 验证候选文件是否
+    真正在 ``[A_*]`` 头声明相同 module_id（排除 ``[BLUEPRINT]`` 引用误报）。
     """
     violations: list[str] = []
     for f in files:
@@ -153,7 +184,14 @@ def _check_cross_file_collision(gateway, files: list[str], project_root) -> list
         if result.returncode != 0:
             continue  # no matches = no collision
         matches = [line.strip() for line in result.stdout.split("\n") if line.strip()]
-        others = [x for x in matches if x != rel]
+        # 精确验证：候选文件必须在 [A_*] 头部声明相同 module_id（非 [BLUEPRINT] 引用）
+        others = [
+            candidate for candidate in matches
+            if candidate != rel
+            and _candidate_declares_mid(
+                os.path.join(str(project_root), candidate.replace("/", os.sep)), mid
+            )
+        ]
         if others:
             violations.append(
                 f"{rel}: module_id_collision '{mid}' also declared in: {', '.join(others[:5])}"
