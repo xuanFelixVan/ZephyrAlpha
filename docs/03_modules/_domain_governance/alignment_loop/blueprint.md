@@ -15,7 +15,6 @@ valid_from: "2026-07-14"
 submodule_path: src/zephyr/gov_drift/; src/zephyr/governance/audit/
 date: "2026-07-14"
 ttl: permanent
-construction_progress: not_started
 actual_disk_path: "src/zephyr/gov_drift/; src/zephyr/governance/audit/reconciliation_registry.py"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

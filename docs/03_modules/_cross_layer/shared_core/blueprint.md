@@ -14,7 +14,6 @@ date: "2026-05-03"
 last_updated: "2026-06-23"
 valid_from: "2026-05-03"
 ttl: permanent
-construction_progress: design_only
 actual_disk_path: "src/zephyr/shared/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "跨层共享基础设施，115+已跟踪文件，Shared 59 + Core 60 .py + ProcessLifecycleGateway (已实现) + F20 监控系统恢复(16文件: health/longevity/metrics/observability/quality/sla/contracts) + F21 自动化集成(EventBus合并+自动启动+事件订阅+分钟级监控+Finalizer自动关闭)"

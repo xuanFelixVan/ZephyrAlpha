@@ -14,7 +14,6 @@ date: "2026-05-08"
 updated: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: src/zephyr/security/llm_defense/llm_security/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha LLM Security Gateway (LSG) 完整蓝图——九层纵深防御 + 自我防护体系 + 运维保障体系：L0 供应链安全（模型验证+依赖扫描+AI BOM+Code Signing+Slopsquatting防御）→ L1 输入防护（直接注入+间接注入+越狱检测+Spotlighting+RAG投毒防御+ToolResultTransform拦截）→ L2 Prompt保护（System Prompt隔离+防泄露+话题控制+长会话Drift检测+Promptware Kill Chain映射）→ L3 输出安全（Schema验证+沙箱执行+PII脱敏+幻觉检测+AI代码信任边界+Embedding Inversion防御）→ L4 Agent安全（权限最小化+HITL+操作审计+MCP Sampling防御+Tool Description Integrity+DeepSeek jailbreak已知漏洞补偿）→ L5 资源保护（速率限制+Token预算+成本熔断+并发限制+LSG性能预算+SLA）→ L6 可观测性（安全日志+异常告警+仪表板+审计报告+LSG自监控+延迟追踪）→ L7 持续验证（自动Red Team+安全回归测试+威胁情报+LSG自我回归测试）→ L8 多Agent安全（Agent间通信认证+跨Agent权限隔离+级联熔断+Rogue检测+Trust Anti-Abuse+Shadow Agent检测+NHI治理）+凭据全生命周期+数据层安全(RLS/默认安全)。fail-closed + 性能预算(SLO/SLA)贯穿全链路。"

@@ -16,7 +16,6 @@ created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 ttl: permanent
 actual_disk_path: "src/zephyr/infrastructure/capacity_assurance/"
-construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
 codification_level: L1

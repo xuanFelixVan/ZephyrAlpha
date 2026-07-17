@@ -185,15 +185,6 @@ items:
   - TRAE-005
   status: ''
   category: ''
-- file: src/zephyr/gov_enforcement/rule_enforcement/g8.yaml
-  gate_id: G8
-  title: G8 SSoT Consistency Gate — frontmatter ↔ registry 双向一致性校验
-  description: SSoT 一致性门禁——校验每份 blueprint.md 的 frontmatter construction_progress 与 blueprint_registry.yaml / module-registry.yaml 完全一致。不一致 = 注册表不可信 = 阻断。
-  rule_ids:
-  - TRAE-013
-  - TRAE-014
-  status: active
-  category: ''
 - file: src/zephyr/gov_enforcement/rule_enforcement/g8_leverage.yaml
   gate_id: G11
   title: ''

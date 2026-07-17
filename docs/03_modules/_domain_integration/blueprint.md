@@ -10,7 +10,6 @@ date: "2026-06-23"
 last_updated: "2026-07-16"
 generation: 1
 belongs_to: "MOD-MASTER_BLUEPRINT"
-construction_progress: scaffold
 actual_disk_path: src/zephyr/integration/local_model/
 functional_domain: infra
 stability: stable

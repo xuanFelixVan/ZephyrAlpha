@@ -14,7 +14,6 @@ created_by: human_plus_agent
 date: "2026-05-06"
 valid_from: "2026-05-06"
 ttl: permanent
-construction_progress: design_only
 actual_disk_path: "src/zephyr/feedback_loop/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

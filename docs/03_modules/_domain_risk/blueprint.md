@@ -17,7 +17,6 @@ last_updated: "2026-05-15"
 last_verified: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/risk/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

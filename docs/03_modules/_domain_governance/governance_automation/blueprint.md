@@ -14,7 +14,6 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-03"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "scripts/governance/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 dependencies:

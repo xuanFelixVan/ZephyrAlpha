@@ -15,7 +15,6 @@ created_by: human_plus_agent
 valid_from: "2026-05-12"
 date: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/factor/"
 belongs_to: ""
 parent_module: ""

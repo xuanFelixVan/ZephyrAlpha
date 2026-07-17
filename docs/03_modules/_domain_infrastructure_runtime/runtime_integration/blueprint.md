@@ -15,7 +15,6 @@ created_by: AI-GLM-5.1
 valid_from: 2026-05-01
 date: "2026-05-01"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "src/zephyr/shared/ + src/zephyr/infrastructure/ + src/zephyr/governance/lifecycle_governance/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

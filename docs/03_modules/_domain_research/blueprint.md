@@ -12,7 +12,6 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-05"
 ttl: permanent
-construction_progress: design_only
 actual_disk_path: "src/zephyr/research/"  # ARCH-MIGRATION-CLOSE(2026-07-16): 空壳目录。实际实现已迁移至 src/zephyr/backtest/（core/engine_base.py + implementations/vectorized_engine.py），见 §0.1 与 §16.7 迁移说明
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"

@@ -15,7 +15,6 @@ valid_from: 2026-05-05
 submodule_path: src/zephyr/gov_drift/
 date: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/gov_drift/; src/zephyr/governance/drift_detector_core/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

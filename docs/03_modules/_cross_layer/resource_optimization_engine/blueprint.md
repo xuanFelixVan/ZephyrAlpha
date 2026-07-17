@@ -11,7 +11,6 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: design_only
 actual_disk_path: "src/zephyr/trading/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 submodule_path: src/zephyr/runtime/

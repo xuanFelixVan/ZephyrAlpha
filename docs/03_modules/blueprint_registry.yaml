@@ -49,19 +49,6 @@ _schema:
     Deprecated=已废弃但保留参考；Retired=完全退役。当前前matter使用 Active(4份)/Draft(34份)。
 
     '
-  construction_progress_values:
-  - not_started
-  - design_only
-  - scaffold
-  - partially_implemented
-  - completed
-  construction_progress_description: '受控词表 (v4.0.0). not_started=蓝图存在但未开工; design_only=仅有设计文档无代码;
-    scaffold=脚手架已创建(scaffold.py); partially_implemented=部分实现; completed=全部施工完成. 废弃值:
-    phase_1_partial/phase_1_complete/phase_2_complete/partially_implemented/phase_27_planned,
-    phase_2_blueprint_audit_357_blind_spots_closed 等非标准写法 统一为上述受控词表中最近似项. 所有蓝图必须在
-    2026-05-15 前完成归一化 (Phase 3 截止).
-
-    '
   completeness_dimensions:
   - id: sections
     weight: 0.3
@@ -117,7 +104,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_backtest/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-CONTEXT_ENGINE
   name: context_engine
   title: Context Engine 集成蓝图 — 上下文引擎集成索引
@@ -132,7 +118,6 @@ blueprints:
   generation: 1
   last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-FEEDBACK_LOOP
   name: feedback_loop
   title: Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防御AIOps核心
@@ -147,7 +132,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-19'
   file_path: 03_modules/_cross_layer/feedback_loop/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-GATE_ENGINE
   name: gate_engine
   title: Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁域熔断器
@@ -161,7 +145,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_cross_layer/gate_engine/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-GOV-SYNC-PANORAMA
   name: panorama_alignment_engine
   title: 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
@@ -179,7 +162,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
-  construction_progress: not_started
 - module_id: MOD-GOV-ALIGNMENT-LOOP
   name: alignment_loop
   title: 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
@@ -193,7 +175,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-14'
   file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
-  construction_progress: not_started
 - module_id: MOD-GOVERNANCE
   name: _domain_governance
   title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
@@ -207,7 +188,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-001
   name: capacity_assurance
   title: Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断
@@ -221,7 +201,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-002
   name: runtime_integration
   title: Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施
@@ -237,7 +216,6 @@ blueprints:
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-005
   name: governance_automation
   title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
@@ -251,7 +229,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/governance_automation/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-009
   name: pipeline
   title: Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -265,7 +242,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/pipeline/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-INF-011
   name: vector_memory
   title: Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化
@@ -280,7 +256,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_domain_knowledge/vector_memory/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-013
   name: model_context_protocol_servers
   title: MCP Servers 蓝图 — MCP 服务器管理与调度
@@ -294,7 +269,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-INF-015
   name: system_telemetry
   title: System Telemetry 蓝图+施工图 — 全系统可观测性
@@ -309,7 +283,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-016
   name: shared_core
   title: Shared+Core 蓝图
@@ -325,7 +298,6 @@ blueprints:
   generation: 2
   last_updated: '2026-06-23'
   file_path: 03_modules/_cross_layer/shared_core/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-INF-017
   name: code_dedup_engine
   title: Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复
@@ -340,7 +312,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-018
   name: agent_role_based_access_control
   title: Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限
@@ -354,7 +325,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-INF-019
   name: agent_spec
   title: 可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎
@@ -369,7 +339,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_autonomy_core/agent_spec/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-020
   name: audit_trail
   title: Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -384,7 +353,6 @@ blueprints:
   generation: 9
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/audit_trail/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-021
   name: rollback_system
   title: Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性
@@ -400,7 +368,6 @@ blueprints:
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_autonomy_core/rollback_system/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-022
   name: escalation_protocol
   title: Escalation Protocol 蓝图
@@ -415,7 +382,6 @@ blueprints:
   generation: 3
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-023
   name: drift_detector
   title: Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期
@@ -431,7 +397,6 @@ blueprints:
   generation: 4
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/drift_detector/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-024
   name: budget_enforcer
   title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
@@ -453,7 +418,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-025
   name: agent_to_agent_protocol
   title: A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -467,7 +431,6 @@ blueprints:
   generation: 3
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-026
   name: asset_inventory
   title: 资产盘点系统蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -481,7 +444,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-027
   name: audit_orchestrator
   title: Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
@@ -495,7 +457,6 @@ blueprints:
   generation: 6
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/audit_orchestrator/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-043
   name: disaster_recovery_backup
   title: 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
@@ -510,7 +471,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-17'
   file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-028
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
@@ -524,7 +484,6 @@ blueprints:
   generation: 5
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/semantic_auditor/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-029
   name: orphan_judge
   title: Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
@@ -538,7 +497,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/orphan_judge/blueprint.md
-  construction_progress: scaffold
 - module_id: MOD-INF-030
   name: red_blue_validator
   title: Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认
@@ -553,7 +511,6 @@ blueprints:
   generation: 17
   last_updated: '2026-05-23'
   file_path: 03_modules/_cross_layer/red_blue_validator/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-031
   name: auto_fix_engine
   title: Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行
@@ -568,7 +525,6 @@ blueprints:
   generation: 5
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/auto_fix_engine/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-INF-033
   name: behavioral_auditor
   title: Behavioral Auditor 蓝图 — 行为审计器·AI行为边界监控
@@ -582,7 +538,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/behavioral_auditor/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-034
   name: model_profiler
   title: Model Profiler 蓝图 — 模型画像器·LLM能力基线测量
@@ -596,7 +551,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-23'
   file_path: 03_modules/_cross_layer/model_profiler/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-035
   name: auto_runtime_core
   title: AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心
@@ -610,7 +564,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/auto_runtime_core/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-036
   name: model_capability_exam
   title: Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估
@@ -624,7 +577,6 @@ blueprints:
   generation: 2
   last_updated: '2026-06-27'
   file_path: 03_modules/_cross_layer/model_capability_exam/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-037
   name: registry_governance
   title: 注册表治理
@@ -638,7 +590,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_governance/registry_governance/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-038
   name: state_machine_engine
   title: State Machine Engine 蓝图 — 通用状态机引擎·全项目状态机实例治理
@@ -652,7 +603,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-INF-039
   name: agent_orchestrator
   title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
@@ -666,7 +616,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-19'
   file_path: 03_modules/_cross_layer/agent_orchestrator/blueprint.md
-  construction_progress: completed
 - module_id: MOD-INF-042
   name: _domain_integration
   title: MOD-INF-042 — Local Model 蓝图 — 本地模型推理基础设施·BGE-M3嵌入+Ollama推理+调度+缓存
@@ -680,7 +629,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_integration/blueprint.md
-  construction_progress: scaffold
 - module_id: MOD-KB-001
   name: knowledge_base
   title: 知识库系统蓝图
@@ -701,7 +649,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_knowledge/knowledge_base/blueprint.md
-  construction_progress: completed
 - module_id: MOD-L00-001
   name: _domain_data
   title: Data Source Core 蓝图+施工图 — 数据接入层
@@ -715,7 +662,6 @@ blueprints:
   generation: 4
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_data/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L02-001
   name: _domain_factor
   title: Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
@@ -729,7 +675,6 @@ blueprints:
   generation: 3
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_factor/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L03-001
   name: _domain_signal
   title: Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理
@@ -743,7 +688,6 @@ blueprints:
   generation: 3
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_signal/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L04-001
   name: _domain_risk
   title: Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -757,7 +701,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_risk/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L05-001
   name: _domain_portfolio_core
   title: Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -772,7 +715,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_portfolio_core/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L06-001
   name: _domain_execution_core
   title: Trade Execution Core 蓝图+施工图 — 交易执行引擎
@@ -788,7 +730,6 @@ blueprints:
   generation: 2
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_execution_core/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L07-001
   name: _domain_reporting
   title: Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -803,7 +744,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_reporting/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L08-001
   name: _domain_frontend
   title: Human Machine Interface Core 蓝图 — 人机交互层
@@ -822,7 +762,6 @@ blueprints:
   generation: 2
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_frontend/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L09-001
   name: _domain_research
   title: Research Innovation Core 蓝图+施工图 — 研究创新层
@@ -836,7 +775,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_research/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-L10-001
   name: _domain_compliance
   title: Compliance Core 蓝图+施工图 — 合规引擎
@@ -851,7 +789,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_compliance/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L11-001
   name: _domain_machine_learning_train
   title: ML Platform Core 蓝图+施工图 — 机器学习平台
@@ -866,7 +803,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_machine_learning_train/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-L13-001
   name: _domain_simulation
   title: Experimentation Core 蓝图+施工图 — 实验管理平台
@@ -881,7 +817,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_simulation/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-LLM_SECURITY
   name: large_language_model_security
   title: LLM Security Gateway 蓝图 — L0-L8 九层纵深防御 + fail-closed 原则
@@ -901,7 +836,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_cross_layer/large_language_model_security/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-MASTER_BLUEPRINT
   name: _master_blueprint
   title: Master Blueprint Index 蓝图 — 集成闭环总蓝图索引·指向3个拆分蓝图
@@ -915,7 +849,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint.md
-  construction_progress: partially_implemented
 - module_id: MOD-MASTER-001
   name: _master_blueprint_agent_spec
   title: Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
@@ -929,7 +862,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint_agent_spec.md
-  construction_progress: completed
 - module_id: MOD-MASTER-002
   name: _master_blueprint_baseline
   title: Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
@@ -944,7 +876,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint_baseline.md
-  construction_progress: completed
 - module_id: MOD-MASTER-003
   name: _master_blueprint_capacity
   title: Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计
@@ -958,7 +889,6 @@ blueprints:
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint_capacity.md
-  construction_progress: partially_implemented
 - module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   name: resource_optimization_engine
   title: 资源优化引擎蓝图
@@ -972,7 +902,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-22'
   file_path: 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
-  construction_progress: design_only
 - module_id: MOD-TASK_SYSTEM
   name: task_system
   title: Task System 蓝图 — 全链路任务卡生命周期管理
@@ -987,7 +916,6 @@ blueprints:
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
-  construction_progress: partially_implemented
 - module_id: SH-DB-001
   name: database
   title: Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位
@@ -1002,7 +930,6 @@ blueprints:
   generation: 3
   last_updated: '2026-07-07'
   file_path: 03_modules/_cross_layer/database/blueprint.md
-  construction_progress: completed
 - module_id: SYS-MASTER-001
   name: _system_master
   title: System Master 蓝图 — 三级金字塔架构·全部子系统拓扑
@@ -1016,7 +943,6 @@ blueprints:
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
-  construction_progress: completed
 summary:
   total: 60
   by_blueprint_status:

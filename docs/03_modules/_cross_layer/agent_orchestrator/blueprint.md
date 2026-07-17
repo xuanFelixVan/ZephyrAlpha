@@ -14,7 +14,6 @@ created_by: agent
 date: "2026-05-19"
 valid_from: "2026-05-19"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "src/zephyr/orchestrator/"
 belongs_to: "MOD-INF-035"
 generation: 1
