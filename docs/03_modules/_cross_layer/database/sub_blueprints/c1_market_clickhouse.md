@@ -4,7 +4,7 @@ submodule_path: data/databases/c1_market_clickhouse
 title: "C1 market_clickhouse 行情仓库施工蓝图"
 doc_type: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L2_domain
 layer_name: market_warehouse
 functional_domain: data
@@ -20,7 +20,7 @@ actual_disk_path: "data/databases/c1_market_clickhouse/"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
-last_updated: "2026-07-15"
+last_updated: "2026-07-17"
 generation: 1
 rule_form: structural
 scope: module
@@ -92,7 +92,7 @@ C1 market_clickhouse 是业务数据库仓库层的**行情仓库**，存储 L1 
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 |
 |---|--------|------------|------|:---:|
-| 1 | schemas/categories/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 待建 |
+| 1 | schemas/categories/market_tick.py | §4.1 | tick_data 表 DDL-as-Code | 已建 |
 | 2 | schemas/categories/market_daily_kline.py | §4.2 | daily_kline 表 DDL-as-Code | 待建 |
 | 3 | schemas/categories/market_auction.py | §4.3 | auction_snapshot 表 DDL-as-Code | 待建 |
 | 4 | schemas/categories/market_index.py | §4.4 | index_quote 表 DDL-as-Code | 待建 |
@@ -358,50 +358,30 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 ### §4.1 tick_data（3秒Tick — replay模式）
 
-```python
-# schemas/categories/market_tick.py
-# category_id: market_tick
-# calc_mode: replay（回测时逐笔回放，保证=实盘）
+> **DDL 真源**：`schemas/categories/market_tick.py`（DDL-as-Code 模式）。
+> 本节为**单向派生文档**，表结构以 `market_tick.py` 的 `TICK_DATA_DDL` 为唯一真源；
+> 禁止在本节反向修改 DDL——结构变更必须改 `market_tick.py` 并经 `apply_schema.py` 执行。
+> 下方属性表由真源派生，仅作速查，冲突时以 `market_tick.py` 为准。
 
-TICK_DATA_DDL = """
-CREATE TABLE IF NOT EXISTS c1_market.tick_data
-(
-    trade_date   Date           COMMENT '交易日期',
-    timestamp    DateTime       COMMENT '时间戳(3秒粒度)',
-    symbol       String         COMMENT '证券代码',
-    price        Decimal(18,4)  COMMENT '成交价',
-    volume       UInt64         COMMENT '成交量(股)',
-    amount       Decimal(18,2)  COMMENT '成交额(元)',
-    bid_price    Decimal(18,4)  COMMENT '买一价',
-    ask_price    Decimal(18,4)  COMMENT '卖一价',
-    bid_volume   UInt64         COMMENT '买一量',
-    ask_volume   UInt64         COMMENT '卖一量',
-    market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留港股/美股/期货)',
-    data_source  LowCardinality(String)  COMMENT '数据来源(miniQMT等)',
-    quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
-    INDEX idx_ts timestamp TYPE minmax GRANULARITY 1
-)
-ENGINE = ReplacingMergeTree(ingest_ts)
-PARTITION BY toYYYYMMDD(trade_date)
-ORDER BY (symbol, trade_date, timestamp)
-COMMENT 'A股3秒Tick行情(原料,replay)'
-"""
-```
+**设计裁定**：`tick_data` 遵循 **#ARCH-CH-002**（ReplacingMergeTree 无版本列），
+是 §4.0 策略表"全部 ReplacingMergeTree(ingest_ts)"（#ARCH-CH-009）的**已登记例外**——
+5 字段 ORDER BY 已能精确去重，无需 ingest_ts 版本列。详见 `market_tick.py` 表头设计决策。
 
-| 属性 | 值 |
+| 属性 | 值（派生自 `market_tick.py` 真源） |
 |------|-----|
 | 表名 | tick_data |
-| 品类 | A股3秒Tick |
+| 品类 | A股3秒Tick（含 stock/etf/cb/lof/index/sector/stock_bj/mkt_index 8种 market_type） |
 | 性质 | 原料 |
 | 频率 | 3秒 |
-| 数据源 | miniQMT |
-| 引擎 | ReplacingMergeTree(ingest_ts) |
-| 分区 | PARTITION BY toYYYYMMDD(trade_date) |
-| 排序键 | ORDER BY (symbol, trade_date, timestamp) |
-| 索引 | INDEX idx_ts timestamp TYPE minmax GRANULARITY 1 |
+| 数据源 | miniqmt, bdpan |
+| 引擎 | ReplacingMergeTree（**无版本列**，#ARCH-CH-002 例外） |
+| 分区 | PARTITION BY toYYYYMM(trade_date)（月级分区，93亿行规模优化） |
+| 排序键 | ORDER BY (market_type, symbol, trade_date, timestamp, price)（**5字段**，防同一时间戳不同价位成交被合并） |
+| 列数 | 14 列（含 direction 买卖方向；bid/ask 为 Nullable） |
 | TTL | **无TTL**（永久保留，INV-RET-003 铁律） |
 | calc_mode | **replay**（回测时逐笔回放，保证=实盘） |
 | category_id | **market_tick** |
+| schema_file | `schemas/categories/market_tick.py` |
 
 ### §4.2 daily_kline（日线OHLCV — preload模式）
 
