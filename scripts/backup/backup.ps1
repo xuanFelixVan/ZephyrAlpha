@@ -161,12 +161,18 @@ $excludeArgs = @(
     "--exclude","logs/*.log",
     "--exclude","logs/*.log.*",
     "--exclude",".venv/",
-    "--exclude","node_modules/"
+    "--exclude","node_modules/",
+    "--exclude","metadata/",
+    "--exclude","access/",
+    "--exclude","preprocessed_configs/",
+    "--exclude","status",
+    "--exclude","uuid"
 )
 
 # restic --json输出JSON到stdout，进度信息到stderr；不用2>&1避免stderr混入stdout导致ConvertFrom-Json失败
 $backupResult = & restic -r $RepoPath backup $ProjectRoot $DumpDir @excludeArgs --json | ConvertFrom-Json
-if ($LASTEXITCODE -ne 0) { Write-Err "restic backup failed (exit $LASTEXITCODE)"; exit 1 }
+if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3) { Write-Err "restic backup failed (exit $LASTEXITCODE)"; exit 1 }
+if ($LASTEXITCODE -eq 3) { Write-Warn "restic backup completed with warnings (some files could not be read)" }
 $snapshotId = ($backupResult | Where-Object { $_.message_type -eq "summary" } | Select-Object -Last 1).snapshot_id
 if (-not $snapshotId) {
     Write-Err "restic backup failed - no snapshot_id in summary"

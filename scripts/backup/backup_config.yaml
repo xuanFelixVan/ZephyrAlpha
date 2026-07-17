@@ -44,7 +44,7 @@ databases:
     db_name: depgraph
     host: "localhost"
     port: 5432
-    user: "postgres"
+    user: "zephyr"
     dump_file: "depgraph.dump"
   sqlite:
     - {src: "data\\databases\\governance.db", dump: "governance_backup.db"}
@@ -68,6 +68,11 @@ excludes:
   - "logs/*.log.*"
   - ".venv/"
   - "node_modules/"
+  - "metadata/"
+  - "access/"
+  - "preprocessed_configs/"
+  - "status"
+  - "uuid"
 
 report:
   output_dir: "logs"
