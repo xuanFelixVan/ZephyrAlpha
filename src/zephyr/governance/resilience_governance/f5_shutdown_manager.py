@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.resilience_governance.f5_shutdown_manager
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.governance.f5_boot_integration; zephyr.trading.boot_hooks
+# [CONSUMERS] zephyr.trading.boot_hooks
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] shutdown is idempotent; signal handlers never raise; atexit hook safe to call multiple times; persist_state writes atomic; restore_state never raises
