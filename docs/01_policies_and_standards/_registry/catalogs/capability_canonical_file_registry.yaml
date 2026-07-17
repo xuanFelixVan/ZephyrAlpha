@@ -1343,6 +1343,22 @@ capabilities:
       - make_pure_shim_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: pure_assertion_gate
+    aliases:
+      - PURE-ASSERTION
+      - pure-assertion
+      - make_pure_assertion_gate
+      - pure_assertion_blocker
+    description: >-
+      纯陈述原则阻断门禁（PURE-ASSERTION，priority=69，2026-07-17 治本）。检测 staged
+      .py 文件中是否含命令式副作用代码（如 subprocess 调用/文件写入/网络请求）违反
+      "纯陈述原则"——声明式描述应与命令式执行分离。subprocess 调 check_pure_assertion.py
+      --ci（检测逻辑 SSoT 在 check_pure_assertion.py，本 gate 是 thin wrapper）。
+      priority=69（紧随 PURE-SHIM=68 之后、DANGLING-REFERENCE=70 之前）。
+    integrity_anchors:
+      - make_pure_assertion_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -4101,6 +4117,10 @@ creation_tokens:
     token: "auto-pure-shim-gate-20260709"
     created_by: "session-p6-ai15-audit"
     capability: "pure_shim_gate"
+  - file: "src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py"
+    token: "auto-pure-assertion-gate-20260717"
+    created_by: "session-m03-m04-fix"
+    capability: "pure_assertion_gate"
 
   # --- ARCH-042 阶段1: rule_enforcement gate_engine/rule_engine 子目录拆分包标记 ---
   - file: "src/zephyr/governance/rule_enforcement/gate_engine/__init__.py"

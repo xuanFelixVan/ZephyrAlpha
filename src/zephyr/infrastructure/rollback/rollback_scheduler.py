@@ -14,6 +14,7 @@
 # [TESTS] tests/adversarial/test_rollback_scheduler.py
 # [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: 注释中提及"cron"描述CI调用方式(L191),非实际cron代码;schedule_wal_gc是事件驱动(rollback_boot_integration调用),schedule_drill是CI job兜底(非daemon线程)
 """
 RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).
 
