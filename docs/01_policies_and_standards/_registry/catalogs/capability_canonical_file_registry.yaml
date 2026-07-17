@@ -457,7 +457,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: completes_when_validator
-    canonical_override: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+    canonical_override: src/zephyr/governance/rule_bridge/git_commit_gateway.py
     aliases:
       - completes_when_check
       - _check_working_docs_completes_when
@@ -672,22 +672,6 @@ capabilities:
       canonical = scripts/governance/sync_panorama_module.py。
       与 sync_yaml_to_depgraph（规则 YAML→DB 单向同步）不同：本引擎是架构数据
       depgraph→dataflow/decision 派生同步，非规则数据同步。
-
-  # --------------------------------------------------------------------------
-  - capability_id: blueprint_panorama_generation
-    aliases:
-      - generate_blueprint_panorama
-      - blueprint_s06_autogen
-      - s06_section_generator
-      - panorama_section_writer
-    description: >-
-      蓝图 §0.6 四图对齐视图生成器（ARCH-056 Phase 3）。从 depgraph/dataflow/
-      decision 三图读取模块数据，单向派生写入蓝图的 §0.6 章节（四图位置表 +
-      四核心字段对比表）。幂等写入——多次运行结果一致。与 align_panoramas
-      （只读检测器）和 sync_panorama_module（四图同步引擎）职责分离：本生成器
-      只写蓝图 §0.6 章节，不修改 frontmatter（由 blueprint_frontmatter_reconciler
-      负责）不检测对齐问题（由 align_panoramas 负责）。
-      canonical = scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py。
 
   # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection
@@ -1359,28 +1343,6 @@ capabilities:
       - make_pure_shim_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
-  - capability_id: pure_assertion_gate
-    aliases:
-      - PURE-ASSERTION
-      - pure-assertion
-      - make_pure_assertion_gate
-      - pure_assertion_blocker
-      - no_pure_assertion_gate
-      - GOV-DOC-016-inprocess
-    description: >-
-      纯陈述原则 in-process 阻断门禁（PURE-ASSERTION，priority=69，GOV-DOC-016 治本）。
-      对标 PURE-SHIM 模式：thin wrapper subprocess 调 check_pure_assertion.py --ci
-      （检测逻辑 SSoT 在 check_pure_assertion.py，本 gate 不重复检测逻辑）。
-      弥补 --no-verify 绕过 pre-commit hooks 的缺口——本 gate 在 GitCommitGateway
-      pre-commit 阶段（in-process）注册，--no-verify 绕不过。检测 staged .md 文件
-      added 行含纯陈述违规（"已废止""之前是X现在改为Y"等过渡文本）。
-      fail-open：脚本故障（exit 2/超时/缺失）时不阻断；fail-closed：检出违规
-      （exit 1）时硬阻断（PURE_ASSERTION_VIOLATION）。
-      priority=69（紧随 PURE-SHIM=68 之后、DANGLING-REFERENCE=70 之前）。
-    integrity_anchors:
-      - make_pure_assertion_gate  # gate 工厂(删则 gate 不注册)
-
-  # --------------------------------------------------------------------------
   - capability_id: create_guard
     aliases:
       - CREATE-GUARD
@@ -1742,7 +1704,7 @@ capabilities:
 
   # --------------------------------------------------------------------------
   - capability_id: test_exempt_checker
-    canonical_override: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py
+    canonical_override: src/zephyr/governance/rule_bridge/commit_gate_registry.py
     aliases:
       - is_test_exempt
       - TEST_EXEMPT_PREFIXES
@@ -1752,10 +1714,10 @@ capabilities:
       - commit_gate_test_exempt
     description: >-
       commit_gates 中 tests/ 目录豁免的唯一真源（SSoT，2026-06-30 治本2 收拢点）。
-      真源实现：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
+      真源实现：src/zephyr/governance/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES
       常量 + is_test_exempt(file_path) 函数（归一化反斜杠后 startswith 比对，消除
       Windows 路径漂移）。create_guard / capability_overlap_gate 等 gate 通过
-      from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt 引用。
+      from zephyr.governance.rule_bridge.commit_gate_registry import is_test_exempt 引用。
       禁止在 commit_gates/*.py 中硬编码 "tests/" 字面量（GATE-VOCAB 检测7 阻断，
       治本红攻发现2 is_test_exempt 漂移——新AI 可能直接硬编码绕过 SSoT）。
       canonical basename commit_gate_registry 不匹配任何 alias，无法 auto 派生，
@@ -3129,61 +3091,6 @@ capabilities:
       原 D_FUNDAMENTAL_SIGNAL 迁移至 D_SIGQC）。契约对齐 CTR-ERR-003。
       signal_fundamental/gen/__init__.py + signal_fundamental/__init__.py 跨域 re-export 向后兼容。
 
-  # --- 因子信号域 capability 补登（2026-07-17 AI-08 审计 P1-15 治本）---
-  - capability_id: signal_aggregator_base
-    aliases:
-      - SignalAggregatorBase
-      - signal_aggregator
-      - aggregator_base
-    description: >-
-      信号聚合器抽象基类（OCP 扩展点 D-SIGNAL-02）。canonical =
-      src/zephyr/signal_fundamental/gen/aggregator_base.py（auto 派生：basename
-      aggregator_base 匹配 alias）。域：D_FUNDAMENTAL_SIGNAL。聚合多因子→统一信号视图。
-      新 AI 实现信号聚合器须继承 SignalAggregatorBase。
-
-  - capability_id: capital_allocator_base
-    aliases:
-      - CapitalAllocatorBase
-      - capital_allocator
-    description: >-
-      资本分配器抽象基类（OCP 扩展点 D-SIGNAL-03）。canonical =
-      src/zephyr/signal_fundamental/gen/aggregator_base.py（与 SignalAggregatorBase 同文件）。
-      域：D_FUNDAMENTAL_SIGNAL。分配资本至多信号/策略。契约对齐 CTR-P1-003
-      CapitalAllocationResult（真源 trading_contracts/execution/capital_allocation_result.py）。
-      signal_fundamental/capital/capital_allocator.py + strategy/capital_allocator.py 为 re-export shim。
-
-  - capability_id: default_signal_aggregator
-    aliases:
-      - DefaultSignalAggregator
-      - default_signal_aggregator
-    description: >-
-      信号聚合器默认实现。canonical =
-      src/zephyr/signal_fundamental/gen/implementations/default_signal_aggregator.py
-      （auto 派生：basename 匹配 alias）。域：D_FUNDAMENTAL_SIGNAL。
-      继承 SignalAggregatorBase；PIT 注意：as_of_timestamp 须取 factor_signals[0].as_of_date。
-
-  - capability_id: default_capital_allocator
-    aliases:
-      - DefaultCapitalAllocator
-      - AllocationMethod
-      - default_capital_allocator
-    description: >-
-      资本分配器默认实现（4 种分配方法）。canonical =
-      src/zephyr/signal_fundamental/strategy/implementations/default_capital_allocator.py
-      （auto 派生：basename 匹配 alias）。域：D_FUNDAMENTAL_SIGNAL。
-      继承 CapitalAllocatorBase；产出 CapitalAllocationResult（CTR-P1-003）。
-
-  - capability_id: bus_factor_defense
-    aliases:
-      - BusFactorRisk
-      - evaluate_bus_factor
-      - ModuleOwnership
-      - bus_factor_defense
-    description: >-
-      巴士因子（关键人风险）防御——模块归属评估+决策日志+运维手册生成。canonical =
-      src/zephyr/factor/bus_factor_defense.py（auto 派生：basename 匹配 alias）。
-      域：D_FACTOR（2026-07-17 AI-08 审计修正：原误标 MOD-INF-022 归属，实际为 D_FACTOR 域内工具）。
-
   # --------------------------------------------------------------------------
   # dataflowgraph 数据流图能力（ARCH-051，2026-07-06 新增）
   # --------------------------------------------------------------------------
@@ -3624,8 +3531,9 @@ capabilities:
     description: >-
       共享 CRUD 方法 Mixin——governance.db + depgraph 9 个 CRUD 方法单一真源。
       canonical = src/zephyr/shared/database/database_crud_mixin.py（SH-DB-001）。
-      被两个 DatabaseService 类继承：governance/persistence 版（SH-DB-001）+
-      infrastructure 版（MOD-INF-002）。宿主类需提供 get_governance_conn(read_only)
+      被 infrastructure 版 DatabaseService（MOD-INF-002，唯一真源）继承。
+      governance/persistence 版已收敛为 re-export（AI-14 审计 P1 修复，2026-07-17），
+      不再是独立 DatabaseService 定义。宿主类需提供 get_governance_conn(read_only)
       和 get_depgraph_conn(read_only) 连接管理方法。消除约 100 行 CRUD 代码重复。
       解决发现性：新 AI 搜 "CRUD mixin/get_task/get_node/database_crud" 可定位真源。
       解决防重建：check_file_canonical() 反查阻止重复创建 CRUD mixin。
@@ -3872,6 +3780,12 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- A2A Agent 黑名单（2026-07-17 AI-14 审计 P5，重命名自 a2a_protocol_security.py 消除命名混淆）---
+  - file: "src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_agent_blocklist.py"
+    token: "auto-a2a-agent-blocklist-20260717"
+    created_by: "session-sess-29948-20260717102712"
+    capability: "a2a_agent_blocklist"
+
   # --- DatabaseCRUDMixin 专项工程（2026-07-06 P-PLAN，抽取两个 DatabaseService 类共享的 9 个 CRUD 方法）---
   - file: "src/zephyr/shared/database/database_crud_mixin.py"
     token: "auto-database-crud-mixin-20260706"
@@ -4036,22 +3950,22 @@ creation_tokens:
     capability: "secret_rotation"
 
   # --- governance/ 核心文件（示例条目） ---
-  - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
+  - file: "src/zephyr/governance/rule_bridge/git_commit_gateway.py"
     token: "auto-git-commit-gateway-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "completes_when_validator"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py"
+  - file: "src/zephyr/governance/rule_bridge/worktree_manager.py"
     token: "auto-worktree-manager-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "session_worktree_isolation"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
+  - file: "src/zephyr/governance/rule_bridge/session_worktree.py"
     token: "auto-session-worktree-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_worktree_lifecycle"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/session_claim.py"
+  - file: "src/zephyr/governance/rule_bridge/session_claim.py"
     token: "auto-session-claim-20260701"
     created_by: "session-trae-fp-iso-4c"
     capability: "session_claim_helper"
@@ -4061,7 +3975,7 @@ creation_tokens:
     created_by: "session-trae-fp-iso-4c"
     capability: "session_required_gate"
 
-  - file: "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py"
+  - file: "src/zephyr/governance/rule_bridge/commit_gate_registry.py"
     token: "auto-commit-gate-registry-20260630"
     created_by: "session-trae-redteam-deadly-5"
     capability: "commit_gate_registry"
@@ -4095,7 +4009,7 @@ creation_tokens:
     token: "auto-audit-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "audit_package_marker"
-  - file: "src/zephyr/gov_enforcement/rule_bridge/__init__.py"
+  - file: "src/zephyr/governance/rule_bridge/__init__.py"
     token: "auto-rule-bridge-init-package-20260701"
     created_by: "session-arch031-p0p1-cleanup"
     capability: "rule_bridge_package_marker"
@@ -4556,10 +4470,6 @@ creation_tokens:
     token: "auto-sync-panorama-module-20260716"
     created_by: "session-sess-29636-20260716185504"
     capability: "panorama_module_sync_engine"
-  - file: "scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py"
-    token: "auto-blueprint-panorama-gen-20260717"
-    created_by: "session-sess-35220-20260717024525"
-    capability: "blueprint_panorama_generation"
 
   # --- ARCH-052: 聚合节点 SSoT 指针 registry（gate_rule_set/script_collection/test_suite/rule_registry_collection 聚合节点展开用）---
   - file: "docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml"
@@ -4625,30 +4535,30 @@ creation_tokens:
     created_by: "session-sess-24256-20260717003348"
     capability: "capability_consistency_gate"
 
-  # --- MOD-INF-043 灾备备份系统（2026-07-17，Restic去重备份+post-commit reconciler）---
+  # --- MOD-INF-027 灾备备份系统（2026-07-17，Restic去重备份+post-commit reconciler）---
   - file: "scripts/backup/backup_config.yaml"
     token: "auto-backup-config-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_config"
   - file: "scripts/backup/backup_reconciler.py"
     token: "auto-backup-reconciler-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_reconciler"
   - file: "scripts/backup/backup.ps1"
     token: "auto-backup-ps1-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_script"
   - file: "scripts/backup/backup_manual.ps1"
     token: "auto-backup-manual-ps1-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_manual_trigger"
   - file: "scripts/backup/restore.ps1"
     token: "auto-restore-ps1-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_restore_script"
   - file: "scripts/backup/README.md"
     token: "auto-backup-readme-20260717"
-    created_by: "session-sess-backup-mod-inf-043"
+    created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_documentation"
 
   # --- GOV-DOC-016 纯陈述原则检测真源（PURE-ASSERTION gate SSoT checker）---
@@ -4656,10 +4566,6 @@ creation_tokens:
     token: "auto-pure-assertion-checker-20260717"
     created_by: "session-sess-24736-20260717023222"
     capability: "pure_assertion_checker"
-  - file: "src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py"
-    token: "auto-pure-assertion-gate-20260717"
-    created_by: "session-sess-24736-20260717023222"
-    capability: "pure_assertion_gate"
 
 # ============================================================================
 # 维护日志

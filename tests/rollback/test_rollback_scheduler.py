@@ -4,34 +4,33 @@
 # [GOVERNANCE] A_test 6-field: test_id=DM-201911-ADV | type=adversarial | scope=scheduler | gate=G0 | owner=AI-09 | rollback=delete_file
 # [TTL] task_bound
 """
-DM-201911 红蓝对抗极端测试: RollbackScheduler 自动运行+自动关闭.
+DM-201911 红蓝对抗极端测试: RollbackScheduler 事件驱动调度.
+
+治本修复(2026-07-17, AI-14 审计 P2): 移除 start/stop/daemon thread 时间触发循环
+测试（TestSchedulerStartStopExtreme/TestDaemonThreadResilience），仅保留事件驱动
+可调用方法（schedule_wal_gc/schedule_drill）的极端测试。
 
 测试场景:
-    1. 重复 start/stop 循环（100次）—— 资源泄漏检测
-    2. start 后立即 stop —— 竞态条件
-    3. WAL GC 空 WAL 文件
-    4. WAL GC 全 PENDING 条目（不删除）
-    5. WAL GC 过期 COMPLETE 条目（删除）
-    6. schedule_drill 演练时间触发（mock is_drill_time）
-    7. schedule_drill 异常处理（run_drill 抛异常）
-    8. 守护线程异常不崩溃
-    9. 并发 start/stop（多线程）
-    10. stop 超时处理
+    1. WAL GC 空 WAL 文件
+    2. WAL GC 全 PENDING 条目（不删除）
+    3. WAL GC 过期 COMPLETE 条目（删除）
+    4. WAL GC 混合状态条目
+    5. WAL GC 损坏行跳过
+    6. schedule_drill 非演练时间返回 None
+    7. schedule_drill 演练时间触发（mock is_drill_time）
+    8. schedule_drill 同一时间不重复触发
+    9. schedule_drill 异常处理
+    10. schedule_drill 不可用处理
+    11. 统计信息
 """
 from __future__ import annotations
 
 import json
-import os
-import sys
-import threading
-import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from zephyr.infrastructure.rollback.rollback_scheduler import RollbackScheduler, SchedulerResult
 
@@ -41,52 +40,6 @@ def temp_project(tmp_path: Path) -> Path:
     """临时项目根目录。"""
     (tmp_path / ".zephyr").mkdir(parents=True, exist_ok=True)
     return tmp_path
-
-
-class TestSchedulerStartStopExtreme:
-    """极端启动/停止测试。"""
-
-    def test_repeated_start_stop_100_cycles(self, temp_project: Path) -> None:
-        """100 次 start/stop 循环——检测资源泄漏。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        for i in range(100):
-            assert rs.start() is True
-            assert rs.is_running is True
-            assert rs.stop(timeout=2.0) is True
-            assert rs.is_running is False
-        # 验证没有残留线程
-        active = [t for t in threading.enumerate() if t.name == "rollback-scheduler" and t.is_alive()]
-        assert len(active) == 0
-
-    def test_start_then_immediate_stop_race(self, temp_project: Path) -> None:
-        """start 后立即 stop——竞态条件。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        for _ in range(20):
-            rs.start()
-            rs.stop(timeout=2.0)
-        assert rs.is_running is False
-
-    def test_double_start_idempotent(self, temp_project: Path) -> None:
-        """重复 start 幂等。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        assert rs.start() is True
-        assert rs.start() is True
-        assert rs.is_running is True
-        rs.stop(timeout=2.0)
-
-    def test_double_stop_idempotent(self, temp_project: Path) -> None:
-        """重复 stop 幂等。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        rs.start()
-        assert rs.stop() is True
-        assert rs.stop() is True
-        assert rs.is_running is False
-
-    def test_stop_without_start(self, temp_project: Path) -> None:
-        """未启动直接 stop。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        assert rs.stop() is True
-        assert rs.is_running is False
 
 
 class TestWalGcExtreme:
@@ -265,113 +218,15 @@ class TestDrillSchedulingExtreme:
             assert "drill not available" in result.errors
 
 
-class TestDaemonThreadResilience:
-    """守护线程韧性测试。"""
-
-    def test_daemon_survives_wal_gc_exception(self, temp_project: Path) -> None:
-        """WAL GC 异常不崩溃守护线程。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        # 缩短间隔以快速触发
-        rs.DRILL_CHECK_INTERVAL_SECONDS = 0.05
-        rs.WAL_GC_INTERVAL_SECONDS = 0.05
-
-        call_count = 0
-        original_gc = rs.schedule_wal_gc
-
-        def failing_gc() -> SchedulerResult:
-            nonlocal call_count
-            call_count += 1
-            if call_count <= 3:
-                raise RuntimeError("gc boom")
-            return original_gc()
-
-        rs.schedule_wal_gc = failing_gc
-
-        rs.start()
-        time.sleep(0.5)
-        rs.stop(timeout=2.0)
-
-        # 线程应存活并继续运行
-        assert rs.is_running is False  # 已 stop
-        assert call_count >= 3  # 异常被捕获，继续运行
-
-    def test_daemon_survives_drill_exception(self, temp_project: Path) -> None:
-        """drill 异常不崩溃守护线程。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        rs.DRILL_CHECK_INTERVAL_SECONDS = 0.05
-        rs.WAL_GC_INTERVAL_SECONDS = 999  # 不触发 GC
-
-        call_count = 0
-
-        def failing_drill() -> None:
-            nonlocal call_count
-            call_count += 1
-            raise RuntimeError("drill boom")
-
-        rs.schedule_drill = failing_drill
-
-        rs.start()
-        time.sleep(0.5)
-        rs.stop(timeout=2.0)
-
-        assert call_count >= 3  # 异常被捕获，继续运行
-
-    def test_concurrent_start_stop_multiple_threads(self, temp_project: Path) -> None:
-        """多线程并发 start/stop——无死锁。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        errors: list[Exception] = []
-
-        def worker_start() -> None:
-            try:
-                for _ in range(20):
-                    rs.start()
-                    time.sleep(0.01)
-            except Exception as e:
-                errors.append(e)
-
-        def worker_stop() -> None:
-            try:
-                for _ in range(20):
-                    rs.stop(timeout=1.0)
-                    time.sleep(0.01)
-            except Exception as e:
-                errors.append(e)
-
-        threads = [threading.Thread(target=worker_start) for _ in range(3)]
-        threads += [threading.Thread(target=worker_stop) for _ in range(3)]
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join(timeout=5.0)
-
-        rs.stop(timeout=2.0)
-        assert len(errors) == 0
-        assert rs.is_running is False
-
-    def test_stop_timeout_warning(self, temp_project: Path) -> None:
-        """stop 超时——不永久阻塞。"""
-        rs = RollbackScheduler(project_root=temp_project)
-        rs.DRILL_CHECK_INTERVAL_SECONDS = 0.01
-        rs.start()
-        time.sleep(0.1)
-        # 超时很短——即使线程还在运行也返回
-        result = rs.stop(timeout=0.001)
-        assert result is True  # stop 总是返回 True
-        assert rs.is_running is False
-
-
 class TestSchedulerStats:
     """统计信息测试。"""
 
     def test_get_stats_initial(self, temp_project: Path) -> None:
-        """初始统计。"""
+        """初始统计（事件驱动，无 running/interval 字段）。"""
         rs = RollbackScheduler(project_root=temp_project)
         stats = rs.get_stats()
-        assert stats["running"] is False
         assert stats["gc_count"] == 0
         assert stats["drill_count"] == 0
-        assert stats["wal_gc_interval_seconds"] == 3600
-        assert stats["drill_check_interval_seconds"] == 60
         assert stats["wal_retention_days"] == 7
 
     def test_gc_count_increments(self, temp_project: Path) -> None:

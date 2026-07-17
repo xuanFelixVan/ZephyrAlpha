@@ -143,8 +143,8 @@ items:
   name: test_a2a_protocol_gateway.py
   node_type: test
   status: active
-- file: tests/a2a/test_a2a_protocol_security.py
-  name: test_a2a_protocol_security.py
+- file: tests/a2a/test_a2a_agent_blocklist.py
+  name: test_a2a_agent_blocklist.py
   node_type: test
   status: active
 - file: tests/a2a/test_a2a_red_team.py

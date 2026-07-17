@@ -2,30 +2,30 @@
 # [MODULE] zephyr.infrastructure.rollback.rollback_scheduler
 # [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.infrastructure.rollback.startup_shutdown; zephyr.trading.boot_hooks
+# [CONSUMERS] zephyr.infrastructure.rollback.rollback_boot_integration（事件驱动 schedule_wal_gc）; CI job（schedule_drill 兜底）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] start/stop are idempotent; daemon thread; never blocks boot/shutdown
-# [MODIFY-GUARD] WAL_GC_INTERVAL_SECONDS / DRILL_CHECK_INTERVAL_SECONDS / WAL_RETENTION_DAYS
+# [INVARIANTS] schedule_wal_gc/schedule_drill are idempotent; event-driven, no daemon thread, no time-trigger loop
+# [MODIFY-GUARD] WAL_RETENTION_DAYS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] returns SchedulerResult; logs error on failure; never raises in daemon thread
+# [ERROR_CONTRACT] returns SchedulerResult; logs error on failure; never raises in caller
 # [TESTS] tests/adversarial/test_rollback_scheduler.py
 # [A_module] module_id=MOD-INF_rollback_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 """
-RollbackScheduler — 回滚系统自动运行调度器 (MOD-INF-021 §7 Phase 5.3).
+RollbackScheduler — 回滚系统事件驱动调度器 (MOD-INF-021 §7 Phase 5.3).
 
-蓝图要求: "回滚演练必须定期自动执行；WAL 必须自动 GC，防止无限增长"
+治本修复(2026-07-17, AI-14 审计 P2): 删除时间触发守护线程循环(start/_run_loop/stop
+及 WAL_GC_INTERVAL_SECONDS/DRILL_CHECK_INTERVAL_SECONDS 周期常量)，违反"禁止时间触发"
+硬约束。生产路径已由 rollback_completed 事件驱动 schedule_wal_gc()（见
+rollback_boot_integration._on_rollback_completed）。
 
 实现:
-    - 后台守护线程，定期执行两个任务:
-        1. WAL GC: 清理超过保留期的 COMPLETE 条目（默认 7 天）
-        2. Drill 调度: 检查是否到演练时间（每周六 03:00 UTC），触发 RollbackDrill
-    - start()/stop() 幂等，可安全集成到启动/停机序列
-    - schedule_wal_gc()/schedule_drill() 可独立调用（用于测试和手动触发）
+    - schedule_wal_gc(): 事件驱动调用（rollback_completed 事件），清理超过保留期的
+      COMPLETE 条目（默认 7 天）
+    - schedule_drill(): CI 定期 job 兜底调用（每周六 03:00 UTC 窗口），非进程内定时器
 
 依赖:
     - RollbackWAL (WAL GC)
@@ -37,7 +37,6 @@ import json
 import logging
 import os
 import threading
-import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -57,15 +56,13 @@ class SchedulerResult:
 
 
 class RollbackScheduler:
-    """回滚系统自动运行调度器。
+    """回滚系统事件驱动调度器。
 
-    后台守护线程定期执行:
-        1. WAL GC: 清理超过保留期的 COMPLETE 条目
-        2. Drill 调度: 检查演练时间，触发 RollbackDrill
+    治本修复：移除时间触发守护线程，仅保留事件驱动可调用方法。
+        - schedule_wal_gc(): 由 rollback_completed 事件触发
+        - schedule_drill(): 由 CI 定期 job 兜底调用
     """
 
-    WAL_GC_INTERVAL_SECONDS: int = 3600  # WAL GC 每小时一次
-    DRILL_CHECK_INTERVAL_SECONDS: int = 60  # 演练检查每分钟一次
     WAL_RETENTION_DAYS: int = 7  # WAL COMPLETE 条目保留 7 天
 
     def __init__(
@@ -77,12 +74,7 @@ class RollbackScheduler:
         self._project_root = project_root or Path.cwd()
         self._wal = wal
         self._drill = drill
-        self._thread: threading.Thread | None = None
-        self._stop_event = threading.Event()
-        self._running = False
-        self._lock = threading.Lock()
-        self._last_wal_gc: float = 0.0
-        self._last_drill_check: float = 0.0
+        self._lock = threading.Lock()  # 保护 _gc_count/_drill_count 并发递增
         self._gc_count: int = 0
         self._drill_count: int = 0
 
@@ -106,72 +98,13 @@ class RollbackScheduler:
             logger.error("Failed to initialize RollbackDrill: %s", e, exc_info=True)
         return self._drill
 
-    def start(self) -> bool:
-        """启动调度器（幂等）。已运行则返回 True。"""
-        with self._lock:
-            if self._running:
-                logger.debug("RollbackScheduler already running")
-                return True
-            self._stop_event.clear()
-            self._thread = threading.Thread(
-                target=self._run_loop,
-                daemon=True,
-                name="rollback-scheduler",
-            )
-            self._thread.start()
-            self._running = True
-            logger.info(
-                "RollbackScheduler started (wal_gc=%ds, drill_check=%ds, retention=%dd)",
-                self.WAL_GC_INTERVAL_SECONDS,
-                self.DRILL_CHECK_INTERVAL_SECONDS,
-                self.WAL_RETENTION_DAYS,
-            )
-        return True
-
-    def stop(self, timeout: float = 5.0) -> bool:
-        """停止调度器（幂等）。未运行则返回 True。"""
-        with self._lock:
-            if not self._running:
-                return True
-            self._stop_event.set()
-            thread = self._thread
-            self._running = False
-        if thread is not None:
-            thread.join(timeout=timeout)
-            if thread.is_alive():
-                logger.warning("RollbackScheduler thread did not stop within %.1fs", timeout)
-            else:
-                logger.info("RollbackScheduler stopped (gc_count=%d, drill_count=%d)", self._gc_count, self._drill_count)
-        return True
-
-    def _run_loop(self) -> None:
-        """调度器主循环（守护线程）。"""
-        logger.debug("RollbackScheduler loop started")
-        while not self._stop_event.is_set():
-            now = time.time()
-            # WAL GC
-            if now - self._last_wal_gc >= self.WAL_GC_INTERVAL_SECONDS:
-                try:
-                    self.schedule_wal_gc()
-                except Exception as e:
-                    logger.error("RollbackScheduler WAL GC error: %s", e, exc_info=True)
-                self._last_wal_gc = now
-            # Drill check
-            if now - self._last_drill_check >= self.DRILL_CHECK_INTERVAL_SECONDS:
-                try:
-                    self.schedule_drill()
-                except Exception as e:
-                    logger.error("RollbackScheduler drill check error: %s", e, exc_info=True)
-                self._last_drill_check = now
-            # 等待下一次检查（可被 stop 唤醒）
-            self._stop_event.wait(self.DRILL_CHECK_INTERVAL_SECONDS)
-        logger.debug("RollbackScheduler loop exited")
-
     def schedule_wal_gc(self) -> SchedulerResult:
         """执行 WAL 垃圾回收——清理超过保留期的 COMPLETE 条目。
 
         删除 written_at 早于 WAL_RETENTION_DAYS 天前的 COMPLETE 条目。
         保留所有 PENDING 条目（未完成的回滚不能删）。
+
+        触发方式：rollback_completed 事件（rollback_boot_integration._on_rollback_completed）。
         """
         timestamp = datetime.now(UTC).isoformat()
         wal = self._get_wal()
@@ -185,7 +118,8 @@ class RollbackScheduler:
 
         wal_path = self._project_root / getattr(wal, "WAL_FILE", ".zephyr/rollback_wal.jsonl")
         if not wal_path.exists():
-            self._gc_count += 1
+            with self._lock:
+                self._gc_count += 1
             return SchedulerResult(
                 task="wal_gc",
                 success=True,
@@ -232,7 +166,8 @@ class RollbackScheduler:
                 errors=["permission_denied"],
             )
 
-        self._gc_count += 1
+        with self._lock:
+            self._gc_count += 1
         logger.info("WAL GC: removed %d entries (retention=%dd)", len(removed), self.WAL_RETENTION_DAYS)
 
         return SchedulerResult(
@@ -248,10 +183,12 @@ class RollbackScheduler:
         )
 
     def schedule_drill(self) -> SchedulerResult | None:
-        """检查并调度回滚演练。
+        """检查并调度回滚演练（CI 定期 job 兜底调用，非进程内定时器）。
 
         如果当前时间满足演练条件（每周六 03:00 UTC），触发 RollbackDrill.run_drill()。
         非演练时间返回 None。
+
+        触发方式：CI 定期 job（cron）调用此方法。禁止进程内 daemon 线程周期调用。
         """
         timestamp = datetime.now(UTC).isoformat()
         drill = self._get_drill()
@@ -277,7 +214,8 @@ class RollbackScheduler:
         logger.info("Drill time reached, triggering RollbackDrill")
         try:
             result = drill.run_drill()
-            self._drill_count += 1
+            with self._lock:
+                self._drill_count += 1
             # 标记本次演练已完成（避免重复触发）
             try:
                 marker_path.parent.mkdir(parents=True, exist_ok=True)
@@ -318,10 +256,6 @@ class RollbackScheduler:
             )
 
     @property
-    def is_running(self) -> bool:
-        return self._running
-
-    @property
     def gc_count(self) -> int:
         return self._gc_count
 
@@ -332,12 +266,7 @@ class RollbackScheduler:
     def get_stats(self) -> dict[str, Any]:
         """获取调度器统计信息。"""
         return {
-            "running": self._running,
             "gc_count": self._gc_count,
             "drill_count": self._drill_count,
-            "last_wal_gc": self._last_wal_gc,
-            "last_drill_check": self._last_drill_check,
-            "wal_gc_interval_seconds": self.WAL_GC_INTERVAL_SECONDS,
-            "drill_check_interval_seconds": self.DRILL_CHECK_INTERVAL_SECONDS,
             "wal_retention_days": self.WAL_RETENTION_DAYS,
         }

@@ -154,7 +154,7 @@ design_maturity: prototype
 | 34 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_idempotency.py` | §3 D-025-15 | 已实现 | — |
 | 35 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_debate.py` | §3 D-025-16 | 已实现 | — |
 | 36 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_work_steal.py` | §3 D-025-19 | 已实现 | — |
-| 37 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_protocol_security.py` | §3 D-025-20 | 已实现 | — |
+| 37 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_agent_blocklist.py` | §3 D-025-20 | 已实现 | — |
 | 38 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_frame_negotiation.py` | §3 D-025-21 | 已实现 | — |
 | 39 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_delegation_chain.py` | §3 D-025-21 | 已实现 | — |
 | 40 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_formal_verification.py` | §3 D-025-22 | 已实现 | — |
@@ -178,9 +178,9 @@ design_maturity: prototype
 | 58 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_blame_attribution.py` | §3 D-025-38 | 已实现 | — |
 | 59 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\layer3_coordination\a2a_governance_adapter.py` | §12 | 已实现 | — |
 | 60 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\a2a_card_registry.py` | §3 D-025-20 | 已实现 | — |
-| 61 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_protocol.py` | 兼容层 | 已废弃 | — |
-| 62 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_auditor.py` | 兼容层 | 已废弃 | — |
-| 63 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_governance_adapter.py` | 兼容层 | 已废弃 | — |
+| 61 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_protocol.py` | 兼容层 | 弃用 | — |
+| 62 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_auditor.py` | 兼容层 | 弃用 | — |
+| 63 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\legacy_governance_adapter.py` | 兼容层 | 弃用 | — |
 | 64 | `D:\ZephyrAlpha\src\zephyr\infra_ops\a2a_protocol\phase_hold.py` | §1.1 | 已实现 | — |
 | `governance/auditor.py` | § — | 已实现 | | 本模块 |
 | `governance/governance_adapter.py` | § — | 已实现 | | 本模块 |
@@ -993,7 +993,7 @@ class A2ATask(BaseModel):
 | experimental | 通信安全 + 经济护栏 | `a2a_security.py` + `a2a_economics.py` | OWASP 覆盖 | 安全测试通过 |
 | experimental | 共识/涌现/Saga | `a2a_negotiation.py` + `a2a_anomaly_detector.py` + `a2a_saga.py` | 协商+检测+回滚 | 集成测试通过 |
 | beta | 可观测性 + 性能优化 | `a2a_tracing.py` + `a2a_metrics.py` | 追踪+指标可用 | P99<100ms |
-| beta | 协议安全 + ANP + TLA+ | `a2a_protocol_security.py` + `a2a_frame_negotiation.py` | A2ASECBENCH 覆盖 | 安全基准通过 |
+| beta | 协议安全 + ANP + TLA+ | `a2a_agent_blocklist.py` + `a2a_frame_negotiation.py` | A2ASECBENCH 覆盖 | 安全基准通过 |
 | beta | 宪法治理 + 免疫 + 遗忘 | `a2a_constitutional.py` + `a2a_immune.py` + `a2a_forgetting.py` | 零容忍门控 | 形式化验证通过 |
 | beta | 多协议网关 + 失败归因 | `a2a_protocol_gateway.py` + `a2a_causal_trace.py` | 四协议适配 | 归因测试通过 |
 | Phase-C1 | 脚本基础设施(G01+G02+G05) | `script_card.py` + `script_queue.py` + `script_sandbox.py` | 10K 脚本入队 | 队列压力测试 |
