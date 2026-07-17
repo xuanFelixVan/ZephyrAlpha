@@ -25,8 +25,8 @@ from unittest.mock import patch
 
 import pytest
 
-# 确保 scripts/ 在 sys.path
-SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
+# 确保 scripts/ 在 sys.path（ARCH-029 迁移 tests/→tests/git/，需 3 级 parent）
+SCRIPTS_DIR = Path(__file__).resolve().parent.parent.parent / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
