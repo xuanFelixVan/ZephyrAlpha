@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/governance/generators/test_generate_gate_registry.py
 # [TTL] permanent
 """
 generate_gate_registry.py — 门禁登记表自动生成器
@@ -28,7 +28,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import sys
 from datetime import UTC, datetime
