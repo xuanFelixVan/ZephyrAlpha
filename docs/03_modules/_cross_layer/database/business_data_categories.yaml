@@ -5,35 +5,45 @@
 # 新增品类 = 加一条YAML记录（不改代码）
 #
 # 当前覆盖范围:
-#   C1 market_clickhouse: 8条（本文件）
-#   C2 indicator_clickhouse: 待建
-#   C3 news_clickhouse: 待建
-#   C4 backtest_clickhouse: 待建
+#   C0 meta: 1条
+#   C1 market_clickhouse: 76条（全量表）
+#   C3 fundamental: 21条（全量表）
+#
+# 注意：
+#   - "index"一词在数据库中有多义，见各表 name 字段的精确描述
+#   - 功能重叠表(hk_kline/kline_hk_daily, kline_futures/futures_kline_qmt)已在注释中标注关系
+#   - 1970-01-01 在元数据表中表示"未发生/未退市"的语义空值，非脏数据
 
-# ========== C1 market_clickhouse（行情仓库，8张表）==========
+# ========== C0 meta（元数据库，1张表）==========
 
-- category_id: market_tick
-  name: "A股3秒Tick行情"
+- category_id: meta_fetch_perf
+  name: "采集性能记录"
   engine: clickhouse
-  database: c1_market
-  table: tick_data
-  schema_file: schemas/categories/market_tick.py
-  data_type: 原料
+  database: c0_meta
+  table: fetch_perf
+  schema_file: null
+  data_type: 元数据
   lifecycle: hot_90d
-  sla_level: L1
+  sla_level: L3
   enabled: true
   hard_constraint: null
-  calc_mode: replay
-  frequency: 3秒
-  data_source: [miniqmt]
-  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.1"
+  calc_mode: none
+  frequency: 按采集
+  data_source: [internal]
+  blueprint: null
 
-- category_id: market_daily_kline
-  name: "日线OHLCV"
+# ========== C1 market_clickhouse（行情仓库，76张表）==========
+# 按数据类别分组，同类别表连续排列便于对比
+
+# --- A股K线（日/周/月，前复权+后复权）---
+# kline_daily = 日K线前复权；kline_daily_hfq = 日K线后复权（同数据不同复权方式）
+
+- category_id: market_kline_daily
+  name: "A股日K线（前复权）"
   engine: clickhouse
   database: c1_market
-  table: daily_kline
-  schema_file: schemas/categories/market_daily_kline.py
+  table: kline_daily
+  schema_file: schemas/categories/market_kline_daily.py
   data_type: 成品
   lifecycle: permanent
   sla_level: L1
@@ -44,24 +54,545 @@
   data_source: [miniqmt, ifind, akshare]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.2"
 
-- category_id: market_auction
-  name: "集合竞价快照"
+- category_id: market_kline_daily_hfq
+  name: "A股日K线（后复权）"
   engine: clickhouse
   database: c1_market
-  table: auction_snapshot
-  schema_file: schemas/categories/market_auction.py
-  data_type: 原料
+  table: kline_daily_hfq
+  schema_file: null
+  data_type: 成品
   lifecycle: permanent
   sla_level: L2
   enabled: true
   hard_constraint: null
   calc_mode: preload
-  frequency: 9:15-9:25
-  data_source: [miniqmt]
-  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.3"
+  frequency: 日频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
 
-- category_id: market_index
-  name: "指数行情"
+- category_id: market_kline_weekly
+  name: "A股周K线（前复权）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_weekly
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 周频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: market_kline_weekly_hfq
+  name: "A股周K线（后复权）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_weekly_hfq
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 周频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: market_kline_monthly
+  name: "A股月K线（前复权）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_monthly
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 月频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: market_kline_monthly_hfq
+  name: "A股月K线（后复权）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_monthly_hfq
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 月频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+# --- A股分钟K线 ---
+# kline_1min/5min/15min/30min/60min 是同一数据源的不同时间聚合
+
+- category_id: market_kline_1min
+  name: "A股1分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_1min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 1分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_kline_5min
+  name: "A股5分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_5min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 5分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_kline_15min
+  name: "A股15分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_15min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 15分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_kline_30min
+  name: "A股30分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_30min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 30分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_kline_60min
+  name: "A股60分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_60min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 60分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+# --- A股逐笔成交 ---
+# tick_data 表通过 market_type 列区分 8 种品种：stock/etf/cb/lof/index/sector/stock_bj/mkt_index
+# 注意：tick_data(market_type='index') 是指数分笔成交，与 kline_index(指数日K线) 不同
+
+- category_id: market_tick
+  name: "A股逐笔成交（含stock/etf/cb/lof/index/sector/stock_bj/mkt_index 8种market_type）"
+  engine: clickhouse
+  database: c1_market
+  table: tick_data
+  schema_file: schemas/categories/market_tick.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 3秒
+  data_source: [miniqmt, bdpan]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.1"
+
+# --- ETF数据 ---
+# kline_etf_* 是ETF分钟K线；etf_list是列表；etf_nav是净值；etf_benchmark是基准
+
+- category_id: market_etf_kline_1min
+  name: "ETF 1分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_1min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 1分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_etf_kline_5min
+  name: "ETF 5分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_5min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 5分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_etf_kline_15min
+  name: "ETF 15分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_15min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 15分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_etf_kline_30min
+  name: "ETF 30分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_30min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 30分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_etf_kline_60min
+  name: "ETF 60分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_etf_60min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 60分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_etf_list
+  name: "ETF列表（全量ETF基础信息）"
+  engine: clickhouse
+  database: c1_market
+  table: etf_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_etf_benchmark
+  name: "ETF基准指数映射"
+  engine: clickhouse
+  database: c1_market
+  table: etf_benchmark
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_etf_nav
+  name: "ETF净值"
+  engine: clickhouse
+  database: c1_market
+  table: etf_nav
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+# --- LOF数据 ---
+
+- category_id: market_lof_kline_1min
+  name: "LOF 1分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_lof_1min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 1分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_lof_kline_5min
+  name: "LOF 5分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_lof_5min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 5分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_lof_kline_15min
+  name: "LOF 15分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_lof_15min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 15分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_lof_kline_30min
+  name: "LOF 30分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_lof_30min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 30分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_lof_kline_60min
+  name: "LOF 60分钟K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_lof_60min
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 60分钟
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_lof_list
+  name: "LOF列表（全量LOF基础信息）"
+  engine: clickhouse
+  database: c1_market
+  table: lof_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+# --- 可转债数据 ---
+
+- category_id: market_cb_kline
+  name: "可转债日K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_cb
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_cb_list
+  name: "可转债列表（全量可转债基础信息，delist_date=1970-01-01表示未退市）"
+  engine: clickhouse
+  database: c1_market
+  table: convertible_bond_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_cb_iv
+  name: "可转债隐含波动率"
+  engine: clickhouse
+  database: c1_market
+  table: convertible_bond_iv
+  schema_file: schemas/categories/market_cb_iv.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [ifind]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.8"
+
+# --- 指数数据 ---
+# 注意："index"一词在此有多义：
+#   kline_index = 指数日K线（开高低收），1990-2026完整
+#   tick_data(market_type='index') = 指数分笔成交（每3秒价位成交额），201610+202201-202606
+#   index_list = 指数列表（732个指数代码），base_date=1970-01-01表示基准日期缺失
+#   index_constituent = 指数成分股
+#   index_weight = 指数权重
+#   index_quote = 指数行情快照（3秒频率）
+#   market_index_meta = 市场宏观指数元数据（总市值/流通市值/平均股价等，50个）
+#   us_index = 美股指数
+
+- category_id: market_index_kline
+  name: "指数日K线（开高低收成交量，区别于tick_data的指数分笔成交）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_index
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: market_index_list
+  name: "指数列表（732个指数代码及基础信息，base_date=1970-01-01表示基准日期缺失）"
+  engine: clickhouse
+  database: c1_market
+  table: index_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_index_constituent
+  name: "指数成分股（指数包含哪些股票）"
+  engine: clickhouse
+  database: c1_market
+  table: index_constituent
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 月频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_index_weight
+  name: "指数权重（成分股权重）"
+  engine: clickhouse
+  database: c1_market
+  table: index_weight
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 月频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_index_quote
+  name: "指数行情快照（3秒频率，区别于kline_index的指数日K线）"
   engine: clickhouse
   database: c1_market
   table: index_quote
@@ -76,21 +607,74 @@
   data_source: [miniqmt]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.4"
 
-- category_id: market_option_iv
-  name: "期权IV曲面"
+- category_id: market_index_meta
+  name: "市场宏观指数元数据（总市值/流通市值/平均股价等50个宏观指标，区别于index_list的具体指数）"
   engine: clickhouse
   database: c1_market
-  table: option_iv_surface
-  schema_file: schemas/categories/market_option_iv.py
-  data_type: 原料
+  table: market_index_meta
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: market_us_index
+  name: "美股指数日K线"
+  engine: clickhouse
+  database: c1_market
+  table: us_index
+  schema_file: null
+  data_type: 成品
   lifecycle: permanent
   sla_level: L2
   enabled: true
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [ifind, akshare]
-  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.5"
+  data_source: [akshare]
+  blueprint: null
+
+# --- 期货数据 ---
+# 注意：kline_futures（期货K线，311万行）与 futures_kline_qmt（QMT期货K线，1170行）功能重叠
+#   kline_futures 是主表（2010-2026完整历史）
+#   futures_kline_qmt 是 QMT 数据源的新表（仅2026-07半月，刚开始采集）
+
+- category_id: market_futures_kline
+  name: "期货K线（主表，含日/周/月多周期，period列区分）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_futures
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [qmt, akshare]
+  blueprint: null
+
+- category_id: market_futures_kline_qmt
+  name: "QMT期货K线（新数据源，仅2026-07起，与kline_futures功能重叠）"
+  engine: clickhouse
+  database: c1_market
+  table: futures_kline_qmt
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [qmt]
+  blueprint: null
 
 - category_id: market_futures_position
   name: "期货持仓"
@@ -124,12 +708,205 @@
   data_source: [exchange]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.7"
 
-- category_id: market_cb_iv
-  name: "可转债隐含波动率"
+# --- 港股数据 ---
+# 注意：hk_kline（港股K线，2024-2026）与 kline_hk_daily（港股日K线，2015-2026）功能重叠
+#   kline_hk_daily 是主表（2015起完整历史，含name列）
+#   hk_kline 是补充数据源（2024起，无name列，volume类型Int64）
+
+- category_id: market_hk_kline_daily
+  name: "港股日K线（主表，2015起完整历史，含股票名称）"
   engine: clickhouse
   database: c1_market
-  table: convertible_bond_iv
-  schema_file: schemas/categories/market_cb_iv.py
+  table: kline_hk_daily
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, qmt]
+  blueprint: null
+
+- category_id: market_hk_kline
+  name: "港股K线（补充数据源，2024起，与kline_hk_daily功能重叠）"
+  engine: clickhouse
+  database: c1_market
+  table: hk_kline
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hk_stock_list
+  name: "港股列表（全量港股基础信息）"
+  engine: clickhouse
+  database: c1_market
+  table: hk_stock_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hk_trade_calendar
+  name: "港股交易日历"
+  engine: clickhouse
+  database: c1_market
+  table: hk_trade_calendar
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 年频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_hk_connect_flow
+  name: "沪深港通资金流（北向/南向资金）"
+  engine: clickhouse
+  database: c1_market
+  table: hk_connect_flow
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+# --- 美股数据 ---
+
+- category_id: market_us_kline_daily
+  name: "美股日K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_us_daily
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+# --- 板块/概念/行业数据 ---
+# 注意：板块类表命名易混淆，关系如下：
+#   concept_board = 概念板块列表（371个，如"新能源汽车""大飞机"），来源akshare
+#   concept_board_constituent = 概念板块成分股（概念板块包含哪些股票）
+#   concept_sector = 概念行业列表（388个，如"3D打印""一季报预增"），来源ifind_iwencai
+#   sector_meta = 同花顺行业板块元数据（90个，含成分数/市值等）
+#   sector_list = 同花顺行业板块成分股（板块包含哪些股票）
+#   kline_sector = 行业板块K线
+#   industry_class = 上市公司行业分类（申万/证监会行业）
+
+- category_id: market_concept_board
+  name: "概念板块列表（371个概念板块，如新能源汽车/大飞机，来源akshare）"
+  engine: clickhouse
+  database: c1_market
+  table: concept_board
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_concept_board_constituent
+  name: "概念板块成分股（概念板块包含哪些股票）"
+  engine: clickhouse
+  database: c1_market
+  table: concept_board_constituent
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 月频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_concept_sector
+  name: "概念行业列表（388个概念行业，如3D打印/一季报预增，来源ifind_iwencai）"
+  engine: clickhouse
+  database: c1_market
+  table: concept_sector
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: market_sector_meta
+  name: "同花顺行业板块元数据（90个行业板块，含成分数/市值/涨跌幅）"
+  engine: clickhouse
+  database: c1_market
+  table: sector_meta
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: market_sector_list
+  name: "同花顺行业板块成分股（板块包含哪些股票）"
+  engine: clickhouse
+  database: c1_market
+  table: sector_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 月频
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: market_sector_kline
+  name: "行业板块K线"
+  engine: clickhouse
+  database: c1_market
+  table: kline_sector
+  schema_file: null
   data_type: 成品
   lifecycle: permanent
   sla_level: L2
@@ -138,4 +915,734 @@
   calc_mode: preload
   frequency: 日频
   data_source: [ifind]
-  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.8"
+  blueprint: null
+
+- category_id: market_industry_class
+  name: "上市公司行业分类（申万/证监会行业分类）"
+  engine: clickhouse
+  database: c1_market
+  table: industry_class
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+# --- A股基本面引用数据 ---
+
+- category_id: market_adj_factor
+  name: "复权因子（用于前复权/后复权计算）"
+  engine: clickhouse
+  database: c1_market
+  table: adj_factor
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: market_daily_valuation
+  name: "日度估值（PE/PB/股息率等）"
+  engine: clickhouse
+  database: c1_market
+  table: daily_valuation
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt, ifind, akshare, local_valuation]
+  blueprint: null
+
+- category_id: market_money_flow
+  name: "资金流向（主力资金净流入/流出）"
+  engine: clickhouse
+  database: c1_market
+  table: money_flow
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt, ifind]
+  blueprint: null
+
+- category_id: market_margin_trading
+  name: "融资融券"
+  engine: clickhouse
+  database: c1_market
+  table: margin_trading
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_dragon_tiger
+  name: "龙虎榜"
+  engine: clickhouse
+  database: c1_market
+  table: dragon_tiger
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_block_trade
+  name: "大宗交易"
+  engine: clickhouse
+  database: c1_market
+  table: block_trade
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_block_trade_detail
+  name: "大宗交易明细"
+  engine: clickhouse
+  database: c1_market
+  table: block_trade_detail
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_limit_up_down
+  name: "涨跌停统计"
+  engine: clickhouse
+  database: c1_market
+  table: limit_up_down
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_st_stock_list
+  name: "ST/*ST股票列表（delist_date=1970-01-01表示未摘帽）"
+  engine: clickhouse
+  database: c1_market
+  table: st_stock_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_stock_indicator
+  name: "股票技术指标"
+  engine: clickhouse
+  database: c1_market
+  table: stock_indicator
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: market_macro_data
+  name: "宏观经济数据"
+  engine: clickhouse
+  database: c1_market
+  table: macro_data
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 低频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+# --- 期权数据 ---
+
+- category_id: market_option_kline
+  name: "期权日K线"
+  engine: clickhouse
+  database: c1_market
+  table: option_kline
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_option_greeks
+  name: "期权Greeks（Delta/Gamma/Theta/Vega）"
+  engine: clickhouse
+  database: c1_market
+  table: option_greeks
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: market_option_iv
+  name: "期权IV曲面"
+  engine: clickhouse
+  database: c1_market
+  table: option_iv_surface
+  schema_file: schemas/categories/market_option_iv.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [ifind, akshare]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.5"
+
+# --- 元数据表 ---
+
+- category_id: market_stock_list
+  name: "A股股票列表（5534只，delist_date=1970-01-01表示未退市）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_list
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: market_trade_calendar
+  name: "A股交易日历（SSE，1990-2026，含全部日历日，is_open区分交易日）"
+  engine: clickhouse
+  database: c1_market
+  table: trade_calendar
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 年频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_auction_snapshot
+  name: "集合竞价快照"
+  engine: clickhouse
+  database: c1_market
+  table: auction_snapshot
+  schema_file: schemas/categories/market_auction.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: "9:15-9:25"
+  data_source: [miniqmt]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.3"
+
+# --- 预留空表（功能未启用） ---
+
+- category_id: market_auction_book
+  name: "集合竞价簿（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: auction_book
+  schema_file: null
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: "9:15-9:25"
+  data_source: []
+  blueprint: null
+
+- category_id: market_edb_data
+  name: "经济数据库EDB（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: edb_data
+  schema_file: null
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: []
+  blueprint: null
+
+- category_id: market_l2_tick
+  name: "Level2逐笔（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: l2_tick
+  schema_file: null
+  data_type: 预留
+  lifecycle: hot_90d
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 逐笔
+  data_source: []
+  blueprint: null
+
+- category_id: market_realtime_snapshot
+  name: "实时快照（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: realtime_snapshot
+  schema_file: null
+  data_type: 预留
+  lifecycle: hot_1d
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: 3秒
+  data_source: []
+  blueprint: null
+
+# ========== C3 fundamental（财务基本面，21张表）==========
+
+- category_id: fund_balance_sheet
+  name: "资产负债表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: balance_sheet
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: fund_income_statement
+  name: "利润表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: income_statement
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: fund_cashflow_statement
+  name: "现金流量表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: cashflow_statement
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: fund_financial_indicator
+  name: "财务指标"
+  engine: clickhouse
+  database: c3_fundamental
+  table: financial_indicator
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, ifind, akshare]
+  blueprint: null
+
+- category_id: fund_dividend
+  name: "分红送股"
+  engine: clickhouse
+  database: c3_fundamental
+  table: dividend
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [miniqmt, ifind]
+  blueprint: null
+
+- category_id: fund_news_data
+  name: "新闻数据（full_publish_time=1970表示发布时间缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: news_data
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 实时
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: fund_restricted_shares
+  name: "限售股解禁（announce_date=1970表示公告日期缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: restricted_shares
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [akshare, ifind]
+  blueprint: null
+
+- category_id: fund_audit_opinion
+  name: "审计意见"
+  engine: clickhouse
+  database: c3_fundamental
+  table: audit_opinion
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 年频
+  data_source: [miniqmt, ifind]
+  blueprint: null
+
+- category_id: fund_disclosure_plan
+  name: "披露计划"
+  engine: clickhouse
+  database: c3_fundamental
+  table: disclosure_plan
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_earnings_forecast
+  name: "盈利预测"
+  engine: clickhouse
+  database: c3_fundamental
+  table: earnings_forecast
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: fund_analyst_forecast
+  name: "分析师预测"
+  engine: clickhouse
+  database: c3_fundamental
+  table: analyst_forecast
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [ifind]
+  blueprint: null
+
+- category_id: fund_express_report
+  name: "业绩快报"
+  engine: clickhouse
+  database: c3_fundamental
+  table: express_report
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_equity_pledge_detail
+  name: "股权质押明细"
+  engine: clickhouse
+  database: c3_fundamental
+  table: equity_pledge_detail
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_equity_pledge_summary
+  name: "股权质押汇总"
+  engine: clickhouse
+  database: c3_fundamental
+  table: equity_pledge_summary
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_repurchase
+  name: "回购"
+  engine: clickhouse
+  database: c3_fundamental
+  table: repurchase
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_rights_issue
+  name: "配股"
+  engine: clickhouse
+  database: c3_fundamental
+  table: rights_issue
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_share_change
+  name: "股本变动"
+  engine: clickhouse
+  database: c3_fundamental
+  table: share_change
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_share_unlock
+  name: "股份解禁"
+  engine: clickhouse
+  database: c3_fundamental
+  table: share_unlock
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_shareholder_count
+  name: "股东人数"
+  engine: clickhouse
+  database: c3_fundamental
+  table: shareholder_count
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_top10_shareholders
+  name: "前十大股东"
+  engine: clickhouse
+  database: c3_fundamental
+  table: top10_shareholders
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_top10_circulating_shareholders
+  name: "前十大流通股东"
+  engine: clickhouse
+  database: c3_fundamental
+  table: top10_circulating_shareholders
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_main_business
+  name: "主营业务构成"
+  engine: clickhouse
+  database: c3_fundamental
+  table: main_business
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 半年频
+  data_source: [miniqmt, ifind]
+  blueprint: null
+
+- category_id: fund_industry_class_suppl
+  name: "行业分类补充"
+  engine: clickhouse
+  database: c3_fundamental
+  table: industry_class_suppl
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [ifind]
+  blueprint: null
