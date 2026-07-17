@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 feedback_diagnosers（D_FBL_DIAGNOSERS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 13:29:26
+> 最后更新: 2026-07-17 15:08:47
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -495,7 +495,7 @@ graph TD
 | 11 | D_AUTONOMY_CORE 自治核心: test_prompt_fingerprint.py | → | Prompt Fingerprint — v0.3.0 R14 (prompt_finger... | 测试依赖 / test_depends |
 | 12 | D_AUTONOMY_CORE 自治核心: test_prompt_sanitizer.py | → | Prompt Sanitizer — v0.10.0 R133 (prompt_saniti... | 测试依赖 / test_depends |
 | 13 | D_DATA: test_data_volume_growth_monitor.py | → | Data Volume Growth Monitor — v0.39.0 R492 (dat... | 测试依赖 / test_depends |
-| 14 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 持久化写入器 — 写 metrics/alerts/dispatch_... | → | __init__.py | runtime / runtime |
+| 14 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | __init__.py | runtime / runtime |
 | 15 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
 | 16 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | diagnosis_engine.py | 导入依赖 / import_depends |
 | 17 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
