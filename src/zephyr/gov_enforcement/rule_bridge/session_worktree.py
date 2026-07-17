@@ -1263,6 +1263,17 @@ def _pre_merge_gate_check(
                 )
 
             _gw._run_git = _wt_run_git
+
+            # monkeypatch TEST-SOURCE-CONSISTENCY gate 的 _SRC_ROOT 指向 worktree src
+            # 病根（2026-07-17 治本）：gate 用全局 _SRC_ROOT = REPO_ROOT / "src"（主仓库），
+            # pre-merge 场景下主仓库源码滞后于 worktree（worktree 有新符号如 _run_pre_merge_topo_check，
+            # 主仓库还没 merge），导致 worktree test import 的符号在主仓库源码中找不到 -> 误阻断 merge。
+            # 治本：pre-merge 时临时重定向 _SRC_ROOT 到 worktree src，使 gate 从 worktree 读源码符号
+            # （与 worktree test 对齐，pre-merge 语义是检测 session 分支变更）。finally 中恢复。
+            import zephyr.gov_enforcement.commit_gates.test_source_consistency_gate as _tsc_gate
+            _orig_src_root = _tsc_gate._SRC_ROOT
+            _tsc_gate._SRC_ROOT = wt_path / "src"
+
             try:
                 # 检查 worktree 文件（session 分支的内容），而非主工作区文件
                 # 修复 (2026-07-05 审计 AI-02)：原实现用 root 路径检查主工作区文件，
@@ -1274,6 +1285,7 @@ def _pre_merge_gate_check(
                     _gw, _changed_abs, session_id=session_id
                 )
             finally:
+                _tsc_gate._SRC_ROOT = _orig_src_root
                 _gw._run_git = _orig_run_git
 
             _skip_gates = _WORKTREE_SKIP_GATES
