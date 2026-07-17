@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 知识管理（D_KNOWLEDGE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-17 10:44:30
+> 最后更新: 2026-07-17 11:28:06
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -148,18 +148,17 @@ graph TD
     tests_kb_test_kb_analyze_py -.->|测试依赖 / test_depends| D_GOV_RULE
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     tests_kb_test_kb_analyze_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_freeze_py -.->|测试依赖 / test_depends| D_GOV_KB
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    tests_kb_test_kb_gate_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
     tests_kb_test_kb_embedding_migrate_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_bootstrap_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_KB
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_kb_test_kb_integrity_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_kb_test_kb_pipeline_activate_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
+    tests_kb_test_kb_freeze_py -.->|测试依赖 / test_depends| D_GOV_KB
+    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
+    tests_kb_test_kb_gate_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
     tests_kb_test_kb_gate_task_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_migration_embedding_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_graph_validator_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_migration_gate_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_migration_gate_py -.->|测试依赖 / test_depends| D_GOV_RULE
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|contract / contract| docs_03_modules_domain_knowledge_knowledge_base_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -167,7 +166,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_domain_knowledge_knowledge_base_blueprint_md,docs_03_modules_domain_knowledge_vector_memory_blueprint_md,src_zephyr_knowledge_init_py,src_zephyr_knowledge_models_init_py,tests_kb_test_kb_activate_py,tests_kb_test_kb_analyze_py,tests_kb_test_kb_batch_ingest_py,tests_kb_test_kb_bootstrap_py,tests_kb_test_kb_embedding_migrate_py,tests_kb_test_kb_extract_py,tests_kb_test_kb_freeze_py,tests_kb_test_kb_gate_py,tests_kb_test_kb_gate_task_py,tests_kb_test_kb_graph_validator_py,tests_kb_test_kb_ingest_py,tests_kb_test_kb_integrity_py,tests_kb_test_kb_migration_embedding_py,tests_kb_test_kb_migration_gate_py,tests_kb_test_kb_pipeline_activate_py,tests_kb_test_kb_reranker_py,tests_kb_test_kb_self_test_py,tests_kb_test_kb_storage_backend_py,tests_kb_test_kb_triage_py,tests_kb_test_kb_unified_memory_api_py,tests_kb_test_kb_verify_py,tests_kb_test_kb_vms_memory_backend_py,tests_kb_test_vector_memory_root_py,tests_knowledge_engine_test_ke_quality_py,tests_knowledge_engine_test_ke_tombstone_py,tests_knowledge_engine_test_knowledge_bus_factor_monitor_py design
-    class D_INTELLIGENCE,D_GOV_RULE,D_GOV_KB,D_GOV_AUDIT,D_GOV_DRIFT external_prod
+    class D_INTELLIGENCE,D_GOV_RULE,D_GOV_KB,D_GOV_AUDIT external_prod
     class D_INFRA_RUNTIME,D_GOV_DOCS external_design
 ```
 
@@ -277,32 +276,33 @@ graph TD
         tests_knowledge_engine_test_knowledge_market_py["(原型态 / prototype) test_knowledge_market.py"]
         tests_knowledge_engine_test_knowledge_packaging_py["(原型态 / prototype) test_knowledge_packaging.py"]
     end
-    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
-    tests_kb_test_kb_activate_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     tests_kb_test_kb_activate_py -.->|测试依赖 / test_depends| D_GOV_RULE
-    tests_kb_test_kb_analyze_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
+    tests_kb_test_kb_activate_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
     tests_kb_test_kb_analyze_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_freeze_py -.->|测试依赖 / test_depends| D_GOV_KB
-    D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
-    tests_kb_test_kb_gate_py -.->|测试依赖 / test_depends| D_GOV_AUDIT
-    tests_kb_test_kb_embedding_migrate_py -.->|测试依赖 / test_depends| D_GOV_KB
     tests_kb_test_kb_bootstrap_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_RULE
     tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_KB
-    D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
-    tests_kb_test_kb_integrity_py -.->|测试依赖 / test_depends| D_GOV_DRIFT
-    tests_kb_test_kb_pipeline_activate_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
-    tests_kb_test_kb_gate_task_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_migration_embedding_py -.->|测试依赖 / test_depends| D_GOV_KB
-    tests_kb_test_kb_reranker_py -.->|测试依赖 / test_depends| D_INTELLIGENCE
+    tests_kb_test_kb_extract_py -.->|测试依赖 / test_depends| D_GOV_RULE
+    tests_kb_test_kb_embedding_migrate_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_unified_memory_api_py -.->|测试依赖 / test_depends| D_GOV_KB
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    tests_kb_test_kb_triage_py -.->|测试依赖 / test_depends| D_GOV_OPS_RESILIENCE
+    tests_kb_test_kb_vms_memory_backend_py -.->|测试依赖 / test_depends| D_GOV_KB
+    tests_kb_test_kb_vms_memory_backend_py -.->|测试依赖 / test_depends| D_GOV_KB
+    D_FBL_DIAGNOSERS["(生产态 / production) D_FBL_DIAGNOSERS"]
+    tests_knowledge_engine_test_knowledge_bus_factor_monitor_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    tests_knowledge_engine_test_knowledge_distillation_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_knowledge_engine_test_knowledge_market_py -.->|测试依赖 / test_depends| D_FBL_DIAGNOSERS
+    tests_knowledge_engine_test_knowledge_injection_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_knowledge_init_py,src_zephyr_knowledge_models_init_py,tests_kb_test_kb_activate_py,tests_kb_test_kb_analyze_py,tests_kb_test_kb_batch_ingest_py,tests_kb_test_kb_bootstrap_py,tests_kb_test_kb_embedding_migrate_py,tests_kb_test_kb_extract_py,tests_kb_test_kb_freeze_py,tests_kb_test_kb_gate_py,tests_kb_test_kb_gate_task_py,tests_kb_test_kb_graph_validator_py,tests_kb_test_kb_ingest_py,tests_kb_test_kb_integrity_py,tests_kb_test_kb_migration_embedding_py,tests_kb_test_kb_migration_gate_py,tests_kb_test_kb_pipeline_activate_py,tests_kb_test_kb_reranker_py,tests_kb_test_kb_self_test_py,tests_kb_test_kb_storage_backend_py,tests_kb_test_kb_triage_py,tests_kb_test_kb_unified_memory_api_py,tests_kb_test_kb_verify_py,tests_kb_test_kb_vms_memory_backend_py,tests_kb_test_vector_memory_root_py,tests_knowledge_engine_test_ke_quality_py,tests_knowledge_engine_test_ke_tombstone_py,tests_knowledge_engine_test_knowledge_bus_factor_monitor_py,tests_knowledge_engine_test_knowledge_capture_py,tests_knowledge_engine_test_knowledge_distillation_py,tests_knowledge_engine_test_knowledge_distiller_py,tests_knowledge_engine_test_knowledge_freshness_py,tests_knowledge_engine_test_knowledge_injection_py,tests_knowledge_engine_test_knowledge_injection_pre_flight_verifier_py,tests_knowledge_engine_test_knowledge_market_py,tests_knowledge_engine_test_knowledge_packaging_py design
-    class D_INTELLIGENCE,D_GOV_RULE,D_GOV_KB,D_GOV_AUDIT,D_GOV_DRIFT external_prod
+    class D_GOV_RULE,D_INTELLIGENCE,D_GOV_KB,D_GOV_OPS_RESILIENCE,D_FBL_DIAGNOSERS,D_FEEDBACK_LOOP external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -320,7 +320,7 @@ graph TD
 | 7 | test_knowledge_injection_pre_flight_verifier.py | → | D_FEEDBACK_LOOP 反馈循环引擎: R515: KnowledgeInjectionPreFlightVerifier (know... | 测试依赖 / test_depends |
 | 8 | test_knowledge_packaging.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Knowledge Packaging — v0.9.0 R123 (knowledge_p... | 测试依赖 / test_depends |
 | 9 | test_kb_gate.py | → | D_GOV_AUDIT 审计追踪: audit-trail.kb_gate — MOD-INF-020 · KB 审计门... | 测试依赖 / test_depends |
-| 10 | test_kb_integrity.py | → | D_GOV_DRIFT 漂移检测: governance.integrity — 兼容垫片层。 (integrity.py) | 测试依赖 / test_depends |
+| 10 | test_kb_integrity.py | → | D_GOV_DRIFT 漂移检测: integrity.py | 测试依赖 / test_depends |
 | 11 | test_kb_analyze.py | → | D_GOV_KB 知识库治理: G3 Evaluate 门禁 — 深度评估（T-2-13-C） (analy... | 测试依赖 / test_depends |
 | 12 | test_kb_bootstrap.py | → | D_GOV_KB 知识库治理: 冷启动引导引擎 — 从存量文档自动生成首批KE（T-M... | 测试依赖 / test_depends |
 | 13 | test_kb_embedding_migrate.py | → | D_GOV_KB 知识库治理: EmbeddingMigrate · Embedding 版本管理 + 迁移管... | 测试依赖 / test_depends |
