@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-17T05:23:18Z'
+generated_at: '2026-07-17T07:18:38Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 86
+total_gates: 87
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -550,6 +550,16 @@ gates:
   name: 'EMPTY-HANDLER: 空事件 handler 函数阻断门禁（EMPTY-HANDLER）（CommitGate, priority=84）'
   entry: in-process (GitCommitGateway)
   description: 空事件 handler 函数阻断门禁（EMPTY-HANDLER）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: ENCODING-SAFETY
+  name: 'ENCODING-SAFETY: 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）（CommitGate,
+    priority=42）'
+  entry: in-process (GitCommitGateway)
+  description: 编码安全校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-ENCODING 的缺口）
   files_trigger: ''
   always_run: false
   category: commit_gate
