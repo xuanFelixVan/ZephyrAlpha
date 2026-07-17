@@ -130,7 +130,8 @@ def _scan_sibling_functions(abs_path: str, exclude_path: str) -> dict[str, tuple
         if os.path.abspath(sibling_path) == os.path.abspath(exclude_path):
             continue  # 排除自身
         try:
-            content = open(sibling_path, "r", encoding="utf-8", errors="replace").read()
+            with open(sibling_path, "r", encoding="utf-8", errors="replace") as f:
+                content = f.read()
             tree = ast.parse(content, filename=sibling_path)
         except (OSError, SyntaxError) as e:
             logger.warning(
@@ -233,7 +234,8 @@ def _collect_dup_violations(abs_files: list[str], wt_root: str) -> list[str]:
     all_violations: list[str] = []
     for abs_path in abs_files:
         try:
-            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+            with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                content = f.read()
         except OSError as e:
             logger.warning(
                 "FUNCTION-DUP gate skip file %s: 读取失败(%s: %s)。",

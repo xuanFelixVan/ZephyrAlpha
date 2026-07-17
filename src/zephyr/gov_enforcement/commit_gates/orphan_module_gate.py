@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged 新增 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 src/ 路径 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测 src/ 路径新增文件（diff-filter=A + startswith src/，与 git grep 搜索范围 src/**/*.py 一致——治本 ARCH-TTL-DOC-001）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）
 # [MODIFY-GUARD] gate_id="ORPHAN-MODULE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -40,11 +40,15 @@
 设计权衡
 --------
 1. **只检测新增文件**：只查 staged 新文件是否被 import。
-2. **subprocess git grep**：用 git grep 而非 Python walk——git grep 快（C 实现），
+2. **只检查 src/ 路径**：gate 的 git grep 搜索范围是 ``src/**/*.py``，检测范围与之一致。
+   根目录文件（测试 fixture / conftest.py / setup.py）不是 src/ 模块，不检查。
+   scripts/ 下文件由 ``_is_entry_point`` 豁免。治本（ARCH-TTL-DOC-001）：修复 gate
+   检测范围与 git grep 搜索范围不一致导致根目录文件被误判为孤儿的问题。
+3. **subprocess git grep**：用 git grep 而非 Python walk——git grep 快（C 实现），
    且只搜 git 追踪的文件（不搜 .gitignore 排除的文件）。
-3. **fail-open on grep error**：git grep 超时/异常不阻断，环境异常非违规。
-4. **入口文件豁免**：``__main__.py`` 等入口文件本就不被 import。
-5. **priority=89**：在 MODULE-ID-CONSISTENCY(88) 之后、FUNCTION-DUP(90) 之前。
+4. **fail-open on grep error**：git grep 超时/异常不阻断，环境异常非违规。
+5. **入口文件豁免**：``__main__.py`` 等入口文件本就不被 import。
+6. **priority=89**：在 MODULE-ID-CONSISTENCY(88) 之后、FUNCTION-DUP(90) 之前。
 
 Usage::
 
@@ -145,7 +149,7 @@ def _compute_module_path(rel_path: str) -> tuple[str, str]:
 
 
 def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
-    """获取 staged 新增 .py 文件（tests/ 豁免）的绝对路径列表 + worktree root。
+    """获取 staged 新增 src/ 路径 .py 文件（tests/ 豁免）的绝对路径列表 + worktree root。
 
     Returns:
         None=fail-open（调用方应返回 pass）；([], "")=无文件待检；
@@ -170,10 +174,14 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
         )
         return None
 
-    # 2. 过滤 .py 文件 + tests/ 豁免
+    # 2. 过滤 .py 文件 + tests/ 豁免 + 只检查 src/ 路径
+    # 治本（ARCH-TTL-DOC-001）：gate 的 git grep 搜索范围是 src/**/*.py，
+    # 检测范围应与之一致。根目录文件（测试 fixture / conftest.py / setup.py）
+    # 不是 src/ 模块，不应被 ORPHAN-MODULE gate 检查。
+    # scripts/ 下文件由 _is_entry_point 豁免，无需额外处理。
     new_py_files = [
         f.replace("\\", "/") for f in staged_new
-        if f.endswith(".py") and not is_test_exempt(f)
+        if f.endswith(".py") and not is_test_exempt(f) and f.startswith("src/")
     ]
     if not new_py_files:
         return [], ""
@@ -211,7 +219,8 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] |
     for abs_path in abs_files:
         rel_name = os.path.relpath(abs_path, wt_root).replace("\\", "/")
         try:
-            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+            with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                content = f.read()
         except OSError as e:
             logger.warning(
                 "ORPHAN-MODULE gate skip file %s: 读取失败(%s: %s)。",

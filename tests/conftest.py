@@ -31,6 +31,15 @@ _src_path = _PROJECT_ROOT / "src"
 if str(_src_path) not in sys.path:
     sys.path.insert(0, str(_src_path))
 
+# Ensure subprocess scripts (check_pure_shim.py, check_frontmatter_metadata.py, etc.)
+# can import zephyr regardless of their cwd. PYTHONPATH=src (relative) fails when
+# subprocess cwd != project root; conftest sets absolute path so subprocesses inherit it.
+import os as _os
+_src_abs = str(_src_path)
+_existing_pp = _os.environ.get("PYTHONPATH", "")
+if _src_abs not in _existing_pp.split(_os.pathsep):
+    _os.environ["PYTHONPATH"] = _src_abs + (_os.pathsep + _existing_pp if _existing_pp else "")
+
 if sys.stdout.encoding != "utf-8":
     sys.stdout.reconfigure(encoding="utf-8")
 

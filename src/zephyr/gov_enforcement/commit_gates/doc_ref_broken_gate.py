@@ -184,7 +184,8 @@ def _detect_md_file_violation(abs_path: str, wt_root: str) -> str | None:
         违规描述字符串；读取失败返回 None（跳过），无断链返回 None。
     """
     try:
-        content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+        with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read()
     except OSError as e:
         logger.warning(
             "DOC-REF-BROKEN gate skip file %s: 读取失败(%s: %s)。",

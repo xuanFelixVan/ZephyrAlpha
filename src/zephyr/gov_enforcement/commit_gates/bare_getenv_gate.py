@@ -191,7 +191,8 @@ def _collect_violations(abs_paths: list[str], wt_root: str) -> list[str]:
     all_violations: list[str] = []
     for abs_path in abs_paths:
         try:
-            content = open(abs_path, "r", encoding="utf-8", errors="replace").read()
+            with open(abs_path, "r", encoding="utf-8", errors="replace") as f:
+                content = f.read()
         except OSError as e:
             logger.warning(
                 "NO-BARE-GETENV gate skip file %s: 读取失败(%s: %s)。",

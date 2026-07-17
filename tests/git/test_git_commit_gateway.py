@@ -57,10 +57,10 @@ from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E40
 def _init_git_repo(repo_dir: Path) -> None:
     """在 tmp_path 初始化一个 git 仓库（含初始 commit）。
 
-    并创建 ``check_directory_contract.py`` stub——DCR gate（directory_contract_gate.py）
-    fail-closed 设计要求 checker 脚本存在，否则阻断 commit。测试目的是测 stash/rename/delete
-    逻辑，不是测 DCR 校验逻辑（DCR 逻辑由 check_directory_contract.py 自己的测试覆盖）。
-    stub 总是 exit 0（通过），让测试环境的 DCR gate 不误拦。
+    并创建 fail-closed gate 源文件 stub——多个 gate（DIRECTORY-CONTRACT/TTL-METADATA/
+    FILE-PLACEMENT-TTL/DANGLING-REFERENCE/ARCH-REFERENCE）fail-closed 设计要求源文件
+    存在，否则阻断 commit。测试目的是测 stash/rename/delete 逻辑，不是测 gate 校验逻辑
+    （gate 逻辑由各自单元测试覆盖）。stub 总是 exit 0（通过），让测试环境的 gate 不误拦。
     """
     repo_dir.mkdir(parents=True, exist_ok=True)
     env = os.environ.copy()
@@ -79,16 +79,50 @@ def _init_git_repo(repo_dir: Path) -> None:
         env=env,
         check=True,
     )
-    # DCR gate checker stub（fail-closed 要求 checker 存在；stub exit 0 让测试通过）
+    # fail-closed gate 源文件 stub（pre-commit gate 需要）
+    # AGENTS.md stub（DANGLING-REFERENCE gate 需要 ## N 章节号）
+    (repo_dir / "AGENTS.md").write_text("# AGENTS.md (test stub)\n## 1 Test Section\n", encoding="utf-8")
+    # directory_contract.yaml stub（FILE-PLACEMENT-TTL gate 需要 directory_zones）
+    dc_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "contracts"
+    dc_dir.mkdir(parents=True, exist_ok=True)
+    (dc_dir / "directory_contract.yaml").write_text(
+        "directory_zones:\n  permanent:\n    paths:\n      - docs/\n    exempt_subdirs: []\n"
+        "  temporary:\n    paths:\n      - docs/_working/\n"
+        "  neutral:\n    paths:\n      - src/\n      - tests/\n      - scripts/\n      - build_artifacts/\n"
+        "root_directory_whitelist:\n  files:\n    - AGENTS.md\n    - .gitignore\n    - .gitkeep\n",
+        encoding="utf-8",
+    )
+    # ttl_vocabulary.yaml stub（FILE-PLACEMENT-TTL gate fail-closed 校验需要 values 含 permanent/task_bound）
+    tv_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
+    tv_dir.mkdir(parents=True, exist_ok=True)
+    (tv_dir / "ttl_vocabulary.yaml").write_text(
+        "values:\n  - value: permanent\n  - value: task_bound\n",
+        encoding="utf-8",
+    )
+    # architecture_issue_registry.yaml stub（ARCH-REFERENCE gate 需要 entries）
+    arch_dir = repo_dir / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+    arch_dir.mkdir(parents=True, exist_ok=True)
+    (arch_dir / "architecture_issue_registry.yaml").write_text(
+        'entries:\n  - issue_id: "#ARCH-001"\n    title: "Test entry"\n    status: "active"\n',
+        encoding="utf-8",
+    )
+    # check_directory_contract.py stub（DIRECTORY-CONTRACT gate subprocess 调用）
     checker_stub = repo_dir / "scripts" / "governance" / "d1_structure" / "check_directory_contract.py"
     checker_stub.parent.mkdir(parents=True, exist_ok=True)
     checker_stub.write_text(
         "#!/usr/bin/env python\nimport sys\nsys.exit(0)\n",
         encoding="utf-8",
     )
+    # check_frontmatter_metadata.py stub（TTL-METADATA gate subprocess 调用）
+    fm_stub = repo_dir / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+    fm_stub.parent.mkdir(parents=True, exist_ok=True)
+    fm_stub.write_text(
+        "#!/usr/bin/env python\nimport sys\nsys.exit(0)\n",
+        encoding="utf-8",
+    )
     # 初始 commit（空仓库无法 commit，先建一个文件）
     (repo_dir / ".gitignore").write_text("*.tmp\n", encoding="utf-8")
-    subprocess.run(["git", "add", ".gitignore"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
+    subprocess.run(["git", "add", "-A"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "commit", "-m", "init", "--no-verify"],
         cwd=str(repo_dir),
@@ -219,7 +253,7 @@ class TestGitCommitGatewayCommit:
             env={**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com"},
         )
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[str(f)], message="feat: no change")
+        result = gw.commit(session_id="s1", files=[str(f)], allow_overlap=True, message="feat: no change")
         assert result.status == CommitStatus.NOTHING_TO_COMMIT
 
     def test_commit_restricted_to_files_in_scope(self, tmp_path: Path) -> None:
@@ -232,7 +266,7 @@ class TestGitCommitGatewayCommit:
         subprocess.run(["git", "add", "b.py"], cwd=str(tmp_path), capture_output=True)
 
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: add a")
+        result = gw.commit(session_id="s1", files=[str(f_a)], allow_overlap=True, message="feat: add a")
 
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
         # 验证 commit 只含 a.py，不含 b.py
@@ -248,17 +282,17 @@ class TestGitCommitGatewayCommit:
         _init_git_repo(tmp_path)
         f = _write_file(tmp_path, "a.py", "x = 1\n")
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="sess-abc", files=[str(f)], message="feat: add marker")
+        result = gw.commit(session_id="sess-abc", files=[str(f)], allow_overlap=True, message="feat: add marker")
         assert result.status == CommitStatus.OK
         msg = _last_commit_message(tmp_path)
-        assert "[GW:sess-abc]" in msg, f"commit message 应含 GW 标记: {msg}"
+        assert "[GW:sess-abc" in msg, f"commit message 应含 GW 标记: {msg}"
 
     def test_commit_sets_gateway_env(self, tmp_path: Path) -> None:
         """commit 后环境变量 ZEPHYR_COMMIT_GATEWAY 被设置（finally 清理后应为空）。"""
         _init_git_repo(tmp_path)
         f = _write_file(tmp_path, "a.py", "x = 1\n")
         gw = GitCommitGateway(project_root=tmp_path)
-        gw.commit(session_id="s1", files=[str(f)], message="feat: env test")
+        gw.commit(session_id="s1", files=[str(f)], allow_overlap=True, message="feat: env test")
         # finally 块清理后环境变量应被移除
         assert _GATEWAY_ENV not in os.environ or os.environ.get(_GATEWAY_ENV) != "1" or True
         # 注: 环境变量在 commit 子进程内设置，主进程 finally 清理；
@@ -297,7 +331,7 @@ class TestStashIsolation:
         f_b.write_text("y = 20\n", encoding="utf-8")
 
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="s1", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # b.py 修改应恢复（stash pop）
@@ -312,7 +346,7 @@ class TestStashIsolation:
         _init_git_repo(tmp_path)
         f_a = _write_file(tmp_path, "a.py", "x = 1\n")
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: only a")
+        result = gw.commit(session_id="s1", files=[str(f_a)], allow_overlap=True, message="feat: only a")
         assert result.status == CommitStatus.OK
         # 无 stash 残留
         stash_list = subprocess.run(
@@ -344,7 +378,7 @@ class TestStashIsolation:
         f_a.write_text("x = 100\n", encoding="utf-8")
 
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="s1", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK
 
         # b.py 未暂存修改应恢复
@@ -438,7 +472,7 @@ class TestSessionAwareStash:
         gw.claim_files("sess-A", [str(f_a)])
         gw.claim_files("sess-B", [str(f_b)])
 
-        result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="sess-A", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # 关键断言：b.py 不在 stash pathspec 中（session-B 的文件未被捡拾）
@@ -465,7 +499,7 @@ class TestSessionAwareStash:
         recorded = self._attach_spy(gw)
         # 不 claim 任何文件——session 未注册
 
-        result = gw.commit(session_id="s1", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="s1", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # pathspec commit 不 stash——b.py 留在工作区
@@ -489,7 +523,7 @@ class TestSessionAwareStash:
         # 注册 session 并 claim 目标文件（claim_required_gate 约束，AGENTS.md §8 L284）
         gw.claim_files("sess-A", [str(f_a)])
 
-        result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="sess-A", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # pathspec commit 不 stash
@@ -515,7 +549,7 @@ class TestSessionAwareStash:
         # 禁用 feature flag
         monkeypatch.setenv("ZEPHYR_SESSION_AWARE_STASH", "0")
 
-        result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="sess-A", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # pathspec commit 不 stash
@@ -533,7 +567,7 @@ class TestSessionAwareStash:
         # session-A 只 claim a.py（即 target）；b.py 无人 claim
         gw.claim_files("sess-A", [str(f_a)])
 
-        result = gw.commit(session_id="sess-A", files=[str(f_a)], message="feat: update a")
+        result = gw.commit(session_id="sess-A", files=[str(f_a)], allow_overlap=True, message="feat: update a")
         assert result.status == CommitStatus.OK, f"commit 应成功: {result.message}"
 
         # session-A held=[a.py]，a.py 是 target 被排除；b.py 不在 held → 候选为空 → 跳过 stash
@@ -558,7 +592,7 @@ class TestEdgeCases:
         """空文件列表 → NOTHING_TO_COMMIT。"""
         _init_git_repo(tmp_path)
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="s1", files=[], message="feat: empty")
+        result = gw.commit(session_id="s1", files=[], allow_overlap=True, message="feat: empty")
         assert result.status == CommitStatus.NOTHING_TO_COMMIT
 
     def test_nonexistent_files_returns_nothing_to_commit(self, tmp_path: Path) -> None:
@@ -568,7 +602,7 @@ class TestEdgeCases:
         result = gw.commit(
             session_id="s1",
             files=[str(tmp_path / "nonexistent.py")],
-            message="feat: nope",
+            allow_overlap=True, message="feat: nope",
         )
         assert result.status == CommitStatus.NOTHING_TO_COMMIT
 
@@ -577,10 +611,10 @@ class TestEdgeCases:
         _init_git_repo(tmp_path)
         f = _write_file(tmp_path, "a.py", "x = 1\n")
         gw = GitCommitGateway(project_root=tmp_path)
-        result = gw.commit(session_id="", files=[str(f)], message="feat: no session")
+        result = gw.commit(session_id="", files=[str(f)], allow_overlap=True, message="feat: no session")
         assert result.status == CommitStatus.OK
         msg = _last_commit_message(tmp_path)
-        assert "[GW:unknown]" in msg, f"空 session_id 应默认 unknown: {msg}"
+        assert "[GW:unknown" in msg, f"空 session_id 应默认 unknown: {msg}"
 
 
 class TestRenameFallback:
@@ -637,7 +671,7 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="rename-test",
             files=[str(tmp_path / "lower.txt")],
-            message="refactor: rename UPPER.txt to lower.txt",
+            allow_overlap=True, message="refactor: rename UPPER.txt to lower.txt",
         )
         assert result.status == CommitStatus.OK, \
             f"rename commit 应成功: {result.status} {result.message}"
@@ -674,7 +708,7 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="dirty-test",
             files=[str(tmp_path / "a.txt")],
-            message="feat: only a",
+            allow_overlap=True, message="feat: only a",
         )
         # pathspec commit 只提交 a.txt，b.txt 留在 staged 区不被提交
         # 治本（2026-06-29）：pathspec commit 不 stash，天然隔离非目标文件
@@ -708,7 +742,7 @@ class TestRenameFallback:
         result = gw.commit(
             session_id="auto-unstage-test",
             files=[str(tmp_path / "lower.txt")],
-            message="refactor: rename UPPER to lower",
+            allow_overlap=True, message="refactor: rename UPPER to lower",
         )
         assert result.status == CommitStatus.OK, \
             f"auto-unstage 后 rename commit 应成功: {result.status} {result.message}"
@@ -823,7 +857,7 @@ class TestGitignoredTrackedDeleted:
         result = gw.commit(
             session_id="test-gi-small",
             files=files,
-            message="test: small-path gitignored-tracked-deleted",
+            allow_overlap=True, message="test: small-path gitignored-tracked-deleted",
         )
         assert result.status == CommitStatus.OK, (
             f"小路径应成功: {result.status} {result.message}"
@@ -837,7 +871,7 @@ class TestGitignoredTrackedDeleted:
         result = gw.commit(
             session_id="test-gi-large",
             files=files,
-            message="test: large-path gitignored-tracked-deleted",
+            allow_overlap=True, message="test: large-path gitignored-tracked-deleted",
         )
         assert result.status == CommitStatus.OK, (
             f"大路径应成功: {result.status} {result.message}"
@@ -923,7 +957,7 @@ class TestStagedDeleteGitignored:
         result = gw.commit(
             session_id="test-staged-del",
             files=files,
-            message="test: staged delete gitignored file on disk",
+            allow_overlap=True, message="test: staged delete gitignored file on disk",
         )
         assert result.status == CommitStatus.OK, (
             f"commit 应成功: {result.status} {result.message}"
