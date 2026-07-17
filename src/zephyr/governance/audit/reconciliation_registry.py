@@ -4216,16 +4216,67 @@ def make_constraint_detect_reconciler(gateway: "object") -> ReconcilerSpec:
 # 现有 GATE-AGENTS-MD-REFS 是反向检测（文档引用→代码存在性），本 reconciler 补正向（代码→文档）
 # trae_060-reviewed: 该 reconciler 独立存在治本（commit_gates 模块清单漂移正向检测），
 # 不合并进已有 reconciler（现有 reconciler 无此检测逻辑，GATE-AGENTS-MD-REFS 是反向检测不覆盖正向）
+def _auto_fix_gate_inventory(project_root) -> dict:
+    """ADP-4: 自动修复 commit_gates 模块清单漂移（裁定#ARCH-DRIFT-PREVENTION-001）。
+
+    检测 missing 文件后，自动在 blueprint.md §0.1 表格末尾补齐 missing 文件行。
+    extra 文件不自动删除（可能人工添加，需人工确认）。
+
+    Returns:
+        {"fixed": bool, "detail": str} — fixed=True 表示已修改 blueprint.md。
+    """
+    import sys
+
+    scripts_gen = str(project_root / "scripts" / "governance" / "generators")
+    if scripts_gen not in sys.path:
+        sys.path.insert(0, scripts_gen)
+    try:
+        from check_gate_inventory_drift import detect_drift
+    except Exception as e:
+        return {"fixed": False, "detail": f"cannot import detect_drift: {e}"}
+
+    missing, _extra = detect_drift()
+    if not missing:
+        return {"fixed": False, "detail": "no missing files to add"}
+
+    blueprint_path = (
+        project_root / "docs" / "03_modules" / "_cross_layer" / "gate_engine" / "blueprint.md"
+    )
+    if not blueprint_path.is_file():
+        return {"fixed": False, "detail": "blueprint.md not found"}
+
+    text = blueprint_path.read_text(encoding="utf-8", errors="replace")
+    lines = text.splitlines(keepends=True)
+
+    last_gate_idx = -1
+    for i, line in enumerate(lines):
+        if line.startswith("| `commit_gates/"):
+            last_gate_idx = i
+    if last_gate_idx < 0:
+        return {"fixed": False, "detail": "cannot locate §0.1 gate table"}
+
+    new_rows = [
+        f"| `commit_gates/{f}` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |\n"
+        for f in missing
+    ]
+    lines[last_gate_idx + 1:last_gate_idx + 1] = new_rows
+    blueprint_path.write_text("".join(lines), encoding="utf-8")
+
+    return {"fixed": True, "detail": f"added {len(missing)} missing gate(s): {', '.join(missing)}"}
+
+
 def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
-    """构造 commit_gates 模块清单漂移检测 post-commit reconciler（ARCH-055 治本）。
+    """构造 commit_gates 模块清单漂移检测 post-commit reconciler（ARCH-055 + ADP-4 治本）。
 
     commit src/zephyr/gov_enforcement/commit_gates/*.py 后，blueprint.md §0.1 模块清单
     可能过时（新增/删除 gate 文件但文档未同步）。本 reconciler 在 post-commit 跑
-    check_gate_inventory_drift.py 检测脚本，漂移时 warn（不阻断）。
+    check_gate_inventory_drift.py 检测脚本，漂移时 auto-fix + warn（裁定#ARCH-DRIFT-PREVENTION-001
+    ADP-4：自动补齐 missing 文件行到 §0.1 表格，extra 不自动删除需人工确认）。
 
-    warn-only 理由：漂移是文档同步滞后，非代码错误；阻断会导致 AI 无法 commit
-    正常的 gate 新增（因 blueprint.md 未同步而阻断 gate 代码本身的 commit，形成
-    死循环）。warn 提醒 AI 同步文档即可。
+    auto-fix + warn 理由（ADP-4 升级）：漂移是文档同步滞后，非代码错误；阻断会导致
+    AI 无法 commit 正常的 gate 新增（因 blueprint.md 未同步而阻断 gate 代码本身的
+    commit，形成死循环）。auto-fix 自动补齐 missing 文件行消除漂移，warn 保留提醒
+    （auto-fix 失败或 extra 文件需人工确认时）。
 
     Args:
         gateway: GitCommitGateway 实例（用 project_root）。
@@ -4255,10 +4306,29 @@ def make_gate_inventory_sync_reconciler(gateway: "object") -> ReconcilerSpec:
         if result.returncode == 0:
             return ReconcileResult(action="clean", detail=result.stdout.strip()[:200])
         if result.returncode == 1:
+            # ADP-4: 升级为 warn + auto-fix（裁定#ARCH-DRIFT-PREVENTION-001）
+            fix = _auto_fix_gate_inventory(project_root)
+            if fix["fixed"]:
+                bp_abs = str(
+                    project_root / "docs" / "03_modules" / "_cross_layer" / "gate_engine" / "blueprint.md"
+                )
+                auto_msg = (
+                    f"fix(gate_engine): GATE-MODULE-INVENTORY-SYNC auto-fix "
+                    f"blueprint.md §0.1 ({fix['detail']})"
+                )
+                commit_result = gateway._commit_auto(session_id, [bp_abs], auto_msg)
+                if commit_result.status == "OK":
+                    return ReconcileResult(
+                        action="auto_committed",
+                        detail=f"inventory drift auto-fixed: {fix['detail']}",
+                    )
+                return ReconcileResult(
+                    action="warn",
+                    detail=f"auto-fix applied but commit failed: {commit_result.message[:100]}",
+                )
             return ReconcileResult(
                 action="warn",
-                detail=f"commit_gates inventory drift detected (ARCH-055): "
-                       f"{result.stdout.strip()[:300]}",
+                detail=f"commit_gates inventory drift (ARCH-055), auto-fix N/A: {fix['detail']}",
             )
         return ReconcileResult(
             action="warn",
