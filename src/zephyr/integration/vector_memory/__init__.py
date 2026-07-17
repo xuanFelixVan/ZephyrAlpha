@@ -38,7 +38,7 @@
 --------
   存储      : ChromaDB 0.6 PersistentClient (SQLite + HNSW)
   数据目录   : data/vector_db/
-  模型缓存   : models/bge-m3/  +  models/bge-small-zh-v1.5/
+  模型缓存   : data/models/local_model/bge-m3/  +  data/models/local_model/bge-small-zh-v1.5/
   嵌入缓存   : data/vector_db/_embedding_cache/
   索引快照   : data/vector_db/_snapshots/
 

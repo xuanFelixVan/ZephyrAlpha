@@ -2,7 +2,7 @@
 # [MODULE] zephyr.integration.local_model.embedding_router
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_embedding
-# [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.trading.auto_runtime_core; tests.unit.vector_memory.test_vector_memory
+# [CONSUMERS] zephyr.autonomy_core.skills.skill_router; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.pipeline_orchestrator; zephyr.integration.local_model.local_model_scheduler; zephyr.integration.local_model.__init__; zephyr.trading.auto_runtime_core; tests.automation.test_auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -27,8 +27,8 @@ EmbeddingRouter — MOD-INF-011 双嵌入维度路由
 
 后端支持
 --------
-    local : SentenceTransformer 本地加载（默认，从 models/ 目录或 HuggingFace）
-    ollama: Ollama HTTP API（复用已有模型，零额外下载）
+    local : SentenceTransformer 本地加载（从 data/models/local_model/ 目录或 HuggingFace）
+    ollama: Ollama HTTP API（默认，复用已有模型，零额外下载）
 
 降级链
 ------
