@@ -281,6 +281,9 @@ config/.env.postgres
 # ClickHouse secrets (P1-7 修复 — 消除硬编码)
 # Contains connection credentials; never commit to repository
 config/.env.clickhouse
+# Restic backup repository password (MOD-INF-043 灾备备份系统)
+# Contains encryption key; never commit to repository
+config/.env.restic
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
 # DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径（已迁移到 tmp/pg_backups/，与 backup_runtime_state.py 标杆对齐）
