@@ -46,6 +46,8 @@ _SLA_CONFIG_PATH: Path = REPO_ROOT / "config" / "sla_targets.yaml"
 _RTO_TARGET_S_DEFAULT = 300
 _RPO_TARGET_TASKS_DEFAULT = 1
 
+_SLA_REPORT_RETENTION_DAYS = 30  # P6 修复：SLA 报告自动清理保留期（事件驱动）
+
 
 def _load_sla_targets() -> tuple[int, int]:
     """从 config/sla_targets.yaml 加载 RTO/RPO 目标，失败时 fallback 到默认值。"""
@@ -156,6 +158,7 @@ class SLAMonitor:
         )
 
         self._save_report(report)
+        self._cleanup_old_reports()  # P6 修复：事件驱动自动清理历史报告
 
         return report
 
@@ -213,6 +216,34 @@ class SLAMonitor:
             ),
             encoding="utf-8",
         )
+
+    def _cleanup_old_reports(self) -> int:
+        """P6 修复：清理超过保留期的历史 SLA 报告（事件驱动，record_recovery 时触发）。
+
+        删除 data/sla/ 下修改时间超过 _SLA_REPORT_RETENTION_DAYS 天的 SLA-*.json 文件。
+        符合永久系统"自动维护"要素：由 rollback_completed 事件链触发，无时间触发。
+        :return: 删除的文件数
+        """
+        import time as _time
+
+        removed = 0
+        cutoff_epoch = _time.time() - (_SLA_REPORT_RETENTION_DAYS * 86400)
+        try:
+            for report_file in self._data_dir.glob("SLA-*.json"):
+                try:
+                    if report_file.stat().st_mtime < cutoff_epoch:
+                        report_file.unlink()
+                        removed += 1
+                except OSError:
+                    continue
+        except Exception as e:
+            logger.warning("SLAMonitor: _cleanup_old_reports failed: %s", e, exc_info=True)
+        if removed:
+            logger.info(
+                "SLAMonitor: cleaned %d old SLA reports (retention=%dd)",
+                removed, _SLA_REPORT_RETENTION_DAYS,
+            )
+        return removed
 
     # ── P1-9 修复：事件驱动订阅（替代被动手动调用）──────────────────
 

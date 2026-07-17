@@ -120,8 +120,13 @@ from zephyr.infrastructure.a2a_protocol.layer3_coordination._security_and_econom
     SmugglingAttempt,
     ThreatCategory,
 )
+# AI-14 审计 P5: 直接 import（_security_and_economics 为 frozen/immutable_core，不宜改）
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_agent_blocklist import (
+    A2AAgentBlocklist,
+)
 
 __all__ = [
+    "A2AAgentBlocklist",
     "A2AAnomalyDetector",
     "A2ABehaviorFingerprint",
     "A2ABlameAttribution",
@@ -254,7 +259,7 @@ __all__ = [
     "a2a_metrics",
     "a2a_negotiation",
     "a2a_protocol_gateway",
-    "a2a_protocol_security",
+    "a2a_agent_blocklist",
     "a2a_red_team",
     "a2a_saga",
     "a2a_security",

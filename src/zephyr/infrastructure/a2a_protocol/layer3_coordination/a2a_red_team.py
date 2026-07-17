@@ -70,7 +70,7 @@ _ATTACK_VECTORS: list[AttackVector] = [
         description="篡改 A2ATask 状态 — 跨过状态机直接改 status",
         severity=AttackSeverity.HIGH,
         penetration_risk=0.70,
-        mitigation="A2AStateMachine.VALID_TRANSITIONS + A2AProtocolSecurity.block",
+        mitigation="A2AStateMachine.VALID_TRANSITIONS + A2AAgentBlocklist.block",
     ),
     AttackVector(
         vector_id="AV-003",
@@ -78,7 +78,7 @@ _ATTACK_VECTORS: list[AttackVector] = [
         description="Agent A 注入恶意内容到 Message Part，Agent B 执行",
         severity=AttackSeverity.CRITICAL,
         penetration_risk=0.90,
-        mitigation="A2ASecurity.scan + A2AProtocolSecurity.is_blocked",
+        mitigation="A2ASecurity.scan + A2AAgentBlocklist.is_blocked",
     ),
     AttackVector(
         vector_id="AV-004",
