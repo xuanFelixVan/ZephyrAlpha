@@ -16,7 +16,6 @@ created_by: human_plus_agent
 valid_from: "2026-05-08"
 date: "2026-05-08"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/security/adversarial_validation/"
 belongs_to: "MOD-INF-027"
 parent_module: "MOD-INF-027"

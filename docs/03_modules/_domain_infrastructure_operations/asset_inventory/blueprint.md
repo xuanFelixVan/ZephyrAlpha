@@ -13,7 +13,6 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-12"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "src/zephyr/infrastructure/asset_inventory/"
 last_updated: "2026-05-15"
 last_verified: "2026-05-15"

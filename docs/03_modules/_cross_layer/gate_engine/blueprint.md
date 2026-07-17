@@ -14,7 +14,6 @@ created_by: human_plus_agent
 date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/gov_enforcement/rule_enforcement/ + src/zephyr/feedback_loop/gates/ + src/zephyr/gov_enforcement/commit_gates/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"

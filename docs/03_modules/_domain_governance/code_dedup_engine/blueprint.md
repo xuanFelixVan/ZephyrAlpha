@@ -17,7 +17,6 @@ created_by: AI
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/governance/code_dedup/"
 last_updated: "2026-05-14"
 last_verified: "2026-05-14"

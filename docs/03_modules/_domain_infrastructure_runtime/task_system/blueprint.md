@@ -32,7 +32,6 @@ submodule_path: src/zephyr/governance
 actual_disk_path: "src/zephyr/governance/"
 runtime_plane: hot
 ttl: permanent
-construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "Task System 全链路蓝图 v0.9.1。覆盖意图→草稿→蓝图真源→任务卡拆解→AI双管线执行→脚本系统校验的闭环工作流。TaskCard 62字段（31基座+31执行层）。v0.9.1 回填OCP扩展点+施工步骤内容变更+依赖对齐+规格化压缩。"
 tags: [task_system, task-card, vibe-coding, dual-pipelines, script-system, state-machine, gates, ai-execution, infrastructure, anti-drift, blind-spot-audit, dogfooding, ai-autonomy, circuit-breaker, diff-plan, saga-compensation, quality-regression-detection, model-snapshot-pinning, schema-migration, cancel-safety, atomic-write, adaptive-replanning, scope-creep-detection, context-cache-reuse]

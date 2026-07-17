@@ -14,7 +14,6 @@ date: "2026-05-05"
 last_updated: "2026-05-15"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: src/zephyr/autonomy_core/
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "可执行 Agent Spec——将蓝图转化为 AI Agent 可执行操作手册，按领域+角色双维度组织，通过 AGENTS.md 路由 + Progressive Disclosure 按需加载。"

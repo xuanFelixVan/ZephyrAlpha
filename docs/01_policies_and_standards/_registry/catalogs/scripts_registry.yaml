@@ -1015,10 +1015,6 @@ items:
   name: validate_ssot.py
   node_type: script
   status: active
-- file: scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py
-  name: validate_ssot_construction_progress.py
-  node_type: script
-  status: active
 - file: scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
   name: validate_static_manifest_drift.py
   node_type: script

@@ -16,7 +16,6 @@ date: 2026-05-07
 updated: 2026-07-02
 valid_from: 2026-05-07
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: src/zephyr/autonomy_core/context/
 belongs_to: MOD-MASTER_BLUEPRINT
 parent_module:

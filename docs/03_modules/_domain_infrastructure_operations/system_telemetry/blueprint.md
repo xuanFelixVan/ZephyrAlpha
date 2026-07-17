@@ -13,7 +13,6 @@ created_by: human_plus_agent
 date: "2026-05-03"
 valid_from: "2026-05-03"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "src/zephyr/infrastructure/system_telemetry/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 summary: "ZephyrAlpha System Telemetry——全系统可观测性平台。9个子系统通过统一接入点 Telemetry 门面类暴露；覆盖三层信号(4 Golden Signals + USE + Annotations) + 多环境隔离；对接已有 shared 基础设施。三层闭环：AI开发闭环+运营闭环+治理闭环。"

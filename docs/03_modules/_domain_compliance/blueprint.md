@@ -15,7 +15,6 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-12"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/compliance/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

@@ -28,7 +28,6 @@ rule_form: structural
 scope: global
 stability: evolving
 verifiability: hybrid
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/governance/"
 summary: "审计编排器——MAPE-K五层自治循环驱动三子系统(结构/语义/行为)四阶段闭环迭代收敛审计引擎。v6.1.0: v3.5模板对齐"
 priority: P1
@@ -1248,7 +1247,6 @@ STEP 3: 拆分后验证
 | `scripts/governance/d5_architecture/validators/validate_blueprint_code_sync.py` | SCALE | 蓝图代码同步 | P1 |
 | `scripts/governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py` | KB 决策记录 | KB 决策记录 frontmatter 一致性 | P1 |
 | `scripts/governance/d5_architecture/detectors/detect_deprecated_adr_references.py` | KB 决策记录 | 废弃 KB 决策记录 引用检测 | P1 |
-| `scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py` | CONSTRUCTION | 施工进度 SSoT | P1 |
 | `scripts/governance/construction_gate.py` | CONSTRUCTION | 施工门禁 | P0 |
 | `scripts/governance/d5_architecture/validators/validate_code_yaml_alignment.py` | CONSTRUCTION | 代码 YAML 对齐 | P1 |
 | `scripts/governance/d5_architecture/validators/lifecycle/validate_module_lifecycle.py` | LIFECYCLE | 模块生命周期验证 | P1 |

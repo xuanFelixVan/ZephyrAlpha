@@ -17,7 +17,6 @@ last_updated: "2026-07-17"
 last_verified: "2026-07-17"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/ex_core/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""

@@ -15,7 +15,6 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-12"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: "src/zephyr/signal_ashare/ + src/zephyr/signal_fundamental/ + src/zephyr/signal_quality/"
 last_updated: "2026-07-05"
 last_verified: "2026-07-05"

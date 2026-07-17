@@ -14,7 +14,6 @@ created_by: human_plus_agent
 date: "2026-05-10"
 valid_from: "2026-05-10"
 ttl: permanent
-construction_progress: completed
 actual_disk_path: "src/zephyr/trading/"
 belongs_to: "SYS-MASTER-001"
 generation: 2

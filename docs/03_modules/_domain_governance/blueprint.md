@@ -15,7 +15,6 @@ date: "2026-05-06"
 ttl: permanent
 last_updated: "2026-05-15"
 last_verified: "2026-05-14"
-construction_progress: partially_implemented
 actual_disk_path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\blueprint.md"
 template_for: blueprint
 generation: 2

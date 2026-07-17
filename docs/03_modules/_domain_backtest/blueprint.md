@@ -2,7 +2,6 @@
 actual_disk_path: src/zephyr/backtest/
 belongs_to: D_BACKTEST
 classification: internal
-construction_progress: partially_implemented
 created_by: human_plus_agent
 date: '2026-07-02'
 depends_on: [MOD-L00-001, MOD-L02-001]

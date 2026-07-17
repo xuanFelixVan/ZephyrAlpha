@@ -5704,13 +5704,6 @@ ownership:
     existence: 'generated'
     ownership_judgment: '本模块'
 
-  - path: 'scripts/governance/d5_architecture/validators/validate_ssot_construction_progress.py'
-    owner_blueprint: 'MOD-INF-005'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_governance/governance_automation/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
   - path: 'scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py'
     owner_blueprint: 'MOD-INF-005'
     claim_type: 'depgraph_node'
@@ -31006,13 +30999,6 @@ ownership:
     owner_blueprint: 'MOD-INF-011'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_knowledge/vector_memory/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/vector_memory/vms_config.yaml'
-    owner_blueprint: 'MOD-INF-017'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 

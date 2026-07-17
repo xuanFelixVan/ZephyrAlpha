@@ -111,7 +111,6 @@ registries:
       - "completeness_pct"
       - "completeness_breakdown"
       - "generation"
-      - "construction_progress"
       - "construction_detail"
       - "purpose"
       - "file_lines"

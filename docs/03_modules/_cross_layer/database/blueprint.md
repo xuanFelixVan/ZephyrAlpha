@@ -21,7 +21,6 @@ parent_module: ""
 scope: global
 stability: evolving
 verifiability: automated
-construction_progress: completed
 actual_disk_path: "src/zephyr/governance/persistence/"
 codification_level: L2
 generation: 3

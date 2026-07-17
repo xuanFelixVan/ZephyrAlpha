@@ -12,7 +12,6 @@ language: zh
 created_by: human_plus_agent
 date: "2026-05-08"
 ttl: permanent
-construction_progress: partially_implemented
 actual_disk_path: src/zephyr/intelligence/model_profiling/
 last_updated: "2026-05-23"
 last_verified: "2026-05-14"

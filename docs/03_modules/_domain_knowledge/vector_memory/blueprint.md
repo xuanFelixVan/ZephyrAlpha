@@ -13,7 +13,6 @@ created_by: human_plus_agent
 date: "2026-05-05"
 valid_from: "2026-05-05"
 ttl: permanent
-construction_progress: partially_implemented
 belongs_to: "MOD-MASTER_BLUEPRINT"
 actual_disk_path: "src/zephyr/integration/vector_memory/"
 last_updated: "2026-05-18"

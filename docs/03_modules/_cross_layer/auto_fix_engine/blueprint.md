@@ -13,7 +13,6 @@ created_by: human_plus_agent
 date: "2026-05-08"
 valid_from: "2026-05-08"
 ttl: permanent
-construction_progress: design_only
 actual_disk_path: "src/zephyr/infrastructure/auto_fix_engine/"
 architecture_layer: "L3_执行层"
 belongs_to: "MOD-INF-027"

@@ -98,14 +98,6 @@ gates:
   scope: global
   execution_plane: warm
   note: 2026-05-05 落地 — 7 条零残留规则（ZR-001~007）：临时文件/孤儿文件/废墟引用/残留学债/文件闭环/文件准入
-- gate_id: G8
-  gate_name: g8
-  title: SSoT 一致性门禁  frontmatter  registry construction_progress 自动校验
-  category: infrastructure
-  file: g8.yaml
-  status: active
-  scope: global
-  execution_plane: warm
 - gate_id: SYS_MASTER_CMP
   gate_name: sys_master_compliance
   title: SYS-MASTER-CMP SYS-MASTER-001 Compliance Gate
@@ -844,19 +836,19 @@ gates:
     的文件。扫描器 scripts/governance/d7_code/detect_forward_reference.py。exit 0=clean, exit 1=findings(阻断),
     exit 2=error
 summary:
-  total: 94
+  total: 93
   by_category:
     kms: 5
     compliance: 55
     lifecycle: 1
     trading: 3
     residue: 1
-    infrastructure: 9
+    infrastructure: 8
     governance: 9
     task: 3
     invariants: 3
     admission: 5
   by_status:
-    active: 88
+    active: 87
     implemented: 4
     draft: 1
