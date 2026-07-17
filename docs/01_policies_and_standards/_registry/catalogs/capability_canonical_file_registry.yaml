@@ -2933,10 +2933,13 @@ capabilities:
       - PITConfig
       - PITError
       - pit_manager
+      - INSTRUMENT_COLUMN_CANDIDATES
       - OverfittingDetector
       - OverfittingConfig
       - OverfittingError
+      - OverfittingGateError
       - overfitting_detector
+      - DEFAULT_OOS_SHARPE_THRESHOLD_RATIO
       - WalkForwardAnalyzer
       - WalkForwardConfig
       - WalkForwardError
@@ -2946,6 +2949,12 @@ capabilities:
       - DecisionGateError
       - DecisionGateResult
       - decision_gate
+      - calculate_dsr
+      - calculate_full_metrics
+      - DEFAULT_N_TRIALS
+      - DEFAULT_RISK_FREE_RATE
+      - DSR
+      - Deflated Sharpe Ratio
     description: >-
       回测引擎核心能力（D_BACKTEST域，MOD-BT-001）。canonical = src/zephyr/backtest/
       core/engine_base.py（BacktestEngineBase ABC + BacktestResult + FactorDiscovery，
