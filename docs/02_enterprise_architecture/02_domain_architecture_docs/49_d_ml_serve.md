@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 推理（D_ML_SERVE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-18 02:20:06
+> 最后更新: 2026-07-18 03:10:44
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -79,7 +79,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -116,7 +116,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000

@@ -15,7 +15,7 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 架构文档治理（D_GOV_DOCS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-18 02:19:31
+> 最后更新: 2026-07-18 03:10:18
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -288,28 +288,31 @@ graph TD
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract / contract| D_COMPLIANCE
-    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime / runtime| D_INFRA_A2A
-    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime / runtime| D_FBL_VERIFICATION
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_FBL_VERIFICATION
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_COMPLIANCE
-    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_INFRA_A2A
-    D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_SECURITY_LLM
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data / data| D_GOVERNANCE
     D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_INTEGRATION
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|data / data| D_GOVERNANCE
+    D_SECURITY_LLM["(原型态 / prototype) D_SECURITY_LLM"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_SECURITY_LLM
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_SECURITY
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
+    D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_COMPLIANCE
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_FBL_VERIFICATION
+    D_ML_TRAIN["(设计态 / design) D_ML_TRAIN"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_ML_TRAIN
+    D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
+    docs_03_modules_cross_layer_pipeline_blueprint_md -.->|runtime / runtime| D_INFRA_RUNTIME
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| D_INTEGRATION
+    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|contract / contract| D_AUTONOMY_CORE
+    docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
     D_GOVERNANCE -.->|contract / contract| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md
@@ -321,7 +324,6 @@ graph TD
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_cross_layer_red_blue_validator_blueprint_md
     D_GOVERNANCE -.->|data / data| docs_03_modules_cross_layer_shared_core_blueprint_md
     D_GOVERNANCE -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
-    D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_cross_layer_context_engine_blueprint_md
     D_AUTONOMY_CORE -.->|runtime / runtime| docs_03_modules_cross_layer_pipeline_blueprint_md
     D_AUTONOMY_CORE -.->|contract / contract| docs_03_modules_domain_governance_governance_automation_blueprint_md
@@ -332,7 +334,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_rules_trae_060_inward_consolidation_yaml,docs_01_policies_and_standards_rules_trae_061_decisiongraph_access_protocol_yaml,docs_01_policies_and_standards_rules_trae_062_ssot_classification_yaml,docs_01_policies_and_standards_rules_trae_063_data_ops_discipline_yaml,docs_02_enterprise_architecture_05_dataflow_architecture_data_acquisition_requirements_yaml,docs_03_modules_cross_layer_database_business_data_categories_yaml,docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_arbitration_rules_yaml,docs_03_modules_domain_infrastructure_operations_agent_to_agent_protocol_trigger_config_yaml production
     class docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md design
-    class D_GOVERNANCE,D_COMPLIANCE,D_INFRA_A2A,D_FBL_VERIFICATION,D_GOV_AUDIT,D_GOV_DRIFT,D_SECURITY_LLM,D_INTEGRATION,D_AUTONOMY_CORE external_design
+    class D_SECURITY,D_FBL_VERIFICATION external_prod
+    class D_GOVERNANCE,D_INTEGRATION,D_SECURITY_LLM,D_GOV_DRIFT,D_GOV_AUDIT,D_COMPLIANCE,D_ML_TRAIN,D_INFRA_RUNTIME,D_AUTONOMY_CORE external_design
 ```
 
 #### 第 4 页 / 共 4 页
@@ -482,16 +485,16 @@ graph TD
     docs_03_modules_domain_governance_governance_automation_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|contract / contract| D_COMPLIANCE
-    D_INFRA_A2A["(原型态 / prototype) D_INFRA_A2A"]
-    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime / runtime| D_INFRA_A2A
-    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime / runtime| D_SECURITY
+    D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
     docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md -.->|runtime / runtime| D_FBL_VERIFICATION
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_FBL_VERIFICATION
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_COMPLIANCE
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_AUDIT
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
-    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_INFRA_A2A
+    docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|contract / contract| D_SECURITY
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
     docs_03_modules_cross_layer_red_blue_validator_blueprint_md -.->|runtime / runtime| D_GOVERNANCE
@@ -521,7 +524,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_auto_fix_engine_blueprint_md,docs_03_modules_cross_layer_auto_runtime_core_blueprint_md,docs_03_modules_cross_layer_behavioral_auditor_blueprint_md,docs_03_modules_cross_layer_context_engine_blueprint_md,docs_03_modules_cross_layer_database_blueprint_md,docs_03_modules_cross_layer_feedback_loop_blueprint_md,docs_03_modules_cross_layer_gate_engine_blueprint_md,docs_03_modules_cross_layer_model_capability_exam_blueprint_md,docs_03_modules_cross_layer_orphan_judge_blueprint_md,docs_03_modules_cross_layer_pipeline_blueprint_md,docs_03_modules_cross_layer_red_blue_validator_blueprint_md,docs_03_modules_cross_layer_resource_optimization_engine_blueprint_md,docs_03_modules_cross_layer_semantic_auditor_blueprint_md,docs_03_modules_cross_layer_shared_core_blueprint_md,docs_03_modules_domain_autonomy_core_agent_spec_blueprint_md,docs_03_modules_domain_autonomy_core_rollback_system_blueprint_md,docs_03_modules_domain_autonomy_perm_budget_enforcer_blueprint_md,docs_03_modules_domain_autonomy_perm_escalation_protocol_blueprint_md,docs_03_modules_domain_governance_blueprint_md,docs_03_modules_domain_governance_code_dedup_engine_blueprint_md,docs_03_modules_domain_governance_governance_automation_blueprint_md,docs_03_modules_domain_governance_registry_governance_blueprint_md,docs_03_modules_master_blueprint_blueprint_agent_spec_md,docs_03_modules_master_blueprint_blueprint_baseline_md,docs_03_modules_master_blueprint_blueprint_capacity_md,docs_03_modules_system_master_blueprint_md design
-    class D_GOVERNANCE,D_COMPLIANCE,D_INFRA_A2A,D_FBL_VERIFICATION,D_GOV_AUDIT,D_GOV_DRIFT,D_SECURITY_LLM,D_INTEGRATION,D_AUTONOMY_CORE external_design
+    class D_SECURITY,D_FBL_VERIFICATION external_prod
+    class D_GOVERNANCE,D_COMPLIANCE,D_GOV_AUDIT,D_GOV_DRIFT,D_SECURITY_LLM,D_INTEGRATION,D_AUTONOMY_CORE external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -540,9 +544,9 @@ graph TD
 | 2 | blueprint.md | → | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 3 | blueprint.md | → | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
 | 4 | blueprint.md | → | D_COMPLIANCE 合规: Audit Trail — MOD-INF-020 (__init__.py) | contract / contract |
-| 5 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: _governance_gates.py | runtime / runtime |
-| 6 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: _governance_gates.py | contract / contract |
-| 7 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: _governance_gates.py | runtime / runtime |
+| 5 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L50-L55 — Coherence + Integrity L... | runtime / runtime |
+| 6 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L50-L55 — Coherence + Integrity L... | contract / contract |
+| 7 | blueprint.md | → | D_FBL_VERIFICATION 反馈验证: Safety Gates L50-L55 — Coherence + Integrity L... | runtime / runtime |
 | 8 | blueprint.md | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | runtime / runtime |
 | 9 | blueprint.md | → | D_GOVERNANCE 生命周期管理: Construction Verifier — 施工验证器: 任务卡完成... | runtime / runtime |
 | 10 | blueprint.md | → | D_GOVERNANCE 生命周期管理: model_provider_data.py | data / data |
@@ -550,16 +554,16 @@ graph TD
 | 12 | blueprint.md | → | D_GOVERNANCE 生命周期管理: model_provider_data.py | runtime / runtime |
 | 13 | blueprint.md | → | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | runtime / runtime |
 | 14 | blueprint.md | → | D_GOVERNANCE 生命周期管理: Batch2 治理层契约 — 15条 Pydantic v2 Schema（P... | runtime / runtime |
-| 15 | blueprint.md | → | D_GOV_AUDIT 审计追踪: audit-trail.compliance_map — MOD-INF-020 · 合... | runtime / runtime |
+| 15 | blueprint.md | → | D_GOV_AUDIT 审计追踪: 三元对齐检测：蓝图声明清单 vs 磁盘实际文件 vs i... | runtime / runtime |
 | 16 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
 | 17 | blueprint.md | → | D_GOV_DRIFT 漂移检测: blueprint.md | runtime / runtime |
-| 18 | blueprint.md | → | D_INFRA_A2A A2A通信: test_a2a_check.py | contract / contract |
-| 19 | blueprint.md | → | D_INFRA_A2A A2A通信: test_a2a_check.py | runtime / runtime |
-| 20 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
-| 21 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | runtime / runtime |
-| 22 | blueprint.md | → | D_INTEGRATION 管线路由: Handoff 自动加载器——从 handoff 包恢复 AI sess... | runtime / runtime |
-| 23 | blueprint.md | → | D_INTEGRATION 管线路由: Handoff 自动加载器——从 handoff 包恢复 AI sess... | contract / contract |
-| 24 | blueprint.md | → | D_ML_TRAIN 训练: blueprint.md | runtime / runtime |
+| 18 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: blueprint.md | runtime / runtime |
+| 19 | blueprint.md | → | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | runtime / runtime |
+| 20 | blueprint.md | → | D_INTEGRATION 管线路由: Handoff 自动加载器——从 handoff 包恢复 AI sess... | runtime / runtime |
+| 21 | blueprint.md | → | D_INTEGRATION 管线路由: Handoff 自动加载器——从 handoff 包恢复 AI sess... | contract / contract |
+| 22 | blueprint.md | → | D_ML_TRAIN 训练: blueprint.md | runtime / runtime |
+| 23 | blueprint.md | → | D_SECURITY 对抗验证: IntegrationManager — 系统集成注册与健康检查. (... | contract / contract |
+| 24 | blueprint.md | → | D_SECURITY 对抗验证: IntegrationManager — 系统集成注册与健康检查. (... | runtime / runtime |
 | 25 | blueprint.md | → | D_SECURITY_LLM LLM防御: LLM Security Gateway Dashboard Module. (__init_... | contract / contract |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -582,9 +586,9 @@ graph TD
 | 14 | D_GOV_AUDIT 审计追踪: blueprint.md | → | blueprint.md | runtime / runtime |
 | 15 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
 | 16 | D_GOV_DRIFT 漂移检测: blueprint.md | → | blueprint.md | runtime / runtime |
-| 17 | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | → | blueprint.md | runtime / runtime |
-| 18 | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | → | blueprint.md | contract / contract |
-| 19 | D_INFRA_RUNTIME 运行时集成: logs/structured_sink — 结构化日志管道（D_SYSTE... | → | blueprint.md | runtime / runtime |
+| 17 | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | → | blueprint.md | runtime / runtime |
+| 18 | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | → | blueprint.md | contract / contract |
+| 19 | D_INFRA_RUNTIME 运行时集成: 遥测 · traces/span_stub — W3C TraceContext 分... | → | blueprint.md | runtime / runtime |
 | 20 | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | → | blueprint.md | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
@@ -595,24 +599,24 @@ graph TD
 graph LR
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
-    D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
+    D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_SECURITY_LLM["D_SECURITY_LLM<br/>LLM防御"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_GOV_DOCS -->|6条 data / data, runtime / runtime| D_GOVERNANCE
-    D_GOV_DOCS -->|3条 contract / contract| D_COMPLIANCE
     D_GOV_DOCS -->|3条 contract / contract, runtime / runtime| D_FBL_VERIFICATION
-    D_GOV_DOCS -->|2条 contract / contract, runtime / runtime| D_INFRA_A2A
-    D_GOV_DOCS -->|2条 runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DOCS -->|3条 contract / contract| D_COMPLIANCE
     D_GOV_DOCS -->|2条 runtime / runtime| D_GOV_DRIFT
+    D_GOV_DOCS -->|2条 contract / contract, runtime / runtime| D_SECURITY
     D_GOV_DOCS -->|2条 contract / contract, runtime / runtime| D_INTEGRATION
+    D_GOV_DOCS -->|2条 runtime / runtime| D_INFRA_RUNTIME
     D_GOV_DOCS -->|1条 contract / contract| D_SECURITY_LLM
     D_GOV_DOCS -->|1条 runtime / runtime| D_FEEDBACK_LOOP
     D_GOV_DOCS -->|1条 runtime / runtime| D_GOV_AUDIT

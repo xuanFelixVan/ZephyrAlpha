@@ -1,5 +1,5 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-18 02:20:18
+%% 生成时间: 2026-07-18 03:10:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 95, 依赖边数: 50
 
@@ -165,9 +165,6 @@ graph TD
     %% D_GOV_DOCS -> D_GOV_DRIFT (2 条)
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_GOV_DOCS -> D_INFRA_A2A (2 条)
-    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_INFRA_A2A[D_INFRA_A2A]
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_INFRA_A2A[D_INFRA_A2A]
     %% D_GOV_DOCS -> D_INFRA_RUNTIME (2 条)
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
@@ -176,6 +173,9 @@ graph TD
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_INTEGRATION[D_INTEGRATION]
     %% D_GOV_DOCS -> D_ML_TRAIN (1 条)
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_ML_TRAIN[D_ML_TRAIN]
+    %% D_GOV_DOCS -> D_SECURITY (2 条)
+    docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| D_SECURITY[D_SECURITY]
+    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_SECURITY[D_SECURITY]
     %% D_GOV_DOCS -> D_SECURITY_LLM (1 条)
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_SECURITY_LLM[D_SECURITY_LLM]
 
