@@ -101,7 +101,7 @@ _STATIC_MANIFEST: list[dict] = [
         "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)",
     },
     {
-        "path": "src/zephyr/gov_audit/reconciliation_registry.py",
+        "path": "src/zephyr/governance/audit/reconciliation_registry.py",
         "critical": True,
         "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)",
     },

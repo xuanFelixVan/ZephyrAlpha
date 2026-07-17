@@ -19,7 +19,7 @@
 被 ``validate_mutation_testing.py`` 的
 ``false_negative_cases/reconciliation_registry_cases.yaml`` 作为 verifier 调用
 （``--warn-only``）。importlib 直接加载 SSoT
-``src/zephyr/gov_audit/reconciliation_registry.py``（绕过 ``zephyr.*`` import 链断裂，
+``src/zephyr/governance/audit/reconciliation_registry.py``（绕过 ``zephyr.*`` import 链断裂，
 仿 ``post_sync_validator.py`` SSoT 解耦模式），检查 8 项结构/行为不变量，打印
 ``FN-RR-XXX: PASS/FAIL: <detail>`` 供 check_detection 子串匹配。
 
