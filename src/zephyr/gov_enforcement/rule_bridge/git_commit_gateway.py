@@ -51,6 +51,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_path_tree_reconciler,
     make_path_ownership_reconciler,
     make_depgraph_ops_reconciler,
+    make_blueprint_frontmatter_reconciler,  # ARCH-FRONTMATTER-STATE-001 Phase 2
     make_drift_scan_reconciler,
     make_drift_fix_reconciler,
     make_module_id_recommend_reconciler,
@@ -561,6 +562,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_path_tree_reconciler(self))
         self._reconciliation_registry.register(make_path_ownership_reconciler(self))  # path_ownership_map.yaml 自动同步
         self._reconciliation_registry.register(make_depgraph_ops_reconciler(self))  # 裁定#209 阶段1
+        self._reconciliation_registry.register(make_blueprint_frontmatter_reconciler(self))  # ARCH-FRONTMATTER-STATE-001 Phase 2 (Link B)
         self._reconciliation_registry.register(make_drift_scan_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S1
         self._reconciliation_registry.register(make_drift_fix_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S2
         self._reconciliation_registry.register(make_module_id_recommend_reconciler(self))  # MOD-GOV-ALIGNMENT-LOOP §4.S4
