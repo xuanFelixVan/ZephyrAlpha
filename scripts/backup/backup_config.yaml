@@ -40,11 +40,11 @@ trigger:
   state_file: "data/databases/backup_state.json"
 
 databases:
+  # PostgreSQL credentials (user/password) are read from config/.env.postgres at runtime.
+  # host/port are hardcoded in backup.ps1 (localhost:5432).
+  # This section only documents db_name/dump_file for reference (not consumed by backup.ps1).
   postgres:
     db_name: depgraph
-    host: "localhost"
-    port: 5432
-    user: "zephyr"
     dump_file: "depgraph.dump"
   sqlite:
     - {src: "data\\databases\\governance.db", dump: "governance_backup.db"}

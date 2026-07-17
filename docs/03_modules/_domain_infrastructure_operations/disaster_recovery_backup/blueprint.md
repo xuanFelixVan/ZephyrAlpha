@@ -5,7 +5,7 @@ title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.1.0"
+version: "1.2.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -15,7 +15,7 @@ date: "2026-07-09"
 ttl: permanent
 construction_progress: not_started
 actual_disk_path: "scripts/backup/"
-last_updated: "2026-07-09"
+last_updated: "2026-07-17"
 last_verified: "2026-07-09"
 generation: 1
 functional_domain: operations
@@ -42,7 +42,7 @@ responsibility_domain:
 build_status: planned
 design_maturity: design
 ---
-> module_id: MOD-INF-043 | version: 1.1.0 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-043 | version: 1.2.0 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: planned
 
 # 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
@@ -302,6 +302,7 @@ trigger:
     - "docker-compose.yml"
   state_file: "data/databases/backup_state.json"
 databases:
+  # PostgreSQL credentials (user/password) read from config/.env.postgres at runtime
   postgres:
     db_name: depgraph
     dump_file: "depgraph.dump"
@@ -355,8 +356,19 @@ pause
 ### §4.1 PostgreSQL（depgraph）
 
 ```powershell
-# 压缩格式dump，支持选择性恢复（dump到项目外临时目录，避免被tmp/排除规则冲突）
-pg_dump -Fc -h localhost -U postgres depgraph > D:\tmp_db_dumps\depgraph.dump
+# Read credentials from config/.env.postgres (avoid hardcoding user/password)
+$pgEnvFile = "$ProjectRoot\config\.env.postgres"
+$pgUser = "postgres"; $pgPassword = ""
+if (Test-Path $pgEnvFile) {
+    $pgEnv = Get-Content $pgEnvFile -Encoding UTF8
+    foreach ($line in $pgEnv) {
+        if ($line -match '^POSTGRES_USER=(.+)$') { $pgUser = $matches[1].Trim() }
+        if ($line -match '^POSTGRES_PASSWORD=(.+)$') { $pgPassword = $matches[1].Trim() }
+    }
+}
+$env:PGPASSWORD = $pgPassword
+# Compressed format dump, supports selective restore (dump to project-external temp dir)
+& pg_dump -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump"
 ```
 
 - 输出：`depgraph.dump`（~48MB，压缩格式）
@@ -523,6 +535,8 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 - **修改backup.ps1前**：必须确认六阶段流水线顺序不被破坏
 - **修改保留策略前**：必须评估快照数量是否满足RPO目标（1任务）
 - **新增排除项前**：必须确认被排除内容确属"可重新生成"类别
+- **修改 .ps1 文件前**：必须确保内容为纯 ASCII（禁止中文注释/非 ASCII 字符）——PowerShell 5.1 无 BOM 时按 ANSI 解码导致乱码，由 `check_encoding.py` (INJ-007) pre-commit GATE-ENCODING 强制检测
+- **修改 PostgreSQL 凭据**：必须改 `config/.env.postgres`（真源），禁止改 `backup_config.yaml` 的 databases.postgres 字段（仅文档参考，不被代码消费）
 
 ---
 

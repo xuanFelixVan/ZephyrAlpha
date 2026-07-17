@@ -2822,6 +2822,27 @@ capabilities:
       解决发现性：新AI搜 "写入前门禁/pre write gate/mojibake检测/根目录污染" 可定位真源。
       解决防重建：阻止新AI重复造写入前检查脚本（对标 held_overlap_gate 的 overlap 检测在 commit 时自动保障）。
 
+  - capability_id: check_encoding
+    canonical_override: scripts/governance/d7_code/check_encoding.py
+    aliases:
+      - encoding_compliance_check
+      - ps1_ascii_check
+      - inj_007
+      - bom_detection
+      - crlf_detection
+      - non_ascii_detector
+    description: >-
+      独立编码合规校验脚本（INJ-007）。检测内容：UTF-8 BOM（FAIL）、CRLF（WARNING）、
+      auto-guess-encoding pattern（FAIL）、GBK-as-UTF-8 mojibake（FAIL）、.ps1 非 ASCII 字节（FAIL）。
+      .ps1 ASCII-only 规则：PowerShell 5.1 无 BOM 时按 ANSI codepage 解码，多字节 UTF-8
+      导致字节偏移→假语法错误；Edit 工具剥离 BOM 使"保留 BOM"不可行，故 .ps1 MUST 纯 ASCII。
+      CLI入口：python scripts/governance/d7_code/check_encoding.py --file <path> | --dir <path> | --scan。
+      强制方式：pre-commit hook GATE-ENCODING（.pre-commit-config.yaml 注册，FAIL 级阻断提交）。
+      与 pre_write_gate.py 的关系：pre_write_gate 是写入前手动诊断（含 mojibake 检测），
+      check_encoding.py 是提交时自动校验（独立脚本，覆盖 .ps1 + BOM + CRLF + mojibake 全格式）。
+      解决发现性：新AI搜 "编码检查/INJ-007/ps1 ASCII/BOM检测/mojibake" 可定位真源。
+      解决防重建：阻止新AI重复造编码检查脚本（对标 pre_write_gate 的 mojibake 检测在写入前手动保障）。
+
   - capability_id: pre_delete_safety_check
     canonical_override: scripts/governance/d5_architecture/pre_delete_safety_check.py
     aliases:
@@ -3768,6 +3789,21 @@ capabilities:
       META-TESTS-COVERAGE Gate 测试覆盖率校验 meta-gate（#ARCH-057）。
       检测 commit gate 自身是否有对应测试覆盖（meta 层：gate 的 gate）。
 
+  - capability_id: rename_depgraph_sync_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py
+    aliases:
+      - RENAME-DEPGRAPH-SYNC
+      - rename-depgraph-sync
+      - make_rename_depgraph_sync_gate
+      - file_rename_depgraph_sync_blocker
+    description: >-
+      RENAME-DEPGRAPH-SYNC in-process 文件重命名 depgraph 同步阻断门禁（AI-14 审计 S1-1，2026-07-17）。
+      检测 staged .py 文件重命名（diff-filter=R）的新路径在 depgraph nodes 表无对应 file_path 记录。
+      文件改名后未重建 depgraph → 生成器读 stale depgraph → 产出 stale docs（幻觉温床）。
+      DB 不可达时 fail-open。priority=39。in-process DB 查询（不走 subprocess）。
+    integrity_anchors:
+      - make_rename_depgraph_sync_gate
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4592,6 +4628,12 @@ creation_tokens:
     token: "auto-pure-assertion-checker-20260717"
     created_by: "session-sess-24736-20260717023222"
     capability: "pure_assertion_checker"
+
+  # --- RENAME-DEPGRAPH-SYNC gate（AI-14 审计 S1-1，2026-07-17）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py"
+    token: "auto-rename-depgraph-sync-gate-20260717"
+    created_by: "session-sess-ai14-20260717"
+    capability: "rename_depgraph_sync_gate"
 
 # ============================================================================
 # 维护日志
