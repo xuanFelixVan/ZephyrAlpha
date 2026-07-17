@@ -379,7 +379,7 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 | 5 | **防幻觉头部**——新建/修改代码文件 MUST 包含十五字段头部（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]/[TTL]）。缺失 = 孤儿文件 |
 | 6 | **根因追踪（MTH-006）**——遇到 bug/失败/漂移 → MUST 追问到底（非固定5次，问到底）。治根判定：修复后同类问题不再产生 + 作用于设计层面 + 可泛化为原则 |
 | 7 | **搜索先行复用决策**——新建功能前 MUST 搜索已有覆盖。放弃新建时 MUST 写 `[REUSE-DECISION]` |
-| 8 | **编码安全**——Python `open(path,'w')` 禁止省略 `encoding='utf-8'`；禁止 Trae+Cursor 同时打开同一文件 |
+| 8 | **编码安全**——Python `open(path,'w')` 禁止省略 `encoding='utf-8'`；禁止 Trae+Cursor 同时打开同一文件；`.ps1` 文件 MUST 纯 ASCII（PowerShell 5.1 无 BOM 时按 ANSI 解码导致中文乱码，Edit 工具会剥离 BOM → 只能 ASCII-only），由 `check_encoding.py` (INJ-007) 强制检测非 ASCII 字节（FAIL 级） |
 | 9 | **修改原则**——发现事实错误 → 直接修正，禁止添加"之前为什么是错的"解释段；单个 real number 原则 |
 | 10 | **审计前置**——任何涉及文件变更的任务完成后 MUST 执行 `python scripts/governance/run_all.py --depth quick` |
 | 11 | **资产认知（RULE-NINE）**——进项目 MUST 先读 `data/asset_index/unified_asset_index.yaml` |

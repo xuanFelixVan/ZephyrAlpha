@@ -1,10 +1,10 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿# __manifest__:
+# __manifest__:
 #   dimensions: [D11]
 #   priority: P2
 #   timeout_seconds: 300
 #   args: []
 #   warn_only: false
-#   description: "47脚本全量并发安全测试 + 同脚本5实例压力测试 — 验证 RULE-ONE temp+rename 原子写入模式的并发正确性"
+#   description: "47-script full concurrent safety test + same-script 5-instance stress test - validates concurrency correctness of RULE-ONE temp+rename atomic write pattern"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectDir = Resolve-Path "$scriptDir\..\.."
