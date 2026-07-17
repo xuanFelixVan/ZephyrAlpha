@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-17T09:57:56Z'
+generated_at: '2026-07-17T12:56:39Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -246,8 +246,9 @@ gates:
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.2）'
   entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
-  description: 运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.2 静态清单自动生成铁律
-  files_trigger: ^(scripts/governance/script_manifest\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\.yaml|\.pre-commit-config\.yaml)$
+  description: 运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.2 静态清单自动生成铁律。files 扩展
+    commit_gates/*.py（ARCH-GATE-REGISTRY-SYNC-001 双保险：reconciler 失效时兜底检测）
+  files_trigger: ^(scripts/governance/script_manifest\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\.yaml|\.pre-commit-config\.yaml|src/zephyr/gov_enforcement/commit_gates/.*\.py)$
   always_run: false
   category: unknown
   status: active
