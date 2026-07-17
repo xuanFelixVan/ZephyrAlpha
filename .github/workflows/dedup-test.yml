@@ -1,13 +1,25 @@
 name: Dedup Test
 
+# 治本(2026-07-17): 修复路径触发遗漏+push/PR不对称
+# - 原路径 src/zephyr/l01-infrastructure/code_dedup_engine/** 已迁移到 src/zephyr/gov_code_quality/code_dedup/**，
+#   导致 workflow 永不触发
+# - 原 tests/test_code_dedup_engine/** 已迁移到 tests/governance/code_quality/test_code_dedup_engine*.py
+# - 原 push/PR paths 不对称（push 含 tests/，PR 不含）
+# - 测试调用改为实际路径 tests/governance/code_quality/test_code_dedup_engine*.py
 on:
   push:
+    branches: [main, master, "phase/*", "sprint/*", "feature/*"]
     paths:
-      - "src/zephyr/l01-infrastructure/code_dedup_engine/**"
-      - "tests/test_code_dedup_engine/**"
+      - "src/zephyr/gov_code_quality/code_dedup/**"
+      - "tests/governance/code_quality/test_code_dedup_engine*.py"
+      - ".github/workflows/dedup-test.yml"
   pull_request:
+    branches: [main, master]
     paths:
-      - "src/zephyr/l01-infrastructure/code_dedup_engine/**"
+      - "src/zephyr/gov_code_quality/code_dedup/**"
+      - "tests/governance/code_quality/test_code_dedup_engine*.py"
+      - ".github/workflows/dedup-test.yml"
+  workflow_dispatch:
 
 jobs:
   test:
@@ -20,4 +32,5 @@ jobs:
       - name: Install deps
         run: pip install pydantic pytest pyyaml
       - name: Run dedup tests
-        run: python -m pytest tests/test_code_dedup_engine/ -q
+        # 治本(2026-07-17): 实际测试文件路径（原 tests/test_code_dedup_engine/ 不存在）
+        run: python -m pytest tests/governance/code_quality/test_code_dedup_engine.py tests/governance/code_quality/test_code_dedup_engine_red_team.py -q

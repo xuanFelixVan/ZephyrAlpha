@@ -31,7 +31,10 @@ matrix:
   description: "AI 能力边界矩阵——将 IRN-001~010 铁律转化为结构化可执行约束"
 
   entries:
-    - scope: "src/zephyr/shared/contracts/**/*.py"
+    # 治本(2026-07-17): 原 hardcoded `if "shared/contracts" in rel` 是 substring 匹配，
+    # 不要求路径以 src/zephyr/ 开头（如 tests/shared/contracts/ 也覆盖）。
+    # YAML scope 改为 **/shared/contracts/** 保持 substring 语义等价。
+    - scope: "**/shared/contracts/**/*.py"
       level: IMMUTABLE
       description: "跨层数据契约（CTR + 辅助类型），含子包"
       rationale: "CTR 是承重墙，变动会影响所有下游消费者"
@@ -43,6 +46,21 @@ matrix:
       level: IMMUTABLE
       description: "AI 行为铁律 IRN-001~010"
       rationale: "铁律是系统最高安全约束"
+
+    # 治本(2026-07-17): 兑现原 _check_file_level substring 行为（governance/ai 子串 → IMMUTABLE）
+    # 原 hardcoded `if "governance/ai" in rel` 同时覆盖 docs/ 和 scripts/ 两处，
+    # 拆分为 YAML entry 后须显式登记 scripts/governance/ai/ 路径。
+    - scope: "scripts/governance/ai/**"
+      level: IMMUTABLE
+      description: "scripts 侧 AI 行为铁律脚本"
+      rationale: "与 docs/.../governance/ai/** 对称——铁律执行脚本同样不可篡改"
+
+    # 治本(2026-07-17): 兑现原 `if "_registry.yaml" in rel` substring 行为
+    # 原 hardcoded 覆盖任意路径下的 _registry.yaml 文件（包括 src/zephyr/gates/_registry.yaml）
+    - scope: "**/_registry.yaml"
+      level: IMMUTABLE
+      description: "所有 _registry.yaml 注册表文件（任意路径）"
+      rationale: "注册表是系统级 SSoT，禁止 AI 篡改"
 
     - scope: "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml"
       level: IMMUTABLE
@@ -64,9 +82,23 @@ matrix:
       description: "ContractEnforcer 单元测试"
       rationale: "可添加用例，不删除或弱化现有用例"
 
+    # 治本(2026-07-17): 兑现原 `if "test_enforcer" in rel` substring 行为
+    # 原 hardcoded 覆盖任意路径下包含 test_enforcer 子串的文件
+    - scope: "**/test_enforcer*.py"
+      level: EXTEND
+      description: "所有 ContractEnforcer 测试文件（任意路径）"
+      rationale: "可添加用例，不删除或弱化现有用例"
+
     - scope: "src/zephyr/factor/**/factor_base*.py"
       level: EXTEND
       description: "因子基类（若存在此类文件）"
+      rationale: "可注册新因子，不删除已有因子"
+
+    # 治本(2026-07-17): 兑现原 `if "factor_registry" in rel` substring 行为
+    # 原 hardcoded 覆盖任意路径下包含 factor_registry 子串的文件
+    - scope: "**/factor_registry/**"
+      level: EXTEND
+      description: "所有 factor_registry 目录（任意路径）"
       rationale: "可注册新因子，不删除已有因子"
 
     - scope: "src/zephyr/factor/**/*.py"

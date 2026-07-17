@@ -5,7 +5,7 @@
 # [CONSUMERS] pre-commit GATE-VOCAB; manual audit
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）
+# [INVARIANTS] AST 扫描检测词表合法值硬编码（变量名匹配 + 值匹配）+ load_vocabulary_values 引用 yaml 存在性 + [STARTUP] 标记值合法性校验；warn-only 起步(exit 0)；DDL 例外白名单；_archive 排除；# noqa: gate-vocab 内联豁免 + noqa 审计输出（治本 2026-06-30，超基线 WARN 不阻断）；检测6：生成器数据库名硬编码（红攻1治本，仅 generators/ 范围，排除 docstring + _common.py）；检测7：commit_gates 测试目录名硬编码（红攻发现2治本，仅 commit_gates/ 范围，排除 docstring，真源 commit_gate_registry.is_test_exempt）；检测8：阈值变量硬编码（ARCH-036 P3-A5，仅 scripts/governance/ 范围，匹配 *THRESHOLD/*DEADLINE/*TIMEOUT/*QUARANTINE/*LIMIT 变量名赋值为数值字面量/数值集合，真源 thresholds.yaml + _get_threshold()，src/zephyr/ 不接入因依赖方向错误）；盲区1治本（2026-07-17）：dict 字面量检测（ast.Dict key 提取 + dict() 调用 + set({...}) 递归）；盲区2治本：检测9 if 语句 ast.Compare 字面量集合（in/not in，min_values=2）；盲区3治本：单字符词表值加载（H/M/L 等，len>=1，原 >=2 漏检 safety_level）；盲区4治本：检测10 return 语句字面量集合（min_values=2）；盲区5治本：_match_vocab_values 全子集阈值（hit_count==len(str_values) 且 ≥ min_values=2，检测4/9/10 共用）替代原 min(3,total)且≥2——覆盖 2 值子集（如 ("draft","active") 2/3 status），单值子集不报（误报率过高）
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -278,12 +278,13 @@ def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gat
     """加载所有 *_vocabulary.yaml 的合法值，构建 vocab_name → set[value] 映射。
 
     用于值匹配检测（检测4）：不限变量名，扫描字面量集合的字符串值，
-    若命中数 ≥ min(3, 词表总值) 且 ≥ 2，标记为疑似硬编码。
+    若命中数 ≥ 1，标记为疑似硬编码（盲区5 治本：阈值从 ≥2 降到 ≥1）。
     覆盖检测1（变量名匹配）漏检的 DOC_TYPES/CODE_TYPES/TYPE_PRIORITY 等命名。
 
     Returns:
         {vocab_name: {value, ...}}；vocab_name 不含 _vocabulary.yaml 后缀。
-        过滤单字符值与纯数字值（避免误报）。文件异常时跳过（warn-only，不崩溃）。
+        过滤纯数字值（避免误报），保留单字符值（盲区3 治本：H/M/L 等单字符词表值需检测）。
+        文件异常时跳过（warn-only，不崩溃）。
     """
     result: dict[str, set[str]] = {}
     for p in sorted(vocab_dir.glob("*_vocabulary.yaml")):
@@ -298,7 +299,8 @@ def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gat
         for v in data.get("values", []) or []:
             if isinstance(v, dict) and "value" in v:
                 val = v["value"]
-                if isinstance(val, str) and len(val) >= 2 and not val.isdigit():
+                # 盲区3 治本：移除 len(val) >= 2 过滤，改为 >= 1（H/M/L 等单字符词表值需检测）
+                if isinstance(val, str) and len(val) >= 1 and not val.isdigit():
                     values.add(val)
         if values:
             result[vocab_name] = values
@@ -335,6 +337,43 @@ def _extract_str_literals(node: ast.expr) -> set[str]:
                 sep = node.args[0].value
             values.update(s for s in node.func.value.value.split(sep) if s)
     return values
+
+
+def _match_vocab_values(
+    node_value: ast.expr,
+    vocab_values: dict[str, set[str]] | None,
+    min_values: int = 2,
+) -> tuple[str, int, int] | None:
+    """检查字面量集合是否为词表合法值的子集（盲区5 治本）。
+
+    检测4/9/10 共用辅助：检测字面量集合（list/set/tuple/dict）中的词表值硬编码。
+
+    原检测4 阈值 ``≥ min(3, total) 且 ≥ 2`` 漏检 2 值子集（如 ``("draft","active")``
+    仅 2/3 status，原阈值要求 ≥ min(3,3)=3）。新阈值要求整个集合为词表子集
+    （``hit_count == len(str_values) 且 ≥ min_values``），覆盖 2 值子集的同时
+    避免部分匹配误报（如 ``("accepted", "active")`` 仅 1/2 命中不报，
+    因 "accepted" 不在 status_vocabulary values 中）。
+
+    Args:
+        node_value: AST 节点（赋值值 / comparator / return value）。
+        vocab_values: ``{vocab_name: set[value]}`` 映射；None 跳过。
+        min_values: 集合最少字符串值数量（默认 2——单值匹配误报率过高，
+            任何单字符串都可能巧合命中某词表；2+ 值全子集匹配才是硬编码强信号）。
+
+    Returns:
+        ``(vocab_name, hit_count, total)`` 如果匹配；``None`` 如果不匹配。
+    """
+    if not vocab_values or not _is_literal_collection(node_value):
+        return None
+    str_values = _extract_str_literals(node_value)
+    if not str_values or len(str_values) < min_values:
+        return None
+    for vocab_name, vocab_set in vocab_values.items():
+        hit_count = len(str_values & vocab_set)
+        # 盲区5 治本：全子集阈值（hit_count == len(str_values) 且 ≥ min_values）
+        if hit_count >= min_values and hit_count == len(str_values):
+            return (vocab_name, hit_count, len(vocab_set))
+    return None
 
 
 def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None = None, vocab_values: dict[str, set[str]] | None = None) -> list[tuple[int, str]]:
@@ -423,24 +462,21 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 name_match_reported = True
 
             # 检测4：值匹配（v1.3.0 新增——不限变量名，覆盖 DOC_TYPES/CODE_TYPES/TYPE_PRIORITY 等漏检命名）
-            # 仅当检测1未报且值是字面量集合时进行，避免与检测1重复。
-            # 阈值：命中数 ≥ min(3, 词表总值) 且 ≥ 2（避免单值巧合误报）。
+            # 仅当检测1未报时进行，避免与检测1重复。
+            # 盲区5 治本：全子集阈值（hit_count == len(str_values) 且 ≥ min_values=2），
+            # 原 min(3,total) 且 ≥2 漏检 2 值子集（如 ("draft","active") 2/3 status）。
+            # min_values=2：单值子集（如 ("draft",)）不报——任何单字符串都可能巧合命中某词表，
+            # 单值匹配误报率过高（实测 140+ 误报）；2+ 值全子集匹配才是硬编码强信号。
             if (not name_match_reported and vocab_values
-                    and _is_literal_collection(node.value)
                     and not _has_noqa_exempt(source, node.lineno)):
-                str_values = _extract_str_literals(node.value)
-                if len(str_values) >= 2:
-                    for vocab_name, vocab_set in vocab_values.items():
-                        hit_count = len(str_values & vocab_set)
-                        total = len(vocab_set)
-                        threshold = min(3, total)
-                        if hit_count >= threshold and hit_count >= 2:
-                            issues.append((
-                                node.lineno,
-                                f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
-                                f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
-                            ))
-                            break  # 一个词表命中即可，避免重复报
+                match = _match_vocab_values(node.value, vocab_values, min_values=2)
+                if match:
+                    vocab_name, hit_count, total = match
+                    issues.append((
+                        node.lineno,
+                        f"字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                        f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                    ))
 
             # 检测8：阈值变量硬编码（ARCH-036 P3-A5: 阈值数值应从 SSoT 读取）
             # 仅对 scripts/governance/ 范围生效——thresholds.yaml 是脚本治理系统的 SSoT，
@@ -532,6 +568,37 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
                 f"def {func_name}() 函数体含 yaml.safe_load 读取词表逻辑"
                 f"(疑似复制词表加载，应使用 load_vocabulary_values SSoT 函数)",
             ))
+        # 检测9：if 语句中字面量集合（盲区2 治本）
+        # 检测 ast.Compare（如 if x not in {"draft", "active"}）中的字面量集合。
+        # 原检测仅查 Assign，漏检 if 语句中的 in/not in 字面量集合硬编码。
+        # min_values=2：if x in ("draft",): 等价 if x == "draft": 属业务逻辑，不报；
+        # 同检测4 rationale，单值匹配误报率过高。
+        elif isinstance(node, ast.Compare):
+            if vocab_values and not _has_noqa_exempt(source, node.lineno):
+                for comparator in node.comparators:
+                    match = _match_vocab_values(comparator, vocab_values, min_values=2)
+                    if match:
+                        vocab_name, hit_count, total = match
+                        issues.append((
+                            node.lineno,
+                            f"if 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                            f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                        ))
+                        break  # 一个 comparator 命中即可，避免重复报
+        # 检测10：return 语句中字面量集合（盲区4 治本）
+        # 检测 ast.Return 中的字面量集合（如 return ("draft", "active")）。
+        # 原检测仅查赋值语句，漏检 return 语句中的字面量集合硬编码。
+        # min_values=2：return ("draft",) 等价 return "draft" 属业务逻辑，不报。
+        elif isinstance(node, ast.Return) and node.value is not None:
+            if vocab_values and not _has_noqa_exempt(source, node.lineno):
+                match = _match_vocab_values(node.value, vocab_values, min_values=2)
+                if match:
+                    vocab_name, hit_count, total = match
+                    issues.append((
+                        node.lineno,
+                        f"return 语句字面量集合含 {hit_count}/{total} 个 {vocab_name} 词表值"
+                        f"(疑似硬编码，应从 {vocab_name}_vocabulary.yaml 动态加载)",
+                    ))
 
     # 检测6：生成器数据库名硬编码（治本 2026-06-30，红攻1治本）
     # 生成器产物里的数据库名必须从 _common.DB_DISPLAY_NAME 引用，禁止硬编码字面量。

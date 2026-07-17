@@ -31,7 +31,7 @@ from pydantic import BaseModel, Field
 
 class DependencyNode(BaseModel):
     file_path: str
-    layer: str = "cross_layer"
+    layer: str = "L1_foundation"
     imported_by_count: int = 0
     imports_count: int = 0
     is_leaf: bool = False
@@ -231,7 +231,8 @@ def _resolve_module_to_file(module_name: str, module_to_file: dict[str, str]) ->
 def _infer_layer(file_path: str) -> str:
     """Infer layer_id from file path (aligned with layer_vocabulary.yaml v2.0.0).
 
-    L0_infrastructure / L1_foundation / L2_domain / L3_application / cross_layer
+    L0_infrastructure / L1_foundation / L2_domain / L3_application
+    (cross_layer 已废弃 v2.0.0——跨层组件由 cross_layer_contracts.yaml 承担)
     """
     if file_path.startswith("src/zephyr/infrastructure/"):
         return "L0_infrastructure"
@@ -250,10 +251,10 @@ def _infer_layer(file_path: str) -> str:
     if file_path.startswith("scripts/"):
         return "L1_foundation"
     if file_path.startswith("tests/"):
-        return "cross_layer"
+        return "L1_foundation"
     if file_path.startswith("docs/"):
-        return "cross_layer"
-    return "cross_layer"
+        return "L1_foundation"
+    return "L1_foundation"
 
 
 def _detect_cycles(nodes: dict[str, DependencyNode], adjacency: dict[str, set[str]]) -> list[list[str]]:

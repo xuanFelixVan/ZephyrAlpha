@@ -81,6 +81,11 @@ import tomllib
 
 import yaml
 from _shared.constants import CONFIG_DIR, EXIT_PASS, SRC_DIR  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_DIR import（L8 l8_code_config_reconciliation 使用）
+from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
+
+# safety_level 合法值真源是 safety_level_vocabulary.yaml，禁止代码硬编码字面量集合。
+# strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
+_SAFETY_LEVEL_VALUES: set[str] = load_vocabulary_values("safety_level_vocabulary.yaml", strict=False)
 
 EXCLUDE_DIRS: tuple[str, ...] = ()
 
@@ -200,7 +205,7 @@ def l2_schema_deep(yaml_data: dict) -> tuple[list[str], list[str]]:
             errors.append(f'[L2] trigger_router.yaml trigger "{ttype}": handler 为空')
         elif "." not in handler:
             warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": handler 格式非 module.func — "{handler}"')
-        if safety not in ("L", "M", "H"):
+        if safety not in _SAFETY_LEVEL_VALUES:
             warnings.append(f'[L2] trigger_router.yaml trigger "{ttype}": safety="{safety}" 非 L/M/H')
         if enabled is not None and not isinstance(enabled, bool):
             errors.append(f'[L2] trigger_router.yaml trigger "{ttype}": enabled 不是 bool')

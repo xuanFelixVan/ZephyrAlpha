@@ -255,7 +255,7 @@ def _count_orphan_nodes(
         if not isinstance(node_data, dict):
             continue
         node_type = node_data.get("type", "")
-        if node_type in ("module", "script"):
+        if node_type in ("module", "script"):  # noqa: gate-vocab  业务逻辑：仅 module/script 节点判定为 orphan（其他类型 orphan 属正常，非词表成员校验）
             if node_id not in owned_by_map:
                 orphan_count += 1
     return orphan_count

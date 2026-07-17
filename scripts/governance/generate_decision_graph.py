@@ -101,6 +101,7 @@ from zephyr.governance.persistence.decisiongraph_schema import (
     load_node_type_values,
     load_track_ids,
 )
+from _shared.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05）
 
 # ---------------------------------------------------------------------------
 # 常量
@@ -111,6 +112,10 @@ _YAML_PATH = REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model
 
 # pg_advisory_lock key（depgraph=424242, dataflowgraph=424243, decisiongraph=424244）
 _DECISIONGRAPH_LOCK_KEY = 424244
+
+# maturity 合法值真源是 maturity_vocabulary.yaml，禁止代码硬编码字面量集合。
+# strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
+_MATURITY_VALUES: set[str] = load_vocabulary_values("maturity_vocabulary.yaml", strict=False)
 
 # build_status 5态机（单调推进）—— 从 YAML 真源动态加载（VOCAB-HARDCODE 治本）
 _BUILD_STATUS_ORDER = load_build_status_order()
@@ -207,7 +212,7 @@ def _validate_yaml(data: dict) -> list[str]:
                     f"layer {lid} build_status '{bs}' not in valid set {_BUILD_STATUS_ORDER}"
                 )
             dm = L.get("design_maturity")
-            if dm and dm not in ("design", "production", "prototype"):
+            if dm and dm not in _MATURITY_VALUES:
                 errors.append(
                     f"layer {lid} design_maturity '{dm}' not in valid set"
                 )

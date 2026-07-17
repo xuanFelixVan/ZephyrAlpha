@@ -79,7 +79,7 @@ def scan_content_type_mismatch() -> list[dict]:
             continue
 
         doc_type = fm.get("doc_type", "")
-        if not doc_type or doc_type in ("index", "template"):
+        if not doc_type or doc_type in ("index", "template"):  # noqa: gate-vocab  业务逻辑：跳过 index/template 文档类型（非内容扫描目标，非词表成员校验）
             continue
 
         try:

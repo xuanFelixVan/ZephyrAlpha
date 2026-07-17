@@ -295,9 +295,9 @@ class TriageGate:
             return "BLUEPRINT"
         if doc_type in ("policy",):
             return "GOVERNANCE_STD"
-        if category in ("strategy", "factor"):
+        if category in ("strategy", "factor"):  # noqa: gate-vocab  业务分类逻辑：strategy/factor 子集映射 STRATEGY（非词表成员校验，见上方 RENAME_REVIEW 注释）
             return "STRATEGY"
-        if category in ("best_practice", "lesson_learned"):
+        if category in ("best_practice", "lesson_learned"):  # noqa: gate-vocab  业务分类逻辑：best_practice/lesson_learned 子集映射 KNOWLEDGE_ENTRY（非词表成员校验）
             return "KNOWLEDGE_ENTRY"
 
         text_lower = text.lower()
