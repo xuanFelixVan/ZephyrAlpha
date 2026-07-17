@@ -462,7 +462,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 ### 8.5 废弃策略
 
-采用标记 deprecated 而非直接删除，给未来留余地。例如 `session_claim_start` 已废弃，所有调用点迁移至 `session_worktree_start`，`session_claim.py` 标记为 deprecated 但保留 `generate_session_id` 函数。
+采用标记 deprecated 而非直接删除，给未来留余地。例如 `session_claim_start` 弃用，所有调用点迁移至 `session_worktree_start`，`session_claim.py` 标记为 deprecated 但保留 `generate_session_id` 函数。
 
 ---
 
@@ -523,7 +523,7 @@ Trade-off：Panel AI 代码生成友好度低于 Streamlit（训练数据少）�
 
 1. **治理军备竞赛**：3193 个违规点分布在 177 维度，治理过严增加 AI 上下文负担，过松导致漂移——平衡点是 #ARCH-028 持续探索的
 2. **回测副产物未持久化**：BacktestResult 不含净值曲线/trades 明细，仅内存累积，进程结束即丢失
-3. **可视化平台已迁移**：已从 Streamlit 迁移到 Panel + HoloViz（ARCH-047 v1.2.0，2026-07-04 DONE），G0.5 Python 过渡层已部署
+3. **可视化平台**：使用 Panel + HoloViz（ARCH-047 v1.2.0，2026-07-04 DONE），G0.5 Python 过渡层已部署
 4. **前端 G0.5→G1 激活**：长期终局是 React + FastAPI，当前 G0.5（Panel 过渡层）已部署，待 3 信号触发 G1 升级
 5. **production 节点占比偏低**：大量 prototype 待施工或退役（占比见 depgraph 动态统计，时点值）
 

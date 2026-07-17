@@ -27,7 +27,7 @@ doc_type: architecture_view
 > 合并后覆盖：依赖全景图（dep_ 表组，管"谁依赖谁"）+ 路径全景图（arch_ 表组，管"放在哪"）+ 设计规则缓存表（domains/contracts 等）。
 > 不包含：施工步骤和问题清单（见 archive/depgraph_issue_registry.md）、架构升级项目导航（见 architecture_upgrade_discussion.md）、生成器技术问题清单（见 generator_issues.md）。
 
-> **⚠️ 数据源迁移说明（P2 迁移完成 2026-06-27）**：全景图数据库已从 SQLite 迁移至 **PostgreSQL 16**，数据库名统一为 `depgraph (PostgreSQL)`（一眼可知全景图所在引擎，避免与 SQLite 物理文件 `depgraph.db` 混淆）。本次迁移带来的引擎差异：
+> **⚠️ 数据源说明**：全景图数据库使用 **PostgreSQL 16**，数据库名统一为 `depgraph (PostgreSQL)`（一眼可知全景图所在引擎，避免与 SQLite 物理文件 `depgraph.db` 混淆）。PostgreSQL 带来的引擎差异：
 > - 自增主键：SQLite 的 `INTEGER PK AUTOINCREMENT` → PostgreSQL 的 `GENERATED ALWAYS AS IDENTITY`（不再需要 `sqlite_sequence` 序列跟踪表）
 > - 并发控制：SQLite 的文件级写锁 → PostgreSQL 的 MVCC 行级锁（多版本并发控制，读写互不阻塞）
 > - 约束校验：SQLite 的 `ALTER TABLE ADD CHECK` 不回溯限制 → PostgreSQL 支持 `NOT VALID` 延迟校验 + `VALIDATE CONSTRAINT`
@@ -2348,7 +2348,7 @@ domains 表 lifecycle/build_status/layer_id 三个字段当前均无 CHECK 约�
 - **执行日期**: 2026-06-27
 - **背景**: SQLite 文件级写锁导致 40+AI 并发写入瓶颈（39 个等待 1 个写）
 - **变更**:
-  - depgraph 从 SQLite 迁移至 PostgreSQL 16，获得 MVCC 行级锁并发能力
+  - depgraph 使用 PostgreSQL 16，获得 MVCC 行级锁并发能力
   - SQLite 物理文件 `data/databases/depgraph.db` 已删除归档
   - PG schema 真源：`scripts/governance/migrate_sqlite_to_pg/02_create_pg_schema.sql`（25 表 + 1 视图 + 39 索引 + 28 触发器）
   - 删除文件锁补丁（apply_depgraph.py / generate_project_depgraph.py / sync_yaml_to_depgraph.py）

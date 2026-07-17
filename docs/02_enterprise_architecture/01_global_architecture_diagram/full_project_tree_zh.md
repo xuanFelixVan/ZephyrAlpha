@@ -896,7 +896,7 @@ scripts/  (包含30个文件: .py(24), .yaml(3), .ps1(2), .tmp(1))
 │   ├── migration/  (包含26个文件: .py(26))  
 │   │   ├── _migration_shared.py  — 搬家脚本共享模块——数据加载、批次筛选、原子写入。  
 │   │   ├── _verify_manifest.py  — _verify_manifest脚本  
-│   │   ├── _verify_step4.py  — 已归档脚本——P2迁移后 depgraph.db 已迁移至 PostgreSQL，此脚本不再适用。  
+│   │   ├── _verify_step4.py  — 已归档脚本（depgraph 现为 PostgreSQL，此脚本不再适用）。
 │   │   ├── apply_rulings.py  — apply_rulings脚本  
 │   │   ├── check_coverage.py  — check_coverage脚本  
 │   │   ├── comprehensive_import_fix.py  — 从 path-migration-mapping.yaml 构建全面的 old→new 模块路径映射，修复所有 .py 文件的 import。  
@@ -5227,7 +5227,7 @@ tests/  (包含13个文件: .py(13))
 │   │   ├── test_trust_ring_manager.py  — test_trust_ring_manager脚本  
 │   │   └── test_vibe_coding_enforcer.py  — test_vibe_coding_enforcer脚本  
 │   ├── depgraph/  (包含2个文件: .py(2))  
-│   │   ├── test_depgraph_db.py  — DM-100017: depgraph端到端功能测试（P2迁移后：PostgreSQL）  
+│   │   ├── test_depgraph_db.py  — DM-100017: depgraph端到端功能测试（PostgreSQL）  
 │   │   └── test_depgraph_generator_design_protection.py  — DM-100026: 极端红蓝测试：depgraph生成器vs设计态保护  
 │   ├── drift/  (包含8个文件: .py(8))  
 │   │   ├── test_dead_module_detector.py  — test_dead_module_detector脚本  

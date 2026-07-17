@@ -149,7 +149,7 @@ session/sess-{5位序号}-{YYYYMMDDHHMMSS}
 3. **禁止**议题性分支名（议题编号用 `#ARCH-NNN` 在 commit message 引用）
 4. **禁止**裸 `git commit`（必须通过 session_worktree_commit 或 GitCommitGateway）
 5. **禁止** `git push --force`（本地仓库无 remote，无此需求）
-6. **禁止**保留已废弃的 worktree 目录（.aidrafts/ 不入库）
+6. **禁止**保留弃用的 worktree 目录（.aidrafts/ 不入库）
 
 ---
 

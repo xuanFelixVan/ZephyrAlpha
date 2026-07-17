@@ -234,11 +234,11 @@ ttl: permanent
 | 55 | scripts/_archive/governance/dm101_blueprint_domain_mappin... | DM-101: 构建 blueprint_id → domain 映射表 + CS... | 原型态 / prototype |  |
 | 56 | scripts/_archive/governance/list_no_consumer_orphans.py | 从 orphan_analysis.json 中提取 NO_CONSUMER_HAS_... | 原型态 / prototype |  |
 | 57 | scripts/_archive/governance/merge_domain_nodes.py | Generic merge script for domain cleanup. Usage:... | 原型态 / prototype |  |
-| 58 | scripts/_archive/governance/repair/ensure_dep_cycles_view.py | 已归档脚本——P2迁移后 depgraph.db 已迁移至 Pos... | 原型态 / prototype |  |
+| 58 | scripts/_archive/governance/repair/ensure_dep_cycles_view.py | 已归档脚本（depgraph 现为 Pos... | 原型态 / prototype |  |
 | 59 | scripts/_archive/governance/repair/list_source_md_files.py | 扫描临时工作区源MD文件清单 | 原型态 / prototype |  |
 | 60 | scripts/_archive/migration/_migration_shared.py | 搬家脚本共享模块——数据加载、批次筛选、原子写入。 | 原型态 / prototype | [MOD-INF-037](../../03_modules/_domain_governance/registry_governance/blueprint.md) |
 | 61 | scripts/_archive/migration/_verify_manifest.py | _verify_manifest.py | 原型态 / prototype |  |
-| 62 | scripts/_archive/migration/_verify_step4.py | 已归档脚本——P2迁移后 depgraph.db 已迁移至 Pos... | 原型态 / prototype |  |
+| 62 | scripts/_archive/migration/_verify_step4.py | 已归档脚本（depgraph 现为 Pos... | 原型态 / prototype |  |
 | 63 | scripts/_archive/migration/apply_rulings.py | apply_rulings.py | 原型态 / prototype |  |
 | 64 | scripts/_archive/migration/check_coverage.py | check_coverage.py | 原型态 / prototype |  |
 | 65 | scripts/_archive/migration/comprehensive_import_fix.py | 从 path-migration-mapping.yaml 构建全面的 old→... | 原型态 / prototype | [MOD-INF-037](../../03_modules/_domain_governance/registry_governance/blueprint.md) |

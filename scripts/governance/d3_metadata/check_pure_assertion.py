@@ -152,6 +152,25 @@ def _check_file(content: str, added_lines: set[int] | None) -> list[str]:
 
         # 匹配 6 条违规 regex
         for pattern, name in _VIOLATION_PATTERNS:
+            # 表格行和受控词表行豁免（当前态描述，非历史过渡）
+            # 已废止/已废弃/已弃用：表格状态值（| 已废弃 |）和受控词表定义行是当前态描述
+            # 已被取代/已被替代：蓝图 §15 表格中的"已被取代的旧蓝图"也是当前态描述
+            if name in ("已废止/已废弃/已弃用", "已被取代/已被替代"):
+                if stripped.startswith("|"):
+                    continue
+            if name == "已废止/已废弃/已弃用":
+                # 受控词表定义行（"存在性状态"/"存在性："/"未实现/已实现"等变体）
+                if any(marker in line for marker in ("受控词表", "存在性状态", "存在性：", "未实现/已实现")):
+                    continue
+                # 文件树行（auto-generated file tree，"已废弃"是当前态文件标签）
+                if stripped.startswith(("│", "├", "└")):
+                    continue
+                # 受控词表 bullet 定义行（"> - `已废弃`：..." / "- `deprecated`：..."）
+                # 以及生命周期值枚举行（"→已废弃" / "→ 已废弃"）
+                if "`已废弃`" in line or "`deprecated`" in line:
+                    continue
+                if "→已废弃" in line or "→ 已废弃" in line:
+                    continue
             if pattern.search(line):
                 violations.append(f"line {i}: [{name}] {line.strip()}")
                 break  # 一行只报一条
