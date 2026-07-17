@@ -553,7 +553,7 @@ def _detect_orphans(all_nodes: list[PanoramaNode],
     """孤儿：仅在一图存在的 module_id。
 
     exempt_list 中的 module_id 跳过检测（历史归档豁免）。
-    蓝图先行模块（仅 blueprint + construction_progress=not_started）自动豁免（ARCH-059）。
+    蓝图先行模块（仅 blueprint 图）自动豁免（ARCH-059, ARCH-FRONTMATTER-STATE-001 Phase 3）。
     """
     exempt = exempt_list or set()
     grouped = _group_by_module_id(all_nodes)
@@ -641,7 +641,7 @@ def _detect_domain_mismatches(all_nodes: list[PanoramaNode]) -> list[dict]:
 def _detect_design_only_in_one(all_nodes: list[PanoramaNode]) -> list[dict]:
     """设计态孤立：design 状态仅出现在一图，其它三图无对应。
 
-    蓝图先行模块（仅 blueprint + construction_progress=not_started）自动豁免（ARCH-059）。
+    蓝图先行模块（仅 blueprint 图）自动豁免（ARCH-059, ARCH-FRONTMATTER-STATE-001 Phase 3）。
     """
     grouped = _group_by_module_id(all_nodes)
     design_only: list[dict] = []

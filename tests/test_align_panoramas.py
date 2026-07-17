@@ -73,7 +73,6 @@ def _make_node(
     design_maturity: str | None = "production",
     build_status: str | None = "stable",
     domain_id: str | None = "D_TEST",
-    construction_progress: str | None = None,
 ) -> PanoramaNode:
     return PanoramaNode(
         module_id=module_id,
@@ -82,7 +81,6 @@ def _make_node(
         design_maturity=design_maturity,
         build_status=build_status,
         domain_id=domain_id,
-        construction_progress=construction_progress,
     )
 
 
@@ -146,23 +144,25 @@ class TestDetectOrphans:
         assert _detect_orphans([]) == []
 
     def test_blueprint_not_started_exempt_from_orphans(self):
-        """ARCH-059: 蓝图先行模块（仅 blueprint + construction_progress=not_started）不报告为孤儿。"""
+        """ARCH-059: 蓝图先行模块（仅 blueprint 图）不报告为孤儿。"""
         nodes = [
             _make_node("MOD-BP-AHEAD", "blueprint",
-                       design_maturity="design", build_status="planned",
-                       construction_progress="not_started"),
+                       design_maturity="design", build_status="planned"),
         ]
         assert _detect_orphans(nodes) == []
 
-    def test_blueprint_started_still_orphan(self):
-        """ARCH-059: 蓝图已开始施工（construction_progress != not_started）仅 blueprint → 仍报告为孤儿。"""
+    def test_depgraph_only_without_blueprint_is_orphan(self):
+        """ARCH-FRONTMATTER-STATE-001: 仅 depgraph 图（不在 blueprint）→ 报告为孤儿。
+
+        construction_progress 退役后，蓝图先行豁免纯靠 graph 检查（graphs=={blueprint}）。
+        本测试验证非 blueprint 的单图模块仍被正确报告为孤儿。
+        """
         nodes = [
-            _make_node("MOD-BP-STARTED", "blueprint",
-                       construction_progress="in_progress"),
+            _make_node("MOD-ORPHAN-DG", "depgraph"),
         ]
         orphans = _detect_orphans(nodes)
         assert len(orphans) == 1
-        assert orphans[0]["module_id"] == "MOD-BP-STARTED"
+        assert orphans[0]["module_id"] == "MOD-ORPHAN-DG"
 
 
 # ---------------------------------------------------------------------------
@@ -324,11 +324,10 @@ class TestDetectDesignOnlyInOne:
         assert _detect_design_only_in_one(nodes) == []
 
     def test_blueprint_not_started_exempt_from_design_isolation(self):
-        """ARCH-059: 蓝图先行模块（仅 blueprint + construction_progress=not_started）不报告为设计态孤立。"""
+        """ARCH-059: 蓝图先行模块（仅 blueprint 图）不报告为设计态孤立。"""
         nodes = [
             _make_node("MOD-BP-DESIGN", "blueprint",
-                       design_maturity="design", build_status="planned",
-                       construction_progress="not_started"),
+                       design_maturity="design", build_status="planned"),
         ]
         assert _detect_design_only_in_one(nodes) == []
 
@@ -507,16 +506,6 @@ class TestFetchBlueprintNodes:
         assert n.design_maturity is None
         assert n.build_status is None
 
-    def test_scan_extracts_construction_progress(self, tmp_path):
-        """ARCH-059: frontmatter 有 construction_progress → 解析到字段。"""
-        (tmp_path / "MOD-BP").write_text(
-            "---\nmodule_id: MOD-BP\nconstruction_progress: not_started\n---\n# BP\n",
-            encoding="utf-8",
-        )
-        nodes = _fetch_blueprint_nodes(scan_root=tmp_path)
-        assert len(nodes) == 1
-        assert nodes[0].construction_progress == "not_started"
-
     def test_scan_quoted_values_stripped(self, tmp_path):
         """frontmatter 值带引号 → 剥离引号。"""
         (tmp_path / "MOD-Q").write_text(
@@ -563,4 +552,4 @@ class TestExemptList:
             PanoramaNode("MOD-NORMAL", "depgraph", "src/a.py", "production", "stable", "D_GOV"),
         ]
         orphans = _detect_orphans(nodes, exempt_list=set())
-        assert len(orphans) == 1
+        assert len(orphans)

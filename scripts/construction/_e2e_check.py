@@ -35,13 +35,11 @@ for bp in reg.get("blueprints", []):
     if bp.get("belongs_to"):
         continue
 
-    cp = bp.get("construction_progress", "")
     layer = bp.get("layer", "")
     fp = bp.get("file_path", "")
 
     entry = {
         "module_id": mid,
-        "progress": cp,
         "layer": layer,
         "code_path": "",
         "code_exists": False,
@@ -131,4 +129,4 @@ for r in results:
     else:
         status = "FAIL: " + r["import_error"][:80]
 
-    print(f"  {r['module_id']:20s} | {r['progress']:20s} | {status}")
+    print(f"  {r['module_id']:20s} | {status}")

@@ -267,7 +267,6 @@ class TestSessionContinuity:
         bp = bp_dir / "blueprint.md"
         bp_content = """---
 version: "1.0.0"
-construction_progress: "80%"
 ai_role_instruction: "Follow rules (1) (2) (3)"
 depends_on:
   - MOD-INF-001
@@ -284,7 +283,6 @@ depends_on:
         result = sc.validate_sys_master_dispatch()
         assert result["valid"] is True
         assert result["version"] == "1.0.0"
-        assert result["construction_progress"] == "80%"
         assert result["ai_rules_count"] == 3
         assert result["dispatch_domains"] >= 1
 

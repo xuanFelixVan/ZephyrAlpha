@@ -15,7 +15,7 @@ ttl: permanent
 
 gate_id: SYS-MASTER-CMP
 gate_name: sys_master_compliance
-description: "系统总蓝图合规门禁——验证 SYS-MASTER-001（三级金字塔顶点）与 MOD-MASTER-001 的集成链路完整性、冷启动序列引用、construction_progress 一致性及 76 条 ai_role_instruction 规则无回归。"
+description: "系统总蓝图合规门禁——验证 SYS-MASTER-001（三级金字塔顶点）与 MOD-MASTER-001 的集成链路完整性、冷启动序列引用及 76 条 ai_role_instruction 规则无回归。"
 rule_ids:
   - TRAE-013
   - TRAE-014
@@ -50,18 +50,6 @@ entry_conditions:
     type: cross_reference
     description: "验证 SYS-MASTER-001 depends_on 正确引用 MOD-MASTER-001"
     check: "SYS-MASTER-001 frontmatter depends_on contains MOD-MASTER-001"
-    severity: error
-    on_failure: reject
-    verifiable: true
-    rule_ids:
-      - TRAE-013
-      - TRAE-014
-
-  - id: SYS-C03
-    name: construction_progress_consistency
-    type: registry_consistency
-    description: "验证 SYS-MASTER-001 construction_progress 在 frontmatter/blueprint-registry/module-registry 三者一致"
-    check: "all three sources agree on construction_progress value"
     severity: error
     on_failure: reject
     verifiable: true

@@ -2,7 +2,6 @@
 actual_disk_path: ''
 belongs_to: ''
 classification: confidential
-construction_progress: not_started
 created_by: human_plus_agent
 date: ''
 depends_on: []
@@ -37,10 +36,9 @@ version: 2.1.0
 # §0.6 四图对齐视图 = 自动生成（派生自 depgraph + dataflow + decision）
 # 查询文件清单：python scripts/governance/extract_depgraph.py --modules <module_id>
 # 查询依赖关系：python scripts/governance/extract_depgraph.py --paths
-# 自动生成字段说明（4字段，depgraph→蓝图单向同步，详见 §0.6 四核心字段）：
+# 自动生成字段说明（3字段，depgraph→蓝图单向同步，详见 §0.6 四核心字段）：
 #   module_id             ← depgraph.nodes.module_id
 #   responsibility_domain ← depgraph.nodes.domain_id
-#   construction_progress ← depgraph.nodes.build_status
 #   §0.1 file_count       ← depgraph.nodes 文件节点数
 #   调谐器：blueprint_frontmatter_reconciler.py（depgraph→frontmatter 单向同步，禁止手写漂移）
 ---
@@ -128,7 +126,7 @@ END_REQUIRED_SECTIONS
 # {English Name} 蓝图+施工图 — {中文一句话描述}
 
 > module_id: {XXX-NNN} | version: {X.Y.Z} | status: {draft/active/deprecated} | layer: {{domain_name}/cross_layer}
-> actual_disk_path: {src/zephyr/{pkg}/} | generation: {N} | construction_progress: {not_started~completed}
+> actual_disk_path: {src/zephyr/{pkg}/} | generation: {N}
 
 ## 概述
 
@@ -169,14 +167,10 @@ END_REQUIRED_SECTIONS
 
 ### §0.2 对齐验证矩阵
 
-> 每次蓝图版本升级后填写。验证 construction_progress 是否与代码实际状态一致。
+> 每次蓝图版本升级后填写。验证蓝图描述与代码实际状态一致。
 
 | 验证项 | 验证方法 | 结果 |
 |--------|---------|:---:|
-| construction_progress = completed → 代码文件清单100%存在 | `ls src/zephyr/{pkg}/` 逐文件核对 | ☐ |
-| construction_progress = partially_implemented → 已实现章节的代码存在 | 按章节核对 | ☐ |
-| construction_progress = scaffold → __init__.py 存在且非空 | `cat __init__.py` | ☐ |
-| construction_progress = design_only → 代码目录不存在或为空 | `ls src/zephyr/{pkg}/` | ☐ |
 | 蓝图描述的类/函数名 = 代码中的类/函数名 | `grep "class\|def" *.py` | ☐ |
 | 代码 [BLUEPRINT] 头部指向 = 本蓝图 module_id | `grep "\[BLUEPRINT\]" *.py` 核对 module_id | ☐ |
 | §4.2 每个数据模型的 SSoT 文件中确实存在该模型 | `grep "class {ModelName}" {ssot_file}.py` 逐模型核对 | ☐ |
@@ -244,7 +238,6 @@ END_REQUIRED_SECTIONS
 |------|-------------------|--------------------------|:-------:|
 | module_id | {module_id} | {module_id} | ✅/❌ |
 | domain_id | {D_XXX} | {responsibility_domain} | ✅/❌ |
-| build_status | {production/design} | {construction_progress} | ✅/❌ |
 | file_count | {N 文件} | {§0.1 行数} | ✅/❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -915,7 +908,6 @@ class {DataModel}(BaseModel):
 |---------|---------|---------------------|---------------------|
 | 接口契约新增/修改（§4） | 需 Owner 审批 + 通知所有消费者 | 下游检查接口兼容性 | 检查集成点兼容性 |
 | 模块边界修改（§2） | 需 Owner 审批 | 下游更新依赖声明 | 更新集成路由 |
-| construction_progress 变更 | 需 §0 对齐验证通过 | 下游更新依赖状态 | 更新集成测试 |
 | 施工步骤微调（命令、路径修正） | AI 可自主修改 | 下游更新产出物引用 | 更新配置文件 |
 | 非关键补充（风险缓解、后果描述） | AI 可自主修改 | — | — |
 | 容量升级方案新增（§15） | 需 Owner 审批 | 下游评估影响 | 更新容量预算 |
@@ -983,7 +975,6 @@ class {DataModel}(BaseModel):
 | 10 | 中 | 每步施工后执行验证命令 | exit 0 才进下一步 | ☐ |
 | 11 | 中 | 新代码文件头部十五字段完整 | 逐文件核对 | ☐ |
 | 12 | 中 | 修改接口契约后检查 §16 决策记录 | 决策ID+依据已更新 | ☐ |
-| 13 | 后 | §0 代码对齐验证已更新 | construction_progress 与实际一致 | ☐ |
 | 14 | 后 | 临时时态内容已清理 | 迁移方案已执行→删除 | ☐ |
 
 ---
@@ -1076,7 +1067,6 @@ class {DataModel}(BaseModel):
 | 6 | **"待定"/"建议"/"按需"等模糊词禁止使用** | AI 无法处理模糊指令，需要明确的二元判断 | 执行漂移——AI 自行决定，可能选错 |
 | 7 | **蓝图必须自包含**——关键信息不能只写"详见XX" | AI 可能不读引用的文件 | 信息缺失——AI 缺少关键上下文 |
 | 8 | **删除文件必须遵守安全删除协议**——禁止直接删除任何文件 | 没有git备份，删除不可逆；AI可能误判文件"没用了" | 永久丢失——无法恢复 |
-| 9 | **construction_progress 必须与代码实际状态一致** | — | 重复造轮子或跳过施工 |
 | 10 | **actual_disk_path 必须与 §10 产出物路径一致** | — | 搜索失败、导入错误 |
 | 11 | **已实现代码不在蓝图中重复**——§0.1 标记`已实现`的模块，蓝图只保留接口签名（§4），不复制实现代码 | 代码文件是 SSoT，蓝图复制代码=双源漂移 | AI 改蓝图忘改代码，或改代码忘改蓝图 |
 | 12 | **临时时态内容执行完毕后从蓝图删除**——迁移方案、升级执行计划等临时时态内容，一旦执行完毕即成为历史，从蓝图删除。蓝图只保留永久时态内容（架构/接口/约束/当前状态） | 蓝图是当前设计文档，不是历史记录 | 蓝图膨胀，关键信息被历史噪音淹没 |

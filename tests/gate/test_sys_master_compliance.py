@@ -10,8 +10,7 @@
 from __future__ import annotations
 
 import sys
-from contextlib import ExitStack
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -77,71 +76,6 @@ class TestDependsOnIntegrity:
             assert results[0]["status"] == "FAIL"
 
 
-class TestConstructionProgressConsistency:
-    def test_all_match(self):
-        from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import check_construction_progress_consistency
-
-        fm_sys = {"construction_progress": "completed"}
-        fm_mod = {"construction_progress": "phase_1_complete"}
-        bp_full = {
-            "construction_progress_values": ["completed", "phase_1_complete"],
-            "blueprints": [
-                {"module_id": "SYS-MASTER-001", "construction_progress": "completed"},
-                {"module_id": "MOD-MASTER_BLUEPRINT", "construction_progress": "phase_1_complete"},
-            ],
-        }
-        mod_data = {
-            "modules": [
-                {"module_id": "SYS-MASTER-001", "construction_plan": {"status": "completed"}},
-                {"module_id": "MOD-MASTER_BLUEPRINT", "construction_plan": {"status": "phase_1_complete"}},
-            ],
-        }
-
-        with ExitStack() as stack:
-            stack.enter_context(patch(f"{SYS_MASTER}.SYS_MASTER_PATH", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.MOD_MASTER_PATH", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.BLUEPRINT_REGISTRY", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.MODULE_REGISTRY", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.extract_frontmatter", side_effect=[fm_sys, fm_mod]))
-            mock_load = stack.enter_context(patch(f"{SYS_MASTER}.yaml.safe_load"))
-            mock_load.side_effect = [bp_full, bp_full, mod_data, bp_full, mod_data]
-            results = check_construction_progress_consistency()
-            assert len(results) == 2
-            assert all(r["status"] == "PASS" for r in results)
-
-    def test_mismatch(self):
-        from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import check_construction_progress_consistency
-
-        fm_sys = {"construction_progress": "completed"}
-        fm_mod = {"construction_progress": "phase_1_complete"}
-        bp_drifted = {
-            "construction_progress_values": ["completed", "phase_1_complete"],
-            "blueprints": [
-                {"module_id": "SYS-MASTER-001", "construction_progress": "not_started"},
-                {"module_id": "MOD-MASTER_BLUEPRINT", "construction_progress": "phase_1_complete"},
-            ],
-        }
-        mod_data = {
-            "modules": [
-                {"module_id": "SYS-MASTER-001", "construction_plan": {"status": "not_started"}},
-                {"module_id": "MOD-MASTER_BLUEPRINT", "construction_plan": {"status": "phase_1_complete"}},
-            ],
-        }
-
-        with ExitStack() as stack:
-            stack.enter_context(patch(f"{SYS_MASTER}.SYS_MASTER_PATH", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.MOD_MASTER_PATH", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.BLUEPRINT_REGISTRY", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.MODULE_REGISTRY", MagicMock(exists=lambda: True)))
-            stack.enter_context(patch(f"{SYS_MASTER}.extract_frontmatter", side_effect=[fm_sys, fm_mod]))
-            mock_load = stack.enter_context(patch(f"{SYS_MASTER}.yaml.safe_load"))
-            mock_load.side_effect = [bp_drifted, bp_drifted, mod_data, bp_drifted, mod_data]
-            results = check_construction_progress_consistency()
-            assert len(results) == 2
-            assert results[0]["status"] == "FAIL"
-            assert results[1]["status"] == "PASS"
-
-
 class TestAiRulesCount:
     def test_32_rules(self, tmp_path):
         from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import check_ai_rules_count
@@ -197,13 +131,12 @@ class TestMainFunction:
         with patch(f"{SYS_MASTER}.check_blueprint_existence", return_value=all_pass):
             with patch(f"{SYS_MASTER}.check_cold_start_integration", return_value=all_pass):
                 with patch(f"{SYS_MASTER}.check_depends_on_integrity", return_value=all_pass):
-                    with patch(f"{SYS_MASTER}.check_construction_progress_consistency", return_value=all_pass):
-                        with patch(f"{SYS_MASTER}.check_version_consistency", return_value=all_pass):
-                            with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=all_pass):
-                                with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=all_pass):
-                                    with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=all_pass):
-                                        with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=all_pass):
-                                            assert main() == 0
+                    with patch(f"{SYS_MASTER}.check_version_consistency", return_value=all_pass):
+                        with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=all_pass):
+                            with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=all_pass):
+                                with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=all_pass):
+                                    with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=all_pass):
+                                        assert main() == 0
 
     def test_main_returns_1_when_any_fail(self):
         from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import main
@@ -212,13 +145,12 @@ class TestMainFunction:
         with patch(f"{SYS_MASTER}.check_blueprint_existence", return_value=one_fail):
             with patch(f"{SYS_MASTER}.check_cold_start_integration", return_value=[]):
                 with patch(f"{SYS_MASTER}.check_depends_on_integrity", return_value=[]):
-                    with patch(f"{SYS_MASTER}.check_construction_progress_consistency", return_value=[]):
-                        with patch(f"{SYS_MASTER}.check_version_consistency", return_value=[]):
-                            with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=[]):
-                                with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=[]):
-                                    with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=[]):
-                                        with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=[]):
-                                            assert main() == 1
+                    with patch(f"{SYS_MASTER}.check_version_consistency", return_value=[]):
+                        with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=[]):
+                            with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=[]):
+                                with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=[]):
+                                    with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=[]):
+                                        assert main() == 1
 
     def test_main_json_flag(self):
         from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import main
@@ -228,23 +160,21 @@ class TestMainFunction:
             with patch(f"{SYS_MASTER}.check_blueprint_existence", return_value=all_pass):
                 with patch(f"{SYS_MASTER}.check_cold_start_integration", return_value=all_pass):
                     with patch(f"{SYS_MASTER}.check_depends_on_integrity", return_value=all_pass):
-                        with patch(f"{SYS_MASTER}.check_construction_progress_consistency", return_value=all_pass):
-                            with patch(f"{SYS_MASTER}.check_version_consistency", return_value=all_pass):
-                                with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=all_pass):
-                                    with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=all_pass):
-                                        with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=all_pass):
-                                            with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=all_pass):
-                                                assert main() == 0
+                        with patch(f"{SYS_MASTER}.check_version_consistency", return_value=all_pass):
+                            with patch(f"{SYS_MASTER}.check_ai_rules_count", return_value=all_pass):
+                                with patch(f"{SYS_MASTER}.check_gate_registry_entry", return_value=all_pass):
+                                    with patch(f"{SYS_MASTER}.check_sli_data_sources", return_value=all_pass):
+                                        with patch(f"{SYS_MASTER}.check_crosscheck_script", return_value=all_pass):
+                                            assert main() == 0
 
 
 class TestIntegrationRealFileSystem:
-    @pytest.mark.xfail(reason="预存技术债: module-registry缺条目, gate_registry.yaml缺失, construction_progress_values缺'completed'", strict=False)
+    @pytest.mark.xfail(reason="预存技术债: module-registry缺条目, gate_registry.yaml缺失", strict=False)
     def test_all_checks_pass_on_real_system(self):
         from zephyr.gov_enforcement.rule_enforcement.sys_master_compliance import (
             check_ai_rules_count,
             check_blueprint_existence,
             check_cold_start_integration,
-            check_construction_progress_consistency,
             check_crosscheck_script,
             check_depends_on_integrity,
             check_gate_registry_entry,
@@ -256,7 +186,6 @@ class TestIntegrationRealFileSystem:
             check_blueprint_existence,
             check_cold_start_integration,
             check_depends_on_integrity,
-            check_construction_progress_consistency,
             check_version_consistency,
             check_ai_rules_count,
             check_gate_registry_entry,

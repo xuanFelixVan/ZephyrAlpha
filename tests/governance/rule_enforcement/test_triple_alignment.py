@@ -442,7 +442,6 @@ class TestCheckTripleAlignment:
                 {
                     "module_id": "MOD-GATE_ENGINE",
                     "file_path": "nonexistent.md",
-                    "construction_progress": "implemented",
                 },
             ]
         }
@@ -469,7 +468,6 @@ class TestCheckTripleAlignment:
                 {
                     "module_id": "MOD-GATE_ENGINE",
                     "file_path": "nonexistent_dir/fake_blueprint.md",
-                    "construction_progress": "implemented",
                 },
             ]
         }
