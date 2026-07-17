@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-17T13:05:30Z
+# 自动生成于 2026-07-17T13:38:00Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-17T13:05:30Z'
+generated_at: '2026-07-17T13:38:00Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 343
@@ -3350,7 +3350,7 @@ scripts:
     description: 输出路径
   warn_only: false
   description: '扫描 _registry/catalogs/*.yaml 的 frontmatter/comment_meta，自动生成 registry-master-index.yaml。
-    对标 §6.16 静态清单自动生成铁律。
+    对标 §6.2 静态清单自动生成铁律。
 
     '
   tags:
@@ -3373,7 +3373,7 @@ scripts:
     description: 输出路径
   warn_only: false
   description: '扫描 scripts/governance/**/*.py 的 __manifest__ 块，自动生成 script_manifest.yaml。
-    对标 §6.16 静态清单自动生成铁律。
+    对标 §6.2 静态清单自动生成铁律。
 
     '
   tags:
@@ -3393,7 +3393,7 @@ scripts:
     description: 仅预览，不修改文件
   warn_only: false
   description: '从现有 script_manifest.yaml 批量提取元数据，注入到各 .py 文件中作为 __manifest__ 块。 对标
-    §6.16 静态清单自动生成铁律。一次性迁移工具。
+    §6.2 静态清单自动生成铁律。一次性迁移工具。
 
     '
   tags:
