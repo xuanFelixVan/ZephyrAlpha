@@ -122,6 +122,14 @@ CAPABILITY_REGISTRY = (
     / "catalogs"
     / "capability_canonical_file_registry.yaml"
 )
+NOQA_EXEMPT_REGISTRY = (
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "noqa_exempt_registry.yaml"
+)
 OUTPUT_DIR = REPO_ROOT / "data" / "architecture_health"
 
 # 手动调研基线（architecture_debt_registry.md L5667：当前总值 3193）
@@ -161,8 +169,50 @@ def _run_script(script_path: Path, args: list[str] | None = None, timeout: int =
         return -2, "", f"run failed: {e}"
 
 
+_NOQA_MARKERS_CACHE: frozenset[str] | None = None
+
+
+def _load_noqa_exempt_markers() -> frozenset[str]:
+    """从 noqa_exempt_registry.yaml 加载合法 noqa 豁免标记集合（SSoT）。
+
+    ARCH-NOQA-GOV-001 Phase 3 统一抽象：替代4处 inline
+    ``if "# noqa: <marker>" in source: continue`` 重复模式。
+    fail-open：registry 加载失败返回空集合（不阻断检测器运行）。
+    """
+    global _NOQA_MARKERS_CACHE
+    if _NOQA_MARKERS_CACHE is not None:
+        return _NOQA_MARKERS_CACHE
+    try:
+        data = load_yaml_safe(NOQA_EXEMPT_REGISTRY)
+        markers = frozenset(
+            m["marker"] for m in (data.get("markers") or []) if m.get("marker")
+        )
+        _NOQA_MARKERS_CACHE = markers
+        return markers
+    except Exception:  # noqa: BLE001 — fail-open 不阻断检测器
+        return frozenset()
+
+
+def _has_noqa_exempt(source: str, marker: str) -> bool:
+    """检查源码是否含指定 noqa 豁免标记（统一抽象，ARCH-NOQA-GOV-001 Phase 3）。
+
+    替代4处 inline ``if "# noqa: <marker>" in source: continue`` 重复模式。
+    marker 合法性由 noqa_validation_gate（priority=71）在 commit 阶段强制校验，
+    本函数只负责运行时检测——检查源码是否含标记字符串。
+
+    Args:
+        source: 源码字符串。
+        marker: noqa 标记名（如 ``m02-manual``）。
+
+    Returns:
+        True 如果源码含 ``# noqa: <marker>`` 标记。
+    """
+    return f"# noqa: {marker}" in source
+
+
 def _parse_count(pattern: str, text: str, default: int = 0) -> int:
     """从文本中正则提取首个整数计数。"""
+
     m = re.search(pattern, text)
     if m:
         try:
@@ -273,7 +323,7 @@ def metric_02_manual_only_permanent() -> dict:
             if startup.lower() != "manual" or ttl.lower() != "permanent":
                 continue
             # 治本（M02）：per-file 豁免（合理的 CLI 启动常驻服务）
-            if "# noqa: m02-manual" in source:
+            if _has_noqa_exempt(source, "m02-manual"):
                 continue
             # 治本（M02）：只检测含常驻服务特征的文件（排除纯 CLI 工具）
             if not _DAEMON_FEATURE_RE.search(source):
@@ -351,7 +401,7 @@ def metric_03_duplicate_function_clusters() -> dict:
         except (OSError, UnicodeDecodeError, SyntaxError):
             continue
         # 治本（M03）：per-file 豁免（接口实现/协议方法等合法重复）
-        if "# noqa: m03-duplicate" in source:
+        if _has_noqa_exempt(source, "m03-duplicate"):
             continue
         try:
             rel = fp.relative_to(REPO_ROOT)
@@ -533,7 +583,7 @@ def metric_07_dead_code() -> dict:
             tree = None
             src = ""
         # 治本（M07）：per-file 豁免
-        if "# noqa: m07-orphan" in src:
+        if _has_noqa_exempt(src, "m07-orphan"):
             continue
         # 治本（M07）：跳过有 [STARTUP] 头的文件（有加载机制）
         if re.search(r"^#\s*\[STARTUP\]", src, re.MULTILINE):
@@ -700,10 +750,10 @@ def metric_10_time_trigger_residuals() -> dict:
             if sm and sm.group(1).strip().lower() == "manual":
                 continue  # manual 脚本不计入时间触发（已在 M02 统计）
             # 检测 time-trigger 模式
-            # 治本（M10，2026-07-17）：支持 # noqa: m10-time-trigger 豁免
+            # 治本（M10，2026-07-17）：支持 m10-time-trigger 标记豁免
             # 适用于：schema 中 "cron" 枚举值/注释提及 "cron"/锁等待 while True+sleep/
             # perm_trigger_gate 自身（检测器含模式字符串）/ threading.Timer 超时（非周期触发）
-            if "# noqa: m10-time-trigger" in source:
+            if _has_noqa_exempt(source, "m10-time-trigger"):
                 continue
             hit_patterns: list[str] = []
             for pat in _TIME_TRIGGER_PATTERNS:
