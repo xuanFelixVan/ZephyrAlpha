@@ -71,19 +71,22 @@ def _cmd_list(args: argparse.Namespace) -> int:
     """list 子命令：列出当前所有 session worktree。"""
     manager = WorktreeManager(REPO_ROOT)
     worktrees = manager.list_session_worktrees()
+    if args.json:
+        # --json 始终输出合法 JSON（空列表输出 []），便于脚本管道解析。
+        # 修复（2026-07-17）：此前空 worktree 时先打印中文提示再 return，
+        # 导致 --json 输出非合法 JSON（test_cli_list_json 在 registry 空时暴露）。
+        print(json.dumps(worktrees, ensure_ascii=False, indent=2))
+        return 0
     if not worktrees:
         print("（无 session worktree）")
         return 0
-    if args.json:
-        print(json.dumps(worktrees, ensure_ascii=False, indent=2))
-    else:
-        print(f"共 {len(worktrees)} 个 session worktree:")
-        for wt in worktrees:
-            dirty_mark = " [dirty]" if wt.get("dirty") else ""
-            print(
-                f"  {wt.get('session_id', '?')}: {wt.get('path', '?')}"
-                f" branch={wt.get('branch', '?')}{dirty_mark}"
-            )
+    print(f"共 {len(worktrees)} 个 session worktree:")
+    for wt in worktrees:
+        dirty_mark = " [dirty]" if wt.get("dirty") else ""
+        print(
+            f"  {wt.get('session_id', '?')}: {wt.get('path', '?')}"
+            f" branch={wt.get('branch', '?')}{dirty_mark}"
+        )
     return 0
 
 
