@@ -212,7 +212,7 @@ class IFindProvider(DataSourceBase):
             from iFinDPy import THS_BasicData
             THS_BasicData("000001.SZ", "ths_pe_stock", "2024-12-31,100")
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"iFind 健康检查失败: {e}")
             return False
 
@@ -222,7 +222,7 @@ class IFindProvider(DataSourceBase):
             from iFinDPy import THS_iFinDLogout
             THS_iFinDLogout()
             self._log.info("iFind 已登出")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"iFind 登出异常（已忽略）: {e}")
         finally:
             self._connected = False
@@ -300,7 +300,7 @@ class IFindProvider(DataSourceBase):
                 raw = self._call_with_policy(
                     THS_BasicData, policy, ts_code, ind_name, params,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.error(f"THS_BasicData 调用异常 {ts_code}@{date}/{ind_name}: {e}")
                 fatal_error = str(e)
                 break
@@ -323,7 +323,7 @@ class IFindProvider(DataSourceBase):
                 df = THS_Trans2DataFrame(raw)
                 if df is not None and len(df) > 0:
                     vals[col_name] = self.safe_float(df.iloc[0].get(ind_name))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}@{date}/{ind_name}: {e}")
 
         # PCF 用 i问财补齐（THS_BD 不支持 ths_pcf_stock_ttm，i问财可查当天值）
@@ -334,7 +334,7 @@ class IFindProvider(DataSourceBase):
                     pcf_val = self._fetch_pcf_via_iwencai(ts_code, policy)
                     if pcf_val is not None:
                         vals["pcf_ncf_ttm"] = pcf_val
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log.warning(f"i问财查 PCF 失败 {ts_code}: {e}")
 
         return vals, fatal_error
@@ -456,7 +456,7 @@ class IFindProvider(DataSourceBase):
                 ts_code, self._KLINE_INDICATORS, self._KLINE_PARAMS,
                 start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_HistoryQuotes 调用失败 {ts_code}: {e}")
             return None, None
 
@@ -469,7 +469,7 @@ class IFindProvider(DataSourceBase):
 
         try:
             df = THS_Trans2DataFrame(raw)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
             return None, None
 
@@ -608,7 +608,7 @@ class IFindProvider(DataSourceBase):
                     ts_code, self._INDEX_KLINE_INDICATORS, self._INDEX_KLINE_PARAMS,
                     start_str, end_str,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_HistoryQuotes(index) 调用失败 {ts_code}: {e}")
                 continue
 
@@ -628,7 +628,7 @@ class IFindProvider(DataSourceBase):
 
             try:
                 df = THS_Trans2DataFrame(raw)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_Trans2DataFrame 失败 {ts_code}: {e}")
                 continue
 
@@ -727,7 +727,7 @@ class IFindProvider(DataSourceBase):
                     f"{date_cn} 主力资金流向 超大单 大单 中单 小单 收盘价 涨跌幅",
                     "stock",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_iwencai 调用失败 {date_cn}: {e}")
                 current += datetime.timedelta(days=1)
                 continue
@@ -1053,7 +1053,7 @@ class IFindProvider(DataSourceBase):
                 THS_EDBQuery, policy,
                 ind_code, start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_EDBQuery 调用失败: {e}")
             return (None, None)
 
@@ -1068,7 +1068,7 @@ class IFindProvider(DataSourceBase):
         # 解析返回结果（尝试 DataFrame 转换）
         try:
             df = THS_Trans2DataFrame(raw)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_Trans2DataFrame 失败: {e}")
             return (None, None)
         return (df, None)
@@ -1139,7 +1139,7 @@ class IFindProvider(DataSourceBase):
                 THS_iwencai, policy,
                 "全部A股 申万行业 同花顺行业", "stock",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=time.time() - start_ts,
@@ -1194,7 +1194,7 @@ class IFindProvider(DataSourceBase):
                     )
                     batch_rows.clear()
                     start_ts = time.time()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=time.time() - start_ts,
@@ -1238,7 +1238,7 @@ class IFindProvider(DataSourceBase):
                     THS_BasicData, policy,
                     ts_code, ind_name, f"{today_str},100",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_BasicData 调用失败: {e}")
                 fatal_error = str(e)
                 break
@@ -1263,7 +1263,7 @@ class IFindProvider(DataSourceBase):
                             industry_sw = str(val)
                         else:
                             industry_zsi = str(val)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"THS_Trans2DataFrame 失败: {e}")
 
         return industry_sw, industry_zsi, fatal_error
@@ -1309,7 +1309,7 @@ class IFindProvider(DataSourceBase):
                 THS_iwencai, policy,
                 "概念板块 代码 名称", "stock",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=time.time() - start_ts,
@@ -1515,7 +1515,7 @@ class IFindProvider(DataSourceBase):
                 THS_RealtimeQuotes, policy,
                 codes_str, self._REALTIME_INDICATORS,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_RealtimeQuotes 调用失败: {e}")
             return ([], None)
 
@@ -1743,7 +1743,7 @@ class IFindProvider(DataSourceBase):
                 "index", f"{today_str};000985.SH",
                 "date:Y,thscode:Y",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"THS_DataPool 获取A股清单失败: {e}")
             return []
 
@@ -1907,7 +1907,7 @@ class IFindProvider(DataSourceBase):
                 "总市值,流通市值,成份股个数,总股本,流通A股",
                 "",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=today_str,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -1953,7 +1953,7 @@ class IFindProvider(DataSourceBase):
                         self.safe_float(_safe_get(total_mv, i)) or 0.0,
                         self.safe_float(_safe_get(float_mv, i)) or 0.0,
                     ))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"sector_meta 解析失败: {e}")
 
         self._log.info(f"sector_meta: {len(rows)} 行")

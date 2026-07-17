@@ -54,7 +54,7 @@ class AlertSubsystem:
         try:
             data = yaml.safe_load(self._CONFIG_PATH.read_text(encoding="utf-8"))
             return data.get("rules", []) if data else []
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
 
     def fire(self, level: AlertLevel, message: str, labels: dict | None = None) -> dict:

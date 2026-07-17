@@ -135,7 +135,7 @@ class PreemptionManager:
                     TaskStatus.WAITING,
                     waiting_for=f"pipeline_preempted:{task_card.task_id}",
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
             self._dispatched_ids.discard(t.task_id)
@@ -185,7 +185,7 @@ class PreemptionManager:
                 else:
                     continue
                 task = self._task_repo.get(tid)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
             if task is None:
                 continue

@@ -94,6 +94,6 @@ class FeedbackLoop:
             try:
                 data = yaml.safe_load(path.read_text(encoding="utf-8"))
                 results.append(EvolutionProposal(**filter_dataclass_fields(EvolutionProposal, data)))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return results

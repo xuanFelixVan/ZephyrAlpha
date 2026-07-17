@@ -258,7 +258,7 @@ def _check_deadlock(engine, event, task_id, strategy):
                 )
                 record.deadlock_detected = True
                 return record
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in delegation_engine", exc_info=True)
     return None
 

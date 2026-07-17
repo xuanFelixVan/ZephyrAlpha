@@ -560,7 +560,7 @@ class TomlAdapter(RegistryAdapter):
                 return []
         try:
             data = tomllib.loads(raw_content)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
         if not isinstance(data, dict):
             return []
@@ -616,7 +616,7 @@ class SqliteAdapter(RegistryAdapter):
                     )
                 )
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RegistryParseError(f"SQLite parse error in {self._registry_id}: {e}") from e
         return entries
 
@@ -738,7 +738,7 @@ class RegistryManager:
                             full = self._root / phys
                             if full.exists():
                                 paths.append(full)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
         candidates = [
@@ -777,7 +777,7 @@ class RegistryManager:
             except RegistryParseError:
                 skipped.append(adapter.registry_id)
                 continue
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
         return entries, skipped

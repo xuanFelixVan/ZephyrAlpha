@@ -125,7 +125,7 @@ class DaemonRegistry:
                 entry.started_at = time.monotonic()
             logger.info("DaemonRegistry: started '%s'", name)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             with cls._lock:
                 entry.state = DaemonState.FAILED
                 entry.error_count += 1
@@ -149,7 +149,7 @@ class DaemonRegistry:
                 entry.state = DaemonState.STOPPED
             logger.info("DaemonRegistry: stopped '%s'", name)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             with cls._lock:
                 entry.state = DaemonState.FAILED
                 entry.error_count += 1

@@ -241,7 +241,7 @@ class ForensicEngine:
                         attested=True,
                         signature=signature,
                     )
-            except (subprocess.TimeoutExpired, Exception):
+            except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
         signature = hashlib.sha256(f"{now.isoformat()}|local|fallback-v1".encode()).hexdigest()
@@ -430,7 +430,7 @@ class ForensicEngine:
                 f"# Reflog backup: {datetime.now(UTC).isoformat()}\n{result.stdout}",
                 encoding="utf-8",
             )
-        except (subprocess.TimeoutExpired, Exception):
+        except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             backup_path.write_text(
                 f"# Failed reflog backup: {datetime.now(UTC).isoformat()}\n",
                 encoding="utf-8",
@@ -460,7 +460,7 @@ class ForensicEngine:
                 timeout=10,
             )
             return True
-        except (subprocess.TimeoutExpired, Exception):
+        except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def get_forensic_notes(self) -> list[dict[str, Any]]:
@@ -492,7 +492,7 @@ class ForensicEngine:
                         notes.append(json.loads(show_result.stdout))
                     except json.JSONDecodeError:
                         notes.append({"raw": show_result.stdout})
-        except (subprocess.TimeoutExpired, Exception):
+        except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
         return notes
@@ -657,7 +657,7 @@ class ForensicEngine:
                 timeout=5,
             )
             return result.stdout.strip()
-        except (subprocess.TimeoutExpired, Exception):
+        except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     def _get_current_commit(self) -> str:
@@ -670,7 +670,7 @@ class ForensicEngine:
                 timeout=5,
             )
             return result.stdout.strip()
-        except (subprocess.TimeoutExpired, Exception):
+        except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             return "UNKNOWN"
 
     def _load_merkle_chain(self) -> list[MerkleChainLink]:

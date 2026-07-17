@@ -174,7 +174,7 @@ def _try_import_checker(module_path: str, class_name: str) -> object:
         cls = getattr(mod, class_name, None)
         if cls is not None:
             return cls()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("Checker %s.%s not available, skipping", module_path, class_name, exc_info=True)
     return None
 
@@ -184,7 +184,7 @@ def _create_l2_checker() -> object:
         from zephyr.security.access_control.orphan_judge.duplicate_detector import DuplicateDetector
 
         return _DuplicateDetectorAdapter(DuplicateDetector())
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("DuplicateDetector not available for L2, skipping", exc_info=True)
         return None
 
@@ -429,7 +429,7 @@ class OrphanJudge:
                 path = futures[future]
                 try:
                     judgments.append(future.result())
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("Judge failed for %s: %s", path, exc, exc_info=True)
                     judgments.append(
                         Judgment(
@@ -512,7 +512,7 @@ class OrphanJudge:
                 passed=bool(result),
                 detail=f"{layer_name} checker returned non-LayerResult",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("%s checker failed for %s: %s", layer_name, path, exc, exc_info=True)
             default = _DEGRADATION_DEFAULTS.get(layer_name, {"passed": False, "data": {}})
             return LayerResult(

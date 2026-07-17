@@ -78,7 +78,7 @@ class EscalationBridge:
                 }
             )
             return action
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Escalation failed: %s", exc, exc_info=True)
             action.metadata["escalation_error"] = str(exc)
             return action

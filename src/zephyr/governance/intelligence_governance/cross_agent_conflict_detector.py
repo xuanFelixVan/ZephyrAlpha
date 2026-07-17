@@ -94,7 +94,7 @@ class CrossAgentConflictDetector:
             if report.has_conflict:
                 try:
                     self._run_git(["add", report.file_path])
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in cross_agent_conflict_detector", exc_info=True)
         return reports
 
@@ -104,14 +104,14 @@ class CrossAgentConflictDetector:
             staged = self._run_git(["diff", "--cached", "--name-only"])
             files = [f for f in mod.split("\n") if f] + [f for f in staged.split("\n") if f]
             return list(set(files))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
 
     def _get_most_recent_author(self, file_path: str) -> str:
         try:
             result = self._run_git(["log", "-1", "--format=%ae", "--", file_path])
             return result.strip()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     def _run_git(self, args: list[str]) -> str:
@@ -124,5 +124,5 @@ class CrossAgentConflictDetector:
                 timeout=10,
             )
             return result.stdout
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

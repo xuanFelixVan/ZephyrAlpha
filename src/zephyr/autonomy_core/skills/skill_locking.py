@@ -116,7 +116,7 @@ class SkillFileLock:
                 break
             except FileExistsError:
                 time.sleep(0.05)
-            except BaseException:
+            except BaseException:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.128.3 修复: os.write 等失败时 fd 已打开但未关闭,异常传播导致 fd 泄漏。
                 # FileExistsError 时 fd 为 None(os.open 失败),无需 close;其他异常时 close fd。
                 if fd is not None:

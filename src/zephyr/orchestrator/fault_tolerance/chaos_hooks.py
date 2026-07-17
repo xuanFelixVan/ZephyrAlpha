@@ -110,7 +110,7 @@ class ChaosHook:
                     target,
                     record.fault_id,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error(
                     "ChaosHook: pre_step inject failed step=%s fault=%s: %s",
                     context.step_name,
@@ -139,7 +139,7 @@ class ChaosHook:
                     record.fault_id,
                     record.target,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error(
                     "ChaosHook: post_step recover failed step=%s fault_id=%s: %s",
                     context.step_name,

@@ -105,7 +105,7 @@ class AsyncMonitor:
                 self._check_bypass_backlog()
                 self._check_cleanup_residue()
                 self._consecutive_failures = 0
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._consecutive_failures += 1
                 if self._consecutive_failures >= 5:
                     self._state = MonitorState.STALLED

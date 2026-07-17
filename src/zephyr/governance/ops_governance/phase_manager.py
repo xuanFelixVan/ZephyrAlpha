@@ -324,7 +324,7 @@ def session_startup(quick: bool = True) -> dict:
             name = futures[future]
             try:
                 status = future.result()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 status = GateResult.RED
             results.append(
                 {

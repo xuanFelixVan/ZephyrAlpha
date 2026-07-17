@@ -81,7 +81,7 @@ def _get_staged_scan_files(gateway) -> list[str]:
             logger.warning("CH-VERSION-COL fail-open: git diff 失败(rc=%d)", diff_result.returncode)
             return []
         staged = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("CH-VERSION-COL fail-open: git diff 异常(%s: %s)", type(e).__name__, e)
         return []
     return [
@@ -105,7 +105,7 @@ def _get_added_lines_text(gateway, rel_path: str) -> list[str]:
             line[1:] for line in diff_content.stdout.splitlines()
             if line.startswith("+") and not line.startswith("+++")
         ]
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
 

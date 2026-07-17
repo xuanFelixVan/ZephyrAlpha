@@ -75,7 +75,7 @@ class GatePipeline:
             try:
                 engine_result = engine.evaluate(task, gate_id)
                 return GateResult.from_engine_result(engine_result)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return GateResult(
                     gate_id=gate_id,
                     status=GateStatus.ERROR,
@@ -112,7 +112,7 @@ class GatePipeline:
                     if not isinstance(result, GateResult):
                         result = GateResult.from_engine_result(result)
                     results.append(result)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     step = futures[future]
                     results.append(
                         GateResult(
@@ -131,7 +131,7 @@ class GatePipeline:
                 if not isinstance(result, GateResult):
                     result = GateResult.from_engine_result(result)
                 results.append(result)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results.append(
                     GateResult(
                         gate_id=step.gate_id,

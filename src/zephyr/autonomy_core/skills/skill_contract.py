@@ -54,7 +54,7 @@ class SkillContract:
                 from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 
                 body = SkillLoader().progressive_load(skill_id).get("l2", "")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return {
                     "skill_id": skill_id,
                     "contracts_valid": False,

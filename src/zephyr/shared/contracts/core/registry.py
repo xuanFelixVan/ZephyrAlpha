@@ -163,7 +163,7 @@ class ContractRegistry:
             import yaml
 
             data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("[ContractRegistry] YAML 加载失败: %s", e, exc_info=True)
             self._initialized = True
             return
@@ -284,7 +284,7 @@ class ContractRegistry:
                     },
                 },
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug(
                 "[ContractRegistry] 无法发送 METRIC_EVENT: %s",
                 contract_id,

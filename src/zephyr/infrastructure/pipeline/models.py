@@ -615,7 +615,7 @@ class StageContext(BaseModel):
         namespace = {"ctx": self, "all": all, "any": any}
         try:
             return bool(eval(compile(tree, "<skip_condition>", "eval"), {"__builtins__": {}}, namespace))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
 
@@ -1057,7 +1057,7 @@ def validate_module_output(module_id: str, output: dict[str, Any]) -> dict[str, 
         result = validated.model_dump()
         result["_schema_validated"] = True
         return result
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         output["_schema_validated"] = False
         output["_validation_errors"] = str(exc)
         return output

@@ -191,7 +191,7 @@ class RedTeamScanner:
                     reason=scan_result.blocked_by or "scanned",
                     latency_ms=(time.time() - t0) * 1000,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pr = PayloadResult(
                     payload_id=entry.get("id", "unknown"),
                     name=entry.get("name", "unknown"),
@@ -229,7 +229,7 @@ class RedTeamScanner:
                     reason=scan_result.blocked_by or "scanned",
                     latency_ms=(time.time() - t0) * 1000,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pr = PayloadResult(
                     payload_id=entry.get("id", "unknown"),
                     name=entry.get("name", "unknown"),

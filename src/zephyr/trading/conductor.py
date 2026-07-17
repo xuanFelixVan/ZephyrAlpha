@@ -120,7 +120,7 @@ class Conductor:
                 bid = row[0] if row[0] else "__no_batch__"
                 if bid != "__no_batch__":
                     self.repo.recover_stale_claims(bid)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Conductor: recover_stale_claims failed: %s", exc, exc_info=True)
 
         claimed = self.autopilot.run_cycle(max_tasks=max_tasks)

@@ -317,7 +317,7 @@ class CapabilityPassport:
             return CapabilityPassport._from_dict(data)
         except TamperError:
             raise
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("Failed to load passport for %s: %s", model_id, exc, exc_info=True)
             return None
 
@@ -536,7 +536,7 @@ class QuickProfile:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             return QuickProfile._from_dict(data)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("Failed to load QuickProfile for %s: %s", model_id, exc, exc_info=True)
             return None
 

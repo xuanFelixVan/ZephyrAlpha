@@ -164,7 +164,7 @@ def _check_hotfix_bypass(
             result["recovery_status"] = "HOTFIX_BYPASSED"
             logger.info("Drift recovery bypassed: hotfix commit detected for %s", module_id)
             return True
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("Hotfix bypass check failed (non-fatal): %s", exc, exc_info=True)
     return False
 
@@ -183,7 +183,7 @@ def _run_drift_scan(
             return loop.run_until_complete(scan_fn(level=level, scope=changed_files or None))
         finally:
             loop.close()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result["errors"].append(f"scan failed: {exc}")
         result["recovery_status"] = "SCAN_FAILED"
         return None
@@ -223,7 +223,7 @@ def _detect_cascade_and_check_lockout(
             result["recovery_status"] = "CASCADE_LOCKOUT"
             logger.warning("Auto-fix paused for %s due to cascade detection", module_id)
             return True
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("Cascade detection failed (non-fatal): %s", exc, exc_info=True)
     return False
 
@@ -261,7 +261,7 @@ def _run_auto_fixes(
                         "detail": fallback.get("reason", "auto_fix returned False"),
                     }
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             failed_count += 1
             fix_results.append(
                 {
@@ -313,7 +313,7 @@ def _fallback_to_rollback_handler(event: object) -> dict[str, Any]:
                 "action": "MANUAL_REQUIRED",
                 "reason": "AutoFixer failed + all fallback handlers unavailable",
             }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
             "drift_id": str(event.event_id),
             "action": "FALLBACK_ERROR",

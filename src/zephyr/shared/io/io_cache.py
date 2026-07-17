@@ -122,7 +122,7 @@ class FileCache:
                 result = self._load_and_cache(str(Path(fp).resolve()))
                 if result is not None:
                     loaded += 1
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("FileCache: warm failed for %s", fp, exc_info=True)
         return loaded
 
@@ -166,7 +166,7 @@ class FileCache:
             else:
                 data = yaml.safe_load(raw) or json.loads(raw)
             size_bytes = len(raw.encode("utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FileCache: parse failed for %s", path, exc_info=True)
             return None
         if data is None:

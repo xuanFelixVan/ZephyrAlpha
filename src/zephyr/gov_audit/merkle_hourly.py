@@ -206,7 +206,7 @@ class MerkleHourlyBridge:
             self._available = True
         except ImportError:
             _logger.warning("HourlyMerkleAggregator not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("HourlyMerkleAggregator init failed: %s", exc, exc_info=True)
 
     def aggregate(self, hour_key: str | None = None) -> dict[str, Any] | None:
@@ -217,7 +217,7 @@ class MerkleHourlyBridge:
             if result is None:
                 return None
             return result.model_dump()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("MerkleHourlyBridge.aggregate failed: %s", exc, exc_info=True)
             return None
 
@@ -229,7 +229,7 @@ class MerkleHourlyBridge:
             if result is None:
                 return False
             return result.merkle_root == expected_root
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("MerkleHourlyBridge.verify failed: %s", exc, exc_info=True)
             return False
 

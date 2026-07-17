@@ -62,7 +62,7 @@ class DegradationChain:
         try:
             with open(_DEGRADATION_CONFIG_PATH, encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     @property

@@ -143,7 +143,7 @@ def _flush_ring_to_jsonl() -> None:
                 pass
             with open(fp, "a", encoding="utf-8") as f:
                 f.write(content)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("flush_ring_to_jsonl failed", exc_info=True)
 
 
@@ -270,7 +270,7 @@ class TracesFacade:
             from zephyr.infrastructure.system_telemetry.traces.span_stub import noop_span
 
             return _RealSpanBridge(operation_name, noop_span)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return _Span(operation_name, test_mode=self._test_mode)
 
 
@@ -340,7 +340,7 @@ class AIBehaviorFacade:
                 rationale=reason,
             )
             return event.snapshot()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.info(
                 "ai_behavior decision=%s model=%s reason=%s extra=%s",
                 decision,
@@ -372,7 +372,7 @@ class ArchiveFacade:
             from zephyr.infrastructure.system_telemetry.archive.cold_stub import next_archive_batch_id
 
             return next_archive_batch_id(prefix)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             import uuid
 
             batch_id = f"{prefix}-{uuid.uuid4().hex[:12]}"
@@ -445,7 +445,7 @@ class Telemetry:
                 if now - last_run[task] >= interval:
                     try:
                         self._run_scheduled_task(task)
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         _logger.debug("scheduled %s failed", task, exc_info=True)
                     last_run[task] = time.monotonic()
             self._scheduler_stop.wait(timeout=1.0)
@@ -466,7 +466,7 @@ class Telemetry:
                 from zephyr.infrastructure.system_telemetry.archive import rotate_by_ttl
 
                 rotate_by_ttl()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("archive_check failed", exc_info=True)
         elif task == "health_aggregator":
             self._health_aggregator_tick()
@@ -476,20 +476,20 @@ class Telemetry:
     def _health_aggregator_tick(self) -> None:
         try:
             self._health_aggregator.poll_all()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("health_aggregator_tick failed", exc_info=True)
 
     def _profiles_snapshot_tick(self) -> None:
         try:
             self.profiles.start("auto_snapshot")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("profiles_snapshot_tick failed", exc_info=True)
 
     def _watchdog_tick(self) -> None:
         try:
             if self._watchdog is not None:
                 self._watchdog.write_external_heartbeat()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("watchdog_tick failed", exc_info=True)
 
     def shutdown(self) -> None:
@@ -513,7 +513,7 @@ class Telemetry:
             if sub is not None and hasattr(sub, "shutdown"):
                 try:
                     sub.shutdown()
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.debug("shutdown %s failed", attr_name, exc_info=True)
 
         if not self.test_mode:

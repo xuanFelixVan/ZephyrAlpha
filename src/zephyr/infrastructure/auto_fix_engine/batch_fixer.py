@@ -99,7 +99,7 @@ class BatchFixer:
                     else:
                         failed += 1
                     return result
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     action.status = FixStatus.FAILED
                     action.metadata["error"] = str(exc)
                     failed += 1
@@ -111,7 +111,7 @@ class BatchFixer:
                 try:
                     result = future.result()
                     results.append(result)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     original = future_to_action[future]
                     original.status = FixStatus.FAILED
                     original.metadata["error"] = str(exc)

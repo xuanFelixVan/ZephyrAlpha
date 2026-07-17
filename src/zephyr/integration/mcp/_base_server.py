@@ -230,7 +230,7 @@ class BaseMCPServer:
 
             self._rbac_guard = EscalationRBACBridge()
             self._agent_session_id = self.server_id
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in _base_server", exc_info=True)
 
     def enable_rbac(self, session_id: str = "") -> None:
@@ -486,7 +486,7 @@ class BaseMCPServer:
             return self._err(req_id, ERR_INVALID_PARAMS, f"Invalid params: {exc}")
         except MCPError as exc:
             return self._err(req_id, exc.code, exc.message, exc.data)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.error("tool_execution_error", tool=tool_name, error=str(exc))
             return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
@@ -632,7 +632,7 @@ class BaseMCPServer:
             try:
                 # 5.100.10 修复: handle_request 改为 run_in_executor 委托线程池避免阻塞事件循环
                 response = await loop.run_in_executor(None, self.handle_request, request)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 response = self._err(request.get("id") if isinstance(request, dict) else None, ERR_INTERNAL_ERROR, f"Internal error: {exc}")
             out.write(json.dumps(response, ensure_ascii=False) + "\n")
             out.flush()

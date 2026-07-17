@@ -36,7 +36,7 @@ class DelegationBridge:
             self._available = True
         except ImportError:
             logger.warning("EscalationEngine not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("EscalationEngine init failed: %s", exc, exc_info=True)
 
     def report_delegation_failure(self, target: str, reason: str) -> dict[str, Any] | None:
@@ -54,7 +54,7 @@ class DelegationBridge:
                 "state": event.state.value if hasattr(event.state, "value") else str(event.state),
                 "description": event.description,
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("DelegationBridge.report_delegation_failure failed: %s", exc, exc_info=True)
             return None
 
@@ -73,7 +73,7 @@ class DelegationBridge:
                 "state": event.state.value if hasattr(event.state, "value") else str(event.state),
                 "description": event.description,
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("DelegationBridge.report_delegation_timeout failed: %s", exc, exc_info=True)
             return None
 

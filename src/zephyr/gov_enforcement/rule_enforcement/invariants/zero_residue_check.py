@@ -111,7 +111,7 @@ class ZeroResidueScanner:
             return (proc.returncode, proc.stdout, proc.stderr)
         except subprocess.TimeoutExpired:
             return (1, "", "Script timed out")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return (1, "", str(exc))
 
     def _parse_findings(self, exit_code: int, stderr: str) -> list[str]:

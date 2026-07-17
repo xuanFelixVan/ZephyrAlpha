@@ -281,7 +281,7 @@ def _try_connect(source: str, result: dict, t0: float) -> object | None:
     """尝试实例化并连接 Provider。失败时更新 result 并返回 None。"""
     try:
         provider = _make_provider(source)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         result["elapsed_sec"] = time.time() - t0
         result["api_status"] = "broken"
         result["error_detail"] = "Provider 实例化失败"
@@ -290,7 +290,7 @@ def _try_connect(source: str, result: dict, t0: float) -> object | None:
 
     try:
         provider.connect()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         result["elapsed_sec"] = time.time() - t0
         result["api_status"] = "blocked"
         result["error_detail"] = "连接失败"
@@ -316,7 +316,7 @@ def _fetch_batches(provider, payload, policy, result: dict) -> tuple[int, int, s
                     break
                 continue
             total_rows += fr.rows_fetched
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         error_count += 1
         first_error = str(e)[:200]
         if "Timeout" in str(e) or "Connection" in str(e):
@@ -359,7 +359,7 @@ def speed_test_one(cfg: SpeedTestConfig) -> dict:
     elapsed = time.time() - t0
     try:
         provider.disconnect()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
 
     result["rows_fetched"] = total_rows
@@ -415,7 +415,7 @@ def run_speed_tests(
             print(f"  rows={r['rows_fetched']} time={r['elapsed_sec']}s "
                   f"rows/s={r['rows_per_sec']} sym/s={r['symbols_per_sec']} "
                   f"status={r['api_status']}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             print(f"  [FATAL] {e}")
             results.append({
                 "source": source, "capability": capability, "target_table": table,
@@ -435,7 +435,7 @@ def save_to_clickhouse(results: list[dict]) -> bool:
     """把测速结果写入 c0_meta.fetch_perf 表。"""
     try:
         from zephyr.data import ch_writer
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.warning(f"无法导入 ch_writer，跳过 CH 写入: {e}")
         return False
 

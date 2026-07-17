@@ -137,7 +137,7 @@ def enforce_contract(contract_id: str):
                 return func(*args, **kwargs)
             except ContractViolationError:
                 raise
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise ContractBusError(f"[{contract_id}] {func.__name__} failed: {e}") from e
 
         @functools.wraps(func)
@@ -146,7 +146,7 @@ def enforce_contract(contract_id: str):
                 return await func(*args, **kwargs)
             except ContractViolationError:
                 raise
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise ContractBusError(f"[{contract_id}] {func.__name__} failed: {e}") from e
 
         if asyncio.iscoroutinefunction(func):

@@ -124,7 +124,7 @@ class AlertDispatcher:
                 len(blocked),
             )
             return result
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[FLE-ORC] dispatch 失败: %s", exc, exc_info=True)
             return DispatchResult(
                 dispatched_to="orchestrator",

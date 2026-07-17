@@ -60,7 +60,7 @@ def _get_staged_md_files(gateway) -> list[str]:
             f.replace("\\", "/") for f in r.stdout.strip().splitlines()
             if f.endswith(".md")
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("PURE-ASSERTION fail-open: git diff 异常(%s: %s)。", type(e).__name__, e)
         return []
 
@@ -71,7 +71,7 @@ def _resolve_worktree_root(gateway) -> str:
         r = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
         if r.returncode == 0:
             return r.stdout.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return str(getattr(gateway, "project_root", _PROJECT_ROOT))
 
@@ -101,7 +101,7 @@ def _run_assertion_checker(abs_files: list[str], wt_root: str) -> subprocess.Com
     except subprocess.TimeoutExpired:
         logger.warning("PURE-ASSERTION fail-open: checker 超时(60s)。")
         return None
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("PURE-ASSERTION fail-open: subprocess 异常(%s: %s)。", type(e).__name__, e)
         return None
 

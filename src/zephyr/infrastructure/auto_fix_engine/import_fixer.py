@@ -100,7 +100,7 @@ def _scan_file_imports(py_file: Path, src_root: Path) -> list[dict[str, Any]]:
                     findings.append(finding)
             elif isinstance(node, ast.Import):
                 findings.extend(_check_import_node(node, src_root, py_file))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return findings
 
@@ -185,7 +185,7 @@ class ImportFixer(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No broken imports found"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action

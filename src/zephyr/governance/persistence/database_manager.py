@@ -293,7 +293,7 @@ class DatabaseManager:
         if self._closed:
             try:
                 conn.close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in database_manager", exc_info=True)
             return
         # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.append() 加锁，与 get_connection() 配对
@@ -308,7 +308,7 @@ class DatabaseManager:
         # 池满或连接不健康时关闭（在锁外关闭）
         try:
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in database_manager", exc_info=True)
 
     # ------------------------------------------------------------------
@@ -376,7 +376,7 @@ class DatabaseManager:
 
             return status
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             status = DatabaseHealthStatus(
                 healthy=False,
                 schema_version=-1,
@@ -395,7 +395,7 @@ class DatabaseManager:
             if conn is not None:
                 try:
                     conn.close()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in database_manager", exc_info=True)
 
     @property
@@ -499,7 +499,7 @@ class DatabaseManager:
                     except OSError:
                         pass
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("db_backup_rotation_error: %s", exc, exc_info=True)
 
     # ------------------------------------------------------------------
@@ -534,7 +534,7 @@ class DatabaseManager:
             if conn is not None:
                 try:
                     conn.close()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in database_manager", exc_info=True)
 
     def wal_checkpoint_truncate(self) -> None:
@@ -576,7 +576,7 @@ class DatabaseManager:
                 if conn is not None:
                     try:
                         conn.close()
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.debug("suppressed error in database_manager", exc_info=True)
 
             self._wal_checkpoint("TRUNCATE")
@@ -647,7 +647,7 @@ class DatabaseManager:
             if backup_before_close:
                 try:
                     self.backup(label="pre_close")
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("pre_close_backup_failed: %s", exc, exc_info=True)
 
             self._closed = True
@@ -656,13 +656,13 @@ class DatabaseManager:
             # WAL checkpoint 抛异常会掩盖with块原始异常并中断连接池清理流程。
             try:
                 self.wal_checkpoint_truncate()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in database_manager", exc_info=True)
 
             for conn in self._conn_pool:
                 try:
                     conn.close()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in database_manager", exc_info=True)
             self._conn_pool.clear()
 
@@ -753,10 +753,10 @@ class DatabaseManager:
                     )
                     conn.execute("COMMIT")
                     success += 1
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     try:
                         conn.execute("ROLLBACK")
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("suppressed error in database_manager", exc_info=True)
                     payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
                     payload["retry_count"] = payload.get("retry_count", 0) + 1
@@ -828,7 +828,7 @@ class DatabaseManager:
         try:
             aq = AuditQuery(db_path=self._db_path, auto_init=False)
             drift = aq.query_schema_drift()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             drift = {"error": "audit_query_unavailable", "is_latest": None}
         qm_stats = query_metrics.stats_all()
 

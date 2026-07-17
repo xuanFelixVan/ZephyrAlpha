@@ -140,13 +140,13 @@ class RollbackDrill:
             db_integrity = self._check_db_integrity(worktree_path)
             details.append(f"DB integrity: {'PASS' if db_integrity else 'FAIL'}")
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             details.append(f"Drill exception: {e}")
             success = False
         finally:
             try:
                 self._run_git(["worktree", "remove", "--force", str(worktree_path)])
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_drill", exc_info=True)
             self._cleanup_chaos(scenario)
 
@@ -190,7 +190,7 @@ class RollbackDrill:
             result = conn.execute("PRAGMA integrity_check").fetchone()
             conn.close()
             return result[0] == "ok"
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _meltdown_automatic_rollback(self) -> None:
@@ -243,5 +243,5 @@ class RollbackDrill:
                 timeout=timeout,
             )
             return result.stdout
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

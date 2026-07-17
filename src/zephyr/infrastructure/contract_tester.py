@@ -96,7 +96,7 @@ class ContractTester:
                     contract = json.load(f)
                 else:
                     contract = {"_raw": f.read()}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.status = ContractStatus.FAIL
             result.failures.append(f"解析失败: {e}")
             return result

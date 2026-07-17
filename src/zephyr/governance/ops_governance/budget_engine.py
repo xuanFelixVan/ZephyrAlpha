@@ -188,7 +188,7 @@ class BudgetEngine:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(snapshot, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, persist_path)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("BudgetEngine.shutdown: snapshot persist failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         with self._lock:
@@ -226,7 +226,7 @@ class BudgetEngine:
             step_idx = snapshot.get("active_step_idx", 0)
             for _ in range(step_idx):
                 engine.advance_degradation()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("BudgetEngine.recover_from_snapshot: snapshot load failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return engine
 
@@ -391,7 +391,7 @@ class BudgetEngine:
                         )
         except ImportError:
             pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
         with self._lock:
@@ -444,7 +444,7 @@ class BudgetEngine:
             if gt is not None:
                 gt.metrics.gauge(f"budget.{policy_id}.tokens_consumed", float(tokens))
                 gt.metrics.gauge(f"budget.{policy_id}.cost_usd", cost)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
         # 事件驱动响应链 1: 预算超限 -> 自动降级
@@ -623,21 +623,21 @@ class BudgetEngine:
             bus = EventBus.get_instance()
             bus.subscribe(EventType.TASK_COMPLETED, self._on_task_completed_budget)
             bus.subscribe(EventType.TASK_FAILED, self._on_task_failed_budget)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
     def _on_task_completed_budget(self, event: object) -> None:
         """TASK_COMPLETED 事件：检查预算状态。"""
         try:
             self._check_budget_exceeded()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
     def _on_task_failed_budget(self, event: object) -> None:
         """TASK_FAILED 事件：检查重试预算。"""
         try:
             self._check_budget_exceeded()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in budget_engine", exc_info=True)
 
     def _check_budget_exceeded(self) -> None:
@@ -775,7 +775,7 @@ def subscribe_eventbus() -> None:
         bus = EventBusBackpressure()
         bus.subscribe("slo_violation", _on_slo_violation)
         _bus_subscribed = True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in budget_engine", exc_info=True)
 
 
@@ -784,5 +784,5 @@ def _on_slo_violation(payload: object) -> None:
     try:
         engine = BudgetEngine.ensure_initialized()
         engine._check_budget_exceeded()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in budget_engine", exc_info=True)

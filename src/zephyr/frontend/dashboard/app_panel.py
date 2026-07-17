@@ -287,7 +287,7 @@ class DashboardPanelApp:
         for name, builder in tabs_spec:
             try:
                 tab_objects.append((name, builder()))
-            except Exception as e:  # 单 Tab 失败不影响其他 Tab
+            except Exception as e:  # 单 Tab 失败不影响其他 Tab  # noqa: BLE001 — 5.135治标: broad exception catch
                 tab_objects.append((name, pn.pane.Alert(
                     f"❌ Tab '{name}' 渲染异常: {e}", alert_type="danger"
                 )))
@@ -317,7 +317,7 @@ def create_dashboard(
         try:
             init_db()
             task_repo = TaskRepository()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             task_repo = None
 
     app = DashboardPanelApp(task_repo=task_repo, olap_engine=olap_engine, **kwargs)
@@ -345,7 +345,7 @@ if pn is not None:
     try:
         _DASHBOARD = create_dashboard()
         _DASHBOARD.servable()
-    except Exception as _e:  # pragma: no cover — servable 失败不阻断 import
+    except Exception as _e:  # pragma: no cover — servable 失败不阻断 import  # noqa: BLE001 — 5.135治标: broad exception catch
         import sys
         print(f"[app_panel] servable 初始化警告: {_e}", file=sys.stderr)
 

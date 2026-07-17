@@ -108,7 +108,7 @@ def parse_yaml_config(filepath: str) -> ConfigSource:
     try:
         content = Path(filepath).read_text(encoding="utf-8")
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return cs
 
     for match in YAML_CONFIG_PATTERN.finditer(content):
@@ -128,7 +128,7 @@ def parse_env_config(filepath: str) -> ConfigSource:
     try:
         content = Path(filepath).read_text(encoding="utf-8")
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return cs
 
     for match in ENV_CONFIG_PATTERN.finditer(content):
@@ -151,7 +151,7 @@ def extract_hardcoded_defaults(
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         for match in HARDCODED_DEFAULT_PATTERN.finditer(content):

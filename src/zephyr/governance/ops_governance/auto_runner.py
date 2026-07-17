@@ -95,7 +95,7 @@ class GovernanceAutoRunner:
 
         try:
             self._run_gates()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._result.errors.append(f"gate execution error: {e}")
             logger.error("Gate execution error: %s", e, exc_info=True)
         finally:
@@ -137,7 +137,7 @@ class GovernanceAutoRunner:
                     else:
                         self._result.failed_gates += 1
                         self._result.errors.append(f"gate {check_name} failed")
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._result.failed_gates += 1
                     self._result.errors.append(f"gate {check_name} error: {e}")
                     logger.warning("Gate %s error: %s", check_name, e, exc_info=True)
@@ -154,7 +154,7 @@ class GovernanceAutoRunner:
 
             result = run_check(gate_name)
             return result == GateResult.GREEN
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # fail-closed: gate 不存在或执行失败时，视为未通过（不静默放行）
             logger.warning("Gate %s execution failed: %s", gate_name, e, exc_info=True)
             return False
@@ -168,7 +168,7 @@ class GovernanceAutoRunner:
             try:
                 if hasattr(resource, "close"):
                     resource.close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Resource close error: %s", e, exc_info=True)
         self._resources.clear()
 
@@ -177,7 +177,7 @@ class GovernanceAutoRunner:
             try:
                 if temp_file.exists():
                     temp_file.unlink()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Temp file cleanup error: %s", e, exc_info=True)
         self._temp_files.clear()
 
@@ -185,7 +185,7 @@ class GovernanceAutoRunner:
         try:
             self._write_audit_log()
             self._result.audit_logged = True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Audit log error: %s", e, exc_info=True)
             self._result.errors.append(f"audit log error: {e}")
 

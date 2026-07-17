@@ -129,7 +129,7 @@ class RedBlueValidator:
                     "detail": f"session_id={session_id} blocked={blocked} bypassed={bypassed} total={len(scene_results)}",
                 },
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in validator", exc_info=True)
 
         return report

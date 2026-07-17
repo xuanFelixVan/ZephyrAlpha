@@ -49,6 +49,6 @@ class MessageRouter:
                     else:
                         result = handler(message)
                     results[part.part_type.value].append(result)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     results[part.part_type.value].append({"error": str(e)})
         return results

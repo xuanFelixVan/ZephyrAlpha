@@ -219,7 +219,7 @@ class F5EventSubscriber:
                     handler_name=binding.handler_name,
                 ))
                 logger.info("F5EventSubscriber: subscribed to '%s'", binding.topic)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results.append(SubscriptionResult(
                     success=False,
                     topic=binding.topic,
@@ -240,7 +240,7 @@ class F5EventSubscriber:
                 removed = self._bus.unsubscribe(topic, handler)
                 if removed:
                     count += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("F5EventSubscriber: unsubscribe failed for '%s': %s", topic, e, exc_info=True)
         self._subscribed_topics.clear()
         return count
@@ -284,7 +284,7 @@ class F5EventSubscriber:
                 result.details["cycle"] = list(cycle)
             result.handled = True
             logger.info("F5EventSubscriber: deadlock handled (node=%s, victim=%s)", node, result.details.get("victim"))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.error = str(e)
             result.handled = True
             logger.error("F5EventSubscriber: handle_deadlock failed: %s", e, exc_info=True)
@@ -331,7 +331,7 @@ class F5EventSubscriber:
             result.details["state"] = str(getattr(escalation_event, "state", ""))
             result.handled = True
             logger.info("F5EventSubscriber: escalation handled (event_id=%s)", result.details.get("event_id"))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.error = str(e)
             result.handled = True
             logger.error("F5EventSubscriber: handle_escalation failed: %s", e, exc_info=True)
@@ -385,7 +385,7 @@ class F5EventSubscriber:
                 result.details.get("winner"),
                 result.details.get("tier"),
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.error = str(e)
             result.handled = True
             logger.error("F5EventSubscriber: handle_conflict failed: %s", e, exc_info=True)
@@ -401,7 +401,7 @@ class F5EventSubscriber:
         role_str = data.get("role", "builder")
         try:
             role = AgentRole.from_string(role_str) if hasattr(AgentRole, "from_string") else AgentRole.BUILDER
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             role = AgentRole.BUILDER
         return AgentMeta(
             agent_id=agent_id,
@@ -432,7 +432,7 @@ class F5EventSubscriber:
                     len(proposals),
                     event_kind,
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("F5EventSubscriber: FeedbackLoop notification failed: %s", e, exc_info=True)
 
     # ── 工具方法 ─────────────────────────────────────────────────────────
@@ -452,11 +452,11 @@ class F5EventSubscriber:
                 return {}
             try:
                 return dict(payload)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return {"value": payload}
         try:
             return dict(event)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     def _log_dispatch(self, result: EventHandlerResult) -> None:
@@ -599,7 +599,7 @@ def subscribe_eventbus() -> None:
             "F5EventSubscriber: subscribed to 4 external events "
             "(budget_exceeded/drift_detected/fix_completed/fix_failed)"
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("F5EventSubscriber: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -636,7 +636,7 @@ def _dispatch_to_escalation(payload: dict[str, Any], category: str) -> None:
             description=description,
             owner_id=owner_id,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in f5_event_subscriber", exc_info=True)
 
 

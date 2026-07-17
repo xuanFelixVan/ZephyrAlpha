@@ -56,7 +56,7 @@ class ReplayEngine:
                 "recomputed_hash": recomputed["hash"],
                 "replayed_at": now_utc().isoformat(),
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("ReplayEngine.replay failed: %s", exc, exc_info=True)
             return {"status": "error", "evidence_id": evidence_id, "match": False, "error": str(exc)}
 
@@ -75,7 +75,7 @@ class ReplayEngine:
                         "match": match,
                     }
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
         total = len(results)
@@ -94,7 +94,7 @@ class ReplayEngine:
                 data = json.loads(path.read_text(encoding="utf-8"))
                 if data.get("evidence_hash", "")[:16] == evidence_id:
                     return path
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return None
 

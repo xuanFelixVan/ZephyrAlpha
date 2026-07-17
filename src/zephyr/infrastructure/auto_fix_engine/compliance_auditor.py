@@ -104,7 +104,7 @@ class ComplianceAuditor:
                     audit_trail_id=row[10],
                     tamper_proof_hash=row[11],
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("ComplianceAuditor.get_evidence: evidence lookup failed (%s: %s)", type(e).__name__, e, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -121,7 +121,7 @@ class ComplianceAuditor:
             conn.commit()
             deleted = cursor.rowcount
             return deleted
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -152,7 +152,7 @@ class ComplianceAuditor:
                 ),
             )
             conn.commit()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to persist compliance evidence: %s", exc, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:

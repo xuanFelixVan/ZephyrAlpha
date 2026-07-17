@@ -133,7 +133,7 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
                 wt_root = toplevel_result.stdout.strip()
             else:
                 wt_root = str(project_root)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_root = str(project_root)
 
         # 4. subprocess 调用 checker
@@ -153,7 +153,7 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
                 _TIMEOUT,
             )
             return True, ""
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "RULE-FOUR-WAY-ALIGN gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
                 type(e).__name__, e, exc_info=True

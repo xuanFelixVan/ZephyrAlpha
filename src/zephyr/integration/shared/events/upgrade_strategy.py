@@ -213,7 +213,7 @@ class EventBusUpgrade:
                     step.status = UpgradeStatus.COMPLETED
                     step.completed_at = datetime.now(UTC).isoformat()
                     result["steps_completed"] += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     step.status = UpgradeStatus.FAILED
                     result["steps_failed"] += 1
                     result["details"].append(
@@ -232,7 +232,7 @@ class EventBusUpgrade:
                         try:
                             self._rollback_step(prev_step)
                             prev_step.status = UpgradeStatus.ROLLED_BACK
-                        except Exception as re:
+                        except Exception as re:  # noqa: BLE001 — 5.135治标: broad exception catch
                             result["details"].append(
                                 {
                                     "rollback_error": f"{prev_step.step_id}: {re}",

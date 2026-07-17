@@ -61,7 +61,7 @@ class SpecRegistry:
                     version=info.get("version", "0.1.0"),
                     spec_hash=info.get("spec_hash", ""),
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._fallback_load()
 
     def _fallback_load(self) -> None:

@@ -301,23 +301,23 @@ def subscribe_metrics_events() -> None:
         def _on_f5_deadlock(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_f5_deadlock_total")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("suppressed error in metrics", exc_info=True)
 
         def _on_fle_anomaly(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_fle_anomaly_total")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("suppressed error in metrics", exc_info=True)
 
         def _on_audit_finding(payload: dict[str, Any]) -> None:
             try:
                 registry.inc("zephyr_event_audit_finding_total")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("suppressed error in metrics", exc_info=True)
 
         bus.subscribe("f5.deadlock_detected", _on_f5_deadlock)
         bus.subscribe("fle.anomaly", _on_fle_anomaly)
         bus.subscribe("audit.finding_created", _on_audit_finding)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in metrics", exc_info=True)

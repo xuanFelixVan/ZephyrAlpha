@@ -137,7 +137,7 @@ class AkshareProvider(DataSourceBase):
             _logger.info("Fetched %d rows for symbol=%s interval=%s", len(df), symbol, interval)
             return df
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Failed to fetch data for symbol=%s: %s", symbol, e, exc_info=True)
             return pd.DataFrame(columns=["open", "high", "low", "close", "volume", "amount", "date"])
 
@@ -150,7 +150,7 @@ class AkshareProvider(DataSourceBase):
         try:
             df = self._akshare.stock_zh_a_spot_em()
             return df[["代码", "名称"]].rename(columns={"代码": "symbol", "名称": "name"})
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Failed to get stock list: %s", e, exc_info=True)
             return pd.DataFrame(columns=["symbol", "name"])
 
@@ -163,7 +163,7 @@ class AkshareProvider(DataSourceBase):
         try:
             df = self._akshare.index_stock_cons_csindex(symbol=index_code)
             return df[["成分券代码", "成分券名称"]].rename(columns={"成分券代码": "symbol", "成分券名称": "name"})
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Failed to get index constituents for %s: %s", index_code, e, exc_info=True)
             return pd.DataFrame(columns=["symbol", "name"])
 

@@ -76,7 +76,7 @@ try:
     from importlib.metadata import version as _pkg_version
 
     __version__ = _pkg_version("zephyralpha")
-except Exception:  # 包未安装（开发模式/直接 import）回退到 pyproject 解析
+except Exception:  # 包未安装（开发模式/直接 import）回退到 pyproject 解析  # noqa: BLE001 — 5.135治标: broad exception catch
     try:
         from pathlib import Path as _Path
 
@@ -87,7 +87,7 @@ except Exception:  # 包未安装（开发模式/直接 import）回退到 pypro
             __version__ = _re.search(r'version\s*=\s*"([^"]+)"', _pyproject.read_text(encoding="utf-8")).group(1)
         else:
             __version__ = "0.0.0+unknown"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         __version__ = "0.0.0+unknown"
 
 
@@ -148,7 +148,7 @@ def _deferred_bootstrap():
         from zephyr.infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
 
         result = _auto_bootstrap()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("auto_bootstrap failed: %s", exc, exc_info=True)
         result = None
     with _bootstrap_lock:  # 5.165.1 修复: 加锁写入 global 变量
@@ -160,7 +160,7 @@ def _deferred_bootstrap():
         from zephyr.feedback_loop.security.secret_rotation import auto_configure
 
         auto_configure()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("secret_rotation auto_configure failed: %s", exc, exc_info=True)
 
 
@@ -177,7 +177,7 @@ def _deferred_service_registration():
         from zephyr.governance.ops_governance.service_registration import register_services
 
         register_services()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("service_registration failed: %s", exc, exc_info=True)
 
 
@@ -192,7 +192,7 @@ def _cleanup_bootstrap_timers() -> None:
     for timer in (_bootstrap_timer, _registration_timer):
         try:
             timer.cancel()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
 

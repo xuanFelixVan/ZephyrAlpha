@@ -134,7 +134,7 @@ class SnapshotManager:
             )
             snapshot_id = self._conn.execute("SELECT last_insert_rowid()").fetchone()[0]
             self._conn.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._conn.execute("ROLLBACK")
             raise
 

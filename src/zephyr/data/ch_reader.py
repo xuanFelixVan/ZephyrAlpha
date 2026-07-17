@@ -84,7 +84,7 @@ def inject_final(sql: str) -> str:
         try:
             if ch_writer.is_replacing_engine(table):
                 return f"FROM {table} FINAL"
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass  # 引擎查询失败则不注入
         return match.group(0)
 
@@ -126,7 +126,7 @@ def count(table: str, where: str = "", timeout: int = 30) -> int:
     try:
         if ch_writer.is_replacing_engine(table):
             final = " FINAL"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     sql = _SQL_COUNT.format(table=table, final=final)
     if where:
@@ -164,7 +164,7 @@ def query_table(
     try:
         if ch_writer.is_replacing_engine(table):
             final = " FINAL"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     sql = _SQL_SELECT.format(columns=columns, table=table, final=final)
     if where:

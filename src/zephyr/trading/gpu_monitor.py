@@ -88,6 +88,6 @@ def collect_gpu_stats() -> dict[str, Any]:
     except subprocess.TimeoutExpired:
         logger.warning("gpu_monitor: nvidia-smi timed out")
         return {"available": False, "error": "timeout"}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("gpu_monitor: collect failed: %s", exc, exc_info=True)
         return {"available": False, "error": str(exc)}

@@ -97,7 +97,7 @@ class RollbackAbuseDetector:
                 query = AuditQuery()
                 core_events = query.by_event_type("rollback_operation")
                 entries = [e for e in core_events if isinstance(e, dict)]
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_abuse_detector", exc_info=True)
 
         if not entries:

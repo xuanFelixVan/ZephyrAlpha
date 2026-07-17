@@ -113,7 +113,7 @@ def _load_env() -> None:
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
                 os.environ.setdefault(k.strip(), v.strip())
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.debug("DeepSeekChat: .env load skipped: %s", exc, exc_info=True)
 
 
@@ -160,7 +160,7 @@ class DeepSeekChat:
         try:
             result = self.ask("ping", system="Reply with: pong")
             return bool(result and len(result) > 0)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.debug("DeepSeekChat available check failed: %s", exc, exc_info=True)
             return False
 
@@ -250,7 +250,7 @@ class DeepSeekChat:
                         "DeepSeekChat: %s empty response attempt %d/%d, retrying...",
                         work_type, attempt + 1, max_retries,
                     )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekChat: %s error attempt %d/%d: %s, retrying...",
@@ -333,7 +333,7 @@ class DeepSeekChat:
             pass
         except RuntimeError:
             raise
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in deepseek_chat", exc_info=True)
 
     @staticmethod

@@ -137,7 +137,7 @@ class LifecycleManager:
             try:
                 await mod.on_init()
                 logger.info("module '%s': init OK", mod.module_name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("module '%s': init FAILED: %s", mod.module_name, exc, exc_info=True)
                 raise
 
@@ -145,7 +145,7 @@ class LifecycleManager:
             try:
                 await mod.on_startup()
                 logger.info("module '%s': startup OK", mod.module_name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("module '%s': startup FAILED: %s", mod.module_name, exc, exc_info=True)
                 raise
 
@@ -154,7 +154,7 @@ class LifecycleManager:
             try:
                 await mod.on_shutdown()
                 logger.info("module '%s': shutdown OK", mod.module_name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("module '%s': shutdown FAILED: %s", mod.module_name, exc, exc_info=True)
 
     async def health_check_all(self) -> dict[str, ModuleHealth]:
@@ -162,7 +162,7 @@ class LifecycleManager:
         for mod in self._modules:
             try:
                 results[mod.module_name] = mod.health_check()
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results[mod.module_name] = ModuleHealth(
                     module_name=mod.module_name,
                     state=LifecycleState.FAILED,

@@ -203,7 +203,7 @@ class InProcessVectorMemory:
                 baseline.collections_healthy + baseline.collections_unhealthy,
                 baseline.drift_detected,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("VMS: 健康基线检查失败: %s", exc, exc_info=True)
 
         self._stop_event.clear()
@@ -308,7 +308,7 @@ class InProcessVectorMemory:
                         }
                     )
                 return hits
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("HybridRetriever 检索失败，降级为原始 EmbeddingRouter 检索", exc_info=True)
         return None
 
@@ -334,7 +334,7 @@ class InProcessVectorMemory:
                 )
             else:
                 results = col.query(query_texts=[query], n_results=min(k, col.count()))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             results = col.query(query_texts=[query], n_results=min(k, col.count()))
         return results
 
@@ -358,7 +358,7 @@ class InProcessVectorMemory:
         try:
             results = self._query_chromadb(col, query, collection_name, k)
             return _results_to_hits(results)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)", exc_info=True)
             return self._get_in_memory_backend().search(query, k=k)
 
@@ -411,7 +411,7 @@ class InProcessVectorMemory:
                     "drift_detected": report.drift_detected,
                     "issues": report.issues,
                 }
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["index_health"] = {"error": str(exc)}
         return result
 
@@ -425,7 +425,7 @@ class InProcessVectorMemory:
                     all_ids = col.get()["ids"]
                     if all_ids:
                         col.delete(ids=all_ids)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("clear_all: 无法清空 %s", name, exc_info=True)
 
     def _maintenance_loop(self) -> None:
@@ -446,9 +446,9 @@ class InProcessVectorMemory:
                         try:
                             self._index_health_monitor.auto_repair(ci)
                             _logger.info("VMS maintenance: auto_repair(%s)", ci)
-                        except Exception:
+                        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                             _logger.debug("VMS maintenance: auto_repair(%s) failed", ci, exc_info=True)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("VMS maintenance: check_all failed", exc_info=True)
 
             now = datetime.now(UTC).timestamp()
@@ -457,5 +457,5 @@ class InProcessVectorMemory:
                 try:
                     self._collection_manager.purge_expired()
                     _logger.info("VMS maintenance: purge_expired done")
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.debug("VMS maintenance: purge_expired failed", exc_info=True)

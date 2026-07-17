@@ -127,7 +127,7 @@ class BatchIngestor:
         try:
             raw = yaml_path.read_text(encoding="utf-8")
             data = yaml.safe_load(raw)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return BatchIngestReport(
                 total=0,
                 failed=1,

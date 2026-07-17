@@ -112,7 +112,7 @@ class ConfigValidator:
                     config = json.load(f)
                 else:
                     config = {"_raw": f.read()}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.valid = False
             result.errors.append(f"解析失败: {e}")
             return result

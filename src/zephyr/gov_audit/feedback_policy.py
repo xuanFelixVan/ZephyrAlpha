@@ -60,7 +60,7 @@ class FeedbackPolicy:
             self._available = self._bridge.is_available()
         except ImportError:
             logger.warning("FeedbackBridge not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackBridge init failed: %s", exc, exc_info=True)
 
     def evaluate(self, findings: list[dict[str, Any]]) -> PolicyDecision:

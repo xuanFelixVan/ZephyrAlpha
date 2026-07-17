@@ -88,7 +88,7 @@ def _get_staged_py_files(gateway):
             )
             return None
         staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "UNSAFE-DICT-SPREAD gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -104,7 +104,7 @@ def _collect_unsafe_spread_warnings(gateway, py_file):
         file_diff = gateway._run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "UNSAFE-DICT-SPREAD gate: git diff 失败 file=%s, %s",
             py_file, e, exc_info=True,

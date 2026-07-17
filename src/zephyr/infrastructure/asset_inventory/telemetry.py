@@ -42,7 +42,7 @@ def _get_sys_telemetry():
             from zephyr.infrastructure.system_telemetry.facade import Telemetry
 
             _sys_telemetry = Telemetry("asset-inventory", test_mode=os.environ.get("ZALPHA_TEST_MODE", "") == "1")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _sys_telemetry = False
     return _sys_telemetry if _sys_telemetry is not False else None
 
@@ -117,7 +117,7 @@ class InventorySelfMetrics:
             for name, value in self._counters.items():
                 telemetry.metrics.counter(f"{name}_total", value)
             telemetry.health.register()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("telemetry push_to_facade failed: %s", exc, exc_info=True)
 
 
@@ -293,7 +293,7 @@ class SmtpEmailChannel(NotificationChannel):
                 server.quit()
 
             record.delivered = True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             record.delivered = False
 
         return record

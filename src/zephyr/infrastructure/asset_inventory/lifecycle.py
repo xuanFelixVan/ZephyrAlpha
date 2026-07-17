@@ -196,7 +196,7 @@ class Lifecycle:
                         "metadata": {"event_id": evt.event_id},
                     }
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in lifecycle", exc_info=True)
 
     def main(self) -> None:

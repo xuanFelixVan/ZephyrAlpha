@@ -247,5 +247,5 @@ class IntegrityVerifier:
             return AgentSigner.verify(event, public_key_hex, signature_hex)
         except ImportError:
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False

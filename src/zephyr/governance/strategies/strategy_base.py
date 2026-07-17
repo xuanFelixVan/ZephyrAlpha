@@ -148,9 +148,9 @@ def autodiscover_strategies(
                 try:
                     importlib.import_module(f"{package_path}.{fp.stem}")
                     found += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.warning("Failed to auto-discover strategy %s: %s", fp.stem, exc, exc_info=True)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("Strategy autodiscover skipped: %s", exc, exc_info=True)
     return found
 

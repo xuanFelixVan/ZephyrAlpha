@@ -49,7 +49,7 @@ class DriftBridge:
                     "scan_level": "STANDARD",
                 }
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("DriftBridge.notify_change failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 

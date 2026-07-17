@@ -386,7 +386,7 @@ def check_sli_data_sources() -> list[dict]:
                         "detail": f"{module_path} importable but {symbol_name} not found; available: {available}",
                     }
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             results.append(
                 {
                     "check_id": "SYS-C08",
@@ -414,7 +414,7 @@ def check_crosscheck_script() -> list[dict]:
                 "detail": f"exit={result.returncode}" + (f" | {result.stdout.strip()[:200]}" if not ok else ""),
             }
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return [{"check_id": "SYS-C06", "label": "crosscheck_script_pass", "status": "FAIL", "detail": "internal error"}]
 
 

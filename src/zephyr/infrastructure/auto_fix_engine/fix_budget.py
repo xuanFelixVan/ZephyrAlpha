@@ -89,7 +89,7 @@ class FixBudget:
                 (this_month + "%",),
             ).fetchone()
             self._llm_tokens_consumed = row[0] if row else 0
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in fix_budget", exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -159,7 +159,7 @@ class FixBudget:
                     (operation_id, level.value, cost, tokens, datetime.now(UTC).isoformat(), ""),
                 )
                 conn.commit()
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to persist budget consumption: %s", exc, exc_info=True)
             # 5.49.2 修复：异常路径确保连接归还
             finally:

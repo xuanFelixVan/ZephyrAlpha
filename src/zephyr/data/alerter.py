@@ -162,7 +162,7 @@ class Alerter:
                     json.dump(record, f, ensure_ascii=False, indent=2)
             log.info("失败汇总已写入: %s", filepath)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("写失败汇总文件异常: %s", e)
             return False
 
@@ -264,6 +264,6 @@ class Alerter:
         try:
             with open(filepath, encoding="utf-8") as f:
                 return json.load(f)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("读取失败汇总文件异常: %s", e)
             return None

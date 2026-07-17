@@ -282,7 +282,7 @@ class SkillConstructor:
     def construct(self, blueprint_path: str) -> dict[str, Any]:
         try:
             bp = self._parse_blueprint(blueprint_path)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {
                 "blueprint": blueprint_path,
                 "skill_id": None,
@@ -347,7 +347,7 @@ class SkillConstructor:
             issues.append("skill_not_registered")
         except FileNotFoundError:
             issues.append("skill_file_missing")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             issues.append(f"validation_error: {e}")
 
         return {

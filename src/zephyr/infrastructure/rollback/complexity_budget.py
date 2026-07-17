@@ -83,7 +83,7 @@ class ComplexityBudget:
         for py_file in module_dir.glob("**/*.py"):
             try:
                 reports.append(self.check_file(py_file))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in complexity_budget", exc_info=True)
         return reports
 

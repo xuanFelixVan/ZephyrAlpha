@@ -148,7 +148,7 @@ class EvalHarness:
                     cat.failed += 1
                     error_counter["assertion"] += 1
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 elapsed = (time.perf_counter() - t0) * 1000.0
                 result = EvalCaseResult(
                     case_id=case.case_id,

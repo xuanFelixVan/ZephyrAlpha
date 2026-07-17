@@ -255,13 +255,13 @@ class PatternLibrary:
             return
         try:
             col = self._chroma_client.get_collection(name=self.PATTERNS_COLLECTION)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 col = self._chroma_client.create_collection(
                     name=self.PATTERNS_COLLECTION,
                     metadata={"hnsw:space": "cosine"},
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return
         content = f"{entry.title}\n{entry.description}\n{entry.context}\n{entry.solution}"
         meta = {
@@ -282,7 +282,7 @@ class PatternLibrary:
             col = self._chroma_client.get_collection(name=self.PATTERNS_COLLECTION)
             chunk_id = f"{pattern_id}-chunk-0"
             col.delete(ids=[chunk_id])
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in pattern_library", exc_info=True)
 
     def search(
@@ -296,7 +296,7 @@ class PatternLibrary:
             return []
         try:
             col = self._chroma_client.get_collection(name=self.PATTERNS_COLLECTION)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
         where_conditions: list[dict[str, Any]] = []
         if pattern_type is not None:
@@ -316,7 +316,7 @@ class PatternLibrary:
             if chroma_where is not None:
                 kwargs["where"] = chroma_where
             results = col.query(**kwargs)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
         hits: list[dict[str, Any]] = []
         if not results["ids"] or not results["ids"][0]:

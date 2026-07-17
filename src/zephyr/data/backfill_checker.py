@@ -103,7 +103,7 @@ def _ch_insert_tsv(tsv_lines: list[str], retries: int = 3) -> bool:
             if ok:
                 return True
             log.warning("CH写入失败(%d/%d)", i + 1, retries)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("CH写入异常(%d/%d): %s", i + 1, retries, e)
         sleep(2)
     return False
@@ -328,7 +328,7 @@ def _safe_float(val) -> float | None:
     try:
         f = float(val)
         return f if f == f and f != 0 else None  # 过滤 NaN 和 0
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 
@@ -490,7 +490,7 @@ def _backfill_tick_range(
                     date_label, start_str[8:], end_str[8:],
                     i + 1, len(symbols), total_rows, fail_count, speed,
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             fail_count += 1
             if fail_count <= 3:
                 log.warning("  %s 失败: %s", sc, e)
@@ -568,7 +568,7 @@ def _backfill_generic_table(
                 log.info("表 %s 补下载成功", table)
             else:
                 log.warning("表 %s 补下载失败", table)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("表 %s 补下载异常: %s", table, e)
 
 
@@ -585,7 +585,7 @@ def _record_backfill_progress(
             "SUCCESS" if total_rows > 0 or not all_missing_tables else "PARTIAL",
             total_rows,
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
 
     try:
@@ -595,7 +595,7 @@ def _record_backfill_progress(
             level="INFO",
             source="backfill",
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
 
 

@@ -1201,7 +1201,7 @@ def init_db(
                 _log(echo, f"[sqlite_schema] executing migration v{version}: {description}")
                 _run_migration(conn, version, description, statements)
             conn.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.execute("ROLLBACK")
             raise
 

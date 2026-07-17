@@ -108,7 +108,7 @@ class WarmStandby:
             self._state_path.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
 
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def cutover(self, target_commit: str) -> CutoverResult:
@@ -139,7 +139,7 @@ class WarmStandby:
 
         try:
             self._run_git(["checkout", target_commit], cwd=self._standby_dir)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return CutoverResult(
                 success=False,
                 previous_commit=previous_commit,
@@ -174,7 +174,7 @@ class WarmStandby:
                 text=True,
                 timeout=10,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in warm_standby", exc_info=True)
 
         return self.initialize(new_commit)
@@ -191,7 +191,7 @@ class WarmStandby:
                 timeout=5,
             )
             return result.returncode == 0
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def get_state(self) -> StandbyState | None:

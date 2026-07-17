@@ -89,12 +89,12 @@ class RollbackSimulator:
                     )
                     conflict_files = [f for f in conflict_output.strip().split("\n") if f]
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             details.append(f"Simulation error: {e}")
         finally:
             try:
                 self._run_git(["worktree", "remove", "--force", str(worktree_path)])
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_simulator", exc_info=True)
 
         duration_ms = int((time.time() - start_time) * 1000)
@@ -120,5 +120,5 @@ class RollbackSimulator:
                 timeout=15,
             )
             return result.stdout
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

@@ -33,7 +33,7 @@ class RbacBridge:
             self._available = True
         except ImportError:
             logger.warning("PermissionGuard not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("PermissionGuard init failed: %s", exc, exc_info=True)
 
     def check_delete_permission(self, file_path: str) -> dict[str, Any]:
@@ -47,7 +47,7 @@ class RbacBridge:
                 "status": "allowed" if allowed else "denied",
                 "detail": str(result),
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("RbacBridge.check_delete_permission failed: %s", exc, exc_info=True)
             return {"allowed": False, "reason": str(exc), "status": "bridge_error"}
 

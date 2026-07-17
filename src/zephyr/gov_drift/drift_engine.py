@@ -443,7 +443,7 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
                 ],
             }
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {
                 "detector_id": detector.id,
                 "events": [_event_to_dict(_create_drift_event(detector, f"Detector exception: {exc}"))],
@@ -455,7 +455,7 @@ async def _dispatch_detector(detector: Detector, sem: asyncio.Semaphore) -> dict
                 if proc is not None and proc.returncode is None:
                     proc.kill()
                     await proc.communicate()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in drift_engine", exc_info=True)
 
 
@@ -619,7 +619,7 @@ def _write_drift_events(events: list[DriftEvent], db_path: str | None = None) ->
 
                 written += 1
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in drift_engine", exc_info=True)
 
         conn.commit()
@@ -708,6 +708,6 @@ def _output_findings_as_jsonl(result: ScanResult) -> list[str]:
 
             ingest = FindingIngest()
             ingest.ingest_findings(findings)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in drift_engine", exc_info=True)
     return jsonl_lines

@@ -299,7 +299,7 @@ class BacktestDataHandler:
                 )
             try:
                 database_service = DatabaseService()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise DataHandlerError(
                     f"DatabaseService 初始化失败: {e}"
                 ) from e
@@ -310,7 +310,7 @@ class BacktestDataHandler:
             raise DataHandlerError(
                 "DatabaseService 未实现 get_clickhouse_conn() 方法"
             ) from e
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise DataHandlerError(f"获取 ClickHouse 连接失败: {e}") from e
 
         # ClickHouse 查询：支持多 symbol
@@ -329,7 +329,7 @@ class BacktestDataHandler:
 
         try:
             rows = client.execute(query, params)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise DataHandlerError(f"ClickHouse 查询失败: {e}") from e
 
         if not rows:
@@ -479,7 +479,7 @@ class MultiSourceDataHandler:
                     self._active_source = "tick"
                     _logger.info("auto 模式: 选中 Tick 源")
                     return
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.warning("auto 模式: Tick 源不可用: %s, 回退批量源", e, exc_info=True)
             # 回退批量源
             self._active_source = "batch"
@@ -497,7 +497,7 @@ class MultiSourceDataHandler:
                     end=self._end,
                     interval="tick",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise DataHandlerError(
                     f"加载 Tick 数据失败 symbol={symbol}: {e}"
                 ) from e

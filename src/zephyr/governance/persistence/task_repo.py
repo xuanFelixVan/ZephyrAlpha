@@ -959,11 +959,11 @@ def _validate_and_construct_taskcard(d: dict) -> TaskCard:
         )
         try:
             return TaskCard.model_validate(d)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return TaskCard.model_construct(**d)
     try:
         return TaskCard.model_validate(d)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         warnings.warn(f"TaskCard {tid!r} schema 不兼容，model_construct 跳过: {e}", UserWarning, stacklevel=2)
         return TaskCard.model_construct(**d)
 
@@ -1194,7 +1194,7 @@ def _validate_post_sync_script_flags(
             text=True,
             timeout=15,
         )
-    except (subprocess.TimeoutExpired, Exception):
+    except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
         # --help 超时或异常无法校验，跳过（不阻断建卡）
         return
 
@@ -1284,7 +1284,7 @@ class TaskRepository:
             try:
                 yield self._conn
                 self._conn.execute("COMMIT")
-            except BaseException:
+            except BaseException:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.163.2 修复: except Exception -> BaseException,确保 Ctrl+C/SystemExit 时
                 # 也执行 ROLLBACK 释放 SQLite BEGIN IMMEDIATE 写锁,避免写锁泄漏。
                 self._conn.execute("ROLLBACK")
@@ -2141,7 +2141,7 @@ class TaskRepository:
                     task_id=task_id,
                     session_id=session_id,
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("DM-202918: 自动git commit失败 (task=%s): %s", task_id, exc, exc_info=True)
             with self._write_tx() as ev_conn:
                 self._record_event(
@@ -2173,7 +2173,7 @@ class TaskRepository:
                         task_id,
                         all_in_progress,
                     )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in task_repo", exc_info=True)
 
     def transition(
@@ -2316,7 +2316,7 @@ class TaskRepository:
                     "DM-202918: GitCommitGateway commit 失败 (task=%s status=%s): %s",
                     task_id, result.status, result.message,
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "DM-202918: GitCommitGateway 异常，回退跳过 commit (task=%s): %s", task_id, e
             , exc_info=True)
@@ -2365,7 +2365,7 @@ class TaskRepository:
                     failures.append(f"命令 {cmd!r} 超时（120s）")
                 except PostSyncConstructionError:
                     raise
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     failures.append(f"命令 {cmd!r} 异常: {exc}")
 
             if failures:
@@ -2492,7 +2492,7 @@ class TaskRepository:
                     row = conn.execute(SQL_SELECT_TASKS_BY_ID_3, (dep_id,)).fetchone()
                 if row is None:
                     issues.append(f"blocked_by引用不存在的任务: {dep_id}")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 issues.append(f"无法验证依赖任务: {dep_id}")
         return issues
 
@@ -3325,12 +3325,12 @@ class TaskRepository:
             try:
                 card = self.create(sub_task, allow_direct_create=True)
                 created.append(card)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("auto_split: 创建子卡 %s 失败", sub_task.task_id, exc_info=True)
                 for c in created:
                     try:
                         self.hard_delete(c.task_id)
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("suppressed error in task_repo", exc_info=True)
                 return False
         return True
@@ -3670,7 +3670,7 @@ class TaskRepository:
                 try:
                     proj_engine = ProjectionEngine(self._db_path)
                     proj_engine.rebuild_from_events(task_id, conn=conn)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.exception("append_and_project: 投影重建失败 task_id=%s", task_id, exc_info=True)
             updated_row = self._fetch_row(conn, task_id)
         if updated_row is None:

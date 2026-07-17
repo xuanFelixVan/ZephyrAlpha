@@ -104,7 +104,7 @@ class SkillContextInjector:
             else:
                 result.injection_context = result.to_context_string()
             return result
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SkillInjectionResult(
                 skill_id=f"{domain_skill_id}+{role_skill_id}",
                 domain_skill_id=domain_skill_id,
@@ -127,7 +127,7 @@ class SkillContextInjector:
                 l2_domain_body=data.get("l2", ""),
                 loaded=True,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SkillInjectionResult(
                 skill_id=skill_id,
                 domain_skill_id=skill_id,

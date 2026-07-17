@@ -191,7 +191,7 @@ class DeadLetterQueue:
                 try:
                     handler(event_type, payload)
                     handlers_called += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self.capture(
                         event_type,
                         payload,
@@ -217,7 +217,7 @@ class DeadLetterQueue:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""
         try:
             raise RuntimeError("DLQ handler should not be called directly")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in dlq", exc_info=True)
 
     def capture(
@@ -503,7 +503,7 @@ def attach_dlq_to_observer(
             try:
                 handler(event_type, payload)
                 handlers_called += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 dlq.capture(
                     event_type,
                     payload,

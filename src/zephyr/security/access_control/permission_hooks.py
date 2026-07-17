@@ -85,7 +85,7 @@ class PermissionHooks:
                     results.append(result)
                 else:
                     results.append({"ok": True, "value": result})
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results.append({"error": str(exc)})
         return results
 

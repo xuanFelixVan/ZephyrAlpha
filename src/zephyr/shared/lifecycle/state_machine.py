@@ -226,19 +226,19 @@ class StateMachine(Generic[S]):
             for eff in effects:
                 try:
                     eff.on_exit(old, context)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("[%s] on_exit error: %s", self._config.fsm_id, exc, exc_info=True)
             for eff in effects:
                 try:
                     eff.on_transition(old, target, context)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("[%s] on_transition error: %s", self._config.fsm_id, exc, exc_info=True)
             self._current = target
             self._history.append((old, target, context))
             for eff in effects:
                 try:
                     eff.on_enter(target, context)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("[%s] on_enter error: %s", self._config.fsm_id, exc, exc_info=True)
             logger.info("[%s] %s -> %s", self._config.fsm_id, old, target)
             return self._current
@@ -276,7 +276,7 @@ class StateMachineRegistry:
                 fsm_id = entry.get("fsm_id", "")
                 if fsm_id:
                     self._configs[fsm_id] = entry
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to load state machine registry: %s", exc, exc_info=True)
 
     def register(self, config: StateMachineConfig[Any]) -> str:
@@ -304,7 +304,7 @@ class StateMachineRegistry:
             try:
                 with open(self._registry_path, encoding="utf-8") as f:
                     data = yaml.safe_load(f) or {"state_machines": []}
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 data = {"state_machines": []}
         machines = data.setdefault("state_machines", [])
         machines.append(entry)

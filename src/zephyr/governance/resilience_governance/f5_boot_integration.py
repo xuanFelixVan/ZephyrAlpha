@@ -96,7 +96,7 @@ class F5BootIntegration:
                 return
             hook_registry.register(_on_boot, priority=15, name=self.HOOK_NAME)
             logger.info("F5BootIntegration registered to boot_hooks as '%s'", self.HOOK_NAME)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to register F5 boot hook: %s", e, exc_info=True)
 
     def on_startup(self) -> BootResult:
@@ -110,7 +110,7 @@ class F5BootIntegration:
             self._deadlock_detector = DeadlockDetector()
             details["deadlock_detector_initialized"] = True
             logger.info("F5: DeadlockDetector initialized")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"DeadlockDetector init failed: {e}")
             logger.error("F5: DeadlockDetector initialization failed: %s", e, exc_info=True)
 
@@ -120,7 +120,7 @@ class F5BootIntegration:
             self._escalation_engine = EscalationEngine(name="f5_default", hooks_enabled=True)
             details["escalation_engine_initialized"] = True
             logger.info("F5: EscalationEngine initialized")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"EscalationEngine init failed: {e}")
             logger.error("F5: EscalationEngine initialization failed: %s", e, exc_info=True)
 
@@ -131,7 +131,7 @@ class F5BootIntegration:
             details["delegation_engine_initialized"] = True
             details["delegation_max_depth"] = DelegationEngine.MAX_DELEGATION_DEPTH
             logger.info("F5: DelegationEngine initialized (MAX_DEPTH=%d)", DelegationEngine.MAX_DELEGATION_DEPTH)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"DelegationEngine init failed: {e}")
             logger.error("F5: DelegationEngine initialization failed: %s", e, exc_info=True)
 
@@ -144,7 +144,7 @@ class F5BootIntegration:
             )
             details["arbitrator_initialized"] = True
             logger.info("F5: Arbitrator initialized (3-tier: priority->rule->escalation)")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"Arbitrator init failed: {e}")
             logger.error("F5: Arbitrator initialization failed: %s", e, exc_info=True)
 
@@ -167,7 +167,7 @@ class F5BootIntegration:
             try:
                 cleaned = self._delegation_engine.cleanup_expired()
                 details["delegations_cleaned"] = int(cleaned) if isinstance(cleaned, int) else 0
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"Delegation cleanup failed: {e}")
                 logger.error("F5: DelegationEngine cleanup failed: %s", e, exc_info=True)
 
@@ -178,7 +178,7 @@ class F5BootIntegration:
                 self._deadlock_detector._locks.clear()
                 self._deadlock_detector._lock_timestamps.clear()
                 details["deadlock_graph_reset"] = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"Deadlock reset failed: {e}")
                 logger.error("F5: DeadlockDetector reset failed: %s", e, exc_info=True)
 
@@ -224,9 +224,9 @@ class F5BootIntegration:
                         victim = self._deadlock_detector.preempt_lowest()
                         if victim:
                             logger.info("F5 periodic: preempted lowest-priority node: %s", victim)
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         result["errors"].append(f"preempt failed: {e}")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["errors"].append(f"detect_cycle failed: {e}")
 
             # 2. 超时锁破解
@@ -235,7 +235,7 @@ class F5BootIntegration:
                 if expired:
                     result["expired_locks"] = list(expired)
                     logger.info("F5 periodic: broke %d expired locks", len(expired))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["errors"].append(f"break_timeout failed: {e}")
 
         # 3. 升级队列巡检
@@ -245,7 +245,7 @@ class F5BootIntegration:
                 result["active_escalations"] = int(active)
                 if active > 0:
                     logger.info("F5 periodic: %d active escalations", active)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["errors"].append(f"get_active_count failed: {e}")
 
         # 4. 过期委托清理
@@ -255,7 +255,7 @@ class F5BootIntegration:
                 result["expired_delegations_cleaned"] = int(cleaned) if isinstance(cleaned, int) else 0
                 if cleaned:
                     logger.info("F5 periodic: cleaned %d expired delegations", cleaned)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["errors"].append(f"cleanup_expired failed: {e}")
 
         self._last_periodic_result = result

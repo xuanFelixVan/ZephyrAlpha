@@ -18,7 +18,7 @@
 """
 ModuleOnboardingScanner — 模块接入扫描器
 =========================================
-蓝图: ARC-0001 §5.4
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Controller Manager 主动调和 + K8s Discovery
 """
 
@@ -113,7 +113,7 @@ class ModuleOnboardingScanner:
         try:
             source = path.read_text(encoding="utf-8")
             tree = ast.parse(source)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_parse_module: failed to parse module %s (%s: %s)", path, type(e).__name__, e, exc_info=True)
             return None
 

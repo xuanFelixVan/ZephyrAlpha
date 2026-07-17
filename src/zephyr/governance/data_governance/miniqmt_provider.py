@@ -176,7 +176,7 @@ class MiniQmtProvider(DataSourceBase):
         # 1. 下载历史数据到本地缓存
         try:
             xtdata.download_history_data(symbol, interval, start_str, end_str)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise MiniQmtProviderError(
                 f"下载历史数据失败 symbol={symbol} interval={interval}: {e}"
             ) from e
@@ -189,7 +189,7 @@ class MiniQmtProvider(DataSourceBase):
                 start_time=start_str,
                 end_time=end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise MiniQmtProviderError(
                 f"获取历史数据失败 symbol={symbol} interval={interval}: {e}"
             ) from e
@@ -230,7 +230,7 @@ class MiniQmtProvider(DataSourceBase):
                 xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
                 self._subscribed_symbols.add(symbol)
                 _logger.info("订阅实时 Tick 成功 symbol=%s", symbol)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtProviderError(
                     f"订阅实时行情失败 symbol={symbol}: {e}"
                 ) from e
@@ -266,7 +266,7 @@ class MiniQmtProvider(DataSourceBase):
         xtdata = self._xtdata_mod
         try:
             ticks = xtdata.get_full_tick([symbol])
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise MiniQmtProviderError(f"获取盘口快照失败 symbol={symbol}: {e}") from e
 
         if not ticks or symbol not in ticks:
@@ -307,7 +307,7 @@ class MiniQmtProvider(DataSourceBase):
         try:
             db = DatabaseService()
             client = db.get_clickhouse_conn()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise MiniQmtProviderError(f"DatabaseService 初始化失败: {e}") from e
 
         start_str = start.strftime("%Y-%m-%d")
@@ -323,7 +323,7 @@ class MiniQmtProvider(DataSourceBase):
 
         try:
             rows = client.execute(query, params)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise MiniQmtProviderError(f"ClickHouse 查询失败: {e}") from e
 
         if not rows:
@@ -347,9 +347,9 @@ class MiniQmtProvider(DataSourceBase):
                 for cb in self._tick_callbacks:
                     try:
                         cb(df)
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         _logger.error("Tick 回调执行错误 symbol=%s: %s", symbol, e, exc_info=True)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("Tick 数据标准化失败 symbol=%s: %s", symbol, e, exc_info=True)
 
     def _normalize_tick_data(self, raw_df: pd.DataFrame, symbol: str) -> pd.DataFrame:

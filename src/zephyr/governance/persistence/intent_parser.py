@@ -270,7 +270,7 @@ class IntentParser:
         if self._emb is None: raise RuntimeError("embedding service not injected")  # 5.88.5 修复: assert->if/raise
         try:
             hits = self._emb(query, top_k=5)
-        except Exception as exc:  # — 检索失败降级到 Stage 3
+        except Exception as exc:  # — 检索失败降级到 Stage 3  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._failed_stage(query, stage="semantic", reason=f"semantic_error: {type(exc).__name__}: {exc}")
 
         if not hits:
@@ -323,7 +323,7 @@ class IntentParser:
         if self._llm is None: raise RuntimeError("LLM service not injected")  # 5.88.5 修复: assert->if/raise
         try:
             verdict = self._llm(query, context=context)
-        except Exception as exc:  # — LLM 失败时保守兜底
+        except Exception as exc:  # — LLM 失败时保守兜底  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._failed_stage(
                 query,
                 stage="llm",

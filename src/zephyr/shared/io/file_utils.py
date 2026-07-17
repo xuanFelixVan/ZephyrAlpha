@@ -134,7 +134,7 @@ def atomic_write(
             os.fsync(f.fileno())
 
         os.replace(str(tmp_path), str(target))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         if tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
         raise AtomicWriteError("atomic_write failed")
@@ -272,7 +272,7 @@ def backup_and_rollback(
 
     try:
         yield target
-    except BaseException:
+    except BaseException:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.163.3 修复: except Exception -> BaseException,确保 Ctrl+C/SystemExit 时
         # 也执行 restore_backup,避免文件停留在半修改状态。
         restore_backup(target, backup_index=0)

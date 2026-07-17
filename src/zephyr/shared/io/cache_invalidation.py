@@ -81,7 +81,7 @@ class CacheInvalidationManager:
         for handler in self._handlers.get(key, []):
             try:
                 handler(key, version)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 回调失败不应影响版本更新主流程
                 pass
 

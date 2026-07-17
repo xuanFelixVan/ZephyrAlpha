@@ -160,7 +160,7 @@ def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
     try:
         import yaml
         registry_data = yaml.safe_load(registry_yaml.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"registry 解析失败 (fail-closed): {type(e).__name__}: {e}", set()
     if not isinstance(registry_data, dict):
         return False, "registry 顶层非 dict（结构异常，fail-closed）。", set()
@@ -253,7 +253,7 @@ def _load_head_registered_nums(project_root: Path) -> set[str] | None:
     try:
         import yaml
         data = yaml.safe_load(head_content)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     if not isinstance(data, dict):
         return None

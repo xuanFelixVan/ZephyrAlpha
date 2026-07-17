@@ -55,7 +55,7 @@ class DLQRetryPolicy:
                 return RetryResult(retried=0, succeeded=0, failed=0, status="degraded")
             finally:
                 conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[DLQ] degraded: %s", e, exc_info=True)
             return RetryResult(status="degraded")
 

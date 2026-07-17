@@ -197,7 +197,7 @@ class SkillExplain:
 
             eval_result = SkillEvaluator.evaluate(skill_id)
             skill_factor = eval_result.get("overall_score", 50.0) / 100.0
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             skill_factor = 0.5
 
         try:
@@ -206,7 +206,7 @@ class SkillExplain:
             impact = SkillModelEvolution.assess_impact(skill_id, "deepseek-v3", llm_model)
             llm_score = impact.get("overall_score", 100.0)
             llm_factor = llm_score / 100.0
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             llm_factor = 0.7
 
         skill_contribution = skill_factor * 0.60

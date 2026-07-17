@@ -83,7 +83,7 @@ def _get_staged_files(gateway) -> list[str] | None:
             )
             return None
         return [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "SSOT-REDEFINITION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -101,7 +101,7 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
 
     try:
         registry_rel = REGISTRY_YAML.relative_to(gateway.project_root).as_posix()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         registry_rel = ""
     registry_being_fixed = bool(registry_rel) and registry_rel in staged
 
@@ -125,7 +125,7 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
     try:
         import yaml
         data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         if registry_being_fixed:
             logger.info(
                 "SSOT-REDEFINITION gate: registry 解析失败(%s: %s)但正在 staged 修复，放行。",
@@ -179,7 +179,7 @@ def _scan_file_violations(gateway, py_file: str, symbol_to_canonical: dict[str, 
         file_diff = gateway._run_git(
             ["git", "diff", "--cached", "--unified=0", "--", py_file]
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "SSOT-REDEFINITION gate: git diff 失败 file=%s, %s",
             py_file, e, exc_info=True,

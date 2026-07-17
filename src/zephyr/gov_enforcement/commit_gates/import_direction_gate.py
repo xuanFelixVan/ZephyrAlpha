@@ -205,7 +205,7 @@ def make_import_direction_gate() -> GateSpec:
                 )
                 return True, ""
             staged = [f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines() if f]
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "NO-UPWARD-IMPORT gate fail-open: git diff 异常(%s: %s)。",
                 type(e).__name__, e, exc_info=True,
@@ -226,7 +226,7 @@ def make_import_direction_gate() -> GateSpec:
         try:
             toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
             wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_root = str(gateway.project_root)
 
         # 4. 解析为绝对路径

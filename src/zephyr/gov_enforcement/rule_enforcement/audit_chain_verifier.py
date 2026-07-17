@@ -72,7 +72,7 @@ class AuditChainVerifier:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
 
     def append(self, gate_id: str, result: GateResult) -> AuditEntry:
@@ -108,7 +108,7 @@ class AuditChainVerifier:
                     "entry_hash": entry_hash,
                 }
                 self._core_writer.write(core_event)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
 
         return entry
@@ -174,7 +174,7 @@ class AuditChainVerifier:
                     "chain_length": len(self._chain),
                     "last_hash": self._last_hash,
                 })
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
         self._chain.clear()
         self._last_hash = "0" * 64

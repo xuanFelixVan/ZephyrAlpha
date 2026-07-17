@@ -119,7 +119,7 @@ def save_fallback(table: str, cols_clause: str | None, tsv_bytes: bytes) -> bool
             table, rows, filename,
         )
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.error("local_fallback: 落盘失败 %s: %s", table, e)
         return False
 
@@ -130,7 +130,7 @@ def has_backlog() -> bool:
         if not _MANIFEST_PATH.exists():
             return False
         return _MANIFEST_PATH.stat().st_size > 0
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
 
@@ -149,7 +149,7 @@ def get_backlog_summary() -> dict[str, int]:
                     entry = json.loads(line)
                     table = entry["table"]
                     summary[table] = summary.get(table, 0) + entry.get("rows", 0)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.warning("get_backlog_summary 读取 manifest 失败: %s", e)
     return summary
 
@@ -211,7 +211,7 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
             return "replayed"
         log.warning("local_replay: %s 回灌失败，保留待重试", entry["file"])
         return "failed"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.error("local_replay: %s 回灌异常: %s", entry["file"], e)
         return "failed"
 

@@ -200,7 +200,7 @@ class ApiClient:
             return
         try:
             self._observer.emit("api_call_completed", metrics=to_dict(metrics))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in api_client", exc_info=True)
 
     def _build_retry(self) -> RetryConfig:
@@ -379,7 +379,7 @@ class AioHttpProvider:
             response_headers = dict(resp.headers)
             try:
                 response_body: Any = await resp.json()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 response_body = await resp.text()
 
             return ApiResponse(

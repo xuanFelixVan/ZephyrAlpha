@@ -177,7 +177,7 @@ class KnowledgeTransferGate:
                     lines.append(f"  孤儿率:    {data.get('orphan_rate_pct', 0):.1f}%")
                     lines.append(f"  幽灵率:    {data.get('ghost_rate_pct', 0):.1f}%")
                     lines.append(f"  漂移率:    {data.get('drift_rate_pct', 0):.1f}%")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 lines.append("  (索引解析失败)")
 
         try:
@@ -190,7 +190,7 @@ class KnowledgeTransferGate:
             conn.close()
             if top:
                 lines.append(f"  最高依赖:  {', '.join(str(t) for t in top)}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in dashboard", exc_info=True)
 
         lines.append("=" * 40)

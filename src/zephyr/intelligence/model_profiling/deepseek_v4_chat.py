@@ -72,7 +72,7 @@ def _patch_win32_ver() -> None:
 
         _safe_win32_ver._patched = True  # type: ignore[attr-defined]
         _plat.win32_ver = _safe_win32_ver
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.debug("win32_ver patch failed: %s", exc, exc_info=True)
     _win32_ver_patched = True
 
@@ -544,7 +544,7 @@ class DeepSeekV4Chat:
                     # 5.72.3 修复：exponential backoff + jitter 替代固定延迟
                     _delay = (2 ** attempt) + _random.uniform(0, 1)
                     _time.sleep(_delay)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
                     _log.warning(
                         "DeepSeekV4Chat: %s error attempt %d/%d: %s, retrying...",

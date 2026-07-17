@@ -71,7 +71,7 @@ class GenesisBlock:
             data = json.loads(self._genesis_path.read_text(encoding="utf-8"))
             data["exists"] = True
             return data
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to read genesis block: %s", exc, exc_info=True)
             return {"error": str(exc), "exists": False}
 
@@ -102,7 +102,7 @@ class GenesisBlock:
                 encoding="utf-8",
             )
             os.replace(str(tmp_path), str(self._genesis_path))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 tmp_path.unlink(missing_ok=True)
             except OSError:
@@ -126,7 +126,7 @@ class GenesisManager:
             manager = GenesisBlockManager(genesis_path)
             result = manager.verify()
             return result.get("valid", False)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
 

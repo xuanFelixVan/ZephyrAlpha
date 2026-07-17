@@ -128,7 +128,7 @@ def parse_gitignore(project_root: str) -> list[str]:
                 if line and not line.startswith("#"):
                     rules.append(line.rstrip("/"))
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in gitignore_auditor", exc_info=True)
 
     return rules

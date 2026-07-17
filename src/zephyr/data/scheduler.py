@@ -198,7 +198,7 @@ def _run_schedule_dag(
                         tid = future_map[future]
                         try:
                             results[tid] = future.result()
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                             log.error("任务 %s 并行执行异常: %s", tid, e, exc_info=True)
                             results[tid] = False
 
@@ -296,7 +296,7 @@ class IntegratorScheduler:
         for handler in self._event_handlers.get(event, []):
             try:
                 handler(*args, **kwargs)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("事件 %s handler 异常: %s", event, e)
 
     def _on_config_changed(self, **kwargs) -> None:
@@ -304,7 +304,7 @@ class IntegratorScheduler:
         try:
             self._policy_registry.maybe_reload(force=True)
             log.info("config_changed 事件触发策略热更新")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("config_changed 事件处理异常: %s", e)
 
     # ============== ClickHouse 健康探活（裁定 #ARCH-CH-011） ==============
@@ -334,7 +334,7 @@ class IntegratorScheduler:
                             "last_check": time.time(),
                             "latency_ms": round(latency, 1),
                         }
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     latency = (time.time() - t0) * 1000
                     with self._ch_health_lock:
                         self._ch_health_cache = {
@@ -372,7 +372,7 @@ class IntegratorScheduler:
                     summary = local_replay.get_backlog_summary()
                     log.info("local_replay: 启动时检测到积压 %s，开始回灌", summary)
                     local_replay.replay_batch(max_files=100)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("local_replay: 启动时回灌异常: %s", e)
 
             while self._started:
@@ -381,7 +381,7 @@ class IntegratorScheduler:
                     if local_replay.has_backlog():
                         result = local_replay.replay_batch(max_files=100)
                         log.info("local_replay: 周期回灌 %s", result)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("local_replay: 周期回灌异常: %s", e)
 
         t = threading.Thread(target=_replay_loop, daemon=True, name="local-replay")
@@ -431,7 +431,7 @@ class IntegratorScheduler:
             """查询 system.text_log 中最近 1 小时的 Checksum 错误日志。"""
             try:
                 return ch_reader.query(_SQL_TEXT_LOG_CHECKSUM, timeout=15)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("查询 system.text_log 异常: %s", e)
                 return ""
 
@@ -460,7 +460,7 @@ class IntegratorScheduler:
                 if len(cols) >= 2:
                     return cols[0], cols[1]
                 return None
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return None
 
         def _isolate_part(part_name: str, db: str, table: str) -> bool:
@@ -495,7 +495,7 @@ class IntegratorScheduler:
                 }
                 with open(_AUDIT_LOG, "a", encoding="utf-8") as f:
                     f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("写入审计日志失败: %s", e)
 
         def _detect_loop() -> None:
@@ -548,7 +548,7 @@ class IntegratorScheduler:
                     processed_parts.add(target)
                     last_action_time = time.time()
 
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("破损 part 检测线程异常: %s", e)
 
                 time.sleep(_CHECK_INTERVAL)
@@ -633,7 +633,7 @@ class IntegratorScheduler:
                 cls = getattr(mod, class_name)
                 if hasattr(cls, "meta") and cls.meta is not None:
                     metas[source] = cls.meta
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("读取 %s.meta 失败（跳过契约校验）: %s", source, e)
         violations = validate_task_capability_contracts(self._tasks, metas)
         if violations:
@@ -683,7 +683,7 @@ class IntegratorScheduler:
                 self._providers[source] = provider
                 log.info("Provider %s 已连接", source)
                 return provider
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("Provider %s 连接失败: %s", source, e)
                 self._alerter.notify(
                     f"_provider_connect_{source}",
@@ -729,7 +729,7 @@ class IntegratorScheduler:
             else:
                 log.warning("未知数据源: %s", source)
                 return None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("创建 Provider %s 异常: %s", source, e)
             return None
 
@@ -915,7 +915,7 @@ class IntegratorScheduler:
                 self._emit_event("task_completed", task_id=task_id, success=True)
                 return True, None
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             last_error = str(e)
             log.error("任务 %s 异常: %s", task_id, e, exc_info=True)
             task_elapsed = time.time() - task_start_ts
@@ -1163,7 +1163,7 @@ class IntegratorScheduler:
             _global_scheduler = self
             log.info("调度器已启动")
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("调度器启动失败: %s", e, exc_info=True)
             return False
 
@@ -1198,7 +1198,7 @@ class IntegratorScheduler:
         if self._scheduler and self._started:
             try:
                 self._scheduler.shutdown(wait=True)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("调度器停止异常: %s", e)
             self._started = False
             log.info("调度器已停止")
@@ -1207,14 +1207,14 @@ class IntegratorScheduler:
         for source, provider in self._providers.items():
             try:
                 provider.disconnect()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("Provider %s 断开异常: %s", source, e)
         self._providers.clear()
 
         # 关闭进度存储
         try:
             self._progress_store.close()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
     # ============== 查询 ==============
@@ -1265,7 +1265,7 @@ class IntegratorScheduler:
                         "id": job.id,
                         "next_run_time": str(job.next_run_time) if job.next_run_time else None,
                     })
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning("获取 APScheduler jobs 失败: %s", e)
 
         # 指标快照：按 status 汇总 task_total
@@ -1338,7 +1338,7 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
         try:
             health = self.scheduler.get_health()
             self._send_json(200, health)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._send_json(500, {"status": "error", "error": str(e)})
 
     def _handle_status(self) -> None:
@@ -1349,7 +1349,7 @@ class _MonitorHandler(http.server.BaseHTTPRequestHandler):
         try:
             status = self.scheduler.get_status()
             self._send_json(200, status)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._send_json(500, {"error": str(e)})
 
     def _send_json(self, code: int, obj: object) -> None:

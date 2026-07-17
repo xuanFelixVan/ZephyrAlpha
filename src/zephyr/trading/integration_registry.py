@@ -18,7 +18,7 @@
 """
 IntegrationRegistry — 集成注册表
 ==================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 全系统集成点清单。
 """
 
@@ -69,7 +69,7 @@ class IntegrationRegistry:
                 point.status = "DISCONNECTED"
                 report.disconnected += 1
                 report.details.append({"point_id": point.point_id, "error": f"cannot import {point.interface}"})
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 point.status = "DEGRADED"
                 report.degraded += 1
                 report.details.append({"point_id": point.point_id, "error": "internal error"})

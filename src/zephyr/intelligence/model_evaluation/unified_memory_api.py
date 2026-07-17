@@ -318,7 +318,7 @@ class UnifiedMemoryAPI:
         """返回当前后端的记忆总数（-1 表示不可用）。"""
         try:
             return int(self._backend.count())
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return -1
 
 
@@ -361,7 +361,7 @@ def get_unified_memory_api(
 
                     resolved_backend = create_vms_backend()
                     _logger.info("get_unified_memory_api: using VMSMemoryBackend")
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.info("get_unified_memory_api: VMS unavailable, falling back to ChromaDB: %s", exc, exc_info=True)
             _singleton_api = UnifiedMemoryAPI(
                 backend=resolved_backend,

@@ -89,7 +89,7 @@ def make_foreign_change_gate() -> GateSpec:
         # 读取本 session 的 claim 快照（异常安全降级为空 dict）
         try:
             snapshots = gateway._claim_snapshots.get(session_id, {})
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # _claim_snapshots 读取异常 -> 安全降级为无快照（不阻断）
             # 理由：快照基础设施故障不应卡死 commit 工作流
             snapshots = {}
@@ -113,7 +113,7 @@ def make_foreign_change_gate() -> GateSpec:
                     os.path.relpath(f, str(gateway.project_root))
                     for f in dirty_files
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 dirty_rel = dirty_files
             return False, (
                 f"目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: "

@@ -100,7 +100,7 @@ class TaskManagerMCP:
         """已注册工具名称列表（与 BaseMCPServer API 保持一致）。"""
         try:
             return list(self.mcp._tool_manager._tools.keys())
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return [
                 "task_manager.create_task",
                 "task_manager.get_task",
@@ -123,7 +123,7 @@ class TaskManagerMCP:
                 raise PermissionError(f"RBAC 拒绝: action={action}")
         except PermissionError:
             raise
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise PermissionError(
                 f"RBAC 检查异常: action={action} — {type(exc).__name__}: {exc}"
             ) from exc
@@ -413,7 +413,7 @@ class TaskManagerMCP:
                 self.task_repo.update(existing)
             else:
                 self.task_repo.create(tc)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"MCP _persist 失败: {type(exc).__name__}: {exc}") from exc
 
         if self.docs_dir:
@@ -434,7 +434,7 @@ class TaskManagerMCP:
             )
         try:
             return self.task_repo.get(task_id)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"MCP _load 失败: {type(exc).__name__}: {exc}") from exc
 
     @staticmethod
@@ -502,7 +502,7 @@ def _extract_yaml_frontmatter(content: str) -> dict | None:
         fm = _yaml.safe_load(raw_yaml)
         if isinstance(fm, dict):
             return fm
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in task_manager_server", exc_info=True)
     return None
 

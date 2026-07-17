@@ -99,7 +99,7 @@ def _load_absence_state() -> dict[str, object]:
         with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {}
 
 
@@ -157,7 +157,7 @@ def check_absence(owner_id: str) -> OwnerStatus:
     try:
         last_active = datetime.fromisoformat(last_active_str.replace("Z", "+00:00"))
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return OwnerStatus(
             owner_id=owner_id,
             last_active=datetime.now(UTC),

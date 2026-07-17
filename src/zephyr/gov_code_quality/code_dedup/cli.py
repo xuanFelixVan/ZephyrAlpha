@@ -266,7 +266,7 @@ def _cmd_verify(args: argparse.Namespace) -> None:
     except ImportError as e:
         print(f"[VERIFY] GATE_ERROR: 引擎导入失败 — {e}")
         sys.exit(ExitCode.TOOL_ERROR)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"[VERIFY] GATE_ERROR: 引擎验证失败 — {e}")
         sys.exit(ExitCode.TOOL_ERROR)
 

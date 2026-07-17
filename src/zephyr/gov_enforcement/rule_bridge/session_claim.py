@@ -117,7 +117,7 @@ def session_claim_start(
     # 注册 session（pid + 空 held_files，后续逐个 claim）
     try:
         registry.register(session_id, pid=os.getpid(), held_files=[])
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
             "session_id": session_id,
             "claimed": [],
@@ -137,7 +137,7 @@ def session_claim_start(
                 # claim 失败 = 文件被其他 session 持有，查 owner
                 owner = _find_file_owner(registry, f, exclude_session=session_id)
                 conflicts.append({"file": f, "owner": owner or "unknown"})
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             conflicts.append({"file": f, "owner": "error", "error": str(e)})
 
     return {
@@ -194,7 +194,7 @@ def session_claim_add(
                 "conflict": True,
                 "owner": owner or "unknown",
             }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
             "session_id": session_id,
             "file": file,
@@ -226,7 +226,7 @@ def session_claim_check(
             owner = _find_file_owner(registry, file, exclude_session=session_id)
             return {"file": file, "clear": False, "owner": owner or "unknown"}
         return {"file": file, "clear": True, "owner": None}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"file": file, "clear": True, "owner": None, "error": str(e)}
 
 
@@ -245,7 +245,7 @@ def session_claim_heartbeat(
     try:
         ok = registry.heartbeat(session_id)
         return {"session_id": session_id, "renewed": ok}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"session_id": session_id, "renewed": False, "error": str(e)}
 
 
@@ -270,13 +270,13 @@ def session_claim_end(
             try:
                 registry.release_file(session_id, f)
                 released.append(f)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in session_claim", exc_info=True)
 
     # 注销 session
     try:
         unregistered = registry.unregister(session_id)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         unregistered = False
 
     return {
@@ -310,5 +310,5 @@ def _find_file_owner(
                 if str(Path(hf).resolve()) == target:
                     return sid
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None

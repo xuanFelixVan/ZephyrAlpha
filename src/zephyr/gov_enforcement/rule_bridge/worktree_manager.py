@@ -170,13 +170,13 @@ def _force_rmtree(path: Path) -> bool:
             os.chmod(p, stat.S_IWRITE)
             func(p)
             return
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in worktree_manager", exc_info=True)
         # 第二次：sleep 等句柄释放后重试
         threading.Event().wait(0.5)
         try:
             func(p)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             failed.append(str(p))  # 记录失败，不再静默吞错
 
     shutil.rmtree(str(path), onerror=_on_error)

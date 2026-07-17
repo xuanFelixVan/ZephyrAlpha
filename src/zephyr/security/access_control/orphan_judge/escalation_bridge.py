@@ -36,7 +36,7 @@ class EscalationBridge:
             self._available = True
         except ImportError:
             logger.warning("EscalationEngine not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("EscalationEngine init failed: %s", exc, exc_info=True)
 
     def escalate_judgment(self, file_path: str, verdict: str, reason: str) -> dict[str, Any]:
@@ -50,7 +50,7 @@ class EscalationBridge:
                 metadata={"file": file_path, "verdict": verdict},
             )
             return {"status": "escalated", "event_id": getattr(event, "id", "unknown")}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("EscalationBridge.escalate_judgment failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 
@@ -64,7 +64,7 @@ class EscalationBridge:
                 source="orphan-judge",
             )
             return {"status": "evaluated", "result": str(result) if result else "no_result"}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("EscalationBridge.evaluate_risk failed: %s", exc, exc_info=True)
             return {"status": "bridge_error", "error": str(exc)}
 

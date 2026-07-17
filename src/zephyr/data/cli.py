@@ -302,7 +302,7 @@ def _get_integrator_safe() -> IntegratorScheduler | None:
     try:
         from zephyr.data import get_integrator
         return get_integrator()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"获取调度器失败: {e}")
         log.error("get_integrator 失败", exc_info=True)
         return None
@@ -390,7 +390,7 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         print("\n中断")
         return 130
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"命令执行异常: {e}")
         log.error("CLI 命令 %s 异常", args.cmd, exc_info=True)
         return 1

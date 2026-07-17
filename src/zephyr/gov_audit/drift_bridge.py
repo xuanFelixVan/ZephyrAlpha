@@ -36,7 +36,7 @@ class DriftBridge:
             self._available = True
         except ImportError:
             logger.warning("DriftDetector not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("DriftDetector init failed: %s", exc, exc_info=True)
 
     def establish_baseline(self, metrics: dict[str, float]) -> bool:
@@ -45,7 +45,7 @@ class DriftBridge:
         try:
             self._detector.establish_baseline(metrics)
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("DriftBridge.establish_baseline failed: %s", exc, exc_info=True)
             return False
 
@@ -59,7 +59,7 @@ class DriftBridge:
                 "drift_score": round(score, 4),
                 "available": True,
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("DriftBridge.check_drift failed: %s", exc, exc_info=True)
             return {"is_drifting": False, "drift_score": 0.0, "available": False}
 

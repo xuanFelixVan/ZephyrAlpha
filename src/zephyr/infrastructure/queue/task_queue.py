@@ -93,7 +93,7 @@ class TaskQueue:
         try:
             from zephyr.shared.event_bus import bus as _bus
             _bus.emit("task.created", {"task_id": task_id, "priority": priority})
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("TaskQueue: emit task.created failed", exc_info=True)
 
     def dequeue_next(self) -> QueueItem | None:
@@ -137,7 +137,7 @@ class TaskQueue:
     def _on_task_created(self, event) -> None:
         try:
             self.dispatch_now()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("TaskQueue: dispatch on task.created failed", exc_info=True)
 
     def dispatch_now(self) -> None:

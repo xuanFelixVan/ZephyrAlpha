@@ -124,7 +124,7 @@ def _check_sqlite_integrity(root: Path) -> CheckResult:
             f"integrity_check: {result}",
             "数据库损坏。运行 VMS 后端的健康检查 尝试自动恢复",
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(
             1, "SQLite Integrity", CheckStatus.FAIL, "internal error", "检查 data/databases/governance.db 是否存在且可读写"
         )
@@ -158,7 +158,7 @@ def _check_ke_count(root: Path) -> CheckResult:
                 f"{count} KEs (< 10 MVKB threshold)",
                 "运行 bootstrap 扫描全项目文档自动填充KE库",
             )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(3, "KE Count (MVKB)", CheckStatus.FAIL, "internal error")
 
 
@@ -178,7 +178,7 @@ def _check_category_coverage(root: Path) -> CheckResult:
                         fm = yaml.safe_load(chunk[:end])
                         cat = fm.get("category", "unknown") if isinstance(fm, dict) else "unknown"
                         categories.add(cat)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
         count = len(categories)
         if count >= 5:
@@ -191,7 +191,7 @@ def _check_category_coverage(root: Path) -> CheckResult:
                 f"{count} categories (< 5 MVKB threshold): {sorted(categories)}",
                 "运行 bootstrap 丰富KE来源",
             )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(4, "Category Coverage", CheckStatus.FAIL, "internal error")
 
 
@@ -220,9 +220,9 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
                                     ttl = datetime.fromisoformat(ttl_str.replace("Z", "+00:00"))
                                     if (ttl - now).days < 14:
                                         expired_lb.append(ke_id)
-                                except Exception:
+                                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                                     pass
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
         if not load_bearing:
             return CheckResult(
@@ -240,7 +240,7 @@ def _check_load_bearing_kes(root: Path) -> CheckResult:
                 "检查即将过期的承重KE并决定是否续期或创建替代",
             )
         return CheckResult(5, "Load-Bearing KEs", CheckStatus.PASS, f"{len(load_bearing)} load-bearing KEs healthy")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(5, "Load-Bearing KEs", CheckStatus.FAIL, "internal error")
 
 
@@ -273,7 +273,7 @@ def _check_wal_health(root: Path) -> CheckResult:
                 "SQLite WAL过大可能意味着checkpoint未正常执行。关闭SQLite连接后自动合并",
             )
         return CheckResult(7, "WAL Health", CheckStatus.PASS, f"{len(wal_files)} WAL file(s) within normal size range")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(7, "WAL Health", CheckStatus.FAIL, "internal error")
 
 
@@ -300,7 +300,7 @@ def _check_freeze_state(root: Path) -> CheckResult:
             f"KB is in {mode} mode since {data.get('since', 'unknown')}. Reason: {data.get('reason', 'unspecified')}",
             "若冻结已解决问题，运行 python -m zephyr.gov_kb.freeze --unfreeze 恢复",
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(9, "Freeze State", CheckStatus.FAIL, "internal error")
 
 
@@ -325,7 +325,7 @@ def _check_tombstone_integrity(root: Path) -> CheckResult:
                 "运行 kb.ke_tombstone 初始化自动创建墓碑表",
             )
         return CheckResult(10, "Tombstone Integrity", CheckStatus.PASS, "Table exists")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(10, "Tombstone Integrity", CheckStatus.FAIL, "internal error")
 
 
@@ -348,7 +348,7 @@ def _check_silent_period(root: Path) -> CheckResult:
                 "管道可能已停止工作。检查 G1-G5 门禁是否正常运行",
             )
         return CheckResult(11, "Silent Period", CheckStatus.PASS, f"{len(recent)} KEs modified in last 7 days")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(11, "Silent Period", CheckStatus.FAIL, "internal error")
 
 
@@ -364,14 +364,14 @@ def _check_filesystem_permissions(root: Path) -> CheckResult:
             if not p.exists():
                 try:
                     p.mkdir(parents=True, exist_ok=True)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     failures.append(f"Cannot create: {p}")
                     continue
             try:
                 test_file = p / ".kb_self_test_write"
                 test_file.write_text("test", encoding="utf-8")
                 test_file.unlink()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 failures.append(f"Cannot write: {p}")
         if failures:
             return CheckResult(
@@ -382,7 +382,7 @@ def _check_filesystem_permissions(root: Path) -> CheckResult:
                 "检查文件系统权限和杀毒软件是否锁定相关目录",
             )
         return CheckResult(12, "Filesystem Permissions", CheckStatus.PASS, "All critical paths writable")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(12, "Filesystem Permissions", CheckStatus.FAIL, "internal error")
 
 
@@ -402,7 +402,7 @@ def _check_embedding_model(root: Path) -> CheckResult:
                 "sentence-transformers not installed",
                 "pip install sentence-transformers",
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 from sentence_transformers import SentenceTransformer
 
@@ -414,7 +414,7 @@ def _check_embedding_model(root: Path) -> CheckResult:
                     CheckStatus.WARN,
                     f"bge-small-zh-v1.5 unavailable, fell back to all-MiniLM-L6-v2 (dim={emb.shape[0]})",
                 )
-            except Exception as e2:
+            except Exception as e2:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return CheckResult(
                     13,
                     "Embedding Model",
@@ -422,7 +422,7 @@ def _check_embedding_model(root: Path) -> CheckResult:
                     f"No embedding model available: {e2}",
                     "向量检索将使用Mock模式（无向量索引），运行 pip install sentence-transformers",
                 )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult(13, "Embedding Model", CheckStatus.FAIL, "internal error")
 
 
@@ -452,7 +452,7 @@ class SelfTest:
             try:
                 result = fn(self._root)
                 checks.append(result)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 checks.append(CheckResult(-1, fn.__name__, CheckStatus.FAIL, "internal error"))
 
         passed = sum(1 for c in checks if c.status == CheckStatus.PASS)

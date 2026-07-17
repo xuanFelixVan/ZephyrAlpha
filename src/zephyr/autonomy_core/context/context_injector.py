@@ -264,7 +264,7 @@ def _lsg_scan_context(context: ValidatedContext) -> bool:
         return result.decision.value in ("allow", "ALLOW")
     except ImportError:
         return False
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
 

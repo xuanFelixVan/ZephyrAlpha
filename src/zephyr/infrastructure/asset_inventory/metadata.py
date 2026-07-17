@@ -321,18 +321,18 @@ class MultiIDERuleGenerator:
         results: dict[str, Path] = {}
         try:
             results["cursor"] = self.generate_cursor_rules()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["trae"] = self.generate_trae_rules()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["vscode"] = self.generate_vscode_rules()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in metadata", exc_info=True)
         try:
             results["jetbrains"] = self.generate_jetbrains_rules()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in metadata", exc_info=True)
         return results

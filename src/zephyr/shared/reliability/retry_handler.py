@@ -95,7 +95,7 @@ class RetryHandler:
                     attempts=attempts,
                     total_time_s=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 attempts.append(
                     RetryAttempt(
                         attempt=i + 1,

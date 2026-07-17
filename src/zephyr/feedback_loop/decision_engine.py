@@ -129,7 +129,7 @@ class DecisionEngine:
                         "reason": adjustment.reason,
                     },
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("FLE->Orc dispatch failed, queuing: %s", exc, exc_info=True)
                 self._pending.append(adjustment)
         else:
@@ -150,7 +150,7 @@ class DecisionEngine:
                     action_type=adj.action_type,
                     payload={"reason": adj.reason},
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 remaining.append(adj)
         self._pending = remaining
         return [a for a in self._pending if a not in remaining]

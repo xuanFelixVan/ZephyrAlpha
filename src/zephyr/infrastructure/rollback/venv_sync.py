@@ -101,7 +101,7 @@ class VenvSync:
             details.append("pip install -r requirements.txt: SUCCESS")
         except subprocess.CalledProcessError as e:
             details.append(f"pip install failed: {e.stderr[:200]}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             details.append(f"pip install error: {e}")
 
         after = self._freeze()
@@ -125,7 +125,7 @@ class VenvSync:
                 timeout=15,
             )
             return result.stdout.strip()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     def _compute_diff(self, before: str, after: str) -> DepDiff:

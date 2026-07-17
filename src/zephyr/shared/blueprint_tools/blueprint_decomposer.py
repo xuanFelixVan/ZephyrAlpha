@@ -196,7 +196,7 @@ class BlueprintDecomposer:
             if len(parts) < 3:
                 return {}
             return yaml.safe_load(parts[1]) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     def _infer_target_layer(self, fm: dict) -> str | None:
@@ -436,7 +436,7 @@ class BlueprintDecomposer:
                 created_at=now,
                 updated_at=now,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(f"TaskCard 构造失败: {name} — {e}", exc_info=True)
             return None
 
@@ -543,7 +543,7 @@ class BlueprintDecomposer:
                     failed_ids.append(task.task_id)
                     result.warnings.append(f"TaskCard {task.task_id} 被门禁拒绝: {e}")
                     continue
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error(f"task_repo.create 失败: {task.task_id} — {e}", exc_info=True)
                     failed_ids.append(task.task_id)
                     result.warnings.append(f"TaskCard {task.task_id} 入库失败: {e}")
@@ -552,7 +552,7 @@ class BlueprintDecomposer:
                     try:
                         self.task_repo.transition(task.task_id, TaskStatus.READY)
                         task.status = TaskStatus.READY
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning(f"PENDING->READY 转换失败: {task.task_id} — {e}", exc_info=True)
             if failed_ids:
                 logger.warning(f"共 {len(failed_ids)} 张卡入库失败: {failed_ids}")

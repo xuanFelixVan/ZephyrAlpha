@@ -216,7 +216,7 @@ def subscribe_eventbus() -> None:
             bus.subscribe("task_completed", _on_task_completed)
             _subscribed = True
             logger.info("AutoPilot: subscribed to task_completed event")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("AutoPilot: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -236,5 +236,5 @@ def _on_task_completed(payload: object) -> None:
             source,
             detail,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("AutoPilot: _on_task_completed failed: %s", e, exc_info=True)

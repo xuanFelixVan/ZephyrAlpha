@@ -152,7 +152,7 @@ class SQLiteMetadataStore:
             for tid, conn in list(self._all_conns.items()):
                 try:
                     conn.close()
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.debug("close_all: failed to close conn for thread %s", tid, exc_info=True)
             self._all_conns.clear()
         # 清理当前线程 local 引用

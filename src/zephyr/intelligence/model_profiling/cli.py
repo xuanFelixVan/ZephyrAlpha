@@ -173,7 +173,7 @@ def cmd_history() -> None:
             for line in f.read_text(encoding="utf-8").strip().split("\n"):
                 if line.strip():
                     record_count += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in cli", exc_info=True)
         size_kb = f.stat().st_size / 1024
         print(f"  {ts}  ->  {record_count} models, {size_kb:.1f}KB")

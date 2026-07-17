@@ -189,7 +189,7 @@ class LocalModelScheduler:
                 self.stop,
                 priority=3,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in local_model_scheduler", exc_info=True)
         _log.info("LocalModelScheduler: 后台线程已启动 (poll=%ss)", self._poll_interval)
 
@@ -216,7 +216,7 @@ class LocalModelScheduler:
                 self._embedding_router = EmbeddingRouter(backend="ollama")
                 self._embedding_router.warmup()
                 _log.info("LocalModelScheduler: EmbeddingRouter 自动初始化")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _log.warning("LocalModelScheduler: EmbeddingRouter 初始化失败: %s", exc, exc_info=True)
 
         if self._ollama_chat is None:
@@ -229,7 +229,7 @@ class LocalModelScheduler:
                 else:
                     _log.warning("LocalModelScheduler: OllamaChat 不可用")
                     self._ollama_chat = None
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _log.warning("LocalModelScheduler: OllamaChat 初始化失败: %s", exc, exc_info=True)
 
     def _run(self) -> None:
@@ -243,7 +243,7 @@ class LocalModelScheduler:
             except queue.Empty:
                 self._cleanup_expired_results()
                 continue
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _log.error("LocalModelScheduler: dispatch error: %s", exc, exc_info=True)
 
     def _dispatch(self, task: LocalTask) -> None:
@@ -274,7 +274,7 @@ class LocalModelScheduler:
                     self._stats["failed"] = self._stats.get("failed", 0) + 1
                     self._stats["pending"] = max(0, self._stats.get("pending", 1) - 1)
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             err_msg = str(exc)
             if self._should_retry(err_msg) and task.retries < task.max_retries:
                 task.retries += 1

@@ -117,7 +117,7 @@ def trace(operation: str = ""):
                     )
                 )
                 return result
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 collector.add_span(
                     TraceSpan(
                         span_id=f"{op_name}-{int(t0 * 1000)}",

@@ -111,7 +111,7 @@ class SelfHealAgent:
             if isinstance(result, list):
                 return {"issues": result}
             return {"issues": [], "raw": str(result)}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"issues": [], "error": str(exc)}
 
     def _orient(self, observation: dict[str, Any]) -> dict[str, Any]:
@@ -146,7 +146,7 @@ class SelfHealAgent:
             if isinstance(result, FixAction):
                 return result
             return FixAction(action_type="self_heal", target=target, status=FixStatus.COMPLETED)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return FixAction(
                 action_type="self_heal", target=target, status=FixStatus.FAILED, metadata={"error": str(exc)}
             )
@@ -157,7 +157,7 @@ class SelfHealAgent:
             if isinstance(result, ValidationResult):
                 return result
             return ValidationResult(valid=bool(result), check_name="self_heal_validation", evidence=str(result))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="self_heal_validation", evidence="", error=str(exc))
 
     def reset_circuit(self) -> None:

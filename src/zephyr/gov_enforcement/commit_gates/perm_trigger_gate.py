@@ -223,7 +223,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
             )
             return [], ""
         staged_files = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "PERM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -242,7 +242,7 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
             ["git", "rev-parse", "--show-toplevel"]
         )
         wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         wt_root = str(gateway.project_root)
 
     return py_files, wt_root
@@ -255,7 +255,7 @@ def _get_added_set(gateway) -> set[str]:
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         return set(result.stdout.strip().splitlines()) if result.returncode == 0 else set()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return set()
 
 
@@ -286,7 +286,7 @@ def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, con
             line[1:] for line in diff_content.stdout.splitlines()
             if line.startswith("+") and not line.startswith("+++")
         ]
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
     if not added_lines:

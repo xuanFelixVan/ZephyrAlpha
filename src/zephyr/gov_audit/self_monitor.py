@@ -35,7 +35,7 @@ class SelfMonitor:
             from zephyr.gov_audit.drift_bridge import DriftBridge
 
             self._drift_bridge = DriftBridge()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in self_monitor", exc_info=True)
 
     def increment(self, name: str, value: int = 1) -> None:

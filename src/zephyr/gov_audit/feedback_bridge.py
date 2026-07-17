@@ -41,7 +41,7 @@ class FeedbackBridge:
             self._available = True
         except ImportError:
             logger.warning("FeedbackLoop not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackLoop init failed: %s", exc, exc_info=True)
 
     def analyze_audit_findings(self, findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -67,7 +67,7 @@ class FeedbackBridge:
                 }
                 for p in proposals
             ]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("FeedbackBridge.analyze_audit_findings failed: %s", exc, exc_info=True)
             return []
 
@@ -87,7 +87,7 @@ class FeedbackBridge:
                 }
                 for p in proposals
             ]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("FeedbackBridge.generate_rules failed: %s", exc, exc_info=True)
             return []
 
@@ -104,7 +104,7 @@ class FeedbackBridge:
                 confidence=proposal.get("confidence", 0.5),
             )
             return self._loop.apply_proposal(p)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("FeedbackBridge.apply failed: %s", exc, exc_info=True)
             return False
 

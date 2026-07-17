@@ -422,7 +422,7 @@ class EvolutionEngine:
             try:
                 if self._apply_fn(p):
                     report.applied_count += 1
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in evolution_engine", exc_info=True)
 
     def _lsg_scan_proposals(self, report: EvolutionReport) -> None:
@@ -442,7 +442,7 @@ class EvolutionEngine:
                 report.proposals = [p for p in report.proposals if p.proposal_id not in flagged]
         except ImportError:
             pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in evolution_engine", exc_info=True)
 
 

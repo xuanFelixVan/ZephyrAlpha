@@ -57,7 +57,7 @@ class BootstrapCache:
                 self._loaded = True
                 logger.info("BootstrapCache loaded: %d keys", len(self._cache))
                 return dict(self._cache)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("BootstrapCache load failed: %s", exc, exc_info=True)
 
         self._cache = {
@@ -91,7 +91,7 @@ class BootstrapCache:
                 encoding="utf-8",
             )
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("BootstrapCache persist failed: %s", exc, exc_info=True)
             return False
 

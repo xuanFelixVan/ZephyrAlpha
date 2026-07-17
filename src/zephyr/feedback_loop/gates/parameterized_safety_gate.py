@@ -287,7 +287,7 @@ class ParameterizedSafetyGate:
                 mod = importlib.import_module(module_path)
                 handler = getattr(mod, func_name)
                 return handler(ctx, gtype, rule)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in parameterized_safety_gate", exc_info=True)
         return GateResult(layer, GateVerdict.PASS, gtype, "Custom handler not found, defaulting to PASS")
 

@@ -163,7 +163,7 @@ def _load_gate_files_from_registry(gate_dir: Path) -> dict[str, str]:
     try:
         with registry_path.open(encoding="utf-8") as fh:
             raw_registry = yaml.safe_load(fh)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("门禁注册表解析失败：%s", registry_path, exc_info=True)
         return {}
     executable: dict[str, str] = {}
@@ -178,7 +178,7 @@ def _load_gate_files_from_registry(gate_dir: Path) -> dict[str, str]:
         try:
             with yaml_path.open(encoding="utf-8") as fh:
                 raw = yaml.safe_load(fh)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("门禁 YAML 解析失败：%s", yaml_path, exc_info=True)
             continue
         gate_id = str(raw.get("gate_id", ""))
@@ -328,7 +328,7 @@ def _check_gbk_roundtrip_clean(content: str) -> bool:
                 partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
                 if partial_cjk >= 3:
                     return True
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in gate_engine", exc_info=True)
     return False
 
@@ -757,7 +757,7 @@ def _handle_circuit_breaker(
             )
             if cb_check.is_open():
                 _add(cb_check.violation_message())
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             # CBGManager 初始化失败时降级为 P2 警告，不阻断门禁
             violations.append(
                 _make_violation(
@@ -828,7 +828,7 @@ def _handle_drift_budget(
                 f"漂移预算耗尽，模块 {target_module} 必须先修复漂移再提交变更",
                 detail=budget.get("reason", "drift budget exceeded"),
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         violations.append(
             _make_violation(
                 check,
@@ -932,7 +932,7 @@ def _handle_circular_dependency_scan(
                     f"Circular dependency: {' -> '.join(cycle)} -> {cycle[0]}",
                     detail=f"Cycle length: {len(cycle)}",
                 )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"EN-001 scan failed: {exc}", detail=str(exc))
     return violations
 
@@ -958,7 +958,7 @@ def _handle_enforcement_mode_check(
         if not result.passed:
             for v in result.violations:
                 _add(v)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"EN-002 check failed: {exc}", detail=str(exc))
     return violations
 
@@ -984,7 +984,7 @@ def _handle_contract_compatibility_check(
         if not result.passed:
             for m in result.mismatches:
                 _add(m)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"EN-003 check failed: {exc}", detail=str(exc))
     return violations
 
@@ -1040,7 +1040,7 @@ def _handle_security_artifact_scan(
                         detail=f"[{f.rule_id}] {f.snippet}",
                         severity=f.severity,
                     )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"Security artifact scan failed: {exc}", detail=str(exc))
     return violations
 
@@ -1177,7 +1177,7 @@ def _handle_zero_residue_check(
                     detail=f"[{fg.rule_id}] {fg.file_rel}",
                     severity=sev,
                 )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"Zero residue scan failed: {exc}", detail=str(exc))
     return violations
 
@@ -1215,7 +1215,7 @@ def _handle_post_doc_review_check(
                 detail=f"pending_count={len(report.pending_regularization)}",
                 severity="P1",
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _add(f"Post doc review scan failed: {exc}", detail=str(exc))
     return violations
 
@@ -1290,7 +1290,7 @@ def _handle_fle_gate(
                             )
                     elif isinstance(result, bool) and not result:
                         _add(f"FLE 门禁 {gate_module}.{gate_method} 返回 False")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             violations.append(
                 _make_violation(
                     check,
@@ -1333,7 +1333,7 @@ def _handle_rollback_exit_code(
                 f"Rollback exit code {exit_code} -> {gate_action}: {description}",
                 detail=f"check_id={check.check_id} exit_code={exit_code}",
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         violations.append(
             _make_violation(
                 check,
@@ -1651,7 +1651,7 @@ class GateEngine:
             )
             if manage_tx:
                 target.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             if manage_tx:
                 target.execute("ROLLBACK")
             raise

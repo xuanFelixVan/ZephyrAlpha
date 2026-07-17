@@ -244,10 +244,10 @@ class OutboxPublisher:
                                 await result
                         await self._store.mark_published(entry.id)
                         logger.debug("outbox: %s published -> %s", entry.id, entry.event_type)
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                         await self._store.mark_failed(entry.id)
                         logger.error("outbox: %s publish failed: %s", entry.id, exc, exc_info=True)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("outbox poll failed: %s", exc, exc_info=True)
 
             await asyncio.sleep(self._poll_interval)

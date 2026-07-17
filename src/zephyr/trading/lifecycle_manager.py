@@ -29,7 +29,7 @@ __all__ = [
 """
 LifecycleManager — 启动/停止序列
 ==================================
-蓝图: ARC-0001 §6.3
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Init Containers + Sidecar + Finalizer
 """
 
@@ -108,7 +108,7 @@ class LifecycleManager:
                 fn()
                 report.steps_completed += 1
                 report.components_started.append(name)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 report.errors.append(f"{name}: {e}")
                 report.success = False
                 logger.warning("boot_sequence step %s failed, skipping remaining steps", name)
@@ -158,25 +158,25 @@ class LifecycleManager:
         try:
             report.finalizer_results = finalizer.run()
             report.steps_completed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"finalizer.run failed: {exc}")
 
         try:
             health_monitor.stop()
             report.steps_completed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"health_monitor.stop failed: {exc}")
 
         try:
             audit_logger.flush()
             report.steps_completed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"audit_logger.flush failed: {exc}")
 
         try:
             stop_gate.acknowledge_shutdown()
             report.steps_completed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"stop_gate.acknowledge_shutdown failed: {exc}")
 
         return report

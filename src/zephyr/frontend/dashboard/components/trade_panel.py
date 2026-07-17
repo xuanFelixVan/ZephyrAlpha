@@ -262,7 +262,7 @@ def submit_order(
 
             Order, OrderSide, OrderType,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"导入 Order 失败: {e}", risk_text
 
     side_enum = OrderSide.BUY if order_submission.side == "buy" else OrderSide.SELL
@@ -296,7 +296,7 @@ def submit_order(
         else:
             broker_order_id = execution_engine.submit_order(order)
         return True, str(broker_order_id), risk_text
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"下单异常: {e}", risk_text
 
 
@@ -312,7 +312,7 @@ def cancel_order(execution_engine: object, broker_order_id: str) -> tuple[bool, 
         else:
             ok = execution_engine.cancel_order(broker_order_id)
         return bool(ok), "撤单成功" if ok else "撤单失败"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False, f"撤单异常: {e}"
 
 

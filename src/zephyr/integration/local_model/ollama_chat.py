@@ -296,7 +296,7 @@ class OllamaChat:
         try:
             self._verify()
             return self._verified
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def ask(
@@ -379,7 +379,7 @@ class OllamaChat:
                     _log.warning(
                         "OllamaChat: %s empty response attempt %d/%d, retrying...", work_type, attempt + 1, max_retries
                     )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt < max_retries - 1:
                     _log.warning(
                         "OllamaChat: %s error attempt %d/%d: %s, retrying...", work_type, attempt + 1, max_retries, exc
@@ -430,7 +430,7 @@ class OllamaChat:
             )
             resp.raise_for_status()
             payload = resp.json()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.error("OllamaChat failed model=%s: %s", self._model, exc, exc_info=True)
             raise
 
@@ -457,7 +457,7 @@ class OllamaChat:
             pass
         except RuntimeError:
             raise
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in ollama_chat", exc_info=True)
 
     @staticmethod
@@ -503,7 +503,7 @@ class OllamaChat:
 
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
             return resp.status_code == HTTPStatus.OK
-        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("quick_alive failed: %s", e, exc_info=True)
             return False
 

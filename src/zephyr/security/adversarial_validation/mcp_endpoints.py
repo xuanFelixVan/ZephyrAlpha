@@ -90,7 +90,7 @@ class MCPEndpoints:
                 return self._check_convergence(args)
             else:
                 raise McpEndpointError(f"Unknown tool: {tool_name}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("mcp_tool_error tool=%s", tool_name, exc_info=True)
             raise McpEndpointError(f"Tool '{tool_name}' failed: {e}") from e
 

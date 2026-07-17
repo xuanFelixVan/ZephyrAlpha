@@ -172,7 +172,7 @@ class ConstitutionGuard:
                         )
                         return False
                 return True
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
                     "constitution_gate_fallback article=%s action=%s", article.article_id, action, exc_info=True
                 )

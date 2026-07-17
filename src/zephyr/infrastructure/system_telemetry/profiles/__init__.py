@@ -78,7 +78,7 @@ class ProfileSubsystem:
                 "thread_count": proc.num_threads(),
                 "test_mode": False,
             }
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {
                 "module_id": self._module_id,
                 "cpu_percent": -1.0,

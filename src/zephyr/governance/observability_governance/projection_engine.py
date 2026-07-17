@@ -140,7 +140,7 @@ class ProjectionEngine:
                 payload = {}
             try:
                 state = handler(state, payload)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise ProjectionError(f"Handler {ev.event_type} failed: {exc}") from exc
 
         return state

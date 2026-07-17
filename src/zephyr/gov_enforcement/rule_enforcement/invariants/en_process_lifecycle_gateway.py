@@ -105,7 +105,7 @@ class ProcessCreationScanner(ast.NodeVisitor):
             with open(self.file_path, encoding="utf-8") as f:
                 source = f.read()
             snippet = ast.get_source_segment(source, node) or snippet
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in en_process_lifecycle_gateway", exc_info=True)
         return snippet.strip()[:120] if snippet else ""
 
@@ -123,7 +123,7 @@ def scan_file(file_path: str) -> list[Violation]:
     try:
         with open(file_path, encoding="utf-8") as f:
             source = f.read()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
     tree = ast.parse(source, filename=file_path)

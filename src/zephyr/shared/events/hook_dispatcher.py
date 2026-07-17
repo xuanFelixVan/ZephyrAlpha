@@ -109,7 +109,7 @@ class HookDispatcher:
                     timestamp_utc=datetime.now(UTC).isoformat(),
                 )
             )
-        except (subprocess.TimeoutExpired, Exception) as e:
+        except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._executions.append(
                 HookExecution(
                     hook_id=hook.hook_id,

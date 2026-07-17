@@ -97,7 +97,7 @@ class OutputSecurityLayer:
         try:
             schema.model_validate(data)
             return SchemaValidationResult(valid=True, errors=[])
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errs = []
             if hasattr(e, "errors"):
                 for err in e.errors():

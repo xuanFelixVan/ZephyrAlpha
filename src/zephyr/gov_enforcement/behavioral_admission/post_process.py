@@ -149,7 +149,7 @@ class PostProcessPipeline:
         for hook in self._hooks:
             try:
                 result = hook.fn(**kwargs)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result = HookResult(
                     hook_name=hook.name,
                     success=False,

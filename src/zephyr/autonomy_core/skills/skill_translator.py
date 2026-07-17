@@ -133,7 +133,7 @@ class SkillTranslator:
                 loader = SkillLoader()
                 loaded = loader.progressive_load(skill_id)
                 body = loaded.get("l2", "")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return {
                     "skill_id": skill_id,
                     "target_model_family": target_model_family,

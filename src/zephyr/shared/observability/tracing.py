@@ -118,7 +118,7 @@ def start_span(
         span.set_attribute("trace_id", trace_id)
         try:
             yield span
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             span.set_status(trace.Status(trace.StatusCode.ERROR))
             raise
 

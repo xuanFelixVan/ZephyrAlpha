@@ -173,7 +173,7 @@ class AutoDiagnostics:
                 data = yaml.safe_load(f)
             for r in data.get("rules", []):
                 self._rules.append(DiagnosisRule(**r))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to load rules from %s: %s", config_path, e, exc_info=True)
             self._load_default_rules()
 

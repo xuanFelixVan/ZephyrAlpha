@@ -109,12 +109,12 @@ class ShadowWorkspace:
                 lint_result=lint_result,
                 shadow_dir=shadow_dir,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ShadowResult(safe_to_apply=False, error=str(exc), shadow_dir=shadow_dir)
         finally:
             try:
                 shutil.rmtree(shadow_dir, ignore_errors=True)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in shadow_workspace", exc_info=True)
 
     def _run_test(self, shadow_dir: str, project_root: str | None = None) -> dict[str, Any]:
@@ -134,7 +134,7 @@ class ShadowWorkspace:
             }
         except subprocess.TimeoutExpired:
             return {"passed": False, "error": "pytest timeout"}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"passed": False, "error": str(exc)}
 
     def _run_type_check(self, shadow_file: str, project_root: str | None = None) -> dict[str, Any]:
@@ -151,7 +151,7 @@ class ShadowWorkspace:
                 "passed": result.returncode == 0,
                 "stdout": result.stdout[-500:] if result.stdout else "",
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"passed": False, "error": str(exc)}
 
     def _run_lint(self, shadow_file: str, project_root: str | None = None) -> dict[str, Any]:
@@ -168,5 +168,5 @@ class ShadowWorkspace:
                 "passed": result.returncode == 0,
                 "stdout": result.stdout[-500:] if result.stdout else "",
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"passed": False, "error": str(exc)}

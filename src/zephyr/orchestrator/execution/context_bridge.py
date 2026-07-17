@@ -72,7 +72,7 @@ class ContextBridge:
 
             try:
                 t_files = json.loads(t_files)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 t_files = []
 
         try:
@@ -91,7 +91,7 @@ class ContextBridge:
             self._vectorize_context(response)
 
             return response
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[ORC-CE] CE unavailable, degraded: %s", exc, exc_info=True)
             return ContextResponse(
                 task_id=task_id,
@@ -104,7 +104,7 @@ class ContextBridge:
             from zephyr.integration.vector_memory.vector_writer import vectorize_context
 
             vectorize_context(response.task_id, response.blocks)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[CE-VMS] context vectorize skipped", exc_info=True)
 
 
@@ -115,7 +115,7 @@ def _infer_type(task: object) -> str:
 
         try:
             tags_list = json.loads(tags)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             tags_list = []
     else:
         tags_list = tags if isinstance(tags, list) else []

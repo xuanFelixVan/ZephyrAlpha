@@ -185,7 +185,7 @@ class ActPhaseHandler:
                 isinstance(level, str) and level.startswith("L2")
             ):
                 self._auto_rollback_on_escalation(anomaly, level_value)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in scheduler_act", exc_info=True)
 
     def _auto_rollback_on_escalation(self, anomaly: object, escalation_level: str) -> None:
@@ -214,13 +214,13 @@ class ActPhaseHandler:
                             topic="rollback.failed",
                             payload={"escalation_level": escalation_level, "errors": getattr(result, "errors", [])},
                         )
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("suppressed error in scheduler_act", exc_info=True)
             else:
                 logger.warning(
                     "FLE auto-rollback: preflight failed, skipping rollback (escalation=%s)", escalation_level
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE auto-rollback failed", exc_info=True)
 
     def run_verify(

@@ -181,7 +181,7 @@ class GraphValidator:
                 if not full_path.exists():
                     continue
                 content = full_path.read_text(encoding="utf-8")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
             referenced = set(ke_ref_pattern.findall(content))
@@ -216,7 +216,7 @@ class GraphValidator:
                     if payload.get("ke_id") == ke_id:
                         latest_event_status = payload.get("to_status")
                         break
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     continue
 
             if latest_event_status and latest_event_status != db_status:

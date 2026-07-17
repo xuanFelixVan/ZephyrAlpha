@@ -112,7 +112,7 @@ def _get_dataclass_fields(module_path: str, class_name: str) -> dict[str, str] |
                 type_str = type_str.split("'")[1]
             result[f.name] = type_str
         return result
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 

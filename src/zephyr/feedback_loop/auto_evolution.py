@@ -89,7 +89,7 @@ class AutoEvolution:
         """事件驱动入口：由外部事件触发知识合并（替代原 time.wait 轮询）。"""
         try:
             self.engine.consolidate_knowledge()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("AutoEvolution.consolidate failed", exc_info=True)
 
 
@@ -213,7 +213,7 @@ class AutoEvolutionEngine:
                 try:
                     if self.apply_fn(p):
                         outcome.applied_count += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in auto_evolution", exc_info=True)
             outcome.windows_processed = 1
 
@@ -240,7 +240,7 @@ class AutoEvolutionEngine:
             try:
                 if self.apply_fn(ae_p):
                     outcome.applied_count += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in auto_evolution", exc_info=True)
         outcome.blocked_by_safety_gate = blocked
 

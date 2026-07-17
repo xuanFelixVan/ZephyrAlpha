@@ -48,7 +48,7 @@ class ConfigLoader:
                     self._config = OrphanJudgeConfig(**filter_dataclass_fields(OrphanJudgeConfig, data))
                     logger.info("Config loaded from %s", self._path)
                     return self._config
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to load config from %s: %s — using defaults", self._path, exc, exc_info=True)
 
         self._config = OrphanJudgeConfig()

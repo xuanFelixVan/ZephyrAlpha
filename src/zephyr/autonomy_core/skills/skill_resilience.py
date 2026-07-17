@@ -80,7 +80,7 @@ class SkillResilience:
                 result = fn()
                 cls.record_success(skill_id)
                 return result, attempt + 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_exc = exc
                 cls.record_failure(skill_id)
                 delay = min(cls.BASE_DELAY_S * (2**attempt), cls.MAX_DELAY_S)

@@ -357,12 +357,12 @@ class SelfBenchmark:
                 try:
                     if func_a(inp) == func_b(inp):
                         match_count += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in self_benchmark", exc_info=True)
             sim = match_count / len(test_inputs)
             stage = "behavioral_sampler" if sim >= pair.expected_sim_min else "none"
             return round(sim, 3), stage
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0.0, "none"
 
     def _eval_micro_clone(self, pair: KnownAnswerTest) -> tuple[float, str]:
@@ -408,12 +408,12 @@ class SelfBenchmark:
                 try:
                     if func_a(*inp) == func_b(*inp):
                         match_count += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in self_benchmark", exc_info=True)
             sim = match_count / len(test_inputs)
             stage = "—" if sim < pair.expected_sim_max else "behavioral_sampler"
             return round(sim, 3), stage
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 1.0, "unknown"
 
     @staticmethod
@@ -433,7 +433,7 @@ class SelfBenchmark:
         except SecurityError:
             logger.warning("blocked dangerous code in self_benchmark", exc_info=True)
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
         for v in ns.values():
             if callable(v) and not isinstance(v, type):

@@ -120,7 +120,7 @@ class FallbackChain(Generic[P, R]):
                         [e[1] for e in last_errors],
                     )
                 return result
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_errors.append((step.name, str(exc)))
                 logger.warning(
                     "fallback chain '%s': step '%s' failed: %s",
@@ -155,7 +155,7 @@ class FallbackChain(Generic[P, R]):
                         [e[1] for e in last_errors],
                     )
                 return result
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_errors.append((step.name, str(exc)))
                 logger.warning(
                     "fallback chain '%s': step '%s' failed: %s",

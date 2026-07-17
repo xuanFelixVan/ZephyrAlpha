@@ -63,7 +63,7 @@ class FindingIngest:
                 from zephyr.gov_audit.writer import get_audit_writer
 
                 self._writer = get_audit_writer()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("FindingIngest: audit-trail.writer unavailable, will use local JSONL fallback", exc_info=True)
                 self._writer = None
         return self._writer
@@ -86,7 +86,7 @@ class FindingIngest:
                         continue
                     try:
                         finding = AuditFinding.from_jsonl(stripped)
-                    except (ValueError, Exception) as exc:
+                    except (ValueError, Exception) as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                         errors += 1
                         _logger.warning("FindingIngest: parse error on line %d in %s: %s", total, jsonl_path, exc)
                         continue
@@ -96,7 +96,7 @@ class FindingIngest:
                         self._emit_event(finding)
                     else:
                         errors += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("FindingIngest: failed to read %s: %s", jsonl_path, exc, exc_info=True)
         return IngestResult(
             total=total,
@@ -123,7 +123,7 @@ class FindingIngest:
                 continue
             try:
                 finding = AuditFinding.from_jsonl(stripped)
-            except (ValueError, Exception) as exc:
+            except (ValueError, Exception) as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors += 1
                 _logger.warning("FindingIngest: parse error on line %d: %s", total, exc)
                 continue
@@ -175,7 +175,7 @@ class FindingIngest:
             bus.subscribe("audit.finding_created", cls._on_finding_created)
             bus.subscribe("audit.finding_resolved", cls._on_finding_resolved)
             cls._subscribers_registered = True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("suppressed error in finding_ingest", exc_info=True)
 
     @staticmethod
@@ -204,7 +204,7 @@ class FindingIngest:
                 event_dict["event_type"] = "finding_ingested"
                 writer.write(event_dict)
                 return True
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("FindingIngest: writer.write failed for %s: %s", finding.finding_id, exc, exc_info=True)
         try:
             audit_path = Path(self._audit_dir)
@@ -223,7 +223,7 @@ class FindingIngest:
             os.replace(tmp_path, str(fallback_file))
             _logger.info("FindingIngest: wrote %s to fallback %s", finding.finding_id, fallback_file)
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("FindingIngest: fallback write failed for %s: %s", finding.finding_id, exc, exc_info=True)
             try:
                 os.remove(tmp_path)
@@ -237,5 +237,5 @@ class FindingIngest:
 
             payload = finding.to_finding_dict()
             bus.emit(topic="audit.finding_created", payload=payload)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("suppressed error in finding_ingest", exc_info=True)

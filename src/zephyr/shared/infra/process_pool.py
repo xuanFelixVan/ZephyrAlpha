@@ -151,7 +151,7 @@ class MCPProcessPool:
                     env=proc_env,
                     creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("MCPProcessPool: failed to create process '%s'", name, exc_info=True)
                 return None
 
@@ -212,7 +212,7 @@ class MCPProcessPool:
         while self._zombie_running:
             try:
                 self._reap_zombies()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("MCPProcessPool: zombie scan failed", exc_info=True)
             time.sleep(self._zombie_check_interval)
 
@@ -245,15 +245,15 @@ class MCPProcessPool:
             try:
                 entry.process.terminate()
                 entry.process.wait(timeout=5.0)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 try:
                     entry.process.kill()
                     entry.process.wait(timeout=2.0)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in process_pool", exc_info=True)
             for stream in (entry.process.stdin, entry.process.stdout, entry.process.stderr):
                 if stream is not None:
                     try:
                         stream.close()
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.debug("suppressed error in process_pool", exc_info=True)

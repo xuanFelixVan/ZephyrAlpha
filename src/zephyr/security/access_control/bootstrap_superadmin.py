@@ -230,7 +230,7 @@ class BootstrapSuperadminBridge:
                 "bootstrapped_at": self.__class__._bootstrapped_at,
             }
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("BootstrapSuperadminBridge: bootstrap failed: %s", e, exc_info=True)
             return {
                 "bootstrapped": False,
@@ -256,7 +256,7 @@ class BootstrapSuperadminBridge:
                 "valid": check_result.get("granted", False),
                 "account": SUPERADMIN_ACCOUNT,
             }
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"valid": False, "error": "internal error"}
 
     def shutdown(self) -> dict[str, Any]:

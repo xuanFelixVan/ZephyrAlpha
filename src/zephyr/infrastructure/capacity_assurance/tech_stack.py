@@ -146,7 +146,7 @@ class TechStackValidator:
             return ComponentStatus(
                 dd_id="DD-2", component="SQLite", available=True, details=f"sqlite3={sqlite3.sqlite_version}"
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ComponentStatus(
                 dd_id="DD-2",
                 component="SQLite",
@@ -165,7 +165,7 @@ class TechStackValidator:
 
                 try:
                     version = pkg_version("opentelemetry-api")
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     version = "unknown"
             return ComponentStatus(
                 dd_id="DD-3", component="OpenTelemetry SDK", available=True, details=f"opentelemetry-api=={version}"

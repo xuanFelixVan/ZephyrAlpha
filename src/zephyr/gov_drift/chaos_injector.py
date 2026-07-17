@@ -308,7 +308,7 @@ def run_chaos_experiment(
         try:
             original, mutated = injector(target)
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         if original == mutated:
@@ -369,7 +369,7 @@ def _inject_phase(
 
             results.append(ci)
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             ci.result = ChaosResult.ERROR
 
             results.append(ci)
@@ -410,7 +410,7 @@ def _detect_phase(
             else:
                 ci.result = ChaosResult.MISSED
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             ci.result = ChaosResult.ERROR
 
     return results
@@ -434,7 +434,7 @@ def _rollback_phase(
 
             ci.rolled_back_at = datetime.now(UTC)
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             ci.result = ChaosResult.DEGRADED
 
     return results

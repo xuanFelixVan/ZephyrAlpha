@@ -194,7 +194,7 @@ class HybridRetriever:
             now = datetime.now(UTC)
             age_days = (now - written_dt).total_seconds() / 86400
             return math.exp(-decay_rate * age_days)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 1.0
 
     def _dense_search(self, query: str, collection_name: str, k: int) -> list[tuple[str, float, dict[str, Any]]]:
@@ -202,7 +202,7 @@ class HybridRetriever:
         try:
             query_embedding = self._embedding_router.embed(query, collection_name)
             results = col.query(query_embeddings=[query_embedding.tolist()], n_results=min(k, col.count()))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             results = col.query(query_texts=[query], n_results=min(k, col.count()))
 
         hits: list[tuple[str, float, dict[str, Any]]] = []
@@ -224,7 +224,7 @@ class HybridRetriever:
             if all_data.get("ids"):
                 for i, doc_id in enumerate(all_data["ids"]):
                     meta_map[doc_id] = all_data.get("metadatas", [{}])[i] if all_data.get("metadatas") else {}
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("suppressed error in hybrid_retriever", exc_info=True)
         return [(doc_id, score, meta_map.get(doc_id, {})) for doc_id, score in scores]
 
@@ -291,12 +291,12 @@ class HybridRetriever:
 
         try:
             dense_hits = self._dense_search(query, collection_name, candidate_k)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             dense_hits = []
 
         try:
             sparse_hits = self._sparse_search(query, collection_name, candidate_k)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             sparse_hits = []
 
         fused = self._rrf_fusion(dense_hits, sparse_hits, collection_name)
@@ -354,7 +354,7 @@ class HybridRetriever:
                     h.score = float(rerank_scores[i]) if i < len(rerank_scores) else h.score
                 trace.hits.sort(key=lambda x: x.score, reverse=True)
                 trace.hits = trace.hits[:k]
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("HybridRetriever: rerank 失败: %s", e, exc_info=True)
         return trace
 

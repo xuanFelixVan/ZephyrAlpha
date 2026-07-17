@@ -69,7 +69,7 @@ class ContextIngest:
                 try:
                     bridge._vms.write(mapped_collection, content, metadata=meta, doc_id=f"{mapped_collection}::{block_id}")
                     stored += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("[VMS-INGEST] write failed for %s: %s", block_id, exc, exc_info=True)
 
             logger.info(
@@ -80,7 +80,7 @@ class ContextIngest:
                 len(records),
             )
             return stored
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[VMS-INGEST] VMS unavailable, in-memory fallback: %s", exc, exc_info=True)
             return self._ingest_memory(records, collection, task_id)
 

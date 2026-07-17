@@ -69,7 +69,7 @@ class DedupExtractor(BaseFixer):
                             normalized = self._normalize_code(body_lines)
                             h = hashlib.sha256(normalized.encode()).hexdigest()[:16]
                             code_blocks[h].append({"file": str(py_file), "function": node.name, "line": node.lineno})
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         for h, occurrences in code_blocks.items():
             if len(occurrences) >= self._min_occurrences:
@@ -190,7 +190,7 @@ class DedupExtractor(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No dedup opportunities found"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action

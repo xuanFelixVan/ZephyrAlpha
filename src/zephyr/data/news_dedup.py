@@ -70,7 +70,7 @@ def _parse_datetime(dt_str: str) -> str:
         from dateutil import parser as date_parser
         dt = date_parser.parse(str(dt_str))
         return dt.strftime("%Y-%m-%d %H:%M:%S")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         s = str(dt_str).strip()
         return s[:19] if len(s) >= 19 else s
 
@@ -161,7 +161,7 @@ def dedup_news_result(result: FetchResult) -> FetchResult:
 
     try:
         existing_hashes = _get_existing_hashes()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.warning("查询已有新闻哈希失败，跳过去重: %s", e)
         return result
 

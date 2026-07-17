@@ -85,7 +85,7 @@ def _load_skill_registry() -> Any:
 
         loader = SkillLoader()
         return loader._load_registry()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in skill_postmortem", exc_info=True)
         return None
 

@@ -68,7 +68,7 @@ class DriftFixer(BaseFixer):
                                 "type": "pre_release_version",
                             }
                         )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -111,7 +111,7 @@ class DriftFixer(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No drift detected"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -159,7 +159,7 @@ class DriftFixer(BaseFixer):
             return ValidationResult(valid=True, check_name="drift_fix", evidence="YAML parseable")
         except yaml.YAMLError as exc:
             return ValidationResult(valid=False, check_name="drift_fix", evidence="", error=f"YAML error: {exc}")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="drift_fix", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

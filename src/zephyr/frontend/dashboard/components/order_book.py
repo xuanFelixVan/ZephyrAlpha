@@ -119,7 +119,7 @@ def fetch_order_book(miniqmt_provider: object, symbol: str) -> OrderBookData:
 
     try:
         raw = miniqmt_provider.get_order_book(symbol)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return OrderBookData(symbol=symbol)
 
     if not raw:

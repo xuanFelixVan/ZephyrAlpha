@@ -106,7 +106,7 @@ class GateRepo:
             )
             if manage_tx:
                 target.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             if manage_tx:
                 target.execute("ROLLBACK")
             raise

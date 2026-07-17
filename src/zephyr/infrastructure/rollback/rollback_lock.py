@@ -303,7 +303,7 @@ class RollbackLock:
                     wait_time_ms=0,
                     reason="Forced release",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_lock", exc_info=True)
         return LockAcquireResult(
             acquired=True,
@@ -349,7 +349,7 @@ class RollbackLock:
                     )
                     + "\n"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in rollback_lock", exc_info=True)
 
     def _dequeue_request(self, lock_id: str) -> None:
@@ -377,7 +377,7 @@ class RollbackLock:
             tmp_path = self._queue_path.with_suffix(".tmp")
             tmp_path.write_text("\n".join(valid_lines) + ("\n" if valid_lines else ""), encoding="utf-8")
             os.replace(str(tmp_path), str(self._queue_path))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in rollback_lock", exc_info=True)
 
     def _count_queue(self) -> int:
@@ -387,7 +387,7 @@ class RollbackLock:
         try:
             lines = self._queue_path.read_text(encoding="utf-8").strip().split("\n")
             return len([l for l in lines if l])
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0
 
     def _cleanup_stale_queue_entries(self) -> None:
@@ -408,5 +408,5 @@ class RollbackLock:
                 except (json.JSONDecodeError, ValueError):
                     pass
             self._queue_path.write_text("\n".join(valid_lines) + ("\n" if valid_lines else ""), encoding="utf-8")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in rollback_lock", exc_info=True)

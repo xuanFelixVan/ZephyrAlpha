@@ -85,7 +85,7 @@ def fetch_task_progress(task_repo: object = None) -> TaskProgressData:
                 pp.in_progress_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.IN_PROGRESS)
                 pp.failed_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.FAILED)
                 pp.pending_tasks = sum(1 for t in tasks if t.status.value == TaskStatus.PENDING)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in task_progress", exc_info=True)
         data.phases.append(pp)
         data.total_tasks += pp.total_tasks

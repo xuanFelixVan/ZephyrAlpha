@@ -39,6 +39,6 @@ def run_smoke() -> dict:
     for t in SMOKE_TESTS:
         try:
             results[t.__name__] = t()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             results[t.__name__] = str(e)
     return results

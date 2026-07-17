@@ -61,7 +61,7 @@ class CrossCollectionRetriever:
                             "metadata": hit.metadata,
                         }
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("CrossCollectionRetriever: %s 检索失败: %s", col_name, e, exc_info=True)
 
         all_hits.sort(key=lambda x: x["score"], reverse=True)

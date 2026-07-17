@@ -104,7 +104,7 @@ class VMSMemoryBackend:
                 doc_id=record.chunk_id,  # 治本：用确定性业务 id 替代 uuid（修复丢弃 record.chunk_id 的 bug）
             )
             return chunk_id
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("VMSMemoryBackend.write fallback: VMS write failed: %s", exc, exc_info=True)
             self._vms_available = False
             return None
@@ -145,7 +145,7 @@ class VMSMemoryBackend:
                     )
                 records.sort(key=lambda r: r.written_at, reverse=True)
                 return records[: max(0, k)]
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("VMSMemoryBackend.list_by_topic fallback: %s", exc, exc_info=True)
                 return self._fallback.list_by_topic(topic, k)
 
@@ -177,7 +177,7 @@ class VMSMemoryBackend:
                         )
                     )
                 return records[: max(0, k)]
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("VMSMemoryBackend.query fallback: %s", exc, exc_info=True)
                 return self._fallback.query(query_text, k, topic)
 
@@ -192,7 +192,7 @@ class VMSMemoryBackend:
                 if isinstance(col_info, dict):
                     total += col_info.get("count", 0)
             return total
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._fallback.count()
 
 
@@ -222,6 +222,6 @@ def create_vms_backend(
         vms.start()
         _logger.info("VMSMemoryBackend: VMS initialized successfully")
         return VMSMemoryBackend(vms=vms, fallback=fallback)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("VMSMemoryBackend: VMS init failed, using fallback: %s", exc, exc_info=True)
         return VMSMemoryBackend(vms=None, fallback=fallback)

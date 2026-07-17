@@ -142,7 +142,7 @@ class AuditFeedbackBridge:
 
             _logger.info("Audit->FLE: bridged %d/%d anomalies", len(signals), len(anomalies))
             return signals
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.exception("Audit->FLE: bridge scan failed")
             return []
 

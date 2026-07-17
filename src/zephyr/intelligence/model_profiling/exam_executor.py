@@ -118,7 +118,7 @@ class ExamExecutor:
         except subprocess.TimeoutExpired:
             # 全量超时 -> 退化为逐测试
             pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in exam_executor", exc_info=True)
 
         # 3. 部分通过：逐测试断言执行，收集错误
@@ -139,7 +139,7 @@ class ExamExecutor:
                     errors.append(self._classify_runtime_error(r.stderr))
             except subprocess.TimeoutExpired:
                 errors.append("[TIMEOUT] 单测试超时(5s)")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"[EXEC_ERROR] {type(e).__name__}: {e}")
 
         return ExecResult(

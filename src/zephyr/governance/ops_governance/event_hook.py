@@ -139,7 +139,7 @@ class HookRegistry:
         for h in self._hooks:
             try:
                 h.callback(event)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception(
                     "Hook '%s' (prio=%d) crashed on task=%s (%s->%s)",
                     h.name,

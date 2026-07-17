@@ -118,7 +118,7 @@ class DepVersionFixer(BaseFixer):
                                 "line": line,
                             }
                         )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         for pkg, entries in dep_versions.items():
             versions = set(e["version"] for e in entries)
@@ -148,7 +148,7 @@ class DepVersionFixer(BaseFixer):
                                         "type": "pyproject_conflict",
                                     }
                                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("DepVersionFixer.scan: pyproject.toml parse failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return findings
 
@@ -181,7 +181,7 @@ class DepVersionFixer(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No version conflicts found"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -216,7 +216,7 @@ class DepVersionFixer(BaseFixer):
                     error="Version conflicts remain",
                 )
             return ValidationResult(valid=True, check_name="dep_version_fix", evidence="No version conflicts")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="dep_version_fix", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

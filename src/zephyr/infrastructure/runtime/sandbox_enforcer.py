@@ -102,7 +102,7 @@ class SandboxEnforcer:
         try:
             self._marker_path.unlink(missing_ok=True)
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def status(self) -> SandboxStatus:
@@ -126,10 +126,10 @@ class SandboxEnforcer:
                 try:
                     if str(resolved).startswith(str(root.resolve())):
                         return True
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     continue
             return False
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     @property

@@ -82,7 +82,7 @@ class GateBridge:
                     result.passed += count
                 else:
                     result.blocked += count
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("[SCRIPT-GATE] gate %s check degraded: %s", gate_id, exc, exc_info=True)
                 result.passed += count
 

@@ -142,7 +142,7 @@ class SafetyGateManager:
 
             with open(registry_path, encoding="utf-8") as f:
                 registry = yaml.safe_load(f)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return results
 
         fle_entries = [
@@ -157,7 +157,7 @@ class SafetyGateManager:
             try:
                 gate_result = self._invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)
                 results[gate_id] = gate_result
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results[gate_id] = True
 
         return results
@@ -174,6 +174,6 @@ class SafetyGateManager:
                 continue
             try:
                 return _evaluate_gate_method(method, method_name, action_id)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return True
         return True

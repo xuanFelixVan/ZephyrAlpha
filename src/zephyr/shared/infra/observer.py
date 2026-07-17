@@ -96,7 +96,7 @@ class Observer:
             try:
                 handler(event_type, payload)
                 called += 1
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.57.3 修复：原 except: pass 静默吞没所有异常，handler 失败后事件被认为"已处理"
                 # 但副作用未生效，下游事件依赖的修改不存在，因果链断裂。改为 warning 级别日志记录。
                 logger.warning("observer: handler %r failed for %s", handler, event_type, exc_info=True)

@@ -150,7 +150,7 @@ def run_context_four_stage(
                 if injected.context.strip():
                     merged.append("--- CONTEXT_ENGINE_INJECT ---\n" + injected.context.strip())
                 final_ctx = "\n\n".join(merged)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 warnings.append(f"inject failed: {type(exc).__name__}: {exc}")
 
     return ContextFourStageResult(

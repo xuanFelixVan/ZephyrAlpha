@@ -73,7 +73,7 @@ class RollbackAuditNexus:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
     def publish(self, event: AuditEvent) -> None:
@@ -101,7 +101,7 @@ class RollbackAuditNexus:
                 core_event["target_path"] = event.target_commit
                 core_event["status"] = "success" if event.success else "failed"
                 self._core_writer.write(core_event)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_audit_nexus", exc_info=True)
 
     def create_event(

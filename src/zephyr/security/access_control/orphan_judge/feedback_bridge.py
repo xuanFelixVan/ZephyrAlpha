@@ -38,7 +38,7 @@ class FeedbackBridge:
             self._available = True
         except ImportError:
             logger.warning("FeedbackLoop not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackLoop init failed: %s", exc, exc_info=True)
 
     def report_misjudgment(self, file_path: str, actual: str, predicted: str) -> list[dict[str, Any]]:
@@ -62,7 +62,7 @@ class FeedbackBridge:
                 }
                 for p in proposals
             ]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("FeedbackBridge.report_misjudgment failed: %s", exc, exc_info=True)
             return []
 

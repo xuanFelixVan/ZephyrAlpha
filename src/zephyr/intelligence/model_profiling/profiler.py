@@ -232,7 +232,7 @@ class ModelProfiler:
                     forbidden_hits=forbidden_hits,
                 )
                 case_results.append(cr)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 cr = CaseResult(
                     case_id=case.case_id,
                     category=case.category,
@@ -314,7 +314,7 @@ class ModelProfiler:
                     forbidden_hits=forbidden_hits,
                 )
                 case_results.append(cr)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _log.warning("Case %s failed for %s: %s", case.case_id, model.name, exc, exc_info=True)
                 cr = CaseResult(
                     case_id=case.case_id,

@@ -120,7 +120,7 @@ def replay_baseline_history(
         try:
             ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             ts = datetime.now(UTC)
 
         action = entry.get("action", "unknown")
@@ -212,7 +212,7 @@ def git_checkout_snapshot(
         if result.returncode == 0:
             return result.stdout
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return None
@@ -252,7 +252,7 @@ def generate_forensics_report(
                     if len(parts) >= 2:
                         report.dependency_impact.setdefault("commits", []).append(parts[0])
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in forensics_engine", exc_info=True)
 
     return report

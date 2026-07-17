@@ -264,7 +264,7 @@ def _record_skill_feedback(
         for skid in [skill_injection.domain_skill_id, skill_injection.role_skill_id]:
             if skid:
                 fb.record_module_result(skid, mr, task_card.task_id)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.12.1 修复：原 except: pass 静默吞 skill feedback 失败（学习回路断链）
         logger.debug("skill feedback record failed for task=%s", task_card.task_id, exc_info=True)
 
@@ -283,7 +283,7 @@ def _process_module_artifacts(
             artifact = PipelineArtifact(**art_dict)
             manifest.artifacts.append(artifact)
             produced_keys.append(artifact.artifact_key)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 artifact 解析失败（产物丢失不可见）
             logger.debug("artifact dict parse failed for mod=%s", mod_id, exc_info=True)
 
@@ -298,7 +298,7 @@ def _process_module_artifacts(
             )
             manifest.artifacts.append(artifact)
             produced_keys.append(artifact.artifact_key)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 artifact 构造失败（产物丢失不可见）
             logger.debug(
                 "artifact build failed for mod=%s key=%s",
@@ -323,7 +323,7 @@ def _load_read_blueprint_ids(metrics_path: Path) -> set[str] | None:
                     continue
                 try:
                     record = json.loads(line)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     continue
                 if record.get("event") == "blueprint_read":
                     read_blueprints.add(record.get("blueprint_id", ""))
@@ -448,7 +448,7 @@ class PipelineOrchestrator:
                 results = self.run_model_benchmark()
                 self._feed_results_to_router(results)
                 self._log("INFO", f"ModelProfiler: auto-startup complete ({len(results)} models)")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"ModelProfiler: auto-startup failed: {exc}")
 
         t = threading.Thread(target=_run, daemon=True, name="model-profiler-startup")
@@ -478,7 +478,7 @@ class PipelineOrchestrator:
                             drift = self.detect_model_drift(str(name))
                             if drift and drift.get("drift_detected"):
                                 self._log("WARN", f"ModelDrift: {name} drift detected — {drift.get('details', {})}")
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log("WARN", f"ModelProfiler: periodic failed: {exc}")
 
         t = threading.Thread(target=_loop, daemon=True, name="model-profiler-periodic")
@@ -492,7 +492,7 @@ class PipelineOrchestrator:
         try:
             count = self._router.load_benchmark_profiles(results)  # type: ignore[union-attr]
             self._log("INFO", f"ModelProfiler: fed {count} profiles to ModelRouter")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log("WARN", f"ModelProfiler: failed to feed router: {exc}")
 
     def run_model_benchmark(self) -> list[dict[str, object]]:
@@ -670,7 +670,7 @@ class PipelineOrchestrator:
                     _state=_state,
                 ),
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._handle_dispatch_exception(task_card, exc, _state, ct_warnings)
         finally:
             self._active_dispatches.discard(task_card.task_id)
@@ -846,7 +846,7 @@ class PipelineOrchestrator:
                     f"tokens={skill_injection.token_budget.get('total_tokens', '?')}"
                 )
             return skill_injection
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 skill injection 失败（技能增强静默失效）
             logger.debug("skill injection failed for task=%s", task_card.task_id, exc_info=True)
             return None
@@ -915,7 +915,7 @@ class PipelineOrchestrator:
                     ),
                     token_budget=total_tokens if total_tokens > 0 else None,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"dispatch[{task_card.task_id}] bridge failed")
 
         self._write_audit_event(
@@ -961,7 +961,7 @@ class PipelineOrchestrator:
                     "error_detail": f"dispatch[{task_card.task_id}] failed: {exc}",
                 },
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 EventBus 失败事件发布失败（故障信号丢失）
             logger.warning("EventBus pipeline_failed emit failed for task=%s", task_card.task_id, exc_info=True)
         # 5.142.1 修复: 移除显式 release, 由 finally 统一释放
@@ -1030,7 +1030,7 @@ class PipelineOrchestrator:
                 warnings.append(
                     f"ROLLBACK_EXIT: exit_code={exit_code} gate={gate_action} pipeline={pipeline_action}"
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 rollback_exit 门禁决策失败（安全门禁失效不可见）
             logger.warning("rollback_exit gate parse failed for task=%s exit_code=%s",
                            task_card.task_id, exit_code, exc_info=True)
@@ -1203,7 +1203,7 @@ class PipelineOrchestrator:
             self._task_repo.transition(task_id, to_status)
             self._emit_task_event(task_id, from_status, to_status.name)
             return None
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._failure_log[f"transition_{task_id}"] = self._failure_log.get(f"transition_{task_id}", 0) + 1
             return f"_transition[{task_id}->{to_status.name}]: {type(exc).__name__}: {exc}"
 
@@ -1214,7 +1214,7 @@ class PipelineOrchestrator:
         try:
             self._task_repo.update(task_id, actual_hours=0.0, tokens_consumed=total_tokens)
             return None
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._failure_log["metrics_update"] = self._failure_log.get("metrics_update", 0) + 1
             return f"_update_runtime_metrics[{task_id}]: {type(exc).__name__}: {exc}"
 
@@ -1437,7 +1437,7 @@ class PipelineOrchestrator:
                     ),
                     model,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_error = f"[{model}] {type(exc).__name__}: {exc}"
                 if model in ModelRouter.FALLBACK_CHAIN:
                     self._failure_log[f"fallback_{module_id}_{model}"] = (
@@ -1594,7 +1594,7 @@ class PipelineOrchestrator:
                     finished_at=now_utc().isoformat(),
                     confidence=confidence,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_error = f"[{attempt}/{self._cfg.max_retries}] {type(exc).__name__}: {exc}"
                 if self._cfg.circuit_breaker_enabled:
                     self._cb_manager.record_result(cb_key, success=False)
@@ -1633,7 +1633,7 @@ class PipelineOrchestrator:
                 self._embedding_router = EmbeddingRouter()
                 self._embedding_router.warmup()
                 self._log("INFO", "Local models warmed up: EmbeddingRouter + Reranker ready")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"Local model warmup failed: {exc}")
 
     def embed_text(self, text: str, collection_name: str) -> list[float]:
@@ -1650,7 +1650,7 @@ class PipelineOrchestrator:
                 from zephyr.intelligence.model_evaluation.reranker import Reranker
 
                 self._reranker_instance = Reranker()
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log("WARN", f"Reranker init failed: {exc}")
                 self._reranker_instance = False
         if self._reranker_instance is False or self._reranker_instance is None:
@@ -1942,7 +1942,7 @@ class PipelineOrchestrator:
             from zephyr.shared.infra.observer import Observer
 
             self._observer = lifecycle_mgr.resolve("observer", Observer)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._observer = None
         self._initialized = True
 
@@ -2025,7 +2025,7 @@ class PipelineOrchestrator:
                     model=node_id,
                     reason=task_type,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞遥测记录失败（指标丢失不可见）
                 logger.debug("telemetry ai_behavior.record failed for task_type=%s", task_type, exc_info=True)
         label = f"decision_{task_type}_{node_id}"
@@ -2039,7 +2039,7 @@ class PipelineOrchestrator:
                     f"pipe_routing_latency_{task_type}",
                     latency_ms,
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞延迟遥测失败（指标丢失不可见）
                 logger.debug("telemetry metrics.histogram failed for task_type=%s", task_type, exc_info=True)
         key = f"latency_{task_type}"
@@ -2055,7 +2055,7 @@ class PipelineOrchestrator:
                     "pipe_zone_crossing",
                     tags={"from": from_zone, "to": to_zone},
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞跨区遥测失败（指标丢失不可见）
                 logger.debug("telemetry metrics.counter failed for %s->%s", from_zone, to_zone, exc_info=True)
         label = f"zone_{from_zone}->{to_zone}"
@@ -2093,7 +2093,7 @@ class PipelineOrchestrator:
                 "source": "PipelineOrchestrator",
             }
             EventBusBackpressure().emit("TASK_EVENT", payload=payload)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 TASK_EVENT 发布失败（状态变更信号丢失）
             logger.debug("EventBus TASK_EVENT emit failed for task=%s %s->%s", task_id, from_status, to_status, exc_info=True)
 
@@ -2169,7 +2169,7 @@ class PipelineOrchestrator:
             return text
         except ImportError:
             return text
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return f"[LSG-BLOCKED] {text[:200]}"
 
     @staticmethod
@@ -2214,7 +2214,7 @@ class PipelineOrchestrator:
                 "Install: pip install -e . or verify src/zephyr/llm-security/ exists."
             )
             return output
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             for key in ("summary", "verdict", "detail", "minority_report"):
                 if key in output and isinstance(output[key], str):
                     output[key] = f"[LSG-BLOCKED] {output[key][:200]}"
@@ -2259,7 +2259,7 @@ class PipelineOrchestrator:
             return None
         except ImportError:
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return "lsg_exception_fail_closed"
 
     # ------------------------------------------------------------------
@@ -2386,7 +2386,7 @@ class PipelineOrchestrator:
             if result.decision in (GateDecision.DEGRADE, GateDecision.NARROW):
                 return True, f"BUDGET-WARN: {result.reason}; tier={result.model_tier}"
             return True, ""
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞预算门禁决策失败（预算失控不可见）
             logger.warning("BudgetEngine decision failed for task=%s", task_card.task_id, exc_info=True)
 
@@ -2494,7 +2494,7 @@ class PipelineOrchestrator:
                     "details": details or {},
                 }
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞审计写入失败（审计链断链不可见）
             logger.warning("audit_writer.write failed for task=%s op=%s", task_id, operation, exc_info=True)
 
@@ -2782,7 +2782,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe("pipeline_start", _on_pipeline_start)
         _subscribed = True
         logger.info("PipelineOrchestrator: subscribed to pipeline_start event")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("PipelineOrchestrator: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -2802,5 +2802,5 @@ def _on_pipeline_start(payload: object) -> None:
             source,
             detail,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("PipelineOrchestrator: _on_pipeline_start failed: %s", e, exc_info=True)

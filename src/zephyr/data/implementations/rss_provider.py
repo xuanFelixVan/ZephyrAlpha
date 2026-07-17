@@ -185,7 +185,7 @@ class RSSProvider(DataSourceBase):
                         last_key=datetime.date.today().isoformat(),
                         elapsed_sec=time.time() - t0,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"RSS {feed_url} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
@@ -224,7 +224,7 @@ class RSSProvider(DataSourceBase):
             try:
                 rp.read()
                 self._robots_cache[domain] = rp
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # robots.txt 读取失败 -> 默认允许（fail-open）
                 self._log.debug(f"robots.txt 读取失败 {domain}: {e}，默认允许")
                 self._robots_cache[domain] = None

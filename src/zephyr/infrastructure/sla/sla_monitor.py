@@ -61,7 +61,7 @@ def _load_sla_targets() -> tuple[int, int]:
         rto = int(targets.get("rto_target_s", _RTO_TARGET_S_DEFAULT))
         rpo = int(targets.get("rpo_target_tasks", _RPO_TARGET_TASKS_DEFAULT))
         return rto, rpo
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("SLA targets YAML load failed, using defaults", exc_info=True)
         return _RTO_TARGET_S_DEFAULT, _RPO_TARGET_TASKS_DEFAULT
 
@@ -236,7 +236,7 @@ class SLAMonitor:
                         removed += 1
                 except OSError:
                     continue
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: _cleanup_old_reports failed: %s", e, exc_info=True)
         if removed:
             logger.info(
@@ -267,7 +267,7 @@ class SLAMonitor:
                 "SLAMonitor: subscribed to 3 events "
                 "(pipeline_failed/kill_switch_triggered/rollback_completed)"
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: subscribe_eventbus failed: %s", e, exc_info=True)
 
     def _on_recovery_start(self, payload: object) -> None:
@@ -287,7 +287,7 @@ class SLAMonitor:
             logger.info(
                 "SLAMonitor: recovery recorded via rollback_completed event (RTO/RPO measured)"
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("SLAMonitor: _on_recovery_completed failed: %s", e, exc_info=True)
         finally:
             self._recovery_start_time = None

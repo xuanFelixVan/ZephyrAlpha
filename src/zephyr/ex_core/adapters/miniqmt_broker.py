@@ -241,7 +241,7 @@ class MiniQmtBroker(BrokerInterface):
                 self._connected = True
                 _logger.info("MiniQMT 券商连接成功 path=%s session=%s", self._path, self._session_id)
                 return True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._connected = False
                 raise MiniQmtBrokerError(
                     f"MiniQMT 连接失败: {e}", error_code=-1
@@ -253,7 +253,7 @@ class MiniQmtBroker(BrokerInterface):
             if self._xttrader is not None:
                 try:
                     self._xttrader.stop()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.warning("断开连接时出错: %s", e, exc_info=True)
                 self._xttrader = None
             self._connected = False
@@ -340,7 +340,7 @@ class MiniQmtBroker(BrokerInterface):
                 )
             except MiniQmtBrokerError:
                 raise
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
                     f"xttrader 下单异常: {e}", error_code=-1
                 ) from e
@@ -390,7 +390,7 @@ class MiniQmtBroker(BrokerInterface):
                         order_id=broker_order_id,
                     )
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
                     f"xttrader 撤单异常: {e}", error_code=-1
                 ) from e
@@ -427,7 +427,7 @@ class MiniQmtBroker(BrokerInterface):
                 orders = self._call_xttrader_with_reconnect(
                     lambda: self._xttrader.query_stock_orders(account=self._session_id)
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
                     f"xttrader 查询订单异常: {e}", error_code=-1
                 ) from e
@@ -474,7 +474,7 @@ class MiniQmtBroker(BrokerInterface):
                         account=self._session_id
                     )
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MiniQmtBrokerError(
                     f"xttrader 查询持仓异常: {e}", error_code=-1
                 ) from e
@@ -613,7 +613,7 @@ class MiniQmtBroker(BrokerInterface):
                     f"连接返回错误码: {XTTRADER_ERROR_CODES.get(result, result)}",
                     error_code=result,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_error = e
 
             _logger.warning(
@@ -643,7 +643,7 @@ class MiniQmtBroker(BrokerInterface):
         """
         try:
             return func()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("xttrader 调用失败，尝试断线重连: %s", e, exc_info=True)
             if self._reconnect():
                 return func()
@@ -664,7 +664,7 @@ class MiniQmtBroker(BrokerInterface):
             self._connected = True
             _logger.info("断线重连成功")
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("断线重连失败: %s", e, exc_info=True)
             return False
 
@@ -721,7 +721,7 @@ class MiniQmtBroker(BrokerInterface):
         """
         try:
             positions = self._xttrader.query_stock_positions(account=self._session_id)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("T+1校验查询持仓失败，跳过: %s", e, exc_info=True)
             return
 

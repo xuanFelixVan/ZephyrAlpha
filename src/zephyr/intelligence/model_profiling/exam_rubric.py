@@ -403,7 +403,7 @@ class ExamRubric:
         for it in items:
             try:
                 s = max(0.0, min(1.0, float(it.checker(result))))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 s = 0.0
             weighted_sum += s * it.weight
             scored.append((it.criterion, round(s, 3), it.weight))

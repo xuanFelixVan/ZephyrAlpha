@@ -80,7 +80,7 @@ def _get_lsg():
 
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.debug("LSG not available for MCP Gateway", exc_info=True)
         return None
 
@@ -104,7 +104,7 @@ def _lsg_scan_tool_call_sync(tool_name: str, tool_params: dict, text: str) -> st
         )
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_agent_scan"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return None
@@ -286,56 +286,56 @@ class MCPGateway(BaseMCPServer):
             from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 
             self._server_instances["knowledge_base"] = KnowledgeBaseServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("kb server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 
             self._server_instances["gate_engine"] = GateEngineServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("gate engine init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 
             self._server_instances["session_handoff"] = DocGuardServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("doc guard init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.sentinel_server import SentinelServer
 
             self._server_instances["intent_router"] = SentinelServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("sentinel init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
 
             self._server_instances["blueprint_search"] = BlueprintSearchServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("blueprint search init failed: %s", exc, exc_info=True)
         # task_manager via FastMCP — import only for tools/list
         try:
             from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 
             self._server_instances["task_manager"] = TaskManagerMCP()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("task manager init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.governance_server import GovernanceServer
 
             self._server_instances["governance"] = GovernanceServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("governance server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.telemetry_server import TelemetryMCP
 
             self._server_instances["telemetry"] = TelemetryMCP()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("telemetry server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.vector_memory_server import VectorMemoryServer
 
             self._server_instances["vector-memory"] = VectorMemoryServer()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("vector-memory server init failed: %s", exc, exc_info=True)
 
     def _register_gateway_tools(self) -> None:
@@ -390,7 +390,7 @@ class MCPGateway(BaseMCPServer):
                 continue
             try:
                 srv_tools = getattr(srv, "_tools", {})
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 srv_tools = {}
             for tname, tdef in srv_tools.items():
                 aggregated.append(
@@ -497,7 +497,7 @@ class MCPGateway(BaseMCPServer):
                 duration_ms=int((time.perf_counter() - t0) * 1000),
             )
             return self._ok(req_id, {"content": [{"type": "text", "text": content_text}]})
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._audit.log_call(
                 client_session_id=session_id,
                 tool_name=tool_name,
@@ -631,7 +631,7 @@ class MCPGateway(BaseMCPServer):
                 out["result"] = result
             return out
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             duration_ms = int((time.perf_counter() - t0) * 1000)
             self._audit.log_call(
                 client_session_id=session_id,

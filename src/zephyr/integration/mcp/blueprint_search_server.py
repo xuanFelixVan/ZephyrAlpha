@@ -276,7 +276,7 @@ class BlueprintSearchServer(BaseMCPServer):
         try:
             with open(ROUTING_YAML_PATH, encoding="utf-8") as fh:
                 config = yaml.safe_load(fh)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Failed to load blueprint_routing.yaml: %s", exc, exc_info=True)
             return []
 

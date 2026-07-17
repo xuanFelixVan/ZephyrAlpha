@@ -195,7 +195,7 @@ class AutoFixer:
 
             return fixed > 0
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _fix_yaml_append(self, event: DriftEvent) -> bool:
@@ -229,7 +229,7 @@ class AutoFixer:
 
             return result.returncode == 0
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _fix_recount(self, event: DriftEvent) -> bool:
@@ -289,7 +289,7 @@ class AutoFixer:
 
             return False
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _fix_dep_sync(self, event: DriftEvent) -> bool:
@@ -362,7 +362,7 @@ class AutoFixer:
 
             return True
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def verify_fix(self, event: DriftEvent) -> bool:

@@ -65,7 +65,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
 
         loop.close()
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"ERROR: scan failed: {exc}", file=sys.stderr)
 
         return 1
@@ -232,7 +232,7 @@ def _status_check_registry(ok: bool) -> bool:
 
         return ok
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  registry        FAIL  {exc}")
 
         return False
@@ -255,7 +255,7 @@ def _status_check_self_test(ok: bool) -> bool:
 
         return ok
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  self_test       FAIL  {exc}")
 
         return False
@@ -276,7 +276,7 @@ def _status_check_self_check(ok: bool) -> bool:
 
         return False
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  self_check      FAIL  {exc}")
 
         return False
@@ -292,7 +292,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  drift_engine    OK  (scan + build_report + budget)")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  drift_engine    FAIL  {exc}")
 
         ok = False
@@ -304,7 +304,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  cold_start      OK  (session_entry_activate + detect_missing_env)")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  cold_start      FAIL  {exc}")
 
         ok = False
@@ -312,7 +312,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  reconciler      OK  (AutoFixer)")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  reconciler      FAIL  {exc}")
 
         ok = False
@@ -320,7 +320,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  cascade_detect  OK")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  cascade_detect  FAIL  {exc}")
 
         ok = False
@@ -328,7 +328,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  chaos_injector  OK")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  chaos_injector  FAIL  {exc}")
 
         ok = False
@@ -336,7 +336,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
     try:
         print("  gate_integration OK  (trigger_recovery)")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"  gate_integration FAIL  {exc}")
 
         ok = False

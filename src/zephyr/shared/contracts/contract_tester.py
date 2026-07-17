@@ -93,7 +93,7 @@ class ContractTester:
                 checks=checks,
                 metadata={"parsed_type": type(parsed).__name__},
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ContractTestResult(
                 contract_path=contract_path,
                 status=ContractStatus.FAIL,

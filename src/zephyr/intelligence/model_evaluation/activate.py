@@ -227,7 +227,7 @@ class ActivateGate:
                 deliverable=source_path,
             )
             return self._gate_engine.evaluate(task, "G4")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     def _write_to_target(

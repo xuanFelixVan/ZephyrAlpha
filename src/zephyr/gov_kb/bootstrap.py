@@ -199,7 +199,7 @@ class Bootstrap:
         kb_root = self._root / "docs" / "08_knowledge"
         try:
             ingest_gate = IngestGate(kb_root=kb_root)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
         passed_g1 = 0
@@ -232,7 +232,7 @@ class Bootstrap:
                         passed_g1 += 1
                     else:
                         all_problems.extend(result.violations[:3])
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     all_problems.append(f"IngestGate error for {ke_id}: {exc}")
             else:
                 passed_g1 += 1
@@ -242,7 +242,7 @@ class Bootstrap:
                 kb.write(topic=topic, content=chunk.content[:4000], provenance=prov)
                 activated += 1
                 cat_set.add(chunk.category)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 all_problems.append(f"kb.write error for {ke_id}: {exc}")
 
         verified = activated
@@ -351,7 +351,7 @@ def segment_document(
 ) -> list[BootstrapChunk]:
     try:
         text = source.read_text(encoding="utf-8", errors="replace")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
     body_start = 0

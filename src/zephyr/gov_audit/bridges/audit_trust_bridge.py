@@ -58,7 +58,7 @@ class AuditTrustBridge:
         except ImportError:
             _logger.debug("ContinuousTrust not available for agent %s", agent_id)
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.exception("Failed to get trust score for agent %s", agent_id)
             return None
 

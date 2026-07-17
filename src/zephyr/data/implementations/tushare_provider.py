@@ -71,7 +71,7 @@ class TushareProvider(DataSourceBase):
         """建立连接：读取 TUSHARE_TOKEN，初始化 pro_api。"""
         try:
             token = get_required_secret("TUSHARE_TOKEN")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise RuntimeError(f"TUSHARE_TOKEN 环境变量未设置: {e}")
         import tushare as ts
         ts.set_token(token)
@@ -162,7 +162,7 @@ class TushareProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=current.isoformat(), elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"新闻快讯 {trade_date} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
@@ -213,7 +213,7 @@ class TushareProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=current.isoformat(), elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"证券新闻 {trade_date} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],

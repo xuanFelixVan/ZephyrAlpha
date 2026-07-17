@@ -84,7 +84,7 @@ def scan_fixture_schema_drift(
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         for fixture_type, pattern in fixture_patterns:
@@ -158,7 +158,7 @@ def scan_mock_target_drift(
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         mock_matches = re.findall(
@@ -204,7 +204,7 @@ def scan_expected_output_drift(
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         for match in assert_pattern.finditer(content):

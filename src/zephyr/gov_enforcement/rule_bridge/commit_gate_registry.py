@@ -174,7 +174,7 @@ class CommitGateRegistry:
                 results.append(GateResult(
                     gate_id=spec.gate_id, passed=passed, detail=detail
                 ))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
                     "CommitGateRegistry: gate %s 异常降级为 fail-closed: %s",
                     spec.gate_id, e, exc_info=True

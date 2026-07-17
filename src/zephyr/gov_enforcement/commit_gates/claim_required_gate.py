@@ -60,7 +60,7 @@ def make_claim_required_gate() -> GateSpec:
         session_id = kwargs.get("session_id", "")
         try:
             info = gateway._registry.get_session(session_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # registry 读取异常 -> 安全降级放行（registry 故障不应卡死 commit）
             return True, ""
 

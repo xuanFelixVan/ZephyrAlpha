@@ -136,7 +136,7 @@ class ActiveTaskQueue:
         while not self._stop_event.is_set():
             try:
                 n = self._tick()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("ActiveTaskQueue tick failed", exc_info=True)
                 # 5.142.8 修复: _stats 写入加锁
                 with self._stats_lock:
@@ -161,7 +161,7 @@ class ActiveTaskQueue:
                 with self._stats_lock:
                     self._stats["dispatched"] += 1
                 logger.info("Queue dispatched %s", task_card.task_id)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("Queue failed to dispatch %s", task_card.task_id, exc_info=True)
                 # 5.142.8 修复: _stats 写入加锁
                 with self._stats_lock:

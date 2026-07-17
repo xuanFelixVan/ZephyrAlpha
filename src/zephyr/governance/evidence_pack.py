@@ -58,7 +58,7 @@ class EvidencePack:
                     encoding="utf-8",
                 )
                 os.replace(str(tmp_path), str(output_path))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 try:
                     tmp_path.unlink(missing_ok=True)
                 except OSError:
@@ -71,7 +71,7 @@ class EvidencePack:
                 "finding_count": len(findings),
                 "hash": evidence_hash,
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("EvidencePack.pack failed: %s", exc, exc_info=True)
             return None
 
@@ -84,7 +84,7 @@ class EvidencePack:
                 current_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
                 if current_hash[:16] == evidence_id:
                     return current_hash == data.get("evidence_hash", "")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return False
 
@@ -101,6 +101,6 @@ class EvidencePack:
                         "created_at": data.get("created_at", ""),
                     }
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return results

@@ -100,7 +100,7 @@ class ContextPipelineAuto:
             bus.subscribe(EventType.TASK_FAILED, self._on_task_failed)
             self._event_subscribed = True
             logger.info("ContextPipelineAuto event subscriptions registered")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("ContextPipelineAuto event subscription failed: %s", exc, exc_info=True)
 
     def _on_task_started(self, event: DomainEvent) -> None:
@@ -154,7 +154,7 @@ class ContextPipelineAuto:
             if result.assembled.errors:
                 self._kill_switch.record_error("assembled_errors")
             return result
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._kill_switch.record_error(f"pipeline_error: {exc}")
             if self.fuse_on:
                 self.auto_shutdown(reason=f"fuse triggered by error: {exc}")
@@ -178,7 +178,7 @@ class ContextPipelineAuto:
             for cb in self._cleanup_callbacks:
                 try:
                     cb()
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("ContextPipelineAuto cleanup callback failed: %s", exc, exc_info=True)
 
             self._cleanup_callbacks.clear()

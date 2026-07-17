@@ -56,7 +56,7 @@ def _scan_directory(directory: str, limit: int = 100) -> dict[str, Any]:
                     "confidence": result.confidence.value,
                 }
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             results.append({"path": rel_path, "error": str(exc)})
     summary = {}
     for r in results:
@@ -89,6 +89,6 @@ def register_tools() -> bool:
     except ImportError:
         logger.warning("MCP server not available, tools not registered")
         return False
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("MCP tool registration failed: %s", exc, exc_info=True)
         return False

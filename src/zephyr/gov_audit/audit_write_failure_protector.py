@@ -42,7 +42,7 @@ class AuditWriteProtector:
         if self._writer is None:
             try:
                 self._writer = AuditWriter()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("AuditWriteProtector._ensure_writer: AuditWriter initialization failed (%s: %s)", type(e).__name__, e, exc_info=True)
         return self._writer
 

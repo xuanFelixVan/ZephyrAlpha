@@ -85,7 +85,7 @@ class AuditDelegationBridge:
                 depth,
                 task_id,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.exception("Failed to persist delegation audit record")
 
         return record

@@ -89,7 +89,7 @@ def _maybe_grant_runtime_allowance(final_decision, mode, request_id):
     ):
         try:
             _grant_runtime_allowance(request_id=request_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 颁发失败绝不影响 LSG 主流程——最坏情况是合法调用被运行时 Gate 拦
             # （此时业务侧会收到 BareLLMCallError，需检查 runtime_interceptor 状态）
             pass
@@ -347,7 +347,7 @@ class LSGSecurityGateway:
                     blocked_by = name
                     break
 
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if name in self.FAIL_OPEN_LAYERS:
                     layer_results[name] = SecurityResult(
                         decision=SecurityDecision.ALLOW,

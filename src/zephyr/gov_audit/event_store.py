@@ -183,7 +183,7 @@ class EventStore:
                 (event_id, task_id, event_type, payload_str, timestamp, session_id, next_seq, prev_hash),
             )
             self._conn.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._conn.execute("ROLLBACK")
             raise
 

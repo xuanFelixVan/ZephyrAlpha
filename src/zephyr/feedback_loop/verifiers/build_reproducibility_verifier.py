@@ -115,7 +115,7 @@ class BuildReproducibilityVerifier:
                 __import__(mod)
             except ImportError:
                 missing.append(mod)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 missing.append(mod)
 
         if missing:

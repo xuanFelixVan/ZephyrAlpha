@@ -81,7 +81,7 @@ class IdempotencyGuard:
                 expires = datetime.fromisoformat(row[1])
                 if datetime.now(UTC) < expires:
                     return False, f"Duplicate fix: {fp} already processed as {row[0]}"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in fix_reliability", exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -103,7 +103,7 @@ class IdempotencyGuard:
                 (fp, action.action_type, action.target, status, datetime.now(UTC).isoformat(), expires),
             )
             conn.commit()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to record idempotency: %s", exc, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -210,7 +210,7 @@ class BlastRadiusEstimator:
         elif target.is_file() and target.suffix == ".py":
             try:
                 lines_estimate = len(target.read_text(encoding="utf-8").splitlines())
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in fix_reliability", exc_info=True)
         if action.level is FixLevel.L2_LLM:
             risk = "medium"

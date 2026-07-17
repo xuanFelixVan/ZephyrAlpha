@@ -270,7 +270,7 @@ class DataSourceBase(abc.ABC):
             try:
                 result = fn(*args, **kwargs)
                 return result
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 last_exc = e
                 err_name = type(e).__name__
                 err_str = str(e)

@@ -119,7 +119,7 @@ class EscalationRBACBridge:
                 reason=guard_result.reason,
                 audit_context=guard_result.audit_context or {},
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("RBAC pre_execute_check failed: %s", exc, exc_info=True)
             return RBACCheckResult(
                 passed=False,

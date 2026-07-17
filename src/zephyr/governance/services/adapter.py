@@ -157,7 +157,7 @@ def escalate_if_needed(
             circuit_state=circuit,
         )
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("escalation check failed: %s", exc, exc_info=True)
         return EscalationDecision(
             operation=operation_type,
@@ -233,7 +233,7 @@ def auto_subscribe_eventbus() -> None:
                     description=description,
                     owner_id=task_id,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("auto_subscribe_eventbus._on_event: event handling failed (%s: %s)", type(e).__name__, e, exc_info=True)
 
         for et in (EventType.GATE_FAILED, EventType.SCOPE_DRIFT, EventType.TASK_FAILED):
@@ -243,5 +243,5 @@ def auto_subscribe_eventbus() -> None:
         _logger.info("EscalationEngine auto-subscribed to EventBus (GATE_FAILED, SCOPE_DRIFT, TASK_FAILED)")
     except ImportError:
         _logger.debug("EventBus not available — escalation auto-subscribe skipped")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("EventBus auto-subscribe failed — escalation remains manual", exc_info=True)

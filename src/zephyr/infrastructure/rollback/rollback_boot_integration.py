@@ -71,7 +71,7 @@ class RollbackBootIntegration:
 
             hook_registry.register(_on_boot, priority=10, name=self.HOOK_NAME)
             logger.info("RollbackBootIntegration registered to boot_hooks as '%s'", self.HOOK_NAME)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to register rollback boot hook: %s", e, exc_info=True)
 
     def on_startup(self) -> BootResult:
@@ -89,7 +89,7 @@ class RollbackBootIntegration:
                 logger.warning("RollbackWAL has incomplete entries from previous session")
             details["wal_initialized"] = True
             details["wal_incomplete_found"] = bool(incomplete)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"WAL init failed: {e}")
             logger.error("RollbackWAL initialization failed: %s", e, exc_info=True)
 
@@ -98,7 +98,7 @@ class RollbackBootIntegration:
             from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
             self._verifier = RollbackVerifier(project_root=self._project_root)
             details["verifier_initialized"] = True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"Verifier init failed: {e}")
             logger.error("RollbackVerifier initialization failed: %s", e, exc_info=True)
 
@@ -122,7 +122,7 @@ class RollbackBootIntegration:
                 if hasattr(self._wal, "flush"):
                     self._wal.flush()
                 details["wal_flushed"] = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"WAL flush failed: {e}")
                 logger.error("RollbackWAL flush failed: %s", e, exc_info=True)
 
@@ -133,7 +133,7 @@ class RollbackBootIntegration:
                 import shutil
                 shutil.rmtree(in_flight_dir, ignore_errors=True)
                 details["in_flight_cleaned"] = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"In-flight cleanup failed: {e}")
 
         # 3. 释放回滚锁
@@ -143,7 +143,7 @@ class RollbackBootIntegration:
             if hasattr(lock, "force_release_all"):
                 lock.force_release_all()
             details["lock_released"] = True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"Lock release failed: {e}")
 
         return BootResult(
@@ -186,7 +186,7 @@ def subscribe_eventbus() -> None:
             "RollbackBootIntegration: subscribed to 4 events "
             "(pipeline_failed/mcp_call_failed/kill_switch_triggered/rollback_completed)"
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -213,7 +213,7 @@ def _on_rollback_completed(payload: object) -> None:
         scheduler = RollbackScheduler(project_root=Path.cwd())
         scheduler.schedule_wal_gc()
         logger.debug("WAL GC triggered by rollback_completed event")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("WAL GC on rollback_completed failed: %s", e, exc_info=True)
 
 
@@ -265,5 +265,5 @@ def _trigger_rollback(payload: object, source: str) -> None:
                     "manual intervention needed",
                     source,
                 )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("Rollback trigger failed for '%s': %s", source, e, exc_info=True)

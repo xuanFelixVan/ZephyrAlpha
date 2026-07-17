@@ -61,7 +61,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe("fix_completed", _on_fix_completed)
         _subscribed = True
         logger.info("ValidatorEventBridge: subscribed to fix_completed event")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("ValidatorEventBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -73,7 +73,7 @@ def _get_validator() -> object:
             from zephyr.security.adversarial_validation.validator import RedBlueValidator
 
             _validator_instance = RedBlueValidator()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("ValidatorEventBridge: failed to instantiate validator: %s", e, exc_info=True)
             return None
     return _validator_instance
@@ -115,5 +115,5 @@ def _on_fix_completed(payload: object) -> None:
             getattr(report, "blocked", None),
             getattr(report, "bypassed", None),
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("ValidatorEventBridge: _on_fix_completed failed: %s", e, exc_info=True)
