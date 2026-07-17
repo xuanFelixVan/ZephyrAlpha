@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "2.2.1"
 generation: 17
 layer: L1_foundation
 layer_name: 跨层基础设施
@@ -1253,6 +1253,69 @@ STEP 3: 拆分后验证
 | 6 | Gate 注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 门禁注册 | 修改 |
 | 7 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 脚本注册 | 修改 |
 | 8 | Contract Registry | `D:\ZephyrAlpha\src\zephyr\orchestrator\contract_registry.py` | 契约注册 | 修改 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/security/adversarial_validation/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/__main__.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/adversarial_validation/ai_attack_generator.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/async_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/attack_registry.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/blast_radius.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/bypass_recorder.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/circuit_breaker.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/cleanup.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/cli.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/cold_start.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/commit_trigger.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/constitution_engine.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/constitution_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/convergence_checker.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/defense_runner.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/game_day_runner.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/game_day_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/injection_engine.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/mcp_endpoints.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/models.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/scenario_loader.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/steady_state.py` | ✅ 已实现 | |
+| `src/zephyr/security/adversarial_validation/validator.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/audit/test_audit_red_blue_e2e.py` | ✅ 已实现 | |
+| `tests/safety/test_commit_trigger.py` | ✅ 已实现 | |
+| `tests/safety/test_constitution_engine.py` | ✅ 已实现 | |
+| `tests/safety/test_phase_manager_integration.py` | ✅ 已实现 | |
+| `tests/safety/test_red_blue_validator.py` | ✅ 已实现 | |
+| `tests/safety/test_red_blue_validator_tests.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

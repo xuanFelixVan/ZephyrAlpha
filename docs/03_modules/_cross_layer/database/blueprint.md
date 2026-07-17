@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/db
 title: "Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位"
 doc_type: blueprint
 status: Active
-version: "4.3.2"
+version: "4.3.3"
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -51,7 +51,7 @@ build_status: planned
 
 # Database 集成蓝图 — SQLite+DuckDB 核心运营 + v3.0 PostgreSQL容量升级
 
-> module_id: SH-DB-001 | version: 4.3.2 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
+> module_id: SH-DB-001 | version: 4.3.3 | status: Active | layer: cross_layer | belongs_to: MOD-MASTER_BLUEPRINT
 > actual_disk_path: `src/zephyr/governance/persistence/` | generation: 3 | construction_progress: completed
 > **DW-045 拆分完成**。详细内容见子蓝图。本文档为集成入口。
 
@@ -386,53 +386,26 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 数据库——task_repo+sqlite_schema+ATM+olap_engine 均已实现（012A 完整）
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/db/atomic_transaction_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/audit_schema.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/base_repo.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/circuit_breaker_repo.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/circuit_breaker_types.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/database_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/gate_repo.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/olap_engine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/query.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/query_metrics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/sqlite_schema.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/task_repo.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/db/transition.py` | ✅ 已实现 | |
-| `src/zephyr/governance/persistence/database_service.py` | ✅ 已实现 | governance版DatabaseService（连接管理+健康检查，继承DatabaseCRUDMixin，P-PLAN-1双连接） |
-| `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | infrastructure版DatabaseService（连接管理+ClickHouse+健康检查，继承DatabaseCRUDMixin，P-PLAN-2统一row_factory） |
-| `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | DatabaseCRUDMixin（共享9个CRUD方法+_TASK_COLUMNS单一真源，被两个DatabaseService类继承，P-PLAN专项工程抽取消除约100行重复） |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/test_task_repo_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_sqlite_schema_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_atomic_transaction_manager_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_olap_engine_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_database_manager_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_audit_schema_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_query_metrics_unit.py` | ✅ 已实现 | 单元测试 |
-| `tests/test_circuit_breaker_unit.py` | ✅ 已实现 | 单元测试（含 circuit_breaker_repo） |
-| `tests/db/test_task_repo_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_sqlite_schema_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_atomic_transaction_manager_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_olap_engine_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_audit_schema_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_database_manager_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_query_metrics_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_circuit_breaker_repo_db.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_gate_repo.py` | ✅ 已实现 | DB 集成测试 |
-| `tests/db/test_dm400_stale_task_fix.py` | ✅ 已实现 | DB 集成测试 |
+| `src/zephyr/gov_enforcement/rule_enforcement/dlq_retry_policy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/depgraph_schema.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/database_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/database_service.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/dataflowgraph_schema.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/depgraph_reader.py` | ✅ 已实现 | |
+| `src/zephyr/governance/persistence/sqlite_schema.py` | ✅ 已实现 | |
+| `src/zephyr/shared/database/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/database/database_crud_mixin.py` | ✅ 已实现 | |
+| `src/zephyr/trading/autopilot.py` | ✅ 已实现 | |
+| `src/zephyr/trading/conductor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -442,8 +415,10 @@ v3.0: 脚本执行器 ──→ get_depgraph_pg_connection() ──→ depgraph 
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
+- 所有路径相对于 `D:\ZephyrAlpha\\`
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

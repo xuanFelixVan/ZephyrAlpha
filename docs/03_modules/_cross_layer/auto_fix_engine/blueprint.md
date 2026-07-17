@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/auto_fix_engine
 title: "Auto Fix Engine 蓝图 — 自动修复引擎·模板化修复执行"
 doc_type: blueprint
 status: Active
-version: "5.1.0"
+version: "5.1.1"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -62,7 +62,7 @@ build_status: planned
 
 本蓝图描述 AutoFixEngine——ZephyrAlpha 的自动修复引擎。它解决了审计发现问题到自动修复执行的闭环问题。核心职责包括：三通道修复管道（结构→模板化100%确定 / 语义→LLM Bridge 95~98%置信 / 行为→Block+Alert永不自动修复）、8状态修复生命周期、WAL原子修复保证、病因修复法九阶链。当前规模 ~51模块/~268脚本/单Session，目标容量 1500模块/10000脚本/100 AI并发。上游依赖 DriftDetector(MOD-INF-023)/OrphanJudge(MOD-INF-029)/SemanticAuditor(MOD-INF-028) 提供审计发现，下游被 AuditOrchestrator(MOD-INF-027) 消费修复结果。
 
-> module_id: MOD-INF-031 | version: 5.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-INF-031 | version: 5.1.1 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/auto-fix-engine/ | generation: 5 | construction_progress: design_only
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -1260,6 +1260,99 @@ ConvergenceController：RedBlue 对抗验证→全部 GREEN→收敛检测→N �
 | 非关键补充（风险缓解、后果描述） | AI 可自主修改 |
 | 容量升级方案新增（§17） | 需 Owner 审批 |
 | 三通道修复管道映射变更 | 需 Owner 审批 + 通知 MOD-INF-027/028/029/030 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/infrastructure/auto_fix_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/alignment_syncer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/all_completer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/batch_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/compliance_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/config_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/dep_version_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/drift_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/engine.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/escalation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/event_hooks.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_budget.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_diff.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_health_check.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_pattern_miner.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_reliability.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_report.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_safety.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/fix_scheduler.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/import_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/interrupt_guard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/llm_fix_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/models.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/scaffold_registrar.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/self_heal_agent.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/shadow_workspace.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/state_machine.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_fix_engine/zombie_cleaner.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/automation/test_auto_fix_autopilot.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_fix_engine.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_fix_red_blue.py` | ✅ 已实现 | |
+| `tests/config/test_config_fixer.py` | ✅ 已实现 | |
+| `tests/drift/test_drift_fixer.py` | ✅ 已实现 | |
+| `tests/escalation/test_escalation_bridge.py` | ✅ 已实现 | |
+| `tests/event/test_event_hooks.py` | ✅ 已实现 | |
+| `tests/fix/test_alignment_syncer.py` | ✅ 已实现 | |
+| `tests/fix/test_all_completer.py` | ✅ 已实现 | |
+| `tests/fix/test_compliance_auditor.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_budget.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_diff.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_health_check.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_pattern_miner.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_reliability.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_report.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_safety.py` | ✅ 已实现 | |
+| `tests/fix/test_fix_scheduler.py` | ✅ 已实现 | |
+| `tests/fix/test_import_fixer.py` | ✅ 已实现 | |
+| `tests/llm_security/test_batch_fixer.py` | ✅ 已实现 | |
+| `tests/llm_security/test_dedup_extractor.py` | ✅ 已实现 | |
+| `tests/llm_security/test_dep_version_fixer.py` | ✅ 已实现 | |
+| `tests/llm_security/test_engine_root.py` | ✅ 已实现 | |
+| `tests/llm_security/test_interrupt_guard.py` | ✅ 已实现 | |
+| `tests/llm_security/test_llm_fix_adapter.py` | ✅ 已实现 | |
+| `tests/llm_security/test_models_root.py` | ✅ 已实现 | |
+| `tests/llm_security/test_scaffold_registrar.py` | ✅ 已实现 | |
+| `tests/llm_security/test_shadow_workspace.py` | ✅ 已实现 | |
+| `tests/llm_security/test_zombie_cleaner.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_heal_agent.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

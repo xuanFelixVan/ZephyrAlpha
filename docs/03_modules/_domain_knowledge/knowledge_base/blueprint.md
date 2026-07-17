@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_kb
 title: "知识库系统蓝图"
 doc_type: blueprint
 status: Active
-version: "0.12.1"
+version: "0.12.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -2743,7 +2743,7 @@ def list_recent_batches(n: int = 10) -> list[KETransaction]:
 **自动每日 SQLite 备份**：
 
 ```python
-# 追加到：src/zephyr/observability/feedback_loop/scheduler.py（APScheduler）
+# 追加到：src/zephyr/feedback_loop/scheduler.py（APScheduler）
 {
     "daily_sqlite_backup": {
         "trigger": "cron", "hour": 3, "minute": 0,
@@ -4483,71 +4483,80 @@ STEP 3: 拆分后验证
 
 ## 7. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 知识库——API骨架已实现，G1-G5门禁待beta
 
 ### 7.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/data/knowledge_management/kb/activate.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/analyze.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/batch_ingest.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/bootstrap.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/chromadb_init.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/embedding_migrate.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/extract.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/freeze.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/graph_validator.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/ingest.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/integrity.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/kb_gate_task.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/kb_repo.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/ke_tombstone.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/load_bearing.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/migration/embedding_migrate.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/migration/kb_gate_task.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/activate.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/analyze.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/batch_ingest.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/extract.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/ingest.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/pipeline/triage.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/quiet_period_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/reranker.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/safety_brake.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/self_test.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/storage/chromadb_init.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/storage/graph_validator.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/storage/kb_repo.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/storage/unified_memory_api.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/triage.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/unified_memory_api.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/verify.py` | ✅ 已实现 | |
-| `src/zephyr/data/knowledge_management/kb/vms_memory_backend.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/_backend_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/batch_ingest.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/bootstrap.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/citation_walker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/embedding_migrate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/embedding_version_lock.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/filing_nlp_engine/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/fragmentation_index.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/freeze.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/graph_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/ingest.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/integrity.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/kb_engine/kb_gate_task.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/kb_gate_task.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/ke_justification.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/ke_tombstone.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/knowledge_distiller.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/load_bearing.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/migration/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/migration/kb_gate_task.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/pattern_library.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/quiet_period_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/reranker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/safety_brake.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/self_test.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/sentiment_engine/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/storage/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/storage/_backend_protocol.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/storage/unified_memory_api.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/supply_chain_graph_engine/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_kb/unified_memory_api.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/verify.py` | ✅ 已实现 | |
+| `src/zephyr/gov_kb/vms_memory_backend.py` | ✅ 已实现 | |
+| `src/zephyr/governance/escalation/triage.py` | ✅ 已实现 | |
 
 ### 7.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_ingest.py` | ✅ 已实现 | |
-| `tests/test_triage.py` | ✅ 已实现 | |
-| `tests/test_analyze.py` | ✅ 已实现 | |
-| `tests/test_activate.py` | ✅ 已实现 | |
-| `tests/test_extract.py` | ✅ 已实现 | |
-| `tests/test_batch_ingest.py` | ✅ 已实现 | |
-| `tests/test_kb_repo.py` | ✅ 已实现 | |
-| `tests/test_graph_validator.py` | ✅ 已实现 | |
-| `tests/test_unified_memory_api.py` | ✅ 已实现 | |
-| `tests/test_embedding_migrate.py` | ✅ 已实现 | |
-| `tests/test_knowledge_activation_rate.py` | ✅ 已实现 | |
-
-### 7.3 配置文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `config/embedding_model_registry.yaml` | ✅ 已实现 | |
+| `tests/governance/compliance/test_load_bearing.py` | ✅ 已实现 | |
+| `tests/governance/compliance/test_quiet_period_monitor.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_activate.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_analyze.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_batch_ingest.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_bootstrap.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_embedding_migrate.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_extract.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_freeze.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_gate_task.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_graph_validator.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_ingest.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_integrity.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_migration_embedding.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_migration_gate.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_pipeline_activate.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_reranker.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_self_test.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_storage_backend.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_triage.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_unified_memory_api.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_verify.py` | ✅ 已实现 | |
+| `tests/kb/test_kb_vms_memory_backend.py` | ✅ 已实现 | |
+| `tests/knowledge_engine/test_ke_tombstone.py` | ✅ 已实现 | |
+| `tests/safety/test_safety_brake.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

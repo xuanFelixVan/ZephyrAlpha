@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.0"
+version: "1.1.1"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7107,6 +7107,160 @@ class PermissionHooks:
 | G-CT-004 | 消费方（承接 Escalation 的权限策略） | MOD-INF-022 |
 | G-CT-007 | 消费方（Agent Spec 与权限绑定） | MOD-INF-019 |
 | G-CT-008 | 消费方（A2A 身份与隔离） | MOD-INF-025 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/security/access_control/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/adversarial_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/agent_creation_policy.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/auto_maintenance.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/blueprint_fidelity.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/bootstrap_superadmin.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/cache_invalidation.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/canary_rollout_manager.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/cold_start_lock.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/cross_cutting.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/derive_rbac_roles.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/detectors/context_drift_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/detectors/cross_session_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/detectors/false_completion_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/detectors/multi_agent_collusion_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/dry_run.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/emergency_override.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/engine_degradation.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/exceptions.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/genesis_bootstrap.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guard_layers.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/abac_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/cybersec_2026_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/input_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/memory_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/memory_provenance_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/native_api_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/novel_attack_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/output_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/path_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/permission_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/rbac_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/replay_attack_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/rule_injection_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/sequence_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/toctou_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/vibe_coding_guard.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/identity.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/immutable_core.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/integration.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/integrity_self_check.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/intent_binder.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/kill_switch.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/monotonic_clock.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/non_repudiation.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/observability.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/permission_hooks.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/risk_mitigation.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/verifiers/contract_verifier.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/a2a/test_a2a_check.py` | ✅ 已实现 | |
+| `tests/agent/test_agent_creation_policy.py` | ✅ 已实现 | |
+| `tests/agent_rbac/conftest.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_abac_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_adversarial_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_adversarial_resilience.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_cross_model_consistency.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_crosscut_d.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_cybersec_2026.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_decision_explainer_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_decisions.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_derive_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_dry_run_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_engine_degradation_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_enhanced_security.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_exceptions_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_a.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_b.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_c.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_guard_layers_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_identity.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_immutable_core_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_input_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integration_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integration_root.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integrity_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_intent_binder_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_kill_switch_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_novel_attack.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_observability_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_output_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_permission_guard.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_permissions.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_post_action.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_rbac_auto_lifecycle.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_rbac_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_redteam_adversarial.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_risk_mitigation_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_sequence_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_toctou_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_vibe_coding.py` | ✅ 已实现 | |
+| `tests/audit/test_audit_log_guard.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_maintenance.py` | ✅ 已实现 | |
+| `tests/blueprint/test_blueprint_fidelity.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_rollout_manager.py` | ✅ 已实现 | |
+| `tests/capability/test_capability_check.py` | ✅ 已实现 | |
+| `tests/cold/test_cold_start_lock.py` | ✅ 已实现 | |
+| `tests/context/test_context_drift_detector.py` | ✅ 已实现 | |
+| `tests/contracts/test_abac_guard_root.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_verifier.py` | ✅ 已实现 | |
+| `tests/contracts/test_rbac_guard_root.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_cutting.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_session_detector.py` | ✅ 已实现 | |
+| `tests/decision/test_decision_explainer_root.py` | ✅ 已实现 | |
+| `tests/decision/test_decision_registry.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_auditor.py` | ✅ 已实现 | |
+| `tests/escalation/test_escalation_handler.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_a2a_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_approver_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_bootstrap_superadmin.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_capability_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_contracts.py` | ✅ 已实现 | |
+| `tests/guard/test_guard_layers_root.py` | ✅ 已实现 | |
+| `tests/intent/test_intent_binder_root.py` | ✅ 已实现 | |
+| `tests/memory/test_memory_guard.py` | ✅ 已实现 | |
+| `tests/memory/test_memory_provenance_guard.py` | ✅ 已实现 | |
+| `tests/multi/test_multi_agent_collusion_detector.py` | ✅ 已实现 | |
+| `tests/observability/test_observability_root.py` | ✅ 已实现 | |
+| `tests/path/test_path_guard.py` | ✅ 已实现 | |
+| `tests/rollback/test_rollback_sandbox.py` | ✅ 已实现 | |
+| `tests/rule/test_rule_injection_guard.py` | ✅ 已实现 | |
+| `tests/session/test_session_lifecycle.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

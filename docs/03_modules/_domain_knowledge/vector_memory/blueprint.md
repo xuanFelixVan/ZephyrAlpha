@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.1"
+version: "0.12.2"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1451,24 +1451,29 @@ class FeedbackEntry(BaseModel):
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 向量记忆——仅目录+__init__.py docstring
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/integration/vector_memory/bm25_index.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_analysis.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_core.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_drift.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_infrastructure.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_scanners.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/bridge_layer.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/cache_layer.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/vector_memory/chunk_strategy_router.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/collection_manager.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/collection_schemas.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/context_ingest.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/cross_collection_retriever.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/delegated_vector_memory.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/design_principles.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/embedding_router.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/vector_memory/faiss_collection_manager.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/hybrid_retriever.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/in_memory_fake_vms.py` | ✅ 已实现 | |
@@ -1476,17 +1481,24 @@ class FeedbackEntry(BaseModel):
 | `src/zephyr/integration/vector_memory/in_process_vector_memory.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/index_health_monitor.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/interface.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/local_model_scheduler.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/ollama_chat.py` | ⚠️ 骨架 | |
-| `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/vector_memory/provenance_enforcer.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/retrieval_feedback.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vector_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/integration/vector_memory/vms_config.yaml` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vector_writer.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vms_errors.py` | ✅ 已实现 | |
 | `src/zephyr/integration/vector_memory/vms_schemas.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/kb/test_vector_memory_root.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_adversarial_hijack.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_adversarial_injection.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_automation.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -1501,6 +1513,7 @@ class FeedbackEntry(BaseModel):
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

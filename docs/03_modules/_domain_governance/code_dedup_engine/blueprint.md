@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance/code_dedup_engine
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.0
+version: 0.15.1
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -1738,16 +1738,159 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> AGENTS.md §6.14 蓝图-代码同步强制约定。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 68 个 .py 文件全部已实现，完整清单见 §0.1。
 
 ### 1.1 源码文件
 
-> 68 个 .py 文件全部已实现，完整清单见 §0.1。
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/gov_code_quality/code_dedup/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/annotations.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/ast_comparator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/atomic_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/auto_fixer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/behavioral_sampler.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/behavioral_trust_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/cache_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/canary_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/canary_register.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/cli.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/code_analyzer_runner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/code_simulator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/config.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/contract_consistency_checker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/cross_boundary_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/dead_module_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/debt_projector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/decision_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/degradation.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/diff_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/doom_loop_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/exit_codes.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/extraction_safety.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/false_negative_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/fifteen_dimension_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/file_creator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/function_discovery.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/grandfather_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/health_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/integration_hub.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/integrations.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/micro_clone_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/mock_duplicate_generator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/monoculture_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/observation_window_guard.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/path_index_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/phase_executor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/policy_tree_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/pre_apply_integrity_gate.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/prioritizer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/recovery_manifest_writer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/report.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/risk_mitigator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/self_scanner.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/sensitivity_sweeper.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/shadow_trust_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/shadow_verifier.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/shared_evolver.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/shared_lifecycle_manager.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/signature_matcher.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/simplicity_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/ssot_registrar.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/stale_shared_detector.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/success_validator.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/symbol_index.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/thematic_clusterer.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/blind_spot_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/consequence_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/hotspot_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/import_surface_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/question_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/trackers/risk_mitigation_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/gov_code_quality/code_dedup/verifier.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/self_benchmark.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/automation/test_auto_fixer.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_register.py` | ✅ 已实现 | |
+| `tests/config/test_config_root.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_consistency_checker.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_boundary_detector.py` | ✅ 已实现 | |
+| `tests/decision/test_decision_auditor.py` | ✅ 已实现 | |
+| `tests/file/test_file_creator.py` | ✅ 已实现 | |
+| `tests/governance/adversarial/test_shadow_verifier.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_false_negative_auditor.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_fifteen_dimension_auditor.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_debt_projector.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_degradation.py` | ✅ 已实现 | |
+| `tests/governance/code_dedup/test_atomic_fixer.py` | ✅ 已实现 | |
+| `tests/governance/code_dedup/test_grandfather_manager.py` | ✅ 已实现 | |
+| `tests/governance/code_dedup/test_policy_tree_validator.py` | ✅ 已实现 | |
+| `tests/governance/code_dedup/test_pre_apply_integrity_gate.py` | ✅ 已实现 | |
+| `tests/governance/code_dedup/test_ssot_registrar.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_ast_comparator.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_code_analyzer_runner.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_code_simulator.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_function_discovery.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_simplicity_auditor.py` | ✅ 已实现 | |
+| `tests/governance/compliance/test_thematic_clusterer.py` | ✅ 已实现 | |
+| `tests/governance/data_layer/test_cache_manager.py` | ✅ 已实现 | |
+| `tests/governance/data_layer/test_symbol_index.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_behavioral_sampler.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_behavioral_trust_checker.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_consequence_tracker.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_shadow_trust_validator.py` | ✅ 已实现 | |
+| `tests/governance/drift/test_dead_module_detector.py` | ✅ 已实现 | |
+| `tests/governance/drift/test_diff_detector.py` | ✅ 已实现 | |
+| `tests/governance/drift/test_micro_clone_detector.py` | ✅ 已实现 | |
+| `tests/governance/drift/test_stale_shared_detector.py` | ✅ 已实现 | |
+| `tests/governance/governance_misc/test_annotations.py` | ✅ 已实现 | |
+| `tests/governance/governance_misc/test_mock_duplicate_generator.py` | ✅ 已实现 | |
+| `tests/governance/governance_misc/test_question_tracker.py` | ✅ 已实现 | |
+| `tests/governance/integration/test_integration_hub.py` | ✅ 已实现 | |
+| `tests/governance/integration/test_integrations.py` | ✅ 已实现 | |
+| `tests/governance/observability/test_hotspot_tracker.py` | ✅ 已实现 | |
+| `tests/governance/observability/test_report.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_exit_codes.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_health_monitor.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_success_validator.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_verifier.py` | ✅ 已实现 | |
+| `tests/governance/orchestrator/test_prioritizer.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_doom_loop_guard.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_observation_window_guard.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_recovery_manifest_writer.py` | ✅ 已实现 | |
+| `tests/governance/security/test_extraction_safety.py` | ✅ 已实现 | |
+| `tests/governance/security/test_import_surface_tracker.py` | ✅ 已实现 | |
+| `tests/governance/security/test_monoculture_guard.py` | ✅ 已实现 | |
+| `tests/governance/security/test_sensitivity_sweeper.py` | ✅ 已实现 | |
+| `tests/governance/security/test_signature_matcher.py` | ✅ 已实现 | |
+| `tests/governance/shared/test_shared_evolver.py` | ✅ 已实现 | |
+| `tests/governance/shared/test_shared_lifecycle_manager.py` | ✅ 已实现 | |
+| `tests/path/test_path_index_validator.py` | ✅ 已实现 | |
+| `tests/risk/test_risk_mitigation_tracker.py` | ✅ 已实现 | |
+| `tests/risk/test_risk_mitigator.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_scanner.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
-读取顺序：§1(已实现清单) → 模块分解(职责+自治权限) → 施工Phase(下一步)
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 
 ## Consumers

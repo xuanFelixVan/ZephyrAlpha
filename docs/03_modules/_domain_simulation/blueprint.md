@@ -4,7 +4,7 @@ submodule_path: src/zephyr/simulation
 title: "Experimentation Core 蓝图+施工图 — 实验管理平台"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.1.1"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -54,7 +54,7 @@ design_maturity: prototype
 
 > ✅ **业务层已开放·可施工** — 本蓝图所属 实验 实验管线层已解除 C 轨 T2-deferred 状态。Owner 已解除占位禁令，基础设施已就绪，AI 可自主实施本层业务代码。
 
-> module_id: MOD-L13-001 | version: 2.1.0 | status: active | domain: simulation
+> module_id: MOD-L13-001 | version: 2.1.1 | status: active | domain: simulation
 > actual_disk_path: src/zephyr/simulation/ | generation: 2 | construction_progress: partially_implemented
 
 # Experimentation Core 蓝图+施工图 — 实验管理平台
@@ -919,6 +919,46 @@ class ExperimentMetric:
 |---|---------|------------|------|---------|
 | 1 | 实验层代码 | `D:\ZephyrAlpha\src\zephyr\simulation\` | 修改 | 蓝图描述的核心代码 |
 | 2 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_domain_simulation\blueprint.md` | 修改 | 本文件 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/governance/engine/pipeline_base.py` | ✅ 已实现 | |
+| `src/zephyr/governance/implementations/default_experiment_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/simulation/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/simulation/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/simulation/implementations/default_experiment_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/simulation/pipeline_base.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/ml_experiment/test_l13_experimentation.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/access_control/orphan_judge
 title: "Orphan Judge 蓝图 — 孤儿判定器·三决策树处置"
 doc_type: blueprint
 status: Active
-version: "2.1.0"
+version: "2.1.1"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -114,7 +114,7 @@ END_REQUIRED_SECTIONS
 
 # Orphan Judge 蓝图 — 孤儿判定器·三决策树处置
 
-> module_id: MOD-INF-029 | version: 2.1.0 | status: Active | layer: cross_layer
+> module_id: MOD-INF-029 | version: 2.1.1 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/orphan-judge/ | generation: 3 | construction_progress: scaffold
 
 ## 概述
@@ -1417,6 +1417,66 @@ STEP 3: 拆分后验证
 | 14 | 中央注册表 | `D:\ZephyrAlpha\docs\registry_of_registries.yaml` | 读取 | 只读 |
 | 15 | 脚本清单 | `D:\ZephyrAlpha\scripts\script-manifest.yaml` | 读取 | 只读 |
 | 16 | Gate注册表 | `D:\ZephyrAlpha\src\zephyr\gates\_registry.yaml` | 读取 | 只读 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/security/access_control/orphan_judge/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/__main__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/cascade_analyzer.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/config_loader.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/db.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/decision_table.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/deprecation_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/drift_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/duplicate_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/escalation_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/feedback_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/judge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/kb_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/mcp_integration.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/models.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/orphan_collector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/orphan_detector.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/rbac_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/reference_graph_engine.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/registration_checker.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/report_generator.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/safety_fence.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/standalone_evaluator.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/swid_tag.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/orphan_judge/unique_analyzer.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/audit/test_audit_orphan_judge_e2e.py` | ✅ 已实现 | |
+| `tests/llm_security/test_orphan_detector.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

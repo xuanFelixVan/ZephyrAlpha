@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.39"
+version: "0.3.40"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -788,14 +788,16 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 
 ## 1. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > MCP服务器——task_manager decompose_blueprint已实现
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/integration/mcp/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/_base_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/audit_logger.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/blueprint_search_server.py` | ✅ 已实现 | |
@@ -813,15 +815,19 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 | `src/zephyr/integration/mcp/sentinel_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/task_manager_server.py` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/telemetry_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp/tool-contracts.yaml` | ✅ 已实现 | |
 | `src/zephyr/integration/mcp/vector_memory_server.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_mcp_servers.py` | ✅ 已实现 | |
-| `tests/integration/test_mcp_e2e.py` | ✅ 已实现 | |
+| `tests/a2a/test_mcp.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_health_check_recovery.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_idle_timeout.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_mcp_signal_shutdown.py` | ✅ 已实现 | |
+| `tests/io/test_mcp_launcher.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -836,6 +842,7 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/知识查询/门禁
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

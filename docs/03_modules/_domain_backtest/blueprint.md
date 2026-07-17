@@ -40,7 +40,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.0
+version: 1.3.1
 responsibility_domain: 
 design_maturity: design
 build_status: generated
@@ -932,3 +932,58 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | src/zephyr/backtest/implementations/event_driven_engine.py | 待创建 | MVP Phase 2 |
 | architecture_model/contracts/cross_layer_contracts.yaml | 已修改 | 新增CTR-P1-016 |
 | architecture_model/events/domain_events.yaml | 已修改 | 新增E-BT-01/02/03 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/backtest/core/data_handler.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/engine_base.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/matching_engine.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/matching_logic.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/overfitting_detector.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/pit_manager.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/portfolio.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/tick_replay.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/core/walk_forward.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/implementations/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/implementations/event_driven_engine.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/implementations/vectorized_engine.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/io/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/io/backtest_result_sink.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/io/decisiongraph_adapter.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/io/result_repository.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
+| `tests/test_event_driven_engine.py` | ✅ 已实现 | |
+| `tests/test_matching_engine.py` | ✅ 已实现 | |
+| `tests/test_tick_replay_data_handler.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

@@ -70,11 +70,11 @@ AUTO_GUESS_VIOLATION_RE = re.compile(
     re.IGNORECASE,
 )
 MOJIBAKE_MARKERS = [
-    "\u9516\u65a4\u62f7",  # 锟斤拷 — classic GBK mojibake (impossible in normal text)
-    "\u93d4\u63d2\u53c2",  # 镹插叆 — extremely rare in normal text
-    "\u93d4\u659c\u7280\u6362",  # 镹斜犺换
-    "\u93d4\u529c\u00b0\u20ac",  # 镹宁°€
-    "\u94c6\u003f",  # 锆?
+    "\u951f\u65a4\u62f7",  # kun-jin-kao — classic GBK mojibake (impossible in normal text)（治本2026-07-17：原 \u9516 为 typo，正确 \u951f，错字致经典标记从未命中；与 gate_engine._MOJIBAKE_MARKERS 保持一致）
+    "\u93d4\u63d2\u53c2",  # extremely rare in normal text
+    "\u93d4\u659c\u7280\u6362",
+    "\u93d4\u529c\u00b0\u20ac",
+    "\u94c6?",
 ]
 
 
@@ -139,8 +139,15 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
                         # If partial round-trip produces ANY common CJK, it's mojibake
                         # because normal Chinese -> GBK -> UTF-8 should fail completely
                         # (not produce partial valid CJK)
-                        partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "\ufffd")
-                        if partial_cjk >= 3:
+                        partial_cjk = sum(1 for c in partial_rt if 0x4E00 <= ord(c) <= 0x9FFF and c != "�")
+                        # 治本（2026-07-17 假阳性根除，与 gate_engine._check_gbk_roundtrip_clean 一致）：
+                        # 原判据「容错解码出 ≥3 CJK 即判」对正常中文短段不稳定（GBK 字节流
+                        # 按 UTF-8 容错解码碰巧产生 CJK，实测 task_system/blueprint.md
+                        # 「语义化版本存储」3 段误报）。分离特征是 U+FFFD 占比：正常中文
+                        # GBK 字节流在 UTF-8 视角下大概率非法 → 占比高（实测 0.58-0.70）；
+                        # 真 mojibake 字节流基本合法 → 占比低（实测 0.09）。阈值 0.5 安全分离。
+                        fffd_ratio = partial_rt.count("�") / len(partial_rt) if partial_rt else 1.0
+                        if partial_cjk >= 3 and fffd_ratio < 0.5:
                             return True
                     except Exception:
                         pass

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/semantic_auditor
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.0"
+version: "6.1.1"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -91,7 +91,7 @@ build_status: planned
 
 # Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
 
-> module_id: MOD-INF-028 | version: 6.1.0 | status: active | layer: cross_layer
+> module_id: MOD-INF-028 | version: 6.1.1 | status: active | layer: cross_layer
 > actual_disk_path: `D:\ZephyrAlpha\src\zephyr\semantic-auditor\` | generation: 5 | construction_progress: partially_implemented
 
 ## 概述
@@ -1050,6 +1050,63 @@ STEP 3: 拆分后验证
 | 4 | 蓝图文件 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\semantic-auditor\blueprint.md` | 修改 | 本次升级 |
 | 5 | Agent Skill | `D:\ZephyrAlpha\src\zephyr\agent-spec\skills\domain\semantic-auditor.md` | 新建 | 渐进式披露 |
 | 6 | 审计数据目录 | `D:\ZephyrAlpha\data\semantic-auditor\` | 新建 | 报告/checkpoint/日志 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/governance/resilience_governance/blast_radius.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/alignment_engine.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/compliance_map.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/feedback_self_audit.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/fix_prioritizer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/fix_result_prioritizer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/issue_aggregator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/kb_gate.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/llm_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/models.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/privacy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/reference_extractor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/safety_boundary.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/self_healer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/self_health.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/spec_auditor.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/trigger_engine.py` | ✅ 已实现 | |
+| `src/zephyr/integration/llm_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/bm25_index.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/audit/test_audit_self_healer_e2e.py` | ✅ 已实现 | |
+| `tests/semantic_auditor/test_blast_radius.py` | ✅ 已实现 | |
+| `tests/semantic_auditor/test_blast_radius_red_team.py` | ✅ 已实现 | |
+| `tests/semantic_auditor/test_semantic_auditor.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 

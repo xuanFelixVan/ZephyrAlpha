@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.0
+version: 5.5.1
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -1444,161 +1444,40 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 ## 14. 已实现代码完整路径索引
 
-> **AGENTS.md §6.14 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 脚本系统——第三条生产线，scaffold MVP已交付
 
 ### 14.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/governance/ops_governance/auto_runner.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/script_system/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/script_system/finding.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/script_system/gate_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/script_system/kb_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/red_blue_validator/__init__.py` | ✅ 已实现 | |
 
-### 14.4 治理脚本
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `scripts/governance/run_all.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_blueprint_code_sync.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_blueprint_implementation_docs.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_cross_references.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_ssot.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/check_architecture_gates.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_blueprint_overlap.py` | ❌ 未实现 | |
-| `scripts/governance/d5_architecture/validate_depends_on_format.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_layer_deps.py` | ❌ 已删除（2026-07-09死代码清理） | |
-| `scripts/governance/d5_architecture/validate_field_ownership.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_directory_structure.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_interface_contracts.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_module_lifecycle.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_p0_module_contracts.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_arch_review_gate.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_yaml_summaries.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_three_way_consistency.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_code_yaml_alignment.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_b_track_packages.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_handoff_package.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_session_log_updated.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_autonomy_gate.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_lifecycle_refs.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/detect_depends_on_cycles.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/detect_deprecated_adr_references.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/detect_duplicate_module_names.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/audit_depends_on_chain_depth.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/measure_deprecation_cascade.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/validate_deprecated_dependents.py` | ✅ 已实现 | |
-| `scripts/governance/d5_architecture/classify_cross_package_imports.py` | ✅ 已实现 | DW-261 跨包引用分类引擎 |
-| `scripts/governance/d5_architecture/refactor_god_init_lazy.py` | ✅ 已实现 | DW-241~250 God模块懒加载重构 |
-| `scripts/governance/d3_metadata/check_naming_convention.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/check_frontmatter_metadata.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_enum_consistency.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_derived_from.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/generate_derived_files.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_blueprint_registry.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_blueprint_provenance.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_architecture.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_registry_master_index.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/generate_rule_catalog.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/detect_skip_active_status.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/detect_stale_version.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/validate_superseded_by.py` | ✅ 已实现 | |
-| `scripts/governance/d3_metadata/scan_deep_content.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_vague_terms.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_shell_dangerous.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_secrets.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_keywords_in_logs.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_git_dangerous.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/validate_gate_discipline.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_anchor_file_deletion.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_threading_lock.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_shell_true.py` | ✅ 已实现 | |
-| `scripts/governance/d6_security/detect_permanent_file_deletion.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/validate_config_integrity.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/run_script_smoke_test.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/audit_directory_integrity.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/audit_config_format.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/sync_policies_index.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/validate_immutable_core.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/generate_missing_index_md.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/validate_index_reality.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/sync_index_from_manifest.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/archive_drafts_zone.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/detect_orphan_py.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/check_index_integrity.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/detect_residual_files.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/detect_temp_files.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/reset_cbg.py` | ✅ 已实现 | |
-| `scripts/governance/d1_structure/audit_findings_by_scope.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_test_coverage.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_import_style.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_docstring_coverage.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_unused_imports.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_type_annotation_coverage.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_init_all.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_fle_imports.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_kb_write_provenance.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/detect_silent_degradation.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_fle_action_metadata.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/detect_pydantic_any_fields.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_contracts_purity.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/detect_direct_llm_calls.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/detect_missing_encoding.py` | ✅ 已实现 | |
-| `scripts/governance/d7_code/validate_test_assertion_depth.py` | ✅ 已实现 | |
-| `scripts/governance/d4_paths/detect_ruins_references.py` | ✅ 已实现 | |
-| `scripts/governance/d4_paths/detect_deprecated_path_writes.py` | ✅ 已实现 | |
-| `scripts/governance/d4_paths/detect_split_delete_ref_commit.py` | ✅ 已实现 | |
-| `scripts/governance/d4_paths/detect_excessive_file_moves.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/validate_script_quality.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/fix_shared_bypass.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/validate_commit_message.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/validate_manifest_admission.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/validate_blueprint_overlap.py` | ✅ 已实现 | |
-| `scripts/governance/d11_compliance/validate_truth_source_cascade.py` | ✅ 已实现 | |
-| `scripts/governance/d8_doc_sync/validate_document_ttl.py` | ✅ 已实现 | |
-| `scripts/governance/d8_doc_sync/detect_ai_products_in_docs.py` | ✅ 已实现 | |
-| `scripts/governance/d8_doc_sync/detect_dated_snapshots.py` | ✅ 已实现 | |
-| `scripts/governance/d8_doc_sync/validate_document_lifecycle.py` | ✅ 已实现 | |
-| `scripts/governance/d2_links/audit_broken_links.py` | ✅ 已实现 | |
-| `scripts/governance/d2_links/detect_relative_references.py` | ✅ 已实现 | |
-| `scripts/governance/d9_knowledge/detect_duplicated_normative_language.py` | ✅ 已实现 | |
-| `scripts/governance/d9_knowledge/detect_orphan_documents.py` | ✅ 已实现 | |
-| `scripts/governance/d12_ai_hallucination/validate_session_gate_check.py` | ✅ 已实现 | |
-| `scripts/governance/d12_ai_hallucination/validate_session_budget.py` | ✅ 已实现 | |
-| `scripts/governance/d10_performance/__init__.py` | ⚠️ 骨架 | |
-| `scripts/governance/env_check.py` | ✅ 已实现 | |
-| `scripts/governance/status.py` | ✅ 已实现 | |
-| `scripts/governance/check_registry_consistency.py` | ✅ 已实现 | |
-
-### 14.5 Meta 自我审计脚本
+### 14.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `scripts/governance/meta/__init__.py` | ✅ 已实现 | Meta 维度目录初始化 |
-| `scripts/governance/meta/validate_script_system_health.py` | ✅ 已实现 | 系统健康六项自检 |
-| `scripts/governance/meta/validate_threshold_changes.py` | ✅ 已实现 | 阈值变更审计日志 (§15) |
-| `scripts/governance/meta/validate_environment_health.py` | ✅ 已实现 | 运行环境健康检查 (§21) |
-| `scripts/governance/meta/validate_false_negatives.py` | ✅ 已实现 | 假阴性检测引擎 (§19) |
-| `scripts/governance/meta/manage_kill_switch.py` | ✅ 已实现 | Kill Switch 管理工具 (§16) |
-| `scripts/governance/meta/manage_shadow_mode.py` | ✅ 已实现 | Shadow Mode 管理工具 (§17) |
-| `scripts/governance/meta/manage_baseline.py` | ✅ 已实现 | Baseline Snapshot 管理 (§18) |
-| `scripts/governance/meta/manage_error_budget.py` | ✅ 已实现 | Error Budget 管理引擎 (§21) |
-| `scripts/governance/meta/finding_state_machine.py` | ✅ 已实现 | Finding 全生命周期状态机 (§20) |
-| `scripts/governance/meta/kill-switch-state.yaml` | ✅ 已实现 | Kill Switch 状态注册 (§16) |
-| `scripts/governance/meta/shadow-mode-state.yaml` | ✅ 已实现 | Shadow Mode 状态注册 (§17) |
-| `scripts/governance/meta/error-budget-state.yaml` | ✅ 已实现 | Error Budget 状态注册 (§21) |
-| `scripts/governance/meta/requirements/requirements-d3.txt` | ✅ 已实现 | D3 维度依赖声明 |
-| `scripts/governance/meta/requirements/requirements-d5.txt` | ✅ 已实现 | D5 维度依赖声明 |
-| `scripts/governance/meta/requirements/requirements-d9.txt` | ✅ 已实现 | D9 维度依赖声明 |
-| `scripts/governance/meta/requirements/requirements-d11.txt` | ✅ 已实现 | D11 维度依赖声明 |
-| `scripts/governance/meta/requirements/requirements-d12.txt` | ✅ 已实现 | D12 维度依赖声明 |
+| `tests/f_lifecycle/test_f18_automation.py` | ✅ 已实现 | |
+| `tests/f_lifecycle/test_f18_redblue.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_concurrent.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_extreme.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_gateway.py` | ✅ 已实现 | |
+| `tests/git/test_lock_release_uncommitted.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_check_frontmatter_metadata.py` | ✅ 已实现 | |
+| `tests/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
+| `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
+| `tests/governance/shared/test_finding.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_f18_governance_adversarial.py` | ✅ 已实现 | |
+| `tests/task/test_task_repo_gateway_e2e.py` | ✅ 已实现 | |
 
-### 14.6 共享工具与配置
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `scripts/governance/_shared/thresholds.yaml` | ✅ 已实现 | 关键阈值集中配置 SSoT (§15) |
-| `scripts/governance/_shared/thresholds.py` | ✅ 已实现 | 阈值加载器模块 |
-| `scripts/governance/quickstart.md` | ✅ 已实现 | AI Session Zero-Memory 冷启动卡片 (§22) |
+### 14.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
 1. 读本蓝图 §14（本节）→ 知道「哪些已实现、在哪里」
@@ -1606,11 +1485,12 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
+- 所有路径相对于 `D:\ZephyrAlpha\\`
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

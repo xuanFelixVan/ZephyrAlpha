@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.1
+version: 6.1.2
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -2004,105 +2004,81 @@ STEP 3: 拆分后验证
 
 ## 1. 已实现代码完整路径索引
 
-> **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
 > 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
-> 运行时集成——orchestrator 9文件已实现
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **蓝图-代码同步强制约定（见 AGENTS.md §7 代码规范）**——本节是蓝图与磁盘代码的「地址簿」。
 
 ### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/orchestration/runtime_core/orchestrator/agent_health_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/agent_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/agent_quality.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/autonomy_guard.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/backup_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/batch_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/benchmark_runner.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/blind_spot_closure.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/blueprint_health.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/bulkhead_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/canary_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/capacity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/chaos_engine.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/config_manager.py` | ❌ 已删除（ARCH-038 P1 空壳退役） | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/construction_guide.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/contract_registry.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/contract_router.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/core/agent_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/core/task_queue.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/core/wave_generator.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/data_lifecycle.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/deferred_queue.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/degrade_cascade.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/dependency_lock.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/design_decisions.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/disk_guard.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/dlq_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/failure_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/feature_flag.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/file_task_mapper.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/finding_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/hallucination_detector.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/housekeeping.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/incident_postmortem.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/ke_quality.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/knowledge_freshness.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/lean_scanner.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/model_registry.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/network_partition.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/path_index.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/phase_executor.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/prompt_version.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/reconciliation_loop.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/resilience/deferred_queue.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/resilience/failure_matcher.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/resilience/hallucination_detector.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/resilience/rollback_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/risk_registry.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/rollback_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/rolling_upgrade.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/schema_migration.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/session_conflict.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/session_handoff.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/session_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/stability_guard.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/startup_sequencer.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state/agent_health_monitor.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state/file_task_mapper.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state/session_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state/state_synchronizer.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state_propagation.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/state_synchronizer.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/system_transfer.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/task_queue.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/teardown_manager.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/trigger_router.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/version_manifest.py` | ✅ 已实现 | |
-| `src/zephyr/orchestration/runtime_core/orchestrator/wave_generator.py` | ✅ 已实现 | |
+| `src/zephyr/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/governance/financial_governance/atomic_transaction_manager.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/event_hook.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/auto_diagnostics.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/blueprint_code_sync.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/config/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/config/app_config.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/config_validator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/contract_tester.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/cost_tracker.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/dry_run_simulator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/event_bus_upgrade.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/event_store.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/file_watcher.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/finding_task_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/hooks/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/hooks/event_hook.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/infrastructure_base.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/kill_switch_sim.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/pydantic_v2_migrator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime/concurrency_guard.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime/gate_coordinator.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/runtime/sandbox_enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_snapshot.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/warm_hot_gate.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/core/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |
+| `src/zephyr/risk/cross_asset/cross_market_data_adapter/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/risk/cross_asset/cross_market_data_adapter/ml_experiment_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/shared/_cross_layer/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/_cross_layer/ml_experiment_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/base_event.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/enforcer.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/factories.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/gate_types.py` | ⚠️ 骨架 | |
+| `src/zephyr/shared/contracts/core/registry.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/runtime_plane_tag.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/system_configuration.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/timestamp.py` | ✅ 已实现 | |
+| `src/zephyr/shared/contracts/core/trace_context.py` | ✅ 已实现 | |
+| `src/zephyr/shared/io/doc_compressor.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/test_agent_orchestrator.py` | ✅ 已实现 | |
-| `tests/test_agent_health_monitor.py` | ✅ 已实现 | |
-| `tests/test_hallucination_detector.py` | ✅ 已实现 | |
-| `tests/test_rollback_manager.py` | ✅ 已实现 | |
-| `tests/test_state_synchronizer.py` | ✅ 已实现 | |
-| `tests/test_trigger_router.py` | ✅ 已实现 | |
-| `tests/test_file_task_mapper.py` | ✅ 已实现 | |
-| `tests/test_wave_generator.py` | ✅ 已实现 | |
-| `tests/test_deferred_queue.py` | ❌ 未实现 | |
-| `tests/integration/test_agent_e2e.py` | ✅ 已实现 | |
-
-### 1.3 配置文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `config/trigger_router.yaml` | ✅ 已实现 | |
-| `config/capabilities.yaml` | ✅ 已实现 | |
-| `config/session_state_machine.yaml` | ✅ 已实现 | |
+| `tests/automation/test_auto_diagnostics.py` | ✅ 已实现 | |
+| `tests/config/test_config_validator.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_tester.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_layer.py` | ✅ 已实现 | |
+| `tests/event/test_event_bus_upgrade.py` | ✅ 已实现 | |
+| `tests/event/test_event_hook.py` | ✅ 已实现 | |
+| `tests/event/test_event_store.py` | ✅ 已实现 | |
+| `tests/file/test_file_watcher.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_cost_tracker.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_dry_run_simulator.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_finding_task_bridge.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_infrastructure_base.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_kill_switch_sim.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_pydantic_v2_migrator.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_warm_hot_gate.py` | ✅ 已实现 | |
+| `tests/pipeline/test_alpha_signal_pipeline.py` | ✅ 已实现 | |
+| `tests/risk/test_ml_experiment_pipeline.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
@@ -2117,6 +2093,7 @@ STEP 3: 拆分后验证
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
 
 ---
 

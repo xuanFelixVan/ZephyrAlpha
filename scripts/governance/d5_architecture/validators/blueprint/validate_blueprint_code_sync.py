@@ -75,14 +75,20 @@ def find_blueprints() -> list[Path]:
 
 
 def extract_path_index_section(content: str) -> str:
-    """提取路径索引段落"""
+    """提取路径索引段落
+
+    终点判定（治本——原 `^## \\d` 只认数字编号标题，会把后续非数字章节
+    （变更记录/治理信息等）误吞进索引段，其中的反引号路径被误判为幽灵路径）：
+    与 sync_blueprint_code_index.py 的章节边界语义一致——下一个任意二级标题
+    或 --- 分隔线（取较早者）。
+    """
     match = SECTION_PATH_INDEX_PATTERN.search(content)
     if not match:
         return ""
     start = match.start()
-    next_h2 = re.search("^## \\d", content[start + 10 :], re.MULTILINE)
-    if next_h2:
-        return content[start : start + 10 + next_h2.start()]
+    nxt = re.search(r"^##\s|^---\s*$", content[match.end() :], re.MULTILINE)
+    if nxt:
+        return content[start : match.end() + nxt.start()]
     return content[start:]
 
 
@@ -96,6 +102,9 @@ def extract_claimed_paths(section: str) -> dict[str, str]:
         for m in PATH_IN_TABLE_PATTERN.finditer(line):
             path_str = m.group(1)
             if not PATH_MUST_HAVE_DIR.search(path_str):
+                continue
+            # 命令行文本（git log -- ... / python ...）与模板占位（{var}）非路径，跳过
+            if " " in path_str or "{" in path_str:
                 continue
             if any(skip in path_str for skip in ["—", "未创建", "待实现", "未实现", "无独立"]):
                 continue

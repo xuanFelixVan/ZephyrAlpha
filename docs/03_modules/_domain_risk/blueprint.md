@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.0"
+version: "2.2.1"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -60,7 +60,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.0 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.1 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -907,6 +907,53 @@ class ViolationDetail(BaseModel):
 | 5 | 蓝图注册表 | `D:\ZephyrAlpha\docs\03_modules\blueprint_registry.yaml` | 修改 | construction_progress 同步 |
 | 6 | 跨层契约 | `D:\ZephyrAlpha\architecture_model\cross_layer_contracts.yaml` | 修改 | 确认契约状态 |
 | 7 | 依赖图 | `D:\ZephyrAlpha\docs\02_enterprise_architecture\dependency_path_panorama.md` | 修改 | §3.10 子模块对齐 |
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `schemas/categories/market_tick.py` | ✅ 已实现 | |
+| `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_position_limit_checker.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_limits_calculator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_manager_orchestrator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_risk_validator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/implementations/default_stop_loss_engine.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_limits.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_manager.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_manager_base.py` | ✅ 已实现 | |
+| `src/zephyr/risk/risk_validator.py` | ✅ 已实现 | |
+| `src/zephyr/risk/stop_loss.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/risk/test_l04_risk_management.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ---
 
