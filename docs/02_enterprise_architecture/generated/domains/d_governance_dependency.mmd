@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-17 13:17:55
+%% 生成时间: 2026-07-17 13:31:38
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 694, 依赖边数: 1133
+%% 模块数: 697, 依赖边数: 1182
 
 graph TD
 
@@ -107,7 +107,7 @@ graph TD
         scripts_arch_guard_check_scaffold_exit_gates_py["...ch_guard/check_scaffold_exit_gates.py [prototype]"]
         scripts_arch_guard_check_schema_consistency_py["...rch_guard/check_schema_consistency.py [prototype]"]
         scripts_arch_guard_fitness_functions___init___py["...h_guard/fitness_functions/__init__.py [prototype]"]
-        %% ... 还有 594 个模块未显示
+        %% ... 还有 597 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -118,10 +118,10 @@ graph TD
     src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| src_zephyr_governance_persistence_base_repo_py
     src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_observab___governance_query_metrics_py
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_decision_graph_reader_py -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_depgraph_reader_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_observab___rnance_projection_engine_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_architec___ance_post_sync_validator_py
@@ -130,9 +130,9 @@ graph TD
     scripts_generate_pathway_registry_py -->|import_depends| src_zephyr_governance_rule_patterns_py
     scripts_scaffold_py -->|import_depends| src_zephyr_governance_capability_lookup_py
     scripts_scaffold_py -->|import_depends| src_zephyr_infrastructure_registry_governance_py
+    scripts_construction_check_transition_code_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_check_statuses_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_check_statuses_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_construction_check_transition_code_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_finalize_tasks_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_finalize_tasks_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_d_init_task_system_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -147,8 +147,8 @@ graph TD
     tests_context_test_context_switch_governor_py -->|test_depends| src_zephyr_governance_context_____context_switch_governor_py
     tests_context_test_context_waste_detector_py -->|test_depends| src_zephyr_governance_context____e_context_waste_detector_py
     tests_governance_test_rule_patterns_py -->|test_depends| src_zephyr_governance_rule_patterns_py
-    tests_governance_access_control_test_rbac_bridge_bridge_py -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     tests_governance_access_control_test_rbac_bridge_py -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
+    tests_governance_access_control_test_rbac_bridge_bridge_py -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     tests_governance_audit_test_alerts_py -->|test_depends| src_zephyr_governance_bridges_alerts_py
     tests_governance_audit_test_gap_analyzer_py -->|test_depends| src_zephyr_governance_architec____governance_gap_analyzer_py
     tests_governance_budget_test_conversation_tax_detector_py -->|test_depends| src_zephyr_governance_context____onversation_tax_detector_py
@@ -168,10 +168,10 @@ graph TD
     tests_governance_lifecycle_test_post_live_verification_py -->|test_depends| src_zephyr_governance_lifecycl___e_post_live_verification_py
     tests_governance_observability_test_confidence_estimator_py -->|test_depends| src_zephyr_governance_intellig___nce_confidence_estimator_py
     tests_governance_observability_test_confidence_quantifier_py -->|test_depends| src_zephyr_governance_intellig___ce_confidence_quantifier_py
-    tests_governance_observability_test_meta_confidence_py -->|test_depends| src_zephyr_governance_intellig___vernance_meta_confidence_py
     tests_governance_observability___struction_bloat_detector_py -->|test_depends| src_zephyr_governance_context____struction_bloat_detector_py
-    tests_governance_orchestrator_test_objective_tracker_py -->|test_depends| src_zephyr_governance_observab___rnance_objective_tracker_py
+    tests_governance_observability_test_meta_confidence_py -->|test_depends| src_zephyr_governance_intellig___vernance_meta_confidence_py
     tests_governance_orchestrator_test_mvep_orchestrator_py -->|test_depends| src_zephyr_governance_intellig___rnance_mvep_orchestrator_py
+    tests_governance_orchestrator_test_objective_tracker_py -->|test_depends| src_zephyr_governance_observab___rnance_objective_tracker_py
     tests_governance_persistence_t___ongraph_schema_domain_id_py -->|test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     tests_governance_orchestrator_test_think_time_model_py -->|test_depends| src_zephyr_governance_context_governance_think_time_model_py
     tests_governance_resilience_test_deadlock_detector_py -->|test_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
@@ -181,24 +181,24 @@ graph TD
     tests_governance_rule_bridge_test_ssot_gate_py -->|test_depends| src_zephyr_governance_capability_lookup_py
     tests_governance_shared_test_boot_hooks_unlock_py -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     tests_governance_trading_test____trage_asymmetry_detector_py -->|test_depends| src_zephyr_governance_financia___trage_asymmetry_detector_py
-    tests_governance_trading_test_exchange_partition_detector_py -->|test_depends| src_zephyr_governance_data_gov___hange_partition_detector_py
     tests_governance_trading_test_exchange_reg_monitor_py -->|test_depends| src_zephyr_governance_data_gov___nce_exchange_reg_monitor_py
-    tests_governance_trading_test_pricing_sync_py -->|test_depends| src_zephyr_governance_data_governance_pricing_sync_py
+    tests_governance_trading_test_exchange_partition_detector_py -->|test_depends| src_zephyr_governance_data_gov___hange_partition_detector_py
     tests_governance_trading_test_paper_live_transition_py -->|test_depends| src_zephyr_governance_lifecycl___ce_paper_live_transition_py
     tests_governance_trading_test_strategy_scoper_py -->|test_depends| src_zephyr_governance_financia___vernance_strategy_scoper_py
+    tests_governance_trading_test_pricing_sync_py -->|test_depends| src_zephyr_governance_data_governance_pricing_sync_py
     tests_rollback_test_concurrent_mv_guard_py -->|test_depends| scripts_git_guard_py
     tests_rollback_test_concurrency_guard_red_blue_py -->|test_depends| scripts_git_guard_py
     tests_task_test_task_repo_gateway_e2e_py -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_check_naming_convention_py -->|config_depends| scripts___init___py
-    scripts_generate_manifest_py -->|config_depends| scripts___init___py
-    %% ... 还有 116 条域内依赖未显示
+    scripts_fix_freeze_manifest_py -->|config_depends| scripts___init___py
+    %% ... 还有 123 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
     %% D_AUDITTEST -> D_GOVERNANCE (3 条)
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_persistence_decision_graph_reader_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_AUDITTEST[D_AUDITTEST] -->|test_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    %% D_AUTONOMY_CORE -> D_GOVERNANCE (7 条)
+    %% D_AUTONOMY_CORE -> D_GOVERNANCE (15 条)
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_intellig___nance_autonomy_dashboard_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_services_adapter_py
@@ -206,6 +206,14 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_services_memory_provenance_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|data| src_zephyr_governance_persistence_depgraph_reader_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_governance_intellig___ance_model_provider_data_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_governance_architec___ce_construction_verifier_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_infrastructure_a2a_protocol_governance_auditor_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|data| src_zephyr_governance_persistence_depgraph_reader_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_governance_architec___ce_construction_verifier_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_governance_intellig___ance_model_provider_data_py
+    D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
     %% D_AUTONOMY_PERM -> D_GOVERNANCE (2 条)
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|config_depends| scripts_arch_guard_fitness_functions___init___py
     D_AUTONOMY_PERM[D_AUTONOMY_PERM] -->|config_depends| scripts_governance_meta___init___py
@@ -213,10 +221,11 @@ graph TD
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    %% D_COMPLIANCE -> D_GOVERNANCE (3 条)
-    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_intellig____governance_aisg_sandbox_py
-    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_complian___te_a6_compliance_manager_py
+    %% D_COMPLIANCE -> D_GOVERNANCE (4 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_evidence_pack_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_complian___te_a6_compliance_manager_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_intellig____governance_aisg_sandbox_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|runtime| src_zephyr_governance_persistence_depgraph_reader_py
     %% D_DATA -> D_GOVERNANCE (14 条)
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_data_governance_data_pipeline_guard_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_data_governance_data_lifecycle_py
@@ -225,33 +234,36 @@ graph TD
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_depgraph_schema_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_database_service_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
-    D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_lifecycle_governance_transition_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
+    D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_DATA[D_DATA] -->|test_depends| src_zephyr_governance_persistence_task_repo_py
     D_DATA[D_DATA] -->|config_depends| scripts___init___py
     D_DATA[D_DATA] -->|config_depends| scripts___init___py
     %% D_EX_CORE -> D_GOVERNANCE (6 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    %% D_FACTOR -> D_GOVERNANCE (1 条)
+    D_FACTOR[D_FACTOR] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
     %% D_FEEDBACK_LOOP -> D_GOVERNANCE (4 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    %% D_FRONTEND -> D_GOVERNANCE (4 条)
+    %% D_FRONTEND -> D_GOVERNANCE (5 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_FRONTEND[D_FRONTEND] -->|runtime| src_zephyr_governance_architec___ernance_local_first_arch_py
     %% D_GOV_AUDIT -> D_GOVERNANCE (20 条)
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -261,15 +273,15 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_agent_spec_registry_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_intellig___ernance_continuous_trust_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_architec____architecture_principles_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_architec___e_architecture_contracts_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_architec___nance_dependency_manager_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_architec____architecture_principles_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_data_governance_data_lifecycle_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_architec___nance_dependency_manager_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_intellig___overnance_self_validator_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_intelligence_governance_self_test_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|test_depends| src_zephyr_governance_intellig___overnance_self_validator_py
     %% D_GOV_CODE_QUALITY -> D_GOVERNANCE (7 条)
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_intellig___overnance_self_benchmark_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
@@ -278,7 +290,14 @@ graph TD
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|config_depends| scripts_governance_d3_metadata___init___py
-    %% D_GOV_DRIFT -> D_GOVERNANCE (7 条)
+    %% D_GOV_DOCS -> D_GOVERNANCE (6 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_architec___ance_post_sync_validator_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_intellig___overnance_self_benchmark_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_architec___ce_construction_verifier_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|data| src_zephyr_governance_intellig___ance_model_provider_data_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_governance_intellig___ance_model_provider_data_py
+    %% D_GOV_DRIFT -> D_GOVERNANCE (9 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -286,6 +305,8 @@ graph TD
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_governance_architec___ce_construction_verifier_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_governance_persistence_depgraph_reader_py
     %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (3 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|test_depends| src_zephyr_governance_depgraph_schema_py
@@ -300,9 +321,9 @@ graph TD
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_services_adapter_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intellig____governance_aisg_sandbox_py
     %% D_GOV_REPAIR -> D_GOVERNANCE (44 条)
     D_GOV_REPAIR[D_GOV_REPAIR] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
@@ -339,15 +360,15 @@ graph TD
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     %% D_GOV_SCRIPTS -> D_GOVERNANCE (164 条)
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decision_graph_reader_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
@@ -372,8 +393,8 @@ graph TD
     %% D_INFRASTRUCTURE -> D_GOVERNANCE (1 条)
     D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|test_depends| src_zephyr_governance_bridges_alerts_py
     %% D_INFRA_A2A -> D_GOVERNANCE (7 条)
-    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a____ol_governance_phase_hold_py
+    D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
     D_INFRA_A2A[D_INFRA_A2A] -->|import_depends| src_zephyr_infrastructure_a2a______governance_integration_py
     D_INFRA_A2A[D_INFRA_A2A] -->|test_depends| src_zephyr_governance_agent_spec_a2a_failure_py
     D_INFRA_A2A[D_INFRA_A2A] -->|test_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
@@ -388,9 +409,9 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_protocols_a2a_a2a_governance_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_intellig____governance_model_router_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_services_adapter_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_capacity_gov___capacity_governance_loop_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -399,8 +420,8 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_infrastructure_registry_governance_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|test_depends| src_zephyr_infrastructure_registry_governance_py
     %% D_INTEGRATION -> D_GOVERNANCE (4 条)
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_integration_mcp_governance_server_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_integration_mcp_governance_server_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_architec___governance_path_resolver_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     %% D_INTEGRATION_GATEWAY -> D_GOVERNANCE (1 条)
@@ -412,8 +433,8 @@ graph TD
     %% D_OPS -> D_GOVERNANCE (1 条)
     D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_services_adapter_py
     %% D_ORCHESTRATOR -> D_GOVERNANCE (3 条)
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     %% D_PF_ALLOC -> D_GOVERNANCE (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategies_strategy_base_py
@@ -427,22 +448,22 @@ graph TD
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_SECURITY[D_SECURITY] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     %% D_SHARED -> D_GOVERNANCE (21 条)
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig____cross_assistant_adapter_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig____agent_conflict_detector_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig____cross_assistant_adapter_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_architec___ce_cross_env_consistency_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_services_cross_session_correlator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig___nce_confidence_estimator_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_context_governance_context_package_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_data_gov___hange_partition_detector_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_financia___rnance_flash_crash_guard_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_architec____governance_gap_analyzer_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_financia___rnance_flash_crash_guard_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_agent_spec_a2a_failure_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig___vernance_meta_confidence_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_observab___rnance_objective_tracker_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_persistence_protocol_state_store_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intelligence_governance_self_test_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_intellig___overnance_self_validator_py
+    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_persistence_protocol_state_store_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_financial_governance_risk_matrix_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_financia___nance_strategy_portfolio_py
     D_SHARED[D_SHARED] -->|test_depends| src_zephyr_governance_financia___vernance_strategy_scoper_py
@@ -455,40 +476,49 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_AUTONOMY_CORE (19 条)
+    %% D_GOVERNANCE -> D_AUTONOMY_CORE (22 条)
     tests_capability_test_capability_check_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_assembler_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_budget_tracker_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_debt_score_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_context_test_context_evaluator_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_evictor_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_context_test_context_evaluator_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_health_score_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_injector_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_context_test_context_model_strategy_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_outcome_tracker_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_context_test_context_pipeline_auto_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_context_test_context_model_strategy_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_playground_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_pipeline_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_pipeline_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_context_test_context_pipeline_auto_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_rot_model_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_context_test_context_rule_registry_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_rule_registry_unit_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    tests_context_test_context_rule_registry_root_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_context_test_context_value_attribution_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     tests_governance_security_test___ernance_capability_check_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|contract| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|runtime| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|runtime| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_GOVERNANCE -> D_COMPLIANCE (1 条)
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|runtime| D_COMPLIANCE[D_COMPLIANCE]
     %% D_GOVERNANCE -> D_DATA (2 条)
     src_zephyr_governance_intellig___vernance_memory_provider_py -->|import_depends| D_DATA[D_DATA]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_DATA[D_DATA]
     %% D_GOVERNANCE -> D_EX_CORE (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_EX_CORE[D_EX_CORE]
+    %% D_GOVERNANCE -> D_FACTOR (1 条)
+    src_zephyr_governance_architec___ance_post_sync_validator_py -->|runtime| D_FACTOR[D_FACTOR]
     %% D_GOVERNANCE -> D_FBL_DETECTORS (1 条)
     tests_context_test_context_window_contamination_detector_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
     %% D_GOVERNANCE -> D_FBL_DIAGNOSERS (2 条)
     tests_context_test_context_truncation_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     tests_context_test_context_window_pressure_manager_py -->|test_depends| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
-    %% D_GOVERNANCE -> D_FBL_VERIFICATION (1 条)
+    %% D_GOVERNANCE -> D_FBL_VERIFICATION (2 条)
     tests_governance_rule_enforcem___t_adversarial_validation_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    %% D_GOVERNANCE -> D_FEEDBACK_LOOP (1 条)
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|runtime| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
+    %% D_GOVERNANCE -> D_FEEDBACK_LOOP (2 条)
     tests_governance_audit_test_spec_auditor_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     %% D_GOVERNANCE -> D_FRONTEND (7 条)
     tests_governance_observability_test_app_panel_unit_py -->|test_depends| D_FRONTEND[D_FRONTEND]
     tests_governance_observability_test_app_panel_unit_py -->|test_depends| D_FRONTEND[D_FRONTEND]
@@ -506,62 +536,69 @@ graph TD
     tests_governance_audit_test_anomaly_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_anomaly_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_bridge_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_code_archaeology_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_compliance_map_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_compliance_map_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_changelog_manager_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_delegation_bridge_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_corporate_actions_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_code_archaeology_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_delegation_auditor_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_dora_metrics_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_compliance_map_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_compliance_map_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_corporate_actions_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_delegation_bridge_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_evidence_pack_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_forensic_package_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_genesis_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_glossary_matrix_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_genesis_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_indexer_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_integrity_root_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_integrity_verifier_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_merkle_audit_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_integrity_verifier_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_log_rotation_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_merkle_hourly_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_orchestrator_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_privacy_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    tests_governance_audit_test_retention_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_orchestrator_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
+    tests_governance_audit_test_replay_engine_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_query_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_query_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     tests_governance_audit_test_query_py -->|test_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOVERNANCE -> D_GOV_CODE_QUALITY (92 条)
+    %% D_GOVERNANCE -> D_GOV_CODE_QUALITY (94 条)
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_capability_test_capability_overlap_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_adversarial_test_shadow_verifier_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_audit_test_false_negative_auditor_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_audit_test_fifteen_dimension_auditor_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_audit_test_false_negative_auditor_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_budget_test_degradation_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_budget_test_debt_projector_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_dedup_test_atomic_fixer_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_code_dedup_test_grandfather_manager_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_dedup_test_policy_tree_validator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_code_dedup_test_grandfather_manager_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_dedup_test_pre_apply_integrity_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_dedup_test_ssot_registrar_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_quality_test_ast_comparator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_code_quality_test_code_analyzer_runner_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_quality_test_code_simulator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_code_quality_test_code_analyzer_runner_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_quality_test_function_discovery_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_code_quality_test_simplicity_auditor_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_commit_gates_test_arch_reference_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates_test_bare_getenv_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_commit_gates_test_bare_sql_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_commit_gates____amodule_consistency_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_commit_gates_test_arch_reference_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates_____capability_overlap_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_commit_gates_test_claim_required_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_commit_gates_test_bare_sql_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates_____dangling_reference_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_commit_gates_test_claim_required_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates_test_diff_helpers_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_commit_gates_____directory_contract_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_governance_commit_gates____etime_now_forbidden_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates____a_task_completeness_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    tests_governance_commit_gates____etime_now_forbidden_gate_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
-    %% D_GOVERNANCE -> D_GOV_DRIFT (10 条)
+    %% D_GOVERNANCE -> D_GOV_DOCS (6 条)
+    src_zephyr_governance_architec___ance_post_sync_validator_py -->|contract| D_GOV_DOCS[D_GOV_DOCS]
+    src_zephyr_governance_architec___ce_construction_verifier_py -->|contract| D_GOV_DOCS[D_GOV_DOCS]
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|contract| D_GOV_DOCS[D_GOV_DOCS]
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|contract| D_GOV_DOCS[D_GOV_DOCS]
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|data| D_GOV_DOCS[D_GOV_DOCS]
+    scripts_backup_backup_config_yaml -->|runtime| D_GOV_DOCS[D_GOV_DOCS]
+    %% D_GOVERNANCE -> D_GOV_DRIFT (11 条)
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
@@ -572,7 +609,8 @@ graph TD
     tests_governance_resilience_test_spiral_ews_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     tests_governance_rule_enforcem___breaking_change_detector_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     tests_governance_rule_enforcem___02_enforcement_validator_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (51 条)
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|contract| D_GOV_DRIFT[D_GOV_DRIFT]
+    %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (53 条)
     src_zephyr_governance_complian___te_a6_compliance_manager_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_git_commit_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
@@ -584,31 +622,31 @@ graph TD
     tests_governance_access_control_test_approval_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_budget_test_pre_flight_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_bare_getenv_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_bare_sql_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates____amodule_consistency_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_____capability_overlap_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_test_bare_sql_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_claim_required_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_____directory_contract_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates____etime_now_forbidden_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates____a_task_completeness_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_doc_ref_broken_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates____etime_now_forbidden_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates____pt_zone_frontmatter_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_file_copy_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_empty_handler_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_function_dup_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_____directory_contract_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_test_domain_fk_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_test_file_copy_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates____pt_zone_frontmatter_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_foreign_change_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_test_function_dup_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_hardcoded_url_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_god_class_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_held_overlap_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_id_uniqueness_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_governance_commit_gates_test_high_complexity_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_import_direction_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_governance_commit_gates_test_long_param_list_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_governance_commit_gates_test_held_overlap_gate_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOVERNANCE -> D_GOV_KB (7 条)
     scripts_kb_self_test_py -->|import_depends| D_GOV_KB[D_GOV_KB]
-    tests_governance_compliance_test_quiet_period_monitor_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     tests_governance_compliance_test_load_bearing_py -->|test_depends| D_GOV_KB[D_GOV_KB]
-    src_zephyr_gov_kb_kb_engine___init___py -->|config_depends| D_GOV_KB[D_GOV_KB]
+    tests_governance_compliance_test_quiet_period_monitor_py -->|test_depends| D_GOV_KB[D_GOV_KB]
     src_zephyr_gov_kb_migration___init___py -->|config_depends| D_GOV_KB[D_GOV_KB]
+    src_zephyr_gov_kb_kb_engine___init___py -->|config_depends| D_GOV_KB[D_GOV_KB]
     src_zephyr_gov_kb_pipeline___init___py -->|config_depends| D_GOV_KB[D_GOV_KB]
     src_zephyr_gov_kb_storage___init___py -->|config_depends| D_GOV_KB[D_GOV_KB]
     %% D_GOVERNANCE -> D_GOV_OPS_RESILIENCE (66 条)
@@ -626,19 +664,19 @@ graph TD
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_access_control_test_account_isolator_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_access_control_test_credential_guard_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    tests_governance_adversarial_test_adversarial_tester_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_adversarial_t___positional_safety_tester_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_governance_adversarial_test_adversarial_tester_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_adversarial_test_anti_automation_bias_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_adversarial_test_persuasion_detector_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    tests_governance_adversarial_test_poison_cascade_detector_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_adversarial_test_vibe_security_verify_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_governance_adversarial_test_poison_cascade_detector_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_adversarial_test_vibe_verify_integration_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_audit_test_tamper_evident_log_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_adversarial_extreme_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_adversarial_extreme_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_adversarial_extreme_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    tests_governance_budget_test_burn_rate_monitor_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_cost_attributor_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    tests_governance_budget_test_burn_rate_monitor_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_error_budget_burst_limiter_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_cost_router_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     tests_governance_budget_test_degradation_manager_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
@@ -653,25 +691,26 @@ graph TD
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_persistence_test_base_repo_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcement_test_adaptive_threshold_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem___t_end_to_end_walkthrough_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcem____integration_test_runner_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem___t_adversarial_strategies_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcement_test_kiss_enforcer_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_governance_rule_enforcement_test_adaptive_threshold_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcement_test_secrets_guard_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcem___rsarial_gate_integration_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcem___rsarial_gate_integration_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_governance_rule_enforcem____integration_test_runner_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_governance_rule_enforcement_test_kiss_enforcer_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcement_test_triple_alignment_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_governance_rule_enforcem___rsarial_gate_integration_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    tests_governance_rule_enforcem___rsarial_gate_integration_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem___ersarial_validation_gate_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem____001_circular_dependency_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_governance_rule_enforcem___3_contract_compatibility_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem___rocess_lifecycle_gateway_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     tests_governance_rule_enforcem____test_zero_residue_check_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    %% D_GOVERNANCE -> D_GOV_SCRIPTS (6 条)
+    tests_governance_rule_enforcem___3_contract_compatibility_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
+    %% D_GOVERNANCE -> D_GOV_SCRIPTS (7 条)
     scripts_scaffold_py -->|import_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     tests_governance_test_blueprint_frontmatter_reconciler_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     tests_governance_test_sync_panorama_module_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     tests_governance_code_quality____eck_frontmatter_metadata_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
+    tests_governance_generators_test_generate_gate_registry_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     tests_governance_rule_bridge_test_ssot_gate_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     scripts_governance_d7_code_check_pure_shim_py -->|config_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     %% D_GOVERNANCE -> D_INFRASTRUCTURE (14 条)
@@ -686,9 +725,9 @@ graph TD
     scripts_demos_demo_e2e_pipeline_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_demos_demo_e2e_pipeline_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_backup_backup_config_yaml -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    scripts_backup_restore_ps1 -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_backup_backup_ps1 -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_backup_backup_manual_ps1 -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    scripts_backup_restore_ps1 -->|config_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_GOVERNANCE -> D_INFRA_A2A (13 条)
     src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
@@ -700,9 +739,9 @@ graph TD
     src_zephyr_infrastructure_a2a_____governance_audit_logger_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_infrastructure_a2a____l_governance_error_codes_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_infrastructure_a2a____governance_policy_engine_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
-    src_zephyr_infrastructure_a2a____vernance_session_manager_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_infrastructure_a2a_____governance_rate_limiter_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_infrastructure_a2a_____governance__base_server_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_infrastructure_a2a____vernance_session_manager_py -->|config_depends| D_INFRA_A2A[D_INFRA_A2A]
     %% D_GOVERNANCE -> D_INFRA_RECOVERY (22 条)
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     scripts_rollback_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
@@ -714,8 +753,8 @@ graph TD
     tests_governance_audit_test_forensic_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_audit_test_governance_auditor_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_compliance_test_right_to_be_forgotten_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    tests_governance_data_layer_test_sqlite_dumper_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_data_layer_test_s3_snapshot_lifecycle_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
+    tests_governance_data_layer_test_sqlite_dumper_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_drift_test_governance_drift_fix_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_integration_test_contract_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     tests_governance_integration_test_submodule_sync_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
@@ -750,25 +789,26 @@ graph TD
     tests_governance_security_test_sandbox_enforcer_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_rollback_test_concurrency_guard_red_blue_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_service_layer_owners_yaml -->|config_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D_GOVERNANCE -> D_INTEGRATION (18 条)
+    %% D_GOVERNANCE -> D_INTEGRATION (19 条)
     src_zephyr_governance_bridges_spec_auditor_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_a2a_full_verification_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_run_ollama_exam_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_construction_finalize_tasks_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_demo_a2a_coordination_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_construction_d_init_task_system_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_local_layer_daemon_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    scripts_construction_finalize_tasks_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    scripts_construction_d_init_task_system_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_start_brain_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_construction_test_event_hook_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    scripts_construction_test_event_hook_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_access_control_test_approval_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_integration_test_schema_schema_registry_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_integration_test_schema_schemas_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_integration_test_schema_schemas_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_shared_test_boot_hooks_unlock_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
     tests_governance_shared_test_boot_hooks_unlock_py -->|test_depends| D_INTEGRATION[D_INTEGRATION]
+    scripts_backup_backup_config_yaml -->|runtime| D_INTEGRATION[D_INTEGRATION]
     %% D_GOVERNANCE -> D_INTEGRATION_GATEWAY (1 条)
     scripts_scaffold_py -->|import_depends| D_INTEGRATION_GATEWAY[D_INTEGRATION_GATEWAY]
     %% D_GOVERNANCE -> D_INTELLIGENCE (14 条)
@@ -777,15 +817,17 @@ graph TD
     scripts_diagnose_breadth_failed_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_diagnose_breadth_failed_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_diagnose_breadth_failed_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_run_ollama_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    scripts_run_deepseek_v4_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_test_exam_scoring_unit_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_test_exam_scoring_unit_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_test_exam_scoring_unit_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_test_exam_scoring_unit_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     tests_capability_test_capability_passport_py -->|test_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    %% D_GOVERNANCE -> D_ML_TRAIN (1 条)
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|data| D_ML_TRAIN[D_ML_TRAIN]
     %% D_GOVERNANCE -> D_OPS (14 条)
     src_zephyr_governance_intellig___ance_model_provider_data_py -->|import_depends| D_OPS[D_OPS]
     src_zephyr_governance_intellig____governance_model_router_py -->|import_depends| D_OPS[D_OPS]
@@ -793,11 +835,11 @@ graph TD
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_OPS[D_OPS]
     tests_governance_budget_test_adversarial_extreme_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_adversarial_extreme_py -->|test_depends| D_OPS[D_OPS]
-    tests_governance_budget_test_burn_rate_monitor_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_cost_attributor_py -->|test_depends| D_OPS[D_OPS]
+    tests_governance_budget_test_burn_rate_monitor_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_cost_budget_root_py -->|test_depends| D_OPS[D_OPS]
-    tests_governance_budget_test_degradation_manager_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_governance_budget_tracker_py -->|test_depends| D_OPS[D_OPS]
+    tests_governance_budget_test_degradation_manager_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_pre_flight_gate_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_budget_test_pre_flight_gate_py -->|test_depends| D_OPS[D_OPS]
     tests_governance_observability_test_meta_observability_py -->|test_depends| D_OPS[D_OPS]
@@ -819,25 +861,26 @@ graph TD
     tests_governance_drift_test_governance_drift_fix_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_governance_rule_bridge_test_session_worktree_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_governance_security_test_governance_a2a_check_py -->|test_depends| D_SECURITY[D_SECURITY]
+    tests_governance_security_test_governance_contracts_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_governance_security_test_governance_approver_check_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_governance_security_test___nce_bootstrap_superadmin_py -->|test_depends| D_SECURITY[D_SECURITY]
     tests_governance_security_test___ernance_capability_check_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_governance_security_test_governance_contracts_py -->|test_depends| D_SECURITY[D_SECURITY]
-    %% D_GOVERNANCE -> D_SECURITY_LLM (1 条)
+    %% D_GOVERNANCE -> D_SECURITY_LLM (2 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_SECURITY_LLM[D_SECURITY_LLM]
-    %% D_GOVERNANCE -> D_SHARED (83 条)
+    src_zephyr_governance_intellig___ance_model_provider_data_py -->|contract| D_SECURITY_LLM[D_SECURITY_LLM]
+    %% D_GOVERNANCE -> D_SHARED (84 条)
     src_zephyr_governance_capability_lookup_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_evidence_pack_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_agent_spec_registry_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_architec___ance_llm_impact_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_architec___governance_path_resolver_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_bridges_alerts_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_engine_pipeline_base_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_data_governance_pricing_sync_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_engine_pipeline_base_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_financia___omic_transaction_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_intellig____governance_aisg_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
@@ -864,6 +907,6 @@ graph TD
     tests_governance_audit_test_verdict_engine_py -->|test_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 196 条
-    %% 跨域入边: 375 条
-    %% 跨域出边: 562 条
+    %% 域内依赖: 203 条
+    %% 跨域入边: 394 条
+    %% 跨域出边: 585 条
