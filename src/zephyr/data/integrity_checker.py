@@ -123,7 +123,7 @@ def run_daily_check(scheduler=None) -> dict:
                     level="ERROR",
                     source="integrity_check",
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("告警发送失败: %s", e)
 
     # 记录到 progress_store
@@ -136,7 +136,7 @@ def run_daily_check(scheduler=None) -> dict:
                 "SUCCESS" if not unhealthy else "PARTIAL",
                 total,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
     summary = {

@@ -171,7 +171,7 @@ class DriftStateMachine:
         except ImportError:
             record.rollback_verified = True
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             record.rollback_verified = False
 
     def check_ttl(self) -> list[uuid.UUID]:

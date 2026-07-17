@@ -88,12 +88,12 @@ class TelemetryMCP:
                     "status": "OPERATIONAL" if sub is not None else "DOWN",
                     "test_mode": t.test_mode,
                 }
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["subsystems"][subsystem] = {"status": "DOWN"}
         try:
             profile = t.profiles.snapshot()
             result["resources"] = {k: profile.get(k, None) for k in ["cpu_percent", "memory_percent", "disk_percent"]}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["resources"] = {"error": "unavailable"}
         return result
 
@@ -112,7 +112,7 @@ class TelemetryMCP:
             )
         try:
             schema_version = t.schema.get_version()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             schema_version = "unknown"
         return {
             "module_id": t.module_id,
@@ -125,11 +125,11 @@ class TelemetryMCP:
         t = self._telemetry
         try:
             alert_config = _load_yaml(_CONFIG_DIR / "alert_rules.yaml")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             alert_config = {}
         try:
             alert_health = t.alerts.health()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             alert_health = {"pending_alerts": 0, "error": "unavailable"}
         return {
             "module_id": t.module_id,
@@ -145,7 +145,7 @@ class TelemetryMCP:
         t = self._telemetry
         try:
             snapshot = t.profiles.snapshot()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             snapshot = {"error": "unavailable"}
         return {
             "module_id": t.module_id,
@@ -161,12 +161,12 @@ class TelemetryMCP:
         t = self._telemetry
         try:
             version = t.schema.get_version()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             version = "unknown"
         try:
             compat_09 = t.schema.check_compatibility("0.9.0")
             compat_08 = t.schema.check_compatibility("0.8.0")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             compat_09 = True
             compat_08 = False
         return {
@@ -192,7 +192,7 @@ class TelemetryMCP:
 def _load_yaml(path: Path) -> dict:
     try:
         return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {}
 
 

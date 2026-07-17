@@ -51,7 +51,7 @@ def _get_xshg_calendar():
         import exchange_calendars as xcals
         _xshg_calendar = xcals.get_calendar("XSHG")
         log.info("XSHG 交易日历已加载（exchange_calendars）")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _xshg_load_failed = True
         log.warning(
             "exchange_calendars 不可用，交易日历降级为 weekday 判断: %s", e
@@ -78,7 +78,7 @@ def is_trading_day(date: datetime.date | None = None) -> bool:
     if cal is not None:
         try:
             return bool(cal.is_session(date.isoformat()))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("XSHG is_session 查询失败，回退 weekday: %s", e)
 
     # 回退：周一~周五视为交易日（无法区分节假日）

@@ -196,7 +196,7 @@ class SystemSnapshotter:
         """
         try:
             snapshot = self._build_snapshot()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             warnings.warn(
                 f"[SystemSnapshotter] 快照构建失败（非致命）：{exc}",
                 stacklevel=2,
@@ -285,7 +285,7 @@ class SystemSnapshotter:
             if row is None or row["total"] == 0:
                 return -1.0
             return round(row["passed"] / row["total"], 4)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return -1.0
 
     # ------------------------------------------------------------------
@@ -310,7 +310,7 @@ class SystemSnapshotter:
             )
             _logger.info("SystemSnapshot 已写入：%s", output_path)
             return output_path
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             warnings.warn(
                 f"[SystemSnapshotter] 快照写入失败（非致命）：{exc}",
                 stacklevel=3,
@@ -407,7 +407,7 @@ def _get_memory_usage_mb() -> float:
 
         if hasattr(os, "sysconf") and hasattr(os, "confstr"):
             return 0.0
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return 0.0
 
@@ -419,7 +419,7 @@ def _count_active_sessions() -> int:
         runtime_dir = Path(".runtime/sessions")
         if runtime_dir.exists():
             return len(list(runtime_dir.glob("*.json")))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return 0
 
@@ -430,7 +430,7 @@ def _check_vms_connection() -> bool:
 
         vms_dir = Path(".runtime/vms")
         return vms_dir.exists()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return False
 
@@ -446,6 +446,6 @@ def _get_pipeline_stats() -> dict[str, float]:
             data = json.loads(stats_file.read_text(encoding="utf-8"))
             if isinstance(data, dict):
                 return {k: float(v) for k, v in data.items()}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in system_snapshot", exc_info=True)
     return {"build_ms": 0.0, "compress_ms": 0.0, "validate_ms": 0.0, "inject_ms": 0.0}

@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.work_orchestrator
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.trading.__init__
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.trading.capability_registry; zephyr.trading.work_dag; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.io.serialization; zephyr.shared.utils.time_utils
+# [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.trading.status_dashboard; zephyr.trading.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] none
+# [INVARIANTS] item_id全局唯一(uuid8hex); slot计数非负(release_slot下限0); _dags/_items/_slots读写均须持self._lock; complete_item须先完成依赖全部COMPLETED才提升PENDING→READY
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/trading/test_work_orchestrator.py; tests/trading/extreme/test_f1_extreme.py; tests/automation/test_auto_runtime_e2e.py; tests/trading/test_lifecycle_manager.py; tests/trading/test_status_dashboard.py
 # [A_module] module_id=MOD-ORC_work_orchestrator | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -22,7 +22,7 @@ __all__ = [
 """
 WorkOrchestrator — 工作编排子系统
 ==================================
-蓝图: ARC-0001 §4.3
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Airflow DAG + Temporal Workflow + K8s Job
 """
 
@@ -90,7 +90,7 @@ class WorkOrchestrator:
                 with self._lock:
                     self._dags[dag.dag_id] = dag
                 count += 1
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return count
 

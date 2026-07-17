@@ -100,7 +100,7 @@ def _load_capability_matrix_entries() -> list[tuple[str, "CapabilityLevel"]]:
                 continue
             entries.append((str(scope), level))
         return entries
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.error(
             "Failed to load ai_capability_matrix.yaml: %s", exc, exc_info=True
         )

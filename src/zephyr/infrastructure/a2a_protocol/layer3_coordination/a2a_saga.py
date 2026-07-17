@@ -117,7 +117,7 @@ class A2ASaga:
                 func = action_funcs.get(step.action_name, lambda p: {"ok": True})
                 step.result = func(step.params)
                 step.executed = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result.status = SagaStatus.COMPENSATING
                 result.error_message = "internal error"
                 self._compensate(result, action_funcs)
@@ -137,7 +137,7 @@ class A2ASaga:
                 func = action_funcs.get(comp["action"], lambda p: {"compensated": True})
                 func(comp["params"])
                 step.compensate_called = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in a2a_saga", exc_info=True)
 
         result.steps = list(self._steps)

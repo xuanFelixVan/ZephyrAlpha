@@ -112,7 +112,7 @@ class FixPatternMiner:
                     }
                 )
             return patterns
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
         # 5.49.2 修复：异常路径确保连接归还
         finally:
@@ -165,7 +165,7 @@ class FixPatternMiner:
                     ),
                 )
             conn.commit()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to upsert pattern: %s", exc, exc_info=True)
         # 5.49.2 修复：异常路径确保连接归还
         finally:

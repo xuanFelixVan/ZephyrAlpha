@@ -355,7 +355,7 @@ def _parse_orm_models(orm_model_files: list[Path]) -> dict[str, set[str]]:
                     if fname and not fname.startswith("_"):
                         fields.add(fname)
                 orm_tables[class_name.lower()] = fields
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
     return orm_tables
@@ -401,14 +401,14 @@ def _scan_db_schema_files(db_files: list[Path], orm_tables: dict[str, set[str]])
                 for field_name, _field_set in orm_tables.items():
                     if field_name == tbl:
                         pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
         finally:
             if conn is not None:
                 try:
                     conn.close()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("conn close failed (%s: %s)", type(e).__name__, e, exc_info=True)
     return events
 
@@ -441,7 +441,7 @@ def _scan_migration_dirs(migration_dirs: list[Path], orm_tables: dict[str, set[s
                                 auto_fixable=False,
                             )
                         )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
     return events
@@ -544,7 +544,7 @@ def _parse_requirements(req_file: Path) -> dict[str, str] | None:
                 pkg = match.group(1).lower().replace("_", "-")
                 constraint = match.group(2) or ""
                 defined[pkg] = constraint
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     return defined
 
@@ -566,7 +566,7 @@ def _get_installed_packages() -> dict[str, str] | None:
             if "==" in line:
                 pkg, ver = line.split("==", 1)
                 installed[pkg.lower().replace("_", "-")] = ver.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     return installed
 
@@ -801,7 +801,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
@@ -848,7 +848,7 @@ def detect_security_policy_drift(project_root: str) -> list[DriftEvent]:
         try:
             content = py_file.read_text(encoding="utf-8")
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
@@ -930,7 +930,7 @@ def _detect_temporal_drift(blueprint_files: list[Path], code_files: list[Path], 
         try:
             bp_mtime = bp.stat().st_mtime
             bp_mtime_dt = datetime.fromtimestamp(bp_mtime, tz=UTC)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
         related_code = _find_related_code_files(bp, code_files)
@@ -955,7 +955,7 @@ def _detect_temporal_drift(blueprint_files: list[Path], code_files: list[Path], 
                             auto_fixable=False,
                         )
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
                 continue
     return events
@@ -971,7 +971,7 @@ def _detect_interface_drift(blueprint_files: list[Path], code_files: list[Path])
     for bp in blueprint_files:
         try:
             bp_content = bp.read_text(encoding="utf-8")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
         sections = _BLUEPRINT_IFACE_ALL_RX.findall(bp_content)
@@ -988,7 +988,7 @@ def _detect_interface_drift(blueprint_files: list[Path], code_files: list[Path])
                             if f"def {func_name}" in cf_content:
                                 found_in_code = True
                                 break
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
                             continue
                 if not found_in_code:
@@ -1125,7 +1125,7 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
         try:
             loc = len(py_file.read_text(encoding="utf-8").splitlines())
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 
@@ -1144,7 +1144,7 @@ def detect_test_coverage_drift(project_root: str) -> list[DriftEvent]:
         try:
             loc = len(py_file.read_text(encoding="utf-8").splitlines())
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("drift scan failed (%s: %s)", type(e).__name__, e, exc_info=True)
             continue
 

@@ -76,7 +76,7 @@ def _snapshot_file_attrs(file_path: str) -> dict[str, object]:
             "readonly": not bool(stat.S_IMODE(st.st_mode) & stat.S_IWUSR),
         }
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {}
 
 
@@ -140,7 +140,7 @@ def check_encoding(file_path: str) -> str | None:
         with open(file_path, "rb") as f:
             raw = f.read(4)
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
     if raw.startswith(b"\xef\xbb\xbf"):
@@ -157,5 +157,5 @@ def check_encoding(file_path: str) -> str | None:
 
             return "utf-16-be"
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return "non-utf8"

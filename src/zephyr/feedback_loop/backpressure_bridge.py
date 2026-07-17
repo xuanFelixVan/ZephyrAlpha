@@ -59,7 +59,7 @@ def sync_evolution_proposals_to_backpressure(
 
     try:
         from zephyr.feedback_loop.evolution_engine import Severity
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"skipped": True, "throttled": False, "critical_count": 0}
 
     critical = [p for p in proposals if getattr(p, "severity", None) == Severity.CRITICAL]

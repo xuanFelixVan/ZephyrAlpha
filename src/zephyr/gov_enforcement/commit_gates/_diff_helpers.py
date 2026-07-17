@@ -219,7 +219,7 @@ def _read_staged_file(gateway, py_file: str) -> str | None:
         result = gateway._run_git(["git", "show", ":" + py_file])
         if result.returncode == 0:
             return result.stdout
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return None
 
@@ -244,7 +244,7 @@ def _get_staged_py_files(gateway, gate_name: str = "gate") -> list[str]:
             for f in result.stdout.strip().splitlines()
             if f and f.endswith(".py")
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "%s fail-open: git diff 异常(%s: %s)。",
             gate_name, type(e).__name__, e, exc_info=True,
@@ -266,7 +266,7 @@ def _get_added_lines(
         if result.returncode != 0:
             return []
         return _parse_diff_with_line_numbers(result.stdout)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("%s: git diff 失败 file=%s, %s", gate_name, py_file, e)
         return []
 
@@ -285,7 +285,7 @@ def _read_head_file(gateway, py_file: str) -> str | None:
         result = gateway._run_git(["git", "show", "HEAD:" + py_file])
         if result.returncode == 0:
             return result.stdout
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return None
 

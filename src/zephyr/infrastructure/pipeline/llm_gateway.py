@@ -56,7 +56,7 @@ def _get_lsg_gateway():
     except ImportError:
         logger.debug("LSG not available, skipping security scan")
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("LSG init failed, security scans disabled", exc_info=True)
         return None
 
@@ -74,7 +74,7 @@ def _lsg_scan_input_sync(text: str, metadata: dict[str, Any] | None = None) -> s
         result = run_sync(gw.scan_input(text, source="llm_gateway", metadata=metadata or {}))
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_input_scan"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return None
@@ -95,7 +95,7 @@ def _lsg_scan_output_sync(text: str, metadata: dict[str, Any] | None = None) -> 
             return "[BLOCKED BY LSG]", result.blocked_by or "lsg_output_scan"
         if result.sanitized_output:
             return result.sanitized_output, None
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
         pass
     return text, None
@@ -249,7 +249,7 @@ def _call_openai_compatible(
             latency_ms=latency_ms,
             simulated=False,
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         latency_ms = int((time.monotonic() - start) * 1000)
         logger.warning("LLMGateway _call_openai_compatible(%s) failed: %s", provider, exc, exc_info=True)
         return LLMResponse(
@@ -337,7 +337,7 @@ def _call_anthropic(
             latency_ms=latency_ms,
             simulated=False,
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         latency_ms = int((time.monotonic() - start) * 1000)
         logger.warning("LLMGateway _call_anthropic failed: %s", exc, exc_info=True)
         return LLMResponse(

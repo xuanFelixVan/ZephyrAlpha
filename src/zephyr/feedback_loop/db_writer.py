@@ -80,7 +80,7 @@ class FLEWriter:
             written = len(rows)
             logger.debug("[FLE-DB] wrote %d metrics", written)
             return written
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[FLE-DB] write_metrics failed: %s", exc, exc_info=True)
             conn.rollback()
             return 0
@@ -113,7 +113,7 @@ class FLEWriter:
             conn.commit()
             logger.debug("[FLE-DB] wrote alert %s %s", event.event_id, severity)
             return event.event_id
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[FLE-DB] write_alert failed: %s", exc, exc_info=True)
             conn.rollback()
             return None
@@ -141,7 +141,7 @@ class FLEWriter:
             last_id = cursor.lastrowid
             logger.debug("[FLE-DB] wrote dispatch_log %d for %s", last_id, event_id)
             return last_id
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[FLE-DB] write_dispatch_log failed: %s", exc, exc_info=True)
             conn.rollback()
             return None
@@ -170,7 +170,7 @@ class FLEWriter:
                 )
             conn.commit()
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[FLE-DB] update_alert_status failed: %s", exc, exc_info=True)
             conn.rollback()
             return False

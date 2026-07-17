@@ -211,14 +211,14 @@ def list_artifacts(
                 artifact = get_artifact(run_id, storage_path=storage)
                 if artifact.strategy_id != strategy_id:
                     continue
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         # 读取 created_at 用于排序
         try:
             with open(f, "r", encoding="utf-8") as fh:
                 d = json.load(fh)
             created_at = d.get("created_at", "")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             created_at = ""
         run_ids.append((run_id, created_at))
 

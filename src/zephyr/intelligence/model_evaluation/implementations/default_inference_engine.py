@@ -84,7 +84,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
             self._metadatas[model_id] = metadata
             _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Failed to load model: model_id=%s error=%s", model_id, e, exc_info=True)
 
             if model_id in self._model_registry:
@@ -135,7 +135,7 @@ class DefaultInferenceEngine(InferenceEngineBase):
                 inference_ms=inference_ms,
                 idempotency_key=request.idempotency_key,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("Prediction failed: model_id=%s error=%s", model_id, e, exc_info=True)
             inference_ms = int((time.perf_counter() - start) * 1000)
             return ModelServingResponse(

@@ -188,7 +188,7 @@ def extract_training_patterns(project_root: str, days: int = 30) -> list[DriftTr
 
                 dim_events.setdefault(dim, []).append(evt)
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
     for dim, freq in dim_freq.items():
@@ -437,7 +437,7 @@ def parse_python_imports(file_path: str) -> list[str]:
     try:
         content = Path(file_path).read_text(encoding="utf-8")
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return imports
 
     for match in re.finditer(
@@ -476,7 +476,7 @@ def parse_python_public_api(file_path: str) -> list[str]:
     try:
         content = Path(file_path).read_text(encoding="utf-8")
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return apis
 
     for match in re.finditer(
@@ -521,7 +521,7 @@ def detect_python_dead_code(file_path: str) -> list[str]:
     try:
         content = Path(file_path).read_text(encoding="utf-8")
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return dead
 
     functions = re.findall(

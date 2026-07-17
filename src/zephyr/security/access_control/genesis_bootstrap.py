@@ -172,7 +172,7 @@ class GenesisBootstrap:
                 self._state.total_checks,
                 self._state.progress * 100,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._state.phase = GenesisPhase.FAILED
             self._state.success = False
             self._state.error = str(exc)
@@ -286,7 +286,7 @@ class GenesisBootstrap:
 
             bridge = BootstrapSuperadminBridge()
             bridge.shutdown()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("GenesisBootstrap shutdown: %s", exc, exc_info=True)
 
         self._state = GenesisState()

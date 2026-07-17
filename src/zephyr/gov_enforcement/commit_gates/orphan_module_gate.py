@@ -167,7 +167,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
             )
             return None
         staged_new = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "ORPHAN-MODULE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -195,7 +195,7 @@ def _collect_staged_new_py_files(gateway) -> "tuple[list[str], str] | None":
             wt_root = toplevel_result.stdout.strip()
         else:
             wt_root = str(gateway.project_root)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         wt_root = str(gateway.project_root)
 
     # 4. 解析为绝对路径
@@ -259,7 +259,7 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> "list[str] |
                 _GREP_TIMEOUT,
             )
             return None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "ORPHAN-MODULE gate fail-open: git grep 异常(%s: %s)，检测器失效。",
                 type(e).__name__, e, exc_info=True

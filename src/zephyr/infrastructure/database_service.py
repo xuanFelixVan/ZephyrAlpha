@@ -180,7 +180,7 @@ class DatabaseService(DatabaseCRUDMixin):
             conn = self.get_governance_conn(read_only=True)
             conn.execute("SELECT 1").fetchone()
             result["governance"] = True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["governance"] = False
 
         try:
@@ -189,14 +189,14 @@ class DatabaseService(DatabaseCRUDMixin):
                 cur.execute("SELECT 1")
                 cur.fetchone()
             result["depgraph"] = True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["depgraph"] = False
 
         try:
             conn = self.get_clickhouse_conn()
             conn.execute("SELECT 1")
             result["clickhouse"] = True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["clickhouse"] = False
 
         return result

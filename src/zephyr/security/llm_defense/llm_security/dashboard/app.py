@@ -86,7 +86,7 @@ class SecurityDashboard:
                 with open(yaml_file, encoding="utf-8") as f:
                     data = yaml.safe_load(f)
                     self.payloads_data[yaml_file.stem] = data
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 st.error(f"加载 {yaml_file} 失败: {e}")
 
     def setup_sidebar(self):

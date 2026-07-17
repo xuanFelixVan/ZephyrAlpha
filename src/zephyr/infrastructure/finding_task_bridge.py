@@ -197,7 +197,7 @@ class FindingTaskBridge:
                         result.namespaces_used.append(ns.value)
                 else:
                     result.tasks_created += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result.tasks_failed += 1
                 err_msg = f"[{finding.finding_id}] {type(e).__name__}: {e}"
                 result.errors.append(err_msg)

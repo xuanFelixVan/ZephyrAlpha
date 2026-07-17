@@ -154,7 +154,7 @@ def _get_staged_added_files(gateway) -> list[str] | None:
             )
             return None
         return diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "NO-BARE-GETENV gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -171,7 +171,7 @@ def _resolve_worktree_root(gateway) -> str:
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
         return str(gateway.project_root)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return str(gateway.project_root)
 
 

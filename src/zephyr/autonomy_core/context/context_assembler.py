@@ -326,7 +326,7 @@ class ContextAssembler:
 
             try:
                 content = path.read_text(encoding="utf-8")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"READ_ERROR: {entry.file_path} — {e}")
                 continue
 
@@ -392,7 +392,7 @@ class ContextAssembler:
             outcome = compressor.compress_with_provenance(raw)
             ctx.raw_context_text = outcome.raw_text
             ctx.context_text = outcome.compressed_text
-        except (ImportError, Exception) as e:
+        except (ImportError, Exception) as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             ctx.errors.append(f"COMPRESSION_FAILED: {e}")
             ctx.was_compressed = False
             ctx.raw_context_text = ""
@@ -489,19 +489,19 @@ def build_context(
     # AI 拿到空上下文不知是真无数据还是检索失败。改为记录 warning 使失败可见
     try:
         ctx.ke_entries = _safe_search(vms, "ke_entries", _task_type, top_k=5)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("context_assembler: ke_entries search failed: %s", e, exc_info=True)
     try:
         ctx.vibe_rules = _safe_search(vms, "vibe_rules", _task_type, top_k=3)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("context_assembler: vibe_rules search failed: %s", e, exc_info=True)
     try:
         ctx.blueprints = _safe_search(vms, "blueprints", _layer, top_k=2)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("context_assembler: blueprints search failed: %s", e, exc_info=True)
     try:
         ctx.failure_patterns = _safe_search(vms, "failure_patterns", _task_type, top_k=3)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("context_assembler: failure_patterns search failed: %s", e, exc_info=True)
 
     if ctx.is_empty:
@@ -618,7 +618,7 @@ def _build_context_from_kb(task_type: str, layer: str, reranker: RerankerProtoco
             blueprint_hits = kb.search(query=f"blueprint {layer} architecture", k=3, topic=None)
             if blueprint_hits:
                 ctx.blueprints = [h.content for h in blueprint_hits[:2]]
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("KB search failed, using embedded defaults only", exc_info=True)
 
     ctx.degraded = not ctx.ke_entries and not ctx.blueprints
@@ -649,7 +649,7 @@ def _get_or_init_kb() -> UnifiedMemoryAPI | None:
             len(result.categories_found),
         )
         return kb
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("KB context bridge initialization failed: %s", exc, exc_info=True)
         return None
 

@@ -92,7 +92,7 @@ def _get_staged_py_files(gateway) -> list[str]:
             )
             return []
         staged = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "PURE-SHIM gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True,
@@ -117,7 +117,7 @@ def _resolve_worktree_root(gateway) -> str:
         )
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return str(gateway.project_root)
 
@@ -169,7 +169,7 @@ def _run_shim_checker(abs_files: list[str], wt_root: str) -> subprocess.Complete
             "PURE-SHIM gate fail-open: check_pure_shim.py 超时(60s)，检测器失效。"
         )
         return None
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "PURE-SHIM gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True,

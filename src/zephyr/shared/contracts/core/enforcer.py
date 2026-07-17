@@ -386,14 +386,14 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
         module = sys.modules.get(contract_type.__module__)
         globalns = getattr(module, "__dict__", {}) if module else {}
         return typing.get_type_hints(contract_type, globalns=globalns, include_extras=False)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("suppressed error in enforcer", exc_info=True)
 
     hints: dict[str, Any] = {}
     try:
         module = sys.modules.get(contract_type.__module__)
         globalns = getattr(module, "__dict__", {}) if module else {}
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         globalns = {}
 
     for fld in dataclasses.fields(contract_type):
@@ -405,7 +405,7 @@ def _resolve_type_hints(contract_type: type[Any]) -> dict[str, Any]:
                 hints[fld.name] = typing._eval_type(
                     typing.ForwardRef(ftype), globalns, None
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 hints[fld.name] = ftype
         else:
             hints[fld.name] = ftype
@@ -462,7 +462,7 @@ def _get_trace_context(value: object) -> object | None:
 
     try:
         return getattr(value, "trace_context", None)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 

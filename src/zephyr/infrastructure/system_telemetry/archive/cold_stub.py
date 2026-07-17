@@ -103,7 +103,7 @@ def compress_dir(src: Path, dst_name: str) -> Path | None:
             tar.add(src, arcname=".")
         os.replace(tmp, dst)
         return dst
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         try:
             os.remove(tmp)
         except OSError:

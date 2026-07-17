@@ -83,7 +83,7 @@ class ContextRecycling:
         try:
             decompressed = zlib.decompress(bytes.fromhex(ctx.data))
             return decompressed.decode("utf-8")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("ContextRecycling restore failed for %s: %s", session_id, exc, exc_info=True)
             return None
 

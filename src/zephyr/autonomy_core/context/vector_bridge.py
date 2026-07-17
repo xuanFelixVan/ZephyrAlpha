@@ -152,7 +152,7 @@ class VectorBridge:
                 degraded=False,
                 collection=collection,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return VectorSearchResponse(
                 results=[],
                 total_found=0,

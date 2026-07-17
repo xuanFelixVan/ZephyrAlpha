@@ -78,7 +78,7 @@ class AutoDispatcher:
             bridge.request_context(task_id=task_id, session_id=session_id)
             result["step_context"] = "ok"
             logger.info("[AUTO-DISPATCH] context built for %s", task_id)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[AUTO-DISPATCH] context failed for %s: %s", task_id, exc, exc_info=True)
             result["step_context"] = f"failed: {exc}"
 
@@ -97,7 +97,7 @@ class AutoDispatcher:
                     audit_result.passed,
                     audit_result.failed,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("[AUTO-DISPATCH] audit failed for %s: %s", task_id, exc, exc_info=True)
                 result["step_scripts"] = f"failed: {exc}"
         else:
@@ -110,7 +110,7 @@ class AutoDispatcher:
                 self._task_repo = TaskRepository()
             self._task_repo.transition(task_id, TaskStatus.COMPLETED, note="auto-dispatched by daemon")
             result["step_transition"] = "ok (->COMPLETED)"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[AUTO-DISPATCH] transition failed for %s: %s", task_id, exc, exc_info=True)
             result["step_transition"] = f"failed: {exc}"
 

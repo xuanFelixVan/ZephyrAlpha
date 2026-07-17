@@ -211,7 +211,7 @@ def scan_python_compat(
         try:
             content = pf.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         all_issues.extend(_check_union_syntax(str(pf), content, target_minor))

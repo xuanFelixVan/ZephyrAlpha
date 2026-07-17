@@ -209,7 +209,7 @@ class VerdictEngine:
                         protection_level=resolved_level,
                     )
                     prot_level = resolved_level
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in verdict_engine", exc_info=True)
 
         verdict_level, reason = self._apply_decision_tree(actor, operation, gate_passed, violation_count)

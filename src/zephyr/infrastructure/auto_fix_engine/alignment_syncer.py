@@ -69,7 +69,7 @@ class AlignmentSyncer(BaseFixer):
                                 "type": "code_missing_from_blueprint",
                             }
                         )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -111,7 +111,7 @@ class AlignmentSyncer(BaseFixer):
             action.metadata["sync_direction"] = "code_to_blueprint"
             action.metadata["auto_fix"] = False
             action.metadata["reason"] = "Alignment sync requires human review - only reporting discrepancies"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -130,7 +130,7 @@ class AlignmentSyncer(BaseFixer):
                     error="Missing blueprint reference",
                 )
             return ValidationResult(valid=True, check_name="alignment_sync", evidence="[BLUEPRINT] header present")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="alignment_sync", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

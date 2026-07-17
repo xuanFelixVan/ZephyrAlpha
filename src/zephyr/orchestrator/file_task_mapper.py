@@ -298,7 +298,7 @@ class FileTaskMapper:
             )
             conn.execute("COMMIT")
             return task_id
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.execute("ROLLBACK")
             raise
         finally:
@@ -352,7 +352,7 @@ class FileTaskMapper:
                     )
                     conn.execute("COMMIT")
                     report.inserted += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     conn.execute("ROLLBACK")
                     report.errors.append(f"{fp}: {e}")
         finally:
@@ -413,7 +413,7 @@ class FileTaskMapper:
             conn.execute(SQL_DELETE_EVENT, (task_id,))
             conn.execute(SQL_DELETE_TASK, (task_id,))
             conn.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.execute("ROLLBACK")
             raise
         finally:
@@ -431,7 +431,7 @@ class FileTaskMapper:
             fm = yaml.safe_load(fm_text)
             if isinstance(fm, dict):
                 return str(fm.get("status", "")).strip() or None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in file_task_mapper", exc_info=True)
         return None
 

@@ -92,7 +92,7 @@ class ProcessLifecycleGateway:
                 entry.pid,
                 idle_timeout_s,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("ProcessLifecycleGateway: DaemonRegistry.register failed for '%s'", name, exc_info=True)
 
         return entry
@@ -121,7 +121,7 @@ class ProcessLifecycleGateway:
 
         try:
             DaemonRegistry.start(f"gateway:{name}")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("ProcessLifecycleGateway: DaemonRegistry.start failed for 'gateway:%s'", name, exc_info=True)
         return True
 
@@ -130,7 +130,7 @@ class ProcessLifecycleGateway:
         daemon_name = f"gateway:{name}"
         try:
             DaemonRegistry.stop(daemon_name)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in process_lifecycle_gateway", exc_info=True)
         return self._pool.terminate(name)
 

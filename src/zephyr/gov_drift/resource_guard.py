@@ -134,7 +134,7 @@ def _get_disk_usage_mb(directory: str) -> float:
 
         return (usage.total - usage.free) / (1024 * 1024)
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return 0.0
 
 
@@ -203,7 +203,7 @@ def apply_degradation(snap: ResourceSnapshot, current_pool: int) -> tuple[int, D
             try:
                 _on_critical()
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in resource_guard", exc_info=True)
 
     return new_pool, level
@@ -257,7 +257,7 @@ def guard_loop(
 
             consecutive_errors = 0
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             consecutive_errors += 1
 
             if consecutive_errors >= max_consecutive_errors:
@@ -301,7 +301,7 @@ def _apply_guard(
         try:
             on_degraded(level)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in resource_guard", exc_info=True)
 
 

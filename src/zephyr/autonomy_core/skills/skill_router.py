@@ -164,7 +164,7 @@ class SkillRouter:
                 "domain_to_role": domain_to_role,
             }
             _logger.info("Semantic index built: %d skills", len(names))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("Semantic index init failed: %s", exc, exc_info=True)
             self._semantic_index = {}
 
@@ -187,7 +187,7 @@ class SkillRouter:
             best_role = self._semantic_index["domain_to_role"].get(best_name, "implementer")
             _logger.info("Semantic route: '%s' -> %s (%.3f)", task_description, best_name, best_score)
             return (best_name, best_role)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("Semantic route failed: %s", exc, exc_info=True)
             return None
 

@@ -100,7 +100,7 @@ class _DiskCache:
     def invalidate(self, key: str) -> None:
         try:
             self._path(key).unlink(missing_ok=True)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in skill_cache_provider", exc_info=True)
 
 

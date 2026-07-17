@@ -90,7 +90,7 @@ class VectorWriter:
                 status="complete",
                 write_duration_ms=elapsed,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             elapsed = round((time.perf_counter() - t0) * 1000)
             logger.warning("[CE-VMS] VMS unavailable, degraded: %s", exc, exc_info=True)
             return VMSWriteResult(

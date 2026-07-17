@@ -190,7 +190,7 @@ class ProviderFailClosedAdapter:
         try:
             if self._provider is not None:
                 return self._provider(request)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in l7_validation", exc_info=True)
         return self._default_safe_response
 

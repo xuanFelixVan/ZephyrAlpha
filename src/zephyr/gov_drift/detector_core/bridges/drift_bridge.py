@@ -63,7 +63,7 @@ def subscribe_eventbus() -> None:
         logger.info(
             "DriftBridge: subscribed to 2 events (gate_blocked/task_completed)"
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("DriftBridge: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -85,7 +85,7 @@ def _on_gate_blocked(payload: object) -> None:
             source,
             detail,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("DriftBridge: _on_gate_blocked failed: %s", e, exc_info=True)
 
 
@@ -105,5 +105,5 @@ def _on_task_completed(payload: object) -> None:
             source,
             detail,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("DriftBridge: _on_task_completed failed: %s", e, exc_info=True)

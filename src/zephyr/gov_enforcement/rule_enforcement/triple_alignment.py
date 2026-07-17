@@ -114,7 +114,7 @@ def _parse_code_headers(py_path: Path) -> dict[str, str]:
         return headers
     try:
         content = py_path.read_text(encoding="utf-8")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return headers
     for line in content.splitlines()[:30]:
         m = re.match(r"^#\s*\[(\w[\w-]*)\]\s*(.+)", line)
@@ -150,7 +150,7 @@ def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
             cur.close()
         finally:
             conn.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to query depgraph nodes: %s", e, exc_info=True)
     return modules
 
@@ -220,7 +220,7 @@ def _build_module_check_context(
                 end = text.find("---", 3)
                 if end > 0:
                     bp_frontmatter = yaml.safe_load(text[3:end]) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in triple_alignment", exc_info=True)
 
     source_path_str = bp_frontmatter.get("actual_disk_path", "")

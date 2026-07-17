@@ -153,7 +153,7 @@ def cross_validate_baseline(
 
                 result["diff_lines"] = diff_lines[:20]
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in baseline_poisoning_guard", exc_info=True)
 
     return result

@@ -70,7 +70,7 @@ class TieredStorage:
                 try:
                     report_path.rename(target_path)
                     result["migrated"] += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("Failed to migrate %s: %s", report_path, exc, exc_info=True)
                     result["errors"] += 1
             else:

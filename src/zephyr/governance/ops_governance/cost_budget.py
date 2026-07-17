@@ -200,7 +200,7 @@ class CostBudget:
                     cost,
                     labels={"provider": provider, "model": model},
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("Failed to emit LLM cost metrics: %s", e, exc_info=True)
 
     @property

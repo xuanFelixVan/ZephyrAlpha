@@ -147,7 +147,7 @@ class ScriptRunner:
                 error="TIMEOUT",
                 duration_ms=elapsed,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             elapsed = round((time.perf_counter() - start) * 1000)
             return ScriptResult(
                 script=script_path,
@@ -194,7 +194,7 @@ class ScriptRunner:
                 )
             if findings:
                 submit_to_gate(findings, task_id=task_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[SCRIPT-GATE] submit skipped", exc_info=True)
 
     def _publish_to_kb(self, result: RunResult, task_id: str) -> None:
@@ -213,7 +213,7 @@ class ScriptRunner:
             ]
             if findings:
                 publish_to_kb(findings, task_id=task_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[SCRIPT-KB] publish skipped", exc_info=True)
 
 

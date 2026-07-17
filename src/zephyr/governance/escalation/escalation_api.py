@@ -108,7 +108,7 @@ class EscalationAPI:
                     "level": str(getattr(event, "level", "")),
                     "state": str(getattr(event, "state", "")),
                 }
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Engine evaluate failed: %s", e, exc_info=True)
         self._record_audit(service_name, operation, "escalated", "OK", context)
         result = {"status": "escalated", "operation": operation, "service": service_name, "context": context or {}}

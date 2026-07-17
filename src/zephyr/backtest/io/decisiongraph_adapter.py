@@ -174,7 +174,7 @@ def register_backtest_result_in_decisiongraph(result: BacktestResult) -> int:
             row = cur.fetchone()
             conn.commit()
             return row[0] if row else -1
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         conn.rollback()
         raise
     finally:

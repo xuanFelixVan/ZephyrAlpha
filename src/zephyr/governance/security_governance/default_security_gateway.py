@@ -59,7 +59,7 @@ def _get_lsg():
 
         _lsg_gateway = LSGSecurityGateway()
         return _lsg_gateway
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 
@@ -185,7 +185,7 @@ class DefaultSecurityGateway(SecurityGateway):
         try:
             self._sanitizer.validate_llm_context(content)
             self._l1_clean = True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._l1_clean = False
             self._findings.append(
                 ScanFinding(
@@ -274,7 +274,7 @@ class DefaultSecurityGateway(SecurityGateway):
             result = run_sync(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
             pass
         return None

@@ -114,7 +114,7 @@ class ModelRouter:
             for line in newest[0].read_text(encoding="utf-8").strip().split("\n"):
                 if line.strip():
                     profiles.append(json.loads(line))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("ModelRouter: failed to load %s: %s", newest[0], exc, exc_info=True)
             return 0
 

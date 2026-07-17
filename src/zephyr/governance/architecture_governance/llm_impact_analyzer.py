@@ -187,7 +187,7 @@ class LLMImpactAnalyzer:
                 analysis.details.append("LSG output scan flagged content")
         except ImportError:
             pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in llm_impact_analyzer", exc_info=True)
 
     def _get_diff(self, commit_sha: str) -> str:
@@ -200,7 +200,7 @@ class LLMImpactAnalyzer:
                 timeout=15,
             )
             return result.stdout or ""
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     def batch_analyze(self, commit_shas: list[str]) -> list[ImpactAnalysis]:

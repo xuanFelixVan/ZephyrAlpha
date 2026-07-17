@@ -209,7 +209,7 @@ class ConstitutionalAutoUpdate:
         try:
             atomic_write(str(self.agents_path), new_content)
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self.agents_path.write_text(original_content, encoding="utf-8")
             return False
 

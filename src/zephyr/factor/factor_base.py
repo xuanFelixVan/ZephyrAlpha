@@ -227,7 +227,7 @@ def autodiscover_factors(package_path: str | None = None) -> None:
                 importlib.reload(sys.modules[full_name])
             else:
                 importlib.import_module(full_name)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             import warnings
 
             warnings.warn(f"autodiscover_factors: 加载 {full_name} 失败：{exc}")

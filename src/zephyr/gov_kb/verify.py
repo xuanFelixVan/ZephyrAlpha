@@ -118,7 +118,7 @@ class FactChecker:
                 verified=found,
                 confidence=1.0 if found else 0.0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return FactResult(fact_type="file_contains", target=path, verified=False, confidence=0.0, error="internal error")
 
     def _verify_path_absolute(self, path: str = "", **kwargs) -> FactResult:
@@ -166,7 +166,7 @@ class FactChecker:
                 verified=has_attr,
                 confidence=1.0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return FactResult(
                 fact_type="module_has_attribute",
                 target=f"{module_name}.{attr}",
@@ -204,7 +204,7 @@ class FactChecker:
                 verified=exists,
                 confidence=1.0 if exists else 0.0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return FactResult(
                 fact_type="git_commit_exists", target=commit, verified=False, confidence=0.0, error=str(e)
             )

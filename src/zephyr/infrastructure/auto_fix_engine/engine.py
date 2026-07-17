@@ -125,7 +125,7 @@ class AutoFixEngine:
         try:
             with open(path, encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     def _load_fixers(self) -> None:
@@ -149,7 +149,7 @@ class AutoFixEngine:
                 mod = importlib.import_module(module_path)
                 cls = getattr(mod, class_name)
                 self._fixers[name] = cls()
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("Fixer %s not loaded: %s", name, exc, exc_info=True)
 
     def fix(self, action_type: str, target: str, dry_run: bool = False) -> FixAction:

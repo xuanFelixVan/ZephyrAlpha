@@ -166,6 +166,6 @@ class AuditAdmissionController:
 
                 ingest = FindingIngest()
                 ingest.ingest_findings(findings)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_admission_controller", exc_info=True)
         return jsonl_lines

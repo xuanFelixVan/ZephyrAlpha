@@ -126,7 +126,7 @@ def _check_modified_file(gateway, rel_path: str) -> str | None:
             line[1:] for line in diff_content.stdout.splitlines()
             if line.startswith("+") and not line.startswith("+++")
         ]
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     for line in added_lines:
         if _QUERY_CALL_PATTERN.search(line):
@@ -144,7 +144,7 @@ def _get_staged_py_files(gateway) -> list[str]:
             logger.warning("CH-FINAL-GATE fail-open: git diff 失败(rc=%d)", diff_result.returncode)
             return []
         staged = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("CH-FINAL-GATE fail-open: git diff 异常(%s: %s)", type(e).__name__, e)
         return []
     return [
@@ -158,7 +158,7 @@ def _get_wt_root(gateway) -> str:
     try:
         toplevel = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
         return toplevel.stdout.strip() if toplevel.returncode == 0 else str(gateway.project_root)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return str(gateway.project_root)
 
 
@@ -169,7 +169,7 @@ def _get_added_set(gateway) -> set[str]:
             ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
         )
         return set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return set()
 
 

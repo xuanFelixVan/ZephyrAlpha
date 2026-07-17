@@ -49,7 +49,7 @@ def _get_lsg():
 
         _lsg_gateway = importlib.import_module("zephyr.security.llm_defense.llm_security.gateway").LSGSecurityGateway()
         return _lsg_gateway
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.debug("LSG not available for A2A layer3 governance", exc_info=True)
         return None
 
@@ -71,7 +71,7 @@ def _lsg_scan_a2a_content_sync(from_agent: str, to_agent: str, content: str) -> 
         )
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_agent_scan"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.162 C1 修复: 移除 except RuntimeError + get_event_loop().is_running() fail-open 回退。
         # run_sync 已处理所有 async/sync 场景。原 is_running() 时 return None = fail-open 漏洞。
         logger.warning("suppressed error in a2a_governance_adapter", exc_info=True)

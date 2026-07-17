@@ -241,7 +241,7 @@ class RedBlueTriggerConsumer:
         circuit = self._get_circuit()
         try:
             circuit.before_run()
-        except Exception as e:  # CircuitBreakerOpenError
+        except Exception as e:  # CircuitBreakerOpenError  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "RedBlueTriggerConsumer: circuit open, skip (hash=%s): %s — 留队列重试",
                 hash8, e, exc_info=True

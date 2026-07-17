@@ -108,7 +108,7 @@ class GitBisector:
 
             return passed
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
         finally:
@@ -117,7 +117,7 @@ class GitBisector:
             # 并使仓库停留在 bisect 的分离 HEAD 状态。包裹 try/except 确保清理始终执行
             try:
                 subprocess.run(["git", "checkout", "-"], capture_output=True, text=True, cwd=self._project_root, timeout=10)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in git_bisector", exc_info=True)
 
     def bisect(

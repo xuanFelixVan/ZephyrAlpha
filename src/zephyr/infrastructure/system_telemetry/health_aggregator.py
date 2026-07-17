@@ -105,7 +105,7 @@ class HealthAggregator:
                     from datetime import UTC, datetime
                     ts = datetime.now(UTC).isoformat()
                     print(f"[HEALTH] {ts}: {len(degraded)} degraded systems after critical event")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
 
         bus.subscribe("kill_switch_triggered", _on_critical_event)

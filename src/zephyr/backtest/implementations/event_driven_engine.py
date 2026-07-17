@@ -235,7 +235,7 @@ class EventDrivenEngine(BacktestEngineBase):
             # 调用策略回调获取目标权重
             try:
                 target_weights = strategy_callback(event)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("策略回调执行错误 tick seq=%d: %s", event.sequence, e, exc_info=True)
                 return
 
@@ -252,7 +252,7 @@ class EventDrivenEngine(BacktestEngineBase):
                     portfolio=portfolio,
                     date=timestamp,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug("撮合失败 tick seq=%d: %s", event.sequence, e, exc_info=True)
                 fills = []
 
@@ -261,7 +261,7 @@ class EventDrivenEngine(BacktestEngineBase):
                 try:
                     portfolio.apply_fill(fill, allow_t_plus_1=False)
                     fills_applied += 1
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.debug("Fill 应用失败: %s (ts=%s)", e, timestamp, exc_info=True)
 
             # 更新市值

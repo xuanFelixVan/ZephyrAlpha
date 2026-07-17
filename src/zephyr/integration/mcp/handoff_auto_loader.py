@@ -51,7 +51,7 @@ class HandoffAutoLoader:
                 with open(files[0], encoding="utf-8") as fh:
                     self._latest = json.load(fh)
                 return self._latest
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("handoff load failed: %s", exc, exc_info=True)
         return None
 

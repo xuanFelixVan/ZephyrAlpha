@@ -238,7 +238,7 @@ class ResultPushManager:
         except urllib.error.URLError as exc:
             _log.error("callback connection error for task %s: %s", task["task_id"], exc)
             return PushStatus.CALLBACK_ERROR
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.error("callback push failed for task %s: %s", task["task_id"], exc, exc_info=True)
             return PushStatus.FAILED
 
@@ -254,7 +254,7 @@ class ResultPushManager:
             try:
                 subscriber(event)
                 delivered = True
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _log.error("event_bus subscriber failed for task %s: %s", task["task_id"], exc, exc_info=True)
 
         if delivered:

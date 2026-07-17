@@ -152,7 +152,7 @@ class PydanticV2Migrator:
                 findings = self._scan_file(py_file)
                 report.findings.extend(findings)
                 report.files_scanned += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 report.error_files.append(f"{py_file}: {e}")
 
         return report
@@ -162,7 +162,7 @@ class PydanticV2Migrator:
         try:
             with open(filepath, encoding="utf-8") as f:
                 lines = f.readlines()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return findings
 
         for i, line in enumerate(lines, 1):
@@ -216,7 +216,7 @@ class PydanticV2Migrator:
                 else:
                     self._apply_to_file(filepath, findings)
                     result["files_modified"] += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result["errors"].append(f"{filepath}: {e}")
 
         return result

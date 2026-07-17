@@ -131,6 +131,6 @@ def evaluate(
                 if evaluator(ks.trigger_condition):
                     ks.active = True
                     triggered.append(ks)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in trading_kill_switch", exc_info=True)
     return triggered

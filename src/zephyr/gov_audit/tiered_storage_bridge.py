@@ -33,7 +33,7 @@ class TieredStorageBridge:
             self._available = True
         except ImportError:
             logger.warning("TieredStorage not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TieredStorage init failed: %s", exc, exc_info=True)
 
     def find_report(self, audit_id: str) -> dict[str, Any] | None:
@@ -48,7 +48,7 @@ class TieredStorageBridge:
             data = json.loads(report_path.read_text(encoding="utf-8"))
             data["_storage_tier"] = self._storage.classify(report_path)
             return data
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TieredStorageBridge.find_report failed: %s", exc, exc_info=True)
             return None
 
@@ -59,7 +59,7 @@ class TieredStorageBridge:
             result = self._storage.migrate(dry_run=dry_run)
             result["available"] = True
             return result
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TieredStorageBridge.migrate failed: %s", exc, exc_info=True)
             return {"migrated": 0, "errors": 1, "available": False}
 
@@ -70,7 +70,7 @@ class TieredStorageBridge:
             stats = self._storage.storage_stats()
             stats["available"] = True
             return stats
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TieredStorageBridge.stats failed: %s", exc, exc_info=True)
             return {"available": False}
 

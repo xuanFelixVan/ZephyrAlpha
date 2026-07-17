@@ -95,7 +95,7 @@ class InputGuard:
         try:
             decoded = base64.b64decode(value, validate=True)
             return decoded.decode("utf-8", errors="ignore")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     def _contains_dangerous(self, value: str) -> bool:

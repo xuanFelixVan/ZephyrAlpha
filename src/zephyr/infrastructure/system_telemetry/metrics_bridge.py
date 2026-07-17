@@ -205,7 +205,7 @@ class MetricsBridge:
 
             logger.debug("[TELE-FLE] emit_metrics: %d written", len(metrics))
             return len(metrics)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.rollback()
             raise TelemetryWriteError("emit_metrics 失败") from exc
         finally:

@@ -105,7 +105,7 @@ def make_panorama_alignment_gate() -> GateSpec:
                 )
                 return True, ""
             staged_files = diff_result.stdout.strip().splitlines()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning(
                 "GATE-PANORAMA-ALIGNMENT gate fail-open: git diff 异常(%s: %s)，检测器失效。",
                 type(e).__name__, e, exc_info=True,
@@ -138,7 +138,7 @@ def make_panorama_alignment_gate() -> GateSpec:
                 str(e),
             )
             return True, ""
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # fail-loud：检测器失效，告警但不阻断
             logger.warning(
                 "GATE-PANORAMA-ALIGNMENT gate fail-open: run_alignment 异常(%s: %s)，检测器失效。",

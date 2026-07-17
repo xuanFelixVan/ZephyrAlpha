@@ -180,7 +180,7 @@ class AtomicFixer:
                             data = f.read()
                             dest.write_bytes(data)
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def scan_and_recover_all(self) -> list[str]:

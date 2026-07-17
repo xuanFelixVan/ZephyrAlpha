@@ -259,7 +259,7 @@ class EmbeddingRouter:
                     _logger.info("EmbeddingRouter: BGE-M3 预热成功 (%dd, backend=%s)", self._bge_m3_dim, self._backend)
                 else:
                     raise ValueError(f"输出维度异常: dim={self._bge_m3_dim}, 期望>0")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("EmbeddingRouter: BGE-M3 预热失败，降级", exc_info=True)
                 self._bge_m3_available = False
 
@@ -273,7 +273,7 @@ class EmbeddingRouter:
                     )
                 else:
                     raise ValueError(f"输出维度异常: dim={self._bge_small_dim}, 期望>0")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("EmbeddingRouter: bge-small 预热失败", exc_info=True)
                 self._bge_small_available = False
 
@@ -322,7 +322,7 @@ class EmbeddingRouter:
                 self._bge_small_dim = embedder.dim
                 self._bge_small_available = True
                 _logger.info("EmbeddingRouter: Ollama bge-small 就绪 (%s, %dd)", model_name, embedder.dim)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             if model_key == "m3":
                 _logger.warning("EmbeddingRouter: Ollama BGE-M3 加载失败: %s", e, exc_info=True)
                 self._bge_m3_available = False
@@ -350,7 +350,7 @@ class EmbeddingRouter:
                 self._bge_small_model = model
                 self._bge_small_available = True
                 _logger.info("EmbeddingRouter: bge-small 本地模型加载成功 (%s)", model_path)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             if model_key == "m3":
                 _logger.warning("EmbeddingRouter: BGE-M3 本地加载失败: %s", e, exc_info=True)
                 self._bge_m3_available = False

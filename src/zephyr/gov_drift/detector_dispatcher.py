@@ -244,7 +244,7 @@ class DetectorDispatcher:
                     elapsed_ms=elapsed,
                 )
 
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 elapsed = (time.perf_counter() - start) * 1000
 
                 return DetectorResult(
@@ -259,7 +259,7 @@ class DetectorDispatcher:
                     if proc is not None and proc.returncode is None:
                         proc.kill()
                         await proc.wait()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in detector_dispatcher", exc_info=True)
 
 

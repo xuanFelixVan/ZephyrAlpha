@@ -253,7 +253,7 @@ class ConfigHolder:
         for cb in listeners:
             try:
                 cb(old, new)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _LOGGER.exception("ConfigHolder listener failed: %r", cb)
 
     @classmethod

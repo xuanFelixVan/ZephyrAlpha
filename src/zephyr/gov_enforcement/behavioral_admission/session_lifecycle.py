@@ -519,7 +519,7 @@ class SessionLifecycle:
                 ),
             )
             self._db_conn.commit()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to persist session %s: %s", record.session_id, exc, exc_info=True)
 
     def _load_from_db(self, session_id: str) -> SessionStateRecord | None:
@@ -539,6 +539,6 @@ class SessionLifecycle:
                 last_transition_at=row[7],
                 transition_history=json.loads(row[8]),
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to load session %s: %s", session_id, exc, exc_info=True)
             return None

@@ -65,7 +65,7 @@ class AllCompleter(BaseFixer):
                 missing = [s for s in actual if s not in declared]
                 if missing:
                     findings.append({"file": str(init_file), "missing": missing, "type": "incomplete_all"})
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -161,7 +161,7 @@ class AllCompleter(BaseFixer):
                 action.status = FixStatus.COMPLETED
             else:
                 action.status = FixStatus.COMPLETED
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -186,7 +186,7 @@ class AllCompleter(BaseFixer):
             return ValidationResult(
                 valid=True, check_name="all_completion", evidence=f"__all__ has {len(declared)} entries"
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="all_completion", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

@@ -90,7 +90,7 @@ def ensure_ch_env_loaded() -> None:
                 # 不覆盖已有环境变量（允许显式 override）
                 os.environ.setdefault(k, v)
             log.info("CH 配置已加载: %s", _CH_ENV_PATH)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.error("CH 配置加载失败 %s: %s", _CH_ENV_PATH, e)
         finally:
             _loaded = True

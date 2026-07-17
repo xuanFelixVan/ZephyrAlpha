@@ -125,7 +125,7 @@ def _get_staged_new_md_files(gateway) -> list[str] | None:
             )
             return None
         staged_new = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "DOC-REF-BROKEN gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -146,7 +146,7 @@ def _get_worktree_root(gateway) -> str:
         )
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return str(gateway.project_root)
 

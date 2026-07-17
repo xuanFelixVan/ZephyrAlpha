@@ -96,7 +96,7 @@ class OrphanCollector:
                         result.kept += 1
                 else:
                     result.errors += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("Error processing judgment for %s: %s", judgment.path, exc, exc_info=True)
                 result.errors += 1
 
@@ -178,6 +178,6 @@ class OrphanCollector:
             tracker.deprecate(path, ttl_days=30, reason=reason)
             logger.info("DEPRECATED: %s — %s", path, reason)
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to deprecate %s: %s", path, exc, exc_info=True)
             return False

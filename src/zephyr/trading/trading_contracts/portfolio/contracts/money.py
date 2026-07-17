@@ -201,7 +201,7 @@ class Money:
         if not isinstance(self.amount, Decimal):
             try:
                 object.__setattr__(self, "amount", Decimal(str(self.amount)))
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 raise MoneyPrecisionError(f"Money.amount 无法转换为 Decimal: {self.amount!r}（{exc}）") from exc
 
         # 按货币精度 quantize（银行家舍入）

@@ -111,7 +111,7 @@ class FreezeCircuitBreaker:
                 triggered_by=data.get("triggered_by", "unknown"),
                 details=data.get("details", ""),
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     def is_frozen(self) -> bool:

@@ -98,7 +98,7 @@ def _get_staged_new_py_files(gateway) -> list[str]:
             )
             return []
         staged_new = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "FILE-COPY gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -150,7 +150,7 @@ def _run_dup_checker(abs_files, repo_root):
             "FILE-COPY gate fail-open: check_code_duplication.py 超时(120s)，检测器失效。"
         )
         return None
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "FILE-COPY gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True

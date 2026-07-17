@@ -90,7 +90,7 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
             )
             return None
         staged_new = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True
@@ -111,7 +111,7 @@ def _resolve_worktree_root(gateway) -> str:
         if toplevel_result.returncode == 0:
             return toplevel_result.stdout.strip()
         return str(gateway.project_root)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return str(gateway.project_root)
 
 
@@ -153,7 +153,7 @@ def _run_vocab_script(abs_files: list[str], wt_root: str):
             "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。"
         )
         return None
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True

@@ -80,7 +80,7 @@ class CapabilitySync:
                     )
                     self._registry.register(cap_card)
                     synced += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in capability_sync", exc_info=True)
         return synced
 
@@ -116,6 +116,6 @@ class CapabilitySync:
                     )
                     self._registry.register(cap_card)
                     synced += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in capability_sync", exc_info=True)
         return synced

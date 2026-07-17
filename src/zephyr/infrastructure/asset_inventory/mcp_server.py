@@ -219,7 +219,7 @@ def dispatch_tool(name: str, **kwargs: str) -> str:
         if kwargs:
             return func(**kwargs)
         return func()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.exception("MCP tool '%s' failed", name, exc_info=True)
         return json.dumps({"error": "internal error"})
 

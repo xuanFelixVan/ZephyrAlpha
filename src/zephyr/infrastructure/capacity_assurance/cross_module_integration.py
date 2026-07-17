@@ -91,7 +91,7 @@ class PredictRouterIntegration:
             for callback in self._switch_callbacks:
                 try:
                     callback(alert_level, slo_id)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     ctx.status = IntegrationStatus.DEGRADED
 
         return ctx

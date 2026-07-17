@@ -68,7 +68,7 @@ def _load_immutable_core_config() -> dict[str, Any]:
             logger.warning("immutable_core.yaml top-level not dict; falling back")
             return {}
         return data
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error(
             "Failed to load immutable_core.yaml: %s", exc, exc_info=True
         )
@@ -186,7 +186,7 @@ class ImmutableCore:
                 checked_items=checked,
                 violations=[],
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("ImmutableCore integrity check FAILED: %s", exc, exc_info=True)
             return IntegrityResult(
                 intact=False,
@@ -219,7 +219,7 @@ class ImmutableCore:
                 checked_items=checked,
                 violations=[],
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Static constants integrity check FAILED: %s", exc, exc_info=True)
             return IntegrityResult(
                 intact=False,

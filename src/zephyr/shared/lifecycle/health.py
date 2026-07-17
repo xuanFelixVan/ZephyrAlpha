@@ -214,7 +214,7 @@ class AggregateHealth:
                         message=f"Health check timed out after {timeout}s",
                     ),
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return (
                     module.module_name,
                     ModuleHealth(
@@ -309,7 +309,7 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in health", exc_info=True)
 
         def _on_fle_anomaly(payload: dict[str, Any]) -> None:
@@ -323,7 +323,7 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in health", exc_info=True)
 
         def _on_audit_finding(payload: dict[str, Any]) -> None:
@@ -337,13 +337,13 @@ def subscribe_monitoring_events() -> None:
                 _event_health_log.append(entry)
                 if len(_event_health_log) > 1000:
                     _event_health_log.pop(0)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in health", exc_info=True)
 
         bus.subscribe("f5.deadlock_detected", _on_f5_deadlock)
         bus.subscribe("fle.anomaly", _on_fle_anomaly)
         bus.subscribe("audit.finding_created", _on_audit_finding)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in health", exc_info=True)
 
 

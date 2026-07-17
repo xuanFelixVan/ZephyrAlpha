@@ -106,7 +106,7 @@ class ExamJudge:
                 temperature=0.0,
             )
             return self._parse_judge_json(raw)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("ExamJudge: judge failed: %s", e, exc_info=True)
             return JudgeResult(reasoning=f"judge_error: {e}")
 

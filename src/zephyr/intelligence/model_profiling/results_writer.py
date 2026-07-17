@@ -94,7 +94,7 @@ def load_benchmark_history(
                 record = json.loads(line)
                 if record.get("model_name") == model_name:
                     history.append(record)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.debug("ResultsWriter: skip %s: %s", f.name, exc, exc_info=True)
 
     history.sort(key=lambda r: r.get("benchmark_date", ""))

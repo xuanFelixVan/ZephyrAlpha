@@ -127,7 +127,7 @@ class WorkflowManager:
                     output=output,
                 )
                 self._completed_order.append(activity.name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._results[activity.name] = ActivityResult(
                     activity_name=activity.name,
                     status=ActivityStatus.FAILED,
@@ -196,7 +196,7 @@ class WorkflowManager:
                     output=output,
                 )
                 self._completed_order.append(activity.name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._results[activity.name] = ActivityResult(
                     activity_name=activity.name,
                     status=ActivityStatus.FAILED,

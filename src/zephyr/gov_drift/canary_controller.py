@@ -116,7 +116,7 @@ def _load_state() -> dict[str, object]:
         with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {}
 
 

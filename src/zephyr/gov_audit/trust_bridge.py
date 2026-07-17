@@ -33,7 +33,7 @@ class TrustBridge:
             self._available = True
         except ImportError:
             logger.warning("TrustEngine not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TrustEngine init failed: %s", exc, exc_info=True)
 
     def evaluate(self, audit_results: list[dict[str, Any]]) -> dict[str, Any]:
@@ -41,7 +41,7 @@ class TrustBridge:
             return {"trust_level": "UNKNOWN", "score": 0.0, "confidence": 0.0}
         try:
             return self._engine.calculate(audit_results)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TrustBridge.evaluate failed: %s", exc, exc_info=True)
             return {"trust_level": "UNKNOWN", "score": 0.0, "confidence": 0.0}
 
@@ -51,7 +51,7 @@ class TrustBridge:
         try:
             self._engine.update_history(result)
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TrustBridge.record failed: %s", exc, exc_info=True)
             return False
 
@@ -60,7 +60,7 @@ class TrustBridge:
             return {"direction": "stable", "change": 0.0}
         try:
             return self._engine.trend()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("TrustBridge.get_trend failed: %s", exc, exc_info=True)
             return {"direction": "stable", "change": 0.0}
 

@@ -146,7 +146,7 @@ def _get_client():
             _ch_client = c
             log.info("clickhouse-driver TCP 已连接 (%s:%s)", _CH_HOST, _CH_TCP_PORT)
             return _ch_client
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver TCP 连接失败 (%s:%s): %s", _CH_HOST, _CH_TCP_PORT, e)
         _tcp_fail_ts = _time.time()
         return None
@@ -195,7 +195,7 @@ def _get_http_host() -> str:
                 log.info("ClickHouse HTTP 已连接 (%s:%s)", _CH_HOST, _CH_HTTP_PORT)
                 return _ch_http_host
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("ClickHouse HTTP 连接失败 (%s:%s): %s", _CH_HOST, _CH_HTTP_PORT, e)
         # 兜底：HTTP 不可用，设置冷却时间戳
         _http_fail_ts = _time.time()
@@ -215,7 +215,7 @@ def _invalidate_tcp_client(reason: str = "") -> None:
         if _ch_client is not None:
             try:
                 _ch_client.disconnect()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
             _ch_client = None
             _tcp_fail_ts = _time.time()
@@ -267,7 +267,7 @@ def _http_insert(
             return True
         log.error("HTTP insert 失败: status=%s, body=%s", resp.status, body[:200])
         return False
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.error("HTTP insert 异常: %s", e)
         _invalidate_http_host(f"insert HTTP 失败: {e}")
         return False
@@ -302,7 +302,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                 with _ch_lock:  # 串行化 execute
                     client.execute(sql, settings={"max_execution_time": timeout})
                 return ""
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver query 失败，降级到 HTTP: %s", e)
             _invalidate_tcp_client(f"query execute 失败: {e}")
 
@@ -320,7 +320,7 @@ def query(sql: str, timeout: int = _DEFAULT_TIMEOUT) -> str:
                 return data
             log.warning("HTTP query 失败: status=%s", resp.status)
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("HTTP query 失败: %s", e)
             _invalidate_http_host(f"query HTTP 失败: {e}")
 
@@ -608,7 +608,7 @@ def delete_where(
             with _ch_lock:  # 串行化 execute（clickhouse-driver Client 非线程安全）
                 client.execute(sql, settings={"max_execution_time": timeout})
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("clickhouse-driver delete 失败，降级到 HTTP: %s", e)
             _invalidate_tcp_client(f"delete execute 失败: {e}")
     # 策略2: HTTP API
@@ -624,7 +624,7 @@ def delete_where(
                 return True
             log.warning("HTTP delete 失败: status=%s", resp.status)
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("HTTP delete 失败: %s", e)
             _invalidate_http_host(f"delete HTTP 失败: {e}")
     log.error("CH delete 失败(TCP+HTTP 均失败): %s WHERE %s", table, condition)
@@ -683,7 +683,7 @@ def health_check() -> dict[str, str]:
             result["tcp"] = "ok"
         else:
             result["tcp"] = "fail"
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         result["tcp"] = "fail"
     finally:
         # 恢复原状态（不污染全局单例）
@@ -704,7 +704,7 @@ def health_check() -> dict[str, str]:
             resp = conn.getresponse()
             result["http"] = "ok" if resp.status == 200 else f"status:{resp.status}"
             conn.close()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result["http"] = f"fail:{type(e).__name__}"
     else:
         result["http"] = "fail"

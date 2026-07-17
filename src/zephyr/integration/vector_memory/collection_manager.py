@@ -514,11 +514,11 @@ class CollectionManager:
                 continue
             try:
                 col = self.get_collection(name)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
             try:
                 all_data = col.get(include=["metadatas"])
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
             if not all_data or not all_data.get("ids"):
                 continue

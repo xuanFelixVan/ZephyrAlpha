@@ -199,7 +199,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
             )
             return None
         staged_files = diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "MSG-STYLE gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True,
@@ -261,7 +261,7 @@ def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> 
         )
         if diff_content.returncode != 0:
             return []
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
     added_lines_meta = _parse_diff_added_lines(diff_content.stdout)
@@ -312,7 +312,7 @@ def make_msg_style_gate() -> GateSpec:
         try:
             toplevel_result = gateway._run_git(["git", "rev-parse", "--show-toplevel"])
             wt_root = toplevel_result.stdout.strip() if toplevel_result.returncode == 0 else str(gateway.project_root)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_root = str(gateway.project_root)
 
         # added(A) set
@@ -321,7 +321,7 @@ def make_msg_style_gate() -> GateSpec:
                 ["git", "diff", "--cached", "--name-only", "--diff-filter=A"]
             )
             added_set = set(added_result.stdout.strip().splitlines()) if added_result.returncode == 0 else set()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             added_set = set()
 
         violations_all: list[str] = []

@@ -89,7 +89,7 @@ class TaskContextBuilder:
             blocks = result["blocks"]
             total_tokens = result["total_tokens"]
             status = result["status"]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("[CE-TCB] build failed: %s", exc, exc_info=True)
             status = "degraded"
         finally:
@@ -101,7 +101,7 @@ class TaskContextBuilder:
                 compressed = _compress_blocks(blocks, max_tokens)
                 blocks = compressed["blocks"]
                 total_tokens = compressed["total_tokens"]
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("[CE-TCB] compress failed: %s", exc, exc_info=True)
         stages["compress_ms"] = round((time.perf_counter() - t0) * 1000, 1)
 
@@ -109,7 +109,7 @@ class TaskContextBuilder:
         try:
             validated = _validate_blocks(blocks)
             blocks = validated
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[CE-TCB] validate failed: %s", exc, exc_info=True)
         stages["validate_ms"] = round((time.perf_counter() - t0) * 1000, 1)
 
@@ -174,7 +174,7 @@ def _build_context_blocks(
                     }
                 )
                 total_tokens += min(tokens, 2000)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 status = "partial"
                 blocks.append(
                     {
@@ -210,7 +210,7 @@ def _build_context_blocks(
                 }
             )
             total_tokens += 100
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in task_context_builder", exc_info=True)
 
     return {"blocks": blocks, "total_tokens": total_tokens, "status": status}
@@ -267,5 +267,5 @@ def _load_conventions(task_type: str) -> dict[str, Any] | None:
         from zephyr.integration.shared.schema.schemas import BASE_CONFIG
 
         return {"task_type": task_type, "config": str(BASE_CONFIG)[:200]}
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None

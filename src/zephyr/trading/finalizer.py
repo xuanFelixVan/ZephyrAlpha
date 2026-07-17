@@ -18,7 +18,7 @@
 """
 Finalizer — 优雅清理器
 ========================
-蓝图: ARC-0001 §4.4 (六阶)
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Finalizer + OwnerReference
 """
 
@@ -44,7 +44,7 @@ class Finalizer:
             try:
                 fn()
                 results[resource_type] = True
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results[resource_type] = False
         return results
 
@@ -77,7 +77,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
             registry = get_registry()
             snapshots = registry.snapshot()
             _logger.info("Monitor flush: %d metrics snapshots flushed", len(snapshots))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("Monitor flush failed: %s", e, exc_info=True)
 
     def _monitor_health_snapshot() -> None:
@@ -87,7 +87,7 @@ def register_monitoring_finalizers(finalizer: Finalizer) -> None:
 
             log = get_event_health_log()
             _logger.info("Monitor health snapshot: %d event log entries saved", len(log))
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("Monitor health snapshot failed: %s", e, exc_info=True)
 
     finalizer.register("monitor-flush", _monitor_flush)

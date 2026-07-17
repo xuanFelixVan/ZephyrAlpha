@@ -211,7 +211,7 @@ class OrderManager:
 
         try:
             broker.cancel_order(order.broker_order_id)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error(
                 "券商端撤单失败: order_id=%s broker_order_id=%s broker_id=%s error=%s",
                 order_id, order.broker_order_id, broker_id, e,
@@ -270,7 +270,7 @@ class OrderManager:
         for callback in self._fill_callbacks:
             try:
                 callback(fill)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("Fill callback error: %s", e, exc_info=True)
 
     @property

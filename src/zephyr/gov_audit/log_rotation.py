@@ -60,7 +60,7 @@ class LogRotation:
                     try:
                         f.unlink()
                         result["deleted"] += 1
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.error("Failed to delete %s: %s", f, exc, exc_info=True)
 
         cutoff = now_utc().timestamp() - (self._max_age_days * 86400)
@@ -85,7 +85,7 @@ class LogRotation:
                             gz.write(data)
                         f.unlink()
                         result["compressed"] += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("Failed to process %s: %s", f, exc, exc_info=True)
 
         return result

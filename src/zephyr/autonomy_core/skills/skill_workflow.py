@@ -185,7 +185,7 @@ class SkillWorkflow:
                     "l1": loaded.get("l1"),
                     "token_count": loaded.get("token_count_l2"),
                 }
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors[skill_id] = str(e)
                 results[skill_id] = {"status": "failed", "error": str(e)}
 

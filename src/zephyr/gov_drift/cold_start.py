@@ -167,7 +167,7 @@ def init_directories(project_root: str) -> list[str]:
 
                 created.append(d)
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in cold_start", exc_info=True)
 
     return created
@@ -194,7 +194,7 @@ def init_database(project_root: str) -> bool:
 
         return True
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
 
@@ -232,7 +232,7 @@ def bootstrap(project_root: str) -> ColdStartResult:
             if not result.first_scan_triggered:
                 result.warnings.append("Cold-start LIGHT scan did not trigger — manual scan recommended")
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.warnings.append(f"Cold-start scan exception: {exc}")
 
     return result
@@ -252,7 +252,7 @@ def _trigger_light_scan(project_root: str) -> bool:
 
         return result.detectors_run > 0
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
     finally:
@@ -286,7 +286,7 @@ def session_entry_activate(project_root: str) -> ColdStartResult:
     try:
         result.first_scan_triggered = _trigger_light_scan(project_root)
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in cold_start", exc_info=True)
 
     return result

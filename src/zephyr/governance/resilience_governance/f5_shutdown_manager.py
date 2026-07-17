@@ -153,7 +153,7 @@ class F5ShutdownManager:
             self._atexit_registered = True
             details["atexit_registered"] = True
             logger.info("F5ShutdownManager: atexit hook registered")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"atexit registration failed: {e}")
             logger.warning("F5ShutdownManager: atexit registration failed: %s", e, exc_info=True)
 
@@ -162,7 +162,7 @@ class F5ShutdownManager:
             self._reschedule_idle_timer()
             details["idle_monitor_started"] = True
             details["idle_timeout_seconds"] = self._idle_timeout
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"idle monitor start failed: {e}")
             logger.warning("F5ShutdownManager: idle monitor start failed: %s", e, exc_info=True)
 
@@ -214,7 +214,7 @@ class F5ShutdownManager:
         # 1. 取消 idle 计时器
         try:
             self._cancel_idle_timer()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"idle timer cancel failed: {e}")
 
         # 2. 持久化状态 (在 on_shutdown 之前, 因为 on_shutdown 会清理状态)
@@ -223,7 +223,7 @@ class F5ShutdownManager:
             details["persist_result"] = persist_result.details
             if not persist_result.success:
                 errors.extend(persist_result.errors)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"persist_state failed: {e}")
             logger.error("F5ShutdownManager: persist_state failed: %s", e, exc_info=True)
 
@@ -234,7 +234,7 @@ class F5ShutdownManager:
                 details["boot_shutdown"] = boot_result.details
                 if not boot_result.success:
                     errors.extend(boot_result.errors)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 errors.append(f"integration on_shutdown failed: {e}")
                 logger.error("F5ShutdownManager: integration on_shutdown failed: %s", e, exc_info=True)
 
@@ -277,7 +277,7 @@ class F5ShutdownManager:
                 try:
                     state_payload["deadlock_state"] = deadlock.serialize()
                     details["deadlock_state_captured"] = True
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     errors.append(f"deadlock serialize failed: {e}")
 
             # EscalationAPI 审计日志 (通过 escalation_engine 获取, 若有)
@@ -294,7 +294,7 @@ class F5ShutdownManager:
                         "active_count": int(active_count),
                     }
                     details["escalation_state_captured"] = True
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     errors.append(f"escalation state capture failed: {e}")
 
             # Arbitrator 审计日志
@@ -303,7 +303,7 @@ class F5ShutdownManager:
                 try:
                     state_payload["arbitrator_audit_log"] = arbitrator.get_audit_log()
                     details["arbitrator_audit_log_captured"] = True
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     errors.append(f"arbitrator audit log capture failed: {e}")
 
             # DelegationEngine 委托历史
@@ -317,7 +317,7 @@ class F5ShutdownManager:
                     ]
                     details["delegation_history_captured"] = True
                     details["delegation_history_count"] = len(history)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     errors.append(f"delegation history capture failed: {e}")
 
         # 写入 SQLite (原子写入: 先写临时文件, 再 replace)
@@ -325,7 +325,7 @@ class F5ShutdownManager:
             self._write_state_to_db(state_payload)
             details["db_path"] = str(self._db_path)
             details["state_written"] = True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"db write failed: {e}")
             logger.error("F5ShutdownManager: db write failed: %s", e, exc_info=True)
 
@@ -420,10 +420,10 @@ class F5ShutdownManager:
                     try:
                         self._restore_deadlock_state(deadlock, deadlock_state)
                         details["deadlock_state_restored"] = True
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         errors.append(f"deadlock restore failed: {e}")
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append(f"db read failed: {e}")
             logger.error("F5ShutdownManager: db read failed: %s", e, exc_info=True)
 
@@ -493,7 +493,7 @@ class F5ShutdownManager:
         logger.info("F5ShutdownManager: received %s, triggering shutdown", sig_name)
         try:
             self.shutdown()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 信号处理永不抛异常
             logger.error("F5ShutdownManager: shutdown in signal handler failed: %s", e, exc_info=True)
 
@@ -502,7 +502,7 @@ class F5ShutdownManager:
         logger.info("F5ShutdownManager: atexit triggered, running shutdown")
         try:
             self.shutdown()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("F5ShutdownManager: shutdown in atexit failed: %s", e, exc_info=True)
 
     def _reschedule_idle_timer(self) -> None:
@@ -529,7 +529,7 @@ class F5ShutdownManager:
         if timer is not None:
             try:
                 timer.cancel()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
             self._idle_timer = None
 
@@ -543,7 +543,7 @@ class F5ShutdownManager:
                 self._idle_timeout,
             )
             self.shutdown()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("F5ShutdownManager: idle timeout callback error: %s", e, exc_info=True)
 
     def update_activity(self) -> None:

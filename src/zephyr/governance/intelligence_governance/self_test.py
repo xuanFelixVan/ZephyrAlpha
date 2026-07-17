@@ -89,7 +89,7 @@ def _check_engine_init():
                 engine,
             )
         return CheckResult("engine_init", True, detail=f"{rule_count} rules loaded"), engine
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("engine_init", False, HealthLevel.CRITICAL, str(e)), None
 
 
@@ -105,7 +105,7 @@ def _check_evaluate(engine) -> CheckResult:
             return CheckResult("evaluate", False, HealthLevel.DEGRADED, "event has no level")
         else:
             return CheckResult("evaluate", True, detail=f"level={ev.level.name}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("evaluate", False, HealthLevel.CRITICAL, str(e))
 
 
@@ -119,7 +119,7 @@ def _check_circuit_breaker(engine) -> CheckResult:
             return CheckResult("circuit_breaker", False, HealthLevel.DEGRADED, "Circuit is OPEN")
         else:
             return CheckResult("circuit_breaker", True, detail=f"state={cb_state.name}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("circuit_breaker", False, HealthLevel.CRITICAL, str(e))
 
 
@@ -133,7 +133,7 @@ def _check_economic_guard(engine) -> CheckResult:
             return CheckResult(
                 "economic_guard", True, detail=f"consumed={status['consumed_today']}/{status['daily_budget']}"
             )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("economic_guard", False, HealthLevel.CRITICAL, str(e))
 
 
@@ -152,7 +152,7 @@ def _check_delegation(engine) -> CheckResult:
         else:
             de.unregister_delegate("_self_test_probe")
             return CheckResult("delegation", True, detail=f"delegated to {record.to_delegate}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("delegation", False, HealthLevel.CRITICAL, str(e))
 
 
@@ -161,7 +161,7 @@ def _check_active_count(engine) -> CheckResult:
     try:
         active = engine.get_active_count()
         return CheckResult("active_count", True, detail=f"{active} active")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("active_count", False, HealthLevel.DEGRADED, str(e))
 
 
@@ -176,7 +176,7 @@ def _check_extensions() -> CheckResult:
             return CheckResult("extensions", False, HealthLevel.DEGRADED, "No extension detectors loaded")
         else:
             return CheckResult("extensions", True, detail=f"{detector_count} detectors")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return CheckResult("extensions", False, HealthLevel.DEGRADED, str(e))
 
 

@@ -221,7 +221,7 @@ class AuditFinding(BaseModel):
     def to_jsonl(self) -> str:
         try:
             return self.model_dump_json() + "\n"
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return json.dumps(self.to_finding_dict(), ensure_ascii=False) + "\n"
 
     def to_finding_dict(self) -> dict:

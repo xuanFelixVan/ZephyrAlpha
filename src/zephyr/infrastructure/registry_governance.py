@@ -94,7 +94,7 @@ class FunctionalDomainRegistry:
                 )
             self._loaded = True
             logger.info("Loaded %d functional domain entries", len(self._entries))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to load functional domain registry: %s", exc, exc_info=True)
             self._loaded = True
 

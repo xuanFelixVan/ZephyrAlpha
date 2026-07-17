@@ -198,7 +198,7 @@ class SqliteDumper:
             conn.execute("PRAGMA integrity_check")
             conn.close()
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def wal_checkpoint(self) -> bool:
@@ -207,7 +207,7 @@ class SqliteDumper:
             conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             conn.close()
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def dump(self, commit_sha: str = "") -> DumpResult:
@@ -302,7 +302,7 @@ class SqliteDumper:
                 file_size_bytes=len(file_content),
                 hmac_signature=hmac_sig,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 os.remove(tmp_path)
             except (OSError, NameError):
@@ -379,7 +379,7 @@ class SqliteDumper:
                 rows_restored=rows_restored,
                 db_path=target_db,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.rollback()
             conn.close()
             raise
@@ -486,7 +486,7 @@ class SqliteDumper:
             )
             if result.returncode == 0:
                 return result.stdout.strip()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in sqlite_dumper", exc_info=True)
         return "unknown"
 
@@ -495,10 +495,10 @@ class SqliteDumper:
             row = conn.execute("SELECT schema_version FROM zalpha_metadata LIMIT 1").fetchone()
             if row:
                 return row["schema_version"]
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in sqlite_dumper", exc_info=True)
         try:
             row = conn.execute("SELECT sqlite_version()").fetchone()
             return f"sqlite-{row[0]}"
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return "unknown"

@@ -59,7 +59,7 @@ def cmd_list() -> int:
                     total += 1
         print(f"\n--- 共 {total} 个已注册 Skill ---")
         return 0
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
@@ -71,7 +71,7 @@ def cmd_status() -> int:
         from zephyr.autonomy_core.skills.skill_model import SkillStatus, SkillTier, SkillType
 
         print(f"skill_model       OK  ({len(SkillTier)} tiers, {len(SkillType)} types, {len(SkillStatus)} statuses)")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"skill_model       FAIL  {exc}")
         is_healthy = False
 
@@ -80,13 +80,13 @@ def cmd_status() -> int:
 
         loader = SkillLoader()
         print(f"skill_loader      OK  (path={loader.registry_path})")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"skill_loader      FAIL  {exc}")
         is_healthy = False
 
     try:
         print("skill_factory     OK")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"skill_factory     FAIL  {exc}")
         is_healthy = False
 
@@ -95,7 +95,7 @@ def cmd_status() -> int:
         n_domain = len(reg.get("skills", {}).get("domain", {}))
         n_role = len(reg.get("skills", {}).get("role", {}))
         print(f"skill-registry    OK  ({n_domain} domain + {n_role} role = {n_domain + n_role} total)")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         print(f"skill-registry    FAIL  {exc}")
         is_healthy = False
 

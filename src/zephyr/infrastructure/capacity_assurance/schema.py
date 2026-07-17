@@ -364,7 +364,7 @@ class MetricsWriteBuffer:
             count = len(self._buffer)
             self._buffer.clear()
             return count
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.rollback()
             raise
         finally:
@@ -376,7 +376,7 @@ class MetricsWriteBuffer:
     def __exit__(self, *args):
         try:
             self.flush()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             if args[0] is None:
                 raise
             import logging

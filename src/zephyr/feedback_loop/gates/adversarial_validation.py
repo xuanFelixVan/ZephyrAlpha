@@ -53,14 +53,14 @@ def _evaluate_red_blue_scenario(scenario, claim, DefenseRunner, ConstitutionGuar
     runner = DefenseRunner()
     try:
         result = runner.evaluate(scenario)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         result = None
 
     guard = ConstitutionGuard()
     try:
         guard.validate_all()
         v_list = guard.get_violations()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         v_list = []
 
     counter_claim = f"'{claim}' survives {scenario.name}"
@@ -71,7 +71,7 @@ def _evaluate_red_blue_scenario(scenario, claim, DefenseRunner, ConstitutionGuar
             scenario_name=scenario.name,
             counter_claim=counter_claim,
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         entry = None
 
     return result, v_list, entry
@@ -94,7 +94,7 @@ class AdversarialValidation:
                 challenges.append(f"Validation error: {adversarial_result.error}")
         except RedBlueImportError:
             pass
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("challenge() enrich failed: %s", exc, exc_info=True)
 
         return challenges
@@ -108,7 +108,7 @@ class AdversarialValidation:
                 passed=True,
                 error="RedBlueValidator not available — skipped adversarial check",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("run_adversarial_check failed: %s", exc, exc_info=True)
             return AdversarialResult(
                 claim=claim,
@@ -135,7 +135,7 @@ class AdversarialValidation:
         loader = ScenarioLoader()
         try:
             scenarios = loader.list_by_tier(tier)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return AdversarialResult(
                 claim=claim,
                 passed=True,

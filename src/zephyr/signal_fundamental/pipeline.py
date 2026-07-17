@@ -129,7 +129,7 @@ class AlphaSignalPipeline:
             import builtins
 
             return frozenset(builtins.__dict__.keys())
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return frozenset()
 
     @staticmethod
@@ -142,7 +142,7 @@ class AlphaSignalPipeline:
             added = current - snapshot
             if added:
                 violations.append(f"builtins keys added: {sorted(added)}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             violations.append(f"builtins guard error: {e}")
         return violations
 
@@ -230,7 +230,7 @@ class AlphaSignalPipeline:
                 from zephyr.factor.factor_base import FactorRegistry
 
                 _ = FactorRegistry.list_all()  # 确认 registry 可达，供未来协议适配扩展
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
             self._factors = []
 
@@ -284,7 +284,7 @@ class AlphaSignalPipeline:
             if signals:
                 factor_signals.extend(signals if isinstance(signals, list) else [signals])
                 result.factors_computed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.factors_failed += 1
             result.errors.append(
                 {
@@ -380,7 +380,7 @@ class AlphaSignalPipeline:
 
                 synthesizers = getattr(SSB, "_registry", {})
                 self._synthesizers = list(synthesizers.values())
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._synthesizers = []
 
         if not self._synthesizers:

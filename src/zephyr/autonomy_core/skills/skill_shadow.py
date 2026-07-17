@@ -132,7 +132,7 @@ class SkillShadowDeploy:
 
             freshness = FreshnessDecayModel()
             freshness.boost(skill_id, 50.0)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in skill_shadow", exc_info=True)
 
         return {

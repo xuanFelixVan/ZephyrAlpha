@@ -199,7 +199,7 @@ class ChaosEngine:
             if point is not None:
                 return True
             raise
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._handle_injection_failure(exc, point, target, injection_type_or_point, start)
 
     def _dispatch_injection(
@@ -291,7 +291,7 @@ class ChaosEngine:
                 self._injection_state.clear()
 
             checks_passed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             checks_failed += 1
             failures.append(f"State cleanup failed: {exc}")  # 5.99.13 修复: %格式化改f-string统一
 
@@ -300,7 +300,7 @@ class ChaosEngine:
                 checks_passed += 1
             else:
                 checks_passed += 1
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             checks_failed += 1
             failures.append("Health check failed: %s" % exc)
 

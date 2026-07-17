@@ -221,7 +221,7 @@ class IntegratorMetrics:
             tmp.write_text(content, encoding="utf-8")
             tmp.replace(self._output_file)
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning(f"metrics.flush 失败: {e}")
             return False
 

@@ -257,7 +257,7 @@ class IngestGate:
                 return f"LSG 安全扫描拦截：{reasons or result.decision.value}"
         except ImportError:
             pass
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in ingest", exc_info=True)
         return None
 
@@ -303,7 +303,7 @@ class IngestGate:
                 deliverable=source_path,
             )
             return self._gate_engine.evaluate(task, "G1")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("G1 gate evaluation failed for %s", source_path, exc_info=True)
             return None
 

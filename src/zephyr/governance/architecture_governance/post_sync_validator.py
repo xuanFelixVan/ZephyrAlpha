@@ -171,7 +171,7 @@ def _validate_flags_via_help(parts: list[str], script_path_obj: Path) -> str | N
             text=True,
             timeout=15,
         )
-    except (subprocess.TimeoutExpired, Exception):
+    except (subprocess.TimeoutExpired, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
         # --help 超时或异常无法校验，视为通过（不阻断）
         return None
 

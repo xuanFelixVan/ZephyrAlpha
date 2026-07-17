@@ -68,7 +68,7 @@ def register_module(module_id: str, environment: str = "dev") -> object:
             from zephyr.infrastructure.system_telemetry.contract_metrics import get_contract_metrics
 
             get_contract_metrics().enable()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("auto_telemetry: contract_metrics enable skipped", exc_info=True)
         _module_registry[module_id] = t
         _logger.info("auto_telemetry: module registered module_id=%s", module_id)
@@ -118,7 +118,7 @@ def _patch_session_continuity() -> bool:
         SessionContinuity.print_restore_summary = _wrapped_restore
         _logger.info("auto_telemetry: patched SessionContinuity.print_restore_summary")
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("auto_telemetry: SessionContinuity patch failed", exc_info=True)
         return False
 
@@ -151,7 +151,7 @@ def _patch_phase_manager() -> bool:
         PhaseGate.run_checks = _wrapped_run_checks
         _logger.info("auto_telemetry: patched PhaseGate.run_checks")
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("auto_telemetry: PhaseManager patch failed", exc_info=True)
         return False
 
@@ -178,7 +178,7 @@ def _patch_blueprint_metrics() -> bool:
         bm.record_blueprint_read = _wrapped_record
         _logger.info("auto_telemetry: patched blueprint_metrics.record_blueprint_read")
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("auto_telemetry: blueprint_metrics patch failed", exc_info=True)
         return False
 

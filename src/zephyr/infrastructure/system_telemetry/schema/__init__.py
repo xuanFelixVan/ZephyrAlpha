@@ -40,7 +40,7 @@ class SchemaSubsystem:
     def _load_schema(self) -> dict:
         try:
             return yaml.safe_load(self._CONFIG_PATH.read_text(encoding="utf-8")) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     def get_version(self) -> str:

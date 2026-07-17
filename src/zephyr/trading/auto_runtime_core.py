@@ -18,7 +18,7 @@
 """
 AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 ==================================================
-蓝图: MOD-INF-035（曾用ID: ARC-0001）§6.2
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: Microsoft Magentic-One + K8s Controller Manager + Google A2A
 """
 
@@ -167,7 +167,7 @@ class AutoRuntimeCore:
                 from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.70.1 修复：原 except: pass 完全无日志。资源压力监控、自愈、降级矩阵全部失效且无告警。
                 # 添加 logger.warning + _resource_engine_degraded 降级标记，供运行时检测降级状态。
                 logger.warning("ResourceOptimizationEngine startup failed, running in degraded mode", exc_info=True)
@@ -207,7 +207,7 @@ class AutoRuntimeCore:
                     state.phase.value,
                     state.error,
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("RBAC bootstrap exception: %s", exc, exc_info=True)
 
     def _shutdown_rbac(self) -> None:
@@ -220,7 +220,7 @@ class AutoRuntimeCore:
             genesis = get_genesis_bootstrap()
             genesis.shutdown()
             logger.info("RBAC shutdown completed")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
 
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
@@ -233,7 +233,7 @@ class AutoRuntimeCore:
             )
             # 5.56.1 修复：原仅接受 200，改为 2xx 范围判定（与 gpu_consensus_scheduler.py 一致）。
             return 200 <= resp.status_code < 300
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e, exc_info=True)
             return False
 
@@ -268,7 +268,7 @@ class AutoRuntimeCore:
             cm = ColdstartManager()
             cm.initialize()
             logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
             logger.warning("EscalationProtocol initialization failed", exc_info=True)
 
@@ -276,7 +276,7 @@ class AutoRuntimeCore:
             from zephyr.governance.services.adapter import auto_subscribe_eventbus
 
             auto_subscribe_eventbus()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("Escalation EventBus auto-subscribe skipped", exc_info=True)
 
     def _register_task_system_hooks(self) -> None:
@@ -304,7 +304,7 @@ class AutoRuntimeCore:
                     if task and task.get("status") in (TaskStatus.READY, TaskStatus.PENDING):
                         po.dispatch(task)
                         return True
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     # 5.12.1 修复：原 except: pass 静默吞任务派发失败（任务黑洞）
                     logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id, exc_info=True)
                 return False
@@ -312,7 +312,7 @@ class AutoRuntimeCore:
             self._task_queue.set_dispatch_handler(_dispatch_handler)
             self._task_queue.start_polling()
             logger.info("TaskQueue polling started (interval=300s)")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to start TaskQueue: %s", e, exc_info=True)
 
     def _start_blueprint_watcher(self) -> None:
@@ -324,7 +324,7 @@ class AutoRuntimeCore:
             self._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
             self._blueprint_watcher.start()
             logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to start BlueprintWatcher: %s", e, exc_info=True)
 
     def _start_fle_scheduler(self) -> None:
@@ -335,7 +335,7 @@ class AutoRuntimeCore:
             # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
             # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
             logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to instantiate FLE Scheduler: %s", e, exc_info=True)
 
     def _run_boot_triple_alignment(self) -> None:
@@ -357,7 +357,7 @@ class AutoRuntimeCore:
                     result.checked_modules,
                     len(result.violations),
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e, exc_info=True)
 
     def _start_local_models(self, report: BootReport) -> None:
@@ -384,7 +384,7 @@ class AutoRuntimeCore:
                 else:
                     logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
                     raise RuntimeError("DeepSeekChat not available")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
                 try:
                     from zephyr.integration.local_model.ollama_chat import OllamaChat
@@ -399,7 +399,7 @@ class AutoRuntimeCore:
                         time.sleep(2.0)
                     else:
                         report.errors.append("ollama_chat: not available (Ollama may not be running)")
-                except Exception as e2:
+                except Exception as e2:  # noqa: BLE001 — 5.135治标: broad exception catch
                     report.errors.append(f"ollama_chat_verify: {e2}")
 
         self._warmup_embedding_router(report)
@@ -431,7 +431,7 @@ class AutoRuntimeCore:
             self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
             report.components_started.append("06_embedding_router_warmup")
             report.steps_completed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"embedding_router_warmup: {e}")
 
     def _start_local_scheduler(self, report: BootReport) -> None:
@@ -439,7 +439,7 @@ class AutoRuntimeCore:
         if self._local_scheduler is not None:
             try:
                 self._local_scheduler.start()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 report.errors.append(f"local_scheduler_start: {e}")
             return
         try:
@@ -453,7 +453,7 @@ class AutoRuntimeCore:
             self._audit_logger.log_registration("local-model-scheduler", "STARTED")
             report.components_started.append("12_local_scheduler_start")
             report.steps_completed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"local_scheduler_start: {e}")
 
     def _start_vms(self) -> None:
@@ -465,12 +465,12 @@ class AutoRuntimeCore:
                 self._vms = InProcessVectorMemory()
                 self._vms.start()
                 logger.info("VMS started via AutoRuntimeCore.boot()")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
         else:
             try:
                 self._vms.start()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
 
     def _init_task_learner(self, report: BootReport) -> None:
@@ -480,7 +480,7 @@ class AutoRuntimeCore:
             self._task_learner = ModelTaskMatrix()
             report.components_started.append("13_task_learner_init")
             report.steps_completed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"task_learner_init: {e}")
 
     def _init_model_router(self) -> None:
@@ -490,7 +490,7 @@ class AutoRuntimeCore:
             from zephyr.governance.intelligence_governance.model_router import ModelRouter
 
             self._model_router = ModelRouter()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._model_router = None
 
     def _benchmark_and_learn(self, report: BootReport) -> None:
@@ -523,7 +523,7 @@ class AutoRuntimeCore:
             self._audit_logger.log_registration("model-benchmark", f"{len(profiles)}_models_profiled")
             report.components_started.append("16_model_benchmark")
             report.steps_completed += 1
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             report.errors.append(f"model_benchmark: {e}")
 
     def learn_from_task_result(
@@ -564,33 +564,33 @@ class AutoRuntimeCore:
             try:
                 self._ollama_proc.terminate()
                 self._ollama_proc.wait(timeout=5)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("ollama_proc.terminate() failed during shutdown", exc_info=True)
             finally:
                 self._ollama_proc = None
         if self._local_scheduler is not None:
             try:
                 self._local_scheduler.stop()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
                 logger.exception("local_scheduler.stop() failed during shutdown", exc_info=True)
         if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
             try:
                 self._fle_scheduler.stop()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
                 logger.exception("fle_scheduler.stop() failed during shutdown", exc_info=True)
         if self._vms is not None:
             try:
                 self._vms.shutdown()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
                 logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
         try:
             from zephyr.trading.resource_optimization import ResourceOptimizationEngine
 
             ResourceOptimizationEngine().stop_monitor()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
             logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown", exc_info=True)
         # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
@@ -647,7 +647,7 @@ class AutoRuntimeCore:
 
                 if count >= _TASK_LEARNER_SAMPLE_LIMIT:
                     break
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）
             logger.exception("_learn_from_completed_tasks failed", exc_info=True)
 
@@ -731,7 +731,7 @@ class AutoRuntimeCore:
                 )
             )
             self._audit_logger.log_registration("a2a-protocol", "INIT_OK")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._integration_registry.register(
                 IntegrationPoint(
                     point_id="a2a-protocol",

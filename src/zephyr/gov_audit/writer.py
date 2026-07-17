@@ -79,7 +79,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
                 f.flush()
                 os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 tmp_path.unlink(missing_ok=True)
             except OSError:
@@ -104,7 +104,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
                 f.flush()
                 os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 tmp_path.unlink(missing_ok=True)
             except OSError:
@@ -126,7 +126,7 @@ class AuditReportWriter(AuditWriterABC):  # 5.104.15 修复: 继承ABC契约
                 f.flush()
                 os.fsync(f.fileno())
             os.replace(str(tmp_path), str(output_path))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 tmp_path.unlink(missing_ok=True)
             except OSError:
@@ -194,7 +194,7 @@ class AuditWriter:
                         pass
             self.event_count = count
             self._last_hash = last_hash
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("AuditWriter._load_state failed", exc_info=True)
 
     def write(self, event: dict[str, Any]) -> str:
@@ -246,7 +246,7 @@ class AuditWriter:
                     f.write(dumps(entry, ensure_ascii=False) + "\n")
                     f.flush()
                     os.fsync(f.fileno())
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._write_failures += 1
                 if self._write_failures >= self._max_write_failures:
                     self._readonly = True

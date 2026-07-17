@@ -117,7 +117,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                 vms.init_all_collections()
                 vms.start()
                 self._vms = vms
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         self.register_tool(
@@ -228,7 +228,7 @@ class KnowledgeBaseServer(BaseMCPServer):
             from zephyr.gov_kb.unified_memory_api import get_unified_memory_api
 
             self._kb_api = get_unified_memory_api(enforce_capability=False)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
     # ------------------------------------------------------------------
@@ -280,7 +280,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                     "total_scanned": len(hits_raw),
                     "latency_ms": elapsed,
                 }
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 elapsed = int((datetime.now(tz=UTC) - start).total_seconds() * 1000)
                 return {"hits": [], "total_scanned": 0, "latency_ms": elapsed, "vms_error": str(exc)}
 
@@ -350,7 +350,7 @@ class KnowledgeBaseServer(BaseMCPServer):
                     content=content[:4000],
                     provenance=prov,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         return {
@@ -417,13 +417,13 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         try:
             vms_status = "available"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         if self._kb_api is not None:
             try:
                 kb_api_count = self._kb_api.count()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in knowledge_base_server", exc_info=True)
 
         overall = "healthy" if (sqlite_ok or chromadb_ok) else "degraded"

@@ -258,7 +258,7 @@ class CostTracker:
             for tid, conn in list(self._all_conns.items()):
                 try:
                     conn.close()
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in cost_tracker", exc_info=True)
             self._all_conns.clear()
         if hasattr(self._local, "conn"):

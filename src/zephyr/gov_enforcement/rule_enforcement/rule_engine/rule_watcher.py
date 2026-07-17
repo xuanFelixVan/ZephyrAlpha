@@ -238,7 +238,7 @@ class RuleWatcher:
             print(msg)
             self._log_sync_event(active_files, -1, msg)
             return {"exit_code": -1, "stdout": "", "stderr": msg}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             msg = f"[RuleWatcher] Sync failed: {exc}"
             print(msg)
             self._log_sync_event(active_files, -1, msg)
@@ -289,7 +289,7 @@ class RuleWatcher:
             msg = "[RuleWatcher] Verify timed out after 60s"
             print(msg)
             return {"exit_code": -1, "stdout": "", "stderr": msg, "passed": False}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             msg = f"[RuleWatcher] Verify failed: {exc}"
             print(msg)
             return {"exit_code": -1, "stdout": "", "stderr": str(exc), "passed": False}

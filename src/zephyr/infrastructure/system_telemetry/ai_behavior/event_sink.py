@@ -240,7 +240,7 @@ def emit_ai_behavior_event(
             from zephyr.infrastructure.system_telemetry.logs.structured_sink import append_jsonl_record
 
             append_jsonl_record(snapshot, labels={"__type": "ai_behavior_event"})
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in event_sink", exc_info=True)
 
     return event

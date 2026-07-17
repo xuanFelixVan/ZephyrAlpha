@@ -143,7 +143,7 @@ class EastmoneyNewsProvider(DataSourceBase):
             data = resp.json()
             news_list = (data.get("data") or {}).get("list") or []
             rows = self._parse_em_news(news_list)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"东方财富新闻获取失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",

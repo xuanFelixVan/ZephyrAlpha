@@ -18,7 +18,7 @@
 """
 HealthMonitor — 健康监控 + 自愈
 ================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 借鉴: K8s Liveness/Readiness Probe + Level-Triggered Reconciliation
 """
 
@@ -163,7 +163,7 @@ class HealthMonitor:
                         ready=ready,
                         error=f"degradation_score={report.degradation_score:.3f}" if not ready else "",
                     )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     return ProbeResult(
                         capability_id="shared.longevity_monitor",
                         alive=False,
@@ -171,7 +171,7 @@ class HealthMonitor:
                     )
 
             self.register_probe("shared.longevity_monitor", _longevity_probe)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("longevity probe registration failed", exc_info=True)
 
         # 2. HealthcheckService
@@ -193,7 +193,7 @@ class HealthMonitor:
                         ready=healthy,
                         error=detail if not healthy else "",
                     )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     return ProbeResult(
                         capability_id="shared.healthcheck_service",
                         alive=False,
@@ -201,7 +201,7 @@ class HealthMonitor:
                     )
 
             self.register_probe("shared.healthcheck_service", _healthcheck_probe)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞注册失败
             logger.debug("healthcheck probe registration failed", exc_info=True)
 
@@ -217,7 +217,7 @@ class HealthMonitor:
             if now - self._last_health_check >= self._health_check_interval:
                 self.reconcile()
                 self._last_health_check = now
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("health monitor tick failed", exc_info=True)
 
     def _collect_metrics(self) -> None:
@@ -249,7 +249,7 @@ class HealthMonitor:
                         f"health.{cid}.errors",
                         labels={"capability_id": cid},
                     )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.53.6 修复：原 except: pass 静默吞没所有异常，metrics 采集失效时运维无感知。
             # 改为 warning 级别日志记录。
             logger.warning("health_monitor: _collect_metrics failed", exc_info=True)
@@ -263,7 +263,7 @@ class HealthMonitor:
             result = fn()
             result.latency_ms = (time.monotonic() - start) * 1000
             return result
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ProbeResult(capability_id=capability_id, error="internal error")
 
     def probe_all(self) -> dict[str, ProbeResult]:
@@ -306,7 +306,7 @@ class HealthMonitor:
             return False
         try:
             return fn()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_auto_restart: restart failed for capability %s (%s: %s)", capability_id, type(e).__name__, e, exc_info=True)
             return False
 
@@ -324,7 +324,7 @@ class HealthMonitor:
                 ROELevel.EMERGENCY: PressureLevel.CRITICAL,
             }
             return mapping.get(roe_level, PressureLevel.NORMAL)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in health_monitor", exc_info=True)
         try:
             import psutil
@@ -335,7 +335,7 @@ class HealthMonitor:
         # 5.43.5 修复：disk_usage>90% 纳入压力分类阈值
         try:
             disk = psutil.disk_usage("/").percent
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             disk = 0.0
         if mem > _MEM_PRESSURE_CRITICAL or disk > _DISK_PRESSURE_CRITICAL:
             return PressureLevel.CRITICAL
@@ -394,7 +394,7 @@ class HealthMonitor:
                 bus.subscribe("task.failed", lambda _: self.tick())
                 bus.subscribe("health.check.request", lambda _: self.tick())
                 logger.info("HealthMonitor started (event-driven, no daemon thread)")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("HealthMonitor EventBus subscribe failed, tick() must be called manually: %s", e, exc_info=True)
 
     def stop(self) -> None:

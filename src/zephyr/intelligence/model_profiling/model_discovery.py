@@ -85,7 +85,7 @@ class ModelDiscovery:
             )
             resp.raise_for_status()
             payload = resp.json()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("ModelDiscovery: Ollama /api/tags failed: %s", exc, exc_info=True)
             return []
 
@@ -182,5 +182,5 @@ class ModelDiscovery:
             )
             resp.raise_for_status()
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False

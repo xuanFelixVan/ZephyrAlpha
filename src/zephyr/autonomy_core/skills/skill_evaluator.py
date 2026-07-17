@@ -184,7 +184,7 @@ class SkillEvaluator:
                 freshness = FreshnessDecayModel()
                 current = freshness.current_state(skill_id)
                 fresh_score, fresh_detail = cls._evaluate_freshness(current)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 fresh_score = 50.0
                 fresh_detail = {"detail": "freshness_errored"}
 

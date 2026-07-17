@@ -200,11 +200,11 @@ class QueryMetrics:
                 else:
                     explain_result = explain_conn.execute(f"EXPLAIN QUERY PLAN {sql}", params if params else ())
                     explain_rows = [dict(r) for r in explain_result.fetchall()]
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 explain_rows = [{"error": "explain_failed"}]
             finally:
                 explain_conn.close()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             explain_rows = [{"error": "explain_unavailable"}]
         import json as _json
 

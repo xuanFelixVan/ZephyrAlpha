@@ -97,6 +97,6 @@ class RollbackTargetStaleness:
             )
             if result.returncode == 0 and result.stdout.strip():
                 return datetime.fromisoformat(result.stdout.strip())
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in rollback_target_staleness", exc_info=True)
         return None

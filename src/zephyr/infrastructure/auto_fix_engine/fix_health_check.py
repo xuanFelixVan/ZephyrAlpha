@@ -49,7 +49,7 @@ class FixHealthCheck:
                         fixer_status[name] = "healthy"
                     else:
                         fixer_status[name] = "degraded"
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     fixer_status[name] = "unhealthy"
         db_accessible = self._check_db()
         config_loaded = self._check_config()
@@ -79,7 +79,7 @@ class FixHealthCheck:
             conn.execute("SELECT 1")
             conn.close()
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _check_config(self) -> bool:
@@ -91,5 +91,5 @@ class FixHealthCheck:
             if not content.strip():
                 return False
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False

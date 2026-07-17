@@ -471,7 +471,7 @@ class AtomicTransactionManager:
 
             try:
                 yield tx
-            except BaseException:
+            except BaseException:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._rollback(tx)
                 raise
 
@@ -486,7 +486,7 @@ class AtomicTransactionManager:
 
             try:
                 self._commit(tx)
-            except BaseException:
+            except BaseException:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._rollback(tx)
                 raise
 

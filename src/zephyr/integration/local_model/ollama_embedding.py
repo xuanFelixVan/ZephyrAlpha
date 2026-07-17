@@ -75,7 +75,7 @@ class OllamaEmbedder:
         try:
             self._verify()
             return self._dim is not None and self._dim > 0
-        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("available failed: %s", e, exc_info=True)
             return False
 
@@ -102,7 +102,7 @@ class OllamaEmbedder:
             )
             resp.raise_for_status()
             payload = resp.json()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.error("OllamaEmbedder.encode failed for model=%s: %s", self._model, exc, exc_info=True)
             raise
 
@@ -130,7 +130,7 @@ class OllamaEmbedder:
 
             resp = requests.get(f"{url.rstrip('/')}/api/tags", timeout=timeout_s)
             return resp.status_code == HTTPStatus.OK
-        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("quick_alive failed: %s", e, exc_info=True)
             return False
 
@@ -145,7 +145,7 @@ class OllamaEmbedder:
                 self._dim = int(vec.shape[0])
                 self._verified = True
                 _log.info("OllamaEmbedder: %s verified (%dd)", self._model, self._dim)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("OllamaEmbedder verification failed for %s: %s", self._model, exc, exc_info=True)
             raise
 

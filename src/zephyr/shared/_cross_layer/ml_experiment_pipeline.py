@@ -145,7 +145,7 @@ def _run_inference_stage(
                 if pred:
                     predictions.append(pred)
                     result.inferences_run += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result.inferences_failed += 1
                 result.errors.append(
                     {
@@ -180,7 +180,7 @@ class MLExperimentPipeline:
             import builtins
 
             return frozenset(builtins.__dict__.keys())
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return frozenset()
 
     @staticmethod
@@ -193,7 +193,7 @@ class MLExperimentPipeline:
             added = current - snapshot
             if added:
                 violations.append(f"builtins keys added: {sorted(added)}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             violations.append(f"builtins guard error: {e}")
         return violations
 
@@ -271,7 +271,7 @@ class MLExperimentPipeline:
                     for name in registry
                 ]
                 self._models = discovered
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._models = []
 
         result.models_discovered = len(self._models)
@@ -331,7 +331,7 @@ class MLExperimentPipeline:
             for name, cls in registry.items():
                 if model_id.lower() in name.lower():
                     return cls
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in ml_experiment_pipeline", exc_info=True)
         return self._engines[0] if self._engines else None
 
@@ -375,7 +375,7 @@ class MLExperimentPipeline:
                         result.best_effect_size = abs(metric.effect_size)
                         result.best_model = pred.get("model_id")
                 count += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result.errors.append(
                     {
                         "stage": PipelineStage.METRIC_COLLECTION.value,

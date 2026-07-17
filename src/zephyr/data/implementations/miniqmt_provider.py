@@ -298,7 +298,7 @@ def _parse_option_expiry(expiry) -> "datetime.date | None":
         exp_str = str(expiry)
         if len(exp_str) >= 8:
             return datetime.date(int(exp_str[:4]), int(exp_str[4:6]), int(exp_str[6:8]))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass
     return None
 
@@ -438,7 +438,7 @@ class MiniQMTProvider(DataSourceBase):
             from xtquant import xtdata
             xtdata.get_stock_list_in_sector("沪深A股")
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"miniQMT health_check 失败: {e}")
             return False
 
@@ -461,7 +461,7 @@ class MiniQMTProvider(DataSourceBase):
             xtdata.get_l2_quote([], "000001.SZ", today, today, -1)
             self._has_l2 = True
             self._log.info("L2 行情权限探测通过")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._has_l2 = False
             self._log.warning(f"L2 行情权限探测失败（账号可能无L2权限）: {e}")
         return self._has_l2
@@ -561,7 +561,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols.append(code)
             self._log.info(f"_load_symbols_from_table({table}) 加载 {len(symbols)} 只标的")
             return symbols
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"_load_symbols_from_table({table}) 查询失败: {e}")
             return []
 
@@ -607,7 +607,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -621,7 +621,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, sector
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -658,7 +658,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=columns,
@@ -824,7 +824,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -879,7 +879,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=["symbol"],
@@ -938,7 +938,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             self._call_with_policy(xtdata.download_sector_data, policy)
             self._log.info("download_sector_data 完成")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"download_sector_data 失败（不影响已有缓存数据）: {e}")
 
         for sector_name in sectors:
@@ -963,7 +963,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=self._date_to_str(payload.end),
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=columns,
@@ -1010,7 +1010,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -1024,7 +1024,7 @@ class MiniQMTProvider(DataSourceBase):
                 index_codes = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深指数"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
@@ -1055,7 +1055,7 @@ class MiniQMTProvider(DataSourceBase):
                 try:
                     detail = xtdata.get_instrument_detail(index_code)
                     name = detail.get("InstrumentName", "") if detail else ""
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     name = ""
 
                 # 4. DataFrame -> tuple 列表
@@ -1071,7 +1071,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=columns,
@@ -1153,7 +1153,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -1198,7 +1198,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=columns,
@@ -1247,7 +1247,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -1261,7 +1261,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -1336,7 +1336,7 @@ class MiniQMTProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table,
                     columns=columns,
@@ -1378,7 +1378,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -1398,7 +1398,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1424,7 +1424,7 @@ class MiniQMTProvider(DataSourceBase):
                 xtdata.download_history_data, policy,
                 stock_code, "1d", start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({stock_code}) 失败: {e}")
 
         kline_data = self._call_with_policy(
@@ -1520,7 +1520,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -1567,7 +1567,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1647,7 +1647,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -1688,7 +1688,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=["symbol"], rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1731,7 +1731,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -1767,7 +1767,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -1877,7 +1877,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -1894,7 +1894,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} IV曲面抓取失败，跳过: {e}")
                 continue
@@ -1992,7 +1992,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -2031,7 +2031,7 @@ class MiniQMTProvider(DataSourceBase):
                     ul = stock_code
                 cb_details_map[bond_code] = {"underlying": ul, "convert_price": conv_price}
             self._log.info(f"获取 {len(cb_details_map)} 只可转债详情（akshare bond_zh_cov）")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"akshare bond_zh_cov 失败: {e}")
         return cb_details_map
 
@@ -2043,7 +2043,7 @@ class MiniQMTProvider(DataSourceBase):
                 xtdata.download_history_data, policy,
                 symbol, "1d", start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({symbol}) 失败: {e}")
         data = self._call_with_policy(
             xtdata.get_market_data_ex, policy,
@@ -2116,7 +2116,7 @@ class MiniQMTProvider(DataSourceBase):
                             exp_date = _dt.date(
                                 int(ed_str[:4]), int(ed_str[4:6]), int(ed_str[6:8])
                             )
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         pass
                 # 1. 下载并获取可转债历史收盘价
                 cb_df = self._fetch_cb_price_df(cb_code, ctx.start_str, ctx.end_str, ctx.policy)
@@ -2152,7 +2152,7 @@ class MiniQMTProvider(DataSourceBase):
                 table=ctx.table, columns=ctx.columns, rows=rows,
                 last_key=ctx.last_key, elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=ctx.table, columns=ctx.columns, rows=[],
                 last_key=ctx.last_key, elapsed_sec=time.time() - t0,
@@ -2194,7 +2194,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -2261,7 +2261,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -2303,7 +2303,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -2332,7 +2332,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -2481,7 +2481,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深指数"
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=[], rows=[], last_key="",
                     elapsed_sec=0.0, error=f"获取指数清单失败: {e}",
@@ -2527,7 +2527,7 @@ class MiniQMTProvider(DataSourceBase):
                 last_key=self._date_to_str(payload.end),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[],
                 last_key="", elapsed_sec=time.time() - t0,
@@ -2580,7 +2580,7 @@ class MiniQMTProvider(DataSourceBase):
                         detail = self._call_with_policy(
                             xtdata.get_instrument_detail, policy, stock_code,
                         )
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         detail = None
                     name = ""
                     exchange = ""
@@ -2625,7 +2625,7 @@ class MiniQMTProvider(DataSourceBase):
                 last_key=self._date_to_str(payload.end),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[],
                 last_key="", elapsed_sec=time.time() - t0,
@@ -2665,7 +2665,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -2717,7 +2717,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -2756,7 +2756,7 @@ class MiniQMTProvider(DataSourceBase):
                         start=payload.start, end=payload.end,
                         incremental=payload.incremental, extra=payload.extra,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取可转债板块失败: {e}")
 
         yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_cb")
@@ -2798,7 +2798,7 @@ class MiniQMTProvider(DataSourceBase):
                         start=payload.start, end=payload.end,
                         incremental=payload.incremental, extra=payload.extra,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期权列表失败: {e}")
 
         yield from self._fetch_simple_kline(payload, policy, "c1_market.option_kline")
@@ -2833,7 +2833,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -2850,7 +2850,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 单个期权合约出错不中断整个任务（xtquant get_option_detail_data 可能有 bug）
                 self._log.warning(f"{opt_code} Greeks抓取失败，跳过: {e}")
                 continue
@@ -2939,7 +2939,7 @@ class MiniQMTProvider(DataSourceBase):
                 xtdata.download_history_data, policy,
                 opt_code, "1d", start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({opt_code}) 失败: {e}")
         opt_data = self._call_with_policy(
             xtdata.get_market_data_ex, policy,
@@ -2960,7 +2960,7 @@ class MiniQMTProvider(DataSourceBase):
                 xtdata.download_history_data, policy,
                 underlying, "1d", start_str, end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"download_history_data({underlying}) 失败: {e}")
         ul_data = self._call_with_policy(
             xtdata.get_market_data_ex, policy,
@@ -3046,7 +3046,7 @@ class MiniQMTProvider(DataSourceBase):
         # 先下载权重数据（无参数，下载全部）
         try:
             self._call_with_policy(xtdata.download_index_weight, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"download_index_weight 失败: {e}")
 
         for index_code in index_codes:
@@ -3068,7 +3068,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -3107,7 +3107,7 @@ class MiniQMTProvider(DataSourceBase):
         # 先下载板块数据
         try:
             self._call_with_policy(xtdata.download_sector_data, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"download_sector_data 失败: {e}")
 
         for sector_name in sectors:
@@ -3125,7 +3125,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -3174,7 +3174,7 @@ class MiniQMTProvider(DataSourceBase):
         try:
             start_str = self._date_to_str(payload.start)
             end_str = self._date_to_str(payload.end)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=[], rows=[], last_key="",
                 elapsed_sec=0.0, error=f"日期转换失败: {e}",
@@ -3196,7 +3196,7 @@ class MiniQMTProvider(DataSourceBase):
                     table=table, columns=columns, rows=rows,
                     last_key=last_key, elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
                     last_key=last_key, elapsed_sec=time.time() - t0,
@@ -3279,7 +3279,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=[], rows=[], last_key="",
                     elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -3333,7 +3333,7 @@ class MiniQMTProvider(DataSourceBase):
                 last_key=self._date_to_str(payload.end),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[],
                 last_key="", elapsed_sec=time.time() - t0,
@@ -3423,7 +3423,7 @@ class MiniQMTProvider(DataSourceBase):
                 symbols = self._call_with_policy(
                     xtdata.get_stock_list_in_sector, policy, "沪深A股"
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 yield FetchResult(
                     table=table, columns=[], rows=[], last_key="",
                     elapsed_sec=0.0, error=f"获取标的清单失败: {e}",
@@ -3453,7 +3453,7 @@ class MiniQMTProvider(DataSourceBase):
                 last_key=self._date_to_str(payload.end),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[],
                 last_key="", elapsed_sec=time.time() - t0,
@@ -3493,7 +3493,7 @@ class MiniQMTProvider(DataSourceBase):
                         start=payload.start, end=payload.end,
                         incremental=payload.incremental, extra=payload.extra,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取期货合约列表失败: {e}")
 
         yield from self._fetch_simple_kline(payload, policy, "c1_market.kline_futures_qmt")
@@ -3530,7 +3530,7 @@ class MiniQMTProvider(DataSourceBase):
                         start=payload.start, end=payload.end,
                         incremental=payload.incremental, extra=payload.extra,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"获取港股列表失败: {e}")
 
         yield from self._fetch_simple_kline(payload, policy, "c1_market.hk_kline")

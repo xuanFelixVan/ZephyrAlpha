@@ -119,7 +119,7 @@ def _get_staged_renamed_py_files(gateway) -> list[tuple[str, str]] | None:
                 continue
             renames.append((old_path, new_path))
         return renames
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "RENAME-DEPGRAPH-SYNC gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__, e, exc_info=True,
@@ -150,7 +150,7 @@ def _check_depgraph_has_file(file_path: str) -> bool | None:
             return cur.fetchone() is not None
         finally:
             conn.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "RENAME-DEPGRAPH-SYNC gate fail-open: depgraph 查询失败(%s: %s)，"
             "无法验证文件重命名同步状态。",

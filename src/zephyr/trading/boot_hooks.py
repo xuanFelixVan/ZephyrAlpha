@@ -49,7 +49,7 @@ def _get_source_blueprint(task_id: str, task_repo: TaskRepositoryProtocol | None
             tr = TaskRepository()
         task = tr.get(task_id)
         return getattr(task, "source_blueprint", "") if task else ""
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("task_repo.get failed for triple_align check task_id=%s", task_id, exc_info=True)
         return ""
 
@@ -69,7 +69,7 @@ def _subscribe_task_lifecycle_events(budget_engine: BudgetEngineProtocol | None 
         bus.subscribe(EventType.TASK_CREATED, _on_task_created)
         bus.subscribe(EventType.TASK_COMPLETED, _on_task_completed_event)
         logger.info("EventBus task lifecycle subscriptions registered (TASK_CREATED, TASK_COMPLETED)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("EventBus task lifecycle subscription skipped: %s", e, exc_info=True)
 
 
@@ -102,7 +102,7 @@ def _init_shared_monitoring_modules() -> None:
         from zephyr.shared.lifecycle.longevity_monitor import LongevityMonitor
         _monitor = LongevityMonitor()
         logger.info("Shared monitoring: LongevityMonitor instantiated")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: LongevityMonitor init failed: %s", e, exc_info=True)
 
     # 2. HealthcheckService
@@ -110,7 +110,7 @@ def _init_shared_monitoring_modules() -> None:
         from zephyr.shared.lifecycle.healthcheck_service import HealthcheckService
         _healthcheck = HealthcheckService(project_root=project_root)
         logger.info("Shared monitoring: HealthcheckService instantiated")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: HealthcheckService init failed: %s", e, exc_info=True)
 
     # 3. AggregateHealth — DM-201247 条件已满足（HealthMonitor._monitor_loop 已实现分钟级调度），
@@ -125,7 +125,7 @@ def _init_shared_monitoring_modules() -> None:
             return "healthy"
         register_system_health("boot_hooks", _boot_hooks_health_check, source="boot_hooks")
         logger.info("Shared monitoring: HealthDiscovery registered boot_hooks health check")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: HealthDiscovery init failed: %s", e, exc_info=True)
 
     # 5. MetricsRegistry — 懒加载
@@ -134,7 +134,7 @@ def _init_shared_monitoring_modules() -> None:
         _metrics = MetricsRegistry()
         _metrics.observe("boot_hooks.init", 1.0, labels={"module": "shared_monitoring"})
         logger.info("Shared monitoring: MetricsRegistry instantiated (lazy)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: MetricsRegistry init failed: %s", e, exc_info=True)
 
     # 6. AutonomyMonitor
@@ -142,7 +142,7 @@ def _init_shared_monitoring_modules() -> None:
         from zephyr.shared.maintenance.autonomy_monitor import AutonomyMonitor
         _autonomy = AutonomyMonitor(data_dir=project_root / "data" / "autonomy")
         logger.info("Shared monitoring: AutonomyMonitor instantiated")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: AutonomyMonitor init failed: %s", e, exc_info=True)
 
     # DM-201248: 事件订阅机制
@@ -150,14 +150,14 @@ def _init_shared_monitoring_modules() -> None:
         from zephyr.shared.lifecycle.health import subscribe_monitoring_events
         subscribe_monitoring_events()
         logger.info("Shared monitoring: event subscription registered (health)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: health event subscription failed: %s", e, exc_info=True)
 
     try:
         from zephyr.shared.observability.metrics import subscribe_metrics_events
         subscribe_metrics_events()
         logger.info("Shared monitoring: event subscription registered (metrics)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: metrics event subscription failed: %s", e, exc_info=True)
 
     # DM-201249: Finalizer 自动关闭
@@ -165,7 +165,7 @@ def _init_shared_monitoring_modules() -> None:
         from zephyr.trading.finalizer import register_monitoring_finalizers_auto
         register_monitoring_finalizers_auto()
         logger.info("Shared monitoring: finalizer registered (monitor-flush + monitor-health-snapshot)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Shared monitoring: finalizer registration failed: %s", e, exc_info=True)
 
 
@@ -222,7 +222,7 @@ def _subscribe_eventbus_consumers() -> None:
             subscribe_fn()
             succeeded += 1
             logger.info("EventBus consumer %s: subscribed", label)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             failed += 1
             logger.warning("EventBus consumer %s: subscribe failed: %s", label, e, exc_info=True)
 
@@ -256,7 +256,7 @@ def _register_rbac_hooks() -> None:
                         getattr(event, "task_id", ""),
                         genesis.state.phase.value,
                     )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("hook rbac_readiness_check: %s", exc, exc_info=True)
 
         def _on_task_completed_rbac_audit(event: object) -> None:
@@ -271,7 +271,7 @@ def _register_rbac_hooks() -> None:
                 task_id = getattr(event, "task_id", "")
                 entry = nr.sign(f"task_completed:{task_id}", "auto_runtime_core")
                 logger.debug("RBAC audit entry signed for task %s: %s", task_id, entry.hmac_hash[:16])
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("hook rbac_audit_sign: %s", exc, exc_info=True)
 
         def _on_task_failed_rbac_alert(event: object) -> None:
@@ -288,7 +288,7 @@ def _register_rbac_hooks() -> None:
                         "Task %s failed — RBAC kill_switch still NORMAL (no systemic threat detected)",
                         getattr(event, "task_id", ""),
                     )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("hook rbac_kill_switch_check: %s", exc, exc_info=True)
 
         hook_registry.register(_on_task_in_progress_rbac_check, priority=40, name="rbac_readiness_check")
@@ -297,7 +297,7 @@ def _register_rbac_hooks() -> None:
         logger.info(
             "RBAC hooks registered: rbac_readiness_check / rbac_audit_sign / rbac_kill_switch_check"
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register RBAC hooks: %s", e, exc_info=True)
 
 
@@ -317,12 +317,12 @@ def _subscribe_skill_freshness_events() -> None:
                     score = item.get("freshness_score", 0.0)
                     if skill_id:
                         auto_deprecate_skill(sl, skill_id, score, reason="freshness_critical_auto")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("skill.freshness_critical handler failed", exc_info=True)
 
         bus.subscribe("skill.freshness_critical", _on_freshness_critical)
         logger.info("Skill freshness critical event subscribed")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to subscribe skill.freshness_critical: %s", e, exc_info=True)
 
 
@@ -358,7 +358,7 @@ def _hook_auto_unblock_dependents(event: object, task_repo: TaskRepositoryProtoc
             all_done = all(tr.get(d).status == TaskStatus.COMPLETED for d in deps if d)
             if all_done:
                 tr.transition(ds.task_id, TaskStatus.READY, note=f"unblocked by {completed_id}")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook auto_unblock_dependents FAILED: %s", exc, exc_info=True)
 
 
@@ -376,7 +376,7 @@ def _hook_auto_retry_on_failure(event: object, task_repo: TaskRepositoryProtocol
                 TaskStatus.RETRY,
                 note=f"auto-retry from hook (attempt {retry_count + 1})",
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook auto_retry_on_failure FAILED: %s", exc, exc_info=True)
 
 
@@ -396,7 +396,7 @@ def _hook_triple_alignment_on_verified(event: object, task_repo: TaskRepositoryP
                 source_bp,
                 len([v for v in result.violations if v.severity.value == "ERROR"]),
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook triple_alignment_on_verified FAILED: %s", exc, exc_info=True)
 
 
@@ -412,7 +412,7 @@ def _hook_cleanup_task_processes(event: object) -> None:
             killed = kill_task_processes(task_id)
             if killed:
                 logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("hook cleanup_task_processes FAILED: %s", exc, exc_info=True)
 
 
@@ -428,7 +428,7 @@ def _hook_orc_vms_archive(event: object, task_repo: TaskRepositoryProtocol | Non
         task = tr.get(task_id)
         if task:
             archive_to_vms(task)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook orc_vms_archive FAILED: %s", exc, exc_info=True)
 
 
@@ -441,7 +441,7 @@ def _hook_kb_vms_sync(event: object) -> None:
         from zephyr.intelligence.model_evaluation.sync_engine import sync_to_vms
 
         sync_to_vms()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook kb_vms_sync FAILED: %s", exc, exc_info=True)
 
 
@@ -454,7 +454,7 @@ def _hook_rbk_gate_freeze(event: object) -> None:
 
         result = freeze_all_gates()
         logger.info("hook rbk_gate_freeze: frozen=%s gates=%d", result.frozen, result.gates_count)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook rbk_gate_freeze FAILED: %s", exc, exc_info=True)
 
 
@@ -464,7 +464,7 @@ def _hook_escalation_check(event: object, task_repo: TaskRepositoryProtocol | No
         return
     try:
         _resolve_task_repo(task_repo).check_escalation(getattr(event, "task_id", ""))
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("hook escalation_check: %s", exc, exc_info=True)
 
 
@@ -474,7 +474,7 @@ def _hook_timeout_check(event: object, task_repo: TaskRepositoryProtocol | None 
         return
     try:
         _resolve_task_repo(task_repo).check_task_timeout(getattr(event, "task_id", ""))
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("hook timeout_check: %s", exc, exc_info=True)
 
 
@@ -491,7 +491,7 @@ def _hook_budget_delta(event: object, budget_engine: BudgetEngineProtocol | None
         snapshot = engine.get_snapshot()
         if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
             logger.warning("Budget status: %s", snapshot.health)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("hook budget_delta: %s", exc, exc_info=True)
 
 
@@ -506,7 +506,7 @@ def _hook_session_startup_init_budget(event: object) -> None:
             snapshot.get("health", "UNKNOWN"),
             snapshot.get("degradation_level", "UNKNOWN"),
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook session_startup_init_budget FAILED: %s", exc, exc_info=True)
 
 
@@ -521,7 +521,7 @@ def _hook_session_shutdown_budget_close(event: object) -> None:
                 result.get("cleaned_up", False),
                 result.get("snapshot", {}).get("health", "UNKNOWN"),
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("hook session_shutdown_budget_close FAILED: %s", exc, exc_info=True)
 
 
@@ -539,7 +539,7 @@ def _hook_triple_align_event(event: object) -> None:
                     source_bp or "all",
                     violations,
                 )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("hook triple_align_event: %s", exc, exc_info=True)
 
 
@@ -575,11 +575,11 @@ def register_boot_hooks(
 
             _bus.subscribe("blueprint.changed", _hook_triple_align_event)
             _bus.subscribe("blueprint.decomposed", _hook_triple_align_event)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
 
         logger.info("Event-driven hooks registered: escalation_check / timeout_check / budget_delta / session_startup_init_budget / session_shutdown_budget_close / triple_align")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register task system hooks: %s", e, exc_info=True)
 
     try:
@@ -587,7 +587,7 @@ def register_boot_hooks(
 
         register_daemon()
         logger.info("IdeHealthDaemon registered and auto-started via boot hooks")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Failed to register IdeHealthDaemon: %s", e, exc_info=True)
 
     _subscribe_task_lifecycle_events(budget_engine=budget_engine)
@@ -600,7 +600,7 @@ def register_boot_hooks(
         _rollback_boot = RollbackBootIntegration(project_root=REPO_ROOT)
         _rollback_boot.register_startup_hook()
         logger.info("RollbackBootIntegration: registered startup hook (WAL+Verifier init)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("RollbackBootIntegration: register failed: %s", e, exc_info=True)
 
     # P1-10 修复：SLAMonitor 永久系统启动接入 — 事件驱动 RTO/RPO 自动记录
@@ -609,7 +609,7 @@ def register_boot_hooks(
         _sla_monitor = SLAMonitor()
         _sla_monitor.subscribe_eventbus()
         logger.info("SLAMonitor: subscribed to EventBus (RTO/RPO auto-record)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("SLAMonitor: subscribe failed: %s", e, exc_info=True)
 
     # P1-10 修复：Notifier 永久系统启动接入 — 事件驱动 Owner 通知
@@ -618,7 +618,7 @@ def register_boot_hooks(
         _notifier = Notifier()
         _notifier.subscribe_eventbus()
         logger.info("Notifier: subscribed to EventBus (pipeline_failed/kill_switch auto-notify)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("Notifier: subscribe failed: %s", e, exc_info=True)
 
     # P1-10 修复：HealthAggregator 永久系统启动接入 — 事件驱动健康快照
@@ -627,7 +627,7 @@ def register_boot_hooks(
         _health_aggregator = HealthAggregator()
         _health_aggregator.subscribe_eventbus()
         logger.info("HealthAggregator: subscribed to EventBus (critical event auto-snapshot)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("HealthAggregator: subscribe failed: %s", e, exc_info=True)
 
     # AI-11 审计修复：F5 永久系统启动/关闭钩子接线 — F5四组件自动初始化+自动关闭
@@ -639,14 +639,14 @@ def register_boot_hooks(
         from zephyr.governance.resilience_governance.f5_boot_integration import register_f5_boot_hook
         _f5_integration = register_f5_boot_hook(project_root=REPO_ROOT)
         logger.info("F5BootIntegration: registered startup hook (F5四组件 auto-init)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("F5BootIntegration: register failed: %s", e, exc_info=True)
 
     try:
         from zephyr.governance.resilience_governance.f5_shutdown_manager import register_f5_shutdown_hook
         register_f5_shutdown_hook(integration=_f5_integration, project_root=REPO_ROOT)
         logger.info("F5ShutdownManager: installed shutdown hook (F5 auto-shutdown)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("F5ShutdownManager: install failed: %s", e, exc_info=True)
 
     _subscribe_eventbus_consumers()
@@ -661,7 +661,7 @@ def register_boot_hooks(
         )
         RedBlueTriggerConsumer().start()
         logger.info("RedBlueTriggerConsumer: started via boot hooks")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("RedBlueTriggerConsumer: start failed: %s", e, exc_info=True)
 
     # MCP 集群自动启动（daemon 线程，不阻塞主流程）
@@ -683,7 +683,7 @@ def register_boot_hooks(
             spec.loader.exec_module(mod)
             logger.info("MCP cluster auto-start: launching 10 servers via DAG...")
             mod.launch_all()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("MCP cluster auto-start FAILED: %s", exc, exc_info=True)
 
     mcp_thread = threading.Thread(target=_start_mcp_cluster, name="mcp-cluster-launcher", daemon=True)

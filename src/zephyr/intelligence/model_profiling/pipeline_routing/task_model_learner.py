@@ -280,7 +280,7 @@ class ModelTaskMatrix:
             (self._dir / "task-model-matrix.json").write_text(
                 json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.debug("ModelTaskMatrix: save failed: %s", exc, exc_info=True)
 
     def _load(self) -> None:
@@ -302,5 +302,5 @@ class ModelTaskMatrix:
                     entry.last_updated = vals.get("last_updated", "")
                     self._matrix.setdefault(task_type, {})[model] = entry
             _log.info("ModelTaskMatrix: loaded %d task types from disk", len(matrix_data))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.debug("ModelTaskMatrix: load failed: %s", exc, exc_info=True)

@@ -87,7 +87,7 @@ class ConfigFixer(BaseFixer):
                             "type": "trailing_whitespace",
                         }
                     )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -131,7 +131,7 @@ class ConfigFixer(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No config issues found"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -211,7 +211,7 @@ class ConfigFixer(BaseFixer):
                     valid=False, check_name="config_fix", evidence="", error=f"YAML parse error: {exc}"
                 )
             return ValidationResult(valid=True, check_name="config_fix", evidence="YAML valid, no merge conflicts")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="config_fix", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

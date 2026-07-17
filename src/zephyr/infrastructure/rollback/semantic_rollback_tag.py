@@ -120,7 +120,7 @@ class SemanticRollbackTag:
                 prefix = f"rollback/{tag_type.value}/"
                 tags = [t for t in tags if t.startswith(prefix)]
             return tags
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return []
 
     def resolve_tag(self, tag_name: str) -> str | None:
@@ -134,7 +134,7 @@ class SemanticRollbackTag:
             )
             if result.returncode == 0:
                 return result.stdout.strip()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in semantic_rollback_tag", exc_info=True)
         return None
 
@@ -149,7 +149,7 @@ class SemanticRollbackTag:
                 check=True,
             )
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def find_task_tags(self, task_id: str) -> list[str]:
@@ -174,5 +174,5 @@ class SemanticRollbackTag:
                 timeout=5,
             )
             return result.stdout.strip()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

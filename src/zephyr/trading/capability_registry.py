@@ -18,7 +18,7 @@
 """
 CapabilityRegistry — 能力注册中心
 ==================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 对标: Google A2A AgentCard + Anthropic MCP Tools + Cursor Rules
 """
 
@@ -116,6 +116,6 @@ class CapabilityRegistry:
                     if card.capability_id not in self._cards:
                         self._cards[card.capability_id] = card
                 count += 1
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return count

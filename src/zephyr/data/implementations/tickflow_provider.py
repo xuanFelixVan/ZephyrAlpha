@@ -165,7 +165,7 @@ class TickFlowProvider(DataSourceBase):
                         table=table, columns=columns, rows=rows,
                         last_key=end.isoformat(), elapsed_sec=time.time() - t0,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"美股K线 {symbol} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],
@@ -234,7 +234,7 @@ class TickFlowProvider(DataSourceBase):
                         table=table, columns=columns, rows=rows,
                         last_key=end.isoformat(), elapsed_sec=time.time() - t0,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"美股指数 {index_code} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],

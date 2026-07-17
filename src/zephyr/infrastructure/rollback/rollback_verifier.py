@@ -91,7 +91,7 @@ def _verify_yaml_file(f_path: Path, f_path_str: str, syntax_errors: list[str]) -
         import yaml
 
         yaml.safe_load(f_path.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         syntax_errors.append(f"{f_path_str}: YAML parse error: {e}")
 
 
@@ -143,7 +143,7 @@ class RollbackVerifier:
             try:
                 shutil.rmtree(cache_dir)
                 removed += 1
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in rollback_verifier", exc_info=True)
         return removed
 
@@ -171,7 +171,7 @@ class RollbackVerifier:
                         conn.execute("UPDATE tasks SET status='FAILED' WHERE task_id=?", (tid,))
                         tasks_fixed += 1
                         details.append(f"task {tid}: status {status} -> FAILED")
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in rollback_verifier", exc_info=True)
 
             gates = conn.execute("SELECT * FROM gates").fetchall()
@@ -184,7 +184,7 @@ class RollbackVerifier:
                         conn.execute("UPDATE gates SET result='FAIL' WHERE gate_id=?", (gid,))
                         gates_fixed += 1
                         details.append(f"gate {gid}: result {result} -> FAIL")
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in rollback_verifier", exc_info=True)
 
             conn.commit()
@@ -198,7 +198,7 @@ class RollbackVerifier:
                 events_fixed=events_fixed,
                 details=details,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=["internal error"])
 
     def differential_check(self, db_before: Path, db_after: Path) -> DifferentialReport:
@@ -233,7 +233,7 @@ class RollbackVerifier:
                 rows_mismatched=rows_mismatched,
                 table_changes=table_changes,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return DifferentialReport(
                 passed=False,
                 rows_compared=0,

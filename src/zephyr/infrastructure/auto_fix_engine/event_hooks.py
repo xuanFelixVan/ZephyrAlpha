@@ -87,13 +87,13 @@ class EventHooks:
                         "detail": f"action_id={action.action_id if action else None} target={action.target if action else None}",
                     },
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in event_hooks", exc_info=True)
         callbacks = self._hooks.get(event, [])
         for callback in callbacks:
             try:
                 callback(event=event, action=action, **kwargs)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("Event hook error for %s: %s", event.value, exc, exc_info=True)
 
     def emit_for_status(self, action: FixAction) -> None:
@@ -152,7 +152,7 @@ def subscribe_eventbus() -> None:
             "AutoFixEngine: subscribed to 2 external events "
             "(drift_detected/validation_result)"
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("AutoFixEngine: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -164,7 +164,7 @@ def _get_engine() -> object:
             from zephyr.infrastructure.auto_fix_engine.engine import AutoFixEngine
 
             _engine_instance = AutoFixEngine()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("AutoFixEngine: failed to instantiate engine: %s", e, exc_info=True)
             return None
     return _engine_instance
@@ -198,7 +198,7 @@ def _on_drift_detected(payload: object) -> None:
             getattr(action, "status", None),
             target,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("AutoFixEngine: _on_drift_detected failed: %s", e, exc_info=True)
 
 
@@ -219,5 +219,5 @@ def _on_validation_result(payload: object) -> None:
             severity,
             detail,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error("AutoFixEngine: _on_validation_result failed: %s", e, exc_info=True)

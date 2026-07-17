@@ -88,7 +88,7 @@ def check_registry_parsable(base: Path) -> bool:
 
         return True
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return False
 
 

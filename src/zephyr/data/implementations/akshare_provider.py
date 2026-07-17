@@ -253,7 +253,7 @@ class AKShareProvider(DataSourceBase):
                     last_key=last_key,
                     elapsed_sec=time.time() - t0,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"{name} 获取失败: {e}")
                 yield FetchResult(
                     table=table,
@@ -387,7 +387,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(ak.stock_zh_a_spot_em, policy)
             if df is not None and len(df) > 0:
                 return [str(c).zfill(6) for c in df["代码"].tolist()]
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_zh_a_spot_em 失败（东财反爬），回退到 CH stock_list: {e}")
 
         # CH fallback
@@ -460,7 +460,7 @@ class AKShareProvider(DataSourceBase):
                         ak.stock_zh_valuation_baidu, policy,
                         symbol=code, indicator=ak_ind, period="近一年",
                     )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log.warning(f"stock_zh_valuation_baidu({code}, {ak_ind}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
@@ -534,7 +534,7 @@ class AKShareProvider(DataSourceBase):
                     continue
                 try:
                     df = self._call_with_policy(fn, policy, date=date_str)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log.warning(f"{fn_name}({date_str}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
@@ -584,7 +584,7 @@ class AKShareProvider(DataSourceBase):
                 ak.stock_dzjy_mrmx, policy,
                 start_date=start_str, end_date=end_str, symbol="A股",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -641,7 +641,7 @@ class AKShareProvider(DataSourceBase):
                 ak.stock_lhb_detail_em, policy,
                 start_date=start_str, end_date=end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -767,7 +767,7 @@ class AKShareProvider(DataSourceBase):
                             last_key=last_key, elapsed_sec=time.time() - t0,
                         )
                         batch_rows.clear()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"money_flow({sym}) 失败: {e}")
                 continue
         yield FetchResult(
@@ -804,7 +804,7 @@ class AKShareProvider(DataSourceBase):
             # AKShare内部对None做["pages"]索引导致TypeError，视为无数据
             self._log.info(f"share_unlock: 日期范围 {start_str}-{end_str} 无数据（可能非交易日）: {e}")
             df = None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -879,7 +879,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(
                 ak.stock_gpzy_pledge_ratio_em, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_gpzy_pledge_ratio_em 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=iso_date,
@@ -933,7 +933,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(
                 ak.stock_gpzy_profile_em, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_gpzy_profile_em 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=iso_date,
@@ -996,7 +996,7 @@ class AKShareProvider(DataSourceBase):
                     ak.stock_history_dividend_detail, policy,
                     symbol=code, indicator="分红",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_history_dividend_detail({code}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -1056,7 +1056,7 @@ class AKShareProvider(DataSourceBase):
                     ak.stock_restricted_release_queue_em, policy,
                     symbol=code,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_restricted_release_queue_em({code}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -1147,7 +1147,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.stock_news_em, policy, symbol=code,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_news_em({code}) 失败: {e}")
                 continue
             batch_rows.extend(self._news_rows_from_df(df, "akshare_stock_news"))
@@ -1180,7 +1180,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.news_cctv, policy, date=date_str,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"news_cctv({date_str}) 失败: {e}")
                 continue
             batch_rows.extend(self._news_rows_from_df(df, "akshare_cctv"))
@@ -1214,7 +1214,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.news_economic_baidu, policy, date=date_str,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"news_economic_baidu({date_str}) 失败: {e}")
                 continue
             batch_rows.extend(self._news_rows_from_df(df, "akshare_economic_baidu"))
@@ -1243,7 +1243,7 @@ class AKShareProvider(DataSourceBase):
         try:
             df = self._call_with_policy(ak.stock_news_main_cx, policy)
             batch_rows = self._news_rows_from_df(df, "akshare_caixin")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_news_main_cx 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
@@ -1276,7 +1276,7 @@ class AKShareProvider(DataSourceBase):
         try:
             df = self._call_with_policy(ak.stock_news_main_cx, policy)
             batch_rows = self._news_rows_from_df(df, "akshare_news_stock")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_news_main_cx 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
@@ -1322,7 +1322,7 @@ class AKShareProvider(DataSourceBase):
                 ak.stock_profit_forecast_em, policy,
                 symbol="",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_profit_forecast_em 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
@@ -1407,7 +1407,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(
                 ak.stock_rights_issue_detail_sina, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"stock_rights_issue_detail_sina 失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",
@@ -1499,7 +1499,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.stock_research_report_em, policy, symbol=code,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_research_report_em({code}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -1568,7 +1568,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.stock_hsgt_hist_em, policy, symbol=channel,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"stock_hsgt_hist_em({channel}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -1592,7 +1592,7 @@ class AKShareProvider(DataSourceBase):
         rows: list[tuple] = []
         try:
             df = self._call_with_policy(fn, policy, date=date_str)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"{fn.__name__}({date_str}) 失败: {e}")
             return rows
         if df is None or len(df) == 0:
@@ -1688,7 +1688,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.stock_share_change_cninfo, policy, symbol=code,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"stock_share_change_cninfo({code}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -1721,7 +1721,7 @@ class AKShareProvider(DataSourceBase):
         rows: list[tuple] = []
         try:
             df = self._call_with_policy(fn, policy, symbol=fn_arg)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"{fn.__name__} 失败: {e}")
             return rows
         if df is None or len(df) == 0:
@@ -1794,7 +1794,7 @@ class AKShareProvider(DataSourceBase):
                     return rows
                 if attempt < max_retries - 1:
                     threading.Event().wait(1.0)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(
                     f"stock_board_concept_cons_em({board_name}) "
                     f"第{attempt+1}次失败: {e}"
@@ -1827,7 +1827,7 @@ class AKShareProvider(DataSourceBase):
             boards_df = self._call_with_policy(
                 ak.stock_board_concept_name_ths, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=board_table, columns=board_cols, rows=[],
                 last_key=iso_date, elapsed_sec=time.time() - t0, error=str(e),
@@ -1868,7 +1868,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(
                 ak.stock_value_em, policy, symbol=code,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"stock_value_em({code}) 失败: {e}")
             return rows
         if df is None or len(df) == 0:
@@ -1974,7 +1974,7 @@ class AKShareProvider(DataSourceBase):
                 ak.stock_dzjy_mrtj, policy,
                 start_date=start_str, end_date=end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -2043,7 +2043,7 @@ class AKShareProvider(DataSourceBase):
             contracts_df = self._call_with_policy(
                 ak.futures_display_main_sina, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0,
@@ -2071,7 +2071,7 @@ class AKShareProvider(DataSourceBase):
                 df = self._call_with_policy(
                     ak.futures_main_sina, policy, symbol=contract_sym,
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"futures_main_sina({contract_sym}) 失败: {e}")
                 continue
             if df is None or len(df) == 0:
@@ -2155,7 +2155,7 @@ class AKShareProvider(DataSourceBase):
                         ak.stock_gdfx_top_10_em, policy,
                         symbol=em_code, date=date_str,
                     )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log.debug(f"stock_gdfx_top_10_em({em_code},{date_str}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
@@ -2223,7 +2223,7 @@ class AKShareProvider(DataSourceBase):
                         ak.stock_gdfx_free_top_10_em, policy,
                         symbol=em_code, date=date_str,
                     )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._log.debug(f"stock_gdfx_free_top_10_em({em_code},{date_str}) 失败: {e}")
                     continue
                 if df is None or len(df) == 0:
@@ -2276,7 +2276,7 @@ class AKShareProvider(DataSourceBase):
                 symbol="全部",
                 start_date=start_str, end_date=end_str,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=last_key,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -2368,7 +2368,7 @@ class AKShareProvider(DataSourceBase):
             df = self._call_with_policy(
                 ak.stock_repurchase_em, policy,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key=iso_date,
                 elapsed_sec=time.time() - t0, error=str(e),
@@ -2433,7 +2433,7 @@ class AKShareProvider(DataSourceBase):
         t0 = time.time()
         try:
             df = self._call_with_policy(ak.bond_zh_cov, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.time() - t0, error=str(e))
             return
@@ -2498,7 +2498,7 @@ class AKShareProvider(DataSourceBase):
         t0 = time.time()
         try:
             df = self._call_with_policy(ak.fund_etf_category_sina, policy, symbol="ETF基金")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.time() - t0, error=str(e))
             return
@@ -2542,7 +2542,7 @@ class AKShareProvider(DataSourceBase):
         t0 = time.time()
         try:
             df = self._call_with_policy(ak.fund_lof_spot_em, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.time() - t0, error=str(e))
             return
@@ -2569,7 +2569,7 @@ class AKShareProvider(DataSourceBase):
         t0 = time.time()
         try:
             df = self._call_with_policy(ak.stock_hk_spot_em, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.time() - t0, error=str(e))
             return
@@ -2596,7 +2596,7 @@ class AKShareProvider(DataSourceBase):
         t0 = time.time()
         try:
             df = self._call_with_policy(ak.tool_trade_date_hist_sina, policy)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.time() - t0, error=str(e))
             return
@@ -2653,7 +2653,7 @@ class AKShareProvider(DataSourceBase):
                         name, market, "交易所", "指数",
                         "", 0.0, "", "", 0.0,
                     ))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"{func_name} 失败: {e}")
         yield FetchResult(table=table, columns=columns, rows=rows,
                           last_key=datetime.date.today().isoformat(),
@@ -2677,7 +2677,7 @@ class AKShareProvider(DataSourceBase):
         # 从指数列表中获取
         try:
             df = self._call_with_policy(ak.index_stock_info, policy, symbol="000300")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.debug(f"index_stock_info 失败: {e}")
         # 如果没有专门接口，用空数据返回（该表为静态参考，低频变化）
         yield FetchResult(table=table, columns=columns, rows=rows,

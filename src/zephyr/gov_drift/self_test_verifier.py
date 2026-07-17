@@ -127,7 +127,7 @@ class SelfTestVerifier:
 
             return {"check": "circular_import", "status": "PASS", "detail": ""}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "circular_import", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_cascade_recursion(self) -> dict[str, str]:
@@ -171,7 +171,7 @@ class SelfTestVerifier:
                 "detail": "Cascade guard + auto_transition verified",
             }
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "cascade_recursion", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_logic_fragmentation(self) -> dict[str, str]:
@@ -221,7 +221,7 @@ class SelfTestVerifier:
 
             return {"check": "logic_fragmentation", "status": "PASS", "detail": "Function distribution balanced"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "logic_fragmentation", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_data_integrity(self) -> dict[str, str]:
@@ -267,7 +267,7 @@ class SelfTestVerifier:
                 "detail": f"{len(all_dets)} detectors, no duplicate IDs",
             }
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "data_integrity", "status": "FAIL", "detail": f"Registry parse error: {e}"}
 
     def check_file_completeness(self) -> dict[str, str]:
@@ -320,7 +320,7 @@ class SelfTestVerifier:
             else:
                 return {"check": "race_condition", "status": "FAIL", "detail": "No lock mechanism in scan_mutex.py"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "race_condition", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_ttl_expiry(self) -> dict[str, str]:
@@ -367,7 +367,7 @@ class SelfTestVerifier:
 
                 return {"check": "ttl_expiry", "status": "FAIL", "detail": f"Missing: {missing_parts}"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "ttl_expiry", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_dead_letter(self) -> dict[str, str]:
@@ -399,7 +399,7 @@ class SelfTestVerifier:
             else:
                 return {"check": "dead_letter", "status": "FAIL", "detail": "DEAD_LETTER state not found"}
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"check": "dead_letter", "status": "ERROR", "detail": str(e)[:100]}
 
     def run_all(self) -> VerifierResult:

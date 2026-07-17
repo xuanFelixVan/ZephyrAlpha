@@ -79,7 +79,7 @@ class SagaCompensator:
             try:
                 step.action()
                 step.executed = True
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 context.errors.append(f"Step {step.step_id} failed: {e}")
                 self._compensate(context, i)
                 return False, context
@@ -109,7 +109,7 @@ class SagaCompensator:
                 try:
                     step.compensation()
                     step.compensated = True
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     context.errors.append(f"Compensation for {step.step_id} failed: {e}")
 
         if context.errors:

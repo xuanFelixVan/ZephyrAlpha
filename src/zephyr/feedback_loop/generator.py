@@ -73,7 +73,7 @@ def generate(skeletons: dict[str, str] | None = None) -> tuple[int, int, int]:
                 except OSError:
                     pass
             return ("error", rel_path)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             if os.path.exists(tmp_path):
                 try:
                     os.remove(tmp_path)

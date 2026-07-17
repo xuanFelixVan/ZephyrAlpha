@@ -215,7 +215,7 @@ class ExamOrchestrator:
                     passed += 1
                 else:
                     failed.append(cap_name)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 failed.append(cap_name)
 
         total = len(CAPABILITIES)
@@ -361,7 +361,7 @@ class ExamOrchestrator:
             else:
                 # 非 OLYMPIAD 题保持现有 _compute_metrics 路径不变
                 p, r, ed, em = self._compute_metrics(case, result)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             p, r, ed, em = 0.0, 0.0, 1.0, 0
             if case.difficulty is Difficulty.OLYMPIAD:
                 oly_overall = 0.0
@@ -961,7 +961,7 @@ class ExamOrchestrator:
                 float(info.get("price_per_1k_input", 0.0)),
                 float(info.get("price_per_1k_output", 0.0)),
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("CostBreakdown: provider_data lookup failed for %s", provider, exc_info=True)
             return (0.0, 0.0)
 
@@ -987,13 +987,13 @@ class ExamOrchestrator:
                         result2 = self._infer(case)
                         if not self._outputs_similar(result, result2):
                             inc_count += 1
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         _log.warning("suppressed error in exam_orchestrator", exc_info=True)
 
                     if self._check_refusal(result):
                         ref_count += 1
 
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     ref_count += 1
 
         return HallucinationResult(
@@ -1068,7 +1068,7 @@ class ExamOrchestrator:
                 hallucination_drift_delta=round(hallucination_drift_delta, 3),
                 stable=stable,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("ExamOrchestrator: drift test failed: %s", e, exc_info=True)
             return DriftResult(tested=False)
 
@@ -1472,7 +1472,7 @@ class ExamOrchestrator:
             if self._check_quantity_hallucination(case, result):
                 counts["qh"] = 1
             counts.update(self._check_inconsistency_drift(case, result))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             counts["ref"] = 1
         return counts
 
@@ -1489,7 +1489,7 @@ class ExamOrchestrator:
                 return {"cd": 1, "inc": 0}
             if not self._outputs_similar(result, result2):
                 return {"cd": 0, "inc": 1}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("suppressed error in exam_orchestrator", exc_info=True)
         return {"cd": 0, "inc": 0}
 
@@ -1552,7 +1552,7 @@ class ExamOrchestrator:
                 else:
                     breadth_failed.append(cap_name)
                     score = 0.0
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 breadth_failed.append(cap_name)
                 score = 0.0
             capability_scores[cap_name] = round(score, 3)
@@ -1592,7 +1592,7 @@ class ExamOrchestrator:
         try:
             matcher = JobMatcher()
             profile.recommendations = matcher.match_top(profile, n=3)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _log.warning("JobMatcher failed: %s", e, exc_info=True)
             profile.notes.append(f"job_match_failed: {e}")
 

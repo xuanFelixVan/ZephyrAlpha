@@ -97,7 +97,7 @@ def _audit_integrity_trail() -> tuple[str, Any]:
         return ("ok" if chain["status"] == "valid" else "fail"), chain
     except ImportError as exc:
         return "unavailable", str(exc)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return "error", str(exc)
 
 
@@ -109,7 +109,7 @@ def _audit_semantic_auditor() -> tuple[str, Any]:
         return "ok", {"kb_gate": "loaded"}
     except ImportError as exc:
         return "unavailable", str(exc)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return "error", str(exc)
 
 
@@ -136,7 +136,7 @@ def _audit_orphan_judge(scope: str) -> tuple[str, Any]:
             }
     except ImportError as exc:
         return "unavailable", str(exc)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return "error", str(exc)
 
 
@@ -155,7 +155,7 @@ def _audit_red_blue_validator() -> tuple[str, Any]:
         }
     except ImportError as exc:
         return "unavailable", str(exc)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return "error", str(exc)
 
 
@@ -182,7 +182,7 @@ def _audit_behavioral_auditor(level: str) -> tuple[str, Any]:
         }
     except ImportError as exc:
         return "unavailable", str(exc)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         return "error", str(exc)
 
 

@@ -135,14 +135,14 @@ def setup_append_only(db_path: str) -> bool:
         conn.executescript(APPEND_ONLY_TRIGGERS)
         conn.commit()
         return True
-    except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+    except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("setup_append_only failed: %s", e, exc_info=True)
         return False
     finally:
         if conn is not None:
             try:
                 conn.close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
 
 
@@ -156,13 +156,13 @@ def snapshot_event_hash(db_path: str) -> str:
         rows = cursor.fetchall()
         data = dumps([list(r) for r in rows])
         return _sha256(data)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return ""
     finally:
         if conn is not None:
             try:
                 conn.close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
 
 
@@ -176,13 +176,13 @@ def count_states(db_path: str) -> dict[str, int]:
         cursor.execute("SELECT state, COUNT(*) FROM drift_events GROUP BY state")
         for row in cursor.fetchall():
             counts[str(row[0])] = int(row[1])
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
     finally:
         if conn is not None:
             try:
                 conn.close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in tamper_proof_audit", exc_info=True)
     return counts
 
@@ -208,7 +208,7 @@ def generate_audit_log(
 
             src_files[pf.relative_to(project_root).as_posix()] = _sha256(content)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in tamper_proof_audit", exc_info=True)
 
     record = AuditRecord(
@@ -297,7 +297,7 @@ def generate_audit_log(
             else:
                 record.committed_to_git = True
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in tamper_proof_audit", exc_info=True)
 
     import importlib as _importlib

@@ -118,7 +118,7 @@ class LLMFixAdapter(BaseFixer):
                     action.status = FixStatus.FAILED
                     return action
             action.status = FixStatus.COMPLETED
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -140,7 +140,7 @@ class LLMFixAdapter(BaseFixer):
                 result = bridge.call(prompt)
                 return result if isinstance(result, str) else str(result)
             return ""
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("LLM call failed: %s", exc, exc_info=True)
             return ""
 

@@ -108,7 +108,7 @@ def _load_cascade_state() -> dict[str, object]:
         with open(path, encoding="utf-8") as f:
             return json.loads(f.read())
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"events": [], "alerts": []}
 
 
@@ -180,7 +180,7 @@ def detect_cascade(
             try:
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
 
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
             if now - ts <= window:
@@ -248,7 +248,7 @@ def _trigger_cascade_rollback(
     except ImportError:
         pass
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in cascade_detector", exc_info=True)
 
 
@@ -307,7 +307,7 @@ def is_auto_fix_paused(module: str) -> bool:
                     if now < pause_until:
                         return True
 
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in cascade_detector", exc_info=True)
 
     return False

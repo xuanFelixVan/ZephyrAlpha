@@ -90,7 +90,7 @@ class TDXProvider(DataSourceBase):
                 close = getattr(self._client, "close", None)
                 if close:
                     close()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"通达信关闭异常: {e}")
         self._client = None
         self._connected = False
@@ -148,7 +148,7 @@ class TDXProvider(DataSourceBase):
                 last_key=datetime.date.today().isoformat(),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"板块分类获取失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[],
@@ -193,7 +193,7 @@ class TDXProvider(DataSourceBase):
                         last_key=datetime.date.today().isoformat(),
                         elapsed_sec=time.time() - t0,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"板块K线 {code} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],

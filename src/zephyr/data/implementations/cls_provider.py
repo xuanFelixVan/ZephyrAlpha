@@ -135,7 +135,7 @@ class ClsProvider(DataSourceBase):
             data = resp.json()
             items = data.get("items") or []
             rows = self._parse_cls_news(items)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"财联社电报获取失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[], last_key="",

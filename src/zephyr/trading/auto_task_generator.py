@@ -124,7 +124,7 @@ class AutoTaskGenerator:
                         break
                     self._file_queue.append(fp)
                     self._processed.add(fp_hash)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
         _log.debug(
@@ -153,7 +153,7 @@ class AutoTaskGenerator:
                         scheduler.enqueue(task_id, capability, payload)
                         submitted += 1
                         self._stats["submitted"] += 1
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                         _log.debug(
                             "AutoTaskGenerator: enqueue failed for %s: %s",
                             task_id,
@@ -161,7 +161,7 @@ class AutoTaskGenerator:
                             exc_info=True,
                         )
                 self._stats["generated"] += len(tasks)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._stats["skipped"] += 1
 
         if submitted > 0:
@@ -244,7 +244,7 @@ class AutoTaskGenerator:
         try:
             content = fp.read_text(encoding="utf-8", errors="replace")
             return content[:max_chars]
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     @staticmethod
@@ -305,7 +305,7 @@ def subscribe_eventbus() -> None:
         bus.subscribe("task_completed", _on_task_completed)
         _subscribed = True
         _log.info("AutoTaskGenerator: subscribed to task_completed event")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("AutoTaskGenerator: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
@@ -325,5 +325,5 @@ def _on_task_completed(payload: object) -> None:
         submitted = generator.generate_and_submit(_scheduler_ref)
         if submitted > 0:
             _log.info("AutoTaskGenerator: submitted %d tasks after task_completed", submitted)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.debug("AutoTaskGenerator: _on_task_completed failed: %s", exc, exc_info=True)

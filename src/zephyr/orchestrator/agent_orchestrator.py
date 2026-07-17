@@ -880,7 +880,7 @@ class AgentOrchestrator:
                 latency_ms=elapsed,
                 result_preview=preview,
             )
-        except Exception as exc:  # — 工具错误必须被收敛
+        except Exception as exc:  # — 工具错误必须被收敛  # noqa: BLE001 — 5.135治标: broad exception catch
             elapsed = int((time.perf_counter() - started) * 1000)
             return ToolCallRecord(
                 directive=directive,
@@ -903,7 +903,7 @@ class AgentOrchestrator:
                         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
                         AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e, exc_info=True)
                         return None
         gw = AgentOrchestrator._lsg_gateway_instance
@@ -940,9 +940,9 @@ class AgentOrchestrator:
 
                 if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                     return result.blocked_by or "lsg_agent_scan"
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in agent_orchestrator", exc_info=True)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in agent_orchestrator", exc_info=True)
         return None
 

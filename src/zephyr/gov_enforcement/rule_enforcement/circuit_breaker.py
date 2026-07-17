@@ -311,7 +311,7 @@ class CBGManager:
                     ),
                 )
                 self._conn.execute("COMMIT")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._conn.execute("ROLLBACK")
                 raise
         else:
@@ -342,7 +342,7 @@ class CBGManager:
                     ),
                 )
                 self._conn.execute("COMMIT")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._conn.execute("ROLLBACK")
                 raise
 
@@ -382,7 +382,7 @@ class CBGManager:
                 (now, caller, target),
             )
             self._conn.execute("COMMIT")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._conn.execute("ROLLBACK")
             raise
         return True
@@ -484,7 +484,7 @@ def circuit_breaker(
                 return result
             except CircuitOpenError:
                 raise
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 manager.record_failure(
                     _resolved_caller,
                     target_module,

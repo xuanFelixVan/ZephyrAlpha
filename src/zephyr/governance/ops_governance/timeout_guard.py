@@ -140,7 +140,7 @@ class TimeoutGuard:
         if handler:
             try:
                 handler(event)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in timeout_guard", exc_info=True)
 
     def active_count(self) -> int:

@@ -117,7 +117,7 @@ class BackpressureManager:
             for handler in self._on_pause_handlers:
                 try:
                     handler(state)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.error("pause handler error: %s", e, exc_info=True)
 
         return state
@@ -149,7 +149,7 @@ class BackpressureManager:
             for handler in self._on_throttle_handlers:
                 try:
                     handler(state)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.error("throttle handler error: %s", e, exc_info=True)
 
         return state
@@ -183,7 +183,7 @@ class BackpressureManager:
             for handler in self._on_resume_handlers:
                 try:
                     handler(state)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     _logger.error("resume handler error: %s", e, exc_info=True)
 
         return state

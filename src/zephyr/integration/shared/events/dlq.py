@@ -471,7 +471,7 @@ def attach_dlq_to_observer(
             try:
                 handler(event_type, payload)
                 handlers_called += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 dlq.capture(
                     event_type,
                     payload,

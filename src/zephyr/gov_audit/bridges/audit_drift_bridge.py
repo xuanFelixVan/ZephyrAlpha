@@ -134,7 +134,7 @@ class DriftBridge:
         except ImportError:
             logger.info("[drift-bridge] AnomalyDetector not available—跳过审计异常扫描")
             return []
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("[drift-bridge] 审计异常扫描失败", exc_info=True)
             return []
 
@@ -157,7 +157,7 @@ class DriftBridge:
         except ImportError:
             logger.info("[drift-bridge] DriftEngine not available—跳过漂移扫描")
             return []
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("[drift-bridge] 漂移事件扫描失败", exc_info=True)
             return []
 

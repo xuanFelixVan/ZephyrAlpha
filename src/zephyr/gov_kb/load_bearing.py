@@ -146,7 +146,7 @@ class LoadBearingWall:
                         version=int(fm.get("version", 1)) if isinstance(fm, dict) else 1,
                     )
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to scan load-bearing KE %s: %s", ke_file.name, e, exc_info=True)
 
         return entries
@@ -261,7 +261,7 @@ class LoadBearingWall:
                 fm = _parse_frontmatter(content)
                 if isinstance(fm, dict):
                     cats.add(str(fm.get("category", "unknown")))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in load_bearing", exc_info=True)
         return len(cats)
 
@@ -278,7 +278,7 @@ def _parse_frontmatter(content: str) -> dict | None:
             try:
                 fm = yaml.safe_load(chunk[:end])
                 return fm if isinstance(fm, dict) else None
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return None
     return None
 

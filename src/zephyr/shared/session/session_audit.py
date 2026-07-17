@@ -347,7 +347,7 @@ class SessionAuditTrail:
                         "operation": "append_record",
                     }
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in session_audit", exc_info=True)
         return filepath
 

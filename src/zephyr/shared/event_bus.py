@@ -125,7 +125,7 @@ class EventBus:
         for handler in handlers:
             try:
                 handler(event)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.debug(
                     "EventBus handler error event_type=%s task_id=%s",
                     event_type,
@@ -234,7 +234,7 @@ class EventBusBackpressure:
             try:
                 validated = self._contract_bus.validate(contract_id, payload)
                 payload = validated
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._contract_rejected_count += 1
                 _logger.warning(
                     "EventBus contract validation rejected: topic=%s contract=%s err=%s", topic, contract_id, exc
@@ -271,7 +271,7 @@ class EventBusBackpressure:
             handlers = self._handlers.get(topic, [])
             for handler in handlers:
                 handler(event)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug(
                 "EventBusBackpressure handler error topic=%s",
                 topic,
@@ -319,7 +319,7 @@ def _init_bridge() -> None:
         from zephyr.shared.contract_bus import get_bus
 
         bus.set_contract_bus(get_bus())
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("contract_bus bridge init failed", exc_info=True)
 
 

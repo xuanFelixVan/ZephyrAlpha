@@ -115,7 +115,7 @@ def _load_patterns() -> dict[str, list[float]]:
             patterns = json.load(f)
             if isinstance(patterns, dict):
                 return patterns
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("_load_patterns: failed to load patterns file (%s: %s)", type(e).__name__, e, exc_info=True)
     return {}
 
@@ -130,7 +130,7 @@ def _save_patterns(patterns: dict[str, list[float]]) -> None:
             f.flush()
             os.fsync(f.fileno())
         os.replace(tmp_path, _PATTERNS_FILE)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("zombie_scanner: failed to save patterns file", exc_info=True)
 
 
@@ -139,7 +139,7 @@ def _log_kill(pid: int, reason: str) -> None:
         os.makedirs(os.path.dirname(_ZOMBIE_LOG), exist_ok=True)
         with open(_ZOMBIE_LOG, "a", encoding="utf-8") as f:
             f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] KILLED PID={pid} reason={reason}\n")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in zombie_scanner", exc_info=True)
 
 
@@ -225,7 +225,7 @@ def _extract_proc_info(proc, project_root_str: str, current_pid: int) -> dict[st
         cpu = proc.cpu_percent()
         try:
             children = len(proc.children())
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             children = 0
     except (_psutil.NoSuchProcess, _psutil.AccessDenied):
         return None

@@ -144,7 +144,7 @@ class DuplicateDetector:
         if node.returns:
             try:
                 return_type = ast.unparse(node.returns)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return_type = "Any"
         return f"def {node.name}({', '.join(arg_names)}) -> {return_type}"
 
@@ -154,7 +154,7 @@ class DuplicateDetector:
         for base in node.bases:
             try:
                 bases.append(ast.unparse(base))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 bases.append("Any")
         method_names = sorted(n.name for n in node.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)))
         return f"class {node.name}({', '.join(bases)}): [{', '.join(method_names)}]"

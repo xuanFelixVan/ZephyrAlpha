@@ -183,7 +183,7 @@ class FeedbackLoopScheduler:
                 _vms.start()
                 self.vector_bridge = VectorBridge(_vms)
                 logger.info("FLE-Scheduler: VectorBridge auto-initialized")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
                     "FLE-Scheduler: VectorBridge initialization failed, failure patterns will not persist to VMS"
                 , exc_info=True)
@@ -249,14 +249,14 @@ class FeedbackLoopScheduler:
                     from zephyr.shared.event_bus import bus
 
                     bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in scheduler", exc_info=True)
             elif status == "no_data":
                 logger.debug("FLE audit trail: no data to verify")
             else:
                 checked = result.get("events_checked", 0)
                 logger.info("FLE audit trail: chain valid (%d events checked)", checked)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE audit trail check failed", exc_info=True)
 
     def _run_drift_scan(self) -> None:
@@ -276,7 +276,7 @@ class FeedbackLoopScheduler:
                 self._auto_fix_drifts(high_drifts)
             else:
                 logger.info("FLE drift scan: clean (%d total, 0 HIGH)", len(result.drifts))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE drift scan failed", exc_info=True)
 
     def _auto_fix_drifts(self, drifts: list) -> None:
@@ -291,7 +291,7 @@ class FeedbackLoopScheduler:
                     logger.info("FLE auto-fix: drift fixed -> %s", target)
                 else:
                     logger.warning("FLE auto-fix: drift fix failed -> %s (%s)", target, action.status)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE auto-fix drift failed", exc_info=True)
 
     def _run_once(self) -> FLEPipelineEvent | None:
@@ -405,7 +405,7 @@ class FeedbackLoopScheduler:
                 if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
                     self.vector_bridge.write_failure_pattern(diag_text)
                     logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
 
     def _run_safety_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
@@ -456,12 +456,12 @@ class FeedbackLoopScheduler:
                         continue
                     try:
                         record = json.loads(line)
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         continue
                     if record.get("event") == "blueprint_read" and record.get("blueprint_id") == "MOD-FEEDBACK_LOOP":
                         return True
             return False
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return True
 
     def _get_current_metric(self, metric_name: str) -> float:
@@ -500,7 +500,7 @@ class FeedbackLoopScheduler:
                 written = write_metrics_batch(points)
                 if written:
                     logger.debug("[FLE-DB] persisted %d metrics", written)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[FLE-DB] metrics persist skipped", exc_info=True)
 
     def _dispatch_alert_if_anomaly(self, event: FLEPipelineEvent, act_result: ActionRecord) -> None:
@@ -549,7 +549,7 @@ class FeedbackLoopScheduler:
             result = dispatcher.dispatch(alert)
 
             self._persist_alert_and_log(alert, result)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
 
     def _persist_alert_and_log(self, alert: AlertEvent, dispatch_result: object) -> None:
@@ -566,7 +566,7 @@ class FeedbackLoopScheduler:
                 task_id=dispatch_result.task_id,
                 error_message=dispatch_result.error,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
 
     def _append_event(self, event: FLEPipelineEvent) -> None:
@@ -606,5 +606,5 @@ class FeedbackLoopScheduler:
                     },
                     priority=EventPriority.NORMAL,
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in scheduler", exc_info=True)

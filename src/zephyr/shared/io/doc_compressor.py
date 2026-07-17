@@ -218,7 +218,7 @@ def load_policy_from_yaml(
             )
         policy_dict = data.get("policy", {})
         return CompressionPolicy(**policy_dict)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("CompressionPolicy YAML parse failed: %s — using DEFAULT_POLICY (%s)", resolved, exc, exc_info=True)
         return DEFAULT_POLICY
 

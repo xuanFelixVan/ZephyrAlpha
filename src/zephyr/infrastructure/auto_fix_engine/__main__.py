@@ -51,7 +51,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
         try:
             scan_results = fixer.scan()
             findings.extend(scan_results)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             findings.append({"fixer": name, "error": str(exc)})
     print(json.dumps({"total": len(findings), "findings": findings[:100]}, indent=2, ensure_ascii=False))
     return 0

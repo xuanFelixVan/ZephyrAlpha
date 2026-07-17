@@ -85,7 +85,7 @@ class RollbackScheduler:
         try:
             from zephyr.infrastructure.rollback.rollback_wal import RollbackWAL
             self._wal = RollbackWAL(project_root=self._project_root)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to initialize RollbackWAL: %s", e, exc_info=True)
         return self._wal
 
@@ -95,7 +95,7 @@ class RollbackScheduler:
         try:
             from zephyr.infrastructure.rollback.rollback_drill import RollbackDrill
             self._drill = RollbackDrill(project_root=self._project_root)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to initialize RollbackDrill: %s", e, exc_info=True)
         return self._drill
 
@@ -231,7 +231,7 @@ class RollbackScheduler:
                     ),
                     encoding="utf-8",
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to write drill marker: %s", e, exc_info=True)
 
             return SchedulerResult(
@@ -247,7 +247,7 @@ class RollbackScheduler:
                 },
                 errors=[] if result.success else [f"drill failed: {result.details}"],
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("RollbackDrill execution failed: %s", e, exc_info=True)
             return SchedulerResult(
                 task="drill",

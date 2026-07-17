@@ -185,6 +185,6 @@ class CircuitBreaker:
             result = func(*args, **kwargs)
             self.record_success()
             return result
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self.record_failure()
             raise

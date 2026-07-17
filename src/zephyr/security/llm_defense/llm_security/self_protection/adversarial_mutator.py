@@ -199,7 +199,7 @@ class AdversarialMutator:
                         bypassed=not is_blocked,
                         latency_ms=(time.time() - t0) * 1000,
                     )
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     mr = MutationResult(
                         payload_id=pid,
                         technique=tech,
@@ -323,7 +323,7 @@ class AdversarialMutator:
 
         try:
             return unicodedata.normalize("NFKC", content)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return content
 
     def _mutate_url_encode(self, content: str) -> str:

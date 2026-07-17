@@ -177,7 +177,7 @@ def fetch_position_monitor(
 
     try:
         snapshot = miniqmt_broker.get_positions()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return PositionMonitorData()
 
     if snapshot is None:

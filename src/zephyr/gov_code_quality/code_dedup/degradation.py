@@ -96,7 +96,7 @@ class DegradationManager:
             output = func()
             stage.success = True
             stage.output = output
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             stage.error = f"{type(exc).__name__}: {exc}"
             self._log_degradation(stage_name, str(exc))
             if on_degrade:

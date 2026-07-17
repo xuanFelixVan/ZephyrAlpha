@@ -90,7 +90,7 @@ def _load_context_rules_yaml() -> dict:
                 data = _yaml.safe_load(fh) or {}
             _context_rules_cache = data
             return data
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in context_budget_tracker", exc_info=True)
     _context_rules_cache = {}
     return _context_rules_cache
@@ -170,7 +170,7 @@ class ContextBudgetTracker:
 
             enc = tiktoken.encoding_for_model("cl100k_base")
             count = len(enc.encode(text))
-        except (ImportError, Exception):
+        except (ImportError, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
             count = len(text) // 4
 
         with self._lock:

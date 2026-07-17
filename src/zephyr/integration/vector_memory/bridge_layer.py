@@ -118,7 +118,7 @@ def _query_vms_collection(
                             "distance": res.get("distances", [[0.0]])[0][i] if res.get("distances") else 0.0,
                         }
                     )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("BridgeLayer: VMS 检索失败: %s", e, exc_info=True)
     return results
 
@@ -149,7 +149,7 @@ def _query_kb_collection(
                                 else 0.0,
                             }
                         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.debug("BridgeLayer: kb/ 检索失败: %s", e, exc_info=True)
     return results
 

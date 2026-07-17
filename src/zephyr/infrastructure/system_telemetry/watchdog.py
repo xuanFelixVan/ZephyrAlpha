@@ -74,7 +74,7 @@ class Watchdog:
             tmp = hb_file.with_suffix(".tmp")
             tmp.write_text(json.dumps(data) + "\n", encoding="utf-8")
             tmp.replace(hb_file)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("write_external_heartbeat failed id=%s", self._id, exc_info=True)
 
     def should_alert_dead_mans_switch(self, last_heartbeat_s: float) -> bool:
@@ -106,7 +106,7 @@ class Watchdog:
                 hb = WatchdogHeartbeat(watchdog_id=self._id)
                 self._heartbeats[self._id] = hb
                 _wd_logger.debug("heartbeat written id=%s", self._id)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _wd_logger.error("heartbeat write failed id=%s", self._id, exc_info=True)
             time.sleep(interval)
 

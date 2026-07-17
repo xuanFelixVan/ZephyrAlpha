@@ -213,7 +213,7 @@ class PipelineAgentBridge:
                     token_budget=token_budget,
                     task_id=f"{pipeline_result.task_id}:{mr.module_id}",
                 )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.exception(
                     "PipelineAgentBridge: orchestrate failed for %s/%s",
                     pipeline_result.task_id,

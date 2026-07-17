@@ -98,7 +98,7 @@ def _analyze_py_file(file_path: Path) -> StubAnalysis:
             is_empty_stub=is_empty_stub,
             reason=reason,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return StubAnalysis(
             file_name=str(file_path.relative_to(_A2A_SRC)),
             line_count=0,

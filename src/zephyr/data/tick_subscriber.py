@@ -84,7 +84,7 @@ def _safe_decimal(val: object) -> Decimal | None:
     try:
         d = Decimal(str(val))
         return d if d != 0 else None
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 
@@ -94,7 +94,7 @@ def _safe_int(val: object) -> int | None:
         return None
     try:
         return int(val)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
 
 
@@ -216,7 +216,7 @@ class TickSubscriber:
                         self._stats["received"] += 1
                 except queue.Full:
                     log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
                     with self._lock:
                         self._stats["errors"] += 1
@@ -259,7 +259,7 @@ class TickSubscriber:
         while not self._tick_queue.empty():
             try:
                 self._flush_once(timeout=0.01)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 break
         if self._writer:
             self._writer.flush()
@@ -302,7 +302,7 @@ class TickSubscriber:
             try:
                 self._xtdata.subscribe_quote(symbol, period="tick", callback=self._on_tick)
                 self._subscribed.add(symbol)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.error("订阅失败 %s: %s", symbol, e)
 
         log.info("TickSubscriber 启动完成: 订阅 %d 只标的", len(self._subscribed))
@@ -318,7 +318,7 @@ class TickSubscriber:
             for symbol in self._subscribed:
                 try:
                     self._xtdata.unsubscribe_quote(symbol, callback=self._on_tick)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     pass
         log.info("TickSubscriber 已停止: stats=%s", self._stats)
 

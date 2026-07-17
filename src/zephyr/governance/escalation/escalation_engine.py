@@ -281,7 +281,7 @@ class EscalationEngine:
                 )
                 if result.forced_review:
                     event.description += " | forced_review=True"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         try:
@@ -294,7 +294,7 @@ class EscalationEngine:
                         EscalationLevel.L4_EMERGENCY.value, event.level.value + scaling["escalation_level_offset"]
                     )
                     event.level = EscalationLevel(new_level)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in escalation_engine", exc_info=True)
 
         if not self._economic_guard.can_proceed():
@@ -470,7 +470,7 @@ class EscalationEngine:
                 continue
             try:
                 hook_fn(event, detector, self)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in escalation_engine", exc_info=True)
         return event
 

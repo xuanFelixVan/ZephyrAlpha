@@ -188,7 +188,7 @@ class RightToBeForgotten:
 
                 full_path.write_text(content, encoding="utf-8")
                 files_purged.append(file_path)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 files_blocked.append(file_path)
 
         gdpr_blocked = len(files_blocked) > 0

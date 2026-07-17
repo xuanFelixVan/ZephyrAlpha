@@ -132,7 +132,7 @@ class SpecEngine:
             result.finished_at = datetime.now(UTC)
             self._write_audit("skill_upgrade_complete", result)
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._fail(result, result.phase, str(exc))
 
         return result
@@ -174,7 +174,7 @@ class SpecEngine:
                 "freshness_ok": freshness >= 30.0,
                 "l3_count": len(data.get("l3_available", [])),
             }
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {"skill_id": skill_id, "valid": False, "error": str(exc)}
 
     # ------------------------------------------------------------------
@@ -206,7 +206,7 @@ class SpecEngine:
                     if p not in ("docs", "03_modules", "infra_ops"):
                         module_name = p
                         break
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in spec_engine", exc_info=True)
 
         result.phase_results["discover"] = {"module_name": module_name, "blueprint": blueprint_path}
@@ -218,7 +218,7 @@ class SpecEngine:
             skill_path = self.factory.generate_domain_skill(module_name, blueprint_path)
             result.phase_results["generate"] = {"skill_path": str(skill_path)}
             return skill_path
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             result.errors.append(f"Generation error: {exc}")
             result.phase_results["generate"] = {"error": str(exc)}
             return None
@@ -247,7 +247,7 @@ class SpecEngine:
                 l2 = skill_data.get("l2", "")
                 if not l2 or len(l2) < 50:
                     result.warnings.append("Generated skill body is too short — may be template placeholder")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result.errors.append(f"Validation load error: {exc}")
                 valid = False
         else:
@@ -294,7 +294,7 @@ class SpecEngine:
                         "timestamp": datetime.now(UTC).isoformat(),
                     }
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in spec_engine", exc_info=True)
 
 

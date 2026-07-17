@@ -279,7 +279,7 @@ class FileLockBackend(LockBackend):
         try:
             with open(owner_file, encoding="utf-8") as fh:
                 return json.load(fh)
-        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_read_owner failed: %s", e, exc_info=True)
             return None
 
@@ -301,7 +301,7 @@ class FileLockBackend(LockBackend):
         try:
             shutil.rmtree(lock_dir, ignore_errors=True)
             return True
-        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"
+        except Exception as e:  # 5.70.4 修复：异常路径添加日志，区分"真阴性"和"异常降级"  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("_cleanup_stale failed: %s", e, exc_info=True)
             return False
 
@@ -388,7 +388,7 @@ class FileLockBackend(LockBackend):
                     try:
                         shutil.rmtree(lock_dir, ignore_errors=True)
                         released.append(entry[:-5])  # strip ".lock"
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("suppressed error in pipeline_lock", exc_info=True)
 
             return sorted(released)
@@ -431,7 +431,7 @@ class FileLockBackend(LockBackend):
                     elif os.path.isfile(path):
                         try:
                             os.unlink(path)
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                             logger.debug("suppressed error in pipeline_lock", exc_info=True)
 
 

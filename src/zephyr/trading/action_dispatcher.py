@@ -90,7 +90,7 @@ def _git_commit_hash(project_root: Path) -> str | None:
         )
         if result.returncode == 0:
                 return result.stdout.strip()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         _log.warning("_git_commit_hash: failed to get git commit hash (%s: %s)", type(e).__name__, e, exc_info=True)
     return None
 
@@ -151,7 +151,7 @@ class ActionDispatcher:
                 return self._search_replace_file(source_text, result, field="dead_sections", remove=True)
             else:
                 return self._skip(task.task_id, capability, "no actuator")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ActionReport(task.task_id, capability, "error", str(exc))
 
     def drain_results(self, scheduler: TaskScheduler) -> list[ActionReport]:
@@ -538,7 +538,7 @@ class ActionDispatcher:
 
         try:
             data = yaml.safe_load(content)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             data = {}
 
         if not isinstance(data, dict):
@@ -681,7 +681,7 @@ class ActionDispatcher:
         for pattern in candidates:
             try:
                 matches = list(REPO_ROOT.glob(str(pattern.relative_to(REPO_ROOT))))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 matches = list(REPO_ROOT.rglob(f"{module_name}.py"))
             if matches:
                 return matches[0]

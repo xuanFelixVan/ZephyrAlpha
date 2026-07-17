@@ -100,7 +100,7 @@ class BaostockProvider(DataSourceBase):
         except ImportError as e:
             self._log.warning(f"Baostock 探活失败（baostock 未安装）: {e}")
             return False
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"Baostock 探活失败: {e}")
             return False
 
@@ -109,7 +109,7 @@ class BaostockProvider(DataSourceBase):
         if getattr(self._tls, "logged_in", False):
             try:
                 self._tls.bs.logout()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"baostock logout 异常: {e}")
             self._tls.logged_in = False
             self._tls.bs = None
@@ -125,7 +125,7 @@ class BaostockProvider(DataSourceBase):
         # 确保当前线程已登录
         try:
             self._ensure_login()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
                 last_key="", elapsed_sec=0.0, error=f"baostock login failed: {e}",
@@ -172,7 +172,7 @@ class BaostockProvider(DataSourceBase):
                 last_key=datetime.date.today().isoformat(),
                 elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"沪深300成分股获取失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[],
@@ -209,7 +209,7 @@ class BaostockProvider(DataSourceBase):
                 table=table, columns=columns, rows=rows,
                 last_key=end, elapsed_sec=time.time() - t0,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.warning(f"交易日历获取失败: {e}")
             yield FetchResult(
                 table=table, columns=columns, rows=[],
@@ -254,7 +254,7 @@ class BaostockProvider(DataSourceBase):
                         table=table, columns=columns, rows=rows,
                         last_key=end, elapsed_sec=time.time() - t0,
                     )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.warning(f"baostock K线 {code} 获取失败: {e}")
                 yield FetchResult(
                     table=table, columns=columns, rows=[],

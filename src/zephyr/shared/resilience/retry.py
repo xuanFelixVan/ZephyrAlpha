@@ -130,7 +130,7 @@ def async_retry(
             for attempt in range(_cfg.max_attempts):
                 try:
                     return await func(*args, **kwargs)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     last_exc = exc
                     if not _cfg.should_retry(exc):
                         raise

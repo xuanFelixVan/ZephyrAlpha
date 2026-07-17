@@ -98,7 +98,7 @@ class HotfixBypass:
                 _CoreAuditWriter = _importlib.import_module("zephyr.gov_audit.writer").AuditWriter
                 self._core_writer = _CoreAuditWriter()
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
     def is_hotfix_commit(self, commit_message: str) -> bool:
@@ -189,7 +189,7 @@ class HotfixBypass:
 
                 return
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
         with open(self._audit_log_path, "a", encoding="utf-8") as fh:

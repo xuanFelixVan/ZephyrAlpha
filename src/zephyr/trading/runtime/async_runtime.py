@@ -151,7 +151,7 @@ class AsyncRuntime:
                 finally:
                     try:
                         self._loop.close()
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("AsyncRuntime.stop: loop.close() 失败: %s", e, exc_info=True)
                     logger.debug("AsyncRuntime: 事件循环已关闭")
 

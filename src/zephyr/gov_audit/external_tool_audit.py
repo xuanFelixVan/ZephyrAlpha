@@ -64,7 +64,7 @@ class ExternalToolAuditor:
             }
             self._results[name] = result
             return result
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Tool %s audit failed: %s", name, exc, exc_info=True)
             result = {
                 "tool": name,

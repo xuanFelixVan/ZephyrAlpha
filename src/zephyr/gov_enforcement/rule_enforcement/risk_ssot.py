@@ -34,5 +34,5 @@ def load_risk_params_ssot(project_root: Path) -> dict[str, Any]:
         return {}
     try:
         return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {}

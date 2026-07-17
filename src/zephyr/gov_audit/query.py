@@ -53,7 +53,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
                 results.append(data)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to read report %s: %s", path, exc, exc_info=True)
         return results
 
@@ -64,7 +64,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
         try:
             data = json.loads(report_path.read_text(encoding="utf-8"))
             return [AuditIssue(**i) for i in data.get("issues", [])]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to read issues for %s: %s", audit_id, exc, exc_info=True)
             return []
 
@@ -79,7 +79,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
                 for issue in data.get("issues", []):
                     if issue.get("severity") in ("RED", "YELLOW"):
                         findings.append(issue)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -96,7 +96,7 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             return data.get("global_converged", False) or data.get("finished_at") is not None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
 

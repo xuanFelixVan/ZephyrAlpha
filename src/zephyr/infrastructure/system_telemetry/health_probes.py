@@ -110,7 +110,7 @@ class HealthProbeManager:
         if self._dependency_checker is not None:
             try:
                 return bool(self._dependency_checker())
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return False
         # 回退：数据目录可达性检查
         # 5.55.1：尝试项目根的 .runtime 目录（SSoT: REPO_ROOT），失败则回退到临时目录
@@ -124,7 +124,7 @@ class HealthProbeManager:
                 probe.write_text("ok", encoding="utf-8")
                 probe.unlink(missing_ok=True)
                 return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in health_probes", exc_info=True)
         # 5.55.7 修复：无注入检查器且 .runtime/ 不可达时 fail-closed（返回 False）
         # 原第三层 temp dir fallback 总返回 True，导致 readiness() 永远 "ready"，

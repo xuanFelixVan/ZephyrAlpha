@@ -85,7 +85,7 @@ def fetch_gate_statistics(olap_engine: object = None) -> GateStatisticsData:
         data.total_failed = data.total_runs - data.total_passed
         data.overall_pass_rate = data.total_passed / data.total_runs if data.total_runs > 0 else 1.0
         data.overall_block_rate = 1.0 - data.overall_pass_rate
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in gate_statistics", exc_info=True)
     return data
 

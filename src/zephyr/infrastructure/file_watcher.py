@@ -113,9 +113,9 @@ class FileWatcher:
                 if self._on_change:
                     try:
                         self._on_change(ev)
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.exception("on_change callback failed for %s", ev.path, exc_info=True)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("FileWatcher _on_file_changed error", exc_info=True)
 
     @property
@@ -218,7 +218,7 @@ class BlueprintWatcher:
             with open(path, encoding="utf-8") as f:
                 head = f.read(500)
             return "module_id:" in head and "blueprint" in head.lower()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     @staticmethod
@@ -235,7 +235,7 @@ class BlueprintWatcher:
                 blueprint_path.name,
                 len(result.tasks) if hasattr(result, "tasks") else 0,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("Auto-decompose failed for %s", blueprint_path, exc_info=True)
 
     @staticmethod
@@ -256,5 +256,5 @@ class BlueprintWatcher:
                 logger.error("G-TRIPLE-ALIGN FAILED for %s: %d violations", module_id, len(errors))
             else:
                 logger.info("G-TRIPLE-ALIGN PASSED for %s", module_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("G-TRIPLE-ALIGN check failed for %s", blueprint_path, exc_info=True)

@@ -18,7 +18,7 @@
 """
 NightShiftQueue — 夜班登记表持久化
 ====================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 JSONL 持久化 + 线程安全。
 """
 
@@ -98,7 +98,7 @@ class NightShiftQueue:
                         entry = NightShiftEntry(**filter_dataclass_fields(NightShiftEntry, data))
                         if entry.human_decision is None:
                             results.append(entry)
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         continue
         return results
 
@@ -122,7 +122,7 @@ class NightShiftQueue:
                             data["human_notes"] = notes
                             is_found = True
                         lines.append(json.dumps(data, ensure_ascii=False) + "\n")
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         lines.append(line)
             self._path.write_text("".join(lines), encoding="utf-8")
         return is_found
@@ -144,7 +144,7 @@ class NightShiftQueue:
                         total += 1
                         if data.get("human_decision") is not None:
                             resolved += 1
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                         continue
         return {"total": total, "pending": total - resolved, "resolved": resolved}
 

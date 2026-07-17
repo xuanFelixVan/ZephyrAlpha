@@ -61,7 +61,7 @@ class DriftDetector:
                         "detail": f"Drift detected: score={self.detect(current):.4f} > threshold={threshold}",
                     },
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in drift_detector", exc_info=True)
         return drifting
 

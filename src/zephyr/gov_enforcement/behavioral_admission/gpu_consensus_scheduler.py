@@ -443,7 +443,7 @@ class GPUConsensusScheduler:
                 request,
             )
             return result
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("API call failed for model %s: %s", model_id, exc, exc_info=True)
             return None
 
@@ -475,7 +475,7 @@ class GPUConsensusScheduler:
                 text = data.get("response", "")
                 return self._parse_model_response(text, model_id)
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     async def _call_ollama(self, request: ConsensusRequest) -> dict[str, Any] | None:
@@ -489,7 +489,7 @@ class GPUConsensusScheduler:
                 request,
             )
             return result
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     def _call_ollama_sync(self, request: ConsensusRequest) -> dict[str, Any] | None:
@@ -517,7 +517,7 @@ class GPUConsensusScheduler:
                 text = data.get("response", "")
                 return self._parse_model_response(text, self._local_model)
             return None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 
     def _parse_model_response(self, text: str, model_id: str) -> dict[str, Any]:
@@ -588,7 +588,7 @@ class GPUConsensusScheduler:
                     last_check_time=time.monotonic(),
                     ollama_responding=False,
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._gpu_status = GPUStatus(
                 available=False,
                 model_name=self._local_model,

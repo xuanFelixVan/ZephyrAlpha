@@ -77,7 +77,7 @@ class ForwardFixRunner:
                 patch_file=str(patch_path),
                 details=[f"Fix patch saved to {patch_path}"],
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             return FixResult(
                 success=False,
                 commit_sha=commit_sha,
@@ -96,5 +96,5 @@ class ForwardFixRunner:
                 timeout=10,
             )
             return result.stdout
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""

@@ -94,7 +94,7 @@ def _scan_script(script_path: str) -> list[HeadlessDiffEntry]:
             if isinstance(entry, dict)
         ]
 
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return []
 
 

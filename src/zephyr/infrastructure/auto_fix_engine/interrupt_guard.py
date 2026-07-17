@@ -77,7 +77,7 @@ class InterruptGuard:
                     self._write_wal(action_id, "interrupted", fix_data)
                     self._rollback_fix(action_id, fix_data)
                 self._active_fixes.clear()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("atexit cleanup failed: %s", exc, exc_info=True)
 
     def remove_handlers(self) -> None:
@@ -135,7 +135,7 @@ class InterruptGuard:
                     )
                     self._rollback_fix(action_id, data)
                 wal_file.unlink(missing_ok=True)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.error("WAL recovery failed for %s: %s", wal_file, exc, exc_info=True)
         return recovered
 
@@ -160,14 +160,14 @@ class InterruptGuard:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(wal_data, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, str(wal_file))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("WAL write failed for %s: %s", action_id, exc, exc_info=True)
 
     def _remove_wal(self, action_id: str) -> None:
         try:
             wal_file = self._wal_dir / f"{action_id}.wal"
             wal_file.unlink(missing_ok=True)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in interrupt_guard", exc_info=True)
 
     def _rollback_fix(self, action_id: str, data: dict[str, Any]) -> None:
@@ -184,5 +184,5 @@ class InterruptGuard:
                     f.write(before_content)
                 os.replace(tmp_path, target)
                 logger.info("Rolled back %s to pre-fix state", target)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Rollback failed for %s: %s", target, exc, exc_info=True)

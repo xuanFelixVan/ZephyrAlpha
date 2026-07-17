@@ -149,7 +149,7 @@ class IntegrityGuard:
                 layer2_sources=[HashEntry(**e) for e in data.get("layer2_sources", [])],
                 layer3_aggregate=data.get("layer3_aggregate", ""),
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("Failed to load integrity manifest: %s", e, exc_info=True)
             return None
 
@@ -249,7 +249,7 @@ class IntegrityGuard:
                         mtime=datetime.fromtimestamp(f.stat().st_mtime, tz=UTC).isoformat(),
                     )
                 )
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("Failed to hash %s: %s", f, e, exc_info=True)
         return entries
 

@@ -34,7 +34,7 @@ class KbBridge:
             self._available = True
         except ImportError:
             logger.warning("UnifiedMemoryAPI not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("UnifiedMemoryAPI init failed: %s", exc, exc_info=True)
 
     def write_judgment(self, file_path: str, verdict: str, reason: str) -> bool:
@@ -45,7 +45,7 @@ class KbBridge:
             content = f"orphan_judge判决: {file_path} -> {verdict}: {reason}"
             self._api.write(topic="orphan-judge", content=content, provenance=prov)
             return True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("KbBridge.write_judgment failed: %s", exc, exc_info=True)
             return False
 
@@ -62,7 +62,7 @@ class KbBridge:
                 }
                 for r in records
             ]
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("KbBridge.search_history failed: %s", exc, exc_info=True)
             return []
 

@@ -110,7 +110,7 @@ class Scanner:
                 continue
             try:
                 self._walk(abs_dir, rel_dir, file_paths, incremental, last_scan_time)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 msg = f"目录遍历异常 {rel_dir}: {exc}"
                 logger.error(msg, exc_info=True)
                 errors.append(msg)
@@ -190,7 +190,7 @@ class Scanner:
                 try:
                     result = future.result()
                     entries.append(result)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     fp = futures[future]
                     msg = f"处理失败 {fp}: {exc}"
                     logger.error(msg, exc_info=True)
@@ -357,7 +357,7 @@ class ConcurrentScanner:
                     entry = future.result()
                     if entry is not None:
                         results.append(entry)
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.warning("suppressed error in scanner", exc_info=True)
         return results
 

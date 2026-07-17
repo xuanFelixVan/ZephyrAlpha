@@ -127,7 +127,7 @@ def _migrate_collection(
     """迁移单个 ChromaDB collection，返回 (total, migrated, failed, processed) 计数。"""
     try:
         col = client.get_collection(name=collection_name)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return (0, 0, 0, 0)
 
     existing = col.get()
@@ -152,7 +152,7 @@ def _migrate_collection(
                     metadatas=metas,
                 )
             return (total, total, 0, 1)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return (total, 0, total, 1)
 
     return (total, total, 0, 1)

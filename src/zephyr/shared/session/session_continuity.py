@@ -129,7 +129,7 @@ class SessionContinuity:
                     self._db_path = ServiceRegistry.get("db_path")
                 else:
                     self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._db_path = self._project_root / "data" / "databases" / "session_continuity.db"
         self._init_schema()
 
@@ -392,7 +392,7 @@ class SessionContinuity:
                                 "task_ref": tid,
                             }
                         )
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
 
         next_actions = next_actions[:10]
@@ -487,7 +487,7 @@ class SessionContinuity:
                     }
                 )
             return decisions
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             conn.close()
             return []
 
@@ -508,7 +508,7 @@ class SessionContinuity:
                     timeout=30,
                     capture_output=True,
                 )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in session_continuity", exc_info=True)
 
     def _auto_generate_questions(
@@ -658,7 +658,7 @@ class SessionContinuity:
                 }
 
             return {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}
 
     def print_restore_summary(self) -> None:
@@ -728,7 +728,7 @@ class SessionContinuity:
                 orphan_rate = f"{orphan_rate * 100:.1f}"
             gen = str(data.get("generated_at", "?"))[:19]
             print(f"  [Asset Inventory] 资产: {total} | 健康: {health} | 孤儿率: {orphan_rate}% | 生成: {gen}")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in session_continuity", exc_info=True)
 
     def restore_session(self) -> dict | None:

@@ -150,7 +150,7 @@ class SelfHealth:
             if total < 5:
                 return SLIResult("forbidden_patterns_too_few", False, float(total), 5.0, "禁碰规则条目不足")
             return SLIResult("forbidden_patterns_ok", True, float(total), 5.0)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SLIResult("forbidden_patterns_parse_fail", False, 0.0, 1.0, str(exc))
 
     def _check_pipeline_files_exist(self) -> SLIResult:
@@ -176,7 +176,7 @@ class SelfHealth:
     def _check_models_importable(self) -> SLIResult:
         try:
             return SLIResult("models_import_ok", True, 1.0, 1.0)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SLIResult("models_import_fail", False, 0.0, 1.0, str(exc))
 
     def _check_blueprint_exists(self) -> SLIResult:
@@ -213,7 +213,7 @@ class SelfHealth:
     def _check_self_module_importable(self) -> SLIResult:
         try:
             return SLIResult("self_health_import_ok", True, 1.0, 1.0)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SLIResult("self_health_import_fail", False, 0.0, 1.0, str(exc))
 
     def _check_module_count_ok(self) -> SLIResult:
@@ -253,7 +253,7 @@ class SelfHealth:
             if elapsed > 2.0:
                 return SLIResult("capacity_import_slow", False, elapsed, 2.0, f"导入耗时 {elapsed:.2f}s")
             return SLIResult("capacity_import_ok", True, elapsed, 2.0)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return SLIResult("capacity_import_fail", False, 0.0, 2.0, str(exc))
 
     def _check_no_temp_files(self) -> SLIResult:

@@ -67,7 +67,7 @@ class RetentionPolicy:
                         if not dry_run:
                             f.unlink()
                             result["purged"] += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.error("Failed to purge %s: %s", f, exc, exc_info=True)
                     result["errors"] += 1
 

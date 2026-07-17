@@ -318,7 +318,7 @@ class RollbackIntegration:
             except (json.JSONDecodeError, FileNotFoundError):
                 exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, "SELF_AUDIT_CONFLICT") else 24
                 return False, "Self-audit conflict IRRESOLVABLE"
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 exit_code = ExitCode.SELF_AUDIT_CONFLICT if hasattr(ExitCode, "SELF_AUDIT_CONFLICT") else 24
                 return False, f"Self-audit conflict merge failed: {e}"
 
@@ -355,7 +355,7 @@ class RollbackIntegration:
                 return True, f"Git binary verified: hash={actual_hash[:12]}...", 0
 
             return True, "Git binary integrity check passed (no hash database)", 0
-        except (subprocess.TimeoutExpired, Exception) as e:
+        except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             exit_code = ExitCode.GIT_BINARY_MISMATCH if hasattr(ExitCode, "GIT_BINARY_MISMATCH") else 25
             return False, f"Git binary verification failed: {e}", exit_code
 
@@ -452,12 +452,12 @@ class RollbackIntegration:
                     finally:
                         conn.close()
                     return True, "SQLite connection pool healthy", 0
-                except (sqlite3.Error, Exception):
+                except (sqlite3.Error, Exception):  # noqa: BLE001 — 5.135治标: broad exception catch
                     pass
 
                 time.sleep(min(EXPONENTIAL_BACKOFF_MAX_SLEEP_S, 2**attempt))
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 if attempt == max_retries - 1:
                     exit_code = ExitCode.CONNECTION_POOL_FAILED if hasattr(ExitCode, "CONNECTION_POOL_FAILED") else 20
                     return False, f"Connection pool health check FAILED after {max_retries} retries: {e}", exit_code

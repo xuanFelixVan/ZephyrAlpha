@@ -250,7 +250,7 @@ class SkillExecutor:
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in skill_executor", exc_info=True)
 
     def _write_audit(self, event_type: str, skill_id: str, extra: dict[str, Any] | None = None):
@@ -265,7 +265,7 @@ class SkillExecutor:
                 core_event["session_id"] = skill_id
                 core_event["target_path"] = skill_id
                 self._core_writer.write(core_event)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in skill_executor", exc_info=True)
         return entry
 
@@ -280,7 +280,7 @@ class SkillExecutor:
         try:
             l1 = self.loader._load_l1_frontmatter(skill_id)
             results["l1_metadata"] = l1
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return self._handle_load_failure(skill_id, results, checkpoint)
 
         allowed_tools = l1.get("allowed_tools", [])
@@ -295,7 +295,7 @@ class SkillExecutor:
         try:
             body = self.loader._load_l2_body(skill_id)
             results["l2_body_length"] = len(body)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             results["l2_body"] = None
 
         gate_results = self._run_gate_checks(skill_id, l1, results)
@@ -360,7 +360,7 @@ class SkillExecutor:
                 gate_results.append(GateResult("G6", True, f"Skill '{skill_id}' registered"))
             else:
                 gate_results.append(GateResult("G6", False, f"Skill '{skill_id}' not in registry"))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             gate_results.append(GateResult("G6", False, f"Registry check failed: {exc}"))
 
         freshness = l1.get("freshness_score", 100.0)

@@ -331,7 +331,7 @@ class StateSynchronizer:
             fm = yaml.safe_load(fm_text)
             if isinstance(fm, dict):
                 return str(fm.get("status", "")).strip() or None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in state_synchronizer", exc_info=True)
         return None
 

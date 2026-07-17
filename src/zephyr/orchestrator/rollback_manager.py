@@ -128,10 +128,10 @@ class RollbackManager:
             conn.execute("COMMIT")
         except ValueError:
             raise
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 conn.execute("ROLLBACK")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in rollback_manager", exc_info=True)
             raise
         finally:
@@ -199,10 +199,10 @@ class RollbackManager:
         except ValueError:
             conn.close()
             raise
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             try:
                 conn.execute("ROLLBACK")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in rollback_manager", exc_info=True)
             raise
         finally:

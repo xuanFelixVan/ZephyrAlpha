@@ -81,7 +81,7 @@ class KBBridge:
                         ),
                     )
                     published += 1
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("[SCRIPT-KB] write finding failed: %s", exc, exc_info=True)
 
             conn.commit()
@@ -89,7 +89,7 @@ class KBBridge:
 
             logger.info("[SCRIPT-KB] published: task=%s published=%d/%d", task_id, published, len(findings))
             return KBPublishResult(published=published, total=len(findings))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("[SCRIPT-KB] KB unavailable, degraded: %s", exc, exc_info=True)
             return KBPublishResult(published=0, total=len(findings), status="degraded", error=str(exc))
 

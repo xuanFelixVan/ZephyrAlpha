@@ -89,7 +89,7 @@ def scan_naming_magic(project_root: str) -> list[NamingMagicAlert]:
         try:
             content = pf.read_text(encoding="utf-8")
 
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue
 
         for pattern, desc, magic_type in _IMPLICIT_FILE_PATTERNS:

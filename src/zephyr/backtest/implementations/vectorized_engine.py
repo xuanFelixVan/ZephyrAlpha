@@ -162,7 +162,7 @@ class DefaultBacktestEngine(BacktestEngineBase):
                 for fill in fills:
                     try:
                         portfolio.apply_fill(fill, allow_t_plus_1=False)
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         _logger.debug("Fill skipped: %s (date=%s)", e, date, exc_info=True)
 
             # 更新当日市值

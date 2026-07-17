@@ -104,7 +104,7 @@ class ZombieCleaner(BaseFixer):
                 for ref in path_refs:
                     if not (repo_root / ref).exists() and not Path(ref).is_absolute():
                         findings.append({"file": str(yaml_file), "reference": ref, "type": "zombie_reference"})
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         for py_file in repo_root.rglob("*.py"):
             try:
@@ -115,7 +115,7 @@ class ZombieCleaner(BaseFixer):
                     if not (repo_root / clean_ref).exists() and not Path(clean_ref).is_absolute():
                         if "site-packages" not in clean_ref and "lib/python" not in clean_ref:
                             findings.append({"file": str(py_file), "reference": clean_ref, "type": "zombie_import"})
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return findings
 
@@ -146,7 +146,7 @@ class ZombieCleaner(BaseFixer):
             else:
                 action.status = FixStatus.COMPLETED
                 action.metadata["note"] = "No zombie references found"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             action.status = FixStatus.FAILED
             action.metadata["error"] = str(exc)
         return action
@@ -173,7 +173,7 @@ class ZombieCleaner(BaseFixer):
                     error="Zombie references still present",
                 )
             return ValidationResult(valid=True, check_name="zombie_clean", evidence="No zombie references found")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ValidationResult(valid=False, check_name="zombie_clean", evidence="", error=str(exc))
 
     def rollback(self, target: str) -> bool:

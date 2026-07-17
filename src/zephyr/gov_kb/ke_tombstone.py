@@ -145,7 +145,7 @@ class TombstoneManager:
             conn.close()
             logger.info("Tombstone table ke_tombstones initialized")
             return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to init tombstone table: %s", e, exc_info=True)
             return False
 
@@ -175,7 +175,7 @@ class TombstoneManager:
                 chroma_id=chroma_id,
                 vector_hash=vector_hash,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to bury KE %s: %s", ke_id, e, exc_info=True)
             raise
         finally:
@@ -189,7 +189,7 @@ class TombstoneManager:
                 (ke_id,),
             ).fetchone()
             return row is not None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
         finally:
             conn.close()
@@ -204,7 +204,7 @@ class TombstoneManager:
                 (source_hash,),
             ).fetchone()
             return row is not None
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
         finally:
             conn.close()
@@ -236,7 +236,7 @@ class TombstoneManager:
                 )
                 for r in rows
             ]
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to list tombstones: %s", e, exc_info=True)
             return []
         finally:
@@ -247,7 +247,7 @@ class TombstoneManager:
         try:
             row = conn.execute(_SQL_COUNT_UNPURGED).fetchone()
             return row[0] if row else 0
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0
         finally:
             conn.close()
@@ -269,7 +269,7 @@ class TombstoneManager:
             if count > 0:
                 logger.info("Purged %d tombstones older than %s", count, cutoff_str)
             return count
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("Failed to purge tombstones: %s", e, exc_info=True)
             return 0
         finally:

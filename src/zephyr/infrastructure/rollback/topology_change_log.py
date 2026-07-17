@@ -101,7 +101,7 @@ class TopologyChangeLog:
                     timeout=5,
                 )
                 return True
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in topology_change_log", exc_info=True)
         return False
 
@@ -162,5 +162,5 @@ class TopologyChangeLog:
                 "current": current_branch.stdout.strip(),
                 "snapshot_at": datetime.now(UTC).isoformat(),
             }
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return {}

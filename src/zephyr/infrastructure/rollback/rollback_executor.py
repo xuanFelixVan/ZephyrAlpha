@@ -156,7 +156,7 @@ class RollbackExecutor:
         if _AUDIT_AVAILABLE:
             try:
                 self._audit_writer = _CoreAuditWriter()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞审计写入器初始化失败（审计链断链不可见）
                 logger.warning("AuditWriter init failed; audit trail will fall back to jsonl", exc_info=True)
 
@@ -194,7 +194,7 @@ class RollbackExecutor:
         path = self._in_flight_path(execution_id)
         try:
             path.unlink(missing_ok=True)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 in-flight 标记清理失败（残留标记会导致下次回滚误判）
             logger.debug("in-flight marker unlink failed for execution_id=%s", execution_id, exc_info=True)
 
@@ -260,7 +260,7 @@ class RollbackExecutor:
             if merge_base.strip() != remote_head.strip():
                 remote_not_ahead = False
                 errors.append("Remote may be ahead of local")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 git merge-base 检查失败（无 remote 时属预期，但仍需可观测）
             logger.debug("preflight merge-base check failed (expected if no remote)", exc_info=True)
 
@@ -304,7 +304,7 @@ class RollbackExecutor:
             try:
                 tracked = self._run_git(["ls-files", "--error-unmatch", f])
                 result[f] = True
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 result[f] = False
         return result
 
@@ -325,7 +325,7 @@ class RollbackExecutor:
                 log_output = self._run_git(["log", "-1", "--format=%an %ae %s", "--", f])
                 if self._owner_session_id and self._owner_session_id in log_output:
                     blocked.append(f)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 git log 查询失败（owner 检测漏判不可见）
                 logger.debug("git log owner detection failed for file=%s", f, exc_info=True)
         return blocked
@@ -385,7 +385,7 @@ class RollbackExecutor:
             try:
                 self._run_git(["checkout", "--", f])
                 files_discarded.append(f)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 discard 失败（回滚失败不可见——最危险）
                 logger.warning("git checkout discard failed for file=%s (rollback incomplete)", f, exc_info=True)
 
@@ -393,7 +393,7 @@ class RollbackExecutor:
             if f in discardable:
                 try:
                     self._run_git(["reset", "HEAD", "--", f])
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     # 5.12.1 修复：原 except: pass 静默吞 staged reset 失败（staged 变更残留）
                     logger.warning("git reset HEAD failed for staged file=%s", f, exc_info=True)
 
@@ -562,7 +562,7 @@ class RollbackExecutor:
                 event["agent_id"] = event.get("agent_id", record.get("session_id", "rollback_executor"))
                 self._audit_writer.write(event)
                 return
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞审计写入失败（审计链断链不可见）
                 logger.warning("AuditWriter.write failed for discard audit; falling back to jsonl", exc_info=True)
         try:
@@ -571,7 +571,7 @@ class RollbackExecutor:
             audit_file = audit_dir / "rollback_discard_audit.jsonl"
             with open(audit_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（审计记录彻底丢失）
             logger.error("jsonl audit fallback write failed for discard audit (audit record LOST)", exc_info=True)
 
@@ -676,7 +676,7 @@ class RollbackExecutor:
 
                 _exit = resolve_exit_code(result.exit_code)
                 object.__setattr__(result, "exit_code_resolution", _exit)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 exit_code 解析失败（门禁决策信号丢失）
                 logger.debug("exit_code resolution failed for execution_id=%s", execution_id, exc_info=True)
 
@@ -696,7 +696,7 @@ class RollbackExecutor:
             )
 
             return result
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             errors.append("internal error")
             self._write_in_flight(execution_id, "error", "FAILED", {"error": "internal error"})
             self._write_op_audit(
@@ -722,7 +722,7 @@ class RollbackExecutor:
                 try:
                     self._run_git(["stash", "pop"])
                     self._write_in_flight(execution_id, "stash_pop", "SUCCESS")
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     self._write_in_flight(execution_id, "stash_pop", "FAILED", {"error": "internal error"})
             self._delete_in_flight(execution_id)
 
@@ -901,13 +901,13 @@ class RollbackExecutor:
             try:
                 preview = self.preview(commit_sha)
                 return list(preview.changed_files)
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return []
         if operation is RollbackOp.HARD_RESET:
             try:
                 output = self._run_git(["ls-files"])
                 return [f for f in output.strip().split("\n") if f]
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 return []
         return []
 
@@ -939,7 +939,7 @@ class RollbackExecutor:
             return result.stdout
         except subprocess.TimeoutExpired:
             return ""
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return ""
 
     def _g0_verify(self, files: list[str] | None = None) -> bool:
@@ -973,12 +973,12 @@ class RollbackExecutor:
             for cache_dir in cache_dirs:
                 try:
                     shutil.rmtree(cache_dir)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                     # 5.12.1 修复：原 except: pass 静默吞 pycache 清理失败（残留缓存可能导致后续导入幽灵模块）
                     logger.debug("pycache rmtree failed for %s", cache_dir, exc_info=True)
 
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def _write_op_audit(
@@ -1008,7 +1008,7 @@ class RollbackExecutor:
                 event["status"] = "success" if success else "failed"
                 self._audit_writer.write(event)
                 return
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞操作审计写入失败（审计链断链不可见）
                 logger.warning("AuditWriter.write failed for op audit; falling back to jsonl", exc_info=True)
         try:
@@ -1017,6 +1017,6 @@ class RollbackExecutor:
             audit_file = audit_dir / "rollback_operations_audit.jsonl"
             with open(audit_file, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞 jsonl 兜底写入失败（操作审计记录彻底丢失）
             logger.error("jsonl audit fallback write failed for op audit (audit record LOST)", exc_info=True)

@@ -130,7 +130,7 @@ class EvalRunner:
                 overall_score=score,
                 dimension_scores=dims,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             return EvalResult(
                 case_id=case.case_id,
                 passed=False,

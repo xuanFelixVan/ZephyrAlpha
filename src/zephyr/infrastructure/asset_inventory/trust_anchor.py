@@ -188,7 +188,7 @@ def _load_override_yaml(override_path: Path) -> dict | None:
     import yaml
     try:
         data = yaml.safe_load(override_path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return None
     if data is None or not isinstance(data, dict):
         return None

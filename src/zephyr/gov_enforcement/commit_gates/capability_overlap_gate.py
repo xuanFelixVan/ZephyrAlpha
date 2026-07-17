@@ -83,7 +83,7 @@ def _get_staged_new_files(gateway) -> list[str] | None:
             )
             return None
         return diff_result.stdout.strip().splitlines()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.error(
             "CAPABILITY-OVERLAP gate fail-loud: git diff 异常(%s: %s)，"
             "检测器失效，无法检测 capability 重叠。", type(e).__name__, e,
@@ -120,7 +120,7 @@ def _load_registry_data() -> dict | None:
     try:
         import yaml
         data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，"
             "检测器失效，无法检测 capability 重叠。",

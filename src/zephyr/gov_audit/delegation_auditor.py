@@ -36,7 +36,7 @@ class DelegationAuditor:
             self._available = self._bridge.is_available()
         except ImportError:
             logger.warning("DelegationBridge not available")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("DelegationBridge init failed: %s", exc, exc_info=True)
 
     def audit_delegation_chain(self, events: list[dict[str, Any]]) -> dict[str, Any]:

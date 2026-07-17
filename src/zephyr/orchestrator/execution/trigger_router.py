@@ -216,7 +216,7 @@ def load_router_config(
     try:
         with resolved.open(encoding="utf-8") as fh:
             data = yaml.safe_load(fh) or {}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         raise TriggerRouterConfigError(f"YAML parse failed: {exc}") from exc
 
     triggers_raw = data.get("triggers")
@@ -233,7 +233,7 @@ def load_router_config(
             )
         try:
             specs[trigger_type] = TriggerHandlerSpec(**raw)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             raise TriggerRouterConfigError(f"trigger_type='{trigger_type}' 规格非法：{exc}") from exc
 
     return specs
@@ -478,7 +478,7 @@ class TriggerRouter:
 
         try:
             handler_result = handler(payload, **context)
-        except Exception as exc:  # — 处理器异常必须被收敛
+        except Exception as exc:  # — 处理器异常必须被收敛  # noqa: BLE001 — 5.135治标: broad exception catch
             result = self._build_result(
                 trigger_type=trigger_type,
                 handler_path=spec.handler,
@@ -569,7 +569,7 @@ class TriggerRouter:
                     model=self._model,
                     extra=extra,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.warning("TriggerRouter audit log 写入失败：%s", exc, exc_info=True)
 
         _logger.info(
@@ -657,7 +657,7 @@ def handle_drift_detected(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "phase": "operational",
             "recovery_result": result,
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("drift handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("drift_detected", payload)
 
@@ -684,7 +684,7 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "exit_code": result.returncode,
             "stdout_preview": result.stdout[:200] if result.stdout else "",
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("cleanup handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("cleanup_due", payload)
 
@@ -704,7 +704,7 @@ def handle_blueprint_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
             "phase": "operational",
             "reflection_result": result,
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.warning("blueprint_published handler fallback to stub: %s", exc, exc_info=True)
         return _stub_response("blueprint_published", payload)
 
@@ -738,7 +738,7 @@ def handle_blueprint_lookup_stub(payload: dict[str, Any], **_: Any) -> dict[str,
             routing_config = yaml.safe_load(fh)
             if not isinstance(routing_config, dict):
                 routing_config = {}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         _logger.error("failed to load blueprint_routing.yaml: %s", exc, exc_info=True)
         return {
             "matched": [],

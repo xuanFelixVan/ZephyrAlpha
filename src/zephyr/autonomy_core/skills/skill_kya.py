@@ -54,7 +54,7 @@ class SkillKYA:
                 from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 
                 tools = list(SkillLoader().progressive_load(skill_id).get("l1", {}).get("allowed_tools", []))
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 tools = []
         tier = self._assess(tools)
         now = datetime.now(UTC)

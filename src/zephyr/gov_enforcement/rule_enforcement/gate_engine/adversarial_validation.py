@@ -138,7 +138,7 @@ class AdversarialValidationGate:
                         details={"test_type": test_type},
                     )
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 results.append(
                     AdversarialTestResult(
                         strategy_name=name,

@@ -183,7 +183,7 @@ class SkillDiscovery:
                 if not dry_run:
                     factory.generate_domain_skill(gap.module_name, gap.blueprint_path)
                 gap_result.generated.append(gap.module_name)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 gap_result.errors.append(f"Failed to generate Skill for {gap.module_name}: {exc}")
 
         return gap_result

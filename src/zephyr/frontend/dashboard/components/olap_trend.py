@@ -62,15 +62,15 @@ def fetch_olap_trends(olap_engine: object = None, period: str = "day", limit: in
         return data
     try:
         data.task_progress = olap_engine.task_progress_trend(period=period, limit=limit)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in olap_trend", exc_info=True)
     try:
         data.compliance_rate = olap_engine.compliance_rate_trend(period=period, limit=limit)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in olap_trend", exc_info=True)
     try:
         data.knowledge_activation = olap_engine.knowledge_activation_trend(period="month", limit=12)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("suppressed error in olap_trend", exc_info=True)
     return data
 

@@ -275,7 +275,7 @@ def _l0_startup_probe(project_root, result):
     except ImportError as exc:
         result.errors.append("ImportError: " + str(exc))
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result.errors.append("L0 exception: " + str(exc))
 
         logger.exception("probe failed with exception", exc_info=True)
@@ -350,7 +350,7 @@ def _l1_readiness_probe(project_root, result):
 
             result.warnings.append("gate_engine_selfcheck.py not found")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result.errors.append("L1 exception: " + str(exc))
 
         logger.exception("probe failed with exception", exc_info=True)
@@ -383,7 +383,7 @@ def _l2_liveness_probe(result):
 
             result.orphan_resources = len(orphans)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("suppressed error in brain_integration", exc_info=True)
 
         try:
@@ -402,7 +402,7 @@ def _l2_liveness_probe(result):
 
             result.credibility_scores = len(engine._scores)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in brain_integration", exc_info=True)
 
         try:
@@ -414,10 +414,10 @@ def _l2_liveness_probe(result):
 
             result.correlation_findings = len(co_occurrence)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in brain_integration", exc_info=True)
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result.errors.append("L2 exception: " + str(exc))
 
         logger.exception("probe failed with exception", exc_info=True)
@@ -444,7 +444,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
 
             result.forensics_reports = len(forensics.timeline_entries)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in brain_integration", exc_info=True)
 
         import importlib as _il
@@ -482,7 +482,7 @@ def _l3_reconcile(result, scan_level="LIGHT"):
 
         result.verify_events_remaining = verify_result.total_drift_events
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result.errors.append("L3 exception: " + str(exc))
 
         logger.exception("probe failed with exception", exc_info=True)
@@ -541,7 +541,7 @@ def session_entry_full_probe(project_root: str = "") -> tuple[ColdStartResult, F
 
         logger.info("STEP 4.9 full probe: %s", probe_result.summary())
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("STEP 4.9 full probe failed: %s", exc, exc_info=True)
 
     return cold_result, probe_result

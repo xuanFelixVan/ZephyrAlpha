@@ -62,7 +62,7 @@ class AlertHandler:
             )
             logger.info("[ORC-FLE] %s alert -> task %s created", severity_val, task.task_id)
             return task
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.53.7 修复：原实现 return None 使调用方无法区分"无告警(MEDIUM/LOW)"
             # 与"处理异常"。改为 re-raise —— 调用方 AlertDispatcher.dispatch 已有
             # try/except 兜底（返回带 error 字段的 DispatchResult），无告警路径仍返回 None。
@@ -115,7 +115,7 @@ def _record_event(event_id: str, severity: str, category: str, event: object) ->
         )
         conn.commit()
         conn.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("suppressed error in alert_handler", exc_info=True)
 
 

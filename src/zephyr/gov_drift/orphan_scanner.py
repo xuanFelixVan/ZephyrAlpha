@@ -94,7 +94,7 @@ def find_orphan_scripts(project_root: str) -> list[OrphanResource]:
 
                         manifest_scripts.add(str(p))
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for py_file in scripts_dir.rglob("*.py"):
@@ -134,7 +134,7 @@ def find_orphan_data(project_root: str) -> list[OrphanResource]:
         try:
             src_text += pf.read_text(encoding="utf-8") + "\n"
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for df in data_files:
@@ -171,7 +171,7 @@ def find_orphan_docs(project_root: str) -> list[OrphanResource]:
 
             blueprint_set.update(refs)
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in orphan_scanner", exc_info=True)
 
     for md_file in docs_dir.rglob("*.md"):

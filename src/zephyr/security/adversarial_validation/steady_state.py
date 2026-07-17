@@ -132,7 +132,7 @@ class SteadyState:
                 return self._glob_count(check[11:])
             elif check.startswith("process_count:"):
                 return self._process_count(check[14:])
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("metric_eval_failed metric=%s", metric_def["metric"], exc_info=True)
         return -1.0
 
@@ -151,7 +151,7 @@ class SteadyState:
             )
             total = sum(int(line.split(":")[-1]) for line in result.stdout.strip().split("\n") if ":" in line)
             return float(total)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0.0
 
     def _dir_count(self, path_str: str) -> float:
@@ -180,7 +180,7 @@ class SteadyState:
                 timeout=30,
             )
             return float(result.returncode)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return -1.0
 
     def _import_time(self, module: str) -> float:
@@ -189,7 +189,7 @@ class SteadyState:
             __import__(module)
             elapsed_ms = (time.perf_counter() - start) * 1000.0
             return round(elapsed_ms, 1)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("import_time_failed module=%s", module, exc_info=True)
             return -1.0
 
@@ -207,7 +207,7 @@ class SteadyState:
                 return round(elapsed_ms, 1)
             logger.warning("lock_time_check_failed file=%s rc=%d", file_path, result.returncode)
             return round(elapsed_ms, 1)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("lock_time_failed file=%s", file_path, exc_info=True)
             return -1.0
 
@@ -224,7 +224,7 @@ class SteadyState:
                 timeout=5,
             )
             return float(result.stdout.count(name))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return 0.0
 
     def _compute_drift(self) -> SteadyStateSummary:

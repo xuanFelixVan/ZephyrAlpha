@@ -69,7 +69,7 @@ def make_held_overlap_gate() -> GateSpec:
         session_id = kwargs.get("session_id", "")
         try:
             other_held = gateway._registry.other_held_files(session_id)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # registry 读取异常 -> 安全降级为空集（不阻断）
             # 理由：registry 故障不应卡死 commit 工作流；
             #       stash 隔离层（_get_session_held_non_target）同样降级为空集

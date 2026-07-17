@@ -50,14 +50,14 @@ class IntegrityGuard:
 
             self._merkle_bridge = MerkleHourlyBridge()
             self._available = True
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("MerkleHourlyBridge not available: %s", exc, exc_info=True)
 
         try:
             from zephyr.gov_audit.trust_bridge import TrustBridge
 
             self._trust_bridge = TrustBridge()
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("TrustBridge not available: %s", exc, exc_info=True)
 
     def check(self, context: AuditContext) -> dict[str, Any]:

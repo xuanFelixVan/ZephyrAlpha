@@ -111,7 +111,7 @@ class LLMBridge:
                 token_used=len(_ESTIMATED_TOKENS_RE.findall(response)),
                 error="",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("LLM 调用失败, 降级到模板: %s", exc, exc_info=True)
             return self._template_fix(issue)
 

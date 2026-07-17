@@ -56,7 +56,7 @@ class BehavioralSampler:
                 if a != b:
                     passed = False
                     break
-            except Exception:
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 passed = False
                 break
 

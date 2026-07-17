@@ -73,7 +73,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
                     "reason": result.reason,
                 }
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             results.append({"path": rel_path, "error": str(exc)})
 
     summary = {}
@@ -108,7 +108,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
                     "reason": result.reason,
                 }
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             results.append({"path": rel_path, "error": str(exc)})
 
     if args.format == "json":

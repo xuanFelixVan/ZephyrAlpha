@@ -18,7 +18,7 @@
 """
 AiAuditLogger — AI 行为审计日志
 ================================
-蓝图: ARC-0001 §6.1
+蓝图: docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md §3.1
 所有 AI 行为写入结构化 JSONL，不可变、追加式。
 
 5.17.3 修复：添加 SHA-256 哈希链 + 篡改检测，实现真正的不可变性。
@@ -97,7 +97,7 @@ class AiAuditLogger:
                     except json.JSONDecodeError:
                         continue
             self._last_hash = last_hash
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in ai_audit_logger", exc_info=True)
 
     def _date_file(self) -> Path:
@@ -160,7 +160,7 @@ class AiAuditLogger:
                         return False
                     prev = stored_hash
             return True
-        except Exception:
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return False
 
     def log_inference(
