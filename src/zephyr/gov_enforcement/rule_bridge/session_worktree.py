@@ -5,7 +5,7 @@
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；pre-merge gate 检查（治本 merge 前 gate 漂移，2026-07-04）：session_worktree_merge 在 _pre_merge_auto_clean 后执行 _pre_merge_gate_check，用 git reset --soft merge-base 模拟 staged 状态运行 7 个 worktree-compatible gate（捕获 commit 后到 merge 前主分支更新的 gate 规则），gate 阻断则 return merged=False，gate 异常降级为 warn 不阻断，HEAD 用 git reset --soft orig_head 恢复；PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期，2026-07-17）：session_worktree_merge 在 _pre_merge_auto_clean 之前执行 _run_pre_merge_topo_check（时序修复 2026-07-17：原在 auto_clean 之后执行，auto_clean 会还原 checker 文件到 HEAD 旧版本导致降级），subprocess 调 MAIN 副本 check_blueprint_code_alignment.py --json --scan-root <worktree>（MAIN 副本有 DB 配置，--scan-root 仅重定向代码扫描），HIGH drift（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge，过滤到 session 变更文件（仅阻断 session 自身引入的 HIGH），LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍；独立于 commit gate（不受 gate 代码修改降级影响）；降级——checker 缺失 fail-closed 阻断，DB 不可用/超时/JSON 解析失败 fail-open 放行；reconcile_verify 默认 True（2026-07-04）：merge 后自动触发 17 个 reconciler（_run_reconcilers_after_merge），补齐 post-merge 漂移修复（manifest/path_tree/path_ownership/depgraph_ops 等 auto_commit + warn-only）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常；breaking_change 并发阻断（§9.7 治本 2026-07-04）：session_worktree_start 新增 breaking_change/allow_concurrent 参数，在注册 session 之前执行双向阻断——breaking_change=True 检查其他活跃 session（BREAKING_CHANGE_CONCURRENCY_BLOCKED），breaking_change=False 检查其他活跃 breaking_change session（BREAKING_CHANGE_AVOIDANCE_BLOCKED），allow_concurrent=True 逃生通道跳过阻断，异常 fail-open 降级放行
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；pre-merge gate 检查（治本 merge 前 gate 漂移，2026-07-04）：session_worktree_merge 在 _pre_merge_auto_clean 后执行 _pre_merge_gate_check，用 git reset --soft merge-base 模拟 staged 状态运行 7 个 worktree-compatible gate（捕获 commit 后到 merge 前主分支更新的 gate 规则），gate 阻断则 return merged=False，gate 异常降级为 warn 不阻断，HEAD 用 git reset --soft orig_head 恢复；PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期，2026-07-17）：_pre_merge_gate_check 在 commit gate 检查后额外执行 _run_pre_merge_topo_check，subprocess 调 MAIN 副本 check_blueprint_code_alignment.py --json --scan-root <worktree>（MAIN 副本有 DB 配置，--scan-root 仅重定向代码扫描），HIGH drift（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge，过滤到 session 变更文件（仅阻断 session 自身引入的 HIGH），LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍；独立于 commit gate（不受 gate 代码修改降级影响）；降级——checker 缺失 fail-closed 阻断，DB 不可用/超时/JSON 解析失败 fail-open 放行；reconcile_verify 默认 True（2026-07-04）：merge 后自动触发 17 个 reconciler（_run_reconcilers_after_merge），补齐 post-merge 漂移修复（manifest/path_tree/path_ownership/depgraph_ops 等 auto_commit + warn-only）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常；breaking_change 并发阻断（§9.7 治本 2026-07-04）：session_worktree_start 新增 breaking_change/allow_concurrent 参数，在注册 session 之前执行双向阻断——breaking_change=True 检查其他活跃 session（BREAKING_CHANGE_CONCURRENCY_BLOCKED），breaking_change=False 检查其他活跃 breaking_change session（BREAKING_CHANGE_AVOIDANCE_BLOCKED），allow_concurrent=True 逃生通道跳过阻断，异常 fail-open 降级放行
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -294,61 +294,6 @@ def session_worktree_sweep(
     return _sweep_stale_worktrees(manager, registry, max_age_minutes=max_age_minutes)
 
 
-def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> dict:
-    """清理 .aidrafts/ 根目录下的孤儿临时脚本（P3 流程治本，2026-07-17）。
-
-    病根：AI 在调研/治本过程中常在 .aidrafts/ 根目录创建 ``_*`` 一次性辅助脚本
-    （如 _commit_adp4_adp5.py / _merge_adp45.py），用完未删则永久残留。P0 曾手工
-    清理 3 个此类孤儿。本 helper 在每次 session_worktree_start 时自动清理 age > 1h
-    的孤儿脚本，消除「治本代码自身成为残留」的递归问题（AI→治本→残留→AI→治本）。
-
-    安全判据：
-    1. 仅扫 .aidrafts/ 根目录（非递归），仅匹配 ``_*`` 前缀文件
-       （非 sess-* worktree 目录——worktree 由 _sweep_stale_worktrees 处理）
-    2. age > max_age_seconds（太新的不动，防误清 AI 正在使用的）
-    3. OSError 静默跳过（清理失败不阻断 start）
-
-    Returns:
-        ``{"deleted": int, "skipped": int, "warnings": list[str]}``
-    """
-    import time as _time
-
-    drafts = root / ".aidrafts"
-    if not drafts.exists():
-        return {"deleted": 0, "skipped": 0, "warnings": []}
-    now = _time.time()
-    deleted = 0
-    skipped = 0
-    warnings: list[str] = []
-    try:
-        for entry in drafts.iterdir():
-            # 仅匹配根目录 _* 文件（非目录，非 sess-* worktree）
-            if entry.is_dir():
-                continue
-            if not entry.name.startswith("_"):
-                continue
-            try:
-                mtime = entry.stat().st_mtime
-            except OSError:
-                skipped += 1
-                continue
-            if (now - mtime) < max_age_seconds:
-                skipped += 1
-                continue
-            try:
-                entry.unlink()
-                deleted += 1
-                logger.info(
-                    "session_worktree orphan cleanup: 删除过期辅助脚本 %s", entry.name,
-                )
-            except OSError as e:
-                warnings.append(f"{entry.name}: 删除异常 {e}")
-                skipped += 1
-    except OSError as e:
-        warnings.append(f".aidrafts 扫描异常: {e}")
-    return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
-
-
 def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
     """治本变更并发阻断（§9.7 治本，2026-07-04）——双向阻断 + 逃生通道。
 
@@ -470,17 +415,6 @@ def session_worktree_start(
             )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree sweep 异常（不阻断 start）: %s", e, exc_info=True)
-    # 3. 清理 .aidrafts/ 根目录孤儿辅助脚本（P3 流程治本，2026-07-17）
-    #    病根：AI 创建的 _* 一次性脚本用完未删则永久残留。age > 1h 自动清理。
-    try:
-        orphan_r = _cleanup_orphan_draft_scripts(root)
-        if orphan_r.get("deleted") or orphan_r.get("warnings"):
-            logger.info(
-                "session_worktree orphan cleanup: deleted=%s skipped=%s warnings=%s",
-                orphan_r.get("deleted"), orphan_r.get("skipped"), orphan_r.get("warnings"),
-            )
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("session_worktree orphan cleanup 异常（不阻断 start）: %s", e, exc_info=True)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)
@@ -1093,30 +1027,6 @@ def _run_reconcilers_after_merge(
         return [{"action": "warn", "detail": str(e)}]
 
 
-def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
-    """获取 session 分支相对 merge-base 的变更文件列表（PRE-MERGE-TOPO-CHECK 过滤用）。
-
-    返回 session 分支相对 ``git merge-base HEAD session/{sid}`` 的 ``--name-only`` diff，
-    用于 _run_pre_merge_topo_check 的 rel_files 过滤（仅阻断 session 自身引入的 HIGH drift）。
-    获取失败时返回空列表（topo check 调用方对空 rel_files 会放行预存漂移）。
-    """
-    branch = f"session/{session_id}"
-    mb_r = subprocess.run(
-        ["git", "merge-base", "HEAD", branch],
-        cwd=str(root), capture_output=True, text=True, timeout=10,
-    )
-    if mb_r.returncode != 0:
-        return []
-    merge_base = mb_r.stdout.strip()
-    diff_r = subprocess.run(
-        ["git", "diff", "--name-only", f"{merge_base}..{branch}"],
-        cwd=str(root), capture_output=True, text=True, timeout=10,
-    )
-    if diff_r.returncode != 0:
-        return []
-    return [f.strip() for f in diff_r.stdout.strip().split("\n") if f.strip()]
-
-
 def _run_pre_merge_topo_check(
     root: Path, session_id: str, wt_path: Path, rel_files: list[str],
 ) -> tuple[bool, list[dict]]:
@@ -1329,6 +1239,17 @@ def _pre_merge_gate_check(
                 )
 
             _gw._run_git = _wt_run_git
+
+            # monkeypatch TEST-SOURCE-CONSISTENCY gate 的 _SRC_ROOT 指向 worktree src
+            # 病根（2026-07-17 治本）：gate 用全局 _SRC_ROOT = REPO_ROOT / "src"（主仓库），
+            # pre-merge 场景下主仓库源码滞后于 worktree（worktree 有新符号如 _run_pre_merge_topo_check，
+            # 主仓库还没 merge），导致 worktree test import 的符号在主仓库源码中找不到 -> 误阻断 merge。
+            # 治本：pre-merge 时临时重定向 _SRC_ROOT 到 worktree src，使 gate 从 worktree 读源码符号
+            # （与 worktree test 对齐，pre-merge 语义是检测 session 分支变更）。finally 中恢复。
+            import zephyr.gov_enforcement.commit_gates.test_source_consistency_gate as _tsc_gate
+            _orig_src_root = _tsc_gate._SRC_ROOT
+            _tsc_gate._SRC_ROOT = wt_path / "src"
+
             try:
                 # 检查 worktree 文件（session 分支的内容），而非主工作区文件
                 # 修复 (2026-07-05 审计 AI-02)：原实现用 root 路径检查主工作区文件，
@@ -1340,6 +1261,7 @@ def _pre_merge_gate_check(
                     _gw, _changed_abs, session_id=session_id
                 )
             finally:
+                _tsc_gate._SRC_ROOT = _orig_src_root
                 _gw._run_git = _orig_run_git
 
             _skip_gates = _WORKTREE_SKIP_GATES
@@ -1382,14 +1304,19 @@ def _pre_merge_gate_check(
                     {"gate_id": gr.gate_id, "detail": gr.detail} for gr in _blocking
                 ]
 
-            # PRE-MERGE-TOPO-CHECK 已移到 session_worktree_merge 的 _pre_merge_auto_clean
-            # 之前执行（时序修复，2026-07-17）：原实现 topo check 在 auto_clean 之后执行，
-            # auto_clean 会还原 session 变更列表中的 checker 文件到 HEAD 旧版本（若 session
-            # 修改了 check_blueprint_code_alignment.py），导致 MAIN 副本 checker 不认识
-            # --scan-root 参数而降级放行（fail-open）。移到 auto_clean 之前确保 checker
-            # 是主工作区最新版本。topo check 独立于 commit gate——不受 gate 代码修改降级影响。
-            if _gate_violations:
-                return False, _gate_violations
+            # PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：pre-merge 拓扑硬阻断。
+            # 独立于 commit gate——用 subprocess 调 MAIN 副本 checker 扫描 worktree 代码，
+            # 不受 gate 代码修改的「鸡生蛋」影响（topo checker 是独立脚本，非 commit_gates/）。
+            # 即使 commit gate 降级为 warn-only，topo 检查仍执行——拓扑完整性是 L1 铁律的
+            # 技术强制层，不应因 gate 代码修改而绕过。LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍
+            # （与 L1 当前语义一致，depgraph 同步滞后由 post-merge reconciler 兜底）。
+            _topo_passed, _topo_violations = _run_pre_merge_topo_check(
+                root, session_id, wt_path, rel_files,
+            )
+
+            _all_violations = _gate_violations + _topo_violations
+            if _gate_violations or not _topo_passed:
+                return False, _all_violations
             return True, []
         finally:
             # 恢复 HEAD（git reset --soft orig_head：HEAD 移回原 commit，index 不变=干净状态）
@@ -1500,37 +1427,13 @@ def session_worktree_merge(
     manager = _get_manager(root)
     registry = _get_registry(root)
 
-    # PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：pre-merge 拓扑硬阻断。
-    # 时序关键（2026-07-17 修复）：必须在 _pre_merge_auto_clean 之前执行——
-    # auto_clean 会还原 session 变更列表中的 checker 文件到 HEAD 旧版本（若 session
-    # 修改了 check_blueprint_code_alignment.py），导致 MAIN 副本 checker 不认识
-    # --scan-root 参数而降级放行（fail-open）。在 auto_clean 之前执行时，MAIN 副本
-    # checker 还是主工作区最新版本（含 --scan-root）。topo check 独立于 commit gate——
-    # 不受 gate 代码修改降级影响（topo checker 是独立脚本，非 commit_gates/）。
-    wt_path = manager._wt_path(session_id)
-    _topo_rel_files = _get_session_branch_diff_files(root, session_id)
-    _topo_passed, _topo_violations = _run_pre_merge_topo_check(
-        root, session_id, wt_path, _topo_rel_files,
-    )
-    if not _topo_passed:
-        _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in _topo_violations)
-        return {
-            "session_id": session_id,
-            "merged": False,
-            "message": f"pre-merge topo check 阻断: {_details}",
-            "cleaned": False,
-            "unregistered": False,
-            "gate_violation": True,
-            "gate_results": _topo_violations,
-            "reconcile_results": [],
-        }
-
     # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
     # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
     auto_cleaned, skipped_files = _pre_merge_auto_clean(root, session_id)
 
     # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
     # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
+    wt_path = manager._wt_path(session_id)
     gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
     if not gate_passed:
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
