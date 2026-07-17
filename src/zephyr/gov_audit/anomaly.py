@@ -2,30 +2,38 @@
 # [MODULE] zephyr.gov_audit.anomaly
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES]
-# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity
+# [CONSUMERS] audit-orchestrator.pipeline_runner; integrity; bridges.audit_anomaly; governance.security.test_adversarial_contract_attacks
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 异常检测基于统计阈值; 误报率低于10%
+# [INVARIANTS] 双 API: (1) scan(events) 规则引擎 + detect(float) z-score 统计; (2) detect(dict) 桥接式可疑权限检测 (G-CT-002); 误报率低于10%
 # [MODIFY-GUARD] 检测算法变更必须同步 self_monitor.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 检测失败返回空结果
-# [TESTS] tests/audit-orchestrator/test_anomaly.py
+# [ERROR_CONTRACT] 检测失败返回空结果; detect(dict) 无匹配返回 None
+# [TESTS] tests/audit/test_audit_anomaly.py; tests/bridges/test_bridges_anomaly.py
 # [A_module] module_id=MOD-GOV_anomaly | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# 治本（裁定#18 G3）：本文件原为桩实现——AnomalyDetector 仅有 feed/detect/scan_series
+# 治本（裁定#18 G3 + G-CT-002）：本文件原为桩实现——AnomalyDetector 仅有 feed/detect/scan_series
 # （统计 z-score），无 scan 方法、无 _event_log_path；AnomalySignature 是普通类（非 Enum），
 # 缺 UNAUTHORIZED_ACCESS/BULK_DELETE/GATE_BYPASS 等成员；AnomalyResult 无 to_dict。
 # 现按 tests/audit/test_audit_anomaly.py 契约重写：AnomalySignature 转 Enum（ANM-XXX 编码），
 # AnomalyResult 支持 to_dict + detected_at，AnomalyDetector 实现 scan(events) 规则引擎。
 # 旧 feed/detect/scan_series 保留以向后兼容（bridges 可能使用）。
+#
+# 治本（G-CT-002 双 API）：AnomalyEvent 从普通类升级为 pydantic BaseModel（必填
+# agent_id/operation_signature/resource_path）。AnomalyDetector.detect() 现按输入类型分派：
+#   - dict 输入 → 桥接式可疑权限检测（_SUSPICIOUS_OPERATIONS + granted=True → AnomalyEvent|None）
+#   - float/int 输入 → 旧 z-score 统计检测（返回 dict，向后兼容）
+# 对齐 tests/bridges/test_bridges_anomaly.py 与 tests/governance/security/test_adversarial_contract_attacks.py。
 import json
 import logging
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +93,28 @@ class AnomalyResult:
         }
 
 
+class AnomalyEvent(BaseModel):
+    """审计异常事件 — G-CT-002 事件格式（pydantic BaseModel）。
+
+    治本（G-CT-002）：从普通类升级为 pydantic BaseModel，对齐
+    tests/bridges/test_bridges_anomaly.py 与 gov_audit/bridges/audit_anomaly.py 契约。
+    必填字段 ``agent_id``/``operation_signature``/``resource_path``——缺失时
+    pydantic 抛 ValidationError（``pytest.raises(Exception)`` 捕获）。
+    其余字段均有默认值。
+    """
+
+    agent_id: str
+    operation_signature: str
+    resource_path: str
+    severity: str = "WARN"
+    event_type: str = "anomaly_detected"
+    timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    session_id: str = ""
+    detail: str = ""
+
+
 class AnomalyDetector:
-    """异常检测器——治本（裁定#18 G3）：实现 scan() 规则引擎对齐测试契约。
+    """异常检测器——治本（裁定#18 G3 + G-CT-002）：双 API 检测器。
 
     旧桩仅有 feed/detect/scan_series（统计 z-score），无 scan/_event_log_path。
     现新增 scan(events) 基于事件规则的异常检测，并保留旧统计 API 向后兼容。
@@ -94,7 +122,23 @@ class AnomalyDetector:
     构造：AnomalyDetector() 默认 _event_log_path=Path("data/audit-trail/events.jsonl")；
     AnomalyDetector(path) 指定事件日志路径。旧 AnomalyDetector(window_size=50) 仍兼容
     （首参为 int 时视为 window_size）。
+
+    双 API（G-CT-002）：
+        - ``detect(audit_record: dict) -> AnomalyEvent | None`` —— 桥接式可疑权限检测
+        - ``detect(value: float, threshold: float = 2.0) -> dict`` —— z-score 统计检测
+        - ``scan(events) -> list[AnomalyResult]`` —— 事件规则引擎
     """
+
+    # G-CT-002 桥接 API：可疑操作权限白名单（lowercase）。granted=True 且 permission
+    # 命中此集合时返回 AnomalyEvent；delete/truncate → HIGH，其余 → WARN。
+    _SUSPICIOUS_OPERATIONS: set[str] = {
+        "delete",
+        "truncate",
+        "drop",
+        "revoke",
+        "sudo",
+        "root",
+    }
 
     def __init__(self, event_log_path: Any = None, window_size: int = 50) -> None:
         # 向后兼容：旧调用 AnomalyDetector(50) 将 int 位置参视为 window_size
@@ -284,7 +328,61 @@ class AnomalyDetector:
         if len(self._values) > self._window_size * 2:
             self._values = self._values[-self._window_size :]
 
-    def detect(self, value: float, threshold: float = 2.0) -> dict[str, Any]:
+    def detect(self, value: Any, threshold: float = 2.0) -> Any:
+        """检测异常——双 API 类型分派（G-CT-002）。
+
+        本方法根据 ``value`` 的类型分派到两条独立的检测路径：
+
+        1. **桥接 API**（``value`` 为 ``dict``）：基于权限规则检测可疑操作。
+           当 ``permission`` (lowercase) 命中 ``_SUSPICIOUS_OPERATIONS`` 且
+           ``granted is True`` 时返回 ``AnomalyEvent``；否则返回 ``None``。
+           ``delete``/``truncate`` → ``severity="HIGH"``，
+           ``drop``/``revoke``/``sudo``/``root`` → ``severity="WARN"``。
+           对齐 ``tests/bridges/test_bridges_anomaly.py`` 契约。
+
+        2. **统计 API**（``value`` 为 ``float``/``int``）：旧 z-score 统计异常检测。
+           维护滑动窗口，返回包含 ``is_anomaly``/``z_score``/``mean``/``std_dev``/
+           ``threshold`` 的 dict。向后兼容旧 ``scan_series`` 调用方。
+
+        Args:
+            value: 审计记录 dict（桥接 API）或数值（统计 API）。
+            threshold: 统计 API 的 z-score 阈值，默认 2.0（仅 float 输入时生效）。
+
+        Returns:
+            桥接 API: ``AnomalyEvent | None``。
+            统计 API: ``dict[str, Any]``。
+        """
+        if isinstance(value, dict):
+            return self._detect_audit_record(value)
+        return self._detect_zscore(value, threshold)
+
+    def _detect_audit_record(self, audit_record: dict[str, Any]) -> "AnomalyEvent | None":
+        """桥接 API：检测审计记录中的可疑操作签名（G-CT-002）。
+
+        - ``permission`` 不在 ``_SUSPICIOUS_OPERATIONS`` → 返回 None
+        - ``granted`` 非 True → 返回 None
+        - ``permission`` 为空或字段缺失 → 返回 None
+        - 命中且 granted=True → 返回 AnomalyEvent，operation_signature="permission={perm}"
+        - severity: delete/truncate → HIGH；drop/revoke/sudo/root → WARN
+        - 大小写不敏感：permission 先 lower() 再匹配
+        """
+        permission = str(audit_record.get("permission", "")).lower()
+        granted = audit_record.get("granted", False)
+
+        if permission and permission in self._SUSPICIOUS_OPERATIONS and granted:
+            resource = audit_record.get("resource", "")
+            return AnomalyEvent(
+                agent_id=audit_record.get("agent_id", "unknown"),
+                operation_signature=f"permission={permission}",
+                resource_path=resource,
+                severity="HIGH" if permission in {"delete", "truncate"} else "WARN",
+                session_id=audit_record.get("session_id", ""),
+                detail=f"Suspicious operation: {permission} on {resource or '?'}",
+            )
+        return None
+
+    def _detect_zscore(self, value: float, threshold: float = 2.0) -> dict[str, Any]:
+        """统计 API：z-score 异常检测（向后兼容旧 detect(float) 调用方）。"""
         self.feed(value)
 
         if len(self._values) < 10:
@@ -318,23 +416,3 @@ class AnomalyDetector:
                 result["value"] = v
                 results.append(result)
         return results
-
-
-class AnomalyEvent:
-    """异常事件（向后兼容，旧 API 保留）。"""
-
-    def __init__(
-        self,
-        event_id: str = "",
-        anomaly_type: str = "",
-        severity: str = "medium",
-        description: str = "",
-        timestamp: Any = None,
-        source: str = "",
-    ) -> None:
-        self.event_id = event_id
-        self.anomaly_type = anomaly_type
-        self.severity = severity
-        self.description = description
-        self.timestamp = timestamp
-        self.source = source
