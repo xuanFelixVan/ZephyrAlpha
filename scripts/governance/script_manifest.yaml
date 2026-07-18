@@ -1,12 +1,12 @@
-# 自动生成于 2026-07-18T18:10:48Z
+# 自动生成于 2026-07-18T18:21:17Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T18:10:48Z'
+generated_at: '2026-07-18T18:21:17Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 344
-with_manifest: 308
+total_scripts: 345
+with_manifest: 309
 missing_manifest: 36
 categories:
   governance:_sync: 4
@@ -27,7 +27,7 @@ categories:
   governance:data_quality: 1
   governance:generators: 9
   governance:meta: 47
-  governance:migrate_sqlite_to_pg: 1
+  governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
   governance:repair: 7
   governance:vms: 9
@@ -3012,8 +3012,8 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 'Python 语法完整性校验 —— 扫描 src/zephyr/ + tests/ 全部 .py 文件， 使用 py_compile
-    编译验证。预防连字符损坏、批量替换副作用等语法破坏。
+  description: 'Python 语法完整性校验 —— 扫描 src/zephyr/ + tests/ + scripts/governance/ 全部
+    .py 文件， 使用 py_compile 编译验证。预防连字符损坏、批量替换副作用等语法破坏。
 
     '
   tags:
@@ -4050,6 +4050,17 @@ scripts:
   args: []
   warn_only: false
   description: SQLite → PostgreSQL 数据迁移脚本
+  tags:
+  - Quick
+- name: migrate_sqlite_to_pg/seed_from_yaml.py
+  owner: governance:migrate_sqlite_to_pg
+  dimensions:
+  - D1
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: 从 YAML 真源灌种子表（5.32.10 种子与迁移拆分，委托 sync_yaml_to_depgraph）
   tags:
   - Quick
 - name: migrate_to_metadata_tables.py
