@@ -21,6 +21,14 @@
 #   原逻辑：session_id 未注册一律 reset，导致 allow_overlap 逃生通道的
 #   合法 commit 被误判为伪造，连带回滚主 commit + auto-sync commits
 #
+# 高基数 --no-verify 阻断（ARCH-TOOL-HEALTH-V1 Phase 5，2026-07-19）：
+#   warn-only 路径（ZEPHYR_COMMIT_GATEWAY=1 + session 未注册）是逃生通道，
+#   但同 session 反复触发 = 系统性问题（注册表 bug 或 --no-verify 滥用）。
+#   治本：统计 24h 内同 session 的 warn-only 次数，超阈值（默认 3，可由
+#   POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD 环境变量覆盖）则升级为阻断（reset）。
+#   计数真源：.runtime/reconcile_reports/post_commit_guard_*.json 中
+#   violation=unregistered_session_id + action=warn_only 的报告。
+#
 # 合法标识（含 [GW: 标记的 commit）：
 #   - GitCommitGateway 常规 commit: [GW:{session_id}]
 #   - GitCommitGateway auto-commit: [GW:{session_id}:auto]
@@ -74,18 +82,77 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
     # 导致合法 commit 被误判为伪造并 reset，连带回滚主 commit + auto-sync commits
     if [ "$ZEPHYR_COMMIT_GATEWAY" = "1" ]; then
         # 环境变量确认通过 GitCommitGateway → warn-only（session 过期/allow_overlap 逃生通道）
+        #
+        # === 高基数 --no-verify 检测（ARCH-TOOL-HEALTH-V1 Phase 5 治本）===
+        # 病根：warn-only 是 allow_overlap 逃生通道（session 过期+合法 GW commit），
+        # 但同一 session 反复 warn-only = 系统性问题（session 注册表 bug 或滥用 --no-verify）。
+        # 治本：统计 24h 内同 session 的 warn-only 次数，超阈值则升级为阻断（reset）。
+        # 阈值默认 3（可由 POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD 环境变量覆盖）。
+
+        NO_VERIFY_BLOCK_THRESHOLD="${POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD:-3}"
+        NO_VERIFY_WINDOW_SECONDS=86400  # 24h
+        now_ts=$(date +%s)
+        window_start_ts=$((now_ts - NO_VERIFY_WINDOW_SECONDS))
+        prior_warn_count=0
+
+        # 解析 reports 目录（复用上方 repo_root 逻辑，处理 worktree 场景）
+        if [ -n "$repo_root" ]; then
+            reports_dir="$repo_root/.runtime/reconcile_reports"
+        else
+            reports_dir=".runtime/reconcile_reports"
+        fi
+
+        if [ -d "$reports_dir" ]; then
+            for rpt in "$reports_dir"/post_commit_guard_*.json; do
+                [ -f "$rpt" ] || continue
+                # 提取字段：grep 模式容忍可选空格（兼容紧凑/空格两种 JSON 格式）
+                # timestamp：提取所有数字（sed 去除非数字字符，兼容 "ts":123 与 "ts": 123）
+                rpt_ts=$(grep -o '"timestamp": *[0-9]*' "$rpt" 2>/dev/null | head -1 | sed 's/[^0-9]//g')
+                rpt_sid=$(grep -o '"session_id": *"[^"]*"' "$rpt" 2>/dev/null | head -1 | cut -d\" -f4)
+                rpt_violation=$(grep -o '"violation": *"[^"]*"' "$rpt" 2>/dev/null | head -1 | cut -d\" -f4)
+                rpt_action=$(grep -o '"action": *"[^"]*"' "$rpt" 2>/dev/null | head -1 | cut -d\" -f4)
+                # 数值比较（rpt_ts 非空且为数字时才比较；2>/dev/null 抑制非数字报错）
+                if [ -n "$rpt_ts" ] && [ "$rpt_ts" -ge "$window_start_ts" ] 2>/dev/null; then
+                    if [ "$rpt_sid" = "$session_id" ] && [ "$rpt_violation" = "unregistered_session_id" ] && [ "$rpt_action" = "warn_only" ]; then
+                        prior_warn_count=$((prior_warn_count + 1))
+                    fi
+                fi
+            done
+        fi
+
+        # 超阈值 → 升级为阻断（ARCH-TOOL-HEALTH-V1 Phase 5）
+        if [ "$prior_warn_count" -ge "$NO_VERIFY_BLOCK_THRESHOLD" ]; then
+            echo ""
+            echo "[POST-COMMIT-GUARD] BLOCK: session_id=$session_id 在 24h 内累计 $prior_warn_count 次 warn-only（阈值 $NO_VERIFY_BLOCK_THRESHOLD）"
+            echo "[POST-COMMIT-GUARD] 疑似 session 注册表异常或 --no-verify 滥用，强制升级为阻断"
+            echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
+            echo "[POST-COMMIT-GUARD] 排查：①SessionRegistry 是否正常运行 ②是否频繁 allow_overlap 逃生"
+            echo ""
+            mkdir -p "$reports_dir"
+            timestamp=$(date +%s)
+            hash=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+            report_file="$reports_dir/post_commit_guard_${timestamp}.json"
+            escaped_sid=$(echo "$session_id" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n' | head -c 200)
+            echo "{\"gate_id\":\"POST-COMMIT-GUARD\",\"timestamp\":$timestamp,\"hash\":\"$hash\",\"violation\":\"unregistered_session_id_high_cardinality\",\"session_id\":\"$escaped_sid\",\"gw_env\":\"1\",\"prior_warn_count\":$prior_warn_count,\"threshold\":$NO_VERIFY_BLOCK_THRESHOLD,\"action\":\"reset_soft_HEAD~1\"}" > "$report_file"
+
+            git reset --soft HEAD~1
+            exit 1
+        fi
+
+        # 未超阈值 → warn-only（保留 commit，显示累计计数）
         echo ""
         echo "[POST-COMMIT-GUARD] WARN: session_id=$session_id 未在 SessionRegistry 注册"
         echo "[POST-COMMIT-GUARD] ZEPHYR_COMMIT_GATEWAY=1 确认通过 GitCommitGateway，commit 保留"
+        echo "[POST-COMMIT-GUARD] warn-only 累计: $prior_warn_count/$NO_VERIFY_BLOCK_THRESHOLD（超阈值将阻断）"
         echo ""
 
         # 记录到审计日志
-        mkdir -p .runtime/reconcile_reports
+        mkdir -p "$reports_dir"
         timestamp=$(date +%s)
         hash=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
-        report_file=".runtime/reconcile_reports/post_commit_guard_${timestamp}.json"
+        report_file="$reports_dir/post_commit_guard_${timestamp}.json"
         escaped_sid=$(echo "$session_id" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n' | head -c 200)
-        echo "{\"gate_id\":\"POST-COMMIT-GUARD\",\"timestamp\":$timestamp,\"hash\":\"$hash\",\"violation\":\"unregistered_session_id\",\"session_id\":\"$escaped_sid\",\"gw_env\":\"1\",\"action\":\"warn_only\"}" > "$report_file"
+        echo "{\"gate_id\":\"POST-COMMIT-GUARD\",\"timestamp\":$timestamp,\"hash\":\"$hash\",\"violation\":\"unregistered_session_id\",\"session_id\":\"$escaped_sid\",\"gw_env\":\"1\",\"prior_warn_count\":$prior_warn_count,\"threshold\":$NO_VERIFY_BLOCK_THRESHOLD,\"action\":\"warn_only\"}" > "$report_file"
 
         exit 0
     fi
