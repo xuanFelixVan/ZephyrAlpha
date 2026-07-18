@@ -41,6 +41,31 @@ if str(_PROJECT_ROOT) not in sys.path:
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
 from zephyr.shared.io.paths import DB_PATH, REPO_ROOT, find_repo_root  # noqa: E402
 
+# DM-90974 Phase 2: depgraph dirty flag — PG 写入脚本落此空文件标记 DB 已变，
+# GATE-DOMAIN-DOC reconciler trigger 检测此 flag 存在即 fire，reconcile 成功后删除。
+# 真源仍是 PostgreSQL DB；此 flag 仅作"运行时 DB 写入→下次 commit 触发 reconciler"的桥接信号
+# （派生缓存，单向 DB 写入→flag→reconciler→删 flag）。
+# 解决"apply_depgraph.py --delete-nodes 等运行时操作不产生 git commit → reconciler 永不 fire"的盲区。
+DEPGRAPH_DIRTY_FLAG = REPO_ROOT / "data" / "databases" / "depgraph_dirty.flag"
+
+
+def mark_depgraph_dirty() -> None:
+    """DM-90974: 标记 depgraph (PostgreSQL) 已被写入。
+
+    在 PG-write 脚本成功 commit 后调用，写一个空 flag 文件到 data/databases/depgraph_dirty.flag。
+    GATE-DOMAIN-DOC reconciler 的 _trigger_domain_doc 检测此 flag 存在即返回 True 触发重生。
+    _reconcile_domain_doc 成功后删除此 flag。
+
+    失败不阻断主流程（写入脚本已成功 commit DB）——最坏情况是 flag 未写，
+    下次 commit 不触发 reconciler，域文档延迟刷新（与治本前等价，不退化）。
+    """
+    try:
+        DEPGRAPH_DIRTY_FLAG.parent.mkdir(parents=True, exist_ok=True)
+        DEPGRAPH_DIRTY_FLAG.touch()
+    except OSError:
+        # flag 写入失败不阻断主流程（DB 已成功写入，flag 仅是优化信号）
+        pass
+
 # P2迁移后：depgraph.db 已迁移到 PostgreSQL，所有治理脚本通过此入口获取 PG 连接。
 # 真源：docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md
 import psycopg2  # noqa: E402

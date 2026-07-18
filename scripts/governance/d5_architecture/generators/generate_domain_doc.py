@@ -1080,7 +1080,9 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh_hardcoded}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
-    lines.append(f"> 最后更新: {now}")
+    # DM-90974 Phase 2: 移除 per-second `最后更新: {now}` body 行——违反"相同 DB 输入→相同输出"幂等 invariant
+    # （原 line 1083 每次 --all 都让所有域文档产生纯时间戳 diff → reconciler 噪音 commit）。
+    # 生成时间由 git log 提供；frontmatter date 字段保留粗粒度（每日）元数据。
     lines.append(f"> 数据源: {DB_DISPLAY_NAME} nodes表 + edges表")
     lines.append("")
 
