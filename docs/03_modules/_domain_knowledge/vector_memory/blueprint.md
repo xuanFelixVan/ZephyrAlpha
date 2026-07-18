@@ -930,7 +930,7 @@ class FeedbackEntry(BaseModel):
 | 测试代码 | `D:\ZephyrAlpha\tests\unit\vector_memory\` | 单元测试 |
 | ChromaDB 数据 | `D:\ZephyrAlpha\data\vector_db\` | ChromaDB 持久化目录 |
 | 嵌入模型缓存 | `D:\ZephyrAlpha\data\models\local_model\bge-m3\` | BGE-M3 模型文件 |
-| 轻量模型缓存 | `D:\ZephyrAlpha\data\models\local_model\bge-small-zh-v1.5\` | 512d 轻量嵌入模型 |
+| 轻量模型缓存 | `D:\ZephyrAlpha\data\models\local_model\paraphrase-multilingual-MiniLM-L12-v2\` | 轻量嵌入模型（降级备选，与 embedding_router.py MODEL_DIR_BGE_SMALL 一致） |
 | 嵌入缓存 | `D:\ZephyrAlpha\data\vector_db\_embedding_cache\` | Embedding memoization 持久化 |
 
 ---

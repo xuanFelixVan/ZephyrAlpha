@@ -299,8 +299,10 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
         return []  # DCR-003/004 聚焦 .md（permanent/temporary zone 主体）；代码文件 ttl 值合法性由 GATE-15 负责
     abs_path = REPO_ROOT / rel_path
     try:
-        fm, _ = parse_frontmatter_from_file(abs_path)
+        fm = parse_frontmatter_from_file(abs_path)
     except OSError:
+        return []
+    if not fm:
         return []
     ttl = fm.get("ttl")
     if not ttl:
@@ -345,8 +347,10 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None =
 
     abs_path = REPO_ROOT / rel_path
     try:
-        fm, _ = parse_frontmatter_from_file(abs_path)
+        fm = parse_frontmatter_from_file(abs_path)
     except OSError:
+        return []
+    if not fm:
         return []
 
     doc_type = fm.get("doc_type")

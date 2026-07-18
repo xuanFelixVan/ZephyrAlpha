@@ -4707,9 +4707,10 @@ git_repo_health:
  threshold: "> 50MB" # 超过 50MB 的文件
  suggest: "git lfs migrate OR move to external storage"
  current_known_large:
- - "models/bge-small-v1.5.onnx (98MB)"
- - "models/bge-m3.onnx (1.2GB)"
- auto_suggested_action: "将 ONNX 模型移到 external/ 目录，项目中使用符号链接——避免 git track 大型二进制文件"
+ - "data/models/local_model/bge-m3/model.safetensors (2.2GB)"
+ - "data/models/local_model/paraphrase-multilingual-MiniLM-L12-v2/model.safetensors (465MB)"
+ - "data/models/local_model/bge-small-zh-v1.5/model.safetensors (92MB)"
+ auto_suggested_action: "模型文件已通过 .gitignore 排除 git 跟踪（data/models/ 目录），无需 LFS——避免 git track 大型二进制文件"
 
  git_operation_performance:
  track: ["git status duration", "git diff duration"]

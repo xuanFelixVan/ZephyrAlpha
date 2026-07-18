@@ -457,7 +457,7 @@ HTTP 请求 / 响应 schema = 库方法入参 / 出参的 Pydantic JSON 序列�
 |-------|:----:|---------|
 | `src/zephyr/config/embedding_model_registry.yaml` | ✅ 已存在 | - |
 | `src/zephyr/vector_memory/` 包创建 | ⏳ 待建 | experimental T-1-XX |
-| BGE-M3 ONNX 模型下载到 `.models/bge-m3/` | ⏳ 待建 | experimental T-1-XX |
+| BGE-M3 ONNX 模型下载到 `data/models/local_model/bge-m3/` | ⏳ 待建 | experimental T-1-XX |
 | `.runtime/` 目录规范写入 `trae_028_doc_structure_naming.yaml` | ⏳ 待修订 | B-d 阶段（B3/B4） |
 | `.gitignore` 追加 `.runtime/` + `.models/` | ⏳ 待追加 | experimental T-1-XX 首步 |
 | `vibe_config.yaml::runtime_root` 字段定义 | ⏳ 待修订 | B-d 阶段（B3） |
