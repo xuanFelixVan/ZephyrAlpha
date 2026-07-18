@@ -26,7 +26,7 @@ ttl: permanent
 | 域名称 | 生命周期管理 | Domain Name | Lifecycle Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 213 | Module Count | 213 |
-| 域内依赖 | 40 | Internal Dependencies | 40 |
+| 域内依赖 | 39 | Internal Dependencies | 39 |
 | 跨域入边 | 123 | Cross-domain Incoming | 123 |
 | 跨域出边 | 146 | Cross-domain Outgoing | 146 |
 | 设计态模块 | 1 | Design Modules | 1 |
@@ -419,8 +419,8 @@ graph TD
         scripts_construction_e2e_check_py["(原型态 / prototype) _e2e_check.py"]
         scripts_construction_e2e_deep_py["(原型态 / prototype) _e2e_deep.py"]
     end
-    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_patch_p1_paths_py
-    scripts_arch_guard_tools_inject_idempotency_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
+    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_arch_guard_tools_patch_p1_paths_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     scripts_a2a_full_verification_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -472,21 +472,20 @@ graph TD
         scripts_migration_dm311_autonomy_core_split_py["(原型态 / prototype) DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>文件: dm311_autonomy_core_split.py"]
     end
     scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_check_transition_code_py
-    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_mcp_start_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_start_all_py
     scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     scripts_construction_start_brain_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     scripts_diagnose_breadth_failed_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
+    D_SHARED["(生产态 / production) D_SHARED"]
+    scripts_construction_reset_test_task_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_diagnose_breadth_failed_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
     scripts_git_guard_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_SHARED["(生产态 / production) D_SHARED"]
     scripts_lock_files_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     scripts_construction_start_brain_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    scripts_construction_reset_test_task_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     scripts_construction_local_layer_daemon_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     scripts_diagnose_breadth_failed_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
@@ -544,6 +543,7 @@ graph TD
         src_zephyr_governance_architecture_governance_post_sync_validator_py["(原型态 / prototype) post_sync_validator — post_sync_standard 命令...<br/>文件: post_sync_validator.py"]
         src_zephyr_governance_bridges_alerts_py["(生产态 / production) G-CT-006 — BudgetAlert re-exported from shared...<br/>文件: alerts.py"]
     end
+    scripts_migration_governance_root_split_py -.->|config_depends / config_depends| scripts_migration_dm314_infra_ops_split_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     scripts_post_checkout_guard_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -1121,7 +1121,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 116 个，11 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 116 个，10 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -1245,15 +1245,14 @@ graph TD
     end
     src_zephyr_governance_implementations_default_experiment_pipeline_py -.->|导入依赖 / import_depends| src_zephyr_governance_engine_pipeline_base_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
-    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_patch_p1_paths_py
-    scripts_arch_guard_tools_inject_idempotency_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
+    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_arch_guard_tools_patch_p1_paths_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
     scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_check_transition_code_py
-    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_mcp_start_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_migration_dm311_autonomy_core_split_py -.->|config_depends / config_depends| scripts_migration_governance_root_split_py
+    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_start_all_py
     scripts_migration_dm314_infra_ops_split_py -.->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
+    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_migration_governance_root_split_py -.->|config_depends / config_depends| scripts_migration_dm314_infra_ops_split_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_persistence_base_repo_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
@@ -1275,8 +1274,8 @@ graph TD
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     scripts_diagnose_breadth_failed_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
     tests_task_test_task_repo_gateway_e2e_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
+    scripts_construction_reset_test_task_py -.->|导入依赖 / import_depends| D_SHARED
     tests_io_test_verify_schema_health_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_agent_rbac_test_session_aware_stash_red_blue_py -.->|测试依赖 / test_depends| D_GOV_ENFORCEMENT
     D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -.->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_self_benchmark_py
     D_EX_CORE["(原型态 / prototype) D_EX_CORE"]
