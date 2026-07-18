@@ -54,6 +54,85 @@ python scripts/demos/demo_e2e_pipeline.py
 - **异步**: asyncio
 - **验证**: Pydantic v2
 
+## 环境要求（新机器 restore 开箱即用清单）
+
+> 灾备验收标准：新机器按本清单准备环境后，执行 `scripts/backup/restore.ps1 latest` 即可恢复全部项目代码、配置与数据库 dump。详见 [disaster_recovery_backup/blueprint.md](docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md)。
+
+### 系统层
+
+| 项 | 要求 | 说明 |
+|---|---|---|
+| 宿主 OS | Windows 11 Pro | 需启用 Hyper-V 角色 |
+| VM OS | Ubuntu 22.04 LTS | Hyper-V VM，运行 ClickHouse 与数据写入调度器 |
+| CPU | ≥12 核 | VM 分配 12 vCPU，宿主为 Windows 留 ≥8 逻辑处理器 |
+| 内存 | ≥64 GB | VM 固定 32 GB，宿主为 Windows 留 ≥16 GB |
+| D 盘 | NVMe ≥1 TB | 项目根 `D:\ZephyrAlpha` + VM 数据 VHDX |
+| F 盘 | 移动硬盘 ≥2 TB | restic 备份仓库 + ClickHouse 备份中转（即异地副本） |
+
+### 运行时与数据库
+
+| 组件 | 版本 | 用途 | 连接配置 |
+|---|---|---|---|
+| Python | >=3.12 | 主运行时（与 `pyproject.toml` `requires-python` 一致） | — |
+| PostgreSQL | 16 | depgraph 依赖架构图库（28 表） | [config/.env.postgres](config/.env.postgres) |
+| ClickHouse | 26.6.1 | c1_market 行情仓库 + c3_fundamental 基础库，运行在 Hyper-V VM `172.24.30.100:9000` | [config/.env.clickhouse](config/.env.clickhouse) |
+| ChromaDB | 0.5.23 | 向量检索（VMS 双后端过渡期，`data/vector_db/`） | — |
+| SQLite | 3.45.1 | 任务库 `governance.db`（Python 自带） | — |
+
+### 外部工具
+
+| 工具 | 版本 | 用途 | 获取 |
+|---|---|---|---|
+| git | 2.48+ | 版本控制 | https://git-scm.com/ |
+| restic | 0.19.1 | 灾备备份（AES-256 加密 + CDC 去重） | https://restic.net/ |
+| MinIO | RELEASE.2025-07-23 | ClickHouse 备份中转对象存储 | `D:\tools\minio\minio.exe` |
+| pg_dump | 16.14 | PostgreSQL dump（随 PostgreSQL 16 安装） | `C:\Program Files\PostgreSQL\16\bin\` |
+| Hyper-V | Windows 内置 | ClickHouse VM 虚拟化 | 启用 Windows 功能 |
+
+### 凭据与配置文件
+
+| 文件 | 用途 | 灾备注意 |
+|---|---|---|
+| [config/.env.postgres](config/.env.postgres) | PostgreSQL 连接（含 `zephyr` 角色密码） | 备份内含，restore 后可直接读 |
+| [config/.env.clickhouse](config/.env.clickhouse) | ClickHouse 连接（`172.24.30.100:9000`） | 备份内含 |
+| [config/.env.ch_backup](config/.env.ch_backup) | MinIO + CH S3 备份凭据 | 备份内含 |
+| [config/.env.restic](config/.env.restic) | **restic 仓库加密密码** | ⚠️ **必须离线物理副本**（U盘/纸质）— 密码本身在备份内被仓库加密，无密码无法解密备份 = 死锁 |
+
+### 关键路径
+
+| 路径 | 内容 |
+|---|---|
+| `D:\ZephyrAlpha\` | 项目根（代码、配置、文档、SQLite DB、向量库） |
+| `D:\tmp_db_dumps\` | PostgreSQL dump 临时输出（备份过程产物） |
+| `F:\restic-zephyr\` | restic 仓库（项目代码 + PG dump，AES-256 加密） |
+| `F:\ch_backup_store\` | ClickHouse 备份中转（MinIO bucket `chbk`，输出 `market.zip`） |
+| Hyper-V VM `172.24.30.100` | ClickHouse 数据库（`/var/lib/clickhouse`，3000 亿条行情） |
+
+### 灾备恢复入口
+
+```powershell
+# 1. 列出所有快照
+.\scripts\backup\restore.ps1 list
+
+# 2. 验证某快照（restore 到 D:\restore_test\，不动生产）
+.\scripts\backup\restore.ps1 verify <snapshot_id>
+
+# 3. 灾难恢复最新快照到 D:\ZephyrAlpha\
+.\scripts\backup\restore.ps1 latest
+
+# 4. 恢复 ClickHouse（从 F:\ch_backup_store\chbk\market.zip）
+.\scripts\backup\restore.ps1 ch
+```
+
+恢复后还需执行的手工动作：
+1. **PostgreSQL 角色密码**：`pg_roles` dump 不含密码哈希，需手工 `ALTER ROLE zephyr PASSWORD '...';`
+2. **ClickHouse VM**：需先在 Hyper-V 管理器重建 Ubuntu VM（IP `172.24.30.100`），安装 ClickHouse 26.6.1，再用 `restore.ps1 ch` 恢复数据
+3. **Python 依赖**：
+   ```powershell
+   pip install -r requirements.txt
+   pip install -r requirements-dev.txt
+   ```
+
 ## 许可证
 
 MIT — 见 [LICENSE](LICENSE)
