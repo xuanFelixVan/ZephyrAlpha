@@ -175,9 +175,9 @@ graph TD
         src_zephyr_gov_drift_detector_core_ml_engineering_py["(生产态 / production) ml_engineering.py"]
     end
     src_zephyr_gov_audit_self_monitor_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_drift_bridge_py
-    src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_credibility_engine_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_correlation_engine_py
-    src_zephyr_gov_drift_detector_core_init_py -.->|config_depends / config_depends| src_zephyr_gov_drift_detector_core_ml_engineering_py
+    src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_credibility_engine_py
+    src_zephyr_gov_drift_detector_core_init_py -.->|config_depends / config_depends| src_zephyr_gov_drift_detector_core_benchmark_integrity_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
@@ -190,13 +190,13 @@ graph TD
     docs_03_modules_domain_governance_drift_detector_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_drift_detector_core_bridges_drift_bridge_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_drift_canary_controller_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_audit_self_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_absence_manager_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_drift_canary_controller_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_drift_chaos_injector_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_drift_chaos_injector_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_brain_integration_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_drift_brain_integration_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_drift_cascade_detector_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_domain_governance_drift_detector_blueprint_md
@@ -260,32 +260,32 @@ graph TD
         src_zephyr_gov_drift_self_test_verifier_py["(生产态 / production) Self Test Verifier — self_test_verifier.py<br/>文件: self_test_verifier.py"]
         src_zephyr_gov_drift_silence_detector_py["(生产态 / production) Silence Detector — v0.8.0 静默窗口检测器: agen...<br/>文件: silence_detector.py"]
     end
-    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
-    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_detector_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_infrastructure_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_drift_training_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
+    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
+    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
     src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
+    src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
+    src_zephyr_gov_drift_drift_training_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_headless_scanner_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_scan_mutex_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_gov_drift_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
     src_zephyr_gov_drift_drift_hotfix_bypass_py -.->|导入依赖 / import_depends| D_INTEGRATION
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_gov_drift_drift_models_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_drift_drift_infrastructure_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(原型态 / prototype) D_GOV_AUDIT"]
     src_zephyr_gov_drift_drift_engine_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_drift_drift_engine_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_drift_drift_infrastructure_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_drift_drift_models_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_drift_drift_detector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_drift_forensics_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_gate_persistence_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_gate_persistence_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_gate_persistence_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_gov_drift_forensics_engine_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_drift_handoff_manager_py -->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
@@ -363,18 +363,18 @@ graph TD
     D_GOV_AUDIT -->|导入依赖 / import_depends| src_zephyr_governance_integrity_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_governance_integrity_py
+    D_OPS["(生产态 / production) D_OPS"]
+    D_OPS -->|导入依赖 / import_depends| src_zephyr_gov_drift_spiral_ews_py
     D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_suppression_learner_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_suppression_learner_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_symlink_checker_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_symlink_checker_py
-    D_OPS["(生产态 / production) D_OPS"]
-    D_OPS -->|导入依赖 / import_depends| src_zephyr_gov_drift_spiral_ews_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_tamper_proof_audit_py
     D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_tamper_proof_audit_py
-    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_trend_analyzer_py
-    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_trend_analyzer_py
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_test_fixture_checker_py
+    D_COMPLIANCE -.->|导入依赖 / import_depends| src_zephyr_gov_drift_test_fixture_checker_py
+    D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_drift_trend_analyzer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -466,20 +466,20 @@ graph TD
     src_zephyr_gov_audit_drift_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_detector_py
     src_zephyr_gov_audit_self_monitor_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_drift_bridge_py
     src_zephyr_gov_drift_ai_construction_detectors_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_credibility_engine_py
+    src_zephyr_gov_drift_chaos_injector_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_correlation_engine_py
+    src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_credibility_engine_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_forensics_engine_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_orphan_scanner_py
     src_zephyr_gov_drift_brain_integration_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_self_check_py
-    src_zephyr_gov_drift_chaos_injector_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
-    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
-    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_detector_dispatcher_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_drift_infrastructure_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_drift_training_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
-    src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
+    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
+    src_zephyr_gov_drift_drift_engine_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_infrastructure_py
     src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
+    src_zephyr_gov_drift_drift_result_types_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_engine_py
+    src_zephyr_gov_drift_drift_training_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_headless_scanner_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     src_zephyr_gov_drift_scan_mutex_py -->|导入依赖 / import_depends| src_zephyr_gov_drift_drift_models_py
     D_SHARED["(生产态 / production) D_SHARED"]
