@@ -1,5 +1,5 @@
 %% D_GOV_KB 域全景依赖图
-%% 生成时间: 2026-07-19 05:02:11
+%% 生成时间: 2026-07-19 05:05:08
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 26, 依赖边数: 84
 
@@ -36,13 +36,13 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_gov_kb_batch_ingest_py -->|import_depends| src_zephyr_gov_kb_pipeline_batch_ingest_py
     src_zephyr_gov_kb_bootstrap_py -->|import_depends| src_zephyr_gov_kb_ingest_py
+    src_zephyr_gov_kb_batch_ingest_py -->|import_depends| src_zephyr_gov_kb_pipeline_batch_ingest_py
     src_zephyr_gov_kb_ingest_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_kb_engine_kb_gate_task_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_migration_kb_gate_task_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_batch_ingest_py -->|import_depends| src_zephyr_gov_kb_ingest_py
-    src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_analyze_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_extract_py -->|import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_reranker_py -->|config_depends| src_zephyr_gov_kb___init___py
@@ -57,28 +57,28 @@ graph TD
     [] -->|test_depends| src_zephyr_gov_kb_ingest_py
     [] -->|test_depends| src_zephyr_gov_kb_pipeline_analyze_py
     [] -->|test_depends| src_zephyr_gov_kb_pipeline_analyze_py
+    [] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
+    [] -->|test_depends| src_zephyr_gov_kb_graph_validator_py
+    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     [] -->|test_depends| src_zephyr_gov_kb_batch_ingest_py
     [] -->|test_depends| src_zephyr_gov_kb_ingest_py
-    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     [] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
-    [] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
-    [] -->|test_depends| src_zephyr_gov_kb_graph_validator_py
-    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     [] -->|test_depends| src_zephyr_gov_kb_ingest_py
+    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     [] -->|test_depends| src_zephyr_gov_kb_graph_validator_py
+    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
+    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
     [] -->|test_depends| src_zephyr_gov_kb_pipeline_analyze_py
-    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
     [] -->|test_depends| src_zephyr_gov_kb_bootstrap_py
-    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
-    [] -->|test_depends| src_zephyr_gov_kb_batch_ingest_py
-    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
-    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
     [] -->|test_depends| src_zephyr_gov_kb_freeze_py
-    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
-    [] -->|test_depends| src_zephyr_gov_kb_bootstrap_py
     [] -->|test_depends| src_zephyr_gov_kb_embedding_migrate_py
     [] -->|test_depends| src_zephyr_gov_kb_kb_gate_task_py
+    [] -->|test_depends| src_zephyr_gov_kb_pipeline_extract_py
+    [] -->|test_depends| src_zephyr_gov_kb_batch_ingest_py
     [] -->|test_depends| src_zephyr_gov_kb_ingest_py
+    [] -->|test_depends| src_zephyr_gov_kb_ingest_py
+    [] -->|test_depends| src_zephyr_gov_kb_bootstrap_py
+    [] -->|test_depends| src_zephyr_gov_kb_graph_validator_py
     %% D_GOVERNANCE -> D_GOV_KB (1 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_kb_self_test_py
 
@@ -101,20 +101,20 @@ graph TD
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_graph_validator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_integrity_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_ingest_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_integrity_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_ke_tombstone_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_kb_gate_task_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_load_bearing_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_verify_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_safety_brake_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_kb_pipeline_batch_ingest_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_quiet_period_monitor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_self_test_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_load_bearing_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_verify_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_kb_pipeline_activate_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_kb_pipeline_batch_ingest_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 10 条

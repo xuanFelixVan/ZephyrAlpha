@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 4 | Module Count | 4 |
 | 域内依赖 | 3 | Internal Dependencies | 3 |
-| 跨域入边 | 7 | Cross-domain Incoming | 7 |
+| 跨域入边 | 6 | Cross-domain Incoming | 6 |
 | 跨域出边 | 5 | Cross-domain Outgoing | 5 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 3 | Prototype Modules | 3 |
@@ -72,8 +72,8 @@ graph TD
         src_zephyr_ml_train_trainer_base_py["(原型态 / prototype) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
@@ -82,7 +82,6 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|data / data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_BACKTEST["(设计态 / design) D_BACKTEST"]
     D_BACKTEST -.->|data / data| docs_03_modules_cross_layer_model_profiler_blueprint_md
@@ -116,7 +115,6 @@ graph TD
         docs_03_modules_cross_layer_model_profiler_blueprint_md["(设计态 / design) docs__03_modules___cross_layer__model_profiler__blueprint_md"]
     end
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|data / data| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_model_profiler_blueprint_md
     D_BACKTEST["(设计态 / design) D_BACKTEST"]
     D_BACKTEST -.->|data / data| docs_03_modules_cross_layer_model_profiler_blueprint_md
@@ -140,8 +138,8 @@ graph TD
         src_zephyr_ml_train_trainer_base_py["(原型态 / prototype) D_ML_TRAIN — ML Training Base<br/>文件: trainer_base.py"]
     end
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| src_zephyr_ml_train_trainer_base_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_TRADING["(生产态 / production) D_TRADING"]
@@ -181,15 +179,14 @@ graph TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_BACKTEST 回测:  | → | blueprint.md | data / data |
 | 2 | D_GOV_DOCS 架构文档治理: blueprint.md | → | blueprint.md | runtime / runtime |
-| 3 | D_GOV_DOCS 架构文档治理: blueprint.md | → | blueprint.md | data / data |
-| 4 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
-| 5 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
-| 6 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
-| 7 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
+| 3 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
+| 4 | D_INTELLIGENCE 上下文管理: D_ML_TRAIN — Default Inference Engine (default... | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
+| 5 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Inference Base (inference_base.py) | 导入依赖 / import_depends |
+| 6 | D_INTELLIGENCE 上下文管理: inference_base.py | → | D_ML_TRAIN — ML Training Base (trainer_base.py) | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 5 个外部域直接连接（出边 5 条 + 入边 7 条 = 12 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 5 条 + 入边 6 条 = 11 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -197,13 +194,13 @@ graph LR
     D_SHARED["D_SHARED<br/>共享服务"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
+    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_ML_TRAIN -->|3条 导入依赖 / import_depends| D_SHARED
     D_ML_TRAIN -->|2条 导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE -->|4条 导入依赖 / import_depends| D_ML_TRAIN
-    D_GOV_DOCS -->|2条 data / data, runtime / runtime| D_ML_TRAIN
     D_BACKTEST -->|1条 data / data| D_ML_TRAIN
+    D_GOV_DOCS -->|1条 runtime / runtime| D_ML_TRAIN
 ```
 
 ## 说明 / Notes
