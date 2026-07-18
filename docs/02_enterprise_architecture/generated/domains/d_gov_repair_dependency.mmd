@@ -1,7 +1,7 @@
 %% D_GOV_REPAIR 域全景依赖图
-%% 生成时间: 2026-07-19 07:38:14
+%% 生成时间: 2026-07-19 07:51:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 1, 依赖边数: 13
+%% 模块数: 1, 依赖边数: 12
 
 graph TD
 
@@ -13,11 +13,10 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_GOV_REPAIR (4 条)
+    %%  -> D_GOV_REPAIR (3 条)
     [] -->|import_depends| src_zephyr_governance_financia___nance_budget_enforcement_py
     [] -->|test_depends| src_zephyr_governance_financia___nance_budget_enforcement_py
     [] -->|test_depends| src_zephyr_governance_financia___nance_budget_enforcement_py
-    [] -->|config_depends| src_zephyr_governance_financia___nance_budget_enforcement_py
     %% D_GOV_SCRIPTS -> D_GOV_REPAIR (1 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_financia___nance_budget_enforcement_py
 
@@ -37,5 +36,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 0 条
-    %% 跨域入边: 5 条
+    %% 跨域入边: 4 条
     %% 跨域出边: 8 条

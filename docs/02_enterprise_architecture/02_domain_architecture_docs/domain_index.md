@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 62 |
-| 模块总数 | 2655 |
+| 模块总数 | 2656 |
 | 生产态模块 | 1542 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1051 |
+| 原型态模块 | 1052 |
 
 ## 域清单（按架构层分组）
 
@@ -79,7 +79,7 @@ ttl: permanent
 | D_EX_SOR | 执行路由 / Execution Routing | 7 | 0 | 0 | 7 | 7/150 (OK) | [📄 35_d_ex_sor.md](35_d_ex_sor.md) |
 | D_FACTOR | 因子 / Factor | 5 | 2 | 0 | 3 | 5/150 (OK) | [📄 36_d_factor.md](36_d_factor.md) |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 / Fundamental Signal | 10 | 4 | 0 | 6 | 10/150 (OK) | [📄 37_d_fundamental_signal.md](37_d_fundamental_signal.md) |
-| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 213 | 96 | 1 | 116 | 213/150 (超容) | [📄 38_d_governance.md](38_d_governance.md) |
+| D_GOVERNANCE | 生命周期管理 / Lifecycle Management | 214 | 96 | 1 | 117 | 214/150 (超容) | [📄 38_d_governance.md](38_d_governance.md) |
 | D_GOV_AUDIT | 审计追踪 / Audit Trail | 102 | 66 | 2 | 34 | 102/150 (OK) | [📄 39_d_gov_audit.md](39_d_gov_audit.md) |
 | D_GOV_DOCS | 架构文档治理 / Architecture Docs Governance | 28 | 0 | 28 | 0 | 28/150 (OK) | [📄 40_d_gov_docs.md](40_d_gov_docs.md) |
 | D_GOV_DRIFT | 漂移检测 / Drift Detection | 74 | 69 | 1 | 4 | 74/150 (OK) | [📄 41_d_gov_drift.md](41_d_gov_drift.md) |
