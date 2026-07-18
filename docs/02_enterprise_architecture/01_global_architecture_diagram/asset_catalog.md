@@ -73,7 +73,7 @@ ttl: permanent
 | INFRA-DB-002 | vector_db | data/vector_db/ | provisioned | < 200ms retrieval p95, index rebuild < 10 min |
 | INFRA-DB-003 | relational_db | localhost:5432/depgraph | connected | ACID, MVCC, < 30ms read p50 |
 | INFRA-DB-004 | cache | :memory: | connected | 内存模式，无持久化SLA；查询延迟 < 200ms p95 |
-| INFRA-DB-006 | relational_db | localhost:9000/c1_market | connected | 持久化, 列式压缩, < 50ms write p95, < 200ms OLAP query p95 |
+| INFRA-DB-006 | relational_db | 172.24.30.100:9000/c1_market | connected | 持久化, 列式压缩, < 50ms write p95, < 200ms OLAP query p95 |
 | INFRA-EVT-001 | event_bus | — | planned | 99.9% uptime, < 100ms publish-delivery |
 | INFRA-MQ-001 | message_queue | — | planned | 99.5% uptime, < 5s task pickup delay |
 | INFRA-PROC-001 | cache | in-process | planned | 进程复用率 ≥ 80%，启动延迟 < 500ms |

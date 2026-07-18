@@ -136,9 +136,9 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 48 | 26 | 1 | 21 | 2.50 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 11 | 0 | 1 | 10 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 43 | 11 | 10 | 22 | 2.00 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 15 | 977 | 792 | 32 | 153 | 2.73 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 15 | 979 | 795 | 32 | 152 | 2.73 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 172 | 99 | 0 | 73 | 0.80 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 836 | 594 | 11 | 231 | 2.38 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 832 | 594 | 11 | 227 | 2.38 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -176,11 +176,11 @@ ttl: permanent
 | D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L1_foundation | 124 | 112 | 0 | 12 | 112 | L3 🟢 | ✅ |
 | D_GOVERNANCE | registry_management | CC1 | L2_domain | 131 | 94 | 1 | 36 | 94 | L3 🟢 | ✅ |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 97 | 67 | 2 | 28 | 67 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 124 | 110 | 0 | 14 | 110 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 126 | 112 | 0 | 14 | 112 | L3 🟢 | ✅ |
 | D_GOV_DOCS | architecture_docs | CC1 | L2_domain | 28 | 0 | 28 | 0 | 0 | L1 🔵 | 🟡 |
 | D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 70 | 66 | 1 | 3 | 66 | L3 🟢 | ✅ |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 28 | 15 | 0 | 13 | 15 | L3 🟢 | ✅ |
-| D_GOV_KB | knowledge_base_governance | CC1 | L2_domain | 31 | 18 | 0 | 13 | 18 | L3 🟢 | ✅ |
+| D_GOV_KB | knowledge_base_governance | CC1 | L2_domain | 31 | 19 | 0 | 12 | 19 | L3 🟢 | ✅ |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance | CC1 | L1_foundation | 90 | 81 | 0 | 9 | 81 | L3 🟢 | ✅ |
 | D_GOV_REPAIR | rollback | CC1 | L2_domain | 1 | 1 | 0 | 0 | 1 | L3 🟢 | ✅ |
 | D_GOV_RULE | rule_governance | CC1 | L2_domain | 34 | 31 | 0 | 3 | 31 | L3 🟢 | ✅ |
@@ -189,7 +189,7 @@ ttl: permanent
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SECURITY | orphan_judge | CC2 | L1_foundation | 165 | 99 | 0 | 66 | 99 | L3 🟢 | ✅ |
 | D_SECURITY_LLM | llm_defense | CC2 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 133 | 131 | 0 | 2 | 131 | L3 🟢 | ✅ |
+| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 133 | 132 | 0 | 1 | 132 | L3 🟢 | ✅ |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 17 | 9 | 6 | 2 | 9 | L3 🟢 | ✅ |
 | D_INFRASTRUCTURE | shared_contracts | CC3 |  | 24 | 12 | 0 | 12 | 12 | L3 🟢 | ✅ |
 | D_INFRA_A2A | a2a_communication | CC3 | L0_infrastructure | 72 | 28 | 0 | 44 | 28 | L3 🟢 | ✅ |
@@ -197,14 +197,14 @@ ttl: permanent
 | D_INFRA_RECOVERY | rollback_recovery | CC3 | L0_infrastructure | 53 | 48 | 0 | 5 | 48 | L3 🟢 | ✅ |
 | D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 159 | 118 | 1 | 40 | 118 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | observability_profiling | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 77 | 50 | 0 | 27 | 50 | L3 🟢 | ✅ |
+| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 72 | 45 | 0 | 27 | 45 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_INTELLIGENCE | context_management | CC3 | L2_domain | 28 | 20 | 0 | 8 | 20 | L3 🟢 | ✅ |
 | D_KNOWLEDGE | vector_storage | CC3 | L2_domain | 4 | 0 | 2 | 2 | 0 | L1 🔵 | 🟡 |
 | D_OPS | telemetry | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 8 | L3 🟢 | ✅ |
 | D_ORCHESTRATOR | agent_orchestrator | CC3 | L1_foundation | 72 | 58 | 0 | 14 | 58 | L3 🟢 | ✅ |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 3 | 1 | 0 | 2 | 1 | L3 🟢 | ✅ |
-| D_SHARED | shared_services | CC3 | L1_foundation | 183 | 111 | 0 | 72 | 111 | L3 🟢 | ✅ |
+| D_SHARED | shared_services | CC3 | L1_foundation | 184 | 115 | 0 | 69 | 115 | L3 🟢 | ✅ |
 
 ## 差距分析 / Gap Analysis
 
@@ -264,7 +264,7 @@ ttl: permanent
 | D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L3 | 124 |
 | D_GOVERNANCE | registry_management | CC1 | L3 | 131 |
 | D_GOV_AUDIT | audit_orchestration | CC1 | L3 | 97 |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L3 | 124 |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L3 | 126 |
 | D_GOV_DRIFT | drift_detection | CC1 | L3 | 70 |
 | D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 28 |
 | D_GOV_KB | knowledge_base_governance | CC1 | L3 | 31 |
@@ -278,9 +278,9 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | rollback_recovery | CC3 | L3 | 53 |
 | D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 159 |
-| D_INTEGRATION | pipeline_routing | CC3 | L3 | 77 |
+| D_INTEGRATION | pipeline_routing | CC3 | L3 | 72 |
 | D_INTELLIGENCE | context_management | CC3 | L3 | 28 |
 | D_OPS | telemetry | CC3 | L3 | 9 |
 | D_ORCHESTRATOR | agent_orchestrator | CC3 | L3 | 72 |
 | D_REPORTING | 报告 | CC3 | L3 | 3 |
-| D_SHARED | shared_services | CC3 | L3 | 183 |
+| D_SHARED | shared_services | CC3 | L3 | 184 |
