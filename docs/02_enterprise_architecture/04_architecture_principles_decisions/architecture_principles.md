@@ -3,7 +3,7 @@ module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: Active
-version: 2.0.2
+version: 2.0.3
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -169,7 +169,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 **核心架构决策**（定死的原则，不可推翻）：
 - **功能域唯一分类**：按功能分域，不按技术层分。逻辑层只作为域的一个属性（layer_id），不当并行分类（两套分类法并存=AI 不知道用哪套=幻觉温床）。
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）从 depgraph 数据库自动生成，禁止手编（手编必过时）。
-- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes.md](../target_architecture/runtime_planes.md)）。当前仅 Warm Path 激活，Hot/Cold Path 为未激活终局拓扑
+- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes_principles.md](runtime_planes_principles.md)）。当前仅 Warm Path 激活，Hot/Cold Path 为未激活终局拓扑
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ 三层从上到下，每层有准入和退出门禁
 - **安全红线**：4 条不可撤销（详见 §2）
 - **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
@@ -180,4 +180,4 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 | 关系 | 对象 | 说明 |
 |:---|:---|:---|
-| 方法论被采用 | `target_architecture/*.md`（BA/IA/AA/TA 四层） | 共用本文档 §1 描述的 TOGAF/C4/功能域方法论 |
+| 方法论被采用 | `*_principles.md`（BA/IA/AA/TA 四层） | 共用本文档 §1 描述的 TOGAF/C4/功能域方法论 |
