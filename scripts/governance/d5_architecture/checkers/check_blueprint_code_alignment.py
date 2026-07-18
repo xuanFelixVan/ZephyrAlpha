@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.checkers.__init__
