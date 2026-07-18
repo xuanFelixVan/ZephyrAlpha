@@ -78,7 +78,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_api_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -115,7 +115,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_api_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -130,7 +130,7 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | __init__.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Training Base (trainer_base.py) | runtime / runtime |
+| 1 | __init__.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 

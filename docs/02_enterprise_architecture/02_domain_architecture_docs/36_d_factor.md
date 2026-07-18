@@ -78,8 +78,8 @@ graph TD
         src_zephyr_factor_momentum_factor_py["(原型态 / prototype) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
         src_zephyr_factor_value_factor_py["(原型态 / prototype) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
     end
-    src_zephyr_factor_value_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_momentum_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_value_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|runtime / runtime| D_GOVERNANCE
     D_INFRA_RUNTIME["(设计态 / design) D_INFRA_RUNTIME"]
@@ -87,7 +87,7 @@ graph TD
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_factor_alpha_signal_pipeline_py
-    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_value_factor_py
+    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_momentum_factor_py
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_GOV_OPS_RESILIENCE["(原型态 / prototype) D_GOV_OPS_RESILIENCE"]
     D_GOV_OPS_RESILIENCE -.->|导入依赖 / import_depends| src_zephyr_factor_bus_factor_defense_py
@@ -148,7 +148,7 @@ graph TD
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_GOVERNANCE -.->|runtime / runtime| src_zephyr_factor_alpha_signal_pipeline_py
-    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_value_factor_py
+    D_FUNDAMENTAL_SIGNAL -.->|contract / contract| src_zephyr_factor_momentum_factor_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -172,7 +172,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | → | D_FACTOR — Value Factor (value_factor.py) | contract / contract |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL Signal Domain (__init__.py) | → | D_FACTOR — Momentum Factor (momentum_factor.py) | contract / contract |
 | 2 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | → | alpha_signal_pipeline.py | runtime / runtime |
 | 4 | D_GOV_OPS_RESILIENCE 运维弹性治理: bus_factor_defense.py | → | bus_factor_defense.py | 导入依赖 / import_depends |

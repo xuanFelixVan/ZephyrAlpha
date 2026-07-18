@@ -117,8 +117,8 @@ graph TD
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_GOV_DOCS
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
-    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_INTEGRATION
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
@@ -131,6 +131,12 @@ graph TD
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
+    D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_compliance_rule_py
     D_REPORTING["(原型态 / prototype) D_REPORTING"]
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
@@ -138,28 +144,22 @@ graph TD
     D_TRADING -->|导入依赖 / import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_MKT_DATA["(原型态 / prototype) D_MKT_DATA"]
     D_MKT_DATA -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_market_data_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_infrastructure_config_init_py
-    D_PF_ALLOC["(原型态 / prototype) D_PF_ALLOC"]
-    D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
-    D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_infrastructure_config_init_py,src_zephyr_shared_contracts_experiment_result_py,src_zephyr_shared_contracts_factor_monitor_report_py,src_zephyr_shared_contracts_factor_signal_py,src_zephyr_shared_contracts_macro_factor_signal_py,src_zephyr_shared_contracts_market_data_py,src_zephyr_shared_contracts_model_serving_response_py,src_zephyr_shared_contracts_performance_attribution_report_py,src_zephyr_shared_contracts_risk_limits_py,src_zephyr_shared_contracts_strategy_lifecycle_event_py,src_zephyr_shared_contracts_synthesized_signal_py,src_zephyr_shared_contracts_telemetry_emitter_py production
     class scripts_backup_backup_reconciler_py,scripts_backup_minio_tcp_relay_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_trace_context_py design
-    class D_SHARED,D_GOV_AUDIT,D_TRADING,D_EX_CORE external_prod
-    class D_GOV_DOCS,D_INTEGRATION,D_REPORTING,D_MKT_DATA,D_GOVERNANCE,D_PF_ALLOC external_design
+    class D_INFRA_RUNTIME,D_SHARED,D_GOV_AUDIT,D_EX_CORE,D_TRADING external_prod
+    class D_GOV_DOCS,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_REPORTING,D_MKT_DATA external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -184,8 +184,8 @@ graph TD
     end
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     D_SHARED -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_performance_attribution_report_py
@@ -248,21 +248,26 @@ graph TD
         src_zephyr_shared_contracts_trace_context_py["(原型态 / prototype) trace_context.py"]
     end
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_INFRA_RUNTIME
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_GOV_DOCS
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
-    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_INTEGRATION
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_GOV_DOCS
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_backup_backup_reconciler_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    D_EX_CORE["(生产态 / production) D_EX_CORE"]
+    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
+    D_GOV_ENFORCEMENT["(原型态 / prototype) D_GOV_ENFORCEMENT"]
+    D_GOV_ENFORCEMENT -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_compliance_rule_py
     D_REPORTING["(原型态 / prototype) D_REPORTING"]
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_execution_report_py
-    D_EX_CORE["(生产态 / production) D_EX_CORE"]
     D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_TRADING["(生产态 / production) D_TRADING"]
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_trace_context_py
@@ -270,22 +275,18 @@ graph TD
     D_REPORTING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_PF_ALLOC["(生产态 / production) D_PF_ALLOC"]
     D_PF_ALLOC -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
     D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_order_py
-    D_TRADING -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_position_py
-    D_EX_CORE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
-    D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_shared_contracts_fill_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_backup_backup_reconciler_py,scripts_backup_minio_tcp_relay_py,src_zephyr_infrastructure_config_app_config_py,src_zephyr_shared_contracts_capital_allocation_result_py,src_zephyr_shared_contracts_compliance_rule_py,src_zephyr_shared_contracts_execution_report_py,src_zephyr_shared_contracts_fill_py,src_zephyr_shared_contracts_model_serving_request_py,src_zephyr_shared_contracts_order_py,src_zephyr_shared_contracts_position_py,src_zephyr_shared_contracts_risk_dashboard_snapshot_py,src_zephyr_shared_contracts_risk_metrics_py,src_zephyr_shared_contracts_system_configuration_py,src_zephyr_shared_contracts_trace_context_py design
-    class D_SHARED,D_GOV_AUDIT,D_EX_CORE,D_TRADING,D_PF_ALLOC external_prod
-    class D_INTEGRATION,D_GOV_DOCS,D_REPORTING,D_GOVERNANCE external_design
+    class D_INFRA_RUNTIME,D_SHARED,D_GOV_AUDIT,D_EX_CORE,D_TRADING,D_PF_ALLOC external_prod
+    class D_GOV_DOCS,D_GOVERNANCE,D_GOV_ENFORCEMENT,D_REPORTING external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -296,7 +297,7 @@ graph TD
 |:--:|---------|:--:|---------|---------|
 | 1 | backup_reconciler.py — 灾备备份系统事件触发器.... | → | D_GOV_AUDIT 审计追踪: reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
 | 2 | TCP relay: expose localhost-only MinIO to the C... | → | D_GOV_DOCS 架构文档治理: blueprint.md | runtime / runtime |
-| 3 | TCP relay: expose localhost-only MinIO to the C... | → | D_INTEGRATION 管线路由: AssetInventory MCP Server — MOD-INF-026 蓝图 ... | runtime / runtime |
+| 3 | TCP relay: expose localhost-only MinIO to the C... | → | D_INFRA_RUNTIME 运行时集成: AssetInventoryModels — MOD-INF-026 Pydantic V2... | runtime / runtime |
 | 4 | experiment_result.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
 | 5 | factor_signal.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
 | 6 | fill.py | → | D_SHARED 共享服务: trace_context.py | 导入依赖 / import_depends |
@@ -361,7 +362,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 12 条 + 入边 47 条 = 59 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 15 个外部域直接连接（出边 12 条 + 入边 47 条 = 59 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -369,7 +370,7 @@ graph LR
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
-    D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
     D_REPORTING["D_REPORTING<br/>报告"]
@@ -381,11 +382,10 @@ graph LR
     D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_INFRASTRUCTURE -->|9条 导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
     D_INFRASTRUCTURE -->|1条 runtime / runtime| D_GOV_DOCS
-    D_INFRASTRUCTURE -->|1条 runtime / runtime| D_INTEGRATION
+    D_INFRASTRUCTURE -->|1条 runtime / runtime| D_INFRA_RUNTIME
     D_TRADING -->|10条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_FUNDAMENTAL_SIGNAL -->|9条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_REPORTING -->|8条 导入依赖 / import_depends| D_INFRASTRUCTURE

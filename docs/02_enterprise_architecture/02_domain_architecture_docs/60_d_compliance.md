@@ -89,12 +89,12 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -143,12 +143,12 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
