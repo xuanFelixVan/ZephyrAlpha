@@ -55,7 +55,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT, get_depgraph_pg_connection  # Bug 5 修复（2026-07-18）：补 REPO_ROOT + get_depgraph_pg_connection，原仅 import 3 个 EXIT_* 致 NameError
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -209,6 +209,12 @@ def _write_tree_to_db(db_path, tree, total_files, total_dirs):
         conn.commit()
         count = conn.execute("SELECT COUNT(*) AS cnt FROM arch_directory_tree").fetchone()["cnt"]
         print(f"[PATH-TREE-DB] Updated {count} directory tree nodes")
+        # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生
+        try:
+            from _shared.constants import mark_depgraph_dirty
+            mark_depgraph_dirty()
+        except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程
+            print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
     except Exception as e:
         conn.rollback()
         print(f"[PATH-TREE-DB] ERROR: {e}")

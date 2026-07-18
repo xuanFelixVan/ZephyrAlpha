@@ -2062,6 +2062,13 @@ def sync_all() -> bool:
         conn.commit()
         print("\n[PASS] 28 项 YAML→DB 同步完成")
 
+        # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生（治本运行时 DB 写入盲区）
+        try:
+            from _shared.constants import mark_depgraph_dirty
+            mark_depgraph_dirty()
+        except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断同步主流程
+            print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
+
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)
 

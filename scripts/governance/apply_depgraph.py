@@ -4649,3 +4649,11 @@ if __name__ == "__main__":
             except Exception as _e:
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr
                 print(f"[BACKUP-PG] WARNING: 备份失败（不阻断主流程）: {_e}", file=sys.stderr)
+            # DM-90974 Phase 2: 落 depgraph_dirty.flag，让 GATE-DOMAIN-DOC reconciler
+            # 在下次任意 commit 时检测到 DB 已变并触发域文档重生。治本盲区：
+            # 运行时 DB 操作（--delete-nodes 等）不产生 git commit，原 trigger 永不 fire。
+            try:
+                from _shared.constants import mark_depgraph_dirty
+                mark_depgraph_dirty()
+            except Exception as _e:  # noqa: BLE001 — flag 写入失败不阻断主流程（DB 已成功写入）
+                print(f"[DIRTY-FLAG] WARNING: depgraph_dirty.flag 写入失败（不阻断）: {_e}", file=sys.stderr)
