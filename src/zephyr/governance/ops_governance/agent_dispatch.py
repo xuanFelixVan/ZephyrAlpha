@@ -200,13 +200,6 @@ DISPATCH_TABLE: Final[dict[str, DomainDispatch]] = {
         token_budget=400,
         blueprint_section="§二十九",
     ),
-    "knowledge-management": DomainDispatch(
-        domain="知识管理",
-        pre_read="SYS-MASTER-001 §三十",
-        re_read="MOD-KB-001 + AUTO-KB(§67)",
-        token_budget=400,
-        blueprint_section="§三十",
-    ),
     "migration-strategy": DomainDispatch(
         domain="迁移策略",
         pre_read="SYS-MASTER-001 §三十一",

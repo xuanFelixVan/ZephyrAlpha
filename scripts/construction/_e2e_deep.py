@@ -57,7 +57,6 @@ tests = [
     ("MOD-INF-029", "zephyr.shared._cross_layer.orphan_judge", []),
     ("MOD-INF-030", "zephyr.shared._cross_layer.red_blue_validator", []),
     ("MOD-INF-031", "zephyr.infrastructure.auto_fix_engine", []),
-    ("MOD-KB-001", "zephyr.data.knowledge_management.kb", []),
     ("MOD-L00-001", "zephyr.data", []),
     ("MOD-L02-001", "zephyr.portfolio.factors", []),
     ("MOD-L03-001", "zephyr.signal", []),
