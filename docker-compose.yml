@@ -49,7 +49,9 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # 5.31.13 修复：原挂载 ./infra/prometheus/prometheus.yml（infra/ 目录不存在），
+      # 改指向已有 SSoT 配置 config/infra/（git 跟踪，rule_registry_collection.yaml 登记）
+      - ./config/infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -80,8 +82,9 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=false
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./infra/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./infra/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      # 5.31.13 修复：同 prometheus，挂载源 ./infra/ → ./config/infra/（目录已存在且 git 跟踪）
+      - ./config/infra/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/infra/grafana/datasources:/etc/grafana/provisioning/datasources:ro
     deploy:
       # 5.43.1 修复：Grafana 仪表板轻量，限制 0.5 CPU / 512m
       resources:

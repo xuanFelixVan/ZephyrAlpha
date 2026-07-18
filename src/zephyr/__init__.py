@@ -36,7 +36,13 @@ _log = logging.getLogger(__name__)
 
 
 def _load_dotenv() -> None:
-    from zephyr.shared.io.paths import REPO_ROOT
+    try:
+        from zephyr.shared.io.paths import REPO_ROOT
+    except FileNotFoundError:
+        # 非源码树环境（pip install 后的 site-packages，如 Docker 镜像内）：
+        # find_repo_root() 找不到 src/zephyr/__init__.py 标记会抛 FileNotFoundError。
+        # 此时无 .env 可加载（容器经 environment/env_file 注入环境变量），直接跳过。
+        return
 
     env_path = REPO_ROOT / ".env"
     if not env_path.exists():
