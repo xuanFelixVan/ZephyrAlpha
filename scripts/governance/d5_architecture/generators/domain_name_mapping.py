@@ -5,12 +5,14 @@
 """
 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
 
-真源优先级（治本 v2.3，2026-07-19，Step 2.5 硬编码表瘦身完成）：
-1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——已由 sync_yaml_to_depgraph.py
+真源优先级（治本 v2.4，2026-07-19，Step 2.5 遗留风险修复）：
+1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源——已由 sync_yaml_to_depgraph.py
    从 functional_domain_registry.yaml 的 domain_name_zh 字段同步为中文）
-2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用；仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*，
+2. functional_domain_registry.yaml 的 domain_name_zh（DB 不可用时 fallback——
+   确保返回中文 domain_name_zh 而非 domain_id）
+3. DOMAIN_NAME_ZH 硬编码映射表（仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*，
    生产域已全部移除——DB 为唯一真源，硬编码不再保留生产域备份）
-3. fallback 参数或 domain_id 本身（生产域 DB 不可用时返回 domain_id，可接受降级）
+4. fallback 参数或 domain_id 本身（DB/YAML/硬编码均无时的最终降级）
 
 治本历史：
 - v1.0：硬编码映射表作真源（绕过 db domain_name 英文/中文不一致问题）
@@ -25,6 +27,10 @@
   63 个生产域从硬编码移除——DB 已是生产域唯一真源，硬编码不再保留生产域备份。
   generate_domain_doc.py 同步重构：移除 DOMAIN_NAME_ZH 直接访问，改走 get_domain_name_zh
   / get_domain_name_zh_strict helper，确保所有路径都过 DB 优先级。
+- v2.4（2026-07-19 Step 2.5 遗留风险修复）：新增 _load_domain_names_from_yaml() fallback。
+  DB 故障时从 functional_domain_registry.yaml 加载中文（原 v2.3 DB 故障时返回 domain_id，
+  如 D_FACTOR 而非"因子"——不优雅）。YAML 是 DB 源头真源，故 fallback 到 YAML 返回中文。
+  4 层真源优先级链：DB → YAML → 硬编码（测试域）→ domain_id 降级。
 
 用法 / Usage:
     from domain_name_mapping import get_domain_name_zh
@@ -278,19 +284,60 @@ LAYER_NAME_BILINGUAL: dict[str, tuple[str, str]] = {
 _DOMAIN_NAME_CACHE: dict[str, str] | None = None
 
 
+def _load_domain_names_from_yaml() -> dict[str, str]:
+    """从 functional_domain_registry.yaml 加载 domain_id → domain_name_zh 映射。
+
+    作为 DB 不可用时的 fallback（治本 v2.4，2026-07-19 Step 2.5 遗留风险修复）。
+    YAML 是 DB 的源头真源（sync_yaml_to_depgraph.py 从 YAML sync 到 DB），
+    故 DB 不可用时从 YAML 加载是正确的降级路径——返回中文 domain_name_zh 而非 domain_id。
+
+    Returns:
+        dict[domain_id, domain_name_zh]；失败时返回空 dict。
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+        from _shared.constants import REPO_ROOT
+        yaml_path = (
+            REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
+            / "catalogs" / "functional_domain_registry.yaml"
+        )
+        if not yaml_path.exists():
+            return {}
+        with open(yaml_path, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        entries = data.get("entries", [])
+        result: dict[str, str] = {}
+        for entry in entries:
+            domain_id = entry.get("domain", "")
+            name_zh = entry.get("domain_name_zh", "")
+            if domain_id and name_zh:
+                if domain_id not in result:
+                    result[domain_id] = name_zh
+        return result
+    except Exception:
+        return {}
+
+
 def _load_domain_names_from_db() -> dict[str, str]:
     """从 depgraph (PostgreSQL) domains 表动态加载 domain_id → domain_name 映射。
 
+    真源优先级（治本 v2.4）：
+    1. depgraph (PostgreSQL) domains.domain_name（真源——已由 sync_yaml_to_depgraph.py
+       从 YAML 的 domain_name_zh 字段同步为中文）
+    2. functional_domain_registry.yaml 的 domain_name_zh（DB 不可用时 fallback——
+       确保返回中文 domain_name_zh 而非 domain_id）
+    3. 空 dict → 调用方回退到硬编码 DOMAIN_NAME_ZH（仅测试域）
+
     延迟 import _shared.constants（避免模块加载时依赖 db 配置）。
-    失败时返回空 dict（调用方回退到硬编码 DOMAIN_NAME_ZH）。
     结果缓存到 _DOMAIN_NAME_CACHE，避免重复查询。
 
     Returns:
-        dict[domain_id, domain_name]；失败时返回空 dict。
+        dict[domain_id, domain_name]；DB 和 YAML 均不可用时返回空 dict。
     """
     global _DOMAIN_NAME_CACHE
     if _DOMAIN_NAME_CACHE is not None:
         return _DOMAIN_NAME_CACHE
+    # 1. 优先从 DB 加载
     try:
         from _shared.constants import get_depgraph_pg_connection
 
@@ -305,7 +352,12 @@ def _load_domain_names_from_db() -> dict[str, str]:
         _DOMAIN_NAME_CACHE = result
         return result
     except Exception:
-        # db 不可用：标记为空 dict，避免反复尝试失败的连接（进程生命周期内）
+        # 2. DB 不可用：fallback 到 YAML（确保返回中文 domain_name_zh 而非 domain_id）
+        yaml_result = _load_domain_names_from_yaml()
+        if yaml_result:
+            _DOMAIN_NAME_CACHE = yaml_result
+            return yaml_result
+        # 3. YAML 也不可用：返回空 dict（调用方回退到硬编码 DOMAIN_NAME_ZH）
         _DOMAIN_NAME_CACHE = {}
         return {}
 
@@ -321,11 +373,13 @@ def preload_domain_names() -> dict[str, str]:
 def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     """获取域的中文名称（DB 优先 + 硬编码 fallback 双层）。
 
-    真源优先级（治本 v2.3，2026-07-19 Step 2.5 硬编码瘦身完成）：
-    1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——
+    真源优先级（治本 v2.4，2026-07-19 Step 2.5 遗留风险修复）：
+    1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源——
        已由 sync_yaml_to_depgraph.py 从 YAML 的 domain_name_zh 字段同步为中文）
-    2. DOMAIN_NAME_ZH 硬编码映射表（fallback：仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*）
-    3. fallback 参数或 domain_id 本身（生产域 DB 不可用时返回 domain_id，可接受降级）
+    2. functional_domain_registry.yaml 的 domain_name_zh（DB 不可用时 fallback——
+       确保返回中文 domain_name_zh 而非 domain_id）
+    3. DOMAIN_NAME_ZH 硬编码映射表（仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*）
+    4. fallback 参数或 domain_id 本身（DB/YAML/硬编码均无时的最终降级）
 
     Args:
         domain_id: 域ID，如 "D_TRADING"
@@ -349,6 +403,7 @@ def get_domain_name_zh_strict(domain_id: str) -> str:
     用于"未找到=不显示"场景（如 mermaid 标签、表格单元格）。
     v2.3（Step 2.5）新增：替代 generate_domain_doc.py 中直接的
     ``DOMAIN_NAME_ZH.get(ext, "")`` 调用，确保路径过 DB 优先级。
+    v2.4：DB 不可用时通过 YAML fallback 返回中文（4 层真源优先级链）。
 
     Args:
         domain_id: 域ID，如 "D_TRADING"
