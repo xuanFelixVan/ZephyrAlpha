@@ -1598,3 +1598,61 @@ resource_optimization:
           hit_rate: { type: number }
           memory_usage_mb: { type: number }
           evictions: { type: integer }
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 11 · rule_discovery（MOD-INF-014 · #ARCH-GOV-CONVERGENCE-META Phase 3.2b）
+# ──────────────────────────────────────────────────────────────────────
+
+  - server_id: rule_discovery
+    module_id: MOD-INF-014
+    description: "规则发现 MCP Server——AI 施工前查询适用 trae 规则（病根2治本）"
+    transport: "BaseMCPServer — JSON-RPC 2.0 over stdio"
+    source: "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml"
+    stability: evolving
+    safety_level: L
+
+    tools:
+
+    - name: rule_discovery.discover_applicable_rules
+      description: >-
+        查询当前操作上下文适用的 trae 规则。AI MUST 在施工前调用此工具，
+        按 operation/scope/domain/gate_id/tags 查询适用的治理规则。
+        真源：rule_ai_perception_index.yaml（64条规则）。
+      safety_level: L
+      stability: evolving
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          operation: { type: string, description: "操作类型（如 file_write/code_naming）" }
+          gate_id: { type: string, description: "门禁 ID（如 G0/GATE-ARCH）" }
+          scope: { type: string, description: "作用域（如 file_operation）" }
+          domain: { type: string, description: "域（如 TRAE）" }
+          tags:
+            type: array
+            items: { type: string }
+            description: "标签过滤（AND 逻辑）"
+          rule_id: { type: string, description: "按规则 ID 精确查询（如 TRAE-001）" }
+      output_schema:
+        type: object
+        properties:
+          results:
+            type: array
+            items:
+              type: object
+              properties:
+                rule_id: { type: string }
+                title: { type: string }
+                scope: { type: string }
+                domain: { type: string }
+                severity: { type: string }
+                operations: { type: array, items: { type: string } }
+                gate_ids: { type: array, items: { type: string } }
+                paired_gate_id: { type: [string, "null"] }
+                rule_file: { type: string }
+          count: { type: integer }
+          total_rules_in_index: { type: integer }
+          source: { type: string }
+          error: { type: string, description: "错误信息（fail-open 时存在）" }
+      errors: ["ZA-RD-0001"]
