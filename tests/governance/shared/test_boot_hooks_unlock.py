@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-508 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: SRC-TST-2119 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 from __future__ import annotations
@@ -12,8 +14,8 @@ from zephyr.shared.io.paths import REPO_ROOT, DB_PATH
 from datetime import UTC, datetime
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.execution_model import ExecutionModel
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import TaskCard, TaskNamespace, TaskStatus
 
 DB_PATH = REPO_ROOT / "data" / "databases" / "governance.db"

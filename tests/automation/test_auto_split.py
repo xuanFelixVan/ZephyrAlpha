@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-015 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: SRC-TST-0382 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import os
@@ -12,8 +14,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from zephyr.governance.persistence.task_repo import TaskNotFoundError, TaskRepository
 from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.schema.execution_model import ExecutionModel
+from zephyr.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 _NOW = datetime.now(UTC)
