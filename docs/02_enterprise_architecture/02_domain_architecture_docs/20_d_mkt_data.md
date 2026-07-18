@@ -157,7 +157,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA: Provider Capability 行为契约校验器（裁定... (ca... | → |  | data / data |
+| 1 | D_DATA: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 

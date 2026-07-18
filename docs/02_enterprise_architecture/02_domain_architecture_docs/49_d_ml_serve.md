@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 7 | Module Count | 7 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
+| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
@@ -77,11 +77,14 @@ graph TD
         src_zephyr_ml_serve_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
+    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_serve_init_py,src_zephyr_ml_serve_extensions_init_py,src_zephyr_ml_serve_api_init_py,src_zephyr_ml_serve_core_init_py,src_zephyr_ml_serve_infrastructure_init_py,src_zephyr_ml_serve_models_init_py,src_zephyr_ml_serve_services_init_py design
+    class D_ML_TRAIN external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -111,18 +114,23 @@ graph TD
         src_zephyr_ml_serve_models_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
+    D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
+    src_zephyr_ml_serve_core_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_ml_serve_init_py,src_zephyr_ml_serve_extensions_init_py,src_zephyr_ml_serve_api_init_py,src_zephyr_ml_serve_core_init_py,src_zephyr_ml_serve_infrastructure_init_py,src_zephyr_ml_serve_models_init_py,src_zephyr_ml_serve_services_init_py design
+    class D_ML_TRAIN external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-无跨域出边依赖 / No cross-domain outgoing dependencies
+| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | __init__.py | → | D_ML_TRAIN 训练: D_ML_TRAIN — ML Inference Base (inference_base.py) | runtime / runtime |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -130,9 +138,14 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 1 个外部域直接连接（出边 1 条 + 入边 0 条 = 1 条）。只显示直接连接的域，不展开具体节点。
 
-> （无跨域依赖 / No cross-domain dependencies）
+```mermaid
+graph LR
+    D_ML_SERVE["D_ML_SERVE<br/>推理"]
+    D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
+    D_ML_SERVE -->|1条 runtime / runtime| D_ML_TRAIN
+```
 
 ## 说明 / Notes
 
