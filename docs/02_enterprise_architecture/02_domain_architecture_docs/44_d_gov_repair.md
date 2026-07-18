@@ -65,13 +65,13 @@ graph TD
     subgraph D_GOV_REPAIR["D_GOV_REPAIR 治理修复"]
         src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
     end
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
@@ -84,7 +84,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_financial_governance_budget_enforcement_py production
-    class D_GOV_OPS_RESILIENCE,D_OPS,D_GOVERNANCE,D_AUTONOMY_CORE external_prod
+    class D_OPS,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_AUTONOMY_CORE external_prod
     class D_GOV_SCRIPTS external_design
 ```
 
@@ -97,13 +97,13 @@ graph TD
     subgraph D_GOV_REPAIR["D_GOV_REPAIR 治理修复"]
         src_zephyr_governance_financial_governance_budget_enforcement_py["(生产态 / production) budget_enforcement.py"]
     end
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_OPS["(生产态 / production) D_OPS"]
-    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
     src_zephyr_governance_financial_governance_budget_enforcement_py -->|导入依赖 / import_depends| D_AUTONOMY_CORE
@@ -116,7 +116,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_financial_governance_budget_enforcement_py production
-    class D_GOV_OPS_RESILIENCE,D_OPS,D_GOVERNANCE,D_AUTONOMY_CORE external_prod
+    class D_OPS,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_AUTONOMY_CORE external_prod
     class D_GOV_SCRIPTS external_design
 ```
 

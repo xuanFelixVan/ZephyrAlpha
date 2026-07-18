@@ -75,11 +75,11 @@ graph TD
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py

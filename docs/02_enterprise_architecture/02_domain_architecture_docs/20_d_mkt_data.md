@@ -83,14 +83,15 @@ graph TD
     end
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_market_data_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_DATA["(生产态 / production) D_DATA"]
+    D_DATA["(原型态 / prototype) D_DATA"]
     D_DATA -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md,src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
-    class D_INFRASTRUCTURE,D_DATA external_prod
+    class D_INFRASTRUCTURE external_prod
+    class D_DATA external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -109,14 +110,14 @@ graph TD
         docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md["(设计态 / design) "]
         docs_03_modules_domain_data_data_source_operation_manual_md["(设计态 / design) "]
     end
-    D_DATA["(生产态 / production) D_DATA"]
+    D_DATA["(原型态 / prototype) D_DATA"]
     D_DATA -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md design
-    class D_DATA external_prod
+    class D_DATA external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -156,7 +157,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA: 数据源集成器 CLI（MOD-L00-004 §8.4）。 (cli.py) | → |  | data / data |
+| 1 | D_DATA: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
