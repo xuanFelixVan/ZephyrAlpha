@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L00-004
+# [BLUEPRINT] MOD-L00-001 | docs/03_modules/_domain_data/blueprint.md | §
 # [MODULE] zephyr.data.tick_subscriber
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.buffered_writer; zephyr.data.provider_base; zephyr.data.ch_writer

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-LLM_SECURITY
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.self_protection.l7_validation
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.security.llm_defense.llm_security.self_protection.code_integrity

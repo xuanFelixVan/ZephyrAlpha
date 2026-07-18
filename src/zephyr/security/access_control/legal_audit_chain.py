@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SECURITY
+# [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §
 # [MODULE] zephyr.security.access_control.legal_audit_chain
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES]

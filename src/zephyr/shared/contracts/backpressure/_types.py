@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SHARED-002
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/contracts_blueprint.md | §
 # [MODULE] zephyr.shared.contracts.backpressure._types
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-MAIN-001
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.capacity_governance.budget_aware_prompt
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

@@ -1,4 +1,4 @@
-# [BLUEPRINT] SH-MAIN-001
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.versioning.vibe_experiment_tracker
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES]

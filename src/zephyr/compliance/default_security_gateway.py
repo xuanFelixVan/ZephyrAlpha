@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L10-001
+# [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md | §
 # [MODULE] zephyr.compliance.default_security_gateway
 # [DOMAIN] D_COMPLIANCE
 # [DEPENDENCIES] zephyr.governance.security_governance.default_security_gateway

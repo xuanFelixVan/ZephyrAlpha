@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-LLM_SECURITY
+# [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] zephyr.security.llm_defense.llm_security.layers.l6_observability
 # [DOMAIN] D_SECURITY
 # [DEPENDENCIES] zephyr.shared.alert_manager

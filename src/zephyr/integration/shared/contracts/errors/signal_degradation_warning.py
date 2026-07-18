@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INTEGRATION
+# [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] zephyr.integration.shared.contracts.errors.signal_degradation_warning
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.contracts.core.trace_context
