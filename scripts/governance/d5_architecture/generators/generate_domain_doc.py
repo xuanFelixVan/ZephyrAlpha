@@ -75,6 +75,7 @@ from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh, DOMAIN_NAME_ZH  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
@@ -1340,7 +1341,23 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    conn = get_depgraph_pg_connection(autocommit=True)
+    # Bug 8 fix: psycopg2 connection has no .execute() (sqlite3 API); wrapper adds it + DictCursor
+    import psycopg2.extras
+
+    class _PgConnSqliteCompat:
+        """psycopg2 -> sqlite3 API compat wrapper."""
+        def __init__(self, conn):
+            self._conn = conn
+        def execute(self, sql, params=None):
+            cur = self._conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cur.execute(sql) if params is None else cur.execute(sql, params)
+            return cur
+        def __getattr__(self, name):
+            return getattr(self._conn, name)
+        def close(self):
+            self._conn.close()
+
+    conn = _PgConnSqliteCompat(get_depgraph_pg_connection(autocommit=True))
     try:
         # 构建编号映射（按 layer_id 分组排序）
         numbering_map = build_numbering_map(conn)
