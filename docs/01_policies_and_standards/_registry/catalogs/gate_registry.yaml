@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-18T21:06:30Z'
+generated_at: '2026-07-18T22:28:36Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 95
+total_gates: 96
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -558,6 +558,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+  name: 'NO-DOMAIN-NAME-ZH-DIRECT-ACCESS: DOMAIN_NAME_ZH 字典直接访问硬阻断门禁（CommitGate, priority=72）'
+  entry: in-process (GitCommitGateway)
+  description: DOMAIN_NAME_ZH 字典直接访问硬阻断门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: EMPTY-HANDLER
   name: 'EMPTY-HANDLER: 空事件 handler 函数阻断门禁（EMPTY-HANDLER）（CommitGate, priority=84）'
   entry: in-process (GitCommitGateway)
@@ -905,10 +914,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: UNDEFINED-NAME
-  name: 'UNDEFINED-NAME: F821 未定义符号硬阻断门禁（UNDEFINED-NAME，GATE-DEPGRAPH-OPS 治本 Phase
-    1）（CommitGate, priority=106）'
+  name: 'UNDEFINED-NAME: UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）（CommitGate, priority=106）'
   entry: in-process (GitCommitGateway)
-  description: F821 未定义符号硬阻断门禁（UNDEFINED-NAME，GATE-DEPGRAPH-OPS 治本 Phase 1）
+  description: UNDEFINED-NAME 门禁（F821 未定义符号硬阻断）
   files_trigger: ''
   always_run: false
   category: commit_gate
