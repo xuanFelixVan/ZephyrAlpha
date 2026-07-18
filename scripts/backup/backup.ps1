@@ -23,6 +23,33 @@ function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
+# -- Dynamic port selection --
+# Hyper-V Host Network Service dynamically reserves random tcp ranges (2026-07-19
+# incident: 9101-9200 reserved -> WinError 10013, MinIO would not start and the CH
+# stage silently skipped). .env ports are preferences only; bind-test is the only
+# reliable check.
+function Test-PortFree([int]$Port) {
+    $listener = $null
+    try {
+        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
+        $listener.Start()
+        return $true
+    } catch {
+        return $false
+    } finally {
+        if ($listener) { $listener.Stop() }
+    }
+}
+
+function Get-FreePort([int]$Preferred, [int[]]$Exclude = @()) {
+    if (($Exclude -notcontains $Preferred) -and (Test-PortFree $Preferred)) { return $Preferred }
+    for ($p = $Preferred + 1; $p -le [math]::Min($Preferred + 200, 65535); $p++) {
+        if ($Exclude -contains $p) { continue }
+        if (Test-PortFree $p) { return $p }
+    }
+    throw "no free tcp port in [$Preferred, $($Preferred + 200)] (HNS excluded ranges shifting?)"
+}
+
 # -- Load config --
 if (-not (Test-Path $ConfigFile)) { Write-Err "config not found: $ConfigFile"; exit 1 }
 $yamlContent = Get-Content $ConfigFile -Raw -Encoding UTF8
@@ -189,6 +216,26 @@ try {
     $chAlive = ($LASTEXITCODE -eq 0)
 } catch { $chAlive = $false }
 
+# CH 24h cadence gate (2026-07-19 fix): a full CH backup is ~315GiB/3h, so it is
+# decoupled from the 8h code-backup cadence. last_ch_backup_time only advances on
+# SUCCESS - a failed run retries at the next scheduled window. -Force bypasses
+# (manual drills).
+$chCadenceDue = $true
+if (-not $Force) {
+    $chStateFile = "$ProjectRoot\data\databases\backup_state.json"
+    if (Test-Path $chStateFile) {
+        try {
+            $prevState = Get-Content $chStateFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($prevState.last_ch_backup_time) {
+                $chElapsedH = ((Get-Date) - [datetime]::Parse($prevState.last_ch_backup_time)).TotalHours
+                if ($chElapsedH -lt 24) {
+                    $chCadenceDue = $false
+                }
+            }
+        } catch { }  # corrupt state -> treat as due
+    }
+}
+
 $minioProc = $null; $relayProc = $null
 if (-not $chAlive) {
     $dbStatus.clickhouse = @{status="skipped"; reason="service down"}
@@ -196,6 +243,9 @@ if (-not $chAlive) {
 } elseif ($chBk.Count -eq 0) {
     $dbStatus.clickhouse = @{status="skipped"; reason="config/.env.ch_backup missing"}
     Write-Warn "config/.env.ch_backup not found, skipping ClickHouse backup"
+} elseif (-not $chCadenceDue) {
+    $dbStatus.clickhouse = @{status="skipped"; reason=("24h cadence (last {0:N1}h ago)" -f $chElapsedH)}
+    Write-OK ("ClickHouse: last CH backup {0:N1}h ago (< 24h cadence), stage skipped" -f $chElapsedH)
 } else {
     try {
         # 1. Delete previous market.zip object BEFORE MinIO starts (plain FS delete in
@@ -212,32 +262,52 @@ if (-not $chAlive) {
             Get-ChildItem $mpDir -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
         }
 
-        # 2. Start MinIO (localhost only) + python TCP relay (VM-facing)
+        # 2. Kill stale MinIO/relay from previous runs, pick HNS-safe ports via
+        #    bind-test, then start MinIO (localhost only) + python TCP relay
+        #    (VM-facing, ports passed as argv). .env ports are preferences only -
+        #    HNS reserved ranges shift across reboots.
+        Get-Process -Name minio -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+            Where-Object { $_.CommandLine -match 'minio_tcp_relay' } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+        $minioPref = 9101; $consolePref = 9102; $relayPref = 9100
+        if ($chBk.MINIO_ADDRESS -match ':(\d+)$')         { $minioPref = [int]$Matches[1] }
+        if ($chBk.MINIO_CONSOLE_ADDRESS -match ':(\d+)$') { $consolePref = [int]$Matches[1] }
+        if ($chBk.CH_S3_ENDPOINT -match ':(\d+)\s*$')     { $relayPref = [int]$Matches[1] }
+        $minioPort = Get-FreePort $minioPref
+        $consolePort = Get-FreePort $consolePref @($minioPort)
+        $relayPort = Get-FreePort $relayPref @($minioPort, $consolePort)
+        $minioAddress = "127.0.0.1:$minioPort"
+        $consoleAddress = "127.0.0.1:$consolePort"
+        $s3EndpointHost = ($chBk.CH_S3_ENDPOINT -replace '^https?://', '') -replace ':\d+\s*$', ''
+        $s3Endpoint = "http://${s3EndpointHost}:$relayPort"
+
+        # 3. Start MinIO + relay, wait for health
         $env:MINIO_ROOT_USER = $chBk.CH_S3_ACCESS_KEY
         $env:MINIO_ROOT_PASSWORD = $chBk.CH_S3_SECRET_KEY
         $minioProc = Start-Process -FilePath $chBk.MINIO_EXE `
-            -ArgumentList 'server', "`"$($chBk.MINIO_ROOT)`"", '--address', "`"$($chBk.MINIO_ADDRESS)`"", '--console-address', "`"$($chBk.MINIO_CONSOLE_ADDRESS)`"" `
+            -ArgumentList 'server', "`"$($chBk.MINIO_ROOT)`"", '--address', "`"$minioAddress`"", '--console-address', "`"$consoleAddress`"" `
             -WindowStyle Hidden -PassThru
-        $relayProc = Start-Process -FilePath "python" -ArgumentList "`"$($chBk.RELAY_SCRIPT)`"" -WindowStyle Hidden -PassThru
+        $relayProc = Start-Process -FilePath "python" -ArgumentList "`"$($chBk.RELAY_SCRIPT)`"", "$relayPort", "$minioPort" -WindowStyle Hidden -PassThru
         $minioReady = $false
         for ($i = 0; $i -lt 30 -and -not $minioReady; $i++) {
             Start-Sleep -Seconds 1
-            curl.exe -s --max-time 2 "http://$($chBk.MINIO_ADDRESS)/minio/health/live" -o NUL
+            curl.exe -s --max-time 2 "http://$minioAddress/minio/health/live" -o NUL
             $minioReady = ($LASTEXITCODE -eq 0)
         }
-        if (-not $minioReady) { throw "MinIO failed to start on $($chBk.MINIO_ADDRESS)" }
-        Write-OK "MinIO + relay started (endpoint $($chBk.CH_S3_ENDPOINT))"
+        if (-not $minioReady) { throw "MinIO failed to start on $minioAddress" }
+        Write-OK "MinIO + relay started (endpoint $s3Endpoint)"
 
-        # 3. Fire async BACKUP to S3 (path style: endpoint is a bare IP, virtual-hosted
+        # 4. Fire async BACKUP to S3 (path style: endpoint is a bare IP, virtual-hosted
         #    style would require bucket-as-subdomain DNS which does not exist here).
-        $s3Url = "$($chBk.CH_S3_ENDPOINT)/$($chBk.MINIO_BUCKET)/market.zip"
+        $s3Url = "$s3Endpoint/$($chBk.MINIO_BUCKET)/market.zip"
         $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('$s3Url', '$($chBk.CH_S3_ACCESS_KEY)', '$($chBk.CH_S3_SECRET_KEY)') ASYNC"
         $fireResp = curl.exe -s --max-time 60 "${chBaseUrl}?s3_uri_style=path" --data-binary $backupQuery
         if ($LASTEXITCODE -ne 0 -or $fireResp -notmatch '([0-9a-f-]{36})') { throw "BACKUP fire failed: $fireResp" }
         $backupId = $Matches[1]
         Write-Stage "ClickHouse BACKUP async id=$backupId (315GiB, may take hours)"
 
-        # 4. Poll system.backups until done (max 3h)
+        # 5. Poll system.backups until done (max 3h)
         $chFinal = "TIMEOUT"
         for ($elapsed = 0; $elapsed -lt 10800; $elapsed += 60) {
             Start-Sleep -Seconds 60
@@ -250,7 +320,7 @@ if (-not $chAlive) {
             throw "ClickHouse backup $chFinal`: $chErr"
         }
 
-        # 5. Verify object landed on F: and is non-empty (institutional practice: verify)
+        # 6. Verify object landed on F: and is non-empty (institutional practice: verify)
         $sizeSum = (Get-ChildItem $objDir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
         if (-not $sizeSum -or $sizeSum -lt 1MB) { throw "market.zip missing or too small ($sizeSum bytes)" }
         $dbStatus.clickhouse = @{status="ok"; method="BACKUP TO S3(MinIO relay)"; file="market.zip"; bytes=$sizeSum}
@@ -259,7 +329,7 @@ if (-not $chAlive) {
         $dbStatus.clickhouse = @{status="failed"; error=$_.Exception.Message}
         Write-Warn "ClickHouse backup failed: $($_.Exception.Message)"
     } finally {
-        # 6. Always stop MinIO + relay (on-demand only, not a resident service)
+        # 7. Always stop MinIO + relay (on-demand only, not a resident service)
         if ($relayProc -and -not $relayProc.HasExited) { Stop-Process -Id $relayProc.Id -Force -ErrorAction SilentlyContinue }
         if ($minioProc -and -not $minioProc.HasExited) { Stop-Process -Id $minioProc.Id -Force -ErrorAction SilentlyContinue }
     }
@@ -345,6 +415,20 @@ if (-not $state) { $state = [PSCustomObject]@{} }
 $state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
 $state | Add-Member -NotePropertyName last_backup_snapshot_id -NotePropertyValue $snapshotId -Force
 $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue "ok" -Force
+# CH stage outcome (2026-07-19 fix: failure visible, 24h cadence tracked separately).
+# last_ch_backup_time advances ONLY on success - a failure retries at the next window.
+if ($dbStatus.clickhouse) {
+    $chSt = [string]$dbStatus.clickhouse.status
+    $state | Add-Member -NotePropertyName last_ch_backup_status -NotePropertyValue $chSt -Force
+    if ($chSt -eq "ok") {
+        $state | Add-Member -NotePropertyName last_ch_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
+        if ($state.PSObject.Properties['last_ch_backup_error']) {
+            $state.PSObject.Properties.Remove('last_ch_backup_error')
+        }
+    } elseif ($chSt -eq "failed") {
+        $state | Add-Member -NotePropertyName last_ch_backup_error -NotePropertyValue ([string]$dbStatus.clickhouse.error) -Force
+    }
+}
 # Write UTF-8 without BOM + LF (ENCODING-SAFETY INJ-007; PS5.1 Out-File -Encoding UTF8 emits BOM)
 $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
 [System.IO.File]::WriteAllText($stateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
@@ -353,3 +437,10 @@ Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
 Write-OK "Backup completed in $([math]::Round($duration.TotalSeconds,1))s"
 Write-Host "==========================================" -ForegroundColor Green
+
+# CH stage failed but code/PG/SQLite/restic succeeded -> exit 2 so backup_reconciler
+# reports warn (failure must be visible; 2026-07-19 incident: CH silently skipped
+# twice while state recorded ok). exit 0 = all ok or CH skipped as planned;
+# exit 1 = pipeline fatal; exit 2 = CH stage failed.
+$chFailed = ($dbStatus.clickhouse -and $dbStatus.clickhouse.status -eq "failed")
+if ($chFailed) { exit 2 }

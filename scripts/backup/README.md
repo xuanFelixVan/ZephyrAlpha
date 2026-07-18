@@ -7,9 +7,11 @@
 系统注册为 post-commit reconciler，每次 `session_worktree_commit` merge 后自动检查：
 
 1. **重要文件变更**：committed_files 包含 `src/` `config/` `docs/` `scripts/` `tests/` `data/databases/` 等路径下的文件
-2. **8小时间隔保护**：距上次成功备份 ≥ 8小时（状态文件：`data/databases/backup_state.json`）
+2. **8小时间隔保护**：距上次成功备份 ≥ 8小时（状态文件：`data/databases/backup_state.json`，纯运行时产物，gitignored）
 
 两个条件同时满足才触发备份。日均触发1-2次。
+
+**ClickHouse 独立节奏**：CH 全量备份 315GiB≈3h，每 24h 至多一次（`last_ch_backup_time` 仅成功时推进，失败下一窗口自动重试），与代码备份 8h 节奏解耦；`-Force` 旁路。CH 阶段失败时 backup.ps1 以 exit 2 退出、reconciler 报 warn（失败可见，禁止静默跳过）。
 
 ## 手动触发（兜底）
 
@@ -67,8 +69,8 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 
 CH 部署在 Hyper-V VM，其数据盘（588G/余 211G）装不下 315GiB 全量备份，且宿主机无 clickhouse-client、Windows 防火墙拦截 minio.exe。因此采用 **MinIO S3 桥**：
 
-1. 备份时临时启动 MinIO（仅监听 127.0.0.1:9101）+ `minio_tcp_relay.py`（0.0.0.0:9100，借 python 防火墙放行规则暴露给 VM）
-2. CH 执行 `BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('http://172.24.16.1:9100/chbk/market.zip') ASYNC`，数据流直接出 VM 落到 F:
+1. 备份时临时启动 MinIO（仅监听 127.0.0.1:<动态端口>）+ `minio_tcp_relay.py`（0.0.0.0:<relay端口>→127.0.0.1:<minio端口>，argv 传参，借 python 防火墙放行规则暴露给 VM）。端口启动前 bind 实测选取（Hyper-V HNS 会动态保留随机端口段，.env 里的端口只是首选值；2026-07-19 事故：9101-9200 被系统保留导致 MinIO 起不来）
+2. CH 执行 `BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('http://<VM侧宿主机IP>:<relay端口>/chbk/market.zip') ASYNC`，数据流直接出 VM 落到 F:
 3. **每次写同一个 market.zip**：restic 内容分块（CDC）对未变化的 CH part 去重，每日增量 ≈ 新增行情（~9GiB/天），版本历史由 restic 快照管理
 4. 备完即停 MinIO/relay（非常驻服务），restic 捕获 `F:\ch_backup_store`
 
@@ -123,7 +125,7 @@ CH 部署在 Hyper-V VM，其数据盘（588G/余 211G）装不下 315GiB 全量
 
 - PostgreSQL：①`psql -f D:\tmp_db_dumps\pg_globals.sql -d postgres`（恢复 zephyr / depgraph_reader / depgraph_writer 角色）②按 `config/.env.postgres` 执行 `ALTER ROLE zephyr PASSWORD '...'`（pg_roles 导出不含密码）③`pg_restore -d depgraph D:\tmp_db_dumps\depgraph.dump`
 - SQLite：覆盖 `data/databases/governance.db` 等
-- ClickHouse：`.\scripts\backup\restore.ps1 ch` — 自动执行：restic 取回 `F:\ch_backup_store` → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查。前置：目标 CH 中相关表需先 DROP（或为空库）
+- ClickHouse：`.\scripts\backup\restore.ps1 ch` — 自动执行：定位最近含 `F:\ch_backup_store` 的快照（CH 24h 节奏与代码 8h 解耦，latest 快照通常不含 CH 存储，禁止盲取 latest）→ restic 取回 → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查。前置：目标 CH 中相关表需先 DROP（或为空库）
 
 ## 保留策略
 
@@ -147,7 +149,7 @@ restic -r F:\restic-zephyr check --read-data
 | `backup_config.yaml` | 配置SSoT（路径/保留/排除/触发条件） |
 | `backup_reconciler.py` | 事件触发器（post-commit reconciler，超时4h） |
 | `backup.ps1` | 主备份脚本（六阶段流水线，含CH MinIO S3桥） |
-| `minio_tcp_relay.py` | TCP中转（9100→9101，借python防火墙规则暴露MinIO给VM） |
+| `minio_tcp_relay.py` | TCP中转（0.0.0.0:<relay端口>→127.0.0.1:<minio端口>，argv 传参，借python防火墙规则暴露MinIO给VM） |
 | `backup_manual.ps1` | 手动兜底触发入口（-Force 模式） |
 | `restore.ps1` | 恢复脚本（list/verify/latest/ch 四子命令） |
 | `README.md` | 本文档 |

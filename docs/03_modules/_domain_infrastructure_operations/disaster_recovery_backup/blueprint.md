@@ -71,7 +71,7 @@ design_maturity: prototype
 | 4 | `backup_manual.ps1` | §3.4 | 手动兜底触发入口（调用backup.ps1 -Force，跳过间隔保护） | 已实现 | |
 | 5 | `restore.ps1` | §3.5 | 恢复脚本（list/verify/latest/ch 四子命令） | 已实现 | |
 | 6 | `README.md` | §3.6 | 使用说明（自动触发机制/手动触发/灾难恢复） | 已实现 | |
-| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:9100→127.0.0.1:9101（借python防火墙放行规则暴露MinIO给CH VM） | 已实现 | |
+| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:<relay端口>→127.0.0.1:<minio端口>（argv 传参，调用方 bind 实测选 HNS 安全端口；借python防火墙放行规则暴露MinIO给CH VM） | 已实现 | |
 
 ---
 
@@ -128,6 +128,10 @@ design_maturity: prototype
    - `data/databases/` `data/raw/bdpan/` `data/vector_db/`
    - 根目录 `AGENTS.md` `pyproject.toml` `docker-compose.yml`
 2. **最小间隔保护**：距离上次成功备份 ≥ 8小时（状态持久化到 `data/databases/backup_state.json`）
+
+**CH 独立节奏（2026-07-19 治本）**：ClickHouse 全量备份 315GiB≈3h，与代码备份 8h 节奏解耦——CH 每 24h 至多一次（`last_ch_backup_time` 仅成功时推进，失败下一调度窗口重试），`-Force` 旁路（手动演练）。代码/PG/SQLite 保持 8h 节奏不变。
+
+**状态文件不入 git（2026-07-19 治本）**：`backup_state.json` 为纯运行时产物，已 gitignore 并退出跟踪。根因：tracked 状态文件在并发会话 worktree merge 时被还原成旧版本 → 8h 间隔检查失效 → 备份风暴。
 
 频率预估：日均1-2次（8小时间隔 + 仅重要文件变更触发，纯日志/cache变更不触发）
 
@@ -240,19 +244,25 @@ def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
     if result.returncode == 0:
         _update_state(last_backup_time=now_iso())
         return ReconcileResult(action="auto_committed",
-                               detail=f"backup ok: {result.stdout[-200:]}")
+                               detail=f"backup ok (clickhouse={ch_status}): ...")
+    if result.returncode == 2:  # CH阶段失败但代码备份成功（2026-07-19 治本：失败可见）
+        _update_state(last_backup_time=now_iso(), last_backup_status="ch_failed")
+        return ReconcileResult(action="warn",
+                               detail=f"backup ok but ClickHouse stage failed: {ch_err}")
     else:
         return ReconcileResult(action="warn",
                                detail=f"backup failed: {result.stderr[-200:]}")
 ```
 
-**状态文件** `data/databases/backup_state.json`：
+**状态文件** `data/databases/backup_state.json`（纯运行时产物，gitignored——tracked 状态会在并发会话 merge 时被还原导致备份风暴，2026-07-19 治本退出跟踪）：
 ```json
 {
   "last_backup_time": "2026-07-09T19:30:00+08:00",
   "last_backup_snapshot_id": "a1b2c3d4",
   "last_backup_status": "ok",
-  "total_backups_count": 42
+  "last_ch_backup_time": "2026-07-18T21:23:00+08:00",
+  "last_ch_backup_status": "ok",
+  "last_ch_backup_error": "(仅失败时存在)"
 }
 ```
 
@@ -420,20 +430,33 @@ sqlite3 data\databases\session_continuity.db ".backup D:\tmp_db_dumps\session_ba
 backup.ps1 (宿主机)
   1. 删除旧 market.zip 对象目录 + 残留 market.zip.lock 写锁 + .minio.sys/multipart 未完成分片
      （防 BACKUP_ALREADY_EXISTS；2026-07-18 事故：KILL 掉的备份留下写锁导致下次备份被拒）
-  2. 起 MinIO（127.0.0.1:9101，localhost-only 规避防火墙）+ minio_tcp_relay.py
-     （0.0.0.0:9100→9101，借 python.exe 已有 Public-allow 防火墙规则暴露给 VM）
-  3. HTTP 发 BACKUP DATABASE c1_market, DATABASE c3_fundamental
-     TO S3('http://172.24.16.1:9100/chbk/market.zip', key, secret) ASYNC
-     （必须 s3_uri_style=path：裸 IP 端点无 bucket 子域 DNS；bucket 名≥3字符）
-  4. 轮询 system.backups 至 BACKUP_CREATED（上限3h）→ 校验对象非空 → 停 MinIO/relay
-  5. restic 捕获 F:\ch_backup_store
+  2. 清理残留 MinIO/relay 进程（防端口占用污染bind实测）→ bind 实测选 HNS 安全端口
+     （.env 端口仅为首选值；Hyper-V HNS 动态保留随机 tcp 端口段，2026-07-19 事故：
+       9101-9200 被系统保留 → MinIO WinError 10013 启动失败 → CH 阶段静默跳过。
+       bind 实测是唯一可靠判据，netsh excludedportrange 仅作诊断）
+  3. 起 MinIO（127.0.0.1:<动态端口>，localhost-only 规避防火墙）+ minio_tcp_relay.py
+     （0.0.0.0:<relay端口>→127.0.0.1:<minio端口>，端口经 argv 传参；借 python.exe
+       已有 Public-allow 防火墙规则暴露给 VM）
+  4. HTTP 发 BACKUP DATABASE c1_market, DATABASE c3_fundamental
+     TO S3('http://<VM侧宿主机IP>:<relay端口>/chbk/market.zip', key, secret) ASYNC
+     （必须 s3_uri_style=path：裸 IP 端点无 bucket 子域 DNS；bucket 名≥3字符；
+       endpoint 主机取 .env CH_S3_ENDPOINT，端口替换为本轮动态 relay 端口）
+  5. 轮询 system.backups 至 BACKUP_CREATED（上限3h）→ 校验对象非空 → 停 MinIO/relay
+  6. restic 捕获 F:\ch_backup_store
 ```
+
+**节奏与失败可见性（2026-07-19 治本）**：
+- **24h 节奏**：全量 CH 备份 ≈3h，独立于代码备份 8h 节奏（见 §1.2）。
+- **失败可见**：CH 阶段失败时 backup.ps1 以 **exit 2** 退出（代码/PG/SQLite/restic 仍成功），
+  backup_reconciler 据此返回 warn ReconcileResult，状态文件落 `last_ch_backup_status/last_ch_backup_error`——
+  CH 失败禁止静默跳过（2026-07-19 事故：两次自动备份记录 ok 但 MinIO 未起、CH 未备份）。
+  exit 0=全部ok或CH按计划跳过，exit 1=流水线致命失败。
 
 **同一文件裁定（用户裁定 2026-07-18）**：每次写同一 key `market.zip`，不用日期后缀。restic 内容定义分块（CDC）对 zip 内未变化的 CH part 字节去重，每日 restic 增量 ≈ 当日新增行情（实测 ~9.2 GiB/天）；版本历史由 restic 快照管理，任意快照自包含可恢复（优于 base_backup 增量链，无需管链）。
 
 **凭据**：`config/.env.ch_backup`（gitignored）：MINIO_EXE/MINIO_ADDRESS/MINIO_ROOT/MINIO_BUCKET/CH_S3_ACCESS_KEY/CH_S3_SECRET_KEY/CH_S3_ENDPOINT/RELAY_SCRIPT。MinIO 本体在 `D:\tools\minio\minio.exe`（环境软件，同 restic 规，下载自国内镜像 dl.minio.org.cn）。
 
-**恢复**：`restore.ps1 ch` → restic 取回 F:\ch_backup_store → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查验证。
+**恢复**：`restore.ps1 ch` → 定位最近含 F:\ch_backup_store 的快照（CH 24h 节奏与代码 8h 解耦，latest 快照通常不含 CH 存储，禁止盲取 latest，2026-07-19 治本）→ restic 取回 → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查验证。
 
 ---
 
@@ -519,7 +542,7 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 
 - PostgreSQL：`pg_restore -d depgraph tmp\_db_dumps\depgraph.dump`
 - SQLite：覆盖 `governance.db` / `session_continuity.db`
-- ClickHouse：`.\scripts\backup\restore.ps1 ch` — restic 取回 `F:\ch_backup_store` → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查（前置：目标表先 DROP；架构见 §4.3）
+- ClickHouse：`.\scripts\backup\restore.ps1 ch` — 定位最近含 `F:\ch_backup_store` 的快照 → restic 取回 → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查（前置：目标表先 DROP；架构见 §4.3）
 
 ---
 
@@ -536,7 +559,7 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 | INV-07 | 禁止备份VMS snapshot_backup（GATE-VMS-SSOT硬阻断，30GB灾难根源） | 排除清单+AGENTS.md约束 |
 | INV-08 | backup_reconciler必须通过post-commit reconciler触发，禁止时间触发（PERM-TRIGGER gate） | AST门禁+reconciler注册校验 |
 | INV-09 | 自动触发必须满足双条件：重要文件变更 + 8小时间隔保护 | `_trigger`函数逻辑+单元测试 |
-| INV-10 | 备份状态必须持久化到 `data/databases/backup_state.json` | 状态文件存在性校验 |
+| INV-10 | 备份状态必须持久化到 `data/databases/backup_state.json`（纯运行时产物，gitignored，禁止重新纳入跟踪） | 状态文件存在性校验 |
 | INV-11 | 手动触发（-Force）跳过间隔保护，但必须走相同六阶段流水线 | 脚本参数校验 |
 
 ---
