@@ -4,7 +4,7 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_anomaly_detector; tests.agent_rbac.test_crosscut_d
 # [STARTUP] imported
-# [MATURITY] stub
+# [MATURITY] production
 # [INVARIANTS]
 # [MODIFY-GUARD]
 # [STABILITY] evolving
@@ -13,22 +13,47 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""Stub module: zephyr.security.access_control.detectors.anomaly_detector — implementation pending."""
+"""AnomalyDetector - rolling z-score anomaly detection per field."""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from statistics import mean, pstdev
+
+
+@dataclass
+class AnomalyScore:
+    anomalous: bool = False
+    z_score: float = 0.0
 
 
 class AnomalyDetector:
-    """Stub class — implementation pending."""
+    """Rolling z-score based anomaly detector.
 
-    pass
+    治本(2026-07-19): 实现 feed() 以匹配 tests/agent_rbac/test_crosscut_d.py 契约.
+    每个字段维护独立的历史窗口, z-score 超过阈值(3.0)判定为异常.
+    """
+
+    THRESHOLD: float = 3.0
+    MIN_SAMPLES: int = 2
+
+    def __init__(self) -> None:
+        self._history: dict[str, list[float]] = {}
+
+    def feed(self, field_name: str, value: float) -> AnomalyScore:
+        history = self._history.setdefault(field_name, [])
+        z_score = 0.0
+        anomalous = False
+        if len(history) >= self.MIN_SAMPLES:
+            mu = mean(history)
+            sigma = pstdev(history) if len(history) > 1 else 0.0
+            if sigma > 0:
+                z_score = abs(value - mu) / sigma
+                anomalous = z_score > self.THRESHOLD
+            elif value != mu:
+                z_score = float("inf")
+                anomalous = z_score > self.THRESHOLD
+        history.append(value)
+        return AnomalyScore(anomalous=anomalous, z_score=z_score)
 
 
-class AnomalyScore:
-    """Stub class — implementation pending."""
-
-    pass
-
-
-__all__ = [
-    "AnomalyDetector",
-    "AnomalyScore",
-]
+__all__ = ["AnomalyDetector", "AnomalyScore"]

@@ -131,7 +131,7 @@ class TestBootstrapSuperadminBridge:
     """测试Superadmin账户桥接."""
 
     def test_bridge_bootstrap(self):
-        from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+        from zephyr.security.access_control.bootstrap_superadmin import (
             BootstrapSuperadminBridge,
         )
 
@@ -144,7 +144,7 @@ class TestBootstrapSuperadminBridge:
         assert "capabilities" in result
 
     def test_bridge_idempotent(self):
-        from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+        from zephyr.security.access_control.bootstrap_superadmin import (
             BootstrapSuperadminBridge,
         )
 
@@ -156,7 +156,7 @@ class TestBootstrapSuperadminBridge:
         assert result2["bootstrapped"] is True
 
     def test_bridge_verify(self):
-        from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+        from zephyr.security.access_control.bootstrap_superadmin import (
             BootstrapSuperadminBridge,
         )
 
@@ -166,7 +166,7 @@ class TestBootstrapSuperadminBridge:
         assert result["valid"] is True
 
     def test_bridge_shutdown(self):
-        from zephyr.security.access_control.governance_bridges.bootstrap_superadmin import (
+        from zephyr.security.access_control.bootstrap_superadmin import (
             BootstrapSuperadminBridge,
         )
 

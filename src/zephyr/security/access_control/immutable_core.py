@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] verify_immutable_core_integrity() never raises; returns IntegrityResult with intact flag
 # [TESTS] tests/agent_rbac/test_rbac_auto_lifecycle.py
-# [A_module] module_id=MOD-SEC_immutable_core | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
+# [A_module] module_id=MOD-SEC-immutable_core | layer=module | stability=evolving | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
 """ImmutableCore — 不可变核心验证器.
 
@@ -29,7 +29,11 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import PROJECT_ROOT, REPO_ROOT
+
+# 治本(2026-07-19): PROJECT_ROOT 从 canonical SSoT (zephyr.shared.io.paths) 导入，
+# 不再本地重定义（SSOT-REDEFINITION gate 阻断）。
+# 测试通过 monkeypatch.setattr("...immutable_core.PROJECT_ROOT", tmp_path) 替换此绑定。
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +121,7 @@ class ImmutableCore:
         if project_root is not None:
             self.project_root = Path(project_root)
         else:
-            self.project_root = REPO_ROOT
+            self.project_root = PROJECT_ROOT
 
     def is_protected_path(self, path: str) -> bool:
         """检查路径是否在保护列表中."""
@@ -243,6 +247,7 @@ def get_immutable_core() -> ImmutableCore:
 
 __all__ = [
     "ALWAYS_BLOCKED_OPERATIONS",
+    "PROJECT_ROOT",
     "REPO_ROOT",
     "PROTECTED_PATHS",
     "ImmutableCore",

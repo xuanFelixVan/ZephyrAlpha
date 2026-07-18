@@ -33,9 +33,14 @@ from typing import Any
 # 一次性 bootstrap：算 sys.path（此 N 值对本文件固定且仅用一次，符合 project_memory 豁免）。
 # 先例：scripts/git_commit.py、scripts/governance/check_ssot_gate.py 均已 bootstrap import src/。
 # 注意：不能用 REPO_ROOT（它要从 zephyr 导入，而 zephyr 需要 sys.path 已设置——鸡生蛋）。
+# 治本(2026-07-19): 必须添加 src/ 而非项目根——zephyr 包位于 src/zephyr，
+# 添加项目根会导致 from zephyr import ... 失败（ModuleNotFoundError）。
+# 原 bug：添加 _PROJECT_ROOT（根目录）而非 _PROJECT_ROOT/src，导致所有 governance
+# 脚本在 subprocess 调用时（无 PYTHONPATH 继承）都报 ModuleNotFoundError: No module named 'zephyr'。
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]  # scripts/governance/_shared/ -> root
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+_SRC_ROOT = _PROJECT_ROOT / "src"
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
 
 # find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
