@@ -3524,7 +3524,7 @@ entries:
       _commit_auto 入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit。
     Phase 2（已完成，2026-07-19）：_pre_merge_auto_clean 回滚机制——session_worktree.py
       _execute_cleanups 用 git stash push 替代 git checkout --，与 S3-B 治本一致。
-    Phase 4（待执行）：stash 过期清理 reconciler——新增 make_stash_lifecycle_reconciler()，
+    Phase 4（已完成，2026-07-19）：stash 过期清理 reconciler——新增 make_stash_lifecycle_reconciler()，
       post-commit 触发，清理 > 24h 的 session_worktree 临时 stash。
   impact:
     - src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py（Phase 1：动态加载
@@ -3534,7 +3534,7 @@ entries:
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 2：_execute_cleanups
       git stash push 替代 git checkout --，已完成）
     - src/zephyr/governance/audit/reconciliation_registry.py（Phase 4：新增
-      make_stash_lifecycle_reconciler，待执行）
+      make_stash_lifecycle_reconciler，已完成）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
     - .runtime/reconcile_reports/stash_backup/（Phase 5 stash 备份，34 个 .diff + manifest.json）
     - .runtime/reconcile_reports/stash_deep_analysis.json（Phase 5 stash 分析报告）
@@ -3562,11 +3562,16 @@ entries:
       - 与 session_worktree_abort 的 S3-B 治本（2026-07-17）一致
       - session_worktree_abort 已在 S3-B 治本中用 git stash push（无需重复修改）
 
-    Phase 4 stash 过期清理 reconciler（待执行）：
-      - 新增 make_stash_lifecycle_reconciler()，post-commit 触发
-      - 清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀识别）
-      - 保留有 safe_to_drop=false 标记的 stash（需人工审查）
-  status: in_progress
+    Phase 4 stash 过期清理 reconciler（已完成 2026-07-19）：
+      - 新增 make_stash_lifecycle_reconciler()，post-commit 事件触发（priority=801）
+      - git stash list --format=%gd|%ct|%s 获取 stash ref/timestamp/message
+      - 清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀 session_worktree_pre_merge /
+        session_worktree_abort 识别）
+      - 保留 < 24h 的 stash（AI 可能还需要 pop 恢复）
+      - 按索引降序 drop（避免 renumbering 问题）
+      - 不影响用户手动 stash（无 session_worktree 前缀）
+      - 注册到 GitCommitGateway._register_default_reconcilers（紧跟 worktree_lifecycle=800）
+  status: resolved
   related_adjudication: 'FP-ISO.4C worktree 君子协定, TRAE-062 SSoT 分类铁律, ARCH-DEPGRAPH-RECONCILER-FAILSILENT, #ARCH-WORKTREE-001'
   related_rules: 'trae_054_depgraph_backup, session_worktree 君子协定'
   created: '2026-07-19'
