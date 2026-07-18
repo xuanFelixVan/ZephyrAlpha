@@ -29,6 +29,8 @@ Usage:
     python scripts/governance/phase_a_backup.py --verify-only
 """
 
+from __future__ import annotations
+
 __manifest__ = """
 args: [--tier0, --tier1, --tier2, --all, --verify-only, --output-dir]
 description: 阶段A安全网 Tier0/1/2 关键文件备份 + git bundle——原子写入+并行复制+SHA256校验
@@ -37,8 +39,6 @@ priority: P1
 timeout_seconds: 600
 warn_only: false
 """
-
-from __future__ import annotations
 
 import argparse
 import hashlib
