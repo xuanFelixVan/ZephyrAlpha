@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-17T14:04:10Z'
+generated_at: '2026-07-18T09:27:16Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 89
+total_gates: 90
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -802,6 +802,15 @@ gates:
   name: 'RULE-FOUR-WAY-ALIGN: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
   description: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: RULING-REFERENCE
+  name: 'RULING-REFERENCE: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）（CommitGate, priority=74）'
+  entry: in-process (GitCommitGateway)
+  description: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）
   files_trigger: ''
   always_run: false
   category: commit_gate
