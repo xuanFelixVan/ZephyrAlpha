@@ -383,11 +383,13 @@ class RollbackExecutor:
         files_discarded: list[str] = []
         for f in discardable:
             try:
-                self._run_git(["checkout", "--", f])
+                # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
+                # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
+                self._run_git(["restore", "--", f])
                 files_discarded.append(f)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 discard 失败（回滚失败不可见——最危险）
-                logger.warning("git checkout discard failed for file=%s (rollback incomplete)", f, exc_info=True)
+                logger.warning("git restore discard failed for file=%s (rollback incomplete)", f, exc_info=True)
 
         for f in staged_files:
             if f in discardable:
