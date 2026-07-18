@@ -4158,6 +4158,36 @@ capabilities:
       canonical = scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py 的
       make_readme_version_sync_reconciler。
 
+  # --------------------------------------------------------------------------
+  - capability_id: scripts_import_integrity_baseline_scan
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py
+    aliases:
+      - make_scripts_import_integrity_reconciler
+      - GATE-SCRIPTS-IMPORT-BASELINE
+      - scan_all_scripts_for_import_violations
+      - scripts_import_baseline
+      - ARCH-TOOL-HEALTH-V1
+      - scripts_import_integrity_baseline
+    description: >-
+      scripts/governance/**/*.py 的 _shared.constants 导入完整性 baseline 全扫 reconciler
+      （2026-07-19 治本，#ARCH-TOOL-HEALTH-V1 Phase 3，MOD-GOV-scripts_import_integrity_gate）。
+      GitCommitGateway commit 完成后自动触发（GATE-SCRIPTS-IMPORT-BASELINE, priority=210），
+      committed_files 含 scripts/governance/**/*.py 或 scripts_import_integrity_gate.py 时
+      扫描磁盘上所有 scripts/governance/**/*.py 文件，检测 _shared.constants 公开符号被使用
+      但未 import 的违规。治本病根：pre-commit gate（SCRIPTS-IMPORT-INTEGRITY, priority=104）
+      只扫 staged 文件（incremental-only），gate 上线前的基线 bug（如 deb695006f 误删
+      get_depgraph_pg_connection import）永远不会被扫到；且 --no-verify 可绕过 pre-commit。
+      本 reconciler 在 post-commit 阶段运行，commit 已入库不可绕过，补强 baseline 覆盖。
+      真源检测逻辑：scan_all_scripts_for_import_violations（与 pre-commit gate 共享
+      _scan_file_content helper，DRY）。全自动：事件触发（post-commit）+ 自动运行
+      （subprocess 内联）+ 自动维护（warn 告警驱动 AI 修复）+ 自动关闭（reconciler 返回即结束）。
+      canonical = scripts_import_integrity_gate.py 的 scan_all_scripts_for_import_violations
+      + reconciliation_registry.py 的 make_scripts_import_integrity_reconciler。
+    integrity_anchors:
+      - make_scripts_import_integrity_reconciler  # reconciler工厂(删则reconciler不注册,baseline全扫失效)
+      - scan_all_scripts_for_import_violations     # 全扫逻辑真源(删则baseline检测失效)
+      - _scan_file_content                          # 共享helper(删则gate+reconciler检测逻辑同时失效)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
