@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-18'
-total_scripts: 574
+total_scripts: 572
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -34,22 +34,6 @@ scripts:
   path: check_naming_convention.py
   description: FILENAME_UPPERCASE_WHITELIST = [
   domain: check_naming_convention.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: check_section_structure.py
-  path: check_section_structure.py
-  description: "\uFEFF#!/usr/bin/env python3"
-  domain: check_section_structure.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: check_sections_v2.py
-  path: check_sections_v2.py
-  description: 检查 docs/03_modules/ 下所有有 frontmatter (module_id:) 的 .md 蓝图文件的章节结构顺序是否一致。
-  domain: check_sections_v2.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
