@@ -78,9 +78,9 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|data / data| docs_03_modules_cross_layer_model_profiler_blueprint_md
@@ -147,9 +147,9 @@ graph TD
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_TRADING
-    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_ml_train_implementations_default_inference_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_ml_train_inference_base_py -.->|导入依赖 / import_depends| D_TRADING
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     D_INTELLIGENCE -.->|导入依赖 / import_depends| src_zephyr_ml_train_inference_base_py
