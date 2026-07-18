@@ -687,6 +687,11 @@ def make_create_guard() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
+        # 对标 DIRECTORY-CONTRACT / SESSION-REQUIRED / TTL-METADATA / FILE-PLACEMENT-TTL gate。
+        _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
+        if not _governance_dir.is_dir():
+            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping CREATE-GUARD"
         commit_files_rel = _compute_commit_files_rel(gateway, files)
 
         # 元问题3治本：新增 make_*_reconciler 需 trae_060 §4 审查标记

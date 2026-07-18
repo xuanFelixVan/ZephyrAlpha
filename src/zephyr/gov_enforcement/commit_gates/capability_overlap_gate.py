@@ -209,6 +209,11 @@ def make_capability_overlap_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
+        # 对标 DIRECTORY-CONTRACT / SESSION-REQUIRED / TTL-METADATA / FILE-PLACEMENT-TTL gate。
+        _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
+        if not _governance_dir.is_dir():
+            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping CAPABILITY-OVERLAP"
         staged_new = _get_staged_new_files(gateway)
         if staged_new is None:
             return True, ""  # warn-only 契约：fail-loud 仍 return True

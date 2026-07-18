@@ -61,6 +61,11 @@ def make_held_overlap_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
+        # 对标 DIRECTORY-CONTRACT / SESSION-REQUIRED / TTL-METADATA / FILE-PLACEMENT-TTL gate。
+        _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
+        if not _governance_dir.is_dir():
+            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping HELD-OVERLAP"
         allow_overlap = kwargs.get("allow_overlap", False)
         if allow_overlap:
             # 逃生通道：显式声明放行，调用方负责追加 [GW:<sid>:overlap] 标记

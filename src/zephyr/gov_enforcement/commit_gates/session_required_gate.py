@@ -69,6 +69,15 @@ def make_session_required_gate() -> GateSpec:
             # 逃生通道：显式声明放行（复用现有 allow_overlap，不新增参数）
             return True, ""
 
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
+        # 此 gate 为 Zephyr AI 开发设计（强制 AI 调 session_worktree_start 注册 session），
+        # 测试用 tmp_path 临时仓库无 Zephyr 项目结构，不应被此 gate 阻断。
+        # 对标 DIRECTORY-CONTRACT gate 的非 Zephyr skip 逻辑。
+        project_root = gateway.project_root
+        governance_dir = project_root / "scripts" / "governance" / "d1_structure"
+        if not governance_dir.is_dir():
+            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping SESSION-REQUIRED"
+
         session_id = kwargs.get("session_id", "")
 
         # 第一道：session_id 为空或保留词 -> 阻断
