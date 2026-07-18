@@ -727,6 +727,8 @@ class AgentOrchestrator:
         default_token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         sanitize_llm_context: bool = True,
         input_sanitizer: InputSanitizer | None = None,
+        lsg_gateway: Any | None = None,
+        enable_lsg: bool = True,
     ) -> None:
         self._router = router
         self._invoker = tool_invoker
@@ -742,6 +744,12 @@ class AgentOrchestrator:
             self._input_sanitizer = InputSanitizer(root=str(REPO_ROOT))
         else:
             self._input_sanitizer = None
+        # P0-5 LSG DI seam: 与 input_sanitizer 对称的可注入/可关闭设计。
+        #   enable_lsg=False → 完全关闭 LSG 扫描（测试场景）；
+        #   lsg_gateway=<mock> → 注入 mock gateway（测试场景）；
+        #   lsg_gateway=None + enable_lsg=True → lazy init 类级单例（生产路径，保持原行为）。
+        self._lsg_gateway = lsg_gateway
+        self._enable_lsg = enable_lsg
 
     # ---- accessors ---------------------------------------------------
 
@@ -895,18 +903,25 @@ class AgentOrchestrator:
     _lsg_lock = threading.Lock()  # 5.172.M8 修复: class-level lock 保护 _lsg_gateway_instance lazy init
 
     def _lsg_scan_agent_action(self, tool_name: str, tool_params: dict[str, Any]) -> str | None:
-        # 5.172.M8 修复: 双重检查锁定, 防多线程并发首次调用创建多个 LSG Gateway 实例
-        if AgentOrchestrator._lsg_gateway_instance is None:
-            with AgentOrchestrator._lsg_lock:
-                if AgentOrchestrator._lsg_gateway_instance is None:
-                    try:
-                        from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
+        # P0-5 LSG DI seam: 测试可通过 enable_lsg=False 关闭，或 lsg_gateway=<mock> 注入
+        if not self._enable_lsg:
+            return None
+        # 优先用实例级 gateway（可 mock），否则 lazy init 类级单例（生产路径）
+        if self._lsg_gateway is not None:
+            gw = self._lsg_gateway
+        else:
+            # 5.172.M8 修复: 双重检查锁定, 防多线程并发首次调用创建多个 LSG Gateway 实例
+            if AgentOrchestrator._lsg_gateway_instance is None:
+                with AgentOrchestrator._lsg_lock:
+                    if AgentOrchestrator._lsg_gateway_instance is None:
+                        try:
+                            from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
-                        AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
-                    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                        logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e, exc_info=True)
-                        return None
-        gw = AgentOrchestrator._lsg_gateway_instance
+                            AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
+                        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                            logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e, exc_info=True)
+                            return None
+            gw = AgentOrchestrator._lsg_gateway_instance
         try:
             import asyncio
 
