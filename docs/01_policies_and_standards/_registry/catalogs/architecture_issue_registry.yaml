@@ -3075,7 +3075,7 @@ entries:
 - issue_id: '#ARCH-FRONTMATTER-STATE-001'
   title: 蓝图 frontmatter 状态三层模型——代码现实→depgraph→frontmatter 缓存同步
   severity: P1高
-  status: in_progress
+  status: resolved
   adjudication: |
     ARCH-FRONTMATTER-STATE-001 确立蓝图 frontmatter 状态字段的三层模型与同步机制，
     治本"frontmatter 状态字段失效导致幻觉"问题。
@@ -3132,9 +3132,13 @@ entries:
         tests/blueprint_construction_template.md）+ 规则/文档更新（trae_060 L208、
         ARCH-059 标注 superseded、rule_enforcement_registry L689、registry_of_registries
         L455/L464）。
-    Phase 4（待执行）：新增 FRONTMATTER_STATE_STALE 门禁到 check_blueprint_code_alignment.py
-      ——检测 frontmatter.build_status 与 depgraph.build_status 不一致并报告为
-      WARN（存量 9/9 stale 蓝图通过全量 depgraph 重建 + sync_all_panorama 修复）。
+    Phase 4（已完成，本次执行）：新增 FRONTMATTER_STATE_STALE 门禁到
+      check_blueprint_code_alignment.py——检测 frontmatter.build_status 与
+      depgraph.build_status 不一致并报告为 WARN/MEDIUM。聚合语义与
+      blueprint_frontmatter_reconciler 对齐（按 blueprint_id, (path IS NULL), path
+      排序后取第一个非空 build_status）。扫描时跳过 index.md 避免目录索引误报。
+      存量修复：generate_project_depgraph.py --force 全量重建 + sync_all_panorama
+      同步 169 个模块后，复跑 gate 报告 FRONTMATTER_STATE_STALE=0。
       该门禁是 L3 cache 失效的机械检测层，与 Phase 2 reconciler 形成"检测+修复"闭环。
 
     【向内收四原则符合性】
@@ -3147,11 +3151,16 @@ entries:
   fix_phase: |
     Phase 1 已完成（commit d51a02b675）
     Phase 2 已完成（commits c9320342fb+08b14705ce+046a0847ee+a816983b1e）
-    Phase 3 进行中：
+    Phase 3 已完成：
       Commit 1 已完成（306200e75d）
       Commit 2 已完成（01189ac76d+32052d289c+7f951c42bb）
-      Commit 3 本次执行（代码/测试修复 + 规则/文档更新）
-    Phase 4 待执行（FRONTMATTER_STATE_STALE 门禁 + 存量修复）
+      Commit 3 已完成（代码/测试修复 + 规则/文档更新）
+    Phase 4 已完成（本次执行）：
+      - 新增 FRONTMATTER_STATE_STALE gate（WARN/MEDIUM）到 check_blueprint_code_alignment.py
+      - 新增 _aggregate_build_status/load_depgraph_build_status/scan_blueprint_frontmatter_entries/check_frontmatter_state_stale
+      - 新增 tests/governance/test_check_blueprint_code_alignment.py（17 个测试全部通过）
+      - 全量 depgraph 重建 + sync_all_panorama 修复存量 stale
+      - 复跑 gate 验证 FRONTMATTER_STATE_STALE=0
   impact:
   - scripts/governance/d5_architecture/generators/align_panoramas.py（PanoramaNode 删除 construction_progress，_is_blueprint_not_started 改 graph-based）
   - scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py（BlueprintFrontmatter 删除字段）
@@ -3173,6 +3182,8 @@ entries:
   - docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml（L208 退役说明）
   - docs/01_policies_and_standards/_registry/catalogs/rule_enforcement_registry.yaml（L689 描述更新）
   - docs/registry_of_registries.yaml（L455/L464 build_status 替换）
+  - scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py（Phase 4 FRONTMATTER_STATE_STALE gate）
+  - tests/governance/test_check_blueprint_code_alignment.py（Phase 4 测试）
   related_adjudication: '#ARCH-059, #ARCH-053, #ARCH-056, TRAE-060'
   created: '2026-07-17'
   last_updated: '2026-07-18'

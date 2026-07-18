@@ -1259,6 +1259,29 @@ capabilities:
       canonical 在 scripts/ 下，用 canonical_override 显式声明。
 
   # --------------------------------------------------------------------------
+  - capability_id: blueprint_code_alignment_checker
+    canonical_override: scripts/governance/d5_architecture/checkers/check_blueprint_code_alignment.py
+    aliases:
+      - check_blueprint_code_alignment
+      - blueprint_alignment_checker
+      - blueprint_code_drift_detector
+      - FRONTMATTER_STATE_STALE
+      - frontmatter_state_stale_gate
+      - blueprint_frontmatter_stale_checker
+    description: >-
+      蓝图↔代码双向对齐检测器（ARCH-FRONTMATTER-STATE-001 Phase 4，2026-07-18）。
+      检测代码[BLUEPRINT]头部 module_id 双源验证（registry+depgraph）+ 蓝图§4文件清单
+      depgraph 派生（裁定#211）+ frontmatter.build_status 与 depgraph 聚合 build_status
+      一致性（FRONTMATTER_STATE_STALE，WARN/MEDIUM）。聚合语义与
+      blueprint_frontmatter_reconciler 对齐（按 blueprint_id, (path IS NULL), path
+      排序后取第一个非空 build_status）。扫描蓝图 frontmatter 时跳过 index.md 避免
+      目录索引误报。--scan-root 用于 #ARCH-DEP-001 第二期 pre-merge 拓扑硬阻断。
+    integrity_anchors:
+      - check_frontmatter_state_stale
+      - _aggregate_build_status
+      - scan_blueprint_frontmatter_entries
+
+  # --------------------------------------------------------------------------
   - capability_id: schema_health_verification
     canonical_override: scripts/governance/d11_compliance/verify_schema_health.py
     aliases:
