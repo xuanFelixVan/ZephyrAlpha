@@ -155,7 +155,6 @@ infrastructure:
     dependency_of:
       - "MOD-INF-011"
       - "MOD-CONTEXT_ENGINE"
-      - "MOD-KB-001"
       - "MOD-TASK_SYSTEM"
     sla: "< 200ms retrieval p95, index rebuild < 10 min"
     status: provisioned
@@ -355,7 +354,6 @@ summary:
     MOD-INF-012A: [INFRA-DB-004]
     MOD-INF-012B: [INFRA-DB-003]
     MOD-CONTEXT_ENGINE: [INFRA-DB-002]
-    MOD-KB-001: [INFRA-DB-002]
     MOD-TASK_SYSTEM:
       - INFRA-MQ-001
       - INFRA-DB-001

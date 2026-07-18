@@ -1,12 +1,12 @@
 registry:
   version: 2.7.10
   created: '2026-05-02'
-  last_updated: '2026-07-16'
-  total_blueprints: 61
+  last_updated: '2026-07-18'
+  total_blueprints: 57
   scope: 03_modules/
-  note: Auto-synced from 60 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 57 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-07-16'
+  generated_at: '2026-07-18'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -100,7 +100,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.3.0
+  version: 1.3.1
   generation: 1
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_backtest/blueprint.md
@@ -114,7 +114,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 1.1.0
+  version: 1.1.1
   generation: 1
   last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
@@ -128,7 +128,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.35.1
+  version: 0.35.2
   generation: 1
   last_updated: '2026-05-19'
   file_path: 03_modules/_cross_layer/feedback_loop/blueprint.md
@@ -141,10 +141,23 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.8.2
+  version: 0.8.3
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_cross_layer/gate_engine/blueprint.md
+- module_id: MOD-GOV-ALIGNMENT-LOOP
+  name: alignment_loop
+  title: 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
+  summary: ''
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: 1.0.1
+  generation: 1
+  last_updated: '2026-07-14'
+  file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
 - module_id: MOD-GOV-SYNC-PANORAMA
   name: panorama_alignment_engine
   title: 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
@@ -158,23 +171,10 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 1.1.0
+  version: 1.1.1
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
-- module_id: MOD-GOV-ALIGNMENT-LOOP
-  name: alignment_loop
-  title: 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
-  summary: 蓝图-代码对齐长效闭环引擎——编排检测(drift_detector)→修复(auto_fix_engine)→同步(panorama_alignment_engine)的无人值守闭环。S1-S5五子任务。
-  layer: L1_foundation
-  functional_domain: governance
-  blueprint_status: Active
-  blueprint_level: module
-  priority: P2
-  version: 1.0.0
-  generation: 1
-  last_updated: '2026-07-14'
-  file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
 - module_id: MOD-GOVERNANCE
   name: _domain_governance
   title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
@@ -184,7 +184,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 0.13.0
+  version: 0.13.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/blueprint.md
@@ -197,7 +197,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 3.1.0
+  version: 3.1.1
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
@@ -212,7 +212,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 6.1.1
+  version: 6.1.2
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
@@ -225,7 +225,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 5.5.0
+  version: 5.5.2
   generation: 1
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/governance_automation/blueprint.md
@@ -238,7 +238,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.39.1
+  version: 0.39.2
   generation: 2
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/pipeline/blueprint.md
@@ -252,7 +252,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.12.1
+  version: 0.12.2
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_domain_knowledge/vector_memory/blueprint.md
@@ -265,7 +265,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.3.39
+  version: 0.3.40
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
@@ -279,7 +279,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.0.2
+  version: 2.0.3
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md
@@ -294,7 +294,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.19.0
+  version: 0.19.1
   generation: 2
   last_updated: '2026-06-23'
   file_path: 03_modules/_cross_layer/shared_core/blueprint.md
@@ -308,7 +308,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.15.0
+  version: 0.15.1
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_domain_governance/code_dedup_engine/blueprint.md
@@ -321,7 +321,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 1.1.0
+  version: 1.1.1
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md
@@ -335,7 +335,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.19.0
+  version: 0.19.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_autonomy_core/agent_spec/blueprint.md
@@ -349,7 +349,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.0
+  version: 2.1.1
   generation: 9
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/audit_trail/blueprint.md
@@ -364,7 +364,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 9.0.0
+  version: 9.0.1
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_autonomy_core/rollback_system/blueprint.md
@@ -378,7 +378,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.0
+  version: 2.1.1
   generation: 3
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
@@ -393,7 +393,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.0
+  version: 3.1.1
   generation: 4
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/drift_detector/blueprint.md
@@ -414,7 +414,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.7.0
+  version: 0.7.1
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
@@ -427,7 +427,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.12.0
+  version: 0.12.1
   generation: 3
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md
@@ -440,7 +440,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.0
+  version: 3.1.1
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md
@@ -453,24 +453,10 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 6.1.0
+  version: 6.1.1
   generation: 6
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/audit_orchestrator/blueprint.md
-- module_id: MOD-INF-043
-  name: disaster_recovery_backup
-  title: 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
-  summary: 灾备备份系统——事件触发的Restic去重备份流水线，post-commit reconciler自动驱动（重要文件变更+8小时间隔保护，日均1-2次），覆盖代码+配置+数据库+不可替代数据，目标盘F:(SanDisk
-    2TB)，遵循3-2-1原则与数据最小化原则
-  layer: L0_infrastructure
-  functional_domain: operations
-  blueprint_status: Active
-  blueprint_level: module
-  priority: P1
-  version: 1.1.0
-  generation: 1
-  last_updated: '2026-07-17'
-  file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
 - module_id: MOD-INF-028
   name: semantic_auditor
   title: Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接
@@ -480,7 +466,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 6.1.0
+  version: 6.1.1
   generation: 5
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/semantic_auditor/blueprint.md
@@ -493,7 +479,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.0
+  version: 2.1.1
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/orphan_judge/blueprint.md
@@ -507,7 +493,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.2.0
+  version: 2.2.1
   generation: 17
   last_updated: '2026-05-23'
   file_path: 03_modules/_cross_layer/red_blue_validator/blueprint.md
@@ -521,7 +507,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 5.1.0
+  version: 5.1.1
   generation: 5
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/auto_fix_engine/blueprint.md
@@ -534,7 +520,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 3.3.0
+  version: 3.3.1
   generation: 3
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/behavioral_auditor/blueprint.md
@@ -547,7 +533,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.2.0
+  version: 2.2.1
   generation: 2
   last_updated: '2026-05-23'
   file_path: 03_modules/_cross_layer/model_profiler/blueprint.md
@@ -560,7 +546,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 6.0.0
+  version: 6.0.1
   generation: 2
   last_updated: '2026-05-14'
   file_path: 03_modules/_cross_layer/auto_runtime_core/blueprint.md
@@ -573,7 +559,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.3.2
+  version: 2.3.3
   generation: 2
   last_updated: '2026-06-27'
   file_path: 03_modules/_cross_layer/model_capability_exam/blueprint.md
@@ -586,7 +572,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.2.0
+  version: 0.2.1
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_governance/registry_governance/blueprint.md
@@ -599,20 +585,21 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_infrastructure_runtime/state_machine_engine/blueprint.md
 - module_id: MOD-INF-039
   name: agent_orchestrator
   title: Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎
-  summary: ''
+  summary: Agent 全生命周期编排：任务队列、Agent调度、沙箱执行、幻觉检测、滚动升级、状态同步、故障恢复、会话管理。遥测跨层支撑层·Vibe Coding
+    2.0 五大核心服务之一。
   layer: L1_foundation
   functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 1.0.0
+  version: 1.0.1
   generation: 1
   last_updated: '2026-05-19'
   file_path: 03_modules/_cross_layer/agent_orchestrator/blueprint.md
@@ -625,30 +612,24 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_integration/blueprint.md
-- module_id: MOD-KB-001
-  name: knowledge_base
-  title: 知识库系统蓝图
-  summary: ZephyrAlpha 知识库系统完整蓝图——[容量升级中 v0.11.0] 设计上限 10,000脚本/1,500模块/100AI并发/40-100脚本并发执行/增量扫描默认/全量扫描可选。当前覆盖：入库(G1-G5五门禁+§3.9.1
-    8条来源矩阵+§5.14内容安全门禁) → 存储(§7三层存储+§7.8灾备+§7.9部分回滚与事务写入+§7.10系统自身纵深防御+§7.10.8 Windows单机健壮性)
-    → 出库(§9检索质量度量+混合检索BM25+RRF+查询改写HyDE+上下文动态分配+§9.4.1多模型格式适配) → 演化(§9 KE版本semver+依赖级联+§9.8隐含因果链检测+§9.8.1引用完整性自检+去重聚类HDBSCAN+效果A/B测试+Self-RAG自反思)
-    → 运维(§9.10 Token预算背压+§9.12三级记忆HotWarmCold+§9.6知识溯源PROV+§4.5冷启动引导引擎+§9.11.1截图文本退化+§12.5
-    E2E集成测试) → 健康保障(§9.18 7项运营期长青机制+§3.9.6异常中断恢复) → §3.5.1多信号源新鲜度引擎(四信源融合min()防御)。§7.10
-    纵深防御(7项SOC2/ISO27001审计级保护)。ChromaDB 4 Collection向量架构 + SQLite元数据层 + 10状态KE状态机
-    + 三轨19类知识分类 + KO→KE→KB三级漏斗 + KE Schema 31字段 + 字段稳定性三级分级 + Human-Gated三层权限模型 +
-    KB规则执行引擎(§9.5) + 互补知识链接(§9.9.1) + 项目阶段感知温度(§9.12.2)。全自动零Owner触发(月均≤12min@≤300KE，非线性增长，LLM费用≤¥0.40)。experimental代码已实现(12模块/3600行)，beta建设进行中。
-  layer: L1_foundation
-  functional_domain: intelligence
+- module_id: MOD-INF-043
+  name: disaster_recovery_backup
+  title: 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
+  summary: 灾备备份系统——事件触发的Restic去重备份流水线，post-commit reconciler自动驱动（重要文件变更+8小时间隔保护，日均1-2次），覆盖代码+配置+数据库+不可替代数据，目标盘F:(SanDisk
+    2TB)，遵循3-2-1原则与数据最小化原则
+  layer: L0_infrastructure
+  functional_domain: operations
   blueprint_status: Active
   blueprint_level: module
-  priority: P0
-  version: 0.12.1
+  priority: P1
+  version: 1.4.0
   generation: 1
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_knowledge/knowledge_base/blueprint.md
+  last_updated: '2026-07-19'
+  file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
 - module_id: MOD-L00-001
   name: _domain_data
   title: Data Source Core 蓝图+施工图 — 数据接入层
@@ -658,7 +639,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 4.0.0
+  version: 4.0.1
   generation: 4
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_data/blueprint.md
@@ -671,7 +652,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 4.0.0
+  version: 4.0.1
   generation: 3
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_factor/blueprint.md
@@ -684,7 +665,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 3.0.0
+  version: 3.0.1
   generation: 3
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_signal/blueprint.md
@@ -697,7 +678,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.0
+  version: 2.2.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_risk/blueprint.md
@@ -711,7 +692,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_portfolio_core/blueprint.md
@@ -726,9 +707,9 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.0
+  version: 2.2.2
   generation: 2
-  last_updated: '2026-07-05'
+  last_updated: '2026-07-17'
   file_path: 03_modules/_domain_execution_core/blueprint.md
 - module_id: MOD-L07-001
   name: _domain_reporting
@@ -740,7 +721,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_reporting/blueprint.md
@@ -758,7 +739,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.0
+  version: 3.1.1
   generation: 2
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_frontend/blueprint.md
@@ -771,7 +752,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_research/blueprint.md
@@ -785,7 +766,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_compliance/blueprint.md
@@ -799,7 +780,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_machine_learning_train/blueprint.md
@@ -813,7 +794,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 2.1.0
+  version: 2.1.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_simulation/blueprint.md
@@ -832,7 +813,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.0.1
+  version: 2.0.2
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_cross_layer/large_language_model_security/blueprint.md
@@ -845,50 +826,10 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 1.3.1
+  version: 1.3.2
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_master_blueprint/blueprint.md
-- module_id: MOD-MASTER-001
-  name: _master_blueprint_agent_spec
-  title: Agent Spec 蓝图 — CBAC能力矩阵·Skill路由
-  summary: CBAC能力访问控制矩阵——12系统×12系统完整授权关系、违规响应、离线更新流程、编排器特权声明、Skill路由接口定义。
-  layer: L1_foundation
-  functional_domain: infrastructure
-  blueprint_status: Active
-  blueprint_level: domain
-  priority: P0
-  version: 1.3.0
-  generation: 2
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_master_blueprint/blueprint_agent_spec.md
-- module_id: MOD-MASTER-002
-  name: _master_blueprint_baseline
-  title: Baseline 蓝图 — 集成闭环总蓝图基线（§零~§三十七 12系统拓扑+63条CT-*契约）
-  summary: MOD-MASTER_BLUEPRINT 基线蓝图 v0.9.2。12 系统拓扑 + 63 条 CT-* 集成契约 + 共享 Schema + 全局状态传播
-    + 容量预算 + 施工 Phase + Anti-Patterns + 设计决策 + 集成测试 + 风险 + 治理信息。
-  layer: L1_foundation
-  functional_domain: infrastructure
-  blueprint_status: Active
-  blueprint_level: domain
-  priority: P0
-  version: 0.9.2
-  generation: 1
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_master_blueprint/blueprint_baseline.md
-- module_id: MOD-MASTER-003
-  name: _master_blueprint_capacity
-  title: Capacity 蓝图 — 容量升级设计·十个升级章+12缺口审计
-  summary: 容量升级设计蓝图。§-2二次容量审计识别12个体系级缺口（GAP-M01~M12），§-1十个升级章完整设计方案。设计上限：10,000治理脚本/1,500模块/100AI并发。
-  layer: L1_foundation
-  functional_domain: infrastructure
-  blueprint_status: Active
-  blueprint_level: domain
-  priority: P0
-  version: 1.3.0
-  generation: 3
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_master_blueprint/blueprint_capacity.md
 - module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
   name: resource_optimization_engine
   title: 资源优化引擎蓝图
@@ -898,7 +839,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 5.4.0
+  version: 5.4.1
   generation: 2
   last_updated: '2026-05-22'
   file_path: 03_modules/_cross_layer/resource_optimization_engine/blueprint.md
@@ -912,7 +853,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.9.5
+  version: 0.9.6
   generation: 1
   last_updated: '2026-05-16'
   file_path: 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
@@ -926,7 +867,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P1
-  version: 4.3.2
+  version: 4.3.3
   generation: 3
   last_updated: '2026-07-07'
   file_path: 03_modules/_cross_layer/database/blueprint.md
@@ -939,41 +880,47 @@ blueprints:
   blueprint_status: Active
   blueprint_level: system
   priority: P0
-  version: 0.17.0
+  version: 0.17.1
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 60
+  total: 57
   by_blueprint_status:
-    Active: 54
+    Active: 51
     Draft: 6
   by_layer:
     L2_domain: 11
-    L1_foundation: 31
+    L1_foundation: 28
     L0_infrastructure: 17
     L3_application: 1
-  note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress 已于 2026-07-18 退役，ARCH-FRONTMATTER-STATE-001 Phase 3）
-  last_recomputed: '2026-07-16'
+  note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
+    已于 2026-07-18 退役）
+  last_recomputed: '2026-07-18'
 changelog:
 - version: 2.7.10
   date: '2026-07-16'
   changes:
   - '[manual-fix] AI-18 第二轮检查修复——补全 3 处空字段（治理本源 frontmatter + 派生 registry 同步）'
-  - 'MOD-INF-024(budget_enforcer).frontmatter: 新增 generation=1, last_updated=2026-07-16；registry.generation: [] → [1]'
-  - 'MOD-INF-042(_domain_integration).frontmatter: 新增 date=2026-06-23, last_updated=2026-07-16, generation=1；registry.generation: [] → [1]; registry.last_updated: [] → [2026-07-16]'
-  - '遵循 SSoT 铁律：物理 frontmatter 是真源，registry 由 sync_registry_from_blueprints.py 单向派生'
+  - 'MOD-INF-024(budget_enforcer).frontmatter: 新增 generation=1, last_updated=2026-07-16；registry.generation:
+    [] → [1]'
+  - 'MOD-INF-042(_domain_integration).frontmatter: 新增 date=2026-06-23, last_updated=2026-07-16,
+    generation=1；registry.generation: [] → [1]; registry.last_updated: [] → [2026-07-16]'
+  - 遵循 SSoT 铁律：物理 frontmatter 是真源，registry 由 sync_registry_from_blueprints.py 单向派生
 - version: 2.7.9
   date: '2026-07-16'
   changes:
   - '[manual-fix] AI-18 审计修复——MOD-INF-027 ID 重复治理 + 词表归一 + 字段补全 + MASTER 子蓝图登记'
-  - 'MOD-INF-027(disaster_recovery_backup).module_id: [MOD-INF-027] → [MOD-INF-040]（消除与 audit_orchestrator 的 ID 冲突）'
-  - 'MOD-INF-027(disaster_recovery_backup).construction_progress: [planned] → [not_started]（planned 非受控词表）'
-  - 'MOD-INF-028(semantic_auditor).construction_progress: [mostly_implemented] → [partially_implemented]（mostly_implemented 非受控词表）'
+  - 'MOD-INF-027(disaster_recovery_backup).module_id: [MOD-INF-027] → [MOD-INF-040]（消除与
+    audit_orchestrator 的 ID 冲突）'
+  - 'MOD-INF-027(disaster_recovery_backup).construction_progress: [planned] → [not_started]（planned
+    非受控词表）'
+  - 'MOD-INF-028(semantic_auditor).construction_progress: [mostly_implemented] → [partially_implemented]（mostly_implemented
+    非受控词表）'
   - 'MOD-GOV-SYNC-PANORAMA.generation: [] → [1]; last_updated: [] → [2026-07-16]（补全空字段）'
-  - '新增 MOD-MASTER-001 → 03_modules/_master_blueprint/blueprint_agent_spec.md'
-  - '新增 MOD-MASTER-002 → 03_modules/_master_blueprint/blueprint_baseline.md'
-  - '新增 MOD-MASTER-003 → 03_modules/_master_blueprint/blueprint_capacity.md'
+  - 新增 MOD-MASTER-001 → 03_modules/_master_blueprint/blueprint_agent_spec.md
+  - 新增 MOD-MASTER-002 → 03_modules/_master_blueprint/blueprint_baseline.md
+  - 新增 MOD-MASTER-003 → 03_modules/_master_blueprint/blueprint_capacity.md
   - 'registry.version: [2.7.0] → [2.7.9]; registry_version(尾) 对齐为 2.7.9（消除三处版本号冲突）'
 - version: 2.7.8
   date: '2026-07-13'

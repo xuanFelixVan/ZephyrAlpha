@@ -1605,10 +1605,6 @@ sections:
       prefix: MOD-INF
       format: MOD-INF-NNN
       example: MOD-INF-005(脚本系统)
-    - level: Level 2知识库模块
-      prefix: MOD-KB
-      format: MOD-KB-NNN
-      example: MOD-KB-001(知识库)
     - level: Level 2数据源模块
       prefix: MOD-DS
       format: MOD-DS-NNN
@@ -1662,9 +1658,6 @@ sections:
       level: Level 1(当前)→Level 0(beta升级后)
       note: 当前承担基础设施域集成蓝图职责beta后升级为全系统总蓝图或降级为DOMAIN-L01兼容期内ID不动
     - id: MOD-INF-001~017
-      level: Level 2 MODULE
-      note: 不涉及不兼容
-    - id: MOD-KB-001
       level: Level 2 MODULE
       note: 不涉及不兼容
     - id: MOD-INF-003(deprecated)
@@ -1742,10 +1735,6 @@ sections:
       blueprint_level: module
     - module_id: MOD-TASK_SYSTEM
       title: 任务系统
-      belongs_to: MOD-MASTER_BLUEPRINT
-      blueprint_level: module
-    - module_id: MOD-KB-001
-      title: 知识库
       belongs_to: MOD-MASTER_BLUEPRINT
       blueprint_level: module
     - module_id: MOD-GATE_ENGINE

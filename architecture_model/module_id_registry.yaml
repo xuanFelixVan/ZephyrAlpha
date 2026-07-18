@@ -375,7 +375,7 @@ registered_ids:
     title: "任务卡系统 + 知识库（KMS）蓝图与施工"
     path: "docs/03_modules/_domain-infra_ops/task-card-kms/blueprint.md"
     status: retired
-    note: "已废弃——内容已被 MOD-TASK_SYSTEM (任务系统) 和 MOD-KB-001 (知识库) 吸收。物理文件已于2026-05-06标记删除。"
+    note: "已废弃——内容已被 MOD-TASK_SYSTEM (任务系统) 吸收。物理文件已于2026-05-06标记删除。"
   - module_id: MOD-INF-009
     title: "Task Pipeline — M1-M11 双管线路由"
     path: "docs/03_modules/_cross_layer/pipeline/blueprint.md"

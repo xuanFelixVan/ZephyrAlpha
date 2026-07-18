@@ -1005,16 +1005,6 @@ dependencies:
   description: Budget Enforcer 预算管控——技能加载Token预算检查。
   direction: upstream
   valid_since: '2026-05-16'
-- dep_id: DEP-019-015
-  source: MOD-INF-019
-  source_name: agent-spec
-  target: MOD-KB-001
-  target_name: knowledge-base
-  type: contract
-  strength: soft
-  description: Knowledge Base KE沉淀——技能经验知识条目写入。
-  direction: upstream
-  valid_since: '2026-05-16'
 - dep_id: DEP-072
   source: MOD-INF-015
   source_name: system-telemetry
@@ -1441,7 +1431,6 @@ dependency_graph:
     - MOD-INF-021
     - MOD-INF-022
     - MOD-INF-024
-    - MOD-KB-001
     - MOD-INF-039
     MOD-INF-024:
     - MOD-INF-001
@@ -1514,8 +1503,6 @@ dependency_graph:
     MOD-LLM_SECURITY:
     - MOD-INF-019
     - MOD-INF-015
-    MOD-KB-001:
-    - MOD-INF-019
     MOD-INF-020:
     - MOD-GATE_ENGINE
     - MOD-INF-015
@@ -1655,7 +1642,6 @@ changelog:
   - zephyr.depmap_engine → zephyr.core (internal)
   - zephyr.escalation_protocol → zephyr.core (internal)
   - zephyr.governance_automation → zephyr.core (internal)
-  - zephyr.knowledge_base → zephyr.core (internal)
   - zephyr.local_model → zephyr.core (internal)
   - zephyr.registry_governance → zephyr.core (internal)
   - zephyr.runtime_integration → zephyr.core (internal)
