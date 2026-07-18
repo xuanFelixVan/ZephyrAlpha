@@ -18,7 +18,7 @@
 对标：AUDIT-09 病根分析（连字符损坏 / 语法错误）
 
 检测内容：
-- 扫描 src/zephyr/ 和 tests/ 下所有 .py 文件
+- 扫描 src/zephyr/、tests/ 和 scripts/governance/ 下所有 .py 文件
 - 使用 py_compile 编译校验语法正确性
 - 捕获连字符损坏、括号不匹配、缩进错误等语法问题
 
@@ -30,7 +30,7 @@ from __future__ import annotations
 __manifest__ = """
 args: []
 description: >
-  Python 语法完整性校验 —— 扫描 src/zephyr/ + tests/ 全部 .py 文件，
+  Python 语法完整性校验 —— 扫描 src/zephyr/ + tests/ + scripts/governance/ 全部 .py 文件，
   使用 py_compile 编译验证。预防连字符损坏、批量替换副作用等语法破坏。
 dimensions:
 - D7
@@ -53,8 +53,8 @@ from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
 
-_TARGET_DIRS = ["src/zephyr", "tests"]
-_EXCLUDE_DIRS = ["__pycache__", ".git", ".ailocks", ".trae", "session_logs"]
+_TARGET_DIRS = ["src/zephyr", "tests", "scripts/governance"]
+_EXCLUDE_DIRS = ["__pycache__", ".git", ".ailocks", ".trae", "session_logs", "_archive"]
 
 
 def _find_py_files() -> list[Path]:

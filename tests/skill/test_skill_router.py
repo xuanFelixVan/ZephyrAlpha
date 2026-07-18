@@ -1,4 +1,4 @@
-﻿# [A_test] module_id: SRC-TST-1649 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-1649 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_system_master/blueprint.md | §
 # [MODULE] tests.test_skill_router
 # [INVARIANTS] SkillRouter uses FALLBACK_TASK_ROUTING when registry YAML missing

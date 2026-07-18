@@ -1,4 +1,4 @@
-﻿# [A_test] module_id: SRC-TST-0908 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: SRC-TST-0908 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_system_master/blueprint.md | §
 # [MODULE] tests.test_file_autoregister
 # [INVARIANTS] register writes to manifest; uses atomic write pattern; returns dict with script_name and registered=True
