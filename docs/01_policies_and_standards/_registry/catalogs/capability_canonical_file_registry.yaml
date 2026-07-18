@@ -5267,6 +5267,15 @@ creation_tokens:
     token: "auto-governance-principles-20260719"
     created_by: "sess-16052-20260719032636"
     capability: "governance_architecture_principles"
+  # 治本（2026-07-19，target_architecture 清理第六批 b）
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/runtime_planes_principles.md"
+    token: "auto-runtime-planes-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "runtime_planes_principles"
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/frontend_principles.md"
+    token: "auto-frontend-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "frontend_principles"
 
   # 治本进度持久化 reconciler（#ARCH-GOV-CONVERGENCE-META Phase 3.1，修复 broken import）
   # 背景：Task I commit b4dd7e8d97 意外包含 orphaned import+registration，但文件未提交→clean checkout broken
