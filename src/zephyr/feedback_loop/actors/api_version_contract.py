@@ -26,7 +26,7 @@ Mitigation: Agent-readable API version contracts with sunset date enforcement.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -54,5 +54,5 @@ class APIVersionContract:
         return now >= sunset
 
     def days_until_sunset(self) -> int:
-        sunset = datetime.strptime(self.sunset_date, "%Y-%m-%d")
+        sunset = datetime.strptime(self.sunset_date, "%Y-%m-%d").replace(tzinfo=UTC)
         return (sunset - now_utc()).days

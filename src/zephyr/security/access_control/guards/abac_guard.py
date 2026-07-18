@@ -37,20 +37,20 @@ from zephyr.shared.utils.time_utils import now_utc
 class TemporalCategory(str, Enum):
     """时间分类枚举."""
 
-    NORMAL = "NORMAL"
-    OFF_HOURS = "OFF_HOURS"
-    LUNCH_PEAK = "LUNCH_PEAK"
-    WEEKEND = "WEEKEND"
+    NORMAL = "normal"
+    OFF_HOURS = "off_hours"
+    LUNCH_PEAK = "lunch_peak"
+    WEEKEND = "weekend"
 
 
 class SensitivityLabel(str, Enum):
     """敏感度标签枚举."""
 
-    PUBLIC = "PUBLIC"
-    INTERNAL = "INTERNAL"
-    CONFIDENTIAL = "CONFIDENTIAL"
-    HIGH = "HIGH"
-    RESTRICTED = "RESTRICTED"
+    PUBLIC = "public"
+    INTERNAL = "internal"
+    CONFIDENTIAL = "confidential"
+    HIGH = "high"
+    RESTRICTED = "restricted"
 
 
 MATURITY_OPERATION_MAP: dict[MaturityLevel, list[str]] = {
@@ -89,6 +89,39 @@ _BLITZ_THRESHOLD = 5
 _BLITZ_WINDOW_SECONDS = 60.0
 
 
+def _maturity_value(maturity: Any) -> str:
+    """提取成熟度的字符串值——兼容 MaturityLevel 枚举与 pydantic 转换后的纯字符串。"""
+    if maturity is None:
+        return "L0_INTERN"
+    if hasattr(maturity, "value"):
+        return maturity.value
+    return str(maturity)
+
+
+def _maturity_to_enum(maturity: Any) -> MaturityLevel:
+    """将 maturity 归一化为 MaturityLevel 枚举——兼容 str/Enum/None。"""
+    if isinstance(maturity, MaturityLevel):
+        return maturity
+    if maturity is None:
+        return MaturityLevel.L0_INTERN
+    try:
+        return MaturityLevel(str(maturity))
+    except ValueError:
+        return MaturityLevel.L0_INTERN
+
+
+def _sensitivity_to_enum(sensitivity: Any) -> SensitivityLabel | None:
+    """将 sensitivity 归一化为 SensitivityLabel 枚举——无法识别时返回 None。"""
+    if isinstance(sensitivity, SensitivityLabel):
+        return sensitivity
+    if sensitivity is None:
+        return None
+    try:
+        return SensitivityLabel(str(sensitivity))
+    except ValueError:
+        return None
+
+
 @dataclass
 class ABACContext:
     """ABAC 上下文.
@@ -125,23 +158,28 @@ def _check_maturity_gate(
     maturity: Any, operation: str
 ) -> tuple[bool, str] | None:
     """成熟度门控：L0_INTERN 只能读，返回拒绝元组或 None（继续）."""
-    if maturity is MaturityLevel.L0_INTERN:
+    maturity_enum = _maturity_to_enum(maturity)
+    if maturity_enum == MaturityLevel.L0_INTERN:
         if not operation.startswith("read:"):
             return (False, f"Maturity L0_INTERN cannot perform: {operation}")
     return None
 
 
 def _check_sensitivity_gate(
-    sensitivity: SensitivityLabel, maturity: Any
+    sensitivity: Any, maturity: Any
 ) -> tuple[bool, str] | None:
     """敏感度门控，返回拒绝元组或 None（继续）."""
-    if sensitivity in SENSITIVITY_MIN_MATURITY:
-        required = SENSITIVITY_MIN_MATURITY[sensitivity]
+    sensitivity_enum = _sensitivity_to_enum(sensitivity)
+    if sensitivity_enum is None:
+        return None
+    if sensitivity_enum in SENSITIVITY_MIN_MATURITY:
+        required = SENSITIVITY_MIN_MATURITY[sensitivity_enum]
         levels = list(MaturityLevel)
-        if maturity and levels.index(maturity) < levels.index(required):
+        maturity_enum = _maturity_to_enum(maturity)
+        if maturity_enum and levels.index(maturity_enum) < levels.index(required):
             return (
                 False,
-                f"Sensitivity {sensitivity.value} requires maturity {required.value}",
+                f"Sensitivity {sensitivity_enum.value} requires maturity {required.value}",
             )
     return None
 
@@ -249,9 +287,7 @@ class ABACGuard:
         if agent_id in self._tlb:
             record = self._tlb[agent_id]
         else:
-            limit = MATURITY_TLB_LIMITS.get(
-                maturity.value if maturity else "L0_INTERN", 100
-            )
+            limit = MATURITY_TLB_LIMITS.get(_maturity_value(maturity), 100)
             record = TLBRecord(agent_id=agent_id, counter=0, limit=limit)
             self._tlb[agent_id] = record
         record.counter += 1
@@ -263,28 +299,30 @@ class ABACGuard:
         self, temporal: TemporalCategory, maturity: Any, operation: str
     ) -> tuple[bool, str] | None:
         """时间门控，返回拒绝元组或 None（继续）."""
+        maturity_enum = _maturity_to_enum(maturity)
+        maturity_val = _maturity_value(maturity)
         if temporal in (TemporalCategory.OFF_HOURS, TemporalCategory.WEEKEND):
-            if maturity is MaturityLevel.L0_INTERN:
-                if temporal is TemporalCategory.WEEKEND:
-                    return (False, f"Weekend blocked for {maturity.value}")
-                return (False, f"Off-hours blocked for {maturity.value}")
-            if maturity in (MaturityLevel.L1_JUNIOR, MaturityLevel.L2_REGULAR):
+            if maturity_enum == MaturityLevel.L0_INTERN:
+                if temporal == TemporalCategory.WEEKEND:
+                    return (False, f"Weekend blocked for {maturity_val}")
+                return (False, f"Off-hours blocked for {maturity_val}")
+            if maturity_enum in (MaturityLevel.L1_JUNIOR, MaturityLevel.L2_REGULAR):
                 if operation.startswith("delete:") or operation.startswith("modify:"):
                     return (
                         False,
-                        f"Destructive operation blocked in off-hours for {maturity.value}",
+                        f"Destructive operation blocked in off-hours for {maturity_val}",
                     )
-                if maturity is MaturityLevel.L1_JUNIOR and self._is_destructive(operation):
+                if maturity_enum == MaturityLevel.L1_JUNIOR and self._is_destructive(operation):
                     return (
                         False,
-                        f"Destructive operation blocked in off-hours for {maturity.value}",
+                        f"Destructive operation blocked in off-hours for {maturity_val}",
                     )
-        elif temporal is TemporalCategory.LUNCH_PEAK:
-            if maturity is MaturityLevel.L1_JUNIOR:
+        elif temporal == TemporalCategory.LUNCH_PEAK:
+            if maturity_enum == MaturityLevel.L1_JUNIOR:
                 if operation.startswith("batch:") or operation.startswith("execute:"):
                     return (
                         False,
-                        f"Heavy operation throttled during lunch peak for {maturity.value}",
+                        f"Heavy operation throttled during lunch peak for {maturity_val}",
                     )
         return None
 

@@ -11,16 +11,16 @@
 module_id: DOM-GOV-001
 schema_version: "1.1"
 anchors:
-  OCP-001: tests/trading/test_ocp_extension_points_unit.py
-  OCP-002: tests/trading/test_ocp_extension_points_unit.py
-  OCP-003: tests/trading/test_ocp_extension_points_unit.py
+  OCP-001: tests/trading/unit/test_ocp_extension_points_unit.py
+  OCP-002: tests/trading/unit/test_ocp_extension_points_unit.py
+  OCP-003: tests/trading/unit/test_ocp_extension_points_unit.py
   CT-CE-LSG-001: tests/llm_security/test_input_sanitizer_unit.py
   CT-PIPE-ORC-001:
-    - tests/trading/test_ct_pipe_routing_unit.py
+    - tests/pipeline/test_ct_pipe_routing_pipeline.py
     - tests/pipeline/test_pipeline_orchestrator.py
   CT-TELE-FLE-001: tests/observability/test_l12_telemetry.py
   CT-ORC-GATE-001: tests/governance/orchestrator/test_gate_engine_unit.py
-  CT-SCRIPT-GATE-001: tests/governance/test_all_scripts.py
+  CT-SCRIPT-GATE-001: tests/governance/integration/test_all_scripts.py
   # B 轨集成契约（architecture-model layers b_* 登记）
   CT-ORC-SCRIPT-001: tests/orchestrator/test_agent_orchestrator.py
   CT-ORC-CE-001: tests/context/test_context_pipeline_unit.py
@@ -29,19 +29,19 @@ anchors:
   CT-KB-VMS-001: tests/memory/test_unified_memory_api_unit.py
   CT-FLE-DB-001: tests/autonomy/test_evolution_e2e.py
   CT-RBK-GATE-001: tests/gate/test_gate_e2e.py
-  CTR-P1-001: tests/trading/test_phase_f_layers.py
-  CTR-P1-002: tests/trading/test_phase_f_layers.py
-  CTR-P1-003: tests/trading/test_phase_f_layers.py
-  CTR-P1-004: tests/trading/test_phase_f_layers.py
-  CTR-P1-005: tests/trading/test_phase_f_layers.py
-  CTR-P1-006: tests/trading/test_phase_f_layers.py
-  CTR-P1-007: tests/trading/test_phase_f_layers.py
-  CTR-P1-008: tests/trading/test_phase_f_layers.py
-  CTR-P1-009: tests/trading/test_phase_f_layers.py
-  CTR-P1-010: tests/trading/test_phase_f_layers.py
-  CTR-P1-011: tests/trading/test_phase_f_layers.py
-  CTR-P1-012: tests/trading/test_phase_f_layers.py
-  CTR-P1-013: tests/trading/test_phase_f_layers.py
-  CTR-P1-014: tests/trading/test_phase_f_layers.py
-  CTR-P1-015: tests/trading/test_phase_f_layers.py
+  CTR-P1-001: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-002: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-003: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-004: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-005: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-006: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-007: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-008: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-009: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-010: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-011: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-012: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-013: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-014: tests/trading/pipeline/test_phase_f_layers.py
+  CTR-P1-015: tests/trading/pipeline/test_phase_f_layers.py
   CT-FLE-ORC-001: tests/kb/test_audit08_service_layer_wiring.py
