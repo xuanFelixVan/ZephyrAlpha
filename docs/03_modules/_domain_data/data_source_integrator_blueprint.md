@@ -1179,6 +1179,12 @@ akshare:
 - `write_tsv()` 保留 WSL TSV
 - 36 单元测试全通过
 
+**后续变更**（2026-07-16 Hyper-V 迁移，裁定 #ARCH-CH-010/#ARCH-CH-013 Phase 3，status=resolved）：
+- ClickHouse 从 WSL2 迁移至 Hyper-V Ubuntu VM（172.24.30.100 固定 IP），不再需要 IP 发现
+- `_discover_wsl_ip()` 函数已从 ch_writer.py 移除（Hyper-V VM 固定 IP，无 localhost 转发失效问题）
+- WSL subprocess fallback 通道已移除，统一走 clickhouse-driver TCP 直连 Hyper-V VM
+- 详见 architecture_issue_registry.yaml #ARCH-CH-010/#ARCH-CH-013（status=resolved）
+
 ### §18.6 治本施工方案（4 阶段）
 
 | 阶段 | 优先级 | 内容 | 状态 |

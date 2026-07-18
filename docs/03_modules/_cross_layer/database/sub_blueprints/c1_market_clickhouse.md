@@ -20,7 +20,7 @@ actual_disk_path: "data/databases/c1_market_clickhouse/"
 belongs_to: "ARCH-BIZDB-001"
 parent_module: "ARCH-BIZDB-001"
 codification_level: L1
-last_updated: "2026-07-17"
+last_updated: "2026-07-19"
 generation: 1
 rule_form: structural
 scope: module
@@ -197,7 +197,7 @@ ZephyrAlpha 业务数据库母蓝图（ARCH-BIZDB-001 §5.2）定义了 **C1 mar
 
 | 约束 | 影响 |
 |------|------|
-| ClickHouse 已部署（INFRA-DB-006，2026-07-01 上线，WSL2 Ubuntu） | C1 施工前置阻塞已解除，DDL 可直接执行 |
+| ClickHouse 已部署（INFRA-DB-006，2026-07-01 上线，2026-07-16 迁移至 Hyper-V Ubuntu VM 172.24.30.100） | C1 施工前置阻塞已解除，DDL 可直接执行 |
 | 当前数据源(D_DATA)只支持 OHLCV（daily_kline 表） | 其他 7 张表需 D_DATA 步骤3 多品类扩展 |
 | 回测内存预算 64G（母蓝图 §7.1） | tick_data 必须分层加载，不能全量载入 |
 | 8 张表 calc_mode 必须标注（母蓝图 §7.5） | 回测引擎按 calc_mode 决定处理方式 |
@@ -1293,7 +1293,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 资源 | 当前基线 | 测量方式 |
 |------|---------|---------|
-| ClickHouse 节点数 | 1（已部署，WSL2 Ubuntu） | infrastructure_registry.yaml |
+| ClickHouse 节点数 | 1（已部署，Hyper-V Ubuntu VM 172.24.30.100，2026-07-16 从 WSL2 迁移） | infrastructure_registry.yaml |
 | C1 表数量 | 0（待建） | SHOW TABLES |
 | 日写入记录 | 0 | 日志统计 |
 | 回测加载延迟 | — | benchmark |
@@ -1302,7 +1302,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 
 | 缺口ID | 当前瓶颈 | 升级方案 | 优先级 | 触发阈值 | 目标版本 | 状态 |
 |--------|---------|---------|:------:|---------|---------|:----:|
-| GAP-C1-001 | ClickHouse 已部署，GAP 已解除 | Docker 部署 INFRA-DB-006 | P0 | C1施工前置 | v1.0.0 | 已解除 |
+| GAP-C1-001 | ClickHouse 已部署，GAP 已解除 | Hyper-V VM 部署 INFRA-DB-006（2026-07-16 从 WSL2 迁移） | P0 | C1施工前置 | v1.0.0 | 已解除 |
 | GAP-C1-002 | D_DATA 仅支持 OHLCV | D_DATA 步骤3 多品类扩展 | P0 | 7张表无数据源 | v1.1.0 | 待施工 |
 | GAP-C1-003 | tick_data 内存占用大 | 热层分层加载 + 标的数量限制 | P1 | 100标的48GB | v1.0.0 | 设计完成 |
 | GAP-C1-004 | ~~TTL 归档无存储~~（已废弃） | INV-RET-003 铁律：无TTL，不归档 | — | — | — | 已废弃 |
