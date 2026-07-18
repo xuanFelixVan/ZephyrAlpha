@@ -22,6 +22,15 @@ cc_mod = pytest.importorskip("zephyr.security.adversarial_validation.convergence
 dr_mod = pytest.importorskip("zephyr.security.adversarial_validation.defense_runner")
 gd_mod = pytest.importorskip("zephyr.security.adversarial_validation.game_day_runner")
 
+# 治本(2026-07-19): run_defense 期望 AttackScenario 对象而非字符串；
+# run_game_day 接受 GameDayFrequency 枚举而非 scope 字符串。
+models_mod = pytest.importorskip(
+    "zephyr.security.adversarial_validation.models",
+    reason="models not available",
+)
+AttackScenario = models_mod.AttackScenario
+GameDayFrequency = gd_mod.GameDayFrequency
+
 AttackRegistry = ar_mod.AttackRegistry
 BypassRecorder = br_mod.BypassRecorder
 ConstitutionGuard = cg_mod.ConstitutionGuard
@@ -173,7 +182,9 @@ class TestDefenseRunner:
 
     def test_run_defense_callable(self):
         runner = DefenseRunner()
-        result = runner.run_defense("ATT-001")
+        # 治本(2026-07-19): run_defense 接受 AttackScenario 对象而非字符串 ID
+        scenario = AttackScenario(scenario_id="ATT-001", name="test")
+        result = runner.run_defense(scenario)
         assert result is None or isinstance(result, DefenseResult)
 
     def test_defense_result_fields(self):
@@ -195,12 +206,14 @@ class TestGameDayRunner:
 
     def test_run_game_day_callable(self):
         runner = GameDayRunner()
-        result = runner.run_game_day(scope="SYSTEM")
+        # 治本(2026-07-19): run_game_day 接受 GameDayFrequency 枚举而非 scope 字符串
+        result = runner.run_game_day(frequency=GameDayFrequency.MONTHLY)
         assert result is None or isinstance(result, GameDayResult)
 
     def test_run_game_day_custom_scope(self):
         runner = GameDayRunner()
-        result = runner.run_game_day(scope="MODULE")
+        # 治本(2026-07-19): 不同 frequency 对应不同 scope，DAILY 对应 module 级
+        result = runner.run_game_day(frequency=GameDayFrequency.DAILY)
         assert result is None or isinstance(result, GameDayResult)
 
     def test_game_day_result_fields(self):
