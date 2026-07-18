@@ -122,9 +122,9 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 | # | gate_ref | 落地状态 | 说明 |
 |---|----------|:---:|------|
 | **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交 |
-| **R2** | **目标态**：运行时日志不得写出 secret、token、私钥 | ⚠️ **T1 待落地** | **当前**以 Code Review + `security_architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job。T1 实盘前必须在 `scripts/arch_guard/` 或专项 workflow 登记自动化扫描并回链本表 |
+| **R2** | 源码静态扫描 + 运行时日志扫描 | ⚠️ **部分落地** | **源码扫描已接入 CI**：`detect_secrets.py`（pre-commit 增量）+ `scan_secret_leak.py`（CI 全库深度扫描，对标 06-SEC §6.3 L3-Audit）。**运行时 .log 文件扫描待 T1 实盘后落地**——项目当前未到实盘阶段，无运行时日志可扫。辅助脚本 `scan_runtime_log_secrets.py` 已开发但功能与 `scan_secret_leak.py` 重叠，未接入 CI |
 | **R3** | **目标态**：风控参数 hard check before 执行层 | ⚠️ **T1 待落地** | CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用）。T1 实盘后须满足 hard-check 与适应度函数阈值 |
-| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | 以权限与流程为主 |
+| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | `database_service.py` 双连接机制：`get_governance_conn(read_only=True)` / `get_depgraph_conn(read_only=True)` 返回独立只读连接（PRAGMA query_only=1 / SET default_transaction_read_only=on） |
 
 **红线优先级**：高于所有其他架构原则。在其他原则（如 §3 "开源优先"）与红线冲突时，**红线无条件优先**。
 
