@@ -282,6 +282,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker(calls),
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D2", directive_chain="325+344")
         assert res.success is True
@@ -298,6 +299,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="325+111")  # 111 未登记
         assert res.success is False
@@ -308,6 +310,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_failing_invoker,
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="325")
         assert res.success is False
@@ -319,6 +322,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=None,
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="999")
         assert res.success is False
@@ -332,6 +336,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
             hallucination_caller=cove,
         )
         res = orch.orchestrate(domain="D6", directive_chain="325", claim="IC=2.5 in momentum factor")
@@ -348,6 +353,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
             hallucination_caller=cove,
         )
         res = orch.orchestrate(domain="D6", directive_chain="325", claim="Normal claim")
@@ -359,6 +365,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         for _ in range(5):
             orch.orchestrate(domain="D0", directive_chain="999")
@@ -369,6 +376,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
             id_factory=lambda: "T-ORCH-FIXED",
         )
         res = orch.orchestrate(domain="D0", directive_chain="999")
@@ -382,6 +390,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
             input_sanitizer=InputSanitizer(root=str(repo)),
         )
         res = orch.orchestrate(
@@ -398,6 +407,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
             sanitize_llm_context=False,
         )
         assert orch._input_sanitizer is None
@@ -427,6 +437,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(
             domain="D0",

@@ -66,7 +66,14 @@ class TestCanStartPhase:
         assert allowed
 
     def test_cannot_skip_phase(self, executor):
-        allowed, reason = executor.can_start_phase(ConstructionPhase.PHASE_B)
+        # P0-3: 完成 PHASE_0 让 current_phase=PHASE_A，
+        # 再请求 PHASE_0（无依赖 + PHASE_0 != current_phase=PHASE_A）→ 命中"不能跳过"路径。
+        # 原测试请求 PHASE_B（依赖 PHASE_A 未完成），先命中依赖检查返回"依赖 Phase 未完成"。
+        # 注：can_start_phase 依赖检查永远先拦截"前进跳过"（跳过 phase 的前驱未完成），
+        # "不能跳过"路径只在请求"无依赖或依赖已完成的非当前 phase"时命中（即回退到已完成 phase）。
+        executor.start_phase(ConstructionPhase.PHASE_0)
+        executor.complete_phase(ConstructionPhase.PHASE_0)
+        allowed, reason = executor.can_start_phase(ConstructionPhase.PHASE_0)
         assert not allowed
         assert "不能跳过" in reason
 

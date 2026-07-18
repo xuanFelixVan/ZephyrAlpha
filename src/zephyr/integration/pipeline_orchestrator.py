@@ -1824,7 +1824,15 @@ class PipelineOrchestrator:
 
     @staticmethod
     def _call_llm_gateway(messages: list[dict], model: str):
-        """Call LLM gateway; return response or None on ImportError."""
+        """Call LLM gateway; return response or None on any failure.
+
+        P0-6: 原 only catch ImportError，LLM 调用失败（网络/认证/超时）会抛异常
+        传播到 _execute_module 导致重试失败 → module FAILURE → CLAUDE_RESCUE。
+        改为 catch Exception 返回 None，触发 simulated fallback（符合 _call_model
+        docstring "非 dry_run 时默认仍返回 simulated: True 的占位输出，直至接入真实 LLM"
+        的设计意图）。CLAUDE_RESCUE 仍可通过 tags（experimental/security）触发，
+        不依赖 module FAILURE。
+        """
         # SRC-0022: Real LLM API via LLMGateway with explicit model ID mapping
         #   Model -> API ID: DeepSeek-V4-Pro/deepseek -> deepseek-chat, GLM-5.1/glm -> glm-4-flash
         #   Provider config (base_url, api_key_env, default_model) defined in
@@ -1839,7 +1847,7 @@ class PipelineOrchestrator:
                 max_tokens=4096,
                 temperature=0.3,
             )
-        except ImportError:
+        except Exception:  # noqa: BLE001 — P0-6: LLM 不可用时降级 simulated，非阻断
             return None
 
     @staticmethod

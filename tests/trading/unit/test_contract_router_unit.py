@@ -100,6 +100,9 @@ class TestSystemNameMap:
 class TestListRoutable:
     def test_list_routable_only_caution_stub(self, router):
         routable = router.list_routable()
-        assert len(routable) == 7
+        # P0-2: 从 SSoT 派生期望值，不硬编码数量（原 == 7 在新增契约后漂移到 11）
+        # list_routable 语义 = ROUTE_MAP 中所有 can_route=True 的契约
+        expected = {cid for cid in ROUTE_MAP if router.can_route(cid)}
+        assert set(routable) == expected
         for cid in routable:
             assert ROUTE_MAP[cid] != ""

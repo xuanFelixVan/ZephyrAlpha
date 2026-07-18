@@ -30,7 +30,8 @@ class TestPropagationRules:
         assert len(PROPAGATION_RULES) == 7
 
     def test_completed_notifies_vms_and_db(self):
-        targets = PROPAGATION_RULES["IN_PROGRESS→COMPLETED"]["notify"]
+        # P0-1: key 对齐源码 ASCII "->"（PROPAGATION_RULES 真源用 ASCII，非 Unicode "→"）
+        targets = PROPAGATION_RULES["IN_PROGRESS->COMPLETED"]["notify"]
         assert PropagationTarget.VMS in targets
         assert PropagationTarget.DB in targets
 

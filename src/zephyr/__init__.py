@@ -201,8 +201,8 @@ atexit.register(_cleanup_bootstrap_timers)
 # ── 模块懒加载注册（M-04 · PEP 562 __getattr__）───────────────────────────
 # 5.22.2 修复：4个幻影路径修正为真实模块路径
 register_lazy(
-    "vector-memory", "zephyr.integration.mcp.vector_memory_server"
-)  # MOD-INF-011 VMS
+    "vector-memory", "zephyr.integration.vector_memory"
+)  # MOD-INF-011 VMS — P0-4: 真源是 vector_memory 包（reexport UnifiedMemoryAPI/get_unified_memory_api），非 mcp.vector_memory_server（仅定义 Server 类）
 register_lazy("llm-security", "zephyr.security.llm_defense.llm_security")  # MOD-LLM_SECURITY LSG — L0-L8 nine-layer defense
 register_lazy(
     "_cross_layer", "zephyr.risk.cross_asset.cross_market_data_adapter"
