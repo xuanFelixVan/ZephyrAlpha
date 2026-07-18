@@ -1,0 +1,1636 @@
+module_id: PS-REG-020
+doc_type: register
+ttl: permanent
+title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
+status: active
+generated_at: '2026-07-18T23:41:09Z'
+generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
+maintenance: auto
+source: docs/01_policies_and_standards/rules/trae_*.yaml
+total_rules: 64
+rules:
+- rule_id: TRAE-001
+  title: 文件操作安全协议
+  module_id: TRAE-001
+  scope: file_operation
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - file_write
+  - file_create
+  - file_delete
+  - db_write
+  gate_ids:
+  - G0
+  tags:
+  - TRAE
+  - file_operation
+  - L0
+  aliases:
+  - RULE-ZERO
+  - RULE-ONE
+  - RULE-THREE
+  - RULE-FOUR
+  - RULE-FIVE
+  - RULE-FOURTEEN
+  - 文件锁
+  - 原子写入
+  - 删除审判
+  - 创建入口
+  - 零残留
+  - 根目录清爽
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml
+- rule_id: TRAE-002
+  title: 反孤儿与搜索先行协议
+  module_id: TRAE-002
+  scope: feature_creation
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - feature_create
+  - file_create
+  gate_ids: []
+  tags:
+  - TRAE
+  - feature_creation
+  - L0
+  aliases:
+  - RULE-TWO
+  - RULE-EIGHT
+  - 反孤儿
+  - 搜索先行
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml
+- rule_id: TRAE-003
+  title: 任务粒度与完成门槛协议
+  module_id: TRAE-003
+  scope: task_management
+  domain: TRAE
+  severity: critical
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: H
+  operations:
+  - task_create
+  - task_transition
+  gate_ids: []
+  tags:
+  - TRAE
+  - task_management
+  - L0
+  aliases:
+  - RULE-SIX
+  - RULE-THIRTEEN
+  - 任务粒度
+  - 完成门槛
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_003_task_granularity_threshold.yaml
+- rule_id: TRAE-004
+  title: 并行执行与原子事务协议
+  module_id: TRAE-004
+  scope: script_execution
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - script_write
+  - subprocess_call
+  gate_ids: []
+  tags:
+  - TRAE
+  - script_execution
+  - L0
+  aliases:
+  - RULE-SEVEN
+  - 并行执行
+  - ThreadPoolExecutor
+  - 原子事务
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_004_parallel_atomic_transaction.yaml
+- rule_id: TRAE-005
+  title: 修改原则与治理施工协议
+  module_id: TRAE-005
+  scope: code_modification
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_modify
+  - structure_change
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_modification
+  - L0
+  aliases:
+  - RULE-NINE
+  - RULE-TEN
+  - 修改原则
+  - 治理施工
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_005_modification_governance.yaml
+- rule_id: TRAE-006
+  title: 防幻觉-结构追溯层
+  module_id: TRAE-006
+  scope: code_structure
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_write
+  - code_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_structure
+  - L0
+  aliases:
+  - ANTI-HALL-01
+  - ANTI-HALL-02
+  - ANTI-HALL-03
+  - ANTI-HALL-04
+  - ANTI-HALL-05
+  - ANTI-HALL-06
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_006_anti_hallucination_structure.yaml
+- rule_id: TRAE-007
+  title: 防幻觉-行为约束层
+  module_id: TRAE-007
+  scope: code_behavior
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_write
+  - code_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_behavior
+  - L0
+  aliases:
+  - ANTI-HALL-07
+  - ANTI-HALL-08
+  - ANTI-HALL-09
+  - ANTI-HALL-10
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_007_anti_hallucination_behavior.yaml
+- rule_id: TRAE-008
+  title: 防幻觉-输出验证层
+  module_id: TRAE-008
+  scope: output_verification
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_write
+  - code_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - output_verification
+  - L0
+  aliases:
+  - ANTI-HALL-11
+  - ANTI-HALL-12
+  - ANTI-HALL-13
+  - ANTI-HALL-14
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_008_anti_hallucination_output.yaml
+- rule_id: TRAE-009
+  title: 防幻觉-安全防护层
+  module_id: TRAE-009
+  scope: security_guard
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_write
+  - code_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - security_guard
+  - L0
+  aliases:
+  - ANTI-HALL-15
+  - ANTI-HALL-16
+  - ANTI-HALL-17
+  - ANTI-HALL-18
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_009_anti_hallucination_safety.yaml
+- rule_id: TRAE-010
+  title: 代码构建-命名与组织
+  module_id: TRAE-010
+  scope: code_naming
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - code_naming
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_naming
+  - L1
+  aliases:
+  - CODE-001
+  - CODE-002
+  - CODE-003
+  - CODE-004
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml
+- rule_id: TRAE-011
+  title: 代码构建-类型与导入
+  module_id: TRAE-011
+  scope: code_type_import
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - code_type_import
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_type_import
+  - L1
+  aliases:
+  - CODE-005
+  - CODE-006
+  - CODE-007
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_011_code_type_import.yaml
+- rule_id: TRAE-012
+  title: 代码构建-测试与安全
+  module_id: TRAE-012
+  scope: code_test_security
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - code_test_security
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_test_security
+  - L1
+  aliases:
+  - CODE-008
+  - CODE-009
+  - CODE-010
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_012_code_test_security.yaml
+- rule_id: TRAE-013
+  title: 架构约束-跨包依赖
+  module_id: TRAE-013
+  scope: architecture_dependency
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_dependency
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_dependency
+  - L1
+  aliases:
+  - ARCH-001
+  - ARCH-002
+  - ARCH-003
+  - ARCH-004
+  - ARCH-005
+  - ARCH-006
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_013_arch_cross_package_dep.yaml
+- rule_id: TRAE-014
+  title: 架构约束-蓝图对齐
+  module_id: TRAE-014
+  scope: architecture_blueprint
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_blueprint
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_blueprint
+  - L1
+  aliases:
+  - ARCH-007
+  - ARCH-008
+  - ARCH-009
+  - ARCH-010
+  - ARCH-011
+  - ARCH-012
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml
+- rule_id: TRAE-015
+  title: 架构约束-路径与注册
+  module_id: TRAE-015
+  scope: architecture_path_registry
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_path_registry
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_path_registry
+  - L1
+  aliases:
+  - ARCH-013
+  - ARCH-014
+  - ARCH-015
+  - ARCH-016
+  - ARCH-017
+  - ARCH-018
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml
+- rule_id: TRAE-016
+  title: 架构约束-漂移检测
+  module_id: TRAE-016
+  scope: architecture_drift
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_drift
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_drift
+  - L1
+  aliases:
+  - ARCH-019
+  - ARCH-020
+  - ARCH-021
+  - ARCH-022
+  - ARCH-023
+  - ARCH-024
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml
+- rule_id: TRAE-017
+  title: 架构约束-治理顺序
+  module_id: TRAE-017
+  scope: architecture_governance_order
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_governance_order
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_governance_order
+  - L1
+  aliases:
+  - ARCH-025
+  - ARCH-026
+  - ARCH-027
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml
+- rule_id: TRAE-018
+  title: 行为边界-代码操作绝对禁止
+  module_id: TRAE-018
+  scope: code_operation_prohibition
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - code_operation_prohibition
+  gate_ids: []
+  tags:
+  - TRAE
+  - code_operation_prohibition
+  - L0
+  aliases:
+  - PS-STD-003
+  - ABS-01
+  - ABS-02
+  - ABS-03
+  - ABS-04
+  - ABS-05
+  - ABS-06
+  - ABS-07
+  - ABS-08
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_018_behavior_code_prohibition.yaml
+- rule_id: TRAE-019
+  title: 行为边界-系统安全绝对禁止
+  module_id: TRAE-019
+  scope: security_prohibition
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - security_prohibition
+  gate_ids: []
+  tags:
+  - TRAE
+  - security_prohibition
+  - L0
+  aliases:
+  - ABS-09
+  - ABS-10
+  - ABS-11
+  - ABS-12
+  - ABS-13
+  - ABS-14
+  - ABS-15
+  - ABS-16
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_019_behavior_security_prohibition.yaml
+- rule_id: TRAE-020
+  title: 行为边界-治理纪律绝对禁止
+  module_id: TRAE-020
+  scope: governance_prohibition
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - governance_prohibition
+  gate_ids: []
+  tags:
+  - TRAE
+  - governance_prohibition
+  - L0
+  aliases:
+  - ABS-17
+  - ABS-18
+  - ABS-19
+  - ABS-20
+  - ABS-21
+  - ABS-22
+  - ABS-23
+  - ABS-24
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_020_behavior_governance_prohibition.yaml
+- rule_id: TRAE-021
+  title: 行为边界-其余绝对禁止
+  module_id: TRAE-021
+  scope: other_prohibition
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - other_prohibition
+  gate_ids: []
+  tags:
+  - TRAE
+  - other_prohibition
+  - L0
+  aliases:
+  - ABS-25
+  - ABS-26
+  - ABS-27
+  - ABS-28
+  - ABS-29
+  - ABS-30
+  - ABS-31
+  - ABS-32
+  - ABS-33
+  - ABS-34
+  - ABS-35
+  - ABS-36
+  - ABS-37
+  - ABS-38
+  - ABS-39
+  - ABS-40
+  - ABS-41
+  - ABS-42
+  - ABS-43
+  - ABS-44
+  - ABS-45
+  - ABS-46
+  - ABS-47
+  - ABS-48
+  - ABS-49
+  - ABS-50
+  - ABS-51
+  - ABS-52
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml
+- rule_id: TRAE-022
+  title: 行为边界-条件禁止(代码与安全)
+  module_id: TRAE-022
+  scope: conditional_prohibition_code_security
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - conditional_prohibition_code_security
+  gate_ids: []
+  tags:
+  - TRAE
+  - conditional_prohibition_code_security
+  - L1
+  aliases:
+  - COND-05~COND-26
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_022_behavior_conditional_code.yaml
+- rule_id: TRAE-023
+  title: 行为边界-条件禁止(治理与文档)
+  module_id: TRAE-023
+  scope: conditional_prohibition_governance_doc
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - conditional_prohibition_governance_doc
+  gate_ids: []
+  tags:
+  - TRAE
+  - conditional_prohibition_governance_doc
+  - L1
+  aliases:
+  - COND-27~COND-52
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_023_behavior_conditional_governance.yaml
+- rule_id: TRAE-024
+  title: 方法论-诊断与根因分析
+  module_id: TRAE-024
+  scope: methodology_diagnosis
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - methodology_diagnosis
+  gate_ids: []
+  tags:
+  - TRAE
+  - methodology_diagnosis
+  - L2
+  aliases:
+  - MTH-001
+  - MTH-002
+  - MTH-003
+  - MTH-004
+  - MTH-005
+  - MTH-006
+  - MTH-007
+  - MTH-008
+  - MTH-009
+  - MTH-010
+  - MTH-011
+  - MTH-012
+  - MTH-013
+  - PS-STD-011
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml
+- rule_id: TRAE-025
+  title: 方法论-决策与执行
+  module_id: TRAE-025
+  scope: methodology_decision
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - methodology_decision
+  gate_ids: []
+  tags:
+  - TRAE
+  - methodology_decision
+  - L2
+  aliases:
+  - MTH-004
+  - MTH-005
+  - MTH-007
+  - MTH-008
+  - MTH-009
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_025_methodology_decision.yaml
+- rule_id: TRAE-026
+  title: 方法论-质量与度量
+  module_id: TRAE-026
+  scope: methodology_quality
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - methodology_quality
+  gate_ids: []
+  tags:
+  - TRAE
+  - methodology_quality
+  - L2
+  aliases:
+  - MTH-010
+  - MTH-011
+  - MTH-014
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_026_methodology_quality.yaml
+- rule_id: TRAE-027
+  title: 方法论-协作与演进
+  module_id: TRAE-027
+  scope: methodology_collaboration
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - methodology_collaboration
+  gate_ids: []
+  tags:
+  - TRAE
+  - methodology_collaboration
+  - L2
+  aliases:
+  - MTH-012
+  - MTH-013
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_027_methodology_collaboration.yaml
+- rule_id: TRAE-028
+  title: 文档治理-结构与命名
+  module_id: TRAE-028
+  scope: doc_structure_naming
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - doc_structure_naming
+  gate_ids: []
+  tags:
+  - TRAE
+  - doc_structure_naming
+  - L1
+  aliases:
+  - DOC-001
+  - DOC-002
+  - DOC-003
+  - DOC-004
+  - DOC-005
+  - DOC-006
+  - DOC-008
+  - DOC-018
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml
+- rule_id: TRAE-029
+  title: 文档治理-操作安全
+  module_id: TRAE-029
+  scope: doc_operation_safety
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - doc_operation_safety
+  gate_ids: []
+  tags:
+  - TRAE
+  - doc_operation_safety
+  - L1
+  aliases:
+  - DOC-007
+  - DOC-009
+  - DOC-010
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
+- rule_id: TRAE-030
+  title: 文档治理-编号与元数据
+  module_id: TRAE-030
+  scope: doc_numbering_metadata
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - doc_numbering_metadata
+  gate_ids: []
+  tags:
+  - TRAE
+  - doc_numbering_metadata
+  - L1
+  aliases:
+  - DOC-011
+  - DOC-012
+  - DOC-013
+  - DOC-014
+  - DOC-015
+  - DOC-016
+  - DOC-017
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml
+- rule_id: TRAE-031
+  title: 安全治理-密钥与访问控制
+  module_id: TRAE-031
+  scope: security_access
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - security_access
+  gate_ids: []
+  tags:
+  - TRAE
+  - security_access
+  - L1
+  aliases:
+  - SEC-001
+  - SEC-002
+  - SEC-003
+  - ACS-001
+  - ACS-002
+  - ACS-003
+  - ACS-004
+  - ACS-005
+  - SEC-004
+  - SEC-005
+  - SEC-006
+  - SIR-001
+  - SIR-002
+  - SIR-003
+  - SIR-004
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_031_security_key_access.yaml
+- rule_id: TRAE-032
+  title: 模块治理-准入与生命周期
+  module_id: TRAE-032
+  scope: module_governance
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: H
+  operations:
+  - module_admission
+  - module_lifecycle
+  gate_ids: []
+  tags:
+  - TRAE
+  - module_governance
+  - L1
+  aliases:
+  - MOD-ALPHA_SIGNAL_DOMAIN
+  - MOD-002
+  - MOD-003
+  - MOD-004
+  - MOD-005
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_032_module_lifecycle.yaml
+- rule_id: TRAE-033
+  title: 模块治理-注册与同步
+  module_id: TRAE-033
+  scope: module_registry_sync
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations:
+  - artifact_creation
+  - artifact_modification
+  - registry_update
+  gate_ids: []
+  tags:
+  - TRAE
+  - module_registry_sync
+  - L1
+  aliases:
+  - MOD-006
+  - MOD-007
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_033_module_registration_sync.yaml
+- rule_id: TRAE-034
+  title: 任务系统-卡片标准与生命周期
+  module_id: TRAE-034
+  scope: task_card_lifecycle
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - task_card_lifecycle
+  gate_ids: []
+  tags:
+  - TRAE
+  - task_card_lifecycle
+  - L1
+  aliases:
+  - TASK-001
+  - TASK-004
+  - TASK-005
+  - GOV-TASK-001
+  - GOV-TASK-004
+  - GOV-TASK-005
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml
+- rule_id: TRAE-035
+  title: 任务系统-施工与验证
+  module_id: TRAE-035
+  scope: task_construction_verification
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - task_construction_verification
+  gate_ids: []
+  tags:
+  - TRAE
+  - task_construction_verification
+  - L1
+  aliases:
+  - TASK-002
+  - TASK-003
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_035_task_construction_verification.yaml
+- rule_id: TRAE-036
+  title: 架构治理-门禁与过渡
+  module_id: TRAE-036
+  scope: architecture_gate_transition
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_gate_transition
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_gate_transition
+  - L1
+  aliases:
+  - GOV-ARCH-002
+  - GOV-ARCH-005
+  - GOV-ARCH-006
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_036_arch_gate_transition.yaml
+- rule_id: TRAE-037
+  title: 架构治理-合格与版本化
+  module_id: TRAE-037
+  scope: architecture_qualification
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_qualification
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_qualification
+  - L1
+  aliases:
+  - GOV-ARCH-003
+  - GOV-ARCH-004
+  - GOV-ARCH-010
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml
+- rule_id: TRAE-038
+  title: 架构治理-CTR注入规则
+  module_id: TRAE-038
+  scope: architecture_ctr_injection
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - architecture_ctr_injection
+  gate_ids: []
+  tags:
+  - TRAE
+  - architecture_ctr_injection
+  - L1
+  aliases:
+  - GOV-ARC-CTR-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_038_arch_ctr_injection.yaml
+- rule_id: TRAE-039
+  title: AI治理-幻觉检测与自检
+  module_id: TRAE-039
+  scope: ai_hallucination
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - ai_hallucination
+  gate_ids: []
+  tags:
+  - TRAE
+  - ai_hallucination
+  - L1
+  aliases:
+  - GOV-AI-003
+  - GOV-AI-009
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml
+- rule_id: TRAE-040
+  title: AI治理-模型路由与协作
+  module_id: TRAE-040
+  scope: ai_model_routing
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - ai_model_routing
+  gate_ids: []
+  tags:
+  - TRAE
+  - ai_model_routing
+  - L1
+  aliases:
+  - GOV-AI-002
+  - PSP-005
+  - GOV-AI-008
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml
+- rule_id: TRAE-041
+  title: 元规则-规则分类与裁决
+  module_id: TRAE-041
+  scope: meta_rule_classification
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - meta_rule_classification
+  gate_ids: []
+  tags:
+  - TRAE
+  - meta_rule_classification
+  - L2
+  aliases:
+  - PS-STD-004
+  - PS-STD-012
+  - STD-007
+  - STD-008
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_041_meta_rule_classification.yaml
+- rule_id: TRAE-042
+  title: 元规则-标准体系与模板
+  module_id: TRAE-042
+  scope: meta_standard_template
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - meta_standard_template
+  gate_ids: []
+  tags:
+  - TRAE
+  - meta_standard_template
+  - L2
+  aliases:
+  - PS-STD-000
+  - PS-STD-002
+  - PS-STD-005
+  - PS-STD-009
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_042_meta_rule_standard.yaml
+- rule_id: TRAE-043
+  title: 元规则-元数据与度量
+  module_id: TRAE-043
+  scope: meta_metadata_metrics
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - meta_metadata_metrics
+  gate_ids: []
+  tags:
+  - TRAE
+  - meta_metadata_metrics
+  - L2
+  aliases:
+  - PS-STD-001
+  - STD-004
+  - STD-005
+  - GOV-024
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml
+- rule_id: TRAE-044
+  title: 合规治理-审计与监管
+  module_id: TRAE-044
+  scope: compliance_audit
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - compliance_audit
+  gate_ids: []
+  tags:
+  - TRAE
+  - compliance_audit
+  - L1
+  aliases:
+  - GOV-CMP-001
+  - GOV-CMP-002
+  - GOV-CMP-003
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_044_compliance_audit.yaml
+- rule_id: TRAE-045
+  title: 数据治理-质量与血缘
+  module_id: TRAE-045
+  scope: data_governance
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: M
+  operations:
+  - data_governance
+  gate_ids: []
+  tags:
+  - TRAE
+  - data_governance
+  - L1
+  aliases:
+  - GOV-DATA-001
+  - GOV-DATA-002
+  - GOV-DATA-003
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_045_data_quality_lineage.yaml
+- rule_id: TRAE-046
+  title: 工程治理-代码重组安全
+  module_id: TRAE-046
+  scope: engineering_code_restructure
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: H
+  operations:
+  - code_merge
+  - code_split
+  - code_migration
+  - code_rename
+  gate_ids: []
+  tags:
+  - TRAE
+  - engineering_code_restructure
+  - L1
+  aliases:
+  - GOV-ENG-004
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml
+- rule_id: TRAE-047
+  title: 工程治理-文件头部与扩展
+  module_id: TRAE-047
+  scope: engineering_header_expansion
+  domain: TRAE
+  severity: error
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: H
+  operations:
+  - file_creation
+  - module_expansion
+  gate_ids: []
+  tags:
+  - TRAE
+  - engineering_header_expansion
+  - L1
+  aliases:
+  - GOV-ENG-002
+  - GOV-ENG-003
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml
+- rule_id: TRAE-048
+  title: 操作-Vibe Coding会话管理
+  module_id: TRAE-048
+  scope: operational_vibe_coding
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - operational_vibe_coding
+  gate_ids: []
+  tags:
+  - TRAE
+  - operational_vibe_coding
+  - L2
+  aliases:
+  - OPS-VC-002
+  - OPS-VC-004
+  - OPS-VC-005
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_048_ops_vibe_coding_session.yaml
+- rule_id: TRAE-049
+  title: 操作-领域操作手册
+  module_id: TRAE-049
+  scope: operational_domain
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - operational_domain
+  gate_ids: []
+  tags:
+  - TRAE
+  - operational_domain
+  - L2
+  aliases:
+  - OPS-001
+  - OPS-002
+  - OPS-003
+  - OPS-004
+  - OPS-DEV-002
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml
+- rule_id: TRAE-050
+  title: 域策略-数据源与因子层
+  module_id: TRAE-050
+  scope: domain_data_factor
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - domain_data_factor
+  gate_ids: []
+  tags:
+  - TRAE
+  - domain_data_factor
+  - L2
+  aliases:
+  - DOM-L00-001
+  - DOM-L02-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_050_domain_policy_data_factor.yaml
+- rule_id: TRAE-051
+  title: 域策略-风控与盘后层
+  module_id: TRAE-051
+  scope: domain_risk_analytics
+  domain: TRAE
+  severity: warning
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - domain_risk_analytics
+  gate_ids: []
+  tags:
+  - TRAE
+  - domain_risk_analytics
+  - L2
+  aliases:
+  - DOM-L04-001
+  - DOM-L07-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_051_domain_policy_risk_backtest.yaml
+- rule_id: TRAE-052
+  title: 铁律补充-跨蓝图变更与项目瘦身
+  module_id: TRAE-052
+  scope: cross_blueprint_change_cleanup
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - cross_blueprint_change_notification
+  - project_slimming_auto_cleanup
+  gate_ids: []
+  tags:
+  - TRAE
+  - cross_blueprint_change_cleanup
+  - L0
+  aliases:
+  - RULE-ELEVEN
+  - RULE-TWELVE
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml
+- rule_id: TRAE-053
+  title: 铁律补充-自动化双轨判定
+  module_id: TRAE-053
+  scope: automation_dual_track
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - automation_system_creation_or_modification
+  gate_ids: []
+  tags:
+  - TRAE
+  - automation_dual_track
+  - L0
+  aliases:
+  - RULE-FIFTEEN
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_053_automation_dual_track.yaml
+- rule_id: TRAE-054
+  title: depgraph 程序化访问协议
+  module_id: TRAE-054
+  scope: depgraph_access_protocol
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - depgraph_read
+  - depgraph_write
+  - depgraph_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - depgraph_access_protocol
+  - L0
+  aliases:
+  - RULE-SIXTEEN
+  - depgraph访问
+  - 程序化访问
+  - extract_depgraph
+  - apply_depgraph
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_054_depgraph_access_protocol.yaml
+- rule_id: TRAE-055
+  title: 架构容量与域治理规则
+  module_id: TRAE-055
+  scope: arch_domain_capacity_governance
+  domain: TRAE
+  severity: critical
+  stability: stable
+  ai_autonomy: human_gated
+  safety_level: H
+  operations:
+  - domain_capacity_check
+  - domain_split
+  - domain_create
+  - module_count_check
+  - generator_modify
+  - max_modules_set
+  - domain_naming
+  - path_design
+  gate_ids: []
+  tags:
+  - TRAE
+  - arch_domain_capacity_governance
+  - L0
+  aliases:
+  - ARCH-CAP-000
+  - ARCH-CAP-001
+  - ARCH-CAP-002
+  - ARCH-CAP-004
+  - ARCH-CAP-005
+  - ARCH-CAP-006
+  - ARCH-CAP-007
+  - ARCH-CAP-008
+  - ARCH-CAP-009
+  - 域容量上限
+  - 模块定义
+  - 平行域原则
+  - 路径平铺原则
+  - 抽屉式扩展
+  - 拆分审批
+  - 第一性原理
+  - 架构命名第一性原理
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_055_arch_domain_capacity.yaml
+- rule_id: TRAE-056
+  title: 操作-模块/蓝图/代码创建完整工作流程
+  module_id: TRAE-056
+  scope: module_creation_workflow
+  domain: TRAE
+  severity: error
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - create_module
+  - create_blueprint
+  - create_code_file
+  - create_gate
+  - session_cold_start
+  gate_ids: []
+  tags:
+  - TRAE
+  - module_creation_workflow
+  - L1
+  - operational
+  - procedural
+  - cold_start
+  - design_state
+  - event_driven
+  - capacity_audit
+  aliases:
+  - OPS-WORKFLOW-001
+  - CREATE-WORKFLOW-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml
+- rule_id: TRAE-057
+  title: AI消费优先原则
+  module_id: TRAE-057
+  scope: global
+  domain: TRAE
+  severity: error
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - create_document
+  - create_code_file
+  - create_rule
+  - create_template
+  - create_configuration
+  - modify_any_output
+  gate_ids: []
+  tags:
+  - TRAE
+  - ai_consumer_first
+  - L0
+  - principle
+  - format_policy
+  - anti_hallucination
+  aliases:
+  - AICF-001
+  - AI-FIRST-001
+  - AI-CONSUMER-FIRST
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_057_ai_consumer_first.yaml
+- rule_id: TRAE-058
+  title: 全景图扫描排除规则
+  module_id: TRAE-058
+  scope: depgraph_scan_exclusions
+  domain: TRAE
+  severity: error
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - depgraph_generate
+  - path_tree_generate
+  - query_why_not_in_panorama
+  - add_new_scan_exclusion
+  gate_ids: []
+  tags:
+  - TRAE
+  - depgraph_scan_exclusions
+  - L1
+  - scan_rules
+  - exclusion
+  aliases:
+  - 扫描排除规则
+  - depgraph排除
+  - 全景图排除
+  - SCAN-EXCLUDE
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
+- rule_id: TRAE-059
+  title: _schema_version 写入保护规范
+  module_id: TRAE-059
+  scope: schema_version_write_protection
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - schema_version_write
+  - schema_version_read
+  - depgraph_migration
+  gate_ids: []
+  tags:
+  - TRAE
+  - schema_version_protection
+  - L0
+  - depgraph
+  - migration_framework
+  aliases:
+  - RULE-SCHEMA-VERSION-PROTECTION
+  - schema_version只读保护
+  - 迁移框架写入独占
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_059_schema_version_write_protection.yaml
+- rule_id: TRAE-060
+  title: 向内收原则（唯一真源·事件驱动·第一性原理）
+  module_id: TRAE-060
+  scope: global
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - create_automation_system
+  - create_code_file
+  - create_script
+  - create_rule
+  - create_vocabulary
+  - create_registry
+  - create_new_function_or_module
+  - modify_any_output
+  gate_ids: []
+  tags:
+  - TRAE
+  - inward_consolidation
+  - L0
+  - principle
+  - single_source_of_truth
+  - event_driven
+  - first_principles
+  - anti_drift
+  aliases:
+  - INWARD-001
+  - INWARD-CONSOLIDATION
+  - 向内收
+  - SSC-EVT-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml
+- rule_id: TRAE-061
+  title: decisiongraph 程序化访问协议
+  module_id: TRAE-061
+  scope: decisiongraph_access_protocol
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: H
+  operations:
+  - decisiongraph_read
+  - decisiongraph_write
+  - decisiongraph_modify
+  gate_ids: []
+  tags:
+  - TRAE
+  - decisiongraph_access_protocol
+  - L0
+  aliases:
+  - RULE-DECISIONGRAPH
+  - decisiongraph访问
+  - 决策流图访问
+  - extract_decisiongraph
+  - apply_decisiongraph
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_061_decisiongraph_access_protocol.yaml
+- rule_id: TRAE-062
+  title: SSoT 真源分类铁律（YAML vs DB）
+  module_id: TRAE-062
+  scope: ssot_classification
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - yaml_ssot_write
+  - db_architecture_write
+  - sync_yaml_to_db
+  - generate_diagram
+  - decision_node_create
+  - depgraph_node_write
+  - dataflow_node_write
+  gate_ids: []
+  tags:
+  - TRAE
+  - ssot_classification
+  - L1_foundation
+  - ssot
+  - yaml_vs_db
+  - 真源分类
+  aliases:
+  - RULE-SSOT-CLASSIFICATION
+  - 真源分类
+  - YAML vs DB
+  - ssot_classification
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml
+- rule_id: TRAE-063
+  title: 数据库破坏性操作纪律（RULE-DATA-OPS）
+  module_id: TRAE-063
+  scope: data_ops_discipline
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - db_delete
+  - db_replace_partition
+  - db_truncate
+  - db_alter_delete
+  - db_alter_replace
+  - db_optimize_final
+  - db_insert_group_by_with_replace
+  - destructive_data_modification
+  gate_ids: []
+  tags:
+  - TRAE
+  - data_ops_discipline
+  - L1_foundation
+  - destructive_ops
+  - backup_first
+  - full_field_duplication_check
+  - RULE-DATA-OPS
+  aliases:
+  - RULE-DATA-OPS
+  - 数据库破坏性操作纪律
+  - destructive_ops_discipline
+  - data_ops_discipline
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml
+- rule_id: TRAE-064
+  title: Git 调用预算铁律（ARCH-GIT-CALL-BUDGET）
+  module_id: TRAE-064
+  scope: git_subprocess_budget
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - git_subprocess_call
+  - session_worktree_commit
+  - session_worktree_merge
+  - commit_gate_check
+  - reconciler_execution
+  gate_ids: []
+  tags:
+  - TRAE
+  - git_call_budget
+  - L1_foundation
+  - git_subprocess
+  - performance
+  - crash_prevention
+  aliases:
+  - RULE-GIT-CALL-BUDGET
+  - Git调用预算
+  - ARCH-GIT-CALL-BUDGET
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_064_git_call_budget.yaml

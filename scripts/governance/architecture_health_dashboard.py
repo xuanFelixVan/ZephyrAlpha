@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 16 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）
+# [INVARIANTS] 17 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 16 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 17 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（17 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -91,6 +91,8 @@ import sys
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+import yaml
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
@@ -1378,9 +1380,49 @@ def metric_16_remediation_progress_freshness() -> dict:
     details = [f'STALE: {row[0]} ({row[1]}) last_updated={row[2]}' for row in stale[:20]]
     return _make_metric('M16', '治本进度新鲜度(>90天超期数)', len(stale), details=details, source='inline')
 
+
+# ── 指标 17：规则感知缺口（无门禁配对数） ──────────────────────────────────
+
+# M17 SQL/路径常量（NO-BARE-SQL compliance 不适用——读 YAML 非 SQL）
+_PERCEPTION_INDEX_REL = 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml'
+
+
+def metric_17_rule_perception_gap() -> dict:
+    """规则感知缺口——无 paired_gate_id 的规则数（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）。
+
+    病根2（规则可发现性）治本指标：perception index 已建立（Phase 3.2a），
+    但规则尚未与门禁配对（Phase 3.5 RULE-EXECUTION-PAIRING 将补齐 paired_gate_id）。
+    本指标统计 paired_gate_id 为 null/空的规则数，追踪 Phase 3.5 进度。
+
+    fail-open：YAML 不存在/解析失败 → count=0 + error（首启正常）。
+    """
+    idx_path = REPO_ROOT / _PERCEPTION_INDEX_REL
+    if not idx_path.is_file():
+        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
+            details=['perception index not yet generated (Phase 3.2a not bootstrapped)'],
+            source='inline', error=f'yaml not found: {idx_path.relative_to(REPO_ROOT)}')
+    try:
+        data = yaml.safe_load(idx_path.read_text(encoding='utf-8'))
+    except yaml.YAMLError as e:
+        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
+            details=[f'yaml parse failed: {e}'], source='inline', error=f'yaml parse failed: {e}')
+    if not isinstance(data, dict):
+        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
+            details=['yaml structure invalid (not dict)'], source='inline', error='yaml not dict')
+    rules = data.get('rules', [])
+    if not isinstance(rules, list) or not rules:
+        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
+            details=['no rules in perception index'], source='inline', error='no rules in index')
+    unpaired = [r for r in rules if not r.get('paired_gate_id')]
+    if not unpaired:
+        return _make_metric('M17', '规则感知缺口(无门禁配对数)', 0,
+            details=[f'all {len(rules)} rules have paired_gate_id (Phase 3.5 complete)'], source='inline')
+    details = [f'UNPAIRED: {r.get("rule_id", "?")} ({r.get("title", "")[:40]})' for r in unpaired[:20]]
+    return _make_metric('M17', '规则感知缺口(无门禁配对数)', len(unpaired), details=details, source='inline')
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 16 项指标注册表（id → 检测函数）
+# 17 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1398,6 +1440,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M14", "ABC抽象方法完整性", metric_14_abc_completeness),
     ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
     ("M16", "治本进度新鲜度(>90天超期数)", metric_16_remediation_progress_freshness),
+    ("M17", "规则感知缺口(无门禁配对数)", metric_17_rule_perception_gap),
 ]
 
 
@@ -1473,7 +1516,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（17 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")

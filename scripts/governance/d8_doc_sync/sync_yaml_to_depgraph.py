@@ -92,6 +92,7 @@ READONLY_TABLES = [
     "data_source_apis",
     "data_source_assets",
     "service_assets",
+    "rule_ai_perception",
 ]
 
 
@@ -1981,6 +1982,88 @@ def sync_config_assets(cur):
     print(f"  同步 {synced} 个配置文件")
 
 
+def sync_rule_ai_perception_index(cur):
+    """#183: 规则AI感知索引 → rule_ai_perception 表（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
+
+    真源：_registry/catalogs/rule_ai_perception_index.yaml（由 generate_rule_ai_perception_index.py 生成）
+    消费方：discover_applicable_rules MCP 工具（Phase 3.2b）、M17 指标。
+    """
+    print("同步 #183: 规则AI感知索引 → rule_ai_perception...")
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS rule_ai_perception (
+        rule_id         TEXT PRIMARY KEY,
+        title           TEXT NOT NULL DEFAULT '',
+        module_id       TEXT NOT NULL DEFAULT '',
+        scope           TEXT NOT NULL DEFAULT '',
+        domain          TEXT NOT NULL DEFAULT '',
+        severity        TEXT NOT NULL DEFAULT '',
+        stability       TEXT NOT NULL DEFAULT '',
+        ai_autonomy     TEXT NOT NULL DEFAULT '',
+        safety_level    TEXT NOT NULL DEFAULT '',
+        operations      TEXT[] NOT NULL DEFAULT '{}',
+        gate_ids        TEXT[] NOT NULL DEFAULT '{}',
+        tags            TEXT[] NOT NULL DEFAULT '{}',
+        aliases         TEXT[] NOT NULL DEFAULT '{}',
+        paired_gate_id  TEXT,
+        rule_file       TEXT NOT NULL DEFAULT ''
+    )
+    """)
+    cur.execute("COMMENT ON TABLE rule_ai_perception IS '规则AI感知索引（#183，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）— trae 规则→operations/gate_ids 映射，真源 rule_ai_perception_index.yaml'")
+
+    data = load_yaml("_registry/catalogs/rule_ai_perception_index.yaml")
+    rules = data.get("rules", [])
+    if not rules:
+        print("  警告: rule_ai_perception_index.yaml 无 rules，跳过")
+        return
+
+    synced = 0
+    for rule in rules:
+        cur.execute(
+            """
+        INSERT INTO rule_ai_perception
+            (rule_id, title, module_id, scope, domain, severity, stability,
+             ai_autonomy, safety_level, operations, gate_ids, tags, aliases,
+             paired_gate_id, rule_file)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT(rule_id) DO UPDATE SET
+            title=excluded.title,
+            module_id=excluded.module_id,
+            scope=excluded.scope,
+            domain=excluded.domain,
+            severity=excluded.severity,
+            stability=excluded.stability,
+            ai_autonomy=excluded.ai_autonomy,
+            safety_level=excluded.safety_level,
+            operations=excluded.operations,
+            gate_ids=excluded.gate_ids,
+            tags=excluded.tags,
+            aliases=excluded.aliases,
+            paired_gate_id=excluded.paired_gate_id,
+            rule_file=excluded.rule_file
+        """,
+            (
+                rule.get("rule_id", ""),
+                rule.get("title", ""),
+                rule.get("module_id", ""),
+                rule.get("scope", ""),
+                rule.get("domain", ""),
+                rule.get("severity", ""),
+                rule.get("stability", ""),
+                rule.get("ai_autonomy", ""),
+                rule.get("safety_level", ""),
+                rule.get("operations", []) or [],
+                rule.get("gate_ids", []) or [],
+                rule.get("tags", []) or [],
+                rule.get("aliases", []) or [],
+                rule.get("paired_gate_id"),
+                rule.get("rule_file", ""),
+            ),
+        )
+        synced += 1
+
+    print(f"  同步 {synced}/{len(rules)} 条规则感知索引")
+
+
 # ========== 主同步函数 ==========
 
 
@@ -2062,11 +2145,14 @@ def sync_all() -> bool:
         sync_service_assets(cur)  # #181 服务资产→service_assets 表
         sync_config_assets(cur)  # #182 配置项资产→config_assets 表（文件系统扫描）
 
+        # P10 优先级同步（#ARCH-GOV-CONVERGENCE-META Phase 3.2a 规则可发现性）
+        sync_rule_ai_perception_index(cur)  # #183 规则AI感知索引→rule_ai_perception 表
+
         # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
         cleanup_legacy_fk_violations(cur)
 
         conn.commit()
-        print("\n[PASS] 28 项 YAML→DB 同步完成")
+        print("\n[PASS] 29 项 YAML→DB 同步完成")
 
         # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生（治本运行时 DB 写入盲区）
         try:
