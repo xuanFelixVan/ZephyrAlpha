@@ -3522,8 +3522,8 @@ entries:
       validate_module_id_naming.is_valid_module_id，替换 REPO_ROOT + sys.path bootstrap。
     Phase 3（已完成，2026-07-19）：reconciler 识别 merge 状态——git_commit_gateway.py
       _commit_auto 入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit。
-    Phase 2（待执行）：_pre_merge_auto_clean 回滚机制——session_worktree.py 修改
-      _pre_merge_auto_clean 和 session_worktree_abort，用 stash + pop 替代 git checkout --。
+    Phase 2（已完成，2026-07-19）：_pre_merge_auto_clean 回滚机制——session_worktree.py
+      _execute_cleanups 用 git stash push 替代 git checkout --，与 S3-B 治本一致。
     Phase 4（待执行）：stash 过期清理 reconciler——新增 make_stash_lifecycle_reconciler()，
       post-commit 触发，清理 > 24h 的 session_worktree 临时 stash。
   impact:
@@ -3531,8 +3531,8 @@ entries:
       validate_module_id_naming，_load_is_valid_module_id + _validate_module_id_cache）
     - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 3：_commit_auto
       入口检测 .git/MERGE_HEAD 跳过 auto-commit）
-    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 2：_pre_merge_auto_clean
-      stash 回滚 + session_worktree_abort stash pop 恢复，待执行）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 2：_execute_cleanups
+      git stash push 替代 git checkout --，已完成）
     - src/zephyr/governance/audit/reconciliation_registry.py（Phase 4：新增
       make_stash_lifecycle_reconciler，待执行）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
@@ -3556,10 +3556,11 @@ entries:
       - 存在时返回 NOTHING_TO_COMMIT，保留 merge 状态供手动完成
       - 语法验证通过 + e2e 测试通过
 
-    Phase 2 _pre_merge_auto_clean 回滚机制（待执行）：
-      - _pre_merge_auto_clean 前先 stash 主工作区修改（msg="session_worktree_pre_merge: <sid>"）
-      - session_worktree_abort 时 stash pop 恢复，而非 git checkout -- 还原
-      - stash pop 失败时（冲突）保留 stash 并告警，不清空主工作区
+    Phase 2 _pre_merge_auto_clean 回滚机制（已完成 2026-07-19）：
+      - _execute_cleanups 用 git stash push -m "session_worktree_pre_merge: <sid>" 替代 git checkout --
+      - tracked 文件修改保存到 stash 栈（可恢复 via git stash pop），不再永久丢弃
+      - 与 session_worktree_abort 的 S3-B 治本（2026-07-17）一致
+      - session_worktree_abort 已在 S3-B 治本中用 git stash push（无需重复修改）
 
     Phase 4 stash 过期清理 reconciler（待执行）：
       - 新增 make_stash_lifecycle_reconciler()，post-commit 触发
