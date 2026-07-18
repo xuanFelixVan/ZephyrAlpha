@@ -5216,6 +5216,21 @@ creation_tokens:
     token: "auto-integration-principles-20260719"
     created_by: "sess-16052-20260719032636"
     capability: "integration_architecture_principles"
+  # 治本（2026-07-19，target_architecture 清理第五批）：从 business_architecture.md 提取永恒原则到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/business_principles.md"
+    token: "auto-business-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "business_architecture_principles"
+  # 治本（2026-07-19，target_architecture 清理第五批）：从 information_architecture.md 提取永恒原则到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/information_principles.md"
+    token: "auto-information-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "information_architecture_principles"
+  # 治本（2026-07-19，target_architecture 清理第五批）：从 application_architecture.md 提取永恒原则到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/application_principles.md"
+    token: "auto-application-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "application_architecture_principles"
 
   # 治本进度持久化 reconciler（#ARCH-GOV-CONVERGENCE-META Phase 3.1，修复 broken import）
   # 背景：Task I commit b4dd7e8d97 意外包含 orphaned import+registration，但文件未提交→clean checkout broken
@@ -5228,6 +5243,20 @@ creation_tokens:
     token: "auto-remediation-progress-smoke-20260719"
     created_by: "sess-33764-20260719035340"
     capability: "remediation_progress_tracking"
+
+  # --- ARCH-GIT-CALL-BUDGET 治本（2026-07-19，git 2.48.x 崩溃根因治本）---
+  - file: "src/zephyr/infrastructure/git_batcher.py"
+    token: "auto-git-batcher-20260719"
+    created_by: "sess-19148-20260719040733"
+    capability: "git_call_batching"
+  - file: "src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py"
+    token: "auto-git-call-budget-gate-20260719"
+    created_by: "sess-19148-20260719040733"
+    capability: "vocab_hardcode_detector"
+  - file: "scripts/governance/git_health_smoke.py"
+    token: "auto-git-health-smoke-20260719"
+    created_by: "sess-19148-20260719040733"
+    capability: "system_telemetry_health_probe"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
