@@ -69,17 +69,17 @@ graph TD
         src_zephyr_reporting_default_attribution_engine_py["(原型态 / prototype) D_REPORTING — Default Attribution Engine<br/>文件: default_attribution_engine.py"]
         src_zephyr_reporting_default_tca_engine_py["(原型态 / prototype) D_REPORTING — Default TCA Engine<br/>文件: default_tca_engine.py"]
     end
-    src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
+    src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
@@ -107,8 +107,8 @@ graph TD
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -135,11 +135,11 @@ graph TD
         src_zephyr_reporting_default_attribution_engine_py["(原型态 / prototype) D_REPORTING — Default Attribution Engine<br/>文件: default_attribution_engine.py"]
         src_zephyr_reporting_default_tca_engine_py["(原型态 / prototype) D_REPORTING — Default TCA Engine<br/>文件: default_tca_engine.py"]
     end
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
@@ -148,7 +148,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_reporting_default_attribution_engine_py,src_zephyr_reporting_default_tca_engine_py design
-    class D_INFRASTRUCTURE,D_GOV_AUDIT external_prod
+    class D_GOV_AUDIT external_prod
+    class D_INFRASTRUCTURE external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

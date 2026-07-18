@@ -1,5 +1,5 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-19 06:36:29
+%% 生成时间: 2026-07-19 07:07:15
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 10, 依赖边数: 72
 
@@ -24,21 +24,21 @@ graph TD
     src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_OPS (40 条)
+    %%  -> D_OPS (39 条)
     [] -->|import_depends| src_zephyr_governance_ops_governance_token_budget_py
     [] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
@@ -46,15 +46,15 @@ graph TD
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_tracker_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     %% D_GOVERNANCE -> D_OPS (4 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
@@ -83,23 +83,25 @@ graph TD
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_OPS ->  (1 条)
+    scripts_governance_observability_gate_cache_py -->|config_depends| []
     %% D_OPS -> D_GOVERNANCE (1 条)
     src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_OPS -> D_GOV_DRIFT (2 条)
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_OPS -> D_GOV_OPS_RESILIENCE (2 条)
-    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_OPS -> D_INFRA_RECOVERY (1 条)
     src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_OPS -> D_SHARED (4 条)
-    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 2 条
-    %% 跨域入边: 60 条
-    %% 跨域出边: 10 条
+    %% 跨域入边: 59 条
+    %% 跨域出边: 11 条
