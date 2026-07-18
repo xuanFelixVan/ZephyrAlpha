@@ -26,7 +26,7 @@ ttl: permanent
 | 域名称 | 脚本治理 | Domain Name | Script Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 358 | Module Count | 358 |
-| 域内依赖 | 19 | Internal Dependencies | 19 |
+| 域内依赖 | 20 | Internal Dependencies | 20 |
 | 跨域入边 | 3 | Cross-domain Incoming | 3 |
 | 跨域出边 | 91 | Cross-domain Outgoing | 91 |
 | 设计态模块 | 2 | Design Modules | 2 |
@@ -411,15 +411,16 @@ graph TD
         scripts_governance_archive_vms_ri_ri_build_completion_check_py["(原型态 / prototype) Runtime Integration Phase 2 完工验证 — MOD-INF-002<br/>文件: ri_build_completion_check.py"]
         scripts_governance_archive_vms_ri_vms_blindspot_check_py["(原型态 / prototype) VMS 盲点闭合检查器 — MOD-INF-011 · R1(33) + R...<br/>文件: vms_blindspot_check.py"]
     end
-    scripts_governance_archive_prototype_adversarial_log_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_audit_domain_nodes_py
-    scripts_governance_archive_prototype_changelog_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_check_audit_rbac_isolation_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_generate_asset_index_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_scan_ground_truth_deps_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_prototype_generate_nav_table_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_sync_blueprint_status_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_vms_blindspot_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
+    scripts_governance_archive_prototype_adversarial_log_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_changelog_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_check_audit_rbac_isolation_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_generate_asset_index_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_audit_domain_nodes_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_prototype_generate_nav_table_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_scan_ground_truth_deps_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_sync_blueprint_status_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_governance_archive_one_off_audit_post_sync_commands_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -431,9 +432,9 @@ graph TD
     scripts_governance_archive_prototype_rebuild_audit_index_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     scripts_governance_archive_prototype_session_simulator_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
-    scripts_governance_archive_one_off_dm105_depgraph_triage_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_archive_governance_dm106_p2b_verification_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_archive_prototype_adversarial_sys_master_test_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
+    scripts_governance_archive_one_off_dm105_depgraph_triage_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_archive_one_off_create_alignment_tasks_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_archive_one_off_fix_broken_post_sync_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -900,16 +901,16 @@ graph TD
         scripts_governance_meta_detect_script_divergence_py["(原型态 / prototype) detect_script_divergence.py — 脚本实现与蓝图规...<br/>文件: detect_script_divergence.py"]
         scripts_governance_meta_detect_script_rot_py["(原型态 / prototype) detect_script_rot.py — Script Rot（脚本静默失...<br/>文件: detect_script_rot.py"]
     end
-    scripts_governance_meta_benchmark_test_fixtures_bad_imports_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py
     scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_bad_imports_py
+    scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
     D_DATA["(原型态 / prototype) D_DATA"]
     scripts_governance_data_quality_check_tick_duplication_py -.->|导入依赖 / import_depends| D_DATA
-    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED["(生产态 / production) D_SHARED"]
+    scripts_governance_extract_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_generate_project_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     scripts_governance_meta_backup_runtime_state_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_meta_create_task_from_finding_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    scripts_governance_extract_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_meta_create_task_from_finding_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_generate_project_depgraph_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_extract_decisiongraph_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -918,8 +919,8 @@ graph TD
     scripts_governance_generators_generate_path_ownership_map_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_extract_decisiongraph_py -.->|导入依赖 / import_depends| D_SHARED
     scripts_governance_generators_generate_path_ownership_map_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    scripts_governance_data_quality_check_tick_duplication_py -.->|导入依赖 / import_depends| D_DATA
     scripts_governance_generators_check_gate_inventory_drift_py -.->|导入依赖 / import_depends| D_SHARED
+    scripts_governance_data_quality_check_tick_duplication_py -.->|导入依赖 / import_depends| D_DATA
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_generators_generate_gate_registry_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -927,8 +928,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_generators_generate_gate_registry_py production
     class scripts_governance_d8_doc_sync_validate_document_ttl_py,scripts_governance_d9_knowledge_detect_duplicated_normative_language_py,scripts_governance_d9_knowledge_detect_orphan_documents_py,scripts_governance_data_quality_check_tick_duplication_py,scripts_governance_extract_decisiongraph_py,scripts_governance_extract_depgraph_py,scripts_governance_generate_decision_graph_py,scripts_governance_generate_project_depgraph_py,scripts_governance_generate_project_path_tree_py,scripts_governance_generators_check_gate_inventory_drift_py,scripts_governance_generators_fix_module_manifest_layout_py,scripts_governance_generators_generate_path_ownership_map_py,scripts_governance_generators_generate_registry_master_index_py,scripts_governance_generators_inject_manifests_py,scripts_governance_generators_refresh_master_entries_py,scripts_governance_generators_sync_audit_protocol_numbers_py,scripts_governance_meta_concurrency_py,scripts_governance_meta_arbitrate_findings_py,scripts_governance_meta_backup_runtime_state_py,scripts_governance_meta_benchmark_test_fixtures_bad_imports_py,scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py,scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py,scripts_governance_meta_compute_sla_metrics_py,scripts_governance_meta_create_task_from_finding_py,scripts_governance_meta_detect_config_deviation_py,scripts_governance_meta_detect_fix_oscillation_py,scripts_governance_meta_detect_hallucinated_packages_py,scripts_governance_meta_detect_script_divergence_py,scripts_governance_meta_detect_script_rot_py design
-    class D_GOVERNANCE external_prod
-    class D_DATA,D_SHARED external_design
+    class D_SHARED,D_GOVERNANCE external_prod
+    class D_DATA external_design
 ```
 
 #### 第 11 页 / 共 12 页
@@ -1069,8 +1070,8 @@ graph TD
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_governance_shared_constants_py -->|导入依赖 / import_depends| D_SHARED
     scripts_governance_sync_panorama_module_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    scripts_governance_sync_panorama_module_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_d5_architecture_generators_generate_blueprint_panorama_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    scripts_governance_sync_panorama_module_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_d5_architecture_generators_generate_blueprint_panorama_py -->|导入依赖 / import_depends| D_GOVERNANCE
     scripts_governance_d5_architecture_generators_generate_blueprint_panorama_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_GOVERNANCE -.->|测试依赖 / test_depends| scripts_governance_generators_generate_gate_registry_py
@@ -1103,7 +1104,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 346 个，19 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 346 个，20 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -1455,22 +1456,23 @@ graph TD
         tests_governance_scripts_governance_test_pre_write_gate_py["(原型态 / prototype) test_pre_write_gate.py — _check_session_overla...<br/>文件: test_pre_write_gate.py"]
         tests_governance_test_check_blueprint_code_alignment_py["(原型态 / prototype) tests for check_blueprint_code_alignment.py — ...<br/>文件: test_check_blueprint_code_alignment.py"]
     end
-    scripts_governance_meta_benchmark_test_fixtures_bad_imports_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py
     scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_bad_imports_py
+    scripts_governance_meta_benchmark_test_fixtures_orphan_file_without_module_registration_py -.->|config_depends / config_depends| scripts_governance_meta_benchmark_test_fixtures_incomplete_module_py
     scripts_governance_migrate_sqlite_to_pg_seed_from_yaml_py -.->|config_depends / config_depends| scripts_governance_migrate_sqlite_to_pg_migrate_data_py
-    scripts_governance_archive_prototype_adversarial_log_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_audit_domain_nodes_py
-    scripts_governance_archive_prototype_changelog_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_check_audit_rbac_isolation_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_generate_asset_index_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_prototype_scan_ground_truth_deps_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_ri_boundary_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_build_completion_check_py
-    scripts_governance_archive_prototype_generate_nav_table_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
+    scripts_governance_archive_prototype_adversarial_log_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_changelog_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_check_audit_rbac_isolation_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_generate_asset_index_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_audit_domain_nodes_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_vms_ri_ri_boundary_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_vms_blindspot_check_py
+    scripts_governance_archive_prototype_generate_nav_table_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_scan_ground_truth_deps_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
+    scripts_governance_archive_prototype_sync_blueprint_status_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_sys_master_test_py
     scripts_governance_archive_vms_ri_vms_build_completion_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
-    scripts_governance_archive_prototype_sync_blueprint_status_py -.->|config_depends / config_depends| scripts_governance_archive_prototype_adversarial_log_py
-    scripts_governance_archive_vms_ri_vms_blindspot_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
+    scripts_governance_archive_vms_ri_ri_build_completion_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
     scripts_governance_archive_vms_ri_vms_cross_file_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
-    scripts_governance_archive_vms_ri_vms_version_sync_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
     scripts_governance_archive_vms_ri_vms_phase_rollback_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
+    scripts_governance_archive_vms_ri_vms_version_sync_check_py -.->|config_depends / config_depends| scripts_governance_archive_vms_ri_ri_boundary_check_py
     scripts_governance_sync_cleanup_p0_auto_bridged_py -.->|config_depends / config_depends| scripts_governance_sync_check_p0_status_py
     scripts_governance_sync_cleanup_p0_ops_pending_py -.->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_auto_bridged_py
     scripts_governance_sync_fix_orphan_deps_py -.->|config_depends / config_depends| scripts_governance_sync_cleanup_p0_auto_bridged_py
