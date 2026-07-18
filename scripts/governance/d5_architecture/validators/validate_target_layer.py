@@ -52,7 +52,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402  # Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 REPO_ROOT，L68 VOCAB_PATH 使用但未 import 致 NameError
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()

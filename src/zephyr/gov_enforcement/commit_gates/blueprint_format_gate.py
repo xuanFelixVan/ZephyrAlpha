@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.blueprint_format_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); scripts.governance.d3_metadata.validate_module_id_naming (is_valid_module_id)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d3_metadata.validate_module_id_naming (is_valid_module_id)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含 [BLUEPRINT] 头部时，module_id 必须合规（裁定#208 双轨制：MOD-/SH- 前缀）；存量基线违规 grandfathered（只检 added 行）；tests/豁免；git diff不可达fail-open；检出违规则fail-closed
+# [INVARIANTS] 硬阻断——staged .py added 行含 [BLUEPRINT] 头部时，module_id 必须合规（裁定#208 双轨制：MOD-/SH- 前缀）；存量基线违规 grandfathered（只检 added 行）；git diff不可达fail-open；检出违规则fail-closed。治本（#ARCH-DATAQUALITY-V1.1）：移除 tests/ 豁免——100% AI 开发下豁免区=债务温床，482 个 SRC-XXX 违规因 tests/ 豁免累积
 # [MODIFY-GUARD] gate_id="BLUEPRINT-FORMAT"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -29,10 +29,9 @@
 --------
 在 GitCommitGateway pre-commit 阶段注册门禁：
   1. 获取 staged added/modified .py 文件
-  2. 过滤 tests/ 豁免
-  3. 对每个文件解析 diff，检查 added 行是否含 [BLUEPRINT] 头部
-  4. 提取 module_id，调用 validate_module_id_naming.is_valid_module_id() 校验
-  5. 不合规 -> 硬阻断
+  2. 对每个文件解析 diff，检查 added 行是否含 [BLUEPRINT] 头部
+  3. 提取 module_id，调用 validate_module_id_naming.is_valid_module_id() 校验
+  4. 不合规 -> 硬阻断
 
 设计权衡
 --------
@@ -40,6 +39,9 @@
 2. **diff-based**：与 bare_sql_gate / hardcoded_url_gate 一致的检测模式。
 3. **复用真源**：is_valid_module_id() 是格式校验唯一真源（裁定#208），禁止复制正则。
 4. **priority=77**：在 RULE-FOUR-WAY(76) 之后，VOCAB-HARDCODE(80) 之前。
+5. **移除 tests/ 豁免**（#ARCH-DATAQUALITY-V1.1，2026-07-18）：原设计豁免 tests/，
+   导致 482 个 SRC-XXX 违规在 tests/ 下无限累积（AI 复制现有模式）。100% AI 开发
+   下任何豁免区=债务温床。存量 grandfathered（只检 added 行），新增必须合规。
 
 Usage::
 
@@ -57,7 +59,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
 )
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
@@ -85,10 +87,10 @@ def make_blueprint_format_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
-            f for f in _get_staged_py_files(gateway, "BLUEPRINT-FORMAT")
-            if not is_test_exempt(f)
-        ]
+        # 治本（#ARCH-DATAQUALITY-V1.1，2026-07-18）：移除 tests/ 豁免——100% AI 开发下，
+        # 豁免区=债务温床（482 个 SRC-XXX 违规因 tests/ 豁免累积）。存量 grandfathered
+        # （只检 added 行），但新增 tests/ 文件必须用合规 MOD-/SH- 前缀。
+        py_files = _get_staged_py_files(gateway, "BLUEPRINT-FORMAT")
         violations: list[str] = []
         for py_file in py_files:
             for line_no, content in _get_added_lines(gateway, py_file, "BLUEPRINT-FORMAT"):

@@ -43,7 +43,14 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+# Bug fix (2026-07-18, #ARCH-DATAQUALITY-V1.4): 补 _shared bootstrap + REPO_ROOT import。
+# 原缺 bootstrap 致 from _shared.constants import 失败（ModuleNotFoundError），且 L50 使用未导入的 REPO_ROOT 致 NameError。
+_THIS_FILE = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P1-A2): 连续失败阈值读SSoT
 
