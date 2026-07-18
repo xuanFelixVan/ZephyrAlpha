@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-19 01:42:42
+%% 生成时间: 2026-07-19 01:44:03
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 72, 依赖边数: 281
+%% 模块数: 72, 依赖边数: 291
 
 graph TD
 
@@ -150,7 +150,7 @@ graph TD
     src_zephyr_integration_vector____ry_sqlite_metadata_store_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_INTEGRATION (78 条)
+    %%  -> D_INTEGRATION (79 条)
     [] -->|import_depends| src_zephyr_integration_llm_bridge_py
     [] -->|import_depends| src_zephyr_integration_mcp_server_py
     [] -->|import_depends| src_zephyr_integration_local_model_cache_layer_py
@@ -186,15 +186,25 @@ graph TD
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_AUTONOMY_CORE[D_AUTONOMY_CORE] -->|import_depends| src_zephyr_integration_vector_memory_context_ingest_py
-    %% D_FEEDBACK_LOOP -> D_INTEGRATION (2 条)
+    %% D_FACTOR -> D_INTEGRATION (1 条)
+    D_FACTOR[D_FACTOR] -->|runtime| src_zephyr_integration_budget____radation_spiral_detector_py
+    %% D_FEEDBACK_LOOP -> D_INTEGRATION (3 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
-    %% D_GOVERNANCE -> D_INTEGRATION (5 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|runtime| src_zephyr_shared_contracts_protocols_py
+    %% D_GOVERNANCE -> D_INTEGRATION (7 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_mcp__base_server_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_ollama_chat_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_runtime_types_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_integration_budget____radation_spiral_detector_py
+    D_GOVERNANCE[D_GOVERNANCE] -->|runtime| src_zephyr_integration_budget____radation_spiral_detector_py
+    %% D_GOV_DOCS -> D_INTEGRATION (4 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_budget____radation_spiral_detector_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_mcp_handoff_auto_loader_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_integration_mcp_handoff_auto_loader_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_budget____radation_spiral_detector_py
     %% D_GOV_DRIFT -> D_INTEGRATION (1 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     %% D_GOV_ENFORCEMENT -> D_INTEGRATION (1 条)
@@ -211,6 +221,8 @@ graph TD
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    %% D_INFRASTRUCTURE -> D_INTEGRATION (1 条)
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|runtime| src_zephyr_integration_mcp_server_py
     %% D_INFRA_RUNTIME -> D_INTEGRATION (8 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
@@ -316,5 +328,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 66 条
-    %% 跨域入边: 113 条
+    %% 跨域入边: 123 条
     %% 跨域出边: 102 条
