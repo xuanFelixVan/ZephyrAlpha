@@ -77,7 +77,6 @@ _ALLOWED_TABLES = frozenset(
     {
         "tasks",
         "events",
-        "knowledge",
         "gate_runs",
         "circuit_breaker_state",
         "task_files",
@@ -599,7 +598,7 @@ class DatabaseManager:
             ).fetchone()[0]
             event_count = conn.execute("SELECT COUNT(*) FROM events").fetchone()[0]
             gate_count = conn.execute("SELECT COUNT(*) FROM gate_runs").fetchone()[0]
-            ke_count = conn.execute("SELECT COUNT(*) FROM knowledge").fetchone()[0]
+            ke_count = 0  # KBG removed — knowledge table dropped (2026-07-19)
             slow_count = conn.execute("SELECT COUNT(*) FROM slow_queries").fetchone()[0]
         finally:
             self.return_connection(conn)
