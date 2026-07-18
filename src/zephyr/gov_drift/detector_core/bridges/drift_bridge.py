@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_DRIFT_det_bridge | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] zephyr.gov_drift.bridges.drift_bridge
 # [DOMAIN] D_GOV_DRIFT
 # [DEPENDENCIES] zephyr.shared.event_bus; zephyr.gov_drift.drift_engine
@@ -12,10 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] handler swallows all exceptions and logs; never raises during event dispatch
 # [TESTS] tests/test_drift_bridge.py
-# [A_module] module_id=MOD-GOV_DRIFT_det_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-DriftBridge — 漂移检测器事件桥接 (MOD-GOV_DRIFT_det_bridge).
+DriftBridge — 漂移检测器事件桥接 (MOD-INF-023).
 
 将 gate_blocked / task_completed 事件桥接到 DriftEngine。
 由于 drift_detector 模块本身是 frozen，在 bridge 层挂载订阅。
