@@ -184,9 +184,9 @@ graph TD
         src_zephyr_shared_contracts_telemetry_emitter_py["(生产态 / production) telemetry_emitter.py"]
     end
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_factor_signal_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_market_data_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_experiment_result_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_risk_limits_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_synthesized_signal_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -249,15 +249,15 @@ graph TD
         src_zephyr_shared_contracts_trace_context_py["(原型态 / prototype) trace_context.py"]
     end
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
-    D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
     scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_INTEGRATION
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     scripts_backup_minio_tcp_relay_py -.->|runtime / runtime| D_GOV_DOCS
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_backup_backup_reconciler_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_TRADING["(生产态 / production) D_TRADING"]

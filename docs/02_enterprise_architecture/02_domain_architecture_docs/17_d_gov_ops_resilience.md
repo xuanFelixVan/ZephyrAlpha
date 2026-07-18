@@ -188,13 +188,13 @@ graph TD
     src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
-    D_SHARED["(原型态 / prototype) D_SHARED"]
-    src_zephyr_governance_escalation_escalation_engine_py -.->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| D_SECURITY
+    D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_escalation_contracts_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_governance_escalation_contracts_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_governance_escalation_escalation_engine_py -.->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_governance_escalation_result_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_escalation_triage_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_KB["(生产态 / production) D_GOV_KB"]
@@ -234,8 +234,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_owner_absent_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_agent_dispatch_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py production
     class src_zephyr_governance_ops_governance_decision_fatigue_py,src_zephyr_governance_ops_governance_environment_manager_py design
-    class D_SECURITY,D_INTEGRATION,D_GOV_KB,D_GOV_RULE,D_GOVERNANCE,D_OPS,D_GOV_REPAIR,D_INFRA_RUNTIME,D_FEEDBACK_LOOP external_prod
-    class D_SHARED,D_GOV_AUDIT external_design
+    class D_SHARED,D_INTEGRATION,D_SECURITY,D_GOV_KB,D_GOV_RULE,D_GOVERNANCE,D_OPS,D_GOV_REPAIR,D_INFRA_RUNTIME,D_FEEDBACK_LOOP external_prod
+    class D_GOV_AUDIT external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -275,9 +275,9 @@ graph TD
         src_zephyr_governance_resilience_governance_f5_shutdown_manager_py["(生产态 / production) F5ShutdownManager — F5 自动关闭/状态持久化/信...<br/>文件: f5_shutdown_manager.py"]
     end
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_resilience_governance_account_isolator_py
     D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|导入依赖 / import_depends| D_OPS
@@ -369,10 +369,10 @@ graph TD
     end
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
-    src_zephyr_governance_security_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_security_governance_api_response_sanitizer_py
+    src_zephyr_governance_security_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_security_governance_bare_repo_scanner_py
     D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
-    src_zephyr_governance_resilience_governance_offline_autonomy_py -.->|导入依赖 / import_depends| D_INFRA_A2A
     src_zephyr_governance_resilience_governance_offline_resilience_py -.->|导入依赖 / import_depends| D_INFRA_A2A
+    src_zephyr_governance_resilience_governance_offline_autonomy_py -.->|导入依赖 / import_depends| D_INFRA_A2A
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_SECURITY["(生产态 / production) D_SECURITY"]
@@ -496,13 +496,13 @@ graph TD
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_circuit_breaker_py
-    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
+    src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
