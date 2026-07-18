@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates._reference_helpers
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (is_test_exempt)
-# [CONSUMERS] zephyr.gov_enforcement.commit_gates.ruling_reference_gate
+# [CONSUMERS] zephyr.gov_enforcement.commit_gates.ruling_reference_gate; zephyr.gov_enforcement.commit_gates.arch_reference_gate; zephyr.gov_enforcement.commit_gates.dangling_reference_gate
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 纯函数——所有差异通过参数注入(extract_refs_fn/extract_registered_nums_fn/registry_rel)，不依赖模块级状态
@@ -14,24 +14,30 @@
 # [TESTS] tests/governance/commit_gates/test_ruling_reference_gate.py
 # [A_module] module_id=MOD-GOV-reference_helpers | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""_reference_helpers.py — 引用检测门禁共享工具函数（ARCH-REFERENCE / RULING-REFERENCE）
+"""_reference_helpers.py — 引用检测门禁共享工具函数（ARCH-REFERENCE / RULING-REFERENCE / DANGLING-REFERENCE）
 
 治本（2026-07-18，FUNCTION-DUP 消除）：arch_reference_gate.py 与 ruling_reference_gate.py
 存在 5 个函数体完全相同的私有 helper（_get_head_content / _scan_file_violations /
 _load_head_registered_nums / _collect_new_refs_by_file / _check_atomicity），
 被 FUNCTION-DUP gate 阻断。提取到本模块，通过参数注入差异（extract_refs_fn /
-extract_registered_nums_fn / registry_rel），两个 gate 复用同一实现。
+extract_registered_nums_fn / registry_rel），共享同一实现。
+
+治本（2026-07-18，M03 重复簇消除）：arch_reference_gate.py 和 dangling_reference_gate.py
+迁移到本模块消费，消除 M03 检出的 5 个重复函数簇。当前三个 gate 复用同一实现：
+  - ruling_reference_gate：消费全部 5 个 helper（参数注入 _RULING_REF_RE / ruling_registry）
+  - arch_reference_gate：消费全部 5 个 helper（参数注入 _ARCH_REF_RE / architecture_issue_registry）
+  - dangling_reference_gate：仅消费 get_head_content（HEAD 版本对比）
 
 设计决策
 --------
-1. **参数注入而非模块级状态**：两个 gate 的 _extract_refs 使用不同正则
+1. **参数注入而非模块级状态**：各 gate 的 _extract_refs 使用不同正则
    (_ARCH_REF_RE vs _RULING_REF_RE)，_extract_registered_nums 解析不同 registry
    结构。通过 callable 参数注入差异，共享控制流。
 2. **函数名去下划线前缀**：避免与 arch_reference_gate.py 的私有函数同名导致
    FUNCTION-DUP 误报（不同函数名 = 不同 AST 节点 = 不同 hash）。
-3. **不修改 arch_reference_gate.py**：arch_reference_gate.py 是已提交的稳定文件，
-   保留其本地 _私有函数不动。本模块仅被 ruling_reference_gate.py 消费。
-   未来 arch_reference_gate.py 也可迁移到本模块，但不在本次 M04 修复范围。
+3. **dangling_reference_gate 部分迁移**：dangling_reference_gate 仅用 get_head_content
+   一个 helper（其余逻辑与 arch/ruling 不同），通过 `from ... import get_head_content`
+   导入在调用方命名空间创建绑定。
 """
 
 from __future__ import annotations
