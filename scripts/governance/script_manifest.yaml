@@ -1,13 +1,13 @@
-# 自动生成于 2026-07-18T17:05:08Z
+# 自动生成于 2026-07-18T17:21:55Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T17:05:08Z'
+generated_at: '2026-07-18T17:21:55Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 343
+total_scripts: 344
 with_manifest: 308
-missing_manifest: 35
+missing_manifest: 36
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -22,7 +22,7 @@ categories:
   governance:d5_architecture: 102
   governance:d6_security: 14
   governance:d7_code: 35
-  governance:d8_doc_sync: 9
+  governance:d8_doc_sync: 10
   governance:d9_knowledge: 2
   governance:data_quality: 1
   governance:generators: 9
@@ -3107,6 +3107,16 @@ scripts:
   description: 带日期快照文件检测（GOV-DOC-006 §三 — 应使用LATEST命名）
   tags:
   - Quick
+- name: d8_doc_sync/readme_version_sync_reconciler.py
+  owner: governance:d8_doc_sync
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d8_doc_sync/sync_rule_registry.py
   owner: governance:d8_doc_sync
   dimensions:
