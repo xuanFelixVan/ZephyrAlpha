@@ -111,7 +111,7 @@
 > 7. **编号空洞检测**：WARNING 不阻断（如本项目编号缺口 #205/#212）
 > 8. **跨表引用**：裁定可关联 `#ARCH-XXX` 议题（related_arch）与其他裁定（related_rulings），形成议题-裁定双向追溯链
 >
-> **RULING-REFERENCE gate 当前状态**：阶段1 manual stage（_MANUAL_STAGE=True），所有违规返回 passed=True + WARNING 不阻断，建立基线；阶段2（后续）移除 _MANUAL_STAGE 后启用 hard block。检测 staged 文件中新增的 裁定#NNN 引用是否在 registry 有对应条目，fail-closed——registry 缺失/git 异常时阻断；跳过 tests/ 豁免区；扫描 .py/.yaml/.yml/.md。
+> **RULING-REFERENCE gate 当前状态**：**阶段2 hard block 已启用**（裁定#20-G，2026-07-18，_MANUAL_STAGE=False）——新增未登记 裁定#NNN 引用直接阻断提交。阶段1 建立基线已完成（51 个裁定登记 + baseline 0 个悬空引用）。检测 staged 文件中新增的 裁定#NNN 引用是否在 registry 有对应条目，fail-closed——registry 缺失/git 异常时阻断；跳过 tests/ 豁免区；扫描 .py/.yaml/.yml/.md；L2 同提交原子性——新增引用必须与 registry 同 commit 提交。
 >
 > **新增裁定流程**：(1) 在 `ruling_registry.yaml` entries 末尾追加新条目（含 ruling_id/title/date/category/status/summary/affected_files/related_arch/related_rulings/superseded_by）；(2) 同 commit 提交 registry 与首次引用代码。
 

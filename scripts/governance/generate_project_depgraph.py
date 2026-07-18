@@ -3040,7 +3040,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
 
         # Clear existing operational data (preserve design-state)
         # Note: NULL != 'design' is NULL (not TRUE) in SQL, so must handle NULL explicitly
-        # 裁定#2026-0701: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
+        # 裁定#218: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
         # ARCH-052: 排除聚合节点类型（gate_rule_set/script_collection/test_suite/rule_registry_collection），
         #           这些节点由 YAML sync 维护（sync_aggregate_nodes），非代码扫描产物，重建时必须保留
         cursor.execute(
@@ -3049,7 +3049,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             "'test_suite', 'rule_registry_collection')"
         )
         # P0-1 schema fix: 保留设计态边（dep_maturity='design'），只删除运营态边
-        # 裁定#2026-0701: 同时保留指向 database 节点的边（模块→数据库依赖，手工维护）
+        # 裁定#218: 同时保留指向 database 节点的边（模块→数据库依赖，手工维护）
         # ARCH-052: 同时保留指向聚合节点的边（gate_engine→gate_rule_set 等手工维护依赖）
         cursor.execute(
             "DELETE FROM edges WHERE (dep_maturity != 'design' OR dep_maturity IS NULL) "

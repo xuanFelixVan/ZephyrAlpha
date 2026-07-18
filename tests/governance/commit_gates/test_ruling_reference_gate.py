@@ -10,11 +10,11 @@
 
 权威依据：ruling_reference_gate.py（make_ruling_reference_gate）
 
-测试组：
-- TestRulingRefManualStageWarn: 阶段1 manual stage，新增未登记裁定#NNN 引用 → 不阻断（passed=True + WARNING）
+测试组（裁定#20-G 阶段2 hard block 模式，_MANUAL_STAGE=False）：
+- TestDanglingRefBlocks: 新增未登记裁定#NNN 引用 → 阻断（passed=False + RULING_REFERENCE_VIOLATION）
 - TestRegisteredRefPasses: 合法已登记裁定#NNN 引用 → 通过
 - TestNoRefPasses: 无裁定#NNN 引用 → 通过
-- TestFailClosedNoRegistryManualStage: manual stage 下 registry 缺失 → 不阻断（WARNING）
+- TestFailClosedNoRegistry: registry 缺失 → 阻断（fail-closed）
 - TestTestExempt: tests/ 下文件豁免 → 通过
 - TestIncrementalOnly: HEAD 已有引用 → 通过（增量检测不阻断历史）
 - TestGateSpecFields: gate_id / priority 字段正确
@@ -33,9 +33,10 @@ from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
 
 
 # 测试用 registry YAML：含 裁定#6 / 裁定#19 / 裁定#19-B / 裁定#203-B，不含 裁定#999
+# 使用真源字段 "entries"（对标 architecture_issue_registry.yaml 结构）
 _REGISTRY_YAML = """\
 module_id: REG-RULING-001
-rulings:
+entries:
   - ruling_id: "裁定#6"
     title: 路径SSoT
     status: active
@@ -71,19 +72,19 @@ def _write_registry(project_root: Path) -> None:
     registry_path.write_text(_REGISTRY_YAML, encoding="utf-8")
 
 
-class TestRulingRefManualStageWarn:
-    """阶段1 manual stage：新增未登记裁定#NNN 引用 → 不阻断（passed=True + WARNING）。"""
+class TestDanglingRefBlocks:
+    """阶段2 hard block：新增未登记裁定#NNN 引用 → 阻断（passed=False + RULING_REFERENCE_VIOLATION）。"""
 
-    def test_dangling_ruling_ref_warn_not_block(self, tmp_path):
+    def test_dangling_ruling_ref_blocks(self, tmp_path):
         _write_registry(tmp_path)
         gw = _make_gateway(tmp_path)
         gate = make_ruling_reference_gate()
         target = tmp_path / "module.py"
         target.write_text("# see 裁定#999 for details\n", encoding="utf-8")
         passed, detail = gate.check(gw, [str(target)])
-        # manual stage: passed=True, detail 含 WARNING
-        assert passed is True, f"manual stage 应放行不阻断，但阻断。detail={detail}"
-        assert "RULING-REFERENCE manual stage" in detail or "RULING_REFERENCE" in detail.upper() or passed is True
+        # hard block: passed=False, detail 含 RULING_REFERENCE_VIOLATION
+        assert passed is False, f"hard block 应阻断未登记引用，但放行。detail={detail}"
+        assert "RULING_REFERENCE_VIOLATION" in detail or "RULING-REFERENCE" in detail.upper()
 
 
 class TestRegisteredRefPasses:
@@ -112,18 +113,19 @@ class TestNoRefPasses:
         assert passed is True
 
 
-class TestFailClosedNoRegistryManualStage:
-    """manual stage 下 registry 缺失 → 不阻断（WARNING）。"""
+class TestFailClosedNoRegistry:
+    """hard block 下 registry 缺失 → 阻断（fail-closed）。"""
 
-    def test_no_registry_manual_stage_warn(self, tmp_path):
+    def test_no_registry_blocks(self, tmp_path):
         # 不写 registry
         gw = _make_gateway(tmp_path)
         gate = make_ruling_reference_gate()
         target = tmp_path / "module.py"
         target.write_text("# ref 裁定#6\n", encoding="utf-8")
         passed, detail = gate.check(gw, [str(target)])
-        # manual stage: registry 缺失也放行
-        assert passed is True
+        # hard block: registry 缺失阻断
+        assert passed is False
+        assert "fail-closed" in detail or "not found" in detail
 
 
 class TestTestExempt:
@@ -191,16 +193,16 @@ class TestSuffixRef:
         passed, detail = gate.check(gw, [str(target)])
         assert passed is True
 
-    def test_dangling_suffix_ref_warn(self, tmp_path):
-        """manual stage 下未登记的带后缀引用 → 不阻断。"""
+    def test_dangling_suffix_ref_blocks(self, tmp_path):
+        """hard block 下未登记的带后缀引用 → 阻断。"""
         _write_registry(tmp_path)
         gw = _make_gateway(tmp_path)
         gate = make_ruling_reference_gate()
         target = tmp_path / "module.py"
         target.write_text("# ref 裁定#999-Z 未登记\n", encoding="utf-8")
         passed, detail = gate.check(gw, [str(target)])
-        # manual stage: passed=True
-        assert passed is True
+        # hard block: passed=False
+        assert passed is False
 
 
 class TestExtractRegisteredNums:
@@ -210,7 +212,8 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
-        data = {"rulings": [{"ruling_id": "裁定#6"}, {"ruling_id": "裁定#19"}]}
+        # entries 是真源字段（对标 architecture_issue_registry.yaml）
+        data = {"entries": [{"ruling_id": "裁定#6"}, {"ruling_id": "裁定#19"}]}
         nums = _extract_registered_nums(data)
         assert "6" in nums
         assert "19" in nums
@@ -219,10 +222,19 @@ class TestExtractRegisteredNums:
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
             _extract_registered_nums,
         )
-        data = {"rulings": [{"ruling_id": "裁定#19-A"}, {"ruling_id": "裁定#203-B"}]}
+        data = {"entries": [{"ruling_id": "裁定#19-A"}, {"ruling_id": "裁定#203-B"}]}
         nums = _extract_registered_nums(data)
         assert "19-A" in nums
         assert "203-B" in nums
+
+    def test_extract_rulings_alias_compatible(self):
+        """早期测试用 'rulings' 字段，gate 兼容此别名。"""
+        from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (
+            _extract_registered_nums,
+        )
+        data = {"rulings": [{"ruling_id": "裁定#6"}]}
+        nums = _extract_registered_nums(data)
+        assert "6" in nums
 
     def test_extract_empty_rulings(self):
         from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import (

@@ -234,11 +234,7 @@ entries:
     - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
   related_arch:
     - '#ARCH-016'
-  related_rulings:
-    - 裁定#166
-    - 裁定#167
-    - 裁定#168
-    - 裁定#169
+  related_rulings: []
   superseded_by: '#ARCH-016'
 
 # === 节点准入边界批次（#173，2026-06-24）===
@@ -287,8 +283,6 @@ entries:
   related_rulings:
     - 裁定#179
     - 裁定#180
-    - 裁定#181
-    - 裁定#182
     - 裁定#183
   superseded_by: null
 
@@ -380,10 +374,7 @@ entries:
   related_arch: []
   related_rulings:
     - 裁定#173
-    - 裁定#185
     - 裁定#186
-    - 裁定#187
-    - 裁定#188
   superseded_by: null
 
 - ruling_id: '裁定#186'
@@ -403,9 +394,6 @@ entries:
   related_arch: []
   related_rulings:
     - 裁定#184
-    - 裁定#185
-    - 裁定#187
-    - 裁定#188
   superseded_by: null
 
 # === V4.3 设计态节点角色批次（#189-193，2026-06-25）===
@@ -1196,7 +1184,55 @@ entries:
     - 裁定#216
   superseded_by: null
 
+# === 历史裁定补登（#218，2026-07-01）===
+
+- ruling_id: '裁定#218'
+  title: 保留 database 节点与聚合节点不被扫描器清空
+  date: '2026-07-01'
+  category: 架构
+  status: active
+  summary: >-
+    历史裁定补登（原代码中以日期式编号 [数字-日期] 形式引用，不符合裁定#20-D 铁律#3
+    子裁定格式，本批次重命名为 裁定#218 并登记）。决策内容：generate_project_depgraph.py
+    全量重建 depgraph 时，排除 node_type='database' 的持久基础设施节点（已运营非设计态，
+    手工维护不被扫描器清空），同时保留指向 database 节点的边（模块→数据库依赖，手工
+    维护）。配合 #ARCH-052 同时保留指向聚合节点的边（gate_rule_set/script_collection/
+    test_suite/rule_registry_collection，由 sync_aggregate_nodes 维护）。治本：避免
+    重建 depgraph 时丢失手工维护的 database 与聚合节点依赖。
+  affected_files:
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch:
+    - '#ARCH-052'
+  related_rulings:
+    - 裁定#20
+  superseded_by: null
+
 # === 裁定#20 治本批次（#20-A/#20-B，2026-07-18）===
+
+- ruling_id: '裁定#20'
+  title: 裁定登记机制治本批次根条目
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    裁定#NNN 登记机制治本批次的根条目，包含子裁定 #20-A（建立 ruling_registry.yaml
+    真源表）/ #20-B（建立 RULING-REFERENCE commit gate 强制引用登记）/ #20-D（裁定
+    编号分配 8 条铁律）/ #20-E（清理 AI 调研产物污染的虚构编号）/ #20-F（登记历史
+    裁定#218 即原日期式编号裁定）/ #20-G（启用 hard block）。治本病根：项目 493
+    处裁定#NNN 引用但无中央登记表，AI 可 grep-and-claim 占位。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    - d:\ZephyrAlpha\AGENTS.md
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\ruling_reference_gate.py
+  related_arch: []
+  related_rulings:
+    - 裁定#20-A
+    - 裁定#20-B
+    - 裁定#20-D
+    - 裁定#20-E
+    - 裁定#20-F
+    - 裁定#20-G
+  superseded_by: null
 
 - ruling_id: '裁定#20-A'
   title: 裁定登记机制建立（治本 grep-and-claim 占位）
@@ -1250,4 +1286,95 @@ entries:
   related_rulings:
     - 裁定#20-A
     - 裁定#20-D
+  superseded_by: null
+
+- ruling_id: '裁定#20-D'
+  title: 裁定编号分配铁律（8 条规则）
+  date: '2026-07-18'
+  category: 治理
+  status: active
+  summary: >-
+    裁定编号分配与维护的 8 条铁律：(1) 连续分配——按裁定时间顺序连续分配，禁止跳号；
+    (2) 不回收——已分配编号永不回收，即使被废弃/superseded；(3) 子裁定格式——
+    裁定#NNN-A/B/C 表示主裁定（裁定#NNN）的子项；(4) status 四值——active/superseded/
+    deprecated/draft；(5) 登记强制——禁止 grep-and-claim 占位（裁定#20-A）；(6) 同提交
+    原子性——新增引用必须与 registry 同 commit（裁定#20-B L2）；(7) 编号空洞检测——
+    WARNING 不阻断；(8) 物理排列规则——按裁定时间顺序追加。治本"裁定#NNN 编号无统一规则"
+    的病根，对标 #ARCH-XXX 编号铁律#6 建立对应机制。AGENTS.md RULE-RULING 章节
+    （第七件事）记录此 8 条规则。
+  affected_files:
+    - d:\ZephyrAlpha\AGENTS.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+  related_arch:
+    - '#ARCH-001'
+  related_rulings:
+    - 裁定#20-A
+    - 裁定#20-B
+  superseded_by: null
+
+- ruling_id: '裁定#20-E'
+  title: 清理 AI 调研产物污染的虚构裁定编号
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    治本 ruling_registry.yaml 中 AI 调研产物污染的虚构编号。病根：前序 session 用
+    Agent 批量调研裁定内容时，Agent 在 related_rulings 字段凭空编造了 8 个不存在的
+    子裁定编号（#166/#167/#168/#169/#181/#182/#185/#187/#188），全项目仅 ruling_registry.yaml
+    自身的 related_rulings 字段引用，无任何其他文档/代码/git log 提及——典型 grep-and-claim
+    占位问题。治本：从 4 个裁定（#165/#178/#184/#186）的 related_rulings 字段删除 12 处
+    悬空引用。这是裁定#20-A 治本机制发现的首个真实违规案例，证明 RULING-REFERENCE gate
+    的价值——没有 registry 真源对比，AI 编造的编号永远无法被发现。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#20
+    - 裁定#20-A
+  superseded_by: null
+
+- ruling_id: '裁定#20-F'
+  title: 历史裁定补登（裁定#218 即原日期式编号裁定）
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    历史裁定补登治本。病根：代码中以日期式编号（数字-日期格式，非合规）引用一个真实决策（保留
+    database 节点不被扫描器清空），编号格式不符合裁定#20-D 铁律#3（裁定#NNN-A/B/C 子
+    裁定格式）。治本：(1) 重命名为合规编号 裁定#218（按裁定时间顺序，2026-07-01 介于
+    #217 与 #20-A 之间）；(2) 在 ruling_registry.yaml 补登完整 entry；(3) 更新代码中
+    3 处引用（generate_project_depgraph.py 2 处 + generate_domain_doc.py 1 处）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\d5_architecture\generators\generate_domain_doc.py
+  related_arch: []
+  related_rulings:
+    - 裁定#20
+    - 裁定#218
+  superseded_by: null
+
+- ruling_id: '裁定#20-G'
+  title: RULING-REFERENCE gate 启用 hard block（阶段2）
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    RULING-REFERENCE gate 阶段2 启用 hard block。治本：将 _MANUAL_STAGE 从 True 切换为
+    False，新增未登记 裁定#NNN 引用直接阻断提交（之前阶段1 仅 WARNING 不阻断）。启用
+    条件已满足：(1) ruling_registry.yaml 全量登记 51 个裁定（48 历史裁定 + #20/#20-D/#218）；
+    (2) 全项目"裁定#NNN"引用 baseline 100% 在 registry 登记（0 个悬空引用）；(3) 治本清理
+    8 个虚构编号（裁定#20-E）；(4) 重命名 1 个非合规编号（裁定#20-F）。同时修复 gate bug：
+    _extract_registered_nums 原用 "rulings" 字段但真源字段是 "entries"，已兼容两者（entries
+    优先，rulings 别名 fallback）。测试同步更新为 hard block 行为，18 个测试全过。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\ruling_reference_gate.py
+    - d:\ZephyrAlpha\tests\governance\commit_gates\test_ruling_reference_gate.py
+    - d:\ZephyrAlpha\AGENTS.md
+  related_arch: []
+  related_rulings:
+    - 裁定#20
+    - 裁定#20-B
+    - 裁定#20-E
+    - 裁定#20-F
   superseded_by: null

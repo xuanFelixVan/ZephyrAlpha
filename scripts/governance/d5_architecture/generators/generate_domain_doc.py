@@ -375,7 +375,7 @@ def get_domain_nodes(conn: PgConnExecuteWrapper, domain_id: str) -> list[dict]:
     )
     rows = []
     for r in cur.fetchall():
-        # node_type='database' 是手工维护的持久基础设施节点（裁定#2026-0701），
+        # node_type='database' 是手工维护的持久基础设施节点（裁定#218），
         # path 是 SSoT 指针（→ infrastructure_registry.yaml INFRA-DB-xxx），不是 ghost
         if r.get("node_type") == "database":
             pass
