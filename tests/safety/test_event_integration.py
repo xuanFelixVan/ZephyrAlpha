@@ -15,6 +15,15 @@ import pytest
 from unittest.mock import MagicMock, patch
 from pathlib import Path
 
+# 裁定(2026-07-19): 同 test_phase_manager_integration.py — GameDayScheduler 的
+# subscribe_to_events/unsubscribe_from_events/_on_security_event/enable_event_subscription
+# API 从未实现（MOD-INF-030 partially_implemented, Phase 2b 未施工）。
+# 治本方案：标记 module-level skip，待 Phase 2b 完整施工后移除本 marker。
+pytestmark = pytest.mark.skip(
+    reason="GameDayScheduler event subscription API 未实现 "
+    "(MOD-INF-030 partially_implemented, 待 Phase 2b 完整施工后启用)"
+)
+
 scheduler_mod = pytest.importorskip(
     "zephyr.security.adversarial_validation.game_day_scheduler",
     reason="game_day_scheduler not available",

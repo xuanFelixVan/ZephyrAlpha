@@ -131,6 +131,7 @@ from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate impor
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
+from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate

@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["ConstitutionEngine", "DuplicateArticleError", "RegistryWriteError"]
 
-_REGISTRY_PATH: Path = Path(__file__).parent / "_constitution-registry.yaml"
+_REGISTRY_PATH: Path = Path(__file__).parent / "_constitution_registry.yaml"
 
 ARTICLE_CATEGORIES: Final[dict[str, str]] = {
     "security_boundary": "Security Boundary",

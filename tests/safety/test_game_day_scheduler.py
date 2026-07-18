@@ -618,7 +618,7 @@ class TestStateLoadSave:
 
 
 # ============================================================
-# 46个攻击场景加载与执行验证
+# 54个攻击场景加载与执行验证
 # ============================================================
 
 
@@ -626,16 +626,16 @@ class TestScenarioRegistry:
     def test_scenario_registry_file_exists(self):
         assert _SCENARIO_REGISTRY_PATH.exists()
 
-    def test_scenario_registry_has_46_scenarios(self):
+    def test_scenario_registry_has_54_scenarios(self):
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         scenarios = data.get("scenarios", [])
-        assert len(scenarios) == 46
+        assert len(scenarios) == 54
 
-    def test_scenario_registry_summary_total_46(self):
+    def test_scenario_registry_summary_total_54(self):
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        assert data["summary"]["total"] == 46
+        assert data["summary"]["total"] == 54
 
     def test_all_scenarios_have_required_fields(self):
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
@@ -657,19 +657,24 @@ class TestScenarioRegistry:
                     f"scenario[{i}] ({scenario.get('scenario_id', '?')}) missing field: {field}"
                 )
 
-    def test_all_scenarios_are_active(self):
+    def test_all_scenarios_have_valid_status(self):
+        # 治本(2026-07-19): 场景注册表支持 active 和 deprecated 两种状态。
+        # deprecated 场景保留在注册表中用于历史追溯（如 RB-SCEN-046 因
+        # circadian_scheduler 已废除而标记 deprecated，attack 向量已失效）。
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
+        valid_statuses = {"active", "deprecated"}
         for scenario in data["scenarios"]:
-            assert scenario["status"] == "active", (
-                f"{scenario['scenario_id']} status={scenario['status']}"
+            assert scenario["status"] in valid_statuses, (
+                f"{scenario['scenario_id']} status={scenario['status']} "
+                f"not in {valid_statuses}"
             )
 
-    def test_scenario_ids_sequential_001_to_046(self):
+    def test_scenario_ids_sequential_001_to_054(self):
         with open(_SCENARIO_REGISTRY_PATH, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         ids = [s["scenario_id"] for s in data["scenarios"]]
-        expected = [f"RB-SCEN-{i:03d}" for i in range(1, 47)]
+        expected = [f"RB-SCEN-{i:03d}" for i in range(1, 55)]
         assert ids == expected
 
     def test_scenarios_cover_all_tiers(self):
@@ -720,21 +725,24 @@ class TestScenarioLoaderIntegration:
     def test_loader_loads_scenarios_from_custom_path(self):
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
         scenarios = loader.load()
-        assert len(scenarios) == 46
+        assert len(scenarios) == 54
 
     def test_loader_scenario_count(self):
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
-        assert loader.scenario_count == 46
+        assert loader.scenario_count == 54
 
-    def test_loader_list_all_returns_46(self):
+    def test_loader_list_all_returns_54(self):
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
         scenarios = loader.list_all()
-        assert len(scenarios) == 46
+        assert len(scenarios) == 54
 
-    def test_loader_list_active_returns_46(self):
+    def test_loader_list_active_returns_53(self):
+        # 治本(2026-07-19): list_active() 过滤掉 deprecated 状态的场景，
+        # 因此 54 个场景中只有 53 个 active（RB-SCEN-046 因 circadian_scheduler
+        # 已废除而标记 deprecated，不在 active 列表中）。
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
         active = loader.list_active()
-        assert len(active) == 46
+        assert len(active) == 53
 
     def test_loader_get_returns_scenario_by_id(self):
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
@@ -759,7 +767,7 @@ class TestScenarioLoaderIntegration:
         loader = ScenarioLoader(registry_path=_SCENARIO_REGISTRY_PATH)
         counts = loader.tier_counts()
         total = sum(counts.values())
-        assert total == 46
+        assert total == 54
 
 
 class TestSchedulerScenarioExecution:
@@ -791,9 +799,9 @@ class TestSchedulerScenarioExecution:
             ["per_commit", "daily", "weekly", "monthly"]
         )
 
-    def test_trigger_with_mocked_46_attacks(self, tmp_path, mock_runner):
+    def test_trigger_with_mocked_54_attacks(self, tmp_path, mock_runner):
         mock_runner.run_game_day.return_value = _make_result(
-            total=46, blocked=40, bypassed=6
+            total=54, blocked=48, bypassed=6
         )
         state_path = tmp_path / "scheduler-state.yaml"
         with patch(
@@ -802,6 +810,6 @@ class TestSchedulerScenarioExecution:
         ):
             sched = GameDayScheduler(state_path=state_path)
         results = sched.trigger("cron_daily")
-        assert results[0]["total"] == 46
-        assert results[0]["blocked"] == 40
+        assert results[0]["total"] == 54
+        assert results[0]["blocked"] == 48
         assert results[0]["bypassed"] == 6
