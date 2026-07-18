@@ -22,9 +22,9 @@ ttl: permanent
 |------|-----|
 | 域总数 | 63 |
 | 模块总数 | 2676 |
-| 生产态模块 | 1568 |
+| 生产态模块 | 1567 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1046 |
+| 原型态模块 | 1047 |
 
 ## 域清单（按架构层分组）
 
@@ -58,7 +58,7 @@ ttl: permanent
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 0 | 0 | 0 | 0 | 0/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
-| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 72 | 58 | 0 | 14 | 72/150 (OK) | [22_d_orchestrator.md](22_d_orchestrator.md) |
+| D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 72 | 57 | 0 | 15 | 72/150 (OK) | [22_d_orchestrator.md](22_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 3 | 1 | 0 | 2 | 3/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 165 | 99 | 0 | 66 | 165/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
