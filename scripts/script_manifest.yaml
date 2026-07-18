@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-18'
-total_scripts: 572
+total_scripts: 574
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -34,6 +34,22 @@ scripts:
   path: check_naming_convention.py
   description: FILENAME_UPPERCASE_WHITELIST = [
   domain: check_naming_convention.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: check_section_structure.py
+  path: check_section_structure.py
+  description: "\uFEFF#!/usr/bin/env python3"
+  domain: check_section_structure.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: check_sections_v2.py
+  path: check_sections_v2.py
+  description: 检查 docs/03_modules/ 下所有有 frontmatter (module_id:) 的 .md 蓝图文件的章节结构顺序是否一致。
+  domain: check_sections_v2.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -888,7 +904,7 @@ scripts:
   dimensions: []
 - name: governance/d11_compliance/validate_truth_source_cascade.py
   path: governance/d11_compliance/validate_truth_source_cascade.py
-  description: from __future__ import annotations
+  description: __manifest__ = """
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1096,7 +1112,7 @@ scripts:
   dimensions: []
 - name: governance/d1_structure/generate_missing_index_md.py
   path: governance/d1_structure/generate_missing_index_md.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/generate_missing_index_md.py | §"
+  description: 对标：AGENTS.md §6.11 索引-实际同步强制约定（index.md 必须与磁盘实际一致）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1216,7 +1232,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/backfill_doctype_metadata.py
   path: governance/d3_metadata/backfill_doctype_metadata.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/backfill_doctype_metadata.py | §gate-15"
+  description: 对有 frontmatter 但缺 doc_type 字段的 .md 文件，按无歧义路径规则注入 doc_type。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1224,7 +1240,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/backfill_ttl_metadata.py
   path: governance/d3_metadata/backfill_ttl_metadata.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/backfill_ttl_metadata.py | §gate-15"
+  description: 对 docs/ + src/ + scripts/ + tests/ 下所有有头部的文件（6 格式），按
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1296,7 +1312,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/classify_ttl_by_content.py
   path: governance/d3_metadata/classify_ttl_by_content.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/classify_ttl_by_content.py | §gate-15"
+  description: 与 backfill_ttl_metadata.py 的区别：
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1320,7 +1336,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/generate_rule_catalog.py
   path: governance/d3_metadata/generate_rule_catalog.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_rule_catalog.py | §"
+  description: Parses Markdown/YAML frontmatter (and YAML comment headers where applicable).
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1328,7 +1344,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/migrate_illegal_doctype.py
   path: governance/d3_metadata/migrate_illegal_doctype.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | §gate-15"
+  description: 扫描全项目（docs/ + src/ + scripts/ + config/ + architecture_model/），
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1336,7 +1352,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/validate_architecture.py
   path: governance/d3_metadata/validate_architecture.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_architecture.py | §"
+  description: validate_architecture.py - Validate rule files against architecture_contract.yaml
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1976,7 +1992,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/syncers/merge_readme_to_index.py
   path: governance/d5_architecture/syncers/merge_readme_to_index.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/syncers/merge_readme_to_index.py | §"
+  description: 'Strategy:'
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2008,7 +2024,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py
   path: governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_adr_frontmatter_consistency.py | §"
+  description: v1.0.0 — 2026-05-03
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2088,7 +2104,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_depends_on_format.py
   path: governance/d5_architecture/validators/validate_depends_on_format.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_depends_on_format.py | §"
+  description: 对标：PS-STD-001 §3.1（depends_on 字段定义——structured {target, at, why}）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2176,7 +2192,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_ssot.py
   path: governance/d5_architecture/validators/validate_ssot.py
-  description: "\uFEFF# [BLUEPRINT] MOD-GOV-SCRIPTS-ARCH"
+  description: __manifest__ = """
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2200,7 +2216,7 @@ scripts:
   dimensions: []
 - name: governance/d5_architecture/validators/validate_three_way_consistency.py
   path: governance/d5_architecture/validators/validate_three_way_consistency.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_three_way_consistency.py | §"
+  description: 对标：AGENTS.md §6.2（原子事务模式）
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2816,7 +2832,7 @@ scripts:
   dimensions: []
 - name: governance/d8_doc_sync/validate_document_ttl.py
   path: governance/d8_doc_sync/validate_document_ttl.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d8_doc_sync/validate_document_ttl.py | §"
+  description: validate_document_ttl.py — 文档 TTL 过期检测
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -2840,7 +2856,7 @@ scripts:
   dimensions: []
 - name: governance/d9_knowledge/detect_orphan_documents.py
   path: governance/d9_knowledge/detect_orphan_documents.py
-  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d9_knowledge/detect_orphan_documents.py | §"
+  description: detect_orphan_documents.py — 孤立文档检测
   domain: governance
   execution_plane: warm-path
   status: registered
