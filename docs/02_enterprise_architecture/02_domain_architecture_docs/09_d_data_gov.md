@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 09_d_data_gov / 数据治理 / 数据治理 / Data Governance
+# 09_d_data_gov / data_governance / 数据治理 / Data Governance
 
 > **功能简介 / Overview**: 数据治理，负责数据标准、元数据管理和数据生命周期治理
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 | Description | 数据治理域。负责数据质量管理、数据血缘追踪与参考数据管理，包括数据质量门禁、血缘图谱、主数据管理、数据字典。拆分自原D-DATA域。 |
+| 描述 | 数据治理，负责数据标准、元数据管理和数据生命周期治理 | Description | 数据治理，负责数据标准、元数据管理和数据生命周期治理 |
 
 ## 模块分层清单 / Module Layered List
 

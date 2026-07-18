@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 49_d_ml_serve / 推理 / 推理 / Inference
+# 49_d_ml_serve / ml_serve / 推理 / Inference
 
 > **功能简介 / Overview**: 推理，负责模型部署、在线推理和模型服务管理
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 | Description | 机器学习推理域。负责ML模型推理服务，包括模型部署、在线推理、批推理、模型版本管理、A/B测试。 |
+| 描述 | 推理，负责模型部署、在线推理和模型服务管理 | Description | 推理，负责模型部署、在线推理和模型服务管理 |
 
 ## 模块分层清单 / Module Layered List
 
@@ -78,7 +78,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_api_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -115,7 +115,7 @@ graph TD
         src_zephyr_ml_serve_services_init_py["(原型态 / prototype) __init__.py"]
     end
     D_ML_TRAIN["(原型态 / prototype) D_ML_TRAIN"]
-    src_zephyr_ml_serve_api_init_py -.->|runtime / runtime| D_ML_TRAIN
+    src_zephyr_ml_serve_init_py -.->|runtime / runtime| D_ML_TRAIN
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000

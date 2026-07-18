@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 63_d_siglegacy / signal_legacy / 信号遗留设计态 / Signal Legacy (Design)
+# 63_d_siglegacy / signal_fundamental / 信号遗留设计态 / Signal Legacy (Design)
 
 > **功能简介 / Overview**: 信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 旧版信号管线（裁定#204改名D-SIGNAL→D_SIGLEGACY） | Description | 旧版信号管线（裁定#204改名D-SIGNAL→D_SIGLEGACY） |
+| 描述 | 信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划 | Description | 信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划 |
 
 ## 模块分层清单 / Module Layered List
 

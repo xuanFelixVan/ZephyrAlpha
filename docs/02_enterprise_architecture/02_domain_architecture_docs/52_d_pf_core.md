@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 52_d_pf_core / 组合核心 / 组合核心 / Portfolio Core
+# 52_d_pf_core / pf_core / 组合核心 / Portfolio Core
 
 > **功能简介 / Overview**: 组合核心，负责投资组合构建、持仓管理和组合优化
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 1 | Prototype Modules | 1 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 | Description | 组合核心域。负责投资组合核心引擎，包括组合优化器、风险预算分配、基准跟踪、再平衡引擎。 |
+| 描述 | 组合核心，负责投资组合构建、持仓管理和组合优化 | Description | 组合核心，负责投资组合构建、持仓管理和组合优化 |
 
 ## 模块分层清单 / Module Layered List
 

@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 08_d_data_eng / 数据工程 / 数据工程 / Data Engineering
+# 08_d_data_eng / data_eng / 数据工程 / Data Engineering
 
 > **功能简介 / Overview**: 数据工程，负责数据管道编排、ETL 流程和数据质量监控
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图谱构建。拆分自原D-DATA域。 | Description | 数据工程域。负责数据增值处理、多源数据融合与知识提取，包括ETL管线、特征工程、数据融合引擎、知识图谱构建。拆分自原D-DATA域。 |
+| 描述 | 数据工程，负责数据管道编排、ETL 流程和数据质量监控 | Description | 数据工程，负责数据管道编排、ETL 流程和数据质量监控 |
 
 ## 模块分层清单 / Module Layered List
 

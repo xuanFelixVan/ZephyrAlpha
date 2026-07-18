@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 31_d_cross_asset / 跨资产 / 跨资产 / Cross Asset
+# 31_d_cross_asset / cross_asset / 跨资产 / Cross Asset
 
 > **功能简介 / Overview**: 跨资产，负责多资产类别投资和跨资产套利策略
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 跨资产策略与配置 | Description | 跨资产策略与配置 |
+| 描述 | 跨资产，负责多资产类别投资和跨资产套利策略 | Description | 跨资产，负责多资产类别投资和跨资产套利策略 |
 
 ## 模块分层清单 / Module Layered List
 

@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 06_d_alt_data / 另类数据 / 另类数据 / Alternative Data
+# 06_d_alt_data / alt_data / 另类数据 / Alternative Data
 
 > **功能简介 / Overview**: 另类数据，负责非传统金融数据的采集、清洗和标准化
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 | Description | 另类数据域。负责另类数据源的接入与处理，包括卫星图像、社交媒体情绪、供应链数据、ESG数据。 |
+| 描述 | 另类数据，负责非传统金融数据的采集、清洗和标准化 | Description | 另类数据，负责非传统金融数据的采集、清洗和标准化 |
 
 ## 模块分层清单 / Module Layered List
 

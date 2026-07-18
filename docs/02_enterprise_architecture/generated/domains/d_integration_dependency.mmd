@@ -1,5 +1,5 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-19 04:07:09
+%% 生成时间: 2026-07-19 04:13:54
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 73, 依赖边数: 353
 
@@ -86,15 +86,11 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| src_zephyr_shared_contracts_protocols_py
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
+    src_zephyr_integration_local_model_embedding_router_py -->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_local_model_local_model_scheduler_py -->|import_depends| src_zephyr_integration_local_model_ollama_chat_py
-    src_zephyr_integration_local_model_embedding_router_py -->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
     src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
-    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
-    src_zephyr_integration_mcp_sandbox_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_audit_logger_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
@@ -107,7 +103,11 @@ graph TD
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_task_manager_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_telemetry_server_py
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| src_zephyr_integration_mcp_vector_memory_server_py
+    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_sentinel_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
+    src_zephyr_integration_mcp_sandbox_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|import_depends| src_zephyr_integration_mcp__base_server_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|import_depends| src_zephyr_integration_vector_memory_vms_errors_py
     src_zephyr_integration_mcp_vector_memory_server_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
@@ -115,19 +115,17 @@ graph TD
     src_zephyr_integration_mcp__base_server_py -->|import_depends| src_zephyr_integration_mcp_error_codes_py
     src_zephyr_integration_shared_events_dlq_bridge_py -->|import_depends| src_zephyr_integration_shared_events_dlq_py
     src_zephyr_integration_vector_memory_bridge_layer_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_context_ingest_py -->|import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
     src_zephyr_integration_vector_memory_collection_manager_py -->|import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
     src_zephyr_integration_vector_memory_collection_manager_py -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
-    src_zephyr_integration_vector_memory_cache_layer_py -->|import_depends| src_zephyr_integration_local_model_cache_layer_py
-    src_zephyr_integration_vector____oss_collection_retriever_py -->|import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
-    src_zephyr_integration_vector_____delegated_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_interface_py
-    src_zephyr_integration_vector_memory_context_ingest_py -->|import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
-    src_zephyr_integration_vector____faiss_collection_manager_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
-    src_zephyr_integration_vector_memory_index_health_monitor_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_collection_schemas_py
     src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_vms_errors_py
     src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_provenance_enforcer_py
     src_zephyr_integration_vector_memory_design_principles_py -->|import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
-    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_cache_layer_py -->|import_depends| src_zephyr_integration_local_model_cache_layer_py
+    src_zephyr_integration_vector____oss_collection_retriever_py -->|import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
+    src_zephyr_integration_vector_____delegated_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_interface_py
+    src_zephyr_integration_vector____faiss_collection_manager_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_local_model_cache_layer_py
@@ -139,15 +137,17 @@ graph TD
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_vector_bridge_py
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
     src_zephyr_integration_vector____in_process_vector_memory_py -->|import_depends| src_zephyr_integration_vector_memory_index_health_monitor_py
-    src_zephyr_integration_vector_memory_retrieval_feedback_py -->|import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
-    src_zephyr_integration_vector_memory_retrieval_feedback_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
-    src_zephyr_integration_vector_memory_vector_bridge_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     src_zephyr_integration_vector_memory_ollama_embedding_py -->|import_depends| src_zephyr_integration_local_model_ollama_embedding_py
+    src_zephyr_integration_vector_memory_index_health_monitor_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_in_memory_fake_vms_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|import_depends| src_zephyr_integration_vector_memory_vms_schemas_py
     src_zephyr_integration_vector_memory_provenance_enforcer_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_vector_bridge_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     src_zephyr_integration_vector_____migrate_chroma_to_faiss_py -->|import_depends| src_zephyr_integration_vector____faiss_collection_manager_py
     src_zephyr_integration_vector_____migrate_chroma_to_faiss_py -->|import_depends| src_zephyr_integration_vector____ry_sqlite_metadata_store_py
     src_zephyr_integration_vector_____migrate_chroma_to_faiss_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
+    src_zephyr_integration_vector_memory_retrieval_feedback_py -->|import_depends| src_zephyr_integration_vector_memory_hybrid_retriever_py
+    src_zephyr_integration_vector_memory_retrieval_feedback_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|import_depends| src_zephyr_integration_vector_memory_bridge_layer_py
     src_zephyr_integration_vector_memory_vms_memory_backend_py -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     src_zephyr_integration_vector____ry_sqlite_metadata_store_py -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
@@ -200,8 +200,8 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_runtime_types_py
     %% D_GOV_DOCS -> D_INTEGRATION (3 条)
     D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_shared_contracts_protocols_py
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_mcp_handoff_auto_loader_py
-    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_integration_mcp_handoff_auto_loader_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_mcp_prompt_provider_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_integration_mcp_prompt_provider_py
     %% D_GOV_DRIFT -> D_INTEGRATION (1 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     %% D_GOV_ENFORCEMENT -> D_INTEGRATION (1 条)
@@ -220,12 +220,12 @@ graph TD
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_integration_vector_memory_collection_manager_py
     %% D_INFRA_RUNTIME -> D_INTEGRATION (8 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_vector____in_process_vector_memory_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_local_model_ollama_chat_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_local_model_embedding_router_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_pipeline_orchestrator_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_contracts_runtime_types_py
     %% D_INTELLIGENCE -> D_INTEGRATION (2 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_integration_vector_memory_in_memory_fake_vms_py
@@ -239,8 +239,8 @@ graph TD
     %% D_INTEGRATION ->  (4 条)
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| []
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| []
-    src_zephyr_integration_ports_py -->|config_depends| []
     src_zephyr_integration_budget____radation_spiral_detector_py -->|config_depends| []
+    src_zephyr_integration_ports_py -->|config_depends| []
     %% D_INTEGRATION -> D_AUTONOMY_CORE (3 条)
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
@@ -302,24 +302,24 @@ graph TD
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_pipeline_orchestrator_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_local_model_ollama_chat_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_local_model_ollama_embedding_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_audit_logger_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_blueprint_search_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_local_model_ollama_embedding_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_local_model_ollama_chat_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_doc_guard_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_integration_mcp_resource_provider_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_gateway_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_gate_engine_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_integration_mcp_task_manager_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_resource_provider_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_integration_mcp_knowledge_base_server_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_INTEGRATION -> D_TRADING (1 条)
     src_zephyr_integration_behavio___ssion_admission_response_py -->|import_depends| D_TRADING[D_TRADING]
 

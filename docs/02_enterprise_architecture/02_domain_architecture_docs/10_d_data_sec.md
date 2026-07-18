@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 10_d_data_sec / 数据安全与契约 / 数据安全与契约 / Data Security & Contracts
+# 10_d_data_sec / data_security / 数据安全与契约 / Data Security & Contracts
 
 > **功能简介 / Overview**: 数据安全与契约，负责数据访问控制、加密和跨层契约校验
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验证。拆分自原D-DATA域。 | Description | 数据安全与契约域。负责数据安全策略、数据契约定义与执行，包括数据加密、访问控制、数据脱敏、数据契约验证。拆分自原D-DATA域。 |
+| 描述 | 数据安全与契约，负责数据访问控制、加密和跨层契约校验 | Description | 数据安全与契约，负责数据访问控制、加密和跨层契约校验 |
 
 ## 模块分层清单 / Module Layered List
 

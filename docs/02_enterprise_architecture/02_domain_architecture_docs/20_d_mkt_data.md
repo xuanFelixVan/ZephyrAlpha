@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 20_d_mkt_data / 行情数据 / 行情数据 / Market Data
+# 20_d_mkt_data / market_data / 行情数据 / Market Data
 
 > **功能简介 / Overview**: 行情数据，负责市场行情数据的采集、分发和订阅管理
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 | Description | 行情数据接入与存储域。负责市场行情数据的接入、存储与分发，包括实时行情、历史行情、多市场数据源的统一接入层。拆分自原D-DATA域。 |
+| 描述 | 行情数据，负责市场行情数据的采集、分发和订阅管理 | Description | 行情数据，负责市场行情数据的采集、分发和订阅管理 |
 
 ## 模块分层清单 / Module Layered List
 
@@ -83,15 +83,15 @@ graph TD
     end
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_market_data_init_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_DATA["(原型态 / prototype) D_DATA"]
-    D_DATA -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
+    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md,src_zephyr_market_data_init_py,src_zephyr_market_data_extensions_init_py,src_zephyr_market_data_api_init_py,src_zephyr_market_data_core_init_py,src_zephyr_market_data_infrastructure_init_py,src_zephyr_market_data_models_init_py,src_zephyr_market_data_services_init_py design
     class D_INFRASTRUCTURE external_prod
-    class D_DATA external_design
+    class D_GOV_SCRIPTS external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -110,14 +110,14 @@ graph TD
         docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md["(设计态 / design) "]
         docs_03_modules_domain_data_data_source_operation_manual_md["(设计态 / design) "]
     end
-    D_DATA["(原型态 / prototype) D_DATA"]
-    D_DATA -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
+    D_GOV_SCRIPTS["(原型态 / prototype) D_GOV_SCRIPTS"]
+    D_GOV_SCRIPTS -.->|data / data| docs_03_modules_domain_data_data_source_operation_manual_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_database_sub_blueprints_c1_market_clickhouse_md,docs_03_modules_domain_data_data_source_operation_manual_md design
-    class D_DATA external_design
+    class D_GOV_SCRIPTS external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -157,7 +157,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA: 批量聚合写入器（MOD-L00-004 §18.3 裁定... (buf... | → |  | data / data |
+| 1 | D_GOV_SCRIPTS 脚本治理: G-acqflow: 从 tasks.yaml 生成业务数据采集流图 M... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
@@ -167,9 +167,9 @@ graph TD
 graph LR
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
-    D_DATA["D_DATA"]
+    D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_MKT_DATA -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_DATA -->|2条 data / data| D_MKT_DATA
+    D_GOV_SCRIPTS -->|2条 data / data| D_MKT_DATA
 ```
 
 ## 说明 / Notes

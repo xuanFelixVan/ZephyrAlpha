@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 53_d_position / 仓位管理 / 仓位管理 / Position Management
+# 53_d_position / position / 仓位管理 / Position Management
 
 > **功能简介 / Overview**: 仓位管理，负责持仓跟踪、仓位计算和盈亏分析
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
-| 描述 | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 | Description | 持仓跟踪、仓位计算、盈亏归因、仓位调整。仓位账本。 |
+| 描述 | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 | Description | 仓位管理，负责持仓跟踪、仓位计算和盈亏分析 |
 
 ## 模块分层清单 / Module Layered List
 

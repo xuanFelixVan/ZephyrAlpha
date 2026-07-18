@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 55_d_sell_decision / 卖出决策 / 卖出决策 / Sell Decision
+# 55_d_sell_decision / sell_decision / 卖出决策 / Sell Decision
 
 > **功能简介 / Overview**: 卖出决策，负责卖出信号生成、卖出时机判断和退出策略
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 | Description | 卖出决策域。负责卖出时机判断与卖出策略执行，包括止盈止损策略、持仓时间优化、卖出信号聚合。 |
+| 描述 | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 | Description | 卖出决策，负责卖出信号生成、卖出时机判断和退出策略 |
 
 ## 模块分层清单 / Module Layered List
 

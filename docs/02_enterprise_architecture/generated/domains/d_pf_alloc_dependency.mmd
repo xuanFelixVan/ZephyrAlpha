@@ -1,12 +1,12 @@
 %% D_PF_ALLOC 域全景依赖图
-%% 生成时间: 2026-07-19 04:07:10
+%% 生成时间: 2026-07-19 04:13:54
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 3, 依赖边数: 9
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_PF_ALLOC[组合分配]
+    subgraph D_PF_ALLOC[pf_alloc]
         src_zephyr_pf_alloc_["src/zephyr/pf_alloc/ [design]"]
         src_zephyr_pf_alloc_strategy_lifecycle_event_py[".../pf_alloc/strategy_lifecycle_event.py [prototype]"]
         src_zephyr_pf_core_default_equity_strategy_py["...yr/pf_core/default_equity_strategy.py [production]"]

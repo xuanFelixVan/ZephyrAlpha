@@ -1,12 +1,12 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-19 04:07:09
+%% 生成时间: 2026-07-19 04:13:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 8, 依赖边数: 36
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_EX_CORE[执行核心]
+    subgraph D_EX_CORE[ex_core]
         src_zephyr_ex_core_adapters___init___py["src/zephyr/ex_core/adapters/__init__.py [prototype]"]
         src_zephyr_ex_core_adapters_miniqmt_broker_py["...yr/ex_core/adapters/miniqmt_broker.py [prototype]"]
         src_zephyr_ex_core_adapters_miniqmt_broker_py_["...r/ex_core/adapters/miniqmt_broker.py/ [design]"]
@@ -46,15 +46,15 @@ graph TD
     %% D_EX_CORE -> D_GOVERNANCE (6 条)
     src_zephyr_ex_core_adapters_miniqmt_broker_py_ -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters_simulation_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters_simulation_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_EX_CORE -> D_INFRASTRUCTURE (4 条)
-    src_zephyr_ex_core_order_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_ex_core_order_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_ex_core_order_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_ex_core_order_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_EX_CORE -> D_SHARED (2 条)
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_SHARED[D_SHARED]

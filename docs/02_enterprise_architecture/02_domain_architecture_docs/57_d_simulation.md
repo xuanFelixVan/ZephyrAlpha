@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 57_d_simulation / 仿真 / 仿真 / Simulation
+# 57_d_simulation / simulation / 仿真 / Simulation
 
 > **功能简介 / Overview**: 仿真，负责市场仿真、模拟撮合和仿真环境管理
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 2 | Production Modules | 2 |
 | 容量 | 2/150 (正常) | Capacity | 2/150 (正常) |
-| 描述 | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 | Description | 仿真引擎、场景生成、蒙特卡洛、回测模拟。策略验证沙箱。 |
+| 描述 | 仿真，负责市场仿真、模拟撮合和仿真环境管理 | Description | 仿真，负责市场仿真、模拟撮合和仿真环境管理 |
 
 ## 模块分层清单 / Module Layered List
 

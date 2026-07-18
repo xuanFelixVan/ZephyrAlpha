@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 51_d_pf_alloc / 组合分配 / 组合分配 / Portfolio Allocation
+# 51_d_pf_alloc / pf_alloc / 组合分配 / Portfolio Allocation
 
 > **功能简介 / Overview**: 组合分配，负责资产配置、权重分配和再平衡
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 1 | Prototype Modules | 1 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
-| 描述 | 资产组合分配优化 | Description | 资产组合分配优化 |
+| 描述 | 组合分配，负责资产配置、权重分配和再平衡 | Description | 组合分配，负责资产配置、权重分配和再平衡 |
 
 ## 模块分层清单 / Module Layered List
 

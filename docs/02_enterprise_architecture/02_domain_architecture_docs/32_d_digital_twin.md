@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 32_d_digital_twin / 数字孪生 / 数字孪生 / Digital Twin
+# 32_d_digital_twin / digital_twin / 数字孪生 / Digital Twin
 
 > **功能简介 / Overview**: 数字孪生，负责市场状态镜像、组合模拟和场景推演
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 数字孪生与虚拟市场仿真 | Description | 数字孪生与虚拟市场仿真 |
+| 描述 | 数字孪生，负责市场状态镜像、组合模拟和场景推演 | Description | 数字孪生，负责市场状态镜像、组合模拟和场景推演 |
 
 ## 模块分层清单 / Module Layered List
 

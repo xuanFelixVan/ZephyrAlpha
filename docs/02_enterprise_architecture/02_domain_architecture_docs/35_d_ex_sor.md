@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 35_d_ex_sor / 执行路由 / 执行路由 / Execution Routing
+# 35_d_ex_sor / ex_sor / 执行路由 / Execution Routing
 
 > **功能简介 / Overview**: 执行路由，负责订单路由、智能拆单和执行场所选择
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 | Description | 执行路由域。负责智能订单路由(SOR)，包括多交易通道选择、流动性聚合、最优执行路径规划。 |
+| 描述 | 执行路由，负责订单路由、智能拆单和执行场所选择 | Description | 执行路由，负责订单路由、智能拆单和执行场所选择 |
 
 ## 模块分层清单 / Module Layered List
 

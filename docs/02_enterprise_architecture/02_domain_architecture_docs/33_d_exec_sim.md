@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 33_d_exec_sim / 执行仿真 / 执行仿真 / Execution Simulation
+# 33_d_exec_sim / execution_simulation / 执行仿真 / Execution Simulation
 
 > **功能简介 / Overview**: 执行仿真，负责执行过程仿真、滑点模拟和冲击成本建模
 
@@ -33,7 +33,7 @@ ttl: permanent
 | 原型态模块 | 7 | Prototype Modules | 7 |
 | 生产态模块 | 0 | Production Modules | 0 |
 | 容量 | 0/150 (正常) | Capacity | 0/150 (正常) |
-| 描述 | Split from D-SIMULATION | Description | Split from D-SIMULATION |
+| 描述 | 执行仿真，负责执行过程仿真、滑点模拟和冲击成本建模 | Description | 执行仿真，负责执行过程仿真、滑点模拟和冲击成本建模 |
 
 ## 模块分层清单 / Module Layered List
 
