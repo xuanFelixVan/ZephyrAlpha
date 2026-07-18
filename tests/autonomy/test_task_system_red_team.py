@@ -37,15 +37,15 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 def test_00_imports():
     """测试所有核心模块能否正常导入"""
     modules = [
-        ("shared.schemas", "zephyr.shared.schemas"),
-        ("core.models", "zephyr.shared.models"),
-        ("core.blueprint_decomposer", "zephyr.shared.blueprint_decomposer"),
+        ("shared.schemas", "zephyr.shared.schema.schemas"),
+        ("core.models", "zephyr.shared.foundation.models"),
+        ("core.blueprint_decomposer", "zephyr.shared.blueprint_tools.blueprint_decomposer"),
         ("db.task_repo", "zephyr.governance.persistence.task_repo"),
         ("mcp.task_manager_server", "zephyr.integration.mcp.task_manager_server"),
         ("pipeline.models", "zephyr.infrastructure.pipeline.models"),
         ("pipeline.pipeline_orchestrator", "zephyr.integration.pipeline_orchestrator"),
         ("context-engine.context_assembler", "zephyr.autonomy_core.context.context_assembler"),
-        ("kb.triage", "zephyr.data.storage.triage"),
+        ("kb.triage", "zephyr.governance.escalation.triage"),
     ]
 
     failures = []
@@ -273,7 +273,13 @@ def test_02_task_repo_crud():
             safety_level=SafetyLevel.L,
             source_blueprint="test",
             source_section="test",
-            description="Repo测试任务：CRUD验证",
+            description="根因：验证 TaskRepository CRUD 全链路完整性。治根：通过单元测试覆盖所有 CRUD 路径确保数据持久化可靠。施工步骤：1) create 持久化任务 2) get 读取验证 3) transition 状态机转换 4) next_seq 序列号分配 5) list_by_status 状态查询。验收标准：所有操作无异常且返回值符合预期。",
+            directive="DIR-001",
+            files_in_scope=["tests/autonomy/test_task_system_red_team.py"],
+            deliverables=["tests/autonomy/output.py"],
+            applicable_rules=[{"module_id": "MOD-TEST-001", "section": "§1", "reason": "测试规则"}],
+            allowed_touch=["tests/autonomy/"],
+            rollback_instructions="git checkout -- tests/autonomy/output.py 撤销生成的测试输出文件",
             created_at=datetime.now(UTC),
             updated_at=datetime.now(UTC),
         )
@@ -322,13 +328,29 @@ def test_02_task_repo_lifecycle():
             safety_level=SafetyLevel.L,
             source_blueprint="test",
             source_section="test",
-            description="生命周期测试：状态转换验证",
+            description="根因：验证 TaskRepository 状态机完整生命周期。治根：通过完整状态转换序列测试确保状态机无死锁。施工步骤：依次执行 PENDING→IN_PROGRESS→COMPLETED→VERIFIED 状态转换并持久化。验收标准：每个状态转换成功且 final.status==VERIFIED。",
+            directive="DIR-001",
+            files_in_scope=["tests/autonomy/test_task_system_red_team.py"],
+            deliverables=["tests/autonomy/output.py"],
+            acceptance=["final.status==VERIFIED 全程无异常"],
+            applicable_rules=[{"module_id": "MOD-TEST-001", "section": "§1", "reason": "测试规则"}],
+            allowed_touch=["tests/autonomy/"],
+            rollback_instructions="git checkout -- tests/autonomy/output.py 撤销生成的测试输出文件",
             created_at=datetime.now(UTC),
             updated_at=datetime.now(UTC),
         )
         repo.create(task)
 
-        for st in [TaskStatus.IN_PROGRESS, TaskStatus.COMPLETED, TaskStatus.VERIFIED]:
+        # IN_PROGRESS 不需要 batch_review
+        t = repo.transition("CP-101", TaskStatus.IN_PROGRESS)
+        assert t.status == TaskStatus.IN_PROGRESS
+
+        # COMPLETED 需要 task_001_batch_review_protocol：连续2次0问题
+        # 治本(2026-07-19): 补齐 batch_review 调用，满足 GOV-TASK-001 §6.5 要求
+        repo.batch_review("CP-101", reviewer="test")
+        repo.batch_review("CP-101", reviewer="test")
+
+        for st in [TaskStatus.COMPLETED, TaskStatus.VERIFIED]:
             t = repo.transition("CP-101", st)
             assert t.status == st
 
@@ -361,7 +383,13 @@ def test_02_taskcard_repo_polymorphism():
             safety_level=SafetyLevel.L,
             source_blueprint="MOD-TEST-001",
             source_section="§1.0",
-            description="测试TaskCard能否通过TaskRepo保存",
+            description="根因：验证 TaskCard（Task 别名）通过 TaskRepository 多态保存的完整性。治根：通过别名透传测试确保 TaskCard 不引入字段漂移。施工步骤：1) create(tc) 2) get(tc.task_id) 读取。验收标准：fetched_tc 非空且 task_id 匹配。",
+            directive="DIR-001",
+            files_in_scope=["tests/autonomy/test_task_system_red_team.py"],
+            deliverables=["tests/autonomy/output.py"],
+            applicable_rules=[{"module_id": "MOD-TEST-001", "section": "§1", "reason": "测试规则"}],
+            allowed_touch=["tests/autonomy/"],
+            rollback_instructions="git checkout -- tests/autonomy/output.py 撤销生成的测试输出文件",
             created_at=datetime.now(),
             updated_at=datetime.now(),
         )
@@ -589,7 +617,7 @@ def test_05_decompose_real_blueprint():
     """测试拆解真实蓝图文件"""
     from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 
-    real_blueprint = REPO_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
+    real_blueprint = REPO_ROOT / "docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md"
     assert real_blueprint.exists(), f"蓝图不存在: {real_blueprint}"
 
     decomposer = BlueprintDecomposer(docs_dir=str(tempfile.mkdtemp()))
@@ -612,7 +640,7 @@ def test_05_decompose_batch():
     """测试批量拆解"""
     from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
 
-    real_blueprint = REPO_ROOT / "docs/03_modules/_domain-infra_ops/task-system/blueprint.md"
+    real_blueprint = REPO_ROOT / "docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md"
     if real_blueprint.exists():
         decomposer = BlueprintDecomposer()
         batch_results = decomposer.decompose_blueprints_batch([str(real_blueprint)], namespace="INFRA", phase=1)
@@ -731,7 +759,13 @@ def test_06_mcp_persist_and_load():
             safety_level=SafetyLevel.L,
             source_blueprint="MOD-TEST-001",
             source_section="§1.0",
-            description="测试持久化——v2后仅SQLite写.md不生成",
+            description="根因：验证 TaskManagerMCP._persist + _load 全链路 SQLite 持久化。治根：通过 MCP↔Repo 协作测试确保接口契约一致。施工步骤：1) mcp._persist(tc) 写入 2) mcp._load(task_id) 读取。验收标准：loaded 非空且 task_id 匹配。",
+            directive="DIR-001",
+            files_in_scope=["tests/autonomy/test_task_system_red_team.py"],
+            deliverables=["tests/autonomy/output.py"],
+            applicable_rules=[{"module_id": "MOD-TEST-001", "section": "§1", "reason": "测试规则"}],
+            allowed_touch=["tests/autonomy/"],
+            rollback_instructions="git checkout -- tests/autonomy/output.py 撤销生成的测试输出文件",
             created_at=datetime.now(),
             updated_at=datetime.now(),
         )
@@ -757,16 +791,24 @@ def test_07_inheritance_chain():
 
 
 def test_07_field_statistics():
-    """统计 TaskCard 字段数"""
+    """统计 TaskCard 字段数——TaskCard 是 Task 的纯别名（models.py: TaskCard = Task）。
+
+    治本(2026-07-19): 原测试假设 TaskCard 有扩展字段，但 models.py 明确
+    TaskCard = Task 是纯别名，不是第二个模型。修正断言为字段集完全相等。
+    """
     from zephyr.gov_enforcement.rule_enforcement.task_types import Task
     from zephyr.shared.foundation.models import TaskCard
 
     tc_fields = set(TaskCard.model_fields.keys())
     task_fields = set(Task.model_fields.keys())
-    extension_fields = tc_fields - task_fields
 
-    assert len(tc_fields) >= len(task_fields), "TaskCard should have >= fields than Task"
-    assert len(extension_fields) > 0, "TaskCard should have extension fields"
+    # TaskCard = Task (pure alias) — must have identical field set
+    assert tc_fields == task_fields, (
+        f"TaskCard=Task alias violation: tc_fields != task_fields "
+        f"(only in TaskCard: {tc_fields - task_fields}, only in Task: {task_fields - tc_fields})"
+    )
+    # Sanity: Task has substantial fields (not empty/degenerate)
+    assert len(tc_fields) >= 30, f"Task should have >=30 fields, got {len(tc_fields)}"
 
 
 # ============================================================================

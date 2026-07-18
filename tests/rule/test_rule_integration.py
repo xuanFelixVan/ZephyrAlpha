@@ -67,7 +67,7 @@ class TestSkillIntegration:
 
 class TestGateIntegration:
     def test_gate_yaml_rule_ids(self, loader):
-        gate_dir = _PROJECT_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+        gate_dir = _PROJECT_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
         registry_path = gate_dir / "_registry.yaml"
         if not registry_path.exists():
             pytest.skip("Gate _registry.yaml not found")
