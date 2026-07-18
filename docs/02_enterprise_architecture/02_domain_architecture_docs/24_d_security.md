@@ -60,7 +60,7 @@ ttl: permanent
 | 15 | src/zephyr/security/access_control/adversarial_resilience.py | AdversarialResilience - adversarial resilience ... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 16 | src/zephyr/security/access_control/agent_creation_policy.py | AgentCreationPolicy — Agent 创建策略. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 17 | src/zephyr/security/access_control/approver_check.py | Approver authorization verifier — 校验审批人是... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 18 | src/zephyr/security/access_control/asymmetric_audit.py | asymmetric_audit.py | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 18 | src/zephyr/security/access_control/asymmetric_audit.py | AsymmetricAudit - quorum-based approval for hig... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 19 | src/zephyr/security/access_control/auto_maintenance.py | AutoMaintenance — 自动维护与规则健康仪表盘. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 20 | src/zephyr/security/access_control/blueprint_fidelity.py | BlueprintFidelity — 蓝图保真度检查. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 21 | src/zephyr/security/access_control/bootstrap_superadmin.py | BootstrapSuperadmin — Superadmin 账户启动器. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -150,7 +150,7 @@ ttl: permanent
 | 105 | src/zephyr/security/access_control/permission_mode_manage... | Stub module: zephyr.security.access_control.per... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 106 | src/zephyr/security/access_control/phase_executor.py | phase_executor.py | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 107 | src/zephyr/security/access_control/risk_mitigation.py | RiskMitigation — 风险评估与缓解策略. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 108 | src/zephyr/security/access_control/rollback_sandbox.py | rollback_sandbox.py | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 108 | src/zephyr/security/access_control/rollback_sandbox.py | RollbackSandbox - isolate/execute/rollback patt... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 109 | src/zephyr/security/access_control/secrets_lifecycle.py | Stub module: zephyr.security.access_control.sec... | 原型态 / prototype | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 110 | src/zephyr/security/access_control/session_concurrency.py | Session 级并发协调模块（P2-SES 落地）。 | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 111 | src/zephyr/security/access_control/session_lifecycle.py | Stub module: zephyr.security.access_control.ses... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -246,7 +246,7 @@ graph TD
         src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience - adversarial resilience ...<br/>文件: adversarial_resilience.py"]
         src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>文件: agent_creation_policy.py"]
         src_zephyr_security_access_control_approver_check_py["(生产态 / production) Approver authorization verifier — 校验审批人是...<br/>文件: approver_check.py"]
-        src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) asymmetric_audit.py"]
+        src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) AsymmetricAudit - quorum-based approval for hig...<br/>文件: asymmetric_audit.py"]
         src_zephyr_security_access_control_auto_maintenance_py["(生产态 / production) AutoMaintenance — 自动维护与规则健康仪表盘.<br/>文件: auto_maintenance.py"]
         src_zephyr_security_access_control_blueprint_fidelity_py["(生产态 / production) BlueprintFidelity — 蓝图保真度检查.<br/>文件: blueprint_fidelity.py"]
         src_zephyr_security_access_control_bootstrap_superadmin_py["(生产态 / production) BootstrapSuperadmin — Superadmin 账户启动器.<br/>文件: bootstrap_superadmin.py"]
@@ -457,7 +457,7 @@ graph TD
         src_zephyr_security_access_control_permission_mode_manager_py["(原型态 / prototype) Stub module: zephyr.security.access_control.per...<br/>文件: permission_mode_manager.py"]
         src_zephyr_security_access_control_phase_executor_py["(原型态 / prototype) phase_executor.py"]
         src_zephyr_security_access_control_risk_mitigation_py["(生产态 / production) RiskMitigation — 风险评估与缓解策略.<br/>文件: risk_mitigation.py"]
-        src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) rollback_sandbox.py"]
+        src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) RollbackSandbox - isolate/execute/rollback patt...<br/>文件: rollback_sandbox.py"]
         src_zephyr_security_access_control_secrets_lifecycle_py["(原型态 / prototype) Stub module: zephyr.security.access_control.sec...<br/>文件: secrets_lifecycle.py"]
         src_zephyr_security_access_control_session_concurrency_py["(生产态 / production) Session 级并发协调模块（P2-SES 落地）。<br/>文件: session_concurrency.py"]
         src_zephyr_security_access_control_session_lifecycle_py["(生产态 / production) Stub module: zephyr.security.access_control.ses...<br/>文件: session_lifecycle.py"]
@@ -699,7 +699,7 @@ graph TD
         src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience - adversarial resilience ...<br/>文件: adversarial_resilience.py"]
         src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>文件: agent_creation_policy.py"]
         src_zephyr_security_access_control_approver_check_py["(生产态 / production) Approver authorization verifier — 校验审批人是...<br/>文件: approver_check.py"]
-        src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) asymmetric_audit.py"]
+        src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) AsymmetricAudit - quorum-based approval for hig...<br/>文件: asymmetric_audit.py"]
         src_zephyr_security_access_control_auto_maintenance_py["(生产态 / production) AutoMaintenance — 自动维护与规则健康仪表盘.<br/>文件: auto_maintenance.py"]
         src_zephyr_security_access_control_blueprint_fidelity_py["(生产态 / production) BlueprintFidelity — 蓝图保真度检查.<br/>文件: blueprint_fidelity.py"]
         src_zephyr_security_access_control_bootstrap_superadmin_py["(生产态 / production) BootstrapSuperadmin — Superadmin 账户启动器.<br/>文件: bootstrap_superadmin.py"]
@@ -762,7 +762,7 @@ graph TD
         src_zephyr_security_access_control_orphan_judge_safety_fence_py["(生产态 / production) safety_fence.py"]
         src_zephyr_security_access_control_permission_hooks_py["(生产态 / production) PermissionHooks — 权限钩子注册表.<br/>文件: permission_hooks.py"]
         src_zephyr_security_access_control_risk_mitigation_py["(生产态 / production) RiskMitigation — 风险评估与缓解策略.<br/>文件: risk_mitigation.py"]
-        src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) rollback_sandbox.py"]
+        src_zephyr_security_access_control_rollback_sandbox_py["(生产态 / production) RollbackSandbox - isolate/execute/rollback patt...<br/>文件: rollback_sandbox.py"]
         src_zephyr_security_access_control_session_concurrency_py["(生产态 / production) Session 级并发协调模块（P2-SES 落地）。<br/>文件: session_concurrency.py"]
         src_zephyr_security_access_control_session_lifecycle_py["(生产态 / production) Stub module: zephyr.security.access_control.ses...<br/>文件: session_lifecycle.py"]
         src_zephyr_security_access_control_verifiers_contract_verifier_py["(生产态 / production) ContractVerifier — 契约验证器.<br/>文件: contract_verifier.py"]

@@ -215,32 +215,31 @@ graph TD
     src_zephyr_gov_audit_bridges_audit_feedback_bridge_py -->|导入依赖 / import_depends| src_zephyr_gov_audit_anomaly_py
     scripts_governance_repair_red_blue_test_py -.->|config_depends / config_depends| scripts_governance_repair_audit_design_completeness_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
+    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|contract / contract| D_GOV_DOCS
     D_GOV_DRIFT["(设计态 / design) D_GOV_DRIFT"]
     docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DRIFT
-    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|contract / contract| D_GOV_DOCS
-    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
-    docs_03_modules_domain_governance_audit_trail_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_gov_audit_delegation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    docs_03_modules_cross_layer_audit_orchestrator_blueprint_md -.->|runtime / runtime| D_GOV_DOCS
     D_SHARED["(生产态 / production) D_SHARED"]
-    scripts_governance_repair_rollback_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_audit_agent_signer_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_audit_schema_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_audit_schema_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_gov_audit_audit_schema_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_gov_audit_cold_start_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_cold_start_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_audit_bridge_py -->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_gov_audit_cli_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    scripts_governance_repair_rollback_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_gov_audit_bridges_audit_trust_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_audit_orchestrator_compat_py -->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_audit_audit_schema_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_gov_audit_cli_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_gov_audit_audit_schema_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DOCS -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOV_DRIFT -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOV_DOCS -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOV_DOCS -.->|contract / contract| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_domain_governance_audit_trail_blueprint_md
-    D_SECURITY["(生产态 / production) D_SECURITY"]
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_audit_contracts_py
     D_SECURITY -->|导入依赖 / import_depends| src_zephyr_gov_audit_bridge_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_gov_audit_audit_schema_py
@@ -259,8 +258,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_audit_orchestrator_compat_py,src_zephyr_gov_audit_action_history_py,src_zephyr_gov_audit_agent_signer_py,src_zephyr_gov_audit_anomaly_py,src_zephyr_gov_audit_api_lifecycle_py,src_zephyr_gov_audit_audit_schema_py,src_zephyr_gov_audit_audit_write_failure_protector_py,src_zephyr_gov_audit_bridge_py,src_zephyr_gov_audit_bridges_audit_delegation_bridge_py,src_zephyr_gov_audit_bridges_audit_feedback_bridge_py,src_zephyr_gov_audit_bridges_audit_tiered_storage_bridge_py,src_zephyr_gov_audit_bridges_audit_trust_bridge_py,src_zephyr_gov_audit_changelog_manager_py,src_zephyr_gov_audit_cli_py,src_zephyr_gov_audit_code_archaeology_py,src_zephyr_gov_audit_cold_start_py,src_zephyr_gov_audit_compliance_map_py,src_zephyr_gov_audit_contracts_py,src_zephyr_gov_audit_corporate_actions_py,src_zephyr_gov_audit_delegation_auditor_py production
     class docs_03_modules_cross_layer_audit_orchestrator_blueprint_md,docs_03_modules_domain_governance_audit_trail_blueprint_md,scripts_governance_repair_audit_design_completeness_py,scripts_governance_repair_red_blue_test_py,scripts_governance_repair_rollback_depgraph_py,src_zephyr_gov_audit_audit_admission_controller_py,src_zephyr_gov_audit_bridges_audit_anomaly_py,src_zephyr_gov_audit_bridges_audit_contracts_py,src_zephyr_gov_audit_bridges_audit_drift_bridge_py,src_zephyr_gov_audit_delegation_bridge_py design
-    class D_GOV_OPS_RESILIENCE,D_SHARED,D_GOVERNANCE,D_SECURITY,D_GOV_RULE,D_INFRA_RUNTIME external_prod
-    class D_GOV_DOCS,D_GOV_DRIFT,D_INFRA_RECOVERY external_design
+    class D_SHARED,D_GOVERNANCE,D_GOV_RULE,D_INFRA_RUNTIME external_prod
+    class D_GOV_DOCS,D_GOV_DRIFT,D_SECURITY,D_INFRA_RECOVERY external_design
 ```
 
 #### 第 2 页 / 共 4 页
@@ -731,24 +730,24 @@ graph TD
     src_zephyr_gov_audit_finding_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     src_zephyr_gov_audit_text_to_finding_adapter_py -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
     scripts_governance_repair_red_blue_test_py -.->|config_depends / config_depends| scripts_governance_repair_audit_design_completeness_py
-    D_REPORTING["(原型态 / prototype) D_REPORTING"]
-    src_zephyr_governance_audit_default_attribution_engine_py -.->|导入依赖 / import_depends| D_REPORTING
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_gov_audit_finding_model_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_governance_semantic_audit_kb_gate_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_semantic_audit_issue_aggregator_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_semantic_audit_privacy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_governance_semantic_audit_self_healer_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_gov_audit_delegation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_gov_audit_finding_ingest_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_text_to_finding_adapter_py -.->|导入依赖 / import_depends| D_SHARED
-    scripts_governance_repair_rollback_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_semantic_audit_issue_aggregator_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_governance_semantic_audit_privacy_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    src_zephyr_gov_audit_finding_model_py -.->|导入依赖 / import_depends| D_SHARED
+    scripts_governance_repair_rollback_depgraph_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_audit_text_to_finding_adapter_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_semantic_audit_self_healer_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_semantic_audit_kb_gate_py -.->|导入依赖 / import_depends| D_GOVERNANCE
+    D_REPORTING["(原型态 / prototype) D_REPORTING"]
+    src_zephyr_governance_audit_default_attribution_engine_py -.->|导入依赖 / import_depends| D_REPORTING
+    D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
+    src_zephyr_gov_audit_delegation_bridge_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
+    src_zephyr_gov_audit_bridges_audit_drift_bridge_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_DRIFT -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_ingest_py
     D_SECURITY["(生产态 / production) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_gov_audit_finding_model_py
@@ -762,7 +761,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class scripts_governance_repair_audit_design_completeness_py,scripts_governance_repair_red_blue_test_py,scripts_governance_repair_rollback_depgraph_py,src_zephyr_gov_audit_audit_admission_controller_py,src_zephyr_gov_audit_bridges_audit_anomaly_py,src_zephyr_gov_audit_bridges_audit_contracts_py,src_zephyr_gov_audit_bridges_audit_drift_bridge_py,src_zephyr_gov_audit_delegation_bridge_py,src_zephyr_gov_audit_finding_ingest_py,src_zephyr_gov_audit_finding_model_py,src_zephyr_gov_audit_resource_aware_pool_py,src_zephyr_gov_audit_text_to_finding_adapter_py,src_zephyr_gov_audit_tiered_storage_bridge_py,src_zephyr_gov_audit_trust_bridge_py,src_zephyr_governance_audit_default_attribution_engine_py,src_zephyr_governance_semantic_audit_alignment_engine_py,src_zephyr_governance_semantic_audit_compliance_map_py,src_zephyr_governance_semantic_audit_feedback_self_audit_py,src_zephyr_governance_semantic_audit_fix_prioritizer_py,src_zephyr_governance_semantic_audit_fix_result_prioritizer_py,src_zephyr_governance_semantic_audit_issue_aggregator_py,src_zephyr_governance_semantic_audit_kb_gate_py,src_zephyr_governance_semantic_audit_llm_bridge_py,src_zephyr_governance_semantic_audit_orchestrator_py,src_zephyr_governance_semantic_audit_privacy_py,src_zephyr_governance_semantic_audit_reference_extractor_py,src_zephyr_governance_semantic_audit_safety_boundary_py,src_zephyr_governance_semantic_audit_self_healer_py,src_zephyr_governance_semantic_audit_self_health_py,src_zephyr_governance_semantic_audit_spec_auditor_py,src_zephyr_governance_semantic_audit_trigger_engine_py design
-    class D_SHARED,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_SECURITY,D_INFRA_RUNTIME external_prod
+    class D_SHARED,D_GOV_DRIFT,D_GOVERNANCE,D_GOV_OPS_RESILIENCE,D_SECURITY,D_INFRA_RUNTIME external_prod
     class D_REPORTING external_design
 ```
 

@@ -531,20 +531,19 @@ graph TD
     end
     src_zephyr_feedback_loop_tests_e2e_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py
     D_FBL_VERIFICATION["(生产态 / production) D_FBL_VERIFICATION"]
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
     src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -.->|导入依赖 / import_depends| D_FBL_DIAGNOSERS
-    D_FBL_DETECTORS["(原型态 / prototype) D_FBL_DETECTORS"]
-    src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -.->|导入依赖 / import_depends| D_FBL_DETECTORS
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
@@ -555,7 +554,7 @@ graph TD
     class src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py,src_zephyr_feedback_loop_validator_py production
     class src_zephyr_feedback_loop_tests_e2e_init_py,src_zephyr_feedback_loop_verifiers_init_py design
     class D_FBL_VERIFICATION external_prod
-    class D_FBL_DIAGNOSERS,D_FBL_DETECTORS external_design
+    class D_FBL_DIAGNOSERS external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
