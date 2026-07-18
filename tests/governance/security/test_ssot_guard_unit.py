@@ -63,7 +63,7 @@ def tmp_repo(tmp_path: Path) -> Path:
     # 注册表文件
     registry_dir = tmp_path / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
     registry_dir.mkdir(parents=True)
-    registry_file = registry_dir / "document-metadata-index-registry.yaml"
+    registry_file = registry_dir / "rule_catalog_registry.yaml"
     registry_file.write_text(
         "# test registry\n"
         "systems_overview:\n"
@@ -313,7 +313,7 @@ class TestCheckC2:
             / "01_policies_and_standards"
             / "_registry"
             / "catalogs"
-            / "document-metadata-index-registry.yaml"
+            / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: scripts/hooks/nonexistent_hook.py\n",
@@ -356,7 +356,7 @@ class TestCheckC4Format:
             / "01_policies_and_standards"
             / "_registry"
             / "catalogs"
-            / "document-metadata-index-registry.yaml"
+            / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: /absolute/path/to/file.py\n",
@@ -373,7 +373,7 @@ class TestCheckC4Format:
             / "01_policies_and_standards"
             / "_registry"
             / "catalogs"
-            / "document-metadata-index-registry.yaml"
+            / "rule_catalog_registry.yaml"
         )
         registry.write_text(
             "  path: scripts\\hooks\\hook.py\n",

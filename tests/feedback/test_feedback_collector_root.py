@@ -13,7 +13,7 @@
 
 import pytest
 
-from zephyr.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.collectors.feedback_collector import (
     ActionResult,
     FeedbackChannel,
     FeedbackCollector,

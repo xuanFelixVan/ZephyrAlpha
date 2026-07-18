@@ -25,6 +25,12 @@ from __future__ import annotations
 import textwrap
 from datetime import UTC, date, datetime
 from pathlib import Path
+import sys
+
+# validate_truth_source_cascade.py imports `_shared` as a top-level package
+# (e.g. `from _shared.constants import ...`), which requires scripts/governance
+# to be on sys.path.
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts" / "governance"))
 
 from scripts.governance.d11_compliance.validate_truth_source_cascade import (
     RationaleDecision,

@@ -55,7 +55,7 @@ class TestP0U1ContractSmoke:
         assert isinstance(result, dict)
 
     def test_gct_005_drift_to_rollback(self):
-        from zephyr.governance.drift_fix import DriftFixHandler
+        from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
         from zephyr.gov_drift.events import ManagedDriftEvent
 
         event = ManagedDriftEvent(drift_id="D001", target="test_config")
