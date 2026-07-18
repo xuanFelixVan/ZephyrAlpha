@@ -17,7 +17,7 @@ import pytest
 
 l05 = pytest.importorskip("zephyr.pf_core", reason="l05-portfolio-construction not importable")
 
-from zephyr.pf_core.strategy_base import (
+from zephyr.governance.strategies.strategy_base import (
     StrategyBase,
     StrategyMeta,
     StrategyRegistry,

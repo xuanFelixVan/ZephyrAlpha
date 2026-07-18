@@ -92,8 +92,8 @@ _LAZY_IMPORTS = {
 
 _SUBMODULES = {
     "aisg_sandbox": "zephyr.governance.intelligence_governance.aisg_sandbox",
-    "artifact_scanner": "zephyr.compliance.artifact_scanner",
-    "compliance_manager": "zephyr.compliance.compliance_manager",
+    "artifact_scanner": "zephyr.gov_drift.artifact_scanner",
+    "compliance_manager": "zephyr.governance.compliance_gate_a6.compliance_manager",
     "default_security_gateway": "zephyr.governance.implementations.default_security_gateway",
     "security_gateway_base": "zephyr.compliance.security_gateway_base",
 }

@@ -59,13 +59,17 @@ _LAZY_IMPORTS = {
     "SecurityGateway": ("zephyr.governance.security_governance.security_gateway_base", "SecurityGateway"),
 }
 
-_SUBMODULES = [
-    "aisg_sandbox",
-    "artifact_scanner",
-    "compliance_manager",
-    "default_security_gateway",
-    "security_gateway_base",
-]
+# ARCH-GOV-SHIM-001 阶段3：_SUBMODULES 改为 dict 映射 canonical 路径（原 compliance shim 已删除）
+_SUBMODULES = {
+    "aisg_sandbox": "zephyr.governance.intelligence_governance.aisg_sandbox",
+    "artifact_scanner": "zephyr.gov_drift.artifact_scanner",
+    "compliance_manager": "zephyr.governance.compliance_gate_a6.compliance_manager",
+    "default_security_gateway": "zephyr.governance.security_governance.default_security_gateway",
+    "security_gateway_base": "zephyr.governance.security_governance.security_gateway_base",
+    "evidence_pack": "zephyr.governance.evidence_pack",
+    "financial_compliance": "zephyr.governance.financial_governance.financial_compliance",
+    "integrity": "zephyr.governance.integrity",
+}
 
 
 def __getattr__(name):
@@ -80,7 +84,7 @@ def __getattr__(name):
     if name in _SUBMODULES:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.governance.{name}")
+        mod = importlib.import_module(_SUBMODULES[name])
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

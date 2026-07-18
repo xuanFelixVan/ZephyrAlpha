@@ -23,7 +23,7 @@ import pytest
 
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.factor.factor_base import FactorBase, FactorMeta, FactorRegistry
-from zephyr.pf_core.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
+from zephyr.governance.strategies.strategy_base import StrategyBase, StrategyMeta, StrategyRegistry
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
 
