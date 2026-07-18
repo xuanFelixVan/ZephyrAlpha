@@ -1,5 +1,5 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-19 02:21:03
+%% 生成时间: 2026-07-19 02:25:16
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 32, 依赖边数: 154
 
@@ -55,7 +55,6 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_TRADING (84 条)
     [] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    [] -->|import_depends| src_zephyr_trading_runtime_async_runtime_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_factories_py
     [] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     [] -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
@@ -73,6 +72,9 @@ graph TD
     [] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     [] -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
+    [] -->|import_depends| src_zephyr_trading_runtime_async_runtime_py
+    [] -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
+    [] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
     [] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     [] -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
     [] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
@@ -80,16 +82,14 @@ graph TD
     [] -->|import_depends| src_zephyr_trading_trading_con___on_model_serving_request_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
-    [] -->|import_depends| src_zephyr_trading_trading_contracts_market_instrument_py
-    [] -->|import_depends| src_zephyr_trading_trading_con___gnal_degradation_warning_py
     [] -->|import_depends| src_zephyr_trading_trading_con___ortfolio_contracts_money_py
     [] -->|import_depends| src_zephyr_trading_trading_con___strategy_lifecycle_event_py
     %% D_EX_CORE -> D_TRADING (6 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_fill_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_execution_position_py
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
     %% D_FRONTEND -> D_TRADING (1 条)
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_trading_trading_contracts_execution_order_py
@@ -136,8 +136,8 @@ graph TD
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_contracts_factories_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_contracts_execution_order_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_trading_trading_con___strategy_lifecycle_event_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con___mance_attribution_report_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_trading_trading_con___strategy_lifecycle_event_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con___sk_limit_violation_error_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_trading_trading_con____risk_validator_protocol_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_TRADING -> D_INFRA_RUNTIME (1 条)

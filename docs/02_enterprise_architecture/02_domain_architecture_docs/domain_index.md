@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 2673 |
-| 生产态模块 | 1567 |
+| 模块总数 | 2676 |
+| 生产态模块 | 1568 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1044 |
+| 原型态模块 | 1046 |
 
 ## 域清单（按架构层分组）
 
@@ -60,7 +60,7 @@ ttl: permanent
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
 | D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 72 | 58 | 0 | 14 | 72/150 (OK) | [22_d_orchestrator.md](22_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 3 | 1 | 0 | 2 | 3/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
-| D_SECURITY | orphan_judge / Adversarial Validation | 164 | 98 | 0 | 66 | 164/150 (超容) | [24_d_security.md](24_d_security.md) |
+| D_SECURITY | orphan_judge / Adversarial Validation | 165 | 99 | 0 | 66 | 165/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
 | D_SHARED | shared_services / Shared Services | 184 | 115 | 0 | 69 | 184/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOV_KB | knowledge_base_governance / Knowledge Base Governance | 31 | 19 | 0 | 12 | 31/150 (OK) | [43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | rollback / Governance Repair | 1 | 1 | 0 | 0 | 1/200 (OK) | [44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | rule_governance / Rule Governance | 35 | 31 | 0 | 4 | 35/200 (OK) | [45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | script_governance / Script Governance | 356 | 10 | 2 | 344 | 356/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | script_governance / Script Governance | 358 | 10 | 2 | 346 | 358/150 (超容) | [46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | context_management / Context Management | 30 | 21 | 0 | 9 | 30/150 (OK) | [47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | vector_storage / Knowledge Management | 4 | 0 | 2 | 2 | 4/150 (OK) | [48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [49_d_ml_serve.md](49_d_ml_serve.md) |
