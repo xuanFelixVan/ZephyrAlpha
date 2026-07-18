@@ -84,9 +84,13 @@ _REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/ruling_regist
 
 # 阶段1 manual stage 标记（裁定#20-B）：
 # True = 所有违规返回 passed=True + WARNING detail 不阻断（建立基线）
-# False = hard block（阶段2 启用）
-# 阶段2 启用条件：ruling_registry.yaml 全量登记 46+ 个裁定 + 全项目"裁定#NNN"引用 100% 在 registry 登记
-_MANUAL_STAGE = True
+# False = hard block（阶段2 启用，裁定#20-G）
+# 阶段2 启用条件（裁定#20-G，2026-07-18 已满足）：
+#   - ruling_registry.yaml 全量登记 51 个裁定（48 历史裁定 + #20/#20-D/#218）
+#   - 全项目"裁定#NNN"引用 baseline 100% 在 registry 登记（0 个悬空引用）
+#   - 治本清理 8 个虚构编号（#166/#167/#168/#169/#181/#182/#185/#187/#188，裁定#20-E）
+#   - 重命名 1 个非合规编号（#2026-0701 → #218，裁定#20-F）
+_MANUAL_STAGE = False
 
 
 def _extract_registered_nums(registry_data: dict) -> set[str]:
@@ -99,7 +103,12 @@ def _extract_registered_nums(registry_data: dict) -> set[str]:
         已登记的编号字符串集合（如 {"6", "19", "19-A", "19-B", "203-B"}）。
     """
     nums: set[str] = set()
-    for entry in registry_data.get("rulings", []) or []:
+    # 真源字段是 "entries"（对标 architecture_issue_registry.yaml），
+    # 测试兼容 "rulings" 别名（早期测试残留）
+    entries = registry_data.get("entries")
+    if entries is None:
+        entries = registry_data.get("rulings", []) or []
+    for entry in entries:
         if isinstance(entry, dict):
             rid = entry.get("ruling_id", "")
             if isinstance(rid, str) and rid:
