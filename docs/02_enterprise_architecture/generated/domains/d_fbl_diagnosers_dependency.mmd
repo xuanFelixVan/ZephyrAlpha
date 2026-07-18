@@ -1,7 +1,7 @@
 %% D_FBL_DIAGNOSERS 域全景依赖图
-%% 生成时间: 2026-07-18 19:52:45
+%% 生成时间: 2026-07-18 19:56:39
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 76, 依赖边数: 121
+%% 模块数: 76, 依赖边数: 120
 
 graph TD
 
@@ -102,37 +102,35 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___ve_cognitive_load_budget_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn____diagnosis_diagnosis_kpi_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___health_global_health_map_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn___is_interactive_diagnosis_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___n_anomaly_flood_detector_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn___s_diagnosis_mtti_tracker_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn___is_interactive_diagnosis_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn____reliability_latency_slo_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn___itive_socratic_questions_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn___s_diagnosis_mtti_tracker_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___y_regime_gain_scheduling_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn___itive_socratic_questions_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___tistical_hygiene_auditor_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___lity_toil_quantification_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn___ognitive_tone_adapter_v2_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___s_cognitive_tone_adapter_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___ity_value_added_baseline_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn___ognitive_tone_adapter_v2_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___lity_zombie_fle_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___diagnosis_auto_diagnosis_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___ty_capacity_aware_repair_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn____start_conservative_mode_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn___ility_context_truncation_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn____window_pressure_manager_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn___ility_context_truncation_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn____guard_conflict_detector_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___on_consistency_validator_py
     [] -->|test_depends| src_zephyr_feedback_loop_diagn___ta_volume_growth_monitor_py
-    [] -->|test_depends| src_zephyr_feedback_loop_diagn____window_pressure_manager_py
+    [] -->|test_depends| src_zephyr_feedback_loop_diagn____start_conservative_mode_py
     %% D_FEEDBACK_LOOP -> D_FBL_DIAGNOSERS (7 条)
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
+    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagn___agnosis_diagnosis_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
-    D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
-    %% D_GOV_DOCS -> D_FBL_DIAGNOSERS (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_diagnosers_cognitive___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FBL_DIAGNOSERS -> D_SHARED (1 条)
@@ -140,5 +138,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 4 条
-    %% 跨域入边: 116 条
+    %% 跨域入边: 115 条
     %% 跨域出边: 1 条
