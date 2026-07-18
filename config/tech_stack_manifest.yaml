@@ -11,8 +11,23 @@
 # 版本：v2.6.0 | 创建：2026-05-07 | 最后更新：2026-05-07
 # 本文件是架构决策 DD-1 至 DD-16 的唯一结构化真源
 
-manifest_version: "2.6.0"
+manifest_version: "2.7.0"
 module_id: mod_inf_001
+
+# GATE-DEPGRAPH-OPS 治本 Phase 5（2026-07-19，解释器归一声明）：
+# 系统存在 Python 3.11/3.12 双解释器，工具链依赖安装路径漂移（ruff/pytest 命中
+# 3.11 而治理脚本要求 3.12）导致"本地通过、CI 失败"类幻觉。canonical 锚定 3.12，
+# 与 pyproject.toml requires-python / ruff target-version 对齐。
+interpreter:
+  canonical_version: "3.12"
+  canonical_executable: 'C:\Users\fanzi\AppData\Local\Programs\Python\Python312\python.exe'
+  invocation_priority:
+    - "py -3.12          # Windows py launcher（默认已是 3.12）"
+    - "canonical_executable 绝对路径"
+    - "python            # 仅当 PATH 首命中为 3.12+ 时可用（当前为 3.11，禁止）"
+  constraints:
+    requires_python: ">=3.12"   # 与 pyproject.toml requires-python 对齐
+    ruff_target: "py312"        # 与 pyproject.toml ruff target-version 对齐
 blueprint_section: "§5.1 终选技术栈"
 total_decisions: 16
 

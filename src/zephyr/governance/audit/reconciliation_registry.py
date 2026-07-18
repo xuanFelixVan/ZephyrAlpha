@@ -104,6 +104,7 @@ __all__ = [
     "make_worktree_lifecycle_reconciler",
     "make_scripts_import_integrity_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 3
     "make_undefined_name_baseline_reconciler",  # GATE-DEPGRAPH-OPS 治本 Phase 1
+    "acknowledge_critical_warns",  # GATE-DEPGRAPH-OPS 治本 Phase 2（告警 ack 消音）
     "make_stash_lifecycle_reconciler",  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
     "scan_and_archive_working_docs",
@@ -647,6 +648,58 @@ def resolve_blocks(
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("resolve_blocks: DB delete failed: %s", e)
         return {"resolved": 0, "error": str(e)}
+
+
+def acknowledge_critical_warns(
+    project_root: "object", gate_id: "str | None" = None, hours: int = 24
+) -> "dict":
+    """手动确认（ack）近 N 小时的 critical_warn 告警，使其从告警横幅消音。
+
+    GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：
+    病根——critical_warn 记录永久活跃，问题修复后仍反复打印告警横幅
+    （2026-07-18 GATE-DEPGRAPH-OPS 两次 critical_warn 已修复但持续告警），
+    导致告警疲劳、真实新告警被淹没。本函数提供手动确认出口：
+    AI/人工排查确认后 ack，告警从横幅消失；未 ack 的继续告警。
+
+    与自愈消音互补：同 gate_id 之后 reconciler 产出 clean 记录时旧告警
+    自动消音（无需 ack）；ack 用于"已人工确认但 clean 尚未产生"的场景。
+
+    幂等：acknowledged_at IS NULL 过滤，重复 ack 不再 UPDATE。
+    老库自动补 ack 列（_ensure_ack_column）。空库 CREATE 兜底建表。
+
+    Returns:
+        {"acknowledged": int, "gate_id": str | None, "error": str | None}。
+    """
+    import sqlite3
+    from datetime import datetime, timedelta, timezone
+    from pathlib import Path
+    try:
+        db_path = _governance_db_path(project_root)
+        Path(db_path).parent.mkdir(parents=True, exist_ok=True)  # 空库 CREATE 兜底
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            _ensure_ack_column(conn)  # 老库补列（幂等）
+            if gate_id is None:
+                cur = conn.execute(SQL_ACK_CRITICAL_WARNS_ALL, (now_utc(), cutoff))
+            else:
+                cur = conn.execute(
+                    SQL_ACK_CRITICAL_WARNS_BY_GATE, (now_utc(), cutoff, gate_id)
+                )
+            acked = cur.rowcount
+            conn.commit()
+        finally:
+            conn.close()
+        logger.info(
+            "acknowledge_critical_warns: acked %d critical_warn(s) "
+            "(gate_id=%s, window=%dh)",
+            acked, gate_id or "ALL", hours,
+        )
+        return {"acknowledged": acked, "gate_id": gate_id, "error": None}
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("acknowledge_critical_warns: DB update failed: %s", e)
+        return {"acknowledged": 0, "gate_id": gate_id, "error": str(e)}
 
 
 def _write_reconcile_report(
