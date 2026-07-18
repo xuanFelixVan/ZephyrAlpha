@@ -27,9 +27,11 @@ class GuardDecision(str, Enum):
 
 @dataclass
 class GuardResult:
+    # P1-3: 合并 security 版 permission_guard.py 的 target 字段（原 security 版独有）
     decision: GuardDecision = GuardDecision.ALLOW
     layer: str = ""
     reason: str = ""
     rule_id: str = ""
+    target: str = ""
     audit_context: dict = field(default_factory=dict)
     timing_ns: int = 0

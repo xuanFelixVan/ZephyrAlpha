@@ -40,8 +40,8 @@ from zephyr.shared.protocols.a2a.a2a_coordination import (
 
 
 @unique
-class AgentRole(str, Enum):
-    """Multi-agent orchestration role (differs from shared AgentRole IntEnum for arbitration)."""
+class MultiAgentRole(str, Enum):
+    """Multi-agent orchestration role (P1-3: renamed from AgentRole to avoid conflict with RbacRole/ArbitrationRole/RoutingRole)."""
 
     COORDINATOR = "coordinator"
     BUILDER = "builder"
@@ -51,13 +51,17 @@ class AgentRole(str, Enum):
     RESEARCHER = "researcher"
 
 
+# P1-3 兼容层：旧名 AgentRole 保留为 MultiAgentRole 别名
+AgentRole = MultiAgentRole  # noqa: F811  # [DEPRECATED] [TTL] task_bound — P1-3 兼容层
+
+
 # class-name-alias: MOD-INF_multi_agent 多Agent编排 AgentCard（dataclass, role-based），与 shared.protocols.a2a.a2a_registry 的 Pydantic AgentCard（A2A discovery 协议契约）同名不同义，本地编排变体
 @dataclass
 class AgentCard:
     """Multi-agent orchestration AgentCard (dataclass; differs from shared Pydantic AgentCard)."""
 
     agent_id: str
-    role: AgentRole
+    role: MultiAgentRole
     capabilities: list[str] = field(default_factory=list)
     description: str = ""
     endpoint: str | None = None
@@ -77,7 +81,7 @@ class AgentCard:
     def from_dict(cls, data: dict[str, Any]) -> AgentCard:
         return cls(
             agent_id=data["agent_id"],
-            role=AgentRole(data["role"]),
+            role=MultiAgentRole(data["role"]),
             # 5.147.9 修复: JSON 中 capabilities/metadata 为 null 时 d.get 返回 None 而非默认值
             capabilities=data.get("capabilities") or [],
             description=data.get("description", ""),
@@ -98,7 +102,7 @@ class TaskDispatch:
     def unregister_agent(self, agent_id: str) -> AgentCard | None:
         return self.agents.pop(agent_id, None)
 
-    def assign(self, task_id: str, description: str, required_role: AgentRole | None = None) -> DispatchedTask | None:
+    def assign(self, task_id: str, description: str, required_role: MultiAgentRole | None = None) -> DispatchedTask | None:
         candidates = [
             (aid, card) for aid, card in self.agents.items() if required_role is None or card.role == required_role
         ]
@@ -128,13 +132,14 @@ class TaskDispatch:
     def get_agent(self, agent_id: str) -> AgentCard | None:
         return self.agents.get(agent_id)
 
-    def list_by_role(self, role: AgentRole) -> list[AgentCard]:
+    def list_by_role(self, role: MultiAgentRole) -> list[AgentCard]:
         return [card for card in self.agents.values() if card.role == role]
 
 
 __all__ = [
     "AgentCard",
-    "AgentRole",
+    "AgentRole",  # P1-3 兼容层（= MultiAgentRole）
+    "MultiAgentRole",
     "DispatchedTask",
     "MergeStrategy",
     "ResultMerge",

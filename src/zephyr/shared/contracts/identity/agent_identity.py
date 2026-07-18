@@ -42,17 +42,25 @@ class IDESource(str, Enum):
     UNKNOWN = "unknown"
 
 
-class AgentRole(str, Enum):
+class RbacRole(str, Enum):
+    # P1-3: AgentRole → RbacRole（消除与 RoutingRole/ArbitrationRole/MultiAgentRole 同名冲突）
+    # 合并 shared 版（AUDITOR）+ security 版（REVIEWER）为 7 成员，值统一小写
     READER = "reader"
     WRITER = "writer"
     EXECUTOR = "executor"
     ADMIN = "admin"
     AUDITOR = "auditor"
+    REVIEWER = "reviewer"
     AUTONOMOUS_AGENT = "autonomous_agent"
 
 
-ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
-    AgentRole.READER: [
+# P1-3 兼容层：旧名 AgentRole 保留为 RbacRole 别名，标 DEPRECATED + TTL task_bound
+# 消费方迁移期内可继续用 AgentRole，过渡期后由 reconciler 清理
+AgentRole = RbacRole  # noqa: F811  # [DEPRECATED] [TTL] task_bound — P1-3 兼容层
+
+
+ROLE_DEFAULT_PERMISSIONS: Final[dict[RbacRole, list[str]]] = {
+    RbacRole.READER: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -60,7 +68,7 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "read:logs",
         "read:data",
     ],
-    AgentRole.WRITER: [
+    RbacRole.WRITER: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -70,7 +78,7 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "read:logs",
         "read:data",
     ],
-    AgentRole.EXECUTOR: [
+    RbacRole.EXECUTOR: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -82,7 +90,7 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "read:logs",
         "read:data",
     ],
-    AgentRole.ADMIN: [
+    RbacRole.ADMIN: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -98,7 +106,7 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "manage:gates",
         "manage:deploy",
     ],
-    AgentRole.AUDITOR: [
+    RbacRole.AUDITOR: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -108,7 +116,15 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "read:audit",
         "audit:full",
     ],
-    AgentRole.AUTONOMOUS_AGENT: [
+    RbacRole.REVIEWER: [
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "read:config",
+        "review:code",
+        "approve:merge",
+    ],
+    RbacRole.AUTONOMOUS_AGENT: [
         "read:docs",
         "read:src",
         "read:tests",
@@ -143,7 +159,7 @@ MATURITY_AUTO_GUARD_TIMEOUT: Final[dict[MaturityLevel, int]] = {
 class AgentIdentity(BaseModel):
     session_id: str
     maturity: MaturityLevel = MaturityLevel.L0_INTERN
-    role: AgentRole = AgentRole.WRITER
+    role: RbacRole = RbacRole.WRITER
     ide_source: IDESource = IDESource.UNKNOWN
     model: str = "unknown"
     task_context: str = ""

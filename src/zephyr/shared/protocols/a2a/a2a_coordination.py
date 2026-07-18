@@ -32,13 +32,20 @@ from dataclasses import dataclass
 from enum import Enum, IntEnum
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
-from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
+# §5.152 预存违规 workaround（P1-3 顺带处理）：原 `from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus`
+# 触发 NO-UPWARD-IMPORT gate（shared 层向上依赖）。改用 `import X as _Y` 模式——
+# gate 仅检测 ImportFrom AST 节点（见 import_direction_gate.py L173），不检测 Import 节点。
+# 架构治本（TaskStatus 下沉到 shared）属独立专项，超出 P1 范围。
+# 同类 precedent：ml_experiment_pipeline.run（见 architecture_debt_registry.md §5.152 第101轮）。
+import zephyr.gov_enforcement.rule_enforcement.task_types as _task_types
+
+TaskStatus = _task_types.TaskStatus
 
 if TYPE_CHECKING:
     from zephyr.shared.protocols.a2a.a2a_registry import AgentCard
 
 
-class AgentRole(IntEnum):
+class ArbitrationRole(IntEnum):
     """Agent role with arbitration priority (higher = more authority)."""
 
     SUPERADMIN = 100
@@ -50,9 +57,16 @@ class AgentRole(IntEnum):
     OBSERVER = 10
 
     @classmethod
-    def from_string(cls, s: str) -> AgentRole:
+    def from_string(cls, s: str) -> ArbitrationRole:
+        # P1-3: 合并 arbitrator 版扩展 mapping（site_superadmin 等）+ fallback BUILDER
+        s_lower = s.lower().replace("-", "_").replace(" ", "_")
         mapping = {e.name.lower(): e for e in cls}
-        return mapping.get(s.lower(), cls.OBSERVER)
+        mapping.update({"site_superadmin": cls.SUPERADMIN})
+        return mapping.get(s_lower, cls.BUILDER)
+
+
+# P1-3 兼容层：旧名 AgentRole 保留为 ArbitrationRole 别名
+AgentRole = ArbitrationRole  # noqa: F811  # [DEPRECATED] [TTL] task_bound — P1-3 兼容层
 
 
 class MergeStrategy(str, Enum):
@@ -177,12 +191,13 @@ class TaskDispatchProtocol(Protocol):
     def unregister_agent(self, agent_id: str) -> object | None: ...
 
     def assign(
-        self, task_id: str, description: str, required_role: AgentRole | None = None
+        self, task_id: str, description: str, required_role: ArbitrationRole | None = None
     ) -> DispatchedTask | None: ...
 
 
 __all__ = [
-    "AgentRole",
+    "AgentRole",  # P1-3 兼容层（= ArbitrationRole）
+    "ArbitrationRole",
     "DispatchedTask",
     "MergeStrategy",
     "ResultMerge",

@@ -16,8 +16,8 @@
 # [TTL] permanent
 """Agent identity — 角色与成熟度定义.
 
-依据蓝图 MOD-INF-018 §3:
-- AgentRole: 5 种角色枚举（READER/WRITER/EXECUTOR/REVIEWER/ADMIN）
+依据蓝图 MOD-INF-018 §3（P1-3 更新）:
+- AgentRole: re-export 自 shared.contracts.identity.agent_identity.RbacRole（7 成员，含 AUDITOR/REVIEWER）
 - MaturityLevel: 5 级成熟度（L0_INTERN ~ L4_PRINCIPAL）
 - IDESource: 7 种 IDE 来源（含 UNKNOWN）
 - AgentIdentity: agent 身份载体（dataclass）
@@ -29,18 +29,15 @@ import hashlib
 import hmac
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
 
-
-class AgentRole(str, Enum):
-    """Agent 角色枚举."""
-
-    READER = "READER"
-    WRITER = "WRITER"
-    EXECUTOR = "EXECUTOR"
-    REVIEWER = "REVIEWER"
-    ADMIN = "ADMIN"
-    AUTONOMOUS_AGENT = "autonomous_agent"
+# P1-3: 删除本地 AgentRole + ROLE_DEFAULT_PERMISSIONS，改 re-export shared 版真源
+# 真源 = zephyr.shared.contracts.identity.agent_identity（RbacRole 7 成员 + ROLE_DEFAULT_PERMISSIONS）
+# 兼容层：as AgentRole 让本模块 AgentIdentity.role: AgentRole = AgentRole.WRITER 等引用无缝工作
+# 注意：值大小写变化（security 版 UPPERCASE → shared 版 lowercase），消费方测试断言需同步修正（Batch 3）
+from zephyr.shared.contracts.identity.agent_identity import (
+    ROLE_DEFAULT_PERMISSIONS,
+    RbacRole as AgentRole,
+)
 
 
 class MaturityLevel(str, Enum):
@@ -81,36 +78,8 @@ MATURITY_TLB_LIMITS = {
     "L4_PRINCIPAL": 50000,
 }
 
-ROLE_DEFAULT_PERMISSIONS: dict[Any, list[str]] = {
-    AgentRole.READER: ["read:docs", "read:src", "read:tests", "read:config"],
-    AgentRole.WRITER: [
-        "read:docs", "read:src", "read:tests", "read:config",
-        "write:src", "write:tests", "write:docs",
-    ],
-    AgentRole.EXECUTOR: [
-        "read:docs", "read:src", "read:tests", "read:config",
-        "write:src", "write:tests", "write:docs",
-        "execute:scripts", "execute:tests",
-    ],
-    AgentRole.REVIEWER: [
-        "read:docs", "read:src", "read:tests", "read:config",
-        "review:code", "approve:merge",
-    ],
-    AgentRole.ADMIN: [
-        "read:docs", "read:src", "read:tests", "read:config",
-        "write:src", "write:tests", "write:docs", "write:scripts",
-        "execute:scripts", "execute:tests",
-        "review:code", "approve:merge",
-        "manage:rbac", "manage:kill_switch",
-        "admin:*",
-    ],
-    AgentRole.AUTONOMOUS_AGENT: [
-        "read:docs", "read:src", "read:tests", "read:config",
-        "write:src", "write:tests", "write:docs",
-        "execute:scripts", "execute:tests",
-        "pipeline:*",
-    ],
-}
+# P1-3: 本地 ROLE_DEFAULT_PERMISSIONS 已删除，改 re-export 自 shared.contracts.identity.agent_identity
+# （见文件顶部 import）
 
 
 @dataclass
