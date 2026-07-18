@@ -1,18 +1,18 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
-# [MODULE] zephyr.gov_kb.storage._backend_protocol
-# [DOMAIN] D_GOV_KB
-# [DEPENDENCIES] zephyr.gov_kb.storage.__init__
-# [CONSUMERS] zephyr.knowledge.kb.storage.unified_memory_api; zephyr.knowledge.kb.vms_memory_backend
+# [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
+# [MODULE] zephyr.intelligence.model_evaluation._memory_backend
+# [DOMAIN] D_INTELLIGENCE
+# [DEPENDENCIES] zephyr.shared.__init__
+# [CONSUMERS] zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.integration.vector_memory.vms_memory_backend
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] MemoryBackend Protocol signature must not change without updating all implementors
 # [MODIFY-GUARD] changes here affect unified_memory_api.py + vms_memory_backend.py + all backend implementors
 # [STABILITY] stable
 # [SAFETY] L
-# [AI_AUTONOMY] human_gated
+# [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MemoryBackendError on backend failure; WriteTraceMissing on missing provenance
 # [TESTS] tests/test_unified_memory_api.py; tests/test_vms_memory_backend.py
-# [A_module] module_id=MOD-DAT__backend_protocol | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-036-_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -27,6 +27,10 @@ InMemoryMemoryBackend fallback) that both unified_memory_api.py and
 vms_memory_backend.py depend on, with no import cycle.
 
 This module must NOT import from unified_memory_api.py or vms_memory_backend.py.
+
+迁移说明 (2026-07-19)：本文件原位于 zephyr.gov_kb.storage._backend_protocol，
+KBG 系统删除时随同 UnifiedMemoryAPI 一起迁移到 intelligence.model_evaluation，
+内容未变。
 """
 
 from __future__ import annotations

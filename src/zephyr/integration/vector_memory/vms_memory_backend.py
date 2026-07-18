@@ -1,24 +1,24 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
-# [MODULE] zephyr.gov_kb.vms_memory_backend
-# [DOMAIN] D_GOV_KB
-# [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS]
+# [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md
+# [MODULE] zephyr.integration.vector_memory.vms_memory_backend
+# [DOMAIN] D_INTEGRATION
+# [DEPENDENCIES] zephyr.intelligence.model_evaluation._memory_backend; zephyr.integration.vector_memory.bridge_layer
+# [CONSUMERS] zephyr.intelligence.model_evaluation.unified_memory_api
 # [STARTUP] imported
-# [MATURITY] prototype
+# [MATURITY] production
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
-# [A_module] module_id=MOD-DAT_vms_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TESTS] tests/test_vms_memory_backend.py
+# [A_module] module_id=MOD-INF-011-vms_memory_backend | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
 VMSMemoryBackend — UnifiedMemoryAPI 的 VMS 后端适配器
 =====================================================
-MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE (kb) 统一桥接
+MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE 统一桥接
 
 功能
 ----
@@ -35,6 +35,9 @@ MOD-INF-011 (vector-memory) ↔ MOD-CONTEXT_ENGINE (kb) 统一桥接
 降级链
 ------
 VMSMemoryBackend -> InMemoryMemoryBackend
+
+迁移说明 (2026-07-19)：本文件原位于 zephyr.gov_kb.vms_memory_backend，
+KBG 系统删除时迁移到 integration.vector_memory，仅改 import 路径，业务逻辑未变。
 """
 
 from __future__ import annotations
@@ -42,7 +45,7 @@ from __future__ import annotations
 import logging
 import threading
 
-from zephyr.gov_kb._backend_protocol import (
+from zephyr.intelligence.model_evaluation._memory_backend import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryRecord,
