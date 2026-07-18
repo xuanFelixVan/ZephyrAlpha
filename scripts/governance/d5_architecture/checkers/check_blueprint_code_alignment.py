@@ -16,9 +16,9 @@
 """
 [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 [MODULE] scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment
-[INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现文件必须在磁盘存在
-[MODIFY-GUARD] script_manifest.yaml; blueprint_registry.yaml
-[CONSUMERS] CI pipeline; AI session 冷启动; Phase Gate
+[INVARIANTS] 代码[BLUEPRINT]头部module_id必须与蓝图注册表一致; 蓝图§4已实现文件必须在磁盘存在; frontmatter.build_status 必须与 depgraph 聚合 build_status 一致（FRONTMATTER_STATE_STALE, WARN/MEDIUM）
+[MODIFY-GUARD] script_manifest.yaml; blueprint_registry.yaml; ARCH-FRONTMATTER-STATE-001 Phase 4
+[CONSUMERS] CI pipeline; AI session 冷启动; Phase Gate; session_worktree pre-merge 拓扑检查
 [STABILITY] evolving
 [SAFETY] L
 [AI_AUTONOMY] ai_modifiable
@@ -45,6 +45,7 @@ import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT, get_depgraph_pg_connection
+from _shared.frontmatter import parse_frontmatter
 from _shared.walk import iter_files
 
 __manifest__ = """
@@ -71,6 +72,17 @@ _SQL_LOAD_DEPGRAPH_MODULE_INDEX = (
     "WHERE blueprint_id IS NOT NULL AND blueprint_id != '' "
     "AND path LIKE '%%.py'"
 )
+
+# ARCH-FRONTMATTER-STATE-001 Phase 4：build_status 聚合查询（取每个 blueprint_id
+# 下按 (path IS NULL), path 排序后的第一个非空 build_status，与 blueprint_frontmatter_reconciler 语义对齐）
+_SQL_LOAD_DEPGRAPH_BUILD_STATUS = (
+    "SELECT blueprint_id, build_status FROM nodes "
+    "WHERE blueprint_id IS NOT NULL AND blueprint_id != '' "
+    "ORDER BY blueprint_id, (path IS NULL), path"
+)
+
+# 蓝图 frontmatter 扫描时跳过的文件名（与 blueprint_frontmatter_reconciler 对齐）
+_BP_SCAN_SKIP_NAMES = {"index.md"}
 
 
 # 裁定#211：蓝图§4文件清单改为 depgraph 派生
@@ -101,6 +113,100 @@ def load_depgraph_module_index() -> tuple[set[str], dict[str, set[str]]]:
     finally:
         conn.close()
     return module_ids, files_by_module
+
+
+# ---------------------------------------------------------------------------
+# ARCH-FRONTMATTER-STATE-001 Phase 4: FRONTMATTER_STATE_STALE gate
+# ---------------------------------------------------------------------------
+
+def _aggregate_build_status(rows: list[dict]) -> dict[str, str]:
+    """按 blueprint_id 聚合 build_status（第一个非空值胜出）。
+
+    与 blueprint_frontmatter_reconciler._query_module_bp 的聚合语义对齐：
+    SQL 已按 blueprint_id, (path IS NULL), path 排序，因此第一个非空
+    build_status 即代表该模块的当前状态。
+    """
+    result: dict[str, str] = {}
+    for row in rows:
+        bid = row["blueprint_id"]
+        bs = (row.get("build_status") or "").strip()
+        if bid not in result and bs:
+            result[bid] = bs
+    return result
+
+
+def load_depgraph_build_status() -> dict[str, str]:
+    """从 depgraph 加载每个 blueprint_id 的聚合 build_status。
+
+    Returns:
+        {blueprint_id: build_status}。连接失败时返回空 dict（fail-open）。
+    """
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+    except Exception as e:
+        print(f"[WARN] depgraph 连接失败，跳过 FRONTMATTER_STATE_STALE 检查: {e}", file=sys.stderr)
+        return {}
+    try:
+        cur = conn.execute(_SQL_LOAD_DEPGRAPH_BUILD_STATUS)
+        return _aggregate_build_status(cur.fetchall())
+    finally:
+        conn.close()
+
+
+def scan_blueprint_frontmatter_entries() -> list[dict]:
+    """扫描 docs/03_modules 下所有蓝图 frontmatter，提取 module_id 与 build_status。
+
+    跳过 _BP_SCAN_SKIP_NAMES（如 index.md），避免把目录索引误判为蓝图。
+    """
+    entries: list[dict] = []
+    if not BLUEPRINTS_DIR.exists():
+        return entries
+    for md_file in BLUEPRINTS_DIR.rglob("*.md"):
+        if md_file.name in _BP_SCAN_SKIP_NAMES:
+            continue
+        try:
+            content = md_file.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        fm = parse_frontmatter(content)
+        if not fm:
+            continue
+        module_id = fm.get("module_id")
+        if not module_id:
+            continue
+        entries.append({
+            "file": str(md_file.relative_to(REPO_ROOT)),
+            "module_id": module_id,
+            "build_status": fm.get("build_status", ""),
+        })
+    return entries
+
+
+def check_frontmatter_state_stale(
+    frontmatter_entries: list[dict],
+    depgraph_build_status: dict[str, str],
+) -> list[dict]:
+    """检查 frontmatter.build_status 是否与 depgraph 聚合 build_status 不一致。
+
+    三层状态模型：L1(代码现实) → L2(depgraph) → L3(frontmatter 缓存)。
+    本 gate 检测 L3 与 L2 的漂移，severity=MEDIUM（WARN），不阻断提交，
+    由 blueprint_frontmatter_reconciler 在 merge 周期自动修复。
+    """
+    findings: list[dict] = []
+    for entry in frontmatter_entries:
+        mid = entry["module_id"]
+        dep_bs = depgraph_build_status.get(mid, "")
+        if not dep_bs:
+            continue
+        fm_bs = entry["build_status"]
+        if fm_bs != dep_bs:
+            findings.append({
+                "type": "FRONTMATTER_STATE_STALE",
+                "severity": "MEDIUM",
+                "file": entry["file"],
+                "detail": f"frontmatter.build_status='{fm_bs or '(空)'}' 与 depgraph build_status='{dep_bs}' 不一致",
+            })
+    return findings
 
 
 def load_blueprint_registry() -> dict[str, dict]:
@@ -316,7 +422,16 @@ def main() -> None:
         code_headers, blueprint_registry, depgraph_files_by_module
     )
 
-    all_findings = drift_findings + file_missing_findings + code_not_in_bp_findings
+    # ARCH-FRONTMATTER-STATE-001 Phase 4：L3 frontmatter 缓存 vs L2 depgraph 状态一致性
+    depgraph_build_status = load_depgraph_build_status()
+    frontmatter_entries = scan_blueprint_frontmatter_entries()
+    frontmatter_stale_findings = check_frontmatter_state_stale(
+        frontmatter_entries, depgraph_build_status
+    )
+
+    all_findings = (
+        drift_findings + file_missing_findings + code_not_in_bp_findings + frontmatter_stale_findings
+    )
 
     high_count = sum(1 for f in all_findings if f["severity"] == "HIGH")
     medium_count = sum(1 for f in all_findings if f["severity"] == "MEDIUM")
@@ -336,6 +451,7 @@ def main() -> None:
                     "code_headers_scanned": len(code_headers),
                     "blueprints_in_registry": len(blueprint_registry),
                     "depgraph_module_ids": len(depgraph_module_ids),
+                    "frontmatter_entries_scanned": len(frontmatter_entries),
                 },
                 ensure_ascii=False,
                 indent=2,
@@ -348,6 +464,7 @@ def main() -> None:
         print(f"扫描: {len(code_headers)} 个代码文件有[BLUEPRINT]头部")
         print(f"蓝图注册表: {len(blueprint_registry)} 个 module_id")
         print(f"depgraph 模块索引: {len(depgraph_module_ids)} 个 blueprint_id（裁定#211 depgraph 派生）")
+        print(f"蓝图 frontmatter: {len(frontmatter_entries)} 个条目（ARCH-FRONTMATTER-STATE-001 Phase 4）")
         print()
 
         if not all_findings:
