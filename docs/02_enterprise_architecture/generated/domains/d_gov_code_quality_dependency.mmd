@@ -1,7 +1,7 @@
 %% D_GOV_CODE_QUALITY 域全景依赖图
-%% 生成时间: 2026-07-19 05:18:04
+%% 生成时间: 2026-07-19 05:49:37
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 133, 依赖边数: 303
+%% 模块数: 135, 依赖边数: 306
 
 graph TD
 
@@ -98,6 +98,7 @@ graph TD
         src_zephyr_gov_enforcement_com____directory_contract_gate_py["...mmit_gates/directory_contract_gate.py [production]"]
         src_zephyr_gov_enforcement_com___ates_doc_ref_broken_gate_py["...t/commit_gates/doc_ref_broken_gate.py [production]"]
         src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py["...cement/commit_gates/domain_fk_gate.py [production]"]
+        src_zephyr_gov_enforcement_com___me_zh_direct_access_gate_py[".../domain_name_zh_direct_access_gate.py [production]"]
         src_zephyr_gov_enforcement_com___gates_empty_handler_gate_py["...nt/commit_gates/empty_handler_gate.py [production]"]
         src_zephyr_gov_enforcement_commit_gates_encoding_gate_py["...rcement/commit_gates/encoding_gate.py [production]"]
         src_zephyr_gov_enforcement_com___pt_zone_frontmatter_gate_py["...gates/exempt_zone_frontmatter_gate.py [production]"]
@@ -106,8 +107,7 @@ graph TD
         src_zephyr_gov_enforcement_com___ates_foreign_change_gate_py["...t/commit_gates/foreign_change_gate.py [production]"]
         src_zephyr_gov_enforcement_commit_gates_function_dup_gate_py["...ent/commit_gates/function_dup_gate.py [production]"]
         src_zephyr_gov_enforcement_commit_gates_gate_repo_py["...enforcement/commit_gates/gate_repo.py [production]"]
-        src_zephyr_gov_enforcement_com___tes_git_call_budget_gate_py[".../commit_gates/git_call_budget_gate.py [prototype]"]
-        %% ... 还有 33 个模块未显示
+        %% ... 还有 35 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
@@ -115,33 +115,34 @@ graph TD
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|import_depends| src_zephyr_gov_code_quality_code_dedup_exit_codes_py
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|import_depends| src_zephyr_gov_code_quality_code_dedup_report_py
     src_zephyr_gov_code_quality_co___up_policy_tree_validator_py -->|import_depends| src_zephyr_gov_code_quality_code_dedup_config_py
-    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___ates_arch_reference_gate_py -->|import_depends| src_zephyr_gov_enforcement_com___gates__reference_helpers_py
-    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___amodule_consistency_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
-    src_zephyr_gov_enforcement_com___ability_consistency_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___gates_ch_batch_size_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com___ability_consistency_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com____dangling_reference_gate_py -->|import_depends| src_zephyr_gov_enforcement_com___gates__reference_helpers_py
     src_zephyr_gov_enforcement_com___etime_now_forbidden_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___depgraph_write_path_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com___me_zh_direct_access_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com___tes_git_call_budget_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___gates_hardcoded_url_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
-    src_zephyr_gov_enforcement_com___tes_git_call_budget_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
-    src_zephyr_gov_enforcement_com___tes_high_complexity_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___tes_long_param_list_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com___tes_high_complexity_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com____import_side_effect_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___ts_import_integrity_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com___es_ruling_reference_gate_py -->|import_depends| src_zephyr_gov_enforcement_com___gates__reference_helpers_py
-    src_zephyr_gov_enforcement_com____source_consistency_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
-    src_zephyr_gov_enforcement_com___ates_undefined_name_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
     src_zephyr_gov_enforcement_com____unsafe_dict_spread_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
-    src_zephyr_gov_code_quality_code_dedup___init___py -->|config_depends| src_zephyr_gov_code_quality_code_dedup_behavioral_sampler_py
-    src_zephyr_gov_code_quality_code_dedup_trackers___init___py -->|config_depends| src_zephyr_gov_code_quality_co___ckers_blind_spot_tracker_py
-    src_zephyr_gov_enforcement_commit_gates___init___py -->|config_depends| src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py
+    src_zephyr_gov_enforcement_com___ates_undefined_name_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_enforcement_com____source_consistency_gate_py -->|import_depends| src_zephyr_gov_enforcement_commit_gates__diff_helpers_py
+    src_zephyr_gov_code_quality_code_dedup___init___py -->|config_depends| src_zephyr_gov_code_quality_code_dedup_annotations_py
+    src_zephyr_gov_code_quality_code_dedup_trackers___init___py -->|config_depends| src_zephyr_gov_code_quality_co___s_import_surface_tracker_py
+    src_zephyr_gov_enforcement_commit_gates___init___py -->|config_depends| src_zephyr_gov_enforcement_com___ates_arch_reference_gate_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_GOV_CODE_QUALITY (126 条)
+    %%  -> D_GOV_CODE_QUALITY (127 条)
     [] -->|import_depends| src_zephyr_gov_code_quality_co___ckers_blind_spot_tracker_py
     [] -->|import_depends| src_zephyr_gov_code_quality_code_dedup_canary_manager_py
     [] -->|import_depends| src_zephyr_gov_code_quality_code_dedup_cli_py
@@ -149,9 +150,9 @@ graph TD
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_auto_fixer_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_canary_register_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_config_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_config_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_degradation_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_exit_codes_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_config_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_config_py
     [] -->|test_depends| src_zephyr_gov_code_quality_co___ract_consistency_checker_py
     [] -->|test_depends| src_zephyr_gov_code_quality_co____cross_boundary_detector_py
@@ -159,26 +160,25 @@ graph TD
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_decision_auditor_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_file_creator_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_shadow_verifier_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_co___p_false_negative_auditor_py
     [] -->|test_depends| src_zephyr_gov_code_quality_co___ifteen_dimension_auditor_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_co___p_false_negative_auditor_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_degradation_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_debt_projector_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_co___up_policy_tree_validator_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_atomic_fixer_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_co___edup_grandfather_manager_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
     [] -->|test_depends| src_zephyr_gov_code_quality_co___pre_apply_integrity_gate_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_co___edup_grandfather_manager_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_co___up_policy_tree_validator_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_ssot_registrar_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_ast_comparator_py
     [] -->|test_depends| src_zephyr_gov_code_quality_co___dup_code_analyzer_runner_py
+    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_auto_fixer_py
     [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_monoculture_guard_py
-    [] -->|test_depends| src_zephyr_gov_code_quality_code_dedup_self_scanner_py
     %% D_GOVERNANCE -> D_GOV_CODE_QUALITY (3 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_code_quality_code_dedup_ast_comparator_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_code_quality_code_dedup_behavioral_sampler_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_gov_code_quality_co___dup_micro_clone_detector_py
-    %% D_GOV_AUDIT -> D_GOV_CODE_QUALITY (2 条)
+    %% D_GOV_AUDIT -> D_GOV_CODE_QUALITY (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_gov_enforcement_com___ts_import_integrity_gate_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_gov_enforcement_com___ates_undefined_name_gate_py
     %% D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY (62 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_commit_gates_held_overlap_gate_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_com___ates_foreign_change_gate_py
@@ -212,11 +212,12 @@ graph TD
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_gov_enforcement_com___ates_doc_ref_broken_gate_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_CODE_QUALITY ->  (4 条)
+    %% D_GOV_CODE_QUALITY ->  (5 条)
     scripts_governance_d3_metadata_check_pure_assertion_py -->|config_depends| []
     scripts_governance_d7_code_check_module_id_consistency_py -->|config_depends| []
     tests_governance_test_apply_depgraph_smoke_py -->|config_depends| []
     tests_governance_test_post_com___uard_no_verify_threshold_py -->|config_depends| []
+    tests_governance_test_session_startup_health_check_py -->|config_depends| []
     %% D_GOV_CODE_QUALITY -> D_AUTONOMY_CORE (1 条)
     src_zephyr_gov_code_quality_code_dedup_integration_hub_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
     %% D_GOV_CODE_QUALITY -> D_DATA (1 条)
@@ -226,47 +227,47 @@ graph TD
     src_zephyr_gov_enforcement_com____capability_overlap_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_enforcement_commit_gates_create_guard_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_enforcement_commit_gates_create_guard_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_gov_enforcement_com___s_ssot_redefinition_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_gov_enforcement_com___ename_depgraph_sync_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_gov_enforcement_com___s_ssot_redefinition_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_CODE_QUALITY -> D_GOV_AUDIT (1 条)
     src_zephyr_gov_enforcement_com___s_reconciler_health_gate_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (60 条)
-    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_CODE_QUALITY -> D_GOV_ENFORCEMENT (61 条)
     src_zephyr_gov_enforcement_com___ates_arch_reference_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___amodule_consistency_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___ability_consistency_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_commit_gates_bare_sql_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___gates_ch_batch_size_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___ability_consistency_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_commit_gates_ch_final_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com____capability_overlap_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_commit_gates_create_guard_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___ates_ch_version_col_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___ates_claim_required_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com____dangling_reference_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_commit_gates_create_guard_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___a_task_completeness_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com____depgraph_freshness_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___ates_ch_version_col_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___etime_now_forbidden_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___depgraph_write_path_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___ates_doc_ref_broken_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_commit_gates_domain_fk_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com____directory_contract_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___depgraph_write_path_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com____depgraph_freshness_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___a_task_completeness_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___gates_empty_handler_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_commit_gates_encoding_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___pt_zone_frontmatter_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_commit_gates_function_dup_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___ates_foreign_change_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_commit_gates_file_copy_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___me_zh_direct_access_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___pt_zone_frontmatter_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_commit_gates_encoding_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___ates_foreign_change_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_gov_enforcement_com___tes_git_call_budget_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com____file_placement_ttl_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_gov_enforcement_com___gates_hardcoded_url_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_commit_gates_god_class_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    src_zephyr_gov_enforcement_com___tes_git_call_budget_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOV_CODE_QUALITY -> D_INFRA_RUNTIME (1 条)
     src_zephyr_gov_code_quality_code_dedup_cli_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_GOV_CODE_QUALITY -> D_SHARED (8 条)
     src_zephyr_gov_code_quality_code_dedup_cache_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_commit_gates_bare_getenv_gate_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_gov_enforcement_com___es_blueprint_format_gate_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_commit_gates_create_guard_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_commit_gates_gate_repo_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_gov_enforcement_commit_gates_gate_repo_py -->|import_depends| D_SHARED[D_SHARED]
@@ -274,6 +275,6 @@ graph TD
     src_zephyr_gov_enforcement_com____source_consistency_gate_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 28 条
+    %% 域内依赖: 29 条
     %% 跨域入边: 193 条
-    %% 跨域出边: 82 条
+    %% 跨域出边: 84 条
