@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator
 # [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -35,7 +35,7 @@ from typing import Any
 
 import yaml
 
-from zephyr.integration.shared.schema.schemas import Priority
+from zephyr.shared.schema.schemas import Priority
 
 from zephyr.shared.io.paths import REPO_ROOT
 

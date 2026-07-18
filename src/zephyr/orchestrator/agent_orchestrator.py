@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.agent_orchestrator
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget; zephyr.shared.contracts.security.__init__; zephyr.security.llm_defense.llm_security.gateway
+# [DEPENDENCIES] zephyr.security.llm_defense.llm_security.input_sanitizer; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils; zephyr.autonomy_core.token_budget; zephyr.shared.contracts.security.__init__; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -92,7 +92,7 @@ from typing import (
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.security.llm_defense.llm_security.input_sanitizer import ContextInjectionError, InputSanitizer
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET

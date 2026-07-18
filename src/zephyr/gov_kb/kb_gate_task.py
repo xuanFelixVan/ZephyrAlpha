@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md
 # [MODULE] zephyr.gov_kb.kb_gate_task
 # [DOMAIN] D_GOV_KB
-# [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.severity_types
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -20,7 +20,7 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.schema.task_types import TaskCard, TaskNamespace, TaskStatus, normalize_execution_model
 
 # 与 KB 流水线文档任务链隔离的专用 seq，避免与真实 tasks 表主键碰撞概率

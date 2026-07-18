@@ -187,6 +187,19 @@ def _extract_source_symbols(file_path: Path) -> set[str] | None:
     except SyntaxError:
         return None
 
+    # PEP 562 模块级 __getattr__ 检测（治本盲点，2026-07-19）：
+    # 惰性 re-export 模块（如 shared/schema/schemas.py 用 __getattr__ 惰性导出
+    # Task/TaskNamespace/TaskStatus 以打破循环依赖）的导出面是动态的，
+    # 静态 AST 无法可靠判定符号存在性——fail-open（返回 None），
+    # 避免把惰性导出符号误报为"符号不存在"而硬阻断 commit。
+    # 符号漂移由测试实际运行（import 失败）兜底，符合本 gate 既有 fail-open 哲学。
+    for node in tree.body:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name == "__getattr__"
+        ):
+            return None
+
     symbols: set[str] = set()
     for node in tree.body:
         _collect_node_symbol(node, symbols)

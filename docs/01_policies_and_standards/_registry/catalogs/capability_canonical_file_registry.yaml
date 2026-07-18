@@ -5102,6 +5102,12 @@ creation_tokens:
     created_by: "session-sess-28516-20260719003114"
     capability: "readme_version_sync_check"
 
+  # --- 5.1.2 簇6 SSoT 收敛（2026-07-19）：execution_model 从 integration/shared/schema 迁入 shared/schema canonical ---
+  - file: "src/zephyr/shared/schema/execution_model.py"
+    token: "auto-execution-model-ssot-20260719"
+    created_by: "sess-29344-20260719002711"
+    capability: "shared_schema_execution_model"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

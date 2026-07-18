@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1955 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-572 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-572 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_schemas
 # [STABILITY] evolving
 # [SAFETY] L
@@ -29,8 +29,8 @@ import pytest
 from pydantic import ValidationError
 
 from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.schemas import (
+from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
     BlockedItem,
@@ -40,7 +40,7 @@ from zephyr.integration.shared.schema.schemas import (
     KnowledgeEntry,
     NextAction,
 )
-from zephyr.integration.shared.schema.severity_types import AuditSeverity, SafetyLevel
+from zephyr.shared.schema.severity_types import AuditSeverity, SafetyLevel
 
 _UTC = UTC
 _NOW = datetime(2026, 4, 24, 0, 0, 0, tzinfo=_UTC)

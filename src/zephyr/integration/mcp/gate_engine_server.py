@@ -48,7 +48,7 @@ from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = ["GateEngineServer", "create_server"]
 
-_GATE_IDS = frozenset({"G1", "G2", "G3", "G4", "G5"})
+_GATE_IDS = frozenset({"G1", "G2", "G3", "G4", "G5"})  # noqa: gate-vocab  无对应词表真源（vocabularies/ 无 gate-id 词表），G1-G5 为本服务门禁阶段本地标识
 _CONTRACT_MODELS = frozenset(
     {"Task", "AuditReport", "KnowledgeEntry", "FailurePattern", "HandoffPackage", "IntentResult"}
 )

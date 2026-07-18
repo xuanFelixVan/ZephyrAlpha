@@ -130,7 +130,7 @@ _PREFIX_TAGS: tuple[tuple[str, list[str]], ...] = (
     ("audit_", ["Periodic"]),
 )
 
-_VALID_TAGS = frozenset({"Quick", "Security", "Disruptive", "Critical", "AI-Generated", "Periodic"})
+_VALID_TAGS = frozenset({"Quick", "Security", "Disruptive", "Critical", "AI-Generated", "Periodic"})  # noqa: gate-vocab  无对应词表真源（无脚本执行标签词表；compliance_tags 词表是监管框架域不适用），执行分类标签为本地常量
 
 _SMOKE_TEST_SCRIPT = "d1_structure/run_script_smoke_test.py"
 _SELF_SCRIPT = "run_all.py"

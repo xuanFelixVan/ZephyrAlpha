@@ -73,7 +73,7 @@ class TestPromptTemplate:
         tpl = _make_prompt_template()
         assert tpl.template_id == "tpl-001"
         assert tpl.version == "1.0.0"
-        assert tpl.stability == "experimental"
+        assert tpl.stability == "evolving"
 
     def test_extract_variables(self):
         tpl = _make_prompt_template(template_str="Hello {name}, welcome to {place}")
@@ -121,7 +121,7 @@ class TestPromptTemplate:
             _make_prompt_template(stability="invalid")
 
     def test_valid_stability_values(self):
-        for stability in ("experimental", "beta", "stable", "frozen"):
+        for stability in ("volatile", "evolving", "stable", "frozen"):
             tpl = _make_prompt_template(stability=stability)
             assert tpl.stability == stability
 
@@ -190,7 +190,7 @@ class TestSkillDefinition:
         assert sd.name == "Find Code References"
         assert sd.category == SkillCategory.CODE
         assert sd.version == "1.0.0"
-        assert sd.stability == "experimental"
+        assert sd.stability == "evolving"
 
     def test_invalid_version_raises(self):
         with pytest.raises(ValidationError):
@@ -238,7 +238,7 @@ class TestSkillDefinition:
         assert sd.category == SkillCategory.CODE
 
     def test_all_stability_values_accepted(self):
-        for stability in ("experimental", "beta", "stable", "frozen"):
+        for stability in ("volatile", "evolving", "stable", "frozen"):
             sd = _make_skill_definition(stability=stability)
             assert sd.stability == stability
 

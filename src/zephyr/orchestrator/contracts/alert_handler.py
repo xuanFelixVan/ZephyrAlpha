@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | CT-FLE-ORC-001
 # [MODULE] zephyr.orchestrator.contracts.alert_handler
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.models; zephyr.shared.__init__; zephyr.shared.schema.severity_types; zephyr.shared.schema.base_config; zephyr.shared.schema.execution_model; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.governance.persistence.sqlite_schema
 # [CONSUMERS] zephyr.feedback_loop.alert_dispatcher; zephyr.trading.work_orchestrator
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -127,9 +127,9 @@ def _create_repair_task(
     detail: str,
     task_repo: TaskRepositoryProtocol | None = None,
 ) -> object:
-    from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-    from zephyr.integration.shared.schema.execution_model import ExecutionModel
-    from zephyr.integration.shared.schema.severity_types import Priority
+    from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
+    from zephyr.shared.schema.execution_model import ExecutionModel
+    from zephyr.shared.schema.severity_types import Priority
     from zephyr.shared.foundation.models import TaskCard
     from zephyr.shared.schema.task_types import TaskNamespace, TaskStatus
 

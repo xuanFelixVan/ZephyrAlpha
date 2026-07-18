@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.gov_kb.embedding_migrate
 # [DOMAIN] D_GOV_KB
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -44,7 +44,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 # KB legacy ChromaDB collection names (chromadb_init.py removed in Step 2.2)
 _KB_LEGACY_COLLECTIONS = ("ke_entries", "vibe_rules", "blueprints", "failure_patterns")

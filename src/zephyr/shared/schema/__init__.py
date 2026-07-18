@@ -3,4 +3,4 @@
 # [TTL] permanent
 """shared.schema — auto-generated package init."""
 
-__all__ = ["base_config", "schema_registry", "schemas", "severity_types"]
+__all__ = ["base_config", "execution_model", "schema_registry", "schemas", "severity_types"]

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §4
 # [MODULE] zephyr.gov_audit.pipeline_runner
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.gov_audit.text_to_finding_adapter
+# [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.gov_audit.text_to_finding_adapter
 # [CONSUMERS] audit-orchestrator.cli; audit_admission_controller
 # [STARTUP] imported
 # [MATURITY] production
@@ -44,7 +44,7 @@ from zephyr.gov_audit.finding_model import (
     RemediationPriority,
     generate_finding_id,
 )
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG
+from zephyr.shared.schema.base_config import BASE_CONFIG
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0437 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-354 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-354 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_blueprint_decomposer
 
@@ -31,8 +31,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.execution_model import ExecutionModel
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.blueprint_tools.blueprint_decomposer import (
     BlueprintDecomposer,
     _marker_to_blueprint_label,

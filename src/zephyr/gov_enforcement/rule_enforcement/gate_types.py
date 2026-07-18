@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_types
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.shared.contracts.core.gate_types; zephyr.gov_enforcement.rule_enforcement.gate_types
 # [STARTUP] imported
 # [MATURITY] production
@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from zephyr.integration.shared.schema.schemas import Priority
+from zephyr.shared.schema.schemas import Priority
 
 __all__ = [
     "GateEngineError",

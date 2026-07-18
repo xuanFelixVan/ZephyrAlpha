@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate-engine/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.task_types
 # [DOMAIN] D_GOV_RULE
-# [DEPENDENCIES] zephyr.integration.shared.schema.base_config; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
 # [CONSUMERS] db.task_repo; db.base_repo; db.transition; db.query; pipeline.pipeline_orchestrator; pipeline.preemptionManager; orchestrator.file_task_mapper; kb.kb_gate_task; kb.migration.kb_gate_task; mcp.task_manager_server; core.blueprint_decomposer; shared.events.event_schemas; core.models
 # [STARTUP] imported
 # [MATURITY] production
@@ -23,9 +23,9 @@ from typing import Annotated, Self
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.execution_model import ExecutionModel, normalize_execution_model
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.shared.schema.execution_model import ExecutionModel, normalize_execution_model
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 
 class TaskNamespace(str, Enum):

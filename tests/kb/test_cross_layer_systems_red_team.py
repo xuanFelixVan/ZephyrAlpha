@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0012 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-207 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-207 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_cross_layer_systems_red_team
 # [STABILITY] evolving
 # [SAFETY] L
@@ -108,7 +108,7 @@ def test_00_import_llm_security():
 def test_00_import_shared_core():
     modules = [
         ("shared", "zephyr.shared"),
-        ("shared.schemas", "zephyr.integration.shared.schema.schemas"),
+        ("shared.schemas", "zephyr.shared.schema.schemas"),
         ("shared.errors", "zephyr.shared.errors"),
         ("shared.event_bus", "zephyr.shared.event_bus"),
         ("shared.ssot_guard", "zephyr.shared.ssot_guard"),
@@ -467,7 +467,7 @@ class TestSharedCoreAdversarial:
         assert data is not None
 
     def test_task_model_minimal(self):
-        from zephyr.integration.shared.schema.schemas import (
+        from zephyr.shared.schema.schemas import (
             Classification,
             ExecutionModel,
             Priority,
@@ -500,7 +500,7 @@ class TestSharedCoreAdversarial:
         assert task.phase == 0
 
     def test_task_invalid_status_rejected(self):
-        from zephyr.integration.shared.schema.schemas import Classification, ExecutionModel, SafetyLevel, TaskNamespace
+        from zephyr.shared.schema.schemas import Classification, ExecutionModel, SafetyLevel, TaskNamespace
         from zephyr.shared.foundation.models import TaskCard
 
         now = datetime.now(UTC)
@@ -540,7 +540,7 @@ class TestSharedCoreAdversarial:
         assert guard is not None
 
     def test_taskcard_instantiate(self):
-        from zephyr.integration.shared.schema.schemas import (
+        from zephyr.shared.schema.schemas import (
             Classification,
             ExecutionModel,
             SafetyLevel,

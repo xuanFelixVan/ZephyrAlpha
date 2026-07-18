@@ -48,6 +48,11 @@ from pydantic import BaseModel, Field
 
 from zephyr.shared.io.paths import VMS_PERSIST_DIR
 from zephyr.shared.schema.schemas import BASE_CONFIG
+# SSoT(5.1.1 治本): HOT/COLD_COLLECTIONS 唯一真源在 collection_schemas.py，本模块 import 自用，禁止重复定义
+from zephyr.integration.vector_memory.collection_schemas import (
+    COLD_COLLECTIONS,
+    HOT_COLLECTIONS,
+)
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
@@ -56,8 +61,7 @@ _logger = logging.getLogger(__name__)
 
 ALLOWED_DIMENSIONS: Final[frozenset[int]] = frozenset({512, 1024})
 
-HOT_COLLECTIONS: Final[frozenset[str]] = frozenset({"decisions", "rules", "lessons", "knowledge"})
-COLD_COLLECTIONS: Final[frozenset[str]] = frozenset({"blueprints", "session_snapshots", "execution_traces"})
+# HOT/COLD_COLLECTIONS 已从 collection_schemas import（上方 SSoT 注释），本处不再重复定义
 
 CHUNK_STRATEGIES_HOT: Final[frozenset[str]] = frozenset({"semantic", "paragraph", "heading_aware", "rule_level", "ast_aware"})
 CHUNK_STRATEGIES_COLD: Final[frozenset[str]] = frozenset({"section_aware", "session_level", "time_window"})

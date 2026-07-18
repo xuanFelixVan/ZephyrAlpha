@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.prompt_registry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -64,7 +64,7 @@ import yaml
 from pydantic import BaseModel, Field, field_validator
 
 from zephyr.infrastructure.capacity_assurance.token_budget import estimate_tokens
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 # 5.160.20 修复：SEMVER正则统一为共享常量
 from zephyr.shared.foundation.constants import SEMVER_PATTERN
 
@@ -189,8 +189,8 @@ class PromptVersion(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     changelog: str = Field(default="", description="该版本变更说明")
     stability: str = Field(
-        default="experimental",
-        description="experimental | beta | stable | frozen",
+        default="evolving",
+        description="stability 合法值见 stability_vocabulary.yaml（frozen | stable | evolving | volatile）",
     )
 
     @field_validator("version")
@@ -217,7 +217,7 @@ class PromptTemplate(BaseModel):
     name: str = Field(description="人类可读名称")
     description: str = Field(default="", description="模板用途说明")
     version: str = Field(description="Semver 版本号")
-    stability: str = Field(default="experimental", description="experimental | beta | stable | frozen")
+    stability: str = Field(default="evolving", description="stability 合法值见 stability_vocabulary.yaml（frozen | stable | evolving | volatile）")
     variables: list[PromptVariable] = Field(default_factory=list, description="变量声明列表")
     token_budget: int = Field(default=4000, ge=1, description="渲染后最大 token 数")
     template_text: str = Field(description="模板正文，含 {variable} 占位符")

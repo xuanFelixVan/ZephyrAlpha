@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_pipeline
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.autonomy_core.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -53,7 +53,7 @@ from zephyr.autonomy_core.context.context_assembler import AssembledContext, Ass
 from zephyr.autonomy_core.context.context_injector import ContextInjector, InjectedContext
 from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 InjectMode = Literal["none", "task_id", "module_id", "keyword"]
 

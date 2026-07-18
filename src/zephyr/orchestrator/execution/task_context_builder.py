@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | CT-ORC-CE-001
 # [MODULE] zephyr.orchestrator.execution.task_context_builder
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] zephyr.orchestrator.context_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -264,7 +264,7 @@ def _inject_log(task_id: str, blocks: list[dict[str, Any]], total_tokens: int, s
 
 def _load_conventions(task_type: str) -> dict[str, Any] | None:
     try:
-        from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+        from zephyr.shared.schema.schemas import BASE_CONFIG
 
         return {"task_type": task_type, "config": str(BASE_CONFIG)[:200]}
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

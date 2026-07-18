@@ -62,10 +62,10 @@ class ErrorContext:
         }
 
 
-_VALID_PERSISTENCE: frozenset[str] = frozenset({"transient", "permanent", "intermittent"})
-_VALID_SOURCE: frozenset[str] = frozenset({"client", "server", "dependency", "internal"})
-_VALID_EXPECTATION: frozenset[str] = frozenset({"expected", "unexpected", "unknown"})
-_VALID_SEVERITY: frozenset[str] = frozenset({"degraded", "blocking", "fatal"})
+_VALID_PERSISTENCE: frozenset[str] = frozenset({"transient", "permanent", "intermittent"})  # noqa: gate-vocab  无对应词表真源（无 error-persistence 词表），错误持续性分类为本地常量
+_VALID_SOURCE: frozenset[str] = frozenset({"client", "server", "dependency", "internal"})  # noqa: gate-vocab  无对应词表真源（无 error-source 词表），错误来源分类为本地常量
+_VALID_EXPECTATION: frozenset[str] = frozenset({"expected", "unexpected", "unknown"})  # noqa: gate-vocab  无对应词表真源（无 error-expectation 词表），错误预期性分类为本地常量
+_VALID_SEVERITY: frozenset[str] = frozenset({"degraded", "blocking", "fatal"})  # noqa: gate-vocab  无对应词表真源（无 error-severity 词表），错误严重度分类为本地常量，非 safety_level 词表域
 
 
 def validate_error_context(ctx: ErrorContext) -> list[str]:
