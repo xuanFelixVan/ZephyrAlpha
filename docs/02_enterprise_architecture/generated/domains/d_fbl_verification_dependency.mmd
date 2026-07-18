@@ -1,7 +1,7 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-19 00:01:32
+%% 生成时间: 2026-07-19 00:18:22
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 71, 依赖边数: 200
+%% 模块数: 71, 依赖边数: 201
 
 graph TD
 
@@ -162,6 +162,8 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_no_llm_degradation_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_preventive_repair_py
+    %% D_GOV_DOCS -> D_FBL_VERIFICATION (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_gates__governance_gates_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FBL_VERIFICATION ->  (1 条)
@@ -171,5 +173,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 17 条
-    %% 跨域入边: 181 条
+    %% 跨域入边: 182 条
     %% 跨域出边: 2 条

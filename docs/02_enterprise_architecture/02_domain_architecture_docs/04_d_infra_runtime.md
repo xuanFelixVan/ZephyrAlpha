@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L0 基础设施层 | Layer | L0 Infrastructure |
 | 模块数 | 159 | Module Count | 159 |
 | 域内依赖 | 146 | Internal Dependencies | 146 |
-| 跨域入边 | 72 | Cross-domain Incoming | 72 |
+| 跨域入边 | 73 | Cross-domain Incoming | 73 |
 | 跨域出边 | 208 | Cross-domain Outgoing | 208 |
 | 设计态模块 | 1 | Design Modules | 1 |
 | 原型态模块 | 40 | Prototype Modules | 40 |
@@ -300,6 +300,7 @@ graph TD
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_SHARED -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     D_GOV_CODE_QUALITY["(原型态 / prototype) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -.->|导入依赖 / import_depends| src_zephyr_infrastructure_asset_inventory_scanner_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
@@ -1047,12 +1048,14 @@ graph TD
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     D_GOV_DOCS -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
+    D_SHARED["(原型态 / prototype) D_SHARED"]
+    D_SHARED -.->|runtime / runtime| docs_03_modules_cross_layer_agent_orchestrator_blueprint_md
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_03_modules_cross_layer_agent_orchestrator_blueprint_md design
-    class D_KNOWLEDGE,D_GOV_DOCS external_design
+    class D_KNOWLEDGE,D_GOV_DOCS,D_SHARED external_design
 ```
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
@@ -1442,15 +1445,16 @@ graph TD
 | 65 | D_SECURITY 对抗验证: mcp_integration.py | → | AssetInventory MCP Server — MOD-INF-026 蓝图 ... | 导入依赖 / import_depends |
 | 66 | D_SECURITY 对抗验证: [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐 (o... | → | CapabilityRegistry — 能力注册中心 (capability_... | 导入依赖 / import_depends |
 | 67 | D_SECURITY 对抗验证: [INVARIANTS] 蓝图 §4 文件清单与代码双向对齐 (o... | → | ModuleOnboardingScanner — 模块接入扫描器 (modu... | 导入依赖 / import_depends |
-| 68 | D_SHARED 共享服务: ProcessLifecycleGateway — 进程生命周期统一入口... | → | daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
-| 69 | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | → | models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
-| 70 | D_SHARED 共享服务: io_cache.py - File-level I/O cache with LRU evi... | → | models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
-| 71 | D_SHARED 共享服务: health.py —— ZephyrAlpha 聚合健康检查 (health.py) | → | hooks.py —— 模块生命周期钩子（Phase 2 新增 | ... | 导入依赖 / import_depends |
-| 72 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
+| 68 | D_SHARED 共享服务: gate_types.py | → | blueprint.md | runtime / runtime |
+| 69 | D_SHARED 共享服务: ProcessLifecycleGateway — 进程生命周期统一入口... | → | daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
+| 70 | D_SHARED 共享服务: process_pool.py - Shared process pool for MCP s... | → | models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
+| 71 | D_SHARED 共享服务: io_cache.py - File-level I/O cache with LRU evi... | → | models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
+| 72 | D_SHARED 共享服务: health.py —— ZephyrAlpha 聚合健康检查 (health.py) | → | hooks.py —— 模块生命周期钩子（Phase 2 新增 | ... | 导入依赖 / import_depends |
+| 73 | D_TRADING 交易运营: ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 24 个外部域直接连接（出边 208 条 + 入边 72 条 = 280 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 24 个外部域直接连接（出边 208 条 + 入边 73 条 = 281 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -1475,10 +1479,10 @@ graph LR
     D_DATA["D_DATA"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
-    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
-    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
+    D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_INFRA_RUNTIME -->|141条 导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME -->|17条 导入依赖 / import_depends| D_INTEGRATION
     D_INFRA_RUNTIME -->|11条 导入依赖 / import_depends| D_GOVERNANCE
@@ -1500,21 +1504,21 @@ graph LR
     D_AUTONOMY_CORE -->|22条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
     D_INTEGRATION -->|13条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOVERNANCE -->|9条 导入依赖 / import_depends, 测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_SHARED -->|5条 导入依赖 / import_depends, runtime / runtime| D_INFRA_RUNTIME
     D_GOV_SCRIPTS -->|4条 导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_SHARED -->|4条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR -->|3条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SECURITY -->|3条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_FEEDBACK_LOOP -->|3条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_DOCS -->|2条 runtime / runtime| D_INFRA_RUNTIME
-    D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_INTELLIGENCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_KNOWLEDGE -->|1条 runtime / runtime| D_INFRA_RUNTIME
-    D_TRADING -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_BACKTEST -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_GOV_CODE_QUALITY -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_TRADING -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_RULE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_INFRA_RECOVERY -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
 ```
 
 ## 说明 / Notes
