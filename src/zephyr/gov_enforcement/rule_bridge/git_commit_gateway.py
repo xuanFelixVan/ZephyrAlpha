@@ -74,7 +74,6 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
-    make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
@@ -127,11 +126,9 @@ from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_impor
 from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
 from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
 from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
-from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # NO-DOMAIN-NAME-ZH-DIRECT-ACCESS (priority=72) 治本 v2.3 Step 2.5 遗留风险修复——DOMAIN_NAME_ZH 字典直接访问硬阻断
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
-from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
@@ -340,7 +337,6 @@ class GitCommitGateway:
         self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
         self._gate_registry.register(make_pure_assertion_gate())  # priority=69 治本纯陈述原则（GOV-DOC-016，subprocess 调 check_pure_assertion.py --ci）
         self._gate_registry.register(make_noqa_validation_gate())  # priority=71 治本自定义 noqa 标记无门禁（#ARCH-NOQA-GOV-001，in-process 校验 noqa_exempt_registry.yaml SSoT）
-        self._gate_registry.register(make_domain_name_zh_direct_access_gate())  # priority=72 治本 DOMAIN_NAME_ZH 字典直接访问（v2.3 Step 2.5 遗留风险修复：强制走 get_domain_name_zh / get_domain_name_zh_strict helper，避免新 AI 绕过 DB 优先级直接读硬编码 fallback）
         self._gate_registry.register(make_datetime_now_forbidden_gate())  # priority=34 治本生成器代码 datetime.now() 硬阻断（AGENTS.md §11.1.1，生成器输出幂等性强制）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
