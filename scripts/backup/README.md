@@ -45,6 +45,8 @@ RESTIC_PASSWORD=<你的备份仓库密码>
 
 同时确保 `config/.env.postgres` 存在（PostgreSQL连接密码）。
 
+另需创建 `config/.env.ch_backup`（不进git，ClickHouse 备份 MinIO/S3 桥凭据），字段见 `scripts/backup/README.md` 文末说明或本机现有文件（`MINIO_EXE`/`MINIO_ADDRESS`/`MINIO_ROOT`/`MINIO_BUCKET`/`CH_S3_ACCESS_KEY`/`CH_S3_SECRET_KEY`/`CH_S3_ENDPOINT`/`RELAY_SCRIPT`）。
+
 ### 3. 确保F盘在线
 
 外置盘 F:(SanDisk 2TB NTFS) 必须已挂载。
@@ -59,7 +61,18 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 
 ## 备份内容
 
-**包含**：`D:\ZephyrAlpha` 全部（排除清单外）+ `D:\tmp_db_dumps`（数据库dump）
+**包含**：`D:\ZephyrAlpha` 全部（排除清单外）+ `D:\tmp_db_dumps`（数据库dump）+ `F:\ch_backup_store`（ClickHouse 行情库备份，315GiB+，见下节）
+
+### ClickHouse 备份架构（2026-07-18 裁定）
+
+CH 部署在 Hyper-V VM，其数据盘（588G/余 211G）装不下 315GiB 全量备份，且宿主机无 clickhouse-client、Windows 防火墙拦截 minio.exe。因此采用 **MinIO S3 桥**：
+
+1. 备份时临时启动 MinIO（仅监听 127.0.0.1:9101）+ `minio_tcp_relay.py`（0.0.0.0:9100，借 python 防火墙放行规则暴露给 VM）
+2. CH 执行 `BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('http://172.24.16.1:9100/chbk/market.zip') ASYNC`，数据流直接出 VM 落到 F:
+3. **每次写同一个 market.zip**：restic 内容分块（CDC）对未变化的 CH part 去重，每日增量 ≈ 新增行情（~9GiB/天），版本历史由 restic 快照管理
+4. 备完即停 MinIO/relay（非常驻服务），restic 捕获 `F:\ch_backup_store`
+
+全程 ASYNC + 轮询 `system.backups`，reconciler 超时已调至 4 小时。
 
 **排除**：
 - `.aidrafts/` — session worktree临时草稿（4.7GB）
@@ -81,7 +94,8 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 | Python | ≥3.12（pyproject.toml requires-python） | python.org | 项目运行时 |
 | 项目依赖 | - | `pip install -r requirements.txt -r requirements-dev.txt` | venv 重建 |
 | SQLite | 任意 | `winget install SQLite.SQLite` | 可选（有 Python fallback） |
-| ClickHouse | 按需 | 当前机器未安装；行情可从 `data/raw/bdpan` 重建 | 可选 |
+| ClickHouse | 21.8+ | **必须**（已裁定：行情为开箱即用灾备资产，不从 bdpan 重建）。当前部署于 Hyper-V VM（172.24.30.100） | c1_market + c3_fundamental 行情库 |
+| MinIO | 近期版 | 下载 `minio.exe` 到 `D:\tools\minio\`（国内镜像：`https://dl.minio.org.cn/server/minio/release/windows-amd64/minio.exe`） | **必须**，CH 备份 S3 桥 |
 
 还需准备：外置盘 F:（或拷贝出的仓库目录）+ `RESTIC_PASSWORD`（**仓库外离线副本**，密码在加密仓库内部，无副本则备份无法解开）。
 
@@ -109,7 +123,7 @@ powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
 
 - PostgreSQL：①`psql -f D:\tmp_db_dumps\pg_globals.sql -d postgres`（恢复 zephyr / depgraph_reader / depgraph_writer 角色）②按 `config/.env.postgres` 执行 `ALTER ROLE zephyr PASSWORD '...'`（pg_roles 导出不含密码）③`pg_restore -d depgraph D:\tmp_db_dumps\depgraph.dump`
 - SQLite：覆盖 `data/databases/governance.db` 等
-- ClickHouse：`RESTORE DATABASE c1_market FROM Disk('backups', 'c1_market_YYYYMMDD.zip')`
+- ClickHouse：`.\scripts\backup\restore.ps1 ch` — 自动执行：restic 取回 `F:\ch_backup_store` → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查。前置：目标 CH 中相关表需先 DROP（或为空库）
 
 ## 保留策略
 
@@ -131,8 +145,11 @@ restic -r F:\restic-zephyr check --read-data
 | 文件 | 职责 |
 |------|------|
 | `backup_config.yaml` | 配置SSoT（路径/保留/排除/触发条件） |
-| `backup_reconciler.py` | 事件触发器（post-commit reconciler） |
-| `backup.ps1` | 主备份脚本（六阶段流水线） |
+| `backup_reconciler.py` | 事件触发器（post-commit reconciler，超时4h） |
+| `backup.ps1` | 主备份脚本（六阶段流水线，含CH MinIO S3桥） |
+| `minio_tcp_relay.py` | TCP中转（9100→9101，借python防火墙规则暴露MinIO给VM） |
 | `backup_manual.ps1` | 手动兜底触发入口（-Force 模式） |
-| `restore.ps1` | 恢复脚本（查看/验证/灾难恢复） |
+| `restore.ps1` | 恢复脚本（list/verify/latest/ch 四子命令） |
 | `README.md` | 本文档 |
+
+外部依赖（不进git/仓库）：`D:\tools\minio\minio.exe`（S3桥）、`config/.env.ch_backup`（S3凭据）

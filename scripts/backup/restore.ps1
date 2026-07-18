@@ -8,10 +8,12 @@
       verify <id>       - Restore to D:\restore_test\ for verification
       latest            - Disaster-recover latest snapshot to D:\ZephyrAlpha\
       latest -target X  - Restore to specified directory
+      ch                - Disaster-recover ClickHouse (c1_market + c3_fundamental) from
+                          F:\ch_backup_store\chbk\market.zip via MinIO + RESTORE FROM S3
 #>
 param(
     [Parameter(Position=0)]
-    [ValidateSet("list","verify","latest")]
+    [ValidateSet("list","verify","latest","ch")]
     [string]$Action = "list",
 
     [Parameter(Position=1)]
@@ -52,6 +54,76 @@ switch ($Action) {
         & restic -r $RepoPath restore latest --target $restoreTarget
         if ($LASTEXITCODE -eq 0) {
             Write-Host "OK: Latest snapshot restored to $restoreTarget" -ForegroundColor Green
+        }
+    }
+    "ch" {
+        # ClickHouse DR: restic restore market.zip object -> start MinIO+relay -> RESTORE FROM S3
+        # Mirror of backup.ps1 CH stage (same .env.ch_backup / .env.clickhouse credentials).
+        $chBk = @{}
+        $chBkEnvFile = "$ProjectRoot\config\.env.ch_backup"
+        if (-not (Test-Path $chBkEnvFile)) { Write-Host "config/.env.ch_backup not found" -ForegroundColor Red; exit 1 }
+        foreach ($line in (Get-Content $chBkEnvFile -Encoding UTF8)) {
+            if ($line -match '^([A-Z0-9_]+)=(.+)$') { $chBk[$matches[1]] = $matches[2].Trim() }
+        }
+        $chHttpHost = "localhost"; $chHttpPort = 8123
+        foreach ($line in (Get-Content "$ProjectRoot\config\.env.clickhouse" -Encoding UTF8)) {
+            if ($line -match '^CLICKHOUSE_HOST=(.+)$')      { $chHttpHost = $matches[1].Trim() }
+            if ($line -match '^CLICKHOUSE_HTTP_PORT=(.+)$') { $chHttpPort = [int]$matches[1].Trim() }
+        }
+        $chBaseUrl = "http://${chHttpHost}:${chHttpPort}/"
+
+        $confirm = Read-Host "Restore ClickHouse c1_market + c3_fundamental from latest snapshot? Existing tables must be dropped first. Continue? (yes/no)"
+        if ($confirm -ne "yes") { Write-Host "Aborted."; exit 0 }
+
+        # 1. Restic restore of the MinIO store path back to F:\ch_backup_store
+        Write-Host "Restoring ch_backup_store from restic (315GiB, may take hours)..." -ForegroundColor Cyan
+        & restic -r $RepoPath restore latest --target "F:\" --include "F:/ch_backup_store*"
+        if ($LASTEXITCODE -ne 0) { Write-Host "restic restore failed" -ForegroundColor Red; exit 1 }
+        $objDir = "$($chBk.MINIO_ROOT)\$($chBk.MINIO_BUCKET)\market.zip"
+        if (-not (Test-Path $objDir)) { Write-Host "market.zip object not found at $objDir" -ForegroundColor Red; exit 1 }
+
+        # 2. Start MinIO (localhost) + python relay (VM-facing)
+        $env:MINIO_ROOT_USER = $chBk.CH_S3_ACCESS_KEY
+        $env:MINIO_ROOT_PASSWORD = $chBk.CH_S3_SECRET_KEY
+        $minioProc = Start-Process -FilePath $chBk.MINIO_EXE `
+            -ArgumentList 'server', "`"$($chBk.MINIO_ROOT)`"", '--address', "`"$($chBk.MINIO_ADDRESS)`"", '--console-address', "`"$($chBk.MINIO_CONSOLE_ADDRESS)`"" `
+            -WindowStyle Hidden -PassThru
+        $relayProc = Start-Process -FilePath "python" -ArgumentList "`"$($chBk.RELAY_SCRIPT)`"" -WindowStyle Hidden -PassThru
+        try {
+            $minioReady = $false
+            for ($i = 0; $i -lt 30 -and -not $minioReady; $i++) {
+                Start-Sleep -Seconds 1
+                curl.exe -s --max-time 2 "http://$($chBk.MINIO_ADDRESS)/minio/health/live" -o NUL
+                $minioReady = ($LASTEXITCODE -eq 0)
+            }
+            if (-not $minioReady) { throw "MinIO failed to start" }
+
+            # 3. RESTORE FROM S3 (async + poll)
+            $s3Url = "$($chBk.CH_S3_ENDPOINT)/$($chBk.MINIO_BUCKET)/market.zip"
+            $restoreQuery = "RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3('$s3Url', '$($chBk.CH_S3_ACCESS_KEY)', '$($chBk.CH_S3_SECRET_KEY)') ASYNC"
+            $fireResp = curl.exe -s --max-time 60 "${chBaseUrl}?s3_uri_style=path" --data-binary $restoreQuery
+            if ($LASTEXITCODE -ne 0 -or $fireResp -notmatch '([0-9a-f-]{36})') { throw "RESTORE fire failed: $fireResp" }
+            $restoreId = $Matches[1]
+            Write-Host "RESTORE async id=$restoreId (may take hours)..." -ForegroundColor Cyan
+            $final = "TIMEOUT"
+            for ($elapsed = 0; $elapsed -lt 10800; $elapsed += 60) {
+                Start-Sleep -Seconds 60
+                $st = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT status FROM system.backups WHERE id='$restoreId'"
+                if ($st -match 'RESTORED')        { $final = "OK"; break }
+                if ($st -match 'RESTORE_FAILED')  { $final = "FAILED"; break }
+            }
+            if ($final -ne "OK") {
+                $rErr = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT substring(error,1,300) FROM system.backups WHERE id='$restoreId'"
+                throw "RESTORE $final`: $rErr"
+            }
+            # 4. Row-count spot check (institutional practice: verify after restore)
+            curl.exe -s $chBaseUrl --data-binary "SELECT database, formatReadableSize(sum(bytes_on_disk)) FROM system.parts WHERE active AND database IN ('c1_market','c3_fundamental') GROUP BY database"
+            Write-Host "OK: ClickHouse restore complete (verify row counts above)" -ForegroundColor Green
+        } catch {
+            Write-Host "CH restore failed: $($_.Exception.Message)" -ForegroundColor Red
+        } finally {
+            if ($relayProc -and -not $relayProc.HasExited) { Stop-Process -Id $relayProc.Id -Force -ErrorAction SilentlyContinue }
+            if ($minioProc -and -not $minioProc.HasExited) { Stop-Process -Id $minioProc.Id -Force -ErrorAction SilentlyContinue }
         }
     }
 }

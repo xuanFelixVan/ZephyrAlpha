@@ -213,14 +213,14 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
             ],
             capture_output=True,
             text=True,
-            timeout=1800,  # 30分钟超时
+            timeout=14400,  # 4h超时（CH 315GiB S3桥备份，见blueprint §4.3）
             cwd=str(_project_root),
         )
     except subprocess.TimeoutExpired:
         _update_state(last_backup_status="timeout")
         return ReconcileResult(
             action="warn",
-            detail="backup timed out after 1800s",
+            detail="backup timed out after 14400s",
         )
 
     if result.returncode == 0:
