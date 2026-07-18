@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.arch_reference_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content, scan_file_violations, load_head_registered_nums, collect_new_refs_by_file, check_atomicity); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -61,9 +61,15 @@ from __future__ import annotations
 import logging
 import os
 import re
-import subprocess
 from pathlib import Path
 
+from zephyr.gov_enforcement.commit_gates._reference_helpers import (
+    check_atomicity,
+    collect_new_refs_by_file,
+    get_head_content,
+    load_head_registered_nums,
+    scan_file_violations,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -79,13 +85,11 @@ __all__ = ["make_arch_reference_gate"]
 # 多段式支持治本 ARCH-GOV-SHIM-001 三段式格式漏检（2026-07-17）
 _ARCH_REF_RE = re.compile(r"#ARCH-([A-Z]+(?:-[A-Z]+)*-\d+|\d+)")
 
-# 扫描的文件扩展名（可能含 #ARCH-NNN 引用的文件类型）
-_SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
-
-# git show 超时（秒）——防止大文件/慢盘卡死 commit
-_GIT_SHOW_TIMEOUT = 10
-
 # registry 相对路径（对标 dangling_reference_gate.py 用 gateway.project_root 的稳健设计）
+# 治本（M03，2026-07-18）：_SCANNABLE_EXTS / _GIT_SHOW_TIMEOUT 已下沉到 _reference_helpers，
+# 本模块不再需要（消除 M03 重复簇：get_head_content / scan_file_violations /
+# load_head_registered_nums / collect_new_refs_by_file / check_atomicity 5 个函数
+# 与 _reference_helpers 重复）。
 _REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"
 
 
@@ -122,31 +126,6 @@ def _extract_refs(content: str) -> set[str]:
     return set(_ARCH_REF_RE.findall(content))
 
 
-def _get_head_content(project_root: Path, rel_path: str) -> str | None:
-    """获取文件在 HEAD 版本的内容。
-
-    Args:
-        project_root: 仓库根路径。
-        rel_path: 相对路径（正斜杠）。
-
-    Returns:
-        HEAD 版本文件内容；文件不在 HEAD 中（新文件）返回 None；
-        git 命令本身失败（非"文件不存在"）抛 OSError 让调用方 fail-closed。
-    """
-    try:
-        result = subprocess.run(
-            ["git", "show", f"HEAD:{rel_path}"],
-            capture_output=True,
-            cwd=str(project_root),
-            timeout=_GIT_SHOW_TIMEOUT,
-        )
-    except (subprocess.TimeoutExpired, OSError) as e:
-        raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
-    if result.returncode != 0:
-        return None
-    return result.stdout.decode("utf-8", errors="replace")
-
-
 def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
     registry_yaml = project_root / _REGISTRY_REL
     # fail-closed：registry 不存在是环境异常，必须阻断
@@ -173,46 +152,6 @@ def _load_registered_nums(project_root: Path) -> tuple[bool, str, set[str]]:
     return True, "", registered_nums
 
 
-def _scan_file_violations(
-    project_root: Path, files: list[str], registered_nums: set[str]
-) -> tuple[list[tuple[str, list[str]]], str | None]:
-    # 检测 staged 文件中新增的悬空引用
-    violations: list[tuple[str, list[str]]] = []
-    for f in files:
-        if not os.path.isfile(f):
-            continue  # deletion commit：文件不存在，跳过
-        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-        if is_test_exempt(rel):
-            continue  # tests/ 豁免区
-        if not rel.endswith(_SCANNABLE_EXTS):
-            continue  # 非可扫描文件类型
-        # 读取当前工作区版本
-        try:
-            current_content = Path(f).read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue  # 读取失败跳过
-        current_refs = _extract_refs(current_content)
-        if not current_refs:
-            continue  # 无 #ARCH-NNN 引用
-        # 获取 HEAD 版本，计算新增引用
-        try:
-            head_content = _get_head_content(project_root, rel)
-        except OSError as e:
-            return [], f"git show failed for {rel} (fail-closed): {e}"
-        if head_content is None:
-            new_refs = current_refs  # 新文件：所有引用都是新增
-        else:
-            head_refs = _extract_refs(head_content)
-            new_refs = current_refs - head_refs
-        if not new_refs:
-            continue  # 无新增引用
-        # 检查新增引用是否悬空
-        dangling = sorted(new_refs - registered_nums)
-        if dangling:
-            violations.append((rel, dangling))
-    return violations, None
-
-
 def _format_violations_detail(violations: list[tuple[str, list[str]]]) -> str:
     detail_lines = []
     for rel, nums in violations:
@@ -224,75 +163,6 @@ def _format_violations_detail(violations: list[tuple[str, list[str]]]) -> str:
         + "\n修复：在 architecture_issue_registry.yaml 中补登对应条目，"
         "或移除/修正引用。（注：本门禁只检测新增引用，历史悬空引用不阻断。）"
     )
-
-
-def _load_head_registered_nums(project_root: Path) -> set[str] | None:
-    """获取 HEAD 版本 registry 中已登记的编号集合（L2 同提交原子性检查用）。
-
-    Returns:
-        HEAD 版本编号集合；registry 不在 HEAD 返回空集合；非 git 仓库或 git 异常返回 None（跳过 L2）。
-    """
-    # 先检查是否是 git 仓库——非 git 仓库（如测试 tmp_path）跳过 L2，避免误阻断
-    try:
-        rev_result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True,
-            cwd=str(project_root),
-            timeout=_GIT_SHOW_TIMEOUT,
-        )
-        if rev_result.returncode != 0:
-            return None  # 非git仓库，跳过L2
-    except (subprocess.TimeoutExpired, OSError):
-        return None
-    try:
-        head_content = _get_head_content(project_root, _REGISTRY_REL)
-    except OSError:
-        return None
-    if head_content is None:
-        return set()
-    try:
-        import yaml
-        data = yaml.safe_load(head_content)
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        return None
-    if not isinstance(data, dict):
-        return None
-    return _extract_registered_nums(data)
-
-
-def _collect_new_refs_by_file(
-    project_root: Path, files: list[str], head_nums: set[str]
-) -> dict[str, set[str]]:
-    """收集 staged 文件中不在 HEAD registry 的新增引用（L2 同提交原子性检查用）。
-
-    排除 registry 自身——registry 文件引用自己的 issue_id 不算"新增引用"。
-    """
-    result: dict[str, set[str]] = {}
-    for f in files:
-        if not os.path.isfile(f):
-            continue
-        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-        if is_test_exempt(rel) or not rel.endswith(_SCANNABLE_EXTS):
-            continue
-        if rel == _REGISTRY_REL:
-            continue  # registry 自身不检查
-        try:
-            content = Path(f).read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
-        new_refs = _extract_refs(content) - head_nums
-        if new_refs:
-            result[rel] = new_refs
-    return result
-
-
-def _check_atomicity(
-    new_refs_by_file: dict[str, set[str]], registry_in_commit: bool
-) -> list[tuple[str, list[str]]]:
-    """L2 同提交原子性检查：新引用不在 HEAD registry 时，要求 registry 同 commit。"""
-    if registry_in_commit:
-        return []
-    return [(rel, sorted(refs)) for rel, refs in new_refs_by_file.items()]
 
 
 def _detect_id_gaps(registered_nums: set[str]) -> dict[str, list[int]]:
@@ -363,7 +233,11 @@ def make_arch_reference_gate() -> GateSpec:
         if not ok:
             return False, detail
 
-        violations, error = _scan_file_violations(project_root, files, registered_nums)
+        # 治本（M03，2026-07-18）：scan_file_violations 等共享 helper 已下沉到
+        # _reference_helpers，通过 _extract_refs 参数注入本 gate 专用正则。
+        violations, error = scan_file_violations(
+            project_root, files, registered_nums, _extract_refs
+        )
         if error is not None:
             return False, error
 
@@ -372,16 +246,20 @@ def make_arch_reference_gate() -> GateSpec:
 
         # L2: 同提交原子性检查——新引用不在 HEAD registry 时，要求 registry 同 commit
         # 防止"引用了新编号但 registry 没同提交登记"导致 commit 后 HEAD registry 仍缺条目
-        head_nums = _load_head_registered_nums(project_root)
+        head_nums = load_head_registered_nums(
+            project_root, _REGISTRY_REL, _extract_registered_nums
+        )
         if head_nums is not None:
-            new_refs_by_file = _collect_new_refs_by_file(project_root, files, head_nums)
+            new_refs_by_file = collect_new_refs_by_file(
+                project_root, files, head_nums, _REGISTRY_REL, _extract_refs
+            )
             if new_refs_by_file:
                 registry_rel = _REGISTRY_REL.replace("\\", "/")
                 registry_in_commit = any(
                     os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel
                     for f in files
                 )
-                atomicity_violations = _check_atomicity(new_refs_by_file, registry_in_commit)
+                atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
                 if atomicity_violations:
                     return False, _format_atomicity_detail(atomicity_violations)
 

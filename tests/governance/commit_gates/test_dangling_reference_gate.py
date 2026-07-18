@@ -157,11 +157,14 @@ class TestIncrementalOnly:
         target = tmp_path / "module.py"
         target.write_text(f"# see AGENTS.md {_SEC}6.9\n", encoding="utf-8")
 
-        # mock _get_head_content 返回含 §6.9 的 HEAD 版本（历史已有此引用）
+        # mock get_head_content 返回含 §6.9 的 HEAD 版本（历史已有此引用）
+        # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
+        # 但 dangling_reference_gate 通过 `from ... import get_head_content` 导入，
+        # 在本模块命名空间创建绑定，故 mock 需打在本模块上（调用方查找路径）。
         import zephyr.gov_enforcement.commit_gates.dangling_reference_gate as mod
 
         monkeypatch.setattr(
-            mod, "_get_head_content", lambda pr, rel: f"# see AGENTS.md {_SEC}6.9\n"
+            mod, "get_head_content", lambda pr, rel: f"# see AGENTS.md {_SEC}6.9\n"
         )
 
         passed, detail = gate.check(gw, [str(target)])

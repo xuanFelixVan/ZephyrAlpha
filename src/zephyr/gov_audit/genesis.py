@@ -14,132 +14,213 @@
 # [TESTS] tests/audit-orchestrator/test_genesis.py
 # [A_module] module_id=MOD-GOV_genesis | layer=module | stability=frozen | safety=H | ai_autonomy=human_gated
 # [TTL] permanent
-from zephyr.shared.io.serialization import dumps
+"""audit-trail.genesis — MOD-INF-020 · 创世块管理
+
+提供创世块 (GenesisBlock) 的创建、持久化、验证能力，以及见证签名
+(WitnessSignature) 与验证结果 (GenesisVerificationResult) 数据模型。
+"""
+
+from __future__ import annotations
+
 import hashlib
-import hmac
 import json
 import logging
-import os
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-from typing import Final
+
+from pydantic import BaseModel, ConfigDict, Field
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["GenesisBlock"]
+__all__ = [
+    "GenesisBlock",
+    "GenesisManager",
+    "GenesisVerificationResult",
+    "WitnessSignature",
+]
 
-DEFAULT_GENESIS_DIR: Final[Any] = Path.cwd() / "data" / "audit_genesis"
-GENESIS_FILE: Final[str] = "genesis_block.json"
-
-
-class GenesisBlock:
-    def __init__(self, genesis_dir: Path | None = None) -> None:
-        self._genesis_dir = Path(genesis_dir or DEFAULT_GENESIS_DIR)
-        self._genesis_dir.mkdir(parents=True, exist_ok=True)
-        self._genesis_path = self._genesis_dir / GENESIS_FILE
-
-    def create(self, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
-        if self._genesis_path.exists():
-            logger.warning("Genesis block already exists, returning existing")
-            return self.read()
-
-        block = {
-            "version": "1.0",
-            "created_at": datetime.now(UTC).isoformat(),
-            "block_hash": "",
-            "audit_dimensions": [
-                "DIM-REGISTRATION-001",
-                "DIM-DEPENDENCY-001",
-                "DIM-IMPORT-001",
-                "DIM-SECURITY-001",
-                "DIM-ORPHAN-001",
-            ],
-            "initial_state": "IDLE",
-            "metadata": metadata or {},
-        }
-
-        block["block_hash"] = self._hash_block(block)
-
-        self._persist(block)
-        return block
-
-    def read(self) -> dict[str, Any]:
-        if not self._genesis_path.exists():
-            return {"error": "Genesis block not found", "exists": False}
-        try:
-            data = json.loads(self._genesis_path.read_text(encoding="utf-8"))
-            data["exists"] = True
-            return data
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.error("Failed to read genesis block: %s", exc, exc_info=True)
-            return {"error": str(exc), "exists": False}
-
-    def verify(self) -> dict[str, Any]:
-        block = self.read()
-        if not block.get("exists"):
-            return {"valid": False, "reason": "Genesis block not found"}
-
-        stored_hash = block.get("block_hash", "")
-        block["block_hash"] = ""
-        computed_hash = self._hash_block(block)
-
-        return {
-            "valid": hmac.compare_digest(stored_hash, computed_hash),
-            "stored_hash": stored_hash,
-            "computed_hash": computed_hash,
-        }
-
-    def _hash_block(self, block: dict[str, Any]) -> str:
-        data = dumps(block, sort_keys=True, ensure_ascii=False)
-        return hashlib.sha256(data.encode("utf-8")).hexdigest()
-
-    def _persist(self, block: dict[str, Any]) -> None:
-        tmp_path = Path(str(self._genesis_path) + f".{os.getpid()}.tmp")
-        try:
-            tmp_path.write_text(
-                dumps(block, indent=2, ensure_ascii=False),
-                encoding="utf-8",
-            )
-            os.replace(str(tmp_path), str(self._genesis_path))
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            try:
-                tmp_path.unlink(missing_ok=True)
-            except OSError:
-                pass
-            raise
+GENESIS_FILE: str = "genesis.json"
+DEFAULT_SYSTEM_ID: str = "zephyr-alpha"
+ZERO_HASH: str = "0" * 64
 
 
-class GenesisManager:
-    def __init__(self, config=None):
-        self.config = config or {}
+class WitnessSignature(BaseModel):
+    """见证者签名——附在创世块上以建立多方信任。"""
 
-    def create_genesis(self, entity, metadata=None):
-        return {}
+    model_config = ConfigDict(frozen=True)
 
-    def verify_genesis(self, entity):
-        # 修复：原实现永远返回 True（虚假安全感）。改为实际验证创世块。
-        try:
-            genesis_path = Path.cwd() / "data" / "audit_genesis" / f"{entity}.json"
-            if not genesis_path.exists():
-                return False
-            manager = GenesisBlockManager(genesis_path)
-            result = manager.verify()
-            return result.get("valid", False)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return False
+    witness_id: str = ""
+    signature_hex: str = ""
+    signed_at: str = ""
+    public_key_pem: str = ""
+
+
+class GenesisBlock(BaseModel):
+    """创世块——审计链的不可变起点。
+
+    使用 pydantic frozen 模型确保建立后不可修改。
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    genesis_id: str = ""
+    system_id: str = ""
+    creator: str = ""
+    prev_hash: str = ZERO_HASH
+    genesis_hash: str = ""
+    initial_config: dict[str, Any] = Field(default_factory=dict)
+    witness_signatures: list[WitnessSignature] = Field(default_factory=list)
+    backup_paths: list[str] = Field(default_factory=list)
+    created_at: str = ""
 
 
 class GenesisVerificationResult:
-    def __init__(self, entity="", valid=True, genesis_hash="", verification_timestamp=None):
-        self.entity = entity
-        self.valid = valid
+    """创世块验证结果。"""
+
+    def __init__(
+        self,
+        is_valid: bool = False,
+        hash_valid: bool = False,
+        prev_hash_valid: bool = False,
+        issues: list[str] | None = None,
+        genesis_hash: str = "",
+    ) -> None:
+        self.is_valid = is_valid
+        self.hash_valid = hash_valid
+        self.prev_hash_valid = prev_hash_valid
+        self.issues = issues if issues is not None else []
         self.genesis_hash = genesis_hash
-        self.verification_timestamp = verification_timestamp
 
 
-class WitnessSignature:
-    def __init__(self, witness_id="", signature="", timestamp=None):
-        self.witness_id = witness_id
-        self.signature = signature
-        self.timestamp = timestamp
+def _canonical_json(data: Any) -> str:
+    """生成确定性 JSON 字符串用于哈希。"""
+    return json.dumps(data, sort_keys=True, ensure_ascii=False, default=str)
+
+
+def _compute_genesis_hash(block_data: dict[str, Any]) -> str:
+    """根据创世块内容（排除 genesis_hash 字段）计算 SHA-256 哈希。"""
+    payload = {k: v for k, v in block_data.items() if k != "genesis_hash"}
+    return hashlib.sha256(_canonical_json(payload).encode("utf-8")).hexdigest()
+
+
+class GenesisManager:
+    """创世块管理器——负责创建、持久化与验证创世块。"""
+
+    def __init__(
+        self,
+        data_dir: Path | str | None = None,
+        system_id: str = DEFAULT_SYSTEM_ID,
+        creator: str = "",
+    ) -> None:
+        self._data_dir = Path(data_dir) if data_dir is not None else Path.cwd() / "data" / "audit_genesis"
+        self._data_dir.mkdir(parents=True, exist_ok=True)
+        self._system_id = system_id
+        self._creator = creator
+
+    @property
+    def data_dir(self) -> Path:
+        return self._data_dir
+
+    @property
+    def genesis_path(self) -> Path:
+        return self._data_dir / GENESIS_FILE
+
+    def create_genesis(
+        self,
+        initial_config: dict[str, Any] | None = None,
+        witnesses: list[WitnessSignature] | None = None,
+        backup_dir: Path | str | None = None,
+    ) -> GenesisBlock:
+        """创建并持久化一个新的创世块。"""
+        genesis_id = uuid.uuid4().hex
+        created_at = datetime.now(UTC).isoformat()
+        witnesses = list(witnesses) if witnesses else []
+        config = dict(initial_config) if initial_config else {}
+
+        backup_paths: list[str] = []
+        if backup_dir is not None:
+            backup_root = Path(backup_dir)
+            backup_root.mkdir(parents=True, exist_ok=True)
+            backup_path = backup_root / f"genesis-{genesis_id}.json"
+            backup_paths.append(str(backup_path))
+
+        block_data: dict[str, Any] = {
+            "genesis_id": genesis_id,
+            "system_id": self._system_id,
+            "creator": self._creator,
+            "prev_hash": ZERO_HASH,
+            "genesis_hash": "",
+            "initial_config": config,
+            "witness_signatures": [w.model_dump() for w in witnesses],
+            "backup_paths": backup_paths,
+            "created_at": created_at,
+        }
+
+        genesis_hash = _compute_genesis_hash(block_data)
+        block_data["genesis_hash"] = genesis_hash
+
+        self._persist(block_data)
+
+        if backup_dir is not None and backup_paths:
+            backup_path = Path(backup_paths[0])
+            backup_path.write_text(
+                json.dumps(block_data, indent=2, ensure_ascii=False, default=str),
+                encoding="utf-8",
+            )
+
+        return GenesisBlock(**block_data)
+
+    def _persist(self, block_data: dict[str, Any]) -> None:
+        """将创世块写入 data_dir/genesis.json（原子写）。"""
+        self._data_dir.mkdir(parents=True, exist_ok=True)
+        tmp_path = self.genesis_path.with_suffix(".json.tmp")
+        tmp_path.write_text(
+            json.dumps(block_data, indent=2, ensure_ascii=False, default=str),
+            encoding="utf-8",
+        )
+        tmp_path.replace(self.genesis_path)
+
+    def verify_genesis(self, block: GenesisBlock | None = None) -> GenesisVerificationResult:
+        """验证创世块完整性。
+
+        若未提供 block，则从 data_dir/genesis.json 加载。
+        """
+        if block is None:
+            if not self.genesis_path.exists():
+                return GenesisVerificationResult(
+                    is_valid=False,
+                    hash_valid=False,
+                    prev_hash_valid=False,
+                    issues=["Genesis block not found"],
+                )
+            try:
+                raw = json.loads(self.genesis_path.read_text(encoding="utf-8"))
+                block = GenesisBlock(**raw)
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+                return GenesisVerificationResult(
+                    is_valid=False,
+                    hash_valid=False,
+                    prev_hash_valid=False,
+                    issues=[f"Failed to load genesis block: {exc}"],
+                )
+
+        issues: list[str] = []
+        block_data = block.model_dump()
+        recomputed = _compute_genesis_hash(block_data)
+        hash_valid = recomputed == block.genesis_hash
+        if not hash_valid:
+            issues.append("Genesis hash mismatch")
+
+        prev_hash_valid = block.prev_hash == ZERO_HASH
+        if not prev_hash_valid:
+            issues.append("Invalid prev_hash: expected all-zeros")
+
+        is_valid = hash_valid and prev_hash_valid
+        return GenesisVerificationResult(
+            is_valid=is_valid,
+            hash_valid=hash_valid,
+            prev_hash_valid=prev_hash_valid,
+            issues=issues,
+        )
