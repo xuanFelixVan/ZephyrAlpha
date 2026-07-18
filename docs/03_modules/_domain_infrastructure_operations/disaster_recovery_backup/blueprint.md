@@ -418,7 +418,8 @@ sqlite3 data\databases\session_continuity.db ".backup D:\tmp_db_dumps\session_ba
 
 ```
 backup.ps1 (宿主机)
-  1. 删除旧 market.zip 对象目录（防 BACKUP_ALREADY_EXISTS）
+  1. 删除旧 market.zip 对象目录 + 残留 market.zip.lock 写锁 + .minio.sys/multipart 未完成分片
+     （防 BACKUP_ALREADY_EXISTS；2026-07-18 事故：KILL 掉的备份留下写锁导致下次备份被拒）
   2. 起 MinIO（127.0.0.1:9101，localhost-only 规避防火墙）+ minio_tcp_relay.py
      （0.0.0.0:9100→9101，借 python.exe 已有 Public-allow 防火墙规则暴露给 VM）
   3. HTTP 发 BACKUP DATABASE c1_market, DATABASE c3_fundamental
