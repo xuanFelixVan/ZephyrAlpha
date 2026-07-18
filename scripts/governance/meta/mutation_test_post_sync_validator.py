@@ -263,18 +263,18 @@ def _run_oracle(mutated_path: Path) -> tuple[bool, str]:
 
 def run_all(threshold: float = DEFAULT_THRESHOLD) -> tuple[RunReport, int]:
     """运行全部变异。返回 (报告, 退出码)。"""
-    if not _SSOt_PATH.exists():
-        print(f"[FATAL] SSoT 真源不存在: {_SSOt_PATH}", file=sys.stderr)
+    if not _SSoT_PATH.exists():
+        print(f"[FATAL] SSoT 真源不存在: {_SSoT_PATH}", file=sys.stderr)
         return RunReport(), 2
     if not _TEST_PATH.exists():
         print(f"[FATAL] oracle 测试不存在: {_TEST_PATH}", file=sys.stderr)
         return RunReport(), 2
 
-    source = _SSOt_PATH.read_text(encoding="utf-8")
+    source = _SSoT_PATH.read_text(encoding="utf-8")
     report = RunReport()
     tmp_files: list[Path] = []
 
-    print(f"\n[MUTATION] SSoT={_SSOt_PATH.relative_to(_REPO_ROOT)}", file=sys.stderr)
+    print(f"\n[MUTATION] SSoT={_SSoT_PATH.relative_to(_REPO_ROOT)}", file=sys.stderr)
     print(f"[MUTATION] oracle={_TEST_PATH.relative_to(_REPO_ROOT)}", file=sys.stderr)
     print(f"[MUTATION] 变异数={len(MUTATIONS)} 阈值={threshold:.0%}\n", file=sys.stderr)
 

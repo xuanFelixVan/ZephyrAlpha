@@ -34,6 +34,7 @@ import os
 import sys
 from datetime import date
 from pathlib import Path
+from typing import Optional  # 治本 #ARCH-TOOL-HEALTH-V1：L241 用 Optional[str] 但未 import
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))

@@ -63,7 +63,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT as _REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT as _REPO_ROOT  # noqa: E402  治本 #ARCH-TOOL-HEALTH-V1：EXIT_PASS/EXIT_FINDINGS 用于 L234-235
 
 _SCRIPTS_DIR = _REPO_ROOT / "scripts" / "governance"
 _MANIFEST_PATH = _SCRIPTS_DIR / "script_manifest.yaml"

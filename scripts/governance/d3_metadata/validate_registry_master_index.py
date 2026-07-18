@@ -35,19 +35,22 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# 治本 #ARCH-TOOL-HEALTH-V1：_GOV_DIR + _shared.constants import 必须在 try: import yaml 之前，
+# 否则 yaml 缺失时 sys.exit(EXIT_ERROR) 会触发 NameError（原 import 在 line 50 之后）
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
+
 try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装", file=sys.stderr)
     sys.exit(EXIT_ERROR)
-_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
 from _shared.encoding import ensure_utf8_stdout
 from _shared.registry_entry_count import count_primary_registry_entries, primary_count_entry_key
 
 ensure_utf8_stdout()
-from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT
 
 MASTER_INDEX_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "registry-master-index.yaml"
