@@ -1,5 +1,5 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-19 04:19:10
+%% 生成时间: 2026-07-19 04:42:12
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 26, 依赖边数: 99
 
@@ -73,7 +73,7 @@ graph TD
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| docs_03_modules__cross_layer_m___apability_exam_blueprint_md
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_GOV_DOCS (8 条)
+    %%  -> D_GOV_DOCS (9 条)
     [] -->|data| docs_03_modules__cross_layer_database_blueprint_md
     [] -->|runtime| docs_03_modules__domain_autono___udget_enforcer_blueprint_md
     [] -->|runtime| docs_03_modules__domain_autono___ation_protocol_blueprint_md
@@ -82,6 +82,7 @@ graph TD
     [] -->|runtime| docs_03_modules__cross_layer_context_engine_blueprint_md
     [] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
     [] -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
+    [] -->|data| docs_03_modules__cross_layer_m___apability_exam_blueprint_md
     %% D_FRONTEND -> D_GOV_DOCS (1 条)
     D_FRONTEND[D_FRONTEND] -->|runtime| docs_03_modules__domain_governance_blueprint_md
     %% D_GOVERNANCE -> D_GOV_DOCS (1 条)
@@ -97,8 +98,6 @@ graph TD
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_database_blueprint_md
-    %% D_ML_TRAIN -> D_GOV_DOCS (1 条)
-    D_ML_TRAIN[D_ML_TRAIN] -->|data| docs_03_modules__cross_layer_m___apability_exam_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_GOV_DOCS ->  (7 条)
@@ -117,8 +116,7 @@ graph TD
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS]
     %% D_GOV_DOCS -> D_FBL_VERIFICATION (1 条)
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    %% D_GOV_DOCS -> D_FEEDBACK_LOOP (5 条)
-    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
+    %% D_GOV_DOCS -> D_FEEDBACK_LOOP (4 条)
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
     docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
@@ -135,6 +133,8 @@ graph TD
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_GOV_AUDIT[D_GOV_AUDIT]
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
     docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_DOCS -> D_GOV_CODE_QUALITY (1 条)
+    docs_03_modules__cross_layer_feedback_loop_blueprint_md -->|runtime| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     %% D_GOV_DOCS -> D_GOV_DRIFT (4 条)
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
