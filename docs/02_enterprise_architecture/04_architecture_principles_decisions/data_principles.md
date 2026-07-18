@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-DATA
 title: Data Architecture Principles / 数据架构原则
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -31,7 +31,7 @@ ttl: permanent
 
 # Data Architecture Principles / 数据架构原则
 
-> 本文档从 `target_architecture/data_architecture.md`（已删除）提取永恒指导原则。
+> 本文档定义永恒指导原则。
 > 派生数据（实体清单、字段级 schema、血缘图）由以下机制自动生成：
 > - `scripts/governance/d5_architecture/generators/generate_data_inventory.py` → `05_dataflow_architecture/data_inventory.md`
 > - `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py` → 跨域数据流图

@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-FRONTEND
 title: Architecture Principles — Frontend / 架构原则：前端
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -33,7 +33,7 @@ tags:
 - runtime-planes
 - orthogonal-view
 - j1
-summary: 前端架构永恒原则文档。从 target_architecture/frontend_architecture.md（已删除）提取的 timeless 方法论——前端架构 7 铁律（FE-P1~FE-P7）、Application/Container/Component/Tools 4 层模型、Module Federation MFE 策略（A/B/C 三方案 + 决策规则）、Remote 间通信三通道（URL 路由 / 事件总线 / 共享 Store）、State 4 域管理（Global/App-Local/Server/Real-time）+ 决策理由、Auth 注入路径、Design System 三件套、Runtime Plane 归属（前端无 Hot Path 只有 Hot-adjacent）+ 硬约束、Activation Triggers G0-G6 7 档激活 + 反信号、G0.5 Python 过渡层（ARCH-047 裁定）。派生数据（具体前端模块三平面归属表、构建管线图、部署拓扑具体路径）不在本文档，由 frontend/ 目录建立后维护。
+summary: 前端架构永恒原则文档。timeless 方法论——前端架构 7 铁律（FE-P1~FE-P7）、Application/Container/Component/Tools 4 层模型、Module Federation MFE 策略（A/B/C 三方案 + 决策规则）、Remote 间通信三通道（URL 路由 / 事件总线 / 共享 Store）、State 4 域管理（Global/App-Local/Server/Real-time）+ 决策理由、Auth 注入路径、Design System 三件套、Runtime Plane 归属（前端无 Hot Path 只有 Hot-adjacent）+ 硬约束、Activation Triggers G0-G6 7 档激活 + 反信号、G0.5 Python 过渡层（ARCH-047 裁定）。派生数据（具体前端模块三平面归属表、构建管线图、部署拓扑具体路径）不在本文档，由 frontend/ 目录建立后维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -45,9 +45,9 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**前端架构的永恒指导原则**，从 `target_architecture/frontend_architecture.md`（已删除）提取。
+本文档是**前端架构的永恒指导原则**。
 
-**承载 KBG-0007 拍板的方案 D**（前端独立 `frontend/` 顶级目录，与 `src/zephyr/` 53 域 Python 后端完全异构），对标 Bloomberg Terminal / Refinitiv Workspace Platform / QuantConnect Lean+Cloud / Interactive Brokers TWS 四家机构共性。
+**承载 KBG-0007 拍板的方案 D**（前端独立 `frontend/` 顶级目录，与 `src/zephyr/` 全域 Python 后端完全异构），对标 Bloomberg Terminal / Refinitiv Workspace Platform / QuantConnect Lean+Cloud / Interactive Brokers TWS 四家机构共性。
 
 **保留内容**：方法论、设计原则、不变约束——前端架构 7 铁律、4 层模型、MFE 策略、State 4 域、Design System、Runtime Plane 归属、Activation Triggers、G0.5 Python 过渡层。
 
@@ -58,7 +58,7 @@ ttl: permanent
 - G0.5 Python 过渡层具体技术栈版本号 → `architecture_model/technology/technology_landscape.yaml`
 
 **与其他原则文档关系**：
-- [application_principles.md](application_principles.md)：53 域 Python 后端架构（与本视图物理隔离）
+- [application_principles.md](application_principles.md)：全域 Python 后端架构（与本视图物理隔离）
 - [technology_principles.md](technology_principles.md)：全局技术基线
 - [runtime_planes_principles.md](runtime_planes_principles.md)：运行平面（前端 Hot-adjacent 概念源于此）
 - [integration_principles.md](integration_principles.md)：API Gateway 集成（前后端唯一对接点）
@@ -95,7 +95,7 @@ ttl: permanent
 
 ## §3 前端 4 层模型（Frontend Layering）
 
-**与 03-AA 53 域 Python 后端分层平行但物理隔离**。前端采用 4 层模型，数字越小越接近业务价值，数字越大越接近基础设施。
+**与 03-AA 全域 Python 后端分层平行但物理隔离**。前端采用 4 层模型，数字越小越接近业务价值，数字越大越接近基础设施。
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -136,7 +136,7 @@ ttl: permanent
 | **FE-L3 Component** | `frontend/packages/{name}/` | 可跨 App 复用的能力单元（UI 组件 / 图表引擎 / 数据客户端 / 认证 SDK 等）| ❌ 不包含业务页面 / ❌ 不依赖具体 App 的 store |
 | **FE-L4 Tools** | `frontend/tools/{name}/` | 构建、测试、代码生成、规范工具的统一配置与脚本 | ❌ 不产生运行时代码（纯 dev-time） |
 
-### 3.2 与后端 53 域的调用规则（永恒铁律）
+### 3.2 与后端 全域的调用规则（永恒铁律）
 
 ```
 frontend/apps/*        ──┐
@@ -400,7 +400,7 @@ G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 
 | G0.5 Python 过渡层具体技术栈版本号 | `architecture_model/technology/technology_landscape.yaml` |
 | 微前端拓扑图 | `diagrams/frontend_mfe_topology.mmd` |
 | 前端构建管线图 | `diagrams/frontend_build_pipeline.mmd` |
-| 后端 53 域 Python 后端架构 | `application_principles.md` |
+| 后端 全域 Python 后端架构 | `application_principles.md` |
 | API Gateway 集成（前后端唯一对接点）| `integration_principles.md` |
 | 运行平面 Hot Path 硬门槛定义 | `runtime_planes_principles.md` |
 | 全局技术基线 | `technology_principles.md` |
@@ -408,7 +408,7 @@ G0.5 与 G1 可共存——Panel 组件可嵌入 React（`pn.pane.HTML` + React 
 
 ### 10.3 与其他原则文档关系
 
-- [application_principles.md](application_principles.md)：53 域 Python 后端架构（与本视图物理隔离）
+- [application_principles.md](application_principles.md)：全域 Python 后端架构（与本视图物理隔离）
 - [technology_principles.md](technology_principles.md)：全局技术基线
 - [runtime_planes_principles.md](runtime_planes_principles.md)：运行平面（前端 Hot-adjacent 概念源于此）
 - [integration_principles.md](integration_principles.md)：API Gateway 集成（前后端唯一对接点）

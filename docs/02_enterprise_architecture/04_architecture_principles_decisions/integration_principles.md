@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-INTEGRATION
 title: Architecture Principles — Integration / 架构原则：集成
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -22,7 +22,7 @@ tags:
 - acl
 - interface-contract
 - anti-corruption-layer
-summary: 集成架构永恒原则文档。从 target_architecture/integration_architecture.md（已删除）提取的 timeless 方法论——六种集成风格定义与采用策略、内部层间数据流（CTR 契约）、接口契约治理（Semantic Versioning + Breaking Change + Deprecation）、Anti-Corruption Layer 策略、Event Backbone 触发条件。派生数据（EI 系列 status、图表引用）不在本文档。
+summary: 集成架构永恒原则文档。timeless 方法论——六种集成风格定义与采用策略、内部层间数据流（CTR 契约）、接口契约治理（Semantic Versioning + Breaking Change + Deprecation）、Anti-Corruption Layer 策略、Event Backbone 触发条件。派生数据（EI 系列 status、图表引用）不在本文档。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -34,7 +34,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**集成架构的永恒指导原则**，从 `target_architecture/integration_architecture.md`（已删除）提取。
+本文档是**集成架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——集成风格、契约治理、ACL 策略、Event Backbone 触发条件。
 

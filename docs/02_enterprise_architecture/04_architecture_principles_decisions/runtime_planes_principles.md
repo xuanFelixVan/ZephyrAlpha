@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-RUNTIME-PLANES
 title: Architecture Principles — Runtime Planes (Orthogonal View) / 架构原则：运行平面正交视图
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -31,7 +31,7 @@ tags:
 - citadel
 - jane-street
 - two-sigma
-summary: 运行平面正交视图永恒原则文档。从 target_architecture/runtime_planes.md（已删除）提取的 timeless 方法论——正交视图方法论（业务 What vs 运行 How/When 两把尺子）、Hot/Warm/Cold 三平面定义与 SLO、三平面归属判定流程、跨平面通信协议（6 方向 + 4 禁止规则）、shared/contracts/runtime_plane_tag.py 契约预留、Hot/Warm/Cold 差异化技术选型矩阵、Ultra-Hot 预留原则、T0-T4 激活触发器与只做/不做清单、与 09-GOV Runtime 层边界澄清（双标签语法）、Sim-to-Real Gap 保障三机制。派生数据（53 域 × 三平面完整映射矩阵、按平面反查表、Tech Radar 当前状态）不在本文档，由 runtime_planes.yaml + technology_landscape.yaml 维护。
+summary: 运行平面正交视图永恒原则文档。timeless 方法论——正交视图方法论（业务 What vs 运行 How/When 两把尺子）、Hot/Warm/Cold 三平面定义与 SLO、三平面归属判定流程、跨平面通信协议（6 方向 + 4 禁止规则）、shared/contracts/runtime_plane_tag.py 契约预留、Hot/Warm/Cold 差异化技术选型矩阵、Ultra-Hot 预留原则、T0-T4 激活触发器与只做/不做清单、与 09-GOV Runtime 层边界澄清（双标签语法）、Sim-to-Real Gap 保障三机制。派生数据（全域 × 三平面完整映射矩阵、按平面反查表、Tech Radar 当前状态）不在本文档，由 runtime_planes.yaml + technology_landscape.yaml 维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -43,19 +43,19 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**运行平面正交视图的永恒指导原则**，从 `target_architecture/runtime_planes.md`（已删除）提取。
+本文档是**运行平面正交视图的永恒指导原则**。
 
-**ZephyrAlpha 2.0 第一个正交视图（Orthogonal View）**——与 TOGAF 10 视图体系平级但切片维度不同。本视图按**运行时延迟 / 技术栈 / 可中断性 / 部署拓扑**四维把 53 域业务代码与前端、治理层重新切分为三个**运行平面（Runtime Planes）**：Hot Path / Warm Path / Cold Path。
+**ZephyrAlpha 2.0 第一个正交视图（Orthogonal View）**——与 TOGAF 10 视图体系平级但切片维度不同。本视图按**运行时延迟 / 技术栈 / 可中断性 / 部署拓扑**四维把 全域业务代码与前端、治理层重新切分为三个**运行平面（Runtime Planes）**：Hot Path / Warm Path / Cold Path。
 
 **保留内容**：方法论、设计原则、不变约束——正交视图方法论、三平面定义与 SLO、归属判定流程、跨平面通信协议、契约预留、技术选型矩阵、激活触发器、与治理层边界澄清、Sim-to-Real 保障。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 53 域 × 三平面完整映射矩阵 → `architecture_model/cross_cutting/runtime_planes.yaml`（Hot 7/Warm 41/Cold 26 + 6 跨面规则）
+- 全域 × 三平面完整映射矩阵 → `architecture_model/cross_cutting/runtime_planes.yaml`（Hot 7/Warm 41/Cold 26 + 6 跨面规则）
 - 按平面维度反查表 → 同 YAML 的 `planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`
 - Tech Radar 当前状态 → `architecture_model/technology/technology_landscape.yaml`
 
 **与其他原则文档关系**：
-- [application_principles.md](application_principles.md)：应用架构 53 域业务 What（本视图定义 How/When）
+- [application_principles.md](application_principles.md)：应用架构 全域业务 What（本视图定义 How/When）
 - [technology_principles.md](technology_principles.md)：技术架构全局技术基线（本视图做平面维度下钻）
 - [governance_principles.md](governance_principles.md)：治理三层 Policy/Factory/Runtime（与本视图三平面正交独立，详见 §9）
 - 本文：运行平面正交视图（Hot/Warm/Cold 三平面 + 跨面协议 + Sim-to-Real 保障）
@@ -71,7 +71,7 @@ ttl: permanent
 | 混为一层的后果（反例）| 正交切分的收益（本视图采纳）|
 |---|---|
 | 例如把 `hot_path/` 建成独立业务域 → D_EX_CORE `trade_execution/` 订单管理和 Hot Path 下单**同一业务概念被两域承担** → ACL 失效 / OCP 契约断裂 / 因子注册表跨域 | D_EX_CORE 仍完整承担"交易执行"业务本体，其中 `oms/` 子模块打 `@RuntimePlane.WARM_PATH` 标签、`sor/` 打 `@RuntimePlane.HOT_PATH` 标签 → 业务语义保持 + 运行特征独立标注 |
-| 未来新增"Cold Path Backfill 专用域"时必须再加一域 → 域数无上限膨胀 | 新增平面仅在本视图技术选型 + 映射矩阵打补丁，53 域业务不动 |
+| 未来新增"Cold Path Backfill 专用域"时必须再加一域 → 域数无上限膨胀 | 新增平面仅在本视图技术选型 + 映射矩阵打补丁，全域业务不动 |
 | AI 协作者找代码时必须同时记住"业务归属 + 延迟归属"两个维度在同一路径里 → 目录歧义 | AI 协作者按业务找代码（`src/zephyr/ex_core/sor/`）+ 按装饰器 / frontmatter 查运行平面，两把尺子各自清晰 |
 
 ### 2.2 业界证据（永恒对标）
@@ -145,7 +145,7 @@ ttl: permanent
 └─────────────────────────────────────────────────────────────┘
 ```
 
-> **注**：53 域 × 三平面完整映射矩阵的真源是 `architecture_model/cross_cutting/runtime_planes.yaml`，不在本文档硬编码。AI / 开发者查询具体子模块归属请查该 YAML。
+> **注**：全域 × 三平面完整映射矩阵的真源是 `architecture_model/cross_cutting/runtime_planes.yaml`，不在本文档硬编码。AI / 开发者查询具体子模块归属请查该 YAML。
 
 ---
 
@@ -183,7 +183,7 @@ from enum import Enum
 
 class RuntimePlane(Enum):
     """
-    运行平面标签 — 正交于 53 域业务分层的执行维度标签。
+    运行平面标签 — 正交于 全域业务分层的执行维度标签。
 
     用法 1（模块级装饰器）：
         @runtime_plane(RuntimePlane.HOT_PATH)
@@ -249,7 +249,7 @@ technology_principles.md 定义**全局技术基线**（Python >=3.11，见 `pyp
 ### 8.1 当前基线状态
 
 **ZephyrAlpha 当前阶段**：
-- 🟢 **Warm Path 100% 激活**（所有 53 域业务代码默认跑在 Warm）
+- 🟢 **Warm Path 100% 激活**（所有 全域业务代码默认跑在 Warm）
 - 🔴 **Hot Path 未激活**（无真实行情 / 无真实委托）
 - 🔴 **Cold Path 部分激活**（D_FACTOR 因子批量回算 / D_TRADING 归因 / D_ML_TRAIN 训练，当前小规模）
 
@@ -257,7 +257,7 @@ technology_principles.md 定义**全局技术基线**（Python >=3.11，见 `pyp
 
 | 触发器 | 档位 | 激活平面 | 激活的子模块 | 激活代价 |
 |---|---|---|---|---|
-| **T0 当前** | P0 | Warm only | 53 域业务 default + 部分 Cold (D_FACTOR/D_TRADING/D_ML_TRAIN) | **已激活** |
+| **T0 当前** | P0 | Warm only | 全域业务 default + 部分 Cold (D_FACTOR/D_TRADING/D_ML_TRAIN) | **已激活** |
 | **T1 真实资金接入** | P1 | Hot 首次激活 | D_RISK `limits/stop_loss/monitor` + D_EX_CORE `sor/adapters_hot` + D_COMPLIANCE `ai_security/security_gateway` | 物理机 × 2 + Aeron cluster + C++/Rust 团队 |
 | **T2 Cold Path 全量激活** | P2 | Cold 扩展 | D_FACTOR `pipeline` 全量 + D_PF_CORE `backtest` 长周期 + D_ML_TRAIN `training` GPU | Spark cluster 或 Dask cluster |
 | **T3 Hot Path 扩展** | P2 | Hot 扩展 | + D_MKT_DATA `connectors_hot` + D_SIGLEGACY `signals_hot` + D_ML_TRAIN `serving_hot` | 增加物理机 + 低延迟行情订阅 |
@@ -375,18 +375,18 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 
 | 内容 | 真源 |
 |------|------|
-| 53 域 × 三平面完整映射矩阵 | `architecture_model/cross_cutting/runtime_planes.yaml` |
+| 全域 × 三平面完整映射矩阵 | `architecture_model/cross_cutting/runtime_planes.yaml` |
 | 按平面维度反查表 | 同 YAML 的 `planes.{hot,warm,cold}.modules[]` |
 | Tech Radar 当前状态 | `architecture_model/technology/technology_landscape.yaml` |
 | 三平面部署拓扑图 | `diagrams/runtime_planes_topology.mmd` |
 | 全局技术基线（Python/Redis/PostgreSQL）| `technology_principles.md` |
-| 53 域业务分层（What）| `application_principles.md` |
+| 全域业务分层（What）| `application_principles.md` |
 | 治理三层（Policy/Factory/Runtime）| `governance_principles.md` |
 | 前端平面归属（Hot-adjacent 概念）| `frontend_principles.md` |
 
 ### 11.3 与其他原则文档关系
 
-- [application_principles.md](application_principles.md)：应用架构 53 域业务 What（本视图定义 How/When）
+- [application_principles.md](application_principles.md)：应用架构 全域业务 What（本视图定义 How/When）
 - [technology_principles.md](technology_principles.md)：技术架构全局技术基线
 - [governance_principles.md](governance_principles.md)：治理三层（与本视图三平面正交独立）
 - [frontend_principles.md](frontend_principles.md)：前端架构原则（含 Hot-adjacent 概念）
@@ -394,4 +394,4 @@ D_SIMULATION `shadow/` 强制所有 Cold → Warm 模型更新先跑 **Shadow Tr
 
 ---
 
-> **文档维护原则**：本文档只包含永恒指导原则。任何随 53 域演进、平面激活、技术栈升级变化的内容，均不应写入本文档——它们由 runtime_planes.yaml + technology_landscape.yaml 维护。
+> **文档维护原则**：本文档只包含永恒指导原则。任何随 全域演进、平面激活、技术栈升级变化的内容，均不应写入本文档——它们由 runtime_planes.yaml + technology_landscape.yaml 维护。

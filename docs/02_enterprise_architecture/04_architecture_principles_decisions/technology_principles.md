@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-TECHNOLOGY
 title: Architecture Principles — Technology / 架构原则：技术
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -31,7 +31,7 @@ tags:
 - vibe-coding-2.0
 - ai-infrastructure-stack
 - 17-core-selections
-summary: 技术架构永恒原则文档。从 target_architecture/technology_architecture.md（已删除）提取的 timeless 方法论——技术栈决策框架（ThoughtWorks Radar 四象限 + 17 项 AI 基础设施聚焦）、单进程演进式运行时拓扑、experimental vs Post-Activation 部署框架、DR/BCP RTO/RPO 分层矩阵、4 环境矩阵与晋级门禁、可观测性三支柱（Metrics/Logs/Traces + OTel）。派生数据（具体技术清单、容量数字、成本预算）不在本文档，由 technology_landscape.yaml + 自动化系统维护。
+summary: 技术架构永恒原则文档。timeless 方法论——技术栈决策框架（ThoughtWorks Radar 四象限 + 17 项 AI 基础设施聚焦）、单进程演进式运行时拓扑、experimental vs Post-Activation 部署框架、DR/BCP RTO/RPO 分层矩阵、4 环境矩阵与晋级门禁、可观测性三支柱（Metrics/Logs/Traces + OTel）。派生数据（具体技术清单、容量数字、成本预算）不在本文档，由 technology_landscape.yaml + 自动化系统维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -43,7 +43,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**技术架构的永恒指导原则**，从 `target_architecture/technology_architecture.md`（已删除）提取。
+本文档是**技术架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——技术栈决策框架、运行时拓扑原则、DR/BCP 方法论、环境矩阵、可观测性三支柱。
 
@@ -133,7 +133,7 @@ ttl: permanent
 
 | 进程类型 | 运行环境 | 职责 | 启动方式 |
 |---------|---------|------|---------|
-| **Main Process** | Windows / Linux (Python) | 运行 53 域全链路主业务逻辑 | `python -m src.zephyr.main` |
+| **Main Process** | Windows / Linux (Python) | 运行 全域全链路主业务逻辑 | `python -m src.zephyr.main` |
 | **Pre-commit Guard** | Git hook（本地） | 文件治理检查 | `git commit` 触发 |
 | **CI Audit Process** | GitHub Actions / CI | 全仓库审计扫描 | push / PR 触发 |
 

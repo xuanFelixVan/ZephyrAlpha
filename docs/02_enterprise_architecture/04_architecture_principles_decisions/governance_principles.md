@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-GOVERNANCE
 title: Architecture Principles — Governance / 架构原则：治理
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -35,7 +35,7 @@ tags:
 - runtime-planes-boundary
 - ssot-validator
 - 5-core-services-governance
-summary: 治理架构永恒原则文档。从 target_architecture/governance_architecture.md（已删除）提取的 timeless 方法论——三层治理边界（Policy/Factory/Runtime）、D2-B 三角闭环（Policy→Factory→Runtime→Audit→Policy）、四档执行约定（deny/dryrun/warn/disabled）、D3-B AI 自治三层预留口子、D4 方案 B 稳健分三轮激活、T0-T7 激活触发条件、Runtime Plane 边界铁律（治理 Runtime 层 vs 执行 Runtime Plane 正交独立）。派生数据（46 治理系统分层归属表、激活 Sprint、5 大核心服务治理归属）不在本文档，由 depgraph + 治理系统注册表维护。
+summary: 治理架构永恒原则文档。timeless 方法论——三层治理边界（Policy/Factory/Runtime）、D2-B 三角闭环（Policy→Factory→Runtime→Audit→Policy）、四档执行约定（deny/dryrun/warn/disabled）、D3-B AI 自治三层预留口子、D4 方案 B 稳健分三轮激活、T0-T7 激活触发条件、Runtime Plane 边界铁律（治理 Runtime 层 vs 执行 Runtime Plane 正交独立）。派生数据（46 治理系统分层归属表、激活 Sprint、5 大核心服务治理归属）不在本文档，由 depgraph + 治理系统注册表维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -47,7 +47,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**治理架构的永恒指导原则**，从 `target_architecture/governance_architecture.md`（已删除）提取。
+本文档是**治理架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——三层治理边界、D2-B 三角闭环、四档执行约定、D3-B AI 自治预留、D4 激活路径、T0-T7 触发条件、Runtime Plane 边界铁律。
 
@@ -74,7 +74,7 @@ ttl: permanent
 
 ### 2.1 三层定义（永恒框架）
 
-治理三层**横切整个系统的所有域**——业务层（src/ 53 域）、文档层（docs/ 6 顶级目录）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
+治理三层**横切整个系统的所有域**——业务层（src/ 全域）、文档层（docs/ 6 顶级目录）、前端层（frontend/）、治理层自己（scripts/ + .cursor/rules/）。治理三层和业务域是**平级正交**的"尺子 + 纪委 + 审计处"。
 
 | 层 | 大白话定位 | 职责 | 典型产物 |
 |---|---|---|---|
