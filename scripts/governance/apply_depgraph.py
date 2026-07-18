@@ -102,7 +102,15 @@ from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表 SSoT �
 _GOV_DIR = Path(__file__).resolve().parent
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+# 治本 #ARCH-TOOL-HEALTH-V1（2026-07-19）：deb695006f 批量重构 sys.exit→EXIT_* 时
+# 误删 get_depgraph_pg_connection import（替换整行而非追加），导致 56 处调用运行时 NameError。
+# 修复：在 EXIT_* 同一 import 语句中显式恢复 get_depgraph_pg_connection。
+from _shared.constants import (  # noqa: E402
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    get_depgraph_pg_connection,
+)
 
 # 引入 module_id 双轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
 # 裁定#208 双轨制（R2 治本修订后）：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨

@@ -58,7 +58,15 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+# 治本 #ARCH-TOOL-HEALTH-V1（2026-07-19）：deb695006f 同源 bug——本文件 line 122
+# verify_prod_db_clean 调用 get_depgraph_pg_connection() 但 import 行被同步替换为 EXIT_*。
+# 修复：在 EXIT_* 同一 import 语句中显式恢复 get_depgraph_pg_connection。
+from _shared.constants import (  # noqa: E402
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    get_depgraph_pg_connection,
+)
 
 TEST_DB = REPO_ROOT / "data" / "databases" / "_test_rb_depgraph.db"
 
