@@ -839,6 +839,21 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 > **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。
 
+### 11.0.3 ⚠️ 核心治理工具健康度铁律（Tool Health，2026-07-19，裁定 #ARCH-TOOL-HEALTH-V1）
+
+> **新 AI 在调用 `apply_depgraph.py` / `apply_decisiongraph.py` / `apply_dataflowgraph.py` / `sync_yaml_to_depgraph.py` 等 L1/L2/L3 铁律执行工具前 MUST 先读本节。**
+> 病根：commit `deb695006f` 批量重构 `sys.exit→EXIT_*` 时误删 `get_depgraph_pg_connection` import（替换整行而非追加），56 处调用保留但无导入，运行时 `NameError` 阻断 L1 铁律执行；5 层防线（ruff F821 / scripts_import_integrity_gate / 单测 / check_blueprint_code_alignment / AI 上报）全部失效——ruff 被 `--no-verify` 绕过；gate 在 bug 后 9h 才上线且只扫 staged；单测全 mock 不触达真实路径；check 直读 DB 不调 apply_depgraph；**AI 遇 NameError 默认 silently workaround 而非上报人类**，导致 LOW `CODE_NOT_IN_DEPGRAPH` drift 静默累积。
+> 100% AI 开发场景下，AI 遇工具报错默认 silently workaround 是最大风险；必须有"启动健康度自检 + 强制上报"机制。
+
+**4 条裁定条款**（真源：[`architecture_issue_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `#ARCH-TOOL-HEALTH-V1`）：
+
+1. **核心治理工具必须有 end-to-end smoke test**：`apply_depgraph.py` / `apply_decisiongraph.py` / `apply_dataflowgraph.py` / `sync_yaml_to_depgraph.py` 等必须真实调用 CLI + 真实 DB + 验证写入行；mock 单测不能替代 e2e smoke test（mock 路径下 NameError 类 bug 永远不暴露）。真源：`tests/governance/test_apply_depgraph_smoke.py`。
+2. **导入完整性 gate 必须支持 baseline 全扫模式**：`scripts_import_integrity_gate` 当前只扫 staged 文件（incremental-only），gate 上线前的基线 bug 永远不会被扫到。必须新增 baseline 全扫模式作为 post-commit reconciler 定期跑全仓（`make_scripts_import_integrity_reconciler`，priority=210）。
+3. **`--no-verify` 必须被审计**：POST-COMMIT-GUARD 当前对 `ZEPHYR_COMMIT_GATEWAY=1` 是 warn-only。必须新增"高基数 `--no-verify` commit"检测——同一 session 1 小时内超过 3 次 `--no-verify` commit 强制升级为 `reset --soft HEAD~1` 阻断（阈值 N=3，可配置）。
+4. **AI session 启动 smoke test**：每个 AI session 启动时必须运行核心工具健康度 smoke test（`session_startup_health_check.py`），失败时 AI 必须输出 `[ESCALATION]` 标记上报人类而非静默 workaround。
+
+**LLM 编辑模式固有缺陷警示**（治本铁律）：LLM 跨文件批量重构时对"形状相同语义不同"的 import 行有结构性误替换风险——LLM 倾向于重新生成整行而非局部追加。**涉及 import 行的修改必须用 Edit 工具（精确替换）而非 Write 工具（整文件覆写），且必须显示 diff 确认仅追加不替换**。deb695006f 就是用 sed 批量替换整行 import 导致的，治本方案是禁止整行覆写 import。
+
 ### 11.1 生成器发现指引与时间戳约定
 
 > **新 AI 进入项目涉及"生成器"相关工作时，MUST 先读本节。**
