@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance._shared.constants
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate); zephyr.governance.audit.reconciliation_registry.make_scripts_import_integrity_reconciler (Phase 3 baseline 全扫)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged scripts/governance/**/*.py 文件中 _shared.constants 公开符号被使用但未 import 时阻断（#ARCH-DATAQUALITY-V1.4 核心治本）；豁免 _shared/constants.py（真源文件，不可自引用）；含 wildcard import 的文件跳过（无法静态推断）；_shared.constants 不可导入时 fail-open；ast.parse 失败 fail-open（语法错误文件本就会在其他阶段失败）
@@ -71,8 +71,10 @@ Usage::
 from __future__ import annotations
 
 import ast
+import glob
 import logging
 import sys
+from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
@@ -83,7 +85,13 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["make_scripts_import_integrity_gate"]
+# 治本 #ARCH-TOOL-HEALTH-V1 Phase 3：scan_all_scripts_for_import_violations 供
+# post-commit reconciler（make_scripts_import_integrity_reconciler）做 baseline 全扫，
+# 补强 pre-commit gate 只扫 staged 文件的盲区（gate 上线前的基线 bug 永远扫不到）。
+__all__ = [
+    "make_scripts_import_integrity_gate",
+    "scan_all_scripts_for_import_violations",
+]
 
 # 豁免：_shared/constants.py 是 _shared.constants 真源，不可自引用 import
 _EXEMPT_FILES: frozenset[str] = frozenset(
@@ -197,6 +205,51 @@ def _find_first_use_line(tree: ast.AST, symbol: str) -> int:
     return min(candidates) if candidates else 0
 
 
+def _scan_file_content(
+    py_file: str, content: str, shared_symbols: set[str]
+) -> list[str]:
+    """扫描单个文件内容，返回 _shared.constants 符号使用未导入的违规列表。
+
+    治本 #ARCH-TOOL-HEALTH-V1 Phase 3：提取为共享 helper，供 pre-commit gate
+    （staged 文件扫描）和 post-commit reconciler（全仓 baseline 扫描）复用，
+    消除检测逻辑重复（DRY）。
+
+    Args:
+        py_file: 文件路径（用于违规消息显示，相对路径格式 scripts/governance/...）。
+        content: 文件文本内容。
+        shared_symbols: _shared.constants 公开符号集合。
+
+    Returns:
+        该文件的违规消息列表（每条形如 "  path:line: symbol 'X' used but not
+        imported..."）。空列表表示无违规、语法错误、或含 wildcard import（跳过）。
+    """
+    try:
+        tree = ast.parse(content)
+    except SyntaxError:
+        # fail-open: 语法错误文件本就会在其他阶段失败
+        return []
+
+    imported, has_wildcard = _collect_imported_names(tree)
+    if has_wildcard:
+        # 跳过：wildcard import 无法静态推断导入集
+        return []
+
+    defined = _collect_defined_names(tree)
+    used = _collect_used_names(tree)
+
+    # 检测：_shared.constants 符号 used 但 not imported 且 not defined
+    missing = shared_symbols & used - imported - defined
+    violations: list[str] = []
+    if missing:
+        for sym in sorted(missing):
+            line_no = _find_first_use_line(tree, sym)
+            violations.append(
+                f"  {py_file}:{line_no}: symbol '{sym}' used but not "
+                f"imported from _shared.constants (nor defined locally)"
+            )
+    return violations
+
+
 def make_scripts_import_integrity_gate() -> GateSpec:
     """构造 _shared.constants 符号导入完整性门禁 GateSpec（硬阻断型）。
 
@@ -228,29 +281,9 @@ def make_scripts_import_integrity_gate() -> GateSpec:
             if content is None:
                 # fail-open: 文件不可读（git show 失败）
                 continue
-            try:
-                tree = ast.parse(content)
-            except SyntaxError:
-                # fail-open: 语法错误文件本就会在其他阶段失败
-                continue
-
-            imported, has_wildcard = _collect_imported_names(tree)
-            if has_wildcard:
-                # 跳过：wildcard import 无法静态推断导入集
-                continue
-
-            defined = _collect_defined_names(tree)
-            used = _collect_used_names(tree)
-
-            # 检测：_shared.constants 符号 used 但 not imported 且 not defined
-            missing = shared_symbols & used - imported - defined
-            if missing:
-                for sym in sorted(missing):
-                    line_no = _find_first_use_line(tree, sym)
-                    violations.append(
-                        f"  {py_file}:{line_no}: symbol '{sym}' used but not "
-                        f"imported from _shared.constants (nor defined locally)"
-                    )
+            # 治本 #ARCH-TOOL-HEALTH-V1 Phase 3：复用 _scan_file_content helper
+            # （与 post-commit reconciler baseline 全扫共享同一检测逻辑，DRY）
+            violations.extend(_scan_file_content(py_file, content, shared_symbols))
 
         if violations:
             detail = (
@@ -271,3 +304,58 @@ def make_scripts_import_integrity_gate() -> GateSpec:
         check=_check,
         priority=104,
     )
+
+
+# 治本 #ARCH-TOOL-HEALTH-V1 Phase 3：baseline 全扫公开入口。
+# 病根：pre-commit gate 只扫 staged 文件（incremental-only），gate 上线前的基线
+# bug（如 deb695006f 误删 import）永远不会被扫到。本函数扫描磁盘上所有
+# scripts/governance/**/*.py 文件，供 post-commit reconciler 定期跑全仓补强。
+def scan_all_scripts_for_import_violations(
+    project_root: Path,
+) -> tuple[list[str], str | None]:
+    """全仓 baseline 扫描 scripts/governance/**/*.py 的 _shared.constants 导入完整性。
+
+    与 make_scripts_import_integrity_gate（pre-commit gate）的区别：
+    - **gate（pre-commit）**：扫 staged 文件，硬阻断（passed=False 阻断 commit）。
+    - **本函数（post-commit reconciler baseline）**：扫全仓磁盘文件，warn 级
+      （commit 已入库不可阻断；violations 报告为 warn 供 AI 修复）。
+
+    复用 _scan_file_content helper，与 gate 共享同一检测逻辑（DRY）。
+
+    Args:
+        project_root: 仓库根 Path 对象（zephyr.shared.io.paths.REPO_ROOT）。
+
+    Returns:
+        (violations, error_msg):
+        - violations: 违规消息列表（空列表=无违规）。
+        - error_msg: None 表示正常完成；非 None 表示 fail-open 原因（如
+          _shared.constants 不可导入或 scripts/governance/ 不存在），调用方
+          应降级为 ReconcileResult(action="skip")。
+    """
+    shared_symbols = _get_shared_constants_symbols()
+    if shared_symbols is None:
+        # fail-open: _shared.constants 不可导入（环境问题）
+        return [], "_shared.constants 不可导入，fail-open"
+
+    gov_dir = project_root / "scripts" / "governance"
+    if not gov_dir.exists():
+        return [], "scripts/governance/ not found"
+
+    violations: list[str] = []
+    # glob all .py files recursively under scripts/governance/
+    for py_file_path in glob.glob(str(gov_dir / "**" / "*.py"), recursive=True):
+        # 转为相对路径（与 gate 的 py_file 格式一致：scripts/governance/...）
+        rel = py_file_path.replace("\\", "/")
+        idx = rel.find("scripts/governance/")
+        if idx < 0:
+            continue
+        py_file = rel[idx:]
+        if py_file in _EXEMPT_FILES:
+            continue
+        try:
+            content = open(py_file_path, encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue  # fail-open: 文件不可读
+        violations.extend(_scan_file_content(py_file, content, shared_symbols))
+
+    return violations, None
