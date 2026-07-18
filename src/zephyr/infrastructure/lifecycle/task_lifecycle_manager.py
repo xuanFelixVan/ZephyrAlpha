@@ -31,6 +31,7 @@ Task Lifecycle Manager — G0-G7 任务生命周期门禁。
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -71,6 +72,7 @@ class LifecycleState:
     blocked_gates: dict[GateID, str]
     transition_history: list[str]
     last_updated: str
+    retry_count: int = 0  # 5.41.8 修复: FAILED->CREATED 重试次数计数
 
 
 class TaskLifecycleManager:
@@ -84,39 +86,55 @@ class TaskLifecycleManager:
         TaskStatus.FAILED: [TaskStatus.CREATED],
     }
 
+    # 5.41.8 修复: FAILED 语义明确为中间态——允许 FAILED->CREATED 重试，但有 max_retries 上限
+    MAX_RETRIES: int = 3
+
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
         self._states: dict[str, LifecycleState] = {}
+        self._lock = threading.RLock()  # 5.41.9 修复: 保护状态读写，消除多 worker 并发竞态
 
     def initialize(self, task_id: str) -> LifecycleState:
-        state = self._states.get(task_id)
-        if state is None:
-            state = LifecycleState(
-                task_id=task_id,
-                status=TaskStatus.CREATED,
-                completed_gates=[],
-                blocked_gates={},
-                transition_history=[f"{datetime.now(UTC).isoformat()}: INITIALIZED -> CREATED"],
-                last_updated=datetime.now(UTC).isoformat(),
-            )
-            self._states[task_id] = state
-        return state
+        with self._lock:
+            state = self._states.get(task_id)
+            if state is None:
+                state = LifecycleState(
+                    task_id=task_id,
+                    status=TaskStatus.CREATED,
+                    completed_gates=[],
+                    blocked_gates={},
+                    transition_history=[f"{datetime.now(UTC).isoformat()}: INITIALIZED -> CREATED"],
+                    last_updated=datetime.now(UTC).isoformat(),
+                )
+                self._states[task_id] = state
+            return state
 
     def transition(self, task_id: str, to_status: TaskStatus) -> tuple[bool, str]:
-        state = self.initialize(task_id)
+        # 5.41.9 修复: 加锁保护 check-then-act，消除并发转换竞态
+        with self._lock:
+            state = self.initialize(task_id)
 
-        if to_status not in self.VALID_TRANSITIONS.get(state.status, []):
-            return False, (
-                f"Invalid transition: {state.status.value} -> {to_status.value}. "
-                f"Allowed: {[s.value for s in self.VALID_TRANSITIONS.get(state.status, [])]}"
-            )
+            if to_status not in self.VALID_TRANSITIONS.get(state.status, []):
+                return False, (
+                    f"Invalid transition: {state.status.value} -> {to_status.value}. "
+                    f"Allowed: {[s.value for s in self.VALID_TRANSITIONS.get(state.status, [])]}"
+                )
 
-        old_status = state.status
-        state.status = to_status
-        state.last_updated = datetime.now(UTC).isoformat()
-        state.transition_history.append(f"{state.last_updated}: {old_status.value} -> {to_status.value}")
+            # 5.41.8 修复: FAILED->CREATED 重试上限，防止失败任务无限重试
+            if state.status == TaskStatus.FAILED and to_status == TaskStatus.CREATED:
+                if state.retry_count >= self.MAX_RETRIES:
+                    return False, (
+                        f"Retry limit exceeded: {state.retry_count}/{self.MAX_RETRIES} retries used. "
+                        f"FAILED task {task_id} cannot be retried further"
+                    )
+                state.retry_count += 1
 
-        return True, f"Transition succeeded: {old_status.value} -> {to_status.value}"
+            old_status = state.status
+            state.status = to_status
+            state.last_updated = datetime.now(UTC).isoformat()
+            state.transition_history.append(f"{state.last_updated}: {old_status.value} -> {to_status.value}")
+
+            return True, f"Transition succeeded: {old_status.value} -> {to_status.value}"
 
     def pass_gate(self, task_id: str, gate_id: GateID, details: str = "") -> GateResult:
         state = self.initialize(task_id)

@@ -77,6 +77,7 @@ class TaskQueue:
         self._running = False
         self._dispatch_handler: Callable[[QueueItem], bool] | None = None
         self._lifecycle_lock = threading.Lock()  # 5.142.6 修复: 保护 start_polling/stop_polling 的 check-then-act, 避免 TOCTOU
+        self._status_lock = threading.RLock()  # 5.41.2 修复: 保护 item 状态读写（dispatch_now 事件回调线程 vs get_stats 主线程竞态）
 
     def enqueue(self, task_id: str, priority: str = "P2") -> QueueItem:
         item = QueueItem(
@@ -84,7 +85,8 @@ class TaskQueue:
             task_id=task_id,
             priority=priority,
         )
-        self._items.append(item)
+        with self._status_lock:
+            self._items.append(item)
         self._emit_task_created(task_id, priority)
         return item
 
@@ -97,21 +99,22 @@ class TaskQueue:
             logger.exception("TaskQueue: emit task.created failed", exc_info=True)
 
     def dequeue_next(self) -> QueueItem | None:
-        ready = [
-            i
-            for i in self._items
-            if i.status == QueueItemStatus.ENQUEUED and (not self._config.only_p0 or i.priority == "P0")
-        ]
+        with self._status_lock:
+            ready = [
+                i
+                for i in self._items
+                if i.status == QueueItemStatus.ENQUEUED and (not self._config.only_p0 or i.priority == "P0")
+            ]
 
-        ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 3))
+            ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 3))
 
-        if ready:
-            item = ready[0]
-            item.status = QueueItemStatus.DISPATCHED
-            item.dispatched_at = datetime.now(UTC).isoformat()
-            return item
+            if ready:
+                item = ready[0]
+                item.status = QueueItemStatus.DISPATCHED
+                item.dispatched_at = datetime.now(UTC).isoformat()
+                return item
 
-        return None
+            return None
 
     def set_dispatch_handler(self, handler: Callable[[QueueItem], bool]) -> None:
         self._dispatch_handler = handler
@@ -146,17 +149,21 @@ class TaskQueue:
             return
         item = self.dequeue_next()
         if item and self._dispatch_handler:
-            item.status = QueueItemStatus.RUNNING
+            with self._status_lock:
+                item.status = QueueItemStatus.RUNNING
             success = self._dispatch_handler(item)
-            item.status = QueueItemStatus.COMPLETED if success else QueueItemStatus.FAILED
+            with self._status_lock:
+                item.status = QueueItemStatus.COMPLETED if success else QueueItemStatus.FAILED
 
     def get_stats(self) -> dict[str, int]:
-        stats: dict[str, int] = {s.value: 0 for s in QueueItemStatus}
-        for item in self._items:
-            stats[item.status.value] += 1
-        return stats
+        with self._status_lock:
+            stats: dict[str, int] = {s.value: 0 for s in QueueItemStatus}
+            for item in self._items:
+                stats[item.status.value] += 1
+            return stats
 
     def clear_completed(self) -> int:
-        before = len(self._items)
-        self._items = [i for i in self._items if i.status not in (QueueItemStatus.COMPLETED, QueueItemStatus.FAILED)]
-        return before - len(self._items)
+        with self._status_lock:
+            before = len(self._items)
+            self._items = [i for i in self._items if i.status not in (QueueItemStatus.COMPLETED, QueueItemStatus.FAILED)]
+            return before - len(self._items)
