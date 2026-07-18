@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 32_d_digital_twin / 数字孪生 / 数字孪生 / Digital Twin
+# 32_d_digital_twin / 数字孪生 / Digital Twin
 
 > **功能简介 / Overview**: 数字孪生，负责市场状态镜像、组合模拟和场景推演
 

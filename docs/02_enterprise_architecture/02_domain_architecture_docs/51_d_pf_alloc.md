@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 51_d_pf_alloc / 组合分配 / 组合分配 / Portfolio Allocation
+# 51_d_pf_alloc / 组合分配 / Portfolio Allocation
 
 > **功能简介 / Overview**: 组合分配，负责资产配置、权重分配和再平衡
 

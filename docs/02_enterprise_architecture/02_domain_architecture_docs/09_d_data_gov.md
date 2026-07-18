@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 09_d_data_gov / 数据治理 / 数据治理 / Data Governance
+# 09_d_data_gov / 数据治理 / Data Governance
 
 > **功能简介 / Overview**: 数据治理，负责数据标准、元数据管理和数据生命周期治理
 

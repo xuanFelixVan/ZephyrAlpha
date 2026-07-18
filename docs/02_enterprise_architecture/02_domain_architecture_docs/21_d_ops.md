@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 21_d_ops / 反馈循环 / 反馈循环 / Feedback Loop
+# 21_d_ops / 反馈循环 / Feedback Loop
 
 > **功能简介 / Overview**: 反馈循环，负责系统运行反馈、性能监控和自动调优闭环
 

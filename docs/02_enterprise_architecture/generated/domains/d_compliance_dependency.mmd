@@ -1,5 +1,5 @@
 %% D_COMPLIANCE 域全景依赖图
-%% 生成时间: 2026-07-19 04:42:11
+%% 生成时间: 2026-07-19 04:56:19
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 4, 依赖边数: 53
 
@@ -18,8 +18,8 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_COMPLIANCE (1 条)
     [] -->|config_depends| src_zephyr_compliance_security_gateway_base_py
-    %% D_GOV_DOCS -> D_COMPLIANCE (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_compliance_security_gateway_base_py
+    %% D_FBL_DIAGNOSERS -> D_COMPLIANCE (1 条)
+    D_FBL_DIAGNOSERS[D_FBL_DIAGNOSERS] -->|runtime| src_zephyr_compliance_security_gateway_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_COMPLIANCE -> D_GOV_DRIFT (43 条)

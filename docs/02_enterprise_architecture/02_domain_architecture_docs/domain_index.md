@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 2677 |
-| 生产态模块 | 1562 |
+| 模块总数 | 2679 |
+| 生产态模块 | 1566 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1053 |
+| 原型态模块 | 1051 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 / A2A Communication | 72 | 28 | 0 | 44 | 72/150 (OK) | [📄 01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | 基础设施运维 / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [📄 02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | 回滚恢复 / Rollback Recovery | 54 | 48 | 0 | 6 | 54/150 (OK) | [📄 03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 156 | 114 | 1 | 41 | 156/150 (超容) | [📄 04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | 运行时集成 / Runtime Integration | 159 | 118 | 1 | 40 | 159/150 (超容) | [📄 04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | 可观测性 / Observability | 0 | 0 | 0 | 0 | 0/150 (OK) | [📄 05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -87,7 +87,7 @@ ttl: permanent
 | D_GOV_KB | 知识库治理 / Knowledge Base Governance | 26 | 16 | 0 | 10 | 26/150 (OK) | [📄 43_d_gov_kb.md](43_d_gov_kb.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 0 | 1/200 (OK) | [📄 44_d_gov_repair.md](44_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 31 | 0 | 4 | 35/200 (OK) | [📄 45_d_gov_rule.md](45_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 359 | 10 | 2 | 347 | 359/150 (超容) | [📄 46_d_gov_scripts.md](46_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 358 | 10 | 2 | 346 | 358/150 (超容) | [📄 46_d_gov_scripts.md](46_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 21 | 0 | 10 | 31/150 (OK) | [📄 47_d_intelligence.md](47_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 4 | 0 | 2 | 2 | 4/150 (OK) | [📄 48_d_knowledge.md](48_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [📄 49_d_ml_serve.md](49_d_ml_serve.md) |

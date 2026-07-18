@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 34_d_ex_core / 执行核心 / 执行核心 / Execution Core
+# 34_d_ex_core / 执行核心 / Execution Core
 
 > **功能简介 / Overview**: 执行核心，负责订单执行引擎、执行策略和执行管理
 
@@ -189,8 +189,6 @@ graph TD
         src_zephyr_ex_core_adapters_risk_validation_bridge_py["(原型态 / prototype) Re-export wrapper: risk_validation_bridge 真源...<br/>文件: risk_validation_bridge.py"]
     end
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
-    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
-    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -200,6 +198,8 @@ graph TD
     D_BACKTEST["(生产态 / production) D_BACKTEST"]
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_BACKTEST
     src_zephyr_ex_core_adapters_miniqmt_broker_py -.->|导入依赖 / import_depends| D_TRADING
+    D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
+    src_zephyr_ex_core_adapters_risk_validation_bridge_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_TRADING
     src_zephyr_ex_core_adapters_init_py -.->|导入依赖 / import_depends| D_GOVERNANCE

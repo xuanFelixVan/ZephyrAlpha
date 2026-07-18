@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 11_d_fbl_detectors / 反馈检测器 / 反馈检测器 / Feedback Detectors
+# 11_d_fbl_detectors / 反馈检测器 / Feedback Detectors
 
 > **功能简介 / Overview**: 反馈检测器，负责异常检测、漂移检测、反馈信号检测和可靠性监控
 
@@ -166,8 +166,8 @@ graph TD
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
     src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py -->|导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py
@@ -181,7 +181,7 @@ graph TD
     class src_zephyr_feedback_loop_detectors_anomaly_anomaly_clustering_py,src_zephyr_feedback_loop_detectors_anomaly_anomaly_detector_py,src_zephyr_feedback_loop_detectors_anomaly_emergent_behavior_detector_py,src_zephyr_feedback_loop_detectors_anomaly_flapping_detector_py,src_zephyr_feedback_loop_detectors_anomaly_heisenbug_detector_py,src_zephyr_feedback_loop_detectors_anomaly_infinite_loop_detector_py,src_zephyr_feedback_loop_detectors_anomaly_intermittent_failure_pattern_py,src_zephyr_feedback_loop_detectors_anomaly_log_anomaly_py,src_zephyr_feedback_loop_detectors_anomaly_silent_corruption_detector_py,src_zephyr_feedback_loop_detectors_anomaly_synthetic_anomaly_generator_py,src_zephyr_feedback_loop_detectors_anomaly_temporal_pattern_py,src_zephyr_feedback_loop_detectors_correlation_action_efficacy_decay_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_interaction_detector_py,src_zephyr_feedback_loop_detectors_correlation_action_side_effect_cumulative_detector_py,src_zephyr_feedback_loop_detectors_correlation_agent_trajectory_anomaly_detector_py,src_zephyr_feedback_loop_detectors_correlation_cross_signal_validator_py,src_zephyr_feedback_loop_detectors_correlation_cross_system_correlator_py,src_zephyr_feedback_loop_detectors_correlation_decision_provenance_py,src_zephyr_feedback_loop_detectors_correlation_dependency_freshness_monitor_py,src_zephyr_feedback_loop_detectors_correlation_ensemble_detector_py,src_zephyr_feedback_loop_detectors_correlation_external_health_py,src_zephyr_feedback_loop_detectors_correlation_external_validation_checkpoint_py,src_zephyr_feedback_loop_detectors_correlation_fle_performance_regression_detector_py,src_zephyr_feedback_loop_detectors_correlation_multi_signal_correlator_py,src_zephyr_feedback_loop_detectors_correlation_rumor_noise_filter_py,src_zephyr_feedback_loop_detectors_correlation_trace_causal_bridge_py,src_zephyr_feedback_loop_detectors_correlation_traffic_replay_validator_py production
     class src_zephyr_feedback_loop_detectors_init_py,src_zephyr_feedback_loop_detectors_anomaly_init_py,src_zephyr_feedback_loop_detectors_correlation_init_py design
     class D_FEEDBACK_LOOP external_prod
-    class D_GOV_DOCS external_design
+    class D_FBL_DIAGNOSERS external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -351,8 +351,8 @@ graph TD
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_drift_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_guard_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_reliability_init_py
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_init_py
@@ -365,7 +365,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_detectors_init_py,src_zephyr_feedback_loop_detectors_anomaly_init_py,src_zephyr_feedback_loop_detectors_correlation_init_py,src_zephyr_feedback_loop_detectors_drift_init_py,src_zephyr_feedback_loop_detectors_guard_init_py,src_zephyr_feedback_loop_detectors_reliability_init_py design
     class D_FEEDBACK_LOOP external_prod
-    class D_GOV_DOCS external_design
+    class D_FBL_DIAGNOSERS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -382,13 +382,13 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | anomaly_detector.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
-| 7 | D_GOV_DOCS 架构文档治理: blueprint.md | → | __init__.py | runtime / runtime |
+| 1 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | __init__.py | runtime / runtime |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | anomaly_detector.py | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.detectors — GOV-DOC-018: 60个叶.... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
@@ -398,10 +398,10 @@ graph TD
 graph LR
     D_FBL_DETECTORS["D_FBL_DETECTORS<br/>反馈检测器"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
+    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
     D_FBL_DETECTORS -->|3条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_FEEDBACK_LOOP -->|6条 导入依赖 / import_depends| D_FBL_DETECTORS
-    D_GOV_DOCS -->|1条 runtime / runtime| D_FBL_DETECTORS
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_FBL_DETECTORS
 ```
 
 ## 说明 / Notes

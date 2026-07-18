@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 31_d_cross_asset / 跨资产 / 跨资产 / Cross Asset
+# 31_d_cross_asset / 跨资产 / Cross Asset
 
 > **功能简介 / Overview**: 跨资产，负责多资产类别投资和跨资产套利策略
 

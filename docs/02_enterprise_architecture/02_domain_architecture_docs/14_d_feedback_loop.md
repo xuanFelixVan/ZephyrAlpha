@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 14_d_feedback_loop / 反馈循环引擎 / 反馈循环引擎 / Feedback Loop Engine
+# 14_d_feedback_loop / 反馈循环引擎 / Feedback Loop Engine
 
 > **功能简介 / Overview**: 反馈循环引擎，负责系统自我改进闭环：异常检测、根因诊断、自动修复和自我进化
 
@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 124 | Module Count | 124 |
 | 域内依赖 | 119 | Internal Dependencies | 119 |
-| 跨域入边 | 17 | Cross-domain Incoming | 17 |
+| 跨域入边 | 18 | Cross-domain Incoming | 18 |
 | 跨域出边 | 84 | Cross-domain Outgoing | 84 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 12 | Prototype Modules | 12 |
@@ -219,29 +219,29 @@ graph TD
         src_zephyr_feedback_loop_collectors_known_unknown_registry_py["(生产态 / production) Known-Unknown Registry — v0.16.0 R229<br/>文件: known_unknown_registry.py"]
         src_zephyr_feedback_loop_collectors_llm_cost_accounting_py["(生产态 / production) LLM Cost Accounting — v0.4.0 R35<br/>文件: llm_cost_accounting.py"]
     end
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_agent_lifecycle_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_api_version_contract_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_incident_priority_triage_automator_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_global_action_scheduler_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_intent_driven_ops_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_agent_lifecycle_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_saga_compensator_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_global_action_scheduler_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_notification_personalizer_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_intent_driven_ops_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_secondary_alert_channel_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_owner_absence_escalation_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_notification_personalizer_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_calendar_adapter_py
     src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_data_quality_validator_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_config_timeline_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_capture_py
     src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_freshness_py
     src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_injection_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_financial_stratification_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_kb_provenance_py
-    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_packaging_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
     src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_known_unknown_registry_py
     src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_llm_cost_accounting_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_calendar_adapter_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_kb_provenance_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_config_timeline_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_packaging_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_financial_stratification_py
+    src_zephyr_feedback_loop_collectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_knowledge_capture_py
     D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
     src_zephyr_feedback_loop_alert_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
@@ -250,8 +250,8 @@ graph TD
     src_zephyr_feedback_loop_alert_dispatcher_py -.->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_feedback_loop_actors_api_version_contract_py -->|导入依赖 / import_depends| D_SHARED
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_collectors_init_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_collectors_init_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
     D_SECURITY -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_init_py
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_feedback_loop_init_py
@@ -267,7 +267,7 @@ graph TD
     class src_zephyr_feedback_loop_init_py,src_zephyr_feedback_loop_gen_inherited_py,src_zephyr_feedback_loop_actors_init_py,src_zephyr_feedback_loop_actors_action_selector_py,src_zephyr_feedback_loop_actors_agent_lifecycle_py,src_zephyr_feedback_loop_actors_api_version_contract_py,src_zephyr_feedback_loop_actors_global_action_scheduler_py,src_zephyr_feedback_loop_actors_incident_priority_triage_automator_py,src_zephyr_feedback_loop_actors_intent_driven_ops_py,src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py,src_zephyr_feedback_loop_actors_notification_personalizer_py,src_zephyr_feedback_loop_actors_owner_absence_escalation_py,src_zephyr_feedback_loop_actors_saga_compensator_py,src_zephyr_feedback_loop_actors_secondary_alert_channel_py,src_zephyr_feedback_loop_auto_evolution_py,src_zephyr_feedback_loop_backpressure_bridge_py,src_zephyr_feedback_loop_collectors_calendar_adapter_py,src_zephyr_feedback_loop_collectors_config_timeline_py,src_zephyr_feedback_loop_collectors_data_quality_validator_py,src_zephyr_feedback_loop_collectors_feedback_collector_py,src_zephyr_feedback_loop_collectors_financial_stratification_py,src_zephyr_feedback_loop_collectors_kb_provenance_py,src_zephyr_feedback_loop_collectors_knowledge_capture_py,src_zephyr_feedback_loop_collectors_knowledge_freshness_py,src_zephyr_feedback_loop_collectors_knowledge_injection_py,src_zephyr_feedback_loop_collectors_knowledge_packaging_py,src_zephyr_feedback_loop_collectors_known_unknown_registry_py,src_zephyr_feedback_loop_collectors_llm_cost_accounting_py production
     class src_zephyr_feedback_loop_alert_dispatcher_py,src_zephyr_feedback_loop_collectors_init_py design
     class D_INFRA_RUNTIME,D_GOVERNANCE,D_SHARED,D_GOV_AUDIT,D_FBL_DETECTORS external_prod
-    class D_ORCHESTRATOR,D_GOV_DOCS,D_SECURITY external_design
+    class D_ORCHESTRATOR,D_FBL_DIAGNOSERS,D_SECURITY external_design
 ```
 
 #### 第 2 页 / 共 5 页
@@ -308,17 +308,17 @@ graph TD
     end
     src_zephyr_feedback_loop_docs_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_docs_cold_start_manual_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_auto_reward_py
-    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_conformal_prediction_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_dynamic_threshold_py
-    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_hypernetwork_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_cross_gen_validation_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_ewc_kb_review_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_online_feature_importance_py
+    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_conformal_prediction_py
+    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_prompt_factory_governance_py
+    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_hypernetwork_py
+    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_failure_replay_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_graduated_activation_protocol_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_knowledge_distillation_py
-    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_prompt_factory_governance_py
     src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_prompt_optimization_regression_detector_py
-    src_zephyr_feedback_loop_evolution_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_failure_replay_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_feedback_loop_db_bridge_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -328,8 +328,8 @@ graph TD
     D_INFRA_RUNTIME["(原型态 / prototype) D_INFRA_RUNTIME"]
     src_zephyr_feedback_loop_db_writer_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
     src_zephyr_feedback_loop_core_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_evolution_auto_reward_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_evolution_init_py
     D_AUTONOMY_CORE["(原型态 / prototype) D_AUTONOMY_CORE"]
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_error_budget_py
     D_ORCHESTRATOR["(生产态 / production) D_ORCHESTRATOR"]
@@ -343,7 +343,7 @@ graph TD
     class src_zephyr_feedback_loop_collectors_market_calendar_py,src_zephyr_feedback_loop_collectors_market_event_integrator_py,src_zephyr_feedback_loop_collectors_metrics_collector_py,src_zephyr_feedback_loop_collectors_notification_feedback_py,src_zephyr_feedback_loop_collectors_schema_evolution_py,src_zephyr_feedback_loop_collectors_schema_migration_py,src_zephyr_feedback_loop_collectors_temporal_event_store_py,src_zephyr_feedback_loop_collectors_token_finops_py,src_zephyr_feedback_loop_config_py,src_zephyr_feedback_loop_db_bridge_py,src_zephyr_feedback_loop_decision_engine_py,src_zephyr_feedback_loop_docs_init_py,src_zephyr_feedback_loop_docs_cold_start_manual_py,src_zephyr_feedback_loop_error_budget_py,src_zephyr_feedback_loop_eval_harness_py,src_zephyr_feedback_loop_evolution_auto_reward_py,src_zephyr_feedback_loop_evolution_conformal_prediction_py,src_zephyr_feedback_loop_evolution_cross_gen_validation_py,src_zephyr_feedback_loop_evolution_dynamic_threshold_py,src_zephyr_feedback_loop_evolution_ewc_kb_review_py,src_zephyr_feedback_loop_evolution_failure_replay_py,src_zephyr_feedback_loop_evolution_graduated_activation_protocol_py,src_zephyr_feedback_loop_evolution_hypernetwork_py,src_zephyr_feedback_loop_evolution_knowledge_distillation_py,src_zephyr_feedback_loop_evolution_online_feature_importance_py,src_zephyr_feedback_loop_evolution_prompt_factory_governance_py,src_zephyr_feedback_loop_evolution_prompt_optimization_regression_detector_py production
     class src_zephyr_feedback_loop_core_py,src_zephyr_feedback_loop_db_writer_py,src_zephyr_feedback_loop_evolution_init_py design
     class D_GOVERNANCE,D_SHARED,D_ORCHESTRATOR,D_FBL_DETECTORS external_prod
-    class D_INFRA_RUNTIME,D_GOV_DOCS,D_AUTONOMY_CORE external_design
+    class D_INFRA_RUNTIME,D_FBL_DIAGNOSERS,D_AUTONOMY_CORE external_design
 ```
 
 #### 第 3 页 / 共 5 页
@@ -384,21 +384,21 @@ graph TD
     end
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_architectural_sod_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_automated_rca_postmortem_generator_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_external_verifier_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_crypto_bootstrap_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_deterministic_replay_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_boot_integrity_attestation_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_guard_configuration_drift_monitor_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_point_in_time_reconstructor_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_guard_complexity_budget_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_interrupt_coherence_validator_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_knowledge_injection_pre_flight_verifier_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_serialization_format_tracker_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_crypto_bootstrap_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_external_verifier_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_guard_configuration_drift_monitor_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_fle_upgrade_safety_validator_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_knowledge_injection_pre_flight_verifier_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_guard_complexity_budget_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_serialization_format_tracker_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_sub_agent_collusion_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_toctou_guard_py
-    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_state_migration_validator_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_worm_write_integrity_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_state_migration_validator_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_point_in_time_reconstructor_py
+    src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_toctou_guard_py
     src_zephyr_feedback_loop_forensic_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_self_modification_audit_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_feedback_loop_feedback_collector_py -->|导入依赖 / import_depends| D_SHARED
@@ -409,8 +409,8 @@ graph TD
     src_zephyr_feedback_loop_feedback_collector_py -->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_feedback_loop_evolution_engine_py -->|导入依赖 / import_depends| D_SECURITY
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_forensic_toctou_guard_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_forensic_automated_rca_postmortem_generator_py
     D_FRONTEND["(生产态 / production) D_FRONTEND"]
     D_FRONTEND -->|导入依赖 / import_depends| src_zephyr_feedback_loop_fitness_functions_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -420,7 +420,7 @@ graph TD
     class src_zephyr_feedback_loop_evolution_prompt_self_optimization_loop_py,src_zephyr_feedback_loop_evolution_self_modification_rate_limiter_py,src_zephyr_feedback_loop_evolution_self_reflection_py,src_zephyr_feedback_loop_evolution_self_upgrade_canary_py,src_zephyr_feedback_loop_evolution_semantic_intent_preservation_guard_py,src_zephyr_feedback_loop_evolution_teacher_transfer_py,src_zephyr_feedback_loop_evolution_training_data_gov_py,src_zephyr_feedback_loop_evolution_engine_py,src_zephyr_feedback_loop_exceptions_py,src_zephyr_feedback_loop_feedback_collector_py,src_zephyr_feedback_loop_fitness_functions_py,src_zephyr_feedback_loop_forensic_architectural_sod_py,src_zephyr_feedback_loop_forensic_automated_rca_postmortem_generator_py,src_zephyr_feedback_loop_forensic_boot_integrity_attestation_py,src_zephyr_feedback_loop_forensic_crypto_bootstrap_py,src_zephyr_feedback_loop_forensic_deterministic_replay_py,src_zephyr_feedback_loop_forensic_external_verifier_py,src_zephyr_feedback_loop_forensic_fle_upgrade_safety_validator_py,src_zephyr_feedback_loop_forensic_guard_complexity_budget_py,src_zephyr_feedback_loop_forensic_guard_configuration_drift_monitor_py,src_zephyr_feedback_loop_forensic_interrupt_coherence_validator_py,src_zephyr_feedback_loop_forensic_knowledge_injection_pre_flight_verifier_py,src_zephyr_feedback_loop_forensic_point_in_time_reconstructor_py,src_zephyr_feedback_loop_forensic_self_modification_audit_py,src_zephyr_feedback_loop_forensic_serialization_format_tracker_py,src_zephyr_feedback_loop_forensic_state_migration_validator_py,src_zephyr_feedback_loop_forensic_sub_agent_collusion_py,src_zephyr_feedback_loop_forensic_worm_write_integrity_py production
     class src_zephyr_feedback_loop_forensic_init_py,src_zephyr_feedback_loop_forensic_toctou_guard_py design
     class D_SHARED,D_SECURITY,D_FRONTEND external_prod
-    class D_GOV_DOCS external_design
+    class D_FBL_DIAGNOSERS external_design
 ```
 
 #### 第 4 页 / 共 5 页
@@ -459,34 +459,34 @@ graph TD
         src_zephyr_feedback_loop_slo_manager_py["(生产态 / production) slo_manager.py"]
         src_zephyr_feedback_loop_template_py["(生产态 / production) template.py"]
     end
-    src_zephyr_feedback_loop_generator_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_template_py
-    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_safety_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_act_py
-    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_collect_detect_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_health_py
-    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py
-    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
+    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_safety_py
+    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_collect_detect_py
+    src_zephyr_feedback_loop_generator_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_template_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_oscillation_damping_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py
-    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_deadman_switch_py
+    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py
+    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py
+    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_deadman_switch_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py
+    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_multi_instance_coord_py
+    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_resource_starvation_aware_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_dr_automation_py
-    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_multi_instance_coord_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_oscillation_damping_py
     src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_split_brain_quorum_py
-    src_zephyr_feedback_loop_resilience_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_resource_starvation_aware_py
-    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_agent_skill_guard_py
-    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_metric_prompt_scanner_py
     src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_dep_cve_correlator_py
+    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_metric_prompt_scanner_py
     src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_secret_rotation_py
-    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
+    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_agent_skill_guard_py
     src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_remote_attestation_py
+    src_zephyr_feedback_loop_security_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
     D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
     src_zephyr_feedback_loop_scheduler_safety_py -.->|导入依赖 / import_depends| D_FBL_DIAGNOSERS
     D_FBL_DETECTORS["(原型态 / prototype) D_FBL_DETECTORS"]
@@ -511,8 +511,7 @@ graph TD
     D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
     src_zephyr_feedback_loop_protocols_py -.->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_feedback_loop_gates_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_resilience_init_py
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_resilience_init_py
     D_FBL_DETECTORS -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_scheduler_py
     D_SHARED -->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_secret_rotation_py
@@ -525,7 +524,7 @@ graph TD
     class src_zephyr_feedback_loop_generator_py,src_zephyr_feedback_loop_metrics_collector_py,src_zephyr_feedback_loop_protocols_py,src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py,src_zephyr_feedback_loop_resilience_deadman_switch_py,src_zephyr_feedback_loop_resilience_dr_automation_py,src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py,src_zephyr_feedback_loop_resilience_multi_instance_coord_py,src_zephyr_feedback_loop_resilience_oscillation_damping_py,src_zephyr_feedback_loop_resilience_resource_starvation_aware_py,src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py,src_zephyr_feedback_loop_resilience_split_brain_quorum_py,src_zephyr_feedback_loop_scheduler_py,src_zephyr_feedback_loop_scheduler_act_py,src_zephyr_feedback_loop_scheduler_collect_detect_py,src_zephyr_feedback_loop_scheduler_health_py,src_zephyr_feedback_loop_scheduler_safety_py,src_zephyr_feedback_loop_security_agent_skill_guard_py,src_zephyr_feedback_loop_security_dep_cve_correlator_py,src_zephyr_feedback_loop_security_metric_prompt_scanner_py,src_zephyr_feedback_loop_security_remote_attestation_py,src_zephyr_feedback_loop_security_secret_rotation_py,src_zephyr_feedback_loop_security_wireheading_prevention_py,src_zephyr_feedback_loop_self_diagnosis_py,src_zephyr_feedback_loop_session_learner_py,src_zephyr_feedback_loop_slo_manager_py,src_zephyr_feedback_loop_template_py production
     class src_zephyr_feedback_loop_gates_init_py,src_zephyr_feedback_loop_resilience_init_py,src_zephyr_feedback_loop_security_init_py design
     class D_SHARED,D_GOVERNANCE,D_AUTONOMY_CORE,D_INFRA_RECOVERY,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
-    class D_FBL_DIAGNOSERS,D_FBL_DETECTORS,D_FBL_VERIFICATION,D_INTEGRATION,D_GOV_DOCS external_design
+    class D_FBL_DIAGNOSERS,D_FBL_DETECTORS,D_FBL_VERIFICATION,D_INTEGRATION external_design
 ```
 
 #### 第 5 页 / 共 5 页
@@ -556,6 +555,7 @@ graph TD
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -686,45 +686,45 @@ graph TD
         src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py["(生产态 / production) E2E Integration Test Pipeline — TASK-MOD-FEEDB...<br/>文件: integration_test_pipeline.py"]
         src_zephyr_feedback_loop_validator_py["(生产态 / production) validator.py"]
     end
-    src_zephyr_feedback_loop_backpressure_bridge_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_engine_py
     src_zephyr_feedback_loop_auto_evolution_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_engine_py
     src_zephyr_feedback_loop_decision_engine_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
-    src_zephyr_feedback_loop_generator_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_template_py
-    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_safety_py
+    src_zephyr_feedback_loop_backpressure_bridge_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_engine_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_act_py
-    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_collect_detect_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_health_py
+    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_safety_py
+    src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_scheduler_collect_detect_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
     src_zephyr_feedback_loop_scheduler_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_metrics_collector_py
-    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_boot_integrity_attestation_py
-    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py
-    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
+    src_zephyr_feedback_loop_generator_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_template_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_self_modification_rate_limiter_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_oscillation_damping_py
-    src_zephyr_feedback_loop_scheduler_collect_detect_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
-    src_zephyr_feedback_loop_scheduler_collect_detect_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_metrics_collector_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_evolution_self_modification_rate_limiter_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_guard_complexity_budget_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py
     src_zephyr_feedback_loop_scheduler_health_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py
+    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_forensic_boot_integrity_attestation_py
+    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py
+    src_zephyr_feedback_loop_scheduler_safety_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_security_wireheading_prevention_py
+    src_zephyr_feedback_loop_scheduler_collect_detect_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
+    src_zephyr_feedback_loop_scheduler_collect_detect_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_metrics_collector_py
     src_zephyr_feedback_loop_validator_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_template_py
     src_zephyr_feedback_loop_actors_action_selector_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_agent_lifecycle_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_api_version_contract_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_incident_priority_triage_automator_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_global_action_scheduler_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_intent_driven_ops_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_action_selector_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_agent_lifecycle_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_saga_compensator_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_global_action_scheduler_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_notification_personalizer_py
+    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_intent_driven_ops_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_secondary_alert_channel_py
     src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_owner_absence_escalation_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py
-    src_zephyr_feedback_loop_actors_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_actors_notification_personalizer_py
     src_zephyr_feedback_loop_docs_init_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_docs_cold_start_manual_py
     src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_feedback_collector_py
     src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_collectors_metrics_collector_py
@@ -750,8 +750,7 @@ graph TD
     src_zephyr_feedback_loop_metrics_collector_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RECOVERY["(生产态 / production) D_INFRA_RECOVERY"]
     src_zephyr_feedback_loop_scheduler_act_py -->|导入依赖 / import_depends| D_INFRA_RECOVERY
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_evolution_auto_reward_py
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_forensic_automated_rca_postmortem_generator_py
     D_AUTONOMY_CORE -.->|测试依赖 / test_depends| src_zephyr_feedback_loop_error_budget_py
     D_FBL_DETECTORS -->|导入依赖 / import_depends| src_zephyr_feedback_loop_protocols_py
     D_SECURITY["(原型态 / prototype) D_SECURITY"]
@@ -776,7 +775,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_init_py,src_zephyr_feedback_loop_gen_inherited_py,src_zephyr_feedback_loop_actors_init_py,src_zephyr_feedback_loop_actors_action_selector_py,src_zephyr_feedback_loop_actors_agent_lifecycle_py,src_zephyr_feedback_loop_actors_api_version_contract_py,src_zephyr_feedback_loop_actors_global_action_scheduler_py,src_zephyr_feedback_loop_actors_incident_priority_triage_automator_py,src_zephyr_feedback_loop_actors_intent_driven_ops_py,src_zephyr_feedback_loop_actors_multi_agent_orchestrator_py,src_zephyr_feedback_loop_actors_notification_personalizer_py,src_zephyr_feedback_loop_actors_owner_absence_escalation_py,src_zephyr_feedback_loop_actors_saga_compensator_py,src_zephyr_feedback_loop_actors_secondary_alert_channel_py,src_zephyr_feedback_loop_auto_evolution_py,src_zephyr_feedback_loop_backpressure_bridge_py,src_zephyr_feedback_loop_collectors_calendar_adapter_py,src_zephyr_feedback_loop_collectors_config_timeline_py,src_zephyr_feedback_loop_collectors_data_quality_validator_py,src_zephyr_feedback_loop_collectors_feedback_collector_py,src_zephyr_feedback_loop_collectors_financial_stratification_py,src_zephyr_feedback_loop_collectors_kb_provenance_py,src_zephyr_feedback_loop_collectors_knowledge_capture_py,src_zephyr_feedback_loop_collectors_knowledge_freshness_py,src_zephyr_feedback_loop_collectors_knowledge_injection_py,src_zephyr_feedback_loop_collectors_knowledge_packaging_py,src_zephyr_feedback_loop_collectors_known_unknown_registry_py,src_zephyr_feedback_loop_collectors_llm_cost_accounting_py,src_zephyr_feedback_loop_collectors_market_calendar_py,src_zephyr_feedback_loop_collectors_market_event_integrator_py,src_zephyr_feedback_loop_collectors_metrics_collector_py,src_zephyr_feedback_loop_collectors_notification_feedback_py,src_zephyr_feedback_loop_collectors_schema_evolution_py,src_zephyr_feedback_loop_collectors_schema_migration_py,src_zephyr_feedback_loop_collectors_temporal_event_store_py,src_zephyr_feedback_loop_collectors_token_finops_py,src_zephyr_feedback_loop_config_py,src_zephyr_feedback_loop_db_bridge_py,src_zephyr_feedback_loop_decision_engine_py,src_zephyr_feedback_loop_docs_init_py,src_zephyr_feedback_loop_docs_cold_start_manual_py,src_zephyr_feedback_loop_error_budget_py,src_zephyr_feedback_loop_eval_harness_py,src_zephyr_feedback_loop_evolution_auto_reward_py,src_zephyr_feedback_loop_evolution_conformal_prediction_py,src_zephyr_feedback_loop_evolution_cross_gen_validation_py,src_zephyr_feedback_loop_evolution_dynamic_threshold_py,src_zephyr_feedback_loop_evolution_ewc_kb_review_py,src_zephyr_feedback_loop_evolution_failure_replay_py,src_zephyr_feedback_loop_evolution_graduated_activation_protocol_py,src_zephyr_feedback_loop_evolution_hypernetwork_py,src_zephyr_feedback_loop_evolution_knowledge_distillation_py,src_zephyr_feedback_loop_evolution_online_feature_importance_py,src_zephyr_feedback_loop_evolution_prompt_factory_governance_py,src_zephyr_feedback_loop_evolution_prompt_optimization_regression_detector_py,src_zephyr_feedback_loop_evolution_prompt_self_optimization_loop_py,src_zephyr_feedback_loop_evolution_self_modification_rate_limiter_py,src_zephyr_feedback_loop_evolution_self_reflection_py,src_zephyr_feedback_loop_evolution_self_upgrade_canary_py,src_zephyr_feedback_loop_evolution_semantic_intent_preservation_guard_py,src_zephyr_feedback_loop_evolution_teacher_transfer_py,src_zephyr_feedback_loop_evolution_training_data_gov_py,src_zephyr_feedback_loop_evolution_engine_py,src_zephyr_feedback_loop_exceptions_py,src_zephyr_feedback_loop_feedback_collector_py,src_zephyr_feedback_loop_fitness_functions_py,src_zephyr_feedback_loop_forensic_architectural_sod_py,src_zephyr_feedback_loop_forensic_automated_rca_postmortem_generator_py,src_zephyr_feedback_loop_forensic_boot_integrity_attestation_py,src_zephyr_feedback_loop_forensic_crypto_bootstrap_py,src_zephyr_feedback_loop_forensic_deterministic_replay_py,src_zephyr_feedback_loop_forensic_external_verifier_py,src_zephyr_feedback_loop_forensic_fle_upgrade_safety_validator_py,src_zephyr_feedback_loop_forensic_guard_complexity_budget_py,src_zephyr_feedback_loop_forensic_guard_configuration_drift_monitor_py,src_zephyr_feedback_loop_forensic_interrupt_coherence_validator_py,src_zephyr_feedback_loop_forensic_knowledge_injection_pre_flight_verifier_py,src_zephyr_feedback_loop_forensic_point_in_time_reconstructor_py,src_zephyr_feedback_loop_forensic_self_modification_audit_py,src_zephyr_feedback_loop_forensic_serialization_format_tracker_py,src_zephyr_feedback_loop_forensic_state_migration_validator_py,src_zephyr_feedback_loop_forensic_sub_agent_collusion_py,src_zephyr_feedback_loop_forensic_worm_write_integrity_py,src_zephyr_feedback_loop_generator_py,src_zephyr_feedback_loop_metrics_collector_py,src_zephyr_feedback_loop_protocols_py,src_zephyr_feedback_loop_resilience_config_hot_reload_guard_py,src_zephyr_feedback_loop_resilience_deadman_switch_py,src_zephyr_feedback_loop_resilience_dr_automation_py,src_zephyr_feedback_loop_resilience_graceful_degradation_planner_py,src_zephyr_feedback_loop_resilience_multi_instance_coord_py,src_zephyr_feedback_loop_resilience_oscillation_damping_py,src_zephyr_feedback_loop_resilience_resource_starvation_aware_py,src_zephyr_feedback_loop_resilience_self_api_throttle_defense_py,src_zephyr_feedback_loop_resilience_split_brain_quorum_py,src_zephyr_feedback_loop_scheduler_py,src_zephyr_feedback_loop_scheduler_act_py,src_zephyr_feedback_loop_scheduler_collect_detect_py,src_zephyr_feedback_loop_scheduler_health_py,src_zephyr_feedback_loop_scheduler_safety_py,src_zephyr_feedback_loop_security_agent_skill_guard_py,src_zephyr_feedback_loop_security_dep_cve_correlator_py,src_zephyr_feedback_loop_security_metric_prompt_scanner_py,src_zephyr_feedback_loop_security_remote_attestation_py,src_zephyr_feedback_loop_security_secret_rotation_py,src_zephyr_feedback_loop_security_wireheading_prevention_py,src_zephyr_feedback_loop_self_diagnosis_py,src_zephyr_feedback_loop_session_learner_py,src_zephyr_feedback_loop_slo_manager_py,src_zephyr_feedback_loop_template_py,src_zephyr_feedback_loop_tests_e2e_integration_test_pipeline_py,src_zephyr_feedback_loop_validator_py production
     class D_FBL_VERIFICATION,D_SHARED,D_GOVERNANCE,D_AUTONOMY_CORE,D_INFRA_RECOVERY,D_INFRA_RUNTIME,D_ORCHESTRATOR,D_GOV_AUDIT,D_FRONTEND external_prod
-    class D_FBL_DIAGNOSERS,D_FBL_DETECTORS,D_GOV_DOCS,D_SECURITY external_design
+    class D_FBL_DIAGNOSERS,D_FBL_DETECTORS,D_SECURITY external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -826,17 +825,18 @@ graph TD
     src_zephyr_feedback_loop_verifiers_init_py -.->|导入依赖 / import_depends| D_FBL_VERIFICATION
     D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
     src_zephyr_feedback_loop_alert_dispatcher_py -.->|导入依赖 / import_depends| D_ORCHESTRATOR
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_collectors_init_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_forensic_toctou_guard_py
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_resilience_init_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_collectors_init_py
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_init_py
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_evolution_init_py
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_feedback_loop_resilience_init_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_alert_dispatcher_py,src_zephyr_feedback_loop_collectors_init_py,src_zephyr_feedback_loop_core_py,src_zephyr_feedback_loop_db_writer_py,src_zephyr_feedback_loop_evolution_init_py,src_zephyr_feedback_loop_forensic_init_py,src_zephyr_feedback_loop_forensic_toctou_guard_py,src_zephyr_feedback_loop_gates_init_py,src_zephyr_feedback_loop_resilience_init_py,src_zephyr_feedback_loop_security_init_py,src_zephyr_feedback_loop_tests_e2e_init_py,src_zephyr_feedback_loop_verifiers_init_py design
     class D_FBL_VERIFICATION,D_SHARED,D_GOVERNANCE external_prod
-    class D_ORCHESTRATOR,D_GOV_DOCS external_design
+    class D_ORCHESTRATOR,D_FBL_DIAGNOSERS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -939,22 +939,23 @@ graph TD
 | 3 | D_FBL_DETECTORS 反馈检测器: anomaly_detector.py | → | feedback_collector.py | 导入依赖 / import_depends |
 | 4 | D_FBL_DETECTORS 反馈检测器: anomaly_detector.py | → | metrics_collector.py | 导入依赖 / import_depends |
 | 5 | D_FBL_DETECTORS 反馈检测器: anomaly_detector.py | → | protocols.py | 导入依赖 / import_depends |
-| 6 | D_FRONTEND 前端: fitness_functions · Fitness Functions 仪表盘组... | → | fitness_functions.py | 导入依赖 / import_depends |
-| 7 | D_GOV_AUDIT 审计追踪: feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
-| 8 | D_GOV_DOCS 架构文档治理: blueprint.md | → | feedback-loop.collectors — auto-generated pack... | runtime / runtime |
-| 9 | D_GOV_DOCS 架构文档治理: blueprint.md | → | Auto Reward — v0.7.0 R76 (auto_reward.py) | runtime / runtime |
-| 10 | D_GOV_DOCS 架构文档治理: blueprint.md | → | TOCTOU Guard — v0.15.0 R207 (toctou_guard.py) | runtime / runtime |
-| 11 | D_GOV_DOCS 架构文档治理: blueprint.md | → | feedback-loop.resilience — auto-generated pack... | runtime / runtime |
-| 12 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
-| 13 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | FLE 全链路调度器 —— collect->detect->diagnose... | 导入依赖 / import_depends |
-| 14 | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
-| 15 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触.... | → | Feedback Loop Decision Engine (decision_engine.py) | 导入依赖 / import_depends |
-| 16 | D_SECURITY 对抗验证: feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
-| 17 | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | → | Secret Rotation — v0.14.0 R189 (secret_rotatio... | 导入依赖 / import_depends |
+| 6 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | feedback-loop.collectors — auto-generated pack... | runtime / runtime |
+| 7 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | feedback-loop.evolution — auto-generated packa... | runtime / runtime |
+| 8 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | Automated RCA Postmortem Generator — v0.38.0 R... | runtime / runtime |
+| 9 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | feedback-loop.resilience — auto-generated pack... | runtime / runtime |
+| 10 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | feedback-loop.verifiers — auto-generated packa... | runtime / runtime |
+| 11 | D_FRONTEND 前端: fitness_functions · Fitness Functions 仪表盘组... | → | fitness_functions.py | 导入依赖 / import_depends |
+| 12 | D_GOV_AUDIT 审计追踪: feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
+| 13 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
+| 14 | D_INFRA_RUNTIME 运行时集成: AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | FLE 全链路调度器 —— collect->detect->diagnose... | 导入依赖 / import_depends |
+| 15 | D_INFRA_RUNTIME 运行时集成: lifecycle_manager.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
+| 16 | D_ORCHESTRATOR 代理编排器: TriggerRouter — RI-03 触发路由器（M3 跨模块触.... | → | Feedback Loop Decision Engine (decision_engine.py) | 导入依赖 / import_depends |
+| 17 | D_SECURITY 对抗验证: feedback_bridge.py | → | Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
+| 18 | D_SHARED 共享服务: secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | → | Secret Rotation — v0.14.0 R189 (secret_rotatio... | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 16 个外部域直接连接（出边 84 条 + 入边 17 条 = 101 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 15 个外部域直接连接（出边 84 条 + 入边 18 条 = 102 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -972,9 +973,8 @@ graph LR
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
-    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_FRONTEND["D_FRONTEND<br/>前端"]
+    D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_FEEDBACK_LOOP -->|35条 导入依赖 / import_depends| D_FBL_VERIFICATION
     D_FEEDBACK_LOOP -->|19条 导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP -->|7条 导入依赖 / import_depends| D_FBL_DIAGNOSERS
@@ -988,15 +988,15 @@ graph LR
     D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_SECURITY
     D_FEEDBACK_LOOP -->|1条 导入依赖 / import_depends| D_INFRA_RECOVERY
-    D_GOV_DOCS -->|4条 runtime / runtime| D_FEEDBACK_LOOP
-    D_FBL_DETECTORS -->|3条 导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_FBL_DIAGNOSERS -->|5条 runtime / runtime| D_FEEDBACK_LOOP
     D_INFRA_RUNTIME -->|3条 导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_FBL_DETECTORS -->|3条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_AUTONOMY_CORE -->|2条 测试依赖 / test_depends| D_FEEDBACK_LOOP
-    D_GOV_AUDIT -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_FRONTEND -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
-    D_ORCHESTRATOR -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_SECURITY -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_SHARED -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_FRONTEND -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_GOV_AUDIT -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
+    D_ORCHESTRATOR -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
 ```
 
 ## 说明 / Notes

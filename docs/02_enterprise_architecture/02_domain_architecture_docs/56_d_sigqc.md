@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 56_d_sigqc / 信号质量控制 / 信号质量控制 / Signal Quality Control
+# 56_d_sigqc / 信号质量控制 / Signal Quality Control
 
 > **功能简介 / Overview**: 信号质量控制，负责信号质量评估、异常检测和质量门禁
 

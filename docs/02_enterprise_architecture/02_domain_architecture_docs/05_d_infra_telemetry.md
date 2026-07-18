@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 05_d_infra_telemetry / 可观测性 / 可观测性 / Observability
+# 05_d_infra_telemetry / 可观测性 / Observability
 
 > **功能简介 / Overview**: 可观测性，负责系统遥测采集、指标监控、链路追踪、日志结构和健康检查
 

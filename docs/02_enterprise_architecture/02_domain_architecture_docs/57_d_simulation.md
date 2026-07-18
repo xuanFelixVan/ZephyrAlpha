@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 57_d_simulation / 仿真 / 仿真 / Simulation
+# 57_d_simulation / 仿真 / Simulation
 
 > **功能简介 / Overview**: 仿真，负责市场仿真、模拟撮合和仿真环境管理
 

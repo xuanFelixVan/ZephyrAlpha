@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 60_d_compliance / 合规 / 合规 / Compliance
+# 60_d_compliance / 合规 / Compliance
 
 > **功能简介 / Overview**: 合规，负责交易合规检查、规则引擎和合规报告
 
@@ -95,15 +95,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
-    class D_SECURITY,D_GOV_DOCS external_design
+    class D_SECURITY,D_FBL_DIAGNOSERS external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -149,15 +149,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
+    D_FBL_DIAGNOSERS["(原型态 / prototype) D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS -.->|runtime / runtime| src_zephyr_compliance_security_gateway_base_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
-    class D_SECURITY,D_GOV_DOCS external_design
+    class D_SECURITY,D_FBL_DIAGNOSERS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -222,7 +222,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_GOV_DOCS 架构文档治理: blueprint.md | → | security_gateway_base.py | runtime / runtime |
+| 1 | D_FBL_DIAGNOSERS 反馈诊断器: __init__.py | → | security_gateway_base.py | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
@@ -235,12 +235,12 @@ graph LR
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
-    D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
+    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
     D_COMPLIANCE -->|43条 导入依赖 / import_depends| D_GOV_DRIFT
     D_COMPLIANCE -->|5条 导入依赖 / import_depends| D_SECURITY
     D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
-    D_GOV_DOCS -->|1条 runtime / runtime| D_COMPLIANCE
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_COMPLIANCE
 ```
 
 ## 说明 / Notes

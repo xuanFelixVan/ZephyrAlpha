@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 17_d_gov_ops_resilience / 运维弹性治理 / 运维弹性治理 / Ops Resilience Governance
+# 17_d_gov_ops_resilience / 运维弹性治理 / Ops Resilience Governance
 
 > **功能简介 / Overview**: 运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议
 
@@ -28,7 +28,7 @@ ttl: permanent
 | 模块数 | 90 | Module Count | 90 |
 | 域内依赖 | 17 | Internal Dependencies | 17 |
 | 跨域入边 | 35 | Cross-domain Incoming | 35 |
-| 跨域出边 | 63 | Cross-domain Outgoing | 63 |
+| 跨域出边 | 61 | Cross-domain Outgoing | 61 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 9 | Prototype Modules | 9 |
 | 生产态模块 | 81 | Production Modules | 81 |
@@ -188,6 +188,8 @@ graph TD
     src_zephyr_governance_escalation_escalation_api_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_metrics_py
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
+    D_OPS["(生产态 / production) D_OPS"]
+    src_zephyr_governance_ops_governance_cost_attributor_py -->|导入依赖 / import_depends| D_OPS
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_escalation_contracts_py -->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
@@ -195,19 +197,14 @@ graph TD
     src_zephyr_governance_escalation_escalation_engine_py -.->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
     src_zephyr_governance_escalation_escalation_engine_py -->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_governance_escalation_result_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     src_zephyr_governance_escalation_triage_py -.->|导入依赖 / import_depends| D_SHARED
-    D_GOV_KB["(生产态 / production) D_GOV_KB"]
-    src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
-    src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_KB
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_governance_escalation_triage_py -->|导入依赖 / import_depends| D_GOV_RULE
-    src_zephyr_governance_escalation_result_types_py -->|导入依赖 / import_depends| D_INTEGRATION
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    D_OPS["(生产态 / production) D_OPS"]
     src_zephyr_governance_ops_governance_burn_rate_monitor_py -->|导入依赖 / import_depends| D_OPS
-    src_zephyr_governance_ops_governance_cost_attributor_py -->|导入依赖 / import_depends| D_OPS
     src_zephyr_governance_ops_governance_degradation_manager_py -->|导入依赖 / import_depends| D_OPS
     D_OPS -->|导入依赖 / import_depends| src_zephyr_governance_escalation_contracts_py
     D_GOVERNANCE -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
@@ -234,7 +231,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_governance_escalation_alternative_path_blocker_py,src_zephyr_governance_escalation_consequence_manager_py,src_zephyr_governance_escalation_contracts_py,src_zephyr_governance_escalation_escalation_api_py,src_zephyr_governance_escalation_escalation_engine_py,src_zephyr_governance_escalation_escalation_fatigue_manager_py,src_zephyr_governance_escalation_escalation_loop_detector_py,src_zephyr_governance_escalation_escalation_metrics_py,src_zephyr_governance_escalation_escalation_models_py,src_zephyr_governance_escalation_escalation_smoke_tests_py,src_zephyr_governance_escalation_git_hook_pre_scanner_py,src_zephyr_governance_escalation_human_factors_py,src_zephyr_governance_escalation_identity_verifier_py,src_zephyr_governance_escalation_incident_response_py,src_zephyr_governance_escalation_owner_absent_py,src_zephyr_governance_escalation_result_types_py,src_zephyr_governance_escalation_spof_checker_py,src_zephyr_governance_escalation_triage_py,src_zephyr_governance_ops_governance_agent_dispatch_py,src_zephyr_governance_ops_governance_auto_runner_py,src_zephyr_governance_ops_governance_bandwidth_optimizer_py,src_zephyr_governance_ops_governance_burn_rate_monitor_py,src_zephyr_governance_ops_governance_clock_guard_py,src_zephyr_governance_ops_governance_coldstart_manager_py,src_zephyr_governance_ops_governance_cost_attributor_py,src_zephyr_governance_ops_governance_cost_router_py,src_zephyr_governance_ops_governance_daily_ops_py,src_zephyr_governance_ops_governance_degradation_manager_py production
     class src_zephyr_governance_ops_governance_decision_fatigue_py,src_zephyr_governance_ops_governance_environment_manager_py design
-    class D_SHARED,D_INTEGRATION,D_SECURITY,D_GOV_KB,D_GOV_RULE,D_GOVERNANCE,D_OPS,D_GOV_REPAIR,D_INFRA_RUNTIME,D_FEEDBACK_LOOP external_prod
+    class D_OPS,D_SHARED,D_INTEGRATION,D_SECURITY,D_GOV_RULE,D_GOVERNANCE,D_GOV_REPAIR,D_INFRA_RUNTIME,D_FEEDBACK_LOOP external_prod
     class D_GOV_AUDIT external_design
 ```
 
@@ -275,9 +272,9 @@ graph TD
         src_zephyr_governance_resilience_governance_f5_shutdown_manager_py["(生产态 / production) F5ShutdownManager — F5 自动关闭/状态持久化/信...<br/>文件: f5_shutdown_manager.py"]
     end
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_resilience_governance_blast_radius_py
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
     src_zephyr_governance_ops_governance_service_registration_py -.->|导入依赖 / import_depends| D_INTELLIGENCE
@@ -369,10 +366,10 @@ graph TD
     end
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_security_gateway_base_py
-    src_zephyr_governance_security_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_security_governance_adversarial_tester_py
+    src_zephyr_governance_security_governance_init_py -.->|config_depends / config_depends| src_zephyr_governance_security_governance_anti_automation_bias_py
     D_INFRA_A2A["(生产态 / production) D_INFRA_A2A"]
-    src_zephyr_governance_resilience_governance_offline_autonomy_py -.->|导入依赖 / import_depends| D_INFRA_A2A
     src_zephyr_governance_resilience_governance_offline_resilience_py -.->|导入依赖 / import_depends| D_INFRA_A2A
+    src_zephyr_governance_resilience_governance_offline_autonomy_py -.->|导入依赖 / import_depends| D_INFRA_A2A
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_governance_security_governance_default_security_gateway_py -->|导入依赖 / import_depends| D_SHARED
     D_SECURITY["(生产态 / production) D_SECURITY"]
@@ -499,10 +496,10 @@ graph TD
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
     src_zephyr_governance_ops_governance_auto_runner_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_manager_py
     src_zephyr_governance_ops_governance_phase_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_phase_check_registry_py
+    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_engine_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_event_hook_py
     src_zephyr_governance_resilience_governance_f5_boot_integration_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_deadlock_detector_py
-    src_zephyr_governance_resilience_governance_decision_fatigue_cli_py -->|导入依赖 / import_depends| src_zephyr_governance_resilience_governance_decision_fatigue_py
     src_zephyr_governance_resilience_governance_f5_event_subscriber_py -->|导入依赖 / import_depends| src_zephyr_governance_escalation_escalation_models_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security_governance_adversarial_tester_py -->|导入依赖 / import_depends| src_zephyr_governance_security_governance_ipi_defense_py
@@ -628,52 +625,50 @@ graph TD
 | 15 | tamper_evident_log.py | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
 | 16 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_GOV_DRIFT 漂移检测: Drift Chaos Injector — 混沌工程主动漂移注入 §... | 导入依赖 / import_depends |
 | 17 | D_COMPLIANCE — Governance & Compliance Layer (... | → | D_GOV_ENFORCEMENT 规则执行: Re-export shim — ComplianceRule 真源已合并至 z... | 导入依赖 / import_depends |
-| 18 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_KB 知识库治理: G1 Ingest 门禁 — 知识流水线入口校验（T-2-13-A... | 导入依赖 / import_depends |
-| 19 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_KB 知识库治理: KB 五阶段门禁 evaluate 用的最小合法 Task（对齐 ... | 导入依赖 / import_depends |
-| 20 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
-| 21 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
-| 22 | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | 导入依赖 / import_depends |
-| 23 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | 导入依赖 / import_depends |
-| 24 | offline_autonomy.py | → | D_INFRA_A2A A2A通信: offline_autonomy.py | 导入依赖 / import_depends |
-| 25 | offline_resilience.py | → | D_INFRA_A2A A2A通信: offline_resilience.py | 导入依赖 / import_depends |
-| 26 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INFRA_RECOVERY 回滚恢复: KillSwitchManager — 三级 Kill Switch 管理器。 ... | 导入依赖 / import_depends |
-| 27 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
-| 28 | Circuit Breaker — MOD-INF-022 (circuit_breaker.py) | → | D_INFRA_RUNTIME 运行时集成: Circuit Breaker — 熔断器：连续失败 -> OPEN -> ... | 导入依赖 / import_depends |
-| 29 | G-CT-003 消费端 — Escalation.on_rollback_failu... | → | D_INTEGRATION 管线路由: G-CT-003 — RollbackResult Pydantic V2 BaseMode... | 导入依赖 / import_depends |
-| 30 | G-CT-003 — RollbackResult backward-compat re-e... | → | D_INTEGRATION 管线路由: G-CT-003 — RollbackResult Pydantic V2 BaseMode... | 导入依赖 / import_depends |
-| 31 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
-| 32 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
-| 33 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 34 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: IndexHealthMonitor — MOD-INF-011 索引健康自检.... | 导入依赖 / import_depends |
-| 35 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
-| 36 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
-| 37 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
-| 38 | Burn Rate Monitor — MOD-INF-024 (burn_rate_mon... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 39 | cost_attributor.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 40 | degradation_manager.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 41 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 42 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 43 | adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 44 | adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
-| 45 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
-| 46 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（... | 导入依赖 / import_depends |
-| 47 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 导入依赖 / import_depends |
-| 48 | Escalation Engine — MOD-INF-022 (escalation_en... | → | D_SECURITY 对抗验证: gateway.py | 导入依赖 / import_depends |
-| 49 | Phase Manager — ZephyrAlpha 施工阶段门控引擎. ... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
-| 50 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SECURITY 对抗验证: gateway.py | 导入依赖 / import_depends |
-| 51 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SECURITY 对抗验证: InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
-| 52 | G-CT-003 消费端 — Escalation.on_rollback_failu... | → | D_SHARED 共享服务: budget_alert.py | 导入依赖 / import_depends |
-| 53 | Escalation Engine — MOD-INF-022 (escalation_en... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
-| 54 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（... | 导入依赖 / import_depends |
-| 55 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 56 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_SHARED 共享服务: SessionContinuity — Session 交接包自动生成与恢... | 导入依赖 / import_depends |
-| 57 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 58 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_SHARED 共享服务: registry — 运行时 DI 容器 (registry.py) | 导入依赖 / import_depends |
-| 59 | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 60 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
-| 61 | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
-| 62 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SHARED 共享服务: security_decision.py | 导入依赖 / import_depends |
-| 63 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 18 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_RULE 规则治理: GateEngine — KMS G1-G6 + Orc G0/G7 + 交易 G10-... | 导入依赖 / import_depends |
+| 19 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
+| 20 | F5BootIntegration — F5 自动启动/关闭集成 (MOD-... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | 导入依赖 / import_depends |
+| 21 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | → | D_INFRA_A2A A2A通信: A2A 三级仲裁引擎 — priority -> rule -> escalat... | 导入依赖 / import_depends |
+| 22 | offline_autonomy.py | → | D_INFRA_A2A A2A通信: offline_autonomy.py | 导入依赖 / import_depends |
+| 23 | offline_resilience.py | → | D_INFRA_A2A A2A通信: offline_resilience.py | 导入依赖 / import_depends |
+| 24 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INFRA_RECOVERY 回滚恢复: KillSwitchManager — 三级 Kill Switch 管理器。 ... | 导入依赖 / import_depends |
+| 25 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INFRA_RECOVERY 回滚恢复: RollbackExecutor — 回滚执行器核心封装。 (rollb... | 导入依赖 / import_depends |
+| 26 | Circuit Breaker — MOD-INF-022 (circuit_breaker.py) | → | D_INFRA_RUNTIME 运行时集成: Circuit Breaker — 熔断器：连续失败 -> OPEN -> ... | 导入依赖 / import_depends |
+| 27 | G-CT-003 消费端 — Escalation.on_rollback_failu... | → | D_INTEGRATION 管线路由: G-CT-003 — RollbackResult Pydantic V2 BaseMode... | 导入依赖 / import_depends |
+| 28 | G-CT-003 — RollbackResult backward-compat re-e... | → | D_INTEGRATION 管线路由: G-CT-003 — RollbackResult Pydantic V2 BaseMode... | 导入依赖 / import_depends |
+| 29 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: BridgeLayer — MOD-INF-011 kb/ ↔ VMS 过渡桥接 ... | 导入依赖 / import_depends |
+| 30 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
+| 31 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 32 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_INTEGRATION 管线路由: IndexHealthMonitor — MOD-INF-011 索引健康自检.... | 导入依赖 / import_depends |
+| 33 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTEGRATION 管线路由: CollectionManager — MOD-INF-011 八大 Collectio... | 导入依赖 / import_depends |
+| 34 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTEGRATION 管线路由: InProcessVectorMemory — MOD-INF-011 VMS 统一入... | 导入依赖 / import_depends |
+| 35 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_INTELLIGENCE 上下文管理: Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T... | 导入依赖 / import_depends |
+| 36 | Burn Rate Monitor — MOD-INF-024 (burn_rate_mon... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 37 | cost_attributor.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 38 | degradation_manager.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 39 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 40 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 41 | adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer core engine — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 42 | adversarial_tester.py | → | D_OPS 反馈循环: Budget Enforcer data models — MOD-INF-024 (bud... | 导入依赖 / import_depends |
+| 43 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: 集成契约注册表（Contract Registry） (contract_r... | 导入依赖 / import_depends |
+| 44 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: BatchOrchestrator — 多 Worker 批量任务协调器（... | 导入依赖 / import_depends |
+| 45 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_ORCHESTRATOR 代理编排器: Chaos 故障注入引擎（CT-CHAOS-001）——4注入点×... | 导入依赖 / import_depends |
+| 46 | Escalation Engine — MOD-INF-022 (escalation_en... | → | D_SECURITY 对抗验证: gateway.py | 导入依赖 / import_depends |
+| 47 | Phase Manager — ZephyrAlpha 施工阶段门控引擎. ... | → | D_SECURITY 对抗验证: Session 级并发协调模块（P2-SES 落地）。 (sessio... | 导入依赖 / import_depends |
+| 48 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SECURITY 对抗验证: gateway.py | 导入依赖 / import_depends |
+| 49 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SECURITY 对抗验证: InputSanitizer: path whitelist + command whitel... | 导入依赖 / import_depends |
+| 50 | G-CT-003 消费端 — Escalation.on_rollback_failu... | → | D_SHARED 共享服务: budget_alert.py | 导入依赖 / import_depends |
+| 51 | Escalation Engine — MOD-INF-022 (escalation_en... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
+| 52 | G2 Triage 门禁 — 知识分类评分（T-2-13-B） (tri... | → | D_SHARED 共享服务: yaml_utils.py — vocabulary YAML 加载公共工具（... | 导入依赖 / import_depends |
+| 53 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 54 | PhaseManager->GateEngine 检查注册表桥梁 — 44 .... | → | D_SHARED 共享服务: SessionContinuity — Session 交接包自动生成与恢... | 导入依赖 / import_depends |
+| 55 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 56 | D-DATA -> ServiceRegistry 注册模块 (service_reg... | → | D_SHARED 共享服务: registry — 运行时 DI 容器 (registry.py) | 导入依赖 / import_depends |
+| 57 | blast_radius — MOD-INF-028 §3.1 Stage 9 (blas... | → | D_SHARED 共享服务: paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 58 | F5EventSubscriber — F5 事件启动机制 (MOD-INF-0... | → | D_SHARED 共享服务: EventBus — 事件总线（带背压控制）(M-07) (event... | 导入依赖 / import_depends |
+| 59 | F5ShutdownManager — F5 自动关闭/状态持久化/信.... | → | D_SHARED 共享服务: serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
+| 60 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SHARED 共享服务: security_decision.py | 导入依赖 / import_depends |
+| 61 | DefaultSecurityGateway — SecurityGateway 三层.... | → | D_SHARED 共享服务: async_utils.py — async/sync 边界桥接（5.12.8 .... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -717,7 +712,7 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 20 个外部域直接连接（出边 63 条 + 入边 35 条 = 98 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 19 个外部域直接连接（出边 61 条 + 入边 35 条 = 96 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -727,11 +722,10 @@ graph LR
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_OPS["D_OPS<br/>反馈循环"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
-    D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
+    D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
-    D_GOV_KB["D_GOV_KB<br/>知识库治理"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
@@ -747,11 +741,10 @@ graph LR
     D_GOV_OPS_RESILIENCE -->|8条 导入依赖 / import_depends| D_INTEGRATION
     D_GOV_OPS_RESILIENCE -->|7条 导入依赖 / import_depends| D_OPS
     D_GOV_OPS_RESILIENCE -->|5条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_GOV_OPS_RESILIENCE -->|4条 导入依赖 / import_depends| D_INFRA_A2A
     D_GOV_OPS_RESILIENCE -->|4条 导入依赖 / import_depends| D_SECURITY
+    D_GOV_OPS_RESILIENCE -->|4条 导入依赖 / import_depends| D_INFRA_A2A
     D_GOV_OPS_RESILIENCE -->|3条 导入依赖 / import_depends| D_ORCHESTRATOR
     D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends| D_INFRA_RECOVERY
-    D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends| D_GOV_KB
     D_GOV_OPS_RESILIENCE -->|2条 导入依赖 / import_depends| D_GOV_RULE
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_INTELLIGENCE
     D_GOV_OPS_RESILIENCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME

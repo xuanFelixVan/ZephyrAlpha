@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 12_d_fbl_diagnosers / 反馈诊断器 / 反馈诊断器 / Feedback Diagnosers
+# 12_d_fbl_diagnosers / 反馈诊断器 / Feedback Diagnosers
 
 > **功能简介 / Overview**: 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理
 
@@ -26,9 +26,9 @@ ttl: permanent
 | 域名称 | 反馈诊断器 | Domain Name | Feedback Diagnosers |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 76 | Module Count | 76 |
-| 域内依赖 | 4 | Internal Dependencies | 4 |
-| 跨域入边 | 8 | Cross-domain Incoming | 8 |
-| 跨域出边 | 1 | Cross-domain Outgoing | 1 |
+| 域内依赖 | 5 | Internal Dependencies | 5 |
+| 跨域入边 | 10 | Cross-domain Incoming | 10 |
+| 跨域出边 | 10 | Cross-domain Outgoing | 10 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 5 | Prototype Modules | 5 |
 | 生产态模块 | 71 | Production Modules | 71 |
@@ -174,9 +174,26 @@ graph TD
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_cognitive_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_health_init_py
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_INTEGRATION
+    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_COMPLIANCE
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    D_FBL_DETECTORS["(原型态 / prototype) D_FBL_DETECTORS"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FBL_DETECTORS
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_cognitive_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
@@ -190,8 +207,8 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py,src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_collaborative_learning_py,src_zephyr_feedback_loop_diagnosers_cognitive_confidence_decomposer_py,src_zephyr_feedback_loop_diagnosers_cognitive_gamification_py,src_zephyr_feedback_loop_diagnosers_cognitive_meta_guard_latency_budget_py,src_zephyr_feedback_loop_diagnosers_cognitive_socratic_questions_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_py,src_zephyr_feedback_loop_diagnosers_cognitive_tone_adapter_v2_py,src_zephyr_feedback_loop_diagnosers_diagnosis_auto_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_causal_inference_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_counterfactual_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_engine_py,src_zephyr_feedback_loop_diagnosers_diagnosis_diagnosis_kpi_py,src_zephyr_feedback_loop_diagnosers_diagnosis_impact_predictor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_incident_knowledge_injector_py,src_zephyr_feedback_loop_diagnosers_diagnosis_interactive_diagnosis_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_bus_factor_monitor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_knowledge_market_py,src_zephyr_feedback_loop_diagnosers_diagnosis_mtti_tracker_py,src_zephyr_feedback_loop_diagnosers_diagnosis_nonstationary_effectiveness_py,src_zephyr_feedback_loop_diagnosers_diagnosis_statistical_hygiene_auditor_py,src_zephyr_feedback_loop_diagnosers_diagnosis_vertical_self_assessment_py,src_zephyr_feedback_loop_diagnosers_health_action_composition_health_monitor_py,src_zephyr_feedback_loop_diagnosers_health_dr_resilience_metrics_py production
     class src_zephyr_feedback_loop_diagnosers_init_py,src_zephyr_feedback_loop_diagnosers_cognitive_init_py,src_zephyr_feedback_loop_diagnosers_diagnosis_init_py,src_zephyr_feedback_loop_diagnosers_health_init_py design
-    class D_FEEDBACK_LOOP external_prod
-    class D_GOV_DOCS external_design
+    class D_AUTONOMY_CORE external_prod
+    class D_INTEGRATION,D_FBL_VERIFICATION,D_COMPLIANCE,D_FEEDBACK_LOOP,D_FBL_DETECTORS,D_GOV_DOCS external_design
 ```
 
 #### 第 2 页 / 共 3 页
@@ -369,7 +386,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 5 个，4 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 5 个，5 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -384,9 +401,26 @@ graph TD
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_health_init_py
     src_zephyr_feedback_loop_diagnosers_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_reliability_init_py
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    D_FBL_DETECTORS["(原型态 / prototype) D_FBL_DETECTORS"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FBL_DETECTORS
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FEEDBACK_LOOP
+    D_COMPLIANCE["(原型态 / prototype) D_COMPLIANCE"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_COMPLIANCE
+    D_FBL_VERIFICATION["(原型态 / prototype) D_FBL_VERIFICATION"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_FBL_VERIFICATION
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    src_zephyr_feedback_loop_diagnosers_diagnosis_init_py -.->|runtime / runtime| D_INTEGRATION
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_cognitive_init_py
-    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
+    D_AUTONOMY_CORE["(生产态 / production) D_AUTONOMY_CORE"]
+    D_AUTONOMY_CORE -.->|runtime / runtime| src_zephyr_feedback_loop_diagnosers_diagnosis_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_diagnosers_init_py
@@ -398,8 +432,8 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_diagnosers_init_py,src_zephyr_feedback_loop_diagnosers_cognitive_init_py,src_zephyr_feedback_loop_diagnosers_diagnosis_init_py,src_zephyr_feedback_loop_diagnosers_health_init_py,src_zephyr_feedback_loop_diagnosers_reliability_init_py design
-    class D_FEEDBACK_LOOP external_prod
-    class D_GOV_DOCS external_design
+    class D_AUTONOMY_CORE external_prod
+    class D_FEEDBACK_LOOP,D_FBL_DETECTORS,D_COMPLIANCE,D_FBL_VERIFICATION,D_INTEGRATION,D_GOV_DOCS external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -408,34 +442,56 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | Operational Seasonality — v0.16.0 R228 (operat... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 1 | __init__.py | → | D_COMPLIANCE 合规: security_gateway_base.py | runtime / runtime |
+| 2 | __init__.py | → | D_FBL_DETECTORS 反馈检测器: __init__.py | runtime / runtime |
+| 3 | __init__.py | → | D_FBL_VERIFICATION 反馈验证: _governance_gates.py | runtime / runtime |
+| 4 | __init__.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.collectors — auto-generated pack... | runtime / runtime |
+| 5 | __init__.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.evolution — auto-generated packa... | runtime / runtime |
+| 6 | __init__.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Automated RCA Postmortem Generator — v0.38.0 R... | runtime / runtime |
+| 7 | __init__.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.resilience — auto-generated pack... | runtime / runtime |
+| 8 | __init__.py | → | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | runtime / runtime |
+| 9 | __init__.py | → | D_INTEGRATION 管线路由: Structural Protocol interfaces for cross-module... | runtime / runtime |
+| 10 | Operational Seasonality — v0.16.0 R228 (operat... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | diagnosis_engine.py | 导入依赖 / import_depends |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 7 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
-| 8 | D_GOV_DOCS 架构文档治理: blueprint.md | → | __init__.py | runtime / runtime |
+| 1 | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — All Skill Modules (a... | → | __init__.py | runtime / runtime |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | diagnosis_engine.py | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_collect_detect.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_health.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 8 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | feedback-loop.diagnosers — GOV-DOC-018: 71个叶... | 导入依赖 / import_depends |
+| 9 | D_GOV_DOCS 架构文档治理: blueprint.md | → | __init__.py | runtime / runtime |
+| 10 | D_GOV_DOCS 架构文档治理: blueprint.md | → | __init__.py | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 1 条 + 入边 8 条 = 9 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 8 个外部域直接连接（出边 10 条 + 入边 10 条 = 20 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
     D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
-    D_SHARED["D_SHARED<br/>共享服务"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
+    D_COMPLIANCE["D_COMPLIANCE<br/>合规"]
+    D_FBL_DETECTORS["D_FBL_DETECTORS<br/>反馈检测器"]
+    D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
+    D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
+    D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
+    D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
+    D_FBL_DIAGNOSERS -->|5条 runtime / runtime| D_FEEDBACK_LOOP
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_COMPLIANCE
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_FBL_DETECTORS
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_FBL_VERIFICATION
+    D_FBL_DIAGNOSERS -->|1条 runtime / runtime| D_INTEGRATION
     D_FBL_DIAGNOSERS -->|1条 导入依赖 / import_depends| D_SHARED
     D_FEEDBACK_LOOP -->|7条 导入依赖 / import_depends| D_FBL_DIAGNOSERS
-    D_GOV_DOCS -->|1条 runtime / runtime| D_FBL_DIAGNOSERS
+    D_GOV_DOCS -->|2条 runtime / runtime| D_FBL_DIAGNOSERS
+    D_AUTONOMY_CORE -->|1条 runtime / runtime| D_FBL_DIAGNOSERS
 ```
 
 ## 说明 / Notes

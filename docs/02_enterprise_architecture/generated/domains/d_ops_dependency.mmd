@@ -1,5 +1,5 @@
 %% D_OPS 域全景依赖图
-%% 生成时间: 2026-07-19 04:42:12
+%% 生成时间: 2026-07-19 04:56:20
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 9, 依赖边数: 71
 
@@ -28,14 +28,14 @@ graph TD
     [] -->|import_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
-    [] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
@@ -44,16 +44,16 @@ graph TD
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     [] -->|test_depends| src_zephyr_governance_ops_gove___e_budget_profile_manager_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_cost_budget_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     [] -->|test_depends| src_zephyr_governance_ops_governance_budget_engine_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_handler_py
+    [] -->|test_depends| src_zephyr_governance_ops_governance_budget_models_py
     %% D_GOVERNANCE -> D_OPS (4 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_governance_ops_governance_budget_models_py
@@ -88,13 +88,13 @@ graph TD
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_OPS -> D_GOV_OPS_RESILIENCE (2 条)
-    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_OPS -> D_INFRA_RECOVERY (1 条)
     src_zephyr_governance_ops_governance_budget_tracker_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_OPS -> D_SHARED (4 条)
-    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_budget_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_ops_governance_budget_handler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_ops_governance_cost_budget_py -->|import_depends| D_SHARED[D_SHARED]
 

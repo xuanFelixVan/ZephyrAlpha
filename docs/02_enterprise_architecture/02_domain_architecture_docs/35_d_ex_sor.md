@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 35_d_ex_sor / 执行路由 / 执行路由 / Execution Routing
+# 35_d_ex_sor / 执行路由 / Execution Routing
 
 > **功能简介 / Overview**: 执行路由，负责订单路由、智能拆单和执行场所选择
 

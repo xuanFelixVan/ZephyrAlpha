@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 20_d_mkt_data / 行情数据 / 行情数据 / Market Data
+# 20_d_mkt_data / 行情数据 / Market Data
 
 > **功能简介 / Overview**: 行情数据，负责市场行情数据的采集、分发和订阅管理
 
