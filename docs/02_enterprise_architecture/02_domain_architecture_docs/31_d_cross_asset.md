@@ -3,7 +3,7 @@ doc_type: architecture_view
 title: D_CROSS_ASSET 跨资产架构文档
 version: "1.0"
 status: active
-date: 2026-07-18
+date: 2026-07-19
 owner: auto-generator
 ttl: permanent
 ---
