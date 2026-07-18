@@ -1320,7 +1320,7 @@ scripts:
   dimensions: []
 - name: governance/d3_metadata/generate_rule_catalog.py
   path: governance/d3_metadata/generate_rule_catalog.py
-  description: Parses Markdown/YAML frontmatter (and YAML comment headers where applicable).
+  description: "\uFEFF# [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/generate_rule_catalog.py | §"
   domain: governance
   execution_plane: warm-path
   status: registered
