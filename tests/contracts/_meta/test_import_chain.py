@@ -50,7 +50,6 @@ CONSUMERS: list[Consumer] = [
     Consumer("mcp.blueprint_search_server", "src/zephyr/mcp/blueprint_search_server.py", "MCP 蓝图搜索服务端"),
     Consumer("orchestrator.trigger_router", "src/zephyr/orchestrator/trigger_router.py", "管线触发路由器"),
     Consumer("feedback-loop", "src/zephyr/feedback-loop/__init__.py", "Feedback Loop MOD-FEEDBACK_LOOP", is_package=True),
-    Consumer("kb", "src/zephyr/knowledge/kb/__init__.py", "Knowledge Base MOD-KB-001", is_package=True),
 ]
 
 

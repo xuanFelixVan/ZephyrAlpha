@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-Cross-Encoder 重排序层 — BGE-reranker-v2-m3（T-MOD-KB-001-RERANKER）
+Cross-Encoder 重排序层 — BGE-reranker-v2-m3
 ====================================================================
 蓝图：§5.9 路由级重排序 + §9.4 Reranker截流
 模块版本：v0.1.0 (beta reranker core)

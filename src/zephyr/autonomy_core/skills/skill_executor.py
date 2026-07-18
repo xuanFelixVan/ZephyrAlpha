@@ -218,28 +218,6 @@ class ScriptCollector:
         }
 
 
-class KBIntegration:
-    """对接 MOD-KB-001 知识库——Skill↔KB 双向同步"""
-
-    @staticmethod
-    def skill_to_kb(skill_id: str, skill_body: str) -> dict[str, Any]:
-        return {
-            "action": "generate_ke_draft",
-            "skill_id": skill_id,
-            "content_hash": hashlib.sha256(skill_body.encode()).hexdigest()[:12],
-        }
-
-    @staticmethod
-    def kb_to_skill(skill_id: str, citations: int) -> dict[str, Any]:
-        if citations >= 5:
-            return {"action": "upgrade_to_instruction", "skill_id": skill_id, "citations": citations}
-        return {"action": "keep_as_reference", "skill_id": skill_id, "citations": citations}
-
-    @staticmethod
-    def sync_freshness(skill_id: str, kb_score: float) -> float:
-        return min(skill_id_score + kb_score, 100.0) if False else 100.0
-
-
 class SkillExecutor:
     """Skill 执行引擎——八项跨模块集成编排"""
 
@@ -327,7 +305,6 @@ class SkillExecutor:
             },
         )
 
-        results["kb_sync"] = KBIntegration.skill_to_kb(skill_id, results.get("l2_body", ""))
         results["status"] = "completed"
 
         self._write_audit("skill_unloaded", skill_id, {"execution_summary": "completed"})

@@ -66,12 +66,6 @@ class ResourceProvider:
             description="MOD-TASK_SYSTEM TaskCard schema blueprint",
         )
         self.register(
-            uri="blueprint://MOD-KB-001",
-            name="KB Blueprint",
-            mime_type="text/markdown",
-            description="MOD-KB-001 Knowledge Base blueprint",
-        )
-        self.register(
             uri="task://INDEX",
             name="Task Index",
             mime_type="application/json",
