@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-17T20:04:56Z
+# 自动生成于 2026-07-18T07:35:51Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-17T20:04:56Z'
+generated_at: '2026-07-18T07:35:51Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 343
@@ -2373,7 +2373,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: 从 status_vocabulary.yaml 加载合法文档 status 值（SSoT 唯一真源）。
+  description: SSoT 校验器——检测 frontmatter 字段有效性及 module_id 重复/冲突
   tags:
   - Critical
 - name: d5_architecture/validators/validate_static_manifest_drift.py
