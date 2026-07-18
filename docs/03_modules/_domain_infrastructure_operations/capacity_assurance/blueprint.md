@@ -158,6 +158,33 @@ design_maturity: prototype
 | `contracts/contract_bus.py` | § — | — | 已实现 | | 本模块 |
 |-----------|------|---------|
 
+#### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-001`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-001` 的 26 个 file 节点 | prototype | `extract_depgraph.py --modules MOD-INF-001` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-001 | MOD-INF-001 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 26 文件 | 28 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
 ### §0.2 对齐验证矩阵
 
 | 蓝图章节 | 代码模块 | 对齐状态 |
@@ -918,32 +945,6 @@ slo_registry:
 
 ## 15. 关键关联 (§10 依赖关系)
 
-#### §0.6 四图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-001`
-
-#### 四图位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-001` 的 26 个 file 节点 | prototype | `extract_depgraph.py --modules MOD-INF-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-INF-001 | MOD-INF-001 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
-| file_count | 26 文件 | 28 文件（§0.1） | ❌ |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 
@@ -2397,7 +2398,6 @@ class ChangeBurstDetector:
 | Owner 离线 48h → Error Budget 消耗 → Kill Switch → 系统冻结 | MUST 自治模式下：Warning/Cautious 自动处理；Critical 仅通知；Emergency 冻结施工 |
 
 
-
 ```yaml
 # capacity_governance_config.yaml —— autonomous_envelope 节
 autonomous_envelope:
@@ -2486,7 +2486,6 @@ autonomous_envelope:
 | 无 Watermark → 150 模块时 10 个 session 消耗 500K token 纯开销 | MUST 每次会话启动自检 `context_tokens_injected`，超限 → auto_compress + log_warning |
 
 
-
 ```yaml
 # capacity_slo.yaml —— context_budget_watermark 节
 context_budget_watermark:
@@ -2533,7 +2532,6 @@ context_budget_watermark:
 |------|------|
 | 单轮上限不等于单任务总消耗（5-15 轮对话） | MUST Per-Task Token Budget 独立于 Per-Request |
 | 上下文膨胀 → 第 N 轮消耗远大于第 1 轮 | MUST 检测 `token_inflation_rate`，超 2× → 建议拆分任务 |
-
 
 
 **典型退化路径**：
@@ -2783,8 +2781,6 @@ class MetricsWriteBuffer:
 | 可观测性数据逼近 SQLite 性能拐点（~1GB） | MUST 自动压缩 + 聚合 + 超限告警 |
 
 
-
-
 ```yaml
 # capacity_slo.yaml —— telemetry_data_lifecycle 节
 telemetry_data_lifecycle:
@@ -2902,7 +2898,6 @@ class OwnerWellnessMonitor:
 | 退化信号：产出文件行数↑ / 类型错误比例↑ / 重写频率↑ / 重复模式↑ | MUST 定义 AI Skill Health SLI + 自动告警 |
 
 
-
 ```yaml
 # capacity_slo.yaml —— ai_skill_health 节
 ai_skill_health:
@@ -2971,7 +2966,6 @@ class AISkillMonitor:
 |------|------|
 | Token Budget 只定义上限，未区分价值分类（创造/防御/浪费） | MUST 定义 Token Value ROI 模型，区分三类 token 消耗 |
 | 100K token 浪费和 100K token 产出 3 模块在系统中无区别 | MUST 追踪 token → 门禁通过率的 ROI |
-
 
 
 ```python
@@ -3234,8 +3228,6 @@ if __name__ == "__main__":
 | Error Budget 无历史消耗数据 | MUST 初始化为保守值（50% 而非 100%） |
 
 
-
-
 ```yaml
 # capacity_slo.yaml —— day0_bootstrap 节
 day0_bootstrap:
@@ -3280,8 +3272,6 @@ day0_bootstrap:
 | AI 任务硬中断，Token Budget 状态丢失 | MUST 关机时持久化 Per-Task Budget 状态 |
 | Error Budget 燃烧率/tier 未持久化 | MUST 关机前写入 `error_budget_snapshot.json` |
 | Kill Switch 状态未写入硬盘 | MUST 关机前持久化当前模式，重启后恢复 |
-
-
 
 
 ```python
@@ -3718,7 +3708,6 @@ class DRDrillRunner:
 | **文件名大小写不敏感** | `Blueprint.md` 和 `blueprint.md` 是同一个文件 | AI 在不同 OS 上生成代码时可能引入大小写 bug |
 
 
-
 ```yaml
 # capacity_slo.yaml —— windows_fs_constraints 节
 windows_fs_constraints:
@@ -3759,8 +3748,6 @@ windows_fs_constraints:
 ```
 
 从 85% → 87% 的 2% 差异导致了 6× 的性能退化。但容量预测模型用线性回归时看不到这个悬崖——它外推的是"80% → 90% 大概是 2× 退化"。
-
-
 
 
 ```python
@@ -3817,8 +3804,6 @@ class CliffDetector:
 
 - 一个 AI 任务已经消耗了 85% 的 Token Budget → 理性决策：停掉它，拆分 → 但系统（和 Owner）的直觉是："已经花了这么多，不如让它完成"
 - Owner 在面对 `hard_stop_suggestion` 时 → 倾向性地选择"增加预算"而非"终止任务"
-
-
 
 
 ```python

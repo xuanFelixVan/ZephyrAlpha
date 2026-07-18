@@ -846,3 +846,30 @@ except VMError:
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
 | 2026-04-24 | 1.0.0 | 初版（B-a-3）。基于 VMS v1.2 模板 + KBG-0017/0018。重点：① 完整 TaskState 状态机强校验；② §3.3 幻觉检测规则引擎；③ §6 Windows ACL 沙箱+ Docker Desktop 升级；④ §11.2 DEGRADE-003 沙箱创建失败不降级（安全红线）；⑤ FLE/VMS 单向 Protocol 依赖，挂了可降级不阻塞。 |
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-039`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-039` 的 131 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-039` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-039 | MOD-INF-039 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 131 文件 | 71 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

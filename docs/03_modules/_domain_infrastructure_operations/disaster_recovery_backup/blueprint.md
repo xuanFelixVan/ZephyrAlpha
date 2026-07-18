@@ -5,7 +5,7 @@ title: "灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.3.1"
+version: "1.4.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -14,7 +14,7 @@ created_by: human_plus_agent
 date: "2026-07-09"
 ttl: permanent
 actual_disk_path: "scripts/backup/"
-last_updated: "2026-07-17"
+last_updated: "2026-07-18"
 last_verified: "2026-07-09"
 generation: 1
 functional_domain: operations
@@ -56,6 +56,10 @@ design_maturity: prototype
 
 ### §0.1 代码文件清单
 
+<!-- AUTOGEN: source=depgraph.nodes, generator=extract_depgraph.py -->
+> **⚠️ 自动化提示**：文件清单真源在 PostgreSQL depgraph.nodes 表，本节手写内容可能过时。
+> 查询最新文件清单：`python scripts/governance/extract_depgraph.py --modules MOD-INF-043`
+
 > **架构归属SSoT**：本蓝图
 > **代码头部规范**：`[BLUEPRINT]/[MODULE]/[INVARIANTS]/[MODIFY-GUARD]/[CONSUMERS]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR-CONTRACT]/[TESTS]`
 
@@ -65,8 +69,38 @@ design_maturity: prototype
 | 2 | `backup.ps1` | §3.2 | 主备份脚本（预检+dump+restic+清理+校验+报告） | 待实现 | |
 | 3 | `backup_config.yaml` | §3.3 | 备份配置（路径/保留策略/排除规则/触发条件） | 待实现 | |
 | 4 | `一键备份.bat` | §3.4 | 手动兜底双击触发入口（调用backup.ps1） | 待实现 | |
-| 5 | `restore.ps1` | §3.5 | 恢复脚本（查看快照/恢复指定快照/灾难恢复） | 待实现 | |
+| 5 | `restore.ps1` | §3.5 | 恢复脚本（list/verify/latest/ch 四子命令） | 待实现 | |
 | 6 | `README.md` | §3.6 | 使用说明（自动触发机制/手动触发/灾难恢复） | 待实现 | |
+| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:9100→127.0.0.1:9101（借python防火墙放行规则暴露MinIO给CH VM） | 待实现 | |
+
+---
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-043`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-043` 的 2 个 file 节点 | prototype | `extract_depgraph.py --modules MOD-INF-043` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | （无节点） | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-043 | MOD-INF-043 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 2 文件 | 7 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 
@@ -201,7 +235,7 @@ def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
     result = subprocess.run(
         ["powershell", "-ExecutionPolicy", "Bypass",
          "-File", str(project_root / "scripts/backup/backup.ps1")],
-        capture_output=True, text=True, timeout=1800,  # 30min超时
+        capture_output=True, text=True, timeout=14400,  # 4h超时（CH 315GiB S3桥备份，见§4.3）
     )
     if result.returncode == 0:
         _update_state(last_backup_time=now_iso())
@@ -377,25 +411,29 @@ sqlite3 data\databases\session_continuity.db ".backup D:\tmp_db_dumps\session_ba
 
 - `.backup` 命令保证一致性快照，优于文件复制
 
-### §4.3 ClickHouse（c1_market）
+### §4.3 ClickHouse（c1_market + c3_fundamental）— MinIO S3 桥
 
-```powershell
-# 检测服务运行
-$ch = Test-NetConnection -ComputerName localhost -Port 9000 -InformationLevel Quiet
-if ($ch) {
-    # 原生 BACKUP 语句（21.8+，在线、MVCC一致），输出必须落到 $DumpDir 供 restic 捕获
-    # File() 路径在 CH 服务端解析：docker 部署需把 D:\tmp_db_dumps 卷映射到容器内同路径
-    clickhouse-client --query="BACKUP DATABASE c1_market TO File('$DumpDir/c1_market_yyyymmdd.zip')"
-    # 验证 zip 存在且非空（机构实践：备份必须验证，>60% 恢复失败源于跳过验证）
-} else {
-    Write-Warning "ClickHouse未运行，跳过dump"
-}
+**部署约束（2026-07-18 实测）**：CH 26.6.1 部署于 Hyper-V VM（172.24.30.100），数据 315 GiB（c1_market 298.86 GiB/202.6亿行 + c3_fundamental 15.93 GiB），VM 数据盘仅剩 211 GiB **装不下全量备份**；宿主机无 clickhouse-client；Windows 防火墙自动拦截 minio.exe（无管理员权限改规则）。
+
+**架构**：备份数据流直接出 VM 落 F: 盘：
+
+```
+backup.ps1 (宿主机)
+  1. 删除旧 market.zip 对象目录（防 BACKUP_ALREADY_EXISTS）
+  2. 起 MinIO（127.0.0.1:9101，localhost-only 规避防火墙）+ minio_tcp_relay.py
+     （0.0.0.0:9100→9101，借 python.exe 已有 Public-allow 防火墙规则暴露给 VM）
+  3. HTTP 发 BACKUP DATABASE c1_market, DATABASE c3_fundamental
+     TO S3('http://172.24.16.1:9100/chbk/market.zip', key, secret) ASYNC
+     （必须 s3_uri_style=path：裸 IP 端点无 bucket 子域 DNS；bucket 名≥3字符）
+  4. 轮询 system.backups 至 BACKUP_CREATED（上限3h）→ 校验对象非空 → 停 MinIO/relay
+  5. restic 捕获 F:\ch_backup_store
 ```
 
-- **裁定：c1_market 为开箱即用灾备资产**（非"可从bdpan重建"），必须纳入备份
-- 输出必须落 `$DumpDir`：`Disk('backups')` 写到 CH 服务端自有目录，restic 捕获不到（设计漏洞已修复）
-- 备份后验证 zip 存在且非空，失败标记 `failed` 而非静默跳过
-- 服务未运行时warn跳过，不阻断备份
+**同一文件裁定（用户裁定 2026-07-18）**：每次写同一 key `market.zip`，不用日期后缀。restic 内容定义分块（CDC）对 zip 内未变化的 CH part 字节去重，每日 restic 增量 ≈ 当日新增行情（实测 ~9.2 GiB/天）；版本历史由 restic 快照管理，任意快照自包含可恢复（优于 base_backup 增量链，无需管链）。
+
+**凭据**：`config/.env.ch_backup`（gitignored）：MINIO_EXE/MINIO_ADDRESS/MINIO_ROOT/MINIO_BUCKET/CH_S3_ACCESS_KEY/CH_S3_SECRET_KEY/CH_S3_ENDPOINT/RELAY_SCRIPT。MinIO 本体在 `D:\tools\minio\minio.exe`（环境软件，同 restic 规，下载自国内镜像 dl.minio.org.cn）。
+
+**恢复**：`restore.ps1 ch` → restic 取回 F:\ch_backup_store → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查验证。
 
 ---
 
@@ -481,7 +519,7 @@ restic -r F:\restic-zephyr check --read-data  # 完整读取校验（慢但彻�
 
 - PostgreSQL：`pg_restore -d depgraph tmp\_db_dumps\depgraph.dump`
 - SQLite：覆盖 `governance.db` / `session_continuity.db`
-- ClickHouse：`RESTORE DATABASE c1_market FROM Disk('backups', 'c1_market.zip')`
+- ClickHouse：`.\scripts\backup\restore.ps1 ch` — restic 取回 `F:\ch_backup_store` → 起 MinIO+relay → `RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM S3(...)` → 行数抽查（前置：目标表先 DROP；架构见 §4.3）
 
 ---
 

@@ -104,6 +104,33 @@ design_maturity: design
 | 12 | `scripts/governance/meta/validate_rules_integrity.py` | §23 供应链安全 | SHA256 完整性校验 | 已实现 | — |
 | 13 | `scripts/governance/architecture_health_dashboard.py` | §六 架构健康度 | 10项指标自动化检测基线（第0期，对标 architecture_debt_registry.md §六） | 已实现 | — |
 
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-005`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 446 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-005` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 446 文件 | 46 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
 ### 对齐验证矩阵
 
 | 验证项 | 验证方法 | 结果 |
@@ -1028,32 +1055,6 @@ D1-D5  现有脚本输出统一化为 Finding Schema 格式
 
 ---
 
-### §0.6 四图对齐视图
-
-<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-005`
-
-#### 四图位置
-
-| 图 | 位置 | 状态 | 链接 |
-|----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 446 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-005` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
-| 蓝图 (blueprint) | 本文件 | Active | — |
-
-#### 四核心字段
-
-| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
-|------|-------------------|--------------------------|:-------:|
-| module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
-| domain_id | N/A | N/A | ✅ |
-| build_status | planned | planned | ✅ |
-| file_count | 446 文件 | 46 文件（§0.1） | ❌ |
-
-> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ---
 
@@ -2436,8 +2437,6 @@ Phase L-2（L 级稳定）
 | R5 | thresholds.yaml 配置错误导致系统不可用 | 中 | 高 | 配置校验 + 无效值 fallback 到硬编码默认值 |
 
 ---
-
-
 
 
 ## Consumers

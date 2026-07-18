@@ -795,3 +795,30 @@ except Exception as e:
 | 日期 | 版本 | 说明 |
 |------|:-:|------|
 | 2026-04-24 | 1.0.0 | 初版（B-a-4）。基于 VMS v1.2 模板 + KBG-0019。重点：① §5 下游 Protocol 单向引用（`ContextAdjustActionProtocol` 等）解决遗漏 #5 耦合风险；② §3.2 ANOMALY_ACTION_ROUTING 静态路由表；③ §6 EMA + 滑窗斜率 + Flatline 三算法；④ §11.2 DEGRADE-001/002 + 所有 Action TTL 强制（FLE 挂也不会留下永久错误配置）；⑤ §5.4 无循环依赖图。 |
+
+### §0.6 四图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-FEEDBACK_LOOP`
+
+#### 四图位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 630 个 file 节点 | design | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Draft | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | planned | planned | ✅ |
+| file_count | 630 文件 | 26 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
