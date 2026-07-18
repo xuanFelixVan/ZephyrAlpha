@@ -5,13 +5,13 @@
 # [CONSUMERS] scripts.governance.d5_architecture.validators.validate_ssot; scripts.ops.verify_header_completeness; scripts.governance.d3_metadata.check_frontmatter_metadata; scripts.governance.d3_metadata.backfill_ttl_metadata
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 本文件是所有文件头部格式解析的唯一真源（SSoT）；6 格式：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta；PY_HEADER_PATTERN 正则也在此定义；新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器；B_yaml 支持两种子格式（注释锚定块优先，YAML 顶层字段 fallback，用于 rules/trae_NNN_*.yaml）
+# [INVARIANTS] 本文件是所有文件头部格式解析的唯一真源（SSoT）；6 格式：.md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta；PY_HEADER_PATTERN 正则也在此定义；新 AI 想解析任何文件头部格式前必须先查本文件——扩展已有函数，勿新建解析器；B_yaml 支持两种子格式（注释锚定块优先，YAML 顶层字段 fallback，用于 rules/trae_NNN_*.yaml）；parse_frontmatter 契约=dict|None（对标 [ERROR_CONTRACT] 与 zephyr.shared.io.frontmatter_utils），需要 body 的调用方使用 parse_frontmatter_with_body
 # [MODIFY-GUARD] trae_047_engineering_file_header.yaml; capability_canonical_file_registry.yaml capability_id=file_header_parser
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 解析失败返回 None（不抛异常）；文件不存在返回 None
-# [TESTS] tests/test_frontmatter_ssot.py
+# [TESTS] tests/test_frontmatter_ssot.py; tests/governance/scripts_governance/test_validate_ssot_unit.py; tests/governance/shared/test_drafts_zone_archiver_unit.py
 # [TTL] permanent
 """文件头部格式解析 SSoT（Single Source of Truth）
 
@@ -30,6 +30,11 @@ A_full/A_test/E_shell 共用 parse_py_header——三者都是 `# [FIELD] value`
 仅字段数不同（A_full=15, A_test=7, E_shell=5），正则 `PY_HEADER_PATTERN` 统一匹配。
 
 新 AI 想解析任何文件头部格式前，必须先查本文件——扩展已有函数，勿新建解析器。
+
+契约对齐（2026-07-18 治本）：``parse_frontmatter`` / ``parse_frontmatter_from_file`` 返回
+``dict | None``，与 ``zephyr.shared.io.frontmatter_utils`` 及 [ERROR_CONTRACT] 一致。
+需要同时获取 body 的调用方使用 ``parse_frontmatter_with_body`` / ``parse_frontmatter_with_body_from_file``
+（返回 ``(dict | None, str)`` 元组）。
 """
 import json
 import re
@@ -41,44 +46,82 @@ import yaml
 _FM_END_PATTERN = re.compile(r"\n---[ \t]*\n?")
 
 
-def parse_frontmatter(text_or_path):
-    """解析 .md 文件的 YAML frontmatter（D_md 格式）。
+def parse_frontmatter_with_body(text_or_path):
+    """解析 .md 文件的 YAML frontmatter（D_md 格式），返回 (metadata, body) 元组。
+
+    对标 [ERROR_CONTRACT]：解析失败/无 frontmatter/文件不存在时 metadata 为 None（不抛异常）。
+    需要同时获取 body 的调用方使用本函数；仅需 metadata 的调用方使用 ``parse_frontmatter``。
 
     Args:
         text_or_path: 文件内容字符串，或文件路径（短字符串无换行时按路径处理）。
 
     Returns:
-        (metadata, body) 元组：metadata 为 dict（无 frontmatter 时为空 dict），
-        body 为 frontmatter 之后的正文。
+        (dict | None, str) 元组：metadata 为 dict（无 frontmatter/解析失败/空 frontmatter 时为 None），
+        body 为 frontmatter 之后的正文（无 frontmatter/解析失败时为原始文本或空串）。
     """
     if isinstance(text_or_path, str) and len(text_or_path) < 260 and "\n" not in text_or_path:
         try:
             with open(text_or_path, encoding="utf-8") as f:
                 text = f.read()
         except OSError:
-            text = str(text_or_path)
+            return None, ""
     else:
         text = str(text_or_path)
-    metadata = {}
-    body = text
-    if text.startswith("---"):
-        # 查找行首 --- 作为 frontmatter 结束符
-        fm_match = _FM_END_PATTERN.search(text[3:])
-        if fm_match:
-            end = 3 + fm_match.start()
-            try:
-                metadata = yaml.safe_load(text[3:end]) or {}
-            except Exception:
-                metadata = {}
-            body = text[3 + fm_match.end() :].lstrip("\n")
+    if not text.startswith("---"):
+        return None, text
+    # 查找行首 --- 作为 frontmatter 结束符
+    fm_match = _FM_END_PATTERN.search(text[3:])
+    if not fm_match:
+        return None, text
+    end = 3 + fm_match.start()
+    try:
+        metadata = yaml.safe_load(text[3:end])
+    except yaml.YAMLError:
+        return None, text[3 + fm_match.end() :].lstrip("\n")
+    if not isinstance(metadata, dict) or not metadata:
+        return None, text[3 + fm_match.end() :].lstrip("\n")
+    body = text[3 + fm_match.end() :].lstrip("\n")
     return metadata, body
 
 
+def parse_frontmatter(text_or_path):
+    """解析 .md 文件的 YAML frontmatter（D_md 格式）。
+
+    对标 [ERROR_CONTRACT]：解析失败/无 frontmatter/文件不存在返回 None（不抛异常）。
+    与 ``zephyr.shared.io.frontmatter_utils.parse_frontmatter`` 契约一致（dict | None）。
+    需要同时获取 body 的调用方使用 ``parse_frontmatter_with_body``。
+
+    Args:
+        text_or_path: 文件内容字符串，或文件路径（短字符串无换行时按路径处理）。
+
+    Returns:
+        dict | None：解析后的 frontmatter 字典；无 frontmatter/解析失败/空 frontmatter/文件不存在时为 None。
+    """
+    metadata, _body = parse_frontmatter_with_body(text_or_path)
+    return metadata
+
+
+def parse_frontmatter_with_body_from_file(filepath):
+    """从文件读取并解析 .md frontmatter（D_md 格式），返回 (metadata, body) 元组。
+
+    对标 [ERROR_CONTRACT]：文件不存在/无 frontmatter/解析失败时 metadata 为 None（不抛异常）。
+    """
+    try:
+        with open(filepath, encoding="utf-8") as f:
+            text = f.read()
+    except (FileNotFoundError, OSError):
+        return None, ""
+    return parse_frontmatter_with_body(text)
+
+
 def parse_frontmatter_from_file(filepath):
-    """从文件读取并解析 .md frontmatter（D_md 格式）。"""
-    with open(filepath, encoding="utf-8") as f:
-        text = f.read()
-    return parse_frontmatter(text)
+    """从文件读取并解析 .md frontmatter（D_md 格式）。
+
+    对标 [ERROR_CONTRACT]：文件不存在/无 frontmatter/解析失败返回 None（不抛异常）。
+    与 ``zephyr.shared.io.frontmatter_utils.parse_frontmatter_from_file`` 契约一致（dict | None）。
+    """
+    metadata, _body = parse_frontmatter_with_body_from_file(filepath)
+    return metadata
 
 
 # ── .py / .sh / .ps1 / .mmd 文件注释行头部解析（A_full / A_test / E_shell 格式）──

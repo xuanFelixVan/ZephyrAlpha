@@ -53,6 +53,7 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置（治本 M01 #5）
 import psycopg2  # noqa: E402
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
 
 PROJECT_ROOT = REPO_ROOT
