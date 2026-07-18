@@ -23,7 +23,6 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 REQUIRED_DEPENDENCIES = [
     "MOD-INF-039",
-    "MOD-KB-001",
     "MOD-GATE_ENGINE",
     "MOD-INF-018",
 ]
@@ -62,7 +61,7 @@ class TestUpstreamDependencyReachability:
             ids = [d.get("module_id", d.get("id", str(d))) for d in depends if isinstance(d, dict)]
         else:
             ids = []
-        for req in ["MOD-INF-039", "MOD-KB-001", "MOD-GATE_ENGINE"]:
+        for req in ["MOD-INF-039", "MOD-GATE_ENGINE"]:
             found = any(req in str(i) for i in ids)
             assert found, f"Missing upstream dependency: {req}"
 
@@ -83,7 +82,6 @@ class TestUpstreamDependencyReachability:
         assert isinstance(data, dict), "tool-contracts.yaml must be a dict"
         expected_servers = [
             "task_manager",
-            "knowledge_base",
             "gate_engine",
             "session_handoff",
             "intent_router",
@@ -104,7 +102,6 @@ class TestUpstreamDependencyReachability:
             "blueprint_search_server.py",
             "doc_guard_server.py",
             "gate_engine_server.py",
-            "knowledge_base_server.py",
             "sandbox_server.py",
             "sentinel_server.py",
             "task_manager_server.py",
@@ -119,7 +116,6 @@ class TestUpstreamDependencyReachability:
             "blueprint_search_server.py",
             "doc_guard_server.py",
             "gate_engine_server.py",
-            "knowledge_base_server.py",
             "sentinel_server.py",
             "task_manager_server.py",
             "error_codes.py",

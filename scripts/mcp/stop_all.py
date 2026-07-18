@@ -68,7 +68,6 @@ def _stop_by_window_title() -> int:
     stopped = 0
     mcp_modules = [
         "task_manager_server",
-        "knowledge_base_server",
         "gate_engine_server",
         "doc_guard_server",
         "sentinel_server",

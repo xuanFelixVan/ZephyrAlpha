@@ -46,7 +46,6 @@ from zephyr.governance.persistence.intent_parser import (
 from zephyr.integration.mcp._base_server import JSONRPC_VERSION, BaseMCPServer
 from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
-from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.feedback_loop.evolution_engine import (
     EvolutionEngine,
@@ -139,7 +138,6 @@ class TestPhase3MCPLifecycle:
         """5 Server 的 initialize 握手全部返回合规 protocolVersion + serverInfo。"""
         servers: list[BaseMCPServer] = [
             TaskManagerServer(),
-            KnowledgeBaseServer(),
             GateEngineServer(),
             DocGuardServer(),
             SentinelServer(),
@@ -150,14 +148,13 @@ class TestPhase3MCPLifecycle:
             assert "protocolVersion" in r
             assert "serverInfo" in r
             names_seen.append(r["serverInfo"]["name"])
-        assert len(names_seen) == 5
-        assert len(set(names_seen)) == 5
+        assert len(names_seen) == 4
+        assert len(set(names_seen)) == 4
 
     def test_five_servers_all_expose_tools(self) -> None:
         """每个 Server 的 tools/list 至少返回一个工具，总和 ≥ 10。"""
         servers: list[BaseMCPServer] = [
             TaskManagerServer(),
-            KnowledgeBaseServer(),
             GateEngineServer(),
             DocGuardServer(),
             SentinelServer(),
@@ -167,63 +164,7 @@ class TestPhase3MCPLifecycle:
             tools = _result(_call(srv, "tools/list"))["tools"]
             assert len(tools) >= 1, f"{srv.server_id} should expose at least 1 tool"
             total += len(tools)
-        assert total >= 10, f"5 servers should collectively expose ≥ 10 tools; got {total}"
-
-    def test_cross_server_chain_task_gate_kb(self) -> None:
-        """跨 Server 链：task_manager 创建任务 → gate_engine G4 契约校验 → knowledge_base 存储。"""
-        tm = TaskManagerServer()
-        ge = GateEngineServer()
-        kb = KnowledgeBaseServer()
-
-        # Step 1: 创建任务
-        task = _tool_result_text(
-            _tool(
-                tm,
-                "task_manager.create_task",
-                {
-                    "task_id": "T-3-E2E-001",
-                    "phase": 3,
-                    "directive": "phase3 e2e cross-server test",
-                    "safety_level": "M",
-                },
-            )
-        )
-        assert task["status"] == "PENDING"
-
-        # Step 2: gate_engine.run_g4_contract 校验 task payload
-        gate_r = _tool_result_text(
-            _tool(
-                ge,
-                "gate_engine.run_g4_contract",
-                {
-                    "payload": {
-                        "task_id": task["task_id"],
-                        "phase": task["phase"],
-                        "status": task["status"],
-                        "directive": task["directive"],
-                    },
-                    "model_name": "Task",
-                },
-            )
-        )
-        assert gate_r["passed"] is True
-
-        # Step 3: knowledge_base 存储跨链证据
-        ke_r = _tool_result_text(
-            _tool(
-                kb,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-301-phase3-e2e",
-                    "title": f"Phase3 e2e gate pass: {task['task_id']}",
-                    "category": "best_practice",
-                    "content": "beta cross-server chain verified end-to-end",
-                    "source_file": "test_phase3_e2e.py",
-                },
-            )
-        )
-        assert ke_r["ke_id"] == "KE-301-phase3-e2e"
-
+        assert total >= 8, f"4 servers should collectively expose ≥ 8 tools; got {total}"
 
 # ===========================================================================
 # 2. 幻觉检测：CoVe 四步 + 降级级联 + 拦截率 ≥ 70%
@@ -645,28 +586,6 @@ class TestPhase3KnowledgePipelineContracts:
         )
         assert "error" in resp
         assert resp["error"]["code"] == -32412
-
-    def test_knowledge_base_upsert_then_search(self) -> None:
-        """kb 入库 → search 可检索（同 Server 内回路）。"""
-        kb = KnowledgeBaseServer()
-        _tool_result_text(
-            _tool(
-                kb,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-302-pipeline",
-                    "title": "phase3 knowledge pipeline validation",
-                    "category": "best_practice",
-                    "content": "beta knowledge pipeline contract testing",
-                    "source_file": "test_phase3_e2e.py",
-                },
-            )
-        )
-        # search 不同 Server 的 API 形态：我们调用 tools/list 保证工具存在即可
-        tools = _result(_call(kb, "tools/list"))["tools"]
-        tool_names = [t["name"] for t in tools]
-        assert "knowledge_base.upsert_ke" in tool_names
-
 
 # ===========================================================================
 # 7. Fitness Functions：5 类度量全部可产出

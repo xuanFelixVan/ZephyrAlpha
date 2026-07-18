@@ -51,7 +51,6 @@ from zephyr.integration.mcp._base_server import (
 )
 from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
-from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer
 
 # ---------------------------------------------------------------------------
@@ -133,7 +132,7 @@ class TestProtocolCompliance:
     """JSON-RPC 2.0 协议合规性——与 Server 无关的通用约束。"""
 
     def setup_method(self) -> None:
-        self.server = KnowledgeBaseServer()
+        self.server = GateEngineServer()
 
     def test_response_jsonrpc_version_always_2_0(self) -> None:
         """所有成功响应必须含 jsonrpc='2.0'。"""
@@ -181,20 +180,14 @@ class TestProtocolCompliance:
 
     def test_tools_call_content_is_json_serializable(self) -> None:
         """tools/call 返回的 content[0].text 必须是合法 JSON 字符串。"""
-        _tool_result_text(
-            _tool(
-                self.server,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-099",
-                    "title": "protocol json test",
-                    "category": "best_practice",
-                    "content": "json roundtrip content for mcp e2e",
-                    "source_file": "tests/infrastructure/test_mcp_e2e.py",
-                },
-            )
+        resp = _tool(
+            self.server,
+            "gate_engine.run_g1_write",
+            {
+                "target_path": "src/zephyr/feedback-loop/fitness_functions.py",
+                "content_preview": "# clean python file content",
+            },
         )
-        resp = _tool(self.server, "knowledge_base.get_ke", {"ke_id": "KE-099"})
         r = _result(resp)
         text = r["content"][0]["text"]
         parsed = json.loads(text)
@@ -215,83 +208,6 @@ class TestProtocolCompliance:
 
 
 # Task Manager 已迁移至 FastMCP——JSON-RPC 生命周期测例见 tests/infrastructure/test_task_manager_mcp.py
-
-
-# 3. KnowledgeBaseServer 完整生命周期
-# ===========================================================================
-
-
-class TestLifecycleKnowledgeBase:
-    """knowledge_base Server: initialize → tools/list → upsert → search → rebuild。"""
-
-    def setup_method(self) -> None:
-        self.server = KnowledgeBaseServer()
-
-    def test_initialize_returns_correct_server_id(self) -> None:
-        resp = _call(self.server, "initialize")
-        assert _result(resp)["serverInfo"]["name"] == KnowledgeBaseServer.SERVER_ID
-
-    def test_full_lifecycle_upsert_search_rebuild(self) -> None:
-        """upsert_ke → search → rebuild_index 完整流程。"""
-        # 1. 写入知识条目
-        upsert = _tool_result_text(
-            _tool(
-                self.server,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-099",
-                    "title": "E2E test KE",
-                    "category": "best_practice",
-                    "content": "duckdb olap integration test knowledge entry",
-                    "source_file": "tests/infrastructure/test_mcp_e2e.py",
-                },
-            )
-        )
-        assert upsert["ke_id"] == "KE-099"
-
-        # 2. 搜索
-        search = _tool_result_text(
-            _tool(
-                self.server,
-                "knowledge_base.search",
-                {
-                    "query_text": "duckdb olap",
-                    "collection": "ke_entries",
-                    "score_threshold": 0.5,
-                },
-            )
-        )
-        assert len(search["hits"]) >= 1
-        assert search["hits"][0]["ke_id"] == "KE-099"
-
-        # 3. 重建索引（幂等）
-        rebuild = _tool_result_text(
-            _tool(
-                self.server,
-                "knowledge_base.rebuild_index",
-                {"collection": "ke_entries", "force": True},
-            )
-        )
-        assert rebuild["chunks_indexed"] >= 1
-
-    def test_get_ke_after_upsert(self) -> None:
-        """upsert_ke 后 get_ke 应返回相同 ke_id。"""
-        _tool_result_text(
-            _tool(
-                self.server,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-100",
-                    "title": "GetKE test",
-                    "category": "strategy",
-                    "content": "content for get test",
-                    "source_file": "tests/test_mcp_e2e.py",
-                },
-            )
-        )
-        got = _tool_result_text(_tool(self.server, "knowledge_base.get_ke", {"ke_id": "KE-100"}))
-        assert got["ke_id"] == "KE-100"
-        assert got["title"] == "GetKE test"
 
 
 # ===========================================================================
@@ -520,7 +436,7 @@ class TestStdioTransport:
     """stdio 传输层：多请求批量、无效 JSON 恢复、空行跳过。"""
 
     def setup_method(self) -> None:
-        self.server = KnowledgeBaseServer()
+        self.server = GateEngineServer()
 
     def test_multi_request_batch_via_stdio(self) -> None:
         """3 条请求通过 stdio 逐行处理，响应数量和 id 正确。"""
@@ -570,40 +486,6 @@ class TestCrossServerChain:
 
     def setup_method(self) -> None:
         self.ge = GateEngineServer()
-        self.kb = KnowledgeBaseServer()
-
-    def test_chain_task_payload_gate_validate_kb_store(self) -> None:
-        """G4 契约校验代表性 Task payload → knowledge_base upsert。"""
-        gate_payload = {
-            "task_id": "SRC-001",
-            "phase": 0,
-            "status": "PENDING",
-            "directive": "cross-server chain test synthetic payload",
-        }
-        gate_r = _tool_result_text(
-            _tool(
-                self.ge,
-                "gate_engine.run_g4_contract",
-                {"payload": gate_payload, "model_name": "Task"},
-            )
-        )
-        assert gate_r["passed"] is True
-
-        ke_content = f"Gate G4 passed for task {gate_payload['task_id']}: {gate_r}"
-        ke_r = _tool_result_text(
-            _tool(
-                self.kb,
-                "knowledge_base.upsert_ke",
-                {
-                    "ke_id": "KE-200",
-                    "title": f"Gate pass record: {gate_payload['task_id']}",
-                    "category": "best_practice",
-                    "content": ke_content,
-                    "source_file": "cross-server-chain",
-                },
-            )
-        )
-        assert ke_r["ke_id"] == "KE-200"
 
     def test_chain_gate_block_triggers_manual_event(self) -> None:
         """G1 阻断 → doc_guard emit_manual_event 完整链。"""

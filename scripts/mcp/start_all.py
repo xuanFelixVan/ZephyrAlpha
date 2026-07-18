@@ -39,7 +39,6 @@ from _shared.constants import REPO_ROOT  # noqa: E402
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
 SERVER_SCRIPTS: list[tuple[str, str]] = [
-    ("knowledge_base", "src/zephyr/mcp/knowledge_base_server.py"),
     ("gate_engine", "src/zephyr/mcp/gate_engine_server.py"),
     ("doc_guard", "src/zephyr/mcp/doc_guard_server.py"),
     ("sentinel", "src/zephyr/mcp/sentinel_server.py"),

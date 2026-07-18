@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.gateway_server
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.mcp.error_codes; zephyr.integration.mcp.audit_logger; zephyr.integration.mcp.rate_limiter; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.protocol; zephyr.integration.mcp.knowledge_base_server; zephyr.integration.mcp.gate_engine_server; zephyr.integration.mcp.doc_guard_server; zephyr.integration.mcp.sentinel_server; zephyr.integration.mcp.blueprint_search_server; zephyr.integration.mcp.task_manager_server; zephyr.integration.mcp.governance_server; zephyr.integration.mcp.telemetry_server; zephyr.integration.mcp.vector_memory_server
+# [DEPENDENCIES] zephyr.integration.mcp._base_server; zephyr.integration.mcp.error_codes; zephyr.integration.mcp.audit_logger; zephyr.integration.mcp.rate_limiter; zephyr.security.llm_defense.llm_security.gateway; zephyr.security.llm_defense.llm_security.protocol; zephyr.integration.mcp.gate_engine_server; zephyr.integration.mcp.doc_guard_server; zephyr.integration.mcp.sentinel_server; zephyr.integration.mcp.blueprint_search_server; zephyr.integration.mcp.task_manager_server; zephyr.integration.mcp.governance_server; zephyr.integration.mcp.telemetry_server; zephyr.integration.mcp.vector_memory_server
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] prototype
@@ -189,13 +189,6 @@ def _default_routes() -> dict[str, dict[str, Any]]:
             "handler": None,
             "prefix": "task_manager.",
         },
-        "knowledge_base": {
-            "module": "knowledge_base_server",
-            "server_id": "knowledge_base",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "knowledge_base.",
-        },
         "gate_engine": {
             "module": "gate_engine_server",
             "server_id": "gate_engine",
@@ -282,12 +275,6 @@ class MCPGateway(BaseMCPServer):
         self._register_gateway_tools()
 
     def _init_server_handlers(self) -> None:
-        try:
-            from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
-
-            self._server_instances["knowledge_base"] = KnowledgeBaseServer()
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _log.warning("kb server init failed: %s", exc, exc_info=True)
         try:
             from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 
@@ -649,7 +636,6 @@ class MCPGateway(BaseMCPServer):
         lower = tool_name.lower()
         mapping: list[tuple[str, str]] = [
             ("task_manager.", "task_manager"),
-            ("knowledge_base.", "knowledge_base"),
             ("gate_engine.", "gate_engine"),
             ("session_handoff.", "session_handoff"),
             ("intent_router.", "intent_router"),

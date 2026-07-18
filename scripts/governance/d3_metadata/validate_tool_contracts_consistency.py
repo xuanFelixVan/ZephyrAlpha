@@ -57,7 +57,6 @@ MCP_DIR = REPO_ROOT / "src/zephyr/mcp"
 
 SERVER_MAP: dict[str, str] = {
     "task_manager": "task_manager_server.py",
-    "knowledge_base": "knowledge_base_server.py",
     "gate_engine": "gate_engine_server.py",
     "session_handoff": "doc_guard_server.py",
     "intent_router": "sentinel_server.py",

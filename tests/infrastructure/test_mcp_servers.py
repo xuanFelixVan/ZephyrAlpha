@@ -12,7 +12,6 @@ Unit tests for 5 MCP Servers (T-3-04, B15)
 验收标准：每个 Server ≥ 3 条单元测试，合计 ≥ 15 条，覆盖：
   - BaseMCPServer: tools/list、tools/call、initialize、ping、unknown method、stdio run
   - Task Manager（FastMCP）→ tests/infrastructure/test_task_manager_mcp.py
-  - KnowledgeBaseServer: search、upsert_ke、get_ke
   - GateEngineServer: run_g1_write、run_g4_contract、submit_exemption
   - DocGuardServer: create_package、validate_package、emit_manual_event
   - SentinelServer: map_intent、reload_keywords、evaluate_golden_set
@@ -31,9 +30,6 @@ from zephyr.integration.mcp._base_server import (
 )
 from zephyr.integration.mcp.doc_guard_server import create_server as make_doc_server
 from zephyr.integration.mcp.gate_engine_server import create_server as make_gate_server
-from zephyr.integration.mcp.knowledge_base_server import (
-    create_server as make_kb_server,
-)
 from zephyr.integration.mcp.sentinel_server import create_server as make_sentinel_server
 
 # ---------------------------------------------------------------------------
@@ -151,92 +147,6 @@ class TestBaseMCPServer:
         out.seek(0)
         response = json.loads(out.read().strip())
         assert "error" in response
-
-
-# KnowledgeBaseServer 测试
-# ===========================================================================
-
-
-class TestKnowledgeBaseServer:
-    def setup_method(self) -> None:
-        self.server = make_kb_server(enable_rbac=False)
-
-    def test_tools_list_has_six_tools(self) -> None:
-        result = _ok(_call(self.server, "tools/list"))
-        names = [t["name"] for t in result["tools"]]
-        assert "knowledge_base.search" in names
-        assert "knowledge_base.upsert_ke" in names
-        assert "knowledge_base.get_ke" in names
-        assert len(names) == 6
-
-    def test_upsert_and_get_ke(self) -> None:
-        upsert = _tool_result(
-            self.server,
-            "knowledge_base.upsert_ke",
-            {
-                "ke_id": "KE-001",
-                "title": "Test Entry",
-                "category": "best_practice",
-                "content": "Use structlog for logging.",
-                "source_file": "docs/test.md",
-            },
-        )
-        assert upsert["ke_id"] == "KE-001"
-        assert "fingerprint_sha256" in upsert
-
-        get = _tool_result(self.server, "knowledge_base.get_ke", {"ke_id": "KE-001"})
-        assert get["title"] == "Test Entry"
-
-    def test_get_ke_not_found_returns_error(self) -> None:
-        err = _err(_tool_call(self.server, "knowledge_base.get_ke", {"ke_id": "KE-999"}))
-        assert "ZA-KB-0005" in err["message"]
-
-    def test_search_returns_hits(self) -> None:
-        _tool_result(
-            self.server,
-            "knowledge_base.upsert_ke",
-            {
-                "ke_id": "KE-002",
-                "title": "Prompt Registry",
-                "category": "best_practice",
-                "content": "YAML-driven prompt template registry with token budget.",
-                "source_file": "src/infra/prompt_registry.py",
-            },
-        )
-        result = _tool_result(
-            self.server,
-            "knowledge_base.search",
-            {
-                "query_text": "YAML",
-                "score_threshold": 0.0,
-            },
-        )
-        assert result["total_scanned"] >= 1
-        assert "latency_ms" in result
-
-    def test_rebuild_index(self) -> None:
-        result = _tool_result(
-            self.server,
-            "knowledge_base.rebuild_index",
-            {
-                "collection": "ke_entries",
-            },
-        )
-        assert "chunks_indexed" in result
-        assert "duration_seconds" in result
-
-    def test_invalid_collection_returns_error(self) -> None:
-        err = _err(
-            _tool_call(
-                self.server,
-                "knowledge_base.search",
-                {
-                    "query_text": "test",
-                    "collection": "invalid_collection",
-                },
-            )
-        )
-        assert "ZA-KB-0001" in err["message"]
 
 
 # ===========================================================================
