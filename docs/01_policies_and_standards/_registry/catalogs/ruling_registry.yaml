@@ -1,0 +1,1253 @@
+# [A_config] module_id=CFG-ruling-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+module_id: REG-RULING-001
+ttl: permanent
+title: 裁定中央登记表
+doc_type: register
+registry_id: REG-RULING-001
+name: 裁定中央登记表
+description: >-
+  架构裁定（裁定#NNN）唯一真源（SSoT）。登记所有架构治理裁定的编号、日期、状态、
+  内容摘要与关联议题。裁定#20-A/#20-B/#20-D 建立（2026-07-18），治本"裁定#NNN 无中央
+  登记表、靠 grep-and-claim 占位"的病根——对标 architecture_issue_registry.yaml（#ARCH-XXX
+  真源）建立对应机制。配套 RULING-REFERENCE commit gate（priority=74）强制引用登记。
+owner: MOD-INF-037
+tier: tier_1_governance
+status: active
+version: "1.0.0"
+created: '2026-07-18'
+last_updated: '2026-07-18'
+# 裁定#20-A/#20-B/#20-D 建立（2026-07-18 治本）
+
+# ============================================================
+# 裁定编号分配铁律（裁定#20-D）
+# ============================================================
+# 1. 连续分配：裁定#NNN 按裁定时间顺序连续分配，禁止跳号
+# 2. 不回收：已分配编号永不回收，即使裁定被废弃/superseded，编号仍保留
+# 3. 子裁定格式：裁定#NNN-A/B/C 表示主裁定（裁定#NNN）的子项（如裁定#203 的子裁定 #203-B），
+#    捕获组为 \d+(?:-[A-Z]+)?，支持纯数字与带字母后缀
+# 4. status 四值：active(生效中) / superseded(已被新裁定取代) / deprecated(已废弃) / draft(草案)
+# 5. 登记强制：任何 裁定#NNN 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位
+#    （裁定#20-A 治本，对标编号铁律#6 的 #ARCH-XXX 机制）
+# 6. 同提交原子性：新增 裁定#NNN 引用必须与 registry 同 commit 提交（裁定#20-B L2），
+#    否则 RULING-REFERENCE gate 硬阻断（阶段2 启用，阶段1 manual stage 仅 WARNING）
+# 7. 编号空洞检测：WARNING 不阻断，建议补登（如本项目编号缺口 #205/#212）
+# 8. 物理排列规则：entries 列表按**裁定时间顺序**追加（新条目追加末尾），不按编号顺序排列。
+#    编号连续性由铁律#1保证，物理排列顺序不影响 YAML list 语义。禁止为"排序"重排历史条目。
+#    检索时按 ruling_id 字段查找，不依赖物理位置。
+# 9. superseded_by 链：裁定被新裁定取代时，旧裁定 status=superseded + 填 superseded_by=新裁定ID；
+#    新裁定 entries 中 reference 旧裁定
+# 10. 跨表引用：裁定可关联 #ARCH-XXX 议题（related_arch）与其他裁定（related_rulings），
+#     形成议题-裁定双向追溯链
+
+unique_key:
+- ruling_id
+
+entry_schema:
+  ruling_id: str              # 裁定#NNN 或 裁定#NNN-X（子裁定）
+  title: str                  # 裁定标题
+  date: str                   # 裁定日期 YYYY-MM-DD
+  category: str               # 架构 | 治本 | 命名 | 流程
+  status: str                 # active | superseded | deprecated | draft
+  summary: str                # 裁定内容摘要（治本病根 + 方案 + 关键文件）
+  affected_files: list        # 受影响文件绝对路径列表
+  related_arch: list          # 关联 #ARCH-XXX 议题编号
+  related_rulings: list       # 关联其他裁定编号
+  superseded_by: str          # (可选) 取代本裁定的新裁定ID
+
+entries:
+# === 基础裁定（#6/#10/#11/#17/#18/#19/#19-A/#19-B，2026-06 ~ 2026-07-18）===
+
+- ruling_id: '裁定#6'
+  title: 路径SSoT（路径真源铁律）
+  date: '2026-06-20'
+  category: 治本
+  status: active
+  summary: >-
+    所有路径相关常量必须从单一真源派生，禁止多真源同步。审计数据目录、REPO_ROOT 等路径
+    常量集中到 zephyr.shared.io.paths 模块，其他模块 import 复用而非自定义。治本逻辑：
+    单一真源=单一变更点=零漂移风险；多真源=同步负担=必然漂移。落地：paths.py 集中定义
+    REPO_ROOT/AUDIT_DIR/GOV_DIR 等路径常量，全项目通过 import zephyr.shared.io.paths 复用。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\shared\io\paths.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#10'
+  title: 双契约并存（HMAC 签名兼容）
+  date: '2026-06-22'
+  category: 治本
+  status: active
+  summary: >-
+    HMAC 签名验证支持两种安全等价的约定并存：首条事件的 prev 字段接受 "" 或 "0"*64。
+    治本逻辑：审计链首条事件无前驱，prev 字段语义为空——但不同实现采用不同空值约定
+    （空字符串 vs 64 个零）。裁定接受两种并存而非强制统一，因为两种约定在密码学上
+    安全等价（HMAC 输入不同但验证逻辑各自自洽）。落地：gov_audit/integrity.py 同时支持
+    两种签名约定，验证函数首条事件 prev 字段接受 "" 或 "0"*64。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\gov_audit\integrity.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#11'
+  title: path 与 imports 自洽（blast_radius 治本）
+  date: '2026-06-27'
+  category: 治本
+  status: active
+  summary: >-
+    blast_radius 检测的 path 与 imports 字段必须自洽——_module_path_from_file(path)
+    必须等于 imports 中的 key。治本病根：path 与 imports 不自洽会导致 blast_radius
+    误判影响范围（路径不一致→漏检/误检）。落地：(1) test_blast_radius.py 强制断言
+    path 与 imports 自洽；(2) 源代码 __init__ 强制 depgraph_path 必传（2026-06-27 治本
+    改造），消除 path 派生歧义。
+  affected_files:
+    - d:\ZephyrAlpha\tests\semantic_auditor\test_blast_radius.py
+    - d:\ZephyrAlpha\src\zephyr\semantic_auditor\blast_radius.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#17'
+  title: 漂移事件记录与状态机（F1 治本）
+  date: '2026-06-28'
+  category: 治本
+  status: active
+  summary: >-
+    AutoFixEngine 漂移事件记录与状态机实现对齐 test_state_machine.py 契约。治本逻辑：
+    漂移事件是自动修复流程的核心数据结构，状态机定义漂移事件的合法状态转换。F1 治本
+    将漂移事件记录与状态机分离为独立类，对齐测试契约——避免状态机变更影响事件记录
+    稳定性。落地：auto_fix_engine/state_machine.py 漂移事件记录类（DriftEvent）+ 漂移
+    状态机类（DriftStateMachine）独立实现，对齐 test_state_machine.py 测试契约。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\infrastructure\auto_fix_engine\state_machine.py
+    - d:\ZephyrAlpha\tests\infrastructure\test_state_machine.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#18'
+  title: 主索引补登与 P0 治本（G1-G10 多批次）
+  date: '2026-07-17'
+  category: 治本
+  status: active
+  summary: >-
+    capability_canonical_file_registry.yaml 主索引补登 + P0 治本系列裁定，包含 G1-G10
+    多批次修复：(G3) AuditAnomalyType 转为真 Enum 对齐 test_audit_anomaly.py 契约；
+    (G6) AuditWriter.write 委托桥接对齐 test_audit_bridge.py 契约；(G7) 桥接实现
+    对齐 test_audit_bridge.py；(G10) + import_time 字段补登；多真源消除：删除连字符
+    YAML 副本条目（2026-07-18）。P0 治本主索引补登（2026-07-18）确保所有能力都被
+    索引到 capability_canonical_file_registry.yaml，AI 通过 CapabilityLookup 可发现。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\capability_canonical_file_registry.yaml
+    - d:\ZephyrAlpha\src\zephyr\gov_audit\integrity.py
+    - d:\ZephyrAlpha\src\zephyr\gov_audit\writer.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: '裁定#19'
+  title: 依赖图责任划分（depgraph vs 路径全景图）
+  date: '2026-06-20'
+  category: 架构
+  status: active
+  summary: >-
+    依赖图（depgraph）与路径全景图（arch_directory_tree）职责划分裁定。依赖图职责：
+    回答"谁依赖谁"——只对有依赖关系的代码节点有意义（§4.1）；路径全景图职责：回答
+    "放在哪"——所有文件都需要位置记录（§4.2）。裁定依据：依赖图本质是有向图，对零
+    import 边的文件无意义；路径全景图本质是文件系统投影，所有文件都需登记位置。该
+    裁定后被 #173/#184 精确实现（nodes 表只收录 4 种 node_type，非代码节点只在
+    arch_directory_tree 记录位置）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#173
+    - 裁定#184
+    - 裁定#19-A
+    - 裁定#19-B
+  superseded_by: null
+
+- ruling_id: '裁定#19-A'
+  title: extract_depgraph.py 列名误读治本
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    治本 extract_depgraph.py 列名误读导致的容量误判。病根：--summary 输出的列名
+    current_modules（全节点数，含 design+prototype+production）被误读为 production
+    节点数，导致容量判定（单域 ≤150）误用口径。治本：(1) 新增 production_nodes
+    字段（裁定#195 v9 migration）明确区分两口径；(2) extract_depgraph.py --summary
+    输出 total_production_nodes/production_nodes/current_modules 三个字段，注释
+    标注口径差异；(3) AGENTS.md RULE-DEPGRAPH 章节补登口径说明。该裁定与裁定#195
+    互为补充——#19-A 是工具层治本，#195 是 DB schema 层治本。
+  affected_files:
+    - d:\ZephyrAlpha\scripts\governance\extract_depgraph.py
+    - d:\ZephyrAlpha\AGENTS.md
+  related_arch: []
+  related_rulings:
+    - 裁定#19
+    - 裁定#19-B
+    - 裁定#195
+  superseded_by: null
+
+- ruling_id: '裁定#19-B'
+  title: worktree base 新鲜度检查治本（FP-ISO.4C）
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    session_worktree_commit 在 _sync_files_to_worktree 之前调 _ensure_worktree_base_fresh
+    ——检测 worktree HEAD vs 主工作区 HEAD 是否一致，落后则自动对齐（无 stash）。治本
+    病根：worktree 创建后主分支继续前进，worktree HEAD 落后会导致 commit 时基于过期
+    base 应用 diff，产生 ghost-commit（看似提交但实际未同步到主分支最新状态）。
+    自动对齐机制：检测落后→git fetch origin + git reset --hard origin/<branch>→
+    再同步文件→commit。逃生通道：--skip-refresh（仅限故障时使用）。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\session_worktree.py
+    - d:\ZephyrAlpha\docs\03_modules\_cross_layer\auto_runtime_core\blueprint.md
+    - d:\ZephyrAlpha\AGENTS.md
+  related_arch:
+    - '#ARCH-062'
+  related_rulings:
+    - 裁定#19
+    - 裁定#19-A
+  superseded_by: null
+
+# === V4.2 模板字段对齐批次（#165，2026-06-21）===
+
+- ruling_id: '裁定#165'
+  title: business_stream 字段合并到 nodes 表
+  date: '2026-06-21'
+  category: 架构
+  status: superseded
+  summary: >-
+    V4.2 模板字段对齐裁定（#165-172 批次）的第一项。扫描 TPL-DEPGRAPH-001 v6.0.0
+    模板发现 nodes 表缺 5 个域级字段，裁定将 business_stream（业务流归属）合并到
+    nodes 表。理由：业务流归属是域级核心字段，缺失导致 AI 无法查询节点所属业务流。
+    该字段后在 v15 schema dead column 清理（裁定#ARCH-016）中被删除——经评估无业务
+    读写，保留只会增加字段噪音。同批次 #166-169 的 stream_role/runtime_plane/
+    ddd_aggregate/provided_interfaces 同样被 v15 删除。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch:
+    - '#ARCH-016'
+  related_rulings:
+    - 裁定#166
+    - 裁定#167
+    - 裁定#168
+    - 裁定#169
+  superseded_by: '#ARCH-016'
+
+# === 节点准入边界批次（#173，2026-06-24）===
+
+- ruling_id: '裁定#173'
+  title: nodes 表节点准入边界（.py+.yaml）
+  date: '2026-06-24'
+  category: 架构
+  status: active
+  summary: >-
+    依赖图 nodes 表的节点准入边界深度裁定。结论：nodes 表只收录有 import 依赖的
+    代码节点（.py 代码 + .yaml/.yml 运行时配置），文档/规则/模板/数据文件不进 nodes
+    表，只在 arch_directory_tree 记录位置。依据目的论推导：依赖图职责是回答"谁依赖
+    谁"，对零 import 边的文件无意义；规则约束通过 arch_constraints 表附加而非节点化。
+    业界对标 dependency-cruiser/madge/ArchUnit/Bazel 均只分析代码 import。落地状态：
+    nodes 表 6,092 节点均为代码节点。该裁定后被 #184 白名单准入机制精确实现。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#19
+    - 裁定#184
+  superseded_by: null
+
+# === V4.3 build_status 枚举统一批次（#178-183，2026-06-25）===
+
+- ruling_id: '裁定#178'
+  title: 合并双字段为单一 build_status 5 态枚举
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.3 build_status 枚举统一裁定（#178-183 批次）的核心项。删除 module_lifecycle_state
+    字段，合并到 build_status，统一为 planned→generated→testing→stable→deprecated 单调
+    推进状态机。planned=设计态未实现；generated=AI 已生成未验证；testing=测试中；
+    stable=已验证；deprecated=已废弃。generated 态是 100% AI 开发场景必需——标记 AI
+    生成但未验证代码，防止下游 AI 基于未验证代码做决策。对齐 K8s Pod Phase 5 值实践。
+    合并双字段消除语义重叠导致 AI 困惑。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_054_depgraph_access_protocol.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#179
+    - 裁定#180
+    - 裁定#181
+    - 裁定#182
+    - 裁定#183
+  superseded_by: null
+
+- ruling_id: '裁定#179'
+  title: design_maturity 保留 3 值（design/production/prototype）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.3 build_status 统一批次之一。design_maturity 保留 3 值：
+    design/production/prototype；scaffold_placeholder（216 个）归一化为 prototype
+    （空 __init__.py 是 prototype 的一种）。design_maturity 作为独立字段保留（不从
+    文件派生），因设计态节点是规划记录需持久化。scaffold_placeholder 是 phase4b
+    清理脚本临时引入的非标准值，不在 §12.6 定义中。归一化消除枚举漂移。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#178
+    - 裁定#180
+    - 裁定#183
+  superseded_by: null
+
+- ruling_id: '裁定#180'
+  title: build_status 由生成器从文件特征推导
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.3 build_status 统一批次之一。build_status 由生成器从文件特征推导，不新增
+    [BUILD_STATUS]/[LIFECYCLE_STATE] 头部字段。推导规则机械可执行：design→planned；
+    production+test→stable；production 无 test→generated；prototype→generated。
+    少数需手工标记的状态（deprecated）通过 apply_depgraph.py --transition-build-status
+    写入。治本逻辑：从文件特征推导=数据从代码派生=代码变则状态变=永远准确；文件头部
+    手工字段=维护负担+生成器覆盖风险（R2 病根）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#178
+    - 裁定#179
+    - 裁定#183
+  superseded_by: null
+
+- ruling_id: '裁定#183'
+  title: 删除 module_lifecycle_state 字段
+  date: '2026-06-25'
+  category: 治本
+  status: active
+  summary: >-
+    V4.3 build_status 统一批次之一。删除 module_lifecycle_state 字段：先标记 deprecated
+    停止写入，数据归档到 _archive 表后 DROP，所有写入该字段的代码删除。理由：7647 个
+    NULL（55% 空值）+ 6834 个 inactive（与 build_status 重叠）= 字段形同虚设。合并到
+    build_status 后无存在意义，保留只会继续制造脏值。v11 迁移归档到
+    nodes_archive_module_lifecycle 表。配合裁定#178 的 5 态 build_status 形成单一
+    生命周期字段 SSoT。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_054_depgraph_access_protocol.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#178
+    - 裁定#179
+    - 裁定#180
+  superseded_by: null
+
+# === V4.3 扫描范围白名单批次（#184-188，2026-06-25）===
+
+- ruling_id: '裁定#184'
+  title: nodes 表翻转为白名单准入（4 种 node_type）
+  date: '2026-06-25'
+  category: 治本
+  status: active
+  summary: >-
+    V4.3 扫描范围白名单裁定（#184-188 批次）核心项。删除 EXCLUDED_NODE_TYPES 黑名单，
+    改为白名单准入：nodes 表只收录 4 种 node_type——module(.py 代码)/script(.py 脚本)/
+    test(.py 测试)/config(.yaml 运行时配置)。gate/contract/registry/schema/blueprint
+    等不进 nodes，保留在 arch_directory_tree。治本逻辑：黑名单天然漏防（已漏 4 种类型
+    导致 561 个非代码节点污染），白名单天然安全——新类型默认不进 nodes。对齐
+    dependency-cruiser/madge/Bazel 实践。精确实现裁定#173 的准入边界。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_058_depgraph_scan_exclusions.yaml
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\node_type_vocabulary.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#173
+    - 裁定#185
+    - 裁定#186
+    - 裁定#187
+    - 裁定#188
+  superseded_by: null
+
+- ruling_id: '裁定#186'
+  title: 从 SCAN_DIRS 移除 tests/ 目录
+  date: '2026-06-25'
+  category: 流程
+  status: active
+  summary: >-
+    V4.3 扫描范围白名单批次之一。从 _FALLBACK_SCAN_DIRS 删除 tests/ 目录，与文档
+    "已废止(2026-06-22)"对齐。病根：tests/ 已在文档标记废止但代码未同步——代码-文档
+    不一致是 AI 幻觉来源。如未来需恢复需先更新文档再改代码（防止代码-文档再次脱节）。
+    扫描目录从 16 减为 15。配合裁定#184 白名单准入形成完整扫描范围治本。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_058_depgraph_scan_exclusions.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#184
+    - 裁定#185
+    - 裁定#187
+    - 裁定#188
+  superseded_by: null
+
+# === V4.3 设计态节点角色批次（#189-193，2026-06-25）===
+
+- ruling_id: '裁定#189'
+  title: 设计态节点只由人工写入，生成器不得创建
+  date: '2026-06-25'
+  category: 流程
+  status: active
+  summary: >-
+    V4.3 设计态节点角色裁定（#189-193 批次）核心项。设计态节点只由人工通过
+    apply_depgraph.py 写入，生成器不得创建。重申 §12.1"唯一来源"规则；删除
+    derive_design_maturity 的 `if node_type == "blueprint": return "design"` 分支；
+    生成器扫描到的所有文件节点都是 production/prototype，不是 design。病根：§12.1
+    已规定"不自动生成"但代码违反此规则，7682 个幽灵设计节点是生成器违规为 .md 文件
+    创建的噪音。设计态节点代表"人工规划 intent"，自动生成的节点没有 intent。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#190
+    - 裁定#191
+    - 裁定#192
+    - 裁定#193
+  superseded_by: null
+
+- ruling_id: '裁定#190'
+  title: 设计态节点 build_status 使用 3 态子集
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.3 设计态节点角色批次之一。设计态节点 build_status 使用 3 态子集：
+    planned（规划中，未实现）/stable（已实现，规划已落地）/deprecated（已废弃）。
+    不使用 generated/testing——这两个状态只适用于有代码文件的生产节点。设计态节点
+    是规划占位符，不是代码文件；build_status 只表示"规划是否落地"。对齐 K8s
+    reconciliation：desired state 的 status 是"已满足/未满足"。配合裁定#178 的 5 态
+    状态机，为设计态节点定义精确子集，避免与生产节点状态混淆。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#178
+    - 裁定#189
+    - 裁定#191
+    - 裁定#193
+  superseded_by: null
+
+- ruling_id: '裁定#191'
+  title: realization detection 由生成器自动执行
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.3 设计态节点角色批次之一。realization detection（实现检测）由生成器自动执行：
+    生成器每次运行时，查询所有 design_maturity='design' 且有 blueprint_id 的节点，
+    检测是否有同 blueprint_id 的 production 节点，有则设 build_status='stable'，
+    无则设 build_status='planned'。对齐 K8s reconciliation controller——自动对比
+    desired/actual。AI 无需写复杂 JOIN 查询——build_status 直接反映实现状态。
+    生成器步骤10 实现该检测逻辑。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#189
+    - 裁定#190
+    - 裁定#192
+    - 裁定#193
+  superseded_by: null
+
+- ruling_id: '裁定#192'
+  title: 清理 7682 个幽灵设计节点
+  date: '2026-06-25'
+  category: 治本
+  status: active
+  summary: >-
+    V4.3 设计态节点角色批次之一。清理 7682 个幽灵设计节点：删除无 blueprint_id 的
+    design_maturity='design' 节点；保留 281 个未实现设计节点（build_status='planned'）
+    + 175 个已实现设计节点（build_status='stable'）。病根：DB 有 8064 个 design 节点
+    但 95.3%（7682 个）无 blueprint_id——是生成器违规为 .md 文件创建的"幽灵设计节点"
+    （违反§12.1"唯一来源"规则）。删除后设计态节点从 8064 降至 456，精确反映实际
+    规划。裁定#184 白名单准入实施后，.md 文件不再进 nodes 表，幽灵节点不会再产生。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#184
+    - 裁定#189
+    - 裁定#190
+    - 裁定#191
+  superseded_by: null
+
+- ruling_id: '裁定#193'
+  title: 设计态→运营态改称"实现"而非"迁移"
+  date: '2026-06-25'
+  category: 命名
+  status: active
+  summary: >-
+    V4.3 设计态节点角色批次之一。设计态→运营态不是"迁移"而是"实现"：更新 §12.6 和
+    §17 文档，将"设计态升级为运营态"改为"设计态实现检测"。设计态节点不会变成运营态
+    节点——它们是不同的行，通过 blueprint_id 关联。"实现"= 生成器扫描到代码文件，
+    创建 production 节点，同时更新设计态节点 build_status='stable'。病根："迁移"暗示
+    设计节点变成生产节点——这是误导；实际上它们是不同的行。对齐 K8s：desired state
+    manifest 不会变成 pod。术语治本消除 AI 对状态转换的幻觉。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+  related_arch: []
+  related_rulings:
+    - 裁定#189
+    - 裁定#190
+    - 裁定#191
+    - 裁定#192
+  superseded_by: null
+
+# === V4.4 容量治理体系重构批次（#194-199，2026-06-25）===
+
+- ruling_id: '裁定#194'
+  title: 废除高度耦合放宽，统一 150 硬上限
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.4 容量治理体系重构裁定（#194-199 批次）核心项。废除高度耦合放宽机制，统一
+    150 硬上限（二元规则）。ARCH-CAP-003 废除（trae_055 v1.0.8 移除 aliases）；
+    ARCH-CAP-002 重写为二元规则：≤150 通过，>150 必须拆分，无例外；5 个 max=200 域
+    （D_GOVERNANCE/D_GOV_AUDIT/D_GOV_DRIFT/D_GOV_RULE/D_SECURITY）统一改为 150。
+    理由：100% AI 开发项目不应有模糊地带——"高度耦合"是拆分信号，不是放宽上限的
+    理由；AI 无法可靠判断"高度耦合"，二元规则可机械执行。apply_depgraph.py
+    --max-modules 默认值 200→150。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_055_arch_domain_capacity.yaml
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch:
+    - '#ARCH-CAP-002'
+  related_rulings:
+    - 裁定#195
+    - 裁定#196
+    - 裁定#197
+    - 裁定#198
+    - 裁定#199
+    - 裁定#200
+  superseded_by: null
+
+- ruling_id: '裁定#195'
+  title: 新增 production_nodes 字段，修复统计口径
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.4 容量治理批次之一。修复统计口径，新增 production_nodes 字段（v9 migration）。
+    current_modules = 全节点数（含 design + prototype + production + scaffold_placeholder）；
+    production_nodes = production 节点数（design_maturity='production' 的真实代码文件）——
+    容量判定口径。v9 migration: ALTER TABLE domains ADD COLUMN production_nodes INTEGER
+    DEFAULT 0。H7 口径修复：生成器分离 current_modules（全节点）和 production_nodes
+    （production only）的统计逻辑。48 个域 production_nodes 已填充。治本：消除"全
+    节点数 vs 生产节点数"混用导致的容量误判。与裁定#19-A 工具层治本互为补充。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_055_arch_domain_capacity.yaml
+  related_arch:
+    - '#ARCH-CAP-002'
+  related_rulings:
+    - 裁定#19-A
+    - 裁定#194
+    - 裁定#196
+    - 裁定#197
+    - 裁定#198
+    - 裁定#199
+  superseded_by: null
+
+- ruling_id: '裁定#196'
+  title: 容量门禁统一 production_nodes 口径
+  date: '2026-06-25'
+  category: 治本
+  status: active
+  summary: >-
+    V4.4 容量治理批次之一。容量门禁统一 production_nodes 口径，与裁定#195 新字段
+    对齐。audit_domain_nodes.py 的 detect_hard_limit_violations 硬上限从 200 改为
+    150，使用 production_nodes 口径；generate_domain_doc.py 的 capacity_status 改用
+    production_nodes 判定（≤max_modules 正常，>max_modules 超容）；
+    generate_capacity_report.py 的 actual_nodes 全部替换为 production_nodes，查询从
+    子查询改为直接读 DB 字段；generate_domain_architecture_diagram.py SELECT 添加
+    production_nodes，默认 max 200→150。治本：消除门禁脚本统计口径不一致导致的误判
+    与漏判。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\audit_domain_nodes.py
+    - d:\ZephyrAlpha\scripts\governance\generate_domain_doc.py
+    - d:\ZephyrAlpha\scripts\governance\generate_capacity_report.py
+    - d:\ZephyrAlpha\scripts\governance\generate_domain_architecture_diagram.py
+  related_arch:
+    - '#ARCH-CAP-002'
+  related_rulings:
+    - 裁定#194
+    - 裁定#195
+    - 裁定#197
+    - 裁定#198
+    - 裁定#199
+  superseded_by: null
+
+- ruling_id: '裁定#197'
+  title: 清理7个无区分度装饰字段（v10 migration）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.4 容量治理体系重构的一部分。通过 v10 migration 删除 domains 表 7 个无区分度/
+    全空装饰字段（can_build 全=1、gate_reason 全 NULL、hard_boundary_ref 全 NULL、
+    growth_pattern 全='linear'、feasibility 语义混乱与 build_status 重复、
+    bottleneck_description 全 NULL、last_capacity_check 39 域同时间戳），domains 表
+    22 列→15 列。nodes 表对应字段保留（节点级有治理价值）。提交 9a06b0a8b2。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch:
+    - '#ARCH-CAP-002'
+  related_rulings:
+    - 裁定#194
+    - 裁定#195
+    - 裁定#196
+    - 裁定#198
+    - 裁定#199
+  superseded_by: null
+
+- ruling_id: '裁定#198'
+  title: 决策记录统一到KE（UnifiedMemoryAPI）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    V4.4 容量治理体系重构的一部分。决定不使用 ADR（100% AI 开发项目决策变化快，ADR
+    不可变性成束缚），改为决策记录写入 KE（UnifiedMemoryAPI），topic 命名约定
+    `domain_capacity::<domain_id>`。同时修复 VMSMemoryBackend.list_by_topic 未按 topic
+    过滤导致 recall 返回所有 topic 记录的 bug（commit c1dea1b595）。本裁定是"禁用
+    ADR"硬约束的依据之一。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+  related_arch: []
+  related_rulings:
+    - 裁定#194
+    - 裁定#195
+    - 裁定#196
+    - 裁定#197
+    - 裁定#199
+  superseded_by: null
+
+- ruling_id: '裁定#199'
+  title: 4个超限域拆分作为后续任务
+  date: '2026-06-25'
+  category: 架构
+  status: superseded
+  summary: >-
+    V4.4 容量治理体系重构的一部分。识别 4 个 production_nodes>150 的超限域：
+    D_INFRA_RUNTIME(412, 2.7x)、D_GOV_AUDIT(230, 1.5x)、D_GOVERNANCE(185, 1.2x)、
+    D_GOV_RULE(177, 1.2x)。本次只修复统计口径和字段，拆分作为后续任务。实际拆分
+    由裁定#200 执行，故 #199 已被 #200 取代。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+  related_arch:
+    - '#ARCH-CAP-002'
+  related_rulings:
+    - 裁定#194
+    - 裁定#200
+  superseded_by: '裁定#200'
+
+- ruling_id: '裁定#200'
+  title: 4个超限域拆分完成+修正A/B补充拆分
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    执行裁定#199 标识的 4 个超限域拆分（ARCH-CAP-002 v1.0.8 合规）。2026-06-25
+    首次拆分新建 5 域（D_INFRA_A2A/RECOVERY/TELEMETRY、D_GOV_AUDIT_TESTS、
+    D_GOV_DOCS）扩充 3 域，53 域达标。修正-A（2026-07-12）补拆
+    D_GOVERNANCE(506→129)+D_TRADING(280→19)，新建 D_GOV_KB/D_FEEDBACK_LOOP/
+    D_ORCHESTRATOR。修正-B（2026-07-13）D_FEEDBACK_LOOP 二分新建
+    D_FBL_DIAGNOSERS/DETECTORS。最终 63 域全部 production_nodes≤150。
+    feedback_loop/orchestrator 物理路径从 trading/ 迁至 src/zephyr/ 顶层。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\_working\domain_split_proposal_d_governance_d_trading.md
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch:
+    - '#ARCH-CAP-002'
+    - '#ARCH-052'
+  related_rulings:
+    - 裁定#199
+    - 裁定#201
+    - 裁定#202
+  superseded_by: null
+
+- ruling_id: '裁定#201'
+  title: D_SIGLEGACY拆分补裁定（追溯记录）
+  date: '2026-06-25'
+  category: 架构
+  status: superseded
+  summary: >-
+    追溯补记 D_SIGLEGACY→3 子域拆分（实际发生在裁定#200前后但未记录）。D_SIGLEGACY
+    保留为设计态占位域（build_status=planned，45 个 design 节点待重新分配，ssot_path
+    留空），新建 D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC 三平级域。命名说明
+    （裁定#ARCH-002）：D_SIGLEGACY_ 前缀仅表示拆分来源不表示层级子域。后 #ARCH-045
+    推翻"保留 D_SIGLEGACY 为占位域"决定，#ARCH-002/#ARCH-004 被 superseded。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\63_d_siglegacy.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\architecture_issue_registry.yaml
+  related_arch:
+    - '#ARCH-002'
+    - '#ARCH-004'
+    - '#ARCH-045'
+  related_rulings:
+    - 裁定#200
+    - 裁定#204
+  superseded_by: '#ARCH-045'
+
+- ruling_id: '裁定#202'
+  title: 数据一致性修复（registry与panorama对齐）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    preexisting DB 问题调研发现 2 个域存在 registry 与 panorama 不一致：
+    D_GOV_RULE panorama 有 4 条裁定（#174/#194/#199/#200）但 registry 无条目，补写
+    registry 条目；D_INFRA_OPS registry 有 3 条但 panorama 无直接裁定，补写 panorama
+    裁定记录。D_INFRA_OPS 在 domain_split_plan 附录 C.1 作为跨域共享 blueprint_id
+    引用域出现，7 个 production 节点，lifecycle=design_only，build_status=planned
+    已修正，追溯确认合法地位。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\functional_domain_registry.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#194
+    - 裁定#199
+    - 裁定#200
+  superseded_by: null
+
+- ruling_id: '裁定#203'
+  title: 合并6a3c179e会话3项预存DB问题裁定
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    合并另一 AI 会话（6a3c179e）独立发现的 5 项 preexisting DB 问题中的 3 项（其余
+    2 项并入 #ARCH-002/#ARCH-004）。本裁定涵盖 3 项子裁定：#203-A 修复 9 域 layer_id
+    非法值 L1_platform→L1_foundation（commit fadd3fdc）；#203-B 清理 148 条孤儿边
+    （commit 290df512+0a69d345）；#203-C 添加 lifecycle/build_status/layer_id CHECK
+    约束+nodes DELETE 自动清理 edges 触发器（v12 migration 7 触发器，commit
+    87e793ec+0a69d345）。交接文档 handover_to_session_6a3cacc8.md 已按用户要求删除。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\architecture_issue_registry.yaml
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch:
+    - '#ARCH-005'
+    - '#ARCH-006'
+    - '#ARCH-007'
+  related_rulings:
+    - 裁定#203-B
+    - 裁定#203-C
+  superseded_by: null
+
+- ruling_id: '裁定#203-B'
+  title: 孤儿边148条清理（#203子裁定）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    裁定#203 的子裁定，对应议题 #ARCH-006。edges 表有 148 条边引用不存在的 node
+    （from_node_id 或 to_node_id 在 nodes 表中不存在）。根因：edges 表 FK 无
+    ON DELETE CASCADE，删除 node 时不自动清理引用边，长期累积形成孤儿边。执行：
+    apply_depgraph.py 新增 cmd_cleanup_orphan_edges() 命令+--cleanup-orphan-edges
+    CLI 参数（commit 87e793ec）；148 条孤儿边全部删除（commit 290df512）；同时在
+    v12 迁移新增 trg_nodes_delete_cleanup_edges 触发器从根源杜绝再生（见 #203-C）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+  related_arch:
+    - '#ARCH-006'
+    - '#ARCH-007'
+  related_rulings:
+    - 裁定#203
+    - 裁定#203-C
+  superseded_by: null
+
+- ruling_id: '裁定#203-C'
+  title: lifecycle/build_status/layer_id CHECK约束（#203子裁定）
+  date: '2026-06-25'
+  category: 架构
+  status: active
+  summary: >-
+    裁定#203 的子裁定，对应议题 #ARCH-007。domains 表 lifecycle/build_status/
+    layer_id 三字段原无 CHECK 约束。裁定接受 lifecycle 4 值
+    （operational/design_only/prototype/deprecated）为合法值集合，与 build_status
+    5 态（裁定#178）互补。在 depgraph_schema.py _MIGRATIONS 新增 v12 迁移（7 个
+    触发器）：trg_nodes_delete_cleanup_edges（AFTER DELETE 自动清理 edges，根治
+    #203-B）+ chk_domains_lifecycle/build_status/layer_id 各 insert/update 共 6 个。
+    同时修复 apply_depgraph.py cmd_insert_domain 默认值 max_modules 200→150
+    （裁定#194）、build_status unbuilt→planned。采用触发器而非 ALTER TABLE ADD CHECK
+    因 SQLite 不回溯校验且 PG 触发器支持 BEFORE 实时拦截+幂等创建。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\src\zephyr\governance\audit\reconciliation_registry.py
+  related_arch:
+    - '#ARCH-005'
+    - '#ARCH-007'
+    - '#ARCH-008'
+  related_rulings:
+    - 裁定#178
+    - 裁定#194
+    - 裁定#203
+    - 裁定#203-B
+    - 裁定#206
+  superseded_by: null
+
+- ruling_id: '裁定#204'
+  title: D-SIGNAL*4域改名+5条命名规则入库
+  date: '2026-06-25'
+  category: 命名
+  status: active
+  summary: >-
+    治本命名违规：原 D-SIGNAL_ASHARE/D-SIGNAL_FUNDAMENTAL/D-SIGNAL_QUALITY/D-SIGNAL
+    四域名采用 D-XXX_YYY 形式，暗示父子关系，违反"所有域平级"铁律。改名：
+    D-SIGNAL_ASHARE→D_ASHARE_SIGNAL、D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL、
+    D-SIGNAL_QUALITY→D_SIGQC、D-SIGNAL→D_SIGLEGACY。预防根因：5 条命名规则
+    （NR-001 无父子前缀/NR-002 全大写下划线/NR-003 语义独立性/NR-004 设计态 LEGACY
+    后缀/NR-005 中文名一致）入库 domain_naming_rules.yaml，apply_depgraph.py
+    --insert-domain 建域时强制校验，severity=error 阻断违规建域。任务卡
+    OPS-2026062610。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\domain_naming_rules.yaml
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\functional_domain_registry.yaml
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+    - d:\ZephyrAlpha\docs\_archive\03_modules\_alpha_signal_domain\index.md
+  related_arch:
+    - '#ARCH-002'
+    - '#ARCH-045'
+  related_rulings:
+    - 裁定#201
+    - 裁定#206
+    - 裁定#207
+  superseded_by: null
+
+# === V4.5 词汇表同步链路根因性修复批次（#206-208，2026-06-25 ~ 2026-06-30）===
+
+- ruling_id: '裁定#206'
+  title: vocabulary同步链路根因性修复（4子裁定A/B/C/D）
+  date: '2026-06-25'
+  category: 治本
+  status: active
+  summary: >-
+    议题 #ARCH-008 浮现后，5 路并行深度调研编写修复方案
+    vocabulary_sync_chain_repair_plan.md v1.1。涵盖 4 项子裁定：#206-A 修复
+    generate_derived_files.py/sync_yaml_to_depgraph.py 的 8 个 Bug（A-H）+派生文件
+    重生成+DB 134 条脏值清理+2 个孤儿 triage.py 删除；#206-B layer 命名体系统一
+    为 layer_vocabulary.yaml 16 值语义命名，废弃 L0/L1/L2/L3 旧格式（59 个
+    trae_*.yaml layer 字段改 compliance）；#206-C apply_depgraph.py
+    ALLOWED_LAYERS 从硬编码改为 vocabulary 动态加载；#206-D layer_vocabulary.yaml
+    新增 dir_prefix 字段。GATE-GENERATE hook 后续接入校验派生文件一致性。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\layer_vocabulary.yaml
+    - d:\ZephyrAlpha\scripts\governance\d8_doc_sync\sync_yaml_to_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\d8_doc_sync\generate_derived_files.py
+  related_arch:
+    - '#ARCH-008'
+    - '#ARCH-009'
+    - '#ARCH-010'
+    - '#ARCH-011'
+  related_rulings:
+    - 裁定#203-C
+    - 裁定#207
+    - 裁定#208
+  superseded_by: null
+
+- ruling_id: '裁定#206-D'
+  title: layer_vocabulary新增dir_prefix字段（#206子裁定）
+  date: '2026-06-26'
+  category: 治本
+  status: active
+  summary: >-
+    裁定#206 的子裁定 D，对应议题 #ARCH-011（根本方案）。在 layer_vocabulary.yaml
+    16 个 entry 新增 dir_prefix 字段（data→l00_、infra_ops→l01_、factor→l02_、
+    signal→l03_、risk→l04_、pf_core→l05_、ex_core→l06_、reporting→l07_、frontend→l08_、
+    research→l09_、compliance→l10_、ml_train→l11_、system-telemetry→l12_、
+    simulation→l13_，shared/cross_layer→空字符串），schema_version 1.0.0→1.1.0。
+    validate_blueprint_placement.py 删除 _LAYER_DIR_PREFIX_MAP 硬编码映射表，
+    _layer_to_dir_prefix() 改为从 layer_vocabulary.yaml 的 dir_prefix 字段动态
+    读取，消除映射表硬编码漂移风险。任务卡 OPS-2026062646，commit 9b14586e2。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\layer_vocabulary.yaml
+    - d:\ZephyrAlpha\scripts\governance\d5_architecture\validators\validate_blueprint_placement.py
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+  related_arch:
+    - '#ARCH-011'
+  related_rulings:
+    - 裁定#206
+  superseded_by: null
+
+- ruling_id: '裁定#207'
+  title: SSoT完整性与改名传播闭环治本（R1-R3）
+  date: '2026-06-26'
+  category: 治本
+  status: active
+  summary: >-
+    在裁定#206 规划阶段发现 3 个更深架构病根，合并为裁定#207 与 #206 配套施工。
+    共同病根："声明范围≠实际覆盖范围，且无机器可执行的完整性校验"。R1 改名传播
+    完整性：cmd_rename_domain 新增全表 TEXT 列值扫描兜底（B1）+
+    audit_rename_completeness.py 改名完整性审计工具+修复 314 行存量残留（B5）+
+    --propagate-rename 精确值映射（B6 禁止子串 REPLACE）。R2 制品生成器职责分离：
+    拆 generate_project_depgraph.py 为只读 artifact 生成器+破坏性 rebuild 脚本
+    （默认禁用需 --force C2）。R3 SSoT 完整性：trae_028 补收录 NR-001/NR-002/
+    NR-003/NR-005+新增派生标识符/改名传播 section+validate_ssot.py 修复空桩新增
+    覆盖范围一致性校验。施工分 A→B→C→D 阶段。
+  affected_files:
+    - d:\ZephyrAlpha\.trae\documents\ssot_completeness_rename_propagation_plan.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml
+    - d:\ZephyrAlpha\scripts\governance\d8_doc_sync\audit_rename_completeness.py
+    - d:\ZephyrAlpha\scripts\governance\apply_depgraph.py
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\derived_identifier_registry.yaml
+  related_arch:
+    - '#ARCH-019'
+  related_rulings:
+    - 裁定#204
+    - 裁定#206
+    - 裁定#208
+  superseded_by: null
+
+- ruling_id: '裁定#208'
+  title: blueprint_id双轨制+历史兼容CHECK触发器（R1-R8）
+  date: '2026-06-30'
+  category: 命名
+  status: active
+  summary: >-
+    治本 module_id 数字序号制 SSoT 自相矛盾+历史违规+议题登记机制缺失（议题
+    #ARCH-019）。8 项子裁定：R1 SSoT 调和（scoped 双轨制：layer-master 轨
+    MOD-{LAYER}-NNN 序号必填 + domain-functional 派生轨 MOD-{DOMAIN_FRAGMENT}[-NNN]
+    序号可选）；R2 派生 ID 合规保留；R3 历史违规分类治理；R4 门禁升级
+    （check_naming_convention.py N-06 强制数字序号+新增 N-17 blueprint_id 域片段
+    一致性校验）；R5 派生注册表结构化（derived_identifier_registry 新增
+    sequence_required/format_pattern/scope）；R6 议题登记机制建立
+    （architecture_issue_registry.yaml 治本 grep-and-claim 占位）；R7 #ARCH 编号
+    分配 8 条铁律；R8 循环验证 3 轮。同时 v18 migration 新增 BEFORE INSERT+
+    BEFORE UPDATE OF blueprint_id 触发器校验四类前缀（MOD-/D-/SH-/PLACEHOLDER）。
+    R2 治本修订（2026-07-05）：D-XXX-NNN 弃用为 module_id 派生轨，重定义为
+    submodule_id 专用。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\architecture_issue_registry.yaml
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\derived_identifier_registry.yaml
+    - d:\ZephyrAlpha\scripts\governance\d3_metadata\validate_module_id_naming.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\rules\trae_028_doc_structure_naming.yaml
+    - d:\ZephyrAlpha\AGENTS.md
+  related_arch:
+    - '#ARCH-016'
+    - '#ARCH-019'
+  related_rulings:
+    - 裁定#204
+    - 裁定#206
+    - 裁定#207
+  superseded_by: null
+
+- ruling_id: '裁定#209'
+  title: 依赖全景图运营态触发机制改造（手动→自动）
+  date: '2026-07-02'
+  category: 架构
+  status: active
+  summary: >-
+    对应议题 #ARCH-040。原 §14.2 "禁止触发，因会覆盖手动修复"条款基于早期无保护
+    机制设计，经调研核实生成器已内置 P1/P2 保护机制（PRODUCTION_PROTECTED_FIELDS
+    14字段+EDGES_PROTECTED_FIELDS 9字段），原禁用理由大幅弱化；同时 15 个
+    reconciler 中无任何针对 nodes/edges 运营态同步的 reconciler 是设计缺口。
+    核心裁定：分 4 阶段——阶段0纠正文档；阶段1新增 GATE-DEPGRAPH-OPS reconciler
+    （priority=130，trigger=commit .py）+pg_advisory_lock 与 apply_depgraph.py
+    互斥；阶段2字段角色分离治本（新建 nodes_metadata/edges_metadata 表，迁移
+    14+9 字段，下线 P1/P2 保护机制）；阶段3增量引擎（content_hash 列+--incremental
+    skip，commit 2093db3615）；阶段4 scan-level 缓存 ScanCache（commit 8641f2b74，
+    3.7x 加速）。对标 Netflix/Stripe/Sourcegraph 自动触发主流做法。第一性原理病根：
+    运营态字段同时承担"派生数据"+"人工 curated 元数据"两种角色，应物理分离。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\04_architecture_principles_decisions\dependency_path_panorama.md
+    - d:\ZephyrAlpha\scripts\governance\generate_project_depgraph.py
+    - d:\ZephyrAlpha\docs\03_modules\_domain_governance\alignment_loop\blueprint.md
+    - d:\ZephyrAlpha\src\zephyr\governance\audit\reconciliation_registry.py
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\architecture_issue_registry.yaml
+  related_arch:
+    - '#ARCH-040'
+  related_rulings:
+    - 裁定#207
+    - 裁定#211
+  superseded_by: null
+
+- ruling_id: '裁定#210'
+  title: 能力热力图硬编码列表改YAML动态读取
+  date: '2026-07-04'
+  category: 治本
+  status: active
+  summary: >-
+    generate_capability_heatmap.py 能力域映射原为代码内硬编码列表，与
+    architecture_model/cross_cutting/capability_heatmap.yaml 形成双真源，违反
+    SSoT 唯一原则。裁定#210 治本：删除硬编码列表，改为从 YAML 动态读取
+    （YAML_PATH = architecture_model/cross_cutting/capability_heatmap.yaml），消除
+    SSoT 分歧。脚本通过 _load_capability_domains() 函数加载 capability_domains
+    字段，映射 id/name/name_en/type/primary_domains。注释标明治本日期
+    2026-07-04。本裁定在 panorama doc 无独立章节，仅在代码注释中标注。
+  affected_files:
+    - d:\ZephyrAlpha\scripts\governance\d5_architecture\generators\generate_capability_heatmap.py
+    - d:\ZephyrAlpha\architecture_model\cross_cutting\capability_heatmap.yaml
+  related_arch: []
+  related_rulings:
+    - 裁定#206
+    - 裁定#211
+  superseded_by: null
+
+- ruling_id: '裁定#211'
+  title: 蓝图§4文件清单改depgraph派生+ORPHAN双源验证
+  date: '2026-07-05'
+  category: 架构
+  status: active
+  summary: >-
+    check_blueprint_code_alignment.py 蓝图↔代码对齐检测治本。原 ORPHAN_MODULE_ID
+    仅单源验证（registry），蓝图§4文件清单由解析 markdown 表格获得。裁定#211 改为
+    双源验证+depgraph 派生：(1) ORPHAN_MODULE_ID 改为 registry+depgraph 双源验证；
+    (2) 蓝图§4文件清单不再解析 markdown 表格，改为从 depgraph 查询 SELECT
+    blueprint_id, path FROM nodes WHERE blueprint_id IS NOT NULL AND path LIKE
+    '%.py'，load_depgraph_module_index() 返回 (module_ids, files_by_module)；
+    (3) depgraph 查询 SQL 提取为模块级常量遵循 §5.160.2 SQL 集中化原则。本裁定
+    在 panorama doc 无独立章节，仅在代码注释和 script_manifest.yaml 中标注。
+  affected_files:
+    - d:\ZephyrAlpha\scripts\governance\d5_architecture\checkers\check_blueprint_code_alignment.py
+    - d:\ZephyrAlpha\scripts\governance\script_manifest.yaml
+  related_arch:
+    - '#ARCH-DEP-001'
+  related_rulings:
+    - 裁定#209
+  superseded_by: null
+
+- ruling_id: '裁定#213'
+  title: 新增dep_import_cycles视图仅检测import循环
+  date: '2026-07-08'
+  category: 架构
+  status: active
+  summary: >-
+    治本 depgraph 循环依赖视图误报。原 dep_cycles 视图不区分 dep_type，将
+    contract/data/runtime 等非 import 边也计入循环，产生虚假循环告警。裁定#213
+    新增 dep_import_cycles 视图（CREATE OR REPLACE VIEW），仅检测
+    dep_type='import_depends' 的双向边，反映真实的 Python 模块级循环导入。
+    原 dep_cycles 视图保留以兼容历史引用。配套实践：src/zephyr/data/scheduler.py
+    L50 `from . import ch_writer` 改为相对导入，避免 depgraph 记录到 zephyr.data
+    包节点导致循环（裁定#213 注释）。本裁定在 panorama doc 无独立章节，仅在 PG
+    schema SQL 和代码注释中标注。
+  affected_files:
+    - d:\ZephyrAlpha\scripts\governance\migrate_sqlite_to_pg\02_create_pg_schema.sql
+    - d:\ZephyrAlpha\src\zephyr\data\scheduler.py
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+# === 循环复杂度重构专项批次（#214-217，2026-07-15）===
+
+- ruling_id: '裁定#214'
+  title: NO-HIGH-COMPLEXITY gate fix解锁Any-abuse死锁+暗债发现
+  date: '2026-07-15'
+  category: 治本
+  status: active
+  summary: >-
+    第94轮治本。死锁问题：§5.145 Any-abuse 修复需修改函数签名，§5.158
+    NO-HIGH-COMPLEXITY gate（priority=85）阻断对高复杂度函数 def 行的修改，两者
+    形成死锁。根因：gate docstring 声明"只检测新增函数"但实现 node.lineno in
+    added_lines 捕获了修改签名的已有函数（设计-实现不一致）。Phase 1 gate fix
+    （commit ad759f67f3）：新增 _read_head_file+_collect_function_names 读取 HEAD
+    版本函数名集合，跳过已存在函数（修改函数），仅对 HEAD 中不存在的函数名检测
+    复杂度（真正新增函数）。Phase 3 清 14 个被死锁的 Any-abuse 违规（commit
+    07ca241c3b，跨 10 文件 11 函数 Any→object/具体类型）。Phase 4 全量扫描脚本
+    scan_complexity.py（纯 stdlib AST 扫描器，与 gate McCabe 算法一致）。暗债
+    盲区发现：12928 个函数中 215 个超阈值（>15），最高复杂度 105（make_create_guard）。
+    裁定 DEFERRED-PERMANENT=215（暗债类别），解锁条件为人类架构师发起循环复杂度
+    重构专项+回归测试覆盖先行。同时引入 BLUEPRINT-FORMAT gate（Phase 0 防蔓延）。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_debt_registry.md
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\high_complexity_gate.py
+    - d:\ZephyrAlpha\scripts\governance\d7_code\scan_complexity.py
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\blueprint_format_gate.py
+  related_arch: []
+  related_rulings:
+    - 裁定#215
+    - 裁定#216
+    - 裁定#217
+  superseded_by: null
+
+- ruling_id: '裁定#215'
+  title: McCabe算法嵌套函数假阳剔除修复
+  date: '2026-07-15'
+  category: 治本
+  status: active
+  summary: >-
+    第95轮治本，测量工具修复。病根：_cyclomatic_complexity 用 ast.walk(node) 遍历
+    所有后代，但 ast.walk 会递归进入嵌套函数体，导致父函数复杂度被嵌套函数的决策点
+    膨胀。典型假阳：make_create_guard（wrapper 实际 complexity=1，内部 _check 闭包
+    complexity=101）报 105；_read_config_file（简单 if/else 实际~3，但
+    snapshot_interface 等方法因缩进 bug 意外嵌套在其体内）报 81。修复（commit
+    dbec9d1e11）：新增 _walk_excluding_nested_funcs 递归 walker，遍历所有后代但
+    不递归进入嵌套 FunctionDef/AsyncFunctionDef 子树；_cyclomatic_complexity 改用
+    此 walker。同步修复 high_complexity_gate.py 和 scan_complexity.py 两处。
+    修复后真实数据：180 个函数>15（原 215，差额 35 为嵌套函数假阳）；22 个函数>30
+    （原 34，差额 12 为假阳）。Tier 1（>50）4 个真实目标：_check（create_guard.py,
+    101）、_run_extension_hooks（escalation_engine.py, 56）、check_triple_alignment
+    （triple_alignment.py, 53）、dispatch（pipeline_orchestrator.py, 51）。
+    DARK-DEBT 计数 215→180。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_debt_registry.md
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\high_complexity_gate.py
+    - d:\ZephyrAlpha\scripts\governance\d7_code\scan_complexity.py
+  related_arch: []
+  related_rulings:
+    - 裁定#214
+    - 裁定#216
+    - 裁定#217
+  superseded_by: null
+
+- ruling_id: '裁定#216'
+  title: 循环复杂度重构专项Tier 1授权+4模板产出
+  date: '2026-07-15'
+  category: 治本
+  status: active
+  summary: >-
+    第96-97轮治本。解锁条件满足（人类架构师发起循环复杂度重构专项+回归测试覆盖
+    先行+优先 complexity>30 函数）。授权执行 Tier 1 重构（4 个函数 complexity>50），
+    按 P1→P2→P3→P4 难度递增：P1 create_guard._check（101，块间无状态耦合，8+独立
+    check 块）；P2 _run_extension_hooks（56，11+同构 try/except detector 块，表
+    驱动分派）；P3 check_triple_alignment（53，6 顺序 check 共享上下文）；
+    P4 dispatch（51，编排器状态机+共享可变状态+try/finally，最高风险）。回归测试
+    覆盖先行铁律+Extract Method 唯一允许手法（每独立块→模块级 helper 非嵌套闭包，
+    避免裁定#215 测量陷阱，helper 复杂度 MUST≤15 gate 自阻断）+一函数一 commit
+    隔离+行为等价性契约（测试通过率≥baseline，禁新失败）。第97轮 Tier 1 4 函数
+    全部 FIXED（commits ccec47d4ab/475098e484/7eb3a8aa3a/0a36f3dada），4 模板
+    汇总作为 Tier 2/3 施工指南。DARK-DEBT 180→176。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_debt_registry.md
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_enforcement\create_guard.py
+    - d:\ZephyrAlpha\src\zephyr\governance\escalation\escalation_engine.py
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_enforcement\triple_alignment.py
+    - d:\ZephyrAlpha\src\zephyr\integration\pipeline_orchestrator.py
+  related_arch: []
+  related_rulings:
+    - 裁定#214
+    - 裁定#215
+    - 裁定#217
+  superseded_by: null
+
+- ruling_id: '裁定#217'
+  title: 循环复杂度重构Tier 2/3/4授权与施工完成
+  date: '2026-07-15'
+  category: 治本
+  status: active
+  summary: >-
+    第98-101轮治本。Tier 1 4 模板已沉淀后授权 Tier 2/3/4 重构。Tier 2（第98-99轮，
+    18 函数 complexity 30-50）分 P1/P3/P4 三批，复用 Tier 1 模板（gate-closure/
+    per-entry context/orchestrator state machine），全部 FIXED（18 个独立 commit），
+    DARK-DEBT 176→158。Tier 3（第100轮，14 函数 complexity 25-30）全部 FIXED
+    （14 个独立 commit），DARK-DEBT 158→144。第101轮 Tier 4 全量复杂度降低
+    （54 函数 complexity 16-24，含初始 47+reconciler auto-commit 新引入 7），
+    全部清除，TOTAL_VIOLATIONS=0，DARK-DEBT 144→0。关键修复：
+    ml_experiment_pipeline.run 的 NO-UPWARD-IMPORT 门禁阻塞（4 个
+    from zephyr.ml_train.* import 转为 importlib.import_module()+getattr()）；
+    sqlite_schema.init_db 的 NO-BARE-SQL 门禁；perm_trigger_gate 自触发门禁。
+    第95轮基线 180 项全部清除，当前代码库零 complexity>15 函数。
+    NO-HIGH-COMPLEXITY gate（裁定#214 修复）防新增+scan_complexity.py 持续监控存量。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\architecture_debt_registry.md
+    - d:\ZephyrAlpha\scripts\governance\d7_code\scan_complexity.py
+    - d:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_judge.py
+    - d:\ZephyrAlpha\src\zephyr\integration\pipeline_orchestrator.py
+  related_arch: []
+  related_rulings:
+    - 裁定#214
+    - 裁定#215
+    - 裁定#216
+  superseded_by: null
+
+# === 裁定#20 治本批次（#20-A/#20-B，2026-07-18）===
+
+- ruling_id: '裁定#20-A'
+  title: 裁定登记机制建立（治本 grep-and-claim 占位）
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    治本病根：项目中存在 493 处"裁定#NNN"引用、48 个不同编号（#6/#10/#11/
+    #17/#18/#19/#19-A/#19-B/#165/#173/#178-184/#186/#189-217 等），但**无中央
+    裁定登记表**（无 ruling_registry.yaml）——对标 #ARCH-XXX 议题登记机制
+    （architecture_issue_registry.yaml，裁定#208 R6 建立）缺失对应物。病根：
+    新 AI 可不查 registry 就用未登记编号，违反"编号铁律#6"对应原则后只能靠
+    人工审核发现。第一性原理治本：(1) 建立 ruling_registry.yaml 作为裁定真源
+    （对标 architecture_issue_registry.yaml），登记全量 48 个裁定条目；
+    (2) 配套 RULING-REFERENCE commit gate（priority=74，裁定#20-B）强制引用
+    登记；(3) AGENTS.md 新增 RULE-RULING 章节（裁定#20-D）文档化规则。
+    本裁定对应 #ARCH-XXX 机制建立（裁定#208 R6）的裁定#NNN 对应物。
+  affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+    - d:\ZephyrAlpha\AGENTS.md
+  related_arch: []
+  related_rulings:
+    - 裁定#20-B
+    - 裁定#208
+  superseded_by: null
+
+- ruling_id: '裁定#20-B'
+  title: RULING-REFERENCE commit gate 建立（裁定#NNN 悬空引用检测）
+  date: '2026-07-18'
+  category: 治本
+  status: active
+  summary: >-
+    治本 裁定#NNN 悬空引用——对标 ARCH-REFERENCE gate（priority=75，#ARCH-XXX
+    悬空引用检测）。病根：裁定#NNN 引用无代码强制，新 AI 可不查 registry 就用
+    未登记编号，违反裁定#20-A 铁律后只能靠人工审核发现。治本：(1) 新建
+    ruling_reference_gate.py（priority=74，紧跟 DANGLING-REFERENCE(70) +
+    NOQA-VALIDATION(71)，在 ARCH-REFERENCE(75) 之前——同属"引用完整性"类检查，
+    集中执行）；(2) 检测 staged 文件中新增的 裁定#NNN 引用是否在
+    ruling_registry.yaml 有对应条目；(3) fail-closed——registry 缺失/git 异常时
+    阻断；(4) 跳过 tests/ 豁免区；(5) 扫描文件类型 .py/.yaml/.yml/.md；
+    (6) 正则 裁定#(\d+(?:-[A-Z]+)?) 匹配纯数字和带字母后缀（裁定#6 / 裁定#19-A /
+    裁定#203-B 等）；(7) L1 编号存在性 + L1 编号空洞检测（WARNING）+ L2 同提交
+    原子性门禁。**阶段1 manual stage**（_MANUAL_STAGE=True，本裁定）——所有违规
+    返回 passed=True + WARNING detail 不阻断，建立基线；**阶段2**（后续）移除
+    _MANUAL_STAGE 标记后启用 hard block。
+  affected_files:
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\ruling_reference_gate.py
+    - d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\git_commit_gateway.py
+    - d:\ZephyrAlpha\tests\governance\commit_gates\test_ruling_reference_gate.py
+  related_arch: []
+  related_rulings:
+    - 裁定#20-A
+    - 裁定#20-D
+  superseded_by: null

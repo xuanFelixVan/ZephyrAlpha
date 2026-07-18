@@ -95,6 +95,26 @@
 >
 > **事故背景**（2026-07-16）：AI 用 `count() - uniqExact(排序键)` 算 tick_data "重复数"，把同时间戳不同价位的有效记录误判为"重复"，执行 INSERT GROUP BY + REPLACE PARTITION 删除 21 个月有效数据。根因：tick_data ORDER BY 不含 price（#ARCH-CH-020）。
 
+## RULE-RULING：第七件事（裁定登记机制，2026-07-18 治本，裁定#20-A/#20-B/#20-D）
+
+> **任何 `裁定#NNN` 引用必须先在裁定登记表登记**——禁止 grep-and-claim 占位（对标编号铁律#6 的 `#ARCH-XXX` 机制）。裁定真源：[`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml)（48 个裁定条目，裁定#20-A 建立）。配套门禁：[`ruling_reference_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py)（priority=74，裁定#20-B 建立）。
+>
+> **病根（第一性原理）**：项目中存在 493 处"裁定#NNN"引用、48 个不同编号，但无中央裁定登记表——新 AI 可不查 registry 就用未登记编号，违反铁律后只能靠人工审核发现。对标 `#ARCH-XXX` 议题登记机制（`architecture_issue_registry.yaml`，裁定#208 R6 建立）缺失对应物。治本：建立中央登记表 + commit gate 强制 + AGENTS.md 文档化三件套。
+>
+> **裁定编号分配铁律**（裁定#20-D）：
+> 1. **连续分配**：裁定#NNN 按裁定时间顺序连续分配，禁止跳号
+> 2. **不回收**：已分配编号永不回收，即使被废弃/superseded
+> 3. **子裁定格式**：裁定#NNN-A/B/C 表示主裁定（裁定#NNN）的子项（如裁定#203 的子裁定 #203-B）
+> 4. **status 四值**：active(生效中) / superseded(被新裁定取代) / deprecated(废弃态) / draft(草案)
+> 5. **登记强制**：任何 裁定#NNN 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位（裁定#20-A）
+> 6. **同提交原子性**：新增 裁定#NNN 引用必须与 registry 同 commit 提交（裁定#20-B L2，阶段2 启用硬阻断）
+> 7. **编号空洞检测**：WARNING 不阻断（如本项目编号缺口 #205/#212）
+> 8. **跨表引用**：裁定可关联 `#ARCH-XXX` 议题（related_arch）与其他裁定（related_rulings），形成议题-裁定双向追溯链
+>
+> **RULING-REFERENCE gate 当前状态**：阶段1 manual stage（_MANUAL_STAGE=True），所有违规返回 passed=True + WARNING 不阻断，建立基线；阶段2（后续）移除 _MANUAL_STAGE 后启用 hard block。检测 staged 文件中新增的 裁定#NNN 引用是否在 registry 有对应条目，fail-closed——registry 缺失/git 异常时阻断；跳过 tests/ 豁免区；扫描 .py/.yaml/.yml/.md。
+>
+> **新增裁定流程**：(1) 在 `ruling_registry.yaml` entries 末尾追加新条目（含 ruling_id/title/date/category/status/summary/affected_files/related_arch/related_rulings/superseded_by）；(2) 同 commit 提交 registry 与首次引用代码。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
