@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-18T08:21:36Z'
+generated_at: '2026-07-18T08:43:16Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 161
+total_files: 162
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1949,6 +1949,21 @@ files:
   doc_type: ''
   status: ''
   version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  module_id: REG-RULING-001
+  title: 裁定中央登记表
+  doc_type: register
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
