@@ -102,6 +102,23 @@ def resolve_module_id(ref: str) -> Path | None:
     return None
 
 
+def _normalize_dep_id(dep: object) -> str:
+    """从 depends_on 条目提取 module_id（治本 2026-07-18）。
+
+    depends_on 支持两种格式：
+    - string: "MOD-XXX"（简单引用）
+    - dict: {"target": "MOD-XXX", "at": "§2", "why": "原因"}（富元数据引用）
+
+    原代码只处理 string，遇到 dict 时 dep.strip() 崩溃（AttributeError）。
+    """
+    if isinstance(dep, str):
+        return dep.strip()
+    if isinstance(dep, dict):
+        # 富格式：target 或 id 字段是 module_id
+        return (dep.get("target") or dep.get("id") or "").strip()
+    return ""
+
+
 def check_dependency_resolvable(module_id: str) -> list[str]:
     """Check compliance and report findings."""
     findings = []
@@ -116,7 +133,7 @@ def check_dependency_resolvable(module_id: str) -> list[str]:
     if isinstance(depends_on, str):
         depends_on = [depends_on]
     for dep in depends_on:
-        dep = dep.strip()
+        dep = _normalize_dep_id(dep)
         if not dep:
             continue
         resolved = resolve_module_id(dep)
@@ -141,7 +158,7 @@ def check_cross_layer_direction(module_id: str) -> list[str]:
     if isinstance(depends_on, str):
         depends_on = [depends_on]
     for dep in depends_on:
-        dep = dep.strip()
+        dep = _normalize_dep_id(dep)
         if not dep:
             continue
         dep_path = resolve_module_id(dep)
