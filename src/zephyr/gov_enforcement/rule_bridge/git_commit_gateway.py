@@ -116,6 +116,7 @@ from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import mak
 from zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate import make_no_import_side_effect_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate import make_depgraph_freshness_gate  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1
 from zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate import make_scripts_import_integrity_gate  # #ARCH-DATAQUALITY-V1.4 核心治本
+from zephyr.gov_enforcement.commit_gates.reconciler_health_gate import make_reconciler_health_gate  # #ARCH-DATAQUALITY-V1.7 reconciler健康度门禁
 from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
 from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
@@ -366,6 +367,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_capability_consistency_gate())  # priority=101 治本Provider路由-meta一致性（裁定#ARCH-CH-022 Phase 4.4，AST检测staged *_provider.py的路由能力集vs meta.capabilities声明集不一致）
         self._gate_registry.register(make_no_import_side_effect_gate())  # priority=103 治本模块导入零副作用（S4-C 2026-07-17，AST检测staged src/ .py added行的模块级I/O/网络/subprocess/DB调用+急切单例实例化，对标S4-A的telemetry.py/rollback/__init__.py修复防回归）
         self._gate_registry.register(make_depgraph_freshness_gate())  # priority=67 治本depgraph新鲜度dual-threshold（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1，>30min WARNING/>24h 阻断，读取.runtime/depgraph_scan_cache.json _meta.saved_at）
+        self._gate_registry.register(make_reconciler_health_gate())  # priority=64 治本reconciler健康度dual-level（#ARCH-DATAQUALITY-V1.7，block_next硬阻断/critical_warn警告，复用_check_recent_blocks/_check_recent_critical_warns，统一GitCommitGateway和session_worktree_commit两条路径的reconciler健康检查）
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）

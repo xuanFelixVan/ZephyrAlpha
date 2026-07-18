@@ -5095,6 +5095,11 @@ creation_tokens:
     token: "auto-scripts-import-integrity-gate-20260718"
     created_by: "sess-30144-20260719001234"
     capability: "scripts_import_integrity_gate"
+  # 治本（2026-07-19，#ARCH-DATAQUALITY-V1.7）：reconciler 健康度门禁
+  - file: "src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py"
+    token: "auto-reconciler-health-gate-20260719"
+    created_by: "sess-27912-20260719022344"
+    capability: "reconciler_health_gate"
   # 治本（2026-07-19，MOD-readme_version_sync）：README 版本号派生校验 reconciler
   # 文件位于 scripts/governance/d8_doc_sync/（非 src/zephyr/ 范围），需登记 creation_token
   - file: "scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py"
@@ -5107,6 +5112,17 @@ creation_tokens:
     token: "auto-execution-model-ssot-20260719"
     created_by: "sess-29344-20260719002711"
     capability: "shared_schema_execution_model"
+  # 治本（2026-07-19，MOD-migrate_sqlite_to_pg）：SQLite→PG 迁移工具集种子脚本
+  # 文件位于 scripts/governance/migrate_sqlite_to_pg/（非 src/zephyr/ 范围），需登记 creation_token
+  - file: "scripts/governance/migrate_sqlite_to_pg/seed_from_yaml.py"
+    token: "auto-migrate-sqlite-to-pg-20260719"
+    created_by: "sess-32960-20260719022002"
+    capability: "migrate_sqlite_to_pg"
+  # 治本（2026-07-19，MOD-MIGRATE_SQLITE_TO_PG）：迁移工具集索引文档（CREATE-GUARD 要求 .md 登记 token）
+  - file: "scripts/governance/migrate_sqlite_to_pg/README.md"
+    token: "auto-migrate-sqlite-to-pg-readme-20260719"
+    created_by: "sess-29488-20260719023314"
+    capability: "migrate_sqlite_to_pg"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
