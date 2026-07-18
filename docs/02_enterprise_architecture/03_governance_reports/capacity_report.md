@@ -91,7 +91,7 @@ ttl: permanent
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 96 | 150 | 64.0% | 正常 |
 | D_GOV_AUDIT | 审计追踪 | L2_domain | 67 | 150 | 44.7% | 正常 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 113 | 150 | 75.3% | 正常 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 114 | 150 | 76.0% | 正常 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_GOV_DRIFT | 漂移检测 | L2_domain | 70 | 150 | 46.7% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 15 | 150 | 10.0% | 正常 |
@@ -104,7 +104,7 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 28 | 150 | 18.7% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 114 | 150 | 76.0% | 正常 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 118 | 150 | 78.7% | 正常 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INTEGRATION | 管线路由 | L1_foundation | 45 | 150 | 30.0% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |
