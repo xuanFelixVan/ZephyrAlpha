@@ -4130,6 +4130,34 @@ capabilities:
       WARNING 级别（非阻断），豁免清单从本文件 di_seam_exemptions 字段动态加载。
       canonical = scripts/governance/generate_project_depgraph.py 的 _validate_di_seam。
 
+  # --------------------------------------------------------------------------
+  # 治本（2026-07-19，MOD-GOV-readme_version_sync）：README 版本号派生校验 reconciler
+  # 解决病根：100% AI 开发项目里 README 版本号是派生展示（派生于 pyproject.toml +
+  # infrastructure_registry.yaml），AI 改真源时未必同步改 README，靠"AI 自觉"必然漂移。
+  # 解决方案：GATE-README-VERSION-SYNC post-commit reconciler 机械校验 4 项版本号。
+  - capability_id: readme_version_sync_check
+    canonical_override: scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py
+    aliases:
+      - make_readme_version_sync_reconciler
+      - GATE-README-VERSION-SYNC
+      - readme_drift_check
+      - readme_version_sync
+    description: >-
+      README 版本号派生展示校验 reconciler（2026-07-19 治本，MOD-GOV-readme_version_sync）。
+      GitCommitGateway commit 完成后自动触发（GATE-README-VERSION-SYNC, priority=210），
+      committed_files 含 README.md 或真源文件（pyproject.toml / infrastructure_registry.yaml）
+      时校验 README "环境要求"章节版本号与真源一致。校验 4 项：Python（README >=3.12 ==
+      pyproject requires-python）、PostgreSQL（README 16 == INFRA-DB-003 note）、
+      ClickHouse（README 26.6.1 == INFRA-DB-006 note）、ChromaDB（README 0.5.23 >=
+      pyproject chromadb 下限）。漂移时 ReconcileResult action=warn（不 auto-fix，版本升级
+      需人工决策）。治本病根：100% AI 开发项目里 README 版本号是派生展示，AI 改真源时未必
+      同步改 README，靠"AI 自觉"必然漂移，必须有机械校验。全自动：事件触发（post-commit）+
+      自动运行（subprocess 内联）+ 自动维护（warn 告警驱动 AI 修复）+ 自动关闭（reconciler
+      返回即结束）。解决发现性：新 AI 搜 "README 版本号/派生校验/真源漂移" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 README 校验脚本。
+      canonical = scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py 的
+      make_readme_version_sync_reconciler。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5057,6 +5085,12 @@ creation_tokens:
     token: "auto-ruling-registry-20260718"
     created_by: "sess-29716-20260718160200"
     capability: "ruling_registry"
+  # 治本（2026-07-19，MOD-GOV-readme_version_sync）：README 版本号派生校验 reconciler
+  # 文件位于 scripts/governance/d8_doc_sync/（非 src/zephyr/ 范围），需登记 creation_token
+  - file: "scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py"
+    token: "auto-readme-version-sync-20260719"
+    created_by: "session-sess-28516-20260719003114"
+    capability: "readme_version_sync_check"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

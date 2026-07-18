@@ -71,15 +71,19 @@ python scripts/demos/demo_e2e_pipeline.py
 
 ### 运行时与数据库
 
-| 组件 | 版本 | 用途 | 连接配置 |
+> **真源说明（2026-07-19 治本）**：本表版本号派生于 [infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)（基础设施真源，INFRA-DB-003/004/006）+ [pyproject.toml](pyproject.toml)（Python 依赖真源，`requires-python` + `chromadb` 下限）。升级时 MUST 先改真源再同步本表，[`GATE-README-VERSION-SYNC`](scripts/governance/d8_doc_sync/readme_version_sync_reconciler.py) reconciler 会 post-commit 自动校验漂移并 warn。
+
+| 组件 | 版本 | 用途（真源指向） | 连接配置 |
 |---|---|---|---|
-| Python | >=3.12 | 主运行时（与 `pyproject.toml` `requires-python` 一致） | — |
-| PostgreSQL | 16 | depgraph 依赖架构图库（28 表） | [config/.env.postgres](config/.env.postgres) |
-| ClickHouse | 26.6.1 | c1_market 行情仓库 + c3_fundamental 基础库，运行在 Hyper-V VM `172.24.30.100:9000` | [config/.env.clickhouse](config/.env.clickhouse) |
-| ChromaDB | 0.5.23 | 向量检索（VMS 双后端过渡期，`data/vector_db/`） | — |
-| SQLite | 3.45.1 | 任务库 `governance.db`（Python 自带） | — |
+| Python | >=3.12 | 主运行时（真源：[pyproject.toml](pyproject.toml) `requires-python = ">=3.12"`） | — |
+| PostgreSQL | 16 | depgraph 依赖架构图库（28 表，真源：[infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) `INFRA-DB-003`） | [config/.env.postgres](config/.env.postgres) |
+| ClickHouse | 26.6.1 | c1_market 行情仓库 + c3_fundamental 基础库，运行在 Hyper-V VM `172.24.30.100:9000`（真源：`INFRA-DB-006` note 字段） | [config/.env.clickhouse](config/.env.clickhouse) |
+| ChromaDB | 0.5.23 | 向量检索（VMS 双后端过渡期，`data/vector_db/`；真源下限：[pyproject.toml](pyproject.toml) `chromadb>=0.4.24,<1.0.0`，0.5.23 为实际安装版本） | — |
+| SQLite | 3.45.1 | 任务库 `governance.db`（随 Python 自带，版本随 Python 走，无独立真源） | — |
 
 ### 外部工具
+
+> **真源说明**：本表为宿主实际安装版本，无项目内真源（灾备恢复时按表中所列版本安装）。`pg_dump` 版本随 PostgreSQL 16 安装，Hyper-V 为 Windows 内置功能。
 
 | 工具 | 版本 | 用途 | 获取 |
 |---|---|---|---|

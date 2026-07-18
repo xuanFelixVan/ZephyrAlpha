@@ -604,6 +604,19 @@ class GitCommitGateway:
         except ImportError as e:
             logger.warning("backup_reconciler not registered: %s", e)
 
+        # 注册 README 版本号派生校验 reconciler（MOD-GOV-readme_version_sync，2026-07-19 治本）
+        # 校验 README.md "环境要求"章节版本号与真源（pyproject.toml + infrastructure_registry.yaml）一致
+        # 漂移时 warn 不阻断（版本升级需人工决策），priority=210 晚于 BACKUP-RECONCILER(200)
+        try:
+            import sys as _sys
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from readme_version_sync_reconciler import make_readme_version_sync_reconciler
+            self._reconciliation_registry.register(make_readme_version_sync_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("readme_version_sync_reconciler not registered: %s", e)
+
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------
