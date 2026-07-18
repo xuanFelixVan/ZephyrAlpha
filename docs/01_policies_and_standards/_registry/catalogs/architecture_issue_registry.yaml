@@ -3187,3 +3187,107 @@ entries:
   related_adjudication: '#ARCH-059, #ARCH-053, #ARCH-056, TRAE-060'
   created: '2026-07-17'
   last_updated: '2026-07-18'
+- issue_id: '#ARCH-DEPGRAPH-RECONCILER-FAILSILENT'
+  title: depgraph_ops_reconciler fail-open + session_worktree_commit 绕过 GitCommitGateway
+    导致零幻觉基础设施 fail-silent 漂移
+  severity: P1高
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    2026-07-18 审查发现 depgraph 运营态自 15:35 起未同步，4 个本会话治本涉及的
+    .py 文件中 2 个完全缺失（_reference_helpers.py / ruling_reference_gate.py）、
+    2 个 content_hash 过期（arch_reference_gate.py / dangling_reference_gate.py）。
+    手动运行 generate_project_depgraph.py --force 成功（49.6s，returncode=0，62 个
+    NEW 节点同步），证明同步机制本身可用，问题在触发链路。
+
+    双重根因（架构级，非工具级）：
+
+    根因 A（触发断链）：session_worktree_commit（FP-ISO.4C worktree君子协定的主提交
+    路径）使用 subprocess.run(["git","commit","--no-verify",...]) 直接提交，完全
+    绕过 GitCommitGateway.commit()。GitCommitGateway._run_post_commit_reconcile
+    (git_commit_gateway.py:704-721) 从未被调用，reconcile_for 从未遍历，
+    make_depgraph_ops_reconciler（已注册于 git_commit_gateway.py:567）从不触发。
+    session_worktree.py:42-48 docstring 明确此为设计决策（worktree 独立 git index
+    避免共享冲突），但未提供补偿机制——post-commit hook 仅跑 git-lfs + non-GW guard
+    （ARCH-050），不含 reconciler 触发逻辑。
+
+    根因 B（失败不可见）：即使 session_worktree_merge 通过 _run_post_merge_reconcile
+    (session_worktree.py:1270-1291) 触发 reconcile_for，make_depgraph_ops_reconciler
+    的 _reconcile 函数（reconciliation_registry.py:649-654）在 subprocess 失败时
+    return ReconcileResult(action="warn")，不阻断 commit、不创建 chore commit
+    （depgraph_ops 写 PG DB 不写文件）、不写持久化日志（DB 无 reconcile_log 表、
+    无 drift_scan_results 表、无 drift_audit_findings 表——DDL 在代码中但迁移未落地）。
+    fail-open 设计 + 观测基础设施缺失 = 实际退化为 fail-silent。
+
+    与 ARCH-FRONTMATTER-STATE-001 Link B 同类：该项目已识别"generate_project_depgraph.py
+    内 try/except 静默失败即漂移"模式（见 reconciliation_registry.py:669 注释），
+    为 frontmatter 同步专门建了 make_blueprint_frontmatter_reconciler 修复 Link B。
+    但 depgraph 本身的 ops reconciler 仍是 fail-open——这是 Link A 断链，比 Link B
+    更严重（Link B 是缓存层失同步，Link A 是真源层失同步），却没得到同等治本。
+
+    裁定（分阶段治本）：
+    Phase 1（已完成，2026-07-18）：
+    (1) 手动诊断——完全复现 reconciler subprocess 调用，确认 generate_project_depgraph.py
+        --force 手动运行成功（49.6s，returncode=0），排除"工具本身故障"假设。
+    (2) 手动恢复——运行 generate_project_depgraph.py --force 同步 depgraph，4 个
+        目标节点全部进入 depgraph（build_status=stable，last_verified=18:31:07）。
+    (3) 本条 issue 登记。
+
+    Phase 2（短期治本，下一会话）：
+    (1) 创建 reconcile_execution_log 表迁移（v20），字段含 gate_id/triggered_at/
+        session_id/action/returncode/elapsed_ms/detail/committed_files_summary。
+    (2) 修改 GitCommitGateway._run_post_commit_reconcile 写入日志表，detail 字段
+        保留完整 stderr（去掉 200 字符截断）。
+    (3) 修改 make_depgraph_ops_reconciler：action 从 "warn" 升级为 "critical_warn"
+        （新增字段），critical_warn 的 reconciler 失败 → 下次 commit pre-commit
+        阶段打印显眼告警横幅。
+    (4) 修复 GATE-MODULE-INVENTORY-SYNC 检测传导：当检测到 src/zephyr/ 下 .py 文件
+        缺失时，不仅补登 blueprint.md §0.1，同时触发一次 depgraph_ops_reconciler
+        显式同步（事件触发，非时间触发）。
+
+    Phase 3（中期架构演进，1-2 周）：
+    (1) 新建 GATE-DEPGRAPH-FRESHNESS (priority=68, pre-commit)：检查 MAX(last_verified)
+        与最近 .py commit 时间戳差值，>30min WARNING，>24h 阻断提交。
+    (2) 补齐 drift_scan_results / drift_audit_findings 表迁移（v21），DDL 已在
+        reconciliation_registry.py:122-160。
+    (3) 新增 architecture_health_dashboard M15 指标：depgraph 新鲜度。
+    (4) 修复 session_worktree_commit 触发断链：在 _git_commit_in_worktree 成功后
+        调一次 gateway._reconciliation_registry.reconcile_for(rel_files, session_id)，
+        仅对 .py 文件触发 depgraph_ops 同步。
+
+    Phase 4（长期战略，1-3 月）：
+    (1) 实现 #ARCH-DEP-PREMERGE-ENFORCE pre-merge 拓扑硬阻断。
+    (2) reconciler 分级语义：clean/warn/critical_warn/block_next。
+    (3) 单一可信通道收敛：depgraph_ops_reconciler 是唯一同步者，drift_scan_reconciler
+        是唯一检测者，MODULE-INVENTORY 只读不写。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - AI 只能感知 DB 表行 + 文件状态 + commit 阻断中持久化的失败。stderr 输出、
+      进程内 logger、200 字符截断的 detail 字段、内存中的 ReconcileResult 对 AI
+      等同于不存在。零幻觉保证依赖的基础设施（depgraph）的同步机制失败必须满足
+      三要素：持久化、可发现、可阻断。
+    - 当前架构用 100% 的查询可信度风险去对冲 <1% 的手工数据丢失风险（裁定#207
+      --force 门禁），期望值是负的。安全保护已由 DELETE WHERE design_maturity=
+      'design' 子句提供，门禁层再叠加 --force 禁令是双重保护，但阻断的是 AI 的
+      恢复路径，不是数据丢失路径。
+    - "session_worktree_commit 绕过 GitCommitGateway"是设计决策（避免 worktree
+      git index 共享冲突），但未提供补偿机制是设计缺陷。治本不是让 session_worktree
+      走 GitCommitGateway（会破坏 worktree 隔离），而是在 session_worktree_commit
+      后显式触发 reconciler 链。
+  impact:
+    - src/zephyr/governance/audit/reconciliation_registry.py（make_depgraph_ops_reconciler
+      fail-open 升级为 critical_warn，line 649-654）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（_run_post_commit_reconcile
+      写日志表，line 704-721）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（_git_commit_in_worktree
+      成功后触发 reconcile_for，line 914-955；docstring line 42-48 同步更新）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - 迁移 v20 reconcile_execution_log 表（Phase 2 新建）
+    - 迁移 v21 drift_scan_results / drift_audit_findings 表（Phase 3 落地）
+    - GATE-DEPGRAPH-FRESHNESS pre-commit gate（Phase 3 新建）
+    - architecture_health_dashboard M15 指标（Phase 3 新建）
+  fix_phase: Phase 1 已完成；Phase 2-4 待执行
+  status: open
+  related_adjudication: '#ARCH-DEP-001, #ARCH-FRONTMATTER-STATE-001, 裁定#207, 裁定#209, ARCH-061, FP-ISO.4C'
+  created: '2026-07-18'
+  last_updated: '2026-07-18'
