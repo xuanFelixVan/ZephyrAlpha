@@ -109,9 +109,13 @@ class TestAgentIdentity:
 
 
 class TestAgentRole:
-    def test_five_roles(self):
+    def test_role_count(self):
         roles = list(AgentRole)
-        assert len(roles) == 5
+        # P1-3: Batch 1 合并后 7 成员（security 5 + shared REVIEWER + AUTONOMOUS_AGENT）
+        # 回归测试固化历史行为（P1-1 例外②）
+        assert len(roles) == 7
+        expected_names = {"READER", "WRITER", "EXECUTOR", "ADMIN", "AUDITOR", "REVIEWER", "AUTONOMOUS_AGENT"}
+        assert {r.name for r in roles} == expected_names
 
     def test_reader_has_read_permissions(self):
         perms = ROLE_DEFAULT_PERMISSIONS[AgentRole.READER]

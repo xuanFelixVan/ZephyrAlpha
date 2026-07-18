@@ -184,7 +184,9 @@ class TestAgentIdentity:
 
     def test_agent_role_enum(self):
         roles = list(AgentRole)
-        assert len(roles) == 5
+        # P1-3: Batch 1 合并后 7 成员（security 5 + shared REVIEWER + AUTONOMOUS_AGENT）
+        # 回归测试固化历史行为（P1-1 例外②）
+        assert len(roles) == 7
         assert AgentRole.READER in roles
         assert AgentRole.ADMIN in roles
 
