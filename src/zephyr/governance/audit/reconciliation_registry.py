@@ -167,6 +167,29 @@ SQL_FIND_MODULE_BY_DIR = (
     "LIMIT 1"
 )
 
+# S5: reconcile_execution_log SQL（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2 治本）
+# 治本动机：reconciler 失败只返回 warn 结果无持久化日志，AI 无法查询历史失败
+# （fail-silent 最危险失败模式）。本表持久化每次 reconciler 执行结果（含完整 detail
+# 不截断），AI 查 governance.db 即可见历史失败。复用 drift_scan_reconciler 的
+# SQLite governance.db 模式（§5.160.2 NO-BARE-SQL 合规）。
+SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_execution_log (
+    log_id TEXT PRIMARY KEY,
+    logged_at TEXT NOT NULL,
+    gate_id TEXT NOT NULL,
+    session_id TEXT,
+    trigger_source TEXT NOT NULL,
+    action TEXT NOT NULL,
+    detail TEXT,
+    committed_files_summary TEXT
+)"""
+
+SQL_INSERT_RECONCILE_LOG = (
+    "INSERT INTO reconcile_execution_log "
+    "(log_id, logged_at, gate_id, session_id, trigger_source, "
+    "action, detail, committed_files_summary) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+)
+
 
 @dataclass
 class ReconcileResult:
@@ -181,6 +204,10 @@ class ReconcileResult:
 
     action: str  # "skip" | "clean" | "auto_committed" | "warn"
     detail: str = ""
+    # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 由 reconcile_for 填充，
+    # 用于 _log_reconcile_results 追踪是哪个 reconciler 产生了该结果。
+    # 默认空字符串保持向后兼容（手工构造的 ReconcileResult 无 gate_id）。
+    gate_id: str = ""
 
 
 @dataclass
@@ -252,6 +279,10 @@ class ReconciliationRegistry:
                         action=result.get("action", "warn"),
                         detail=result.get("detail", ""),
                     )
+                # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 填充 gate_id
+                # 供 _log_reconcile_results 追踪结果归属。dataclass mutable，直接赋值。
+                if not result.gate_id:
+                    result.gate_id = spec.gate_id
                 results.append(result)
             except (Exception, KeyboardInterrupt) as e:  # noqa: BLE001 — drift 对账非阻断；KeyboardInterrupt 也降级（commit 已入库，reconciler 中断不应 crash 进程，治本 #2026-0701）
                 logger.warning(
@@ -262,6 +293,7 @@ class ReconciliationRegistry:
                     ReconcileResult(
                         action="warn",
                         detail=f"reconciler {spec.gate_id} raised: {e}",
+                        gate_id=spec.gate_id,
                     )
                 )
         return results
@@ -274,6 +306,71 @@ class ReconciliationRegistry:
     def list_gate_ids(self) -> list[str]:
         """已注册的 gate_id 列表（诊断用）。"""
         return [s.gate_id for s in self._specs]
+
+
+def _log_reconcile_results(
+    project_root: "object",
+    results: "list[ReconcileResult]",
+    session_id: str,
+    trigger_source: str,
+    committed_files: "list[str] | None" = None,
+) -> None:
+    """将 reconciler 执行结果持久化到 governance.db reconcile_execution_log 表。
+
+    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2：
+    之前 reconciler 失败只返回 warn 结果，无持久化日志，AI 无法查询历史失败
+    （fail-silent 最危险失败模式——失败不可见，下次 commit 照常开工）。
+    本函数在 reconcile_for 的两个调用方（GitCommitGateway._run_post_commit_reconcile
+    和 session_worktree._run_reconcilers_after_merge）统一写日志，所有 reconciler
+    自动受益（无需逐个修改 reconciler 实现）。
+
+    设计裁定（复用 drift_scan_reconciler 模式）：
+    - SQLite governance.db（非 PG depgraph）——reconcile 日志是运行时观测数据，
+      不需要 PG 事务一致性，且避免触碰 TRAE-059 _schema_version 保护。
+    - detail 完整记录（不截断）——失败诊断需要完整错误信息。
+    - skip 结果不记录（未触发对账，无日志价值）。
+    - 异常降级为 logger.warning（不阻断 commit/merge 主流程）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root / merge root）。
+        results: reconcile_for 返回的 ReconcileResult 列表（gate_id 已填充）。
+        session_id: commit session_id（用于关联 commit 与 reconcile）。
+        trigger_source: "post_commit" 或 "post_merge"（标识日志触发方）。
+        committed_files: 本次 commit 的文件列表（摘要记录前 20 个，便于追溯）。
+    """
+    import os
+    import sqlite3
+    import uuid
+    try:
+        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        files_summary = ""
+        if committed_files:
+            rel_files = []
+            for f in committed_files[:20]:
+                try:
+                    rel_files.append(os.path.relpath(f, str(project_root)).replace("\\", "/"))
+                except (ValueError, OSError):
+                    rel_files.append(os.path.basename(f))
+            files_summary = "; ".join(rel_files)
+            if len(committed_files) > 20:
+                files_summary += f"; ...(+{len(committed_files) - 20} more)"
+        conn = sqlite3.connect(db_path, timeout=30.0)
+        try:
+            conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            for r in results:
+                if r.action == "skip":
+                    continue  # skip 未触发对账，无日志价值
+                log_id = f"rc-{uuid.uuid4().hex[:12]}"
+                conn.execute(
+                    SQL_INSERT_RECONCILE_LOG,
+                    (log_id, now_utc(), r.gate_id or "unknown", session_id,
+                     trigger_source, r.action, r.detail, files_summary),
+                )
+            conn.commit()
+        finally:
+            conn.close()
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("_log_reconcile_results: DB write failed: %s", e)
 
 
 def _write_reconcile_report(
@@ -647,10 +744,13 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
         )
         elapsed = time.time() - start
         if sync_result.returncode != 0:
+            # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: detail 不截断
+            # 原截断到 200 字符导致 fail-silent（完整 traceback 丢失，AI 无法诊断）。
+            # 现完整记录 stderr，由 _log_reconcile_results 持久化到 governance.db。
             return ReconcileResult(
                 action="warn",
                 detail=f"depgraph ops sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
-                       f"{sync_result.stderr.strip()[:200]}",
+                       f"{sync_result.stderr.strip()}",
             )
         return ReconcileResult(
             action="clean",
@@ -1795,10 +1895,11 @@ def _audit_commit_history(
     audit_window: int,
     gw_marker: str,
     rv_marker: str = "",
-) -> "tuple[list[dict], list[dict], str | None]":
-    """扫描最近 N 个 commit，返回 (裸commit违规, rv豁免通道使用, error)。
+) -> "tuple[list[dict], str | None]":
+    """扫描最近 N 个 commit，返回 (裸commit违规, error)。
 
-    rv_marker 非空时，含 [GW: 且含 rv_marker 的 commit 记入 rv_uses（合法但追溯）。
+    rv_marker 保留为兼容参数（旧调用方仍传入），rv_uses 追溯通道已于 2026-07-18
+    治本收敛为不再返回——裸 commit 检测为唯一对外契约，rv 追溯报告移除。
 
     治本（2026-06-30 病根1 看门人无人看）：把 make_commit_gateway_audit_reconciler
     闭包内的审计逻辑提取为模块级函数，使其成为可被 integrity_anchors 保护的 name
@@ -1816,8 +1917,8 @@ def _audit_commit_history(
         gw_marker: GW 标记字符串（如 "[GW:"）。
 
     Returns:
-        (violations, rv_uses, error_msg): error_msg 非 None 表示 git log 失败；
-        error_msg 为 None 时 violations 为裸 commit 违规列表，rv_uses 为豁免通道使用列表。
+        (violations, error_msg): error_msg 非 None 表示 git log 失败；
+        error_msg 为 None 时 violations 为裸 commit 违规列表（每条含 hash + subject）。
     """
     import subprocess
 
@@ -1831,10 +1932,9 @@ def _audit_commit_history(
         timeout=10,
     )
     if log_result.returncode != 0:
-        return [], [], f"git log failed: {log_result.stderr.strip()[:200]}"
+        return [], f"git log failed: {log_result.stderr.strip()[:200]}"
 
     violations: list[dict] = []
-    rv_uses: list[dict] = []
     for line in log_result.stdout.strip().splitlines():
         # format: <hash> <subject>
         parts = line.split(" ", 1)
@@ -1845,9 +1945,7 @@ def _audit_commit_history(
         if subject.lower().startswith("merge "):
             continue
         if gw_marker in subject:
-            # subject 已含 [GW:（合法 commit），检测是否豁免通道使用
-            if rv_marker and rv_marker in subject:
-                rv_uses.append({"hash": commit_hash, "subject": subject[:120]})
+            # subject 已含 [GW:（合法 commit）
             continue
         # subject 无 [GW: -> 查 body（手动 commit 的 [GW:tag] 在 body 末尾）
         body_result = _run_subprocess(
@@ -1861,12 +1959,10 @@ def _audit_commit_history(
         )
         body = body_result.stdout if body_result.returncode == 0 else ""
         if gw_marker in body:
-            # body 含 [GW:（合法 commit），检测是否豁免通道使用
-            if rv_marker and rv_marker in body:
-                rv_uses.append({"hash": commit_hash, "subject": subject[:120]})
+            # body 含 [GW:（合法 commit）
             continue
         violations.append({"hash": commit_hash, "subject": subject[:120]})
-    return violations, rv_uses, None
+    return violations, None
 
 
 def _migrate_deprecated_files(items, dep_path, target_base, project_root) -> list[dict]:
@@ -3365,7 +3461,7 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile_commit_gw_audit(committed_files: list[str], session_id: str) -> ReconcileResult:
         # 审计逻辑真源：模块级 _audit_commit_history（A 层 AST 锚点保护，
         # 治本 2026-06-30 病根1 看门人无人看）。闭包只做调用 + 报告落盘 + 判定。
-        violations, rv_uses, err = _audit_commit_history(
+        violations, err = _audit_commit_history(
             project_root, _AUDIT_WINDOW, _GW_MARKER, _RV_MARKER,
         )
         if err:
@@ -3398,8 +3494,6 @@ def make_integrity_audit_reconciler(gateway: "object") -> ReconcilerSpec:
             "audit_window": _AUDIT_WINDOW,
             "violations_count": len(violations),
             "violations": violations,
-            "reconciler_verify_uses_count": len(rv_uses),
-            "reconciler_verify_uses": rv_uses,
             "concurrent_conflict": concurrent_conflict,
             "conflict_sessions": conflict_sessions,
         }

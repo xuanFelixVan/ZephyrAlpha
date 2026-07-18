@@ -73,6 +73,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_gate_registry_sync_reconciler,
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
+    _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -710,6 +711,12 @@ class GitCommitGateway:
         try:
             reconcile_results = self._reconciliation_registry.reconcile_for(existing, session_id)
             result.reconcile = reconcile_results
+            # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
+            # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
+            _log_reconcile_results(
+                self.project_root, reconcile_results, session_id,
+                trigger_source="post_commit", committed_files=existing,
+            )
             for rr in reconcile_results:
                 if rr.action == "auto_committed":
                     logger.info("GitCommitGateway: post-commit reconcile auto-committed (session=%s): %s", session_id, rr.detail)
