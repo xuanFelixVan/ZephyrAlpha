@@ -233,10 +233,10 @@ graph TD
         src_zephyr_autonomy_core_context_curation_loop_py["(生产态 / production) curation_loop.py — Per-Turn Curation 策展 (DD1...<br/>文件: curation_loop.py"]
     end
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| D_SHARED
@@ -370,15 +370,15 @@ graph TD
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     D_SHARED["(生产态 / production) D_SHARED"]
@@ -493,25 +493,25 @@ graph TD
         tests_trading_extreme_test_f14_pipeline_extreme_py["(原型态 / prototype) F14 管线编排/反馈环 — 红蓝对抗端到端极端测试<br/>文件: test_f14_pipeline_extreme.py"]
         tests_trading_extreme_test_f1_extreme_py["(原型态 / prototype) F1 自动驾驶/运行时大脑 — 红蓝对抗端到端极端测试<br/>文件: test_f1_extreme.py"]
     end
-    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
-    src_zephyr_integration_vector_memory_vector_writer_py -.->|导入依赖 / import_depends| D_INTEGRATION
-    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
-    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    D_INTEGRATION["(原型态 / prototype) D_INTEGRATION"]
+    src_zephyr_integration_vector_memory_vector_writer_py -.->|导入依赖 / import_depends| D_INTEGRATION
     tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
+    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_f_lifecycle_test_f1_event_trigger_py -.->|测试依赖 / test_depends| D_SHARED
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -520,7 +520,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_security_llm_defense_llm_security_adversarial_robustness_py,src_zephyr_security_llm_defense_llm_security_alignment_scorer_py,src_zephyr_security_llm_defense_llm_security_lsg_pattern_tracker_py,src_zephyr_security_llm_defense_llm_security_poisoning_monitor_py,src_zephyr_security_llm_defense_llm_security_sensitivity_classifier_py,src_zephyr_security_llm_defense_llm_security_solo_dev_safety_net_py,src_zephyr_shared_ai_guards_config_safety_guard_py,src_zephyr_shared_blueprint_tools_architecture_context_loader_py,src_zephyr_shared_dependency_dependency_tracker_py,src_zephyr_shared_io_cache_invalidation_py,src_zephyr_shared_io_doc_compressor_py,src_zephyr_shared_utils_verify_paths_py production
     class src_zephyr_integration_vector_memory_vector_writer_py,tests_automation_test_auto_runtime_e2e_py,tests_f_lifecycle_test_f1_event_trigger_py,tests_trading_extreme_test_f14_pipeline_extreme_py,tests_trading_extreme_test_f1_extreme_py design
-    class D_INFRA_RUNTIME,D_SHARED,D_FEEDBACK_LOOP external_prod
+    class D_SHARED,D_INFRA_RUNTIME,D_FEEDBACK_LOOP external_prod
     class D_INTEGRATION,D_ORCHESTRATOR external_design
 ```
 
@@ -666,67 +666,67 @@ graph TD
     end
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_registry_py
+    src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_spec_engine_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_main_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
+    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
-    src_zephyr_autonomy_core_context_context_budget_tracker_py -->|导入依赖 / import_depends| src_zephyr_shared_io_doc_compressor_py
-    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_assembler_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_injector_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| src_zephyr_shared_blueprint_tools_architecture_context_loader_py
+    src_zephyr_autonomy_core_context_context_pipeline_auto_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_pipeline_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_trigger_router_py
     src_zephyr_autonomy_core_integration_pipeline_bridge_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_contract_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_constructor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_consensus_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_factory_py
     src_zephyr_autonomy_core_skills_skill_discovery_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_efficacy_calibrator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_evaluator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_executor_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_evaluator_py
     src_zephyr_autonomy_core_skills_skill_explain_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_evolution_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
-    src_zephyr_autonomy_core_skills_skill_feedback_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_kill_switch_py
+    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_lifecycle_py
     src_zephyr_autonomy_core_skills_skill_freshness_ext_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_kya_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
-    src_zephyr_autonomy_core_skills_skill_kill_switch_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
     src_zephyr_autonomy_core_skills_skill_lifecycle_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_model_py
-    src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_postmortem_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
+    src_zephyr_autonomy_core_skills_skill_prompt_opt_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_shadow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_py
     src_zephyr_autonomy_core_skills_skill_translator_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_autonomy_core_skills_skill_workflow_py -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_loader_py
     src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_intent_keyword_mapper_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_io_doc_compressor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_system_snapshot_py -.->|导入依赖 / import_depends| D_SHARED
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     src_zephyr_autonomy_core_skills_skill_router_py -->|导入依赖 / import_depends| D_INTEGRATION
+    src_zephyr_autonomy_core_prompt_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_governance_persistence_intent_parser_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_autonomy_core_skills_skill_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_injector_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_governance_persistence_intent_keyword_mapper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_pipeline_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_autonomy_core_skills_skill_registry_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_governance_persistence_intent_keyword_mapper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_context_context_assembler_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_skills_skill_registry_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_pattern_library_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_skills_skill_registry_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_system_snapshot_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_autonomy_core_skills_skill_factory_py -->|导入依赖 / import_depends| D_SHARED
+    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     D_GOV_CODE_QUALITY["(生产态 / production) D_GOV_CODE_QUALITY"]
     D_GOV_CODE_QUALITY -->|导入依赖 / import_depends| src_zephyr_autonomy_core_context_context_rule_registry_py
-    D_INTEGRATION -->|导入依赖 / import_depends| src_zephyr_autonomy_core_integration_pipeline_bridge_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     D_INFRA_RUNTIME -->|导入依赖 / import_depends| src_zephyr_autonomy_core_skills_skill_freshness_ext_py
     D_SECURITY["(生产态 / production) D_SECURITY"]
@@ -782,12 +782,12 @@ graph TD
     tests_automation_test_auto_runtime_e2e_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_SHARED["(生产态 / production) D_SHARED"]
     tests_f_lifecycle_test_f1_event_trigger_py -.->|测试依赖 / test_depends| D_SHARED
-    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
+    tests_trading_extreme_test_f1_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
-    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_FEEDBACK_LOOP
-    tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     tests_trading_extreme_test_f14_pipeline_extreme_py -.->|测试依赖 / test_depends| D_INFRA_RUNTIME
     D_ORCHESTRATOR["(原型态 / prototype) D_ORCHESTRATOR"]
     D_ORCHESTRATOR -.->|导入依赖 / import_depends| src_zephyr_integration_vector_memory_vector_writer_py

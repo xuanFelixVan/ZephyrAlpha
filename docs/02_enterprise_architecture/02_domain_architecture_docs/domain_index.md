@@ -22,9 +22,9 @@ ttl: permanent
 |------|-----|
 | 域总数 | 63 |
 | 模块总数 | 2677 |
-| 生产态模块 | 1567 |
+| 生产态模块 | 1568 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1048 |
+| 原型态模块 | 1047 |
 
 ## 域清单（按架构层分组）
 
@@ -52,7 +52,7 @@ ttl: permanent
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
 | D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 124 | 112 | 0 | 12 | 124/150 (OK) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 18 | 9 | 6 | 3 | 18/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
-| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 129 | 112 | 0 | 17 | 129/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
+| D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 129 | 113 | 0 | 16 | 129/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 90 | 81 | 0 | 9 | 90/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
 | D_INTEGRATION | pipeline_routing / Pipeline Routing | 72 | 45 | 0 | 27 | 72/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 0 | 0 | 0 | 0 | 0/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
