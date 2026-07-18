@@ -202,6 +202,15 @@ if (-not $chAlive) {
         #    single-drive mode) so CH does not fail with BACKUP_ALREADY_EXISTS.
         $objDir = "$($chBk.MINIO_ROOT)\$($chBk.MINIO_BUCKET)\market.zip"
         if (Test-Path $objDir) { Remove-Item $objDir -Recurse -Force }
+        # Stale write-lock + aborted multipart leftovers from a killed BACKUP run also
+        # trigger BACKUP_ALREADY_EXISTS ("being written already") - remove them too.
+        # (2026-07-18 incident: KILLed 315GiB BACKUP left market.zip.lock behind.)
+        $objLock = "$objDir.lock"
+        if (Test-Path $objLock) { Remove-Item $objLock -Recurse -Force }
+        $mpDir = "$($chBk.MINIO_ROOT)\.minio.sys\multipart"
+        if (Test-Path $mpDir) {
+            Get-ChildItem $mpDir -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        }
 
         # 2. Start MinIO (localhost only) + python TCP relay (VM-facing)
         $env:MINIO_ROOT_USER = $chBk.CH_S3_ACCESS_KEY
