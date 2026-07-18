@@ -250,9 +250,9 @@ graph TD
     scripts_backup_minio_tcp_relay_py -.->|config_depends / config_depends| scripts_backup_backup_reconciler_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_shared_contracts_fill_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_shared_contracts_position_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_shared_contracts_order_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     scripts_backup_backup_reconciler_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     D_REPORTING["(原型态 / prototype) D_REPORTING"]
