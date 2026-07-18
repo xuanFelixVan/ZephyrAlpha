@@ -170,7 +170,7 @@ def scan_directory(scan_dir: str, repo_root: Path) -> list[dict]:
             continue
 
         if fname.endswith(".md"):
-            fm = parse_frontmatter(raw)[0]
+            fm = parse_frontmatter(raw)  # Bug 7 fix: returns dict|None not tuple, [0] caused KeyError
         else:
             fm = extract_yaml_header(raw)
 
