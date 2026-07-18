@@ -3305,3 +3305,29 @@ entries:
   related_adjudication: '#ARCH-DEP-001, #ARCH-FRONTMATTER-STATE-001, 裁定#207, 裁定#209, ARCH-061, FP-ISO.4C'
   created: '2026-07-18'
   last_updated: '2026-07-18'
+
+# --- #ARCH-DI-SEAM-001: DI seam 静态门禁（P1-2 治本，2026-07-18 补登记） ---
+# 补登记说明：代码 _validate_di_seam() 在 P1 Batch 4（2026-07-18）已引用 #ARCH-DI-SEAM-001，
+# 但 architecture_issue_registry.yaml 条目遗漏未登记，违反 ARCH-REFERENCE L2 原子性铁律。
+# 本条目于 2026-07-18 补建，消除引用-注册不一致。
+- issue_id: '#ARCH-DI-SEAM-001'
+  title: DI seam 静态门禁——跨切面依赖注入接缝扫描（WARNING 级，待存量清理后升级 ERROR）
+  category: architecture_governance
+  severity: P1中
+  adjudication: >-
+    P1-2 治本裁定（2026-07-18）：跨切面依赖应通过 DI seam（Protocol/ABC/Interface 类型注解
+    或 `| None = None` 默认值）注入，而非硬编码外部依赖。_validate_di_seam() AST 扫描
+    src/zephyr/**/*.py 的 ClassDef __init__ 方法，检测缺少可注入参数的类。当前为 WARNING
+    级别（非阻断），存量违规过渡期不阻断。升级条件：存量违规清理完成后（469 个候选违规
+    降至豁免清单覆盖范围），可升级为 ERROR 级 commit gate。豁免清单真源：
+    capability_canonical_file_registry.yaml 的 di_seam_exemptions 字段。
+  fix_phase: |
+    Phase 1 (P1 Batch 4, 已完成 2026-07-18): _validate_di_seam() 实现上线，WARNING 级非阻断
+    Phase 2 (待定): 存量违规清理——469 个候选违规逐个评估（真实 DI seam 违规 vs 误报），
+    真实违规添加注入参数或加入豁免清单
+    Phase 3 (待定): WARNING→ERROR 升级——_validate_di_seam 失败时 exit 1 阻断，
+    注册为 commit gate
+  status: in_progress
+  related_adjudication: 'P1-2 治本, ARCH-REFERENCE-L2 原子性'
+  created: '2026-07-18'
+  last_updated: '2026-07-18'
