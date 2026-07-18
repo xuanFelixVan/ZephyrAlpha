@@ -78,8 +78,8 @@ graph TD
         src_zephyr_factor_momentum_factor_py["(原型态 / prototype) D_FACTOR — Momentum Factor<br/>文件: momentum_factor.py"]
         src_zephyr_factor_value_factor_py["(原型态 / prototype) D_FACTOR — Value Factor<br/>文件: value_factor.py"]
     end
-    src_zephyr_factor_momentum_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     src_zephyr_factor_value_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
+    src_zephyr_factor_momentum_factor_py -.->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py
     D_FUNDAMENTAL_SIGNAL["(生产态 / production) D_FUNDAMENTAL_SIGNAL"]
     src_zephyr_factor_alpha_signal_pipeline_py -.->|导入依赖 / import_depends| D_FUNDAMENTAL_SIGNAL
     D_FUNDAMENTAL_SIGNAL -->|导入依赖 / import_depends| src_zephyr_factor_factor_base_py

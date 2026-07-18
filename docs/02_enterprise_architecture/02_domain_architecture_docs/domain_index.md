@@ -21,8 +21,8 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 2674 |
-| 生产态模块 | 1567 |
+| 模块总数 | 2673 |
+| 生产态模块 | 1566 |
 | 设计态模块 | 62 |
 | 原型态模块 | 1045 |
 
@@ -60,7 +60,7 @@ ttl: permanent
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
 | D_ORCHESTRATOR | agent_orchestrator / Agent Orchestrator | 72 | 58 | 0 | 14 | 72/150 (OK) | [22_d_orchestrator.md](22_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 3 | 1 | 0 | 2 | 3/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
-| D_SECURITY | orphan_judge / Adversarial Validation | 165 | 99 | 0 | 66 | 165/150 (超容) | [24_d_security.md](24_d_security.md) |
+| D_SECURITY | orphan_judge / Adversarial Validation | 164 | 98 | 0 | 66 | 164/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
 | D_SHARED | shared_services / Shared Services | 184 | 115 | 0 | 69 | 184/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
