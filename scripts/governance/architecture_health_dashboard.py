@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 15 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）
+# [INVARIANTS] 16 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 14 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 16 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -86,9 +86,10 @@ import json
 import os
 import re
 import subprocess
+import sqlite3
 import sys
 from collections import defaultdict
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
@@ -1215,6 +1216,14 @@ def metric_14_abc_completeness() -> dict:
 _DEPGRAPH_CACHE_REL = ".runtime/depgraph_scan_cache.json"
 _DEPGRAPH_WARN_SECONDS = 30 * 60        # 30 分钟 → WARNING（与 gate 同阈值）
 _DEPGRAPH_BLOCK_SECONDS = 24 * 60 * 60  # 24 小时 → 阻断级（与 gate 同阈值）
+_REMEDIATION_BLOCK_SECONDS = 90 * 24 * 60 * 60  # 90 天 → 阻断级（与 GATE-REMEDIATION-PROGRESS 同阈值，#ARCH-GOV-CONVERGENCE-META Phase 3.1）
+# M16 SQL（NO-BARE-SQL compliance）
+_SQL_CHECK_REMEDIATION_TABLE = "SELECT name FROM sqlite_master WHERE type='table' AND name='remediation_progress'"
+_SQL_SELECT_STALE_REMEDIATION = (
+    'SELECT dimension_id, title, last_updated FROM remediation_progress '
+    "WHERE last_updated < ? AND status NOT IN ('completed', 'deferred') "
+    'ORDER BY last_updated ASC'
+)
 
 
 def _parse_depgraph_saved_at(saved_at_raw: str) -> datetime | None:
@@ -1330,9 +1339,48 @@ def metric_15_depgraph_freshness() -> dict:
     )
 
 
+
+# ── 指标 16：治本进度新鲜度 ────────────────────────────────────────────────
+
+def metric_16_remediation_progress_freshness() -> dict:
+    """治本进度新鲜度——>90天超期未更新维度数（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。
+
+    病根：治本进度是 6 阶段治本计划跟踪数据，若长期不更新，
+    AI 在过期进度上决策 = 幻觉温床。Phase 3.1 reconciler（priority=900）
+    已在 commit 时阻断（>90天 block_next）。本指标暴露超期维度数到仪表盘。
+
+    fail-open：表不存在/DB缺失 → count=0 + error（首启正常）。
+    """
+    db_path = REPO_ROOT / 'data' / 'databases' / 'governance.db'
+    if not db_path.is_file():
+        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
+            details=['governance.db missing (first-run or new env)'],
+            source='inline', error=f'db not found: {db_path.relative_to(REPO_ROOT)}')
+    try:
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.execute(_SQL_CHECK_REMEDIATION_TABLE)
+            if not cur.fetchone():
+                return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
+                    details=['table not yet created (Phase 3.1 not bootstrapped)'],
+                    source='inline', error='table remediation_progress missing')
+            cutoff_iso = (datetime.now(UTC) - timedelta(seconds=_REMEDIATION_BLOCK_SECONDS)).isoformat()
+            cur = conn.execute(_SQL_SELECT_STALE_REMEDIATION, (cutoff_iso,))
+            stale = cur.fetchall()
+        finally:
+            conn.close()
+    except sqlite3.Error as e:
+        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
+            details=[f'db query failed: {e}'], source='inline', error=f'db query failed: {e}')
+    if not stale:
+        return _make_metric('M16', '治本进度新鲜度(>90天超期数)', 0,
+            details=['all remediation dimensions fresh (<90 days)'], source='inline')
+    details = [f'STALE: {row[0]} ({row[1]}) last_updated={row[2]}' for row in stale[:20]]
+    return _make_metric('M16', '治本进度新鲜度(>90天超期数)', len(stale), details=details, source='inline')
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 15 项指标注册表（id → 检测函数）
+# 16 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1349,6 +1397,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M13", "异常信息泄露(返客户端)", metric_13_exception_info_leak),
     ("M14", "ABC抽象方法完整性", metric_14_abc_completeness),
     ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
+    ("M16", "治本进度新鲜度(>90天超期数)", metric_16_remediation_progress_freshness),
 ]
 
 
@@ -1424,7 +1473,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")
