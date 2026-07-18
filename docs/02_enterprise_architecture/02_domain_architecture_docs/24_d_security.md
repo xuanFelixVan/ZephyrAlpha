@@ -58,7 +58,7 @@ ttl: permanent
 | 13 | src/zephyr/red_blue_validator/__init__.py | red_blue_validator — re-export shim for zephyr... | 原型态 / prototype | [MOD-INF-030](../../03_modules/_cross_layer/red_blue_validator/blueprint.md) |
 | 14 | src/zephyr/security/access_control/a2a_check.py | A2A 通信对验证——校验两个 agent 之间是否允许通信。 | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 15 | src/zephyr/security/access_control/adversarial_resilience.py | AdversarialResilience — 对抗性韧性与 OWASP 覆盖. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
-| 16 | src/zephyr/security/access_control/agent_creation_policy.py | AgentCreationPolicy — Agent 创建策略. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
+| 16 | src/zephyr/security/access_control/agent_creation_policy.py | agent_creation_policy.py | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 17 | src/zephyr/security/access_control/approver_check.py | Approver authorization verifier — 校验审批人是... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 18 | src/zephyr/security/access_control/asymmetric_audit.py | Stub module: zephyr.security.access_control.asy... | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
 | 19 | src/zephyr/security/access_control/auto_maintenance.py | AutoMaintenance — 自动维护与规则健康仪表盘. | 生产态 / production | [MOD-INF-018](../../03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) |
@@ -244,7 +244,7 @@ graph TD
         src_zephyr_red_blue_validator_init_py["(原型态 / prototype) red_blue_validator — re-export shim for zephyr...<br/>文件: __init__.py"]
         src_zephyr_security_access_control_a2a_check_py["(生产态 / production) A2A 通信对验证——校验两个 agent 之间是否允许通信。<br/>文件: a2a_check.py"]
         src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience — 对抗性韧性与 OWASP 覆盖.<br/>文件: adversarial_resilience.py"]
-        src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>文件: agent_creation_policy.py"]
+        src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) agent_creation_policy.py"]
         src_zephyr_security_access_control_approver_check_py["(生产态 / production) Approver authorization verifier — 校验审批人是...<br/>文件: approver_check.py"]
         src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) Stub module: zephyr.security.access_control.asy...<br/>文件: asymmetric_audit.py"]
         src_zephyr_security_access_control_auto_maintenance_py["(生产态 / production) AutoMaintenance — 自动维护与规则健康仪表盘.<br/>文件: auto_maintenance.py"]
@@ -698,7 +698,7 @@ graph TD
         src_zephyr_gov_drift_events_py["(生产态 / production) G-CT-005 — ManagedDriftEvent Pydantic V2 BaseM...<br/>文件: events.py"]
         src_zephyr_security_access_control_a2a_check_py["(生产态 / production) A2A 通信对验证——校验两个 agent 之间是否允许通信。<br/>文件: a2a_check.py"]
         src_zephyr_security_access_control_adversarial_resilience_py["(生产态 / production) AdversarialResilience — 对抗性韧性与 OWASP 覆盖.<br/>文件: adversarial_resilience.py"]
-        src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) AgentCreationPolicy — Agent 创建策略.<br/>文件: agent_creation_policy.py"]
+        src_zephyr_security_access_control_agent_creation_policy_py["(生产态 / production) agent_creation_policy.py"]
         src_zephyr_security_access_control_approver_check_py["(生产态 / production) Approver authorization verifier — 校验审批人是...<br/>文件: approver_check.py"]
         src_zephyr_security_access_control_asymmetric_audit_py["(生产态 / production) Stub module: zephyr.security.access_control.asy...<br/>文件: asymmetric_audit.py"]
         src_zephyr_security_access_control_auto_maintenance_py["(生产态 / production) AutoMaintenance — 自动维护与规则健康仪表盘.<br/>文件: auto_maintenance.py"]
