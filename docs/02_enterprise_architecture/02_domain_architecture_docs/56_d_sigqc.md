@@ -68,10 +68,10 @@ graph TD
         src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -104,10 +104,10 @@ graph TD
         src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_TRADING["(原型态 / prototype) D_TRADING"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_TRADING["(原型态 / prototype) D_TRADING"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
