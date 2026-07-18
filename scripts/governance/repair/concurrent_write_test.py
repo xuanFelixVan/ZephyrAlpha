@@ -58,7 +58,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 TEST_DB = REPO_ROOT / "data" / "databases" / "_test_rb_depgraph.db"
 
@@ -108,7 +108,7 @@ def teardown():
             if "test_rb" in d.name.lower() or "_test_rb_depgraph" in d.name.lower():
                 try:
                     shutil.rmtree(d, ignore_errors=True)
-                except Exception:
+                except Exception:  # noqa: BLE001 — 测试清理兜底，测试锁目录删除失败不影响后续测试
                     pass
     print("[TEARDOWN] 测试数据库已清理")
 
@@ -443,7 +443,7 @@ def test_t6():
     # 清理
     try:
         test_path.unlink()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 测试临时文件清理兜底，删除失败不影响判定结果
         pass
 
     passed = ok_count == 1 and conflict_count == 1
@@ -483,7 +483,7 @@ def test_t7():
     for f in [test_file_a, test_file_b]:
         try:
             (REPO_ROOT / f).unlink()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 测试临时文件清理兜底，删除失败不影响判定结果
             pass
 
     passed = ok_count == 2
@@ -531,7 +531,7 @@ def test_t8():
     lf.cmd_release(test_file, "session-t8-new")
     try:
         test_path.unlink()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 测试临时文件清理兜底，删除失败不影响判定结果
         pass
 
     passed = rc2 == 0
@@ -636,7 +636,7 @@ def test_t10():
     lf.cmd_release(test_file, "session-t10")
     try:
         test_path.unlink()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 测试临时文件清理兜底，删除失败不影响判定结果
         pass
 
     passed = rc1 == 0 and rc2 == 0
@@ -651,7 +651,7 @@ def main():
     # repair/p2_pg_concurrent_test.py（使用get_db_connection+psycopg2）。
     print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
     print("[DEPRECATED] PG替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")
-    return 0
+    return EXIT_PASS
 
     print("=" * 60)
     print("红蓝对抗测试 — depgraph 并发写入极限测试")
@@ -678,7 +678,7 @@ def main():
         print("\n" + "=" * 60)
         print("[FATAL] 生产库污染检测失败 — 测试隔离缺陷需修复")
         print("=" * 60)
-        return 1
+        return EXIT_FINDINGS
 
     # 汇总报告
     print("\n" + "=" * 60)

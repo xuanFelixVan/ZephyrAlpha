@@ -243,12 +243,12 @@ def main():
     # 1. 加载连接配置
     if not os.path.exists(ENV_PATH):
         print(f'ERROR: 环境变量文件不存在: {ENV_PATH}')
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     env = load_env(ENV_PATH)
 
     if not os.path.exists(SQLITE_PATH):
         print(f'ERROR: SQLite 数据库不存在: {SQLITE_PATH}')
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     # 2. 连接两个数据库
     # PostgreSQL 连接使用 postgres 超级用户（而非应用用户 zephyr），
@@ -309,12 +309,20 @@ def main():
         # 失败时尝试重新启用触发器，避免遗留禁用状态
         try:
             enable_all_triggers(pg_conn)
-        except Exception:
-            pass
+        except psycopg2.Error as trig_err:
+            print(f'[WARN] 迁移失败后重新启用触发器失败（可能遗留禁用状态）: {trig_err}')
         print(f'\n[ERROR] 迁移失败: {e}')
         import traceback
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+
         traceback.print_exc()
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     finally:
         sqlite_conn.close()
         pg_conn.close()

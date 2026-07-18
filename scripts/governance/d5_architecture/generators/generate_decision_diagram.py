@@ -53,6 +53,14 @@ except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
 
 from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+
     get_decisiongraph_pg_connection,
 )
 
@@ -156,7 +164,7 @@ def _resolve_blueprint_names(conn, layers: list[dict]) -> dict[str, str]:
                 bp_name = row[1] if isinstance(row, (list, tuple)) else row.get("node_name")
                 if bp_id and bp_name:
                     result[bp_id] = bp_name
-    except Exception:
+    except Exception:  # noqa: BLE001 — depgraph 查询失败（表不存在/连接断开/驱动异常）时静默降级为仅展示 module_id，不影响图生成主流程
         # depgraph 表不存在或查询失败时静默降级——仅展示 module_id
         pass
     return result

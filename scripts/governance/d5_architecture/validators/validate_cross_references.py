@@ -518,7 +518,7 @@ def check_dim9_deprecated_refs() -> None:
 
         try:
             content = f.read_text(encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个治理文档读取失败（权限/非UTF-8编码/IO）时跳过该文件继续 DIM-9 废弃引用扫描，尽力而为语义
             continue
 
         fm_raw = parse_frontmatter_from_file(f)
@@ -617,7 +617,7 @@ def check_dim10_broken_path_refs() -> None:
     for f in scan_files:
         try:
             content = f.read_text(encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 Markdown 读取失败（权限/非UTF-8编码/IO）时跳过该文件继续 DIM-10 断裂路径检测，尽力而为语义
             continue
 
         fm_raw = parse_frontmatter_from_file(f)

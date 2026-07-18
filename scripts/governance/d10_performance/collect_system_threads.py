@@ -113,7 +113,7 @@ def collect_threads(top: int | None = None) -> ThreadSnapshot:
                 )
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
-    except Exception:
+    except Exception:  # noqa: BLE001 — 进程迭代整体失败（权限/平台限制）时返回已收集的部分快照，采集器不阻断调用方
         pass
 
     processes.sort(key=lambda x: x["num_threads"], reverse=True)

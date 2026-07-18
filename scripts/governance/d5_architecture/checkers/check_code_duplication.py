@@ -151,7 +151,7 @@ def main() -> int:
                 try:
                     content = py_file.read_text(encoding="utf-8")
                     files[py_file.name] = content
-                except Exception:
+                except Exception:  # noqa: BLE001 — 单个源码文件读取失败（编码/权限/IO）时跳过该文件继续跨包重复检测，治理扫描尽力而为语义
                     pass
             if files:
                 packages[pkg_dir.name] = files

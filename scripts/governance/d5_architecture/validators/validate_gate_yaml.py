@@ -114,7 +114,7 @@ def check_yaml_gateids_in_engine() -> dict[str, Any]:
     for yf in iter_files(GATES_DIR, name_pattern="g[1-5]_*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 gate YAML 读取/解析失败时跳过该文件继续 D1 gate_id 一致性检查，尽力而为语义
             continue
         gid = yd.get("gate_id", "")
         if gid and gid not in gate_files:
@@ -138,7 +138,7 @@ def check_checktype_implementation() -> dict[str, Any]:
     for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 gate YAML 读取/解析失败时跳过该文件继续 D2 CheckType 覆盖检查，尽力而为语义
             continue
         checks = yd.get("checks") or yd.get("entry_conditions") or []
         for c in checks:
@@ -198,7 +198,7 @@ def check_severity_consistency() -> dict[str, Any]:
     for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 gate YAML 读取/解析失败时跳过该文件继续 D5 severity 一致性检查，尽力而为语义
             continue
         checks = yd.get("checks") or yd.get("entry_conditions") or []
         for c in checks:
@@ -222,7 +222,7 @@ def check_autofix_compatibility() -> dict[str, Any]:
     for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 gate YAML 读取/解析失败时跳过该文件继续 D6 auto_fix 兼容性检查，尽力而为语义
             continue
         checks = yd.get("checks") or yd.get("entry_conditions") or []
         for c in checks:
@@ -249,7 +249,7 @@ def check_duplicate_checkids() -> dict[str, Any]:
     for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):
         try:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 gate YAML 读取/解析失败时跳过该文件继续 check id 重复检测，尽力而为语义
             continue
         checks = yd.get("checks") or yd.get("entry_conditions") or []
         for c in checks:

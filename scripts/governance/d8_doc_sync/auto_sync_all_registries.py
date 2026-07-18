@@ -151,7 +151,7 @@ def _read_class_docstring(py_file: Path) -> str | None:
         doc = ast.get_docstring(tree)
         if doc:
             return doc.split("\n")[0].strip()
-    except Exception:
+    except (OSError, SyntaxError, ValueError):  # 单个 gate 文件读取/AST 解析失败返回 None（docstring 为可选元数据），不阻断同步
         pass
     return None
 
@@ -169,7 +169,7 @@ def _extract_blueprint_version(blueprint_path: Path) -> str | None:
         m = re.search(r'^\s*-\s*version\s*:\s*"?([\d.]+)"?\s*$', content, re.MULTILINE)
         if m:
             return m.group(1)
-    except Exception:
+    except (OSError, ValueError):  # blueprint 读取/解码失败返回 None（版本号为可选元数据），不阻断同步
         pass
     return None
 

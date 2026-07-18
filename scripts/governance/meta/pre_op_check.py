@@ -160,7 +160,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
             content = _SCRIPT_MANIFEST.read_text(encoding="utf-8")
             if rel in content:
                 checks.append((True, "script_manifest.yaml"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 注册表读取失败时跳过该登记来源，属尽力而为探测
             pass
 
     if _REGISTRY_OF_REGISTRIES.exists():
@@ -168,7 +168,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
             content = _REGISTRY_OF_REGISTRIES.read_text(encoding="utf-8")
             if rel in content:
                 checks.append((True, "registry_of_registries.yaml"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 注册表读取失败时跳过该登记来源，属尽力而为探测
             pass
 
     init_dir = Path(filepath).resolve().parent
@@ -179,7 +179,7 @@ def _file_is_registered(filepath: str) -> tuple[bool, str]:
             basename = Path(filepath).stem
             if basename in content:
                 checks.append((True, "__init__.py"))
-        except Exception:
+        except Exception:  # noqa: BLE001 — __init__.py 读取失败时跳过该登记来源，属尽力而为探测
             pass
 
     if checks:
@@ -352,8 +352,8 @@ def check_delete(filepath: str) -> AdmissionResult:
                     f"文件有 git 提交历史: {result.stdout.strip()[:100]}",
                     "已提交的文件有持续价值。只能重构/重安置，不能删除。",
                 )
-        except Exception:
-            pass
+        except (OSError, subprocess.SubprocessError) as e:
+            logger.warning("git 历史检查异常，按无提交历史放行: %s", e)
         return CheckItem("DEL-003", "RULE-THREE STEP 1: git历史检查", "GREEN", "文件无 git 提交历史")
 
     def _content_value_check() -> CheckItem:

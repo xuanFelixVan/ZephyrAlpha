@@ -327,7 +327,7 @@ def _is_real_package(pkg_name: str, cache: dict) -> bool:
             if resp.status == 200:
                 cache.setdefault("verified", {})[pkg_name] = True
                 return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — PyPI 网络探测为可选检查，超时/断网/非200 时降级到本地 import 探测
         pass
 
     try:

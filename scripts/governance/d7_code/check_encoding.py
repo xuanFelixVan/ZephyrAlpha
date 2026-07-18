@@ -149,7 +149,7 @@ def _detect_mojibake_bytes(raw: bytes) -> bool:
                         fffd_ratio = partial_rt.count("�") / len(partial_rt) if partial_rt else 1.0
                         if partial_cjk >= 3 and fffd_ratio < 0.5:
                             return True
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 容错解码启发式的防御性兜底：任何异常都视为该片段非 mojibake，不影响其余片段检测
                         pass
             except UnicodeEncodeError:
                 pass

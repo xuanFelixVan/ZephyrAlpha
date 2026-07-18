@@ -198,7 +198,7 @@ def _get_project_root() -> str:
         )
         if r.returncode == 0:
             return r.stdout.strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — git 不可用（未安装/非 git 仓库）时回退 os.getcwd()，项目根探测不阻断检查
         pass
     return os.getcwd()
 
@@ -252,7 +252,7 @@ def _read_staged_content(rel_path: str) -> str:
         )
         if r.returncode == 0:
             return r.stdout
-    except Exception:
+    except Exception:  # noqa: BLE001 — git show 读取 staged 内容失败返回空串，调用方跳过该文件继续检查其余文件
         pass
     return ""
 
@@ -309,7 +309,8 @@ def _run_full_scan(project_root: str) -> int:
         try:
             with open(abs_file, "r", encoding="utf-8", errors="replace") as f:
                 content = f.read()
-        except Exception:
+        except OSError as e:
+            print(f"PURE-ASSERTION full-scan: 读取失败跳过 {rel}: {e}", file=sys.stderr)
             continue
         violations = _check_file(content, None)
         for v in violations:

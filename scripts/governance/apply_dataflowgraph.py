@@ -61,6 +61,8 @@ import sys
 from datetime import datetime
 from typing import Any
 
+import psycopg2
+
 # 添加项目根到 sys.path（确保 zephyr.* 可导入）
 from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -68,6 +70,14 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
+
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+
     _DATAFLOW_ADVISORY_LOCK_KEY,
     acquire_dataflow_write_lock,
     get_dataflowgraph_pg_connection,
@@ -136,8 +146,8 @@ def cmd_add_design_dataset(args: argparse.Namespace) -> int:
     finally:
         try:
             release_dataflow_write_lock(conn)
-        except Exception:
-            pass
+        except psycopg2.Error as lock_err:
+            print(f"WARN: 释放 dataflow 写锁失败（可能遗留 advisory lock）: {lock_err}", file=sys.stderr)
         conn.close()
 
 
@@ -175,8 +185,8 @@ def cmd_add_design_job(args: argparse.Namespace) -> int:
     finally:
         try:
             release_dataflow_write_lock(conn)
-        except Exception:
-            pass
+        except psycopg2.Error as lock_err:
+            print(f"WARN: 释放 dataflow 写锁失败（可能遗留 advisory lock）: {lock_err}", file=sys.stderr)
         conn.close()
 
 
@@ -208,8 +218,8 @@ def cmd_add_design_edge(args: argparse.Namespace) -> int:
     finally:
         try:
             release_dataflow_write_lock(conn)
-        except Exception:
-            pass
+        except psycopg2.Error as lock_err:
+            print(f"WARN: 释放 dataflow 写锁失败（可能遗留 advisory lock）: {lock_err}", file=sys.stderr)
         conn.close()
 
 
@@ -258,8 +268,8 @@ def cmd_transition_build_status(args: argparse.Namespace) -> int:
     finally:
         try:
             release_dataflow_write_lock(conn)
-        except Exception:
-            pass
+        except psycopg2.Error as lock_err:
+            print(f"WARN: 释放 dataflow 写锁失败（可能遗留 advisory lock）: {lock_err}", file=sys.stderr)
         conn.close()
 
 
@@ -395,23 +405,23 @@ def main() -> None:
     if args.add_design_dataset:
         if not args.entity_name:
             print("ERROR: --add-design-dataset 需要 --entity-name", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(EXIT_ERROR)
         sys.exit(cmd_add_design_dataset(args))
     if args.add_design_job:
         if not args.job_name:
             print("ERROR: --add-design-job 需要 --job-name", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(EXIT_ERROR)
         sys.exit(cmd_add_design_job(args))
     if args.add_design_edge:
         if not all([args.from_id, args.to_id, args.from_type, args.to_type]):
             print("ERROR: --add-design-edge 需要 --from-id --to-id --from-type --to-type", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(EXIT_ERROR)
         sys.exit(cmd_add_design_edge(args))
     if args.transition_build_status:
         entity_type, entity_ref, new_status = args.transition_build_status
         if entity_type not in ("dataset", "job"):
             print(f"ERROR: ENTITY_TYPE 必须是 dataset 或 job，得到: {entity_type!r}", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(EXIT_ERROR)
         args.entity_type = entity_type
         args.entity_ref = entity_ref
         args.new_status = new_status
@@ -419,7 +429,7 @@ def main() -> None:
 
     # 无命令时显示帮助
     parser.print_help()
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

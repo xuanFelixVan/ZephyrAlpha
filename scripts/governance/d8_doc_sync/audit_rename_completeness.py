@@ -73,7 +73,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 logger = logging.getLogger(__name__)
 
@@ -175,7 +175,7 @@ def scan_residual(
                                 "samples": samples,
                             }
                         )
-                except Exception as e:
+                except Exception as e:  # noqa: BLE001 — 单个表/列残留查询失败不中断审计（已记 WARN 日志），继续扫描其余列
                     logger.warning("scan_residual: residual query failed for %s.%s (%s: %s)", tbl, col, type(e).__name__, e)
 
     return residuals
@@ -414,11 +414,11 @@ def main() -> int:
         total = len(residuals)
         if total == 0:
             print(f"[PASS] 0 文件残留——文件扫描通过（旧标识符: {old_ids}，扫描 {len(file_paths)} 文件）")
-            return 0
+            return EXIT_PASS
         print(f"[FAIL] 发现 {total} 处文件残留:")
         for r in residuals:
             print(f"  {r['file']}:{r['line']}: {r['old_id']}")
-        return 1
+        return EXIT_FINDINGS
 
     # 文件重命名残留扫描模式（幽灵文件检测——AI-14 审计 S1-2 治本）
     if args.check_file_renames:
@@ -430,13 +430,13 @@ def main() -> int:
         total = len(residuals)
         if total == 0:
             print("[PASS] 0 幽灵文件——depgraph nodes.file_path 全部指向磁盘存在的文件")
-            return 0
+            return EXIT_PASS
         print(f"[FAIL] 发现 {total} 个幽灵文件（depgraph 记录了磁盘上不存在的 file_path）:")
         for r in residuals:
             print(f"  node_id={r['node_id']} file_path={r['file_path']} "
                   f"domain={r['domain_id']} build_status={r['build_status']}")
         print("修复: python scripts/governance/generate_project_depgraph.py --force")
-        return 1
+        return EXIT_FINDINGS
 
     # 节点路径模式
     if args.check_node_paths:
@@ -447,9 +447,9 @@ def main() -> int:
             passed = circular_review_node_paths(args.db_path, patterns, rounds=args.rounds)
             if passed:
                 print(f"[PASS] 连续 {args.rounds} 轮0残留，节点路径改名完整性审计通过")
-                return 0
+                return EXIT_PASS
             print(f"[FAIL] 未能连续 {args.rounds} 轮0残留")
-            return 1
+            return EXIT_FINDINGS
         # 单次扫描模式
         conn = get_depgraph_pg_connection(autocommit=True)
         try:
@@ -459,13 +459,13 @@ def main() -> int:
         total = sum(r["count"] for r in residuals)
         if total == 0:
             print(f"[PASS] 节点路径列（nodes.path + blueprint_links.blueprint_path）无旧前缀残留（{patterns}）")
-            return 0
+            return EXIT_PASS
         print(f"[FAIL] 节点路径列发现 {total} 行残留:")
         for r in residuals:
             print(f"  {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows")
             for s in r["samples"]:
                 print(f"    sample: {s}")
-        return 1
+        return EXIT_FINDINGS
 
     # 循环审查模式
     if args.rounds > 0:
@@ -473,9 +473,9 @@ def main() -> int:
         passed = circular_review(args.db_path, old_ids, rounds=args.rounds)
         if passed:
             print(f"[PASS] 连续 {args.rounds} 轮0残留，改名完整性审计通过")
-            return 0
+            return EXIT_PASS
         print(f"[FAIL] 未能连续 {args.rounds} 轮0残留")
-        return 1
+        return EXIT_FINDINGS
 
     # 单次扫描模式
     conn = get_depgraph_pg_connection(autocommit=True)
@@ -487,7 +487,7 @@ def main() -> int:
     total = sum(r["count"] for r in residuals)
     if total == 0:
         print(f"[PASS] 0 残留——改名完整性审计通过（旧标识符: {old_ids}）")
-        return 0
+        return EXIT_PASS
 
     print(f"[FAIL] 发现 {total} 行残留（{len(residuals)} 个列位）:")
     print(f"  排除表（规则示例/系统表）: {sorted(EXCLUDE_TABLES)}")
@@ -496,7 +496,7 @@ def main() -> int:
         print(f"  {r['table']}.{r['column']} contains '{r['old_id']}': {r['count']} rows")
         for s in r["samples"]:
             print(f"    sample: {s}")
-    return 1
+    return EXIT_FINDINGS
 
 
 if __name__ == "__main__":

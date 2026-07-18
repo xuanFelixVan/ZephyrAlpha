@@ -52,7 +52,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.encoding import ensure_utf8_stdout
 
 ensure_utf8_stdout()
@@ -62,7 +62,7 @@ try:
     import yaml
 except ImportError:
     print("ERROR: PyYAML 未安装, 请运行 pip install pyyaml", file=sys.stderr)
-    sys.exit(2)
+    sys.exit(EXIT_ERROR)
 
 # target_layer_vocabulary.yaml 真源路径
 VOCAB_PATH = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "target_layer_vocabulary.yaml"
@@ -75,7 +75,7 @@ def load_vocabulary() -> tuple[set[str], dict[str, str]]:
     """加载 target_layer_vocabulary.yaml，返回 (合法值集合, 废弃值→替换值映射)。"""
     if not VOCAB_PATH.exists():
         print(f"ERROR: 词表文件不存在: {VOCAB_PATH}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
     data = yaml.safe_load(VOCAB_PATH.read_text(encoding="utf-8"))
     valid_values = {v["value"] for v in data.get("values", [])}
@@ -101,7 +101,7 @@ def scan_files(valid_values: set[str], deprecated_map: dict[str, str]) -> list[d
                 continue
             try:
                 text = py_file.read_text(encoding="utf-8")
-            except Exception:
+            except Exception:  # noqa: BLE001 — 单个源码文件读取失败（权限/非UTF-8编码/IO）时跳过该文件继续 target_layer 扫描，尽力而为语义
                 continue
             for line_no, line in enumerate(text.split("\n"), 1):
                 for m in _TARGET_LAYER_RE.finditer(line):

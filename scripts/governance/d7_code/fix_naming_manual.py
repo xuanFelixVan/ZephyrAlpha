@@ -156,7 +156,7 @@ def _batch_update_references(renames: list[tuple[str, str]], dry_run: bool = Fal
             fpath = Path(root) / f
             try:
                 content = fpath.read_text(encoding="utf-8", errors="replace")
-            except Exception:
+            except OSError:  # 单个文件读取失败跳过，继续处理其余文件的引用更新
                 continue
             new_content = content
             for old_name, new_name in rename_map.items():

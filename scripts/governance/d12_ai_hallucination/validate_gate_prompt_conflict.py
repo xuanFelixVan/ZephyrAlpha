@@ -95,7 +95,7 @@ def _load_gate_rules() -> list[dict[str, Any]]:
             data = yaml.safe_load(yf.read_text(encoding="utf-8"))
             if not isinstance(data, dict):
                 continue
-        except Exception:
+        except (OSError, yaml.YAMLError):  # 单个 gate yaml 读取/解析失败跳过，继续校验其余 gate 文件
             continue
 
         gate_id = str(data.get("gate_id", ""))

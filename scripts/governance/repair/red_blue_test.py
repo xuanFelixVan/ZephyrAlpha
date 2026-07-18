@@ -258,6 +258,13 @@ def run_special_tests():
     # 清理可能残留的锁
     import subprocess as _sp
 
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+
+
     _sp.run(
         ["python", lock_script, "release", test_file, "rb-session-a"],
         capture_output=True,
@@ -443,7 +450,7 @@ def run_special_tests():
             conn_cleanup.execute("DELETE FROM nodes WHERE path=?", (test_node_path,))
             conn_cleanup.commit()
             conn_cleanup.close()
-        except Exception:
+        except Exception:  # noqa: BLE001 — 测试清理兜底，无论临时节点创建是否成功都尝试清理
             pass
     except Exception:
         sm_ok = False
@@ -456,7 +463,7 @@ def main():
     # repair/p2_pg_concurrent_test.py 模式。
     print("[DEPRECATED] 本脚本基于SQLite语义，P2迁移后已弃用。")
     print("[DEPRECATED] 需PG重写；并发测试替代品：python scripts/governance/repair/p2_pg_concurrent_test.py")
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
     print("=" * 60)
     print("=== §4 红蓝对抗测试（20项）===")
@@ -479,10 +486,10 @@ def main():
     print(f"\n总计: {pass_count} PASS / {fail_count} FAIL")
     if fail_count == 0:
         print("\n[PASS] 红蓝对抗测试全部通过")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
     else:
         print(f"\n[FAIL] 红蓝对抗测试有 {fail_count} 项失败")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
 
 if __name__ == "__main__":
