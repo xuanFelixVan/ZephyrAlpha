@@ -13,6 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] ScanError; ParseError
 # [TESTS] tests/test_generate_project_depgraph.py
+# [ARCH-REF] #ARCH-DI-SEAM-001 — DI seam 静态门禁（_validate_di_seam）
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: while True用于Tarjan SCC算法(含break退出),非daemon常驻服务;一次性CLI工具
 """
@@ -2803,6 +2804,130 @@ def _validate_arch_references():
         print(f"[DEPGRAPH] ARCH 引用校验通过: {sorted(arch_refs)} 均已在 registry 中登记")
 
 
+def _load_di_seam_exemptions() -> set[str]:
+    """从 capability_canonical_file_registry.yaml 加载 di_seam_exemptions 豁免清单（#ARCH-DI-SEAM-001）。"""
+    registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml")
+    if not _Path(registry_path).exists():
+        return set()
+    try:
+        data = _yaml_load(registry_path)
+        exemptions = data.get("di_seam_exemptions", []) if data else []
+        return {e.get("module_path", "") for e in exemptions if e.get("module_path")}
+    except Exception as e:  # noqa: BLE001 — fail-open，豁免清单加载失败不阻断
+        print(f"[DEPGRAPH] WARNING: di_seam_exemptions 加载失败，跳过豁免: {e}")
+        return set()
+
+
+def _is_injectable_param(arg: ast.arg) -> bool:
+    """判断 __init__ 参数是否为可注入 DI 接缝（#ARCH-DI-SEAM-001）。
+
+    判定标准：参数注解含 Protocol/ABC/Interface 类型名（默认值 None 由调用方检查）。
+    """
+    annotation = arg.annotation
+    if annotation is not None:
+        ann_src = ast.unparse(annotation) if hasattr(ast, "unparse") else ""
+        if any(token in ann_src for token in ("Protocol", "ABC", "Interface")):
+            return True
+    return False
+
+
+def _is_dataclass(class_node: ast.ClassDef) -> bool:
+    """检查 ClassDef 是否有 @dataclass 装饰器（#ARCH-DI-SEAM-001）。"""
+    for dec in class_node.decorator_list:
+        dec_src = ast.unparse(dec) if hasattr(ast, "unparse") else ""
+        if "dataclass" in dec_src:
+            return True
+    return False
+
+
+def _is_protocol_subclass(class_node: ast.ClassDef) -> bool:
+    """检查 ClassDef 是否继承 Protocol/ABC/Interface（接口定义，跳过）。"""
+    for base in class_node.bases:
+        base_src = ast.unparse(base) if hasattr(ast, "unparse") else ""
+        if any(t in base_src for t in ("Protocol", "ABC", "Interface")):
+            return True
+    return False
+
+
+def _find_init_method(class_node: ast.ClassDef):
+    """查找 ClassDef 的 __init__ 方法，找不到返回 None。"""
+    for node in class_node.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "__init__":
+            return node
+    return None
+
+
+def _init_has_injectable_param(init_func: ast.FunctionDef) -> bool:
+    """判断 __init__ 是否含可注入参数（True=有 seam，False=候选违规）。
+
+    跳过 *args/**kwargs-only 动态签名。
+    """
+    args = init_func.args
+    named = args.args[1:]  # 跳过 self
+    if not named and not args.kwonlyargs:
+        return True  # 动态签名，跳过
+    defaults = [None] * (len(named) - len(args.defaults)) + args.defaults
+    for arg, default in zip(named, defaults):
+        if _is_injectable_param(arg):
+            return True
+        if default is not None:
+            default_src = ast.unparse(default) if hasattr(ast, "unparse") else ""
+            if default_src == "None":
+                return True  # | None = None 可注入
+    return False
+
+
+def _class_has_di_seam(class_node: ast.ClassDef) -> bool:
+    """判断 ClassDef 是否有 DI seam（True=有/无需检查，False=候选违规，#ARCH-DI-SEAM-001）。
+
+    跳过：@dataclass（字段注入）、Protocol/ABC 子类（接口定义）、无 __init__、*args/**kwargs-only。
+    """
+    if _is_dataclass(class_node) or _is_protocol_subclass(class_node):
+        return True
+    init_func = _find_init_method(class_node)
+    if init_func is None:
+        return True  # 无 __init__，跳过
+    return _init_has_injectable_param(init_func)
+
+
+def _validate_di_seam():
+    """Phase 4 防御性门禁 (#ARCH-DI-SEAM-001): DI seam 静态检测 — 跨切面依赖注入接缝扫描。
+
+    P1-2 治本：AST 扫描 src/zephyr/**/*.py 的 ClassDef __init__ 方法，检测缺少
+    可注入参数的类（疑似硬编码外部依赖，违反 DI seam 原则）。WARNING 级别（非阻断），
+    存量违规过渡期不阻断，待存量清理后可升级为 ERROR。
+
+    豁免清单真源：capability_canonical_file_registry.yaml 的 di_seam_exemptions 字段。
+    编号铁律#6: 本函数引用 #ARCH-DI-SEAM-001，已在 architecture_issue_registry.yaml 登记。
+    """
+    exemptions = _load_di_seam_exemptions()
+    src_root = PROJECT_ROOT / "src" / "zephyr"
+    warnings: list[str] = []
+    for py_file in src_root.rglob("*.py"):
+        try:
+            tree = ast.parse(py_file.read_text(encoding="utf-8-sig", errors="ignore"), filename=str(py_file))
+        except SyntaxError:
+            continue
+        rel_path = str(py_file.relative_to(PROJECT_ROOT)).replace("\\", "/").replace("src/", "")
+        module_prefix = rel_path.replace("/", ".").removesuffix(".py")
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            full_path = f"{module_prefix}.{node.name}"
+            if full_path in exemptions:
+                continue
+            if not _class_has_di_seam(node):
+                warnings.append(f"{full_path} — __init__ 无可注入参数（Protocol/ABC/Interface 注解 或 |None=None 默认）")
+    if warnings:
+        print(f"[DEPGRAPH] WARNING: DI seam 检测发现 {len(warnings)} 个候选违规 (#ARCH-DI-SEAM-001):")
+        for w in warnings[:20]:
+            print(f"  - {w}")
+        if len(warnings) > 20:
+            print(f"  ... 还有 {len(warnings) - 20} 条未显示")
+    else:
+        print(f"[DEPGRAPH] DI seam 校验通过: 0 个违规 (#ARCH-DI-SEAM-001)")
+
+
 def merge_depgraph(new_data: dict, existing_path, old_data=None) -> dict:
     """Merge new depgraph with existing, preserving manual annotations and design-state nodes.
 
@@ -3852,6 +3977,8 @@ def main():
 
     # Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 registry 中有对应条目
     _validate_arch_references()
+    # P1-2 (#ARCH-DI-SEAM-001): DI seam 静态检测（WARNING 级，非阻断）
+    _validate_di_seam()
 
     granularity = args.granularity
     report = GenerationReport()

@@ -4117,6 +4117,19 @@ capabilities:
       catalogs/ruling_registry.yaml。解决发现性：新 AI 搜"裁定登记/裁定 registry/ruling
       registry/裁定#NNN 真源/裁定#20-A/裁定#20-B"可定位 YAML 真源。
 
+  # --------------------------------------------------------------------------
+  - capability_id: di_seam_static_checker
+    aliases:
+      - _validate_di_seam
+      - DI_SEAM_GATE
+      - di_seam_validator
+    description: >-
+      DI seam 静态门禁（P1-2，#ARCH-DI-SEAM-001）：AST 扫描 src/zephyr/**/*.py 的
+      ClassDef __init__ 方法，检测缺少可注入参数（Protocol/ABC/Interface 类型注解
+      或 `| None = None` 默认）的类——疑似硬编码外部依赖，违反 DI seam 原则。
+      WARNING 级别（非阻断），豁免清单从本文件 di_seam_exemptions 字段动态加载。
+      canonical = scripts/governance/generate_project_depgraph.py 的 _validate_di_seam。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5044,6 +5057,22 @@ creation_tokens:
     token: "auto-ruling-registry-20260718"
     created_by: "sess-29716-20260718160200"
     capability: "ruling_registry"
+
+# ============================================================================
+# DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
+# ============================================================================
+# _validate_di_seam() 动态加载本清单，命中 module_path 的类跳过违规检测。
+# 新增豁免：在此追加 {module_path, reason, created} 条目。
+di_seam_exemptions:
+  - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
+    reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"
+    created: "2026-07-18"
+  - module_path: "zephyr.gov_enforcement.behavioral_admission.admission_controller.AdmissionController"
+    reason: "行为准入控制器，依赖图已知 DI seam，待后续重构"
+    created: "2026-07-18"
+  - module_path: "zephyr.orchestrator.agent_orchestrator.AgentOrchestrator"
+    reason: "编排器核心，P1-3 RoutingRole 改造期暂豁免"
+    created: "2026-07-18"
 
 # ============================================================================
 # 维护日志
