@@ -3,7 +3,7 @@ module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: Active
-version: 2.0.0
+version: 2.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -27,7 +27,7 @@ tags:
 - safety-red-lines
 - security-principles
 - domain-driven
-summary: ZephyrAlpha 2.0 架构原则+方法论集中 SSoT。v2.0.0：合并 overview.md 永恒指导内容（TOGAF/C4/功能域裁定/三棵树/核心决策），overview.md 删除。v1.4.0：修复编号错乱、删除过期归集承诺、机构对标表瘦身。v1.1.0：安全红线归集。
+summary: ZephyrAlpha 2.0 架构原则+方法论集中 SSoT。v2.0.1：清理幻觉引用（KBG/ADR/D_XXX/ARB/gov_kb 等不存在的引用全删）。v2.0.0：合并 overview.md 永恒指导内容（TOGAF/C4/功能域裁定/三棵树/核心决策），overview.md 删除。v1.4.0：修复编号错乱、删除过期归集承诺、机构对标表瘦身。v1.1.0：安全红线归集。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -46,8 +46,6 @@ ttl: permanent
 3. **核心架构决策**（§4）——系统定位与定死的决策
 
 任何其他文件中对同一原则或方法论的描述均为**只读引用**，不得独立修改正文。如有冲突，以本文档为准。
-
-**关于 OCP / SSoT / 模块准入铁律**：这三项原则仍分别在 `KBG-0004`（OCP 扩展点）、`KBG-0001`（SSoT 唯一真源）、`KBG-0014`（模块准入四级铁律）中定义，不归集到本文档——各自 KBG 已是独立 SSoT，强行归集会产生双源同步负担。
 
 ---
 
@@ -73,7 +71,7 @@ ttl: permanent
 | 逻辑层怎么保留 | 作为域的 layer_id 属性 | 属性不是分类，不会产生两套并行的分法 |
 | 逻辑层 YAML 文件 | 废弃，合并进 depgraph | 避免两个地方同时存同一信息（真源分裂） |
 
-**当前域层级分布**：由 depgraph `domains` 表派生，详见 [`generated/domains/index.md`](../generated/domains/index.md)。禁止在本文硬编码域数量/节点数/边数。
+**当前域层级分布**：由 depgraph `domains` 表派生（详见 depgraph 数据库或 `domains` 表）。禁止在本文硬编码域数量/节点数/边数。
 
 ### 1.3 TOGAF 四层
 
@@ -116,17 +114,17 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 |---|------|--------|----------|
 | **R1** | **键盘不录 key** | API 密钥、数据库密码等秘密信息只能通过环境变量/密钥管理器注入，绝不手动键入 | pre-commit 检测 `key=` / `password=` / `secret=` 字面量 |
 | **R2** | **日志不写 secret** | 任何日志系统（structlog/logging/print）的输出中不得包含密钥、token、私钥 | CI 门禁正则扫描 log 输出 |
-| **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | D_RISK 风控层 hard check before D_EXECUTION_CORE 执行 |
+| **R3** | **金融不盲信任 AI** | AI 生成的交易决策、风控参数、金额计算必须经过人工确认或确定性规则校验后才生效 | 风控层 hard check before 执行层 |
 | **R4** | **PRD 永远不改** | 生产数据库（PRD）永远不做 DDL 变更/手动 UPDATE/DELETE；所有变更走迁移脚本 + 审计日志 | DB 权限只读连接 + 迁移脚本强制记录 |
 
 ### §2bis 门禁追溯（CI / 本地工件）
 
 | # | gate_ref | 落地状态 | 说明 |
 |---|----------|:---:|------|
-| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交；密钥字面量与轮换另见 `secret-management-policy.md` |
+| **R1** | `.pre-commit-config.yaml` → `pre-commit-hooks` / `detect-private-key`；服务端全量见 `.github/workflows/governance.yml`（`Arch Guard` 等步骤） | ✅ 已落地 | 防私钥误提交 |
 | **R2** | **目标态**：运行时日志不得写出 secret、token、私钥 | ⚠️ **T1 待落地** | **当前**以 Code Review + `security_architecture.md` 日志约束为主，**尚无**「扫描所有运行时 log 输出」的独立 CI job。T1 实盘前必须在 `scripts/arch_guard/` 或专项 workflow 登记自动化扫描并回链本表 |
-| **R3** | 设计侧：`cross_layer_contracts.yaml` + `invariants.yaml`（D_RISK ↔ D_EXECUTION_CORE）；CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用） | ⚠️ **T1 待落地** | T1 实盘后须满足 hard-check 与适应度函数阈值 |
-| **R4** | 数据治理策略（`data-retention-policy.md` 等）+ 迁移与审计流程；非单一脚本名 | ✅ 已落地 | 以权限与流程为主 |
+| **R3** | **目标态**：风控参数 hard check before 执行层 | ⚠️ **T1 待落地** | CI：`python scripts/arch_guard/run_all.py`（由 governance workflow 调用）。T1 实盘后须满足 hard-check 与适应度函数阈值 |
+| **R4** | 数据治理策略（权限只读连接 + 迁移审计流程） | ✅ 已落地 | 以权限与流程为主 |
 
 **红线优先级**：高于所有其他架构原则。在其他原则（如 §3 "开源优先"）与红线冲突时，**红线无条件优先**。
 
@@ -174,7 +172,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 > 任何新模块在架构设计稿的 §1 必须包含"OSS Candidates 调研结果"，证明已做过 GitHub 扫描。未做 OSS Scan 的设计稿不予进入 IOA 评审。
 
 **执行标准**：
-- 每个新的 `design_draft`、`adr`、`c4_view` 类文档必须含"OSS Candidates"小节
+- 新增架构设计类文档（如模块蓝图、技术选型记录）必须含"OSS Candidates"小节
 - 至少调研 3 个同类开源项目
 - 明确决策结论（Buy / Buy+Wrap / Hybrid / Build）
 
@@ -184,7 +182,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 > 当决策为 Buy/Buy+Wrap 时，必须通过 OCP 扩展点 + ACL 适配器引入，避免业务逻辑与开源项目深度耦合。
 
-**实现路径**（对齐 KBG-0004 + 03-AA §4.4）：
+**实现路径**：
 ```
 开源项目 API
     ↓
@@ -205,7 +203,7 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 
 #### 原则 3：License-as-Code / 许可证即代码
 
-> 所有依赖项的许可证必须通过 SBOM 自动扫描（D_COMPLIANCE 文件治理）。GPL/AGPL 项目进入代码库前必须经过 ARB 特批。
+> 所有依赖项的许可证必须通过 SBOM 自动扫描。GPL/AGPL 项目进入代码库前必须经过架构评审特批。
 
 **许可证分类标准**：
 
@@ -223,9 +221,9 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 > 对开源项目的 patch/fork 必须有明确记录；可贡献的改进优先提交 PR 而不是私有 fork。
 
 **执行标准**：
-- 每次对 OSS 库做 monkey-patch / fork 时 → 写入 `adr/` 记录原因 + 评估是否可提 PR
+- 每次对 OSS 库做 monkey-patch / fork 时 → 在模块蓝图或独立设计记录中写明原因 + 评估是否可提 PR
 - 私有 fork 的生命周期 ≤ 3 个月——超过 3 个月未合并回上游 → 触发评估：是否应替换该 OSS 库
-- 长期维护的私有 fork → 必须在 `technology_landscape.yaml` 中标注 `quadrant: hold`（警戒指標）
+- 长期维护的私有 fork → 必须在技术全景登记中标注为"hold"警戒
 
 ---
 
@@ -253,9 +251,7 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 - **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 三个独立的平面各管各的：引擎跑策略、Vibe Coding 写代码、治理管规则
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ 三层从上到下，每层有准入和退出门禁
 - **安全红线**：4 条不可撤销（详见 §2）
-- **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议（具体版本以 technology_landscape.yaml 为准）
-
-> KBG 决策记录通过 gov_kb 系统检索（knowledge 表），不在本文档硬编码。
+- **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
 
 ---
 
@@ -263,10 +259,7 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 
 | 关系 | 对象 | 说明 |
 |:---|:---|:---|
-| 本文档引用 | `KBG-0004`（OCP 扩展点） | §3.2 原则 2 依赖 OCP 扩展点基础设施 |
-| 本文档引用 | `KBG-0014`（模块准入铁律） | 模块准入 MOD-P1~P4 是独立的决策维度 |
-| 本文档引用 | `technology_landscape.yaml` | 技术全景图承载具体 OSS 条目登记，本文档承载"为什么选/不选"的决策原则 |
-| 本文档被引用 | `application_architecture.md` | 03-AA §4.4 的 ACL 三段是原则 2"薄适配器"的基础设施实现 |
+| 本文档被引用 | `application_architecture.md` | 应用架构视图，与本文档原则交叉引用 |
 | 已合并删除 | `overview.md` | v2.0.0 合并——永恒指导内容已归集至本文档 §1+§4，overview.md 已删除 |
 
 ---
@@ -280,3 +273,4 @@ OCP 扩展点基类（业务层只依赖抽象接口，不依赖具体开源库�
 | 2026-07-06 | 1.3.0 | 删除 §2.3（5 条硬约束，孤岛概念+第1/4条重叠+第5条引用失效概念）+ §3（BvB 五维评分法，未落地的方法论附录）。清理 OQ-032 悬空引用。 |
 | 2026-07-09 | 1.4.0 | **大修复**：(1) 修复编号错乱——§1.1.1/2/3 重编号为 §2.1.1/2/3，原§4/§5 重编号为 §3/§4；(2) 删除 §0 过期归集承诺（OCP/SSoT/模块准入铁律不再归集，各自 KBG 是独立 SSoT）；(3) §1bis 门禁追溯表新增"落地状态"列，R2/R3 显式标注"T1 待落地"；(4) §2.1 机构对标表瘦身——删除 JPMorgan/Bloomberg/Netflix 3 家非量化机构，保留 Two Sigma/Man AHL/Microsoft Qlib 3 家量化领域代表性机构；(5) §3 修正交叉引用错误（§1.2→§2.2）和过期描述（"未来应归集"→"已归集"）。 |
 | 2026-07-19 | 2.0.0 | **合并 overview.md**：将 overview.md 的永恒指导内容（TOGAF/C4/功能域裁定/三棵树/核心架构决策）合并至本文档 §1（架构方法论）+§4（核心架构决策）。原 §1 安全红线→§2，原 §2 开源优先→§3。overview.md 删除。KBG 决策导航删除（真源在 gov_kb 系统，75+条决策不在文档硬编码）。Runway 导航删除（视图文件拆分后失效）。 |
+| 2026-07-19 | 2.0.1 | **清理幻觉引用**：删除全项目不存在的引用——KBG-0001/0004/0014（无 KBG 系统）、`adr/` 目录（不存在）、`design_draft`/`adr`/`c4_view` 文档类型（无文档用）、D_COMPLIANCE/D_RISK/D_EXECUTION_CORE 功能域（不存在）、ARB 架构评审委员会（不存在）、gov_kb/knowledge 表（不存在）、secret-management-policy.md / cross_layer_contracts.yaml / invariants.yaml / data-retention-policy.md / technology_landscape.yaml（主工作区不存在）、generated/domains/index.md（目录空）、03-AA §4.4（不存在）。原则内容保留，只删引用。 |
