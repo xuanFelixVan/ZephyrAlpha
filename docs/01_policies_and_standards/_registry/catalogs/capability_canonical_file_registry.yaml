@@ -5057,6 +5057,16 @@ creation_tokens:
     token: "auto-ruling-registry-20260718"
     created_by: "sess-29716-20260718160200"
     capability: "ruling_registry"
+  # 治本（2026-07-18，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1）：depgraph 新鲜度门禁
+  - file: "src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py"
+    token: "auto-depgraph-freshness-gate-20260718"
+    created_by: "sess-30144-20260719001234"
+    capability: "depgraph_freshness_gate"
+  # 治本（2026-07-18，#ARCH-DATAQUALITY-V1.4）：_shared.constants 符号导入完整性门禁
+  - file: "src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py"
+    token: "auto-scripts-import-integrity-gate-20260718"
+    created_by: "sess-30144-20260719001234"
+    capability: "scripts_import_integrity_gate"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
