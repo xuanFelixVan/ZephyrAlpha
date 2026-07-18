@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.dangling_reference_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._reference_helpers (get_head_content); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -69,9 +69,9 @@ from __future__ import annotations
 import logging
 import os
 import re
-import subprocess
 from pathlib import Path
 
+from zephyr.gov_enforcement.commit_gates._reference_helpers import get_head_content
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -91,9 +91,6 @@ _AGENTS_REF_RE = re.compile(r"AGENTS\.md\s*§(\d+(?:\.\d+)*)")
 
 # 扫描的文件扩展名（可能含 AGENTS.md §X.Y 引用的文件类型）
 _SCANNABLE_EXTS = (".py", ".yaml", ".yml", ".md")
-
-# git show 超时（秒）——防止大文件/慢盘卡死 commit
-_GIT_SHOW_TIMEOUT = 10
 
 
 def _extract_valid_sections(agents_md_content: str) -> set[str]:
@@ -118,33 +115,6 @@ def _extract_refs(content: str) -> set[str]:
         被引用的章节号字符串集合。
     """
     return set(_AGENTS_REF_RE.findall(content))
-
-
-def _get_head_content(project_root: Path, rel_path: str) -> str | None:
-    """获取文件在 HEAD 版本的内容。
-
-    Args:
-        project_root: 仓库根路径。
-        rel_path: 相对路径（正斜杠）。
-
-    Returns:
-        HEAD 版本文件内容；文件不在 HEAD 中（新文件）返回 None；
-        git 命令本身失败（非"文件不存在"）抛 OSError 让调用方 fail-closed。
-    """
-    try:
-        result = subprocess.run(
-            ["git", "show", f"HEAD:{rel_path}"],
-            capture_output=True,
-            cwd=str(project_root),
-            timeout=_GIT_SHOW_TIMEOUT,
-        )
-    except (subprocess.TimeoutExpired, OSError) as e:
-        # git 命令本身不可达 -> 抛异常让调用方 fail-closed
-        raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
-    if result.returncode != 0:
-        # 文件不在 HEAD 中（新文件）-> 返回 None 表示无历史版本
-        return None
-    return result.stdout.decode("utf-8", errors="replace")
 
 
 def _load_valid_sections(project_root: Path) -> tuple[set[str] | None, tuple[bool, str] | None]:
@@ -208,8 +178,10 @@ def make_dangling_reference_gate() -> GateSpec:
                 continue  # 无 AGENTS.md §X.Y 引用
 
             # 获取 HEAD 版本，计算新增引用
+            # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
+            # 消除与 arch_reference_gate / ruling_reference_gate 的 M03 重复簇。
             try:
-                head_content = _get_head_content(project_root, rel)
+                head_content = get_head_content(project_root, rel)
             except OSError as e:
                 # git 命令失败 -> fail-closed 阻断
                 return False, f"git show failed for {rel} (fail-closed): {e}"

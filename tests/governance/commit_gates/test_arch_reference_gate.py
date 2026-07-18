@@ -149,11 +149,13 @@ class TestIncrementalOnly:
         target = tmp_path / "module.py"
         target.write_text("# see #ARCH-999\n", encoding="utf-8")
 
-        # mock _get_head_content 返回含 #ARCH-999 的 HEAD 版本（历史已有此引用）
-        import zephyr.gov_enforcement.commit_gates.arch_reference_gate as mod
+        # mock get_head_content 返回含 #ARCH-999 的 HEAD 版本（历史已有此引用）
+        # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
+        # mock 需打在 _reference_helpers 模块上（scan_file_violations 内部调用）。
+        import zephyr.gov_enforcement.commit_gates._reference_helpers as helpers
 
         monkeypatch.setattr(
-            mod, "_get_head_content", lambda pr, rel: "# see #ARCH-999\n"
+            helpers, "get_head_content", lambda pr, rel: "# see #ARCH-999\n"
         )
 
         passed, detail = gate.check(gw, [str(target)])
