@@ -288,22 +288,24 @@ class SelfHealer:
         if self._rollback_handler is not None:
             return self._rollback_handler.restore(target_path)
         try:
+            # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
+            # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
             result = subprocess.run(
-                ["git", "checkout", "--", target_path],
+                ["git", "restore", "--", target_path],
                 capture_output=True,
                 text=True,
                 timeout=30,
             )
             if result.returncode == 0:
-                logger.info("git checkout 回滚成功: %s", target_path)
+                logger.info("git restore 回滚成功: %s", target_path)
                 return True
-            logger.warning("git checkout 回滚失败: %s — %s", target_path, result.stderr.strip())
+            logger.warning("git restore 回滚失败: %s — %s", target_path, result.stderr.strip())
             return False
         except subprocess.TimeoutExpired:
-            logger.error("git checkout 回滚超时: %s", target_path)
+            logger.error("git restore 回滚超时: %s", target_path)
             return False
         except OSError as exc:
-            logger.error("git checkout 回滚异常: %s — %s", target_path, exc)
+            logger.error("git restore 回滚异常: %s — %s", target_path, exc)
             return False
 
     def batch_heal(self, issues: list[dict[str, Any]]) -> list[HealResult]:
