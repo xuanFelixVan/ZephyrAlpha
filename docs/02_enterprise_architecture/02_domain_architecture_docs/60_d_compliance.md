@@ -77,21 +77,22 @@ graph TD
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -99,7 +100,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
-    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT external_prod
+    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
     class D_SECURITY external_design
 ```
 
@@ -128,21 +129,22 @@ graph TD
         src_zephyr_compliance_zero_knowledge_audit_stub_init_py["(原型态 / prototype) D_COMPLIANCE Compliance<br/>文件: __init__.py"]
     end
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
-    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_compliance_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
-    D_SECURITY["(原型态 / prototype) D_SECURITY"]
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_security_gateway_base_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_GOV_DRIFT["(生产态 / production) D_GOV_DRIFT"]
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_SECURITY["(原型态 / prototype) D_SECURITY"]
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_INFRA_RUNTIME
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
+    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_SECURITY
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
-    src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -150,7 +152,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
-    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT external_prod
+    class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
     class D_SECURITY external_design
 ```
 
