@@ -20,6 +20,7 @@ for type-level agreements, breaking the direct D-ORCH -> D-INFRA dependency.
 
 from zephyr.shared.protocols.a2a.a2a_coordination import (
     AgentRole,
+    ArbitrationRole,
     DispatchedTask,
     MergeStrategy,
     ResultMerge,
@@ -75,6 +76,7 @@ __all__ = [
     "AgentCapability",
     "AgentCard",
     "AgentRole",
+    "ArbitrationRole",
     "ContextPackage",
     "DispatchedTask",
     "GovernanceAdapterProtocol",

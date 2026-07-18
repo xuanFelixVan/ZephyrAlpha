@@ -22,6 +22,7 @@ from zephyr.shared.contracts.identity.agent_identity import (
     AgentRole,
     IDESource,
     MaturityLevel,
+    RbacRole,
 )
 from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
 
@@ -47,6 +48,7 @@ __all__ = [
     "GuardResult",
     "IDESource",
     "MaturityLevel",
+    "RbacRole",
     "agent_identity",
     "permission",
 ]

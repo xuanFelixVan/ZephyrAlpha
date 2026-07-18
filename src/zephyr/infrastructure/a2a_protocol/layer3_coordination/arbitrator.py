@@ -39,8 +39,12 @@ from enum import IntEnum
 
 # P1-3: 删除本地 AgentRole(IntEnum) 定义，改 import shared 版 ArbitrationRole
 # 真源 = zephyr.shared.protocols.a2a.a2a_coordination.ArbitrationRole
-# 兼容层：as AgentRole 让本模块 body 内 AgentRole.SUPERADMIN 等引用无缝工作
-from zephyr.shared.protocols.a2a.a2a_coordination import ArbitrationRole as AgentRole
+# P1-3 Batch 2: import ArbitrationRole（新名）+ AgentRole = ArbitrationRole 兼容层
+# （与其他3模块 RbacRole/RoutingRole/MultiAgentRole 一致），让 _core_coordination 可同时 re-export 两名
+from zephyr.shared.protocols.a2a.a2a_coordination import ArbitrationRole
+
+# P1-3 兼容层：旧名 AgentRole 保留为 ArbitrationRole 别名（body 内 AgentRole.SUPERADMIN 等引用无缝工作）
+AgentRole = ArbitrationRole  # noqa: F811  # [DEPRECATED] [TTL] task_bound — P1-3 兼容层
 
 
 class ArbitrationVerdict(IntEnum):
