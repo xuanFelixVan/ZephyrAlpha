@@ -192,9 +192,9 @@ class TaskManagerMCP:
                 phase=phase,
                 execution_model=normalize_execution_model(execution_model),
                 safety_level=getattr(
-                    __import__("zephyr.shared.schemas", fromlist=["SafetyLevel"]).SafetyLevel,
+                    __import__("zephyr.shared.schema.schemas", fromlist=["SafetyLevel"]).SafetyLevel,
                     safety_level,
-                    __import__("zephyr.shared.schemas", fromlist=["SafetyLevel"]).SafetyLevel.L,
+                    __import__("zephyr.shared.schema.schemas", fromlist=["SafetyLevel"]).SafetyLevel.L,
                 ),
                 source_blueprint=source_blueprint,
                 source_section=source_section,
@@ -524,16 +524,16 @@ def _parse_yaml_frontmatter_to_taskcard(fm: dict) -> TaskCard:
 
     classification_str = str(fm.get("classification", "internal"))
     classification = getattr(
-        __import__("zephyr.shared.schemas", fromlist=["Classification"]).Classification,
+        __import__("zephyr.shared.schema.schemas", fromlist=["Classification"]).Classification,
         classification_str.upper(),
-        __import__("zephyr.shared.schemas", fromlist=["Classification"]).Classification.INTERNAL,
+        __import__("zephyr.shared.schema.schemas", fromlist=["Classification"]).Classification.INTERNAL,
     )
 
     evolution_str = str(fm.get("evolution_policy", "extendable"))
     evolution_policy = getattr(
-        __import__("zephyr.shared.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy,
+        __import__("zephyr.shared.schema.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy,
         evolution_str.upper(),
-        __import__("zephyr.shared.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy.EXTENDABLE,
+        __import__("zephyr.shared.schema.schemas", fromlist=["EvolutionPolicy"]).EvolutionPolicy.EXTENDABLE,
     )
 
     upstream_files = _normalize_str_list(fm.get("upstream_files", []))
