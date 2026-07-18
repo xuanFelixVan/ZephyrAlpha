@@ -40,12 +40,14 @@ function Test-PortFree([int]$Port) {
     }
 }
 function Get-FreePort([int]$Preferred, [int[]]$Exclude = @()) {
+    # Scan window +2000: HNS exclusion clusters observed 300+ ports wide
+    # (9101-9400 on 2026-07-19), a +200 window cannot escape them (2026-07-19 fix).
     if (($Exclude -notcontains $Preferred) -and (Test-PortFree $Preferred)) { return $Preferred }
-    for ($p = $Preferred + 1; $p -le [math]::Min($Preferred + 200, 65535); $p++) {
+    for ($p = $Preferred + 1; $p -le [math]::Min($Preferred + 2000, 65535); $p++) {
         if ($Exclude -contains $p) { continue }
         if (Test-PortFree $p) { return $p }
     }
-    throw "no free tcp port in [$Preferred, $($Preferred + 200)] (HNS excluded ranges shifting?)"
+    throw "no free tcp port in [$Preferred, $($Preferred + 2000)] (HNS excluded ranges shifting?)"
 }
 
 switch ($Action) {
