@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 4975 |
-| 生产态模块 | 1751 |
+| 模块总数 | 4971 |
+| 生产态模块 | 1749 |
 | 设计态模块 | 62 |
-| 原型态模块 | 3162 |
+| 原型态模块 | 3160 |
 
 ## 域清单（按架构层分组）
 
@@ -35,7 +35,7 @@ ttl: permanent
 | D_INFRA_A2A | a2a_communication / A2A Communication | 133 | 29 | 0 | 104 | 133/150 (OK) | [01_d_infra_a2a.md](01_d_infra_a2a.md) |
 | D_INFRA_OPS | asset-inventory / Asset Inventory | 2 | 0 | 2 | 0 | 2/150 (OK) | [02_d_infra_ops.md](02_d_infra_ops.md) |
 | D_INFRA_RECOVERY | rollback_recovery / Rollback Recovery | 91 | 48 | 0 | 43 | 91/150 (OK) | [03_d_infra_recovery.md](03_d_infra_recovery.md) |
-| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 331 | 149 | 1 | 181 | 331/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
+| D_INFRA_RUNTIME | runtime_core / Runtime Integration | 327 | 145 | 1 | 181 | 327/150 (超容) | [04_d_infra_runtime.md](04_d_infra_runtime.md) |
 | D_INFRA_TELEMETRY | observability_profiling / Observability | 10 | 8 | 0 | 2 | 10/150 (OK) | [05_d_infra_telemetry.md](05_d_infra_telemetry.md) |
 
 ### L1 基础平台层 / L1 Foundation (21 个域 / 21 domains)
@@ -50,7 +50,7 @@ ttl: permanent
 | D_FBL_DETECTORS | feedback_detectors / Feedback Detectors | 65 | 59 | 0 | 6 | 65/150 (OK) | [11_d_fbl_detectors.md](11_d_fbl_detectors.md) |
 | D_FBL_DIAGNOSERS | feedback_diagnosers / Feedback Diagnosers | 76 | 71 | 0 | 5 | 76/150 (OK) | [12_d_fbl_diagnosers.md](12_d_fbl_diagnosers.md) |
 | D_FBL_VERIFICATION | feedback_verification / Feedback Verification | 71 | 67 | 0 | 4 | 71/150 (OK) | [13_d_fbl_verification.md](13_d_fbl_verification.md) |
-| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 231 | 112 | 0 | 119 | 231/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
+| D_FEEDBACK_LOOP | feedback_loop_engine / Feedback Loop Engine | 231 | 114 | 0 | 117 | 231/150 (超容) | [14_d_feedback_loop.md](14_d_feedback_loop.md) |
 | D_FRONTEND | 前端 / Frontend | 46 | 13 | 6 | 27 | 46/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 124 | 108 | 0 | 16 | 124/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 94 | 82 | 0 | 12 | 94/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |

@@ -1,7 +1,7 @@
 %% D_INFRASTRUCTURE 域全景依赖图
-%% 生成时间: 2026-07-18 04:04:46
+%% 生成时间: 2026-07-18 15:35:38
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 62, 依赖边数: 170
+%% 模块数: 62, 依赖边数: 166
 
 graph TD
 
@@ -80,8 +80,8 @@ graph TD
     src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
     src_zephyr_shared_contracts___init___py -->|import_depends| src_zephyr_shared_contracts_backpressure___init___py
     src_zephyr_shared_contracts_capital_allocation_result_py -->|config_depends| src_zephyr_shared_contracts___init___py
-    src_zephyr_shared_contracts_risk_dashboard_snapshot_py -->|config_depends| src_zephyr_shared_contracts___init___py
     src_zephyr_shared_contracts_risk_metrics_py -->|config_depends| src_zephyr_shared_contracts___init___py
+    src_zephyr_shared_contracts_risk_dashboard_snapshot_py -->|config_depends| src_zephyr_shared_contracts___init___py
     src_zephyr_shared_contracts_system_configuration_py -->|config_depends| src_zephyr_shared_contracts___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -100,7 +100,7 @@ graph TD
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
-    %% D_GOVERNANCE -> D_INFRASTRUCTURE (14 条)
+    %% D_GOVERNANCE -> D_INFRASTRUCTURE (10 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_order_py
@@ -111,10 +111,6 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_model_serving_request_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_backup_backup_reconciler_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_backup_backup_reconciler_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_backup_backup_reconciler_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_backup_backup_reconciler_py
     %% D_GOV_ENFORCEMENT -> D_INFRASTRUCTURE (1 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_shared_contracts_compliance_rule_py
     %% D_INFRA_RUNTIME -> D_INFRASTRUCTURE (1 条)
@@ -130,14 +126,14 @@ graph TD
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_shared_contracts_order_py
     %% D_REPORTING -> D_INFRASTRUCTURE (9 条)
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
+    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_execution_report_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_fill_py
     D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_order_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_REPORTING[D_REPORTING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     %% D_RISK -> D_INFRASTRUCTURE (3 条)
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_RISK[D_RISK] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
@@ -167,21 +163,21 @@ graph TD
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_position_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_monitor_report_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_macro_factor_signal_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_market_data_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_order_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_monitor_report_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_macro_factor_signal_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_market_data_py
+    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_strategy_lifecycle_event_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_monitor_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_macro_factor_signal_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_market_data_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_pe___mance_attribution_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_monitor_report_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_factor_signal_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_macro_factor_signal_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_market_data_py
-    D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_synthesized_signal_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_trace_context_py
     D_TRADING[D_TRADING] -->|import_depends| src_zephyr_shared_contracts_risk_limits_py
     D_TRADING[D_TRADING] -->|test_depends| src_zephyr_shared_contracts_factor_signal_py
@@ -229,34 +225,34 @@ graph TD
     src_zephyr_shared_contracts_factor_signal_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_fill_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_market_data_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_position_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts_order_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_risk_limits_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_synthesized_signal_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_backpressure___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_core___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_core___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_shared_contracts___init___py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_shared_contracts_errors___init___py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 11 条
-    %% 跨域入边: 86 条
+    %% 跨域入边: 82 条
     %% 跨域出边: 73 条

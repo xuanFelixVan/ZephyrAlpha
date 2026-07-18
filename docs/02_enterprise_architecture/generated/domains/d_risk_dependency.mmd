@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-18 04:04:46
+%% 生成时间: 2026-07-18 15:35:39
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 29, 依赖边数: 40
 
@@ -74,8 +74,8 @@ graph TD
     %% D_RISK -> D_GOVERNANCE (1 条)
     tests_risk_test_risk_matrix_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_RISK -> D_GOV_CODE_QUALITY (2 条)
-    tests_risk_test_risk_mitigation_tracker_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     tests_risk_test_risk_mitigator_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
+    tests_risk_test_risk_mitigation_tracker_py -->|test_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     %% D_RISK -> D_GOV_RULE (1 条)
     tests_risk_test_risk_ssot_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_RISK -> D_INFRASTRUCTURE (3 条)
