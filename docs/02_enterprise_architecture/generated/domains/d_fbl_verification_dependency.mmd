@@ -1,7 +1,7 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-19 03:20:45
+%% 生成时间: 2026-07-19 03:26:25
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 71, 依赖边数: 201
+%% 模块数: 71, 依赖边数: 200
 
 graph TD
 
@@ -81,22 +81,22 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -113,8 +113,8 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_validator_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
@@ -127,10 +127,10 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_gates_db_integrity_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_checkpoint_manager_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_ci_cd_pre_scanner_py
     %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (35 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
@@ -162,8 +162,6 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_no_llm_degradation_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_preventive_repair_py
-    %% D_GOV_DOCS -> D_FBL_VERIFICATION (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_gates__safety_gates_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FBL_VERIFICATION ->  (1 条)
@@ -173,5 +171,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 17 条
-    %% 跨域入边: 182 条
+    %% 跨域入边: 181 条
     %% 跨域出边: 2 条
