@@ -227,6 +227,11 @@ def make_arch_reference_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip
+        # 对标 DIRECTORY-CONTRACT / SESSION-REQUIRED / TTL-METADATA / FILE-PLACEMENT-TTL gate。
+        _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
+        if not _governance_dir.is_dir():
+            return True, "non-Zephyr project (no scripts/governance/d1_structure), skipping ARCH-REFERENCE"
         project_root = gateway.project_root
 
         ok, detail, registered_nums = _load_registered_nums(project_root)
