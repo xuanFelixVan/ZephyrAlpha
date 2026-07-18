@@ -26,7 +26,7 @@ depends_on:
 - {target: MOD-LLM_SECURITY", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 responsibility_domain: 
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 ssot_claims:
   - claim: "Token/Cost/Time 三维预算策略唯一真源"

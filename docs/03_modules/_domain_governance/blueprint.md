@@ -92,7 +92,7 @@ ssot_claims:
   - claim: "治理域Phase施工路线图与进度"
     scope: layer
 design_maturity: design
-build_status: planned
+build_status: generated
 ---
 
 # Governance Domain 蓝图 — Agent治理八件套跨模块集成契约

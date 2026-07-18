@@ -38,7 +38,7 @@ references: []
 codification_level: L2
 codification_at: "2026-05-13"
 responsibility_domain: 
-build_status: generated
+build_status: stable
 design_maturity: prototype
 ---
 > module_id: MOD-INF-026 | version: 3.1.1 | status: active | layer: L0_infrastructure
