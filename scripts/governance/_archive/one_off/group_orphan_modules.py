@@ -20,6 +20,8 @@
     python scripts/governance/group_orphan_modules.py --output d:/ZephyrAlpha/orphan_groups.json
 """
 
+from __future__ import annotations
+
 __manifest__ = {
     "args": [{"flag": "--output", "type": "str", "description": "输出 JSON 路径"}],
     "description": "按域分组统计 ORPHAN MODULES（用于建任务卡批量处理）",
@@ -28,8 +30,6 @@ __manifest__ = {
     "timeout_seconds": 60,
     "warn_only": False,
 }
-
-from __future__ import annotations
 
 import argparse
 import json

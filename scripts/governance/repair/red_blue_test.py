@@ -54,6 +54,12 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
 
+# 添加 scripts/governance/_shared 到 sys.path（用于 EXIT_ERROR 等共享常量）
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
+
 DST_DB = "depgraph (PostgreSQL)"
 
 results = []
@@ -257,13 +263,6 @@ def run_special_tests():
     test_file = r"scripts\governance\repair\_rb_test_concurrent.tmp"
     # 清理可能残留的锁
     import subprocess as _sp
-
-_SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-
 
     _sp.run(
         ["python", lock_script, "release", test_file, "rb-session-a"],

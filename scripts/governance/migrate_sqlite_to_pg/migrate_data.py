@@ -50,6 +50,12 @@ while not (_PROJECT_ROOT / ".git").exists() and _PROJECT_ROOT != _PROJECT_ROOT.p
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+# 添加 scripts/governance/_shared 到 sys.path（用于 EXIT_ERROR 等共享常量）
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  仓库根真源（SSoT）
 
 # === 路径常量 ===
@@ -313,14 +319,6 @@ def main():
             print(f'[WARN] 迁移失败后重新启用触发器失败（可能遗留禁用状态）: {trig_err}')
         print(f'\n[ERROR] 迁移失败: {e}')
         import traceback
-
-_SCRIPT_DIR = Path(__file__).resolve()
-_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
-if _GOV_DIR not in sys.path:
-    sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
-
-
         traceback.print_exc()
         sys.exit(EXIT_FINDINGS)
     finally:
