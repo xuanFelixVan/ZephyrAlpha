@@ -156,7 +156,6 @@ capability_domains:
   - D_GOV_REPAIR
   - D_GOV_CODE_QUALITY
   - D_GOV_DOCS
-  - D_GOV_KB
   - D_GOV_OPS_RESILIENCE
   - D_DATA_GOV
   - D_FEEDBACK_LOOP
