@@ -230,19 +230,35 @@ def _reconcile(committed_files: list[str], session_id: str) -> Any:
             last_backup_status="ok",
             last_session_id=session_id,
         )
-        # 取最后200字符作为摘要
+        # 取最后200字符作为摘要；附带CH阶段状态（ok/skipped及原因）保持可见性
         summary = result.stdout[-200:] if result.stdout else ""
+        ch_status = _load_state().get("last_ch_backup_status", "unknown")
         return ReconcileResult(
             action="auto_committed",
-            detail=f"backup ok: {summary}",
+            detail=f"backup ok (clickhouse={ch_status}): {summary}",
         )
-    else:
-        _update_state(last_backup_status="failed")
-        err_summary = result.stderr[-200:] if result.stderr else result.stdout[-200:]
+    if result.returncode == 2:
+        # CH阶段失败但代码/PG/SQLite/restic成功（backup.ps1已持久化last_ch_backup_*
+        # 到backup_state.json）。8h代码备份计时照常推进；CH 24h计时仅在成功时推进
+        # （失败在下一个调度窗口重试）。返回warn使失败在commit/merge时可见——
+        # CH失败禁止静默跳过（2026-07-19事件：两次自动备份记录ok但CH未备份）。
+        now_iso = datetime.now(timezone.utc).isoformat()
+        _update_state(
+            last_backup_time=now_iso,
+            last_backup_status="ch_failed",
+            last_session_id=session_id,
+        )
+        ch_err = _load_state().get("last_ch_backup_error", "unknown")
         return ReconcileResult(
             action="warn",
-            detail=f"backup failed (exit={result.returncode}): {err_summary}",
+            detail=f"backup ok but ClickHouse stage failed: {ch_err}",
         )
+    _update_state(last_backup_status="failed")
+    err_summary = result.stderr[-200:] if result.stderr else result.stdout[-200:]
+    return ReconcileResult(
+        action="warn",
+        detail=f"backup failed (exit={result.returncode}): {err_summary}",
+    )
 
 
 def make_backup_reconciler(project_root: Path | None = None):

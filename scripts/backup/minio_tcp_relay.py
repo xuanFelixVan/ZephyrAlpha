@@ -6,7 +6,7 @@
 # [CONSUMERS] scripts/backup/backup.ps1 (CH stage), scripts/backup/restore.ps1 (ch)
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] MinIO binds localhost only (Windows Firewall auto-blocks minio.exe; python.exe has Public-allow) | dumb byte-pipe, no protocol parsing | listens 0.0.0.0:9100 -> 127.0.0.1:9101 | on-demand, killed after each backup/restore
+# [INVARIANTS] MinIO binds localhost only (Windows Firewall auto-blocks minio.exe; python.exe has Public-allow) | dumb byte-pipe, no protocol parsing | listens 0.0.0.0:<argv1> -> 127.0.0.1:<argv2> (ports are argv params; caller bind-tests HNS-safe free ports at runtime) | on-demand, killed after each backup/restore
 # [MODIFY-GUARD] gate_id="MINIO-TCP-RELAY"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,15 +17,26 @@
 """TCP relay: expose localhost-only MinIO to the CH VM via firewall-allowed python.
 
 Spawned on-demand by backup.ps1 CH stage and restore.ps1 ch; killed right after the
-backup/restore completes (task-bound, not a resident service)."""
+backup/restore completes (task-bound, not a resident service).
+
+Ports are argv parameters (caller picks HNS-safe free ports at runtime via bind-test —
+Hyper-V Host Network Service reserves random tcp ranges, e.g. 9101-9200 on 2026-07-19,
+so hardcoded ports fail WinError 10013 at MinIO/relay startup)::
+
+    python minio_tcp_relay.py <listen_port> <target_port>
+"""
 import socket
+import sys
 import threading
 
 LISTEN_HOST = "0.0.0.0"
-LISTEN_PORT = 9100
 TARGET_HOST = "127.0.0.1"
-TARGET_PORT = 9101
 BUF = 1024 * 1024  # 1 MiB chunks: 315 GiB backup throughput needs large buffers
+
+# argv ports (defaults retained for manual smoke tests only; production callers
+# MUST pass explicit ports chosen by bind-test — see backup.ps1 Get-FreePort).
+LISTEN_PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 9100
+TARGET_PORT = int(sys.argv[2]) if len(sys.argv) > 2 else 9101
 
 
 def _pipe(src: socket.socket, dst: socket.socket) -> None:
