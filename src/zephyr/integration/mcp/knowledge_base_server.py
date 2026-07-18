@@ -22,7 +22,7 @@ KnowledgeBaseServer: 知识库语义检索 MCP Server
 Task ID  : T-3-04 (B15)
 Server   : knowledge_base (tool-contracts.yaml §Server 2)
 Protocol : ADR-0033（stdio 传输、JSON-RPC 2.0）
-Backend  : UnifiedMemoryAPI (zephyr.gov_kb.storage.unified_memory_api) + InProcessVectorMemory
+Backend  : UnifiedMemoryAPI (zephyr.intelligence.model_evaluation.unified_memory_api) + InProcessVectorMemory
            KB refactor 已移除 SQLite knowledge 表 + ChromaDB 中间层
 
 实现工具
@@ -92,7 +92,7 @@ class KnowledgeBaseServer(BaseMCPServer):
     """knowledge_base MCP Server 实现。
 
     持久化后端：UnifiedMemoryAPI (RI-02 三件套，真源:
-    zephyr.gov_kb.storage.unified_memory_api) + InProcessVectorMemory。
+    zephyr.intelligence.model_evaluation.unified_memory_api) + InProcessVectorMemory。
     KB refactor 已移除 KbRepo (SQLite + ChromaDB) 中间层，禁止重建。
     降级策略：UnifiedMemoryAPI 不可用时回退到内存字典。
     """
@@ -225,7 +225,7 @@ class KnowledgeBaseServer(BaseMCPServer):
         self._backend_mode = "memory_fallback(kb_repo removed)"
 
         try:
-            from zephyr.gov_kb.unified_memory_api import get_unified_memory_api
+            from zephyr.intelligence.model_evaluation.unified_memory_api import get_unified_memory_api
 
             self._kb_api = get_unified_memory_api(enforce_capability=False)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -341,7 +341,7 @@ class KnowledgeBaseServer(BaseMCPServer):
 
         if self._kb_api is not None:
             try:
-                from zephyr.gov_kb.unified_memory_api import build_provenance
+                from zephyr.intelligence.model_evaluation.unified_memory_api import build_provenance
 
                 prov = build_provenance(
                     origin=f"mcp:knowledge_base:upsert_ke:{ke_id}",

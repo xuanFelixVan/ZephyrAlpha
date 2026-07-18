@@ -42,7 +42,6 @@ from typing import Any
 
 import yaml
 
-from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
 from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 
@@ -220,15 +219,8 @@ class ActivateGate:
             return None
 
     def _run_gate(self, source_path: Path) -> GateResult | None:
-        try:
-            task = build_kb_gate_eval_task(
-                gate_id="G4",
-                title="G4 Activate Gate",
-                deliverable=source_path,
-            )
-            return self._gate_engine.evaluate(task, "G4")
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return None
+        # KBG removal Stage 2: build_kb_gate_eval_task removed (gov_kb deleted in Stage 3)
+        return None
 
     def _write_to_target(
         self,

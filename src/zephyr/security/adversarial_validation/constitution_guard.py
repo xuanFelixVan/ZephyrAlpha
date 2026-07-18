@@ -190,7 +190,6 @@ class ConstitutionGuard:
             "freeze_manifest.validate": "src/zephyr/governance/contracts.py",
             "mcp_auth.verify_tool_access": "src/zephyr/infrastructure_runtime_integration/mcp_server",
             "session_audit.verify": "session_logs",
-            "kb.verify_provenance": "src/zephyr/gov_kb",
             "gates_registry.verify_all": "src/zephyr/gov_enforcement/rule_enforcement",
             "route_manifest.validate": "src/zephyr/orchestrator",
             "event_schemas.validate": "src/zephyr/orchestrator",
