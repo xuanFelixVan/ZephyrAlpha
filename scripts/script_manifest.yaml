@@ -3552,23 +3552,23 @@ scripts:
   dimensions: []
 - name: governance/_archive/one_off/_commit_v24_legacy_risk_fix.py
   path: governance/_archive/one_off/_commit_v24_legacy_risk_fix.py
-  description: 'Files to commit:'
+  description: 'Fixes:'
   domain: governance
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_archive/one_off/_parse_hc.py
-  path: governance/_archive/one_off/_parse_hc.py
-  description: import json
+- name: governance/_archive/one_off/_phase6_followup_commit.py
+  path: governance/_archive/one_off/_phase6_followup_commit.py
+  description: 修复内容：
   domain: governance
-  execution_plane: warm-path
+  execution_plane: hot-path
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_archive/one_off/_phase6_syspath_fix.py
-  path: governance/_archive/one_off/_phase6_syspath_fix.py
-  description: The health check's _check_core_tool_import didn't add src/ to sys.path,
+- name: governance/_archive/one_off/_phase6_followup_commit_v2.py
+  path: governance/_archive/one_off/_phase6_followup_commit_v2.py
+  description: 工作区包含两组改动（交织在同一批文件中）：
   domain: governance
   execution_plane: hot-path
   status: registered
