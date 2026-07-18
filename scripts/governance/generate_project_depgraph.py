@@ -2819,7 +2819,7 @@ def _validate_arch_references():
 def _load_di_seam_exemptions() -> set[str]:
     """从 capability_canonical_file_registry.yaml 加载 di_seam_exemptions 豁免清单（#ARCH-DI-SEAM-001）。"""
     registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml")
-    if not _Path(registry_path).exists():
+    if not Path(registry_path).exists():
         return set()
     try:
         data = _yaml_load(registry_path)
