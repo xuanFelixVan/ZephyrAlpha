@@ -103,7 +103,8 @@ __all__ = [
     "DEFAULT_ROLE_DOMAIN_MATRIX",
     "AgentOrchestrator",
     "AgentProfile",
-    "AgentRole",
+    "AgentRole",  # P1-3 兼容层（= RoutingRole）
+    "RoutingRole",
     "AgentRouter",
     "HallucinationCaller",
     "HealthMonitor",
@@ -120,8 +121,8 @@ __all__ = [
 # ---------------------------------------------------------------------------
 
 
-class AgentRole(str, Enum):
-    """§3 — 6 个 Agent 角色。"""
+class RoutingRole(str, Enum):
+    """§3 — 6 个 Agent 角色（P1-3: renamed from AgentRole to avoid conflict with RbacRole/ArbitrationRole/MultiAgentRole）。"""
 
     ARCHITECT = "architect"  # 架构师：蓝图/KBG/模块拆分
     IMPLEMENTER = "implementer"  # 实施者：代码产出与修复
@@ -129,6 +130,10 @@ class AgentRole(str, Enum):
     GOVERNOR = "governor"  # 治理官：合规/标准/审计
     RESEARCHER = "researcher"  # 研究员：因子/策略/实验
     OPERATOR = "operator"  # 运营员：运行/监控/回放
+
+
+# P1-3 兼容层：旧名 AgentRole 保留为 RoutingRole 别名
+AgentRole = RoutingRole  # noqa: F811  # [DEPRECATED] [TTL] task_bound — P1-3 兼容层
 
 
 class RoutingStrategy(str, Enum):
@@ -142,8 +147,8 @@ class RoutingStrategy(str, Enum):
 
 #  §3.2 — 6 角色 × 10 域静态映射
 # 每个 (role, domain) 有一个 0.0-1.0 的 capability score；0.0 表示不覆盖
-DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
-    AgentRole.ARCHITECT: {
+DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[RoutingRole, dict[str, float]]] = {
+    RoutingRole.ARCHITECT: {
         "D0": 0.8,
         "D1": 0.4,
         "D2": 1.0,
@@ -155,7 +160,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
         "D8": 0.4,
         "D9": 0.3,
     },
-    AgentRole.IMPLEMENTER: {
+    RoutingRole.IMPLEMENTER: {
         "D0": 0.5,
         "D1": 0.8,
         "D2": 0.6,
@@ -167,7 +172,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
         "D8": 0.6,
         "D9": 1.0,
     },
-    AgentRole.REVIEWER: {
+    RoutingRole.REVIEWER: {
         "D0": 0.6,
         "D1": 0.5,
         "D2": 0.7,
@@ -179,7 +184,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
         "D8": 0.4,
         "D9": 0.6,
     },
-    AgentRole.GOVERNOR: {
+    RoutingRole.GOVERNOR: {
         "D0": 0.9,
         "D1": 0.4,
         "D2": 0.5,
@@ -191,7 +196,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
         "D8": 0.3,
         "D9": 0.3,
     },
-    AgentRole.RESEARCHER: {
+    RoutingRole.RESEARCHER: {
         "D0": 0.3,
         "D1": 0.7,
         "D2": 0.4,
@@ -203,7 +208,7 @@ DEFAULT_ROLE_DOMAIN_MATRIX: Final[dict[AgentRole, dict[str, float]]] = {
         "D8": 0.2,
         "D9": 0.3,
     },
-    AgentRole.OPERATOR: {
+    RoutingRole.OPERATOR: {
         "D0": 0.7,
         "D1": 0.6,
         "D2": 0.2,
@@ -228,7 +233,7 @@ class AgentProfile(BaseModel):
     model_config = BASE_CONFIG
 
     agent_id: str = Field(min_length=1, description="Agent 实例 ID")
-    role: AgentRole = Field(description="Agent 角色")
+    role: RoutingRole = Field(description="Agent 角色")
     current_load: int = Field(default=0, ge=0, description="当前并发任务数")
     max_load: int = Field(default=5, ge=1, description="最大并发阈值")
     healthy: bool = Field(default=True, description="是否健康可用")
@@ -246,9 +251,9 @@ class RouteDecision(BaseModel):
 
     domain: str = Field(min_length=1, description="目标域 D0-D9")
     strategy: RoutingStrategy = Field(description="使用的路由策略")
-    primary_role: AgentRole = Field(description="首选角色")
+    primary_role: RoutingRole = Field(description="首选角色")
     primary_agent_id: str | None = Field(default=None, description="首选 Agent 实例 ID")
-    fallback_roles: list[AgentRole] = Field(default_factory=list, description="回退角色链")
+    fallback_roles: list[RoutingRole] = Field(default_factory=list, description="回退角色链")
     capability_score: float = Field(ge=0.0, le=1.0, description="首选角色在该域的能力分")
     rationale: str = Field(default="", description="决策解释")
 
@@ -338,7 +343,7 @@ class AgentRouter:
 
     Parameters
     ----------
-    matrix : dict[AgentRole, dict[str, float]] | None
+    matrix : dict[RoutingRole, dict[str, float]] | None
         角色-域能力矩阵；默认使用 ``DEFAULT_ROLE_DOMAIN_MATRIX``。
     agent_pool : list[AgentProfile] | None
         可用 Agent 实例池（load_balance 策略需要）。
@@ -346,7 +351,7 @@ class AgentRouter:
 
     def __init__(
         self,
-        matrix: dict[AgentRole, dict[str, float]] | None = None,
+        matrix: dict[RoutingRole, dict[str, float]] | None = None,
         agent_pool: list[AgentProfile] | None = None,
     ) -> None:
         self._matrix = matrix or DEFAULT_ROLE_DOMAIN_MATRIX
@@ -368,7 +373,7 @@ class AgentRouter:
                 a.current_load = max(0, a.current_load + delta)
                 return
 
-    def score(self, role: AgentRole, domain: str) -> float:
+    def score(self, role: RoutingRole, domain: str) -> float:
         """查询 (role, domain) 的能力分。"""
         return self._matrix.get(role, {}).get(domain, 0.0)
 
@@ -377,7 +382,7 @@ class AgentRouter:
         domain: str,
         *,
         strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCH,
-        required_role: AgentRole | None = None,
+        required_role: RoutingRole | None = None,
     ) -> RouteDecision:
         """按策略返回路由决策。
 
@@ -388,7 +393,7 @@ class AgentRouter:
             ``primary_role`` 取字典序最小的角色，``capability_score=0``。
         strategy : RoutingStrategy
             路由策略，默认 capability_match。
-        required_role : AgentRole | None
+        required_role : RoutingRole | None
             specialist_first 策略必须指定。
 
         Returns
@@ -457,7 +462,7 @@ class AgentRouter:
             ),
         )
 
-    def _specialist_first(self, domain: str, required_role: AgentRole) -> RouteDecision:
+    def _specialist_first(self, domain: str, required_role: RoutingRole) -> RouteDecision:
         """强制指定角色，失败再回退到 capability_match 的 top-2。"""
         score = self.score(required_role, domain)
         ranked = self._ranked_roles(domain)
@@ -490,13 +495,13 @@ class AgentRouter:
 
     # ---- helpers ------------------------------------------------------
 
-    def _ranked_roles(self, domain: str) -> list[tuple[AgentRole, float]]:
+    def _ranked_roles(self, domain: str) -> list[tuple[RoutingRole, float]]:
         """按 capability_score 降序返回 (role, score) 列表。"""
-        scored = [(role, self.score(role, domain)) for role in AgentRole]
+        scored = [(role, self.score(role, domain)) for role in RoutingRole]
         scored.sort(key=lambda x: (-x[1], x[0].value))
         return scored
 
-    def _pick_agent(self, role: AgentRole) -> str | None:
+    def _pick_agent(self, role: RoutingRole) -> str | None:
         """在池中挑选一个健康且负载最低的该角色 Agent。"""
         candidates = [a for a in self._pool if a.role == role and a.healthy]
         if not candidates:
@@ -771,7 +776,7 @@ class AgentOrchestrator:
         claim: str = "",
         context: dict[str, Any] | None = None,
         strategy: RoutingStrategy = RoutingStrategy.CAPABILITY_MATCH,
-        required_role: AgentRole | None = None,
+        required_role: RoutingRole | None = None,
         token_used: int = 0,
         token_budget: int | None = None,
         task_id: str | None = None,
@@ -790,7 +795,7 @@ class AgentOrchestrator:
             附加上下文（给 CoVe 与工具）。
         strategy : RoutingStrategy
             路由策略。
-        required_role : AgentRole | None
+        required_role : RoutingRole | None
             specialist_first 时必填。
         token_used : int
             已使用 token 数。
