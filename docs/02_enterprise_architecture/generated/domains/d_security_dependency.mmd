@@ -1,7 +1,7 @@
 %% D_SECURITY 域全景依赖图
-%% 生成时间: 2026-07-18 21:47:37
+%% 生成时间: 2026-07-18 21:50:58
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 165, 依赖边数: 523
+%% 模块数: 165, 依赖边数: 532
 
 graph TD
 
@@ -194,7 +194,7 @@ graph TD
     %% ... 还有 38 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_SECURITY (250 条)
+    %%  -> D_SECURITY (252 条)
     [] -->|import_depends| src_zephyr_gov_drift_reconciler_py
     [] -->|import_depends| src_zephyr_gov_drift_state_machine_py
     [] -->|import_depends| src_zephyr_security_access_control_orphan_judge___main___py
@@ -246,10 +246,18 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_access_control_orphan_judge_judge_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_security_adversarial_validation_validator_py
-    %% D_GOV_DRIFT -> D_SECURITY (3 条)
+    %% D_GOV_DOCS -> D_SECURITY (6 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_security_access_control_phase_executor_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_security_access_control_phase_executor_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_security_llm_defens___m_security_dashboard_app_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_security_llm_defens___m_security_dashboard_app_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_security_access_control_phase_executor_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_security_llm_defens___m_security_dashboard_app_py
+    %% D_GOV_DRIFT -> D_SECURITY (4 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_drift_cold_start_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_drift_reconciler_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_gov_drift_events_py
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| src_zephyr_security_access_control_phase_executor_py
     %% D_GOV_ENFORCEMENT -> D_SECURITY (4 条)
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_access_control_session_concurrency_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_security_adversarial_validation_commit_trigger_py
@@ -395,5 +403,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 118 条
-    %% 跨域入边: 289 条
+    %% 跨域入边: 298 条
     %% 跨域出边: 116 条

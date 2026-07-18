@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-18 21:47:37
+%% 生成时间: 2026-07-18 21:50:58
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 77, 依赖边数: 327
+%% 模块数: 77, 依赖边数: 331
 
 graph TD
 
@@ -218,6 +218,10 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
+    %% D_GOV_DOCS -> D_INTEGRATION (3 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_shared_contracts_protocols_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_mcp_handoff_auto_loader_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_integration_mcp_handoff_auto_loader_py
     %% D_GOV_DRIFT -> D_INTEGRATION (2 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -243,6 +247,8 @@ graph TD
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_integration_shared_schema_base_config_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_integration_shared_schema_execution_model_py
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_integration_shared_schema_severity_types_py
+    %% D_INFRASTRUCTURE -> D_INTEGRATION (1 条)
+    D_INFRASTRUCTURE[D_INFRASTRUCTURE] -->|runtime| src_zephyr_integration_mcp_server_py
     %% D_INFRA_RUNTIME -> D_INTEGRATION (17 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_events_upgrade_strategy_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_integration_shared_schema_schemas_py
@@ -368,5 +374,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 69 条
-    %% 跨域入边: 153 条
+    %% 跨域入边: 157 条
     %% 跨域出边: 105 条
