@@ -4876,6 +4876,10 @@ creation_tokens:
     token: "auto-backup-readme-20260717"
     created_by: "session-sess-backup-mod-inf-027"
     capability: "backup_documentation"
+  - file: "scripts/backup/minio_tcp_relay.py"
+    token: "auto-minio-tcp-relay-20260718"
+    created_by: "session-sess-25960-20260718155747"
+    capability: "minio_tcp_relay"
 
   # --- GOV-DOC-016 纯陈述原则检测真源（PURE-ASSERTION gate SSoT checker）---
   - file: "scripts/governance/d3_metadata/check_pure_assertion.py"
@@ -4930,6 +4934,15 @@ creation_tokens:
     token: "auto-worktree-lifecycle-reconciler-20260717"
     created_by: "session-sweep-fix-20260717"
     capability: "worktree_lifecycle_reconciler"
+  # 治本（2026-07-18）：logs 模块此前被 .gitignore logs/ 规则误忽略，首次纳入版本控制
+  - file: "src/zephyr/infrastructure/system_telemetry/logs/__init__.py"
+    token: "auto-sys-telemetry-logs-init-20260718"
+    created_by: "sess-leftover-fix"
+    capability: "system_telemetry_logs_sink"
+  - file: "src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py"
+    token: "auto-sys-telemetry-logs-sink-20260718"
+    created_by: "sess-leftover-fix"
+    capability: "system_telemetry_logs_sink"
 
 # ============================================================================
 # 维护日志

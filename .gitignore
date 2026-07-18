@@ -199,6 +199,11 @@ data/metrics.prom
 # 不被任何代码/规则引用；整目录忽略，已跟踪文件用 git rm --cached 退回未跟踪
 .trae/documents/
 logs/
+# 治本（2026-07-18）：src/ 下的 logs/ 是 Python 模块目录（system_telemetry.logs），
+# 非日志输出目录，MUST 纳入版本控制——否则 worktree 基于 HEAD 创建时缺此模块，
+# 导致 system_telemetry/__init__.py 的 `from .logs import flush` ModuleNotFoundError
+!src/zephyr/infrastructure/system_telemetry/logs/
+!src/zephyr/infrastructure/system_telemetry/logs/*
 
 # Session and journal artifacts
 _journals/

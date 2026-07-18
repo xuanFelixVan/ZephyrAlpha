@@ -163,6 +163,15 @@ EXCLUDE_DIRS: frozenset[str] = frozenset(
         # models 是 ML 模型文件目录（含 tokenizer.json 等大文件，已被 .gitignore 忽略）。
         # 模型 JSON 的转义字符（\\\\）会被误判为"路径双重嵌套"，扫描无意义且产生假阳性。
         "models",
+        # data 是运行时数据目录（security_baselines/asset_index/audit_trail/drift_* 等），
+        # 含 177MB secret_baseline JSON + 101MB archive YAML 等大文件（均 .gitignore 忽略）。
+        # 治本（2026-07-18）：detect_secrets.py 扫描 data/ 导致 30s 超时——
+        # 运行时数据非源码，扫描无意义且产生假阳性，统一加入 EXCLUDE_DIRS 跳过。
+        "data",
+        # tmp 是临时数据目录（pg_backups/pytest_benchleak/drift 等），
+        # 含多个 13MB+ depgraph_*.json 备份文件（均 .gitignore 忽略）。
+        # 治本（2026-07-18）：同 data/，临时数据非源码，统一排除。
+        "tmp",
     }
 )
 
