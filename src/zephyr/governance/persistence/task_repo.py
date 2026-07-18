@@ -2086,7 +2086,6 @@ class TaskRepository:
                 now if set_completed_at else None,
                 1 if increment_block_count else 0,
                 now,
-                now,
                 *extra_params,
                 task_id,
             ),
