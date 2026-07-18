@@ -1,5 +1,5 @@
 %% D_FBL_VERIFICATION 域全景依赖图
-%% 生成时间: 2026-07-19 00:33:45
+%% 生成时间: 2026-07-19 00:38:53
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 71, 依赖边数: 200
 
@@ -81,23 +81,23 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
-    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_FBL_VERIFICATION (146 条)
@@ -108,8 +108,8 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_verif___reproducibility_verifier_py
     [] -->|test_depends| src_zephyr_feedback_loop_verif___reproducibility_verifier_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_preventive_repair_py
-    [] -->|test_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py
+    [] -->|test_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_toctou_revalidation_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
@@ -120,17 +120,17 @@ graph TD
     [] -->|test_depends| src_zephyr_feedback_loop_verifiers_canary_repair_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_config_complexity_budget_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_config_governance_py
-    [] -->|test_depends| src_zephyr_feedback_loop_verif___blueprint_contract_drift_py
     [] -->|test_depends| src_zephyr_feedback_loop_verif___cross_module_integration_py
+    [] -->|test_depends| src_zephyr_feedback_loop_verif___blueprint_contract_drift_py
     [] -->|test_depends| src_zephyr_feedback_loop_verif___sion_knowledge_integrity_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_data_quality_gate_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_db_integrity_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_credit_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_adversarial_validation_py
-    [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_validator_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_action_reversibility_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_blueprint_code_reconciler_py
     [] -->|test_depends| src_zephyr_feedback_loop_gates_autonomy_maturity_py
+    [] -->|test_depends| src_zephyr_feedback_loop_gates_checkpoint_manager_py
     %% D_FEEDBACK_LOOP -> D_FBL_VERIFICATION (35 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_verif___cading_rollback_analyzer_py

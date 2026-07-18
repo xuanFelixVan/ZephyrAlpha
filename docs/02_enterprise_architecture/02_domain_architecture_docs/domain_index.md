@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 2679 |
+| 模块总数 | 2674 |
 | 生产态模块 | 1566 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1051 |
+| 原型态模块 | 1046 |
 
 ## 域清单（按架构层分组）
 
@@ -54,7 +54,7 @@ ttl: permanent
 | D_FRONTEND | 前端 / Frontend | 18 | 9 | 6 | 3 | 18/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 128 | 112 | 0 | 16 | 128/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 90 | 81 | 0 | 9 | 90/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
-| D_INTEGRATION | pipeline_routing / Pipeline Routing | 77 | 45 | 0 | 32 | 77/150 (OK) | [18_d_integration.md](18_d_integration.md) |
+| D_INTEGRATION | pipeline_routing / Pipeline Routing | 72 | 45 | 0 | 27 | 72/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 0 | 0 | 0 | 0 | 0/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
