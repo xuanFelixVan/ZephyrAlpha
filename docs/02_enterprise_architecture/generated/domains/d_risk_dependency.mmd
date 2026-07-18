@@ -1,5 +1,5 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-19 06:18:35
+%% 生成时间: 2026-07-19 06:36:29
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 11, 依赖边数: 43
 
@@ -22,10 +22,6 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_risk_stop_loss_py -->|import_depends| src_zephyr_risk_implementations_default_stop_loss_engine_py
-    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
-    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_limits_py
     src_zephyr_risk_implementation___t_risk_limits_calculator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
@@ -35,6 +31,10 @@ graph TD
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_py
     src_zephyr_risk_implementation___isk_manager_orchestrator_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
     src_zephyr_risk_implementations_default_stop_loss_engine_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementation___t_position_limit_checker_py -->|import_depends| src_zephyr_risk_risk_manager_base_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_manager_py
+    src_zephyr_risk_implementations_default_risk_validator_py -->|import_depends| src_zephyr_risk_risk_validator_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_RISK (21 条)
@@ -58,15 +58,15 @@ graph TD
     [] -->|test_depends| src_zephyr_risk_risk_manager_py
     [] -->|test_depends| src_zephyr_risk_implementations_default_risk_validator_py
     [] -->|config_depends| src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py
-    [] -->|config_depends| src_zephyr_risk_implementation___t_position_limit_checker_py
+    [] -->|config_depends| src_zephyr_risk_implementation___t_risk_limits_calculator_py
     %% D_GOVERNANCE -> D_RISK (2 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_risk_risk_manager_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_risk_stop_loss_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_RISK -> D_INFRASTRUCTURE (2 条)
-    src_zephyr_risk_risk_limits_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_risk_risk_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_risk_risk_limits_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_RISK -> D_SHARED (1 条)
     src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_RISK -> D_TRADING (3 条)

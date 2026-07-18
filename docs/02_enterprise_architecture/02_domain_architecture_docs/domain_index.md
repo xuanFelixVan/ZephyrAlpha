@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 62 |
-| 模块总数 | 2652 |
+| 模块总数 | 2655 |
 | 生产态模块 | 1543 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1047 |
+| 原型态模块 | 1050 |
 
 ## 域清单（按架构层分组）
 
@@ -57,7 +57,7 @@ ttl: permanent
 | D_INTEGRATION | 管线路由 / Pipeline Routing | 72 | 44 | 0 | 28 | 72/150 (OK) | [📄 18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | 集成网关 / Integration Gateway | 0 | 0 | 0 | 0 | 0/150 (OK) | [📄 19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [📄 20_d_mkt_data.md](20_d_mkt_data.md) |
-| D_OPS | 反馈循环 / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [📄 21_d_ops.md](21_d_ops.md) |
+| D_OPS | 反馈循环 / Feedback Loop | 10 | 8 | 0 | 2 | 10/150 (OK) | [📄 21_d_ops.md](21_d_ops.md) |
 | D_ORCHESTRATOR | 代理编排器 / Agent Orchestrator | 72 | 58 | 0 | 14 | 72/150 (OK) | [📄 22_d_orchestrator.md](22_d_orchestrator.md) |
 | D_REPORTING | 报告 / Reporting | 3 | 1 | 0 | 2 | 3/150 (OK) | [📄 23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | 对抗验证 / Adversarial Validation | 165 | 99 | 0 | 66 | 165/150 (超容) | [📄 24_d_security.md](24_d_security.md) |
@@ -86,7 +86,7 @@ ttl: permanent
 | D_GOV_ENFORCEMENT | 规则执行 / Rule Enforcement | 33 | 15 | 0 | 18 | 33/150 (OK) | [📄 42_d_gov_enforcement.md](42_d_gov_enforcement.md) |
 | D_GOV_REPAIR | 治理修复 / Governance Repair | 1 | 1 | 0 | 0 | 1/200 (OK) | [📄 43_d_gov_repair.md](43_d_gov_repair.md) |
 | D_GOV_RULE | 规则治理 / Rule Governance | 35 | 31 | 0 | 4 | 35/200 (OK) | [📄 44_d_gov_rule.md](44_d_gov_rule.md) |
-| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 359 | 10 | 2 | 347 | 359/150 (超容) | [📄 45_d_gov_scripts.md](45_d_gov_scripts.md) |
+| D_GOV_SCRIPTS | 脚本治理 / Script Governance | 361 | 10 | 2 | 349 | 361/150 (超容) | [📄 45_d_gov_scripts.md](45_d_gov_scripts.md) |
 | D_INTELLIGENCE | 上下文管理 / Context Management | 31 | 20 | 0 | 11 | 31/150 (OK) | [📄 46_d_intelligence.md](46_d_intelligence.md) |
 | D_KNOWLEDGE | 知识管理 / Knowledge Management | 4 | 0 | 2 | 2 | 4/150 (OK) | [📄 47_d_knowledge.md](47_d_knowledge.md) |
 | D_ML_SERVE | 推理 / Inference | 7 | 0 | 0 | 7 | 7/150 (OK) | [📄 48_d_ml_serve.md](48_d_ml_serve.md) |
