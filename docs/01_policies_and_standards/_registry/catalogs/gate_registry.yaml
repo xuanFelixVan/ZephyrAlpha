@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-18T19:56:02Z'
+generated_at: '2026-07-18T21:06:30Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 93
+total_gates: 95
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -626,6 +626,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: GIT-CALL-BUDGET
+  name: 'GIT-CALL-BUDGET: Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET
+    P2.2）（CommitGate, priority=105）'
+  entry: in-process (GitCommitGateway)
+  description: Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET P2.2）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: NO-GOD-CLASS
   name: 'NO-GOD-CLASS: God Class 阻断门禁（NO-GOD-CLASS，§5.150 防复发）（CommitGate, priority=93）'
   entry: in-process (GitCommitGateway)
@@ -889,6 +899,16 @@ gates:
     priority=32）'
   entry: in-process (GitCommitGateway)
   description: ttl 字段校验门禁（治本：弥补 --no-verify 绕过 pre-commit GATE-15 的缺口）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: UNDEFINED-NAME
+  name: 'UNDEFINED-NAME: F821 未定义符号硬阻断门禁（UNDEFINED-NAME，GATE-DEPGRAPH-OPS 治本 Phase
+    1）（CommitGate, priority=106）'
+  entry: in-process (GitCommitGateway)
+  description: F821 未定义符号硬阻断门禁（UNDEFINED-NAME，GATE-DEPGRAPH-OPS 治本 Phase 1）
   files_trigger: ''
   always_run: false
   category: commit_gate
