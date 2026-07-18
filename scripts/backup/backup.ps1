@@ -159,36 +159,101 @@ foreach ($db in $sqliteDbs) {
 $dbStatus.sqlite = @{status=$(if($sqliteOk -gt 0){"ok"}else{"skipped"}); count=$sqliteOk}
 Write-OK "SQLite dump: $sqliteOk databases"
 
-# ClickHouse
-# Industry practice (ClickHouse official docs, 21.8+): native BACKUP statement - online,
-# MVCC-consistent. Output MUST land in $DumpDir so restic captures it: Disk('backups') would
-# write to the CH server's own data dir which restic cannot see (fixed via TO File()).
-# Decision: c1_market is a disaster-recovery (out-of-box) asset, not rebuildable-from-bdpan.
-$chPort = 9000
-$chAlive = (Test-NetConnection -ComputerName localhost -Port $chPort -InformationLevel Quiet -WarningAction SilentlyContinue)
-if ($chAlive) {
-    $chClient = Get-Command clickhouse-client -ErrorAction SilentlyContinue
-    if ($chClient) {
-        $chZipName = "c1_market_$(Get-Date -Format 'yyyyMMdd').zip"
-        $chZipPath = "$DumpDir\$chZipName"
-        # File() path resolves on the CH SERVER side: native/WSL deploys use the local path;
-        # docker deploys must volume-map D:\tmp_db_dumps to the same path in the container.
-        $chZipTarget = $chZipPath -replace '\\','/'
-        & clickhouse-client --query="BACKUP DATABASE c1_market TO File('$chZipTarget')" 2>&1 | Out-Null
-        if ($LASTEXITCODE -eq 0 -and (Test-Path $chZipPath) -and ((Get-Item $chZipPath).Length -gt 0)) {
-            $dbStatus.clickhouse = @{status="ok"; method="BACKUP TO File"; file=$chZipName}
-            Write-OK "ClickHouse dump: ok"
-        } else {
-            $dbStatus.clickhouse = @{status="failed"; error="exit $LASTEXITCODE or zip missing/empty"}
-            Write-Warn "ClickHouse dump failed (exit $LASTEXITCODE)"
-        }
-    } else {
-        $dbStatus.clickhouse = @{status="skipped"; reason="clickhouse-client not found"}
-        Write-Warn "clickhouse-client not found, skipping"
+# ClickHouse (c1_market + c3_fundamental) via MinIO S3 bridge
+# Architecture: CH server runs in Hyper-V VM whose data disk (588G, 211G free) cannot
+# hold a 315GiB full backup. MinIO runs on the HOST (localhost-only, Windows Firewall
+# auto-blocks minio.exe so a python TCP relay on :9100 - already firewall-allowed -
+# exposes it to the VM). CH streams BACKUP ... TO S3 straight out of the VM onto F:.
+# Same object key "market.zip" every run: restic content-defined chunking dedups
+# unchanged CH parts, so daily restic cost ~= new market data (~9GiB/day).
+# Credentials: config/.env.ch_backup (gitignored), CH host: config/.env.clickhouse.
+$chBkEnvFile = "$ProjectRoot\config\.env.ch_backup"
+$chBk = @{}
+if (Test-Path $chBkEnvFile) {
+    foreach ($line in (Get-Content $chBkEnvFile -Encoding UTF8)) {
+        if ($line -match '^([A-Z0-9_]+)=(.+)$') { $chBk[$matches[1]] = $matches[2].Trim() }
     }
-} else {
+}
+$chHttpHost = "localhost"; $chHttpPort = 8123
+$chEnvFile = "$ProjectRoot\config\.env.clickhouse"
+if (Test-Path $chEnvFile) {
+    foreach ($line in (Get-Content $chEnvFile -Encoding UTF8)) {
+        if ($line -match '^CLICKHOUSE_HOST=(.+)$')      { $chHttpHost = $matches[1].Trim() }
+        if ($line -match '^CLICKHOUSE_HTTP_PORT=(.+)$') { $chHttpPort = [int]$matches[1].Trim() }
+    }
+}
+$chBaseUrl = "http://${chHttpHost}:${chHttpPort}/"
+$chAlive = $false
+try {
+    curl.exe -s --max-time 5 $chBaseUrl --data-binary "SELECT 1" | Out-Null
+    $chAlive = ($LASTEXITCODE -eq 0)
+} catch { $chAlive = $false }
+
+$minioProc = $null; $relayProc = $null
+if (-not $chAlive) {
     $dbStatus.clickhouse = @{status="skipped"; reason="service down"}
-    Write-Warn "ClickHouse not running (port $chPort), skipping"
+    Write-Warn "ClickHouse not reachable ($chBaseUrl), skipping"
+} elseif ($chBk.Count -eq 0) {
+    $dbStatus.clickhouse = @{status="skipped"; reason="config/.env.ch_backup missing"}
+    Write-Warn "config/.env.ch_backup not found, skipping ClickHouse backup"
+} else {
+    try {
+        # 1. Delete previous market.zip object BEFORE MinIO starts (plain FS delete in
+        #    single-drive mode) so CH does not fail with BACKUP_ALREADY_EXISTS.
+        $objDir = "$($chBk.MINIO_ROOT)\$($chBk.MINIO_BUCKET)\market.zip"
+        if (Test-Path $objDir) { Remove-Item $objDir -Recurse -Force }
+
+        # 2. Start MinIO (localhost only) + python TCP relay (VM-facing)
+        $env:MINIO_ROOT_USER = $chBk.CH_S3_ACCESS_KEY
+        $env:MINIO_ROOT_PASSWORD = $chBk.CH_S3_SECRET_KEY
+        $minioProc = Start-Process -FilePath $chBk.MINIO_EXE `
+            -ArgumentList 'server', "`"$($chBk.MINIO_ROOT)`"", '--address', "`"$($chBk.MINIO_ADDRESS)`"", '--console-address', "`"$($chBk.MINIO_CONSOLE_ADDRESS)`"" `
+            -WindowStyle Hidden -PassThru
+        $relayProc = Start-Process -FilePath "python" -ArgumentList "`"$($chBk.RELAY_SCRIPT)`"" -WindowStyle Hidden -PassThru
+        $minioReady = $false
+        for ($i = 0; $i -lt 30 -and -not $minioReady; $i++) {
+            Start-Sleep -Seconds 1
+            curl.exe -s --max-time 2 "http://$($chBk.MINIO_ADDRESS)/minio/health/live" -o NUL
+            $minioReady = ($LASTEXITCODE -eq 0)
+        }
+        if (-not $minioReady) { throw "MinIO failed to start on $($chBk.MINIO_ADDRESS)" }
+        Write-OK "MinIO + relay started (endpoint $($chBk.CH_S3_ENDPOINT))"
+
+        # 3. Fire async BACKUP to S3 (path style: endpoint is a bare IP, virtual-hosted
+        #    style would require bucket-as-subdomain DNS which does not exist here).
+        $s3Url = "$($chBk.CH_S3_ENDPOINT)/$($chBk.MINIO_BUCKET)/market.zip"
+        $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO S3('$s3Url', '$($chBk.CH_S3_ACCESS_KEY)', '$($chBk.CH_S3_SECRET_KEY)') ASYNC"
+        $fireResp = curl.exe -s --max-time 60 "${chBaseUrl}?s3_uri_style=path" --data-binary $backupQuery
+        if ($LASTEXITCODE -ne 0 -or $fireResp -notmatch '([0-9a-f-]{36})') { throw "BACKUP fire failed: $fireResp" }
+        $backupId = $Matches[1]
+        Write-Stage "ClickHouse BACKUP async id=$backupId (315GiB, may take hours)"
+
+        # 4. Poll system.backups until done (max 3h)
+        $chFinal = "TIMEOUT"
+        for ($elapsed = 0; $elapsed -lt 10800; $elapsed += 60) {
+            Start-Sleep -Seconds 60
+            $st = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT status FROM system.backups WHERE id='$backupId'"
+            if ($st -match 'BACKUP_CREATED') { $chFinal = "OK"; break }
+            if ($st -match 'BACKUP_FAILED')  { $chFinal = "FAILED"; break }
+        }
+        if ($chFinal -ne "OK") {
+            $chErr = curl.exe -s --max-time 15 $chBaseUrl --data-binary "SELECT substring(error,1,300) FROM system.backups WHERE id='$backupId'"
+            throw "ClickHouse backup $chFinal`: $chErr"
+        }
+
+        # 5. Verify object landed on F: and is non-empty (institutional practice: verify)
+        $sizeSum = (Get-ChildItem $objDir -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
+        if (-not $sizeSum -or $sizeSum -lt 1MB) { throw "market.zip missing or too small ($sizeSum bytes)" }
+        $dbStatus.clickhouse = @{status="ok"; method="BACKUP TO S3(MinIO relay)"; file="market.zip"; bytes=$sizeSum}
+        Write-OK ("ClickHouse dump: ok ({0:N1} GiB)" -f ($sizeSum/1GB))
+    } catch {
+        $dbStatus.clickhouse = @{status="failed"; error=$_.Exception.Message}
+        Write-Warn "ClickHouse backup failed: $($_.Exception.Message)"
+    } finally {
+        # 6. Always stop MinIO + relay (on-demand only, not a resident service)
+        if ($relayProc -and -not $relayProc.HasExited) { Stop-Process -Id $relayProc.Id -Force -ErrorAction SilentlyContinue }
+        if ($minioProc -and -not $minioProc.HasExited) { Stop-Process -Id $minioProc.Id -Force -ErrorAction SilentlyContinue }
+    }
 }
 
 # -- Stage 3: Restic backup --
@@ -217,7 +282,13 @@ $excludeArgs = @(
 )
 
 # restic --json outputs JSON to stdout, progress info to stderr; avoid 2>&1 to prevent stderr mixing into stdout causing ConvertFrom-Json failure
-$backupResult = & restic -r $RepoPath backup $ProjectRoot $DumpDir @excludeArgs --json | ConvertFrom-Json
+# CH backup store (MinIO root on F:) included when CH stage succeeded; same market.zip
+# key each run -> restic CDC dedups unchanged CH parts (~9GiB/day incremental).
+$backupSources = @($ProjectRoot, $DumpDir)
+if ($dbStatus.clickhouse -and $dbStatus.clickhouse.status -eq "ok" -and $chBk.MINIO_ROOT) {
+    $backupSources += $chBk.MINIO_ROOT
+}
+$backupResult = & restic -r $RepoPath backup @backupSources @excludeArgs --exclude ".minio.sys/" --json | ConvertFrom-Json
 if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 3) { Write-Err "restic backup failed (exit $LASTEXITCODE)"; exit 1 }
 if ($LASTEXITCODE -eq 3) { Write-Warn "restic backup completed with warnings (some files could not be read)" }
 $snapshotId = ($backupResult | Where-Object { $_.message_type -eq "summary" } | Select-Object -Last 1).snapshot_id

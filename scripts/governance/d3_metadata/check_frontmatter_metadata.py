@@ -127,7 +127,7 @@ def _check_file(
     # .md→parse_frontmatter / .py+.sh+.ps1+.mmd→parse_py_header / .yaml→parse_byaml_anchor / .json→parse_json_meta
     suffix = fpath.suffix.lower()
     if suffix == ".md":
-        metadata, _ = parse_frontmatter(text)
+        metadata = parse_frontmatter(text)
     elif suffix in (".py", ".sh", ".ps1", ".mmd"):
         metadata = parse_py_header(text)
     elif suffix == ".yaml":
