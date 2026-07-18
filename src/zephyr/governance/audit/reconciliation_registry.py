@@ -103,6 +103,8 @@ __all__ = [
     "make_tmp_cleanup_reconciler",
     "make_worktree_lifecycle_reconciler",
     "make_scripts_import_integrity_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 3
+    "make_undefined_name_baseline_reconciler",  # GATE-DEPGRAPH-OPS 治本 Phase 1
+    "make_stash_lifecycle_reconciler",  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
     "scan_and_archive_working_docs",
 ]
@@ -182,7 +184,8 @@ SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_exe
     trigger_source TEXT NOT NULL,
     action TEXT NOT NULL,
     detail TEXT,
-    committed_files_summary TEXT
+    committed_files_summary TEXT,
+    acknowledged_at TEXT
 )"""
 
 SQL_INSERT_RECONCILE_LOG = (
@@ -190,6 +193,40 @@ SQL_INSERT_RECONCILE_LOG = (
     "(log_id, logged_at, gate_id, session_id, trigger_source, "
     "action, detail, committed_files_summary) "
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+)
+
+# GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：老库幂等迁移——
+# 2026-07-19 前创建的 governance.db 无 acknowledged_at 列，写入/查询路径
+# 统一经 _ensure_ack_column 补列（PRAGMA 检测，幂等）。
+SQL_ALTER_RECONCILE_LOG_ADD_ACK = (
+    "ALTER TABLE reconcile_execution_log ADD COLUMN acknowledged_at TEXT"
+)
+
+# GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：活跃 critical_warn 查询。
+# 双重消音：① acknowledged_at IS NULL（手动 ack 消音）；② NOT EXISTS 同 gate_id
+# 之后的 clean 记录（自愈消音——问题修复后 reconciler 下次运行产出 clean，
+# 旧 critical_warn 自动从横幅消失，消除"已解决事件持续告警"的告警疲劳）。
+SQL_SELECT_ACTIVE_CRITICAL_WARNS = (
+    "SELECT w.gate_id, w.logged_at, substr(w.detail, 1, 200) "
+    "FROM reconcile_execution_log w "
+    "WHERE w.action = 'critical_warn' AND w.logged_at >= ? "
+    "AND w.acknowledged_at IS NULL "
+    "AND NOT EXISTS ("
+    "SELECT 1 FROM reconcile_execution_log c "
+    "WHERE c.gate_id = w.gate_id AND c.action = 'clean' AND c.logged_at > w.logged_at"
+    ") "
+    "ORDER BY w.logged_at DESC LIMIT 10"
+)
+
+# 手动确认（ack）：acknowledged_at IS NULL 过滤保证幂等（重复 ack 不再 UPDATE）。
+SQL_ACK_CRITICAL_WARNS_ALL = (
+    "UPDATE reconcile_execution_log SET acknowledged_at = ? "
+    "WHERE action = 'critical_warn' AND logged_at >= ? AND acknowledged_at IS NULL"
+)
+SQL_ACK_CRITICAL_WARNS_BY_GATE = (
+    "UPDATE reconcile_execution_log SET acknowledged_at = ? "
+    "WHERE action = 'critical_warn' AND logged_at >= ? "
+    "AND acknowledged_at IS NULL AND gate_id = ?"
 )
 
 # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2/4.1: block_next 查询/清除 SQL
@@ -332,6 +369,32 @@ class ReconciliationRegistry:
         return [s.gate_id for s in self._specs]
 
 
+def _governance_db_path(project_root: "object") -> str:
+    """governance.db 绝对路径，锚定主仓库根（GATE-DEPGRAPH-OPS 治本 Phase 3）。
+
+    worktree 进程内 REPO_ROOT 解析为 worktree 根，直接 join project_root 会把
+    观测数据写入 .aidrafts/<session>/data/ 而分裂（merge/abort 后即丢失）。
+    strip_session_worktree 剥离 .aidrafts 前缀；主仓库进程原样返回。
+    """
+    import os
+    from pathlib import Path
+    from zephyr.shared.io.paths import strip_session_worktree
+
+    root = strip_session_worktree(Path(str(project_root)))
+    return os.path.join(str(root), "data", "databases", "governance.db")
+
+
+def _ensure_ack_column(conn: "object") -> None:
+    """老库幂等补 acknowledged_at 列（GATE-DEPGRAPH-OPS 治本 Phase 2）。
+
+    2026-07-19 前创建的 governance.db 无 ack 列；PRAGMA table_info 检测，
+    缺失才 ALTER（幂等，新库 no-op）。所有读写路径统一调用。
+    """
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(reconcile_execution_log)")}
+    if cols and "acknowledged_at" not in cols:
+        conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ACK)
+
+
 def _log_reconcile_results(
     project_root: "object",
     results: "list[ReconcileResult]",
@@ -366,7 +429,7 @@ def _log_reconcile_results(
     import sqlite3
     import uuid
     try:
-        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        db_path = _governance_db_path(project_root)
         files_summary = ""
         if committed_files:
             rel_files = []
@@ -381,6 +444,7 @@ def _log_reconcile_results(
         conn = sqlite3.connect(db_path, timeout=30.0)
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            _ensure_ack_column(conn)  # 老库补 ack 列（幂等）
             for r in results:
                 if r.action == "skip":
                     continue  # skip 未触发对账，无日志价值
@@ -400,11 +464,15 @@ def _log_reconcile_results(
 def _check_recent_critical_warns(
     project_root: "object", hours: int = 24
 ) -> "list[dict]":
-    """查询 governance.db 最近 N 小时内的 critical_warn 记录。
+    """查询 governance.db 最近 N 小时内的【活跃】critical_warn 记录。
 
     治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3：
     让 commit/merge 前能看到最近的严重失败（depgraph 同步失败等），
     由 _print_critical_warn_banner 打印告警横幅强制 AI 看到。
+
+    GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：只返回活跃告警——
+    ① 已 ack（acknowledged_at 非空）消音；② 同 gate_id 之后有 clean 记录
+    （问题已修复自愈）消音。消除"已解决事件持续告警"的告警疲劳。
 
     Args:
         project_root: Path 对象（gateway.project_root / merge root）。
@@ -412,22 +480,19 @@ def _check_recent_critical_warns(
 
     Returns:
         list[dict]: 每条含 gate_id/logged_at/detail（detail 截断到 200 字符用于横幅显示）。
-        空列表表示无 critical_warn 或查询失败（fail-open，不阻断主流程）。
+        空列表表示无活跃 critical_warn 或查询失败（fail-open，不阻断主流程）。
     """
-    import os
     import sqlite3
     from datetime import datetime, timedelta, timezone
     try:
-        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        db_path = _governance_db_path(project_root)
         cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
         conn = sqlite3.connect(db_path, timeout=10.0)
         try:
+            conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            _ensure_ack_column(conn)  # 老库补 ack 列（幂等，否则查询报 no such column）
             rows = conn.execute(
-                "SELECT gate_id, logged_at, substr(detail, 1, 200) "
-                "FROM reconcile_execution_log "
-                "WHERE action = 'critical_warn' AND logged_at >= ? "
-                "ORDER BY logged_at DESC LIMIT 10",
-                (cutoff,),
+                SQL_SELECT_ACTIVE_CRITICAL_WARNS, (cutoff,)
             ).fetchall()
             return [{"gate_id": r[0], "logged_at": r[1], "detail": r[2]} for r in rows]
         finally:
@@ -483,11 +548,10 @@ def _check_recent_blocks(
         list[dict]: 每条含 gate_id/logged_at/detail（detail 截断到 200 字符用于横幅显示）。
         空列表表示无 block_next 或查询失败（fail-open，不阻断主流程）。
     """
-    import os
     import sqlite3
     from datetime import datetime, timedelta, timezone
     try:
-        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        db_path = _governance_db_path(project_root)
         cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
         conn = sqlite3.connect(db_path, timeout=10.0)
         try:
@@ -5159,6 +5223,243 @@ def make_scripts_import_integrity_reconciler(gateway: "object") -> ReconcilerSpe
         reconcile=_reconcile,
         priority=210,  # post-commit baseline 全扫组（在 manifest=200/readme=210 区间之后，
         # gate-registry=830 之前；同 priority 按 register 顺序，不冲突）
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架。病根：pre-commit UNDEFINED-NAME gate
+# （priority=106）只扫 staged 文件，有两个盲区：
+# 1. **gate 上线前的基线 bug**：gate 在 2026-07-19 才上线，此前已存在的 F821 违规
+#    （如 deb695006f 引入的 NameError）永远不会被 staged 扫描命中。
+# 2. **--no-verify 绕过**：pre-commit hook 可被 --no-verify 绕过，gate 不执行；
+#    本 reconciler 在 post-commit 阶段运行，commit 已入库不可绕过。
+# 治本：post-commit baseline 全扫——扫描 scripts/governance/**/*.py + src/**.py，
+# 报告 violations 为 warn（commit 已入库不可阻断；warn 供 AI 修复）。
+# 向内收：复用 scan_all_for_undefined_names 公开入口（与 gate 共享
+# scan_content_for_undefined_names helper），零新真源。lazy import 避免 import-time 耦合
+# （reconciliation_registry 不应在模块加载时依赖 commit_gates.undefined_name_gate）。
+# 触发策略：committed_files 含 scripts/governance/**/*.py 或 src/**/*.py 时触发
+# （新违规只可能由这些路径的 .py 变更引入）；或含 undefined_name_gate.py 自身变更时触发
+# （检测逻辑变更应重跑 baseline）。其他 commit 不触发（避免无谓全扫开销）。
+def make_undefined_name_baseline_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-UNDEFINED-NAME-BASELINE post-commit baseline 全扫 reconciler。
+
+    病根（第一性原理）：pre-commit UNDEFINED-NAME gate 只扫 staged 文件，有两个盲区：
+    1. **gate 上线前的基线 bug**：F821 违规（如 deb695006f 引入的 NameError）在 gate
+       上线前已存在，永远不会被 staged 扫描命中。
+    2. **--no-verify 绕过**：pre-commit hook 可被 --no-verify 绕过，gate 不执行；
+       本 reconciler 在 post-commit 阶段运行，commit 已入库不可绕过。
+
+    治本：post-commit baseline 全扫——扫描磁盘上所有 scripts/governance/**/*.py +
+    src/**.py 文件，报告 violations 为 warn（commit 已入库不可阻断；warn 供 AI 修复）。
+
+    向内收：复用 scan_all_for_undefined_names 公开入口（与 gate 共享
+    scan_content_for_undefined_names helper），零新真源。lazy import 避免 import-time 耦合
+    （reconciliation_registry 不应在模块加载时依赖 commit_gates.undefined_name_gate）。
+
+    触发策略：committed_files 含 scripts/governance/**/*.py 或 src/**/*.py 时触发
+    （新违规只可能由这些路径的 .py 变更引入）；或含 undefined_name_gate.py 自身变更时触发
+    （检测逻辑变更应重跑 baseline）。其他 commit 不触发（避免无谓全扫开销）。
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 触发条件：committed_files 含 scripts/governance/**/*.py 或 src/**/*.py
+        # 或 undefined_name_gate.py 自身（检测逻辑变更应重跑 baseline）
+        for f in committed_files:
+            normalized = f.replace("\\", "/")
+            if normalized.startswith("scripts/governance/") and normalized.endswith(".py"):
+                return True
+            if normalized.startswith("src/") and normalized.endswith(".py"):
+                return True
+            if "undefined_name_gate.py" in normalized:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # lazy import 避免 import-time 耦合（reconciliation_registry 不应在模块加载时
+        # 依赖 gov_enforcement.commit_gates.undefined_name_gate）
+        from zephyr.gov_enforcement.commit_gates.undefined_name_gate import (
+            scan_all_for_undefined_names,
+        )
+
+        try:
+            violations, error_msg = scan_all_for_undefined_names(project_root)
+        except Exception as e:  # noqa: BLE001 — reconciler 容错降级
+            return ReconcileResult(
+                action="warn",
+                detail=f"undefined name baseline scan 异常（降级告警）: {e}",
+            )
+
+        if error_msg is not None:
+            # fail-open：scripts/governance/ 与 src/ 均不存在
+            return ReconcileResult(action="skip", detail=f"baseline scan skip: {error_msg}")
+
+        if violations:
+            detail = (
+                f"undefined name baseline scan: {len(violations)} violation(s) detected"
+                "（GATE-DEPGRAPH-OPS 治本 Phase 1 baseline 全扫）\n"
+                + "\n".join(violations[:30])  # 截断到前 30 条避免日志过长
+                + (f"\n  ...(+{len(violations) - 30} more)" if len(violations) > 30 else "")
+            )
+            logger.warning("GATE-UNDEFINED-NAME-BASELINE: %s", detail)
+            return ReconcileResult(action="warn", detail=detail)
+
+        return ReconcileResult(
+            action="clean",
+            detail="undefined name baseline scan: 0 violations (clean)",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-UNDEFINED-NAME-BASELINE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=211,  # post-commit baseline 全扫组（scripts-import=210 之后，
+        # gate-registry=830 之前；同 priority 按 register 顺序，不冲突）
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架（第30个reconciler）。病根（#ARCH-WORKTREE-002
+# 缺陷4）：session_worktree 在多处 stash 临时修改（_pre_merge_auto_clean 的
+# _execute_cleanups / _ensure_worktree_base_fresh / 手动 merge 前），但从不清理。
+# auto-recover 机制（commit f7cce1ce97）修复了 stash 丢失 bug，但未清理过期 stash。
+# 实测 34 个 stash 堆积，部分 30+ 小时，占用 git 对象存储，且积累的 stash 会混淆
+# AI 判断（AI 看到 stash list 会以为有未提交工作）。
+# 治本：post-commit 事件触发，清理 > 24h 的 session_worktree 临时 stash（按 msg
+# 前缀 session_worktree_pre_merge: / session_worktree_abort: 识别）。保留 < 24h
+# 的 stash（AI 可能还需要 pop 恢复）。不影响用户手动 stash（无前缀匹配）。
+# 向内收：扩展 ReconciliationRegistry 框架，复用 git stash 命令，零新真源。
+# 对标 make_worktree_lifecycle_reconciler（worktree 残留清理）的 event-driven TTL 模式。
+def make_stash_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-STASH-LIFECYCLE post-commit stash 过期清理 reconciler.
+
+    病根（#ARCH-WORKTREE-002 缺陷4，2026-07-19）：session_worktree 在多处 stash
+    临时修改，但从不清理。auto-recover 机制修复了 stash 丢失 bug，但未清理过期
+    stash。实测 34 个 stash 堆积，部分 30+ 小时。
+
+    治本（事件驱动 TTL 清理）：
+    - trigger: 任何非空 committed_files 触发（stash 堆积与 AI 活跃正相关，
+      每次 commit 是清理过期 stash 的合适时机；扫描 stash list 成本 <0.1s）
+    - reconcile: ``git stash list --format=%gd|%ct|%s`` 获取所有 stash 的
+      ref/timestamp/message，过滤 session_worktree 前缀 + age > 24h 的 stash，
+      按索引降序 drop（避免 renumbering 问题）
+    - 自维护/自关闭：每次 commit 后自动清理，无需 AI 干预
+
+    保护规则（第一性原理：只清 session_worktree 临时 stash，保留用户手动 stash）：
+    - 只清理 message 以 ``session_worktree_pre_merge`` 或 ``session_worktree_abort``
+      开头的 stash（session_worktree 创建的临时 stash）
+    - 保留 < 24h 的 stash（AI 可能还需要 pop 恢复修改）
+    - 不影响用户手动 stash（无 session_worktree 前缀）
+
+    向内收：扩展 ReconciliationRegistry 框架（第30个 reconciler），不新建独立
+    清理系统。复用 _run_subprocess 统一 subprocess 解码策略。
+    """
+    import time
+
+    project_root = gateway.project_root
+    _STASH_TTL_SECONDS = 24 * 3600  # 24 小时
+    _STASH_PREFIXES = ("session_worktree_pre_merge", "session_worktree_abort")
+
+    def _stash_index(stash_ref: str) -> int:
+        """从 stash ref（如 ``stash@{3}``）提取索引，用于降序排序避免 renumbering。"""
+        try:
+            return int(stash_ref.split("{", 1)[1].rstrip("}"))
+        except (IndexError, ValueError):
+            return 0
+
+    def _trigger(committed_files: list[str]) -> bool:
+        return bool(committed_files)  # 任何有文件的 commit 都触发（扫描成本低）
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # git stash list --format=%gd|%ct|%s: stash ref | committer timestamp | message
+        list_result = _run_subprocess(
+            ["git", "stash", "list", "--format=%gd|%ct|%s"],
+            cwd=str(project_root),
+            timeout=30,
+        )
+        if list_result.returncode != 0:
+            return ReconcileResult(
+                action="warn",
+                detail=(
+                    f"stash lifecycle: git stash list failed (rc="
+                    f"{list_result.returncode}): {list_result.stderr.strip()[:200]}"
+                ),
+            )
+
+        lines = [line for line in list_result.stdout.splitlines() if line.strip()]
+        if not lines:
+            return ReconcileResult(action="skip", detail="stash lifecycle: 无 stash")
+
+        now = time.time()
+        to_drop: list[tuple[str, float, str]] = []  # (stash_ref, age_hours, message)
+        kept = 0
+        for line in lines:
+            parts = line.split("|", 2)
+            if len(parts) < 3:
+                continue
+            stash_ref, ts_str, message = parts
+            try:
+                stash_ts = float(ts_str)
+            except ValueError:
+                continue
+            age = now - stash_ts
+            # 只清理 session_worktree 前缀的 stash（不影响用户手动 stash）
+            if not message.startswith(_STASH_PREFIXES):
+                kept += 1
+                continue
+            if age < _STASH_TTL_SECONDS:
+                kept += 1
+                continue  # 仍在 TTL 内，保留（AI 可能还需要 pop 恢复）
+            to_drop.append((stash_ref, age / 3600, message))
+
+        if not to_drop:
+            return ReconcileResult(
+                action="skip",
+                detail=(
+                    f"stash lifecycle: {kept} stash(es) 全部在 TTL 内或非 "
+                    f"session_worktree 前缀，无需清理"
+                ),
+            )
+
+        # 按索引降序 drop——避免 renumbering 问题（drop stash@{3} 后 stash@{4} 变 stash@{3}）
+        to_drop.sort(key=lambda x: _stash_index(x[0]), reverse=True)
+
+        dropped = 0
+        errors = 0
+        for stash_ref, age_h, _msg in to_drop:
+            drop_result = _run_subprocess(
+                ["git", "stash", "drop", stash_ref],
+                cwd=str(project_root),
+                timeout=15,
+            )
+            if drop_result.returncode == 0:
+                dropped += 1
+                logger.info(
+                    "GATE-STASH-LIFECYCLE: dropped %s (age=%.1fh)",
+                    stash_ref, age_h,
+                )
+            else:
+                errors += 1
+                logger.warning(
+                    "GATE-STASH-LIFECYCLE: drop %s failed: %s",
+                    stash_ref, drop_result.stderr.strip()[:200],
+                )
+
+        action = "clean" if errors == 0 else "warn"
+        return ReconcileResult(
+            action=action,
+            detail=(
+                f"stash lifecycle: dropped={dropped} "
+                f"(>{_STASH_TTL_SECONDS // 3600}h session_worktree stash), "
+                f"kept={kept}, errors={errors}"
+            ),
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-STASH-LIFECYCLE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=801,  # worktree_lifecycle=800 之后，gate_registry_sync=830 之前
+        # （stash 清理与 worktree 清理同属基础设施级，紧跟 worktree_lifecycle）
     )
 
 

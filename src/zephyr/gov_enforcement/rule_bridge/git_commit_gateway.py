@@ -75,6 +75,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
     make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
+    make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
@@ -380,6 +381,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_reconciler_health_gate())  # priority=64 治本reconciler健康度dual-level（#ARCH-DATAQUALITY-V1.7，block_next硬阻断/critical_warn警告，复用_check_recent_blocks/_check_recent_critical_warns，统一GitCommitGateway和session_worktree_commit两条路径的reconciler健康检查）
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
         self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
+        self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
@@ -610,7 +612,9 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_gate_registry_sync_reconciler(self))  #ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
         self._reconciliation_registry.register(make_worktree_lifecycle_reconciler(self))  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
+        self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
         self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
+        self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
         self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
         self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
