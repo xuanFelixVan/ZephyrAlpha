@@ -26,7 +26,7 @@ ttl: permanent
 | 域名称 | 生命周期管理 | Domain Name | Lifecycle Management |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 213 | Module Count | 213 |
-| 域内依赖 | 40 | Internal Dependencies | 40 |
+| 域内依赖 | 39 | Internal Dependencies | 39 |
 | 跨域入边 | 123 | Cross-domain Incoming | 123 |
 | 跨域出边 | 146 | Cross-domain Outgoing | 146 |
 | 设计态模块 | 1 | Design Modules | 1 |
@@ -419,8 +419,8 @@ graph TD
         scripts_construction_e2e_check_py["(原型态 / prototype) _e2e_check.py"]
         scripts_construction_e2e_deep_py["(原型态 / prototype) _e2e_deep.py"]
     end
+    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
     scripts_arch_guard_tools_patch_p1_paths_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
-    scripts_arch_guard_tools_inject_idempotency_py -.->|config_depends / config_depends| scripts_arch_guard_tools_patch_p1_paths_py
     D_SHARED["(生产态 / production) D_SHARED"]
     scripts_construction_e2e_deep_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
@@ -471,11 +471,10 @@ graph TD
         scripts_mcp_stop_all_py["(原型态 / prototype) MCP 全 Server 停止脚本（MOD-INF-013 §14）。<br/>文件: stop_all.py"]
         scripts_migration_dm311_autonomy_core_split_py["(原型态 / prototype) DM-311: autonomy_core/ 拆分迁移执行脚本。<br/>文件: dm311_autonomy_core_split.py"]
     end
-    scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_check_transition_code_py
-    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_mcp_start_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_demo_a2a_coordination_py
+    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_start_all_py
     scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
     scripts_construction_start_brain_py -.->|导入依赖 / import_depends| D_INTEGRATION
     D_INTELLIGENCE["(生产态 / production) D_INTELLIGENCE"]
@@ -1040,8 +1039,8 @@ graph TD
     src_zephyr_governance_intelligence_governance_self_test_py -->|导入依赖 / import_depends| src_zephyr_governance_intelligence_governance_delegation_engine_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_query_metrics_py
     src_zephyr_governance_persistence_database_manager_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     src_zephyr_governance_persistence_decisiongraph_schema_py -->|导入依赖 / import_depends| src_zephyr_governance_depgraph_schema_py
+    src_zephyr_governance_persistence_decision_graph_reader_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_observability_governance_projection_engine_py
     src_zephyr_governance_persistence_task_repo_py -->|导入依赖 / import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_scaffold_py -->|导入依赖 / import_depends| src_zephyr_governance_capability_lookup_py
@@ -1124,7 +1123,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 116 个，11 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 116 个，10 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -1248,15 +1247,14 @@ graph TD
     end
     src_zephyr_governance_implementations_default_experiment_pipeline_py -.->|导入依赖 / import_depends| src_zephyr_governance_engine_pipeline_base_py
     src_zephyr_infrastructure_a2a_protocol_layer3_coordination_governance_integration_py -.->|导入依赖 / import_depends| src_zephyr_infrastructure_a2a_protocol_layer3_coordination_a2a_governance_adapter_py
+    scripts_arch_guard_tools_build_ocp_manifest_py -.->|config_depends / config_depends| scripts_arch_guard_tools_inject_idempotency_py
+    scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_demo_a2a_coordination_py
     scripts_arch_guard_tools_patch_p1_paths_py -.->|config_depends / config_depends| scripts_arch_guard_tools_build_ocp_manifest_py
-    scripts_arch_guard_tools_inject_idempotency_py -.->|config_depends / config_depends| scripts_arch_guard_tools_patch_p1_paths_py
-    scripts_construction_demo_a2a_chat_py -.->|config_depends / config_depends| scripts_construction_check_transition_code_py
-    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_launcher_py
-    scripts_mcp_start_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
-    scripts_migration_dm314_infra_ops_split_py -.->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
+    scripts_mcp_generate_ide_config_py -.->|config_depends / config_depends| scripts_mcp_start_all_py
     scripts_mcp_stop_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
+    scripts_migration_dm314_infra_ops_split_py -.->|config_depends / config_depends| scripts_migration_dm311_autonomy_core_split_py
     scripts_migration_governance_root_split_py -.->|config_depends / config_depends| scripts_migration_dm314_infra_ops_split_py
+    scripts_mcp_status_all_py -.->|config_depends / config_depends| scripts_mcp_generate_ide_config_py
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_governance_implementations_default_security_gateway_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_INTEGRATION["(生产态 / production) D_INTEGRATION"]
