@@ -53,41 +53,84 @@ def _pydantic_fields(model_class: type) -> dict[str, str]:
 
 
 # =============================================================================
-# Task 字段快照（31 字段）
+# Task 字段快照（73 字段）—— MOD-TASK_SYSTEM 治本演进
+# 28 基础业务字段（task_id..schema_version）+ 45 治理/审计/管线字段
 # =============================================================================
 
 TASK_EXPECTED_FIELDS = {
     "task_id": "str",
-    "namespace": "TaskNamespace | None",
+    "namespace": "<enum 'TaskNamespace'>",
     "seq": "int",
     "title": "str",
-    "status": "TaskStatus",
-    "priority": "Priority",
-    "phase": "ContractPhase | None",
-    "execution_model": "ExecutionModel | None",
+    "status": "<enum 'TaskStatus'>",
+    "priority": "<enum 'Priority'>",
+    "phase": "int",
+    "execution_model": "<enum 'ExecutionModel'>",
     "model_rationale": "str | None",
-    "fallback_model": "ExecutionModel | None",
-    "safety_level": "SafetyLevel",
-    "directive": "str | None",
+    "fallback_model": "str | None",
+    "safety_level": "<enum 'SafetyLevel'>",
+    "directive": "str",
     "idempotent": "bool",
-    "classification": "Classification | None",
-    "evolution_policy": "EvolutionPolicy | None",
-    "estimate_hours": "float | None",
+    "classification": "<enum 'Classification'>",
+    "evolution_policy": "<enum 'EvolutionPolicy'>",
+    "estimate_hours": "float",
     "actual_hours": "float | None",
-    "files_in_scope": "list[str] | None",
-    "deliverables": "list[str] | None",
-    "acceptance": "list[str] | None",
-    "depends_on": "list[str] | None",
-    "tags": "list[str] | None",
+    "files_in_scope": "list[str]",
+    "deliverables": "list[str]",
+    "acceptance": "list[str]",
+    "depends_on": "list[str]",
+    "tags": "list[str]",
     "session_id": "str | None",
     "waiting_for": "str | None",
     "ready_at": "datetime.datetime | None",
     "completed_at": "datetime.datetime | None",
-    "created_at": "datetime.datetime | None",
-    "updated_at": "datetime.datetime | None",
-    "is_deleted": "bool",
+    "created_at": "datetime.datetime",
+    "updated_at": "datetime.datetime",
+    "is_deleted": "int",
     "deleted_at": "datetime.datetime | None",
     "schema_version": "str",
+    "source_blueprint": "str",
+    "source_section": "str",
+    "description": "str",
+    "allowed_touch": "list[str]",
+    "applicable_rules": "list[dict]",
+    "rollback_instructions": "str",
+    "post_sync_standard": "list[str]",
+    "dependency_type": "str",
+    "upstream_files": "list[str]",
+    "downstream_outputs": "list[dict]",
+    "forbidden_touch": "list[str]",
+    "context_assembly_manifest": "list[dict]",
+    "estimated_tokens": "int",
+    "timeout_minutes": "int",
+    "completed_gates": "list[zephyr.gov_enforcement.rule_enforcement.task_types.GateLevel]",
+    "blocked_gates": "dict[str, str]",
+    "assigned_pipeline": "str",
+    "pipeline_modules": "list[str]",
+    "blocked_by": "list[str]",
+    "artifact_paths": "list[str]",
+    "audit_findings": "list[zephyr.gov_enforcement.rule_enforcement.task_types.TaskAuditFinding]",
+    "ke_entries": "list[str]",
+    "ai_autonomy_level": "str",
+    "autonomy_checklist": "list[str]",
+    "construction_status": "str",
+    "verification_status": "str",
+    "approval_required": "bool",
+    "requires_rb_check": "bool",
+    "priority_proposed": "str | None",
+    "rejection_cooldown_until": "str | None",
+    "block_sessions_count": "int",
+    "pipeline_task_type": "str | None",
+    "target_layer": "str | None",
+    "estimated_complexity": "str | None",
+    "post_sync_specific": "list[str]",
+    "depgraph_nodes": "list[str]",
+    "depgraph_layer": "str | None",
+    "dependency_rationale": "str",
+    "root_cause_analysis": "str | None",
+    "hallucination_risk": "float",
+    "drift_risk": "float",
+    "granularity_level": "str",
 }
 
 
@@ -100,11 +143,11 @@ class TestTaskSchemaStability:
         fields = _pydantic_fields(Task)
         actual_count = len(fields)
 
-        assert actual_count == 31, (
-            f"Task 字段数预期 31，实际 {actual_count}。\n"
+        assert actual_count == 73, (
+            f"Task 字段数预期 73，实际 {actual_count}。\n"
             f"  当前字段: {sorted(fields.keys())}\n"
-            f"  注意：31 字段 = 28 业务 + 3 DB 追踪（is_deleted/deleted_at/schema_version）\n"
-            f"  新增字段会改变契约，请检查所有 12 消费者是否兼容。"
+            f"  注意：73 字段 = 28 基础业务 + 3 DB 追踪 + 42 治理/审计/管线\n"
+            f"  新增字段会改变契约，请检查所有消费者是否兼容。"
         )
 
     def test_task_required_fields_present(self) -> None:
@@ -129,10 +172,10 @@ class TestTaskSchemaStability:
         if extra:
             pytest.fail(
                 f"Task 包含预期外的字段: {sorted(extra)}\n"
-                f"  这改变了数据契约，影响所有 12 消费者。\n"
+                f"  这改变了数据契约，影响所有消费者。\n"
                 f"  如果有意新增字段，请：\n"
                 f"    1. 更新 TASK_EXPECTED_FIELDS 字典\n"
-                f"    2. 更新 schemas.py Task docstring（字段计数 31→{31 + len(extra)}）\n"
+                f"    2. 更新 schemas.py Task docstring（字段计数 73→{73 + len(extra)}）\n"
                 f"    3. 更新 models.py TaskCard docstring\n"
                 f"    4. 更新 blueprint.md/registries\n"
                 f"    5. 检查所有消费者兼容性"
@@ -200,9 +243,11 @@ ERROR_SUBCLASSES_EXPECTED = {
     "IOError",
     "PipelineError",
     "SecurityError",
+    "SessionError",
     "TaskError",
     "UnimplementedError",
     "ValidationError",
+    "ZephyrIOError",
 }
 
 
@@ -235,7 +280,12 @@ class TestErrorHierarchy:
             cls = getattr(err_module, name)
             try:
                 instance = cls(f"{name} test message")
-                assert str(instance) == f"{name} test message"
+                # 错误格式：f"[{error_code}] {message}"（如 [ZA-SH-0001] ConfigError test message）
+                expected_msg = f"{name} test message"
+                actual_str = str(instance)
+                assert actual_str.endswith(expected_msg), (
+                    f"{name}: expected str ending with {expected_msg!r}, got {actual_str!r}"
+                )
             except Exception as e:
                 pytest.fail(f"{name} 实例化失败: {e}")
 

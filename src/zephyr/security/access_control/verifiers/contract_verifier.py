@@ -27,6 +27,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+_GCT007_MIN_TEST_COUNT = 120
+_GCT008_REQUIRED_STRATEGY = "AUTO_GUARD"
+
 
 @dataclass
 class ContractResult:
@@ -43,12 +46,21 @@ class ContractResult:
     detail: str = ""
 
 
+@dataclass
 class ContractStatus:
-    """契约状态枚举."""
+    """契约状态记录.
 
-    COMPLIANT = "COMPLIANT"
-    VIOLATED = "VIOLATED"
-    UNKNOWN = "UNKNOWN"
+    Attributes:
+        contract_id: 契约 ID
+        compliant: 是否合规
+        detail: 详情
+        checked_at: 检查时间戳（ISO 字符串）
+    """
+
+    contract_id: str
+    compliant: bool = False
+    detail: str = ""
+    checked_at: str = ""
 
 
 class ContractVerifier:
@@ -117,6 +129,39 @@ class ContractVerifier:
             contract_id="G-CT-004",
             compliant=compliant,
             detail=f"blocked_layer={blocked_layer}, rule_id={rule_id}",
+        )
+
+    def verify_gct007(self, test_count: int) -> ContractResult:
+        """验证 G-CT-007 审计链契约——测试数 >= 阈值则合规.
+
+        Args:
+            test_count: 已执行的测试数
+
+        Returns:
+            ContractResult
+        """
+        compliant = test_count >= _GCT007_MIN_TEST_COUNT
+        return ContractResult(
+            contract_id="G-CT-007",
+            compliant=compliant,
+            detail=f"test_count={test_count}, min={_GCT007_MIN_TEST_COUNT}",
+        )
+
+    def verify_gct008(self, strategies: list[str] | None) -> ContractResult:
+        """验证 G-CT-008 不可否认契约——需含 AUTO_GUARD 策略.
+
+        Args:
+            strategies: 已声明的策略列表
+
+        Returns:
+            ContractResult
+        """
+        strategies_list = strategies or []
+        compliant = _GCT008_REQUIRED_STRATEGY in strategies_list
+        return ContractResult(
+            contract_id="G-CT-008",
+            compliant=compliant,
+            detail=f"strategies={strategies_list}, required={_GCT008_REQUIRED_STRATEGY}",
         )
 
 

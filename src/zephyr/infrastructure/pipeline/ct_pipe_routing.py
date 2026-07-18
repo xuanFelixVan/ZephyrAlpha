@@ -166,7 +166,7 @@ def modules_slice_from_node(node_id: str) -> tuple[Literal["A", "B"], list[str]]
     if node_id in _ORDER_B:
         i = _ORDER_B.index(node_id)
         return "B", list(_ORDER_B[i:])
-    raise ValueError(f"未知 pipeline node_id: {node_id!r}")
+    raise ValueError(f"unknown pipeline node_id: {node_id!r}")
 
 
 def _make_decision(node_id: str, rationale: str) -> PipelineRouteDecision:
@@ -248,9 +248,9 @@ def _check_pipeline_affinity(
     constraint: PipelineAffinityConstraint,
     decision: PipelineRouteDecision,
 ) -> list[str]:
-    """检查 pipeline 流向约束——A区->B区穿越需经 M5/M6。"""
+    """检查 pipeline 流向约束——A区→B区穿越需经 M5/M6。"""
     if decision.node_id not in ("M5", "M6"):
-        return [f"WARN: {constraint.description} — A区->B区穿越需经M5/M6"]
+        return [f"WARN: pipeline affinity — {constraint.description} — A区→B区穿越需经M5/M6"]
     return []
 
 

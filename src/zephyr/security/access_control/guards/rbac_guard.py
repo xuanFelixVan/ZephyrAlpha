@@ -194,7 +194,7 @@ class RBACGuard:
         self, role: object, operation: str
     ) -> PermissionResult | None:
         """READER 不能写。"""
-        if role is AgentRole.READER and operation.startswith("write:"):
+        if role == AgentRole.READER and operation.startswith("write:"):
             return PermissionResult(
                 decision=PermissionDecision.BLOCKED,
                 reason="READER cannot write",
@@ -206,7 +206,7 @@ class RBACGuard:
         self, maturity: object, operation: str
     ) -> PermissionResult | None:
         """L0_INTERN 不能修改蓝图。"""
-        if maturity is MaturityLevel.L0_INTERN and operation.startswith("modify:"):
+        if maturity == MaturityLevel.L0_INTERN and operation.startswith("modify:"):
             return PermissionResult(
                 decision=PermissionDecision.BLOCKED,
                 reason=f"INTERN cannot modify: {operation}",
@@ -258,9 +258,10 @@ class RBACGuard:
         """角色权限检查 — 精确匹配 + 通配符匹配（如 admin:*）。"""
         role_perms = ROLE_DEFAULT_PERMISSIONS.get(role, [])
         if operation in role_perms:
+            role_v = role.value if hasattr(role, "value") else (role if role else "unknown")
             return PermissionResult(
                 decision=PermissionDecision.ALLOW,
-                reason=f"allowed by role {role.value if role else 'unknown'}",
+                reason=f"allowed by role {role_v}",
                 layer="L1_rbac",
             )
         for perm in role_perms:
@@ -304,11 +305,11 @@ class RBACGuard:
 
     def is_blocked(self, result: PermissionResult) -> bool:
         """判断结果是否为 BLOCKED."""
-        return result.decision is PermissionDecision.BLOCKED
+        return result.decision == PermissionDecision.BLOCKED
 
     def is_auto_guard(self, result: PermissionResult) -> bool:
         """判断结果是否为 AUTO_GUARD."""
-        return result.decision is PermissionDecision.AUTO_GUARD
+        return result.decision == PermissionDecision.AUTO_GUARD
 
 
 __all__ = [
