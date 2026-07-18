@@ -172,7 +172,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL Signal Domain (__init__.py) | → | D_FACTOR — Value Factor (value_factor.py) | contract / contract |
+| 1 | D_FUNDAMENTAL_SIGNAL 基本面信号: D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | → | D_FACTOR — Value Factor (value_factor.py) | contract / contract |
 | 2 | D_FUNDAMENTAL_SIGNAL 基本面信号: AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
 | 3 | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | → | alpha_signal_pipeline.py | runtime / runtime |
 | 4 | D_GOV_OPS_RESILIENCE 运维弹性治理: bus_factor_defense.py | → | bus_factor_defense.py | 导入依赖 / import_depends |
