@@ -203,4 +203,4 @@ def make_git_call_budget_gate() -> GateSpec:
             return True, detail  # warn-only：passed=True 不阻断
         return True, ""
 
-    return GateSpec(gate_id
+    return GateSpec(gate_id="GIT-CALL-BUDGET", check=_check, priority=105)

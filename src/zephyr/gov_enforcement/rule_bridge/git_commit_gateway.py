@@ -121,6 +121,7 @@ from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import mak
 from zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate import make_no_import_side_effect_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate import make_depgraph_freshness_gate  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1
 from zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate import make_scripts_import_integrity_gate  # #ARCH-DATAQUALITY-V1.4 核心治本
+from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.reconciler_health_gate import make_reconciler_health_gate  # #ARCH-DATAQUALITY-V1.7 reconciler健康度门禁
 from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
@@ -128,6 +129,7 @@ from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_p
 from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
+from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
@@ -374,6 +376,8 @@ class GitCommitGateway:
         self._gate_registry.register(make_depgraph_freshness_gate())  # priority=67 治本depgraph新鲜度dual-threshold（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1，>30min WARNING/>24h 阻断，读取.runtime/depgraph_scan_cache.json _meta.saved_at）
         self._gate_registry.register(make_reconciler_health_gate())  # priority=64 治本reconciler健康度dual-level（#ARCH-DATAQUALITY-V1.7，block_next硬阻断/critical_warn警告，复用_check_recent_blocks/_check_recent_critical_warns，统一GitCommitGateway和session_worktree_commit两条路径的reconciler健康检查）
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
+        self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS Phase 1，stdlib AST检测staged scripts/governance/**+src/** .py 未import未定义符号，--no-verify绕不过）
+        self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
@@ -1317,6 +1321,28 @@ class GitCommitGateway:
             return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="empty files list")
         if not session_id:
             session_id = "unknown"
+
+        # 治本（#ARCH-WORKTREE-002 缺陷3，2026-07-19）：检测 merge 中间态
+        # 病根：auto-sync reconciler 不识别 merge 状态，手动 `git merge --no-commit` 后
+        #       reconciler 检测到 staged changes 自动 _commit_auto，清理 MERGE_HEAD，
+        #       导致用户手动 merge 被强制完成（HEAD 移动到 auto-sync commit）。
+        # 方案：入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit，保留 merge 状态
+        #       供用户手动完成。实测案例（2026-07-19）：手动 git merge --no-commit --no-ff
+        #       输出 "Automatic merge went well"，但随后 MERGE_HEAD 消失。
+        merge_head = self.project_root / ".git" / "MERGE_HEAD"
+        if merge_head.exists():
+            logger.info(
+                "_commit_auto: skip auto-commit, merge in progress "
+                "(session=%s, files=%d) —— #ARCH-WORKTREE-002 缺陷3 治本",
+                session_id, len(files),
+            )
+            return CommitResult(
+                status=CommitStatus.NOTHING_TO_COMMIT,
+                message=(
+                    "skip auto-commit: merge in progress (MERGE_HEAD exists)"
+                    " —— #ARCH-WORKTREE-002 缺陷3 治本，保留 merge 状态供手动完成"
+                ),
+            )
 
         existing = self._resolve_auto_commit_files(files)
         if not existing:

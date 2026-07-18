@@ -98,6 +98,25 @@ logger = logging.getLogger(__name__)
 # session_worktree_commit 和 _pre_merge_gate_check 共用。
 _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
 
+# Fast-path env 授权（ARCH-GIT-CALL-BUDGET P1.3，2026-07-19）
+# session_worktree 是可信内部调用方——已通过 held_files 机制完成冲突检查，
+# 调 git checkout/reset/restore/revert 时设置此 env 使 scripts/git_guard.py
+# 别名拦截跳过冗余 ls-files 全扫 + .ailocks/ 冲突检测，直接透传。
+# 根因：alias 拦截每次危险命令触发 2-3x git 子进程 spawn，在 14 万文件工作区
+# + fscache/fsmonitor 路径上是 git.exe 崩溃（0xc0000005 @ 0x13e4d4）的放大源。
+_FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
+
+
+def _trusted_git_env() -> dict:
+    """构造可信内部 git 调用的 env（fast-path 透传 git_guard alias）。
+
+    返回 os.environ 的副本 + ZEPHYR_GIT_GUARD_FAST_PATH=1。
+    仅对 checkout/reset/restore/revert 生效（git_guard.py fast-path 限定）。
+    """
+    env = dict(os.environ)
+    env[_FAST_PATH_ENV] = "1"
+    return env
+
 
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
     """获取 WorktreeManager 实例。"""
@@ -781,9 +800,11 @@ def _ensure_worktree_base_fresh(root: Path, wt_path: Path, session_id: str) -> d
 
     if session_commit_count == 0:
         # 无 session commit，安全 reset 到主工作区 HEAD
+        # P1.3 fast-path：session_worktree 是可信调用方，跳过 git_guard alias 扫描
         reset_r = subprocess.run(
             ["git", "reset", "--hard", main_head],
             cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+            env=_trusted_git_env(),
         )
         if reset_r.returncode != 0:
             return {
@@ -1093,10 +1114,12 @@ def _recover_changes_from_stash(
         f"  files ({len(hits)}): {hits[:5]}{'...' if len(hits) > 5 else ''}",
         file=sys.stderr,
     )
+    # P1.3 fast-path：session_worktree auto-recover 是可信调用方，跳过 git_guard alias 扫描
     checkout_r = subprocess.run(
         ["git", "checkout", stash_ref, "--"] + hits,
         cwd=str(root), capture_output=True, text=True,
         encoding="utf-8", errors="replace", timeout=60,
+        env=_trusted_git_env(),
     )
     if checkout_r.returncode == 0:
         print(
@@ -1735,9 +1758,11 @@ def _pre_merge_gate_check(
         orig_head = head_r.stdout.strip()
 
         # git reset --soft merge-base：模拟 staged 状态（HEAD 移到 merge-base，index 保留 session commit 内容）
+        # P1.3 fast-path：session_worktree pre-merge gate check 是可信调用方，跳过 git_guard alias 扫描
         reset_r = subprocess.run(
             ["git", "reset", "--soft", merge_base],
             cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+            env=_trusted_git_env(),
         )
         if reset_r.returncode != 0:
             return True, []  # reset 失败，降级放行
@@ -1847,9 +1872,11 @@ def _pre_merge_gate_check(
             return True, []
         finally:
             # 恢复 HEAD（git reset --soft orig_head：HEAD 移回原 commit，index 不变=干净状态）
+            # P1.3 fast-path：pre-merge gate HEAD 恢复是可信调用方，跳过 git_guard alias 扫描
             subprocess.run(
                 ["git", "reset", "--soft", orig_head],
                 cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+                env=_trusted_git_env(),
             )
     except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         # gate 基础设施异常降级为 warn（不阻断）
@@ -2222,6 +2249,7 @@ def _dispose_main_workdir_files(
         subprocess.run(
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_stash,
             cwd=str(root), capture_output=True,
+            env=_trusted_git_env(),
         )
         logger.info(
             "session_worktree_abort: stashed %d tracked file(s) for session=%s "

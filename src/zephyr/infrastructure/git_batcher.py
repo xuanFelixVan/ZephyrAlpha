@@ -1,0 +1,229 @@
+# [BLUEPRINT] MOD-INF-003 | docs/03_modules/_domain_infrastructure/runtime_integration/blueprint.md | §ARCH-GIT-CALL-BUDGET
+# [MODULE] zephyr.infrastructure.git_batcher
+# [DOMAIN] D_INFRA_RUNTIME
+# [DEPENDENCIES] stdlib (subprocess, tarfile, io, pathlib, logging, typing)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (collector 批量化); zephyr.gov_enforcement.commit_gates.* (diff helpers 批量化)
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] 所有方法返回 dict/list 结构，不抛异常——subprocess 失败返回空容器；git archive --format=tar 单次调用替代 N 次 git show；线程安全（无共享可变状态）
+# [MODIFY-GUARD] GitCommandBatcher 类名；git_show_batch/git_diff_cached_names/git_diff_names/git_ls_files_tracked 方法签名
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] subprocess 超时/失败返回空 dict/list + log warning；tarfile 解析失败返回空 dict + log warning
+# [TESTS] tests/infrastructure/test_git_batcher.py
+# [A_module] module_id=MOD-INF-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+"""git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）
+
+将 N 次独立 git 子进程调用合并为 1 次批量调用，消除逐文件 git 调用反模式
+（N 文件 = N subprocess → 1 subprocess）。
+
+病根（第一性原理）
+-----------------
+git 是昂贵外部资源，每次 ``subprocess.run(["git", ...])`` 在 Windows 上成本
+~50-100ms + fscache/fsmonitor 初始化开销。100% AI 开发场景下 session_worktree /
+gates / reconcilers 高频调 git，逐文件调用在 14 万文件工作区上是 git.exe 2.48.x
+崩溃（0xc0000005 @ 0x13e4d4）的放大源。
+
+批量化方案
+----------
+- ``git_show_batch``: 用 ``git archive --format=tar`` 一次获取 N 个文件内容
+  （替代 N 次 ``git show <ref>:<file>``）
+- ``git_diff_cached_names``: 用 ``git diff --cached --name-only`` 一次获取 staged 文件名
+- ``git_diff_names``: 用 ``git diff --name-only <ref_spec>`` 一次获取 diff 文件名
+- ``git_ls_files_tracked``: 用 ``git ls-files`` 一次获取 tracked 文件列表
+
+设计权衡
+--------
+1. **git archive --format=tar**：比 ``git show`` N 次调用快 N 倍，且避免 N 次
+   fscache/fsmonitor 初始化（崩溃路径）。tar 格式可流式解析。
+2. **不依赖 pygit2/gitpython**：纯 stdlib + git CLI，零额外依赖。
+3. **fail-open**：subprocess 失败返回空容器（不抛异常），调用方需检查空结果。
+4. **线程安全**：无共享可变状态，每次调用创建独立的 subprocess。
+
+Usage::
+
+    from zephyr.infrastructure.git_batcher import GitCommandBatcher
+
+    batcher = GitCommandBatcher("/path/to/repo")
+
+    # 批量获取 N 个文件内容（1 次 git archive 替代 N 次 git show）
+    contents = batcher.git_show_batch("HEAD", ["src/foo.py", "src/bar.py"])
+    # contents == {"src/foo.py": b"...", "src/bar.py": b"..."}
+
+    # 批量获取 staged 文件名
+    staged = batcher.git_diff_cached_names()
+
+    # 批量获取 tracked 文件
+    tracked = batcher.git_ls_files_tracked(["src/foo.py", "src/bar.py"])
+"""
+
+from __future__ import annotations
+
+import io
+import logging
+import subprocess
+import tarfile
+from pathlib import Path
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["GitCommandBatcher"]
+
+
+class GitCommandBatcher:
+    """Git 命令批量化工具——将 N 次子进程调用合并为 1 次。
+
+    所有方法 fail-open：subprocess 失败返回空容器，不抛异常。
+    """
+
+    def __init__(self, project_root: Path | str) -> None:
+        """初始化批量化工具。
+
+        Args:
+            project_root: git 仓库根目录（绝对路径）。
+        """
+        self._root = Path(project_root)
+
+    def git_show_batch(
+        self, ref: str, files: list[str], timeout: int = 60
+    ) -> dict[str, bytes]:
+        """批量获取 git ref 中指定文件的内容。
+
+        用 ``git archive --format=tar <ref> -- <files>`` 一次获取 N 个文件内容，
+        替代 N 次 ``git show <ref>:<file>``。
+
+        Args:
+            ref: git 引用（如 "HEAD", "dev", commit SHA）。
+            files: 文件相对路径列表。
+            timeout: subprocess 超时秒数。
+
+        Returns:
+            ``{file_path: file_content_bytes}`` 字典。
+            不存在的文件不在结果中（git archive 跳过）。
+            subprocess 失败时返回空字典。
+        """
+        if not files:
+            return {}
+
+        try:
+            cmd = ["git", "archive", "--format=tar", ref, "--"] + files
+            r = subprocess.run(
+                cmd, cwd=str(self._root), capture_output=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            logger.warning("git_show_batch: timeout after %ss (ref=%s, %d files)", timeout, ref, len(files))
+            return {}
+        except Exception as e:  # noqa: BLE001
+            logger.warning("git_show_batch: subprocess failed: %s", e)
+            return {}
+
+        if r.returncode != 0:
+            stderr = r.stderr.decode("utf-8", errors="replace").strip()[:200]
+            logger.warning("git_show_batch: git archive failed (rc=%d): %s", r.returncode, stderr)
+            return {}
+
+        return self._parse_tar_archive(r.stdout)
+
+    def git_diff_cached_names(
+        self, files: Optional[list[str]] = None, timeout: int = 60
+    ) -> list[str]:
+        """批量获取 staged 文件名。
+
+        Args:
+            files: 可选——限定文件范围（pathspec）。None = 所有 staged 文件。
+            timeout: subprocess 超时秒数。
+
+        Returns:
+            staged 文件相对路径列表。subprocess 失败时返回空列表。
+        """
+        cmd = ["git", "diff", "--cached", "--name-only"]
+        if files:
+            cmd += ["--"] + files
+        return self._run_git_name_list(cmd, timeout, "git_diff_cached_names")
+
+    def git_diff_names(
+        self, ref_spec: str, files: Optional[list[str]] = None, timeout: int = 60
+    ) -> list[str]:
+        """批量获取 diff 文件名。
+
+        Args:
+            ref_spec: diff 引用规格（如 "HEAD~1..HEAD", "dev..main"）。
+            files: 可选——限定文件范围。None = 所有 diff 文件。
+            timeout: subprocess 超时秒数。
+
+        Returns:
+            diff 文件相对路径列表。subprocess 失败时返回空列表。
+        """
+        cmd = ["git", "diff", "--name-only", ref_spec]
+        if files:
+            cmd += ["--"] + files
+        return self._run_git_name_list(cmd, timeout, "git_diff_names")
+
+    def git_ls_files_tracked(
+        self, files: Optional[list[str]] = None, timeout: int = 60
+    ) -> list[str]:
+        """批量获取 tracked 文件列表。
+
+        Args:
+            files: 可选——限定文件范围。None = 所有 tracked 文件。
+            timeout: subprocess 超时秒数。
+
+        Returns:
+            tracked 文件相对路径列表。subprocess 失败时返回空列表。
+        """
+        cmd = ["git", "ls-files"]
+        if files:
+            cmd += ["--"] + files
+        return self._run_git_name_list(cmd, timeout, "git_ls_files_tracked")
+
+    def _parse_tar_archive(self, tar_bytes: bytes) -> dict[str, bytes]:
+        """解析 git archive --format=tar 的输出，返回 {file_path: content} 字典。
+
+        fail-open：tarfile 解析失败返回空字典。
+        """
+        result: dict[str, bytes] = {}
+        try:
+            bio = io.BytesIO(tar_bytes)
+            with tarfile.open(fileobj=bio, mode="r|") as tar:
+                for member in tar:
+                    if not member.isfile():
+                        continue
+                    name = member.name
+                    # git archive 输出的文件名可能带前缀（如 src/zephyr/...）
+                    f = tar.extractfile(member)
+                    if f is not None:
+                        result[name] = f.read()
+        except tarfile.TarError as e:
+            logger.warning("_parse_tar_archive: tarfile parse failed: %s", e)
+        except Exception as e:  # noqa: BLE001
+            logger.warning("_parse_tar_archive: unexpected error: %s", e)
+        return result
+
+    def _run_git_name_list(
+        self, cmd: list[str], timeout: int, caller: str
+    ) -> list[str]:
+        """运行返回文件名列表的 git 命令（git diff --name-only / git ls-files）。
+
+        fail-open：subprocess 失败返回空列表。
+        """
+        try:
+            r = subprocess.run(
+                cmd, cwd=str(self._root), capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            logger.warning("%s: timeout after %ss", caller, timeout)
+            return []
+        except Exception as e:  # noqa: BLE001
+            logger.warning("%s: subprocess failed: %s", caller, e)
+            return []
+
+        if r.returncode != 0:
+            stderr = r.stderr.strip()[:200]
+            logger.warning("%s: git command failed (rc=%d): %s", caller, r.returncode, stderr)
+            return []
+
+        return [line.strip() for line in r.stdout.split("\n") if line.strip()]
