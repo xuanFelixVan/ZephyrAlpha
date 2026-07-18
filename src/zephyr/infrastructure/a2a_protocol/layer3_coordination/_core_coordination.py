@@ -24,6 +24,7 @@ from zephyr.infrastructure.a2a_protocol.layer3_coordination.arbitrator import (
     AgentMeta,
     AgentRole,
     ArbitrationResult,
+    ArbitrationRole,
     Arbitrator,
     FileOwnership,
 )
@@ -64,6 +65,7 @@ __all__ = [
     "AgentMeta",
     "AgentRole",
     "ArbitrationResult",
+    "ArbitrationRole",
     "Arbitrator",
     "CascadeGuard",
     "ChangeRange",
