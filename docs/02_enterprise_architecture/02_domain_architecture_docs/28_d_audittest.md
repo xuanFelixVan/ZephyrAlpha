@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 28_d_audittest / 审计测试套件 / 审计测试套件 / Audit Test Suite
+# 28_d_audittest / audit_test_suite / 审计测试套件 / Audit Test Suite
 
 > **功能简介 / Overview**: 审计测试套件，负责审计测试用例管理和测试执行
 

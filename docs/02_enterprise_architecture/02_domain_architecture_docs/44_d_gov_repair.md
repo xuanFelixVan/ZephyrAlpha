@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 44_d_gov_repair / 治理修复 / 治理修复 / Governance Repair
+# 44_d_gov_repair / rollback / 治理修复 / Governance Repair
 
 > **功能简介 / Overview**: 治理修复，负责治理问题自动修复和修复策略管理
 

@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 56_d_sigqc / 信号质量控制 / 信号质量控制 / Signal Quality Control
+# 56_d_sigqc / signal_quality / 信号质量控制 / Signal Quality Control
 
 > **功能简介 / Overview**: 信号质量控制，负责信号质量评估、异常检测和质量门禁
 
@@ -68,10 +68,10 @@ graph TD
         src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(原型态 / prototype) D_TRADING"]
     src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -104,10 +104,10 @@ graph TD
         src_zephyr_signal_quality_degradation_monitor_base_py["(原型态 / prototype) D_SIGQC — Signal Quality Degradation Monitor Base<br/>文件: degradation_monitor_base.py"]
     end
     src_zephyr_signal_quality_init_py -.->|导入依赖 / import_depends| src_zephyr_signal_quality_degradation_monitor_base_py
-    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
-    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_TRADING["(原型态 / prototype) D_TRADING"]
     src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_TRADING
+    D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
+    src_zephyr_signal_quality_degradation_monitor_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -123,7 +123,7 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
 | 2 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -137,7 +137,7 @@ graph TD
 ```mermaid
 graph LR
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_SIGQC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SIGQC -->|1条 导入依赖 / import_depends| D_TRADING

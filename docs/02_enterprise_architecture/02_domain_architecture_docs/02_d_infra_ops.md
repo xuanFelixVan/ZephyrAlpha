@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 02_d_infra_ops / 基础设施运维 / 基础设施运维 / Asset Inventory
+# 02_d_infra_ops / asset-inventory / 基础设施运维 / Asset Inventory
 
 > **功能简介 / Overview**: 资产清单与运维扫描，负责运行时资产盘点、基础设施配置管理和运维自动化
 

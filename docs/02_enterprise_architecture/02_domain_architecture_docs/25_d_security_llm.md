@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 25_d_security_llm / LLM防御 / LLM防御 / LLM Defense
+# 25_d_security_llm / llm_defense / LLM防御 / LLM Defense
 
 > **功能简介 / Overview**: LLM 防御，负责 LLM 安全防护、Prompt 注入防御和输出过滤
 
