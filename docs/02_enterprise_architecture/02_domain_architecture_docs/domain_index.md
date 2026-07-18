@@ -22,9 +22,9 @@ ttl: permanent
 |------|-----|
 | 域总数 | 63 |
 | 模块总数 | 2673 |
-| 生产态模块 | 1566 |
+| 生产态模块 | 1567 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1045 |
+| 原型态模块 | 1044 |
 
 ## 域清单（按架构层分组）
 
@@ -43,7 +43,7 @@ ttl: permanent
 | 域ID / Domain ID | 域名称 / Domain Name | 模块数 / Modules | 生产态 / Production | 设计态 / Design | 原型态 / Prototype | 容量 / Capacity | 文档 / Doc |
 |------|--------|:---:|:---:|:---:|:---:|------|------|
 | D_ALT_DATA | 另类数据 / Alternative Data | 7 | 0 | 0 | 7 | 7/150 (OK) | [06_d_alt_data.md](06_d_alt_data.md) |
-| D_AUTONOMY_CORE | agent_lifecycle / Autonomy Core | 137 | 131 | 0 | 6 | 137/150 (OK) | [07_d_autonomy_core.md](07_d_autonomy_core.md) |
+| D_AUTONOMY_CORE | agent_lifecycle / Autonomy Core | 137 | 132 | 0 | 5 | 137/150 (OK) | [07_d_autonomy_core.md](07_d_autonomy_core.md) |
 | D_DATA_ENG | 数据工程 / Data Engineering | 7 | 0 | 0 | 7 | 7/150 (OK) | [08_d_data_eng.md](08_d_data_eng.md) |
 | D_DATA_GOV | 数据治理 / Data Governance | 7 | 0 | 0 | 7 | 7/150 (OK) | [09_d_data_gov.md](09_d_data_gov.md) |
 | D_DATA_SEC | 数据安全与契约 / Data Security & Contracts | 7 | 0 | 0 | 7 | 7/150 (OK) | [10_d_data_sec.md](10_d_data_sec.md) |

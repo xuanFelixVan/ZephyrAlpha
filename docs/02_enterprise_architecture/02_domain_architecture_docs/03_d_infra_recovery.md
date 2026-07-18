@@ -154,18 +154,18 @@ graph TD
     src_zephyr_infrastructure_rollback_auditor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
-    D_SECURITY["(生产态 / production) D_SECURITY"]
-    src_zephyr_infrastructure_rollback_drift_fix_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_contracts_py -.->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_external_merkle_proof_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
+    D_SECURITY["(生产态 / production) D_SECURITY"]
+    src_zephyr_infrastructure_rollback_drift_fix_py -->|导入依赖 / import_depends| D_SECURITY
     src_zephyr_infrastructure_rollback_right_to_be_forgotten_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_OPS_RESILIENCE["(生产态 / production) D_GOV_OPS_RESILIENCE"]
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     src_zephyr_infrastructure_rollback_rollback_boot_integration_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
@@ -223,20 +223,20 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
     tests_rollback_test_rollback_scheduler_py -.->|测试依赖 / test_depends| src_zephyr_infrastructure_rollback_rollback_scheduler_py
     D_SHARED["(原型态 / prototype) D_SHARED"]
+    src_zephyr_infrastructure_rollback_rollback_drill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_executor_py -.->|导入依赖 / import_depends| D_SHARED
     D_INFRA_RUNTIME["(生产态 / production) D_INFRA_RUNTIME"]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_INFRA_RUNTIME
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_drill_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(原型态 / prototype) D_GOVERNANCE"]
@@ -316,26 +316,26 @@ graph TD
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_lock_py
     src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_sqlite_dumper_py
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_drill_py
     src_zephyr_infrastructure_rollback_rollback_scheduler_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_rollback_wal_py
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_s3_snapshot_lifecycle_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_right_to_be_forgotten_py -->|导入依赖 / import_depends| D_SHARED
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_infrastructure_rollback_rollback_abuse_detector_py -->|导入依赖 / import_depends| D_GOV_AUDIT
+    src_zephyr_infrastructure_rollback_warm_standby_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_executor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_integration_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_agent_cooldown_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_infrastructure_rollback_rollback_integration_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_forward_fix_runner_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_infrastructure_rollback_rollback_audit_nexus_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     src_zephyr_infrastructure_rollback_external_merkle_proof_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_forensic_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_sqlite_dumper_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_infrastructure_rollback_rollback_verifier_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     D_GOV_RULE -->|导入依赖 / import_depends| src_zephyr_infrastructure_rollback_contract_py
     D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
