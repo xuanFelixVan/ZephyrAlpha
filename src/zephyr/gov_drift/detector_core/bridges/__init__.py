@@ -1,8 +1,8 @@
-# [A_module] module_id=MOD-GOV_DRIFT_bridges | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_DRIFT_bridges | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+# [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [TTL] permanent
 """
-Drift Detector — MOD-GOV_DRIFT_bridges
+Drift Detector — MOD-INF-023
 =============================
 Agent行为漂移检测：签名一致性 + 输出分布监控.
 
@@ -37,4 +37,4 @@ except ImportError:
 __all__ = ['drift_bridge']
 
 __version__ = "1.0.0"
-__module_id__ = "MOD-GOV_DRIFT_bridges"
+__module_id__ = "MOD-INF-023"

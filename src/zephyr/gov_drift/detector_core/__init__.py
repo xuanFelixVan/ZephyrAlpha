@@ -1,5 +1,5 @@
-# [A_module] module_id=MOD-GOV_DRIFT_detector_core | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-GOV_DRIFT_detector_core | docs/03_modules/_domain_governance/drift_detector/blueprint.md
+# [A_module] module_id=MOD-INF-023 | layer=module | stability=stable | safety=M | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md
 # [MODULE] zephyr.gov_drift.detector_core
 # [DOMAIN] D_GOV_DRIFT
 # [INVARIANTS] 7-file core subset migrated from drift_detection/ to resolve directory boundary with MOD-INF-033
@@ -7,7 +7,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
-"""MOD-GOV_DRIFT_detector_core drift_detector core module.
+"""MOD-INF-023 drift_detector core module.
 Migrated from drift_detection/ to resolve directory boundary with MOD-INF-033.
 """
 
