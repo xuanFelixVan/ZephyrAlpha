@@ -3368,7 +3368,7 @@ scripts:
   dimensions: []
 - name: governance/migrate_sqlite_to_pg/migrate_data.py
   path: governance/migrate_sqlite_to_pg/migrate_data.py
-  description: SQLite → PostgreSQL 运营数据迁移脚本
+  description: SQLite → PostgreSQL 数据迁移脚本
   domain: governance
   execution_plane: warm-path
   status: registered
