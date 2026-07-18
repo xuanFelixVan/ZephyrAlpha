@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-18T19:36:31Z
+# 自动生成于 2026-07-18T19:49:03Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T19:36:31Z'
+generated_at: '2026-07-18T19:49:03Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 346
@@ -147,7 +147,7 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+  description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
@@ -4046,10 +4046,10 @@ scripts:
   dimensions:
   - D1
   priority: P2
-  timeout_seconds: 120
+  timeout_seconds: 60
   args: []
   warn_only: false
-  description: SQLite → PostgreSQL 运营数据迁移脚本（每表独立事务+migration_log幂等）
+  description: SQLite → PostgreSQL 数据迁移脚本
   tags:
   - Quick
 - name: migrate_sqlite_to_pg/seed_from_yaml.py
