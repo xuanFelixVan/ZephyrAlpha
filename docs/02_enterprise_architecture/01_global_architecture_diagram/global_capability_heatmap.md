@@ -22,13 +22,13 @@ ttl: permanent
 |------|-----|
 | 域总数 / Total Domains | 61 |
 | 能力域数 / Capability Domains | 10 |
-| L0 缺失 / Missing | 2 |
-| L1 设计中 / Designing | 18 |
-| L2 可用未验证 / Usable | 38 |
-| L3 生产已验证 / Verified | 3 |
-| ✅ 完全覆盖 / Full Coverage (L3) | 3 |
-| 🟡 部分覆盖 / Partial Coverage (L1-L2) | 56 |
-| ❌ 无覆盖 / No Coverage (L0) | 2 |
+| L0 缺失 / Missing | 6 |
+| L1 设计中 / Designing | 19 |
+| L2 可用未验证 / Usable | 0 |
+| L3 生产已验证 / Verified | 36 |
+| ✅ 完全覆盖 / Full Coverage (L3) | 36 |
+| 🟡 部分覆盖 / Partial Coverage (L1-L2) | 19 |
+| ❌ 无覆盖 / No Coverage (L0) | 6 |
 
 ## 成熟度图例 / Maturity Legend
 
@@ -64,147 +64,147 @@ ttl: permanent
 | 架构域 / Architecture Domain | 域名称 / Domain Name | C1 | C2 | C3 | C4 | C5 | C6 | C7 | CC1 | CC2 | CC3 | 成熟度 / Maturity |
 |--------|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | 🔵 | — | — | — | — | — | — | — | — | — | L1 |
-| D_DATA | data_source_integrator | 🟡 | — | — | — | — | — | — | — | — | — | L2 |
+| D_DATA | data_source_integrator | 🟢 | — | — | — | — | — | — | — | — | — | L3 |
 | D_DATA_ENG | 数据工程 | 🔵 | — | — | — | — | — | — | — | — | — | L1 |
 | D_MKT_DATA | 行情数据 | 🔵 | — | — | — | — | — | — | — | — | — | L1 |
 | D_ASHARE_SIGNAL | ashare_signal | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
-| D_FACTOR | 因子 | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
-| D_FUNDAMENTAL_SIGNAL | fundamental_signal | — | 🟡 | — | — | — | — | — | — | — | — | L2 |
-| D_SIGLEGACY | signal_legacy | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
+| D_FACTOR | 因子 | — | 🟢 | — | — | — | — | — | — | — | — | L3 |
+| D_FUNDAMENTAL_SIGNAL | fundamental_signal | — | 🟢 | — | — | — | — | — | — | — | — | L3 |
+| D_SIGLEGACY | signal_legacy | — | ⚪ | — | — | — | — | — | — | — | — | L0 |
 | D_SIGQC | signal_quality | — | 🔵 | — | — | — | — | — | — | — | — | L1 |
 | D_COMPLIANCE | compliance_gate | — | — | 🔵 | — | — | — | — | — | — | — | L1 |
-| D_RISK | 风控 | — | — | 🟡 | — | — | — | — | — | — | — | L2 |
+| D_RISK | 风控 | — | — | 🟢 | — | — | — | — | — | — | — | L3 |
 | D_CROSS_ASSET | 跨资产 | — | — | — | 🔵 | — | — | — | — | — | — | L1 |
-| D_PF_ALLOC | 组合分配 | — | — | — | 🟡 | — | — | — | — | — | — | L2 |
-| D_PF_CORE | 组合核心 | — | — | — | 🟡 | — | — | — | — | — | — | L2 |
+| D_PF_ALLOC | 组合分配 | — | — | — | 🟢 | — | — | — | — | — | — | L3 |
+| D_PF_CORE | 组合核心 | — | — | — | 🔵 | — | — | — | — | — | — | L1 |
 | D_SELL_DECISION | 卖出决策 | — | — | — | 🔵 | — | — | — | — | — | — | L1 |
-| D_EX_CORE | 执行核心 | — | — | — | — | 🟡 | — | — | — | — | — | L2 |
+| D_EX_CORE | 执行核心 | — | — | — | — | 🟢 | — | — | — | — | — | L3 |
 | D_EX_SOR | 执行路由 | — | — | — | — | 🔵 | — | — | — | — | — | L1 |
-| D_POSITION | 仓位管理 | — | — | — | — | 🟡 | — | — | — | — | — | L2 |
-| D_TRADING | 交易运营 | — | — | — | — | 🟡 | — | — | — | — | — | L2 |
+| D_POSITION | 仓位管理 | — | — | — | — | 🟢 | — | — | — | — | — | L3 |
+| D_TRADING | 交易运营 | — | — | — | — | 🟢 | — | — | — | — | — | L3 |
 | D_ML_SERVE | 推理 | — | — | — | — | — | 🔵 | — | — | — | — | L1 |
 | D_ML_TRAIN | model_evaluation | — | — | — | — | — | 🔵 | — | — | — | — | L1 |
-| D_BACKTEST | 回测 | — | — | — | — | — | — | 🟡 | — | — | — | L2 |
+| D_BACKTEST | 回测 | — | — | — | — | — | — | 🟢 | — | — | — | L3 |
 | D_DIGITAL_TWIN | 数字孪生 | — | — | — | — | — | — | 🔵 | — | — | — | L1 |
 | D_EXEC_SIM | 执行仿真 | — | — | — | — | — | — | 🔵 | — | — | — | L1 |
-| D_SIMULATION | 仿真 | — | — | — | — | — | — | 🟡 | — | — | — | L2 |
+| D_SIMULATION | 仿真 | — | — | — | — | — | — | 🟢 | — | — | — | L3 |
 | D_DATA_GOV | 数据治理 | — | — | — | — | — | — | — | 🔵 | — | — | L1 |
-| D_FBL_DETECTORS | feedback_detectors | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_FBL_DIAGNOSERS | feedback_diagnosers | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_FBL_VERIFICATION | feedback_verification | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
+| D_FBL_DETECTORS | feedback_detectors | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_FBL_VERIFICATION | feedback_verification | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOVERNANCE | registry_management | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
-| D_GOV_AUDIT | audit_orchestration | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_CODE_QUALITY | code_quality_governance | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_DOCS | architecture_docs | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_DRIFT | drift_detection | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
+| D_GOV_AUDIT | audit_orchestration | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_GOV_CODE_QUALITY | code_quality_governance | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_GOV_DOCS | architecture_docs | — | — | — | — | — | — | — | 🔵 | — | — | L1 |
+| D_GOV_DRIFT | drift_detection | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOV_ENFORCEMENT | rule_enforcement | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
-| D_GOV_KB | knowledge_base_governance | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_OPS_RESILIENCE | ops_resilience_governance | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_REPAIR | rollback | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
-| D_GOV_RULE | rule_governance | — | — | — | — | — | — | — | 🟡 | — | — | L2 |
+| D_GOV_KB | knowledge_base_governance | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_GOV_OPS_RESILIENCE | ops_resilience_governance | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_GOV_REPAIR | rollback | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
+| D_GOV_RULE | rule_governance | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_AUTONOMY_PERM | budget_enforcement | — | — | — | — | — | — | — | — | ⚪ | — | L0 |
 | D_BEHAVIORAL_AUDIT | drift_detector_core | — | — | — | — | — | — | — | — | ⚪ | — | L0 |
 | D_DATA_SEC | 数据安全与契约 | — | — | — | — | — | — | — | — | 🔵 | — | L1 |
-| D_SECURITY | orphan_judge | — | — | — | — | — | — | — | — | 🟡 | — | L2 |
-| D_SECURITY_LLM | llm_defense | — | — | — | — | — | — | — | — | 🟡 | — | L2 |
-| D_AUTONOMY_CORE | agent_lifecycle | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_FRONTEND | 前端 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_INFRASTRUCTURE | shared_contracts | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_INFRA_A2A | a2a_communication | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_SECURITY | orphan_judge | — | — | — | — | — | — | — | — | 🟢 | — | L3 |
+| D_SECURITY_LLM | llm_defense | — | — | — | — | — | — | — | — | ⚪ | — | L0 |
+| D_AUTONOMY_CORE | agent_lifecycle | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_FRONTEND | 前端 | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_INFRASTRUCTURE | shared_contracts | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_INFRA_A2A | a2a_communication | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
 | D_INFRA_OPS | asset-inventory | — | — | — | — | — | — | — | — | — | 🔵 | L1 |
-| D_INFRA_RECOVERY | rollback_recovery | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_INFRA_RECOVERY | rollback_recovery | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
 | D_INFRA_RUNTIME | runtime_core | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
-| D_INFRA_TELEMETRY | observability_profiling | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_INTEGRATION | pipeline_routing | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_INTEGRATION_GATEWAY | mcp_servers | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_INTELLIGENCE | context_management | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_INFRA_TELEMETRY | observability_profiling | — | — | — | — | — | — | — | — | — | ⚪ | L0 |
+| D_INTEGRATION | pipeline_routing | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_INTEGRATION_GATEWAY | mcp_servers | — | — | — | — | — | — | — | — | — | ⚪ | L0 |
+| D_INTELLIGENCE | context_management | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
 | D_KNOWLEDGE | vector_storage | — | — | — | — | — | — | — | — | — | 🔵 | L1 |
-| D_OPS | telemetry | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_ORCHESTRATOR | agent_orchestrator | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_REPORTING | 报告 | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
-| D_SHARED | shared_services | — | — | — | — | — | — | — | — | — | 🟡 | L2 |
+| D_OPS | telemetry | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_ORCHESTRATOR | agent_orchestrator | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_REPORTING | 报告 | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
+| D_SHARED | shared_services | — | — | — | — | — | — | — | — | — | 🟢 | L3 |
 
 ## 能力域成熟度汇总 / Capability Domain Maturity Summary
 
 | 能力域 / Capability | 中文名 / Chinese | 域数量 / Domain Count | 总节点 / Total Nodes | production | design | prototype | 平均成熟度 / Avg Maturity | 覆盖度 / Coverage |
 |:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| C1 | 数据接入 | 4 | 63 | 9 | 3 | 51 | 1.25 | 🟡 部分覆盖 / Partial |
-| C2 | 因子研究 | 5 | 52 | 7 | 0 | 45 | 1.40 | 🟡 部分覆盖 / Partial |
-| C3 | 风险控制 | 2 | 43 | 9 | 0 | 34 | 1.50 | 🟡 部分覆盖 / Partial |
-| C4 | 策略决策 | 4 | 36 | 3 | 2 | 31 | 1.50 | 🟡 部分覆盖 / Partial |
-| C5 | 执行交易 | 4 | 79 | 31 | 1 | 47 | 1.75 | 🟡 部分覆盖 / Partial |
-| C6 | ML平台 | 2 | 12 | 0 | 1 | 11 | 1.00 | 🟡 部分覆盖 / Partial |
-| C7 | 回测仿真 | 4 | 59 | 11 | 10 | 38 | 1.50 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 15 | 1138 | 899 | 32 | 207 | 2.07 | 🟡 部分覆盖 / Partial |
-| CC2 | 安全防护 | 5 | 200 | 106 | 0 | 94 | 1.00 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 1012 | 640 | 11 | 361 | 1.94 | 🟡 部分覆盖 / Partial |
+| C1 | 数据接入 | 4 | 63 | 9 | 3 | 51 | 1.50 | 🟡 部分覆盖 / Partial |
+| C2 | 因子研究 | 5 | 24 | 6 | 0 | 18 | 1.60 | 🟡 部分覆盖 / Partial |
+| C3 | 风险控制 | 2 | 15 | 9 | 0 | 6 | 2.00 | 🟡 部分覆盖 / Partial |
+| C4 | 策略决策 | 4 | 19 | 1 | 2 | 16 | 1.50 | 🟡 部分覆盖 / Partial |
+| C5 | 执行交易 | 4 | 48 | 26 | 1 | 21 | 2.50 | 🟡 部分覆盖 / Partial |
+| C6 | ML平台 | 2 | 11 | 0 | 1 | 10 | 1.00 | 🟡 部分覆盖 / Partial |
+| C7 | 回测仿真 | 4 | 43 | 11 | 10 | 22 | 2.00 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 15 | 977 | 792 | 32 | 153 | 2.73 | 🟡 部分覆盖 / Partial |
+| CC2 | 安全防护 | 5 | 172 | 99 | 0 | 73 | 0.80 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 836 | 594 | 11 | 231 | 2.38 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 架构层 / Layer | 节点数 / Nodes | production | design | prototype | active | 成熟度 / Maturity | 覆盖度 / Coverage |
 |--------|--------|:---:|--------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | D_ALT_DATA | 另类数据 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_DATA | data_source_integrator | C1 |  | 39 | 9 | 0 | 30 | 0 | L2 🟡 | 🟡 |
+| D_DATA | data_source_integrator | C1 |  | 39 | 9 | 0 | 30 | 6 | L3 🟢 | ✅ |
 | D_DATA_ENG | 数据工程 | C1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_MKT_DATA | 行情数据 | C1 | L1_foundation | 10 | 0 | 3 | 7 | 0 | L1 🔵 | 🟡 |
 | D_ASHARE_SIGNAL | ashare_signal | C2 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_FACTOR | 因子 | C2 | L2_domain | 13 | 3 | 0 | 10 | 0 | L2 🟡 | 🟡 |
-| D_FUNDAMENTAL_SIGNAL | fundamental_signal | C2 | L2_domain | 9 | 4 | 0 | 5 | 0 | L2 🟡 | 🟡 |
-| D_SIGLEGACY | signal_legacy | C2 |  | 15 | 0 | 0 | 15 | 0 | L1 🔵 | 🟡 |
-| D_SIGQC | signal_quality | C2 | L2_domain | 8 | 0 | 0 | 8 | 0 | L1 🔵 | 🟡 |
-| D_COMPLIANCE | compliance_gate | C3 |  | 23 | 0 | 0 | 23 | 0 | L1 🔵 | 🟡 |
-| D_RISK | 风控 | C3 | L2_domain | 20 | 9 | 0 | 11 | 0 | L2 🟡 | 🟡 |
+| D_FACTOR | 因子 | C2 | L2_domain | 5 | 2 | 0 | 3 | 2 | L3 🟢 | ✅ |
+| D_FUNDAMENTAL_SIGNAL | fundamental_signal | C2 | L2_domain | 10 | 4 | 0 | 6 | 4 | L3 🟢 | ✅ |
+| D_SIGLEGACY | signal_legacy | C2 |  | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D_SIGQC | signal_quality | C2 | L2_domain | 2 | 0 | 0 | 2 | 0 | L1 🔵 | 🟡 |
+| D_COMPLIANCE | compliance_gate | C3 |  | 4 | 0 | 0 | 4 | 0 | L1 🔵 | 🟡 |
+| D_RISK | 风控 | C3 | L2_domain | 11 | 9 | 0 | 2 | 9 | L3 🟢 | ✅ |
 | D_CROSS_ASSET | 跨资产 | C4 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
-| D_PF_ALLOC | 组合分配 | C4 | L2_domain | 10 | 1 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_PF_CORE | 组合核心 | C4 | L2_domain | 11 | 2 | 0 | 9 | 0 | L2 🟡 | 🟡 |
+| D_PF_ALLOC | 组合分配 | C4 | L2_domain | 3 | 1 | 1 | 1 | 1 | L3 🟢 | ✅ |
+| D_PF_CORE | 组合核心 | C4 | L2_domain | 1 | 0 | 0 | 1 | 0 | L1 🔵 | 🟡 |
 | D_SELL_DECISION | 卖出决策 | C4 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_EX_CORE | 执行核心 | C5 | L2_domain | 14 | 5 | 1 | 8 | 0 | L2 🟡 | 🟡 |
+| D_EX_CORE | 执行核心 | C5 | L2_domain | 8 | 4 | 1 | 3 | 4 | L3 🟢 | ✅ |
 | D_EX_SOR | 执行路由 | C5 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_POSITION | 仓位管理 | C5 | L2_domain | 8 | 1 | 0 | 7 | 0 | L2 🟡 | 🟡 |
-| D_TRADING | 交易运营 | C5 | L2_domain | 50 | 25 | 0 | 25 | 0 | L2 🟡 | 🟡 |
+| D_POSITION | 仓位管理 | C5 | L2_domain | 1 | 1 | 0 | 0 | 1 | L3 🟢 | ✅ |
+| D_TRADING | 交易运营 | C5 | L2_domain | 32 | 21 | 0 | 11 | 21 | L3 🟢 | ✅ |
 | D_ML_SERVE | 推理 | C6 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_ML_TRAIN | model_evaluation | C6 | L2_domain | 5 | 0 | 1 | 4 | 0 | L1 🔵 | 🟡 |
-| D_BACKTEST | 回测 | C7 | L2_domain | 33 | 9 | 8 | 16 | 0 | L2 🟡 | 🟡 |
+| D_ML_TRAIN | model_evaluation | C6 | L2_domain | 4 | 0 | 1 | 3 | 0 | L1 🔵 | 🟡 |
+| D_BACKTEST | 回测 | C7 | L2_domain | 25 | 9 | 8 | 8 | 9 | L3 🟢 | ✅ |
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L2_domain | 8 | 0 | 1 | 7 | 0 | L1 🔵 | 🟡 |
 | D_EXEC_SIM | 执行仿真 | C7 | L2_domain | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_SIMULATION | 仿真 | C7 | L2_domain | 11 | 2 | 1 | 8 | 0 | L2 🟡 | 🟡 |
-| D_DATA_GOV | 数据治理 | CC1 | L1_foundation | 30 | 0 | 0 | 30 | 0 | L1 🔵 | 🟡 |
-| D_FBL_DETECTORS | feedback_detectors | CC1 | L1_foundation | 65 | 59 | 0 | 6 | 0 | L2 🟡 | 🟡 |
-| D_FBL_DIAGNOSERS | feedback_diagnosers | CC1 | L1_foundation | 76 | 71 | 0 | 5 | 0 | L2 🟡 | 🟡 |
-| D_FBL_VERIFICATION | feedback_verification | CC1 | L1_foundation | 71 | 67 | 0 | 4 | 0 | L2 🟡 | 🟡 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L1_foundation | 124 | 110 | 0 | 14 | 0 | L2 🟡 | 🟡 |
-| D_GOVERNANCE | registry_management | CC1 | L2_domain | 177 | 135 | 1 | 41 | 1 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 102 | 69 | 2 | 31 | 0 | L2 🟡 | 🟡 |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 115 | 102 | 0 | 13 | 0 | L2 🟡 | 🟡 |
-| D_GOV_DOCS | architecture_docs | CC1 | L2_domain | 97 | 69 | 28 | 0 | 0 | L2 🟡 | 🟡 |
-| D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 73 | 67 | 1 | 5 | 0 | L2 🟡 | 🟡 |
-| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 34 | 17 | 0 | 17 | 1 | L3 🟢 | ✅ |
-| D_GOV_KB | knowledge_base_governance | CC1 | L2_domain | 31 | 17 | 0 | 14 | 0 | L2 🟡 | 🟡 |
-| D_GOV_OPS_RESILIENCE | ops_resilience_governance | CC1 | L1_foundation | 92 | 82 | 0 | 10 | 0 | L2 🟡 | 🟡 |
-| D_GOV_REPAIR | rollback | CC1 | L2_domain | 16 | 3 | 0 | 13 | 0 | L2 🟡 | 🟡 |
-| D_GOV_RULE | rule_governance | CC1 | L2_domain | 35 | 31 | 0 | 4 | 0 | L2 🟡 | 🟡 |
+| D_SIMULATION | 仿真 | C7 | L2_domain | 3 | 2 | 1 | 0 | 2 | L3 🟢 | ✅ |
+| D_DATA_GOV | 数据治理 | CC1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
+| D_FBL_DETECTORS | feedback_detectors | CC1 | L1_foundation | 65 | 59 | 0 | 6 | 59 | L3 🟢 | ✅ |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | CC1 | L1_foundation | 76 | 71 | 0 | 5 | 71 | L3 🟢 | ✅ |
+| D_FBL_VERIFICATION | feedback_verification | CC1 | L1_foundation | 71 | 67 | 0 | 4 | 67 | L3 🟢 | ✅ |
+| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L1_foundation | 124 | 112 | 0 | 12 | 112 | L3 🟢 | ✅ |
+| D_GOVERNANCE | registry_management | CC1 | L2_domain | 131 | 94 | 1 | 36 | 94 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | audit_orchestration | CC1 | L2_domain | 97 | 67 | 2 | 28 | 67 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L1_foundation | 124 | 110 | 0 | 14 | 110 | L3 🟢 | ✅ |
+| D_GOV_DOCS | architecture_docs | CC1 | L2_domain | 28 | 0 | 28 | 0 | 0 | L1 🔵 | 🟡 |
+| D_GOV_DRIFT | drift_detection | CC1 | L2_domain | 70 | 66 | 1 | 3 | 66 | L3 🟢 | ✅ |
+| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L2_domain | 28 | 15 | 0 | 13 | 15 | L3 🟢 | ✅ |
+| D_GOV_KB | knowledge_base_governance | CC1 | L2_domain | 31 | 18 | 0 | 13 | 18 | L3 🟢 | ✅ |
+| D_GOV_OPS_RESILIENCE | ops_resilience_governance | CC1 | L1_foundation | 90 | 81 | 0 | 9 | 81 | L3 🟢 | ✅ |
+| D_GOV_REPAIR | rollback | CC1 | L2_domain | 1 | 1 | 0 | 0 | 1 | L3 🟢 | ✅ |
+| D_GOV_RULE | rule_governance | CC1 | L2_domain | 34 | 31 | 0 | 3 | 31 | L3 🟢 | ✅ |
 | D_AUTONOMY_PERM | budget_enforcement | CC2 | L2_domain | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 |  | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
-| D_SECURITY | orphan_judge | CC2 | L1_foundation | 180 | 101 | 0 | 79 | 0 | L2 🟡 | 🟡 |
-| D_SECURITY_LLM | llm_defense | CC2 | L1_foundation | 13 | 5 | 0 | 8 | 0 | L2 🟡 | 🟡 |
-| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 137 | 133 | 0 | 4 | 0 | L2 🟡 | 🟡 |
-| D_FRONTEND | 前端 | CC3 | L1_foundation | 30 | 13 | 6 | 11 | 0 | L2 🟡 | 🟡 |
-| D_INFRASTRUCTURE | shared_contracts | CC3 |  | 37 | 9 | 0 | 28 | 0 | L2 🟡 | 🟡 |
-| D_INFRA_A2A | a2a_communication | CC3 | L0_infrastructure | 77 | 29 | 0 | 48 | 0 | L2 🟡 | 🟡 |
+| D_SECURITY | orphan_judge | CC2 | L1_foundation | 165 | 99 | 0 | 66 | 99 | L3 🟢 | ✅ |
+| D_SECURITY_LLM | llm_defense | CC2 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L1_foundation | 133 | 131 | 0 | 2 | 131 | L3 🟢 | ✅ |
+| D_FRONTEND | 前端 | CC3 | L1_foundation | 17 | 9 | 6 | 2 | 9 | L3 🟢 | ✅ |
+| D_INFRASTRUCTURE | shared_contracts | CC3 |  | 24 | 12 | 0 | 12 | 12 | L3 🟢 | ✅ |
+| D_INFRA_A2A | a2a_communication | CC3 | L0_infrastructure | 72 | 28 | 0 | 44 | 28 | L3 🟢 | ✅ |
 | D_INFRA_OPS | asset-inventory | CC3 | L0_infrastructure | 2 | 0 | 2 | 0 | 0 | L1 🔵 | 🟡 |
-| D_INFRA_RECOVERY | rollback_recovery | CC3 | L0_infrastructure | 54 | 48 | 0 | 6 | 0 | L2 🟡 | 🟡 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 247 | 148 | 1 | 98 | 4 | L3 🟢 | ✅ |
-| D_INFRA_TELEMETRY | observability_profiling | CC3 | L0_infrastructure | 10 | 8 | 0 | 2 | 0 | L2 🟡 | 🟡 |
-| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 87 | 53 | 0 | 34 | 0 | L2 🟡 | 🟡 |
-| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 2 | 1 | 0 | 1 | 0 | L2 🟡 | 🟡 |
-| D_INTELLIGENCE | context_management | CC3 | L2_domain | 50 | 20 | 0 | 30 | 0 | L2 🟡 | 🟡 |
+| D_INFRA_RECOVERY | rollback_recovery | CC3 | L0_infrastructure | 53 | 48 | 0 | 5 | 48 | L3 🟢 | ✅ |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L0_infrastructure | 159 | 118 | 1 | 40 | 118 | L3 🟢 | ✅ |
+| D_INFRA_TELEMETRY | observability_profiling | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D_INTEGRATION | pipeline_routing | CC3 | L1_foundation | 77 | 50 | 0 | 27 | 50 | L3 🟢 | ✅ |
+| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
+| D_INTELLIGENCE | context_management | CC3 | L2_domain | 28 | 20 | 0 | 8 | 20 | L3 🟢 | ✅ |
 | D_KNOWLEDGE | vector_storage | CC3 | L2_domain | 4 | 0 | 2 | 2 | 0 | L1 🔵 | 🟡 |
-| D_OPS | telemetry | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 0 | L2 🟡 | 🟡 |
-| D_ORCHESTRATOR | agent_orchestrator | CC3 | L1_foundation | 73 | 59 | 0 | 14 | 0 | L2 🟡 | 🟡 |
-| D_REPORTING | 报告 | CC3 | L1_foundation | 10 | 1 | 0 | 9 | 0 | L2 🟡 | 🟡 |
-| D_SHARED | shared_services | CC3 | L1_foundation | 183 | 110 | 0 | 73 | 0 | L2 🟡 | 🟡 |
+| D_OPS | telemetry | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 8 | L3 🟢 | ✅ |
+| D_ORCHESTRATOR | agent_orchestrator | CC3 | L1_foundation | 72 | 58 | 0 | 14 | 58 | L3 🟢 | ✅ |
+| D_REPORTING | 报告 | CC3 | L1_foundation | 3 | 1 | 0 | 2 | 1 | L3 🟢 | ✅ |
+| D_SHARED | shared_services | CC3 | L1_foundation | 183 | 111 | 0 | 72 | 111 | L3 🟢 | ✅ |
 
 ## 差距分析 / Gap Analysis
 
@@ -216,70 +216,71 @@ ttl: permanent
 | D_DATA_ENG | 数据工程 | C1 | L1 | 7 |
 | D_MKT_DATA | 行情数据 | C1 | L1 | 10 |
 | D_ASHARE_SIGNAL | ashare_signal | C2 | L1 | 7 |
-| D_SIGLEGACY | signal_legacy | C2 | L1 | 15 |
-| D_SIGQC | signal_quality | C2 | L1 | 8 |
-| D_COMPLIANCE | compliance_gate | C3 | L1 | 23 |
+| D_SIGLEGACY | signal_legacy | C2 | L0 | 0 |
+| D_SIGQC | signal_quality | C2 | L1 | 2 |
+| D_COMPLIANCE | compliance_gate | C3 | L1 | 4 |
 | D_CROSS_ASSET | 跨资产 | C4 | L1 | 8 |
+| D_PF_CORE | 组合核心 | C4 | L1 | 1 |
 | D_SELL_DECISION | 卖出决策 | C4 | L1 | 7 |
 | D_EX_SOR | 执行路由 | C5 | L1 | 7 |
 | D_ML_SERVE | 推理 | C6 | L1 | 7 |
-| D_ML_TRAIN | model_evaluation | C6 | L1 | 5 |
+| D_ML_TRAIN | model_evaluation | C6 | L1 | 4 |
 | D_DIGITAL_TWIN | 数字孪生 | C7 | L1 | 8 |
 | D_EXEC_SIM | 执行仿真 | C7 | L1 | 7 |
-| D_DATA_GOV | 数据治理 | CC1 | L1 | 30 |
+| D_DATA_GOV | 数据治理 | CC1 | L1 | 7 |
+| D_GOV_DOCS | architecture_docs | CC1 | L1 | 28 |
 | D_AUTONOMY_PERM | budget_enforcement | CC2 | L0 | 0 |
 | D_BEHAVIORAL_AUDIT | drift_detector_core | CC2 | L0 | 0 |
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1 | 7 |
+| D_SECURITY_LLM | llm_defense | CC2 | L0 | 0 |
 | D_INFRA_OPS | asset-inventory | CC3 | L1 | 2 |
+| D_INFRA_TELEMETRY | observability_profiling | CC3 | L0 | 0 |
+| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L0 | 0 |
 | D_KNOWLEDGE | vector_storage | CC3 | L1 | 4 |
 
 ### P1 关注（L2，可用未验证）/ P1 Watch (L2, usable unverified)
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_DATA | data_source_integrator | C1 | L2 | 39 |
-| D_FACTOR | 因子 | C2 | L2 | 13 |
-| D_FUNDAMENTAL_SIGNAL | fundamental_signal | C2 | L2 | 9 |
-| D_RISK | 风控 | C3 | L2 | 20 |
-| D_PF_ALLOC | 组合分配 | C4 | L2 | 10 |
-| D_PF_CORE | 组合核心 | C4 | L2 | 11 |
-| D_EX_CORE | 执行核心 | C5 | L2 | 14 |
-| D_POSITION | 仓位管理 | C5 | L2 | 8 |
-| D_TRADING | 交易运营 | C5 | L2 | 50 |
-| D_BACKTEST | 回测 | C7 | L2 | 33 |
-| D_SIMULATION | 仿真 | C7 | L2 | 11 |
-| D_FBL_DETECTORS | feedback_detectors | CC1 | L2 | 65 |
-| D_FBL_DIAGNOSERS | feedback_diagnosers | CC1 | L2 | 76 |
-| D_FBL_VERIFICATION | feedback_verification | CC1 | L2 | 71 |
-| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L2 | 124 |
-| D_GOV_AUDIT | audit_orchestration | CC1 | L2 | 102 |
-| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L2 | 115 |
-| D_GOV_DOCS | architecture_docs | CC1 | L2 | 97 |
-| D_GOV_DRIFT | drift_detection | CC1 | L2 | 73 |
-| D_GOV_KB | knowledge_base_governance | CC1 | L2 | 31 |
-| D_GOV_OPS_RESILIENCE | ops_resilience_governance | CC1 | L2 | 92 |
-| D_GOV_REPAIR | rollback | CC1 | L2 | 16 |
-| D_GOV_RULE | rule_governance | CC1 | L2 | 35 |
-| D_SECURITY | orphan_judge | CC2 | L2 | 180 |
-| D_SECURITY_LLM | llm_defense | CC2 | L2 | 13 |
-| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L2 | 137 |
-| D_FRONTEND | 前端 | CC3 | L2 | 30 |
-| D_INFRASTRUCTURE | shared_contracts | CC3 | L2 | 37 |
-| D_INFRA_A2A | a2a_communication | CC3 | L2 | 77 |
-| D_INFRA_RECOVERY | rollback_recovery | CC3 | L2 | 54 |
-| D_INFRA_TELEMETRY | observability_profiling | CC3 | L2 | 10 |
-| D_INTEGRATION | pipeline_routing | CC3 | L2 | 87 |
-| D_INTEGRATION_GATEWAY | mcp_servers | CC3 | L2 | 2 |
-| D_INTELLIGENCE | context_management | CC3 | L2 | 50 |
-| D_OPS | telemetry | CC3 | L2 | 9 |
-| D_ORCHESTRATOR | agent_orchestrator | CC3 | L2 | 73 |
-| D_REPORTING | 报告 | CC3 | L2 | 10 |
-| D_SHARED | shared_services | CC3 | L2 | 183 |
+| — | 无P1关注 / No P1 watch | — | — | — |
 
 ### 已就绪（L3，生产已验证）/ Ready (L3, verified)
 
 | 架构域 / Architecture Domain | 域名称 / Domain Name | 能力域 / Capability | 当前成熟度 / Current Maturity | 节点数 / Nodes |
 |--------|--------|:---:|:---:|:---:|
-| D_GOVERNANCE | registry_management | CC1 | L3 | 177 |
-| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 34 |
-| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 247 |
+| D_DATA | data_source_integrator | C1 | L3 | 39 |
+| D_FACTOR | 因子 | C2 | L3 | 5 |
+| D_FUNDAMENTAL_SIGNAL | fundamental_signal | C2 | L3 | 10 |
+| D_RISK | 风控 | C3 | L3 | 11 |
+| D_PF_ALLOC | 组合分配 | C4 | L3 | 3 |
+| D_EX_CORE | 执行核心 | C5 | L3 | 8 |
+| D_POSITION | 仓位管理 | C5 | L3 | 1 |
+| D_TRADING | 交易运营 | C5 | L3 | 32 |
+| D_BACKTEST | 回测 | C7 | L3 | 25 |
+| D_SIMULATION | 仿真 | C7 | L3 | 3 |
+| D_FBL_DETECTORS | feedback_detectors | CC1 | L3 | 65 |
+| D_FBL_DIAGNOSERS | feedback_diagnosers | CC1 | L3 | 76 |
+| D_FBL_VERIFICATION | feedback_verification | CC1 | L3 | 71 |
+| D_FEEDBACK_LOOP | feedback_loop_engine | CC1 | L3 | 124 |
+| D_GOVERNANCE | registry_management | CC1 | L3 | 131 |
+| D_GOV_AUDIT | audit_orchestration | CC1 | L3 | 97 |
+| D_GOV_CODE_QUALITY | code_quality_governance | CC1 | L3 | 124 |
+| D_GOV_DRIFT | drift_detection | CC1 | L3 | 70 |
+| D_GOV_ENFORCEMENT | rule_enforcement | CC1 | L3 | 28 |
+| D_GOV_KB | knowledge_base_governance | CC1 | L3 | 31 |
+| D_GOV_OPS_RESILIENCE | ops_resilience_governance | CC1 | L3 | 90 |
+| D_GOV_REPAIR | rollback | CC1 | L3 | 1 |
+| D_GOV_RULE | rule_governance | CC1 | L3 | 34 |
+| D_SECURITY | orphan_judge | CC2 | L3 | 165 |
+| D_AUTONOMY_CORE | agent_lifecycle | CC3 | L3 | 133 |
+| D_FRONTEND | 前端 | CC3 | L3 | 17 |
+| D_INFRASTRUCTURE | shared_contracts | CC3 | L3 | 24 |
+| D_INFRA_A2A | a2a_communication | CC3 | L3 | 72 |
+| D_INFRA_RECOVERY | rollback_recovery | CC3 | L3 | 53 |
+| D_INFRA_RUNTIME | runtime_core | CC3 | L3 | 159 |
+| D_INTEGRATION | pipeline_routing | CC3 | L3 | 77 |
+| D_INTELLIGENCE | context_management | CC3 | L3 | 28 |
+| D_OPS | telemetry | CC3 | L3 | 9 |
+| D_ORCHESTRATOR | agent_orchestrator | CC3 | L3 | 72 |
+| D_REPORTING | 报告 | CC3 | L3 | 3 |
+| D_SHARED | shared_services | CC3 | L3 | 183 |

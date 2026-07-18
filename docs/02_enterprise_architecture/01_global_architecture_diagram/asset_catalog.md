@@ -10,7 +10,7 @@ ttl: permanent
 
 # 资产清单全景图 / Asset Catalog
 
-> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共258项资产。AI接入新功能前必查此图确认可复用资产。
+> **文档作用 / Purpose**: 一张图看完所有运行中服务/数据流/契约/数据源/数据源 API/配置的总览,共259项资产。AI接入新功能前必查此图确认可复用资产。
 
 > 本文档由 generate_asset_catalog.py 从 depgraph (PostgreSQL) 自动生成
 > 真源: data_sources_registry.yaml + data_source_apis_registry.yaml + service_registry.yaml + config/*.yaml + cross_layer_contracts.yaml
@@ -24,10 +24,10 @@ ttl: permanent
 | 服务资产 | 10 | service_registry.yaml |
 | 基础设施组件 | 14 | infrastructure_components.yaml |
 | 契约资产 | 65 | cross_layer_contracts.yaml |
-| 配置项 | 33 | config/*.yaml |
+| 配置项 | 34 | config/*.yaml |
 | 数据流作业 | 13 | dataflow_graph_registry.yaml |
 | 数据集 | 14 | dataflow_graph_registry.yaml |
-| **合计** | **258** | |
+| **合计** | **259** | |
 
 ## 2. 外部数据源资产
 
@@ -158,7 +158,7 @@ ttl: permanent
 
 | 文件路径 | 大小(KB) | 最后修改 |
 |----------|---------|----------|
-| `config/ai_capability_matrix.yaml` | 4.8 | 2026-07-14 |
+| `config/ai_capability_matrix.yaml` | 6.5 | 2026-07-17 |
 | `config/ai_context_policy.yaml` | 1.0 | 2026-07-04 |
 | `config/alert_rules.yaml` | 2.0 | 2026-07-02 |
 | `config/asset_inventory.yaml` | 2.3 | 2026-07-04 |
@@ -169,12 +169,13 @@ ttl: permanent
 | `config/capacity_params.yaml` | 7.2 | 2026-06-24 |
 | `config/capacity_slo.yaml` | 4.6 | 2026-07-10 |
 | `config/compression_policy.yaml` | 2.5 | 2026-07-04 |
-| `config/context_rules.yaml` | 5.7 | 2026-07-17 |
+| `config/context_rules.yaml` | 5.6 | 2026-07-17 |
 | `config/degradation_chain.yaml` | 1.3 | 2026-07-02 |
 | `config/embedding_model_registry.yaml` | 3.5 | 2026-06-23 |
 | `config/error_budget_config.yaml` | 1.6 | 2026-07-02 |
 | `config/external_watchdog.yaml` | 0.9 | 2026-07-02 |
 | `config/flags.yaml` | 2.0 | 2026-06-12 |
+| `config/immutable_core.yaml` | 2.8 | 2026-07-17 |
 | `config/kb_parameters.yaml` | 3.2 | 2026-06-13 |
 | `config/metrics_schema.yaml` | 2.6 | 2026-07-02 |
 | `config/model_pricing.yaml` | 1.3 | 2026-06-12 |
