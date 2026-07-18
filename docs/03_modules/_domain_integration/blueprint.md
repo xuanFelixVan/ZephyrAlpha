@@ -38,7 +38,7 @@ ssot_declarations:
 ttl: permanent
 doc_type: blueprint
 responsibility_domain: 
-build_status: generated
+build_status: stable
 design_maturity: prototype
 ---
 ## §0 代码对齐验证 {temporal_type=permanent}

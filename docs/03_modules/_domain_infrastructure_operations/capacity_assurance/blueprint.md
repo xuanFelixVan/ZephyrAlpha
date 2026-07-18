@@ -60,7 +60,7 @@ tags:
  - otel
 summary: SLI/SLO框架+Error Budget五级响应+Token Budget四级限流+Kill Switch熔断+降级链+DR+容量预测
 responsibility_domain: 
-build_status: generated
+build_status: stable
 design_maturity: prototype
 ---
 
@@ -158,7 +158,27 @@ design_maturity: prototype
 | `contracts/contract_bus.py` | § — | — | 已实现 | | 本模块 |
 |-----------|------|---------|
 
-#### §0.6 四图对齐视图
+### §0.2 对齐验证矩阵
+
+| 蓝图章节 | 代码模块 | 对齐状态 |
+|---------|---------|:-------:|
+| §8 Error Budget | M-21 error_budget_tracker.py | ✅ 已对齐 |
+| §10 Kill Switch | M-22 kill_switch.py | ✅ 已对齐 |
+| §10 Sandbox | M-23 sandbox_executor.py | ✅ 已对齐 |
+| §11 降级链 | M-24 degradation_chain.py | ✅ 已对齐 |
+| §12 OTel | M-25 reasoning_spans.py | ✅ 已对齐 |
+| §9 Token Budget | M-26 cost_estimator.py | ✅ 已对齐 |
+| §11 语义缓存 | M-27 semantic_cache.py | ✅ 已对齐 |
+| §7 架构-治理层 | M-19 governance_loop.py | ❌ 未实现 |
+| §7 架构-结构层 | M-03 validate_ssot.py | ✅ 已对齐 |
+
+### §0.3 版本-代码映射
+
+| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
+|---------|------------|---------|---------|
+| v3.0.0 (基线) | 27 模块 + Error Budget + Token Budget + Kill Switch + Sandbox + Graceful Degradation + OTel + DR + 容量预测 + 跨模块集成 | — | — |
+
+### §0.6 四图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
@@ -184,26 +204,6 @@ design_maturity: prototype
 | file_count | 26 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
-
-### §0.2 对齐验证矩阵
-
-| 蓝图章节 | 代码模块 | 对齐状态 |
-|---------|---------|:-------:|
-| §8 Error Budget | M-21 error_budget_tracker.py | ✅ 已对齐 |
-| §10 Kill Switch | M-22 kill_switch.py | ✅ 已对齐 |
-| §10 Sandbox | M-23 sandbox_executor.py | ✅ 已对齐 |
-| §11 降级链 | M-24 degradation_chain.py | ✅ 已对齐 |
-| §12 OTel | M-25 reasoning_spans.py | ✅ 已对齐 |
-| §9 Token Budget | M-26 cost_estimator.py | ✅ 已对齐 |
-| §11 语义缓存 | M-27 semantic_cache.py | ✅ 已对齐 |
-| §7 架构-治理层 | M-19 governance_loop.py | ❌ 未实现 |
-| §7 架构-结构层 | M-03 validate_ssot.py | ✅ 已对齐 |
-
-### §0.3 版本-代码映射
-
-| 蓝图版本 | 代码覆盖范围 | 缺失组件 | 缺失原因 |
-|---------|------------|---------|---------|
-| v3.0.0 (基线) | 27 模块 + Error Budget + Token Budget + Kill Switch + Sandbox + Graceful Degradation + OTel + DR + 容量预测 + 跨模块集成 | — | — |
 
 ---
 
