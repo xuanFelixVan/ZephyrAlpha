@@ -67,3 +67,13 @@ rules:
     description: "Schema校验拒绝率超过5%，可能有未注册指标"
     notify: ["dashboard"]
     silence_window: "10m"
+
+  - id: ALERT-MCP-001
+    name: "mcp_rate_limit_rejection_spike"
+    severity: warning
+    metric: "mcp.rate_limit.rejected"
+    condition: "> 100"
+    duration: "5m"
+    description: "MCP Gateway 限流拒绝计数 5 分钟内超过 100——可能存在配额耗尽或异常客户端（5.36.10）"
+    notify: ["dashboard"]
+    silence_window: "10m"
