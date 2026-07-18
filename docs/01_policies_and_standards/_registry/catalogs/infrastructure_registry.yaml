@@ -311,7 +311,7 @@ infrastructure:
     type: relational_db
     description: "ClickHouse 业务行情仓库——c1_market 数据库，存放日线/分钟线/Tick/5档盘口/可转债隐含波动率/期货期限结构等行情数据。替代已删除的 INFRA-DB-005 market.duckdb。由母蓝图 docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md 定义。"
     runtime_plane: hot
-    host: "localhost:9000/c1_market"
+    host: "172.24.30.100:9000/c1_market"
     access_method: "入口: zephyr.infrastructure.database_service.DatabaseService.get_clickhouse_conn()（统一入口，settings={'readonly': 1}）；蓝图: docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md；写入接口: c1_market_writer.py（待建）；查询接口: c1_market_reader.py（待建）"
     health_check: query
     dependency_of:
@@ -321,7 +321,7 @@ infrastructure:
     sla: "持久化, 列式压缩, < 50ms write p95, < 200ms OLAP query p95"
     status: connected
     provisioned_at: "2026-07-01"
-    note: "ClickHouse 26.6.1 部署在 WSL2 Ubuntu (D:\\WSL\\Ubuntu\\ext4.vhdx)，已创建 c1_market 数据库及 daily_kline 表。DatabaseService L86-101 已实现 get_clickhouse_conn()。MOD-ARCH-BIZDB 业务数据库顶层架构。母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md。"
+    note: "ClickHouse 26.6.1 部署在 Hyper-V Ubuntu VM（D:\\HyperV\\VMs\\zephyr-ch\\data.vhdx，2026-07-16 从 WSL2 迁移）。网络: 专用 ZephyrCH-Net Internal 交换机（172.24.30.0/24 固定子网，Host=172.24.30.1，VM 静态 IP=172.24.30.100，重启不漂移）。端点: TCP 172.24.30.100:9000 / HTTP 172.24.30.100:8123。已创建 c0_meta/c1_market/c3_fundamental 三库 97 表。WSL2 已于 2026-07-18 完全移除（Docker Desktop 卸载 + WSL Store App 移除 + WSL 功能禁用）。DatabaseService L86-101 已实现 get_clickhouse_conn()。MOD-ARCH-BIZDB 业务数据库顶层架构。母蓝图: docs/03_modules/_cross_layer/database/business_data_architecture.md。"
 
 # ============================================================================
 # 汇总统计
