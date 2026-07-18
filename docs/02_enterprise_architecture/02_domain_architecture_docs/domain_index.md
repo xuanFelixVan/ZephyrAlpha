@@ -21,10 +21,10 @@ ttl: permanent
 | 指标 / Metric | 值 / Value |
 |------|-----|
 | 域总数 | 63 |
-| 模块总数 | 2678 |
-| 生产态模块 | 1567 |
+| 模块总数 | 2679 |
+| 生产态模块 | 1566 |
 | 设计态模块 | 62 |
-| 原型态模块 | 1049 |
+| 原型态模块 | 1051 |
 
 ## 域清单（按架构层分组）
 
@@ -54,7 +54,7 @@ ttl: permanent
 | D_FRONTEND | 前端 / Frontend | 18 | 9 | 6 | 3 | 18/150 (OK) | [15_d_frontend.md](15_d_frontend.md) |
 | D_GOV_CODE_QUALITY | code_quality_governance / Code Quality Governance | 128 | 112 | 0 | 16 | 128/150 (OK) | [16_d_gov_code_quality.md](16_d_gov_code_quality.md) |
 | D_GOV_OPS_RESILIENCE | ops_resilience_governance / Ops Resilience Governance | 90 | 81 | 0 | 9 | 90/150 (OK) | [17_d_gov_ops_resilience.md](17_d_gov_ops_resilience.md) |
-| D_INTEGRATION | pipeline_routing / Pipeline Routing | 77 | 50 | 0 | 27 | 77/150 (OK) | [18_d_integration.md](18_d_integration.md) |
+| D_INTEGRATION | pipeline_routing / Pipeline Routing | 77 | 45 | 0 | 32 | 77/150 (OK) | [18_d_integration.md](18_d_integration.md) |
 | D_INTEGRATION_GATEWAY | mcp_servers / Integration Gateway | 0 | 0 | 0 | 0 | 0/150 (OK) | [19_d_integration_gateway.md](19_d_integration_gateway.md) |
 | D_MKT_DATA | 行情数据 / Market Data | 10 | 0 | 3 | 7 | 10/150 (OK) | [20_d_mkt_data.md](20_d_mkt_data.md) |
 | D_OPS | telemetry / Feedback Loop | 9 | 8 | 0 | 1 | 9/150 (OK) | [21_d_ops.md](21_d_ops.md) |
@@ -62,7 +62,7 @@ ttl: permanent
 | D_REPORTING | 报告 / Reporting | 3 | 1 | 0 | 2 | 3/150 (OK) | [23_d_reporting.md](23_d_reporting.md) |
 | D_SECURITY | orphan_judge / Adversarial Validation | 165 | 99 | 0 | 66 | 165/150 (超容) | [24_d_security.md](24_d_security.md) |
 | D_SECURITY_LLM | llm_defense / LLM Defense | 0 | 0 | 0 | 0 | 0/150 (OK) | [25_d_security_llm.md](25_d_security_llm.md) |
-| D_SHARED | shared_services / Shared Services | 183 | 111 | 0 | 72 | 183/150 (超容) | [26_d_shared.md](26_d_shared.md) |
+| D_SHARED | shared_services / Shared Services | 184 | 115 | 0 | 69 | 184/150 (超容) | [26_d_shared.md](26_d_shared.md) |
 
 ### L2 业务域层 / L2 Domain (32 个域 / 32 domains)
 
