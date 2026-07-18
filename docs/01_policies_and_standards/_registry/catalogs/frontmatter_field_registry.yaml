@@ -3,10 +3,10 @@ blueprint_id: GOV-INF-001
 schema_version: 1.0.0
 doc_type: register
 title: Frontmatter 字段定义登记表
-version: 1.0.0
+version: 1.0.1
 status: active
 created: '2026-05-02'
-last_updated: '2026-05-02'
+last_updated: '2026-07-19'
 ai_autonomy: human_gated
 ttl: permanent
 total_registered: 53
@@ -26,11 +26,9 @@ fields:
   stage: null
   enum_values: []
   applicable_docs: []
-  description: 模块唯一标识（frontmatter 文档标识符，格式：DOMAIN-TYPE-NNN）。注意：此 pattern 仅用于 frontmatter
-    文档 module_id，不适用于 depgraph blueprint_id 双轨制格式。blueprint_id 格式校验真源见 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）
-  source: PS-STD-001 §5
-  pattern: ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$
-  note: 全项目唯一，不可重复。此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id 双轨制格式
+  description: 模块唯一标识（frontmatter 文档标识符）。格式真源为 module_id_registry.yaml allocation_rules（doc_rule_format={DOMAIN}-{TYPE}-{NNN}，允许 DOMAIN-NNN/DOMAIN-TYPE-NNN/VIEW-XXX-YYY 等变体，DOMAIN∈{GOV,DOM,OPS,PS,ARCH,VIEW,CFG,REG,...}）。蓝图 module_id（MOD-/SH- 前缀）校验真源为 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）。本字段与 trae_043 §ps_std_001_module_id_naming 三声明轨道语义一致（CFG-*/MOD-*/PS-*/GOV-* 互补不冲突）
+  source: PS-STD-001 §5 + module_id_registry.yaml allocation_rules + trae_043 §ps_std_001_module_id_naming
+  note: 全项目唯一，不可重复。本字段不定义 pattern——格式校验由 module_id_registry.yaml（文档规则 ID 真源）和 validate_module_id_naming.py（蓝图 ID 真源）负责，避免多真源漂移。原 pattern ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$ 已废弃（v1.0.1，2026-07-19）：该 pattern 既不匹配文档 ID（PS-REG-012/ARCH-004/VIEW-04PRINC-DATA）也不匹配蓝图 ID（MOD-L00-001/SH-DB-001），与裁定#208 矛盾
 - field_name: title
   type: string
   required: always
@@ -451,12 +449,9 @@ fields:
   enum_values: []
   applicable_docs: []
   description: 上级蓝图引用——Level 2 模块蓝图声明其归属于哪个 Level 1 域蓝图或 Level 0 总蓝图。格式：module_id（如
-    MOD-MASTER_BLUEPRINT）。注意：此 pattern 仅用于 frontmatter 文档 module_id，非 blueprint_id
-    双轨制格式。blueprint_id 格式校验真源见 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）
-  source: PS-STD-005 §6.1
-  pattern: ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$
-  note: Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）。此 pattern 仅用于 frontmatter 文档 module_id，非
-    blueprint_id 双轨制格式
+    MOD-MASTER_BLUEPRINT）。格式真源为 module_id_registry.yaml allocation_rules 与 scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 + R2 治本修订）
+  source: PS-STD-005 §6.1 + module_id_registry.yaml allocation_rules
+  note: Level 2 蓝图 MUST 声明此字段。Level 0 蓝图不声明（顶层）。本字段不定义 pattern——格式校验同 module_id 字段，由 module_id_registry.yaml（文档规则 ID）和 validate_module_id_naming.py（蓝图 ID）两个真源负责。原 pattern ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\d{3,4}$ 已废弃（v1.0.1，2026-07-19）：与裁定#208 矛盾
 - field_name: blueprint_level
   type: enum
   required: optional

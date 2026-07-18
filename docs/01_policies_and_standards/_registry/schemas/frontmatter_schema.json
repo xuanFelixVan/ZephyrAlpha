@@ -8,8 +8,7 @@
   "properties": {
     "module_id": {
       "type": "string",
-      "description": "模块唯一标识。格式：DOMAIN-TYPE-NNN（大写字母+连字符）。PS-STD-001 §5",
-      "pattern": "^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$"
+      "description": "模块唯一标识。格式真源：module_id_registry.yaml allocation_rules（doc_rule_format={DOMAIN}-{TYPE}-{NNN}）+ scripts/governance/d3_metadata/validate_module_id_naming.py（裁定#208 双轨制 MOD-/SH- 前缀）。原 pattern ^[A-Z]+(-[A-Z]+)?-[A-Z]+-\\d{3,4}$ 已废弃（v1.0.1，2026-07-19）：与裁定#208 矛盾"
     },
     "title": {
       "type": "string",
