@@ -5154,6 +5154,12 @@ creation_tokens:
     created_by: "sess-29488-20260719023314"
     capability: "migrate_sqlite_to_pg"
 
+  # 治本（2026-07-19，target_architecture 清理第一批）：从 capability_heatmap.md 提取永恒方法论到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/capability_maturity_principles.md"
+    token: "auto-capability-maturity-principles-20260719"
+    created_by: "sess-27136-20260719030938"
+    capability: "capability_maturity_principles"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
