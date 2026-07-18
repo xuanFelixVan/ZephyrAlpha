@@ -5,10 +5,12 @@
 """
 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
 
-真源优先级（治本 v2.2，2026-07-19，domain_index 中英文化配套完成）：
+真源优先级（治本 v2.3，2026-07-19，Step 2.5 硬编码表瘦身完成）：
 1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——已由 sync_yaml_to_depgraph.py
    从 functional_domain_registry.yaml 的 domain_name_zh 字段同步为中文）
-2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用，测试域专用）
+2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用；仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*，
+   生产域已全部移除——DB 为唯一真源，硬编码不再保留生产域备份）
+3. fallback 参数或 domain_id 本身（生产域 DB 不可用时返回 domain_id，可接受降级）
 
 治本历史：
 - v1.0：硬编码映射表作真源（绕过 db domain_name 英文/中文不一致问题）
@@ -19,6 +21,10 @@
 - v2.2（2026-07-19 下午）：sync_yaml_to_depgraph.py 改用 domain_name_zh 后跑 sync，
   DB 全 63 域 domain_name 已统一为中文（验证：ON CONFLICT 仅更 5 列，layer_id/lifecycle/
   max_modules/build_status/domain_group 5 个关键字段无漂移）。再次反转为 DB 优先（治本完成）。
+- v2.3（2026-07-19 Step 2.5）：DOMAIN_NAME_ZH 瘦身为纯测试域 fallback（73 → 10 entry）。
+  63 个生产域从硬编码移除——DB 已是生产域唯一真源，硬编码不再保留生产域备份。
+  generate_domain_doc.py 同步重构：移除 DOMAIN_NAME_ZH 直接访问，改走 get_domain_name_zh
+  / get_domain_name_zh_strict helper，确保所有路径都过 DB 优先级。
 
 用法 / Usage:
     from domain_name_mapping import get_domain_name_zh
@@ -52,95 +58,10 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 
-# 域ID → 中文名称映射（fallback：db 不可用时使用；新增域应通过 apply_depgraph.py 同步到 db）
+# 域ID → 中文名称映射（v2.3 瘦身：仅测试域 fallback，生产域真源在 DB）
+# 测试域不插入生产 depgraph (PostgreSQL)（隔离规则），故仅硬编码维护。
+# 生产域中文名请通过 sync_yaml_to_depgraph.py 从 YAML 同步到 DB（已是中文）。
 DOMAIN_NAME_ZH = {
-    # L0 基础设施层
-    "D_INFRA_A2A": "A2A通信",
-    "D_INFRA_OPS": "基础设施运维",
-    "D_INFRA_RECOVERY": "回滚恢复",
-    "D_INFRA_RUNTIME": "运行时集成",
-    "D_INFRA_TELEMETRY": "可观测性",
-
-    # L1 基础平台层
-    "D_ALT_DATA": "另类数据",
-    "D_BEHAVIORAL_AUDIT": "行为审计",
-    "D_DATA_ENG": "数据工程",
-    "D_DATA_GOV": "数据治理",
-    "D_DATA_SEC": "数据安全与契约",
-    "D_FRONTEND": "前端",
-    "D_GOVERNANCE": "生命周期管理",
-    "D_INTEGRATION": "管线路由",
-    "D_INTEGRATION_GATEWAY": "集成网关",
-    "D_MKT_DATA": "行情数据",
-    "D_OPS": "反馈循环",
-    "D_FEEDBACK_LOOP": "反馈循环引擎",
-    "D_ORCHESTRATOR": "代理编排器",
-    "D_FBL_VERIFICATION": "反馈验证",
-    "D_FBL_DETECTORS": "反馈检测器",
-    "D_FBL_DIAGNOSERS": "反馈诊断器",
-    "D_REPORTING": "报告",
-    "D_SECURITY": "对抗验证",
-    "D_SECURITY_LLM": "LLM防御",
-    "D_SHARED": "共享服务",
-
-    # L1 智能层
-    "D_INTELLIGENCE": "上下文管理",
-    "D_KNOWLEDGE": "知识管理",
-    "D_AUTONOMY_CORE": "自治核心",
-
-    # L2 业务域层 - 数据
-    "D_DIGITAL_TWIN": "数字孪生",
-
-    # L2 业务域层 - 因子信号
-    "D_FACTOR": "因子",
-    "D_SIGLEGACY": "信号遗留设计态",
-    "D_ASHARE_SIGNAL": "A股特色信号",
-    "D_FUNDAMENTAL_SIGNAL": "基本面信号",
-    "D_SIGQC": "信号质量控制",
-
-    # L2 业务域层 - 风险合规
-    "D_RISK": "风控",
-    "D_COMPLIANCE": "合规",
-    "D_AUTONOMY_PERM": "自治保护",
-
-    # L2 业务域层 - 组合决策
-    "D_PF_CORE": "组合核心",
-    "D_PF_ALLOC": "组合分配",
-    "D_SELL_DECISION": "卖出决策",
-    "D_CROSS_ASSET": "跨资产",
-
-    # L2 业务域层 - 执行交易
-    "D_EX_CORE": "执行核心",
-    "D_EX_SOR": "执行路由",
-    "D_TRADING": "交易运营",
-    "D_POSITION": "仓位管理",
-
-    # L2 业务域层 - ML平台
-    "D_ML_TRAIN": "训练",
-    "D_ML_SERVE": "推理",
-
-    # L2 业务域层 - 回测仿真
-    "D_BACKTEST": "回测",
-    "D_SIMULATION": "仿真",
-    "D_EXEC_SIM": "执行仿真",
-
-    # L2 治理域层
-    "D_AUDITTEST": "审计测试套件",
-    "D_GOV_REPAIR": "治理修复",
-    "D_GOV_AUDIT": "审计追踪",
-    "D_GOV_DOCS": "架构文档治理",
-    "D_GOV_DRIFT": "漂移检测",
-    "D_GOV_ENFORCEMENT": "规则执行",
-    "D_GOV_KB": "知识库治理",
-    "D_GOV_RULE": "规则治理",
-    "D_GOV_SCRIPTS": "脚本治理",
-    "D_GOV_CODE_QUALITY": "代码质量治理",
-    "D_GOV_OPS_RESILIENCE": "运维弹性治理",
-
-    # 未分类（DB layer_id 为 NULL 或未归类的手工插入域，裁定#199/#200/#204）
-    "D_DATA": "数据接入层",
-    "D_INFRASTRUCTURE": "跨层契约基础设施",
-
     # 测试域（测试域不插入生产 depgraph (PostgreSQL)，仅硬编码 fallback 维护）
     "D-T3-W0": "测试域T3-0",
     "D-T3-W1": "测试域T3-1",
@@ -400,11 +321,11 @@ def preload_domain_names() -> dict[str, str]:
 def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     """获取域的中文名称（DB 优先 + 硬编码 fallback 双层）。
 
-    真源优先级（治本 v2.2，2026-07-19，domain_index 中英文化配套完成）：
+    真源优先级（治本 v2.3，2026-07-19 Step 2.5 硬编码瘦身完成）：
     1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——
        已由 sync_yaml_to_depgraph.py 从 YAML 的 domain_name_zh 字段同步为中文）
-    2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用，测试域专用）
-    3. fallback 参数或 domain_id 本身
+    2. DOMAIN_NAME_ZH 硬编码映射表（fallback：仅含测试域 D-T3-*/D-T4-*/D-T5-*/D-T9-*）
+    3. fallback 参数或 domain_id 本身（生产域 DB 不可用时返回 domain_id，可接受降级）
 
     Args:
         domain_id: 域ID，如 "D_TRADING"
@@ -417,8 +338,28 @@ def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
     db_names = _load_domain_names_from_db()
     if domain_id in db_names:
         return db_names[domain_id]
-    # 回退到硬编码映射表（db 不可用或测试域 D-T3-*）
+    # 回退到硬编码映射表（v2.3：仅测试域；生产域 DB 不可用时返回 fallback/domain_id）
     return DOMAIN_NAME_ZH.get(domain_id, fallback or domain_id)
+
+
+def get_domain_name_zh_strict(domain_id: str) -> str:
+    """获取域的中文名称，未找到返回空字符串（严格模式）。
+
+    与 ``get_domain_name_zh`` 的区别：未找到时返回 ``""`` 而非 ``domain_id``，
+    用于"未找到=不显示"场景（如 mermaid 标签、表格单元格）。
+    v2.3（Step 2.5）新增：替代 generate_domain_doc.py 中直接的
+    ``DOMAIN_NAME_ZH.get(ext, "")`` 调用，确保路径过 DB 优先级。
+
+    Args:
+        domain_id: 域ID，如 "D_TRADING"
+
+    Returns:
+        中文名称字符串；未找到返回空字符串
+    """
+    db_names = _load_domain_names_from_db()
+    if domain_id in db_names:
+        return db_names[domain_id]
+    return DOMAIN_NAME_ZH.get(domain_id, "")
 
 
 def get_domain_name_en(domain_id: str, fallback: str = "") -> str:
