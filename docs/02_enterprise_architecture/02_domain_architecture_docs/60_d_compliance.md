@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 |  | Layer |  |
 | 模块数 | 4 | Module Count | 4 |
 | 域内依赖 | 0 | Internal Dependencies | 0 |
-| 跨域入边 | 0 | Cross-domain Incoming | 0 |
+| 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 51 | Cross-domain Outgoing | 51 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 4 | Prototype Modules | 4 |
@@ -95,13 +95,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
-    class D_SECURITY external_design
+    class D_SECURITY,D_FEEDBACK_LOOP external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -147,13 +149,15 @@ graph TD
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
     src_zephyr_compliance_behavioral_auditor_init_py -.->|导入依赖 / import_depends| D_GOV_DRIFT
+    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
+    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_compliance_default_security_gateway_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_compliance_behavioral_auditor_init_py,src_zephyr_compliance_default_security_gateway_py,src_zephyr_compliance_security_gateway_base_py,src_zephyr_compliance_zero_knowledge_audit_stub_init_py design
     class D_GOV_OPS_RESILIENCE,D_GOV_DRIFT,D_INFRA_RUNTIME external_prod
-    class D_SECURITY external_design
+    class D_SECURITY,D_FEEDBACK_LOOP external_design
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies
@@ -216,11 +220,13 @@ graph TD
 
 ### 依赖本域的其他域（入边）/ Depended By
 
-无跨域入边依赖 / No cross-domain incoming dependencies
+| # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
+|:--:|---------|:--:|---------|---------|
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | default_security_gateway.py | runtime / runtime |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 4 个外部域直接连接（出边 51 条 + 入边 0 条 = 51 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 5 个外部域直接连接（出边 51 条 + 入边 1 条 = 52 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -229,10 +235,12 @@ graph LR
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
+    D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_COMPLIANCE -->|43条 导入依赖 / import_depends| D_GOV_DRIFT
     D_COMPLIANCE -->|5条 导入依赖 / import_depends| D_SECURITY
     D_COMPLIANCE -->|2条 导入依赖 / import_depends| D_GOV_OPS_RESILIENCE
     D_COMPLIANCE -->|1条 导入依赖 / import_depends| D_INFRA_RUNTIME
+    D_FEEDBACK_LOOP -->|1条 runtime / runtime| D_COMPLIANCE
 ```
 
 ## 说明 / Notes
