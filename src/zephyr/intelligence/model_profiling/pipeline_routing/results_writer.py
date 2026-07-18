@@ -53,7 +53,14 @@ def write_benchmark_results(
     profiles: list[ModelProfile],
     output_dir: str = DEFAULT_OUTPUT_DIR,
 ) -> str:
-    """将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。"""
+    """将 benchmark 结果写入 JSONL 文件（每行一个模型的结果）。
+
+    ARCH-BENCH-LEAK-001：profiles 为空时跳过写入并返回 ""——空文件无消费价值
+    （漂移检测需 ≥2 条记录，router 读空文件返回 0），且会遮蔽最新有效结果。
+    """
+    if not profiles:
+        _log.info("ResultsWriter: empty profiles, skip writing (ARCH-BENCH-LEAK-001)")
+        return ""
     base = Path(output_dir)
     base.mkdir(parents=True, exist_ok=True)
     timestamp = now_utc().strftime("%Y%m%d_%H%M%S")

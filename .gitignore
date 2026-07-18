@@ -224,6 +224,9 @@ _temp*.md
 /tmp_*.sh
 /tmp_*.ps1
 /tmp_*.log
+# Root-only tmp_*/ directories (AI 会话 pytest --basetemp 过程性残留，ARCH-TTL-DOC-001 扩展 2026-07-17)
+# 原文件模式不覆盖目录，导致 tmp_clean/tmp_extreme*/tmp_pytest* 等 12 目录成为可见性黑洞
+/tmp_*/
 
 # AI tool directories
 .roo/
@@ -299,6 +302,9 @@ config/.env.clickhouse
 # Restic backup repository password (MOD-INF-043 灾备备份系统)
 # Contains encryption key; never commit to repository
 config/.env.restic
+# ClickHouse backup S3 (MinIO) credentials (MOD-INF-043 CH backup pipeline)
+# Contains S3 access keys; never commit to repository
+config/.env.ch_backup
 # PostgreSQL native data directory (Windows install)
 data/databases/postgres/
 # DEBT-BACKUP-CLEANUP: ghost_autoclean 备份旧路径（已迁移到 tmp/pg_backups/，与 backup_runtime_state.py 标杆对齐）

@@ -66,10 +66,10 @@ class TestWriteBenchmarkResults:
         assert nested.exists()
 
     def test_empty_profiles(self, tmp_path):
+        # ARCH-BENCH-LEAK-001：空 profiles 跳过写入（空文件无消费价值且遮蔽最新有效结果）
         output_path = write_benchmark_results([], output_dir=str(tmp_path))
-        with open(output_path, encoding="utf-8") as f:
-            content = f.read().strip()
-        assert content == ""
+        assert output_path == ""
+        assert list(tmp_path.glob("benchmark_*.jsonl")) == []
 
     def test_profile_fields_in_output(self, tmp_path):
         profile = ModelProfile(

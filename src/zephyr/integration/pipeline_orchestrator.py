@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m10-time-trigger  M10豁免: start_periodic_profile的while True+sleep是模型性能benchmark周期触发(可选,periodic_profile_interval_s>0才启用),非reconciler时间触发;用于模型漂移检测
+# noqa: m10-time-trigger  M10豁免: start_periodic_profile的while+sleep是模型性能benchmark周期触发(可选,periodic_profile_interval_s>0才启用),非reconciler时间触发;用于模型漂移检测;四要素完整(_periodic_stop_flag+stop_periodic_profile()+shutdown() join回收,ARCH-BENCH-LEAK-001)
 """
 PipelineOrchestrator — M1-M11 管线协调器
 =========================================
@@ -429,6 +429,8 @@ class PipelineOrchestrator:
         self._periodic_profile_interval_s: float = self._cfg.periodic_profile_interval_s
         self._auto_profile_on_startup: bool = self._cfg.auto_profile_on_startup
         self._profile_thread: threading.Thread | None = None
+        self._periodic_stop_flag: bool = False
+        self._periodic_thread: threading.Thread | None = None
         self._profile_results: list[dict[str, object]] = []
 
         if self._auto_profile_on_startup and self._model_profiler is not None:
@@ -456,18 +458,29 @@ class PipelineOrchestrator:
         self._profile_thread = t
 
     def start_periodic_profile(self) -> None:
-        """启动定时 benchmark（每隔 periodic_profile_interval_s 秒运行一次）。"""
+        """启动定时 benchmark（每隔 periodic_profile_interval_s 秒运行一次）。
+
+        生命周期四要素完整：start_periodic_profile() 启动 → 周期运行 →
+        漂移检测维护 → shutdown() 停止（stop event + join）。
+        """
         import threading
 
         if self._periodic_profile_interval_s <= 0:
             self._log("INFO", "ModelProfiler: periodic profiling disabled (interval <= 0)")
             return
+        if self._periodic_thread is not None and self._periodic_thread.is_alive():
+            self._log("INFO", "ModelProfiler: periodic profiling already running")
+            return
+
+        self._periodic_stop_flag = False
 
         def _loop():
             import time
 
-            while True:
+            while not self._periodic_stop_flag:
                 time.sleep(self._periodic_profile_interval_s)
+                if self._periodic_stop_flag:
+                    break
                 try:
                     self._log("INFO", "ModelProfiler: periodic benchmark triggered")
                     results = self.run_model_benchmark()
@@ -483,7 +496,68 @@ class PipelineOrchestrator:
 
         t = threading.Thread(target=_loop, daemon=True, name="model-profiler-periodic")
         t.start()
+        self._periodic_thread = t
         self._log("INFO", f"ModelProfiler: periodic profiling every {self._periodic_profile_interval_s}s")
+
+    def stop_periodic_profile(self) -> None:
+        """请求停止周期 benchmark 线程——设置停止标志，线程在下个周期边界退出。"""
+        self._periodic_stop_flag = True
+        self._log("INFO", "ModelProfiler: periodic profile stop requested")
+
+    def shutdown(self, timeout: float = 5.0) -> None:
+        """关闭 orchestrator：停止周期 benchmark 线程并 join（四要素之自动关闭）。
+
+        ARCH-BENCH-LEAK-001 治本：原实现线程一旦启动无法停止（无 stop 标志、
+        无线程引用、无 shutdown），测试/长驻进程场景下泄漏为 1Hz 写盘循环。
+
+        Args:
+            timeout: join 等待秒数，超时后线程仍由 daemon 属性随进程退出回收。
+        """
+        self.stop_periodic_profile()
+        t = self._periodic_thread
+        if t is not None and t.is_alive():
+            t.join(timeout=timeout)
+        self._periodic_thread = None
+        self._log("INFO", "shutdown complete")
+
+    def on_model_registered(self, model_name: str) -> None:
+        """事件入口：新模型注册 → 后台触发一次 benchmark（事件驱动，DM-202011）。
+
+        四要素对齐：事件触发(启动) → benchmark 执行(运行) → 结果注入 router(维护)
+        → 线程 run 完即退出(自动关闭，daemon 属性兜底)。
+        """
+        import threading
+
+        self._log("INFO", f"model_registered event: {model_name} — triggering benchmark")
+
+        def _run() -> None:
+            try:
+                results = self.run_model_benchmark()
+                self._feed_results_to_router(results)
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log("WARN", f"model_registered benchmark failed: {exc}")
+
+        t = threading.Thread(target=_run, daemon=True, name="model-profiler-event")
+        t.start()
+
+    def on_drift_detected(self, model_name: str, drift_info: dict[str, object] | None = None) -> None:
+        """事件入口：检测到模型漂移 → 后台触发一次 benchmark 复核（事件驱动，DM-202011）。"""
+        import threading
+
+        if drift_info:
+            self._log("WARN", f"drift_detected event: {model_name} — {drift_info.get('details', drift_info)}")
+        else:
+            self._log("INFO", f"drift_detected event: {model_name} — triggering re-benchmark")
+
+        def _run() -> None:
+            try:
+                results = self.run_model_benchmark()
+                self._feed_results_to_router(results)
+            except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log("WARN", f"drift_detected benchmark failed: {exc}")
+
+        t = threading.Thread(target=_run, daemon=True, name="model-profiler-drift")
+        t.start()
 
     def _feed_results_to_router(self, results: list[dict[str, object]]) -> None:
         """将 benchmark 结果注入 ModelRouter。"""
