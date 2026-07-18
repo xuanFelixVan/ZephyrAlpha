@@ -157,7 +157,7 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA 数据接入层: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → |  | data / data |
+| 1 | D_DATA 数据接入层: L10 周末补下载检测器——检测过去N天缺失数据并精... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
