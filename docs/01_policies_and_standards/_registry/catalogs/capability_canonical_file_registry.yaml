@@ -5182,6 +5182,16 @@ creation_tokens:
     created_by: "sess-33764-20260719035340"
     capability: "remediation_progress_tracking"
 
+
+  # 治本（2026-07-19，#ARCH-GOV-CONVERGENCE-META Phase 3.1）：治本进度持久化 + 新鲜度对账
+  - file: "src/zephyr/governance/audit/remediation_progress_reconciler.py"
+    token: "auto-remediation-progress-reconciler-20260719"
+    created_by: "sess-33696-20260719033248"
+    capability: "remediation_progress_tracker"
+  - file: "scripts/governance/test_remediation_progress_smoke.py"
+    token: "auto-remediation-progress-smoke-20260719"
+    created_by: "sess-33696-20260719033248"
+    capability: "remediation_progress_tracker"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
