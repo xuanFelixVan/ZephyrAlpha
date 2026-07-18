@@ -200,9 +200,12 @@ class ReconcileResult:
     - clean: 真源重生成后无变更，一致
     - auto_committed: 检测到漂移并自动提交修复
     - warn: 检测到漂移但自动修复失败（仅告警，不阻断；commit 已入 git 历史）
+    - critical_warn: 严重失败——架构图与代码不一致且自动同步失败（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3）。
+      比 warn 更严重：下次 commit/merge 前打印告警横幅强制 AI 看到。不阻断 commit
+      （commit 已入历史无法回滚），但确保失败不被忽视。
     """
 
-    action: str  # "skip" | "clean" | "auto_committed" | "warn"
+    action: str  # "skip" | "clean" | "auto_committed" | "warn" | "critical_warn"
     detail: str = ""
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 由 reconcile_for 填充，
     # 用于 _log_reconcile_results 追踪是哪个 reconciler 产生了该结果。
@@ -371,6 +374,71 @@ def _log_reconcile_results(
             conn.close()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("_log_reconcile_results: DB write failed: %s", e)
+
+
+def _check_recent_critical_warns(
+    project_root: "object", hours: int = 24
+) -> "list[dict]":
+    """查询 governance.db 最近 N 小时内的 critical_warn 记录。
+
+    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3：
+    让 commit/merge 前能看到最近的严重失败（depgraph 同步失败等），
+    由 _print_critical_warn_banner 打印告警横幅强制 AI 看到。
+
+    Args:
+        project_root: Path 对象（gateway.project_root / merge root）。
+        hours: 查询窗口（小时），默认 24h。
+
+    Returns:
+        list[dict]: 每条含 gate_id/logged_at/detail（detail 截断到 200 字符用于横幅显示）。
+        空列表表示无 critical_warn 或查询失败（fail-open，不阻断主流程）。
+    """
+    import os
+    import sqlite3
+    from datetime import datetime, timedelta, timezone
+    try:
+        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            rows = conn.execute(
+                "SELECT gate_id, logged_at, substr(detail, 1, 200) "
+                "FROM reconcile_execution_log "
+                "WHERE action = 'critical_warn' AND logged_at >= ? "
+                "ORDER BY logged_at DESC LIMIT 10",
+                (cutoff,),
+            ).fetchall()
+            return [{"gate_id": r[0], "logged_at": r[1], "detail": r[2]} for r in rows]
+        finally:
+            conn.close()
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("_check_recent_critical_warns: query failed: %s", e)
+        return []
+
+
+def _print_critical_warn_banner(project_root: "object", context: str) -> None:
+    """打印 critical_warn 告警横幅（如有近期记录）。
+
+    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3：
+    "工人失败时大声喊"——commit/merge 前翻日志本，有 critical_warn 就打印醒目横幅。
+    不阻断 commit/merge（warn 语义），但确保失败不被忽视（消除 fail-silent 的最后一公里）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root / merge root）。
+        context: "pre_commit" 或 "pre_merge"（标识调用场景，显示在横幅中）。
+    """
+    warns = _check_recent_critical_warns(project_root)
+    if not warns:
+        return
+    print("\n" + "=" * 78)
+    print(f"!! CRITICAL RECONCILER FAILURES DETECTED (last 24h) -- context: {context}")
+    print(f"   {len(warns)} recent critical_warn(s) in reconcile_execution_log:")
+    for w in warns[:5]:
+        print(f"   - [{w['logged_at']}] {w['gate_id']}: {w['detail']}")
+    if len(warns) > 5:
+        print(f"   ... and {len(warns) - 5} more (query governance.db for full list)")
+    print("   Action required: investigate failures before proceeding.")
+    print("=" * 78 + "\n")
 
 
 def _write_reconcile_report(
@@ -747,8 +815,11 @@ def make_depgraph_ops_reconciler(gateway: "object") -> ReconcilerSpec:
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: detail 不截断
             # 原截断到 200 字符导致 fail-silent（完整 traceback 丢失，AI 无法诊断）。
             # 现完整记录 stderr，由 _log_reconcile_results 持久化到 governance.db。
+            # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: action 升级为 critical_warn
+            # depgraph 同步失败 = 架构图与代码不一致，是严重问题。下次 commit/merge 前
+            # 打印告警横幅强制 AI 看到（_check_recent_critical_warns）。
             return ReconcileResult(
-                action="warn",
+                action="critical_warn",
                 detail=f"depgraph ops sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
                        f"{sync_result.stderr.strip()}",
             )
@@ -2353,7 +2424,7 @@ def _compose_reconcilers(
 
     triggers = [s.trigger for s in specs]
     reconciles = [s.reconcile for s in specs]
-    _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2}
+    _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2, "critical_warn": 3}
 
     def _trigger(committed_files: list[str]) -> bool:
         return any(t(committed_files) for t in triggers)

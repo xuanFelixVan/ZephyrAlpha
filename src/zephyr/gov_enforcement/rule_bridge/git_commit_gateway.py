@@ -74,6 +74,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
+    _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -757,6 +758,11 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             wt_session = None
         self._warn_non_worktree_commit(session_id, wt_session)
+
+        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-commit 告警横幅
+        # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
+        # 不阻断 commit（warn 语义），但确保上次 reconciler 失败不被忽视。
+        _print_critical_warn_banner(self.project_root, context="pre_commit")
 
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）

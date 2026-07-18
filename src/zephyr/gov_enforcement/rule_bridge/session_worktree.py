@@ -1718,6 +1718,15 @@ def session_worktree_merge(
     manager = _get_manager(root)
     registry = _get_registry(root)
 
+    # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-merge 告警横幅
+    # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
+    # 不阻断 merge（warn 语义），但确保上次 reconciler 失败不被忽视。
+    try:
+        from zephyr.governance.audit.reconciliation_registry import _print_critical_warn_banner
+        _print_critical_warn_banner(root, context="pre_merge")
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        pass  # 告警横幅失败不应阻断 merge
+
     # PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：pre-merge 拓扑硬阻断。
     # 时序关键（2026-07-17 修复）：必须在 _pre_merge_auto_clean 之前执行——
     # auto_clean 会还原 session 变更列表中的 checker 文件到 HEAD 旧版本（若 session
