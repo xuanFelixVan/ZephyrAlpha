@@ -216,31 +216,6 @@ routes:
     priority: 95
     description: "任务系统 — 全链路流程（蓝图→任务卡→双管线→脚手架）"
 
-  # -- KB-001 知识库 --
-  - route_id: "R008"
-    blueprint_id: "MOD-KB-001"
-    blueprint_level: module
-    path_patterns:
-      - "src/zephyr/data/knowledge_management/kb/**"
-      - "config/kb_parameters.yaml"
-    task_keywords:
-      - "知识"
-      - "knowledge"
-      - "文档"
-      - "document"
-      - "spec"
-      - "standard"
-      - "标准"
-      - "规范"
-      - "policy"
-      - "KE"
-      - "knowledge entry"
-      - "索引"
-      - "index"
-    scope: pre_change
-    safety: "M"
-    priority: 90
-
   # -- INF-007 Gate Engine --
   - route_id: "R009"
     blueprint_id: "mod_inf_007"

@@ -664,8 +664,8 @@ entries:
 - domain: D_KNOWLEDGE
   subdomain: knowledge_management
   domain_name_zh: 知识管理
-  ssot_module: MOD-KB-001
-  ssot_path: src/zephyr/knowledge/
+  ssot_module: ''
+  ssot_path: ''
   covers:
   - 知识管线(ingest/triage/extract/activate/analyze)
   - ChromaDB初始化(chromadb_init)
