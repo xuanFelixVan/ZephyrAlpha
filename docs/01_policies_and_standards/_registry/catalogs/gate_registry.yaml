@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-18T15:50:35Z'
+generated_at: '2026-07-18T15:55:06Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 90
+total_gates: 91
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -504,6 +504,17 @@ gates:
     priority=34）'
   entry: in-process (GitCommitGateway)
   description: 生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: DEPGRAPH-FRESHNESS
+  name: 'DEPGRAPH-FRESHNESS: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
+    Phase 3.1）（CommitGate, priority=68）'
+  entry: in-process (GitCommitGateway)
+  description: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
+    Phase 3.1）
   files_trigger: ''
   always_run: false
   category: commit_gate
