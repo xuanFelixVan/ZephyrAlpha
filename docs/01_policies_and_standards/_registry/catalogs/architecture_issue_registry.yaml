@@ -3345,3 +3345,99 @@ entries:
   related_adjudication: 'P1-2 治本, ARCH-REFERENCE-L2 原子性'
   created: '2026-07-18'
   last_updated: '2026-07-18'
+
+# --- #ARCH-TOOL-HEALTH-V1: 核心治理工具健康度铁律（apply_depgraph.py NameError 静默失效治本，2026-07-19） ---
+# 病根：commit deb695006f 批量重构 sys.exit→EXIT_* 时误删 get_depgraph_pg_connection import，
+# 5 层防线全部失效，AI 遇 NameError 默认 silently workaround 导致 LOW drift 静默累积。
+# 治本：4 条裁定条款（smoke test / baseline 全扫 / --no-verify 审计 / session 启动自检）。
+- issue_id: '#ARCH-TOOL-HEALTH-V1'
+  title: 核心治理工具健康度铁律——apply_depgraph.py NameError 静默失效治本（5 层防线全失效）
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-19 治本裁定。病根：commit deb695006f（2026-07-18 15:50:57）批量重构
+    sys.exit→EXIT_* 时，将 apply_depgraph.py line 105 的
+    `from _shared.constants import get_depgraph_pg_connection` 替换为
+    `from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS`，
+    丢失 get_depgraph_pg_connection 的 import，但 56 处调用全部保留，运行时 NameError
+    阻断 L1 铁律执行（depgraph 依赖登记无法进行）。concurrent_write_test.py 同源 bug。
+
+
+    5 层防线全部失效分析：
+    (1) ruff F821 被 --no-verify 绕过——pre-commit hook 在 ZEPHYR_COMMIT_GATEWAY=1
+        时可跳过；
+    (2) scripts_import_integrity_gate 在 bug 后 9h 才上线（commit 96caa8ceaa，
+        2026-07-19 00:58:40）且只扫 staged 文件（incremental-only），基线 bug
+        永远扫不到；
+    (3) 单测 test_apply_depgraph_transition_sync.py 全程用 MagicMock 替换连接，
+        从不真正调用 get_depgraph_pg_connection，且用 importlib 加载模块在 import
+        阶段不触发 NameError（调用都在函数体内）；
+    (4) check_blueprint_code_alignment.py 直读 DB 不调 apply_depgraph，无法暴露
+        apply_depgraph 的 import bug；
+    (5) AI 遇 NameError 默认 silently workaround 而非上报人类——LOW
+        CODE_NOT_IN_DEPGRAPH drift 静默累积。
+
+
+    第一性原理治本：100% AI 开发场景下，AI 遇工具报错默认 silently workaround
+    是最大风险。必须有"启动健康度自检 + 强制上报"机制。4 条裁定条款：
+    (1) 核心治理工具必须有 end-to-end smoke test（真实 CLI + 真实 DB + 验证写入行）；
+    (2) 导入完整性 gate 必须支持 baseline 全扫模式（post-commit reconciler）；
+    (3) --no-verify 必须被审计（同一 session 1h 内 > 3 次升级为 reset --soft HEAD~1）；
+    (4) AI session 启动 smoke test（失败时 [ESCALATION] 上报而非 silently workaround）。
+    LLM 编辑模式固有缺陷警示：涉及 import 行的修改必须用 Edit（精确替换）而非
+    Write（整文件覆写），deb695006f 就是用 sed 批量替换整行 import 导致的。
+  fix_phase: |
+    Phase 1 紧急止血（已完成 2026-07-19，commit 2cee176f81，merge 4a0d46508b）：
+      - 恢复 apply_depgraph.py + concurrent_write_test.py 的 get_depgraph_pg_connection import
+      - ruff F821 零违规验证；--add-design-node --dry-run 真实到达 PG 域校验步骤
+
+    Phase 2 基线债务清理（已完成 2026-07-19，commit e854b40a3d merge）：
+      - 修复 9 个活跃文件的 F821 违规（batch_create_index_md/drafts_zone_archiver/
+        validate_registry_master_index/detect_causal_conflicts/generate_domain_doc/
+        detect_shell_dangerous/mutation_test_post_sync_validator/
+        validate_script_system_health/vms_cron_monitor）
+
+    Phase 7 归档裁定（本次执行 2026-07-19）：
+      - AGENTS.md §11.0.3 核心治理工具健康度铁律
+      - architecture_issue_registry.yaml 本条登记
+      - project_memory.md lessons learned 更新
+
+    Phase 3 gate baseline 全扫 reconciler（待执行）：
+      - 新增 make_scripts_import_integrity_reconciler() 作为 post-commit reconciler（priority=210）
+      - 在 git_commit_gateway.py 注册
+      - 在 capability_canonical_file_registry.yaml 登记
+
+    Phase 4 end-to-end smoke test（待执行）：
+      - 新增 tests/governance/test_apply_depgraph_smoke.py
+      - 真实调用 CLI + 真实 PostgreSQL + 验证 DB 行写入
+      - 用 D_SMOKE_TEST 临时域，测试后清理
+
+    Phase 5 POST-COMMIT-GUARD 升级（待执行）：
+      - warn-only 计数阈值阻断（同一 session 1 小时内 > 3 次 warn-only 升级为 reset_soft_HEAD~1）
+      - 新增 commit_gateway_abuse_monitor_reconciler.py
+
+    Phase 6 session 启动健康度自检（待执行）：
+      - 新增 session_startup_health_check.py
+      - AI session 启动时自检核心工具健康度
+      - 失败时输出 [ESCALATION] 标记，禁止 silently workaround
+  impact:
+    - scripts/governance/apply_depgraph.py（恢复 get_depgraph_pg_connection import，Phase 1）
+    - scripts/governance/repair/concurrent_write_test.py（同源 bug 修复，Phase 1）
+    - scripts/governance/d1_structure/batch_create_index_md.py（Optional import 修复，Phase 2）
+    - scripts/governance/d1_structure/drafts_zone_archiver.py（import 前移，Phase 2）
+    - scripts/governance/d3_metadata/validate_registry_master_index.py（import 前移，Phase 2）
+    - scripts/governance/d5_architecture/detect_causal_conflicts.py（DEFAULT_DEPGRAPH_PATH 引用删除，Phase 2）
+    - scripts/governance/d5_architecture/generators/generate_domain_doc.py（PgConnExecuteWrapper import，Phase 2）
+    - scripts/governance/d6_security/detect_shell_dangerous.py（EXCLUDE_DIRS + iter_files import，Phase 2）
+    - scripts/governance/meta/mutation_test_post_sync_validator.py（_SSoT_PATH typo 修正，Phase 2）
+    - scripts/governance/meta/validate_script_system_health.py（EXIT_PASS/EXIT_FINDINGS import，Phase 2）
+    - scripts/governance/vms/vms_cron_monitor.py（Any import，Phase 2）
+    - AGENTS.md（§11.0.3 核心治理工具健康度铁律，Phase 7）
+    - src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py（baseline 全扫模式，Phase 3 待执行）
+    - tests/governance/test_apply_depgraph_smoke.py（e2e smoke test，Phase 4 待执行）
+    - scripts/governance/git_hooks/post_commit_guard.sh（warn-only 阈值阻断，Phase 5 待执行）
+    - scripts/governance/meta/session_startup_health_check.py（启动健康度自检，Phase 6 待执行）
+  status: in_progress
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, FP-ISO.4C worktree 君子协定, ARCH-DEPGRAPH-RECONCILER-FAILSILENT'
+  created: '2026-07-19'
+  last_updated: '2026-07-19'
