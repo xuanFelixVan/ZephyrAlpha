@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-18T21:23:53Z'
+generated_at: '2026-07-18T21:31:57Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 162
+total_files: 163
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1342,6 +1342,24 @@ files:
   - 数据库破坏性操作纪律
   - destructive_ops_discipline
   - data_ops_discipline
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_064_git_call_budget.yaml
+  module_id: TRAE-064
+  title: Git 调用预算铁律（ARCH-GIT-CALL-BUDGET）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: git_subprocess_budget
+  stability: evolving
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-GIT-CALL-BUDGET
+  - Git调用预算
+  - ARCH-GIT-CALL-BUDGET
   section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
