@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] flush 失败返回 CommitResult(COMMIT_FAILED) 不抛异常；buffer 累积无上限（reconciler 数量有限，25 个 spec 最多 25 次 buffer）
 # [TESTS] tests/governance/rule_bridge/test_batched_auto_committer.py
-# [A_module] module_id=MOD-GOV_batched_auto_committer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-batched_auto_committer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """batched_auto_committer.py — Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）
 
