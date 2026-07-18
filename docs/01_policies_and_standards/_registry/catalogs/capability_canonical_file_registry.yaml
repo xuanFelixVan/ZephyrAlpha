@@ -5159,6 +5159,11 @@ creation_tokens:
     token: "auto-capability-maturity-principles-20260719"
     created_by: "sess-27136-20260719030938"
     capability: "capability_maturity_principles"
+  # 治本（2026-07-19，target_architecture 清理第二批）：从 data_architecture.md 提取永恒原则到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/data_principles.md"
+    token: "auto-data-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "data_architecture_principles"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
