@@ -36,7 +36,7 @@ InProcessVectorMemory — MOD-INF-011 VMS 统一入口
     ├── CacheLayer               ← Embedding memoization (Phase 1)
     ├── BridgeLayer              ← kb/ ↔ VMS 桥接 (Phase 1)
     ├── VectorBridge             ← CE/KB 外部集成 (Phase 1)
-    └── InMemoryMemoryBackend    ← 降级兜底 (Phase 1)
+    └── DegradedVMSBackend    ← 降级兜底 (Phase 1)
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ if TYPE_CHECKING:
     from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
     from zephyr.integration.vector_memory.bridge_layer import BridgeLayer
     from zephyr.integration.vector_memory.chunk_strategy_router import ChunkStrategyRouter
-    from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+    from zephyr.integration.vector_memory.in_memory_memory_backend import DegradedVMSBackend
     from zephyr.integration.vector_memory.provenance_enforcer import ProvenanceEnforcer
     from zephyr.integration.vector_memory.retrieval_feedback import RetrievalFeedback
     from zephyr.integration.vector_memory.vector_bridge import VectorBridge
@@ -185,7 +185,7 @@ class InProcessVectorMemory:
 
         self._bridge_layer = BridgeLayer(self._collection_manager)
         self._vector_bridge = VectorBridge(self)
-        # InMemoryMemoryBackend 惰性创建——仅在所有检索路径失败时才实例化（对标 Netflix Hystrix fallback 按需触发）
+        # DegradedVMSBackend 惰性创建——仅在所有检索路径失败时才实例化（对标 Netflix Hystrix fallback 按需触发）
         self._in_memory_backend: Any | None = None
 
         self._started = True
@@ -268,17 +268,17 @@ class InProcessVectorMemory:
             doc_id=doc_id,
         )
 
-    def _get_in_memory_backend(self) -> InMemoryMemoryBackend:
-        """惰性创建 InMemoryMemoryBackend——仅在所有检索路径失败时才实例化。
+    def _get_in_memory_backend(self) -> DegradedVMSBackend:
+        """惰性创建 DegradedVMSBackend——仅在所有检索路径失败时才实例化。
 
         对标 Netflix Hystrix：fallback 按需触发，不预先创建。
         蓝图 §6.2 退化矩阵 L3 级别：双嵌入模型全不可用 -> InMemory 零向量检索。
         """
         if self._in_memory_backend is None:
-            from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+            from zephyr.integration.vector_memory.in_memory_memory_backend import DegradedVMSBackend
 
-            self._in_memory_backend = InMemoryMemoryBackend()
-            _logger.warning("VMS: 所有检索路径失败，降级到 InMemoryMemoryBackend (L3)")
+            self._in_memory_backend = DegradedVMSBackend()
+            _logger.warning("VMS: 所有检索路径失败，降级到 DegradedVMSBackend (L3)")
         return self._in_memory_backend
 
     def _search_via_hybrid_retriever(
@@ -359,7 +359,7 @@ class InProcessVectorMemory:
             results = self._query_chromadb(col, query, collection_name, k)
             return _results_to_hits(results)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _logger.warning("VMS: ChromaDB 检索全部失败，降级到 InMemoryMemoryBackend (L3)", exc_info=True)
+            _logger.warning("VMS: ChromaDB 检索全部失败，降级到 DegradedVMSBackend (L3)", exc_info=True)
             return self._get_in_memory_backend().search(query, k=k)
 
     def recall(

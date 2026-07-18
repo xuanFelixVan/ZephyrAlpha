@@ -75,7 +75,7 @@ def register_services() -> None:
 
     # reranker — Reranker instance
     def _make_reranker() -> object:
-        from zephyr.gov_kb.reranker import Reranker
+        from zephyr.intelligence.model_evaluation.reranker import Reranker
 
         return Reranker()
 

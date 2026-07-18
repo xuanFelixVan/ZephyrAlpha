@@ -16,7 +16,7 @@
 # [TTL] permanent
 
 """
-InMemoryMemoryBackend — MOD-INF-011 降级兜底
+DegradedVMSBackend — MOD-INF-011 降级兜底
 =============================================
 蓝图 §6 · V-VMS-505/507 · ChromaDB + 双模型全不可用时的最后防线
 
@@ -38,14 +38,14 @@ import numpy as np
 _logger = logging.getLogger(__name__)
 
 
-class InMemoryMemoryBackend:
+class DegradedVMSBackend:
     DEFAULT_DIM: ClassVar[int] = 512
 
     def __init__(self, dim: int = DEFAULT_DIM) -> None:
         self._dim = dim
         self._store: dict[str, dict[str, Any]] = {}
         self._degraded = True
-        _logger.warning("InMemoryMemoryBackend: 进入降级模式 (%dd degraded=True)", dim)
+        _logger.warning("DegradedVMSBackend: 进入降级模式 (%dd degraded=True)", dim)
 
     @property
     def degraded(self) -> bool:
