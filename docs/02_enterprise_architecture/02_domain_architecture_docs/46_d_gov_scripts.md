@@ -279,7 +279,7 @@ ttl: permanent
 | 120 | scripts/governance/d3_metadata/classify_ttl_by_content.py | 基于内容关键词的 ttl 精细分类审查脚本。 | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
 | 121 | scripts/governance/d3_metadata/deep_content_scanner.py | deep_content_scanner.py — 深度内容扫描器 | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
 | 122 | scripts/governance/d3_metadata/generate_derived_files.py | generate_derived_files.py — 枚举自动派生生成器... | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
-| 123 | scripts/governance/d3_metadata/generate_rule_catalog.py | Scan docs/01_policies_and_standards and emit _r... | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
+| 123 | scripts/governance/d3_metadata/generate_rule_catalog.py | generate_rule_catalog.py | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
 | 124 | scripts/governance/d3_metadata/migrate_illegal_doctype.py | 批量迁移非法 doc_type 值（doc_type 存量治理 Sta... | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
 | 125 | scripts/governance/d3_metadata/validate_architecture.py | validate_architecture.py - Validate rule files ... | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
 | 126 | scripts/governance/d3_metadata/validate_blueprint_provena... | Blueprint Provenance Gate - V-12: validate prov... | 原型态 / prototype | [MOD-INF-005](../../03_modules/_domain_governance/governance_automation/blueprint.md) |
@@ -634,7 +634,7 @@ graph TD
         scripts_governance_d3_metadata_classify_ttl_by_content_py["(原型态 / prototype) 基于内容关键词的 ttl 精细分类审查脚本。<br/>文件: classify_ttl_by_content.py"]
         scripts_governance_d3_metadata_deep_content_scanner_py["(原型态 / prototype) deep_content_scanner.py — 深度内容扫描器<br/>文件: deep_content_scanner.py"]
         scripts_governance_d3_metadata_generate_derived_files_py["(原型态 / prototype) generate_derived_files.py — 枚举自动派生生成器...<br/>文件: generate_derived_files.py"]
-        scripts_governance_d3_metadata_generate_rule_catalog_py["(原型态 / prototype) Scan docs/01_policies_and_standards and emit _r...<br/>文件: generate_rule_catalog.py"]
+        scripts_governance_d3_metadata_generate_rule_catalog_py["(原型态 / prototype) generate_rule_catalog.py"]
         scripts_governance_d3_metadata_migrate_illegal_doctype_py["(原型态 / prototype) 批量迁移非法 doc_type 值（doc_type 存量治理 Sta...<br/>文件: migrate_illegal_doctype.py"]
         scripts_governance_d3_metadata_validate_architecture_py["(原型态 / prototype) validate_architecture.py - Validate rule files ...<br/>文件: validate_architecture.py"]
         scripts_governance_d3_metadata_validate_blueprint_provenance_py["(原型态 / prototype) Blueprint Provenance Gate - V-12: validate prov...<br/>文件: validate_blueprint_provenance.py"]
@@ -1234,7 +1234,7 @@ graph TD
         scripts_governance_d3_metadata_classify_ttl_by_content_py["(原型态 / prototype) 基于内容关键词的 ttl 精细分类审查脚本。<br/>文件: classify_ttl_by_content.py"]
         scripts_governance_d3_metadata_deep_content_scanner_py["(原型态 / prototype) deep_content_scanner.py — 深度内容扫描器<br/>文件: deep_content_scanner.py"]
         scripts_governance_d3_metadata_generate_derived_files_py["(原型态 / prototype) generate_derived_files.py — 枚举自动派生生成器...<br/>文件: generate_derived_files.py"]
-        scripts_governance_d3_metadata_generate_rule_catalog_py["(原型态 / prototype) Scan docs/01_policies_and_standards and emit _r...<br/>文件: generate_rule_catalog.py"]
+        scripts_governance_d3_metadata_generate_rule_catalog_py["(原型态 / prototype) generate_rule_catalog.py"]
         scripts_governance_d3_metadata_migrate_illegal_doctype_py["(原型态 / prototype) 批量迁移非法 doc_type 值（doc_type 存量治理 Sta...<br/>文件: migrate_illegal_doctype.py"]
         scripts_governance_d3_metadata_validate_architecture_py["(原型态 / prototype) validate_architecture.py - Validate rule files ...<br/>文件: validate_architecture.py"]
         scripts_governance_d3_metadata_validate_blueprint_provenance_py["(原型态 / prototype) Blueprint Provenance Gate - V-12: validate prov...<br/>文件: validate_blueprint_provenance.py"]
