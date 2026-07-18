@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-18T17:02:03Z'
+generated_at: '2026-07-18T17:05:22Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 90
+total_gates: 92
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -509,6 +509,17 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: DEPGRAPH-FRESHNESS
+  name: 'DEPGRAPH-FRESHNESS: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
+    Phase 3.1）（CommitGate, priority=67）'
+  entry: in-process (GitCommitGateway)
+  description: depgraph 新鲜度门禁（dual-threshold，#ARCH-DEPGRAPH-RECONCILER-FAILSILENT
+    Phase 3.1）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: DEPGRAPH-WRITE-PATH
   name: 'DEPGRAPH-WRITE-PATH: depgraph 写入路径白名单门禁（DEPGRAPH-WRITE-PATH）（CommitGate,
     priority=100）'
@@ -811,6 +822,15 @@ gates:
   name: 'RULING-REFERENCE: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）（CommitGate, priority=74）'
   entry: in-process (GitCommitGateway)
   description: 裁定#NNN 悬空引用自动检测门禁（RULING-REFERENCE）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: SCRIPTS-IMPORT-INTEGRITY
+  name: 'SCRIPTS-IMPORT-INTEGRITY: _shared.constants 符号导入完整性门禁（CommitGate, priority=104）'
+  entry: in-process (GitCommitGateway)
+  description: _shared.constants 符号导入完整性门禁
   files_trigger: ''
   always_run: false
   category: commit_gate
