@@ -1,7 +1,7 @@
 %% D_INFRA_RUNTIME 域全景依赖图
-%% 生成时间: 2026-07-19 03:55:38
+%% 生成时间: 2026-07-19 03:57:08
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 155, 依赖边数: 798
+%% 模块数: 155, 依赖边数: 800
 
 graph TD
 
@@ -194,7 +194,7 @@ graph TD
     %% ... 还有 66 条域内依赖未显示
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_INFRA_RUNTIME (361 条)
+    %%  -> D_INFRA_RUNTIME (362 条)
     [] -->|import_depends| src_zephyr_infrastructure_system_telemetry_auto_bootstrap_py
     [] -->|import_depends| src_zephyr_infrastructure_asset_inventory_classifier_py
     [] -->|import_depends| src_zephyr_infrastructure_asset_inventory_dashboard_py
@@ -252,6 +252,8 @@ graph TD
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_infrastructure_database_service_py
     %% D_COMPLIANCE -> D_INFRA_RUNTIME (1 条)
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_infrastructure_auto_fix_engine_state_machine_py
+    %% D_FACTOR -> D_INFRA_RUNTIME (1 条)
+    D_FACTOR[D_FACTOR] -->|runtime| docs_03_modules__cross_layer_agent_orchestrator_blueprint_md
     %% D_FEEDBACK_LOOP -> D_INFRA_RUNTIME (3 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_infrastructure_pipeline_backpressure_manager_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_infrastructure_system_telemetry_metrics_bridge_py
@@ -438,5 +440,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 146 条
-    %% 跨域入边: 433 条
+    %% 跨域入边: 435 条
     %% 跨域出边: 219 条
