@@ -1,7 +1,7 @@
 %% D_FRONTEND 域全景依赖图
-%% 生成时间: 2026-07-19 01:29:28
+%% 生成时间: 2026-07-19 01:42:42
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 18, 依赖边数: 68
+%% 模块数: 18, 依赖边数: 62
 
 graph TD
 
@@ -43,10 +43,10 @@ graph TD
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     src_zephyr_frontend_dashboard_app_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
     src_zephyr_frontend_dashboard_components_backtest_results_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_position_monitor_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
-    src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     src_zephyr_frontend_dashboard_components_order_book_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_trade_panel_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_position_monitor_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    src_zephyr_frontend_dashboard_components_tick_replay_py -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_order_book_py
@@ -54,8 +54,7 @@ graph TD
     scripts_tests_test_frontend_components_py -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_FRONTEND (23 条)
-    [] -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
+    %%  -> D_FRONTEND (17 条)
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
@@ -63,20 +62,15 @@ graph TD
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     [] -->|import_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
+    [] -->|import_depends| src_zephyr_frontend_dashboard_components_chart_factory_py
     [] -->|test_depends| src_zephyr_frontend_interface_base_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_app_panel_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
-    [] -->|test_depends| src_zephyr_frontend_dashboard_app_py
-    [] -->|test_depends| src_zephyr_frontend_dashboard____onents_fitness_functions_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_backtest_results_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_tick_replay_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_order_book_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_position_monitor_py
     [] -->|test_depends| src_zephyr_frontend_dashboard_components_trade_panel_py
-    [] -->|test_depends| src_zephyr_frontend_interface_base_py
-    [] -->|test_depends| src_zephyr_frontend_dashboard_app_py
-    [] -->|test_depends| src_zephyr_frontend_interface_base_py
-    [] -->|test_depends| src_zephyr_frontend_interface_base_py
     [] -->|config_depends| src_zephyr_frontend_interface_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
@@ -112,5 +106,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 24 条
-    %% 跨域入边: 23 条
+    %% 跨域入边: 17 条
     %% 跨域出边: 21 条

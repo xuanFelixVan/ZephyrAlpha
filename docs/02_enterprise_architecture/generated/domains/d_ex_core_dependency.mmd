@@ -1,7 +1,7 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-19 01:29:28
+%% 生成时间: 2026-07-19 01:42:42
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 8, 依赖边数: 36
+%% 模块数: 8, 依赖边数: 27
 
 graph TD
 
@@ -22,17 +22,8 @@ graph TD
     src_zephyr_ex_core_adapters___init___py -->|import_depends| src_zephyr_ex_core_adapters_miniqmt_broker_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %%  -> D_EX_CORE (12 条)
+    %%  -> D_EX_CORE (3 条)
     [] -->|test_depends| src_zephyr_governance_escalation_order_state_escalator_py
-    [] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    [] -->|test_depends| src_zephyr_ex_core_execution_engine_py
-    [] -->|test_depends| src_zephyr_ex_core_order_manager_py
-    [] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    [] -->|test_depends| src_zephyr_ex_core_order_manager_py
-    [] -->|test_depends| src_zephyr_ex_core_execution_engine_py
-    [] -->|test_depends| src_zephyr_ex_core_order_manager_py
-    [] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
-    [] -->|test_depends| src_zephyr_ex_core_adapters_simulation_broker_py
     [] -->|test_depends| src_zephyr_ex_core_execution_engine_py
     [] -->|test_depends| src_zephyr_ex_core_order_manager_py
     %% D_FRONTEND -> D_EX_CORE (2 条)
@@ -45,10 +36,10 @@ graph TD
     src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_BACKTEST[D_BACKTEST]
     %% D_EX_CORE -> D_GOVERNANCE (6 条)
     src_zephyr_ex_core_adapters_miniqmt_broker_py_ -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    src_zephyr_ex_core_adapters_simulation_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_execution_engine_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters___init___py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    src_zephyr_ex_core_adapters_simulation_broker_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     src_zephyr_ex_core_adapters_risk_validation_bridge_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_EX_CORE -> D_INFRASTRUCTURE (4 条)
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
@@ -68,5 +59,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 2 条
-    %% 跨域入边: 14 条
+    %% 跨域入边: 5 条
     %% 跨域出边: 20 条
