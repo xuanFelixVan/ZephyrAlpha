@@ -1,5 +1,5 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-19 02:37:48
+%% 生成时间: 2026-07-19 02:40:28
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 213, 依赖边数: 614
 
@@ -111,22 +111,22 @@ graph TD
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_governance_data_governance_akshare_provider_py -->|import_depends| src_zephyr_governance_intellig___governance_provider_base_py
+    src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| src_zephyr_governance_intellig___governance_provider_base_py
+    src_zephyr_governance_implemen___ault_experiment_pipeline_py -->|import_depends| src_zephyr_governance_engine_pipeline_base_py
+    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
+    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| src_zephyr_governance_persistence_base_repo_py
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_observab___governance_query_metrics_py
+    src_zephyr_governance_persistence_depgraph_reader_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    src_zephyr_governance_persistence_decision_graph_reader_py -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_observab___rnance_projection_engine_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     src_zephyr_governance_persistence_task_repo_py -->|import_depends| src_zephyr_governance_architec___ance_post_sync_validator_py
-    src_zephyr_governance_persistence_depgraph_reader_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_decision_graph_reader_py -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_dataflowgraph_schema_py -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| src_zephyr_governance_observab___governance_query_metrics_py
-    src_zephyr_governance_implemen___ault_experiment_pipeline_py -->|import_depends| src_zephyr_governance_engine_pipeline_base_py
-    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py
     src_zephyr_governance_strategies_strategy_registry_py -->|import_depends| src_zephyr_governance_strategies_strategy_base_py
-    src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| src_zephyr_governance_intellig___governance_provider_base_py
-    src_zephyr_governance_data_governance_akshare_provider_py -->|import_depends| src_zephyr_governance_intellig___governance_provider_base_py
-    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| src_zephyr_governance_persistence_base_repo_py
-    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
+    src_zephyr_infrastructure_a2a______governance_integration_py -->|import_depends| src_zephyr_infrastructure_a2a____n_a2a_governance_adapter_py
     scripts_generate_pathway_registry_py -->|import_depends| src_zephyr_governance_rule_patterns_py
     scripts_scaffold_py -->|import_depends| src_zephyr_governance_capability_lookup_py
     scripts_scaffold_py -->|import_depends| src_zephyr_infrastructure_registry_governance_py
@@ -139,25 +139,20 @@ graph TD
     scripts_construction_d_init_task_system_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     scripts_construction_test_event_hook_py -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     scripts_construction_test_event_hook_py -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    tests_rollback_test_concurrent_mv_guard_py -->|test_depends| scripts_git_guard_py
     tests_rollback_test_concurrency_guard_red_blue_py -->|test_depends| scripts_git_guard_py
+    tests_rollback_test_concurrent_mv_guard_py -->|test_depends| scripts_git_guard_py
     tests_task_test_task_repo_gateway_e2e_py -->|test_depends| src_zephyr_governance_persistence_task_repo_py
-    scripts_arch_guard__tools_build_ocp_manifest_py -->|config_depends| scripts_arch_guard__tools_patch_p1_paths_py
-    scripts_arch_guard__tools_inject_idempotency_py -->|config_depends| scripts_arch_guard__tools_build_ocp_manifest_py
+    scripts_arch_guard__tools_build_ocp_manifest_py -->|config_depends| scripts_arch_guard__tools_inject_idempotency_py
+    scripts_arch_guard__tools_patch_p1_paths_py -->|config_depends| scripts_arch_guard__tools_build_ocp_manifest_py
     scripts_construction_demo_a2a_chat_py -->|config_depends| scripts_construction_check_statuses_py
-    scripts_mcp_start_all_py -->|config_depends| scripts_mcp_stop_all_py
-    scripts_mcp_status_all_py -->|config_depends| scripts_mcp_start_all_py
-    scripts_mcp_generate_ide_config_py -->|config_depends| scripts_mcp_start_all_py
-    scripts_migration_governance_root_split_py -->|config_depends| scripts_migration_dm314_infra_ops_split_py
-    scripts_migration_dm311_autonomy_core_split_py -->|config_depends| scripts_migration_governance_root_split_py
+    scripts_mcp_status_all_py -->|config_depends| scripts_mcp_generate_ide_config_py
+    scripts_mcp_start_all_py -->|config_depends| scripts_mcp_status_all_py
+    scripts_mcp_stop_all_py -->|config_depends| scripts_mcp_status_all_py
+    scripts_migration_dm314_infra_ops_split_py -->|config_depends| scripts_migration_governance_root_split_py
+    scripts_migration_dm311_autonomy_core_split_py -->|config_depends| scripts_migration_dm314_infra_ops_split_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_GOVERNANCE (250 条)
-    [] -->|import_depends| src_zephyr_infrastructure_a2a____nance_governance_adapter_py
-    [] -->|import_depends| src_zephyr_governance_agent_spec_registry_py
-    [] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    [] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
-    [] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     [] -->|import_depends| src_zephyr_governance_architec___governance_path_resolver_py
     [] -->|import_depends| src_zephyr_governance_data_governance_akshare_provider_py
     [] -->|import_depends| src_zephyr_governance_capability_lookup_py
@@ -183,6 +178,11 @@ graph TD
     [] -->|import_depends| src_zephyr_governance_architec___nance_dependency_manager_py
     [] -->|import_depends| src_zephyr_governance_architec___ernance_local_first_arch_py
     [] -->|import_depends| src_zephyr_governance_financia___e_microstructure_defense_py
+    [] -->|import_depends| src_zephyr_governance_lifecycl___nance_migration_strategy_py
+    [] -->|import_depends| src_zephyr_governance_intellig___ce_multi_model_consensus_py
+    [] -->|import_depends| src_zephyr_governance_financia___vernance_oms_risk_engine_py
+    [] -->|import_depends| src_zephyr_governance_context_governance_prompt_lifecycle_py
+    [] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     %% D_BACKTEST -> D_GOVERNANCE (3 条)
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
@@ -190,10 +190,10 @@ graph TD
     %% D_EX_CORE -> D_GOVERNANCE (6 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
-    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_risk_validation_bridge_py
+    D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
     %% D_FEEDBACK_LOOP -> D_GOVERNANCE (4 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -207,22 +207,22 @@ graph TD
     %% D_GOV_AUDIT -> D_GOVERNANCE (11 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_evidence_pack_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_intellig___ernance_continuous_trust_py
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_agent_spec_registry_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_rule_patterns_py
+    D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_governance_intellig___ernance_continuous_trust_py
     %% D_GOV_CODE_QUALITY -> D_GOVERNANCE (6 条)
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_intellig___overnance_self_benchmark_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
     D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_intellig___overnance_self_benchmark_py
+    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|import_depends| src_zephyr_governance_capability_lookup_py
     %% D_GOV_DRIFT -> D_GOVERNANCE (7 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
@@ -232,21 +232,21 @@ graph TD
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     %% D_GOV_ENFORCEMENT -> D_GOVERNANCE (2 条)
-    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_capability_lookup_py
+    D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     %% D_GOV_KB -> D_GOVERNANCE (2 条)
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_KB[D_GOV_KB] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     %% D_GOV_OPS_RESILIENCE -> D_GOVERNANCE (9 条)
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intelligence_governance_self_test_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
+    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_services_adapter_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intellig___rnance_delegation_engine_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intelligence_governance_self_test_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_intellig____governance_aisg_sandbox_py
-    D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     %% D_GOV_REPAIR -> D_GOVERNANCE (1 条)
     D_GOV_REPAIR[D_GOV_REPAIR] -->|import_depends| src_zephyr_governance_intellig____governance_model_router_py
     %% D_GOV_RULE -> D_GOVERNANCE (2 条)
@@ -254,20 +254,20 @@ graph TD
     D_GOV_RULE[D_GOV_RULE] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     %% D_GOV_SCRIPTS -> D_GOVERNANCE (39 条)
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decision_graph_reader_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_capability_lookup_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_capability_lookup_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
@@ -280,16 +280,16 @@ graph TD
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_dataflowgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_rule_patterns_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
+    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
-    D_GOV_SCRIPTS[D_GOV_SCRIPTS] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     %% D_INFRA_RUNTIME -> D_GOVERNANCE (11 条)
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_depgraph_schema_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_depgraph_schema_py
-    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_services_adapter_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_infrastructure_capa___tracts_batch2_governance_py
+    D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_intellig____governance_model_router_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_services_adapter_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
@@ -297,16 +297,16 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_shared_capacity_gov___capacity_governance_loop_py
     %% D_INTEGRATION -> D_GOVERNANCE (4 条)
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
-    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_architec___governance_path_resolver_py
     D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_integration_mcp_governance_server_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_architec___governance_path_resolver_py
+    D_INTEGRATION[D_INTEGRATION] -->|import_depends| src_zephyr_governance_agent_spec_rbac_bridge_py
     %% D_INTELLIGENCE -> D_GOVERNANCE (1 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
     %% D_OPS -> D_GOVERNANCE (1 条)
     D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_services_adapter_py
     %% D_ORCHESTRATOR -> D_GOVERNANCE (3 条)
-    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_sqlite_schema_py
+    D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_persistence_task_repo_py
     %% D_PF_ALLOC -> D_GOVERNANCE (1 条)
     D_PF_ALLOC[D_PF_ALLOC] -->|import_depends| src_zephyr_governance_strategies_strategy_base_py
@@ -325,41 +325,41 @@ graph TD
     scripts_a2a_full_verification_py -->|import_depends| []
     scripts_scaffold_py -->|import_depends| []
     scripts_scaffold_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
-    scripts_construction_finalize_tasks_py -->|import_depends| []
     scripts_construction_demo_a2a_coordination_py -->|import_depends| []
+    scripts_construction_finalize_tasks_py -->|import_depends| []
     scripts_construction_d_init_task_system_py -->|import_depends| []
     scripts_construction_local_layer_daemon_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
+    scripts_construction_demo_e2e_pipeline_py -->|import_depends| []
     scripts_construction_test_event_hook_py -->|import_depends| []
-    src_zephyr_infrastructure_a2a____vernance_session_manager_py -->|config_depends| []
-    src_zephyr_infrastructure_a2a____governance_policy_engine_py -->|config_depends| []
-    src_zephyr_infrastructure_a2a____l_governance_error_codes_py -->|config_depends| []
     src_zephyr_infrastructure_a2a_____governance_audit_logger_py -->|config_depends| []
     src_zephyr_infrastructure_a2a_protocol_governance_auditor_py -->|config_depends| []
+    src_zephyr_infrastructure_a2a____vernance_session_manager_py -->|config_depends| []
+    src_zephyr_infrastructure_a2a____governance_policy_engine_py -->|config_depends| []
     src_zephyr_infrastructure_a2a_____governance__base_server_py -->|config_depends| []
-    scripts_fix_freeze_manifest_py -->|config_depends| []
-    scripts_dm90971_add_test_headers_py -->|config_depends| []
+    src_zephyr_infrastructure_a2a____l_governance_error_codes_py -->|config_depends| []
     scripts_check_naming_convention_py -->|config_depends| []
-    scripts_fix_orphan_all_py -->|config_depends| []
+    scripts_dm90971_add_test_headers_py -->|config_depends| []
+    scripts_fix_freeze_manifest_py -->|config_depends| []
     scripts_generate_manifest_py -->|config_depends| []
-    scripts_arch_guard_check_cross_plane_communication_py -->|config_depends| []
-    scripts_arch_guard_check_fe_acl_boundary_py -->|config_depends| []
-    scripts_setup_git_guard_aliases_py -->|config_depends| []
+    scripts_fix_orphan_all_py -->|config_depends| []
     scripts_arch_guard_check_acl_boundary_py -->|config_depends| []
+    scripts_arch_guard_check_cross_plane_communication_py -->|config_depends| []
+    scripts_arch_guard_check_schema_consistency_py -->|config_depends| []
+    scripts_setup_git_guard_aliases_py -->|config_depends| []
     %% D_GOVERNANCE -> D_DATA (2 条)
     src_zephyr_governance_intellig___vernance_memory_provider_py -->|import_depends| D_DATA[D_DATA]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_DATA[D_DATA]
     %% D_GOVERNANCE -> D_FUNDAMENTAL_SIGNAL (1 条)
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL]
     %% D_GOVERNANCE -> D_GOV_AUDIT (3 条)
+    src_zephyr_governance_observab___rnance_projection_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    src_zephyr_governance_observab___rnance_projection_engine_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     %% D_GOVERNANCE -> D_GOV_CODE_QUALITY (3 条)
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY]
@@ -369,42 +369,42 @@ graph TD
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOVERNANCE -> D_GOV_ENFORCEMENT (8 条)
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     src_zephyr_governance_complian___te_a6_compliance_manager_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     scripts_git_commit_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_agent_rbac_test_session_aware_stash_red_blue_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    tests_git_test_git_commit_concurrent_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_git_test_git_commit_gateway_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_git_test_git_commit_extreme_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    tests_git_test_git_commit_concurrent_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     tests_task_test_task_repo_gateway_e2e_py -->|test_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
     %% D_GOVERNANCE -> D_GOV_KB (1 条)
     scripts_kb_self_test_py -->|import_depends| D_GOV_KB[D_GOV_KB]
     %% D_GOVERNANCE -> D_GOV_OPS_RESILIENCE (12 条)
     src_zephyr_governance_agent_spec_a2a_failure_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_governance_implemen___default_security_gateway_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_services_adapter_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_services_adapter_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     src_zephyr_governance_intellig___rnance_delegation_engine_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_intelligence_governance_self_test_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_services_adapter_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_governance_services_adapter_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     %% D_GOVERNANCE -> D_GOV_RULE (4 条)
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     src_zephyr_governance_lifecycle_governance_transition_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     %% D_GOVERNANCE -> D_GOV_SCRIPTS (2 条)
     scripts_scaffold_py -->|import_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     tests_governance_generators_test_generate_gate_registry_py -->|test_depends| D_GOV_SCRIPTS[D_GOV_SCRIPTS]
     %% D_GOVERNANCE -> D_INFRASTRUCTURE (6 条)
-    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
-    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     src_zephyr_governance_adapters_risk_validation_bridge_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
+    src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_a2a_full_verification_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     scripts_construction_local_layer_daemon_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
     %% D_GOVERNANCE -> D_INFRA_A2A (6 条)
@@ -419,18 +419,18 @@ graph TD
     scripts_rollback_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     scripts_rollback_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     %% D_GOVERNANCE -> D_INFRA_RUNTIME (9 条)
-    src_zephyr_governance_persistence_database_service_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_context_governance_context_budget_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    src_zephyr_governance_persistence_database_service_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_git_guard_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_post_checkout_guard_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_construction_start_brain_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_construction_start_brain_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     tests_rollback_test_concurrency_guard_red_blue_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     %% D_GOVERNANCE -> D_INTEGRATION (5 条)
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     src_zephyr_governance_bridges_spec_auditor_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_run_ollama_exam_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_local_layer_daemon_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     scripts_construction_start_brain_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
@@ -445,10 +445,10 @@ graph TD
     scripts_run_ollama_exam_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
     %% D_GOVERNANCE -> D_OPS (4 条)
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_OPS[D_OPS]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_OPS[D_OPS]
-    src_zephyr_governance_intellig____governance_model_router_py -->|import_depends| D_OPS[D_OPS]
     src_zephyr_governance_intellig___ance_model_provider_data_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_governance_intellig____governance_model_router_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_OPS[D_OPS]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_OPS[D_OPS]
     %% D_GOVERNANCE -> D_REPORTING (1 条)
     src_zephyr_governance_observab___overnance_analytics_base_py -->|import_depends| D_REPORTING[D_REPORTING]
     %% D_GOVERNANCE -> D_RISK (2 条)
@@ -456,42 +456,42 @@ graph TD
     scripts_construction_demo_e2e_pipeline_py -->|import_depends| D_RISK[D_RISK]
     %% D_GOVERNANCE -> D_SECURITY (6 条)
     src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SECURITY[D_SECURITY]
-    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SECURITY[D_SECURITY]
     src_zephyr_governance_intellig___rnance_delegation_engine_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SECURITY[D_SECURITY]
+    src_zephyr_integration_mcp_governance_server_py -->|import_depends| D_SECURITY[D_SECURITY]
     scripts_git_commit_py -->|import_depends| D_SECURITY[D_SECURITY]
     tests_agent_rbac_test_session_aware_stash_red_blue_py -->|test_depends| D_SECURITY[D_SECURITY]
     %% D_GOVERNANCE -> D_SHARED (58 条)
-    src_zephyr_infrastructure_a2a_____governance_rate_limiter_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____ocol_governance_protocol_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____nance_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_a2a____nance_governance_adapter_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_architec___governance_path_resolver_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_architec___ance_llm_impact_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_agent_spec_registry_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_infrastructure_registry_governance_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_evidence_pack_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_capability_lookup_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_intellig____governance_aisg_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_financia___omic_transaction_manager_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_services_adapter_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_base_repo_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_governance_persistence_base_repo_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_depgraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_agent_spec_registry_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_evidence_pack_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_agent_spec_rbac_bridge_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_architec___ance_llm_impact_analyzer_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_architec___governance_path_resolver_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_bridges_alerts_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_data_governance_pricing_sync_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_data_governance_miniqmt_provider_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_governance_engine_pipeline_base_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_financia___omic_transaction_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_intellig____governance_aisg_sandbox_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_intellig___rnance_delegation_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_intellig___overnance_self_benchmark_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_observab___rnance_projection_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_observab___governance_query_metrics_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_observab___governance_query_metrics_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_database_manager_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_decisiongraph_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_base_repo_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_base_repo_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_sqlite_schema_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_governance_persistence_task_repo_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_GOVERNANCE -> D_TRADING (1 条)
     src_zephyr_governance_adapters_simulation_broker_py -->|import_depends| D_TRADING[D_TRADING]
 

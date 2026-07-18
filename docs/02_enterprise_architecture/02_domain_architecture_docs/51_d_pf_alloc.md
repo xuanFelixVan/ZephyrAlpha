@@ -76,11 +76,11 @@ graph TD
     end
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
-    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
+    src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
     D_PF_CORE -.->|导入依赖 / import_depends| src_zephyr_pf_core_default_equity_strategy_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
