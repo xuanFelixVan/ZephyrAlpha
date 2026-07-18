@@ -174,9 +174,9 @@ graph TD
     src_zephyr_orchestrator_init_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_script_runner_py
     src_zephyr_orchestrator_contracts_contract_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_contracts_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_contracts_alert_handler_py
-    src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
-    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_data_lifecycle_py
+    src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
+    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_context_bridge_py
     src_zephyr_orchestrator_fault_tolerance_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_fault_tolerance_canary_manager_py
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -256,11 +256,11 @@ graph TD
         src_zephyr_orchestrator_lifecycle_teardown_manager_py["(生产态 / production) teardown_manager.py"]
         src_zephyr_orchestrator_quality_init_py["(原型态 / prototype) quality — orchestrator quality subpackage.<br/>文件: __init__.py"]
     end
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_governance_feature_flag_py -.->|config_depends / config_depends| src_zephyr_orchestrator_governance_init_py
+    src_zephyr_orchestrator_lifecycle_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_housekeeping_py
     src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
-    src_zephyr_orchestrator_lifecycle_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_lifecycle_session_conflict_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_orchestrator_file_task_mapper_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_orchestrator_file_task_mapper_py -->|导入依赖 / import_depends| D_SHARED
@@ -389,8 +389,8 @@ graph TD
     src_zephyr_orchestrator_agent_health_monitor_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_agent_orchestrator_py
     src_zephyr_orchestrator_contracts_contract_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_contracts_contract_registry_py
     src_zephyr_orchestrator_execution_trigger_router_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_quality_blueprint_scorer_py
-    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_chaos_engine_py
+    src_zephyr_orchestrator_fault_tolerance_chaos_hooks_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_fault_tolerance_fault_types_py
     src_zephyr_orchestrator_lifecycle_state_synchronizer_py -->|导入依赖 / import_depends| src_zephyr_orchestrator_file_task_mapper_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_orchestrator_lifecycle_session_manager_py -->|导入依赖 / import_depends| D_SHARED
@@ -432,7 +432,7 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 15 个，4 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 15 个，5 条域内依赖）。
 
 ```mermaid
 graph TD
@@ -454,8 +454,9 @@ graph TD
         src_zephyr_orchestrator_resilience_init_py["(原型态 / prototype) orchestrator.resilience — auto-generated packa...<br/>文件: __init__.py"]
     end
     src_zephyr_orchestrator_contracts_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_contracts_alert_handler_py
-    src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
     src_zephyr_orchestrator_execution_context_bridge_py -.->|导入依赖 / import_depends| src_zephyr_orchestrator_execution_task_context_builder_py
+    src_zephyr_orchestrator_core_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_core_task_queue_py
+    src_zephyr_orchestrator_execution_init_py -.->|config_depends / config_depends| src_zephyr_orchestrator_execution_context_bridge_py
     src_zephyr_orchestrator_governance_feature_flag_py -.->|config_depends / config_depends| src_zephyr_orchestrator_governance_init_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_orchestrator_contracts_alert_handler_py -.->|导入依赖 / import_depends| D_SHARED

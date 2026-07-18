@@ -347,9 +347,9 @@ graph TD
         src_zephyr_feedback_loop_detectors_reliability_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_anomaly_init_py
+    src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_guard_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_drift_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_correlation_init_py
-    src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_guard_init_py
     src_zephyr_feedback_loop_detectors_init_py -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_detectors_reliability_init_py
     D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
     D_GOV_DOCS -.->|runtime / runtime| src_zephyr_feedback_loop_detectors_anomaly_init_py
