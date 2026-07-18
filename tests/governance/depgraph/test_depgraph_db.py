@@ -33,11 +33,15 @@ def test_all():
     print("\n=== 1. domains ===")
     c.execute("SELECT COUNT(*) AS cnt FROM domains")
     count = c.fetchone()["cnt"]
-    check("domains has 35 records", count == 35, f"got {count}")
+    # 治本（2026-07-19）：35 → 63（裁定#199/#200/#204 补 25 个手工域后 DB 共 63 个域）
+    check("domains has 63 records", count == 63, f"got {count}")
 
-    c.execute("SELECT * FROM domains WHERE domain_id='D-DATA-PERSISTENCE'")
+    # 治本（2026-07-19）：D-DATA-PERSISTENCE 是旧 D-XXX 格式（裁定#204 已统一为 D_XXX），
+    # 改用 D_INFRA_RUNTIME（YAML domain_name_zh=运行时集成，sync 后 DB domain_name 同步）。
+    c.execute("SELECT * FROM domains WHERE domain_id='D_INFRA_RUNTIME'")
     d = c.fetchone()
-    check("domains SELECT by id", d is not None and d["domain_name"] == "persistence")
+    check("domains SELECT by id", d is not None and d["domain_name"] == "运行时集成",
+         f"got domain_name={d['domain_name'] if d else None}")
 
     # === 2. nodes 表 (23列) ===
     print("\n=== 2. nodes (23 columns) ===")

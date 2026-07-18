@@ -11,17 +11,23 @@ tier: tier_1_governance
 status: active
 version: 0.4.0
 created: '2026-05-16'
-last_updated: '2026-07-13'
+last_updated: '2026-07-19'
 # 裁定#201: 补写 D-SIGNAL_ASHARE/FUNDAMENTAL/QUALITY registry 条目
 # 裁定#202: 补写 D_GOV_RULE registry 条目
 # 裁定#204: D-SIGNAL* 4 域改名（D-SIGNAL_ASHARE→D_ASHARE_SIGNAL, D-SIGNAL_FUNDAMENTAL→D_FUNDAMENTAL_SIGNAL, D-SIGNAL_QUALITY→D_SIGQC, D-SIGNAL→D_SIGLEGACY）
 # 裁定#200(2026-07-13修正): 14个ssot_path更新以反映D_GOVERNANCE/D_TRADING/D_FEEDBACK_LOOP域拆分后的实际物理路径（orchestrator/feedback_loop移至顶层、gov_*子域独立、audit_trail合并入gov_audit）
+# 治本(2026-07-19): domain_name_zh 字段 + 25 个手工域补 YAML 真源（domain_index 中英文化配套）
+#   - 38 个已有 entry 加 domain_name_zh（中文显示名，sync 到 domains.domain_name）
+#   - 25 个手工插入域（裁定#199/#200/#204）补 entry，使 YAML 成为全 63 域统一真源
+#   - sync_yaml_to_depgraph.py sync_functional_domain_registry 改用 domain_name_zh
+#   - DB 全部 domain_name 统一为中文，硬编码 DOMAIN_NAME_ZH 降级为测试域专用 fallback
 unique_key:
 - domain
 - subdomain
 entry_schema:
   domain: str
   subdomain: str
+  domain_name_zh: str
   ssot_module: str
   ssot_path: str
   covers: list[str]
@@ -31,6 +37,7 @@ entry_schema:
 entries:
 - domain: D_GOV_ENFORCEMENT
   subdomain: rule_enforcement
+  domain_name_zh: 规则执行
   ssot_module: MOD-GATE_ENGINE
   ssot_path: src/zephyr/gov_enforcement/rule_enforcement/
   covers:
@@ -58,6 +65,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_GOV_SCRIPTS
   subdomain: script_governance
+  domain_name_zh: 脚本治理
   ssot_module: MOD-INF-005
   ssot_path: scripts/governance/
   covers:
@@ -77,6 +85,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_DRIFT
   subdomain: drift_detection
+  domain_name_zh: 漂移检测
   ssot_module: MOD-INF-023
   ssot_path: src/zephyr/gov_drift/
   covers:
@@ -120,6 +129,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_GOV_KB
   subdomain: knowledge_base_governance
+  domain_name_zh: 知识库治理
   ssot_module: MOD-KB-001
   ssot_path: src/zephyr/gov_kb/
   covers:
@@ -141,6 +151,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOVERNANCE
   subdomain: registry_management
+  domain_name_zh: 生命周期管理
   ssot_module: MOD-INF-037
   ssot_path: architecture_model/
   covers:
@@ -159,6 +170,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_SECURITY
   subdomain: orphan_judge
+  domain_name_zh: 对抗验证
   ssot_module: MOD-INF-029
   ssot_path: src/zephyr/security/access_control/orphan_judge/
   covers:
@@ -183,6 +195,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_GOV_AUDIT
   subdomain: audit_orchestration
+  domain_name_zh: 审计追踪
   ssot_module: MOD-INF-027
   ssot_path: src/zephyr/gov_audit/
   covers:
@@ -197,6 +210,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_AUDIT
   subdomain: semantic_audit
+  domain_name_zh: 审计追踪
   ssot_module: MOD-INF-028
   ssot_path: src/zephyr/governance/semantic_audit/
   covers:
@@ -213,6 +227,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_SECURITY
   subdomain: access_control
+  domain_name_zh: 对抗验证
   ssot_module: MOD-INF-018
   ssot_path: src/zephyr/security/access_control/
   covers:
@@ -237,6 +252,7 @@ entries:
   ai_autonomy: immutable_core
 - domain: D_SECURITY_LLM
   subdomain: llm_defense
+  domain_name_zh: LLM防御
   ssot_module: MOD-LLM_SECURITY
   ssot_path: src/zephyr/security/llm_defense/
   covers:
@@ -260,6 +276,7 @@ entries:
   ai_autonomy: immutable_core
 - domain: D_SECURITY
   subdomain: adversarial_validation
+  domain_name_zh: 对抗验证
   ssot_module: MOD-INF-030
   ssot_path: src/zephyr/security/adversarial_validation/
   covers:
@@ -285,6 +302,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_INTEGRATION
   subdomain: pipeline_routing
+  domain_name_zh: 管线路由
   ssot_module: MOD-INF-009
   ssot_path: src/zephyr/integration/
   covers:
@@ -305,6 +323,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_AUTONOMY_CORE
   subdomain: agent_lifecycle
+  domain_name_zh: 自治核心
   ssot_module: MOD-INF-019
   ssot_path: src/zephyr/autonomy_core/
   covers:
@@ -325,6 +344,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_AUTONOMY_CORE
   subdomain: agent_communication
+  domain_name_zh: 自治核心
   ssot_module: MOD-INF-025
   ssot_path: src/zephyr/autonomy_core/
   covers:
@@ -344,6 +364,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_RUNTIME
   subdomain: runtime_core
+  domain_name_zh: 运行时集成
   ssot_module: MOD-INF-035
   ssot_path: src/zephyr/infra_runtime/
   covers:
@@ -374,6 +395,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INTELLIGENCE
   subdomain: context_management
+  domain_name_zh: 上下文管理
   ssot_module: MOD-CONTEXT_ENGINE
   ssot_path: src/zephyr/intelligence/
   covers:
@@ -403,6 +425,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_REPAIR
   subdomain: rollback
+  domain_name_zh: 治理修复
   ssot_module: MOD-INF-021
   ssot_path: src/zephyr/governance/
   covers:
@@ -425,6 +448,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_AUTONOMY_PERM
   subdomain: budget_enforcement
+  domain_name_zh: 自治保护
   ssot_module: MOD-INF-024
   ssot_path: src/zephyr/autonomy_perm/
   covers:
@@ -447,6 +471,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_AUTONOMY_PERM
   subdomain: escalation
+  domain_name_zh: 自治保护
   ssot_module: MOD-INF-022
   ssot_path: src/zephyr/autonomy_perm/
   covers:
@@ -485,6 +510,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_GOV_AUDIT
   subdomain: audit-trail
+  domain_name_zh: 审计追踪
   ssot_module: MOD-INF-020
   ssot_path: src/zephyr/gov_audit/
   covers:
@@ -509,6 +535,7 @@ entries:
   ai_autonomy: immutable_core
 - domain: D_INFRA_OPS
   subdomain: asset-inventory
+  domain_name_zh: 基础设施运维
   ssot_module: MOD-INF-026
   ssot_path: src/zephyr/infra_ops/
   covers:
@@ -529,6 +556,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_OPS
   subdomain: telemetry
+  domain_name_zh: 反馈循环
   ssot_module: MOD-INF-015
   ssot_path: src/zephyr/infrastructure/system_telemetry/
   covers:
@@ -547,6 +575,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_OPS
   subdomain: feedback-loop
+  domain_name_zh: 反馈循环
   ssot_module: MOD-FEEDBACK_LOOP
   ssot_path: src/zephyr/feedback_loop/
   covers:
@@ -579,6 +608,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_OPS
   subdomain: capacity-assurance
+  domain_name_zh: 基础设施运维
   ssot_module: MOD-INF-001
   ssot_path: src/zephyr/infra_ops/
   covers:
@@ -595,6 +625,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_RUNTIME
   subdomain: persistence
+  domain_name_zh: 运行时集成
   ssot_module: SH-DB-001
   ssot_path: src/zephyr/data/persistence/
   covers:
@@ -626,6 +657,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_KNOWLEDGE
   subdomain: vector_storage
+  domain_name_zh: 知识管理
   ssot_module: MOD-INF-011
   ssot_path: src/zephyr/knowledge/
   covers:
@@ -653,6 +685,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_KNOWLEDGE
   subdomain: knowledge_management
+  domain_name_zh: 知识管理
   ssot_module: MOD-KB-001
   ssot_path: src/zephyr/knowledge/
   covers:
@@ -674,6 +707,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_ML_TRAIN
   subdomain: model_evaluation
+  domain_name_zh: 训练
   ssot_module: MOD-INF-036
   ssot_path: src/zephyr/intelligence/model_evaluation/
   covers:
@@ -690,6 +724,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_ML_TRAIN
   subdomain: model_profiling
+  domain_name_zh: 训练
   ssot_module: MOD-INF-034
   ssot_path: src/zephyr/intelligence/model_profiling/
   covers:
@@ -705,6 +740,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_SHARED
   subdomain: shared_services
+  domain_name_zh: 共享服务
   ssot_module: MOD-INF-016
   ssot_path: src/zephyr/shared/shared_services/
   covers:
@@ -744,6 +780,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_OPS
   subdomain: resource_optimization
+  domain_name_zh: 基础设施运维
   ssot_module: MOD-RESOURCE_OPTIMIZATION_ENGINE
   ssot_path: src/zephyr/infra_ops/
   covers:
@@ -766,6 +803,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_RUNTIME
   subdomain: runtime_integration
+  domain_name_zh: 运行时集成
   ssot_module: MOD-INF-002
   ssot_path: src/zephyr/infra_runtime/
   covers:
@@ -781,6 +819,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INTEGRATION_GATEWAY
   subdomain: mcp_servers
+  domain_name_zh: 集成网关
   ssot_module: MOD-INF-013
   ssot_path: src/zephyr/integration/mcp/
   covers:
@@ -804,6 +843,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOVERNANCE
   subdomain: task_management
+  domain_name_zh: 生命周期管理
   ssot_module: MOD-TASK_SYSTEM
   ssot_path: src/zephyr/governance/
   covers:
@@ -820,6 +860,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOVERNANCE
   subdomain: lifecycle_management
+  domain_name_zh: 生命周期管理
   ssot_module: MOD-INF-016
   ssot_path: src/zephyr/governance/
   covers:
@@ -835,6 +876,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_SCRIPTS
   subdomain: code_dedup
+  domain_name_zh: 脚本治理
   ssot_module: MOD-INF-017
   ssot_path: src/zephyr/gov_code_quality/code_dedup/
   covers:
@@ -851,6 +893,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_A2A
   subdomain: a2a_communication
+  domain_name_zh: A2A通信
   ssot_module: MOD-INF-025
   ssot_path: src/zephyr/infrastructure/a2a_protocol/
   covers:
@@ -876,6 +919,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_INFRA_RECOVERY
   subdomain: rollback_recovery
+  domain_name_zh: 回滚恢复
   ssot_module: MOD-INF-021
   ssot_path: src/zephyr/infrastructure/rollback/
   covers:
@@ -904,6 +948,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_INFRA_TELEMETRY
   subdomain: observability_profiling
+  domain_name_zh: 可观测性
   ssot_module: MOD-INF-015
   ssot_path: src/zephyr/infrastructure/system_telemetry/
   covers:
@@ -927,6 +972,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_AUDITTEST
   subdomain: audit_test_suite
+  domain_name_zh: 审计测试套件
   ssot_module: MOD-INF-027
   ssot_path: tests/
   covers:
@@ -945,6 +991,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_DOCS
   subdomain: architecture_docs
+  domain_name_zh: 架构文档治理
   ssot_module: MOD-INF-037
   ssot_path: docs/02_enterprise_architecture/
   covers:
@@ -964,6 +1011,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_GOV_CODE_QUALITY
   subdomain: code_quality_governance
+  domain_name_zh: 代码质量治理
   ssot_module: MOD-INF-024
   ssot_path: src/zephyr/gov_code_quality/code_dedup/
   covers:
@@ -985,6 +1033,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_OPS_RESILIENCE
   subdomain: ops_resilience_governance
+  domain_name_zh: 运维弹性治理
   ssot_module: MOD-INF-022
   ssot_path: src/zephyr/governance/ops_governance/
   covers:
@@ -1008,6 +1057,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_FBL_VERIFICATION
   subdomain: feedback_verification
+  domain_name_zh: 反馈验证
   ssot_module: MOD-FEEDBACK_LOOP
   ssot_path: src/zephyr/feedback_loop/verifiers/
   covers:
@@ -1030,6 +1080,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_ASHARE_SIGNAL
   subdomain: ashare_signal
+  domain_name_zh: A股特色信号
   ssot_module: MOD-INF-038
   ssot_path: src/zephyr/signal_ashare/
   covers:
@@ -1044,6 +1095,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_FUNDAMENTAL_SIGNAL
   subdomain: fundamental_signal
+  domain_name_zh: 基本面信号
   ssot_module: MOD-INF-039
   ssot_path: src/zephyr/signal_fundamental/
   covers:
@@ -1062,6 +1114,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_SIGQC
   subdomain: signal_quality
+  domain_name_zh: 信号质量控制
   ssot_module: MOD-INF-040
   ssot_path: src/zephyr/signal_quality/
   covers:
@@ -1077,6 +1130,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_GOV_RULE
   subdomain: rule_governance
+  domain_name_zh: 规则治理
   ssot_module: MOD-INF-041
   ssot_path: src/zephyr/gov_rule/
   covers:
@@ -1092,6 +1146,7 @@ entries:
   ai_autonomy: human_gated
 - domain: D_FEEDBACK_LOOP
   subdomain: feedback_loop_engine
+  domain_name_zh: 反馈循环引擎
   ssot_module: MOD-FEEDBACK_LOOP
   ssot_path: src/zephyr/feedback_loop/
   covers:
@@ -1125,6 +1180,7 @@ entries:
   ai_autonomy: ai_modifiable
 - domain: D_ORCHESTRATOR
   subdomain: agent_orchestrator
+  domain_name_zh: 代理编排器
   ssot_module: MOD-INF-039
   ssot_path: src/zephyr/orchestrator/
   covers:
@@ -1153,6 +1209,7 @@ entries:
 # 补注册: D_BEHAVIORAL_AUDIT（drift_detector_core 7-file subset, MOD-INF-023）
 - domain: D_BEHAVIORAL_AUDIT
   subdomain: drift_detector_core
+  domain_name_zh: 行为审计
   ssot_module: MOD-INF-023
   ssot_path: src/zephyr/gov_drift/detector_core/
   covers:
@@ -1169,6 +1226,7 @@ entries:
 # 补注册: D_COMPLIANCE（合规层, MOD-L10-001）
 - domain: D_COMPLIANCE
   subdomain: compliance_gate
+  domain_name_zh: 合规
   ssot_module: MOD-L10-001
   ssot_path: src/zephyr/compliance/
   covers:
@@ -1188,6 +1246,7 @@ entries:
 # 补注册: D_DATA（数据接入层, MOD-L00-004）
 - domain: D_DATA
   subdomain: data_source_integrator
+  domain_name_zh: 数据接入层
   ssot_module: MOD-L00-004
   ssot_path: src/zephyr/data/
   covers:
@@ -1205,6 +1264,7 @@ entries:
 # 补注册: D_INFRASTRUCTURE（跨层契约基础设施, MOD-INF-016）
 - domain: D_INFRASTRUCTURE
   subdomain: shared_contracts
+  domain_name_zh: 跨层契约基础设施
   ssot_module: MOD-INF-016
   ssot_path: src/zephyr/shared/contracts/
   covers:
@@ -1220,3 +1280,409 @@ entries:
   - cross layer contracts
   stability: stable
   ai_autonomy: human_gated
+
+# 治本(2026-07-19): 以下 25 个域原由 apply_depgraph.py --insert-domain 手工插入
+# (裁定#199/#200/#204)，DB domain_name 已是中文但无 YAML 真源。此处补 YAML 真源，
+# 使 functional_domain_registry.yaml 成为全 63 域的统一真源。
+# sync 的 ON CONFLICT 子句只更新 domain_name/description/ssot_path/modification_permission,
+# 不动 layer_id/lifecycle/max_modules/build_status——故 DB 手工设的元数据会被保留。
+
+- domain: D_ALT_DATA
+  subdomain: alt_data
+  domain_name_zh: 另类数据
+  ssot_module: MOD-ALT_DATA
+  ssot_path: src/zephyr/alt_data/
+  covers:
+  - 另类数据，负责非传统金融数据的采集、清洗和标准化
+  aliases:
+  - alt_data
+  - 另类数据
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_BACKTEST
+  subdomain: backtest
+  domain_name_zh: 回测
+  ssot_module: MOD-BT-001
+  ssot_path: src/zephyr/backtest/
+  covers:
+  - 回测，负责历史数据回测、回测引擎和回测报告
+  aliases:
+  - backtest
+  - 回测
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_CROSS_ASSET
+  subdomain: cross_asset
+  domain_name_zh: 跨资产
+  ssot_module: MOD-CROSS_ASSET
+  ssot_path: src/zephyr/cross_asset/
+  covers:
+  - 跨资产，负责多资产类别投资和跨资产套利策略
+  aliases:
+  - cross_asset
+  - 跨资产
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_DATA_ENG
+  subdomain: data_eng
+  domain_name_zh: 数据工程
+  ssot_module: MOD-DATA_ENG
+  ssot_path: src/zephyr/data_eng/
+  covers:
+  - 数据工程，负责数据管道编排、ETL 流程和数据质量监控
+  aliases:
+  - data_eng
+  - 数据工程
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_DATA_GOV
+  subdomain: data_governance
+  domain_name_zh: 数据治理
+  ssot_module: MOD-DATA_GOV
+  ssot_path: src/zephyr/data_governance/
+  covers:
+  - 数据治理，负责数据标准、元数据管理和数据生命周期治理
+  aliases:
+  - data_governance
+  - 数据治理
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_DATA_SEC
+  subdomain: data_security
+  domain_name_zh: 数据安全与契约
+  ssot_module: MOD-DATA_SEC
+  ssot_path: src/zephyr/data_security/
+  covers:
+  - 数据安全与契约，负责数据访问控制、加密和跨层契约校验
+  aliases:
+  - data_security
+  - 数据安全与契约
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_DIGITAL_TWIN
+  subdomain: digital_twin
+  domain_name_zh: 数字孪生
+  ssot_module: MOD-DIGITAL_TWIN
+  ssot_path: src/zephyr/digital_twin/
+  covers:
+  - 数字孪生，负责市场状态镜像、组合模拟和场景推演
+  aliases:
+  - digital_twin
+  - 数字孪生
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_EXEC_SIM
+  subdomain: execution_simulation
+  domain_name_zh: 执行仿真
+  ssot_module: MOD-EXEC_SIM
+  ssot_path: src/zephyr/execution_simulation/
+  covers:
+  - 执行仿真，负责执行过程仿真、滑点模拟和冲击成本建模
+  aliases:
+  - execution_simulation
+  - 执行仿真
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_EX_CORE
+  subdomain: ex_core
+  domain_name_zh: 执行核心
+  ssot_module: MOD-INF-022
+  ssot_path: src/zephyr/ex_core/
+  covers:
+  - 执行核心，负责订单执行引擎、执行策略和执行管理
+  aliases:
+  - ex_core
+  - 执行核心
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_EX_SOR
+  subdomain: ex_sor
+  domain_name_zh: 执行路由
+  ssot_module: MOD-EX_SOR
+  ssot_path: src/zephyr/ex_sor/
+  covers:
+  - 执行路由，负责订单路由、智能拆单和执行场所选择
+  aliases:
+  - ex_sor
+  - 执行路由
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_FACTOR
+  subdomain: factor
+  domain_name_zh: 因子
+  ssot_module: MOD-INF-002
+  ssot_path: src/zephyr/factor/
+  covers:
+  - 因子，负责因子计算、因子库管理和因子评价
+  aliases:
+  - factor
+  - 因子
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_FBL_DETECTORS
+  subdomain: detectors
+  domain_name_zh: 反馈检测器
+  ssot_module: MOD-FEEDBACK_LOOP
+  ssot_path: src/zephyr/feedback_loop/detectors/
+  covers:
+  - 反馈检测器，负责异常检测、漂移检测、反馈信号检测和可靠性监控
+  aliases:
+  - detectors
+  - 反馈检测器
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_FBL_DIAGNOSERS
+  subdomain: diagnosers
+  domain_name_zh: 反馈诊断器
+  ssot_module: MOD-FEEDBACK_LOOP
+  ssot_path: src/zephyr/feedback_loop/diagnosers/
+  covers:
+  - 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理
+  aliases:
+  - diagnosers
+  - 反馈诊断器
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_FRONTEND
+  subdomain: frontend
+  domain_name_zh: 前端
+  ssot_module: MOD-L08-001
+  ssot_path: src/zephyr/frontend/
+  covers:
+  - 前端，负责用户界面展示、交互可视化和前端状态管理
+  aliases:
+  - frontend
+  - 前端
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_MKT_DATA
+  subdomain: market_data
+  domain_name_zh: 行情数据
+  ssot_module: MOD-L00-002
+  ssot_path: src/zephyr/market_data/
+  covers:
+  - 行情数据，负责市场行情数据的采集、分发和订阅管理
+  aliases:
+  - market_data
+  - 行情数据
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_ML_SERVE
+  subdomain: ml_serve
+  domain_name_zh: 推理
+  ssot_module: MOD-ML_SERVE
+  ssot_path: src/zephyr/ml_serve/
+  covers:
+  - 推理，负责模型部署、在线推理和模型服务管理
+  aliases:
+  - ml_serve
+  - 推理
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_PF_ALLOC
+  subdomain: pf_alloc
+  domain_name_zh: 组合分配
+  ssot_module: MOD-INF-016
+  ssot_path: src/zephyr/pf_alloc/
+  covers:
+  - 组合分配，负责资产配置、权重分配和再平衡
+  aliases:
+  - pf_alloc
+  - 组合分配
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_PF_CORE
+  subdomain: pf_core
+  domain_name_zh: 组合核心
+  ssot_module: MOD-L05-001
+  ssot_path: src/zephyr/pf_core/
+  covers:
+  - 组合核心，负责投资组合构建、持仓管理和组合优化
+  aliases:
+  - pf_core
+  - 组合核心
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_POSITION
+  subdomain: position
+  domain_name_zh: 仓位管理
+  ssot_module: MOD-INF-022
+  ssot_path: src/zephyr/position/
+  covers:
+  - 仓位管理，负责持仓跟踪、仓位计算和盈亏分析
+  aliases:
+  - position
+  - 仓位管理
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_REPORTING
+  subdomain: reporting
+  domain_name_zh: 报告
+  ssot_module: MOD-L07-001
+  ssot_path: src/zephyr/reporting/
+  covers:
+  - 报告，负责投资报告、风险报告和合规报告的生成与分发
+  aliases:
+  - reporting
+  - 报告
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L1_foundation, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_RISK
+  subdomain: risk
+  domain_name_zh: 风控
+  ssot_module: MOD-INF-002
+  ssot_path: src/zephyr/risk/
+  covers:
+  - 风控，负责风险指标计算、风险限额管理和风险预警
+  aliases:
+  - risk
+  - 风控
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_SELL_DECISION
+  subdomain: sell_decision
+  domain_name_zh: 卖出决策
+  ssot_module: MOD-SELL_DECISION
+  ssot_path: src/zephyr/sell_decision/
+  covers:
+  - 卖出决策，负责卖出信号生成、卖出时机判断和退出策略
+  aliases:
+  - sell_decision
+  - 卖出决策
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=prototype, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_SIGLEGACY
+  subdomain: signal_fundamental
+  domain_name_zh: 信号遗留设计态
+  ssot_module: MOD-TBD-SIGLEGACY
+  ssot_path: src/zephyr/signal_fundamental/
+  covers:
+  - 信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划
+  aliases:
+  - signal_fundamental
+  - 信号遗留设计态
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=未分类, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_SIMULATION
+  subdomain: simulation
+  domain_name_zh: 仿真
+  ssot_module: MOD-L13-001
+  ssot_path: src/zephyr/simulation/
+  covers:
+  - 仿真，负责市场仿真、模拟撮合和仿真环境管理
+  aliases:
+  - simulation
+  - 仿真
+  stability: plastic
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=design_only, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
+
+- domain: D_TRADING
+  subdomain: trading
+  domain_name_zh: 交易运营
+  ssot_module: MOD-TRADING-001
+  ssot_path: src/zephyr/trading/
+  covers:
+  - 交易运营，负责交易生命周期管理、订单状态和成交处理
+  aliases:
+  - trading
+  - 交易运营
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
+  # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+

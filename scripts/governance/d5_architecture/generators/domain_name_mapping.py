@@ -3,14 +3,20 @@
 """
 功能域中文名称映射表 / Functional Domain Chinese Name Mapping
 
-真源优先级（治本 v2.0，2026-06-29）：
-1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一）
-2. DOMAIN_NAME_ZH 硬编码映射表（fallback，db 不可用时使用）
+真源优先级（治本 v2.2，2026-07-19，domain_index 中英文化配套完成）：
+1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——已由 sync_yaml_to_depgraph.py
+   从 functional_domain_registry.yaml 的 domain_name_zh 字段同步为中文）
+2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用，测试域专用）
 
 治本历史：
 - v1.0：硬编码映射表作真源（绕过 db domain_name 英文/中文不一致问题）
 - v2.0：apply_depgraph.py --update-domain-name 统一 db domain_name 为中文后，
-  改为从 db 动态加载（真源归一），硬编码降为 fallback（向后兼容 + db 不可用兜底）
+  改为从 db 动态加载（真源归一），硬编码降为 fallback
+- v2.1（2026-07-19 上午）：DB 仍是 63 个英文 subdomain 值（非先前以为的 38 英文+25 中文），
+  domain_index 中英文化需要硬编码作权威中文真源，故反转优先级为硬编码优先
+- v2.2（2026-07-19 下午）：sync_yaml_to_depgraph.py 改用 domain_name_zh 后跑 sync，
+  DB 全 63 域 domain_name 已统一为中文（验证：ON CONFLICT 仅更 5 列，layer_id/lifecycle/
+  max_modules/build_status/domain_group 5 个关键字段无漂移）。再次反转为 DB 优先（治本完成）。
 
 用法 / Usage:
     from domain_name_mapping import get_domain_name_zh
@@ -68,6 +74,8 @@ DOMAIN_NAME_ZH = {
     "D_FEEDBACK_LOOP": "反馈循环引擎",
     "D_ORCHESTRATOR": "代理编排器",
     "D_FBL_VERIFICATION": "反馈验证",
+    "D_FBL_DETECTORS": "反馈检测器",
+    "D_FBL_DIAGNOSERS": "反馈诊断器",
     "D_REPORTING": "报告",
     "D_SECURITY": "对抗验证",
     "D_SECURITY_LLM": "LLM防御",
@@ -126,6 +134,10 @@ DOMAIN_NAME_ZH = {
     "D_GOV_SCRIPTS": "脚本治理",
     "D_GOV_CODE_QUALITY": "代码质量治理",
     "D_GOV_OPS_RESILIENCE": "运维弹性治理",
+
+    # 未分类（DB layer_id 为 NULL 或未归类的手工插入域，裁定#199/#200/#204）
+    "D_DATA": "数据接入层",
+    "D_INFRASTRUCTURE": "跨层契约基础设施",
 
     # 测试域（测试域不插入生产 depgraph (PostgreSQL)，仅硬编码 fallback 维护）
     "D-T3-W0": "测试域T3-0",
@@ -222,6 +234,10 @@ DOMAIN_NAME_EN: dict[str, str] = {
     "D_GOV_SCRIPTS": "Script Governance",
     "D_GOV_CODE_QUALITY": "Code Quality Governance",
     "D_GOV_OPS_RESILIENCE": "Ops Resilience Governance",
+
+    # 未分类（DB layer_id 为 NULL 或未归类的手工插入域）
+    "D_DATA": "Data Access Layer",
+    "D_INFRASTRUCTURE": "Cross-Layer Contract Infrastructure",
 }
 
 # 域ID → 中文功能简介映射（用于域文档标题下方的功能简介行）
@@ -308,6 +324,10 @@ DOMAIN_DESC_ZH: dict[str, str] = {
     "D_GOV_SCRIPTS": "脚本治理，负责脚本生命周期管理和脚本质量门禁",
     "D_GOV_CODE_QUALITY": "代码质量治理，负责代码去重引擎、函数重复检测、AST语义分析和提交门禁引擎",
     "D_GOV_OPS_RESILIENCE": "运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议",
+
+    # 未分类（DB layer_id 为 NULL 或未归类的手工插入域，裁定#199/#200/#204）
+    "D_DATA": "数据接入层，负责数据源接入、数据集成和数据标准化",
+    "D_INFRASTRUCTURE": "跨层契约基础设施，负责跨层契约定义、共享契约管理和契约校验",
 }
 
 
@@ -376,25 +396,26 @@ def preload_domain_names() -> dict[str, str]:
 
 
 def get_domain_name_zh(domain_id: str, fallback: str = "") -> str:
-    """获取域的中文名称（动态加载 + 硬编码 fallback 双层）。
+    """获取域的中文名称（DB 优先 + 硬编码 fallback 双层）。
 
-    真源优先级：
-    1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一）
-    2. DOMAIN_NAME_ZH 硬编码映射表（fallback）
+    真源优先级（治本 v2.2，2026-07-19，domain_index 中英文化配套完成）：
+    1. depgraph (PostgreSQL) domains.domain_name（动态加载，真源唯一——
+       已由 sync_yaml_to_depgraph.py 从 YAML 的 domain_name_zh 字段同步为中文）
+    2. DOMAIN_NAME_ZH 硬编码映射表（fallback：DB 不可用时使用，测试域专用）
     3. fallback 参数或 domain_id 本身
 
     Args:
         domain_id: 域ID，如 "D_TRADING"
-        fallback: db 和硬编码都没有时的回退值（通常已无意义，保留向后兼容）
+        fallback: db 和硬编码都没有时的回退值
 
     Returns:
         中文名称字符串
     """
-    # 优先从 db 动态加载（真源）
+    # v2.2：优先从 db 动态加载（真源——sync 后全 63 域 domain_name 已统一为中文）
     db_names = _load_domain_names_from_db()
     if domain_id in db_names:
         return db_names[domain_id]
-    # 回退到硬编码映射表（db 不可用或测试域）
+    # 回退到硬编码映射表（db 不可用或测试域 D-T3-*）
     return DOMAIN_NAME_ZH.get(domain_id, fallback or domain_id)
 
 

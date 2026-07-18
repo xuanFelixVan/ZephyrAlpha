@@ -166,9 +166,11 @@ def generate_domain_index() -> str:
             safe_name = d["domain_id"].replace("-", "_").lower()
             number = numbering_map.get(d["domain_id"], 0)
             if number:
-                doc_link = f"[{number:02d}_{safe_name}.md]({number:02d}_{safe_name}.md)"
+                # 治本（2026-07-19）：加 📄 图标让链接视觉更明显，点击跳转到对应域文档
+                doc_link = f"[📄 {number:02d}_{safe_name}.md]({number:02d}_{safe_name}.md)"
             else:
-                doc_link = f"[{safe_name}.md](未编号)"
+                # 未编号域：无对应文档，纯文本提示（修复原 (未编号) 断链 bug）
+                doc_link = "— 未编号"
             lines.append(
                 f"| {d['domain_id']} | {get_domain_name_zh(d['domain_id'], d['domain_name'])} / {get_domain_name_en(d['domain_id'])} | {d['actual_nodes']} | "
                 f"{d['production_count']} | {d['design_count']} | {d['prototype_count']} | "
