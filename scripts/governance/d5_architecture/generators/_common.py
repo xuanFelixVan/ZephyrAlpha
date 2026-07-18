@@ -1,4 +1,4 @@
-# [BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/_working/architecture_diagram_construction_plan.md | §generator-common
+# [BLUEPRINT] MOD-GOV_COMMON | docs/_working/architecture_diagram_construction_plan.md | §generator-common
 # [MODULE] scripts.governance.d5_architecture.generators._common
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] (none — pure stdlib)

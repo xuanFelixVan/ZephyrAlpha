@@ -1,4 +1,4 @@
-# [BLUEPRINT] GOV-076 | docs/03_modules/_domain_governance/blueprint.md | §3.9
+# [BLUEPRINT] MOD-GOV_GATE_CACHE | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] scripts.governance.observability.gate_cache
 # [DOMAIN] D_OPS
 # [DEPENDENCIES]
