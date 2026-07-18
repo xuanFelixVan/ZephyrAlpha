@@ -1,7 +1,7 @@
 %% D_INTEGRATION 域全景依赖图
-%% 生成时间: 2026-07-19 02:04:26
+%% 生成时间: 2026-07-19 02:08:49
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 72, 依赖边数: 346
+%% 模块数: 72, 依赖边数: 349
 
 graph TD
 
@@ -195,6 +195,10 @@ graph TD
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_ollama_chat_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_integration_local_model_local_model_scheduler_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_contracts_runtime_types_py
+    %% D_GOV_DOCS -> D_INTEGRATION (3 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_shared_contracts_protocols_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_integration_mcp_resource_provider_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|contract| src_zephyr_integration_mcp_resource_provider_py
     %% D_GOV_DRIFT -> D_INTEGRATION (1 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| src_zephyr_shared_contracts_protocols_py
     %% D_GOV_ENFORCEMENT -> D_INTEGRATION (1 条)
@@ -317,5 +321,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 66 条
-    %% 跨域入边: 177 条
+    %% 跨域入边: 180 条
     %% 跨域出边: 103 条
