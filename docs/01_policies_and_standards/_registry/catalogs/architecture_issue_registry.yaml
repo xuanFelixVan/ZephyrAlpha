@@ -3291,3 +3291,33 @@ entries:
   related_adjudication: '#ARCH-DEP-001, #ARCH-FRONTMATTER-STATE-001, 裁定#207, 裁定#209, ARCH-061, FP-ISO.4C'
   created: '2026-07-18'
   last_updated: '2026-07-18'
+- issue_id: '#ARCH-DI-SEAM-001'
+  title: DI seam 静态门禁（P1-2 跨切面依赖注入接缝检测）
+  severity: P2中
+  category: governance_gate
+  adjudication: |
+    问题背景：
+    P1-2 治本：跨切面依赖注入（DI）接缝缺乏静态检测，ClassDef __init__ 方法
+    硬编码外部依赖（无 Protocol/ABC/Interface 类型注解参数、无 `| None = None`
+    可注入默认值）时无法被静态扫描发现，导致模块间耦合度隐性增长，违反 DI seam 原则。
+
+    裁定（WARNING 级过渡期）：
+    (1) 在 generate_project_depgraph.py 新增 _validate_di_seam() 函数，AST 扫描
+        src/zephyr/**/*.py 的 ClassDef __init__ 方法，检测缺少可注入参数的类。
+    (2) 输出级别 WARNING（非阻断，sys.exit 仍 0）：存量代码可能违规，过渡期不阻断；
+        待存量清理后可升级为 ERROR。
+    (3) 豁免清单真源：capability_canonical_file_registry.yaml 的 di_seam_exemptions
+        顶层字段（list of {module_path, reason, created}），_validate_di_seam() 动态
+        加载（非硬编码，符合向内收原则）。
+    (4) 误报避免：跳过 @dataclass（字段注入）、Protocol/ABC 子类（接口定义）、
+        *args/**kwargs-only __init__（动态签名）。
+    (5) 首版豁免清单 3 条：AutoRuntimeCore（P0-5 LSG DI seam 标杆，已有 DI 但 AST
+        模式不匹配）、AdmissionController、AgentOrchestrator。
+
+    配套 P1-1：AGENTS.md §7 新增"测试断言 SSoT 派生规则"bullet，禁止测试断言
+    硬编码派生计数/集合/字面量，MUST 从 SSoT 真源动态派生（本 commit 同步落地）。
+  fix_phase: Phase 1 已完成（本 commit 落地 _validate_di_seam + AGENTS.md §7 P1-1 规则 + 2 registry 登记）
+  status: decided
+  related_adjudication: 'P1-2, P1-1'
+  created: '2026-07-18'
+  last_updated: '2026-07-18'
