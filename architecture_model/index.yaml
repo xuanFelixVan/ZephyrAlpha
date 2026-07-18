@@ -225,9 +225,6 @@ domains:
 - id: D_GOV_ENFORCEMENT
   name: rule_enforcement
   layer_id: L2_domain
-- id: D_GOV_KB
-  name: knowledge_base_governance
-  layer_id: L2_domain
 - id: D_GOV_OPS_RESILIENCE
   name: ops_resilience_governance
   layer_id: L1_foundation
