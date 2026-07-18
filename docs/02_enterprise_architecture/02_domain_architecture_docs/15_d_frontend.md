@@ -130,6 +130,8 @@ graph TD
     scripts_tests_test_frontend_components_py -.->|导入依赖 / import_depends| src_zephyr_frontend_dashboard_components_order_book_py
     D_BACKTEST["(设计态 / design) D_BACKTEST"]
     src_zephyr_frontend_dashboard_components_backtest_results_py_1 -.->|import / import| D_BACKTEST
+    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
+    src_zephyr_frontend_dashboard_components_chart_factory_py_1 -.->|runtime / runtime| D_GOV_DOCS
     src_zephyr_frontend_dashboard_components_tick_replay_py_1 -.->|导入依赖 / import_depends| D_BACKTEST
     D_GOVERNANCE["(设计态 / design) D_GOVERNANCE"]
     src_zephyr_frontend_dashboard_components_tick_replay_py_1 -.->|导入依赖 / import_depends| D_GOVERNANCE
@@ -146,8 +148,6 @@ graph TD
     src_zephyr_frontend_dashboard_app_panel_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_TRADING["(生产态 / production) D_TRADING"]
     src_zephyr_frontend_dashboard_components_trade_panel_py -->|导入依赖 / import_depends| D_TRADING
-    D_GOV_DOCS["(设计态 / design) D_GOV_DOCS"]
-    src_zephyr_frontend_dashboard_components_chart_factory_py_1 -.->|runtime / runtime| D_GOV_DOCS
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -155,7 +155,7 @@ graph TD
     class src_zephyr_frontend_dashboard_app_py,src_zephyr_frontend_dashboard_app_panel_py,src_zephyr_frontend_dashboard_components_backtest_results_py,src_zephyr_frontend_dashboard_components_fitness_functions_py,src_zephyr_frontend_dashboard_components_order_book_py,src_zephyr_frontend_dashboard_components_position_monitor_py,src_zephyr_frontend_dashboard_components_tick_replay_py,src_zephyr_frontend_dashboard_components_trade_panel_py,src_zephyr_frontend_interface_base_py production
     class scripts_tests_test_frontend_components_py,src_zephyr_frontend_dashboard_components_backtest_performance_py,src_zephyr_frontend_dashboard_components_backtest_results_py_1,src_zephyr_frontend_dashboard_components_chart_factory_py,src_zephyr_frontend_dashboard_components_chart_factory_py_1,src_zephyr_frontend_dashboard_components_order_book_py_1,src_zephyr_frontend_dashboard_components_position_monitor_py_1,src_zephyr_frontend_dashboard_components_tick_replay_py_1,src_zephyr_frontend_dashboard_components_trade_panel_py_1 design
     class D_SHARED,D_FEEDBACK_LOOP,D_TRADING external_prod
-    class D_BACKTEST,D_GOVERNANCE,D_EX_CORE,D_GOV_DOCS external_design
+    class D_BACKTEST,D_GOV_DOCS,D_GOVERNANCE,D_EX_CORE external_design
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
