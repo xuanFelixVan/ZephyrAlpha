@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-18T19:20:55Z
+# 自动生成于 2026-07-18T19:26:39Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T19:20:55Z'
+generated_at: '2026-07-18T19:26:39Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 345
+total_scripts: 346
 with_manifest: 309
-missing_manifest: 36
+missing_manifest: 37
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 18
+  governance: 19
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -147,7 +147,7 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+  description: 架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
@@ -4220,6 +4220,16 @@ scripts:
   tags:
   - Quick
 - name: sync_panorama_module.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: test_remediation_progress_smoke.py
   owner: governance
   dimensions: []
   priority: P2
