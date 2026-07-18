@@ -46,21 +46,41 @@ from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-
 
 ensure_utf8_stdout()
 
-C_TRACK_LAYERS = [  # noqa: gate-vocab  层目录名，非 domain 值
+# 治本（2026-07-18）：拆分为两棵树各自的目录列表。
+# 原先 C_TRACK_LAYERS 对 docs/03_modules/ 和 src/zephyr/ 用同一个列表，
+# 但两棵树命名约定不同（docs 用 _domain_<full_name> 前缀，src 用短名），
+# 导致 17 个误报 finding（FIND-D1-20260706-*）和 18 个 CP 任务阻塞。
+# 同时移除重复的 pf_core 条目和不存在的 observability 目录。
+C_DOCS_MODULES_DIRS = [  # noqa: gate-vocab  层目录名，非 domain 值
+    "_domain_data",
+    "_domain_infrastructure_runtime",
+    "_domain_integration",
+    "_domain_factor",
+    "_domain_signal",
+    "_domain_risk",
+    "_domain_portfolio_core",
+    "_domain_execution_core",
+    "_domain_frontend",
+    "_domain_research",
+    "_domain_compliance",
+    "_domain_machine_learning_train",
+]
+
+C_SRC_ZEPHYR_DIRS = [  # noqa: gate-vocab  层目录名，非 domain 值
     "data",
-    "infrastructure_runtime_integration",
+    "infrastructure",
+    "integration",
     "factor",
-    "signal",
+    "signal_ashare",
+    "signal_fundamental",
+    "signal_quality",
     "risk",
     "pf_core",
     "ex_core",
-    "pf_core",
     "frontend",
     "research",
     "compliance",
     "ml_train",
-    "observability",
-    "integration",
 ]
 
 THRESHOLD_DOCS_MD_WARN = _get_threshold("directory_scalability.docs_md_warn", 5)  # 治本(ARCH-036 P3-A5): 从SSoT读取
@@ -81,15 +101,10 @@ def count_direct_items(path: Path, suffix: str | None = None) -> int:
     return len(items)
 
 
-def has_direct_file(path: Path, filename: str) -> bool:
-    """has_direct_file implementation."""
-    return (path / filename).exists()
-
-
 def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
     """Check compliance and report findings."""
     docs_modules = REPO_ROOT / "docs" / "03_modules"
-    for layer_name in C_TRACK_LAYERS:
+    for layer_name in C_DOCS_MODULES_DIRS:
         layer_dir = docs_modules / layer_name
         if not layer_dir.exists():
             findings.append(
@@ -101,15 +116,10 @@ def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
                 }
             )
             continue
-        if has_direct_file(layer_dir, "blueprint.md"):
-            findings.append(
-                {
-                    "path": str(layer_dir / "blueprint.md"),
-                    "issue": "flat_blueprint",
-                    "severity": "ERROR",
-                    "msg": "blueprint.md 应在 <module>/ 子目录下,而非层目录平铺 (1500模块不可行)",
-                }
-            )
+        # 治本（2026-07-18）：移除 flat_blueprint 检查。
+        # 原检查假设 blueprint.md 是模块级文件（1500模块不可行），但实际
+        # _domain_*/blueprint.md 是域级蓝图（每域1个，约20个，不受1500模块约束）。
+        # 模块蓝图有不同文件名（如 <module>_blueprint.md），由 flat_md 计数检查覆盖。
         md_count = count_direct_items(layer_dir, ".md")
         if md_count >= THRESHOLD_DOCS_MD_ERROR:
             findings.append(
@@ -145,7 +155,7 @@ def check_docs_modules_scalability(findings: list[dict[str, Any]]) -> None:
 def check_src_zephyr_scalability(findings: list[dict[str, Any]]) -> None:
     """Check compliance and report findings."""
     src_zephyr = REPO_ROOT / "src" / "zephyr"
-    for layer_name in C_TRACK_LAYERS:
+    for layer_name in C_SRC_ZEPHYR_DIRS:
         layer_dir = src_zephyr / layer_name
         if not layer_dir.exists():
             findings.append(
