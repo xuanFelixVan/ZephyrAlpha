@@ -41,8 +41,8 @@ responsibility_domain:
 build_status: generated
 design_maturity: prototype
 ---
-> module_id: MOD-INF-043 | version: 1.2.0 | status: active | layer: L0_infrastructure
-> actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: planned
+> module_id: MOD-INF-043 | version: 1.4.0 | status: active | layer: L0_infrastructure
+> actual_disk_path: scripts/backup/ | generation: 1 | construction_progress: completed
 
 # 灾备备份系统蓝图 — 事件触发→DB dump→Restic去重备份→保留清理→校验→报告
 
@@ -65,13 +65,13 @@ design_maturity: prototype
 
 | # | 文件名 | 对应蓝图章节 | 职责 | 存在性 | 阻塞原因（仅已阻塞） |
 |---|--------|------------|------|:-----:|-------------------|
-| 1 | `backup_reconciler.py` | §3.1 | post-commit reconciler（事件触发+间隔保护+调用backup.ps1） | 待实现 | |
-| 2 | `backup.ps1` | §3.2 | 主备份脚本（预检+dump+restic+清理+校验+报告） | 待实现 | |
-| 3 | `backup_config.yaml` | §3.3 | 备份配置（路径/保留策略/排除规则/触发条件） | 待实现 | |
-| 4 | `一键备份.bat` | §3.4 | 手动兜底双击触发入口（调用backup.ps1） | 待实现 | |
-| 5 | `restore.ps1` | §3.5 | 恢复脚本（list/verify/latest/ch 四子命令） | 待实现 | |
-| 6 | `README.md` | §3.6 | 使用说明（自动触发机制/手动触发/灾难恢复） | 待实现 | |
-| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:9100→127.0.0.1:9101（借python防火墙放行规则暴露MinIO给CH VM） | 待实现 | |
+| 1 | `backup_reconciler.py` | §3.1 | post-commit reconciler（事件触发+间隔保护+调用backup.ps1） | 已实现 | |
+| 2 | `backup.ps1` | §3.2 | 主备份脚本（预检+dump+restic+清理+校验+报告） | 已实现 | |
+| 3 | `backup_config.yaml` | §3.3 | 备份配置（路径/保留策略/排除规则/触发条件） | 已实现 | |
+| 4 | `backup_manual.ps1` | §3.4 | 手动兜底触发入口（调用backup.ps1 -Force，跳过间隔保护） | 已实现 | |
+| 5 | `restore.ps1` | §3.5 | 恢复脚本（list/verify/latest/ch 四子命令） | 已实现 | |
+| 6 | `README.md` | §3.6 | 使用说明（自动触发机制/手动触发/灾难恢复） | 已实现 | |
+| 7 | `minio_tcp_relay.py` | §4.3 | TCP中转 0.0.0.0:9100→127.0.0.1:9101（借python防火墙放行规则暴露MinIO给CH VM） | 已实现 | |
 
 ---
 
@@ -131,7 +131,7 @@ design_maturity: prototype
 
 频率预估：日均1-2次（8小时间隔 + 仅重要文件变更触发，纯日志/cache变更不触发）
 
-**手动触发（兜底路径）**：保留双击 `一键备份.bat` 能力，不受间隔保护限制（force模式）。
+**手动触发（兜底路径）**：运行 `backup_manual.ps1`（右键"用PowerShell运行"或命令行），不受间隔保护限制（force模式）。
 
 ### §1.3 备份目标
 
@@ -346,15 +346,13 @@ trigger:
   state_file: "data/databases/backup_state.json"
 ```
 
-### §3.4 一键备份.bat — 手动兜底触发入口
+### §3.4 backup_manual.ps1 — 手动兜底触发入口
 
-**职责**：Windows双击即可触发备份（force模式，跳过间隔保护），作为自动触发的兜底。
+**职责**：手动触发备份（force模式，跳过间隔保护），作为自动触发的兜底。右键"用PowerShell运行"或命令行执行。
 
-```bat
-@echo off
-cd /d D:\ZephyrAlpha
-powershell -ExecutionPolicy Bypass -File scripts\backup\backup.ps1 -Force
-pause
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\backup\backup_manual.ps1
+# 等价于: scripts\backup\backup.ps1 -Force
 ```
 
 ### §3.5 restore.ps1 — 恢复脚本
@@ -365,7 +363,8 @@ pause
 - `.\restore.ps1 list` — 列出所有快照
 - `.\restore.ps1 verify <snapshot-id>` — 恢复到临时目录验证
 - `.\restore.ps1 latest` — 灾难恢复最新快照到 D:\ZephyrAlpha\
-- `.\restore.ps1 latest --target D:\restore_test\` — 恢复到指定目录
+- `.\restore.ps1 latest -target D:\restore_test\` — 恢复到指定目录
+- `.\restore.ps1 ch` — 灾难恢复 ClickHouse（c1_market + c3_fundamental，经 MinIO S3 桥，见 §4.3）
 
 ### §3.6 README.md — 使用说明
 
