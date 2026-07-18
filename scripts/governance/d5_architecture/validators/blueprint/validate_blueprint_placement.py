@@ -79,7 +79,7 @@ VALID_LAYERS: frozenset[str] = frozenset(
     str(v.get("value")) for v in _LAYER_DATA.get("values", []) if isinstance(v, dict)
 )
 
-VALID_BELONGS_TO: frozenset[str] = frozenset({"SYS-MASTER-001", "MOD-MASTER_BLUEPRINT", "DOM-GOV-001"})
+VALID_BELONGS_TO: frozenset[str] = frozenset({"SYS-MASTER-001", "MOD-MASTER_BLUEPRINT", "DOM-GOV-001"})  # noqa: gate-vocab  无对应词表真源（无 belongs_to 词表），主蓝图 ID 白名单为本地校验策略常量
 
 
 def _is_blueprint(filepath: Path) -> bool:

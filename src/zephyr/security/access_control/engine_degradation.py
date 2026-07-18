@@ -61,7 +61,7 @@ class DegradationReason(str, Enum):
     INPUT_GUARD_FAILURE = "input_guard_failure"
 
 
-_BLOCKED_LEVELS = frozenset({
+_BLOCKED_LEVELS = frozenset({  # noqa: gate-vocab  无对应词表真源（无降级级别词表），取值为同文件 DegradationLevel 枚举成员（枚举即真源），非字符串字面量
     DegradationLevel.SYSTEM_UNAVAILABLE,
     DegradationLevel.PERMISSION_BLOCKED,
 })

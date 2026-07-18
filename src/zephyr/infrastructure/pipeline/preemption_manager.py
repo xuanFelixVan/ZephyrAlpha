@@ -56,7 +56,7 @@ class PreemptionManager:
     - ``re_dispatch_callback``: 重新分发任务回调, 等价于 ``lambda task: po.dispatch(task)``
     """
 
-    _PREEMPTIBLE_PRIORITIES: ClassVar[frozenset[str]] = frozenset({"P3", "P2"})
+    _PREEMPTIBLE_PRIORITIES: ClassVar[frozenset[str]] = frozenset({"P3", "P2"})  # noqa: gate-vocab  无对应词表真源（无任务优先级词表），可抢占优先级子集为本地抢占策略（非 Priority 枚举全集）
 
     def __init__(
         self,

@@ -222,7 +222,7 @@ templates:
   - template_id: tpl1
     name: "Template 1"
     version: "1.0.0"
-    stability: experimental
+    stability: evolving
     token_budget: 1000
     template_text: "One {x}"
     variables:
@@ -231,7 +231,7 @@ templates:
   - template_id: tpl2
     name: "Template 2"
     version: "1.0.0"
-    stability: beta
+    stability: evolving
     token_budget: 2000
     template_text: "Two {y}"
     variables:

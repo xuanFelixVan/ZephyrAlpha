@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2067 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-684 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-684 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_skill_registry
 # [STABILITY] evolving
 # [SAFETY] L
@@ -49,7 +49,7 @@ class TestPromptTemplate:
         )
         assert t.template_id == "test-v1"
         assert t.version == "1.0.0"
-        assert t.stability == "experimental"
+        assert t.stability == "evolving"
         assert t.token_budget == 2000
 
     def test_invalid_version(self):

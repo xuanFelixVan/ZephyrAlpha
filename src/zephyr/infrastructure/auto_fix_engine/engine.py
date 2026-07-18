@@ -79,7 +79,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-_NO_AUTO_FIX_TYPES = {"behavioral_audit_red", "security_critical", "data_loss_risk"}
+_NO_AUTO_FIX_TYPES = {"behavioral_audit_red", "security_critical", "data_loss_risk"}  # noqa: gate-vocab  无对应词表真源（无 finding-type 词表），禁止自动修复的发现类型为本地安全策略
 
 
 class AutoFixEngine:

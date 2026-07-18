@@ -37,7 +37,7 @@ templates:
   - template_id: test_tpl
     name: "Test Template"
     version: "1.0.0"
-    stability: experimental
+    stability: evolving
     token_budget: 2000
     variables:
       - name: task_id

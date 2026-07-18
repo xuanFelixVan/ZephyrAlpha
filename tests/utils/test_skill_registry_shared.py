@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1958 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-575 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-575 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_skill_registry
 # [STABILITY] evolving
 # [SAFETY] L
@@ -90,7 +90,7 @@ class TestPromptTemplate:
             template_str="Hello {name}",
         )
         assert tmpl.version == "1.0.0"
-        assert tmpl.stability == "experimental"
+        assert tmpl.stability == "evolving"
         assert tmpl.token_budget == 2000
 
     def test_invalid_version_rejected(self):
@@ -288,7 +288,7 @@ class TestSkillDefinition:
             ),
         )
         assert skill.version == "1.0.0"
-        assert skill.stability == "experimental"
+        assert skill.stability == "evolving"
         assert skill.category == SkillCategory.CODE
         assert skill.input_schema == []
         assert skill.tags == []

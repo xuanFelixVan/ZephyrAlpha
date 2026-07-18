@@ -69,7 +69,7 @@ _FOUNDATION_LAYERS = frozenset(
     load_vocabulary_section_list("target_layer_vocabulary.yaml", "foundation_domains")
 )
 
-_NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {
+_NODE_TASK_TYPE_MAP: dict[str, frozenset[str]] = {  # noqa: gate-vocab  无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为节点-任务类型路由策略
     "M1": frozenset({"MODEL_BUILD"}),
     "M2": frozenset({"MODEL_BUILD", "DOC_WRITE", "REFACTOR", "OPS"}),
     "M3": frozenset({"AUDIT"}),

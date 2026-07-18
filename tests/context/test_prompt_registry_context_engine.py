@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1844 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-472 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-472 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.context_engine.test_prompt_registry
 # [STABILITY] evolving
 # [SAFETY] L
@@ -65,7 +65,7 @@ MULTI_VERSION_YAML = textwrap.dedent("""\
       - template_id: analyze
         name: "Analyze"
         version: "1.0.0"
-        stability: beta
+        stability: evolving
         token_budget: 2000
         variables:
           - name: task_id
@@ -357,7 +357,7 @@ class TestPromptRegistryRenderWithContext:
               - template_id: ctx_template
                 name: "Context Template"
                 version: "1.0.0"
-                stability: beta
+                stability: evolving
                 token_budget: 8000
                 variables:
                   - name: task_id

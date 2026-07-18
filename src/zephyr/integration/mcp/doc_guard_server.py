@@ -48,8 +48,8 @@ from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = ["DocGuardServer", "create_server"]
 
-_VALID_PLATFORMS = frozenset({"cursor", "trae-cn", "cli"})
-_VALID_PRIORITIES = frozenset({"LOW", "NORMAL", "HIGH", "CRITICAL"})
+_VALID_PLATFORMS = frozenset({"cursor", "trae-cn", "cli"})  # noqa: gate-vocab  无对应词表真源（无 platform 词表），IDE 平台标识为本地常量
+_VALID_PRIORITIES = frozenset({"LOW", "NORMAL", "HIGH", "CRITICAL"})  # noqa: gate-vocab  无对应词表真源（无通知优先级词表），与任务 Priority(P0-P3) 枚举不同域，本地常量
 _VALID_CONTEXT_PRIORITIES = frozenset({Priority.P0.value, Priority.P1.value, Priority.P2.value, Priority.P3.value})
 
 # 5 项反腐败校验项（ADR-0041）

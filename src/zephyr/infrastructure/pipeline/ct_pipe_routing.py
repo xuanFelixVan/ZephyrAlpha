@@ -69,7 +69,7 @@ _FOUNDATION_LAYERS = frozenset(
 )
 
 # node_id -> (execution_model, sandbox_profile, gate_profile) — 对齐契约 YAML 枚举语义
-_NODE_PROFILE: dict[str, tuple[str, str, str]] = {
+_NODE_PROFILE: dict[str, tuple[str, str, str]] = {  # noqa: gate-vocab  无对应词表真源；M1-M11 节点 ID 真源为 models.py M_MODULE_SPECS，值为路由策略配置
     "M1": ("deepseek", "full", "full_g0_g7"),
     "M2": ("deepseek", "standard", "pre_commit_only"),
     "M3": ("deepseek", "audit", "post_exec_only"),
