@@ -3287,7 +3287,7 @@ entries:
     - GATE-DEPGRAPH-FRESHNESS pre-commit gate（Phase 3 新建）
     - architecture_health_dashboard M15 指标（Phase 3 新建）
   fix_phase: |
-    Phase 1-4 已完成（2026-07-18）：
+    核心治本（持久化 + 可发现 + 可阻断三要素）已完成（2026-07-18）：
     - Phase 1: 手动诊断 + 手动恢复 depgraph + 本条 issue 登记（已完成）
     - Phase 2: reconcile_execution_log 表持久化 + _log_reconcile_results +
       make_depgraph_ops_reconciler action 升级 critical_warn（commit 0b66f5acee）
@@ -3300,11 +3300,25 @@ entries:
     - Phase 4.3: 修复 session_worktree_commit 触发断链（_run_post_commit_reconcile
       在 _git_commit_in_worktree 成功后显式触发 reconciler 链，commit 105f547fac,
       merge 985b811f17）
+
+    Phase 3 可选增强（中期架构演进，2026-07-18~19 完成）：
+    - P3.1: GATE-DEPGRAPH-FRESHNESS pre-commit gate（dual-threshold: >30min WARN,
+      >24h block, priority=67, fail-open; commit 96caa8ceaa）——补强「可阻断」
+      要素，depgraph 超 24h 未同步直接阻断 commit
+    - P3.2: drift_scan_results / drift_audit_findings 表迁移 v21（DDL 已在
+      reconciliation_registry.py 代码中，reconciler 触发时自动建表）
+    - P3.3: architecture_health_dashboard M15 指标（depgraph 新鲜度仪表盘,
+      与 GATE-DEPGRAPH-FRESHNESS 同阈值; commit e6d5c519a0, merge f6f0d03811）
+      ——补强「可发现」要素，新鲜度状态暴露到仪表盘供 AI 冷启动查询
+
     根因A（触发断链）+ 根因B（失败不可见）均已治本。
+    核心治本三要素：持久化（Phase 2 reconcile_execution_log）+ 可发现（Phase 3
+    critical_warn 横幅 + P3.3 M15 仪表盘）+ 可阻断（Phase 4.2 block_next + P3.1
+    GATE-DEPGRAPH-FRESHNESS >24h 阻断）。
   status: resolved
   related_adjudication: '#ARCH-DEP-001, #ARCH-FRONTMATTER-STATE-001, 裁定#207, 裁定#209, ARCH-061, FP-ISO.4C'
   created: '2026-07-18'
-  last_updated: '2026-07-18'
+  last_updated: '2026-07-19'
 
 # --- #ARCH-DI-SEAM-001: DI seam 静态门禁（P1-2 治本，2026-07-18 补登记） ---
 # 补登记说明：代码 _validate_di_seam() 在 P1 Batch 4（2026-07-18）已引用 #ARCH-DI-SEAM-001，
