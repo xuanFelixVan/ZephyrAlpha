@@ -5173,6 +5173,13 @@ creation_tokens:
     token: "auto-readme-version-sync-20260719"
     created_by: "session-sess-28516-20260719003114"
     capability: "readme_version_sync_check"
+  # --- GATE-DEPGRAPH-OPS 治本 Phase 1（2026-07-19，F821 未定义符号零防护缺口）---
+  # undefined_name_gate.py: UNDEFINED-NAME commit gate（priority=106，stdlib AST
+  # 静态检测 staged .py 未定义符号，硬阻断；对标 ruff F821，in-process 无 subprocess）
+  - file: "src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py"
+    token: "auto-undefined-name-gate-20260719"
+    created_by: "sess-gate-depgraph-ops-20260719"
+    capability: "undefined_name_gate"
 
   # --- 5.1.2 簇6 SSoT 收敛（2026-07-19）：execution_model 从 integration/shared/schema 迁入 shared/schema canonical ---
   - file: "src/zephyr/shared/schema/execution_model.py"

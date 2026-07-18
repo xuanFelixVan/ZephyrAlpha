@@ -118,6 +118,36 @@ def _trusted_git_env() -> dict:
     return env
 
 
+def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root: Path) -> None:
+    """worktree 删除遥测（GATE-DEPGRAPH-OPS 治本 Phase 4）。
+
+    病根：并发场景下 worktree 意外消失无迹可查——merge/abort/sweep 三个删除点
+    均不落盘记录，排查"谁删了我的 worktree"只能靠猜。治本：三删除点统一调用
+    本函数，JSONL 追加落盘主仓库 .runtime/worktree_ops_log.jsonl（锚定主仓库根，
+    worktree 进程内写主仓库——worktree 删除后自身文件系统随之消失）。
+
+    降级：遥测失败仅 debug 日志，绝不阻断 merge/abort/sweep 主流程。
+    """
+    try:
+        from datetime import datetime, timezone
+        from zephyr.shared.io.paths import strip_session_worktree
+
+        main_root = strip_session_worktree(Path(root))
+        log_dir = main_root / ".runtime"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "op": "worktree_delete",
+            "session_id": session_id,
+            "source": source,
+            "path": str(path),
+        }
+        with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 5.135治标: 遥测降级不阻断主流程
+        logger.debug("worktree delete telemetry failed", exc_info=True)
+
+
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
     """获取 WorktreeManager 实例。"""
     root = Path(project_root) if project_root else REPO_ROOT
@@ -269,6 +299,7 @@ def _sweep_one_dir(
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("suppressed error in session_worktree", exc_info=True)
         swept = 1
+        _log_worktree_delete(sid, "sweep", d, manager.repo_root)  # Phase 4 遥测
         logger.info(
             "session_worktree sweep: 清理 stale %s (registered=%s)",
             sid, is_registered,
@@ -1951,6 +1982,9 @@ def _execute_merge_and_build_msg(
                 parts.append("，worktree 已清理")
                 msg = "".join(parts)
                 cleaned = True
+                _log_worktree_delete(  # Phase 4 遥测：merge 删除点
+                    session_id, "merge", wt_path, manager.repo_root
+                )
         else:
             if skipped_files:
                 msg = (

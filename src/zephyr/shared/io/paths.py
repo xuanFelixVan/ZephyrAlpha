@@ -64,6 +64,24 @@ def find_repo_root() -> Path:
 
 REPO_ROOT: Final[Path] = find_repo_root()
 
+
+def strip_session_worktree(root: Path) -> Path:
+    """若 root 位于 session worktree（.aidrafts/<session>/）内，剥离回主仓库根。
+
+    GATE-DEPGRAPH-OPS 治本 Phase 3（观测库单一定位）：
+    worktree 进程内 REPO_ROOT 解析为 worktree 根，观测数据写入 worktree 而分裂。
+    观测数据必须锚定主仓库——worktree merge/abort 后即删除。
+    """
+    parts = root.parts
+    if ".aidrafts" in parts:
+        return Path(*parts[: parts.index(".aidrafts")])
+    return root
+
+
+# 主仓库根（观测数据锚定点）：主仓库进程 MAIN_REPO_ROOT == REPO_ROOT；
+# worktree 进程剥离 .aidrafts/<session> 前缀回主仓库。
+MAIN_REPO_ROOT: Final[Path] = strip_session_worktree(REPO_ROOT)
+
 # 治本(2026-07-19): PROJECT_ROOT 作为 REPO_ROOT 的语义别名（canonical SSoT 定义点）。
 # 某些模块（如 immutable_core）的测试契约要求 monkeypatch PROJECT_ROOT 属性，
 # 将 canonical 定义放在此处避免 SSOT-REDEFINITION gate 阻断（消除分散重定义）。
@@ -127,7 +145,9 @@ __all__ = [
     "DB_DIR",
     "DB_PATH",
     "GATES_DIR",
+    "MAIN_REPO_ROOT",
     "MODELS_CACHE_DIR",
+    "PROJECT_ROOT",
     "RATIONALE_LOG_PATH",
     "REPO_ROOT",
     "SNAPSHOTS_DIR",
@@ -137,4 +157,5 @@ __all__ = [
     "get_config_dir",
     "get_data_dir",
     "get_tmp_dir",
+    "strip_session_worktree",
 ]
