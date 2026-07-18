@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-19'
-total_scripts: 573
+total_scripts: 574
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3360,7 +3360,15 @@ scripts:
   dimensions: []
 - name: governance/migrate_sqlite_to_pg/migrate_data.py
   path: governance/migrate_sqlite_to_pg/migrate_data.py
-  description: SQLite → PostgreSQL 数据迁移脚本
+  description: SQLite → PostgreSQL 运营数据迁移脚本
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/migrate_sqlite_to_pg/seed_from_yaml.py
+  path: governance/migrate_sqlite_to_pg/seed_from_yaml.py
+  description: seed_from_yaml.py — 从 YAML 真源灌种子表（5.32.10 治本：种子与迁移拆分）
   domain: governance
   execution_plane: warm-path
   status: registered
