@@ -712,6 +712,115 @@ def _delete_worktree_file(dst: Path, rel_file: str, wt_path: Path) -> None:
             )
 
 
+def _ensure_worktree_base_fresh(root: Path, wt_path: Path, session_id: str) -> dict | None:
+    """确保 worktree branch base 与主工作区 HEAD 对齐（防搭便车提交 + 防 ARCH-REFERENCE 误判）。
+
+    病根（裁定#19-B，2026-07-18）：
+      - session_worktree_start 创建 worktree 时 base = dev HEAD (T0)
+      - 并发 session merge 到 dev，dev HEAD 前进到 T1（引入新 #ARCH-XXX 引用等）
+      - AI 在主工作区 Edit 文件（主工作区文件 = dev T1 内容 + AI 改动）
+      - session_worktree_commit 调 _sync_files_to_worktree copy2 主工作区文件到 worktree
+      - worktree commit 内容 = (主工作区文件) − (worktree base T0) = dev T0→T1 改动 + AI 改动
+      - 后果：① 搭便车提交（dev 的多个 commit 被塞进 session commit，污染 git 历史）；
+        ② ARCH-REFERENCE L2 误判（dev 新引用被算作本次 commit 新增，要求 registry 同 commit）
+
+    治本：在 _sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，若落后则：
+      - 无 session commit（start 后第一次 commit）→ git reset --hard <main HEAD>（安全，worktree 无未提交改动）
+      - 有 session commit → git rebase <main HEAD>（fail-loud on conflict，AI 手动处理）
+
+    Returns:
+        None 表示通过（base 已最新或已成功对齐）；dict 表示失败（含 error 字段，阻断 commit）。
+    """
+    # 获取主工作区 HEAD（不假设分支名，直接取 HEAD）
+    main_head_r = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if main_head_r.returncode != 0:
+        return None  # 无法获取主工作区 HEAD，降级放行（不阻断业务）
+    main_head = main_head_r.stdout.strip()
+
+    # 获取 worktree HEAD
+    wt_head_r = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=str(wt_path), capture_output=True, text=True, timeout=10,
+    )
+    if wt_head_r.returncode != 0:
+        return None  # 无法获取 worktree HEAD，降级放行
+    wt_head = wt_head_r.stdout.strip()
+
+    # base 已最新
+    if wt_head == main_head:
+        return None
+
+    # 检测 worktree 是否有 session 自己的 commit（merge-base..worktree_HEAD 的 commit 数）
+    mb_r = subprocess.run(
+        ["git", "merge-base", wt_head, main_head],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if mb_r.returncode != 0:
+        return None  # 无法计算 merge-base，降级放行
+    merge_base = mb_r.stdout.strip()
+
+    session_commits_r = subprocess.run(
+        ["git", "rev-list", "--count", f"{merge_base}..{wt_head}"],
+        cwd=str(root), capture_output=True, text=True, timeout=10,
+    )
+    if session_commits_r.returncode != 0:
+        return None  # 降级放行
+    session_commit_count = int(session_commits_r.stdout.strip() or "0")
+
+    if session_commit_count == 0:
+        # 无 session commit，安全 reset 到主工作区 HEAD
+        reset_r = subprocess.run(
+            ["git", "reset", "--hard", main_head],
+            cwd=str(wt_path), capture_output=True, text=True, timeout=30,
+        )
+        if reset_r.returncode != 0:
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"worktree base 对齐失败（git reset --hard {main_head[:8]}）: "
+                    f"{reset_r.stderr.strip()}"
+                ),
+                "commit_hash": "",
+                "base_sync_failed": True,
+            }
+        logger.info(
+            "session_worktree base 对齐: reset --hard %s (无 session commit，安全)",
+            main_head[:8],
+        )
+    else:
+        # 有 session commit，rebase 到主工作区 HEAD（可能有冲突）
+        rebase_r = subprocess.run(
+            ["git", "rebase", main_head],
+            cwd=str(wt_path), capture_output=True, text=True, timeout=120,
+        )
+        if rebase_r.returncode != 0:
+            subprocess.run(
+                ["git", "rebase", "--abort"],
+                cwd=str(wt_path), capture_output=True, timeout=30,
+            )
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"worktree base 过期且 rebase 冲突（有 {session_commit_count} 个 session commit）。"
+                    f"请手动处理：① 在 worktree ({wt_path}) 内 git rebase {main_head[:8]} 解决冲突，或"
+                    f"② session_worktree_abort 后重新 start + commit。"
+                    f"原始 rebase 输出: {rebase_r.stderr.strip()[:500]}"
+                ),
+                "commit_hash": "",
+                "base_sync_failed": True,
+            }
+        logger.info(
+            "session_worktree base 对齐: rebase %s (有 %d 个 session commit)",
+            main_head[:8], session_commit_count,
+        )
+    return None
+
+
 def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> None:
     """同步主工作区改动到 worktree（君子协定模式：AI 的 Edit/Write 写在项目根）。"""
     import shutil
@@ -941,6 +1050,20 @@ def session_worktree_commit(
     err = _run_dcr_check(root, rel_files, session_id)
     if err:
         return err
+
+    # 裁定#19-B（2026-07-18）：worktree base 新鲜度检查
+    # 病根：session_worktree_start 创建 worktree 时 base = dev HEAD(T0)，并发 session merge
+    #   到 dev 后 dev HEAD 前进到 T1，AI Edit 主工作区文件（含 dev T1 内容 + AI 改动），
+    #   _sync_files_to_worktree copy2 主工作区文件到 worktree，commit 内容 =
+    #   (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。
+    #   后果：① git 历史污染（dev 多 commit 被塞进 session commit）；② ARCH-REFERENCE L2
+    #   误判（dev 新 #ARCH-XXX 引用被算作本次 commit 新增，要求 registry 同 commit → 硬阻断）。
+    # 治本：_sync_files_to_worktree 之前检测 worktree HEAD 是否落后于主工作区 HEAD，落后则
+    #   ① 无 session commit → git reset --hard <main HEAD>（安全，worktree 无未提交工作可丢）
+    #   ② 有 session commit → git rebase <main HEAD>（保留 session 工作，冲突 fail-loud）
+    base_err = _ensure_worktree_base_fresh(root, wt_path, session_id)
+    if base_err:
+        return base_err
 
     _sync_files_to_worktree(root, wt_path, rel_files)
 
