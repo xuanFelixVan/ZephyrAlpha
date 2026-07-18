@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0717 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-375 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-375 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_decision_fatigue
 # [INVARIANTS] classify always returns valid EisenhowerPriority; triage covers all priorities
 # [MODIFY-GUARD] none

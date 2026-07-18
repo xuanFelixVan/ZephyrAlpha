@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2003 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-620 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-620 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_cost_budget
 # [STABILITY] evolving
 # [SAFETY] L

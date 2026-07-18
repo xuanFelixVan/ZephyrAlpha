@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1989 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-606 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-606 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_code_dedup_engine
 # [STABILITY] evolving
 # [SAFETY] L

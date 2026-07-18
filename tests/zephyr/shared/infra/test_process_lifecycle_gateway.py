@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2093 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-710 | tests/zephyr/shared/infra/test_process_lifecycle_gateway.py | §
+# [BLUEPRINT] MOD-TEST-710 | tests/zephyr/shared/infra/test_process_lifecycle_gateway.py | §
 # [TTL] task_bound
 """
 Tests for ProcessLifecycleGateway.

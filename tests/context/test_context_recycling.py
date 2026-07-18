@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0604 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-370 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-370 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_context_recycling
 # [INVARIANTS] compress/restore roundtrip preserves content; is_valid requires data and ratio<1
 # [MODIFY-GUARD] Changes must sync with context_recycling.py

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0696 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-373 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-373 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_data_classification
 # [INVARIANTS] classify respects level ordering; max_level_from_list returns highest
 # [MODIFY-GUARD] Changes must sync with data_classification.py

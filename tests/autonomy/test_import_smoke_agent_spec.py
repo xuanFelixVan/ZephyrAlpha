@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1820 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-450 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-450 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.agent_spec.test_import_smoke
 # [STABILITY] evolving
 # [SAFETY] L

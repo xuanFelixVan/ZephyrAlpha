@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0285 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-345 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-345 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_agent_dispatch
 # [INVARIANTS] DISPATCH_TABLE keys must be unique; resolve_domain returns None for unknown
 # [MODIFY-GUARD] Changes must sync with agent_dispatch.py

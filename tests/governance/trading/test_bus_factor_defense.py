@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0478 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-356 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-356 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_bus_factor_defense
 # [INVARIANTS] evaluate_bus_factor sets risk based on owner count; onboarding_complete requires all 3 flags
 # [MODIFY-GUARD] Changes must sync with bus_factor_defense.py

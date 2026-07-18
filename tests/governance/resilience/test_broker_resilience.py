@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0462 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-355 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-355 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_broker_resilience
 # [INVARIANTS] BrokerLevel has 3 tiers; BROKER_FAILOVER keys match BrokerLevel enum
 # [MODIFY-GUARD] Changes must sync with broker_resilience.py

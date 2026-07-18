@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0096 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-254 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-254 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_ce_lsg_001
 # [STABILITY] evolving
 # [SAFETY] L

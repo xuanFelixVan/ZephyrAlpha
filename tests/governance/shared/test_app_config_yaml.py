@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1974 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-591 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-591 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_app_config_yaml
 # [STABILITY] evolving
 # [SAFETY] L

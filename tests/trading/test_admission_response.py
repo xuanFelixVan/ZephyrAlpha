@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0274 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-343 | docs/03_modules/_domain_governance/blueprint.md | §3.9
+# [BLUEPRINT] MOD-TEST-343 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] tests.test_admission_response
 # [INVARIANTS] REJECTED must include rejection_reason; queue_position only valid for QUEUED
 # [MODIFY-GUARD] Changes must sync with admission_response.py

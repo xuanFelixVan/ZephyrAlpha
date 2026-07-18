@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2036 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-653 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-653 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_intent_accuracy
 # [STABILITY] evolving
 # [SAFETY] L

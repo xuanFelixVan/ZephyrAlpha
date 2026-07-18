@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0284 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-344 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-344 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_agent_debate
 # [INVARIANTS] DebateVerdict must be consistent with content comparison
 # [MODIFY-GUARD] Changes must sync with agent_debate.py

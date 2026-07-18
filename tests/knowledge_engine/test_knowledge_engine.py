@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1195 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-401 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-401 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_knowledge_engine
 # [INVARIANTS] KnowledgeIndex.index populates entries and inverted_index; search returns matches
 # [MODIFY-GUARD] none

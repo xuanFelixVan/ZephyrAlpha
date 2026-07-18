@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1849 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-477 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-477 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.core.test_session_continuity
 # [STABILITY] evolving
 # [SAFETY] L

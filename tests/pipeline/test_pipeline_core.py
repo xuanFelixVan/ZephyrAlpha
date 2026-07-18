@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1925 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-544 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-544 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.pipeline.test_pipeline_core
 # [STABILITY] evolving
 # [SAFETY] L

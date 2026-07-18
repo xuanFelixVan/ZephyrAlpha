@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0890 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-384 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-384 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_failure_matcher
 # [INVARIANTS] FailureMatcher.match返回FailureMatch; probability∈[0,1]; unknown category for no match
 # [MODIFY-GUARD] 仅当failure_matcher公开API变更时修改

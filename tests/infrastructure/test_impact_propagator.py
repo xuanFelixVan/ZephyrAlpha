@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1110 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-395 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-395 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_impact_propagator
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

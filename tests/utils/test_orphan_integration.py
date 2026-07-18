@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1953 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-570 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-570 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_orphan_integration
 # [STABILITY] evolving
 # [SAFETY] L

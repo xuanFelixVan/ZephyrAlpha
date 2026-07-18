@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0163 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-320 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-320 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_akshare_real_data
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2098 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-643 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-643 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_integrity_audit_reconciler
 # [STABILITY] evolving
 # [SAFETY] L

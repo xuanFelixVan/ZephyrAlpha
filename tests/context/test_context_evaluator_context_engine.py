@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1833 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-461 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-461 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.context_engine.test_context_evaluator
 # [STABILITY] evolving
 # [SAFETY] L

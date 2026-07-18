@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2019 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-636 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-636 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_evolution_engine
 # [STABILITY] evolving
 # [SAFETY] L

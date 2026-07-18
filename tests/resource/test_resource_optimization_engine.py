@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1454 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-423 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-423 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_resource_optimization_engine
 # [INVARIANTS] ResourceOptimizationEngine is singleton; must reset between tests
 # [MODIFY-GUARD] resource_optimization_engine.py

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1878 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-499 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-499 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.feedback_loop.test_fitness_functions
 # [STABILITY] evolving
 # [SAFETY] L

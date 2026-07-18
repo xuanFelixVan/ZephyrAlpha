@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0207 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-342 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-342 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.performance.test_mcp_stress
 # [STABILITY] evolving
 # [SAFETY] L

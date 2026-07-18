@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2023 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-640 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-640 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_file_task_mapper
 # [STABILITY] evolving
 # [SAFETY] L

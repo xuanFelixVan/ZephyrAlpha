@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1315 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-410 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-410 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_notifier
 # [INVARIANTS] Notifier.notify返回Notification; disabled config→no file write; critical always saved
 # [MODIFY-GUARD] 仅当notifier公开API变更时修改

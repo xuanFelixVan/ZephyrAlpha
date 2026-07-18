@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0298 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-346 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-346 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_ai_code_standards
 # [INVARIANTS] CODE_CONVENTIONS keys must be stable; AI_FORBIDDEN must be non-empty
 # [MODIFY-GUARD] Changes must sync with ai_code_standards.py

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1412 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-419 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-419 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_prompt_version_manager
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

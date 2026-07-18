@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0579 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-366 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-366 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_consequence_manager
 # [INVARIANTS] is_active only when declared_at set and resolved_at None; activate sets declared_at
 # [MODIFY-GUARD] Changes must sync with consequence_manager.py

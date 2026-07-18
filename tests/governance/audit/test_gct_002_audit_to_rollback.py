@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0125 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-282 | tests/governance/test_gct_002_audit_to_rollback.py | §
+# [BLUEPRINT] MOD-TEST-282 | tests/governance/test_gct_002_audit_to_rollback.py | §
 # [TTL] task_bound
 from __future__ import annotations
 

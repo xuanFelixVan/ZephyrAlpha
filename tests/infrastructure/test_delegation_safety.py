@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0149 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-306 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-306 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_delegation_safety
 # [STABILITY] evolving
 # [SAFETY] L

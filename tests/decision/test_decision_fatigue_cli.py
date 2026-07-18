@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0718 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-376 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-376 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_decision_fatigue_cli
 # [INVARIANTS] build_parser returns ArgumentParser; main runs without error
 # [MODIFY-GUARD] none

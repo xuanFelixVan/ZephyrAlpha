@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1913 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-532 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-532 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.orchestrator.test_agent_health_monitor
 # [STABILITY] evolving
 # [SAFETY] L

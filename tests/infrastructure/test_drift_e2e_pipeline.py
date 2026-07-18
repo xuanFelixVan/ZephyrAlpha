@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0150 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-307 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-307 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_drift_e2e_pipeline
 # [STABILITY] evolving
 # [SAFETY] L

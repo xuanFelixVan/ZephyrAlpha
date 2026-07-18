@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0130 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-287 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-287 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_007_spec_to_rbac_audit
 # [STABILITY] evolving
 # [SAFETY] L

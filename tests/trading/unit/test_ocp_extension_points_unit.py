@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2048 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-665 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-665 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_ocp_extension_points
 # [STABILITY] evolving
 # [SAFETY] L

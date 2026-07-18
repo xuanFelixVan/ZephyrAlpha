@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2043 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-660 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-660 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_l12_telemetry
 # [STABILITY] evolving
 # [SAFETY] L

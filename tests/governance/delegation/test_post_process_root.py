@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1392 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-417 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-417 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_post_process
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

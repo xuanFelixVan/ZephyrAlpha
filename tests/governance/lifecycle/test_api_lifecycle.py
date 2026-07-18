@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0322 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-348 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-348 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_api_lifecycle
 # [INVARIANTS] REJECTED status must include rejection_reason; deprecate_api sets DEPRECATED state
 # [MODIFY-GUARD] Changes must sync with api_lifecycle.py

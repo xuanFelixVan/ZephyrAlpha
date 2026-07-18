@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1319 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-411 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-411 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_observability_dashboard
 # [INVARIANTS] DashboardPanel has 4 panels; SLI has 11 indicators; default config has all panels
 # [MODIFY-GUARD] none

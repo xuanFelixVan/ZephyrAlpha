@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1991 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-608 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-608 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_constitutional_update
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0537 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-365 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-365 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_code_dedup_engine.test_self_scan_integrity
 # [STABILITY] evolving
 # [SAFETY] L

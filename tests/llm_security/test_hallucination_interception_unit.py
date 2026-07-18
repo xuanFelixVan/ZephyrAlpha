@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2112 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-647 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-647 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_hallucination_interception
 # [STABILITY] evolving
 # [SAFETY] L

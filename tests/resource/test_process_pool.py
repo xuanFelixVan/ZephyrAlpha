@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1932 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-551 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-551 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_process_pool
 # [STABILITY] evolving
 # [SAFETY] L

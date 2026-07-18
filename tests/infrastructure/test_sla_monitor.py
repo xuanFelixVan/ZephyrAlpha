@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1661 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-433 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-433 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_sla_monitor
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

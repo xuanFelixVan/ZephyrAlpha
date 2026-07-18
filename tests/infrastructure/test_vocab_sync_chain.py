@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2100 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-700 | docs/03_modules/_domain_governance/blueprint.md | §vocab-sync-chain
+# [BLUEPRINT] MOD-TEST-700 | docs/03_modules/_domain_governance/blueprint.md | §vocab-sync-chain
 # [MODULE] tests.unit.test_vocab_sync_chain
 # [STABILITY] evolving
 # [SAFETY] L

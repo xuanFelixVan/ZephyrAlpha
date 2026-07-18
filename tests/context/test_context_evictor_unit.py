@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1994 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-611 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-611 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_context_evictor
 # [STABILITY] evolving
 # [SAFETY] L

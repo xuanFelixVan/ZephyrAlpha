@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1810 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-444 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-444 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_zero_config
 # [INVARIANTS] ZeroConfig.scan返回ZeroConfigResult; all_passed反映所有checks的passed状态
 # [MODIFY-GUARD] 仅当zero_config公开API变更时修改

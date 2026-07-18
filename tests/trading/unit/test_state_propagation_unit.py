@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2071 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-688 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-688 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_state_propagation
 # [STABILITY] evolving
 # [SAFETY] L

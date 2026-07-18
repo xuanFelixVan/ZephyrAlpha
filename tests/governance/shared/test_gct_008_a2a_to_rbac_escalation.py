@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0131 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-288 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-288 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_gct_008_a2a_to_rbac_escalation
 # [STABILITY] evolving
 # [SAFETY] L

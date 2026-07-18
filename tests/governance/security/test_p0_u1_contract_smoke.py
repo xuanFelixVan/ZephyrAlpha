@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0138 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-295 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-295 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.governance.test_p0_u1_contract_smoke
 # [STABILITY] evolving
 # [SAFETY] L

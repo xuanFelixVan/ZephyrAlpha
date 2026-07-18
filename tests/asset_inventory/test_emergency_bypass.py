@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0071 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-229 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-229 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_emergency_bypass
 # [STABILITY] evolving
 # [SAFETY] L

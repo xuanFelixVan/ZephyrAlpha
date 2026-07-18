@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1455 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-424 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-424 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_resource_optimization_models
 # [INVARIANTS] Pydantic models validate on construction
 # [MODIFY-GUARD] resource_optimization_models.py

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0693 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-372 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-372 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_daemon_registry
 # [INVARIANTS] DaemonRegistry uses ClassVar state; must reset between tests
 # [MODIFY-GUARD] daemon_registry.py

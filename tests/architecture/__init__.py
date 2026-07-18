@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0061 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable | error_contract=ImportError→skip
-# [BLUEPRINT] SRC-219 | tests/architecture/__init__.py | §
+# [BLUEPRINT] MOD-TEST-219 | tests/architecture/__init__.py | §
 # [TTL] task_bound
 """
 tests/architecture/ — 架构适应度函数（Architectural Fitness Functions）

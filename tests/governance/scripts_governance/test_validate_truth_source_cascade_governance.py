@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1895 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-514 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-514 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.governance.test_validate_truth_source_cascade
 # [STABILITY] evolving
 # [SAFETY] L

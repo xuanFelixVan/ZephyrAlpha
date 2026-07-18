@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2069 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-686 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-686 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_sqlite_schema
 # [STABILITY] evolving
 # [SAFETY] L

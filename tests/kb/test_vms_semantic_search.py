@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1796 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-442 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-442 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_vms_semantic_search
 # [STABILITY] evolving
 # [SAFETY] L

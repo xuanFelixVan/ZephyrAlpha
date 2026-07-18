@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1089 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-391 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-391 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_handbook
 # [INVARIANTS] Handbook.generate_onboarding_context返回非空str; get_directory_map返回非空dict
 # [MODIFY-GUARD] 仅当handbook公开API变更时修改

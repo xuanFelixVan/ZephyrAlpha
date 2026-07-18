@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0010 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-205 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-205 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_audit_integration_fracture
 # [STABILITY] evolving
 # [SAFETY] L

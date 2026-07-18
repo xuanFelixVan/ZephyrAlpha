@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0699 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-374 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-374 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_data_quality
 # [INVARIANTS] DQ_SPECS covers all DQDimension values; score_dq returns 0.0 for unknown dim
 # [MODIFY-GUARD] none

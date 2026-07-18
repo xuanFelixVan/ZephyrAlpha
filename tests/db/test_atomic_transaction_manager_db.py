@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1853 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-481 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-481 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_atomic_transaction_manager
 # [STABILITY] evolving
 # [SAFETY] L

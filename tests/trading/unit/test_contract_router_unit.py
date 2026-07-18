@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2001 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-618 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-618 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_contract_router
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1885 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-505 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-505 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.gates.test_sys_master_compliance
 # [STABILITY] evolving
 # [SAFETY] L

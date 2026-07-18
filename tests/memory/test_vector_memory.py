@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2091 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-708 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-708 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.vector_memory.test_vector_memory
 # [STABILITY] evolving
 # [SAFETY] L

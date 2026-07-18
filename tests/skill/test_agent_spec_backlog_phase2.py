@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1968 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-585 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-585 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_agent_spec_backlog_phase2
 # [STABILITY] evolving
 # [SAFETY] L

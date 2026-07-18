@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0089 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-247 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-247 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.chaos.test_mcp_chaos
 # [STABILITY] evolving
 # [SAFETY] L

@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1977 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-594 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-594 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_audit_schema
 # [STABILITY] evolving
 # [SAFETY] L

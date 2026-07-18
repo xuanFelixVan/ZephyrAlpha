@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2007 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-624 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-624 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_demo_e2e_pipeline_smoke
 # [STABILITY] evolving
 # [SAFETY] L

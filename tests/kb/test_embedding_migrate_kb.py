@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1900 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-519 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-519 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.kb.test_embedding_migrate
 # [STABILITY] evolving
 # [SAFETY] L

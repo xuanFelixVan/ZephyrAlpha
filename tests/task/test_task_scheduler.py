@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1724 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-439 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-439 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_task_scheduler
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

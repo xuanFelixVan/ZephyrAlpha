@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1584 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-430 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-430 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_session_continuity
 

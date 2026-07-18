@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1928 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-547 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-547 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_brain_integration
 # [STABILITY] evolving
 # [SAFETY] L

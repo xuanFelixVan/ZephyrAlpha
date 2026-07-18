@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0121 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-278 | tests/governance/test_budget_enforcer_submodules.py | §
+# [BLUEPRINT] MOD-TEST-278 | tests/governance/test_budget_enforcer_submodules.py | §
 # [TTL] task_bound
 """budget-enforcer 子模块集成冒烟测试
 ========================================

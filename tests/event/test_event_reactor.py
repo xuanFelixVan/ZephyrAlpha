@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0866 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-382 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-382 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_event_reactor
 # [INVARIANTS] EventReactor must log a Reaction for each subscribed event type
 # [MODIFY-GUARD] none
