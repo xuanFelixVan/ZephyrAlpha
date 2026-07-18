@@ -792,6 +792,7 @@ tasks:
     symbols: null
     extra:
       description: "股票列表全量刷新（QMT 5207只）"
+      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
   - task_id: index_constituent_refresh
     table: c1_market.index_constituent
@@ -1185,6 +1186,7 @@ tasks:
     symbols: null  # null=默认核心指数（上证50/沪深300/中证500/中证1000）
     extra:
       description: "指数成分股权重全量刷新（miniQMT get_index_weight，需先download_index_weight）"
+      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
   - task_id: sector_list_refresh
     table: c1_market.sector_list
@@ -1196,6 +1198,7 @@ tasks:
     symbols: null
     extra:
       description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
+      trading_day_only: true  # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
   - task_id: l2_tick_snapshot
     table: c1_market.l2_tick

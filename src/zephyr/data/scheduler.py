@@ -145,12 +145,29 @@ def _run_special_schedule(
 
 
 def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
-    """过滤该时段的任务（跳过 extra.disabled=true 的退役/暂停任务）。"""
-    return [
-        t for t in tasks
-        if t.get("schedule") == schedule_name
-        and not (t.get("extra") or {}).get("disabled")
-    ]
+    """过滤该时段的任务。
+
+    跳过规则：
+    - extra.disabled=true：退役/暂停任务
+    - extra.trading_day_only=true 且今日非交易日：miniqmt 等依赖 QMT 服务器的任务
+      （QMT 服务器周末/节假日非交易时段拒绝连接，error 10061 WSAECONNREFUSED，
+       见 schedule.yaml L8 注释与蓝图 §6.2.1）
+    """
+    today = datetime.date.today()
+    is_trading = is_trading_day(today)
+    result = []
+    for t in tasks:
+        if t.get("schedule") != schedule_name:
+            continue
+        extra = t.get("extra") or {}
+        if extra.get("disabled"):
+            continue
+        if extra.get("trading_day_only") and not is_trading:
+            log.info("任务 %s 跳过：trading_day_only 且今日(%s)非交易日",
+                     t.get("task_id"), today)
+            continue
+        result.append(t)
+    return result
 
 
 def _run_schedule_dag(

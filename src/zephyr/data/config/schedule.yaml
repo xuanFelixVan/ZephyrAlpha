@@ -62,11 +62,12 @@ schedules:
     executor: heavy
     description: "夜间财务层——财报/财务指标/十大股东/融资融券(T+1)"
 
-  # L8 周末校准层：周六 02:00（利用无交易窗口）
+  # L8 周末后校准层：周一 03:00（周末后首个工作日，QMT服务器可用；与L10补下载02:00错峰1小时）
+  # 原周六02:00已废弃：miniqmt源任务周末连不上QMT服务器(error 10061 WSAECONNREFUSED)
   weekend_calibration:
-    cron: "00 2 * * 6"
+    cron: "00 3 * * 0"
     executor: heavy
-    description: "周末校准层——全量校准/TDX板块/概念板块/美股全量"
+    description: "周末后校准层——全量校准/TDX板块/概念板块/美股全量（周一03:00，QMT可用）"
 
   # L9 月初静态层：每月1日 09:00
   monthly_static:
@@ -74,7 +75,8 @@ schedules:
     executor: default
     description: "月初静态层——股票列表/板块分类/指数成分/交易日历"
 
-  # L10 周末补下载层：周日 02:00（L8周六校准之后，利用无交易窗口）
+  # L10 周末补下载层：周一 02:00（周末后首个工作日；APScheduler 0=周一，非周日）
+  # 与L8校准层(03:00)错峰：先补下载缺失数据，再做全量校准
   weekend_backfill:
     cron: "00 2 * * 0"
     executor: heavy

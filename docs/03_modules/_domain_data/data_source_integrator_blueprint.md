@@ -469,10 +469,22 @@ scheduler = BackgroundScheduler(
 | **L5 盘后资金** | 00 18 周一-五 | default | margin_trading / block_trade / dragon_tiger / money_flow / futures_kline / us_daily / us_index / share_unlock | iFind + QMT + AKShare + TickFlow | 资金面 + 外盘 |
 | **L6 盘后事件** | 00 19 周一-五 | default | analyst_forecast / dividend / rights_issue / disclosure_plan | AKShare + iFind | 事件类数据 |
 | **L7 夜间财务** | 00 22 周一-五 | heavy | balance_sheet / income_statement / cashflow / financial_indicator / top10_shareholders / equity_pledge | QMT + iFind + AKShare | 低频财务数据 |
-| **L8 周末校准** | 00 2 周六 | heavy | 全量校准 / TDX板块 / 概念板块 / 美股全量 | 各源 | 全量刷新 |
-| **L9 月初静态** | 00 9 1 * * | default | stock_list / index_list / trade_calendar / etf_list | 各源 | 月度刷新 |
-| **L10 周末补下载** | 00 2 周日 | heavy | tick_data 补下载 + 全表缺失检测补下载 | QMT + 各源 | 动态发现 tasks.yaml 全表，检测过去7天缺失并精准补下载 |
+| **L8 周末后校准** | 00 3 周一 | heavy | 全量校准 / TDX板块 / 概念板块 / 美股全量 | 各源 | 全量刷新（原周六02:00已废弃，miniqmt周末连不上QMT服务器） |
+| **L9 月初静态** | 00 9 1 * * | default | stock_list / index_list / trade_calendar / etf_list | 各源 | 月度刷新（miniqmt源任务加 `trading_day_only: true`，月初遇周末跳过） |
+| **L10 周末补下载** | 00 2 周一 | heavy | tick_data 补下载 + 全表缺失检测补下载 | QMT + 各源 | 动态发现 tasks.yaml 全表，检测过去7天缺失并精准补下载（APScheduler 0=周一） |
 | **L11 完整性巡检** | 00 23 周一-五 | default | integrity_check_daily | internal | 动态发现 tasks.yaml 全表，检测当日数据是否达标，不达标告警 |
+
+#### §6.2.1 miniqmt 任务交易日约束（2026-07-19 裁定）
+
+**背景**：QMT 服务器（`qmt.gjzq.com.cn:56001`）在周末/节假日非交易时段关闭登录服务，返回 `error 10061 WSAECONNREFUSED`（由于目标计算机积极拒绝）。miniqmt 源任务（xtquant SDK）在非交易日触发必然失败。
+
+**约束**：
+1. `TRADING_DAY_GUARDED_SCHEDULES`（见 `trading_calendar.py`）已覆盖 L1/L2/L4/L5/L6/L7/L11/L0 共 8 个时段，scheduler 在非交易日自动跳过这些时段的所有任务。
+2. `weekend_calibration`（L8）cron 已从 `00 2 * * 6`（周六）改为 `00 3 * * 0`（周一 03:00），确保周末后首个工作日执行全量校准时 QMT 服务器可用。
+3. `monthly_static`（L9）不在交易日历守卫列表（因含 ifind/akshare 任务需周末/月初跑），但其中的 miniqmt 源任务必须标记 `extra.trading_day_only: true`，由 `_filter_schedule_tasks` 在非交易日自动过滤。当前标记此字段的任务：`stock_list_refresh` / `index_weight_refresh` / `sector_list_refresh`。
+4. `cli run <task_id>` 手动触发**绕过**交易日历守卫，用户需自行判断时机（未来可加非交易日警告）。
+
+**判定流程**：miniqmt 任务触发前 → 检查 `extra.trading_day_only` → 若为 true 且今日非交易日 → 跳过并记日志。
 
 ### §6.3 任务依赖图
 
@@ -508,7 +520,7 @@ index_list ──→ index_constituent ──→ index_kline
   - 可恢复错误（超时/网络波动）→ PolicyRegistry 重试用完后 fallback
   - tasks.yaml 配置 `fallback_sources` 字段声明副源优先级列表
 - **调度级重跑**：DEAD 任务进入 `failures/` 目录，CLI `integrator rerun-failed` 一键重跑
-- **L10 周末补下载**：周日 02:00 自动检测过去7天全表缺失并补下载（不依赖 last_key）
+- **L10 周末补下载**：周一 02:00 自动检测过去7天全表缺失并补下载（不依赖 last_key）
 - **L11 每日巡检**：每天 23:00 盘后全表数据达标检测，不达标告警
 - **告警触发**：
   - 任务 DEAD → 立即告警
