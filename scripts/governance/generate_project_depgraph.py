@@ -3461,6 +3461,8 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         edges = depgraph.get("edges", [])
         edge_count = 0
         broken_edge_count = 0
+        # Task G (#ARCH-DATAQUALITY-V1.6): collect dangling edge details for actionable report
+        broken_edge_details: list[dict] = []
 
         # P0-1 schema fix: 构建生成器node_id→DB_node_id映射
         # 生成器node_id是字符串（如"src__zephyr__governance____init___py"），
@@ -3485,8 +3487,20 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                 continue
 
             # DM-012 Fix 1: Skip edges where from_node or to_node does not exist in nodes table
+            # Task G (#ARCH-DATAQUALITY-V1.6): collect details for actionable dangling-edge report
             if from_node not in gen_id_set or to_node not in gen_id_set:
                 broken_edge_count += 1
+                missing = []
+                if from_node not in gen_id_set:
+                    missing.append("from")
+                if to_node not in gen_id_set:
+                    missing.append("to")
+                broken_edge_details.append({
+                    "from": from_node,
+                    "to": to_node,
+                    "dep_type": edge.get("dep_type", "import_depends"),
+                    "missing": "+".join(missing),
+                })
                 continue
 
             api_contract_refs = edge.get("api_contract_refs", [])
@@ -3555,9 +3569,29 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             print(f"[DEPGRAPH-DB] WARNING: edges_metadata 恢复失败: {e}")
 
         conn.commit()
-        print(
-            f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (skipped {broken_edge_count} broken edges)"
-        )
+        # Task G (#ARCH-DATAQUALITY-V1.6): improved dangling-edge report with details + actionable guidance
+        if broken_edge_count > 0:
+            print(
+                f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges "
+                f"(skipped {broken_edge_count} dangling edges: endpoint not in nodes table)"
+            )
+            print(f"[DEPGRAPH-DB] Dangling edge details (first 10 of {broken_edge_count}):")
+            for i, d in enumerate(broken_edge_details[:10]):
+                print(
+                    f"  [{i + 1}] from={d['from']} -> to={d['to']} "
+                    f"(dep_type={d['dep_type']}, missing={d['missing']})"
+                )
+            if broken_edge_count > 10:
+                print(f"  ... and {broken_edge_count - 10} more (see broken_edge_details)")
+            print(
+                "[DEPGRAPH-DB] Action: these edges reference nodes absent from current scan. "
+                "Causes: node deleted/renamed, path changed, or outside scan scope. "
+                "Verify gen_node_id_to_path mapping or rerun with --full to rebuild from scratch."
+            )
+        else:
+            print(
+                f"[DEPGRAPH-DB] Inserted {node_count} nodes, {edge_count} edges (0 dangling edges)"
+            )
 
         # H6 fix: Backfill gate_reason for design-state nodes that were preserved
         try:
