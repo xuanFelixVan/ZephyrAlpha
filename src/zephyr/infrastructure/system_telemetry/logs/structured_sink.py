@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | 蓝图特有§A
+# noqa: m10-time-trigger  M10豁免: threading.Timer 仅出现在类型注解（_flush_timer: threading.Timer | None），非实际时间触发创建；[STARTUP] imported 被调用方导入非常驻服务
 # [MODULE] zephyr.infrastructure.system_telemetry.logs.structured_sink
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] zephyr.infrastructure.__init__
