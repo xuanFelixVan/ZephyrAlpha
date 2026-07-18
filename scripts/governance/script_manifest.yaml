@@ -1,8 +1,8 @@
-# 自动生成于 2026-07-18T20:15:40Z
+# 自动生成于 2026-07-18T20:19:26Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T20:15:40Z'
+generated_at: '2026-07-18T20:19:26Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 346
@@ -147,7 +147,7 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+  description: 架构健康度仪表盘（16 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
