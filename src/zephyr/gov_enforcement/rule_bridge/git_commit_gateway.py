@@ -75,6 +75,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_worktree_lifecycle_reconciler,
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
+    _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -763,6 +764,17 @@ class GitCommitGateway:
         # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
         # 不阻断 commit（warn 语义），但确保上次 reconciler 失败不被忽视。
         _print_critical_warn_banner(self.project_root, context="pre_commit")
+
+        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2: pre-commit 硬阻断
+        # block_next 是最严重的 reconciler 失败级别——下次 commit 硬阻断。
+        # 与 critical_warn 的区别：critical_warn 只告警不阻断，block_next 硬阻断。
+        # AI 必须先修复问题，调 resolve_blocks() 清除阻断，才能继续 commit。
+        _block_err = _print_block_banner(self.project_root, context="pre_commit")
+        if _block_err:
+            return CommitResult(
+                status=CommitStatus.COMMIT_FAILED,
+                message=_block_err,
+            )
 
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）

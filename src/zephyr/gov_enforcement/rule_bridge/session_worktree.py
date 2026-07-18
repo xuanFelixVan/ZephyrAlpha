@@ -1727,6 +1727,25 @@ def session_worktree_merge(
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         pass  # 告警横幅失败不应阻断 merge
 
+    # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2: pre-merge 硬阻断
+    # block_next 是最严重的 reconciler 失败级别——下次 merge 硬阻断。
+    # 与 critical_warn 的区别：critical_warn 只告警不阻断，block_next 硬阻断。
+    # AI 必须先修复问题，调 resolve_blocks() 清除阻断，才能继续 merge。
+    # fail-open 策略：查询失败（governance.db 不可用）不阻断 merge，仅记录日志
+    # （避免 DB 故障时永久阻塞所有 merge）。
+    try:
+        from zephyr.governance.audit.reconciliation_registry import _print_block_banner
+        _block_err = _print_block_banner(root, context="pre_merge")
+        if _block_err:
+            return {
+                "session_id": session_id,
+                "merged": False,
+                "error": _block_err,
+                "blocked": True,
+            }
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("session_worktree_merge: block_next check failed: %s", e)
+
     # PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：pre-merge 拓扑硬阻断。
     # 时序关键（2026-07-17 修复）：必须在 _pre_merge_auto_clean 之前执行——
     # auto_clean 会还原 session 变更列表中的 checker 文件到 HEAD 旧版本（若 session
