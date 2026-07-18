@@ -5264,6 +5264,11 @@ creation_tokens:
     token: "auto-git-health-smoke-20260719"
     created_by: "sess-19148-20260719040733"
     capability: "system_telemetry_health_probe"
+  # --- ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): reconciler batched auto-commit ---
+  - file: "src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py"
+    token: "auto-batched-auto-committer-20260719"
+    created_by: "sess-29340-20260719070757"
+    capability: "git_call_batching"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

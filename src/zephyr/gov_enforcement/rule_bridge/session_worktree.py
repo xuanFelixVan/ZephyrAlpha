@@ -1601,7 +1601,10 @@ def _run_reconcilers_after_merge(
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
         from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
         gateway = GitCommitGateway(project_root=root)
-        results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
+        # P2.3: batch intercept -- flush on exit produces single squash commit.
+        with gateway._batcher as batcher:
+            batcher.enable(session_id)
+            results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
         # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
         # worktree merge 路径此前无日志记录，是 fail-silent 的重灾区。
@@ -2046,7 +2049,10 @@ def _run_post_commit_reconcile(
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
         from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
         gateway = GitCommitGateway(project_root=root)
-        results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
+        # P2.3: batch intercept -- flush on exit produces single squash commit.
+        with gateway._batcher as batcher:
+            batcher.enable(session_id)
+            results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化到 governance.db
         _log_reconcile_results(
             root, results, session_id,
@@ -2389,6 +2395,9 @@ def session_worktree_abort(
     try:
         aborted = manager.cleanup_session_worktree(session_id)
         if aborted:
+            _log_worktree_delete(  # Phase 4 遥测：abort 删除点
+                session_id, "abort", manager._wt_path(session_id), root
+            )
             parts = ["worktree 已丢弃并清理"]
             if main_cleaned > 0:
                 parts.append(f"（主工作区清理 {main_cleaned} 个文件）")
