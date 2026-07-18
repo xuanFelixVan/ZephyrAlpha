@@ -26,7 +26,7 @@ ttl: permanent
 | 域名称 | 知识库治理 | Domain Name | Knowledge Base Governance |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
 | 模块数 | 26 | Module Count | 26 |
-| 域内依赖 | 11 | Internal Dependencies | 11 |
+| 域内依赖 | 10 | Internal Dependencies | 10 |
 | 跨域入边 | 1 | Cross-domain Incoming | 1 |
 | 跨域出边 | 29 | Cross-domain Outgoing | 29 |
 | 设计态模块 | 0 | Design Modules | 0 |
@@ -118,22 +118,21 @@ graph TD
     src_zephyr_gov_kb_batch_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_pipeline_batch_ingest_py
     src_zephyr_gov_kb_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_init_py -.->|config_depends / config_depends| src_zephyr_gov_kb_batch_ingest_py
-    src_zephyr_gov_kb_kb_engine_kb_gate_task_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_reranker_py -.->|config_depends / config_depends| src_zephyr_gov_kb_init_py
-    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
+    src_zephyr_gov_kb_kb_engine_kb_gate_task_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_migration_kb_gate_task_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
+    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_SHARED["(生产态 / production) D_SHARED"]
-    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_embedding_migrate_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_gov_kb_self_test_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_kb_kb_gate_task_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_GOVERNANCE
+    src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_ingest_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_kb_self_test_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
@@ -180,8 +179,8 @@ graph TD
     end
     src_zephyr_gov_kb_bootstrap_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_ingest_py
     src_zephyr_gov_kb_ingest_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
-    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     src_zephyr_gov_kb_pipeline_analyze_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
+    src_zephyr_gov_kb_pipeline_extract_py -->|导入依赖 / import_depends| src_zephyr_gov_kb_kb_gate_task_py
     D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_embedding_migrate_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_freeze_py -->|导入依赖 / import_depends| D_SHARED
@@ -197,9 +196,9 @@ graph TD
     src_zephyr_gov_kb_ke_tombstone_py -->|导入依赖 / import_depends| D_GOVERNANCE
     src_zephyr_gov_kb_kb_gate_task_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_kb_gate_task_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_load_bearing_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_quiet_period_monitor_py -->|导入依赖 / import_depends| D_SHARED
     D_GOVERNANCE -.->|导入依赖 / import_depends| src_zephyr_gov_kb_self_test_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
@@ -234,19 +233,19 @@ graph TD
         src_zephyr_gov_kb_supply_chain_graph_engine_init_py["(原型态 / prototype) __init__.py"]
     end
     src_zephyr_gov_kb_reranker_py -.->|config_depends / config_depends| src_zephyr_gov_kb_init_py
+    D_SHARED["(生产态 / production) D_SHARED"]
+    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
     D_GOV_RULE["(生产态 / production) D_GOV_RULE"]
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_GOV_RULE
-    D_SHARED["(生产态 / production) D_SHARED"]
     src_zephyr_gov_kb_pipeline_activate_py -.->|导入依赖 / import_depends| D_SHARED
-    src_zephyr_gov_kb_pipeline_batch_ingest_py -.->|导入依赖 / import_depends| D_SHARED
     src_zephyr_gov_kb_integrity_py -.->|导入依赖 / import_depends| D_SHARED
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_gov_kb_init_py,src_zephyr_gov_kb_filing_nlp_engine_init_py,src_zephyr_gov_kb_integrity_py,src_zephyr_gov_kb_kb_engine_kb_gate_task_py,src_zephyr_gov_kb_migration_kb_gate_task_py,src_zephyr_gov_kb_pipeline_activate_py,src_zephyr_gov_kb_pipeline_batch_ingest_py,src_zephyr_gov_kb_reranker_py,src_zephyr_gov_kb_sentiment_engine_init_py,src_zephyr_gov_kb_supply_chain_graph_engine_init_py design
-    class D_GOV_RULE,D_SHARED external_prod
+    class D_SHARED,D_GOV_RULE external_prod
 ```
 
 ## 跨域依赖 / Cross-domain Dependencies

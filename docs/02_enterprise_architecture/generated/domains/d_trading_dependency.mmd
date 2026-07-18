@@ -1,5 +1,5 @@
 %% D_TRADING 域全景依赖图
-%% 生成时间: 2026-07-19 04:56:20
+%% 生成时间: 2026-07-19 05:02:12
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 32, 依赖边数: 154
 
@@ -55,7 +55,6 @@ graph TD
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_TRADING (84 条)
     [] -->|import_depends| src_zephyr_trading_trading_contracts_broker_interface_py
-    [] -->|import_depends| src_zephyr_trading_runtime_async_runtime_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_factories_py
     [] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     [] -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
@@ -73,6 +72,7 @@ graph TD
     [] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_limits_py
     [] -->|import_depends| src_zephyr_trading_trading_contracts_risk_risk_metrics_py
     [] -->|import_depends| src_zephyr_trading_trading_con____risk_validator_protocol_py
+    [] -->|import_depends| src_zephyr_trading_runtime_async_runtime_py
     [] -->|import_depends| src_zephyr_trading_trading_con___apital_allocation_result_py
     [] -->|import_depends| src_zephyr_trading_trading_con___xecution_rejection_error_py
     [] -->|import_depends| src_zephyr_trading_trading_con___ecution_execution_report_py
@@ -157,14 +157,14 @@ graph TD
     src_zephyr_trading_auto_dispatcher_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_conductor_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_conductor_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_gpu_consensus_scheduler_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_speed_baseline_checker_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_runtime_async_runtime_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_trading_trading_contracts_execution_order_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_trading_ide_health_daemon_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
     %% 域内依赖: 9 条
