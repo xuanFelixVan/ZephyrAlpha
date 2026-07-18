@@ -1760,15 +1760,45 @@ def session_worktree_merge(
     )
     if not _topo_passed:
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in _topo_violations)
+        # #ARCH-DEP-PREMERGE-ENFORCE (P4.1)：拓扑检查失败写入 block_next 记录，
+        # 下次 commit/merge 硬阻断——AI 必须修复 HIGH drift 后调 resolve_blocks()
+        # 清除阻断才能继续。复用 P4.2 的 _log_reconcile_results + block_next action
+        # 语义（block_next: 最严重——下次 commit/merge 硬阻断）。
+        # 为什么写 block_next 而非 critical_warn：拓扑不一致是"需要强制干预"场景，
+        # critical_warn 只告警不阻断，AI 可继续 commit 引入更多漂移；block_next 硬阻断
+        # 强制 AI 先修复拓扑问题。写入失败降级为 warn（不阻断本次 merge 的 return，
+        # 但日志可见——DB 故障不应卡死业务流程，拓扑问题本身已通过 return 阻断本次 merge）。
+        try:
+            from zephyr.governance.audit.reconciliation_registry import (
+                ReconcileResult,
+                _log_reconcile_results,
+            )
+            _block_result = ReconcileResult(
+                action="block_next",
+                detail=f"PRE-MERGE-TOPO-CHECK 阻断: {_details}",
+                gate_id="PRE-MERGE-TOPO-CHECK",
+            )
+            _log_reconcile_results(
+                root, [_block_result], session_id, "pre_merge_topo_check",
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning(
+                "PRE-MERGE-TOPO-CHECK: 写入 block_next 记录失败（降级为仅阻断本次 merge）: %s", e,
+            )
         return {
             "session_id": session_id,
             "merged": False,
-            "message": f"pre-merge topo check 阻断: {_details}",
+            "message": (
+                f"pre-merge topo check 阻断: {_details}。"
+                f"已写入 block_next 记录——下次 commit/merge 将硬阻断。"
+                f"修复 HIGH drift 后调 resolve_blocks() 清除阻断再重试 merge。"
+            ),
             "cleaned": False,
             "unregistered": False,
             "gate_violation": True,
             "gate_results": _topo_violations,
             "reconcile_results": [],
+            "blocked_next": True,  # P4.1: 标记已写入 block_next
         }
 
     # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
