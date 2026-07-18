@@ -3647,21 +3647,48 @@ capabilities:
       解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 批量入库引擎。
 
   - capability_id: kb_unified_memory
-    canonical_override: src/zephyr/governance/kb/storage/unified_memory_api.py
+    canonical_override: src/zephyr/intelligence/model_evaluation/unified_memory_api.py
     aliases:
       - unified_memory_api
       - UnifiedMemoryAPI
+      - get_unified_memory_api
+      - WriteTrace
+      - WriteTraceMissing
+      - build_provenance
+    description: >-
+      统一记忆 API——UnifiedMemoryAPI 三件套接口（write/recall/search）。
+      canonical = src/zephyr/intelligence/model_evaluation/unified_memory_api.py。
+      解决发现性：新 AI 搜 "unified memory/kb write/recall" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建统一记忆 API。
+      迁移历史：2026-07-19 从 src/zephyr/governance/kb/storage/unified_memory_api.py 迁出（KBG 删除工程）。
+
+  - capability_id: kb_memory_backend
+    canonical_override: src/zephyr/intelligence/model_evaluation/_memory_backend.py
+    aliases:
       - MemoryBackend
       - MemoryRecord
       - MemoryBackendError
       - InMemoryMemoryBackend
-      - VMSMemoryBackend
+      - _backend_protocol
     description: >-
-      KB 统一记忆 API——MemoryBackend Protocol + 统一记忆接口。
-      canonical = src/zephyr/governance/kb/storage/unified_memory_api.py。
-      kb/_backend_protocol.py 和 kb/unified_memory_api.py 是 re-export shim。
-      解决发现性：新 AI 搜 "unified memory/memory backend/kb storage" 可定位真源。
-      解决防重建：check_file_canonical() 反查阻止新 AI 重建 KB 统一记忆 API。
+      记忆后端协议——MemoryBackend Protocol + InMemoryMemoryBackend 默认实现 + MemoryRecord 数据模型。
+      canonical = src/zephyr/intelligence/model_evaluation/_memory_backend.py。
+      解决发现性：新 AI 搜 "memory backend protocol/memory record" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 MemoryBackend 协议。
+      迁移历史：2026-07-19 从 src/zephyr/gov_kb/storage/_backend_protocol.py 迁出（KBG 删除工程）。
+
+  - capability_id: vms_memory_backend
+    canonical_override: src/zephyr/integration/vector_memory/vms_memory_backend.py
+    aliases:
+      - VMSMemoryBackend
+      - create_vms_backend
+      - vms_memory_backend
+    description: >-
+      VMS 记忆后端——VMSMemoryBackend 将 UnifiedMemoryAPI 路由到 InProcessVectorMemory。
+      canonical = src/zephyr/integration/vector_memory/vms_memory_backend.py。
+      解决发现性：新 AI 搜 "vms memory backend/create_vms_backend" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建 VMS 记忆后端。
+      迁移历史：2026-07-19 从 src/zephyr/gov_kb/vms_memory_backend.py 迁出（KBG 删除工程）。
 
   # --------------------------------------------------------------------------
   - capability_id: registry_discovery
@@ -4243,6 +4270,16 @@ creation_tokens:
     token: "auto-event-bus-restore-20260706"
     created_by: "session-sess-44448-20260706204224"
     capability: "event_bus"
+
+  # --- KBG 删除：记忆后端迁移（2026-07-19，从 gov_kb 迁出到 intelligence + integration 域）---
+  - file: "src/zephyr/intelligence/model_evaluation/_memory_backend.py"
+    token: "auto-kb-memory-backend-20260719"
+    created_by: "session-sess-27140-20260719040729"
+    capability: "kb_memory_backend"
+  - file: "src/zephyr/integration/vector_memory/vms_memory_backend.py"
+    token: "auto-vms-memory-backend-20260719"
+    created_by: "session-sess-27140-20260719040729"
+    capability: "vms_memory_backend"
 
   # --- red_blue_validator re-export shim（2026-07-17 裁定#18 G10+import_time；2026-07-18 多真源消除：删除连字符 YAML 副本条目）---
   - file: "src/zephyr/red_blue_validator/__init__.py"
@@ -5182,6 +5219,16 @@ creation_tokens:
     created_by: "sess-33764-20260719035340"
     capability: "remediation_progress_tracking"
 
+
+  # 治本（2026-07-19，#ARCH-GOV-CONVERGENCE-META Phase 3.1）：治本进度持久化 + 新鲜度对账
+  - file: "src/zephyr/governance/audit/remediation_progress_reconciler.py"
+    token: "auto-remediation-progress-reconciler-20260719"
+    created_by: "sess-33696-20260719033248"
+    capability: "remediation_progress_tracker"
+  - file: "scripts/governance/test_remediation_progress_smoke.py"
+    token: "auto-remediation-progress-smoke-20260719"
+    created_by: "sess-33696-20260719033248"
+    capability: "remediation_progress_tracker"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
