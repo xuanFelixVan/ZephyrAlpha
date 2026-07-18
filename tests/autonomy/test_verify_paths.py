@@ -139,7 +139,7 @@ class TestVerifyAllCorrectness:
 
 class TestVerifyAllBoundaryConditions:
     def test_empty_source_files(self):
-        with patch("zephyr.autonomy_core.verify_paths.SOURCE_FILES", {}):
+        with patch("zephyr.shared.utils.verify_paths.SOURCE_FILES", {}):
             result = verify_all()
             assert result["source_files"] == {}
             assert result["stats"]["source_expected_exist"] == 0
@@ -147,7 +147,7 @@ class TestVerifyAllBoundaryConditions:
             assert result["stats"]["source_actually_exist"] == 0
 
     def test_empty_test_files(self):
-        with patch("zephyr.autonomy_core.verify_paths.TEST_FILES", {}):
+        with patch("zephyr.shared.utils.verify_paths.TEST_FILES", {}):
             result = verify_all()
             assert result["test_files"] == {}
             assert result["stats"]["tests_total"] == 0
@@ -156,8 +156,8 @@ class TestVerifyAllBoundaryConditions:
 
     def test_both_dicts_empty(self):
         with (
-            patch("zephyr.autonomy_core.verify_paths.SOURCE_FILES", {}),
-            patch("zephyr.autonomy_core.verify_paths.TEST_FILES", {}),
+            patch("zephyr.shared.utils.verify_paths.SOURCE_FILES", {}),
+            patch("zephyr.shared.utils.verify_paths.TEST_FILES", {}),
         ):
             result = verify_all()
             assert result["source_files"] == {}
@@ -171,7 +171,7 @@ class TestVerifyAllBoundaryConditions:
 
     def test_nonexistent_source_file_has_zero_size(self):
         fake_files = {"nonexistent_module.py": "source"}
-        with patch("zephyr.autonomy_core.verify_paths.SOURCE_FILES", fake_files):
+        with patch("zephyr.shared.utils.verify_paths.SOURCE_FILES", fake_files):
             result = verify_all()
             info = result["source_files"]["nonexistent_module.py"]
             assert info["exists"] is False
@@ -179,7 +179,7 @@ class TestVerifyAllBoundaryConditions:
 
     def test_nonexistent_test_file_exists_is_false(self):
         fake_tests = {"unit/context-engine/test_fake.py": "test"}
-        with patch("zephyr.autonomy_core.verify_paths.TEST_FILES", fake_tests):
+        with patch("zephyr.shared.utils.verify_paths.TEST_FILES", fake_tests):
             result = verify_all()
             info = result["test_files"]["unit/context-engine/test_fake.py"]
             assert info["exists"] is False
