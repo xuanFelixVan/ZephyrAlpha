@@ -1096,7 +1096,19 @@ def session_worktree_commit(
     if err:
         return err
 
-    return _git_commit_in_worktree(wt_path, message, session_id)
+    commit_result = _git_commit_in_worktree(wt_path, message, session_id)
+    if commit_result.get("status") == "OK":
+        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT P4.3: 修复触发断链
+        # session_worktree_commit 绕过 GitCommitGateway（worktree 独立 index 设计决策，
+        # 见 docstring line 42-48），导致 GitCommitGateway._run_post_commit_reconcile
+        # 从未被调用。此处显式触发 reconciler 链补齐——治本不是让 session_worktree
+        # 走 GitCommitGateway（会破坏 worktree 隔离），而是在 commit 后显式触发 reconciler。
+        # reconciler 的 auto-commit 通过 _commit_auto 只提交 reconciler 生成的文件，
+        # 不搭便车提交工作区遗留；merge 时由 _ensure_worktree_base_fresh 自动对齐（裁定#19-B）。
+        commit_result["reconcile_results"] = _run_post_commit_reconcile(
+            root, rel_files, session_id,
+        )
+    return commit_result
 
 
 def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
@@ -1688,6 +1700,51 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
         print(f"[RECONCILER] 触发失败: {e}")
         reconcile_results = [{"action": "warn", "detail": str(e)}]
     return reconcile_results
+
+
+def _run_post_commit_reconcile(
+    root: Path, committed_files: list[str], session_id: str,
+) -> list[dict]:
+    """commit 后触发 reconciler（P4.3: 修复 session_worktree_commit 触发断链）。
+
+    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3(4)/Phase 4(3)：
+    session_worktree_commit 绕过 GitCommitGateway.commit()（worktree 独立 index
+    设计决策，见 session_worktree.py:42-48 docstring），导致
+    GitCommitGateway._run_post_commit_reconcile 从未被调用——reconcile_for
+    从未遍历，make_depgraph_ops_reconciler 等从不触发。本函数在
+    _git_commit_in_worktree 成功后显式触发 reconciler 链，补齐触发断链。
+
+    与 _run_reconcilers_after_merge 的区别：
+    - trigger_source="post_commit_worktree"（区分于 post_merge，便于日志追溯）
+    - 看到的是主仓库状态（不含 worktree commit），同步的是主仓库既有漂移
+    - worktree commit 引入的漂移由 merge 后的 _run_post_merge_reconcile 处理
+
+    安全性：reconciler 的 auto-commit 通过 _commit_auto 只提交 reconciler 生成
+    的文件（manifest/path_tree 等，经 _resolve_auto_commit_files 过滤），不搭便车
+    提交工作区遗留。auto-commit 在主仓库创建的新 commit 不影响 worktree 分支——
+    merge 时若 worktree base 落后，_ensure_worktree_base_fresh（裁定#19-B）会
+    自动对齐（无 session commit → git reset --hard；有 session commit → git rebase）。
+    """
+    try:
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+        from zephyr.governance.audit.reconciliation_registry import _log_reconcile_results
+        gateway = GitCommitGateway(project_root=root)
+        results = gateway._reconciliation_registry.reconcile_for(committed_files, session_id)
+        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化到 governance.db
+        _log_reconcile_results(
+            root, results, session_id,
+            trigger_source="post_commit_worktree", committed_files=committed_files,
+        )
+        summary = []
+        for r in results:
+            if r.action == "skip":
+                continue
+            summary.append({"action": r.action, "detail": r.detail})
+            print(f"[RECONCILER post-commit] {r.action}" + (f" - {r.detail}" if r.detail else ""))
+        return summary
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        print(f"[RECONCILER post-commit] 触发失败: {e}")
+        return [{"action": "warn", "detail": str(e)}]
 
 
 def session_worktree_merge(
