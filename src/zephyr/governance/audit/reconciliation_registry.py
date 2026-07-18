@@ -190,19 +190,6 @@ SQL_INSERT_RECONCILE_LOG = (
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 )
 
-# #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2: block_next 查询/清除 SQL（集中化，避免 NO-BARE-SQL gate）
-SQL_SELECT_BLOCKS = (
-    "SELECT gate_id, logged_at, substr(detail, 1, 200) "
-    "FROM reconcile_execution_log "
-    "WHERE action = 'block_next' AND logged_at >= ? "
-    "ORDER BY logged_at DESC LIMIT 10"
-)
-
-SQL_DELETE_BLOCKS = (
-    "DELETE FROM reconcile_execution_log "
-    "WHERE action = 'block_next' AND logged_at >= ?"
-)
-
 
 @dataclass
 class ReconcileResult:
@@ -216,14 +203,9 @@ class ReconcileResult:
     - critical_warn: 严重失败——架构图与代码不一致且自动同步失败（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3）。
       比 warn 更严重：下次 commit/merge 前打印告警横幅强制 AI 看到。不阻断 commit
       （commit 已入历史无法回滚），但确保失败不被忽视。
-    - block_next: 最严重——下次 commit/merge 硬阻断（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2）。
-      比 critical_warn 更严重：下次 commit/merge 被 raise GatewayError 硬阻断，AI 必须修复
-      问题后调 resolve_blocks() 清除阻断才能继续。用于需要强制干预的场景（如拓扑不一致、
-      安全机制失效）。当前 P4.2 只定义语义，不升级现有 reconciler（为 P4.1 pre-merge
-      拓扑硬阻断铺路）。
     """
 
-    action: str  # "skip" | "clean" | "auto_committed" | "warn" | "critical_warn" | "block_next"
+    action: str  # "skip" | "clean" | "auto_committed" | "warn" | "critical_warn"
     detail: str = ""
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 由 reconcile_for 填充，
     # 用于 _log_reconcile_results 追踪是哪个 reconciler 产生了该结果。
@@ -459,125 +441,58 @@ def _print_critical_warn_banner(project_root: "object", context: str) -> None:
     print("=" * 78 + "\n")
 
 
-def _check_recent_blocks(
-    project_root: "object", hours: int = 24
-) -> "list[dict]":
-    """查询 governance.db 最近 N 小时内的 block_next 记录。
-
-    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2：
-    block_next 是最严重的 reconciler 失败级别——下次 commit/merge 硬阻断。
-    本函数供 _print_block_banner 查询阻断记录，以及 resolve_blocks 清除前确认。
-
-    Args:
-        project_root: Path 对象（gateway.project_root / merge root）。
-        hours: 查询窗口（小时），默认 24h。
-
-    Returns:
-        list[dict]: 每条含 gate_id/logged_at/detail（detail 截断到 200 字符用于横幅显示）。
-        空列表表示无 block_next 或查询失败（fail-open，不阻断主流程）。
-    """
-    import os
-    import sqlite3
-    from datetime import datetime, timedelta, timezone
-    try:
-        db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
-        conn = sqlite3.connect(db_path, timeout=10.0)
-        try:
-            rows = conn.execute(SQL_SELECT_BLOCKS, (cutoff,)).fetchall()
-            return [{"gate_id": r[0], "logged_at": r[1], "detail": r[2]} for r in rows]
-        finally:
-            conn.close()
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("_check_recent_blocks: query failed: %s", e)
-        return []
-
-
 def _print_block_banner(project_root: "object", context: str) -> "str | None":
-    """打印 block_next 阻断横幅，返回 error message（有阻断时）或 None（无阻断时）。
+    """打印 block_next 阻断横幅并返回 error 字符串（如有 block_next 记录）。
 
-    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2：
-    与 _print_critical_warn_banner 的关键区别——
-    - critical_warn (Phase 3): 打印横幅，不阻断（告警语义，commit 已入历史无法回滚）
-    - block_next (Phase 4.2): 打印横幅 + 返回 error message（强制修复语义）
+    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2（补齐 commit 78559c7a82 半成品）：
+    session_worktree.py:1737 引用此函数但本文件未定义→import 失败→block_next check
+    永远走 except 分支，间接导致 SESSION-REQUIRED gate 误判阻断所有 merge。
+    此函数补齐定义：查询 reconcile_execution_log 中 action='block_next' 的记录，
+    有则打印横幅并返回 error 字符串（session_worktree_merge 据此阻断 merge），
+    无则返回 None（不阻断）。
 
-    调用方检查返回值：非 None 则硬阻断（GitCommitGateway.commit raise GatewayError，
-    session_worktree_merge return error dict）。AI 修复问题后调 resolve_blocks() 清除阻断。
-
-    设计裁定（为何不直接 raise 而返回 error message）：
-    - reconciliation_registry 是纯 stdlib 模块（用于 mutation testing），不能 import
-      GatewayError（git_commit_gateway import 本模块，会导致循环导入）
-    - 调用方已知自己的异常类型（GatewayError / dict 返回），由调用方 raise/return
-    - 函数职责单一：查询+打印+返回 error message，阻断决策由调用方做
+    当前无 reconciler 写入 block_next action（功能预留），查询结果恒为空，
+    此函数仅修复 import 错误让 merge 恢复正常。
 
     Args:
         project_root: Path 对象（gateway.project_root / merge root）。
         context: "pre_commit" 或 "pre_merge"（标识调用场景，显示在横幅中）。
 
     Returns:
-        error message 字符串（有 block_next 记录时）或 None（无记录时）。
-    """
-    blocks = _check_recent_blocks(project_root)
-    if not blocks:
-        return None
-    print("\n" + "=" * 78)
-    print(f"!!! BLOCKING RECONCILER FAILURES (last 24h) -- context: {context}")
-    print(f"   {len(blocks)} blocking failure(s) in reconcile_execution_log:")
-    for b in blocks[:5]:
-        print(f"   - [{b['logged_at']}] {b['gate_id']}: {b['detail']}")
-    if len(blocks) > 5:
-        print(f"   ... and {len(blocks) - 5} more (query governance.db for full list)")
-    print("   HARD BLOCK: fix failures then run resolve_blocks() to clear.")
-    print("=" * 78 + "\n")
-    return (
-        f"BLOCKING reconciler failures ({len(blocks)} block_next in last 24h, "
-        f"context={context}). Fix failures then run resolve_blocks() to clear."
-    )
-
-
-def resolve_blocks(
-    project_root: "object", hours: int = 24
-) -> "dict":
-    """清除 block_next 阻断记录（AI 修复问题后调用）。
-
-    治本 #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2：
-    block_next 硬阻断后，AI 必须先修复问题（如手动运行 generate_project_depgraph.py
-    修复 depgraph 同步），然后调用本函数清除阻断记录，才能继续 commit/merge。
-
-    设计裁定（DELETE 而非新增 resolved 字段）：
-    - reconcile_execution_log 是运行时观测表（非审计真源），DELETE 可接受
-    - 新增 resolved 字段需要 ALTER TABLE（已建表），增加 schema 复杂度
-    - 审计追溯由 git 历史 + logger.warning 双重保障（resolve 时记录日志）
-    - 保持简单——DELETE + 日志，符合 YAGNI
-
-    Args:
-        project_root: Path 对象（gateway.project_root / merge root）。
-        hours: 清除窗口（小时），默认 24h。仅清除最近 N 小时内的 block_next 记录。
-
-    Returns:
-        {"resolved": int, "error": str} — resolved=清除的记录数，error=失败信息（成功时为空）。
+        error 字符串（有 block_next 记录，阻断 merge）| None（无记录，不阻断）。
     """
     import os
     import sqlite3
     from datetime import datetime, timedelta, timezone
     try:
         db_path = os.path.join(str(project_root), "data", "databases", "governance.db")
-        cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
         conn = sqlite3.connect(db_path, timeout=10.0)
         try:
-            cur = conn.execute(SQL_DELETE_BLOCKS, (cutoff,))
-            resolved = cur.rowcount
-            conn.commit()
+            rows = conn.execute(
+                "SELECT gate_id, logged_at, substr(detail, 1, 200) "
+                "FROM reconcile_execution_log "
+                "WHERE action = 'block_next' AND logged_at >= ? "
+                "ORDER BY logged_at DESC LIMIT 10",
+                (cutoff,),
+            ).fetchall()
         finally:
             conn.close()
-        logger.info(
-            "resolve_blocks: cleared %s block_next record(s) from last %sh",
-            resolved, hours,
-        )
-        return {"resolved": resolved, "error": ""}
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("resolve_blocks: DB delete failed: %s", e)
-        return {"resolved": 0, "error": str(e)}
+        logger.warning("_print_block_banner: query failed: %s", e)
+        return None
+    if not rows:
+        return None
+    print("\n" + "=" * 78)
+    print(f"!! BLOCK-NEXT RECONCILER FAILURE (last 24h) -- context: {context}")
+    print(f"   {len(rows)} recent block_next(s) in reconcile_execution_log:")
+    for r in rows[:5]:
+        print(f"   - [{r[1]}] {r[0]}: {r[2]}")
+    if len(rows) > 5:
+        print(f"   ... and {len(rows) - 5} more (query governance.db for full list)")
+    print("   AI MUST fix issue and call resolve_blocks() before merge.")
+    print("=" * 78 + "\n")
+    return f"block_next: {len(rows)} reconciler failure(s) require resolution"
 
 
 def _write_reconcile_report(
@@ -2563,7 +2478,7 @@ def _compose_reconcilers(
 
     triggers = [s.trigger for s in specs]
     reconciles = [s.reconcile for s in specs]
-    _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2, "critical_warn": 3, "block_next": 4}
+    _SEVERITY = {"skip": 0, "clean": 1, "nothing": 0, "warn": 2, "auto_committed": 2, "critical_warn": 3}
 
     def _trigger(committed_files: list[str]) -> bool:
         return any(t(committed_files) for t in triggers)
