@@ -40,6 +40,7 @@ class AgentRole(str, Enum):
     EXECUTOR = "EXECUTOR"
     REVIEWER = "REVIEWER"
     ADMIN = "ADMIN"
+    AUTONOMOUS_AGENT = "autonomous_agent"
 
 
 class MaturityLevel(str, Enum):
@@ -102,6 +103,12 @@ ROLE_DEFAULT_PERMISSIONS: dict[Any, list[str]] = {
         "review:code", "approve:merge",
         "manage:rbac", "manage:kill_switch",
         "admin:*",
+    ],
+    AgentRole.AUTONOMOUS_AGENT: [
+        "read:docs", "read:src", "read:tests", "read:config",
+        "write:src", "write:tests", "write:docs",
+        "execute:scripts", "execute:tests",
+        "pipeline:*",
     ],
 }
 

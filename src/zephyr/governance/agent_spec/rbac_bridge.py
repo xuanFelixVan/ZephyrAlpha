@@ -34,8 +34,9 @@ try:
     from zephyr.shared.contracts.identity.agent_identity import (
         AgentIdentity, AgentRole, IDESource, MaturityLevel,
     )
-    from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
-    from zephyr.security.access_control.guards.permission_guard import PermissionGuard
+    from zephyr.security.access_control.guards.permission_guard import (
+        GuardDecision, GuardResult, PermissionGuard,
+    )
     _AGENT_RBAC_AVAILABLE = True
 except ImportError:
     pass
@@ -92,15 +93,16 @@ class EscalationRBACBridge:
 
         try:
             identity = AgentIdentity(
-                agent_id=session_id,
+                session_id=session_id,
                 role=AgentRole.AUTONOMOUS_AGENT,
                 ide_source=IDESource.TRAE,
-                maturity=MaturityLevel.PROTOTYPE,
+                maturity=MaturityLevel.L0_INTERN,
+                auto_guard_eligible=True,
             )
             guard_result: GuardResult = self._guard.check(
-                identity=identity,
+                identity,
                 operation=operation,
-                target_path=target_path or None,
+                target_path=target_path or "",
             )
             if guard_result.decision is GuardDecision.BLOCKED:
                 return RBACCheckResult(
@@ -109,7 +111,7 @@ class EscalationRBACBridge:
                     layer="permission_guard",
                     rule_id=guard_result.rule_id or "AUTO_GUARD",
                     reason=guard_result.reason,
-                    audit_context=guard_result.audit_context or {},
+                    audit_context={"target": getattr(guard_result, "target", "")},
                 )
             return RBACCheckResult(
                 passed=True,
@@ -117,7 +119,7 @@ class EscalationRBACBridge:
                 layer="permission_guard",
                 rule_id=guard_result.rule_id or "AUTO_ALLOW",
                 reason=guard_result.reason,
-                audit_context=guard_result.audit_context or {},
+                audit_context={"target": getattr(guard_result, "target", "")},
             )
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.warning("RBAC pre_execute_check failed: %s", exc, exc_info=True)

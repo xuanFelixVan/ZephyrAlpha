@@ -48,6 +48,7 @@ class AgentRole(str, Enum):
     EXECUTOR = "executor"
     ADMIN = "admin"
     AUDITOR = "auditor"
+    AUTONOMOUS_AGENT = "autonomous_agent"
 
 
 ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
@@ -106,6 +107,18 @@ ROLE_DEFAULT_PERMISSIONS: Final[dict[AgentRole, list[str]]] = {
         "read:data",
         "read:audit",
         "audit:full",
+    ],
+    AgentRole.AUTONOMOUS_AGENT: [
+        "read:docs",
+        "read:src",
+        "read:tests",
+        "write:src",
+        "write:tests",
+        "execute:scripts",
+        "execute:tests",
+        "read:config",
+        "read:logs",
+        "read:data",
     ],
 }
 

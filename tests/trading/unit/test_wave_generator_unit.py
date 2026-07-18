@@ -46,17 +46,17 @@ class TestWaveGeneratorBasic:
 
     def test_single_task_is_wave_0(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
+        _insert_task(conn, "KBG-001")
         conn.close()
         waves = generator.generate_waves()
         assert len(waves) == 1
         assert waves[0].wave_id == 0
-        assert "ADR-001" in waves[0].task_ids
+        assert "KBG-001" in waves[0].task_ids
 
     def test_two_independent_tasks_same_wave(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
-        _insert_task(conn, "ADR-002")
+        _insert_task(conn, "KBG-001")
+        _insert_task(conn, "KBG-002")
         conn.close()
         waves = generator.generate_waves()
         assert len(waves) == 1
@@ -64,48 +64,48 @@ class TestWaveGeneratorBasic:
 
     def test_dependent_tasks_separate_waves(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
-        _insert_task(conn, "ADR-002", depends_on=["ADR-001"])
+        _insert_task(conn, "KBG-001")
+        _insert_task(conn, "KBG-002", depends_on=["KBG-001"])
         conn.close()
         waves = generator.generate_waves()
         assert len(waves) == 2
-        assert "ADR-001" in waves[0].task_ids
-        assert "ADR-002" in waves[1].task_ids
+        assert "KBG-001" in waves[0].task_ids
+        assert "KBG-002" in waves[1].task_ids
 
     def test_diamond_dependency(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
-        _insert_task(conn, "ADR-002", depends_on=["ADR-001"])
-        _insert_task(conn, "ADR-003", depends_on=["ADR-001"])
-        _insert_task(conn, "ADR-004", depends_on=["ADR-002", "ADR-003"])
+        _insert_task(conn, "KBG-001")
+        _insert_task(conn, "KBG-002", depends_on=["KBG-001"])
+        _insert_task(conn, "KBG-003", depends_on=["KBG-001"])
+        _insert_task(conn, "KBG-004", depends_on=["KBG-002", "KBG-003"])
         conn.close()
         waves = generator.generate_waves()
         assert len(waves) == 3
-        assert "ADR-001" in waves[0].task_ids
-        assert "ADR-002" in waves[1].task_ids
-        assert "ADR-003" in waves[1].task_ids
-        assert "ADR-004" in waves[2].task_ids
+        assert "KBG-001" in waves[0].task_ids
+        assert "KBG-002" in waves[1].task_ids
+        assert "KBG-003" in waves[1].task_ids
+        assert "KBG-004" in waves[2].task_ids
 
     def test_filter_by_phase(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", phase=2)
+        _insert_task(conn, "KBG-001", phase=2)
         _insert_task(conn, "STD-001", phase=1)
         conn.close()
         waves = generator.generate_waves(phase=2)
         assert len(waves) == 1
-        assert "ADR-001" in waves[0].task_ids
+        assert "KBG-001" in waves[0].task_ids
         assert "STD-001" not in waves[0].task_ids
 
 
 class TestGetNextWave:
     def test_returns_first_pending_wave(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
-        _insert_task(conn, "ADR-002", depends_on=["ADR-001"])
+        _insert_task(conn, "KBG-001")
+        _insert_task(conn, "KBG-002", depends_on=["KBG-001"])
         conn.close()
         wave = generator.get_next_wave()
         assert wave is not None
-        assert "ADR-001" in wave.task_ids
+        assert "KBG-001" in wave.task_ids
 
     def test_returns_none_when_all_completed(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
@@ -114,7 +114,7 @@ class TestGetNextWave:
         conn.execute(
             """INSERT INTO tasks
                (task_id, namespace, seq, title, status, priority, phase, execution_model, safety_level, created_at, updated_at)
-               VALUES ('ADR-001', 'ADR', 1, 'test', 'COMPLETED', 'P2', 2, 'glm', 'M', ?, ?)""",
+               VALUES ('KBG-001', 'KBG', 1, 'test', 'COMPLETED', 'P2', 2, 'glm', 'M', ?, ?)""",
             (now, now),
         )
         conn.execute("COMMIT")
@@ -126,13 +126,13 @@ class TestGetNextWave:
 class TestWaveStatus:
     def test_wave_status_counts(self, generator: WaveGenerator, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001")
-        _insert_task(conn, "ADR-002")
+        _insert_task(conn, "KBG-001")
+        _insert_task(conn, "KBG-002")
         conn.close()
 
         conn = get_db_connection(tmp_db)
         conn.execute("BEGIN")
-        conn.execute("UPDATE tasks SET status = 'COMPLETED' WHERE task_id = 'ADR-001'")
+        conn.execute("UPDATE tasks SET status = 'COMPLETED' WHERE task_id = 'KBG-001'")
         conn.execute("COMMIT")
         conn.close()
 

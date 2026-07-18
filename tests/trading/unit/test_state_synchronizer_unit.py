@@ -47,14 +47,14 @@ class TestStateSynchronizerSync:
 
     def test_sync_pending_no_file_is_ok(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/nonexistent.md", "PENDING")
+        _insert_task(conn, "KBG-001", "docs/nonexistent.md", "PENDING")
         conn.close()
         results = syncer.sync_all()
         assert len(results) == 0
 
     def test_sync_missing_artifact_detected(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/missing.md", "COMPLETED")
+        _insert_task(conn, "KBG-001", "docs/missing.md", "COMPLETED")
         conn.close()
         results = syncer.sync_all()
         assert len(results) == 1
@@ -62,41 +62,41 @@ class TestStateSynchronizerSync:
 
     def test_sync_auto_fix(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/missing.md", "COMPLETED")
+        _insert_task(conn, "KBG-001", "docs/missing.md", "COMPLETED")
         conn.close()
         results = syncer.sync_all(auto_fix=True)
         assert len(results) == 1
         conn2 = get_db_connection(tmp_db)
-        row = conn2.execute("SELECT status FROM tasks WHERE task_id = 'ADR-001'").fetchone()
+        row = conn2.execute("SELECT status FROM tasks WHERE task_id = 'KBG-001'").fetchone()
         conn2.close()
         assert row["status"] == "PENDING"
 
     def test_sync_single_task(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/missing.md", "COMPLETED")
+        _insert_task(conn, "KBG-001", "docs/missing.md", "COMPLETED")
         conn.close()
-        result = syncer.sync_task("ADR-001")
+        result = syncer.sync_task("KBG-001")
         assert result is not None
         assert result.action == "MISSING_ARTIFACT_ERROR"
 
     def test_sync_nonexistent_task(self, syncer: StateSynchronizer) -> None:
-        result = syncer.sync_task("ADR-999")
+        result = syncer.sync_task("KBG-999")
         assert result is None
 
 
 class TestDetectGhosts:
     def test_detect_ghosts(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "docs/ghost.md", "PENDING")
+        _insert_task(conn, "KBG-001", "docs/ghost.md", "PENDING")
         conn.close()
         ghosts = syncer.detect_ghosts()
         assert len(ghosts) >= 1
-        assert any(g.task_id == "ADR-001" for g in ghosts)
+        assert any(g.task_id == "KBG-001" for g in ghosts)
 
     def test_no_ghosts_for_existing_files(self, syncer: StateSynchronizer, tmp_db: Path) -> None:
         conn = get_db_connection(tmp_db)
-        _insert_task(conn, "ADR-001", "data/databases/governance.db", "PENDING")
+        _insert_task(conn, "KBG-001", "data/databases/governance.db", "PENDING")
         conn.close()
         ghosts = syncer.detect_ghosts()
         ghost_ids = [g.task_id for g in ghosts]
-        assert "ADR-001" not in ghost_ids
+        assert "KBG-001" not in ghost_ids
