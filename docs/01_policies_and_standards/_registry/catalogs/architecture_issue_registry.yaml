@@ -3441,3 +3441,132 @@ entries:
   related_adjudication: 'TRAE-062 SSoT 分类铁律, FP-ISO.4C worktree 君子协定, ARCH-DEPGRAPH-RECONCILER-FAILSILENT'
   created: '2026-07-19'
   last_updated: '2026-07-19'
+
+# --- #ARCH-WORKTREE-002: session_worktree 四重缺陷治本（2026-07-19） ---
+# 病根：session_worktree 君子协定（FP-ISO.4C）在 worktree 模式下存在 4 个独立缺陷，
+# 导致 AI 在 worktree 模式下提交时遭遇 gate 阻断、merge 状态被清理、修改丢失、
+# stash 堆积等问题。100% AI 开发场景下，这些缺陷会直接导致治本工作丢失（实测：
+# Phase 1 + Phase 3 代码修改被 session_worktree_abort 还原到 HEAD，全部丢失）。
+- issue_id: '#ARCH-WORKTREE-002'
+  title: session_worktree 四重缺陷治本——REPO_ROOT 解析不一致 / _pre_merge_auto_clean
+    无回滚 / reconciler 不识别 merge / stash 堆积无自动清理
+  category: architecture_governance
+  severity: P1
+  adjudication: |
+    2026-07-19 治本裁定。session_worktree 君子协定（FP-ISO.4C，2026-07-02 正式版）
+    是 AI 对话启动后的核心提交流程（start → commit → merge）。但实测发现 4 个独立
+    缺陷，在 worktree 模式下会导致 gate 阻断、merge 状态被清理、修改丢失、stash 堆积。
+
+    四重缺陷详述（第一性原理分析）：
+
+    缺陷1（REPO_ROOT 路径解析不一致）：
+    - 病根：blueprint_format_gate.py 模块级 import 通过 REPO_ROOT 定位
+      scripts/governance/d3_metadata/validate_module_id_naming.py。REPO_ROOT 基于
+      __file__ 定位（src/zephyr/shared/io/paths.py:65 find_repo_root()），永远指向
+      主工作区，而非 worktree。
+    - 表现：worktree 模式下 pre-merge gate import 主工作区旧版本模块。实测：regex
+      修复 [A-Z]→[A-Za-z] 后（commit 8e245e5c2f），worktree 内 gate 仍用主工作区
+      旧版本拒绝合规的 MOD-migrate_sqlite_to_pg。
+    - 治本：用 importlib.util.spec_from_file_location 从 gateway.project_root 动态
+      加载，确保 worktree 模式下使用 worktree 中的模块版本。缓存按 project_root key。
+
+    缺陷2（_pre_merge_auto_clean 无回滚机制）：
+    - 病根：session_worktree_merge 调用 _pre_merge_auto_clean 在 merge 前清理主工作区
+      的 staged changes（避免冲突）。清理方式是对 tracked 文件执行 git checkout --
+      还原到 HEAD。但 merge 失败后 abort 时，同样用 git checkout -- 还原 files 参数
+      中的文件——这会清空 AI 在主工作区的未提交修改。
+    - 表现：实测 session_worktree_abort('sess-XXX', files=[3个文件]) 返回
+      {'main_cleaned': 3}，三个文件的修改全部丢失（Select-String 验证 #ARCH-WORKTREE-002
+      标记消失）。这正是 Phase 1 + Phase 3 修改丢失的直接原因。
+    - 治本：_pre_merge_auto_clean 前先 stash 主工作区修改（带标记 msg），merge 失败
+      abort 时 stash pop 恢复，而非 git checkout -- 还原。
+
+    缺陷3（reconciler _commit_auto 不识别 merge 状态）：
+    - 病根：auto-sync reconciler 在检测到 staged changes 时自动调用
+      GitCommitGateway._commit_auto 提交。但 _commit_auto 不检测 .git/MERGE_HEAD，
+      手动 git merge --no-commit 后，reconciler 检测到 staged changes 自动提交，
+      清理 MERGE_HEAD，导致用户手动 merge 被强制完成（HEAD 移动到 auto-sync commit）。
+    - 表现：实测手动 git merge --no-commit --no-ff 输出 "Automatic merge went well"，
+      但随后 MERGE_HEAD 消失，HEAD 已移动。
+    - 治本：_commit_auto 入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit，返回
+      NOTHING_TO_COMMIT，保留 merge 状态供用户手动完成。
+
+    缺陷4（stash 堆积无自动清理）：
+    - 病根：session_worktree 在多处 stash 临时修改（_pre_merge_auto_clean /
+      _ensure_worktree_base_fresh / 手动 merge 前），但从不清理。auto-recover
+      机制（commit f7cce1ce97）修复了 stash 丢失 bug，但未清理过期 stash。
+    - 表现：实测 34 个 stash 堆积，部分已 30+ 小时，占用大量 git 对象存储。
+    - 治本：新增 stash 过期清理 reconciler（GATE-STASH-LIFECYCLE），post-commit
+      触发，清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀识别）。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - worktree 君子协定是 AI 隔离提交的核心机制，其缺陷会直接导致治本工作丢失。
+      实测：Phase 1 + Phase 3 代码修改全部丢失，需要重新应用——这是 AI 开发效率的
+      重大损耗。
+    - 缺陷2（abort 还原主工作区）尤其严重：AI 用 Edit/Write 写主工作区（IDE 限制），
+      session_worktree_commit 同步到 worktree。abort 时 git checkout -- 还原主工作区，
+      直接清空 AI 的工作成果。这不是"清理 worktree 残留"，而是"清空主工作区修改"。
+    - 缺陷1（REPO_ROOT 不一致）破坏了 worktree 物理隔离的语义：worktree 内的 gate
+      应该用 worktree 内的模块版本，而非主工作区版本。否则 worktree 隔离形同虚设。
+    - 缺陷3（reconciler 清理 MERGE_HEAD）破坏了用户手动 merge 的控制权：AI 手动
+      merge 是为了精细控制合并结果，reconciler 自动完成 merge 剥夺了这种控制权。
+    - 缺陷4（stash 堆积）虽不直接导致工作丢失，但会降低 git 性能，且积累的 stash
+      会混淆 AI 判断（AI 看到 stash list 会以为有未提交工作）。
+
+    裁定（5 阶段治本方案）：
+    Phase 5（已完成，2026-07-19）：存量 stash 清理——34 个 stash 全部 drop，备份
+      patch 到 .runtime/reconcile_reports/stash_backup/（123MB）。分析报告存于
+      stash_deep_analysis.json + stash_reverse_apply_check.json。
+    Phase 1（已完成，2026-07-19）：gate 模块 import 路径统一化——blueprint_format_gate.py
+      用 importlib.util.spec_from_file_location 从 gateway.project_root 动态加载
+      validate_module_id_naming.is_valid_module_id，替换 REPO_ROOT + sys.path bootstrap。
+    Phase 3（已完成，2026-07-19）：reconciler 识别 merge 状态——git_commit_gateway.py
+      _commit_auto 入口检测 .git/MERGE_HEAD 存在时跳过 auto-commit。
+    Phase 2（待执行）：_pre_merge_auto_clean 回滚机制——session_worktree.py 修改
+      _pre_merge_auto_clean 和 session_worktree_abort，用 stash + pop 替代 git checkout --。
+    Phase 4（待执行）：stash 过期清理 reconciler——新增 make_stash_lifecycle_reconciler()，
+      post-commit 触发，清理 > 24h 的 session_worktree 临时 stash。
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py（Phase 1：动态加载
+      validate_module_id_naming，_load_is_valid_module_id + _validate_module_id_cache）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 3：_commit_auto
+      入口检测 .git/MERGE_HEAD 跳过 auto-commit）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 2：_pre_merge_auto_clean
+      stash 回滚 + session_worktree_abort stash pop 恢复，待执行）
+    - src/zephyr/governance/audit/reconciliation_registry.py（Phase 4：新增
+      make_stash_lifecycle_reconciler，待执行）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - .runtime/reconcile_reports/stash_backup/（Phase 5 stash 备份，34 个 .diff + manifest.json）
+    - .runtime/reconcile_reports/stash_deep_analysis.json（Phase 5 stash 分析报告）
+    - .runtime/reconcile_reports/stash_reverse_apply_check.json（Phase 5 stash 验证报告）
+  fix_phase: |
+    Phase 5 存量 stash 清理（已完成 2026-07-19）：
+      - 34 个 stash 全部分析（blob hash 比较 + reverse-apply check）
+      - 全部 drop，备份 patch 到 .runtime/reconcile_reports/stash_backup/（123MB）
+      - 分析报告存于 stash_deep_analysis.json + stash_reverse_apply_check.json
+
+    Phase 1 gate 模块 import 路径统一化（已完成 2026-07-19）：
+      - blueprint_format_gate.py 用 importlib.util.spec_from_file_location 动态加载
+      - _load_is_valid_module_id(project_root) 从 gateway.project_root 定位模块
+      - _validate_module_id_cache 按 project_root key 缓存，避免 repeated exec_module
+      - 语法验证通过 + gate 构造测试通过
+
+    Phase 3 reconciler 识别 merge 状态（已完成 2026-07-19）：
+      - git_commit_gateway.py _commit_auto 入口检测 .git/MERGE_HEAD
+      - 存在时返回 NOTHING_TO_COMMIT，保留 merge 状态供手动完成
+      - 语法验证通过 + e2e 测试通过
+
+    Phase 2 _pre_merge_auto_clean 回滚机制（待执行）：
+      - _pre_merge_auto_clean 前先 stash 主工作区修改（msg="session_worktree_pre_merge: <sid>"）
+      - session_worktree_abort 时 stash pop 恢复，而非 git checkout -- 还原
+      - stash pop 失败时（冲突）保留 stash 并告警，不清空主工作区
+
+    Phase 4 stash 过期清理 reconciler（待执行）：
+      - 新增 make_stash_lifecycle_reconciler()，post-commit 触发
+      - 清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀识别）
+      - 保留有 safe_to_drop=false 标记的 stash（需人工审查）
+  status: in_progress
+  related_adjudication: 'FP-ISO.4C worktree 君子协定, TRAE-062 SSoT 分类铁律, ARCH-DEPGRAPH-RECONCILER-FAILSILENT, #ARCH-WORKTREE-001'
+  related_rules: 'trae_054_depgraph_backup, session_worktree 君子协定'
+  created: '2026-07-19'
+  last_updated: '2026-07-19'

@@ -51,27 +51,68 @@ Usage::
 
 from __future__ import annotations
 
+import importlib.util
 import logging
 import re
-import sys
+from pathlib import Path
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
-from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["make_blueprint_format_gate"]
 
-# 复用 validate_module_id_naming.is_valid_module_id（裁定#208 格式校验唯一真源）
-# bootstrap sys.path：scripts/governance/d3_metadata/ 包外 import
-_d3_meta_dir = str(REPO_ROOT / "scripts" / "governance" / "d3_metadata")
-if _d3_meta_dir not in sys.path:
-    sys.path.insert(0, _d3_meta_dir)
-from validate_module_id_naming import is_valid_module_id  # noqa: E402
+# 治本（#ARCH-WORKTREE-002 缺陷1，2026-07-19）：动态加载 validate_module_id_naming
+# 原设计：模块级 import 通过 REPO_ROOT 定位 scripts/governance/d3_metadata/
+# 问题：REPO_ROOT 基于 __file__ 永远指向主工作区（src/zephyr/shared/io/paths.py:65），
+#       worktree 模式下 pre-merge gate import 主工作区旧版本而非 worktree 新版本
+#       （实测：regex 修复 [A-Z]→[A-Za-z] 后仍被旧版本拒绝 MOD-migrate_sqlite_to_pg）
+# 方案：用 importlib.util.spec_from_file_location 从 gateway.project_root 动态加载，
+#       确保 worktree 模式下使用 worktree 中的模块版本。缓存按 project_root key，
+#       避免 repeated exec_module（实际 project_root 只有主工作区/worktree 两个值）
+_validate_module_id_cache: dict[str, object] = {}
+
+
+def _load_is_valid_module_id(project_root: Path):
+    """从 project_root 动态加载 validate_module_id_naming.is_valid_module_id。
+
+    治本（#ARCH-WORKTREE-002 缺陷1）：用 gateway.project_root 而非 REPO_ROOT，
+    确保 worktree 模式下 import worktree 中的模块版本。
+
+    Args:
+        project_root: gateway.project_root（worktree 模式下为 worktree 路径）
+
+    Returns:
+        validate_module_id_naming.is_valid_module_id 函数引用
+
+    Raises:
+        FileNotFoundError: 模块文件不存在（project_root 异常时回退到 REPO_ROOT）
+    """
+    key = str(project_root)
+    if key in _validate_module_id_cache:
+        return _validate_module_id_cache[key]
+    module_path = (
+        project_root / "scripts" / "governance" / "d3_metadata"
+        / "validate_module_id_naming.py"
+    )
+    if not module_path.exists():
+        # 回退到 REPO_ROOT（非 worktree 模式或路径异常）
+        from zephyr.shared.io.paths import REPO_ROOT
+        module_path = (
+            REPO_ROOT / "scripts" / "governance" / "d3_metadata"
+            / "validate_module_id_naming.py"
+        )
+    spec = importlib.util.spec_from_file_location(
+        "_validate_module_id_naming_dynamic", module_path,
+    )
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    _validate_module_id_cache[key] = mod.is_valid_module_id
+    return mod.is_valid_module_id
 
 # 匹配 [BLUEPRINT] 头部行，提取 module_id token（第一个非空白 token）
 # 合规：# [BLUEPRINT] MOD-INF-029 | docs/...
@@ -90,6 +131,9 @@ def make_blueprint_format_gate() -> GateSpec:
         # 治本（#ARCH-DATAQUALITY-V1.1，2026-07-18）：移除 tests/ 豁免——100% AI 开发下，
         # 豁免区=债务温床（482 个 SRC-XXX 违规因 tests/ 豁免累积）。存量 grandfathered
         # （只检 added 行），但新增 tests/ 文件必须用合规 MOD-/SH- 前缀。
+        # 治本（#ARCH-WORKTREE-002 缺陷1，2026-07-19）：从 gateway.project_root 动态加载
+        # is_valid_module_id，确保 worktree 模式下使用 worktree 中的模块版本
+        is_valid_module_id = _load_is_valid_module_id(gateway.project_root)
         py_files = _get_staged_py_files(gateway, "BLUEPRINT-FORMAT")
         violations: list[str] = []
         for py_file in py_files:
