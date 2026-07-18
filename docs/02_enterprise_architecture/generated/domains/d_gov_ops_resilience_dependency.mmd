@@ -1,5 +1,5 @@
 %% D_GOV_OPS_RESILIENCE 域全景依赖图
-%% 生成时间: 2026-07-18 21:42:29
+%% 生成时间: 2026-07-18 21:47:37
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 90, 依赖边数: 250
 
@@ -115,8 +115,8 @@ graph TD
     src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     src_zephyr_governance_security___nance_adversarial_tester_py -->|import_depends| src_zephyr_governance_ops_governance_stream_abort_guard_py
     src_zephyr_governance_security___default_security_gateway_py -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
-    src_zephyr_governance_resilience_governance___init___py -->|config_depends| src_zephyr_governance_resilien___nance_bus_factor_defense_py
-    src_zephyr_governance_security_governance___init___py -->|config_depends| src_zephyr_governance_security___e_api_response_sanitizer_py
+    src_zephyr_governance_resilience_governance___init___py -->|config_depends| src_zephyr_governance_resilien___rnance_broker_resilience_py
+    src_zephyr_governance_security_governance___init___py -->|config_depends| src_zephyr_governance_security___rnance_bare_repo_scanner_py
 
     %% 跨域依赖（入）- 最多显示 30 条
     %%  -> D_GOV_OPS_RESILIENCE (133 条)
@@ -146,13 +146,13 @@ graph TD
     [] -->|test_depends| src_zephyr_governance_security_governance_ipi_defense_py
     [] -->|test_depends| src_zephyr_governance_security_governance_config_scanner_py
     [] -->|test_depends| src_zephyr_governance_resilien___vernance_circuit_breaker_py
-    [] -->|test_depends| src_zephyr_governance_ops_governance_clock_guard_py
     [] -->|test_depends| src_zephyr_governance_escalation_consequence_manager_py
     [] -->|test_depends| src_zephyr_governance_resilien___rnance_deadlock_detector_py
-    [] -->|test_depends| src_zephyr_governance_ops_gove___ror_budget_burst_limiter_py
+    [] -->|test_depends| src_zephyr_governance_resilien___ernance_decision_fatigue_py
+    [] -->|test_depends| src_zephyr_governance_escalation_escalation_metrics_py
     %% D_COMPLIANCE -> D_GOV_OPS_RESILIENCE (2 条)
-    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_security___default_security_gateway_py
     D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_security___ce_security_gateway_base_py
+    D_COMPLIANCE[D_COMPLIANCE] -->|import_depends| src_zephyr_governance_security___default_security_gateway_py
     %% D_FEEDBACK_LOOP -> D_GOV_OPS_RESILIENCE (2 条)
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_escalation_escalation_engine_py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_governance_escalation_escalation_models_py
@@ -192,8 +192,8 @@ graph TD
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_resilien___ance_f5_shutdown_manager_py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_governance_ops_governance_coldstart_manager_py
     %% D_OPS -> D_GOV_OPS_RESILIENCE (2 条)
-    D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_escalation_contracts_py
+    D_OPS[D_OPS] -->|import_depends| src_zephyr_governance_security_governance_ipi_defense_py
     %% D_ORCHESTRATOR -> D_GOV_OPS_RESILIENCE (1 条)
     D_ORCHESTRATOR[D_ORCHESTRATOR] -->|import_depends| src_zephyr_governance_ops_governance_event_hook_py
     %% D_SECURITY -> D_GOV_OPS_RESILIENCE (1 条)
@@ -235,8 +235,8 @@ graph TD
     %% D_GOV_OPS_RESILIENCE -> D_INFRA_A2A (4 条)
     src_zephyr_governance_resilien___ance_f5_boot_integration_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_governance_resilien___ance_f5_event_subscriber_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
-    src_zephyr_governance_resilien___nance_offline_resilience_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
     src_zephyr_governance_resilien___ernance_offline_autonomy_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
+    src_zephyr_governance_resilien___nance_offline_resilience_py -->|import_depends| D_INFRA_A2A[D_INFRA_A2A]
     %% D_GOV_OPS_RESILIENCE -> D_INFRA_RECOVERY (2 条)
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
     src_zephyr_governance_ops_governance_phase_check_registry_py -->|import_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
