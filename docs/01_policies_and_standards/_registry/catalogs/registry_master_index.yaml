@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-18T08:20:39Z
+# 自动生成于 2026-07-18T08:41:49Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-18T08:20:39Z'
+generated_at: '2026-07-18T08:41:49Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 29
+total_registries: 30
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -207,6 +207,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: unknown
+- registry_id: REG-RULING-001
+  name: 裁定中央登记表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 48
+  status: active
 - registry_id: CFG-scripts-registry
   name: scripts_registry
   category: governance_rule
