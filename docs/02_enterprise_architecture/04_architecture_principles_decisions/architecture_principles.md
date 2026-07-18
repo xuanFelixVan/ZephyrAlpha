@@ -3,7 +3,7 @@ module_id: ARCH-004
 title: Architecture Principles / 架构原则
 doc_type: architecture_view
 status: Active
-version: 2.0.1
+version: 2.0.2
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -11,8 +11,8 @@ language: zh
 created_by: agent
 valid_from: 2026-05-02
 superseded_by: null
-supersedes: VIEW-00-OVERVIEW
-related_rationale: R26, R27, R28, R29, R30
+supersedes: null
+related_rationale: []
 related_open_questions: []
 tags:
 - architecture-principles
@@ -21,13 +21,10 @@ tags:
 - c4
 - iso-42010
 - open-source-first
-- license-governance
-- replaceability
-- thin-adapter
 - safety-red-lines
 - security-principles
 - domain-driven
-summary: ZephyrAlpha 架构原则+方法论集中 SSoT。包含架构方法论（TOGAF/C4/功能域裁定/三棵树）+ 4 条安全红线 + 5 条开源优先子原则 + 核心架构决策。
+summary: ZephyrAlpha 架构原则+方法论集中 SSoT。包含架构方法论（TOGAF/C4/功能域裁定/三棵树）+ 4 条安全红线 + 开源优先机构对标 + 核心架构决策。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -40,7 +37,7 @@ ttl: permanent
 
 本文档是 ZephyrAlpha 2.0 **所有架构原则与方法的 SSoT（Single Source of Truth / 唯一真源）**。
 
-包含两类内容：
+包含三类内容：
 1. **架构方法论**（§1）——怎么描述架构（TOGAF/C4/功能域裁定/三棵树）
 2. **架构原则**（§2-§3）——应该怎么做（安全红线/开源优先）
 3. **核心架构决策**（§4）——系统定位与定死的决策
@@ -96,7 +93,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 ### 1.5 三棵树映射
 
-项目有三个顶层目录（"三棵树"），各归一个架构视图管：
+项目根有多个顶层目录，其中三个是业务代码树（"三棵树"），各归一个架构视图管。运行时/工件目录（`data/` `logs/` `tmp/` `config/` `tests/` 等）不在三棵树范围：
 
 | 目录 | 大白话 | 归属视图 | 归属文档 |
 |------|--------|---------|---------|
@@ -140,7 +137,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 | 机构 | 开源使用情况 | 关键证据 |
 |------|------------|--------|
-| **Two Sigma** | 重度使用 + 大量反哺 | 开源 `BeakerX`, `Arbuti`, `Cook`（数据科学生态）|
+| **Two Sigma** | 重度使用 + 大量反哺 | 开源 `BeakerX`, `Cook`（数据科学生态）|
 | **Man AHL** | 开源 `arctic` 时序库 | 全球 Python 时序管理标杆 |
 | **Microsoft (Qlib)** | 开源 `Qlib` 完整 AI 量化平台 | 因子 / 训练 / 回测全栈 |
 
@@ -172,7 +169,7 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 **核心架构决策**（定死的原则，不可推翻）：
 - **功能域唯一分类**：按功能分域，不按技术层分。逻辑层只作为域的一个属性（layer_id），不当并行分类（两套分类法并存=AI 不知道用哪套=幻觉温床）。
 - **全景图派生**：所有结构化数据（域清单/模块清单/依赖关系/容量统计）从 depgraph 数据库自动生成，禁止手编（手编必过时）。
-- **运行时三平面**（引擎平面 / Vibe Coding 平面 / 治理平面）→ 三个独立的平面各管各的：引擎跑策略、Vibe Coding 写代码、治理管规则
+- **运行时平面**：Hot Path / Warm Path / Cold Path 三平面（详见 [runtime_planes.md](../target_architecture/runtime_planes.md)）。当前仅 Warm Path 激活，Hot/Cold Path 为未激活终局拓扑
 - **治理三层**（制度标准层 / 企业架构层 / 蓝图施工层）→ 三层从上到下，每层有准入和退出门禁
 - **安全红线**：4 条不可撤销（详见 §2）
 - **技术栈**：Python + Pydantic + SQLite/PostgreSQL + ChromaDB + MCP 协议
@@ -183,5 +180,4 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 | 关系 | 对象 | 说明 |
 |:---|:---|:---|
-| 本文档被引用 | `application_architecture.md` | 应用架构视图，与本文档原则交叉引用 |
-| 已合并删除 | `overview.md` | v2.0.0 合并——永恒指导内容已归集至本文档 §1+§4，overview.md 已删除 |
+| 方法论被采用 | `target_architecture/*.md`（BA/IA/AA/TA 四层） | 共用本文档 §1 描述的 TOGAF/C4/功能域方法论 |
