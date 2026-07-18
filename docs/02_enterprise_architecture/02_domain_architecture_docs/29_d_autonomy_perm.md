@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 29_d_autonomy_perm / budget_enforcement / 自治保护 / Autonomy Protection
+# 29_d_autonomy_perm / 自治保护 / 自治保护 / Autonomy Protection
 
 > **功能简介 / Overview**: 自治保护，负责 AI 自治行为的权限控制和安全边界
 

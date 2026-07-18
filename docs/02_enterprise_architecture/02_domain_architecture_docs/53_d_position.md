@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 53_d_position / position / 仓位管理 / Position Management
+# 53_d_position / 仓位管理 / 仓位管理 / Position Management
 
 > **功能简介 / Overview**: 仓位管理，负责持仓跟踪、仓位计算和盈亏分析
 

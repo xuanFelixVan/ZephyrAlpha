@@ -1,12 +1,12 @@
 %% D_BACKTEST 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:26
+%% 生成时间: 2026-07-19 04:19:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 25, 依赖边数: 81
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_BACKTEST[backtest]
+    subgraph D_BACKTEST[回测]
         src_zephyr_backtest_core_data_handler_py["src/zephyr/backtest/core/data_handler.py [production]"]
         src_zephyr_backtest_core_data_handler_py_["...zephyr/backtest/core/data_handler.py/ [design]"]
         src_zephyr_backtest_core_decision_gate_py["...zephyr/backtest/core/decision_gate.py [prototype]"]

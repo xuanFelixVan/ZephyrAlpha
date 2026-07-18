@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 06_d_alt_data / alt_data / 另类数据 / Alternative Data
+# 06_d_alt_data / 另类数据 / 另类数据 / Alternative Data
 
 > **功能简介 / Overview**: 另类数据，负责非传统金融数据的采集、清洗和标准化
 

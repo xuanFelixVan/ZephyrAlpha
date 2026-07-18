@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 52_d_pf_core / pf_core / 组合核心 / Portfolio Core
+# 52_d_pf_core / 组合核心 / 组合核心 / Portfolio Core
 
 > **功能简介 / Overview**: 组合核心，负责投资组合构建、持仓管理和组合优化
 

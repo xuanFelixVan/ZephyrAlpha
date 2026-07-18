@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 48_d_knowledge / vector_storage / 知识管理 / Knowledge Management
+# 48_d_knowledge / 知识管理 / 知识管理 / Knowledge Management
 
 > **功能简介 / Overview**: 知识管理，负责知识库构建、向量索引和知识检索
 

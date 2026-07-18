@@ -1,12 +1,12 @@
 %% D_FBL_DIAGNOSERS 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:26
+%% 生成时间: 2026-07-19 04:19:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 76, 依赖边数: 120
+%% 模块数: 76, 依赖边数: 121
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_FBL_DIAGNOSERS[diagnosers]
+    subgraph D_FBL_DIAGNOSERS[反馈诊断器]
         src_zephyr_feedback_loop_diagnosers___init___py[".../feedback_loop/diagnosers/__init__.py [prototype]"]
         src_zephyr_feedback_loop_diagnosers_cognitive___init___py["...loop/diagnosers/cognitive/__init__.py [prototype]"]
         src_zephyr_feedback_loop_diagn___ve_adaptive_param_tuning_py["...rs/cognitive/adaptive_param_tuning.py [production]"]
@@ -131,6 +131,8 @@ graph TD
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
     D_FEEDBACK_LOOP[D_FEEDBACK_LOOP] -->|import_depends| src_zephyr_feedback_loop_diagnosers___init___py
+    %% D_GOV_DOCS -> D_FBL_DIAGNOSERS (1 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_diagnosers_cognitive___init___py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_FBL_DIAGNOSERS -> D_SHARED (1 条)
@@ -138,5 +140,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 4 条
-    %% 跨域入边: 115 条
+    %% 跨域入边: 116 条
     %% 跨域出边: 1 条

@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 10_d_data_sec / data_security / 数据安全与契约 / Data Security & Contracts
+# 10_d_data_sec / 数据安全与契约 / 数据安全与契约 / Data Security & Contracts
 
 > **功能简介 / Overview**: 数据安全与契约，负责数据访问控制、加密和跨层契约校验
 

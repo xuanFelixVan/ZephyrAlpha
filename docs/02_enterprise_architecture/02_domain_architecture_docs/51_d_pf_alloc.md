@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 51_d_pf_alloc / pf_alloc / 组合分配 / Portfolio Allocation
+# 51_d_pf_alloc / 组合分配 / 组合分配 / Portfolio Allocation
 
 > **功能简介 / Overview**: 组合分配，负责资产配置、权重分配和再平衡
 
@@ -76,9 +76,9 @@ graph TD
     end
     D_INFRASTRUCTURE["(生产态 / production) D_INFRASTRUCTURE"]
     src_zephyr_pf_alloc_strategy_lifecycle_event_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
@@ -102,10 +102,10 @@ graph TD
     subgraph D_PF_ALLOC["D_PF_ALLOC 组合分配"]
         src_zephyr_pf_core_default_equity_strategy_py["(生产态 / production) D_PORTFOLIO_CORE — Default Equity Long-Only St...<br/>文件: default_equity_strategy.py"]
     end
-    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
-    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED["(原型态 / prototype) D_SHARED"]
     src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_SHARED
+    D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_pf_core_default_equity_strategy_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
     src_zephyr_pf_core_default_equity_strategy_py -->|导入依赖 / import_depends| D_GOVERNANCE
     D_PF_CORE["(原型态 / prototype) D_PF_CORE"]
@@ -116,7 +116,7 @@ graph TD
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_pf_core_default_equity_strategy_py production
     class D_GOVERNANCE external_prod
-    class D_INFRASTRUCTURE,D_SHARED,D_PF_CORE external_design
+    class D_SHARED,D_INFRASTRUCTURE,D_PF_CORE external_design
 ```
 
 ### 设计态子图（仅 design_maturity=design 的模块和依赖）
@@ -161,8 +161,8 @@ graph TD
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
 | 1 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_GOVERNANCE 生命周期管理: D_PORTFOLIO_CORE — StrategyBase + StrategyMeta... | 导入依赖 / import_depends |
-| 2 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE: strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
+| 2 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE 跨层契约基础设施: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 3 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
 | 4 | D_PORTFOLIO_CORE — Default Equity Long-Only St... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -178,7 +178,7 @@ graph TD
 ```mermaid
 graph LR
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_PF_CORE["D_PF_CORE<br/>组合核心"]

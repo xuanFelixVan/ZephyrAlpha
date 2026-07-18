@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 23_d_reporting / reporting / 报告 / Reporting
+# 23_d_reporting / 报告 / 报告 / Reporting
 
 > **功能简介 / Overview**: 报告，负责投资报告、风险报告和合规报告的生成与分发
 
@@ -72,14 +72,14 @@ graph TD
     src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| src_zephyr_reporting_analytics_base_py
     D_INFRASTRUCTURE["(原型态 / prototype) D_INFRASTRUCTURE"]
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_analytics_base_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
-    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     src_zephyr_reporting_default_attribution_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
+    src_zephyr_reporting_default_tca_engine_py -.->|导入依赖 / import_depends| D_INFRASTRUCTURE
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_tca_engine_py
     D_GOV_AUDIT -.->|导入依赖 / import_depends| src_zephyr_reporting_default_attribution_engine_py
@@ -158,14 +158,14 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: execution_report.py | 导入依赖 / import_depends |
-| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 4 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 5 | D_REPORTING — Default Attribution Engine (defa... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: execution_report.py | 导入依赖 / import_depends |
-| 7 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 8 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: execution_report.py | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill.py | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 跨层契约基础设施: performance_attribution_report.py | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default Attribution Engine (defa... | → | D_INFRASTRUCTURE 跨层契约基础设施: performance_attribution_report.py | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: execution_report.py | 导入依赖 / import_depends |
+| 7 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: fill.py | 导入依赖 / import_depends |
+| 8 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 跨层契约基础设施: order.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -182,7 +182,7 @@ graph TD
 ```mermaid
 graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_REPORTING -->|8条 导入依赖 / import_depends| D_INFRASTRUCTURE

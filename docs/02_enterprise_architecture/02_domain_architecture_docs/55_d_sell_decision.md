@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 55_d_sell_decision / sell_decision / 卖出决策 / Sell Decision
+# 55_d_sell_decision / 卖出决策 / 卖出决策 / Sell Decision
 
 > **功能简介 / Overview**: 卖出决策，负责卖出信号生成、卖出时机判断和退出策略
 

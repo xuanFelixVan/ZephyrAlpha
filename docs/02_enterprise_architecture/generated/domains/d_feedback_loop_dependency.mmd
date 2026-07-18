@@ -1,12 +1,12 @@
 %% D_FEEDBACK_LOOP 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:27
+%% 生成时间: 2026-07-19 04:19:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 124, 依赖边数: 458
+%% 模块数: 124, 依赖边数: 463
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_FEEDBACK_LOOP[feedback_loop_engine]
+    subgraph D_FEEDBACK_LOOP[反馈循环引擎]
         src_zephyr_feedback_loop___init___py["src/zephyr/feedback_loop/__init__.py [production]"]
         src_zephyr_feedback_loop__gen_inherited_py["...ephyr/feedback_loop/_gen_inherited.py [production]"]
         src_zephyr_feedback_loop_actors___init___py["...phyr/feedback_loop/actors/__init__.py [production]"]
@@ -236,6 +236,12 @@ graph TD
     D_FRONTEND[D_FRONTEND] -->|import_depends| src_zephyr_feedback_loop_fitness_functions_py
     %% D_GOV_AUDIT -> D_FEEDBACK_LOOP (1 条)
     D_GOV_AUDIT[D_GOV_AUDIT] -->|import_depends| src_zephyr_feedback_loop___init___py
+    %% D_GOV_DOCS -> D_FEEDBACK_LOOP (5 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_collectors___init___py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_verifiers___init___py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_evolution___init___py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_forensic_toctou_guard_py
+    D_GOV_DOCS[D_GOV_DOCS] -->|runtime| src_zephyr_feedback_loop_resilience___init___py
     %% D_INFRA_RUNTIME -> D_FEEDBACK_LOOP (3 条)
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_feedback_loop___init___py
     D_INFRA_RUNTIME[D_INFRA_RUNTIME] -->|import_depends| src_zephyr_feedback_loop_scheduler_py
@@ -345,5 +351,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 119 条
-    %% 跨域入边: 254 条
+    %% 跨域入边: 259 条
     %% 跨域出边: 85 条

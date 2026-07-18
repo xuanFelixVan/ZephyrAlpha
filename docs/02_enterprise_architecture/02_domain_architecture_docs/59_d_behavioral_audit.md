@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 59_d_behavioral_audit / drift_detector_core / 行为审计 / Behavioral Audit
+# 59_d_behavioral_audit / 行为审计 / 行为审计 / Behavioral Audit
 
 > **功能简介 / Overview**: 行为审计，负责 AI 决策行为的可追溯审计和合规检查
 

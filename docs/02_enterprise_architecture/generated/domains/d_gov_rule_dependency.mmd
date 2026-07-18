@@ -1,12 +1,12 @@
 %% D_GOV_RULE 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:27
+%% 生成时间: 2026-07-19 04:19:10
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 35, 依赖边数: 265
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_GOV_RULE[rule_governance]
+    subgraph D_GOV_RULE[规则治理]
         scripts_governance_generators_generate_script_manifest_py["...enerators/generate_script_manifest.py [prototype]"]
         src_zephyr_gov_enforcement_rul___ement_adaptive_threshold_py["...ule_enforcement/adaptive_threshold.py [production]"]
         src_zephyr_gov_enforcement_rul___t_adversarial_strategies_py["...enforcement/adversarial_strategies.py [production]"]

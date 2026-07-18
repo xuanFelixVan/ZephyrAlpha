@@ -1,12 +1,12 @@
 %% D_SHARED 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:27
+%% 生成时间: 2026-07-19 04:19:11
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 184, 依赖边数: 1235
+%% 模块数: 184, 依赖边数: 1236
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_SHARED[shared_services]
+    subgraph D_SHARED[共享服务]
         src_zephyr_shared___version___py["src/zephyr/shared/__version__.py [production]"]
         src_zephyr_shared__cross_layer_ml_experiment_pipeline_py["...cross_layer/ml_experiment_pipeline.py [production]"]
         src_zephyr_shared_adaptation_execution_tuner_py[".../shared/adaptation/execution_tuner.py [production]"]
@@ -302,7 +302,7 @@ graph TD
     %% D_FUNDAMENTAL_SIGNAL -> D_SHARED (2 条)
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_shared_foundation_errors_py
     D_FUNDAMENTAL_SIGNAL[D_FUNDAMENTAL_SIGNAL] -->|import_depends| src_zephyr_shared_utils_time_utils_py
-    %% D_GOVERNANCE -> D_SHARED (55 条)
+    %% D_GOVERNANCE -> D_SHARED (56 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_io_paths_py
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_shared_security_secrets_py
@@ -741,5 +741,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 89 条
-    %% 跨域入边: 1123 条
+    %% 跨域入边: 1124 条
     %% 跨域出边: 23 条

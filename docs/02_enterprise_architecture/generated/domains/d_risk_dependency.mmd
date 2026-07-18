@@ -1,12 +1,12 @@
 %% D_RISK 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:27
+%% 生成时间: 2026-07-19 04:19:11
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 11, 依赖边数: 43
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_RISK[risk]
+    subgraph D_RISK[风控]
         src_zephyr_risk_cross_asset_cr___r_ml_experiment_pipeline_py["...ata_adapter/ml_experiment_pipeline.py [production]"]
         src_zephyr_risk_implementation___t_position_limit_checker_py["...ons/default_position_limit_checker.py [prototype]"]
         src_zephyr_risk_implementation___t_risk_limits_calculator_py["...ons/default_risk_limits_calculator.py [production]"]

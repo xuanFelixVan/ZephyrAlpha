@@ -1,12 +1,12 @@
 %% D_ML_TRAIN 域全景依赖图
-%% 生成时间: 2026-07-19 04:15:27
+%% 生成时间: 2026-07-19 04:19:11
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 4, 依赖边数: 17
+%% 模块数: 4, 依赖边数: 19
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_ML_TRAIN[model_evaluation]
+    subgraph D_ML_TRAIN[训练]
         docs_03_modules__cross_layer_model_profiler_blueprint_md["...oss_layer/model_profiler/blueprint.md [design]"]
         src_zephyr_ml_train_implementa___default_inference_engine_py["...entations/default_inference_engine.py [prototype]"]
         src_zephyr_ml_train_inference_base_py["src/zephyr/ml_train/inference_base.py [prototype]"]
@@ -32,8 +32,12 @@ graph TD
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
+    %% D_ML_SERVE -> D_ML_TRAIN (1 条)
+    D_ML_SERVE[D_ML_SERVE] -->|runtime| src_zephyr_ml_train_trainer_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
+    %% D_ML_TRAIN -> D_GOV_DOCS (1 条)
+    src_zephyr_ml_train_trainer_base_py -->|data| D_GOV_DOCS[D_GOV_DOCS]
     %% D_ML_TRAIN -> D_SHARED (3 条)
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
@@ -44,5 +48,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 3 条
-    %% 跨域入边: 9 条
-    %% 跨域出边: 5 条
+    %% 跨域入边: 10 条
+    %% 跨域出边: 6 条

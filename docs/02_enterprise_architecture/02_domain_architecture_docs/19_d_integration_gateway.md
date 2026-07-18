@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 19_d_integration_gateway / mcp_servers / 集成网关 / Integration Gateway
+# 19_d_integration_gateway / 集成网关 / 集成网关 / Integration Gateway
 
 > **功能简介 / Overview**: 集成网关，负责外部系统接入、协议转换和请求路由
 

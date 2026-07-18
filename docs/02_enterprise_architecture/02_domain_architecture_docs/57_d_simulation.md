@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 57_d_simulation / simulation / 仿真 / Simulation
+# 57_d_simulation / 仿真 / 仿真 / Simulation
 
 > **功能简介 / Overview**: 仿真，负责市场仿真、模拟撮合和仿真环境管理
 
@@ -139,7 +139,7 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 实验 — Experimentation Pipeline Layer (pipelin... | → | D_INFRASTRUCTURE: experiment_result.py | 导入依赖 / import_depends |
+| 1 | 实验 — Experimentation Pipeline Layer (pipelin... | → | D_INFRASTRUCTURE 跨层契约基础设施: experiment_result.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -154,7 +154,7 @@ graph TD
 ```mermaid
 graph LR
     D_SIMULATION["D_SIMULATION<br/>仿真"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>跨层契约基础设施"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_SIMULATION -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SHARED -->|1条 导入依赖 / import_depends| D_SIMULATION

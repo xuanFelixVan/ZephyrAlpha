@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 27_d_ashare_signal / ashare_signal / A股特色信号 / A-Share Signal
+# 27_d_ashare_signal / A股特色信号 / A股特色信号 / A-Share Signal
 
 > **功能简介 / Overview**: A 股特色信号，负责 A 股市场特色交易信号的生成和管理
 
