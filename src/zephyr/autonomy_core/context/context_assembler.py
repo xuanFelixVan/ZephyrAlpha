@@ -629,29 +629,9 @@ _KBS_CACHE: UnifiedMemoryAPI | None = None
 
 
 def _get_or_init_kb() -> UnifiedMemoryAPI | None:
-    global _KBS_CACHE
-    if _KBS_CACHE is not None:
-        return _KBS_CACHE
-    try:
-        from pathlib import Path
-
-        from zephyr.gov_kb.bootstrap import Bootstrap, BootstrapConfig
-        from zephyr.intelligence.model_evaluation.unified_memory_api import InMemoryMemoryBackend, UnifiedMemoryAPI
-
-        kb = UnifiedMemoryAPI(backend=InMemoryMemoryBackend(), enforce_capability=False)
-        config = BootstrapConfig(min_ke_count=1, min_categories=1, max_chunks_per_file=10)
-        engine = Bootstrap(project_root=Path.cwd(), config=config, kb_api=kb)
-        result = engine.run()
-        _KBS_CACHE = kb
-        _logger.info(
-            "KB context bridge initialized: %d KEs in %d categories",
-            result.total_activated,
-            len(result.categories_found),
-        )
-        return kb
-    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _logger.warning("KB context bridge initialization failed: %s", exc, exc_info=True)
-        return None
+    # KBG removal Stage 2: Bootstrap removed (gov_kb deleted in Stage 3)
+    # Returns None — context assembler falls back to embedded defaults only
+    return None
 
 
 AUTHORITY_MIN_SCORE: Final[float] = 0.7

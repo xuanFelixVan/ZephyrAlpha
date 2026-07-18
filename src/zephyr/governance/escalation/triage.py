@@ -43,8 +43,6 @@ from typing import Any
 
 import yaml
 
-from zephyr.gov_kb.ingest import COLLOQUIAL_PATTERNS
-from zephyr.gov_kb.kb_gate_task import build_kb_gate_eval_task
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import GATES_DIR, GateEngine
 from zephyr.gov_enforcement.rule_enforcement.gate_types import GateResult
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表合法值加载 SSoT（D-D-05：禁止复制 _load_xxx()）
@@ -129,7 +127,12 @@ _LESSON_KEYWORDS = [
     "root cause",
 ]
 
-_COLLOQUIAL_RES = [re.compile(p) for p in COLLOQUIAL_PATTERNS]
+# KBG removal Stage 2: COLLOQUIAL_PATTERNS inlined from gov_kb.ingest (deleted in Stage 3)
+_COLLOQUIAL_RES = [re.compile(p) for p in (
+    r"gonna", r"wanna", r"gotta", r"kinda", r"sorta",
+    r"yeah", r"nope", r"ok\b", r"ok\s*,",
+    r"\btbh\b", r"\bimo\b", r"\bfyi\b", r"\btbd\b", r"\bwip\b",
+)]
 
 _UTC = UTC
 
@@ -345,15 +348,8 @@ class TriageGate:
             return None
 
     def _run_gate(self, source_path: Path) -> GateResult | None:
-        try:
-            task = build_kb_gate_eval_task(
-                gate_id="G2",
-                title="G2 Triage Gate",
-                deliverable=source_path,
-            )
-            return self._gate_engine.evaluate(task, "G2")
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return None
+        # KBG removal Stage 2: build_kb_gate_eval_task removed (gov_kb deleted in Stage 3)
+        return None
 
     def _write_to_triaged(
         self,
