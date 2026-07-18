@@ -315,7 +315,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
-        self._gate_registry.register(make_ruling_reference_gate())  # priority=74 治本 裁定#NNN 悬空引用（裁定#20-B，manual stage 不阻断，对标 ARCH-REFERENCE，紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后）
+        self._gate_registry.register(make_ruling_reference_gate())  # priority=74 治本 裁定#NNN 悬空引用（裁定#20-B，阶段2 hard block 已启用 裁定#20-G，对标 ARCH-REFERENCE，紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后）
         self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）
@@ -633,6 +633,73 @@ class GitCommitGateway:
                     message=f"门禁 {gr.gate_id} 阻断: {gr.detail}",
                 )
         return None
+
+    def _check_ssot_canonical(self, abs_files: list[str]) -> tuple[bool, str]:
+        """L2 兜底门禁：检测新增 .py 文件是否声明已有 module_path（SSoT 冲突）。
+
+        L1 scaffold 是主防线，本方法是 L2 兜底——防止 AI 绕过 scaffold 直接 Write
+        新文件后 commit。检测范围仅限 ``src/zephyr/`` 下未 git-tracked 的 .py 文件。
+
+        策略：
+          - 只检查 src/zephyr/ 下的 .py 文件（其他路径/扩展名跳过）
+          - 跳过已 git-tracked 文件（视为修改而非新增）
+          - 解析 [MODULE] 头，反查 find_files_by_module_path
+          - 命中已有文件 = SSoT 冲突 = 阻断
+          - capability_lookup 不可用时 fail-open（L1 是主防线，L2 是兜底）
+        """
+        # 步骤1：筛选 src/zephyr/ 下未跟踪的 .py 文件
+        new_py_files: list[tuple[str, str]] = []
+        for abs_path in abs_files:
+            norm_abs = abs_path.replace("\\", "/")
+            if not norm_abs.endswith(".py"):
+                continue
+            try:
+                rel = os.path.relpath(abs_path, str(self.project_root)).replace("\\", "/")
+            except ValueError:
+                continue
+            if not rel.startswith("src/zephyr/"):
+                continue
+            if self._is_git_tracked(rel):
+                continue
+            new_py_files.append((abs_path, rel))
+
+        if not new_py_files:
+            return (True, "no new src/zephyr/*.py files to check (all skipped or empty)")
+
+        try:
+            from zephyr.governance.capability_lookup import CapabilityLookup
+        except Exception as e:  # noqa: BLE001 — fail-open
+            return (True, f"SSoT 兜底门禁 fail-open: capability_lookup 不可用 (import failed: {e})")
+
+        try:
+            lookup = CapabilityLookup()
+        except Exception as e:  # noqa: BLE001 — fail-open
+            return (True, f"SSoT 兜底门禁 fail-open: capability_lookup 不可用 (init failed: {e})")
+
+        for abs_path, rel_path in new_py_files:
+            try:
+                header = lookup._parse_header(Path(abs_path), rel_path)
+            except Exception:  # noqa: BLE001 — 单文件解析失败不阻断整体
+                continue
+            if not header.module_path:
+                continue
+            conflicts = lookup.find_files_by_module_path(header.module_path)
+            conflicts = [c for c in conflicts if c != rel_path]
+            if conflicts:
+                conflict_basenames = [Path(c).name for c in conflicts]
+                detail = (
+                    f"SSoT 冲突：新文件 {rel_path} 声明的 module_path "
+                    f"'{header.module_path}' 已被以下文件声明：{conflicts}"
+                    f"（basename: {conflict_basenames}）——违反 SSoT 真源唯一原则。\n"
+                    f"  修复指令：删除上述新增文件，扩展现有 canonical 文件后重新 commit。\n"
+                    f"  查已有 canonical：python -m zephyr.governance.capability_lookup --find <关键词>"
+                )
+                return (False, detail)
+
+        return (
+            True,
+            f"SSoT 兜底门禁 passed: {len(new_py_files)} new src/zephyr/*.py files checked, no conflict",
+        )
 
     def _run_post_commit_reconcile(
         self, existing: list[str], session_id: str, result: CommitResult

@@ -97,7 +97,7 @@
 
 ## RULE-RULING：第七件事（裁定登记机制，2026-07-18 治本，裁定#20-A/#20-B/#20-D）
 
-> **任何 `裁定#NNN` 引用必须先在裁定登记表登记**——禁止 grep-and-claim 占位（对标编号铁律#6 的 `#ARCH-XXX` 机制）。裁定真源：[`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml)（48 个裁定条目，裁定#20-A 建立）。配套门禁：[`ruling_reference_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py)（priority=74，裁定#20-B 建立）。
+> **任何 `裁定#NNN` 引用必须先在裁定登记表登记**——禁止 grep-and-claim 占位（对标编号铁律#6 的 `#ARCH-XXX` 机制）。裁定真源：[`ruling_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml)（54 个裁定条目，裁定#20-A 建立，裁定#20-E/#20-F/#20-G 扩展）。配套门禁：[`ruling_reference_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py)（priority=74，裁定#20-B 建立，裁定#20-G 启用 hard block）。
 >
 > **病根（第一性原理）**：项目中存在 493 处"裁定#NNN"引用、48 个不同编号，但无中央裁定登记表——新 AI 可不查 registry 就用未登记编号，违反铁律后只能靠人工审核发现。对标 `#ARCH-XXX` 议题登记机制（`architecture_issue_registry.yaml`，裁定#208 R6 建立）缺失对应物。治本：建立中央登记表 + commit gate 强制 + AGENTS.md 文档化三件套。
 >
