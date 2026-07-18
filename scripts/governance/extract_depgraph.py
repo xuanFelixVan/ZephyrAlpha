@@ -161,7 +161,12 @@ def _build_modules_view(dep: dict) -> dict:
         sid = fd.get("subdomain_id", did)
         items = domain_nodes.get(did, [])
         # 也按 subdomain_id 细分
-        sub_items = [n for n in items if n.get("subdomain_id", n.get("domain_id")) == sid]
+        # 裁定#19-A（2026-07-18）：修复 subdomain 过滤 bug
+        # 原 bug: n.get("subdomain_id", n.get("domain_id")) 用 dict.get 默认值
+        #   但 nodes 表有 subdomain_id 列（值为空字符串""），dict.get 返回空字符串而非默认值
+        #   → 31 个 MOD-INF-030 代码文件节点（subdomain_id=""）被排除，只查到 2 个 blueprint MD 节点
+        # 治本: 用 `or` 表达式，空字符串/falsy 时 fallback 到 domain_id
+        sub_items = [n for n in items if (n.get("subdomain_id") or n.get("domain_id")) == sid]
         # 如果 subdomain 细分后为空，使用整个 domain 的 items
         if not sub_items:
             sub_items = items
@@ -175,7 +180,15 @@ def _build_modules_view(dep: dict) -> dict:
         for n in sub_items:
             modules[key]["items"].append(
                 {
-                    "module_id": n.get("belongs_to") or n.get("blueprint_id", ""),
+                    # 裁定#19-A（2026-07-18）：字段语义治本
+                    # 原 bug：module_id = belongs_to or blueprint_id，优先 belongs_to（父模块）
+                    #   → 用户 --modules MOD-INF-030（蓝图编号）查不到子文件节点
+                    #   （若子节点 belongs_to=MOD-INF-027，item.module_id=MOD-INF-027）
+                    # 治本：明确分离 blueprint_id（蓝图编号，用户查询主键）和 belongs_to（父模块）
+                    #   cmd_modules 按 blueprint_id 匹配（用户语义），向后兼容也匹配 belongs_to
+                    "module_id": n.get("blueprint_id") or n.get("belongs_to", ""),
+                    "blueprint_id": n.get("blueprint_id", ""),
+                    "belongs_to": n.get("belongs_to", ""),
                     "name": n.get("path", "").split("/")[-1] if n.get("path") else "",
                     "path": n.get("path", ""),
                     "physical_files": [n.get("path", "")] if n.get("path") else [],
@@ -257,6 +270,12 @@ def cmd_modules(dep: dict, module_ids: list[str], output: str | None) -> None:
 
     修复: 原实现找到首个匹配就 break，只返回 1 个文件。
     现在: 收集所有匹配的文件节点，返回完整文件列表。
+
+    裁定#19-A（2026-07-18）：字段语义治本
+    原 bug: 匹配 item.module_id（= belongs_to or blueprint_id），优先 belongs_to
+      → 用户传蓝图编号 MOD-INF-030 查不到子文件节点（若 belongs_to=MOD-INF-027）
+    治本: 按 blueprint_id 匹配（用户语义：--modules 接受蓝图编号）
+      向后兼容: 同时匹配 belongs_to（支持按父模块查子模块的旧用法）
     """
     modules = _build_modules_view(dep)
     result = {}
@@ -264,7 +283,8 @@ def cmd_modules(dep: dict, module_ids: list[str], output: str | None) -> None:
         found_items = []
         for domain_name, domain_data in modules.items():
             for item in domain_data.get("items", []):
-                if item.get("module_id") == module_id:
+                # 裁定#19-A：按 blueprint_id 匹配（用户语义），向后兼容 belongs_to
+                if item.get("blueprint_id") == module_id or item.get("belongs_to") == module_id:
                     found_items.append(item)
         if found_items:
             result[module_id] = {
