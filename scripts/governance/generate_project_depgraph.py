@@ -55,8 +55,19 @@ from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置�
 import psycopg2  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
+# Bug 1 修复（2026-07-18）：导入 PG 连接入口。脚本多处调用但未 import，致 NameError。
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+# Bug 2 修复（2026-07-18）：DictCursor 支持。脚本多处用 row["key"] 字典风格访问。
+import psycopg2.extras  # noqa: E402
 
 PROJECT_ROOT = REPO_ROOT
+
+
+def _get_pg_conn_with_dict_cursor(**kwargs):
+    """Bug 2 修复（2026-07-18）：DictCursor wrapper。"""
+    conn = get_depgraph_pg_connection(**kwargs)
+    conn.cursor_factory = psycopg2.extras.DictCursor
+    return conn
 
 # === 扫描排除配置（从 YAML 配置文件加载，真源: depgraph_scan_exclusions.yaml）===
 # 规则定义: docs/01_policies_and_standards/rules/trae_058_depgraph_scan_exclusions.yaml
@@ -569,7 +580,7 @@ def _load_panorama_from_db(db_path):
     """
     import json as _json
 
-    conn = get_depgraph_pg_connection(autocommit=False)
+    conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
     data = {"domains": {}, "tree": {}, "meta": {}}
 
     # Load domains — map to the same structure as the YAML panorama domains section
@@ -661,7 +672,7 @@ def _load_domain_mappings_from_db(db_path: Path):
 
     # P2 PG 迁移：删除 db_path.exists() 检查（PG 无文件路径概念）
     try:
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
         cur = conn.cursor()
 
         # Tier 1: domain_id → layer_id from domains table (per-domain, more accurate than group-based)
@@ -1045,7 +1056,8 @@ def parse_blueprint_header(filepath: Path) -> dict:
         "modification_permission": "",
     }
     try:
-        with open(filepath, encoding="utf-8", errors="ignore") as f:
+        # Bug 4 修复（2026-07-18）：用 utf-8-sig 自动去除 BOM。
+        with open(filepath, encoding="utf-8-sig", errors="ignore") as f:
             for i, line in enumerate(f):
                 if i >= 15:
                     break
@@ -2923,7 +2935,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     conn = None  # DM-3004: 预初始化None，防御性编程
 
     try:
-        conn = get_depgraph_pg_connection(autocommit=False, read_only=False)  # P2 PG 迁移
+        conn = _get_pg_conn_with_dict_cursor(autocommit=False, read_only=False)  # P2 PG 迁移  Bug 2 修复：DictCursor
         cursor = conn.cursor()
         # 裁定#209 阶段1：pg_advisory_xact_lock 互斥保护
         # 与 apply_depgraph.py._db_write_lock 共享 lock key 424242
@@ -3149,8 +3161,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                         node.get("type", "module"),
                         node.get("path", ""),
                         node.get("granularity", "file"),
-                        node.get("domain_id", ""),
-                        node.get("subdomain_id", ""),
+                        # Bug 3 修复（2026-07-18）：domain_id 空字符串触发 FK 违反
+                        # nodes_domain_id_fkey（空字符串不在 domains 表中）。NULL 不触发 FK 检查。
+                        node.get("domain_id") or None,
+                        node.get("subdomain_id") or None,
                         node.get("blueprint_id", ""),
                         node.get("belongs_to", ""),
                         node.get("owner", ""),
@@ -3665,7 +3679,7 @@ def load_design_state_from_db(db_path: str) -> dict:
     design_arch = []
     try:
         # P2 PG 迁移：sqlite3.connect → get_depgraph_pg_connection(autocommit=False)
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
         cur = conn.cursor()
         # 加载设计态节点
         cur.execute("""
@@ -3754,7 +3768,7 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
         return False
     conn = None
     try:
-        conn = get_depgraph_pg_connection(autocommit=False)
+        conn = _get_pg_conn_with_dict_cursor(autocommit=False)  # Bug 2 修复：DictCursor
         with conn.cursor() as cur:
             cur.execute("SELECT path, content_hash FROM nodes WHERE design_maturity = 'production'")
             db_rows = cur.fetchall()
