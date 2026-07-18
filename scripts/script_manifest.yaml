@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-07-19'
-total_scripts: 577
+total_scripts: 578
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -3550,11 +3550,11 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/_archive/one_off/_phase6_commit_helper.py
-  path: governance/_archive/one_off/_phase6_commit_helper.py
-  description: 在单个 Python 进程中完成 session_worktree_start + commit + merge，
+- name: governance/_archive/one_off/_commit_v24_legacy_risk_fix.py
+  path: governance/_archive/one_off/_commit_v24_legacy_risk_fix.py
+  description: 'Files to commit:'
   domain: governance
-  execution_plane: hot-path
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -4042,6 +4042,14 @@ scripts:
   path: hooks/auto_handoff_log.py
   description: from __future__ import annotations
   domain: hooks
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: kb/self_test.py
+  path: kb/self_test.py
+  description: 实际实现位于 zephyr.gov_kb.self_test.SelfTest
+  domain: test
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
