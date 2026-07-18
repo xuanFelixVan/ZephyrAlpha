@@ -489,7 +489,7 @@ def main() -> int:
         print(json.dumps(results, indent=2, default=str))
         return 0 if results["overall"] == "PASS" else 1
 
-    depgraph = args.depgraph or str(DEFAULT_DEPGRAPH_PATH)
+    depgraph = args.depgraph  # PG 模式下无文件路径概念，参数保留向后兼容（治本 #ARCH-TOOL-HEALTH-V1：原 DEFAULT_DEPGRAPH_PATH 已删除）
     detector = CausalConflictDetector(depgraph_path=depgraph)
     report = detector.run_all_checks()
     print(f"[CAUSAL_CONFLICT] Total conflicts: {report['total_conflicts']}")

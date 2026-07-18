@@ -71,7 +71,7 @@ from datetime import datetime
 
 import yaml
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh, DOMAIN_NAME_ZH  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）

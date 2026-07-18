@@ -76,6 +76,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.encoding import ensure_utf8_stdout
+# 治本 #ARCH-TOOL-HEALTH-V1：EXIT_ERROR 必须在 try: import yaml 之前导入，
+# 否则 yaml 缺失时 sys.exit(EXIT_ERROR) 会触发 NameError（原 import 在 line 86 之后）
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 ensure_utf8_stdout()
 try:
@@ -83,7 +86,6 @@ try:
 except ImportError:
     print("ERROR: PyYAML 未安装，请运行 `pip install pyyaml`", file=sys.stderr)
     sys.exit(EXIT_ERROR)
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 DRAFTS_ROOT = REPO_ROOT / "docs" / "19_development_workspace" / "drafts-and-audits"
 ARCHIVE_ROOT = REPO_ROOT / "docs" / "99_archive"
