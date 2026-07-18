@@ -73,9 +73,14 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_gate_registry_sync_reconciler,
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
+    make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
+    make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
     _print_block_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 4.2
+)
+from zephyr.governance.audit.remediation_progress_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.1
+    make_remediation_progress_reconciler,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -599,6 +604,9 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_gate_registry_sync_reconciler(self))  #ARCH-GATE-REGISTRY-SYNC-001 gate_registry.yaml 自动重生成（对标 make_manifest_reconciler，post-commit priority=830）
         self._reconciliation_registry.register(make_tmp_cleanup_reconciler(self))  # tmp/ TTL 自动清理（priority=49，对标 make_runtime_cleanup_reconciler，治本 249+ 文件残留）
         self._reconciliation_registry.register(make_worktree_lifecycle_reconciler(self))  # worktree 残留事件驱动清理（P2，治本遗留项#2，2026-07-17，priority=800）
+        self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
+        self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
+        self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
@@ -728,6 +736,13 @@ class GitCommitGateway:
     ) -> None:
         """Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）。"""
         if result.status != CommitStatus.OK:
+            return
+        # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip post-commit reconciler
+        # 原因：reconciler 依赖 Zephyr 项目结构（scripts/governance/、AGENTS.md 等），
+        # 在 tmp_path 测试仓库中运行会导致 S4 frontmatter 注入污染测试文件 + 脚本缺失 warning 刷屏。
+        # 对标 commit gates 的非 Zephyr skip 逻辑。
+        _governance_dir = self.project_root / "scripts" / "governance" / "d1_structure"
+        if not _governance_dir.is_dir():
             return
         try:
             reconcile_results = self._reconciliation_registry.reconcile_for(existing, session_id)

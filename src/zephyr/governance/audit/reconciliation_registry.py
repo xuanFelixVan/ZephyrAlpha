@@ -102,6 +102,8 @@ __all__ = [
     "make_gate_registry_sync_reconciler",
     "make_tmp_cleanup_reconciler",
     "make_worktree_lifecycle_reconciler",
+    "make_scripts_import_integrity_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 3
+    "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
     "scan_and_archive_working_docs",
 ]
 
@@ -5077,4 +5079,300 @@ def make_worktree_lifecycle_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=800,  # 在 GATE-GATE-REGISTRY-SYNC(830) 之前——worktree 清理是基础设施级
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架（第28个reconciler）。病根：pre-commit
+# gate（SCRIPTS-IMPORT-INTEGRITY, priority=104）只扫 staged 文件（incremental-only）+
+# --no-verify 可绕过。治本：post-commit baseline 全扫（扫描磁盘上所有
+# scripts/governance/**/*.py，commit 已入库不可绕过），复用
+# scan_all_scripts_for_import_violations（与 gate 共享 _scan_file_content helper，DRY）。
+def make_scripts_import_integrity_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-SCRIPTS-IMPORT-BASELINE post-commit baseline 全扫 reconciler。
+
+    病根（第一性原理）：pre-commit gate 只扫 staged 文件，有两个盲区：
+    1. **gate 上线前的基线 bug**：gate 在 commit 96caa8ceaa（2026-07-19 00:58:40）才上线，
+       此前已存在的 F821 违规（如 deb695006f 引入的 NameError）永远不会被 staged 扫描命中。
+    2. **--no-verify 绕过**：pre-commit hook 可被 --no-verify 绕过，gate 不执行；
+       本 reconciler 在 post-commit 阶段运行，commit 已入库不可绕过。
+
+    治本：post-commit baseline 全扫——扫描磁盘上所有 scripts/governance/**/*.py 文件，
+    报告 violations 为 warn（commit 已入库不可阻断；warn 供 AI 修复）。
+
+    向内收：复用 scan_all_scripts_for_import_violations 公开入口（与 gate 共享
+    _scan_file_content helper），零新真源。lazy import 避免 import-time 耦合
+    （reconciliation_registry 不应在模块加载时依赖 commit_gates.scripts_import_integrity_gate）。
+
+    触发策略：committed_files 含 scripts/governance/**/*.py 文件时触发（新违规只可能
+    由 governance 脚本变更引入）；或含 scripts_import_integrity_gate.py 自身变更时触发
+    （检测逻辑变更应重跑 baseline）。其他 commit 不触发（避免无谓全扫开销）。
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 触发条件：committed_files 含 scripts/governance/**/*.py 或 gate 自身
+        for f in committed_files:
+            normalized = f.replace("\\", "/")
+            if normalized.startswith("scripts/governance/") and normalized.endswith(".py"):
+                return True
+            if "scripts_import_integrity_gate.py" in normalized:
+                return True
+        return False
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # lazy import 避免 import-time 耦合（reconciliation_registry 不应在模块加载时
+        # 依赖 gov_enforcement.commit_gates.scripts_import_integrity_gate）
+        from zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate import (
+            scan_all_scripts_for_import_violations,
+        )
+
+        try:
+            violations, error_msg = scan_all_scripts_for_import_violations(project_root)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: reconciler 容错降级
+            return ReconcileResult(
+                action="warn",
+                detail=f"scripts import baseline scan 异常（降级告警）: {e}",
+            )
+
+        if error_msg is not None:
+            # fail-open：_shared.constants 不可导入或 scripts/governance/ 不存在
+            return ReconcileResult(action="skip", detail=f"baseline scan skip: {error_msg}")
+
+        if violations:
+            detail = (
+                f"scripts import baseline scan: {len(violations)} violation(s) detected"
+                "（#ARCH-TOOL-HEALTH-V1 Phase 3 baseline 全扫）\n"
+                + "\n".join(violations[:30])  # 截断到前 30 条避免日志过长
+                + (f"\n  ...(+{len(violations) - 30} more)" if len(violations) > 30 else "")
+            )
+            logger.warning("GATE-SCRIPTS-IMPORT-BASELINE: %s", detail)
+            return ReconcileResult(action="warn", detail=detail)
+
+        return ReconcileResult(
+            action="clean",
+            detail="scripts import baseline scan: 0 violations (clean)",
+        )
+
+    return ReconcilerSpec(
+        gate_id="GATE-SCRIPTS-IMPORT-BASELINE",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=210,  # post-commit baseline 全扫组（在 manifest=200/readme=210 区间之后，
+        # gate-registry=830 之前；同 priority 按 register 顺序，不冲突）
+    )
+
+
+# trae_060-reviewed: 该存在+可合并入已有框架（第29个reconciler）。病根：pre-commit
+# BLUEPRINT-FORMAT gate（priority=77）只检测 staged added 行的新违规，存量 64 条
+# legacy blueprint_id（MOD-GOV-SCRIPTS / ARCHITECTURE-DIAGRAM-PLAN / 空头 / SRC-XXX
+# 残留等）grandfathered 不检测。治本：post-commit baseline 全扫，报告存量债务，
+# warn-only（commit 已入库不可阻断；warn 供 AI/人工修复追踪）。
+def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-BLUEPRINT-ID-LEGACY post-commit baseline 全扫 reconciler（#ARCH-DATAQUALITY-V1.8 Task I）。
+
+    病根（第一性原理）：pre-commit BLUEPRINT-FORMAT gate 有两个盲区：
+    1. **gate 上线前的基线债务**：64 条 legacy blueprint_id 头部（MOD-GOV-SCRIPTS /
+       ARCHITECTURE-DIAGRAM-PLAN / 空头 / (migrated...) / SRC-XXX 残留等）在 gate
+       上线前已存在，grandfathered 不检测，永远不会被 staged 扫描命中。
+    2. **--no-verify 绕过**：pre-commit hook 可被 --no-verify 绕过，gate 不执行；
+       本 reconciler 在 post-commit 阶段运行，commit 已入库不可绕过。
+
+    治本：post-commit baseline 全扫——扫描 src/zephyr/ + tests/ + scripts/ 下所有
+    .py 文件的 [BLUEPRINT] 头部，用 is_valid_module_id() 校验，收集违规并落盘报告，
+    返回 warn（commit 已入库不可阻断；warn 供 AI/人工修复追踪）。
+
+    向内收（消除重复）：
+    - 真源唯一：复用 validate_module_id_naming.is_valid_module_id（裁定#208 格式
+      校验唯一真源），禁止复制正则。
+    - 框架唯一：扩展 ReconciliationRegistry（第29个 reconciler），不新建独立触发系统。
+    - 事件触发：post-commit 自动执行，无 cron/manual。
+
+    与 BLUEPRINT-FORMAT gate 的分工：
+    - BLUEPRINT-FORMAT gate（pre-commit, priority=77, 阻断型）：检测 staged added 行
+      的**新增**违规，阻断 commit。
+    - 本 reconciler（post-commit, priority=145, warn-only）：全扫**存量**违规，
+      落盘报告供追踪，不阻断。
+    两者互补不冲突——gate 防蔓延，reconciler 清存量。
+
+    trigger 裁定：committed_files 含 .py 文件时触发（legacy 头可能在任何 .py 文件中，
+    且 post-commit 全扫开销可接受——只读每个文件前几行提取 [BLUEPRINT] 头）。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="GATE-BLUEPRINT-ID-LEGACY", priority=145)。
+    """
+    import os
+    import re
+    import sys
+
+    project_root = gateway.project_root
+
+    # 匹配 [BLUEPRINT] 头部行，提取 module_id token（第一个非空白 token）
+    # 对标 blueprint_format_gate.py L79——真源同源，不复制正则逻辑
+    _BP_HEADER_RE = re.compile(r"^#\s*\[BLUEPRINT\]\s*(\S+)?")
+
+    # 扫描范围：src/zephyr/ + tests/ + scripts/（与 validate_python_syntax.py 一致）
+    _SCAN_DIRS = ("src/zephyr", "tests", "scripts")
+    _EXCLUDE_DIRS = frozenset({
+        "__pycache__", ".git", ".ailocks", ".trae", "session_logs",
+        "_archive", ".runtime", "node_modules",
+    })
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 触发条件：committed_files 含任何 .py 文件（legacy 头可能在任何 .py 中）
+        # 或含 validate_module_id_naming.py 自身（校验逻辑变更应重跑 baseline）
+        for f in committed_files:
+            normalized = f.replace("\\", "/")
+            if normalized.endswith(".py"):
+                return True
+            if "validate_module_id_naming.py" in normalized:
+                return True
+        return False
+
+    def _iter_py_files(root):
+        """递归遍历 _SCAN_DIRS 下所有 .py 文件（排除 _EXCLUDE_DIRS）。"""
+        for scan_dir_rel in _SCAN_DIRS:
+            scan_dir = root / scan_dir_rel
+            if not scan_dir.is_dir():
+                continue
+            for path in scan_dir.rglob("*.py"):
+                # 排除 __pycache__ 等
+                parts = set(path.relative_to(root).parts)
+                if parts & _EXCLUDE_DIRS:
+                    continue
+                # 排除路径中包含排除目录的
+                try:
+                    rel_parts = path.relative_to(scan_dir).parts
+                except ValueError:
+                    continue
+                if any(p in _EXCLUDE_DIRS for p in rel_parts):
+                    continue
+                yield path
+
+    def _extract_blueprint_id(file_path) -> tuple[str | None, int | None]:
+        """从文件前 5 行提取 [BLUEPRINT] 头部的 module_id。
+
+        Returns:
+            (module_id, line_no) —
+            - (None, None): 无 [BLUEPRINT] 头行（文件无蓝图声明）
+            - ("", line_no): [BLUEPRINT] 头存在但 module_id 为空（违规：空头）
+            - (module_id, line_no): [BLUEPRINT] 头含 module_id token
+        """
+        try:
+            with file_path.open("r", encoding="utf-8", errors="replace") as fh:
+                for line_no, line in enumerate(fh, start=1):
+                    if line_no > 5:
+                        break
+                    m = _BP_HEADER_RE.match(line)
+                    if m:
+                        # m.group(1) 为 None 时表示 "# [BLUEPRINT]" 空头——
+                        # 转空字符串以区分"无头"（返回 None, None）
+                        return (m.group(1) or ""), line_no
+        except OSError:
+            pass
+        return None, None
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        # lazy import：reconciliation_registry 不应在模块加载时依赖
+        # scripts/governance/d3_metadata/validate_module_id_naming
+        _d3_meta_dir = str(project_root / "scripts" / "governance" / "d3_metadata")
+        if _d3_meta_dir not in sys.path:
+            sys.path.insert(0, _d3_meta_dir)
+        try:
+            from validate_module_id_naming import is_valid_module_id  # noqa: E402
+        except ImportError as e:
+            return ReconcileResult(
+                action="skip",
+                detail=f"blueprint_id_legacy scan skip: cannot import is_valid_module_id: {e}",
+            )
+
+        violations: list[dict] = []
+        scanned = 0
+        files_with_header = 0
+
+        for py_file in _iter_py_files(project_root):
+            scanned += 1
+            module_id, line_no = _extract_blueprint_id(py_file)
+            if module_id is None and line_no is None:
+                # 无 [BLUEPRINT] 头行——不在本 reconciler 职责范围（由 ORPHAN-MODULE gate 等管）
+                continue
+            files_with_header += 1
+            if not module_id:
+                # 空头：[BLUEPRINT] 行存在但无 module_id token
+                violations.append({
+                    "file": str(py_file.relative_to(project_root)).replace("\\", "/"),
+                    "line": line_no,
+                    "module_id": "",
+                    "reason": "empty [BLUEPRINT] header (missing module_id)",
+                })
+                continue
+            ok, reason = is_valid_module_id(module_id)
+            if not ok:
+                violations.append({
+                    "file": str(py_file.relative_to(project_root)).replace("\\", "/"),
+                    "line": line_no,
+                    "module_id": module_id,
+                    "reason": reason,
+                })
+
+        report = {
+            "gate_id": "GATE-BLUEPRINT-ID-LEGACY",
+            "session_id": session_id,
+            "scanned_files": scanned,
+            "files_with_blueprint_header": files_with_header,
+            "violation_count": len(violations),
+            "violations": violations[:200],  # 截断到前 200 条避免报告过大
+            "truncated": len(violations) > 200,
+            "truncated_count": max(0, len(violations) - 200),
+        }
+        report_path, write_err = _write_reconcile_report(
+            project_root, "blueprint_id_legacy", report
+        )
+        if write_err:
+            return ReconcileResult(
+                action="warn",
+                detail=(
+                    f"blueprint_id_legacy scan done ({scanned} files, {len(violations)} violations) "
+                    f"but report write failed: {write_err}"
+                ),
+            )
+
+        if not violations:
+            return ReconcileResult(
+                action="clean",
+                detail=(
+                    f"blueprint_id_legacy scan clean: 0 violations in {scanned} files "
+                    f"({files_with_header} with [BLUEPRINT] header), report={report_path.name}"
+                ),
+            )
+
+        # 按违规类型聚合统计
+        reason_counts: dict[str, int] = {}
+        for v in violations:
+            # 取 reason 的第一行作为类型键
+            key = v["reason"].split("(")[0].strip()[:80]
+            reason_counts[key] = reason_counts.get(key, 0) + 1
+        summary_lines = [f"  - {count}x {key}" for key, count in sorted(reason_counts.items(), key=lambda x: -x[1])]
+
+        detail = (
+            f"blueprint_id_legacy scan: {len(violations)} violation(s) in {scanned} files "
+            f"({files_with_header} with [BLUEPRINT] header)\n"
+            f"  violation breakdown:\n"
+            + "\n".join(summary_lines[:10])
+            + (f"\n  ...(+{len(summary_lines) - 10} more types)" if len(summary_lines) > 10 else "")
+            + f"\n  report={report_path.name}"
+            + f"\n  Action: fix [BLUEPRINT] header to use valid MOD-/SH- prefix "
+            f"(see裁定#208 three-track: MOD-{{LAYER}}-NNN / MOD-{{DOMAIN}}[-NNN] / SH-{{ABBR}}-NNN)"
+        )
+        logger.warning("GATE-BLUEPRINT-ID-LEGACY: %s", detail)
+        return ReconcileResult(action="warn", detail=detail)
+
+    return ReconcilerSpec(
+        gate_id="GATE-BLUEPRINT-ID-LEGACY",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=145,  # 在 drift_scan@140 之后，module_id_recommend@170 之前
+        # ——drift_scan 看到已同步状态，本 reconciler 报告存量 legacy 债务
     )
