@@ -1,0 +1,91 @@
+rule_id: TRAE-064
+title: Git 调用预算铁律（ARCH-GIT-CALL-BUDGET）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-064
+depends_on:
+- TRAE-054
+tags:
+- TRAE
+- git_call_budget
+- L1_foundation
+- git_subprocess
+- performance
+- crash_prevention
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-GIT-CALL-BUDGET
+- Git调用预算
+- ARCH-GIT-CALL-BUDGET
+severity: critical
+scope: git_subprocess_budget
+domain: TRAE
+triggers:
+- operation: git_subprocess_call
+- operation: session_worktree_commit
+- operation: session_worktree_merge
+- operation: commit_gate_check
+- operation: reconciler_execution
+sections:
+  git_call_budget:
+    section_type: procedure
+    title: Git 调用预算铁律（ARCH-GIT-CALL-BUDGET）
+    original_rules:
+    - RULE-GIT-CALL-BUDGET
+    conditions:
+    - type: trigger
+      check: 任何调用 git 子进程（subprocess.run(["git", ...])）的操作
+      pass: 按预算表控制调用频率，批量化替代逐文件调用
+      fail: 逐文件 git 调用（N 文件 = N subprocess）→ git.exe 崩溃放大源
+    - type: constraint
+      check: git 是昂贵外部资源，Windows 上每次 subprocess.run(["git",...]) 成本 ~50-100ms + fscache/fsmonitor 初始化开销
+      pass: 用 GitCommandBatcher 批量化（1 次 git archive 替代 N 次 git show）
+      fail: 逐文件调用在 14 万文件工作区 + fscache/fsmonitor 路径上是 git.exe 2.48.x 崩溃（0xc0000005 @ 0x13e4d4）的放大源
+    actions:
+    - type: mandatory
+      step: '铁律1: 任何循环内禁止直接调用 subprocess.run(["git", ...])（N 文件 = N subprocess）。MUST 用 GitCommandBatcher 批量化（git_show_batch / git_diff_cached_names / git_ls_files_tracked）'
+    - type: mandatory
+      step: '铁律2: 可信内部模块（session_worktree / GitCommitGateway）的 git 子进程调用 MUST 设置 ZEPHYR_GIT_GUARD_FAST_PATH=1 env，跳过 git_guard alias 拦截的 ls-files 扫描'
+    - type: mandatory
+      step: '铁律3: 仓库级 .git/config MUST 锁定 core.fscache=false + core.fsmonitor=false（git 2.48.x 崩溃路径）'
+    - type: mandatory
+      step: '铁律4: AI session 启动时 MUST 运行 git_health_smoke.py 健康度检查，fail 时 escalate 而非静默 workaround'
+    - type: mandatory
+      step: '铁律5: GIT-CALL-BUDGET gate 检测 staged .py 中 subprocess.run(["git",...]) 在循环内调用，warn-only（P2），P3 升级 block'
+    - type: forbidden
+      step: '禁止: 在 for/while 循环内直接调用 subprocess.run(["git", ...])——逐文件 git 调用是崩溃放大源'
+    - type: forbidden
+      step: '禁止: 在仓库级 .git/config 启用 core.fscache=true 或 core.fsmonitor=true——git 2.48.x 崩溃路径'
+    - type: forbidden
+      step: '禁止: AI 遇到核心工具报错时 silently workaround——MUST 上报（escalate）'
+    - type: forbidden
+      step: '禁止: 绕过 GitCommandBatcher 用 N 次 git show 获取 N 个文件内容——MUST 用 git_show_batch（1 次 git archive）'
+    invariants:
+    - id: GIT-BUDGET-INV-001
+      title: 循环内 git 调用禁止
+      description: 任何 for/while 循环内禁止直接调用 subprocess.run(["git", ...])。MUST 用 GitCommandBatcher 批量化（1 次 git archive 替代 N 次 git show）
+      enforcement: GIT-CALL-BUDGET gate（warn-only P2, block P3）AST 检测 subprocess.run(["git",...]) 在 For/While 体内
+      violation_action: warn_p2_block_p3
+    - id: GIT-BUDGET-INV-002
+      title: 批量化强制
+      description: 获取 N 个文件内容 MUST 用 GitCommandBatcher.git_show_batch（git archive --format=tar），禁止 N 次 git show。获取 staged/diff/tracked 文件名 MUST 用对应的批量方法
+      enforcement: GIT-CALL-BUDGET gate AST 检测 + 代码审查
+      violation_action: warn_p2_block_p3
+    - id: GIT-BUDGET-INV-003
+      title: Fast-path 授权
+      description: 可信内部模块（session_worktree / GitCommitGateway）的 git 子进程调用 MUST 设置 ZEPHYR_GIT_GUARD_FAST_PATH=1 env，使 git_guard.py 跳过 alias 拦截的 ls-files 扫描
+      enforcement: 代码审查 + git_guard.py _is_fast_path_authorized 检查
+      violation_action: warn
+    - id: GIT-BUDGET-INV-004
+      title: fscache/fsmonitor 仓库级锁定
+      description: 仓库级 .git/config MUST 锁定 core.fscache=false + core.fsmonitor=false。git 2.48.x 的 fscache/fsmonitor 代码路径是 0xc0000005 崩溃的触发点
+      enforcement: git_health_smoke.py 检测 + 人工审查
+      violation_action: reject_change
+    - id: GIT-BUDGET-INV-005
+      title: AI session 启动 smoke test
+      description: AI session 启动时 MUST 运行 git_health_smoke.py，检测 git 版本/fscache/fsmonitor/status 计时/alias 状态。fail 时 MUST escalate 而非静默 workaround
+      enforcement: AGENTS.md 规则 + session_worktree_start 可选调用
+      violation_action: warn

@@ -87,6 +87,24 @@ FORCE_STASH_ENV = "ZEPHYR_FORCE_STASH"
 # GitCommitGateway 授权标记（P0-ENV 契约统一：gateway commit 流程设置此 env）
 GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 
+# Fast-path 授权标记（ARCH-GIT-CALL-BUDGET P1.3，2026-07-19）
+# 由可信内部调用方（session_worktree / GitCommitGateway）设置，表示调用方已自行完成
+# .ailocks/ 冲突检查与 held_files 登记，git_guard 跳过冗余的 ls-files/rev-parse 全扫，
+# 直接透传。根因：alias 拦截每次 checkout/reset 触发 2-3x git 子进程 spawn，在 14 万文件
+# 工作区 + fscache/fsmonitor 路径上是 git.exe 崩溃（0xc0000005 @ 0x13e4d4）的放大源。
+FAST_PATH_ENV = "ZEPHYR_GIT_GUARD_FAST_PATH"
+
+
+def _is_fast_path_authorized() -> bool:
+    """检测调用方是否为已自检的可信内部代码（session_worktree / GitCommitGateway）。
+
+    Fast-path 语义：调用方声明"我已对该 git 操作涉及的文件做过 .ailocks/ 冲突检查与
+    held_files 登记"，git_guard 跳过自身的 ls-files 全扫 + rev-parse + 冲突检测，
+    直接透传给真实 git。安全前提：调用方是 session_worktree（物理隔离 worktree +
+    held_files claim）或 GitCommitGateway（自有 7 gates）。
+    """
+    return os.environ.get(FAST_PATH_ENV) == "1"
+
 
 def _is_gateway_authorized() -> bool:
     """检测当前进程是否经 GitCommitGateway 或显式强制授权（P0-ENV 契约统一）。
@@ -506,6 +524,12 @@ def check_and_execute(git_args: list[str]) -> int:
 
     # 非危险命令，直接透传
     if subcommand not in DANGEROUS_SUBCOMMANDS:
+        return _passthrough(git_args)
+
+    # Fast-path（ARCH-GIT-CALL-BUDGET P1.3）：可信内部调用方已自检，跳过 ls-files
+    # 全扫 + 冲突检测，直接透传。仅对 checkout/reset/restore/revert 等危险命令生效；
+    # stash/mv 仍走原路径（stash 涉及工作区覆盖语义复杂，mv 涉及未跟踪文件策略）。
+    if _is_fast_path_authorized() and subcommand in {"checkout", "reset", "restore", "revert"}:
         return _passthrough(git_args)
 
     # stash 特殊处理：push 移走修改，pop/apply 覆盖工作区，list/show 只读

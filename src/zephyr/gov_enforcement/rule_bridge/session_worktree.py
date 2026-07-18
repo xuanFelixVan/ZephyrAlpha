@@ -1453,12 +1453,38 @@ def _collect_untracked_cleanups(
     return cleaned, skipped, to_unlink
 
 
-def _execute_cleanups(root: Path, to_checkout: list[str], to_unlink: list[str]) -> None:
-    """执行批量 checkout tracked dirty 文件 + 删除 untracked 文件。"""
+def _execute_cleanups(
+    root: Path, to_checkout: list[str], to_unlink: list[str],
+    session_id: str = "",
+) -> None:
+    """执行批量 stash tracked dirty 文件 + 删除 untracked 文件。
+
+    治本（#ARCH-WORKTREE-002 缺陷2，2026-07-19）：tracked 文件原用 ``git checkout --``
+    永久丢弃修改，merge 失败后 abort 导致修改丢失（实测 Phase 1+3 修改被 abort
+    还原到 HEAD 全部丢失）。改为 ``git stash push`` 保存修改（可恢复 via
+    ``git stash pop``），与 session_worktree_abort 的 S3-B 治本一致。
+
+    Args:
+        root: 主仓库根目录。
+        to_checkout: 需要 stash 的 tracked 文件列表（原 to_checkout 语义）。
+        to_unlink: 需要物理删除的 untracked 文件列表。
+        session_id: session 标识，用于 stash message 溯源。
+    """
     if to_checkout:
+        # 治本（#ARCH-WORKTREE-002 缺陷2）：git stash push 替代 git checkout --
+        # stash 保留修改（可恢复 via git stash pop），checkout -- 永久丢弃
+        stash_msg = (
+            f"session_worktree_pre_merge: {session_id}"
+            if session_id else "session_worktree_pre_merge"
+        )
         subprocess.run(
-            ["git", "checkout", "--"] + to_checkout,
+            ["git", "stash", "push", "-m", stash_msg, "--"] + to_checkout,
             cwd=str(root), capture_output=True,
+            env=_trusted_git_env(),
+        )
+        logger.info(
+            "session_worktree_pre_merge: stashed %d tracked file(s) for session=%s "
+            "(recoverable via 'git stash pop')", len(to_checkout), session_id or "?",
         )
     for rel_file in to_unlink:
         try:
@@ -1477,7 +1503,10 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
     场景1（tracked dirty）：AI 的 Edit 改动留在主工作区（uncommitted），
     session_worktree_commit 同步到 worktree 并 commit。这些未提交改动与 worktree
     commit 内容一致，merge 时触发 "Your local changes would be overwritten by merge"。
-    修复：内容一致时 git checkout -- 还原到 HEAD（merge 会重新带入）。
+    修复：内容一致时 git stash push 保存修改（可恢复 via git stash pop），文件还原
+    到 HEAD（merge 会重新带入）。治本（#ARCH-WORKTREE-002 缺陷2，2026-07-19）：
+    原用 git checkout -- 永久丢弃，merge 失败后 abort 导致修改丢失；改为 stash
+    与 session_worktree_abort 的 S3-B 治本一致。
 
     场景2（untracked new file）：AI 用 Write 创建新文件留在主工作区（untracked），
     session_worktree_commit 复制到 worktree 并 commit。merge 时 git 拒绝覆盖 untracked
@@ -1508,7 +1537,7 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
     cleaned_u, skipped_u, to_unlink = _collect_untracked_cleanups(
         root, branch, changed_files,
     )
-    _execute_cleanups(root, to_checkout, to_unlink)
+    _execute_cleanups(root, to_checkout, to_unlink, session_id)
     return cleaned_t + cleaned_u, skipped_t + skipped_u
 
 
@@ -2249,7 +2278,6 @@ def _dispose_main_workdir_files(
         subprocess.run(
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_stash,
             cwd=str(root), capture_output=True,
-            env=_trusted_git_env(),
         )
         logger.info(
             "session_worktree_abort: stashed %d tracked file(s) for session=%s "
