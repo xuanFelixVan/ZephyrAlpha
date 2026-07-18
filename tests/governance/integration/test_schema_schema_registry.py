@@ -22,7 +22,7 @@
 
 import pytest
 
-from zephyr.integration.shared.schema.schema_registry import (
+from zephyr.shared.schema.schema_registry import (
     SchemaEntry,
     SchemaRegistry,
     SchemaRegistryError,

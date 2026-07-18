@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1862 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-489 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-489 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.db.test_task_repo
 # [STABILITY] evolving
 # [SAFETY] L
@@ -41,8 +41,8 @@ from zephyr.governance.persistence.task_repo import (
     is_terminal,
 )
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
+from zephyr.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.foundation.models import TaskCard
 
 _UTC = UTC

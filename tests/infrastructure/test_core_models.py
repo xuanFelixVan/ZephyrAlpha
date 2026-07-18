@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0627 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-371 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
+# [BLUEPRINT] MOD-TEST-371 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_core_models
 # [INVARIANTS] GateLevel enum values match gate engine expectations; TaskAuditFinding validation rules; TaskCard instantiation validates inherited+extended fields; DecompositionResult/GateCheckResult field constraints
 # [MODIFY-GUARD] src/zephyr/core/models.py
@@ -18,8 +18,8 @@ import pytest
 from pydantic import ValidationError
 
 from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.integration.shared.schema.schemas import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.schemas import TaskNamespace, TaskStatus
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import (
     DecompositionResult,
     GateCheckResult,

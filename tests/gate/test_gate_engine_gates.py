@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1884 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-504 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-504 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.gates.test_gate_engine
 # [STABILITY] evolving
 # [SAFETY] L
@@ -42,7 +42,7 @@ from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine import (
     _check_path_blacklist,
 )
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.foundation.models import TaskCard
 
 # ---------------------------------------------------------------------------

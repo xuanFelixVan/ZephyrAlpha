@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_injector
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.security.llm_defense.llm_security.gateway
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -43,7 +43,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 __all__ = [

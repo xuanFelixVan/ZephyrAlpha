@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 _SOURCE_MODULE = "zephyr.gov_enforcement.rule_enforcement.task_types"
-_EXEC_MODEL_MODULE = "zephyr.integration.shared.schema.execution_model"
+_EXEC_MODEL_MODULE = "zephyr.shared.schema.execution_model"
 
 _LAZY_IMPORTS = {
     "Task": _SOURCE_MODULE,

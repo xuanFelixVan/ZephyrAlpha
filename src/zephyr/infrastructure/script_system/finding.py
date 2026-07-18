@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain-governance/governance-automation/blueprint.md
 # [MODULE] zephyr.infrastructure.script_system.finding
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -60,7 +60,7 @@ import os
 from datetime import UTC, datetime
 from enum import Enum
 
-from zephyr.integration.shared.schema.schemas import Priority
+from zephyr.shared.schema.schemas import Priority
 
 
 class Dimension(str, Enum):

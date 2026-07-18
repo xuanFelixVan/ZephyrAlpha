@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1957 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-574 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-574 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.shared.test_shared_core
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.schemas import (
+from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
     AuditSeverity,
@@ -29,7 +29,7 @@ from zephyr.integration.shared.schema.schemas import (
     TaskNamespace,
     TaskStatus,
 )
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.shared.schema.severity_types import SafetyLevel
 from zephyr.shared.io.paths import (
     DB_DIR,
     GATES_DIR,

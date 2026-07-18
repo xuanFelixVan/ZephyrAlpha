@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-1926 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-545 | docs/03_modules/_domain_governance/blueprint.md | §
+# [BLUEPRINT] MOD-TEST-545 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.pipeline.test_pipeline_orchestrator
 # [STABILITY] evolving
 # [SAFETY] L
@@ -24,7 +24,7 @@ from zephyr.shared.foundation.models import TaskCard
 
 def _make_task(task_id: str, **overrides) -> TaskCard:
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace
-    from zephyr.integration.shared.schema.severity_types import Priority
+    from zephyr.shared.schema.severity_types import Priority
 
     parts = task_id.split("-", 2)
     ns_name = parts[0] if len(parts) >= 2 else "TASK"
@@ -138,7 +138,7 @@ class TestPipelineDispatch:
         assert mids == ["M2", "M3", "M4", "M5"]
 
     def test_ct_pipe_audit_p0_vs_assigned_pipeline_b_warns(self) -> None:
-        from zephyr.integration.shared.schema.severity_types import Priority
+        from zephyr.shared.schema.severity_types import Priority
 
         task = _make_task(
             "CP-0102",

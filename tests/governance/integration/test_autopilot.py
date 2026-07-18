@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-0392 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] SRC-350 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
+# [BLUEPRINT] MOD-TEST-350 | docs/03_modules/_cross_layer/database/blueprint.md | §auto-pilot
 # [MODULE] tests.test_autopilot
 # [INVARIANTS] All tests use temp DB files; concurrent tests use ThreadPoolExecutor; claim_next verified via Event Sourcing atomicity
 # [MODIFY-GUARD] If AutoPilot.scan() or claim_next() changes API, MUST update these tests
@@ -30,9 +30,9 @@ import pytest
 
 from zephyr.governance.persistence.task_repo import TaskRepository
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-from zephyr.integration.shared.schema.base_config import Classification
-from zephyr.integration.shared.schema.execution_model import ExecutionModel
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.base_config import Classification
+from zephyr.shared.schema.execution_model import ExecutionModel
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import TaskCard
 from zephyr.trading.autopilot import AutoPilot
 

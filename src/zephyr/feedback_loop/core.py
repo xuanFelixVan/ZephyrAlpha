@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.feedback_loop.core
 # [DOMAIN] D_FEEDBACK_LOOP
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS] zephyr.trading.auto_runtime_core; zephyr.trading.lifecycle_manager; zephyr.gov_audit.feedback_bridge; zephyr.security.access_control.orphan_judge.feedback_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -30,7 +30,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
 

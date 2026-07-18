@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 
 import pytest
 
-from zephyr.integration.shared.schema.schemas import (
+from zephyr.shared.schema.schemas import (
     AuditFinding,
     AuditReport,
     BlockedItem,
@@ -36,7 +36,7 @@ from zephyr.integration.shared.schema.schemas import (
     KnowledgeEntry,
     NextAction,
 )
-from zephyr.integration.shared.schema.severity_types import AuditSeverity
+from zephyr.shared.schema.severity_types import AuditSeverity
 
 
 def _now():

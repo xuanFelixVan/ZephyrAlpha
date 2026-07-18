@@ -37,9 +37,9 @@ transition_mod = pytest.importorskip("zephyr.governance.lifecycle_governance.tra
 
 try:
     from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
-    from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-    from zephyr.integration.shared.schema.execution_model import ExecutionModel
-    from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+    from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
+    from zephyr.shared.schema.execution_model import ExecutionModel
+    from zephyr.shared.schema.severity_types import Priority, SafetyLevel
     from zephyr.shared.foundation.models import TaskCard
 
     HAS_TASK_TYPES = True

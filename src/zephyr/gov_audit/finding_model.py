@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §4
 # [MODULE] zephyr.gov_audit.finding_model
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.integration.shared.schema.base_config
+# [DEPENDENCIES] zephyr.shared.schema.base_config
 # [CONSUMERS] finding_ingest.py; pipeline_runner.py; audit-trail.writer; _finding_lifecycle.py; create_task_from_finding.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -24,7 +24,7 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG
+from zephyr.shared.schema.base_config import BASE_CONFIG
 
 
 class FindingSeverity(str, Enum):

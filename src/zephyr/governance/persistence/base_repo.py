@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.persistence.base_repo
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.severity_types
 # [CONSUMERS] task_repo;query;transition
 # [STARTUP] imported
 # [MATURITY] prototype

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-TASK_SYSTEM | docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 # [MODULE] zephyr.governance.persistence.intent_keyword_mapper
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -43,7 +43,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 __all__ = [
     "MAP",

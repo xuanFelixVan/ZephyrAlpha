@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [MODULE] zephyr.autonomy_core.skills.skill_registry
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.schema.schemas
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -44,11 +44,15 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 # 5.160.20 修复：SEMVER正则统一为共享常量
 from zephyr.shared.foundation.constants import SEMVER_PATTERN
+from zephyr.shared.io.yaml_utils import load_vocabulary_values
 
-_STABILITY_VALUES: frozenset[str] = frozenset({"experimental", "beta", "stable", "frozen"})
+# SSoT(5.1.1 词表硬编码治本): stability 合法值唯一真源是 stability_vocabulary.yaml
+# (frozen/stable/evolving/volatile)——原硬编码 {experimental,beta,stable,frozen} 属值域漂移，
+# 语义以词表为准。strict=True fail-fast（词表缺失/误拼立即崩溃，防静默空集漂移）。
+_STABILITY_VALUES: frozenset[str] = frozenset(load_vocabulary_values("stability_vocabulary.yaml"))
 
 
 def _validate_semver(v: str) -> str:
@@ -82,7 +86,7 @@ class PromptTemplate(BaseModel):
     template_id: str = Field(min_length=1, description="模板唯一标识符")
     name: str = Field(min_length=1, description="模板名称")
     version: str = Field(default="1.0.0", description="Semver 版本号")
-    stability: str = Field(default="experimental", description="experimental|beta|stable|frozen")
+    stability: str = Field(default="evolving", description="stability 合法值见 stability_vocabulary.yaml（frozen|stable|evolving|volatile）")
     description: str = Field(default="", description="模板用途说明")
     template_str: str = Field(min_length=1, description="模板文本——{variable} 占位符")
     variables: list[PromptVariable] = Field(default_factory=list, description="变量声明列表")
@@ -181,7 +185,7 @@ class SkillDefinition(BaseModel):
     skill_id: str = Field(min_length=1, description="Skill 唯一标识符")
     name: str = Field(min_length=1, description="Skill 名称")
     version: str = Field(default="1.0.0", description="Semver 版本号")
-    stability: str = Field(default="experimental", description="稳定性")
+    stability: str = Field(default="evolving", description="稳定性（合法值见 stability_vocabulary.yaml）")
     category: SkillCategory = Field(default=SkillCategory.CODE, description="Skill 分类")
     description: str = Field(default="", description="Skill 用途说明")
     prompt_template: PromptTemplate = Field(description="关联的 Prompt 模板")

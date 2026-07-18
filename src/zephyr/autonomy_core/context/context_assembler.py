@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_assembler
 # [DOMAIN] D_AUTONOMY_CORE
-# [DEPENDENCIES] zephyr.integration.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.intelligence.model_evaluation.reranker; zephyr.governance.__init__
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.autonomy_core.__init__; zephyr.intelligence.model_evaluation.unified_memory_api; zephyr.intelligence.model_evaluation.reranker; zephyr.governance.__init__
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -39,7 +39,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import BaseModel, Field
 
 from zephyr.infrastructure.capacity_assurance.token_budget import DEFAULT_CONTEXT_TOKEN_BUDGET, estimate_tokens
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 
 from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegistry  # 5.12.10 修复：移除 if TYPE_CHECKING: 死分支（条件import残留）
 

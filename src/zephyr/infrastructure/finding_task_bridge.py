@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md
 # [MODULE] zephyr.infrastructure.finding_task_bridge
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.__init__; zephyr.integration.shared.schema.schemas
+# [DEPENDENCIES] zephyr.shared.__init__; zephyr.shared.schema.schemas
 # [CONSUMERS] scripts/governance/run_all.py (bridge_findings_to_tasks)
 # [STARTUP] imported
 # [MATURITY] production
@@ -28,7 +28,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.integration.shared.schema.schemas import Priority, SafetyLevel
+from zephyr.shared.schema.schemas import Priority, SafetyLevel
 from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.protocols.registry import ServiceRegistry
 from zephyr.shared.schema.task_types import GateLevel, TaskCard, TaskNamespace, TaskStatus

@@ -21,8 +21,8 @@
 # [TTL] task_bound
 
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
-from zephyr.integration.shared.schema.schemas import AuditReport, FailurePattern, HandoffPackage, KnowledgeEntry, Task
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.schemas import AuditReport, FailurePattern, HandoffPackage, KnowledgeEntry, Task
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.utils.testing import (
     make_completed_task,
     make_p0_task,
@@ -110,7 +110,7 @@ class TestMakeValidFailurePattern:
         assert fp.pattern_id.startswith("F-")
 
     def test_custom_failure_type(self):
-        from zephyr.integration.shared.schema.schemas import FailureType
+        from zephyr.shared.schema.schemas import FailureType
 
         fp = make_valid_failure_pattern(failure_type=FailureType.TIMEOUT)
         assert fp.failure_type == FailureType.TIMEOUT

@@ -24,8 +24,8 @@ from zephyr.gov_enforcement.rule_enforcement.task_types import (
     TaskStatus,
     normalize_execution_model,
 )
-from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+from zephyr.shared.schema.base_config import Classification, EvolutionPolicy
+from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
 _NOW = datetime(2026, 5, 22, 12, 0, 0)
 

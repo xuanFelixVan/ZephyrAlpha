@@ -32,7 +32,7 @@ from zephyr.gov_enforcement.rule_enforcement.gate_types import (
     GateViolation,
     GateViolationError,
 )
-from zephyr.integration.shared.schema.schemas import Priority
+from zephyr.shared.schema.schemas import Priority
 
 
 class TestGateViolation:

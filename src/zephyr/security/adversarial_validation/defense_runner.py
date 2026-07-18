@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §4.1 + §16 Phase 1
 # [MODULE] zephyr.security.adversarial_validation.defense_runner
 # [DOMAIN] D_SECURITY
-# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.integration.shared.schema.severity_types; zephyr.integration.shared.schema.execution_model
+# [DEPENDENCIES] zephyr.security.adversarial_validation.models; zephyr.gov_audit.finding_model; zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
 # [CONSUMERS] validator.py; game_day_runner.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -179,8 +179,8 @@ class DefenseRunner:
             from datetime import UTC, datetime
 
             from zephyr.gov_enforcement.rule_enforcement.task_types import Task, TaskNamespace, TaskStatus
-            from zephyr.integration.shared.schema.execution_model import ExecutionModel
-            from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
+            from zephyr.shared.schema.execution_model import ExecutionModel
+            from zephyr.shared.schema.severity_types import Priority, SafetyLevel
 
             task = Task(
                 task_id=f"OPS-{abs(hash(scenario.scenario_id)) % 100000:05d}",

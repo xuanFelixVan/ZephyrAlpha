@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent-orchestrator/blueprint.md
 # [MODULE] zephyr.orchestrator.agent_health_monitor
 # [DOMAIN] D_ORCHESTRATOR
-# [DEPENDENCIES] zephyr.trading.__init__; zephyr.integration.shared.schema.schemas; zephyr.shared.utils.time_utils
+# [DEPENDENCIES] zephyr.trading.__init__; zephyr.shared.schema.schemas; zephyr.shared.utils.time_utils
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -55,7 +55,7 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
-from zephyr.integration.shared.schema.schemas import BASE_CONFIG
+from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.utils.time_utils import default_now
 from zephyr.orchestrator.agent_orchestrator import OrchestrationResult
 

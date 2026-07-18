@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §4
 # [MODULE] zephyr.gov_audit.text_to_finding_adapter
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.gov_audit.finding_model; zephyr.integration.shared.schema.base_config
+# [DEPENDENCIES] zephyr.gov_audit.finding_model; zephyr.shared.schema.base_config
 # [CONSUMERS] pipeline_runner.py; run_all.py
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -33,7 +33,7 @@ from zephyr.gov_audit.finding_model import (
     RemediationPriority,
     generate_finding_id,
 )
-from zephyr.integration.shared.schema.base_config import BASE_CONFIG
+from zephyr.shared.schema.base_config import BASE_CONFIG
 
 
 class ParsedLine(BaseModel):

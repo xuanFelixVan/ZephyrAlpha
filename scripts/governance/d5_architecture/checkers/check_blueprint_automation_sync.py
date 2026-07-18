@@ -44,6 +44,7 @@ import argparse
 import re
 
 from _shared.constants import BLUEPRINTS_DIR, EXIT_FINDINGS, REPO_ROOT
+from _shared.frontmatter import parse_frontmatter
 from _shared.walk import iter_files
 
 __manifest__ = """
@@ -62,9 +63,6 @@ SRC_DIR = REPO_ROOT / "src" / "zephyr"
 AUTOMATION_TABLE_RE = re.compile(
     r"\|\s*([^|]+)\s*\|\s*(auto_boot|auto_scheduled|auto_event|on_demand)\s*\|\s*([^|]+)\s*\|\s*(✅已实现|⚠️待实现|⚠️部分实现|⚠️未实现|❌未实现)\s*\|"
 )
-
-MODULE_ID_RE = re.compile(r'module_id:\s*["\']?(\S+?)["\']?\s*$')
-DISK_PATH_RE = re.compile(r'actual_disk_path:\s*["\']?([^"\']+)["\']?\s*$')
 
 CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
     "MOD-INF-011": {
@@ -110,24 +108,6 @@ CODE_IMPLEMENTATION_PROBES: dict[str, dict] = {
 
 def find_blueprint_files() -> list[Path]:
     return iter_files(BLUEPRINTS_DIR, name_pattern="blueprint.md")
-
-
-def parse_frontmatter(content: str) -> dict[str, str]:
-    fm: dict[str, str] = {}
-    if not content.startswith("---"):
-        return fm
-    end = content.find("---", 3)
-    if end < 0:
-        return fm
-    fm_text = content[3:end]
-    for line in fm_text.splitlines():
-        m = MODULE_ID_RE.match(line.strip())
-        if m:
-            fm["module_id"] = m.group(1).strip('"').strip("'")
-        m2 = DISK_PATH_RE.match(line.strip())
-        if m2:
-            fm["actual_disk_path"] = m2.group(1).strip().strip('"').strip("'").rstrip("/")
-    return fm
 
 
 def extract_automation_table(content: str) -> list[dict]:
@@ -182,7 +162,7 @@ def check_automation_sync(blueprint_path: Path | None = None) -> list[dict]:
         except OSError:
             continue
 
-        fm = parse_frontmatter(content)
+        fm = parse_frontmatter(content) or {}
         module_id = fm.get("module_id", "")
         if not module_id:
             continue

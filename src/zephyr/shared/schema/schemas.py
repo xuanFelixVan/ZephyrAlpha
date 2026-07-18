@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.schema.schemas
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types
+# [DEPENDENCIES] zephyr.shared.schema.base_config; zephyr.shared.schema.severity_types; zephyr.shared.schema.execution_model
 # [CONSUMERS] gates; context-engine; orchestrator; kb; runtime; db; pipeline; mcp; core; shared.events; scripts; tests
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -24,30 +24,16 @@ from typing import Annotated, Any, Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from zephyr.shared.schema.base_config import BASE_CONFIG, Classification, EvolutionPolicy
+from zephyr.shared.schema.execution_model import (
+    ExecutionModel,
+    normalize_execution_model,
+)
 from zephyr.shared.schema.severity_types import (
     AuditSeverity,
     CircuitBreakerState,
     Priority,
     SafetyLevel,
 )
-
-_TASK_TYPES_NAMES = {
-    "ExecutionModel",
-    "Task",
-    "TaskNamespace",
-    "TaskStatus",
-    "normalize_execution_model",
-}
-
-
-def __getattr__(name):
-    if name in _TASK_TYPES_NAMES:
-        _mod = importlib.import_module("zephyr.gov_enforcement.rule_enforcement.task_types")
-        _val = getattr(_mod, name)
-        globals()[name] = _val
-        return _val
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
 
 __all__ = [
     "BASE_CONFIG",
@@ -73,6 +59,34 @@ __all__ = [
     "TaskStatus",
     "normalize_execution_model",
 ]
+
+_STABILITY_FROZEN = True
+_FROZEN_PUBLIC_API = frozenset(__all__)
+
+# Lazy-load governance task types to break circular dependency:
+# shared.schema.schemas -> governance.rule_enforcement.task_types -> shared.schema.*
+# These symbols are re-export only (zero business usage in this module).
+_GOVERNANCE_TASK_TYPES = {
+    "Task": "zephyr.gov_enforcement.rule_enforcement.task_types",
+    "TaskNamespace": "zephyr.gov_enforcement.rule_enforcement.task_types",
+    "TaskStatus": "zephyr.gov_enforcement.rule_enforcement.task_types",
+}
+
+
+def __getattr__(name: str):
+    if name in _GOVERNANCE_TASK_TYPES:
+        _mod = importlib.import_module(_GOVERNANCE_TASK_TYPES[name])
+        _val = getattr(_mod, name)
+        globals()[name] = _val
+        return _val
+    if name in _FROZEN_PUBLIC_API:
+        import logging
+
+        logging.getLogger("zephyr.stability_guard").warning(
+            "STABILITY VIOLATION: Public API attribute '%s' removed from frozen module zephyr.shared.schema.schemas",
+            name,
+        )
+    raise AttributeError(f"module 'zephyr.shared.schema.schemas' has no attribute {name!r}")
 
 
 class KeCategory(str, Enum):

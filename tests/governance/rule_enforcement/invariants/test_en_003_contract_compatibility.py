@@ -162,7 +162,7 @@ class TestGetDataclassFields:
         assert result is None
 
     def test_nonexistent_class(self):
-        result = _get_dataclass_fields("zephyr.integration.shared.schema.schemas", "NonexistentClass12345")
+        result = _get_dataclass_fields("zephyr.shared.schema.schemas", "NonexistentClass12345")
         assert result is None
 
     def test_non_dataclass(self):

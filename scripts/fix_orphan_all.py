@@ -27,7 +27,6 @@
 from __future__ import annotations
 
 import ast
-import os
 import sys
 from pathlib import Path
 
@@ -36,6 +35,7 @@ _GOV_DIR = str(Path(__file__).resolve().parent / "governance")
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import REPO_ROOT as PROJECT_ROOT  # noqa: E402
+from _shared.file_utils import atomic_write  # noqa: E402  # SSoT: zephyr.shared.io.file_utils.atomic_write
 
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 
@@ -139,20 +139,6 @@ def format_all_block(entries: list[str]) -> str:
         lines.append(f"    {entry!r},")
     lines.append("]")
     return "\n".join(lines)
-
-
-def atomic_write(path: Path, content: str) -> None:
-    tmp_path = f"{path}.{os.getpid()}.tmp"
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        os.replace(tmp_path, path)
-    except PermissionError:
-        try:
-            os.remove(tmp_path)
-        except OSError:
-            pass
-        raise
 
 
 def rebuild_init(source: str, new_imports: list[str], new_all_entries: set[str]) -> str:
