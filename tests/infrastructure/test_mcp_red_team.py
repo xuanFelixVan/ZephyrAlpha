@@ -37,7 +37,6 @@ def test_00_imports_all_mcp_modules():
         ("_base_server", "zephyr.integration.mcp._base_server"),
         ("gateway_server", "zephyr.integration.mcp.gateway_server"),
         ("task_manager_server", "zephyr.integration.mcp.task_manager_server"),
-        ("knowledge_base_server", "zephyr.integration.mcp.knowledge_base_server"),
         ("gate_engine_server", "zephyr.integration.mcp.gate_engine_server"),
         ("doc_guard_server", "zephyr.integration.mcp.doc_guard_server"),
         ("sentinel_server", "zephyr.integration.mcp.sentinel_server"),
@@ -74,7 +73,6 @@ def test_01_gateway_initializes_all_routes():
 
     expected_sids = [
         "task_manager",
-        "knowledge_base",
         "gate_engine",
         "session_handoff",
         "intent_router",
@@ -194,7 +192,6 @@ def test_08_sql_injection_in_tool_name():
     gw = create_gateway()
     payloads = [
         "task_manager.'; DROP TABLE tasks;--",
-        "knowledge_base.' OR '1'='1",
         "'; SELECT * FROM secrets;--",
         "1' UNION SELECT * FROM users--",
     ]
@@ -409,16 +406,6 @@ def test_16_audit_log_call_records():
 # ============================================================================
 
 
-def test_17_knowledge_base_server_instance():
-    """KnowledgeBaseServer 实例化 + tools/list 有内容"""
-    from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
-
-    kb = KnowledgeBaseServer()
-    assert kb.server_id == "knowledge_base"
-    resp = kb.handle_request({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
-    assert "tools" in resp.get("result", {}), "KB server should list its tools"
-
-
 def test_18_gate_engine_server_instance():
     """GateEngineServer 实例化 + tools/list"""
     from zephyr.integration.mcp.gate_engine_server import GateEngineServer
@@ -522,7 +509,6 @@ def test_24_route_prefix_accuracy():
 
     test_cases = [
         ("task_manager.decompose_blueprint", "task_manager"),
-        ("knowledge_base.query_ke", "knowledge_base"),
         ("gate_engine.evaluate_gate", "gate_engine"),
         ("session_handoff.validate_package", "session_handoff"),
         ("intent_router.map_intent", "intent_router"),

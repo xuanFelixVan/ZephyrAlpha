@@ -6,7 +6,6 @@
 八个 MCP 服务端通过 stdio 协议对外暴露内部系统能力：
 
 - task_manager_server.py — TaskManagerMCP: 蓝图->任务卡拆解、任务 CRUD（FastMCP）
-- knowledge_base_server.py — KnowledgeBaseServer: KE 查询/创建、健康检查（functional，内存存储）
 - gate_engine_server.py — GateEngineServer: Gate 判定/熔断状态（functional，6 门禁+熔断+豁免）
 - doc_guard_server.py — DocGuardServer: session_handoff 文档安全校验（functional，5 项反腐败校验，文件名≠server_id）
 - sentinel_server.py — SentinelServer: intent_router 意图路由哨兵/监控（functional，3 阶段路由，文件名≠server_id）
@@ -40,7 +39,6 @@ from zephyr.integration.mcp.blueprint_search_server import BlueprintSearchServer
 from zephyr.integration.mcp.doc_guard_server import DocGuardServer
 from zephyr.integration.mcp.gate_engine_server import GateEngineServer
 from zephyr.integration.mcp.governance_server import GovernanceServer
-from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
 from zephyr.integration.mcp.sentinel_server import SentinelServer
 from zephyr.integration.mcp.task_manager_server import TaskManagerMCP
 from zephyr.integration.mcp.telemetry_server import TelemetryMCP
@@ -63,7 +61,6 @@ __all__ = [
     "DocGuardServer",
     "GateEngineServer",
     "GovernanceServer",
-    "KnowledgeBaseServer",
     "MCPError",
     "SentinelServer",
     "TaskManagerMCP",
@@ -79,7 +76,6 @@ __all__ = [
     "gateway_server",
     "governance_server",
     "handoff_auto_loader",
-    "knowledge_base_server",
     "prompt_provider",
     "rate_limiter",
     "resource_provider",

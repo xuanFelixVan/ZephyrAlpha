@@ -56,7 +56,6 @@ _log = logging.getLogger(__name__)
 DAG_LAYERS: dict[str, list[str]] = {
     "layer_0": [],
     "layer_1": [
-        "knowledge_base",
         "gate_engine",
         "blueprint_search",
         "governance",
@@ -70,7 +69,6 @@ DAG_LAYERS: dict[str, list[str]] = {
 
 # Server ID → 脚本相对路径（实际路径：src/zephyr/integration/mcp/）
 SERVER_SCRIPTS: dict[str, str] = {
-    "knowledge_base": "src/zephyr/integration/mcp/knowledge_base_server.py",
     "gate_engine": "src/zephyr/integration/mcp/gate_engine_server.py",
     "blueprint_search": "src/zephyr/integration/mcp/blueprint_search_server.py",
     "governance": "src/zephyr/integration/mcp/governance_server.py",
