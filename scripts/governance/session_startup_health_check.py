@@ -323,6 +323,12 @@ def run_startup_health_check(repo_root: str | Path | None = None, include_git: b
             "escalation_required": True,
         }
 
+    # 确保 src/ 在 sys.path 上——核心工具（apply_depgraph 等）import zephyr.*，
+    # 独立运行时（非 pytest）需要此设置才能正确检测 import 失败（Phase 1 类 NameError）
+    src_path = root / "src"
+    if src_path.is_dir() and str(src_path) not in sys.path:
+        sys.path.insert(0, str(src_path))
+
     checks: list[dict] = []
 
     # 1. 核心工具 import 检查
