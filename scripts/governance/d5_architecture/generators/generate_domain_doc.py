@@ -73,7 +73,7 @@ import yaml
 
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
 
-from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh, DOMAIN_NAME_ZH  # noqa: E402
+from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 
@@ -568,7 +568,7 @@ def generate_cross_domain_mermaid(
         ext = d["target_domain"]
         if ext not in external_domains:
             ext_id = sanitize_node_id(ext)
-            ext_name_zh = DOMAIN_NAME_ZH.get(ext, "")
+            ext_name_zh = get_domain_name_zh_strict(ext)
             label = f"{ext}<br/>{ext_name_zh}" if ext_name_zh else ext
             external_domains[ext] = ext_id
             lines.append(f'    {ext_id}["{label}"]')
@@ -576,7 +576,7 @@ def generate_cross_domain_mermaid(
         ext = d["source_domain"]
         if ext not in external_domains:
             ext_id = sanitize_node_id(ext)
-            ext_name_zh = DOMAIN_NAME_ZH.get(ext, "")
+            ext_name_zh = get_domain_name_zh_strict(ext)
             label = f"{ext}<br/>{ext_name_zh}" if ext_name_zh else ext
             external_domains[ext] = ext_id
             lines.append(f'    {ext_id}["{label}"]')
@@ -1057,15 +1057,16 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
     domain_name_zh = get_domain_name_zh(domain_id, info["domain_name"])
     domain_name_en = get_domain_name_en(domain_id)
-    # 中文名优先用硬编码 DOMAIN_NAME_ZH（DB domain_name 多为英文），确保标题显示中文
-    domain_name_zh_hardcoded = DOMAIN_NAME_ZH.get(domain_id, domain_name_zh)
+    # v2.3（2026-07-19 Step 2.5）：移除 domain_name_zh_hardcoded 变量——v2.1 的"硬编码优先"
+    # 逻辑在 v2.2 治本后已无意义（DB 全 63 域 domain_name 已统一为中文，get_domain_name_zh
+    # 返回值即权威中文名）。直接用 domain_name_zh 即可。
     domain_desc_zh = get_domain_desc_zh(domain_id)
 
     lines = []
     # frontmatter（G1 门禁要求：doc_type, title, version, status, date, owner, ttl）
     lines.append("---")
     lines.append("doc_type: architecture_view")
-    lines.append(f"title: {domain_id} {domain_name_zh_hardcoded}架构文档")
+    lines.append(f"title: {domain_id} {domain_name_zh}架构文档")
     lines.append('version: "1.0"')
     lines.append("status: active")
     lines.append(f"date: {now.split()[0]}")
@@ -1073,12 +1074,12 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("ttl: permanent")
     lines.append("---")
     lines.append("")
-    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_zh_hardcoded} / {domain_name_en}")
+    lines.append(f"# {number:02d}_{domain_id.replace('-', '_').lower()} / {domain_name_zh} / {domain_name_en}")
     lines.append("")
     if domain_desc_zh:
         lines.append(f"> **功能简介 / Overview**: {domain_desc_zh}")
         lines.append("")
-    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh_hardcoded}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
+    lines.append(f"> **文档作用 / Purpose**: 展示 {domain_name_zh}（{domain_id}）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。")
     lines.append("")
     lines.append(f"> 本文档由 generate_domain_doc.py 从 {DB_DISPLAY_NAME} 自动生成")
     # DM-90974 Phase 2: 移除 per-second `最后更新: {now}` body 行——违反"相同 DB 输入→相同输出"幂等 invariant
@@ -1094,7 +1095,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("|------|------|-------|-------|")
     lines.append(f"| 编号 | {number:02d} | Number | {number:02d} |")
     lines.append(f"| 域ID | {domain_id} | Domain ID | {domain_id} |")
-    lines.append(f"| 域名称 | {domain_name_zh_hardcoded} | Domain Name | {domain_name_en} |")
+    lines.append(f"| 域名称 | {domain_name_zh} | Domain Name | {domain_name_en} |")
     layer_zh, layer_en = get_layer_name_bilingual(info['layer_id'])
     lines.append(f"| 层级 | {layer_zh} | Layer | {layer_en} |")
     lines.append(f"| 模块数 | {len(nodes)} | Module Count | {len(nodes)} |")
@@ -1154,7 +1155,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             lines.append("")
 
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh_hardcoded, page_nodes, edges, page_outgoing, page_incoming
+            domain_id, domain_name_zh, page_nodes, edges, page_outgoing, page_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -1174,7 +1175,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
     if prod_nodes_list:
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh_hardcoded, prod_nodes_list, prod_edges_list, prod_outgoing, prod_incoming
+            domain_id, domain_name_zh, prod_nodes_list, prod_edges_list, prod_outgoing, prod_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -1196,7 +1197,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
     if design_only_nodes_list:
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh_hardcoded, design_only_nodes_list, design_only_edges_list, design_only_outgoing, design_only_incoming
+            domain_id, domain_name_zh, design_only_nodes_list, design_only_edges_list, design_only_outgoing, design_only_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -1218,7 +1219,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
 
     if proto_nodes_list:
         mermaid_code = generate_internal_mermaid(
-            domain_id, domain_name_zh_hardcoded, proto_nodes_list, proto_edges_list, proto_outgoing, proto_incoming
+            domain_id, domain_name_zh, proto_nodes_list, proto_edges_list, proto_outgoing, proto_incoming
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
@@ -1243,7 +1244,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
             src_label = f"{src_desc} ({src_short})" if src_desc else src_short
             src_label = _truncate(src_label, 50)
             tgt_domain = d["to_domain"]
-            tgt_domain_zh = DOMAIN_NAME_ZH.get(tgt_domain, "")
+            tgt_domain_zh = get_domain_name_zh_strict(tgt_domain)
             tgt_domain_label = f"{tgt_domain} {tgt_domain_zh}" if tgt_domain_zh else tgt_domain
             tgt_desc = _node_desc_zh({"path": d["to_path"], "description": ""}) or ""
             tgt_short = _node_short_name({"path": d["to_path"]})
@@ -1262,7 +1263,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         lines.append("|:--:|---------|:--:|---------|---------|")
         for i, d in enumerate(incoming_detail, 1):
             src_domain = d["from_domain"]
-            src_domain_zh = DOMAIN_NAME_ZH.get(src_domain, "")
+            src_domain_zh = get_domain_name_zh_strict(src_domain)
             src_domain_label = f"{src_domain} {src_domain_zh}" if src_domain_zh else src_domain
             src_desc = _node_desc_zh({"path": d["from_path"], "description": ""}) or ""
             src_short = _node_short_name({"path": d["from_path"]})
@@ -1289,7 +1290,7 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
     lines.append("")
     if outgoing_agg or incoming_agg:
         mermaid_code = generate_cross_domain_mermaid(
-            domain_id, domain_name_zh_hardcoded, outgoing_agg, incoming_agg
+            domain_id, domain_name_zh, outgoing_agg, incoming_agg
         )
         lines.append("```mermaid")
         lines.append(mermaid_code)
