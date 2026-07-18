@@ -74,6 +74,8 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
+    make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
+    make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
@@ -129,6 +131,7 @@ from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
+from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
