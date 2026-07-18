@@ -35,8 +35,8 @@ AGENTS.md，46+ 不同编号，**无中央登记表**（与 #ARCH-XXX 有 archit
    - L1 编号存在性：新增"裁定#NNN"引用未在 registry 登记则违规
    - L1 编号空洞检测：WARNING 不阻断
    - L2 同提交原子性：新引用不在 HEAD registry 时要求 registry 同 commit
-3. 阶段1 manual stage：所有违规返回 passed=True + WARNING detail 不阻断（建立基线）
-4. 阶段2 hard block：移除 _MANUAL_STAGE 标记后硬阻断
+3. 阶段1 manual stage（已完成）：所有违规返回 passed=True + WARNING detail 不阻断（建立基线）
+4. 阶段2 hard block（裁定#20-G 已启用，2026-07-18）：移除 _MANUAL_STAGE 标记后硬阻断
 
 治本（2026-07-18，FUNCTION-DUP 消除）
 -------------------------------------
@@ -140,12 +140,12 @@ def _load_registered_nums(project_root) -> tuple[bool, str, set[str]]:
     from pathlib import Path
     registry_yaml = Path(project_root) / _REGISTRY_REL
     # fail-closed：registry 不存在是环境异常，必须阻断
-    # 但 _MANUAL_STAGE=True 时降级为 WARNING（放行）
+    # _MANUAL_STAGE=True 时降级为 WARNING（放行）——阶段2 hard block 已启用，此分支不再触发（裁定#20-G）
     if not registry_yaml.is_file():
         if _MANUAL_STAGE:
             return True, (
                 f"⚠️ RULING-REFERENCE manual stage：ruling_registry.yaml 未找到，"
-                f"本会话不阻断（阶段1 建立基线）。路径：{registry_yaml}"
+                f"本会话不阻断（阶段1 建立基线，阶段2 已切 False）。路径：{registry_yaml}"
             ), set()
         return False, (
             f"ruling_registry.yaml not found (RULING-REFERENCE fail-closed)——"
