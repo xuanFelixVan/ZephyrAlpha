@@ -671,9 +671,18 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
         dcr_cmd = [sys.executable, str(check_script), "--all-files"]
     else:
         dcr_cmd = [sys.executable, str(check_script)] + existing_files
+    # 治本(2026-07-19): 显式注入 PYTHONPATH——check_directory_contract.py 间接 import
+    # zephyr.shared.io.paths（via _shared.constants），需 src/ 在路径中。
+    # subprocess 默认继承父 env，但 session_worktree_commit 调用链可能丢失 PYTHONPATH，
+    # 显式构造确保稳健（对标 directory_contract_gate.py 同款修复）。
+    dcr_env = os.environ.copy()
+    _src_dir = str(root / "src")
+    _existing_pp = dcr_env.get("PYTHONPATH", "")
+    if _src_dir not in _existing_pp.split(os.pathsep):
+        dcr_env["PYTHONPATH"] = f"{_src_dir}{os.pathsep}{_existing_pp}" if _existing_pp else _src_dir
     try:
         dcr_result = subprocess.run(
-            dcr_cmd, capture_output=True, cwd=str(root), timeout=60,
+            dcr_cmd, capture_output=True, cwd=str(root), env=dcr_env, timeout=60,
         )
     except (subprocess.TimeoutExpired, OSError) as e:
         return {
@@ -955,6 +964,207 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
     }
 
 
+def _get_clean_target_files(root: Path, rel_files: list[str]) -> list[str] | None:
+    """获取目标文件中主工作区无改动的（可能被 stash 移走）。
+
+    ``git diff --name-only HEAD`` 列出所有有改动的文件（含暂存区），
+    目标文件不在该列表中 = 主工作区无改动 = 可能被 stash 移走。
+    """
+    try:
+        diff_r = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD"],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=15,
+        )
+        if diff_r.returncode != 0:
+            return None
+        changed_files = {f.strip() for f in diff_r.stdout.splitlines() if f.strip()}
+        clean_files = [f for f in rel_files if f not in changed_files]
+        return clean_files if clean_files else None
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("_get_clean_target_files failed: %s", e, exc_info=True)
+        return None
+
+
+def _check_stash_for_files(
+    root: Path, stash_line: str, clean_files: list[str],
+) -> tuple[str, str, list[str]] | None:
+    """检查单个 stash 是否包含 clean_files 中的文件，命中返回 (stash_ref, msg, hits)。"""
+    parts = stash_line.split("|", 1)
+    if len(parts) < 2:
+        return None
+    stash_ref, stash_msg = parts[0], parts[1]
+    try:
+        show_r = subprocess.run(
+            ["git", "stash", "show", "--name-only", stash_ref],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=15,
+        )
+        if show_r.returncode != 0:
+            return None
+        stash_files = {f.strip() for f in show_r.stdout.splitlines() if f.strip()}
+        hits = [f for f in clean_files if f in stash_files]
+        if hits:
+            return (stash_ref, stash_msg, hits)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    return None
+
+
+def _scan_stash_for_files(
+    root: Path, clean_files: list[str],
+) -> tuple[str, str, list[str]] | None:
+    """扫描最近 10 个 stash，返回第一个包含 clean_files 的 stash 信息。"""
+    try:
+        stash_list_r = subprocess.run(
+            ["git", "stash", "list", "--format=%gd|%s"],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=10,
+        )
+        if stash_list_r.returncode != 0 or not stash_list_r.stdout.strip():
+            return None
+        stashes = [line.strip() for line in stash_list_r.stdout.splitlines() if line.strip()]
+        for stash_line in stashes[:10]:
+            result = _check_stash_for_files(root, stash_line, clean_files)
+            if result:
+                return result
+        return None
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("_scan_stash_for_files failed: %s", e, exc_info=True)
+        return None
+
+
+def _detect_changes_in_stash(
+    root: Path, rel_files: list[str],
+) -> tuple[str, str, list[str]] | None:
+    """检测主工作区目标文件是否被 stash 移走，返回 (stash_ref, stash_msg, hits) 或 None。
+
+    病根（2026-07-19 bug）：session_worktree_commit 假设 AI 的 Edit/Write 改动留在
+    主工作区。但并发场景下主工作区改动可能被外部机制移走（手动 ``git stash push``
+    / safety-net stash / 并发 session merge auto-clean / recovery 脚本）。此时
+    _sync_files_to_worktree 复制的是 HEAD 内容（无改动），git diff --cached 返回 0
+    → NOTHING_TO_COMMIT，AI 误判"数据丢失"。
+
+    检测策略（逐文件，支持混合场景——部分文件有改动、部分被 stash 移走）：
+    1. ``git diff --name-only HEAD`` 获取主工作区所有有改动的文件
+    2. 找出目标文件中无改动的（可能被 stash 移走）
+    3. 扫描最近 10 个 stash 是否包含这些无改动文件
+    4. 命中返回 (stash_ref, stash_msg, hits)；未命中返回 None
+    """
+    clean_files = _get_clean_target_files(root, rel_files)
+    if not clean_files:
+        return None
+    return _scan_stash_for_files(root, clean_files)
+
+
+def _recover_changes_from_stash(
+    root: Path, rel_files: list[str], session_id: str,
+) -> bool:
+    """auto-recover：主工作区改动被 stash 移走时，自动从 stash 恢复目标文件。
+
+    场景：AI 用 Edit/Write 写主工作区，但外部机制（safety-net stash / recovery
+    脚本 / 并发 session merge auto-clean）通过 ``git stash push`` 清空了工作区。
+    session_worktree_commit 看到空工作区返回 NOTHING_TO_COMMIT，AI 误判"数据丢失"。
+
+    修复（2026-07-19 治本）：检测到目标文件在 stash 中时，自动
+    ``git checkout <stash> -- <files>`` 恢复目标文件到主工作区。只恢复目标文件
+    （不带入无关改动），覆盖式恢复（不会因 stash 基于旧 HEAD 而冲突）。恢复后
+    由调用方继续正常的 sync → add → commit 流程。
+
+    为什么用 checkout 而非 pop：stash 可能基于旧 HEAD（pop 会冲突），或包含非
+    目标文件（pop 会带入无关改动）。checkout 只取目标文件，覆盖式恢复更安全。
+
+    Returns:
+        True 表示已恢复（应继续正常流程），False 表示未找到 stash 或恢复失败。
+    """
+    detected = _detect_changes_in_stash(root, rel_files)
+    if not detected:
+        return False
+    stash_ref, stash_msg, hits = detected
+    print("\n" + "=" * 80, file=sys.stderr)
+    print(
+        "[SESSION_WORKTREE_COMMIT] AUTO-RECOVER: target files found in stash, "
+        "recovering to main workspace",
+        file=sys.stderr,
+    )
+    print(f"  session_id: {session_id}", file=sys.stderr)
+    print(f"  stash: {stash_ref} ({stash_msg})", file=sys.stderr)
+    print(
+        f"  files ({len(hits)}): {hits[:5]}{'...' if len(hits) > 5 else ''}",
+        file=sys.stderr,
+    )
+    checkout_r = subprocess.run(
+        ["git", "checkout", stash_ref, "--"] + hits,
+        cwd=str(root), capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=60,
+    )
+    if checkout_r.returncode == 0:
+        print(
+            f"  ✓ recovered {len(hits)} file(s) to main workspace, "
+            "continuing with normal commit flow",
+            file=sys.stderr,
+        )
+        print("=" * 80 + "\n", file=sys.stderr)
+        return True
+    print(
+        f"  ✗ git checkout failed: {checkout_r.stderr.strip()[:200]}",
+        file=sys.stderr,
+    )
+    print("  falling back to manual recovery:", file=sys.stderr)
+    print(f"    git stash pop {stash_ref}", file=sys.stderr)
+    print(f"    git checkout {stash_ref} -- <file>", file=sys.stderr)
+    print("=" * 80 + "\n", file=sys.stderr)
+    return False
+
+
+def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) -> None:
+    """NOTHING_TO_COMMIT 兜底诊断：检测目标文件是否在 stash 中，打印 LOUD warning。
+
+    当 _recover_changes_from_stash 未触发或失败（如 sync 之前主工作区有改动但
+    sync 后 diff 仍为 0 的边缘情况），此函数作为兜底，在 NOTHING_TO_COMMIT
+    返回前打印恢复命令。
+
+    病根（2026-07-19 bug 修复）：
+    session_worktree_commit 假设 AI 的 Edit/Write 改动留在主工作区。但并发场景下
+    主工作区改动可能被外部机制移走（手动 ``git stash push`` / safety-net stash /
+    并发 session merge 后的 auto-clean / recovery 脚本）。此时 _sync_files_to_worktree
+    复制的是 HEAD 内容（无改动），git diff --cached 返回 0 → NOTHING_TO_COMMIT。
+    AI 误以为数据丢失，实际改动在 stash 中（可恢复 via ``git stash pop``）。
+    """
+    detected = _detect_changes_in_stash(root, rel_files)
+    if not detected:
+        return
+    stash_ref, stash_msg, hits = detected
+    print("\n" + "=" * 80, file=sys.stderr)
+    print(
+        "[SESSION_WORKTREE_COMMIT] WARNING: NOTHING_TO_COMMIT but "
+        "target files found in stash!",
+        file=sys.stderr,
+    )
+    print(f"  session_id: {session_id}", file=sys.stderr)
+    print(f"  stash: {stash_ref} ({stash_msg})", file=sys.stderr)
+    print(
+        f"  files in stash ({len(hits)}): "
+        f"{hits[:5]}{'...' if len(hits) > 5 else ''}",
+        file=sys.stderr,
+    )
+    print("", file=sys.stderr)
+    print("  Root cause: main workspace is clean (matches HEAD),", file=sys.stderr)
+    print("  but your Edit/Write changes were stashed by an external", file=sys.stderr)
+    print("  mechanism (manual stash / safety-net / recovery script).", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  Recovery options:", file=sys.stderr)
+    print(f"    1. git stash pop {stash_ref}", file=sys.stderr)
+    print("       (restore ALL stashed changes—may include other files)", file=sys.stderr)
+    print(
+        f"    2. git checkout {stash_ref} -- <file>",
+        file=sys.stderr,
+    )
+    print("       (restore specific file from stash, safer)", file=sys.stderr)
+    print("  Then re-call session_worktree_commit.", file=sys.stderr)
+    print("=" * 80 + "\n", file=sys.stderr)
+
+
 def session_worktree_commit(
     session_id: str,
     files: list[str],
@@ -1065,6 +1275,14 @@ def session_worktree_commit(
     if base_err:
         return base_err
 
+    # auto-recover（2026-07-19 bug 治本修复）：检测主工作区改动是否被外部 stash
+    # 移走（safety-net stash / recovery 脚本 / 并发 session merge auto-clean），
+    # 命中则自动 git checkout <stash> -- <files> 恢复目标文件到主工作区。治本
+    # session_worktree_commit 假设 AI 改动在主工作区，但外部 stash 移走改动后
+    # sync 复制 HEAD 内容 → diff 为 0 → NOTHING_TO_COMMIT，AI 误判"数据丢失"。
+    # auto-recover 只恢复目标文件（不带入无关改动），覆盖式恢复（不冲突）。
+    _recover_changes_from_stash(root, rel_files, session_id)
+
     _sync_files_to_worktree(root, wt_path, rel_files)
 
     add_cmd = ["git", "add", "-A", "--"] + rel_files
@@ -1085,6 +1303,12 @@ def session_worktree_commit(
         cwd=str(wt_path), capture_output=True, timeout=30,
     )
     if diff_r.returncode == 0:
+        # 诊断盲区修复（2026-07-19 bug）：返回 NOTHING_TO_COMMIT 前，检测主工作区
+        # 目标文件是否意外干净（改动被外部 stash 移走）。命中则打印 LOUD warning +
+        # 恢复命令。病根：session_worktree_commit 假设 AI 改动在主工作区，但并发
+        # 场景下可能被 safety-net stash / recovery 脚本移走，导致 AI 误判"数据丢失"。
+        # 实际改动在 stash 中可恢复。warn-only 不阻断业务流程。
+        _warn_if_changes_missing(root, rel_files, session_id)
         return {
             "session_id": session_id,
             "status": "NOTHING_TO_COMMIT",

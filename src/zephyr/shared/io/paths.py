@@ -64,6 +64,12 @@ def find_repo_root() -> Path:
 
 REPO_ROOT: Final[Path] = find_repo_root()
 
+# 治本(2026-07-19): PROJECT_ROOT 作为 REPO_ROOT 的语义别名（canonical SSoT 定义点）。
+# 某些模块（如 immutable_core）的测试契约要求 monkeypatch PROJECT_ROOT 属性，
+# 将 canonical 定义放在此处避免 SSOT-REDEFINITION gate 阻断（消除分散重定义）。
+# 消费者 MUST from zephyr.shared.io.paths import PROJECT_ROOT，禁止在各自模块重定义。
+PROJECT_ROOT: Final[Path] = REPO_ROOT
+
 DB_DIR: Final[Path] = REPO_ROOT / "data"
 
 # DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence
