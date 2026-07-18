@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 39_d_gov_audit / audit_orchestration / 审计追踪 / Audit Trail
+# 39_d_gov_audit / 审计追踪 / 审计追踪 / Audit Trail
 
 > **功能简介 / Overview**: 审计追踪，负责变更审计追踪和操作日志管理
 
@@ -893,7 +893,7 @@ graph TD
 | 36 | D_GOV_RULE 规则治理: Owner 紧急旁路——时间限定的门禁临时绕过 + 审计... | → | bridge.py | 导入依赖 / import_depends |
 | 37 | D_GOV_SCRIPTS 脚本治理: Red/Blue Team Adversarial Test v3: SYS-MASTER-0... | → | SYS-MASTER-001 Compliance Checker (sys_master_c... | 导入依赖 / import_depends |
 | 38 | D_GOV_SCRIPTS 脚本治理: scripts/governance/rebuild_audit_index.py — 重... | → | indexer.py | 导入依赖 / import_depends |
-| 39 | D_INFRASTRUCTURE: backup_reconciler.py — 灾备备份系统事件触发器.... | → | reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
+| 39 | D_INFRASTRUCTURE 共享契约: backup_reconciler.py — 灾备备份系统事件触发器.... | → | reconciliation_registry.py — GitCommitGateway ... | 导入依赖 / import_depends |
 | 40 | D_INFRA_RECOVERY 回滚恢复: G-CT-004 契约：Rollback -> Audit 记录回滚操作. ... | → | contracts.py | 导入依赖 / import_depends |
 | 41 | D_INFRA_RECOVERY 回滚恢复: G-CT-002 Rollback 消费端 — on_audit_anomaly() ... | → | anomaly.py | 导入依赖 / import_depends |
 | 42 | D_INFRA_RECOVERY 回滚恢复: RollbackAbuseDetector — 回滚滥用检测。 (rollba... | → | query.py | 导入依赖 / import_depends |
@@ -936,7 +936,7 @@ graph LR
     D_AUTONOMY_CORE["D_AUTONOMY_CORE<br/>自治核心"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_FBL_VERIFICATION["D_FBL_VERIFICATION<br/>反馈验证"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_GOV_AUDIT -->|38条 导入依赖 / import_depends| D_SHARED

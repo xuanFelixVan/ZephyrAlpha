@@ -1,12 +1,12 @@
 %% D_GOV_AUDIT 域全景依赖图
-%% 生成时间: 2026-07-19 03:32:56
+%% 生成时间: 2026-07-19 03:35:43
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 101, 依赖边数: 377
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_GOV_AUDIT[audit_orchestration]
+    subgraph D_GOV_AUDIT[审计追踪]
         docs_03_modules__cross_layer_audit_orchestrator_blueprint_md["...layer/audit_orchestrator/blueprint.md [design]"]
         docs_03_modules__domain_governance_audit_trail_blueprint_md["...n_governance/audit_trail/blueprint.md [design]"]
         scripts_governance_repair_audit_design_completeness_py["...e/repair/audit_design_completeness.py [prototype]"]

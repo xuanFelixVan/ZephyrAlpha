@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 03_d_infra_recovery / rollback_recovery / 回滚恢复 / Rollback Recovery
+# 03_d_infra_recovery / 回滚恢复 / 回滚恢复 / Rollback Recovery
 
 > **功能简介 / Overview**: 回滚恢复，负责系统故障时的状态回滚、事务补偿和恢复编排
 

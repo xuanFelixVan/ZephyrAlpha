@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 07_d_autonomy_core / agent_lifecycle / 自治核心 / Autonomy Core
+# 07_d_autonomy_core / 自治核心 / 自治核心 / Autonomy Core
 
 > **功能简介 / Overview**: 自治核心，负责 AI 自治决策、目标分解和执行编排
 

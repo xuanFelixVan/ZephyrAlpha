@@ -1,12 +1,12 @@
 %% D_GOV_ENFORCEMENT 域全景依赖图
-%% 生成时间: 2026-07-19 03:32:56
+%% 生成时间: 2026-07-19 03:35:43
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 32, 依赖边数: 258
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_GOV_ENFORCEMENT[rule_enforcement]
+    subgraph D_GOV_ENFORCEMENT[规则执行]
         docs_01_policies_and_standards___e_enforcement_registry_yaml["...talogs/rule_enforcement_registry.yaml [production]"]
         scripts_governance_d8_doc_sync____version_sync_reconciler_py["...ync/readme_version_sync_reconciler.py [prototype]"]
         scripts_governance_session_worktree_cli_py["...ts/governance/session_worktree_cli.py [prototype]"]

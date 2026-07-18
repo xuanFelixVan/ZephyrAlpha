@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 13_d_fbl_verification / feedback_verification / 反馈验证 / Feedback Verification
+# 13_d_fbl_verification / 反馈验证 / 反馈验证 / Feedback Verification
 
 > **功能简介 / Overview**: 反馈验证，负责反馈循环门禁拦截、结果验证器执行和反馈质量检查
 

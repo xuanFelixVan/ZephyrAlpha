@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D_INFRASTRUCTURE shared_contracts架构文档
+title: D_INFRASTRUCTURE 共享契约架构文档
 version: "1.0"
 status: active
 date: 2026-07-19
@@ -8,9 +8,11 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 62_d_infrastructure / shared_contracts / shared_contracts / D_INFRASTRUCTURE
+# 62_d_infrastructure / 共享契约 / 共享契约 / Shared Contracts
 
-> **文档作用 / Purpose**: 展示 shared_contracts（D_INFRASTRUCTURE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 共享契约，负责跨域共享的契约定义、协议常量和基础数据结构
+
+> **文档作用 / Purpose**: 展示 共享契约（D_INFRASTRUCTURE）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -21,7 +23,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 62 | Number | 62 |
 | 域ID | D_INFRASTRUCTURE | Domain ID | D_INFRASTRUCTURE |
-| 域名称 | shared_contracts | Domain Name | D_INFRASTRUCTURE |
+| 域名称 | 共享契约 | Domain Name | Shared Contracts |
 | 层级 |  | Layer |  |
 | 模块数 | 26 | Module Count | 26 |
 | 域内依赖 | 2 | Internal Dependencies | 2 |
@@ -85,7 +87,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE shared_contracts"]
+    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE 共享契约"]
         scripts_backup_backup_reconciler_py["(原型态 / prototype) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
         scripts_backup_minio_tcp_relay_py["(原型态 / prototype) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
         src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer —...<br/>文件: __init__.py"]
@@ -164,7 +166,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE shared_contracts"]
+    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE 共享契约"]
         src_zephyr_infrastructure_config_init_py["(生产态 / production) ZephyrAlpha — 基础设施 Infrastructure Layer —...<br/>文件: __init__.py"]
         src_zephyr_shared_contracts_experiment_result_py["(生产态 / production) experiment_result.py"]
         src_zephyr_shared_contracts_factor_monitor_report_py["(生产态 / production) factor_monitor_report.py"]
@@ -226,7 +228,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE shared_contracts"]
+    subgraph D_INFRASTRUCTURE["D_INFRASTRUCTURE 共享契约"]
         scripts_backup_backup_reconciler_py["(原型态 / prototype) backup_reconciler.py — 灾备备份系统事件触发器...<br/>文件: backup_reconciler.py"]
         scripts_backup_minio_tcp_relay_py["(原型态 / prototype) TCP relay: expose localhost-only MinIO to the C...<br/>文件: minio_tcp_relay.py"]
         src_zephyr_infrastructure_config_app_config_py["(原型态 / prototype) app_config.py — 应用配置数据类与加载/热重载逻辑<br/>文件: app_config.py"]
@@ -354,7 +356,7 @@ graph TD
 
 ```mermaid
 graph LR
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>shared_contracts"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_TRADING["D_TRADING<br/>交易运营"]

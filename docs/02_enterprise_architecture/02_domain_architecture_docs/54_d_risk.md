@@ -201,8 +201,8 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_RISK — Risk Limits Calculator (risk_limits.py) | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
-| 2 | ZephyrAlpha — D_RISK Risk Management Layer — ... | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
+| 1 | D_RISK — Risk Limits Calculator (risk_limits.py) | → | D_INFRASTRUCTURE 共享契约: risk_limits.py | 导入依赖 / import_depends |
+| 2 | ZephyrAlpha — D_RISK Risk Management Layer — ... | → | D_INFRASTRUCTURE 共享契约: risk_limits.py | 导入依赖 / import_depends |
 | 3 | ml_experiment_pipeline.py | → | D_SHARED 共享服务: MLExperimentPipeline D_ML_TRAIN->实验跨层集成管... | 导入依赖 / import_depends |
 | 4 | ZephyrAlpha — D_RISK Risk Management Layer — ... | → | D_TRADING 交易运营: risk_dashboard_snapshot.py | 导入依赖 / import_depends |
 | 5 | ZephyrAlpha — D_RISK Risk Management Layer — ... | → | D_TRADING 交易运营: risk_limit_violation_error.py | 导入依赖 / import_depends |
@@ -223,7 +223,7 @@ graph TD
 graph LR
     D_RISK["D_RISK<br/>风控"]
     D_TRADING["D_TRADING<br/>交易运营"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_RISK -->|3条 导入依赖 / import_depends| D_TRADING

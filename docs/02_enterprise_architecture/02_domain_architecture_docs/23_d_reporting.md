@@ -158,14 +158,14 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: execution_report.py | 导入依赖 / import_depends |
-| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 4 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 5 | D_REPORTING — Default Attribution Engine (defa... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: execution_report.py | 导入依赖 / import_depends |
-| 7 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 8 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
+| 1 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 共享契约: execution_report.py | 导入依赖 / import_depends |
+| 2 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 共享契约: fill.py | 导入依赖 / import_depends |
+| 3 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
+| 4 | D_REPORTING — Post-Trade Analytics Layer (anal... | → | D_INFRASTRUCTURE 共享契约: performance_attribution_report.py | 导入依赖 / import_depends |
+| 5 | D_REPORTING — Default Attribution Engine (defa... | → | D_INFRASTRUCTURE 共享契约: performance_attribution_report.py | 导入依赖 / import_depends |
+| 6 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 共享契约: execution_report.py | 导入依赖 / import_depends |
+| 7 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 共享契约: fill.py | 导入依赖 / import_depends |
+| 8 | D_REPORTING — Default TCA Engine (default_tca_... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -182,7 +182,7 @@ graph TD
 ```mermaid
 graph LR
     D_REPORTING["D_REPORTING<br/>报告"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_REPORTING -->|8条 导入依赖 / import_depends| D_INFRASTRUCTURE

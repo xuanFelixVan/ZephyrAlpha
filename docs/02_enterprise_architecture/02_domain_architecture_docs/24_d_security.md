@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 24_d_security / orphan_judge / 对抗验证 / Adversarial Validation
+# 24_d_security / 对抗验证 / 对抗验证 / Adversarial Validation
 
 > **功能简介 / Overview**: 对抗验证，负责系统安全对抗测试、漏洞扫描和攻防验证
 

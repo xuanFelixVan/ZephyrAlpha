@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 47_d_intelligence / context_management / 上下文管理 / Context Management
+# 47_d_intelligence / 上下文管理 / 上下文管理 / Context Management
 
 > **功能简介 / Overview**: 上下文管理，负责 AI 上下文窗口管理、记忆检索和上下文压缩
 

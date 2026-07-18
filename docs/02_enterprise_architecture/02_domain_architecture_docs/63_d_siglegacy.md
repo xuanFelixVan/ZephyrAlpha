@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 63_d_siglegacy / signal_legacy / 信号遗留设计态 / Signal Legacy (Design)
+# 63_d_siglegacy / 信号遗留设计态 / 信号遗留设计态 / Signal Legacy (Design)
 
 > **功能简介 / Overview**: 信号遗留设计态，负责旧版信号系统的设计态维护和迁移规划
 

@@ -226,10 +226,10 @@ graph TD
 | 6 | Re-export wrapper: risk_validation_bridge 真源.... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-... | 导入依赖 / import_depends |
 | 7 | Re-export wrapper: simulation_broker 真源在 zep... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Simulation Broker Adapter (... | 导入依赖 / import_depends |
 | 8 | D_EXECUTION_CORE — Execution Engine (execution... | → | D_GOVERNANCE 生命周期管理: D_EXECUTION_CORE — Risk Validation Bridge (DW-... | 导入依赖 / import_depends |
-| 9 | D_EXECUTION_CORE — Execution Engine (execution... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 10 | D_EXECUTION_CORE — Execution Engine (execution... | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
-| 11 | D_EXECUTION_CORE — Order Manager (order_manage... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 12 | D_EXECUTION_CORE — Order Manager (order_manage... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
+| 9 | D_EXECUTION_CORE — Execution Engine (execution... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
+| 10 | D_EXECUTION_CORE — Execution Engine (execution... | → | D_INFRASTRUCTURE 共享契约: risk_limits.py | 导入依赖 / import_depends |
+| 11 | D_EXECUTION_CORE — Order Manager (order_manage... | → | D_INFRASTRUCTURE 共享契约: fill.py | 导入依赖 / import_depends |
+| 12 | D_EXECUTION_CORE — Order Manager (order_manage... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
 | 13 | MiniQMT 实盘券商适配器（对接 xttrader，A股实盘.... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 14 | D_EXECUTION_CORE — Order Manager (order_manage... | → | D_SHARED 共享服务: OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
 | 15 | D_EX_CORE adapters — 券商/风控适配器 re-export... | → | D_TRADING 交易运营: D_EXECUTION_CORE — BrokerInterface (broker_int... | 导入依赖 / import_depends |
@@ -255,7 +255,7 @@ graph LR
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_TRADING["D_TRADING<br/>交易运营"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_BACKTEST["D_BACKTEST<br/>回测"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_FRONTEND["D_FRONTEND<br/>前端"]

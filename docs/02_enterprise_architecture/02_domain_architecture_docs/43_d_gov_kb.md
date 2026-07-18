@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 43_d_gov_kb / knowledge_base_governance / 知识库治理 / Knowledge Base Governance
+# 43_d_gov_kb / 知识库治理 / 知识库治理 / Knowledge Base Governance
 
 > **功能简介 / Overview**: 知识库治理，负责知识管线、知识引擎和向量记忆后端管理
 

@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 60_d_compliance / compliance_gate / 合规 / Compliance
+# 60_d_compliance / 合规 / 合规 / Compliance
 
 > **功能简介 / Overview**: 合规，负责交易合规检查、规则引擎和合规报告
 

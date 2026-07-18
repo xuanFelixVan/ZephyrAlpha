@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 41_d_gov_drift / drift_detection / 漂移检测 / Drift Detection
+# 41_d_gov_drift / 漂移检测 / 漂移检测 / Drift Detection
 
 > **功能简介 / Overview**: 漂移检测，负责架构漂移检测和漂移告警
 

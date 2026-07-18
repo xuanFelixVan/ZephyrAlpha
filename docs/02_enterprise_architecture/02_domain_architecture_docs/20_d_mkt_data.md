@@ -151,13 +151,13 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | __init__.py | → | D_INFRASTRUCTURE: market_data.py | 导入依赖 / import_depends |
+| 1 | __init__.py | → | D_INFRASTRUCTURE 共享契约: market_data.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_DATA: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → |  | data / data |
+| 1 | D_DATA 数据集成: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → |  | data / data |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
@@ -166,8 +166,8 @@ graph TD
 ```mermaid
 graph LR
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
-    D_DATA["D_DATA"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_MKT_DATA -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_DATA -->|2条 data / data| D_MKT_DATA
 ```

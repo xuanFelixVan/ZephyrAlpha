@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D_DATA data_source_integrator架构文档
+title: D_DATA 数据集成架构文档
 version: "1.0"
 status: active
 date: 2026-07-19
@@ -8,9 +8,11 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 61_d_data / data_source_integrator / data_source_integrator / D_DATA
+# 61_d_data / 数据集成 / 数据集成 / Data Source Integrator
 
-> **文档作用 / Purpose**: 展示 data_source_integrator（D_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **功能简介 / Overview**: 数据集成，负责多源数据接入、数据源适配器和统一数据访问层
+
+> **文档作用 / Purpose**: 展示 数据集成（D_DATA）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -21,7 +23,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 61 | Number | 61 |
 | 域ID | D_DATA | Domain ID | D_DATA |
-| 域名称 | data_source_integrator | Domain Name | D_DATA |
+| 域名称 | 数据集成 | Domain Name | Data Source Integrator |
 | 层级 |  | Layer |  |
 | 模块数 | 42 | Module Count | 42 |
 | 域内依赖 | 108 | Internal Dependencies | 108 |
@@ -113,7 +115,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_DATA["D_DATA data_source_integrator"]
+    subgraph D_DATA["D_DATA 数据集成"]
         schemas_categories_market_tick_py["(原型态 / prototype) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
         scripts_register_scheduler_task_ps1["(原型态 / prototype) register_scheduler_task.ps1"]
         scripts_start_scheduler_ps1["(原型态 / prototype) start_scheduler.ps1"]
@@ -205,7 +207,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_DATA["D_DATA data_source_integrator"]
+    subgraph D_DATA["D_DATA 数据集成"]
         src_zephyr_data_metrics_py["(原型态 / prototype) 可观测性指标采集（MOD-L00-004 §11）。<br/>文件: metrics.py"]
         src_zephyr_data_news_dedup_py["(原型态 / prototype) 新闻数据去重模块（MOD-L00-004 §4.3）。<br/>文件: news_dedup.py"]
         src_zephyr_data_policy_registry_py["(生产态 / production) per-source 调用策略注册表（MOD-L00-004 §5）。<br/>文件: policy_registry.py"]
@@ -262,7 +264,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_DATA["D_DATA data_source_integrator"]
+    subgraph D_DATA["D_DATA 数据集成"]
         src_zephyr_data_init_py["(生产态 / production) zephyr.data — 数据源集成器（MOD-L00-004）。<br/>文件: __init__.py"]
         src_zephyr_data_cli_py["(生产态 / production) 数据源集成器 CLI（MOD-L00-004 §8.4）。<br/>文件: cli.py"]
         src_zephyr_data_config_policies_yaml["(生产态 / production) policies.yaml"]
@@ -305,7 +307,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_DATA["D_DATA data_source_integrator"]
+    subgraph D_DATA["D_DATA 数据集成"]
         schemas_categories_market_tick_py["(原型态 / prototype) tick_data 表 DDL-as-Code（category_id: market_t...<br/>文件: market_tick.py"]
         scripts_register_scheduler_task_ps1["(原型态 / prototype) register_scheduler_task.ps1"]
         scripts_start_scheduler_ps1["(原型态 / prototype) start_scheduler.ps1"]
@@ -491,7 +493,7 @@ graph TD
 
 ```mermaid
 graph LR
-    D_DATA["D_DATA<br/>data_source_integrator"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_MKT_DATA["D_MKT_DATA<br/>行情数据"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]

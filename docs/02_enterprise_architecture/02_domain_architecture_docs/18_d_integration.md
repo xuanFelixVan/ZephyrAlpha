@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 18_d_integration / pipeline_routing / 管线路由 / Pipeline Routing
+# 18_d_integration / 管线路由 / 管线路由 / Pipeline Routing
 
 > **功能简介 / Overview**: 管线路由，负责跨域数据流路由、管道编排和集成适配
 

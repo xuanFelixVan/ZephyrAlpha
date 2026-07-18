@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 46_d_gov_scripts / script_governance / 脚本治理 / Script Governance
+# 46_d_gov_scripts / 脚本治理 / 脚本治理 / Script Governance
 
 > **功能简介 / Overview**: 脚本治理，负责脚本生命周期管理和脚本质量门禁
 
@@ -1517,10 +1517,10 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | G-inventory: 扫描 ClickHouse 生成业务数据清单 M... | → | D_DATA: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
-| 2 | G-inventory: 扫描 ClickHouse 生成业务数据清单 M... | → | D_DATA: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
-| 3 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套.... | → | D_DATA: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
-| 4 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套.... | → | D_DATA: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
+| 1 | G-inventory: 扫描 ClickHouse 生成业务数据清单 M... | → | D_DATA 数据集成: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
+| 2 | G-inventory: 扫描 ClickHouse 生成业务数据清单 M... | → | D_DATA 数据集成: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
+| 3 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套.... | → | D_DATA 数据集成: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
+| 4 | tick_data 表真重复检查工具（RULE-DATA-OPS 配套.... | → | D_DATA 数据集成: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
 | 5 | audit_post_sync_commands.py — post_sync_standa... | → | D_GOVERNANCE 生命周期管理: post_sync_validator — post_sync_standard 命令.... | 导入依赖 / import_depends |
 | 6 | # [BLUEPRINT] MOD-INF-005 | scripts/governance/... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
 | 7 | fix_broken_post_sync.py — 批量修复历史 broken ... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
@@ -1628,7 +1628,7 @@ graph LR
     D_SHARED["D_SHARED<br/>共享服务"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
-    D_DATA["D_DATA"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_GOV_REPAIR["D_GOV_REPAIR<br/>治理修复"]

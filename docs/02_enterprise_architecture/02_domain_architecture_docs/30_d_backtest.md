@@ -299,8 +299,8 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | → | D_DATA: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
-| 2 | 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | → | D_DATA: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
+| 1 | 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | → | D_DATA 数据集成: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
+| 2 | 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | → | D_DATA 数据集成: ClickHouse 统一读取层（裁定 #ARCH-CH-007）。 (c... | 导入依赖 / import_depends |
 | 3 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
 | 4 |  | → | D_GOVERNANCE 生命周期管理:  | 导入依赖 / import_depends |
 | 5 | BacktestResult -> decisiongraph 适配器（TRAE-06... | → | D_GOVERNANCE 生命周期管理: decisiongraph Schema DDL + 不变量声明 (decision... | 导入依赖 / import_depends |
@@ -328,7 +328,7 @@ graph LR
     D_BACKTEST["D_BACKTEST<br/>回测"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_SHARED["D_SHARED<br/>共享服务"]
-    D_DATA["D_DATA"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]
     D_ML_TRAIN["D_ML_TRAIN<br/>训练"]
     D_EX_CORE["D_EX_CORE<br/>执行核心"]

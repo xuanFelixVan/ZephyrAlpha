@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 04_d_infra_runtime / runtime_core / 运行时集成 / Runtime Integration
+# 04_d_infra_runtime / 运行时集成 / 运行时集成 / Runtime Integration
 
 > **功能简介 / Overview**: 运行时集成，负责组件生命周期编排、启动钩子和运行时上下文管理
 
@@ -1163,7 +1163,7 @@ graph TD
 |:--:|---------|:--:|---------|---------|
 | 1 | boot_hooks.py | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Freshness Exte... | 导入依赖 / import_depends |
 | 2 | boot_hooks.py | → | D_AUTONOMY_CORE 自治核心: MOD-INF-019: Agent Spec — Skill Lifecycle (ski... | 导入依赖 / import_depends |
-| 3 | DatabaseService: 统一管理数据库的连接池、生命周... | → | D_DATA: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | 导入依赖 / import_depends |
+| 3 | DatabaseService: 统一管理数据库的连接池、生命周... | → | D_DATA 数据集成: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | 导入依赖 / import_depends |
 | 4 | AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
 | 5 | AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | 导入依赖 / import_depends |
 | 6 | lifecycle_manager.py | → | D_FEEDBACK_LOOP 反馈循环引擎: Feedback Loop Engine — MOD-FEEDBACK_LOOP. (__i... | 导入依赖 / import_depends |
@@ -1193,7 +1193,7 @@ graph TD
 | 30 | AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | D_GOV_RULE 规则治理: G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁 ... | 导入依赖 / import_depends |
 | 31 | boot_hooks.py | → | D_GOV_RULE 规则治理: G-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁 ... | 导入依赖 / import_depends |
 | 32 | work_orchestrator.py | → | D_GOV_RULE 规则治理: task_types.py | 导入依赖 / import_depends |
-| 33 | HealthMonitor — 健康监控 + 自愈 (health_monito... | → | D_INFRASTRUCTURE: telemetry_emitter.py | 导入依赖 / import_depends |
+| 33 | HealthMonitor — 健康监控 + 自愈 (health_monito... | → | D_INFRASTRUCTURE 共享契约: telemetry_emitter.py | 导入依赖 / import_depends |
 | 34 | AutoRuntimeCore — 三层运行时运营中心（系统大脑... | → | D_INFRA_A2A A2A通信: A2A 协议网关 — Agent 间请求分发与协议转换 (a2a... | 导入依赖 / import_depends |
 | 35 | capability_sync.py | → | D_INFRA_A2A A2A通信: A2A Registry — Agent Card 注册与发现 (a2a_regi... | 导入依赖 / import_depends |
 | 36 | boot_hooks.py | → | D_INFRA_RECOVERY 回滚恢复: RollbackBootIntegration — 回滚系统自动启动/关.... | 导入依赖 / import_depends |
@@ -1473,8 +1473,8 @@ graph LR
     D_OPS["D_OPS<br/>反馈循环"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
-    D_DATA["D_DATA"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]
     D_KNOWLEDGE["D_KNOWLEDGE<br/>知识管理"]

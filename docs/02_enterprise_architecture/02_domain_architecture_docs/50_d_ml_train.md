@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 50_d_ml_train / model_evaluation / 训练 / Training
+# 50_d_ml_train / 训练 / 训练 / Training
 
 > **功能简介 / Overview**: 训练，负责模型训练、特征工程和模型评估
 

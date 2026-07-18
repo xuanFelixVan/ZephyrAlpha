@@ -1,6 +1,6 @@
 ---
 doc_type: architecture_view
-title: D_FBL_DIAGNOSERS feedback_diagnosers架构文档
+title: D_FBL_DIAGNOSERS 反馈诊断器架构文档
 version: "1.0"
 status: active
 date: 2026-07-19
@@ -8,11 +8,11 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 12_d_fbl_diagnosers / feedback_diagnosers / feedback_diagnosers / Feedback Diagnosers
+# 12_d_fbl_diagnosers / 反馈诊断器 / 反馈诊断器 / Feedback Diagnosers
 
 > **功能简介 / Overview**: 反馈诊断器，负责异常根因诊断、模型健康监控、可靠性诊断和上下文窗口压力管理
 
-> **文档作用 / Purpose**: 展示 feedback_diagnosers（D_FBL_DIAGNOSERS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
+> **文档作用 / Purpose**: 展示 反馈诊断器（D_FBL_DIAGNOSERS）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
@@ -23,7 +23,7 @@ ttl: permanent
 |------|------|-------|-------|
 | 编号 | 12 | Number | 12 |
 | 域ID | D_FBL_DIAGNOSERS | Domain ID | D_FBL_DIAGNOSERS |
-| 域名称 | feedback_diagnosers | Domain Name | Feedback Diagnosers |
+| 域名称 | 反馈诊断器 | Domain Name | Feedback Diagnosers |
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 76 | Module Count | 76 |
 | 域内依赖 | 4 | Internal Dependencies | 4 |
@@ -139,7 +139,7 @@ ttl: permanent
 
 ```mermaid
 graph TD
-    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS feedback_diagnosers"]
+    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
         src_zephyr_feedback_loop_diagnosers_init_py["(原型态 / prototype) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: adaptive_param_tuning.py"]
@@ -195,7 +195,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS feedback_diagnosers"]
+    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
         src_zephyr_feedback_loop_diagnosers_health_e2e_integration_health_py["(生产态 / production) E2E Integration Health Monitor — v0.39.0 R489<br/>文件: e2e_integration_health.py"]
         src_zephyr_feedback_loop_diagnosers_health_fle_dogfood_monitor_py["(生产态 / production) FLE Dogfood Monitor — v0.38.0 R480<br/>文件: fle_dogfood_monitor.py"]
         src_zephyr_feedback_loop_diagnosers_health_fle_self_slo_metrics_py["(生产态 / production) FLE Self SLO Metrics — v0.17.0+ R249-R254<br/>文件: fle_self_slo_metrics.py"]
@@ -242,7 +242,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS feedback_diagnosers"]
+    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
         src_zephyr_feedback_loop_diagnosers_reliability_model_rotation_v2_py["(生产态 / production) Model Rotation v2 — v0.10.0 R140<br/>文件: model_rotation_v2.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_model_version_semantic_drift_py["(生产态 / production) Model Version Semantic Drift Monitor — v0.39.0...<br/>文件: model_version_semantic_drift.py"]
         src_zephyr_feedback_loop_diagnosers_reliability_numerical_stability_guard_py["(生产态 / production) Numerical Stability Guard — v0.38.0 R475<br/>文件: numerical_stability_guard.py"]
@@ -276,7 +276,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS feedback_diagnosers"]
+    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
         src_zephyr_feedback_loop_diagnosers_cognitive_adaptive_param_tuning_py["(生产态 / production) Adaptive Parameter Tuning — v0.37.0 R452<br/>文件: adaptive_param_tuning.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_py["(生产态 / production) Cognitive Load Estimator — v0.6.0 R68<br/>文件: cognitive_load.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_cognitive_load_budget_py["(生产态 / production) Cognitive Load Budget — v0.16.0 R223<br/>文件: cognitive_load_budget.py"]
@@ -373,7 +373,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS feedback_diagnosers"]
+    subgraph D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS 反馈诊断器"]
         src_zephyr_feedback_loop_diagnosers_init_py["(原型态 / prototype) feedback-loop.diagnosers — GOV-DOC-018: 71个叶...<br/>文件: __init__.py"]
         src_zephyr_feedback_loop_diagnosers_cognitive_init_py["(原型态 / prototype) __init__.py"]
         src_zephyr_feedback_loop_diagnosers_diagnosis_init_py["(原型态 / prototype) __init__.py"]
@@ -427,7 +427,7 @@ graph TD
 
 ```mermaid
 graph LR
-    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>feedback_diagnosers"]
+    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
     D_SHARED["D_SHARED<br/>共享服务"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_FBL_DIAGNOSERS -->|1条 导入依赖 / import_depends| D_SHARED

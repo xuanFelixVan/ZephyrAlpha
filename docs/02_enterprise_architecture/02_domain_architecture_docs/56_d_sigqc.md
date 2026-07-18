@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 56_d_sigqc / signal_quality / 信号质量控制 / Signal Quality Control
+# 56_d_sigqc / 信号质量控制 / 信号质量控制 / Signal Quality Control
 
 > **功能简介 / Overview**: 信号质量控制，负责信号质量评估、异常检测和质量门禁
 
@@ -123,7 +123,7 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 1 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
 | 2 | D_SIGQC — Signal Quality Degradation Monitor B... | → | D_TRADING 交易运营: signal_degradation_warning.py | 导入依赖 / import_depends |
 
 ### 依赖本域的其他域（入边）/ Depended By
@@ -137,7 +137,7 @@ graph TD
 ```mermaid
 graph LR
     D_SIGQC["D_SIGQC<br/>信号质量控制"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_SIGQC -->|1条 导入依赖 / import_depends| D_INFRASTRUCTURE
     D_SIGQC -->|1条 导入依赖 / import_depends| D_TRADING

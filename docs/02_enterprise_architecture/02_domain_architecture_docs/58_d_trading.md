@@ -356,16 +356,16 @@ graph TD
 | 3 | Conductor — AI session 全自动指挥官。 (conduct... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
 | 4 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_GOVERNANCE 生命周期管理: TaskRepository — 任务登记表 CRUD + 状态机（T-1... | 导入依赖 / import_depends |
 | 5 | verdict_engine.py | → | D_GOV_AUDIT 审计追踪: models.py | 导入依赖 / import_depends |
-| 6 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 7 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 8 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE: position.py | 导入依赖 / import_depends |
-| 9 | Re-export wrapper: Order 真源在 zephyr.shared.c... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 10 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
-| 11 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
-| 12 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
-| 13 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE: strategy_lifecycle_event.py | 导入依赖 / import_depends |
-| 14 | risk_limit_violation_error.py | → | D_INFRASTRUCTURE: trace_context.py | 导入依赖 / import_depends |
-| 15 | risk_validator_protocol.py | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
+| 6 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE 共享契约: fill.py | 导入依赖 / import_depends |
+| 7 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
+| 8 | D_EXECUTION_CORE — BrokerInterface (broker_int... | → | D_INFRASTRUCTURE 共享契约: position.py | 导入依赖 / import_depends |
+| 9 | Re-export wrapper: Order 真源在 zephyr.shared.c... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
+| 10 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE 共享契约: factor_signal.py | 导入依赖 / import_depends |
+| 11 | trading-contracts/factories.py — 交易域数据契.... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 12 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE 共享契约: performance_attribution_report.py | 导入依赖 / import_depends |
+| 13 | strategy_lifecycle_event.py | → | D_INFRASTRUCTURE 共享契约: strategy_lifecycle_event.py | 导入依赖 / import_depends |
+| 14 | risk_limit_violation_error.py | → | D_INFRASTRUCTURE 共享契约: trace_context.py | 导入依赖 / import_depends |
+| 15 | risk_validator_protocol.py | → | D_INFRASTRUCTURE 共享契约: risk_limits.py | 导入依赖 / import_depends |
 | 16 | ide_health_daemon.py — TRAE IDE 幽灵窗口守护线... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
 | 17 | verdict_engine.py | → | D_INTEGRATION 管线路由: LocalModelScheduler — L2 本地模型 24/7 调度循... | 导入依赖 / import_depends |
 | 18 | AutoDispatcher — 守护进程内的轻量 PipelineDisp... | → | D_ORCHESTRATOR 代理编排器: ActiveTaskQueue — 后台任务轮询与自动分发 (task... | 导入依赖 / import_depends |
@@ -425,7 +425,7 @@ graph TD
 graph LR
     D_TRADING["D_TRADING<br/>交易运营"]
     D_SHARED["D_SHARED<br/>共享服务"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
     D_ORCHESTRATOR["D_ORCHESTRATOR<br/>代理编排器"]
     D_INFRA_RUNTIME["D_INFRA_RUNTIME<br/>运行时集成"]

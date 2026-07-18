@@ -1,12 +1,12 @@
 %% D_INTELLIGENCE 域全景依赖图
-%% 生成时间: 2026-07-19 03:32:56
+%% 生成时间: 2026-07-19 03:35:44
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 30, 依赖边数: 137
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
-    subgraph D_INTELLIGENCE[context_management]
+    subgraph D_INTELLIGENCE[上下文管理]
         scripts_calibrate_model_diff_py["scripts/calibrate_model_diff.py [production]"]
         scripts_quick_profile_py["scripts/quick_profile.py [prototype]"]
         src_zephyr_intelligence_model_drift_detector_py[".../intelligence/model_drift_detector.py [production]"]

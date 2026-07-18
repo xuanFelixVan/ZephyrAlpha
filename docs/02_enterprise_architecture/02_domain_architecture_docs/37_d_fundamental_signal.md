@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 37_d_fundamental_signal / fundamental_signal / 基本面信号 / Fundamental Signal
+# 37_d_fundamental_signal / 基本面信号 / 基本面信号 / Fundamental Signal
 
 > **功能简介 / Overview**: 基本面信号，负责基于财务数据的基本面信号生成
 
@@ -209,15 +209,15 @@ graph TD
 |:--:|---------|:--:|---------|---------|
 | 1 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | → | D_FACTOR 因子: D_FACTOR — Value Factor (value_factor.py) | contract / contract |
 | 2 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_FACTOR 因子: ZephyrAlpha — D_FACTOR Alpha Factor Layer (fac... | 导入依赖 / import_depends |
-| 3 | D_SIGNAL — Signal Generation Layer (aggregator... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
-| 4 | D_SIGNAL — Signal Generation Layer (aggregator... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
-| 5 | D_SIGNAL — Default Signal Aggregator (default_... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
-| 6 | D_SIGNAL — Default Signal Aggregator (default_... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
-| 7 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
-| 8 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
-| 9 | D_SIGNAL — Default Capital Allocator (default_... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
-| 10 | D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | D_INFRASTRUCTURE: factor_signal.py | 导入依赖 / import_depends |
-| 11 | D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | D_INFRASTRUCTURE: synthesized_signal.py | 导入依赖 / import_depends |
+| 3 | D_SIGNAL — Signal Generation Layer (aggregator... | → | D_INFRASTRUCTURE 共享契约: factor_signal.py | 导入依赖 / import_depends |
+| 4 | D_SIGNAL — Signal Generation Layer (aggregator... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 5 | D_SIGNAL — Default Signal Aggregator (default_... | → | D_INFRASTRUCTURE 共享契约: factor_signal.py | 导入依赖 / import_depends |
+| 6 | D_SIGNAL — Default Signal Aggregator (default_... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 7 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_INFRASTRUCTURE 共享契约: factor_signal.py | 导入依赖 / import_depends |
+| 8 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 9 | D_SIGNAL — Default Capital Allocator (default_... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
+| 10 | D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | D_INFRASTRUCTURE 共享契约: factor_signal.py | 导入依赖 / import_depends |
+| 11 | D_SIGNAL — Signal Synthesizer (signal_synthesi... | → | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | 导入依赖 / import_depends |
 | 12 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_SHARED 共享服务: errors.py —— ZephyrAlpha 统一错误层次（Tradit... | 导入依赖 / import_depends |
 | 13 | AlphaSignalPipeline D_FACTOR->D_SIGNAL跨层集成... | → | D_SHARED 共享服务: time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 14 | D_FUNDAMENTAL_SIGNAL — CapitalAllocationResult... | → | D_TRADING 交易运营: capital_allocation_result.py | 导入依赖 / import_depends |
@@ -240,7 +240,7 @@ graph TD
 ```mermaid
 graph LR
     D_FUNDAMENTAL_SIGNAL["D_FUNDAMENTAL_SIGNAL<br/>基本面信号"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_FACTOR["D_FACTOR<br/>因子"]
     D_SHARED["D_SHARED<br/>共享服务"]

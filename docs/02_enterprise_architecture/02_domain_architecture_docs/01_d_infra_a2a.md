@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 01_d_infra_a2a / a2a_communication / A2A通信 / A2A Communication
+# 01_d_infra_a2a / A2A通信 / A2A通信 / A2A Communication
 
 > **功能简介 / Overview**: Agent 与 Agent 之间的通信协议层，负责 AI 代理间的消息传递、请求路由和协议适配
 

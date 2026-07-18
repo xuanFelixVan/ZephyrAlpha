@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 38_d_governance / registry_management / 生命周期管理 / Lifecycle Management
+# 38_d_governance / 生命周期管理 / 生命周期管理 / Lifecycle Management
 
 > **功能简介 / Overview**: 生命周期管理，负责蓝图/模块/任务的声明周期管理和元数据治理
 
@@ -1324,8 +1324,8 @@ graph TD
 
 | # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | D_DATA: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
-| 2 | D_DATA — Memory Provider (memory_provider.py) | → | D_DATA: 数据源 Provider 抽象基类（MOD-L00-004 §4）。 (... | 导入依赖 / import_depends |
+| 1 | C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | D_DATA 数据集成: zephyr.data — 数据源集成器（MOD-L00-004）。 (_... | 导入依赖 / import_depends |
+| 2 | D_DATA — Memory Provider (memory_provider.py) | → | D_DATA 数据集成: 数据源 Provider 抽象基类（MOD-L00-004 §4）。 (... | 导入依赖 / import_depends |
 | 3 | base_repo — 异常类、状态机常量、工具函数（从 t... | → | D_FACTOR 因子: alpha_signal_pipeline.py | runtime / runtime |
 | 4 | C-track 端到端演示 —— 全流水线一次性运行 (dem... | → | D_FUNDAMENTAL_SIGNAL 基本面信号: D_SIGNAL Signal Domain (__init__.py) | 导入依赖 / import_depends |
 | 5 | ProjectionEngine — 事件折叠为当前状态（DW-0003... | → | D_GOV_AUDIT 审计追踪: EventStore — Event Sourcing 事件追加与回放（DW... | 导入依赖 / import_depends |
@@ -1365,12 +1365,12 @@ graph TD
 | 39 | TaskRepository — 任务登记表 CRUD + 状态机（T-1... | → | D_GOV_RULE 规则治理: gate_types.py | 导入依赖 / import_depends |
 | 40 | scaffold.py — ZephyrAlpha 唯一创建入口（RULE-T... | → | D_GOV_SCRIPTS 脚本治理: GATE-11 命名规范门禁 — 全类型命名检测。 (check... | 导入依赖 / import_depends |
 | 41 | test_generate_gate_registry.py — generate_gate... | → | D_GOV_SCRIPTS 脚本治理: generate_gate_registry.py — 门禁登记表自动生成... | 测试依赖 / test_depends |
-| 42 | A2A Protocol 全链路满分验证脚本 (a2a_full_verif... | → | D_INFRASTRUCTURE: ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
-| 43 | local_layer_daemon.py — L2 本地模型层守护进程.... | → | D_INFRASTRUCTURE: ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
-| 44 | D_EXECUTION_CORE — Risk Validation Bridge (DW-... | → | D_INFRASTRUCTURE: risk_limits.py | 导入依赖 / import_depends |
-| 45 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE: fill.py | 导入依赖 / import_depends |
-| 46 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE: order.py | 导入依赖 / import_depends |
-| 47 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE: position.py | 导入依赖 / import_depends |
+| 42 | A2A Protocol 全链路满分验证脚本 (a2a_full_verif... | → | D_INFRASTRUCTURE 共享契约: ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
+| 43 | local_layer_daemon.py — L2 本地模型层守护进程.... | → | D_INFRASTRUCTURE 共享契约: ZephyrAlpha — 基础设施 Infrastructure Layer —... | 导入依赖 / import_depends |
+| 44 | D_EXECUTION_CORE — Risk Validation Bridge (DW-... | → | D_INFRASTRUCTURE 共享契约: risk_limits.py | 导入依赖 / import_depends |
+| 45 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE 共享契约: fill.py | 导入依赖 / import_depends |
+| 46 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE 共享契约: order.py | 导入依赖 / import_depends |
+| 47 | D_EXECUTION_CORE — Simulation Broker Adapter (... | → | D_INFRASTRUCTURE 共享契约: position.py | 导入依赖 / import_depends |
 | 48 | Re-export bridge for layer3_coordination govern... | → | D_INFRA_A2A A2A通信: A2A 监控仪表盘 — Agent 集群运行状态可视化面板 ... | 导入依赖 / import_depends |
 | 49 | Re-export bridge for layer3_coordination govern... | → | D_INFRA_A2A A2A通信: A2A 形式化验证 — 协议属性模型检查 (a2a_formal_... | 导入依赖 / import_depends |
 | 50 | Re-export bridge for layer3_coordination govern... | → | D_INFRA_A2A A2A通信: A2A ANP 帧协商协议 — Agent Negotiation Protoco... | 导入依赖 / import_depends |
@@ -1484,7 +1484,7 @@ graph TD
 | 1 | D_BACKTEST 回测:  | → |  | 导入依赖 / import_depends |
 | 2 | D_BACKTEST 回测:  | → |  | 导入依赖 / import_depends |
 | 3 | D_BACKTEST 回测: BacktestResult -> decisiongraph 适配器（TRAE-06... | → | decisiongraph Schema DDL + 不变量声明 (decision... | 导入依赖 / import_depends |
-| 4 | D_DATA: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → |  | contract / contract |
+| 4 | D_DATA 数据集成: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → |  | contract / contract |
 | 5 | D_EX_CORE 执行核心: D_EX_CORE adapters — 券商/风控适配器 re-export... | → | D_EXECUTION_CORE — Risk Validation Bridge (DW-... | 导入依赖 / import_depends |
 | 6 | D_EX_CORE 执行核心: D_EX_CORE adapters — 券商/风控适配器 re-export... | → | D_EXECUTION_CORE — Simulation Broker Adapter (... | 导入依赖 / import_depends |
 | 7 | D_EX_CORE 执行核心:  | → |  | 导入依赖 / import_depends |
@@ -1627,7 +1627,7 @@ graph LR
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
     D_SECURITY["D_SECURITY<br/>对抗验证"]
     D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_OPS["D_OPS<br/>反馈循环"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
@@ -1635,7 +1635,7 @@ graph LR
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
     D_GOV_DRIFT["D_GOV_DRIFT<br/>漂移检测"]
     D_INFRA_RECOVERY["D_INFRA_RECOVERY<br/>回滚恢复"]
-    D_DATA["D_DATA"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_GOV_SCRIPTS["D_GOV_SCRIPTS<br/>脚本治理"]
     D_RISK["D_RISK<br/>风控"]
     D_GOV_DOCS["D_GOV_DOCS<br/>架构文档治理"]

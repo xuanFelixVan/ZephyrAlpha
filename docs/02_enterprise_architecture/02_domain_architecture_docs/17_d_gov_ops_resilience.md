@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 17_d_gov_ops_resilience / ops_resilience_governance / 运维弹性治理 / Ops Resilience Governance
+# 17_d_gov_ops_resilience / 运维弹性治理 / 运维弹性治理 / Ops Resilience Governance
 
 > **功能简介 / Overview**: 运维弹性治理，负责运维治理、安全治理、弹性治理和升级协议
 

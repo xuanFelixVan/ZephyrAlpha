@@ -8,7 +8,7 @@ owner: auto-generator
 ttl: permanent
 ---
 
-# 26_d_shared / shared_services / 共享服务 / Shared Services
+# 26_d_shared / 共享服务 / 共享服务 / Shared Services
 
 > **功能简介 / Overview**: 共享服务，负责跨域共享的工具、协议和基础服务
 
@@ -1081,7 +1081,7 @@ graph TD
 | 1 | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | → | D_FEEDBACK_LOOP 反馈循环引擎: Secret Rotation — v0.14.0 R189 (secret_rotatio... | 导入依赖 / import_depends |
 | 2 | session_audit.py —— Session 审计轨迹（Phase 1... | → | D_GOV_AUDIT 审计追踪: writer.py | 导入依赖 / import_depends |
 | 3 | A2A Coordination — shared interface definition... | → | D_GOV_RULE 规则治理: task_types.py | 导入依赖 / import_depends |
-| 4 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE: performance_attribution_report.py | 导入依赖 / import_depends |
+| 4 | Re-export shim — 真源已收敛至 zephyr.shared.co... | → | D_INFRASTRUCTURE 共享契约: performance_attribution_report.py | 导入依赖 / import_depends |
 | 5 | ProcessLifecycleGateway — 进程生命周期统一入口... | → | D_INFRA_RUNTIME 运行时集成: daemon_registry.py - unified daemon thread regi... | 导入依赖 / import_depends |
 | 6 | process_pool.py - Shared process pool for MCP s... | → | D_INFRA_RUNTIME 运行时集成: models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
 | 7 | io_cache.py - File-level I/O cache with LRU evi... | → | D_INFRA_RUNTIME 运行时集成: models.py - Pydantic data models for resource o... | 导入依赖 / import_depends |
@@ -1122,22 +1122,22 @@ graph TD
 | 28 | D_BACKTEST 回测: L_BACKTEST — Backtest Engine Layer (engine_bas... | → | trace_context.py | 导入依赖 / import_depends |
 | 29 | D_BACKTEST 回测: result_repository · 回测产物持久化/检索模块（v... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 30 | D_BACKTEST 回测: result_repository · 回测产物持久化/检索模块（v... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 31 | D_DATA: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 32 | D_DATA: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 33 | D_DATA: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 34 | D_DATA: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 35 | D_DATA: 财联社电报数据源 Provider 实现（MOD-L00-004 §4... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 36 | D_DATA: RSS 财经新闻数据源 Provider 实现（MOD-L00-004 .... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
-| 37 | D_DATA: Tushare 数据源 Provider 实现（MOD-L00-004 §4.3... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
-| 38 | D_DATA: 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 39 | D_DATA: 可观测性指标采集（MOD-L00-004 §11）。 (metrics.py) | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 40 | D_DATA: 统一进度存储（MOD-L00-004 §7）。 (progress_sto... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 41 | D_DATA: 统一进度存储（MOD-L00-004 §7）。 (progress_sto... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
-| 42 | D_DATA: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 43 | D_DATA: 数据源测速器（MOD-L00-004 §8.5）。 (speed_test... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 31 | D_DATA 数据集成: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 32 | D_DATA 数据集成: 告警管理（MOD-L00-004 §6.5 失败重试与告警 + §... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 33 | D_DATA 数据集成: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 34 | D_DATA 数据集成: ClickHouse 连接配置单真源加载器（裁定... (ch_co... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 35 | D_DATA 数据集成: 财联社电报数据源 Provider 实现（MOD-L00-004 §4... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 36 | D_DATA 数据集成: RSS 财经新闻数据源 Provider 实现（MOD-L00-004 .... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
+| 37 | D_DATA 数据集成: Tushare 数据源 Provider 实现（MOD-L00-004 §4.3... | → | secrets.py —— Secrets 管理抽象（Phase 7 新增 ... | 导入依赖 / import_depends |
+| 38 | D_DATA 数据集成: 本地落盘兜底 + 自动回灌（裁定 #ARCH-CH-013 Phas... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 39 | D_DATA 数据集成: 可观测性指标采集（MOD-L00-004 §11）。 (metrics.py) | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 40 | D_DATA 数据集成: 统一进度存储（MOD-L00-004 §7）。 (progress_sto... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 41 | D_DATA 数据集成: 统一进度存储（MOD-L00-004 §7）。 (progress_sto... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 42 | D_DATA 数据集成: 数据源调度编排层（MOD-L00-004 §6）。 (schedule... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
+| 43 | D_DATA 数据集成: 数据源测速器（MOD-L00-004 §8.5）。 (speed_test... | → | constants.py —— 共享枚举 & 常量集中 re-export... | 导入依赖 / import_depends |
 | 44 | D_EX_CORE 执行核心: MiniQMT 实盘券商适配器（对接 xttrader，A股实盘.... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 45 | D_EX_CORE 执行核心: D_EXECUTION_CORE — Order Manager (order_manage... | → | OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
-| 46 | D_FBL_DIAGNOSERS: Operational Seasonality — v0.16.0 R228 (operat... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
+| 46 | D_FBL_DIAGNOSERS 反馈诊断器: Operational Seasonality — v0.16.0 R228 (operat... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 47 | D_FEEDBACK_LOOP 反馈循环引擎: API Version Contract — v0.14.0 R188 (api_versi... | → | time_utils.py —— 时间/日期工具（Phase 9 新增 ... | 导入依赖 / import_depends |
 | 48 | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackLoop core — 反馈闭环核心类。 (core.py) | → | serialization.py —— 统一序列化/反序列化基础设... | 导入依赖 / import_depends |
 | 49 | D_FEEDBACK_LOOP 反馈循环引擎: FeedbackLoop core — 反馈闭环核心类。 (core.py) | → | schemas.py | 导入依赖 / import_depends |
@@ -1383,15 +1383,15 @@ graph TD
 | 289 | D_GOV_SCRIPTS 脚本治理: create_task_from_finding.py — Finding → 任务.... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 290 | D_GOV_SCRIPTS 脚本治理: SQLite → PostgreSQL 运营数据迁移脚本 (migrate_... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
 | 291 | D_GOV_SCRIPTS 脚本治理: concurrent_commit_test.py — 幽灵提交红蓝对抗脚... | → | paths.py — 项目路径常量 SSoT（Single Source of... | 导入依赖 / import_depends |
-| 292 | D_INFRASTRUCTURE: experiment_result.py | → | trace_context.py | 导入依赖 / import_depends |
-| 293 | D_INFRASTRUCTURE: factor_signal.py | → | trace_context.py | 导入依赖 / import_depends |
-| 294 | D_INFRASTRUCTURE: fill.py | → | trace_context.py | 导入依赖 / import_depends |
-| 295 | D_INFRASTRUCTURE: market_data.py | → | trace_context.py | 导入依赖 / import_depends |
-| 296 | D_INFRASTRUCTURE: order.py | → | trace_context.py | 导入依赖 / import_depends |
-| 297 | D_INFRASTRUCTURE: order.py | → | OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
-| 298 | D_INFRASTRUCTURE: position.py | → | trace_context.py | 导入依赖 / import_depends |
-| 299 | D_INFRASTRUCTURE: risk_limits.py | → | trace_context.py | 导入依赖 / import_depends |
-| 300 | D_INFRASTRUCTURE: synthesized_signal.py | → | trace_context.py | 导入依赖 / import_depends |
+| 292 | D_INFRASTRUCTURE 共享契约: experiment_result.py | → | trace_context.py | 导入依赖 / import_depends |
+| 293 | D_INFRASTRUCTURE 共享契约: factor_signal.py | → | trace_context.py | 导入依赖 / import_depends |
+| 294 | D_INFRASTRUCTURE 共享契约: fill.py | → | trace_context.py | 导入依赖 / import_depends |
+| 295 | D_INFRASTRUCTURE 共享契约: market_data.py | → | trace_context.py | 导入依赖 / import_depends |
+| 296 | D_INFRASTRUCTURE 共享契约: order.py | → | trace_context.py | 导入依赖 / import_depends |
+| 297 | D_INFRASTRUCTURE 共享契约: order.py | → | OrderSide/OrderStatus/OrderType — 交易枚举真源... | 导入依赖 / import_depends |
+| 298 | D_INFRASTRUCTURE 共享契约: position.py | → | trace_context.py | 导入依赖 / import_depends |
+| 299 | D_INFRASTRUCTURE 共享契约: risk_limits.py | → | trace_context.py | 导入依赖 / import_depends |
+| 300 | D_INFRASTRUCTURE 共享契约: synthesized_signal.py | → | trace_context.py | 导入依赖 / import_depends |
 | 301 | D_INFRA_A2A A2A通信: Agent Card 模型 — A2A Layer 1 Discovery (agent... | → | A2A Registry and Agent Card contracts — discov... | 导入依赖 / import_depends |
 | 302 | D_INFRA_A2A A2A通信: A2A Message/Part 系统 — Layer 2 Communication ... | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
 | 303 | D_INFRA_A2A A2A通信: A2A Task 状态机 — Layer 2 Communication (a2a_s... | → | A2A data structure contracts — Message, Task, ... | 导入依赖 / import_depends |
@@ -1763,7 +1763,7 @@ graph LR
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_GOV_RULE["D_GOV_RULE<br/>规则治理"]
-    D_INFRASTRUCTURE["D_INFRASTRUCTURE"]
+    D_INFRASTRUCTURE["D_INFRASTRUCTURE<br/>共享契约"]
     D_SIMULATION["D_SIMULATION<br/>仿真"]
     D_INTEGRATION["D_INTEGRATION<br/>管线路由"]
     D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
@@ -1777,7 +1777,7 @@ graph LR
     D_INTELLIGENCE["D_INTELLIGENCE<br/>上下文管理"]
     D_TRADING["D_TRADING<br/>交易运营"]
     D_GOV_ENFORCEMENT["D_GOV_ENFORCEMENT<br/>规则执行"]
-    D_DATA["D_DATA"]
+    D_DATA["D_DATA<br/>数据集成"]
     D_GOV_OPS_RESILIENCE["D_GOV_OPS_RESILIENCE<br/>运维弹性治理"]
     D_INFRA_A2A["D_INFRA_A2A<br/>A2A通信"]
     D_GOV_CODE_QUALITY["D_GOV_CODE_QUALITY<br/>代码质量治理"]
@@ -1789,7 +1789,7 @@ graph LR
     D_EX_CORE["D_EX_CORE<br/>执行核心"]
     D_RISK["D_RISK<br/>风控"]
     D_PF_ALLOC["D_PF_ALLOC<br/>组合分配"]
-    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS"]
+    D_FBL_DIAGNOSERS["D_FBL_DIAGNOSERS<br/>反馈诊断器"]
     D_SHARED -->|4条 导入依赖 / import_depends| D_INFRA_RUNTIME
     D_SHARED -->|1条 导入依赖 / import_depends| D_FEEDBACK_LOOP
     D_SHARED -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
