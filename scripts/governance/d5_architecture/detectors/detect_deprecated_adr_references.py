@@ -73,7 +73,7 @@ def build_adr_status_map() -> dict[str, str]:
                     status_map[row[0]] = row[1]
             finally:
                 conn.close()
-        except Exception:
+        except Exception:  # noqa: BLE001 — KB SQLite 读取失败（库锁定/表缺失/损坏）时按设计回退到物理 ADR 目录扫描，降级语义见 docstring
             pass
     adr_dirs = [
         REPO_ROOT / "" / "docs" / "01_policies_and_standards" / "governance" / "architecture" / "adr",

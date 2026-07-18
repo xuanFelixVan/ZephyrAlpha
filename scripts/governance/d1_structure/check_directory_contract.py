@@ -302,8 +302,8 @@ def check_ttl_zone(rel_path: str, contract: dict) -> list[dict]:
         fm = parse_frontmatter_from_file(abs_path)
     except OSError:
         return []
-    if not fm:
-        return []
+    if fm is None:
+        return []  # 文件无 frontmatter（parse 契约：metadata=None 表示无 FM/解析失败）
     ttl = fm.get("ttl")
     if not ttl:
         return []  # ttl 缺失由 GATE-15 (check_frontmatter_metadata.py) 负责，不重复校验
@@ -350,8 +350,9 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None =
         fm = parse_frontmatter_from_file(abs_path)
     except OSError:
         return []
-    if not fm:
-        return []
+
+    if fm is None:
+        return []  # 文件无 frontmatter（parse 契约：metadata=None 表示无 FM/解析失败）
 
     doc_type = fm.get("doc_type")
     if not doc_type:

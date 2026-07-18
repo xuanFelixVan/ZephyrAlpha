@@ -50,7 +50,7 @@ import yaml
 _GOV_DIR = str(Path(__file__).resolve().parent)
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.thresholds import get_thresholds_safe  # noqa: E402  阈值外置（治本 M01 #5）
 import psycopg2  # noqa: E402
 from zephyr.shared.io.yaml_utils import load_vocabulary_values  # noqa: E402  SSoT 词表加载（治本 2026-06-30）
@@ -635,7 +635,7 @@ def _load_panorama_from_db(db_path):
         r = cur.fetchone()
         if r:
             data["meta"]["schema_version"] = r["version"]
-    except Exception:
+    except Exception:  # noqa: BLE001 — _schema_version 表可能不存在（首次构建），版本元数据读取失败跳过不影响主数据加载
         pass
 
     conn.close()
@@ -1012,7 +1012,7 @@ def count_header_completeness(filepath) -> int:
                 for field in HEADER_FIELDS:
                     if f"[{field}]" in stripped:
                         found += 1
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取/解码失败时返回已统计字段数，不中断批量头部完整性扫描
         pass
     return found
 
@@ -1083,7 +1083,7 @@ def parse_blueprint_header(filepath: Path) -> dict:
                     )
                     if bp_match:
                         info["blueprint_id"] = bp_match.group(1).upper()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件蓝图头解析失败返回默认空信息，不中断全量文件扫描
         pass
     return info
 
@@ -1126,7 +1126,7 @@ def parse_yaml_header(filepath: Path) -> dict:
                     m = re.match(r"#\s*ai_autonomy:\s*(.+)$", line)
                     if m:
                         info["modification_permission"] = m.group(1).strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件 YAML 头解析失败返回默认空信息，不中断全量文件扫描
         pass
     return info
 
@@ -1160,7 +1160,7 @@ def parse_md_frontmatter(filepath: Path) -> dict:
                     m = re.match(r"ai_autonomy:\s*(.+)$", stripped)
                     if m:
                         info["modification_permission"] = m.group(1).strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件 frontmatter 解析失败返回默认空信息，不中断全量文件扫描
         pass
     return info
 
@@ -1213,7 +1213,7 @@ def extract_py_imports(filepath: Path) -> list:
                             sub_mod = f"{node.module}.{alias.name}"
                             if sub_mod not in imports:
                                 imports.append(sub_mod)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件 AST 解析或导入分析失败返回已收集导入，不中断全量扫描
         pass
     return imports
 
@@ -1242,7 +1242,7 @@ def extract_public_api(filepath: Path) -> str:
                                     names.append(elt.value)
                             return ", ".join(names)
                         return ""
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件 __all__ 提取失败返回空串，public_api 为可选字段不中断扫描
         pass
     return ""
 
@@ -1254,7 +1254,7 @@ def extract_md_references(filepath: Path) -> list:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取失败返回已收集引用，不中断全量扫描
         pass
     return list(set(refs))
 
@@ -1266,7 +1266,7 @@ def extract_json_references(filepath: Path) -> list:
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取失败返回已收集引用，不中断全量扫描
         pass
     return list(set(refs))
 
@@ -1377,7 +1377,7 @@ def scan_yaml_file(rel_path: str, domain_derivation: list = None) -> dict | None
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取失败仅丢失该文件引用提取，节点其余字段照常生成
         pass
     ref_key = "yaml_references" if cat in CONFIG_TYPES else "doc_references"
     return {
@@ -1454,7 +1454,7 @@ def scan_blueprint_file(rel_path: str, domain_derivation: list = None) -> dict |
             module_id = m.group(1).strip('"').strip("'")
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件解析失败仍以空 module_id/refs 生成蓝图节点，不中断全量扫描
         pass
     return {
         "path": rel_path.replace("\\", "/"),
@@ -1498,7 +1498,7 @@ def scan_infra_file(rel_path: str, domain_derivation: list = None) -> dict | Non
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取失败仅丢失引用提取，infra 节点照常生成
         pass
     return {
         "path": rel_path.replace("\\", "/"),
@@ -1524,7 +1524,7 @@ def scan_diagram_file(rel_path: str, domain_derivation: list = None) -> dict | N
             content = f.read()
         for m in ID_PATTERN.finditer(content):
             refs.append(m.group(1))
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单文件读取失败仅丢失引用提取，diagram 节点照常生成
         pass
     return {
         "path": rel_path.replace("\\", "/"),
@@ -2174,7 +2174,7 @@ def build_depgraph(
         for fd in sorted(files_data, key=lambda x: x.get("path", "")):
             hasher.update(fd.get("path", "").encode("utf-8"))
         source_hash = hasher.hexdigest()[:12]
-    except Exception:
+    except Exception:  # noqa: BLE001 — source_hash 仅为元信息，计算失败留空不阻断 depgraph 生成
         pass
 
     # Dual-state protection: merge design-state nodes from existing depgraph
@@ -2490,7 +2490,7 @@ def load_depgraph_design_files() -> dict:
                     result_nodes[cp] = node
             for edge in data.get("edges", []):
                 result_edges.append(edge)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个设计态 YAML 解析失败跳过该文件，继续加载其余设计文件
             continue
     return result_nodes, result_edges
 
@@ -2747,7 +2747,7 @@ def _validate_arch_references():
     """Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 architecture_issue_registry.yaml 有对应条目。
 
     编号铁律#6: 任何 #ARCH-XXX 引用必须在本注册表有对应条目，禁止 grep-and-claim 占位。
-    校验失败打印 ERROR 并 sys.exit(1) 阻断运行（编号铁律#6 强制门禁，2026-07-02 从 WARN 升级为 ERROR）。
+    校验失败打印 ERROR 并 sys.exit(EXIT_FINDINGS) 阻断运行（编号铁律#6 强制门禁，2026-07-02 从 WARN 升级为 ERROR）。
     """
     import re as _re
     import sys as _sys
@@ -2769,19 +2769,19 @@ def _validate_arch_references():
                       if m.group() != m.group().upper()]
     if lowercase_arch:
         print(f"[DEPGRAPH] ERROR: 发现小写 arch- 引用 (trae_028 §标识符编号格式: 标识符编号必须大写): {lowercase_arch}")
-        _sys.exit(1)
+        _sys.exit(EXIT_FINDINGS)
 
     # 2. 读取 architecture_issue_registry.yaml
     registry_path = str(PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "architecture_issue_registry.yaml")
     if not _Path(registry_path).exists():
         print(f"[DEPGRAPH] ERROR: architecture_issue_registry.yaml 不存在，无法校验 ARCH 引用 (编号铁律#6)")
-        _sys.exit(1)
+        _sys.exit(EXIT_FINDINGS)
 
     try:
         registry_data = _yaml_load(registry_path)
     except Exception as e:
         print(f"[DEPGRAPH] ERROR: 读取 architecture_issue_registry.yaml 失败: {e}")
-        _sys.exit(1)
+        _sys.exit(EXIT_FINDINGS)
 
     # 3. 提取 registry 中所有 issue_id
     registered_ids = set()
@@ -2797,7 +2797,7 @@ def _validate_arch_references():
     if unregistered:
         print(f"[DEPGRAPH] ERROR: 发现未注册的 #ARCH-XXX 引用 (编号铁律#6): {sorted(unregistered)}")
         print(f"[DEPGRAPH] ERROR: 请在 architecture_issue_registry.yaml 中登记这些编号后重试")
-        _sys.exit(1)
+        _sys.exit(EXIT_FINDINGS)
     else:
         print(f"[DEPGRAPH] ARCH 引用校验通过: {sorted(arch_refs)} 均已在 registry 中登记")
 
@@ -3764,7 +3764,7 @@ def _check_incremental_skip(files_data: list, output_db: str) -> bool:
         if conn:
             try:
                 conn.close()
-            except Exception:
+            except Exception:  # noqa: BLE001 — 连接已不可用时 close 可能抛错，finally 中吞没避免二次异常掩盖主流程
                 pass
 
     db_hashes = {row["path"]: (row["content_hash"] or "") for row in db_rows}
@@ -3884,7 +3884,7 @@ def main():
                             if node.get("lifecycle") == "design":
                                 existing_design_nodes[nid] = node
                         print(f"[DEPGRAPH] [DEPRECATED] 从YAML加载 {len(existing_design_nodes)} 个设计态节点")
-                except Exception:
+                except Exception:  # noqa: BLE001 — 旧 YAML 兜底加载失败视为无历史设计态节点，PG 为主路径，不阻断生成
                     pass
 
     print("[DEPGRAPH] Loading architecture panorama...")
@@ -3975,7 +3975,7 @@ def main():
     # 裁定#209 Stage 3: 增量模式——无变更时跳过 DB 重建
     if args.incremental and _check_incremental_skip(files_data, args.output_db):
         print("[DEPGRAPH][INCREMENTAL] 跳过 DB 重建，直接退出")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     print("[DEPGRAPH] Building dependency graph...")
     depgraph = build_depgraph(files_data, functional_domains, domain_derivation, existing_design_nodes, granularity)
@@ -4051,7 +4051,7 @@ def main():
     # dry-run模式：只输出报告，不写入任何文件
     if args.dry_run:
         print("[DEPGRAPH] --dry-run模式：未修改任何文件，仅输出执行报告")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if args.output_yaml:
         print(
@@ -4099,7 +4099,7 @@ def main():
             else:
                 print(f"[LOCKED] Cannot acquire lock after {max_retries} attempts: {result.stdout.strip()}")
                 print("         Another AI session is writing. Retry later.")
-                sys.exit(1)
+                sys.exit(EXIT_FINDINGS)
 
         try:
             depgraph = merge_depgraph(depgraph, out_path, old_data=preloaded_old_data)
@@ -4163,7 +4163,7 @@ def main():
         except Exception as e:
             print(f"[WARN] sync_panorama_module 失败（不阻断）: {e}", file=sys.stderr)
 
-    sys.exit(0)
+    sys.exit(EXIT_PASS)
 
 
 if __name__ == "__main__":

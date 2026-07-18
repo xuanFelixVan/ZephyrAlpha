@@ -700,7 +700,7 @@ def gate_d_doc_directory_index_required() -> tuple[bool, list[str]]:
         try:
             with open(doc_index, encoding="utf-8") as f:
                 index_data = f.read()
-        except Exception:
+        except Exception:  # noqa: BLE001 — docs/index.md 读取失败（权限/非UTF-8编码）时按无索引声明处理，仅做目录存在性检查，治理扫描尽力而为语义
             pass
 
     # 从 docs/index.md 中解析"抽屉"声明的目录路径
@@ -816,7 +816,7 @@ def gate_e_session_log_alignment() -> tuple[bool, list[str]]:
     for log_path in recent:
         try:
             content = log_path.read_text(encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 session log 读取失败（权限/编码/IO）时跳过该文件继续扫描其余日志，治理扫描尽力而为语义
             continue
 
         # 解析变更文件表

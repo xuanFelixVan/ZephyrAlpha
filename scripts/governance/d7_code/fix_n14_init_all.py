@@ -90,7 +90,7 @@ def find_init_files(root: Path) -> list[Path]:
             continue
         try:
             content = init_path.read_text(encoding="utf-8", errors="replace")
-        except Exception:
+        except OSError:  # 单个 __init__.py 读取失败跳过，继续扫描其余文件
             continue
         if not content.strip():
             continue

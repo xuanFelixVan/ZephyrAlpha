@@ -1355,7 +1355,7 @@ def check_new_files_full(
                 for v in current_violations:
                     if (v.rule, v.message) not in head_keys:
                         violations.append(v)
-            except Exception:
+            except Exception:  # noqa: BLE001 — git show 失败或临时文件问题 → fail-open（不阻断修改），单文件基线对比失败仅跳过该文件
                 # git show 失败或临时文件问题 → fail-open（不阻断修改）
                 pass
 

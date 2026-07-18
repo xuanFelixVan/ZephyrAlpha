@@ -213,7 +213,7 @@ def _extract_csv_paths(content: str) -> list[str]:
                     if any(cell.endswith(ext) for ext in (".md", ".yaml", ".yml", ".json", ".py", ".ps1", ".sh", ".toml", ".txt", ".csv")):
                         if not _is_url(cell):
                             refs.append(cell)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单个 CSV 文件解析失败则跳过，返回已提取的路径引用，不阻断整体断链审计
         pass  # CSV 解析失败则跳过
     return refs
 
@@ -337,8 +337,12 @@ def _get_valid_blueprint_ids() -> set[str]:
             mid = bp.get("module_id")
             if mid:
                 _VALID_BLUEPRINT_IDS.add(mid)
-    except Exception:
-        pass  # registry 解析失败不阻断（降级为空集，所有 ID 判通过）
+    except Exception as e:  # noqa: BLE001 — registry 解析失败不阻断（降级为空集，所有 ID 判通过）；补 WARN 日志防静默掩盖注册表损坏
+        # registry 解析失败不阻断（降级为空集，所有 ID 判通过）
+        print(
+            f"WARN: blueprint_registry.yaml 解析失败，blueprint_id 存在性校验降级为全部通过: {type(e).__name__}: {e}",
+            file=sys.stderr,
+        )
     return _VALID_BLUEPRINT_IDS
 
 

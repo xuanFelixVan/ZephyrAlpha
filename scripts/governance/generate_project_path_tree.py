@@ -55,7 +55,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 PROJECT_ROOT = REPO_ROOT
 
@@ -144,7 +144,7 @@ def _load_panorama_from_db(db_path):
         r = cur.fetchone()
         if r:
             data["meta"]["schema_version"] = r["version"]
-    except Exception:
+    except Exception:  # noqa: BLE001 — schema_version 为可选元数据，读取失败仅缺该字段，不阻断树生成
         pass
 
     conn.close()
@@ -413,7 +413,7 @@ def _extract_path_section_domains(section_data: dict, section_name: str, derivat
         panorama = {}
         try:
             panorama = _load_panorama_from_db(None) or {}
-        except Exception:
+        except Exception:  # noqa: BLE001 — 域展开为增强逻辑，panorama 加载失败时降级为空字典跳过 {domain_id} 展开
             pass
         domains_data = panorama.get("domains", {})
         for func_domain_name, func_domain_val in domains_data.items():
@@ -669,7 +669,7 @@ def cmd_write() -> None:
                     new_disk = PROJECT_ROOT / new_p
                     if new_disk.exists():
                         pending_entries.append(old_p)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 迁移注册表解析为尽力而为提示，失败时跳过 pending 条目不影响主流程
             pass
 
     print("[PATH-TREE] Computation done. Ready to write.")
@@ -679,11 +679,11 @@ def cmd_write() -> None:
         panorama = _load_panorama_from_db(None)
     except Exception as e:
         print(f"[FAIL] Cannot load panorama: {e}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     if not panorama:
         print("[FAIL] Panorama is empty")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     old_tree = panorama.get("tree", {})
     merged_tree = merge_with_design_nodes(new_tree, old_tree)
@@ -717,7 +717,7 @@ def cmd_check() -> None:
         panorama = _load_panorama_from_db(None)
     except Exception as e:
         print(f"[FAIL] Cannot load panorama: {e}")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
 
     domain_derivation = load_domain_derivation()
     new_tree = generate_tree(domain_derivation)
@@ -748,7 +748,7 @@ def cmd_check() -> None:
     if new_yaml != old_yaml:
         print("[FAIL] Panorama tree is OUT OF SYNC with disk.")
         print("       Run: python scripts/governance/generate_project_path_tree.py --write")
-        sys.exit(1)
+        sys.exit(EXIT_FINDINGS)
     else:
         print("[OK] Panorama tree is in sync with disk.")
 

@@ -89,7 +89,7 @@ def check_var_cvar(_repo: Path) -> tuple[bool, str]:
     for py_file in risk_dir.rglob("*.py"):
         try:
             content = py_file.read_text(encoding="utf-8", errors="replace")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个源码文件读取失败（权限/IO）时跳过该文件继续 VaR/CVaR 证据扫描，尽力而为语义
             continue
         for pattern in [r"(?i)\bVaR\b", r"(?i)\bCVaR\b", r"(?i)value_at_risk", r"(?i)expected_shortfall"]:
             if re.search(pattern, content):
@@ -112,7 +112,7 @@ def check_channel_fallback(_repo: Path) -> tuple[bool, str]:
     for py_file in frontend.rglob("*.py"):
         try:
             content = py_file.read_text(encoding="utf-8", errors="replace")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个源码文件读取失败（权限/IO）时跳过该文件继续多渠道 fallback 证据扫描，尽力而为语义
             continue
         for keyword in fallback_names:
             if keyword in content.lower():
@@ -134,7 +134,7 @@ def check_historical_backfill(_repo: Path) -> tuple[bool, str]:
     for py_file in research.rglob("*.py"):
         try:
             content = py_file.read_text(encoding="utf-8", errors="replace")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个源码文件读取失败（权限/IO）时跳过该文件继续历史回填证据扫描，尽力而为语义
             continue
         for keyword in backfill_names:
             if keyword in content.lower():

@@ -280,7 +280,7 @@ def check_gate_registry_consistency() -> dict[str, Any]:
                         break
             if yd is not None and isinstance(yd, dict) and "gate_id" in yd:
                 yaml_gate_ids.add(yd["gate_id"])
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败时跳过该文件，继续校验其余门禁
             continue
 
     unregistered = yaml_gate_ids - registry_gate_ids
@@ -330,7 +330,7 @@ def check_checktype_coverage() -> dict[str, Any]:
             checks = yd.get("checks") or yd.get("entry_conditions") or []
             for c in checks:
                 yaml_types.add(c.get("type", ""))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败时跳过该文件，继续统计其余 check type
             continue
 
     orphaned = yaml_types - code_types - {"condition", ""}

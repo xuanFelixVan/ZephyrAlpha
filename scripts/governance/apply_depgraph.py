@@ -102,7 +102,7 @@ from zephyr.shared.io.yaml_utils import load_vocabulary_values  # 词表 SSoT �
 _GOV_DIR = Path(__file__).resolve().parent
 if str(_GOV_DIR) not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
-from _shared.constants import get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 # 引入 module_id 双轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
 # 裁定#208 双轨制（R2 治本修订后）：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
@@ -221,13 +221,13 @@ def _load_depgraph_from_db(db_path: Path | None = None) -> dict:
 
 
 def _load_depgraph() -> dict:
-    # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(1) 守卫（latent bug）。
+    # 治本（2026-06-27）：删除 if not DEPGRAPH_PATH.exists(): sys.exit(EXIT_FINDINGS) 守卫（latent bug）。
     # PG 模式下文件路径无意义，直接查询 PG；连接失败时 fail-loud 抛异常。
     try:
         return _load_depgraph_from_db()
     except Exception as e:
         logger.error("Failed to load depgraph from PostgreSQL: %s", e)
-        sys.exit(2)
+        sys.exit(EXIT_ERROR)
 
 
 def _find_module(dep: dict, module_id: str) -> dict | None:
@@ -2746,8 +2746,8 @@ def _with_bp_rename_tx(
                     _restore_blueprint_links_readonly_trigger(c)
                     if own_conn:
                         c.commit()
-                except Exception:
-                    pass
+                except psycopg2.Error as restore_err:
+                    logger.warning("恢复 blueprint_links 只读触发器失败（门禁可能遗留禁用状态）: %s", restore_err)
                 return -1
             finally:
                 if own_conn:
@@ -2976,8 +2976,8 @@ def cmd_rename_blueprint_id(
                     _restore_blueprint_links_readonly_trigger(c)
                     if own_conn:
                         c.commit()
-                except Exception:
-                    pass
+                except psycopg2.Error as restore_err:
+                    logger.warning("恢复 blueprint_links 只读触发器失败（门禁可能遗留禁用状态）: %s", restore_err)
                 return -1
             finally:
                 if own_conn:
@@ -3099,8 +3099,8 @@ def cmd_propagate_node_paths(
                         _restore_blueprint_links_readonly_trigger(c)
                     if own_conn:
                         c.commit()
-                except Exception:
-                    pass
+                except psycopg2.Error as restore_err:
+                    logger.warning("恢复 blueprint_links 只读触发器失败（门禁可能遗留禁用状态）: %s", restore_err)
                 return -1
             finally:
                 if own_conn:
@@ -4591,7 +4591,7 @@ def main() -> None:
         for op in ops:
             kind = "节点级(经 dep dict)" if op in _NODE_OPS else "域级(直接 SQL)"
             print(f"  {op:30s} ({kind})")
-        sys.exit(0)
+        sys.exit(EXIT_PASS)
 
     if not args.update_module and not args.batch:
         parser.print_help()

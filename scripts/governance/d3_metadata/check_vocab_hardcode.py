@@ -291,7 +291,7 @@ def _load_all_vocab_values(vocab_dir: Path) -> dict[str, set[str]]:  # noqa: gat
         vocab_name = p.name.removesuffix("_vocabulary.yaml")
         try:
             data = yaml.safe_load(p.read_text(encoding="utf-8"))
-        except Exception:
+        except (OSError, yaml.YAMLError):  # noqa: BLE001 — 单词表文件读取/解析失败跳过（docstring 已声明 warn-only）
             continue
         if not isinstance(data, dict):
             continue

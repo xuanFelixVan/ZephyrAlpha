@@ -43,7 +43,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
-from _shared.constants import REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 from _shared.thresholds import get as _get_threshold  # noqa: E402  治本(ARCH-036 P1-A2): 连续失败阈值读SSoT
 
@@ -152,7 +152,7 @@ class GovernanceWatchdog:
                 if self._on_exhausted is not None:
                     try:
                         self._on_exhausted(name)
-                    except Exception:
+                    except Exception:  # noqa: BLE001 — 通知回调失败不应中断重启限额的状态流转
                         pass
                 return False
             svc.status = ServiceStatus.RESTARTING
@@ -173,7 +173,7 @@ class GovernanceWatchdog:
                     if self._on_exhausted is not None:
                         try:
                             self._on_exhausted(name)
-                        except Exception:
+                        except Exception:  # noqa: BLE001 — 通知回调失败不应中断重启限额的状态流转
                             pass
                 else:
                     svc.status = ServiceStatus.FAILED
@@ -196,8 +196,8 @@ class GovernanceWatchdog:
                     if info["status"] in (ServiceStatus.FAILED.value, ServiceStatus.DEGRADED.value):
                         self.restart_service(name)
                 self._save_state()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[WATCHDOG] 巡检循环异常（吞没以维持常驻巡检）: {e}", file=sys.stderr)
             self._stop_event.wait(timeout=self._check_interval)
 
     def stop(self) -> None:
@@ -320,7 +320,7 @@ def main() -> int:
     )
     print(f"[WATCHDOG] Starting governance watchdog (interval={args.check_interval}s, max_restart={args.max_restart})")
     wd.run(daemon=False)
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

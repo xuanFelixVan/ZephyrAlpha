@@ -188,7 +188,7 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
         content = raw.decode("utf-8")
         # Method 1: known markers
         MOJIBAKE_MARKERS = [
-            "\u9516\u65a4\u62f7",  # 锟斤拷
+            "\u9516\u65a4\u62f7",  # classic GBK mojibake marker (kan-jin-kao)，注释不写字面量——否则被 check_encoding.py INJ-007 Method1 误判为真乱码（治本 2026-07-18）
             "\u93d4\u63d2\u53c2",
             "\u93d4\u659c\u7280\u6362",
             "\u93d4\u529c\u00b0\u20ac",
@@ -234,7 +234,7 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
                                     False,
                                     f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (partial round-trip) — fix encoding before modifying (DM-378)",
                                 )
-                        except Exception:
+                        except Exception:  # noqa: BLE001 — mojibake 局部 round-trip 启发式检测的防御性兜底：分段检测意外异常时跳过该段继续检测其余段，避免误拦截
                             pass
                 except UnicodeEncodeError:
                     pass

@@ -98,7 +98,7 @@ def extract_registered_tools(server_file: Path) -> dict[str, dict[str, Any]]:
                     if name_node and isinstance(name_node, ast.Constant):
                         name = name_node.value
                         tools[name] = {"has_schema": schema_node is not None}
-                except Exception:
+                except Exception:  # noqa: BLE001 — 单个 register_tool 调用节点结构异常时跳过该节点，继续扫描其余调用
                     continue
     return tools
 

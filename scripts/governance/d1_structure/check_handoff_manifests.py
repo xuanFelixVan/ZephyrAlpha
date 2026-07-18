@@ -212,7 +212,7 @@ def check_missing_manifests() -> list[dict]:
 
                 if hint in (AIReadOnlyHint.DO_NOT_CALL, None):
                     continue
-            except Exception:
+            except Exception:  # noqa: BLE001 — 契约注册表查询为可选增强：zephyr 包不可导入或查询失败时降级为直接 WARN，不阻断清单检查
                 pass
 
             results.append(

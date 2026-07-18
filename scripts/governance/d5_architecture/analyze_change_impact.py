@@ -35,7 +35,7 @@ _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import get_depgraph_pg_connection, REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
 
 PROJECT_ROOT = REPO_ROOT
@@ -264,8 +264,8 @@ class ChangeImpactAnalyzer:
             )
             if completed.returncode == 0 and completed.stdout.strip():
                 return [line.strip() for line in completed.stdout.strip().splitlines() if line.strip()]
-        except Exception:
-            pass
+        except (subprocess.TimeoutExpired, OSError, UnicodeDecodeError) as exc:
+            print(f"[analyze_change_impact] WARNING: git diff-tree 获取 commit {commit_hash} 文件列表失败（{exc}），按空文件列表降级")
         return []
 
     def generate_incremental_scan_list(self, impact: dict[str, Any]) -> list[str]:
@@ -407,10 +407,10 @@ def main() -> int:
         result = analyzer.analyze_file_change(args.files)
     else:
         print("[CHANGE_IMPACT] No input specified. Use --files or --commit.")
-        return 1
+        return EXIT_FINDINGS
 
     print(json.dumps(result, indent=2, default=str))
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

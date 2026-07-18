@@ -98,7 +98,7 @@ def scan_md_files(truth: dict) -> list[dict]:
     for fpath in sorted(md_files):
         try:
             content = fpath.read_text(encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 Markdown 读取失败（权限/非UTF-8编码/IO）时跳过该文件继续数字漂移扫描，尽力而为语义
             continue
         rel = str(fpath.relative_to(EA_DIR))
         for m in re.finditer("(\\d+)\\s*大\\s*(?:核心\\s*)?服务", content):

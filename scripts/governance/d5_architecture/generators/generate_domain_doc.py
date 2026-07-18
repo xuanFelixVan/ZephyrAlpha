@@ -71,7 +71,7 @@ from datetime import datetime
 
 import yaml
 
-from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
 from domain_name_mapping import get_domain_name_zh, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh, DOMAIN_NAME_ZH  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -194,7 +194,7 @@ def _extract_docstring_first_line(path: str) -> str:
                     continue
                 return _truncate(line, 80)
             return ""
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单个 Python 文件读取/AST 解析失败（语法错误/编码异常/IO）时返回空简介继续生成文档，尽力而为语义
         pass
     return ""
 
@@ -217,7 +217,7 @@ def _extract_yaml_description(path: str) -> str:
                 # 取第一行，截断到 80 字符
                 first_line = desc.split('\n')[0].strip()
                 return _truncate(first_line, 80)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败（YAMLError/IO）时返回空简介继续生成文档，尽力而为语义
         pass
     return ""
 
@@ -238,7 +238,7 @@ def _load_registry_items(registry_path: str) -> list[dict]:
         if isinstance(data, dict):
             items = data.get('items', []) or []
             return items if isinstance(items, list) else []
-    except Exception:
+    except Exception:  # noqa: BLE001 — registry.yaml 读取/解析失败时按无 items 处理（返回空列表），聚合节点仅显示自身行，尽力而为语义
         pass
     return []
 
@@ -974,7 +974,7 @@ def generate_module_layered_list(nodes: list[dict]) -> str:
                             collection_desc = reg_data.get("collection_name", "") or ""
                             items_count = len(registry_data)
                             collection_desc = f"[聚合节点 / Aggregated] {collection_desc} ({items_count} items)"
-                except Exception:
+                except Exception:  # noqa: BLE001 — registry.yaml 读取/解析失败时 collection_desc 留空回退到 name_display，不影响表格生成，尽力而为语义
                     pass
                 lines.append(
                     f"| {i} | {path_display} | "
@@ -1380,7 +1380,7 @@ def main() -> None:
             number = numbering_map.get(args.domain_id, 0)
             content = generate_domain_doc(args.domain_id, conn, number)
             if not content:
-                sys.exit(2)
+                sys.exit(EXIT_ERROR)
             safe_name = args.domain_id.replace("-", "_").lower()
             out_path = output_dir / f"{number:02d}_{safe_name}.md"
             _atomic_write(out_path, content)

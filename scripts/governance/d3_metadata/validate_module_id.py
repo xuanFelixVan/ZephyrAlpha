@@ -120,7 +120,7 @@ def check_dim2() -> list[str]:
     for idx_file in POLICIES_ROOT.rglob("index.md"):
         try:
             text = idx_file.read_text(encoding="utf-8")
-        except Exception:
+        except (OSError, UnicodeDecodeError):  # 单个 index.md 读取/解码失败跳过，继续校验其余文件
             continue
         table_rows = re.findall(
             "\\|\\s*`?([^\\s|`]+\\.md| [^\\s|`]+\\.yaml)`?\\s*\\|\\s*([A-Z]+-[A-Z]+-\\d{3})\\s*\\|", text

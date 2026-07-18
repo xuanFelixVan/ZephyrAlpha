@@ -320,7 +320,7 @@ def verify_registry_filesystem_consistency() -> dict[str, Any]:
             yd = yaml.safe_load(yf.read_text(encoding="utf-8"))
             if isinstance(yd, dict) and "gate_id" in yd:
                 yaml_gate_ids.add(str(yd["gate_id"]))
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单个 YAML 读取/解析失败时跳过该文件，继续比对其余门禁
             continue
 
     unregistered = yaml_gate_ids - registry_gate_ids
