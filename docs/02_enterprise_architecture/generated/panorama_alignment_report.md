@@ -1,10 +1,10 @@
 # 四图对齐报告 (Panorama Alignment Report)
 
-- 生成时间: 2026-07-19 02:25:51
+- 生成时间: 2026-07-19 04:53:26
 - 数据源: depgraph (PostgreSQL)
-- 四图节点数: depgraph=639 / dataflow=25 / decision=319 / blueprint=72
-- 问题总数: 487
-  - 孤儿（仅一图）: 487
+- 四图节点数: depgraph=641 / dataflow=25 / decision=319 / blueprint=72
+- 问题总数: 489
+  - 孤儿（仅一图）: 489
   - 状态漂移（blueprint 缺 design_maturity）: 0
   - 域不一致（domain_id 不一致）: 0
   - 设计态孤立（design 仅一图）: 0
@@ -28,8 +28,9 @@
 | MOD-GOV-rename_depgraph_sync_gate | depgraph | tests/governance/commit_gates/test_rename_depgraph_sync_gate.py |
 | MOD-GOV-ruling_reference_gate | depgraph | tests/governance/commit_gates/test_ruling_reference_gate.py |
 | MOD-GOV_DQ | depgraph | scripts/governance/data_quality/check_tick_duplication.py |
-| MOD-INF-012B | depgraph | scripts/governance/migrate_sqlite_to_pg/migrate_data.py |
 | MOD-INF-040 | depgraph | src/zephyr/signal_quality/__init__.py |
+| MOD-REMEDIATION_PROGRESS | depgraph | src/zephyr/governance/audit/remediation_progress_reconciler.py |
+| MOD-REMEDIATION_PROGRESS_SMOKE | depgraph | scripts/governance/test_remediation_progress_smoke.py |
 | MOD-SEC-immutable_core | depgraph | config/immutable_core.yaml |
 | MOD-TEST-202 | depgraph | tests/skill/test_agent_spec_adversarial.py |
 | MOD-TEST-203 | depgraph | tests/autonomy/test_agent_spec_e2e.py |
@@ -212,8 +213,7 @@
 | MOD-TEST-390 | depgraph | tests/governance/governance_e2e/test_gov_session_concurrency.py |
 | MOD-TEST-391 | depgraph | tests/utils/test_handbook.py |
 | MOD-TEST-392 | depgraph | tests/utils/test_healthcheck_service.py |
-| MOD-TEST-393 | depgraph | tests/event/test_hook_dispatcher.py |
-... 共 487 行（仅展示前 200 行）
+... 共 489 行（仅展示前 200 行）
 
 ## 2. 状态漂移（blueprint 缺 design_maturity 字段）
 

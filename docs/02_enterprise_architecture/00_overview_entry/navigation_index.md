@@ -4,7 +4,7 @@
 >
 > **核心原则**：这个文档库是给人看的，不是给机器看的。机器看全景图数据库（depgraph (PostgreSQL)），人看这里。所以一切都是以人怎么方便、怎么看得直白为准。
 >
-> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-07-19 02:25:48
+> **自动生成**：本文件由 `generate_navigation_index.py` 自动生成，每次全景图更新后自动刷新。最后更新：2026-07-19 04:53:23
 
 ---
 
@@ -60,10 +60,10 @@
 
 | 层级 | 域数量 | 代表域 |
 |------|:---:|--------|
-| 基础设施层 | 5 | D_INFRA_A2A（a2a_communication）、D_INFRA_OPS（asset-inventory）、D_INFRA_RECOVERY（rollback_recovery） 等 |
-| 基础层 | 21 | D_ALT_DATA（另类数据）、D_AUTONOMY_CORE（agent_lifecycle）、D_DATA_ENG（数据工程） 等 |
-| 业务域层 | 32 | D_ASHARE_SIGNAL（ashare_signal）、D_AUDITTEST（audit_test_suite）、D_AUTONOMY_PERM（budget_enforcement） 等 |
-| 未分层 | 5 | D_BEHAVIORAL_AUDIT（drift_detector_core）、D_COMPLIANCE（compliance_gate）、D_DATA（data_source_integrator） 等 |
+| 基础设施层 | 5 | D_INFRA_A2A（A2A通信）、D_INFRA_OPS（基础设施运维）、D_INFRA_RECOVERY（回滚恢复） 等 |
+| 基础层 | 21 | D_ALT_DATA（另类数据）、D_AUTONOMY_CORE（自治核心）、D_DATA_ENG（数据工程） 等 |
+| 业务域层 | 32 | D_ASHARE_SIGNAL（A股特色信号）、D_AUDITTEST（审计测试套件）、D_AUTONOMY_PERM（自治保护） 等 |
+| 未分层 | 5 | D_BEHAVIORAL_AUDIT（行为审计）、D_COMPLIANCE（合规）、D_DATA（数据接入层） 等 |
 
 ---
 
@@ -71,4 +71,4 @@
 
 | 日期 | 说明 |
 |------|------|
-| 2026-07-19 02:25:48 | 自动生成 |
+| 2026-07-19 04:53:23 | 自动生成 |
