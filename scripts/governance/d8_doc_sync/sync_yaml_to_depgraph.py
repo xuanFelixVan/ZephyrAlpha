@@ -687,6 +687,12 @@ def sync_functional_domain_registry(cur):
                 domain_group = domain_group.replace("tier_", "").replace("_governance", "").replace("_", "")
 
             ssot_path = d.get("ssot_path", "")
+            # 治本（2026-07-19）：domain_name 优先用 YAML 的 domain_name_zh（中文显示名），
+            # 缺失时 fallback 到 subdomain（向后兼容旧 YAML）。
+            # 历史问题：原用 subdomain 写入 domains.domain_name 导致 38 域为英文（如 "rule_enforcement"），
+            # 与 25 个手工插入的中文域（如 "反馈检测器"）混合，导致 domain_index 显示不一致。
+            # 修复后：YAML 的 domain_name_zh 升级为真源，DB 统一为中文。
+            domain_name = d.get("domain_name_zh", "") or d.get("subdomain", "")
             cur.execute(
                 """
         INSERT INTO domains (domain_id, domain_name, domain_group, description, ssot_path,
@@ -699,7 +705,7 @@ def sync_functional_domain_registry(cur):
             modification_permission=excluded.modification_permission,
             updated_at=excluded.updated_at
         """,
-                (domain_id, d.get("subdomain", ""), domain_group, description, ssot_path or None, ai_autonomy, now, now),
+                (domain_id, domain_name, domain_group, description, ssot_path or None, ai_autonomy, now, now),
             )
             synced += 1
         else:
