@@ -4215,6 +4215,27 @@ capabilities:
       - scan_all_scripts_for_import_violations     # 全扫逻辑真源(删则baseline检测失效)
       - _scan_file_content                          # 共享helper(删则gate+reconciler检测逻辑同时失效)
 
+  - capability_id: session_startup_health_check
+    canonical_override: scripts/governance/session_startup_health_check.py
+    aliases:
+      - run_startup_health_check
+      - ARCH-TOOL-HEALTH-V1
+      - session_startup_health
+      - startup_health_smoke
+    description: >-
+      AI session 启动时核心治理工具健康度自检（2026-07-19 治本，#ARCH-TOOL-HEALTH-V1 Phase 6，
+      SH-GOV-004）。检测 12 项：4 核心 tool import（apply_depgraph/apply_decisiongraph/
+      apply_dataflowgraph/sync_yaml_to_depgraph）+ 4 核心 tool CLI（--list-ops rc=0）+
+      3 gateway 模块 import（git_commit_gateway/session_worktree/reconciliation_registry）+
+      1 git_health_smoke 委托（git version/fscache/status/aliases）。治本病根：commit deb695006f
+      误删 get_depgraph_pg_connection import 导致 NameError 静默累积，5 层防线全失效，根因是
+      AI session 启动时不检测核心工具是否可用，遇错默认 silently workaround。本脚本在启动时
+      检测 import/CLI/符号可用性，失败时返回 escalation_required=True，AI MUST escalate 不可静默
+      workaround。CLI exit codes: 0=pass / 1=fail(AI escalate) / 2=warn。独立可运行（不依赖 zephyr
+      包，避免 import 链故障导致 smoke test 本身不可用）；委托 git_health_smoke.py 做 git 层面检查。
+      真源检测逻辑：run_startup_health_check（_check_core_tool_import/_check_core_tool_cli/
+      _check_gateway_module/_check_git_health_smoke）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4248,6 +4269,12 @@ creation_tokens:
     token: "auto-immutable-core-yaml-20260717"
     created_by: "session-sess-29448-20260717102258"
     capability: "immutable_core_config"
+
+  # --- AI session 启动健康度自检（2026-07-19 #ARCH-TOOL-HEALTH-V1 Phase 6 治本）---
+  - file: "scripts/governance/session_startup_health_check.py"
+    token: "auto-session-startup-health-check-20260719"
+    created_by: "session-sess-19936-20260719043721"
+    capability: "session_startup_health_check"
 
   # --- A2A Agent 黑名单（2026-07-17 AI-14 审计 P5，重命名自 a2a_protocol_security.py 消除命名混淆）---
   - file: "src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_agent_blocklist.py"
@@ -5231,6 +5258,15 @@ creation_tokens:
     token: "auto-application-principles-20260719"
     created_by: "sess-16052-20260719032636"
     capability: "application_architecture_principles"
+  # 治本（2026-07-19，target_architecture 清理第六批 a）
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/technology_principles.md"
+    token: "auto-technology-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "technology_architecture_principles"
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/governance_principles.md"
+    token: "auto-governance-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "governance_architecture_principles"
 
   # 治本进度持久化 reconciler（#ARCH-GOV-CONVERGENCE-META Phase 3.1，修复 broken import）
   # 背景：Task I commit b4dd7e8d97 意外包含 orphaned import+registration，但文件未提交→clean checkout broken
