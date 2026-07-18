@@ -1,4 +1,3 @@
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain-knowledge/knowledge-base/blueprint.md
 # [MODULE] zephyr.governance.escalation.triage
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.gov_enforcement.rule_enforcement.gate_types.__init__; zephyr.governance.__init__

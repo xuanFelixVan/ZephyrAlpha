@@ -1,5 +1,4 @@
 # [A_test] module_id: SRC-TST-1185 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-KB-001 | docs/03_modules/_domain_knowledge/knowledge_base/blueprint.md | §
 # [MODULE] tests.test_ke_tombstone
 # [INVARIANTS] none
 # [MODIFY-GUARD] none

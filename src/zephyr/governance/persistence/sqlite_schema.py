@@ -29,7 +29,6 @@ Safety  : M（DDL 定义，init_db 幂等执行）
  1. tasks                 — 任务登记表（10 状态流转 + namespace 分类）
  2. task_files            — 任务-文件 N:N 映射表（#21 裁定）
  3. events                — 事件流（DeferredQueue 消费）
- 4. knowledge             — KE 索引
  5. gate_runs             — 门禁运行记录（5.18.14 改名，避免与 depgraph gates 同名异构）
  6. circuit_breaker_state — CBG 模块间熔断状态（T-V2-005 experimental）
  7. _schema_version       — Schema 版本追踪（SH-DB-001 v2.0 新增）
@@ -141,23 +140,6 @@ CREATE TABLE IF NOT EXISTS events (
 
 # ---------------------------------------------------------------------------
 # DDL — knowledge 表
-# ---------------------------------------------------------------------------
-
-_DDL_KNOWLEDGE = """
-CREATE TABLE IF NOT EXISTS knowledge (
-    ke_id               TEXT PRIMARY KEY,
-    title               TEXT NOT NULL,
-    category            TEXT NOT NULL DEFAULT 'general',
-    source_file         TEXT NOT NULL,
-    source_git_deleted  INTEGER NOT NULL DEFAULT 0 CHECK(source_git_deleted IN (0,1)),
-    fingerprint_sha256  TEXT,
-    tags                TEXT NOT NULL DEFAULT '[]',
-    summary             TEXT NOT NULL DEFAULT '',
-    created_at          TEXT NOT NULL,
-    updated_at          TEXT NOT NULL
-)
-"""
-
 # ---------------------------------------------------------------------------
 # DDL — gates 表
 # ---------------------------------------------------------------------------
@@ -370,7 +352,6 @@ _DDL_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_events_created     ON events(created_at)",
     "CREATE INDEX IF NOT EXISTS idx_gate_runs_gate_id  ON gate_runs(gate_id)",
     "CREATE INDEX IF NOT EXISTS idx_gate_runs_session  ON gate_runs(session_id)",
-    "CREATE INDEX IF NOT EXISTS idx_knowledge_cat      ON knowledge(category)",
 ]
 
 _DDL_INDEXES_FLE = [
@@ -463,11 +444,10 @@ from zephyr.shared.io.sqlite_factory import (  # noqa: E402
 _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     (
         1,
-        "Initial schema: tasks + events + knowledge + gates + indexes + views",
+        "Initial schema: tasks + events + gates + indexes + views",
         [
             _DDL_TASKS,
             _DDL_EVENTS,
-            _DDL_KNOWLEDGE,
             _DDL_GATES,
             *_DDL_INDEXES,
             _DDL_VIEW_EVENT_LOG,
@@ -502,13 +482,9 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
     ),
     (
         4,
-        "knowledge status column (T-2-11-A)",
+        "KBG removal: drop knowledge table (T-2-11-A superseded)",
         [
-            "ALTER TABLE knowledge ADD COLUMN status TEXT NOT NULL DEFAULT 'DRAFT' "
-            "CHECK(status IN ("
-            "'DRAFT','SUBMITTED','REVIEWED','ACCEPTED','INDEXED',"
-            "'VERIFIED','REJECTED','DEPRECATED','ARCHIVED','SUPERSEDED'"
-            "))",
+            "DROP TABLE IF EXISTS knowledge",
         ],
     ),
     (
