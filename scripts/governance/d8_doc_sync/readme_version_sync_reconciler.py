@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV-readme_version_sync | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
+# [BLUEPRINT] MOD-readme_version_sync | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] scripts.governance.d8_doc_sync.readme_version_sync_reconciler
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcilerSpec, ReconcileResult)
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] _reconcile异常降级为warn ReconcileResult；真源文件读取失败降级warn；版本号解析失败降级warn
 # [TESTS] tests/scripts/governance/d8_doc_sync/test_readme_version_sync_reconciler.py
-# [A_module] module_id=MOD-GOV-readme_version_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-readme_version_sync | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """readme_version_sync_reconciler.py — README 版本号派生展示校验 reconciler
 
