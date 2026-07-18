@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# [BLUEPRINT] MOD-MIGRATE_SQLITE_TO_PG | docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md | §seed_from_yaml
+# [BLUEPRINT] MOD-migrate_sqlite_to_pg | docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md | §seed_from_yaml
 # [MODULE] scripts.governance.migrate_sqlite_to_pg.seed_from_yaml
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d8_doc_sync.sync_yaml_to_depgraph (sync_all); scripts.governance._shared.constants (EXIT codes)

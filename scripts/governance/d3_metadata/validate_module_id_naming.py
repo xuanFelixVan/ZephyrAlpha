@@ -66,9 +66,9 @@ import re
 #   \Z 替代 $（防止尾部 \n 被 $ 匹配，$ 默认匹配换行前）
 #   {1,20} 限制（防止超长输入如 10000 个 A 导致存储/日志膨胀）
 #   SH- 轨支持 _ 下划线（与派生轨一致，如 SH-LLM_SEC-042）
-MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")              # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填
-MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Z]{1,20}(?:_[A-Z]{1,20})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选
-MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")           # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填
+MODULE_ID_LAYER_MASTER_RE = re.compile(r"^MOD-[A-Z][A-Z0-9]{1,5}-[0-9]+\Z")              # layer-master 轨: MOD-{LAYER_CODE}-{SEQ} 序号必填（LAYER_CODE 大写缩写）
+MODULE_ID_DOMAIN_DERIVED_RE = re.compile(r"^MOD-[A-Za-z]{1,20}(?:_[A-Za-z]{1,20})*(?:-[0-9]+)?\Z")  # 派生轨: MOD-{DOMAIN_FRAGMENT}[-NNN] 序号可选（小写约定，兼容历史大写）
+MODULE_ID_SHARED_RE = re.compile(r"^SH-[A-Z]{1,20}(?:_[A-Z]{1,20})*-[0-9]+\Z")           # 跨域共享轨: SH-{ABBR}-{NNN} 序号必填（ABBR 大写缩写）
 
 # ---------------------------------------------------------------------------
 # submodule_id 正则（R2 治本修订，2026-07-05）

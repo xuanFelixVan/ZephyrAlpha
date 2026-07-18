@@ -1,5 +1,5 @@
 # [A_test] module_id: SRC-TST-2410 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
-# [BLUEPRINT] MOD-MIGRATE_SQLITE_TO_PG | docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md | §migrate_data
+# [BLUEPRINT] MOD-migrate_sqlite_to_pg | docs/03_modules/_cross_layer/database/sub_blueprints/mod_inf_012b_p2_postgresql_migration.md | §migrate_data
 # [MODULE] tests.governance.test_migrate_sqlite_to_pg
 # [STABILITY] volatile
 # [SAFETY] L

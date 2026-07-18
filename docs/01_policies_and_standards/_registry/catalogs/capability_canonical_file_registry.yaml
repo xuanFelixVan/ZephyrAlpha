@@ -5148,17 +5148,39 @@ creation_tokens:
     token: "auto-migrate-sqlite-to-pg-20260719"
     created_by: "sess-32960-20260719022002"
     capability: "migrate_sqlite_to_pg"
-  # 治本（2026-07-19，MOD-MIGRATE_SQLITE_TO_PG）：迁移工具集索引文档（CREATE-GUARD 要求 .md 登记 token）
+  # 治本（2026-07-19，MOD-migrate_sqlite_to_pg）：迁移工具集索引文档（CREATE-GUARD 要求 .md 登记 token）
   - file: "scripts/governance/migrate_sqlite_to_pg/README.md"
     token: "auto-migrate-sqlite-to-pg-readme-20260719"
     created_by: "sess-29488-20260719023314"
     capability: "migrate_sqlite_to_pg"
+  # 治本（2026-07-19，MOD-GOV-debt-rulings）：第102轮 DEFERRED-PERMANENT 架构裁定记录（promote 到永久区）
+  - file: "docs/02_enterprise_architecture/debt_permanent_rulings_r102.md"
+    token: "auto-debt-rulings-r102-20260719"
+    created_by: "sess-3352-20260719032034"
+    capability: "debt_permanent_rulings"
 
   # 治本（2026-07-19，target_architecture 清理第一批）：从 capability_heatmap.md 提取永恒方法论到 04 永久区
   - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/capability_maturity_principles.md"
     token: "auto-capability-maturity-principles-20260719"
     created_by: "sess-27136-20260719030938"
     capability: "capability_maturity_principles"
+  # 治本（2026-07-19，target_architecture 清理第二批）：从 data_architecture.md 提取永恒原则到 04 永久区
+  - file: "docs/02_enterprise_architecture/04_architecture_principles_decisions/data_principles.md"
+    token: "auto-data-principles-20260719"
+    created_by: "sess-16052-20260719032636"
+    capability: "data_architecture_principles"
+
+  # 治本进度持久化 reconciler（#ARCH-GOV-CONVERGENCE-META Phase 3.1，修复 broken import）
+  # 背景：Task I commit b4dd7e8d97 意外包含 orphaned import+registration，但文件未提交→clean checkout broken
+  - file: "src/zephyr/governance/audit/remediation_progress_reconciler.py"
+    token: "auto-remediation-progress-reconciler-20260719"
+    created_by: "sess-33764-20260719035340"
+    capability: "remediation_progress_tracking"
+  # 治本进度 reconciler end-to-end smoke test（真实 DB 写入验证三要素：持久化+可发现+可阻断）
+  - file: "scripts/governance/test_remediation_progress_smoke.py"
+    token: "auto-remediation-progress-smoke-20260719"
+    created_by: "sess-33764-20260719035340"
+    capability: "remediation_progress_tracking"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
