@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-INFORMATION
 title: Architecture Principles — Information / 架构原则：信息
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -21,7 +21,7 @@ tags:
 - docs-structure
 - document-lifecycle
 - drawer-taxonomy
-summary: 信息架构永恒原则文档。从 target_architecture/information_architecture.md（已删除）提取的 timeless 方法论——docs/ 抽屉四种性质分类（治理与标准层/架构层/模块蓝图层/知识层/过程区/历史区）、文档生命周期状态机、frontmatter 元数据标准（schema v2.0.0 + 9 类 doc_type 词表 + module_id 命名规则）、TTL 治理。派生数据（具体目录清单、成熟度状态、当前工作区入口）不在本文档，由 directory_registry.yaml + 自动化系统维护。
+summary: 信息架构永恒原则文档。timeless 方法论——docs/ 抽屉四种性质分类（治理与标准层/架构层/模块蓝图层/知识层/过程区/历史区）、文档生命周期状态机、frontmatter 元数据标准（schema v2.0.0 + 9 类 doc_type 词表 + module_id 命名规则）、TTL 治理。派生数据（具体目录清单、成熟度状态、当前工作区入口）不在本文档，由 directory_registry.yaml + 自动化系统维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -33,7 +33,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**信息架构的永恒指导原则**，从 `target_architecture/information_architecture.md`（已删除）提取。
+本文档是**信息架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——抽屉分类依据、文档生命周期、元数据标准。
 
@@ -41,7 +41,7 @@ ttl: permanent
 - docs/ 具体目录清单 → `directory_registry.yaml`（项目目录登记表 SSoT）
 - 目录成熟度状态（active/partial/planned/deferred）→ 由 directory_registry 派生
 - 当前工作区关键入口 → 自动从 directory_registry 派生
-- 53 域清单 → `generated/domains/index.md`（depgraph 派生）
+- 全域清单 → `generated/domains/index.md`（depgraph 派生）
 
 **与其他原则文档关系**：
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
@@ -222,7 +222,7 @@ draft → in_discussion → review_ready → active/accepted → superseded/depr
 | docs/ 具体目录清单 | `directory_registry.yaml`（SSoT）|
 | 目录成熟度状态（active/partial/planned/deferred）| `directory_registry.yaml` 派生 |
 | 当前工作区关键入口 | 自动从 directory_registry 派生 |
-| 53 域清单 | `generated/domains/index.md`（depgraph 派生）|
+| 全域清单 | `generated/domains/index.md`（depgraph 派生）|
 | frontmatter schema 完整规格 | `frontmatter_schema.json` |
 | doc_type 合法值清单 | `doc_type_vocabulary.yaml` |
 | TTL 合法值清单 | `ttl_vocabulary.yaml` |

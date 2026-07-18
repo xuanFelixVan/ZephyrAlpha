@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-OPERATIONS
 title: Architecture Principles — Operations / 架构原则：运维
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -29,7 +29,7 @@ tags:
 - sli-slo
 - opentelemetry
 - feedback-loop-consumer
-summary: 运维架构永恒原则文档。从 target_architecture/operations_architecture.md（已删除）提取的 timeless 方法论——8 运维域定义（D1 部署/D2 监控/D3 备份/D4 灾备/D5 变更/D6 事件/D7 容量/D8 成本）、experimental SLI/SLO 基线（9 项指标阈值 + 告警动作）、指标采集拓扑（FLE 三段管道）、5 大核心服务运维治理（生命周期 DAG 序 + 健康检查合约 + 降级矩阵 + 日常巡检）、8 条 Activation Triggers（真实资金/非 localhost/磁盘 80%/第二人/7x24/月费 ¥5000/合规审查/生产因子）。派生数据（各域当前状态、Runbook Catalog 占位清单）不在本文档，由 ops 域实际激活后维护。
+summary: 运维架构永恒原则文档。timeless 方法论——8 运维域定义（D1 部署/D2 监控/D3 备份/D4 灾备/D5 变更/D6 事件/D7 容量/D8 成本）、experimental SLI/SLO 基线（9 项指标阈值 + 告警动作）、指标采集拓扑（FLE 三段管道）、5 大核心服务运维治理（生命周期 DAG 序 + 健康检查合约 + 降级矩阵 + 日常巡检）、8 条 Activation Triggers（真实资金/非 localhost/磁盘 80%/第二人/7x24/月费 ¥5000/合规审查/生产因子）。派生数据（各域当前状态、Runbook Catalog 占位清单）不在本文档，由 ops 域实际激活后维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -41,7 +41,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**运维架构的永恒指导原则**，从 `target_architecture/operations_architecture.md`（已删除，原 status=Draft v0.2.1 skeleton）提取。
+本文档是**运维架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——8 运维域定义、SLI/SLO 基线、指标采集拓扑、5 大核心服务运维治理、Activation Triggers。
 

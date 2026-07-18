@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-CAPABILITY-MATURITY
 title: Capability Maturity Principles / 能力成熟度原则
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -22,14 +22,14 @@ tags:
 - maturity-model
 - orthogonal-view
 - domain-driven
-summary: 能力成熟度评估的永恒原则——五档成熟度模型定义、评分规则、季度 review 流程。派生数据（53域×10能力域热力图快照）由 depgraph 自动生成，不在本文档。
+summary: 能力成熟度评估的永恒原则——五档成熟度模型定义、评分规则、季度 review 流程。派生数据（全域×10能力域热力图快照）由 depgraph 自动生成，不在本文档。
 date: '2026-07-19'
 ttl: permanent
 ---
 
 # Capability Maturity Principles / 能力成熟度原则
 
-> 本文档从 `target_architecture/capability_heatmap.md`（已删除）提取永恒指导内容。
+> 本文档定义永恒指导内容。
 > 派生数据（域成熟度快照、热力图可视化）由 `scripts/governance/d5_architecture/generators/generate_design_vs_production.py` 自动生成到 `01_global_architecture_diagram/global_capability_heatmap.md`。
 
 ## 1. 业界对标

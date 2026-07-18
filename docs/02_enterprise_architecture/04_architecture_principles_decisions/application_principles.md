@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-APPLICATION
 title: Architecture Principles — Application / 架构原则：应用
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -43,7 +43,7 @@ tags:
 - orthogonal-view
 - vibe-coding-2.0
 - 5-core-services
-summary: 应用架构永恒原则文档。从 target_architecture/application_architecture.md（已删除）提取的 timeless 方法论——模块归属判定原则（域归属/跨域依赖/容量管理）、Vibe Coding 2.0 五大核心服务定位（LSG/CE/Orc/VMS/FLE）、容错与幂等设计铁律、C4 视图分层、运行时三平面正交视图。派生数据（53 域清单、节点统计、域层级分布、5 大服务域归属）不在本文档，由 depgraph + 自动化派生视图维护。
+summary: 应用架构永恒原则文档。timeless 方法论——模块归属判定原则（域归属/跨域依赖/容量管理）、Vibe Coding 2.0 五大核心服务定位（LSG/CE/Orc/VMS/FLE）、容错与幂等设计铁律、C4 视图分层、运行时三平面正交视图。派生数据（全域清单、节点统计、域层级分布、5 大服务域归属）不在本文档，由 depgraph + 自动化派生视图维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -55,12 +55,12 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**应用架构的永恒指导原则**，从 `target_architecture/application_architecture.md`（已删除）提取。
+本文档是**应用架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——模块归属原则、五大核心服务定位、容错与幂等设计、C4 视图分层、运行时三平面正交视图。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 53 域清单与统计 → `generated/domains/index.md`（depgraph 派生）
+- 全域清单与统计 → `generated/domains/index.md`（depgraph 派生）
 - 域层级分布 → depgraph `domains` 表
 - 节点/边统计数字 → depgraph `nodes`/`edges` 表（时点快照）
 - 5 大核心服务域归属 → depgraph
@@ -223,7 +223,7 @@ ttl: permanent
 
 | 内容 | 真源 |
 |------|------|
-| 53 域清单与统计 | `generated/domains/index.md`（depgraph 派生）|
+| 全域清单与统计 | `generated/domains/index.md`（depgraph 派生）|
 | 域层级分布 | depgraph `domains` 表 |
 | 节点/边统计数字 | depgraph `nodes`/`edges` 表（时点快照）|
 | 5 大核心服务域归属 | depgraph |

@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-SECURITY
 title: Architecture Principles — Security / 架构原则：安全
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -27,7 +27,7 @@ tags:
 - agent-sandbox
 - fail-closed
 - llm-security-gateway
-summary: 安全架构永恒原则文档。从 target_architecture/security_architecture.md 提取的 timeless 方法论——安全域划分、STRIDE-Lite 威胁模型、OWASP LLM Top 10 映射、LSG fail-closed 四层防御、Agent Sandbox 沙箱规则、Secret Management 三道防线、IAM AI Agent 身份模型、Data Protection 数据分级、Audit Logging 防篡改、Incident Response 响应流程。派生数据（密钥资产清单、Phase 进度、Open Questions）不在本文档，由各自自动化系统维护。
+summary: 安全架构永恒原则文档。timeless 方法论——安全域划分、STRIDE-Lite 威胁模型、OWASP LLM Top 10 映射、LSG fail-closed 四层防御、Agent Sandbox 沙箱规则、Secret Management 三道防线、IAM AI Agent 身份模型、Data Protection 数据分级、Audit Logging 防篡改、Incident Response 响应流程。派生数据（密钥资产清单、Phase 进度、Open Questions）不在本文档，由各自自动化系统维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -39,7 +39,7 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**安全架构的永恒指导原则**，从 `target_architecture/security_architecture.md`（已删除）提取。
+本文档是**安全架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——这些不随 Phase 演进或资产清单变化而改变。
 

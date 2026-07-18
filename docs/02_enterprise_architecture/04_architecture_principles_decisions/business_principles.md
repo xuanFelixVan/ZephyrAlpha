@@ -3,7 +3,7 @@ module_id: VIEW-04PRINC-BUSINESS
 title: Architecture Principles — Business / 架构原则：业务
 doc_type: architecture_view
 status: Active
-version: 1.0.0
+version: 1.0.1
 layer: cross_layer
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -25,7 +25,7 @@ tags:
 - nfr
 - slo
 - sli
-summary: 业务架构永恒原则文档。从 target_architecture/business_architecture.md（已删除）提取的 timeless 方法论——业务能力地图框架（C1-C7 + CC1-CC3 横切）、Value Stream Map 方法论（LT/PT/%C&A、Handoff 治理、精益七浪费）、NFR 定位原则（Non-HFT、市场时段分层、可审计≫可用性）、SLO/SLA/SLI 术语铁律、SLO 升级触发条件。派生数据（53 域→能力域映射、阶段指标具体数字、能力成熟度评分）不在本文档，由 capability_heatmap.yaml + 自动化系统维护。
+summary: 业务架构永恒原则文档。timeless 方法论——业务能力地图框架（C1-C7 + CC1-CC3 横切）、Value Stream Map 方法论（LT/PT/%C&A、Handoff 治理、精益七浪费）、NFR 定位原则（Non-HFT、市场时段分层、可审计≫可用性）、SLO/SLA/SLI 术语铁律、SLO 升级触发条件。派生数据（全域→能力域映射、阶段指标具体数字、能力成熟度评分）不在本文档，由 capability_heatmap.yaml + 自动化系统维护。
 date: '2026-07-19'
 ttl: permanent
 ---
@@ -37,12 +37,12 @@ ttl: permanent
 
 ## §1 定位 / Position
 
-本文档是**业务架构的永恒指导原则**，从 `target_architecture/business_architecture.md`（已删除）提取。
+本文档是**业务架构的永恒指导原则**。
 
 **保留内容**：方法论、设计原则、不变约束——业务能力地图框架、VSM 方法论、NFR 定位原则、SLO 术语铁律。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 53 域→能力域映射 → `architecture_model/cross_cutting/capability_heatmap.yaml`（真源）
+- 全域→能力域映射 → `architecture_model/cross_cutting/capability_heatmap.yaml`（真源）
 - 能力成熟度评分 → `capability_heatmap.yaml` + `global_capability_heatmap.md`（自动派生）
 - VSM 阶段指标具体数字（LT/PT/%C&A）→ 由运营态 metrics 自动采集
 - Stakeholder RACI 矩阵 → 未来激活时从 git 历史恢复（v1.2.0, commit 69fa51dc12~1）
@@ -247,7 +247,7 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 
 | 内容 | 真源 |
 |------|------|
-| 53 域→能力域映射 | `architecture_model/cross_cutting/capability_heatmap.yaml` |
+| 全域→能力域映射 | `architecture_model/cross_cutting/capability_heatmap.yaml` |
 | 能力成熟度评分（L0-L5） | `capability_heatmap.yaml` + `global_capability_heatmap.md`（自动派生）|
 | VSM 阶段指标具体数字（LT/PT/%C&A）| 运营态 metrics 自动采集 |
 | SLO 目标值矩阵 | SLO 矩阵文档（运营态维护）|
