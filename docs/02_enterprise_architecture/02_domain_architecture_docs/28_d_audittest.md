@@ -15,7 +15,6 @@ ttl: permanent
 > **文档作用 / Purpose**: 展示 审计测试套件（D_AUDITTEST）功能域的模块清单、域内依赖关系、跨域依赖关系、架构分层视图，供架构审查和域治理参考。
 
 > 本文档由 generate_domain_doc.py 从 depgraph (PostgreSQL) 自动生成
-> 最后更新: 2026-07-18 15:37:48
 > 数据源: depgraph (PostgreSQL) nodes表 + edges表
 
 ## 域基本信息 / Domain Overview
@@ -26,19 +25,19 @@ ttl: permanent
 | 域ID | D_AUDITTEST | Domain ID | D_AUDITTEST |
 | 域名称 | 审计测试套件 | Domain Name | Audit Test Suite |
 | 层级 | L2 业务域层 | Layer | L2 Domain |
-| 模块数 | 12 | Module Count | 12 |
-| 域内依赖 | 1 | Internal Dependencies | 1 |
+| 模块数 | 1 | Module Count | 1 |
+| 域内依赖 | 0 | Internal Dependencies | 0 |
 | 跨域入边 | 0 | Cross-domain Incoming | 0 |
-| 跨域出边 | 17 | Cross-domain Outgoing | 17 |
+| 跨域出边 | 0 | Cross-domain Outgoing | 0 |
 | 设计态模块 | 0 | Design Modules | 0 |
-| 原型态模块 | 11 | Prototype Modules | 11 |
+| 原型态模块 | 0 | Prototype Modules | 0 |
 | 生产态模块 | 1 | Production Modules | 1 |
 | 容量 | 1/150 (正常) | Capacity | 1/150 (正常) |
 | 描述 | 审计单元测试(unit) | Description | 审计单元测试(unit) |
 
 ## 模块分层清单 / Module Layered List
 
-> 按 architecture_layer 分组的模块清单（共 12 个模块 / 12 modules）。
+> 按 architecture_layer 分组的模块清单（共 1 个模块 / 1 modules）。
 
 ### L1 基础层 / Foundation Layer (1 modules)
 
@@ -147,22 +146,6 @@ ttl: permanent
 | ↳100 |   ↳ tests/agent_rbac/test_permissions.py |  | - | - |
 | | | > (仅显示前 100 个 items，共 1681 个) | | |
 
-### L2 领域层 / Domain Layer (11 modules)
-
-| # | 模块路径 / Module Path | 模块名称 / Module Name (功能简介 / Description) | 成熟度 / Maturity | 蓝图 / Blueprint |
-|:--:|---------|---------|:---:|:---:|
-| 1 | tests/scripts/backup/__init__.py | __init__.py | 原型态 / prototype |  |
-| 2 | tests/scripts/backup/test_backup_reconciler.py | backup_reconciler单元测试——验证触发条件与间隔... | 原型态 / prototype |  |
-| 3 | tests/test_apply_decisiongraph.py | test_apply_decisiongraph — apply_decisiongraph... | 原型态 / prototype |  |
-| 4 | tests/test_backtest_decisiongraph_adapter.py | test_backtest_decisiongraph_adapter — Backtest... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 5 | tests/test_decision_graph_reader.py | test_decision_graph_reader — DecisionGraphRead... | 原型态 / prototype |  |
-| 6 | tests/test_event_driven_engine.py | event_driven_engine 正式测试（原 scripts/tests/... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 7 | tests/test_extract_decisiongraph.py | test_extract_decisiongraph — extract_decisiong... | 原型态 / prototype |  |
-| 8 | tests/test_generate_decision_graph.py | test_generate_decision_graph — generate_decisi... | 原型态 / prototype |  |
-| 9 | tests/test_matching_engine.py | matching_engine + matching_logic + portfolio 正... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-| 10 | tests/test_miniqmt_broker.py | miniqmt_broker 正式测试（原 scripts/tests/ 临时... | 原型态 / prototype | [MOD-L06-001](../../03_modules/_domain_execution_core/blueprint.md) |
-| 11 | tests/test_tick_replay_data_handler.py | tick_replay + data_handler 正式测试（原 scripts... | 原型态 / prototype | [MOD-BT-001](../../03_modules/_domain_backtest/blueprint.md) |
-
 ## 域内依赖图 / Internal Dependency Diagram
 
 > 依赖图内嵌在本文档中，IDE 可直接渲染显示。参考 decision_index.md 设计，分四个视图：合并全景图、运营态子图、设计态子图、原型态子图（按 design_maturity 实际值拆分）。
@@ -176,50 +159,18 @@ ttl: permanent
 
 ### 合并全景图（全部模块，标签标注成熟度）
 
-> 展示全部 12 个模块（生产态 1 + 设计态 0 + 原型态 11），标签标注成熟度。
+> 展示全部 1 个模块（生产态 1 + 设计态 0 + 原型态 0），标签标注成熟度。
 
 ```mermaid
 graph TD
     subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
         docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml["(生产态 / production)  Test Suite — ARCH-052 聚合节点 production"]
-        tests_scripts_backup_init_py["(原型态 / prototype) __init__.py"]
-        tests_scripts_backup_test_backup_reconciler_py["(原型态 / prototype) backup_reconciler单元测试——验证触发条件与间隔...<br/>文件: test_backup_reconciler.py"]
-        tests_test_apply_decisiongraph_py["(原型态 / prototype) test_apply_decisiongraph — apply_decisiongraph...<br/>文件: test_apply_decisiongraph.py"]
-        tests_test_backtest_decisiongraph_adapter_py["(原型态 / prototype) test_backtest_decisiongraph_adapter — Backtest...<br/>文件: test_backtest_decisiongraph_adapter.py"]
-        tests_test_decision_graph_reader_py["(原型态 / prototype) test_decision_graph_reader — DecisionGraphRead...<br/>文件: test_decision_graph_reader.py"]
-        tests_test_event_driven_engine_py["(原型态 / prototype) event_driven_engine 正式测试（原 scripts/tests/...<br/>文件: test_event_driven_engine.py"]
-        tests_test_extract_decisiongraph_py["(原型态 / prototype) test_extract_decisiongraph — extract_decisiong...<br/>文件: test_extract_decisiongraph.py"]
-        tests_test_generate_decision_graph_py["(原型态 / prototype) test_generate_decision_graph — generate_decisi...<br/>文件: test_generate_decision_graph.py"]
-        tests_test_matching_engine_py["(原型态 / prototype) matching_engine + matching_logic + portfolio 正...<br/>文件: test_matching_engine.py"]
-        tests_test_miniqmt_broker_py["(原型态 / prototype) miniqmt_broker 正式测试（原 scripts/tests/ 临时...<br/>文件: test_miniqmt_broker.py"]
-        tests_test_tick_replay_data_handler_py["(原型态 / prototype) tick_replay + data_handler 正式测试（原 scripts...<br/>文件: test_tick_replay_data_handler.py"]
     end
-    tests_scripts_backup_test_backup_reconciler_py -.->|config_depends / config_depends| tests_scripts_backup_init_py
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    D_TRADING["(生产态 / production) D_TRADING"]
-    tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_TRADING
-    tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_test_decision_graph_reader_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_decision_graph_reader_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_extract_decisiongraph_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_BACKTEST
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class docs_01_policies_and_standards_registry_catalogs_test_suite_registry_yaml production
-    class tests_scripts_backup_init_py,tests_scripts_backup_test_backup_reconciler_py,tests_test_apply_decisiongraph_py,tests_test_backtest_decisiongraph_adapter_py,tests_test_decision_graph_reader_py,tests_test_event_driven_engine_py,tests_test_extract_decisiongraph_py,tests_test_generate_decision_graph_py,tests_test_matching_engine_py,tests_test_miniqmt_broker_py,tests_test_tick_replay_data_handler_py design
-    class D_BACKTEST,D_TRADING,D_GOVERNANCE external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -246,73 +197,15 @@ graph TD
 
 ### 原型态子图（仅 design_maturity=prototype 的模块和依赖）
 
-> 仅展示代码已写、验证中未稳定上线的原型态模块（共 11 个，1 条域内依赖）。
+> 仅展示代码已写、验证中未稳定上线的原型态模块（共 0 个，0 条域内依赖）。
 
-```mermaid
-graph TD
-    subgraph D_AUDITTEST["D_AUDITTEST 审计测试套件"]
-        tests_scripts_backup_init_py["(原型态 / prototype) __init__.py"]
-        tests_scripts_backup_test_backup_reconciler_py["(原型态 / prototype) backup_reconciler单元测试——验证触发条件与间隔...<br/>文件: test_backup_reconciler.py"]
-        tests_test_apply_decisiongraph_py["(原型态 / prototype) test_apply_decisiongraph — apply_decisiongraph...<br/>文件: test_apply_decisiongraph.py"]
-        tests_test_backtest_decisiongraph_adapter_py["(原型态 / prototype) test_backtest_decisiongraph_adapter — Backtest...<br/>文件: test_backtest_decisiongraph_adapter.py"]
-        tests_test_decision_graph_reader_py["(原型态 / prototype) test_decision_graph_reader — DecisionGraphRead...<br/>文件: test_decision_graph_reader.py"]
-        tests_test_event_driven_engine_py["(原型态 / prototype) event_driven_engine 正式测试（原 scripts/tests/...<br/>文件: test_event_driven_engine.py"]
-        tests_test_extract_decisiongraph_py["(原型态 / prototype) test_extract_decisiongraph — extract_decisiong...<br/>文件: test_extract_decisiongraph.py"]
-        tests_test_generate_decision_graph_py["(原型态 / prototype) test_generate_decision_graph — generate_decisi...<br/>文件: test_generate_decision_graph.py"]
-        tests_test_matching_engine_py["(原型态 / prototype) matching_engine + matching_logic + portfolio 正...<br/>文件: test_matching_engine.py"]
-        tests_test_miniqmt_broker_py["(原型态 / prototype) miniqmt_broker 正式测试（原 scripts/tests/ 临时...<br/>文件: test_miniqmt_broker.py"]
-        tests_test_tick_replay_data_handler_py["(原型态 / prototype) tick_replay + data_handler 正式测试（原 scripts...<br/>文件: test_tick_replay_data_handler.py"]
-    end
-    tests_scripts_backup_test_backup_reconciler_py -.->|config_depends / config_depends| tests_scripts_backup_init_py
-    D_BACKTEST["(生产态 / production) D_BACKTEST"]
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_event_driven_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    D_TRADING["(生产态 / production) D_TRADING"]
-    tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_TRADING
-    tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_backtest_decisiongraph_adapter_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_matching_engine_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    tests_test_tick_replay_data_handler_py -.->|测试依赖 / test_depends| D_BACKTEST
-    D_GOVERNANCE["(生产态 / production) D_GOVERNANCE"]
-    tests_test_decision_graph_reader_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_decision_graph_reader_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_extract_decisiongraph_py -.->|测试依赖 / test_depends| D_GOVERNANCE
-    tests_test_miniqmt_broker_py -.->|测试依赖 / test_depends| D_BACKTEST
-    classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
-    classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
-    classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
-    class tests_scripts_backup_init_py,tests_scripts_backup_test_backup_reconciler_py,tests_test_apply_decisiongraph_py,tests_test_backtest_decisiongraph_adapter_py,tests_test_decision_graph_reader_py,tests_test_event_driven_engine_py,tests_test_extract_decisiongraph_py,tests_test_generate_decision_graph_py,tests_test_matching_engine_py,tests_test_miniqmt_broker_py,tests_test_tick_replay_data_handler_py design
-    class D_BACKTEST,D_TRADING,D_GOVERNANCE external_prod
-```
+> （无原型态模块 / No prototype modules）
 
 ## 跨域依赖 / Cross-domain Dependencies
 
 ### 本域依赖的其他域（出边）/ Depends On
 
-| # | 本域模块 / Source Module | → | 外部域-目标模块 / Target Module | 依赖类型 / Type |
-|:--:|---------|:--:|---------|---------|
-| 1 | test_backtest_decisiongraph_adapter — Backtest... | → | D_BACKTEST 回测: L_BACKTEST — Backtest Engine Layer (engine_bas... | 测试依赖 / test_depends |
-| 2 | test_backtest_decisiongraph_adapter — Backtest... | → | D_BACKTEST 回测: BacktestResult -> decisiongraph 适配器（TRAE-06... | 测试依赖 / test_depends |
-| 3 | event_driven_engine 正式测试（原 scripts/tests/... | → | D_BACKTEST 回测: L_BACKTEST — Backtest Engine Layer (engine_bas... | 测试依赖 / test_depends |
-| 4 | event_driven_engine 正式测试（原 scripts/tests/... | → | D_BACKTEST 回测: Tick 回放引擎模块（v1.1.0 新增，秒级做T专用） (... | 测试依赖 / test_depends |
-| 5 | event_driven_engine 正式测试（原 scripts/tests/... | → | D_BACKTEST 回测: 事件驱动回测引擎（v1.1.0 新增，Tick 级回测核心... | 测试依赖 / test_depends |
-| 6 | event_driven_engine 正式测试（原 scripts/tests/... | → | D_BACKTEST 回测: L_BACKTEST — Vectorized Backtest Engine (vecto... | 测试依赖 / test_depends |
-| 7 | matching_engine + matching_logic + portfolio 正... | → | D_BACKTEST 回测: 回测撮合引擎模块（v1.1.0 重构：委托 MatchingLog... | 测试依赖 / test_depends |
-| 8 | matching_engine + matching_logic + portfolio 正... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） (matchi... | 测试依赖 / test_depends |
-| 9 | matching_engine + matching_logic + portfolio 正... | → | D_BACKTEST 回测: 回测持仓管理模块 (portfolio.py) | 测试依赖 / test_depends |
-| 10 | miniqmt_broker 正式测试（原 scripts/tests/ 临时... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） (matchi... | 测试依赖 / test_depends |
-| 11 | tick_replay + data_handler 正式测试（原 scripts... | → | D_BACKTEST 回测: 回测数据处理器模块（v1.1.0 扩展：多源化 + Click... | 测试依赖 / test_depends |
-| 12 | tick_replay + data_handler 正式测试（原 scripts... | → | D_BACKTEST 回测: 共享撮合逻辑模块（回测=实盘一致性核心） (matchi... | 测试依赖 / test_depends |
-| 13 | tick_replay + data_handler 正式测试（原 scripts... | → | D_BACKTEST 回测: Tick 回放引擎模块（v1.1.0 新增，秒级做T专用） (... | 测试依赖 / test_depends |
-| 14 | test_decision_graph_reader — DecisionGraphRead... | → | D_GOVERNANCE 生命周期管理: decision_graph_reader.py — 决策流图数据库只读.... | 测试依赖 / test_depends |
-| 15 | test_decision_graph_reader — DecisionGraphRead... | → | D_GOVERNANCE 生命周期管理: decisiongraph Schema DDL + 不变量声明 (decision... | 测试依赖 / test_depends |
-| 16 | test_extract_decisiongraph — extract_decisiong... | → | D_GOVERNANCE 生命周期管理: decisiongraph Schema DDL + 不变量声明 (decision... | 测试依赖 / test_depends |
-| 17 | miniqmt_broker 正式测试（原 scripts/tests/ 临时... | → | D_TRADING 交易运营: Re-export wrapper: Order 真源在 zephyr.shared.c... | 测试依赖 / test_depends |
+无跨域出边依赖 / No cross-domain outgoing dependencies
 
 ### 依赖本域的其他域（入边）/ Depended By
 
@@ -320,18 +213,9 @@ graph TD
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 3 个外部域直接连接（出边 17 条 + 入边 0 条 = 17 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 0 个外部域直接连接（出边 0 条 + 入边 0 条 = 0 条）。只显示直接连接的域，不展开具体节点。
 
-```mermaid
-graph LR
-    D_AUDITTEST["D_AUDITTEST<br/>审计测试套件"]
-    D_BACKTEST["D_BACKTEST<br/>回测"]
-    D_GOVERNANCE["D_GOVERNANCE<br/>生命周期管理"]
-    D_TRADING["D_TRADING<br/>交易运营"]
-    D_AUDITTEST -->|13条 测试依赖 / test_depends| D_BACKTEST
-    D_AUDITTEST -->|3条 测试依赖 / test_depends| D_GOVERNANCE
-    D_AUDITTEST -->|1条 测试依赖 / test_depends| D_TRADING
-```
+> （无跨域依赖 / No cross-domain dependencies）
 
 ## 说明 / Notes
 

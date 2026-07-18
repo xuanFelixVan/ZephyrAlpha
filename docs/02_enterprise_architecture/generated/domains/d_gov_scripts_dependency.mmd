@@ -1,7 +1,7 @@
 %% D_GOV_SCRIPTS 域全景依赖图
-%% 生成时间: 2026-07-18 15:38:39
+%% 生成时间: 2026-07-18 19:51:46
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 452, 依赖边数: 561
+%% 模块数: 356, 依赖边数: 386
 
 graph TD
 
@@ -10,19 +10,12 @@ graph TD
         docs_01_policies_and_standards___alogs_scripts_registry_yaml["...gistry/catalogs/scripts_registry.yaml [production]"]
         scripts__archive_governance_dm106_p2b_verification_py[".../governance/dm106_p2b_verification.py [prototype]"]
         scripts_governance_["scripts/governance/ [design]"]
-        scripts_governance___init___py["scripts/governance/__init__.py [production]"]
-        scripts_governance__archive_on___analyze_orphan_consumers_py["...e/one_off/analyze_orphan_consumers.py [prototype]"]
         scripts_governance__archive_on___audit_post_sync_commands_py["...e/one_off/audit_post_sync_commands.py [prototype]"]
         scripts_governance__archive_on___ck_exam_case_consistency_py["...ne_off/check_exam_case_consistency.py [prototype]"]
-        scripts_governance__archive_one_off_check_rule_coverage_py["...rchive/one_off/check_rule_coverage.py [prototype]"]
         scripts_governance__archive_on___f_create_alignment_tasks_py["...ive/one_off/create_alignment_tasks.py [prototype]"]
         scripts_governance__archive_one_off_dm105_depgraph_triage_py["...hive/one_off/dm105_depgraph_triage.py [prototype]"]
         scripts_governance__archive_one_off_fix_broken_post_sync_py["...chive/one_off/fix_broken_post_sync.py [prototype]"]
-        scripts_governance__archive_one_off_group_orphan_modules_py["...chive/one_off/group_orphan_modules.py [prototype]"]
         scripts_governance__archive_one_off_list_phase0_tasks_py["..._archive/one_off/list_phase0_tasks.py [prototype]"]
-        scripts_governance__archive_on___grate_clean_build_status_py["...one_off/migrate_clean_build_status.py [prototype]"]
-        scripts_governance__archive_on____id_hyphen_to_underscore_py["...ate_domain_id_hyphen_to_underscore.py [prototype]"]
-        scripts_governance__archive_on___f_perf_depgraph_baseline_py["...ive/one_off/perf_depgraph_baseline.py [prototype]"]
         scripts_governance__archive_one_off_phase_a_backup_py["...ce/_archive/one_off/phase_a_backup.py [prototype]"]
         scripts_governance__archive_one_off_rename_kebab_to_snake_py["...hive/one_off/rename_kebab_to_snake.py [prototype]"]
         scripts_governance__archive_on___rename_whitelist_cleanup_py["...e/one_off/rename_whitelist_cleanup.py [prototype]"]
@@ -52,25 +45,20 @@ graph TD
         scripts_governance__archive_vms_ri_vms_migration_dry_run_py["...chive/vms_ri/vms_migration_dry_run.py [prototype]"]
         scripts_governance__archive_vms_ri_vms_phase_rollback_py["..._archive/vms_ri/vms_phase_rollback.py [prototype]"]
         scripts_governance__archive_vms_ri_vms_version_sync_check_py["...hive/vms_ri/vms_version_sync_check.py [prototype]"]
-        scripts_governance__shared___init___py["scripts/governance/_shared/__init__.py [prototype]"]
         scripts_governance__shared_base_py["scripts/governance/_shared/base.py [prototype]"]
         scripts_governance__shared_constants_py["scripts/governance/_shared/constants.py [production]"]
-        scripts_governance__shared_deprecated_paths_yaml["...ernance/_shared/deprecated_paths.yaml [production]"]
         scripts_governance__shared_encoding_py["scripts/governance/_shared/encoding.py [prototype]"]
         scripts_governance__shared_file_utils_py["scripts/governance/_shared/file_utils.py [prototype]"]
         scripts_governance__shared_frontmatter_py["...pts/governance/_shared/frontmatter.py [production]"]
         scripts_governance__shared_libcst_docstring_adder_py["...nce/_shared/libcst_docstring_adder.py [prototype]"]
-        scripts_governance__shared_plugin_contract_schema_yaml["...e/_shared/plugin_contract_schema.yaml [production]"]
         scripts_governance__shared_registry_entry_count_py["...nance/_shared/registry_entry_count.py [prototype]"]
         scripts_governance__shared_thresholds_py["scripts/governance/_shared/thresholds.py [prototype]"]
-        scripts_governance__shared_thresholds_yaml["...ts/governance/_shared/thresholds.yaml [production]"]
         scripts_governance__shared_walk_py["scripts/governance/_shared/walk.py [prototype]"]
         scripts_governance__shared_yaml_utils_py["scripts/governance/_shared/yaml_utils.py [prototype]"]
         scripts_governance__sync_check_p0_status_py["...s/governance/_sync/check_p0_status.py [prototype]"]
         scripts_governance__sync_cleanup_p0_auto_bridged_py["...ance/_sync/cleanup_p0_auto_bridged.py [prototype]"]
         scripts_governance__sync_cleanup_p0_ops_pending_py["...nance/_sync/cleanup_p0_ops_pending.py [prototype]"]
         scripts_governance__sync_fix_orphan_deps_py["...s/governance/_sync/fix_orphan_deps.py [prototype]"]
-        scripts_governance__tasks___init___py["scripts/governance/_tasks/__init__.py [prototype]"]
         scripts_governance__tasks_list_phase0_tasks_py["...overnance/_tasks/list_phase0_tasks.py [prototype]"]
         scripts_governance__tasks_task_show_py["scripts/governance/_tasks/task_show.py [prototype]"]
         scripts_governance__tasks_task_summary_py["...pts/governance/_tasks/task_summary.py [prototype]"]
@@ -79,12 +67,9 @@ graph TD
         scripts_governance_apply_depgraph_py["scripts/governance/apply_depgraph.py [prototype]"]
         scripts_governance_architecture_health_dashboard_py["...ance/architecture_health_dashboard.py [prototype]"]
         scripts_governance_ast_import_rewriter_py["...pts/governance/ast_import_rewriter.py [prototype]"]
-        scripts_governance_d10_performance___init___py["...overnance/d10_performance/__init__.py [prototype]"]
         scripts_governance_d10_performance_collect_system_threads_py["...performance/collect_system_threads.py [prototype]"]
-        scripts_governance_d11_compliance___init___py["...governance/d11_compliance/__init__.py [prototype]"]
         scripts_governance_d11_compliance_audit_registration_py[".../d11_compliance/audit_registration.py [prototype]"]
         scripts_governance_d11_compliance_check_ssot_gate_py["...nce/d11_compliance/check_ssot_gate.py [prototype]"]
-        scripts_governance_d11_compliance_check_test_structure_py["...11_compliance/check_test_structure.py [prototype]"]
         scripts_governance_d11_compliance_ci_self_check_py["...nance/d11_compliance/ci_self_check.py [prototype]"]
         scripts_governance_d11_compliance_fix_shared_bypass_py["...e/d11_compliance/fix_shared_bypass.py [prototype]"]
         scripts_governance_d11_compliance_g9_compliance_check_py["...d11_compliance/g9_compliance_check.py [prototype]"]
@@ -100,137 +85,104 @@ graph TD
         scripts_governance_d11_complia___ask_decomposition_bypass_py["...validate_task_decomposition_bypass.py [prototype]"]
         scripts_governance_d11_complia___date_vocabulary_coverage_py["...iance/validate_vocabulary_coverage.py [prototype]"]
         scripts_governance_d11_compliance_verify_audit_integrity_py["..._compliance/verify_audit_integrity.py [prototype]"]
-        scripts_governance_d11_compliance_verify_key_imports_py[".../d11_compliance/verify_key_imports.py [prototype]"]
         scripts_governance_d11_compliance_verify_schema_health_py["...11_compliance/verify_schema_health.py [prototype]"]
-        scripts_governance_d12_ai_hallucination___init___py["...ance/d12_ai_hallucination/__init__.py [prototype]"]
         scripts_governance_d12_ai_hall___tion_check_logger_kwargs_py["..._hallucination/check_logger_kwargs.py [prototype]"]
         scripts_governance_d12_ai_hall___ate_gate_prompt_conflict_py["...tion/validate_gate_prompt_conflict.py [prototype]"]
         scripts_governance_d12_ai_hall____validate_session_budget_py["...lucination/validate_session_budget.py [prototype]"]
         scripts_governance_d12_ai_hall___idate_session_gate_check_py["...nation/validate_session_gate_check.py [prototype]"]
-        %% ... 还有 352 个模块未显示
+        scripts_governance_d1_structure_archive_drafts_zone_py["...e/d1_structure/archive_drafts_zone.py [production]"]
+        scripts_governance_d1_structure_audit_config_format_py["...e/d1_structure/audit_config_format.py [prototype]"]
+        scripts_governance_d1_structure_audit_directory_integrity_py["...tructure/audit_directory_integrity.py [prototype]"]
+        scripts_governance_d1_structur___it_directory_scalability_py["...ucture/audit_directory_scalability.py [prototype]"]
+        scripts_governance_d1_structure_audit_findings_by_scope_py["..._structure/audit_findings_by_scope.py [prototype]"]
+        scripts_governance_d1_structure_batch_create_index_md_py["...d1_structure/batch_create_index_md.py [prototype]"]
+        scripts_governance_d1_structure_cbg_reset_py[".../governance/d1_structure/cbg_reset.py [prototype]"]
+        scripts_governance_d1_structure_check_directory_contract_py["...structure/check_directory_contract.py [prototype]"]
+        scripts_governance_d1_structure_check_handoff_manifests_py["..._structure/check_handoff_manifests.py [prototype]"]
+        scripts_governance_d1_structure_check_index_integrity_py["...d1_structure/check_index_integrity.py [prototype]"]
+        scripts_governance_d1_structure_cleanup_stash_py["...ernance/d1_structure/cleanup_stash.py [prototype]"]
+        scripts_governance_d1_structure_detect_orphan_py_py["...ance/d1_structure/detect_orphan_py.py [prototype]"]
+        scripts_governance_d1_structure_detect_residual_files_py["...d1_structure/detect_residual_files.py [prototype]"]
+        scripts_governance_d1_structure_detect_temp_files_py["...nce/d1_structure/detect_temp_files.py [prototype]"]
+        scripts_governance_d1_structure_drafts_zone_archiver_py[".../d1_structure/drafts_zone_archiver.py [prototype]"]
+        scripts_governance_d1_structure_generate_missing_index_md_py["...tructure/generate_missing_index_md.py [prototype]"]
+        scripts_governance_d1_structure_reset_cbg_py[".../governance/d1_structure/reset_cbg.py [prototype]"]
+        %% ... 还有 256 个模块未显示
     end
 
     %% 域内依赖（最多显示 80 条）
-    scripts_governance_ast_import_rewriter_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_architecture_health_dashboard_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_generate_project_path_tree_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_d10_performance_collect_system_threads_py -->|config_depends| scripts_governance_d10_performance___init___py
-    scripts_governance_status_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_verify_sync_integrity_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_run_gate_chain_py -->|config_depends| scripts_governance___init___py
-    scripts_governance_d11_compliance_ci_self_check_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_audit_registration_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_fix_shared_bypass_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_complia___date_frozen_requirements_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_commit_gateway_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_exit_codes_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_complia___idate_manifest_admission_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_commit_message_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_complia___ask_decomposition_bypass_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_script_quality_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_no_utf8_bom_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_validate_script_naming_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_complia___date_vocabulary_coverage_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d11_compliance_verify_audit_integrity_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d12_ai_hall___ate_gate_prompt_conflict_py -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
-    scripts_governance_d11_compliance_verify_key_imports_py -->|config_depends| scripts_governance_d11_compliance___init___py
-    scripts_governance_d12_ai_hall___idate_session_gate_check_py -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
-    scripts_governance_d12_ai_hall___tion_check_logger_kwargs_py -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
-    scripts_governance_d12_ai_hall____validate_session_budget_py -->|config_depends| scripts_governance_d12_ai_hallucination___init___py
-    scripts_governance_d1_structure_audit_directory_integrity_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_audit_config_format_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structur___it_directory_scalability_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_check_index_integrity_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_audit_findings_by_scope_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_cleanup_stash_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_batch_create_index_md_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_generate_missing_index_md_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_drafts_zone_archiver_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_run_script_smoke_test_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_detect_residual_files_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_detect_temp_files_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_sync_index_from_manifest_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_detect_orphan_py_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_sync_policies_index_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_validate_config_integrity_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_validate_immutable_core_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_validate_index_reality_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structure_validate_d1_output_sanity_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d1_structur___lidate_read_before_write_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d2_links_detect_relative_references_py -->|config_depends| scripts_governance_d2_links___init___py
-    scripts_governance_d2_links_audit_broken_links_py -->|config_depends| scripts_governance_d2_links___init___py
-    scripts_governance_d1_structure_check_directory_contract_py -->|config_depends| scripts_governance_d1_structure___init___py
-    scripts_governance_d4_paths_detect_excessive_file_moves_py -->|config_depends| scripts_governance_d4_paths___init___py
-    scripts_governance_d4_paths_detect_deprecated_path_writes_py -->|config_depends| scripts_governance_d4_paths___init___py
-    scripts_governance_d4_paths_de____split_delete_ref_commit_py -->|config_depends| scripts_governance_d4_paths___init___py
-    scripts_governance_d4_paths_detect_ruins_references_py -->|config_depends| scripts_governance_d4_paths___init___py
-    scripts_governance_d6_security___ect_anchor_file_deletion_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security____permanent_file_deletion_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_check_protected_paths_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_git_dangerous_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_keywords_in_logs_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_shell_dangerous_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_threading_lock_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_shell_true_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_run_adversarial_checks_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_vague_terms_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_detect_secrets_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_scan_runtime_log_secrets_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d7_code_check_ai_capability_boundary_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d6_security_scan_secret_leak_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d6_security_validate_gate_discipline_py -->|config_depends| scripts_governance_d6_security___init___py
-    scripts_governance_d7_code_check_encoding_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_check_idempotency_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_check_pit_compliance_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_detect_direct_llm_calls_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_det___absolute_path_hardcoding_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_detect_forward_reference_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_fix_n14_init_all_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_detect_pydantic_any_fields_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_detect_missing_encoding_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_fix_n13_snake_case_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_fix_n06_scope_py -->|config_depends| scripts_governance_d7_code___init___py
-    scripts_governance_d7_code_detect_silent_degradation_py -->|config_depends| scripts_governance_d7_code___init___py
-    %% ... 还有 78 条域内依赖未显示
+    scripts_governance_meta_benchm___est_fixtures_bad_imports_py -->|config_depends| scripts_governance_meta_benchm___hout_module_registration_py
+    scripts_governance_meta_benchm___xtures_incomplete_module_py -->|config_depends| scripts_governance_meta_benchm___est_fixtures_bad_imports_py
+    scripts_governance__archive_prototype_adversarial_log_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_prototype_changelog_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_pr___eck_audit_rbac_isolation_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_prototype_audit_domain_nodes_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_pr___e_scan_ground_truth_deps_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_pr___ype_generate_asset_index_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_prototype_generate_nav_table_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_pr___pe_sync_blueprint_status_py -->|config_depends| scripts_governance__archive_pr___ersarial_sys_master_test_py
+    scripts_governance__archive_vm___i_build_completion_check_py -->|config_depends| scripts_governance__archive_vms_ri_vms_blindspot_check_py
+    scripts_governance__archive_vms_ri_ri_boundary_check_py -->|config_depends| scripts_governance__archive_vm___i_build_completion_check_py
+    scripts_governance__archive_vms_ri_vms_cross_file_check_py -->|config_depends| scripts_governance__archive_vm___i_build_completion_check_py
+    scripts_governance__archive_vm___s_build_completion_check_py -->|config_depends| scripts_governance__archive_vm___i_build_completion_check_py
+    scripts_governance__archive_vms_ri_vms_version_sync_check_py -->|config_depends| scripts_governance__archive_vm___i_build_completion_check_py
+    scripts_governance__archive_vms_ri_vms_phase_rollback_py -->|config_depends| scripts_governance__archive_vm___i_build_completion_check_py
+    scripts_governance__sync_check_p0_status_py -->|config_depends| scripts_governance__sync_cleanup_p0_ops_pending_py
+    scripts_governance__sync_cleanup_p0_auto_bridged_py -->|config_depends| scripts_governance__sync_check_p0_status_py
+    scripts_governance__sync_fix_orphan_deps_py -->|config_depends| scripts_governance__sync_check_p0_status_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_GOV_SCRIPTS (9 条)
+    %%  -> D_GOV_SCRIPTS (5 条)
+    [] -->|test_depends| scripts_governance_d5_architec___erate_blueprint_panorama_py
+    [] -->|test_depends| scripts_governance_sync_panorama_module_py
+    [] -->|test_depends| scripts_governance_d5_architec___t_frontmatter_reconciler_py
+    [] -->|test_depends| scripts_governance_d3_metadata_check_frontmatter_metadata_py
+    [] -->|config_depends| scripts_governance_d5_architec___eprecated_adr_references_py
+    %% D_GOVERNANCE -> D_GOV_SCRIPTS (2 条)
     D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| scripts_governance_d3_metadata_check_naming_convention_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d5_architec___t_frontmatter_reconciler_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_sync_panorama_module_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_d3_metadata_check_frontmatter_metadata_py
     D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance_generators_generate_gate_registry_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|test_depends| scripts_governance___init___py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d5_architec____validate_lifecycle_refs_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d5_architec___aml_interface_uniqueness_py
-    D_GOVERNANCE[D_GOVERNANCE] -->|config_depends| scripts_governance_d7_code___init___py
-    %% D_GOV_AUDIT -> D_GOV_SCRIPTS (1 条)
-    D_GOV_AUDIT[D_GOV_AUDIT] -->|config_depends| scripts_governance_repair_concurrent_commit_test_py
-    %% D_GOV_CODE_QUALITY -> D_GOV_SCRIPTS (1 条)
-    D_GOV_CODE_QUALITY[D_GOV_CODE_QUALITY] -->|config_depends| scripts_governance_d7_code___init___py
-    %% D_GOV_RULE -> D_GOV_SCRIPTS (1 条)
-    D_GOV_RULE[D_GOV_RULE] -->|config_depends| scripts_governance_generators___init___py
+    %% D_GOV_DRIFT -> D_GOV_SCRIPTS (1 条)
+    D_GOV_DRIFT[D_GOV_DRIFT] -->|import_depends| scripts_governance__shared_frontmatter_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_SCRIPTS -> D_AUTONOMY_CORE (3 条)
-    scripts_governance_d11_compliance_g9_compliance_check_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    scripts_governance_d5_architecture_audit_agent_spec_py -->|import_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
-    tests_dependency_test_dependency_tracker_py -->|test_depends| D_AUTONOMY_CORE[D_AUTONOMY_CORE]
+    %% D_GOV_SCRIPTS ->  (269 条)
+    scripts_governance_d11_compliance_task_self_check_py -->|import_depends| []
+    scripts_governance_d11_compliance_g9_compliance_check_py -->|import_depends| []
+    scripts_governance_d11_compliance_verify_schema_health_py -->|import_depends| []
+    scripts_governance_d3_metadata_check_registry_consistency_py -->|import_depends| []
+    scripts_governance_d5_architecture_audit_agent_spec_py -->|import_depends| []
+    scripts_governance_d5_architecture_check_budget_health_py -->|import_depends| []
+    scripts_governance_d5_architecture_pre_write_gate_py -->|import_depends| []
+    scripts_governance_meta_create_task_from_finding_py -->|import_depends| []
+    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| []
+    scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| []
+    scripts_governance_vms_vms_health_check_py -->|import_depends| []
+    scripts_governance_vms_vms_migrate_py -->|import_depends| []
+    scripts_governance_vms_vms_migration_dry_run_py -->|import_depends| []
+    scripts_governance_vms_vms_cron_monitor_py -->|import_depends| []
+    scripts_governance__archive_vms_ri_vms_cron_monitor_py -->|import_depends| []
+    scripts_governance__archive_vms_ri_vms_health_check_py -->|import_depends| []
+    scripts_governance__archive_vms_ri_vms_migrate_py -->|import_depends| []
+    scripts_governance__shared_base_py -->|import_depends| []
+    scripts_governance__archive_vms_ri_vms_migration_dry_run_py -->|import_depends| []
+    scripts_governance_apply_dataflowgraph_py -->|config_depends| []
+    scripts_governance_architecture_health_dashboard_py -->|config_depends| []
+    scripts_governance_ast_import_rewriter_py -->|config_depends| []
+    scripts_governance_status_py -->|config_depends| []
+    scripts_governance_run_gate_chain_py -->|config_depends| []
+    scripts_governance_d10_performance_collect_system_threads_py -->|config_depends| []
+    scripts_governance_verify_sync_integrity_py -->|config_depends| []
+    scripts_governance_d11_compliance_audit_registration_py -->|config_depends| []
+    scripts_governance_d11_compliance_fix_shared_bypass_py -->|config_depends| []
+    scripts_governance_d11_compliance_ci_self_check_py -->|config_depends| []
+    scripts_governance_d11_compliance_validate_commit_gateway_py -->|config_depends| []
     %% D_GOV_SCRIPTS -> D_DATA (4 条)
     scripts_governance_d5_architec____generate_data_inventory_py -->|import_depends| D_DATA[D_DATA]
     scripts_governance_d5_architec____generate_data_inventory_py -->|import_depends| D_DATA[D_DATA]
     scripts_governance_data_quality_check_tick_duplication_py -->|import_depends| D_DATA[D_DATA]
     scripts_governance_data_quality_check_tick_duplication_py -->|import_depends| D_DATA[D_DATA]
-    %% D_GOV_SCRIPTS -> D_FBL_DETECTORS (1 条)
-    tests_dependency_test_dependency_freshness_monitor_py -->|test_depends| D_FBL_DETECTORS[D_FBL_DETECTORS]
-    %% D_GOV_SCRIPTS -> D_FBL_VERIFICATION (2 条)
-    tests_blueprint_test_blueprint_code_reconciler_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    tests_blueprint_test_blueprint_validator_py -->|test_depends| D_FBL_VERIFICATION[D_FBL_VERIFICATION]
-    %% D_GOV_SCRIPTS -> D_FEEDBACK_LOOP (1 条)
-    tests_blueprint_test_gen_inherited_py -->|test_depends| D_FEEDBACK_LOOP[D_FEEDBACK_LOOP]
-    %% D_GOV_SCRIPTS -> D_GOVERNANCE (161 条)
+    %% D_GOV_SCRIPTS -> D_GOVERNANCE (39 条)
     scripts_governance_apply_decisiongraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_apply_dataflowgraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_extract_decisiongraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_extract_decisiongraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_generate_decision_graph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -244,6 +196,7 @@ graph TD
     scripts_governance_d11_compliance_check_ssot_gate_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d11_compliance_task_self_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d11_compliance_task_self_check_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_generate_project_depgraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d11_compliance_verify_schema_health_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d3_metadata___ck_schema_version_writes_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d5_architec___nerators_align_panoramas_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
@@ -252,107 +205,55 @@ graph TD
     scripts_governance_d5_architec___erate_blueprint_panorama_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d5_architec___erate_blueprint_panorama_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d5_architec___erate_blueprint_panorama_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_d5_architec___enerate_decision_diagram_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d5_architec___t_frontmatter_reconciler_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_generators_generate_path_ownership_map_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_generators_generate_path_ownership_map_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_meta_backup_runtime_state_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
+    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     scripts_governance_d8_doc_sync_sync_yaml_to_depgraph_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_generators_generate_path_ownership_map_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_generators_generate_path_ownership_map_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOVERNANCE[D_GOVERNANCE]
     %% D_GOV_SCRIPTS -> D_GOV_AUDIT (2 条)
     scripts_governance__archive_pr___ersarial_sys_master_test_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
     scripts_governance__archive_prototype_rebuild_audit_index_py -->|import_depends| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_SCRIPTS -> D_GOV_DRIFT (1 条)
-    tests_git_test_git_bisector_py -->|test_depends| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (2 条)
-    scripts_governance_d5_architecture_pre_write_gate_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
+    %% D_GOV_SCRIPTS -> D_GOV_ENFORCEMENT (1 条)
     scripts_governance_repair_concurrent_commit_test_py -->|import_depends| D_GOV_ENFORCEMENT[D_GOV_ENFORCEMENT]
-    %% D_GOV_SCRIPTS -> D_GOV_OPS_RESILIENCE (4 条)
-    scripts_governance_d5_architecture_check_budget_health_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
+    %% D_GOV_SCRIPTS -> D_GOV_OPS_RESILIENCE (2 条)
     scripts_governance_meta_session_startup_check_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
     scripts_governance_meta_session_startup_check_py -->|import_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    tests_git_test_git_hook_pre_scanner_py -->|test_depends| D_GOV_OPS_RESILIENCE[D_GOV_OPS_RESILIENCE]
-    %% D_GOV_SCRIPTS -> D_GOV_REPAIR (10 条)
-    scripts_governance_d11_compliance_verify_schema_health_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
+    %% D_GOV_SCRIPTS -> D_GOV_REPAIR (1 条)
     scripts_governance_d5_architecture_check_budget_health_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance_vms_vms_cron_monitor_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance_vms_vms_health_check_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance_vms_vms_migration_dry_run_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance_vms_vms_migrate_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance__archive_vms_ri_vms_health_check_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance__archive_vms_ri_vms_migration_dry_run_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance__archive_vms_ri_vms_migrate_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    scripts_governance__archive_vms_ri_vms_cron_monitor_py -->|import_depends| D_GOV_REPAIR[D_GOV_REPAIR]
-    %% D_GOV_SCRIPTS -> D_GOV_RULE (102 条)
+    %% D_GOV_SCRIPTS -> D_GOV_RULE (6 条)
     scripts_governance_d1_structure_cbg_reset_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     scripts_governance_d1_structure_reset_cbg_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     scripts_governance_meta_gate_engine_selfcheck_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
     scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_003_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_003_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_004_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_004_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_007_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_007_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_006_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_006_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_008_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_008_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_010_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_010_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_009_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_009_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_016_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_016_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_021_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_021_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_018_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_018_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_020_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_020_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_012_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    tests_trae_rules_test_g_trae_012_py -->|test_depends| D_GOV_RULE[D_GOV_RULE]
-    %% D_GOV_SCRIPTS -> D_INFRA_RECOVERY (1 条)
-    tests_git_test_git_infra_snapshot_py -->|test_depends| D_INFRA_RECOVERY[D_INFRA_RECOVERY]
-    %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (8 条)
+    %% D_GOV_SCRIPTS -> D_INFRA_RUNTIME (4 条)
     scripts_governance_run_all_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_governance_run_all_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    scripts_governance_d3_metadata_check_registry_consistency_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_governance_meta_finding_state_machine_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    scripts_governance_meta_validate_emergency_bypass_log_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
     scripts_governance__archive_prototype_session_simulator_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    scripts_governance__shared_base_py -->|import_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    tests_dependency_test_dependency_root_py -->|test_depends| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
-    %% D_GOV_SCRIPTS -> D_INTEGRATION (3 条)
-    scripts_governance_d11_compliance_task_self_check_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
-    scripts_governance_meta_validate_gate_engine_external_py -->|import_depends| D_INTEGRATION[D_INTEGRATION]
     %% D_GOV_SCRIPTS -> D_INTELLIGENCE (1 条)
     scripts_governance__archive_on___ck_exam_case_consistency_py -->|import_depends| D_INTELLIGENCE[D_INTELLIGENCE]
-    %% D_GOV_SCRIPTS -> D_ORCHESTRATOR (3 条)
+    %% D_GOV_SCRIPTS -> D_ORCHESTRATOR (1 条)
     scripts_governance_d1_structure_check_handoff_manifests_py -->|import_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
-    tests_blueprint_test_blueprint_scorer_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
-    tests_dependency_test_dependency_lock_py -->|test_depends| D_ORCHESTRATOR[D_ORCHESTRATOR]
-    %% D_GOV_SCRIPTS -> D_SECURITY (3 条)
+    %% D_GOV_SCRIPTS -> D_SECURITY (1 条)
     scripts_governance_d5_architecture_pre_write_gate_py -->|import_depends| D_SECURITY[D_SECURITY]
-    tests_blueprint_test_blueprint_fidelity_py -->|test_depends| D_SECURITY[D_SECURITY]
-    tests_dependency_test_dependency_auditor_py -->|test_depends| D_SECURITY[D_SECURITY]
-    %% D_GOV_SCRIPTS -> D_SHARED (79 条)
+    %% D_GOV_SCRIPTS -> D_SHARED (28 条)
     scripts_governance_apply_decisiongraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_extract_decisiongraph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_apply_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_apply_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_generate_decision_graph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_generate_project_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_extract_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_d11_compliance_check_test_structure_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d11_compliance_check_ssot_gate_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_apply_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_apply_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_generate_project_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_generate_project_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d3_metadata_check_module_singlesource_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architecture_diagnose_depgraph_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_d5_architec___ators_generate_contracts_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___s_generate_asset_catalog_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance_d5_architec___ators_generate_contracts_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___enerate_contract_catalog_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___nerate_panorama_registry_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_d5_architec___date_interface_contracts_py -->|import_depends| D_SHARED[D_SHARED]
@@ -361,17 +262,15 @@ graph TD
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_meta_create_task_from_finding_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_meta__concurrency_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance_migrate_sqlite_to_pg_migrate_data_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance_repair_concurrent_commit_test_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance__archive_on___analyze_orphan_consumers_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance__archive_on___audit_post_sync_commands_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance__archive_one_off_dm105_depgraph_triage_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance__archive_on___f_perf_depgraph_baseline_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance__shared_file_utils_py -->|import_depends| D_SHARED[D_SHARED]
-    scripts_governance__shared_constants_py -->|import_depends| D_SHARED[D_SHARED]
     scripts_governance__shared_yaml_utils_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts__archive_governance_dm106_p2b_verification_py -->|import_depends| D_SHARED[D_SHARED]
+    scripts_governance__shared_constants_py -->|import_depends| D_SHARED[D_SHARED]
 
     %% 统计
-    %% 域内依赖: 158 条
-    %% 跨域入边: 12 条
-    %% 跨域出边: 391 条
+    %% 域内依赖: 19 条
+    %% 跨域入边: 8 条
+    %% 跨域出边: 359 条

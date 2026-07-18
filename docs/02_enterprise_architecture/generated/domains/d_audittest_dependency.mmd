@@ -1,54 +1,22 @@
 %% D_AUDITTEST 域全景依赖图
-%% 生成时间: 2026-07-18 15:38:38
+%% 生成时间: 2026-07-18 19:51:45
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 12, 依赖边数: 18
+%% 模块数: 1, 依赖边数: 0
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_AUDITTEST[audit_test_suite]
         docs_01_policies_and_standards___gs_test_suite_registry_yaml["...try/catalogs/test_suite_registry.yaml [production]"]
-        tests_scripts_backup___init___py["tests/scripts/backup/__init__.py [prototype]"]
-        tests_scripts_backup_test_backup_reconciler_py["...ipts/backup/test_backup_reconciler.py [prototype]"]
-        tests_test_apply_decisiongraph_py["tests/test_apply_decisiongraph.py [prototype]"]
-        tests_test_backtest_decisiongraph_adapter_py["...est_backtest_decisiongraph_adapter.py [prototype]"]
-        tests_test_decision_graph_reader_py["tests/test_decision_graph_reader.py [prototype]"]
-        tests_test_event_driven_engine_py["tests/test_event_driven_engine.py [prototype]"]
-        tests_test_extract_decisiongraph_py["tests/test_extract_decisiongraph.py [prototype]"]
-        tests_test_generate_decision_graph_py["tests/test_generate_decision_graph.py [prototype]"]
-        tests_test_matching_engine_py["tests/test_matching_engine.py [prototype]"]
-        tests_test_miniqmt_broker_py["tests/test_miniqmt_broker.py [prototype]"]
-        tests_test_tick_replay_data_handler_py["tests/test_tick_replay_data_handler.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
-    tests_scripts_backup_test_backup_reconciler_py -->|config_depends| tests_scripts_backup___init___py
 
     %% 跨域依赖（入）- 最多显示 30 条
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_AUDITTEST -> D_BACKTEST (13 条)
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_event_driven_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_backtest_decisiongraph_adapter_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_backtest_decisiongraph_adapter_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_matching_engine_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_tick_replay_data_handler_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    tests_test_miniqmt_broker_py -->|test_depends| D_BACKTEST[D_BACKTEST]
-    %% D_AUDITTEST -> D_GOVERNANCE (3 条)
-    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_decision_graph_reader_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    tests_test_extract_decisiongraph_py -->|test_depends| D_GOVERNANCE[D_GOVERNANCE]
-    %% D_AUDITTEST -> D_TRADING (1 条)
-    tests_test_miniqmt_broker_py -->|test_depends| D_TRADING[D_TRADING]
 
     %% 统计
-    %% 域内依赖: 1 条
+    %% 域内依赖: 0 条
     %% 跨域入边: 0 条
-    %% 跨域出边: 17 条
+    %% 跨域出边: 0 条

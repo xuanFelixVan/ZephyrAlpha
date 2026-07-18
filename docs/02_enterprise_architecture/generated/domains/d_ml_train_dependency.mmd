@@ -1,50 +1,52 @@
 %% D_ML_TRAIN 域全景依赖图
-%% 生成时间: 2026-07-18 15:38:39
+%% 生成时间: 2026-07-18 19:51:46
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 6, 依赖边数: 17
+%% 模块数: 4, 依赖边数: 19
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_ML_TRAIN[model_evaluation]
         docs_03_modules__cross_layer_model_profiler_blueprint_md["...oss_layer/model_profiler/blueprint.md [design]"]
-        src_zephyr_intelligence_model_evaluation___init___py["...lligence/model_evaluation/__init__.py [prototype]"]
         src_zephyr_ml_train_implementa___default_inference_engine_py["...entations/default_inference_engine.py [prototype]"]
         src_zephyr_ml_train_inference_base_py["src/zephyr/ml_train/inference_base.py [prototype]"]
         src_zephyr_ml_train_trainer_base_py["src/zephyr/ml_train/trainer_base.py [prototype]"]
-        tests_ml_experiment_test_l13_experimentation_py["...xperiment/test_l13_experimentation.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
+    src_zephyr_ml_train_inference_base_py -->|import_depends| src_zephyr_ml_train_trainer_base_py
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| src_zephyr_ml_train_inference_base_py
     src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| src_zephyr_ml_train_trainer_base_py
-    src_zephyr_ml_train_inference_base_py -->|import_depends| src_zephyr_ml_train_trainer_base_py
 
     %% 跨域依赖（入）- 最多显示 30 条
+    %%  -> D_ML_TRAIN (2 条)
+    [] -->|import_depends| src_zephyr_ml_train_implementa___default_inference_engine_py
+    [] -->|config_depends| src_zephyr_ml_train_trainer_base_py
     %% D_BACKTEST -> D_ML_TRAIN (1 条)
     D_BACKTEST[D_BACKTEST] -->|data| docs_03_modules__cross_layer_model_profiler_blueprint_md
-    %% D_GOV_DOCS -> D_ML_TRAIN (1 条)
+    %% D_GOV_DOCS -> D_ML_TRAIN (2 条)
+    D_GOV_DOCS[D_GOV_DOCS] -->|data| docs_03_modules__cross_layer_model_profiler_blueprint_md
     D_GOV_DOCS[D_GOV_DOCS] -->|runtime| docs_03_modules__cross_layer_model_profiler_blueprint_md
-    %% D_INTELLIGENCE -> D_ML_TRAIN (6 条)
+    %% D_INTELLIGENCE -> D_ML_TRAIN (4 条)
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_inference_base_py
     D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_trainer_base_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|import_depends| src_zephyr_ml_train_implementa___default_inference_engine_py
-    D_INTELLIGENCE[D_INTELLIGENCE] -->|config_depends| src_zephyr_ml_train_trainer_base_py
+    %% D_ML_SERVE -> D_ML_TRAIN (1 条)
+    D_ML_SERVE[D_ML_SERVE] -->|runtime| src_zephyr_ml_train_trainer_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_ML_TRAIN -> D_INTELLIGENCE (1 条)
-    src_zephyr_intelligence_model_evaluation___init___py -->|config_depends| D_INTELLIGENCE[D_INTELLIGENCE]
+    %% D_ML_TRAIN -> D_GOV_DOCS (1 条)
+    src_zephyr_ml_train_trainer_base_py -->|data| D_GOV_DOCS[D_GOV_DOCS]
     %% D_ML_TRAIN -> D_SHARED (3 条)
-    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
-    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
     src_zephyr_ml_train_inference_base_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_ML_TRAIN -> D_TRADING (2 条)
-    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_ml_train_inference_base_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_ml_train_implementa___default_inference_engine_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 3 条
-    %% 跨域入边: 8 条
+    %% 跨域入边: 10 条
     %% 跨域出边: 6 条

@@ -1,41 +1,32 @@
 %% D_SIMULATION 域全景依赖图
-%% 生成时间: 2026-07-18 15:38:40
+%% 生成时间: 2026-07-18 19:51:46
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 11, 依赖边数: 6
+%% 模块数: 3, 依赖边数: 5
 
 graph TD
 
     %% 域内模块（最多显示 100 个）
     subgraph D_SIMULATION[仿真]
         src_zephyr_simulation_["src/zephyr/simulation/ [design]"]
-        src_zephyr_simulation___init___py["src/zephyr/simulation/__init__.py [prototype]"]
-        src_zephyr_simulation__extensions___init___py["...yr/simulation/_extensions/__init__.py [prototype]"]
-        src_zephyr_simulation_api___init___py["src/zephyr/simulation/api/__init__.py [prototype]"]
-        src_zephyr_simulation_core___init___py["src/zephyr/simulation/core/__init__.py [prototype]"]
-        src_zephyr_simulation_implementations___init___py["...imulation/implementations/__init__.py [prototype]"]
         src_zephyr_simulation_implemen___ault_experiment_pipeline_py["...ations/default_experiment_pipeline.py [production]"]
-        src_zephyr_simulation_infrastructure___init___py["...simulation/infrastructure/__init__.py [prototype]"]
-        src_zephyr_simulation_models___init___py["src/zephyr/simulation/models/__init__.py [prototype]"]
         src_zephyr_simulation_pipeline_base_py["src/zephyr/simulation/pipeline_base.py [production]"]
-        src_zephyr_simulation_services___init___py["...ephyr/simulation/services/__init__.py [prototype]"]
     end
 
     %% 域内依赖（最多显示 80 条）
     src_zephyr_simulation_implemen___ault_experiment_pipeline_py -->|import_depends| src_zephyr_simulation_pipeline_base_py
-    src_zephyr_simulation_implementations___init___py -->|config_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOVERNANCE -> D_SIMULATION (1 条)
-    D_GOVERNANCE[D_GOVERNANCE] -->|import_depends| src_zephyr_simulation___init___py
-    %% D_SHARED -> D_SIMULATION (2 条)
+    %%  -> D_SIMULATION (2 条)
+    [] -->|test_depends| src_zephyr_simulation_pipeline_base_py
+    [] -->|config_depends| src_zephyr_simulation_implemen___ault_experiment_pipeline_py
+    %% D_SHARED -> D_SIMULATION (1 条)
     D_SHARED[D_SHARED] -->|import_depends| src_zephyr_simulation_pipeline_base_py
-    D_SHARED[D_SHARED] -->|test_depends| src_zephyr_simulation_pipeline_base_py
 
     %% 跨域依赖（出）- 最多显示 30 条
     %% D_SIMULATION -> D_INFRASTRUCTURE (1 条)
     src_zephyr_simulation_pipeline_base_py -->|import_depends| D_INFRASTRUCTURE[D_INFRASTRUCTURE]
 
     %% 统计
-    %% 域内依赖: 2 条
+    %% 域内依赖: 1 条
     %% 跨域入边: 3 条
     %% 跨域出边: 1 条
