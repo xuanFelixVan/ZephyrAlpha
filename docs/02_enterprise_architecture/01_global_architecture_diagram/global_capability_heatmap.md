@@ -10,7 +10,7 @@ ttl: permanent
 
 # 能力热力图 / Capability Heatmap
 
-> **文档作用 / Purpose**: 以矩阵形式展示61个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
+> **文档作用 / Purpose**: 以矩阵形式展示60个架构域在10个能力域上的成熟度分布，用于识别能力短板和过度建设。
 
 > 本文档由 generate_capability_heatmap.py 从 depgraph (PostgreSQL) 自动生成
 > 最后更新以 git log 为准
@@ -20,13 +20,13 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 / Total Domains | 61 |
+| 域总数 / Total Domains | 60 |
 | 能力域数 / Capability Domains | 10 |
 | L0 缺失 / Missing | 6 |
 | L1 设计中 / Designing | 19 |
 | L2 可用未验证 / Usable | 0 |
-| L3 生产已验证 / Verified | 36 |
-| ✅ 完全覆盖 / Full Coverage (L3) | 36 |
+| L3 生产已验证 / Verified | 35 |
+| ✅ 完全覆盖 / Full Coverage (L3) | 35 |
 | 🟡 部分覆盖 / Partial Coverage (L1-L2) | 19 |
 | ❌ 无覆盖 / No Coverage (L0) | 6 |
 
@@ -50,14 +50,14 @@ ttl: permanent
 | C5 | 执行交易 | Execution & Trading | 业务 | 4 | D_EX_CORE, D_EX_SOR, D_TRADING, D_POSITION |
 | C6 | ML平台 | ML Platform | 业务 | 2 | D_ML_TRAIN, D_ML_SERVE |
 | C7 | 回测仿真 | Backtest & Simulation | 业务 | 4 | D_BACKTEST, D_SIMULATION, D_EXEC_SIM, D_DIGITAL_TWIN |
-| CC1 | 治理合规 | Governance & Compliance | 横切 | 15 | D_GOVERNANCE, D_GOV_RULE, D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D_GOV_REPAIR, D_GOV_CODE_QUALITY, D_GOV_DOCS, D_GOV_KB, D_GOV_OPS_RESILIENCE, D_DATA_GOV, D_FEEDBACK_LOOP, D_FBL_DIAGNOSERS, D_FBL_DETECTORS, D_FBL_VERIFICATION |
+| CC1 | 治理合规 | Governance & Compliance | 横切 | 14 | D_GOVERNANCE, D_GOV_RULE, D_GOV_AUDIT, D_GOV_DRIFT, D_GOV_ENFORCEMENT, D_GOV_REPAIR, D_GOV_CODE_QUALITY, D_GOV_DOCS, D_GOV_OPS_RESILIENCE, D_DATA_GOV, D_FEEDBACK_LOOP, D_FBL_DIAGNOSERS, D_FBL_DETECTORS, D_FBL_VERIFICATION |
 | CC2 | 安全防护 | Security | 横切 | 5 | D_SECURITY, D_SECURITY_LLM, D_BEHAVIORAL_AUDIT, D_DATA_SEC, D_AUTONOMY_PERM |
 | CC3 | 基础设施 | Infrastructure | 横切 | 16 | D_INFRA_OPS, D_INFRA_RUNTIME, D_INFRASTRUCTURE, D_INFRA_A2A, D_INFRA_RECOVERY, D_INFRA_TELEMETRY, D_INTEGRATION, D_INTEGRATION_GATEWAY, D_SHARED, D_FRONTEND, D_REPORTING, D_KNOWLEDGE, D_INTELLIGENCE, D_AUTONOMY_CORE, D_OPS, D_ORCHESTRATOR |
 
 ## 能力热力图矩阵 / Capability Heatmap Matrix
 
-> 行：架构域（61域） | 列：能力域（10能力域）
-> Rows: Architecture Domains (61) | Columns: Capability Domains (10)
+> 行：架构域（60域） | 列：能力域（10能力域）
+> Rows: Architecture Domains (60) | Columns: Capability Domains (10)
 > 单元格：成熟度符号（属于该能力域时显示，否则显示 —）
 > Cell: Maturity symbol (shown when domain belongs to capability, otherwise —)
 
@@ -99,7 +99,6 @@ ttl: permanent
 | D_GOV_DOCS | 架构文档治理 | — | — | — | — | — | — | — | 🔵 | — | — | L1 |
 | D_GOV_DRIFT | 漂移检测 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOV_ENFORCEMENT | 规则执行 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
-| D_GOV_KB | 知识库治理 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOV_REPAIR | 治理修复 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
 | D_GOV_RULE | 规则治理 | — | — | — | — | — | — | — | 🟢 | — | — | L3 |
@@ -136,9 +135,9 @@ ttl: permanent
 | C5 | 执行交易 | 4 | 48 | 26 | 1 | 21 | 2.50 | 🟡 部分覆盖 / Partial |
 | C6 | ML平台 | 2 | 11 | 0 | 1 | 10 | 1.00 | 🟡 部分覆盖 / Partial |
 | C7 | 回测仿真 | 4 | 43 | 11 | 10 | 22 | 2.00 | 🟡 部分覆盖 / Partial |
-| CC1 | 治理合规 | 15 | 978 | 794 | 32 | 152 | 2.73 | 🟡 部分覆盖 / Partial |
+| CC1 | 治理合规 | 14 | 953 | 773 | 32 | 148 | 2.71 | 🟡 部分覆盖 / Partial |
 | CC2 | 安全防护 | 5 | 172 | 99 | 0 | 73 | 0.80 | 🟡 部分覆盖 / Partial |
-| CC3 | 基础设施 | 16 | 835 | 594 | 11 | 230 | 2.38 | 🟡 部分覆盖 / Partial |
+| CC3 | 基础设施 | 16 | 828 | 576 | 11 | 241 | 2.38 | 🟡 部分覆盖 / Partial |
 
 ## 域成熟度明细 / Domain Maturity Detail
 
@@ -171,16 +170,15 @@ ttl: permanent
 | D_SIMULATION | 仿真 | C7 | L2_domain | 3 | 2 | 1 | 0 | 2 | L3 🟢 | ✅ |
 | D_DATA_GOV | 数据治理 | CC1 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_FBL_DETECTORS | 反馈检测器 | CC1 | L1_foundation | 65 | 59 | 0 | 6 | 59 | L3 🟢 | ✅ |
-| D_FBL_DIAGNOSERS | 反馈诊断器 | CC1 | L1_foundation | 76 | 71 | 0 | 5 | 71 | L3 🟢 | ✅ |
+| D_FBL_DIAGNOSERS | 反馈诊断器 | CC1 | L1_foundation | 76 | 69 | 0 | 7 | 69 | L3 🟢 | ✅ |
 | D_FBL_VERIFICATION | 反馈验证 | CC1 | L1_foundation | 71 | 67 | 0 | 4 | 67 | L3 🟢 | ✅ |
-| D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 124 | 112 | 0 | 12 | 112 | L3 🟢 | ✅ |
+| D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L1_foundation | 124 | 110 | 0 | 14 | 110 | L3 🟢 | ✅ |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L2_domain | 131 | 94 | 1 | 36 | 94 | L3 🟢 | ✅ |
-| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 98 | 67 | 2 | 29 | 67 | L3 🟢 | ✅ |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 129 | 114 | 0 | 15 | 114 | L3 🟢 | ✅ |
+| D_GOV_AUDIT | 审计追踪 | CC1 | L2_domain | 98 | 66 | 2 | 30 | 66 | L3 🟢 | ✅ |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L1_foundation | 130 | 115 | 0 | 15 | 115 | L3 🟢 | ✅ |
 | D_GOV_DOCS | 架构文档治理 | CC1 | L2_domain | 28 | 0 | 28 | 0 | 0 | L1 🔵 | 🟡 |
-| D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 70 | 66 | 1 | 3 | 66 | L3 🟢 | ✅ |
+| D_GOV_DRIFT | 漂移检测 | CC1 | L2_domain | 70 | 65 | 1 | 4 | 65 | L3 🟢 | ✅ |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L2_domain | 28 | 15 | 0 | 13 | 15 | L3 🟢 | ✅ |
-| D_GOV_KB | 知识库治理 | CC1 | L2_domain | 26 | 16 | 0 | 10 | 16 | L3 🟢 | ✅ |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L1_foundation | 90 | 81 | 0 | 9 | 81 | L3 🟢 | ✅ |
 | D_GOV_REPAIR | 治理修复 | CC1 | L2_domain | 1 | 1 | 0 | 0 | 1 | L3 🟢 | ✅ |
 | D_GOV_RULE | 规则治理 | CC1 | L2_domain | 34 | 31 | 0 | 3 | 31 | L3 🟢 | ✅ |
@@ -189,7 +187,7 @@ ttl: permanent
 | D_DATA_SEC | 数据安全与契约 | CC2 | L1_foundation | 7 | 0 | 0 | 7 | 0 | L1 🔵 | 🟡 |
 | D_SECURITY | 对抗验证 | CC2 | L1_foundation | 165 | 99 | 0 | 66 | 99 | L3 🟢 | ✅ |
 | D_SECURITY_LLM | LLM防御 | CC2 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 133 | 132 | 0 | 1 | 132 | L3 🟢 | ✅ |
+| D_AUTONOMY_CORE | 自治核心 | CC3 | L1_foundation | 127 | 126 | 0 | 1 | 126 | L3 🟢 | ✅ |
 | D_FRONTEND | 前端 | CC3 | L1_foundation | 17 | 9 | 6 | 2 | 9 | L3 🟢 | ✅ |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 |  | 24 | 12 | 0 | 12 | 12 | L3 🟢 | ✅ |
 | D_INFRA_A2A | A2A通信 | CC3 | L0_infrastructure | 72 | 28 | 0 | 44 | 28 | L3 🟢 | ✅ |
@@ -197,14 +195,14 @@ ttl: permanent
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L0_infrastructure | 53 | 48 | 0 | 5 | 48 | L3 🟢 | ✅ |
 | D_INFRA_RUNTIME | 运行时集成 | CC3 | L0_infrastructure | 160 | 118 | 1 | 41 | 118 | L3 🟢 | ✅ |
 | D_INFRA_TELEMETRY | 可观测性 | CC3 | L0_infrastructure | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 73 | 45 | 0 | 28 | 45 | L3 🟢 | ✅ |
+| D_INTEGRATION | 管线路由 | CC3 | L1_foundation | 72 | 40 | 0 | 32 | 40 | L3 🟢 | ✅ |
 | D_INTEGRATION_GATEWAY | 集成网关 | CC3 | L1_foundation | 0 | 0 | 0 | 0 | 0 | L0 ⚪ | ❌ |
-| D_INTELLIGENCE | 上下文管理 | CC3 | L2_domain | 29 | 20 | 0 | 9 | 20 | L3 🟢 | ✅ |
+| D_INTELLIGENCE | 上下文管理 | CC3 | L2_domain | 29 | 18 | 0 | 11 | 18 | L3 🟢 | ✅ |
 | D_KNOWLEDGE | 知识管理 | CC3 | L2_domain | 4 | 0 | 2 | 2 | 0 | L1 🔵 | 🟡 |
 | D_OPS | 反馈循环 | CC3 | L1_foundation | 9 | 8 | 0 | 1 | 8 | L3 🟢 | ✅ |
-| D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 72 | 58 | 0 | 14 | 58 | L3 🟢 | ✅ |
+| D_ORCHESTRATOR | 代理编排器 | CC3 | L1_foundation | 72 | 56 | 0 | 16 | 56 | L3 🟢 | ✅ |
 | D_REPORTING | 报告 | CC3 | L1_foundation | 3 | 1 | 0 | 2 | 1 | L3 🟢 | ✅ |
-| D_SHARED | 共享服务 | CC3 | L1_foundation | 184 | 115 | 0 | 69 | 115 | L3 🟢 | ✅ |
+| D_SHARED | 共享服务 | CC3 | L1_foundation | 184 | 112 | 0 | 72 | 112 | L3 🟢 | ✅ |
 
 ## 差距分析 / Gap Analysis
 
@@ -264,21 +262,20 @@ ttl: permanent
 | D_FEEDBACK_LOOP | 反馈循环引擎 | CC1 | L3 | 124 |
 | D_GOVERNANCE | 生命周期管理 | CC1 | L3 | 131 |
 | D_GOV_AUDIT | 审计追踪 | CC1 | L3 | 98 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 129 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | CC1 | L3 | 130 |
 | D_GOV_DRIFT | 漂移检测 | CC1 | L3 | 70 |
 | D_GOV_ENFORCEMENT | 规则执行 | CC1 | L3 | 28 |
-| D_GOV_KB | 知识库治理 | CC1 | L3 | 26 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | CC1 | L3 | 90 |
 | D_GOV_REPAIR | 治理修复 | CC1 | L3 | 1 |
 | D_GOV_RULE | 规则治理 | CC1 | L3 | 34 |
 | D_SECURITY | 对抗验证 | CC2 | L3 | 165 |
-| D_AUTONOMY_CORE | 自治核心 | CC3 | L3 | 133 |
+| D_AUTONOMY_CORE | 自治核心 | CC3 | L3 | 127 |
 | D_FRONTEND | 前端 | CC3 | L3 | 17 |
 | D_INFRASTRUCTURE | 跨层契约基础设施 | CC3 | L3 | 24 |
 | D_INFRA_A2A | A2A通信 | CC3 | L3 | 72 |
 | D_INFRA_RECOVERY | 回滚恢复 | CC3 | L3 | 53 |
 | D_INFRA_RUNTIME | 运行时集成 | CC3 | L3 | 160 |
-| D_INTEGRATION | 管线路由 | CC3 | L3 | 73 |
+| D_INTEGRATION | 管线路由 | CC3 | L3 | 72 |
 | D_INTELLIGENCE | 上下文管理 | CC3 | L3 | 29 |
 | D_OPS | 反馈循环 | CC3 | L3 | 9 |
 | D_ORCHESTRATOR | 代理编排器 | CC3 | L3 | 72 |

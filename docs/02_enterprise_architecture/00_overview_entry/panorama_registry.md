@@ -29,9 +29,9 @@
 
 | 表组 | 表名 | 行数 | 备注（各表区别） |
 |------|------|-----:|------|
-| 依赖图 depgraph | `domains` | 63 | 功能域清单——63 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
-| 依赖图 depgraph | `nodes` | 5450 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5450 个 |
-| 依赖图 depgraph | `edges` | 7446 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7446 条 |
+| 依赖图 depgraph | `domains` | 62 | 功能域清单——62 个域的 ID/名称/层级/容量上限等元信息（L0/L1/L2 分层） |
+| 依赖图 depgraph | `nodes` | 5342 | 模块节点——每个 .py/.yaml/.md 文件作为一个节点（module_id/path/build_status/design_maturity），5342 个 |
+| 依赖图 depgraph | `edges` | 7280 | 依赖边——节点间的依赖关系（import/契约/事件订阅），7280 条 |
 | 数据流图 dataflowgraph | `dataflow_datasets` | 14 | 数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy |
 | 数据流图 dataflowgraph | `dataflow_jobs` | 13 | 作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context |
 | 数据流图 dataflowgraph | `dataflow_edges` | 28 | 数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），28 条 |
@@ -46,7 +46,7 @@
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_apis` | 124 | 数据源 API 清单——外部数据源的 API 函数/参数/测试状态，真源 data_source_apis_registry.yaml，124 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `data_source_assets` | 12 | 外部数据源——行情/交易/风控等外部数据源资产，真源 data_sources_registry.yaml，12 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `service_assets` | 10 | 服务资产——内部服务 ID/端口/协议/状态，真源 service_registry.yaml，10 个 |
-| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 35 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），35 项 |
+| 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `config_assets` | 34 | 配置项元数据——config/*.yaml 文件名/大小/修改时间（内容真源为文件系统，非 YAML 单文件），34 项 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `infrastructure_components` | 14 | 基础设施组件——基础服务地址/健康检查/SLA，真源 infrastructure_registry.yaml，14 个 |
 | 资产配置 assets（YAML→DB 同步，DB 为只读缓存） | `interface_contracts` | 5 | 接口级契约——模块对外 API（函数名/参数签名/返回值/消费方），5 行（仅 5=大部分模块接口未登记，AI 会幻觉函数名） |
 
@@ -97,7 +97,7 @@
 | PAN-BUILT-09 | 能力热力图（53域×10能力） | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capability_heatmap.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/global_capability_heatmap.md) | ✅存在 |
 | PAN-BUILT-10 | 资产清单配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_asset_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/asset_catalog.md) | ✅存在 |
 | PAN-BUILT-11 | 契约目录配置 | 资产 | depgraph | depgraph (PostgreSQL) | `generate_contract_catalog.py` | [`01_global_architecture_diagram`](../01_global_architecture_diagram/contract_catalog.md) | ✅存在 |
-| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(64文件) |
+| PAN-BUILT-20 | 域架构文档（50 域 + domain_index） | 域架构文档 | depgraph | depgraph (PostgreSQL) | `generate_domain_doc.py` | `02_domain_architecture_docs/` | ✅存在(84文件) |
 | PAN-BUILT-12 | 容量报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_capacity_report.py` | [`03_governance_reports`](../03_governance_reports/capacity_report.md) | ✅存在 |
 | PAN-BUILT-13 | 约束违规报告 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_constraint_violations.py` | [`03_governance_reports`](../03_governance_reports/constraint_violations.md) | ✅存在 |
 | PAN-BUILT-14 | 设计态 vs 运营态 | 治理健康度 | depgraph | depgraph (PostgreSQL) | `generate_design_vs_production.py` | [`03_governance_reports`](../03_governance_reports/design_vs_production.md) | ✅存在 |

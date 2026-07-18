@@ -20,8 +20,8 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 约束总数 | 228 |
-| Open（未解决） | 228 |
+| 约束总数 | 223 |
+| Open（未解决） | 223 |
 | Resolved（已解决） | 0 |
 | 其他状态 | 0 |
 
@@ -29,7 +29,7 @@ ttl: permanent
 
 | 严重程度 / Severity | 数量 / Count |
 |---------|:---:|
-| error | 128 |
+| error | 123 |
 | warn | 100 |
 
 ## 按约束类型分组
@@ -37,8 +37,8 @@ ttl: permanent
 | 约束类型 / Constraint Type | 数量 / Count |
 |---------|:---:|
 | architecture_contract | 1 |
-| cross_domain_violation | 92 |
-| layer_violation | 35 |
+| cross_domain_violation | 89 |
+| layer_violation | 33 |
 | orphan_node | 100 |
 
 ## Open 违规清单（需处理）
@@ -165,7 +165,6 @@ ttl: permanent
 | V-CROSS-D_GOVERNANCE-D_GOV_AUDIT | 跨域违规: D_GOVERNANCE -> D_GOV_AUDIT | cross_domain_violation | D_GOVERNANCE | D_GOV_AUDIT | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_AUDIT |
 | V-CROSS-D_GOVERNANCE-D_GOV_CODE_QUALITY | 跨域违规: D_GOVERNANCE -> D_GOV_CODE_QUALITY | cross_domain_violation | D_GOVERNANCE | D_GOV_CODE_QUALITY | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_CODE_QUALITY |
 | V-CROSS-D_GOVERNANCE-D_GOV_ENFORCEMENT | 跨域违规: D_GOVERNANCE -> D_GOV_ENFORCEMENT | cross_domain_violation | D_GOVERNANCE | D_GOV_ENFORCEMENT | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_ENFORCEMENT |
-| V-CROSS-D_GOVERNANCE-D_GOV_KB | 跨域违规: D_GOVERNANCE -> D_GOV_KB | cross_domain_violation | D_GOVERNANCE | D_GOV_KB | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_KB |
 | V-CROSS-D_GOVERNANCE-D_GOV_OPS_RESILIENCE | 跨域违规: D_GOVERNANCE -> D_GOV_OPS_RESILIENCE | cross_domain_violation | D_GOVERNANCE | D_GOV_OPS_RESILIENCE | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_OPS_RESILIENCE |
 | V-CROSS-D_GOVERNANCE-D_GOV_REPAIR | 跨域违规: D_GOVERNANCE -> D_GOV_REPAIR | cross_domain_violation | D_GOVERNANCE | D_GOV_REPAIR | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_GOV_REPAIR |
 | V-CROSS-D_GOVERNANCE-D_INFRA_RECOVERY | 跨域违规: D_GOVERNANCE -> D_INFRA_RECOVERY | cross_domain_violation | D_GOVERNANCE | D_INFRA_RECOVERY | error | gate | 跨域依赖未声明: D_GOVERNANCE -> D_INFRA_RECOVERY |
@@ -186,7 +185,6 @@ ttl: permanent
 | V-CROSS-D_GOV_DRIFT-D_SHARED | 跨域违规: D_GOV_DRIFT -> D_SHARED | cross_domain_violation | D_GOV_DRIFT | D_SHARED | error | gate | 跨域依赖未声明: D_GOV_DRIFT -> D_SHARED |
 | V-CROSS-D_GOV_ENFORCEMENT-D_GOV_AUDIT | 跨域违规: D_GOV_ENFORCEMENT -> D_GOV_AUDIT | cross_domain_violation | D_GOV_ENFORCEMENT | D_GOV_AUDIT | error | gate | 跨域依赖未声明: D_GOV_ENFORCEMENT -> D_GOV_AUDIT |
 | V-CROSS-D_GOV_ENFORCEMENT-D_GOV_CODE_QUALITY | 跨域违规: D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY | cross_domain_violation | D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | error | gate | 跨域依赖未声明: D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY |
-| V-CROSS-D_GOV_KB-D_SHARED | 跨域违规: D_GOV_KB -> D_SHARED | cross_domain_violation | D_GOV_KB | D_SHARED | error | gate | 跨域依赖未声明: D_GOV_KB -> D_SHARED |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOVERNANCE | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOVERNANCE | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOVERNANCE | error | gate | 跨域依赖未声明: D_GOV_OPS_RESILIENCE -> D_GOVERNANCE |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOV_AUDIT | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOV_AUDIT | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | error | gate | 跨域依赖未声明: D_GOV_OPS_RESILIENCE -> D_GOV_AUDIT |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOV_DRIFT | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOV_DRIFT | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOV_DRIFT | error | gate | 跨域依赖未声明: D_GOV_OPS_RESILIENCE -> D_GOV_DRIFT |
@@ -200,7 +198,6 @@ ttl: permanent
 | V-CROSS-D_GOV_REPAIR-D_GOV_AUDIT | 跨域违规: D_GOV_REPAIR -> D_GOV_AUDIT | cross_domain_violation | D_GOV_REPAIR | D_GOV_AUDIT | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_AUDIT |
 | V-CROSS-D_GOV_REPAIR-D_GOV_DRIFT | 跨域违规: D_GOV_REPAIR -> D_GOV_DRIFT | cross_domain_violation | D_GOV_REPAIR | D_GOV_DRIFT | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_DRIFT |
 | V-CROSS-D_GOV_REPAIR-D_GOV_ENFORCEMENT | 跨域违规: D_GOV_REPAIR -> D_GOV_ENFORCEMENT | cross_domain_violation | D_GOV_REPAIR | D_GOV_ENFORCEMENT | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_ENFORCEMENT |
-| V-CROSS-D_GOV_REPAIR-D_GOV_KB | 跨域违规: D_GOV_REPAIR -> D_GOV_KB | cross_domain_violation | D_GOV_REPAIR | D_GOV_KB | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_KB |
 | V-CROSS-D_GOV_REPAIR-D_GOV_OPS_RESILIENCE | 跨域违规: D_GOV_REPAIR -> D_GOV_OPS_RESILIENCE | cross_domain_violation | D_GOV_REPAIR | D_GOV_OPS_RESILIENCE | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_OPS_RESILIENCE |
 | V-CROSS-D_GOV_REPAIR-D_GOV_RULE | 跨域违规: D_GOV_REPAIR -> D_GOV_RULE | cross_domain_violation | D_GOV_REPAIR | D_GOV_RULE | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_GOV_RULE |
 | V-CROSS-D_GOV_REPAIR-D_INFRASTRUCTURE | 跨域违规: D_GOV_REPAIR -> D_INFRASTRUCTURE | cross_domain_violation | D_GOV_REPAIR | D_INFRASTRUCTURE | error | gate | 跨域依赖未声明: D_GOV_REPAIR -> D_INFRASTRUCTURE |
@@ -249,7 +246,6 @@ ttl: permanent
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOVERNANCE | error | gate | 层级违规: 2522527 -> 2522551 (L1_foundation -> L2_domain) |
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_AUDIT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | error | gate | 层级违规: 2522527 -> 2522687 (L1_foundation -> L2_domain) |
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_DRIFT | error | gate | 层级违规: 2522527 -> 2522793 (L1_foundation -> L2_domain) |
-| V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_KB | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_KB | error | gate | 层级违规: 2522439 -> 2522986 (L1_foundation -> L2_domain) |
 | V-LAYER-D_INFRA_A2A-D_FEEDBACK_LOOP | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_FEEDBACK_LOOP | error | gate | 层级违规: 2525110 -> 2522009 (L0_infrastructure -> L1_foundation... |
 | V-LAYER-D_INFRA_A2A-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_A2A | D_GOVERNANCE | error | gate | 层级违规: 2524810 -> 2522362 (L0_infrastructure -> L2_domain) |
 | V-LAYER-D_INFRA_A2A-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_SHARED | error | gate | 层级违规: 2523066 -> 2524043 (L0_infrastructure -> L1_foundation... |
@@ -269,7 +265,6 @@ ttl: permanent
 | V-LAYER-D_SECURITY-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOVERNANCE | error | gate | 层级违规: 2522794 -> 2522543 (L1_foundation -> L2_domain) |
 | V-LAYER-D_SECURITY-D_GOV_AUDIT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_AUDIT | error | gate | 层级违规: 2523776 -> 2522651 (L1_foundation -> L2_domain) |
 | V-LAYER-D_SECURITY-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_DRIFT | error | gate | 层级违规: 2522843 -> 2522837 (L1_foundation -> L2_domain) |
-| V-LAYER-D_SECURITY-D_GOV_KB | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_KB | error | gate | 层级违规: 2526201 -> 2522997 (L1_foundation -> L2_domain) |
 | V-LAYER-D_SECURITY-D_GOV_RULE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_RULE | error | gate | 层级违规: 2523726 -> 2522938 (L1_foundation -> L2_domain) |
 | V-LAYER-D_SHARED-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SHARED | D_GOVERNANCE | error | gate | 层级违规: 2525216 -> 2522372 (L1_foundation -> L2_domain) |
 | V-LAYER-D_SHARED-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SHARED | D_GOV_DRIFT | error | gate | 层级违规: 2525222 -> 2522800 (L1_foundation -> L2_domain) |
@@ -398,7 +393,6 @@ ttl: permanent
 | V-CROSS-D_GOVERNANCE-D_GOV_AUDIT | 跨域违规: D_GOVERNANCE -> D_GOV_AUDIT | cross_domain_violation | D_GOVERNANCE | D_GOV_AUDIT | error | open |
 | V-CROSS-D_GOVERNANCE-D_GOV_CODE_QUALITY | 跨域违规: D_GOVERNANCE -> D_GOV_CODE_QUALITY | cross_domain_violation | D_GOVERNANCE | D_GOV_CODE_QUALITY | error | open |
 | V-CROSS-D_GOVERNANCE-D_GOV_ENFORCEMENT | 跨域违规: D_GOVERNANCE -> D_GOV_ENFORCEMENT | cross_domain_violation | D_GOVERNANCE | D_GOV_ENFORCEMENT | error | open |
-| V-CROSS-D_GOVERNANCE-D_GOV_KB | 跨域违规: D_GOVERNANCE -> D_GOV_KB | cross_domain_violation | D_GOVERNANCE | D_GOV_KB | error | open |
 | V-CROSS-D_GOVERNANCE-D_GOV_OPS_RESILIENCE | 跨域违规: D_GOVERNANCE -> D_GOV_OPS_RESILIENCE | cross_domain_violation | D_GOVERNANCE | D_GOV_OPS_RESILIENCE | error | open |
 | V-CROSS-D_GOVERNANCE-D_GOV_REPAIR | 跨域违规: D_GOVERNANCE -> D_GOV_REPAIR | cross_domain_violation | D_GOVERNANCE | D_GOV_REPAIR | error | open |
 | V-CROSS-D_GOVERNANCE-D_INFRA_RECOVERY | 跨域违规: D_GOVERNANCE -> D_INFRA_RECOVERY | cross_domain_violation | D_GOVERNANCE | D_INFRA_RECOVERY | error | open |
@@ -419,7 +413,6 @@ ttl: permanent
 | V-CROSS-D_GOV_DRIFT-D_SHARED | 跨域违规: D_GOV_DRIFT -> D_SHARED | cross_domain_violation | D_GOV_DRIFT | D_SHARED | error | open |
 | V-CROSS-D_GOV_ENFORCEMENT-D_GOV_AUDIT | 跨域违规: D_GOV_ENFORCEMENT -> D_GOV_AUDIT | cross_domain_violation | D_GOV_ENFORCEMENT | D_GOV_AUDIT | error | open |
 | V-CROSS-D_GOV_ENFORCEMENT-D_GOV_CODE_QUALITY | 跨域违规: D_GOV_ENFORCEMENT -> D_GOV_CODE_QUALITY | cross_domain_violation | D_GOV_ENFORCEMENT | D_GOV_CODE_QUALITY | error | open |
-| V-CROSS-D_GOV_KB-D_SHARED | 跨域违规: D_GOV_KB -> D_SHARED | cross_domain_violation | D_GOV_KB | D_SHARED | error | open |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOVERNANCE | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOVERNANCE | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOVERNANCE | error | open |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOV_AUDIT | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOV_AUDIT | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | error | open |
 | V-CROSS-D_GOV_OPS_RESILIENCE-D_GOV_DRIFT | 跨域违规: D_GOV_OPS_RESILIENCE -> D_GOV_DRIFT | cross_domain_violation | D_GOV_OPS_RESILIENCE | D_GOV_DRIFT | error | open |
@@ -433,7 +426,6 @@ ttl: permanent
 | V-CROSS-D_GOV_REPAIR-D_GOV_AUDIT | 跨域违规: D_GOV_REPAIR -> D_GOV_AUDIT | cross_domain_violation | D_GOV_REPAIR | D_GOV_AUDIT | error | open |
 | V-CROSS-D_GOV_REPAIR-D_GOV_DRIFT | 跨域违规: D_GOV_REPAIR -> D_GOV_DRIFT | cross_domain_violation | D_GOV_REPAIR | D_GOV_DRIFT | error | open |
 | V-CROSS-D_GOV_REPAIR-D_GOV_ENFORCEMENT | 跨域违规: D_GOV_REPAIR -> D_GOV_ENFORCEMENT | cross_domain_violation | D_GOV_REPAIR | D_GOV_ENFORCEMENT | error | open |
-| V-CROSS-D_GOV_REPAIR-D_GOV_KB | 跨域违规: D_GOV_REPAIR -> D_GOV_KB | cross_domain_violation | D_GOV_REPAIR | D_GOV_KB | error | open |
 | V-CROSS-D_GOV_REPAIR-D_GOV_OPS_RESILIENCE | 跨域违规: D_GOV_REPAIR -> D_GOV_OPS_RESILIENCE | cross_domain_violation | D_GOV_REPAIR | D_GOV_OPS_RESILIENCE | error | open |
 | V-CROSS-D_GOV_REPAIR-D_GOV_RULE | 跨域违规: D_GOV_REPAIR -> D_GOV_RULE | cross_domain_violation | D_GOV_REPAIR | D_GOV_RULE | error | open |
 | V-CROSS-D_GOV_REPAIR-D_INFRASTRUCTURE | 跨域违规: D_GOV_REPAIR -> D_INFRASTRUCTURE | cross_domain_violation | D_GOV_REPAIR | D_INFRASTRUCTURE | error | open |
@@ -482,7 +474,6 @@ ttl: permanent
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOVERNANCE | error | open |
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_AUDIT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_AUDIT | error | open |
 | V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_DRIFT | error | open |
-| V-LAYER-D_GOV_OPS_RESILIENCE-D_GOV_KB | 层级违规: L1_foundation -> L2_domain | layer_violation | D_GOV_OPS_RESILIENCE | D_GOV_KB | error | open |
 | V-LAYER-D_INFRA_A2A-D_FEEDBACK_LOOP | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_FEEDBACK_LOOP | error | open |
 | V-LAYER-D_INFRA_A2A-D_GOVERNANCE | 层级违规: L0_infrastructure -> L2_domain | layer_violation | D_INFRA_A2A | D_GOVERNANCE | error | open |
 | V-LAYER-D_INFRA_A2A-D_SHARED | 层级违规: L0_infrastructure -> L1_foundation | layer_violation | D_INFRA_A2A | D_SHARED | error | open |
@@ -502,7 +493,6 @@ ttl: permanent
 | V-LAYER-D_SECURITY-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOVERNANCE | error | open |
 | V-LAYER-D_SECURITY-D_GOV_AUDIT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_AUDIT | error | open |
 | V-LAYER-D_SECURITY-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_DRIFT | error | open |
-| V-LAYER-D_SECURITY-D_GOV_KB | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_KB | error | open |
 | V-LAYER-D_SECURITY-D_GOV_RULE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SECURITY | D_GOV_RULE | error | open |
 | V-LAYER-D_SHARED-D_GOVERNANCE | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SHARED | D_GOVERNANCE | error | open |
 | V-LAYER-D_SHARED-D_GOV_DRIFT | 层级违规: L1_foundation -> L2_domain | layer_violation | D_SHARED | D_GOV_DRIFT | error | open |

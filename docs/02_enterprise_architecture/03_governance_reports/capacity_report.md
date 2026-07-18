@@ -20,7 +20,7 @@ ttl: permanent
 
 | 指标 / Metric | 值 / Value |
 |------|-----|
-| 域总数 | 63 |
+| 域总数 | 62 |
 | 超容域 | 0 |
 | 接近超容域（>80%） | 1 |
 | 空域（0模块） | 25 |
@@ -29,7 +29,7 @@ ttl: permanent
 
 | 域ID / Domain ID | 域名称 / Domain Name | 实际模块数 / Actual Modules | 上限 / Max | 使用率 / Usage |
 |------|--------|:---:|:---:|:---:|
-| D_AUTONOMY_CORE | 自治核心 | 132 | 150 | 88.0% |
+| D_AUTONOMY_CORE | 自治核心 | 126 | 150 | 84.0% |
 
 ## 空域清单（0模块，待开发）
 
@@ -68,7 +68,7 @@ ttl: permanent
 | D_ALT_DATA | 另类数据 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_ASHARE_SIGNAL | A股特色信号 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_AUDITTEST | 审计测试套件 | L2_domain | 1 | 150 | 0.7% | 正常 |
-| D_AUTONOMY_CORE | 自治核心 | L1_foundation | 132 | 150 | 88.0% | 接近超容 |
+| D_AUTONOMY_CORE | 自治核心 | L1_foundation | 126 | 150 | 84.0% | 接近超容 |
 | D_AUTONOMY_PERM | 自治保护 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_BACKTEST | 回测 | L2_domain | 9 | 150 | 6.0% | 正常 |
 | D_BEHAVIORAL_AUDIT | 行为审计 |  | 0 | 150 | 0.0% | 空 |
@@ -84,18 +84,17 @@ ttl: permanent
 | D_EX_SOR | 执行路由 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_FACTOR | 因子 | L2_domain | 2 | 150 | 1.3% | 正常 |
 | D_FBL_DETECTORS | 反馈检测器 | L1_foundation | 59 | 150 | 39.3% | 正常 |
-| D_FBL_DIAGNOSERS | 反馈诊断器 | L1_foundation | 71 | 150 | 47.3% | 正常 |
+| D_FBL_DIAGNOSERS | 反馈诊断器 | L1_foundation | 69 | 150 | 46.0% | 正常 |
 | D_FBL_VERIFICATION | 反馈验证 | L1_foundation | 67 | 150 | 44.7% | 正常 |
-| D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 112 | 150 | 74.7% | 正常 |
+| D_FEEDBACK_LOOP | 反馈循环引擎 | L1_foundation | 110 | 150 | 73.3% | 正常 |
 | D_FRONTEND | 前端 | L1_foundation | 9 | 150 | 6.0% | 正常 |
 | D_FUNDAMENTAL_SIGNAL | 基本面信号 | L2_domain | 4 | 150 | 2.7% | 正常 |
 | D_GOVERNANCE | 生命周期管理 | L2_domain | 96 | 150 | 64.0% | 正常 |
-| D_GOV_AUDIT | 审计追踪 | L2_domain | 67 | 150 | 44.7% | 正常 |
-| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 114 | 150 | 76.0% | 正常 |
+| D_GOV_AUDIT | 审计追踪 | L2_domain | 66 | 150 | 44.0% | 正常 |
+| D_GOV_CODE_QUALITY | 代码质量治理 | L1_foundation | 115 | 150 | 76.7% | 正常 |
 | D_GOV_DOCS | 架构文档治理 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_GOV_DRIFT | 漂移检测 | L2_domain | 70 | 150 | 46.7% | 正常 |
+| D_GOV_DRIFT | 漂移检测 | L2_domain | 69 | 150 | 46.0% | 正常 |
 | D_GOV_ENFORCEMENT | 规则执行 | L2_domain | 15 | 150 | 10.0% | 正常 |
-| D_GOV_KB | 知识库治理 | L2_domain | 16 | 150 | 10.7% | 正常 |
 | D_GOV_OPS_RESILIENCE | 运维弹性治理 | L1_foundation | 81 | 150 | 54.0% | 正常 |
 | D_GOV_REPAIR | 治理修复 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_GOV_RULE | 规则治理 | L2_domain | 31 | 150 | 20.7% | 正常 |
@@ -104,17 +103,17 @@ ttl: permanent
 | D_INFRA_A2A | A2A通信 | L0_infrastructure | 28 | 150 | 18.7% | 正常 |
 | D_INFRA_OPS | 基础设施运维 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
 | D_INFRA_RECOVERY | 回滚恢复 | L0_infrastructure | 48 | 150 | 32.0% | 正常 |
-| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 118 | 150 | 78.7% | 正常 |
+| D_INFRA_RUNTIME | 运行时集成 | L0_infrastructure | 114 | 150 | 76.0% | 正常 |
 | D_INFRA_TELEMETRY | 可观测性 | L0_infrastructure | 0 | 150 | 0.0% | 空 |
-| D_INTEGRATION | 管线路由 | L1_foundation | 45 | 150 | 30.0% | 正常 |
+| D_INTEGRATION | 管线路由 | L1_foundation | 40 | 150 | 26.7% | 正常 |
 | D_INTEGRATION_GATEWAY | 集成网关 | L1_foundation | 0 | 150 | 0.0% | 空 |
-| D_INTELLIGENCE | 上下文管理 | L2_domain | 21 | 150 | 14.0% | 正常 |
+| D_INTELLIGENCE | 上下文管理 | L2_domain | 19 | 150 | 12.7% | 正常 |
 | D_KNOWLEDGE | 知识管理 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_MKT_DATA | 行情数据 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_ML_SERVE | 推理 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_ML_TRAIN | 训练 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_OPS | 反馈循环 | L1_foundation | 8 | 150 | 5.3% | 正常 |
-| D_ORCHESTRATOR | 代理编排器 | L1_foundation | 58 | 150 | 38.7% | 正常 |
+| D_ORCHESTRATOR | 代理编排器 | L1_foundation | 56 | 150 | 37.3% | 正常 |
 | D_PF_ALLOC | 组合分配 | L2_domain | 1 | 150 | 0.7% | 正常 |
 | D_PF_CORE | 组合核心 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_POSITION | 仓位管理 | L2_domain | 1 | 150 | 0.7% | 正常 |
@@ -123,7 +122,7 @@ ttl: permanent
 | D_SECURITY | 对抗验证 | L1_foundation | 99 | 150 | 66.0% | 正常 |
 | D_SECURITY_LLM | LLM防御 | L1_foundation | 0 | 150 | 0.0% | 空 |
 | D_SELL_DECISION | 卖出决策 | L2_domain | 0 | 150 | 0.0% | 空 |
-| D_SHARED | 共享服务 | L1_foundation | 115 | 150 | 76.7% | 正常 |
+| D_SHARED | 共享服务 | L1_foundation | 112 | 150 | 74.7% | 正常 |
 | D_SIGLEGACY | 信号遗留设计态 |  | 0 | 150 | 0.0% | 空 |
 | D_SIGQC | 信号质量控制 | L2_domain | 0 | 150 | 0.0% | 空 |
 | D_SIMULATION | 仿真 | L2_domain | 2 | 150 | 1.3% | 正常 |
