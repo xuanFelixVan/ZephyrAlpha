@@ -14,7 +14,7 @@ created_by: human_plus_agent
 date: "2026-07-09"
 ttl: permanent
 actual_disk_path: "scripts/backup/"
-last_updated: "2026-07-18"
+last_updated: "2026-07-19"
 last_verified: "2026-07-09"
 generation: 1
 functional_domain: operations
