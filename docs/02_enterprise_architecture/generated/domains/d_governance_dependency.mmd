@@ -1,7 +1,7 @@
 %% D_GOVERNANCE 域全景依赖图
-%% 生成时间: 2026-07-19 03:03:07
+%% 生成时间: 2026-07-19 03:10:24
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 213, 依赖边数: 615
+%% 模块数: 213, 依赖边数: 616
 
 graph TD
 
@@ -188,6 +188,8 @@ graph TD
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_BACKTEST[D_BACKTEST] -->|import_depends| src_zephyr_governance_persistence_decisiongraph_schema_py
+    %% D_DATA -> D_GOVERNANCE (1 条)
+    D_DATA[D_DATA] -->|contract| src_zephyr_governance_data_governance_miniqmt_provider_py_
     %% D_EX_CORE -> D_GOVERNANCE (6 条)
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_data_governance_miniqmt_provider_py_
     D_EX_CORE[D_EX_CORE] -->|import_depends| src_zephyr_governance_adapters_simulation_broker_py
@@ -498,5 +500,5 @@ graph TD
 
     %% 统计
     %% 域内依赖: 40 条
-    %% 跨域入边: 373 条
+    %% 跨域入边: 374 条
     %% 跨域出边: 202 条

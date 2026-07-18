@@ -1,5 +1,5 @@
 %% D_KNOWLEDGE 域全景依赖图
-%% 生成时间: 2026-07-19 03:03:07
+%% 生成时间: 2026-07-19 03:10:24
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 4, 依赖边数: 2
 
@@ -16,12 +16,12 @@ graph TD
     %% 域内依赖（最多显示 80 条）
 
     %% 跨域依赖（入）- 最多显示 30 条
-    %% D_GOV_DOCS -> D_KNOWLEDGE (1 条)
-    D_GOV_DOCS[D_GOV_DOCS] -->|contract| docs_03_modules__domain_knowle___knowledge_base_blueprint_md
+    %%  -> D_KNOWLEDGE (1 条)
+    [] -->|contract| docs_03_modules__domain_knowle___knowledge_base_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_KNOWLEDGE -> D_INFRA_RUNTIME (1 条)
-    docs_03_modules__domain_knowledge_vector_memory_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    %% D_KNOWLEDGE ->  (1 条)
+    docs_03_modules__domain_knowledge_vector_memory_blueprint_md -->|runtime| []
 
     %% 统计
     %% 域内依赖: 0 条

@@ -27,7 +27,7 @@ ttl: permanent
 | 层级 | L1 基础平台层 | Layer | L1 Foundation |
 | 模块数 | 71 | Module Count | 71 |
 | 域内依赖 | 17 | Internal Dependencies | 17 |
-| 跨域入边 | 37 | Cross-domain Incoming | 37 |
+| 跨域入边 | 35 | Cross-domain Incoming | 35 |
 | 跨域出边 | 1 | Cross-domain Outgoing | 1 |
 | 设计态模块 | 0 | Design Modules | 0 |
 | 原型态模块 | 4 | Prototype Modules | 4 |
@@ -167,7 +167,6 @@ graph TD
         src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py["(生产态 / production) Safety Gates L1-L27 — Unified Pipeline (MOD-FE...<br/>文件: safety_gate_l1_l27.py"]
     end
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_security_gates_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
@@ -223,11 +222,11 @@ graph TD
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_auto_rollback_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_cascading_rollback_analyzer_py
@@ -263,8 +262,7 @@ graph TD
         src_zephyr_feedback_loop_verifiers_toctou_revalidation_py["(生产态 / production) TOCTOU Revalidation — v0.37.0 R458<br/>文件: toctou_revalidation.py"]
         src_zephyr_feedback_loop_verifiers_verification_engine_py["(生产态 / production) verification_engine.py"]
     end
-    D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_federated_protocol_py
+    D_FEEDBACK_LOOP["(生产态 / production) D_FEEDBACK_LOOP"]
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_golden_test_external_py
@@ -284,7 +282,7 @@ graph TD
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
     classDef external_design fill:#fce4ec,stroke:#880e4f,stroke-width:1px,color:#000,stroke-dasharray: 5 5
     class src_zephyr_feedback_loop_verifiers_dry_run_sandbox_py,src_zephyr_feedback_loop_verifiers_federated_protocol_py,src_zephyr_feedback_loop_verifiers_golden_test_external_py,src_zephyr_feedback_loop_verifiers_no_llm_degradation_py,src_zephyr_feedback_loop_verifiers_pre_flight_simulator_py,src_zephyr_feedback_loop_verifiers_preventive_repair_py,src_zephyr_feedback_loop_verifiers_rollback_integrity_py,src_zephyr_feedback_loop_verifiers_sim2real_calibration_py,src_zephyr_feedback_loop_verifiers_stochastic_diagnosis_verifier_py,src_zephyr_feedback_loop_verifiers_toctou_revalidation_py,src_zephyr_feedback_loop_verifiers_verification_engine_py production
-    class D_FEEDBACK_LOOP external_design
+    class D_FEEDBACK_LOOP external_prod
 ```
 
 ### 运营态子图（仅 design_maturity=production 的模块和依赖）
@@ -363,32 +361,31 @@ graph TD
         src_zephyr_feedback_loop_verifiers_verification_engine_py["(生产态 / production) verification_engine.py"]
     end
     src_zephyr_feedback_loop_gates_safety_gate_l28_l29_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l44_l45_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l38_l39_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l40_l41_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l50_l51_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l52_l53_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l42_l43_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l36_l37_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l48_l49_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l46_l47_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l60_l61_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l54_l55_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l64_l65_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
-    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     src_zephyr_feedback_loop_gates_safety_gate_l62_l63_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l58_l59_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l56_l57_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_GOV_AUDIT["(生产态 / production) D_GOV_AUDIT"]
     src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py -->|导入依赖 / import_depends| D_GOV_AUDIT
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_verifiers_federated_protocol_py
-    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
-    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ab_test_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_action_explainability_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_ai_comment_veracity_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_build_reproducibility_verifier_py
+    D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_attack_simulator_py
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_verification_engine_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l66_l67_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_sim2real_calibration_py
@@ -397,6 +394,7 @@ graph TD
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_no_llm_degradation_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_deployment_suppression_py
     D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gate_l1_l27_py
+    D_FEEDBACK_LOOP -->|导入依赖 / import_depends| src_zephyr_feedback_loop_verifiers_cascading_rollback_analyzer_py
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
     classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
     classDef external_prod fill:#e8f5e9,stroke:#1b5e20,stroke-width:1px,color:#000
@@ -425,7 +423,6 @@ graph TD
         src_zephyr_feedback_loop_gates_security_gates_py["(原型态 / prototype) _security_gates.py"]
     end
     D_FEEDBACK_LOOP["(原型态 / prototype) D_FEEDBACK_LOOP"]
-    D_FEEDBACK_LOOP -.->|runtime / runtime| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_safety_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_security_gates_py
     D_FEEDBACK_LOOP -.->|导入依赖 / import_depends| src_zephyr_feedback_loop_gates_governance_gates_py
@@ -450,47 +447,45 @@ graph TD
 
 | # | 外部域-源模块 / Source Module | → | 本域模块 / Target Module | 依赖类型 / Type |
 |:--:|---------|:--:|---------|---------|
-| 1 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | _safety_gates.py | runtime / runtime |
-| 2 | D_FEEDBACK_LOOP 反馈循环引擎: FLE->Orc 告警分派器 — dispatch() 生产者 (alert... | → | Federated Protocol — v0.10.0 R129 (federated_p... | runtime / runtime |
-| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _governance_gates.py | 导入依赖 / import_depends |
-| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _operational_gates.py | 导入依赖 / import_depends |
-| 5 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _safety_gates.py | 导入依赖 / import_depends |
-| 6 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _security_gates.py | 导入依赖 / import_depends |
-| 7 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | verification_engine.py | 导入依赖 / import_depends |
-| 8 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | Cascading Rollback Analyzer — v0.38.0 R482 (ca... | 导入依赖 / import_depends |
-| 9 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 导入依赖 / import_depends |
-| 10 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | verification_engine.py | 导入依赖 / import_depends |
-| 11 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | Deployment Suppression — v0.37.0 R464 (deploym... | 导入依赖 / import_depends |
-| 12 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FE... | 导入依赖 / import_depends |
-| 13 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FE... | 导入依赖 / import_depends |
-| 14 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | Safety Gates L66-L67 — Financial Prudence + Fu... | 导入依赖 / import_depends |
-| 15 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | A/B Test Verifier — v0.9.0 R117 (ab_test.py) | 导入依赖 / import_depends |
-| 16 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Action Explainability — v0.3.0 R15 (action_exp... | 导入依赖 / import_depends |
-| 17 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | AI Comment Veracity — v0.37.0 R459 (ai_comment... | 导入依赖 / import_depends |
-| 18 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Attack Simulator — v0.6.0 R57 (attack_simulato... | 导入依赖 / import_depends |
-| 19 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Auto Rollback — v0.8.0 R93 (auto_rollback.py) | 导入依赖 / import_depends |
-| 20 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Build Reproducibility Verifier — v0.38.0 R484 ... | 导入依赖 / import_depends |
-| 21 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Canary Repair — v0.8.0 R104b (canary_repair.py) | 导入依赖 / import_depends |
-| 22 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cascading Rollback Analyzer — v0.38.0 R482 (ca... | 导入依赖 / import_depends |
-| 23 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Blueprint Contract Drift Monitor — v0.39... | 导入依赖 / import_depends |
-| 24 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Module Integration Verifier — v0.5.0 R39... | 导入依赖 / import_depends |
-| 25 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Session Knowledge Integrity — v0.16.0 R2... | 导入依赖 / import_depends |
-| 26 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Digital Twin Sandbox — v0.6.0 R55 (digital_twi... | 导入依赖 / import_depends |
-| 27 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Dry Run Sandbox — v0.3.0 R19 (dry_run_sandbox.py) | 导入依赖 / import_depends |
-| 28 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Federated Protocol — v0.10.0 R129 (federated_p... | 导入依赖 / import_depends |
-| 29 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Golden Test External — v0.15.0 R214 (golden_te... | 导入依赖 / import_depends |
-| 30 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | No-LLM Degradation Mode — v0.8.0 R94 (no_llm_d... | 导入依赖 / import_depends |
-| 31 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Pre-Flight Simulator — v0.12.0 R169b (pre_flig... | 导入依赖 / import_depends |
-| 32 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Preventive Repair — v0.6.0 R69 (preventive_rep... | 导入依赖 / import_depends |
-| 33 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Rollback Integrity — v0.3.0 R18b (rollback_int... | 导入依赖 / import_depends |
-| 34 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Sim2Real Calibration — v0.6.0 R56 (sim2real_ca... | 导入依赖 / import_depends |
-| 35 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 导入依赖 / import_depends |
-| 36 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | TOCTOU Revalidation — v0.37.0 R458 (toctou_rev... | 导入依赖 / import_depends |
-| 37 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | verification_engine.py | 导入依赖 / import_depends |
+| 1 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _governance_gates.py | 导入依赖 / import_depends |
+| 2 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _operational_gates.py | 导入依赖 / import_depends |
+| 3 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _safety_gates.py | 导入依赖 / import_depends |
+| 4 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.gates — auto-generated package i... | → | _security_gates.py | 导入依赖 / import_depends |
+| 5 | D_FEEDBACK_LOOP 反馈循环引擎: FLE 全链路调度器 —— collect->detect->diagnose... | → | verification_engine.py | 导入依赖 / import_depends |
+| 6 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | Cascading Rollback Analyzer — v0.38.0 R482 (ca... | 导入依赖 / import_depends |
+| 7 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 导入依赖 / import_depends |
+| 8 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_act.py | → | verification_engine.py | 导入依赖 / import_depends |
+| 9 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | Deployment Suppression — v0.37.0 R464 (deploym... | 导入依赖 / import_depends |
+| 10 | D_FEEDBACK_LOOP 反馈循环引擎: scheduler_safety.py | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FE... | 导入依赖 / import_depends |
+| 11 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | Safety Gates L1-L27 — Unified Pipeline (MOD-FE... | 导入依赖 / import_depends |
+| 12 | D_FEEDBACK_LOOP 反馈循环引擎: E2E Integration Test Pipeline — TASK-MOD-FEEDB... | → | Safety Gates L66-L67 — Financial Prudence + Fu... | 导入依赖 / import_depends |
+| 13 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | A/B Test Verifier — v0.9.0 R117 (ab_test.py) | 导入依赖 / import_depends |
+| 14 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Action Explainability — v0.3.0 R15 (action_exp... | 导入依赖 / import_depends |
+| 15 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | AI Comment Veracity — v0.37.0 R459 (ai_comment... | 导入依赖 / import_depends |
+| 16 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Attack Simulator — v0.6.0 R57 (attack_simulato... | 导入依赖 / import_depends |
+| 17 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Auto Rollback — v0.8.0 R93 (auto_rollback.py) | 导入依赖 / import_depends |
+| 18 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Build Reproducibility Verifier — v0.38.0 R484 ... | 导入依赖 / import_depends |
+| 19 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Canary Repair — v0.8.0 R104b (canary_repair.py) | 导入依赖 / import_depends |
+| 20 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cascading Rollback Analyzer — v0.38.0 R482 (ca... | 导入依赖 / import_depends |
+| 21 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Blueprint Contract Drift Monitor — v0.39... | 导入依赖 / import_depends |
+| 22 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Module Integration Verifier — v0.5.0 R39... | 导入依赖 / import_depends |
+| 23 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Cross-Session Knowledge Integrity — v0.16.0 R2... | 导入依赖 / import_depends |
+| 24 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Digital Twin Sandbox — v0.6.0 R55 (digital_twi... | 导入依赖 / import_depends |
+| 25 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Dry Run Sandbox — v0.3.0 R19 (dry_run_sandbox.py) | 导入依赖 / import_depends |
+| 26 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Federated Protocol — v0.10.0 R129 (federated_p... | 导入依赖 / import_depends |
+| 27 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Golden Test External — v0.15.0 R214 (golden_te... | 导入依赖 / import_depends |
+| 28 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | No-LLM Degradation Mode — v0.8.0 R94 (no_llm_d... | 导入依赖 / import_depends |
+| 29 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Pre-Flight Simulator — v0.12.0 R169b (pre_flig... | 导入依赖 / import_depends |
+| 30 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Preventive Repair — v0.6.0 R69 (preventive_rep... | 导入依赖 / import_depends |
+| 31 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Rollback Integrity — v0.3.0 R18b (rollback_int... | 导入依赖 / import_depends |
+| 32 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Sim2Real Calibration — v0.6.0 R56 (sim2real_ca... | 导入依赖 / import_depends |
+| 33 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | Stochastic Diagnosis Verifier — v0.38.0 R483 (... | 导入依赖 / import_depends |
+| 34 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | TOCTOU Revalidation — v0.37.0 R458 (toctou_rev... | 导入依赖 / import_depends |
+| 35 | D_FEEDBACK_LOOP 反馈循环引擎: feedback-loop.verifiers — auto-generated packa... | → | verification_engine.py | 导入依赖 / import_depends |
 
 ### 跨域依赖图 / Cross-domain Dependency Diagram
 
-> 本域与 2 个外部域直接连接（出边 1 条 + 入边 37 条 = 38 条）。只显示直接连接的域，不展开具体节点。
+> 本域与 2 个外部域直接连接（出边 1 条 + 入边 35 条 = 36 条）。只显示直接连接的域，不展开具体节点。
 
 ```mermaid
 graph LR
@@ -498,7 +493,7 @@ graph LR
     D_GOV_AUDIT["D_GOV_AUDIT<br/>审计追踪"]
     D_FEEDBACK_LOOP["D_FEEDBACK_LOOP<br/>反馈循环引擎"]
     D_FBL_VERIFICATION -->|1条 导入依赖 / import_depends| D_GOV_AUDIT
-    D_FEEDBACK_LOOP -->|37条 导入依赖 / import_depends, runtime / runtime| D_FBL_VERIFICATION
+    D_FEEDBACK_LOOP -->|35条 导入依赖 / import_depends| D_FBL_VERIFICATION
 ```
 
 ## 说明 / Notes
