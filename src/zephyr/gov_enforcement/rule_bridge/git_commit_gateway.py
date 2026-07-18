@@ -87,6 +87,7 @@ from zephyr.gov_enforcement.commit_gates.encoding_gate import make_encoding_gate
 from zephyr.gov_enforcement.commit_gates.file_placement_ttl_gate import make_file_placement_ttl_gate
 from zephyr.gov_enforcement.commit_gates.dangling_reference_gate import make_dangling_reference_gate
 from zephyr.gov_enforcement.commit_gates.arch_reference_gate import make_arch_reference_gate
+from zephyr.gov_enforcement.commit_gates.ruling_reference_gate import make_ruling_reference_gate
 from zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate import make_r5_digit_suffix_gate
 from zephyr.gov_enforcement.commit_gates.ssot_redefinition_gate import make_ssot_redefinition_gate
 from zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate import make_unsafe_dict_spread_gate
@@ -314,6 +315,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
+        self._gate_registry.register(make_ruling_reference_gate())  # priority=74 治本 裁定#NNN 悬空引用（裁定#20-B，manual stage 不阻断，对标 ARCH-REFERENCE，紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后）
         self._gate_registry.register(make_rule_four_way_alignment_gate())  # priority=76 治本规则四方对齐（ARCH-020 补建，subprocess 调 check_rule_four_way_alignment.py --ci）
         self._gate_registry.register(make_r5_digit_suffix_gate())  # priority=35 治本 R5 数字后缀目录禁止（弥补 --no-verify 绕过 pre-commit 的缺口）
         self._gate_registry.register(make_rename_depgraph_sync_gate())  # priority=39 治本文件重命名后 depgraph 未同步（AI-14 审计：a2a_protocol_security→a2a_agent_blocklist 重命名导致 13 处 docs stale 引用根因；原 36 与 CH-BATCH-SIZE 冲突，迁移到 39）

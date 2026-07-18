@@ -4036,6 +4036,44 @@ capabilities:
           __init__.py，re-export 自 src/zephyr/security/adversarial_validation/
           真源。非重复实现，是兼容性 re-export 垫片。
 
+  # --------------------------------------------------------------------------
+  # M04 治本补登（2026-07-18）：ruling_reference_gate 未在 capability registry 登记，
+  # 被 M04 检测器报为 GATE 未登记 capability 数=1。补登后 M04=0 闭环。
+  - capability_id: ruling_reference_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py
+    aliases:
+      - RULING-REFERENCE
+      - ruling-reference
+      - make_ruling_reference_gate
+    description: >-
+      RULING-REFERENCE 裁定#NNN 悬空引用自动检测门禁（裁定#20-A/B，2026-07-18）。
+      检测 staged 文件中新增的"裁定#NNN" / "裁定#NNN-X"引用是否在
+      ruling_registry.yaml 中登记。L1 编号存在性检测 + L1 编号空洞 WARNING +
+      L2 同提交原子性硬阻断（阶段2）。priority=74，紧跟 DANGLING-REFERENCE(70) +
+      NOQA-VALIDATION(71) 之后，ARCH-REFERENCE(75) 之前——同属"引用完整性"类检查。
+      当前阶段1 manual stage（_MANUAL_STAGE=True）：违规只 WARNING 不阻断，建立基线。
+      canonical = src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py。
+      解决发现性：新 AI 搜 "裁定引用/ruling reference/RULING-REFERENCE/裁定#NNN" 可定位真源。
+
+  # --------------------------------------------------------------------------
+  # 裁定#20-A 建立（2026-07-18）：ruling_registry.yaml 是裁定中央登记表，作为独立
+  # capability 登记——对标 architecture_issue_registry.yaml 的发现性模式。新 AI 搜
+  # "裁定登记/裁定 registry/ruling registry/裁定#NNN 真源" 可定位 YAML 真源。
+  - capability_id: ruling_registry
+    canonical_override: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    aliases:
+      - ruling_registry_yaml
+      - 裁定登记表
+      - 裁定中央登记表
+    description: >-
+      裁定中央登记表（裁定#20-A 建立，2026-07-18）。48 个裁定条目真源（SSoT）——
+      登记 ruling_id/title/date/category/status/summary/affected_files/related_arch/
+      related_rulings/superseded_by。对标 architecture_issue_registry.yaml（#ARCH-XXX
+      真源，裁定#208 R6 建立）建立对应机制。配套门禁 RULING-REFERENCE gate（priority=74，
+      裁定#20-B）强制引用登记。canonical = docs/01_policies_and_standards/_registry/
+      catalogs/ruling_registry.yaml。解决发现性：新 AI 搜"裁定登记/裁定 registry/ruling
+      registry/裁定#NNN 真源/裁定#20-A/裁定#20-B"可定位 YAML 真源。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -4943,6 +4981,22 @@ creation_tokens:
     token: "auto-sys-telemetry-logs-sink-20260718"
     created_by: "sess-leftover-fix"
     capability: "system_telemetry_logs_sink"
+  # 治本（2026-07-18）：ruling_reference_gate.py 首次纳入版本控制（M04 补登）
+  - file: "src/zephyr/gov_enforcement/commit_gates/ruling_reference_gate.py"
+    token: "auto-ruling-reference-gate-20260718"
+    created_by: "sess-m04-fix"
+    capability: "ruling_reference_gate"
+  # 治本（2026-07-18）：_reference_helpers.py FUNCTION-DUP 消除——提取 5 个重复 helper
+  - file: "src/zephyr/gov_enforcement/commit_gates/_reference_helpers.py"
+    token: "auto-reference-helpers-20260718"
+    created_by: "sess-m04-fix"
+    capability: "ruling_reference_gate"
+  # 治本（2026-07-18，裁定#20-A）：ruling_registry.yaml 首次纳入版本控制——裁定中央登记表
+  # 非 rules/ .yaml，需登记 creation_token（CREATE-GUARD 门禁消费，对标其他 _registry/catalogs/*.yaml）
+  - file: "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml"
+    token: "auto-ruling-registry-20260718"
+    created_by: "sess-29716-20260718160200"
+    capability: "ruling_registry"
 
 # ============================================================================
 # 维护日志
