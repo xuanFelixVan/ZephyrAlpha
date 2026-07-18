@@ -106,7 +106,7 @@ class TestExitCodeConstants:
     def test_manifest_has_owner_field(self):
         import yaml
 
-        manifest_path = GOV_DIR / "script-manifest.yaml"
+        manifest_path = GOV_DIR / "script_manifest.yaml"
         data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
         assert "scripts" in data
         first_with_owner = any("owner" in s for s in data["scripts"])

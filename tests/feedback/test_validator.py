@@ -20,7 +20,7 @@ class TestBASE:
         assert isinstance(BASE, str)
 
     def test_base_points_to_feedback_loop(self):
-        assert "feedback-loop" in BASE
+        assert "feedback_loop" in BASE
 
 
 class TestMissingFiles:

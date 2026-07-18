@@ -43,14 +43,14 @@ from zephyr.feedback_loop.collectors.schema_migration import (
 )
 from zephyr.feedback_loop.collectors.temporal_event_store import TemporalEventStore
 from zephyr.feedback_loop.collectors.token_finops import TokenFinOps
-from zephyr.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.collectors.feedback_collector import (
     ActionResult,
     FeedbackChannel,
     FeedbackCollector,
     OwnerAck,
     OwnerResponse,
 )
-from zephyr.feedback_loop.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
+from zephyr.feedback_loop.collectors.metrics_collector import EMABaseline, MetricsCollector, MetricSnapshot
 
 
 class TestMetricSnapshot:

@@ -42,7 +42,7 @@ from zephyr.governance.persistence.task_repo import (
 )
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskNamespace, TaskStatus
 from zephyr.integration.shared.schema.base_config import Classification, EvolutionPolicy
-from zephyr.integration.shared.schema.severity_types import SafetyLevel
+from zephyr.integration.shared.schema.severity_types import Priority, SafetyLevel
 from zephyr.shared.foundation.models import TaskCard
 
 _UTC = UTC
@@ -76,7 +76,16 @@ def _make_task(
         estimate_hours=1.0,
         source_blueprint="test",
         source_section="test",
-        description=f"Task {task_id}",
+        directive="GOV-TASK-001",
+        description=f"根因：测试 TaskRepository CRUD 功能。治根：创建符合 GOV-TASK-001 v3.1.0 颗粒度门禁的测试任务。施工步骤：(1) 构造 TaskCard 并调用 create。验收标准：任务 {task_id} 创建成功。",
+        files_in_scope=["src/zephyr/db/task_repo.py"],
+        deliverables=["test deliverable"],
+        applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+        allowed_touch=["src/zephyr/db/task_repo.py"],
+        rollback_instructions="git checkout -- task_repo.py",
+        post_sync_standard=["python --version"],
+        acceptance=["exit=0"],
+        dependency_type="none",
         session_id=session_id,
         created_at=now,
         updated_at=now,
@@ -149,7 +158,16 @@ class TestCreate:
             safety_level=SafetyLevel.H,
             source_blueprint="test",
             source_section="test",
-            description="Depends Task",
+            directive="GOV-TASK-001",
+            description="根因：测试依赖关系功能。治根：创建带依赖的测试任务卡并验证 depends_on 字段持久化。施工步骤：(1) 构造带 depends_on 的 TaskCard 实例并调用 create。验收标准：依赖关系正确存储和查询，depends_on 列表包含预期值。",
+            files_in_scope=["src/zephyr/db/task_repo.py"],
+            deliverables=["test deliverable"],
+            applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+            allowed_touch=["src/zephyr/db/task_repo.py"],
+            rollback_instructions="git checkout -- task_repo.py",
+            post_sync_standard=["python --version"],
+            acceptance=["exit=0"],
+            dependency_type="hard",
             depends_on=["SRC-5", "SRC-6"],
             created_at=now,
             updated_at=now,
@@ -225,12 +243,18 @@ class TestTransition:
     def test_in_progress_to_completed(self, repo: TaskRepository) -> None:
         repo.create(_make_task("SRC-31"))
         repo.transition("SRC-31", TaskStatus.IN_PROGRESS)
+        # COMPLETED requires 2 consecutive zero-issue batch_review rounds
+        repo.batch_review("SRC-31")
+        repo.batch_review("SRC-31")
         t = repo.transition("SRC-31", TaskStatus.COMPLETED)
         assert t.status == TaskStatus.COMPLETED
 
     def test_completed_to_verified(self, repo: TaskRepository) -> None:
         repo.create(_make_task("SRC-32"))
         repo.transition("SRC-32", TaskStatus.IN_PROGRESS)
+        # COMPLETED requires 2 consecutive zero-issue batch_review rounds
+        repo.batch_review("SRC-32")
+        repo.batch_review("SRC-32")
         repo.transition("SRC-32", TaskStatus.COMPLETED)
         t = repo.transition("SRC-32", TaskStatus.VERIFIED)
         assert t.status == TaskStatus.VERIFIED
@@ -238,7 +262,7 @@ class TestTransition:
     def test_failed_to_retry(self, repo: TaskRepository) -> None:
         repo.create(_make_task("SRC-33"))
         repo.transition("SRC-33", TaskStatus.IN_PROGRESS)
-        repo.transition("SRC-33", TaskStatus.FAILED)
+        repo.transition("SRC-33", TaskStatus.FAILED, note="根因: integration test failure simulation")
         t = repo.transition("SRC-33", TaskStatus.RETRY)
         assert t.status == TaskStatus.RETRY
 
@@ -305,13 +329,28 @@ class TestTransition:
             safety_level=SafetyLevel.M,
             source_blueprint="test",
             source_section="test",
-            description="Test task for transition",
+            directive="GOV-TASK-001",
+            description="根因：测试状态转换验证。治根：创建测试任务卡验证非法转换拦截机制。施工步骤：(1) 构造 TaskCard 并测试非法状态转换。验收标准：非法转换被正确拦截并抛出 InvalidTransitionError。",
+            files_in_scope=["src/zephyr/db/task_repo.py"],
+            deliverables=["test"],
+            applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+            allowed_touch=["src/zephyr/db/task_repo.py"],
+            rollback_instructions="git checkout -- task_repo.py",
+            post_sync_standard=["python --version"],
+            acceptance=["exit=0"],
+            dependency_type="none",
             created_at=now,
             updated_at=now,
         )
         repo.create(t)
+        # COMPLETED transitions require 2 consecutive zero-issue batch_review
+        # rounds; call unconditionally (harmless for non-COMPLETED targets)
+        repo.batch_review(tid)
+        repo.batch_review(tid)
         with pytest.raises(InvalidTransitionError):
-            repo.transition(tid, to_s)
+            # note provided so RootCauseRequiredError doesn't fire before
+            # InvalidTransitionError for the PENDING->FAILED case
+            repo.transition(tid, to_s, note="root cause: test invalid transition")
 
     def test_transition_nonexistent_raises(self, repo: TaskRepository) -> None:
         with pytest.raises(TaskNotFoundError):
@@ -402,7 +441,16 @@ class TestList:
                 safety_level=SafetyLevel.L,
                 source_blueprint="test",
                 source_section="test",
-                description=f"Test task {i}",
+                directive="GOV-TASK-001",
+                description=f"根因：测试列表查询功能。治根：创建批量测试任务卡验证 list_by 方法。施工步骤：(1) 构造 TaskCard {i} 并入库。验收标准：列表查询结果正确，按 status/phase/session 过滤无误。",
+                files_in_scope=[f"src/zephyr/db/task_repo_{100 + i}.py"],
+                deliverables=["test"],
+                applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+                allowed_touch=[f"src/zephyr/db/task_repo_{100 + i}.py"],
+                rollback_instructions="git checkout -- task_repo.py",
+                post_sync_standard=["python --version"],
+                acceptance=["exit=0"],
+                dependency_type="none",
                 session_id="sess-seed" if i < 3 else None,
                 created_at=now,
                 updated_at=now,
@@ -463,7 +511,16 @@ class TestUpsert:
             safety_level=SafetyLevel.H,
             source_blueprint="test",
             source_section="test",
-            description="Updated Name",
+            directive="GOV-TASK-001",
+            description="根因：测试 upsert 更新功能。治根：创建测试任务卡验证 upsert 插入和更新行为。施工步骤：(1) 构造 TaskCard 并调用 upsert 两次验证幂等。验收标准：更新后字段值正确，task_id 不变。",
+            files_in_scope=["src/zephyr/db/task_repo.py"],
+            deliverables=["test"],
+            applicable_rules=[{"module_id": "GOV-TASK-001", "section": "v3.0.0", "reason": "test"}],
+            allowed_touch=["src/zephyr/db/task_repo.py"],
+            rollback_instructions="git checkout -- task_repo.py",
+            post_sync_standard=["python --version"],
+            acceptance=["exit=0"],
+            dependency_type="none",
             created_at=now,
             updated_at=now,
         )
