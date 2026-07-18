@@ -59,25 +59,25 @@ from __future__ import annotations
 import argparse
 import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 import psycopg2
 
 # 添加项目根到 sys.path（确保 zephyr.* 可导入）
-from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
-
+# 添加 _shared 到 sys.path（确保 _shared.constants 可导入）
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS
 
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
+from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     _DATAFLOW_ADVISORY_LOCK_KEY,
     acquire_dataflow_write_lock,
     get_dataflowgraph_pg_connection,
@@ -289,7 +289,7 @@ def cmd_list_datasets(args: argparse.Namespace) -> int:
         print(f"{'ID':>4}  {'entity_name':40}  {'scope':18}  {'contract':12}  {'domain':14}  {'maturity':10}  {'build':10}")
         print("-" * 130)
         for row in rows:
-            print(f"{row[0]:>4}  {row[1]:40}  {row[2]:18}  {str(row[3] or '-'):12}  {str(row[4] or '-'):14}  {row[5]:10}  {row[6]:10}")
+            print(f"{row[0]:>4}  {row[1]:40}  {row[2]:18}  {row[3] or '-'!s:12}  {row[4] or '-'!s:14}  {row[5]:10}  {row[6]:10}")
         print(f"\n共 {len(rows)} 个 Dataset")
         return 0
     finally:
@@ -312,7 +312,7 @@ def cmd_list_jobs(args: argparse.Namespace) -> int:
         print(f"{'ID':>4}  {'job_name':35}  {'scope':18}  {'source_code_ref':50}  {'trigger':12}  {'maturity':10}  {'build':10}")
         print("-" * 150)
         for row in rows:
-            print(f"{row[0]:>4}  {row[1]:35}  {row[2]:18}  {str(row[3] or '-'):50}  {str(row[4] or '-'):12}  {row[5]:10}  {row[6]:10}")
+            print(f"{row[0]:>4}  {row[1]:35}  {row[2]:18}  {row[3] or '-'!s:50}  {row[4] or '-'!s:12}  {row[5]:10}  {row[6]:10}")
         print(f"\n共 {len(rows)} 个 Job")
         return 0
     finally:
