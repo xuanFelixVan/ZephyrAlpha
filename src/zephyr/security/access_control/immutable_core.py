@@ -163,8 +163,9 @@ class ImmutableCore:
         }
 
     def should_cold_start_lock(self) -> bool:
-        """判断是否应启用冷启动锁."""
-        return True
+        """判断是否应启用冷启动锁（存在 config/rbac_roles.yaml 时无需冷启动锁）."""
+        rbac_config = self.project_root / "config" / "rbac_roles.yaml"
+        return not rbac_config.exists()
 
     def verify_immutable_core_integrity(self) -> IntegrityResult:
         """验证不可变核心完整性.

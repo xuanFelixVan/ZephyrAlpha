@@ -51,6 +51,8 @@ class KillSwitchStatus:
         self.state: KillSwitchState = KillSwitchState.NORMAL
         self.tripped_at: float = 0.0
         self.reason: str = ""
+        # 治本(2026-07-18): owner_override 标记 owner 是否已释放全局熔断（覆盖模式）。
+        self.owner_override: bool = False
 
     def __repr__(self) -> str:
         return f"KillSwitchStatus(state={self.state.value}, reason={self.reason!r})"
@@ -84,6 +86,7 @@ class TriggerResult:
     NO_ACTION = "no_action"
     BLOCK_AGENT = "block_agent"
     GLOBAL_BLOCK = "global_block"
+    WARNING = "warning"
 
     def __init__(self, action: str = "no_action", agent_id: str = "", reason: str = "") -> None:
         self.action = action
@@ -109,7 +112,7 @@ class TriggerResult:
 
 # 默认触发器列表（至少9个）
 DEFAULT_TRIGGERS: list[TriggerDefinition] = [
-    TriggerDefinition(trigger="rapid_file_deletion", default_threshold=5, description="快速文件删除"),
+    TriggerDefinition(trigger="rapid_file_deletion", default_threshold=3, description="快速文件删除"),
     TriggerDefinition(trigger="permission_boundary_probe", default_threshold=3, description="权限边界探测"),
     TriggerDefinition(trigger="suspicious_sequence", default_threshold=3, description="可疑操作序列"),
     TriggerDefinition(trigger="off_hours_destructive", default_threshold=2, description="非工作时间破坏性操作"),
@@ -209,10 +212,13 @@ class KillSwitch:
 
             return TriggerResult(action=TriggerResult.BLOCK_AGENT, agent_id=agent_id)
 
-        return TriggerResult(action=TriggerResult.NO_ACTION)
+        # 治本(2026-07-18): sub-threshold 事件已记录但未达阻断阈值，返回 WARNING
+        return TriggerResult(action=TriggerResult.WARNING, agent_id=agent_id)
 
     def is_agent_blocked(self, agent_id: str) -> bool:
-        """检查agent是否被阻断."""
+        """检查agent是否被阻断. 全局熔断时所有 agent 均被阻断."""
+        if self._global_tripped:
+            return True
         return agent_id in self._blocked_agents
 
     def is_global_tripped(self) -> bool:
@@ -242,6 +248,8 @@ class KillSwitch:
         self._status.state = KillSwitchState.NORMAL
         self._status.tripped_at = 0.0
         self._status.reason = ""
+        # 治本(2026-07-18): 标记 owner 已启用覆盖模式。
+        self._status.owner_override = True
         logger.info("KillSwitch global released by owner (override active)")
 
     def owner_release_agent(self, agent_id: str) -> None:
@@ -254,6 +262,8 @@ class KillSwitch:
         if self._override_active:
             self._global_tripped = self._pre_override_tripped
             self._override_active = False
+            # 治本(2026-07-18): 撤销覆盖时清除 owner_override 标记。
+            self._status.owner_override = False
             if self._global_tripped:
                 self._status.state = KillSwitchState.TRIPPED
                 self._status.reason = self._global_reason or "override revoked"
@@ -286,6 +296,8 @@ class KillSwitch:
         self._global_reason = ""
         self._override_active = False
         self._pre_override_tripped = False
+        # 治本(2026-07-18): 重置时清除 owner_override 标记。
+        self._status.owner_override = False
         self._blocked_agents.clear()
         self._agent_events.clear()
         logger.info("KillSwitch RESET to NORMAL")
