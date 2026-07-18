@@ -5,7 +5,7 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 14 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件
+# [INVARIANTS] 15 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（14 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -1208,9 +1208,131 @@ def metric_14_abc_completeness() -> dict:
     return _make_metric("M14", "ABC抽象方法完整性", len(violations), violations, "inline")
 
 
+# ── 指标 15：depgraph 新鲜度 ─────────────────────────────────────────────────
+# 治本（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）：depgraph 新鲜度仪表盘
+# 与 depgraph_freshness_gate.py (P3.1) 共享数据源 .runtime/depgraph_scan_cache.json
+# _meta.saved_at，但独立解析（避免 scripts/ → src/zephyr/gov_enforcement/ 跨层耦合）
+_DEPGRAPH_CACHE_REL = ".runtime/depgraph_scan_cache.json"
+_DEPGRAPH_WARN_SECONDS = 30 * 60        # 30 分钟 → WARNING（与 gate 同阈值）
+_DEPGRAPH_BLOCK_SECONDS = 24 * 60 * 60  # 24 小时 → 阻断级（与 gate 同阈值）
+
+
+def _parse_depgraph_saved_at(saved_at_raw: str) -> datetime | None:
+    """解析 depgraph scan cache 的 saved_at ISO 时间戳（兼容带/不带时区）。
+
+    与 depgraph_freshness_gate._parse_saved_at 同逻辑——独立实现避免
+    scripts/ → src/zephyr/gov_enforcement/ 跨层耦合（dashboard 自包含原则）。
+    generate_project_depgraph.py 用 datetime.now().isoformat() 写入（无时区），
+    按本地时间解析后转 UTC 比较。
+    """
+    if not saved_at_raw:
+        return None
+    try:
+        dt = datetime.fromisoformat(saved_at_raw)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        # 无时区 → 按本地时间解释，转 UTC（astimezone 对 naive datetime 假定系统时区）
+        dt = dt.astimezone(UTC)
+    return dt.astimezone(UTC)
+
+
+def metric_15_depgraph_freshness() -> dict:
+    """depgraph 新鲜度——>24h 阻断级违规数（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）。
+
+    病根：depgraph 是依赖关系唯一真源（L2 铁律），但 sync 是 reconciler 异步触发。
+    若触发链断裂，depgraph 长期不刷新，AI 在过期快照上设计 = 幻觉温床。
+    P3.1 已在 commit 时 dual-threshold 阻断（>24h block, >30min warn）。
+    本指标把新鲜度状态暴露到仪表盘，供 post-commit 基线追踪与 AI 冷启动查询。
+
+    检测：读取 .runtime/depgraph_scan_cache.json 的 _meta.saved_at，计算 age。
+    count 语义（与 GATE-DEPGRAPH-FRESHNESS 阻断行为对齐）：
+      - 0 = fresh (<30min) 或 warn (>30min, <24h)——非阻断级违规
+      - 1 = block (>24h)——阻断级违规，commit 会被 GATE-DEPGRAPH-FRESHNESS 拒绝
+    fail-open：cache 缺失/解析失败 → count=0 + error 字段（不视为违规，
+    因首启/新环境无 cache 正常；与 gate fail-open 行为一致）。
+    """
+    cache_path = REPO_ROOT / _DEPGRAPH_CACHE_REL
+    if not cache_path.is_file():
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=[f"cache missing: {_DEPGRAPH_CACHE_REL} (first-run or new env)"],
+            source="inline",
+            error=f"cache not found: {_DEPGRAPH_CACHE_REL}",
+        )
+    try:
+        data = json.loads(cache_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as e:
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=[f"cache parse failed: {e}"],
+            source="inline",
+            error=f"cache parse failed: {e}",
+        )
+
+    saved_at_raw = (data.get("_meta") or {}).get("saved_at")
+    if not saved_at_raw:
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=["cache missing _meta.saved_at"],
+            source="inline",
+            error="cache missing _meta.saved_at",
+        )
+
+    saved_at = _parse_depgraph_saved_at(saved_at_raw)
+    if saved_at is None:
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=[f"saved_at unparseable: {saved_at_raw!r}"],
+            source="inline",
+            error=f"saved_at unparseable: {saved_at_raw!r}",
+        )
+
+    now_utc = datetime.now(UTC)
+    age_seconds = (now_utc - saved_at).total_seconds()
+
+    # 时钟漂移（saved_at 在未来）→ 视为 fresh（与 gate 一致）
+    if age_seconds < 0:
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=[f"fresh (saved_at in future: {saved_at_raw})"],
+            source="inline",
+        )
+
+    # dual-threshold 判定（与 GATE-DEPGRAPH-FRESHNESS 同阈值）
+    if age_seconds >= _DEPGRAPH_BLOCK_SECONDS:
+        hours = int(age_seconds // 3600)
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 1,
+            details=[
+                f"BLOCK: {hours}h since last sync (saved_at={saved_at_raw})",
+                "超过 24h 阈值——GATE-DEPGRAPH-FRESHNESS 会阻断 commit",
+                "修复: python scripts/governance/generate_project_depgraph.py",
+            ],
+            source="inline",
+        )
+
+    if age_seconds >= _DEPGRAPH_WARN_SECONDS:
+        minutes = int(age_seconds // 60)
+        return _make_metric(
+            "M15", "depgraph新鲜度(>24h阻断数)", 0,
+            details=[
+                f"WARN: {minutes}min since last sync (saved_at={saved_at_raw})",
+                "超过 30min 告警阈值——建议运行 generate_project_depgraph.py 刷新",
+            ],
+            source="inline",
+        )
+
+    return _make_metric(
+        "M15", "depgraph新鲜度(>24h阻断数)", 0,
+        details=[f"fresh (age={int(age_seconds)}s, saved_at={saved_at_raw})"],
+        source="inline",
+    )
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 14 项指标注册表（id → 检测函数）
+# 15 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1226,6 +1348,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M12", "异常粒度过粗(吞没型)", metric_12_broad_except_swallow),
     ("M13", "异常信息泄露(返客户端)", metric_13_exception_info_leak),
     ("M14", "ABC抽象方法完整性", metric_14_abc_completeness),
+    ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
 ]
 
 
@@ -1301,7 +1424,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（14 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")
