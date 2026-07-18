@@ -74,6 +74,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_tmp_cleanup_reconciler,
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
+    make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
     _print_critical_warn_banner,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3
@@ -121,12 +122,12 @@ from zephyr.gov_enforcement.commit_gates.test_source_consistency_gate import mak
 from zephyr.gov_enforcement.commit_gates.no_import_side_effect_gate import make_no_import_side_effect_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate import make_depgraph_freshness_gate  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1
 from zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate import make_scripts_import_integrity_gate  # #ARCH-DATAQUALITY-V1.4 核心治本
-from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.reconciler_health_gate import make_reconciler_health_gate  # #ARCH-DATAQUALITY-V1.7 reconciler健康度门禁
 from zephyr.gov_enforcement.commit_gates.import_direction_gate import make_import_direction_gate
 from zephyr.gov_enforcement.commit_gates.panorama_alignment_gate import make_panorama_alignment_gate
 from zephyr.gov_enforcement.commit_gates.long_param_list_gate import make_long_param_list_gate
 from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
+from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # NO-DOMAIN-NAME-ZH-DIRECT-ACCESS (priority=72) 治本 v2.3 Step 2.5 遗留风险修复——DOMAIN_NAME_ZH 字典直接访问硬阻断
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
@@ -338,6 +339,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
         self._gate_registry.register(make_pure_assertion_gate())  # priority=69 治本纯陈述原则（GOV-DOC-016，subprocess 调 check_pure_assertion.py --ci）
         self._gate_registry.register(make_noqa_validation_gate())  # priority=71 治本自定义 noqa 标记无门禁（#ARCH-NOQA-GOV-001，in-process 校验 noqa_exempt_registry.yaml SSoT）
+        self._gate_registry.register(make_domain_name_zh_direct_access_gate())  # priority=72 治本 DOMAIN_NAME_ZH 字典直接访问（v2.3 Step 2.5 遗留风险修复：强制走 get_domain_name_zh / get_domain_name_zh_strict helper，避免新 AI 绕过 DB 优先级直接读硬编码 fallback）
         self._gate_registry.register(make_datetime_now_forbidden_gate())  # priority=34 治本生成器代码 datetime.now() 硬阻断（AGENTS.md §11.1.1，生成器输出幂等性强制）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
@@ -376,7 +378,6 @@ class GitCommitGateway:
         self._gate_registry.register(make_depgraph_freshness_gate())  # priority=67 治本depgraph新鲜度dual-threshold（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.1，>30min WARNING/>24h 阻断，读取.runtime/depgraph_scan_cache.json _meta.saved_at）
         self._gate_registry.register(make_reconciler_health_gate())  # priority=64 治本reconciler健康度dual-level（#ARCH-DATAQUALITY-V1.7，block_next硬阻断/critical_warn警告，复用_check_recent_blocks/_check_recent_critical_warns，统一GitCommitGateway和session_worktree_commit两条路径的reconciler健康检查）
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
-        self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS Phase 1，stdlib AST检测staged scripts/governance/**+src/** .py 未import未定义符号，--no-verify绕不过）
         self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
