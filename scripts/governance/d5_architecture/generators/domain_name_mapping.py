@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV-029 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # -*- coding: utf-8 -*-
 # [TTL] permanent
 """
