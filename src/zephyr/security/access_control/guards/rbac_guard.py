@@ -45,6 +45,7 @@ ALWAYS_ALLOW_OPERATIONS = [
     "read:tests",
     "read:config",
     "code_search",
+    "file_search",
 ]
 
 AUTO_GUARD_OPERATIONS = [
