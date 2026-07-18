@@ -1,7 +1,7 @@
 %% D_GOV_DOCS 域全景依赖图
-%% 生成时间: 2026-07-19 07:07:35
+%% 生成时间: 2026-07-19 07:38:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
-%% 模块数: 26, 依赖边数: 45
+%% 模块数: 26, 依赖边数: 51
 
 graph TD
 
@@ -37,7 +37,6 @@ graph TD
 
     %% 域内依赖（最多显示 80 条）
     docs_03_modules__domain_autono___ollback_system_blueprint_md -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
-    docs_03_modules__domain_autono___ation_protocol_blueprint_md -->|contract| docs_03_modules__domain_autono___ollback_system_blueprint_md
     docs_03_modules__domain_govern___e_dedup_engine_blueprint_md -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
     docs_03_modules__domain_govern___e_dedup_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
     docs_03_modules__domain_govern___e_dedup_engine_blueprint_md -->|contract| docs_03_modules__cross_layer_context_engine_blueprint_md
@@ -47,7 +46,6 @@ graph TD
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_semantic_auditor_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__domain_govern___e_dedup_engine_blueprint_md
-    docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__domain_autono___ation_protocol_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_orphan_judge_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| docs_03_modules__cross_layer_auto_fix_engine_blueprint_md
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|data| docs_03_modules__domain_autono___udget_enforcer_blueprint_md
@@ -56,10 +54,18 @@ graph TD
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| docs_03_modules__cross_layer_gate_engine_blueprint_md
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| docs_03_modules__domain_autono___udget_enforcer_blueprint_md
-    docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|contract| docs_03_modules__domain_autono___ation_protocol_blueprint_md
+    docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| docs_03_modules__domain_autono___ore_agent_spec_blueprint_md
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|data| docs_03_modules__cross_layer_shared_core_blueprint_md
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|data| docs_03_modules__cross_layer_database_blueprint_md
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|runtime| docs_03_modules__cross_layer_context_engine_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__cross_layer_context_engine_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__cross_layer_pipeline_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|contract| docs_03_modules__domain_govern___nce_automation_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__cross_layer_feedback_loop_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|data| docs_03_modules__cross_layer_database_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| docs_03_modules__domain_autono___udget_enforcer_blueprint_md
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| docs_03_modules__cross_layer_m___apability_exam_blueprint_md
 
     %% 跨域依赖（入）- 最多显示 30 条
@@ -70,30 +76,29 @@ graph TD
     D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
     D_GOV_AUDIT[D_GOV_AUDIT] -->|contract| docs_03_modules__cross_layer_shared_core_blueprint_md
     D_GOV_AUDIT[D_GOV_AUDIT] -->|runtime| docs_03_modules__cross_layer_red_blue_validator_blueprint_md
-    %% D_GOV_DRIFT -> D_GOV_DOCS (5 条)
+    %% D_GOV_DRIFT -> D_GOV_DOCS (4 条)
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__domain_autono___ollback_system_blueprint_md
-    D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__domain_autono___ation_protocol_blueprint_md
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_gate_engine_blueprint_md
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_shared_core_blueprint_md
     D_GOV_DRIFT[D_GOV_DRIFT] -->|runtime| docs_03_modules__cross_layer_database_blueprint_md
 
     %% 跨域依赖（出）- 最多显示 30 条
-    %% D_GOV_DOCS -> D_GOV_AUDIT (4 条)
+    %% D_GOV_DOCS -> D_GOV_AUDIT (5 条)
     docs_03_modules__domain_autono___ollback_system_blueprint_md -->|contract| D_GOV_AUDIT[D_GOV_AUDIT]
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|contract| D_GOV_AUDIT[D_GOV_AUDIT]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|contract| D_GOV_AUDIT[D_GOV_AUDIT]
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
-    %% D_GOV_DOCS -> D_GOV_DRIFT (3 条)
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| D_GOV_AUDIT[D_GOV_AUDIT]
+    %% D_GOV_DOCS -> D_GOV_DRIFT (4 条)
     docs_03_modules__cross_layer_red_blue_validator_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     docs_03_modules__cross_layer_r___ization_engine_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|contract| D_GOV_DRIFT[D_GOV_DRIFT]
-    %% D_GOV_DOCS -> D_INFRA_RUNTIME (1 条)
-    docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_INFRA_RUNTIME[D_INFRA_RUNTIME]
+    docs_03_modules__domain_autono___ore_agent_spec_blueprint_md -->|runtime| D_GOV_DRIFT[D_GOV_DRIFT]
     %% D_GOV_DOCS -> D_ML_TRAIN (2 条)
     docs_03_modules__domain_autono___udget_enforcer_blueprint_md -->|data| D_ML_TRAIN[D_ML_TRAIN]
     docs_03_modules__cross_layer_pipeline_blueprint_md -->|runtime| D_ML_TRAIN[D_ML_TRAIN]
 
     %% 统计
-    %% 域内依赖: 25 条
-    %% 跨域入边: 10 条
-    %% 跨域出边: 10 条
+    %% 域内依赖: 31 条
+    %% 跨域入边: 9 条
+    %% 跨域出边: 11 条

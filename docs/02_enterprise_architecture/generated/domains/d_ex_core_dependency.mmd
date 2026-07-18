@@ -1,5 +1,5 @@
 %% D_EX_CORE 域全景依赖图
-%% 生成时间: 2026-07-19 07:07:35
+%% 生成时间: 2026-07-19 07:38:13
 %% 数据源: depgraph (PostgreSQL) nodes表 + edges表
 %% 模块数: 8, 依赖边数: 36
 
@@ -60,11 +60,11 @@ graph TD
     src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_SHARED[D_SHARED]
     %% D_EX_CORE -> D_TRADING (6 条)
     src_zephyr_ex_core_order_manager_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
+    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
     src_zephyr_ex_core_adapters___init___py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
-    src_zephyr_ex_core_adapters_miniqmt_broker_py -->|import_depends| D_TRADING[D_TRADING]
 
     %% 统计
     %% 域内依赖: 2 条
