@@ -162,7 +162,7 @@ def _scan_scripts_by_directory(gov_path: Path) -> dict[str, list[str]]:
     total = len(py_files)
     for i, py_file in enumerate(py_files):
         if (i + 1) % 200 == 0 or i == total - 1:
-            print(f"[PROGRESS] Filesystem scan {i + 1}/{total} files...", file=sys.stderr)
+            logger.debug("[PROGRESS] Filesystem scan %d/%d files...", i + 1, total)
         name = py_file.name
         if name.startswith("_"):
             continue
@@ -213,7 +213,7 @@ def _process_depgraph_edges(
 ) -> None:
     for i, edge in enumerate(edges):
         if (i + 1) % 3000 == 0:
-            print(f"[PROGRESS] Edge analysis {i + 1}/{len(edges)}...", file=sys.stderr)
+            logger.debug("[PROGRESS] Edge analysis %d/%d...", i + 1, len(edges))
         dep_type = edge.get("dep_type", "")
         from_id = edge.get("from", "")
         to_id = edge.get("to", "")
@@ -365,7 +365,7 @@ class PipelineRunner:
             PipelineRunner._discovery_cache[cache_key] = (current_mtime, {})
             return {}
 
-        print(f"[START] Discovering scripts in {gov_path}...", file=sys.stderr)
+        logger.info("[START] Discovering scripts in %s...", gov_path)
         t_start = time.perf_counter()
 
         mapping = _scan_scripts_by_directory(gov_path)
@@ -381,7 +381,7 @@ class PipelineRunner:
         _finalize_discovery_mapping(mapping)
 
         elapsed = time.perf_counter() - t_start
-        print(f"[DONE] Discovered {sum(len(v) for v in mapping.values())} scripts in {elapsed:.1f}s", file=sys.stderr)
+        logger.info("[DONE] Discovered %d scripts in %.1fs", sum(len(v) for v in mapping.values()), elapsed)
 
         PipelineRunner._discovery_cache[cache_key] = (current_mtime, mapping)
         return mapping
@@ -739,7 +739,7 @@ class PipelineRunner:
         cached = PipelineRunner._depgraph_cache
         if cached is not None and cached[0] == current_mtime:
             return cached[1]
-        print(f"[START] Loading depgraph {dep_path.name}...", file=sys.stderr)
+        logger.info("[START] Loading depgraph %s...", dep_path.name)
         t_start = time.perf_counter()
         try:
             import yaml
@@ -750,7 +750,7 @@ class PipelineRunner:
             # depgraph 文件被篡改时可实例化任意对象。统一改用 safe_load（与 L669 _load_manifest 一致）。
             data = yaml.safe_load(f)
         elapsed = time.perf_counter() - t_start
-        print(f"[DONE] Loaded depgraph in {elapsed:.1f}s", file=sys.stderr)
+        logger.info("[DONE] Loaded depgraph in %.1fs", elapsed)
         PipelineRunner._depgraph_cache = (current_mtime, data)
         return data
 
@@ -1059,7 +1059,7 @@ class PipelineRunner:
         owned_by_map: dict[str, list[str]] = {}
         for node_id in nodes:
             import_adj.setdefault(node_id, set())
-        print(f"[START] Analyzing depgraph {len(edges)} edges...", file=sys.stderr)
+        logger.info("[START] Analyzing depgraph %d edges...", len(edges))
         t_start = time.perf_counter()
         _process_depgraph_edges(edges, import_adj, owned_by_map)
         node_list = list(import_adj.keys())[:1000]
@@ -1100,7 +1100,7 @@ class PipelineRunner:
                 )
             )
         elapsed = time.perf_counter() - t_start
-        print(f"[DONE] Depgraph analysis in {elapsed:.1f}s", file=sys.stderr)
+        logger.info("[DONE] Depgraph analysis in %.1fs", elapsed)
         self._set_cached_scan("scan_depgraph", dep_path, findings)
         return findings
 

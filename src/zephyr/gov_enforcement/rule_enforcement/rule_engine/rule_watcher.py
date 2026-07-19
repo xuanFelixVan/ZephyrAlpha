@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors to stdout
+# [ERROR_CONTRACT] Returns empty list on missing dir; never raises for missing files; logs errors via logging
 # [TESTS] tests/test_rule_watcher.py
 # [TTL] permanent
 # noqa: m02-manual  M02豁免: 规则文件watchdog常驻服务(python -m zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_watcher),CLI触发启动,启动后自动轮询;非reconciler无需事件触发
@@ -39,6 +39,7 @@ CLI:
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
@@ -47,6 +48,8 @@ import sys
 import threading
 import time
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def _find_project_root() -> Path:
@@ -102,7 +105,7 @@ class RuleWatcher:
             daemon=True,
         )
         self._thread.start()
-        print(f"[RuleWatcher] Started (interval={self._poll_interval}s, dir={self._rules_dir})")
+        logger.info("[RuleWatcher] Started (interval=%ss, dir=%s)", self._poll_interval, self._rules_dir)
 
     def stop(self) -> None:
         """停止轮询线程。"""
@@ -110,14 +113,14 @@ class RuleWatcher:
         if self._thread is not None:
             self._thread.join(timeout=self._poll_interval * 2)
             self._thread = None
-        print("[RuleWatcher] Stopped")
+        logger.info("[RuleWatcher] Stopped")
 
     def _poll_loop(self) -> None:
         """后台轮询循环。"""
         while not self._stop_event.is_set():
             changed = self.check_changes()
             if changed:
-                print(f"[RuleWatcher] Detected {len(changed)} changed file(s)")
+                logger.info("[RuleWatcher] Detected %d changed file(s)", len(changed))
                 sync_result = self.sync_changed(changed)
                 if sync_result.get("exit_code") == 0:
                     self.verify_changed(changed)
@@ -204,10 +207,10 @@ class RuleWatcher:
         """
         active_files = [f for f in changed_files if f["change_type"] in ("added", "modified")]
         if not active_files:
-            print("[RuleWatcher] No active files to sync (only deletions)")
+            logger.info("[RuleWatcher] No active files to sync (only deletions)")
             return {"exit_code": 0, "stdout": "", "stderr": ""}
 
-        print(f"[RuleWatcher] Syncing {len(active_files)} file(s) to depgraph")
+        logger.info("[RuleWatcher] Syncing %d file(s) to depgraph", len(active_files))
 
         try:
             result = subprocess.run(
@@ -222,9 +225,9 @@ class RuleWatcher:
                 cwd=str(_PROJECT_ROOT),
             )
             output_summary = result.stdout[-500:] if len(result.stdout) > 500 else result.stdout
-            print(f"[RuleWatcher] Sync result: exit={result.returncode}")
+            logger.info("[RuleWatcher] Sync result: exit=%s", result.returncode)
             if output_summary.strip():
-                print(output_summary.strip())
+                logger.debug("%s", output_summary.strip())
 
             self._log_sync_event(active_files, result.returncode, result.stdout)
 
@@ -235,12 +238,12 @@ class RuleWatcher:
             }
         except subprocess.TimeoutExpired:
             msg = "[RuleWatcher] Sync timed out after 60s"
-            print(msg)
+            logger.warning("%s", msg)
             self._log_sync_event(active_files, -1, msg)
             return {"exit_code": -1, "stdout": "", "stderr": msg}
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             msg = f"[RuleWatcher] Sync failed: {exc}"
-            print(msg)
+            logger.warning("%s", msg)
             self._log_sync_event(active_files, -1, msg)
             return {"exit_code": -1, "stdout": "", "stderr": str(exc)}
 
@@ -258,10 +261,10 @@ class RuleWatcher:
         """
         active_files = [f for f in changed_files if f["change_type"] in ("added", "modified")]
         if not active_files:
-            print("[RuleWatcher] No active files to verify")
+            logger.info("[RuleWatcher] No active files to verify")
             return {"exit_code": 0, "stdout": "", "stderr": "", "passed": True}
 
-        print(f"[RuleWatcher] Verifying {len(active_files)} file(s)")
+        logger.info("[RuleWatcher] Verifying %d file(s)", len(active_files))
 
         try:
             result = subprocess.run(
@@ -277,7 +280,7 @@ class RuleWatcher:
             )
             passed = result.returncode == 0
             status = "PASS" if passed else "FAIL"
-            print(f"[RuleWatcher] Verify result: {status} (exit={result.returncode})")
+            logger.info("[RuleWatcher] Verify result: %s (exit=%s)", status, result.returncode)
 
             return {
                 "exit_code": result.returncode,
@@ -287,11 +290,11 @@ class RuleWatcher:
             }
         except subprocess.TimeoutExpired:
             msg = "[RuleWatcher] Verify timed out after 60s"
-            print(msg)
+            logger.warning("%s", msg)
             return {"exit_code": -1, "stdout": "", "stderr": msg, "passed": False}
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             msg = f"[RuleWatcher] Verify failed: {exc}"
-            print(msg)
+            logger.warning("%s", msg)
             return {"exit_code": -1, "stdout": "", "stderr": str(exc), "passed": False}
 
     def _log_sync_event(self, changed_files: list[dict], exit_code: int, output: str) -> None:

@@ -840,7 +840,7 @@ class GitCommitGateway:
                 elif rr.action == "warn":
                     logger.warning("GitCommitGateway: post-commit reconcile warning (session=%s): %s", session_id, rr.detail)
                 elif rr.action == "clean":
-                    print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
+                    logger.info("GitCommitGateway: post-commit reconcile clean (session=%s): %s", session_id, rr.detail)
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
             reconcile_results = []
