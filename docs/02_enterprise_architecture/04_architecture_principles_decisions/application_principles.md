@@ -14,14 +14,8 @@ superseded_by: null
 supersedes: VIEW-03-APPLICATION-ARCH
 related_rationale: []
 related_open_questions:
-- OQ-021
-- OQ-022
-- OQ-043
-- OQ-045
 - OQ-063
-- OQ-067
 - OQ-071
-- OQ-072
 - OQ-083
 related_kb:
 - KBG-0009
@@ -231,7 +225,7 @@ ttl: permanent
 | C4 图表 | `scripts/governance/d5_architecture/generators/`（自动生成）|
 | 治理代码拓扑 | `scripts/script-manifest.yaml`（SSoT）|
 | ACL 落盘位置 | `security_principles.md` |
-| 供应商注册表 | `architecture_model/technology/vendor_registry.yaml` |
+| 供应商注册表 | `architecture_model/technology/vendor_registry.yaml`（待创建） |
 | 运行时平面详细映射 | `runtime_planes_principles.md`|
 | LSG 详细设计原则 | `security_principles.md` §4 |
 

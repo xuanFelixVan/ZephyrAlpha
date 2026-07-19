@@ -13,8 +13,7 @@ valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-04-TECHNOLOGY-ARCH
 related_rationale: []
-related_open_questions:
-- OQ-067
+related_open_questions: []
 tags:
 - technology-principles
 - togaf
@@ -83,7 +82,7 @@ ttl: permanent
 
 ### 2.2 Vibe Coding 2.0 AI 基础设施聚焦视图（永恒——17 项强约束）
 
-源自 `vibe-coding-audit-merged.md` Qwen 17 项技术选型共识，是 AI 基础设施的**强约束选型**。
+源自 `vibe-coding-audit-merged.md`（已归档）Qwen 17 项技术选型共识，是 AI 基础设施的**强约束选型**。
 
 **权威真源**：`architecture_model/technology/vibe_coding_infrastructure_tech_stack.yaml`（17 项 AI 基础设施选型）。
 

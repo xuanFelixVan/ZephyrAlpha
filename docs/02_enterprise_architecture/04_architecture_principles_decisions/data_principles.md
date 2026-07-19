@@ -62,7 +62,7 @@ ttl: permanent
 
 | 场景 | 例子 | 防御 |
 |------|------|------|
-| **Look-ahead bias / 前视偏差** | 用今天收盘价做今天开盘的决策 | factor 必须显式声明 `asof_offset`（如"昨日收盘后可知"） + fitness function `test_no_lookahead_bias.py` 在 CI 强制扫描 |
+| **Look-ahead bias / 前视偏差** | 用今天收盘价做今天开盘的决策 | factor 必须显式声明 `asof_offset`（如"昨日收盘后可知"） + fitness function `test_no_lookahead_bias.py`（待创建）在 CI 强制扫描 |
 | **Restated data / 财报修订** | Q1 财报 4/30 公布，6/15 修订；回测 5/15 用了 6/15 修订版 | 财务实体存 bitemporal，查询走 `vendor_release_ts ≤ T` |
 | **Index rebalance / 指数成分调整** | 沪深 300 半年调整，回测 2024 年 Q1 不能用 Q3 后调进的成分股 | `IndexConstituent` 必须 bitemporal；查询用 PIT API |
 
@@ -71,7 +71,7 @@ ttl: permanent
 1. **bitemporal 表** —— OLTP 主数据用 valid_time + transaction_time 双时间戳建模
 2. **append-only event log** —— 事件实体（Tick/Fill/Signal）天然 PIT，永不修改
 3. **PIT-safe view layer** —— 因子计算前必须经过统一的 `pit_view(entity, asof=T)` 函数封装（具体实现归 D_DATA_ENG 域）
-4. **CI fitness function** —— `test_no_lookahead_bias.py` 在 PR 阶段扫描所有因子代码，禁止任何 `df.loc[df.date <= today]` 之外的时间过滤模式
+4. **CI fitness function** —— `test_no_lookahead_bias.py`（待创建）在 PR 阶段扫描所有因子代码，禁止任何 `df.loc[df.date <= today]` 之外的时间过滤模式
 
 > **原则边界**：本文档只定义"原则与契约"；具体 SQL/代码归 D_DATA_ENG / D_FACTOR 域、`scripts/fitness_functions/`。
 
@@ -100,7 +100,7 @@ universe = build_universe(
 )
 ```
 
-**禁止**直接 `SELECT * FROM security WHERE status = 'active'`——这是幸存者偏差的最常见入口。`scripts/fitness_functions/test_no_survivorship_bias.py` 应扫描此类反模式。
+**禁止**直接 `SELECT * FROM security WHERE status = 'active'`——这是幸存者偏差的最常见入口。`scripts/fitness_functions/test_no_survivorship_bias.py`（待创建）应扫描此类反模式。
 
 ### 3.3 退市股票的数据保留
 
@@ -138,7 +138,7 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 
 ### 4.3 血缘的 fitness function 契约
 
-`scripts/fitness_functions/test_lineage_completeness.py` 应保证：
+`scripts/fitness_functions/test_lineage_completeness.py`（待创建）应保证：
 - 任何派生实体（FactorValue / Signal / PnL / RiskMetric）创建时必填 `lineage_root`
 - 任何 lineage_root 必须能解析出至少一条上游边
 - 任何代码层 commit 不允许引入"无血缘的派生实体"
