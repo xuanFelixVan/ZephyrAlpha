@@ -2072,16 +2072,121 @@ def sync_rule_ai_perception_index(cur):
     print(f"  同步 {synced}/{len(rules)} 条规则感知索引")
 
 
+# ========== sync_all 级联失败隔离辅助（裁定 B / P1 / #ARCH-GUC-TRIGGER-FIX-001）==========
+# 治本目标：30 项 sync 单点失败不再拖垮全部，每项独立 SAVEPOINT 隔离
+# 失败项记录到 sync_failures_log 表，由 reconciler 跟踪修复（裁定 C / P2 填充 error_class）
+
+
+def _ensure_sync_failures_log_table(cur):
+    """幂等创建 sync_failures_log 表（失败项日志，供 reconciler 跟踪）。
+
+    表结构：
+    - function_name: 失败的 sync 函数名
+    - phase / arch_ref: 优先级阶段 + 架构 issue 编号
+    - error_message / error_type: 异常详情
+    - error_class: 错误分类（裁定 C / P2 填充：deterministic/transient/unknown）
+    - failed_at: 失败时间戳
+    - resolved / resolved_at: 解决状态（reconciler 标记）
+    """
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS sync_failures_log (
+            id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            function_name TEXT NOT NULL,
+            phase TEXT,
+            arch_ref TEXT,
+            error_message TEXT NOT NULL,
+            error_type TEXT,
+            error_class TEXT,
+            failed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+            resolved BOOLEAN DEFAULT FALSE,
+            resolved_at TIMESTAMP
+        )
+    """)
+    cur.execute("""
+        CREATE INDEX IF NOT EXISTS idx_sync_failures_log_unresolved
+        ON sync_failures_log(failed_at) WHERE NOT resolved
+    """)
+
+
+def _log_sync_failures(cur, failures):
+    """Best-effort 写入失败项到 sync_failures_log（写入失败不阻断 sync）。
+
+    用独立 SAVEPOINT 隔离：若 sync_failures_log 表创建/写入失败，
+    ROLLBACK TO SAVEPOINT 保证主事务不被污染，sync 主流程继续 commit。
+
+    Args:
+        cur: DB cursor
+        failures: list of dict, 每项含 phase/function/arch_ref/error/error_type
+    """
+    try:
+        cur.execute("SAVEPOINT sp_log_failures")
+        _ensure_sync_failures_log_table(cur)
+        for f in failures:
+            cur.execute("""
+                INSERT INTO sync_failures_log (function_name, phase, arch_ref, error_message, error_type)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (f["function"], f["phase"], f["arch_ref"], f["error"], f["error_type"]))
+        cur.execute("RELEASE SAVEPOINT sp_log_failures")
+    except Exception as e:
+        # Best-effort: 写日志失败不能阻断 sync 主流程
+        try:
+            cur.execute("ROLLBACK TO SAVEPOINT sp_log_failures")
+        except Exception:
+            pass  # SAVEPOINT 本身可能未建立
+        print(f"[WARN] sync_failures_log 写入失败（不阻断）: {e}")
+
+
+def _run_sync_with_savepoint(cur, phase, arch_ref, func, failures):
+    """单项 sync 用 SAVEPOINT 隔离执行；失败记录到 failures 列表。
+
+    治本（裁定 B / P1 / #ARCH-GUC-TRIGGER-FIX-001）：每项 sync 失败只
+    ROLLBACK TO SAVEPOINT，不影响其他 sync。失败项追加到 failures 供
+    _log_sync_failures 写入 sync_failures_log 表。
+
+    Args:
+        cur: DB cursor
+        phase: 优先级阶段（如 "P0"）
+        arch_ref: 架构 issue 编号（如 "#152"）
+        func: sync 函数（签名: func(cur) -> None）
+        failures: 可变列表，失败时追加 dict
+    """
+    sp_name = f"sp_{func.__name__}"[:60]  # PG 标识符长度限制 63
+    try:
+        cur.execute(f"SAVEPOINT {sp_name}")
+        func(cur)
+        cur.execute(f"RELEASE SAVEPOINT {sp_name}")
+    except Exception as e:
+        try:
+            cur.execute(f"ROLLBACK TO SAVEPOINT {sp_name}")
+        except Exception as rollback_err:
+            # SAVEPOINT 本身可能未建立（极端情况），记录但继续
+            print(f"[WARN] ROLLBACK TO {sp_name} 失败: {rollback_err}")
+        err_msg = str(e)[:2000]  # 截断防日志膨胀
+        failures.append({
+            "phase": phase,
+            "function": func.__name__,
+            "arch_ref": arch_ref,
+            "error": err_msg,
+            "error_type": type(e).__name__,
+        })
+        print(f"[SYNC ISOLATED FAIL] {phase} {func.__name__} ({arch_ref}): {type(e).__name__}: {err_msg[:200]}")
+
+
 # ========== 主同步函数 ==========
 
 
 def sync_all() -> bool:
     """主同步函数：按优先级同步所有 YAML 源。
 
-    返回 True=同步成功，False=DB 连接失败跳过（不抛异常）。
+    返回 True=全部同步成功，False=部分或全部失败（已隔离，查看 sync_failures_log）。
+    严重故障（连接断、触发器恢复失败）抛异常。
 
     P2 PG 迁移：删除 lock_files 跨进程文件锁（PG 用 MVCC，无需文件锁）。
     事务管理保留：autocommit=False + 显式 commit/rollback。
+
+    裁定 B / P1（#ARCH-GUC-TRIGGER-FIX-001）：每项 sync 用 SAVEPOINT 隔离，
+    单点失败只 ROLLBACK TO SAVEPOINT，不影响其他 sync。失败项记录到
+    sync_failures_log 表，由 reconciler 跟踪修复（裁定 C / P2 填充 error_class）。
     """
     # P2 PG 迁移：删除 os.path.exists(DB_PATH) 检查（PG 无文件路径概念）
     # P2 PG 迁移：删除 lock_files 跨进程文件锁（PG 用 MVCC）
@@ -2098,69 +2203,68 @@ def sync_all() -> bool:
     print(f"RULES_DIR: {RULES_DIR}")
     print("=" * 60)
 
+    # sync 函数清单（按优先级阶段 + 架构 issue 编号）
+    # 顺序依赖：sync_data_source_assets 必须在 sync_data_source_apis 之前
+    # （FK ON DELETE CASCADE——若 assets 后执行，其 DELETE 会级联清空 apis）
+    sync_functions = [
+        ("P0", "#152", sync_cross_module_dependencies),
+        ("P0", "#153", sync_architecture_contract),
+        ("P0", "#154", sync_contract_mapping_table),
+        ("P0", "#154b", sync_cross_layer_contracts),
+        ("P1", "#155", sync_gate_registry),
+        ("P1", "#156", sync_functional_domain_registry),
+        ("P1", "#157", sync_vocabularies),
+        ("P1", "#158", sync_architecture_rules),
+        ("P2", "#159", sync_declarative_contract_tracker),
+        ("P2", "#160", sync_frontmatter_field_registry),
+        ("P2", "#161", sync_registry_of_registries),
+        ("P2", "#162", sync_directory_registry),
+        ("P2", "#163", sync_rule_catalog_registry),
+        ("P3", "#164", sync_infrastructure_registry),
+        ("P3", "#164", sync_model_capability_contract),
+        ("P4", "#170", sync_hard_boundaries),
+        ("P4", "#171", sync_business_streams),
+        ("P4", "#172", sync_blueprint_links),
+        ("P5", "#173", sync_domain_naming_rules),
+        ("P5", "#174", sync_derived_identifier_registry),
+        ("P6", "#175", sync_dataflow_registry),
+        ("P7", "#176", sync_aggregate_nodes),
+        ("P8", "#177", sync_interface_contracts),
+        ("P8", "#178", sync_database_nodes),
+        # 顺序依赖：assets 必须在 apis 之前（FK ON DELETE CASCADE）
+        ("P9", "#180", sync_data_source_assets),
+        ("P9", "#179", sync_data_source_apis),
+        ("P9", "#181", sync_service_assets),
+        ("P9", "#182", sync_config_assets),
+        ("P10", "#183", sync_rule_ai_perception_index),
+        ("cleanup", "—", cleanup_legacy_fk_violations),
+    ]
+
+    failures: list[dict] = []
     try:
         # 临时禁用只读触发器（PG 模式下为 no-op，权限管理替代）
         disable_readonly_triggers(cur)
 
-        # P0 优先级同步
-        sync_cross_module_dependencies(cur)  # #152
-        sync_architecture_contract(cur)  # #153
-        sync_contract_mapping_table(cur)  # #154
-        sync_cross_layer_contracts(cur)  # #154b 跨层(跨域)契约→contracts 表
+        # 裁定 B / P1：每项 sync 用 SAVEPOINT 隔离，单点失败不扩散
+        for phase, arch_ref, func in sync_functions:
+            _run_sync_with_savepoint(cur, phase, arch_ref, func, failures)
 
-        # P1 优先级同步
-        sync_gate_registry(cur)  # #155
-        sync_functional_domain_registry(cur)  # #156
-        sync_vocabularies(cur)  # #157
-        sync_architecture_rules(cur)  # #158
+        # 失败项写入 sync_failures_log（best-effort，不阻断 sync 主流程）
+        if failures:
+            _log_sync_failures(cur, failures)
 
-        # P2 优先级同步
-        sync_declarative_contract_tracker(cur)  # #159
-        sync_frontmatter_field_registry(cur)  # #160
-        sync_registry_of_registries(cur)  # #161
-        sync_directory_registry(cur)  # #162
-        sync_rule_catalog_registry(cur)  # #163
+        conn.commit()  # 提交所有成功的 sync（失败项已 ROLLBACK TO SAVEPOINT）
 
-        # P3 优先级同步
-        sync_infrastructure_registry(cur)  # #164
-        sync_model_capability_contract(cur)  # #164
-
-        # P4 优先级同步（V4.2 新增表）
-        sync_hard_boundaries(cur)  # #170
-        sync_business_streams(cur)  # #171
-        sync_blueprint_links(cur)  # #172
-
-        # P5 优先级同步（裁定#204 预防根因 + 裁定#206/#207 派生标识符）
-        sync_domain_naming_rules(cur)  # #173
-        sync_derived_identifier_registry(cur)  # #174 裁定#206 B-5/B-6 + #207 R3-4
-
-        # P6 优先级同步（ARCH-051 dataflowgraph 数据流图）
-        sync_dataflow_registry(cur)  # #175 ARCH-051 dataflowgraph（同库不同表）
-
-        # P7 优先级同步（ARCH-052 聚合节点恢复通道）
-        sync_aggregate_nodes(cur)  # #176 ARCH-052 聚合节点 YAML→nodes 表恢复
-
-        # P8 优先级同步（ARCH-053 API 契约 + database 节点补齐）
-        sync_interface_contracts(cur)  # #177 ARCH-053 接口契约→interface_contracts 表
-        sync_database_nodes(cur)  # #178 ARCH-053 database 节点→nodes 表
-
-        # P9 优先级同步（资产清单扩展：数据源/服务/配置项资产）
-        # 注意执行顺序：data_source_assets 必须在 data_source_apis 之前，
-        # 因为 data_source_apis 有 FK 到 data_source_assets(source_id) ON DELETE CASCADE。
-        # 若 data_source_assets 后执行，其 DELETE 会级联清空 data_source_apis。
-        sync_data_source_assets(cur)  # #180 外部数据源资产→data_source_assets 表（先建父表）
-        sync_data_source_apis(cur)  # #179 数据源 API→data_source_apis 表（后建子表，FK 依赖父表）
-        sync_service_assets(cur)  # #181 服务资产→service_assets 表
-        sync_config_assets(cur)  # #182 配置项资产→config_assets 表（文件系统扫描）
-
-        # P10 优先级同步（#ARCH-GOV-CONVERGENCE-META Phase 3.2a 规则可发现性）
-        sync_rule_ai_perception_index(cur)  # #183 规则AI感知索引→rule_ai_perception 表
-
-        # 历史遗留清理：删除 sync 无法触及的 FK 违规孤立记录
-        cleanup_legacy_fk_violations(cur)
-
-        conn.commit()
-        print("\n[PASS] 29 项 YAML→DB 同步完成")
+        # 打印汇总
+        total = len(sync_functions)
+        failed = len(failures)
+        succeeded = total - failed
+        if failures:
+            print(f"\n[PARTIAL] {succeeded}/{total} 项同步成功，{failed} 项失败（已隔离）")
+            for f in failures:
+                print(f"  - {f['phase']} {f['function']} ({f['arch_ref']}): {f['error_type']}: {f['error'][:150]}")
+        else:
+            print(f"\n[PASS] {total} 项 YAML→DB 同步完成")
 
         # DM-90974 Phase 2: 落 depgraph_dirty.flag 触发域文档重生（治本运行时 DB 写入盲区）
         try:
@@ -2172,11 +2276,12 @@ def sync_all() -> bool:
         # S1.2: 验证 readonly 表 COMMENT（HB-001 table_comment_required）
         verify_readonly_table_comments(cur)
 
-        return True
+        return len(failures) == 0
 
     except Exception as e:
+        # 严重故障（SAVEPOINT 异常累积、连接断等）：回滚整个事务
         conn.rollback()
-        print(f"\n[SYNC ERROR] 同步失败，已回滚: {e}")
+        print(f"\n[SYNC FATAL] 严重故障，已回滚: {e}")
         import traceback
 
         traceback.print_exc()
