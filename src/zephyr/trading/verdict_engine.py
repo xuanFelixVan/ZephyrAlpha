@@ -36,19 +36,10 @@ logger = logging.getLogger(__name__)
 _YELLOW_L5_VIOLATION_THRESHOLD = 5
 _YELLOW_L4_VIOLATION_THRESHOLD = 3
 
-try:
-    from zephyr.gov_audit.models import AuditEntryV1, AuditEventType
-
-    _HAS_AUDIT_ENTRY = True
-except ImportError as e:
-    logger.warning(
-        "verdict_engine: audit_trail import failed, audit features disabled (%s: %s)",
-        type(e).__name__,
-        e,
-    )
-    _HAS_AUDIT_ENTRY = False
-    AuditEntryV1 = None
-    AuditEventType = None
+# 5.138.2 治本：zephyr.gov_audit.models 无下游 import（仅 stdlib+pydantic），
+# gov_audit/__init__ 为 PEP 562 全惰性加载，与本模块无真实循环链——
+# 移除 try/except ImportError 静默降级，import 失败显式化。
+from zephyr.gov_audit.models import AuditEntryV1
 
 
 class AuditEvent(BaseModel):
@@ -260,7 +251,7 @@ class VerdictEngine:
 
     def _parse_event(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> tuple[ActorInfo, OperationInfo, bool, int] | None:
         """将 3 种事件类型统一解析为 (actor, operation, gate_passed, violation_count)。未知类型返回 None。"""
-        if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
+        if isinstance(event, AuditEntryV1):
             return self._parse_audit_entry_v1(event)
         if isinstance(event, AuditEvent):
             return self._parse_audit_event(event)

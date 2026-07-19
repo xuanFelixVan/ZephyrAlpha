@@ -69,27 +69,25 @@ from .drift_models import (
     Severity,
 )
 
-try:
-    from zephyr.gov_audit.finding_model import (
-        AuditFinding,
-        BlastRadius,
-        FindingDimension,
-        FindingImpact,
-        FindingLifecycle,
-        FindingRemediation,
-        FindingSeverity,
-        FindingStatus,
-        FindingTarget,
-        FindingTraceability,
-        RecommendationBlock,
-        RemediationAction,
-        RemediationPriority,
-        generate_finding_id,
-    )
-
-    _FINDING_MODEL_AVAILABLE = True
-except ImportError:
-    _FINDING_MODEL_AVAILABLE = False
+# 5.138.2 治本：zephyr.gov_audit.finding_model 无下游 import（仅 stdlib+pydantic+shared.schema），
+# gov_audit/__init__ 为 PEP 562 全惰性加载，与本模块无真实循环链——
+# 移除 try/except ImportError 静默降级，import 失败显式化。
+from zephyr.gov_audit.finding_model import (
+    AuditFinding,
+    BlastRadius,
+    FindingDimension,
+    FindingImpact,
+    FindingLifecycle,
+    FindingRemediation,
+    FindingSeverity,
+    FindingStatus,
+    FindingTarget,
+    FindingTraceability,
+    RecommendationBlock,
+    RemediationAction,
+    RemediationPriority,
+    generate_finding_id,
+)
 
 
 _REGISTRY_PATH: str = ""
@@ -675,8 +673,6 @@ _DRIFT_SEVERITY_MAP: dict[str, str] = {
 
 
 def _output_findings_as_jsonl(result: ScanResult) -> list[str]:
-    if not _FINDING_MODEL_AVAILABLE:
-        return []
     findings: list[AuditFinding] = []
     for evt in result.events:
         sev_str = _DRIFT_SEVERITY_MAP.get(getattr(evt, "severity", ""), "MEDIUM")

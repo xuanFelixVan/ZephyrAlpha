@@ -17,6 +17,7 @@ Moved from shared/contracts/ to eliminate cross-package violations.
 Infrastructure contracts (core/, backpressure/) remain in shared/contracts/.
 """
 
+from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule
 from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
 from zephyr.trading.trading_contracts import factories
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
@@ -67,6 +68,7 @@ __all__ = [
     "AssetClass",
     "Bond",
     "CapitalAllocationResult",
+    "ComplianceRule",
     "Country",
     "Crypto",
     "CryptoContractType",

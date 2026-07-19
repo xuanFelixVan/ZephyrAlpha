@@ -40,7 +40,7 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.trading.trading_contracts.portfolio.contracts.money import (
+from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,
