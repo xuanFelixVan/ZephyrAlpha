@@ -92,5 +92,5 @@ class EscalationBridge:
         return self._escalation_history[-limit:]
 
     @property
-    def enabled(self) -> bool:
+    def enabled(self) -> bool:  # noqa: m03-duplicate  M03豁免: 平凡一行属性getter(return self._enabled)，AI趋同演化非复制粘贴
         return self._enabled

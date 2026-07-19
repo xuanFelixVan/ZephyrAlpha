@@ -162,7 +162,7 @@ class QueryMetrics:
         return cls._instance
 
     @property
-    def enabled(self) -> bool:
+    def enabled(self) -> bool:  # noqa: m03-duplicate  M03豁免: 平凡一行属性getter(return self._enabled)，AI趋同演化非复制粘贴
         return self._enabled
 
     def disable(self) -> None:

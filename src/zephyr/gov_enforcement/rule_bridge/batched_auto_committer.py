@@ -179,7 +179,7 @@ class BatchedAutoCommitter:
             "BatchedAutoCommitter: disabled (buffer size=%d)", len(self._buffer),
         )
 
-    def is_enabled(self) -> bool:
+    def is_enabled(self) -> bool:  # noqa: m03-duplicate  M03豁免: 平凡一行属性getter(return self._enabled)，AI趋同演化非复制粘贴
         """当前是否处于 batching 模式。"""
         return self._enabled
 

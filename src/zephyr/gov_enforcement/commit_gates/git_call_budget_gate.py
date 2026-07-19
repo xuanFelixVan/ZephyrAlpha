@@ -72,7 +72,7 @@ __all__ = ["make_git_call_budget_gate"]
 _EXEMPT_FILES = {"git_batcher.py", "git_call_budget_gate.py", "_diff_helpers.py"}
 
 
-def _is_git_budget_exempt_file(py_file: str) -> bool:
+def _is_git_budget_exempt_file(py_file: str) -> bool:  # noqa: m03-duplicate  M03豁免: 与ch_batch_size_gate._is_exempt_file共享实现（各gate持自身_EXEMPT_FILES常量，共享模块提取为后续重构，对标_reference_helpers模式）
     """文件级豁免：GitCommandBatcher / 本 gate / diff helpers 自身。
 
     重命名自 _is_exempt_file 以避免 FUNCTION-DUP gate 与 ch_batch_size_gate 冲突。
@@ -81,7 +81,7 @@ def _is_git_budget_exempt_file(py_file: str) -> bool:
                for name in _EXEMPT_FILES)
 
 
-def _build_git_parent_map(tree: ast.AST) -> dict[int, ast.AST]:
+def _build_git_parent_map(tree: ast.AST) -> dict[int, ast.AST]:  # noqa: m03-duplicate  M03豁免: 与ch_batch_size_gate._build_parent_map共享实现（各gate持自身常量，共享模块提取为后续重构，对标_reference_helpers模式）
     """构建 AST parent map：{id(child_node): parent_node}。
 
     重命名自 _build_parent_map 以避免 FUNCTION-DUP gate 与 ch_batch_size_gate 冲突。
