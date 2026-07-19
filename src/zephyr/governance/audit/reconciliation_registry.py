@@ -4528,7 +4528,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
     治本（事件触发自动重生，三图对齐）：
     - 接入 GitCommitGateway post-commit reconciler 轨（事件触发，非 cron/manual）
     - trigger: PG 写入脚本 commit OR YAML 真源变更 -> 命中
-    - reconcile: 串联跑 12 个生成器，检测漂移，auto-commit
+    - reconcile: 串联跑 15 个生成器，检测漂移，auto-commit
 
     涵盖生成器（输出均在 docs/02_enterprise_architecture/）：
       1. generate_decision_diagram.py        -> 06_decision_architecture/decision_index.md
@@ -4543,6 +4543,9 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
      10. generate_panorama_registry.py        -> 00_overview_entry/panorama_registry.md
      11. align_panoramas.py                   -> generated/panorama_alignment_report.md（ARCH-053 三图对齐检测器）
      12. generate_asset_catalog.py            -> 01_global_architecture_diagram/asset_catalog.md（#179/#180/#181/#182 资产清单）
+     13. generate_policies.py                 -> src/zephyr/data/config/policies.yaml（#183 数据源策略派生）
+     14. generate_data_inventory.py           -> 05_dataflow_architecture/data_inventory.md（真源：ClickHouse 实时扫描）
+     15. generate_data_acquisition_flow.py    -> 05_dataflow_architecture/data_acquisition_flow.md（真源：tasks.yaml）
 
     已覆盖（不在本 reconciler 范围，由 make_regenerate_reconciler 处理）：
       - generate_domain_doc.py --all
@@ -4598,10 +4601,12 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "architecture_model/data/data_source_apis_registry.yaml",
         "architecture_model/runtime/service_registry.yaml",
         "architecture_model/contracts/cross_layer_contracts.yaml",
+        # generate_data_acquisition_flow.py 真源：tasks.yaml 变更触发 data_acquisition_flow.md 重生
+        "src/zephyr/data/config/tasks.yaml",
     )
 
     _GEN_DIR = "scripts/governance/d5_architecture/generators"
-    # 13 个生成器 + 输出路径（漂移检测目标）
+    # 15 个生成器 + 输出路径（漂移检测目标）
     _GENERATORS = (
         "generate_decision_diagram.py",
         "generate_dataflow_diagram.py",
@@ -4616,6 +4621,8 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "align_panoramas.py",  # ARCH-053 三图对齐检测器（manual，但 PG 写入后自动重生）
         "generate_asset_catalog.py",  # #179/#180/#181/#182 资产清单全景图（256 项资产）
         "generate_policies.py",  # #183 数据源策略派生（data_sources_registry.yaml → policies.yaml）
+        "generate_data_inventory.py",  # 业务数据清单（真源：ClickHouse 实时扫描；YAML/PG 变更顺带重生）
+        "generate_data_acquisition_flow.py",  # 数据采集流图（真源：tasks.yaml）
     )
     _OUTPUTS = (
         "docs/02_enterprise_architecture/06_decision_architecture/decision_index.md",
@@ -4631,6 +4638,8 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         "docs/02_enterprise_architecture/generated/panorama_alignment_report.md",  # ARCH-053
         "docs/02_enterprise_architecture/01_global_architecture_diagram/asset_catalog.md",  # #179/#180/#181/#182
         "src/zephyr/data/config/policies.yaml",  # #183 数据源策略派生物
+        "docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md",  # generate_data_inventory.py
+        "docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md",  # generate_data_acquisition_flow.py
     )
 
     def _trigger(committed_files: list[str]) -> bool:
@@ -4643,7 +4652,7 @@ def make_arch_diagram_reconciler(gateway: "object") -> ReconcilerSpec:
         return False
 
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
-        # 1. 串联跑 13 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
+        # 1. 串联跑 15 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
         failed_gens: list[str] = []
         for gen_name in _GENERATORS:
             gen_result = _run_subprocess(
