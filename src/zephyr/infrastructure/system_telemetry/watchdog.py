@@ -25,6 +25,7 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -32,6 +33,8 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 
 from zephyr.shared.io.paths import REPO_ROOT
+
+_logger = logging.getLogger(__name__)
 
 
 class WatchdogHeartbeat(BaseModel):

@@ -108,6 +108,66 @@ def _collect_target_names(target: ast.AST) -> set[str]:
     return names
 
 
+def _collect_module_name_sets(body: list) -> dict[str, set[str]]:
+    """收集模块级 *_NAMES 集合字面量（惰性导出符号登记表）。"""
+    name_sets: dict[str, set[str]] = {}
+    for stmt in body:
+        if not (isinstance(stmt, ast.Assign) and len(stmt.targets) == 1):
+            continue
+        target = stmt.targets[0]
+        if not (
+            isinstance(target, ast.Name)
+            and target.id.endswith("_NAMES")
+            and isinstance(stmt.value, (ast.Set, ast.List, ast.Tuple))
+        ):
+            continue
+        name_sets[target.id] = {
+            elt.value
+            for elt in stmt.value.elts
+            if isinstance(elt, ast.Constant) and isinstance(elt.value, str)
+        }
+    return name_sets
+
+
+def _extract_getattr_lazy_names(stmt: ast.AST, name_sets: dict[str, set[str]]) -> set[str]:
+    """从单个 __getattr__ 函数体提取惰性导出符号（name == "X" / name in _XXX_NAMES）。"""
+    lazy: set[str] = set()
+    args = getattr(stmt, "args", None)
+    param = args.args[0].arg if args and args.args else "name"
+    for node in ast.walk(stmt):
+        if not isinstance(node, ast.Compare):
+            continue
+        if not (isinstance(node.left, ast.Name) and node.left.id == param):
+            continue
+        for op, comparator in zip(node.ops, node.comparators):
+            if (
+                isinstance(op, ast.Eq)
+                and isinstance(comparator, ast.Constant)
+                and isinstance(comparator.value, str)
+            ):
+                lazy.add(comparator.value)
+            elif isinstance(op, ast.In) and isinstance(comparator, ast.Name):
+                lazy.update(name_sets.get(comparator.id, set()))
+    return lazy
+
+
+def _collect_lazy_getattr_names(tree: ast.AST) -> set[str]:
+    """收集 PEP 562 模块级 __getattr__ 惰性导出的符号名。
+
+    背景（2026-07-19 存量债务治理发现）：项目刻意使用 module __getattr__ +
+    importlib 惰性导入规避分层违规边（如 L0 shared -> L3 trading 的 CurrencyCode、
+    shared -> gov_enforcement 的 TaskStatus、跨域重型依赖 InputSanitizer）。
+    运行时由 __getattr__ 解析，静态扫描需识别该模式，避免对刻意架构误报。
+    """
+    body = getattr(tree, "body", [])
+    name_sets = _collect_module_name_sets(body)
+    lazy: set[str] = set()
+    for stmt in body:
+        if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)) and stmt.name == "__getattr__":
+            lazy.update(_extract_getattr_lazy_names(stmt, name_sets))
+    return lazy
+
+
 def _collect_defined_names(tree: ast.AST) -> set[str]:
     """收集模块内所有本地定义名（声明即定义——Python 无块级作用域，顺序不敏感）。
 
@@ -153,6 +213,7 @@ def _collect_defined_names(tree: ast.AST) -> set[str]:
             defined.update(_collect_match_capture_names(node.pattern))
         elif isinstance(node, ast.NamedExpr):
             defined.update(_collect_target_names(node.target))
+    defined.update(_collect_lazy_getattr_names(tree))
     return defined
 
 

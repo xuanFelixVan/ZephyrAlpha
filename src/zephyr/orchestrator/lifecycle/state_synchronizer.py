@@ -266,7 +266,7 @@ class StateSynchronizer:
             for f in sorted(scan_dir.rglob(pattern)):
                 if not f.is_file():
                     continue
-                rel = str(f.relative_to(_REPO_ROOT)).replace("\\", "/")
+                rel = str(f.relative_to(REPO_ROOT)).replace("\\", "/")
                 escaped = rel.replace("'", "''")
                 row = conn.execute(
                     "SELECT task_id FROM tasks WHERE files_in_scope LIKE ?",

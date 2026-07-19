@@ -26,7 +26,7 @@ Script System -> Orchestrator: Finding -> TaskCard 转换管道
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Any, Final
 import importlib as _importlib
 import logging
 from collections.abc import Sequence

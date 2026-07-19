@@ -46,6 +46,7 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+from zephyr.shared.io.sqlite_factory import get_db_connection
 from zephyr.shared.schema.task_types import TaskCard, TaskStatus
 from zephyr.shared.utils.time_utils import now_iso as _now_iso_true_source  # 5.12.3 修复：统一Z后缀真源
 
