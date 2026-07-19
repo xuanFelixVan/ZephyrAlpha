@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-19T01:02:29Z'
+generated_at: '2026-07-19T08:42:05Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 97
+total_gates: 98
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -270,6 +270,16 @@ gates:
   files_trigger: ^AGENTS\.md$
   always_run: false
   category: load_path_integrity
+  status: active
+  source: pre-commit
+- gate_id: GATE-SILENT-DEGRADATION
+  name: 'GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 — 降级路径必须有日志）'
+  entry: python scripts/governance/d7_code/detect_silent_degradation.py
+  description: AST 扫描降级代码路径（fallback/default/except 块）无日志写入——对标 COND-45（服务降级不写入日志为条件禁止）。warn-only
+    观察期，存量清零后转硬阻断
+  files_trigger: ^src/zephyr/.*\.py$
+  always_run: false
+  category: unknown
   status: active
   source: pre-commit
 - gate_id: GATE-MCP

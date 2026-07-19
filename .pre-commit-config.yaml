@@ -563,6 +563,24 @@ repos:
         files: "^AGENTS\\.md$"
         description: "解析 AGENTS.md 任务菜单路径引用（§8.2 待补建，当前 SKIP）。warn-only骨架阶段，对标 AI加载路径不可漂移铁律"
 
+      # ── GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 强制执行层）──
+      # 权威依据：COND-45 — 服务降级不写入日志为条件禁止（降级路径必须有日志，运维盲区零容忍）
+      # Ruling:100PCT-AI-GOVERNANCE P1-3 (2026-07-19)：脚本已存在但未注册为 gate，
+      #         导致 COND-45 在 commit 阶段无强制执行——典型"检测能力存在但未激活"反模式
+      # 检测范围：src/zephyr/**/*.py 变更时触发
+      # 检测内容：AST 扫描 except/fallback/default 块，识别降级路径并要求包含日志写入调用
+      # 模式：warn-only（观察期；当前存量 6 处违规，包括 circuit_breaker/secrets 等承重模块）
+      #       存量清零后转硬阻断（移除 --warn-only 参数）
+      - id: gate-silent-degradation
+        name: "GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 — 降级路径必须有日志）"
+        entry: python scripts/governance/d7_code/detect_silent_degradation.py
+        args: ["--warn-only"]
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: "^src/zephyr/.*\\.py$"
+        description: "AST 扫描降级代码路径（fallback/default/except 块）无日志写入——对标 COND-45（服务降级不写入日志为条件禁止）。warn-only 观察期，存量清零后转硬阻断"
+
       # ── Handoff: 交接日志（manual stage，按需运行）──
       # 说明：不在 pre-commit 默认阶段运行，避免每次提交刷 handoff 文件。
       # 运行：pre-commit run handoff-log-generate --hook-stage manual
