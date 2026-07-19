@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-10-FRONTEND-ARCH
-related_rationale: R64, R69
+related_rationale: []
 related_open_questions:
 - OQ-083
 related_kb:
@@ -228,7 +228,7 @@ frontend/packages/*    ──┘
 5. JWT 过期 → 静默 refresh → 失败则路由到登录页并清空 Global Store
 ```
 
-权限模型**当前：单用户单角色**，未来激活 OQ-069 细粒度 RBAC / ABAC 时升级。
+权限模型**当前：单用户单角色**，未来激活细粒度 RBAC / ABAC 时升级（对应 Open Question 待登记）。
 
 ---
 

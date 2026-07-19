@@ -12,8 +12,7 @@ created_by: agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-05-DATA-ARCH
-related_rationale:
-- R36
+related_rationale: []
 related_open_questions: []
 tags:
 - data-architecture
@@ -33,7 +32,7 @@ ttl: permanent
 
 > 本文档定义永恒指导原则。
 > 派生数据（实体清单、字段级 schema、血缘图）由以下机制自动生成：
-> - `scripts/governance/d5_architecture/generators/generate_data_inventory.py` → `05_dataflow_architecture/data_inventory.md`
+> - `scripts/governance/d5_architecture/generators/generate_data_inventory.py` → `../05_dataflow_architecture/data_inventory.md`
 > - `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py` → 跨域数据流图
 > - 字段级 schema 真源在 `03_modules/_domain_data/`（D_DATA_ENG 域）
 
@@ -279,5 +278,5 @@ PIT 是"时间维度真实"，Survivorship 是"对象维度真实"——两者**
 |---|---|
 | `architecture_principles.md` | 本文是总纲 §4 核心架构决策的数据架构子原则 |
 | `capability_maturity_principles.md` | 数据域（D_MKT_DATA/D_FACTOR/D_DATA_ENG 等）的成熟度评估遵循该文定义 |
-| `05_dataflow_architecture/data_inventory.md` | 自动生成的实体清单（派生数据），实体定义遵循本文 PIT/lineage/MDM 原则 |
+| `../05_dataflow_architecture/data_inventory.md` | 自动生成的实体清单（派生数据），实体定义遵循本文 PIT/lineage/MDM 原则 |
 | `03_modules/_domain_data/` | 字段级 schema 真源（D_DATA_ENG 域物化点），遵循本文 PIT/质量门禁原则 |

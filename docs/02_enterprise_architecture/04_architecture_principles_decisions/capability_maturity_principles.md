@@ -12,10 +12,8 @@ created_by: agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: null
-related_rationale:
-- R70
-related_open_questions:
-- OQ-084
+related_rationale: []
+related_open_questions: []
 tags:
 - architecture-principle
 - capability-maturity
@@ -30,7 +28,7 @@ ttl: permanent
 # Capability Maturity Principles / 能力成熟度原则
 
 > 本文档定义永恒指导内容。
-> 派生数据（域成熟度快照、热力图可视化）由 `scripts/governance/d5_architecture/generators/generate_design_vs_production.py` 自动生成到 `01_global_architecture_diagram/global_capability_heatmap.md`。
+> 派生数据（域成熟度快照、热力图可视化）由 `scripts/governance/d5_architecture/generators/generate_design_vs_production.py` 自动生成到 `../01_global_architecture_diagram/global_capability_heatmap.md`。
 
 ## 1. 业界对标
 
@@ -97,4 +95,4 @@ ttl: permanent
 |---|---|
 | `architecture_principles.md` | 本文是总纲 §4 核心架构决策的能力成熟度子原则 |
 | `architecture_model/cross_cutting/capability_heatmap.yaml` | YAML 是机器可读能力清单（canonical schema）；本文是人类可读原则定义 |
-| `01_global_architecture_diagram/global_capability_heatmap.md` | 自动生成的热力图快照（派生数据），以本文档定义的
+| `../01_global_architecture_diagram/global_capability_heatmap.md` | 自动生成的热力图快照（派生数据），以本文档定义的

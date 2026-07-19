@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-02-INFORMATION-ARCH
-related_rationale: R26, R27, R28, R29, R30, R44
+related_rationale: []
 related_open_questions: []
 tags:
 - information-principles
@@ -41,7 +41,7 @@ ttl: permanent
 - docs/ 具体目录清单 → `directory_registry.yaml`（项目目录登记表 SSoT）
 - 目录成熟度状态（active/partial/planned/deferred）→ 由 directory_registry 派生
 - 当前工作区关键入口 → 自动从 directory_registry 派生
-- 全域清单 → `generated/domains/index.md`（depgraph 派生）
+- 全域清单 → `generated/domains/index.md`（depgraph 派生，待生成）
 
 **与其他原则文档关系**：
 - [capability_maturity_principles.md](capability_maturity_principles.md)：能力成熟度方法论
@@ -222,7 +222,7 @@ draft → in_discussion → review_ready → active/accepted → superseded/depr
 | docs/ 具体目录清单 | `directory_registry.yaml`（SSoT）|
 | 目录成熟度状态（active/partial/planned/deferred）| `directory_registry.yaml` 派生 |
 | 当前工作区关键入口 | 自动从 directory_registry 派生 |
-| 全域清单 | `generated/domains/index.md`（depgraph 派生）|
+| 全域清单 | `generated/domains/index.md`（depgraph 派生，待生成）|
 | frontmatter schema 完整规格 | `frontmatter_schema.json` |
 | doc_type 合法值清单 | `doc_type_vocabulary.yaml` |
 | TTL 合法值清单 | `ttl_vocabulary.yaml` |

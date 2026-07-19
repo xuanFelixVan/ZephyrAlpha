@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-06-SECURITY-ARCH
-related_rationale: R38, R70, R71, R72
+related_rationale: []
 related_open_questions: []
 tags:
 - security-principles
@@ -47,7 +47,7 @@ ttl: permanent
 - 密钥资产清单 → 由 `scripts/governance/scan_secret_leak.py` 自动扫描生成
 - Phase Roadmap 进度 → 由 `phase-transition-protocol.md` + 自动化 phase gate 维护
 - Open Questions → 由决策注册表（`docs/02_enterprise_architecture/04_architecture_principles_decisions/`）维护
-- LSG 接口实现细节 → `03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md`
+- LSG 接口实现细节 → `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md`
 - Agent Sandbox 技术选型 → KBG-0018
 
 **与其他原则文档关系**：
@@ -386,7 +386,7 @@ AI Agent 的每次调用都带 `agent_id`，Session Log 按 agent_id 分流，�
 
 | 内容 | 真源 |
 |------|------|
-| LSG 接口实现 | `03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md` |
+| LSG 接口实现 | `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md` |
 | Agent Sandbox 技术选型 | KBG-0018 |
 | 密钥资产清单（动态） | `scripts/governance/scan_secret_leak.py` 自动扫描 |
 | Phase Roadmap 进度 | `phase-transition-protocol.md` + 自动化 phase gate |

@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-08-OPERATIONS-ARCH
-related_rationale: R39
+related_rationale: []
 related_open_questions: []
 tags:
 - operations-principles

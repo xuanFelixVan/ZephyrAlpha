@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-07-INTEGRATION-ARCH
-related_rationale: R37
+related_rationale: []
 related_open_questions: []
 tags:
 - integration-principles
@@ -227,9 +227,9 @@ MarketDataTick (raw)
 | 接口契约规格（数据结构、版本、稳定性） | `architecture_model/contracts/cross_layer_contracts.yaml` |
 | EI 系列 status（planned/in use） | 集成点注册表（自动维护） |
 | 外部集成拓扑图 | `diagrams/integration_topology.mmd`（自动生成） |
-| 集成协议与技术选型 | `technology_architecture.md`（待清理后→technology_principles.md） |
+| 集成协议与技术选型 | `technology_principles.md` |
 | 安全认证机制 | `security_principles.md` |
-| 运维告警 | `operations_architecture.md`（待清理后→ops_principles.md） |
+| 运维告警 | `operations_principles.md` |
 
 ### 7.3 视图定位
 
