@@ -346,3 +346,7 @@ uuid
 
 # Architecture health dashboard snapshots (timestamped, regenerable; latest.json is tracked)
 data/architecture_health/dashboard_*.json
+
+# Docker Compose local override (5.34.2 — 本地私有覆盖，禁止入库；示例见 config/infra/docker-compose.override.example.yml)
+docker-compose.override.yml
+docker-compose.override.yaml
