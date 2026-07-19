@@ -1487,6 +1487,76 @@ def metric_20_runtime_snapshot_drift() -> dict:
         error=error if not fresh else '')
 
 
+# ── 指标 19：治理层 151→6 收敛缺口数 ──────────────────────────────────────
+
+_CONVERGENCE_MAP_REL = 'docs/02_enterprise_architecture/governance_convergence_map.yaml'
+
+
+def metric_19_governance_convergence_gap() -> dict:
+    """治理层 151→6 收敛缺口数（#ARCH-GOV-CONVERGENCE-META Phase 3.3）。
+
+    病根4 治本指标：治理体系自身 151+ 个组件（gate/reconciler/vocab/registry）
+    应收敛为 6 个核心功能入口。M19 = 未收敛组件数（total - consolidated）。
+
+    - M19=0：所有组件已收敛到 6 个核心功能入口（理想态）
+    - M19>0：仍有组件未收敛，治理体系自身仍是漂移源
+    - convergence_map 不存在/解析失败 → fail-open，count=0 + error
+
+    数据真源：docs/02_enterprise_architecture/governance_convergence_map.yaml
+    """
+    import yaml as _yaml
+
+    map_path = REPO_ROOT / _CONVERGENCE_MAP_REL
+    if not map_path.exists():
+        return _make_metric('M19', '治理层收敛缺口数', 0,
+            details=[f'convergence map not found: {_CONVERGENCE_MAP_REL}'],
+            source='inline', error='convergence map not found')
+
+    try:
+        data = _yaml.safe_load(map_path.read_text(encoding='utf-8'))
+    except Exception as e:  # noqa: BLE001 — fail-open
+        return _make_metric('M19', '治理层收敛缺口数', 0,
+            details=[f'YAML parse failed: {e}'], source='inline',
+            error=f'YAML parse failed: {e}')
+
+    if not isinstance(data, dict):
+        return _make_metric('M19', '治理层收敛缺口数', 0,
+            details=['convergence map top-level not dict'],
+            source='inline', error='invalid structure')
+
+    summary = data.get('convergence_summary', {})
+    if not isinstance(summary, dict):
+        return _make_metric('M19', '治理层收敛缺口数', 0,
+            details=['convergence_summary missing'],
+            source='inline', error='convergence_summary missing')
+
+    total = summary.get('total_components', 0)
+    consolidated = summary.get('consolidated_components', 0)
+    gap = total - consolidated
+
+    # 构造详细信息
+    details = []
+    core_functions = data.get('core_functions', []) or []
+    for cf in core_functions:
+        if not isinstance(cf, dict):
+            continue
+        cf_id = cf.get('id', '?')
+        cf_name = cf.get('name', '?')
+        for c in cf.get('consolidates', []) or []:
+            if not isinstance(c, dict):
+                continue
+            ctype = c.get('component_type', '?')
+            count = c.get('current_count', 0)
+            status = c.get('status', '?')
+            details.append(f'{cf_id}/{ctype}: {count} components, status={status}')
+
+    details.append(f'total={total}, consolidated={consolidated}, gap={gap}')
+    details.append(f'target: 6 core function entry points (M19 ≤ 6)')
+
+    return _make_metric('M19', '治理层收敛缺口数', gap,
+        details=details, source=_CONVERGENCE_MAP_REL)
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
 # 18 项指标注册表（id → 检测函数）
@@ -1508,6 +1578,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
     ("M16", "治本进度新鲜度(>90天超期数)", metric_16_remediation_progress_freshness),
     ("M17", "规则感知缺口(无门禁配对数)", metric_17_rule_perception_gap),
+    ("M19", "治理层收敛缺口数", metric_19_governance_convergence_gap),
     ("M20", "trae_060 §5 快照漂移数", metric_20_runtime_snapshot_drift),
 ]
 

@@ -1,0 +1,104 @@
+# governance_convergence_map.yaml — 治理层 151→6 收敛映射表
+# #ARCH-GOV-CONVERGENCE-META Phase 3.3
+#
+# 真源：本文件是治理组件→核心功能收敛映射的 SSoT。
+# 消费方：architecture_health_dashboard.py M19 指标
+#
+# 背景（architecture_debt_registry.md §一 line 643）：
+#   治理体系自身 52 GATE + 17 reconciler + 34 词表 + 48 注册表 = 151 个治理组件
+#   治理组件数 > 被治理组件数时，治理体系自身就是最大漂移源
+#   战略建议：L5 治理层应从 14 功能收敛为 5-6 功能
+#
+# 6 核心功能（target_state）：
+#   1. unified_detector  — 统一检测器（所有 gate 的统一入口）
+#   2. unified_fixer     — 统一修复器（所有 reconciler 的统一入口）
+#   3. unified_verifier  — 统一验证器（合规性验证的统一入口）
+#   4. audit             — 审计（治理行为日志/可观测性）
+#   5. registry          — 注册表（所有注册表的统一管理）
+#   6. asset             — 资产（词表/契约/配置等数据资产）
+
+meta:
+  id: governance_convergence_map
+  version: "1.0.0"
+  phase: "3.3"
+  created: "2026-07-19"
+  baseline_total: 151  # 原始基线：52 gate + 17 reconciler + 34 vocab + 48 registry
+  target_core_functions: 6
+
+# 6 核心功能定义
+core_functions:
+  - id: unified_detector
+    name: "统一检测器"
+    description: "所有 gate 的统一入口——单点注册、单点调用、单点配置"
+    target_entry: "zephyr.gov_enforcement.commit_gate_registry.CommitGateRegistry"
+    consolidates:
+      - component_type: gate
+        current_count: 99
+        baseline_count: 52
+        status: in_progress  # CommitGateRegistry 已存在，但 gate 仍各自独立注册
+        convergence_action: "所有 gate 通过 make_*_gate() 工厂函数注册到 CommitGateRegistry"
+
+  - id: unified_fixer
+    name: "统一修复器"
+    description: "所有 reconciler 的统一入口——单点注册、单点调度、单点监控"
+    target_entry: "zephyr.governance.audit.reconciliation_registry.ReconciliationRegistry"
+    consolidates:
+      - component_type: reconciler
+        current_count: 25  # 实际注册的 reconciler 数（去除别名/导入）
+        baseline_count: 17
+        status: in_progress  # ReconciliationRegistry 已存在，但 reconciler 仍各自独立注册
+        convergence_action: "所有 reconciler 通过 make_*_reconciler() 工厂函数注册到 ReconciliationRegistry"
+
+  - id: unified_verifier
+    name: "统一验证器"
+    description: "合规性验证的统一入口——蓝图对齐/规则对齐/Schema 对齐"
+    target_entry: "scripts.governance.check_blueprint_code_alignment"
+    consolidates:
+      - component_type: verifier
+        current_count: 5  # check_blueprint_code_alignment + check_rule_four_way_alignment 等
+        baseline_count: 5
+        status: planned  # 尚未统一入口
+        convergence_action: "提取 VerifierRegistry，所有验证脚本统一注册"
+
+  - id: audit
+    name: "审计"
+    description: "治理行为日志/可观测性/健康度监控"
+    target_entry: "zephyr.governance.audit.audit_log"
+    consolidates:
+      - component_type: audit_component
+        current_count: 3  # audit_log + runtime_violation_snapshot + architecture_health_dashboard
+        baseline_count: 3
+        status: in_progress
+        convergence_action: "统一审计入口，所有治理行为通过 AuditLogger 记录"
+
+  - id: registry
+    name: "注册表"
+    description: "所有注册表的统一管理——单点 schema、单点同步、单点查询"
+    target_entry: "zephyr.governance.registry.unified_registry (planned)"
+    consolidates:
+      - component_type: registry
+        current_count: 35
+        baseline_count: 48
+        status: planned  # 各注册表仍独立维护
+        convergence_action: "提取 UnifiedRegistry 基类，所有注册表统一 schema + 同步"
+
+  - id: asset
+    name: "资产"
+    description: "词表/契约/配置等数据资产——单点定义、单点消费"
+    target_entry: "zephyr.governance.vocab.unified_vocab (planned)"
+    consolidates:
+      - component_type: vocabulary
+        current_count: 39
+        baseline_count: 34
+        status: planned  # 各词表仍独立维护
+        convergence_action: "提取 UnifiedVocab 基类，所有词表统一 schema + 消费链"
+
+# 收敛进度汇总
+convergence_summary:
+  total_components: 206  # 99 gate + 25 reconciler + 5 verifier + 3 audit + 35 registry + 39 vocab
+  consolidated_components: 0  # 尚无组件完全收敛到统一入口
+  in_progress_components: 127  # gate(99) + reconciler(25) + audit(3) = 有统一框架但未完全收敛
+  planned_components: 79  # verifier(5) + registry(35) + vocab(39) = 尚无统一框架
+  convergence_ratio: 0.0  # consolidated / total
+  # M19 指标 = total_components - consolidated_components = 206
+  # 目标：M19 ≤ 6（仅 6 个核心功能入口点）
