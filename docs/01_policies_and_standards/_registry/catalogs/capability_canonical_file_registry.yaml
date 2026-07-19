@@ -5807,6 +5807,11 @@ creation_tokens:
     token: "auto-workspace-telemetry-20260719"
     created_by: "session-sess-20004-20260720010618"
     capability: "workspace_telemetry"
+  # --- 裁定 D 综合分析报告（2026-07-20，#ARCH-GUC-TRIGGER-FIX-001 裁定 D 展开）---
+  - file: "docs/02_enterprise_architecture/ruling_100pct_ai_governance_hardening.md"
+    token: "auto-ruling-100pct-ai-gov-hardening-20260720"
+    created_by: "sess-7308-20260720013540"
+    capability: "ruling_100pct_ai_governance_hardening"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
