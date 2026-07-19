@@ -148,15 +148,36 @@ _auto_bootstrap_result = None
 _bootstrap_lock = threading.Lock()  # 5.165.1 修复: 保护 _auto_bootstrap_result 跨线程读写
 
 
+def _feature_flag_enabled(key: str, *, default: bool = True) -> bool:
+    """5.38.8 治本：高风险功能 flag 守护点——读 canonical global_flag_registry。
+
+    flags.yaml 未加载/flag 未注册/flag 系统异常时返回 ``default``（默认 ON 可关闭，
+    守护点 fail-open 保证 import zephyr 永不因 flag 系统故障而中断）。
+    """
+    try:
+        from zephyr.shared.foundation.flags import ensure_global_flags_loaded, global_flag_registry
+
+        ensure_global_flags_loaded()
+        return global_flag_registry.is_enabled(key, default=default)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return default
+
+
 def _deferred_bootstrap():
     global _auto_bootstrap_result
-    try:
-        from zephyr.infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
-
-        result = _auto_bootstrap()
-    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _log.warning("auto_bootstrap failed: %s", exc, exc_info=True)
+    # 5.38.8: auto_bootstrap（monkey-patch 全模块遥测注入）属高风险功能，加 flag 守护。
+    # config/flags.yaml auto_bootstrap.enabled=false 时跳过 patch（默认 ON 可关闭）。
+    if not _feature_flag_enabled("auto_bootstrap"):
+        _log.info("auto_bootstrap skipped: feature flag 'auto_bootstrap' is OFF (config/flags.yaml)")
         result = None
+    else:
+        try:
+            from zephyr.infrastructure.system_telemetry.auto_bootstrap import bootstrap as _auto_bootstrap
+
+            result = _auto_bootstrap()
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            _log.warning("auto_bootstrap failed: %s", exc, exc_info=True)
+            result = None
     with _bootstrap_lock:  # 5.165.1 修复: 加锁写入 global 变量
         _auto_bootstrap_result = result
     # §5.17.14 治本：自动接入 secret_rotation 到 SecretProvider

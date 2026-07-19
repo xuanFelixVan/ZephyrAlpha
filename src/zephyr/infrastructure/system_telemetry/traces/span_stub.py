@@ -50,9 +50,11 @@ class TraceContext:
     tracestate: str | None = None
 
     @classmethod
-    def new_root(cls) -> TraceContext:
+    def new_root(cls, trace_id: str | None = None) -> TraceContext:
+        # 5.39.5: trace_id 可显式传入（从 shared logging contextvars 继承），
+        # 缺省生成 32-hex 新 id。继承值原样保留以保证与日志侧精确相关。
         return cls(
-            trace_id=_gen_hex_id(32),
+            trace_id=trace_id or _gen_hex_id(32),
             span_id=_gen_hex_id(16),
         )
 
@@ -198,6 +200,44 @@ def _pop_span() -> Span | None:
     return stack[-1]
 
 
+# 5.39.5 修复: 统一 TraceContext——span 追踪与 shared logging 共用同一
+# contextvars trace 上下文存储（zephyr.shared.utils.logging.trace_id_var）。
+# 原两套实现（logging contextvars vs span_stub threading.local，后者已在
+# 5.132.3 改 contextvars 但仍独立存储）互不可见，跨模块 trace_id 断链。
+# 桥接策略（委托而非替代，span_stub 的 W3C TraceContext 数据结构保留）：
+#   - root span 创建时继承 logging trace_id_var（日志 trace -> span 加入同一 trace）
+#   - span 生命周期内把自身 trace_id 写回 logging trace_id_var（span -> 日志自动携带）
+def _inherit_log_trace_id() -> str | None:
+    """读取 shared logging contextvars 的 trace_id（无则 None）。"""
+    try:
+        from zephyr.shared.utils.logging import trace_id_var
+
+        return trace_id_var.get() or None
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return None
+
+
+def _bind_log_trace_id(trace_id: str) -> contextvars.Token | None:
+    """把 span trace_id 写入 shared logging contextvars，返回 reset token。"""
+    try:
+        from zephyr.shared.utils.logging import trace_id_var
+
+        return trace_id_var.set(trace_id)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return None
+
+
+def _reset_log_trace_id(token: contextvars.Token | None) -> None:
+    if token is None:
+        return
+    try:
+        from zephyr.shared.utils.logging import trace_id_var
+
+        trace_id_var.reset(token)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        pass
+
+
 @contextmanager
 def noop_span(
     name: str,
@@ -209,12 +249,18 @@ def noop_span(
     if parent is None and parent_span is not None:
         parent = parent_span.context
 
-    ctx = TraceContext.new_child(parent) if parent is not None else TraceContext.new_root()
+    if parent is not None:
+        ctx = TraceContext.new_child(parent)
+    else:
+        # 5.39.5: root span 继承 logging trace_id（存在时），消除日志/span 双轨断链
+        ctx = TraceContext.new_root(trace_id=_inherit_log_trace_id())
     span = Span(name=name, context=ctx, attributes=dict(attributes or {}))
     span.set_attribute("thread", threading.current_thread().name)
 
     _register_span(span)
     _push_span(span)
+    # 5.39.5: span 生命周期内日志自动携带本 span 的 trace_id
+    _log_trace_token = _bind_log_trace_id(ctx.trace_id)
 
     try:
         yield span
@@ -227,6 +273,7 @@ def noop_span(
     finally:
         _pop_span()
         _deregister_span(span)
+        _reset_log_trace_id(_log_trace_token)
 
         _sampler = sampler or TraceSampler()
         if _sampler.should_sample(span):

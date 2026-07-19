@@ -630,6 +630,24 @@ def register_boot_hooks(
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("HealthAggregator: subscribe failed: %s", e, exc_info=True)
 
+    # 5.38.2/5.38.4 治本：特性开关启动加载 — config/flags.yaml 注册进 global_flag_registry
+    # （canonical 真源 zephyr.shared.foundation.flags，加载后全系统可读 flag 守护点）
+    try:
+        from zephyr.shared.foundation.flags import ensure_global_flags_loaded
+        _flags_loaded = ensure_global_flags_loaded()
+        logger.info("FeatureFlags: %d flags loaded from config/flags.yaml into global_flag_registry", _flags_loaded)
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("FeatureFlags: load failed: %s", e, exc_info=True)
+
+    # 5.39.6 治本：SLOManager 永久系统启动接入 — 实例化 + 事件驱动 metric 采集
+    try:
+        from zephyr.feedback_loop.slo_manager import get_slo_manager
+        _slo_manager = get_slo_manager()
+        _slo_manager.subscribe_eventbus()
+        logger.info("SLOManager: instantiated + subscribed to EventBus (SLO auto-check, %d contracts)", len(_slo_manager.list_contracts()))
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning("SLOManager: init failed: %s", e, exc_info=True)
+
     # AI-11 审计修复：F5 永久系统启动/关闭钩子接线 — F5四组件自动初始化+自动关闭
     # 审计发现：register_f5_boot_hook/register_f5_shutdown_hook 已定义但从未被 boot_hooks 调用，
     # 导致 F5 启动初始化（DeadlockDetector/EscalationEngine/DelegationEngine/Arbitrator）

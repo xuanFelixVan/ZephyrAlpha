@@ -329,9 +329,35 @@ def TraceContext(
 _root_configured = False
 
 
+def _resolve_default_level() -> str:
+    """5.34.10 修复：环境感知默认日志级别。
+
+    优先级：``ZEPHYR_LOG_LEVEL`` 环境变量（合法值才生效）> 环境感知默认——
+    dev->DEBUG（排障信息完整）/ test->WARNING（CI 输出安静）/
+    staging->INFO / prod->INFO（生产不输出 DEBUG 噪音）。
+    环境检测异常时回退 INFO。
+    """
+    import os
+
+    env_override = os.environ.get("ZEPHYR_LOG_LEVEL", "").strip().upper()
+    if env_override in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
+        return env_override
+    try:
+        from zephyr.shared.foundation.env import Env, current_env
+
+        env = current_env()
+        if env is Env.DEV:
+            return "DEBUG"
+        if env is Env.TEST:
+            return "WARNING"
+        return "INFO"
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return "INFO"
+
+
 def configure_root_logger(
     *,
-    level: str = "INFO",
+    level: str | None = None,
     json_file: str | None = None,
     human_console: bool = True,
 ) -> None:
@@ -340,7 +366,9 @@ def configure_root_logger(
     应在应用入口（如 main.py / cli.py）调用一次。
 
     Args:
-        level: 日志级别（DEBUG/INFO/WARNING/ERROR/CRITICAL）
+        level: 日志级别（DEBUG/INFO/WARNING/ERROR/CRITICAL）。
+            None（默认）= 环境感知（5.34.10：dev->DEBUG / test->WARNING /
+            prod->INFO，或被 ZEPHYR_LOG_LEVEL 环境变量覆盖）
         json_file: 可选 JSON 日志输出文件路径（None = 不写文件）
         human_console: 是否启用控制台人类可读输出
     """
@@ -348,6 +376,9 @@ def configure_root_logger(
     if _root_configured:
         return
     _root_configured = True
+
+    if level is None:
+        level = _resolve_default_level()
 
     root = logging.getLogger()
     root.setLevel(getattr(logging, level.upper(), logging.INFO))
