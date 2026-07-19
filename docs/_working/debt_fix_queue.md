@@ -63,6 +63,13 @@ completes_when: 本队列全部清空且 architecture_debt_registry.md 全部维
 - M17=65、M19=206、M20=4、M21=3（其他 session 新增指标，其负责域，评估后协同）
 - 5.176 编号冲突（SQL注入 vs AI-11遗留同号）——文档修复
 
+## A5. 裁定补充（第102轮架构师裁定）
+- 5.21 测试质量（skip 218 + importorskip 264）：**RATIFY**——skip/importorskip 用于可选依赖（openai/chromadb 未装）、平台特定、慢速测试豁免，是合法测试实践；真问题（assert True 占位 22 处）规模小。不建 skip 审计门禁（低收益）。
+- 5.20 print 迁移：704 处库代码 print → logging（agent-35 分批施工）；MCP stdio 协议帧与 CLI 输出职责 print 保留（合法）。
+- 5.25 contract_registry 1087 行：已采用同文件分区（5 SECTION 横幅+9 数据子区导航，920 行数据 dict 的注意力治本），非拆包（CREATE-GUARD + registry 持有阻断新建文件）。
+- 文档状态行：因主工作区+worktree 均被并发 session 覆盖（23→2→0），改为**末尾原子性一次性应用**（worktree 静默后立即 merge，避开覆盖窗口）。
+- B11（5.60）：agent-14 三次超时，已实证 6 项全部落地（5.60.1/2/4/5/8/9），状态行已按此回写。
+
 ## B. 施工遗留（各 agent 报告）
 - error_code_registry.yaml：ZA-IG-0015（B2 删 integration schema）+ ZA-TR-0002/0003（B14 money.py 收敛）悬空条目清理
 - 5.34.7 reconciliation_registry.py 最后 1 处 governance.db 字面量（被 sess-27964-p0 持有，其已部分处理，补提）
