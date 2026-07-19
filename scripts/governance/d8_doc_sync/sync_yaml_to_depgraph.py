@@ -2123,9 +2123,9 @@ def _log_sync_failures(cur, failures):
         _ensure_sync_failures_log_table(cur)
         for f in failures:
             cur.execute("""
-                INSERT INTO sync_failures_log (function_name, phase, arch_ref, error_message, error_type)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (f["function"], f["phase"], f["arch_ref"], f["error"], f["error_type"]))
+                INSERT INTO sync_failures_log (function_name, phase, arch_ref, error_message, error_type, error_class)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (f["function"], f["phase"], f["arch_ref"], f["error"], f["error_type"], f.get("error_class", "unknown")))
         cur.execute("RELEASE SAVEPOINT sp_log_failures")
     except Exception as e:
         # Best-effort: 写日志失败不能阻断 sync 主流程
@@ -2162,14 +2162,91 @@ def _run_sync_with_savepoint(cur, phase, arch_ref, func, failures):
             # SAVEPOINT 本身可能未建立（极端情况），记录但继续
             print(f"[WARN] ROLLBACK TO {sp_name} 失败: {rollback_err}")
         err_msg = str(e)[:2000]  # 截断防日志膨胀
+        err_type = type(e).__name__
+        err_class = _classify_error(err_type, err_msg)  # 裁定 C / P2
         failures.append({
             "phase": phase,
             "function": func.__name__,
             "arch_ref": arch_ref,
             "error": err_msg,
-            "error_type": type(e).__name__,
+            "error_type": err_type,
+            "error_class": err_class,
         })
-        print(f"[SYNC ISOLATED FAIL] {phase} {func.__name__} ({arch_ref}): {type(e).__name__}: {err_msg[:200]}")
+        print(f"[SYNC ISOLATED FAIL] {phase} {func.__name__} ({arch_ref}): {err_type} [{err_class}]: {err_msg[:200]}")
+
+
+# ========== 错误分类（裁定 C / P2 / #ARCH-GUC-TRIGGER-FIX-001）==========
+# 分类 sync 函数抛出的 Python 异常，填充 sync_failures_log.error_class 列。
+# reconciler 侧另有 _classify_sync_failure 解析 subprocess 文本做重试决策——
+# 两者分类标准一致，但本函数基于异常类型/消息，reconciler 侧基于 stderr 文本。
+
+_DETERMINISTIC_EXC_TYPES = frozenset({
+    "undefinedobject", "undefinedcolumn", "undefinedtable", "undefinedfunction",
+    "syntaxerror", "duplicatetable", "duplicatecolumn", "permissiondenied",
+    "notnullviolation", "foreignkeyviolation", "uniqueviolation", "checkviolation",
+    "invalidtextrepresentation", "invalidparametervalue", "undefinedparameter",
+    "duplicateobject", "duplicatealias", "invalidcolumnreference", "groupingerror",
+    "wrongobjecttype",
+})
+
+_TRANSIENT_EXC_TYPES = frozenset({
+    "operationalerror", "deadlockdetected", "serializationfailure", "internalerror",
+})
+
+_DETERMINISTIC_MSG_PATTERNS = (
+    "unrecognized configuration parameter",
+    "does not exist",
+    "already exists",
+    "syntax error",
+    "permission denied",
+    "not-null constraint",
+    "foreign key constraint",
+    "unique constraint",
+    "check constraint",
+    "invalid input syntax",
+)
+
+_TRANSIENT_MSG_PATTERNS = (
+    "deadlock detected",
+    "could not serialize access",
+    "connection refused",
+    "connection timeout",
+    "could not connect",
+    "server closed the connection unexpectedly",
+    "terminating connection due to",
+)
+
+
+def _classify_error(error_type: str, error_message: str) -> str:
+    """分类 sync 函数抛出的异常，决定 error_class（裁定 C / P2 / #ARCH-GUC-TRIGGER-FIX-001）。
+
+    Args:
+        error_type: 异常类名（如 "UndefinedObject", "OperationalError"）
+        error_message: 异常消息文本
+
+    Returns:
+        "deterministic" - 确定性错误（schema bug），重试必然失败
+        "transient" - 瞬态错误（连接/死锁），重试可能成功
+        "unknown" - 未知错误，保守重试
+
+    优先级：deterministic > transient（避免 OperationalError 包装的 GUC 错误被误判为 transient）
+    """
+    et = (error_type or "").lower()
+    msg = (error_message or "").lower()
+
+    # 1. deterministic 类型/消息优先（psycopg2 可能用 OperationalError 包装 UndefinedObject）
+    if et in _DETERMINISTIC_EXC_TYPES:
+        return "deterministic"
+    for pat in _DETERMINISTIC_MSG_PATTERNS:
+        if pat in msg:
+            return "deterministic"
+    # 2. transient 类型/消息次之
+    if et in _TRANSIENT_EXC_TYPES:
+        return "transient"
+    for pat in _TRANSIENT_MSG_PATTERNS:
+        if pat in msg:
+            return "transient"
+    return "unknown"
 
 
 # ========== 主同步函数 ==========

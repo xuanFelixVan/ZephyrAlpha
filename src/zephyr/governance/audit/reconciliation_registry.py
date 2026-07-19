@@ -1905,6 +1905,71 @@ def make_module_id_recommend_reconciler(gateway: "object") -> ReconcilerSpec:
     )
 
 
+# ============================================================================
+# 裁定 C / P2 / #ARCH-GUC-TRIGGER-FIX-001: 错误分类纯函数
+# ============================================================================
+# reconciler 以 subprocess 方式运行 sync_yaml_to_depgraph.py，无法直接捕获
+# Python 异常。本函数解析 stderr/stdout 文本匹配错误模式，决定是否重试：
+#   - deterministic: schema bug / GUC 未注册 / 约束违规 → 不重试，立即 escalate
+#   - transient: 连接/死锁/超时 → 重试可能成功
+#   - unknown: 未知错误 → 保守重试
+#
+# 原 bug（sync_dataflow_registry retry 23 次全失败）正是确定性错误被盲重试的典型。
+# 提取到模块级便于单元测试（对齐 commit_gateway_abuse_monitor_reconciler._classify_abuse 模式）。
+_DETERMINISTIC_PATTERNS = (
+    "unrecognized configuration parameter",  # GUC 未注册（#ARCH-GUC-TRIGGER-FIX-001 根因）
+    "undefinedobject",                       # GUC/对象未定义
+    "undefinedcolumn",                       # 列不存在
+    "undefinedtable",                        # 表不存在
+    "undefinedfunction",                     # 函数不存在
+    "undefinedparameter",                    # 参数未定义
+    "syntax error",                          # SQL 语法错误
+    "duplicatetable",                        # 表已存在
+    "duplicatecolumn",                       # 列已存在
+    "duplicateobject",                       # 对象已存在
+    "permission denied",                     # 权限不足
+    "not-null constraint",                   # NOT NULL 约束
+    "foreign key constraint",                # FK 约束
+    "unique constraint",                     # UNIQUE 约束
+    "check constraint",                      # CHECK 约束
+    "invalid input syntax",                  # 数据类型不匹配
+    "does not exist",                        # 表/列/函数不存在（通用）
+    "already exists",                        # 对象已存在（通用）
+)
+
+_TRANSIENT_PATTERNS = (
+    "operationalerror",
+    "deadlock detected",
+    "could not serialize access",
+    "connection refused",
+    "connection timeout",
+    "could not connect",
+    "server closed the connection unexpectedly",
+    "terminating connection due to",
+)
+
+
+def _classify_sync_failure(error_text: str) -> str:
+    """分类 sync 失败错误，决定 reconciler 是否重试（裁定 C / P2 / #ARCH-GUC-TRIGGER-FIX-001）。
+
+    Args:
+        error_text: sync_yaml_to_depgraph.py subprocess 的 stderr/stdout 文本。
+
+    Returns:
+        "deterministic" - 确定性错误（schema bug），不重试，立即 escalate
+        "transient" - 瞬态错误（连接/死锁），重试可能成功
+        "unknown" - 未知错误，保守重试
+    """
+    text = (error_text or "").lower()
+    for pat in _DETERMINISTIC_PATTERNS:
+        if pat in text:
+            return "deterministic"
+    for pat in _TRANSIENT_PATTERNS:
+        if pat in text:
+            return "transient"
+    return "unknown"
+
+
 def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 YAML->depgraph 规则同步 post-commit reconciler。
 
@@ -2007,24 +2072,61 @@ def make_yaml_sync_reconciler(gateway: "object") -> ReconcilerSpec:
                 action="clean",
                 detail="YAML->depgraph rules synced",
             )
-        # S1.6: 失败->写入重试队列（单条记录，记录最近一次失败信息 + 累计次数）
+        # 裁定 C / P2 / #ARCH-GUC-TRIGGER-FIX-001: 失败时先分类错误
+        # deterministic 错误（schema bug / GUC 未注册 / 约束违规）重试必然失败，立即 escalate
+        # transient / unknown 错误保留重试机制（可能下次成功）
+        error_text = sync_result.stderr.strip() or sync_result.stdout.strip()
+        error_class = _classify_sync_failure(error_text)
+
+        if error_class == "deterministic":
+            # 确定性错误：清空重试队列（不重试），立即升级为 error
+            # 原因：schema bug / GUC 未注册 / SQL 语法错误重试 N 次必然失败 N 次
+            # 原 bug（sync_dataflow_registry retry 23 次全失败）正是此类错误被盲重试的典型
+            _clear_retry_queue()
+            _write_retry_queue({
+                "failed_at": datetime.now(UTC).isoformat(),
+                "attempt": 1,
+                "error": error_text[:500],
+                "error_class": error_class,
+                "triggered_by": session_id,
+                "escalated": True,
+            })
+            return ReconcileResult(
+                action="error",
+                detail=(
+                    f"yaml sync DETERMINISTIC failure (error_class={error_class}, "
+                    f"NOT retryable — schema bug / GUC / constraint). "
+                    f"Manual fix needed: {error_text[:200]}"
+                ),
+            )
+
+        # transient / unknown 错误：保留重试机制
         prev = _read_retry_queue() or {}
         attempt = prev.get("attempt", 0) + 1
         _write_retry_queue({
             "failed_at": datetime.now(UTC).isoformat(),
             "attempt": attempt,
-            "error": sync_result.stderr.strip()[:500] or sync_result.stdout.strip()[:500],
+            "error": error_text[:500],
+            "error_class": error_class,
             "triggered_by": session_id,
         })
         if attempt >= _MAX_RETRY_ATTEMPTS:
-            # S1.6: 超过最大重试次数->升级为 error（停止重试，需人工介入修路径/依赖）
+            # 超过最大重试次数->升级为 error（停止重试，需人工介入修路径/依赖）
             return ReconcileResult(
                 action="error",
-                detail=f"yaml sync failed {attempt} times (max={_MAX_RETRY_ATTEMPTS}), STOPPED retry. Manual fix needed: {sync_result.stderr.strip()[:200]}",
+                detail=(
+                    f"yaml sync failed {attempt} times (max={_MAX_RETRY_ATTEMPTS}, "
+                    f"error_class={error_class}), STOPPED retry. "
+                    f"Manual fix needed: {error_text[:200]}"
+                ),
             )
         return ReconcileResult(
             action="warn",
-            detail=f"yaml sync failed (attempt {attempt}/{_MAX_RETRY_ATTEMPTS}, will retry on next commit): {sync_result.stderr.strip()[:200]}",
+            detail=(
+                f"yaml sync failed (attempt {attempt}/{_MAX_RETRY_ATTEMPTS}, "
+                f"error_class={error_class}, will retry on next commit): "
+                f"{error_text[:200]}"
+            ),
         )
 
     return ReconcilerSpec(
