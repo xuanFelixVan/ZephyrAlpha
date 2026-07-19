@@ -79,8 +79,9 @@ stuck 进程阻塞（_GlobalCommitLock 超时）或 session 注册表异常导�
 
 from __future__ import annotations
 
-__all__ = ["emergency_commit"]
+__all__ = ["emergency_commit", "check_start_blocked"]
 
+import json
 import logging
 import os
 import subprocess
@@ -97,6 +98,142 @@ logger = logging.getLogger(__name__)
 _COMMIT_TREE_TIMEOUT = 60
 # hash-object 单文件超时（秒）
 _HASH_OBJECT_TIMEOUT = 10
+
+# #ARCH-HEARTBEAT-001 P1-5 成本递增阈值
+# N >= 3 需显式 reason（强制说明紧急提交原因）
+# N >= 5 阻断下次 session_worktree_start（强制调查根因）
+_EMERGENCY_REASON_THRESHOLD: int = 3
+_EMERGENCY_BLOCK_THRESHOLD: int = 5
+_EMERGENCY_COUNTS_DIR: str = ".runtime/sessions"
+
+
+def _emergency_count_path(project_root: str | Path, session_id: str) -> Path:
+    """返回 emergency_count.json 文件路径。"""
+    return Path(project_root) / _EMERGENCY_COUNTS_DIR / session_id / "emergency_count.json"
+
+
+def _read_emergency_count(project_root: str | Path, session_id: str) -> dict:
+    """读取 session 的 emergency 计数（返回 {"count": N, "block_next_start": bool}）。
+
+    文件不存在时返回 {"count": 0, "block_next_start": False}（默认值）。
+    """
+    path = _emergency_count_path(project_root, session_id)
+    if not path.exists():
+        return {"count": 0, "block_next_start": False}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {"count": 0, "block_next_start": False}
+
+
+def _write_emergency_count(
+    project_root: str | Path, session_id: str, data: dict,
+) -> None:
+    """写入 emergency 计数（原子写入：tmp + os.replace）。"""
+    path = _emergency_count_path(project_root, session_id)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        os.replace(str(tmp), str(path))
+    except OSError as e:
+        logger.warning("emergency count write failed (non-blocking): %s", e)
+
+
+def _check_emergency_escalation(
+    project_root: str | Path, session_id: str, reason: str,
+) -> tuple[bool, str]:
+    """检查 emergency_commit 成本递增门禁（#ARCH-HEARTBEAT-001 P1-5）。
+
+    - N >= 3 且 reason 为空 → 拒绝（强制说明原因）
+    - N >= 5 → 拒绝（已超阈值，必须先解决根因）
+
+    Args:
+        project_root: 项目根目录。
+        session_id: session 标识。
+        reason: 调用方提供的紧急提交原因。
+
+    Returns:
+        (allowed, error_msg) — allowed=True 时 error_msg 为空。
+    """
+    data = _read_emergency_count(project_root, session_id)
+    count = data.get("count", 0)
+    if count >= _EMERGENCY_BLOCK_THRESHOLD:
+        return False, (
+            f"emergency_commit 已达 {count} 次（阈值 {_EMERGENCY_BLOCK_THRESHOLD}），"
+            f"阻断本次提交。必须先调查根因（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset），"
+            f"解决后调 session_worktree_abort 清理 session 计数。"
+        )
+    if count >= _EMERGENCY_REASON_THRESHOLD and not reason.strip():
+        return False, (
+            f"emergency_commit 已达 {count} 次（阈值 {_EMERGENCY_REASON_THRESHOLD}），"
+            f"必须提供非空 reason 参数说明紧急提交原因。"
+        )
+    return True, ""
+
+
+def _increment_emergency_count(
+    project_root: str | Path, session_id: str,
+) -> int:
+    """emergency_commit 成功后递增计数（#ARCH-HEARTBEAT-001 P1-5）。
+
+    N+1 >= 5 时设置 block_next_start=True（阻断下次 session_worktree_start）。
+
+    Returns:
+        递增后的新计数。
+    """
+    data = _read_emergency_count(project_root, session_id)
+    new_count = data.get("count", 0) + 1
+    block_next = new_count >= _EMERGENCY_BLOCK_THRESHOLD
+    _write_emergency_count(project_root, session_id, {
+        "count": new_count,
+        "block_next_start": block_next,
+    })
+    if block_next:
+        logger.warning(
+            "emergency_commit count reached %d (block threshold %d) — "
+            "next session_worktree_start will be blocked (session=%s)",
+            new_count, _EMERGENCY_BLOCK_THRESHOLD, session_id,
+        )
+    return new_count
+
+
+def check_start_blocked(project_root: str | Path) -> tuple[bool, str]:
+    """检查是否有 session 阻断 session_worktree_start（#ARCH-HEARTBEAT-001 P1-5）。
+
+    扫描 .runtime/sessions/*/emergency_count.json，若任何 session 的
+    block_next_start=True 则阻断。
+
+    Args:
+        project_root: 项目根目录。
+
+    Returns:
+        (blocked, reason) — blocked=True 时 reason 含阻断 session 信息。
+    """
+    sessions_dir = Path(project_root) / _EMERGENCY_COUNTS_DIR
+    if not sessions_dir.exists():
+        return False, ""
+    try:
+        for sid_dir in sessions_dir.iterdir():
+            if not sid_dir.is_dir():
+                continue
+            count_file = sid_dir / "emergency_count.json"
+            if not count_file.exists():
+                continue
+            try:
+                data = json.loads(count_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                continue
+            if data.get("block_next_start", False):
+                return True, (
+                    f"session {sid_dir.name} 的 emergency_commit 计数达 "
+                    f"{data.get('count', 0)} 次（阈值 {_EMERGENCY_BLOCK_THRESHOLD}），"
+                    f"阻断新 session 启动。必须先调 session_worktree_abort('{sid_dir.name}') "
+                    f"清理该 session 计数，或手动删除 {count_file}。"
+                )
+    except OSError:
+        pass
+    return False, ""
 
 
 class EmergencyCommitResult(TypedDict, total=False):
@@ -214,6 +351,19 @@ def emergency_commit(
     """
     root = Path(project_root) if project_root else REPO_ROOT
     root = root.resolve()
+
+    # #ARCH-HEARTBEAT-001 P1-5: 成本递增门禁检查
+    # N>=3 需显式 reason，N>=5 阻断提交（强制调查根因）
+    allowed, escalation_error = _check_emergency_escalation(root, session_id, reason)
+    if not allowed:
+        return {
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": f"emergency cost escalation blocked: {escalation_error}",
+            "files_count": len(files),
+        }
 
     # 输入校验
     if not files:
@@ -401,6 +551,13 @@ def emergency_commit(
             "emergency_commit: OK commit=%s branch=%s files=%d session=%s",
             short_sha, branch, len(norm_files), session_id,
         )
+        # #ARCH-HEARTBEAT-001 P1-5: 成本递增——成功后递增计数
+        # N+1 >= 5 时设置 block_next_start=True（阻断下次 session_worktree_start）
+        try:
+            new_count = _increment_emergency_count(root, session_id)
+        except Exception as e:  # noqa: BLE001 — 计数失败不阻断 commit
+            logger.warning("emergency_commit: increment count failed: %s", e)
+            new_count = -1
         return {
             "ok": True,
             "session_id": session_id,
@@ -408,6 +565,7 @@ def emergency_commit(
             "commit_hash": short_sha,
             "branch": branch,
             "files_count": len(norm_files),
+            "emergency_count": new_count,
         }
 
     except subprocess.TimeoutExpired as e:

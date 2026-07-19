@@ -92,6 +92,8 @@ from zephyr.security.access_control.session_concurrency import SessionRegistry
 from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.infra.process_pool import is_pid_alive
+from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
+from zephyr.gov_enforcement.rule_bridge.emergency_commit import check_start_blocked as _check_emergency_start_blocked
 
 import functools
 import logging
@@ -1168,6 +1170,26 @@ def session_worktree_start(
     #    不依赖 held_files claim 机制）
     registry = _get_registry(root)
     registered = False
+
+    # #ARCH-HEARTBEAT-001 P1-5: 检查 emergency_commit 成本递增阻断
+    # 若任一 session 的 emergency_commit 计数 >= 5，阻断新 session 启动，
+    # 强制先调查根因（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset）。
+    # 失败时非阻断（best-effort，避免 check_start_blocked 自身 bug 阻塞所有 start）
+    try:
+        start_blocked, block_reason = _check_emergency_start_blocked(root)
+        if start_blocked:
+            return {
+                "session_id": sid,
+                "worktree_path": "",
+                "branch": "",
+                "registered": False,
+                "created": False,
+                "error": f"session_worktree_start blocked: {block_reason}",
+                "health_check": health_check,
+            }
+    except Exception as e:  # noqa: BLE001 — 5.135治标: best-effort 防御
+        logger.warning("check_start_blocked failed (non-blocking): %s", e, exc_info=True)
+
     try:
         # Phase 6 治本（2026-07-19，warn-only 噪声治理——session 注册时序修复）：
         # pid=0 = 逻辑 session（非进程绑定）。session_worktree 工作流跨多个 python -c
@@ -2872,6 +2894,112 @@ def _pre_merge_gate_check(
         return True, []
 
 
+def _classify_merge_failure(error_text: str) -> str:
+    """分类 merge 失败错误（#ARCH-HEARTBEAT-001 P1-4）。
+
+    复用裁定 C 错误分类思路（_classify_sync_failure）：
+      - deterministic: content conflict / worktree 不存在 / session_id 空
+        → 不重试（重试也是同样的结果）
+      - transient: index.lock / git process running / timeout
+        → 重试（lock 释放后可能成功）
+      - unknown: 其他
+        → 不重试（保守，避免掩盖真实 bug）
+
+    Args:
+        error_text: merge 错误文本（stderr / 异常 str）。
+
+    Returns:
+        "deterministic" / "transient" / "unknown"
+    """
+    text = (error_text or "").lower()
+    if not text:
+        return "unknown"
+    # deterministic 模式（content conflict / 参数错误 / worktree 不存在）
+    _DET_PATTERNS = (
+        "conflict", "merge conflict", "automatic merge failed",
+        "not something we can merge", "unknown revision",
+        "worktree 不存在", "session_id 不能为空",
+    )
+    # transient 模式（lock contention / git process 阻塞 / IO 超时）
+    _TRANS_PATTERNS = (
+        "index.lock", "another git process seems to be running",
+        "could not lock", "unable to create", "unable to write",
+        "timeoutexpired", "timeout expired", "resource temporarily unavailable",
+    )
+    for pat in _DET_PATTERNS:
+        if pat in text:
+            return "deterministic"
+    for pat in _TRANS_PATTERNS:
+        if pat in text:
+            return "transient"
+    return "unknown"
+
+
+def _merge_with_retry(
+    manager: WorktreeManager,
+    session_id: str,
+    max_attempts: int = 3,
+) -> tuple[bool, str]:
+    """带重试的 merge（#ARCH-HEARTBEAT-001 P1-4）。
+
+    仅 transient 错误重试（index.lock / git process running / timeout），
+    deterministic 错误立即返回（content conflict / worktree 不存在）。
+
+    退避序列 [1, 2, 4] 秒（指数退避，给 lock 释放时间）。
+
+    Args:
+        manager: WorktreeManager 实例。
+        session_id: session 标识。
+        max_attempts: 最大重试次数（默认 3）。
+
+    Returns:
+        (merged, error_text) — merged=True 时 error_text 为空。
+    """
+    import threading as _threading
+    delays = [1, 2, 4]  # 指数退避
+    last_error = ""
+    for attempt in range(1, max_attempts + 1):
+        try:
+            merged = manager.merge_session_worktree(session_id, delete_after=True)
+            if merged:
+                return True, ""
+            # merge 返回 False 通常是冲突——提取错误信息分类
+            last_error = "merge returned False (likely conflict)"
+            # 尝试从 git status 获取更具体的错误信息
+            try:
+                wt_path = manager._wt_path(session_id)
+                import subprocess as _sp
+                r = _sp.run(
+                    ["git", "status", "--porcelain"],
+                    cwd=str(wt_path), capture_output=True, text=True,
+                    encoding="utf-8", errors="replace", timeout=10,
+                )
+                if r.returncode == 0 and r.stdout.strip():
+                    last_error = f"merge conflict: {r.stdout.strip()[:200]}"
+            except Exception:  # noqa: BLE001 — best-effort 错误信息提取
+                pass
+            classification = _classify_merge_failure(last_error)
+            if classification != "transient" or attempt == max_attempts:
+                return False, last_error
+            _threading.Event().wait(delays[attempt - 1])
+        except WorktreeError as e:
+            # WorktreeError 通常是 deterministic（worktree 不存在 / 参数错误）
+            return False, f"WorktreeError: {e}"
+        except subprocess.TimeoutExpired as e:
+            last_error = f"TimeoutExpired: {e}"
+            classification = _classify_merge_failure(last_error)
+            if classification != "transient" or attempt == max_attempts:
+                return False, last_error
+            _threading.Event().wait(delays[attempt - 1])
+        except Exception as e:  # noqa: BLE001 — 兜底
+            last_error = f"{type(e).__name__}: {e}"
+            classification = _classify_merge_failure(last_error)
+            if classification != "transient" or attempt == max_attempts:
+                return False, last_error
+            _threading.Event().wait(delays[attempt - 1])
+    return False, last_error
+
+
 def _execute_merge_and_build_msg(
     manager: WorktreeManager,
     session_id: str,
@@ -2883,45 +3011,45 @@ def _execute_merge_and_build_msg(
     merge 成功后验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
     merge 成功但清理失败时 cleaned=False（worktree 残留——session 保留供重试，
     防孤儿 worktree 累积）。
+
+    #ARCH-HEARTBEAT-001 P1-4：merge 用 _merge_with_retry 包装，transient 错误
+    自动重试 3 次（1s/2s/4s 指数退避），deterministic 错误立即返回。
     """
     merged = False
     cleaned = False
     msg = ""
-    try:
-        merged = manager.merge_session_worktree(session_id, delete_after=True)
-        if merged:
-            parts = ["merge 成功"]
-            if auto_cleaned > 0:
-                parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
-            if skipped_files:
-                parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
-            # 验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
-            # merge 成功但清理失败时 worktree 残留——此时不注销 session，
-            # 保留供重试 cleanup_session_worktree / abort（防孤儿 worktree 累积）。
-            wt_path = manager._wt_path(session_id)
-            if manager._worktree_exists(session_id) or wt_path.exists():
-                parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
-                msg = "".join(parts)
-                cleaned = False
-            else:
-                parts.append("，worktree 已清理")
-                msg = "".join(parts)
-                cleaned = True
-                _log_worktree_delete(  # Phase 4 遥测：merge 删除点
-                    session_id, "merge", wt_path, manager.repo_root
-                )
+    merged, merge_error = _merge_with_retry(manager, session_id)
+    if merged:
+        parts = ["merge 成功"]
+        if auto_cleaned > 0:
+            parts.append(f"（pre-merge 自动清理 {auto_cleaned} 个冗余文件）")
+        if skipped_files:
+            parts.append(f"（{len(skipped_files)} 个文件内容不一致已跳过）")
+        # 验证 worktree 是否真清理（git 注册 + 物理目录双重检查）。
+        # merge 成功但清理失败时 worktree 残留——此时不注销 session，
+        # 保留供重试 cleanup_session_worktree / abort（防孤儿 worktree 累积）。
+        wt_path = manager._wt_path(session_id)
+        if manager._worktree_exists(session_id) or wt_path.exists():
+            parts.append("，但 worktree 清理失败——session 保留，请重试 cleanup")
+            msg = "".join(parts)
+            cleaned = False
         else:
-            if skipped_files:
-                msg = (
-                    f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
-                    f"请手动处理：{skipped_files}"
-                )
-            else:
-                msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
-    except WorktreeError as e:
-        msg = f"merge 失败: {e}"
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        msg = f"unexpected: {e}"
+            parts.append("，worktree 已清理")
+            msg = "".join(parts)
+            cleaned = True
+            _log_worktree_delete(  # Phase 4 遥测：merge 删除点
+                session_id, "merge", wt_path, manager.repo_root
+            )
+    else:
+        if merge_error:
+            msg = f"merge 失败（重试已耗尽）: {merge_error}"
+        elif skipped_files:
+            msg = (
+                f"merge 失败：以下文件主工作区有额外改动（与 worktree commit 不一致），"
+                f"请手动处理：{skipped_files}"
+            )
+        else:
+            msg = "merge 冲突，worktree 保留供手动解决（解决后重新调 merge 或手动 cleanup）"
     return merged, cleaned, msg
 
 
@@ -3155,6 +3283,11 @@ def session_worktree_merge(
             # 先 kill daemon 停止心跳，再 unregister——即使 unregister 失败，
             # daemon 已停，90s 后 session 自动过期被 list_active 清理
             _kill_heartbeat_daemon(session_id, root)
+            # P1-3: 清理 heartbeat.jsonl 审计文件（session 已正常结束）
+            try:
+                cleanup_heartbeat_file(root, session_id)
+            except Exception:  # noqa: BLE001 — best-effort
+                logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
             try:
                 unregistered = registry.unregister(session_id)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -3358,6 +3491,11 @@ def session_worktree_abort(
     unregistered = False
     # #ARCH-HEARTBEAT-001: 终止 heartbeat daemon（session 生命周期结束）
     _kill_heartbeat_daemon(session_id, root)
+    # P1-3: 清理 heartbeat.jsonl 审计文件（session 已 abort）
+    try:
+        cleanup_heartbeat_file(root, session_id)
+    except Exception:  # noqa: BLE001 — best-effort
+        logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
     try:
         unregistered = registry.unregister(session_id)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
