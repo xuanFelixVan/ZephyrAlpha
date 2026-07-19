@@ -186,14 +186,15 @@ SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_exe
     action TEXT NOT NULL,
     detail TEXT,
     committed_files_summary TEXT,
-    acknowledged_at TEXT
+    acknowledged_at TEXT,
+    commit_message TEXT
 )"""
 
 SQL_INSERT_RECONCILE_LOG = (
     "INSERT INTO reconcile_execution_log "
     "(log_id, logged_at, gate_id, session_id, trigger_source, "
-    "action, detail, committed_files_summary) "
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    "action, detail, committed_files_summary, commit_message) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 )
 
 # GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：老库幂等迁移——
@@ -201,6 +202,16 @@ SQL_INSERT_RECONCILE_LOG = (
 # 统一经 _ensure_ack_column 补列（PRAGMA 检测，幂等）。
 SQL_ALTER_RECONCILE_LOG_ADD_ACK = (
     "ALTER TABLE reconcile_execution_log ADD COLUMN acknowledged_at TEXT"
+)
+
+# #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S6 Phase 3.4 治本断点7：
+# 老库幂等迁移——2026-07-19 前创建的 governance.db 无 commit_message 列，
+# 写入/查询路径统一经 _ensure_commit_message_column 补列（PRAGMA 检测，幂等）。
+# commit_message 用于 post-commit 审计链追溯——CAPABILITY-LOOKUP-REQUIRED gate
+# 的 [no-lookup:reason] 逃生通道标记检测需要 commit_message，原断点4-7 导致
+# reconciler 无法获取 commit_message 做审计。
+SQL_ALTER_RECONCILE_LOG_ADD_COMMIT_MESSAGE = (
+    "ALTER TABLE reconcile_execution_log ADD COLUMN commit_message TEXT"
 )
 
 # GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：活跃 critical_warn 查询。
@@ -283,12 +294,17 @@ class ReconcilerSpec:
         reconcile: 执行对账，返回 ReconcileResult。
             签名 ``(committed_files: list[str], session_id: str) -> ReconcileResult``。
             reconciler 是闭包，注册时捕获所需上下文（project_root / gateway 实例等）。
+            #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点6：
+            可选第 3 参数 ``commit_message: str``——reconcile_for 用 inspect.signature
+            检测 arity，3-arg reconciler 收到 commit_message 用于审计（如
+            CAPABILITY-LOOKUP-REQUIRED gate 的 [no-lookup:reason] 标记审计）。
+            2-arg reconciler（现有全部 reconciler）向后兼容不收 commit_message。
         priority: 执行优先级（升序，数字小先执行）；同 priority 按 register 顺序。
     """
 
     gate_id: str
     trigger: Callable[[list[str]], bool]
-    reconcile: Callable[[list[str], str], ReconcileResult]
+    reconcile: Callable[..., ReconcileResult]
     priority: int = 100
 
 
@@ -318,18 +334,35 @@ class ReconciliationRegistry:
         self._specs.sort(key=lambda s: s.priority)
 
     def reconcile_for(
-        self, committed_files: list[str], session_id: str
+        self, committed_files: list[str], session_id: str,
+        commit_message: str = "",
     ) -> list[ReconcileResult]:
         """遍历注册的 reconciler，trigger 命中即执行，返回结果列表。
 
         单个 reconciler 异常降级为 warn 结果，不阻断后续。
+
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点5/6 治本：
+        新增 commit_message 可选参数——3-arg reconciler（inspect.signature 检测
+        arity ≥ 3）收到 commit_message 用于审计（如 [no-lookup:reason] 标记审计）。
+        2-arg reconciler（现有全部 reconciler）向后兼容不收 commit_message。
+        原断点5: reconcile_for 不接收 commit_message；原断点6: 不传递给 spec.reconcile。
         """
+        import inspect
         results: list[ReconcileResult] = []
         for spec in self._specs:
             try:
                 if not spec.trigger(committed_files):
                     continue
-                result = spec.reconcile(committed_files, session_id)
+                # Phase 3.4 断点6 治本：检测 reconciler arity，3-arg 传 commit_message
+                try:
+                    sig_params = inspect.signature(spec.reconcile).parameters
+                    accepts_msg = len(sig_params) >= 3
+                except (ValueError, TypeError):
+                    accepts_msg = False  # 内置/C 函数无法 introspect，向后兼容 2-arg
+                if accepts_msg:
+                    result = spec.reconcile(committed_files, session_id, commit_message)
+                else:
+                    result = spec.reconcile(committed_files, session_id)
                 # Defensive: 某些 reconciler 可能返回 dict 而非 ReconcileResult，
                 # 转换为 ReconcileResult 防止 _run_reconcilers_after_merge 级联失败。
                 if isinstance(result, dict):
@@ -396,12 +429,25 @@ def _ensure_ack_column(conn: "object") -> None:
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ACK)
 
 
+def _ensure_commit_message_column(conn: "object") -> None:
+    """老库幂等补 commit_message 列（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点7）。
+
+    2026-07-19 前创建的 governance.db 无 commit_message 列；PRAGMA table_info 检测，
+    缺失才 ALTER（幂等，新库 no-op）。所有写入路径统一调用，确保 commit_message
+    可持久化到 reconcile_execution_log 表（post-commit 审计链追溯）。
+    """
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(reconcile_execution_log)")}
+    if cols and "commit_message" not in cols:
+        conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_COMMIT_MESSAGE)
+
+
 def _log_reconcile_results(
     project_root: "object",
     results: "list[ReconcileResult]",
     session_id: str,
     trigger_source: str,
     committed_files: "list[str] | None" = None,
+    commit_message: str = "",
 ) -> None:
     """将 reconciler 执行结果持久化到 governance.db reconcile_execution_log 表。
 
@@ -411,6 +457,11 @@ def _log_reconcile_results(
     本函数在 reconcile_for 的两个调用方（GitCommitGateway._run_post_commit_reconcile
     和 session_worktree._run_reconcilers_after_merge）统一写日志，所有 reconciler
     自动受益（无需逐个修改 reconciler 实现）。
+
+    治本 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点7：
+    新增 commit_message 参数——持久化 commit message 到 reconcile_execution_log 表，
+    使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。
+    原断点7：_log_reconcile_results 不存储 commit_message，审计链断裂。
 
     设计裁定（复用 drift_scan_reconciler 模式）：
     - SQLite governance.db（非 PG depgraph）——reconcile 日志是运行时观测数据，
@@ -425,6 +476,7 @@ def _log_reconcile_results(
         session_id: commit session_id（用于关联 commit 与 reconcile）。
         trigger_source: "post_commit" 或 "post_merge"（标识日志触发方）。
         committed_files: 本次 commit 的文件列表（摘要记录前 20 个，便于追溯）。
+        commit_message: 本次 commit 的 message（审计追溯用，post_merge 时为空）。
     """
     import os
     import sqlite3
@@ -442,10 +494,13 @@ def _log_reconcile_results(
             files_summary = "; ".join(rel_files)
             if len(committed_files) > 20:
                 files_summary += f"; ...(+{len(committed_files) - 20} more)"
+        # commit_message 截断到 2000 字符（避免超长 message 撑爆 SQLite）
+        msg_truncated = (commit_message or "")[:2000]
         conn = sqlite3.connect(db_path, timeout=30.0)
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
             _ensure_ack_column(conn)  # 老库补 ack 列（幂等）
+            _ensure_commit_message_column(conn)  # 老库补 commit_message 列（幂等，Phase 3.4 断点7）
             for r in results:
                 if r.action == "skip":
                     continue  # skip 未触发对账，无日志价值
@@ -453,7 +508,7 @@ def _log_reconcile_results(
                 conn.execute(
                     SQL_INSERT_RECONCILE_LOG,
                     (log_id, now_utc(), r.gate_id or "unknown", session_id,
-                     trigger_source, r.action, r.detail, files_summary),
+                     trigger_source, r.action, r.detail, files_summary, msg_truncated),
                 )
             conn.commit()
         finally:

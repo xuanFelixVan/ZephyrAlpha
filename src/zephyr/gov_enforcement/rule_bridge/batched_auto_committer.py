@@ -70,7 +70,7 @@ Usage::
     gateway = GitCommitGateway(project_root=root)
     with gateway.batched_auto_committer(session_id):
         results = gateway._reconciliation_registry.reconcile_for(
-            committed_files, session_id,
+            committed_files, session_id, commit_message="",
         )
     # 退出 with 块时自动 flush，产生单个 squash commit
 """

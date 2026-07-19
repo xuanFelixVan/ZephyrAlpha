@@ -84,6 +84,9 @@ from zephyr.governance.audit.reconciliation_registry import (
 from zephyr.governance.audit.remediation_progress_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.1
     make_remediation_progress_reconciler,
 )
+from zephyr.governance.audit.runtime_violation_snapshot_reconciler import (  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b
+    make_runtime_violation_snapshot_reconciler,
+)
 from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -622,6 +625,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
         self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
         self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
+        self._reconciliation_registry.register(make_runtime_violation_snapshot_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
@@ -747,9 +751,17 @@ class GitCommitGateway:
         )
 
     def _run_post_commit_reconcile(
-        self, existing: list[str], session_id: str, result: CommitResult
+        self, existing: list[str], session_id: str, result: CommitResult,
+        commit_message: str = "",
     ) -> None:
-        """Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）。"""
+        """Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）。
+
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：
+        新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，
+        使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。
+        原断点4: commit() 不传 message 给 _run_post_commit_reconcile；
+        原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。
+        """
         if result.status != CommitStatus.OK:
             return
         # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip post-commit reconciler
@@ -763,13 +775,17 @@ class GitCommitGateway:
             # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
             with self._batcher as _batcher_ctx:
                 _batcher_ctx.enable(session_id)
-                reconcile_results = self._reconciliation_registry.reconcile_for(existing, session_id)
+                reconcile_results = self._reconciliation_registry.reconcile_for(
+                    existing, session_id, commit_message=commit_message,
+                )
             result.reconcile = reconcile_results
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
             # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
+            # Phase 3.4 断点7: 同时持久化 commit_message 供审计追溯。
             _log_reconcile_results(
                 self.project_root, reconcile_results, session_id,
                 trigger_source="post_commit", committed_files=existing,
+                commit_message=commit_message,
             )
             for rr in reconcile_results:
                 if rr.action == "auto_committed":
@@ -851,7 +867,7 @@ class GitCommitGateway:
         except GatewayError as e:
             return CommitResult(status=CommitStatus.LOCK_TIMEOUT, message="internal error")
 
-        self._run_post_commit_reconcile(existing, session_id, result)
+        self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         return result
 
     def _is_git_tracked(self, rel_path: str) -> bool:
