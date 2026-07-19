@@ -5205,6 +5205,18 @@ creation_tokens:
     token: "auto-worktree-lifecycle-reconciler-20260717"
     created_by: "session-sweep-fix-20260717"
     capability: "worktree_lifecycle_reconciler"
+  # GATE-STASH-LIFECYCLE reconciler: post-commit 事件驱动 session_worktree 临时 stash 过期清理
+  # （#ARCH-WORKTREE-002 Phase 4, 2026-07-19）
+  # 病根：session_worktree pre_merge/abort/auto-recover 多处 stash 临时修改但从不清理，
+  #   实测 34 个 stash 堆积（部分 30+ 小时），导致 stash 栈污染、pop 风险、索引漂移。
+  # 治本：reconciler 在任何非空 commit 后自动触发（priority=801），清理 > 24h 的
+  #   session_worktree 临时 stash（按 msg 前缀 session_worktree_pre_merge /
+  #   session_worktree_abort 识别，按索引降序 drop 避免 renumbering），不影响用户手动 stash。
+  # capability 反查：新 AI 搜 stash 清理/stash 过期/stash lifecycle/临时 stash 可定位此 reconciler。
+  - file: "src/zephyr/governance/audit/reconciliation_registry.py"
+    token: "auto-stash-lifecycle-reconciler-20260719"
+    created_by: "sess-arch-worktree-002-20260719"
+    capability: "stash_lifecycle_reconciler"
   # 治本（2026-07-18）：logs 模块此前被 .gitignore logs/ 规则误忽略，首次纳入版本控制
   - file: "src/zephyr/infrastructure/system_telemetry/logs/__init__.py"
     token: "auto-sys-telemetry-logs-init-20260718"
