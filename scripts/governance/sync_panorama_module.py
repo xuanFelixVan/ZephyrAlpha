@@ -58,6 +58,12 @@ except ImportError:
         _sys.path.insert(0, _pc_path)
     from panorama_common import weighted_domain_vote, min_maturity as _min_mat
 
+# Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
+# 统一用 normalize_to_none() 替代 `or None` 模式。
+# 原因：`or None` 会误转所有 falsy 值（0/False/[]），
+# normalize_to_none 只转空字符串，类型安全且意图明确。
+from zephyr.shared.utils.converters import normalize_to_none
+
 # ---------------------------------------------------------------------------
 # SQL 常量（SQL 集中化，§5.160.2）
 # ---------------------------------------------------------------------------
@@ -156,17 +162,18 @@ def _query_depgraph_module(conn, module_id: str) -> dict | None:
             path = p
     domain_id = weighted_domain_vote(rows)
     design_maturity = _min_mat(maturities) if maturities else ""
-    # FP-ISO.4C 修复（2026-07-19）：空字符串统一转 None。
-    # 原因：weighted_domain_vote/min_maturity 在无值时返回 ""，但 decision_layers
+    # Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
+    # 用 normalize_to_none() 替代 `or None` 模式（类型安全，不误转 falsy 值）。
+    # 背景：weighted_domain_vote/min_maturity 在无值时返回 ""，但 decision_layers
     # 的 chk_decision_layers_domain_id_not_empty 约束允许 NULL 禁止 ''，
     # 导致 540 个空 domain_id 模块的 decision_layers INSERT 静默失败。
     # 转为 None 让 PostgreSQL 写入 NULL，对齐约束语义。
     return {
         "module_id": module_id,
-        "domain_id": domain_id or None,
-        "design_maturity": design_maturity or None,
-        "build_status": build_status or None,
-        "path": path or None,
+        "domain_id": normalize_to_none(domain_id),
+        "design_maturity": normalize_to_none(design_maturity),
+        "build_status": normalize_to_none(build_status),
+        "path": normalize_to_none(path),
     }
 
 

@@ -79,6 +79,10 @@ except ImportError:
         _sys.path.insert(0, _pc_path)
     from panorama_common import weighted_domain_vote, min_maturity as _min_mat
 
+# Ruling:100PCT-AI-GOVERNANCE P1-1 (2026-07-19) 治本：
+# 统一用 normalize_to_none() 替代 `or None` 模式（类型安全，不误转 falsy 值）。
+from zephyr.shared.utils.converters import normalize_to_none
+
 
 # ---------------------------------------------------------------------------
 # 数据模型
@@ -259,10 +263,11 @@ def _fetch_depgraph_nodes(conn) -> list[PanoramaNode]:
     nodes: list[PanoramaNode] = []
     for bp, rows in grouped.items():
         # domain_id: 加权域投票（测试文件降权，平局字母序）
-        domain_id = weighted_domain_vote(rows) or None
+        # Ruling:100PCT-AI-GOVERNANCE P1-1: normalize_to_none 替代 `or None`
+        domain_id = normalize_to_none(weighted_domain_vote(rows))
         # design_maturity: 取最 design（min rank）
         maturities = [r["design_maturity"] for r in rows if r["design_maturity"]]
-        design_maturity = _min_mat(maturities) or None
+        design_maturity = normalize_to_none(_min_mat(maturities))
         # build_status: 取第一个非空
         build_status = next((r["build_status"] for r in rows if r["build_status"]), None)
         # entity_name: 取第一个非空 path
@@ -511,9 +516,10 @@ def _fetch_blueprint_nodes(scan_root: Path | None = None) -> list[PanoramaNode]:
             module_id=mid,
             graph="blueprint",
             entity_name=rel,
-            design_maturity=fm.get("design_maturity") or None,
-            build_status=fm.get("build_status") or None,
-            domain_id=fm.get("responsibility_domain") or None,
+            # Ruling:100PCT-AI-GOVERNANCE P1-1: normalize_to_none 替代 `or None`
+            design_maturity=normalize_to_none(fm.get("design_maturity")),
+            build_status=normalize_to_none(fm.get("build_status")),
+            domain_id=normalize_to_none(fm.get("responsibility_domain")),
         ))
     return nodes
 
