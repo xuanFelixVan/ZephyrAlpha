@@ -1,5 +1,5 @@
 # [DOMAIN] D_FEEDBACK_LOOP
-# [A_module] module_id=MOD-UNK_actors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FBL-actors | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback-loop/blueprint.md
 # [MODULE] zephyr.feedback_loop.actors
 # [INVARIANTS] pending_review
@@ -16,6 +16,7 @@
 from . import (
     action_selector,
     agent_lifecycle,
+    alert_router,
     api_version_contract,
     global_action_scheduler,
     incident_priority_triage_automator,
@@ -30,6 +31,7 @@ from . import (
 __all__ = [
     "action_selector",
     "agent_lifecycle",
+    "alert_router",
     "api_version_contract",
     "global_action_scheduler",
     "incident_priority_triage_automator",

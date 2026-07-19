@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DispatchError 任务创建失败/DB 不可用
 # [TESTS] scripts/connect/fle_orc.py --trigger
-# [A_module] module_id=MOD-UNK_alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FBL-alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FLE->Orc 告警分派器 — dispatch() 生产者
 
@@ -159,3 +159,22 @@ def _block_related_tasks(event: AlertEvent) -> list[str]:
 
 def dispatch(event: AlertEvent) -> DispatchResult:
     return AlertDispatcher().dispatch(event)
+
+
+def route_alert(event: AlertEvent) -> dict:
+    """Route an AlertEvent to appropriate channels based on severity.
+
+    Thin wrapper around ``zephyr.feedback_loop.actors.alert_router.route``
+    that adapts the AlertEvent to the router's expected interface.
+
+    Returns:
+        Dict with ``channels`` (list[str]), ``routed`` (bool), ``reason`` (str).
+    """
+    from zephyr.feedback_loop.actors.alert_router import route as _route
+
+    decision = _route(event)
+    return {
+        "channels": list(decision.channels),
+        "routed": decision.routed,
+        "reason": decision.reason,
+    }

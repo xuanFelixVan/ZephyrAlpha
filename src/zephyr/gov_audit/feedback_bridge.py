@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 桥接失败返回空结果
-# [TESTS] tests/audit-orchestrator/test_feedback_bridge.py
+# [TESTS] tests/feedback/test_feedback_bridge.py
 # [A_module] module_id=MOD-GOV_feedback_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -25,13 +25,60 @@ from zephyr.shared.io.paths import get_tmp_dir
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["FeedbackBridge"]
+__all__ = ["AuditFeedbackBridge", "FeedbackBridge"]
+
+
+# ---------------------------------------------------------------------------
+# Anomaly signature → FLE signal type mapping (ANM-001 through ANM-013).
+# Each anomaly signature detected by audit-trail maps to a canonical signal
+# type consumed by the Feedback Loop Engine.
+# ---------------------------------------------------------------------------
+
+_ANOMALY_SIGNAL_MAP: dict[str, str] = {
+    "ANM-001": "UNAUTHORIZED_ACCESS",
+    "ANM-002": "PRIVILEGE_ESCALATION",
+    "ANM-003": "DATA_EXFILTRATION",
+    "ANM-004": "RESOURCE_ABUSE",
+    "ANM-005": "CONFIGURATION_DRIFT",
+    "ANM-006": "AUDIT_TAMPERING",
+    "ANM-007": "RATE_LIMIT_VIOLATION",
+    "ANM-008": "BOUNDARY_VIOLATION",
+    "ANM-009": "STALE_CREDENTIAL_USE",
+    "ANM-010": "UNUSUAL_ACCESS_PATTERN",
+    "ANM-011": "DEPENDENCY_CONFUSION",
+    "ANM-012": "SECRET_LEAK",
+    "ANM-013": "SUPPLY_CHAIN_ANOMALY",
+}
+
+
+# Severity → architecture layer mapping (used by _classify_layer).
+_SEVERITY_LAYER_MAP: dict[str, str] = {
+    "CRITICAL": "L3_ARCHITECTURE",
+    "HIGH": "L3_ARCHITECTURE",
+    "MEDIUM": "L2_PATTERN",
+    "LOW": "L1_TASK",
+    "INFO": "L1_TASK",
+}
 
 
 class FeedbackBridge:
+    """Bridge between audit-trail anomaly findings and the Feedback Loop Engine.
+
+    Two parallel APIs coexist:
+      1. Legacy FeedbackLoop delegation (analyze_audit_findings/generate_rules/apply)
+         — used by `FeedbackPolicy` to translate audit findings into evolution
+         proposals.
+      2. Anomaly-to-signal bridging (anomaly_to_fle_signal/evolution_to_audit_record/
+         scan_and_bridge) — used by audit-orchestrator to translate raw anomaly
+         events into FLE signals and back-port FLE evolution decisions into
+         audit records.
+    """
+
     def __init__(self, storage_path: Path | None = None) -> None:
         self._loop = None
         self._available = False
+        # Anomaly signature → signal type mapping (instance attribute for test access).
+        self._anomaly_to_signal: dict[str, str] = dict(_ANOMALY_SIGNAL_MAP)
         try:
             from zephyr.feedback_loop import FeedbackLoop
 
@@ -43,6 +90,10 @@ class FeedbackBridge:
             logger.warning("FeedbackLoop not available")
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("FeedbackLoop init failed: %s", exc, exc_info=True)
+
+    # ------------------------------------------------------------------
+    # Legacy FeedbackLoop delegation API
+    # ------------------------------------------------------------------
 
     def analyze_audit_findings(self, findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if not self._available or self._loop is None:
@@ -110,3 +161,87 @@ class FeedbackBridge:
 
     def is_available(self) -> bool:
         return self._available
+
+    # ------------------------------------------------------------------
+    # Anomaly-to-signal bridging API
+    # ------------------------------------------------------------------
+
+    def anomaly_to_fle_signal(self, anomaly: dict[str, Any]) -> dict[str, Any] | None:
+        """Convert an audit-trail anomaly dict to an FLE signal dict.
+
+        Returns None if the anomaly's `signature_id` is missing or unknown.
+        Default severity is MEDIUM; default agent_id is "unknown".
+        """
+        signature_id = anomaly.get("signature_id")
+        if not signature_id:
+            return None
+        signal_type = self._anomaly_to_signal.get(signature_id)
+        if signal_type is None:
+            return None
+        severity = str(anomaly.get("severity", "MEDIUM")).upper()
+        if severity not in _SEVERITY_LAYER_MAP:
+            severity = "MEDIUM"
+        return {
+            "source": "audit-trail",
+            "signal_type": signal_type,
+            "severity": severity,
+            "agent_id": anomaly.get("agent_id", "unknown") or "unknown",
+            "timestamp": anomaly.get("timestamp", ""),
+            "layer": self._classify_layer(severity),
+            "details": anomaly.get("details", {}),
+        }
+
+    def evolution_to_audit_record(self, proposal: dict[str, Any]) -> dict[str, Any]:
+        """Convert an FLE evolution proposal dict to an audit-trail record dict.
+
+        Empty/missing fields default to empty strings (not None) so downstream
+        audit consumers can uniformly use `.get(key, "")` patterns.
+        """
+        return {
+            "event_type": "feedback_loop_evolution",
+            "source": "fle_evolution_engine",
+            "signal": proposal.get("signal", ""),
+            "layer": proposal.get("layer", ""),
+            "severity": proposal.get("severity", ""),
+            "recommended_action": proposal.get("recommended_action", ""),
+            "provenance": "feedback-loop",
+        }
+
+    @staticmethod
+    def _classify_layer(severity: str) -> str:
+        """Map a severity string to an architecture layer.
+
+        Mapping:
+          - CRITICAL, HIGH → L3_ARCHITECTURE
+          - MEDIUM        → L2_PATTERN
+          - LOW, INFO     → L1_TASK
+        Unknown severities default to L1_TASK (conservative).
+        """
+        sev = str(severity).upper()
+        return _SEVERITY_LAYER_MAP.get(sev, "L1_TASK")
+
+    def scan_and_bridge(self) -> list[dict[str, Any]]:
+        """Scan pending audit anomalies and bridge each to an FLE signal.
+
+        Returns a list of FLE signal dicts (one per bridgable anomaly).
+        Empty list if no pending anomalies or FeedbackLoop unavailable.
+
+        Does NOT catch exceptions — callers (and tests) rely on propagating
+        RuntimeError/etc. for diagnostic purposes.
+        """
+        if not self._available or self._loop is None:
+            return []
+        # Delegate to FeedbackLoop to fetch pending anomalies; bridge each.
+        pending = self._loop.fetch_pending_anomalies() if hasattr(self._loop, "fetch_pending_anomalies") else []
+        signals: list[dict[str, Any]] = []
+        for anomaly in pending:
+            signal = self.anomaly_to_fle_signal(anomaly)
+            if signal is not None:
+                signals.append(signal)
+        return signals
+
+
+# Alias for consumers/tests that import `AuditFeedbackBridge` directly.
+# Semantically identical to `FeedbackBridge` — kept as a module-level name
+# so `from zephyr.gov_audit.feedback_bridge import AuditFeedbackBridge` works.
+AuditFeedbackBridge = FeedbackBridge

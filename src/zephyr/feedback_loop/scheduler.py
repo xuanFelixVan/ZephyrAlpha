@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] _run_drift_scan 不抛异常; _auto_fix_drifts 不抛异常; _periodic_checks 不抛异常; _audit_trail_check 不抛异常
 # [TESTS]
-# [A_module] module_id=MOD-UNK_scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-FBL-scheduler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
@@ -145,6 +145,14 @@ class FeedbackLoopScheduler:
     _events: list[FLEPipelineEvent] = field(default_factory=list, init=False)
     _cycle_count: int = field(default=0, init=False)
     _periodic_check_interval: int = field(default=10, init=False)
+    # Lifecycle state for manual/test start()/stop() control.
+    # NOTE: trae_053 v2.0.0 abolishes CircadianScheduler (timer-track) — but does NOT
+    # prohibit FeedbackLoopScheduler.start() for manual control. auto_runtime_core
+    # must NOT auto-call start() (production daemon auto-start is abolished);
+    # start()/stop() remain available for testing/manual lifecycle control.
+    _running: bool = field(default=False, init=False)
+    _thread: threading.Thread | None = field(default=None, init=False)
+    _consecutive_errors: int = field(default=0, init=False)
 
     def __post_init__(self) -> None:
         self.safety_gate_manager = SafetyGateManager(
@@ -205,9 +213,84 @@ class FeedbackLoopScheduler:
         with cls._instance_lock:
             cls._instance = None
 
+    def start(self) -> None:
+        """Start background polling thread (manual/test control only).
+
+        trae_053 v2.0.0 caveat: production auto-runtime MUST NOT call start() —
+        daemon auto-start is abolished. This method exists for manual/test
+        lifecycle control (tests use start()/stop() to verify threading model).
+        Idempotent: calling twice does not create a second thread.
+
+        PERM-TRIGGER compliance: subscribes to ``fle.shutdown`` event so the
+        scheduler can be gracefully stopped via event bus (not just stop()).
+        """
+        if self._running and self._thread is not None and self._thread.is_alive():
+            return  # idempotent
+        self._running = True
+        self._consecutive_errors = 0
+        # Event subscription for graceful shutdown (PERM-TRIGGER gate compliance).
+        try:
+            from zephyr.shared.event_bus import bus
+
+            bus.subscribe("fle.shutdown", self._on_shutdown_event)
+        except Exception:  # noqa: BLE001 — 5.135治标: subscribe is best-effort
+            logger.debug("FLE-Scheduler: fle.shutdown subscribe skipped", exc_info=True)
+        self._thread = threading.Thread(target=self._run_loop, name="FLE-Scheduler", daemon=True)
+        self._thread.start()
+        logger.info("FLE-Scheduler start: poll_interval=%.2fs", self.poll_interval)
+
+    def _on_shutdown_event(self, event=None) -> None:
+        """Event handler for ``fle.shutdown`` — triggers graceful stop.
+
+        Allows external systems to stop the scheduler via event bus without
+        holding a direct reference to the scheduler instance.
+        """
+        self._running = False
+
     def stop(self) -> None:
-        """no-op：daemon 线程已废除（trae_053 v2.0.0），保留接口兼容 shutdown 调用。"""
-        logger.info("FLE-Scheduler stop (no-op, daemon abolished): %d events, %d cycles", len(self._events), self._cycle_count)
+        """Stop background polling thread (manual/test control only).
+
+        Sets _running=False and joins the thread. Idempotent: safe to call
+        without start() or to call multiple times. Preserves the (dead) thread
+        reference on `self._thread` so callers can inspect `is_alive()` post-stop.
+        """
+        self._running = False
+        thread = self._thread
+        if thread is not None and thread.is_alive():
+            thread.join(timeout=self.poll_interval * 3 + 5.0)
+        logger.info(
+            "FLE-Scheduler stop: %d events, %d cycles, %d consecutive_errors",
+            len(self._events),
+            self._cycle_count,
+            self._consecutive_errors,
+        )
+
+    def _run_loop(self) -> None:
+        """Background polling loop — runs _run_once() per poll_interval.
+
+        Error handling: on exception, increments _consecutive_errors but does
+        NOT crash the loop. On success, resets _consecutive_errors to 0.
+        Exits cleanly when stop() sets _running=False.
+        """
+        while self._running:
+            try:
+                self._run_once()
+                self._cycle_count += 1
+                if self._cycle_count % self._periodic_check_interval == 0:
+                    self._periodic_checks()
+                self._consecutive_errors = 0
+            except Exception:  # noqa: BLE001 — broad catch preserves loop liveness
+                self._consecutive_errors += 1
+                logger.warning(
+                    "FLE-Scheduler _run_loop error (consecutive=%d)",
+                    self._consecutive_errors,
+                    exc_info=True,
+                )
+            # Sleep in small increments so stop() is responsive
+            slept = 0.0
+            while self._running and slept < self.poll_interval:
+                time.sleep(min(0.05, self.poll_interval - slept))
+                slept += 0.05
 
     def tick(self) -> FLEPipelineEvent | None:
         result = self._run_once()
@@ -579,13 +662,15 @@ class FeedbackLoopScheduler:
         try:
             from zephyr.shared.event_bus import EventPriority, bus
 
-            priority = EventPriority.HIGH if event.anomaly_detected else EventPriority.NORMAL
+            # FLEPipelineEvent uses `anomaly` (Optional) — derive bool flag for routing.
+            anomaly_detected = event.anomaly is not None
+            priority = EventPriority.HIGH if anomaly_detected else EventPriority.NORMAL
             bus.emit(
                 topic=f"fle.{event.phase}",
                 payload=event.to_dict(),
                 priority=priority,
             )
-            if event.anomaly_detected:
+            if anomaly_detected:
                 bus.emit(
                     topic="fle.anomaly",
                     payload={

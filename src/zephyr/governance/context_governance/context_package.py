@@ -1,23 +1,29 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.context_governance.context_package
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] zephyr.governance.intelligence_governance.delegation_engine;zephyr.governance.intelligence_governance.delegation_manager
+# [DEPENDENCIES] zephyr.shared.protocols.a2a.a2a_schemas
+# [CONSUMERS] tests/context/test_context_package.py; tests/e/test_e_context_package.py
 # [STARTUP] imported
-# [MATURITY] prototype
-# [INVARIANTS] 7字段结构不可变;context_snapshot必须完整
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MATURITY] production
+# [INVARIANTS] ContextPackage API: task_id/source_agent/blueprints/decisions/session_state/locks_held
+# [MODIFY-GUARD] ContextPackage SSoT is zephyr.shared.protocols.a2a.a2a_schemas — re-export only
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
-# [TESTS] tests/test_escalation_engine.py
+# [TESTS] tests/context/test_context_package.py; tests/e/test_e_context_package.py
 # [A_module] module_id=MOD-RES_context_package | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-
 """
 
 Context Package — D-022-08 委托上下文包: 升级原因+证据链+历史try_trace。
+
+This module exposes two distinct context-package types:
+  1. `ContextPackage` (re-exported from zephyr.shared.protocols.a2a.a2a_schemas):
+     the A2A-protocol context package with task_id/source_agent/blueprints/
+     decisions/session_state/locks_held. SSoT is a2a_schemas — re-export only.
+  2. `EscalationContext` + `ContextPackageBuilder`: escalation-specific context
+     with evidence_chain/try_trace/escalation_level. Locally defined.
 """
 
 from __future__ import annotations
@@ -25,6 +31,16 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
+
+# Re-export the canonical ContextPackage from a2a_schemas (SSoT).
+# Local aliasing/redefinition is prohibited — a2a_schemas is the single source.
+from zephyr.shared.protocols.a2a.a2a_schemas import ContextPackage  # noqa: F401
+
+__all__ = [
+    "ContextPackage",
+    "ContextPackageBuilder",
+    "EscalationContext",
+]
 
 
 class EscalationContext(BaseModel):
@@ -50,13 +66,3 @@ class ContextPackageBuilder:
             evidence_chain=evidence or [],
             try_trace=trace or [],
         )
-
-
-class ContextPackage:
-    def __init__(self, package_id="", source="", target="", context_type="", payload=None, timestamp=None):
-        self.package_id = package_id
-        self.source = source
-        self.target = target
-        self.context_type = context_type
-        self.payload = payload or {}
-        self.timestamp = timestamp

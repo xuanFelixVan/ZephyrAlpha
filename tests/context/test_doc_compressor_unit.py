@@ -26,6 +26,7 @@ T-V2-006 单元测试 — DocCompressor + CompressionPolicy
 from __future__ import annotations
 
 import textwrap
+import time
 from pathlib import Path
 
 import pytest
@@ -449,7 +450,7 @@ class TestBudgetTrackerDocCompressorIntegration:
             "token_count": 90,  # 90% > L2(85%)
             "limit": 100,
             "triggered_levels": set(),
-            "created_at": 0.0,
+            "created_at": time.time(),
         }
         tracker.evaluate_budget("s1")
 
