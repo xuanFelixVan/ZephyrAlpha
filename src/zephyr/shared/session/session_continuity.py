@@ -580,7 +580,7 @@ class SessionContinuity:
         yaml_text = "\n".join(lines) + "\n"
         yaml_path.write_text(yaml_text, encoding="utf-8")
 
-        print(f"  [SessionContinuity] YAML handoff written: {yaml_path}")
+        logger.info("  [SessionContinuity] YAML handoff written: %s", yaml_path)
 
     def get_latest_handoff(self) -> dict | None:
         conn = self._get_conn()

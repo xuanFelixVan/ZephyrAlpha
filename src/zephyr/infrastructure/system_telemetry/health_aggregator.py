@@ -24,11 +24,14 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field
 
 from zephyr.infrastructure.system_telemetry.health_probes import SYSTEMS, HealthProbeManager
+
+logger = logging.getLogger(__name__)
 
 
 class SystemHealthSnapshot(BaseModel):
@@ -104,7 +107,7 @@ class HealthAggregator:
                 if degraded:
                     from datetime import UTC, datetime
                     ts = datetime.now(UTC).isoformat()
-                    print(f"[HEALTH] {ts}: {len(degraded)} degraded systems after critical event")
+                    logger.warning("[HEALTH] %s: %d degraded systems after critical event", ts, len(degraded))
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 pass
 
