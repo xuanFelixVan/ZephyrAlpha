@@ -925,6 +925,20 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "CREATE INDEX IF NOT EXISTS idx_te_seq ON task_events(seq)",
         ],
     ),
+    (
+        33,
+        "KBG removal: drop knowledge + ke_tombstones tables (forward migration for existing DBs)",
+        # 治本(2026-07-19): migration #4 was repurposed to DROP TABLE IF EXISTS knowledge,
+        # but for existing DBs where #4 was already applied (with original CREATE TABLE SQL),
+        # the new SQL never runs. This forward migration ensures ALL existing DBs drop the
+        # KBG tables. Idempotent: DROP TABLE IF EXISTS is a no-op if table already absent.
+        # ke_tombstones was never in any migration (created at runtime by KBG module code);
+        # this migration also cleans it up for existing DBs.
+        [
+            "DROP TABLE IF EXISTS knowledge",
+            "DROP TABLE IF EXISTS ke_tombstones",
+        ],
+    ),
 ]
 
 
