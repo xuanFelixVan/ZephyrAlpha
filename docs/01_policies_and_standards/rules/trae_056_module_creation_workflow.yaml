@@ -1,6 +1,7 @@
 rule_id: TRAE-056
 title: 操作-模块/蓝图/代码创建完整工作流程
-version: 2.1.0
+version: 2.2.0
+# 2.2.0 (2026-07-20, sess-49952-20260720044516, 裁定A2): phase_6 order_7 容量表对齐 TRAE-055 ARCH-CAP-002 二元规则（≤150通过/>150必须拆分），删除三档表
 layer: L1_foundation
 module_id: TRAE-056
 depends_on:
@@ -462,9 +463,9 @@ sections:
       rule_ref: ARCH-CAP-001~007
       check: 目标域容量未超上限
       capacity_limits:
-        safe: "80-150（默认安全区间）"
-        caution: "150-200（高度耦合放宽，需KB决策记录）"
-        hard_limit: ">200（硬上限，必须拆分）"
+        pass_limit: "≤150（通过，可继续分配；=150 时 MUST 提交 KB 决策记录 topic=domain_capacity::<domain_id> 评估拆分）"
+        hard_limit: ">150（硬上限，必须拆分，无例外；禁止以高度耦合为由放宽）"
+      capacity_ssot: trae_055_arch_domain_capacity.yaml ARCH-CAP-002（二元规则：≤150 通过 / >150 必须拆分）
       command: "python scripts/governance/extract_depgraph.py --summary"
       pass: 容量未超上限
       fail: 容量超上限 → 必须拆分或换域
