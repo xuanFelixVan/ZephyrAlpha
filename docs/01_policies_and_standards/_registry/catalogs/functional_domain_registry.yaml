@@ -637,7 +637,7 @@ entries:
   subdomain: vector_storage
   domain_name_zh: 知识管理
   ssot_module: MOD-INF-011
-  ssot_path: src/zephyr/knowledge/
+  ssot_path: src/zephyr/integration/vector_memory/
   covers:
   - 八大Collection管理(decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces)
   - 双嵌入维度(BGE-M3 1024d + bge-small-zh 512d)
@@ -659,28 +659,6 @@ entries:
   - semantic similarity
   - 语义相似度
   - embedding model
-  stability: stable
-  ai_autonomy: ai_modifiable
-- domain: D_KNOWLEDGE
-  subdomain: knowledge_management
-  domain_name_zh: 知识管理
-  ssot_module: ''
-  ssot_path: ''
-  covers:
-  - 知识管线(ingest/triage/extract/activate/analyze)
-  - ChromaDB初始化(chromadb_init)
-  - 知识仓库(kb_repo)
-  - 统一记忆API(unified_memory_api)
-  - 知识完整性(integrity)
-  - 重排序(reranker)
-  - 安全制动(safety_brake)
-  - VMS记忆后端(vms_memory_backend)
-  aliases:
-  - knowledge base
-  - 知识库
-  - KB
-  - knowledge management
-  - 知识管理
   stability: stable
   ai_autonomy: ai_modifiable
 - domain: D_ML_TRAIN

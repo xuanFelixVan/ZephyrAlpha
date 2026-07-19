@@ -464,11 +464,6 @@ error_codes:
   class: TamperError
   module: zephyr.intelligence.model_profiling.capability_passport
   file: src/zephyr/intelligence/model_profiling/capability_passport.py
-- code: ZA-KB-0001
-  class: MCPError
-  module: zephyr.infrastructure.knowledge_base_server
-  file: src/zephyr/infrastructure/knowledge_base_server.py
-  description: collection 未找到
 - code: ZA-KB-0002
   class: MCPError
   module: zephyr.integration.mcp.tool_contracts

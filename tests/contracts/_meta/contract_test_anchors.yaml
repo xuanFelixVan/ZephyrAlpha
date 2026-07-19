@@ -44,4 +44,3 @@ anchors:
   CTR-P1-013: tests/trading/pipeline/test_phase_f_layers.py
   CTR-P1-014: tests/trading/pipeline/test_phase_f_layers.py
   CTR-P1-015: tests/trading/pipeline/test_phase_f_layers.py
-  CT-FLE-ORC-001: tests/kb/test_audit08_service_layer_wiring.py

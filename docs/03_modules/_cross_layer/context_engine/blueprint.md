@@ -217,7 +217,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | `tests/context/test_context_health_score.py` | ✅ 已实现 | |
 | `tests/context/test_context_model_strategy.py` | ✅ 已实现 | |
 | `tests/context/test_context_pipeline_auto.py` | ✅ 已实现 | |
-| `tests/knowledge_engine/test_knowledge_distiller.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 
