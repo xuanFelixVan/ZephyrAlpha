@@ -5376,6 +5376,11 @@ creation_tokens:
     token: "auto-worktree-pool-20260719"
     created_by: "sess-11392-20260719075653"
     capability: "git_call_batching"
+  # --- ARCH-GIT-CALL-BUDGET P3.5 (2026-07-19): git 性能持续监控 reconciler ---
+  - file: "src/zephyr/governance/audit/git_performance_monitor_reconciler.py"
+    token: "auto-git-performance-monitor-reconciler-20260719"
+    created_by: "sess-29564-20260719151617"
+    capability: "git_call_batching"
 
   # --- #ARCH-GOV-CONVERGENCE-META Phase 3.2（2026-07-19，规则可发现性治本 病根2）---
   - file: "scripts/governance/generators/generate_rule_ai_perception_index.py"
