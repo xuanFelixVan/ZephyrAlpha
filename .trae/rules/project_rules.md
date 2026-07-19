@@ -58,7 +58,7 @@
 
 | 你要做什么 | 必须先问自己 | 答案=NO时的强制命令 |
 |-----------|-------------|-------------------|
-| **进入新 session** | Phase 0 检查全部 GREEN？守护进程在跑？ | `session_startup()` + `python scripts/ide_health_service.py --status` → running=false→`--start` |
+| **进入新 session** | Phase 0 检查全部 GREEN？守护进程在跑？worktree 隔离已启动？ | ① `python scripts/ide_health_service.py --status` → running=false→`--start` ② **worktree 隔离（FP-ISO.4C 强制，2026-07-19 补齐）**：`python -c "from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_start, generate_session_id; sid=generate_session_id(); print(session_worktree_start(sid))"`（cwd=仓库根，确保 `sitecustomize.py` 生效自动注入 `src/` 到 PYTHONPATH）③ 提交走 `session_worktree_commit(sid, files, msg)`，禁裸 git commit |
 | **创建新文件** | 文件已在注册表中？ | `python scripts/scaffold.py module/script/gate ...` |
 | **修改已有文件** | 拿到锁了？pre_write_gate 通过？ | `python scripts/governance/d5_architecture/pre_write_gate.py <file>` → exit 0 → `python scripts/lock_files.py acquire <file> <session_id>` |
 | **删除任何文件** | 文件每一行内容在别处还有？ | RULE-THREE 三步审判 → 全通过才能删 |
