@@ -17,12 +17,13 @@
 """batched_auto_committer.py — Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）
 
 将 post-commit reconciler 阶段的 N 次独立 ``_commit_auto`` 调用合并为 1 次 squash
-commit，消除「N reconciler × 1 git commit = N commits」反模式（典型场景：17 个
-reconciler 中 5 个触发 auto-commit，产生 5 个独立 commit 刷屏 git log）。
+commit，消除「N reconciler × 1 git commit = N commits」反模式（典型场景：所有已注册
+reconciler 中 5 个触发 auto-commit，产生 5 个独立 commit 刷屏 git log；
+reconciler 数量以 ReconciliationRegistry 实际注册为准，不硬编码——裁定 D 治本 2026-07-19）。
 
 病根（第一性原理）
 -----------------
-当前 ``ReconciliationRegistry.reconcile_for`` 遍历 17+ 个 spec，每个 spec 的
+当前 ``ReconciliationRegistry.reconcile_for`` 遍历所有已注册 spec（数量以 ReconciliationRegistry 实际注册为准，不硬编码——裁定 D 治本 2026-07-19），每个 spec 的
 ``_reconcile`` 闭包独立调用 ``gateway._commit_auto(session_id, files, msg)``。
 ``_commit_auto`` 内部完整执行：merge-state check → DIRECTORY-CONTRACT gate →
 TTL-METADATA gate → FILE-PLACEMENT-TTL gate → ``_GlobalCommitLock`` 获取 →
@@ -47,7 +48,7 @@ auto-sync`` 等）。
    合并所有 buffered 文件（去重）+ 合并 message → 单次 ``_commit_auto`` 提交
 
 为什么是拦截器模式而非修改 reconciler？
-  - 17 个 reconciler 分布在 ``reconciliation_registry.py``（4715 行），逐个
+  - 所有已注册 reconciler 分布在 ``reconciliation_registry.py``（数量以 ReconciliationRegistry 实际注册为准，不硬编码——裁定 D 治本 2026-07-19），逐个
     修改成本高且易引入回归
   - 拦截器只在 ``_commit_auto`` 单一入口插入检查，零侵入 reconciler 代码
   - 向后兼容：batcher 未启用时 ``_commit_auto`` 行为完全不变（``is_enabled()``

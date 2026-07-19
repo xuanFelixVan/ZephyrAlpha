@@ -4510,10 +4510,10 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
 # 病根：index.yaml 的 by_date/by_module/by_contract 派生数据截至 2026-05-08 未更新，
 #   派生脚本（validate_session_log_index_integrity.py --generate）无自动触发机制。
 # 治本：接入 GitCommitGateway post-commit reconciler 轨（事件触发，非时间触发/手动触发）。
-# 向内收：扩展已有 reconciliation_registry.py 框架（第18个 reconciler），不新建独立触发系统。
+# 向内收：扩展已有 reconciliation_registry.py 框架（增加一个 reconciler，序号以实际注册顺序为准，不硬编码——裁定 D 治本 2026-07-19），不新建独立触发系统。
 # 真源：validate_session_log_index_integrity.py 是 index.yaml 派生逻辑唯一真源，本 reconciler 仅调用。
 # trae_060-reviewed: 通过元问题审查。session_logs/index.yaml 派生数据过期是真实问题（截至 2026-05-08
-# 未更新），需自动触发机制。现有 17 个 reconciler 无一处理 session_logs/ 目录，无法合并进已有。
+# 未更新），需自动触发机制。现有所有已注册 reconciler 无一处理 session_logs/ 目录，无法合并进已有（数量以 ReconciliationRegistry 实际注册为准，不硬编码——裁定 D 治本 2026-07-19）。
 # 事件触发（post-commit: session_logs/**/*.yaml 落盘），非 cron/manual，满足项目约束"reconciler 必须事件触发"。
 # 派生逻辑真源唯一：validate_session_log_index_integrity.py --generate（本 reconciler 仅调用，不复制逻辑）。
 def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
@@ -4535,7 +4535,7 @@ def make_session_log_index_reconciler(gateway: "object") -> ReconcilerSpec:
 
     向内收设计：
     - 责任唯一：派生逻辑只在 validate_session_log_index_integrity.py 一处（本 reconciler 仅调用）
-    - 真源唯一：复用 ReconciliationRegistry 框架（第18个 reconciler），不新建独立触发系统
+    - 真源唯一：复用 ReconciliationRegistry 框架（增加一个 reconciler，序号以实际注册顺序为准，不硬编码——裁定 D 治本 2026-07-19），不新建独立触发系统
     - 事件触发：post-commit 自动执行，无 cron/manual
 
     Args:
