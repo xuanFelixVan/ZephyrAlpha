@@ -111,6 +111,7 @@ __all__ = [
     "scan_and_archive_working_docs",
     "log_gate_failure",  # Ruling:100PCT-AI-GOVERNANCE P1-5 — gate fail-open 持久化
     "log_emergency_commit",  # Ruling:100PCT-AI-GOVERNANCE P2-1 — emergency_commit 审计
+    "make_commit_gateway_abuse_monitor_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 5b
 ]
 
 

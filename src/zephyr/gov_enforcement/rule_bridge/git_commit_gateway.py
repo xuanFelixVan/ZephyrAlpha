@@ -90,6 +90,9 @@ from zephyr.governance.audit.runtime_violation_snapshot_reconciler import (  # #
 from zephyr.governance.audit.git_performance_monitor_reconciler import (  # ARCH-GIT-CALL-BUDGET P3.5
     make_git_performance_monitor_reconciler,
 )
+from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
+    make_commit_gateway_abuse_monitor_reconciler,
+)
 from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.commit_gates.held_overlap_gate import make_held_overlap_gate
@@ -118,6 +121,9 @@ from zephyr.gov_enforcement.commit_gates.id_uniqueness_gate import make_id_uniqu
 from zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate import make_exempt_zone_frontmatter_gate
 from zephyr.gov_enforcement.commit_gates.module_id_consistency_gate import make_module_id_consistency_gate
 from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import make_perm_trigger_gate
+from zephyr.gov_enforcement.commit_gates.snapshot_drift_gate import make_snapshot_drift_gate  # Phase 3.6 rc1
+from zephyr.gov_enforcement.commit_gates.vocab_chain_gate import make_vocab_chain_gate  # Phase 3.6 rc2
+from zephyr.gov_enforcement.commit_gates.manual_only_permanent_gate import make_manual_only_permanent_gate  # Phase 3.6 rc4
 from zephyr.gov_enforcement.commit_gates.msg_exposure_gate import make_msg_exposure_gate
 from zephyr.gov_enforcement.commit_gates.empty_handler_gate import make_empty_handler_gate
 from zephyr.gov_enforcement.commit_gates.orphan_module_gate import make_orphan_module_gate
@@ -356,6 +362,8 @@ class GitCommitGateway:
         self._gate_registry.register(make_domain_name_zh_direct_access_gate())  # priority=72 治本 DOMAIN_NAME_ZH 字典直接访问硬阻断（Step 2.5 遗留风险修复——防止 AI 绕过 DB 优先级链直接访问硬编码域名字典）
         self._gate_registry.register(make_datetime_now_forbidden_gate())  # priority=34 治本生成器代码 datetime.now() 硬阻断（AGENTS.md §11.1.1，生成器输出幂等性强制）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
+        self._gate_registry.register(make_vocab_chain_gate())  # priority=73 #ARCH-GOV-CONVERGENCE-META Phase 3.6 rc2 治本 SSoT 路径硬编码（扩展 VOCAB-HARDCODE 覆盖至消费链）
+        self._gate_registry.register(make_snapshot_drift_gate())  # priority=40 #ARCH-GOV-CONVERGENCE-META Phase 3.6 rc1 治本运行时违规快照漂移（结构+新鲜度+SHA 一致性校验）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
         # Phase 3 reconciler->gate 收敛（2026-07-03）：3 个 B 类纯校验 reconciler 升级为 pre-commit 阻断 gate
         self._gate_registry.register(make_id_uniqueness_gate())  # priority=86 治本 same-repo 重复 pre-commit hook id（原 post-commit warn reconciler）
@@ -363,6 +371,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_module_id_consistency_gate())  # priority=88 治本 module_id 三声明轨道一致性 + count 派生（原 post-commit warn reconciler）
         # Phase 1 AST 门禁扩展（DM-202953，2026-07-03）：5 个新 in-process gate 治本 5 病根
         self._gate_registry.register(make_perm_trigger_gate())  # priority=82 治本永久系统时间触发模式无事件订阅（病根：永久系统触发32）
+        self._gate_registry.register(make_manual_only_permanent_gate())  # priority=43 #ARCH-GOV-CONVERGENCE-META Phase 3.6 rc4 治本永久系统 manual 触发无事件订阅（与 PERM-TRIGGER 互补：PERM-TRIGGER 检测时间触发，本 gate 检测 manual 触发）
         self._gate_registry.register(make_msg_exposure_gate())  # priority=83 治本错误消息暴露敏感信息（5.99.20 防复发：raise XxxError(f"...{path/tx_id/secret}...") 阻断）
         self._gate_registry.register(make_empty_handler_gate())  # priority=84 治本空 handler 函数体仅 logger/pass/return（病根：事件订阅空壳）
         self._gate_registry.register(make_orphan_module_gate())  # priority=89 治本孤儿模块死代码无 import 引用（病根：新AI可发现性55）——原86与id_uniqueness撞号，调整至89
@@ -632,6 +641,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
         self._reconciliation_registry.register(make_runtime_violation_snapshot_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
         self._reconciliation_registry.register(make_git_performance_monitor_reconciler(self))  # ARCH-GIT-CALL-BUDGET P3.5 git status 计时持续监控 + stale worktree 累积预警 + 退化趋势检测（priority=870，post-commit 事件触发，warn-only）
+        self._reconciliation_registry.register(make_commit_gateway_abuse_monitor_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 5b commit gateway 持续滥用监控（priority=875，post-commit 事件触发，五维滥用检测 warn-only，补强 POST-COMMIT-GUARD 1h 短窗口盲区）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
