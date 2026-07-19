@@ -1,4 +1,4 @@
-# [BLUEPRINT] D-GOV-ENFORCEMENT | docs/03_modules/_domain_governance/blueprint.md
+# [BLUEPRINT] MOD-GOV_ENFORCEMENT | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_enforcement
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [A_module] module_id=D-GOV-ENFORCEMENT | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable
