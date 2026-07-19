@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-035 | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
+# [BLUEPRINT] MOD-GOV-reconciliation_registry | .trae/documents/systemic_drift_root_cure_continuation_plan.md | §4 P2-T1
 # [MODULE] zephyr.governance.audit.reconciliation_registry
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] (none — pure stdlib)

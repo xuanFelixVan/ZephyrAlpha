@@ -1103,7 +1103,12 @@ def _check_stash_for_files(
 def _scan_stash_for_files(
     root: Path, clean_files: list[str],
 ) -> tuple[str, str, list[str]] | None:
-    """扫描最近 10 个 stash，返回第一个包含 clean_files 的 stash 信息。"""
+    """扫描最新 stash（stash@{0}），返回包含 clean_files 的 stash 信息。
+
+    只扫描 stash@{0}（最新 stash）——避免从旧 stash 恢复错误版本。
+    （2026-07-19 F-01 修复：原扫描最近 10 个 stash，旧 stash 可能包含
+    目标文件的旧版本，auto-recover 选错导致主工作区被旧版本覆盖。）
+    """
     try:
         stash_list_r = subprocess.run(
             ["git", "stash", "list", "--format=%gd|%s"],
@@ -1113,7 +1118,8 @@ def _scan_stash_for_files(
         if stash_list_r.returncode != 0 or not stash_list_r.stdout.strip():
             return None
         stashes = [line.strip() for line in stash_list_r.stdout.splitlines() if line.strip()]
-        for stash_line in stashes[:10]:
+        # 只扫描 stash@{0}（最新 stash）——避免从旧 stash 恢复错误版本（F-01 治本）
+        for stash_line in stashes[:1]:
             result = _check_stash_for_files(root, stash_line, clean_files)
             if result:
                 return result
@@ -1137,7 +1143,7 @@ def _detect_changes_in_stash(
     检测策略（逐文件，支持混合场景——部分文件有改动、部分被 stash 移走）：
     1. ``git diff --name-only HEAD`` 获取主工作区所有有改动的文件
     2. 找出目标文件中无改动的（可能被 stash 移走）
-    3. 扫描最近 10 个 stash 是否包含这些无改动文件
+    3. 扫描最新 stash（stash@{0}）是否包含这些无改动文件
     4. 命中返回 (stash_ref, stash_msg, hits)；未命中返回 None
     """
     clean_files = _get_clean_target_files(root, rel_files)
