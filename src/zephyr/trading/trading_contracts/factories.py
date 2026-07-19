@@ -22,14 +22,22 @@
 
 Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float->Decimal 边界转换。
 
+5.150 参数对象化（Long Parameter List 治本）：3 个 risk 工厂改收单一参数对象
+（RiskLimitsParams / RiskDashboardSnapshotParams / RiskMetricsReportParams）。
+旧调用过渡路径：
+    - 关键字参数原样透传（make_risk_limits(max_single_position=0.2) 仍可用）；
+    - 位置参数经参数对象构造函数（字段顺序与旧签名 1:1，如 RiskLimitsParams(None, "", 0.2)）。
+
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
 """
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any, TypeVar
 
 from zephyr.trading.trading_contracts.execution.order import Order, OrderSide, OrderType
 from zephyr.shared.contracts.factor_signal import FactorSignal
@@ -37,6 +45,8 @@ from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits
 from zephyr.trading.trading_contracts.risk.risk_metrics import RiskMetricsReport
+
+_P = TypeVar("_P")
 
 
 def _to_decimal(value: float | int | str | Decimal | None) -> Decimal:
@@ -53,95 +63,143 @@ def _optional_decimal(value: float | int | str | Decimal | None) -> Decimal | No
     return _to_decimal(value)
 
 
-def make_risk_limits(
-    as_of_date: datetime | None = None,
-    idempotency_key: str = "",
-    max_single_position: float = 0.10,
-    min_single_position: float = 0.0,
-    max_gross_leverage: float = 1.0,
-    max_sector_concentration: float = 0.30,
-    max_portfolio_var_1d: float | Decimal | None = None,
-    max_drawdown_limit: float | None = None,
-    symbol_overrides: dict[str, float] | None = None,
-) -> RiskLimits:
+def _coerce_params(params: _P | None, params_cls: type[_P], kwargs: dict[str, Any], factory_name: str) -> _P:
+    """工厂参数收口：params 优先；kwargs 经参数对象构造函数过渡；混用/类型错误显式拒绝。"""
+    if params is None:
+        return params_cls(**kwargs)
+    if kwargs:
+        raise TypeError(f"{factory_name}: params 与关键字参数不可混用")
+    if not isinstance(params, params_cls):
+        raise TypeError(f"{factory_name}: params 须为 {params_cls.__name__}，收到 {type(params).__name__}")
+    return params
+
+
+@dataclass(frozen=True)
+class RiskLimitsParams:
+    """make_risk_limits 参数对象（5.150 Long Parameter List 治本）。
+
+    字段顺序与 5.150 前 make_risk_limits 签名 1:1，构造函数即旧签名过渡入口
+    （NO-LONG-PARAM-LIST gate 禁止 from_params 类方法形态的长签名）。
+    """
+
+    as_of_date: datetime | None = None
+    idempotency_key: str = ""
+    max_single_position: float = 0.10
+    min_single_position: float = 0.0
+    max_gross_leverage: float = 1.0
+    max_sector_concentration: float = 0.30
+    max_portfolio_var_1d: float | Decimal | None = None
+    max_drawdown_limit: float | None = None
+    symbol_overrides: dict[str, float] | None = None
+
+
+@dataclass(frozen=True)
+class RiskDashboardSnapshotParams:
+    """make_risk_dashboard_snapshot 参数对象（5.150 Long Parameter List 治本）。
+
+    字段顺序与 5.150 前 make_risk_dashboard_snapshot 签名 1:1，构造函数即旧签名过渡入口。
+    """
+
+    portfolio_id: str
+    portfolio_var_1d: Decimal | float
+    max_drawdown_current: float = 0.0
+    gross_leverage: float = 0.0
+    top_position_concentration: float = 0.0
+    sector_concentrations: dict[str, float] | None = None
+    active_alerts: list[str] | None = None
+    overall_risk_score: float = 0.0
+    idempotency_key: str = ""
+
+
+@dataclass(frozen=True)
+class RiskMetricsReportParams:
+    """make_risk_metrics_report 参数对象（5.150 Long Parameter List 治本）。
+
+    字段顺序与 5.150 前 make_risk_metrics_report 签名 1:1，构造函数即旧签名过渡入口。
+    """
+
+    portfolio_id: str
+    var_1d_95: Decimal
+    var_1d_99: Decimal
+    cvar_1d_95: Decimal
+    cvar_1d_99: Decimal
+    max_drawdown: float = 0.0
+    current_drawdown: float = 0.0
+    beta: float = 1.0
+    sharpe_ratio: float = 0.0
+    sortino_ratio: float = 0.0
+    volatility_1d: float = 0.0
+    volatility_1m: float = 0.0
+    calculation_method: str = "historical"
+    confidence_level: float = 0.95
+    lookback_period: int = 252
+    idempotency_key: str = ""
+    as_of_date: datetime | None = None
+
+
+def make_risk_limits(params: RiskLimitsParams | None = None, **kwargs: Any) -> RiskLimits:
+    """创建 RiskLimits——单一参数对象入口（旧签名经 **kwargs/参数对象位置构造过渡）。"""
+    params = _coerce_params(params, RiskLimitsParams, kwargs, "make_risk_limits")
     mpv: float | None = None
-    if max_portfolio_var_1d is not None:
-        mpv = float(max_portfolio_var_1d)
+    if params.max_portfolio_var_1d is not None:
+        mpv = float(params.max_portfolio_var_1d)
     return RiskLimits(
-        as_of_date=as_of_date or datetime.now(UTC),
-        idempotency_key=idempotency_key or f"limits-{int(datetime.now(UTC).timestamp())}",
-        max_single_position=max_single_position,
-        min_single_position=min_single_position,
-        max_gross_leverage=max_gross_leverage,
-        max_sector_concentration=max_sector_concentration,
+        as_of_date=params.as_of_date or datetime.now(UTC),
+        idempotency_key=params.idempotency_key or f"limits-{int(datetime.now(UTC).timestamp())}",
+        max_single_position=params.max_single_position,
+        min_single_position=params.min_single_position,
+        max_gross_leverage=params.max_gross_leverage,
+        max_sector_concentration=params.max_sector_concentration,
         max_portfolio_var_1d=mpv,
-        max_drawdown_limit=max_drawdown_limit,
-        symbol_overrides=symbol_overrides or {},
+        max_drawdown_limit=params.max_drawdown_limit,
+        symbol_overrides=params.symbol_overrides or {},
     )
 
 
 def make_risk_dashboard_snapshot(
-    portfolio_id: str,
-    portfolio_var_1d: Decimal | float,
-    max_drawdown_current: float = 0.0,
-    gross_leverage: float = 0.0,
-    top_position_concentration: float = 0.0,
-    sector_concentrations: dict[str, float] | None = None,
-    active_alerts: list[str] | None = None,
-    overall_risk_score: float = 0.0,
-    idempotency_key: str = "",
+    params: RiskDashboardSnapshotParams | None = None,
+    **kwargs: Any,
 ) -> RiskDashboardSnapshot:
+    """创建 RiskDashboardSnapshot——单一参数对象入口（旧签名经 **kwargs/参数对象位置构造过渡）。"""
+    params = _coerce_params(params, RiskDashboardSnapshotParams, kwargs, "make_risk_dashboard_snapshot")
     return RiskDashboardSnapshot(
         snapshot_time=datetime.now(UTC).isoformat(),
-        portfolio_id=portfolio_id,
-        portfolio_var_1d=float(portfolio_var_1d),
-        max_drawdown_current=max_drawdown_current,
-        gross_leverage=gross_leverage,
-        top_position_concentration=top_position_concentration,
-        sector_concentrations=sector_concentrations or {},
-        active_alerts=active_alerts or [],
-        overall_risk_score=overall_risk_score,
-        idempotency_key=idempotency_key or f"snap-{int(datetime.now(UTC).timestamp())}",
+        portfolio_id=params.portfolio_id,
+        portfolio_var_1d=float(params.portfolio_var_1d),
+        max_drawdown_current=params.max_drawdown_current,
+        gross_leverage=params.gross_leverage,
+        top_position_concentration=params.top_position_concentration,
+        sector_concentrations=params.sector_concentrations or {},
+        active_alerts=params.active_alerts or [],
+        overall_risk_score=params.overall_risk_score,
+        idempotency_key=params.idempotency_key or f"snap-{int(datetime.now(UTC).timestamp())}",
     )
 
 
 def make_risk_metrics_report(
-    portfolio_id: str,
-    var_1d_95: Decimal,
-    var_1d_99: Decimal,
-    cvar_1d_95: Decimal,
-    cvar_1d_99: Decimal,
-    max_drawdown: float = 0.0,
-    current_drawdown: float = 0.0,
-    beta: float = 1.0,
-    sharpe_ratio: float = 0.0,
-    sortino_ratio: float = 0.0,
-    volatility_1d: float = 0.0,
-    volatility_1m: float = 0.0,
-    calculation_method: str = "historical",
-    confidence_level: float = 0.95,
-    lookback_period: int = 252,
-    idempotency_key: str = "",
-    as_of_date: datetime | None = None,
+    params: RiskMetricsReportParams | None = None,
+    **kwargs: Any,
 ) -> RiskMetricsReport:
+    """创建 RiskMetricsReport——单一参数对象入口（旧签名经 **kwargs/参数对象位置构造过渡）。"""
+    params = _coerce_params(params, RiskMetricsReportParams, kwargs, "make_risk_metrics_report")
     return RiskMetricsReport(
-        portfolio_id=portfolio_id,
-        as_of_date=as_of_date or datetime.now(UTC),
-        var_1d_95=float(var_1d_95),
-        var_1d_99=float(var_1d_99),
-        cvar_1d_95=float(cvar_1d_95),
-        cvar_1d_99=float(cvar_1d_99),
-        max_drawdown=max_drawdown,
-        current_drawdown=current_drawdown,
-        beta=beta,
-        sharpe_ratio=sharpe_ratio,
-        sortino_ratio=sortino_ratio,
-        volatility_1d=volatility_1d,
-        volatility_1m=volatility_1m,
-        calculation_method=calculation_method,
-        confidence_level=confidence_level,
-        lookback_period=lookback_period,
-        idempotency_key=idempotency_key or f"metrics-{int(datetime.now(UTC).timestamp())}",
+        portfolio_id=params.portfolio_id,
+        as_of_date=params.as_of_date or datetime.now(UTC),
+        var_1d_95=float(params.var_1d_95),
+        var_1d_99=float(params.var_1d_99),
+        cvar_1d_95=float(params.cvar_1d_95),
+        cvar_1d_99=float(params.cvar_1d_99),
+        max_drawdown=params.max_drawdown,
+        current_drawdown=params.current_drawdown,
+        beta=params.beta,
+        sharpe_ratio=params.sharpe_ratio,
+        sortino_ratio=params.sortino_ratio,
+        volatility_1d=params.volatility_1d,
+        volatility_1m=params.volatility_1m,
+        calculation_method=params.calculation_method,
+        confidence_level=params.confidence_level,
+        lookback_period=params.lookback_period,
+        idempotency_key=params.idempotency_key or f"metrics-{int(datetime.now(UTC).timestamp())}",
     )
 
 
@@ -221,6 +279,9 @@ def make_order(
 
 
 __all__ = [
+    "RiskDashboardSnapshotParams",
+    "RiskLimitsParams",
+    "RiskMetricsReportParams",
     "_optional_decimal",
     "_to_decimal",
     "make_factor_signal",

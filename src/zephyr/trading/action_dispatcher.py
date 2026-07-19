@@ -95,11 +95,168 @@ def _git_commit_hash(project_root: Path) -> str | None:
     return None
 
 
+class BrainBlockEditor:
+    """BRAIN 注释块文本编辑器（ActionDispatcher 协作者，职责簇：纯文本块构建/插入/更新，无 I/O 无状态）。
+
+    5.150 Extract Class: 从 ActionDispatcher 提取的高内聚文本处理簇。
+    ActionDispatcher 通过类级别名委托，历史访问面（ActionDispatcher._build_py_brain_block 等）不变。
+    """
+
+    @staticmethod
+    def build_block(data: dict) -> str:
+        ts = datetime.now(UTC).isoformat()
+        lines = [f"{_BRAIN_MARKER} {k}: {dumps(v, ensure_ascii=False)}" for k, v in data.items()]
+        lines.append(f"{_BRAIN_MARKER} at: {ts}")
+        return "\n".join(lines)
+
+    @staticmethod
+    def insert_block(original: str, block: str) -> str:
+        lines = original.split("\n")
+        insert_pos = 0
+
+        if lines and lines[0].startswith("#!"):
+            insert_pos = 1
+
+        i = insert_pos
+        while i < len(lines) and lines[i].strip().startswith('"""'):
+            i += 1
+            while i < len(lines) and '"""' not in lines[i]:
+                i += 1
+            i += 1
+            insert_pos = i
+            break
+
+        while insert_pos < len(lines) and lines[insert_pos].strip().startswith(_BRAIN_MARKER):
+            insert_pos += 1
+
+        block_lines = block.split("\n")
+        new_lines = lines[:insert_pos] + block_lines + [""] + lines[insert_pos:]
+        return "\n".join(new_lines)
+
+    @staticmethod
+    def update_block(original: str, block: str) -> str:
+        lines = original.split("\n")
+        start = -1
+        end = -1
+        for i, line in enumerate(lines):
+            if line.strip().startswith(_BRAIN_MARKER):
+                if start < 0:
+                    start = i
+                end = i
+            elif start >= 0:
+                break
+            else:
+                start = -1
+
+        if start < 0:
+            return BrainBlockEditor.insert_block(original, block)
+
+        block_lines = block.split("\n")
+        new_lines = lines[:start] + block_lines + lines[end + 1 :]
+        return "\n".join(new_lines)
+
+
+class ModuleFileLocator:
+    """模块文件发现器（ActionDispatcher 协作者，职责簇：模块名/文本提示 -> 磁盘文件解析）。
+
+    5.150 Extract Class: 从 ActionDispatcher 提取的高内聚文件发现簇。
+    ActionDispatcher 保留同名薄封装委托本类，实例级 patch 面（patch.object(d, "_find_module_file", ...)）不变。
+    """
+
+    def extract_module_name(self, text: str) -> str:
+        if not text:
+            return "unknown"
+        for prefix in (
+            "classify this module: ",
+            "classify this document: ",
+            "generate tags for: ",
+            "generate tags for config: ",
+            "suggest alternative names for module: ",
+            "fix bug: ",
+            "fix code in: ",
+            "refactor: ",
+            "analyze file: ",
+            "scan dead code in: ",
+            "detect dead code: ",
+        ):
+            if text.startswith(prefix):
+                text = text[len(prefix) :]
+        first_line = text.split("\n")[0].strip()
+        if len(first_line) > 80:
+            first_line = first_line[:80]
+        return first_line
+
+    def parse_file_path(self, text: str) -> Path | None:
+        """从文本中提取可能的文件路径。"""
+        for line in text.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            candidate = REPO_ROOT / line
+            if candidate.exists() and candidate.is_file():
+                return candidate
+            # 尝试只取 stem
+            stem = Path(line).stem
+            found = self.find_module_file(stem)
+            if found:
+                return found
+        return None
+
+    def find_module_file(self, module_name: str) -> Path | None:
+        """在 src/ 下找对应的 .py 文件。"""
+        candidates = [
+            REPO_ROOT / "src" / "zephyr" / "**" / f"{module_name}.py",
+            REPO_ROOT / "src" / f"zephyr/**/{module_name}.py",
+        ]
+        for pattern in candidates:
+            try:
+                matches = list(REPO_ROOT.glob(str(pattern.relative_to(REPO_ROOT))))
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                matches = list(REPO_ROOT.rglob(f"{module_name}.py"))
+            if matches:
+                return matches[0]
+
+        # 模糊搜索
+        for py_file in (REPO_ROOT / "src").rglob("*.py"):
+            if module_name in py_file.stem or py_file.stem in module_name:
+                return py_file
+        return None
+
+    def find_capability_card(self, module_name: str) -> Path | None:
+        """匹配 Python 模块 -> capability card YAML。"""
+        stem = module_name.replace("_", "-").replace(".py", "")
+        candidate = CAPABILITY_CARDS_DIR / f"{stem}.yaml"
+        if candidate.exists():
+            return candidate
+
+        if CAPABILITY_CARDS_DIR.exists():
+            for yaml_file in sorted(CAPABILITY_CARDS_DIR.glob("*.yaml")):
+                if stem in yaml_file.stem or yaml_file.stem in stem:
+                    return yaml_file
+        return None
+
+    def find_blueprint_file(self, module_name: str) -> Path | None:
+        """在 architecture_model/ 下找 matching YAML。"""
+        arch = REPO_ROOT / "architecture_model"
+        return self.find_file_by_name(module_name, [arch])
+
+    def find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:
+        stem = name.replace("_", "-").replace(".py", "").replace(".yaml", "")
+        for sdir in search_dirs:
+            if not sdir.exists():
+                continue
+            for yf in sdir.rglob("*.yaml"):
+                if stem in yf.stem or yf.stem in stem:
+                    return yf
+        return None
+
+
 class ActionDispatcher:
     """推理结果->直接回写源文件 (Phase 2: 版本链 + 行级编辑 + 创建/删除)。"""
 
     def __init__(self, dry_run: bool = False) -> None:
         self._dry_run = dry_run
+        self._locator = ModuleFileLocator()
         self._stats: dict[str, int] = {
             "dispatched": 0,
             "modified": 0,
@@ -631,149 +788,37 @@ class ActionDispatcher:
         status = "ALERT" if needs_human else "CLEAR"
         return ActionReport("audit", "anomaly_triage", "modified", f"triage: {status}")
 
-    # ── 文件发现辅助 ────────────────────────────────────
+    # ── 文件发现（委托 ModuleFileLocator） ──────────────
+    # 薄封装保留实例级 patch 面与历史私有方法签名；实现已提取至 ModuleFileLocator。
 
     def _extract_module_name(self, text: str) -> str:
-        if not text:
-            return "unknown"
-        for prefix in (
-            "classify this module: ",
-            "classify this document: ",
-            "generate tags for: ",
-            "generate tags for config: ",
-            "suggest alternative names for module: ",
-            "fix bug: ",
-            "fix code in: ",
-            "refactor: ",
-            "analyze file: ",
-            "scan dead code in: ",
-            "detect dead code: ",
-        ):
-            if text.startswith(prefix):
-                text = text[len(prefix) :]
-        first_line = text.split("\n")[0].strip()
-        if len(first_line) > 80:
-            first_line = first_line[:80]
-        return first_line
+        return self._locator.extract_module_name(text)
 
     def _parse_file_path(self, text: str) -> Path | None:
         """从文本中提取可能的文件路径。"""
-        for line in text.split("\n"):
-            line = line.strip()
-            if not line:
-                continue
-            candidate = REPO_ROOT / line
-            if candidate.exists() and candidate.is_file():
-                return candidate
-            # 尝试只取 stem
-            stem = Path(line).stem
-            found = self._find_module_file(stem)
-            if found:
-                return found
-        return None
+        return self._locator.parse_file_path(text)
 
     def _find_module_file(self, module_name: str) -> Path | None:
         """在 src/ 下找对应的 .py 文件。"""
-        candidates = [
-            REPO_ROOT / "src" / "zephyr" / "**" / f"{module_name}.py",
-            REPO_ROOT / "src" / f"zephyr/**/{module_name}.py",
-        ]
-        for pattern in candidates:
-            try:
-                matches = list(REPO_ROOT.glob(str(pattern.relative_to(REPO_ROOT))))
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                matches = list(REPO_ROOT.rglob(f"{module_name}.py"))
-            if matches:
-                return matches[0]
-
-        # 模糊搜索
-        for py_file in (REPO_ROOT / "src").rglob("*.py"):
-            if module_name in py_file.stem or py_file.stem in module_name:
-                return py_file
-        return None
+        return self._locator.find_module_file(module_name)
 
     def _find_capability_card(self, module_name: str) -> Path | None:
         """匹配 Python 模块 -> capability card YAML。"""
-        stem = module_name.replace("_", "-").replace(".py", "")
-        candidate = CAPABILITY_CARDS_DIR / f"{stem}.yaml"
-        if candidate.exists():
-            return candidate
-
-        if CAPABILITY_CARDS_DIR.exists():
-            for yaml_file in sorted(CAPABILITY_CARDS_DIR.glob("*.yaml")):
-                if stem in yaml_file.stem or yaml_file.stem in stem:
-                    return yaml_file
-        return None
+        return self._locator.find_capability_card(module_name)
 
     def _find_blueprint_file(self, module_name: str) -> Path | None:
         """在 architecture_model/ 下找 matching YAML。"""
-        arch = REPO_ROOT / "architecture_model"
-        return self._find_file_by_name(module_name, [arch])
+        return self._locator.find_blueprint_file(module_name)
 
     def _find_file_by_name(self, name: str, search_dirs: list[Path]) -> Path | None:
-        stem = name.replace("_", "-").replace(".py", "").replace(".yaml", "")
-        for sdir in search_dirs:
-            if not sdir.exists():
-                continue
-            for yf in sdir.rglob("*.yaml"):
-                if stem in yf.stem or yf.stem in stem:
-                    return yf
-        return None
+        return self._locator.find_file_by_name(name, search_dirs)
 
-    # ── Python 文件脑注释块 ─────────────────────────────
+    # ── Python 文件脑注释块（委托 BrainBlockEditor） ──────
+    # 类级别名保留历史访问面：ActionDispatcher._build_py_brain_block(...) 等签名/返回值不变
 
-    @staticmethod
-    def _build_py_brain_block(data: dict) -> str:
-        ts = datetime.now(UTC).isoformat()
-        lines = [f"{_BRAIN_MARKER} {k}: {dumps(v, ensure_ascii=False)}" for k, v in data.items()]
-        lines.append(f"{_BRAIN_MARKER} at: {ts}")
-        return "\n".join(lines)
-
-    @staticmethod
-    def _insert_brain_block(original: str, block: str) -> str:
-        lines = original.split("\n")
-        insert_pos = 0
-
-        if lines and lines[0].startswith("#!"):
-            insert_pos = 1
-
-        i = insert_pos
-        while i < len(lines) and lines[i].strip().startswith('"""'):
-            i += 1
-            while i < len(lines) and '"""' not in lines[i]:
-                i += 1
-            i += 1
-            insert_pos = i
-            break
-
-        while insert_pos < len(lines) and lines[insert_pos].strip().startswith(_BRAIN_MARKER):
-            insert_pos += 1
-
-        block_lines = block.split("\n")
-        new_lines = lines[:insert_pos] + block_lines + [""] + lines[insert_pos:]
-        return "\n".join(new_lines)
-
-    @staticmethod
-    def _update_brain_block(original: str, block: str) -> str:
-        lines = original.split("\n")
-        start = -1
-        end = -1
-        for i, line in enumerate(lines):
-            if line.strip().startswith(_BRAIN_MARKER):
-                if start < 0:
-                    start = i
-                end = i
-            elif start >= 0:
-                break
-            else:
-                start = -1
-
-        if start < 0:
-            return ActionDispatcher._insert_brain_block(original, block)
-
-        block_lines = block.split("\n")
-        new_lines = lines[:start] + block_lines + lines[end + 1 :]
-        return "\n".join(new_lines)
+    _build_py_brain_block = staticmethod(BrainBlockEditor.build_block)
+    _insert_brain_block = staticmethod(BrainBlockEditor.insert_block)
+    _update_brain_block = staticmethod(BrainBlockEditor.update_block)
 
     @staticmethod
     def _skip(task_id: str, capability: str, reason: str) -> ActionReport:
