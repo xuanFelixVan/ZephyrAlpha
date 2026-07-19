@@ -127,12 +127,16 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
 def _create_gate_source_stubs(repo: Path) -> None:
     """创建 fail-closed gate 源文件 stub（session_worktree_commit pre-commit gate 需要）。
 
-    3 个 fail-closed gates 在 pre-commit 阶段运行，源文件缺失会阻断 commit：
+    fail-closed gates 在 pre-commit 阶段运行，源文件缺失会阻断 commit：
     - FILE-PLACEMENT-TTL: 需要 directory_contract.yaml（directory_zones 结构）+
       ttl_vocabulary.yaml（values 含 permanent/task_bound，gate L259 fail-closed 校验）
     - DANGLING-REFERENCE: 需要 AGENTS.md（含至少一个 ## N 章节号）
     - ARCH-REFERENCE: 需要 architecture_issue_registry.yaml（含至少一个 entry）
-    - DIRECTORY-CONTRACT: 需要 check_directory_contract.py（subprocess 调用）
+    - RULING-REFERENCE: 需要 ruling_registry.yaml（entries 含 ruling_id "裁定#NNN"，
+      gate _load_registered_nums fail-closed 校验，裁定#20-G 阶段2 hard block 已启用）
+    - DIRECTORY-CONTRACT: 需要 check_directory_contract.py（subprocess 调用）+
+      scripts/governance/d1_structure/ 目录存在（RULING-REFERENCE skip 判定依赖此目录，
+      目录存在则 RULING-REFERENCE 不 skip，必须配套提供 ruling_registry.yaml）
     - TTL-METADATA: 需要 check_frontmatter_metadata.py（subprocess 调用，pre-merge gate 需要）
 
     stub 内容最小化，仅满足 gate "源文件存在且非空" 的 fail-closed 要求。
@@ -162,6 +166,16 @@ def _create_gate_source_stubs(repo: Path) -> None:
     arch_dir.mkdir(parents=True, exist_ok=True)
     (arch_dir / "architecture_issue_registry.yaml").write_text(
         'entries:\n  - issue_id: "#ARCH-001"\n    title: "Test entry"\n    status: "active"\n',
+        encoding="utf-8",
+    )
+    # ruling_registry.yaml stub（RULING-REFERENCE gate 需要 entries 含 ruling_id "裁定#NNN"）
+    # 治本(2026-07-19): DIRECTORY-CONTRACT stub 创建 scripts/governance/d1_structure/ 目录，
+    # 导致 RULING-REFERENCE skip 判定（ruling_reference_gate.py:245-247）不触发，gate 进入
+    # _load_registered_nums 查找 ruling_registry.yaml，缺失则 fail-closed 阻断 commit。
+    # stub 提供 1 个已登记裁定编号（_extract_registered_nums 提取 {"1"}，非空通过校验），
+    # 测试 marker 文件无 裁定#NNN 引用，scan_file_violations 返回空，gate 放行。
+    (arch_dir / "ruling_registry.yaml").write_text(
+        'entries:\n  - ruling_id: "裁定#1"\n    title: "Test ruling"\n    status: "active"\n',
         encoding="utf-8",
     )
     # check_directory_contract.py stub（DIRECTORY-CONTRACT gate subprocess 调用）
@@ -589,6 +603,16 @@ def test_worktree_merge_releases_claims():
     # 验证 A 不再持有 _TEST_FILE_A
     other_held = registry.other_held_files("sess-pytest-B")
     assert test_file_a_abs not in other_held, f"A merge 后应释放 {_TEST_FILE_A}: {other_held}"
+
+    # B 重新写入主工作区（设计模式：AI 写项目根，session_worktree_commit 同步到 worktree）
+    # 治本(2026-07-19): A merge 后主工作区 _TEST_FILE_A 为 A 的版本，worktree base 也被
+    # _ensure_worktree_base_fresh git reset --hard 对齐到 A 的版本。若 B 不重写主工作区文件，
+    # _sync_files_to_worktree 会 copy A 的版本到 worktree（与 HEAD 相同 → NOTHING_TO_COMMIT）。
+    # B 覆盖主工作区为自己的版本，_sync_files_to_worktree 同步 B 的版本到 worktree，
+    # git add 检测到与 HEAD（A 的版本）不同 → commit 成功（claim 已释放，HELD-OVERLAP 放行）。
+    marker_b_main = REPO_ROOT / _TEST_FILE_A
+    marker_b_main.parent.mkdir(parents=True, exist_ok=True)
+    marker_b_main.write_text('{"session": "B"}\n', encoding="utf-8")
 
     # B 现在可以 commit _TEST_FILE_A
     cB2 = session_worktree_commit("sess-pytest-B", files=[_TEST_FILE_A], message="test: B after A merge")
