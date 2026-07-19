@@ -71,6 +71,7 @@ __all__ = [
     "session_worktree_status",
     "session_worktree_sweep",
     "generate_session_id",
+    "claim_files_for_edit",  # Ruling:100PCT-AI-GOVERNANCE P2-2 — 编辑前 claim
 ]
 
 import json
@@ -1886,13 +1887,24 @@ def _get_dirty_files(root: Path) -> set[str] | None:
 
 def _collect_tracked_cleanups(
     root: Path, branch: str, changed_files: list[str], dirty_files: set[str],
+    skip_files: set[str] | None = None,
 ) -> tuple[int, list[str], list[str]]:
-    """收集 tracked dirty 文件的清理操作——返回 (cleaned, skipped, to_checkout)。"""
+    """收集 tracked dirty 文件的清理操作——返回 (cleaned, skipped, to_checkout)。
+
+    Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+    新增 ``skip_files`` 参数——其他活跃 session claim 的文件不清理，避免并发
+    session 的 _pre_merge_auto_clean 毫秒级还原正在编辑的文件（P1-5 实测 bug）。
+    """
     cleaned = 0
     skipped: list[str] = []
     to_checkout: list[str] = []
+    skip_set = skip_files or set()
     for rel_file in changed_files:
         if rel_file not in dirty_files:
+            continue
+        # P2-2: 跳过其他 session claim 的文件（并发编辑保护）
+        if rel_file in skip_set:
+            skipped.append(rel_file)
             continue
         main_file = root / rel_file
         if not main_file.exists():
@@ -1916,8 +1928,13 @@ def _collect_tracked_cleanups(
 
 def _collect_untracked_cleanups(
     root: Path, branch: str, changed_files: list[str],
+    skip_files: set[str] | None = None,
 ) -> tuple[int, list[str], list[str]]:
-    """收集 untracked 文件的清理操作——返回 (cleaned, skipped, to_unlink)。"""
+    """收集 untracked 文件的清理操作——返回 (cleaned, skipped, to_unlink)。
+
+    Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+    新增 ``skip_files`` 参数——其他活跃 session claim 的文件不清理。
+    """
     untracked_r = subprocess.run(
         ["git", "ls-files", "--others", "--exclude-standard"],
         cwd=str(root), capture_output=True, text=True, encoding="utf-8",
@@ -1928,8 +1945,13 @@ def _collect_untracked_cleanups(
     cleaned = 0
     skipped: list[str] = []
     to_unlink: list[str] = []
+    skip_set = skip_files or set()
     for rel_file in changed_files:
         if rel_file not in untracked_files:
+            continue
+        # P2-2: 跳过其他 session claim 的文件（并发编辑保护）
+        if rel_file in skip_set:
+            skipped.append(rel_file)
             continue
         main_file = root / rel_file
         if not main_file.exists():
@@ -2013,6 +2035,13 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
 
     两类场景都只清理内容完全一致的文件（safe）；内容不一致的跳过（AI 有额外编辑）。
 
+    Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+    清理前查询其他活跃 session claim 的文件（other_held_files），claimed 文件
+    加入 skip_files 不清理。病根：并发 session 的 _pre_merge_auto_clean 在毫秒级
+    还原正在编辑的文件（P1-5 实测 bug——AI Edit 后、session_worktree_commit 前
+    窗口被命中）。治本：claim_files_for_edit API 让 AI 在编辑前 claim 文件，
+    _pre_merge_auto_clean 尊重 claim 不清理。
+
     Args:
         root: 主仓库根目录。
         session_id: session 标识。
@@ -2029,14 +2058,130 @@ def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
     dirty_files = _get_dirty_files(root)
     if dirty_files is None:
         return 0, []
+
+    # P2-2: 查询其他活跃 session claim 的文件，转相对路径加入 skip_files
+    skip_files = _get_other_session_claimed_files(root, session_id)
+
     cleaned_t, skipped_t, to_checkout = _collect_tracked_cleanups(
-        root, branch, changed_files, dirty_files,
+        root, branch, changed_files, dirty_files, skip_files=skip_files,
     )
     cleaned_u, skipped_u, to_unlink = _collect_untracked_cleanups(
-        root, branch, changed_files,
+        root, branch, changed_files, skip_files=skip_files,
     )
     _execute_cleanups(root, to_checkout, to_unlink, session_id)
     return cleaned_t + cleaned_u, skipped_t + skipped_u
+
+
+def _get_other_session_claimed_files(root: Path, session_id: str) -> set[str]:
+    """查询其他活跃 session claim 的文件，返回相对路径集合。
+
+    Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19)：
+    other_held_files 返回归一化绝对路径，本函数转相对路径供 _collect_*_cleanups 使用。
+    失败时返回空集（fail-open，不阻断 merge——claim 查询失败不应阻塞业务流程）。
+    """
+    try:
+        registry = _get_registry(root)
+        held_abs = registry.other_held_files(session_id)
+        if not held_abs:
+            return set()
+        # 绝对路径 → 相对路径（forward slash）
+        root_str = str(root)
+        rel_files: set[str] = set()
+        for abs_path in held_abs:
+            p = str(abs_path)
+            if p.startswith(root_str):
+                rel = p[len(root_str):].lstrip("\\/").replace("\\", "/")
+                if rel:
+                    rel_files.add(rel)
+            else:
+                # 不在 root 下的文件，忽略
+                continue
+        return rel_files
+    except Exception:  # noqa: BLE001 — claim 查询失败不阻断 merge
+        logger.warning(
+            "_get_other_session_claimed_files: query failed, fail-open (no skip)",
+            exc_info=True,
+        )
+        return set()
+
+
+def claim_files_for_edit(
+    session_id: str,
+    files: list[str],
+    project_root: str | Path | None = None,
+) -> dict:
+    """编辑前 claim 文件（预防并发 session _pre_merge_auto_clean 还原）。
+
+    Ruling:100PCT-AI-GOVERNANCE P2-2 (2026-07-19) 治本：
+    AI Edit 文件前调用本 API claim 文件，_pre_merge_auto_clean 会跳过 claimed 文件，
+    避免 P1-5 的毫秒级还原 bug。claim 是 session 级（不 per-commit 释放），
+    merge/abort 时 unregister 自动释放。
+
+    与 session_worktree_commit 内部 _check_held_overlap 的区别：
+    - _check_held_overlap: commit 时 claim（too late——Edit 后、commit 前窗口无保护）
+    - claim_files_for_edit: 编辑前 claim（预防性，消除 race window）
+
+    推荐用法（AI session 启动后、第一次 Edit 前）::
+
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            session_worktree_start, claim_files_for_edit,
+        )
+        sid = generate_session_id()
+        session_worktree_start(sid)
+        claim_files_for_edit(sid, [
+            "src/zephyr/some_module/file1.py",
+            "src/zephyr/some_module/file2.py",
+        ])
+        # 现在可以安全 Edit 这些文件，并发 session 的 merge 不会还原它们
+
+    Args:
+        session_id: 已注册的 session_id（必须先 session_worktree_start）。
+        files: 要 claim 的文件列表（绝对路径或相对项目根的路径）。
+        project_root: 项目根目录（默认 REPO_ROOT）。
+
+    Returns:
+        {
+            "ok": bool,           # 全部 claim 成功为 True
+            "session_id": str,
+            "claimed": list[str], # 成功 claim 的相对路径
+            "blocked": list[str], # 被其他 session 持有的相对路径
+            "error": str,         # 失败原因（ok=False 时）
+        }
+    """
+    root = Path(project_root) if project_root else REPO_ROOT
+    root = root.resolve()
+    registry = _get_registry(root)
+
+    if not files:
+        return {
+            "ok": True, "session_id": session_id,
+            "claimed": [], "blocked": [], "error": "",
+        }
+
+    claimed: list[str] = []
+    blocked: list[str] = []
+    for f in files:
+        p = Path(f)
+        if not p.is_absolute():
+            p = (root / f).resolve()
+        rel = p.relative_to(root).as_posix()
+        try:
+            if registry.claim_file(session_id, rel):
+                claimed.append(rel)
+            else:
+                blocked.append(rel)
+        except Exception:  # noqa: BLE001 — 单文件 claim 失败不阻断其他文件
+            blocked.append(rel)
+
+    return {
+        "ok": len(blocked) == 0,
+        "session_id": session_id,
+        "claimed": claimed,
+        "blocked": blocked,
+        "error": (
+            f"以下文件被其他活跃 session 持有: {blocked}" if blocked else ""
+        ),
+    }
 
 
 def _get_merge_files(root: Path) -> list[str]:
