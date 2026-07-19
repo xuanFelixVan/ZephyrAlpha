@@ -350,3 +350,23 @@ data/architecture_health/dashboard_*.json
 # Docker Compose local override (5.34.2 — 本地私有覆盖，禁止入库；示例见 config/infra/docker-compose.override.example.yml)
 docker-compose.override.yml
 docker-compose.override.yaml
+
+# C4-2 治本（2026-07-20）：runtime 遥测产物 gitignore 闭环
+# 病根：runtime_violation_snapshot/health_snapshots/audit_logs 等 reconciler 运行时产物
+# 既未被 batched_auto_committer commit（纯运行时产物，不应入库），也未被 .gitignore
+# 排除，导致 git status 噪音 + 误入库风险（违反 trae_053 双轨判定——批量兜底缺失）。
+# 治本：分时快照忽略（timestamped, regenerable），保留 latest.json/baseline_*.yaml 等
+# "最新状态"文件入库。已 tracked 的历史文件不强制 git rm --cached（渐进式治本）。
+# 关联裁定：#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 Phase 4 C4-2
+
+# Runtime violation snapshots (timestamped, regenerable; latest.json + baseline_*.yaml tracked)
+data/runtime_violation_snapshot/snapshot_*.json
+
+# Health snapshots (timestamped, regenerable; latest.json tracked)
+data/health_snapshots/health_*.json
+
+# Audit logs (runtime, regenerable; timestamped ai_audit_*.jsonl)
+data/audit_logs/ai_audit_*.jsonl
+
+# Rollback trust score runtime state (regenerable; trust_score.json 下划线版本 tracked)
+data/rollback/trust/trust-score.json
