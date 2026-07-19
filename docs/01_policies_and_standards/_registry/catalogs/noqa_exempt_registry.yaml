@@ -167,6 +167,22 @@ markers:
     created: "2026-07-19"
     created_by: "ARCH-GOV-CONVERGENCE-META-Phase-3.6"
 
+  # ── P3-1.2 治本（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 B / C，2026-07-20）──────
+  # MANUAL-ONLY-PERMANENT gate 的合法豁免路径——AI/CI 按需调用的 permanent runner
+  - marker: "m11-perm-manual-legitimate"
+    metric_id: "M02"  # 复用 M02 manual-only 语义维度（同维度不同豁免类型）
+    description: "permanent manual 触发脚本合法豁免——AI/CI 按需调用（非 cron/非 daemon/非常驻服务）的回归 runner / 一次性治理脚本"
+    applicable_conditions:
+      - "permanent 脚本被 AI/CI 按需触发（人工或 CI workflow），非进程内常驻服务"
+      - "无事件订阅但属于合法 manual 触发场景（如回归 runner / 一次性数据修复脚本 / 紧急修复脚本）"
+      - "不同于 m02-manual-trigger（检测器自豁免）：m11 是业务脚本的合法 manual 触发豁免"
+    reason_required: true
+    reason_format: "M11豁免: <具体理由>（必须说明为何非常驻服务）"
+    reason_min_length: 10
+    scope: "per-file"
+    created: "2026-07-20"
+    created_by: "ARCH-P3-FOLLOWUP-TODOS-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

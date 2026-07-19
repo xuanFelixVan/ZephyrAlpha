@@ -91,6 +91,7 @@ from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
 from zephyr.security.access_control.session_concurrency import SessionRegistry
 from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.infra.process_pool import is_pid_alive
 
 import functools
 import logging
@@ -112,6 +113,7 @@ class StartResult(TypedDict, total=False):
     warning: str                # 任务去重警告时存在
     conflict_with: str          # 任务去重冲突 session
     overlap_files: list[str]    # 任务去重重叠文件
+    heartbeat_daemon_pid: int | None  # #ARCH-HEARTBEAT-001: daemon PID（None=spawn 失败）
 
 
 class CommitResult(TypedDict, total=False):
@@ -512,6 +514,138 @@ def _session_active_guard(repo_root: Path, session_id: str):
             lockfile.unlink()
         except OSError:
             pass
+
+
+# ---------------------------------------------------------------------------
+# #ARCH-HEARTBEAT-001: Heartbeat daemon spawn/kill（P0 治本，2026-07-20）
+# ---------------------------------------------------------------------------
+# 病根：pid=0 逻辑 session（跨 python -c 进程）仅靠 TTL=3600s 判活，stale session
+# 残留 1h 持有 held_files → HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈。
+# 治本：session_worktree_start spawn detached daemon 进程，每 30s 刷新 last_heartbeat；
+#       _is_session_alive 对 pid=0 改用 90s 心跳超时（3× interval，容忍 2 次丢失）；
+#       daemon 死亡 → 心跳停止 → 90s 后 session 判死 → held_files 自动释放。
+# ---------------------------------------------------------------------------
+
+
+def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
+    """heartbeat daemon PID 文件路径（#ARCH-HEARTBEAT-001）。"""
+    return root / ".runtime" / "locks" / f"heartbeat_{session_id}.pid"
+
+
+def _spawn_heartbeat_daemon(
+    session_id: str, root: Path, interval: int = 30,
+) -> int | None:
+    """spawn detached heartbeat daemon 进程（#ARCH-HEARTBEAT-001, P0 治本）。
+
+    daemon（heartbeat_daemon.run_daemon）每 ``interval`` 秒刷新 session heartbeat
+    （last_heartbeat），使 _is_session_alive 的 90s 超时判据生效。
+    daemon 在 session_worktree_merge/abort 时由 _kill_heartbeat_daemon 终止；
+    若 daemon 异常死亡，心跳停止，90s 后 session 判死，held_files 自动释放
+    （list_active 清理）。
+
+    幂等：若 daemon 已在运行（PID 文件存在且进程存活），不重复 spawn。
+
+    Args:
+        session_id: 要保活的 session ID。
+        root: 项目根目录。
+        interval: 心跳刷新间隔（秒），默认 30。测试可用更短间隔。
+
+    Returns: daemon PID 或 None（spawn 失败，不阻断 start——session 仍有 90s 可用）。
+    """
+    pid_file = _heartbeat_pid_file(root, session_id)
+    # 幂等：daemon 已在运行则不重复 spawn
+    try:
+        existing_pid = int(pid_file.read_text(encoding="utf-8").strip())
+        if is_pid_alive(existing_pid):
+            logger.info(
+                "heartbeat daemon already running: sid=%s pid=%d",
+                session_id, existing_pid,
+            )
+            return existing_pid
+    except (OSError, ValueError):
+        pass  # 无 PID 文件或损坏——继续 spawn
+
+    try:
+        pid_file.parent.mkdir(parents=True, exist_ok=True)
+        cmd = [
+            sys.executable, "-m",
+            "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon",
+            session_id,
+            str(root),
+            str(interval),
+        ]
+        env = os.environ.copy()
+        # 确保 src/ 在 PYTHONPATH（daemon 进程需导入 zephyr.* 模块）
+        src_path = str(root / "src")
+        env["PYTHONPATH"] = (
+            src_path + os.pathsep + env["PYTHONPATH"]
+            if env.get("PYTHONPATH") else src_path
+        )
+        # daemon 不需要 LLM 运行时拦截（sitecustomize.py kill-switch）
+        env["ZEPHYR_RUNTIME_GATE"] = "0"
+        creationflags = 0
+        start_new_session = False
+        if os.name == "nt":
+            # DETACHED_PROCESS: 不继承父控制台，父退出后存活
+            # CREATE_NEW_PROCESS_GROUP: 独立进程组，不受 Ctrl+C 影响
+            creationflags = (
+                getattr(subprocess, "DETACHED_PROCESS", 0x00000008)
+                | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
+            )
+        else:
+            start_new_session = True  # Unix: 新 session（setsid）
+        proc = subprocess.Popen(
+            cmd,
+            creationflags=creationflags,
+            start_new_session=start_new_session,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            close_fds=True,
+            cwd=str(root),
+            env=env,
+        )
+        pid_file.write_text(str(proc.pid), encoding="utf-8")
+        logger.info("heartbeat daemon spawned: sid=%s pid=%d", session_id, proc.pid)
+        return proc.pid
+    except Exception as e:  # noqa: BLE001 — spawn 失败不阻断 start
+        logger.warning(
+            "heartbeat daemon spawn failed (session will expire in 90s): %s", e,
+        )
+        return None
+
+
+def _kill_heartbeat_daemon(session_id: str, root: Path) -> None:
+    """终止 heartbeat daemon 进程（#ARCH-HEARTBEAT-001）。
+
+    在 session_worktree_merge/abort 时调用。Best-effort：
+    PID 文件不存在/进程已死均不报错。daemon 被 kill 后心跳停止，
+    但 session 已由 registry.unregister 清理，不影响业务。
+    """
+    pid_file = _heartbeat_pid_file(root, session_id)
+    try:
+        pid_str = pid_file.read_text(encoding="utf-8").strip()
+        pid = int(pid_str)
+    except (OSError, ValueError):
+        return  # 无 PID 文件或损坏——无 daemon 可 kill
+
+    try:
+        if os.name == "nt":
+            subprocess.run(
+                ["taskkill", "/PID", str(pid), "/F"],
+                capture_output=True, timeout=5,
+            )
+        else:
+            import signal
+            os.kill(pid, signal.SIGTERM)
+        logger.info("heartbeat daemon killed: sid=%s pid=%d", session_id, pid)
+    except Exception as e:  # noqa: BLE001 — best-effort
+        logger.debug("kill heartbeat daemon failed (may already be dead): %s", e)
+
+    try:
+        pid_file.unlink()
+    except OSError:
+        pass
 
 
 def _sweep_one_dir(
@@ -1129,6 +1263,10 @@ def session_worktree_start(
                 created = True
         else:
             created = False
+        # #ARCH-HEARTBEAT-001: spawn detached heartbeat daemon
+        # daemon 每 30s 刷新 last_heartbeat，使 _is_session_alive 的 90s 超时生效
+        # spawn 失败不阻断 start（session 仍有 90s 可用窗口）
+        daemon_pid = _spawn_heartbeat_daemon(sid, root)
         return {
             "session_id": sid,
             "worktree_path": str(wt_path),
@@ -1136,6 +1274,7 @@ def session_worktree_start(
             "registered": registered,
             "created": created,
             "health_check": health_check,
+            "heartbeat_daemon_pid": daemon_pid,
         }
     except WorktreeError as e:
         return {
@@ -3012,6 +3151,10 @@ def session_worktree_merge(
         # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
         unregistered = False
         if merged and cleaned:
+            # #ARCH-HEARTBEAT-001: 终止 heartbeat daemon（session 生命周期结束）
+            # 先 kill daemon 停止心跳，再 unregister——即使 unregister 失败，
+            # daemon 已停，90s 后 session 自动过期被 list_active 清理
+            _kill_heartbeat_daemon(session_id, root)
             try:
                 unregistered = registry.unregister(session_id)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -3213,6 +3356,8 @@ def session_worktree_abort(
         msg = f"unexpected: {e}"
 
     unregistered = False
+    # #ARCH-HEARTBEAT-001: 终止 heartbeat daemon（session 生命周期结束）
+    _kill_heartbeat_daemon(session_id, root)
     try:
         unregistered = registry.unregister(session_id)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
