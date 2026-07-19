@@ -79,7 +79,12 @@ def _init_git_repo(repo_dir: Path) -> None:
         ["git", "config", "user.email", "test@test.com"],
         cwd=str(repo_dir), capture_output=True, env=env, check=True,
     )
-    (repo_dir / "README.md").write_text("init\n", encoding="utf-8")
+    # 禁用 autocrlf——避免 Windows 上 git 自动将 \n 转 \r\n 导致内容比对失败
+    subprocess.run(
+        ["git", "config", "core.autocrlf", "false"],
+        cwd=str(repo_dir), capture_output=True, env=env, check=True,
+    )
+    (repo_dir / "README.md").write_bytes(b"init\n")
     subprocess.run(["git", "add", "README.md"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(["git", "commit", "-m", "init"], cwd=str(repo_dir), capture_output=True, env=env, check=True)
 
@@ -89,7 +94,8 @@ def _commit_file(repo_dir: Path, path: str, content: str) -> None:
     env = _git_env()
     fpath = repo_dir / path
     fpath.parent.mkdir(parents=True, exist_ok=True)
-    fpath.write_text(content, encoding="utf-8")
+    # 使用 write_bytes 避免 Windows write_text 的 \n→\r\n 自动转换
+    fpath.write_bytes(content.encode("utf-8"))
     subprocess.run(["git", "add", path], cwd=str(repo_dir), capture_output=True, env=env, check=True)
     subprocess.run(
         ["git", "commit", "-m", f"add {path}"],
@@ -374,7 +380,9 @@ class TestGitStatusPorcelain:
 
     def test_failed_git_status_returns_empty(self, tmp_path):
         # 非 git 仓库 → git status 失败 → 返回空列表（fail-open）
-        result = _git_status_porcelain(str(tmp_path))
+        # 注意：必须用 tmp_path 下的子目录，避免 tmp_path 本身落在主仓库内
+        # （--basetemp 可能指向仓库内路径，导致 git status 命中主仓库）
+        result = _git_status_porcelain(str(tmp_path / "nonexistent_subdir"))
         assert result == []
 
     def test_timeout_returns_empty(self, tmp_path):
@@ -453,13 +461,14 @@ class TestReconcile:
             "v2-modified\n", encoding="utf-8"
         )
         gw = _FakeGateway(tmp_path)
-        spec = make_workspace_hygiene_reconciler(gw)
-        # mock batcher.git_restore_batch 返回空列表（失败）
-        with patch.object(spec, "_batcher") if hasattr(spec, "_batcher") else patch(
+        # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
+        # （patch 类对已创建的实例无效）
+        with patch(
             "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
         ) as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = []
+            spec = make_workspace_hygiene_reconciler(gw)
             result = spec.reconcile(["data/telemetry/dev/metrics.jsonl"], "test-session")
         # restore 失败 → warn
         assert result.action == "warn"
@@ -561,13 +570,13 @@ class TestGitBudgetCompliance:
             "v2\n", encoding="utf-8"
         )
         gw = _FakeGateway(tmp_path)
-        spec = make_workspace_hygiene_reconciler(gw)
-        # mock GitCommandBatcher.git_restore_batch 验证被调用
+        # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
         with patch(
             "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
         ) as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = ["data/telemetry/dev/metrics.jsonl"]
+            spec = make_workspace_hygiene_reconciler(gw)
             result = spec.reconcile(["data/telemetry/dev/metrics.jsonl"], "test-session")
         # 验证 git_restore_batch 被调用一次（批量，非逐个）
         assert mock_batcher.git_restore_batch.call_count == 1
@@ -592,13 +601,13 @@ class TestGitBudgetCompliance:
             (tmp_path / f).parent.mkdir(parents=True, exist_ok=True)
             (tmp_path / f).write_text("v2\n", encoding="utf-8")
         gw = _FakeGateway(tmp_path)
-        spec = make_workspace_hygiene_reconciler(gw)
-        # mock git_restore_batch 返回空列表（批量失败）
+        # 必须在 patch 上下文内创建 spec，否则 factory 会创建真实 GitCommandBatcher 实例
         with patch(
             "zephyr.governance.audit.workspace_hygiene_reconciler.GitCommandBatcher"
         ) as mock_batcher_cls:
             mock_batcher = mock_batcher_cls.return_value
             mock_batcher.git_restore_batch.return_value = []
+            spec = make_workspace_hygiene_reconciler(gw)
             result = spec.reconcile(files, "test-session")
         # 验证 git_restore_batch 只被调用一次（不逐个重试）
         assert mock_batcher.git_restore_batch.call_count == 1
