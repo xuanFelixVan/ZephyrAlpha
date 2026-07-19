@@ -9,9 +9,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.4
+version: 1.3.5
 created: '2026-06-26'
-last_updated: '2026-07-17'
+last_updated: '2026-07-20'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -3943,4 +3943,62 @@ entries:
   related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (5 层闭环模型 + 第 6 层可预防性)'
   created: '2026-07-19'
-  last_updated: '2026-07-19'  # R1 裁定：阈值过渡期回滚 30→10（2026-08-02 回滚到 5）
+  last_updated: '2026-07-20'
+# --- #ARCH-ASYNC-MERGE-RECONCILE-001: session_worktree 异步化治本（2026-07-20） ---
+# 关联 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 的 P1 emergency_commit 治本路线图 + Ruling:100PCT-AI-GOVERNANCE R2 阈值调整
+- issue_id: '#ARCH-ASYNC-MERGE-RECONCILE-001'
+  title: session_worktree 异步化治本——emergency_commit / allow_overlap 滥用的 L1 根因消除
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定。Ruling:100PCT-AI-GOVERNANCE P3 收尾时复核 commit_gateway_abuse_monitor
+    5 维滥用检测数据，确认 emergency_commit / allow_overlap 滥用的 L1 最深层根因是
+    session_worktree_merge **同步阻塞 + 跨进程 PID liveness 失效**：
+
+    1. **同步阻塞**：session_worktree_commit / merge 走 git subprocess（add/commit/checkout/merge），
+       在 worktree 数量增长或 git lock 争用时延迟可达 5-15s。AI 在对话往返压力下为避免
+       超时频繁走 emergency_commit 逃生通道（17 次/24h sprint，全部是合法治理 commit）。
+
+    2. **PID liveness 失效**：session_worktree 通过 PID 检测 active session，但跨进程
+       PID 检测在 Windows PID 复用 / Linux PID wraparound 场景下不可靠，导致
+       allow_overlap 频繁被触发（1890/7d）——AI 不得不逃生 allow_overlap 才能提交。
+
+    治本方向：session_worktree **异步化**——commit/merge 改为非阻塞 fire-and-forget，
+    立即返回 token，后台 worker 串行处理，AI 不再因 git 性能压力绕过 session_worktree。
+
+
+    R2 阈值调整（commit_gateway_abuse_monitor_reconciler.py）作为治本前过渡：
+    - _EMERGENCY_24H_THRESHOLD: 30 → 20（容忍单次 governance sprint <20，仍捕获日常滥用 >20）
+    - _ALLOW_OVERLAP_7D_THRESHOLD: 30 → 500（适配 100% AI 开发 7d 累积流量）
+    过渡期阈值避免在治本未完成前持续误报，治本完成后收紧到稳态基线（emergency 5,
+    allow_overlap 200）。
+  fix_phase: |
+    Layer 2 立项（已完成 2026-07-20）：
+      - architecture_issue_registry.yaml 登记本条目
+      - commit_gateway_abuse_monitor_reconciler.py R2 阈值调整（过渡期）
+        + #ARCH-ASYNC-MERGE-RECONCILE-001 引用注释
+
+    P1 session_worktree 异步化（待独立裁定立项，本周）：
+      - session_worktree_commit / merge 改为异步 fire-and-forget
+      - 后台 worker 串行处理 git 操作（消除 lock 争用）
+      - 返回 token 供 AI 查询状态（消除同步阻塞）
+      - heartbeat 机制（.runtime/sessions/<sid>/heartbeat.jsonl，30s 追加，>5min = stale）
+        替代 PID liveness 检测（消除跨进程 PID 失效）
+
+    P2 治本后阈值收紧（治本完成后）：
+      - _EMERGENCY_24H_THRESHOLD: 20 → 5（稳态基线）
+      - _ALLOW_OVERLAP_7D_THRESHOLD: 500 → 200（稳态基线）
+
+    P3 长期：
+      - session_worktree 异步化 + heartbeat 覆盖率审计
+      - 治本后 emergency_commit / allow_overlap 自然下降验证
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（异步化改造点，P1 待实施）
+    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（R2 阈值过渡 + 治本后收紧）
+    - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（L1 根因分析引用本条目）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: open
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (P1 emergency_commit 治本路线图), #ARCH-P3-FOLLOWUP-TODOS-001 (P3 收尾复核), Ruling:100PCT-AI-GOVERNANCE (R2 阈值调整)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行), trae_053 (双轨判定)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
