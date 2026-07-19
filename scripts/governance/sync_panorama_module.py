@@ -156,12 +156,17 @@ def _query_depgraph_module(conn, module_id: str) -> dict | None:
             path = p
     domain_id = weighted_domain_vote(rows)
     design_maturity = _min_mat(maturities) if maturities else ""
+    # FP-ISO.4C 修复（2026-07-19）：空字符串统一转 None。
+    # 原因：weighted_domain_vote/min_maturity 在无值时返回 ""，但 decision_layers
+    # 的 chk_decision_layers_domain_id_not_empty 约束允许 NULL 禁止 ''，
+    # 导致 540 个空 domain_id 模块的 decision_layers INSERT 静默失败。
+    # 转为 None 让 PostgreSQL 写入 NULL，对齐约束语义。
     return {
         "module_id": module_id,
-        "domain_id": domain_id,
-        "design_maturity": design_maturity,
-        "build_status": build_status,
-        "path": path,
+        "domain_id": domain_id or None,
+        "design_maturity": design_maturity or None,
+        "build_status": build_status or None,
+        "path": path or None,
     }
 
 
@@ -236,7 +241,11 @@ def sync_module_panorama(module_id: str) -> int:
     # ARCH-FRONTMATTER-STATE-001 Phase 2：dataflow/decision 同步失败不阻断 frontmatter 对齐。
     # 三个下游 sync 目标（dataflow/decision/blueprint）相互独立，
     # 环境级权限问题（InsufficientPrivilege on dataflow_jobs）不应让 frontmatter reconciler 失效。
-    dataflow_conn = get_dataflowgraph_pg_connection(allow_design_delete=True)
+    # FP-ISO.4C 修复（2026-07-19）：必须传 read_only=False，否则连接工厂默认只读角色，
+    # INSERT/UPDATE 会被 PostgreSQL 拒绝（"对表 dataflow_jobs 权限不够"），同步静默失败。
+    dataflow_conn = get_dataflowgraph_pg_connection(
+        read_only=False, allow_design_delete=True,
+    )
     try:
         _sync_to_dataflow(dataflow_conn, module)
     except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
@@ -244,7 +253,9 @@ def sync_module_panorama(module_id: str) -> int:
     finally:
         dataflow_conn.close()
 
-    decision_conn = get_decisiongraph_pg_connection(allow_design_delete=True)
+    decision_conn = get_decisiongraph_pg_connection(
+        read_only=False, allow_design_delete=True,
+    )
     try:
         _sync_to_decision(decision_conn, module)
     except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
