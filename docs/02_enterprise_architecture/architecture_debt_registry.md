@@ -4123,12 +4123,12 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 **严重度汇总**：HIGH=9, MEDIUM=6, LOW=2, 合计=17
 
-### 5.176 AI-11 审计遗留专项工程（4个，AI-11 审计新增）
+### 5.180 AI-11 审计遗留专项工程（4个，AI-11 审计新增）
 
 > **AI-11 审计发现（2026-07-06）**：审计治理-规则+安全韧性域时识别 4 项需大规模重构的专项工程，均非阻断级，标记 DEFERRED 待后续专项工程处理。
 > **第1轮状态（2026-07-06 AI-11）**：DEFERRED=4，STILL_VALID=0。
 
-#### 5.176.1 [MEDIUM] gate_engine.py 孤儿栈硬编码 _GATE_FILES
+#### 5.180.1 [MEDIUM] gate_engine.py 孤儿栈硬编码 _GATE_FILES
 
 - **文件**：`src/zephyr/gov_enforcement/rule_enforcement/gate_engine/gate_engine.py` L40-180（_GATE_FILES 字典 + _run_check 960 行分发器）
 - **问题**：`gate_engine.py` 中 `_GATE_FILES` 字典硬编码 30+ gate 文件路径，与 `_registry.yaml`（声明式 gate 注册表）形成双真源；`_run_check` 函数 960 行用 if-elif 分发，违反声明式注册原则。该文件是 check_type_registry 死代码根源（每次新增 gate 需同步修改 3 处：_registry.yaml / _GATE_FILES / _run_check 分支）。
@@ -4136,24 +4136,24 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **专项工程计划**：3 阶段施工——阶段 1 加载器迁移 + 阶段 2 dispatch 重构 + 阶段 3 死代码清理。每阶段独立 commit + AST 验证。
 - **DEFERRED 理由**：影响面 960 行核心分发器，触及全 governance 域 gate 注册链路；非阻断且现有硬编码可工作，专项重构需独立任务。
 
-#### 5.176.2 [MEDIUM] rule_enforcement 容量治理（ARCH-CAP-002 单域 ≤150 节点）
+#### 5.180.2 [MEDIUM] rule_enforcement 容量治理（ARCH-CAP-002 单域 ≤150 节点）
 
 - **文件**：`src/zephyr/gov_enforcement/rule_enforcement/` 整域
 - **问题**：rule_enforcement 域 production_nodes 数量接近 ARCH-CAP-002 单域 ≤150 上限，需评估是否拆分为 rule_enforcement_core + rule_enforcement_invariants + rule_enforcement_gates 等子域。当前未触发硬阻断（<150），但需前瞻性容量规划。
 - **修复方向**：(1) 运行 `generate_project_depgraph.py` 量化当前节点数；(2) 若 >120 则启动拆分评估；(3) 拆分时遵循"功能域平级，能平铺绝不嵌套"原则。
 - **专项工程计划**：先量化 → 再评估 → 最后拆分（如需）。
 - **DEFERRED 理由**：未触发硬阻断，当前容量仍在合规区间；拆分需重新设计域边界，影响 AGENTS.md / depgraph / capability registry 多处真源，属架构级变更。
-- **R99 验证结果（2026-07-12）**：FIXED（验证通过，无需拆分）。运行 `generate_project_depgraph.py` 重新生成 depgraph 快照后，D_GOV_ENFORCEMENT 域 production nodes = 82（81 module + 1 gate_rule_set，build_status=generated/stable），远低于 ARCH-CAP-002 ≤150 硬上限和 >120 早期预警阈值。5.176.1 Phase 3 删除 check_types/ 包（35源文件）后，depgraph 中 check_types/ 节点已全部清除（0残留 ghost 节点）。域容量安全，无需拆分。
+- **R99 验证结果（2026-07-12）**：FIXED（验证通过，无需拆分）。运行 `generate_project_depgraph.py` 重新生成 depgraph 快照后，D_GOV_ENFORCEMENT 域 production nodes = 82（81 module + 1 gate_rule_set，build_status=generated/stable），远低于 ARCH-CAP-002 ≤150 硬上限和 >120 早期预警阈值。5.180.1 Phase 3 删除 check_types/ 包（35源文件）后，depgraph 中 check_types/ 节点已全部清除（0残留 ghost 节点）。域容量安全，无需拆分。
 
-#### 5.176.3 [MEDIUM] check_type_registry 死代码
+#### 5.180.3 [MEDIUM] check_type_registry 死代码
 
 - **文件**：`src/zephyr/gov_enforcement/rule_enforcement/check_types/check_type_registry.py`（参考 P0-7 修复的 invariants 三文件后仍存在的死代码）
-- **问题**：`check_type_registry.py` 中部分 check_type 类未被任何 gate 引用（与 5.176.1 同源：gate_engine 硬编码分支绕过 registry 查找）。审计 P0-7 已修复 invariants 三文件的双真源（py 从 yaml 加载），但 check_type_registry 仍存在死代码。
-- **修复方向**：与 5.176.1 联动——gate_engine 改用 registry dispatch 后，check_type_registry 中的死代码（未被 _GATE_FILES 引用的类）可被静态分析识别并清理。
-- **专项工程计划**：跟随 5.176.1 阶段 3（死代码清理）一并处理。
-- **DEFERRED 理由**：依赖 5.176.1 完成；独立清理会因 gate_engine 仍硬编码而触发误判（被硬编码分支引用的类被识别为"活"代码）。
+- **问题**：`check_type_registry.py` 中部分 check_type 类未被任何 gate 引用（与 5.180.1 同源：gate_engine 硬编码分支绕过 registry 查找）。审计 P0-7 已修复 invariants 三文件的双真源（py 从 yaml 加载），但 check_type_registry 仍存在死代码。
+- **修复方向**：与 5.180.1 联动——gate_engine 改用 registry dispatch 后，check_type_registry 中的死代码（未被 _GATE_FILES 引用的类）可被静态分析识别并清理。
+- **专项工程计划**：跟随 5.180.1 阶段 3（死代码清理）一并处理。
+- **DEFERRED 理由**：依赖 5.180.1 完成；独立清理会因 gate_engine 仍硬编码而触发误判（被硬编码分支引用的类被识别为"活"代码）。
 
-#### 5.176.4 [LOW] commit_gates 5 处 subprocess.run 绕过 gateway._run_git
+#### 5.180.4 [LOW] commit_gates 5 处 subprocess.run 绕过 gateway._run_git
 
 - **文件**：
   - `src/zephyr/gov_enforcement/commit_gates/arch_reference_gate.py:131`（`git show`）
@@ -4172,17 +4172,17 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 - **专项工程计划**：(1) 扩展 `_run_git` 支持查询类命令；(2) 批量替换 13 处 subprocess.run；(3) 测试验证。
 - **DEFERRED 理由**：非阻断，各 gate 自行处理 cwd/timeout 工作正常；批量替换需先验证 `_run_git` 兼容性，属一致性优化非正确性修复。
 
-> **第95轮修复状态（2026-07-10）**：FIXED=6(LOW 5.176.4: arch_reference_gate/dangling_reference_gate/exempt_zone_frontmatter_gate/r5_digit_suffix_gate/module_id_consistency_gate 共6处 git 命令 subprocess.run 替换为 gateway._run_git, 对齐 _diff_helpers.py 模式. _get_head_content/_is_tracked_in_head 模块级函数改为接收 gateway 参数. 3个测试文件 mock 同步更新. 63测试全通过), DEFERRED-PERMANENT=7(directory_contract_gate/ttl_gate/file_copy_gate/vocab_hardcode_gate/rule_four_way_alignment_gate/id_uniqueness_gate 共7处 [sys.executable, script] Python脚本调用, 非git命令不适合_run_git替换), DEFERRED=1(orphan_module_gate:235 cwd=wt_root可能!=project_root需扩展_run_git支持cwd参数). commit=90c5b09772 merged.
+> **第95轮修复状态（2026-07-10）**：FIXED=6(LOW 5.180.4: arch_reference_gate/dangling_reference_gate/exempt_zone_frontmatter_gate/r5_digit_suffix_gate/module_id_consistency_gate 共6处 git 命令 subprocess.run 替换为 gateway._run_git, 对齐 _diff_helpers.py 模式. _get_head_content/_is_tracked_in_head 模块级函数改为接收 gateway 参数. 3个测试文件 mock 同步更新. 63测试全通过), DEFERRED-PERMANENT=7(directory_contract_gate/ttl_gate/file_copy_gate/vocab_hardcode_gate/rule_four_way_alignment_gate/id_uniqueness_gate 共7处 [sys.executable, script] Python脚本调用, 非git命令不适合_run_git替换), DEFERRED=1(orphan_module_gate:235 cwd=wt_root可能!=project_root需扩展_run_git支持cwd参数). commit=90c5b09772 merged.
 
-> **第96轮修复状态（2026-07-10）**：FIXED=7(LOW 5.176.4: orphan_module_gate:235 subprocess.run 替换为 gateway._run_git(cwd=wt_root). _run_git 扩展可选 cwd: str | None = None 参数支持 worktree root 执行. 测试 mock 改用 MagicMock(side_effect=...) + side_effect 覆盖模式. 21测试全通过), DEFERRED-PERMANENT=7(不变), DEFERRED=0(5.176.4 全部清零). commit=9a4446b510 merged.
+> **第96轮修复状态（2026-07-10）**：FIXED=7(LOW 5.180.4: orphan_module_gate:235 subprocess.run 替换为 gateway._run_git(cwd=wt_root). _run_git 扩展可选 cwd: str | None = None 参数支持 worktree root 执行. 测试 mock 改用 MagicMock(side_effect=...) + side_effect 覆盖模式. 21测试全通过), DEFERRED-PERMANENT=7(不变), DEFERRED=0(5.180.4 全部清零). commit=9a4446b510 merged.
 
-> **第97轮修复状态（2026-07-10）**：FIXED=1(MEDIUM 5.176.1 Phase 1: _GATE_FILES 70条目硬编码字典改为从 _registry.yaml 动态加载. 新增模块级函数 _load_gate_files_from_registry + 实例方法 _load_gate_configs_from_registry 两遍加载策略(第一遍可执行checks/entry_conditions优先, 第二遍叙述型rules填补空缺). 自然解决 G0/G0_ORC 双条目冲突(g0_entry.yaml仅rules被跳过, g0_orc_gate_engine.yaml有checks加载为G0). reload_gates()不再迭代_GATE_FILES. _GATE_FILES保留为类变量(从registry动态填充)兼容tests/trae_rules/. 测试EXPECTED_GATE_IDS动态计算. 480 trae_rules + 252 gate测试通过). DEFERRED=2(5.176.1 Phase 2 _run_check分发器重构 + 5.176.3 check_type_registry死代码清理), DEFERRED-PERMANENT=7(不变). commit=da4e4a7b6e merged=396578d4d9.
+> **第97轮修复状态（2026-07-10）**：FIXED=1(MEDIUM 5.180.1 Phase 1: _GATE_FILES 70条目硬编码字典改为从 _registry.yaml 动态加载. 新增模块级函数 _load_gate_files_from_registry + 实例方法 _load_gate_configs_from_registry 两遍加载策略(第一遍可执行checks/entry_conditions优先, 第二遍叙述型rules填补空缺). 自然解决 G0/G0_ORC 双条目冲突(g0_entry.yaml仅rules被跳过, g0_orc_gate_engine.yaml有checks加载为G0). reload_gates()不再迭代_GATE_FILES. _GATE_FILES保留为类变量(从registry动态填充)兼容tests/trae_rules/. 测试EXPECTED_GATE_IDS动态计算. 480 trae_rules + 252 gate测试通过). DEFERRED=2(5.180.1 Phase 2 _run_check分发器重构 + 5.180.3 check_type_registry死代码清理), DEFERRED-PERMANENT=7(不变). commit=da4e4a7b6e merged=396578d4d9.
 
-> **第98轮修复状态（2026-07-10）**：FIXED=2(MEDIUM 5.176.1 Phase 2 + 5.176.3). Phase 2: _run_check 27分支if-elif链替换为_CHECK_DISPATCH分发表(33条目)+26个handler函数. 新增_make_violation辅助函数(支持severity覆盖)修复潜在_add(severity=)TypeError bug. 每个handler有独立_add闭包. 248 gate+480 trae_rules测试通过. commit=d357556960 merged. Phase 3: 删除check_types/整个包(35源文件: check_type_registry.py+33个ct_*.py+__init__.py+adversarial_validation.py)+34测试文件. CheckTypeHandler ABC+33个handler子类从未被_run_check调用(Phase 2用_CHECK_DISPATCH替代). 编辑test_adversarial_gate_integration.py移除TestGateRegistry类保留TestGatePipelineIntegration. 6 ghost depgraph节点自动清理. 188 gate测试通过. commit=efc31ce4ff merged. DEFERRED=0(5.176.1三阶段全部完成, 5.176.3完成), DEFERRED-PERMANENT=7(不变).
+> **第98轮修复状态（2026-07-10）**：FIXED=2(MEDIUM 5.180.1 Phase 2 + 5.180.3). Phase 2: _run_check 27分支if-elif链替换为_CHECK_DISPATCH分发表(33条目)+26个handler函数. 新增_make_violation辅助函数(支持severity覆盖)修复潜在_add(severity=)TypeError bug. 每个handler有独立_add闭包. 248 gate+480 trae_rules测试通过. commit=d357556960 merged. Phase 3: 删除check_types/整个包(35源文件: check_type_registry.py+33个ct_*.py+__init__.py+adversarial_validation.py)+34测试文件. CheckTypeHandler ABC+33个handler子类从未被_run_check调用(Phase 2用_CHECK_DISPATCH替代). 编辑test_adversarial_gate_integration.py移除TestGateRegistry类保留TestGatePipelineIntegration. 6 ghost depgraph节点自动清理. 188 gate测试通过. commit=efc31ce4ff merged. DEFERRED=0(5.180.1三阶段全部完成, 5.180.3完成), DEFERRED-PERMANENT=7(不变).
 
 > **第98.1轮修复状态（2026-07-10）**：FIXED=1(Phase 3遗留清理). blueprint.md移除33个check_types/条目(§4.7 OCP扩展点表+模块清单表+实现清单表). trae_046 CheckType条目更新: 真源改为gate_engine.py _CHECK_DISPATCH分发表(33条目)+26个handler函数, 废弃改为check_types/包(35源文件已删除)+原if/elif链(27分支已替换). test_suite_registry.yaml移除34个已删除测试文件条目(33个test_ct_*.py+1个test_check_type_registry.py). commit=fbef5181dc merged. 7个reconciler全部clean/auto_committed.
 
-> **第99轮修复状态（2026-07-12）**：FIXED=1(MEDIUM 5.176.2 rule_enforcement容量治理). 运行generate_project_depgraph.py重新生成depgraph快照, D_GOV_ENFORCEMENT域production nodes=82(81 module + 1 gate_rule_set, build_status=generated/stable), 远低于ARCH-CAP-002 ≤150硬上限和>120早期预警阈值. 5.176.1 Phase 3删除check_types/包(35源文件)后depgraph中check_types/节点已全部清除(0残留ghost节点). 域容量安全无需拆分. 维度5.176全部清零(5.176.1/2/3/4全部FIXED), DEFERRED=0, DEFERRED-PERMANENT=7(不变).
+> **第99轮修复状态（2026-07-12）**：FIXED=1(MEDIUM 5.180.2 rule_enforcement容量治理). 运行generate_project_depgraph.py重新生成depgraph快照, D_GOV_ENFORCEMENT域production nodes=82(81 module + 1 gate_rule_set, build_status=generated/stable), 远低于ARCH-CAP-002 ≤150硬上限和>120早期预警阈值. 5.180.1 Phase 3删除check_types/包(35源文件)后depgraph中check_types/节点已全部清除(0残留ghost节点). 域容量安全无需拆分. 维度5.176全部清零(5.180.1/2/3/4全部FIXED), DEFERRED=0, DEFERRED-PERMANENT=7(不变).
 
 > **AI-11 审计小结**：4 项 DEFERRED 均为大规模重构/架构级变更，符合"专项工程"定义。审计同步修复的 10 项 P0 + 多项 P1/P2/P3 已通过 commit 落地，剩余 4 项 DEFERRED 待后续专项工程处理。
 
