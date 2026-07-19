@@ -1,6 +1,6 @@
 # 决策流图 · 层级详情图
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 辅助图
@@ -134,6 +134,7 @@ flowchart LR
     LMOD_GOV_runtime_violation_snapshot_reconciler["[design] MOD-GOV_runtime_violation_snapshot_reconciler MOD-GOV_runtime_violation_snapshot_reconciler<br/>MOD-GOV_runtime_violation_snapshot_reconciler<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_GOV_security_governance["[prototype] MOD-GOV_security_governance MOD-GOV_security_governance<br/>MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_sync_savepoint_test["[prototype] MOD-GOV_sync_savepoint_test MOD-GOV_sync_savepoint_test<br/>MOD-GOV_sync_savepoint_test<br/>蓝图: MOD-GOV_sync_savepoint_test<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_yaml_sync_error_class["[prototype] MOD-GOV_yaml_sync_error_class MOD-GOV_yaml_sync_error_class<br/>MOD-GOV_yaml_sync_error_class<br/>蓝图: MOD-GOV_yaml_sync_error_class<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_001["[prototype] MOD-INF-001 MOD-INF-001<br/>MOD-INF-001<br/>蓝图: MOD-INF-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_002["[prototype] MOD-INF-002 MOD-INF-002<br/>MOD-INF-002<br/>蓝图: MOD-INF-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_003["[prototype] MOD-INF-003 MOD-INF-003<br/>MOD-INF-003<br/>蓝图: MOD-INF-003<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -181,7 +182,7 @@ flowchart LR
     LMOD_L02_001["[prototype] MOD-L02-001 MOD-L02-001<br/>MOD-L02-001<br/>蓝图: MOD-L02-001<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_L03_001["[prototype] MOD-L03-001 MOD-L03-001<br/>MOD-L03-001<br/>蓝图: MOD-L03-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L04_001["[prototype] MOD-L04-001 MOD-L04-001<br/>MOD-L04-001<br/>蓝图: MOD-L04-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_L05_001["[prototype] MOD-L05-001 MOD-L05-001<br/>MOD-L05-001<br/>蓝图: MOD-L05-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_L05_001["[prototype] MOD-L05-001 MOD-L05-001<br/>MOD-L05-001<br/>蓝图: MOD-L05-001<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_L06_001["[design] MOD-L06-001 MOD-L06-001<br/>MOD-L06-001<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_L07_001["[prototype] MOD-L07-001 MOD-L07-001<br/>MOD-L07-001<br/>蓝图: MOD-L07-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L08_001["[design] MOD-L08-001 MOD-L08-001<br/>MOD-L08-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
@@ -653,7 +654,9 @@ flowchart LR
     LMOD_TEST_708["[prototype] MOD-TEST-708 MOD-TEST-708<br/>MOD-TEST-708<br/>蓝图: MOD-TEST-708<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_710["[prototype] MOD-TEST-710 MOD-TEST-710<br/>MOD-TEST-710<br/>蓝图: MOD-TEST-710<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_apply_depgraph_smoke["[prototype] MOD-TEST-apply_depgraph_smoke MOD-TEST-apply_depgraph_smoke<br/>MOD-TEST-apply_depgraph_smoke<br/>蓝图: MOD-TEST-apply_depgraph_smoke<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_TEST_apply_depgraph_smoke["[prototype] MOD-TEST_apply_depgraph_smoke MOD-TEST_apply_depgraph_smoke<br/>MOD-TEST_apply_depgraph_smoke<br/>蓝图: MOD-TEST_apply_depgraph_smoke<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TRADING_001["[prototype] MOD-TRADING-001 MOD-TRADING-001<br/>MOD-TRADING-001<br/>蓝图: MOD-TRADING-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_WORKSPACE_TELEMETRY["[prototype] MOD-WORKSPACE_TELEMETRY MOD-WORKSPACE_TELEMETRY<br/>MOD-WORKSPACE_TELEMETRY<br/>蓝图: MOD-WORKSPACE_TELEMETRY<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_XLR_003["[prototype] MOD-XLR-003 MOD-XLR-003<br/>MOD-XLR-003<br/>蓝图: MOD-XLR-003<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_migrate_sqlite_to_pg["[prototype] MOD-migrate_sqlite_to_pg MOD-migrate_sqlite_to_pg<br/>MOD-migrate_sqlite_to_pg<br/>蓝图: MOD-migrate_sqlite_to_pg<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_readme_version_sync["[prototype] MOD-readme_version_sync MOD-readme_version_sync<br/>MOD-readme_version_sync<br/>蓝图: MOD-readme_version_sync<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -788,7 +791,8 @@ flowchart LR
     LMOD_GOV_runtime_violation_snapshot -->|triggering| LMOD_GOV_runtime_violation_snapshot_reconciler
     LMOD_GOV_runtime_violation_snapshot_reconciler -->|triggering| LMOD_GOV_security_governance
     LMOD_GOV_security_governance -->|triggering| LMOD_GOV_sync_savepoint_test
-    LMOD_GOV_sync_savepoint_test -->|triggering| LMOD_INF_001
+    LMOD_GOV_sync_savepoint_test -->|triggering| LMOD_GOV_yaml_sync_error_class
+    LMOD_GOV_yaml_sync_error_class -->|triggering| LMOD_INF_001
     LMOD_INF_001 -->|triggering| LMOD_INF_002
     LMOD_INF_002 -->|triggering| LMOD_INF_003
     LMOD_INF_003 -->|triggering| LMOD_INF_005
@@ -1307,8 +1311,10 @@ flowchart LR
     LMOD_TEST_706 -->|triggering| LMOD_TEST_708
     LMOD_TEST_708 -->|triggering| LMOD_TEST_710
     LMOD_TEST_710 -->|triggering| LMOD_TEST_apply_depgraph_smoke
+    LMOD_TEST_apply_depgraph_smoke -->|triggering| LMOD_TEST_apply_depgraph_smoke
     LMOD_TEST_apply_depgraph_smoke -->|triggering| LMOD_TRADING_001
-    LMOD_TRADING_001 -->|triggering| LMOD_XLR_003
+    LMOD_TRADING_001 -->|triggering| LMOD_WORKSPACE_TELEMETRY
+    LMOD_WORKSPACE_TELEMETRY -->|triggering| LMOD_XLR_003
     LMOD_XLR_003 -->|triggering| LMOD_migrate_sqlite_to_pg
     LMOD_migrate_sqlite_to_pg -->|triggering| LMOD_readme_version_sync
     LMOD_readme_version_sync -->|triggering| LPLACEHOLDER_MOD_GOV_SYNC_PANORAMA

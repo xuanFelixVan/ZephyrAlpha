@@ -1,11 +1,11 @@
-# 决策流图 · L2A 功能域 simulation
+# Decision Flow · L2A Functional Domain simulation（仿真）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → simulation
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `simulation`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `simulation`（仿真）
 
 ## 统计
 
@@ -138,16 +138,16 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | decision/signal/sg_13 | → | decision/simulation/sim_01 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 2 个外部域直接连接。
+> 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["simulation"]:::selfDomain
-    EXT_aut_core["aut_core"]:::extDomain
+    SELF["simulation（仿真）"]:::selfDomain
+    EXT_aut_core["aut_core（自主核心）"]:::extDomain
     SELF -->|出 1| EXT_aut_core
-    EXT_signal["signal"]:::extDomain
+    EXT_signal["signal（信号）"]:::extDomain
     EXT_signal -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000

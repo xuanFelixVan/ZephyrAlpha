@@ -1,11 +1,11 @@
-# 决策流图 · L3 功能域 ex_core
+# Decision Flow · L3 Functional Domain ex_core（执行核心）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_core
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `ex_core`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `ex_core`（执行核心）
 
 ## 统计
 
@@ -110,18 +110,18 @@ flowchart TD
 | 1 | decision/aut_core/ac_24 | → | decision/ex_core/ex_03 | informing |
 | 2 | decision/compliance/cmp_11 | → | decision/ex_core/ex_01 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 3 个外部域直接连接。
+> 本域与 3 个外部域直接连接 / This domain directly connects to 3 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["ex_core"]:::selfDomain
-    EXT_ex_sor["ex_sor"]:::extDomain
+    SELF["ex_core（执行核心）"]:::selfDomain
+    EXT_ex_sor["ex_sor（执行排序）"]:::extDomain
     SELF -->|出 2| EXT_ex_sor
-    EXT_aut_core["aut_core"]:::extDomain
+    EXT_aut_core["aut_core（自主核心）"]:::extDomain
     EXT_aut_core -->|入 1| SELF
-    EXT_compliance["compliance"]:::extDomain
+    EXT_compliance["compliance（compliance）"]:::extDomain
     EXT_compliance -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000
