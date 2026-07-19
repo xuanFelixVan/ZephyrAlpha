@@ -70,7 +70,6 @@ class AllSkillModules:
         "skill_durable",
         "skill_prompt_cache",
         "skill_cache_provider",
-        "skill_knowledge_base",
         "skill_di",
         "skill_guardrails",
         "skill_team_optimizer",

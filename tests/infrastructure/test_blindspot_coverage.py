@@ -61,9 +61,6 @@ BLINDSPOT_TO_CODE = {
     "G6_task_queue": "queue/task_queue.TaskQueue",
     "G7_impact_propagation": "impact/impact_propagator.ImpactPropagator",
     "G8_semantic_impact": "impact/llm_impact_analyzer.LLMImpactAnalyzer",
-    "H1_ke_structuring": "knowledge/ke_structurer.KEStructurer",
-    "H2_ke_linking": "knowledge/ke_linker.KELinker",
-    "H3_kms_interface": "knowledge/kms_interface.KMSInterface",
     "H4_draft_assistant": "draft/draft_assistant.DraftAssistant",
 }
 

@@ -32,7 +32,7 @@ VMS — Vector Memory Service 接口基类
   - EmbeddingEngineBase : OCP VMS-EMB — 嵌入生成
 
 过渡期说明（2026-05-05）：
-  当前业务能力由 zephyr.knowledge.kb.unified_memory_api 承接（参见 vector-memory/__init__.py）。
+  当前业务能力由 vector_memory 子包承接（参见 vector-memory/__init__.py）。
   本文件定义 VMS 独立进程/Chroma 后端的规划接口——Phase B 骨架就位，Phase D 落地实现。
 """
 

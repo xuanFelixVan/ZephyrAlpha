@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_engine
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.utils.db_utils; zephyr.gov_enforcement.rule_enforcement.gate_types; zephyr.gov_enforcement.rule_enforcement.risk_ssot; zephyr.gov_enforcement.rule_enforcement.task_types; zephyr.shared.io.io_cache; zephyr.shared.blueprint_code_auditor; zephyr.shared.code_economy_analyzer; zephyr.shared.combinatorial_gate; zephyr.shared.core_integrity_guard; zephyr.shared.slo_review_assistant; zephyr.gov_enforcement.rule_enforcement.circuit_breaker; zephyr.gov_drift.drift_infrastructure; zephyr.gov_enforcement.rule_enforcement.invariants.en_001_circular_dependency; zephyr.gov_enforcement.rule_enforcement.invariants.en_002_enforcement_validator; zephyr.gov_enforcement.rule_enforcement.invariants.en_003_contract_compatibility; zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check; zephyr.shared.contracts.protocols; zephyr.governance.__init__
-# [CONSUMERS] zephyr.governance.persistence.task_repo; zephyr.governance.lifecycle_governance.transition; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.autonomy_core.skills.skill_executor
+# [CONSUMERS] zephyr.governance.persistence.task_repo; zephyr.governance.lifecycle_governance.transition; zephyr.autonomy_core.skills.skill_executor
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
