@@ -1433,22 +1433,30 @@ def sync_dataflow_registry(cur):
     from datetime import datetime, UTC
     now_iso = datetime.now(UTC).isoformat(timespec="seconds")
 
-    # --- 清空运营态数据（DELETE + INSERT 模式，保护设计态）---
+    # --- 清空运营态数据（DELETE + INSERT 模式，保护设计态 + 原型态）---
     # ARCH-052: 与 generate_project_depgraph.py 对齐——保护 design_maturity='design' 的设计态数据
     # apply_dataflowgraph.py --add-design-* 写入的数据（design_maturity='design', build_status='planned'）
     # 不得被常规 sync 清空。NULL != 'design' 为 NULL（非 TRUE），需显式处理。
     # 先 edges（FK 逻辑依赖），再 datasets/jobs
+    #
+    # Ruling:100PCT-AI-GOVERNANCE P0-5 (2026-07-19) 治本：
+    # 原 DELETE 谓词 `design_maturity != 'design'` 会误删 prototype 占位记录
+    # （sync_panorama_module.py 写入的 module_placeholder，design_maturity='prototype'）。
+    # 225 条 prototype 被并发 session 误删事件根因。
+    # 治本：谓词从"排除 design"改为"只删 production"，保护 design + prototype。
+    # 配套 P0-4：protect_dataflow_design_maturity 触发器同步扩展保护 prototype，
+    # 双重防御（谓词层 + 触发器层），即使谓词漏判，触发器仍阻断。
     cur.execute(
         "DELETE FROM dataflow_edges "
-        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
     )
     cur.execute(
         "DELETE FROM dataflow_datasets "
-        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
     )
     cur.execute(
         "DELETE FROM dataflow_jobs "
-        "WHERE design_maturity IS NULL OR design_maturity != 'design'"
+        "WHERE design_maturity IS NULL OR design_maturity = 'production'"
     )
 
     # --- 同步 jobs（先 jobs，因为 datasets 的 produced_by_job 引用 job_name）---
