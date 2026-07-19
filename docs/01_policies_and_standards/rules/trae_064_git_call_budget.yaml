@@ -46,9 +46,9 @@ sections:
       fail: 逐文件调用在 14 万文件工作区 + fscache/fsmonitor 路径上是 git.exe 2.48.x 崩溃（0xc0000005 @ 0x13e4d4）的放大源
     actions:
     - type: mandatory
-      step: '铁律1: 任何循环内禁止直接调用 subprocess.run(["git", ...])（N 文件 = N subprocess）。MUST 用 GitCommandBatcher 批量化（git_show_batch / git_diff_cached_names / git_ls_files_tracked）'
+      step: '铁律1: AI 编写的业务代码中，任何循环内禁止直接调用 subprocess.run(["git", ...])（N 文件 = N subprocess）。MUST 用 GitCommandBatcher 批量化（git_show_batch / git_diff_cached_names / git_ls_files_tracked）。场景区分（Phase 3 治本 2026-07-19）：本条针对 AI 编写的业务代码；GitCommandBatcher 内部实现（单次 git archive 批量调用，不在循环内）不违反本条'
     - type: mandatory
-      step: '铁律2: 可信内部模块（session_worktree / GitCommitGateway）的 git 子进程调用 MUST 设置 ZEPHYR_GIT_GUARD_FAST_PATH=1 env，跳过 git_guard alias 拦截的 ls-files 扫描'
+      step: '铁律2: 可信内部模块（session_worktree / GitCommitGateway）的 git 子进程调用 MUST 设置 ZEPHYR_GIT_GUARD_FAST_PATH=1 env，跳过 git_guard alias 拦截的 ls-files 扫描。场景区分（Phase 3 治本 2026-07-19）：本条明确"可信内部模块"vs"AI 业务代码"——可信内部模块享有 fast-path 豁免，AI 业务代码不享有'
     - type: mandatory
       step: '铁律3: 仓库级 .git/config MUST 锁定 core.fscache=false + core.fsmonitor=false（git 2.48.x 崩溃路径）'
     - type: mandatory

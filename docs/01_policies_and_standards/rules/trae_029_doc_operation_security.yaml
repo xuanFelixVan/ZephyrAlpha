@@ -63,10 +63,12 @@ sections:
       step: MUST更新所有引用后再完成删除/移动——遗漏引用更新=断链批量积累
     - type: mandatory
       step: "搬迁commit message必须包含moved: old/path -> new/path | reason: 一句话原因"
+    - type: mandatory
+      step: "场景区分（Phase 3 治本 2026-07-19）：AI 私自使用 --no-verify 禁止；GitCommitGateway / session_worktree_commit 内部使用 --no-verify 合规（有 in-process gate 等效检查 + POST-COMMIT-GUARD 兜底）"
     prohibitions:
     - 禁止删除锚点文件(治理系统崩溃风险)
     - 禁止先删文件后清引用(分两次commit)
-    - 禁止使用--no-verify跳过pre-commit检查
+    - 禁止 AI 私自使用 --no-verify 跳过 pre-commit 检查（绕过 GitCommitGateway 门禁；工具内部使用合规）
     - 禁止不查搬迁历史直接移动文件
   doc_008:
     title: 文档控制原则-DOC-001~DOC-004 (GOV-DOC-009前4条)

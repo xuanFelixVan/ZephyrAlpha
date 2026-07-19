@@ -136,20 +136,24 @@ sections:
     prohibitions:
     - 先删文件后清引用（分两次 commit）
   abs_16:
-    title: "使用 `--no-verify` 跳过pre-commit检查"
+    title: "AI 私自使用 `--no-verify` 跳过 pre-commit 检查"
     section_type: rule
     original_rules:
     - ABS-16
     conditions:
     - type: pre_condition
-      check: 检测 ABS-16 违规
+      check: 检测 ABS-16 违规（Phase 3 治本 2026-07-19：区分 AI 私自使用 vs 工具内部使用）
       pass: 操作合规
-      fail: pre-commit 是最后一道门禁，跳过 = 绕过所有自动化检查
+      fail: pre-commit 是最后一道门禁，AI 私自跳过 = 绕过所有自动化检查
+    - type: scope_exclusion
+      check: 场景区分（Phase 3 治本 2026-07-19）——GitCommitGateway / session_worktree_commit 内部使用 --no-verify 是否合规
+      pass: GitCommitGateway / session_worktree_commit 内部使用 --no-verify 合规（有 in-process gate 等效检查 + POST-COMMIT-GUARD 兜底，不属于本条禁止范围）
+      fail: AI 在 shell 中直接执行 git commit --no-verify 绕过 GitCommitGateway 门禁
     actions:
     - type: mandatory
-      step: 修复 pre-commit 报错后正常提交
+      step: 修复 pre-commit 报错后通过 GitCommitGateway 正常提交
     prohibitions:
-    - 使用 `--no-verify` 跳过 pre-commit 检查
+    - AI 私自使用 `--no-verify` 跳过 pre-commit 检查（绕过 GitCommitGateway 门禁）
   change_history:
     title: 修订记录
     section_type: examples
