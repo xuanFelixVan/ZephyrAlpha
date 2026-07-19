@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.meta.backup_runtime_state
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.meta.__init__; zephyr.governance.depgraph_schema (_build_pg_dsn, backup_pg_depgraph 函数)
-# [CONSUMERS] scripts.governance.apply_depgraph (backup_pg_depgraph 事件触发入口)
+# [CONSUMERS] scripts.governance.apply_depgraph (backup_pg_depgraph 事件触发入口); tests/dr/test_restore_from_backup.py
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS]
@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/dr/test_restore_from_backup.py
 # [TTL] permanent
 """
 backup_runtime_state.py — 运行时状态备份（蓝图 §33 灾备）
@@ -22,6 +22,10 @@ tmp/runtime_backups/（临时目录，不进 git）。
 
 PG depgraph 备份已实现（ARCH-041 §5.33.1 治本）：backup_pg_depgraph() 函数。
 触发方式：apply_depgraph.py 成功修改 depgraph 后自动调用（事件触发）。
+
+.runtime/ handoffs+reconcile_reports 备份已实现（5.33.7 治本）：backup_runtime_handoffs()
+函数。.runtime/ 被 .gitignore 整目录忽略（git 非真源），需独立物理备份；
+保留最近 10 份（对齐 backup_pg_depgraph 标杆），RPO/RTO 真源见 config/dr_policy.yaml。
 
 YAML/JSONL 快照功能仍保留（向后兼容），但已标记 DEPRECATED。
 
@@ -46,6 +50,7 @@ warn_only: true
 import argparse
 import json
 import os
+import shutil
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -219,6 +224,80 @@ def backup_pg_depgraph(max_backups: int = 10) -> str | None:
         return None
 
 
+# ── .runtime/ 状态备份（5.33.7 治本）──────────────────────────────────────
+# .runtime/ 被 .gitignore 整目录忽略（git 非真源），handoffs/reconcile_reports
+# 丢失无法从 git 恢复。此处补强物理备份：tmp/runtime_backups/runtime_handoffs_<ts>/，
+# 保留最近 max_backups 份（对齐 backup_pg_depgraph 标杆）。
+# RPO/RTO 量化目标唯一真源：config/dr_policy.yaml（runtime_state 条目）。
+
+RUNTIME_STATE_DIRS = (".runtime/handoffs", ".runtime/reconcile_reports")
+RUNTIME_BACKUP_PREFIX = "runtime_handoffs_"
+
+
+def backup_runtime_handoffs(max_backups: int = 10, backup_dir: Path | None = None) -> str | None:
+    """备份 .runtime/handoffs/ + .runtime/reconcile_reports/ 到 tmp/runtime_backups/。
+
+    5.33.7 治本：.runtime/ 无备份路径（git 忽略 + 无物理快照）。
+    自动清理旧备份（保留最近 max_backups 份，对齐 backup_pg_depgraph 标杆）。
+
+    Args:
+        max_backups: 保留的备份份数
+        backup_dir: 备份输出根目录（默认 DEFAULT_BACKUP_DIR=tmp/runtime_backups/）
+
+    Returns:
+        备份目录路径；源目录全部缺失或全部复制失败返回 None
+    """
+    backup_root = backup_dir or DEFAULT_BACKUP_DIR
+    sources = [REPO_ROOT / d for d in RUNTIME_STATE_DIRS]
+    existing = [s for s in sources if s.is_dir()]
+    if not existing:
+        print("[BACKUP-RUNTIME] .runtime/ 源目录均不存在，跳过", file=sys.stderr)
+        return None
+
+    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    dest = backup_root / f"{RUNTIME_BACKUP_PREFIX}{timestamp}"
+    dest.mkdir(parents=True, exist_ok=True)
+
+    copied: list[str] = []
+    for src in existing:
+        target = dest / src.name
+        try:
+            shutil.copytree(src, target)
+        except OSError as e:
+            print(f"[BACKUP-RUNTIME] 复制失败 {src}: {e}", file=sys.stderr)
+            continue
+        file_count = sum(1 for p in target.rglob("*") if p.is_file())
+        copied.append(f"{src.relative_to(REPO_ROOT)} ({file_count} files)")
+
+    if not copied:
+        return None
+
+    manifest = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "backup_type": "runtime_handoffs",
+        "sources": copied,
+        "dr_policy": "config/dr_policy.yaml#runtime_state",
+    }
+    manifest_path = dest / "manifest.json"
+    tmp = f"{manifest_path}.tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, str(manifest_path))
+
+    # 自动清理旧备份（保留最近 max_backups 份）
+    backups = sorted(p for p in backup_root.glob(f"{RUNTIME_BACKUP_PREFIX}*") if p.is_dir())
+    if len(backups) > max_backups:
+        for old in backups[:-max_backups]:
+            shutil.rmtree(old, ignore_errors=True)
+
+    print(
+        f"[BACKUP-RUNTIME] .runtime/ 备份完成: {dest.relative_to(REPO_ROOT)} "
+        f"({'; '.join(copied)})",
+        file=sys.stderr,
+    )
+    return str(dest)
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="运行时状态备份")
@@ -262,6 +341,9 @@ def main() -> None:
     print(f"\n[BACKUP] {len(all_files)} 文件已备份到 {snapshot_dir.relative_to(REPO_ROOT)}\n", file=sys.stderr)
     for f in all_files:
         print(f"  ✅ {f}", file=sys.stderr)
+
+    # 5.33.7 治本：.runtime/ handoffs + reconcile_reports 物理备份（保留最近 10 份）
+    backup_runtime_handoffs(backup_dir=backup_dir)
 
     if args.warn_only:
         sys.exit(EXIT_PASS)
