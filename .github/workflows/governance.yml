@@ -135,7 +135,7 @@ jobs:
         continue-on-error: false
 
       - name: Registry Consistency Cross-Check
-        run: python scripts/governance/check_registry_consistency.py
+        run: python scripts/governance/d3_metadata/check_registry_consistency.py
         continue-on-error: false
 
       - name: Path Tree Freshness (G6_PT)
@@ -287,7 +287,7 @@ jobs:
         continue-on-error: false
 
       - name: MCP Tool Contract Consistency
-        run: python scripts/governance/validate_tool_contracts_consistency.py --ci
+        run: python scripts/governance/d3_metadata/validate_tool_contracts_consistency.py --ci
         continue-on-error: false
 
       - name: Pre-compile Architecture Context
@@ -318,7 +318,7 @@ jobs:
         continue-on-error: false
 
       - name: Self-Check
-        run: python scripts/governance/ci_self_check.py
+        run: python scripts/governance/d11_compliance/ci_self_check.py
         continue-on-error: false
 
       - name: Upload Audit Report

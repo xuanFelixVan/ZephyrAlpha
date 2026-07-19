@@ -430,10 +430,6 @@ error_codes:
   class: HotColdSeparationError
   module: zephyr.integration.vector_memory.collection_manager
   file: src/zephyr/integration/vector_memory/collection_manager.py
-- code: ZA-IG-0015
-  class: SchemaRegistryError
-  module: zephyr.integration.shared.schema.schema_registry
-  file: src/zephyr/integration/shared/schema/schema_registry.py
 - code: ZA-IG-0016
   class: EventVersionError
   module: zephyr.integration.shared.events.event_bus_upgrade

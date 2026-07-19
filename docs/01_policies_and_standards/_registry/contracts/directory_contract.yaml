@@ -627,11 +627,11 @@ directory_extensions:
 
   # --- 平台约定目录（2026-07-09 补盲）---
   - path: ".github/"
-    allowed: [".yml", ".yaml", ".md"]
+    allowed: [".yml", ".yaml", ".md", ""]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp", ".csv", ".jsonl", ".json"]
     zone: neutral
     allowed_doc_types: []
-    note: "GitHub平台专属配置——workflows/子目录放GitHub Actions CI/CD流水线YAML定义。平台约定目录非项目业务逻辑"
+    note: "GitHub平台专属配置——workflows/子目录放GitHub Actions CI/CD流水线YAML定义。平台约定目录非项目业务逻辑。allowed 含空串扩展名（\"\"）以兼容 GitHub 平台约定无扩展名文件（CODEOWNERS/FUNDING 等）"
 
 # ============================================================
 # 3. 根目录白名单（Root Directory Whitelist）

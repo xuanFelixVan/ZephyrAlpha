@@ -1,0 +1,16 @@
+# CODEOWNERS — ZephyrAlpha（5.29 治本，2026-07-19）
+# 项目模式：100% AI 开发（AI 施工，人类 Owner 终审）。
+# 语法：<pattern> <owner...>；匹配自下而上，后写规则优先。
+# Owner：GitHub 仓库所有者 @xuanFelixVan。
+
+# 默认所有者——全仓文件默认由 Owner 终审。
+* @xuanFelixVan
+
+# 治理与安全关键路径（任何改动必须 Owner 审查）：
+/.github/workflows/ @xuanFelixVan
+/scripts/governance/ @xuanFelixVan
+/src/zephyr/gov_enforcement/ @xuanFelixVan
+/src/zephyr/security/ @xuanFelixVan
+/src/zephyr/governance/ @xuanFelixVan
+/config/ @xuanFelixVan
+/docs/01_policies_and_standards/ @xuanFelixVan
