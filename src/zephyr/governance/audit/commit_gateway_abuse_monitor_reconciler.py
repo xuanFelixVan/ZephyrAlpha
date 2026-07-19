@@ -87,10 +87,12 @@ _PRIORITY = 875
 # === 五维滥用阈值（warn-only，reconciler 不能 block post-commit）===
 # 维度1: warn_only 持续低频（24h）——per-hour POST-COMMIT-GUARD 阈值 10/h 抓不到 5/h 持续
 _WARN_ONLY_24H_THRESHOLD = 50
-# 维度2: emergency_commit 滥用（24h）——P2 (2026-07-20): 阈值 5→30
-# 原阈值 5/天 在 dogfooding 阶段（worktree 君子协定 + 治本变更频繁）误报频繁,
-# 30/天 仍能捕获 systemic 滥用（>1/h 持续）但容忍 dogfooding 噪声。
-_EMERGENCY_24H_THRESHOLD = 30
+# 维度2: emergency_commit 滥用（24h）——裁定 R1（2026-07-19）：30→10 过渡期
+# bc3cad107c 将阈值 5→30 掩盖 systemic 滥用（15/24h 变 clean），是"杀信使"反模式。
+# R1 回滚到 10（过渡期 2026-07-19 ~ 2026-08-02）：检测逻辑 count > threshold（严格大于），
+# 15 > 10 触发 critical_warn 保持信号可见性；10 是 2× 原阈值 5 的保守翻倍，容忍 dogfooding 极值。
+# 2026-08-02 heartbeat 落地（裁定 R4）后强制回滚到 5。
+_EMERGENCY_24H_THRESHOLD = 10
 # 维度3: allow_overlap 滥用（7d）——gw_env=1 warn_only 持续 7d = session 注册表 bug
 _ALLOW_OVERLAP_7D_THRESHOLD = 30
 # 维度4: forged_gw_marker 伪造率（24h）——任何伪造都 serious，3/天即 critical
