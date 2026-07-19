@@ -2,7 +2,7 @@
 # [MODULE] zephyr.intelligence.model_evaluation.sync_engine
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema; zephyr.governance.__init__; zephyr.autonomy_core.__init__
-# [CONSUMERS] zephyr.knowledge.kb.scheduler; AutoRuntime Core sync phase
+# [CONSUMERS] AutoRuntime Core sync phase
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 增量按created_at > since检测; 全量since=None; VMS不可用降级不阻塞

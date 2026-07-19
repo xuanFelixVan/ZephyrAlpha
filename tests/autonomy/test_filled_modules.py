@@ -437,26 +437,6 @@ class TestDurableExecution:
         assert result["execution_id"] == exec_id
 
 
-class TestSkillKnowledgeBase:
-    def test_extract_from_skill(self):
-        from zephyr.autonomy_core.skills.skill_knowledge_base import SkillKnowledgeBridge
-
-        kb = SkillKnowledgeBridge()
-        entities = kb.extract_from_skill(
-            "test-skill",
-            "MUST: validate input. 不可: delete core data. `read_file`",
-        )
-        assert len(entities) >= 1
-
-    def test_sync_to_kb(self):
-        from zephyr.autonomy_core.skills.skill_knowledge_base import SkillKnowledgeBridge
-
-        kb = SkillKnowledgeBridge()
-        result = kb.sync_to_kb("test-skill", "MUST: validate inputs. `read_file` `grep`")
-        assert result["kb_synced"] is True
-        assert result["entities_extracted"] >= 1
-
-
 class TestSkillGuardrails:
     def test_pre_execution_clean(self):
         from zephyr.autonomy_core.skills.skill_guardrails import SkillGuardrails

@@ -2,7 +2,7 @@
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.gate_types
 # [DOMAIN] D_GOV_RULE
 # [DEPENDENCIES] zephyr.shared.schema.schemas
-# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.knowledge.kb.pipeline.triage; zephyr.knowledge.kb.pipeline.ingest; zephyr.knowledge.kb.pipeline.extract; zephyr.knowledge.kb.pipeline.activate; zephyr.knowledge.kb.pipeline.analyze; zephyr.shared.contracts.core.gate_types; zephyr.gov_enforcement.rule_enforcement.gate_types
+# [CONSUMERS] zephyr.gov_enforcement.rule_enforcement.gate_engine; zephyr.shared.contracts.core.gate_types; zephyr.gov_enforcement.rule_enforcement.gate_types
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
