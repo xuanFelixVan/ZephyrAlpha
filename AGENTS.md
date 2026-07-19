@@ -759,6 +759,40 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 **违规处置**：non-GW commit 被自动 `git reset --soft HEAD~1`，修改保留在 staging area。审计报告落盘 `.runtime/reconcile_reports/post_commit_guard_<timestamp>.json`。AI 应通过 GitCommitGateway 重新提交。
 
+### 10.1.1 REFERENCE-TRANSACTION-GUARD：git commit-tree plumbing 绕过堵漏（Phase 4 治本，2026-07-19）
+
+**病根（第一性原理）**：git 分两层——porcelain 命令（`git commit`/`git merge`/`git reset`）触发 hook；plumbing 命令（`git commit-tree`+`git update-ref`+`git write-tree`）**不触发任何 hook**。POST-COMMIT-GUARD 在 `post-commit` hook 中运行，能拦截 `git commit --no-verify`（`--no-verify` 跳 pre-commit，不跳 post-commit），但**完全无法拦截** `git commit-tree` + `git update-ref` 组合——这俩 plumbing 命令不触发任何 hook，POST-COMMIT-GUARD 永远不会运行。P2-1 落地的 `emergency_commit` 用 `commit-tree` 实现合法逃生通道，但同样路径可被 AI 用于绕过所有治理。
+
+**治本**：`reference-transaction` 是 git 2.45+ 的 hook，在 ref 事务提交时触发：
+- `prepared` 状态：事务即将提交，exit non-zero 回滚整个事务
+- `committed` 状态：事务已提交（informational only）
+
+本 hook 在 `prepared` 状态检查 `refs/heads/dev` 的 forward 更新：
+1. 跳过 reset/rewind（old 不是 new 的祖先，如 POST-COMMIT-GUARD 的 `git reset --soft HEAD~1` 走这条路径）
+2. 跳过 deletion/creation（OID 含全零）
+3. 跳过 merge commit（2+ parents，已被 merge gate 校验）
+4. 跳过含 `[GW:` 标记的 commit（GitCommitGateway / `session_worktree_commit` / `session_worktree_merge` / `emergency_commit` 的合法标识）
+5. 其余 → **block**（exit 1，事务回滚，ref 不变）
+
+**生效条件**：`.git/hooks/reference-transaction` 调用 [`scripts/governance/git_hooks/reference_transaction_guard.sh`](file:///d:/ZephyrAlpha/scripts/governance/git_hooks/reference_transaction_guard.sh)。源文件被 git-tracked，hook 安装见脚本头部注释。兼容性要求 git 2.45+（当前实测 git 2.48.1.windows.1）。
+
+**合法标识**（5 种 GW 标记均放行，与 POST-COMMIT-GUARD 一致 + 新增 emergency）：
+- `[GW:{session_id}]` — GitCommitGateway 常规 commit
+- `[GW:{session_id}:auto]` — GitCommitGateway auto-commit
+- `[GW:{session_id}:worktree]` — `session_worktree_commit`
+- `[GW:{session_id}:merge]` — `session_worktree_merge`
+- `[GW:{session_id}:emergency]` — `emergency_commit`（P2-1 落地，合法 commit-tree 逃生通道）
+
+**豁免**（不含 [GW: 但放行）：
+- merge commit（2+ parents）
+- reset/rewind（backward ref 移动，POST-COMMIT-GUARD 的 reset 走这条路径）
+
+**违规处置**：plumbing 绕过被 block，ref 不变（事务回滚）。审计报告落盘 `.runtime/reconcile_reports/reference_transaction_guard_<timestamp>.json`。AI 应通过 GitCommitGateway / `session_worktree_commit` / `emergency_commit` 重新提交。
+
+**调试**：`REF_TX_GUARD_DEBUG=1` 环境变量启用调用日志（写 `.runtime/ref_tx_guard_debug.log`），用于排查 hook 是否被 git 调用。
+
+**测试覆盖**（6 用例）：non-GW forward block / GW forward allow / merge allow / reset allow / session branch allow / committed state allow。真实环境验证：`git commit-tree` + `git update-ref` bypass 被 block（exit 128），`emergency_commit` 仍正常工作。
+
 ### 10.2 代码内部 subprocess 调用与文件删除弹窗规避（Trae Shell Interception，2026-07-19）
 
 **根因**：Trae 对 `git checkout` / `Remove-Item` 等高危命令有独立的 **Shell Interception 二次拦截层**，**不受「始终自动运行」设置控制**（官方博客 [Making AI Coding Safer](https://www.trae.ai/blog/engineering_thought_0108) 明确说明这是独立于沙箱/自动运行之外的安全网）。项目代码内部的 `subprocess.run(["git", "checkout", ...])` 和 AI 直接执行的 `Remove-Item` 都会触发弹窗，打断 AI 连续工作。改用语义等价但不被拦截的命令可消除弹窗。
