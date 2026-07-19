@@ -1177,6 +1177,36 @@ capabilities:
       - make_capability_overlap_gate # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: capability_lookup_required_gate
+    aliases:
+      - CAPABILITY-LOOKUP-REQUIRED
+      - capability-lookup-required
+      - make_capability_lookup_required_gate
+      - rule_discovery_enforcement_gate
+      - mcp_lookup_audit_gate
+      - ARCH-GOV-CONVERGENCE-META-Phase-3.4a
+    description: >-
+      Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
+      Phase 3.4a 病根3治本）。检测 commit 含 src/zephyr/**/*.py 业务代码变更时，
+      当前 session 是否调用了 rule_discovery.discover_applicable_rules 或
+      capability_lookup.find——未调用则硬阻断。把"AI 应在施工前查询适用规则"从
+      AGENTS.md §7 君子协定升级为代码层强制（对标 create_guard 把"先登记 token
+      再写文件"从君子协定升级为代码层强制）。audit log 真源：
+      .runtime/lookup_audit/<session_id>.jsonl（由 rule_discovery_server 在
+      _discover_applicable_rules 中写入）。逃生通道：commit msg 含 [no-lookup:reason]
+      标记（reason 持久化到 commit detail 便于审计）/ ZEPHYR_BYPASS_LOOKUP=1 环境变量
+      （紧急逃生）。豁免：tests/-only / .md-only / merge commit / non-Zephyr 项目。
+      priority=110 在 UNDEFINED-NAME(106) 之后——先过基础语法检查，再过 capability
+      lookup 强制（语义层约束）。
+      解决发现性：新 AI 搜 "capability lookup required/rule discovery 强制/audit
+      log gate" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类强制门禁。
+    integrity_anchors:
+      - _audit_log_dir_exists    # 目录存在性检查(篡改即检测失效)
+      - _count_valid_log_entries # audit log 解析(篡改即绕过)
+      - make_capability_lookup_required_gate # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: held_overlap_gate
     aliases:
       - HELD-OVERLAP
@@ -5213,6 +5243,18 @@ creation_tokens:
     created_by: "sess-gate-depgraph-ops-20260719"
     capability: "undefined_name_gate"
 
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.4a（2026-07-19，病根3治本：规则可发现性强制）---
+  # capability_lookup_required_gate.py: CAPABILITY-LOOKUP-REQUIRED commit gate
+  # （priority=110，硬阻断 src/zephyr/**/*.py 业务代码 commit 但 session 未调
+  # rule_discovery.discover_applicable_rules / capability_lookup.find 的情况；
+  # audit log 真源 .runtime/lookup_audit/<session_id>.jsonl，由 rule_discovery_server
+  # 在 _discover_applicable_rules 中写入；逃生通道：[no-lookup:reason] msg 标记 /
+  # ZEPHYR_BYPASS_LOOKUP=1 环境变量）
+  - file: "src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py"
+    token: "auto-capability-lookup-required-gate-20260719"
+    created_by: "sess-33764-20260719"
+    capability: "capability_lookup_required_gate"
+
   # --- 5.1.2 簇6 SSoT 收敛（2026-07-19）：execution_model 从 integration/shared/schema 迁入 shared/schema canonical ---
   - file: "src/zephyr/shared/schema/execution_model.py"
     token: "auto-execution-model-ssot-20260719"
@@ -5300,6 +5342,11 @@ creation_tokens:
   - file: "src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py"
     token: "auto-batched-auto-committer-20260719"
     created_by: "sess-29340-20260719070757"
+    capability: "git_call_batching"
+  # --- ARCH-GIT-CALL-BUDGET P3.3 (2026-07-19): worktree 预创建池 ---
+  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py"
+    token: "auto-worktree-pool-20260719"
+    created_by: "sess-11392-20260719075653"
     capability: "git_call_batching"
 
   # --- #ARCH-GOV-CONVERGENCE-META Phase 3.2（2026-07-19，规则可发现性治本 病根2）---
