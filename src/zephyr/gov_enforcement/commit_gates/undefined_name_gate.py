@@ -221,6 +221,10 @@ def scan_all_for_undefined_names(
         if not base.exists():
             continue
         for py_file_path in glob.glob(str(base / "**" / "*.py"), recursive=True):
+            # 裁定#E（2026-07-19）：排除 _archive 目录（归档代码不参与 F821 扫描）
+            # 病根：归档目录中的死代码触发 F821 误报，干扰存量债务治理
+            if "_archive" in py_file_path:
+                continue
             rel = py_file_path.replace("\\", "/")
             idx = rel.find(prefix)
             if idx < 0:

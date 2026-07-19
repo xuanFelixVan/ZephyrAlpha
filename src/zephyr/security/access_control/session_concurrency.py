@@ -165,6 +165,7 @@ class SessionInfo:
     held_files: list[str] = field(default_factory=list)
     last_heartbeat: float = 0.0
     is_breaking_change: bool = False
+    task_files: list[str] = field(default_factory=list)  # 裁定#D：任务文件集（重复施工检测）
 
     def to_dict(self) -> dict:
         return {
@@ -174,6 +175,7 @@ class SessionInfo:
             "held_files": self.held_files,
             "last_heartbeat": self.last_heartbeat,
             "is_breaking_change": self.is_breaking_change,
+            "task_files": self.task_files,
         }
 
     @classmethod
@@ -186,6 +188,7 @@ class SessionInfo:
             held_files=d.get("held_files") or [],
             last_heartbeat=d.get("last_heartbeat", 0.0),
             is_breaking_change=d.get("is_breaking_change", False),
+            task_files=d.get("task_files") or [],
         )
 
 
@@ -239,6 +242,7 @@ class SessionRegistry:
         pid: int | None = None,
         held_files: list[str] | None = None,
         is_breaking_change: bool = False,
+        task_files: list[str] | None = None,
     ) -> SessionInfo:
         """注册一个活跃 session。"""
         with self._lock:
@@ -249,6 +253,7 @@ class SessionRegistry:
                 held_files=held_files or [],
                 last_heartbeat=time.time(),
                 is_breaking_change=is_breaking_change,
+                task_files=task_files or [],
             )
             data = self._load()
             data[session_id] = info.to_dict()
