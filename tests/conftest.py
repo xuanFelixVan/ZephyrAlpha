@@ -50,12 +50,70 @@ def tmp_db(tmp_path):
 
     使用 zephyr.data_governance_governance.persistence.sqlite_schema.init_db 初始化，
     适用于所有需要数据库的测试（task_repo、circuit_breaker、olap_engine 等）。
+
+    5.34.3 双轨说明：本 fixture 是默认的 SQLite 快速轨（零依赖、秒级）；
+    需要与生产 depgraph (PostgreSQL) 对齐的测试请改用 pg_db fixture
+    （ZEPHYR_TEST_PG=1 激活，见下方注释）。
     """
     from zephyr.governance.persistence.sqlite_schema import init_db
 
     db_path = tmp_path / "test_zalpha.db"
     init_db(db_path)
     return db_path
+
+
+def _load_test_pg_config() -> dict[str, str] | None:
+    """解析 PG 测试库连接参数（5.34.3 治本——双轨测试的可选 PG 轨）。
+
+    优先级：``config/.env.postgres.test``（KEY=VALUE，若存在）>
+    ``ZEPHYR_TEST_PG_*`` 环境变量。两者均未提供 host/db 时返回 None，
+    调用方应 ``pytest.skip``——默认 SQLite 快速轨不受影响。
+
+    禁止回退到 ``config/.env.postgres``（生产库真源）——测试连接目标必须
+    显式声明，防测试误写生产表（5.34.4 交叉确认）。
+    """
+    cfg: dict[str, str] = {}
+    env_file = _PROJECT_ROOT / "config" / ".env.postgres.test"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                cfg[key.strip()] = value.strip()
+    host = _os.environ.get("ZEPHYR_TEST_PG_HOST") or cfg.get("POSTGRES_HOST")
+    port = _os.environ.get("ZEPHYR_TEST_PG_PORT") or cfg.get("POSTGRES_PORT", "5432")
+    dbname = _os.environ.get("ZEPHYR_TEST_PG_DB") or cfg.get("POSTGRES_DB")
+    user = _os.environ.get("ZEPHYR_TEST_PG_USER") or cfg.get("POSTGRES_USER", "zephyr")
+    password = _os.environ.get("ZEPHYR_TEST_PG_PASSWORD") or cfg.get("POSTGRES_PASSWORD", "")
+    if not (host and dbname):
+        return None
+    return {"host": host, "port": port, "dbname": dbname, "user": user, "password": password}
+
+
+@pytest.fixture
+def pg_db():
+    """可选 PG 测试库连接 fixture（5.34.3 治本——双轨测试的 PG 轨）。
+
+    仅在 ``ZEPHYR_TEST_PG=1`` 时激活；连接参数来自 ``_load_test_pg_config()``
+    （``config/.env.postgres.test`` 或 ``ZEPHYR_TEST_PG_*`` 环境变量，独立 PG
+    test 库模式；未引入 testcontainers 依赖）。未激活 / 未配置 / PG 不可用时
+    ``pytest.skip``——默认 SQLite 快速轨（tmp_db）不受影响。
+    teardown 回滚未提交事务，保证测试间隔离。
+    """
+    if _os.environ.get("ZEPHYR_TEST_PG") != "1":
+        pytest.skip("ZEPHYR_TEST_PG!=1，跳过 PG 测试轨（默认 SQLite 快速路径）")
+    cfg = _load_test_pg_config()
+    if cfg is None:
+        pytest.skip("PG 测试库未配置（ZEPHYR_TEST_PG_* 或 config/.env.postgres.test）")
+    try:
+        import psycopg2
+
+        conn = psycopg2.connect(**cfg)
+    except Exception as exc:  # noqa: BLE001 — PG 不可用一律降级为 skip，不阻断测试套件
+        pytest.skip(f"PG 测试库不可用: {exc}")
+    yield conn
+    conn.rollback()  # 测试间隔离：丢弃未提交事务
+    conn.close()
 
 
 @pytest.fixture

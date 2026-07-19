@@ -1,20 +1,106 @@
 """
 DM-100017: depgraph端到端功能测试（P2迁移后：PostgreSQL）
 覆盖：dep_表组7表CRUD、arch_表组7表CRUD、rule_bindings表、nodes 23列、edges 18列
+
+5.34.4 治本（2026-07-18）：原实现经 get_depgraph_pg_connection() 直连生产
+depgraph (PostgreSQL)，INSERT/DELETE 直接修改生产数据。现增加防护——
+pytest 运行（PYTEST_CURRENT_TEST）时连接目标强制切到 PG 测试库
+（ZEPHYR_TEST_PG_* 环境变量或 config/.env.postgres.test），未配置或不可用
+时 pytest.skip，禁止测试写生产表；手工脚本执行（__main__）优先使用测试库
+配置，未配置时回退生产库并输出 stderr 提醒（操作员显式选择）。
 """
 
 import json
+import os
 import sys
 from datetime import datetime
 
 import psycopg2
+import pytest
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.shared.io.paths import REPO_ROOT
+
+
+def _in_pytest() -> bool:
+    """是否处于 pytest 测试调用上下文。
+
+    PYTEST_CURRENT_TEST 仅在测试调用期由 pytest 设置——不能用
+    ``"pytest" in sys.modules`` 判定（本文件自身 import pytest，恒为 True）。
+    """
+    return bool(os.environ.get("PYTEST_CURRENT_TEST"))
+
+
+def _resolve_test_pg_config() -> dict[str, str] | None:
+    """解析 PG 测试库连接参数（5.34.4 治本）。
+
+    优先级：``config/.env.postgres.test``（KEY=VALUE，若存在）>
+    ``ZEPHYR_TEST_PG_*`` 环境变量。与 tests/conftest.py 的
+    ``_load_test_pg_config()`` 同规（本文件需支持 __main__ 独立执行，
+    不依赖 conftest 加载，故自含一份）。未配置 host/db 时返回 None。
+
+    禁止回退到 ``config/.env.postgres``（生产库真源）——测试连接目标必须
+    显式声明，防测试误写生产表。
+    """
+    cfg: dict[str, str] = {}
+    env_file = REPO_ROOT / "config" / ".env.postgres.test"
+    if env_file.exists():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                cfg[key.strip()] = value.strip()
+    host = os.environ.get("ZEPHYR_TEST_PG_HOST") or cfg.get("POSTGRES_HOST")
+    port = os.environ.get("ZEPHYR_TEST_PG_PORT") or cfg.get("POSTGRES_PORT", "5432")
+    dbname = os.environ.get("ZEPHYR_TEST_PG_DB") or cfg.get("POSTGRES_DB")
+    user = os.environ.get("ZEPHYR_TEST_PG_USER") or cfg.get("POSTGRES_USER", "zephyr")
+    password = os.environ.get("ZEPHYR_TEST_PG_PASSWORD") or cfg.get("POSTGRES_PASSWORD", "")
+    if not (host and dbname):
+        return None
+    return {"host": host, "port": port, "dbname": dbname, "user": user, "password": password}
+
+
+def _make_connection():
+    """5.34.4 治本：连接目标选择——pytest 下强制测试库，禁止写生产表。
+
+    - pytest 运行：连接 PG 测试库（ZEPHYR_TEST_PG_* / config/.env.postgres.test），
+      未配置或不可用时 pytest.skip；绝不回退生产库。
+    - __main__ 手工执行：优先测试库配置；未配置时回退 get_depgraph_pg_connection()
+      （生产库）并输出 stderr 提醒——操作员显式选择的人工验证路径。
+    """
+    test_cfg = _resolve_test_pg_config()
+    if _in_pytest():
+        if test_cfg is None:
+            pytest.skip(
+                "PG 测试库未配置（ZEPHYR_TEST_PG_HOST/ZEPHYR_TEST_PG_DB 或 "
+                "config/.env.postgres.test），跳过以防测试写生产表（5.34.4）"
+            )
+        try:
+            conn = psycopg2.connect(cursor_factory=RealDictCursor, **test_cfg)
+        except psycopg2.OperationalError as exc:
+            pytest.skip(f"PG 测试库不可用，跳过: {exc}")
+        # 与 get_depgraph_pg_connection() 默认 autocommit=True 行为对齐——
+        # 本测试含"表已删除"容错查询（psycopg2.Error 后继续执行），
+        # 非 autocommit 下事务会进入 aborted 状态导致后续查询全部失败。
+        conn.autocommit = True
+        return conn
+    if test_cfg is not None:
+        conn = psycopg2.connect(cursor_factory=RealDictCursor, **test_cfg)
+        conn.autocommit = True
+        print(f"[5.34.4] 使用 PG 测试库: {test_cfg['host']}:{test_cfg['port']}/{test_cfg['dbname']}")
+        return conn
+    print(
+        "[5.34.4] WARNING: 未配置 PG 测试库（ZEPHYR_TEST_PG_* / "
+        "config/.env.postgres.test），回退连接生产 depgraph (PostgreSQL)——"
+        "INSERT/DELETE 将修改生产数据，请确认这是有意的人工验证。",
+        file=sys.stderr,
+    )
+    return get_depgraph_pg_connection()
 
 
 def test_all():
-    conn = get_depgraph_pg_connection()
+    conn = _make_connection()
     conn.cursor_factory = RealDictCursor
     c = conn.cursor()
     passed = 0
@@ -242,10 +328,15 @@ def test_all():
     print(f"\n{'=' * 50}")
     print(f"Results: {passed} passed, {failed} failed, {passed + failed} total")
     if failed > 0:
+        # 5.34.4 治本：pytest 下用断言失败代替 sys.exit（SystemExit 在 pytest
+        # 下会被记为 error 而非正常失败）；__main__ 脚本保持原退出码语义。
+        if _in_pytest():
+            raise AssertionError(f"depgraph DB checks failed: {failed}/{passed + failed}")
         sys.exit(1)
     else:
         print("ALL TESTS PASSED")
-        sys.exit(0)
+        if not _in_pytest():
+            sys.exit(0)
 
 
 if __name__ == "__main__":

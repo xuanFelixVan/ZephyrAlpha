@@ -52,6 +52,7 @@ logger = logging.getLogger(__name__)
 import json
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
+from zephyr.shared.io.paths import DB_PATH
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -135,7 +136,7 @@ class DeadLetterQueue:
 
     Usage:
         from zephyr.shared.infra.observer import global_observer
-        dlq = DeadLetterQueue(db_path="data/databases/governance.db")
+        dlq = DeadLetterQueue()  # db_path 缺省 = SSoT DB_PATH（governance.db，5.34.7 治本）
         dlq.attach(global_observer)
 
         # 任何 handler 失败 -> 自动写入 dead_letters 表
@@ -152,13 +153,15 @@ class DeadLetterQueue:
 
     def __init__(
         self,
-        db_path: str,
+        db_path: str | None = None,
         *,
         retry_interval: float = 60.0,
         max_attempts: int = 3,
         max_age_hours: float = 168.0,
     ) -> None:
-        self._db_path = db_path
+        # 5.34.7 治本：db_path 缺省回退 SSoT DB_PATH（zephyr.shared.io.paths），
+        # 调用方无需再硬编码 "data/databases/governance.db" 字面量
+        self._db_path = db_path or str(DB_PATH)
         self._retry_interval = retry_interval
         self._max_attempts = max_attempts
         self._max_age_seconds = max_age_hours * 3600.0
@@ -462,7 +465,7 @@ class DeadLetterQueue:
 
 def attach_dlq_to_observer(
     observer: Observer,
-    db_path: str,
+    db_path: str | None = None,
     *,
     retry_interval: float = 60.0,
     max_attempts: int = 3,
@@ -473,7 +476,7 @@ def attach_dlq_to_observer(
         from zephyr.shared.infra.observer import global_observer
         from zephyr.shared.events.dlq import attach_dlq_to_observer
 
-        dlq = attach_dlq_to_observer(global_observer, "data/databases/governance.db")
+        dlq = attach_dlq_to_observer(global_observer)  # db_path 缺省 = SSoT DB_PATH（5.34.7 治本）
     """
     dlq = DeadLetterQueue(
         db_path,

@@ -1,0 +1,36 @@
+# ==============================================================================
+# docker-compose.override.yml — 本地开发覆盖示例（5.34.2 治本）
+#
+# [PURPOSE] 消除 dev/staging/prod 共用单一 docker-compose.yml 的环境隔离债务：
+#           本示例提供本地 dev 覆盖（debug 日志 / 源码挂载 / 热重载），
+#           生产语义仍唯一锚定 docker-compose.yml（本文件不改生产配置）。
+# [USAGE]
+#   cp config/infra/docker-compose.override.example.yml docker-compose.override.yml
+#   docker compose up -d
+#   Docker Compose 自动加载项目根的 docker-compose.override.yml 叠加到
+#   docker-compose.yml（无需 -f 参数），同名字段以 override 为准。
+# [PLACEMENT] 本示例存放于 config/infra/（基础设施配置区）——项目根目录受
+#   directory_contract.yaml root_directory_whitelist（DCR-007）保护，
+#   仅 docker-compose.yml/docker-compose.yaml 可入库；复制到根的
+#   docker-compose.override.yml 已加入 .gitignore（本地私有，禁止入库）。
+# [WARNING] 生产/CI 环境不要创建 override 文件——override 仅面向本地 dev。
+# ==============================================================================
+
+services:
+  zephyr-core:
+    environment:
+      # debug 日志（dev 排障；ZEPHYR_LOG_LEVEL 端到端分级见 5.34.10 条目）
+      - ZEPHYR_LOG_LEVEL=DEBUG
+      # 显式锚定 dev 环境（与 env.py Env 枚举一致，防 5.34.1 静默回退重演）
+      - ZEPHYR_ENV=dev
+    volumes:
+      # 源码挂载：容器内直接运行工作区代码，改代码后 restart 即生效（热重载）。
+      # 只读挂载防容器内进程意外污染工作区；入口 CMD 为 python -m zephyr.trading，
+      # 无内建 --reload 机制，代码变更后执行 `docker compose restart zephyr-core`。
+      - ./src:/app/src:ro
+    deploy:
+      # 本地 dev 放宽资源上限（排障场景需更多内存；生产限制仍以 docker-compose.yml 为准）
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4g

@@ -29,6 +29,7 @@ from __future__ import annotations
 import os
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.paths import DB_PATH
 from dataclasses import dataclass, field
 
 
@@ -46,12 +47,9 @@ class CorrelationReport:
 class CorrelationEngine:
     def __init__(self, db_path: str | None = None) -> None:
         if db_path is None:
-            db_path = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-                "data",
-                "databases",
-                "governance.db",
-            )
+            # 5.34.7 治本：默认路径改用 SSoT DB_PATH（zephyr.shared.io.paths），
+            # 消除 __file__ 上溯 4 层 + 字面量 "data/databases/governance.db" 硬编码
+            db_path = str(DB_PATH)
 
         self._db_path = db_path
 

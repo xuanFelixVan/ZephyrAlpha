@@ -40,6 +40,13 @@ AI 施工约定：
   - 任何环境相关判断 MUST 使用 is_dev()/is_prod()/is_test()——禁止裸 os.getenv("ENV")
   - 新增环境类型时 SHOULD 在 Environmental 中追加
 
+真实调用点（5.34.6 治本复核，2026-07-18）：
+  - is_prod()：src/zephyr/infrastructure/pipeline/llm_gateway.py（×2，生产缺 API key
+    硬阻断，5.155.13 引入）+ scripts/governance/apply_depgraph.py（生产环境 depgraph
+    写入命令需 ZEPHYR_DEPGRAPH_WRITE_ACK=1 显式确认，5.34.6 引入）
+  判定记录：债务登记时的"零调用"已被 5.155.13 部分消化——存在真实生产消费者，
+  按 RULE-THREE 禁止删除；按 5.34.6 选项 (a) 在关键写入路径补足 is_prod() 守卫。
+
 SSoT: MOD-INF-016 §2.19 shared-env
 Version: 0.1.0
 """
