@@ -36,7 +36,10 @@ from zephyr.security.llm_defense.llm_security.protocol import (
     SecurityDecision,
     SecurityResult,
 )
-from zephyr.security.llm_defense.llm_security.runtime_interceptor import grant_allowance as _grant_runtime_allowance
+from zephyr.security.llm_defense.llm_security.runtime_interceptor import (
+    grant_allowance as _grant_runtime_allowance,
+    reset_allowance_for_request as _reset_runtime_allowance,
+)
 from zephyr.security.llm_defense.llm_security.self_protection.l7_validation import ValidationLayer
 
 
@@ -277,6 +280,12 @@ class LSGSecurityGateway:
         任一非 fail-open 层 DENY/BLOCK -> 立即中断，不评估后续层.
         每层评估带超时保护，防止单层卡死导致整体阻塞.
         """
+        # 5.131 接线：请求边界预防性重置放行令牌——线程池复用时，上一请求残留的
+        # 未过期令牌（TTL 30s）会被新请求读到而绕过 RULE-LSG-001；重置失败不影响主流程。
+        try:
+            _reset_runtime_allowance()
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            pass
         t0 = time.perf_counter()
         layer_results: dict[str, SecurityResult] = {}
         passed = 0

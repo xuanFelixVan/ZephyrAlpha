@@ -410,7 +410,11 @@ class MCPGateway(BaseMCPServer):
     # Override handle_request — Route + Auth + RateLimit + Audit + Degrade
     # ------------------------------------------------------------------
 
-    def handle_request(self, request: dict[str, Any]) -> dict[str, Any]:
+    def handle_request(self, request: dict[str, Any]) -> dict[str, Any] | None:
+        # JSON-RPC 2.0：notification（无 id 但含 method）不回包（对齐 _base_server.handle_request）；
+        # 无 id 且无 method 的非法 Request 落入下方分支，最终由基类回错误（id=null）。
+        if request.get("id") is None and request.get("method"):
+            return None
         sid = request.get("_session_id", "unknown")
         method = request.get("method", "")
 

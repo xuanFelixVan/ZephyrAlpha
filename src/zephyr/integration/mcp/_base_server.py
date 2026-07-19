@@ -382,13 +382,22 @@ class BaseMCPServer:
     # 请求路由
     # ------------------------------------------------------------------
 
-    def handle_request(self, request: dict[str, Any]) -> dict[str, Any]:
-        """处理单个 JSON-RPC 请求，返回响应字典。"""
+    def handle_request(self, request: dict[str, Any]) -> dict[str, Any] | None:
+        """处理单个 JSON-RPC 请求，返回响应字典；notification（无 id）返回 None 不回包。"""
         req_id = request.get("id")
         method: str = request.get("method", "")
         params: dict[str, Any] = request.get("params") or {}
 
         self._log.debug("request_received", method=method, req_id=req_id)
+
+        # JSON-RPC 2.0 §4.1：notification（无 id 成员但含 method）服务端 MUST NOT 回包——
+        # 此前对 notification 回包 id:null，违反规范。
+        # 无 id 且无 method 的是非法 Request（非 notification），按规范回错误（id=null）。
+        if req_id is None:
+            if method:
+                self._log.debug("notification_no_reply", method=method)
+                return None
+            return self._err(None, ERR_INVALID_REQUEST, "Invalid Request: missing 'id' and 'method'")
 
         if method == "initialize":
             return self._handle_initialize(req_id)
@@ -574,6 +583,8 @@ class BaseMCPServer:
                 continue
 
             response = self.handle_request(request)
+            if response is None:  # notification：按 JSON-RPC 2.0 不回包
+                continue
             out.write(json.dumps(response, ensure_ascii=False) + "\n")
             out.flush()
 
@@ -636,6 +647,8 @@ class BaseMCPServer:
                 response = await loop.run_in_executor(None, self.handle_request, request)
             except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
                 response = self._err(request.get("id") if isinstance(request, dict) else None, ERR_INTERNAL_ERROR, f"Internal error: {exc}")
+            if response is None:  # notification：按 JSON-RPC 2.0 不回包
+                continue
             out.write(json.dumps(response, ensure_ascii=False) + "\n")
             out.flush()
 

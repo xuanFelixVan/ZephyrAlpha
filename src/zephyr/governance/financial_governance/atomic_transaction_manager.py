@@ -77,6 +77,8 @@ from threading import RLock
 from typing import Any, Literal, cast
 
 from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.utils.time_utils import now_iso  # 5.161 修复: 收敛 _now_iso 私有副本到真源
+
 _SCRIPTS_DIR = REPO_ROOT / "scripts"
 if str(_SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS_DIR))
@@ -159,12 +161,6 @@ def _fsync_dir(path: Path) -> None:
         os.fsync(fd)
     finally:
         os.close(fd)
-
-
-def _now_iso() -> str:
-    from datetime import UTC, datetime
-
-    return datetime.now(UTC).isoformat()
 
 
 def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
@@ -455,7 +451,7 @@ class AtomicTransactionManager:
             # 登记到幂等去重表
             self._conn.execute(
                 "INSERT OR IGNORE INTO tx_idempotency (tx_id, status, started_at, note) VALUES (?, 'PREPARED', ?, '')",
-                (tx.tx_id, _now_iso()),
+                (tx.tx_id, now_iso()),
             )
             # 检查是否重复（tx_id 已存在 -> 重复提交）
             row = self._conn.execute("SELECT status FROM tx_idempotency WHERE tx_id = ?", (tx.tx_id,)).fetchone()
@@ -526,12 +522,12 @@ class AtomicTransactionManager:
                     ),
                     None,
                     None,
-                    _now_iso(),
+                    now_iso(),
                 ),
             )
             self._conn.execute(
                 "UPDATE tx_idempotency SET status='COMPENSATED', compensation_at=? WHERE tx_id=?",
-                (_now_iso(), tx.tx_id),
+                (now_iso(), tx.tx_id),
             )
         except sqlite3.Error as exc:
             logger.error("[%s] failed to write compensation event: %s", tx.tx_id, exc)
@@ -552,7 +548,7 @@ class AtomicTransactionManager:
         try:
             self._conn.execute(
                 "UPDATE tx_idempotency SET status='COMMITTED', committed_at=? WHERE tx_id=?",
-                (_now_iso(), tx.tx_id),
+                (now_iso(), tx.tx_id),
             )
         except sqlite3.Error:
             pass  # 尽力更新，失败不影响事务已提交的事实
@@ -581,7 +577,7 @@ class AtomicTransactionManager:
         try:
             self._conn.execute(
                 "UPDATE tx_idempotency SET status='ROLLED_BACK', rolled_back_at=? WHERE tx_id=?",
-                (_now_iso(), tx.tx_id),
+                (now_iso(), tx.tx_id),
             )
         except sqlite3.Error:
             pass
