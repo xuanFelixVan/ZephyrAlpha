@@ -851,10 +851,6 @@ items:
   name: ide_health_service.py
   node_type: script
   status: active
-- file: scripts/kb/self_test.py
-  name: self_test.py
-  node_type: script
-  status: active
 - file: scripts/lock_files.py
   name: lock_files.py
   node_type: script

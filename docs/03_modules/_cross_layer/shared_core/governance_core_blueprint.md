@@ -55,18 +55,17 @@ build_status: planned
 | 5 | draft/ | 2 | `draft_assistant` |
 | 6 | events/ | 5 | `event_bus`, `event_reactor`, `event_store`, `hook_dispatcher` |
 | 7 | impact/ | 3 | `impact_propagator`, `llm_impact_analyzer` |
-| 8 | knowledge/ | 4 | `ke_linker`, `ke_structurer`, `kms_interface` |
-| 9 | lifecycle/ | 8 | `daemon_registry`, `hooks`, `lazy_loader`, `resource_optimization_engine`, `resource_optimization_models`, `scope_guard`, `task_lifecycle_manager` |
-| 10 | maintenance/ | 5 | `autonomy_monitor`, `dogfooding`, `handbook`, `zero_config` |
-| 11 | observability/ | 6 | `cli_summary`, `cost_tracker`, `failure_matcher`, `notifier`, `trace_decorator` |
-| 12 | quality/ | 2 | `quality_monitor` |
-| 13 | queue/ | 3 | `task_queue`, `task_scheduler` |
-| 14 | reliability/ | 5 | `circuit_breaker`, `context_guard`, `diff_planner`, `retry_handler` |
-| 15 | session/ | 3 | `session_boundary`, `session_continuity` |
-| 16 | sla/ | 2 | `sla_monitor` |
-| 17 | sync/ | 2 | `blueprint_code_sync` |
+| 8 | lifecycle/ | 8 | `daemon_registry`, `hooks`, `lazy_loader`, `resource_optimization_engine`, `resource_optimization_models`, `scope_guard`, `task_lifecycle_manager` |
+| 9 | maintenance/ | 5 | `autonomy_monitor`, `dogfooding`, `handbook`, `zero_config` |
+| 10 | observability/ | 6 | `cli_summary`, `cost_tracker`, `failure_matcher`, `notifier`, `trace_decorator` |
+| 11 | quality/ | 2 | `quality_monitor` |
+| 12 | queue/ | 3 | `task_queue`, `task_scheduler` |
+| 13 | reliability/ | 5 | `circuit_breaker`, `context_guard`, `diff_planner`, `retry_handler` |
+| 14 | session/ | 3 | `session_boundary`, `session_continuity` |
+| 15 | sla/ | 2 | `sla_monitor` |
+| 16 | sync/ | 2 | `blueprint_code_sync` |
 
-**总计**: 64 个 .py 文件
+**总计**: 60 个 .py 文件
 
 ### §0.6 四图对齐视图
 

@@ -2201,10 +2201,6 @@ STEP 3: 拆分后验证
 | `src/zephyr/integration/behavioral_admission/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/behavioral_admission/admission_response.py` | ✅ 已实现 | |
 | `src/zephyr/shared/evaluation/evals.py` | ✅ 已实现 | |
-| `src/zephyr/shared/knowledge/ke_linker.py` | ✅ 已实现 | |
-| `src/zephyr/shared/knowledge/ke_structurer.py` | ✅ 已实现 | |
-| `src/zephyr/shared/knowledge/kg_interface.py` | ✅ 已实现 | |
-| `src/zephyr/shared/knowledge/kms_interface.py` | ✅ 已实现 | |
 | `src/zephyr/shared/resilience/durable_execution.py` | ✅ 已实现 | |
 | `src/zephyr/shared/versioning/version_negotiation.py` | ✅ 已实现 | |
 

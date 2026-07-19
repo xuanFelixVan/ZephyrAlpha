@@ -644,7 +644,7 @@ class DetectionResult(BaseModel):
 | `src/zephyr/orchestrator/governance/autonomy_guard.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/governance/capacity_budget.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/governance/dependency_lock.py` | ✅ 已实现 | |
-| `src/zephyr/orchestrator/governance/feature_flag.py` | ✅ 已实现 | |
+| ~~`src/zephyr/orchestrator/governance/feature_flag.py`~~ | ❌ 已删除（5.38.1 收敛至 canonical `src/zephyr/shared/foundation/flags.py`） | |
 | `src/zephyr/orchestrator/governance/model_registry.py` | ✅ 已实现 | |
 | `src/zephyr/orchestrator/governance/path_index.py` | ⚠️ 骨架 | |
 | `src/zephyr/orchestrator/governance/risk_registry.py` | ✅ 已实现 | |
@@ -695,8 +695,6 @@ class DetectionResult(BaseModel):
 | `tests/contracts/test_contract_router_root.py` | ✅ 已实现 | |
 | `tests/dependency/test_dependency_lock.py` | ✅ 已实现 | |
 | `tests/file/test_file_task_mapper_root.py` | ✅ 已实现 | |
-| `tests/knowledge_engine/test_ke_quality.py` | ✅ 已实现 | |
-| `tests/knowledge_engine/test_knowledge_freshness.py` | ✅ 已实现 | |
 | `tests/orchestrator/test_deferred_queue.py` | ✅ 已实现 | |
 | `tests/orchestrator/test_orchestrator_data_lifecycle.py` | ✅ 已实现 | |
 | `tests/orchestrator/test_orchestrator_failure_matcher.py` | ✅ 已实现 | |

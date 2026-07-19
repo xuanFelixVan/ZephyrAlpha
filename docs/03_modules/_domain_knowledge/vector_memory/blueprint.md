@@ -1520,7 +1520,6 @@ class FeedbackEntry(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/kb/test_vector_memory_root.py` | ✅ 已实现 | |
 | `tests/memory/test_vms_adversarial_hijack.py` | ✅ 已实现 | |
 | `tests/memory/test_vms_adversarial_injection.py` | ✅ 已实现 | |
 | `tests/memory/test_vms_automation.py` | ✅ 已实现 | |

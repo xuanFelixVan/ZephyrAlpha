@@ -1577,7 +1577,6 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 | `src/zephyr/autonomy_core/skills/skill_guardrails.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/skill_idempotency.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/skill_kill_switch.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/skills/skill_knowledge_base.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/skill_kya.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/skill_learning.py` | ✅ 已实现 | |
 | `src/zephyr/autonomy_core/skills/skill_lifecycle.py` | ✅ 已实现 | |
@@ -1717,7 +1716,6 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 | `tests/skill/test_skill_guardrails.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_idempotency.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_kill_switch.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_knowledge_base.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_kya.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_learning.py` | ✅ 已实现 | |
 | `tests/skill/test_skill_lifecycle.py` | ✅ 已实现 | |

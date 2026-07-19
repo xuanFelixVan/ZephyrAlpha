@@ -369,7 +369,6 @@ build_status: planned
 | `src/zephyr/infrastructure/impact/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/impact/impact_propagator.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/impact/llm_impact_analyzer.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/knowledge/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/lifecycle/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/infrastructure/lifecycle/scope_guard.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/lifecycle/task_lifecycle_manager.py` | ✅ 已实现 | |

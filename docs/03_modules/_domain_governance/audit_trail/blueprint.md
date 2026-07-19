@@ -1839,7 +1839,6 @@ class LamportClockV2:
 | `tests/governance/audit/test_trust_engine.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_wqa_scorer.py` | ✅ 已实现 | |
 | `tests/governance/audit/test_writer.py` | ✅ 已实现 | |
-| `tests/kb/test_kb_gate.py` | ✅ 已实现 | |
 | `tests/self_check/test_self_monitor.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
