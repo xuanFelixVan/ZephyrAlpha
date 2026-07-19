@@ -13,7 +13,9 @@
 
 """trading-contracts.risk — risk management domain contracts."""
 
-from zephyr.gov_enforcement.rule_enforcement.compliance_rule import ComplianceRule
+# 5.60.1 治本：从 canonical SSoT（shared 层，向下依赖）导入，
+# 原经 gov_enforcement shim 导入造成 trading->governance 向上循环边（gov shim 真源即本模块）。
+from zephyr.shared.contracts.compliance_rule import ComplianceRule
 from zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.trading.trading_contracts.risk.risk_limit_violation_error import RiskLimitViolationError
 from zephyr.trading.trading_contracts.risk.risk_limits import RiskLimits

@@ -24,7 +24,7 @@ depending on each other's concrete implementations.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Callable, Protocol, runtime_checkable
 
 from pydantic import BaseModel, Field
 
@@ -115,6 +115,39 @@ class HealthCheckFn(Protocol):
     def health_check(self) -> dict[str, Any]: ...
 
 
+@runtime_checkable
+class ContractRegistryProtocol(Protocol):
+    """Structural interface for integration contract registry (5.60.2 治本).
+
+    governance 门禁检查（phase_check_registry.check_contract_compliance）依赖此抽象，
+    替代运行时直接 import zephyr.orchestrator 具体实现（依赖倒置）。
+    orchestrator 侧模块加载时经 set_contract_registry_provider() 自注册。
+    """
+
+    def list_all(self) -> list[Any]: ...
+
+
+# ── Contract registry provider（5.60.2 依赖倒置）────────────────────
+# governance(L2) 不再 import orchestrator 具体 ContractRegistry；
+# orchestrator 在模块加载时调用 set_contract_registry_provider 自注册，
+# 消费方经 get_contract_registry() 获取实例。测试可注册 fake provider 独立测试。
+
+_CONTRACT_REGISTRY_PROVIDER: Callable[[], ContractRegistryProtocol] | None = None
+
+
+def set_contract_registry_provider(provider: Callable[[], ContractRegistryProtocol]) -> None:
+    """注册 ContractRegistry 类/工厂（由 orchestrator 侧模块加载时调用）。"""
+    global _CONTRACT_REGISTRY_PROVIDER
+    _CONTRACT_REGISTRY_PROVIDER = provider
+
+
+def get_contract_registry() -> ContractRegistryProtocol | None:
+    """返回已注册的 ContractRegistry 实例；未注册时返回 None。"""
+    if _CONTRACT_REGISTRY_PROVIDER is None:
+        return None
+    return _CONTRACT_REGISTRY_PROVIDER()
+
+
 # ── Shared contract types ────────────────────────────────────────────
 
 
@@ -148,6 +181,9 @@ _FROZEN_PUBLIC_API = frozenset(
         "ModuleStatusProtocol",
         "EstimateCostFn",
         "HealthCheckFn",
+        "ContractRegistryProtocol",
+        "set_contract_registry_provider",
+        "get_contract_registry",
         "AgentCapability",
         "IntegrityVerifier",
     }

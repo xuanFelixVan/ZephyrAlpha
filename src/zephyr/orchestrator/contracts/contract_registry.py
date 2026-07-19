@@ -35,6 +35,10 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from zephyr.shared.contracts.protocols import (
+    set_contract_registry_provider as _set_cr_provider,
+)
+
 
 class AIReadOnlyHint(str, Enum):
     DO_NOT_CALL = "DO_NOT_CALL"
@@ -1085,3 +1089,9 @@ class ContractRegistry:
                 1,
             ),
         }
+
+
+# 5.60.2 治本：向 shared 层抽象注册自身（依赖倒置）——governance 门禁检查
+# 经 zephyr.shared.contracts.protocols.get_contract_registry() 获取本注册表，
+# 不再直接 import 本模块具体实现。
+_set_cr_provider(ContractRegistry)

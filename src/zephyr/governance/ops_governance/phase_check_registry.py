@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.orchestrator.contract_registry; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.shared.contracts.protocols; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -409,18 +409,33 @@ def check_ssot_validator() -> GateResult:
     return GateResult.YELLOW
 
 
+def _contract_hint_value(contract: object) -> object:
+    """结构化提取契约 ai_read_only_hint 值（5.60.2：避免 import orchestrator 枚举）。"""
+    hint = getattr(contract, "ai_read_only_hint", None)
+    return getattr(hint, "value", hint)
+
+
 def check_contract_compliance() -> GateResult:
     exit_code, output = _run_script("d5_architecture/checkers/check_contract_code_drift.py", timeout=20)
     if exit_code != 0:
         return GateResult.YELLOW
 
     try:
-        from zephyr.orchestrator.contracts.contract_registry import AIReadOnlyHint, ContractRegistry
+        # 5.60.2 治本：经 shared 层抽象（ContractRegistryProtocol，依赖倒置）获取契约注册表，
+        # 不再 import zephyr.orchestrator 具体实现——测试可注册 fake provider 独立测试。
+        from zephyr.shared.contracts.protocols import get_contract_registry
 
-        cr = ContractRegistry()
+        cr = get_contract_registry()
+        if cr is None:
+            # provider 未注册：引导 orchestrator 模块完成自注册（插件式加载，非静态依赖）
+            importlib.import_module("zephyr.orchestrator.contracts.contract_registry")
+            cr = get_contract_registry()
+        if cr is None:
+            return GateResult.YELLOW
         contracts = cr.list_all()
         min_expected = 15
-        active_contracts = [c for c in contracts if c.ai_read_only_hint not in (AIReadOnlyHint.DO_NOT_CALL,)]
+        # 结构化判定 hint（不 import AIReadOnlyHint 枚举）：str Enum 按 value 比对
+        active_contracts = [c for c in contracts if _contract_hint_value(c) != "DO_NOT_CALL"]
         if len(contracts) < min_expected:
             return GateResult.YELLOW
         if not active_contracts:
