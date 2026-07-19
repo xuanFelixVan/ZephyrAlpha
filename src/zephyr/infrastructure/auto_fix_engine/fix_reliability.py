@@ -33,6 +33,7 @@ from zephyr.infrastructure.auto_fix_engine.models import (
     FixAction,
     FixDeadLetter,
     FixLevel,
+    FixStatus,
 )
 from zephyr.shared.io.paths import DB_PATH
 

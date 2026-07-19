@@ -28,6 +28,7 @@ from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.infrastructure.asset_inventory.models import (
+    AssetType,
     ClassificationResult,
     ClassifiedAsset,
     DriftEntry,

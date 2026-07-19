@@ -190,6 +190,7 @@ class QueryMetrics:
         explain_rows = []
         try:
             from zephyr.shared.io.paths import DB_PATH as schema_db_path
+            from zephyr.shared.io.sqlite_factory import get_db_connection
 
             explain_conn = get_db_connection(str(schema_db_path))
             try:

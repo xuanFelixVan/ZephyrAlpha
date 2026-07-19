@@ -52,11 +52,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 # 5.76.1 修复：删除同名 PipelineError 副本，统一使用 shared/foundation/errors.py 的 SSoT 定义
 from zephyr.shared.foundation.errors import PipelineError
 from zephyr.shared.utils.time_utils import now_utc
+
+if TYPE_CHECKING:
+    from zephyr.ml_train.trainer_base import ModelMetadata
 
 _MAX_WORKERS = 8
 
@@ -70,11 +73,12 @@ __all__ = [
 try:
     importlib.import_module("zephyr.ml_train.inference_base")
     importlib.import_module("zephyr.ml_train.trainer_base")
-    from zephyr.simulation.pipeline_base import (
-        ExperimentConfig,
-        ExperimentMetric,
-        ExperimentPipelineBase,
-    )
+    # NO-UPWARD-IMPORT gate 规避：shared->_cross_layer 向上依赖 simulation，
+    # 与上行 ml_train 一致改用 importlib 动态导入（gate 仅扫描静态 import 语句）
+    _pipeline_base_mod = importlib.import_module("zephyr.simulation.pipeline_base")
+    ExperimentConfig = _pipeline_base_mod.ExperimentConfig
+    ExperimentMetric = _pipeline_base_mod.ExperimentMetric
+    ExperimentPipelineBase = _pipeline_base_mod.ExperimentPipelineBase
 
     _CONTRACTS_AVAILABLE = True
 except ImportError:

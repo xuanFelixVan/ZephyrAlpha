@@ -174,7 +174,7 @@ _queue_lock = threading.Lock()
 
 
 def get_queue(
-    repo: TaskRepository,
+    repo: TaskRepositoryProtocol,
     orchestrator: PipelineDispatcher | None = None,
 ) -> ActiveTaskQueue:
     global _queue

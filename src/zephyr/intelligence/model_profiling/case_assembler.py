@@ -130,7 +130,7 @@ def assemble_real_context(
     needles = needles or []
     extra_files = extra_files or {}
     # 按 basename 索引埋针
-    needle_by_file: dict[str, list[Needle]] = {}
+    needle_by_file: dict[str, list[dict[str, Any]]] = {}
     for n in needles:
         needle_by_file.setdefault(n["file"], []).append(n)
 

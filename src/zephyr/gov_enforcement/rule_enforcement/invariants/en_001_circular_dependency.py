@@ -28,7 +28,7 @@ Architecture Decision:  (LPC 双轨)
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Any, Final
 import ast
 import sys
 from collections import deque

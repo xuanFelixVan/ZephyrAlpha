@@ -458,7 +458,7 @@ class OllamaChat:
         except RuntimeError:
             raise
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in ollama_chat", exc_info=True)
+            _log.warning("suppressed error in ollama_chat", exc_info=True)
 
     @staticmethod
     def _strip_think_block(text: str) -> str:

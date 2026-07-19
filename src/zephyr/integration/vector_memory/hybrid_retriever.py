@@ -36,7 +36,7 @@ Pipeline
 
 from __future__ import annotations
 
-from typing import Final
+from typing import TYPE_CHECKING, Final
 import logging
 import math
 import threading
@@ -47,6 +47,11 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from zephyr.shared.schema.schemas import BASE_CONFIG
+
+if TYPE_CHECKING:
+    from zephyr.integration.local_model.embedding_router import EmbeddingRouterProtocol
+    from zephyr.integration.vector_memory.collection_manager import CollectionManager
+    from zephyr.shared.protocols.ports import RerankerProtocol
 
 _logger = logging.getLogger(__name__)
 
