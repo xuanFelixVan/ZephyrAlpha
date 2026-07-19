@@ -165,6 +165,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "GATE-ARCH"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/diagnose_depgraph.py

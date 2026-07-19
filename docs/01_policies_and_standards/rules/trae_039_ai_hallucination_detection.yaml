@@ -198,6 +198,7 @@ references:
   - architecture_model/contracts/cross_layer_contracts.yaml
   blueprints: []
 enforcement:
+  paired_gate_id: "UNDEFINED-NAME"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/arch_guard/run_all.py

@@ -255,6 +255,7 @@ references:
   blueprints:
   - MOD-INF-005
 enforcement:
+  paired_gate_id: "CREATE-GUARD"  # Phase 3.5 规则-执行配对
   type: hook
   executors:
   - lock_files.py

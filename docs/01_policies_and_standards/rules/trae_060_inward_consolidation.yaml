@@ -273,6 +273,7 @@ enforcement:
   - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false
   gate_id: GATE-VOCAB
+  paired_gate_id: "GATE-VOCAB"  # Phase 3.5 规则-执行配对
 
 metadata:
   change_policy: frozen

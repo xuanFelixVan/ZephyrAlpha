@@ -184,3 +184,5 @@ sections:
           3. 新增 git_performance_monitor reconciler（Phase 4）：持续监控 git status
              计时，stale worktree 累积超阈值时早期预警。
         date: "2026-07-19"
+enforcement:
+  paired_gate_id: "GIT-CALL-BUDGET"  # Phase 3.5 规则-执行配对

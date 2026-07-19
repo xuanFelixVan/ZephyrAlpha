@@ -166,6 +166,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "DIRECTORY-CONTRACT"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/generate_project_path_tree.py

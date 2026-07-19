@@ -464,6 +464,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "DOC-REF-BROKEN"  # Phase 3.5 规则-执行配对
   type: code
   executors: [scripts/governance/d6_security/detect_anchor_file_deletion.py]
   bypass_allowed: false

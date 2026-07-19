@@ -130,6 +130,7 @@ references:
   - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
 enforcement:
+  paired_gate_id: "GATE-SSOT-CODE"  # Phase 3.5 规则-执行配对
   type: doc
   executors:
   - human_review

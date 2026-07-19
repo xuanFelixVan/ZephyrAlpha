@@ -236,6 +236,7 @@ references:
   - GOV-MOD-007
   blueprints: []
 enforcement:
+  paired_gate_id: "MODULE-ID-CONSISTENCY"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/check_registry_consistency.py

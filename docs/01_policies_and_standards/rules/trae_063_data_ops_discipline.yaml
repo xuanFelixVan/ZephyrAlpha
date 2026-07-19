@@ -130,6 +130,7 @@ references:
   - AGENTS.md §11.0.2 SSoT真源分类铁律
   - AGENTS.md RULE-DATA-OPS 段
 enforcement:
+  paired_gate_id: "NO-BARE-SQL"  # Phase 3.5 规则-执行配对
   type: doc
   executors:
   - human_review

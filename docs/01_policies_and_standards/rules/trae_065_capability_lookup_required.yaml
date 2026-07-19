@@ -158,6 +158,7 @@ references:
   - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
   - config/mcp.json
 enforcement:
+  paired_gate_id: "CAPABILITY-LOOKUP-REQUIRED"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - capability_lookup_required_gate

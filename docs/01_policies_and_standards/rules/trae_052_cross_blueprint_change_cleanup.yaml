@@ -78,6 +78,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "FILE-COPY"  # Phase 3.5 规则-执行配对
   type: hook
   executors:
   - scripts/governance/d11_compliance/audit_registration.py
