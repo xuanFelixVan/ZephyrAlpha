@@ -3421,7 +3421,7 @@ entries:
       - 在 git_commit_gateway.py 注册
       - 在 capability_canonical_file_registry.yaml 登记
 
-    Phase 4 end-to-end smoke test（待执行）：
+    Phase 4 end-to-end smoke test（已完成 2026-07-20，commit 76dd7ab19d，14 个 e2e test 覆盖 import/CLI/DB 写入）：
       - 新增 tests/governance/test_apply_depgraph_smoke.py
       - 真实调用 CLI + 真实 PostgreSQL + 验证 DB 行写入
       - 用 D_SMOKE_TEST 临时域，测试后清理
@@ -3433,7 +3433,7 @@ entries:
         新增 POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD/WINDOW_SECONDS 环境变量覆盖阈值与窗口
       - 新增 commit_gateway_abuse_monitor_reconciler.py（已完成 Phase 5b 2026-07-19 commit 140543f201，post-commit priority=875 五维滥用检测：warn_only 24h>50 / emergency 24h>5 / allow_overlap 7d>30 / forged_gw_marker 24h>3 / non-GW 24h>10；26 单测通过；capability_canonical_file_registry.yaml 已登记）
 
-    Phase 6 session 启动健康度自检（待执行）：
+    Phase 6 session 启动健康度自检（已完成 2026-07-20，scripts/governance/session_startup_health_check.py SH-GOV-004，4 工具 import+CLI+符号检查 + 6 Gateway 模块检查）：
       - 新增 session_startup_health_check.py
       - AI session 启动时自检核心工具健康度
       - 失败时输出 [ESCALATION] 标记，禁止 silently workaround
@@ -3471,14 +3471,15 @@ entries:
     - scripts/governance/meta/validate_script_system_health.py（EXIT_PASS/EXIT_FINDINGS import，Phase 2）
     - scripts/governance/vms/vms_cron_monitor.py（Any import，Phase 2）
     - AGENTS.md（§11.0.3 核心治理工具健康度铁律，Phase 7）
-    - src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py（baseline 全扫模式，Phase 3 待执行）
-    - tests/governance/test_apply_depgraph_smoke.py（e2e smoke test，Phase 4 待执行）
+    - src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py（baseline 全扫模式，Phase 3 已完成 2026-07-20）
+    - tests/governance/test_apply_depgraph_smoke.py（e2e smoke test，Phase 4 已完成 2026-07-20 commit 76dd7ab19d，14 test 覆盖 import/CLI/DB）
     - scripts/governance/git_hooks/post_commit_guard.sh（warn-only 阈值阻断，裁定 B 治本已完成 Phase 5a 2026-07-19 commit 565818c5a3；per-hour aggregate ≥10 替代 per-session ≥3）
-    - scripts/governance/meta/session_startup_health_check.py（启动健康度自检，Phase 6 待执行）
-  status: in_progress
+    - scripts/governance/session_startup_health_check.py（启动健康度自检，Phase 6 已完成 2026-07-20，SH-GOV-004 canonical）
+    - src/zephyr/governance/audit/workspace_hygiene_reconciler.py（DEBT-WORKSPACE-001/002 自动化消除，Phase 6 联动 2026-07-20，post-commit priority=890 auto-sync 产物 git restore）
+  status: in_progress  # Phase 1/2/3/4/5/6/7 已完成；Phase 3 reconciler capability 登记 待补
   related_adjudication: 'TRAE-062 SSoT 分类铁律, FP-ISO.4C worktree 君子协定, ARCH-DEPGRAPH-RECONCILER-FAILSILENT'
   created: '2026-07-19'
-  last_updated: '2026-07-19'
+  last_updated: '2026-07-20'
 
 # --- #ARCH-WORKTREE-002: session_worktree 四重缺陷治本（2026-07-19） ---
 # 病根：session_worktree 君子协定（FP-ISO.4C）在 worktree 模式下存在 4 个独立缺陷，
@@ -3840,10 +3841,18 @@ entries:
       - test_sync_savepoint_isolation.py: 7 个测试全部 PASSED（含 best-effort 日志隔离验证）
       - 既有 smoke test 27 个全部 PASSED，无回归
 
-    Phase 3 裁定 C 错误分类（待实施）：
-      - reconciler 重试逻辑增加错误分类
-      - 确定性错误不重试，立即 escalate
-      - 读取 sync_failures_log.error_class 字段（P2 填充）
+    Phase 3 裁定 C 错误分类（已完成 2026-07-20）：
+      - reconciliation_registry.py: 新增模块级 _classify_sync_failure 纯函数 + 模式常量
+        （_DETERMINISTIC_PATTERNS / _TRANSIENT_PATTERNS），解析 subprocess stderr 文本
+      - reconciliation_registry.py: _reconcile() 更新——deterministic 错误立即升级为 error
+        （不重试，attempt 固定为 1，标记 escalated=True），transient/unknown 保留重试机制
+      - sync_yaml_to_depgraph.py: 新增模块级 _classify_error 纯函数（基于异常类型+消息），
+        优先级 deterministic > transient（避免 OperationalError 包装的 GUC 错误被误判为 transient）
+      - sync_yaml_to_depgraph.py: _run_sync_with_savepoint 调用 _classify_error 填充 error_class
+      - sync_yaml_to_depgraph.py: _log_sync_failures INSERT 写入 error_class 列
+      - test_yaml_sync_reconciler_error_classification.py: 69 个测试全部 PASSED
+        （含纯函数分类 + _reconcile 集成 mock subprocess + 优先级验证 + 重试不累加验证）
+      - 原 bug（sync_dataflow_registry retry 23 次全失败）在此分类下第 1 次即升级为 error
 
     Phase 4 裁定 D 100% AI 治理加固（长期）：
       - session_worktree 可靠性修复
@@ -3855,13 +3864,15 @@ entries:
     - scripts/governance/migrate_sqlite_to_pg/05_fix_guc_trigger_bug.sql（幂等迁移脚本，Phase 1 已完成）
     - tests/governance/d8_doc_sync/test_guc_trigger_fix.py（7 个 smoke test，Phase 1 已完成）
     - docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md（裁定文档）
-    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离 + 3 helpers，Phase 2 已完成）
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离 + 3 helpers + _classify_error，Phase 2/3 已完成）
     - tests/governance/d8_doc_sync/test_sync_savepoint_isolation.py（7 个 SAVEPOINT 隔离测试，Phase 2 已完成）
+    - src/zephyr/governance/audit/reconciliation_registry.py（_classify_sync_failure + _reconcile 错误分类，Phase 3 已完成）
+    - tests/governance/audit/test_yaml_sync_reconciler_error_classification.py（69 个错误分类测试，Phase 3 已完成）
   status: in_progress
   related_adjudication: 'ARCH-053 design_maturity 保护, ARCH-051 dataflowgraph, 裁定#203 protect_depgraph_design_edges'
   related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
   created: '2026-07-19'
-  last_updated: '2026-07-19'
+  last_updated: '2026-07-20'
 # --- #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001: Gate-Abuse 5 维滥用系统性审计（2026-07-19） ---
 # 关联 #ARCH-P3-FOLLOWUP-TODOS-001 裁定 C 的 Layer 2 落地 + #ARCH-GUC-TRIGGER-FIX-001 Task 4 Phase 1 深化
 - issue_id: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001'
@@ -3890,10 +3901,24 @@ entries:
 
     本案范围：仅产出审计文档 + emergency_commit 治本设计（不实施代码改动）。其余 4 维
     在审计文档记录方向，后续独立裁定实施。
+
+
+    裁定 R1（2026-07-19 阈值过渡期回滚）：本审计起草后，commit bc3cad107c（2026-07-20）
+    将 _EMERGENCY_24H_THRESHOLD 从 5 放松到 30，理由"dogfooding 噪声"——但 30 完全
+    掩盖 systemic 滥用（15/24h 变 clean），正是"可预防性缺失"反模式的自我实例化
+    （杀信使而非治根因）。裁定 R1 回滚到 10（过渡期 2026-07-19 ~ 2026-08-02），过渡期
+    结束后强制回滚到 5。选 10 而非 15 的原因：检测逻辑是 count > threshold（严格大于），
+    15/24h 在阈值 15 下不触发（15 > 15 为 False），故阈值必须 <15 才能保持 critical_warn
+    可见性；10 是 2× 原阈值 5 的保守翻倍，既容忍 dogfooding 极值，又保持 15/24h 的
+    critical_warn 可见性。过渡期对应 P1 heartbeat 落地周期（裁定 R4）。
   fix_phase: |
     Layer 2 文档产出（已完成 2026-07-19）：
-      - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（5 维根因分析 + 治本路线图 + emergency_commit heartbeat 设计）
+      - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（5 维根因分析 + 治本路线图 + emergency_commit heartbeat 设计 + R1 裁定）
       - architecture_issue_registry.yaml 登记本条目
+
+    裁定 R1 阈值回滚（本 session 实施，2026-07-19）：
+      - commit_gateway_abuse_monitor_reconciler.py _EMERGENCY_24H_THRESHOLD 30→10（过渡期）
+      - 2026-08-02 heartbeat 落地后回滚到 5
 
     P1 emergency_commit 治本（待独立裁定立项，本周）：
       - heartbeat 机制（.runtime/sessions/<sid>/heartbeat.jsonl，30s 追加，>5min 无更新 = stale）
@@ -3918,4 +3943,4 @@ entries:
   related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (5 层闭环模型 + 第 6 层可预防性)'
   created: '2026-07-19'
-  last_updated: '2026-07-19'
+  last_updated: '2026-07-19'  # R1 裁定：阈值过渡期回滚 30→10（2026-08-02 回滚到 5）

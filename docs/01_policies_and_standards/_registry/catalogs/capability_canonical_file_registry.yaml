@@ -4412,9 +4412,10 @@ capabilities:
     description: >-
       commit gateway 持续滥用监控 reconciler（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。
       post-commit 事件触发（priority=875），补强 POST-COMMIT-GUARD 1h 短窗口盲区。
-      五维滥用检测：①warn_only sustained (24h >50) ②emergency_commit abuse (24h >5)
-      ③allow_overlap abuse (7d >30) ④forged_gw_marker rate (24h >3 → critical_warn)
-      ⑤non-GW commit sustained (24h >10)。判定：0维 clean / 1-2维 warn / 3+维或
+      五维滥用检测：①warn_only sustained (24h >50) ②emergency_commit abuse (24h >15,
+      R1 过渡期 2026-08-02 回滚到 >5) ③allow_overlap abuse (7d >30)
+      ④forged_gw_marker rate (24h >3 → critical_warn) ⑤non-GW commit sustained (24h >10)。
+      判定：0维 clean / 1-2维 warn / 3+维或
       forged 触发 critical_warn。canonical = src/zephyr/governance/audit/
       commit_gateway_abuse_monitor_reconciler.py（MOD-GOV_commit_gateway_abuse_monitor）。
       数据源只读 .runtime/reconcile_reports/ 下 post_commit_guard_* + commit_gateway_audit_*
@@ -4422,6 +4423,61 @@ capabilities:
       注册点：git_commit_gateway.py:644 _register_default_reconcilers。
       治本（2d 可发现性）：新 AI 通过 capability_lookup.find("abuse_monitor") /
       find("commit gateway abuse") 可定位真源，避免重复造轮子。
+
+  # --------------------------------------------------------------------------
+  - capability_id: workspace_hygiene_reconciler
+    canonical_override: src/zephyr/governance/audit/workspace_hygiene_reconciler.py
+    aliases:
+      - make_workspace_hygiene_reconciler
+      - GATE-WORKSPACE-HYGIENE
+      - workspace_hygiene_reconciler
+      - DEBT-WORKSPACE-001
+      - DEBT-WORKSPACE-002
+      - ARCH-TOOL-HEALTH-V1-Phase-6-hygiene
+    description: >-
+      工作区卫生自动清理 reconciler（ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
+      消除，2026-07-20）。post-commit 事件触发（priority=890），检测工作区残留的 auto-sync
+      产物并自动 git restore 还原到 HEAD 版本。真实代码修改（非 auto-sync 产物）不自动
+      处理，仅 action=warn 告警。canonical = src/zephyr/governance/audit/
+      workspace_hygiene_reconciler.py（MOD-GOV_workspace_hygiene_reconciler）。
+      注册点：git_commit_gateway.py:648 _register_default_reconcilers。
+      治本动机：100% AI 开发下，AI 不自觉执行 git checkout 还原 auto-sync 产物残留，
+      导致工作区永久有 modified 文件——判断疲劳 → 误判 → 漂移。本 reconciler 把"还原优先"
+      从君子协定升级为自动化。
+
+  # --------------------------------------------------------------------------
+  - capability_id: session_startup_health_check
+    canonical_override: scripts/governance/session_startup_health_check.py
+    aliases:
+      - SH-GOV-004
+      - session_startup_health_check
+      - startup_health_check
+      - ARCH-TOOL-HEALTH-V1-Phase-6-startup
+    description: >-
+      AI session 启动健康度自检脚本（ARCH-TOOL-HEALTH-V1 Phase 6，SH-GOV-004）。
+      检查 4 个核心治理工具（apply_depgraph/apply_decisiongraph/apply_dataflowgraph/
+      sync_yaml_to_depgraph）的 import + CLI + 符号完整性，以及 6 个 Gateway 模块
+      （GitCommitGateway/session_worktree/reconciliation_registry/emergency_commit/
+      reconcile_runner/reconcile_worker）的健康度。失败时输出 [ESCALATION] 标记，
+      禁止 silently workaround。canonical = scripts/governance/session_startup_health_check.py。
+      使用：AI session 启动时 python scripts/governance/session_startup_health_check.py。
+
+  # --------------------------------------------------------------------------
+  - capability_id: apply_depgraph_smoke_test
+    canonical_override: tests/governance/test_apply_depgraph_smoke.py
+    aliases:
+      - test_apply_depgraph_smoke
+      - apply_depgraph_smoke
+      - ARCH-TOOL-HEALTH-V1-Phase-4
+    description: >-
+      apply_depgraph.py end-to-end smoke test（ARCH-TOOL-HEALTH-V1 Phase 4，commit 76dd7ab19d）。
+      14 个 test 覆盖：模块 import 无 NameError、get_depgraph_pg_connection 符号存在、
+      EXIT_* 常量存在、核心函数存在、list_ops CLI 运行、--no-args 打印 help、
+      只读连接工作、depgraph_nodes 表可访问、add_design_node/edge 可调用、
+      transition_build_status 可调用、remove_design_node 可调用、
+      nodes 表 schema 匹配、domains 表有 test isolation 域。
+      真实调用 CLI + 真实 PostgreSQL + 验证 DB 写入。@pytest.mark.e2e 标记 DB 连接测试。
+      canonical = tests/governance/test_apply_depgraph_smoke.py。
 
   # --------------------------------------------------------------------------
   - capability_id: reference_transaction_guard
@@ -4443,6 +4499,26 @@ capabilities:
       审计日志：.runtime/reconcile_reports/reference_transaction_guard_<ts>.json。
       治本（2d 可发现性）：新 AI 通过 capability_lookup.find("reference_transaction") /
       find("commit-tree bypass") 可定位真源，避免重复造轮子。
+
+  # --------------------------------------------------------------------------
+  - capability_id: workspace_telemetry
+    canonical_override: src/zephyr/shared/io/workspace_telemetry.py
+    aliases:
+      - log_workspace_op
+      - compute_content_hash
+      - workspace_telemetry_shared
+      - ARCH-P3-FOLLOWUP-TODOS-001-Ruling-A
+    description: >-
+      主工作区文件操作遥测公共 API（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 A，2026-07-19）。
+      将原 _log_workspace_op（zephyr.gov_enforcement.rule_bridge.session_worktree 私有函数）
+      提取到 zephyr.shared.io.workspace_telemetry 作为公共 API（无下划线前缀），消除
+      D_GOV_AUDIT → D_GOV_ENFORCEMENT 跨域依赖。两个公共函数：log_workspace_op() 记录
+      git restore/stash/quarantine/rollback 操作到 worktree_ops_log.jsonl（含 content_hash
+      校验字段）；compute_content_hash() 计算 sha256 hex 前 16 字符。永不抛异常（遥测
+      降级仅 debug 日志）。canonical = src/zephyr/shared/io/workspace_telemetry.py
+      （MOD-WORKSPACE_TELEMETRY）。消费方：session_worktree._log_workspace_op thin wrapper、
+      self_healer._rollback。治本（2d 可发现性）：新 AI 通过
+      capability_lookup.find("workspace_telemetry") / find("log_workspace_op") 可定位真源。
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -5700,6 +5776,11 @@ creation_tokens:
     token: "auto-commit-gw-abuse-monitor-20260719"
     created_by: "sess-16568-20260719211116"
     capability: "commit_gateway_abuse_monitor"
+  # --- ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 消除（2026-07-20）---
+  - file: "src/zephyr/governance/audit/workspace_hygiene_reconciler.py"
+    token: "auto-workspace-hygiene-reconciler-20260720"
+    created_by: "sess-42560-20260720002150"
+    capability: "workspace_hygiene_reconciler"
   # --- #ARCH-GUC-TRIGGER-FIX-001 (2026-07-19): GUC 触发器缺陷治本修复 ---
   # 裁定 A (P0): 修复 SHOW app.* → current_setting(..., true)
   # 裁定 A+ (P0): 修复 COALESCE 跨表列引用 → OLD::text
@@ -5717,6 +5798,15 @@ creation_tokens:
     token: "auto-guc-trigger-smoke-test-20260719"
     created_by: "sess-34696-20260719234628"
     capability: "guc_trigger_fix_smoke_test"
+
+  # --- workspace_telemetry 公共 API（2026-07-19 P3-1.1 治本，#ARCH-P3-FOLLOWUP-TODOS-001 裁定 A）---
+  # 提取 _log_workspace_op 到 shared.io.workspace_telemetry 作为公共 API（无下划线前缀），
+  # 消除 D_GOV_AUDIT → D_GOV_ENFORCEMENT 跨域依赖，移除 audit_worktree_ops_telemetry 的 "rollback" 豁免。
+  # session: sess-20004-20260720010618
+  - file: "src/zephyr/shared/io/workspace_telemetry.py"
+    token: "auto-workspace-telemetry-20260719"
+    created_by: "session-sess-20004-20260720010618"
+    capability: "workspace_telemetry"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
