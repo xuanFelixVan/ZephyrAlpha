@@ -37,7 +37,7 @@ segment_plan:
   0001-8999: 业务异常（按域分配，单域 9999 容量）
   9000-9999: 保留/实验段位
 # ============================================================
-# error_code 登记表（共 212 条）
+# error_code 登记表（共 210 条）
 # ============================================================
 error_codes:
 - code: ZA-AC-0001
@@ -479,11 +479,6 @@ error_codes:
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: 索引重建要求（声明于 tool_contracts.yaml）
-- code: ZA-KB-0005
-  class: MCPError
-  module: zephyr.infrastructure.knowledge_base_server
-  file: src/zephyr/infrastructure/knowledge_base_server.py
-  description: ke_id 未找到
 - code: ZA-SC-0001
   class: SessionError
   module: zephyr.security.adversarial_validation.validator
