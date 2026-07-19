@@ -128,6 +128,7 @@ def _query_reconcile_log(repo: Path) -> list[dict]:
 # ---------------------------------------------------------------------------
 # 输入校验测试
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestInputValidation:

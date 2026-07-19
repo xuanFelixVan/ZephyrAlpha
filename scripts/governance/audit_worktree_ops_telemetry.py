@@ -115,6 +115,12 @@ EXEMPT_FUNC_NAME_KEYWORDS: set[str] = {
     "_force_rmtree",   # worktree 目录强制删除（已由 _log_worktree_delete 遥测）
     "release",         # _GlobalCommitLock.release / file lock release — 锁文件清理
     "_clear_stale",    # _clear_stale_lock — 过期锁文件清理
+    # P3-1（2026-07-19）：self_healer._rollback — git restore 回滚 self_healer 自身修改
+    # 语义不同于常规擦除：① 回滚的是 self_healer 自己刚做的修改（非用户/AI 文件操作）
+    # ② 已有 logger.info/warning 记录（非 worktree_ops_log.jsonl 结构化遥测）
+    # ③ 跨域 import _log_workspace_op 会违反架构边界（semantic_audit → gov_enforcement）
+    # TODO(P3-1.1 follow-up): 提取 _log_workspace_op 到 shared 模块后，移除此豁免并补遥测
+    "rollback",        # _rollback / _rollback_handler — 自愈回滚自身修改
 }
 
 # 豁免路径片段：擦除操作涉及这些路径片段时豁免（temp/lock/pathspec 文件，非源码）

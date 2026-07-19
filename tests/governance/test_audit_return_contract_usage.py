@@ -80,6 +80,7 @@ def au():
 # ---------------------------------------------------------------------------
 # KNOWN_MISUSE_PATTERNS 完整性测试
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestKnownMisusePatterns:

@@ -54,6 +54,7 @@ def tmp_repo(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 # write_status_file / read_status_file
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestStatusFileIO:

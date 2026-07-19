@@ -96,6 +96,7 @@ def _make_branch_with_file(repo: Path, branch: str, name: str, content: str) -> 
 # ---------------------------------------------------------------------------
 # claim_files_for_edit API 测试
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestClaimFilesForEdit:

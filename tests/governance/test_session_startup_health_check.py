@@ -84,6 +84,9 @@ def _write_tool_script(repo_root: Path, rel_path: str, content: str) -> Path:
     return script_path
 
 
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
+
+
 class TestCheckCoreToolImport:
     """_check_core_tool_import 的四种场景。"""
 
