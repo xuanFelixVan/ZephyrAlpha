@@ -97,12 +97,418 @@ _OLLAMA_POLL_INTERVAL_S = 2.5
 _TASK_LEARNER_SAMPLE_LIMIT = 50
 
 
+class AutoRuntimeCore:
+    """三层运行时运营中心——ZephyrAlpha 系统大脑。
+
+    5.150.2 God Class 治本：4 个高内聚零耦合职责簇已提取为同文件协作者类
+    （置于本类之后，见文件末尾协作者注释块）——
+    ollama 进程生命周期（_OllamaProcessManager）、本地模型栈启动编排（_LocalModelBootstrap）、
+    boot 子系统注册（_BootSubsystemRegistrar）、任务-模型学习（_TaskModelLearning）。
+    公共 API 零变化：簇内方法由本类同名薄封装委托（实例级 patch 面不变），状态保留在
+    本类实例上（测试直接读写），协作者仅经 core 参数读写、不反向持有引用。
+    boot/shutdown 编排、组件装配、RBAC 生命周期、状态面板/任务分发/夜班/A2A 访问器
+    与单例状态/调用顺序/副作用深度交织，不外移，理由见各职责分区注释块。
+    """
+
+    # ── 组件装配区（交织保留：16 个子系统实例化 + module-level patch 面） ──
+    # 保留理由：装配顺序即依赖拓扑（registry→orchestrator→dashboard→scanner），
+    # 且测试 patch zephyr.trading.auto_runtime_core.<Name> 模块级类名，移出即断 patch 面。
+    def __init__(
+        self,
+        config: RuntimeConfig | None = None,
+        system_config: SystemConfiguration | None = None,
+        embedding_router: EmbeddingRouterProtocol | None = None,
+        ollama_chat: OllamaChat | None = None,
+        local_scheduler: LocalModelScheduler | None = None,
+        vms: InProcessVectorMemory | None = None,
+        model_router: ModelRouter | None = None,
+        model_profiler: ModelProfiler | None = None,
+        task_repo: TaskRepositoryProtocol | None = None,
+    ) -> None:
+        self._config = config or RuntimeConfig()
+        self._system_config = system_config
+        ensure_runtime_dirs(self._config)
+
+        self._audit_logger = AiAuditLogger(self._config.audit_log_dir)
+        self._registry = CapabilityRegistry(self._config.capability_card_dir)
+        self._night_shift_queue = NightShiftQueue(self._config.night_shift_storage_path)
+        self._stop_gate = StopGate()
+        self._dream_cycle = DreamCycle(self._config.dream_archive_dir, self._config.audit_log_dir)
+        self._feedback_loop = FeedbackLoop(self._config.feedback_proposal_dir)
+        self._health_monitor = HealthMonitor(self._config.health_snapshot_dir)
+        self._integration_registry = IntegrationRegistry()
+        self._work_orchestrator = WorkOrchestrator(
+            self._registry,
+            dag_dir=self._config.work_dag_dir,
+            max_parallel_l1=self._config.max_parallel_l1,
+            max_parallel_l2=self._config.max_parallel_l2,
+            max_parallel_l3=self._config.max_parallel_l3,
+        )
+        self._finalizer = Finalizer()
+        self._lifecycle = LifecycleManager(self._config)
+
+        src_root = self._config.capability_card_dir.parent.parent / "src" / "zephyr"
+        bp_root = self._config.capability_card_dir.parent.parent / "architecture_model"
+        self._scanner = ModuleOnboardingScanner(src_root, bp_root, self._registry)
+        self._auto_integrator = AutoIntegrator(self._registry, self._config.max_daily_l3_activations)
+        self._orphan_detector = OrphanDetector(self._scanner, self._registry)
+
+        self._dashboard = StatusDashboard(
+            registry=self._registry,
+            health_monitor=self._health_monitor,
+            night_shift_queue=self._night_shift_queue,
+            work_orchestrator=self._work_orchestrator,
+            orphan_detector=self._orphan_detector,
+        )
+
+        self._a2a_registry: A2ARegistry | None = None
+        self._a2a_protocol_gateway: A2AProtocolGateway | None = None
+        self._init_a2a()
+
+        self._booted = False
+        self._local_scheduler: LocalModelScheduler | None = local_scheduler
+        self._fle_scheduler: FeedbackLoopScheduler | None = None
+        self._embedding_router: EmbeddingRouter | None = embedding_router
+        self._ollama_chat: OllamaChat | None = ollama_chat
+        self._ollama_proc: object | None = None  # 5.49.1 修复：保存 Popen 引用避免孤儿进程
+        self._task_learner: ModelTaskMatrix | None = None
+        self._model_router: ModelRouter | None = model_router
+        self._vms: InProcessVectorMemory | None = vms
+        self._model_profiler: ModelProfiler | None = model_profiler
+        self._task_repo: TaskRepositoryProtocol | None = task_repo
+
+    # ── boot 编排区（交织保留：调用顺序即语义） ──
+    # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
+    # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
+    def boot(self) -> BootReport:
+        report = self._lifecycle.boot_sequence(
+            audit_logger=self._audit_logger,
+            registry=self._registry,
+            night_shift_queue=self._night_shift_queue,
+            health_monitor=self._health_monitor,
+            integration_registry=self._integration_registry,
+            work_orchestrator=self._work_orchestrator,
+            dream_cycle=self._dream_cycle,
+            feedback_loop=self._feedback_loop,
+            stop_gate=self._stop_gate,
+            finalizer=self._finalizer,
+        )
+
+        if report.success and self._config.auto_start_l2:
+            self._start_local_models(report)
+
+        if report.success and self._ollama_chat is not None:
+            self._init_task_learner(report)
+            self._benchmark_and_learn(report)
+
+        if report.success:
+            try:
+                ResourceOptimizationEngine().start_monitor(interval=30.0)
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # 5.70.1 修复：原 except: pass 完全无日志。资源压力监控、自愈、降级矩阵全部失效且无告警。
+                # 添加 logger.warning + _resource_engine_degraded 降级标记，供运行时检测降级状态。
+                logger.warning("ResourceOptimizationEngine startup failed, running in degraded mode", exc_info=True)
+                self._resource_engine_degraded = True
+
+            self._bootstrap_rbac()
+            self._register_task_system_cron_jobs()
+            self._register_task_system_hooks()
+            self._start_task_queue()
+            self._start_blueprint_watcher()
+            self._start_fle_scheduler()
+            self._run_boot_triple_alignment()
+            self._init_escalation_protocol()
+
+        self._booted = report.success
+        return report
+
+    # ── RBAC 生命周期区（交织保留：boot 成功末段启动 / shutdown 最先关闭） ──
+    # 保留理由：仅 2 个方法且与 boot/shutdown 编排顺序强耦合（启动顺序敏感：
+    # RBAC 必须在所有子系统就绪后 bootstrap、在任何清理前 shutdown），量小不独立成簇。
+    def _bootstrap_rbac(self) -> None:
+        """启动RBAC系统 — Agent权限/身份/熔断器/superadmin."""
+        try:
+            genesis = get_genesis_bootstrap()
+            state = genesis.bootstrap(config={"version": "0.14.0"})
+            if state.is_ready:
+                logger.info(
+                    "RBAC bootstrap COMPLETED: phase=%s checks=%d/%d progress=%.0f%%",
+                    state.phase.value,
+                    state.checks_passed,
+                    state.total_checks,
+                    state.progress * 100,
+                )
+            else:
+                logger.error(
+                    "RBAC bootstrap FAILED: phase=%s error=%s",
+                    state.phase.value,
+                    state.error,
+                )
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.error("RBAC bootstrap exception: %s", exc, exc_info=True)
+
+    def _shutdown_rbac(self) -> None:
+        """关闭RBAC系统 — 清理资源."""
+        try:
+            genesis = get_genesis_bootstrap()
+            genesis.shutdown()
+            logger.info("RBAC shutdown completed")
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
+
+    # ── ollama 进程生命周期（委托 _OllamaProcessManager） ──
+    def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
+        return _OllamaProcessManager.ollama_alive(self._config.ollama_base_url, timeout_s)
+
+    def _ensure_ollama_running(self) -> bool:
+        return _OllamaProcessManager.ensure_running(self)
+
+    def _ensure_ollama_available(self, report: BootReport) -> bool:
+        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
+        return _OllamaProcessManager.ensure_available(self, report)
+
+    # ── boot 子系统注册（委托 _BootSubsystemRegistrar） ──
+    def _init_escalation_protocol(self) -> None:
+        return _BootSubsystemRegistrar.init_escalation_protocol(self)
+
+    def _register_task_system_cron_jobs(self) -> None:
+        """注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
+
+        历史：原 boot_cron_jobs.register_boot_cron_jobs 已于 2026-06-26 裁定随
+        CircadianScheduler 定时调度机制一并废除；本方法保留为 boot 流程钩子，
+        注册任务系统残留的事件订阅（EventBus 任务生命周期事件），满足项目铁律
+        "永久系统必须全自动（自动触发/运行/维护/关闭）"——定时调度虽废除，但任务
+        系统仍需通过事件订阅自动响应任务状态变更。
+        """
+        return _BootSubsystemRegistrar.register_task_system_cron_jobs(self)
+
+    def _register_task_system_hooks(self) -> None:
+        return _BootSubsystemRegistrar.register_task_system_hooks(self)
+
+    def _start_task_queue(self) -> None:
+        return _BootSubsystemRegistrar.start_task_queue(self)
+
+    def _start_blueprint_watcher(self) -> None:
+        return _BootSubsystemRegistrar.start_blueprint_watcher(self)
+
+    def _start_fle_scheduler(self) -> None:
+        return _BootSubsystemRegistrar.start_fle_scheduler(self)
+
+    def _run_boot_triple_alignment(self) -> None:
+        return _BootSubsystemRegistrar.run_boot_triple_alignment(self)
+
+    # ── 本地模型栈启动编排（委托 _LocalModelBootstrap） ──
+    def _start_local_models(self, report: BootReport) -> None:
+        """启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
+
+        5.158.11 重构：extract method（chat backend 保留 inline 维持 warmup sleep 语义，
+        避免 time.sleep 迁移触发 PERM-TRIGGER 误判）。主函数 McCabe 16→8。
+        """
+        return _LocalModelBootstrap.start_local_models(self, report)
+
+    def _warmup_embedding_router(self, report: BootReport) -> None:
+        """初始化并预热 embedding router。"""
+        return _LocalModelBootstrap.warmup_embedding_router(self, report)
+
+    def _start_local_scheduler(self, report: BootReport) -> None:
+        """启动本地模型调度器。"""
+        return _LocalModelBootstrap.start_local_scheduler(self, report)
+
+    def _start_vms(self) -> None:
+        """启动向量记忆存储（容错——失败仅警告）。"""
+        return _LocalModelBootstrap.start_vms(self)
+
+    # ── 任务-模型学习（委托 _TaskModelLearning） ──
+    def _init_task_learner(self, report: BootReport) -> None:
+        return _TaskModelLearning.init_task_learner(self, report)
+
+    def _init_model_router(self) -> None:
+        return _TaskModelLearning.init_model_router(self)
+
+    def _benchmark_and_learn(self, report: BootReport) -> None:
+        return _TaskModelLearning.benchmark_and_learn(self, report)
+
+    def learn_from_task_result(
+        self, task_type: str, model: str, duration_ms: float, tokens: int, confidence: float = 0.0
+    ) -> None:
+        """记录一次任务执行结果——供大脑学习最优任务->模型映射。"""
+        return _TaskModelLearning.learn_from_task_result(self, task_type, model, duration_ms, tokens, confidence)
+
+    def get_task_model_recommendations(self) -> list[dict[str, object]]:
+        """获取当前任务->模型推荐矩阵。"""
+        return _TaskModelLearning.get_task_model_recommendations(self)
+
+    def learner_summary(self) -> str:
+        """任务->模型学习器摘要。"""
+        return _TaskModelLearning.learner_summary(self)
+
+    def _learn_from_completed_tasks(self) -> int:
+        """从已完成的任务中学习最优模型映射。"""
+        return _TaskModelLearning.learn_from_completed_tasks(self)
+
+    # ── 关停编排区（交织保留：关停顺序即语义） ──
+    # 保留理由：RBAC→ollama proc→schedulers→vms→资源引擎→lifecycle 的顺序与
+    # _booted 状态翻转（try/finally 保证）深度交织，是纯编排而非职责簇。
+    def shutdown(self) -> ShutdownReport:
+        self._shutdown_rbac()
+        # 5.49.1 修复：shutdown 时终止 ollama 进程，避免孤儿进程
+        _OllamaProcessManager.terminate_proc(self)
+        if self._local_scheduler is not None:
+            try:
+                self._local_scheduler.stop()
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
+                logger.exception("local_scheduler.stop() failed during shutdown", exc_info=True)
+        if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
+            try:
+                self._fle_scheduler.stop()
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
+                logger.exception("fle_scheduler.stop() failed during shutdown", exc_info=True)
+        if self._vms is not None:
+            try:
+                self._vms.shutdown()
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
+                logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
+        try:
+            ResourceOptimizationEngine().stop_monitor()
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
+            logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown", exc_info=True)
+        # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
+        # 运行时状态卡在"已关闭但 booted=True"。用 try/finally 保证 _booted=False 必定执行
+        try:
+            report = self._lifecycle.shutdown_sequence(
+                stop_gate=self._stop_gate,
+                finalizer=self._finalizer,
+                health_monitor=self._health_monitor,
+                audit_logger=self._audit_logger,
+            )
+        finally:
+            self._booted = False
+        return report
+
+    # ── 对账编排区（交织保留：orphan→reconcile→学习→双 sync 顺序敏感） ──
+    def reconcile(self) -> ReconciliationReport:
+        orphan_rate = self._orphan_detector.compute_orphan_rate()
+        report = self._health_monitor.reconcile(orphan_rate=orphan_rate)
+        self._learn_from_completed_tasks()
+        self.sync_a2a_to_capability_registry()
+        self.sync_skills_to_capability_registry()
+        return report
+
+    # ── 状态面板区（已极简薄委托，无簇可提） ──
+    def health(self) -> dict:
+        return self._health_monitor.dump_last_snapshot()
+
+    def status_panel(self) -> str:
+        return self._dashboard.render_tui()
+
+    def status_json(self) -> dict:
+        return self._dashboard.render_json()
+
+    # ── 任务分发区（已极简薄委托，无簇可提） ──
+    def dispatch_task(self, task: WorkItem) -> str:
+        return self._work_orchestrator.submit(task)
+
+    def submit_work(self, work: WorkItem) -> str:
+        return self._work_orchestrator.submit(work)
+
+    def submit_dag(self, dag_id: str, params: dict | None = None) -> str:
+        return self._work_orchestrator.submit_dag(dag_id, params)
+
+    # ── 夜班队列区（已极简薄委托，无簇可提） ──
+    def get_night_shift_queue(self) -> list[NightShiftEntry]:
+        return self._night_shift_queue.pending()
+
+    def resolve_night_shift(self, entry_id: str, decision: str, notes: str = "") -> bool:
+        return self._night_shift_queue.resolve(entry_id, decision, notes)
+
+    # ── 子系统访问器区（外部消费者直接依赖，保留） ──
+    @property
+    def capability_registry(self) -> CapabilityRegistry:
+        return self._registry
+
+    @property
+    def integration_registry(self) -> IntegrationRegistry:
+        return self._integration_registry
+
+    @property
+    def work_orchestrator(self) -> WorkOrchestrator:
+        return self._work_orchestrator
+
+    @property
+    def orphan_detector(self) -> OrphanDetector:
+        return self._orphan_detector
+
+    @property
+    def onboarding_scanner(self) -> ModuleOnboardingScanner:
+        return self._scanner
+
+    @property
+    def stop_gate(self) -> StopGate:
+        return self._stop_gate
+
+    def can_stop(self) -> bool:
+        return self._stop_gate.can_stop(
+            audit_has_new_entries=not self._audit_logger.has_pending_flush(),
+            night_shift_all_resolved=not self._night_shift_queue.has_unresolved(),
+            dream_cycle_archived=not self._dream_cycle.needs_archival(),
+        )
+
+    # ── A2A 集成区（交织保留：_init_a2a 为 class-level patch 面，sync 已极简） ──
+    # 保留理由：全部测试 patch AutoRuntimeCore._init_a2a（类级 patch 面），
+    # 两个 sync 方法已是 CapabilitySync 薄委托（2 行），无簇可提。
+    def _init_a2a(self) -> None:
+        try:
+            self._a2a_registry = card_registry
+            self._a2a_protocol_gateway = A2AProtocolGateway()
+            self._integration_registry.register(
+                IntegrationPoint(
+                    point_id="a2a-protocol",
+                    target_system="A2AProtocol",
+                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
+                    protocol="python_import",
+                    sla="best_effort",
+                    status="CONNECTED",
+                )
+            )
+            self._audit_logger.log_registration("a2a-protocol", "INIT_OK")
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._integration_registry.register(
+                IntegrationPoint(
+                    point_id="a2a-protocol",
+                    target_system="A2AProtocol",
+                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
+                    protocol="python_import",
+                    sla="best_effort",
+                    status="DISCONNECTED",
+                )
+            )
+
+    def sync_a2a_to_capability_registry(self) -> int:
+        return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
+
+    def sync_skills_to_capability_registry(self) -> int:
+        skill_registry_path = Path(__file__).resolve().parent.parent / "agent-spec" / "skill-registry.yaml"
+        return CapabilitySync(self._registry).sync_skills(skill_registry_path)
+
+    @property
+    def a2a_registry(self) -> A2ARegistry | None:
+        return self._a2a_registry
+
+
 # 5.150.2 Extract Class 协作者（God Class 治本：高内聚零耦合职责簇）
 #   - 依赖 core 状态的方法由 core 同名薄封装委托（实例级 patch 面不变）
 #   - 协作者内部跨方法调用一律经 core 属性查找（core._ollama_alive 等），
 #     保留 patch.object(core, "_ollama_alive", ...) 等实例级 patch 拦截点
 # 协作者均无状态——配置/子系统句柄/进程引用等状态保留在 core 上（测试直接读写），
 # 协作者仅经 core 参数读写，不反向持有引用。
+# 置于类后（非试点的前置布局）：NO-GOD-CLASS gate 按 diff added 行检测新 ClassDef，
+# 协作者后置保证 AutoRuntimeCore 类行锚定为上文 context（类行不位移、不进 added 行集），
+# 门禁确定性通过；运行时安全——薄封装在调用时解析协作者全局名，注解经
+# `from __future__ import annotations` 惰性求值。
 
 
 class _OllamaProcessManager:
@@ -517,404 +923,3 @@ class _TaskModelLearning:
         if count > 0:
             core._task_learner._save()
         return count
-
-
-class AutoRuntimeCore:
-    """三层运行时运营中心——ZephyrAlpha 系统大脑。
-
-    5.150.2 God Class 治本：4 个高内聚零耦合职责簇已提取为同文件协作者类——
-    ollama 进程生命周期（_OllamaProcessManager）、本地模型栈启动编排（_LocalModelBootstrap）、
-    boot 子系统注册（_BootSubsystemRegistrar）、任务-模型学习（_TaskModelLearning）。
-    公共 API 零变化：簇内方法由本类同名薄封装委托（实例级 patch 面不变），状态保留在
-    本类实例上（测试直接读写），协作者仅经 core 参数读写、不反向持有引用。
-    boot/shutdown 编排、组件装配、RBAC 生命周期、状态面板/任务分发/夜班/A2A 访问器
-    与单例状态/调用顺序/副作用深度交织，不外移，理由见各职责分区注释块。
-    """
-
-    # ── 组件装配区（交织保留：16 个子系统实例化 + module-level patch 面） ──
-    # 保留理由：装配顺序即依赖拓扑（registry→orchestrator→dashboard→scanner），
-    # 且测试 patch zephyr.trading.auto_runtime_core.<Name> 模块级类名，移出即断 patch 面。
-    def __init__(
-        self,
-        config: RuntimeConfig | None = None,
-        system_config: SystemConfiguration | None = None,
-        embedding_router: EmbeddingRouterProtocol | None = None,
-        ollama_chat: OllamaChat | None = None,
-        local_scheduler: LocalModelScheduler | None = None,
-        vms: InProcessVectorMemory | None = None,
-        model_router: ModelRouter | None = None,
-        model_profiler: ModelProfiler | None = None,
-        task_repo: TaskRepositoryProtocol | None = None,
-    ) -> None:
-        self._config = config or RuntimeConfig()
-        self._system_config = system_config
-        ensure_runtime_dirs(self._config)
-
-        self._audit_logger = AiAuditLogger(self._config.audit_log_dir)
-        self._registry = CapabilityRegistry(self._config.capability_card_dir)
-        self._night_shift_queue = NightShiftQueue(self._config.night_shift_storage_path)
-        self._stop_gate = StopGate()
-        self._dream_cycle = DreamCycle(self._config.dream_archive_dir, self._config.audit_log_dir)
-        self._feedback_loop = FeedbackLoop(self._config.feedback_proposal_dir)
-        self._health_monitor = HealthMonitor(self._config.health_snapshot_dir)
-        self._integration_registry = IntegrationRegistry()
-        self._work_orchestrator = WorkOrchestrator(
-            self._registry,
-            dag_dir=self._config.work_dag_dir,
-            max_parallel_l1=self._config.max_parallel_l1,
-            max_parallel_l2=self._config.max_parallel_l2,
-            max_parallel_l3=self._config.max_parallel_l3,
-        )
-        self._finalizer = Finalizer()
-        self._lifecycle = LifecycleManager(self._config)
-
-        src_root = self._config.capability_card_dir.parent.parent / "src" / "zephyr"
-        bp_root = self._config.capability_card_dir.parent.parent / "architecture_model"
-        self._scanner = ModuleOnboardingScanner(src_root, bp_root, self._registry)
-        self._auto_integrator = AutoIntegrator(self._registry, self._config.max_daily_l3_activations)
-        self._orphan_detector = OrphanDetector(self._scanner, self._registry)
-
-        self._dashboard = StatusDashboard(
-            registry=self._registry,
-            health_monitor=self._health_monitor,
-            night_shift_queue=self._night_shift_queue,
-            work_orchestrator=self._work_orchestrator,
-            orphan_detector=self._orphan_detector,
-        )
-
-        self._a2a_registry: A2ARegistry | None = None
-        self._a2a_protocol_gateway: A2AProtocolGateway | None = None
-        self._init_a2a()
-
-        self._booted = False
-        self._local_scheduler: LocalModelScheduler | None = local_scheduler
-        self._fle_scheduler: FeedbackLoopScheduler | None = None
-        self._embedding_router: EmbeddingRouter | None = embedding_router
-        self._ollama_chat: OllamaChat | None = ollama_chat
-        self._ollama_proc: object | None = None  # 5.49.1 修复：保存 Popen 引用避免孤儿进程
-        self._task_learner: ModelTaskMatrix | None = None
-        self._model_router: ModelRouter | None = model_router
-        self._vms: InProcessVectorMemory | None = vms
-        self._model_profiler: ModelProfiler | None = model_profiler
-        self._task_repo: TaskRepositoryProtocol | None = task_repo
-
-    # ── boot 编排区（交织保留：调用顺序即语义） ──
-    # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
-    # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
-    def boot(self) -> BootReport:
-        report = self._lifecycle.boot_sequence(
-            audit_logger=self._audit_logger,
-            registry=self._registry,
-            night_shift_queue=self._night_shift_queue,
-            health_monitor=self._health_monitor,
-            integration_registry=self._integration_registry,
-            work_orchestrator=self._work_orchestrator,
-            dream_cycle=self._dream_cycle,
-            feedback_loop=self._feedback_loop,
-            stop_gate=self._stop_gate,
-            finalizer=self._finalizer,
-        )
-
-        if report.success and self._config.auto_start_l2:
-            self._start_local_models(report)
-
-        if report.success and self._ollama_chat is not None:
-            self._init_task_learner(report)
-            self._benchmark_and_learn(report)
-
-        if report.success:
-            try:
-                ResourceOptimizationEngine().start_monitor(interval=30.0)
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                # 5.70.1 修复：原 except: pass 完全无日志。资源压力监控、自愈、降级矩阵全部失效且无告警。
-                # 添加 logger.warning + _resource_engine_degraded 降级标记，供运行时检测降级状态。
-                logger.warning("ResourceOptimizationEngine startup failed, running in degraded mode", exc_info=True)
-                self._resource_engine_degraded = True
-
-            self._bootstrap_rbac()
-            self._register_task_system_cron_jobs()
-            self._register_task_system_hooks()
-            self._start_task_queue()
-            self._start_blueprint_watcher()
-            self._start_fle_scheduler()
-            self._run_boot_triple_alignment()
-            self._init_escalation_protocol()
-
-        self._booted = report.success
-        return report
-
-    # ── RBAC 生命周期区（交织保留：boot 成功末段启动 / shutdown 最先关闭） ──
-    # 保留理由：仅 2 个方法且与 boot/shutdown 编排顺序强耦合（启动顺序敏感：
-    # RBAC 必须在所有子系统就绪后 bootstrap、在任何清理前 shutdown），量小不独立成簇。
-    def _bootstrap_rbac(self) -> None:
-        """启动RBAC系统 — Agent权限/身份/熔断器/superadmin."""
-        try:
-            genesis = get_genesis_bootstrap()
-            state = genesis.bootstrap(config={"version": "0.14.0"})
-            if state.is_ready:
-                logger.info(
-                    "RBAC bootstrap COMPLETED: phase=%s checks=%d/%d progress=%.0f%%",
-                    state.phase.value,
-                    state.checks_passed,
-                    state.total_checks,
-                    state.progress * 100,
-                )
-            else:
-                logger.error(
-                    "RBAC bootstrap FAILED: phase=%s error=%s",
-                    state.phase.value,
-                    state.error,
-                )
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.error("RBAC bootstrap exception: %s", exc, exc_info=True)
-
-    def _shutdown_rbac(self) -> None:
-        """关闭RBAC系统 — 清理资源."""
-        try:
-            genesis = get_genesis_bootstrap()
-            genesis.shutdown()
-            logger.info("RBAC shutdown completed")
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
-
-    # ── ollama 进程生命周期（委托 _OllamaProcessManager） ──
-    def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
-        return _OllamaProcessManager.ollama_alive(self._config.ollama_base_url, timeout_s)
-
-    def _ensure_ollama_running(self) -> bool:
-        return _OllamaProcessManager.ensure_running(self)
-
-    def _ensure_ollama_available(self, report: BootReport) -> bool:
-        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
-        return _OllamaProcessManager.ensure_available(self, report)
-
-    # ── boot 子系统注册（委托 _BootSubsystemRegistrar） ──
-    def _init_escalation_protocol(self) -> None:
-        return _BootSubsystemRegistrar.init_escalation_protocol(self)
-
-    def _register_task_system_cron_jobs(self) -> None:
-        """注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
-
-        历史：原 boot_cron_jobs.register_boot_cron_jobs 已于 2026-06-26 裁定随
-        CircadianScheduler 定时调度机制一并废除；本方法保留为 boot 流程钩子，
-        注册任务系统残留的事件订阅（EventBus 任务生命周期事件），满足项目铁律
-        "永久系统必须全自动（自动触发/运行/维护/关闭）"——定时调度虽废除，但任务
-        系统仍需通过事件订阅自动响应任务状态变更。
-        """
-        return _BootSubsystemRegistrar.register_task_system_cron_jobs(self)
-
-    def _register_task_system_hooks(self) -> None:
-        return _BootSubsystemRegistrar.register_task_system_hooks(self)
-
-    def _start_task_queue(self) -> None:
-        return _BootSubsystemRegistrar.start_task_queue(self)
-
-    def _start_blueprint_watcher(self) -> None:
-        return _BootSubsystemRegistrar.start_blueprint_watcher(self)
-
-    def _start_fle_scheduler(self) -> None:
-        return _BootSubsystemRegistrar.start_fle_scheduler(self)
-
-    def _run_boot_triple_alignment(self) -> None:
-        return _BootSubsystemRegistrar.run_boot_triple_alignment(self)
-
-    # ── 本地模型栈启动编排（委托 _LocalModelBootstrap） ──
-    def _start_local_models(self, report: BootReport) -> None:
-        """启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
-
-        5.158.11 重构：extract method（chat backend 保留 inline 维持 warmup sleep 语义，
-        避免 time.sleep 迁移触发 PERM-TRIGGER 误判）。主函数 McCabe 16→8。
-        """
-        return _LocalModelBootstrap.start_local_models(self, report)
-
-    def _warmup_embedding_router(self, report: BootReport) -> None:
-        """初始化并预热 embedding router。"""
-        return _LocalModelBootstrap.warmup_embedding_router(self, report)
-
-    def _start_local_scheduler(self, report: BootReport) -> None:
-        """启动本地模型调度器。"""
-        return _LocalModelBootstrap.start_local_scheduler(self, report)
-
-    def _start_vms(self) -> None:
-        """启动向量记忆存储（容错——失败仅警告）。"""
-        return _LocalModelBootstrap.start_vms(self)
-
-    # ── 任务-模型学习（委托 _TaskModelLearning） ──
-    def _init_task_learner(self, report: BootReport) -> None:
-        return _TaskModelLearning.init_task_learner(self, report)
-
-    def _init_model_router(self) -> None:
-        return _TaskModelLearning.init_model_router(self)
-
-    def _benchmark_and_learn(self, report: BootReport) -> None:
-        return _TaskModelLearning.benchmark_and_learn(self, report)
-
-    def learn_from_task_result(
-        self, task_type: str, model: str, duration_ms: float, tokens: int, confidence: float = 0.0
-    ) -> None:
-        """记录一次任务执行结果——供大脑学习最优任务->模型映射。"""
-        return _TaskModelLearning.learn_from_task_result(self, task_type, model, duration_ms, tokens, confidence)
-
-    def get_task_model_recommendations(self) -> list[dict[str, object]]:
-        """获取当前任务->模型推荐矩阵。"""
-        return _TaskModelLearning.get_task_model_recommendations(self)
-
-    def learner_summary(self) -> str:
-        """任务->模型学习器摘要。"""
-        return _TaskModelLearning.learner_summary(self)
-
-    def _learn_from_completed_tasks(self) -> int:
-        """从已完成的任务中学习最优模型映射。"""
-        return _TaskModelLearning.learn_from_completed_tasks(self)
-
-    # ── 关停编排区（交织保留：关停顺序即语义） ──
-    # 保留理由：RBAC→ollama proc→schedulers→vms→资源引擎→lifecycle 的顺序与
-    # _booted 状态翻转（try/finally 保证）深度交织，是纯编排而非职责簇。
-    def shutdown(self) -> ShutdownReport:
-        self._shutdown_rbac()
-        # 5.49.1 修复：shutdown 时终止 ollama 进程，避免孤儿进程
-        _OllamaProcessManager.terminate_proc(self)
-        if self._local_scheduler is not None:
-            try:
-                self._local_scheduler.stop()
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                # 5.12.1 修复：原 except: pass 静默吞本地模型调度器关闭失败
-                logger.exception("local_scheduler.stop() failed during shutdown", exc_info=True)
-        if hasattr(self, "_fle_scheduler") and self._fle_scheduler is not None:
-            try:
-                self._fle_scheduler.stop()
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                # 5.12.1 修复：原 except: pass 静默吞 FLE 调度器关闭失败
-                logger.exception("fle_scheduler.stop() failed during shutdown", exc_info=True)
-        if self._vms is not None:
-            try:
-                self._vms.shutdown()
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
-                logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
-        try:
-            ResourceOptimizationEngine().stop_monitor()
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
-            logger.exception("ResourceOptimizationEngine.stop_monitor() failed during shutdown", exc_info=True)
-        # 5.144.4 修复: shutdown_sequence() 无 try/except, 若抛异常则 self._booted = False 不执行,
-        # 运行时状态卡在"已关闭但 booted=True"。用 try/finally 保证 _booted=False 必定执行
-        try:
-            report = self._lifecycle.shutdown_sequence(
-                stop_gate=self._stop_gate,
-                finalizer=self._finalizer,
-                health_monitor=self._health_monitor,
-                audit_logger=self._audit_logger,
-            )
-        finally:
-            self._booted = False
-        return report
-
-    # ── 对账编排区（交织保留：orphan→reconcile→学习→双 sync 顺序敏感） ──
-    def reconcile(self) -> ReconciliationReport:
-        orphan_rate = self._orphan_detector.compute_orphan_rate()
-        report = self._health_monitor.reconcile(orphan_rate=orphan_rate)
-        self._learn_from_completed_tasks()
-        self.sync_a2a_to_capability_registry()
-        self.sync_skills_to_capability_registry()
-        return report
-
-    # ── 状态面板区（已极简薄委托，无簇可提） ──
-    def health(self) -> dict:
-        return self._health_monitor.dump_last_snapshot()
-
-    def status_panel(self) -> str:
-        return self._dashboard.render_tui()
-
-    def status_json(self) -> dict:
-        return self._dashboard.render_json()
-
-    # ── 任务分发区（已极简薄委托，无簇可提） ──
-    def dispatch_task(self, task: WorkItem) -> str:
-        return self._work_orchestrator.submit(task)
-
-    def submit_work(self, work: WorkItem) -> str:
-        return self._work_orchestrator.submit(work)
-
-    def submit_dag(self, dag_id: str, params: dict | None = None) -> str:
-        return self._work_orchestrator.submit_dag(dag_id, params)
-
-    # ── 夜班队列区（已极简薄委托，无簇可提） ──
-    def get_night_shift_queue(self) -> list[NightShiftEntry]:
-        return self._night_shift_queue.pending()
-
-    def resolve_night_shift(self, entry_id: str, decision: str, notes: str = "") -> bool:
-        return self._night_shift_queue.resolve(entry_id, decision, notes)
-
-    # ── 子系统访问器区（外部消费者直接依赖，保留） ──
-    @property
-    def capability_registry(self) -> CapabilityRegistry:
-        return self._registry
-
-    @property
-    def integration_registry(self) -> IntegrationRegistry:
-        return self._integration_registry
-
-    @property
-    def work_orchestrator(self) -> WorkOrchestrator:
-        return self._work_orchestrator
-
-    @property
-    def orphan_detector(self) -> OrphanDetector:
-        return self._orphan_detector
-
-    @property
-    def onboarding_scanner(self) -> ModuleOnboardingScanner:
-        return self._scanner
-
-    @property
-    def stop_gate(self) -> StopGate:
-        return self._stop_gate
-
-    def can_stop(self) -> bool:
-        return self._stop_gate.can_stop(
-            audit_has_new_entries=not self._audit_logger.has_pending_flush(),
-            night_shift_all_resolved=not self._night_shift_queue.has_unresolved(),
-            dream_cycle_archived=not self._dream_cycle.needs_archival(),
-        )
-
-    # ── A2A 集成区（交织保留：_init_a2a 为 class-level patch 面，sync 已极简） ──
-    # 保留理由：全部测试 patch AutoRuntimeCore._init_a2a（类级 patch 面），
-    # 两个 sync 方法已是 CapabilitySync 薄委托（2 行），无簇可提。
-    def _init_a2a(self) -> None:
-        try:
-            self._a2a_registry = card_registry
-            self._a2a_protocol_gateway = A2AProtocolGateway()
-            self._integration_registry.register(
-                IntegrationPoint(
-                    point_id="a2a-protocol",
-                    target_system="A2AProtocol",
-                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
-                    protocol="python_import",
-                    sla="best_effort",
-                    status="CONNECTED",
-                )
-            )
-            self._audit_logger.log_registration("a2a-protocol", "INIT_OK")
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._integration_registry.register(
-                IntegrationPoint(
-                    point_id="a2a-protocol",
-                    target_system="A2AProtocol",
-                    interface="zephyr.infrastructure.a2a_protocol:card_registry",
-                    protocol="python_import",
-                    sla="best_effort",
-                    status="DISCONNECTED",
-                )
-            )
-
-    def sync_a2a_to_capability_registry(self) -> int:
-        return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
-
-    def sync_skills_to_capability_registry(self) -> int:
-        skill_registry_path = Path(__file__).resolve().parent.parent / "agent-spec" / "skill-registry.yaml"
-        return CapabilitySync(self._registry).sync_skills(skill_registry_path)
-
-    @property
-    def a2a_registry(self) -> A2ARegistry | None:
-        return self._a2a_registry
