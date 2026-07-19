@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.ops_governance.phase_check_registry
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.shared.contracts.protocols; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.orchestrator.chaos_engine; zephyr.governance.persistence.task_repo; zephyr.orchestrator.batch_orchestrator
+# [DEPENDENCIES] zephyr.shared.session_continuity; zephyr.gov_enforcement.rule_enforcement.sys_master_compliance; zephyr.integration.vector_memory.collection_manager; zephyr.integration.vector_memory.index_health_monitor; zephyr.integration.vector_memory.in_process_vector_memory; zephyr.integration.vector_memory.bridge_layer; zephyr.shared.contracts.protocols; zephyr.gov_audit.integrity; zephyr.gov_audit.query; zephyr.governance.__init__; zephyr.infrastructure.__init__; zephyr.gov_drift.chaos_injector; zephyr.governance.persistence.task_repo
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -37,6 +37,7 @@
 from __future__ import annotations
 
 import importlib
+import importlib.util  # 5.60.2: find_spec 检查模块存在性（无副作用，消除跨层静态依赖）
 import logging
 import subprocess
 import sys
@@ -694,12 +695,14 @@ def check_full_backtest() -> GateResult:
 
 
 def check_chaos_test() -> GateResult:
+    # 5.60.2 治本：用 importlib.util.find_spec 检查模块存在性，不执行模块（无副作用），
+    # 消除 governance→orchestrator 静态跨层依赖（替代 from zephyr.orchestrator...import）。
     try:
-        from zephyr.orchestrator.fault_tolerance.chaos_engine import ChaosEngine
-        from zephyr.gov_drift.chaos_injector import ChaosInjector
-
-        return GateResult.GREEN
-    except ImportError:
+        chaos_spec = importlib.util.find_spec("zephyr.orchestrator.fault_tolerance.chaos_engine")
+        injector_spec = importlib.util.find_spec("zephyr.gov_drift.chaos_injector")
+        if chaos_spec is not None and injector_spec is not None:
+            return GateResult.GREEN
+        # 模块未安装：回退到文件存在性检查（兼容 legacy 路径）
         mod = REPO_ROOT / "src/zephyr/feedback-loop/detectors/chaos_engineering.py"
         return GateResult.GREEN if mod.exists() else GateResult.YELLOW
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -911,12 +914,14 @@ def check_code_dedup() -> GateResult:
 
 
 def check_task_system() -> GateResult:
+    # 5.60.2 治本：用 importlib.util.find_spec 检查模块存在性，不执行模块（无副作用），
+    # 消除 governance→orchestrator 静态跨层依赖（替代 from zephyr.orchestrator...import）。
     try:
-        from zephyr.orchestrator.execution.batch_orchestrator import BatchOrchestrator
-        from zephyr.governance.persistence.task_repo import TaskRepository
-
-        return GateResult.GREEN
-    except ImportError:
+        bo_spec = importlib.util.find_spec("zephyr.orchestrator.execution.batch_orchestrator")
+        tr_spec = importlib.util.find_spec("zephyr.governance.persistence.task_repo")
+        if bo_spec is not None and tr_spec is not None:
+            return GateResult.GREEN
+        # 模块未安装：回退到文件存在性检查（兼容 legacy 路径）
         tr = REPO_ROOT / "src/zephyr/db/task_repo.py"
         bo = REPO_ROOT / "src/zephyr/orchestrator/batch_orchestrator.py"
         return GateResult.GREEN if tr.exists() and bo.exists() else GateResult.YELLOW
