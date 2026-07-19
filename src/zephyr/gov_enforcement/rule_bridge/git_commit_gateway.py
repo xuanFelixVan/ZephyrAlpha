@@ -760,13 +760,17 @@ class GitCommitGateway:
         self, existing: list[str], session_id: str, result: CommitResult,
         commit_message: str = "",
     ) -> None:
-        """Post-commit reconciler 在锁外运行（reconciler 可通过 _commit_auto 独立获取锁 auto-commit）。
+        """Post-commit reconciler 调度器（Ruling:100PCT-AI-GOVERNANCE P2-3 异步化）。
 
         #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 3.4 断点4/5 治本：
         新增 commit_message 参数——传递给 reconcile_for 和 _log_reconcile_results，
         使 post-commit 审计链可追溯 [no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP 逃生通道使用。
         原断点4: commit() 不传 message 给 _run_post_commit_reconcile；
         原断点5: _run_post_commit_reconcile 不传 commit_message 给 reconcile_for。
+
+        P2-3 治本（2026-07-19）：默认异步 spawn detached worker subprocess，避免 30+ 个
+        reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env
+        ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。
         """
         if result.status != CommitStatus.OK:
             return
@@ -777,6 +781,32 @@ class GitCommitGateway:
         _governance_dir = self.project_root / "scripts" / "governance" / "d1_structure"
         if not _governance_dir.is_dir():
             return
+
+        # P2-3 分发：默认 async，ZEPHYR_RECONCILE_SYNC=1 强制 sync（测试）
+        if os.environ.get("ZEPHYR_RECONCILE_SYNC", "") == "1":
+            self._run_post_commit_reconcile_sync(
+                existing, session_id, commit_message, result=result,
+            )
+        else:
+            self._run_post_commit_reconcile_async(
+                existing, session_id, result.commit_hash, commit_message,
+            )
+
+    def _run_post_commit_reconcile_sync(
+        self, existing: list[str], session_id: str, commit_message: str = "",
+        result: CommitResult | None = None,
+    ) -> list[ReconcileResult]:
+        """同步执行 reconciler 链路（原 _run_post_commit_reconcile 主体逻辑）。
+
+        Args:
+            existing: 已 commit 的文件绝对路径列表。
+            session_id: commit session_id。
+            commit_message: commit message（审计追溯用）。
+            result: 可选 CommitResult——传入则填充 ``result.reconcile`` 字段（同步模式向后兼容）。
+
+        Returns:
+            reconcile_results 列表（worker 用于统计）。
+        """
         try:
             # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
             with self._batcher as _batcher_ctx:
@@ -784,7 +814,8 @@ class GitCommitGateway:
                 reconcile_results = self._reconciliation_registry.reconcile_for(
                     existing, session_id, commit_message=commit_message,
                 )
-            result.reconcile = reconcile_results
+            if result is not None:
+                result.reconcile = reconcile_results
             # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
             # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
             # Phase 3.4 断点7: 同时持久化 commit_message 供审计追溯。
@@ -802,6 +833,92 @@ class GitCommitGateway:
                     print(f"GitCommitGateway: post-commit reconcile clean (session={session_id}): {rr.detail}")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("GitCommitGateway: post-commit reconcile failed: %s", e, exc_info=True)
+            reconcile_results = []
+        return reconcile_results
+
+    def _run_post_commit_reconcile_sync_worker(
+        self, existing: list[str], session_id: str, commit_message: str = "",
+    ) -> list[ReconcileResult]:
+        """worker-only 入口：同步执行 reconciler 链路并返回 results。
+
+        与 ``_run_post_commit_reconcile_sync`` 区别：
+        - 不传 CommitResult（worker 没有 CommitResult 对象）
+        - trigger_source="post_commit_async"（标识异步 worker 调用，便于审计区分）
+        - 异常向上抛（worker 兜底捕获写 status=failed）
+
+        供 ``zephyr.governance.audit.reconcile_worker._run_worker`` 调用。
+        """
+        # ARCH-GIT-CALL-BUDGET P2.3 (2026-07-19): batched auto-commit wrapper.
+        with self._batcher as _batcher_ctx:
+            _batcher_ctx.enable(session_id)
+            reconcile_results = self._reconciliation_registry.reconcile_for(
+                existing, session_id, commit_message=commit_message,
+            )
+        _log_reconcile_results(
+            self.project_root, reconcile_results, session_id,
+            trigger_source="post_commit_async", committed_files=existing,
+            commit_message=commit_message,
+        )
+        for rr in reconcile_results:
+            if rr.action == "auto_committed":
+                logger.info("GitCommitGateway: worker reconcile auto-committed (session=%s): %s", session_id, rr.detail)
+            elif rr.action == "warn":
+                logger.warning("GitCommitGateway: worker reconcile warning (session=%s): %s", session_id, rr.detail)
+        return reconcile_results
+
+    def _run_post_commit_reconcile_async(
+        self, existing: list[str], session_id: str, commit_sha: str,
+        commit_message: str = "",
+    ) -> None:
+        """异步 spawn detached worker subprocess（P2-3 治本）。
+
+        - commit_sha 缺失 → 回退 sync（兼容 edge case）
+        - launch 失败 → 回退 sync（fail-open，reconciler 仍需执行）
+        - launch 成功 → 立即返回，worker 在后台执行
+
+        Args:
+            existing: 已 commit 的文件绝对路径列表。
+            session_id: commit session_id。
+            commit_sha: 本次 commit 的 SHA（worker 用作 status file key）。
+            commit_message: commit message（审计追溯用）。
+        """
+        if not commit_sha:
+            logger.warning(
+                "GitCommitGateway: async reconcile fallback to sync (no commit_sha, session=%s)",
+                session_id,
+            )
+            self._run_post_commit_reconcile_sync(
+                existing, session_id, commit_message, result=None,
+            )
+            return
+        try:
+            from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
+            launch_result = launch_reconcile_async(
+                self.project_root, commit_sha, session_id, existing, commit_message,
+            )
+            if launch_result["ok"]:
+                logger.info(
+                    "GitCommitGateway: post-commit reconcile async launched "
+                    "(session=%s, sha=%s, pid=%s)",
+                    session_id, commit_sha, launch_result.get("worker_pid", 0),
+                )
+            else:
+                # launch 失败 → 回退 sync（reconciler 仍需执行，只是退化为同步阻塞）
+                logger.warning(
+                    "GitCommitGateway: async launch failed, fallback to sync: %s",
+                    launch_result.get("error", ""),
+                )
+                self._run_post_commit_reconcile_sync(
+                    existing, session_id, commit_message, result=None,
+                )
+        except Exception as e:  # noqa: BLE001 — async 启动失败 fail-open 回退 sync
+            logger.warning(
+                "GitCommitGateway: async reconcile launch failed, fallback to sync: %s",
+                e, exc_info=True,
+            )
+            self._run_post_commit_reconcile_sync(
+                existing, session_id, commit_message, result=None,
+            )
 
     def commit(
         self,
