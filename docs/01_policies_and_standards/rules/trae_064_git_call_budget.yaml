@@ -89,3 +89,55 @@ sections:
       description: AI session 启动时 MUST 运行 git_health_smoke.py，检测 git 版本/fscache/fsmonitor/status 计时/alias 状态。fail 时 MUST escalate 而非静默 workaround
       enforcement: AGENTS.md 规则 + session_worktree_start 可选调用
       violation_action: warn
+    implementation_status:
+      title: ARCH-GIT-CALL-BUDGET 建设阶段落地状态
+      description: 跟踪 P0-P3.4 各建设阶段的实际落地状态与 commit hash。SSoT——其他文档（capability_canonical_file_registry.yaml / full_project_tree_zh.md）引用本节为准。
+      last_updated: "2026-07-19"
+      phases:
+      - phase: P0
+        title: 铁律定义 + git_health_smoke.py 健康度检查基础
+        status: landed
+        commit: cb2cf154f2
+        date: "2026-07-19"
+      - phase: P1
+        title: GitCommandBatcher 批量化工具 + ZEPHYR_GIT_GUARD_FAST_PATH env（可信内部模块跳过 git_guard alias 拦截）
+        status: landed
+        commit: cb2cf154f2
+        date: "2026-07-19"
+      - phase: P2.1
+        title: fscache/fsmonitor 仓库级锁定（.git/config core.fscache=false + core.fsmonitor=false）
+        status: landed
+        commit: cb2cf154f2
+        date: "2026-07-19"
+      - phase: P2.2
+        title: GIT-CALL-BUDGET gate（warn-only P2，AST 检测循环内 subprocess.run(["git",...])；P3 升级 block）
+        status: landed
+        commit: cb2cf154f2
+        date: "2026-07-19"
+      - phase: P2.3
+        title: BatchedAutoCommitter reconciler 批量 auto-commit（post-commit 多 reconcilers 合并 1 次 commit）
+        status: landed
+        commit: 867defaec9
+        date: "2026-07-19"
+      - phase: P3.1
+        title: node_modules 排除（fsmonitor 扫描优化）
+        status: skipped
+        reason: N/A——本项目无 node_modules 目录
+        date: "2026-07-19"
+      - phase: P3.2
+        title: git_health_smoke.py AI session 启动健康度 smoke test（git 版本/fscache/fsmonitor/status 计时/alias 状态）
+        status: landed
+        commit: cb2cf154f2
+        date: "2026-07-19"
+      - phase: P3.3
+        title: WorktreePool 预创建池（git worktree move 重定位 .aidrafts_pool/→.aidrafts/{sid}/，消除 session 启动 git worktree add 开销）
+        status: landed
+        commit: a2c6d92874
+        followup_commit: 97e4fbec0c
+        followup_note: Windows 文件锁重试（antivirus/search indexer 句柄占用 git worktree move，3 次重试 0.5s 间隔）
+        date: "2026-07-19"
+      - phase: P3.4
+        title: git fsmonitor--daemon 替代方案（PoC 探索）
+        status: deferred
+        reason: PoC 性质，待 git 2.48.x 崩溃根因 upstream 修复后再评估
+        date: "2026-07-19"
