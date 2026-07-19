@@ -5514,6 +5514,11 @@ creation_tokens:
     token: "auto-rule-execution-pairing-gate-20260719"
     created_by: "sess-20644-20260719164900"
     capability: "rule_execution_pairing"
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.3 治理层收敛映射表 ---
+  - file: "docs/02_enterprise_architecture/governance_convergence_map.yaml"
+    token: "auto-governance-convergence-map-20260719"
+    created_by: "sess-5224-20260719175353"
+    capability: "governance_convergence"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
