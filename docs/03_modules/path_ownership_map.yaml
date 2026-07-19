@@ -2233,7 +2233,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/gov_enforcement/__init__.py'
-    owner_blueprint: 'D-GOV-ENFORCEMENT'
+    owner_blueprint: 'MOD-GOV_ENFORCEMENT'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'generated'
