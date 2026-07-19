@@ -1005,8 +1005,15 @@ def session_worktree_start(
     registry = _get_registry(root)
     registered = False
     try:
+        # Phase 6 治本（2026-07-19，warn-only 噪声治理——session 注册时序修复）：
+        # pid=0 = 逻辑 session（非进程绑定）。session_worktree 工作流跨多个 python -c
+        # 进程（start/commit/merge 各一次），若用 os.getpid() 注册，start 进程退出后
+        # PID 死亡 → _is_session_alive 判死 → SESSION-REQUIRED gate 阻断 merge +
+        # POST-COMMIT-GUARD warn-only 噪声。pid=0 时 _is_session_alive 跳过 PID 检查
+        # （仅靠 TTL=3600s + commit/merge 时的 heartbeat 刷新），session 跨进程存活。
+        # 僵尸检测由 session_worktree_sweep（age + 分支取代）兜底，非 PID liveness。
         registry.register(
-            sid, pid=os.getpid(), held_files=[],
+            sid, pid=0, held_files=[],
             is_breaking_change=breaking_change,
             task_files=task_files or [],  # 裁定#D：任务文件指纹注册
         )
@@ -2759,6 +2766,15 @@ def session_worktree_merge(
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)
     registry = _get_registry(root)
+
+    # Phase 6 治本（2026-07-19）：merge 时刷新 session heartbeat，防 TTL 过期。
+    # session_worktree_start 用 pid=0（逻辑 session）注册，跨进程存活靠 TTL，
+    # merge 前 heartbeat 刷新确保长 session（start→commit→merge 跨多次 python -c）
+    # 不会因 TTL=3600s 过期被误判死亡。
+    try:
+        registry.heartbeat(session_id)
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        pass  # heartbeat 失败不阻断 merge（TTL 未过期则 session 仍存活）
 
     # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-merge 告警横幅
     # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。

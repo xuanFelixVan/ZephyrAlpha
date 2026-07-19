@@ -3502,6 +3502,20 @@ entries:
     - 治本：新增 stash 过期清理 reconciler（GATE-STASH-LIFECYCLE），post-commit
       触发，清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀识别）。
 
+    缺陷5（PID liveness 跨进程失效，Phase 6 治本 2026-07-19）：
+    - 病根：session_worktree_start 用 pid=os.getpid() 注册 session。但 session_worktree
+      工作流跨多个 python -c 进程（start/commit/merge 各一次），start 进程退出后
+      PID 死亡。_is_session_alive（S3-A 治本）先查 PID liveness：死 PID → 立即
+      判失效 → get_session 返回 None → SESSION-REQUIRED gate 阻断 merge +
+      POST-COMMIT-GUARD warn-only 噪声（session_id 未注册）。
+    - 表现实测：session_worktree_merge 返回 gate_violation=True, gate_id=SESSION-REQUIRED；
+      emergency_commit 走 allow_overlap 逃生通道时 POST-COMMIT-GUARD 持续 warn-only，
+      触发 commit_gateway_abuse_monitor 维度3（allow_overlap abuse）误报。
+    - 治本：session_worktree_start 改用 pid=0（逻辑 session，非进程绑定）。
+      _is_session_alive 已支持 pid=0 跳过 PID 检查（仅靠 TTL=3600s + heartbeat）。
+      session_worktree_merge 新增 registry.heartbeat(session_id) 刷新 TTL，防长
+      session 过期。僵尸检测由 session_worktree_sweep（age + 分支取代）兜底。
+
     针对 100% AI 开发的长远期战略考虑：
     - worktree 君子协定是 AI 隔离提交的核心机制，其缺陷会直接导致治本工作丢失。
       实测：Phase 1 + Phase 3 代码修改全部丢失，需要重新应用——这是 AI 开发效率的
@@ -3529,13 +3543,17 @@ entries:
       _execute_cleanups 用 git stash push 替代 git checkout --，与 S3-B 治本一致。
     Phase 4（已完成，2026-07-19）：stash 过期清理 reconciler——新增 make_stash_lifecycle_reconciler()，
       post-commit 触发，清理 > 24h 的 session_worktree 临时 stash。
+    Phase 6（已完成，2026-07-19）：PID liveness 跨进程失效治本——session_worktree_start
+      改用 pid=0（逻辑 session），session_worktree_merge 新增 heartbeat 刷新 TTL。
+      消除 SESSION-REQUIRED gate 误阻断 + POST-COMMIT-GUARD warn-only 噪声。
   impact:
     - src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py（Phase 1：动态加载
       validate_module_id_naming，_load_is_valid_module_id + _validate_module_id_cache）
     - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 3：_commit_auto
       入口检测 .git/MERGE_HEAD 跳过 auto-commit）
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 2：_execute_cleanups
-      git stash push 替代 git checkout --，已完成）
+      git stash push 替代 git checkout --，已完成；Phase 6：session_worktree_start pid=0
+      逻辑 session + session_worktree_merge heartbeat 刷新 TTL）
     - src/zephyr/governance/audit/reconciliation_registry.py（Phase 4：新增
       make_stash_lifecycle_reconciler，已完成）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
@@ -3574,6 +3592,17 @@ entries:
       - 按索引降序 drop（避免 renumbering 问题）
       - 不影响用户手动 stash（无 session_worktree 前缀）
       - 注册到 GitCommitGateway._register_default_reconcilers（紧跟 worktree_lifecycle=800）
+
+    Phase 6 PID liveness 跨进程失效治本（已完成 2026-07-19）：
+      - session_worktree_start: registry.register(sid, pid=os.getpid()) → pid=0
+        （逻辑 session，非进程绑定）
+      - _is_session_alive 已支持 pid=0 跳过 PID 检查（仅靠 TTL=3600s + heartbeat）
+      - session_worktree_merge: 新增 registry.heartbeat(session_id) 刷新 TTL
+        （session_worktree_commit 已有 heartbeat 调用，无需重复添加）
+      - 跨进程 smoke test 验证：start 进程退出后 session 仍存活（pid=0, heartbeat_age=22.9s）
+      - 104 项现有单测全部通过（session_concurrency + session_worktree + session_required_gate）
+      - 消除 SESSION-REQUIRED gate 误阻断 merge + POST-COMMIT-GUARD warn-only 噪声
+      - 僵尸检测由 session_worktree_sweep（age + 分支取代）兜底，非 PID liveness
   status: resolved
   related_adjudication: 'FP-ISO.4C worktree 君子协定, TRAE-062 SSoT 分类铁律, ARCH-DEPGRAPH-RECONCILER-FAILSILENT, #ARCH-WORKTREE-001'
   related_rules: 'trae_054_depgraph_backup, session_worktree 君子协定'
