@@ -298,6 +298,43 @@ class TestGitCommitGatewayCommit:
         # 注: 环境变量在 commit 子进程内设置，主进程 finally 清理；
         # 这里验证 finally 清理逻辑不残留（不抛异常即通过）
 
+    def test_commit_passes_message_to_gates(self, tmp_path: Path) -> None:
+        """commit() 将 message 透传给 check_all 的 commit_message kwarg。
+
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复的回归测试：
+        验证直接路径与 session_worktree._run_pre_commit_gates L1174 对称，
+        CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记。
+
+        病根：git_commit_gateway.py:831 调 check_all 时漏传 commit_message，
+        导致 [no-lookup:reason] 标记在直接路径下永远不触发（逃生通道形同虚设）。
+        """
+        from unittest.mock import MagicMock
+        _init_git_repo(tmp_path)
+        f = _write_file(tmp_path, "a.py", "x = 1\n")
+
+        gw = GitCommitGateway(project_root=tmp_path)
+        # 用 MagicMock 替换 _gate_registry，捕获 check_all 调用参数
+        mock_registry = MagicMock()
+        mock_registry.check_all.return_value = []  # 所有 gate 通过
+        gw._gate_registry = mock_registry
+
+        gw.commit(
+            session_id="sess-test",
+            files=[str(f)],
+            allow_overlap=True,
+            message="feat: test [no-lookup:symmetry-test]",
+        )
+
+        mock_registry.check_all.assert_called_once()
+        call_args = mock_registry.check_all.call_args
+        # call_args.kwargs 是关键字参数
+        assert 'commit_message' in call_args.kwargs, (
+            "commit() MUST 传 commit_message 给 check_all"
+            "（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1）"
+        )
+        assert call_args.kwargs['commit_message'] == "feat: test [no-lookup:symmetry-test]", \
+            "commit_message 应为原始 message（不含 GW marker）"
+
 
 # ---------------------------------------------------------------------------
 # stash 隔离测试

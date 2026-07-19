@@ -133,6 +133,7 @@ from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_de
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
 from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
+from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # Step 2.5 遗留风险修复（域名字典直接访问硬阻断 priority=72）
 from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import make_capability_lookup_required_gate  # #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
@@ -344,6 +345,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_pure_shim_gate())  # priority=68 治本 --no-verify 绕过 GATE-NO-PURE-SHIM（P6 AI-15 审计，subprocess 调 check_pure_shim.py --ci）
         self._gate_registry.register(make_pure_assertion_gate())  # priority=69 治本纯陈述原则（GOV-DOC-016，subprocess 调 check_pure_assertion.py --ci）
         self._gate_registry.register(make_noqa_validation_gate())  # priority=71 治本自定义 noqa 标记无门禁（#ARCH-NOQA-GOV-001，in-process 校验 noqa_exempt_registry.yaml SSoT）
+        self._gate_registry.register(make_domain_name_zh_direct_access_gate())  # priority=72 治本 DOMAIN_NAME_ZH 字典直接访问硬阻断（Step 2.5 遗留风险修复——防止 AI 绕过 DB 优先级链直接访问硬编码域名字典）
         self._gate_registry.register(make_datetime_now_forbidden_gate())  # priority=34 治本生成器代码 datetime.now() 硬阻断（AGENTS.md §11.1.1，生成器输出幂等性强制）
         self._gate_registry.register(make_vocab_hardcode_gate())  # priority=80 治本 --no-verify 绕过 GATE-VOCAB（Phase 1 AST 门禁，subprocess 调 check_vocab_hardcode.py --files --ci）
         self._gate_registry.register(make_file_copy_gate())  # priority=85 治本文件复制检测无 commit-time 强制（Phase 1 sub-task 3，subprocess 调 check_code_duplication.py --files --ast --threshold 0.7）
@@ -828,9 +830,11 @@ class GitCommitGateway:
 
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
+        # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
+        # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
         gate_results = self._gate_registry.check_all(
             self, existing, session_id=session_id, allow_overlap=allow_overlap,
-            allow_promote=allow_promote,
+            allow_promote=allow_promote, commit_message=message,
         )
         blocked = self._check_gate_results(gate_results)
         if blocked is not None:
