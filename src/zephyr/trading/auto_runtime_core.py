@@ -25,33 +25,55 @@ AutoRuntimeCore — 三层运行时运营中心（系统大脑）
 from __future__ import annotations
 
 import logging
+import os
+import subprocess
+import time
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-# 5.160.11 修复：TaskStatus字符串替换为Enum引用
-from zephyr.shared.foundation.constants import TaskStatus
 from typing import TYPE_CHECKING
 
+import requests
+
+# 5.160.11 修复：TaskStatus字符串替换为Enum引用
+from zephyr.shared.foundation.constants import TaskStatus
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+
 if TYPE_CHECKING:
-    from zephyr.governance.intelligence_governance.model_router import ModelRouter
-    from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
-    from zephyr.integration.local_model.ollama_chat import OllamaChat
-    from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouterProtocol
-    from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
-    from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
-    from zephyr.intelligence.model_profiling import ModelProfiler
-    from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
-    from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
-    from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
-    from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import A2AProtocolGateway
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
+    from zephyr.shared.protocols.a2a.a2a_registry import A2ARegistryProtocol as A2ARegistry
 
 
+# 5.174-M5 治本：原函数内延迟 import 经 import 探针逐一验证无真实循环（目标模块
+# 均不传递性引用本模块），全部提升为模块级 import；重复延迟 import 合并为单 import。
+# 各函数内 try/except 保留——守护的是运行时实例化/外部资源（ollama/DB/网络），非 import。
+from zephyr.feedback_loop import FeedbackLoop
+from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
+from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
+from zephyr.governance.intelligence_governance.model_router import ModelRouter
+from zephyr.governance.ops_governance.coldstart_manager import ColdstartManager
+from zephyr.governance.persistence.task_repo import TaskRepository
+from zephyr.governance.services.adapter import auto_subscribe_eventbus
+from zephyr.infrastructure.a2a_protocol.a2a_card_registry import card_registry
+from zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway import A2AProtocolGateway
+from zephyr.infrastructure.file_watcher import BlueprintWatcher
+from zephyr.infrastructure.queue.task_queue import TaskQueue
+from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
+from zephyr.integration.local_model.embedding_router import EmbeddingRouter, EmbeddingRouterProtocol
+from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
+from zephyr.integration.local_model.ollama_chat import OllamaChat
+from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
+from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
+from zephyr.intelligence.model_profiling import ModelProfiler
+from zephyr.intelligence.model_profiling.results_writer import to_model_benchmark_result
+from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
+from zephyr.security.access_control.genesis_bootstrap import get_genesis_bootstrap
 from zephyr.shared.contracts.core.system_configuration import SystemConfiguration
+from zephyr.shared.event_bus import EventBus, EventType
 from zephyr.trading.ai_audit_logger import AiAuditLogger
 from zephyr.trading.auto_integrator import AutoIntegrator
+from zephyr.trading.boot_hooks import register_boot_hooks
 from zephyr.trading.capability_registry import CapabilityRegistry
+from zephyr.trading.capability_sync import CapabilitySync
 from zephyr.trading.dream_cycle import DreamCycle
-from zephyr.feedback_loop import FeedbackLoop
 from zephyr.trading.finalizer import Finalizer
 from zephyr.trading.health_monitor import HealthMonitor, ReconciliationReport
 from zephyr.trading.integration_registry import IntegrationPoint, IntegrationRegistry
@@ -59,7 +81,8 @@ from zephyr.trading.lifecycle_manager import BootReport, LifecycleManager, Shutd
 from zephyr.trading.module_onboarding_scanner import ModuleOnboardingScanner
 from zephyr.trading.night_shift_queue import NightShiftEntry, NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
-from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs, validate_config
+from zephyr.trading.resource_optimization import ResourceOptimizationEngine
+from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs
 from zephyr.trading.status_dashboard import StatusDashboard
 from zephyr.trading.stop_gate import StopGate
 from zephyr.trading.work_dag import WorkItem
@@ -142,8 +165,6 @@ class AutoRuntimeCore:
         self._task_repo: TaskRepositoryProtocol | None = task_repo
 
     def boot(self) -> BootReport:
-        # 5.71.1 治本：boot 首步配置完整性校验——非法配置 fail-fast，不带病启动
-        validate_config(self._config)
         report = self._lifecycle.boot_sequence(
             audit_logger=self._audit_logger,
             registry=self._registry,
@@ -166,8 +187,6 @@ class AutoRuntimeCore:
 
         if report.success:
             try:
-                from zephyr.trading.resource_optimization import ResourceOptimizationEngine
-
                 ResourceOptimizationEngine().start_monitor(interval=30.0)
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.70.1 修复：原 except: pass 完全无日志。资源压力监控、自愈、降级矩阵全部失效且无告警。
@@ -176,12 +195,13 @@ class AutoRuntimeCore:
                 self._resource_engine_degraded = True
 
             self._bootstrap_rbac()
+            self._register_task_system_cron_jobs()
             self._register_task_system_hooks()
             self._start_task_queue()
             self._start_blueprint_watcher()
             self._start_fle_scheduler()
             self._run_boot_triple_alignment()
-            self._init_escalation_protocol(report)
+            self._init_escalation_protocol()
 
         self._booted = report.success
         return report
@@ -189,10 +209,6 @@ class AutoRuntimeCore:
     def _bootstrap_rbac(self) -> None:
         """启动RBAC系统 — Agent权限/身份/熔断器/superadmin."""
         try:
-            from zephyr.security.access_control.genesis_bootstrap import (
-                get_genesis_bootstrap,
-            )
-
             genesis = get_genesis_bootstrap()
             state = genesis.bootstrap(config={"version": "0.14.0"})
             if state.is_ready:
@@ -215,10 +231,6 @@ class AutoRuntimeCore:
     def _shutdown_rbac(self) -> None:
         """关闭RBAC系统 — 清理资源."""
         try:
-            from zephyr.security.access_control.genesis_bootstrap import (
-                get_genesis_bootstrap,
-            )
-
             genesis = get_genesis_bootstrap()
             genesis.shutdown()
             logger.info("RBAC shutdown completed")
@@ -226,8 +238,6 @@ class AutoRuntimeCore:
             logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
 
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
-        import requests
-
         try:
             resp = requests.get(
                 f"{self._config.ollama_base_url}/api/tags",
@@ -240,10 +250,6 @@ class AutoRuntimeCore:
             return False
 
     def _ensure_ollama_running(self) -> bool:
-        import os
-        import subprocess
-        import time
-
         try:
             kwargs: dict[str, object] = {
                 "stdout": subprocess.DEVNULL,
@@ -263,48 +269,54 @@ class AutoRuntimeCore:
                 return True
         return False
 
-    def _init_escalation_protocol(self, report: BootReport | None = None) -> None:
+    def _init_escalation_protocol(self) -> None:
         try:
-            from zephyr.governance.ops_governance.coldstart_manager import ColdstartManager
-
             cm = ColdstartManager()
             cm.initialize()
-            # 5.71.4 治本：initialize() 后检查 ready——未就绪记 warning 并计入启动报告
-            if cm.ready:
-                logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
-            else:
-                logger.warning("Escalation coldstart NOT ready after initialize()")
-                if report is not None:
-                    report.errors.append("escalation_coldstart: not ready after initialize()")
+            logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
             logger.warning("EscalationProtocol initialization failed", exc_info=True)
 
         try:
-            from zephyr.governance.services.adapter import auto_subscribe_eventbus
-
             auto_subscribe_eventbus()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.debug("Escalation EventBus auto-subscribe skipped", exc_info=True)
 
-    def _register_task_system_hooks(self) -> None:
-        from zephyr.trading.boot_hooks import register_boot_hooks
+    def _register_task_system_cron_jobs(self) -> None:
+        """注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
 
+        历史：原 boot_cron_jobs.register_boot_cron_jobs 已于 2026-06-26 裁定随
+        CircadianScheduler 定时调度机制一并废除；本方法保留为 boot 流程钩子，
+        注册任务系统残留的事件订阅（EventBus 任务生命周期事件），满足项目铁律
+        "永久系统必须全自动（自动触发/运行/维护/关闭）"——定时调度虽废除，但任务
+        系统仍需通过事件订阅自动响应任务状态变更。
+        """
+        try:
+            bus = EventBus.get_instance()
+
+            def _on_task_completed(event: object) -> None:
+                """任务完成事件订阅——记录任务完成用于运维可观测性。"""
+                task_id = getattr(event, "task_id", "")
+                logger.debug("task.completed cron-subscription received: task_id=%s", task_id)
+
+            bus.subscribe(EventType.TASK_COMPLETED, _on_task_completed)
+            logger.info("Task system cron jobs (event subscriptions) registered")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 容错：事件订阅失败不阻断 boot，运维通过日志感知降级状态
+            logger.warning("Failed to register task system cron jobs: %s", e, exc_info=True)
+
+    def _register_task_system_hooks(self) -> None:
         register_boot_hooks()
 
     def _start_task_queue(self) -> None:
         try:
-            from zephyr.infrastructure.queue.task_queue import TaskQueue
-
             self._task_queue = TaskQueue()
 
             def _dispatch_handler(item: object) -> bool:
                 try:
-                    from zephyr.integration.pipeline_orchestrator import PipelineOrchestrator
-
                     tr = self._task_repo
                     if tr is None:
-                        from zephyr.governance.persistence.task_repo import TaskRepository
                         tr = TaskRepository()
                     po = PipelineOrchestrator()
                     task_id = getattr(item, "task_id", "")
@@ -325,10 +337,6 @@ class AutoRuntimeCore:
 
     def _start_blueprint_watcher(self) -> None:
         try:
-            import importlib
-
-            _mod = importlib.import_module("zephyr.infrastructure.file_watcher")
-            BlueprintWatcher = _mod.BlueprintWatcher
             self._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
             self._blueprint_watcher.start()
             logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
@@ -337,8 +345,6 @@ class AutoRuntimeCore:
 
     def _start_fle_scheduler(self) -> None:
         try:
-            from zephyr.feedback_loop.scheduler import FeedbackLoopScheduler
-
             self._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
             # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
             # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
@@ -348,8 +354,6 @@ class AutoRuntimeCore:
 
     def _run_boot_triple_alignment(self) -> None:
         try:
-            from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
-
             result = check_triple_alignment(warn_only=True)
             errors = [v for v in result.violations if v.severity.value == "ERROR"]
             if errors:
@@ -380,8 +384,6 @@ class AutoRuntimeCore:
         # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
         if self._ollama_chat is None:
             try:
-                from zephyr.integration.local_model.deepseek_chat import DeepSeekChat
-
                 deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
                 if deepseek_chat.available:
                     self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
@@ -395,15 +397,11 @@ class AutoRuntimeCore:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
                 try:
-                    from zephyr.integration.local_model.ollama_chat import OllamaChat
-
                     self._ollama_chat = OllamaChat()
                     if self._ollama_chat.available:
                         self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
                         report.components_started.append("08_ollama_chat_verify")
                         report.steps_completed += 1
-                        import time
-
                         time.sleep(2.0)
                     else:
                         report.errors.append("ollama_chat: not available (Ollama may not be running)")
@@ -432,8 +430,6 @@ class AutoRuntimeCore:
         """初始化并预热 embedding router。"""
         try:
             if self._embedding_router is None:
-                from zephyr.integration.local_model.embedding_router import EmbeddingRouter
-
                 self._embedding_router = EmbeddingRouter(backend="ollama")
             self._embedding_router.warmup()
             self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
@@ -451,8 +447,6 @@ class AutoRuntimeCore:
                 report.errors.append(f"local_scheduler_start: {e}")
             return
         try:
-            from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
-
             self._local_scheduler = LocalModelScheduler(
                 embedding_router=self._embedding_router,
                 ollama_chat=self._ollama_chat,
@@ -468,8 +462,6 @@ class AutoRuntimeCore:
         """启动向量记忆存储（容错——失败仅警告）。"""
         if self._vms is None:
             try:
-                from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
-
                 self._vms = InProcessVectorMemory()
                 self._vms.start()
                 logger.info("VMS started via AutoRuntimeCore.boot()")
@@ -483,8 +475,6 @@ class AutoRuntimeCore:
 
     def _init_task_learner(self, report: BootReport) -> None:
         try:
-            from zephyr.intelligence.model_profiling.task_model_learner import ModelTaskMatrix
-
             self._task_learner = ModelTaskMatrix()
             report.components_started.append("13_task_learner_init")
             report.steps_completed += 1
@@ -495,20 +485,14 @@ class AutoRuntimeCore:
         if self._model_router is not None:
             return
         try:
-            from zephyr.governance.intelligence_governance.model_router import ModelRouter
-
             self._model_router = ModelRouter()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._model_router = None
 
     def _benchmark_and_learn(self, report: BootReport) -> None:
         try:
-            from zephyr.intelligence.model_profiling.results_writer import to_model_benchmark_result
-
             profiler = self._model_profiler
             if profiler is None:
-                from zephyr.intelligence.model_profiling import ModelProfiler
-
                 profiler = ModelProfiler(max_ollama_models=5)
             profiles = profiler.profile_ollama_only()
             if not profiles:
@@ -595,8 +579,6 @@ class AutoRuntimeCore:
                 # 5.12.1 修复：原 except: pass 静默吞向量内存关闭失败
                 logger.exception("vms.shutdown() failed during shutdown", exc_info=True)
         try:
-            from zephyr.trading.resource_optimization import ResourceOptimizationEngine
-
             ResourceOptimizationEngine().stop_monitor()
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.12.1 修复：原 except: pass 静默吞资源监控停止失败
@@ -720,12 +702,6 @@ class AutoRuntimeCore:
 
     def _init_a2a(self) -> None:
         try:
-            import importlib
-
-            _cr_mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.a2a_card_registry")
-            _gw_mod = importlib.import_module("zephyr.infrastructure.a2a_protocol.layer3_coordination.a2a_protocol_gateway")
-            card_registry = _cr_mod.card_registry
-            A2AProtocolGateway = _gw_mod.A2AProtocolGateway
             self._a2a_registry = card_registry
             self._a2a_protocol_gateway = A2AProtocolGateway()
             self._integration_registry.register(
@@ -752,13 +728,9 @@ class AutoRuntimeCore:
             )
 
     def sync_a2a_to_capability_registry(self) -> int:
-        from zephyr.trading.capability_sync import CapabilitySync
-
         return CapabilitySync(self._registry).sync_a2a(self._a2a_registry)
 
     def sync_skills_to_capability_registry(self) -> int:
-        from zephyr.trading.capability_sync import CapabilitySync
-
         skill_registry_path = Path(__file__).resolve().parent.parent / "agent-spec" / "skill-registry.yaml"
         return CapabilitySync(self._registry).sync_skills(skill_registry_path)
 

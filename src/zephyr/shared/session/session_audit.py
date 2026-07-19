@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.session.session_audit
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.gov_audit.writer
-# [CONSUMERS] governance/constitutional_update.py
+# [DEPENDENCIES]
+# [CONSUMERS] gov_rule/constitutional_update/constitutional_update.py; gov_audit/writer.py
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -32,6 +32,9 @@ AI 施工约定：
   - 与 session_logs/ YAML 互补（此模块负责运行时实时记录）
 
 SSoT: MOD-INF-016 §12 盲点 B32 + GOV-AI-007 Session Log Schema
+
+依赖倒置（5.174-M6）：全局审计写入由 governance 层经 register_audit_writer_provider()
+依赖注入——本模块不 import gov_audit（shared 层禁止向上依赖 L2 governance）。
 """
 
 from __future__ import annotations
@@ -39,12 +42,37 @@ from __future__ import annotations
 import json
 import logging
 import threading
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 logger = logging.getLogger(__name__)
+
+
+class AuditWriterProtocol(Protocol):
+    """全局审计写入器协议（5.174-M6 依赖倒置）。
+
+    shared 层禁止向上 import governance（NO-UPWARD-IMPORT）——全局审计写入能力
+    由 L2 `zephyr.gov_audit.writer` 实现，并在其模块 import 时经
+    `register_audit_writer_provider()` 注入本模块；运行时通过 registry 查找，
+    未注册时跳过全局审计事件（best-effort，对齐原 ImportError 容错语义）。
+    """
+
+    def write(self, record: dict[str, Any]) -> Any:
+        """写入一条审计事件。"""
+        ...
+
+
+# 运行时 registry：governance 层注入的 AuditWriter 工厂（签名对齐 get_audit_writer）
+_audit_writer_provider: Callable[[], AuditWriterProtocol] | None = None
+
+
+def register_audit_writer_provider(provider: Callable[[], AuditWriterProtocol] | None) -> None:
+    """注册/注销全局审计写入器工厂——由 governance 层（gov_audit.writer）import 时调用。"""
+    global _audit_writer_provider
+    _audit_writer_provider = provider
 
 
 @dataclass
@@ -327,17 +355,16 @@ class SessionAuditTrail:
         record_dict = record.to_dict()
         with self._lock, open(filepath, "a", encoding="utf-8") as f:
             f.write(json.dumps(record_dict, ensure_ascii=False) + "\n")
-        try:
-            from zephyr.gov_audit.writer import get_audit_writer
-        except ImportError as e:
-            logger.warning(
-                "session_audit: audit_trail.writer import failed, skipping audit (%s: %s)",
-                type(e).__name__,
-                e,
+        # 5.174-M6：全局审计事件经注入的 provider 写入（runtime registry 查找），
+        # 不再延迟 import zephyr.gov_audit.writer——L0→L2 向上依赖已消除。
+        provider = _audit_writer_provider
+        if provider is None:
+            logger.debug(
+                "session_audit: no audit writer provider registered, skipping global audit event"
             )
         else:
             try:
-                get_audit_writer().write(
+                provider().write(
                     {
                         "event_type": "session_record",
                         "action_type": "session_record",
@@ -347,7 +374,7 @@ class SessionAuditTrail:
                         "operation": "append_record",
                     }
                 )
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in session_audit", exc_info=True)
         return filepath
 
@@ -395,6 +422,7 @@ class SessionAuditTrail:
 
 
 __all__ = [
+    "AuditWriterProtocol",
     "CostRecord",
     "DecisionRecord",
     "ErrorRecord",
@@ -403,4 +431,5 @@ __all__ = [
     "SessionAuditTrail",
     "SessionRecord",
     "ToolCallRecord",
+    "register_audit_writer_provider",
 ]
