@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 生成器代码(.py)新增行含 datetime.now() 调用时阻断 commit（passed=False）；生成器判定：路径含 /generators/ 或文件名以 generate_ 开头；tests/ 豁免；import/注释/docstring 豁免；非生成器文件豁免；YAML/git diff 不可达 fail-open（logger.warning 检测器失效）；检出违规则 fail-closed 阻断（passed=False）
+# [INVARIANTS] 硬阻断——两类检测面：①生成器代码(.py)新增行含 datetime.now() 任何形式调用时阻断（生成器输出必须幂等）；②src/zephyr/ 全量代码(.py)新增行含 time.time() 或 datetime.now() 无参数调用（naive datetime）时阻断（5.46 时区处理防复发）；tests/ 豁免；import/注释/docstring 豁免；# noqa: m46-time 豁免；YAML/git diff 不可达 fail-open（logger.warning 检测器失效）；检出违规则 fail-closed 阻断（passed=False）
 # [MODIFY-GUARD] gate_id="DATETIME-NOW-FORBIDDEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -14,39 +14,41 @@
 # [TESTS] tests/governance/commit_gates/test_datetime_now_forbidden_gate.py
 # [A_module] module_id=MOD-GOV-datetime_now_forbidden_gate | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""datetime_now_forbidden_gate.py — 生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN）
+"""datetime_now_forbidden_gate.py — 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
 
-检测 staged 生成器代码（.py）新增行中的 ``datetime.now()`` 调用——
-违反 AGENTS.md §11.1.1 时间戳约定（生成器输出必须幂等，禁止实时时间源）。
+检测 staged 代码（.py）新增行中的时间戳误用，覆盖两类场景：
+  1. 生成器代码中 ``datetime.now()`` 任何形式（违反 AGENTS.md §11.1.1 生成器幂等约定）
+  2. src/zephyr/ 全量代码中 ``time.time()`` 或 ``datetime.now()`` 无参数
+     （违反 5.46 时区处理约定——应改用 ``now_utc()`` 或 ``datetime.now(UTC)``）
 
-病根（AGENTS.md §11.1.1）
---------------------------
-生成器中使用 ``datetime.now()`` 会导致每次运行输出不同的时间戳，
-产生非幂等噪音 auto-commit——修改 depgraph (PostgreSQL) 后重生文档时，
-即使数据无变化也会因时间戳变化触发 auto-commit，污染 git 历史。
+病根（5.46 时间与时区处理 + AGENTS.md §11.1.1）
+------------------------------------------------
+- 生成器中使用 ``datetime.now()`` 导致非幂等 auto-commit，污染 git 历史
+- 运行时代码中 ``time.time()`` 用于 TTL 计算易引入时区漂移
+- ``datetime.now()`` 无参数产生 naive datetime，与 aware datetime 混用 100+ 处
 
 治本方案
 --------
 在 GitCommitGateway pre-commit 阶段（in-process）注册门禁：
   1. 获取 staged added/modified .py 文件
-  2. 过滤到生成器文件（路径含 /generators/ 或文件名以 generate_ 开头）
-  3. 解析 diff，检查 added 行中是否含 ``datetime.now(`` 调用
-  4. 豁免 import/注释/docstring 行
+  2. 双轨过滤：生成器文件（路径含 /generators/ 或文件名以 generate_ 开头）
+     + src/zephyr/ 文件
+  3. 解析 diff，检查 added 行中的违规模式
+  4. 豁免 import/注释/docstring 行 + noqa:m46-time 标记
   5. 命中 -> 硬阻断（passed=False）
 
 设计权衡
 --------
-1. **只检测生成器文件**：非生成器代码（如运行时服务）使用 ``datetime.now()``
-   是合法的。生成器判定：路径含 ``/generators/`` 或文件名以 ``generate_`` 开头。
-2. **只检测 added 行**：存量 ``datetime.now()`` 由人工检测命令排查（§11.1.1），
-   gate 只防止新增违规。对修改文件，只检查 diff 中的 added 行。
-3. **正则匹配**：``datetime\\.now\\s*\\(`` 同时覆盖 ``datetime.now()``
-   和 ``datetime.datetime.now()``（正则引擎在后者中匹配第二个 ``datetime``）。
+1. **双轨检测面**：生成器中 ``datetime.now()`` 任何形式都禁（非幂等）；
+   src/zephyr/ 全量中只禁 ``time.time()`` 和 ``datetime.now()`` 无参数
+   （运行时服务使用 ``datetime.now(UTC)`` 是合法的）。
+2. **只检测 added 行**：存量违规由仪表盘 M02/M21 监控，gate 只防新增。
+3. **正则匹配**：``datetime\\.now\\s*\\(\\s*\\)`` 精确匹配无参数形式，
+   ``time\\.time\\s*\\(`` 匹配 ``time.time()`` 调用。
 4. **fail-open on git error**：git diff 失败时不阻断（由其他 gate 管完整性）。
-5. **priority=34**：在 FILE-PLACEMENT-TTL(33) 之后、R5-DIGIT-SUFFIX(35) 之前，
-   与文件放置/TTL 组同组（生成器代码质量检测）。
-6. **hard-block 而非 warn**：``datetime.now()`` 在生成器中是确定性违规
-   （违反 §11.1.1），不是疑似风险，应硬阻断。
+5. **priority=34**：在 FILE-PLACEMENT-TTL(33) 之后、R5-DIGIT-SUFFIX(35) 之前。
+6. **hard-block**：时间戳误用是确定性违规，应硬阻断。
+7. **noqa 豁免**：合法场景（如 benchmark 基准测试）可用 noqa:m46-time 标记豁免。
 
 Usage::
 
@@ -77,9 +79,21 @@ __all__ = ["make_datetime_now_forbidden_gate"]
 _GENERATORS_DIR_PART = "/generators/"
 _GENERATOR_FILE_PREFIX = "generate_"
 
+# src/zephyr/ 全量检测面前缀
+_SRC_ZEPHYR_PREFIX = "src/zephyr/"
+
+# noqa 豁免标记（MUST 在 noqa_exempt_registry.yaml 登记）
+_NOQA_MARKER = "m46-time"
+
 # 匹配 datetime.now( —— 同时覆盖 datetime.now() 和 datetime.datetime.now()
 # （正则引擎在 "datetime.datetime.now()" 中匹配第二个 "datetime.now("）
 _DATETIME_NOW_RE = re.compile(r"datetime\.now\s*\(")
+
+# 匹配 datetime.now() 无参数（naive datetime）—— 精确匹配 () 内无内容
+_DATETIME_NOW_NAIVE_RE = re.compile(r"datetime\.now\s*\(\s*\)")
+
+# 匹配 time.time( —— 用于 TTL/时间戳计算
+_TIME_TIME_RE = re.compile(r"\btime\.time\s*\(")
 
 
 def _is_generator_file(py_file: str) -> bool:
@@ -100,6 +114,24 @@ def _is_generator_file(py_file: str) -> bool:
         return True
     basename = normalized.rsplit("/", 1)[-1]
     return basename.startswith(_GENERATOR_FILE_PREFIX)
+
+
+def _is_src_zephyr_file(py_file: str) -> bool:
+    """判定 .py 文件是否在 src/zephyr/ 目录下（5.46 全量检测面）。
+
+    Args:
+        py_file: 相对路径（/ 或 \\ 分隔）。
+
+    Returns:
+        True 如果文件路径以 ``src/zephyr/`` 开头。
+    """
+    normalized = py_file.replace("\\", "/")
+    return normalized.startswith(_SRC_ZEPHYR_PREFIX)
+
+
+def _has_noqa_exempt(content: str) -> bool:
+    """检查行是否含 ``# noqa: m46-time`` 豁免标记。"""
+    return f"# noqa: {_NOQA_MARKER}" in content
 
 
 def _get_staged_files(gateway) -> list[str] | None:
@@ -123,18 +155,18 @@ def _get_staged_files(gateway) -> list[str] | None:
         return None
 
 
-def _filter_generator_py_files(staged: list[str]) -> list[str]:
-    # 过滤到生成器 .py 文件 + tests/ 豁免
+def _filter_target_py_files(staged: list[str]) -> list[str]:
+    # 过滤到目标 .py 文件（生成器 OR src/zephyr/）+ tests/ 豁免
     return [
         f for f in staged
         if f.endswith(".py")
         and not is_test_exempt(f)
-        and _is_generator_file(f)
+        and (_is_generator_file(f) or _is_src_zephyr_file(f))
     ]
 
 
 def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
-    # 检测单个生成器文件的 added 行，返回违规列表
+    # 检测单个文件的 added 行，返回违规列表
     violations: list[str] = []
     # 3a. 读取 staged 完整文件，预计算 docstring 行号集合（豁免 docstring）
     file_content = _read_staged_file(gateway, py_file)
@@ -154,6 +186,10 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
     if file_diff.returncode != 0:
         return violations
 
+    # 3c. 判定检测模式：生成器文件全量检测 datetime.now(；
+    #     src/zephyr/ 文件只检测 time.time( 和 datetime.now() 无参数
+    is_generator = _is_generator_file(py_file)
+
     added_lines = _parse_diff_with_line_numbers(file_diff.stdout)
     for line_no, content in added_lines:
         # 豁免：docstring 内的行
@@ -162,9 +198,26 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
         # 豁免：注释 / import
         if _is_exempt_line(content):
             continue
-        if _DATETIME_NOW_RE.search(content):
+        # 豁免：noqa 标记
+        if _has_noqa_exempt(content):
+            continue
+
+        if is_generator:
+            # 生成器：任何 datetime.now( 形式都禁
+            if _DATETIME_NOW_RE.search(content):
+                violations.append(
+                    f"  {py_file}:{line_no}: 生成器代码 datetime.now() 调用 -> {content.strip()}"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
+                )
+                continue
+        # src/zephyr/ 全量：检测 time.time( 和 datetime.now() 无参数
+        if _TIME_TIME_RE.search(content):
             violations.append(
-                f"  {py_file}:{line_no}: datetime.now() 调用 -> {content.strip()}"
+                f"  {py_file}:{line_no}: time.time() 调用（应改 now_utc()）-> {content.strip()}"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
+            )
+            continue
+        if _DATETIME_NOW_NAIVE_RE.search(content):
+            violations.append(
+                f"  {py_file}:{line_no}: datetime.now() naive（应改 datetime.now(UTC) 或 now_utc()）-> {content.strip()}"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
             )
     return violations
 
@@ -172,15 +225,15 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
 def _format_violation_detail(violations: list[str]) -> str:
     # 硬阻断：检出违规则 fail-closed
     return (
-        "DATETIME-NOW-FORBIDDEN：生成器代码中检测到 datetime.now() 调用，\n"
-        "  违反 AGENTS.md §11.1.1 时间戳约定（生成器输出必须幂等，禁止实时时间源）。\n"
+        "DATETIME-NOW-FORBIDDEN：检测到时间戳误用（5.46 时区处理防复发 + AGENTS.md §11.1.1），\n"
+        "  生成器代码禁止 datetime.now() 任何形式；src/zephyr/ 全量禁止 time.time() 和 datetime.now() 无参数。\n"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
         + "\n".join(violations)
-        + "\n-> 移除 datetime.now() 调用，改用 git log 时间戳或固定占位符。"
+        + "\n-> 改用 now_utc()（time_utils SSoT）或 datetime.now(UTC)；合法场景用 # noqa: m46-time 豁免。"  # noqa: m46-time  M46豁免: 检测器源码含检测模式字符串用于违规消息构造
     )
 
 
 def make_datetime_now_forbidden_gate() -> GateSpec:
-    """构造生成器代码 ``datetime.now()`` 硬阻断 GateSpec。
+    """构造时间戳约定硬阻断 GateSpec（双轨检测面）。
 
     Returns:
         GateSpec(gate_id="DATETIME-NOW-FORBIDDEN", priority=34)。
@@ -193,14 +246,14 @@ def make_datetime_now_forbidden_gate() -> GateSpec:
         if staged is None:
             return True, ""
 
-        # 2. 过滤到生成器 .py 文件 + tests/ 豁免
-        gen_files = _filter_generator_py_files(staged)
-        if not gen_files:
+        # 2. 过滤到目标 .py 文件（生成器 OR src/zephyr/）+ tests/ 豁免
+        target_files = _filter_target_py_files(staged)
+        if not target_files:
             return True, ""
 
-        # 3. 检测每个生成器文件的 added 行
+        # 3. 检测每个目标文件的 added 行
         violations: list[str] = []
-        for py_file in gen_files:
+        for py_file in target_files:
             violations.extend(_scan_file_for_violations(gateway, py_file))
 
         # 4. 硬阻断：检出违规则 fail-closed

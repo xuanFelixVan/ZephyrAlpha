@@ -183,6 +183,22 @@ markers:
     created: "2026-07-20"
     created_by: "ARCH-P3-FOLLOWUP-TODOS-001"
 
+  # ── 5.46 时间与时区处理防复发（DATETIME-NOW-FORBIDDEN gate 扩展，2026-07-20）──
+  # src/zephyr/ 全量禁止 time.time() 和 datetime.now() 无参数；生成器全量禁 datetime.now()
+  - marker: "m46-time"
+    metric_id: "M46"  # 5.46 时区处理防复发维度
+    description: "时间戳误用豁免——benchmark 基准测试 / 性能计时等合法 time.time() 场景"
+    applicable_conditions:
+      - "benchmark 基准测试代码（需 wall-clock 测量而非 monotonic）"
+      - "性能计时场景（time.time() 是合法选择）"
+      - "外部库 API 强制要求 time.time() 返回值（如 cache_key=time.time()）"
+    reason_required: true
+    reason_format: "M46豁免: <具体理由>（必须说明为何 time.time() 不可替代）"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-20"
+    created_by: "ARCH-ANTI-RECURRENCE-P0"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
