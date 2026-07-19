@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
 # [MODULE] zephyr.integration.shared.events.dlq_bridge
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.shared.events.dlq
+# [DEPENDENCIES] zephyr.shared.events.dlq
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -28,7 +28,7 @@ import logging
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from zephyr.integration.shared.events.dlq import DeadLetterQueue
+from zephyr.shared.events.dlq import DeadLetterQueue
 
 if TYPE_CHECKING:
     from zephyr.shared.infra.observer import Observer

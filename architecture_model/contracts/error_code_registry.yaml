@@ -875,10 +875,6 @@ error_codes:
   class: RedBlueImportError
   module: zephyr.feedback_loop.gates.adversarial_validation
   file: src/zephyr/feedback_loop/gates/adversarial_validation.py
-- code: ZA-TR-0018
-  class: DispatchError
-  module: zephyr.feedback_loop.alert_dispatcher
-  file: src/zephyr/feedback_loop/alert_dispatcher.py
 - code: ZA-XC-0001
   class: MiniQmtBrokerError
   module: zephyr.ex_core.adapters.miniqmt_broker

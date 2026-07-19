@@ -86,6 +86,11 @@ DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:
 # RSSHub 本地实例 URL（部署在 D:\RSSHub，npm start，监听 1200 端口）
 DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:1200")
 
+# 5.141 修复：DeepSeek API URL 集中化为共享常量（原散落 3 处字面量重复：
+# integration/local_model/deepseek_chat.py / infrastructure/pipeline/llm_gateway.py /
+# intelligence/model_profiling/deepseek_v4_chat.py）
+DEFAULT_DEEPSEEK_URL: Final[str] = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+
 # Lazy imports for trading-domain symbols (upward dependency from L0 shared -> L3 trading)
 _TRADING_SYMBOLS = {
     "ETF": "zephyr.trading.trading_contracts.market.instrument",
@@ -123,6 +128,7 @@ def __getattr__(name):
 __all__ = [
     "COLD_PATH_LATENCY_BUDGET_MS",
     "COLD_PATH_PARTIAL_ACTIVATED",
+    "DEFAULT_DEEPSEEK_URL",
     "DEFAULT_OLLAMA_URL",
     "DEFAULT_RSSHUB_URL",
     "ETF",

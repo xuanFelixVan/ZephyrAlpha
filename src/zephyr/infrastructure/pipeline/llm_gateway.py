@@ -36,6 +36,7 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any
+from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 from zephyr.shared.security.secrets import get_secret_or_default
 
@@ -136,7 +137,7 @@ def _build_providers() -> dict[str, ProviderConfig]:
     """
     return {
         "deepseek": ProviderConfig(
-            base_url=os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
+            base_url=DEFAULT_DEEPSEEK_URL,  # 5.141 修复: SSoT 收敛到 shared.foundation.constants
             default_model=os.getenv("DEEPSEEK_MODEL", "deepseek-chat"),
             api_key_env="DEEPSEEK_API_KEY",
             fallback="glm",

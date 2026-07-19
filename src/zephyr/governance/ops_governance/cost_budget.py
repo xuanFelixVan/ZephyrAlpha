@@ -26,7 +26,7 @@ cost_budget.py —— AI 成本预算与强制熔断（Phase 11 | 盲点 B26）
   - AWS Budgets: 硬性熔断阈值 + 预警线
 
 AI 施工约定：
-  - 任何 LLM API 调用 MUST 通过 check_budget() 预检
+  - 任何 LLM API 调用 MUST 通过 assert_budget() 预检
   - 超出 hard_limit 时 MUST 抛 CostBudgetExceededError
   - 每次 API 调用 MUST 调用 record_usage() 更新累计消费
 
@@ -77,7 +77,7 @@ class CostBudget:
 
         budget = CostBudget(hard_limit=5.00)
         budget.set_pricing("openai", "gpt-4o", input_1k=0.0025, output_1k=0.0100)
-        budget.check_budget("openai", "gpt-4o")
+        budget.assert_budget("openai", "gpt-4o")
         budget.record_usage("openai", "gpt-4o", input_tokens=500, output_tokens=200)
 
     Attributes:
@@ -131,8 +131,9 @@ class CostBudget:
             cost += (cached_input_tokens / 1000.0) * tier.cached_input_price_per_1k
         return cost
 
-    def check_budget(self, provider: str = "", model: str = "") -> None:
-        """预检：当前累计消费是否超出硬性熔断阈值。
+    def assert_budget(self, provider: str = "", model: str = "") -> None:
+        """预检：当前累计消费超出硬性熔断阈值时抛异常（5.177 修复：原名 check_budget，
+        返回 None + raise 风格违反 check_ 前缀返回布尔的命名直觉，更名 assert_budget）。
 
         Raises:
             CostBudgetExceededError: 超出 hard_limit。

@@ -93,6 +93,7 @@ class DataQualityGate(abc.ABC):
     """
 
     QUALITY_THRESHOLD: ClassVar[float] = 0.7
+    # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
     _registry: ClassVar[dict[str, type[DataQualityGate]]] = {}
 
     def __init_subclass__(cls, **kwargs):

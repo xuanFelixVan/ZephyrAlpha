@@ -2,7 +2,7 @@
 # [MODULE] zephyr.shared.events.dlq
 # [DOMAIN] D_SHARED
 # [DEPENDENCIES] zephyr.shared.infra.observer
-# [CONSUMERS]
+# [CONSUMERS] zephyr.shared.events.dlq_bridge; zephyr.integration.shared.events; zephyr.integration.shared.events.dlq_bridge
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] none
@@ -50,9 +50,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import json
+import re
 import sqlite3
 from zephyr.shared.io.sqlite_factory import get_db_connection
-from zephyr.shared.io.paths import DB_PATH
 import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -65,6 +65,38 @@ __all__ = [
     "DeadLetterQueue",
     "attach_dlq_to_observer",
 ]
+
+
+# 5.63.2 修复：traceback 脱敏防止敏感信息写入 DLQ（自 integration 副本合并归一）
+# 敏感模式列表（顺序无关，均使用 re.sub 替换为占位符）：
+#   - PostgreSQL DSN: postgres://user:password@host -> postgres://user:***@host
+#   - Bearer token:   Bearer sk-xxx -> Bearer ***
+#   - API key:        sk-[a-zA-Z0-9]{20,} -> sk-***
+#   - 密码赋值:        password=xxx -> password=***
+_SENSITIVE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    # PostgreSQL / 通用 DB DSN: scheme://user:password@host
+    (re.compile(r"((?:postgres|postgresql|mysql|redis|mongodb)://[^:/:@]+):[^@/]+@"), r"\1:***@"),
+    # Bearer token（HTTP Authorization 头）
+    (re.compile(r"(Bearer\s+)[^\s,]+"), r"\1***"),
+    # OpenAI 风格 API key: sk- + 至少 20 个字母数字
+    (re.compile(r"sk-[a-zA-Z0-9]{20,}"), "sk-***"),
+    # key=value 形式的密码赋值（password=xxx / passwd=xxx / pwd=xxx）
+    (re.compile(r"((?:password|passwd|pwd|secret|api_key|apikey|token)=)[^\s,;\"')&]+", re.IGNORECASE), r"\1***"),
+]
+
+
+def _sanitize_traceback(text: str) -> str:
+    """5.63.2 修复：对 traceback / error 字符串脱敏，防止敏感信息写入 DLQ。
+
+    替换 DSN 密码、Bearer token、API key、password=xxx 等敏感值，
+    保留堆栈结构与错误类型，仅抹除敏感字面量。
+    """
+    if not text:
+        return text
+    sanitized = text
+    for pattern, replacement in _SENSITIVE_PATTERNS:
+        sanitized = pattern.sub(replacement, sanitized)
+    return sanitized
 
 
 def _ensure_table(conn: sqlite3.Connection) -> None:
@@ -136,7 +168,7 @@ class DeadLetterQueue:
 
     Usage:
         from zephyr.shared.infra.observer import global_observer
-        dlq = DeadLetterQueue()  # db_path 缺省 = SSoT DB_PATH（governance.db，5.34.7 治本）
+        dlq = DeadLetterQueue(db_path="data/databases/governance.db")
         dlq.attach(global_observer)
 
         # 任何 handler 失败 -> 自动写入 dead_letters 表
@@ -153,15 +185,13 @@ class DeadLetterQueue:
 
     def __init__(
         self,
-        db_path: str | None = None,
+        db_path: str,
         *,
         retry_interval: float = 60.0,
         max_attempts: int = 3,
         max_age_hours: float = 168.0,
     ) -> None:
-        # 5.34.7 治本：db_path 缺省回退 SSoT DB_PATH（zephyr.shared.io.paths），
-        # 调用方无需再硬编码 "data/databases/governance.db" 字面量
-        self._db_path = db_path or str(DB_PATH)
+        self._db_path = db_path
         self._retry_interval = retry_interval
         self._max_attempts = max_attempts
         self._max_age_seconds = max_age_hours * 3600.0
@@ -218,10 +248,14 @@ class DeadLetterQueue:
 
     def _failure_handler(self, event_type: EventType, payload: dict[str, Any]) -> None:
         """DLQ 内部的 handler 不应抛异常——避免无限递归。"""
-        try:
-            raise RuntimeError("DLQ handler should not be called directly")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in dlq", exc_info=True)
+        # 5.151.4 修复: 原 raise+except pass 完全静默, 该 handler 已注册到事件总线,
+        # 所有 DLQ 事件在此处被完全静默丢弃。改为记录 warning 日志使丢弃可见
+        logger.warning(
+            "DLQ _failure_handler called directly (should use capture() instead): "
+            "event_type=%s payload_keys=%s",
+            event_type,
+            list(payload.keys()) if isinstance(payload, dict) else "N/A",
+        )
 
     def capture(
         self,
@@ -251,6 +285,12 @@ class DeadLetterQueue:
         now = _utc_iso()
         next_retry = _utc_iso()  # 立即可重试
 
+        # 5.63.2 修复：traceback 脱敏防止敏感信息写入 DLQ
+        # error_message 与 error_traceback 均可能含 DSN/Bearer/API key/密码等
+        # 敏感字面量，入库前统一脱敏（仅替换敏感值，保留堆栈结构）。
+        sanitized_error_message = _sanitize_traceback(str(error))
+        sanitized_traceback = _sanitize_traceback(traceback_str)
+
         conn = get_db_connection(self._db_path)
         try:
             _ensure_table(conn)
@@ -275,8 +315,8 @@ class DeadLetterQueue:
                     event_type.value,
                     dumps(payload, ensure_ascii=False),
                     type(error).__name__,
-                    str(error),
-                    traceback_str,
+                    sanitized_error_message,
+                    sanitized_traceback,
                     1,
                     self._max_attempts,
                     now,
@@ -465,7 +505,7 @@ class DeadLetterQueue:
 
 def attach_dlq_to_observer(
     observer: Observer,
-    db_path: str | None = None,
+    db_path: str,
     *,
     retry_interval: float = 60.0,
     max_attempts: int = 3,
@@ -476,7 +516,7 @@ def attach_dlq_to_observer(
         from zephyr.shared.infra.observer import global_observer
         from zephyr.shared.events.dlq import attach_dlq_to_observer
 
-        dlq = attach_dlq_to_observer(global_observer)  # db_path 缺省 = SSoT DB_PATH（5.34.7 治本）
+        dlq = attach_dlq_to_observer(global_observer, "data/databases/governance.db")
     """
     dlq = DeadLetterQueue(
         db_path,
