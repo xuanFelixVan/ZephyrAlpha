@@ -126,10 +126,9 @@ root_cause_coverage:
           treatment: "capability_canonical_file_registry 登记 + M20 metric 追踪 drift"
           phase: "3.4b"
         enforceability:
-          covered: false
-          treatment: null
-          gap: "M20 warn-only 检测 drift，无 commit gate 硬阻断静态快照漂移"
-          phase: "planned（第1期 AST 门禁）"
+          covered: true
+          treatment: "SNAPSHOT-DRIFT gate (priority=63) 硬阻断——快照提交时校验结构+新鲜度(≤24h)+commit_sha 与 HEAD 一致"
+          phase: "3.6 第1期 AST 门禁（2026-07-19）"
 
     - id: rc2_vocab_chain_blindspot
       name: "词表→代码消费链机械盲区"
@@ -145,10 +144,9 @@ root_cause_coverage:
           treatment: "capability_canonical_file_registry 登记 vocab + vocab_registry 索引"
           phase: "baseline"
         enforceability:
-          covered: false
-          treatment: null
-          gap: "VOCAB-HARDCODE gate (priority=50) 仅检测硬编码字符串，未覆盖完整消费链（值域/字段名/SsoT 引用）"
-          phase: "planned（第1期扩展 VOCAB-HARDCODE 覆盖面）"
+          covered: true
+          treatment: "VOCAB-CHAIN gate (priority=73) 硬阻断——扩展 VOCAB-HARDCODE 覆盖至 SSoT 路径硬编码（docs/01_*/02_*/*.yaml / data/*.json）"
+          phase: "3.6 第1期 AST 门禁（2026-07-19）"
 
     - id: rc3_capability_lookup_suggestion
       name: "CapabilityLookup 建议性反查"
@@ -182,10 +180,9 @@ root_cause_coverage:
           treatment: "M02 metric 追踪 manual-only 永久脚本 + capability registry"
           phase: "baseline"
         enforceability:
-          covered: false
-          treatment: null
-          gap: "M02 metric warn-only，无 commit gate 硬阻断含常驻服务特征的 manual-only permanent 脚本"
-          phase: "planned（第1期 MANUAL-ONLY-PERMANENT gate）"
+          covered: true
+          treatment: "MANUAL-ONLY-PERMANENT gate (priority=43) 硬阻断——permanent 脚本含 manual 触发(argparse/input/__main__+argv)但无事件订阅/自动触发注册"
+          phase: "3.6 第1期 AST 门禁（2026-07-19）"
 
     - id: rc5_rule_inflation_execution_gap
       name: "规则膨胀执行断层"
@@ -207,11 +204,8 @@ root_cause_coverage:
 
   coverage_summary:
     total_cells: 15  # 5 root causes × 3 elements
-    covered_cells: 12
-    uncovered_cells: 3  # rc1/enforceability + rc2/enforceability + rc4/enforceability
-    # M21 指标 = uncovered_cells = 3
-    # 目标：M21 = 0（全部 15 cell 覆盖，第1期 AST 门禁补齐 3 个 enforceability gap）
-    uncovered_list:
-      - "rc1_static_snapshot/enforceability: 静态快照 drift 无 gate 阻断"
-      - "rc2_vocab_chain_blindspot/enforceability: VOCAB-HARDCODE 覆盖面不足"
-      - "rc4_manual_exception_permissive/enforceability: manual-only permanent 无 gate 阻断"
+    covered_cells: 15
+    uncovered_cells: 0  # 3.6 第1期 AST 门禁补齐 rc1/rc2/rc4 enforceability gap
+    # M21 指标 = uncovered_cells = 0（全部 15 cell 覆盖）
+    # 第1期 AST 门禁：SNAPSHOT-DRIFT(rc1) + VOCAB-CHAIN(rc2) + MANUAL-ONLY-PERMANENT(rc4)
+    uncovered_list: []

@@ -5519,6 +5519,24 @@ creation_tokens:
     token: "auto-governance-convergence-map-20260719"
     created_by: "sess-5224-20260719175353"
     capability: "governance_convergence"
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.6 Task 1 第1期 AST 门禁（2026-07-19）---
+  # 3 个新 gate 补齐 M21 enforceability gap（rc1/rc2/rc4）
+  - file: "src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py"
+    token: "auto-snapshot-drift-gate-20260719"
+    created_by: "sess-30532-20260719211319"
+    capability: "snapshot_drift_detector"
+  - file: "src/zephyr/gov_enforcement/commit_gates/vocab_chain_gate.py"
+    token: "auto-vocab-chain-gate-20260719"
+    created_by: "sess-30532-20260719211319"
+    capability: "vocab_chain_detector"
+  - file: "src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py"
+    token: "auto-manual-only-permanent-gate-20260719"
+    created_by: "sess-30532-20260719211319"
+    capability: "manual_only_permanent_detector"
+  - file: "tests/governance/commit_gates/test_m21_phase3_6_gates.py"
+    token: "auto-test-m21-phase3-6-gates-20260719"
+    created_by: "sess-30532-20260719211319"
+    capability: "snapshot_drift_detector"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
