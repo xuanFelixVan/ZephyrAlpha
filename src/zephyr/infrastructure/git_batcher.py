@@ -2,11 +2,11 @@
 # [MODULE] zephyr.infrastructure.git_batcher
 # [DOMAIN] D_INFRA_RUNTIME
 # [DEPENDENCIES] stdlib (subprocess, tarfile, io, pathlib, logging, typing)
-# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (collector 批量化); zephyr.gov_enforcement.commit_gates.* (diff helpers 批量化)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (collector 批量化); zephyr.gov_enforcement.commit_gates.* (diff helpers 批量化); zephyr.governance.audit.workspace_hygiene_reconciler (auto-sync restore 批量化)
 # [STARTUP] imported
 # [MATURITY] prototype
 # [INVARIANTS] 所有方法返回 dict/list 结构，不抛异常——subprocess 失败返回空容器；git archive --format=tar 单次调用替代 N 次 git show；线程安全（无共享可变状态）
-# [MODIFY-GUARD] GitCommandBatcher 类名；git_show_batch/git_diff_cached_names/git_diff_names/git_ls_files_tracked 方法签名
+# [MODIFY-GUARD] GitCommandBatcher 类名；git_show_batch/git_diff_cached_names/git_diff_names/git_ls_files_tracked/git_restore_batch 方法签名
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -33,6 +33,8 @@ gates / reconcilers 高频调 git，逐文件调用在 14 万文件工作区上�
 - ``git_diff_cached_names``: 用 ``git diff --cached --name-only`` 一次获取 staged 文件名
 - ``git_diff_names``: 用 ``git diff --name-only <ref_spec>`` 一次获取 diff 文件名
 - ``git_ls_files_tracked``: 用 ``git ls-files`` 一次获取 tracked 文件列表
+- ``git_restore_batch``: 用 ``git restore [--staged] -- <files>`` 一次还原 N 个文件
+  （替代 N 次 ``git restore -- <file>``，workspace_hygiene_reconciler 使用）
 
 设计权衡
 --------
@@ -57,6 +59,10 @@ Usage::
 
     # 批量获取 tracked 文件
     tracked = batcher.git_ls_files_tracked(["src/foo.py", "src/bar.py"])
+
+    # 批量还原 N 个文件到 HEAD（1 次 git restore 替代 N 次）
+    restored = batcher.git_restore_batch(["src/foo.py", "src/bar.py"])
+    # restored == ["src/foo.py", "src/bar.py"]（成功）或 []（失败 fail-open）
 """
 
 from __future__ import annotations
@@ -178,6 +184,60 @@ class GitCommandBatcher:
         if files:
             cmd += ["--"] + files
         return self._run_git_name_list(cmd, timeout, "git_ls_files_tracked")
+
+    def git_restore_batch(
+        self, files: list[str], timeout: int = 60, *, staged: bool = False
+    ) -> list[str]:
+        """批量 git restore 还原文件（GIT-BUDGET-INV-002 批量化强制）。
+
+        用 ``git restore [--staged] -- <files>`` 一次还原 N 个文件，
+        替代 N 次 ``git restore -- <file>``（逐文件调用是 git.exe 崩溃放大源）。
+
+        fail-open：批量失败返回空列表，**不逐个重试**——逐个重试本身是
+        GIT-BUDGET-INV-002 反模式。调用方应依赖下次 post-commit 事件兜底。
+
+        Args:
+            files: 待还原文件相对路径列表。
+            timeout: subprocess 超时秒数。
+            staged: True = 还原 staged 状态（``git restore --staged``），
+                False = 还原 worktree 到 HEAD（默认，``git restore``）。
+
+        Returns:
+            成功还原的文件路径列表（returncode=0 时返回全部 files 副本）。
+            subprocess 失败 / returncode!=0 时返回空列表。
+        """
+        if not files:
+            return []
+
+        cmd = ["git", "restore"]
+        if staged:
+            cmd.append("--staged")
+        cmd += ["--"] + files
+
+        try:
+            r = subprocess.run(
+                cmd, cwd=str(self._root), capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            logger.warning(
+                "git_restore_batch: timeout after %ss (%d files)",
+                timeout, len(files),
+            )
+            return []
+        except Exception as e:  # noqa: BLE001 — fail-open
+            logger.warning("git_restore_batch: subprocess failed: %s", e)
+            return []
+
+        if r.returncode == 0:
+            return list(files)
+
+        stderr = r.stderr.strip()[:300]
+        logger.warning(
+            "git_restore_batch: git restore failed (rc=%d, %d files): %s",
+            r.returncode, len(files), stderr,
+        )
+        return []
 
     def _parse_tar_archive(self, tar_bytes: bytes) -> dict[str, bytes]:
         """解析 git archive --format=tar 的输出，返回 {file_path: content} 字典。

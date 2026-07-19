@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_workspace_hygiene_reconciler | docs/01_policies_and_standards/policies/workspace_governance_policy.md | §ARCH-TOOL-HEALTH-V1 Phase 6 联动 + DEBT-WORKSPACE-001/002 消除
 # [MODULE] zephyr.governance.audit.workspace_hygiene_reconciler
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (logging, subprocess)
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); zephyr.infrastructure.git_batcher (GitCommandBatcher, auto-sync restore 批量化); stdlib (logging, subprocess)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -35,11 +35,19 @@ path-tree 等），这些产物是**被 track 的**，导致工作区永久有 m
 本 reconciler 把"还原优先"从君子协定升级为自动化：post-commit 检测工作区 auto-sync 产物
 残留，自动 ``git restore`` 还原。真实代码修改（非 auto-sync 产物）不自动处理，仅告警。
 
+批量化（GIT-BUDGET-INV-002 合规，2026-07-20 治本）
+--------------------------------------------------
+早期实现 ``_git_restore_individual`` 在批量 restore 失败时逐文件重试，违反
+trae_064 ARCH-GIT-CALL-BUDGET GIT-BUDGET-INV-002 批量化强制（N 文件 = N subprocess
+是 git.exe 崩溃放大源）。治本：改用 ``GitCommandBatcher.git_restore_batch`` 单次
+``git restore -- <files>`` 批量调用，fail-open 不逐个重试（依赖下次 post-commit 兜底）。
+
 auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 -----------------------------------------------------------
 - ``docs/02_enterprise_architecture/generated/`` —— 生成器产物（mermaid 图等）
 - ``docs/02_enterprise_architecture/02_domain_architecture_docs/`` —— 域架构文档
 - ``docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_`` —— 全局树
+- ``docs/02_enterprise_architecture/00_overview_entry/`` —— 概览入口（navigation_index/panorama 派生产物）
 - ``docs/**/_registry/catalogs/rule_catalog_registry.yaml`` —— 规则目录
 - ``docs/**/_registry/catalogs/registry_master_index.yaml`` —— 注册表主索引
 - ``data/asset_index/unified-asset-index.yaml`` —— 资产索引
@@ -48,6 +56,8 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 - ``data/scans/raw-asset-scan.json`` —— 资产扫描
 - ``data/architecture_health/latest.json`` —— 健康快照
 - ``data/classified/classified-assets.json`` —— 分类资产
+- ``data/audit-trail/`` —— 审计追踪日志（运行时，reconciler 追加）
+- ``data/cache/`` —— 缓存（运行时，reconciler 重生成）
 - ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
 - ``docs/03_modules/**/blueprint.md`` —— 蓝图 frontmatter（blueprint_frontmatter_reconciler 产物）
 - ``architecture_model/index.yaml`` —— GATE-ARCH-MODEL reconciler 产物
@@ -57,6 +67,7 @@ auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
 - ``data/runtime_violation_snapshot/latest.json`` —— 运行时违规快照
 - ``data/telemetry/blueprint_reads.jsonl`` —— 蓝图读取遥测
 - ``data/telemetry/dev/metrics.jsonl`` —— 开发指标
+- ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
 - ``scripts/governance/script_manifest.yaml`` / ``scripts/script_manifest.yaml`` —— 脚本清单
 - ``scripts/governance/migrate_sqlite_to_pg/03_create_*_schema.sql`` —— PG schema 产物
 
@@ -89,6 +100,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     ReconcileResult,
     ReconcilerSpec,
 )
+from zephyr.infrastructure.git_batcher import GitCommandBatcher
 
 logger = logging.getLogger(__name__)
 
@@ -99,15 +111,13 @@ _PRIORITY = 890
 # git status --porcelain 超时（秒）
 _GIT_STATUS_TIMEOUT = 10
 
-# git restore 超时（秒）
-_GIT_RESTORE_TIMEOUT = 30
-
 # === auto-sync 产物路径前缀/模式（workspace_governance_policy.md §2.1 派生）===
 # 精确前缀匹配（路径以这些字符串开头）
 _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     "docs/02_enterprise_architecture/generated/",
     "docs/02_enterprise_architecture/02_domain_architecture_docs/",
     "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_",
+    "docs/02_enterprise_architecture/00_overview_entry/",
     "docs/02_enterprise_architecture/architecture_debt_registry.md",
     "data/asset_index/unified-asset-index.yaml",
     "data/reports/dashboard.json",
@@ -120,6 +130,8 @@ _AUTO_SYNC_PREFIXES: tuple[str, ...] = (
     # 目录前缀匹配（避免 SSoT 路径硬编码，VOCAB-CHAIN gate 合规）
     "data/runtime_violation_snapshot/",
     "data/telemetry/",
+    "data/audit-trail/",
+    "data/cache/",
     "scripts/governance/meta/rules_integrity_db.json",
     "scripts/governance/script_manifest.yaml",
     "scripts/script_manifest.yaml",
@@ -247,78 +259,6 @@ def _git_status_porcelain(repo_root: str) -> list[str]:
         return []
 
 
-def _git_restore(repo_root: str, files: list[str]) -> tuple[int, list[str]]:
-    """``git restore`` 还原指定文件到 HEAD 版本。
-
-    fail-open：restore 失败的文件返回到 failed 列表，不阻断 reconciler。
-
-    Args:
-        repo_root: 仓库根路径。
-        files: 待还原文件路径列表（相对仓库根）。
-
-    Returns:
-        (success_count, failed_files) —— 成功还原数量 + 失败文件列表。
-    """
-    if not files:
-        return 0, []
-
-    try:
-        result = subprocess.run(
-            ["git", "restore", "--"] + files,
-            cwd=repo_root,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=_GIT_RESTORE_TIMEOUT,
-        )
-        if result.returncode == 0:
-            return len(files), []
-        # 部分失败：尝试逐个 restore 以最大化成功率
-        logger.warning("workspace_hygiene: batch git restore failed (rc=%d): %s, "
-                       "trying individual restore",
-                       result.returncode, result.stderr[:200])
-        return _git_restore_individual(repo_root, files)
-    except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open
-        logger.warning("workspace_hygiene: git restore error: %s", e)
-        return 0, files
-
-
-def _git_restore_individual(repo_root: str, files: list[str]) -> tuple[int, list[str]]:
-    """逐个 ``git restore`` 文件（批量失败时的降级策略）。
-
-    Args:
-        repo_root: 仓库根路径。
-        files: 待还原文件路径列表。
-
-    Returns:
-        (success_count, failed_files)。
-    """
-    success = 0
-    failed: list[str] = []
-    for f in files:
-        try:
-            result = subprocess.run(
-                ["git", "restore", "--", f],
-                cwd=repo_root,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=_GIT_RESTORE_TIMEOUT,
-            )
-            if result.returncode == 0:
-                success += 1
-            else:
-                logger.warning("workspace_hygiene: git restore %s failed: %s",
-                               f, result.stderr[:100])
-                failed.append(f)
-        except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open
-            logger.warning("workspace_hygiene: git restore %s error: %s", f, e)
-            failed.append(f)
-    return success, failed
-
-
 def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造 GATE-WORKSPACE-HYGIENE post-commit 工作区卫生自动清理 reconciler。
 
@@ -330,6 +270,10 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger 永远返回 True（任何 commit 都触发工作区卫生检查——全局关注）。
     """
     project_root = gateway.project_root
+    # GitCommandBatcher 单例——reconciler 生命周期内复用，避免每次 reconcile 重建
+    # 使用 batcher.git_restore_batch 替代 _git_restore + _git_restore_individual
+    # （GIT-BUDGET-INV-002 合规：N 文件 = 1 subprocess，不逐个重试）
+    batcher = GitCommandBatcher(project_root)
 
     def _trigger(committed_files: list[str]) -> bool:
         # 任何 commit 都触发——工作区卫生是全局关注，不限文件类型
@@ -351,13 +295,15 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
             auto_sync_files = [f for f in modified if _is_auto_sync_product(f)]
             real_changes = [f for f in modified if not _is_auto_sync_product(f)]
 
-            # 3. auto-sync 产物：自动 git restore 还原
+            # 3. auto-sync 产物：批量 git restore 还原（GIT-BUDGET-INV-002 合规）
+            # batcher.git_restore_batch 单次 `git restore -- <files>` 调用，
+            # fail-open 返回成功还原的文件列表（不逐个重试——那是 GIT-BUDGET-INV-002 反模式）
             restored_count = 0
             restore_failed: list[str] = []
             if auto_sync_files:
-                restored_count, restore_failed = _git_restore(
-                    str(project_root), auto_sync_files,
-                )
+                restored_set = set(batcher.git_restore_batch(auto_sync_files))
+                restored_count = len(restored_set)
+                restore_failed = [f for f in auto_sync_files if f not in restored_set]
 
             # 4. 构造结果
             parts: list[str] = []
