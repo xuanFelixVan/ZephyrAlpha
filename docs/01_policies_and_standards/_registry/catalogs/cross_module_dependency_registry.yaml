@@ -1324,6 +1324,17 @@ dependencies:
   description: D_ML_SERVE 推理服务运行时加载 D_ML_TRAIN 训练产出的模型工件（ModelRegistry → 推理引擎装载），属上下游紧耦合。
   direction: upstream
   valid_since: '2026-07-17'
+- dep_id: DEP-103
+  source: MOD-INF-035
+  source_name: ghost-commit-gateway
+  target: MOD-GATE_ENGINE
+  target_name: gate-engine
+  type: runtime
+  strength: hard
+  description: GitCommitGateway __init__ 中 register(make_domain_name_zh_direct_access_gate()) 注册 NO-DOMAIN-NAME-ZH-DIRECT-ACCESS 门禁（priority=72，Step 2.5 遗留风险修复 2026-07-19）。门禁依赖 commit_gates/_diff_helpers（diff 解析）+ commit_gate_registry（GateSpec/is_test_exempt）。
+  contract_anchor: MOD-INF-035 §1 [INVARIANTS] 门禁注册制
+  direction: upstream
+  valid_since: '2026-07-19'
 dependency_graph:
   forward:
     SYS-MASTER-001:
