@@ -818,15 +818,15 @@ class TestGenTrackFileMd:
         )
         assert isinstance(md, str)
 
-    def test_contains_three_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
-                                           sample_nodes_expanded, sample_edges_expanded):
-        """model_driven 轨有 design+production 层 → 3 个 mermaid（合并+设计态+运营态）。"""
+    def test_contains_one_mermaid_block(self, sample_tracks, sample_layers_expanded,
+                                        sample_nodes_expanded, sample_edges_expanded):
+        """概览模式：仅 1 个 Layer 骨架图 mermaid（不画决策节点）。"""
         di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
         md = _gen_track_file_md(
             sample_tracks[0], sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded, di,
         )
-        assert md.count("```mermaid") == 3
+        assert md.count("```mermaid") == 1
 
     def test_contains_layer_table(self, sample_tracks, sample_layers_expanded,
                                   sample_nodes_expanded, sample_edges_expanded):
@@ -838,25 +838,25 @@ class TestGenTrackFileMd:
         )
         assert "## Layer 清单" in md
 
-    def test_contains_node_table(self, sample_tracks, sample_layers_expanded,
-                                 sample_nodes_expanded, sample_edges_expanded):
-        """含 Node 清单 section。"""
+    def test_no_node_table(self, sample_tracks, sample_layers_expanded,
+                           sample_nodes_expanded, sample_edges_expanded):
+        """概览模式不含 Node 清单（决策节点详情在功能域文件）。"""
         di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
         md = _gen_track_file_md(
             sample_tracks[0], sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded, di,
         )
-        assert "## Node 清单" in md
+        assert "## Node 清单" not in md
 
-    def test_contains_edge_table(self, sample_tracks, sample_layers_expanded,
-                                 sample_nodes_expanded, sample_edges_expanded):
-        """含本轨 Edge 清单 section。"""
+    def test_no_edge_table(self, sample_tracks, sample_layers_expanded,
+                           sample_nodes_expanded, sample_edges_expanded):
+        """概览模式不含本轨 Edge 清单（决策边详情在功能域文件）。"""
         di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
         md = _gen_track_file_md(
             sample_tracks[0], sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded, di,
         )
-        assert "## Edge 清单（本轨内）" in md
+        assert "## Edge 清单（本轨内）" not in md
 
     def test_contains_domain_links(self, sample_tracks, sample_layers_expanded,
                                    sample_nodes_expanded, sample_edges_expanded):
@@ -871,15 +871,15 @@ class TestGenTrackFileMd:
 
     def test_empty_track_shows_hint(self, sample_tracks, sample_layers_expanded,
                                     sample_nodes_expanded, sample_edges_expanded):
-        """emergency 轨（expanded 无节点）→ 设计态/运营态提示，仅合并视图 1 mermaid。"""
+        """emergency 轨（expanded 无节点）→ 0 mermaid（无决策节点不画骨架图）+ 无功能域文件提示。"""
         di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
         md = _gen_track_file_md(
             sample_tracks[1], sample_tracks, sample_layers_expanded,
             sample_nodes_expanded, sample_edges_expanded, di,
         )
-        assert "（本轨无设计态节点）" in md
-        assert "（本轨无运营态节点）" in md
-        assert md.count("```mermaid") == 1  # 仅合并视图
+        assert md.count("```mermaid") == 0  # 无决策节点，不画骨架图
+        assert "本轨无决策节点" in md
+        assert "（本轨无功能域文件" in md  # emergency 无功能域文件
 
 
 # ---------- _gen_domain_file_md 测试 ----------

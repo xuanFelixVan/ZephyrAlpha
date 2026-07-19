@@ -270,6 +270,7 @@ def _gen_overview_mmd(
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
     production_only: bool = False, design_only: bool = False,
     track_id: str | None = None, path_prefix: str | None = None,
+    skeleton_only: bool = False,
 ) -> tuple[str, int, int, int]:
     """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。
 
@@ -278,6 +279,7 @@ def _gen_overview_mmd(
         design_only: True 时仅 design_maturity='design'。与 production_only 互斥。
         track_id: 仅生成该 track（用于 per-Track 文件）。
         path_prefix: 仅生成该 path 第 2 段域的节点（用于 per-domain 文件）。
+        skeleton_only: True 时仅画 Layer 节点 + 层间边，跳过决策节点（用于 Track 概览图）。
     """
     # 将 production_only/design_only 转换为 maturity 单参（保持 _gen_overview_mmd 签名不变）
     _maturity = "production" if production_only else ("design" if design_only else None)
@@ -316,13 +318,14 @@ def _gen_overview_mmd(
             label += f'<br/>build: {layer["build"]}'
             cls = _build_status_color(layer["build"])
             lines.append(f'        L{safe_lid}["{label}"]:::{cls}')
-            layer_nodes = [n for n in nodes if n["layer_id"] == lid]
-            for n in layer_nodes:
-                nmtag = _maturity_tag(n.get("maturity"))
-                nlabel = f'{nmtag}{n["type"]}: {n["name"]}<br/>path: {n["path"]}' if nmtag else f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
-                ncls = _build_status_color(n["build"])
-                lines.append(f'        N{n["id"]}("{nlabel}"):::{ncls}')
-                lines.append(f'        L{safe_lid} --- N{n["id"]}')
+            if not skeleton_only:
+                layer_nodes = [n for n in nodes if n["layer_id"] == lid]
+                for n in layer_nodes:
+                    nmtag = _maturity_tag(n.get("maturity"))
+                    nlabel = f'{nmtag}{n["type"]}: {n["name"]}<br/>path: {n["path"]}' if nmtag else f'{n["type"]}: {n["name"]}<br/>path: {n["path"]}'
+                    ncls = _build_status_color(n["build"])
+                    lines.append(f'        N{n["id"]}("{nlabel}"):::{ncls}')
+                    lines.append(f'        L{safe_lid} --- N{n["id"]}')
         lines.append("    end")
 
     # 层间边（triggering，按 layer 顺序）
@@ -332,9 +335,10 @@ def _gen_overview_mmd(
         to_lid = layer_ids[i + 1].replace("-", "_")
         lines.append(f'    L{from_lid} -.->|triggering| L{to_lid}')
 
-    # 节点间边
-    for e in edges:
-        lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
+    # 节点间边（skeleton_only 模式下跳过——无决策节点）
+    if not skeleton_only:
+        for e in edges:
+            lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
 
     lines.append("")
     lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
@@ -711,32 +715,40 @@ def _filter_track_data(
 def _gen_track_views_section(
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict], tid: str,
 ) -> list[str]:
-    """生成 3 视图（合并/设计态/运营态）+ 统计表（Extract Method 降低复杂度）。"""
-    merged_mmd, _, merged_l, merged_e = _gen_overview_mmd(tracks, layers, nodes, edges, track_id=tid)
-    design_mmd, _, design_l, design_e = _gen_overview_mmd(tracks, layers, nodes, edges, design_only=True, track_id=tid)
-    prod_mmd, _, prod_l, prod_e = _gen_overview_mmd(tracks, layers, nodes, edges, production_only=True, track_id=tid)
+    """生成 Layer 骨架图 + 统计表（概览模式，不画决策节点；Extract Method 降低复杂度）。
+
+    Track 文件改为「概览+导航」角色：仅画 Layer 节点 + 层间边，决策节点详情在各
+    功能域文件（L2A/L3）中查看。避免 model_driven 等大轨重复展示数百节点导致文件过长。
+
+    无决策节点的 track（如 placeholder/human_override/emergency）不画骨架图——
+    骨架图是为决策节点提供 Layer 上下文，无节点时画图无意义（placeholder 轨有 645 个
+    占位 Layer 但 0 决策节点，画图会产生无用的巨型 mermaid）。
+    """
+    track_layers, track_nodes, track_edges, cross_track_edges = _filter_track_data(tid, layers, nodes, edges)
 
     lines = [
         "## 统计", "",
-        "| 视图 | Layer 数 | Edge 数 |",
-        "|------|----------|---------|",
-        f"| 合并 | {merged_l} | {merged_e} |",
-        f"| 设计态 | {design_l} | {design_e} |",
-        f"| 运营态 | {prod_l} | {prod_e} |",
+        "| Layer 数 | 决策节点数 | 域内边数 | 跨轨边数 |",
+        "|----------|-----------|----------|----------|",
+        f"| {len(track_layers)} | {len(track_nodes)} | {len(track_edges)} | {len(cross_track_edges)} |",
         "",
-        "## 合并全景图（设计态 + 运营态，标签标注 [design]/[production]）",
-        "", "```mermaid", merged_mmd.rstrip("\n"), "```", "",
-        "## 设计态全景图（仅 design_maturity=design）", "",
+        "## Layer 骨架图",
+        "",
     ]
-    if design_l == 0:
-        lines += ["> （本轨无设计态节点）", ""]
+
+    if not track_nodes:
+        # 无决策节点的 track 不画骨架图（骨架图是为决策节点提供上下文，无节点时无意义）
+        lines += ["> 本轨无决策节点，骨架图省略。Layer 清单见下方表格。", ""]
     else:
-        lines += [f"> 共 {design_l} 层，{design_e} 边。", "", "```mermaid", design_mmd.rstrip("\n"), "```", ""]
-    lines += ["## 运营态全景图（仅 design_maturity=production）", ""]
-    if prod_l == 0:
-        lines += ["> （本轨无运营态节点）", ""]
-    else:
-        lines += [f"> 共 {prod_l} 层，{prod_e} 边。", "", "```mermaid", prod_mmd.rstrip("\n"), "```", ""]
+        # Layer 骨架图（仅 Layer 节点 + 层间边，跳过决策节点）
+        skeleton_mmd, _, _, _ = _gen_overview_mmd(
+            tracks, layers, nodes, edges, track_id=tid, skeleton_only=True
+        )
+        lines += [
+            "> 仅展示 Layer 节点与层间流向；决策节点详情见下方「功能域文件」链接。",
+            "",
+            "```mermaid", skeleton_mmd.rstrip("\n"), "```", "",
+        ]
     return lines
 
 
@@ -745,7 +757,11 @@ def _gen_track_file_md(
     nodes: list[dict], edges: list[dict],
     domain_index: list[dict],
 ) -> str:
-    """Per-Track 文件：3 视图 + 本轨 Layer/Node/Edge 表 + 跨轨边表 + 域文件链接。"""
+    """Per-Track 文件：Layer 骨架图 + 统计 + 功能域链接 + Layer 清单 + 跨轨边（概览+导航模式）。
+
+    决策节点详情不在此文件展示（避免大轨数百节点导致文件过长），改由各功能域文件
+    （L2A/L3）承载。Track 文件聚焦：骨架概览 + 功能域导航 + Layer/跨轨边清单。
+    """
     tid = track["id"]
     track_layers, track_nodes, track_edges, cross_track_edges = _filter_track_data(tid, layers, nodes, edges)
 
@@ -761,9 +777,19 @@ def _gen_track_file_md(
     ]
     lines += _gen_track_views_section(tracks, layers, nodes, edges, tid)
 
+    # 功能域文件链接（突出导航作用，紧跟骨架图之后）
+    track_domains = [d for d in domain_index if d["track"]["id"] == tid]
+    if track_domains:
+        lines += ["## 功能域文件（L2A/L3 拆分）", ""]
+        lines += ["| 序号 | 层 | 功能域 | Node 数 | 文档 |", "|------|------|--------|---------|------|"]
+        for d in track_domains:
+            lines.append(f"| {d['seq']:02d} | {d['layer_id']} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
+        lines += [""]
+    else:
+        lines += ["## 功能域文件（L2A/L3 拆分）", "", "> （本轨无功能域文件——决策节点未按域拆分）", ""]
+
     lines += ["## Layer 清单", ""] + _layer_table(track_layers) + [""]
-    lines += ["## Node 清单", ""] + _node_table(track_nodes) + [""]
-    lines += ["## Edge 清单（本轨内）", ""] + _edge_table(track_edges) + [""]
+
     lines += ["## 跨轨边", ""]
     if cross_track_edges:
         lines += [
@@ -775,15 +801,6 @@ def _gen_track_file_md(
     else:
         lines += ["> （无跨轨边）"]
     lines += [""]
-
-    # 本轨下的功能域文件链接
-    track_domains = [d for d in domain_index if d["track"]["id"] == tid]
-    if track_domains:
-        lines += ["## 功能域文件（L2A/L3 拆分）", ""]
-        lines += ["| 序号 | 层 | 功能域 | Node 数 | 文档 |", "|------|------|--------|---------|------|"]
-        for d in track_domains:
-            lines.append(f"| {d['seq']:02d} | {d['layer_id']} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
-        lines += [""]
 
     return "\n".join(lines) + "\n"
 
