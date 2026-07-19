@@ -88,6 +88,7 @@ import secrets
 import shutil
 import subprocess
 import threading
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -320,12 +321,21 @@ class WorktreePool:
                 return None
 
             # Step 1: git worktree move <pool_path> <session_path>
-            r_move = self._run_git(
-                ["git", "worktree", "move", str(pool_path), str(session_path)]
-            )
+            # Windows 文件锁重试：新创建的 worktree 可能被 antivirus/search indexer
+            # 短暂占用句柄（Permission denied / .git does not exist），重试 3 次
+            # 每次 0.5s 间隔。同类问题见 worktree_manager._force_rmtree 的 onerror 重试。
+            r_move = None
+            for _attempt in range(3):
+                r_move = self._run_git(
+                    ["git", "worktree", "move", str(pool_path), str(session_path)]
+                )
+                if r_move.returncode == 0:
+                    break
+                if _attempt < 2:
+                    time.sleep(0.5)  # noqa: m10-time-trigger — retry delay, not a periodic trigger
             if r_move.returncode != 0:
                 logger.warning(
-                    "WorktreePool: git worktree move failed "
+                    "WorktreePool: git worktree move failed after 3 retries "
                     "(pool=%s, session=%s): %s",
                     pool_id, session_id, r_move.stderr.strip(),
                 )
