@@ -161,6 +161,7 @@ def make_unsafe_dict_spread_gate() -> GateSpec:
             warnings.extend(_collect_unsafe_spread_warnings(gateway, py_file))
         if warnings:
             detail = _format_unsafe_spread_detail(warnings)
+            # 保留 print：gate warn 按设计直出 stderr（操作员可见性），与 logger.warning 双通道
             print(f"[GATE] UNSAFE-DICT-SPREAD warn:\n{detail}", file=sys.stderr)
             logger.warning("UNSAFE-DICT-SPREAD gate warn:\n%s", detail)
             return True, detail

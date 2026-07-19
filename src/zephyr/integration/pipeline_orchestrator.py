@@ -2535,6 +2535,8 @@ class PipelineOrchestrator:
         if len(self._log_buffer) > limit:
             self._log_buffer = self._log_buffer[-limit:]
         if self._should_log(level):
+            # 保留 print（5.20 B 类）：_log 是编排器自带的结构化控制台日志设施
+            # （级别门控 + flush 直出），其职责即控制台输出，不迁移到 logging
             print(f"[PipelineOrchestrator][{ts}][{level}] {message}", flush=True)
 
     def get_logs(self, *, level: str | None = None, limit: int = 100) -> list[tuple[str, str, str]]:

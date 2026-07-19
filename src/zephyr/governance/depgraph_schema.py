@@ -1370,6 +1370,7 @@ def init_db(
                 count = cur.fetchone()[0]
                 cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
                 ver = cur.fetchone()[0]
+                # 保留 print（5.20 B 类）：echo=True 是调用方显式请求控制台输出（CLI 初始化场景）
                 print(f"[depgraph_schema] PG schema healthy: {count} tables, version=v{ver}")
     finally:
         release_depgraph_pg_connection(conn)
