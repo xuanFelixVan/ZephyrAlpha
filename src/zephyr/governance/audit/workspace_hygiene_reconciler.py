@@ -1,0 +1,408 @@
+# [BLUEPRINT] MOD-GOV_workspace_hygiene_reconciler | docs/01_policies_and_standards/policies/workspace_governance_policy.md | §ARCH-TOOL-HEALTH-V1 Phase 6 联动 + DEBT-WORKSPACE-001/002 消除
+# [MODULE] zephyr.governance.audit.workspace_hygiene_reconciler
+# [DOMAIN] D_GOV_AUDIT
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec); stdlib (logging, subprocess)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，工作区卫生是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只自动 restore auto-sync 产物，不触碰真实代码修改
+# [MODIFY-GUARD] _GATE_ID / _PRIORITY / _AUTO_SYNC_PATTERNS
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] reconcile 永不抛异常——subprocess/解析失败降级为 ReconcileResult(action="warn")
+# [TESTS] tests/governance/audit/test_workspace_hygiene_reconciler.py
+# [A_module] module_id=MOD-GOV-workspace_hygiene_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
+"""workspace_hygiene_reconciler.py — 工作区卫生自动清理 reconciler（DEBT-WORKSPACE-001/002 消除，2026-07-20）。
+
+post-commit 事件触发，检测工作区残留的 auto-sync 产物并自动 ``git restore`` 还原到 HEAD
+版本，消除 workspace_governance_policy.md §2.2 定义的"还原优先"策略的君子协定依赖。
+
+治本动机（第一性原理）
+--------------------
+workspace_governance_policy.md 附录 B 已登记 DEBT-WORKSPACE-001/002 为君子协定：
+
+- DEBT-WORKSPACE-001（§5.1 会话开始检查 git status）—— 无自动触发
+- DEBT-WORKSPACE-002（§5.2 提交前检查工作区只保留本次任务相关改动）—— 无自动触发
+
+100% AI 开发下，AI 不会自觉执行 ``git checkout -- <file>`` 还原 auto-sync 产物残留。
+每次 GitCommitGateway post-commit 触发 reconciler 重生成产物（dashboard、catalog、
+path-tree 等），这些产物是**被 track 的**，导致工作区永久有 modified 文件——AI 每次看
+``git status`` 都需判断"这些改动是否相关"→ 判断疲劳 → 误判 → 漂移。
+
+本 reconciler 把"还原优先"从君子协定升级为自动化：post-commit 检测工作区 auto-sync 产物
+残留，自动 ``git restore`` 还原。真实代码修改（非 auto-sync 产物）不自动处理，仅告警。
+
+auto-sync 产物清单（workspace_governance_policy.md §2.1 派生）
+-----------------------------------------------------------
+- ``docs/02_enterprise_architecture/generated/`` —— 生成器产物（mermaid 图等）
+- ``docs/02_enterprise_architecture/02_domain_architecture_docs/`` —— 域架构文档
+- ``docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_`` —— 全局树
+- ``docs/**/_registry/catalogs/rule_catalog_registry.yaml`` —— 规则目录
+- ``docs/**/_registry/catalogs/registry_master_index.yaml`` —— 注册表主索引
+- ``data/asset_index/unified-asset-index.yaml`` —— 资产索引
+- ``data/reports/dashboard.json`` —— 仪表盘快照
+- ``data/reports/reconciliation-report.md`` —— 对账报告
+- ``data/scans/raw-asset-scan.json`` —— 资产扫描
+- ``data/architecture_health/latest.json`` —— 健康快照
+- ``data/classified/classified-assets.json`` —— 分类资产
+- ``scripts/governance/meta/rules_integrity_db.json`` —— 规则完整性
+- ``docs/03_modules/**/blueprint.md`` —— 蓝图 frontmatter（blueprint_frontmatter_reconciler 产物）
+- ``architecture_model/index.yaml`` —— GATE-ARCH-MODEL reconciler 产物
+- ``docs/02_enterprise_architecture/architecture_debt_registry.md`` —— 架构债务注册表
+- ``data/budget/shutdown_snapshot.json`` —— 预算关闭快照
+- ``data/metrics/kill_switch_probes.jsonl`` —— kill-switch 探针
+- ``data/runtime_violation_snapshot/latest.json`` —— 运行时违规快照
+- ``data/telemetry/blueprint_reads.jsonl`` —— 蓝图读取遥测
+- ``data/telemetry/dev/metrics.jsonl`` —— 开发指标
+- ``scripts/governance/script_manifest.yaml`` / ``scripts/script_manifest.yaml`` —— 脚本清单
+- ``scripts/governance/migrate_sqlite_to_pg/03_create_*_schema.sql`` —— PG schema 产物
+
+判定
+----
+- 工作区无 modified 文件 → skip
+- 有 auto-sync 产物残留 → 自动 ``git restore``，返回 clean（已清理）
+- 有非 auto-sync 的真实代码修改 → warn（不自动处理，AI 需关注）
+- 同时有 auto-sync + 真实代码修改 → restore auto-sync + warn 真实代码修改
+
+priority=890（晚于 commit_gateway_abuse_monitor(875)，早于 remediation_progress(900)）
+
+Usage
+-----
+::
+
+    from zephyr.governance.audit.workspace_hygiene_reconciler import (
+        make_workspace_hygiene_reconciler,
+    )
+
+    registry.register(make_workspace_hygiene_reconciler(gateway))
+"""
+
+from __future__ import annotations
+
+import logging
+import subprocess
+
+from zephyr.governance.audit.reconciliation_registry import (
+    ReconcileResult,
+    ReconcilerSpec,
+)
+
+logger = logging.getLogger(__name__)
+
+_GATE_ID = "GATE-WORKSPACE-HYGIENE"
+# priority=890: 晚于 commit_gateway_abuse_monitor(875)，早于 remediation_progress(900)
+_PRIORITY = 890
+
+# git status --porcelain 超时（秒）
+_GIT_STATUS_TIMEOUT = 10
+
+# git restore 超时（秒）
+_GIT_RESTORE_TIMEOUT = 30
+
+# === auto-sync 产物路径前缀/模式（workspace_governance_policy.md §2.1 派生）===
+# 精确前缀匹配（路径以这些字符串开头）
+_AUTO_SYNC_PREFIXES: tuple[str, ...] = (
+    "docs/02_enterprise_architecture/generated/",
+    "docs/02_enterprise_architecture/02_domain_architecture_docs/",
+    "docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_",
+    "docs/02_enterprise_architecture/architecture_debt_registry.md",
+    "data/asset_index/unified-asset-index.yaml",
+    "data/reports/dashboard.json",
+    "data/reports/reconciliation-report.md",
+    "data/scans/raw-asset-scan.json",
+    "data/architecture_health/latest.json",
+    "data/classified/classified-assets.json",
+    "data/budget/shutdown_snapshot.json",
+    "data/metrics/kill_switch_probes.jsonl",
+    # 目录前缀匹配（避免 SSoT 路径硬编码，VOCAB-CHAIN gate 合规）
+    "data/runtime_violation_snapshot/",
+    "data/telemetry/",
+    "scripts/governance/meta/rules_integrity_db.json",
+    "scripts/governance/script_manifest.yaml",
+    "scripts/script_manifest.yaml",
+    "architecture_model/index.yaml",
+    # PG schema 迁移产物（reconciler 自动同步）
+    "scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql",
+    "scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql",
+)
+
+# 通配后缀匹配（路径以这些后缀结尾）
+_AUTO_SYNC_SUFFIXES: tuple[str, ...] = (
+    # blueprint.md 是 blueprint_frontmatter_reconciler 的产物
+    # 仅匹配 docs/03_modules/ 下的 blueprint.md
+)
+
+
+def _is_auto_sync_product(file_path: str) -> bool:
+    """判断文件是否属于 auto-sync 产物（workspace_governance_policy.md §2.1）。
+
+    Args:
+        file_path: 工作区中的文件路径（相对仓库根，POSIX 风格）。
+
+    Returns:
+        True 如果是 auto-sync 产物；False 如果是真实代码修改。
+    """
+    # 精确前缀匹配
+    for prefix in _AUTO_SYNC_PREFIXES:
+        if file_path.startswith(prefix):
+            return True
+
+    # blueprint.md 特殊处理：仅 docs/03_modules/ 下的 blueprint.md 是 auto-sync 产物
+    if file_path.endswith("/blueprint.md") and file_path.startswith("docs/03_modules/"):
+        return True
+
+    # registry catalogs 下的派生产物（rule_catalog_registry / registry_master_index）
+    if file_path.startswith("docs/01_policies_and_standards/_registry/catalogs/"):
+        if file_path.endswith(("rule_catalog_registry.yaml",
+                               "registry_master_index.yaml")):
+            return True
+
+    return False
+
+
+def _parse_porcelain(output: str) -> list[str]:
+    """解析 ``git status --porcelain`` 输出，返回 modified 文件路径列表。
+
+    仅返回 `` M`` / ``MM`` / ``M `` 状态的文件（已修改，非新增/删除/重命名）。
+    跳过 untracked（``??``）、deleted（`` D``）、renamed（``R``）等。
+
+    Args:
+        output: ``git status --porcelain`` 的原始输出。
+
+    Returns:
+        修改文件路径列表（POSIX 风格，已 strip 尾部 \\r）。
+    """
+    files: list[str] = []
+    for line in output.splitlines():
+        if len(line) < 4:
+            continue
+        # porcelain 格式："XY path" 或 "XY path -> path"（rename）
+        # X = staged status, Y = worktree status
+        status = line[:2]
+        path = line[3:]
+
+        # Windows CRLF 兼容
+        path = path.rstrip("\r")
+
+        # 跳过 rename（R）
+        if "R" in status:
+            continue
+        # 跳过 untracked（??）
+        if status == "??":
+            continue
+        # 跳过 deleted（D）
+        if "D" in status:
+            continue
+        # 跳过 added（A）—— 新增文件不是 auto-sync 产物
+        if "A" in status:
+            continue
+
+        # 处理 rename 的 "path -> path" 格式（虽然上面已跳过 R，但防御性处理）
+        if " -> " in path:
+            path = path.split(" -> ")[-1]
+
+        # 转换为 POSIX 风格（git status 在 Windows 上可能用反斜杠）
+        path = path.replace("\\", "/")
+
+        # 去除引号（git status 对含特殊字符的路径会加引号）
+        if path.startswith('"') and path.endswith('"'):
+            path = path[1:-1]
+
+        files.append(path)
+
+    return files
+
+
+def _git_status_porcelain(repo_root: str) -> list[str]:
+    """获取工作区 modified 文件列表（git status --porcelain）。
+
+    fail-open：git status 失败返回空列表（无法检测工作区卫生，降级为不触发清理）。
+
+    Args:
+        repo_root: 仓库根路径。
+
+    Returns:
+        修改文件路径列表（POSIX 风格）。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=_GIT_STATUS_TIMEOUT,
+        )
+        if result.returncode != 0:
+            logger.warning("workspace_hygiene: git status failed (rc=%d): %s",
+                           result.returncode, result.stderr[:200])
+            return []
+        return _parse_porcelain(result.stdout)
+    except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open 不阻断
+        logger.warning("workspace_hygiene: git status error: %s", e)
+        return []
+
+
+def _git_restore(repo_root: str, files: list[str]) -> tuple[int, list[str]]:
+    """``git restore`` 还原指定文件到 HEAD 版本。
+
+    fail-open：restore 失败的文件返回到 failed 列表，不阻断 reconciler。
+
+    Args:
+        repo_root: 仓库根路径。
+        files: 待还原文件路径列表（相对仓库根）。
+
+    Returns:
+        (success_count, failed_files) —— 成功还原数量 + 失败文件列表。
+    """
+    if not files:
+        return 0, []
+
+    try:
+        result = subprocess.run(
+            ["git", "restore", "--"] + files,
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=_GIT_RESTORE_TIMEOUT,
+        )
+        if result.returncode == 0:
+            return len(files), []
+        # 部分失败：尝试逐个 restore 以最大化成功率
+        logger.warning("workspace_hygiene: batch git restore failed (rc=%d): %s, "
+                       "trying individual restore",
+                       result.returncode, result.stderr[:200])
+        return _git_restore_individual(repo_root, files)
+    except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open
+        logger.warning("workspace_hygiene: git restore error: %s", e)
+        return 0, files
+
+
+def _git_restore_individual(repo_root: str, files: list[str]) -> tuple[int, list[str]]:
+    """逐个 ``git restore`` 文件（批量失败时的降级策略）。
+
+    Args:
+        repo_root: 仓库根路径。
+        files: 待还原文件路径列表。
+
+    Returns:
+        (success_count, failed_files)。
+    """
+    success = 0
+    failed: list[str] = []
+    for f in files:
+        try:
+            result = subprocess.run(
+                ["git", "restore", "--", f],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=_GIT_RESTORE_TIMEOUT,
+            )
+            if result.returncode == 0:
+                success += 1
+            else:
+                logger.warning("workspace_hygiene: git restore %s failed: %s",
+                               f, result.stderr[:100])
+                failed.append(f)
+        except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — fail-open
+            logger.warning("workspace_hygiene: git restore %s error: %s", f, e)
+            failed.append(f)
+    return success, failed
+
+
+def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 GATE-WORKSPACE-HYGIENE post-commit 工作区卫生自动清理 reconciler。
+
+    Args:
+        gateway: GitCommitGateway 实例（仅用其 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id=_GATE_ID, priority=_PRIORITY)。
+        trigger 永远返回 True（任何 commit 都触发工作区卫生检查——全局关注）。
+    """
+    project_root = gateway.project_root
+
+    def _trigger(committed_files: list[str]) -> bool:
+        # 任何 commit 都触发——工作区卫生是全局关注，不限文件类型
+        return True
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+        try:
+            # 1. 获取工作区 modified 文件列表
+            modified = _git_status_porcelain(str(project_root))
+
+            if not modified:
+                return ReconcileResult(
+                    action="skip",
+                    detail="workspace clean (no modified files)",
+                    gate_id=_GATE_ID,
+                )
+
+            # 2. 分类：auto-sync 产物 vs 真实代码修改
+            auto_sync_files = [f for f in modified if _is_auto_sync_product(f)]
+            real_changes = [f for f in modified if not _is_auto_sync_product(f)]
+
+            # 3. auto-sync 产物：自动 git restore 还原
+            restored_count = 0
+            restore_failed: list[str] = []
+            if auto_sync_files:
+                restored_count, restore_failed = _git_restore(
+                    str(project_root), auto_sync_files,
+                )
+
+            # 4. 构造结果
+            parts: list[str] = []
+            if restored_count > 0:
+                parts.append(f"restored {restored_count} auto-sync files")
+            if restore_failed:
+                parts.append(f"{len(restore_failed)} auto-sync restore failed: "
+                             f"{restore_failed[:3]}")
+            if real_changes:
+                # 真实代码修改：告警（不自动处理）
+                # 截断显示前 5 个，避免 detail 过长
+                sample = real_changes[:5]
+                parts.append(f"{len(real_changes)} non-auto-sync modified files detected: "
+                             f"{sample}"
+                             f"{'...' if len(real_changes) > 5 else ''}")
+
+            detail = "; ".join(parts) if parts else "no action"
+
+            # 判定 action：
+            # - 有真实代码修改 → warn（AI 需关注）
+            # - 无真实代码修改但有 restore 失败 → warn（restore 异常需关注）
+            # - 仅 auto-sync 产物且全部 restore 成功 → clean（已清理）
+            if real_changes or restore_failed:
+                return ReconcileResult(
+                    action="warn",
+                    detail=detail,
+                    gate_id=_GATE_ID,
+                )
+            return ReconcileResult(
+                action="clean",
+                detail=detail,
+                gate_id=_GATE_ID,
+            )
+
+        except Exception as e:  # noqa: BLE001 — reconciler 永不抛异常
+            logger.warning("workspace_hygiene: reconcile failed: %s", e)
+            return ReconcileResult(
+                action="warn",
+                detail=f"workspace_hygiene reconcile error: {e}",
+                gate_id=_GATE_ID,
+            )
+
+    return ReconcilerSpec(
+        gate_id=_GATE_ID,
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=_PRIORITY,
+    )

@@ -199,7 +199,7 @@ git status --short
 
 | 债务编号 | 规则位置 | 规则内容 | 自动化状态 | 缓解措施 |
 |----------|----------|----------|------------|----------|
-| DEBT-WORKSPACE-001 | §5.1 | 每次会话开始时检查 `git status --short` | 君子协定，无自动触发 | AI 读 AGENTS.md 时被引导执行；GitCommitGateway post-commit reconciler 部分覆盖（auto-sync 产物自动提交） |
-| DEBT-WORKSPACE-002 | §5.2 | 每次提交前检查工作区只保留本次任务相关改动 | 君子协定，无自动触发 | session_worktree 物理隔离 + HELD-OVERLAP gate 部分覆盖（文件级冲突阻断） |
+| DEBT-WORKSPACE-001 | §5.1 | 每次会话开始时检查 `git status --short` | 已自动化 2026-07-20 | workspace_hygiene_reconciler post-commit priority=890 自动检测+还原 auto-sync 产物残留（真实代码修改 action=warn 不自动处理） |
+| DEBT-WORKSPACE-002 | §5.2 | 每次提交前检查工作区只保留本次任务相关改动 | 已自动化 2026-07-20 | workspace_hygiene_reconciler post-commit auto-sync 产物 `git restore` + session_worktree 物理隔离 + HELD-OVERLAP gate 文件级冲突阻断 |
 
-**消除路径**：未来可新增 `workspace_hygiene_reconciler`（post-commit 检测工作区残留 auto-sync 产物并自动 `git checkout` 还原），当前优先级不够，不创造无价值代码（向内收原则①）。在 reconciler 落地前，AI 读到本声明即知这些规则需自觉执行。
+**消除路径**：已落地 2026-07-20——`src/zephyr/governance/audit/workspace_hygiene_reconciler.py`（post-commit priority=890，检测工作区残留 auto-sync 产物并自动 `git restore` 还原到 HEAD 版本，真实代码修改仅 action=warn 不自动处理）。reconciler 已在 git_commit_gateway.py L648 注册，reconciliation_registry.py __all__ 导出。
