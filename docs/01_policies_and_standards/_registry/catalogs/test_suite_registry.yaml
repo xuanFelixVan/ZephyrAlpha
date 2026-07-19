@@ -5,7 +5,7 @@ collection_name: 测试集 / Test Suite
 collection_path: tests/
 owner_module: MOD-AUDIT-TEST
 node_type: test_suite
-total_registered: 1718
+total_registered: 1617
 items:
 - file: tests/a2a/test_a2a_anomaly_detector.py
   name: test_a2a_anomaly_detector.py
@@ -463,14 +463,6 @@ items:
   name: test_ai_context_injector.py
   node_type: test
   status: active
-- file: tests/ai/test_human_ai_interface.py
-  name: test_human_ai_interface.py
-  node_type: test
-  status: active
-- file: tests/alpha_signal/test_alpha_factor.py
-  name: test_alpha_factor.py
-  node_type: test
-  status: active
 - file: tests/asset_inventory/test_asset_inventory.py
   name: test_asset_inventory.py
   node_type: test
@@ -883,10 +875,6 @@ items:
   name: test_auto_fix_engine.py
   node_type: test
   status: active
-- file: tests/automation/test_auto_fix_phase_manager.py
-  name: test_auto_fix_phase_manager.py
-  node_type: test
-  status: active
 - file: tests/automation/test_auto_fix_red_blue.py
   name: test_auto_fix_red_blue.py
   node_type: test
@@ -933,10 +921,6 @@ items:
   status: active
 - file: tests/automation/test_auto_task_generator.py
   name: test_auto_task_generator.py
-  node_type: test
-  status: active
-- file: tests/automation/test_auto_test_generator.py
-  name: test_auto_test_generator.py
   node_type: test
   status: active
 - file: tests/autonomy/test_adversarial_robustness.py
@@ -1003,10 +987,6 @@ items:
   name: test_checkpoint_manager.py
   node_type: test
   status: active
-- file: tests/autonomy/test_citation_walker.py
-  name: test_citation_walker.py
-  node_type: test
-  status: active
 - file: tests/autonomy/test_complexity_budget.py
   name: test_complexity_budget.py
   node_type: test
@@ -1043,16 +1023,8 @@ items:
   name: test_domain_decay_config.py
   node_type: test
   status: active
-- file: tests/autonomy/test_embedding_version_lock.py
-  name: test_embedding_version_lock.py
-  node_type: test
-  status: active
 - file: tests/autonomy/test_fallback_staleness_gate.py
   name: test_fallback_staleness_gate.py
-  node_type: test
-  status: active
-- file: tests/autonomy/test_fragmentation_index.py
-  name: test_fragmentation_index.py
   node_type: test
   status: active
 - file: tests/autonomy/test_host_resource_governor.py
@@ -1103,10 +1075,6 @@ items:
   name: test_parsing_intent_parser.py
   node_type: test
   status: active
-- file: tests/autonomy/test_pattern_library_root.py
-  name: test_pattern_library_root.py
-  node_type: test
-  status: active
 - file: tests/autonomy/test_poisoning_monitor.py
   name: test_poisoning_monitor.py
   node_type: test
@@ -1117,10 +1085,6 @@ items:
   status: active
 - file: tests/autonomy/test_progressive_disclosure_injector.py
   name: test_progressive_disclosure_injector.py
-  node_type: test
-  status: active
-- file: tests/autonomy/test_rational.py
-  name: test_rational.py
   node_type: test
   status: active
 - file: tests/autonomy/test_registry.py
@@ -1365,10 +1329,6 @@ items:
   status: active
 - file: tests/capability/test_capability_lookup.py
   name: test_capability_lookup.py
-  node_type: test
-  status: active
-- file: tests/capability/test_capability_overlap_gate.py
-  name: test_capability_overlap_gate.py
   node_type: test
   status: active
 - file: tests/capability/test_capability_passport.py
@@ -1753,10 +1713,6 @@ items:
   status: active
 - file: tests/data/test_data_quality_gate.py
   name: test_data_quality_gate.py
-  node_type: test
-  status: active
-- file: tests/data/test_data_source.py
-  name: test_data_source.py
   node_type: test
   status: active
 - file: tests/data/test_data_source_reliability.py
@@ -2445,74 +2401,6 @@ items:
   status: active
 - file: tests/federated_learning/test_fl_safety_gate_l1_l27.py
   name: test_fl_safety_gate_l1_l27.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l29.py
-  name: test_fl_safety_gate_l29.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l37.py
-  name: test_fl_safety_gate_l37.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l39.py
-  name: test_fl_safety_gate_l39.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l41.py
-  name: test_fl_safety_gate_l41.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l43.py
-  name: test_fl_safety_gate_l43.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l45.py
-  name: test_fl_safety_gate_l45.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l47.py
-  name: test_fl_safety_gate_l47.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l49.py
-  name: test_fl_safety_gate_l49.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l51.py
-  name: test_fl_safety_gate_l51.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l53.py
-  name: test_fl_safety_gate_l53.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l55.py
-  name: test_fl_safety_gate_l55.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l57.py
-  name: test_fl_safety_gate_l57.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l59.py
-  name: test_fl_safety_gate_l59.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l61.py
-  name: test_fl_safety_gate_l61.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l63.py
-  name: test_fl_safety_gate_l63.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l65.py
-  name: test_fl_safety_gate_l65.py
-  node_type: test
-  status: active
-- file: tests/federated_learning/test_fl_safety_gate_l67.py
-  name: test_fl_safety_gate_l67.py
   node_type: test
   status: active
 - file: tests/federated_learning/test_fl_saga_compensator.py
@@ -3839,10 +3727,6 @@ items:
   name: test_ttl_gate.py
   node_type: test
   status: active
-- file: tests/governance/compliance/test_compliance.py
-  name: test_compliance.py
-  node_type: test
-  status: active
 - file: tests/governance/compliance/test_compliance_mapper.py
   name: test_compliance_mapper.py
   node_type: test
@@ -3851,16 +3735,8 @@ items:
   name: test_human_factors.py
   node_type: test
   status: active
-- file: tests/governance/compliance/test_load_bearing.py
-  name: test_load_bearing.py
-  node_type: test
-  status: active
 - file: tests/governance/compliance/test_owner_absent.py
   name: test_owner_absent.py
-  node_type: test
-  status: active
-- file: tests/governance/compliance/test_quiet_period_monitor.py
-  name: test_quiet_period_monitor.py
   node_type: test
   status: active
 - file: tests/governance/compliance/test_right_to_be_forgotten.py
@@ -4755,142 +4631,6 @@ items:
   name: test_verify_schema_health.py
   node_type: test
   status: active
-- file: tests/kb/test_kb_activate.py
-  name: test_kb_activate.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_analyze.py
-  name: test_kb_analyze.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_batch_ingest.py
-  name: test_kb_batch_ingest.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_bootstrap.py
-  name: test_kb_bootstrap.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_embedding_migrate.py
-  name: test_kb_embedding_migrate.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_extract.py
-  name: test_kb_extract.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_freeze.py
-  name: test_kb_freeze.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_gate.py
-  name: test_kb_gate.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_gate_task.py
-  name: test_kb_gate_task.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_graph_validator.py
-  name: test_kb_graph_validator.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_ingest.py
-  name: test_kb_ingest.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_integrity.py
-  name: test_kb_integrity.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_migration_embedding.py
-  name: test_kb_migration_embedding.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_migration_gate.py
-  name: test_kb_migration_gate.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_pipeline_activate.py
-  name: test_kb_pipeline_activate.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_reranker.py
-  name: test_kb_reranker.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_self_test.py
-  name: test_kb_self_test.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_storage_backend.py
-  name: test_kb_storage_backend.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_triage.py
-  name: test_kb_triage.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_unified_memory_api.py
-  name: test_kb_unified_memory_api.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_verify.py
-  name: test_kb_verify.py
-  node_type: test
-  status: active
-- file: tests/kb/test_kb_vms_memory_backend.py
-  name: test_kb_vms_memory_backend.py
-  node_type: test
-  status: active
-- file: tests/kb/test_vector_memory_root.py
-  name: test_vector_memory_root.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_ke_quality.py
-  name: test_ke_quality.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_ke_tombstone.py
-  name: test_ke_tombstone.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_bus_factor_monitor.py
-  name: test_knowledge_bus_factor_monitor.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_capture.py
-  name: test_knowledge_capture.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_distillation.py
-  name: test_knowledge_distillation.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_distiller.py
-  name: test_knowledge_distiller.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_freshness.py
-  name: test_knowledge_freshness.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_injection.py
-  name: test_knowledge_injection.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_injection_pre_flight_verifier.py
-  name: test_knowledge_injection_pre_flight_verifier.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_market.py
-  name: test_knowledge_market.py
-  node_type: test
-  status: active
-- file: tests/knowledge_engine/test_knowledge_packaging.py
-  name: test_knowledge_packaging.py
-  node_type: test
-  status: active
 - file: tests/llm_security/test_adversarial_mutator.py
   name: test_adversarial_mutator.py
   node_type: test
@@ -5131,10 +4871,6 @@ items:
   name: test_vms_lifecycle.py
   node_type: test
   status: active
-- file: tests/ml_experiment/test_experimentation.py
-  name: test_experimentation.py
-  node_type: test
-  status: active
 - file: tests/model/test_benchmark_suite.py
   name: test_benchmark_suite.py
   node_type: test
@@ -5165,10 +4901,6 @@ items:
   status: active
 - file: tests/model/test_local_model.py
   name: test_local_model.py
-  node_type: test
-  status: active
-- file: tests/model/test_ml_platform.py
-  name: test_ml_platform.py
   node_type: test
   status: active
 - file: tests/model/test_model_capability_exam.py
@@ -5217,10 +4949,6 @@ items:
   status: active
 - file: tests/model/test_provider_data.py
   name: test_provider_data.py
-  node_type: test
-  status: active
-- file: tests/model/test_research_innovation.py
-  name: test_research_innovation.py
   node_type: test
   status: active
 - file: tests/model/test_results_writer.py
@@ -5463,10 +5191,6 @@ items:
   name: test_ml_experiment_pipeline.py
   node_type: test
   status: active
-- file: tests/risk/test_risk_management.py
-  name: test_risk_management.py
-  node_type: test
-  status: active
 - file: tests/risk/test_risk_matrix.py
   name: test_risk_matrix.py
   node_type: test
@@ -5671,80 +5395,8 @@ items:
   name: test_red_blue_validator_tests.py
   node_type: test
   status: active
-- file: tests/safety/test_safety_brake.py
-  name: test_safety_brake.py
-  node_type: test
-  status: active
 - file: tests/safety/test_safety_gate_l1_l27.py
   name: test_safety_gate_l1_l27.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l29.py
-  name: test_safety_gate_l29.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l37.py
-  name: test_safety_gate_l37.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l39.py
-  name: test_safety_gate_l39.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l41.py
-  name: test_safety_gate_l41.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l43.py
-  name: test_safety_gate_l43.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l45.py
-  name: test_safety_gate_l45.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l47.py
-  name: test_safety_gate_l47.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l49.py
-  name: test_safety_gate_l49.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l51.py
-  name: test_safety_gate_l51.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l53.py
-  name: test_safety_gate_l53.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l55.py
-  name: test_safety_gate_l55.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l57.py
-  name: test_safety_gate_l57.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l59.py
-  name: test_safety_gate_l59.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l61.py
-  name: test_safety_gate_l61.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l63.py
-  name: test_safety_gate_l63.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l65.py
-  name: test_safety_gate_l65.py
-  node_type: test
-  status: active
-- file: tests/safety/test_safety_gate_l67.py
-  name: test_safety_gate_l67.py
   node_type: test
   status: active
 - file: tests/safety/test_scheduler_safety.py
@@ -6011,10 +5663,6 @@ items:
   name: test_skill_kill_switch.py
   node_type: test
   status: active
-- file: tests/skill/test_skill_knowledge_base.py
-  name: test_skill_knowledge_base.py
-  node_type: test
-  status: active
 - file: tests/skill/test_skill_kya.py
   name: test_skill_kya.py
   node_type: test
@@ -6155,10 +5803,6 @@ items:
   name: test_temporal_context_adapter.py
   node_type: test
   status: active
-- file: tests/temporal/test_temporal_drift_tracker.py
-  name: test_temporal_drift_tracker.py
-  node_type: test
-  status: active
 - file: tests/temporal/test_temporal_event_store.py
   name: test_temporal_event_store.py
   node_type: test
@@ -6223,10 +5867,6 @@ items:
   name: test_blind_spot_closure.py
   node_type: test
   status: active
-- file: tests/trading/test_boot_cron_jobs.py
-  name: test_boot_cron_jobs.py
-  node_type: test
-  status: active
 - file: tests/trading/test_boot_hooks.py
   name: test_boot_hooks.py
   node_type: test
@@ -6255,28 +5895,12 @@ items:
   name: test_degrade_cascade.py
   node_type: test
   status: active
-- file: tests/trading/test_design_decisions_root.py
-  name: test_design_decisions_root.py
-  node_type: test
-  status: active
 - file: tests/trading/test_disk_guard.py
   name: test_disk_guard.py
   node_type: test
   status: active
-- file: tests/trading/test_dlq_manager_root.py
-  name: test_dlq_manager_root.py
-  node_type: test
-  status: active
 - file: tests/trading/test_dream_cycle.py
   name: test_dream_cycle.py
-  node_type: test
-  status: active
-- file: tests/trading/test_f14_pipeline_extreme.py
-  name: test_f14_pipeline_extreme.py
-  node_type: test
-  status: active
-- file: tests/trading/test_f1_extreme.py
-  name: test_f1_extreme.py
   node_type: test
   status: active
 - file: tests/trading/test_fault_types.py
@@ -6335,14 +5959,6 @@ items:
   name: test_night_shift_queue.py
   node_type: test
   status: active
-- file: tests/trading/test_portfolio_construction.py
-  name: test_portfolio_construction.py
-  node_type: test
-  status: active
-- file: tests/trading/test_post_trade_analytics.py
-  name: test_post_trade_analytics.py
-  node_type: test
-  status: active
 - file: tests/trading/test_protection_index.py
   name: test_protection_index.py
   node_type: test
@@ -6367,10 +5983,6 @@ items:
   name: test_schema_migration.py
   node_type: test
   status: active
-- file: tests/trading/test_signal_generation.py
-  name: test_signal_generation.py
-  node_type: test
-  status: active
 - file: tests/trading/test_stability_guard.py
   name: test_stability_guard.py
   node_type: test
@@ -6381,14 +5993,6 @@ items:
   status: active
 - file: tests/trading/test_startup_sequencer.py
   name: test_startup_sequencer.py
-  node_type: test
-  status: active
-- file: tests/trading/test_state_propagation_root.py
-  name: test_state_propagation_root.py
-  node_type: test
-  status: active
-- file: tests/trading/test_state_synchronizer_root.py
-  name: test_state_synchronizer_root.py
   node_type: test
   status: active
 - file: tests/trading/test_status_dashboard.py
@@ -6405,14 +6009,6 @@ items:
   status: active
 - file: tests/trading/test_teardown_manager.py
   name: test_teardown_manager.py
-  node_type: test
-  status: active
-- file: tests/trading/test_trade_execution.py
-  name: test_trade_execution.py
-  node_type: test
-  status: active
-- file: tests/trading/test_trading_contracts.py
-  name: test_trading_contracts.py
   node_type: test
   status: active
 - file: tests/trading/test_trading_kill_switch.py
