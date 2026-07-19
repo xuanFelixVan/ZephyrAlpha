@@ -372,15 +372,16 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append(f"> 生成时间: {now}")
     lines.append(f"> 真源: `dataflow_graph_registry.yaml` → PostgreSQL `dataflow_*` 表（ARCH-051）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
+    lines.append(f"> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")
-    lines.append("## 概述")
+    lines.append("## 概述（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
     lines.append("数据流图（dataflowgraph）是与依赖图（depgraph）正交的第三维度全景图。")
     lines.append('- depgraph 表达"谁依赖谁"（模块依赖）')
     lines.append('- dataflowgraph 表达"数据从哪流到哪"（数据流向）')
     lines.append("- 通过 `Job.source_code_ref` 引用 depgraph 模块 path，建立跨图关联")
     lines.append("")
-    lines.append("## 统计")
+    lines.append("## 统计（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
     lines.append(f"| 类型 | 生产 (production) | 回测内部 (backtest_internal) | 合计 |")
     lines.append(f"|------|-------------------|------------------------------|------|")
@@ -404,7 +405,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("")
 
     # 内嵌 Mermaid 图
-    lines.append("## Mermaid 图表")
+    lines.append("## Mermaid 图表（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
     lines.append("> 图表内嵌在本文档中，IDE 可直接渲染显示。")
     lines.append(">")
@@ -475,7 +476,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
     lines.append("")
 
     # Dataset 清单
-    lines.append("## Dataset 清单")
+    lines.append("## Dataset 清单（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
     lines.append("| ID | entity_name / 实体名 | scope / 范围 | contract_ref / 契约引用 | domain / 域 | pit_policy / PIT策略 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
     lines.append("|----|----------------------|--------------|---------------------------|------------|------------------|------------------|---------------------------|--------------------|----------|")
@@ -488,7 +489,7 @@ def _gen_index_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) -> 
 
     # Job 清单
     lines.append("")
-    lines.append("## Job 清单")
+    lines.append("## Job 清单（自动生成 · 生成器: generate_dataflow_diagram.py）")
     lines.append("")
     lines.append("| ID | job_name / 作业名 | scope / 范围 | source_code_ref / 源码引用 | trigger_type / 触发类型 | run_context / 运行上下文 | module_id / 蓝图 | design_maturity / 设计成熟度 | build_status / 构建状态 | 功能简述 |")
     lines.append("|----|-------------------|--------------|------------------------------|----------------------------|------------------------------|------------------|---------------------------|--------------------|----------|")

@@ -565,13 +565,13 @@ def _gen_header(today: date, all_tables: list[dict]) -> list[str]:
         "",
         "---",
         "",
-        "## 总览",
+        "## 总览（自动生成 · 生成器: generate_data_inventory.py）",
         "",
         f"- 业务表总数：**{total_tables}**",
         f"- 非空表数：**{non_empty}**",
         f"- 数据总行数：**{_fmt_rows(total_rows)}**",
         "",
-        "### 10层数据分布",
+        "### 10层数据分布（自动生成 · 生成器: generate_data_inventory.py）",
         "",
         "| 层 | 名称 | 类别 | 频率 | 表数 | 总行数 | 说明 |",
         "|---|------|------|------|------|--------|------|",
@@ -593,7 +593,7 @@ def _gen_layer_section(layer_id: str, tables: list[dict], requirements: dict) ->
     """生成单个数据层的表格章节（含需求补充列）。"""
     info = _LAYER_INFO[layer_id]
     lines = [
-        f"## {layer_id} {info['name']}（{info['category']} / {info['freq']}）",
+        f"## {layer_id} {info['name']}（{info['category']} / {info['freq']} · 自动生成 · 生成器: generate_data_inventory.py）",
         "",
         f"> {info['desc']}",
         "",
@@ -626,7 +626,7 @@ def _gen_footer() -> list[str]:
     return [
         "---",
         "",
-        "## 字段说明",
+        "## 字段说明（自动生成 · 生成器: generate_data_inventory.py）",
         "",
         "- **表名**：ClickHouse 中的表名（不含库名前缀）。",
         "- **中文名**：表中文名映射字典，不在字典中的表显示表名本身。",

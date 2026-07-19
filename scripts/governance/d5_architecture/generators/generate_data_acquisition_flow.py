@@ -298,7 +298,7 @@ def _gen_overview(tasks: list[dict]) -> list[str]:
     dbs = sorted({_db_of(t["table"]) for t in tasks})
 
     lines = [
-        "## 一句话说清楚",
+        "## 一句话说清楚（自动生成 · 生成器: generate_data_acquisition_flow.py）",
         "",
         f"系统每天从 **{len(sources)} 个数据源**采集 **{total} 个任务**，灌进 ClickHouse 的 **{len(dbs)} 个库**：",
         "",
@@ -310,7 +310,7 @@ def _gen_overview(tasks: list[dict]) -> list[str]:
             lines.append(f"- `{db}` — 基本面库（财务报表、新闻、股东、分红等）")
         else:
             lines.append(f"- `{db}`")
-    lines += ["", "---", "", "## 数据源分布总览", "",
+    lines += ["", "---", "", "## 数据源分布总览（自动生成 · 生成器: generate_data_acquisition_flow.py）", "",
               "| 数据源 | 任务数 | 主要采什么 |",
               "|--------|--------|-----------|"]
 
@@ -331,7 +331,7 @@ def _gen_overview(tasks: list[dict]) -> list[str]:
 
 def _gen_source_detail(tasks: list[dict]) -> list[str]:
     """生成'各数据源详情'（8个章节，每源一张明细表）。"""
-    lines = ["## 各数据源详情", ""]
+    lines = ["## 各数据源详情（自动生成 · 生成器: generate_data_acquisition_flow.py）", ""]
 
     # 按数据源分组
     by_source: dict[str, list[dict]] = defaultdict(list)
@@ -381,7 +381,7 @@ def _gen_schedule_overview(tasks: list[dict]) -> list[str]:
         by_slot[t["schedule"]] += 1
 
     lines = [
-        "## 调度时段总览",
+        "## 调度时段总览（自动生成 · 生成器: generate_data_acquisition_flow.py）",
         "",
         "系统按 5 个时段调度，避免并发冲突：",
         "",
@@ -417,7 +417,7 @@ def _gen_flow_diagram(tasks: list[dict]) -> list[str]:
     db_ids = {db: f"D{i}" for i, db in enumerate(all_dbs)}
 
     lines = [
-        "## 数据流向图",
+        "## 数据流向图（自动生成 · 生成器: generate_data_acquisition_flow.py）",
         "",
         "```mermaid",
         "flowchart LR",
@@ -458,7 +458,7 @@ def _gen_known_issues(tasks: list[dict]) -> list[str]:
     来源：① tasks.yaml 中 disabled/requires_manual 的任务 ② 硬编码的实测经验。
     """
     lines = [
-        "## 已知问题与注意事项",
+        "## 已知问题与注意事项（自动生成 · 生成器: generate_data_acquisition_flow.py）",
         "",
         "| 问题 | 涉及任务 | 说明 |",
         "|------|---------|------|",
