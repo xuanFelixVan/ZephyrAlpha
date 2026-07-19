@@ -41,6 +41,7 @@ if str(_SRC_ROOT) not in sys.path:
 # ---------------------------------------------------------------------------
 # TestRunStartupHealthCheck
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestRunStartupHealthCheck:

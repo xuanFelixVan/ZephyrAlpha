@@ -581,6 +581,38 @@ repos:
         files: "^src/zephyr/.*\\.py$"
         description: "AST 扫描降级代码路径（fallback/default/except 块）无日志写入——对标 COND-45（服务降级不写入日志为条件禁止）。warn-only 观察期，存量清零后转硬阻断"
 
+      # ── GATE-RETURN-CONTRACT: TypedDict 返回契约 ok 键调用方审计（P3-1，2026-07-19）──
+      # 权威依据：Ruling:100PCT-AI-GOVERNANCE P3-1 — P2-5 审计脚本已存在但未注册为 gate，
+      #           复现"检测能力存在但未激活"反模式。本 gate 在 commit 时强制执行审计。
+      # 检测内容：session_worktree_commit/merge/abort 等返回值的 forbidden key 访问
+      #           （committed/merged/success/status_ok）—— AI 误用旧键名会导致 KeyError 静默失败
+      # 模式：硬阻断（exit 1）—— P2-5 e2e 验证真实仓库 0 违规，可安全硬阻断
+      # noqa: m10-time-trigger  M10豁免: 由 commit 事件触发（非 cron/manual）
+      - id: gate-return-contract
+        name: "GATE-RETURN-CONTRACT: TypedDict 返回契约 ok 键审计（P2-5/P3-1）"
+        entry: python scripts/governance/audit_return_contract_usage.py
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^src/zephyr/.*\\.py$|^scripts/.*\\.py$"
+        description: "AST + regex 双重检测 session_worktree_*/emergency_commit 返回值的 forbidden key 访问（committed/merged/success/status_ok）—— 防止 AI 误用旧键名导致 KeyError 静默失败"
+
+      # ── GATE-WORKTREE-OPS-TELEMETRY: 主工作区文件级擦除操作遥测完整性审计（P3-1，2026-07-19）──
+      # 权威依据：Ruling:100PCT-AI-GOVERNANCE P3-1 — P2-6 审计脚本已存在但未注册为 gate。
+      # 检测内容：git stash push / git restore / Path.unlink / _quarantine_file 等擦除操作
+      #           必须在同一函数内有 _log_workspace_op / _log_worktree_delete 遥测调用
+      # 模式：硬阻断（exit 1 on error severity）—— P2-6 e2e 验证真实仓库 0 error 违规
+      #       warning severity（path_unlink/os_unlink/shutil_rmtree）不阻断（仅 info 提示）
+      # noqa: m10-time-trigger  M10豁免: 由 commit 事件触发（非 cron/manual）
+      - id: gate-worktree-ops-telemetry
+        name: "GATE-WORKTREE-OPS-TELEMETRY: 主工作区擦除操作遥测审计（P2-6/P3-1）"
+        entry: python scripts/governance/audit_worktree_ops_telemetry.py
+        language: system
+        pass_filenames: true
+        always_run: false
+        files: "^src/zephyr/.*\\.py$|^scripts/.*\\.py$"
+        description: "AST 函数边界识别 + regex 擦除操作检测——确保 git stash push/git restore/Path.unlink/_quarantine_file 等操作同函数内有 _log_workspace_op 遥测调用（防主工作区文件擦除无遥测）"
+
       # ── Handoff: 交接日志（manual stage，按需运行）──
       # 说明：不在 pre-commit 默认阶段运行，避免每次提交刷 handoff 文件。
       # 运行：pre-commit run handoff-log-generate --hook-stage manual

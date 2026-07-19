@@ -94,6 +94,7 @@ markers = [
     "financial: marks financial calculation tests",
     "filterwarnings: marks tests that suppress specific warnings (required by --strict-markers)",
     "asyncio: marks asyncio async tests (requires pytest-asyncio plugin to run)",
+    "silent_failure: marks silent-failure regression tests (Ruling:100PCT-AI-GOVERNANCE P0-P3)",
 ]
 filterwarnings = [
     "error",

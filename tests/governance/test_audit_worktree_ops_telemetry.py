@@ -82,6 +82,7 @@ def au():
 # ---------------------------------------------------------------------------
 # Part A: 审计脚本检测逻辑
 # ---------------------------------------------------------------------------
+pytestmark = pytest.mark.silent_failure  # Ruling:100PCT-AI-GOVERNANCE P3-2
 
 
 class TestAuditScriptDetection:
