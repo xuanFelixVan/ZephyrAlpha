@@ -4026,15 +4026,31 @@ entries:
       - session_worktree.py 实施 heartbeat daemon spawn/kill
       - 引用 #ARCH-HEARTBEAT-001 的代码点已全部登记
 
-    P1 后续（待独立裁定立项）：
+    Phase 1 治本（已完成 2026-07-20，Ruling:100PCT-AI-GOVERNANCE 裁定 D-1 / R4）：
+      - P1-1: heartbeat_daemon.py 独立模块（DETACHED_PROCESS，30s 刷新 + JSONL 审计）
+      - P1-2: session_concurrency.py _is_session_alive heartbeat 新鲜度判据（>90s=stale）
+      - P1-3: session_worktree.py merge/abort 清理 heartbeat.jsonl + start 检查 emergency 阻断
+      - P1-4: session_worktree.py merge 重试 3 次指数退避（1s/2s/4s，仅 transient 重试）
+      - P1-5: emergency_commit.py 成本递增（N>=3 需 reason，N>=5 阻断 session_worktree_start）
+      - P1-6: test_heartbeat_daemon.py smoke test 34/34 PASSED
+      - P1-7: ruling_session_worktree_heartbeat.md 独立裁定文档产出（R4 交付物）
+      - 阻塞窗口从 1h（TTL）缩短到 90s（heartbeat 3×30s）
+
+    P2/P3 后续（待独立裁定立项）：
       - heartbeat stale 检测 reconciler（替代 PID liveness 主动扫描）
       - heartbeat 覆盖率审计（所有 active session 必须有 heartbeat）
       - 治本后 allow_overlap 阈值收紧（500 → 200 稳态基线）
+      - fail-open gate + warn-only 治本（warn_only 203/24h, allow_overlap 1890/7d）
   impact:
-    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（heartbeat daemon 实施）
+    - src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py（P1-1 新增模块，daemon 主循环 + heartbeat_file_path + cleanup_heartbeat_file）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（P1-3 cleanup 集成 + P1-4 merge 重试 + P1-5 check_start_blocked 检查）
+    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-5 成本递增 _check_emergency_escalation / _increment_emergency_count / check_start_blocked）
+    - src/zephyr/security/access_control/session_concurrency.py（P1-2 _is_session_alive heartbeat 判据，已存在）
+    - tests/governance/rule_bridge/test_heartbeat_daemon.py（P1-6 smoke test 34 用例）
+    - docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md（P1-7 独立裁定文档，R4 交付物）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
-  status: open
-  related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (P1 fix_phase 落地), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (allow_overlap 滥用治本)'
-  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行)'
+  status: in_progress
+  related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (P1 fix_phase 落地), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (allow_overlap 滥用治本), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D-1 / R4 交付物)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'

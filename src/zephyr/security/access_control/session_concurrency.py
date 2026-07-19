@@ -5,7 +5,7 @@
 # [CONSUMERS] tests.test_session_concurrency; zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.gov_enforcement.rule_bridge.session_worktree (find_breaking_change_session)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定=PID liveness+TTL(3600s)双判据（S3-A 治本，对标 _GlobalCommitLock 零窗口期清理，死进程立即 reap 不等 TTL）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
+# [INVARIANTS] SessionRegistry 原子写入（tmp + os.replace）；session 存活判定双轨：pid>0=PID liveness+TTL(3600s)双判据（S3-A 治本），pid=0=心跳新鲜度(90s)判据（#ARCH-HEARTBEAT-001 P0 治本，daemon 每 30s 刷新 last_heartbeat，stale session 90s 自动释放 held_files 消除 allow_overlap 62× 超阈）；不替代 lock_files.py（文件级锁）；claim_file 懒注册+不覆盖冲突+幂等；release_file 移除 held_files；get_session 只读无写副作用；is_breaking_change 字段标记治本变更 session（§9.7 治本 2026-07-04）；find_breaking_change_session 查找活跃 breaking_change session（只读，排除自身+忽略死/过期，供 session_worktree_start 双向阻断调用）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -138,7 +138,13 @@ def detect_mtime_conflict(path: str, last_read_mtime: float) -> bool:
 # P2-SES: Session 级协调（SessionRegistry + SessionHandoff + ConflictDetector）
 # ---------------------------------------------------------------------------
 
-_SESSION_TTL_SECONDS: int = 3600  # session 超时自动注销（1 小时）
+_SESSION_TTL_SECONDS: int = 3600  # pid>0 session 超时自动注销（1 小时，PID 兜底）
+# pid=0 逻辑 session 的心跳超时（#ARCH-HEARTBEAT-001, P0 治本）。
+# daemon（heartbeat_daemon.run_daemon）每 30s 刷新 last_heartbeat，
+# 90s（3× interval）无心跳判死——容忍 2 次心跳丢失（daemon 短暂卡顿/调度延迟）。
+# 原 pid=0 仅靠 TTL=3600s，stale session 残留 1h 持有 held_files →
+# HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈。
+_HEARTBEAT_TIMEOUT_SECONDS: int = 90
 _REGISTRY_PATH: str = ".runtime/session_registry.json"
 _HANDOFF_DIR: str = ".runtime/handoffs"
 
@@ -193,25 +199,30 @@ class SessionInfo:
 
 
 def _is_session_alive(info: SessionInfo, now: float) -> bool:
-    """判定 session 是否存活：PID liveness + 心跳 TTL 双判据（S3-A 治本）。
+    """判定 session 是否存活：PID liveness + 心跳新鲜度双判据。
 
-    PID 已死 → 立即判失效（零窗口期清理，对标 _GlobalCommitLock 僵尸锁检测）。
-    PID 存活但心跳过期 → 判失效（TTL 兜底）。
-    两者都通过 → 存活。
+    pid>0（进程绑定 session，S3-A 治本）：
+    - PID 已死 → 立即判失效（零窗口期清理，对标 _GlobalCommitLock 僵尸锁检测）
+    - PID 存活但心跳过期 → 判失效（TTL=3600s 兜底）
+    - 两者都通过 → 存活
 
-    治本根因（S3-A）：原仅靠 TTL(3600s) 过期判定，进程崩溃后 session 残留最长 1 小时，
-    持续阻塞并发检测/worktree 清理/held_files claim（实测：reconciler 子进程退出后
-    session 被 claim_file 刷新心跳但 PID 已死，breaking_change 阻断误触发）。
-    本函数在 TTL 检查前先查 PID 存活，死进程立即失效（零窗口期），
-    与 _GlobalCommitLock/lock_files.py 的 stale 清理对齐（真源 is_pid_alive）。
-
-    pid=0（缺失/旧版）→ 跳过 PID 检查，仅靠 TTL 判定（保守，不激进删除）。
+    pid=0（逻辑 session，跨 python -c 进程，#ARCH-HEARTBEAT-001 P0 治本）：
+    - 心跳新鲜度判据：90s（_HEARTBEAT_TIMEOUT_SECONDS）无心跳判死
+    - daemon（heartbeat_daemon.run_daemon）每 30s 刷新 last_heartbeat
+    - daemon 死亡 → 心跳停止 → 90s 后 held_files 自动释放（list_active 清理）
+    - 原: 仅靠 TTL=3600s，stale session 残留 1h 持有 held_files →
+      HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈
     """
-    # PID liveness 检查（零窗口期，对标 _GlobalCommitLock:231）
-    if info.pid and info.pid > 0 and not is_pid_alive(info.pid):
-        return False
-    # TTL 兜底
-    if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+    if info.pid and info.pid > 0:
+        # PID liveness 检查（零窗口期，对标 _GlobalCommitLock:231）
+        if not is_pid_alive(info.pid):
+            return False
+        # TTL 兜底
+        if now - info.last_heartbeat > _SESSION_TTL_SECONDS:
+            return False
+        return True
+    # pid=0（逻辑 session）→ 心跳新鲜度判据（#ARCH-HEARTBEAT-001）
+    if now - info.last_heartbeat > _HEARTBEAT_TIMEOUT_SECONDS:
         return False
     return True
 
