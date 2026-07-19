@@ -16,25 +16,16 @@
 """A2A Protocol 全链路满分验证脚本"""
 
 import sys
-from dataclasses import dataclass
 
-
-@dataclass
-class CheckStats:
-    """验证统计累加器（5.165.43 治本：dataclass 替代 global score/total 计数）。"""
-
-    score: int = 0
-    total: int = 0
-
-
-_stats = CheckStats()
+score = 0
+total = 0
 
 
 def check(name: str, condition: bool, detail: str = "") -> None:
-    """记录一次验证结果（5.165.43 治本：通过 _stats 累加器替代 global 计数）。"""
-    _stats.total += 1
+    global score, total
+    total += 1
     if condition:
-        _stats.score += 1
+        score += 1
         print(f"  PASS  {name} {detail}")
     else:
         print(f"  FAIL  {name} {detail}")
@@ -192,8 +183,8 @@ check("SpecSync a2a-protocol 注册成功", sync_result["status"] == "synced")
 
 # === 最终评分 ===
 print("\n" + "=" * 60)
-pct = (_stats.score / _stats.total * 100) if _stats.total > 0 else 0
-print(f"FINAL SCORE: {_stats.score}/{_stats.total} = {pct:.1f}%")
+pct = (score / total * 100) if total > 0 else 0
+print(f"FINAL SCORE: {score}/{total} = {pct:.1f}%")
 if pct == 100:
     print("VERDICT: PERFECT SCORE")
 elif pct >= 90:

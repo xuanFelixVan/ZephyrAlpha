@@ -28,7 +28,6 @@
 """
 import sys
 from collections import defaultdict
-from dataclasses import dataclass, field
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -81,19 +80,14 @@ EXEMPT_DIRS = {
     "models",  # ML 模型文件
 }
 
-# 统计累加器（5.165.35 治本：dataclass 替代 global 计数器，避免 module-level
-# 可变状态副作用——多次调用 main() 时旧数据会残留导致计数错误）
-@dataclass
-class ScanStats:
-    """扫描统计累加器（替代 module-level global 计数器）。"""
-
-    files_scanned: int = 0
-    files_complete: int = 0
-    files_missing_req: int = 0
-    files_no_header: int = 0
-    missing_stats: dict[str, int] = field(default_factory=lambda: defaultdict(int))
-    missing_files: dict[str, list] = field(default_factory=lambda: defaultdict(list))
-    format_counts: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+# 统计
+files_scanned = 0
+files_complete = 0
+files_missing_req = 0
+files_no_header = 0
+missing_stats: dict[str, int] = defaultdict(int)
+missing_files: dict[str, list] = defaultdict(list)
+format_counts: dict[str, int] = defaultdict(int)
 
 
 def _is_exempt(path: Path) -> bool:
@@ -144,15 +138,16 @@ def _parse_header(filepath: Path, fmt: str) -> dict | None:
     return None
 
 
-def scan_file(filepath: Path, stats: ScanStats) -> None:
-    """校验单个文件的头部字段完整性（5.165.35 治本：通过 stats 累加器替代 global 计数）。"""
-    stats.files_scanned += 1
+def scan_file(filepath: Path) -> None:
+    """校验单个文件的头部字段完整性。"""
+    global files_scanned
+    files_scanned += 1
 
     fmt_info = _get_format_and_fields(filepath)
     if not fmt_info:
         return
     fmt, required = fmt_info
-    stats.format_counts[fmt] += 1
+    format_counts[fmt] += 1
 
     try:
         header = _parse_header(filepath, fmt)
@@ -160,7 +155,8 @@ def scan_file(filepath: Path, stats: ScanStats) -> None:
         return
 
     if not header:
-        stats.files_no_header += 1
+        global files_no_header
+        files_no_header += 1
         return
 
     # 字段名统一小写比较
@@ -168,16 +164,18 @@ def scan_file(filepath: Path, stats: ScanStats) -> None:
     missing = [f for f in required if f not in header_keys]
 
     if not missing:
-        stats.files_complete += 1
+        global files_complete
+        files_complete += 1
     else:
-        stats.files_missing_req += 1
+        global files_missing_req
+        files_missing_req += 1
         for f in missing:
-            stats.missing_stats[f] += 1
+            missing_stats[f] += 1
             try:
                 rel = str(filepath.relative_to(REPO_ROOT))
             except ValueError:
                 rel = str(filepath)
-            stats.missing_files[f].append(rel)
+            missing_files[f].append(rel)
 
 
 def _collect_files() -> list[Path]:
@@ -195,22 +193,21 @@ def _collect_files() -> list[Path]:
 
 
 def main() -> int:
-    stats = ScanStats()
     files = _collect_files()
 
     for fp in files:
         if fp.name == "__init__.py":
             continue
-        scan_file(fp, stats)
+        scan_file(fp)
 
     print("=" * 70)
     print("HEADER COMPLETENESS VERIFICATION (6 formats: A_full/A_test/E_shell/B_yaml/C_json)")
     print("=" * 70)
-    print(f"Files scanned:           {stats.files_scanned}")
-    print(f"  By format:             {dict(stats.format_counts)}")
-    print(f"Files complete (all req): {stats.files_complete}")
-    print(f"Files missing required:   {stats.files_missing_req}")
-    print(f"Files no header (skip):   {stats.files_no_header}")
+    print(f"Files scanned:           {files_scanned}")
+    print(f"  By format:             {dict(format_counts)}")
+    print(f"Files complete (all req): {files_complete}")
+    print(f"Files missing required:   {files_missing_req}")
+    print(f"Files no header (skip):   {files_no_header}")
     print()
     print("MISSING FIELD STATISTICS:")
     print(f"  {'Field':<20} {'Missing':>8}")
@@ -219,25 +216,25 @@ def main() -> int:
     for fields in ALL_FIELD_SETS.values():
         all_fields.update(fields)
     for f in sorted(all_fields):
-        if stats.missing_stats.get(f, 0) > 0:
-            print(f"  {f:<20} {stats.missing_stats[f]:>8}")
+        if missing_stats.get(f, 0) > 0:
+            print(f"  {f:<20} {missing_stats[f]:>8}")
 
-    if stats.files_missing_req > 0:
+    if files_missing_req > 0:
         print("\nFiles missing required fields:")
-        for f in sorted(stats.missing_files.keys()):
-            if stats.missing_files[f]:
-                print(f"\n  [{f}] missing in {len(stats.missing_files[f])} files:")
-                for fn in stats.missing_files[f][:5]:
+        for f in sorted(missing_files.keys()):
+            if missing_files[f]:
+                print(f"\n  [{f}] missing in {len(missing_files[f])} files:")
+                for fn in missing_files[f][:5]:
                     print(f"    - {fn}")
-                if len(stats.missing_files[f]) > 5:
-                    print(f"    ... and {len(stats.missing_files[f]) - 5} more")
+                if len(missing_files[f]) > 5:
+                    print(f"    ... and {len(missing_files[f]) - 5} more")
 
     print("\n" + "=" * 70)
-    if stats.files_missing_req == 0:
+    if files_missing_req == 0:
         print("RESULT: ALL FILES HAVE COMPLETE REQUIRED HEADERS ✓")
         return 0
     else:
-        print(f"RESULT: {stats.files_missing_req} FILES STILL MISSING REQUIRED FIELDS ✗")
+        print(f"RESULT: {files_missing_req} FILES STILL MISSING REQUIRED FIELDS ✗")
         return 1
 
 
