@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-19T06:51:05Z'
+generated_at: '2026-07-19T13:49:23Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 65
+total_rules: 66
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1669,3 +1669,32 @@ rules:
   - ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+- rule_id: TRAE-066
+  title: RunCommand 命令纯洁性铁律（RULE-SEVENTEEN 外部化）
+  module_id: TRAE-066
+  scope: runcommand_purity
+  domain: TRAE
+  severity: critical
+  stability: frozen
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - runcommand_invoke
+  - shell_command_execution
+  - git_command_invocation
+  gate_ids: []
+  tags:
+  - TRAE
+  - rule_seventeen
+  - L1_foundation
+  - runcommand_purity
+  - powershell_prohibition
+  - shell_command_chaining
+  - RULE-SEVENTEEN
+  aliases:
+  - RULE-SEVENTEEN
+  - RunCommand纯洁性
+  - PowerShell禁止
+  - 命令串联禁止
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
