@@ -35,7 +35,7 @@ from typing import Any
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +229,7 @@ class GovernanceAutoRunner:
             logger.error("_write_audit_log: 写入审计日志失败: %s", e)
             conn.rollback()
         finally:
-            conn.close()
+            release_depgraph_pg_connection(conn)
 
     def register_resource(self, resource: object) -> None:
         """注册需要在关闭时释放的资源。"""
@@ -273,7 +273,7 @@ class GovernanceAutoRunner:
             logger.warning("get_gates_by_event(%s) failed: %s", event_type, e)
             return []
         finally:
-            conn.close()
+            release_depgraph_pg_connection(conn)
 
     @staticmethod
     def get_all_event_types() -> list[str]:
@@ -297,7 +297,7 @@ class GovernanceAutoRunner:
             logger.warning("get_all_event_types failed: %s", e)
             return []
         finally:
-            conn.close()
+            release_depgraph_pg_connection(conn)
 
 
 def main() -> None:
