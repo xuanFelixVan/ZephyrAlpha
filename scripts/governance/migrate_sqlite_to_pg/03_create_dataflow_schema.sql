@@ -165,7 +165,13 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_allow TEXT;
 BEGIN
-    SHOW app.allow_design_maturity_delete INTO v_allow;
+    -- #ARCH-GUC-TRIGGER-FIX-001 (2026-07-19): 用 current_setting(..., true) 替代 SHOW
+    -- 原因: SHOW app.allow_design_maturity_delete 在 GUC 未注册时抛 UndefinedObject 异常，
+    -- 导致 sync_dataflow_registry 失败（reconciler 重试 23 次仍失败）。
+    -- current_setting 的 missing_ok=true 参数在 GUC 未注册时返回 NULL，不抛异常，
+    -- 触发器正常跳过逃生通道检查，继续执行保护逻辑（阻断 design/prototype 删除）。
+    -- 对齐 02_create_pg_schema.sql L665 的 protect_depgraph_design_edges 模式（裁定#203）。
+    v_allow := current_setting('app.allow_design_maturity_delete', true);
     IF v_allow = 'on' THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
@@ -176,10 +182,16 @@ BEGIN
     -- 治本：触发器保护 design + prototype，配套 P0-5 修改 DELETE 谓词只删 production。
     -- 逃生通道不变：SET app.allow_design_maturity_delete = on 仍可绕过（apply_dataflowgraph.py 用）。
     -- DELETE: OLD.design_maturity / UPDATE: OLD.design_maturity（before 状态）
+    -- #ARCH-GUC-TRIGGER-FIX-001c: 用 OLD::text 替代 CASE/COALESCE 引用特定列
+    -- 原因: 触发器函数跨 3 表共享 (dataflow_datasets/jobs/edges), 列结构不同
+    -- (datasets 有 entity_name, jobs 有 job_name, edges 都没有).
+    -- COALESCE 和 CASE 都会求值所有分支的列引用, 访问不存在列抛
+    -- "记录 old 没有字段 entity_name" 异常 (GUC bug 修复后暴露).
+    -- OLD::text 将整行转为文本, 不引用任何特定列, 对所有表通用.
     IF TG_OP = 'DELETE' AND OLD.design_maturity IN ('design', 'prototype') THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design/prototype 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design/prototype 态 dataflow 行（表=%, row=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text;
     ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity IN ('design', 'prototype') AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design/prototype 态 dataflow 行降级（表=%, entity=%, %→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), OLD.design_maturity, NEW.design_maturity;
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design/prototype 态 dataflow 行降级（表=%, row=%, %→%）', TG_TABLE_NAME, OLD::text, OLD.design_maturity, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;
