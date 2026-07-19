@@ -1,10 +1,4 @@
-# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
-# [MODULE] tests.governance.audit.test_critical_warn_ack
-# [STABILITY] evolving
-# [SAFETY] L
-# [AI_AUTONOMY] ai_modifiable
-# [TESTS] —
-# [TTL] permanent
+# [A_test] module_id: SRC-TST-2401 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 """test_critical_warn_ack.py — critical_warn 告警消解语义单测
 
 权威依据：reconciliation_registry.py（GATE-DEPGRAPH-OPS 治本 Phase 2/3）

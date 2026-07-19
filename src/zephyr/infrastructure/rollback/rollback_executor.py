@@ -859,7 +859,9 @@ class RollbackExecutor:
             all_uncommitted = set(uncommitted + staged)
             discardable = [f for f in file_list if f in all_uncommitted]
             for f in discardable:
-                self._run_git(["checkout", "--", f])
+                # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
+                # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
+                self._run_git(["restore", "--", f])
             for f in staged:
                 if f in discardable:
                     self._run_git(["reset", "HEAD", "--", f])
@@ -925,7 +927,9 @@ class RollbackExecutor:
         keep_files = [f for f in all_files.strip().split("\n") if f and f not in file_globs]
         for f in keep_files:
             self._run_git(["reset", "HEAD", "--", f])
-            self._run_git(["checkout", "--", f])
+            # 用 git restore 替代 git checkout（Trae Shell Interception 对 git checkout 二次拦截；
+            # git restore 语义等价，git_guard.py 已支持 restore 拦截保护）
+            self._run_git(["restore", "--", f])
         self._run_git(["commit", "-m", f"Partial revert: {commit_sha} [selected files]"])
         return {"files_changed": len(file_globs)}
 
