@@ -527,6 +527,7 @@ def log_gate_failure(
     detail: str,
     session_id: str = "",
     trigger_source: str = "pre_commit_gate",
+    stack_trace: str = "",
 ) -> None:
     """持久化 gate 检测器失效到 reconcile_execution_log 表。
 
@@ -543,12 +544,18 @@ def log_gate_failure(
     action='critical_warn' 与 P0-1 治本一致，触发 _print_critical_warn_banner 横幅
     （下次 commit/merge 时强制 AI 看到历史 gate 失效）。
 
+    P1-3 (2026-07-20) 治本：增加 stack_trace 参数，持久化完整调用栈。
+    原实现只存 detail 字符串（type(e).__name__: e），丢失栈信息——post-mortem 诊断能力受损。
+    新实现：stack_trace 非空时追加到 detail 末尾（detail 是 TEXT 字段不截断）。
+    调用方在 except 块中用 traceback.format_exc() 传入。
+
     Args:
         project_root: Path 对象（gateway.project_root）。
         gate_id: 失效的 gate ID（如 "GATE-PANORAMA-ALIGNMENT"）。
         detail: 失败详情（完整错误信息，不截断）。
         session_id: commit session_id（可空）。
         trigger_source: 触发源标识（默认 "pre_commit_gate"）。
+        stack_trace: 完整调用栈（traceback.format_exc() 输出，可空）。
     """
     import os
     import sqlite3
@@ -557,6 +564,10 @@ def log_gate_failure(
         db_path = _governance_db_path(project_root)
         # Ruling:100PCT-AI-GOVERNANCE P1-5: 确保目录存在（测试/首次运行场景）
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        # P1-3 (2026-07-20): stack_trace 非空时追加到 detail（不截断，TEXT 字段）
+        full_detail = detail
+        if stack_trace:
+            full_detail = f"{detail}\n\n--- Stack trace ---\n{stack_trace}"
         conn = sqlite3.connect(db_path, timeout=30.0)
         try:
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
@@ -566,7 +577,7 @@ def log_gate_failure(
             conn.execute(
                 SQL_INSERT_RECONCILE_LOG,
                 (log_id, now_utc(), gate_id, session_id,
-                 trigger_source, "critical_warn", detail, "", ""),
+                 trigger_source, "critical_warn", full_detail, "", ""),
             )
             conn.commit()
         finally:

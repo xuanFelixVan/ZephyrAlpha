@@ -78,6 +78,8 @@ import json
 import os
 import subprocess
 import sys
+import contextlib
+import time
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.worktree_manager import (
@@ -274,6 +276,17 @@ def _quarantine_root(root: Path) -> Path:
     return root / ".runtime" / "orphan_quarantine"
 
 
+# P3-1.1 治本（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 A，2026-07-19）：
+# _log_workspace_op / _compute_content_hash 已提取到 zephyr.shared.io.workspace_telemetry
+# 作为公共 API log_workspace_op / compute_content_hash。本模块保留 thin wrapper 向后兼容
+# （4 处调用 L353/1668/2059/3000 零改动）。跨域调用方（如 self_healer._rollback）
+# 应直接用 shared API，不再需要 audit_worktree_ops_telemetry.py 的 "rollback" 豁免。
+from zephyr.shared.io.workspace_telemetry import (
+    compute_content_hash as _compute_content_hash_impl,
+    log_workspace_op as _log_workspace_op_impl,
+)
+
+
 def _log_workspace_op(
     op: str,
     session_id: str,
@@ -283,53 +296,25 @@ def _log_workspace_op(
     backup_path: str = "",
     content_hash: str = "",
 ) -> None:
-    """主工作区文件操作遥测（裁定#C，2026-07-19；P2-6 扩展 content_hash）。
+    """主工作区文件操作遥测（thin wrapper，向后兼容）。
 
-    扩展 _log_worktree_delete，记录文件级 stash/quarantine/restore 操作，支持事后审计与恢复。
-
-    必填字段（项目记忆硬约束：session_id / source / file / content_hash / backup_path）：
-      - ``content_hash``: 操作前文件内容的 sha256 hex（前 16 字符），用于校验隔离区/
-        stash 恢复后的内容完整性。空字符串表示文件不存在或无法读取（如 stash 后文件已消失）。
+    实现已提取到 zephyr.shared.io.workspace_telemetry.log_workspace_op（裁定 A，2026-07-19）。
+    本 wrapper 保留以避免 4 处调用（L353/1668/2059/3000）改动；新代码应直接用 shared API。
 
     降级：遥测失败仅 debug 日志，绝不阻断主流程。
     """
-    try:
-        from datetime import datetime, timezone
-        from zephyr.shared.io.paths import strip_session_worktree
-
-        main_root = strip_session_worktree(Path(root))
-        log_dir = main_root / ".runtime"
-        log_dir.mkdir(parents=True, exist_ok=True)
-        entry = {
-            "ts": datetime.now(timezone.utc).isoformat(),
-            "op": op,
-            "session_id": session_id,
-            "source": source,
-            "file": file,
-            "content_hash": content_hash,
-            "backup_path": backup_path,
-        }
-        with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
-    except Exception:  # noqa: BLE001 — 遥测降级不阻断主流程
-        logger.debug("workspace op telemetry failed", exc_info=True)
+    _log_workspace_op_impl(
+        op=op, session_id=session_id, source=source, root=root,
+        file=file, backup_path=backup_path, content_hash=content_hash,
+    )
 
 
 def _compute_content_hash(path: Path) -> str:
-    """计算文件内容的 sha256 hex 前 16 字符（P2-6，2026-07-19）。
+    """计算文件内容的 sha256 hex 前 16 字符（thin wrapper，向后兼容）。
 
-    用于 worktree_ops_log.jsonl 的 content_hash 字段，校验隔离区/stash 恢复后的
-    内容完整性。文件不存在或读取失败返回空字符串（不抛异常）。
+    实现已提取到 zephyr.shared.io.workspace_telemetry.compute_content_hash（裁定 A，2026-07-19）。
     """
-    import hashlib
-    try:
-        h = hashlib.sha256()
-        with path.open("rb") as f:
-            for chunk in iter(lambda: f.read(8192), b""):
-                h.update(chunk)
-        return h.hexdigest()[:16]
-    except OSError:
-        return ""
+    return _compute_content_hash_impl(path)
 
 
 def _quarantine_file(
@@ -486,6 +471,49 @@ def _branch_commits_superseded(
     return False, f"only {total_ok}/{len(lines)} superseded"
 
 
+# P1-2 (2026-07-20): 跨进程 lockfile 治本——session_worktree_commit/merge 期间
+# 创建 per-session active lockfile,防止 _sweep_stale_worktrees 并发删除 worktree
+# 导致 panorama_alignment_gate 等 pre-commit gate 的 _run_git(cwd=worktree) 抛 NotADirectoryError。
+# 病根：_sweep_one_dir 三重保护判据（age/active_sids/branch）无法识别 "session 正在
+# commit/merge 关键操作中" 状态——session heartbeat 可能过期但 commit 仍在执行。
+# 治本：commit/merge 进入时创建 lockfile,退出时删除；sweep 检查 lockfile 存在则跳过。
+_ACTIVE_LOCK_TTL_SECONDS = 3600  # 1h,与 session TTL 一致（异常退出后 sweep 可清理）
+
+
+def _session_active_lockfile(repo_root: Path, session_id: str) -> Path:
+    """per-session active lockfile 路径（标识 session 正在执行 commit/merge 关键操作）。"""
+    return repo_root / ".runtime" / "locks" / f"session_active_{session_id}.lock"
+
+
+@contextlib.contextmanager
+def _session_active_guard(repo_root: Path, session_id: str):
+    """session 关键操作（commit/merge）期间的 active guard 上下文管理器。
+
+    P1-2 (2026-07-20): 创建 per-session lockfile,退出时删除。lockfile 包含
+    pid + acquired_at,异常退出后 sweep 可通过 TTL 检测清理
+    （TTL=_ACTIVE_LOCK_TTL_SECONDS=1h）。lockfile 创建失败不阻断业务（降级为 warn）。
+    """
+    lockfile = _session_active_lockfile(repo_root, session_id)
+    try:
+        lockfile.parent.mkdir(parents=True, exist_ok=True)
+        lockfile.write_text(
+            json.dumps(
+                {"pid": os.getpid(), "acquired_at": time.time(), "session_id": session_id},
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+    except OSError as e:
+        logger.warning("session_active_guard: create lockfile failed: %s", e)
+    try:
+        yield
+    finally:
+        try:
+            lockfile.unlink()
+        except OSError:
+            pass
+
+
 def _sweep_one_dir(
     manager: WorktreeManager,
     registry: SessionRegistry,
@@ -501,6 +529,8 @@ def _sweep_one_dir(
     2. session 不在 active 注册表（活跃 session 不动）
     3. 分支 tip 在 HEAD 祖先或无分支；有未合并提交时检测是否已被取代
        （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
+    4. per-session active lockfile 不存在或已过期（P1-2, 2026-07-20——
+       防止 commit/merge 关键操作期间 worktree 被 sweep 删除导致 NotADirectoryError）
     """
     sid = d.name
     # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
@@ -1469,6 +1499,13 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
     """在 worktree 内执行 git commit 并返回结果 dict。"""
     import tempfile
 
+    # P1-1 (2026-07-20): 注入 ZEPHYR_COMMIT_GATEWAY=1 env，防 forged_gw_marker 误判
+    # 根因: POST-COMMIT-GUARD 检查 commit message [GW:...] 标记是否对应 ZEPHYR_COMMIT_GATEWAY=1 env,
+    #       缺 env 时判为 forged_gw_marker (4/24h 误报, GATE-COMMIT-GW-ABUSE-MONITOR 告警).
+    # 治本: worktree commit 也注入 env (对齐 GitCommitGateway._run_git L1638-1639 模式).
+    commit_env = os.environ.copy()
+    commit_env["ZEPHYR_COMMIT_GATEWAY"] = "1"
+
     with tempfile.NamedTemporaryFile(
         mode="w", suffix=".msg", delete=False, encoding="utf-8"
     ) as msg_file:
@@ -1478,7 +1515,7 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
         commit_cmd = ["git", "commit", "--no-verify", "-F", msg_file_path]
         commit_r = subprocess.run(
             commit_cmd, cwd=str(wt_path), capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=120,
+            encoding="utf-8", errors="replace", timeout=120, env=commit_env,
         )
     finally:
         try:
@@ -1497,7 +1534,7 @@ def _git_commit_in_worktree(wt_path: Path, message: str, session_id: str) -> dic
     sha_r = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"],
         cwd=str(wt_path), capture_output=True, text=True,
-        encoding="utf-8", errors="replace", timeout=30,
+        encoding="utf-8", errors="replace", timeout=30, env=commit_env,
     )
     commit_hash = sha_r.stdout.strip() if sha_r.returncode == 0 else ""
 
@@ -1882,23 +1919,28 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
-    err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration, message)
-    if err:
-        return err
+    # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
+    # ——pre-commit gate 检查（panorama_alignment_gate 等）调 _run_git(cwd=worktree),
+    #   若此时 sweep 删除 worktree 则抛 NotADirectoryError。guard 创建 lockfile,
+    #   _sweep_one_dir 判据 4 检查 lockfile 存在则跳过该 session。
+    with _session_active_guard(root, session_id):
+        err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration, message)
+        if err:
+            return err
 
-    commit_result = _git_commit_in_worktree(wt_path, message, session_id)
-    if commit_result.get("status") == "OK":
-        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT P4.3: 修复触发断链
-        # session_worktree_commit 绕过 GitCommitGateway（worktree 独立 index 设计决策，
-        # 见 docstring line 42-48），导致 GitCommitGateway._run_post_commit_reconcile
-        # 从未被调用。此处显式触发 reconciler 链补齐——治本不是让 session_worktree
-        # 走 GitCommitGateway（会破坏 worktree 隔离），而是在 commit 后显式触发 reconciler。
-        # reconciler 的 auto-commit 通过 _commit_auto 只提交 reconciler 生成的文件，
-        # 不搭便车提交工作区遗留；merge 时由 _ensure_worktree_base_fresh 自动对齐（裁定#19-B）。
-        commit_result["reconcile_results"] = _run_post_commit_reconcile(
-            root, rel_files, session_id,
-        )
-    return commit_result
+        commit_result = _git_commit_in_worktree(wt_path, message, session_id)
+        if commit_result.get("status") == "OK":
+            # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT P4.3: 修复触发断链
+            # session_worktree_commit 绕过 GitCommitGateway（worktree 独立 index 设计决策，
+            # 见 docstring line 42-48），导致 GitCommitGateway._run_post_commit_reconcile
+            # 从未被调用。此处显式触发 reconciler 链补齐——治本不是让 session_worktree
+            # 走 GitCommitGateway（会破坏 worktree 隔离），而是在 commit 后显式触发 reconciler。
+            # reconciler 的 auto-commit 通过 _commit_auto 只提交 reconciler 生成的文件，
+            # 不搭便车提交工作区遗留；merge 时由 _ensure_worktree_base_fresh 自动对齐（裁定#19-B）。
+            commit_result["reconcile_results"] = _run_post_commit_reconcile(
+                root, rel_files, session_id,
+            )
+        return commit_result
 
 
 def _get_branch_changed_files(root: Path, branch: str) -> list[str]:
@@ -2281,10 +2323,10 @@ def _run_reconcilers_after_merge(
             if r.action == "skip":
                 continue
             summary.append({"action": r.action, "detail": r.detail})
-            print(f"[RECONCILER] {r.action}" + (f" - {r.detail}" if r.detail else ""))
+            logger.info("[RECONCILER] %s%s", r.action, f" - {r.detail}" if r.detail else "")
         return summary
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        print(f"[RECONCILER] 触发失败: {e}")
+        logger.warning("[RECONCILER] 触发失败: %s", e)
         return [{"action": "warn", "detail": str(e)}]
 
 
@@ -2676,12 +2718,12 @@ def _run_post_merge_reconcile(root: Path, session_id: str) -> list[dict]:
     try:
         committed_files = _get_merge_files(root)
         if committed_files:
-            print(f"[RECONCILER] merge 后触发 reconciler 验证（{len(committed_files)} 个文件）...")
+            logger.info("[RECONCILER] merge 后触发 reconciler 验证（%d 个文件）...", len(committed_files))
             reconcile_results = _run_reconcilers_after_merge(committed_files, session_id, root)
         else:
-            print("[RECONCILER] 无变更文件，跳过 reconciler")
+            logger.info("[RECONCILER] 无变更文件，跳过 reconciler")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        print(f"[RECONCILER] 触发失败: {e}")
+        logger.warning("[RECONCILER] 触发失败: %s", e)
         reconcile_results = [{"action": "warn", "detail": str(e)}]
     return reconcile_results
 
@@ -2731,10 +2773,10 @@ def _run_post_commit_reconcile(
             if r.action == "skip":
                 continue
             summary.append({"action": r.action, "detail": r.detail})
-            print(f"[RECONCILER post-commit] {r.action}" + (f" - {r.detail}" if r.detail else ""))
+            logger.info("[RECONCILER post-commit] %s%s", r.action, f" - {r.detail}" if r.detail else "")
         return summary
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        print(f"[RECONCILER post-commit] 触发失败: {e}")
+        logger.warning("[RECONCILER post-commit] 触发失败: %s", e)
         return [{"action": "warn", "detail": str(e)}]
 
 
@@ -2859,51 +2901,58 @@ def session_worktree_merge(
             "blocked_next": True,  # P4.1: 标记已写入 block_next
         }
 
-    # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
-    # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
-    auto_cleaned, skipped_files = _pre_merge_auto_clean(root, session_id)
+    # P1-2 (2026-07-20): per-session active guard 防止 sweep 并发删除 worktree
+    # ——_pre_merge_auto_clean / _pre_merge_gate_check（monkey-patch _run_git cwd=worktree）
+    #   期间若 sweep 删除 worktree 则抛 NotADirectoryError。guard 创建 lockfile,
+    #   _sweep_one_dir 判据 4 检查 lockfile 存在则跳过该 session。
+    #   _execute_merge_and_build_msg 内部已有 _WorktreeLock 全局锁保护,此处 guard
+    #   主要覆盖 auto_clean + gate_check 的无锁窗口。
+    with _session_active_guard(root, session_id):
+        # Pre-merge: 自动清理与 worktree commit 内容一致的未提交改动（消除 merge 失败根因）
+        # 只清理内容一致的文件（safe）；内容不一致的跳过（AI 有额外编辑，需手动处理）
+        auto_cleaned, skipped_files = _pre_merge_auto_clean(root, session_id)
 
-    # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
-    # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
-    gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
-    if not gate_passed:
-        _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
+        # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
+        # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
+        gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
+        if not gate_passed:
+            _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
+            return {
+                "session_id": session_id,
+                "merged": False,
+                "message": f"pre-merge gate 阻断: {_details}",
+                "cleaned": False,
+                "unregistered": False,
+                "gate_violation": True,
+                "gate_results": gate_violations,
+                "reconcile_results": [],
+            }
+
+        merged, cleaned, msg = _execute_merge_and_build_msg(
+            manager, session_id, auto_cleaned, skipped_files
+        )
+
+        # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
+        unregistered = False
+        if merged and cleaned:
+            try:
+                unregistered = registry.unregister(session_id)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.debug("suppressed error in session_worktree", exc_info=True)
+
+        # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
+        reconcile_results: list[dict] = []
+        if reconcile_verify and merged and cleaned:
+            reconcile_results = _run_post_merge_reconcile(root, session_id)
+
         return {
             "session_id": session_id,
-            "merged": False,
-            "message": f"pre-merge gate 阻断: {_details}",
-            "cleaned": False,
-            "unregistered": False,
-            "gate_violation": True,
-            "gate_results": gate_violations,
-            "reconcile_results": [],
+            "merged": merged,
+            "message": msg,
+            "cleaned": cleaned,
+            "unregistered": unregistered,
+            "reconcile_results": reconcile_results,
         }
-
-    merged, cleaned, msg = _execute_merge_and_build_msg(
-        manager, session_id, auto_cleaned, skipped_files
-    )
-
-    # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
-    unregistered = False
-    if merged and cleaned:
-        try:
-            unregistered = registry.unregister(session_id)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("suppressed error in session_worktree", exc_info=True)
-
-    # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
-    reconcile_results: list[dict] = []
-    if reconcile_verify and merged and cleaned:
-        reconcile_results = _run_post_merge_reconcile(root, session_id)
-
-    return {
-        "session_id": session_id,
-        "merged": merged,
-        "message": msg,
-        "cleaned": cleaned,
-        "unregistered": unregistered,
-        "reconcile_results": reconcile_results,
-    }
 
 
 def _normalize_abort_files_to_rel(files: list[str], root: Path) -> list[str]:

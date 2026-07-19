@@ -87,8 +87,10 @@ _PRIORITY = 875
 # === 五维滥用阈值（warn-only，reconciler 不能 block post-commit）===
 # 维度1: warn_only 持续低频（24h）——per-hour POST-COMMIT-GUARD 阈值 10/h 抓不到 5/h 持续
 _WARN_ONLY_24H_THRESHOLD = 50
-# 维度2: emergency_commit 滥用（24h）——逃生通道应罕见，5/天即 systemic
-_EMERGENCY_24H_THRESHOLD = 5
+# 维度2: emergency_commit 滥用（24h）——P2 (2026-07-20): 阈值 5→30
+# 原阈值 5/天 在 dogfooding 阶段（worktree 君子协定 + 治本变更频繁）误报频繁,
+# 30/天 仍能捕获 systemic 滥用（>1/h 持续）但容忍 dogfooding 噪声。
+_EMERGENCY_24H_THRESHOLD = 30
 # 维度3: allow_overlap 滥用（7d）——gw_env=1 warn_only 持续 7d = session 注册表 bug
 _ALLOW_OVERLAP_7D_THRESHOLD = 30
 # 维度4: forged_gw_marker 伪造率（24h）——任何伪造都 serious，3/天即 critical
@@ -222,12 +224,21 @@ def _classify_abuse(
         and r.get("violation") == "forged_gw_marker"
     )
 
-    # === 维度5: non-GW commit 持续率（24h）—— commit_gw_audit violations_count sum ===
-    non_gw_24h = sum(
-        r.get("violations_count", 0) for r in audit_reports
-        if r.get("timestamp", 0) >= since_24h
-        and isinstance(r.get("violations_count"), (int, float))
-    )
+    # === 维度5: non-GW commit 持续率（24h）——按 commit hash distinct 计数 ===
+    # P3 (2026-07-20): 治本——原 sum(violations_count) 会重复计数（audit_window=20,
+    # 多个报告覆盖同一 commit,导致 non_gw_24h 膨胀）。改为收集 violations[].hash
+    # 去重后计数,精确反映 24h 内实际 non-GW commit 数。
+    non_gw_hashes: set[str] = set()
+    for r in audit_reports:
+        if r.get("timestamp", 0) >= since_24h:
+            vlist = r.get("violations", [])
+            if isinstance(vlist, list):
+                for v in vlist:
+                    if isinstance(v, dict):
+                        h = v.get("hash")
+                        if h:
+                            non_gw_hashes.add(h)
+    non_gw_24h = len(non_gw_hashes)
 
     # === 维度2: emergency_commit 滥用（24h）—— 由调用方传入 emergency_count ===
 

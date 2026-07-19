@@ -46,6 +46,7 @@ from __future__ import annotations
 import logging
 import os
 import sys
+import traceback
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -97,6 +98,25 @@ def make_panorama_alignment_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # P0-3 (2026-07-20): 调用前校验 cwd（wt_path）存在性，防 worktree 被 sweep 后 NotADirectoryError
+        # 根因: session_worktree_merge 期间 worktree_lifecycle_reconciler 并发 sweep 删除 wt_path,
+        #       导致 gateway._run_git(cwd=wt_path) 抛 NotADirectoryError (P1-2 跨进程 lockfile 治本).
+        # fail-open + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）.
+        cwd_to_check = str(gateway.project_root)
+        if not os.path.isdir(cwd_to_check):
+            detail = (
+                f"git diff cwd 不存在({cwd_to_check})，可能 worktree 被 sweep。"
+                f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2 待治本)"
+            )
+            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
+            try:
+                log_gate_failure(
+                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    session_id=kwargs.get("session_id", ""),
+                )
+            except Exception:  # noqa: BLE001 — log 失败不阻断 gate
+                pass
+            return True, ""
         # 1. 获取 staged 文件清单
         try:
             diff_result = gateway._run_git(
@@ -114,11 +134,13 @@ def make_panorama_alignment_gate() -> GateSpec:
             staged_files = diff_result.stdout.strip().splitlines()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+            # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
             detail = f"git diff 异常({type(e).__name__}: {e})，检测器失效"
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
             log_gate_failure(
                 gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
                 session_id=kwargs.get("session_id", ""),
+                stack_trace=traceback.format_exc(),
             )
             return True, ""
 
@@ -151,11 +173,13 @@ def make_panorama_alignment_gate() -> GateSpec:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
             # ——检测器失效时持久化到 reconcile_execution_log，下次 commit 横幅告警
+            # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
             detail = f"run_alignment 异常({type(e).__name__}: {e})，检测器失效"
             logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
             log_gate_failure(
                 gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
                 session_id=kwargs.get("session_id", ""),
+                stack_trace=traceback.format_exc(),
             )
             return True, ""
 
