@@ -26,6 +26,7 @@ import logging
 import re
 from typing import Any
 
+# 5.152 #19 sanctioned: integration 为组合层，允许依赖全部层（governance.L2 含 semantic_audit）。
 from zephyr.governance.semantic_audit.models import LLMFixResult
 
 logger = logging.getLogger(__name__)

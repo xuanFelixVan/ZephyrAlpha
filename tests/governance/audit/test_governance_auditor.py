@@ -89,7 +89,7 @@ class TestLogRollback:
         mock_write.assert_called_once()
         call_kwargs = mock_write.call_args
         assert call_kwargs.kwargs["metadata"]["rollback_target"] == "sha_xyz"
-        assert "Rollback→Audit: sha_xyz" in call_kwargs.kwargs["decision_basis"]
+        assert "Rollback->Audit: sha_xyz" in call_kwargs.kwargs["decision_basis"]
 
     @patch("zephyr.infrastructure.rollback.auditor.AuditWriter")
     def test_log_rollback_with_empty_session_id(self, mock_audit_writer_cls):
