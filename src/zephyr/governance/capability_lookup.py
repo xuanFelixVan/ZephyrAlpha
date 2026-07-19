@@ -75,9 +75,12 @@ from __future__ import annotations
 from typing import Final
 import argparse
 import json
+import logging
+import os
 import re
 import subprocess
 import sys
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -88,6 +91,17 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 # 路径常量
 # ---------------------------------------------------------------------------
 REGISTRY_YAML: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
+
+# #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2: 审计日志目录与 rule_discovery_server 对称
+# CAPABILITY-LOOKUP-REQUIRED gate 消费此目录的 JSONL 日志（capability_lookup_required_gate.py:81）
+# 病根 G3：原 find() 不写审计日志，Phase 3.4a "同步扩展" 半成品——本次治本补齐
+LOOKUP_AUDIT_DIR: Final[Path] = REPO_ROOT / ".runtime" / "lookup_audit"
+
+# session_id 环境变量（与 rule_discovery_server.SESSION_ID_ENV_VAR 对齐）
+SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"
+
+_logger = logging.getLogger(__name__)
+
 # 治本（P8 Phase 3 S4 可发现性）：多根化让 scripts/governance/ 下文件进入自动扫描，
 # 消除 canonical_override 手填需求（原 scripts/ 不在扫描范围，需手动声明 canonical）
 SCAN_ROOTS: Final[list[Path]] = [
@@ -237,6 +251,68 @@ class CapabilityEntry:
 # ---------------------------------------------------------------------------
 # CapabilityLookup 主类
 # ---------------------------------------------------------------------------
+
+
+def write_lookup_audit_log(
+    session_id: str,
+    query: dict,
+    result_count: int,
+    capability_ids: list[str],
+    *,
+    tool: str = "capability_lookup.find",
+) -> None:
+    """写入 session 级 lookup audit log（best-effort，失败不抛异常）。
+
+    #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2 治本 G3：
+    与 rule_discovery_server.write_lookup_audit_log 对称——AI 调用
+    capability_lookup.find / get 时同样落盘审计日志，让 CAPABILITY-LOOKUP-REQUIRED
+    gate 能识别 Python API 路径的调用（原仅识别 MCP 路径）。
+
+    Args:
+        session_id: session 标识（必填，空串则跳过）。
+        query: 调用参数 dict（如 {"query": "session handoff"}）。
+        result_count: 返回结果数。
+        capability_ids: 命中的 capability_id 列表（如 ["session_handoff"]）。
+        tool: 调用方 tool name（默认 capability_lookup.find）。
+
+    失败处理：log 写入失败仅 logger.warning，不抛异常——查询 API 不应因
+    audit log 故障失败（fail-open）。gate 端会处理 log 缺失的情况（fail-closed）。
+    """
+    if not session_id or session_id in ("unknown", "none", "null"):
+        return  # 无有效 session_id，跳过 audit log
+    try:
+        LOOKUP_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+        log_path = LOOKUP_AUDIT_DIR / f"{session_id}.jsonl"
+        entry = {
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "tool": tool,
+            "query": query,
+            "result_count": result_count,
+            # 字段名 rule_ids 与 rule_discovery_server 对齐——gate 端 _count_valid_log_entries
+            # 只检查 "tool" 字段是否存在，rule_ids 字段语义复用为 capability_ids
+            "rule_ids": capability_ids,
+        }
+        with open(log_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except OSError as exc:
+        _logger.warning(
+            "capability_lookup: audit log 写入失败 (session=%s): %s",
+            session_id, exc, exc_info=True,
+        )
+    except Exception as exc:  # noqa: BLE001 — broad exception catch (fail-open)
+        _logger.warning(
+            "capability_lookup: audit log 写入异常 (session=%s): %s: %s",
+            session_id, type(exc).__name__, exc, exc_info=True,
+        )
+
+
+def _resolve_session_id(session_id: str | None) -> str:
+    """解析 session_id：参数优先，回退到 ZEPHYR_SESSION_ID 环境变量。"""
+    if session_id:
+        return session_id
+    env_val = os.environ.get(SESSION_ID_ENV_VAR, "")
+    return env_val or ""
+
 
 class CapabilityLookup:
     """能力->真源文件反查注册表查询 API + 派生逻辑。
@@ -756,7 +832,7 @@ class CapabilityLookup:
 
     # ---- 查询 API ----
 
-    def find(self, query: str) -> list[dict]:
+    def find(self, query: str, *, session_id: str | None = None) -> list[dict]:
         """关键词搜索：匹配 capability_id / description / canonical_file / module_id / aliases（大小写不敏感）。
 
         匹配策略（治本：token 包含匹配，消除中文变体 alias 堆砌反模式）：
@@ -771,6 +847,16 @@ class CapabilityLookup:
                避免"目录"单字 OR 误命中所有含"目"/"录"条目——公共子串要求连续）
              - 守卫：ASCII 词数 + CJK 字符数 ≥2，避免单 token 过宽匹配
            设计权衡（勿误判为 bug）：短词（如 ttl）会命中多个 ttl_* 能力——token 包含匹配的合理代价。精确查用 reg.get(capability_id)，宽搜用更长关键词（如 ttl_validation 而非 ttl）。
+
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2 治本 G3：
+        调用本方法时自动写入 audit log 到 .runtime/lookup_audit/<session_id>.jsonl，
+        与 rule_discovery_server.write_lookup_audit_log 对称——CAPABILITY-LOOKUP-REQUIRED
+        gate 据此识别 Python API 路径的调用。session_id 参数优先，未提供时回退到
+        ZEPHYR_SESSION_ID 环境变量；两者皆空则跳过 audit log（向后兼容无 session 场景）。
+
+        Args:
+            query: 搜索关键词（≥2 字符）。
+            session_id: 可选 session 标识——未提供时回退到 ZEPHYR_SESSION_ID 环境变量。
         """
         q = query.lower()
         if len(q.strip()) < 2:
@@ -787,6 +873,16 @@ class CapabilityLookup:
                 results.append(self._entry_to_dict(cap))
             elif self._token_match(ascii_tokens, cjk_str, haystack):
                 results.append(self._entry_to_dict(cap))
+        # 审计日志落盘（best-effort，fail-open）
+        resolved_sid = _resolve_session_id(session_id)
+        if resolved_sid:
+            write_lookup_audit_log(
+                session_id=resolved_sid,
+                query={"query": query},
+                result_count=len(results),
+                capability_ids=[r.get("capability_id", "") for r in results],
+                tool="capability_lookup.find",
+            )
         return results
 
     @staticmethod
@@ -842,12 +938,28 @@ class CapabilityLookup:
                 return False
         return True
 
-    def get(self, capability_id: str) -> dict | None:
-        """按 capability_id 精确查询。"""
+    def get(self, capability_id: str, *, session_id: str | None = None) -> dict | None:
+        """按 capability_id 精确查询。
+
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2 治本 G3：
+        与 find() 对称——调用本方法时自动写 audit log。
+        """
+        result: dict | None = None
         for cap in self._capabilities:
             if cap.capability_id == capability_id:
-                return self._entry_to_dict(cap)
-        return None
+                result = self._entry_to_dict(cap)
+                break
+        # 审计日志落盘（best-effort，fail-open）
+        resolved_sid = _resolve_session_id(session_id)
+        if resolved_sid:
+            write_lookup_audit_log(
+                session_id=resolved_sid,
+                query={"capability_id": capability_id},
+                result_count=1 if result else 0,
+                capability_ids=[capability_id] if result else [],
+                tool="capability_lookup.get",
+            )
+        return result
 
     def list_duplicates(self) -> list[dict]:
         """列出所有有 duplicates[] 的能力。"""

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "MCP Gateway + 10 Server 集中式配置（mod_inf_013 §12 SSoT）",
+  "description": "MCP Gateway + 11 Server 集中式配置（mod_inf_013 §12 SSoT）",
 
   "gateway": {
     "server_id": "mcp_gateway",
@@ -121,6 +121,17 @@
       ],
       "status": "implemented",
       "note": "Red-Blue Adversarial Validator MCP Server——对抗性安全测试四工具"
+    },
+    "rule_discovery": {
+      "module": "rule_discovery_server",
+      "server_id": "rule_discovery",
+      "transport": "BaseMCPServer",
+      "tool_prefix": "rule_discovery.",
+      "tool_count": 1,
+      "safety_level": ["L"],
+      "rate_limit": { "default_qps": 30, "burst": 60 },
+      "status": "implemented",
+      "note": "#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S2 Phase 2 治本 G2——规则发现 MCP Server，按 operation/scope/domain/tags 查询适用 trae 规则。AI 施工前 MUST 调用 rule_discovery.discover_applicable_rules 进入零幻觉空间。调用自动写 audit log 到 .runtime/lookup_audit/<session_id>.jsonl，CAPABILITY-LOOKUP-REQUIRED gate 据此放行 commit。真源：rule_ai_perception_index.yaml (#ARCH-GOV-CONVERGENCE-META Phase 3.2b)"
     }
   },
 
@@ -193,6 +204,11 @@
         "reader": ["vector_memory.search", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"],
         "operator": ["vector_memory.search", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"],
         "admin": ["vector_memory.search", "vector_memory.write", "vector_memory.recall", "vector_memory.list_collections", "vector_memory.health_check"]
+      },
+      "rule_discovery": {
+        "reader": ["rule_discovery.discover_applicable_rules"],
+        "operator": ["rule_discovery.discover_applicable_rules"],
+        "admin": ["rule_discovery.discover_applicable_rules"]
       }
     },
     "roles": {
