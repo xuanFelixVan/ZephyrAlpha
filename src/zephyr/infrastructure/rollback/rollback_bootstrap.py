@@ -86,6 +86,8 @@ def bootstrap_rollback(project_root: Path | None = None, commit_sha: str = "") -
     project_root = project_root or Path.cwd()
 
     if not _check_git_available():
+        # 保留 print（5.20 B/C 类）：本模块是零依赖灾难恢复 CLI，print 即操作员 UX
+        # （恢复场景下 logging 未必已配置，直出 stderr/stdout 是必须的可见性通道）
         print("BOOTSTRAP ERROR: git not available", file=sys.stderr)
         return 1
 

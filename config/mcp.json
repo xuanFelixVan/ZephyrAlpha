@@ -12,6 +12,7 @@
     "task_manager": {
       "module": "task_manager_server",
       "server_id": "task_manager",
+      "version": "1.0.0",
       "transport": "FastMCP",
       "tool_prefix": "task_manager.",
       "tool_count": 6,
@@ -21,6 +22,7 @@
     "knowledge_base": {
       "module": "knowledge_base_server",
       "server_id": "knowledge_base",
+      "version": "1.1.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "knowledge_base.",
       "tool_count": 6,
@@ -30,6 +32,7 @@
     "gate_engine": {
       "module": "gate_engine_server",
       "server_id": "gate_engine",
+      "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "gate_engine.",
       "tool_count": 8,
@@ -39,6 +42,7 @@
     "session_handoff": {
       "module": "doc_guard_server",
       "server_id": "session_handoff",
+      "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "session_handoff.",
       "tool_count": 5,
@@ -49,6 +53,7 @@
     "intent_router": {
       "module": "sentinel_server",
       "server_id": "intent_router",
+      "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "intent_router.",
       "tool_count": 4,
@@ -59,6 +64,7 @@
     "blueprint_search": {
       "module": "blueprint_search_server",
       "server_id": "blueprint_search",
+      "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "blueprint_search.",
       "tool_count": 2,
@@ -68,6 +74,7 @@
     "sandbox": {
       "module": "sandbox_server",
       "server_id": "sandbox",
+      "version": "0.1.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "sandbox.",
       "tool_count": 2,
@@ -79,6 +86,7 @@
     "governance": {
       "module": "governance_server",
       "server_id": "governance",
+      "version": "1.1.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "governance.",
       "tool_count": 7,
@@ -87,9 +95,22 @@
       "status": "implemented",
       "note": "治理域统一MCP入口——PhaseGate/Audit/Lock/Contract/Health/Skill 五+二工具"
     },
+    "telemetry": {
+      "module": "telemetry_server",
+      "server_id": "telemetry",
+      "version": "1.0.0",
+      "transport": "FastMCP",
+      "tool_prefix": "telemetry.",
+      "tool_count": 5,
+      "safety_level": ["L"],
+      "rate_limit": { "default_qps": 10, "burst": 30 },
+      "status": "implemented",
+      "note": "系统遥测 MCP Server——health/metrics_snapshot/alerts_status/system_profile/schema_info 五工具"
+    },
     "vector_memory": {
       "module": "vector_memory_server",
       "server_id": "vector_memory",
+      "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "vector_memory.",
       "tool_count": 5,
@@ -101,6 +122,7 @@
     "red_blue_validator": {
       "module": "zephyr.autonomy_perm.red_blue_validator.mcp_endpoints",
       "server_id": "red_blue_validator",
+      "version": "1.0.0",
       "transport": "stdio",
       "tool_prefix": "red_blue_validator.",
       "tool_count": 4,

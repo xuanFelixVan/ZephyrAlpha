@@ -84,7 +84,7 @@ class RiskRegistry:
         return list(RISKS.values())
 
     def list_open(self) -> list[Risk]:
-        return [r for r in RISKS.values() if r.status == RiskStatus.OPEN]
+        return [r for r in RISKS.values() if r.status is RiskStatus.OPEN]
 
     def mitigate(self, risk_id: str) -> bool:
         risk = RISKS.get(risk_id)

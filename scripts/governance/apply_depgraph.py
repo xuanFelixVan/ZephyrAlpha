@@ -4650,26 +4650,53 @@ def main() -> None:
         cmd_batch(dep, changes, args.dry_run)
 
 
+# 写入命令集合（模块级——5.34.6 is_prod() 守卫与 __main__ 尾部自动备份共用；
+# 原定义在 finally 块内，hoist 到模块级消除两处重复维护的漂移风险）
+_WRITE_COMMANDS = {
+    "--add-design-node", "--add-design-edge", "--transition-build-status", "--transition-design-maturity",
+    "--remove-design-node", "--deprecate-node", "--delete-design-edge",
+    "--mark-invalid", "--update-edge-type", "--add-edge", "--delete-edge",
+    "--delete-blueprint-link", "--delete-constraint", "--add-file-node",
+    "--insert-domain", "--update-domain-id", "--update-path",
+    "--migrate-dependencies", "--update-domain-capacity", "--update-domain-layer",
+    "--migrate-nodes", "--update-domain-ssot-path", "--insert-domain-mapping",
+    "--rename-domain", "--update-domain-name", "--fix-residual",
+    "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
+    "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
+    "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check", "--fix-domains-defaults",
+}
+
+
+def _guard_prod_write_commands() -> None:
+    """5.34.6 治本：is_prod() 真实守卫调用点——生产环境 depgraph 写入命令需显式确认。
+
+    ZEPHYR_ENV=production 时，执行任何写入命令（_WRITE_COMMANDS）必须显式设置
+    ZEPHYR_DEPGRAPH_WRITE_ACK=1，否则 exit 3 阻断（对齐头部 ERROR_CONTRACT
+    "验证失败→exit 3"）。dev/test 环境 is_prod() 为 False 直接返回，默认路径零影响。
+    """
+    from zephyr.shared.foundation.env import is_prod
+
+    if not is_prod():
+        return
+    write_cmds = sorted(arg for arg in sys.argv if arg in _WRITE_COMMANDS)
+    if write_cmds and os.environ.get("ZEPHYR_DEPGRAPH_WRITE_ACK") != "1":
+        print(
+            f"ERROR: 生产环境（ZEPHYR_ENV=production）执行 depgraph 写入命令 "
+            f"{write_cmds} 需显式确认——设置 ZEPHYR_DEPGRAPH_WRITE_ACK=1 后重试"
+            f"（5.34.6 is_prod() 守卫）。",
+            file=sys.stderr,
+        )
+        sys.exit(3)
+
+
 if __name__ == "__main__":
+    _guard_prod_write_commands()
     try:
         main()
     finally:
         # ARCH-041 §5.33.1 治本：PG depgraph 备份（事件触发——写入命令后自动备份）
         # 只在写入命令（非 --dry-run）时触发，--list-ops/--help 等只读命令不备份
         # 治本原则：永久系统必须全自动（事件触发，非时间触发/手动触发）
-        _WRITE_COMMANDS = {
-            "--add-design-node", "--add-design-edge", "--transition-build-status", "--transition-design-maturity",
-            "--remove-design-node", "--deprecate-node", "--delete-design-edge",
-            "--mark-invalid", "--update-edge-type", "--add-edge", "--delete-edge",
-            "--delete-blueprint-link", "--delete-constraint", "--add-file-node",
-            "--insert-domain", "--update-domain-id", "--update-path",
-            "--migrate-dependencies", "--update-domain-capacity", "--update-domain-layer",
-            "--migrate-nodes", "--update-domain-ssot-path", "--insert-domain-mapping",
-            "--rename-domain", "--update-domain-name", "--fix-residual",
-            "--propagate-rename", "--rename-blueprint-id", "--propagate-node-paths",
-            "--cleanup-orphan-edges", "--cleanup-orphan-nodes", "--update-module",
-            "--batch", "--merge-domain", "--replace-text-domain", "--apply-domain-id-check", "--fix-domains-defaults",
-        }
         is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
         has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
         if has_write_cmd and not is_dry_run:

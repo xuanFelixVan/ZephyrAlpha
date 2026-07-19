@@ -10,81 +10,13 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_COMPLIANCE Compliance — Re-export wrapper (DM-291)
+"""D_COMPLIANCE Compliance — 包标记（DM-291 迁移后）
 
-All modules have been migrated to zephyr.governance.
-This package re-exports for backward compatibility.
+全部合规实现已迁移至 zephyr.governance / zephyr.gov_audit 等 canonical 包。
+本包仅保留真实子包骨架（audit_trail/bridges 等），不再 re-export 任何符号。
+5.60.8 治本：原 PEP 562 lazy re-export 壳与顶层 re-export 文件已移除（全仓 0 消费者）。
 """
 
 from __future__ import annotations
 
-__all__ = [
-    "AISGSandbox",
-    "ArtifactFinding",
-    "ArtifactScanner",
-    "AuditAction",
-    "AuditDecision",
-    "ComplianceEngine",
-    "ComplianceManagerBase",
-    "ComplianceRule",
-    "DefaultSecurityGateway",
-    "ScanFinding",
-    "ScanReport",
-    "SecurityContext",
-    "SecurityGateway",
-    "aisg_sandbox",
-    "artifact_scanner",
-    "compliance_manager",
-    "default_security_gateway",
-    "evidence_pack",
-    "financial_compliance",
-    "integrity",
-    "merkle_hourly",
-    "security_gateway_base",
-]
-
-_LAZY_IMPORTS = {
-    "AISGSandbox": ("zephyr.governance.intelligence_governance.aisg_sandbox", "AISGSandbox"),
-    "ArtifactFinding": ("zephyr.gov_drift.artifact_scanner", "ArtifactFinding"),
-    "ArtifactScanner": ("zephyr.gov_drift.artifact_scanner", "ArtifactScanner"),
-    "ScanReport": ("zephyr.gov_drift.artifact_scanner", "ScanReport"),
-    "ComplianceManagerBase": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceManagerBase"),
-    "ComplianceRule": ("zephyr.governance.compliance_gate_a6.compliance_manager", "ComplianceRule"),
-    "DefaultSecurityGateway": ("zephyr.governance.security_governance.default_security_gateway", "DefaultSecurityGateway"),
-    "ScanFinding": ("zephyr.governance.security_governance.default_security_gateway", "ScanFinding"),
-    "SecurityContext": ("zephyr.governance.security_governance.default_security_gateway", "SecurityContext"),
-    "AuditAction": ("zephyr.governance.security_governance.security_gateway_base", "AuditAction"),
-    "AuditDecision": ("zephyr.governance.security_governance.security_gateway_base", "AuditDecision"),
-    "ComplianceEngine": ("zephyr.governance.security_governance.security_gateway_base", "ComplianceEngine"),
-    "SecurityGateway": ("zephyr.governance.security_governance.security_gateway_base", "SecurityGateway"),
-}
-
-# ARCH-GOV-SHIM-001 阶段3：_SUBMODULES 改为 dict 映射 canonical 路径（原 compliance shim 已删除）
-_SUBMODULES = {
-    "aisg_sandbox": "zephyr.governance.intelligence_governance.aisg_sandbox",
-    "artifact_scanner": "zephyr.gov_drift.artifact_scanner",
-    "compliance_manager": "zephyr.governance.compliance_gate_a6.compliance_manager",
-    "default_security_gateway": "zephyr.governance.security_governance.default_security_gateway",
-    "security_gateway_base": "zephyr.governance.security_governance.security_gateway_base",
-    "evidence_pack": "zephyr.governance.evidence_pack",
-    "financial_compliance": "zephyr.governance.financial_governance.financial_compliance",
-    "integrity": "zephyr.governance.integrity",
-}
-
-
-def __getattr__(name):
-    if name in _LAZY_IMPORTS:
-        import importlib
-
-        mod_path, attr_name = _LAZY_IMPORTS[name]
-        mod = importlib.import_module(mod_path)
-        value = getattr(mod, attr_name)
-        globals()[name] = value
-        return value
-    if name in _SUBMODULES:
-        import importlib
-
-        mod = importlib.import_module(_SUBMODULES[name])
-        globals()[name] = mod
-        return mod
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+__all__: list[str] = []

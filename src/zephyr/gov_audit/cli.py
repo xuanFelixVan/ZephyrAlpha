@@ -21,7 +21,7 @@ from zephyr.shared.io.serialization import dumps
 import argparse
 import json
 import sys
-from typing import Any
+from typing import Any, Callable
 
 __all__: list[str] = ["main"]
 
@@ -186,19 +186,23 @@ def _audit_behavioral_auditor(level: str) -> tuple[str, Any]:
         return "error", str(exc)
 
 
+# 分发表（5.97.6 治本）：audit_type -> handler(scope, level)。
+# handler 统一签名为 (scope, level) -> tuple[str, Any]，未用参数以下划线占位。
+_AUDIT_DISPATCH: dict[str, Callable[[str, str], tuple[str, Any]]] = {
+    "audit-trail": lambda _scope, _level: _audit_integrity_trail(),
+    "semantic-auditor": lambda _scope, _level: _audit_semantic_auditor(),
+    "orphan-judge": lambda scope, _level: _audit_orphan_judge(scope),
+    "red-blue-validator": lambda _scope, _level: _audit_red_blue_validator(),
+    "behavioral-auditor": lambda _scope, level: _audit_behavioral_auditor(level),
+}
+
+
 def _run_single_audit(module_name: str, scope: str, level: str) -> dict[str, Any]:
     result: dict[str, Any] = {"module": module_name, "status": "skipped", "detail": None}
 
-    if module_name == "audit-trail":
-        result["status"], result["detail"] = _audit_integrity_trail()
-    elif module_name == "semantic-auditor":
-        result["status"], result["detail"] = _audit_semantic_auditor()
-    elif module_name == "orphan-judge":
-        result["status"], result["detail"] = _audit_orphan_judge(scope)
-    elif module_name == "red-blue-validator":
-        result["status"], result["detail"] = _audit_red_blue_validator()
-    elif module_name == "behavioral-auditor":
-        result["status"], result["detail"] = _audit_behavioral_auditor(level)
+    handler = _AUDIT_DISPATCH.get(module_name)
+    if handler is not None:
+        result["status"], result["detail"] = handler(scope, level)
 
     return result
 

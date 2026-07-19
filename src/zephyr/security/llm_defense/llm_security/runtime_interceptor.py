@@ -198,22 +198,54 @@ def allow_llm_call(ttl: float = _DEFAULT_TTL):
 
         with allow_llm_call():
             client.chat.completions.create(...)  # 放行
+
+    5.80.3 治本：进入时保存先前令牌状态，退出时栈式恢复（contextvar reset(token) +
+    thread-local 旧值恢复）——嵌套 allow_llm_call 不再破坏外层放行状态（原实现退出时
+    一律 revoke，内层退出会把外层放行一并清除）。
+    5.80.5 治本：进入时主动清理 thread-local/contextvar——线程池复用场景下上一任务
+    残留的未过期令牌不会泄漏进本任务（残留的外层状态已保存并在退出时恢复）。
     """
+    prev_tls = _tls_get()
+    ctx_token = _ctx_allowance.set(None)  # 清理 contextvar（token 记录进入前的值）
+    _tls_set(None)  # 任务开始主动清理 thread-local 残留（线程池复用场景）
     grant_allowance(request_id="allow_llm_call_ctx", ttl=ttl)
     try:
         yield
     finally:
-        revoke_allowance()
+        try:
+            _ctx_allowance.reset(ctx_token)  # 栈式恢复进入前的 contextvar 值
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.critical(
+                "allow_llm_call: contextvar reset 失败(%s: %s)，fail-closed 清空放行令牌",
+                type(e).__name__, e, exc_info=True,
+            )
+            _ctx_allowance.set(None)
+        _tls_set(prev_tls)  # 恢复进入前的 thread-local 值
 
 
 @asynccontextmanager
 async def allow_llm_call_async(ttl: float = _DEFAULT_TTL):
-    """异步上下文管理器：在代码块内允许裸调 LLM（异步版本）。"""
+    """异步上下文管理器：在代码块内允许裸调 LLM（异步版本）。
+
+    5.80.3/5.80.5 治本：与 allow_llm_call 相同的栈式恢复 + 进入时主动清理语义——
+    嵌套不破坏外层放行状态，线程池复用残留令牌不泄漏进本任务。
+    """
+    prev_tls = _tls_get()
+    ctx_token = _ctx_allowance.set(None)
+    _tls_set(None)
     grant_allowance(request_id="allow_llm_call_async_ctx", ttl=ttl)
     try:
         yield
     finally:
-        revoke_allowance()
+        try:
+            _ctx_allowance.reset(ctx_token)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.critical(
+                "allow_llm_call_async: contextvar reset 失败(%s: %s)，fail-closed 清空放行令牌",
+                type(e).__name__, e, exc_info=True,
+            )
+            _ctx_allowance.set(None)
+        _tls_set(prev_tls)
 
 
 # ============================================================================

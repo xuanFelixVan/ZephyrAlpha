@@ -45,6 +45,7 @@ import sys
 import time as _time
 from typing import Any
 
+from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.security.secrets import get_secret_or_default
 
 _log = logging.getLogger(__name__)
@@ -77,7 +78,7 @@ def _patch_win32_ver() -> None:
     _win32_ver_patched = True
 
 
-DEFAULT_BASE_URL: Final[str] = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEFAULT_BASE_URL: Final[str] = DEFAULT_DEEPSEEK_URL  # 5.141 修复: SSoT 收敛到 shared.foundation.constants
 
 SYSTEM_PROMPTS: Final[dict[str, str]] = {
     "task_classification": (

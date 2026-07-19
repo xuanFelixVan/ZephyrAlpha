@@ -44,6 +44,7 @@ import re
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from zephyr.shared.foundation.constants import DEFAULT_DEEPSEEK_URL
 from zephyr.shared.io.paths import REPO_ROOT
 
 logger = logging.getLogger(__name__)
@@ -54,7 +55,7 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-DEFAULT_BASE_URL: Final[str] = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEFAULT_BASE_URL: Final[str] = DEFAULT_DEEPSEEK_URL  # 5.141 修复: SSoT 收敛到 shared.foundation.constants
 # 5.141.1 修复: 模型名通过环境变量外部化, 避免硬编码
 DEFAULT_MODEL: Final[str] = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash")
 INFERENCE_TEMPERATURE: Final[float] = 0.1

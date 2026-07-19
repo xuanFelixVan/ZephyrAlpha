@@ -38,7 +38,7 @@ ETF = instrument_mod.ETF
 make_stock_identifier = instrument_mod.make_stock_identifier
 
 money_mod = pytest.importorskip(
-    "zephyr.trading.trading_contracts.portfolio.contracts.money", reason="trading-contracts.money not available"
+    "zephyr.shared.contracts.portfolio.money", reason="shared-contracts.money not available"
 )
 Money = money_mod.Money
 MoneyPrecisionError = money_mod.MoneyPrecisionError

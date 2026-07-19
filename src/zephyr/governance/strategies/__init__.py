@@ -7,6 +7,8 @@ Uses lazy __getattr__ to avoid double-registration in StrategyRegistry
 """
 
 _LAZY = {
+    # 5.152 #8 sanctioned: governance(L2)->pf_core(L2) 同层依赖，层级模型允许；
+    # PEP 562 lazy 映射避免 StrategyRegistry 双重注册，真源唯一在 pf_core.default_equity_strategy。
     "DefaultEquityStrategy": ("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy"),
     "RebalanceMode": ("zephyr.pf_core.default_equity_strategy", "RebalanceMode"),
 }

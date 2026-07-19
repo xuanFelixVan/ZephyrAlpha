@@ -179,12 +179,12 @@ class ResultPushManager:
             status = self._do_push(task, result)
             task["status"] = status.value
 
-            if status == PushStatus.PUSHED:
+            if status is PushStatus.PUSHED:
                 task["retry_count"] = 0
                 task["error_message"] = None
             else:
                 task["retry_count"] = task.get("retry_count", 0)
-                if task["error_message"] is None and status != PushStatus.PUSHED:
+                if task["error_message"] is None and status is not PushStatus.PUSHED:
                     task["error_message"] = f"push failed with status {status.value}"
 
             self._save(state)
@@ -347,7 +347,7 @@ class ResultPushManager:
 
             status = self._do_push(task, result)
             task["status"] = status.value
-            if status == PushStatus.PUSHED:
+            if status is PushStatus.PUSHED:
                 task["retry_count"] = 0
                 task["error_message"] = None
             else:
@@ -355,7 +355,7 @@ class ResultPushManager:
             self._save(state)
 
         # 5.53.4 修复：重试失败是负向事件，原用 INFO 记录被当正常信息。status≠PUSHED 时用 WARNING。
-        if status != PushStatus.PUSHED:
+        if status is not PushStatus.PUSHED:
             _log.warning("retry_failed %s -> %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))
         else:
             _log.info("retry_failed %s -> %s (attempt %d)", task_id, status.value, task.get("retry_count", 0))

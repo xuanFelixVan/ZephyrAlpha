@@ -47,6 +47,8 @@ from __future__ import annotations
 
 from typing import Final
 import asyncio
+import hashlib
+import hmac
 import logging
 import os
 from pathlib import Path
@@ -61,6 +63,7 @@ __all__ = [
     "SecretProvider",
     "SecretsError",
     "configure_secret_rotation",
+    "derive_key_hkdf",
     "get_required_secret",
     "get_secret",
     "get_secret_or_default",
@@ -424,3 +427,55 @@ def get_secret_from_file_or_default(key: str, env_file: str | Path, default: str
         return get_secret_from_file(key, env_file)
     except SecretsError:
         return default
+
+
+# ============ HKDF 密钥派生（5.62.7 新增） ============
+# 痛点：项目无标准 KDF——各模块直接复用同一主密钥于不同上下文（审计签名/agent 标记），
+# 单点泄露即全域失守。提供 RFC 5869 HKDF-SHA256（extract-then-expand，纯 stdlib），
+# 供 per-context 子密钥派生：sub_key = derive_key_hkdf(master, info="audit/hmac")。
+
+
+def derive_key_hkdf(
+    master_key: bytes | str,
+    info: bytes | str,
+    salt: bytes | str = b"",
+    length: int = 32,
+) -> bytes:
+    """HKDF-SHA256 密钥派生（RFC 5869，5.62.7 治本）——从主密钥派生 per-context 子密钥。
+
+    纯 stdlib 实现（hmac + hashlib），extract-then-expand 两阶段。
+
+    Args:
+        master_key: 主密钥（IKM），str 自动 utf-8 编码。
+        info: 上下文标识（如 "audit/hmac"、"l4/impersonation"）——不同 info 派生无关子密钥。
+        salt: 可选盐（空时按 RFC 5869 使用 HashLen 零盐）。
+        length: 输出字节数（1..255*32）。
+
+    Returns:
+        派生的子密钥 bytes。
+
+    Raises:
+        ValueError: master_key 为空或 length 越界。
+    """
+    if isinstance(master_key, str):
+        master_key = master_key.encode("utf-8")
+    if isinstance(info, str):
+        info = info.encode("utf-8")
+    if isinstance(salt, str):
+        salt = salt.encode("utf-8")
+    if not master_key:
+        raise ValueError("HKDF master_key 不能为空")
+    hash_len = hashlib.sha256().digest_size
+    if not 0 < length <= 255 * hash_len:
+        raise ValueError(f"HKDF length 必须在 1..{255 * hash_len} 之间, got {length}")
+    if not salt:
+        salt = b"\x00" * hash_len
+    # extract: PRK = HMAC-Hash(salt, IKM)
+    prk = hmac.new(salt, master_key, hashlib.sha256).digest()
+    # expand: T(i) = HMAC-Hash(PRK, T(i-1) | info | i)
+    okm = b""
+    t = b""
+    for i in range(1, -(-length // hash_len) + 1):
+        t = hmac.new(prk, t + info + bytes([i]), hashlib.sha256).digest()
+        okm += t
+    return okm[:length]

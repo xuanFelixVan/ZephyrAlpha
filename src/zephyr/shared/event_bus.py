@@ -257,7 +257,7 @@ class EventBusBackpressure:
                 return False
 
             if queue_depth >= self.critical_threshold:
-                if priority == EventPriority.LOW:
+                if priority is EventPriority.LOW:
                     self._dropped_count += 1
                     return False
                 self._backpressure_events += 1

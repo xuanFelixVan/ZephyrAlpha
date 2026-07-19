@@ -39,4 +39,4 @@ class ConfidenceEstimator:
         return ConfidenceLevel.LOW
 
     def should_auto_execute(self, certainty: float, evidence: float, risk: float) -> bool:
-        return self.evaluate(certainty, evidence, risk) == ConfidenceLevel.HIGH and risk < 0.3
+        return self.evaluate(certainty, evidence, risk) is ConfidenceLevel.HIGH and risk < 0.3

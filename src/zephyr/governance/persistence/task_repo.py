@@ -2016,14 +2016,14 @@ class TaskRepository:
         """规范化 to_status 并执行 FAILED 根因检查（MTH-006）。"""
         if isinstance(to_status, str):
             to_status = TaskStatus(to_status)
-        if to_status == TaskStatus.FAILED:
+        if to_status is TaskStatus.FAILED:
             if not note or not note.strip():
                 raise RootCauseRequiredError(task_id)
         return to_status
 
     def _pre_circular_acceptance(self, to_status: TaskStatus, task_id: str) -> None:
         """COMPLETED 转换前执行循环验收（5.15.1：移到写事务之前避免事务内 subprocess 持锁）。"""
-        if to_status != TaskStatus.COMPLETED:
+        if to_status is not TaskStatus.COMPLETED:
             return
         with self._read_tx() as read_conn:
             _pre_row = self._fetch_row(read_conn, task_id)
@@ -2037,17 +2037,17 @@ class TaskRepository:
         self, conn, row, to_status: TaskStatus, task_id: str,
     ) -> None:
         """G1 门禁（IN_PROGRESS）+ G7 门禁（COMPLETED）+ 批量审查检查（COMPLETED）。"""
-        if to_status == TaskStatus.IN_PROGRESS and self._should_evaluate_gate(_STARTUP_GATE_ID):
+        if to_status is TaskStatus.IN_PROGRESS and self._should_evaluate_gate(_STARTUP_GATE_ID):
             task_obj = _row_to_taskcard(row)
             gate_result = self._gate_engine.evaluate(task_obj, _STARTUP_GATE_ID, conn=conn)
             if not gate_result.passed:
                 raise GateViolationError(gate_result)
-        if to_status == TaskStatus.COMPLETED and self._should_evaluate_gate("G7"):
+        if to_status is TaskStatus.COMPLETED and self._should_evaluate_gate("G7"):
             task_obj = _row_to_taskcard(row)
             gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
             if not gate_result.passed:
                 raise GateViolationError(gate_result)
-        if to_status == TaskStatus.COMPLETED:
+        if to_status is TaskStatus.COMPLETED:
             review_status = self.get_review_status(task_id)
             if not review_status.get("reviewed", False):
                 raise BatchReviewRequiredError(
@@ -2066,12 +2066,12 @@ class TaskRepository:
     ) -> None:
         """构建 UPDATE 参数并执行状态转换 SQL。"""
         now = now_iso()
-        set_ready_at = to_status == TaskStatus.READY
+        set_ready_at = to_status is TaskStatus.READY
         set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
-        increment_block_count = to_status == TaskStatus.BLOCKED
+        increment_block_count = to_status is TaskStatus.BLOCKED
         extra_updates = ""
         extra_params: list[object] = []
-        if to_status == TaskStatus.FAILED and note:
+        if to_status is TaskStatus.FAILED and note:
             extra_updates = ", root_cause_analysis = ?"
             extra_params.append(note)
         conn.execute(
@@ -2111,7 +2111,7 @@ class TaskRepository:
         # 5.15.2 修复：COMPLETED 时记录 git_commit_pending 事件，与状态转换原子落盘
         # 若后续 git commit 失败，该事件保留为 pending，可被 reconciler 重试（Outbox 模式）
         # 5.178 修复: event_type 改为 task_event（events表CHECK约束仅允许7种枚举值）
-        if to_status == TaskStatus.COMPLETED:
+        if to_status is TaskStatus.COMPLETED:
             self._record_event(
                 conn,
                 "task_event",
@@ -2125,7 +2125,7 @@ class TaskRepository:
         session_id: str | None, updated_row,
     ) -> None:
         """COMPLETED 后的自动 git commit + 提醒剩余 IN_PROGRESS 任务。"""
-        if to_status != TaskStatus.COMPLETED:
+        if to_status is not TaskStatus.COMPLETED:
             return
         # DM-202918: transition(COMPLETED)后自动git commit files_in_scope
         # 5.15.2 修复：记录 git commit 结果事件；失败时 pending 事件保留可被 reconciler 重试
@@ -2296,16 +2296,16 @@ class TaskRepository:
                 )
             finally:
                 gw.release_files(session_id, claimed)
-            if result.status == CommitStatus.OK:
+            if result.status is CommitStatus.OK:
                 logger.info(
                     "DM-202918: GitCommitGateway commit 成功 (task=%s hash=%s): %s",
                     task_id, result.commit_hash[:8], result.message,
                 )
-            elif result.status == CommitStatus.NOTHING_TO_COMMIT:
+            elif result.status is CommitStatus.NOTHING_TO_COMMIT:
                 logger.info(
                     "DM-202918: files_in_scope 无 staged 变更，跳过 commit (task=%s)", task_id
                 )
-            elif result.status == CommitStatus.STASH_CONFLICT:
+            elif result.status is CommitStatus.STASH_CONFLICT:
                 logger.warning(
                     "DM-202918: commit 成功但 stash pop 失败，数据保留在 stash (task=%s): %s",
                     task_id, result.message,
@@ -2499,9 +2499,9 @@ class TaskRepository:
         """审查 data_consistency 维度。"""
         issues: list[str] = []
         bl = self._normalize_blocked_by(task)
-        if bl and task.status != TaskStatus.BLOCKED:
+        if bl and task.status is not TaskStatus.BLOCKED:
             issues.append(f"有blocked_by但status={task.status}(应BLOCKED)")
-        if not bl and task.status == TaskStatus.BLOCKED:
+        if not bl and task.status is TaskStatus.BLOCKED:
             issues.append("无blocked_by但status=BLOCKED")
         return issues
 

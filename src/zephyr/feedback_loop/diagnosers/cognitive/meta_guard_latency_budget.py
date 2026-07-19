@@ -44,7 +44,9 @@ class MetaGuardLatencyBudget:
     def set_priority(self, guard_id: str, priority: float) -> None:
         self.priority_ranking[guard_id] = priority
 
-    def check_budget(self) -> dict:
+    def evaluate_budget(self) -> dict:
+        """评估 Guard 延迟预算并返回状态报告（5.177 修复：原名 check_budget，
+        返回 dict 违反 check_ 前缀返回布尔的命名直觉，更名 evaluate_budget）。"""
         avg_latencies = {}
         for guard_id, latencies in self.guard_latencies.items():
             if latencies:

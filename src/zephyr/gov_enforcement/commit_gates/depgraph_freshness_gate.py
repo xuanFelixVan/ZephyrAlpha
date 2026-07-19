@@ -166,6 +166,7 @@ def make_depgraph_freshness_gate() -> GateSpec:
                 f"(saved_at={saved_at_raw}). 建议运行 generate_project_depgraph.py 刷新。"
             )
             logger.warning(detail)
+            # 保留 print：gate 告警需直接出现在操作员控制台（commit UX），不依赖 logging 配置
             print(f"[GATE DEPGRAPH-FRESHNESS] {detail}")
             return True, detail
 

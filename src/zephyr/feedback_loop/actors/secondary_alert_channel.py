@@ -66,9 +66,9 @@ class SecondaryAlertChannel:
             if now - self.last_heartbeat.get(ch, 0) > self.heartbeat_interval * 3:
                 self.channel_health[ch] = ChannelState.DOWN
 
-        if self.channel_health.get(self.active_channel) == ChannelState.DOWN:
+        if self.channel_health.get(self.active_channel) is ChannelState.DOWN:
             for ch in self.channels:
-                if self.channel_health.get(ch) == ChannelState.HEALTHY:
+                if self.channel_health.get(ch) is ChannelState.HEALTHY:
                     self.active_channel = ch
                     self.failover_count += 1
                     return ch

@@ -27,6 +27,7 @@ from zephyr.shared.infra.idempotency import (
     IdempotencyRecord,
     IdempotencyStatus,
     IdempotencyStore,
+    SQLiteIdempotencyStore,
     _build_idempotency_key,
 )
 
@@ -152,3 +153,60 @@ class TestIdempotencyError:
 
         err = IdempotencyError("conflict", details={"key": "k"})
         assert isinstance(err, ZephyrBaseError)
+
+
+class TestSQLiteIdempotencyStore:
+    """5.40.7：SQLite 持久化后端（tmp_path 隔离，不触生产 governance.db）。"""
+
+    def test_start_complete_get_roundtrip(self, tmp_path):
+        store = SQLiteIdempotencyStore(db_path=tmp_path / "idem.db")
+        rec = store.start("k1")
+        assert rec.status == IdempotencyStatus.PROCESSING
+        store.complete("k1", {"ok": True})
+        got = store.get("k1")
+        assert got is not None
+        assert got.status == IdempotencyStatus.COMPLETED
+        assert got.result == {"ok": True}
+
+    def test_persistence_across_instances(self, tmp_path):
+        db = tmp_path / "idem.db"
+        SQLiteIdempotencyStore(db_path=db).start("k1")
+        # 新实例（模拟跨进程/重启）仍能看到 PROCESSING 记录
+        store2 = SQLiteIdempotencyStore(db_path=db)
+        with pytest.raises(IdempotencyError, match="already being processed"):
+            store2.start("k1")
+
+    def test_start_completed_key_returns_existing(self, tmp_path):
+        store = SQLiteIdempotencyStore(db_path=tmp_path / "idem.db")
+        store.start("k1")
+        store.complete("k1", "cached")
+        rec = store.start("k1")
+        assert rec.status == IdempotencyStatus.COMPLETED
+        assert rec.result == "cached"
+
+    def test_complete_nonexistent_raises(self, tmp_path):
+        store = SQLiteIdempotencyStore(db_path=tmp_path / "idem.db")
+        with pytest.raises(IdempotencyError, match="not found"):
+            store.complete("nope", result="x")
+
+    def test_fail_and_size(self, tmp_path):
+        store = SQLiteIdempotencyStore(db_path=tmp_path / "idem.db")
+        assert store.size == 0
+        store.start("k1")
+        store.fail("k1")
+        got = store.get("k1")
+        assert got is not None
+        assert got.status == IdempotencyStatus.FAILED
+        assert store.size == 1
+
+    def test_ttl_expiry(self, tmp_path):
+        import time
+
+        store = SQLiteIdempotencyStore(db_path=tmp_path / "idem.db", default_ttl_seconds=0.01)
+        store.start("k1")
+        store.complete("k1", "old")
+        time.sleep(0.05)
+        assert store.get("k1") is None
+        # 过期后同 key 可重新 start（视为新业务操作）
+        rec = store.start("k1")
+        assert rec.status == IdempotencyStatus.PROCESSING

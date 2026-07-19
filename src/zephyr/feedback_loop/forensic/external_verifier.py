@@ -60,7 +60,7 @@ class ExternalVerifier:
             reasoning=f"Confidence: {evidence.get('confidence', 0.0)}",
         )
         self.verdicts.append(audit)
-        if verdict == Verdict.DISSENT:
+        if verdict is Verdict.DISSENT:
             self.consecutive_dissents += 1
         else:
             self.consecutive_dissents = 0

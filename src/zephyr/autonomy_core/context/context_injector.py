@@ -357,8 +357,6 @@ def _lsg_scan_context(context: ValidatedContext) -> bool:
     Returns True only if LSG explicitly allows the content.
     """
     try:
-        import asyncio
-
         from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway
 
         gateway = LSGSecurityGateway()

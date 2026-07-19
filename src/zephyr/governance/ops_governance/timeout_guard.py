@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from typing import Final
 import logging
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +86,9 @@ class TimeoutGuard:
         timer = self._timers.pop(key, None)
         if timer:
             timer.cancel()
+
+        # W2 治本: 同步移除 handler，防 _handlers 只写不删内存泄漏
+        self._handlers.pop(key, None)
 
         started = self._active_scopes.pop(key, None)
         elapsed = time.time() - started if started else 0.0
@@ -153,6 +157,8 @@ class TimeoutGuard:
         for timer in self._timers.values():
             timer.cancel()
         self._timers.clear()
+        # W2 治本: clear 时同步清空 handlers，防 _handlers 只写不删内存泄漏
+        self._handlers.clear()
         self._active_scopes.clear()
         self._events.clear()
 

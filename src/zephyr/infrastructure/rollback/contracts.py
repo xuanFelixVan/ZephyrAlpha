@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.infrastructure.rollback.contracts
 # [DOMAIN] D_INFRA_RECOVERY
-# [DEPENDENCIES] zephyr.gov_audit.anomaly
+# [DEPENDENCIES] none（5.152 #15 Protocol 解耦；原 zephyr.gov_audit.anomaly TYPE_CHECKING 依赖已 Protocol 化）
 # [CONSUMERS] rollback包内所有模块
 # [STARTUP] imported
 # [MATURITY] production
@@ -23,11 +23,19 @@ G-CT-002 Rollback 消费端 — on_audit_anomaly() 接口.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, Protocol
 
-# lazy import to avoid L0->L2 circular dependency (Phase 2 P2 import cycle fix)
-if TYPE_CHECKING:
-    from zephyr.gov_audit.anomaly import AnomalyResult as AnomalyEvent
+
+class AnomalyEvent(Protocol):
+    """5.152 #15 Protocol 解耦——rollback(L0) 不再 TYPE_CHECKING 依赖 gov_audit(L2) 具体类型。
+
+    仅声明本消费端所需的结构协议（duck typing）；真源参考
+    ``zephyr.gov_audit.anomaly.AnomalyResult``(L2)，由上层在运行时传入。
+    """
+
+    severity: str
+    signature: Any  # 异常签名枚举，仅读取 .value
+    evidence: dict[str, Any]
 
 
 class RollbackHandler:

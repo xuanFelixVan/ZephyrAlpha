@@ -48,6 +48,7 @@ from zephyr.integration.mcp._base_server import BaseMCPServer, MCPError
 
 __all__ = ["SentinelServer", "create_server"]
 
+# 5.152 #23 sanctioned: integration 为组合层，允许依赖全部层（governance.L2 意图领域枚举）。
 from zephyr.governance.persistence.intent_keyword_mapper import IntentDomain
 
 _VALID_DOMAINS = frozenset({d.value for d in IntentDomain})

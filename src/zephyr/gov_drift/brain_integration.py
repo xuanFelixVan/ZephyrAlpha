@@ -169,10 +169,10 @@ class FullProbeResult:
 
         self.total_warnings = sum(len(r.warnings) for r in [self.l0, self.l1, self.l2, self.l3])
 
-        if self.l0.status == ProbeStatus.FAIL:
+        if self.l0.status is ProbeStatus.FAIL:
             self.classification = "STARTUP_FAILED"
 
-        elif self.l1.status == ProbeStatus.FAIL:
+        elif self.l1.status is ProbeStatus.FAIL:
             self.classification = "NOT_READY"
 
         elif self.l2.scan_events_found == 0:
@@ -505,7 +505,7 @@ def execute_full_probe(project_root: str = "", scan_level: str = "LIGHT") -> Ful
 
     _l0_startup_probe(root, result.l0)
 
-    if result.l0.status == ProbeStatus.FAIL:
+    if result.l0.status is ProbeStatus.FAIL:
         logger.error("L0 STARTUP failed, aborting probe chain")
 
         result.mark_completed()

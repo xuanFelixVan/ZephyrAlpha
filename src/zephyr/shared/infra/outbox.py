@@ -121,7 +121,7 @@ class MemoryOutboxStore:
         async with self._lock:
             if len(self._entries) >= self._max_entries:
                 stale = sorted(
-                    [e for e in self._entries.values() if e.status != OutboxStatus.PENDING],
+                    [e for e in self._entries.values() if e.status is not OutboxStatus.PENDING],
                     key=lambda e: e.published_at,
                 )
                 for entry in stale[: len(self._entries) // 4]:
@@ -142,7 +142,7 @@ class MemoryOutboxStore:
         # 5.57.7 修复：原 fetch_pending 无锁，与 append 并发时 "RuntimeError: dictionary changed size during iteration"。
         # mark_published/mark_failed/count_pending 同样无锁。所有读写 self._entries 的方法都加锁。
         async with self._lock:
-            pending = [e for e in self._entries.values() if e.status == OutboxStatus.PENDING]
+            pending = [e for e in self._entries.values() if e.status is OutboxStatus.PENDING]
             pending.sort(key=lambda e: e.created_at)
             return pending[:limit]
 
@@ -162,7 +162,7 @@ class MemoryOutboxStore:
 
     async def count_pending(self) -> int:
         async with self._lock:
-            return sum(1 for e in self._entries.values() if e.status == OutboxStatus.PENDING)
+            return sum(1 for e in self._entries.values() if e.status is OutboxStatus.PENDING)
 
 
 class OutboxPublisher:

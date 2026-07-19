@@ -55,9 +55,12 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    is_test_exempt,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -139,12 +142,9 @@ def _run_vocab_script(abs_files: list[str], wt_root: str):
         )
         return None
     try:
-        return subprocess.run(
-            [sys.executable, _VOCAB_SCRIPT, "--files"] + abs_files + ["--ci"],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
+        return run_checker_script(
+            _VOCAB_SCRIPT,
+            ["--files"] + abs_files + ["--ci"],
             cwd=wt_root,
             timeout=60,
         )

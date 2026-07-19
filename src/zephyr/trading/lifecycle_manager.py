@@ -95,7 +95,7 @@ class LifecycleManager:
             ("05_work_orch_load_dags", lambda: work_orchestrator.load_dags()),
             # 06_circadian_start 已移除：CircadianScheduler 定时调度废除（2026-06-26裁定）
             ("07_health_monitor_start", lambda: health_monitor.start()),
-            ("08_integration_validate", lambda: integration_registry.validate_all()),
+            ("08_integration_validate", lambda: self._validate_integrations(integration_registry)),
             # 08a_audit_schedule_register / 08b_audit_event_hooks_register 已移除：
             #   _register_audit_tasks 为 no-op；_register_audit_event_hooks 注册的回调因
             #   CircadianScheduler.trigger_event 从未被调用而永不触发=死代码。
@@ -120,6 +120,28 @@ class LifecycleManager:
         # finalizer.register("circadian_scheduler", ...) 已移除：save_state 为 no-op（CircadianScheduler 废除）
 
         return report
+
+    def _validate_integrations(self, integration_registry: IntegrationRegistry) -> None:
+        """5.71.3 治本：检查 ValidationReport——DISCONNECTED 超阈值 fail-fast。
+
+        原实现仅调用 validate_all() 丢弃结果，DISCONNECTED 也继续 boot。
+        阈值由 RuntimeConfig.max_boot_disconnected_integrations 控制（默认 0=任何断连即失败）。
+        """
+        report = integration_registry.validate_all()
+        threshold = getattr(self._config, "max_boot_disconnected_integrations", 0)
+        if report.disconnected > threshold:
+            raise RuntimeError(
+                f"integration validate: {report.disconnected} DISCONNECTED "
+                f"(threshold={threshold}) -> {report.details}"
+            )
+        if report.disconnected or report.degraded:
+            logger.warning(
+                "integration validate: %d connected / %d degraded / %d disconnected (threshold=%d)",
+                report.connected,
+                report.degraded,
+                report.disconnected,
+                threshold,
+            )
 
     def _start_self_monitor(self) -> None:
         from zephyr.gov_audit.self_monitor import SelfMonitor

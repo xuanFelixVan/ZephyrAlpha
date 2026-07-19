@@ -283,7 +283,7 @@ def _register_rbac_hooks() -> None:
                 from zephyr.security.access_control.kill_switch import KillSwitchState, get_kill_switch
 
                 ks = get_kill_switch()
-                if ks.status.state == KillSwitchState.NORMAL:
+                if ks.status.state is KillSwitchState.NORMAL:
                     logger.info(
                         "Task %s failed — RBAC kill_switch still NORMAL (no systemic threat detected)",
                         getattr(event, "task_id", ""),
@@ -355,7 +355,7 @@ def _hook_auto_unblock_dependents(event: object, task_repo: TaskRepositoryProtoc
             deps = ds.depends_on or []
             if not deps:
                 continue
-            all_done = all(tr.get(d).status == TaskStatus.COMPLETED for d in deps if d)
+            all_done = all(tr.get(d).status is TaskStatus.COMPLETED for d in deps if d)
             if all_done:
                 tr.transition(ds.task_id, TaskStatus.READY, note=f"unblocked by {completed_id}")
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch

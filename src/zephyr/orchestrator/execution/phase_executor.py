@@ -117,7 +117,7 @@ class PhaseExecutor:
         dep = PHASE_DEPENDENCIES.get(phase)
         if dep is not None:
             dep_state = self._progress.phases.get(dep.value)
-            if dep_state is None or dep_state.status != PhaseStatus.COMPLETED:
+            if dep_state is None or dep_state.status is not PhaseStatus.COMPLETED:
                 return False, f"依赖 Phase 未完成: {dep.value}"
 
         if phase != self._progress.current_phase:
@@ -141,7 +141,7 @@ class PhaseExecutor:
         phase_state = self._progress.phases.get(phase.value)
         if phase_state is None:
             return False
-        if phase_state.status != PhaseStatus.IN_PROGRESS:
+        if phase_state.status is not PhaseStatus.IN_PROGRESS:
             return False
 
         phase_state.status = PhaseStatus.COMPLETED

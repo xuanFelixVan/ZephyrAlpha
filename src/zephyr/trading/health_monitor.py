@@ -233,20 +233,24 @@ class HealthMonitor:
             registry = _shared_metrics_registry
             results = self.probe_all()
             for cid, result in results.items():
+                # 5.39.3 修复：capability_id 从 metric 名移到 label 维度——
+                # 低基数 metric 名 + 高基数 label（Prometheus 最佳实践）。
+                # 原 f"health.{cid}.alive" 每个 capability 生成新 metric 名导致基数爆炸。
+                # 已核查 config/alert_rules.yaml + config/infra/grafana 无旧名引用。
                 registry.observe(
-                    f"health.{cid}.alive",
+                    "health.alive",
                     1.0 if result.alive else 0.0,
                     labels={"capability_id": cid},
                 )
                 registry.observe(
-                    f"health.{cid}.latency_ms",
+                    "health.latency_ms",
                     result.latency_ms,
                     labels={"capability_id": cid},
                 )
                 # 5.39.8 修复：RED 方法论 Error 维度——健康检查失败时 increment error counter
                 if not result.alive:
                     registry.inc(
-                        f"health.{cid}.errors",
+                        "health.errors",
                         labels={"capability_id": cid},
                     )
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch

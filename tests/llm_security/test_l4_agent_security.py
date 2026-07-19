@@ -156,17 +156,17 @@ class TestEvaluateFullPipeline:
 
 class TestAgentImpersonationDefender:
     def test_marker_generation_and_verification(self):
-        defender = AgentImpersonationDefender()
+        defender = AgentImpersonationDefender(secret="test-impersonation-secret")
         marker = defender.generate_unforgeable_marker("agent-42")
         assert marker.startswith("zephyr-ag|agent-42|")
         assert defender.verify_marker(marker, "agent-42") is True
 
     def test_verify_fake_marker_fails(self):
-        defender = AgentImpersonationDefender()
+        defender = AgentImpersonationDefender(secret="test-impersonation-secret")
         assert defender.verify_marker("fake-marker", "agent-42") is False
 
     def test_verify_wrong_agent_id_fails(self):
-        defender = AgentImpersonationDefender()
+        defender = AgentImpersonationDefender(secret="test-impersonation-secret")
         marker = defender.generate_unforgeable_marker("agent-42")
         assert defender.verify_marker(marker, "agent-99") is False
 

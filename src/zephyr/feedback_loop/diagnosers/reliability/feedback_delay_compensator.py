@@ -80,7 +80,7 @@ class FeedbackDelayCompensator:
     def should_suppress(self, metric_name: str) -> dict:
         now = time.time()
         for aid, action in list(self.pending_actions.items()):
-            if action["target_metric"] == metric_name and action["state"] == DelayState.WAITING:
+            if action["target_metric"] == metric_name and action["state"] is DelayState.WAITING:
                 if now < action["suppressed_until"]:
                     remaining = action["suppressed_until"] - now
                     return {"suppress": True, "action_id": aid, "remaining_seconds": round(remaining, 1)}
@@ -126,10 +126,10 @@ class FeedbackDelayCompensator:
                 "remaining_s": round(max(0, a["suppressed_until"] - time.time()), 1),
             }
             for aid, a in self.pending_actions.items()
-            if a["state"] == DelayState.WAITING
+            if a["state"] is DelayState.WAITING
         ]
 
     def cleanup_completed(self) -> int:
         before = len(self.pending_actions)
-        self.pending_actions = {aid: a for aid, a in self.pending_actions.items() if a["state"] != DelayState.IDLE}
+        self.pending_actions = {aid: a for aid, a in self.pending_actions.items() if a["state"] is not DelayState.IDLE}
         return before - len(self.pending_actions)

@@ -110,13 +110,13 @@ class TestCostBudget:
 
     def test_check_budget_under_limit(self):
         cb = CostBudget(hard_limit=10.0)
-        cb.check_budget("openai", "gpt-4o")
+        cb.assert_budget("openai", "gpt-4o")
 
     def test_check_budget_exceeds_limit(self):
         cb = CostBudget(hard_limit=1.0)
         cb.cumulative_cost = 1.5
         with pytest.raises(CostBudgetExceededError) as exc_info:
-            cb.check_budget("openai", "gpt-4o")
+            cb.assert_budget("openai", "gpt-4o")
         assert exc_info.value.current == 1.5
         assert exc_info.value.limit == 1.0
 
@@ -124,7 +124,7 @@ class TestCostBudget:
         cb = CostBudget(hard_limit=5.0)
         cb.cumulative_cost = 5.0
         with pytest.raises(CostBudgetExceededError):
-            cb.check_budget()
+            cb.assert_budget()
 
     def test_check_budget_or_warn_under_warning(self):
         cb = CostBudget(hard_limit=10.0, warning_ratio=0.8)

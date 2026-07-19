@@ -25,12 +25,14 @@ TechStackValidator — 技术栈可用性校验器
   - 可观测：report() 输出结构化状态报告
 """
 
+import logging
 import os
 import sqlite3
-import sys
 from dataclasses import dataclass
 
 import yaml
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -275,10 +277,10 @@ def validate_on_startup(manifest_path: str | None = None) -> bool:
     validator = TechStackValidator(manifest_path=manifest_path)
     validator.validate()
     report = validator.report()
-    print(report, file=sys.stderr)
+    logger.info("%s", report)
     all_ok = all(r.available for r in validator.results)
     if not all_ok:
         unavailable = [r for r in validator.results if not r.available]
         missing = ", ".join(r.component for r in unavailable)
-        print(f"[WARN] 技术栈不可用组件: {missing} — 系统可能降级运行", file=sys.stderr)
+        logger.warning("[WARN] 技术栈不可用组件: %s — 系统可能降级运行", missing)
     return all_ok

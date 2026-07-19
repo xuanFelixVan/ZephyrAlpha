@@ -20,7 +20,7 @@
 from pydantic import BaseModel, Field
 
 
-class CT_SLO_001(BaseModel):
+class CtSlo001(BaseModel):
     """capacity_slo.yaml Schema 定义."""
 
     slo_id: str
@@ -30,7 +30,7 @@ class CT_SLO_001(BaseModel):
     severity: str
 
 
-class CT_SLO_002(BaseModel):
+class CtSlo002(BaseModel):
     """SLO measurement window 定义."""
 
     fast_cycle: dict = Field(default_factory=lambda: {"1h": 14.4, "6h": 6.0})
@@ -38,7 +38,7 @@ class CT_SLO_002(BaseModel):
     slow_cycle: dict = Field(default_factory=lambda: {"28d": 1.0})
 
 
-class CT_EB_001(BaseModel):
+class CtEb001(BaseModel):
     """Error Budget 计算公式."""
 
     slo_id: str
@@ -48,7 +48,7 @@ class CT_EB_001(BaseModel):
     burn_rate: float = 0.0
 
 
-class CT_EB_002(BaseModel):
+class CtEb002(BaseModel):
     """Burn Rate 阈值契约."""
 
     threshold_1h: float = 14.4
@@ -57,7 +57,7 @@ class CT_EB_002(BaseModel):
     threshold_30d: float = 1.0
 
 
-class CT_EB_003(BaseModel):
+class CtEb003(BaseModel):
     """五级响应动作契约."""
 
     tier: str
@@ -65,7 +65,7 @@ class CT_EB_003(BaseModel):
     actions: list[str] = Field(default_factory=list)
 
 
-class CT_TB_001(BaseModel):
+class CtTb001(BaseModel):
     """Token Budget 四级定义."""
 
     level: str
@@ -74,7 +74,7 @@ class CT_TB_001(BaseModel):
     unit: str = "tokens"
 
 
-class CT_TB_002(BaseModel):
+class CtTb002(BaseModel):
     """Pre-flight 预估接口."""
 
     estimated_tokens: int
@@ -82,7 +82,7 @@ class CT_TB_002(BaseModel):
     accuracy_ratio: float | None = None
 
 
-class CT_KS_001(BaseModel):
+class CtKs001(BaseModel):
     """Kill Switch 信号格式."""
 
     active: bool = False
@@ -91,7 +91,7 @@ class CT_KS_001(BaseModel):
     triggered_at: str | None = None
 
 
-class CT_KS_002(BaseModel):
+class CtKs002(BaseModel):
     """熔断状态切换契约."""
 
     from_state: str
@@ -100,7 +100,7 @@ class CT_KS_002(BaseModel):
     timestamp: str
 
 
-class CT_SB_001(BaseModel):
+class CtSb001(BaseModel):
     """Sandbox 子进程隔离规范."""
 
     max_memory_mb: int = 512
@@ -108,14 +108,14 @@ class CT_SB_001(BaseModel):
     allowed_syscalls: list[str] = Field(default_factory=list)
 
 
-class CT_GD_001(BaseModel):
+class CtGd001(BaseModel):
     """降级链 YAML Schema."""
 
     chain_id: str
     levels: list[dict] = Field(default_factory=list)
 
 
-class CT_GD_002(BaseModel):
+class CtGd002(BaseModel):
     """模型路由接口."""
 
     current_model: str
@@ -123,14 +123,14 @@ class CT_GD_002(BaseModel):
     switch_threshold: float
 
 
-class CT_GD_003(BaseModel):
+class CtGd003(BaseModel):
     """输出截断策略."""
 
     max_output_tokens: int = 4096
     truncation_strategy: str = "semantic_boundary"
 
 
-class CT_SC_001(BaseModel):
+class CtSc001(BaseModel):
     """语义缓存键格式."""
 
     cache_key: str
@@ -138,7 +138,7 @@ class CT_SC_001(BaseModel):
     ttl_seconds: int = 3600
 
 
-class CT_SC_002(BaseModel):
+class CtSc002(BaseModel):
     """ChromaDB 向量存储契约."""
 
     collection_name: str
@@ -147,19 +147,19 @@ class CT_SC_002(BaseModel):
 
 
 BATCH1_CONTRACTS = {
-    "CT-SLO-001": CT_SLO_001,
-    "CT-SLO-002": CT_SLO_002,
-    "CT-EB-001": CT_EB_001,
-    "CT-EB-002": CT_EB_002,
-    "CT-EB-003": CT_EB_003,
-    "CT-TB-001": CT_TB_001,
-    "CT-TB-002": CT_TB_002,
-    "CT-KS-001": CT_KS_001,
-    "CT-KS-002": CT_KS_002,
-    "CT-SB-001": CT_SB_001,
-    "CT-GD-001": CT_GD_001,
-    "CT-GD-002": CT_GD_002,
-    "CT-GD-003": CT_GD_003,
-    "CT-SC-001": CT_SC_001,
-    "CT-SC-002": CT_SC_002,
+    "CT-SLO-001": CtSlo001,
+    "CT-SLO-002": CtSlo002,
+    "CT-EB-001": CtEb001,
+    "CT-EB-002": CtEb002,
+    "CT-EB-003": CtEb003,
+    "CT-TB-001": CtTb001,
+    "CT-TB-002": CtTb002,
+    "CT-KS-001": CtKs001,
+    "CT-KS-002": CtKs002,
+    "CT-SB-001": CtSb001,
+    "CT-GD-001": CtGd001,
+    "CT-GD-002": CtGd002,
+    "CT-GD-003": CtGd003,
+    "CT-SC-001": CtSc001,
+    "CT-SC-002": CtSc002,
 }

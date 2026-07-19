@@ -35,6 +35,7 @@ Redis H1 热缓存为预留接口（抛 NotImplementedError），待 P2 实盘�
 注：market.duckdb（旧 DuckDB 业务时序库）已于 2026-07-05 删除（524KB 残留文件，无有价值数据）。业务行情数据已迁移至 ClickHouse c1_market。
 """
 
+import logging
 import sqlite3
 import threading
 from pathlib import Path
@@ -47,6 +48,8 @@ from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from zephyr.shared.database.database_crud_mixin import DatabaseCRUDMixin
 from zephyr.shared.io.paths import DB_PATH
+
+logger = logging.getLogger(__name__)
 
 
 # ClickHouse 连接配置：委托给 zephyr.data.ch_config（裁定 #ARCH-CH-017 / #ARCH-CH-019）
@@ -87,8 +90,12 @@ class DatabaseService(DatabaseCRUDMixin):
 
         self._governance_conn: sqlite3.Connection | None = None  # 读写连接
         self._governance_conn_readonly: sqlite3.Connection | None = None  # P-PLAN-1 双连接：只读连接
-        self._depgraph_conn: psycopg2.extensions.connection | None = None  # psycopg2 读写连接 (P2迁移后)
-        self._depgraph_conn_readonly: psycopg2.extensions.connection | None = None  # P-PLAN-1 双连接：只读连接
+        # 5.64.2 修复：PG 连接改为 per-thread（threading.local）——psycopg2 connection
+        # 非线程安全，单一连接跨线程共享会产生交错执行/状态损坏竞态。
+        # 每线程惰性创建独立连接（读写/只读各一），注册到 _live_pg_conns 供 close_all 统一关闭。
+        self._pg_tls = threading.local()
+        self._live_pg_conns: list[psycopg2.extensions.connection] = []
+        self._live_pg_lock = threading.Lock()
         self._clickhouse_conn: Any | None = None  # clickhouse_driver.Client (C1行情仓库)
         self._lock = threading.Lock()  # Phase 2 P2 修复（并发安全 HIGH）：lazy init 线程安全
 
@@ -130,18 +137,17 @@ class DatabaseService(DatabaseCRUDMixin):
                           安全约束：业务数据库查询MUST显式 read_only=True（project_memory 硬约束）。
                           False=读写连接（用于 INSERT/UPDATE/DELETE）。
         """
-        target_attr = "_depgraph_conn_readonly" if read_only else "_depgraph_conn"
-        conn = getattr(self, target_attr)
-        if conn is None:
-            with self._lock:
-                conn = getattr(self, target_attr)
-                if conn is None:
-                    conn = get_depgraph_pg_connection(autocommit=True)
-                    conn.cursor_factory = RealDictCursor
-                    if read_only:
-                        with conn.cursor() as cur:
-                            cur.execute("SET default_transaction_read_only = on")
-                    setattr(self, target_attr, conn)
+        tls_attr = "depgraph_conn_readonly" if read_only else "depgraph_conn"
+        conn = getattr(self._pg_tls, tls_attr, None)
+        if conn is None or conn.closed:
+            conn = get_depgraph_pg_connection(autocommit=True)
+            conn.cursor_factory = RealDictCursor
+            if read_only:
+                with conn.cursor() as cur:
+                    cur.execute("SET default_transaction_read_only = on")
+            setattr(self._pg_tls, tls_attr, conn)
+            with self._live_pg_lock:
+                self._live_pg_conns.append(conn)
         return conn
 
     def get_clickhouse_conn(self):
@@ -202,13 +208,33 @@ class DatabaseService(DatabaseCRUDMixin):
         return result
 
     def close_all(self):
-        """关闭所有连接（P-PLAN-1 双连接：关闭 4 个连接）"""
-        for attr in ("_governance_conn", "_governance_conn_readonly",
-                     "_depgraph_conn", "_depgraph_conn_readonly"):
+        """关闭所有连接。
+
+        5.64.5 修复：每个 close 独立 try/except 记录后继续——单个连接关闭失败
+        不再中断其余连接的清理。
+        5.64.2 修复：PG 连接为 per-thread 持有，从 _live_pg_conns 注册表统一关闭；
+        各线程下次 get_depgraph_conn() 时按 conn.closed 惰性重建。
+        """
+        for attr in ("_governance_conn", "_governance_conn_readonly"):
             conn = getattr(self, attr)
             if conn:
-                conn.close()
+                try:
+                    conn.close()
+                except Exception:  # noqa: BLE001 — 5.64.5：异常隔离，记录后继续
+                    logger.warning("close_all: failed to close %s", attr, exc_info=True)
                 setattr(self, attr, None)
+
+        with self._live_pg_lock:
+            pg_conns, self._live_pg_conns = self._live_pg_conns, []
+        for conn in pg_conns:
+            try:
+                conn.close()
+            except Exception:  # noqa: BLE001 — 5.64.5：异常隔离，记录后继续
+                logger.warning("close_all: failed to close depgraph conn", exc_info=True)
+        # 清理当前线程的线程局部引用（其他线程的引用按 conn.closed 惰性重建）
+        for tls_attr in ("depgraph_conn", "depgraph_conn_readonly"):
+            if hasattr(self._pg_tls, tls_attr):
+                setattr(self._pg_tls, tls_attr, None)
 
         # clickhouse_driver.Client 无 close()，断开由 GC 处理
         self._clickhouse_conn = None

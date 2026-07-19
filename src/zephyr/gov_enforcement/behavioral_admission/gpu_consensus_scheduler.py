@@ -217,13 +217,13 @@ class GPUConsensusScheduler:
 
         with self._lock:
             self._total_latency_ms += result.latency_ms
-            if result.status == ConsensusStatus.CONSENSUS_REACHED:
+            if result.status is ConsensusStatus.CONSENSUS_REACHED:
                 self._consensus_reached += 1
-            elif result.status == ConsensusStatus.PARTIAL_CONSENSUS:
+            elif result.status is ConsensusStatus.PARTIAL_CONSENSUS:
                 self._partial_consensus += 1
-            elif result.status == ConsensusStatus.FAILED:
+            elif result.status is ConsensusStatus.FAILED:
                 self._failed += 1
-            elif result.status == ConsensusStatus.DEGRADED:
+            elif result.status is ConsensusStatus.DEGRADED:
                 self._degraded += 1
             if route is ConsensusRoute.DUAL_API:
                 self._dual_api_count += 1

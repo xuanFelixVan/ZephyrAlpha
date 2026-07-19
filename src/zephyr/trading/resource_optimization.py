@@ -259,7 +259,284 @@ class _PressureStateMachine:
         self._pending_confirmations = 0
 
 
+# ══════════════════════════════════════════════════════════════════════════
+# 5.150.1 Extract Class 协作者（God Class 治本：高内聚零耦合职责簇）
+# 模式对齐 action_dispatcher.py：
+#   - 纯静态方法（零引擎依赖）由 engine 类级别名 staticmethod 委托
+#   - 依赖引擎状态的方法由 engine 同名薄封装委托（实例级 patch 面不变）
+# 协作者均无状态——配置/开关/子系统句柄等状态保留在 engine 上（测试直接访问），
+# 协作者仅经 engine 参数读写，不反向持有引用。
+# ══════════════════════════════════════════════════════════════════════════
+
+
+class _ConfigReloader:
+    """配置加载/热重载协作者（职责簇：YAML 配置发现/解析/应用 + mtime 热重载）。
+
+    5.150.1 Extract Class: 从 ResourceOptimizationEngine 提取的高内聚配置簇。
+    状态（_config_path/_config_mtime 及被应用的 thresholds/hysteresis/self_healing/
+    audit/eventbus 字段）保留在 engine 上（测试直接赋值 engine._config_path），
+    本类无状态，仅经 engine 参数读写。engine 保留同名薄封装，实例级 patch 面不变。
+    """
+
+    @staticmethod
+    def discover_path() -> str | None:
+        config_paths = [
+            os.path.join(os.getcwd(), "config", "resource_optimization.yaml"),
+            os.path.join(os.path.dirname(__file__), "..", "..", "..", "config", "resource_optimization.yaml"),
+        ]
+        for cp in config_paths:
+            cp = os.path.normpath(cp)
+            if os.path.isfile(cp):
+                return cp
+        return None
+
+    @staticmethod
+    def apply(engine: ResourceOptimizationEngine, path: str) -> None:
+        try:
+            import yaml
+
+            with open(path, encoding="utf-8") as f:
+                raw = f.read()
+            cfg = yaml.safe_load(raw)
+            if not isinstance(cfg, dict):
+                return
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.exception("ResourceOptimizationEngine: config load failed from %s", path, exc_info=True)
+            return
+
+        engine._config_mtime = os.path.getmtime(path)
+
+        pt = cfg.get("pressure_thresholds", {})
+        if pt:
+            engine._thresholds = _PressureThresholds(
+                memory_warning_percent=pt.get("memory_warning_percent", 75.0),
+                memory_critical_percent=pt.get("memory_critical_percent", 85.0),
+                memory_emergency_percent=pt.get("memory_emergency_percent", 95.0),
+                cpu_warning_percent=pt.get("cpu_warning_percent", 80.0),
+                cpu_critical_percent=pt.get("cpu_critical_percent", 90.0),
+                cpu_emergency_percent=pt.get("cpu_emergency_percent", 98.0),
+                process_warning_count=pt.get("process_warning_count", 50),
+                process_critical_count=pt.get("process_critical_count", 100),
+                process_emergency_count=pt.get("process_emergency_count", 250),
+                gpu_warning_percent=pt.get("gpu_warning_percent", 85.0),
+                gpu_critical_percent=pt.get("gpu_critical_percent", 95.0),
+                gpu_emergency_percent=pt.get("gpu_emergency_percent", 98.0),
+            )
+
+        hy = cfg.get("hysteresis", {})
+        if hy:
+            engine._hysteresis = _HysteresisConfig(
+                confirmation_count=hy.get("confirmation_count", 2),
+                cooldown_seconds=hy.get("cooldown_seconds", 60.0),
+                hysteresis_percent=hy.get("hysteresis_percent", 10.0),
+                oscillation_threshold_per_hour=hy.get("oscillation_threshold_per_hour", 3),
+            )
+            engine._pressure_sm = _PressureStateMachine(engine._hysteresis)
+
+        sh = cfg.get("self_healing", {})
+        if sh:
+            engine._self_healing_enabled = sh.get("enabled", True)
+            engine._self_healing_max_recovery_s = sh.get("max_recovery_time_s", 60.0)
+            engine._self_healing_verification_delay_s = sh.get("verification_delay_s", 5.0)
+            engine._self_healing_max_retries = sh.get("max_retries", 3)
+
+        au = cfg.get("audit", {})
+        if au:
+            engine._audit_enabled = au.get("enabled", True)
+
+        eb = cfg.get("eventbus", {})
+        if eb:
+            engine._eventbus_enabled = eb.get("enabled", True)
+            engine._eventbus_topic = eb.get("topic", "resource.pressure.changed")
+
+        logger.info("ResourceOptimizationEngine: config loaded from %s", path)
+
+    @staticmethod
+    def check_reload(engine: ResourceOptimizationEngine) -> None:
+        if engine._config_path is None:
+            return
+        try:
+            current_mtime = os.path.getmtime(engine._config_path)
+            if current_mtime != engine._config_mtime:
+                engine._apply_config(engine._config_path)
+        except OSError as e:
+            # 5.54.5 修复：原 except OSError: pass 静默停止热重载，配置文件误删后引擎无感知。
+            # 改为 warning 级别日志记录。
+            logger.warning("ResourceOptimizationEngine: config hot-reload failed (%s: %s)", type(e).__name__, e)
+
+
+class _StrategyExecutor:
+    """优化策略执行协作者（职责簇：7 种 OptimizationStrategy 执行 + 防御降级动作）。
+
+    5.150.1 Extract Class: 从 ResourceOptimizationEngine 提取的策略执行簇。
+    纯函数式方法（memory_compact/streaming_read/defensive，零引擎依赖）由 engine
+    类级别名 staticmethod 委托；依赖引擎子系统（_monitor_interval/_file_cache/
+    _process_pool/_lazy_loader）的方法由 engine 同名薄封装委托，实例级 patch 面不变。
+    """
+
+    @staticmethod
+    def schedule_adapt(engine: ResourceOptimizationEngine, pressure: PressureLevel) -> list[str]:
+        intervals = {
+            PressureLevel.NORMAL: 30.0,
+            PressureLevel.WARNING: 60.0,
+            PressureLevel.CRITICAL: 120.0,
+            PressureLevel.EMERGENCY: 0.0,
+        }
+        new_interval = intervals.get(pressure, 30.0)
+        if new_interval > 0:
+            engine._monitor_interval = new_interval
+            return [f"schedule_adapt: interval set to {new_interval}s for {pressure.value}"]
+        else:
+            return [f"schedule_adapt: paused for {pressure.value}"]
+
+    @staticmethod
+    def memory_compact() -> list[str]:
+        import gc
+
+        before = len(gc.get_objects())
+        collected = gc.collect()
+        after = len(gc.get_objects())
+        return [f"memory_compact: gc.collect() freed {collected} objects ({before} -> {after})"]
+
+    @staticmethod
+    def cache_warm(engine: ResourceOptimizationEngine, context: dict[str, Any] | None) -> list[str]:
+        files = []
+        if context and "files" in context:
+            files = context["files"]
+        if not files:
+            return ["cache_warm: no files specified in context"]
+        loaded = engine._file_cache.warm(files)
+        return [f"cache_warm: preloaded {loaded}/{len(files)} files"]
+
+    @staticmethod
+    def io_batch(engine: ResourceOptimizationEngine, context: dict[str, Any] | None) -> list[str]:
+        files = []
+        if context and "files" in context:
+            files = context["files"]
+        if not files:
+            return ["io_batch: no files specified in context"]
+        loaded = 0
+        for fp in files:
+            result = engine._file_cache.get_or_load(fp)
+            if result is not None:
+                loaded += 1
+        return [f"io_batch: batch loaded {loaded}/{len(files)} files"]
+
+    @staticmethod
+    def streaming_read(context: dict[str, Any] | None) -> list[str]:
+        path = context.get("path") if context else None
+        if not path:
+            return ["streaming_read: no path specified in context"]
+        p = str(path)
+        try:
+            size_mb = os.path.getsize(p) / (1024 * 1024)
+        except OSError:
+            size_mb = 0.0
+        if size_mb > 1.0:
+            return [f"streaming_read: {p} ({size_mb:.1f}MB) — use stream_jsonl/tail_jsonl"]
+        return [f"streaming_read: {p} ({size_mb:.1f}MB) — small file, direct read OK"]
+
+    @staticmethod
+    def process_pool(engine: ResourceOptimizationEngine, context: dict[str, Any] | None) -> list[str]:
+        stats = engine._process_pool.get_stats()
+        if stats.active_processes == 0:
+            return ["process_pool: no active processes to optimize"]
+        reuse_before = stats.reuse_count
+        return [f"process_pool: {stats.active_processes} active, {reuse_before} reuses — pool sharing active"]
+
+    @staticmethod
+    def lazy_init(engine: ResourceOptimizationEngine, context: dict[str, Any] | None) -> list[str]:
+        loader_stats = engine._lazy_loader.stats()
+        pending = loader_stats.get("pending", 0)
+        if pending == 0:
+            return ["lazy_init: all registered modules already loaded"]
+        return [f"lazy_init: {pending} modules pending — deferred until first access"]
+
+    @staticmethod
+    def defensive(pressure: PressureLevel) -> list[str]:
+        actions: list[str] = []
+        if pressure is PressureLevel.EMERGENCY:
+            stopped = DaemonRegistry.stop_low_priority(min_priority=5)
+            if stopped:
+                actions.append(f"stop_low_priority(5): stopped {stopped}")
+            import gc
+
+            gc.collect()
+            actions.append("emergency_gc: forced garbage collection")
+        elif pressure is PressureLevel.CRITICAL:
+            stopped = DaemonRegistry.stop_low_priority(min_priority=2)
+            if stopped:
+                actions.append(f"stop_low_priority(2): stopped {stopped}")
+            actions.append("reduce_frequency: monitor interval extended")
+        return actions
+
+
+class _ExternalNotifier:
+    """外部通知协作者（职责簇：EventBus 压力事件 + gov_audit 审计外发）。
+
+    5.150.1 Extract Class: 从 ResourceOptimizationEngine 提取的外发通知簇。
+    两路同构——enabled 开关守卫 + 外部系统调用 + 异常抑制。开关/去抖状态
+    （_eventbus_enabled/_eventbus_topic/_last_pressure_level/_audit_enabled）
+    保留在 engine 上，engine 保留同名薄封装，实例级 patch 面不变。
+    """
+
+    @staticmethod
+    def emit_pressure_event(engine: ResourceOptimizationEngine, snap: ResourceSnapshot) -> None:
+        if not engine._eventbus_enabled:
+            return
+        if snap.pressure == engine._last_pressure_level:
+            return
+        engine._last_pressure_level = snap.pressure
+        try:
+            from zephyr.shared.event_bus import bus
+            bus.emit(
+                engine._eventbus_topic,
+                {
+                    "pressure_level": snap.pressure.value,
+                    "cpu_percent": snap.cpu_percent,
+                    "memory_percent": snap.memory_percent,
+                    "process_count": snap.process_count,
+                    "timestamp": snap.timestamp,
+                },
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("suppressed error in resource_optimization", exc_info=True)
+
+    @staticmethod
+    def audit_optimization(engine: ResourceOptimizationEngine, record: OptimizationRecord) -> None:
+        if not engine._audit_enabled:
+            return
+        try:
+            from zephyr.gov_audit.bridge import write_to_core
+
+            write_to_core(
+                "resource_optimization",
+                {
+                    "strategy": record.strategy.value,
+                    "trigger": record.trigger.value,
+                    "actions_taken": record.actions_taken,
+                    "memory_before_gb": record.memory_before_gb,
+                    "memory_after_gb": record.memory_after_gb,
+                    "quality_preserved": record.quality_preserved,
+                    "success": record.success,
+                    "duration_ms": record.duration_ms,
+                },
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("suppressed error in resource_optimization", exc_info=True)
+
+
 class ResourceOptimizationEngine:
+    """MAPE-K 自治资源优化引擎（单例 facade）。
+
+    5.150.1 God Class 治本：3 个高内聚零耦合职责簇已提取为同文件协作者类——
+    _ConfigReloader（配置加载/热重载）、_StrategyExecutor（策略执行+防御降级）、
+    _ExternalNotifier（EventBus/审计外发），本类以类级别名 staticmethod + 同名
+    薄封装委托，公共 API 与实例级 patch 面不变。
+    保留在本类的簇（Monitor/Analyze 核心、optimize 调度、监控编排、自愈闭环、
+    子系统访问器）与单例状态/调用顺序/副作用深度交织，不外移，理由见各职责分区注释块。
+    """
+
     _instance: ResourceOptimizationEngine | None = None
     _init_lock = threading.Lock()
 
@@ -319,6 +596,11 @@ class ResourceOptimizationEngine:
             self._initialized = True
             self._load_config()
             logger.info("ResourceOptimizationEngine: initialized (singleton)")
+
+    # ══ 职责分区① Monitor/Analyze 核心（保留，不外移） ══
+    # 保留理由：snapshot() 的副作用链环环相扣——psutil/ctypes 采集 →
+    # _classify_pressure（读 _thresholds）→ _pressure_sm.transition（状态机副作用）→
+    # 写 _last_snapshot；classification 夹在采集与状态转换之间，强行外移会破坏调用顺序语义。
 
     def snapshot(self) -> ResourceSnapshot:
         snap = ResourceSnapshot(timestamp=time.time())
@@ -416,6 +698,10 @@ class ResourceOptimizationEngine:
                 return level
         return PressureLevel.NORMAL
 
+    # ══ 职责分区② Plan/Execute 核心（保留，不外移） ══
+    # 保留理由：optimize() 是 MAPE-K 调度枢纽——按序编排 熔断器 → snapshot 前采 →
+    # 策略执行 → snapshot 后采 → 历史截断 → 审计外发，跨 6 个状态字段的调用顺序即语义。
+
     def optimize(
         self,
         strategy: OptimizationStrategy,
@@ -498,93 +784,36 @@ class ResourceOptimizationEngine:
             error_message=error_msg,
         )
 
+    # ── 策略执行 facade（委托 _StrategyExecutor，5.150.1 Extract Class） ──
+    # 纯方法用类级别名 staticmethod（对齐 action_dispatcher 静态簇模式）；
+    # 依赖引擎子系统的方法用同名薄封装，实例级 patch 面（patch.object(engine, ...)）不变。
+
     def _execute_schedule_adapt(self, pressure: PressureLevel) -> list[str]:
-        intervals = {
-            PressureLevel.NORMAL: 30.0,
-            PressureLevel.WARNING: 60.0,
-            PressureLevel.CRITICAL: 120.0,
-            PressureLevel.EMERGENCY: 0.0,
-        }
-        new_interval = intervals.get(pressure, 30.0)
-        if new_interval > 0:
-            self._monitor_interval = new_interval
-            return [f"schedule_adapt: interval set to {new_interval}s for {pressure.value}"]
-        else:
-            return [f"schedule_adapt: paused for {pressure.value}"]
+        return _StrategyExecutor.schedule_adapt(self, pressure)
 
-    def _execute_memory_compact(self) -> list[str]:
-        import gc
-
-        before = len(gc.get_objects())
-        collected = gc.collect()
-        after = len(gc.get_objects())
-        return [f"memory_compact: gc.collect() freed {collected} objects ({before} -> {after})"]
+    _execute_memory_compact = staticmethod(_StrategyExecutor.memory_compact)
 
     def _execute_cache_warm(self, context: dict[str, Any] | None) -> list[str]:
-        files = []
-        if context and "files" in context:
-            files = context["files"]
-        if not files:
-            return ["cache_warm: no files specified in context"]
-        loaded = self._file_cache.warm(files)
-        return [f"cache_warm: preloaded {loaded}/{len(files)} files"]
+        return _StrategyExecutor.cache_warm(self, context)
 
     def _execute_io_batch(self, context: dict[str, Any] | None) -> list[str]:
-        files = []
-        if context and "files" in context:
-            files = context["files"]
-        if not files:
-            return ["io_batch: no files specified in context"]
-        loaded = 0
-        for fp in files:
-            result = self._file_cache.get_or_load(fp)
-            if result is not None:
-                loaded += 1
-        return [f"io_batch: batch loaded {loaded}/{len(files)} files"]
+        return _StrategyExecutor.io_batch(self, context)
 
-    def _execute_streaming_read(self, context: dict[str, Any] | None) -> list[str]:
-        path = context.get("path") if context else None
-        if not path:
-            return ["streaming_read: no path specified in context"]
-        p = str(path)
-        try:
-            size_mb = os.path.getsize(p) / (1024 * 1024)
-        except OSError:
-            size_mb = 0.0
-        if size_mb > 1.0:
-            return [f"streaming_read: {p} ({size_mb:.1f}MB) — use stream_jsonl/tail_jsonl"]
-        return [f"streaming_read: {p} ({size_mb:.1f}MB) — small file, direct read OK"]
+    _execute_streaming_read = staticmethod(_StrategyExecutor.streaming_read)
 
     def _execute_process_pool(self, context: dict[str, Any] | None) -> list[str]:
-        stats = self._process_pool.get_stats()
-        if stats.active_processes == 0:
-            return ["process_pool: no active processes to optimize"]
-        reuse_before = stats.reuse_count
-        return [f"process_pool: {stats.active_processes} active, {reuse_before} reuses — pool sharing active"]
+        return _StrategyExecutor.process_pool(self, context)
 
     def _execute_lazy_init(self, context: dict[str, Any] | None) -> list[str]:
-        loader_stats = self._lazy_loader.stats()
-        pending = loader_stats.get("pending", 0)
-        if pending == 0:
-            return ["lazy_init: all registered modules already loaded"]
-        return [f"lazy_init: {pending} modules pending — deferred until first access"]
+        return _StrategyExecutor.lazy_init(self, context)
 
-    def _execute_defensive(self, pressure: PressureLevel) -> list[str]:
-        actions: list[str] = []
-        if pressure is PressureLevel.EMERGENCY:
-            stopped = DaemonRegistry.stop_low_priority(min_priority=5)
-            if stopped:
-                actions.append(f"stop_low_priority(5): stopped {stopped}")
-            import gc
+    _execute_defensive = staticmethod(_StrategyExecutor.defensive)
 
-            gc.collect()
-            actions.append("emergency_gc: forced garbage collection")
-        elif pressure is PressureLevel.CRITICAL:
-            stopped = DaemonRegistry.stop_low_priority(min_priority=2)
-            if stopped:
-                actions.append(f"stop_low_priority(2): stopped {stopped}")
-            actions.append("reduce_frequency: monitor interval extended")
-        return actions
+    # ══ 职责分区③ 子系统访问器/DaemonRegistry 委托（保留，不外移） ══
+    # 保留理由：全部为一行委托（DaemonRegistry/_file_cache/_process_pool/_lazy_loader/
+    # _optimization_history/_pressure_callbacks/_pressure_sm/_degradation_matrix/
+    # _circuit_breakers），本身是 facade 的最薄形态，提取无内聚收益。
+    # health_check 横切读取 6 个子系统状态，是引擎级聚合视图，属本类。
 
     def register_daemon(
         self,
@@ -671,6 +900,11 @@ class ResourceOptimizationEngine:
     def get_circuit_breaker_status(self) -> dict[str, CircuitBreakerState]:
         return {name: cb.state for name, cb in self._circuit_breakers.items()}
 
+    # ══ 职责分区④ 监控编排：事件驱动 MAPE-K 循环（保留，不外移） ══
+    # 保留理由：monitor_tick() 按序编排 配置热重载 → snapshot → 压力回调 →
+    # EventBus 外发 → 防御降级 → 自愈闭环，调用顺序与副作用跨全部保留簇交织，
+    # 是引擎的运行时骨架，外移等于把引擎掏空。
+
     def start_monitor(self, interval: float = 30.0) -> None:
         """P1 修复（2026-07-05）：事件驱动替代 time.sleep daemon。
 
@@ -734,91 +968,27 @@ class ResourceOptimizationEngine:
     def reset(cls) -> None:
         cls._instance = None
 
+    # ── 配置加载/热重载 facade（委托 _ConfigReloader，5.150.1 Extract Class） ──
+    # 状态 _config_path/_config_mtime 及被应用字段保留在本类（测试直接访问），
+    # 同名薄封装保留实例级 patch 面。
+
     def _load_config(self) -> None:
-        config_paths = [
-            os.path.join(os.getcwd(), "config", "resource_optimization.yaml"),
-            os.path.join(os.path.dirname(__file__), "..", "..", "..", "config", "resource_optimization.yaml"),
-        ]
-        for cp in config_paths:
-            cp = os.path.normpath(cp)
-            if os.path.isfile(cp):
-                self._config_path = cp
-                break
+        self._config_path = _ConfigReloader.discover_path()
         if self._config_path is None:
             return
         self._apply_config(self._config_path)
 
     def _apply_config(self, path: str) -> None:
-        try:
-            import yaml
-
-            with open(path, encoding="utf-8") as f:
-                raw = f.read()
-            cfg = yaml.safe_load(raw)
-            if not isinstance(cfg, dict):
-                return
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.exception("ResourceOptimizationEngine: config load failed from %s", path, exc_info=True)
-            return
-
-        self._config_mtime = os.path.getmtime(path)
-
-        pt = cfg.get("pressure_thresholds", {})
-        if pt:
-            self._thresholds = _PressureThresholds(
-                memory_warning_percent=pt.get("memory_warning_percent", 75.0),
-                memory_critical_percent=pt.get("memory_critical_percent", 85.0),
-                memory_emergency_percent=pt.get("memory_emergency_percent", 95.0),
-                cpu_warning_percent=pt.get("cpu_warning_percent", 80.0),
-                cpu_critical_percent=pt.get("cpu_critical_percent", 90.0),
-                cpu_emergency_percent=pt.get("cpu_emergency_percent", 98.0),
-                process_warning_count=pt.get("process_warning_count", 50),
-                process_critical_count=pt.get("process_critical_count", 100),
-                process_emergency_count=pt.get("process_emergency_count", 250),
-                gpu_warning_percent=pt.get("gpu_warning_percent", 85.0),
-                gpu_critical_percent=pt.get("gpu_critical_percent", 95.0),
-                gpu_emergency_percent=pt.get("gpu_emergency_percent", 98.0),
-            )
-
-        hy = cfg.get("hysteresis", {})
-        if hy:
-            self._hysteresis = _HysteresisConfig(
-                confirmation_count=hy.get("confirmation_count", 2),
-                cooldown_seconds=hy.get("cooldown_seconds", 60.0),
-                hysteresis_percent=hy.get("hysteresis_percent", 10.0),
-                oscillation_threshold_per_hour=hy.get("oscillation_threshold_per_hour", 3),
-            )
-            self._pressure_sm = _PressureStateMachine(self._hysteresis)
-
-        sh = cfg.get("self_healing", {})
-        if sh:
-            self._self_healing_enabled = sh.get("enabled", True)
-            self._self_healing_max_recovery_s = sh.get("max_recovery_time_s", 60.0)
-            self._self_healing_verification_delay_s = sh.get("verification_delay_s", 5.0)
-            self._self_healing_max_retries = sh.get("max_retries", 3)
-
-        au = cfg.get("audit", {})
-        if au:
-            self._audit_enabled = au.get("enabled", True)
-
-        eb = cfg.get("eventbus", {})
-        if eb:
-            self._eventbus_enabled = eb.get("enabled", True)
-            self._eventbus_topic = eb.get("topic", "resource.pressure.changed")
-
-        logger.info("ResourceOptimizationEngine: config loaded from %s", path)
+        _ConfigReloader.apply(self, path)
 
     def _check_config_reload(self) -> None:
-        if self._config_path is None:
-            return
-        try:
-            current_mtime = os.path.getmtime(self._config_path)
-            if current_mtime != self._config_mtime:
-                self._apply_config(self._config_path)
-        except OSError as e:
-            # 5.54.5 修复：原 except OSError: pass 静默停止热重载，配置文件误删后引擎无感知。
-            # 改为 warning 级别日志记录。
-            logger.warning("ResourceOptimizationEngine: config hot-reload failed (%s: %s)", type(e).__name__, e)
+        _ConfigReloader.check_reload(self)
+
+    # ══ 职责分区⑤ 自愈闭环（保留，不外移） ══
+    # 保留理由：_self_heal_cycle 与 optimize()/snapshot() 调用顺序深度交织——
+    # 策略选择 → optimize 执行 → 验证快照 → 压力等级比较 → 指数退避重试，
+    # 且测试以 patch.object(ResourceOptimizationEngine, "optimize"/"snapshot")
+    # 类级补丁验证该编排，外移会破坏补丁语义与重试时序。
 
     def _self_heal_cycle(self, snap: ResourceSnapshot) -> OptimizationResult | None:
         if not self._self_healing_enabled:
@@ -871,45 +1041,12 @@ class ResourceOptimizationEngine:
         else:
             return OptimizationStrategy.SCHEDULE_ADAPT
 
+    # ── 外部通知 facade（委托 _ExternalNotifier，5.150.1 Extract Class） ──
+    # 开关/去抖状态（_eventbus_enabled/_eventbus_topic/_last_pressure_level/
+    # _audit_enabled）保留在本类，同名薄封装保留实例级 patch 面。
+
     def _emit_pressure_event(self, snap: ResourceSnapshot) -> None:
-        if not self._eventbus_enabled:
-            return
-        if snap.pressure == self._last_pressure_level:
-            return
-        self._last_pressure_level = snap.pressure
-        try:
-            from zephyr.shared.event_bus import bus
-            bus.emit(
-                self._eventbus_topic,
-                {
-                    "pressure_level": snap.pressure.value,
-                    "cpu_percent": snap.cpu_percent,
-                    "memory_percent": snap.memory_percent,
-                    "process_count": snap.process_count,
-                    "timestamp": snap.timestamp,
-                },
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in resource_optimization", exc_info=True)
+        _ExternalNotifier.emit_pressure_event(self, snap)
 
     def _audit_optimization(self, record: OptimizationRecord) -> None:
-        if not self._audit_enabled:
-            return
-        try:
-            from zephyr.gov_audit.bridge import write_to_core
-
-            write_to_core(
-                "resource_optimization",
-                {
-                    "strategy": record.strategy.value,
-                    "trigger": record.trigger.value,
-                    "actions_taken": record.actions_taken,
-                    "memory_before_gb": record.memory_before_gb,
-                    "memory_after_gb": record.memory_after_gb,
-                    "quality_preserved": record.quality_preserved,
-                    "success": record.success,
-                    "duration_ms": record.duration_ms,
-                },
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in resource_optimization", exc_info=True)
+        _ExternalNotifier.audit_optimization(self, record)

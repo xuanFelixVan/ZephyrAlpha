@@ -46,7 +46,6 @@ import hashlib
 import os
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-import subprocess
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -261,44 +260,39 @@ def generate_audit_log(
             pass
 
     try:
-        # 5.75.1 修复：检查 git add/commit 返回码，失败时不置 committed_to_git=True
-        add_result = subprocess.run(
-            ["git", "add", str(audit_path.relative_to(project_root))],
-            capture_output=True,
-            timeout=10,
-            cwd=project_root,
+        # 5.37.6 治本：原 subprocess 裸 git add/commit 绕过 GitCommitGateway——
+        # post_commit_guard（#ARCH-050）会 git reset --soft 撤销无 [GW:] 标记的
+        # commit，审计锚定静默失效。改走 GitCommitGateway._commit_auto（reconciler
+        # auto-commit 统一入口）：本函数在 DEEP scan 流程中运行，无 AI session
+        # 上下文，_commit_auto 不要求 session claim，自带 _GlobalCommitLock 串行锁
+        # + DIRECTORY-CONTRACT/TTL/FILE-PLACEMENT gate + [GW:...:auto] 标记。
+        # status==OK 才置 committed_to_git；gate 阻断/失败仅告警（审计文件已落盘，
+        # 不中断 scan 主流程）。
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+            CommitStatus,
+            GitCommitGateway,
         )
 
-        if add_result.returncode != 0:
-            logger.warning(
-                "tamper_proof_audit: git add failed (returncode=%d): %s",
-                add_result.returncode,
-                add_result.stderr.decode("utf-8", errors="replace").strip(),
-            )
-        else:
-            commit_result = subprocess.run(
-                [
-                    "git",
-                    "commit",
-                    "-m",
-                    f"audit_log: {scan_id} sha256={events_hash[:12]}",
-                ],
-                capture_output=True,
-                timeout=10,
-                cwd=project_root,
-            )
+        gateway = GitCommitGateway(project_root=project_root)
+        commit_result = gateway._commit_auto(
+            session_id="drift-tamper-proof-audit",
+            files=[str(audit_path)],
+            message=f"audit_log: {scan_id} sha256={events_hash[:12]}",
+        )
 
-            if commit_result.returncode != 0:
-                logger.warning(
-                    "tamper_proof_audit: git commit failed (returncode=%d): %s",
-                    commit_result.returncode,
-                    commit_result.stderr.decode("utf-8", errors="replace").strip(),
-                )
-            else:
-                record.committed_to_git = True
+        if commit_result.status == CommitStatus.OK:
+            record.committed_to_git = True
+        elif commit_result.status == CommitStatus.NOTHING_TO_COMMIT:
+            logger.info("tamper_proof_audit: audit log unchanged, nothing to commit")
+        else:
+            logger.warning(
+                "tamper_proof_audit: gateway auto-commit not OK (status=%s): %s",
+                commit_result.status,
+                commit_result.message,
+            )
 
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning("suppressed error in tamper_proof_audit", exc_info=True)
+        logger.warning("tamper_proof_audit: gateway auto-commit failed: %s", e, exc_info=True)
 
     import importlib as _importlib
 

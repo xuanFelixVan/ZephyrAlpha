@@ -114,7 +114,7 @@ class TaskScheduler:
         return task
 
     def get_pending(self) -> list[ScheduledTask]:
-        return [t for t in self._tasks.values() if t.status == ScheduleStatus.PENDING]
+        return [t for t in self._tasks.values() if t.status is ScheduleStatus.PENDING]
 
     def get_stats(self) -> dict[str, int]:
         stats: dict[str, int] = {

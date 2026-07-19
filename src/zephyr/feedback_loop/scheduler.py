@@ -102,6 +102,217 @@ class FLEPipelineEvent:
         }
 
 
+class PeriodicGovernanceInspector:
+    """周期治理巡检器（FeedbackLoopScheduler 协作者，职责簇：drift 扫描/自动修复/审计链校验）。
+
+    5.150.3 Extract Class: 从 FeedbackLoopScheduler 提取的高内聚零耦合簇——
+    三个方法均为周期性治理自检（由 _periodic_checks 每 10 周期编排调用），
+    不读写调度器实例状态，ERROR_CONTRACT 均为不抛异常。
+    FeedbackLoopScheduler 保留同名薄封装委托，实例级 patch 面不变。
+    """
+
+    @staticmethod
+    def run_drift_scan() -> None:
+        try:
+            import asyncio
+
+            from zephyr.gov_drift.drift_engine import scheduled_light
+
+            result = run_sync(scheduled_light())
+            high_drifts = [
+                d
+                for d in result.drifts
+                if getattr(d, "severity", "").value == "HIGH" or getattr(d, "severity", "") == "HIGH"
+            ]
+            if high_drifts:
+                logger.warning("FLE drift scan: %d HIGH drifts detected", len(high_drifts))
+                PeriodicGovernanceInspector.auto_fix_drifts(high_drifts)
+            else:
+                logger.info("FLE drift scan: clean (%d total, 0 HIGH)", len(result.drifts))
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("FLE drift scan failed", exc_info=True)
+
+    @staticmethod
+    def auto_fix_drifts(drifts: list) -> None:
+        try:
+            from zephyr.infrastructure.auto_fix_engine import AutoFixEngine
+
+            engine = AutoFixEngine()
+            for d in drifts[:3]:
+                target = getattr(d, "target", "") or getattr(d, "file_path", "") or str(d)
+                action = engine.fix("drift_fixer", target, dry_run=False)
+                if action.status.value == "COMPLETED":
+                    logger.info("FLE auto-fix: drift fixed -> %s", target)
+                else:
+                    logger.warning("FLE auto-fix: drift fix failed -> %s (%s)", target, action.status)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("FLE auto-fix drift failed", exc_info=True)
+
+    @staticmethod
+    def audit_trail_check() -> None:
+        try:
+            from zephyr.governance.integrity import IntegrityVerifier
+
+            verifier = IntegrityVerifier()
+            result = verifier.verify_chain()
+            status = result.get("status", "unknown")
+            if status == "compromised":
+                issues = result.get("issues", [])
+                logger.warning("FLE audit trail: chain COMPROMISED — %d issues: %s", len(issues), issues[:3])
+                try:
+                    from zephyr.shared.event_bus import bus
+
+                    bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    logger.warning("suppressed error in scheduler", exc_info=True)
+            elif status == "no_data":
+                logger.debug("FLE audit trail: no data to verify")
+            else:
+                checked = result.get("events_checked", 0)
+                logger.info("FLE audit trail: chain valid (%d events checked)", checked)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("FLE audit trail check failed", exc_info=True)
+
+
+class ExternalPersistenceWriter:
+    """外部持久化写出器（FeedbackLoopScheduler 协作者，职责簇：指标/告警/失败模式持久化）。
+
+    5.150.3 Extract Class: 从 FeedbackLoopScheduler 提取的高内聚零耦合簇——
+    四个方法均为对外部系统（ClickHouse/AlertDispatcher/FLEWriter/VMS）的副作用写出，
+    不读写调度器实例状态，全部 try/except 静默失败。
+    FeedbackLoopScheduler 保留同名薄封装委托，实例级 patch 面不变。
+    """
+
+    @staticmethod
+    def persist_metrics(snapshot: MetricSnapshot) -> None:
+        try:
+            from datetime import datetime
+
+            from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint, SourceSystem
+            from zephyr.feedback_loop.db_writer import write_metrics_batch
+
+            ts = datetime.fromtimestamp(snapshot.timestamp, tz=UTC).isoformat()
+            metric_fields = {
+                "system_cpu": "percent",
+                "memory_usage_pct": "percent",
+                "disk_io_wait": "percent",
+                "network_errors_count": "count",
+                "detection_latency_ms": "ms",
+            }
+            points = []
+            for field, unit in metric_fields.items():
+                val = getattr(snapshot, field, 0.0)
+                points.append(
+                    MetricPoint(
+                        timestamp=ts,
+                        source_system=SourceSystem.FEEDBACK_LOOP,
+                        metric_name=f"fle.{field}",
+                        value=float(val),
+                        unit=unit,
+                    )
+                )
+            if points:
+                written = write_metrics_batch(points)
+                if written:
+                    logger.debug("[FLE-DB] persisted %d metrics", written)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("[FLE-DB] metrics persist skipped", exc_info=True)
+
+    @staticmethod
+    def dispatch_alert_if_anomaly(event: FLEPipelineEvent, act_result: ActionRecord) -> None:
+        if event.anomaly is None:
+            return
+        try:
+            from zephyr.feedback_loop.alert_dispatcher import AlertCategory, AlertDispatcher, AlertEvent, AlertSeverity
+
+            anomaly = event.anomaly
+            raw_severity = getattr(anomaly, "severity", 5)
+            if isinstance(raw_severity, (int, float)):
+                if raw_severity >= 8:
+                    severity = AlertSeverity.CRITICAL
+                elif raw_severity >= 5:
+                    severity = AlertSeverity.HIGH
+                elif raw_severity >= 2:
+                    severity = AlertSeverity.MEDIUM
+                else:
+                    severity = AlertSeverity.LOW
+            else:
+                severity = AlertSeverity.MEDIUM
+
+            anomaly_id = getattr(anomaly, "anomaly_id", "unknown")
+            evidence = getattr(anomaly, "evidence", {}) or {}
+            metric_name = evidence.get("metric_name", "") if isinstance(evidence, dict) else ""
+            metric_value = evidence.get("value", 0) if isinstance(evidence, dict) else 0
+            z_score = evidence.get("z_score", 0) if isinstance(evidence, dict) else 0
+
+            diagnosis_text = ""
+            if event.diagnosis is not None:
+                diagnosis_text = getattr(event.diagnosis, "summary", None) or str(event.diagnosis)
+
+            alert = AlertEvent(
+                source="feedback-loop",
+                severity=severity,
+                category=AlertCategory.METRIC_ANOMALY,
+                title=f"FLE Anomaly #{anomaly_id}: {metric_name} z={z_score:.2f}",
+                detail=diagnosis_text[:2000],
+                metric_ref={
+                    "name": metric_name,
+                    "current_value": metric_value,
+                    "z_score": z_score,
+                },
+            )
+            dispatcher = AlertDispatcher()
+            result = dispatcher.dispatch(alert)
+
+            ExternalPersistenceWriter.persist_alert_and_log(alert, result)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
+
+    @staticmethod
+    def persist_alert_and_log(alert: AlertEvent, dispatch_result: object) -> None:
+        try:
+            from zephyr.feedback_loop.db_writer import FLEWriter
+
+            writer = FLEWriter()
+            writer.write_alert(alert)
+            writer.update_alert_status(alert.event_id, "DISPATCHED")
+            writer.write_dispatch_log(
+                event_id=alert.event_id,
+                target_system="orchestrator",
+                result="success" if dispatch_result.success else "failed",
+                task_id=dispatch_result.task_id,
+                error_message=dispatch_result.error,
+            )
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
+
+    @staticmethod
+    def persist_failure_pattern(vector_bridge: Any, event: FLEPipelineEvent) -> None:
+        """5.158.4 重构：从 _run_once 提取 VMS 失败模式持久化逻辑。
+
+        治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
+        提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底。
+        """
+        if vector_bridge is None or event.diagnosis is None:
+            return
+        try:
+            diag_text = getattr(event.diagnosis, "summary", None)
+            if diag_text is None:
+                root_cause = getattr(event.diagnosis, "root_cause", None)
+                if root_cause:
+                    # root_cause 格式 "Elevated {metric} (z={score:.2f})" -> 保留稳定部分
+                    diag_text = root_cause.split(" (")[0]
+                else:
+                    diag_text = str(event.diagnosis)
+            if diag_text and event.verification is not None:
+                verdict = getattr(event.verification, "verdict", None)
+                if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
+                    vector_bridge.write_failure_pattern(diag_text)
+                    logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
+
+
 @dataclass
 class FeedbackLoopScheduler:
     """FLE 全链路调度器——wire collect->detect->diagnose->act->verify。
@@ -200,6 +411,8 @@ class FeedbackLoopScheduler:
     _instance: ClassVar[FeedbackLoopScheduler | None] = None
     _instance_lock: ClassVar[threading.Lock] = threading.Lock()
 
+    # ── 单例管理 ──────────────────────────────────────────────────
+
     @classmethod
     def get_instance(cls, **kwargs: Any) -> FeedbackLoopScheduler:
         if cls._instance is None:
@@ -212,6 +425,9 @@ class FeedbackLoopScheduler:
     def reset_instance(cls) -> None:
         with cls._instance_lock:
             cls._instance = None
+
+    # ── 生命周期（保留 facade：线程状态机，深度交织 _running/_thread/_consecutive_errors） ──
+    # 状态/调用顺序交织（start→_run_loop→stop 原子性依赖共享可变状态），不强行拆。
 
     def start(self) -> None:
         """Start background polling thread (manual/test control only).
@@ -292,6 +508,8 @@ class FeedbackLoopScheduler:
                 time.sleep(min(0.05, self.poll_interval - slept))
                 slept += 0.05
 
+    # ── 手动周期与自检查询（保留 facade：读写 _events/_cycle_count 实例状态） ──
+
     def tick(self) -> FLEPipelineEvent | None:
         result = self._run_once()
         self._cycle_count += 1
@@ -318,64 +536,20 @@ class FeedbackLoopScheduler:
         self._run_drift_scan()
         self._audit_trail_check()
 
+    # ── 周期治理巡检（委托 PeriodicGovernanceInspector） ──────────────
+    # 薄封装保留实例级 patch 面与 ERROR_CONTRACT；实现已提取至同文件协作者类。
+
     def _audit_trail_check(self) -> None:
-        try:
-            from zephyr.governance.integrity import IntegrityVerifier
-
-            verifier = IntegrityVerifier()
-            result = verifier.verify_chain()
-            status = result.get("status", "unknown")
-            if status == "compromised":
-                issues = result.get("issues", [])
-                logger.warning("FLE audit trail: chain COMPROMISED — %d issues: %s", len(issues), issues[:3])
-                try:
-                    from zephyr.shared.event_bus import bus
-
-                    bus.emit(topic="audit_chain.compromised", payload={"issues": issues})
-                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    logger.warning("suppressed error in scheduler", exc_info=True)
-            elif status == "no_data":
-                logger.debug("FLE audit trail: no data to verify")
-            else:
-                checked = result.get("events_checked", 0)
-                logger.info("FLE audit trail: chain valid (%d events checked)", checked)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("FLE audit trail check failed", exc_info=True)
+        PeriodicGovernanceInspector.audit_trail_check()
 
     def _run_drift_scan(self) -> None:
-        try:
-            import asyncio
-
-            from zephyr.gov_drift.drift_engine import scheduled_light
-
-            result = run_sync(scheduled_light())
-            high_drifts = [
-                d
-                for d in result.drifts
-                if getattr(d, "severity", "").value == "HIGH" or getattr(d, "severity", "") == "HIGH"
-            ]
-            if high_drifts:
-                logger.warning("FLE drift scan: %d HIGH drifts detected", len(high_drifts))
-                self._auto_fix_drifts(high_drifts)
-            else:
-                logger.info("FLE drift scan: clean (%d total, 0 HIGH)", len(result.drifts))
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("FLE drift scan failed", exc_info=True)
+        PeriodicGovernanceInspector.run_drift_scan()
 
     def _auto_fix_drifts(self, drifts: list) -> None:
-        try:
-            from zephyr.infrastructure.auto_fix_engine import AutoFixEngine
+        PeriodicGovernanceInspector.auto_fix_drifts(drifts)
 
-            engine = AutoFixEngine()
-            for d in drifts[:3]:
-                target = getattr(d, "target", "") or getattr(d, "file_path", "") or str(d)
-                action = engine.fix("drift_fixer", target, dry_run=False)
-                if action.status.value == "COMPLETED":
-                    logger.info("FLE auto-fix: drift fixed -> %s", target)
-                else:
-                    logger.warning("FLE auto-fix: drift fix failed -> %s (%s)", target, action.status)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("FLE auto-fix drift failed", exc_info=True)
+    # ── 主管线编排（保留 facade：collect->detect->diagnose->act->verify 编排核心） ──
+    # 调用顺序与 event 状态在全部 handler/协作者间交织，拆分即破坏编排语义，不强行拆。
 
     def _run_once(self) -> FLEPipelineEvent | None:
         import uuid
@@ -467,29 +641,7 @@ class FeedbackLoopScheduler:
         return event
 
     def _persist_failure_pattern(self, event: FLEPipelineEvent) -> None:
-        """5.158.4 重构：从 _run_once 提取 VMS 失败模式持久化逻辑。
-
-        治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等
-        提取稳定 pattern_text: summary > root_cause(去 z_score 浮点) > str() 兜底。
-        """
-        if self.vector_bridge is None or event.diagnosis is None:
-            return
-        try:
-            diag_text = getattr(event.diagnosis, "summary", None)
-            if diag_text is None:
-                root_cause = getattr(event.diagnosis, "root_cause", None)
-                if root_cause:
-                    # root_cause 格式 "Elevated {metric} (z={score:.2f})" -> 保留稳定部分
-                    diag_text = root_cause.split(" (")[0]
-                else:
-                    diag_text = str(event.diagnosis)
-            if diag_text and event.verification is not None:
-                verdict = getattr(event.verification, "verdict", None)
-                if verdict is not None and str(verdict) not in ("HEALTHY", "NOMINAL"):
-                    self.vector_bridge.write_failure_pattern(diag_text)
-                    logger.debug("FLE-Scheduler: failure pattern persisted to VMS lessons")
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("FLE-Scheduler: failed to persist failure pattern to VMS", exc_info=True)
+        ExternalPersistenceWriter.persist_failure_pattern(self.vector_bridge, event)
 
     def _run_safety_gates(self, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> dict[str, bool]:
         return self.safety_gate_manager.run_safety_gates(anomaly, diagnosis)
@@ -499,6 +651,9 @@ class FeedbackLoopScheduler:
 
     def _invoke_fle_gate(self, gate_id: str, gate_file: str, anomaly: AnomalyEvent, diagnosis: Diagnosis) -> bool:
         return self.safety_gate_manager._invoke_fle_gate(gate_id, gate_file, anomaly, diagnosis)
+
+    # ── 管线后自检与门禁（保留 facade：依赖 human_flood_detector/temporal_coherence/  ──
+    # ── diagnosis_trust/metrics_collector 等实例组件字段，与组件状态交织） ──
 
     def _post_pipeline_checks(self, event: FLEPipelineEvent) -> None:
         if event.anomaly is not None:
@@ -552,105 +707,19 @@ class FeedbackLoopScheduler:
             return 0.0
         return getattr(self.metrics_collector.baseline, f"{metric_name}_ema", 0.0)
 
+    # ── 外部持久化写出（委托 ExternalPersistenceWriter） ──────────────
+    # 薄封装保留实例级 patch 面；实现已提取至同文件协作者类。
+
     def _persist_metrics(self, snapshot: MetricSnapshot) -> None:
-        try:
-            from datetime import datetime
-
-            from zephyr.infrastructure.system_telemetry.metrics_bridge import MetricPoint, SourceSystem
-            from zephyr.feedback_loop.db_writer import write_metrics_batch
-
-            ts = datetime.fromtimestamp(snapshot.timestamp, tz=UTC).isoformat()
-            metric_fields = {
-                "system_cpu": "percent",
-                "memory_usage_pct": "percent",
-                "disk_io_wait": "percent",
-                "network_errors_count": "count",
-                "detection_latency_ms": "ms",
-            }
-            points = []
-            for field, unit in metric_fields.items():
-                val = getattr(snapshot, field, 0.0)
-                points.append(
-                    MetricPoint(
-                        timestamp=ts,
-                        source_system=SourceSystem.FEEDBACK_LOOP,
-                        metric_name=f"fle.{field}",
-                        value=float(val),
-                        unit=unit,
-                    )
-                )
-            if points:
-                written = write_metrics_batch(points)
-                if written:
-                    logger.debug("[FLE-DB] persisted %d metrics", written)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("[FLE-DB] metrics persist skipped", exc_info=True)
+        ExternalPersistenceWriter.persist_metrics(snapshot)
 
     def _dispatch_alert_if_anomaly(self, event: FLEPipelineEvent, act_result: ActionRecord) -> None:
-        if event.anomaly is None:
-            return
-        try:
-            from zephyr.feedback_loop.alert_dispatcher import AlertCategory, AlertDispatcher, AlertEvent, AlertSeverity
-
-            anomaly = event.anomaly
-            raw_severity = getattr(anomaly, "severity", 5)
-            if isinstance(raw_severity, (int, float)):
-                if raw_severity >= 8:
-                    severity = AlertSeverity.CRITICAL
-                elif raw_severity >= 5:
-                    severity = AlertSeverity.HIGH
-                elif raw_severity >= 2:
-                    severity = AlertSeverity.MEDIUM
-                else:
-                    severity = AlertSeverity.LOW
-            else:
-                severity = AlertSeverity.MEDIUM
-
-            anomaly_id = getattr(anomaly, "anomaly_id", "unknown")
-            evidence = getattr(anomaly, "evidence", {}) or {}
-            metric_name = evidence.get("metric_name", "") if isinstance(evidence, dict) else ""
-            metric_value = evidence.get("value", 0) if isinstance(evidence, dict) else 0
-            z_score = evidence.get("z_score", 0) if isinstance(evidence, dict) else 0
-
-            diagnosis_text = ""
-            if event.diagnosis is not None:
-                diagnosis_text = getattr(event.diagnosis, "summary", None) or str(event.diagnosis)
-
-            alert = AlertEvent(
-                source="feedback-loop",
-                severity=severity,
-                category=AlertCategory.METRIC_ANOMALY,
-                title=f"FLE Anomaly #{anomaly_id}: {metric_name} z={z_score:.2f}",
-                detail=diagnosis_text[:2000],
-                metric_ref={
-                    "name": metric_name,
-                    "current_value": metric_value,
-                    "z_score": z_score,
-                },
-            )
-            dispatcher = AlertDispatcher()
-            result = dispatcher.dispatch(alert)
-
-            self._persist_alert_and_log(alert, result)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("[FLE-ORC] alert dispatch skipped", exc_info=True)
+        ExternalPersistenceWriter.dispatch_alert_if_anomaly(event, act_result)
 
     def _persist_alert_and_log(self, alert: AlertEvent, dispatch_result: object) -> None:
-        try:
-            from zephyr.feedback_loop.db_writer import FLEWriter
+        ExternalPersistenceWriter.persist_alert_and_log(alert, dispatch_result)
 
-            writer = FLEWriter()
-            writer.write_alert(alert)
-            writer.update_alert_status(alert.event_id, "DISPATCHED")
-            writer.write_dispatch_log(
-                event_id=alert.event_id,
-                target_system="orchestrator",
-                result="success" if dispatch_result.success else "failed",
-                task_id=dispatch_result.task_id,
-                error_message=dispatch_result.error,
-            )
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
+    # ── 事件缓冲与总线发布（保留 facade：直接读写 _events/max_events 实例状态） ──
 
     def _append_event(self, event: FLEPipelineEvent) -> None:
         self._events.append(event)

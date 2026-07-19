@@ -61,9 +61,11 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,17 +117,15 @@ def make_ttl_gate() -> GateSpec:
         # 3. 构造命令——文件数过多时改用 --all-files（避免 WinError 206）
         # --strict-doctype：启用 doc_type hard block（阶段 4 治本，ARCH-TTL-DOC-001）
         if len(rel_files) > _MAX_INLINE_FILES:
-            cmd = [sys.executable, str(check_script), "--all-files", "--strict-doctype"]
+            cmd_args = ["--all-files", "--strict-doctype"]
         else:
-            cmd = [sys.executable, str(check_script), "--strict-doctype"] + rel_files
+            cmd_args = ["--strict-doctype"] + rel_files
 
         # 4. subprocess 调用复用真源
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                cwd=str(project_root),
-                timeout=60,
+            result = run_checker_script(
+                check_script, cmd_args,
+                cwd=project_root, timeout=60, text=False,
             )
         except (subprocess.TimeoutExpired, OSError) as e:
             # fail-closed：执行失败阻断（ttl 是强制字段）

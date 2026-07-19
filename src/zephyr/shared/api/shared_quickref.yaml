@@ -243,9 +243,9 @@ events:
     - ?dict 传事件数据——必须用 Pydantic Schema
 logging:
   file: src/zephyr/shared/logging.py
-  entry_point: from zephyr.shared.utils.logging import get_logger, TraceContext, configure_root_logger
-  pattern: "from zephyr.shared.utils.logging import get_logger, TraceContext\nlog = get_logger(__name__,\
-    \ module_id=\"MOD-XXX-001\")\nwith TraceContext() as trace_id:\n    log.info(\"\
+  entry_point: from zephyr.shared.utils.logging import get_logger, trace_context, configure_root_logger
+  pattern: "from zephyr.shared.utils.logging import get_logger, trace_context\nlog = get_logger(__name__,\
+    \ module_id=\"MOD-XXX-001\")\nwith trace_context() as trace_id:\n    log.info(\"\
     operation started\", extra={\"param\": value})\n"
   anti_patterns:
   - ?print() 或裸 logging.getLogger()——必须用 get_logger()

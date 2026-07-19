@@ -20,7 +20,7 @@
 from pydantic import BaseModel, Field
 
 
-class CT_PR_001(BaseModel):
+class CtPr001(BaseModel):
     """ai_provenance 表写入契约."""
 
     module: str
@@ -31,7 +31,7 @@ class CT_PR_001(BaseModel):
     audit_result: str
 
 
-class CT_PR_002(BaseModel):
+class CtPr002(BaseModel):
     """hash 链校验算法契约."""
 
     prev_hash: str | None = None
@@ -39,7 +39,7 @@ class CT_PR_002(BaseModel):
     algorithm: str = "sha256"
 
 
-class CT_PR_003(BaseModel):
+class CtPr003(BaseModel):
     """Provenance 查询接口."""
 
     module_pattern: str
@@ -47,7 +47,7 @@ class CT_PR_003(BaseModel):
     include_hashes: bool = False
 
 
-class CT_AG_001(BaseModel):
+class CtAg001(BaseModel):
     """AI 审计守卫规则引擎输入/输出."""
 
     rule_id: str
@@ -56,7 +56,7 @@ class CT_AG_001(BaseModel):
     result: str
 
 
-class CT_AG_002(BaseModel):
+class CtAg002(BaseModel):
     """审计结果格式."""
 
     audit_id: str
@@ -65,7 +65,7 @@ class CT_AG_002(BaseModel):
     timestamp: str
 
 
-class CT_VL_001(BaseModel):
+class CtVl001(BaseModel):
     """TechStackValidator 校验结果格式."""
 
     component_id: str
@@ -73,7 +73,7 @@ class CT_VL_001(BaseModel):
     violations: list[str] = Field(default_factory=list)
 
 
-class CT_VL_002(BaseModel):
+class CtVl002(BaseModel):
     """mypy 配置契约."""
 
     strict_mode: bool = True
@@ -81,21 +81,21 @@ class CT_VL_002(BaseModel):
     warn_unused_configs: bool = True
 
 
-class CT_VL_003(BaseModel):
+class CtVl003(BaseModel):
     """ruff 规则集契约."""
 
     select_rules: list[str] = Field(default_factory=lambda: ["E", "F", "I", "N", "W"])
     line_length: int = 120
 
 
-class CT_VL_004(BaseModel):
+class CtVl004(BaseModel):
     """bandit 规则集契约."""
 
     severity_filter: list[str] = Field(default_factory=lambda: ["high", "medium"])
     exclude_dirs: list[str] = Field(default_factory=lambda: [".git", "__pycache__"])
 
 
-class CT_GV_001(BaseModel):
+class CtGv001(BaseModel):
     """治理闭环 EMA 参数."""
 
     alpha: float = 0.1
@@ -103,7 +103,7 @@ class CT_GV_001(BaseModel):
     threshold_multiplier: float = 2.0
 
 
-class CT_GV_002(BaseModel):
+class CtGv002(BaseModel):
     """阈值/持续时间契约."""
 
     metric_id: str
@@ -112,7 +112,7 @@ class CT_GV_002(BaseModel):
     sustain_duration_seconds: int = 30
 
 
-class CT_SB_002(BaseModel):
+class CtSb002(BaseModel):
     """Sandbox 资源限制规范."""
 
     max_memory_bytes: int = 536870912
@@ -120,7 +120,7 @@ class CT_SB_002(BaseModel):
     network_access: bool = False
 
 
-class CT_SB_003(BaseModel):
+class CtSb003(BaseModel):
     """Sandbox 超时策略."""
 
     execution_timeout_seconds: int = 60
@@ -128,7 +128,7 @@ class CT_SB_003(BaseModel):
     grace_period_seconds: int = 5
 
 
-class CT_MB_001(BaseModel):
+class CtMb001(BaseModel):
     """MetricsWriteBuffer 批量写入规格."""
 
     batch_size: int = 100
@@ -136,7 +136,7 @@ class CT_MB_001(BaseModel):
     max_buffer_size: int = 10000
 
 
-class CT_CH_001(BaseModel):
+class CtCh001(BaseModel):
     """capacity_metrics_hourly 聚合策略."""
 
     aggregation_window: str = "1h"
@@ -144,19 +144,19 @@ class CT_CH_001(BaseModel):
 
 
 BATCH2_CONTRACTS = {
-    "CT-PR-001": CT_PR_001,
-    "CT-PR-002": CT_PR_002,
-    "CT-PR-003": CT_PR_003,
-    "CT-AG-001": CT_AG_001,
-    "CT-AG-002": CT_AG_002,
-    "CT-VL-001": CT_VL_001,
-    "CT-VL-002": CT_VL_002,
-    "CT-VL-003": CT_VL_003,
-    "CT-VL-004": CT_VL_004,
-    "CT-GV-001": CT_GV_001,
-    "CT-GV-002": CT_GV_002,
-    "CT-SB-002": CT_SB_002,
-    "CT-SB-003": CT_SB_003,
-    "CT-MB-001": CT_MB_001,
-    "CT-CH-001": CT_CH_001,
+    "CT-PR-001": CtPr001,
+    "CT-PR-002": CtPr002,
+    "CT-PR-003": CtPr003,
+    "CT-AG-001": CtAg001,
+    "CT-AG-002": CtAg002,
+    "CT-VL-001": CtVl001,
+    "CT-VL-002": CtVl002,
+    "CT-VL-003": CtVl003,
+    "CT-VL-004": CtVl004,
+    "CT-GV-001": CtGv001,
+    "CT-GV-002": CtGv002,
+    "CT-SB-002": CtSb002,
+    "CT-SB-003": CtSb003,
+    "CT-MB-001": CtMb001,
+    "CT-CH-001": CtCh001,
 }

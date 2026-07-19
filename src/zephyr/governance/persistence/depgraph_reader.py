@@ -40,6 +40,8 @@ depgraph_reader.py — 依赖图数据库查询工具模块
 from __future__ import annotations
 
 import json
+import logging
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -47,6 +49,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+logger = logging.getLogger(__name__)
 
 
 class _PgConnExecuteWrapper:
@@ -64,6 +68,11 @@ class _PgConnExecuteWrapper:
         cur.execute(sql, params)
         return cur
 
+    @property
+    def closed(self) -> bool:
+        """底层 PG 连接是否已关闭（5.64.2：close() 后各线程据此惰性重建）。"""
+        return bool(self._pg_conn.closed)
+
     def close(self) -> None:
         self._pg_conn.close()
 
@@ -74,17 +83,33 @@ class DepgraphReader:
     def __init__(self, db_path: str | Path | None = None) -> None:
         # db_path 参数保留向后兼容（P2迁移后 PG 连接配置由 depgraph_schema.get_depgraph_pg_connection 管理）
         # 治本（2026-06-27）：不再保存 DB_PATH 常量，防止路径污染
-        self._conn: _PgConnExecuteWrapper | None = None
+        # 5.64.2 修复：连接改为 per-thread（threading.local）——psycopg2 connection
+        # 非线程安全，单一连接跨线程共享会产生交错执行/状态损坏竞态。
+        # 每线程惰性创建独立连接，注册到 _all_conns 供 close() 统一关闭。
+        self._tls = threading.local()
+        self._all_conns: list[_PgConnExecuteWrapper] = []
+        self._all_conns_lock = threading.Lock()
 
     def _get_conn(self) -> _PgConnExecuteWrapper:
-        if self._conn is None:
-            self._conn = _PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=True))
-        return self._conn
+        conn = getattr(self._tls, "conn", None)
+        if conn is None or conn.closed:
+            conn = _PgConnExecuteWrapper(get_depgraph_pg_connection(autocommit=True))
+            self._tls.conn = conn
+            with self._all_conns_lock:
+                self._all_conns.append(conn)
+        return conn
 
     def close(self) -> None:
-        if self._conn is not None:
-            self._conn.close()
-            self._conn = None
+        """关闭所有线程的连接（5.64.5 同款异常隔离：每个 close 独立 try/except 记录后继续）。"""
+        with self._all_conns_lock:
+            conns, self._all_conns = self._all_conns, []
+        for conn in conns:
+            try:
+                conn.close()
+            except Exception:  # noqa: BLE001 — 5.64.5：异常隔离，记录后继续
+                logger.warning("depgraph_reader: failed to close conn", exc_info=True)
+        if hasattr(self._tls, "conn"):
+            self._tls.conn = None
 
     def __enter__(self) -> DepgraphReader:
         return self

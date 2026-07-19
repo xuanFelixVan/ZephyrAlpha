@@ -749,6 +749,8 @@ def _print_critical_warn_banner(project_root: "object", context: str) -> None:
     warns = _check_recent_critical_warns(project_root)
     if not warns:
         return
+    # 保留 print（5.20 B 类）：本函数职责即打印醒目横幅（"工人失败时大声喊"），
+    # 必须不依赖 logging 配置直出控制台
     print("\n" + "=" * 78)
     print(f"!! CRITICAL RECONCILER FAILURES DETECTED (last 24h) -- context: {context}")
     print(f"   {len(warns)} recent critical_warn(s) in reconcile_execution_log:")
@@ -824,6 +826,8 @@ def _print_block_banner(project_root: "object", context: str) -> "str | None":
     blocks = _check_recent_blocks(project_root)
     if not blocks:
         return None
+    # 保留 print（5.20 B 类）：本函数职责即打印阻断横幅（"工人失败时锁门"），
+    # 必须不依赖 logging 配置直出控制台
     print("\n" + "=" * 78)
     print(f"!!! BLOCKING RECONCILER FAILURES (last 24h) -- context: {context}")
     print(f"   {len(blocks)} recent block_next(s) in reconcile_execution_log:")

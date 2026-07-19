@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §4.4
 # [MODULE] zephyr.gov_audit.writer
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.gov_audit.models
+# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.shared.session.session_audit
 # [CONSUMERS] audit-orchestrator.pipeline_runner; cli
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,7 +14,6 @@
 # [TESTS] tests/audit-orchestrator/test_writer.py
 # [A_module] module_id=MOD-GOV_writer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from zephyr.shared.io.serialization import dumps
 import hashlib
 import hmac
 import json
@@ -24,12 +23,15 @@ import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.gov_audit.contracts import AuditWriter as AuditWriterABC  # 5.104.15 修复: 继承ABC契约
 from zephyr.gov_audit.models import AuditEventType, AuditIssue, GlobalAuditReport
+from zephyr.shared.io.serialization import dumps
+from zephyr.shared.session.session_audit import (
+    register_audit_writer_provider as _register_audit_writer_provider,
+)
 from zephyr.shared.utils.time_utils import now_utc
-from typing import Final
 
 logger = logging.getLogger(__name__)
 
@@ -345,3 +347,9 @@ def _resolve_hmac_key(config=None) -> bytes:
         "ZEPHYR_AUDIT_HMAC_SECRET 未设置，使用公开默认密钥（不提供任何安全保证，仅限开发/测试）"
     )
     return b"zephyr-audit-hmac-default-key"
+
+
+# 5.174-M6 治本：模块 import 时向 L0 shared 层 session_audit 注册审计写入器工厂——
+# 依赖注入消除 session_audit.append_record 原 L0→L2 延迟 import（shared 禁止向上
+# import governance；依赖方向 governance(L2)→shared(L0)，符合向下依赖原则）。
+_register_audit_writer_provider(get_audit_writer)

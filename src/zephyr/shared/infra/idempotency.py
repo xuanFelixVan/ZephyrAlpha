@@ -94,7 +94,7 @@ class IdempotencyStore:
         store = IdempotencyStore(default_ttl_seconds=86400)
 
         async with store.operation("req-abc123") as record:
-            if record.status == IdempotencyStatus.COMPLETED:
+            if record.status is IdempotencyStatus.COMPLETED:
                 return record.result  # 直接返回缓存结果
 
             result = await do_work()
@@ -124,7 +124,7 @@ class IdempotencyStore:
         record = self._records.get(key)
         if record is None:
             return None
-        if record.status == IdempotencyStatus.COMPLETED:
+        if record.status is IdempotencyStatus.COMPLETED:
             elapsed = time.monotonic() - record.completed_at
             if elapsed > self._default_ttl:
                 del self._records[key]
@@ -136,7 +136,7 @@ class IdempotencyStore:
 
         existing = self._records.get(key)
         if existing is not None:
-            if existing.status == IdempotencyStatus.PROCESSING:
+            if existing.status is IdempotencyStatus.PROCESSING:
                 raise IdempotencyError(
                     f"idempotency key '{key}' is already being processed",
                     details={"key": key, "status": existing.status.value},

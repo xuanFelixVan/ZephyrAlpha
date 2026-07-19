@@ -35,7 +35,7 @@ AI 排障时无法快速定位根因的问题。
 AI 施工约定：
   - 所有模块 MUST 使用 get_logger(__name__) 获取日志器
   - 禁止直接使用 print() 或裸 logging.getLogger()
-  - trace_id 通过 TraceContext 上下文管理器自动传播
+  - trace_id 通过 trace_context 上下文管理器自动传播
 
 SSoT: MOD-INF-016 §2.10 shared-logging
 Version: 0.1.0
@@ -61,6 +61,7 @@ __all__ = [
     "module_id_var",
     "request_id_var",
     "session_id_var",
+    "trace_context",
     "trace_id_var",
 ]
 
@@ -287,7 +288,7 @@ def get_logger(
 
 
 @contextmanager
-def TraceContext(
+def trace_context(
     trace_id: str | None = None,
     *,
     session_id: str | None = None,
@@ -297,16 +298,16 @@ def TraceContext(
     """trace_id 传播上下文管理器。
 
     在 with 块内，所有日志调用自动携带指定的 trace_id / session_id / module_id / request_id。
-    嵌套 TraceContext 时，内层恢复外层 token。
+    嵌套 trace_context 时，内层恢复外层 token。
 
     用法:
-        with TraceContext() as tc:
+        with trace_context() as tc:
             log.info("inside trace")
             # 也可以子函数中嵌套:
-            with TraceContext() as tc2:
+            with trace_context() as tc2:
                 log.info("sub-trace")
 
-        with TraceContext(session_id="sess-001", module_id="MOD-INF-016", request_id="req-abc"):
+        with trace_context(session_id="sess-001", module_id="MOD-INF-016", request_id="req-abc"):
             log.info("scoped log")
     """
     if trace_id is None:
@@ -324,6 +325,10 @@ def TraceContext(
         session_id_var.reset(token_session)
         module_id_var.reset(token_module)
         request_id_var.reset(token_request)
+
+
+# [DEPRECATED] 兼容别名，新代码用 trace_context
+TraceContext = trace_context
 
 
 _root_configured = False

@@ -44,7 +44,7 @@ class TestLogRollback:
             agent_id="agent-1",
             permission="rollback",
             resource="src/main.py",
-            decision_basis="Rollback→Audit: abc123",
+            decision_basis="Rollback->Audit: abc123",
             session_id="sess-1",
             granted=True,
             metadata={"rollback_target": "abc123"},
@@ -114,7 +114,7 @@ class TestLogRollback:
             rollback_target="commit-sha",
         )
         call_kwargs = mock_write.call_args
-        assert call_kwargs[1]["decision_basis"] == "Rollback→Audit: commit-sha"
+        assert call_kwargs[1]["decision_basis"] == "Rollback->Audit: commit-sha"
 
     @patch("zephyr.gov_audit.contracts.AuditWriter")
     def test_log_rollback_returns_writer_result(self, mock_writer_cls):
@@ -144,4 +144,4 @@ class TestLogRollback:
         call_kwargs = mock_write.call_args
         assert call_kwargs[1]["agent_id"] == ""
         assert call_kwargs[1]["resource"] == ""
-        assert call_kwargs[1]["decision_basis"] == "Rollback→Audit: "
+        assert call_kwargs[1]["decision_basis"] == "Rollback->Audit: "

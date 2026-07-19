@@ -59,7 +59,7 @@ class GateCheckResult:
 
     @property
     def blocked(self) -> bool:
-        return self.status == WarmHotStatus.BLOCKED
+        return self.status is WarmHotStatus.BLOCKED
 
     @property
     def requires_approval(self) -> bool:

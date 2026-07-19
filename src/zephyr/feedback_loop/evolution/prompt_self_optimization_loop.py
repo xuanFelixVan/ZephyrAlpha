@@ -125,7 +125,7 @@ class PromptSelfOptimizationLoop:
     def get_optimization_status(self) -> dict:
         return {
             "total_variants": len(self.variants),
-            "adopted_count": sum(1 for v in self.variants.values() if v.status == PromptVariantStatus.ADOPTED),
+            "adopted_count": sum(1 for v in self.variants.values() if v.status is PromptVariantStatus.ADOPTED),
             "cycles_since_last": self.cycles_since_last_optimization,
             "cooldown_remaining": max(0, self.cooldown_cycles - self.cycles_since_last_optimization),
             "can_propose": self.cycles_since_last_optimization >= self.cooldown_cycles,

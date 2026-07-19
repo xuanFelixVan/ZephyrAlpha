@@ -45,7 +45,9 @@ except ImportError:
 class BudgetRBACBridge:
     """预算消耗->RBAC权限降级."""
 
-    def check_budget(self, agent_id: str, token_used: int, token_limit: int) -> dict:
+    def evaluate_budget(self, agent_id: str, token_used: int, token_limit: int) -> dict:
+        """评估预算消耗并返回配额裁决（5.177 修复：原名 check_budget，
+        返回 dict 违反 check_ 前缀返回布尔的命名直觉，更名 evaluate_budget）。"""
         exceeded = token_used > token_limit
 
         return {

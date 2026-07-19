@@ -1,7 +1,7 @@
 # [BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] zephyr.gov_enforcement.rule_enforcement.dlq_retry_policy
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.persistence.sqlite_schema
+# [DEPENDENCIES] zephyr.shared.events.dlq; zephyr.shared.infra.observer; zephyr.shared.io.paths
 # [CONSUMERS] zephyr.infrastructure.pipeline.dead_letter_queue; AutoRuntime Core retry phase
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -14,15 +14,51 @@
 # [TESTS] scripts/connect/dlq_retry.py --trigger
 # [A_module] module_id=MOD-DAT_dlq_retry_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""DLQ 重试策略 — 指数退避自动重试"""
+"""DLQ 重试策略 — 对接 shared/events/dlq.DeadLetterQueue 的真重试。
+
+5.40.4 修复：原 retry_pending 仅 SELECT COUNT(*) 打印日志后返回 degraded
+（假重试——死信永远不被重新投递）。现对接项目已有 DLQ 投递接口：
+
+  - 取出待重试死信：`DeadLetterQueue.pop_retryable()`（过滤 resolved/超次数/未到点）
+  - 重新投递：`Observer.emit(event_type, payload)`，返回成功处理的 handler 数
+  - 投递成功（>=1 个 handler 成功）-> `mark_resolved(db_id)`
+  - 投递失败（无订阅者或全部失败）-> `record_failure(dl)`（attempt+1，安排下次重试）
+  - 本次失败且已达 max_attempts -> `mark_exhausted(db_id)`（终态，不再重试）
+
+注：若 observer 已被 DLQ attach 包装（attach_dlq_to_observer），仍失败的 handler
+会被自动重新捕获为新死信（幂等键去重）。退避间隔由 DeadLetterQueue 的
+retry_interval 控制（构造参数，默认 60s）。
+"""
 
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from zephyr.shared.events.dlq import DeadLetter, DeadLetterQueue
+    from zephyr.shared.infra.observer import Observer
 
 logger = logging.getLogger(__name__)
-__all__ = ["DLQRetryPolicy", "RetryResult", "retry_pending"]
+__all__ = ["DLQRetryPolicy", "RetryResult", "get_default_observer", "retry_pending"]
+
+_default_observer: "Observer | None" = None
+
+
+def get_default_observer() -> "Observer":
+    """进程级默认重投递总线（懒加载单例）。
+
+    生产接线：运行时应将事件消费者 subscribe 到本总线（或通过
+    `DLQRetryPolicy(observer=...)` 注入自己的总线），否则重投递因
+    无订阅者计为失败并按 max_attempts 耗尽。
+    """
+    global _default_observer
+    if _default_observer is None:
+        from zephyr.shared.infra.observer import Observer
+
+        _default_observer = Observer()
+    return _default_observer
 
 
 @dataclass
@@ -34,30 +70,73 @@ class RetryResult:
 
 
 class DLQRetryPolicy:
-    def retry_pending(self) -> RetryResult:
-        # 5.15.3 修复：dlq_messages 表不存在于 sqlite_schema，先检查 sqlite_master
-        # 避免 OperationalError 异常路径；BACKOFF_SCHEDULE 死代码已删除
-        try:
-            from zephyr.governance.persistence.sqlite_schema import get_db_connection
+    """死信重试策略——从 DeadLetterQueue 取待重试死信并真重投递。
 
-            conn = get_db_connection()
-            try:
-                # 检查 dlq_messages 表是否存在
-                table_exists = conn.execute(
-                    "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='dlq_messages'"
-                ).fetchone()[0]
-                if table_exists == 0:
-                    logger.info("[DLQ] dlq_messages table not found, retry not connected")
-                    return RetryResult(retried=0, succeeded=0, failed=0, status="degraded")
-                rows = conn.execute("SELECT COUNT(*) FROM dlq_messages").fetchone()
-                total = rows[0] if rows else 0
-                logger.info("[DLQ] pending messages: %d (retry not connected)", total)
-                return RetryResult(retried=0, succeeded=0, failed=0, status="degraded")
-            finally:
-                conn.close()
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+    Args:
+        dlq: 注入的 DeadLetterQueue（测试/定制 DB 路径）；None -> 默认 governance.db。
+        observer: 注入的重投递总线；None -> 进程级默认总线（get_default_observer()）。
+    """
+
+    def __init__(self, dlq: "DeadLetterQueue | None" = None, observer: "Observer | None" = None) -> None:
+        self._dlq = dlq
+        self._observer = observer
+
+    def _get_dlq(self) -> "DeadLetterQueue":
+        if self._dlq is None:
+            from zephyr.shared.events.dlq import DeadLetterQueue
+            from zephyr.shared.io.paths import DB_PATH
+
+            self._dlq = DeadLetterQueue(str(DB_PATH))
+        return self._dlq
+
+    def _get_observer(self) -> "Observer":
+        if self._observer is None:
+            self._observer = get_default_observer()
+        return self._observer
+
+    @staticmethod
+    def _redeliver(observer: "Observer", dl: "DeadLetter") -> bool:
+        """重投递单条死信。emit 返回成功处理的 handler 数，> 0 视为投递成功。"""
+        try:
+            delivered = observer.emit(dl.event_type, dl.payload)
+        except Exception:  # noqa: BLE001 — emit 实现异常不得中断批量重试
+            logger.warning("[DLQ] redeliver raised for dead letter id=%s", dl.db_id, exc_info=True)
+            return False
+        return delivered > 0
+
+    def retry_pending(self) -> RetryResult:
+        try:
+            dlq = self._get_dlq()
+            pending = dlq.pop_retryable()
+        except Exception as e:  # noqa: BLE001 — DB 不可达等降级为 degraded，不阻断调用方
             logger.warning("[DLQ] degraded: %s", e, exc_info=True)
             return RetryResult(status="degraded")
+
+        if not pending:
+            return RetryResult(retried=0, succeeded=0, failed=0, status="complete")
+
+        observer = self._get_observer()
+        result = RetryResult(status="complete")
+        for dl in pending:
+            result.retried += 1
+            if self._redeliver(observer, dl):
+                dlq.mark_resolved(dl.db_id)  # type: ignore[arg-type]
+                result.succeeded += 1
+            else:
+                # 失败：已达最大次数 -> 终态 exhausted；否则 record_failure 安排下次重试
+                if dl.attempt_count + 1 >= dl.max_attempts:
+                    dlq.mark_exhausted(dl.db_id)  # type: ignore[arg-type]
+                else:
+                    dlq.record_failure(dl)
+                result.failed += 1
+
+        logger.info(
+            "[DLQ] retry_pending: retried=%d succeeded=%d failed=%d",
+            result.retried,
+            result.succeeded,
+            result.failed,
+        )
+        return result
 
 
 def retry_pending() -> RetryResult:

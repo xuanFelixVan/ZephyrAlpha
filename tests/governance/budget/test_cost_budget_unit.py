@@ -85,7 +85,7 @@ class TestCostBudget:
         budget = CostBudget(hard_limit=10.00)
         budget.set_pricing("openai", "gpt-4o", input_1k=0.0025, output_1k=0.0100)
         budget.record_usage("openai", "gpt-4o", input_tokens=1000, output_tokens=500)
-        budget.check_budget()
+        budget.assert_budget()
 
     def test_check_budget_exceeded_raises(self):
         budget = CostBudget(hard_limit=0.001)
@@ -93,7 +93,7 @@ class TestCostBudget:
         budget.record_usage("openai", "gpt-4o", input_tokens=1000)
 
         with pytest.raises(CostBudgetExceededError) as exc_info:
-            budget.check_budget("openai", "gpt-4o")
+            budget.assert_budget("openai", "gpt-4o")
         assert exc_info.value.provider == "openai"
         assert exc_info.value.model == "gpt-4o"
 
@@ -144,6 +144,6 @@ class TestCostBudget:
         budget.record_usage("openai", "gpt-4o", input_tokens=10000)
 
         with pytest.raises(CostBudgetExceededError) as exc_info:
-            budget.check_budget("openai", "gpt-4o")
+            budget.assert_budget("openai", "gpt-4o")
         assert "Cost budget exceeded" in str(exc_info.value)
         assert "openai" in str(exc_info.value)

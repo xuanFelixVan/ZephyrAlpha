@@ -140,7 +140,7 @@ class EngineDegradationManager:
     @property
     def is_degraded(self) -> bool:
         """是否处于降级状态（级别 != NORMAL）."""
-        return self._state.level != DegradationLevel.NORMAL
+        return self._state.level is not DegradationLevel.NORMAL
 
     def should_block(self) -> bool:
         """是否应该阻断操作."""
@@ -250,7 +250,7 @@ class EngineDegradationManager:
         Returns:
             bool: 如果部分失败持续时间 > 3600 秒则返回 True
         """
-        if self._state.level != DegradationLevel.PARTIAL_FAILURE:
+        if self._state.level is not DegradationLevel.PARTIAL_FAILURE:
             return False
         if self._state.partial_failure_start is None:
             return False

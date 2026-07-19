@@ -82,7 +82,7 @@ class SimulationResult:
 
     @property
     def is_safe(self) -> bool:
-        return self.status != SimulationStatus.BLOCKED
+        return self.status is not SimulationStatus.BLOCKED
 
 
 def _scan_dangerous_patterns(
@@ -130,7 +130,7 @@ def _finalize_risk_and_status(result: SimulationResult) -> None:
     if result.risk is SimulationRisk.NONE and result.warnings:
         result.risk = SimulationRisk.LOW
 
-    if result.warnings and result.status == SimulationStatus.PASSED:
+    if result.warnings and result.status is SimulationStatus.PASSED:
         result.status = SimulationStatus.PASSED_WITH_WARNINGS
 
 

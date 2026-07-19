@@ -30,6 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.paths import DB_PATH
 
 __all__ = ["FLE_METRICS_TABLE_DDL", "bulk_record_via_db_contract", "record_via_db_contract"]
 
@@ -87,9 +88,11 @@ def record_via_db_contract(
     task_id: str = "",
     cost_usd: float = 0.0,
     token_count: int = 0,
-    db_path: str | Path = "data/databases/governance.db",
+    db_path: str | Path | None = None,
 ) -> int:
-    conn = get_db_connection(Path(db_path))
+    # 5.34.7 治本：默认 None -> SSoT DB_PATH（原字面量相对路径
+    # "data/databases/governance.db" 依赖 cwd，语义脆弱）
+    conn = get_db_connection(DB_PATH if db_path is None else Path(db_path))
     try:
         _ensure_table(conn)
         timestamp = datetime.now(UTC).isoformat()
@@ -111,11 +114,12 @@ def record_via_db_contract(
 
 def bulk_record_via_db_contract(
     records: list[dict[str, Any]],
-    db_path: str | Path = "data/databases/governance.db",
+    db_path: str | Path | None = None,
 ) -> int:
     if not records:
         return 0
-    conn = get_db_connection(Path(db_path))
+    # 5.34.7 治本：默认 None -> SSoT DB_PATH（同 record_via_db_contract）
+    conn = get_db_connection(DB_PATH if db_path is None else Path(db_path))
     try:
         _ensure_table(conn)
         # 5.44.3 修复：原 for rec in records: conn.execute(...) 为 N+1 往返，

@@ -25,7 +25,7 @@ class TestBudgetRBACBridgeInit:
 class TestCheckBudget:
     def test_within_budget(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent1", 50, 100)
+        result = bridge.evaluate_budget("agent1", 50, 100)
         assert result["agent_id"] == "agent1"
         assert result["token_used"] == 50
         assert result["token_limit"] == 100
@@ -34,43 +34,43 @@ class TestCheckBudget:
 
     def test_exceeded_budget(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent2", 150, 100)
+        result = bridge.evaluate_budget("agent2", 150, 100)
         assert result["exceeded"] is True
         assert result["action"] == "REVOKE_WRITE"
 
     def test_exact_limit(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent3", 100, 100)
+        result = bridge.evaluate_budget("agent3", 100, 100)
         assert result["exceeded"] is False
         assert result["action"] == "ALLOW"
 
     def test_zero_usage(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent4", 0, 100)
+        result = bridge.evaluate_budget("agent4", 0, 100)
         assert result["exceeded"] is False
         assert result["action"] == "ALLOW"
 
     def test_zero_limit_zero_usage(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent5", 0, 0)
+        result = bridge.evaluate_budget("agent5", 0, 0)
         assert result["exceeded"] is False
         assert result["action"] == "ALLOW"
 
     def test_zero_limit_nonzero_usage(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent6", 1, 0)
+        result = bridge.evaluate_budget("agent6", 1, 0)
         assert result["exceeded"] is True
         assert result["action"] == "REVOKE_WRITE"
 
     def test_result_has_all_keys(self):
         bridge = BudgetRBACBridge()
-        result = bridge.check_budget("agent7", 10, 50)
+        result = bridge.evaluate_budget("agent7", 10, 50)
         expected_keys = {"agent_id", "token_used", "token_limit", "exceeded", "action"}
         assert set(result.keys()) == expected_keys
 
     def test_different_agents_independent(self):
         bridge = BudgetRBACBridge()
-        r1 = bridge.check_budget("a1", 50, 100)
-        r2 = bridge.check_budget("a2", 200, 100)
+        r1 = bridge.evaluate_budget("a1", 50, 100)
+        r2 = bridge.evaluate_budget("a2", 200, 100)
         assert r1["action"] == "ALLOW"
         assert r2["action"] == "REVOKE_WRITE"

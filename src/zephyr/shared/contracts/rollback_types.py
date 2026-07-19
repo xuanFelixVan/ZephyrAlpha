@@ -53,4 +53,4 @@ class RollbackResult(BaseModel):
 
     @property
     def needs_escalation(self) -> bool:
-        return self.status == RollbackStatus.FAILED or self.validation_result == ValidationResult.FAIL
+        return self.status is RollbackStatus.FAILED or self.validation_result is ValidationResult.FAIL

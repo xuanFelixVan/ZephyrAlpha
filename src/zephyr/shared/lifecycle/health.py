@@ -120,11 +120,11 @@ def _derive_summary(health_map: dict[str, ModuleHealth]) -> HealthSummary:
 
     for mod_health in health_map.values():
         details.append(mod_health)
-        if mod_health.state == LifecycleState.FAILED:
+        if mod_health.state is LifecycleState.FAILED:
             failed_count += 1
             unhealthy_count += 1
             unhealthy_modules.append(mod_health.module_name)
-        elif mod_health.state == LifecycleState.DEGRADED:
+        elif mod_health.state is LifecycleState.DEGRADED:
             degraded_count += 1
             degraded_modules.append(mod_health.module_name)
         elif not mod_health.healthy:

@@ -110,11 +110,11 @@ class StateMigrationValidator:
             "diverged_count": len(diverged_fields),
             "recommendation": (
                 "rollback_and_investigate"
-                if result == MigrationResult.INCOMPATIBLE
+                if result is MigrationResult.INCOMPATIBLE
                 else "review_diverged_fields"
-                if result == MigrationResult.PARTIAL
+                if result is MigrationResult.PARTIAL
                 else "proceed"
-                if result == MigrationResult.COMPATIBLE
+                if result is MigrationResult.COMPATIBLE
                 else "proceed_with_caution"
             ),
         }
@@ -125,8 +125,8 @@ class StateMigrationValidator:
         if not results:
             return {"safe": False, "reason": "no_migration_tested", "recommendation": "run_migration_dry_run"}
 
-        incompatible = sum(1 for r in results.values() if r == MigrationResult.INCOMPATIBLE)
-        partial = sum(1 for r in results.values() if r == MigrationResult.PARTIAL)
+        incompatible = sum(1 for r in results.values() if r is MigrationResult.INCOMPATIBLE)
+        partial = sum(1 for r in results.values() if r is MigrationResult.PARTIAL)
 
         return {
             "safe": incompatible == 0,

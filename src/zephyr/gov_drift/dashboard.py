@@ -30,6 +30,7 @@ import json
 import os
 import sqlite3
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
+from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -81,7 +82,10 @@ class Dashboard:
 
         self._project_root = project_root
 
-        self._db_path = os.path.join(project_root, "data", "databases", "governance.db")
+        # 5.34.7 治本：governance.db 路径从 SSoT（zephyr.shared.io.paths.DB_PATH）派生，
+        # 消除字面量 "data/databases/governance.db" 硬编码；自定义 project_root（测试隔离）
+        # 时按 DB_PATH 相对 REPO_ROOT 的相对路径重定位。
+        self._db_path = os.path.join(project_root, *DB_PATH.relative_to(REPO_ROOT).parts)
 
         self._registry_path = os.path.join(os.path.dirname(__file__), "_detector-registry.yaml")
 

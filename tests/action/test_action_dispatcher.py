@@ -259,7 +259,7 @@ class TestActionDispatcherCreateFile:
 
     def test_create_file_path_escape(self, tmp_path):
         d = ActionDispatcher()
-        with patch("zephyr.trading.action_dispatcher.PROJECT_ROOT", tmp_path):
+        with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
             report = d._create_file({"file_path": "../../etc/passwd", "content": "x"})
         assert report.status == "error"
         assert "escapes" in report.detail
@@ -268,14 +268,14 @@ class TestActionDispatcherCreateFile:
         d = ActionDispatcher()
         existing = tmp_path / "exists.py"
         existing.write_text("old", encoding="utf-8")
-        with patch("zephyr.trading.action_dispatcher.PROJECT_ROOT", tmp_path):
+        with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
             report = d._create_file({"file_path": "exists.py", "content": "new"})
         assert report.status == "skipped"
         assert "already exists" in report.detail
 
     def test_create_file_success_dry_run(self, tmp_path):
         d = ActionDispatcher(dry_run=True)
-        with patch("zephyr.trading.action_dispatcher.PROJECT_ROOT", tmp_path):
+        with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
             report = d._create_file({"file_path": "new_file.py", "content": "print('hi')"})
         assert report.status == "created"
         assert not (tmp_path / "new_file.py").exists()
@@ -291,7 +291,7 @@ class TestActionDispatcherDeleteFile:
         d = ActionDispatcher(dry_run=True)
         target = tmp_path / "to_delete.py"
         target.write_text("content", encoding="utf-8")
-        with patch("zephyr.trading.action_dispatcher.PROJECT_ROOT", tmp_path):
+        with patch("zephyr.trading.action_dispatcher.REPO_ROOT", tmp_path):
             with patch("zephyr.trading.action_dispatcher.BRAIN_TRASH_DIR", tmp_path / ".brain_trash"):
                 with patch.object(d, "_find_module_file", return_value=target):
                     with patch.object(d, "_extract_module_name", return_value="to_delete"):

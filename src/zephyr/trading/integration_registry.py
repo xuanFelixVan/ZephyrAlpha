@@ -57,18 +57,43 @@ class IntegrationRegistry:
         self._points[point.point_id] = point
 
     def validate_all(self) -> ValidationReport:
+        """运行时探测所有集成点（5.71.2 治本：非仅 import——import + 属性解析 + None 检查）。
+
+        判定：
+          - 模块 import 失败 -> DISCONNECTED
+          - interface 含 "module:attr" 时 attr 不可解析 / 解析为 None -> DEGRADED
+          - 全部通过 -> CONNECTED
+        """
+        import importlib
+
         report = ValidationReport(total=len(self._points))
         for point in self._points.values():
             try:
                 parts = point.interface.split(":")
                 mod_path = parts[0]
-                __import__(mod_path)
+                attr_path = parts[1] if len(parts) > 1 else ""
+                module = importlib.import_module(mod_path)
+                if attr_path:
+                    target: object = module
+                    for attr in attr_path.split("."):
+                        target = getattr(target, attr)
+                    if target is None:
+                        point.status = "DEGRADED"
+                        report.degraded += 1
+                        report.details.append(
+                            {"point_id": point.point_id, "error": f"{point.interface} resolved to None"}
+                        )
+                        continue
                 point.status = "CONNECTED"
                 report.connected += 1
             except ImportError:
                 point.status = "DISCONNECTED"
                 report.disconnected += 1
                 report.details.append({"point_id": point.point_id, "error": f"cannot import {point.interface}"})
+            except AttributeError as e:
+                point.status = "DEGRADED"
+                report.degraded += 1
+                report.details.append({"point_id": point.point_id, "error": f"attr unresolved: {e}"})
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 point.status = "DEGRADED"
                 report.degraded += 1

@@ -68,26 +68,31 @@ P2 迁移后 schema 真源（重要）
 
 用法
 ----
-    from zephyr.governance.depgraph_schema import init_db, get_depgraph_pg_connection
+    from zephyr.governance.depgraph_schema import init_db, get_depgraph_pg_connection, release_depgraph_pg_connection
 
     init_db()              # 幂等，验证 PG schema 健康性
-    conn = get_depgraph_pg_connection()   # 返回 PostgreSQL 连接（psycopg2）
+    conn = get_depgraph_pg_connection()   # 返回 PostgreSQL 连接（psycopg2，默认池化 §5.64.1）
+    release_depgraph_pg_connection(conn)  # 归还池化连接（conn.close() 亦安全，但失去复用收益）
 
 P2 迁移后路径真源（2026-06-27 治本）
 -----------------------------------
   物理文件 data/databases/depgraph.db 已删除归档，逻辑库迁移至 PostgreSQL (连接串由 get_depgraph_pg_connection() 从环境变量派生)。
   禁止定义 DB_PATH = .../depgraph.db 常量（路径污染源）。
   PG 连接入口唯一真源：get_depgraph_pg_connection()（本模块定义）。
-  PG 连接配置真源：config/.env.postgres（_PG_ENV_PATH）。
+  PG 连接配置真源（§5.34.5）：环境变量 DATABASE_URL 优先，config/.env.postgres（_PG_ENV_PATH）为 fallback。
 """
 
 from __future__ import annotations
 
+import atexit
 import os
+import threading
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 import psycopg2
+from psycopg2.pool import PoolError, ThreadedConnectionPool
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.security.secrets import SecretsError, get_secret_from_file  # §5.34.8 修复：DB密码走SecretProvider真源
@@ -115,14 +120,19 @@ _PG_OPTIONAL_KEYS: tuple[str, ...] = (
 
 
 def _load_pg_config() -> dict[str, str]:
-    """从 config/.env.postgres 加载 PostgreSQL 连接参数。
+    """加载 PostgreSQL 连接参数。
 
-    §5.34.8 修复：改用 get_secret_from_file（SecretProvider 真源），
+    §5.34.5 修复：优先读环境变量 DATABASE_URL（postgres://user:pass@host:port/db），
+    未设置时回退 config/.env.postgres 文件。
+    §5.34.8 修复：文件路径走 get_secret_from_file（SecretProvider 真源），
     优先级 os.environ > 指定文件 > 抛异常。
     必需字段：POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
     可选字段：POSTGRES_READER_USER/PASSWORD, POSTGRES_WRITER_USER/PASSWORD
         （裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: read_only 分级访问所需，缺失时由 _build_pg_dsn 报错）
     """
+    database_url = os.environ.get("DATABASE_URL", "").strip()
+    if database_url:
+        return _load_pg_config_from_url(database_url)
     if not _PG_ENV_PATH.exists():
         raise FileNotFoundError(
             "PG 连接配置文件不存在\n"
@@ -141,6 +151,37 @@ def _load_pg_config() -> dict[str, str]:
     if missing:
         raise ValueError(f"PG 连接配置缺少必需字段: {missing} (文件: {_PG_ENV_PATH})")
     # 加载可选字段（reader/writer 凭证，缺失不报错，由 _build_pg_dsn 在使用时检查）
+    for key in _PG_OPTIONAL_KEYS:
+        try:
+            config[key] = get_secret_from_file(key, _PG_ENV_PATH)
+        except SecretsError:
+            pass
+    return config
+
+
+def _load_pg_config_from_url(database_url: str) -> dict[str, str]:
+    """从 DATABASE_URL 环境变量解析 PG 连接参数（§5.34.5）。
+
+    格式：postgres://user:pass@host:port/db 或 postgresql://...（user/pass 支持 URL 编码）。
+    角色凭证（POSTGRES_READER_*/POSTGRES_WRITER_*）URL 无法表达，仍走
+    get_secret_from_file（os.environ > config/.env.postgres 若存在），缺失不报错。
+    """
+    parsed = urlparse(database_url)
+    if parsed.scheme not in ("postgres", "postgresql"):
+        raise ValueError(
+            f"DATABASE_URL scheme 非法: {parsed.scheme!r}（要求 postgres:// 或 postgresql://）"
+        )
+    config: dict[str, str] = {
+        "POSTGRES_HOST": parsed.hostname or "",
+        "POSTGRES_PORT": str(parsed.port or 5432),
+        "POSTGRES_DB": parsed.path.lstrip("/"),
+        "POSTGRES_USER": unquote(parsed.username) if parsed.username else "",
+        "POSTGRES_PASSWORD": unquote(parsed.password) if parsed.password else "",
+    }
+    missing = [key for key in _PG_REQUIRED_KEYS if not config[key]]
+    if missing:
+        raise ValueError(f"DATABASE_URL 缺少必需字段: {missing}")
+    # 可选角色凭证：仍走 SecretProvider 真源（os.environ > 文件），文件缺失不报错
     for key in _PG_OPTIONAL_KEYS:
         try:
             config[key] = get_secret_from_file(key, _PG_ENV_PATH)
@@ -1329,9 +1370,160 @@ def init_db(
                 count = cur.fetchone()[0]
                 cur.execute("SELECT COALESCE(MAX(version), 0) FROM _schema_version")
                 ver = cur.fetchone()[0]
+                # 保留 print（5.20 B 类）：echo=True 是调用方显式请求控制台输出（CLI 初始化场景）
                 print(f"[depgraph_schema] PG schema healthy: {count} tables, version=v{ver}")
     finally:
-        conn.close()
+        release_depgraph_pg_connection(conn)
+
+
+# ---------------------------------------------------------------------------
+# §5.64.1 治本：per-role 轻量连接池（ThreadedConnectionPool, minconn=1 maxconn=5）
+# ---------------------------------------------------------------------------
+
+_POOL_MINCONN = 1
+_POOL_MAXCONN = 5
+_POOLED_CONNS_SWEEP_THRESHOLD = 512  # 归属登记表超过此规模时清理已关闭连接的条目
+
+
+class _SelfHealingPool(ThreadedConnectionPool):
+    """自愈连接池：回收被调用方 close() 但未归还的连接槽位（防池耗尽）。
+
+    背景：存量调用方在 finally 中 conn.close()（未感知池）。close() 后槽位残留在
+    _used 中，累积 maxconn 个后池耗尽（PoolError）。getconn 前清理已关闭连接的
+    槽位 + 丢弃服务端已断开的残留连接，使 close() 与 release 两种归还方式都安全。
+    """
+
+    def getconn(self, key=None):  # noqa: D102
+        with self._lock:
+            for stale_key, stale_conn in list(self._used.items()):
+                if stale_conn.closed:
+                    self._rused.pop(id(stale_conn), None)
+                    del self._used[stale_key]
+            conn = self._getconn(key)
+            if conn.closed:
+                # 服务端断开/网络分区残留：丢弃重建
+                self._rused.pop(id(conn), None)
+                self._used.pop(key, None)
+                conn = self._connect(key)
+            return conn
+
+
+_pools: dict[str, _SelfHealingPool] = {}
+_pools_lock = threading.Lock()
+_pools_pid: int | None = None  # 池所属进程 PID（fork 安全：子进程丢弃继承的池引用）
+_atexit_registered = False
+# id(conn) -> (pool, conn)。psycopg2 connection 不支持属性赋值，归属登记只能走模块级表；
+# 值中持有 conn 强引用防止 id() 复用导致误判；release/close 后条目由 sweep 清理。
+_pooled_conns: dict[int, tuple[_SelfHealingPool, psycopg2.extensions.connection]] = {}
+_pooled_conns_lock = threading.Lock()
+
+
+def _pool_role(superuser: bool, read_only: bool) -> str:
+    if superuser:
+        return "superuser"
+    return "reader" if read_only else "writer"
+
+
+def _get_role_pool(role: str) -> _SelfHealingPool:
+    """按角色获取/创建连接池（lazy 创建 + fork 安全 + atexit 注册）。"""
+    global _pools_pid, _atexit_registered
+    with _pools_lock:
+        pid = os.getpid()
+        if _pools_pid is not None and _pools_pid != pid:
+            # fork 子进程：继承的池持有父进程 socket，直接丢弃引用
+            # （不 closeall——close 会误关父进程共享的 socket fd）
+            _pools.clear()
+            with _pooled_conns_lock:
+                _pooled_conns.clear()
+        _pools_pid = pid
+        pool = _pools.get(role)
+        if pool is None or pool.closed:
+            dsn = _build_pg_dsn(
+                superuser=(role == "superuser"),
+                read_only=(role != "writer"),
+            )
+            pool = _SelfHealingPool(_POOL_MINCONN, _POOL_MAXCONN, **dsn)
+            _pools[role] = pool
+        if not _atexit_registered:
+            atexit.register(_close_all_pools)
+            _atexit_registered = True
+    return pool
+
+
+def _checkout_pooled(superuser: bool, read_only: bool) -> psycopg2.extensions.connection:
+    """从角色池取出连接并登记归属（供 release_depgraph_pg_connection 路由）。"""
+    pool = _get_role_pool(_pool_role(superuser, read_only))
+    try:
+        conn = pool.getconn()
+    except PoolError:
+        # 池耗尽（>maxconn 个并发长持，如 DatabaseService 常驻连接）：
+        # 降级直连（不登记归属，release 时按非池化关闭），保持池化前的行为
+        return psycopg2.connect(**_build_pg_dsn(superuser=superuser, read_only=read_only))
+    if not conn.autocommit:
+        # 防御：归还方未归一化（异常路径）时清理悬挂事务
+        conn.rollback()
+        conn.autocommit = True
+    with _pooled_conns_lock:
+        if len(_pooled_conns) >= _POOLED_CONNS_SWEEP_THRESHOLD:
+            for stale_id, (_, stale_conn) in list(_pooled_conns.items()):
+                if stale_conn.closed:
+                    del _pooled_conns[stale_id]
+        _pooled_conns[id(conn)] = (pool, conn)
+    return conn
+
+
+def release_depgraph_pg_connection(conn: psycopg2.extensions.connection | None) -> None:
+    """归还 get_depgraph_pg_connection() 获取的连接（§5.64.1 配套接口）。
+
+    池化连接：回滚悬挂事务 + 归一化 autocommit + RESET ALL 清理会话变量
+    （防 SET 状态跨借用泄漏，如 app.allow_delete_apply_depgraph_edges）后归还池。
+    直连连接（pooled=False / replica=True / 池耗尽降级）：直接关闭。
+    None / 已关闭连接：静默忽略。
+    """
+    if conn is None:
+        return
+    with _pooled_conns_lock:
+        entry = _pooled_conns.pop(id(conn), None)
+    if entry is None:
+        # 非池化连接（直连路径）：直接关闭
+        try:
+            conn.close()
+        except Exception:  # noqa: BLE001  释放路径尽力而为
+            pass
+        return
+    pool, _ = entry
+    try:
+        if not conn.closed:
+            if not conn.autocommit:
+                conn.rollback()  # 清理未提交/中止事务（未提交写入按放弃处理）
+            conn.autocommit = True  # 归一化基线，下次 checkout 再按需设置
+            with conn.cursor() as cur:
+                cur.execute("RESET ALL")  # 清理 SET 会话变量（防跨借用泄漏）
+    except psycopg2.Error:
+        try:
+            conn.close()  # 连接已损坏：丢弃（池自愈会回收槽位）
+        except Exception:  # noqa: BLE001
+            pass
+        return
+    try:
+        pool.putconn(conn)
+    except PoolError:
+        # 池已关闭（atexit 后）或连接已被自愈回收：直接关闭
+        try:
+            conn.close()
+        except Exception:  # noqa: BLE001
+            pass
+
+
+def _close_all_pools() -> None:
+    """进程退出时关闭全部连接池（atexit 注册，首次建池时挂载）。"""
+    with _pools_lock:
+        for pool in _pools.values():
+            try:
+                pool.closeall()
+            except Exception:  # noqa: BLE001  退出路径尽力而为
+                pass
+        _pools.clear()
 
 
 # ---------------------------------------------------------------------------
@@ -1344,8 +1536,9 @@ def get_depgraph_pg_connection(
     *,
     superuser: bool = False,
     read_only: bool = True,  # 裁定#ARCH-DEPGRAPH_ACCESS_CONTROL: 默认只读
-    autocommit: bool = True,
+    autocommit: bool | None = None,
     replica: bool = False,
+    pooled: bool = True,
     # 以下参数保留向后兼容但 PG 模式下无效（避免调用方修改）
     check_same_thread: bool = False,  # SQLite-only，PG 忽略
     timeout: float = 30.0,  # SQLite-only，PG 忽略
@@ -1360,21 +1553,42 @@ def get_depgraph_pg_connection(
     - 仅白名单脚本可传 read_only=False 使用 depgraph_writer 读写角色
     - DEPGRAPH-WRITE-PATH pre-commit gate 检测 read_only=False 调用点是否在白名单内
 
+    §5.61.2 治本（写角色显式事务默认）：autocommit=None（默认）时按角色决定——
+    reader 角色 True（历史默认，零行为变化）；writer/superuser 角色 False
+    （多语句写操作获得事务原子性，需显式 conn.commit()）。显式传值始终优先
+    （存量写调用方已全部显式传 autocommit，行为不变）。
+
+    §5.64.1 治本（连接池）：pooled=True（默认）从 per-role 池（minconn=1,
+    maxconn=5）取连接，用毕应调 release_depgraph_pg_connection() 归还；
+    调用方 conn.close() 同样安全（池自愈回收槽位，但失去复用收益）。
+    pooled=False 走直连（每次新建 TCP 连接）。replica=True 强制直连
+    （session_replication_role 是粘性会话状态，禁止入池）。
+
     :param superuser: True 使用 postgres 超级用户（用于数据迁移 / SET session_replication_role）
         （优先级最高，覆盖 read_only）
     :param read_only: True（默认）使用 depgraph_reader 只读角色；
         False 使用 depgraph_writer 读写角色（仅白名单脚本可用）
-    :param autocommit: True 启用自动提交（默认）；False 需显式 conn.commit()
+    :param autocommit: None（默认）按角色决定（reader=True；writer/superuser=False，
+        §5.61.2 显式事务治本）；显式 True/False 始终优先
     :param replica: True 设置 session_replication_role='replica' 禁用所有触发器和 FK
-        （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True）
+        （仅超级用户可用；用于批量数据导入/迁移场景；自动设置 superuser=True + 强制直连）
+    :param pooled: True（默认）从 per-role 连接池取连接；False 直连新建 TCP 连接
 
     注意：以下 SQLite 时代参数保留向后兼容但 PG 模式下无效：
         - db_path, check_same_thread, timeout, apply_foreign_keys
     """
     if replica:
         superuser = True  # session_replication_role 需要超级用户
+        pooled = False  # session_replication_role 是粘性会话状态，禁止入池
 
-    conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser, read_only=read_only))
+    if autocommit is None:
+        # §5.61.2：reader 保持历史默认 True；writer/superuser 默认显式事务
+        autocommit = read_only and not superuser
+
+    if pooled:
+        conn = _checkout_pooled(superuser=superuser, read_only=read_only)
+    else:
+        conn = psycopg2.connect(**_build_pg_dsn(superuser=superuser, read_only=read_only))
     conn.autocommit = autocommit
 
     if replica:
@@ -1386,9 +1600,8 @@ def get_depgraph_pg_connection(
     return conn
 
 
-# DEPRECATED: get_db_connection 已改名为 get_depgraph_pg_connection（消除与 SQLite 同名冲突）。
-# 保留别名向后兼容，新代码必须用 get_depgraph_pg_connection。见 AGENTS.md §11.4。
-get_db_connection = get_depgraph_pg_connection
+# 原 get_db_connection 废弃别名已删除（5.61.7+5.1.5#2 治本：全仓零活跃调用点）。
+# 禁止恢复——与 SQLite 同名函数冲突（AGENTS.md §11.4 的历史描述以本代码为准）。
 
 
 def table_names(db_path: Path | str | None = None) -> list[str]:
@@ -1404,7 +1617,7 @@ def table_names(db_path: Path | str | None = None) -> list[str]:
             """)
             return [row[0] for row in cur.fetchall()]
     finally:
-        conn.close()
+        release_depgraph_pg_connection(conn)
 
 
 def schema_version(db_path: Path | str | None = None) -> int:
@@ -1413,7 +1626,7 @@ def schema_version(db_path: Path | str | None = None) -> int:
     try:
         return _get_current_version(conn)
     finally:
-        conn.close()
+        release_depgraph_pg_connection(conn)
 
 
 # ---------------------------------------------------------------------------
@@ -1452,7 +1665,7 @@ def apply_pg_schema(*, version: int | None = None, description: str = "") -> Non
                 )
         conn.commit()
     finally:
-        conn.close()
+        release_depgraph_pg_connection(conn)
 
 
 # ---------------------------------------------------------------------------
@@ -1519,7 +1732,7 @@ def restore_from_backup(backup_path: Path | str) -> None:
 
 __all__ = [
     "get_depgraph_pg_connection",
-    "get_db_connection",  # DEPRECATED 别名，向后兼容
+    "release_depgraph_pg_connection",  # 5.64.1: 池化连接归还接口
     "init_db",
     "schema_version",
     "table_names",

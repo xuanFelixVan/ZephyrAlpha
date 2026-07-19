@@ -85,6 +85,7 @@ class RiskValidator(abc.ABC):
       - kill_switch 触发后 MUST 阻断所有订单，直到人工确认恢复
     """
 
+    # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
     _registry: ClassVar[dict[str, type[RiskValidator]]] = {}
 
     def __init_subclass__(cls, **kwargs):

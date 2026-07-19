@@ -1090,6 +1090,7 @@ def _run_migration(
 
 
 def _log(echo: bool, message: str) -> None:
+    # 保留 print（5.20 B 类）：echo=True 是调用方显式请求控制台输出（CLI 初始化场景）
     if echo:
         print(message)
 

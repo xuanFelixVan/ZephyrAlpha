@@ -465,11 +465,17 @@ class IdeHealthDaemon:
             logger.warning("drift health: stash_count=%d > 5, auto-cleanup", metrics["stash_count"])
             # P1-STH: 自动调用 cleanup_stash.py --cleanup（保留 KEEP_COUNT=3 最新，安全）
             try:
-                subprocess.run(
+                result = subprocess.run(
                     [sys.executable, "scripts/governance/cleanup_stash.py", "--cleanup"],
                     cwd=str(self._project_root),
                     capture_output=True, text=True, timeout=60,
                 )
+                # W2 治本: 检查 returncode，非 0 记 warning（原静默忽略失败）
+                if result.returncode != 0:
+                    logger.warning(
+                        "drift health: stash auto-cleanup exited non-zero (returncode=%d): %s",
+                        result.returncode, result.stderr.strip(),
+                    )
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("drift health: stash auto-cleanup failed", exc_info=True)
         if metrics["worktree_changes"] is not None and metrics["worktree_changes"] > 50:

@@ -41,6 +41,10 @@ class FixState(str, Enum):
 
 _TERMINAL_STATES = {FixState.CLOSED, FixState.DEAD_LETTER}
 
+# 5.41.3 修复: force_state 可强制写入的目标状态集合——终态（CLOSED/DEAD_LETTER）禁止强制写入，
+# 必须走 transition()/to_dead_letter() 正规路径，防止绕过终态保护
+_FORCEABLE_STATES = {s for s in FixState if s not in _TERMINAL_STATES}
+
 _TRANSITIONS: dict[FixState, set[FixState]] = {
     FixState.DETECTED: {FixState.DIAGNOSED, FixState.DEAD_LETTER},
     FixState.DIAGNOSED: {FixState.TRIAGED, FixState.DEAD_LETTER},
@@ -115,12 +119,30 @@ class FixStateMachine:
             logger.info("Fix state transition: %s -> %s", previous.value, target.value)
             return self._current
 
-    def force_state(self, target: FixState) -> FixState:
+    def force_state(self, target: FixState, caller: str = "", reason: str = "") -> FixState:
+        """强制设置状态（仅限恢复场景）。
+
+        5.41.3 修复:
+          - 限制可强制写入的目标状态集合（_FORCEABLE_STATES，排除终态 CLOSED/DEAD_LETTER），
+            禁止绕过终态保护；非法目标抛 InvalidFixTransitionError。
+          - 要求调用方标识（caller）与原因（reason），写入审计日志（WARNING 级 + history 记录），
+            保证强制操作可追溯。
+        """
         with self._lock:
+            if target not in _FORCEABLE_STATES:
+                raise InvalidFixTransitionError(self._current, target, set(_FORCEABLE_STATES))
             previous = self._current
             self._current = target
-            self._history.append((previous, target, {"forced": True}))
-            logger.warning("Forced fix state transition: %s -> %s", previous.value, target.value)
+            audit_ctx = {
+                "forced": True,
+                "caller": caller or "unknown",
+                "reason": reason or "unspecified",
+            }
+            self._history.append((previous, target, audit_ctx))
+            logger.warning(
+                "Forced fix state transition: %s -> %s (caller=%s, reason=%s)",
+                previous.value, target.value, audit_ctx["caller"], audit_ctx["reason"],
+            )
             return self._current
 
     def to_dead_letter(self, reason: str = "") -> FixState:

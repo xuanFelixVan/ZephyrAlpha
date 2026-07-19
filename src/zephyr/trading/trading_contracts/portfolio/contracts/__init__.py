@@ -12,7 +12,7 @@
 # [TTL] permanent
 
 from zephyr.shared.contracts.performance_attribution_report import PerformanceAttributionReport
-from zephyr.trading.trading_contracts.portfolio.contracts.money import (
+from zephyr.shared.contracts.portfolio.money import (
     Money,
     MoneyCurrencyMismatchError,
     MoneyPrecisionError,

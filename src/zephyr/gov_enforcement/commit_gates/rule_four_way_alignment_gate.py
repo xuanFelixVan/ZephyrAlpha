@@ -50,12 +50,12 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
+    run_checker_script,
 )
 
 logger = logging.getLogger(__name__)
@@ -138,14 +138,9 @@ def make_rule_four_way_alignment_gate() -> GateSpec:
 
         # 4. subprocess 调用 checker
         try:
-            result = subprocess.run(
-                [sys.executable, str(checker_path), "--ci"],
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                cwd=wt_root,
-                timeout=_TIMEOUT,
+            result = run_checker_script(
+                checker_path, ["--ci"],
+                cwd=wt_root, timeout=_TIMEOUT,
             )
         except subprocess.TimeoutExpired:
             logger.warning(

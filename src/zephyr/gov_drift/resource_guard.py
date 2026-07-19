@@ -183,20 +183,20 @@ def apply_degradation(snap: ResourceSnapshot, current_pool: int) -> tuple[int, D
 
     level = snap.degradation_level
 
-    if level == DegradationLevel.LEVEL_1:
+    if level is DegradationLevel.LEVEL_1:
         new_pool = max(1, current_pool // 2)
 
-    elif level == DegradationLevel.LEVEL_2:
+    elif level is DegradationLevel.LEVEL_2:
         new_pool = max(1, current_pool // 4)
 
-    elif level == DegradationLevel.LEVEL_3:
+    elif level is DegradationLevel.LEVEL_3:
         gc.collect()
 
         time.sleep(0.1)
 
         new_pool = max(1, current_pool // 8)
 
-    elif level == DegradationLevel.LEVEL_4:
+    elif level is DegradationLevel.LEVEL_4:
         new_pool = 0
 
         if _on_critical:
@@ -247,10 +247,10 @@ def guard_loop(
         try:
             snap = snapshot(directory)
 
-            if snap.status != ResourceStatus.OK:
+            if snap.status is not ResourceStatus.OK:
                 _apply_guard(snap, on_degraded)
 
-            if snap.status == ResourceStatus.OOM:
+            if snap.status is ResourceStatus.OOM:
                 _restore_pool()
 
                 break

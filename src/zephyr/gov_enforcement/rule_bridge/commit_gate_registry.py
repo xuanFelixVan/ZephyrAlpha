@@ -58,7 +58,10 @@ from __future__ import annotations
 
 from typing import Final
 import logging
+import subprocess
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
@@ -69,6 +72,7 @@ __all__ = [
     "CommitGateRegistry",
     "TEST_EXEMPT_PREFIXES",
     "is_test_exempt",
+    "run_checker_script",
 ]
 
 
@@ -102,6 +106,54 @@ def is_test_exempt(file_path: str) -> bool:
     """
     normalized = file_path.replace("\\", "/")
     return any(normalized.startswith(prefix) for prefix in TEST_EXEMPT_PREFIXES)
+
+
+def run_checker_script(
+    script_path: str | Path,
+    args: list[str],
+    *,
+    cwd: str | Path,
+    timeout: int = 60,
+    text: bool = True,
+    env: dict[str, str] | None = None,
+) -> subprocess.CompletedProcess:
+    """运行 checker 脚本的共享 helper（5.176.4 治本：消除各 gate 的 subprocess 样板重复）。
+
+    封装 ``[sys.executable, script_path, *args]`` + ``capture_output=True`` +
+    ``cwd`` + ``timeout`` 样板；``text=True``（默认）时附加
+    ``encoding="utf-8", errors="replace"``（各 text 模式 gate 的既有约定）。
+
+    责任边界：本函数只负责执行并返回 ``CompletedProcess``——**returncode 解析
+    （exit 0/1/2 语义）与 ``subprocess.TimeoutExpired``/``OSError`` 处理由各 gate
+    按自身 fail-open/fail-closed 策略负责**（helper 不吞异常、不判结果）。
+
+    Args:
+        script_path: checker 脚本路径（str 或 Path）。
+        args: 传给脚本的参数列表（不含解释器与脚本路径）。
+        cwd: 子进程工作目录（gate 传入 project_root 或 worktree root）。
+        timeout: 超时秒数（各 gate 保持既有值）。
+        text: True=文本模式（stdout/stderr 为 str）；False=字节模式
+            （stdout/stderr 为 bytes，由 gate 自行 decode）。
+        env: 自定义环境变量（如 directory_contract_gate 注入 PYTHONPATH）；
+            None=继承父进程环境。
+
+    Returns:
+        subprocess.CompletedProcess（returncode/stdout/stderr 由调用方解析）。
+
+    Raises:
+        subprocess.TimeoutExpired: 超时（各 gate 按自身策略捕获）。
+        OSError: 子进程启动失败（各 gate 按自身策略捕获）。
+    """
+    kwargs: dict[str, Any] = {
+        "capture_output": True,
+        "cwd": str(cwd),
+        "timeout": timeout,
+    }
+    if text:
+        kwargs.update({"text": True, "encoding": "utf-8", "errors": "replace"})
+    if env is not None:
+        kwargs["env"] = env
+    return subprocess.run([sys.executable, str(script_path), *args], **kwargs)
 
 
 @dataclass

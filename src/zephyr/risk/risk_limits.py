@@ -67,6 +67,7 @@ class RiskLimitsCalculator(abc.ABC):
       L3（熔断线）：max_drawdown_limit —— 触发全仓暂停
     """
 
+    # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
     _registry: ClassVar[dict[str, type[RiskLimitsCalculator]]] = {}
 
     def __init_subclass__(cls, **kwargs):

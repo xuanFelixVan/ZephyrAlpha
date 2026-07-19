@@ -100,19 +100,19 @@ def current_env() -> Env:
 
 
 def is_dev() -> bool:
-    return current_env() == Env.DEV
+    return current_env() is Env.DEV
 
 
 def is_staging() -> bool:
-    return current_env() == Env.STAGING
+    return current_env() is Env.STAGING
 
 
 def is_prod() -> bool:
-    return current_env() == Env.PROD
+    return current_env() is Env.PROD
 
 
 def is_test() -> bool:
-    return current_env() == Env.TEST
+    return current_env() is Env.TEST
 
 
 def is_debug() -> bool:

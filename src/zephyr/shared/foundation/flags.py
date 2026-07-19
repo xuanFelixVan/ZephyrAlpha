@@ -44,15 +44,21 @@ AI 施工约定：
   - 运维在 config/ 中启用 flag 后才生效
   - 禁止 AI 自行修改 flag 状态——那是人工运维的权限
 
+5.38.1/5.38.7 治本：本模块是全项目唯一 canonical 特性开关真源
+（原 zephyr.orchestrator.governance.feature_flag 已删除，能力收敛于此）。
+
 SSoT: MOD-INF-016 §2.8 shared-feature-flags
 Version: 0.1.0
 """
 
 
+import json
 import logging
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum, unique
+from pathlib import Path
+from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
@@ -61,7 +67,9 @@ __all__ = [
     "FlagNotFoundError",
     "FlagRegistry",
     "FlagState",
+    "ensure_global_flags_loaded",
     "global_flag_registry",
+    "load_flags_from_yaml",
 ]
 
 logger = logging.getLogger(__name__)
@@ -152,17 +160,80 @@ class FlagRegistry:
             model = "gpt-4o"
         else:
             model = "gpt-4o-mini"
+
+    5.38.6 修复: 审计轨迹持久化——register/unregister/set 除写入内存
+    ``_audit`` list 外，当 ``persist_audit=True``（或显式传 ``audit_path``）
+    时同时追加 JSONL（默认 ``data/audit_logs/feature_flags.jsonl``，惰性解析
+    REPO_ROOT）。默认实例不持久化，避免测试意外写生产路径（ARCH-BENCH-LEAK-001）。
+    审计写入失败仅 warning，绝不阻断 flag 操作。
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        audit_path: Path | str | None = None,
+        persist_audit: bool = False,
+    ) -> None:
         self._flags: dict[str, FeatureFlag] = {}
+        self._audit: list[dict[str, Any]] = []
+        self._audit_path: Path | None = Path(audit_path) if audit_path is not None else None
+        self._persist_audit: bool = persist_audit or self._audit_path is not None
+
+    def _default_audit_path(self) -> Path | None:
+        """惰性解析默认审计路径——shared 层禁止向上 import audit 组件，JSONL 落盘即可。"""
+        try:
+            from zephyr.shared.io.paths import REPO_ROOT
+
+            return REPO_ROOT / "data" / "audit_logs" / "feature_flags.jsonl"
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            return None
+
+    def _record_audit(self, action: str, *, key: str, state: str = "", description: str = "") -> None:
+        entry: dict[str, Any] = {
+            "timestamp": datetime.now(UTC).isoformat(),
+            "action": action,
+            "key": key,
+            "state": state,
+            "description": description,
+        }
+        self._audit.append(entry)
+        if not self._persist_audit:
+            return
+        path = self._audit_path if self._audit_path is not None else self._default_audit_path()
+        if path is None:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        except Exception as exc:  # noqa: BLE001 — 审计写入失败绝不阻断 flag 操作（OSError/ValueError 等）
+            logger.warning("flag audit write failed (%s): %s", path, exc)
 
     def register(self, flag: FeatureFlag) -> None:
         self._flags[flag.key] = flag
+        self._record_audit("register", key=flag.key, state=flag.state.value, description=flag.description)
         logger.info("feature flag registered: %s (state=%s)", flag.key, flag.state.value)
 
     def unregister(self, key: str) -> None:
-        self._flags.pop(key, None)
+        existed = self._flags.pop(key, None)
+        self._record_audit("unregister", key=key, state=existed.state.value if existed else "")
+
+    def set(self, key: str, enabled: bool, description: str = "") -> FeatureFlag:
+        """便捷开关接口（收敛 orchestrator FeatureFlagManager.set，5.38.1）。
+
+        enabled=True -> ALWAYS_ON；enabled=False -> ALWAYS_OFF（安全默认）。
+        """
+        flag = FeatureFlag(
+            key=key,
+            state=FlagState.ALWAYS_ON if enabled else FlagState.ALWAYS_OFF,
+            description=description,
+        )
+        self.register(flag)
+        return flag
+
+    def get_all(self) -> dict[str, bool]:
+        """返回 {key: 当前是否启用} 映射（收敛 FeatureFlagManager.get_all，5.38.1）。"""
+        return {k: f.is_enabled() for k, f in self._flags.items()}
 
     def get(self, key: str) -> FeatureFlag:
         flag = self._flags.get(key)
@@ -179,8 +250,22 @@ class FlagRegistry:
         *,
         module_id: str | None = None,
         agent_id: str | None = None,
+        default: bool | None = None,
     ) -> bool:
-        flag = self.get(key)
+        """查询 flag 是否启用。
+
+        flag 未注册时：``default`` 非 None 则返回 ``default``（调用方显式声明
+        缺省语义，如守护点默认 ON 可关闭）；``default`` 为 None 则抛
+        FlagNotFoundError（安全默认，未注册不等于启用）。
+        """
+        flag = self._flags.get(key)
+        if flag is None:
+            if default is not None:
+                return default
+            raise FlagNotFoundError(
+                f"FeatureFlag '{key}' not found in registry",
+                details={"key": key},
+            )
         return flag.is_enabled(module_id=module_id, agent_id=agent_id)
 
     def list_all(self) -> dict[str, FeatureFlag]:
@@ -190,4 +275,68 @@ class FlagRegistry:
         self._flags.clear()
 
 
-global_flag_registry = FlagRegistry()
+global_flag_registry = FlagRegistry(persist_audit=True)
+
+
+_DEFAULT_FLAGS_YAML = "config/flags.yaml"
+
+
+def _default_flags_yaml_path() -> Path | None:
+    try:
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        return REPO_ROOT / _DEFAULT_FLAGS_YAML
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return None
+
+
+def load_flags_from_yaml(
+    path: Path | str | None = None,
+    *,
+    registry: FlagRegistry | None = None,
+) -> int:
+    """5.38.4 修复: 从 YAML 加载特性开关到 FlagRegistry。
+
+    默认读取 ``config/flags.yaml`` 的 ``flags:`` 段并注册到
+    ``global_flag_registry``——每个顶层 key 映射为一个 FeatureFlag：
+    ``enabled: true`` -> ALWAYS_ON，否则 -> ALWAYS_OFF（安全默认）。
+    重复调用幂等（同 key 覆盖注册）。返回注册的 flag 数。
+    """
+    reg = registry if registry is not None else global_flag_registry
+    yaml_path = Path(path) if path is not None else _default_flags_yaml_path()
+    if yaml_path is None or not yaml_path.exists():
+        logger.warning("flags yaml not found: %s", yaml_path)
+        return 0
+
+    import yaml
+
+    data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+    flags_section = data.get("flags") or {}
+    count = 0
+    for key, spec in flags_section.items():
+        if not isinstance(spec, dict):
+            continue
+        reg.register(
+            FeatureFlag(
+                key=str(key),
+                state=FlagState.ALWAYS_ON if spec.get("enabled", False) else FlagState.ALWAYS_OFF,
+                description=str(spec.get("description", "")),
+            )
+        )
+        count += 1
+    logger.info("loaded %d feature flags from %s", count, yaml_path)
+    return count
+
+
+_global_flags_loaded = False
+
+
+def ensure_global_flags_loaded() -> int:
+    """5.38.2 修复: 启动流程幂等加载入口——首次调用时把 config/flags.yaml
+    注册进 global_flag_registry，后续调用直接返回当前 flag 数（不重复注册）。
+    """
+    global _global_flags_loaded
+    if _global_flags_loaded:
+        return len(global_flag_registry.list_all())
+    _global_flags_loaded = True
+    return load_flags_from_yaml()

@@ -123,6 +123,7 @@ def make_reconciler_health_gate() -> GateSpec:
             warn_lines.append("  Investigate before proceeding (non-blocking warning).")
             warn_detail = "\n".join(warn_lines)
             logger.warning(warn_detail)
+            # 保留 print：gate 告警需直接出现在操作员控制台（commit UX），不依赖 logging 配置
             print(f"[GATE RECONCILER-HEALTH] {warn_detail}")
             return True, warn_detail
 

@@ -187,7 +187,7 @@ class DecisionRegistry:
         return list(DECISIONS.values())
 
     def list_active(self) -> list[DesignDecision]:
-        return [d for d in DECISIONS.values() if d.status == DecisionStatus.ACTIVE]
+        return [d for d in DECISIONS.values() if d.status is DecisionStatus.ACTIVE]
 
     def get_by_impact(self, keyword: str) -> list[DesignDecision]:
         return [d for d in DECISIONS.values() if keyword.lower() in d.impact_scope.lower()]

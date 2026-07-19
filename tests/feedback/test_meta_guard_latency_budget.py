@@ -77,25 +77,25 @@ class TestCheckBudget:
     def test_check_budget_under_budget(self):
         mglb = MetaGuardLatencyBudget()
         mglb.record_latency("g1", 10.0)
-        result = mglb.check_budget()
+        result = mglb.evaluate_budget()
         assert result["over_budget"] is False
 
     def test_check_budget_over_total_latency(self):
         mglb = MetaGuardLatencyBudget(max_total_latency_ms=50.0)
         mglb.record_latency("g1", 100.0)
-        result = mglb.check_budget()
+        result = mglb.evaluate_budget()
         assert result["over_budget"] is True
 
     def test_check_budget_empty_guards(self):
         mglb = MetaGuardLatencyBudget()
-        result = mglb.check_budget()
+        result = mglb.evaluate_budget()
         assert result["over_budget"] is False
         assert result["guard_count"] == 0
 
     def test_check_budget_returns_required_keys(self):
         mglb = MetaGuardLatencyBudget()
         mglb.record_latency("g1", 10.0)
-        result = mglb.check_budget()
+        result = mglb.evaluate_budget()
         for key in (
             "over_budget",
             "total_avg_latency_ms",

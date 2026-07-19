@@ -337,6 +337,10 @@ class VerdictEngine:
         gate_passed: bool,
         violation_count: int,
     ) -> tuple[VerdictLevel, str]:
+        # 5.120 评估裁定（LOW, wontfix）：保留 if-elif 决策树而非 dict/Registry 分发表。
+        # 理由：6 个分支逻辑异质（human 直通 / cross_module 阻断 / anchor 阻断 /
+        # protected 嵌套门禁 / normal 嵌套信任分+违规数 / public 兜底），非重复分发，
+        # 表格化需 6 个不同签名 lambda，可读性反而下降。
         if actor.is_human:
             return VerdictLevel.PASS, "human_actor_auto_pass"
 

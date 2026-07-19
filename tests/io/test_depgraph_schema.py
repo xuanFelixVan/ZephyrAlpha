@@ -42,7 +42,7 @@ if str(_SRC_DIR) not in sys.path:
 schema_mod = pytest.importorskip("zephyr.governance.depgraph_schema")
 
 init_db = schema_mod.init_db
-get_db_connection = schema_mod.get_db_connection
+get_db_connection = schema_mod.get_depgraph_pg_connection
 table_names = schema_mod.table_names
 schema_version = schema_mod.schema_version
 _MIGRATIONS = schema_mod._MIGRATIONS

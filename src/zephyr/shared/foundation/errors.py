@@ -50,6 +50,7 @@ __all__ = [
     "DataError",
     "FeedbackError",
     "GateError",
+    "PoolExhaustedError",
     # 5.151.5 修复: IOError 从 __all__ 移除, 避免覆盖 Python 内建 IOError (3.3+ 为 OSError 别名)。
     # IOError 仍可作为 errors.IOError 直接访问 (向后兼容), 但 import * 不再覆盖内建。
     # 新代码应使用 ZephyrIOError。
@@ -183,3 +184,9 @@ class UnimplementedError(ZephyrBaseError):
     """施工占位——标记尚未实现但已规划的功能入口。"""
 
     error_code = "ZA-SH-0013"
+
+
+class PoolExhaustedError(DataError):
+    """连接池耗尽——池内连接与 overflow 临时连接全部借出且阻塞等待超时（5.64.4 治本）。"""
+
+    error_code = "ZA-SH-0014"

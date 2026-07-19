@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.api.api_client
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.resilience.circuit_breaker; zephyr.shared.resilience.retry; zephyr.shared.io.serialization
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.resilience.circuit_breaker; zephyr.shared.resilience.retry; zephyr.shared.io.serialization; zephyr.shared.infra.idempotency
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -32,6 +32,7 @@ api_client.py —— 统一 API Client 基类（Phase 7 新增 | 盲点 B11 修�
   - async-first——项目主体是异步架构
   - 可组合——timeout / retry / circuit-breaker 都是可选注入
   - 内置 metrics hook——每次调用自动 emit 事件到 Observer（如果有）
+  - 幂等重试——POST/PUT 自动注入 Idempotency-Key（同业务请求重试 = 同键），可选 IdempotencyStore 跟踪
   - 零侵入——不强制依赖 aiohttp，接口协议可替换
 
 AI 施工约定：
@@ -44,6 +45,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import json
 import logging
 import time
 import uuid
@@ -52,6 +54,13 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING, Any, Protocol, Self
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.infra.idempotency import (
+    IdempotencyError,
+    IdempotencyStatus,
+    IdempotencyStore,
+    SQLiteIdempotencyStore,
+    build_idempotency_key,
+)
 from zephyr.shared.io.serialization import to_dict
 from zephyr.shared.resilience.circuit_breaker import CircuitBreaker
 from zephyr.shared.resilience.retry import RetryConfig, async_retry
@@ -141,6 +150,8 @@ class ApiClientConfig:
     retry: RetryConfig | None = None
     circuit_breaker_name: str | None = None
     trace_id_header: str = "X-Trace-Id"
+    # 5.40.1 修复：POST/PUT 自动注入 Idempotency-Key（同业务请求重试 = 同键）
+    send_idempotency_key: bool = True
 
 
 class ApiClient:
@@ -164,11 +175,15 @@ class ApiClient:
         *,
         circuit_breaker: CircuitBreaker | None = None,
         observer: Observer | None = None,
+        idempotency_store: IdempotencyStore | SQLiteIdempotencyStore | None = None,
     ) -> None:
         self._provider = provider
         self._config = config or ApiClientConfig()
         self._circuit_breaker = circuit_breaker
         self._observer = observer
+        # 5.40.7 修复：可选幂等存储（生产环境 SHOULD 传 SQLiteIdempotencyStore 跨进程存活）。
+        # 仅作 best-effort 跟踪（start/complete/fail + 重复告警），绝不阻断请求路径。
+        self._idempotency_store = idempotency_store
         self._active = False
 
     async def __aenter__(self) -> Self:
@@ -214,6 +229,66 @@ class ApiClient:
             retryable_exceptions=(ApiCallError,),
         )
 
+    def _prepare_idempotency_key(
+        self,
+        method: HttpMethod,
+        url: str,
+        headers: dict[str, str],
+        body: dict[str, Any] | None,
+    ) -> str | None:
+        """5.40.1 修复：POST/PUT 生成稳定幂等键并注入请求头。
+
+        键 = SHA256(method | url | canonical_body)，同一业务请求的重试（含
+        _execute 内部的 async_retry 重试与调用方业务层重试）= 同一键；
+        不同业务请求 = 不同键。调用方显式提供的 Idempotency-Key 优先。
+        """
+        if method not in (HttpMethod.POST, HttpMethod.PUT):
+            return None
+        if not self._config.send_idempotency_key:
+            return None
+        key = headers.get("Idempotency-Key")
+        if not key:
+            canonical_body = json.dumps(body or {}, sort_keys=True, ensure_ascii=False, default=str)
+            key = build_idempotency_key("api", method.value, url, canonical_body)
+            headers["Idempotency-Key"] = key
+        return key
+
+    def _idempotency_begin(self, key: str) -> bool:
+        """best-effort 登记 PROCESSING。返回 True 表示本调用拥有该记录（应配对 _idempotency_end）。"""
+        store = self._idempotency_store
+        if store is None:
+            return False
+        try:
+            record = store.start(key)
+        except IdempotencyError:
+            # 已有 PROCESSING 记录（并发在途或上次崩溃残留）——继续发送，
+            # 服务端仍可靠 Idempotency-Key 头去重；不接管他人记录。
+            logger.warning("idempotency key '%s' already PROCESSING (concurrent or stale)—sending anyway", key)
+            return False
+        except Exception:  # noqa: BLE001 — 存储故障不得阻断请求路径
+            logger.warning("idempotency store start failed (best-effort)", exc_info=True)
+            return False
+        if record.status == IdempotencyStatus.COMPLETED:
+            logger.warning(
+                "idempotency key '%s' already COMPLETED—possible duplicate business submit; sending anyway",
+                key,
+            )
+        elif record.status == IdempotencyStatus.FAILED:
+            logger.info("idempotency key '%s' previously FAILED—this call is a business retry", key)
+        return True
+
+    def _idempotency_end(self, key: str, *, success: bool, result: object = None) -> None:
+        store = self._idempotency_store
+        if store is None:
+            return
+        try:
+            if success:
+                store.complete(key, result)
+            else:
+                store.fail(key)
+        except Exception:  # noqa: BLE001 — 存储故障不得阻断请求路径
+            logger.warning("idempotency store finish failed (best-effort)", exc_info=True)
+
     async def request(
         self,
         method: HttpMethod,
@@ -231,6 +306,8 @@ class ApiClient:
 
         url = self._build_url(path)
         final_headers = self._build_headers(headers)
+        idempotency_key = self._prepare_idempotency_key(method, url, final_headers, body)
+        idempotency_tracked = self._idempotency_begin(idempotency_key) if idempotency_key else False
         effective_timeout = timeout_seconds or self._config.timeout_seconds
 
         if self._circuit_breaker is not None and self._circuit_breaker.is_open:
@@ -302,7 +379,15 @@ class ApiClient:
 
             return resp
 
-        return await _execute()
+        try:
+            resp = await _execute()
+        except Exception:
+            if idempotency_tracked and idempotency_key:
+                self._idempotency_end(idempotency_key, success=False)
+            raise
+        if idempotency_tracked and idempotency_key:
+            self._idempotency_end(idempotency_key, success=True, result={"status_code": resp.status_code})
+        return resp
 
     async def get(
         self, path: str, *, headers: dict[str, str] | None = None, timeout_seconds: float | None = None

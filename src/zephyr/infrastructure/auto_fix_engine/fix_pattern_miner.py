@@ -59,8 +59,8 @@ class FixPatternMiner:
         for action in actions:
             by_type[action.action_type].append(action)
         for action_type, type_actions in by_type.items():
-            succeeded = [a for a in type_actions if a.status == FixStatus.COMPLETED]
-            failed = [a for a in type_actions if a.status == FixStatus.FAILED]
+            succeeded = [a for a in type_actions if a.status is FixStatus.COMPLETED]
+            failed = [a for a in type_actions if a.status is FixStatus.FAILED]
             total = len(type_actions)
             success_rate = len(succeeded) / total if total > 0 else 0.0
             pattern_id = f"pattern_{action_type}"

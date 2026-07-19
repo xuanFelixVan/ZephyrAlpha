@@ -3,7 +3,7 @@
 
 # [MODULE] tests.test_observability_logging
 
-# [INVARIANTS] TraceContext自动传播trace_id;get_logger缓存;ZephyrLogger注入z_trace_id
+# [INVARIANTS] trace_context自动传播trace_id;get_logger缓存;ZephyrLogger注入z_trace_id
 
 # [MODIFY-GUARD] logging.py变更时同步更新
 
@@ -26,13 +26,13 @@ import pytest
 
 from zephyr.shared.utils.logging import (
     LogLevel,
-    TraceContext,
     ZephyrLogger,
     _logger_cache,
     _StructuredFormatter,
     get_logger,
     module_id_var,
     session_id_var,
+    trace_context,
     trace_id_var,
 )
 
@@ -128,33 +128,33 @@ class TestGetLogger:
 
 class TestTraceContext:
     def test_sets_trace_id(self):
-        with TraceContext("trace-abc") as tid:
+        with trace_context("trace-abc") as tid:
             assert tid == "trace-abc"
             assert trace_id_var.get() == "trace-abc"
 
     def test_generates_trace_id_if_none(self):
-        with TraceContext() as tid:
+        with trace_context() as tid:
             assert tid != ""
             assert len(tid) == 36
 
     def test_restores_after_exit(self):
         trace_id_var.set("before")
-        with TraceContext("during"):
+        with trace_context("during"):
             assert trace_id_var.get() == "during"
         assert trace_id_var.get() == "before"
 
     def test_sets_session_id(self):
-        with TraceContext("t1", session_id="s1"):
+        with trace_context("t1", session_id="s1"):
             assert session_id_var.get() == "s1"
 
     def test_sets_module_id(self):
-        with TraceContext("t2", module_id="m2"):
+        with trace_context("t2", module_id="m2"):
             assert module_id_var.get() == "m2"
 
     def test_nested_contexts(self):
-        with TraceContext("outer") as outer_id:
+        with trace_context("outer") as outer_id:
             assert trace_id_var.get() == "outer"
-            with TraceContext("inner") as inner_id:
+            with trace_context("inner") as inner_id:
                 assert trace_id_var.get() == "inner"
             assert trace_id_var.get() == "outer"
 

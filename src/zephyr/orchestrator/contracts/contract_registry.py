@@ -19,13 +19,30 @@
 集成契约注册表（Contract Registry）
 
 依据：MOD-MASTER-002 蓝图 §二 集成契约登记表
-注册全部 17 条核心 CT-* 集成契约，提供查询、ai_read_only_hint 检查功能。
+注册全部 66 条 CT-* 集成契约，提供查询、ai_read_only_hint 检查功能。
 
 ai_read_only_hint 四级：
 - DO_NOT_CALL -> 拒绝调用（契约不存在/未实现）
 - IMPL_REQUIRED -> 拒绝调用（需先完成实现）
 - CAUTION_STUB -> 允许调用但 warn 消费者
 - SAFE -> 允许调用
+
+文件分区导航（5.25 复杂度治本——同文件内分区方案）
+------------------------------------------------
+本文件约 1100 行，其中约 920 行为 CONTRACTS 契约数据登记表（66 条 CT-* 实例
+数据），代码逻辑（枚举 + 模型 + 注册表方法）仅约 90 行。按职责分为 5 个 SECTION：
+
+- SECTION 1/5  枚举定义：AIReadOnlyHint（四级调用提示）/ TelemetryType（RED/USE）
+- SECTION 2/5  Contract 契约模型（BaseModel，12 字段）
+- SECTION 3/5  CONTRACTS 契约数据登记表（66 条实例，9 个子区；
+               插入序即 list_all() 输出序，禁止重排）
+- SECTION 4/5  ContractCallResult 调用判定结果模型
+- SECTION 5/5  ContractRegistry 注册表（查询/判定/反查/统计四组 API）
+
+说明：拆包方案（contract_registry/ 包，enums/models/registry 分离）需新建 .py
+文件并登记 creation_token；因 capability_canonical_file_registry.yaml 被并发
+session 持有（HELD-OVERLAP 硬阻断），改用同文件分区方案——公共 API 与文件路径
+不变，全部消费点零改动。
 """
 
 from __future__ import annotations
@@ -34,6 +51,11 @@ from typing import Final
 from enum import Enum
 
 from pydantic import BaseModel, Field
+
+
+# ============================================================================
+# SECTION 1/5: 枚举定义（AIReadOnlyHint 四级调用提示 / TelemetryType 指标类型）
+# ============================================================================
 
 
 class AIReadOnlyHint(str, Enum):
@@ -46,6 +68,11 @@ class AIReadOnlyHint(str, Enum):
 class TelemetryType(str, Enum):
     RED = "RED"
     USE = "USE"
+
+
+# ============================================================================
+# SECTION 2/5: Contract 契约模型（BaseModel，12 字段）
+# ============================================================================
 
 
 class Contract(BaseModel):
@@ -63,7 +90,17 @@ class Contract(BaseModel):
     route_target: str = ""
 
 
+# ============================================================================
+# SECTION 3/5: CONTRACTS 契约数据登记表（66 条 CT-* 实例，9 个子区）
+#
+# 本 dict 是纯数据登记（无逻辑），占本文件约 85% 篇幅。
+# 注意：插入序即 list_all() / list_ids() 输出序，子区仅作阅读导航；
+#       新增契约追加到对应子区末尾，禁止跨子区重排条目。
+# ============================================================================
+
+
 CONTRACTS: Final[dict[str, Contract]] = {
+    # --- 3.1 Orchestrator 核心契约（CT-ORC-*，4 条，部分实现/骨架）---
     "CT-ORC-SCRIPT-001": Contract(
         contract_id="CT-ORC-SCRIPT-001",
         producer="Orchestrator",
@@ -120,6 +157,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="Orc 在任务生命周期 -> 调用 Gates 门禁 -> G0-G7 判定",
         route_target="gate-engine",
     ),
+    # --- 3.2 域间协作契约（Script/CE/KB/FLE/Telemetry/Pipeline/DB，10 条）---
     "CT-SCRIPT-KB-001": Contract(
         contract_id="CT-SCRIPT-KB-001",
         producer="Script System",
@@ -260,6 +298,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="Orc -> TaskRepository -> db CRUD -> FTS5 全文搜索",
         route_target="database",
     ),
+    # --- 3.3 门禁/会话/回滚契约（CBAC/CDC/Handoff/Rollback，4 条）---
     "CT-CBAC-001": Contract(
         contract_id="CT-CBAC-001",
         producer="Gate Engine",
@@ -316,6 +355,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="Rollback Exit Code -> Gate 判定 + Pipeline 行为 -> 51 exit code 回滚出口(协议已定义,运行时桥接待接通)",
         route_target="rollback",
     ),
+    # --- 3.4 红蓝对抗契约（CT-RB-00x 规划态，3 条）---
     "CT-RB-001": Contract(
         contract_id="CT-RB-001",
         producer="MOD-INF-030",
@@ -358,6 +398,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="红白对抗报告->审计轨迹:对抗结果->审计条目->不可篡改记录",
         route_target="audit-trail.record",
     ),
+    # --- 3.5 基础设施契约（Health/DLQ 部分实现，2 条）---
     "CT-HEALTH-001": Contract(
         contract_id="CT-HEALTH-001",
         producer="System Telemetry",
@@ -386,6 +427,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="失败事件 -> DLQ 持久化 -> 定期重试/告警(DLQ实现已存在438行,需接入全系统事件总线)",
         route_target="database",
     ),
+    # --- 3.6 规划态系统契约·第一批（对账/启停/SLO/隔舱/看门狗/备份/配置/特性开关/密钥/KISS/数据生命周期，12 条）---
     "CT-RECONCILE-001": Contract(
         contract_id="CT-RECONCILE-001",
         producer="全系统",
@@ -554,6 +596,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="数据生命周期: 逐级冷却 -> 自动清理 -> 合规保留",
         route_target="database",
     ),
+    # --- 3.7 规划态系统契约·第二批（混沌/模型注册/依赖/稳定性/事故/成本/部署/自治/质量/Lean 等，24 条）---
     "CT-CHAOS-001": Contract(
         contract_id="CT-CHAOS-001",
         producer="Orchestrator",
@@ -890,6 +933,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="KE Quality: 评分 -> 低分标记 -> 触发改进/归档",
         route_target="knowledge-base",
     ),
+    # --- 3.8 运行态桥接契约（EventBus/FLE-EVT/LLM-GW/VMS-Bridge，4 条，运行中）---
     "CT-EVT-BUS-001": Contract(
         contract_id="CT-EVT-BUS-001",
         producer="EventBus",
@@ -946,6 +990,7 @@ CONTRACTS: Final[dict[str, Contract]] = {
         ai_prompt="VMS Bridge: topic->Collection 映射 + VMS不可用时降级到ChromaDB/InMemory",
         route_target="vector-memory",
     ),
+    # --- 3.9 红蓝对抗契约（已实现：Gate 判定/Escalation 升级/KB 自学习，3 条）---
     "CT-RB-GATE-001": Contract(
         contract_id="CT-RB-GATE-001",
         producer="Red-Blue Validator",
@@ -991,6 +1036,11 @@ CONTRACTS: Final[dict[str, Contract]] = {
 }
 
 
+# ============================================================================
+# SECTION 4/5: ContractCallResult 调用判定结果模型（check_ai_read_only 返回类型）
+# ============================================================================
+
+
 class ContractCallResult(BaseModel):
     allowed: bool
     contract_id: str
@@ -998,7 +1048,14 @@ class ContractCallResult(BaseModel):
     message: str
 
 
+# ============================================================================
+# SECTION 5/5: ContractRegistry 注册表（查询 / 调用判定 / 反查 / 统计四组 API，
+#              无状态——直接读 CONTRACTS 模块级登记表）
+# ============================================================================
+
+
 class ContractRegistry:
+    # --- 查询 API ---
     def get(self, contract_id: str) -> Contract | None:
         return CONTRACTS.get(contract_id)
 
@@ -1008,6 +1065,7 @@ class ContractRegistry:
     def list_ids(self) -> list[str]:
         return list(CONTRACTS.keys())
 
+    # --- 调用判定 API ---
     def check_ai_read_only(self, contract_id: str) -> ContractCallResult:
         contract = CONTRACTS.get(contract_id)
         if contract is None:
@@ -1048,6 +1106,7 @@ class ContractRegistry:
                 message=f"契约 '{contract_id}' 可用",
             )
 
+    # --- 按生产者/消费者反查 API ---
     def get_by_producer(self, producer: str) -> list[Contract]:
         return [c for c in CONTRACTS.values() if c.producer == producer]
 
@@ -1060,6 +1119,7 @@ class ContractRegistry:
             return ""
         return contract.route_target
 
+    # --- 统计 API ---
     def stats(self) -> dict[str, int | float]:
         total = len(CONTRACTS)
         by_hint: dict[str, int] = {}

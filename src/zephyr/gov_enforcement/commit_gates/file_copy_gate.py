@@ -58,9 +58,12 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    is_test_exempt,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -134,14 +137,9 @@ def _run_dup_checker(abs_files, repo_root):
         )
         return None
     try:
-        return subprocess.run(
-            [sys.executable, _DUP_SCRIPT,
-             "--files"] + abs_files +
-            ["--ast", "--threshold", str(_THRESHOLD)],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
+        return run_checker_script(
+            _DUP_SCRIPT,
+            ["--files"] + abs_files + ["--ast", "--threshold", str(_THRESHOLD)],
             cwd=repo_root,
             timeout=120,
         )

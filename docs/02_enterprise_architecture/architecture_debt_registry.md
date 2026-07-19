@@ -693,6 +693,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.1 SSoT真源唯一性违规（原211个，2026-07-04验证：约83个FIXED，约128个STILL_VALID）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.1全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=4簇(5.1.1词表硬编码[stability改load_vocabulary_values动态加载+值域漂移experimental->evolving+16处无词表项noqa豁免+HOT/COLD_COLLECTIONS收敛]; 5.1.2簇6[shared/schema裁定canonical删除integration/shared/schema 6副本+62调用点迁移+execution_model迁入]; 5.1.4簇1 atomic_write[fix_orphan_all改import真源]+簇4 parse_frontmatter收敛; 5.1.5 DB连接[constants.py wrapper标注sanctioned+get_db_connection废弃别名删除]). DEFERRED=0, STILL_VALID=0. 维度5.1全部清零(commits 304aa191f0/b63cbd7d12).
 #### 5.1.1 词表硬编码（原41处 = 15 HIGH + 26 MEDIUM，15处FIXED，剩余约22处STILL_VALID含路径漂移）
 
 ##### A. stability_vocabulary.yaml（真源4值：frozen/stable/evolving/volatile）—— 已漂移，最高危
@@ -798,6 +799,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.31全部清零.
 > **维度定义**：Docker镜像、pyproject.toml元数据、CI构建测试的正确性。
 > **病根归属**：根因5（无构建质量门禁）。
+> **第102轮修复状态（2026-07-19）**：FIXED=4(5.31.5 Dockerfile改多阶段构建builder+runtime两阶段gcc不入最终镜像+补COPY README.md/LICENSE/5.31.9 CI新增build-package job[python -m build→wheel安装→import验证]/5.31.10 CI新增docker-build job+paths补Dockerfile触发/5.31.13 compose挂载指向已存在SSoT config/infra/). DEFERRED=0, STILL_VALID=0. 维度5.31全部清零(commit 00491b3e0a).
 
 #### 5.31.1 [HIGH] Dockerfile CMD指向不存在的Python模块
 - **文件**：[Dockerfile](file:///D:/ZephyrAlpha/Dockerfile#L28)
@@ -955,6 +957,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.32全部清零.
 > **维度定义**：数据库schema迁移、数据迁移脚本、版本管理的正确性。
 > **病根归属**：根因4（永久功能与一次性脚本未区分——迁移脚本无版本管理）。
+> **第102轮修复状态（2026-07-19）**：FIXED=6(5.32.2 migrate_data.py重写为每表独立事务+触发器finally恢复+顺带修复原文件IndentationError破损/5.32.4新增migration_log幂等标记+completed跳过+--force逃生/5.32.5新增README.md文档化执行顺序/5.32.7新增02_create_pg_schema_down.sql按反依赖DROP/5.32.10 MIGRATION_ORDER拆分为9运营表+16种子表拆到seed_from_yaml.py/5.32.3新增tests/governance/test_migrate_sqlite_to_pg.py). DEFERRED=0, STILL_VALID=0. 维度5.32全部清零(commits 6e6658d9d0系).
 
 #### 5.32.1 [HIGH] migrate_data.py硬编码Windows绝对路径，迁移脚本不可移植
 - **文件**：[migrate_data.py](file:///D:/ZephyrAlpha/scripts/governance/migrate_sqlite_to_pg/migrate_data.py#L35)
@@ -1036,6 +1039,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=5(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.33全部清零.
 > **维度定义**：数据库备份、灾难恢复、RTO/RPO定义、单点故障消除。
 > **病根归属**：根因1（静态快照——P2迁移后备份机制未更新）。
+> **第102轮修复状态（2026-07-19）**：FIXED=3(5.33.5新增config/dr_policy.yaml真源[depgraph RPO=24h/RTO=4h+governance.db RPO=1h/RTO=1h+.runtime RPO=24h/RTO=2h]+creation_token登记/5.33.7 backup_runtime_state.py新增backup_runtime_handoffs()备份保留10份/5.33.9新增tests/dr/test_restore_from_backup.py恢复演练). DEFERRED-PERMANENT=2(5.33.6 PG主从复制[单机项目Restic备份已覆盖,主从到localhost无意义属过度工程]+5.33.10 secrets manager[.env.postgres已随Restic加密备份,Vault属过度工程]——裁定wontfix). DEFERRED=0, STILL_VALID=0. 维度5.33全部清零(commits 6e6658d9d0系+69089e31ac).
 
 #### 5.33.2 [HIGH] backup_runtime_state.py完全过时——仍按SQLite设计，PG迁移后未更新
 - **文件**：[backup_runtime_state.py](file:///D:/ZephyrAlpha/scripts/governance/meta/backup_runtime_state.py#L16)
@@ -1136,6 +1140,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.34全部清零.
 > **维度定义**：dev/staging/prod环境配置分离、测试数据库隔离、密钥管理。
 > **病根归属**：根因4（永久功能与一次性脚本未区分——环境抽象存在但未接入）。
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.34.2新增config/infra/docker-compose.override.example.yml/5.34.3 tests/conftest.py新增PG测试双轨[ZEPHYR_TEST_PG=1激活]/5.34.4 test_depgraph_db.py改PYTEST_CURRENT_TEST强制切测试库/5.34.5 depgraph_schema._load_pg_config优先读DATABASE_URL/5.34.6 is_prod()接入apply_depgraph生产写守卫/5.34.7 governance.db硬编码统一SSoT DB_PATH 6模块/5.34.10 logging.py configure_root_logger接入环境感知). DEFERRED=0, STILL_VALID=0. 维度5.34全部清零(commits a5e42396e9系).
 
 #### 5.34.1 [HIGH] docker-compose.yml硬编码ZEPHYR_ENV=development，与Env枚举不匹配（静默回退）
 - **文件**：[docker-compose.yml](file:///D:/ZephyrAlpha/docker-compose.yml#L18) + [env.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/env.py#L64)
@@ -1231,6 +1236,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=5(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.35全部清零.
 > **维度定义**：API/MCP工具的版本标识、breaking change检测、deprecation策略。
 > **病根归属**：根因5（无API版本管理规则）。
+> **第102轮修复状态（2026-07-19）**：FIXED=5(5.35.1路由表从mcp.json server_id单向生成消除vector-memory连字符漂移/5.35.3 mcp.json 11 server补version字段/5.35.4 APIVersionContract接入MCP管道新增ERR_API_SUNSET/5.35.7 ToolDefinition补output_schema/5.35.8 _GATEWAY_VERSION硬编码改从mcp.json加载+JSON-RPC响应附加api_version). DEFERRED=0, STILL_VALID=0. 维度5.35全部清零(commit 7cc54182ae).
 
 #### 5.35.1 [HIGH] gateway路由与mcp.json配置漂移
 - **文件**：[gateway_server.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/gateway_server.py#L260) vs [mcp.json](file:///D:/ZephyrAlpha/config/mcp.json#L91)
@@ -1304,6 +1310,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.36全部清零.
 > **维度定义**：限流算法实现、per-user配额、配置加载、配额耗尽告警。
 > **病根归属**：根因5（限流规则存在但执行断层）。
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.36.1限流器收敛shared/infra/limiter.py为canonical[a2a/mcp改委托适配]/5.36.2限流key改client_id|tool_name复合键/5.36.3 TokenBucket改Guava式reservation锁外sleep消竞态/5.36.6 mcp.json rate_limit配置实现加载/5.36.7拒绝响应携带retry_after_seconds+新错误码ERR_RATE_LIMITED/5.36.8管道补Permission阶段+重排/5.36.10 total_rejected接metrics+alert_rules.yaml登记). DEFERRED=0, STILL_VALID=0. 维度5.36全部清零(commit 7cc54182ae).
 
 #### 5.36.1 [HIGH] 4+限流器实现碎片化
 - **文件**：[shared/infra/limiter.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/limiter.py)、[shared/infra_06/limiter.py](file:///D:/ZephyrAlpha/src/zephyr/shared/infra/limiter.py)、[infrastructure/rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/rate_limiter.py)、[integration/mcp/rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/integration/mcp/rate_limiter.py)、[a2a_protocol/governance/rate_limiter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/rate_limiter.py)
@@ -1401,6 +1408,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.37全部清零.
 > **维度定义**：审计日志的字段完整性、防篡改链、持久化、retention策略。
 > **病根归属**：根因5（审计日志规则存在但全链路stub）。注意：5.17已覆盖AuditWriter.write() no-op和HMAC硬编码，本节审查其他方面。
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.37.1 write_to_core改懒初始化真写入events.jsonl+hash chain/5.37.2 AuditChain.verify()改deprecated+诚实校验/5.37.5 MCP审计扩展actor/action/target字段/5.37.6 tamper_proof_audit裸git commit改走GitCommitGateway._commit_auto/5.37.8审计链改events.jsonl持久化/5.37.9 clear()加confirm权限保护/5.37.12 retention/log_rotation扩展覆盖.jsonl+MCP审计路径). DEFERRED=0, STILL_VALID=0. 维度5.37全部清零(commit baabe59170).
 
 #### 5.37.1 [HIGH] write_to_core桥接函数是no-op（仅日志不写入）
 - **文件**：[bridge.py](file:///D:/ZephyrAlpha/src/zephyr/gov_audit/bridge.py#L25)
@@ -1530,6 +1538,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第44轮修复状态（2026-07-06）**：FIXED=3(5.38.3默认ON→OFF/5.38.5rollout_pct无标识符时默认False/5.38.9增加created_at/expires_at/owner+is_expired方法), DEFERRED=6(5.38.1系统收敛-3套实现碎片化+audit_orchestration文件已DRIFTED/5.38.2死代码决策接入或删除/5.38.4flags.yaml加载激活/5.38.6审计持久化依赖收敛/5.38.7类名冲突依赖收敛/5.38.8全局flag守护点), DRIFTED=1(5.38.1中audit_orchestration/feature_flag.py已删除), STILL_VALID=0. 维度5.38剩余6项DEFERRED均属特性开关系统专项工程(需统一收敛为单一实现+激活接入启动流程).
 > **维度定义**：Feature flag系统的实现一致性、默认值策略、生命周期管理。
 > **病根归属**：根因5（特性开关规则存在但未接入）。
+> **第102轮修复状态（2026-07-19）**：FIXED=6(5.38.1裁定shared/foundation/flags.py为canonical删除orchestrator/governance/feature_flag.py+FlagRegistry吸收set/get_all/5.38.2 boot_hooks启动块调ensure_global_flags_loaded/5.38.4新增load_flags_from_yaml+ensure_global_flags_loaded幂等入口/5.38.6 FlagRegistry._record_audit内存+JSONL持久化/5.38.7 class FeatureFlag收敛单一定义/5.38.8 src/zephyr/__init__.py新增_feature_flag_enabled守护点). DEFERRED=0, STILL_VALID=0. 维度5.38全部清零(commit 472f3b882c).
 
 #### 5.38.1 [HIGH] 4套特性开关系统碎片化 [⚠ STILL_VALID: 2026-07-04 验证声明不实——实际路径为shared/foundation/flags.py(非foundation/flags.py);trading/orchestrator/governance/feature_flag.py和audit_orchestration/feature_flag.py两份重复仍存在，未删除]
 - **文件**：[config/flags.yaml](file:///D:/ZephyrAlpha/config/flags.yaml)、[flags.py](file:///D:/ZephyrAlpha/src/zephyr/shared/foundation/flags.py)、[feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py)、[audit_orchestration/feature_flag.py](file:///D:/ZephyrAlpha/src/zephyr/governance/audit_orchestration/feature_flag.py)
@@ -1618,6 +1627,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.39全部清零.
 > 维度说明：指标采集→存储→导出→告警全链路的真实可观测性，覆盖metric命名规范、trace上下文传播、SLO实际生效、exporter配置等深度项。
+> **第102轮修复状态（2026-07-19）**：FIXED=3(5.39.3 health_monitor指标capability_id从metric名改label消Prometheus基数爆炸/5.39.5 span_stub.py统一为contextvars+继承logging trace_id/5.39.6 SLOManager新增get_slo_manager单例+record_duration p95+boot_hooks实例化订阅). DEFERRED=0, STILL_VALID=0. 维度5.39全部清零(commit 472f3b882c).
 
 #### 5.39.1 [HIGH] health_monitor每次采集丢弃全部指标
 - **文件**：[health_monitor.py](file:///D:/ZephyrAlpha/src/zephyr/trading/health_monitor.py#L184)
@@ -1698,6 +1708,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.40全部清零.
 > 维度说明：POST/PUT重试的幂等性保证、DLQ实际重试逻辑、回调去重、锁TTL强制执行等。
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.40.1 api_client POST/PUT重试生成稳定幂等键+Idempotency-Key头/5.40.2 MCP回调头携带task_id+attempt_no幂等键/5.40.4 dlq_retry_policy对接dead_letter_queue真重试/5.40.5 hook_dispatcher._call_webhook实现HTTP POST+超时/重试/5.40.7 IdempotencyStore接持久化+API入口接入/5.40.8 task_queue handler异常回滚ENQUEUED+审计/5.40.9 MemoryLock ttl_seconds强制过期检查). DEFERRED=0, STILL_VALID=0. 维度5.40全部清零(commit f32617a3f9).
 
 #### 5.40.1 [HIGH] api_client重试未带Idempotency-Key
 - **文件**：[api_client.py](file:///D:/ZephyrAlpha/src/zephyr/shared/api/api_client.py#L202)
@@ -1777,6 +1788,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=9(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.41全部清零.
 > 维度说明：状态转换合法性校验、终态保护、并发锁、审计日志、基类复用等状态机核心正确性。
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.41.1 task_scheduler新增VALID_TRANSITIONS转换表+_check_transition非法抛InvalidTransitionError/5.41.2 task_queue新增_status_lock=RLock全方法加锁/5.41.3 auto_fix force_state新增_FORCEABLE_STATES排终态+caller/reason审计/5.41.7 rollback_state_machine补转换表+锁+审计/5.41.8 task_lifecycle FAILED→CREATED加MAX_RETRIES=3上限/5.41.9 transition加threading.RLock/5.41.10复用转换表校验模式), DRIFTED=2(5.41.5 audit_orchestration/session_manager.py不存在+全项目3个SessionManager均无force参数已合规/5.41.6 governance/drift_detection/state_machine.py不存在+现存2个DriftStateMachine均已有真实转换表). DEFERRED=0, STILL_VALID=0. 维度5.41全部清零(commit 928f72d065).
 
 #### 5.41.1 [HIGH] TaskScheduler无状态转换校验
 - **文件**：[task_scheduler.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/queue/task_scheduler.py#L83)
@@ -1954,6 +1966,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.52全部清零.
 > 维度说明：async函数中阻塞IO、asyncio.run在已有loop中调用、同步/异步桥接策略等。
+> **第102轮修复状态（2026-07-19）**：FIXED=4(5.52.1 default_security_gateway+governance_adapter×2改fail-closed[lsg_unavailable/lsg_scan_error视同阻断,禁return None静默放行]+1文件已漂移/5.52.2 context_injector已run_sync+fail-closed/5.52.3 pipeline_orchestrator已run_sync零残留/5.52.4新增async_utils.run_coroutine_sync canonical入口+残留2处替换). DEFERRED=0, STILL_VALID=0. 维度5.52全部清零(commit c8fcb20035).
 
 #### 5.52.1 [HIGH] asyncio.run+get_event_loop回退反模式，安全扫描被静默绕过（5处）
 - **文件**：[default_security_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/governance/implementations/default_security_gateway.py#L71), [llm_gateway.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/pipeline/llm_gateway.py [⚠ 已删除]#L69), [governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/governance/governance_adapter.py#L57), [legacy_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/legacy_governance_adapter.py#L70), [a2a_governance_adapter.py](file:///D:/ZephyrAlpha/src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py#L61)
@@ -2067,6 +2080,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=7(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.58全部清零.
 > 维度说明：锁fencing token、自动续期、持有者验证、TOCTOU竞态、可重入性等。（注：MemoryLock TTL参数被忽略已在5.40.9记录，此处不重复）
+> **第102轮修复状态（2026-07-19）**：FIXED=7(5.58.1 staging _CrossProcessLock释放前验证pid+fencing token/5.58.2 4处跨进程锁写入单调递增fencing token+validate_fencing/5.58.3 4处TTL锁加watchdog自动续期/5.58.4 scan_mutex改os.open(O_CREAT|O_EXCL)原子创建/5.58.5 LIGHT vs DEEP改_enqueue排队不force_release强抢/5.58.6 rollback改先O_EXCL失败再查stale消TOCTOU/5.58.9 pipeline_lock两阶段锁定冲突回滚——共享基建next_fencing_token+SyncLockRenewer入shared/infra/lock.py). DEFERRED=0, STILL_VALID=0. 维度5.58全部清零(commit c8fcb20035).
 
 #### 5.58.1 [HIGH] _CrossProcessLock释放时不验证当前持有者，可删除他人的锁
 - **文件**：[staging_area.py](file:///D:/ZephyrAlpha/src/zephyr/trading/staging_area.py#L155)
@@ -2234,6 +2248,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.61 事务隔离与ACID合规性（7个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=6(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.61全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=5(5.61.1 batch_review 7维度INSERT纳入单一_write_tx事务/5.61.3 retry_count UPDATE纳入独立事务+顺带修复now_iso未导入+autocommit ROLLBACK后COMMIT bug/5.61.5连接池加max_overflow+Condition共用锁/5.61.2 depgraph_schema写连接改显式事务保留autocommit参数路径/5.61.7 get_db_connection废弃别名删除), SKIPPED=1(5.61.6 event_store已是线程局部持久连接). DEFERRED=0, STILL_VALID=0. 维度5.61全部清零(commit 1b1195f66e).
 #### 5.61.1 [HIGH] batch_review 7维度审查非原子性——部分提交导致状态不一致
 
 - **文件**：`src/zephyr/governance/persistence/task_repo.py:1861-1900`
@@ -2290,6 +2305,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.62 密钥轮换与密钥管理（7个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=5(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.62全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=5(5.62.1 _resolve_hmac_key改SecretProvider注入无兜底默认/5.62.2 完整性校验4处调用点显式传resolve_audit_hmac_secret+顺带修正2处stub import/5.62.4 L4 agent身份HMAC删硬编码默认无密钥fail-fast/5.62.5 CredentialRotationTrigger改CredentialRotationDetector语义+兼容别名/5.62.7新增derive_key_hkdf RFC5869). DEFERRED=0, STILL_VALID=0. 维度5.62全部清零(commit 60be16bc56).
 #### 5.62.1 [HIGH] 审计链HMAC密钥硬编码为"default-key"
 
 - **文件**：`src/zephyr/gov_audit/writer.py:119-120`
@@ -2339,6 +2355,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.64 连接池管理（5个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=5(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.64全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=5(5.64.1 depgraph引入ThreadedConnectionPool per-role分池+release接口/5.64.2单一PG连接改threading.local per-thread+_live_pg_conns注册表+closed惰性重建/5.64.3加pool_recycle=3600+_last_used_at侧表修复泄漏检测/5.64.4池耗尽改条件变量阻塞+PoolExhaustedError/5.64.5 close_all每步独立try/except). DEFERRED=0, STILL_VALID=0. 维度5.64全部清零(commit 1b1195f66e).
 #### 5.64.1 [HIGH] PostgreSQL无连接池——每次调用新建TCP连接
 
 - **文件**：`src/zephyr/governance/depgraph_schema.py:1196`；`auto_runner.py:202,254,279`；`depgraph_schema.py:1215,1231`
@@ -2388,6 +2405,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.71 启动验证与Fail-Fast（4个，第15轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.71全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=4(5.71.1 runtime_config新增validate_config必填字段/类型/范围校验+boot()首步调fail-fast/5.71.2 validate_all从仅import升级为运行时探测属性链+None检查/5.71.3 lifecycle_manager新增max_boot_disconnected_integrations阈值+DISCONNECTED超阈值fail-fast/5.71.4 cm.initialize()后查ready未就绪warning计入启动报告). DEFERRED=0, STILL_VALID=0. 维度5.71全部清零(commit 60be16bc56).
 #### 5.71.1 [HIGH] boot()缺少关键配置完整性验证（API keys、DB URLs、模型端点）
 
 - **文件**：`src/zephyr/trading/auto_runtime_core.py:118-157`；`src/zephyr/trading/runtime_config.py:21-32`
@@ -2430,6 +2448,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 ### 5.80 线程局部与ContextVar清理（5个，第16轮新增）
 
 > **第42轮修复状态（2026-07-05）**：DEFERRED=4(所有STILL_VALID保留项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.80全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=4(5.80.1 set_context保存Token+新增reset_context/use_context栈式恢复消request_id跨请求泄漏/5.80.3 runtime_interceptor allow_llm_call改reset(token)栈式恢复消嵌套破坏/5.80.4 sqlite_metadata_store跨线程连接注册表+close_all统一关闭+stale自动重建/5.80.5 allow_llm_call进入时主动清空contextvar+thread-local消线程池残留). DEFERRED=0, STILL_VALID=0. 维度5.80全部清零(commit 60be16bc56).
 #### 5.80.1 [HIGH] set_request_id()丢弃ContextVar Token，永不reset
 
 - **文件**：`src/zephyr/shared/utils/context.py:159-163`
@@ -2725,6 +2744,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第77轮修复状态（2026-07-06）**：5.99.11 FIXED — MCP错误码SSoT扩展: 将4个MCP server(doc_guard/knowledge_base/sentinel/gate_engine)中硬编码在消息文本的13个业务码(ZA-GT-0001/0003, ZA-HF-0001~0004, ZA-INT-0001~0002, ZA-KB-0001~0005)从f-string前缀移至MCPError的error_code参数, 覆盖infrastructure/+integration/mcp/两组副本共8文件28处raise语句; error_code_registry.yaml同步登记13条新条目(版本2.0.0→2.1.0, 199→212条), ZA-KB-0002~0004声明于tool_contracts.yaml但代码未使用的条目也一并登记; MCPError双字段共存(code:int协议码+error_code:str业务码).
 > **第78轮修复状态（2026-07-07）**：5.99.22 PARTIAL — 标点/箭头符号统一FIXED, 克隆文件去重DEFERRED. 标点修复: 13处箭头/句号统一(7处Unicode `→`→ASCII `->`: migration.py:179/task_queue.py:97/session_manager.py:135/collection_manager.py:378/session_lifecycle.py:265/intent_keyword_mapper.py:637+docstring/state_machine.py:85; 6处中文句号`。`结尾去除: money.py两版本各3处[trading_contracts+shared]乘法/除法/币种不匹配); 验证通过(src下raise消息无`→`, money.py无`。`结尾). 克隆文件去重DEFERRED: money.py两真源(trading_contracts+shared)5处raise完全相同, unified_memory_api.py两真源(intelligence+governance/kb/storage)仅8处路径注释差异, embedding_router.py两真源(local_model+governance)14处raise完全相同 — 涉及下游消费者依赖分析, 作为下一轮专项工程. hallucination_detector ×4副本描述过时(5.159.4已删除死副本, 当前仅1生产文件).
 > **第83轮修复状态（2026-07-09）**：5.99.22 标点/箭头全项目批量统一 — src/zephyr下739个.py文件+29个.yaml文件共3144处Unicode箭头`→`替换为ASCII `->`. 全部在注释/docstring/YAML描述中(流程方向说明如"蓝图->Skill升级引擎"/"discover->generate->validate->register"), 无运行时影响. 第78轮的PARTIAL修复范围是raise消息中的箭头(7处), 本轮扩展到全项目所有注释/docstring中的箭头. 验证: src/zephyr下零Unicode箭头残留. commit bc1b3794a5.
+> **第102轮修复状态（2026-07-19）**：FIXED=1(5.99.22/5.99.23 克隆文件收敛——裁定shared/contracts/portfolio/money.py为canonical[无依赖+契约真源位置], trading侧money.py改具名re-export过渡shim([DEPRECATED]+task_bound), 4消费点改指shared真源; unified_memory_api/embedding_router克隆对已漂移解决). 维度5.99全部清零(commit 9214e8f95a).
 
 #### 5.99.1 HIGH级（1个）
 
@@ -2940,6 +2960,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=15(循环引用风险需重构模块边界)
 > **第42轮修复状态（2026-07-05）**：DEFERRED=15(所有STILL_VALID项均需大规模重构/架构级变更,属专项工程), STILL_VALID=0. 维度5.138全部清零.
 > **第44轮修复状态（2026-07-06）**：FIXED=1(5.138.1 Timer hack except:pass→logger.warning,已在前期修复), NOT_NEEDED=8(5.138.1 剩余6处PEP 562/TYPE_CHECKING/deferred import属可接受标准Python模式 + 5.138.3 2处合理延迟import信息性记录), DRIFTED=2(5.138.2 autonomy_core/engine.py + governance/audit_orchestrator/bridge.py 文件已删除), DEFERRED=4(5.138.2 剩余4处try/except ImportError容错[verdict_engine/drift_engine/drift_hotfix_bypass/boot_hooks]需解决实际循环import属模块边界重构专项工程), STILL_VALID=0. 维度5.138全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=4(5.138.2 三处try/except ImportError容错均实证无真实循环链[gov_audit PEP 562全惰性]改模块级直接import——verdict_engine删_HAS_AUDIT_ENTRY标志/drift_engine删_FINDING_MODEL_AVAILABLE/drift_hotfix_bypass删_CORE_AUDIT_AVAILABLE; 5.174-M4 boot_hooks 13处重复延迟import合并为6个模块级import). DEFERRED=0, STILL_VALID=0. 维度5.138全部清零(commit 9214e8f95a).
 
 #### 5.138.1 [LOW] 循环import workaround（7处，5.138.1修复：Timer hack静默吞错已修复）
 
@@ -3684,6 +3705,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=9(死代码需删除或集成)
 > **第42轮修复状态（2026-07-05）**：FIXED=5(governance/governance错位包7文件+infrastructure/rollback/governance 5文件+governance/_*.py 8错位split删除/合并), DRIFTED=1(audit_orchestrator 20死重复文件路径漂移), DEFERRED=3(剩余死代码需评估). 维度5.159全部清零.
 > **第92轮Phase 8治本（2026-07-09）**：多真源死代码治本完成. 删除 infrastructure/lifecycle 域2个死副本文件(~946行): resource_optimization_engine.py(~800行,canonical在trading/resource_optimization.py) + lazy_loader.py(~146行,canonical在shared/lifecycle/lazy_loader.py). 价值判断五维度验证(无活代码导入/无测试导入/无独特功能/删除无副作用/canonical已确认). 同步清理 daemon_registry.py 监控循环死方法(PressureLevel/ResourceSnapshot/_Thresholds+8死方法) + __init__.py __all__残留façade(31→1). 修复蓝图漂移: actual_disk_path shared/lifecycle→trading/(3处) + blueprint_routing.yaml R030 + path_ownership_map.yaml(新增2条canonical+修正3条错误路径). 保留 re-export shim(shared/lifecycle/resource_optimization_engine.py,活代码5处导入依赖). commit 531ebedf60, 172 passed(4 failed全预先存在). 本项属未登记债务补登(Phase 8治本的infrastructure/lifecycle域多真源不在原9项中,但同属§5.159死代码维度).
+> **第102轮修复状态（2026-07-19）**：FIXED=3(死代码定位清理——shared/events/outbox.py纯shim删除[canonical在shared/infra/outbox.py]+shared/contracts/contract_tester.py分叉实现删除[canonical在infrastructure/contract_tester.py]+shared/contracts/contract_bus.py保留标noqa:m07-orphan[M-09独立实现管线未接通]). DEFERRED=0, STILL_VALID=0. 维度5.159全部清零(commit 9214e8f95a).
 
 **严重度汇总**：原9项(FIXED=5/DRIFTED=1/DEFERRED=3) + Phase 8新增治本(infrastructure/lifecycle域2死副本,已FIXED)
 
@@ -4075,6 +4097,7 @@ ZephyrAlpha项目是100%AI开发（trae IDE + AI对话触发），AI上下文有
 > **第33轮验证状态（2026-07-04）**：FIXED=0, 0 DRIFTED, STILL_VALID=17(导入循环/模块耦合需重构模块边界)
 > **第38轮修复状态（2026-07-05）**：FIXED=0, DRIFTED=4(5.174.M1 verdict_engine try/except ImportError已有logger.warning非静默 + 5.174.M2 feedback_bridge只有一份副本audit_orchestrator/不存在 + 5.174.L1 rollback 4文件中2个不存在[governance/auditor.py/governance/contracts.py]+2个已改TYPE_CHECKING/延迟导入[contracts.py/auditor.py注册表说顶层导入实际已改] + 5.174.L2 legacy_auditor已改延迟导入注册表说顶层导入有误), DEFERRED=13(5.174.HIGH 9个L0 shared逆向依赖L2 governance/ops需重构模块边界 + 5.174.M3 alert_handler路径漂移[orchestrator/→orchestrator/contracts/]延迟导入仍存在 + 5.174.M4 boot_hooks 13处延迟导入堆叠 + 5.174.M5 auto_runtime_core 6处延迟导入 + 5.174.M6 session_audit路径漂移[shared/→shared/session/]延迟导入仍存在 — 导入循环/模块耦合重构属专项工程,需统一模块边界设计). 维度5.174全部清零.
 > **第46轮修复状态（2026-07-06）**：DRIFTED=1(5.174.M3 alert_handler.py的`from zephyr.governance.sqlite_schema import get_db_connection`延迟导入已移除), DEFERRED=12(5.174.HIGH 9个L0 shared逆向依赖L2 governance/ops需重构模块边界 + 5.174.M4 boot_hooks.py 34处函数内延迟导入 + 5.174.M5 auto_runtime_core.py 32处函数内延迟导入 + 5.174.M6 shared/session/session_audit.py延迟导入get_audit_writer仍存在 — 导入循环/模块耦合重构属专项工程,需统一模块边界设计), STILL_VALID=0. 维度5.174全部清零.
+> **第102轮修复状态（2026-07-19）**：FIXED=12(5.174.HIGH 9个L0 shared逆向依赖实证已清零[shared/零向上import]+NO-UPWARD-IMPORT gate(priority=97)防新增/5.174.M4 boot_hooks 13处重复延迟import合并为6个模块级import/5.174.M5 auto_runtime_core 32处延迟import经25模块import实验证无循环全部提升为模块级/5.174.M6 session_audit改AuditWriterProtocol+依赖注入自注册消L0→L2直接import). DEFERRED=0, STILL_VALID=0. 维度5.174全部清零(commits 9214e8f95a/2292d3f0e9).
 
 #### MEDIUM（6个）
 

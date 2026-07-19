@@ -17,7 +17,20 @@ from typing import Final
 # [A_module] module_id=MOD-UNK_slo_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。"""
+"""SLO/SLI 管理器（CT-SLO-001）——14条CT-* p95/p99目标 + Error Budget。
+
+5.39.6 治本：原 SLOManager 定义后从未实例化（死代码）。现提供
+``get_slo_manager()`` 单例 + ``subscribe_eventbus()`` 事件驱动接入——
+boot_hooks 启动时实例化并订阅 EventBus，task.completed 等事件携带
+``contract_id`` + ``duration_s`` 时自动采集样本、计算 p95/p99 并对照
+SLO_MATRIX 检查，违规则 warning + ``slo.breach_total`` counter。
+"""
+
+import logging
+import math
+from collections import deque
+
+logger = logging.getLogger(__name__)
 
 
 SLO_MATRIX: Final[dict[str, dict]] = {
@@ -39,6 +52,13 @@ SLO_MATRIX: Final[dict[str, dict]] = {
 
 
 class SLOManager:
+    # 5.39.6: 每合同保留最近 N 个 duration 样本用于 p95/p99 计算
+    _MAX_SAMPLES = 1000
+
+    def __init__(self) -> None:
+        self._durations: dict[str, deque[float]] = {}
+        self._subscribed = False
+
     def get_slos(self, contract_id: str) -> dict | None:
         return SLO_MATRIX.get(contract_id)
 
@@ -55,3 +75,83 @@ class SLOManager:
             if percentile == "p99" and p95 > threshold:
                 return False, f"p99 {p95}s > {threshold}s"
         return True, "OK"
+
+    def record_duration(self, contract_id: str, duration_s: float) -> tuple[bool, str]:
+        """5.39.6: 采集一次 duration 样本并对照 SLO 检查。
+
+        样本写入 MetricsRegistry（``slo.duration_s`` histogram，contract_id
+        作为 label 维度，对标 5.39.3 低基数名+高基数 label 原则），
+        随后用滚动样本计算 p95 调 ``check()``；违规则 warning 日志 +
+        ``slo.breach_total`` counter。返回 ``check()`` 结果。
+        """
+        samples = self._durations.setdefault(contract_id, deque(maxlen=self._MAX_SAMPLES))
+        samples.append(duration_s)
+
+        try:
+            from zephyr.shared.observability.metrics import get_registry
+
+            get_registry().observe("slo.duration_s", duration_s, labels={"contract_id": contract_id})
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("slo metric observe failed", exc_info=True)
+
+        sorted_samples = sorted(samples)
+        p95_idx = max(0, math.ceil(0.95 * len(sorted_samples)) - 1)
+        p95 = sorted_samples[p95_idx]
+        ok, msg = self.check(contract_id, p95)
+        if not ok:
+            logger.warning("SLO breach: %s — %s (n=%d)", contract_id, msg, len(sorted_samples))
+            try:
+                from zephyr.shared.observability.metrics import get_registry
+
+                get_registry().inc("slo.breach_total", labels={"contract_id": contract_id})
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.debug("slo breach counter failed", exc_info=True)
+        return ok, msg
+
+    def subscribe_eventbus(self) -> None:
+        """5.39.6: 订阅 EventBus，事件驱动采集 duration 样本（幂等）。
+
+        task.completed 事件携带 ``contract_id``/``source_blueprint`` 与
+        ``duration_s``/``duration`` 属性（或 dict key）时自动 record_duration。
+        """
+        if self._subscribed:
+            return
+        self._subscribed = True
+        try:
+            from zephyr.shared.event_bus import bus
+
+            def _on_task_completed(event: object) -> None:
+                try:
+                    contract_id = (
+                        getattr(event, "contract_id", "")
+                        or getattr(event, "source_blueprint", "")
+                        or (event.get("contract_id") if isinstance(event, dict) else "")
+                        or (event.get("source_blueprint") if isinstance(event, dict) else "")
+                        or ""
+                    )
+                    duration = getattr(event, "duration_s", None)
+                    if duration is None:
+                        duration = getattr(event, "duration", None)
+                    if duration is None and isinstance(event, dict):
+                        duration = event.get("duration_s") or event.get("duration")
+                    if not contract_id or duration is None:
+                        return
+                    self.record_duration(str(contract_id), float(duration))
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    logger.debug("slo task.completed handler failed", exc_info=True)
+
+            bus.subscribe("task.completed", _on_task_completed)
+            logger.info("SLOManager: subscribed to EventBus task.completed (SLO auto-check)")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("SLOManager: EventBus subscribe failed: %s", e, exc_info=True)
+
+
+_default_manager: SLOManager | None = None
+
+
+def get_slo_manager() -> SLOManager:
+    """5.39.6: SLOManager 进程级单例（boot_hooks 启动时实例化）。"""
+    global _default_manager
+    if _default_manager is None:
+        _default_manager = SLOManager()
+    return _default_manager

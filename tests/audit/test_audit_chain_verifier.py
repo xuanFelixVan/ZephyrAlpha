@@ -30,6 +30,16 @@ from zephyr.gov_enforcement.rule_enforcement.audit_chain_verifier import AuditCh
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
 
 
+@pytest.fixture(autouse=True)
+def _isolated_persist_path(tmp_path, monkeypatch):
+    """5.37.8：隔离门禁链持久化路径到 tmp_path，防测试写入生产 data/audit_trail/。
+
+    通过 ZEPHYR_GATE_CHAIN_PATH 环境变量覆盖默认持久化路径
+    （ARCH-BENCH-LEAK-001：测试禁止写生产路径）。
+    """
+    monkeypatch.setenv("ZEPHYR_GATE_CHAIN_PATH", str(tmp_path / "gate_chain.jsonl"))
+
+
 def _make_result(
     gate_id: str = "G1", status: GateStatus = GateStatus.PASS, reasons: list[str] | None = None
 ) -> GateResult:
@@ -306,30 +316,96 @@ class TestAuditChainVerifierClear:
         v = AuditChainVerifier()
         v.append("G1", _make_result("G1", GateStatus.PASS))
         assert v.length == 1
-        v.clear()
+        v.clear(confirm=True)
         assert v.length == 0
 
     def test_clear_resets_hash_chain(self):
         v = AuditChainVerifier()
         v.append("G1", _make_result("G1", GateStatus.PASS))
-        v.clear()
+        v.clear(confirm=True)
         e2 = v.append("G2", _make_result("G2", GateStatus.PASS))
         assert e2.previous_hash == "0" * 64
 
     def test_clear_on_empty_verifier(self):
         v = AuditChainVerifier()
-        v.clear()
+        v.clear(confirm=True)
         assert v.length == 0
 
     def test_clear_then_rebuild_chain(self):
         v = AuditChainVerifier()
         _append_sync(v, "G1", _make_result("G1", GateStatus.PASS))
-        v.clear()
+        v.clear(confirm=True)
         _append_sync(v, "G2", _make_result("G2", GateStatus.PASS))
         _append_sync(v, "G3", _make_result("G3", GateStatus.FAIL, reasons=["x"]))
         report = v.verify_chain()
         assert report.chain_valid is True
         assert v.length == 2
+
+
+class TestAuditChainVerifierClearPermission:
+    """5.37.9：clear() 权限保护——必须显式 confirm=True。"""
+
+    def test_clear_without_confirm_raises(self):
+        v = AuditChainVerifier()
+        v.append("G1", _make_result("G1", GateStatus.PASS))
+        with pytest.raises(PermissionError):
+            v.clear()
+        assert v.length == 1  # 链未被抹除
+
+    def test_clear_without_confirm_on_empty_raises(self):
+        v = AuditChainVerifier()
+        with pytest.raises(PermissionError):
+            v.clear()
+
+    def test_clear_with_confirm_and_reason(self):
+        v = AuditChainVerifier()
+        v.append("G1", _make_result("G1", GateStatus.PASS))
+        v.clear(reason="test reset", confirm=True, cleared_by="pytest")
+        assert v.length == 0
+
+
+class TestAuditChainVerifierPersistence:
+    """5.37.8：审计链 append-only JSONL 持久化 + 重启恢复。"""
+
+    def test_append_persists_to_jsonl(self, tmp_path):
+        path = tmp_path / "chain.jsonl"
+        v = AuditChainVerifier(persist_path=path)
+        v.append("G1", _make_result("G1", GateStatus.PASS))
+        assert path.exists()
+        lines = [l for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        assert len(lines) == 1
+        import json as _json
+
+        raw = _json.loads(lines[0])
+        assert raw["gate_id"] == "G1"
+        assert raw["status"] == "PASS"
+        assert len(raw["hash"]) == 64
+        assert raw["previous_hash"] == "0" * 64
+
+    def test_reload_restores_chain_across_instances(self, tmp_path):
+        path = tmp_path / "chain.jsonl"
+        v1 = AuditChainVerifier(persist_path=path)
+        # 用 _append_sync 对齐 entry.timestamp（hash 以 result.timestamp 计算，
+        # verify_chain 以 entry.timestamp 重算——与既有测试契约一致）
+        _append_sync(v1, "G1", _make_result("G1", GateStatus.PASS))
+        _append_sync(v1, "G2", _make_result("G2", GateStatus.FAIL, reasons=["x"]))
+        tail_hash = v1._last_hash
+
+        v2 = AuditChainVerifier(persist_path=path)
+        assert v2.length == 2
+        assert v2._last_hash == tail_hash
+        assert v2.verify_chain().chain_valid is True
+
+    def test_clear_confirm_removes_persisted_file(self, tmp_path):
+        path = tmp_path / "chain.jsonl"
+        v = AuditChainVerifier(persist_path=path)
+        v.append("G1", _make_result("G1", GateStatus.PASS))
+        assert path.exists()
+        v.clear(confirm=True)
+        assert not path.exists()
+        # 新实例从空链开始
+        v2 = AuditChainVerifier(persist_path=path)
+        assert v2.length == 0
 
 
 class TestAuditChainVerifierLength:
@@ -344,7 +420,7 @@ class TestAuditChainVerifierLength:
     def test_length_after_clear(self):
         v = AuditChainVerifier()
         v.append("G1", _make_result("G1", GateStatus.PASS))
-        v.clear()
+        v.clear(confirm=True)
         assert v.length == 0
 
 

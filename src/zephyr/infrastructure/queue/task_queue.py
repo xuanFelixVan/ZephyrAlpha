@@ -100,7 +100,7 @@ class TaskQueue:
         ready = [
             i
             for i in self._items
-            if i.status == QueueItemStatus.ENQUEUED and (not self._config.only_p0 or i.priority == "P0")
+            if i.status is QueueItemStatus.ENQUEUED and (not self._config.only_p0 or i.priority == "P0")
         ]
 
         ready.sort(key=lambda x: {"P0": 0, "P1": 1, "P2": 2}.get(x.priority, 3))

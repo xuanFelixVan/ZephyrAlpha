@@ -86,6 +86,7 @@ class Notifier:
             NotificationLevel.CRITICAL: "[CRIT]",
         }
         prefix = prefix_map.get(level, "[?]")
+        # 保留 print（5.20 B 类）：Notifier 的 console 通道职责即控制台通知输出
         print(f"{prefix} {title}: {message}")
 
         self._output_dir.mkdir(parents=True, exist_ok=True)

@@ -104,7 +104,7 @@ class RollbackStateMachine:
 
         step.status = status
         now = datetime.now(UTC).isoformat()
-        if status == StepStatus.PENDING and not step.started_at:
+        if status is StepStatus.PENDING and not step.started_at:
             step.started_at = now
 
         if status in (StepStatus.SUCCESS, StepStatus.FAILED):
@@ -112,7 +112,7 @@ class RollbackStateMachine:
         if error:
             step.error = error
 
-        if status == StepStatus.SUCCESS:
+        if status is StepStatus.SUCCESS:
             self._current_step_idx += 1
 
     def retry_current(self) -> bool:
@@ -133,8 +133,8 @@ class RollbackStateMachine:
         return self._current_step_idx >= len(self._steps)
 
     def get_result(self) -> StateMachineResult:
-        all_success = all(s.status == StepStatus.SUCCESS for s in self._steps)
-        failed_steps = [s for s in self._steps if s.status == StepStatus.FAILED]
+        all_success = all(s.status is StepStatus.SUCCESS for s in self._steps)
+        failed_steps = [s for s in self._steps if s.status is StepStatus.FAILED]
         failed_step = failed_steps[0].name if failed_steps else ""
 
         overall = StepStatus.SUCCESS if all_success else (StepStatus.FAILED if failed_steps else StepStatus.PENDING)

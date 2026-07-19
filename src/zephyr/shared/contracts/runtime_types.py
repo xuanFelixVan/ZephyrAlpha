@@ -64,6 +64,11 @@ class RuntimeConfig(BaseModel):
 
     max_daily_l3_activations: int = Field(default=10, description="AutoIntegrator 每天最多临时激活 L3 次数")
 
+    max_boot_disconnected_integrations: int = Field(
+        default=0,
+        description="boot 集成验证允许的最大 DISCONNECTED 数（5.71.3，超过即 fail-fast）",
+    )
+
     ultimate_goal: str = Field(
         default="全域接入：项目中每一个模块、系统、脚本都在大脑管辖范围内，孤儿率=0%",
         description="终极目标——写入大脑配置，所有 AI 可读取",

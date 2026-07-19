@@ -81,10 +81,10 @@ class PhaseGate(BaseModel):
         worst = GateResult.GREEN
         for check_name in self.gate_checks:
             r = check_fn(check_name)
-            if r == GateResult.RED:
+            if r is GateResult.RED:
                 self.result = GateResult.RED
                 return GateResult.RED
-            if r == GateResult.YELLOW:
+            if r is GateResult.YELLOW:
                 worst = GateResult.YELLOW
         self.result = worst
         return worst

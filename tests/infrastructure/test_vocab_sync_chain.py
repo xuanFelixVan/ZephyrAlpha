@@ -564,15 +564,13 @@ class TestDbConnectionNamingConvention:
             "depgraph_schema.py 未定义 get_depgraph_pg_connection（真源冲突治本回归）"
         )
 
-    def test_depgraph_get_db_connection_is_deprecated_alias(self) -> None:
-        """F1 的 get_db_connection 必须是 deprecation 别名，指向 get_depgraph_pg_connection。"""
+    def test_depgraph_get_db_connection_alias_removed(self) -> None:
+        """F1 的 get_db_connection 废弃别名已删除（5.61.7 治本：零调用点 + 同名冲突）。"""
         import zephyr.governance.depgraph_schema as mod  # noqa: PLC0415
 
-        assert hasattr(mod, "get_db_connection"), (
-            "depgraph_schema.py 未保留 get_db_connection deprecation 别名（向后兼容破坏）"
-        )
-        assert mod.get_db_connection is mod.get_depgraph_pg_connection, (
-            "get_db_connection 不是 get_depgraph_pg_connection 的别名（真源分裂）"
+        assert not hasattr(mod, "get_db_connection"), (
+            "depgraph_schema.py 仍存在 get_db_connection 别名（5.61.7 治本回归："
+            "与 SQLite 同名函数冲突，禁止恢复）"
         )
 
     def test_sqlite_get_db_connection_exists_in_db_utils(self) -> None:

@@ -81,7 +81,7 @@ class MetricCardinalityGuard:
         growth_rate = self._compute_growth_rate(metric_name)
 
         alert = None
-        if status == CardinalityStatus.CRITICAL:
+        if status is CardinalityStatus.CRITICAL:
             alert = {
                 "metric": metric_name,
                 "cardinality": current_cardinality,
@@ -89,7 +89,7 @@ class MetricCardinalityGuard:
                 "growth_rate_per_hour": round(growth_rate, 1),
                 "recommendation": "emergency_label_pruning",
             }
-        elif status == CardinalityStatus.DANGEROUS:
+        elif status is CardinalityStatus.DANGEROUS:
             alert = {
                 "metric": metric_name,
                 "cardinality": current_cardinality,

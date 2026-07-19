@@ -113,6 +113,8 @@ class MCPProcessPool:
         self._lock = threading.Lock()
         self._zombie_thread: threading.Thread | None = None
         self._zombie_running = False
+        # W2 治本: stop 事件让扫描循环即时退出（替代 sleep 长等待），stop 可 join
+        self._zombie_stop = threading.Event()
 
     def get_or_create(
         self,
@@ -197,6 +199,7 @@ class MCPProcessPool:
     def start_zombie_scanner(self) -> None:
         if self._zombie_running:
             return
+        self._zombie_stop.clear()
         self._zombie_running = True
         self._zombie_thread = threading.Thread(
             target=self._zombie_scan_loop,
@@ -205,8 +208,19 @@ class MCPProcessPool:
         )
         self._zombie_thread.start()
 
-    def stop_zombie_scanner(self) -> None:
+    def stop_zombie_scanner(self, timeout: float = 5.0) -> None:
         self._zombie_running = False
+        # W2 治本: 唤醒等待中的扫描线程并 join，确保线程真正退出而非仅置标志
+        self._zombie_stop.set()
+        thread = self._zombie_thread
+        if thread is not None and thread.is_alive() and thread is not threading.current_thread():
+            thread.join(timeout=timeout)
+            if thread.is_alive():
+                logger.warning(
+                    "MCPProcessPool: zombie scanner thread did not stop within %.1fs",
+                    timeout,
+                )
+        self._zombie_thread = None
 
     def _zombie_scan_loop(self) -> None:
         while self._zombie_running:
@@ -214,7 +228,8 @@ class MCPProcessPool:
                 self._reap_zombies()
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.exception("MCPProcessPool: zombie scan failed", exc_info=True)
-            time.sleep(self._zombie_check_interval)
+            # W2 治本: Event.wait 替代 sleep，stop_zombie_scanner 可即时唤醒
+            self._zombie_stop.wait(self._zombie_check_interval)
 
     def _reap_zombies(self) -> int:
         with self._lock:

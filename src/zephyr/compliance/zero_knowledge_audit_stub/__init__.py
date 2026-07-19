@@ -95,7 +95,7 @@ _SUBMODULES = {
     "artifact_scanner": "zephyr.gov_drift.artifact_scanner",
     "compliance_manager": "zephyr.governance.compliance_gate_a6.compliance_manager",
     "default_security_gateway": "zephyr.governance.implementations.default_security_gateway",
-    "security_gateway_base": "zephyr.compliance.security_gateway_base",
+    "security_gateway_base": "zephyr.governance.security_governance.security_gateway_base",
 }
 
 

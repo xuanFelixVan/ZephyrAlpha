@@ -53,7 +53,7 @@ def _make_gateway(project_root=None):
 
 def _install_subprocess(monkeypatch, returncode=0, stdout="", stderr=""):
     """mock subprocess.run 返回指定 returncode/stdout/stderr。"""
-    import zephyr.gov_enforcement.commit_gates.id_uniqueness_gate as mod
+    import subprocess
 
     def _run(cmd, **kwargs):
         class _R:
@@ -64,7 +64,7 @@ def _install_subprocess(monkeypatch, returncode=0, stdout="", stderr=""):
         r.stderr = stderr
         return r
 
-    monkeypatch.setattr(mod.subprocess, "run", _run)
+    monkeypatch.setattr(subprocess, "run", _run)
 
 
 # ---------------------------------------------------------------------------

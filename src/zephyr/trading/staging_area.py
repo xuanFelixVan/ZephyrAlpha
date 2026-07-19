@@ -62,6 +62,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
+from zephyr.shared.infra.lock import SyncLockRenewer, next_fencing_token  # 5.58.2/5.58.3 fencing+续期共享助手
+
 logger = logging.getLogger(__name__)
 
 _COMMIT_LOCK = threading.Lock()  # 5.12.11 修复：仅进程内线程安全辅助锁；跨进程互斥由 _CrossProcessLock(os.open O_CREAT|O_EXCL) 负责
@@ -114,6 +116,11 @@ class _CrossProcessLock:
 
     锁文件: .ailocks/staging_commit_{hash}.lock
     TTL: 30 分钟（防进程崩溃死锁，与 lock_files.py 一致）
+
+    5.58.1：释放前验证持有者（pid + fencing token 匹配才删除）。
+    5.58.2：锁内容含单调递增 fencing token（.ailocks/staging_commit_{hash}.fence
+    持久计数器），validate_fencing() 供受保护操作前验证未被取代。
+    5.58.3：SyncLockRenewer 按 TTL/3 周期刷新 acquired_at，持有者存活期间锁不过期。
     """
 
     _TTL_SECONDS = 1800
@@ -121,11 +128,58 @@ class _CrossProcessLock:
     def __init__(self, project_root: Path, file_path: str, timeout: float = 30.0, poll_interval: float = 0.05) -> None:
         name_hash = hashlib.sha256(file_path.encode("utf-8")).hexdigest()[:16]
         self._lock_file = project_root / ".ailocks" / f"staging_commit_{name_hash}.lock"
+        self._fence_file = project_root / ".ailocks" / f"staging_commit_{name_hash}.fence"
         self._lock_file.parent.mkdir(parents=True, exist_ok=True)
         self._file_path = file_path
         self._timeout = timeout
         self._poll_interval = poll_interval
         self._acquired = False
+        self._pid = os.getpid()
+        self._token = 0
+        self._renewer: SyncLockRenewer | None = None
+
+    def _write_content(self, payload: dict) -> None:
+        """原子重写锁文件内容（持有者专属：tmp + os.replace）。"""
+        import json
+
+        tmp = self._lock_file.with_name(f"{self._lock_file.name}.{self._pid}.tmp")
+        try:
+            tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp, self._lock_file)
+        except OSError:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            raise
+
+    def _read_content(self) -> dict | None:
+        import json
+
+        try:
+            data = json.loads(self._lock_file.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError):
+            return None
+        return data if isinstance(data, dict) else None
+
+    def validate_fencing(self) -> bool:
+        """5.58.2 受保护操作前验证——锁内容仍指向本持有者（pid + fencing token）。"""
+        data = self._read_content()
+        if data is None:
+            return False
+        return data.get("pid") == self._pid and data.get("fencing_token") == self._token
+
+    def _refresh_lease(self) -> bool:
+        """5.58.3 续约：持有者身份校验通过后刷新 acquired_at；被取代则停止续约。"""
+        data = self._read_content()
+        if data is None or data.get("pid") != self._pid or data.get("fencing_token") != self._token:
+            return False
+        data["acquired_at"] = time.time()
+        try:
+            self._write_content(data)
+        except OSError:
+            return False
+        return True
 
     def __enter__(self) -> _CrossProcessLock:
         import json
@@ -138,12 +192,20 @@ class _CrossProcessLock:
                     os.write(
                         fd,
                         json.dumps(
-                            {"pid": os.getpid(), "acquired_at": time.time(), "file": self._file_path},
+                            {"pid": self._pid, "acquired_at": time.time(), "file": self._file_path, "fencing_token": 0},
                             ensure_ascii=False,
                         ).encode("utf-8"),
                     )
                 finally:
                     os.close(fd)
+                # 5.58.2：已持锁后分配单调递增 fencing token 并写回锁内容
+                self._token = next_fencing_token(self._fence_file)
+                self._write_content(
+                    {"pid": self._pid, "acquired_at": time.time(), "file": self._file_path, "fencing_token": self._token}
+                )
+                # 5.58.3：持有者存活期间自动续期，TTL 不失效
+                self._renewer = SyncLockRenewer(self._refresh_lease, self._TTL_SECONDS / 3, name="staging-commit-lock-renewer")
+                self._renewer.start()
                 self._acquired = True
                 return self
             except FileExistsError:
@@ -169,11 +231,28 @@ class _CrossProcessLock:
                 time.sleep(self._poll_interval)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+        if self._renewer is not None:
+            self._renewer.stop()
+            self._renewer = None
         if self._acquired:
-            try:
-                os.remove(self._lock_file)
-            except OSError as e:
-                logger.warning("_CrossProcessLock.__exit__: failed to remove lock file %s (%s: %s)", self._lock_file, type(e).__name__, e)
+            # 5.58.1：释放前验证持有者——仅当锁内容仍指向本进程+本 token 时才删除，
+            # 防止 TTL 过期被他人取代后误删他人新锁。
+            data = self._read_content()
+            if data is not None and data.get("pid") == self._pid and data.get("fencing_token") == self._token:
+                try:
+                    os.remove(self._lock_file)
+                except OSError as e:
+                    logger.warning("_CrossProcessLock.__exit__: failed to remove lock file %s (%s: %s)", self._lock_file, type(e).__name__, e)
+            elif data is not None:
+                logger.warning(
+                    "_CrossProcessLock.__exit__: lock %s held by another owner (pid=%s token=%s), not removing",
+                    self._lock_file, data.get("pid"), data.get("fencing_token"),
+                )
+            else:
+                try:
+                    os.remove(self._lock_file)
+                except OSError:
+                    pass
             self._acquired = False
         return False
 
@@ -524,7 +603,13 @@ class StagingArea:
         target.parent.mkdir(parents=True, exist_ok=True)
         draft_content = _read_file_robust(draft)
 
-        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path):
+        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path) as _xlock:
+            # 5.58.2：受保护操作前验证 fencing token 未过期/未被取代
+            if not _xlock.validate_fencing():
+                raise StagingError(
+                    "Cross-process lock fencing validation failed — lock displaced by another session",
+                    details={"file_path": str(file_path)},
+                )
             if _orig_mtime is not None:
                 pre_replace_mtime = _file_mtime(target)
                 pre_replace_hash = _file_hash(target)
@@ -586,7 +671,13 @@ class StagingArea:
         baseline_content = self._read_baseline_content(draft, orig_hash)
         draft_lines = draft.read_text(encoding="utf-8").splitlines(keepends=True)
 
-        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path):
+        with _COMMIT_LOCK, _CrossProcessLock(self._root, file_path) as _xlock:
+            # 5.58.2：受保护操作前验证 fencing token 未过期/未被取代
+            if not _xlock.validate_fencing():
+                raise StagingError(
+                    "Cross-process lock fencing validation failed — lock displaced by another session",
+                    details={"file_path": str(file_path)},
+                )
             current_lines = _read_file_robust(target).splitlines(keepends=True)
 
             locked_mtime = _file_mtime(target)

@@ -15,12 +15,13 @@
 # [TTL] permanent
 from zephyr.shared.utils.logging import (
     LogLevel,
-    TraceContext,
+    TraceContext,  # [DEPRECATED] 兼容别名，新代码用 trace_context
     ZephyrLogger,
     configure_root_logger,
     get_logger,
     module_id_var,
     session_id_var,
+    trace_context,
     trace_id_var,
 )
 
@@ -32,5 +33,6 @@ __all__ = [
     "get_logger",
     "module_id_var",
     "session_id_var",
+    "trace_context",
     "trace_id_var",
 ]

@@ -353,6 +353,7 @@ def init_decision_db(*, echo: bool = False) -> None:
                 ):
                     cur.execute(f"SELECT 1 FROM {table_name} LIMIT 1")  # noqa: S608
                     cur.fetchone()
+                # 保留 print（5.20 B 类）：echo=True 是调用方显式请求控制台输出（CLI 初始化场景）
                 print("[decisiongraph_schema] PG schema healthy: 4 tables verified")
     finally:
         conn.close()

@@ -123,3 +123,60 @@ class TestLockError:
 
         err = LockError("locked", details={"name": "r1"})
         assert isinstance(err, ZephyrBaseError)
+
+
+class TestMemoryLockTTL:
+    """5.40.9：TTL 过期强释语义。"""
+
+    def test_expired_lock_can_be_stolen(self):
+        lock = MemoryLock()
+
+        async def run():
+            h1 = await lock.acquire("r1", ttl_seconds=0.05)
+            assert h1 is not None
+            await asyncio.sleep(0.1)
+            # 持有者 TTL 已过期 -> 强释后抢锁成功
+            h2 = await lock.acquire("r1")
+            assert h2 is not None
+            return h1
+
+        h1 = asyncio.get_event_loop().run_until_complete(run())
+        # 被强释的原持有者 release 被 owner 校验拒绝
+        released = asyncio.get_event_loop().run_until_complete(lock.release(h1))
+        assert released is False
+
+    def test_unexpired_lock_cannot_be_stolen(self):
+        lock = MemoryLock()
+
+        async def run():
+            h1 = await lock.acquire("r1", ttl_seconds=30.0)
+            h2 = await lock.acquire("r1")
+            assert h1 is not None
+            assert h2 is None
+            await lock.release(h1)
+
+        asyncio.get_event_loop().run_until_complete(run())
+
+    def test_is_locked_false_for_expired_hold(self):
+        lock = MemoryLock()
+
+        async def run():
+            await lock.acquire("r1", ttl_seconds=0.05)
+            assert lock.is_locked("r1") is True
+            await asyncio.sleep(0.1)
+            assert lock.is_locked("r1") is False
+
+        asyncio.get_event_loop().run_until_complete(run())
+
+    def test_wait_timeout_acquires_after_holder_ttl_expires(self):
+        lock = MemoryLock()
+
+        async def run():
+            h1 = await lock.acquire("r1", ttl_seconds=0.05)
+            assert h1 is not None
+            # 持有者 TTL 0.05s 后到期；等待路径应检测到强释并抢锁成功，
+            # 而非傻等 0.5s 超时失败
+            h2 = await lock.acquire("r1", wait_timeout_seconds=0.5)
+            assert h2 is not None
+
+        asyncio.get_event_loop().run_until_complete(run())

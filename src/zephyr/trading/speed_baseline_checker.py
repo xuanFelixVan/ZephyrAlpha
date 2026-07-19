@@ -17,6 +17,7 @@ from typing import Final
 # [A_module] module_id=MOD-ORC_speed_baseline_checker | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+import logging
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -25,6 +26,8 @@ from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.
 
 import psutil
 import yaml
+
+logger = logging.getLogger(__name__)
 
 _MANIFEST_PATH = REPO_ROOT / "scripts" / "script-manifest.yaml"
 _BASELINE_CACHE_TTL = 300.0
@@ -136,7 +139,7 @@ class SpeedBaselineChecker:
             self._cache_loaded_at = now
             return baselines
         except (FileNotFoundError, yaml.YAMLError) as e:
-            print(f"[SpeedBaselineChecker] MANIFEST_NOT_FOUND: {e}")
+            logger.warning("[SpeedBaselineChecker] MANIFEST_NOT_FOUND: %s", e)
             return self._cache if self._cache else {}
 
     @staticmethod

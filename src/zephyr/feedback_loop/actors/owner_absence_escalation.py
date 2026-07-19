@@ -72,7 +72,7 @@ class OwnerAbsenceEscalation:
         )
         self._prune_stale()
 
-        if self.check_absence() == AbsenceState.ABSENT and urgency == "critical":
+        if self.check_absence() is AbsenceState.ABSENT and urgency == "critical":
             self.auto_approved += 1
             return {"decision": decision_id, "action": "auto_approved", "reason": "owner_absent"}
 

@@ -106,6 +106,9 @@ class _FakeCursor:
     def fetchall(self):
         return list(self._result)
 
+    def __iter__(self):
+        return iter(self._result)
+
 
 class _FakePGConnection:
     """模拟 psycopg2 连接：内存表 + migration_log + 提交计数。"""

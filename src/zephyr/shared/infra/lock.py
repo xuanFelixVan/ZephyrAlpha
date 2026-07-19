@@ -44,12 +44,16 @@ Version: 0.1.0
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
+import os
+import threading
 import time
 import uuid
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Protocol
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -59,9 +63,81 @@ __all__ = [
     "LockError",
     "LockHandle",
     "MemoryLock",
+    "SyncLockRenewer",
+    "next_fencing_token",
 ]
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# 5.58 同步文件锁共享助手（fencing token + TTL 自动续期）
+# ---------------------------------------------------------------------------
+
+
+def next_fencing_token(counter_path: Path | str) -> int:
+    """读取并递增持久化 fencing 计数器，返回新的单调递增 token（5.58.2）。
+
+    调用方 MUST 已持有对应互斥锁——递增操作在锁保护下串行化，保证单调性。
+    计数器文件缺失/损坏时从 1 重新开始：旧锁内容中的 token 随锁文件一起失效，
+    不会有两个活跃持有者共享同一 token（释放验证同时比对 owner + token）。
+    """
+    path = Path(counter_path)
+    token = 0
+    try:
+        raw = path.read_text(encoding="utf-8").strip()
+        token = int(raw) if raw else 0
+    except (OSError, ValueError):
+        token = 0
+    token += 1
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    try:
+        tmp.write_text(str(token), encoding="utf-8")
+        os.replace(tmp, path)
+    except OSError:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+    return token
+
+
+class SyncLockRenewer:
+    """TTL 锁自动续期 watchdog（5.58.3）——守护线程定期调用 refresh_fn 刷新锁时间戳。
+
+    refresh_fn() 续约前 MUST 验证持有者身份（owner + fencing token），
+    返回 False（锁已释放/已被取代）时 watchdog 自动停止。
+    线程为 daemon——进程退出不阻塞；stop() 通过 Event 立即唤醒退出。
+    """
+
+    def __init__(self, refresh_fn: Callable[[], bool], interval_s: float, name: str = "sync-lock-renewer") -> None:
+        self._refresh_fn = refresh_fn
+        self._interval_s = max(1.0, interval_s)
+        self._name = name
+        self._stop = threading.Event()
+        self._thread: threading.Thread | None = None
+
+    def start(self) -> None:
+        if self._thread is not None:
+            return
+        self._thread = threading.Thread(target=self._run, name=self._name, daemon=True)
+        self._thread.start()
+
+    def _run(self) -> None:
+        while not self._stop.wait(self._interval_s):
+            try:
+                if not self._refresh_fn():
+                    return
+            except Exception:  # noqa: BLE001 — watchdog 异常静默退出，续约失效后锁按 TTL 自然过期
+                logger.warning("SyncLockRenewer '%s' refresh failed, stopping", self._name, exc_info=True)
+                return
+
+    def stop(self, timeout: float = 2.0) -> None:
+        self._stop.set()
+        thread = self._thread
+        if thread is not None and thread.is_alive():
+            thread.join(timeout=timeout)
+        self._thread = None
 
 
 class LockError(ZephyrBaseError):

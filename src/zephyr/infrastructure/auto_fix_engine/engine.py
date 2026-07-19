@@ -203,7 +203,7 @@ class AutoFixEngine:
                 metadata={"error": f"No fixer found for action type: {action_type}"},
             )
         action = fixer.fix(target, dry_run=dry_run)
-        if action.status == FixStatus.COMPLETED and not dry_run:
+        if action.status is FixStatus.COMPLETED and not dry_run:
             self._fix_budget.consume(action.level, action.token_cost, operation_id=action.action_id)
             self._cascade_breaker.record("")
             self._storm_guard.record()
@@ -245,7 +245,7 @@ class AutoFixEngine:
             action.metadata["canary_reason"] = f"Sample ratio {sample_ratio} exceeds canary ratio {ratio}"
             return action
         result = self.fix(action.action_type, action.target)
-        if result.status == FixStatus.COMPLETED:
+        if result.status is FixStatus.COMPLETED:
             self._canary_fixer.advance(action.action_type)
         return result
 

@@ -153,7 +153,7 @@ class GovernanceAutoRunner:
             from zephyr.governance.ops_governance.phase_manager import GateResult
 
             result = run_check(gate_name)
-            return result == GateResult.GREEN
+            return result is GateResult.GREEN
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # fail-closed: gate 不存在或执行失败时，视为未通过（不静默放行）
             logger.warning("Gate %s execution failed: %s", gate_name, e, exc_info=True)

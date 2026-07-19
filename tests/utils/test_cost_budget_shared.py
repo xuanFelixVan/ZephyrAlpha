@@ -21,7 +21,7 @@
   CostBudget.get_cost：
     - 已知 provider/model cost × 2（含 cached input）
     - 未知 provider/model 返回 0.0 × 1
-  CostBudget.check_budget：
+  CostBudget.assert_budget：
     - 预算内通过 × 1
     - 超出 hard_limit 抛 CostBudgetExceededError × 1
     - 刚好临界（>=）抛异常 × 1
@@ -152,16 +152,16 @@ class TestGetCost:
         assert cost == 0.0
 
 
-class TestCheckBudget:
+class TestAssertBudget:
     def test_within_budget(self):
         b = CostBudget(hard_limit=10.00)
-        b.check_budget("openai", "gpt-4o")
+        b.assert_budget("openai", "gpt-4o")
 
     def test_exceeded_raises_error(self):
         b = CostBudget(hard_limit=0.01)
         b.cumulative_cost = 0.02
         with pytest.raises(CostBudgetExceededError) as exc:
-            b.check_budget("openai", "gpt-4o")
+            b.assert_budget("openai", "gpt-4o")
         assert exc.value.current == 0.02
         assert exc.value.limit == 0.01
         assert exc.value.provider == "openai"
@@ -171,7 +171,7 @@ class TestCheckBudget:
         b = CostBudget(hard_limit=5.00)
         b.cumulative_cost = 5.00
         with pytest.raises(CostBudgetExceededError):
-            b.check_budget("openai", "gpt-4o")
+            b.assert_budget("openai", "gpt-4o")
 
 
 class TestCheckBudgetOrWarn:

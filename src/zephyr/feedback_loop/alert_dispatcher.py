@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] DispatchError 任务创建失败/DB 不可用
+# [ERROR_CONTRACT] dispatch 失败不抛异常——捕获后返回 DispatchResult.error（RULE-THREE 裁定：原 DispatchError 全库无 raise，死异常类已删除）
 # [TESTS] scripts/connect/fle_orc.py --trigger
 # [A_module] module_id=MOD-FBL-alert_dispatcher | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -87,15 +87,6 @@ class DispatchResult:
     @property
     def success(self) -> bool:
         return self.error is None and self.dispatched_to is not None
-
-
-class DispatchError(Exception):
-    error_code = "ZA-TR-0018"
-
-    def __init__(self, *args, error_code: str | None = None, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        if error_code is not None:
-            self.error_code = error_code
 
 
 class AlertDispatcher:

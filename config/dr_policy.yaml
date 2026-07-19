@@ -1,0 +1,53 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §dr_policy
+# module_id: MOD-INF-043
+# stability: stable
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# dr_policy.yaml — 灾难恢复策略真源（RTO/RPO 定义，5.33.5 治本）
+# 真源说明：本文件是 RTO/RPO 量化目标的唯一真源（SSoT）。operations_architecture.md
+#   §6 D4 等文档仅允许用纯指针引用本文件，禁止同步副本。
+# 依据：Restic 备份 8h 间隔（post-commit reconciler 双条件触发，日均 1-2 次）
+#   + apply_depgraph.py 变更前 pg_dump 快照 + backup_runtime_state.py 运行时状态备份。
+
+dr_policy:
+  version: "1.0.0"
+  owner: ZephyrAlpha-Owner
+  review_cycle: quarterly
+  targets:
+    - component: depgraph_pg
+      name: "depgraph (PostgreSQL)"
+      description: "架构全景真源库（nodes/edges/domains 等 30 表）"
+      rpo: 24h
+      rto: 4h
+      backup_source:
+        - restic           # scripts/backup/backup.ps1，8h 间隔 post-commit reconciler 触发
+        - pg_dump          # apply_depgraph.py 变更前 -Fc 快照（trae_054 STEP0）
+      verify_method: "scripts/backup/restore.ps1 verify <snapshot_id> 恢复到 D:/restore_test/ 验证；pg_dump 快照用 pg_restore 恢复后比对表行数"
+      owner: ZephyrAlpha-Owner
+      rationale: "Restic 备份 8h 间隔（post-commit reconciler 双条件触发）+ apply_depgraph.py 变更前 pg_dump 快照，worst-case 数据丢失窗口 < 24h"
+
+    - component: governance_db
+      name: "governance.db (SQLite)"
+      description: "治理持久化库（任务状态机/熔断器/文件任务映射等）"
+      rpo: 1h
+      rto: 1h
+      backup_source:
+        - restic           # scripts/backup/backup.ps1 覆盖 data/databases/
+        - sqlite_backup    # sqlite3 .backup（不可用时 Python sqlite3.connect().backup() fallback）
+      verify_method: "sqlite3 .backup 恢复后 PRAGMA integrity_check 返回 ok + 关键表行数比对"
+      owner: ZephyrAlpha-Owner
+      rationale: "SQLite 单文件拷贝成本低，.backup 在线热备秒级完成，RTO 受限于文件恢复+服务重启"
+
+    - component: runtime_state
+      name: ".runtime/ 运行时状态"
+      description: "handoffs（session 交接）/ reconcile_reports（reconciler 报告）/ session_registry（活跃会话登记）"
+      rpo: 24h
+      rto: 2h
+      backup_source:
+        - backup_runtime_handoffs  # scripts/governance/meta/backup_runtime_state.py，tmp/runtime_backups/，保留最近 10 份
+      verify_method: "tests/dr/test_restore_from_backup.py 恢复演练（manifest 清单校验+文件数比对）+ 人工抽查 handoff JSON 可解析"
+      owner: ZephyrAlpha-Owner
+      rationale: ".runtime/ 被 .gitignore 整目录忽略（git 非真源），丢失影响限于 session 交接中断，可接受 24h 窗口"

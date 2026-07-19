@@ -85,6 +85,7 @@ class DataSourceBase(abc.ABC):
     禁止直接修改本文件中的抽象接口。
     """
 
+    # Phase-B 骨架，插件注册表备将来发现（__init_subclass__ 自动注册，读取侧工厂待 Phase-B 落地）
     _registry: ClassVar[dict[str, type[DataSourceBase]]] = {}
 
     def __init_subclass__(cls, **kwargs):

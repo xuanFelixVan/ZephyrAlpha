@@ -89,7 +89,7 @@ class DependencyFreshnessMonitor:
             else:
                 status = FreshnessStatus.FRESH
 
-            if status != FreshnessStatus.FRESH:
+            if status is not FreshnessStatus.FRESH:
                 alert = {
                     "package": name,
                     "status": status.value,

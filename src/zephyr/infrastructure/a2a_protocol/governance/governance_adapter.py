@@ -21,7 +21,6 @@ G-CT-008: A2A -> RBAC + Escalation
 触发条件：Phase 4 激活后，A2A 通信需要经过 RBAC 验证 + Escalation 升级。
 """
 
-import asyncio
 import logging
 from dataclasses import dataclass, field
 from typing import Any
@@ -51,9 +50,12 @@ def _get_lsg():
 
 
 def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | None:
+    # 5.52.1 fail-closed：LSG 不可用或扫描执行失败时视同阻断（返回 blocked_by 标记），
+    # 禁止 return None 静默跳过安全扫描。仅扫描正常执行且显式放行时返回 None。
     gw = _get_lsg()
     if gw is None:
-        return None
+        logger.warning("LSG gateway unavailable for A2A governance — fail-closed (treated as blocked)")
+        return "lsg_unavailable"
     try:
         from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
@@ -67,11 +69,12 @@ def _lsg_scan_a2a_sync(from_agent: str, to_agent: str, content: str) -> str | No
         )
         if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
             return result.blocked_by or "lsg_agent_scan"
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        return None
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         # 5.162 C1 修复: 移除 except RuntimeError + get_event_loop().is_running() fail-open 回退。
         # run_sync 已处理所有 async/sync 场景。原 is_running() 时 return None = fail-open 漏洞。
-        logger.warning("suppressed error in governance_adapter", exc_info=True)
-    return None
+        logger.warning("LSG A2A scan failed — fail-closed (treated as blocked)", exc_info=True)
+        return "lsg_scan_error"
 
 
 @dataclass

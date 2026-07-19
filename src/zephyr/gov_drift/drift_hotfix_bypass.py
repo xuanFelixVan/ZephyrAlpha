@@ -40,15 +40,10 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
-_CORE_AUDIT_AVAILABLE = False
-
-
-try:
-    from zephyr.shared.contracts.protocols import AuditWriterProtocol
-
-    _CORE_AUDIT_AVAILABLE = True
-except ImportError:
-    _CORE_AUDIT_AVAILABLE = False
+# 5.138.2 治本：zephyr.shared.contracts.protocols 仅依赖 typing+pydantic，
+# shared 层不可能反向 import gov_drift，与本模块无真实循环链——
+# 移除 try/except ImportError 静默降级，import 失败显式化。
+from zephyr.shared.contracts.protocols import AuditWriterProtocol
 
 
 HOTFIX_PREFIXES: Final[tuple[str, ...]] = ("[HOTFIX]", "[EMERGENCY]", "[HOTFIX]", "[EMERGENCY]")
@@ -89,17 +84,16 @@ class HotfixBypass:
 
         self._active_hotfixes: dict[str, HotfixAuditEntry] = {}
 
-        self._core_writer = None
+        self._core_writer: AuditWriterProtocol | None = None
 
-        if _CORE_AUDIT_AVAILABLE:
-            try:
-                import importlib as _importlib
+        try:
+            import importlib as _importlib
 
-                _CoreAuditWriter = _importlib.import_module("zephyr.gov_audit.writer").AuditWriter
-                self._core_writer = _CoreAuditWriter()
+            _CoreAuditWriter = _importlib.import_module("zephyr.gov_audit.writer").AuditWriter
+            self._core_writer = _CoreAuditWriter()
 
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("suppressed error in drift_hotfix_bypass", exc_info=True)
 
     def is_hotfix_commit(self, commit_message: str) -> bool:
         upper = commit_message.strip().upper()

@@ -239,7 +239,7 @@ def _file_exists(module_path: str) -> bool:
 def check_consistency() -> tuple[int, list[dict]]:
     results = []
     for dm in DECISION_MAP:
-        module_ok = _verify_module_exists(dm.code_module) if dm.code_module else (dm.status == DecisionStatus.BACKLOG)
+        module_ok = _verify_module_exists(dm.code_module) if dm.code_module else (dm.status is DecisionStatus.BACKLOG)
         results.append(
             {
                 "decision_id": dm.decision_id,
@@ -248,7 +248,7 @@ def check_consistency() -> tuple[int, list[dict]]:
                 "code_module": dm.code_module,
                 "module_found": module_ok,
                 "notes": dm.notes,
-                "drift": (dm.status == DecisionStatus.IMPLEMENTED and not module_ok),
+                "drift": (dm.status is DecisionStatus.IMPLEMENTED and not module_ok),
             }
         )
     drift_count = sum(1 for r in results if r["drift"])

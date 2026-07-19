@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+# 5.152 #25 sanctioned: integration 为组合层，允许依赖全部层（trading.L2 准入决策契约）。
 from zephyr.trading.admission_controller import (
     AdmissionDecision,
     AdmissionResult,
@@ -71,14 +72,14 @@ class AdmissionResponse(BaseModel):
 
     @model_validator(mode="after")
     def _validate_invariants(self) -> AdmissionResponse:
-        if self.status == AdmissionResponseStatus.REJECTED and not self.rejection_reason:
+        if self.status is AdmissionResponseStatus.REJECTED and not self.rejection_reason:
             raise ValueError("REJECTED status must include rejection_reason")
-        if self.status != AdmissionResponseStatus.QUEUED:
+        if self.status is not AdmissionResponseStatus.QUEUED:
             if self.queue_position is not None:
                 raise ValueError("queue_position only valid for QUEUED status")
             if self.estimated_wait_seconds is not None:
                 raise ValueError("estimated_wait_seconds only valid for QUEUED status")
-        if self.status != AdmissionResponseStatus.DEGRADED and self.degraded_capabilities:
+        if self.status is not AdmissionResponseStatus.DEGRADED and self.degraded_capabilities:
             raise ValueError("degraded_capabilities only valid for DEGRADED status")
         return self
 
@@ -167,7 +168,7 @@ class AdmissionResponseBuilder:
             "request_id": request_id,
         }
 
-        if status == AdmissionResponseStatus.QUEUED:
+        if status is AdmissionResponseStatus.QUEUED:
             kwargs["queue_position"] = queue_position
             kwargs["estimated_wait_seconds"] = estimated_wait_seconds
             if self._controller is not None and estimated_wait_seconds is None:
@@ -175,10 +176,10 @@ class AdmissionResponseBuilder:
                 retry_ms = self._controller.get_retry_after(event_type)
                 kwargs["estimated_wait_seconds"] = retry_ms / 1000.0
 
-        if status == AdmissionResponseStatus.REJECTED:
+        if status is AdmissionResponseStatus.REJECTED:
             kwargs["rejection_reason"] = rejection_reason or "Request rejected by admission policy"
 
-        if status == AdmissionResponseStatus.DEGRADED:
+        if status is AdmissionResponseStatus.DEGRADED:
             kwargs["degraded_capabilities"] = degraded_capabilities or []
 
         if metadata:
@@ -202,13 +203,13 @@ class AdmissionResponseBuilder:
             "request_id": request_id,
         }
 
-        if status == AdmissionResponseStatus.QUEUED:
+        if status is AdmissionResponseStatus.QUEUED:
             kwargs["estimated_wait_seconds"] = result.retry_after_ms / 1000.0
 
-        if status == AdmissionResponseStatus.REJECTED:
+        if status is AdmissionResponseStatus.REJECTED:
             kwargs["rejection_reason"] = "Request rejected by admission policy"
 
-        if status == AdmissionResponseStatus.DEGRADED:
+        if status is AdmissionResponseStatus.DEGRADED:
             kwargs["degraded_capabilities"] = []
 
         result_metadata: dict[str, Any] = {
