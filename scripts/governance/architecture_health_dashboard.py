@@ -1880,9 +1880,305 @@ def metric_29_resource_not_in_try_finally() -> dict:
     return _make_metric("M29", "资源未在 try/finally 计数", len(violations), violations, "inline")
 
 
+# ── 指标 24：字段遮蔽计数（5.101 变量遮蔽与命名冲突）─────────────────────────
+
+
+# 内置名遮蔽检测集（5.101: 42 处数据类字段遮蔽内置名）
+_BUILTIN_NAME_SHADOWS: frozenset[str] = frozenset({
+    "id", "file", "type", "format", "hash", "open", "input", "round",
+    "list", "dict", "set", "tuple", "str", "int", "float", "bool", "bytes",
+    "map", "filter", "range", "len", "print", "sum", "min", "max", "sorted",
+})
+
+
+def _is_dataclass_or_basemodel(node: ast.ClassDef) -> bool:
+    """判定类是否为 dataclass 或 Pydantic BaseModel 子类（字段遮蔽检测范围）。"""
+    for dec in node.decorator_list:
+        if isinstance(dec, ast.Name) and dec.id == "dataclass":
+            return True
+        if isinstance(dec, ast.Attribute) and dec.attr == "dataclass":
+            return True
+    for base in node.bases:
+        if isinstance(base, ast.Name) and base.id in {"BaseModel", "BaseSettings"}:
+            return True
+        if isinstance(base, ast.Attribute) and base.attr in {"BaseModel", "BaseSettings"}:
+            return True
+    return False
+
+
+def metric_24_field_shadowing() -> dict:
+    """字段遮蔽计数（5.101 变量遮蔽与命名冲突，P2 防复发）。
+
+    病根：5.101 PERMANENT-12 + 42 处数据类字段遮蔽内置名。wontfix（R80 裁定
+    实例属性不参与作用域链），但需 metric 监控趋势防增量。
+    检测：AST 扫描 dataclass/BaseModel 类的字段名（AnnAssign target）是否
+    遮蔽内置名（id/file/type/format/hash/open/input/round 等）。
+    范围：src/zephyr/**/*.py，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            if not _is_dataclass_or_basemodel(node):
+                continue
+            for stmt in node.body:
+                if not isinstance(stmt, ast.AnnAssign):
+                    continue
+                if not isinstance(stmt.target, ast.Name):
+                    continue
+                field_name = stmt.target.id
+                if field_name in _BUILTIN_NAME_SHADOWS:
+                    violations.append(f"{rel}:{stmt.lineno} {node.name}.{field_name}")
+    return _make_metric("M24", "字段遮蔽计数(dataclass/BaseModel 字段遮蔽内置名)", len(violations), violations, "inline")
+
+
+# ── 指标 25：模块级常量未标 Final 计数（5.114 Final/@final 强制）────────────
+
+
+def _is_literal_constant(node: ast.AST) -> bool:
+    """判定节点是否为字面量常量（模块级常量候选）。"""
+    if isinstance(node, ast.Constant):
+        return True
+    if isinstance(node, (ast.List, ast.Tuple, ast.Set, ast.Dict)):
+        return True
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        return isinstance(node.operand, ast.Constant)
+    return False
+
+
+def _is_final_annotation(annotation: ast.AST) -> bool:
+    """判定注解是否为 Final[...] 形式。"""
+    if isinstance(annotation, ast.Name) and annotation.id == "Final":
+        return True
+    if isinstance(annotation, ast.Subscript):
+        if isinstance(annotation.value, ast.Name) and annotation.value.id == "Final":
+            return True
+        if isinstance(annotation.value, ast.Attribute) and annotation.value.attr == "Final":
+            return True
+    return False
+
+
+def _check_module_const_assign(stmt: ast.Assign, rel) -> str | None:
+    """检查模块级 Assign（CONST_NAME = value）是否为未标 Final 的字面量常量。
+
+    返回违规描述字符串，或 None 表示无违规。
+    """
+    if len(stmt.targets) != 1:
+        return None
+    target = stmt.targets[0]
+    if not isinstance(target, ast.Name):
+        return None
+    if not target.id.isupper():
+        return None
+    if _is_literal_constant(stmt.value):
+        return f"{rel}:{stmt.lineno} {target.id} (无 Final 标注)"
+    return None
+
+
+def _check_module_const_annassign(stmt: ast.AnnAssign, rel) -> str | None:
+    """检查模块级 AnnAssign（CONST_NAME: T = value）是否为未标 Final 的字面量常量。
+
+    返回违规描述字符串，或 None 表示无违规。
+    """
+    if not isinstance(stmt.target, ast.Name):
+        return None
+    if not stmt.target.id.isupper():
+        return None
+    if stmt.value is None:
+        return None
+    if _is_final_annotation(stmt.annotation):
+        return None
+    if _is_literal_constant(stmt.value):
+        return f"{rel}:{stmt.lineno} {stmt.target.id} (注解非 Final)"
+    return None
+
+
+def metric_25_module_const_missing_final() -> dict:
+    """模块级常量未标 Final 计数（5.114 Final/@final 强制，P2 防复发）。
+
+    病根：5.114 FIXED + 375 处模块级常量已标注。metric 监控回归防新增未标 Final 常量。
+    检测：AST 扫描模块级赋值（Assign/AnnAssign）值为字面量常量且无 Final[...] 标注。
+    范围：src/zephyr/**/*.py，排除 tests/_archive。
+    仅检测大写常量命名风格（CONST_NAME）。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for stmt in tree.body:  # 仅模块级（不递归）
+            if isinstance(stmt, ast.Assign):
+                v = _check_module_const_assign(stmt, rel)
+                if v:
+                    violations.append(v)
+            elif isinstance(stmt, ast.AnnAssign):
+                v = _check_module_const_annassign(stmt, rel)
+                if v:
+                    violations.append(v)
+    return _make_metric("M25", "模块级常量未标 Final 计数", len(violations), violations, "inline")
+
+
+# ── 指标 28：模块级单例无锁 double-check 计数（5.165 全局状态管理）──────────
+
+
+def _class_has_instance_none(node: ast.ClassDef) -> bool:
+    """检测类是否含 `_instance = None` 或 `__instance = None` 类变量。"""
+    for stmt in node.body:
+        if isinstance(stmt, ast.Assign):
+            for tgt in stmt.targets:
+                if isinstance(tgt, ast.Name) and tgt.id in ("_instance", "__instance"):
+                    if isinstance(stmt.value, ast.Constant) and stmt.value.value is None:
+                        return True
+        elif isinstance(stmt, ast.AnnAssign):
+            if isinstance(stmt.target, ast.Name) and stmt.target.id in ("_instance", "__instance"):
+                if stmt.value is not None and isinstance(stmt.value, ast.Constant) and stmt.value.value is None:
+                    return True
+    return False
+
+
+def _class_uses_lock(node: ast.ClassDef) -> bool:
+    """检测类是否使用 Lock/RLock/allocate_lock 或 `with lock:` 模式。"""
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Call):
+            func = sub.func
+            if isinstance(func, ast.Name) and func.id in ("Lock", "RLock", "allocate_lock"):
+                return True
+            if isinstance(func, ast.Attribute) and func.attr in ("Lock", "RLock", "allocate_lock"):
+                return True
+        elif isinstance(sub, ast.With):
+            for item in sub.items:
+                ctx = item.context_expr
+                if isinstance(ctx, ast.Name) and "lock" in ctx.id.lower():
+                    return True
+                if isinstance(ctx, ast.Attribute) and "lock" in ctx.attr.lower():
+                    return True
+    return False
+
+
+def metric_28_singleton_no_lock() -> dict:
+    """模块级单例无锁 double-check 计数（5.165 全局状态管理，P2 防复发）。
+
+    病根：5.165 FIXED（残留 2 项 LOW）+ ~20 处模块级单例无锁 double-check。
+    metric 监控回归防新增无锁单例。
+    检测：AST 扫描类中 `_instance = None` 类变量 + 同类无 Lock() 使用。
+    范围：src/zephyr/**/*.py，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.ClassDef):
+                continue
+            if not _class_has_instance_none(node):
+                continue
+            if not _class_uses_lock(node):
+                violations.append(f"{rel}:{node.lineno} {node.name} (单例无 Lock)")
+    return _make_metric("M28", "模块级单例无锁 double-check 计数", len(violations), violations, "inline")
+
+
+# ── 指标 30：ZEPHYR_ENV 枚举一致性（5.34 环境隔离）──────────────────────────
+
+
+_ZEPHYR_ENV_ACCESS_RE = re.compile(
+    r"os\.environ(?:\.get\(\s*['\"]ZEPHYR_ENV['\"]\s*\)|\[['\"]ZEPHYR_ENV['\"]\])"
+    r"|os\.getenv\(\s*['\"]ZEPHYR_ENV['\"]\s*\)"
+)
+
+
+def metric_30_zephyr_env_enum_consistency() -> dict:
+    """ZEPHYR_ENV 枚举一致性（5.34 环境隔离，P2 防复发）。
+
+    病根：5.34 FIXED + ZEPHYR_ENV 与枚举不匹配历史。metric 监控回归防
+    直接 os.environ["ZEPHYR_ENV"] 访问绕过 canonical 验证器（is_prod/get_environment）。
+    检测：正则扫描直接访问 os.environ["ZEPHYR_ENV"] / os.environ.get("ZEPHYR_ENV")
+    / os.getenv("ZEPHYR_ENV") 的位置（应通过 is_prod() / get_environment() canonical 入口）。
+    范围：src/zephyr/**/*.py，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        try:
+            source = fp.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for line_no, line in enumerate(source.splitlines(), 1):
+            if _ZEPHYR_ENV_ACCESS_RE.search(line):
+                violations.append(f"{rel}:{line_no} {line.strip()[:80]}")
+    return _make_metric("M30", "ZEPHYR_ENV 直接访问数(绕过 canonical 验证器)", len(violations), violations, "inline")
+
+
+# ── 指标 31：MCP version 字段覆盖率（5.35 API 版本管理）─────────────────────
+
+
+_MCP_JSON_CANDIDATES = (
+    REPO_ROOT / "src" / "zephyr" / "integration" / "mcp" / "mcp.json",
+    REPO_ROOT / "config" / "mcp.json",
+    REPO_ROOT / "mcp.json",
+)
+
+
+def metric_31_mcp_version_coverage() -> dict:
+    """MCP version 字段覆盖率（5.35 API 版本管理，P2 防复发）。
+
+    病根：5.35 FIXED + MCP 工具无 version 历史。metric 监控回归防新增工具无 version。
+    检测：解析 mcp.json，统计 tools 数组中无 "version" 字段的工具数。
+    范围：mcp.json（候选路径：src/zephyr/integration/mcp/mcp.json, config/mcp.json, mcp.json）。
+    """
+    mcp_path = None
+    for candidate in _MCP_JSON_CANDIDATES:
+        if candidate.exists():
+            mcp_path = candidate
+            break
+    if mcp_path is None:
+        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
+            details=["mcp.json not found in candidate paths"], source="inline", error="mcp.json not found")
+    try:
+        data = json.loads(mcp_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
+            details=[f"parse failed: {e}"], source=mcp_path.name, error=f"parse failed: {e}")
+    tools: list = []
+    if isinstance(data, dict):
+        tools = data.get("tools") or []
+    elif isinstance(data, list):
+        tools = data
+    if not isinstance(tools, list):
+        return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", 0,
+            details=["tools field is not a list"], source=mcp_path.name, error="invalid tools structure")
+    violations: list[str] = []
+    for idx, tool in enumerate(tools):
+        if not isinstance(tool, dict):
+            continue
+        if "version" not in tool:
+            name = tool.get("name", f"<tool#{idx}>")
+            violations.append(f"{mcp_path.name}: tool '{name}' missing version")
+    return _make_metric("M31", "MCP version 字段覆盖率(无 version 工具数)", len(violations), violations, mcp_path.name)
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 24 项指标注册表（id → 检测函数）
+# 30 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1906,9 +2202,14 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M21", "5病根×3要素覆盖缺口数", metric_21_root_cause_coverage),
     ("M22", "docstring 覆盖率倒数(公共函数无 docstring)", metric_22_docstring_coverage),
     ("M23", "asyncio.run/get_event_loop 调用数", metric_23_asyncio_calls),
+    ("M24", "字段遮蔽计数(dataclass/BaseModel 字段遮蔽内置名)", metric_24_field_shadowing),
+    ("M25", "模块级常量未标 Final 计数", metric_25_module_const_missing_final),
     ("M26", "TODO/FIXME 计数", metric_26_todo_fixme),
     ("M27", "open() 未在 with 语句计数", metric_27_open_not_in_with),
+    ("M28", "模块级单例无锁 double-check 计数", metric_28_singleton_no_lock),
     ("M29", "资源未在 try/finally 计数", metric_29_resource_not_in_try_finally),
+    ("M30", "ZEPHYR_ENV 直接访问数(绕过 canonical 验证器)", metric_30_zephyr_env_enum_consistency),
+    ("M31", "MCP version 字段覆盖率(无 version 工具数)", metric_31_mcp_version_coverage),
 ]
 
 
