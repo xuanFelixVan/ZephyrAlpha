@@ -117,6 +117,31 @@
 >
 > **新增裁定流程**：(1) 在 `ruling_registry.yaml` entries 末尾追加新条目（含 ruling_id/title/date/category/status/summary/affected_files/related_arch/related_rulings/superseded_by）；(2) 同 commit 提交 registry 与首次引用代码。
 
+## RULE-CAPABILITY-LOOKUP：第八件事（能力反查强制 + 逃生通道治本，2026-07-19，裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD）
+
+> **AI 施工前 MUST 调用能力反查**——写第一行 `src/zephyr/**/*.py` 业务代码（不含 `tests/` / `*.md` / `*.yaml` / `*.json`）前，必须先调用以下任一接口，让 AI 进入"零幻觉空间"：
+> - **MCP 接口（首选，AI 自动可用）**：`rule_discovery.discover_applicable_rules(operation='file_write')` ——返回当前 session 适用规则清单 + 写入审计日志
+> - **Python API（备选，用于脚本/调试）**：`capability_lookup.find(<keyword>)` ——按关键字反查能力 → 真源文件
+>
+> 配套门禁：[`capability_lookup_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py)（priority=110，#ARCH-GOV-CONVERGENCE-META Phase 3.4a 建立）。规则真源：[`trae_063_capability_lookup_required.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_policies/trae_063_capability_lookup_required.yaml)。
+>
+> **病根（第一性原理，5 层断裂模型）**：100% AI 开发场景下，机制必须经 5 层闭环才能可靠工作——①**可知性**（AI 知道机制存在）②**可达性**（AI 能调用接口）③**可观察性**（调用结果有反馈）④**可逃生性**（紧急情况能 bypass）⑤**可追溯性**（bypass 留审计链）。本次发现 7 个 Gap（G1-G7）：直接 commit 路径漏传 commit_message（G1）→ 逃生标记永远不触发；rule_discovery 未注册到 mcp.json（G2）→ AI 无法调用；capability_lookup.py 不写审计日志（G3）→ Phase 3.4a 半成品；AGENTS.md 无条款（G4，本节治本）；trae_*.yaml 无规则定义（G5）；`.runtime/lookup_audit/` 空目录（G6，铁证）；无启动 smoke test（G7）。
+>
+> **逃生通道（可逃生性，治本 G1/G4 后已可用）**：
+> 1. **常规逃生**（推荐，留痕可追溯）：commit message 含 `[no-lookup:<reason>]` 标记——`<reason>` 必填非空（如 `[no-lookup:hotfix-xxx]`），由 [`capability_lookup_required_gate.py:91`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py) `_BYPASS_MARKER_PREFIX = "[no-lookup:"` 检测。reason 持久化到 git commit log。
+> 2. **紧急逃生**（不推荐，仅限故障）：环境变量 `ZEPHYR_BYPASS_LOOKUP=1`——绕过 gate 不留 commit 痕迹，须人工事后审计。**Phase 4 升级后**：同一 session 内超过 N 次 `ZEPHYR_BYPASS_LOOKUP=1` commit 强制升级为阻断（POST-COMMIT-GUARD 扩展）。
+> 3. **自动豁免**：merge commit / `*.md`-only / `tests/`-only / 非 `src/zephyr/**/*.py` / 非 Zephyr 项目——gate 直接放行。
+>
+> **审计落盘（可追溯性，治本 G3/G6）**：MCP 接口 `rule_discovery.discover_applicable_rules` 调用时自动写入 JSONL 审计日志到 [`.runtime/lookup_audit/<session_id>.jsonl`](file:///d:/ZephyrAlpha/.runtime/lookup_audit/)，每条 entry 含 `session_id / timestamp / operation / found_rules / discoverer_version`。Phase 2 同步扩展 `capability_lookup.find` Python API 也写审计日志（与 MCP 接口对称）。gate 在 commit 时读取此目录——目录缺失 fail-closed，文件不存在/为空/JSON 损坏均阻断。
+>
+> **直接路径 vs worktree 路径对称性（治本 G1）**：
+> - **直接路径**：`GitCommitGateway.commit()` → `_gate_registry.check_all(commit_message=message)` —— [`git_commit_gateway.py:831`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py)（commit `dda0fbc127` 修复）
+> - **worktree 路径**：`session_worktree._run_pre_commit_gates` → `_gate_registry.check_all(commit_message=message)` —— [`session_worktree.py:1174`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/session_worktree.py)（原本正确）
+>
+> **配套启动 smoke test（治本 G7）**：`session_worktree_start` 健康度自检——检测 `capability_lookup_required_gate.py` 能否正常 import、`.runtime/lookup_audit/` 目录是否可写。失败时 AI MUST 上报（escalate）而非静默 workaround（对标 §11.0.3 #ARCH-TOOL-HEALTH-V1）。
+>
+> **裁定引用**：[`#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml)（P0 严重度，DESIGN-IMPLEMENTATION-GAP 类型，含子裁定 S1-S7 对应 7 个 Gap 治本）。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
