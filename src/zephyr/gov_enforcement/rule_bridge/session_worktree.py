@@ -2293,11 +2293,92 @@ def _get_merge_files(root: Path) -> list[str]:
 def _run_reconcilers_after_merge(
     committed_files: list[str], session_id: str, root: Path
 ) -> list[dict]:
-    """merge 后触发 reconciler（补齐 worktree 路径的 reconciler 验证）。
+    """merge 后异步触发 reconciler（治本 #ARCH-ASYNC-MERGE-RECONCILE-001，2026-07-20）。
 
-    创建临时 GitCommitGateway 实例，调用 reconcile_for 触发所有已注册 reconciler。
-    reconciler 数量以 GitCommitGateway._reconciliation_registry 实际注册为准，不硬编码（裁定 D 治本 2026-07-19）。
-    reconciler 的 auto-commit 通过 gateway._commit_auto 处理（防递归已内置）。
+    病根（第一性原理）：
+    原实现同步调用 gateway._reconciliation_registry.reconcile_for()，导致：
+    1. session_worktree_merge 卡 2-5min（GATE-BLUEPRINT-ID-LEGACY 全扫 5038 文件 +
+       GATE-BLUEPRINT-FRONTMATTER-SYNC 超时 120s 等）
+    2. AI 因性能压力绕过 session_worktree，直接用 GitCommitGateway（生成 warn_only
+       + unregistered_session_id 事件）
+    3. 产生大量 warn_only + allow_overlap 事件
+    4. 触发 GATE-COMMIT-GW-ABUSE-MONITOR critical_warn（dim1+dim3+dim2 三维超阈）
+
+    治本：
+    对齐 P2-3 launch_reconcile_async 机制（GitCommitGateway post-commit 路径早已
+    异步化），spawn detached worker subprocess 后台执行所有 reconciler，merge
+    立即返回不阻塞。补齐 post-merge 路径的异步化缺口。
+
+    降级策略（fail-open）：
+    - launch 失败 → 回退 sync（_run_reconcilers_after_merge_sync，reconciler 仍需执行）
+    - 获取 merge SHA 失败 → 用 session_id 派生 key（保持异步不阻塞）
+    - 异步启动异常 → 回退 sync
+
+    reconciler 数量以 GitCommitGateway._reconciliation_registry 实际注册为准，
+    不硬编码（裁定 D 治本 2026-07-19）。
+    """
+    try:
+        # 获取 merge commit SHA（post-merge HEAD = merge commit），作为 status file key
+        sha_r = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=10,
+        )
+        commit_sha = sha_r.stdout.strip() if sha_r.returncode == 0 else ""
+
+        if not commit_sha:
+            # SHA 获取失败——用 session_id 派生 key（保持异步不阻塞 merge）
+            commit_sha = f"merge_{session_id}"
+
+        from zephyr.governance.audit.reconcile_runner import launch_reconcile_async
+        launch_result = launch_reconcile_async(
+            project_root=root,
+            commit_sha=commit_sha,
+            session_id=session_id,
+            committed_files=committed_files,
+            commit_message=f"[post-merge] session={session_id}",
+        )
+
+        if launch_result.get("ok"):
+            worker_pid = launch_result.get("worker_pid", 0)
+            logger.info(
+                "[RECONCILER] post-merge async launched "
+                "(session=%s, sha=%s, pid=%s)",
+                session_id, commit_sha[:12], worker_pid,
+            )
+            return [{
+                "action": "async_pending",
+                "detail": (
+                    f"post-merge reconcilers launched async "
+                    f"(sha={commit_sha[:12]}, pid={worker_pid})"
+                ),
+            }]
+
+        # launch 失败 → 回退 sync（reconciler 仍需执行，只是退化为同步阻塞）
+        logger.warning(
+            "[RECONCILER] post-merge async launch failed, fallback to sync: %s",
+            launch_result.get("error", ""),
+        )
+        return _run_reconcilers_after_merge_sync(committed_files, session_id, root)
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning(
+            "[RECONCILER] post-merge async launch exception, fallback to sync: %s",
+            e, exc_info=True,
+        )
+        return _run_reconcilers_after_merge_sync(committed_files, session_id, root)
+
+
+def _run_reconcilers_after_merge_sync(
+    committed_files: list[str], session_id: str, root: Path
+) -> list[dict]:
+    """sync fallback：原同步实现（async launch 失败时降级使用）。
+
+    保留原 _run_reconcilers_after_merge 的同步逻辑，作为 async 路径的 fail-open
+    降级。正常情况下不应被调用——只在 launch_reconcile_async 失败时触发。
+
+    #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果到
+    governance.db reconcile_execution_log 表，消除 fail-silent。
+    Phase 3.4 断点7: commit_message="" (post_merge 无单一 commit message)。
     """
     try:
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
@@ -2309,13 +2390,9 @@ def _run_reconcilers_after_merge(
             results = gateway._reconciliation_registry.reconcile_for(
                 committed_files, session_id, commit_message="",
             )
-        # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2: 持久化 reconciler 执行结果
-        # 到 governance.db reconcile_execution_log 表，消除 fail-silent（失败不可见）。
-        # worktree merge 路径此前无日志记录，是 fail-silent 的重灾区。
-        # Phase 3.4 断点7: commit_message="" (post_merge 无单一 commit message)。
         _log_reconcile_results(
             root, results, session_id,
-            trigger_source="post_merge", committed_files=committed_files,
+            trigger_source="post_merge_sync_fallback", committed_files=committed_files,
             commit_message="",
         )
         summary = []

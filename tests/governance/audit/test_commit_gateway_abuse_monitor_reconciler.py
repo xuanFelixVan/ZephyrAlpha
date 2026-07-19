@@ -237,22 +237,22 @@ class TestClassifyAbuse:
         assert result["metrics"]["warn_only_24h"] == 51
 
     def test_dimension2_emergency_abuse(self):
-        # 6 个 emergency commit（>5 阈值）
+        # 21 个 emergency commit（>20 阈值，R2 2026-07-20 #ARCH-ASYNC-MERGE-RECONCILE-001）
         result = _classify_abuse(
             post_commit_reports=[],
             audit_reports=[],
-            emergency_count=6,
+            emergency_count=21,
             now_ts=self.NOW_TS,
         )
         assert "emergency_commit_abuse_24h" in result["dimensions_triggered"]
-        assert result["metrics"]["emergency_commit_24h"] == 6
+        assert result["metrics"]["emergency_commit_24h"] == 21
 
     def test_dimension3_allow_overlap_abuse(self):
-        # 31 个 gw_env=1 warn_only 事件（>30 阈值，7d 窗口）
+        # 501 个 gw_env=1 warn_only 事件（>500 阈值，7d 窗口，R2 2026-07-20 #ARCH-ASYNC-MERGE-RECONCILE-001）
         reports = [
             {"timestamp": self.NOW_TS - 100000, "action": "warn_only",
              "violation": "unregistered_session_id", "gw_env": "1"}
-            for _ in range(31)
+            for _ in range(501)
         ]
         result = _classify_abuse(
             post_commit_reports=reports,
@@ -261,7 +261,7 @@ class TestClassifyAbuse:
             now_ts=self.NOW_TS,
         )
         assert "allow_overlap_abuse_7d" in result["dimensions_triggered"]
-        assert result["metrics"]["allow_overlap_7d"] == 31
+        assert result["metrics"]["allow_overlap_7d"] == 501
 
     def test_dimension4_forged_gw_marker(self):
         # 4 个 forged_gw_marker（>3 阈值）
@@ -279,10 +279,14 @@ class TestClassifyAbuse:
         assert result["metrics"]["forged_gw_marker_24h"] == 4
 
     def test_dimension5_non_gw_commit_sustained(self):
-        # audit 报告 violations_count sum = 11（>10 阈值）
+        # audit 报告 violations[].hash distinct = 11（>10 阈值）
+        # P3 (2026-07-20, bc3cad107c): 改用 violations[].hash distinct 计数，
+        # 替代旧 sum(violations_count)（避免多报告覆盖同一 commit 导致膨胀）。
         audit_reports = [
-            {"timestamp": self.NOW_TS - 100, "violations_count": 5},
-            {"timestamp": self.NOW_TS - 200, "violations_count": 6},
+            {"timestamp": self.NOW_TS - 100,
+             "violations": [{"hash": f"h{i}"} for i in range(5)]},
+            {"timestamp": self.NOW_TS - 200,
+             "violations": [{"hash": f"h{i}"} for i in range(5, 11)]},
         ]
         result = _classify_abuse(
             post_commit_reports=[],
@@ -294,7 +298,7 @@ class TestClassifyAbuse:
         assert result["metrics"]["non_gw_commit_24h"] == 11
 
     def test_multiple_dimensions_triggered(self):
-        # 同时触发维度1 + 维度2
+        # 同时触发维度1 + 维度2（R2 2026-07-20: emergency_count 6→21 适配新阈值 20）
         reports = [
             {"timestamp": self.NOW_TS - 100, "action": "warn_only",
              "violation": "unregistered_session_id"}
@@ -303,7 +307,7 @@ class TestClassifyAbuse:
         result = _classify_abuse(
             post_commit_reports=reports,
             audit_reports=[],
-            emergency_count=6,
+            emergency_count=21,
             now_ts=self.NOW_TS,
         )
         assert len(result["dimensions_triggered"]) == 2
