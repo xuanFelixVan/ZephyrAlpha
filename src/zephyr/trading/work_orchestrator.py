@@ -26,7 +26,6 @@ WorkOrchestrator — 工作编排子系统
 借鉴: Airflow DAG + Temporal Workflow + K8s Job
 """
 
-import logging
 import threading
 import uuid
 from datetime import datetime
@@ -39,8 +38,6 @@ from zephyr.trading.work_dag import WorkDAG, WorkItem
 from zephyr.gov_enforcement.rule_enforcement.task_types import TaskStatus
 from zephyr.shared.io.serialization import filter_dataclass_fields
 from zephyr.shared.utils.time_utils import now_utc
-
-logger = logging.getLogger(__name__)
 
 
 class WorkOrchestrator:
@@ -93,9 +90,7 @@ class WorkOrchestrator:
                 with self._lock:
                     self._dags[dag.dag_id] = dag
                 count += 1
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                # W2 治本: 记录具体失败文件+原因，替代静默 continue
-                logger.warning("WorkOrchestrator: failed to load DAG from %s: %s", path, e, exc_info=True)
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 continue
         return count
 

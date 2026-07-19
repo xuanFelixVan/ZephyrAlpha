@@ -242,7 +242,7 @@ def run_canary(
 def promote_detector(canary_run: CanaryRun) -> bool:
     """Owner审查通过后将v2全量切换。"""
 
-    if canary_run.result == CanaryResult.AUTO_ROLLBACK:
+    if canary_run.result is CanaryResult.AUTO_ROLLBACK:
         return False
 
     canary_run.result = CanaryResult.PROMOTE

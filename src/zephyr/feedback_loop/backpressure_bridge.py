@@ -62,7 +62,7 @@ def sync_evolution_proposals_to_backpressure(
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"skipped": True, "throttled": False, "critical_count": 0}
 
-    critical = [p for p in proposals if getattr(p, "severity", None) == Severity.CRITICAL]
+    critical = [p for p in proposals if getattr(p, "severity", None) is Severity.CRITICAL]
     if not critical:
         return {"skipped": False, "throttled": False, "critical_count": 0}
 

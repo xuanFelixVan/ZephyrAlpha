@@ -86,5 +86,5 @@ class FeedbackCollector:
     def owner_override_rate(self) -> float:
         if not self.owner_acks:
             return 0.0
-        overrides = sum(1 for a in self.owner_acks if a.response == OwnerResponse.OVERRIDE)
+        overrides = sum(1 for a in self.owner_acks if a.response is OwnerResponse.OVERRIDE)
         return overrides / len(self.owner_acks)

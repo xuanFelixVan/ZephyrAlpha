@@ -238,7 +238,7 @@ class GenesisBootstrap:
             from zephyr.security.access_control.kill_switch import KillSwitchState, get_kill_switch
 
             ks = get_kill_switch()
-            if ks.status.state != KillSwitchState.NORMAL:
+            if ks.status.state is not KillSwitchState.NORMAL:
                 raise RuntimeError(f"KillSwitch not NORMAL: {ks.status.state}")
         except (AttributeError, NotImplementedError) as exc:
             logger.warning("Phase KILL_SWITCH: stub detected, skipping (%s)", exc)

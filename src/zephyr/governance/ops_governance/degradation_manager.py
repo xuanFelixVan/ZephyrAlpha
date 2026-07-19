@@ -14,6 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-RES_degradation_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum, auto
@@ -53,10 +54,10 @@ class DegradationState:
 
     @property
     def is_degraded(self) -> bool:
-        return self.current_level != DegradationLevel.NORMAL
+        return self.current_level is not DegradationLevel.NORMAL
 
     def can_advance(self) -> bool:
-        return self.current_level != DegradationLevel.HALT
+        return self.current_level is not DegradationLevel.HALT
 
     def can_retreat(self) -> bool:
         now = time.time()
@@ -126,7 +127,7 @@ class DegradationManager:
             return self._force_halt(dimension)
 
         target_level = self._resolve_level(usage_ratio)
-        if target_level == DegradationLevel.NORMAL:
+        if target_level is DegradationLevel.NORMAL:
             return self._try_retreat(dimension)
 
         if target_level.value[0] <= self._state.current_level.value[0]:

@@ -36,10 +36,19 @@ logger = logging.getLogger(__name__)
 _YELLOW_L5_VIOLATION_THRESHOLD = 5
 _YELLOW_L4_VIOLATION_THRESHOLD = 3
 
-# 5.138.2 治本：zephyr.gov_audit.models 无下游 import（仅 stdlib+pydantic），
-# gov_audit/__init__ 为 PEP 562 全惰性加载，与本模块无真实循环链——
-# 移除 try/except ImportError 静默降级，import 失败显式化。
-from zephyr.gov_audit.models import AuditEntryV1
+try:
+    from zephyr.gov_audit.models import AuditEntryV1, AuditEventType
+
+    _HAS_AUDIT_ENTRY = True
+except ImportError as e:
+    logger.warning(
+        "verdict_engine: audit_trail import failed, audit features disabled (%s: %s)",
+        type(e).__name__,
+        e,
+    )
+    _HAS_AUDIT_ENTRY = False
+    AuditEntryV1 = None
+    AuditEventType = None
 
 
 class AuditEvent(BaseModel):
@@ -251,7 +260,7 @@ class VerdictEngine:
 
     def _parse_event(self, event: AuditEntryV1 | AuditEvent | dict[str, Any]) -> tuple[ActorInfo, OperationInfo, bool, int] | None:
         """将 3 种事件类型统一解析为 (actor, operation, gate_passed, violation_count)。未知类型返回 None。"""
-        if isinstance(event, AuditEntryV1):
+        if _HAS_AUDIT_ENTRY and isinstance(event, AuditEntryV1):
             return self._parse_audit_entry_v1(event)
         if isinstance(event, AuditEvent):
             return self._parse_audit_event(event)
@@ -328,6 +337,10 @@ class VerdictEngine:
         gate_passed: bool,
         violation_count: int,
     ) -> tuple[VerdictLevel, str]:
+        # 5.120 评估裁定（LOW, wontfix）：保留 if-elif 决策树而非 dict/Registry 分发表。
+        # 理由：6 个分支逻辑异质（human 直通 / cross_module 阻断 / anchor 阻断 /
+        # protected 嵌套门禁 / normal 嵌套信任分+违规数 / public 兜底），非重复分发，
+        # 表格化需 6 个不同签名 lambda，可读性反而下降。
         if actor.is_human:
             return VerdictLevel.PASS, "human_actor_auto_pass"
 

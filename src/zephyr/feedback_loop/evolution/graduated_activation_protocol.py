@@ -82,7 +82,7 @@ class GraduatedActivationProtocol:
             rule["success_count"] += 1
         else:
             rule["failure_count"] += 1
-            if rule["stage"] != ActivationStage.CANARY:
+            if rule["stage"] is not ActivationStage.CANARY:
                 rule["stage"] = ActivationStage.ROLLED_BACK
                 self.rollback_history.append(
                     {
@@ -162,10 +162,10 @@ class GraduatedActivationProtocol:
         }
 
     def get_active_canary_rules(self) -> list[str]:
-        return [rid for rid, r in self.rules.items() if r["stage"] == ActivationStage.CANARY]
+        return [rid for rid, r in self.rules.items() if r["stage"] is ActivationStage.CANARY]
 
     def get_stable_rules(self) -> list[str]:
-        return [rid for rid, r in self.rules.items() if r["stage"] == ActivationStage.STABLE]
+        return [rid for rid, r in self.rules.items() if r["stage"] is ActivationStage.STABLE]
 
     def get_rollback_count(self) -> int:
         return len(self.rollback_history)

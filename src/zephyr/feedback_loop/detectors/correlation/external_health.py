@@ -71,4 +71,4 @@ class ExternalHealth:
                 dep.status = DependencyStatus.DOWN
 
     def suppress_internal_alerts(self) -> set[str]:
-        return {s for s, d in self.dependencies.items() if d.status == DependencyStatus.DOWN}
+        return {s for s, d in self.dependencies.items() if d.status is DependencyStatus.DOWN}

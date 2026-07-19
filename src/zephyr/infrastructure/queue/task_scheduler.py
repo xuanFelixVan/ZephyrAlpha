@@ -30,7 +30,6 @@ from enum import Enum
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.shared.lifecycle.state_machine import InvalidTransitionError
 
 
 class ScheduleStatus(str, Enum):
@@ -39,24 +38,6 @@ class ScheduleStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
-
-
-# 5.41.1 修复: 状态转换表——合法转换的唯一真源
-# COMPLETED/CANCELLED 为终态；FAILED 可回 PENDING 重新调度
-VALID_TRANSITIONS: dict[ScheduleStatus, set[ScheduleStatus]] = {
-    ScheduleStatus.PENDING: {ScheduleStatus.RUNNING, ScheduleStatus.FAILED, ScheduleStatus.CANCELLED},
-    ScheduleStatus.RUNNING: {ScheduleStatus.COMPLETED, ScheduleStatus.FAILED, ScheduleStatus.CANCELLED},
-    ScheduleStatus.COMPLETED: set(),
-    ScheduleStatus.FAILED: {ScheduleStatus.PENDING},
-    ScheduleStatus.CANCELLED: set(),
-}
-
-
-def _check_transition(fsm_id: str, current: ScheduleStatus, target: ScheduleStatus) -> None:
-    """校验状态转换合法性，非法转换抛 InvalidTransitionError。"""
-    allowed = VALID_TRANSITIONS.get(current, set())
-    if target not in allowed:
-        raise InvalidTransitionError(fsm_id, current, target, allowed)
 
 
 @dataclass
@@ -101,16 +82,10 @@ class TaskScheduler:
 
         return scheduled
 
-    @staticmethod
-    def _apply_transition(task: ScheduledTask, target: ScheduleStatus) -> None:
-        """5.41.1 修复: 转换前校验合法性，非法转换抛 InvalidTransitionError。"""
-        _check_transition("task_scheduler", task.status, target)
-        task.status = target
-
     def start(self, schedule_id: str) -> ScheduledTask | None:
         task = self._tasks.get(schedule_id)
         if task:
-            self._apply_transition(task, ScheduleStatus.RUNNING)
+            task.status = ScheduleStatus.RUNNING
             task.started_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
@@ -118,7 +93,7 @@ class TaskScheduler:
     def complete(self, schedule_id: str) -> ScheduledTask | None:
         task = self._tasks.get(schedule_id)
         if task:
-            self._apply_transition(task, ScheduleStatus.COMPLETED)
+            task.status = ScheduleStatus.COMPLETED
             task.completed_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
@@ -126,7 +101,7 @@ class TaskScheduler:
     def fail(self, schedule_id: str) -> ScheduledTask | None:
         task = self._tasks.get(schedule_id)
         if task:
-            self._apply_transition(task, ScheduleStatus.FAILED)
+            task.status = ScheduleStatus.FAILED
             task.completed_at = datetime.now(UTC).isoformat()
             self._persist_task(task)
         return task
@@ -134,12 +109,12 @@ class TaskScheduler:
     def cancel(self, schedule_id: str) -> ScheduledTask | None:
         task = self._tasks.get(schedule_id)
         if task:
-            self._apply_transition(task, ScheduleStatus.CANCELLED)
+            task.status = ScheduleStatus.CANCELLED
             self._persist_task(task)
         return task
 
     def get_pending(self) -> list[ScheduledTask]:
-        return [t for t in self._tasks.values() if t.status == ScheduleStatus.PENDING]
+        return [t for t in self._tasks.values() if t.status is ScheduleStatus.PENDING]
 
     def get_stats(self) -> dict[str, int]:
         stats: dict[str, int] = {

@@ -782,7 +782,7 @@ class GitCommitGateway:
         reconciler 同步执行超时被 AI 工具强制终止（误判为 commit 失败）。env
         ``ZEPHYR_RECONCILE_SYNC=1`` 强制同步模式（测试用）。
         """
-        if result.status != CommitStatus.OK:
+        if result.status is not CommitStatus.OK:
             return
         # 治本(2026-07-19): 非 Zephyr 项目（tmp_path 测试仓库等）skip post-commit reconciler
         # 原因：reconciler 依赖 Zephyr 项目结构（scripts/governance/、AGENTS.md 等），

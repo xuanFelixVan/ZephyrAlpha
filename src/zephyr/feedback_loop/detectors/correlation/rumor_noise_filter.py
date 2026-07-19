@@ -74,7 +74,7 @@ class RumorNoiseFilter:
 
     def can_act_on(self, signal_id: str) -> bool:
         return (
-            self.ingest_signal(signal_id, "", "") == SignalCredibility.CONFIRMED
+            self.ingest_signal(signal_id, "", "") is SignalCredibility.CONFIRMED
             if signal_id in self.pending_signals
             else False
         )

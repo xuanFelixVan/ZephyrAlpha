@@ -45,7 +45,6 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
-from uuid import uuid4
 
 _logger = logging.getLogger(__name__)
 
@@ -93,7 +92,6 @@ class EventBus:
     """
 
     _instance: "EventBus | None" = None
-    _instance_lock = threading.Lock()  # 5.149/5.172 修复: 双重检查锁定, 防并发首次调用创建多实例
 
     def __init__(self) -> None:
         self._subscribers: dict[EventType, list[EventHandler]] = {et: [] for et in EventType}
@@ -102,10 +100,8 @@ class EventBus:
 
     @classmethod
     def get_instance(cls) -> "EventBus":
-        if cls._instance is None:  # 第一次检查（无锁快路径）
-            with cls._instance_lock:
-                if cls._instance is None:  # 第二次检查（持锁）
-                    cls._instance = cls()
+        if cls._instance is None:
+            cls._instance = cls()
         return cls._instance
 
     def subscribe(self, event_type: EventType, handler: EventHandler) -> None:
@@ -115,7 +111,7 @@ class EventBus:
 
     def publish(self, event_type: EventType, task_id: str, payload: dict[str, Any] | None = None) -> DomainEvent:
         event = DomainEvent(
-            event_id=f"EV-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}-{uuid4().hex[:12]}",  # uuid4 段消除秒级 strftime 碰撞
+            event_id=f"EV-{task_id}-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
             event_type=event_type,
             task_id=task_id,
             payload=payload or {},
@@ -261,7 +257,7 @@ class EventBusBackpressure:
                 return False
 
             if queue_depth >= self.critical_threshold:
-                if priority == EventPriority.LOW:
+                if priority is EventPriority.LOW:
                     self._dropped_count += 1
                     return False
                 self._backpressure_events += 1

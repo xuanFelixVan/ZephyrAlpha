@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import os
 import sqlite3
-from itertools import combinations
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
 from dataclasses import dataclass, field
 
@@ -76,28 +75,24 @@ class CorrelationEngine:
 
         matrix: dict[str, dict[str, float]] = {m: {} for m in modules}
 
-        # W2 治本: 预计算 module->scans 映射一次（原 O(n^2*S) 内层重复构建）+
-        # itertools.combinations 只遍历上三角对（原 n^2 迭代 + ma>=mb 跳过一半）
-        module_scans: dict[str, set[str]] = {m: set() for m in modules}
+        for ma in modules:
+            for mb in modules:
+                if ma >= mb:
+                    continue
 
-        for scan_id, mods in scan_sets.items():
-            for m in mods:
-                module_scans[m].add(scan_id)
+                a_scans = set(s for s, ms in scan_sets.items() if ma in ms)
 
-        for ma, mb in combinations(modules, 2):
-            a_scans = module_scans[ma]
+                b_scans = set(s for s, ms in scan_sets.items() if mb in ms)
 
-            b_scans = module_scans[mb]
+                inter = len(a_scans & b_scans)
 
-            inter = len(a_scans & b_scans)
+                union = len(a_scans | b_scans)
 
-            union = len(a_scans | b_scans)
+                jaccard = inter / union if union > 0 else 0.0
 
-            jaccard = inter / union if union > 0 else 0.0
+                matrix[ma][mb] = round(jaccard, 4)
 
-            matrix[ma][mb] = round(jaccard, 4)
-
-            matrix[mb][ma] = round(jaccard, 4)
+                matrix[mb][ma] = round(jaccard, 4)
 
         return matrix
 

@@ -104,7 +104,7 @@ class GracefulDegradationPlanner:
             "active_services": active_services,
             "total_services": len(self.services),
             "recommendation": (
-                "scale_up_or_increase_thresholds" if self.current_level != DegradationLevel.FULL else "continue"
+                "scale_up_or_increase_thresholds" if self.current_level is not DegradationLevel.FULL else "continue"
             ),
         }
 

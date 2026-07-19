@@ -98,14 +98,14 @@ class WorkflowManager:
             a.name
             for a in self._activities
             if (a.name not in completed and a.name not in self._results)
-            or self._results[a.name].status != ActivityStatus.COMPLETED
+            or self._results[a.name].status is not ActivityStatus.COMPLETED
         ]
 
     @property
     def progress(self) -> float:
         if not self._activities:
             return 0.0
-        completed = sum(1 for r in self._results.values() if r.status == ActivityStatus.COMPLETED)
+        completed = sum(1 for r in self._results.values() if r.status is ActivityStatus.COMPLETED)
         return completed / len(self._activities)
 
     def add_activity(self, activity: Activity) -> None:
@@ -117,7 +117,7 @@ class WorkflowManager:
 
     def run(self, ctx: dict[str, Any]) -> dict[str, ActivityResult]:
         for activity in self._activities:
-            if activity.name in self._results and self._results[activity.name].status == ActivityStatus.COMPLETED:
+            if activity.name in self._results and self._results[activity.name].status is ActivityStatus.COMPLETED:
                 continue
             try:
                 output = activity.execute(ctx)

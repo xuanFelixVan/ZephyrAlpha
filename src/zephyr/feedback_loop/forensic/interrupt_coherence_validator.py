@@ -72,7 +72,7 @@ class InterruptCoherenceValidator:
 
         result = {
             "status": status.value,
-            "coherent": status == CoherenceStatus.COHERENT,
+            "coherent": status is CoherenceStatus.COHERENT,
             "issues": issues,
             "orphaned_locks": len(self.known_locks),
             "half_applied_actions": len(self.known_actions_in_flight),

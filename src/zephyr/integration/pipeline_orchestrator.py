@@ -942,9 +942,9 @@ class PipelineOrchestrator:
         if rescue.triggered:
             status = PipelineStatus.CLAUDE_RESCUE
 
-        passed = sum(1 for r in ctx.results if r.status == ModuleStatus.SUCCESS)
+        passed = sum(1 for r in ctx.results if r.status is ModuleStatus.SUCCESS)
         partial = passed > 0 and passed < len(ctx.results)
-        if status == PipelineStatus.SUCCESS and partial:
+        if status is PipelineStatus.SUCCESS and partial:
             status = PipelineStatus.PARTIAL_FAILURE
 
         total_tokens = sum(r.tokens_used for r in ctx.results if r.tokens_used > 0)
@@ -1589,7 +1589,7 @@ class PipelineOrchestrator:
         m7_result.blind_review_role = "reviewer"
 
         consensus = False
-        if m3_result.status == ModuleStatus.SUCCESS and m7_result.status == ModuleStatus.SUCCESS:
+        if m3_result.status is ModuleStatus.SUCCESS and m7_result.status is ModuleStatus.SUCCESS:
             m3_verdict = m3_result.output.get("verdict", "ok")
             m7_verdict = m7_result.output.get("verdict", "ok")
             consensus = m3_verdict == m7_verdict
@@ -1786,8 +1786,8 @@ class PipelineOrchestrator:
         trigger = ClaudeRescueTrigger()
         self._populate_claude_trigger_flags(trigger, task_card)
 
-        deepseek_fail = sum(1 for r in results if r.model == "deepseek" and r.status == ModuleStatus.FAILURE)
-        glm_reject = sum(1 for r in results if r.model == "glm" and r.status == ModuleStatus.FAILURE)
+        deepseek_fail = sum(1 for r in results if r.model == "deepseek" and r.status is ModuleStatus.FAILURE)
+        glm_reject = sum(1 for r in results if r.model == "glm" and r.status is ModuleStatus.FAILURE)
         trigger.deepseek_failure_count = deepseek_fail
         trigger.glm_rejection_count = glm_reject
 
@@ -2006,7 +2006,7 @@ class PipelineOrchestrator:
         total = len(results)
         if total == 0:
             return PipelineStatus.FAILURE
-        ok = sum(1 for r in results if r.status == ModuleStatus.SUCCESS)
+        ok = sum(1 for r in results if r.status is ModuleStatus.SUCCESS)
         if ok == total:
             return PipelineStatus.SUCCESS
         if ok == 0:
@@ -2372,7 +2372,7 @@ class PipelineOrchestrator:
         m3 = m3_results[0]
         m7 = m7_results[0]
 
-        if m3.status != ModuleStatus.SUCCESS or m7.status != ModuleStatus.SUCCESS:
+        if m3.status is not ModuleStatus.SUCCESS or m7.status is not ModuleStatus.SUCCESS:
             return ModelCollapseAlert()
 
         m3_verdict = m3.output.get("verdict", "")
@@ -2600,7 +2600,7 @@ class PipelineOrchestrator:
         """检测三模全失败并生成降级计划。"""
         failed_models: set[str] = set()
         for r in results:
-            if r.status == ModuleStatus.FAILURE:
+            if r.status is ModuleStatus.FAILURE:
                 failed_models.add(r.model)
 
         if len(failed_models) < 3:

@@ -212,9 +212,9 @@ class TransitionMixin:
         if not self._enable_gate or self._gate_engine is None:
             return
 
-        if to_status == TaskStatus.IN_PROGRESS:
+        if to_status is TaskStatus.IN_PROGRESS:
             gate_id = _STARTUP_GATE_ID
-        elif to_status == TaskStatus.COMPLETED:
+        elif to_status is TaskStatus.COMPLETED:
             gate_id = "G7"
         else:
             return
@@ -230,11 +230,11 @@ class TransitionMixin:
         """落盘状态转换 UPDATE，按目标状态设置 ready_at / completed_at / block_sessions_count。"""
         now = now_iso()
 
-        set_ready_at = to_status == TaskStatus.READY
+        set_ready_at = to_status is TaskStatus.READY
 
         set_completed_at = to_status in (TaskStatus.COMPLETED, TaskStatus.VERIFIED)
 
-        increment_block_count = to_status == TaskStatus.BLOCKED
+        increment_block_count = to_status is TaskStatus.BLOCKED
 
         conn.execute(
             """

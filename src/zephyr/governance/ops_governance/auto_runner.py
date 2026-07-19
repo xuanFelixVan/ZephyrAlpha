@@ -35,7 +35,7 @@ from typing import Any
 
 import psycopg2
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +153,7 @@ class GovernanceAutoRunner:
             from zephyr.governance.ops_governance.phase_manager import GateResult
 
             result = run_check(gate_name)
-            return result == GateResult.GREEN
+            return result is GateResult.GREEN
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             # fail-closed: gate 不存在或执行失败时，视为未通过（不静默放行）
             logger.warning("Gate %s execution failed: %s", gate_name, e, exc_info=True)
@@ -229,7 +229,7 @@ class GovernanceAutoRunner:
             logger.error("_write_audit_log: 写入审计日志失败: %s", e)
             conn.rollback()
         finally:
-            release_depgraph_pg_connection(conn)
+            conn.close()
 
     def register_resource(self, resource: object) -> None:
         """注册需要在关闭时释放的资源。"""
@@ -273,7 +273,7 @@ class GovernanceAutoRunner:
             logger.warning("get_gates_by_event(%s) failed: %s", event_type, e)
             return []
         finally:
-            release_depgraph_pg_connection(conn)
+            conn.close()
 
     @staticmethod
     def get_all_event_types() -> list[str]:
@@ -297,7 +297,7 @@ class GovernanceAutoRunner:
             logger.warning("get_all_event_types failed: %s", e)
             return []
         finally:
-            release_depgraph_pg_connection(conn)
+            conn.close()
 
 
 def main() -> None:

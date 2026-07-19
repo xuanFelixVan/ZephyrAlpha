@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager; zephyr.governance.ops_governance.budget_engine; zephyr.trading.ide_health_daemon
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -23,29 +23,10 @@ from typing import TYPE_CHECKING
 
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
-from zephyr.shared.event_bus import EventBus, EventType, bus
+from zephyr.shared.event_bus import EventBus, EventType
 
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
-
-# 5.174-M4 治本：以下模块经实证无循环链（均不反向 import boot_hooks 或 zephyr.trading
-# 子模块，且 zephyr/trading/__init__.py 无任何 import），原为无谓延迟 import——
-# 合并提升为模块级单 import：task_repo（原函数内重复延迟 2 次）、budget_engine（3 次）、
-# triple_alignment（2 次）、event_hook（2 次）、event_bus.bus（2 次，与上行 EventBus 同模块）、
-# ide_health_daemon（2 次）。
-from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-from zephyr.governance.ops_governance.event_hook import hook_registry
-from zephyr.governance.persistence.task_repo import TaskRepository
-from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
-from zephyr.trading.ide_health_daemon import kill_task_processes, register_daemon
-
-# 保留函数内延迟 import 的三类情形（约定，勿随意提升）：
-#   ① 可选组件容错初始化——import 失败 MUST 只降级为日志告警、不得阻断 boot
-#     （_init_shared_monitoring_modules 的监控模块、register_boot_hooks 内
-#     RollbackBootIntegration/SLAMonitor/Notifier/HealthAggregator/F5/RedBlueTriggerConsumer 等）；
-#   ② 事件回调内按需加载——handler 触发才需要重模块
-#     （memory_writer/sync_engine/gate_coordinator/skill_* 等）；
-#   ③ _subscribe_eventbus_consumers 的 importlib 动态导入——模块路径数据驱动，必须保持动态。
 
 if TYPE_CHECKING:
     from zephyr.shared.contracts.task_repository_protocol import TaskRepositoryProtocol
@@ -63,6 +44,8 @@ def _get_source_blueprint(task_id: str, task_repo: TaskRepositoryProtocol | None
     try:
         tr = task_repo
         if tr is None:
+            from zephyr.governance.persistence.task_repo import TaskRepository
+
             tr = TaskRepository()
         task = tr.get(task_id)
         return getattr(task, "source_blueprint", "") if task else ""
@@ -254,6 +237,8 @@ def _subscribe_eventbus_consumers() -> None:
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
+        from zephyr.governance.ops_governance.event_hook import hook_registry
+
         def _on_task_in_progress_rbac_check(event: object) -> None:
             """任务开始执行时验证RBAC系统就绪状态."""
             to_status = getattr(event, "to_status", "")
@@ -298,7 +283,7 @@ def _register_rbac_hooks() -> None:
                 from zephyr.security.access_control.kill_switch import KillSwitchState, get_kill_switch
 
                 ks = get_kill_switch()
-                if ks.status.state == KillSwitchState.NORMAL:
+                if ks.status.state is KillSwitchState.NORMAL:
                     logger.info(
                         "Task %s failed — RBAC kill_switch still NORMAL (no systemic threat detected)",
                         getattr(event, "task_id", ""),
@@ -319,6 +304,8 @@ def _register_rbac_hooks() -> None:
 def _subscribe_skill_freshness_events() -> None:
     """订阅 skill.freshness_critical 事件 — 原 boot_cron_jobs 内联（2026-07-05 裁定）。"""
     try:
+        from zephyr.shared.event_bus import bus
+
         def _on_freshness_critical(payload: dict) -> None:
             try:
                 from zephyr.autonomy_core.skills.skill_freshness_ext import auto_deprecate_skill
@@ -350,6 +337,8 @@ def _resolve_task_repo(task_repo: TaskRepositoryProtocol | None = None):
     """解析 task_repo — 注入则用注入的，否则惰性创建 TaskRepository。"""
     if task_repo is not None:
         return task_repo
+    from zephyr.governance.persistence.task_repo import TaskRepository
+
     return TaskRepository()
 
 
@@ -366,7 +355,7 @@ def _hook_auto_unblock_dependents(event: object, task_repo: TaskRepositoryProtoc
             deps = ds.depends_on or []
             if not deps:
                 continue
-            all_done = all(tr.get(d).status == TaskStatus.COMPLETED for d in deps if d)
+            all_done = all(tr.get(d).status is TaskStatus.COMPLETED for d in deps if d)
             if all_done:
                 tr.transition(ds.task_id, TaskStatus.READY, note=f"unblocked by {completed_id}")
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -393,6 +382,8 @@ def _hook_auto_retry_on_failure(event: object, task_repo: TaskRepositoryProtocol
 
 def _hook_triple_alignment_on_verified(event: object, task_repo: TaskRepositoryProtocol | None = None) -> None:
     try:
+        from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
+
         task_id = getattr(event, "task_id", "")
         source_bp = _get_source_blueprint(task_id, task_repo=task_repo)
         if not source_bp:
@@ -416,6 +407,8 @@ def _hook_cleanup_task_processes(event: object) -> None:
         if not task_id:
             return
         if to_status.upper() in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+            from zephyr.trading.ide_health_daemon import kill_task_processes
+
             killed = kill_task_processes(task_id)
             if killed:
                 logger.info("hook cleanup_task_processes: killed %d PIDs for %s", len(killed), task_id)
@@ -492,6 +485,8 @@ def _hook_budget_delta(event: object, budget_engine: BudgetEngineProtocol | None
     try:
         engine = budget_engine
         if engine is None:
+            from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
             engine = BudgetEngine()
         snapshot = engine.get_snapshot()
         if snapshot and getattr(snapshot, "health", "") not in ("HEALTHY", ""):
@@ -502,6 +497,8 @@ def _hook_budget_delta(event: object, budget_engine: BudgetEngineProtocol | None
 
 def _hook_session_startup_init_budget(event: object) -> None:
     try:
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
         engine = BudgetEngine.ensure_initialized()
         snapshot = engine.get_snapshot()
         logger.info(
@@ -515,6 +512,8 @@ def _hook_session_startup_init_budget(event: object) -> None:
 
 def _hook_session_shutdown_budget_close(event: object) -> None:
     try:
+        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
+
         if BudgetEngine._instance is not None:
             result = BudgetEngine._instance.shutdown()
             logger.info(
@@ -528,6 +527,8 @@ def _hook_session_shutdown_budget_close(event: object) -> None:
 
 def _hook_triple_align_event(event: object) -> None:
     try:
+        from zephyr.gov_enforcement.rule_enforcement.triple_alignment import check_triple_alignment
+
         source_bp = getattr(event, "blueprint_path", "") or getattr(event, "path", "")
         result = check_triple_alignment(specific_module=source_bp or None, warn_only=True)
         if not result.passed:
@@ -547,6 +548,8 @@ def register_boot_hooks(
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
     try:
+        from zephyr.governance.ops_governance.event_hook import hook_registry
+
         # Task system hooks — 需要 task_repo 的用 lambda 绑定
         hook_registry.register(lambda e: _hook_auto_unblock_dependents(e, task_repo), priority=50, name="auto_unblock_dependents")
         hook_registry.register(lambda e: _hook_auto_retry_on_failure(e, task_repo), priority=60, name="auto_retry_on_failure")
@@ -568,8 +571,10 @@ def register_boot_hooks(
         hook_registry.register(_hook_triple_align_event, priority=72, name="triple_align_event")
 
         try:
-            bus.subscribe("blueprint.changed", _hook_triple_align_event)
-            bus.subscribe("blueprint.decomposed", _hook_triple_align_event)
+            from zephyr.shared.event_bus import bus as _bus
+
+            _bus.subscribe("blueprint.changed", _hook_triple_align_event)
+            _bus.subscribe("blueprint.decomposed", _hook_triple_align_event)
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.warning("EventBus subscribe failed for triple_align blueprint hooks", exc_info=True)
 
@@ -578,6 +583,8 @@ def register_boot_hooks(
         logger.warning("Failed to register task system hooks: %s", e, exc_info=True)
 
     try:
+        from zephyr.trading.ide_health_daemon import register_daemon
+
         register_daemon()
         logger.info("IdeHealthDaemon registered and auto-started via boot hooks")
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

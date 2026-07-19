@@ -112,7 +112,7 @@ class Lifecycle:
 
         age = now - mtime
 
-        if age > timedelta(days=max_days * 2) and asset.status == AssetStatus.STALE:
+        if age > timedelta(days=max_days * 2) and asset.status is AssetStatus.STALE:
             return AssetLifecycleEvent(
                 event_id=_generate_event_id(),
                 event_type="TIME_DECAY",
@@ -121,7 +121,7 @@ class Lifecycle:
                 to_status=AssetStatus.DEPRECATED,
                 rule_detail=f"最后修改 {age.days} 天前，超过 {max_days * 2} 天",
             )
-        if age > timedelta(days=max_days) and asset.status == AssetStatus.ACTIVE:
+        if age > timedelta(days=max_days) and asset.status is AssetStatus.ACTIVE:
             return AssetLifecycleEvent(
                 event_id=_generate_event_id(),
                 event_type="TIME_DECAY",
@@ -151,7 +151,7 @@ class Lifecycle:
 
     def _check_dir_convention(self, asset: ClassifiedAsset) -> AssetLifecycleEvent | None:
         path = asset.relative_path
-        if "/_deprecated/" in path and asset.status != AssetStatus.DEPRECATED:
+        if "/_deprecated/" in path and asset.status is not AssetStatus.DEPRECATED:
             return AssetLifecycleEvent(
                 event_id=_generate_event_id(),
                 event_type="DIR_CONVENTION",
@@ -160,7 +160,7 @@ class Lifecycle:
                 to_status=AssetStatus.DEPRECATED,
                 rule_detail="文件位于 _deprecated/ 目录",
             )
-        if "/_archived/" in path and asset.status != AssetStatus.ARCHIVED:
+        if "/_archived/" in path and asset.status is not AssetStatus.ARCHIVED:
             return AssetLifecycleEvent(
                 event_id=_generate_event_id(),
                 event_type="DIR_CONVENTION",

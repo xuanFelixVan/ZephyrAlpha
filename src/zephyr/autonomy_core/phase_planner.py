@@ -122,17 +122,17 @@ class PhasePlanner:
         phase = self.phases[name]
         phase.status = status
         now = datetime.now(UTC)
-        if status == PhaseStatus.IN_PROGRESS:
+        if status is PhaseStatus.IN_PROGRESS:
             phase.started_at = now
-        elif status == PhaseStatus.DONE:
+        elif status is PhaseStatus.DONE:
             phase.done_at = now
-        elif status == PhaseStatus.VERIFIED:
+        elif status is PhaseStatus.VERIFIED:
             phase.verified_at = now
         return phase
 
     def get_ready_phases(self) -> list[str]:
         done = [n for n, p in self.phases.items() if p.status in (PhaseStatus.DONE, PhaseStatus.VERIFIED)]
-        return [n for n, p in self.phases.items() if p.status == PhaseStatus.BACKLOG and p.can_start(done)]
+        return [n for n, p in self.phases.items() if p.status is PhaseStatus.BACKLOG and p.can_start(done)]
 
     def all_phases(self) -> list[dict[str, Any]]:
         return [p.to_dict() for p in self.phases.values()]

@@ -157,7 +157,7 @@ class SessionManager:
         timed_out = []
         with self._lock:
             for sid, session in self._sessions.items():
-                if session["state"] == SessionState.ACTIVE:
+                if session["state"] is SessionState.ACTIVE:
                     elapsed_h = (now - session["last_transition_at"]) / 3600
                     for rule in self._timeout_rules:
                         if rule.get("state") == "active" and elapsed_h >= rule.get("max_duration", 4):
@@ -171,4 +171,4 @@ class SessionManager:
     @property
     def active_sessions(self) -> list[str]:
         with self._lock:
-            return [sid for sid, s in self._sessions.items() if s["state"] == SessionState.ACTIVE]
+            return [sid for sid, s in self._sessions.items() if s["state"] is SessionState.ACTIVE]

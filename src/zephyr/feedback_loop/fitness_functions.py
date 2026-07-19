@@ -268,13 +268,13 @@ class FitnessFunctionFramework:
                 hallucination_intercepted=inputs.hallucination_intercepted,
             ),
         ]
-        all_passed = all(m.status == MetricStatus.PASS for m in metrics)
+        all_passed = all(m.status is MetricStatus.PASS for m in metrics)
         overall = MetricStatus.PASS
         for m in metrics:
-            if m.status == MetricStatus.FAIL:
+            if m.status is MetricStatus.FAIL:
                 overall = MetricStatus.FAIL
                 break
-            elif m.status == MetricStatus.WARN:
+            elif m.status is MetricStatus.WARN:
                 overall = MetricStatus.WARN
         return FitnessReport(
             report_id=f"FF-{_time.time_ns()}",

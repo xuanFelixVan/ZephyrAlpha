@@ -227,7 +227,7 @@ class EventBusUpgrade:
                     )
 
                     for prev_step in reversed(plan.steps):
-                        if prev_step.status != UpgradeStatus.COMPLETED:
+                        if prev_step.status is not UpgradeStatus.COMPLETED:
                             continue
                         try:
                             self._rollback_step(prev_step)

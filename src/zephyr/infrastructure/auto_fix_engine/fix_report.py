@@ -42,10 +42,10 @@ class FixReportGenerator:
     def generate(
         self, actions: list[FixAction], budget_info: BudgetInfo | None = None, cascade_alerts: list[str] | None = None
     ) -> FixReport:
-        succeeded = sum(1 for a in actions if a.status == FixStatus.COMPLETED)
-        failed = sum(1 for a in actions if a.status == FixStatus.FAILED)
-        escalated = sum(1 for a in actions if a.status == FixStatus.APPROVAL_PENDING or a.escalated)
-        dead_lettered = sum(1 for a in actions if a.status == FixStatus.DEAD_LETTER)
+        succeeded = sum(1 for a in actions if a.status is FixStatus.COMPLETED)
+        failed = sum(1 for a in actions if a.status is FixStatus.FAILED)
+        escalated = sum(1 for a in actions if a.status is FixStatus.APPROVAL_PENDING or a.escalated)
+        dead_lettered = sum(1 for a in actions if a.status is FixStatus.DEAD_LETTER)
         report = FixReport(
             total_attempted=len(actions),
             succeeded=succeeded,
@@ -66,9 +66,9 @@ class FixReportGenerator:
             if t not in by_type:
                 by_type[t] = {"total": 0, "succeeded": 0, "failed": 0}
             by_type[t]["total"] += 1
-            if action.status == FixStatus.COMPLETED:
+            if action.status is FixStatus.COMPLETED:
                 by_type[t]["succeeded"] += 1
-            elif action.status == FixStatus.FAILED:
+            elif action.status is FixStatus.FAILED:
                 by_type[t]["failed"] += 1
         by_level: dict[str, int] = {}
         for action in report.actions:

@@ -16,8 +16,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # pip install . 构建元数据时必须存在）
 COPY pyproject.toml README.md LICENSE requirements.txt requirements-dev.txt ./
 
-# 安装 Python 依赖到独立前缀，便于 runtime 阶段整体复制
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt -r requirements-dev.txt
+# 生产依赖 → /install（会被复制到 runtime 阶段）
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+# 5.30 治本：开发依赖装到独立前缀 /install-dev，仅供 builder 阶段使用
+# （如 docker build --target builder 跑测试），不复制进 runtime 镜像——
+# 修复 ruff/mypy/pytest/pre-commit 等 dev 工具链进入生产镜像的问题
+RUN pip install --no-cache-dir --prefix=/install-dev -r requirements-dev.txt
 
 # 5.31.6 修复：生产镜像用 pip install . 而非可编辑模式 -e .
 COPY src/ ./src/
