@@ -60,12 +60,14 @@ from zephyr.governance.persistence.sqlite_schema import (
     init_db,
     schema_version,
 )
+from zephyr.shared.foundation.errors import PoolExhaustedError
 from zephyr.shared.utils.time_utils import now_iso
 
 __all__ = [
     "DatabaseHealthStatus",
     "DatabaseManager",
     "DatabaseManagerError",
+    "PoolExhaustedError",
 ]
 
 logger = logging.getLogger(__name__)
@@ -93,6 +95,10 @@ _ALLOWED_TABLES = frozenset(
         "f5_state",
     }
 )
+
+# 5.61.3 修复：retry_dlq retry_count 更新 SQL 集中化
+# （NO-BARE-SQL gate 合规，常量名匹配 ^_?SQL_\w+$ 豁免正则）
+SQL_UPDATE_EVENTS_RETRY_COUNT = "UPDATE events SET payload = ? WHERE event_id = ?"
 
 
 def _validate_table_name(table: str) -> str:
@@ -205,6 +211,12 @@ class DatabaseManager:
         True 时在构造时调用 init_db()（默认 True）。
     pool_size
         连接池最大连接数（默认 2）。
+    max_overflow
+        池耗尽时允许额外创建的临时连接上限（默认 10，5.61.5/5.64.4）。
+    pool_timeout
+        池+overflow 全部耗尽时阻塞等待的秒数，超时抛 PoolExhaustedError（默认 30s）。
+    pool_recycle
+        连接最大存活秒数，超龄连接在借出/归还时关闭重建（默认 3600s，5.64.3）。
 
     线程模型
     --------
@@ -221,11 +233,25 @@ class DatabaseManager:
         *,
         auto_init: bool = True,
         pool_size: int = 2,
+        max_overflow: int = 10,
+        pool_timeout: float = 30.0,
+        pool_recycle: float = 3600.0,
     ) -> None:
         self._db_path: Path = Path(db_path) if db_path is not None else DB_PATH
         self._backup_dir: Path = Path(backup_dir) if backup_dir is not None else BACKUP_DIR
         self._pool_size = pool_size
+        # 5.61.5/5.64.3/5.64.4 修复：连接池上限与回收参数
+        self._max_overflow = max_overflow
+        self._pool_timeout = pool_timeout
+        self._pool_recycle = pool_recycle
         self._lock = threading.Lock()
+        # 5.64.4 修复：池耗尽时阻塞等待的条件变量（与 5.61.5 复用同一把锁）
+        self._pool_cond = threading.Condition(self._lock)
+        self._overflow_out = 0  # 当前已借出的 overflow 临时连接数
+        # 5.64.3 修复：连接元数据侧表（sqlite3.Connection 不支持自定义属性，
+        # 这是原 _last_used_at 从未设置、泄漏检测失效的根因）。
+        # 键为 id(conn)，值含 created_at/last_used_at/overflow。
+        self._conn_meta: dict[int, dict[str, float | bool]] = {}
 
         if auto_init:
             init_db(self._db_path)
@@ -242,6 +268,8 @@ class DatabaseManager:
             "database_manager_initialized",
             db_path=str(self._db_path),
             pool_size=pool_size,
+            max_overflow=max_overflow,
+            pool_recycle=pool_recycle,
             schema_version=schema_version(self._db_path),
         )
 
@@ -259,57 +287,159 @@ class DatabaseManager:
         with self._lock:
             while len(self._conn_pool) < self._pool_size:
                 conn = get_db_connection(self._db_path)
+                self._touch_conn(conn, created=True)
                 self._conn_pool.append(conn)
+
+    # ------------------------------------------------------------------
+    # 连接元数据（5.61.5/5.64.3/5.64.4）
+    # ------------------------------------------------------------------
+
+    def _touch_conn(self, conn: sqlite3.Connection, *, created: bool = False) -> None:
+        """更新连接元数据（last_used_at；created=True 时同时记录创建时间）。
+
+        调用方须持有 self._lock。sqlite3.Connection 不支持自定义属性，
+        元数据存于侧表 self._conn_meta[id(conn)]。
+        """
+        now = time.time()
+        meta = self._conn_meta.get(id(conn))
+        if meta is None:
+            meta = {"created_at": now, "last_used_at": now, "overflow": False}
+            self._conn_meta[id(conn)] = meta
+        if created:
+            meta["created_at"] = now
+        meta["last_used_at"] = now
+
+    def _is_stale(self, conn: sqlite3.Connection) -> bool:
+        """连接是否超过 pool_recycle 秒（调用方须持有 self._lock）。"""
+        meta = self._conn_meta.get(id(conn))
+        if meta is None:
+            return False
+        return (time.time() - float(meta["created_at"])) > self._pool_recycle
+
+    def _is_overflow(self, conn: sqlite3.Connection) -> bool:
+        """连接是否为 overflow 临时连接（调用方须持有 self._lock）。"""
+        meta = self._conn_meta.get(id(conn))
+        return bool(meta is not None and meta["overflow"])
+
+    def _close_conn_quietly(self, conn: sqlite3.Connection) -> None:
+        """关闭连接并清理元数据；异常降级为日志（5.64.5 同款异常隔离语义）。"""
+        try:
+            conn.close()
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("suppressed error in database_manager", exc_info=True)
+        with self._lock:
+            self._conn_meta.pop(id(conn), None)
 
     def get_connection(self) -> sqlite3.Connection:
         """
         从连接池获取一个连接。
 
-        池中无空闲连接时自动创建新连接（不超过 pool_size）。
-        返回的连接调用方不应关闭——由 DatabaseManager 统一管理。
+        5.61.5/5.64.3/5.64.4 修复：
+        - 池空闲连接耗尽时，最多额外创建 max_overflow 个 overflow 临时连接（默认 10）；
+        - overflow 也耗尽时在条件变量上阻塞等待（pool_timeout 秒，默认 30s），
+          超时仍无可用连接抛 PoolExhaustedError；
+        - 超过 pool_recycle 秒（默认 3600s）的陈旧连接借出时关闭重建。
+
+        返回的连接调用方不应关闭——用 return_connection() 归还。
 
         异常
         ----
         DatabaseManagerError
             数据库已关闭时抛出。
+        PoolExhaustedError
+            池与 overflow 全部借出且等待超时。
         """
         if self._closed:
             raise DatabaseManagerError("DatabaseManager is closed")
-        # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.pop() 加锁，原代码声明 self._lock 但从未使用
+        deadline = time.monotonic() + self._pool_timeout
+        result: sqlite3.Connection | None = None
+        overflow_granted = False
+        stale: list[sqlite3.Connection] = []
+        with self._pool_cond:
+            # 条件变量阻塞等待（事件驱动唤醒，非轮询——return_connection 归还时 notify）
+            while result is None and not overflow_granted:
+                # 池内取连接（顺带回收过期连接，锁外关闭）
+                while self._conn_pool:
+                    conn = self._conn_pool.pop()
+                    if self._is_stale(conn):
+                        stale.append(conn)
+                        continue
+                    result = conn
+                    break
+                if result is not None:
+                    self._touch_conn(result)
+                    break
+                if self._closed:
+                    raise DatabaseManagerError("DatabaseManager is closed")
+                if self._overflow_out < self._max_overflow:
+                    self._overflow_out += 1
+                    overflow_granted = True
+                    break
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise PoolExhaustedError(
+                        f"连接池耗尽: pool_size={self._pool_size} + max_overflow={self._max_overflow} "
+                        f"全部借出, 等待 {self._pool_timeout}s 超时",
+                        details={
+                            "pool_size": self._pool_size,
+                            "max_overflow": self._max_overflow,
+                            "pool_timeout": self._pool_timeout,
+                        },
+                    )
+                self._pool_cond.wait(remaining)
+        for conn in stale:
+            self._close_conn_quietly(conn)
+        if result is not None:
+            return result
+        # overflow_granted：锁外创建临时连接，避免长时间持锁
+        try:
+            conn = get_db_connection(self._db_path)
+        except Exception:
+            with self._pool_cond:
+                self._overflow_out -= 1
+                self._pool_cond.notify()
+            raise
         with self._lock:
-            if self._conn_pool:
-                return self._conn_pool.pop()
-        # 池耗尽时创建临时连接（在锁外创建，避免长时间持锁）
-        conn = get_db_connection(self._db_path)
-        logger.debug("pool_exhausted_created_temp_connection")
+            self._touch_conn(conn, created=True)
+            self._conn_meta[id(conn)]["overflow"] = True
+        logger.debug("pool_exhausted_created_overflow_connection")
         return conn
 
     def return_connection(self, conn: sqlite3.Connection) -> None:
         """
-        归还连接到池（如果未超出 pool_size 且连接健康）。
+        归还连接到池（如果未超出 pool_size 且连接健康且未超 pool_recycle 年龄）。
 
         连接不再需要时应归还而非关闭，以便复用。
+
+        5.61.5/5.64.3/5.64.4 修复：
+        - 归还时更新 last_used_at（泄漏检测据此工作）；
+        - overflow 临时连接归还时释放 overflow 配额并唤醒等待者；
+        - 超龄（>pool_recycle 秒）或不健康的连接关闭而非入池。
         """
-        if self._closed:
-            try:
-                conn.close()
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.debug("suppressed error in database_manager", exc_info=True)
+        if conn is None:
             return
-        # Phase 2 P2 修复（并发安全 HIGH）：_conn_pool.append() 加锁，与 get_connection() 配对
-        with self._lock:
-            if len(self._conn_pool) < self._pool_size:
+        close_it = False
+        with self._pool_cond:
+            self._touch_conn(conn)
+            if self._is_overflow(conn):
+                self._overflow_out -= 1
+                self._conn_meta[id(conn)]["overflow"] = False
+            if self._closed:
+                close_it = True
+            elif self._is_stale(conn):
+                close_it = True  # 5.64.3：超龄连接回收
+            elif len(self._conn_pool) < self._pool_size:
                 try:
                     conn.execute("SELECT 1")
                     self._conn_pool.append(conn)
-                    return
                 except sqlite3.Error:
-                    pass  # 连接不健康，fall through 到关闭
-        # 池满或连接不健康时关闭（在锁外关闭）
-        try:
-            conn.close()
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("suppressed error in database_manager", exc_info=True)
+                    close_it = True  # 连接不健康
+            else:
+                close_it = True  # 池满
+            # 池有新连接或 overflow 配额释放，唤醒一个等待者
+            self._pool_cond.notify()
+        if close_it:
+            self._close_conn_quietly(conn)
 
     # ------------------------------------------------------------------
     # 健康检查
@@ -664,7 +794,10 @@ class DatabaseManager:
                     conn.close()
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     logger.debug("suppressed error in database_manager", exc_info=True)
+                self._conn_meta.pop(id(conn), None)  # 5.64.3：清理元数据侧表
             self._conn_pool.clear()
+            # 5.64.4 修复：唤醒 get_connection 中的等待者（其循环内会检测 _closed 抛 DatabaseManagerError）
+            self._pool_cond.notify_all()
 
             logger.info("database_manager_closed")
 
@@ -758,13 +891,25 @@ class DatabaseManager:
                         conn.execute("ROLLBACK")
                     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                         logger.warning("suppressed error in database_manager", exc_info=True)
-                    payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
-                    payload["retry_count"] = payload.get("retry_count", 0) + 1
-                    conn.execute(
-                        "UPDATE events SET payload = ? WHERE event_id = ?",
-                        (_json.dumps(payload, ensure_ascii=False), event_id),
-                    )
-                    conn.execute("COMMIT")
+                    # 5.61.3 修复：retry_count 更新纳入独立事务（BEGIN IMMEDIATE...COMMIT）。
+                    # 原实现 ROLLBACK 后在事务外 UPDATE 再 COMMIT——autocommit 模式下
+                    # COMMIT 必抛 OperationalError 中断整个循环；且 UPDATE 无事务保护。
+                    # 失败时回滚并记录日志后继续处理下一条（尽力记录语义不变）。
+                    try:
+                        payload = _json.loads(str(dl["payload"])) if isinstance(dl["payload"], str) else dict(dl["payload"])
+                        payload["retry_count"] = payload.get("retry_count", 0) + 1
+                        conn.execute("BEGIN IMMEDIATE")
+                        conn.execute(
+                            SQL_UPDATE_EVENTS_RETRY_COUNT,
+                            (_json.dumps(payload, ensure_ascii=False), event_id),
+                        )
+                        conn.execute("COMMIT")
+                    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                        try:
+                            conn.execute("ROLLBACK")
+                        except Exception as e2:  # noqa: BLE001 — 5.135治标: broad exception catch
+                            logger.warning("suppressed error in database_manager", exc_info=True)
+                        logger.warning("retry_dlq_retry_count_update_failed", event_id=event_id, exc_info=True)
             return success
         finally:
             self.return_connection(conn)
@@ -797,15 +942,21 @@ class DatabaseManager:
         """T-DB-011: 检测连接泄漏（超过最大空闲时间的连接）。
 
         返回 dict{leaked_count, actionable, detail}。
+
+        5.64.3 修复：原实现检测 conn._last_used_at，但 sqlite3.Connection 不支持
+        自定义属性、该时间戳从未被设置，检测器恒返回 0 形同虚设。现从元数据侧表
+        _conn_meta（get/return_connection 每次维护 last_used_at）读取。
         """
         with self._lock:
             leaked = []
             now_ts = time.time()
             for i, conn in enumerate(self._conn_pool):
-                if hasattr(conn, "_last_used_at"):
-                    idle_time = now_ts - conn._last_used_at
-                    if idle_time > max_idle_seconds:
-                        leaked.append({"conn_index": i, "idle_seconds": round(idle_time, 1)})
+                meta = self._conn_meta.get(id(conn))
+                if meta is None:
+                    continue
+                idle_time = now_ts - float(meta["last_used_at"])
+                if idle_time > max_idle_seconds:
+                    leaked.append({"conn_index": i, "idle_seconds": round(idle_time, 1)})
             actionable = len(leaked) > 10
             return {
                 "leaked_count": len(leaked),

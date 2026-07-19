@@ -2385,7 +2385,12 @@ class TaskRepository:
     )
 
     def batch_review(self, task_id: str, *, reviewer: str = "ai_session", session_id: str | None = None) -> dict:
-        """task_001_batch_review_protocol: 7维度审查并持久化记录。"""
+        """task_001_batch_review_protocol: 7维度审查并持久化记录。
+
+        5.61.1 修复：轮次计算 + 7 个维度的审查记录写入纳入单一事务
+        （BEGIN IMMEDIATE...COMMIT），任一维度失败整体 ROLLBACK，
+        消除部分维度已落库、部分未落库的部分提交状态。
+        """
         import json
         import uuid
 
@@ -2393,6 +2398,10 @@ class TaskRepository:
         if task_card is None:
             raise TaskNotFoundError(task_id)
         task = task_card.to_task() if hasattr(task_card, "to_task") else task_card
+
+        dimensions_result = {}
+        total_issues = 0
+        now = now_iso()
 
         with self._write_tx() as conn:
             rows = conn.execute(
@@ -2414,17 +2423,12 @@ class TaskRepository:
                 else:
                     break
 
-        dimensions_result = {}
-        total_issues = 0
-        now = now_iso()
+            for dim in self._BATCH_REVIEW_DIMENSIONS:
+                issues = self._evaluate_review_dimension(task, dim)
+                passed = len(issues) == 0
+                total_issues += len(issues)
+                dimensions_result[dim] = {"issues": issues, "passed": passed}
 
-        for dim in self._BATCH_REVIEW_DIMENSIONS:
-            issues = self._evaluate_review_dimension(task, dim)
-            passed = len(issues) == 0
-            total_issues += len(issues)
-            dimensions_result[dim] = {"issues": issues, "passed": passed}
-
-            with self._write_tx() as conn:
                 conn.execute(
                     SQL_INSERT_TASK_REVIEWS_COUNT,
                     (str(uuid.uuid4()), task_id, current_round, dim, len(issues), json.dumps(issues, ensure_ascii=False), 1 if passed else 0, reviewer, session_id, now),
@@ -2487,7 +2491,9 @@ class TaskRepository:
         bl = self._normalize_blocked_by(task)
         for dep_id in bl:
             try:
-                with self._write_tx() as conn:
+                # 5.61.1 修复：纯读查询改用 _read_tx——batch_review 已用单一 _write_tx
+                # 包裹 7 个维度，此处再开 _write_tx 会嵌套 BEGIN IMMEDIATE 报错。
+                with self._read_tx() as conn:
                     row = conn.execute(SQL_SELECT_TASKS_BY_ID_3, (dep_id,)).fetchone()
                 if row is None:
                     issues.append(f"blocked_by引用不存在的任务: {dep_id}")
