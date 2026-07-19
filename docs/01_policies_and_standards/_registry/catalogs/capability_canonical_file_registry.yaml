@@ -5537,6 +5537,10 @@ creation_tokens:
     token: "auto-test-m21-phase3-6-gates-20260719"
     created_by: "sess-30532-20260719211319"
     capability: "snapshot_drift_detector"
+  - file: "docs/02_enterprise_architecture/agents_md_slimming_test_design.md"
+    token: "auto-agents-md-slimming-design-20260719"
+    created_by: "sess-30532-20260719211319"
+    capability: "agents_md_slimming_decision_doc"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
