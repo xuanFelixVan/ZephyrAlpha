@@ -1,32 +1,35 @@
 # [BLUEPRINT] MOD-GOV-SCRIPTS | docs/03_modules/_domain_governance/blueprint.md | §decisiongraph
 # [MODULE] scripts.governance.d5_architecture.generators.generate_decision_diagram
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); architecture_model/domain/decision_graph_model.yaml (invariants 真源)
+# [DEPENDENCIES] zephyr.governance.persistence.decisiongraph_schema (get_decisiongraph_pg_connection); architecture_model/domain/decision_graph_model.yaml (invariants 真源); _common (cleanup_stale_files, DB_DISPLAY_NAME)
 # [CONSUMERS] CI自动触发;人工查看06_decision_architecture/
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 输出幂等(相同输入→相同输出);只读decisiongraph;输出到06_decision_architecture/
+# [INVARIANTS] 输出幂等(相同输入→相同输出22文件);只读decisiongraph;输出到06_decision_architecture/;序号硬编码稳定
 # [MODIFY-GUARD] 修改需通过TRAE-061任务或后续维护任务
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] decisiongraph不存在→exit 1;无tracks/layers→exit 2
+# [ERROR_CONTRACT] decisiongraph不存在→exit 1;无tracks/layers→exit 2;域集合漂移→exit 3
 # [TESTS] tests/test_generate_decision_diagram.py
 # [TTL] permanent
 """G-decision: 从 decisiongraph (PostgreSQL) 生成决策流图(.md 文档，Mermaid 内嵌)
 
-依据：TRAE-061 任务（2026-07-06）
+依据：TRAE-061 任务（2026-07-06）；拆分重构（2026-07-19）。
 
 功能：
   - 从 decision_tracks / decision_layers / decision_nodes / decision_edges 表读取决策流图
   - 从 decision_graph_model.yaml 读取 invariants 定义（5 条承重墙不变量）
-  - 生成 Mermaid 图表并内嵌在 Markdown ```mermaid 代码块中（与
-    02_domain_architecture_docs/ 模式一致，避免单独 .mmd 文件在查看器
-    中无法渲染为图表的问题）
+  - 生成 Mermaid 图表并内嵌在 Markdown ```mermaid 代码块中
   - 输出到 docs/02_enterprise_architecture/06_decision_architecture/
 
-输出文件：
-  - decision_index.md              索引文档（含统计 + 3 个内嵌 Mermaid 图表 + tracks/layers 清单）
+输出文件（22 个，治本拆分，对标 02_domain_architecture_docs/ 模式）：
+  - decision_index.md              主索引（纯导航，0 个 mermaid）
+  - 01..05_decision_track_*.md     5 个 Track 文件（各 3 视图：合并/设计态/运营态）
+  - 06..12_decision_l2a_*.md       7 个 L2A 功能域文件
+  - 13..19_decision_l3_*.md        7 个 L3 功能域文件
+  - 20_decision_layers.md          层级详情图
+  - 21_decision_invariants.md      不变量图
 
 用法
 ----
@@ -36,8 +39,9 @@
 from __future__ import annotations
 
 import argparse
+import os
+import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 
 import yaml
@@ -48,9 +52,13 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 try:
-    from _common import DB_DISPLAY_NAME  # noqa: E402
+    from _common import DB_DISPLAY_NAME, cleanup_stale_files  # noqa: E402
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
+
+    def cleanup_stale_files(output_dir: Path, expected: set[str], pattern: str) -> list[str]:  # noqa: ARG001
+        """降级 stub：_common 不可用时不动文件。"""
+        return []
 
 from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
@@ -58,6 +66,38 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
 
 OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "06_decision_architecture"
 _YAML_PATH = _REPO_ROOT / "architecture_model" / "domain" / "decision_graph_model.yaml"
+
+# --- 文件编号（硬编码，字母序保证跨重生成稳定） ---
+# Track 01-05 按 priority（DB ORDER BY priority）；L2A 06-12 按域名字母序；L3 13-19 按域名字母序
+_L2A_DOMAINS_ALPHA = ["data", "factor", "frontend", "research", "sell", "signal", "simulation"]
+_L3_DOMAINS_ALPHA = ["aut_core", "ex_core", "ex_sor", "pf_alloc", "pf_core", "position", "trading"]
+_L2A_DOMAIN_LAYER = "L2A"
+_L3_DOMAIN_LAYER = "L3"
+_L2A_SEQ_OFFSET = 6   # 06..12
+_L3_SEQ_OFFSET = 13   # 13..19
+_LAYERS_FILE_NAME = "20_decision_layers.md"
+_INVARIANTS_FILE_NAME = "21_decision_invariants.md"
+_STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
+
+
+def _git_commit_timestamp() -> str:
+    """获取本生成器脚本最近一次 git commit 时间（ISO 8601 秒精度）。
+
+    幂等时间源：相同 commit → 相同时间戳，避免 datetime.now() 导致输出非确定性。
+    git 不可用或文件未入库时返回固定占位符。
+    """
+    try:
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", "--", __file__],
+            capture_output=True, text=True, timeout=5,
+            cwd=str(_REPO_ROOT),
+        )
+        if r.returncode == 0 and r.stdout.strip():
+            # %cI 输出形如 2026-07-19T13:47:00+08:00，截到秒
+            return r.stdout.strip()[:19]
+    except Exception:  # noqa: BLE001 — git 不可用时降级
+        pass
+    return "unknown"
 
 
 def _fetch_decision_data(conn) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
@@ -129,10 +169,6 @@ def _load_invariants() -> list[dict]:
 def _resolve_blueprint_names(conn, layers: list[dict]) -> dict[str, str]:
     """从 depgraph 查 module_id→blueprint_name 映射。
 
-    decisiongraph 与 depgraph 共享 PG 实例，可通过同一连接查询
-    depgraph.nodes 表。module_id 对应 depgraph.nodes.blueprint_id，
-    node_name 为蓝图可读名称。
-
     :return: {module_id: blueprint_name}，查不到的 module_id 不包含在映射中
     """
     module_ids = {l.get("module_id") for l in layers if l.get("module_id")}
@@ -156,8 +192,7 @@ def _resolve_blueprint_names(conn, layers: list[dict]) -> dict[str, str]:
                 bp_name = row[1] if isinstance(row, (list, tuple)) else row.get("node_name")
                 if bp_id and bp_name:
                     result[bp_id] = bp_name
-    except Exception:  # noqa: BLE001 — depgraph 查询失败（表不存在/连接断开/驱动异常）时静默降级为仅展示 module_id，不影响图生成主流程
-        # depgraph 表不存在或查询失败时静默降级——仅展示 module_id
+    except Exception:  # noqa: BLE001 — depgraph 查询失败时静默降级为仅展示 module_id
         pass
     return result
 
@@ -184,42 +219,73 @@ def _build_status_color(build: str) -> str:
 
 
 def _maturity_tag(maturity: str | None) -> str:
-    """design_maturity → 标注标签，对标 depgraph generate_domain_dependency_diagram.py。
-
-    返回值用于 Mermaid 节点 label 前缀，区分设计态/运营态：
-    - production → [production]
-    - design     → [design]
-    - prototype  → [prototype]
-    - 空/未知    → 空字符串
-    """
+    """design_maturity → 标注标签（[production]/[design]/[prototype]/空）。"""
     if not maturity:
         return ""
     return f"[{maturity}]"
 
 
+def _node_domain(path: str) -> str:
+    """path 第 2 段（功能域），如 'decision/sell/sell_00' → 'sell'。
+
+    path 不足 2 段返回空串（调用方负责跳过）。
+    """
+    parts = (path or "").split("/")
+    return parts[1] if len(parts) >= 2 else ""
+
+
+def _filter_overview_inputs(
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+    *, maturity: str | None = None,
+    track_id: str | None = None, path_prefix: str | None = None,
+) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    """全景图输入过滤辅助（复杂度收口，避免 _gen_overview_mmd 超 15）。
+
+    过滤顺序：maturity → track_id → path_prefix（path 第 2 段精确匹配）→ 边端点 → 空 track。
+    返回新列表，不修改输入。maturity 取值："production" / "design" / None（不过滤）。
+    """
+    # maturity 过滤
+    if maturity is not None:
+        layers = [l for l in layers if l.get("maturity") == maturity]
+        layer_ids = {l["id"] for l in layers}
+        nodes = [n for n in nodes if n["layer_id"] in layer_ids and n.get("maturity") == maturity]
+    # track_id 过滤
+    if track_id is not None:
+        layers = [l for l in layers if l["track"] == track_id]
+        layer_ids = {l["id"] for l in layers}
+        nodes = [n for n in nodes if n["layer_id"] in layer_ids]
+    # path_prefix 过滤（path 第 2 段精确匹配，不用 startswith 避免 sell/sell_algo 误匹配）
+    if path_prefix is not None:
+        nodes = [n for n in nodes if _node_domain(n.get("path", "")) == path_prefix]
+    # 边端点必须都在过滤后节点集中
+    node_ids = {n["id"] for n in nodes}
+    edges = [e for e in edges if e["from"] in node_ids and e["to"] in node_ids]
+    # tracks 过滤：只保留仍有 layer 的 track
+    used_track_ids = {l["track"] for l in layers}
+    tracks = [t for t in tracks if t["id"] in used_track_ids]
+    return tracks, layers, nodes, edges
+
+
 def _gen_overview_mmd(
     tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
     production_only: bool = False, design_only: bool = False,
+    track_id: str | None = None, path_prefix: str | None = None,
 ) -> tuple[str, int, int, int]:
     """生成全景图：L0-L6 层级 + 四轨并行 subgraph + 节点/边。
 
     Args:
-        production_only: True 时仅生成运营态（design_maturity='production'）的
-            layer/node，对标 depgraph 的运营态全景图。False（默认）生成全部，
-            并在节点标签上标注 [design]/[production] 区分设计态/运营态。
-        design_only: True 时仅生成设计态（design_maturity='design'）的
-            layer/node。production_only 和 design_only 互斥，同时为 True 时
-            按 production_only 处理。
+        production_only: True 时仅 design_maturity='production'。
+        design_only: True 时仅 design_maturity='design'。与 production_only 互斥。
+        track_id: 仅生成该 track（用于 per-Track 文件）。
+        path_prefix: 仅生成该 path 第 2 段域的节点（用于 per-domain 文件）。
     """
-    # 过滤运营态/设计态子集
-    if production_only or design_only:
-        target_maturity = "production" if production_only else "design"
-        layers = [l for l in layers if l.get("maturity") == target_maturity]
-        filt_layer_ids = {l["id"] for l in layers}
-        nodes = [n for n in nodes if n["layer_id"] in filt_layer_ids and n.get("maturity") == target_maturity]
-        # 边的两端必须都在过滤后的节点集中
-        filt_node_ids = {n["id"] for n in nodes}
-        edges = [e for e in edges if e["from"] in filt_node_ids and e["to"] in filt_node_ids]
+    # 将 production_only/design_only 转换为 maturity 单参（保持 _gen_overview_mmd 签名不变）
+    _maturity = "production" if production_only else ("design" if design_only else None)
+    tracks, layers, nodes, edges = _filter_overview_inputs(
+        tracks, layers, nodes, edges,
+        maturity=_maturity,
+        track_id=track_id, path_prefix=path_prefix,
+    )
 
     lines = ["flowchart TD"]
 
@@ -234,18 +300,14 @@ def _gen_overview_mmd(
             safe_lid = lid.replace("-", "_")
             mtag = _maturity_tag(layer.get("maturity"))
             label = f'{mtag}{layer["id"]}: {layer["name"]}' if mtag else f'{layer["id"]}: {layer["name"]}'
-            # 议题1约束：蓝图/代码仅 production/prototype 态显示（design 态代码未写、蓝图未建）
             is_design = layer.get("maturity") == "design"
-            # 蓝图（module_id + 派生蓝图名）
             mid = layer.get("module_id")
             if mid and not is_design:
                 bp_name = layer.get("blueprint_name") or mid
                 label += f'<br/>蓝图: {bp_name}'
-            # 代码引用
             scr = layer.get("source_code_ref")
             if scr and not is_design:
                 label += f'<br/>代码: {_truncate(scr, 30)}'
-            # 功能简述（截断到~20字，设计态也显示）
             desc = layer.get("desc")
             if desc:
                 label += f'<br/>功能: {_truncate(desc)}'
@@ -254,7 +316,6 @@ def _gen_overview_mmd(
             label += f'<br/>build: {layer["build"]}'
             cls = _build_status_color(layer["build"])
             lines.append(f'        L{safe_lid}["{label}"]:::{cls}')
-            # 该层下的节点
             layer_nodes = [n for n in nodes if n["layer_id"] == lid]
             for n in layer_nodes:
                 nmtag = _maturity_tag(n.get("maturity"))
@@ -264,7 +325,7 @@ def _gen_overview_mmd(
                 lines.append(f'        L{safe_lid} --- N{n["id"]}')
         lines.append("    end")
 
-    # 层间边（informing/triggering，按 layer 顺序）
+    # 层间边（triggering，按 layer 顺序）
     layer_ids = [l["id"] for l in layers]
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
@@ -275,8 +336,6 @@ def _gen_overview_mmd(
     for e in edges:
         lines.append(f'    N{e["from"]} -->|{e["type"]}| N{e["to"]}')
 
-    # 样式（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式；
-    # bsPlanned/bsDeprecated 加 stroke-dasharray 虚线边框区分设计态）
     lines.append("")
     lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
     lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
@@ -297,18 +356,14 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         label = f'{layer["id"]} {layer["name"]}<br/>{layer["name_en"]}'
         if mtag:
             label = f'{mtag} {label}'
-        # 议题1约束：蓝图/代码仅 production/prototype 态显示（design 态代码未写、蓝图未建）
         is_design = layer.get("maturity") == "design"
-        # 蓝图（module_id + 派生蓝图名）
         mid = layer.get("module_id")
         if mid and not is_design:
             bp_name = layer.get("blueprint_name") or mid
             label += f'<br/>蓝图: {bp_name}'
-        # 代码引用
         scr = layer.get("source_code_ref")
         if scr and not is_design:
             label += f'<br/>代码: {_truncate(scr, 30)}'
-        # 功能简述（截断到~20字，设计态也显示）
         desc = layer.get("desc")
         if desc:
             label += f'<br/>功能: {_truncate(desc)}'
@@ -319,7 +374,6 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
         cls = _build_status_color(layer["build"])
         lines.append(f'    L{lid}["{label}"]:::{cls}')
 
-    # 层间流向（informing/triggering/approving/feedback）
     layer_ids = [l["id"] for l in layers]
     for i in range(len(layer_ids) - 1):
         from_lid = layer_ids[i].replace("-", "_")
@@ -335,7 +389,6 @@ def _gen_layers_mmd(tracks: list[dict], layers: list[dict]) -> str:
             lines.append(f'    {l6} -.->|feedback| {l1}')
         lines.append(f'    {l6} -.->|feedback| {l5}')
 
-    # 图例（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式）
     lines.append("")
     lines.append("    classDef bsStable fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000")
     lines.append("    classDef bsGenerated fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#000")
@@ -350,7 +403,6 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     """生成不变量图：6 节点类型 + 5 不变量标注 + 合法/非法连接。"""
     lines = ["flowchart TD"]
 
-    # 6 节点类型
     node_types = [
         ("signal", "信号节点<br/>Signal"),
         ("portfolio_target", "仓位目标节点<br/>Portfolio Target"),
@@ -363,7 +415,6 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
         safe = nt.replace("-", "_")
         lines.append(f'    NT_{safe}["{label}"]:::nodeType')
 
-    # 合法连接（实线）
     lines.append("    NT_signal -->|portfolio_target| NT_portfolio_target")
     lines.append("    NT_portfolio_target -->|risk_check| NT_risk_check")
     lines.append("    NT_risk_check -->|approving| NT_order")
@@ -371,28 +422,479 @@ def _gen_invariants_mmd(invariants: list[dict]) -> str:
     lines.append("    NT_execution -.->|feedback| NT_feedback")
     lines.append("    NT_feedback -.->|informing| NT_signal")
 
-    # 非法连接（DEC-INV-002，红色虚线）
     lines.append("    NT_signal -.->|禁止| NT_order")
     lines.append("    linkStyle 6 stroke:#c62828,stroke-width:2px,stroke-dasharray: 5 5")
 
-    # 不变量标注节点
     for inv in invariants:
         iid = inv["id"]
         safe_iid = iid.replace("-", "_")
         label = f'{iid}<br/>{inv["name"]}<br/>{inv["name_en"]}'
         lines.append(f'    INV_{safe_iid}(["{label}"]):::invariant')
 
-    # 不变量关联到节点类型
     lines.append("    INV_DEC_INV_001 -.- NT_order")
     lines.append("    INV_DEC_INV_002 -.- NT_signal")
     lines.append("    INV_DEC_INV_003 -.- NT_feedback")
     lines.append("    INV_DEC_INV_005 -.- NT_signal")
 
-    # 样式（color:#000 显式黑色文字，对标 02_domain_architecture_docs 模式）
     lines.append("")
     lines.append("    classDef nodeType fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000")
     lines.append("    classDef invariant fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#000")
 
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# 文件编号与域索引
+# ---------------------------------------------------------------------------
+
+
+def _track_filename(track: dict) -> str:
+    """01_decision_track_<track_id>.md — 序号取自 track['priority']。"""
+    seq = track.get("priority") or 0
+    safe_tid = track["id"].replace("-", "_")
+    return f"{seq:02d}_decision_track_{safe_tid}.md"
+
+
+def _domain_filename(layer_id: str, domain: str) -> str:
+    """NN_decision_<layer_lower>_<domain>.md — NN 由硬编码字母序索引+偏移推得。"""
+    if layer_id == _L2A_DOMAIN_LAYER:
+        idx = _L2A_DOMAINS_ALPHA.index(domain)
+        seq = _L2A_SEQ_OFFSET + idx
+    elif layer_id == _L3_DOMAIN_LAYER:
+        idx = _L3_DOMAINS_ALPHA.index(domain)
+        seq = _L3_SEQ_OFFSET + idx
+    else:
+        raise ValueError(f"未知 layer_id {layer_id}，仅支持 L2A/L3")
+    return f"{seq:02d}_decision_{layer_id.lower()}_{domain}.md"
+
+
+def _build_domain_index(tracks: list[dict], layers: list[dict], nodes: list[dict]) -> list[dict]:
+    """构建 14 个功能域索引（L2A 7 + L3 7）。
+
+    返回 [{track, layer_id, domain, node_count, filename, seq}]，按 seq 升序。
+    空域（node_count=0）仍保留以稳定编号。
+    """
+    track_by_id = {t["id"]: t for t in tracks}
+    layer_track = {l["id"]: l["track"] for l in layers}
+    index: list[dict] = []
+    for domain in _L2A_DOMAINS_ALPHA:
+        layer_id = _L2A_DOMAIN_LAYER
+        domain_nodes = [n for n in nodes if n["layer_id"] == layer_id and _node_domain(n.get("path", "")) == domain]
+        fname = _domain_filename(layer_id, domain)
+        seq = _L2A_SEQ_OFFSET + _L2A_DOMAINS_ALPHA.index(domain)
+        tid = layer_track.get(layer_id, "")
+        index.append({
+            "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
+            "layer_id": layer_id, "domain": domain,
+            "node_count": len(domain_nodes), "filename": fname, "seq": seq,
+        })
+    for domain in _L3_DOMAINS_ALPHA:
+        layer_id = _L3_DOMAIN_LAYER
+        domain_nodes = [n for n in nodes if n["layer_id"] == layer_id and _node_domain(n.get("path", "")) == domain]
+        fname = _domain_filename(layer_id, domain)
+        seq = _L3_SEQ_OFFSET + _L3_DOMAINS_ALPHA.index(domain)
+        tid = layer_track.get(layer_id, "")
+        index.append({
+            "track": track_by_id.get(tid, {"id": tid, "name": tid, "name_en": tid}),
+            "layer_id": layer_id, "domain": domain,
+            "node_count": len(domain_nodes), "filename": fname, "seq": seq,
+        })
+    return index
+
+
+def _aggregate_cross_domain_edges(
+    nodes: list[dict], edges: list[dict], self_domain: str,
+) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    """聚合跨域边：返回 (outgoing_agg, incoming_agg, outgoing_detail, incoming_detail)。
+
+    - agg: [{other_domain, count, types:set}]
+    - detail: [{from_path, to_path, type, condition}]
+    域 = node['path'] 第 2 段；path 不足 2 段的节点跳过并 stderr 警告。
+    """
+    node_id_to_domain: dict[int, str] = {}
+    for n in nodes:
+        d = _node_domain(n.get("path", ""))
+        if not d:
+            print(f"[WARN] 节点 {n.get('id')} path 残缺（{n.get('path')!r}），跳过跨域边聚合", file=sys.stderr)
+            continue
+        node_id_to_domain[n["id"]] = d
+
+    outgoing_agg_map: dict[str, dict] = {}
+    incoming_agg_map: dict[str, dict] = {}
+    outgoing_detail: list[dict] = []
+    incoming_detail: list[dict] = []
+
+    for e in edges:
+        from_d = node_id_to_domain.get(e["from"])
+        to_d = node_id_to_domain.get(e["to"])
+        if from_d is None or to_d is None:
+            continue
+        if from_d == self_domain and to_d != self_domain:
+            entry = outgoing_agg_map.setdefault(to_d, {"other_domain": to_d, "count": 0, "types": set()})
+            entry["count"] += 1
+            entry["types"].add(e["type"])
+            outgoing_detail.append({"from_path": _node_path(nodes, e["from"]), "to_path": _node_path(nodes, e["to"]), "type": e["type"], "condition": e.get("condition")})
+        elif to_d == self_domain and from_d != self_domain:
+            entry = incoming_agg_map.setdefault(from_d, {"other_domain": from_d, "count": 0, "types": set()})
+            entry["count"] += 1
+            entry["types"].add(e["type"])
+            incoming_detail.append({"from_path": _node_path(nodes, e["from"]), "to_path": _node_path(nodes, e["to"]), "type": e["type"], "condition": e.get("condition")})
+
+    outgoing_agg = [{"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])} for v in outgoing_agg_map.values()]
+    incoming_agg = [{"other_domain": v["other_domain"], "count": v["count"], "types": sorted(v["types"])} for v in incoming_agg_map.values()]
+    return outgoing_agg, incoming_agg, outgoing_detail, incoming_detail
+
+
+def _node_path(nodes: list[dict], node_id: int) -> str:
+    """查 node_id → path（跨域边表格用）。"""
+    for n in nodes:
+        if n["id"] == node_id:
+            return n.get("path", "")
+    return ""
+
+
+def _gen_cross_domain_mermaid(
+    self_domain: str, outgoing_agg: list[dict], incoming_agg: list[dict],
+) -> str:
+    """跨域依赖图：graph LR，本域居中，外部域为外围节点，边标计数。
+
+    参照 generate_domain_doc.py L544-598 改写（决策边只有单个 type 字段）。
+    """
+    lines = ["flowchart LR"]
+    safe_self = self_domain.replace("-", "_")
+    lines.append(f'    SELF["{self_domain}"]:::selfDomain')
+    seen: set[str] = set()
+    for d in outgoing_agg:
+        other = d["other_domain"]
+        safe = other.replace("-", "_")
+        if other not in seen:
+            lines.append(f'    EXT_{safe}["{other}"]:::extDomain')
+            seen.add(other)
+        lines.append(f'    SELF -->|出 {d["count"]}| EXT_{safe}')
+    for d in incoming_agg:
+        other = d["other_domain"]
+        safe = other.replace("-", "_")
+        if other not in seen:
+            lines.append(f'    EXT_{safe}["{other}"]:::extDomain')
+            seen.add(other)
+        lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
+    lines.append("")
+    lines.append("    classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000")
+    lines.append("    classDef extDomain fill:#e3f2fd,stroke:#1565c0,stroke-width:1px,color:#000")
+    return "\n".join(lines) + "\n"
+
+
+def _atomic_write(path: Path, content: str) -> None:
+    """原子写入文件（tmp + os.replace）。本地复制自 generate_domain_doc.py L1016-1028，避免跨模块耦合。"""
+    tmp_path = f"{path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(content)
+        os.replace(tmp_path, str(path))
+    except Exception:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+def _assert_domain_set_stable(layers: list[dict], nodes: list[dict]) -> None:
+    """断言 DB 派生的 L2A/L3 域集合 == 硬编码列表（防 schema drift）。
+
+    不匹配则 exit 3 并打印可操作信息。空 DB（无节点）时跳过断言（允许空库生成空文件）。
+    """
+    if not nodes:
+        return
+    l2a_layer = next((l for l in layers if l["id"] == _L2A_DOMAIN_LAYER), None)
+    l3_layer = next((l for l in layers if l["id"] == _L3_DOMAIN_LAYER), None)
+    db_l2a = {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L2A_DOMAIN_LAYER) if d} if l2a_layer else set()
+    db_l3 = {d for d in (_node_domain(n.get("path", "")) for n in nodes if n["layer_id"] == _L3_DOMAIN_LAYER) if d} if l3_layer else set()
+    expected_l2a = set(_L2A_DOMAINS_ALPHA)
+    expected_l3 = set(_L3_DOMAINS_ALPHA)
+    drift_l2a = db_l2a - expected_l2a
+    drift_l3 = db_l3 - expected_l3
+    if drift_l2a or drift_l3:
+        msg = (
+            f"[ERROR] decisiongraph 域集合漂移（schema drift）。\n"
+            f"  L2A 新增域（未在 _L2A_DOMAINS_ALPHA）: {sorted(drift_l2a)}\n"
+            f"  L3 新增域（未在 _L3_DOMAINS_ALPHA）: {sorted(drift_l3)}\n"
+            f"  请更新 generate_decision_diagram.py 的 _L2A_DOMAINS_ALPHA / _L3_DOMAINS_ALPHA 后重跑。"
+        )
+        print(msg, file=sys.stderr)
+        sys.exit(3)
+
+
+# ---------------------------------------------------------------------------
+# 文件构建函数
+# ---------------------------------------------------------------------------
+
+
+def _md_header(title: str, breadcrumb: str) -> list[str]:
+    """统一的文件头部（标题 + 真源 + 生成时间）。"""
+    return [
+        f"# {title}",
+        "",
+        f"> 生成时间: {_git_commit_timestamp()}",
+        f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）",
+        f"> 数据库: {DB_DISPLAY_NAME}",
+        f"> 导航: [返回主索引 decision_index.md](decision_index.md) | {breadcrumb}",
+        "",
+    ]
+
+
+def _layer_table(layers: list[dict]) -> list[str]:
+    """Layer 清单表（Markdown 行列表）。"""
+    lines = [
+        "| layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |",
+        "|----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|",
+    ]
+    for l in layers:
+        mid = l.get("module_id") or "-"
+        bp_name = l.get("blueprint_name") or "-"
+        scr = l.get("source_code_ref") or "-"
+        desc = (l.get("desc") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
+        lines.append(
+            f"| {l['id']} | {l['name']} | {l['name_en']} | {l['track']} | "
+            f"{mid} | {bp_name} | {scr} | {desc} | "
+            f"{l['freq'] or '-'} | {l['maturity']} | {l['build']} |"
+        )
+    return lines
+
+
+def _node_table(nodes: list[dict]) -> list[str]:
+    """Node 清单表。"""
+    if not nodes:
+        return ["> （无节点）"]
+    lines = [
+        "| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |",
+        "|---------|-------|------|------|------|-----------|----------|--------|--------------|",
+    ]
+    for n in nodes:
+        nscr = n.get("source_code_ref") or "-"
+        lines.append(
+            f"| {n['id']} | {n['layer_id']} | {n['type']} | {n['name']} | "
+            f"{n['path']} | {n['module_id'] or '-'} | {nscr} | {n.get('maturity') or '-'} | {n['build']} |"
+        )
+    return lines
+
+
+def _edge_table(edges: list[dict]) -> list[str]:
+    """Edge 清单表。"""
+    if not edges:
+        return ["> （无决策因果边）"]
+    lines = [
+        "| edge_id | from | to | type | condition | track |",
+        "|---------|-------|-----|------|-----------|-------|",
+    ]
+    for e in edges:
+        lines.append(
+            f"| {e['id']} | {e['from']} | {e['to']} | {e['type']} | "
+            f"{e['condition'] or '-'} | {e['track'] or '-'} |"
+        )
+    return lines
+
+
+def _filter_track_data(
+    tid: str, layers: list[dict], nodes: list[dict], edges: list[dict],
+) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    """过滤本轨的 Layer/Node/Edge + 跨轨边（Extract Method 降低 _gen_track_file_md 复杂度）。"""
+    track_layers = [l for l in layers if l["track"] == tid]
+    track_layer_ids = {l["id"] for l in track_layers}
+    track_nodes = [n for n in nodes if n["layer_id"] in track_layer_ids]
+    track_node_ids = {n["id"] for n in track_nodes}
+    track_edges = [e for e in edges if e["from"] in track_node_ids and e["to"] in track_node_ids]
+    cross_track_edges = [e for e in edges if (e["from"] in track_node_ids) ^ (e["to"] in track_node_ids)]
+    return track_layers, track_nodes, track_edges, cross_track_edges
+
+
+def _gen_track_views_section(
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict], tid: str,
+) -> list[str]:
+    """生成 3 视图（合并/设计态/运营态）+ 统计表（Extract Method 降低复杂度）。"""
+    merged_mmd, _, merged_l, merged_e = _gen_overview_mmd(tracks, layers, nodes, edges, track_id=tid)
+    design_mmd, _, design_l, design_e = _gen_overview_mmd(tracks, layers, nodes, edges, design_only=True, track_id=tid)
+    prod_mmd, _, prod_l, prod_e = _gen_overview_mmd(tracks, layers, nodes, edges, production_only=True, track_id=tid)
+
+    lines = [
+        "## 统计", "",
+        "| 视图 | Layer 数 | Edge 数 |",
+        "|------|----------|---------|",
+        f"| 合并 | {merged_l} | {merged_e} |",
+        f"| 设计态 | {design_l} | {design_e} |",
+        f"| 运营态 | {prod_l} | {prod_e} |",
+        "",
+        "## 合并全景图（设计态 + 运营态，标签标注 [design]/[production]）",
+        "", "```mermaid", merged_mmd.rstrip("\n"), "```", "",
+        "## 设计态全景图（仅 design_maturity=design）", "",
+    ]
+    if design_l == 0:
+        lines += ["> （本轨无设计态节点）", ""]
+    else:
+        lines += [f"> 共 {design_l} 层，{design_e} 边。", "", "```mermaid", design_mmd.rstrip("\n"), "```", ""]
+    lines += ["## 运营态全景图（仅 design_maturity=production）", ""]
+    if prod_l == 0:
+        lines += ["> （本轨无运营态节点）", ""]
+    else:
+        lines += [f"> 共 {prod_l} 层，{prod_e} 边。", "", "```mermaid", prod_mmd.rstrip("\n"), "```", ""]
+    return lines
+
+
+def _gen_track_file_md(
+    track: dict, tracks: list[dict], layers: list[dict],
+    nodes: list[dict], edges: list[dict],
+    domain_index: list[dict],
+) -> str:
+    """Per-Track 文件：3 视图 + 本轨 Layer/Node/Edge 表 + 跨轨边表 + 域文件链接。"""
+    tid = track["id"]
+    track_layers, track_nodes, track_edges, cross_track_edges = _filter_track_data(tid, layers, nodes, edges)
+
+    lines = _md_header(
+        f"决策流图 · {track['name']}（{track['name_en']}）",
+        f"Track {track.get('priority', '-')}",
+    )
+    lines += [
+        f"**track_id**: `{tid}` | **优先级**: {track.get('priority', '-')} | **激活条件**: {track.get('activation') or '-'}",
+        "",
+        track.get("desc") or "",
+        "",
+    ]
+    lines += _gen_track_views_section(tracks, layers, nodes, edges, tid)
+
+    lines += ["## Layer 清单", ""] + _layer_table(track_layers) + [""]
+    lines += ["## Node 清单", ""] + _node_table(track_nodes) + [""]
+    lines += ["## Edge 清单（本轨内）", ""] + _edge_table(track_edges) + [""]
+    lines += ["## 跨轨边", ""]
+    if cross_track_edges:
+        lines += [
+            "| edge_id | from | to | type | condition |",
+            "|---------|-------|-----|------|-----------|",
+        ]
+        for e in cross_track_edges:
+            lines.append(f"| {e['id']} | {e['from']} | {e['to']} | {e['type']} | {e['condition'] or '-'} |")
+    else:
+        lines += ["> （无跨轨边）"]
+    lines += [""]
+
+    # 本轨下的功能域文件链接
+    track_domains = [d for d in domain_index if d["track"]["id"] == tid]
+    if track_domains:
+        lines += ["## 功能域文件（L2A/L3 拆分）", ""]
+        lines += ["| 序号 | 层 | 功能域 | Node 数 | 文档 |", "|------|------|--------|---------|------|"]
+        for d in track_domains:
+            lines.append(f"| {d['seq']:02d} | {d['layer_id']} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
+        lines += [""]
+
+    return "\n".join(lines) + "\n"
+
+
+def _gen_domain_file_md(
+    track: dict, layer_id: str, domain: str,
+    tracks: list[dict], layers: list[dict], nodes: list[dict], edges: list[dict],
+) -> str:
+    """Per-domain 文件：1 设计态 mermaid + 本域 Node 表 + 出/入边表 + 跨域 mermaid。"""
+    domain_nodes = [n for n in nodes if n["layer_id"] == layer_id and _node_domain(n.get("path", "")) == domain]
+    domain_node_ids = {n["id"] for n in domain_nodes}
+    domain_edges = [e for e in edges if e["from"] in domain_node_ids and e["to"] in domain_node_ids]
+    outgoing_agg, incoming_agg, outgoing_detail, incoming_detail = _aggregate_cross_domain_edges(nodes, edges, domain)
+
+    mmd, _, l_count, e_count = _gen_overview_mmd(
+        tracks, layers, nodes, edges,
+        design_only=True, track_id=track["id"], path_prefix=domain,
+    )
+
+    lines = _md_header(
+        f"决策流图 · {layer_id} 功能域 {domain}",
+        f"{track['name']} → {layer_id} → {domain}",
+    )
+    lines += [
+        f"**所属轨**: {track['name']}（`{track['id']}`） | **所属层**: {layer_id} | **功能域**: `{domain}`",
+        "",
+        "## 统计",
+        "",
+        f"- 设计态节点数: {len(domain_nodes)}",
+        f"- 域内边数: {len(domain_edges)}",
+        f"- 跨域出边: {sum(d['count'] for d in outgoing_agg)}（{len(outgoing_agg)} 个外部域）",
+        f"- 跨域入边: {sum(d['count'] for d in incoming_agg)}（{len(incoming_agg)} 个外部域）",
+        "",
+        "## 设计态全景图",
+        "",
+        f"> 共 {l_count} 层，{e_count} 边。",
+        "",
+        "```mermaid",
+        mmd.rstrip("\n"),
+        "```",
+        "",
+        "## Node 清单",
+        "",
+    ]
+    lines += _node_table(domain_nodes) + [""]
+    lines += ["## Edge 清单（域内）", ""] + _edge_table(domain_edges) + [""]
+
+    # 跨域出边
+    lines += ["## 跨域出边（Depends On）", ""]
+    if outgoing_detail:
+        lines += ["| # | 本域节点 | → | 外部域-目标节点 | type |", "|:--:|---------|:--:|---------|---------|"]
+        for i, d in enumerate(outgoing_detail, 1):
+            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {d['type']} |")
+    else:
+        lines += ["> （无跨域出边）"]
+    lines += [""]
+
+    # 跨域入边
+    lines += ["## 跨域入边（Depended By）", ""]
+    if incoming_detail:
+        lines += ["| # | 外部域-源节点 | → | 本域节点 | type |", "|:--:|---------|:--:|---------|---------|"]
+        for i, d in enumerate(incoming_detail, 1):
+            lines.append(f"| {i} | {d['from_path']} | → | {d['to_path']} | {d['type']} |")
+    else:
+        lines += ["> （无跨域入边）"]
+    lines += [""]
+
+    # 跨域 mermaid
+    lines += ["## 跨域依赖图", ""]
+    if outgoing_agg or incoming_agg:
+        lines += [
+            f"> 本域与 {len(outgoing_agg) + len(incoming_agg)} 个外部域直接连接。",
+            "",
+            "```mermaid",
+            _gen_cross_domain_mermaid(domain, outgoing_agg, incoming_agg).rstrip("\n"),
+            "```",
+        ]
+    else:
+        lines += ["> （无跨域依赖）"]
+    lines += [""]
+
+    return "\n".join(lines) + "\n"
+
+
+def _gen_layers_file_md(tracks: list[dict], layers: list[dict]) -> str:
+    """层级详情图独立文件。"""
+    mmd = _gen_layers_mmd(tracks, layers)
+    lines = _md_header("决策流图 · 层级详情图", "辅助图")
+    lines += [
+        "L0-L6 层级卡片 + 频率/成熟度/状态 + 流向箭头 + 学习闭环反馈边。",
+        "",
+        "```mermaid",
+        mmd.rstrip("\n"),
+        "```",
+        "",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def _gen_invariants_file_md(invariants: list[dict]) -> str:
+    """不变量图独立文件。"""
+    mmd = _gen_invariants_mmd(invariants)
+    lines = _md_header("决策流图 · 不变量图", "辅助图")
+    lines += [
+        "6 节点类型 + 5 承重墙不变量 + 合法/非法连接标注。",
+        "",
+        "```mermaid",
+        mmd.rstrip("\n"),
+        "```",
+        "",
+    ]
     return "\n".join(lines) + "\n"
 
 
@@ -402,27 +904,15 @@ def _gen_index_md(
     nodes: list[dict],
     edges: list[dict],
     invariants: list[dict] | None = None,
+    domain_index: list[dict] | None = None,
 ) -> str:
-    """生成索引文档（含统计 + 内嵌 Mermaid 图表 + tracks/layers 清单）。
+    """生成主索引（纯导航，0 个 mermaid）。
 
-    Mermaid 图表通过 ```mermaid 代码块内嵌在 .md 中，与
-    02_domain_architecture_docs/ 模式一致——避免单独 .mmd 文件在 Markdown
-    查看器中无法渲染为图表的问题。
+    保留概述 + 统计 + Track/L2A/L3 导航表 + 辅助图链接 + 旧锚点重定向。
     """
     invariants = invariants or []
-    overview_mmd, t_count, l_count, e_count = _gen_overview_mmd(tracks, layers, nodes, edges)
-    layers_mmd = _gen_layers_mmd(tracks, layers)
-    invariants_mmd = _gen_invariants_mmd(invariants)
-    # 运营态全景图（只含 design_maturity='production' 的 layer/node）
-    prod_overview_mmd, _, prod_l_count, prod_e_count = _gen_overview_mmd(
-        tracks, layers, nodes, edges, production_only=True
-    )
-    # 设计态全景图（只含 design_maturity='design' 的 layer/node）
-    design_overview_mmd, _, design_l_count, design_e_count = _gen_overview_mmd(
-        tracks, layers, nodes, edges, design_only=True
-    )
+    domain_index = domain_index or []
 
-    # 设计态/运营态计数
     prod_layers = [l for l in layers if l.get("maturity") == "production"]
     design_layers = [l for l in layers if l.get("maturity") == "design"]
     prototype_layers = [l for l in layers if l.get("maturity") == "prototype"]
@@ -432,7 +922,7 @@ def _gen_index_md(
     lines = [
         "# 决策流图（decisiongraph）索引",
         "",
-        f"> 生成时间: {datetime.now().isoformat(timespec='seconds')}",
+        f"> 生成时间: {_git_commit_timestamp()}",
         f"> 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）",
         f"> 数据库: {DB_DISPLAY_NAME}",
         "",
@@ -443,6 +933,8 @@ def _gen_index_md(
         '- dataflowgraph 表达"数据从哪流到哪"（数据流向，动态）',
         '- decisiongraph 表达"决策如何产生"（决策流，动态）',
         "- 三图通过 `module_id` 关联：决策节点 → 实现模块（depgraph）→ 数据流作业（dataflowgraph）",
+        "",
+        "> 本索引为纯导航枢纽。各 Track / 功能域 / 辅助图分别独立成文件，避免单文件过大无法阅读。",
         "",
         "## 统计",
         "",
@@ -460,112 +952,77 @@ def _gen_index_md(
         "",
         "> **设计态 vs 运营态**：`design_maturity` 字段区分——`design`=蓝图规划（代码未写），`production`=实际代码已实现稳定运行，`prototype`=原型验证中。对标 depgraph 的设计态/运营态机制。",
         "",
-        "## Mermaid 图表",
+        "## Track 导航（按优先级）",
         "",
-        "> 以下图表通过 Mermaid 代码块内嵌，可直接在 Markdown 查看器中渲染。",
-        "",
-        "### 全景图（设计态 + 运营态合并，标签标注 [design]/[production]）",
-        "",
-        "```mermaid",
-        overview_mmd.rstrip("\n"),
-        "```",
-        "",
-        "### 运营态全景图（仅 design_maturity=production 的 layer/node）",
-        "",
-        f"> 仅展示已实现稳定运行的决策层/节点（共 {prod_l_count} 层，{prod_e_count} 边）。",
-        "",
-        "```mermaid",
-        prod_overview_mmd.rstrip("\n"),
-        "```",
-        "",
-        "### 设计态全景图（仅 design_maturity=design 的 layer/node）",
-        "",
-        f"> 仅展示蓝图规划中尚未实现的决策层/节点（共 {design_l_count} 层，{design_e_count} 边）。",
-        "",
-        "```mermaid",
-        design_overview_mmd.rstrip("\n"),
-        "```",
-        "",
-        "### 层级详情图（10 层卡片 + 频率/状态，标签标注 [design]/[production]）",
-        "",
-        "```mermaid",
-        layers_mmd.rstrip("\n"),
-        "```",
-        "",
-        "### 不变量图（6 节点类型 + 5 承重墙不变量）",
-        "",
-        "```mermaid",
-        invariants_mmd.rstrip("\n"),
-        "```",
-        "",
-        "## Track 清单（四轨）",
-        "",
-        "| track_id | 名称 | 英文名 | 优先级 | 激活条件 |",
-        "|----------|------|--------|--------|----------|",
+        "| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | 文档 |",
+        "|------|----------|------|--------|----------|---------|------|",
     ]
     for t in tracks:
+        t_layers = [l for l in layers if l["track"] == t["id"]]
+        t_layer_ids = {l["id"] for l in t_layers}
+        t_nodes = [n for n in nodes if n["layer_id"] in t_layer_ids]
+        fname = _track_filename(t)
         lines.append(
-            f"| {t['id']} | {t['name']} | {t['name_en']} | {t['priority']} | {t['activation'] or '-'} |"
+            f"| {t.get('priority', 0):02d} | {t['id']} | {t['name']} | {t.get('priority', '-')} | "
+            f"{len(t_layers)} | {len(t_nodes)} | [📄 {fname}]({fname}) |"
         )
 
-    lines.extend([
+    # L2A 域导航
+    l2a_entries = [d for d in domain_index if d["layer_id"] == _L2A_DOMAIN_LAYER]
+    lines += [
         "",
-        "## Layer 清单（L0-L6）",
+        f"## L2A 信号层 · 功能域导航（{len(l2a_entries)} 域）",
         "",
-        "| layer_id | 名称 | 英文名 | 所属轨 | 蓝图(module_id) | 蓝图名(派生) | 代码引用 | 功能简述 | 决策频率 | 成熟度 | build_status |",
-        "|----------|------|--------|--------|-----------------|--------------|----------|----------|----------|--------|--------------|",
-    ])
-    for l in layers:
-        mid = l.get("module_id") or "-"
-        bp_name = l.get("blueprint_name") or "-"
-        scr = l.get("source_code_ref") or "-"
-        desc = (l.get("desc") or "").strip().replace("\n", " ").replace("|", "\\|") or "-"
-        lines.append(
-            f"| {l['id']} | {l['name']} | {l['name_en']} | {l['track']} | "
-            f"{mid} | {bp_name} | {scr} | {desc} | "
-            f"{l['freq'] or '-'} | {l['maturity']} | {l['build']} |"
-        )
+        "| 序号 | 功能域 | Node 数 | 文档 |",
+        "|------|--------|---------|------|",
+    ]
+    for d in l2a_entries:
+        lines.append(f"| {d['seq']:02d} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
 
-    if nodes:
-        lines.extend([
-            "",
-            "## Node 清单（运行时决策节点）",
-            "",
-            "| node_id | layer | type | name | path | module_id | 代码引用 | 成熟度 | build_status |",
-            "|---------|-------|------|------|------|-----------|----------|--------|--------------|",
-        ])
-        for n in nodes:
-            nscr = n.get("source_code_ref") or "-"
-            lines.append(
-                f"| {n['id']} | {n['layer_id']} | {n['type']} | {n['name']} | "
-                f"{n['path']} | {n['module_id'] or '-'} | {nscr} | {n.get('maturity') or '-'} | {n['build']} |"
-            )
+    # L3 域导航
+    l3_entries = [d for d in domain_index if d["layer_id"] == _L3_DOMAIN_LAYER]
+    lines += [
+        "",
+        f"## L3 策略组合层 · 功能域导航（{len(l3_entries)} 域）",
+        "",
+        "| 序号 | 功能域 | Node 数 | 文档 |",
+        "|------|--------|---------|------|",
+    ]
+    for d in l3_entries:
+        lines.append(f"| {d['seq']:02d} | {d['domain']} | {d['node_count']} | [📄 {d['filename']}]({d['filename']}) |")
 
-    if edges:
-        lines.extend([
-            "",
-            "## Edge 清单（决策因果边）",
-            "",
-            "| edge_id | from | to | type | condition | track |",
-            "|---------|-------|-----|------|-----------|-------|",
-        ])
-        for e in edges:
-            lines.append(
-                f"| {e['id']} | {e['from']} | {e['to']} | {e['type']} | "
-                f"{e['condition'] or '-'} | {e['track'] or '-'} |"
-            )
+    # 辅助图
+    lines += [
+        "",
+        "## 辅助图",
+        "",
+        f"- [📄 {_LAYERS_FILE_NAME}]({_LAYERS_FILE_NAME}) — 层级详情图（L0-L6 卡片 + 流向）",
+        f"- [📄 {_INVARIANTS_FILE_NAME}]({_INVARIANTS_FILE_NAME}) — 不变量图（6 节点类型 + 5 承重墙不变量）",
+        "",
+        "## 旧锚点重定向",
+        "",
+        "原单文件 `decision_index.md` 的各 section 已拆分到对应文件，外部 wiki 链接请按下方映射更新：",
+        "",
+        "- `#全景图` / `#运营态全景图` / `#设计态全景图` → 见各 [Track 文件](#track-导航按优先级)",
+        "- `#层级详情图` → [20_decision_layers.md](20_decision_layers.md)",
+        "- `#不变量图` → [21_decision_invariants.md](21_decision_invariants.md)",
+        "- `#track-清单` → 上方 Track 导航表",
+        "- `#layer-清单` → 各 Track 文件内的 Layer 清单 section",
+        "- `#node-清单` → 各 Track / 功能域文件内的 Node 清单 section",
+        "- `#edge-清单` → 各 Track 文件内的 Edge 清单 section",
+        "",
+    ]
 
     return "\n".join(lines) + "\n"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="从 decisiongraph (PostgreSQL) 生成决策流图（Mermaid + Markdown）",
+        description="从 decisiongraph (PostgreSQL) 生成决策流图（Mermaid + Markdown，22 文件）",
     )
     parser.add_argument("--output-dir", type=str, default=str(OUTPUT_DIR), help="输出目录")
     args = parser.parse_args()
 
-    # 验证连接
     try:
         conn = get_decisiongraph_pg_connection()
     except Exception as e:
@@ -574,7 +1031,6 @@ def main() -> int:
 
     try:
         tracks, layers, nodes, edges = _fetch_decision_data(conn)
-        # 派生蓝图名：从 depgraph 查 module_id→blueprint_name
         bp_map = _resolve_blueprint_names(conn, layers)
         for l in layers:
             mid = l.get("module_id")
@@ -587,22 +1043,54 @@ def main() -> int:
         print("[WARN] decisiongraph 表为空，请先运行 generate_decision_graph.py 同步 decision_graph_model.yaml")
         return 2
 
-    # 加载 invariants（从 YAML 真源）
     invariants = _load_invariants()
 
-    # 创建输出目录
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 生成索引文档（Mermaid 图表内嵌在 .md 中，不再生成独立 .mmd 文件）
-    md = _gen_index_md(tracks, layers, nodes, edges, invariants)
-    (out_dir / "decision_index.md").write_text(md, encoding="utf-8")
-    print(
-        f"[OK] 生成 decision_index.md ({len(tracks)} tracks, {len(layers)} layers, "
-        f"{len(nodes)} nodes, {len(edges)} edges, {len(invariants)} invariants)"
-    )
+    # 写文件前断言域集合稳定（失败 exit 3，不留半成品）
+    _assert_domain_set_stable(layers, nodes)
 
-    print(f"\n输出目录: {out_dir}")
+    domain_index = _build_domain_index(tracks, layers, nodes)
+    expected_basenames: set[str] = set()
+
+    # 1. 主索引（纯导航）
+    index_md = _gen_index_md(tracks, layers, nodes, edges, invariants, domain_index)
+    _atomic_write(out_dir / "decision_index.md", index_md)
+
+    # 2. Per-Track 文件（01-05）
+    for track in tracks:
+        fname = _track_filename(track)
+        expected_basenames.add(fname)
+        _atomic_write(out_dir / fname, _gen_track_file_md(track, tracks, layers, nodes, edges, domain_index))
+
+    # 3. Per-domain 文件（06-19）
+    for entry in domain_index:
+        expected_basenames.add(entry["filename"])
+        _atomic_write(
+            out_dir / entry["filename"],
+            _gen_domain_file_md(
+                entry["track"], entry["layer_id"], entry["domain"],
+                tracks, layers, nodes, edges,
+            ),
+        )
+
+    # 4. 辅助图（20, 21）
+    _atomic_write(out_dir / _LAYERS_FILE_NAME, _gen_layers_file_md(tracks, layers))
+    _atomic_write(out_dir / _INVARIANTS_FILE_NAME, _gen_invariants_file_md(invariants))
+    expected_basenames.add(_LAYERS_FILE_NAME)
+    expected_basenames.add(_INVARIANTS_FILE_NAME)
+
+    # 5. 清理陈旧文件
+    deleted = cleanup_stale_files(out_dir, expected_basenames, _STALE_FILE_REGEX)
+    if deleted:
+        print(f"[CLEANUP] 删除 {len(deleted)} 个残留文件: {deleted}")
+
+    total_files = len(expected_basenames) + 1  # +1 for decision_index.md
+    print(
+        f"[OK] 生成 {total_files} 文件 (1 index + {len(tracks)} tracks + "
+        f"{len(domain_index)} domains + 2 aux) 到 {out_dir}"
+    )
     return 0
 
 

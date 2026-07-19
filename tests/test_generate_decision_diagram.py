@@ -27,6 +27,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -56,6 +57,17 @@ try:
     _gen_index_md = _mod._gen_index_md
     _resolve_blueprint_names = _mod._resolve_blueprint_names
     _truncate = _mod._truncate
+    # 拆分重构新增函数（per-track / per-domain 文件生成）
+    _filter_overview_inputs = _mod._filter_overview_inputs
+    _gen_track_file_md = _mod._gen_track_file_md
+    _gen_domain_file_md = _mod._gen_domain_file_md
+    _gen_layers_file_md = _mod._gen_layers_file_md
+    _gen_invariants_file_md = _mod._gen_invariants_file_md
+    _track_filename = _mod._track_filename
+    _domain_filename = _mod._domain_filename
+    _build_domain_index = _mod._build_domain_index
+    _node_domain = _mod._node_domain
+    _STALE_FILE_REGEX = _mod._STALE_FILE_REGEX
     OUTPUT_DIR = _mod.OUTPUT_DIR
     _YAML_PATH_FROM_MOD = _mod._YAML_PATH
 except Exception as e:  # noqa: BLE001
@@ -140,6 +152,80 @@ def sample_invariants():
         {"id": "DEC-INV-003", "name": "DAG 无环", "name_en": "DAG No Cycle"},
         {"id": "DEC-INV-004", "name": "时间单调性", "name_en": "Time Monotonicity"},
         {"id": "DEC-INV-005", "name": "证据哈希必填", "name_en": "Evidence Hash Required"},
+    ]
+
+
+@pytest.fixture
+def sample_layers_expanded():
+    """6 个 Layer（含 L3 策略组合层），覆盖 L2A design + L3 design + L0/L1/L4 production。"""
+    return [
+        {"id": "L0", "name": "数据接入层", "name_en": "Data", "track": "model_driven",
+         "desc": "数据接入", "freq": "tick", "maturity": "production", "build": "stable",
+         "module_id": "MOD-DATA-001", "source_code_ref": "src/zephyr/data.py", "blueprint_name": "数据蓝图"},
+        {"id": "L2A", "name": "信号层", "name_en": "Signal", "track": "model_driven",
+         "desc": "信号工厂", "freq": "daily", "maturity": "design", "build": "planned",
+         "module_id": "", "source_code_ref": ""},
+        {"id": "L3", "name": "策略组合层", "name_en": "Portfolio", "track": "model_driven",
+         "desc": "组合管理", "freq": "daily", "maturity": "design", "build": "planned",
+         "module_id": "", "source_code_ref": ""},
+        {"id": "L4", "name": "风控层", "name_en": "Risk", "track": "model_driven",
+         "desc": "风控校验", "freq": "realtime", "maturity": "production", "build": "stable",
+         "module_id": "MOD-RISK-001", "source_code_ref": "src/zephyr/risk.py", "blueprint_name": "风控蓝图"},
+        {"id": "L5", "name": "学习层", "name_en": "Learning", "track": "model_driven",
+         "desc": "学习闭环", "freq": "weekly", "maturity": "design", "build": "planned",
+         "module_id": "", "source_code_ref": ""},
+        {"id": "L6", "name": "自评估层", "name_en": "SelfEval", "track": "model_driven",
+         "desc": "自评估", "freq": "weekly", "maturity": "design", "build": "planned",
+         "module_id": "", "source_code_ref": ""},
+    ]
+
+
+@pytest.fixture
+def sample_nodes_expanded():
+    """12 节点跨 3 个 L2A 域（sell/signal/simulation）+ 3 个 L3 域（position/trading/pf_core）。
+
+    path 第 2 段即功能域；用于测试 per-domain 文件生成与跨域边聚合。
+    """
+    return [
+        {"id": 101, "layer_id": "L2A", "type": "sell_decision", "path": "decision/sell/sell_01",
+         "module_id": "", "name": "止盈信号", "build": "planned", "maturity": "design", "hash": "h1", "source_code_ref": ""},
+        {"id": 102, "layer_id": "L2A", "type": "sell_decision", "path": "decision/sell/sell_02",
+         "module_id": "", "name": "止损信号", "build": "planned", "maturity": "design", "hash": "h2", "source_code_ref": ""},
+        {"id": 111, "layer_id": "L2A", "type": "signal", "path": "decision/signal/sg_01",
+         "module_id": "", "name": "动量信号", "build": "planned", "maturity": "design", "hash": "h3", "source_code_ref": ""},
+        {"id": 112, "layer_id": "L2A", "type": "signal", "path": "decision/signal/sg_02",
+         "module_id": "", "name": "反转信号", "build": "planned", "maturity": "design", "hash": "h4", "source_code_ref": ""},
+        {"id": 121, "layer_id": "L2A", "type": "signal", "path": "decision/simulation/sim_01",
+         "module_id": "", "name": "市场仿真", "build": "planned", "maturity": "design", "hash": "h5", "source_code_ref": ""},
+        {"id": 201, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_01",
+         "module_id": "", "name": "仓位裁决", "build": "planned", "maturity": "design", "hash": "h6", "source_code_ref": ""},
+        {"id": 202, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_02",
+         "module_id": "", "name": "仓位调整", "build": "planned", "maturity": "design", "hash": "h7", "source_code_ref": ""},
+        {"id": 203, "layer_id": "L3", "type": "portfolio_target", "path": "decision/position/pos_03",
+         "module_id": "", "name": "仓位清零", "build": "planned", "maturity": "design", "hash": "h8", "source_code_ref": ""},
+        {"id": 211, "layer_id": "L3", "type": "portfolio_target", "path": "decision/trading/tr_01",
+         "module_id": "", "name": "交易决策", "build": "planned", "maturity": "design", "hash": "h9", "source_code_ref": ""},
+        {"id": 212, "layer_id": "L3", "type": "portfolio_target", "path": "decision/trading/tr_02",
+         "module_id": "", "name": "交易执行", "build": "planned", "maturity": "design", "hash": "h10", "source_code_ref": ""},
+        {"id": 221, "layer_id": "L3", "type": "portfolio_target", "path": "decision/pf_core/pc_01",
+         "module_id": "", "name": "组合核心", "build": "planned", "maturity": "design", "hash": "h11", "source_code_ref": ""},
+        {"id": 222, "layer_id": "L3", "type": "portfolio_target", "path": "decision/pf_core/pc_02",
+         "module_id": "", "name": "组合优化", "build": "planned", "maturity": "design", "hash": "h12", "source_code_ref": ""},
+    ]
+
+
+@pytest.fixture
+def sample_edges_expanded():
+    """8 边：5 域内 + 2 跨域（L2A→L3）+ 1 跨轨（to=999 不存在，被过滤）。"""
+    return [
+        {"id": 1001, "from": 101, "to": 102, "type": "informing", "condition": None, "track": "model_driven"},
+        {"id": 1002, "from": 111, "to": 112, "type": "informing", "condition": None, "track": "model_driven"},
+        {"id": 1003, "from": 201, "to": 202, "type": "triggering", "condition": "pos_change", "track": "model_driven"},
+        {"id": 1004, "from": 202, "to": 203, "type": "triggering", "condition": "flatten", "track": "model_driven"},
+        {"id": 1005, "from": 211, "to": 212, "type": "triggering", "condition": None, "track": "model_driven"},
+        {"id": 1006, "from": 102, "to": 201, "type": "informing", "condition": "sell_signal", "track": "model_driven"},
+        {"id": 1007, "from": 112, "to": 211, "type": "informing", "condition": "sig_active", "track": "model_driven"},
+        {"id": 1008, "from": 201, "to": 999, "type": "approving", "condition": "risk_veto", "track": "model_driven"},
     ]
 
 
@@ -249,11 +335,11 @@ class TestGenOverviewMmd:
         assert isinstance(e_count, int)
 
     def test_counts_match_input(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """计数与输入一致。"""
+        """计数反映过滤后输入（emergency 无 layer → 被过滤，只留 model_driven）。"""
         mmd, t_count, l_count, e_count = _gen_overview_mmd(
             sample_tracks, sample_layers, sample_nodes, sample_edges
         )
-        assert t_count == 2  # 2 tracks
+        assert t_count == 1  # emergency 无 layer → 被 _filter_overview_inputs 过滤
         assert l_count == 4  # 4 layers
         assert e_count == 2  # 2 edges
 
@@ -263,10 +349,11 @@ class TestGenOverviewMmd:
         assert mmd.startswith("flowchart TD")
 
     def test_contains_subgraphs(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """mmd 包含每个 track 的 subgraph。"""
+        """mmd 包含有 layer 的 track 的 subgraph（emergency 无 layer → 不出现）。"""
         mmd, _, _, _ = _gen_overview_mmd(sample_tracks, sample_layers, sample_nodes, sample_edges)
         assert "subgraph track_model_driven" in mmd
-        assert "subgraph track_emergency" in mmd
+        # emergency 在 sample_tracks 中但 sample_layers 无 emergency 层 → 被 _filter_overview_inputs 过滤
+        assert "subgraph track_emergency" not in mmd
 
     def test_contains_layer_nodes(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
         """mmd 包含 layer 节点（L0/L1/L2A/L4）。"""
@@ -501,55 +588,14 @@ class TestGenIndexMd:
         assert "| Node（节点） | 3 |" in md
         assert "| Edge（边） | 2 |" in md
 
-    def test_contains_track_list(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """md 包含 Track 清单。"""
+    def test_contains_track_nav_table_with_links(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
+        """主索引含 Track 导航表，每行带文件链接。"""
         md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
         assert "model_driven" in md
-        assert "emergency" in md
-        assert "模型驱动轨" in md
         assert "应急保命轨" in md
-
-    def test_contains_layer_list(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """md 包含 Layer 清单。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "L0" in md
-        assert "L1" in md
-        assert "L2A" in md
-        assert "L4" in md
-        assert "数据接入与预处理层" in md
-        assert "风控层" in md
-
-    def test_contains_node_list(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """md 包含 Node 清单。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "ingest.tick" in md
-        assert "signal.momentum" in md
-        assert "risk.checker" in md
-
-    def test_contains_edge_list(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """md 包含 Edge 清单。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "informing" in md
-        assert "triggering" in md
-
-    def test_empty_input_no_node_edge_tables(self):
-        """空 nodes/edges 时不生成 Node/Edge 清单表。"""
-        md = _gen_index_md([], [], [], [])
-        assert "## Node 清单" not in md
-        assert "## Edge 清单" not in md
-
-    def test_contains_embedded_mermaid_blocks(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
-        """md 包含 5 个内嵌 ```mermaid 代码块（全景图 + 运营态 + 设计态 + 层级图 + 不变量图）。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
-        # 5 个 ```mermaid 开场标记
-        assert md.count("```mermaid") == 5
-        # 不再生成 .mmd 文件链接
-        assert "decision_overview.mmd" not in md
-        assert "decision_layers.mmd" not in md
-        assert "decision_invariants.mmd" not in md
-        # 内嵌的 Mermaid 图表内容应存在
-        assert "flowchart TD" in md  # overview + production overview + design overview + invariants
-        assert "flowchart LR" in md  # layers
+        # 链接格式：[📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md)
+        assert "[📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md)" in md
+        assert "[📄 04_decision_track_emergency.md](04_decision_track_emergency.md)" in md
 
     def test_stats_table_contains_design_production_counts(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
         """统计表包含设计态/运营态计数行。"""
@@ -562,18 +608,6 @@ class TestGenIndexMd:
         # sample_nodes: node 1/3=production(2), node 2=design(1)
         assert f"| 运营态 Node（design_maturity=production） | {2} |" in md
         assert f"| 设计态 Node（design_maturity=design） | {1} |" in md
-
-    def test_contains_production_overview_section(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
-        """md 包含运营态全景图 section。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
-        assert "运营态全景图" in md
-        assert "design_maturity=production" in md
-
-    def test_contains_design_overview_section(self, sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants):
-        """md 包含设计态全景图 section。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges, sample_invariants)
-        assert "设计态全景图" in md
-        assert "design_maturity=design" in md
 
 
 # ---------- 新字段测试（module_id / source_code_ref / description） ----------
@@ -649,53 +683,6 @@ class TestNewFields:
         mmd = _gen_layers_mmd(sample_tracks, sample_layers)
         assert "功能: 因子工厂全生命周期管理" in mmd
 
-    def test_index_md_layer_table_has_new_columns(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Layer 清单表包含新列头。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "蓝图(module_id)" in md
-        assert "蓝图名(派生)" in md
-        assert "代码引用" in md
-        assert "功能简述" in md
-
-    def test_index_md_layer_table_has_module_id_values(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Layer 清单表包含 module_id 值。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "MOD-DATA-001" in md
-        assert "MOD-FACTOR-001" in md
-        assert "MOD-RISK-001" in md
-
-    def test_index_md_layer_table_has_blueprint_names(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Layer 清单表包含派生蓝图名。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "数据接入蓝图" in md
-        assert "因子计算蓝图" in md
-        assert "风控蓝图" in md
-
-    def test_index_md_layer_table_has_source_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Layer 清单表包含代码引用值。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "src/zephyr/data/ingestion.py" in md
-        assert "src/zephyr/factor/calc.py" in md
-
-    def test_index_md_layer_table_has_description(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Layer 清单表包含功能简述值。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "miniQMT+iFind数据接入与预处理" in md
-        assert "Pre/Post-Trade风控校验" in md
-
-    def test_index_md_node_table_has_source_code_ref(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """Node 清单表包含代码引用列和值。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        assert "代码引用" in md
-        assert "src/zephyr/data/ingest.py" in md
-        assert "src/zephyr/risk/check.py" in md
-
-    def test_index_md_empty_module_id_shows_dash(self, sample_tracks, sample_layers, sample_nodes, sample_edges):
-        """module_id 为空时清单表显示 '-'。"""
-        md = _gen_index_md(sample_tracks, sample_layers, sample_nodes, sample_edges)
-        # L2A 的 module_id 为空
-        assert "| - | - | - |" in md or "| - |" in md
-
     def test_resolve_blueprint_names_empty_input(self):
         """_resolve_blueprint_names 无 module_id 时返回空 dict。"""
         layers_no_mid = [{"id": "L0", "module_id": None}, {"id": "L1", "module_id": ""}]
@@ -708,3 +695,390 @@ class TestNewFields:
                 return MockCur()
         result = _resolve_blueprint_names(MockConn(), layers_no_mid)
         assert result == {}
+
+
+# ---------- _filter_overview_inputs 测试（拆分重构新增） ----------
+
+class TestFilterOverviewInputs:
+    """全景图输入过滤辅助测试。
+
+    过滤顺序：maturity → track_id → path_prefix（path 第 2 段精确匹配）→ 边端点 → 空 track。
+    sample_layers_expanded: L0/L4=production, L2A/L3/L5/L6=design, 全属 model_driven。
+    sample_nodes_expanded: 12 节点全 design，L2A(sell/signal/simulation) + L3(position/trading/pf_core)。
+    sample_edges_expanded: 8 边，其中 edge 1008 (201→999) 的 to=999 不在节点集，必被过滤。
+    """
+
+    def test_no_filter_returns_all_minus_orphans(self, sample_tracks, sample_layers_expanded,
+                                                  sample_nodes_expanded, sample_edges_expanded):
+        """无过滤时：layers/nodes 原样，edges 丢掉端点不在节点集的，tracks 丢掉无 layer 的（emergency）。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded
+        )
+        assert len(t) == 1  # emergency 无 layer → 被丢
+        assert len(l) == 6
+        assert len(n) == 12
+        assert len(e) == 7  # edge 1008 (to=999) 被丢
+
+    def test_production_only(self, sample_tracks, sample_layers_expanded,
+                             sample_nodes_expanded, sample_edges_expanded):
+        """maturity='production'：只留 maturity=production 的 layer/node。expanded 节点全 design → 0 节点。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            maturity="production",
+        )
+        assert len(t) == 1  # L0/L4 属 model_driven
+        assert len(l) == 2  # L0, L4
+        assert len(n) == 0  # expanded 节点全 design
+        assert len(e) == 0
+
+    def test_design_only(self, sample_tracks, sample_layers_expanded,
+                         sample_nodes_expanded, sample_edges_expanded):
+        """maturity='design'：只留 maturity=design。4 layer + 12 节点。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            maturity="design",
+        )
+        assert len(t) == 1
+        assert len(l) == 4  # L2A, L3, L5, L6
+        assert len(n) == 12
+        assert len(e) == 7
+
+    def test_track_id_filter_model_driven(self, sample_tracks, sample_layers_expanded,
+                                          sample_nodes_expanded, sample_edges_expanded):
+        """track_id=model_driven：留全部（expanded 全属 model_driven）。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            track_id="model_driven",
+        )
+        assert len(t) == 1
+        assert len(l) == 6
+        assert len(n) == 12
+        assert len(e) == 7
+
+    def test_track_id_filter_emergency_empty(self, sample_tracks, sample_layers_expanded,
+                                             sample_nodes_expanded, sample_edges_expanded):
+        """track_id=emergency：expanded 无 emergency layer → 全空。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            track_id="emergency",
+        )
+        assert len(t) == 0
+        assert len(l) == 0
+        assert len(n) == 0
+        assert len(e) == 0
+
+    def test_path_prefix_exact_match_sell(self, sample_tracks, sample_layers_expanded,
+                                          sample_nodes_expanded, sample_edges_expanded):
+        """path_prefix=sell：精确匹配 path 第 2 段，留 2 节点 + 1 边。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            path_prefix="sell",
+        )
+        assert len(t) == 1  # layers 未受 path_prefix 影响
+        assert len(l) == 6
+        assert len(n) == 2  # 101, 102
+        assert len(e) == 1  # 1001 (101→102)
+
+    def test_path_prefix_rejects_partial_match(self, sample_tracks, sample_layers_expanded,
+                                               sample_nodes_expanded, sample_edges_expanded):
+        """path_prefix=sel：精确匹配，不 startswith → 0 节点。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            path_prefix="sel",
+        )
+        assert len(n) == 0
+        assert len(e) == 0
+        assert len(t) == 1  # layers 仍全在 → model_driven 保留
+
+    def test_combination_design_track_path(self, sample_tracks, sample_layers_expanded,
+                                           sample_nodes_expanded, sample_edges_expanded):
+        """maturity='design' + track_id=model_driven + path_prefix=sell → 2 节点 + 1 边。"""
+        t, l, n, e = _filter_overview_inputs(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded, sample_edges_expanded,
+            maturity="design", track_id="model_driven", path_prefix="sell",
+        )
+        assert len(t) == 1
+        assert len(l) == 4  # design layers
+        assert len(n) == 2  # sell 域
+        assert len(e) == 1
+
+
+# ---------- _gen_track_file_md 测试 ----------
+
+class TestGenTrackFileMd:
+    """Per-Track 文件生成测试。"""
+
+    def test_returns_str(self, sample_tracks, sample_layers_expanded,
+                         sample_nodes_expanded, sample_edges_expanded):
+        """返回字符串。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert isinstance(md, str)
+
+    def test_contains_three_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
+                                           sample_nodes_expanded, sample_edges_expanded):
+        """model_driven 轨有 design+production 层 → 3 个 mermaid（合并+设计态+运营态）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert md.count("```mermaid") == 3
+
+    def test_contains_layer_table(self, sample_tracks, sample_layers_expanded,
+                                  sample_nodes_expanded, sample_edges_expanded):
+        """含 Layer 清单 section。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "## Layer 清单" in md
+
+    def test_contains_node_table(self, sample_tracks, sample_layers_expanded,
+                                 sample_nodes_expanded, sample_edges_expanded):
+        """含 Node 清单 section。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "## Node 清单" in md
+
+    def test_contains_edge_table(self, sample_tracks, sample_layers_expanded,
+                                 sample_nodes_expanded, sample_edges_expanded):
+        """含本轨 Edge 清单 section。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "## Edge 清单（本轨内）" in md
+
+    def test_contains_domain_links(self, sample_tracks, sample_layers_expanded,
+                                   sample_nodes_expanded, sample_edges_expanded):
+        """含功能域文件链接表，含 sell 域文件链接。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[0], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "## 功能域文件" in md
+        assert "[📄 10_decision_l2a_sell.md](10_decision_l2a_sell.md)" in md
+
+    def test_empty_track_shows_hint(self, sample_tracks, sample_layers_expanded,
+                                    sample_nodes_expanded, sample_edges_expanded):
+        """emergency 轨（expanded 无节点）→ 设计态/运营态提示，仅合并视图 1 mermaid。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_track_file_md(
+            sample_tracks[1], sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded, di,
+        )
+        assert "（本轨无设计态节点）" in md
+        assert "（本轨无运营态节点）" in md
+        assert md.count("```mermaid") == 1  # 仅合并视图
+
+
+# ---------- _gen_domain_file_md 测试 ----------
+
+class TestGenDomainFileMd:
+    """Per-domain 文件生成测试。"""
+
+    def test_returns_str(self, sample_tracks, sample_layers_expanded,
+                         sample_nodes_expanded, sample_edges_expanded):
+        """返回字符串。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert isinstance(md, str)
+
+    def test_sell_has_two_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
+                                         sample_nodes_expanded, sample_edges_expanded):
+        """sell 域有跨域出边（→position）→ 2 mermaid（设计态全景 + 跨域依赖图）。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert md.count("```mermaid") == 2
+
+    def test_contains_node_table_with_sell_paths(self, sample_tracks, sample_layers_expanded,
+                                                 sample_nodes_expanded, sample_edges_expanded):
+        """Node 清单含 sell 域节点 path。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert "## Node 清单" in md
+        assert "decision/sell/sell_01" in md
+
+    def test_contains_outgoing_cross_domain_edges(self, sample_tracks, sample_layers_expanded,
+                                                  sample_nodes_expanded, sample_edges_expanded):
+        """跨域出边表含 sell→position 边。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "sell", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert "## 跨域出边（Depends On）" in md
+        assert "decision/position/pos_01" in md  # edge 1006 (102→201)
+
+    def test_isolated_domain_has_one_mermaid(self, sample_tracks, sample_layers_expanded,
+                                             sample_nodes_expanded, sample_edges_expanded):
+        """simulation 域无跨域边 → 仅 1 mermaid（设计态全景）+ 无跨域依赖提示。"""
+        md = _gen_domain_file_md(
+            sample_tracks[0], "L2A", "simulation", sample_tracks, sample_layers_expanded,
+            sample_nodes_expanded, sample_edges_expanded,
+        )
+        assert md.count("```mermaid") == 1
+        assert "（无跨域依赖）" in md
+
+
+# ---------- _gen_index_md 导航测试（拆分重构后主索引纯导航） ----------
+
+class TestGenIndexMdNavigation:
+    """主索引纯导航测试：0 mermaid + Track/L2A/L3 导航表 + 辅助图链接 + 旧锚点重定向。"""
+
+    def test_zero_mermaid_blocks(self, sample_tracks, sample_layers_expanded,
+                                 sample_nodes_expanded, sample_edges_expanded):
+        """主索引 0 个 mermaid 块（纯导航）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert md.count("```mermaid") == 0
+
+    def test_contains_track_nav_with_links(self, sample_tracks, sample_layers_expanded,
+                                           sample_nodes_expanded, sample_edges_expanded):
+        """含 Track 导航表 + 文件链接。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert "## Track 导航" in md
+        assert "[📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md)" in md
+
+    def test_contains_l2a_nav_with_links(self, sample_tracks, sample_layers_expanded,
+                                         sample_nodes_expanded, sample_edges_expanded):
+        """含 L2A 域导航表 + sell 域文件链接。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert "## L2A 信号层 · 功能域导航" in md
+        assert "[📄 10_decision_l2a_sell.md](10_decision_l2a_sell.md)" in md
+
+    def test_contains_l3_nav_with_links(self, sample_tracks, sample_layers_expanded,
+                                        sample_nodes_expanded, sample_edges_expanded):
+        """含 L3 域导航表 + position 域文件链接。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert "## L3 策略组合层 · 功能域导航" in md
+        assert "[📄 18_decision_l3_position.md](18_decision_l3_position.md)" in md
+
+    def test_contains_aux_file_links(self, sample_tracks, sample_layers_expanded,
+                                     sample_nodes_expanded, sample_edges_expanded):
+        """含辅助图文件链接。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert "20_decision_layers.md" in md
+        assert "21_decision_invariants.md" in md
+
+    def test_contains_redirect_section(self, sample_tracks, sample_layers_expanded,
+                                       sample_nodes_expanded, sample_edges_expanded):
+        """含旧锚点重定向 section（兼容外部 wiki 链接）。"""
+        di = _build_domain_index(sample_tracks, sample_layers_expanded, sample_nodes_expanded)
+        md = _gen_index_md(
+            sample_tracks, sample_layers_expanded, sample_nodes_expanded,
+            sample_edges_expanded, [], di,
+        )
+        assert "## 旧锚点重定向" in md
+
+
+# ---------- _gen_layers_file_md / _gen_invariants_file_md 测试 ----------
+
+class TestGenLayersFileMd:
+    """层级详情图独立文件测试。"""
+
+    def test_returns_str(self, sample_tracks, sample_layers_expanded):
+        """返回字符串。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert isinstance(md, str)
+
+    def test_one_mermaid_block(self, sample_tracks, sample_layers_expanded):
+        """含 1 个 mermaid 块。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert md.count("```mermaid") == 1
+
+    def test_contains_flowchart_lr(self, sample_tracks, sample_layers_expanded):
+        """mermaid 使用 flowchart LR。"""
+        md = _gen_layers_file_md(sample_tracks, sample_layers_expanded)
+        assert "flowchart LR" in md
+
+
+class TestGenInvariantsFileMd:
+    """不变量图独立文件测试。"""
+
+    def test_returns_str(self, sample_invariants):
+        """返回字符串。"""
+        md = _gen_invariants_file_md(sample_invariants)
+        assert isinstance(md, str)
+
+    def test_one_mermaid_block(self, sample_invariants):
+        """含 1 个 mermaid 块。"""
+        md = _gen_invariants_file_md(sample_invariants)
+        assert md.count("```mermaid") == 1
+
+
+# ---------- 文件编号与陈旧清理正则测试 ----------
+
+class TestFileNumbering:
+    """文件命名序号 + 陈旧清理正则测试。"""
+
+    def test_track_filename_with_priority(self):
+        """track priority=1 → 01_decision_track_model_driven.md。"""
+        assert _track_filename({"id": "model_driven", "priority": 1}) == "01_decision_track_model_driven.md"
+
+    def test_track_filename_no_priority(self):
+        """priority 缺失 → 00 前缀。"""
+        assert _track_filename({"id": "xxx"}) == "00_decision_track_xxx.md"
+
+    def test_track_filename_hyphen_replaced(self):
+        """track_id 含连字符 → 下划线（model_driven-data → model_driven_data）。"""
+        assert _track_filename({"id": "human-override", "priority": 3}) == "03_decision_track_human_override.md"
+
+    def test_domain_filename_l2a_sell(self):
+        """L2A sell 域 → 10_decision_l2a_sell.md（sell 是 _L2A_DOMAINS_ALPHA[4]，6+4=10）。"""
+        assert _domain_filename("L2A", "sell") == "10_decision_l2a_sell.md"
+
+    def test_domain_filename_l3_position(self):
+        """L3 position 域 → 18_decision_l3_position.md（position 是 _L3_DOMAINS_ALPHA[5]，13+5=18）。"""
+        assert _domain_filename("L3", "position") == "18_decision_l3_position.md"
+
+    def test_domain_filename_unknown_layer_raises(self):
+        """未知 layer_id → ValueError。"""
+        with pytest.raises(ValueError):
+            _domain_filename("L0", "whatever")
+
+    def test_stale_regex_excludes_index(self):
+        """陈旧正则不匹配 decision_index.md（无数字前缀）。"""
+        assert re.match(_STALE_FILE_REGEX, "decision_index.md") is None
+
+    def test_stale_regex_matches_numbered(self):
+        """陈旧正则匹配 99_decision_obsolete.md。"""
+        assert re.match(_STALE_FILE_REGEX, "99_decision_obsolete.md") is not None
+
+    def test_stale_regex_excludes_non_decision(self):
+        """陈旧正则不匹配非 decision 前缀的编号文件（不误删其他生成器产物）。"""
+        assert re.match(_STALE_FILE_REGEX, "22_d_sell_architecture.md") is None
