@@ -107,6 +107,7 @@ __all__ = [
     "acknowledge_critical_warns",  # GATE-DEPGRAPH-OPS 治本 Phase 2（告警 ack 消音）
     "make_stash_lifecycle_reconciler",  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
+    "make_capability_lookup_health_reconciler",  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6
     "scan_and_archive_working_docs",
 ]
 
@@ -1223,10 +1224,18 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
         )
         elapsed = time.time() - start
         if sync_result.returncode != 0:
+            # #Ruling:100PCT-AI-GOVERNANCE P0-1 (2026-07-19):
+            # 对齐 make_depgraph_ops_reconciler@1138 的 fail-silent 治本模式：
+            # ① action 从 warn 升级为 critical_warn——下次 commit/merge 前 _check_recent_critical_warns
+            #   打印告警横幅强制 AI 看到（避免 reconciler 失败被 AI 静默 workaround）。
+            # ② detail 不截断——原 [:200] 截断导致完整 traceback 丢失，AI 无法诊断根因，
+            #    完整 stderr 由 _log_reconcile_results 持久化到 governance.db。
+            # 根因：sync_panorama_module.py --all 失败时内部 try/except 吞异常返回 0（P0-2 修复），
+            # 此处再 warn+截断=双重静默，AI 看到 "0 失败" 实际全失败。
             return ReconcileResult(
-                action="warn",
+                action="critical_warn",
                 detail=f"frontmatter sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
-                       f"{sync_result.stderr.strip()[:200]}",
+                       f"{sync_result.stderr.strip()}",
             )
 
         # 检测 docs/03_modules/ 下 .md frontmatter 变更（DB 同步不进 git，无需提交）
@@ -1234,9 +1243,10 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
             ["git", "diff", "--name-only", "--", "docs/03_modules/"]
         )
         if diff_result.returncode != 0:
+            # #Ruling:100PCT-AI-GOVERNANCE P0-1: 同步升级 critical_warn + 不截断
             return ReconcileResult(
-                action="warn",
-                detail=f"frontmatter sync: git diff failed: {diff_result.stderr.strip()[:200]}",
+                action="critical_warn",
+                detail=f"frontmatter sync: git diff failed: {diff_result.stderr.strip()}",
             )
         changed_files = [
             f.strip() for f in diff_result.stdout.strip().splitlines()
@@ -1266,9 +1276,9 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"frontmatter sync: {len(changed_files)} files but no staged changes in {elapsed:.1f}s",
             )
         return ReconcileResult(
-            action="warn",
+            action="critical_warn",
             detail=f"frontmatter sync: auto-commit failed ({commit_result.status}): "
-                   f"{commit_result.message[:200]}",
+                   f"{commit_result.message}",
         )
 
     return ReconcilerSpec(
@@ -5793,4 +5803,152 @@ def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
         reconcile=_reconcile,
         priority=145,  # 在 drift_scan@140 之后，module_id_recommend@170 之前
         # ——drift_scan 看到已同步状态，本 reconciler 报告存量 legacy 债务
+    )
+
+
+# trae_060-reviewed: ①该存在——治本 G6 监控缺失（.runtime/lookup_audit/ 长期为空，gate 静默失效无监控）；
+# ②无法合并进已有 reconciler（职责独立：CAPABILITY-LOOKUP gate 健康度监控，非 depgraph/frontmatter/drift）；
+# ③治本——事件触发检测 bypass 频率 + audit log 存在性，非时间触发。
+def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpec:
+    """构造 CAPABILITY-LOOKUP-REQUIRED gate 健康度监控 reconciler。
+
+    #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S8 Phase 4 治本 G6（监控缺失）：
+    病根 G6——.runtime/lookup_audit/ 曾长期为空（铁证），无监控检测 gate 静默失效；
+    ZEPHYR_BYPASS_LOOKUP=1 无升级机制，高频率使用应触发告警。
+
+    治本（post-commit 事件触发，非时间触发——铁律）：
+    1. 检测 commit_message 中的 [no-lookup:reason] 标记 → 记录到 bypass_audit.jsonl
+    2. 统计最近 N 次 commit 中 bypass 频率 → 超阈值 critical_warn（升级）
+    3. 检查 .runtime/lookup_audit/ 是否有 session 级 audit log（排除 bypass_audit.jsonl）
+       → 无日志且无 bypass → warn（gate 可能静默失效，对标 G6 铁证）
+
+    3-arg reconciler（Phase 3.4 断点6 治本）：接收 commit_message 做审计。
+
+    Args:
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+        ReconcilerSpec(gate_id="CAPABILITY-LOOKUP-HEALTH", priority=220)。
+    """
+    import json
+    import os
+    import time
+
+    project_root = gateway.project_root
+    BYPASS_AUDIT_LOG = project_root / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
+    LOOKUP_AUDIT_DIR = project_root / ".runtime" / "lookup_audit"
+    # 升级阈值：最近 10 次 src/zephyr/**/*.py commit 中 >5 次 bypass → critical_warn
+    BYPASS_ESCALATION_THRESHOLD = 5
+    BYPASS_WINDOW = 10
+
+    def _trigger(committed_files: list[str]) -> bool:
+        """命中 src/zephyr/**/*.py 业务代码 commit。"""
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if rel.startswith("src/zephyr/") and rel.endswith(".py"):
+                return True
+        return False
+
+    def _read_recent_bypasses() -> list[dict]:
+        """读取 bypass_audit.jsonl 最近 N 条记录。"""
+        if not BYPASS_AUDIT_LOG.is_file():
+            return []
+        try:
+            lines = BYPASS_AUDIT_LOG.read_text(encoding="utf-8").splitlines()
+            entries = []
+            for line in lines[-BYPASS_WINDOW * 2:]:  # 读最近 2N 行解析
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entries.append(json.loads(line))
+                except (json.JSONDecodeError, ValueError):
+                    continue
+            return entries[-BYPASS_WINDOW:]
+        except OSError:
+            return []
+
+    def _has_session_audit_logs() -> bool:
+        """检查 .runtime/lookup_audit/ 是否有 session 级 audit log（排除 bypass_audit.jsonl）。"""
+        if not LOOKUP_AUDIT_DIR.is_dir():
+            return False
+        for entry in LOOKUP_AUDIT_DIR.iterdir():
+            if entry.name == "bypass_audit.jsonl":
+                continue
+            if entry.name.startswith("._"):
+                continue  # 健康检查测试文件
+            if entry.is_file() and entry.suffix == ".jsonl":
+                return True
+        return False
+
+    def _reconcile(
+        committed_files: list[str], session_id: str, commit_message: str = "",
+    ) -> ReconcileResult:
+        """3-arg reconciler：检测 bypass + 监控 audit log 健康。"""
+        msg = commit_message or ""
+        has_bypass_marker = "[no-lookup:" in msg
+
+        # 1. 记录 bypass 使用
+        if has_bypass_marker:
+            try:
+                BYPASS_AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
+                reason = ""
+                if "[no-lookup:" in msg:
+                    start = msg.index("[no-lookup:") + len("[no-lookup:")
+                    end = msg.find("]", start)
+                    reason = msg[start:end] if end > start else ""
+                entry = {
+                    "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "session_id": session_id,
+                    "reason": reason,
+                    "commit_message_snippet": msg[:200],
+                }
+                with open(BYPASS_AUDIT_LOG, "a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            except OSError as e:
+                logger.warning("CAPABILITY-LOOKUP-HEALTH: bypass log write failed: %s", e)
+
+        # 2. 统计 bypass 频率 → 升级
+        recent_bypasses = _read_recent_bypasses()
+        bypass_count = len(recent_bypasses)
+        if bypass_count > BYPASS_ESCALATION_THRESHOLD:
+            detail = (
+                f"CAPABILITY-LOOKUP-HEALTH: ZEPHYR_BYPASS_LOOKUP / [no-lookup:] "
+                f"使用频率过高——最近 {BYPASS_WINDOW} 次 src/zephyr commit 中 {bypass_count} 次 bypass "
+                f"(阈值 {BYPASS_ESCALATION_THRESHOLD})。"
+                f"这可能表明 CAPABILITY-LOOKUP-REQUIRED gate 机制存在系统性问题（AI 频繁无法正常 "
+                f"调用能力反查），MUST 上报人类排查。对标 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD G6。"
+            )
+            logger.error("[ESCALATION] %s", detail)
+            return ReconcileResult(action="critical_warn", detail=detail)
+
+        # 3. 检查 audit log 健康（G6 铁证：曾长期为空）
+        if not has_bypass_marker and not _has_session_audit_logs():
+            detail = (
+                f"CAPABILITY-LOOKUP-HEALTH: .runtime/lookup_audit/ 无 session 级 audit log "
+                f"且本次 commit 未使用 bypass——CAPABILITY-LOOKUP-REQUIRED gate 可能静默失效 "
+                f"(AI 未调用能力反查但 gate 未阻断)。对标 G6 铁证（曾长期为空）。"
+                f"MUST 检查 gate 是否正常工作 + AI 是否遵循 RULE-CAPABILITY-LOOKUP 铁律。"
+            )
+            logger.warning("[ESCALATION] %s", detail)
+            return ReconcileResult(action="warn", detail=detail)
+
+        # 4. 正常路径
+        if has_bypass_marker:
+            detail = (
+                f"CAPABILITY-LOOKUP-HEALTH: 本次 commit 使用 [no-lookup:] bypass "
+                f"(最近 {bypass_count}/{BYPASS_WINDOW} 次)，频率正常。"
+            )
+        else:
+            detail = (
+                f"CAPABILITY-LOOKUP-HEALTH: audit log 正常，gate 工作正常 "
+                f"(最近 {bypass_count}/{BYPASS_WINDOW} 次 bypass)。"
+            )
+        return ReconcileResult(action="clean", detail=detail)
+
+    return ReconcilerSpec(
+        gate_id="CAPABILITY-LOOKUP-HEALTH",
+        trigger=_trigger,
+        reconcile=_reconcile,
+        priority=220,  # 在 scripts_import_integrity@210 / undefined_name_baseline@211 之后
     )
