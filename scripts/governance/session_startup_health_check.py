@@ -122,11 +122,27 @@ _GATEWAY_MODULES = [
     {
         "module": "zephyr.gov_enforcement.rule_bridge.session_worktree",
         "required_attrs": ["session_worktree_start", "session_worktree_commit",
-                           "session_worktree_merge", "session_worktree_abort"],
+                           "session_worktree_merge", "session_worktree_abort",
+                           # P2-2 (2026-07-19): claim_files_for_edit 新增
+                           "claim_files_for_edit"],
     },
     {
         "module": "zephyr.governance.audit.reconciliation_registry",
         "required_attrs": ["ReconcilerSpec", "ReconcileResult", "ReconciliationRegistry"],
+    },
+    # P2-4 (2026-07-19): 新增 P2-1/P2-3 工具覆盖
+    {
+        "module": "zephyr.gov_enforcement.rule_bridge.emergency_commit",
+        "required_attrs": ["emergency_commit", "EmergencyCommitResult"],
+    },
+    {
+        "module": "zephyr.governance.audit.reconcile_runner",
+        "required_attrs": ["launch_reconcile_async", "query_reconcile_status",
+                           "write_status_file", "read_status_file"],
+    },
+    {
+        "module": "zephyr.governance.audit.reconcile_worker",
+        "required_attrs": ["main", "_load_payload"],
     },
 ]
 
@@ -296,12 +312,19 @@ def _check_git_health_smoke(repo_root: Path) -> dict:
     }
 
 
-def run_startup_health_check(repo_root: str | Path | None = None, include_git: bool = True) -> dict:
+def run_startup_health_check(
+    repo_root: str | Path | None = None,
+    include_git: bool = True,
+    session_id: str = "",
+) -> dict:
     """运行 AI session 启动健康度自检。
 
     Args:
         repo_root: 仓库根目录。None = 当前工作目录。
         include_git: 是否包含 git_health_smoke 检查（默认 True）。
+        session_id: 可选——AI session ID，用于失败时持久化到 reconcile_execution_log
+            （action='critical_warn'，gate_id='STARTUP-HEALTH-CHECK'）。AI 可后续查询
+            历史 session 的健康度失败记录。P2-4 (2026-07-19) 新增。
 
     Returns:
         dict 结构：
@@ -362,6 +385,35 @@ def run_startup_health_check(repo_root: str | Path | None = None, include_git: b
         fail_details = "; ".join(f"{c['check']}: {c['detail'][:80]}" for c in failed[:5])
         fail_summary = f" | FAIL项: {fail_details}"
 
+    # P2-4 (2026-07-19): 失败持久化到 reconcile_execution_log
+    # 病根：原实现只返回 dict，AI 可静默忽略失败。治本：session_id 提供时，
+    # 调用 log_gate_failure 持久化（action='critical_warn'），下次 commit/merge
+    # 时 _print_critical_warn_banner 强制 AI 看到历史失败。
+    # 设计原则：脚本无 zephyr 内部依赖——try/except import 失败时降级为 logger.warning。
+    persisted_to_db = False
+    if overall == "fail" and session_id:
+        try:
+            # 确保 src/ 在 sys.path（_check_gateway_module 已设过，但保险）
+            src_path = root / "src"
+            if src_path.is_dir() and str(src_path) not in sys.path:
+                sys.path.insert(0, str(src_path))
+            from zephyr.governance.audit.reconciliation_registry import log_gate_failure
+            detail = fail_summary or f"session_startup_health_check failed: {len(failed)}/{len(checks)} 项 fail"
+            log_gate_failure(
+                project_root=root,
+                gate_id="STARTUP-HEALTH-CHECK",
+                detail=detail,
+                session_id=session_id,
+                trigger_source="session_startup",
+            )
+            persisted_to_db = True
+        except Exception as persist_err:  # noqa: BLE001 — 持久化失败不阻断主流程
+            # 降级：仅 stderr 警告，主结果仍返回（AI 见 escalation_required 仍需 escalate）
+            print(
+                f"[session_startup_health_check] WARN: 持久化失败到 DB 失败: {persist_err}",
+                file=sys.stderr,
+            )
+
     return {
         "status": overall,
         "checks": checks,
@@ -370,6 +422,8 @@ def run_startup_health_check(repo_root: str | Path | None = None, include_git: b
         "escalation_required": escalation,
         "failed_count": len(failed),
         "total_count": len(checks),
+        "session_id": session_id,
+        "persisted_to_db": persisted_to_db,
     }
 
 
@@ -380,10 +434,31 @@ def main() -> int:
         0 = all pass
         1 = at least one fail (AI MUST escalate)
         2 = at least one warn but no fail
+
+    CLI args:
+        [repo_root]              仓库根目录（可选，默认 cwd）
+        --no-git                 跳过 git_health_smoke 检查
+        --session-id <SID>       AI session ID（失败时持久化到 DB，P2-4）
     """
-    repo_root = sys.argv[1] if len(sys.argv) > 1 else None
-    include_git = "--no-git" not in sys.argv
-    result = run_startup_health_check(repo_root, include_git=include_git)
+    args = sys.argv[1:]
+    repo_root = None
+    include_git = True
+    session_id = ""
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a == "--no-git":
+            include_git = False
+        elif a == "--session-id":
+            if i + 1 < len(args):
+                session_id = args[i + 1]
+                i += 1
+        elif not a.startswith("--"):
+            repo_root = a
+        i += 1
+    result = run_startup_health_check(
+        repo_root, include_git=include_git, session_id=session_id,
+    )
     print(json.dumps(result, indent=2, ensure_ascii=False))
     if result["status"] == "fail":
         # 关键：AI 见此输出 MUST escalate，不可静默 workaround

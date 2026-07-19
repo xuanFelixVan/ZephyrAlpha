@@ -386,8 +386,9 @@ class TestRunStartupHealthCheckAggregation:
 
         result = hc.run_startup_health_check(repo_root=str(tmp_path), include_git=False)
         assert result["status"] == "pass"
-        # 11 项（12 - 1 git_health_smoke）
-        assert result["total_count"] == 11
+        # 14 项（P2-4 后：8 core tools + 6 gateway modules + 0 git skipped）
+        # 原值 11（3 gateway modules）→ P2-4 新增 emergency_commit/reconcile_runner/reconcile_worker = 14
+        assert result["total_count"] == 14
 
 
 # ---------------------------------------------------------------------------
@@ -450,6 +451,187 @@ class TestMainExitCodes:
 # ---------------------------------------------------------------------------
 # e2e：真实 ZephyrAlpha 仓库 smoke test
 # ---------------------------------------------------------------------------
+
+
+class TestP2_4Extensions:
+    """P2-4 (2026-07-19) 扩展：新增 P2-1/P2-2/P2-3 工具覆盖 + session_id 持久化。
+
+    病根：原 health check 不覆盖 P2-1/P2-2/P2-3 新工具——AI 用 emergency_commit
+    逃生时如果 emergency_commit 模块本身有 import bug，AI 不会知道。
+    治本：扩展 _GATEWAY_MODULES 覆盖新工具 + session_id 失败持久化到 DB。
+    """
+
+    def test_gateway_modules_includes_p2_1_emergency_commit(self, hc):
+        """_GATEWAY_MODULES 应包含 emergency_commit 模块。"""
+        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        assert "zephyr.gov_enforcement.rule_bridge.emergency_commit" in modules, \
+            "P2-1 emergency_commit 必须纳入 health check"
+
+    def test_gateway_modules_includes_p2_3_reconcile_runner(self, hc):
+        """_GATEWAY_MODULES 应包含 reconcile_runner 模块。"""
+        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        assert "zephyr.governance.audit.reconcile_runner" in modules, \
+            "P2-3 reconcile_runner 必须纳入 health check"
+
+    def test_gateway_modules_includes_p2_3_reconcile_worker(self, hc):
+        """_GATEWAY_MODULES 应包含 reconcile_worker 模块。"""
+        modules = [m["module"] for m in hc._GATEWAY_MODULES]
+        assert "zephyr.governance.audit.reconcile_worker" in modules, \
+            "P2-3 reconcile_worker 必须纳入 health check"
+
+    def test_session_worktree_includes_claim_files_for_edit(self, hc):
+        """session_worktree 模块的 required_attrs 应包含 P2-2 claim_files_for_edit。"""
+        sw_spec = next(
+            (m for m in hc._GATEWAY_MODULES
+             if m["module"] == "zephyr.gov_enforcement.rule_bridge.session_worktree"),
+            None,
+        )
+        assert sw_spec is not None
+        assert "claim_files_for_edit" in sw_spec["required_attrs"], \
+            "P2-2 claim_files_for_edit 必须纳入 session_worktree 属性检查"
+
+    def test_session_id_persists_failure_to_db(
+        self, hc, tmp_path, monkeypatch,
+    ):
+        """status=fail + session_id 提供时调用 log_gate_failure 持久化。"""
+        _init_git_repo(tmp_path)
+
+        def fail_check(*args, **kwargs):
+            return {"check": "fake_fail", "status": "fail", "detail": "mocked failure"}
+
+        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+
+        # mock log_gate_failure 捕获调用
+        persist_calls: list[dict] = []
+
+        def fake_log_gate_failure(project_root, gate_id, detail, session_id="", trigger_source=""):
+            persist_calls.append({
+                "project_root": str(project_root),
+                "gate_id": gate_id,
+                "detail": detail,
+                "session_id": session_id,
+                "trigger_source": trigger_source,
+            })
+
+        # 注入 fake 模块到 sys.modules，使 `from zephyr... import log_gate_failure` 命中
+        import sys
+        import types
+        fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
+        fake_mod.log_gate_failure = fake_log_gate_failure
+        monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
+
+        result = hc.run_startup_health_check(
+            repo_root=str(tmp_path),
+            include_git=False,
+            session_id="sess-p2-4-test",
+        )
+        assert result["status"] == "fail"
+        assert result["escalation_required"] is True
+        assert result["session_id"] == "sess-p2-4-test"
+        assert result["persisted_to_db"] is True, "失败应持久化到 DB"
+        assert len(persist_calls) == 1, "log_gate_failure 应被调用一次"
+        assert persist_calls[0]["gate_id"] == "STARTUP-HEALTH-CHECK"
+        assert persist_calls[0]["session_id"] == "sess-p2-4-test"
+        assert persist_calls[0]["trigger_source"] == "session_startup"
+
+    def test_no_session_id_skips_persistence(
+        self, hc, tmp_path, monkeypatch,
+    ):
+        """status=fail 但无 session_id 时不调用 log_gate_failure（向后兼容）。"""
+        _init_git_repo(tmp_path)
+
+        def fail_check(*args, **kwargs):
+            return {"check": "fake_fail", "status": "fail", "detail": "mocked"}
+
+        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+
+        # mock log_gate_failure，断言不被调用
+        def fake_log_gate_failure(*args, **kwargs):
+            pytest.fail("log_gate_failure 不应被调用（无 session_id）")
+
+        import sys
+        import types
+        fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
+        fake_mod.log_gate_failure = fake_log_gate_failure
+        monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
+
+        result = hc.run_startup_health_check(
+            repo_root=str(tmp_path),
+            include_git=False,
+            session_id="",  # 无 session_id
+        )
+        assert result["status"] == "fail"
+        assert result["persisted_to_db"] is False
+
+    def test_pass_status_skips_persistence(
+        self, hc, tmp_path, monkeypatch,
+    ):
+        """status=pass 时不调用 log_gate_failure（即使有 session_id）。"""
+        _init_git_repo(tmp_path)
+
+        def pass_check(*args, **kwargs):
+            return {"check": "fake_pass", "status": "pass", "detail": "ok"}
+
+        monkeypatch.setattr(hc, "_check_core_tool_import", pass_check)
+        monkeypatch.setattr(hc, "_check_core_tool_cli", pass_check)
+        monkeypatch.setattr(hc, "_check_gateway_module", pass_check)
+        monkeypatch.setattr(hc, "_check_git_health_smoke", pass_check)
+
+        def fake_log_gate_failure(*args, **kwargs):
+            pytest.fail("log_gate_failure 不应被调用（status=pass）")
+
+        import sys
+        import types
+        fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
+        fake_mod.log_gate_failure = fake_log_gate_failure
+        monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
+
+        result = hc.run_startup_health_check(
+            repo_root=str(tmp_path),
+            include_git=False,
+            session_id="sess-pass-test",
+        )
+        assert result["status"] == "pass"
+        assert result["persisted_to_db"] is False
+
+    def test_persistence_failure_does_not_block_result(
+        self, hc, tmp_path, monkeypatch,
+    ):
+        """log_gate_failure 抛异常时不阻断主结果返回（fail-open 降级）。"""
+        _init_git_repo(tmp_path)
+
+        def fail_check(*args, **kwargs):
+            return {"check": "fake_fail", "status": "fail", "detail": "mocked"}
+
+        monkeypatch.setattr(hc, "_check_core_tool_import", fail_check)
+        monkeypatch.setattr(hc, "_check_core_tool_cli", fail_check)
+        monkeypatch.setattr(hc, "_check_gateway_module", fail_check)
+        monkeypatch.setattr(hc, "_check_git_health_smoke", fail_check)
+
+        def fake_log_gate_failure(*args, **kwargs):
+            raise RuntimeError("mocked DB failure")
+
+        import sys
+        import types
+        fake_mod = types.ModuleType("zephyr.governance.audit.reconciliation_registry")
+        fake_mod.log_gate_failure = fake_log_gate_failure
+        monkeypatch.setitem(sys.modules, "zephyr.governance.audit.reconciliation_registry", fake_mod)
+
+        # 不应抛异常
+        result = hc.run_startup_health_check(
+            repo_root=str(tmp_path),
+            include_git=False,
+            session_id="sess-persist-fail",
+        )
+        assert result["status"] == "fail"
+        assert result["persisted_to_db"] is False, "持久化失败时 persisted_to_db=False"
+        assert result["escalation_required"] is True, "主结果仍要求 escalate"
 
 
 class TestE2ERealRepo:
