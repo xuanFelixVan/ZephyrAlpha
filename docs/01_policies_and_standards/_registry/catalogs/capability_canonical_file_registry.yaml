@@ -4215,6 +4215,38 @@ capabilities:
       - scan_all_scripts_for_import_violations     # 全扫逻辑真源(删则baseline检测失效)
       - _scan_file_content                          # 共享helper(删则gate+reconciler检测逻辑同时失效)
 
+  # --------------------------------------------------------------------------
+  - capability_id: discover_applicable_rules
+    aliases:
+      - rule_discovery
+      - RuleDiscoveryServer
+      - rule_discovery_server
+      - discover_rules
+      - rule_perception_index_query
+      - ARCH-GOV-CONVERGENCE-META-Phase-3.2b
+    description: >-
+      规则发现 MCP Server——AI 施工前查询适用 trae 规则（病根2治本）。
+      解决"AI 不知道某操作命中哪些规则"的信息不可达问题。真源：
+      rule_ai_perception_index.yaml（64条规则×operations/gate_ids/paired_gate_id
+      映射，Phase 3.2a 生成器产出）。本 server 通过 MCP 协议暴露查询能力，
+      AI 按 operation/gate_id/scope/domain/tags/rule_id 查询适用规则。
+      Phase 3.4a CAPABILITY-LOOKUP-REQUIRED gate 将强制 AI 施工前调用此工具。
+      canonical = src/zephyr/integration/mcp/rule_discovery_server.py。
+      工具契约：tool_contracts.yaml Server 11（rule_discovery.discover_applicable_rules）。
+
+  - capability_id: rule_ai_perception_index_generator
+    aliases:
+      - generate_rule_ai_perception_index
+      - rule_perception_index_generator
+      - ARCH-GOV-CONVERGENCE-META-Phase-3.2a
+    description: >-
+      规则AI感知索引生成器——从 64 条 trae_*.yaml 提取感知元数据（operations/
+      gate_ids/scope/domain/tags/aliases/paired_gate_id），聚合为单一索引文件
+      rule_ai_perception_index.yaml。消费方：discover_applicable_rules MCP 工具
+      （Phase 3.2b）、M17 指标、sync_yaml_to_depgraph.py（#183→rule_ai_perception 表）。
+      canonical = scripts/governance/generators/generate_rule_ai_perception_index.py。
+      --check 模式对比生成版 vs 磁盘版（GATE-21 静态清单漂移检测）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5269,6 +5301,16 @@ creation_tokens:
     token: "auto-batched-auto-committer-20260719"
     created_by: "sess-29340-20260719070757"
     capability: "git_call_batching"
+
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.2（2026-07-19，规则可发现性治本 病根2）---
+  - file: "scripts/governance/generators/generate_rule_ai_perception_index.py"
+    token: "auto-rule-perception-index-gen-20260719"
+    created_by: "sess-15552-20260719074512"
+    capability: "rule_ai_perception_index_generator"
+  - file: "src/zephyr/integration/mcp/rule_discovery_server.py"
+    token: "auto-rule-discovery-server-20260719"
+    created_by: "sess-33764-20260719"
+    capability: "discover_applicable_rules"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
@@ -5372,3 +5414,12 @@ di_seam_exemptions:
 #   - G5 本条新增 creation_token: worktree_lifecycle_reconciler（reconciliation_registry.py make_worktree_lifecycle_reconciler）
 #   - 治本根因：5 项文档缺口使新 AI 无法通过 capability/registry/AGENTS.md 反查发现 P2 reconciler，可能重复造轮子
 #   - session: sess-39824-20260718031108
+# 2026-07-19 #ARCH-GOV-CONVERGENCE-META Phase 3.2（规则可发现性治本 病根2）：
+#   - 新增 capability: discover_applicable_rules（canonical=src/zephyr/integration/mcp/rule_discovery_server.py，MOD-INF-014）
+#     aliases 含 rule_discovery / RuleDiscoveryServer / rule_perception_index_query / ARCH-GOV-CONVERGENCE-META-Phase-3.2b
+#   - 新增 capability: rule_ai_perception_index_generator（canonical=scripts/governance/generators/generate_rule_ai_perception_index.py，MOD-GOV-041）
+#   - 新增 creation_tokens：generate_rule_ai_perception_index.py（Phase 3.2a 已提交，补登记 token）+ rule_discovery_server.py（Phase 3.2b 新建）
+#   - 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("rule_discovery") / find("applicable rules") 可定位 MCP server 真源
+#   - 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 rule_discovery_server.py 新建副本
+#   - 三要素闭环：持久化(YAML+DB) + 可发现(MCP tool + capability registry) + 可阻断(CREATE-GUARD + 后续 Phase 3.4a CAPABILITY-LOOKUP-REQUIRED gate)
+#   - session: sess-33764-20260719
