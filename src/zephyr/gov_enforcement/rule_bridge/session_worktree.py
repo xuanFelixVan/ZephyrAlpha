@@ -281,10 +281,16 @@ def _log_workspace_op(
     root: Path,
     file: str = "",
     backup_path: str = "",
+    content_hash: str = "",
 ) -> None:
-    """主工作区文件操作遥测（裁定#C，2026-07-19）。
-    
-    扩展 _log_worktree_delete，记录文件级 stash/quarantine 操作，支持事后审计与恢复。
+    """主工作区文件操作遥测（裁定#C，2026-07-19；P2-6 扩展 content_hash）。
+
+    扩展 _log_worktree_delete，记录文件级 stash/quarantine/restore 操作，支持事后审计与恢复。
+
+    必填字段（项目记忆硬约束：session_id / source / file / content_hash / backup_path）：
+      - ``content_hash``: 操作前文件内容的 sha256 hex（前 16 字符），用于校验隔离区/
+        stash 恢复后的内容完整性。空字符串表示文件不存在或无法读取（如 stash 后文件已消失）。
+
     降级：遥测失败仅 debug 日志，绝不阻断主流程。
     """
     try:
@@ -300,6 +306,7 @@ def _log_workspace_op(
             "session_id": session_id,
             "source": source,
             "file": file,
+            "content_hash": content_hash,
             "backup_path": backup_path,
         }
         with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
@@ -308,27 +315,49 @@ def _log_workspace_op(
         logger.debug("workspace op telemetry failed", exc_info=True)
 
 
+def _compute_content_hash(path: Path) -> str:
+    """计算文件内容的 sha256 hex 前 16 字符（P2-6，2026-07-19）。
+
+    用于 worktree_ops_log.jsonl 的 content_hash 字段，校验隔离区/stash 恢复后的
+    内容完整性。文件不存在或读取失败返回空字符串（不抛异常）。
+    """
+    import hashlib
+    try:
+        h = hashlib.sha256()
+        with path.open("rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                h.update(chunk)
+        return h.hexdigest()[:16]
+    except OSError:
+        return ""
+
+
 def _quarantine_file(
     root: Path, rel_file: str, session_id: str, source: str,
 ) -> str | None:
     """将主工作区文件移送隔离区（裁定#B，2026-07-19）。
-    
+
     替代物理删除，保留 72h 可恢复。返回隔离区路径（失败返回 None）。
+
+    P2-6（2026-07-19）：移送前计算 content_hash 并记入遥测，支持恢复后内容校验。
     """
     src = root / rel_file
     if not src.exists():
         return None
     dest = _quarantine_root(root) / session_id / rel_file
+    # P2-6: 移送前计算 content_hash（移送后 src 消失，无法回算）
+    content_hash = _compute_content_hash(src)
     try:
         dest.parent.mkdir(parents=True, exist_ok=True)
         src.replace(dest)
         _log_workspace_op(
             "file_quarantine", session_id, source, root,
             file=rel_file, backup_path=str(dest),
+            content_hash=content_hash,
         )
         logger.info(
-            "session_worktree quarantine: %s -> %s (session=%s, source=%s)",
-            rel_file, dest, session_id, source,
+            "session_worktree quarantine: %s -> %s (session=%s, source=%s, hash=%s)",
+            rel_file, dest, session_id, source, content_hash,
         )
         return str(dest)
     except OSError:
@@ -1625,6 +1654,15 @@ def _recover_changes_from_stash(
             file=sys.stderr,
         )
         print("=" * 80 + "\n", file=sys.stderr)
+        # P2-6（2026-07-19）：file_restore 遥测——记录从 stash 恢复到主工作区的文件
+        # content_hash 在恢复后计算（restore 写入文件内容后），用于校验恢复完整性
+        for rel_file in hits:
+            restored_hash = _compute_content_hash(root / rel_file)
+            _log_workspace_op(
+                "file_restore", session_id, "auto_recover_from_stash", root,
+                file=rel_file, backup_path=f"stash:{stash_ref}",
+                content_hash=restored_hash,
+            )
         return True
     print(
         f"  ✗ git restore failed: {restore_r.stderr.strip()[:200]}",
@@ -1996,6 +2034,10 @@ def _execute_cleanups(
             f"session_worktree_pre_merge: {session_id}"
             if session_id else "session_worktree_pre_merge"
         )
+        # P2-6: stash push 前计算 content_hash（push 后文件被 reset 到 HEAD，hash 会变）
+        pre_stash_hashes: dict[str, str] = {}
+        for rel_file in to_checkout:
+            pre_stash_hashes[rel_file] = _compute_content_hash(root / rel_file)
         subprocess.run(
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_checkout,
             cwd=str(root), capture_output=True,
@@ -2005,11 +2047,12 @@ def _execute_cleanups(
             "session_worktree_pre_merge: stashed %d tracked file(s) for session=%s "
             "(recoverable via 'git stash pop')", len(to_checkout), session_id or "?",
         )
-        # 裁定#C（2026-07-19）：stash 操作遥测
+        # 裁定#C（2026-07-19）：stash 操作遥测（P2-6: 含 content_hash）
         for rel_file in to_checkout:
             _log_workspace_op(
                 "file_stash", session_id, "pre_merge_auto_clean", root,
                 file=rel_file, backup_path=f"stash:{stash_msg}",
+                content_hash=pre_stash_hashes.get(rel_file, ""),
             )
     for rel_file in to_unlink:
         # 裁定#B（2026-07-19）：untracked 文件物理删除 → 隔离区移送（72h 可恢复）
@@ -2875,20 +2918,6 @@ def _query_tracked_files(root: Path, rel_files: list[str]) -> set[str]:
     return set()
 
 
-def _safe_unlink_main_file(main_file: Path) -> bool:
-    """尽力删除文件：先直接 unlink，失败时降权限重试（untracked 文件清理）。"""
-    try:
-        main_file.unlink()
-        return True
-    except OSError:
-        try:
-            os.chmod(str(main_file), 0o644)
-            main_file.unlink()
-            return True
-        except OSError:
-            return False
-
-
 def _dispose_main_workdir_files(
     root: Path, rel_files: list[str], tracked_files: set[str],
     session_id: str | None = None,
@@ -2938,6 +2967,10 @@ def _dispose_main_workdir_files(
             f"session_worktree_abort: {session_id}"
             if session_id else "session_worktree_abort"
         )
+        # P2-6: stash push 前计算 content_hash（push 后文件被 reset 到 HEAD，hash 会变）
+        pre_stash_hashes: dict[str, str] = {}
+        for rel_file in to_stash:
+            pre_stash_hashes[rel_file] = _compute_content_hash(root / rel_file)
         subprocess.run(
             ["git", "stash", "push", "-m", stash_msg, "--"] + to_stash,
             cwd=str(root), capture_output=True,
@@ -2946,11 +2979,12 @@ def _dispose_main_workdir_files(
             "session_worktree_abort: stashed %d tracked file(s) for session=%s "
             "(recoverable via 'git stash pop')", len(to_stash), session_id or "?",
         )
-        # 裁定#C（2026-07-19）：stash 操作遥测
+        # 裁定#C（2026-07-19）：stash 操作遥测（P2-6: 含 content_hash）
         for rel_file in to_stash:
             _log_workspace_op(
                 "file_stash", session_id or "unknown", "abort", root,
                 file=rel_file, backup_path=f"stash:{stash_msg}",
+                content_hash=pre_stash_hashes.get(rel_file, ""),
             )
     return cleaned
 
