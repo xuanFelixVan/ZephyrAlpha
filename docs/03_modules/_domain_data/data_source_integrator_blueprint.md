@@ -5,7 +5,8 @@ doc_type: blueprint
 status: Draft
 layer: L2_domain
 date: "2026-07-06"
-version: "0.4.0"
+version: "0.4.1"
+last_updated: "2026-07-19"
 ttl: permanent
 supersedes:
   - "MOD-L00-001 §3.1 Provider 抽象部分（接管）"

@@ -339,14 +339,75 @@ class IFindProvider(DataSourceBase):
 
         return vals, fatal_error
 
+    # 估值批量查询的标的分片大小（URL 长度安全限制）
+    _VALUATION_BATCH_SYMBOLS = 200
+
+    def _fetch_valuation_batch(
+        self, symbols: list[str], date: str, policy: SourcePolicy
+    ) -> tuple[dict[str, dict[str, float]], str | None]:
+        """批量查询多个标的的估值指标（PE/PB/PS），一次 API 调用查所有标的。
+
+        THS_BasicData 支持逗号分隔多标的，返回 DataFrame 每行一个标的。
+        性能提升：5000 标的从 20000 次 API 调用降至 4 次（每指标一次）。
+
+        PCF（ths_pcf_stock_ttm）因 THS_BD 返回 -209 且 i问财无法批量，此处跳过。
+        如需 PCF，可单独跑 _fetch_valuation_for_symbol（仅当天数据）。
+
+        Returns:
+            (vals_by_symbol, fatal_error)
+            vals_by_symbol: {ts_code: {pe_ttm: val, pb_mrq: val, ps_ttm: val}}
+            fatal_error: 配额耗尽等致命错误时非 None
+        """
+        from iFinDPy import THS_BasicData, THS_Trans2DataFrame
+
+        symbols_str = ",".join(symbols)
+        vals_by_symbol: dict[str, dict[str, float]] = {s: {} for s in symbols}
+        fatal_error: str | None = None
+
+        for ind_name, col_name in self._VALUATION_INDICATOR_LIST:
+            if col_name == "pcf_ncf_ttm":
+                continue  # PCF 跳过：THS_BD 不支持(-209)，i问财无法批量
+
+            params = f"{date},100"
+            try:
+                raw = self._call_with_policy(
+                    THS_BasicData, policy, symbols_str, ind_name, params,
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.error("THS_BasicData 批量调用异常 %s/%s: %s", date, ind_name, e)
+                fatal_error = str(e)
+                break
+
+            is_error, code, msg = self._check_ifind_error(raw)
+            if is_error:
+                if code in (-4318, -4309):
+                    fatal_error = f"iFind配额耗尽: {code}"
+                    self._log.error("批量估值 %s/%s %s", date, ind_name, fatal_error)
+                    break
+                self._log.warning("批量估值 %s/%s iFind错误: %s %s", date, ind_name, code, msg)
+                continue
+
+            try:
+                df = THS_Trans2DataFrame(raw)
+                if df is not None and len(df) > 0:
+                    for _, row in df.iterrows():
+                        ts_code = str(row.get("thscode", ""))
+                        if ts_code in vals_by_symbol:
+                            vals_by_symbol[ts_code][col_name] = self.safe_float(row.get(ind_name))
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning("THS_Trans2DataFrame 批量解析失败 %s/%s: %s", date, ind_name, e)
+
+        return vals_by_symbol, fatal_error
+
     def _fetch_daily_valuation(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
         """拉取日频估值（PE/PB/PS/PCF），写入 c1_market.daily_valuation。
 
-        THS_BD 不支持分号分隔多指标（返回 -209），需逐个指标单独查询后合并。
+        批量模式：每 200 个标的一次 API 调用（每指标），5000 标的约 40 次调用。
+        原 per-symbol 模式需 20000 次调用导致 30 分钟超时（2026-07-19 裁定）。
+        PCF（pcf_ncf_ttm）在批量模式下为 None（i问财无法批量，可单独补齐）。
         每 500 行 yield 一个 FetchResult；last_key 为当前处理的 date。
-        遇到配额耗尽（-4318/-4309）或其他 iFind 错误码时，yield 错误结果并 return。
         """
         symbols = payload.symbols or []
         snapshot_dates = self._build_snapshot_dates(payload)
@@ -364,10 +425,12 @@ class IFindProvider(DataSourceBase):
 
         batch_rows: list[tuple] = []
         start_ts = time.time()
+        chunk_size = self._VALUATION_BATCH_SYMBOLS
 
         for date in snapshot_dates:
-            for ts_code in symbols:
-                vals, fatal_error = self._fetch_valuation_for_symbol(ts_code, date, policy)
+            for i in range(0, len(symbols), chunk_size):
+                chunk = symbols[i:i + chunk_size]
+                vals_by_symbol, fatal_error = self._fetch_valuation_batch(chunk, date, policy)
 
                 # 致命错误（配额/连接）→ yield error 并 return
                 if fatal_error and ("配额" in fatal_error or "-4318" in fatal_error):
@@ -381,26 +444,28 @@ class IFindProvider(DataSourceBase):
                     )
                     return
 
-                symbol = self._ts_code_to_symbol(ts_code)
-                batch_rows.append((
-                    date, symbol,
-                    vals.get("pe_ttm"),
-                    vals.get("pb_mrq"),
-                    vals.get("ps_ttm"),
-                    vals.get("pcf_ncf_ttm"),
-                ))
+                for ts_code in chunk:
+                    vals = vals_by_symbol.get(ts_code, {})
+                    symbol = self._ts_code_to_symbol(ts_code)
+                    batch_rows.append((
+                        date, symbol,
+                        vals.get("pe_ttm"),
+                        vals.get("pb_mrq"),
+                        vals.get("ps_ttm"),
+                        vals.get("pcf_ncf_ttm"),  # None（批量模式跳过 PCF）
+                    ))
 
-                # 每 500 行 yield 一次
-                if len(batch_rows) >= self._BATCH_SIZE:
-                    yield FetchResult(
-                        table=self._VALUATION_TABLE,
-                        columns=self._VALUATION_COLUMNS,
-                        rows=batch_rows[:],
-                        last_key=date,
-                        elapsed_sec=time.time() - start_ts,
-                    )
-                    batch_rows.clear()
-                    start_ts = time.time()
+                    # 每 500 行 yield 一次
+                    if len(batch_rows) >= self._BATCH_SIZE:
+                        yield FetchResult(
+                            table=self._VALUATION_TABLE,
+                            columns=self._VALUATION_COLUMNS,
+                            rows=batch_rows[:],
+                            last_key=date,
+                            elapsed_sec=time.time() - start_ts,
+                        )
+                        batch_rows.clear()
+                        start_ts = time.time()
 
             # 当前 date 处理完，yield 剩余行
             if batch_rows:
@@ -1899,7 +1964,6 @@ class IFindProvider(DataSourceBase):
         t0 = time.time()
 
         # 问财查询：同花顺881二级行业板块
-        query = "同花顺二级行业板块 总市值 流通市值 成分股数量 总股本 流通A股"
         try:
             raw = self._call_with_policy(
                 THS_WC, policy,
@@ -1927,7 +1991,10 @@ class IFindProvider(DataSourceBase):
         rows: list[tuple] = []
         try:
             tables = raw.get("tables", []) if isinstance(raw, dict) else []
-            if tables:
+            if not tables:
+                self._log.warning("sector_meta: 问财返回空 tables，raw keys=%s",
+                                  list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__)
+            else:
                 tbl = tables[0].get("table", {})
                 sector_codes = tbl.get("thscode", [])
                 sector_names = self._extract_wencai_column(tbl, ["板块名称", "名称", "sector_name"])

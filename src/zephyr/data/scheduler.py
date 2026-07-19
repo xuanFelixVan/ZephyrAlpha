@@ -152,6 +152,9 @@ def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
     - extra.trading_day_only=true 且今日非交易日：miniqmt 等依赖 QMT 服务器的任务
       （QMT 服务器周末/节假日非交易时段拒绝连接，error 10061 WSAECONNREFUSED，
        见 schedule.yaml L8 注释与蓝图 §6.2.1）
+
+    拼写防护：miniqmt 源任务在非交易日历守卫时段（如 monthly_static）若缺少
+    trading_day_only 字段（含拼写错误如 trade_day_only），会在此告警。
     """
     today = datetime.date.today()
     is_trading = is_trading_day(today)
@@ -162,6 +165,16 @@ def _filter_schedule_tasks(tasks: list[dict], schedule_name: str) -> list[dict]:
         extra = t.get("extra") or {}
         if extra.get("disabled"):
             continue
+        # 拼写防护：miniqmt 任务在非守卫时段必须有 trading_day_only
+        source = t.get("source", "")
+        if (source == "miniqmt"
+                and schedule_name not in TRADING_DAY_GUARDED_SCHEDULES
+                and extra.get("trading_day_only") is not True):
+            log.warning(
+                "任务 %s（source=miniqmt, schedule=%s）缺少 trading_day_only: true，"
+                "非交易日将触发 QMT error 10061。请检查字段拼写是否正确。",
+                t.get("task_id"), schedule_name,
+            )
         if extra.get("trading_day_only") and not is_trading:
             log.info("任务 %s 跳过：trading_day_only 且今日(%s)非交易日",
                      t.get("task_id"), today)
