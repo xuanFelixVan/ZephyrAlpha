@@ -103,6 +103,12 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
         fi
 
         if [ -d "$reports_dir" ]; then
+            # === 7天前报告清理（ARCH-TOOL-HEALTH-V1 Phase 5 优化，2026-07-19）===
+            # 病根：reports_dir 中旧报告永不清理，for 循环随文件数增长变慢
+            # 治本：每次 post-commit 事件触发时顺带清理 7 天前的 post_commit_guard_*.json
+            # 事件触发（非时间触发），符合永久系统全自动原则
+            find "$reports_dir" -name "post_commit_guard_*.json" -mtime +7 -delete 2>/dev/null || true
+
             for rpt in "$reports_dir"/post_commit_guard_*.json; do
                 [ -f "$rpt" ] || continue
                 # 提取字段：grep 模式容忍可选空格（兼容紧凑/空格两种 JSON 格式）
@@ -113,7 +119,11 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
                 rpt_action=$(grep -o '"action": *"[^"]*"' "$rpt" 2>/dev/null | head -1 | cut -d\" -f4)
                 # 数值比较（rpt_ts 非空且为数字时才比较；2>/dev/null 抑制非数字报错）
                 if [ -n "$rpt_ts" ] && [ "$rpt_ts" -ge "$window_start_ts" ] 2>/dev/null; then
-                    if [ "$rpt_sid" = "$session_id" ] && [ "$rpt_violation" = "unregistered_session_id" ] && [ "$rpt_action" = "warn_only" ]; then
+                    # 提取 prior_warn_count 字段（阈值上线前的旧版报告无此字段）
+                    # 过滤旧版报告避免历史遗留污染新 session 累计（ARCH-TOOL-HEALTH-V1 Phase 5 优化，2026-07-19）
+                    rpt_prior=$(grep -o '"prior_warn_count": *[0-9]*' "$rpt" 2>/dev/null | head -1 | sed 's/[^0-9]//g')
+                    # rpt_prior 非空 = 新版报告（阈值上线后），计入累计；为空 = 旧版报告，跳过
+                    if [ -n "$rpt_prior" ] && [ "$rpt_sid" = "$session_id" ] && [ "$rpt_violation" = "unregistered_session_id" ] && [ "$rpt_action" = "warn_only" ]; then
                         prior_warn_count=$((prior_warn_count + 1))
                     fi
                 fi
