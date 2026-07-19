@@ -1452,6 +1452,7 @@ references:
   modules: [src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py, src/zephyr/governance/rule_patterns.py]
   blueprints: []
 enforcement:
+  paired_gate_id: "GATE-NAMING"  # Phase 3.5 规则-执行配对
   type: code
   executors: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py, src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py]
   bypass_allowed: false

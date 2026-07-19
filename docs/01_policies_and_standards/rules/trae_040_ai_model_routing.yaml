@@ -362,6 +362,7 @@ references:
   - docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml
   blueprints: []
 enforcement:
+  paired_gate_id: null  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/d7_code/check_encoding.py

@@ -870,6 +870,7 @@ references:
   - docs/03_modules/_cross_layer/gate_engine/blueprint.md
   - docs/03_modules/_domain_governance/governance_automation/blueprint.md
 enforcement:
+  paired_gate_id: "GATE-ARCH"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py

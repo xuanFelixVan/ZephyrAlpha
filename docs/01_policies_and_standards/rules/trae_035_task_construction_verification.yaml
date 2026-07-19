@@ -342,6 +342,7 @@ references:
   blueprints:
   - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 enforcement:
+  paired_gate_id: "DATA-TASK-COMPLETENESS"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/d11_compliance/audit_registration.py

@@ -809,6 +809,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "CREATE-GUARD"  # Phase 3.5 规则-执行配对
   type: procedure
   executors:
   - scripts/scaffold.py

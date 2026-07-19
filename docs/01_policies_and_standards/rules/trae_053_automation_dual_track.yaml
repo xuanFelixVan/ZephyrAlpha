@@ -73,6 +73,7 @@ references:
   - src/zephyr/trading/boot_hooks.py
   blueprints: []
 enforcement:
+  paired_gate_id: null  # Phase 3.5 规则-执行配对
   type: hook
   executors:
   - scripts/governance/d11_compliance/audit_registration.py

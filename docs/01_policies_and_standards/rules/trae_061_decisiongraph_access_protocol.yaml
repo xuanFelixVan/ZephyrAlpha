@@ -112,6 +112,7 @@ references:
   - zephyr.governance.decisiongraph_schema
   blueprints: []
 enforcement:
+  paired_gate_id: "DEPGRAPH-WRITE-PATH"  # Phase 3.5 规则-执行配对
   type: hook
   executors:
   - scripts/governance/extract_decisiongraph.py

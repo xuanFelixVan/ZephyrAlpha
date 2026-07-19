@@ -231,6 +231,7 @@ references:
   blueprints:
   - GOV-ENG-001
 enforcement:
+  paired_gate_id: "GATE-NAMING"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - ruff

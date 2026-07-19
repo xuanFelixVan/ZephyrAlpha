@@ -259,6 +259,7 @@ references:
   - GOV-ENG-001
   - GOV-ENG-002
 enforcement:
+  paired_gate_id: "UNDEFINED-NAME"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - ruff

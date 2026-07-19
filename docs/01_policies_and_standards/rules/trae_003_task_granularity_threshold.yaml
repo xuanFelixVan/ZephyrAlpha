@@ -92,6 +92,7 @@ references:
   blueprints:
   - GOV-TASK-001
 enforcement:
+  paired_gate_id: null  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - TaskRepository._validate_template_fields()

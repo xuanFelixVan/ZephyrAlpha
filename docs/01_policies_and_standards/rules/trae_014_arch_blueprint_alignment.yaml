@@ -913,6 +913,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "BLUEPRINT-FORMAT"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py

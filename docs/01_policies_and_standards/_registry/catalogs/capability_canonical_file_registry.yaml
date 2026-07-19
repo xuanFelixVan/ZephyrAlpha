@@ -5509,6 +5509,11 @@ creation_tokens:
     token: "auto-setup-dev-env-20260719"
     created_by: "sess-16216-20260719163301"
     capability: "dev_env_setup"
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.5 规则-执行配对门禁 ---
+  - file: "src/zephyr/gov_enforcement/commit_gates/rule_execution_pairing_gate.py"
+    token: "auto-rule-execution-pairing-gate-20260719"
+    created_by: "sess-20644-20260719164900"
+    capability: "rule_execution_pairing"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

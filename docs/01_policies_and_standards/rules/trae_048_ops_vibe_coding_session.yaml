@@ -539,6 +539,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "SESSION-REQUIRED"  # Phase 3.5 规则-执行配对
   type: doc
   executors: []
   bypass_allowed: false

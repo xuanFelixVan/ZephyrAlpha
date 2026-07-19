@@ -233,6 +233,7 @@ references:
   - GOV-ENG-001
   blueprints: []
 enforcement:
+  paired_gate_id: "NO-UPWARD-IMPORT"  # Phase 3.5 规则-执行配对
   type: code
   executors:
   - mypy

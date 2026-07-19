@@ -254,6 +254,7 @@ enforcement:
   - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   bypass_allowed: false
   gate_id: null
+  paired_gate_id: null  # Phase 3.5 规则-执行配对
 
 metadata:
   change_policy: frozen

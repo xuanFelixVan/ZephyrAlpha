@@ -633,6 +633,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "GATE-FRONTMATTER"  # Phase 3.5 规则-执行配对
   type: code
   executors: [scripts/governance/d3_metadata/check_frontmatter_metadata.py]
   bypass_allowed: false

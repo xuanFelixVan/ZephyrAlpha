@@ -319,6 +319,7 @@ references:
   - docs/01_policies_and_standards/rules/trae_046_engineering_code_restructure.yaml
   blueprints: []
 enforcement:
+  paired_gate_id: "NO-HIGH-COMPLEXITY"  # Phase 3.5 规则-执行配对
   type: manual
   executors:
   - scripts/governance/d11_compliance/audit_registration.py

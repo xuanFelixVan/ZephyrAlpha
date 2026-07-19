@@ -199,6 +199,7 @@ references:
   modules: []
   blueprints: []
 enforcement:
+  paired_gate_id: "GATE-DRIFT"  # Phase 3.5 规则-执行配对
   type: doc
   executors:
   - scripts/governance/generate_project_depgraph.py
