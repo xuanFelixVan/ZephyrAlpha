@@ -3437,6 +3437,27 @@ entries:
       - 新增 session_startup_health_check.py
       - AI session 启动时自检核心工具健康度
       - 失败时输出 [ESCALATION] 标记，禁止 silently workaround
+      - 注：本 Phase 6 勿与 #ARCH-WORKTREE-002 缺陷5 Phase 6（PID liveness 跨进程
+        失效治本，已完成 2026-07-19 commit ec30b6a419）混淆——两者分属不同 issue
+        的不同 Phase 6，本条是"启动健康度自检"，后者是"session 注册时序修复"。
+        命名冲突因两 issue 独立编排 Phase 序号所致，AI 查询时需用 issue_id 限定。
+
+    审查轮 P3/P5 债务记录（2026-07-19，sess-39804）：
+    - P3（.sh 表头规范）：reference_transaction_guard.sh 在 depgraph 中 blueprint_id
+      空、file_header_score=0，经查 blueprint_format_gate 只检查 .py 文件（L31
+      "获取 staged added/modified .py 文件"），.sh 脚本豁免。file_header_score=0
+      是 .sh 特性（无 [BLUEPRINT] 表头），非问题。可发现性已通过 capability_
+      canonical_file_registry.yaml 登记 reference_transaction_guard 解决
+      （capability_id=reference_transaction_guard，含 5 个 aliases）。
+      设计决策：.sh 脚本不强制 [BLUEPRINT] 表头，靠 capability registry + AGENTS.md
+      §10.1.1 文档化保证可发现性。
+    - P5（L1 君子协定违反）：commit_gateway_abuse_monitor_reconciler.py +
+      reference_transaction_guard.sh 两个新模块施工前未走 apply_depgraph
+      --add-design-node 登记设计态（status=planned）。当前 L1 为君子协定无
+      commit-time 强制。两个模块已由 generate_project_depgraph.py reconciler
+      自动扫描物理文件同步为 production 运营态（depgraph.nodes 中 node_id=
+      5257982/5262634，design_maturity=production/prototype，build_status=
+      stable/generated）。第三期 pre-merge 拓扑硬阻断上线后须严格遵循 L1。
   impact:
     - scripts/governance/apply_depgraph.py（恢复 get_depgraph_pg_connection import，Phase 1）
     - scripts/governance/repair/concurrent_write_test.py（同源 bug 修复，Phase 1）
