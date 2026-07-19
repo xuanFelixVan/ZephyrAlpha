@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-07-19T08:14:53.095108+00:00",
+  "generated_by": "GATE-RUNTIME-VIOLATION-SNAPSHOT",
+  "session_id": "sess-29344-20260719002711",
+  "commit_sha": "b131988bc8ad",
+  "baseline_file": "data/runtime_violation_snapshot/baseline_2026_06_26.yaml",
+  "trae_rule_id": "TRAE-060",
+  "trae_rule_version": "1.0.1",
+  "violations": [
+    {
+      "category": "vocab_hardcode",
+      "rule": "禁止硬编码词表合法值(造第二真源)",
+      "claimed_count": 64,
+      "claim_text": "全量排查(2026-06-26)发现64处.py硬编码副本(12词表)",
+      "detected_count": 1,
+      "drift": -63,
+      "detector_metric_id": "M01",
+      "detector_metric_name": "词表硬编码违规数",
+      "detector_error": "",
+      "details": [
+        "WARN: scripts\\governance\\generators\\generate_rule_ai_perception_index.py:6 [STARTUP] 标记值 'on_demand' 不在 startup_vocabulary.yaml 合法值中(合法值: ['auto_start', 'event_driven', 'imported', 'manual'])"
+      ]
+    },
+    {
+      "category": "manual_trigger",
+      "rule": "禁止永久功能仅manual触发",
+      "claimed_count": 25,
+      "claim_text": "手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py等永久治理功能仅manual",
+      "detected_count": 0,
+      "drift": -25,
+      "detector_metric_id": "M02",
+      "detector_metric_name": "manual-only 永久脚本数",
+      "detector_error": "",
+      "details": []
+    },
+    {
+      "category": "mergeable_clusters",
+      "rule": "重复簇MUST合并",
+      "claimed_count": 6,
+      "claim_text": "可合并6簇:atomic_write 22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL 10次、src侧forensic/metadata双份、scan_secret_leak双份",
+      "detected_count": 3,
+      "drift": -3,
+      "detector_metric_id": "M03",
+      "detector_metric_name": "重复簇函数数",
+      "detector_error": "",
+      "details": [
+        "簇(3): src\\zephyr\\governance\\observability_governance\\query_metrics.py:enabled() L166 | src\\zephyr\\gov_enforcement\\rule_bridge\\batched_auto_committer.py:is_enabled() L181 | src\\zephyr\\infrastructure\\auto_fix_engine\\escalation_bridge.py:enabled() L95",
+        "簇(2): src\\zephyr\\gov_enforcement\\commit_gates\\ch_batch_size_gate.py:_is_exempt_file() L83 | src\\zephyr\\gov_enforcement\\commit_gates\\git_call_budget_gate.py:_is_git_budget_exempt_file() L75",
+        "簇(2): src\\zephyr\\gov_enforcement\\commit_gates\\ch_batch_size_gate.py:_build_parent_map() L89 | src\\zephyr\\gov_enforcement\\commit_gates\\git_call_budget_gate.py:_build_git_parent_map() L84"
+      ]
+    },
+    {
+      "category": "time_trigger",
+      "rule": "禁止时间触发(CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内轮询)",
+      "claimed_count": 14,
+      "claim_text": "时间触发14处:CircadianScheduler系统/circadian_scheduler.py/boot_cron_jobs.py/...",
+      "detected_count": 0,
+      "drift": -14,
+      "detector_metric_id": "M10",
+      "detector_metric_name": "时间触发残留数",
+      "detector_error": "",
+      "details": []
+    }
+  ],
+  "summary": {
+    "total_detected": 4,
+    "total_claimed": 109,
+    "drift_count": 4,
+    "fresh": true
+  }
+}

@@ -1,0 +1,77 @@
+# baseline_2026_06_26.yaml — trae_060 §5 历史证据基线（#ARCH-GOV-CONVERGENCE-META Phase 3.4b）
+#
+# 病根1 治本（架构债务 §三 病根1）：
+#   trae_060 §5 的"违规清单"是 2026-06-26 全项目排查的静态快照，写入 frozen YAML 后
+#   随项目演进持续脱节（证据：docs/_working/trae_060_s5_evidence_audit.md 证明
+#   §5 声称 23 处违规实际为 0、声称 9 词表实际为 27）。
+#
+# 本文件抽出 §5 prohibitions 的历史计数，作为固定基线供 M20 指标对比：
+#   - 不再随项目演进更新（历史快照，frozen）
+#   - live 证据由 runtime_violation_snapshot_reconciler 自动生成到 latest.json
+#   - M20 = 基线 vs live 漂移数（drift != 0 的类别数）
+#
+# 数据来源：trae_060_inward_consolidation.yaml v1.0.1 §5 prohibitions 字段
+# 抽出日期：2026-07-19（Phase 3.4b 落地）
+# 抽出依据：RULE-EXECUTION-PAIRING 裁定（规则可写但 MUST 同 commit 配对门禁/reconciler）
+
+baseline_date: '2026-06-26'
+trae_rule_id: TRAE-060
+trae_rule_version: '1.0.1'
+source_section: '§5 prohibitions'
+extraction_date: '2026-07-19'
+extraction_session: '#ARCH-GOV-CONVERGENCE-META Phase 3.4b'
+
+# 4 类 ongoing 违规的基线计数（从 §5 prohibitions 字符串中抽出）
+# sync_construction_progress 项是 one-time 退役事件（已 resolved），不计入 ongoing
+violations:
+  vocab_hardcode:
+    rule: '禁止硬编码词表合法值(造第二真源)'
+    claimed_count: 64
+    claim_text: '全量排查(2026-06-26)发现64处.py硬编码副本(12词表)'
+    detector_metric_id: M01
+    detector_metric_name: '词表硬编码违规数'
+    detector_script: scripts/governance/d3_metadata/check_vocab_hardcode.py
+
+  time_trigger:
+    rule: '禁止时间触发(CircadianScheduler/cron/Timer/sleep-loop/periodic/进程内轮询)'
+    claimed_count: 14
+    claim_text: '时间触发14处:CircadianScheduler系统/circadian_scheduler.py/boot_cron_jobs.py/...'
+    detector_metric_id: M10
+    detector_metric_name: '时间触发残留数'
+    detector_script: scripts/governance/architecture_health_dashboard.py (metric_10)
+
+  manual_trigger:
+    rule: '禁止永久功能仅manual触发'
+    claimed_count: 25
+    claim_text: '手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py等永久治理功能仅manual'
+    detector_metric_id: M02
+    detector_metric_name: 'manual-only 永久脚本数'
+    detector_script: scripts/governance/architecture_health_dashboard.py (metric_02)
+    note: >-
+      M02 检测条件比 §5 声明更严格（要求 [STARTUP]=manual + [TTL]=permanent + 常驻服务特征），
+      基线计数可能略低于 §5 声明的 ~25 处（§5 含所有 manual 触发，M02 仅含常驻服务特征）。
+
+  mergeable_clusters:
+    rule: '重复簇MUST合并'
+    claimed_count: 6
+    claim_text: '可合并6簇:atomic_write 22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL 10次、src侧forensic/metadata双份、scan_secret_leak双份'
+    detector_metric_id: M03
+    detector_metric_name: '重复簇函数数'
+    detector_script: scripts/governance/architecture_health_dashboard.py (metric_03)
+    note: >-
+      M03 检测的是函数级重复簇（AST 哈希），§5 声明的是文件级/模块级重复簇。
+      二者检测粒度不同，drift 主要反映"新增函数级重复"而非"原 6 簇是否合并"。
+
+# 已解决的 historical evidence（one-time 事件，不再 ongoing）
+resolved_evidence:
+  sync_construction_progress:
+    rule: 'sync真源收敛'
+    resolution: 'construction_progress 字段已于 2026-07-18 ARCH-FRONTMATTER-STATE-001 Phase 3 退役'
+    resolution_date: '2026-07-18'
+    resolution_issue: 'ARCH-FRONTMATTER-STATE-001'
+
+# 基线汇总
+summary:
+  total_ongoing_claimed: 109  # 64 + 14 + 25 + 6
+  total_resolved: 1
+  baseline_frozen: true

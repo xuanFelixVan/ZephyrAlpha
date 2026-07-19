@@ -1,6 +1,6 @@
 rule_id: TRAE-060
 title: 向内收原则（唯一真源·事件驱动·第一性原理）
-version: 1.0.1
+version: 1.0.2
 layer: L1_foundation
 module_id: TRAE-060
 depends_on:
@@ -192,7 +192,14 @@ sections:
     section_type: rule
     title: §5 禁止清单（汇总与evidence）
     description: |
-      本节汇总三原则的禁止项,并附已排查违反清单作evidence。违反清单是2026-06-26全项目排查结果,作为本原则的可验证锚点。
+      本节汇总三原则的禁止项。
+      病根1 治本（#ARCH-GOV-CONVERGENCE-META Phase 3.4b，2026-07-19）：
+        原本节附 2026-06-26 全项目排查的违反清单作 evidence。但违反清单是
+        事实快照（"今天发现64处"），不是规则本身（"禁止硬编码"）。把事实
+        快照写入 frozen YAML 会导致规则随时间脱节（证据：原 evidence 声称
+        23 处违规实际为 0、声称 9 词表实际为 27，详见
+        docs/_working/trae_060_s5_evidence_audit.md）。
+      治本：evidence 抽出为自动生成的 runtime snapshot，本节只保留规则（判断标准）。
     original_rules:
     - "禁止硬编码词表合法值(造第二真源)"
     - "禁止同步复制YAML/MD内容当第二真源"
@@ -203,12 +210,17 @@ sections:
     - "禁止只治标不治本"
     - "禁止跳过搜索直接创造"
     - "禁止把同步复制当扩展"
-    prohibitions:
-    - "硬编码词表合法值:全量排查(2026-06-26)发现64处.py硬编码副本(12词表),其中4处已被GATE-VOCAB检出(VALID_SEMANTIC_TYPES×2/VALID_CONTRACT_STATUSES/VALID_MODULE_STATUSES),60处因变量名/形式不匹配GATE-VOCAB模式未检出(stability 14处/ai_autonomy 13处/ttl 8处/safety_level 5处/status 4处/其他16处)。完整清单见GATE-VOCAB审计输出。MUST动态加载"
-    - "sync真源收敛(evidence):construction_progress字段已于2026-07-18 ARCH-FRONTMATTER-STATE-001 Phase 3退役——手动维护+不可自动派生+违反SSoT铁律+语义重复build_status,原二真源(frontmatter+blueprint_registry.yaml)+validate_ssot_construction_progress.py双向校验+G8门禁全部删除,蓝图先行检测改用graph-based(graphs=={blueprint}=模块仅在blueprint图=无代码=蓝图先行)"
-    - "时间触发14处:CircadianScheduler系统(circadian_scheduler.py/boot_cron_jobs.py/lifecycle_manager.py/f5_boot_integration.py/auto_runtime_core.py)、drift_cron_scheduler.py:48、ops/scheduler.py、ide_health_service.py:212、governance_watchdog.py:141、vms_cron_monitor.py:108、auto_fix_cron.py:108、dedup-watch.yml:4、red-blue-validator.yml:75死条件,MUST改事件驱动或CI兜底"
-    - "手工触发~25处:sync_yaml_to_depgraph.py、auto_sync_all_registries.py、diagnose_depgraph.py等永久治理功能仅manual,MUST补事件注册"
-    - "可合并6簇:atomic_write 22处、load_yaml 17处、parse_frontmatter 9处、apply_depgraph WAL 10次、src侧forensic/metadata双份、scan_secret_leak双份,MUST收敛为唯一实现"
+    evidence_source:
+      live_snapshot: "data/runtime_violation_snapshot/latest.json"
+      historical_baseline: "data/runtime_violation_snapshot/baseline_2026_06_26.yaml"
+      reconciler: "GATE-RUNTIME-VIOLATION-SNAPSHOT (post-commit event-driven)"
+      metric: "M20 (architecture_health_dashboard.py metric_20_runtime_snapshot_drift)"
+      note: |
+        live snapshot 由 post-commit reconciler 自动生成（事件触发，非 cron/manual），
+        报告 4 类违规的当前计数（vocab_hardcode/time_trigger/manual_trigger/mergeable_clusters）。
+        historical baseline 是 2026-06-26 的 frozen 快照（从原 §5 prohibitions 抽出），
+        供 M20 对比计算 drift_count。
+        AI 查询 evidence MUST 读 live snapshot，禁止引用本节静态文本作为事实依据。
     exceptions:
       ddl_as_code: "SQL DDL里的CHECK枚举(如sqlite_schema.py:84-107)无法yaml.safe_load动态化,走DDL-as-Code单独协议(见§6),GATE-VOCAB排除DDL文件"
       ci_schedule_fallback: "CI .github/workflows schedule作批量兜底允许(非进程内Timer)"
@@ -281,6 +293,9 @@ provenance:
   source: "Owner裁定(2026-06-26)——用户'向内收'三原则固化;依据project_memory YAML唯一真源铁律+MOD-INF-030废止CircadianScheduler+红蓝对抗迁移事件驱动+trae_057 AI消费优先"
 
 change_history:
+- version: '1.0.2'
+  date: '2026-07-19'
+  change: '#ARCH-GOV-CONVERGENCE-META Phase 3.4b 病根1治本——抽出§5 prohibitions evidence 到 runtime_violation_snapshot。原§5 prohibitions 是2026-06-26静态快照(64处硬编码/14时间触发/25 manual/6重复簇),随项目演进脱节(审计报告 docs/_working/trae_060_s5_evidence_audit.md 证明声称23处违规实际为0)。治本:evidence 抽到 data/runtime_violation_snapshot/baseline_2026_06_26.yaml(frozen历史基线)+latest.json(post-commit reconciler GATE-RUNTIME-VIOLATION-SNAPSHOT 自动生成),M20指标报告drift_count。本节只保留规则(original_rules+exceptions),新增evidence_source指针。配对reconciler同commit落地(RULE-EXECUTION-PAIRING裁定)。依据:用户确认Option(a)全量执行Phase 3.4b'
 - version: '1.0.1'
   date: '2026-06-28'
   change: '补充§2 prohibitions第5条"迁移/重构替换使用点后遗留定义点死代码"——基于P2迁移实证(auto_runner.py _DEPGRAPH_DB死代码与depgraph_schema.DB_PATH真源分裂);与trae_046 v1.0.6 Post-merge Verify第4项联动;同步修复GOV-DOC-016门禁拦截(3处"已废止/已废除"→"废止/废除",去掉过渡文本)'
