@@ -1,34 +1,35 @@
 # [BLUEPRINT] MOD-GOV_HEARTBEAT_DAEMON_TEST | tests/governance/rule_bridge/test_heartbeat_daemon.py | §Ruling-100PCT-AI-GOVERNANCE-P3-1
 # [MODULE] tests.governance.rule_bridge.test_heartbeat_daemon
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon; zephyr.gov_enforcement.rule_bridge.emergency_commit; zephyr.gov_enforcement.rule_bridge.session_worktree
 # [CONSUMERS] pytest
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] 临时目录隔离测试，不污染主仓库；不依赖真实 DB；不启动真实 daemon 进程
-# [MODIFY-GUARD] 测试函数名与 heartbeat_daemon API 对齐
+# [MODIFY-GUARD] 测试函数名与 heartbeat_daemon / emergency_commit / session_worktree API 对齐
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 测试失败→pytest assert error
 # [TESTS] self
 # [TTL] task_bound
-"""test_heartbeat_daemon.py — heartbeat daemon smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）
+"""test_heartbeat_daemon.py — heartbeat daemon + 成本递增 smoke test（Ruling:100PCT-AI-GOVERNANCE P3-1）
 
-测试覆盖（P1-1 ~ P1-3）：
+测试覆盖（P1-1 ~ P1-5）：
   1. heartbeat_file_path 路径格式
-  2. cleanup_heartbeat_file 清理（文件存在 / 不存在 / 不影响 emergency_count.json）
+  2. cleanup_heartbeat_file 清理（文件存在 / 不存在 / 失败兜底）
   3. _append_heartbeat_log JSONL 追加（多记录）
   4. _session_in_registry 注册表查询（mock SessionRegistry）
-  5. run_daemon 生命周期 smoke（启动 → 心跳 → session 注销后退出）
+  5. _classify_merge_failure 错误分类（deterministic / transient / unknown）
+  6. _check_emergency_escalation 成本递增门禁（N<3 / N=3空reason / N>=5）
+  7. _increment_emergency_count 计数递增 + block_next_start 阈值
+  8. check_start_blocked 多 session 扫描
+  9. run_daemon 生命周期 smoke（启动 → 心跳 → session 注销后退出）
 
 测试策略：
   - 每个测试用独立临时目录（tmp_path），不污染主仓库
   - mock SessionRegistry 避免真实 DB 依赖
-  - run_daemon 用短 interval（0.05s）+ session 立即注销 避免测试阻塞
-
-注：emergency_commit 成本递增 + _classify_merge_failure 错误分类不在 heartbeat 治本范围内，
-    由独立测试模块覆盖（避免 test-source 符号漂移）。
+  - run_daemon 用短 interval（0.1s）+ session 立即注销 避免测试阻塞
 """
 
 from __future__ import annotations
@@ -47,6 +48,14 @@ from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
     heartbeat_file_path,
     run_daemon,
 )
+from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+    _check_emergency_escalation,
+    _increment_emergency_count,
+    _read_emergency_count,
+    _write_emergency_count,
+    check_start_blocked,
+)
+from zephyr.gov_enforcement.rule_bridge.session_worktree import _classify_merge_failure
 
 
 # ---------------------------------------------------------------------------
@@ -211,6 +220,190 @@ def test_run_daemon_lifecycle_smoke(tmp_path: Path) -> None:
     statuses = [json.loads(line)["status"] for line in lines]
     assert "started" in statuses, "应有 started 记录"
     assert "exited" in statuses, "应有 exited 记录（session 注销后）"
+
+
+# ---------------------------------------------------------------------------
+# P1-4: _classify_merge_failure 错误分类
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("error_text,expected", [
+    # deterministic（不重试）
+    ("automatic merge failed; fix conflicts", "deterministic"),
+    ("CONFLICT (content): Merge conflict", "deterministic"),
+    ("fatal: not something we can merge", "deterministic"),
+    ("worktree 不存在", "deterministic"),
+    ("session_id 不能为空", "deterministic"),
+    # transient（重试）
+    ("fatal: Unable to create index.lock", "transient"),
+    ("another git process seems to be running", "transient"),
+    ("error: could not lock config file", "transient"),
+    ("TimeoutExpired: command timed out", "transient"),
+    # unknown
+    ("some weird error", "unknown"),
+    ("", "unknown"),
+    (None, "unknown"),
+])
+def test_classify_merge_failure(error_text, expected) -> None:
+    """_classify_merge_failure 正确分类 deterministic / transient / unknown。"""
+    assert _classify_merge_failure(error_text) == expected
+
+
+# ---------------------------------------------------------------------------
+# P1-5: emergency_commit 成本递增
+# ---------------------------------------------------------------------------
+
+
+def test_check_emergency_escalation_allowed_below_threshold(tmp_path: Path) -> None:
+    """N<3 时允许提交（无 reason 也允许）。"""
+    # 默认 count=0
+    allowed, err = _check_emergency_escalation(tmp_path, "sess-ec-001", reason="")
+    assert allowed is True
+    assert err == ""
+
+
+def test_check_emergency_escalation_requires_reason_at_threshold(tmp_path: Path) -> None:
+    """N>=3 且 reason 为空时拒绝（强制说明原因）。"""
+    _write_emergency_count(tmp_path, "sess-ec-002", {"count": 3, "block_next_start": False})
+    allowed, err = _check_emergency_escalation(tmp_path, "sess-ec-002", reason="")
+    assert allowed is False
+    assert "必须提供非空 reason" in err
+
+
+def test_check_emergency_escalation_allows_with_reason_at_threshold(tmp_path: Path) -> None:
+    """N>=3 且 reason 非空时允许。"""
+    _write_emergency_count(tmp_path, "sess-ec-003", {"count": 3, "block_next_start": False})
+    allowed, err = _check_emergency_escalation(tmp_path, "sess-ec-003", reason="GW 锁死")
+    assert allowed is True
+    assert err == ""
+
+
+def test_check_emergency_escalation_blocks_at_block_threshold(tmp_path: Path) -> None:
+    """N>=5 时无条件拒绝（必须先调查根因）。"""
+    _write_emergency_count(tmp_path, "sess-ec-004", {"count": 5, "block_next_start": True})
+    allowed, err = _check_emergency_escalation(tmp_path, "sess-ec-004", reason="GW 锁死")
+    assert allowed is False
+    assert "阻断本次提交" in err
+
+
+def test_increment_emergency_count_below_block_threshold(tmp_path: Path) -> None:
+    """N+1 < 5 时不设置 block_next_start。"""
+    _write_emergency_count(tmp_path, "sess-ec-005", {"count": 2, "block_next_start": False})
+    new_count = _increment_emergency_count(tmp_path, "sess-ec-005")
+    assert new_count == 3
+    data = _read_emergency_count(tmp_path, "sess-ec-005")
+    assert data["count"] == 3
+    assert data["block_next_start"] is False, "N=3 不应阻断"
+
+
+def test_increment_emergency_count_sets_block_at_threshold(tmp_path: Path) -> None:
+    """N+1 >= 5 时设置 block_next_start=True。"""
+    _write_emergency_count(tmp_path, "sess-ec-006", {"count": 4, "block_next_start": False})
+    new_count = _increment_emergency_count(tmp_path, "sess-ec-006")
+    assert new_count == 5
+    data = _read_emergency_count(tmp_path, "sess-ec-006")
+    assert data["count"] == 5
+    assert data["block_next_start"] is True, "N=5 应阻断下次 session_worktree_start"
+
+
+def test_increment_emergency_count_starts_from_zero(tmp_path: Path) -> None:
+    """文件不存在时从 count=0 开始递增。"""
+    new_count = _increment_emergency_count(tmp_path, "sess-ec-007")
+    assert new_count == 1
+    data = _read_emergency_count(tmp_path, "sess-ec-007")
+    assert data["count"] == 1
+    assert data["block_next_start"] is False
+
+
+# ---------------------------------------------------------------------------
+# P1-5: check_start_blocked 多 session 扫描
+# ---------------------------------------------------------------------------
+
+
+def test_check_start_blocked_no_sessions_dir(tmp_path: Path) -> None:
+    """sessions 目录不存在时返回 (False, '')。"""
+    blocked, reason = check_start_blocked(tmp_path)
+    assert blocked is False
+    assert reason == ""
+
+
+def test_check_start_blocked_no_block(tmp_path: Path) -> None:
+    """所有 session 都未阻断时返回 (False, '')。"""
+    sessions_dir = tmp_path / ".runtime" / "sessions"
+    sessions_dir.mkdir(parents=True)
+    (sessions_dir / "sess-001").mkdir()
+    (sessions_dir / "sess-001" / "emergency_count.json").write_text(
+        '{"count":2,"block_next_start":false}', encoding="utf-8"
+    )
+    (sessions_dir / "sess-002").mkdir()
+    (sessions_dir / "sess-002" / "emergency_count.json").write_text(
+        '{"count":4,"block_next_start":false}', encoding="utf-8"
+    )
+
+    blocked, reason = check_start_blocked(tmp_path)
+    assert blocked is False
+    assert reason == ""
+
+
+def test_check_start_blocked_detects_blocked_session(tmp_path: Path) -> None:
+    """任一 session block_next_start=True 时返回 (True, reason)。"""
+    sessions_dir = tmp_path / ".runtime" / "sessions"
+    sessions_dir.mkdir(parents=True)
+    (sessions_dir / "sess-001").mkdir()
+    (sessions_dir / "sess-001" / "emergency_count.json").write_text(
+        '{"count":2,"block_next_start":false}', encoding="utf-8"
+    )
+    (sessions_dir / "sess-bad").mkdir()
+    (sessions_dir / "sess-bad" / "emergency_count.json").write_text(
+        '{"count":5,"block_next_start":true}', encoding="utf-8"
+    )
+
+    blocked, reason = check_start_blocked(tmp_path)
+    assert blocked is True
+    assert "sess-bad" in reason
+    assert "5" in reason
+
+
+def test_check_start_blocked_skips_corrupt_json(tmp_path: Path) -> None:
+    """损坏的 JSON 文件被跳过（不阻断扫描）。"""
+    sessions_dir = tmp_path / ".runtime" / "sessions"
+    sessions_dir.mkdir(parents=True)
+    (sessions_dir / "sess-corrupt").mkdir()
+    (sessions_dir / "sess-corrupt" / "emergency_count.json").write_text(
+        'not valid json {{{', encoding="utf-8"
+    )
+
+    blocked, reason = check_start_blocked(tmp_path)
+    assert blocked is False
+    assert reason == ""
+
+
+# ---------------------------------------------------------------------------
+# P1-3 + P1-5 集成场景：cleanup_heartbeat_file 不影响 check_start_blocked
+# ---------------------------------------------------------------------------
+
+
+def test_cleanup_heartbeat_does_not_clear_block(tmp_path: Path) -> None:
+    """cleanup_heartbeat_file 删 heartbeat.jsonl 后，emergency_count.json 仍生效。
+
+    场景：session_worktree_abort 后 heartbeat.jsonl 被清理，
+    但 emergency_count.json 保留（计数持久化）。
+    若 block_next_start=True，下次 check_start_blocked 仍应阻断。
+    """
+    sid = "sess-integration-001"
+    hb = heartbeat_file_path(tmp_path, sid)
+    hb.parent.mkdir(parents=True, exist_ok=True)
+    hb.write_text('{"status":"started"}\n', encoding="utf-8")
+    _write_emergency_count(tmp_path, sid, {"count": 5, "block_next_start": True})
+
+    # cleanup heartbeat.jsonl
+    assert cleanup_heartbeat_file(tmp_path, sid) is True
+    assert not hb.exists()
+
+    # emergency_count.json 仍存在并阻断
+    blocked, reason = check_start_blocked(tmp_path)
+    assert blocked is True
+    assert sid in reason
 
 
 if __name__ == "__main__":
