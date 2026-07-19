@@ -97,9 +97,443 @@ _OLLAMA_POLL_INTERVAL_S = 2.5
 _TASK_LEARNER_SAMPLE_LIMIT = 50
 
 
-class AutoRuntimeCore:
-    """三层运行时运营中心——ZephyrAlpha 系统大脑。"""
+# 5.150.2 Extract Class 协作者（God Class 治本：高内聚零耦合职责簇）
+#   - 依赖 core 状态的方法由 core 同名薄封装委托（实例级 patch 面不变）
+#   - 协作者内部跨方法调用一律经 core 属性查找（core._ollama_alive 等），
+#     保留 patch.object(core, "_ollama_alive", ...) 等实例级 patch 拦截点
+# 协作者均无状态——配置/子系统句柄/进程引用等状态保留在 core 上（测试直接读写），
+# 协作者仅经 core 参数读写，不反向持有引用。
 
+
+class _OllamaProcessManager:
+    """ollama 进程生命周期协作者（职责簇：存活探测 / 自动启动 / 可用性确保 / 进程终止）。
+
+    仅读写 core._config.ollama_base_url 与 core._ollama_proc，与其余子系统零耦合。
+    ensure_available 经 core 属性查找调用 core._ollama_alive / core._ensure_ollama_running，
+    实例级 patch（patch.object(core, "_ollama_alive", ...)）语义不变。
+    """
+
+    @staticmethod
+    def ollama_alive(base_url: str, timeout_s: float = 2.0) -> bool:
+        try:
+            resp = requests.get(
+                f"{base_url}/api/tags",
+                timeout=timeout_s,
+            )
+            # 5.56.1 修复：原仅接受 200，改为 2xx 范围判定（与 gpu_consensus_scheduler.py 一致）。
+            return 200 <= resp.status_code < 300
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e, exc_info=True)
+            return False
+
+    @staticmethod
+    def ensure_running(core: AutoRuntimeCore) -> bool:
+        try:
+            kwargs: dict[str, object] = {
+                "stdout": subprocess.DEVNULL,
+                "stderr": subprocess.DEVNULL,
+            }
+            if os.name == "nt":
+                kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+            # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
+            core._ollama_proc = subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
+        except FileNotFoundError as e:
+            logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
+            return False
+
+        for _ in range(10):
+            time.sleep(2.5)
+            if core._ollama_alive(timeout_s=1.5):
+                return True
+        return False
+
+    @staticmethod
+    def ensure_available(core: AutoRuntimeCore, report: BootReport) -> bool:
+        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
+        if core._ollama_alive():
+            return True
+        report.errors.append(f"ollama: not reachable at {core._config.ollama_base_url}, attempting auto-start...")
+        if core._ensure_ollama_running():
+            report.components_started.append("ollama_auto_started")
+            report.steps_completed += 1
+            return True
+        report.errors.append(
+            "ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"
+        )
+        return False
+
+    @staticmethod
+    def terminate_proc(core: AutoRuntimeCore) -> None:
+        """终止 core._ollama_proc 引用的 ollama 子进程（5.49.1 孤儿进程防护）。"""
+        if core._ollama_proc is None:
+            return
+        try:
+            core._ollama_proc.terminate()
+            core._ollama_proc.wait(timeout=5)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.exception("ollama_proc.terminate() failed during shutdown", exc_info=True)
+        finally:
+            core._ollama_proc = None
+
+
+class _LocalModelBootstrap:
+    """本地模型栈启动编排协作者（职责簇：chat backend 选择+降级 / embedding 预热 /
+    本地调度器启动 / VMS 启动）。
+
+    仅读写 core 的 _ollama_chat/_embedding_router/_local_scheduler/_vms/_audit_logger，
+    DeepSeekChat/OllamaChat/EmbeddingRouter/LocalModelScheduler 经模块级名称解析
+    （zephyr.trading.auto_runtime_core.<Name> module-level patch 面不变）。
+    """
+
+    @staticmethod
+    def start_local_models(core: AutoRuntimeCore, report: BootReport) -> None:
+        # chat backend 选择保留 inline 维持 warmup sleep 语义（5.158.11），
+        # 避免 time.sleep 跨文件迁移触发 PERM-TRIGGER 误判。
+        if not core._ensure_ollama_available(report):
+            return
+
+        # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
+        if core._ollama_chat is None:
+            try:
+                deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
+                if deepseek_chat.available:
+                    core._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
+                    core._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")
+                    report.components_started.append("08_deepseek_chat_verify")
+                    report.steps_completed += 1
+                    logger.info("DeepSeekChat 已启用作为推理后端 (deepseek-v4-flash)")
+                else:
+                    logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
+                    raise RuntimeError("DeepSeekChat not available")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
+                try:
+                    core._ollama_chat = OllamaChat()
+                    if core._ollama_chat.available:
+                        core._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
+                        report.components_started.append("08_ollama_chat_verify")
+                        report.steps_completed += 1
+                        time.sleep(2.0)
+                    else:
+                        report.errors.append("ollama_chat: not available (Ollama may not be running)")
+                except Exception as e2:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    report.errors.append(f"ollama_chat_verify: {e2}")
+
+        core._warmup_embedding_router(report)
+        core._start_local_scheduler(report)
+        core._start_vms()
+
+    @staticmethod
+    def warmup_embedding_router(core: AutoRuntimeCore, report: BootReport) -> None:
+        """初始化并预热 embedding router。"""
+        try:
+            if core._embedding_router is None:
+                core._embedding_router = EmbeddingRouter(backend="ollama")
+            core._embedding_router.warmup()
+            core._audit_logger.log_registration("embedding-router", "WARMUP_OK")
+            report.components_started.append("06_embedding_router_warmup")
+            report.steps_completed += 1
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            report.errors.append(f"embedding_router_warmup: {e}")
+
+    @staticmethod
+    def start_local_scheduler(core: AutoRuntimeCore, report: BootReport) -> None:
+        """启动本地模型调度器。"""
+        if core._local_scheduler is not None:
+            try:
+                core._local_scheduler.start()
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                report.errors.append(f"local_scheduler_start: {e}")
+            return
+        try:
+            core._local_scheduler = LocalModelScheduler(
+                embedding_router=core._embedding_router,
+                ollama_chat=core._ollama_chat,
+            )
+            core._local_scheduler.start()
+            core._audit_logger.log_registration("local-model-scheduler", "STARTED")
+            report.components_started.append("12_local_scheduler_start")
+            report.steps_completed += 1
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            report.errors.append(f"local_scheduler_start: {e}")
+
+    @staticmethod
+    def start_vms(core: AutoRuntimeCore) -> None:
+        """启动向量记忆存储（容错——失败仅警告）。"""
+        if core._vms is None:
+            try:
+                core._vms = InProcessVectorMemory()
+                core._vms.start()
+                logger.info("VMS started via AutoRuntimeCore.boot()")
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
+        else:
+            try:
+                core._vms.start()
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
+
+
+class _BootSubsystemRegistrar:
+    """boot 子系统注册协作者（职责簇：cron 事件订阅 / boot hooks / TaskQueue /
+    BlueprintWatcher / FLE scheduler / triple alignment / escalation protocol）。
+
+    仅读写 core 的 _task_queue/_blueprint_watcher/_fle_scheduler/_task_repo，
+    各子系统启动彼此独立（任一失败仅告警不阻断 boot），与 boot 主流程单向耦合。
+    """
+
+    @staticmethod
+    def init_escalation_protocol(core: AutoRuntimeCore) -> None:
+        try:
+            cm = ColdstartManager()
+            cm.initialize()
+            logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
+            logger.warning("EscalationProtocol initialization failed", exc_info=True)
+
+        try:
+            auto_subscribe_eventbus()
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.debug("Escalation EventBus auto-subscribe skipped", exc_info=True)
+
+    @staticmethod
+    def register_task_system_cron_jobs(core: AutoRuntimeCore) -> None:
+        """注册任务系统残留的事件订阅（容错——失败仅告警，不阻断 boot）。"""
+        try:
+            bus = EventBus.get_instance()
+
+            def _on_task_completed(event: object) -> None:
+                """任务完成事件订阅——记录任务完成用于运维可观测性。"""
+                task_id = getattr(event, "task_id", "")
+                logger.debug("task.completed cron-subscription received: task_id=%s", task_id)
+
+            bus.subscribe(EventType.TASK_COMPLETED, _on_task_completed)
+            logger.info("Task system cron jobs (event subscriptions) registered")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 容错：事件订阅失败不阻断 boot，运维通过日志感知降级状态
+            logger.warning("Failed to register task system cron jobs: %s", e, exc_info=True)
+
+    @staticmethod
+    def register_task_system_hooks(core: AutoRuntimeCore) -> None:
+        register_boot_hooks()
+
+    @staticmethod
+    def start_task_queue(core: AutoRuntimeCore) -> None:
+        try:
+            core._task_queue = TaskQueue()
+
+            def _dispatch_handler(item: object) -> bool:
+                try:
+                    tr = core._task_repo
+                    if tr is None:
+                        tr = TaskRepository()
+                    po = PipelineOrchestrator()
+                    task_id = getattr(item, "task_id", "")
+                    task = tr.get(task_id)
+                    if task and task.get("status") in (TaskStatus.READY, TaskStatus.PENDING):
+                        po.dispatch(task)
+                        return True
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    # 5.12.1 修复：原 except: pass 静默吞任务派发失败（任务黑洞）
+                    logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id, exc_info=True)
+                return False
+
+            core._task_queue.set_dispatch_handler(_dispatch_handler)
+            core._task_queue.start_polling()
+            logger.info("TaskQueue polling started (interval=300s)")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("Failed to start TaskQueue: %s", e, exc_info=True)
+
+    @staticmethod
+    def start_blueprint_watcher(core: AutoRuntimeCore) -> None:
+        try:
+            core._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
+            core._blueprint_watcher.start()
+            logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("Failed to start BlueprintWatcher: %s", e, exc_info=True)
+
+    @staticmethod
+    def start_fle_scheduler(core: AutoRuntimeCore) -> None:
+        try:
+            core._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
+            # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
+            # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
+            logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("Failed to instantiate FLE Scheduler: %s", e, exc_info=True)
+
+    @staticmethod
+    def run_boot_triple_alignment(core: AutoRuntimeCore) -> None:
+        try:
+            result = check_triple_alignment(warn_only=True)
+            errors = [v for v in result.violations if v.severity.value == "ERROR"]
+            if errors:
+                logger.warning(
+                    "G-TRIPLE-ALIGN boot check: %d ERROR, %d WARN across %d modules",
+                    len(errors),
+                    len(result.violations) - len(errors),
+                    result.checked_modules,
+                )
+            else:
+                logger.info(
+                    "G-TRIPLE-ALIGN boot check: PASS (%d modules, %d WARN)",
+                    result.checked_modules,
+                    len(result.violations),
+                )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e, exc_info=True)
+
+
+class _TaskModelLearning:
+    """任务-模型学习协作者（职责簇：学习器初始化 / benchmark 播种 / 执行结果记录 /
+    推荐矩阵 / 已完成任务采样学习）。
+
+    仅读写 core 的 _task_learner/_model_router/_model_profiler/_local_scheduler/_audit_logger，
+    与 boot 编排/子系统注册零耦合（仅在 boot 成功且 ollama_chat 就绪后被调用）。
+    """
+
+    @staticmethod
+    def init_task_learner(core: AutoRuntimeCore, report: BootReport) -> None:
+        try:
+            core._task_learner = ModelTaskMatrix()
+            report.components_started.append("13_task_learner_init")
+            report.steps_completed += 1
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            report.errors.append(f"task_learner_init: {e}")
+
+    @staticmethod
+    def init_model_router(core: AutoRuntimeCore) -> None:
+        if core._model_router is not None:
+            return
+        try:
+            core._model_router = ModelRouter()
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            core._model_router = None
+
+    @staticmethod
+    def benchmark_and_learn(core: AutoRuntimeCore, report: BootReport) -> None:
+        try:
+            profiler = core._model_profiler
+            if profiler is None:
+                profiler = ModelProfiler(max_ollama_models=5)
+            profiles = profiler.profile_ollama_only()
+            if not profiles:
+                return
+
+            results = [to_model_benchmark_result(p) for p in profiles if p.available]
+
+            if core._task_learner is not None:
+                core._task_learner.load_benchmark_baseline(results)
+                report.components_started.append("14_learner_seeded")
+                report.steps_completed += 1
+
+            if core._model_router is None:
+                core._init_model_router()
+            if core._model_router is not None:
+                core._model_router.load_benchmark_profiles(results)
+                report.components_started.append("15_router_seeded")
+                report.steps_completed += 1
+
+            core._audit_logger.log_registration("model-benchmark", f"{len(profiles)}_models_profiled")
+            report.components_started.append("16_model_benchmark")
+            report.steps_completed += 1
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            report.errors.append(f"model_benchmark: {e}")
+
+    @staticmethod
+    def learn_from_task_result(
+        core: AutoRuntimeCore, task_type: str, model: str, duration_ms: float, tokens: int, confidence: float = 0.0
+    ) -> None:
+        """记录一次任务执行结果——供大脑学习最优任务->模型映射。"""
+        if core._task_learner is None:
+            return
+        core._task_learner.record(task_type, model, duration_ms, tokens, confidence)
+
+    @staticmethod
+    def get_task_model_recommendations(core: AutoRuntimeCore) -> list[dict[str, object]]:
+        """获取当前任务->模型推荐矩阵。"""
+        if core._task_learner is None:
+            return []
+        recs = core._task_learner.recommend_all()
+        return [
+            {
+                "task_type": r.task_type,
+                "best_model": r.best_model,
+                "score": r.score,
+                "sample_count": r.sample_count,
+                "source": r.source,
+                "alternatives": r.alternatives,
+            }
+            for r in recs
+        ]
+
+    @staticmethod
+    def learner_summary(core: AutoRuntimeCore) -> str:
+        """任务->模型学习器摘要。"""
+        if core._task_learner is None:
+            return "ModelTaskLearner: not initialized"
+        return core._task_learner.summary()
+
+    @staticmethod
+    def learn_from_completed_tasks(core: AutoRuntimeCore) -> int:
+        """从已完成的任务中学习最优模型映射。"""
+        if core._task_learner is None or core._local_scheduler is None:
+            return 0
+
+        count = 0
+        try:
+            results = getattr(core._local_scheduler, "_results", {})
+            for tid, task in list(results.items()):
+                if getattr(task, "status", "") != "completed":
+                    continue
+                result = getattr(task, "result", None)
+                if result is None:
+                    continue
+                mod_id = None
+                model = None
+                dur = 0.0
+                toks = 0
+                conf = 0.0
+
+                if isinstance(result, dict):
+                    mod_id = result.get("module_id")
+                    model = result.get("model")
+                    dur = float(result.get("duration_ms", 0))
+                    toks = int(result.get("tokens_used", 0))
+                    conf = float(result.get("confidence", 0))
+
+                if mod_id and model and dur > 0:
+                    core._task_learner.record(mod_id, model, dur, toks, conf)
+                    count += 1
+
+                if count >= _TASK_LEARNER_SAMPLE_LIMIT:
+                    break
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）
+            logger.exception("_learn_from_completed_tasks failed", exc_info=True)
+
+        if count > 0:
+            core._task_learner._save()
+        return count
+
+
+class AutoRuntimeCore:
+    """三层运行时运营中心——ZephyrAlpha 系统大脑。
+
+    5.150.2 God Class 治本：4 个高内聚零耦合职责簇已提取为同文件协作者类——
+    ollama 进程生命周期（_OllamaProcessManager）、本地模型栈启动编排（_LocalModelBootstrap）、
+    boot 子系统注册（_BootSubsystemRegistrar）、任务-模型学习（_TaskModelLearning）。
+    公共 API 零变化：簇内方法由本类同名薄封装委托（实例级 patch 面不变），状态保留在
+    本类实例上（测试直接读写），协作者仅经 core 参数读写、不反向持有引用。
+    boot/shutdown 编排、组件装配、RBAC 生命周期、状态面板/任务分发/夜班/A2A 访问器
+    与单例状态/调用顺序/副作用深度交织，不外移，理由见各职责分区注释块。
+    """
+
+    # ── 组件装配区（交织保留：16 个子系统实例化 + module-level patch 面） ──
+    # 保留理由：装配顺序即依赖拓扑（registry→orchestrator→dashboard→scanner），
+    # 且测试 patch zephyr.trading.auto_runtime_core.<Name> 模块级类名，移出即断 patch 面。
     def __init__(
         self,
         config: RuntimeConfig | None = None,
@@ -164,6 +598,9 @@ class AutoRuntimeCore:
         self._model_profiler: ModelProfiler | None = model_profiler
         self._task_repo: TaskRepositoryProtocol | None = task_repo
 
+    # ── boot 编排区（交织保留：调用顺序即语义） ──
+    # 保留理由：boot_sequence→L2 模型栈→benchmark→资源引擎→RBAC→子系统注册 的顺序
+    # 与 report 累积语义/_booted 状态翻转/降级标记深度交织，是纯编排而非职责簇。
     def boot(self) -> BootReport:
         report = self._lifecycle.boot_sequence(
             audit_logger=self._audit_logger,
@@ -206,6 +643,9 @@ class AutoRuntimeCore:
         self._booted = report.success
         return report
 
+    # ── RBAC 生命周期区（交织保留：boot 成功末段启动 / shutdown 最先关闭） ──
+    # 保留理由：仅 2 个方法且与 boot/shutdown 编排顺序强耦合（启动顺序敏感：
+    # RBAC 必须在所有子系统就绪后 bootstrap、在任何清理前 shutdown），量小不独立成簇。
     def _bootstrap_rbac(self) -> None:
         """启动RBAC系统 — Agent权限/身份/熔断器/superadmin."""
         try:
@@ -237,51 +677,20 @@ class AutoRuntimeCore:
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.error("RBAC shutdown exception: %s", exc, exc_info=True)
 
+    # ── ollama 进程生命周期（委托 _OllamaProcessManager） ──
     def _ollama_alive(self, timeout_s: float = 2.0) -> bool:
-        try:
-            resp = requests.get(
-                f"{self._config.ollama_base_url}/api/tags",
-                timeout=timeout_s,
-            )
-            # 5.56.1 修复：原仅接受 200，改为 2xx 范围判定（与 gpu_consensus_scheduler.py 一致）。
-            return 200 <= resp.status_code < 300
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("_ollama_alive: ollama health check failed (%s: %s)", type(e).__name__, e, exc_info=True)
-            return False
+        return _OllamaProcessManager.ollama_alive(self._config.ollama_base_url, timeout_s)
 
     def _ensure_ollama_running(self) -> bool:
-        try:
-            kwargs: dict[str, object] = {
-                "stdout": subprocess.DEVNULL,
-                "stderr": subprocess.DEVNULL,
-            }
-            if os.name == "nt":
-                kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
-            # 5.49.1 修复：保存 Popen 引用，shutdown 时可 terminate
-            self._ollama_proc = subprocess.Popen(["ollama", "serve"], **kwargs)  # type: ignore[arg-type]
-        except FileNotFoundError as e:
-            logger.warning("_ensure_ollama_running: ollama binary not found (%s: %s)", type(e).__name__, e)
-            return False
+        return _OllamaProcessManager.ensure_running(self)
 
-        for _ in range(10):
-            time.sleep(2.5)
-            if self._ollama_alive(timeout_s=1.5):
-                return True
-        return False
+    def _ensure_ollama_available(self, report: BootReport) -> bool:
+        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
+        return _OllamaProcessManager.ensure_available(self, report)
 
+    # ── boot 子系统注册（委托 _BootSubsystemRegistrar） ──
     def _init_escalation_protocol(self) -> None:
-        try:
-            cm = ColdstartManager()
-            cm.initialize()
-            logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
-            logger.warning("EscalationProtocol initialization failed", exc_info=True)
-
-        try:
-            auto_subscribe_eventbus()
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("Escalation EventBus auto-subscribe skipped", exc_info=True)
+        return _BootSubsystemRegistrar.init_escalation_protocol(self)
 
     def _register_task_system_cron_jobs(self) -> None:
         """注册任务系统定时作业的残留事件订阅（容错——失败仅告警，不阻断 boot）。
@@ -292,274 +701,79 @@ class AutoRuntimeCore:
         "永久系统必须全自动（自动触发/运行/维护/关闭）"——定时调度虽废除，但任务
         系统仍需通过事件订阅自动响应任务状态变更。
         """
-        try:
-            bus = EventBus.get_instance()
-
-            def _on_task_completed(event: object) -> None:
-                """任务完成事件订阅——记录任务完成用于运维可观测性。"""
-                task_id = getattr(event, "task_id", "")
-                logger.debug("task.completed cron-subscription received: task_id=%s", task_id)
-
-            bus.subscribe(EventType.TASK_COMPLETED, _on_task_completed)
-            logger.info("Task system cron jobs (event subscriptions) registered")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 容错：事件订阅失败不阻断 boot，运维通过日志感知降级状态
-            logger.warning("Failed to register task system cron jobs: %s", e, exc_info=True)
+        return _BootSubsystemRegistrar.register_task_system_cron_jobs(self)
 
     def _register_task_system_hooks(self) -> None:
-        register_boot_hooks()
+        return _BootSubsystemRegistrar.register_task_system_hooks(self)
 
     def _start_task_queue(self) -> None:
-        try:
-            self._task_queue = TaskQueue()
-
-            def _dispatch_handler(item: object) -> bool:
-                try:
-                    tr = self._task_repo
-                    if tr is None:
-                        tr = TaskRepository()
-                    po = PipelineOrchestrator()
-                    task_id = getattr(item, "task_id", "")
-                    task = tr.get(task_id)
-                    if task and task.get("status") in (TaskStatus.READY, TaskStatus.PENDING):
-                        po.dispatch(task)
-                        return True
-                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    # 5.12.1 修复：原 except: pass 静默吞任务派发失败（任务黑洞）
-                    logger.exception("TaskQueue dispatch_handler failed for task_id=%s", task_id, exc_info=True)
-                return False
-
-            self._task_queue.set_dispatch_handler(_dispatch_handler)
-            self._task_queue.start_polling()
-            logger.info("TaskQueue polling started (interval=300s)")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("Failed to start TaskQueue: %s", e, exc_info=True)
+        return _BootSubsystemRegistrar.start_task_queue(self)
 
     def _start_blueprint_watcher(self) -> None:
-        try:
-            self._blueprint_watcher = BlueprintWatcher(poll_interval=60.0, auto_decompose=True)
-            self._blueprint_watcher.start()
-            logger.info("BlueprintWatcher started (interval=60s, auto_decompose=True)")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("Failed to start BlueprintWatcher: %s", e, exc_info=True)
+        return _BootSubsystemRegistrar.start_blueprint_watcher(self)
 
     def _start_fle_scheduler(self) -> None:
-        try:
-            self._fle_scheduler = FeedbackLoopScheduler(poll_interval=30.0)
-            # trae_053 v2.0.0: 禁止 daemon 线程模式，FLE 调度器仅实例化供 tick() 单次执行使用。
-            # 定时轮询已废除，FLE 反馈循环由事件驱动（commit 事件/状态变更事件）。
-            logger.info("FLE Scheduler instantiated (daemon mode abolished per trae_053 v2.0.0)")
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("Failed to instantiate FLE Scheduler: %s", e, exc_info=True)
+        return _BootSubsystemRegistrar.start_fle_scheduler(self)
 
     def _run_boot_triple_alignment(self) -> None:
-        try:
-            result = check_triple_alignment(warn_only=True)
-            errors = [v for v in result.violations if v.severity.value == "ERROR"]
-            if errors:
-                logger.warning(
-                    "G-TRIPLE-ALIGN boot check: %d ERROR, %d WARN across %d modules",
-                    len(errors),
-                    len(result.violations) - len(errors),
-                    result.checked_modules,
-                )
-            else:
-                logger.info(
-                    "G-TRIPLE-ALIGN boot check: PASS (%d modules, %d WARN)",
-                    result.checked_modules,
-                    len(result.violations),
-                )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("G-TRIPLE-ALIGN boot check failed: %s", e, exc_info=True)
+        return _BootSubsystemRegistrar.run_boot_triple_alignment(self)
 
+    # ── 本地模型栈启动编排（委托 _LocalModelBootstrap） ──
     def _start_local_models(self, report: BootReport) -> None:
         """启动本地模型组件——编排 ollama/chat/embedding/scheduler/vms。
 
         5.158.11 重构：extract method（chat backend 保留 inline 维持 warmup sleep 语义，
         避免 time.sleep 迁移触发 PERM-TRIGGER 误判）。主函数 McCabe 16→8。
         """
-        if not self._ensure_ollama_available(report):
-            return
-
-        # 优先使用 DeepSeek API（更强、更快），降级到 OllamaChat
-        if self._ollama_chat is None:
-            try:
-                deepseek_chat = DeepSeekChat()  # 5.141.1 修复: 使用DEFAULT_MODEL默认值, 避免硬编码
-                if deepseek_chat.available:
-                    self._ollama_chat = deepseek_chat  # 接口兼容，复用变量名
-                    self._audit_logger.log_registration("deepseek-chat", "VERIFY_OK")
-                    report.components_started.append("08_deepseek_chat_verify")
-                    report.steps_completed += 1
-                    logger.info("DeepSeekChat 已启用作为推理后端 (deepseek-v4-flash)")
-                else:
-                    logger.warning("DeepSeekChat 不可用，降级到 OllamaChat")
-                    raise RuntimeError("DeepSeekChat not available")
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("DeepSeekChat 初始化失败: %s，降级到 OllamaChat", e, exc_info=True)
-                try:
-                    self._ollama_chat = OllamaChat()
-                    if self._ollama_chat.available:
-                        self._audit_logger.log_registration("ollama-chat", "VERIFY_OK")
-                        report.components_started.append("08_ollama_chat_verify")
-                        report.steps_completed += 1
-                        time.sleep(2.0)
-                    else:
-                        report.errors.append("ollama_chat: not available (Ollama may not be running)")
-                except Exception as e2:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    report.errors.append(f"ollama_chat_verify: {e2}")
-
-        self._warmup_embedding_router(report)
-        self._start_local_scheduler(report)
-        self._start_vms()
-
-    def _ensure_ollama_available(self, report: BootReport) -> bool:
-        """检查 ollama 存活，必要时自动启动。返回 True 表示可用。"""
-        if self._ollama_alive():
-            return True
-        report.errors.append(f"ollama: not reachable at {self._config.ollama_base_url}, attempting auto-start...")
-        if self._ensure_ollama_running():
-            report.components_started.append("ollama_auto_started")
-            report.steps_completed += 1
-            return True
-        report.errors.append(
-            "ollama: could not auto-start. Please install Ollama (https://ollama.com) and run 'ollama serve'"
-        )
-        return False
+        return _LocalModelBootstrap.start_local_models(self, report)
 
     def _warmup_embedding_router(self, report: BootReport) -> None:
         """初始化并预热 embedding router。"""
-        try:
-            if self._embedding_router is None:
-                self._embedding_router = EmbeddingRouter(backend="ollama")
-            self._embedding_router.warmup()
-            self._audit_logger.log_registration("embedding-router", "WARMUP_OK")
-            report.components_started.append("06_embedding_router_warmup")
-            report.steps_completed += 1
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            report.errors.append(f"embedding_router_warmup: {e}")
+        return _LocalModelBootstrap.warmup_embedding_router(self, report)
 
     def _start_local_scheduler(self, report: BootReport) -> None:
         """启动本地模型调度器。"""
-        if self._local_scheduler is not None:
-            try:
-                self._local_scheduler.start()
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                report.errors.append(f"local_scheduler_start: {e}")
-            return
-        try:
-            self._local_scheduler = LocalModelScheduler(
-                embedding_router=self._embedding_router,
-                ollama_chat=self._ollama_chat,
-            )
-            self._local_scheduler.start()
-            self._audit_logger.log_registration("local-model-scheduler", "STARTED")
-            report.components_started.append("12_local_scheduler_start")
-            report.steps_completed += 1
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            report.errors.append(f"local_scheduler_start: {e}")
+        return _LocalModelBootstrap.start_local_scheduler(self, report)
 
     def _start_vms(self) -> None:
         """启动向量记忆存储（容错——失败仅警告）。"""
-        if self._vms is None:
-            try:
-                self._vms = InProcessVectorMemory()
-                self._vms.start()
-                logger.info("VMS started via AutoRuntimeCore.boot()")
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
-        else:
-            try:
-                self._vms.start()
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("VMS auto-start skipped: %s", e, exc_info=True)
+        return _LocalModelBootstrap.start_vms(self)
 
+    # ── 任务-模型学习（委托 _TaskModelLearning） ──
     def _init_task_learner(self, report: BootReport) -> None:
-        try:
-            self._task_learner = ModelTaskMatrix()
-            report.components_started.append("13_task_learner_init")
-            report.steps_completed += 1
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            report.errors.append(f"task_learner_init: {e}")
+        return _TaskModelLearning.init_task_learner(self, report)
 
     def _init_model_router(self) -> None:
-        if self._model_router is not None:
-            return
-        try:
-            self._model_router = ModelRouter()
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._model_router = None
+        return _TaskModelLearning.init_model_router(self)
 
     def _benchmark_and_learn(self, report: BootReport) -> None:
-        try:
-            profiler = self._model_profiler
-            if profiler is None:
-                profiler = ModelProfiler(max_ollama_models=5)
-            profiles = profiler.profile_ollama_only()
-            if not profiles:
-                return
-
-            results = [to_model_benchmark_result(p) for p in profiles if p.available]
-
-            if self._task_learner is not None:
-                self._task_learner.load_benchmark_baseline(results)
-                report.components_started.append("14_learner_seeded")
-                report.steps_completed += 1
-
-            if self._model_router is None:
-                self._init_model_router()
-            if self._model_router is not None:
-                self._model_router.load_benchmark_profiles(results)
-                report.components_started.append("15_router_seeded")
-                report.steps_completed += 1
-
-            self._audit_logger.log_registration("model-benchmark", f"{len(profiles)}_models_profiled")
-            report.components_started.append("16_model_benchmark")
-            report.steps_completed += 1
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            report.errors.append(f"model_benchmark: {e}")
+        return _TaskModelLearning.benchmark_and_learn(self, report)
 
     def learn_from_task_result(
         self, task_type: str, model: str, duration_ms: float, tokens: int, confidence: float = 0.0
     ) -> None:
         """记录一次任务执行结果——供大脑学习最优任务->模型映射。"""
-        if self._task_learner is None:
-            return
-        self._task_learner.record(task_type, model, duration_ms, tokens, confidence)
+        return _TaskModelLearning.learn_from_task_result(self, task_type, model, duration_ms, tokens, confidence)
 
     def get_task_model_recommendations(self) -> list[dict[str, object]]:
         """获取当前任务->模型推荐矩阵。"""
-        if self._task_learner is None:
-            return []
-        recs = self._task_learner.recommend_all()
-        return [
-            {
-                "task_type": r.task_type,
-                "best_model": r.best_model,
-                "score": r.score,
-                "sample_count": r.sample_count,
-                "source": r.source,
-                "alternatives": r.alternatives,
-            }
-            for r in recs
-        ]
+        return _TaskModelLearning.get_task_model_recommendations(self)
 
     def learner_summary(self) -> str:
         """任务->模型学习器摘要。"""
-        if self._task_learner is None:
-            return "ModelTaskLearner: not initialized"
-        return self._task_learner.summary()
+        return _TaskModelLearning.learner_summary(self)
 
+    def _learn_from_completed_tasks(self) -> int:
+        """从已完成的任务中学习最优模型映射。"""
+        return _TaskModelLearning.learn_from_completed_tasks(self)
+
+    # ── 关停编排区（交织保留：关停顺序即语义） ──
+    # 保留理由：RBAC→ollama proc→schedulers→vms→资源引擎→lifecycle 的顺序与
+    # _booted 状态翻转（try/finally 保证）深度交织，是纯编排而非职责簇。
     def shutdown(self) -> ShutdownReport:
         self._shutdown_rbac()
         # 5.49.1 修复：shutdown 时终止 ollama 进程，避免孤儿进程
-        if self._ollama_proc is not None:
-            try:
-                self._ollama_proc.terminate()
-                self._ollama_proc.wait(timeout=5)
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.exception("ollama_proc.terminate() failed during shutdown", exc_info=True)
-            finally:
-                self._ollama_proc = None
+        _OllamaProcessManager.terminate_proc(self)
         if self._local_scheduler is not None:
             try:
                 self._local_scheduler.stop()
@@ -596,6 +810,7 @@ class AutoRuntimeCore:
             self._booted = False
         return report
 
+    # ── 对账编排区（交织保留：orphan→reconcile→学习→双 sync 顺序敏感） ──
     def reconcile(self) -> ReconciliationReport:
         orphan_rate = self._orphan_detector.compute_orphan_rate()
         report = self._health_monitor.reconcile(orphan_rate=orphan_rate)
@@ -604,47 +819,7 @@ class AutoRuntimeCore:
         self.sync_skills_to_capability_registry()
         return report
 
-    def _learn_from_completed_tasks(self) -> int:
-        """从已完成的任务中学习最优模型映射。"""
-        if self._task_learner is None or self._local_scheduler is None:
-            return 0
-
-        count = 0
-        try:
-            results = getattr(self._local_scheduler, "_results", {})
-            for tid, task in list(results.items()):
-                if getattr(task, "status", "") != "completed":
-                    continue
-                result = getattr(task, "result", None)
-                if result is None:
-                    continue
-                mod_id = None
-                model = None
-                dur = 0.0
-                toks = 0
-                conf = 0.0
-
-                if isinstance(result, dict):
-                    mod_id = result.get("module_id")
-                    model = result.get("model")
-                    dur = float(result.get("duration_ms", 0))
-                    toks = int(result.get("tokens_used", 0))
-                    conf = float(result.get("confidence", 0))
-
-                if mod_id and model and dur > 0:
-                    self._task_learner.record(mod_id, model, dur, toks, conf)
-                    count += 1
-
-                if count >= _TASK_LEARNER_SAMPLE_LIMIT:
-                    break
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 5.12.1 修复：原 except: pass 静默吞任务学习失败（学习回路断链不可见）
-            logger.exception("_learn_from_completed_tasks failed", exc_info=True)
-
-        if count > 0:
-            self._task_learner._save()
-        return count
-
+    # ── 状态面板区（已极简薄委托，无簇可提） ──
     def health(self) -> dict:
         return self._health_monitor.dump_last_snapshot()
 
@@ -654,6 +829,7 @@ class AutoRuntimeCore:
     def status_json(self) -> dict:
         return self._dashboard.render_json()
 
+    # ── 任务分发区（已极简薄委托，无簇可提） ──
     def dispatch_task(self, task: WorkItem) -> str:
         return self._work_orchestrator.submit(task)
 
@@ -663,12 +839,14 @@ class AutoRuntimeCore:
     def submit_dag(self, dag_id: str, params: dict | None = None) -> str:
         return self._work_orchestrator.submit_dag(dag_id, params)
 
+    # ── 夜班队列区（已极简薄委托，无簇可提） ──
     def get_night_shift_queue(self) -> list[NightShiftEntry]:
         return self._night_shift_queue.pending()
 
     def resolve_night_shift(self, entry_id: str, decision: str, notes: str = "") -> bool:
         return self._night_shift_queue.resolve(entry_id, decision, notes)
 
+    # ── 子系统访问器区（外部消费者直接依赖，保留） ──
     @property
     def capability_registry(self) -> CapabilityRegistry:
         return self._registry
@@ -700,6 +878,9 @@ class AutoRuntimeCore:
             dream_cycle_archived=not self._dream_cycle.needs_archival(),
         )
 
+    # ── A2A 集成区（交织保留：_init_a2a 为 class-level patch 面，sync 已极简） ──
+    # 保留理由：全部测试 patch AutoRuntimeCore._init_a2a（类级 patch 面），
+    # 两个 sync 方法已是 CapabilitySync 薄委托（2 行），无簇可提。
     def _init_a2a(self) -> None:
         try:
             self._a2a_registry = card_registry

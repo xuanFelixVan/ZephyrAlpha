@@ -587,14 +587,22 @@ def metric_07_dead_code() -> dict:
     all_trees: list[tuple[Path, ast.AST | None, str]] = []
     all_string_literals: set[str] = set()
     for fp in py_files:
-        if fp.name in ("__init__.py", "__main__.py", "conftest.py", "setup.py"):
-            continue
         try:
             src = fp.read_text(encoding="utf-8")
             tree = ast.parse(src, filename=str(fp))
         except (OSError, UnicodeDecodeError, SyntaxError):
             tree = None
             src = ""
+        # 治本（M07 盲点）：字符串字面量从所有文件收集（含 __init__.py 的 __all__
+        # 与 [STARTUP] 头文件）——包 __init__.py 的 __all__ 是对子模块的合法
+        # re-export 引用，原实现先跳过 __init__.py 再收集字符串，导致被 re-export
+        # 的子模块（如 decision_registry/guard_layers）被误报为 orphan。
+        if tree is not None:
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    all_string_literals.add(node.value)
+        if fp.name in ("__init__.py", "__main__.py", "conftest.py", "setup.py"):
+            continue
         # 治本（M07）：per-file 豁免
         if _has_noqa_exempt(src, "m07-orphan"):
             continue
@@ -603,11 +611,6 @@ def metric_07_dead_code() -> dict:
             continue
         all_modules[fp.stem] = fp
         all_trees.append((fp, tree, src))
-        # 治本（M07）：收集所有字符串字面量（用于检测动态引用）
-        if tree is not None:
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Constant) and isinstance(node.value, str):
-                    all_string_literals.add(node.value)
     # 治本（M07）：也扫描 scripts/ 下的 import 和字符串（跨目录引用）
     scripts_dir = REPO_ROOT / "scripts"
     if scripts_dir.exists():
