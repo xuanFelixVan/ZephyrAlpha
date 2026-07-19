@@ -1675,9 +1675,214 @@ def metric_21_root_cause_coverage() -> dict:
         details=details, source=_CONVERGENCE_MAP_REL)
 
 
+# ── 指标 22：docstring 覆盖率倒数（5.42 代码注释与 API 文档）────────────────
+
+
+def _has_docstring(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+    """判定函数节点是否有 docstring（body[0] 是 ast.Constant(str)）。"""
+    if not node.body:
+        return False
+    first = node.body[0]
+    return (
+        isinstance(first, ast.Expr)
+        and isinstance(first.value, ast.Constant)
+        and isinstance(first.value.value, str)
+    )
+
+
+def metric_22_docstring_coverage() -> dict:
+    """docstring 覆盖率倒数（5.42 代码注释与 API 文档，P1 防复发）。
+
+    病根：5.42 HIGH 严重度 + PERMANENT-1，AI 可发现性依赖 docstring。
+    检测：AST 扫描 src/zephyr/ 公共函数（非 _ 开头）无 docstring 计数。
+    范围：src/zephyr/**/*.py，排除 tests/_archive/__pycache__。
+    豁免：无（warn-only 趋势监控）。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            # 仅公共函数（非 _ 开头）
+            if node.name.startswith("_"):
+                continue
+            if _has_docstring(node):
+                continue
+            violations.append(f"{rel}:{node.lineno} {node.name}")
+    return _make_metric("M22", "docstring 覆盖率倒数(公共函数无 docstring)", len(violations), violations, "inline")
+
+
+# ── 指标 23：asyncio.run/get_event_loop 调用数（5.100 异步资源生命周期）────
+
+
+_ASYNCIO_CALL_RE = re.compile(r"\b(asyncio\.run|get_event_loop)\s*\(")
+
+
+def metric_23_asyncio_calls() -> dict:
+    """asyncio.run/get_event_loop 调用数（5.100 异步资源生命周期，P1 防复发）。
+
+    病根：5.100 PERMANENT-2 + 12+ 文件 asyncio.run/get_event_loop，wontfix 但需趋势监控防增量。
+    检测：正则扫描 src/zephyr/ + scripts/governance/ 中 asyncio.run( / get_event_loop( 调用。
+    范围：生产代码，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        try:
+            source = fp.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for line_no, line in enumerate(source.splitlines(), 1):
+            if _ASYNCIO_CALL_RE.search(line):
+                violations.append(f"{rel}:{line_no} {line.strip()[:80]}")
+    return _make_metric("M23", "asyncio.run/get_event_loop 调用数", len(violations), violations, "inline")
+
+
+# ── 指标 26：TODO/FIXME 技术债务标记（5.139）──────────────────────────────
+
+
+_TODO_FIXME_RE = re.compile(r"#\s*(TODO|FIXME)\b", re.IGNORECASE)
+
+
+def metric_26_todo_fixme() -> dict:
+    """TODO/FIXME 计数（5.139 技术债务标记，P1 防复发）。
+
+    病根：5.139 FIXED + 零检出，metric 监控防新增 TODO/FIXME 污染。
+    检测：正则扫描 # TODO / # FIXME（大小写不敏感）。
+    范围：生产代码，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        try:
+            source = fp.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        for line_no, line in enumerate(source.splitlines(), 1):
+            if _TODO_FIXME_RE.search(line):
+                violations.append(f"{rel}:{line_no} {line.strip()[:80]}")
+    return _make_metric("M26", "TODO/FIXME 计数", len(violations), violations, "inline")
+
+
+# ── 指标 27：open() 未在 with 语句（5.144 资源清理顺序）─────────────────────
+
+
+def _is_open_call(node: ast.AST) -> bool:
+    """判定节点是否为 open() 调用。"""
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    return isinstance(func, ast.Name) and func.id == "open"
+
+
+def metric_27_open_not_in_with() -> dict:
+    """open() 未在 with 语句计数（5.144 资源清理顺序，P1 防复发）。
+
+    病根：5.144 FIXED + finally 模式已批量落地，metric 监控防回归。
+    检测：AST 扫描 open() 调用不在 with 上下文管理器内。
+    范围：生产代码，排除 tests/_archive。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        # 收集所有 with 语句内的 open() 调用行号集合
+        with_open_lines: set[int] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.With):
+                for item in node.items:
+                    if _is_open_call(item.context_expr):
+                        with_open_lines.add(item.context_expr.lineno)
+        # 找出不在 with 内的 open() 调用
+        for node in ast.walk(tree):
+            if not _is_open_call(node):
+                continue
+            if node.lineno in with_open_lines:
+                continue
+            violations.append(f"{rel}:{node.lineno} open() not in with")
+    return _make_metric("M27", "open() 未在 with 语句计数", len(violations), violations, "inline")
+
+
+# ── 指标 29：资源未在 try/finally（5.169 文件句柄/资源泄漏）──────────────────
+
+
+def _is_resource_acquire(node: ast.AST) -> bool:
+    """判定节点是否为资源获取调用（acquire/__enter__/Lock()/open()）。"""
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    # 直接名调用：open() / Lock() / Semaphore() 等
+    if isinstance(func, ast.Name) and func.id in ("open", "Lock", "Semaphore", "RLock"):
+        return True
+    # 方法调用：xxx.acquire() / xxx.__enter__()
+    if isinstance(func, ast.Attribute) and func.attr in ("acquire", "__enter__"):
+        return True
+    return False
+
+
+def metric_29_resource_not_in_try_finally() -> dict:
+    """资源未在 try/finally 计数（5.169 文件句柄/资源泄漏，P1 防复发）。
+
+    病根：5.169 FIXED + try/finally 已批量包装，与 5.144 同族防回归。
+    检测：AST 扫描 acquire/release 模式不在 try/finally 内。
+    范围：生产代码，排除 tests/_archive。
+    简化策略：只统计 acquire 调用（open()/Lock()/acquire()）不在 try 块内。
+    """
+    violations: list[str] = []
+    for fp in _iter_prod_py_files():
+        tree, _ = _scan_py_file_ast(fp)
+        if tree is None:
+            continue
+        try:
+            rel = fp.relative_to(REPO_ROOT)
+        except ValueError:
+            rel = fp
+        # 收集所有 Try 节点（含 finally）覆盖的行号范围
+        try_lines: set[int] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Try):
+                start = node.lineno
+                end = getattr(node, "end_lineno", start)
+                for i in range(start, end + 1):
+                    try_lines.add(i)
+        # 收集所有 with 语句覆盖的行号范围（with 等价于 try/finally）
+        for node in ast.walk(tree):
+            if isinstance(node, ast.With):
+                start = node.lineno
+                end = getattr(node, "end_lineno", start)
+                for i in range(start, end + 1):
+                    try_lines.add(i)
+        # 找出不在 try/finally/with 内的资源获取
+        for node in ast.walk(tree):
+            if not _is_resource_acquire(node):
+                continue
+            if node.lineno in try_lines:
+                continue
+            violations.append(f"{rel}:{node.lineno} resource acquire not in try/finally")
+    return _make_metric("M29", "资源未在 try/finally 计数", len(violations), violations, "inline")
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 19 项指标注册表（id → 检测函数）
+# 24 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1699,6 +1904,11 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M19", "治理层收敛缺口数", metric_19_governance_convergence_gap),
     ("M20", "trae_060 §5 快照漂移数", metric_20_runtime_snapshot_drift),
     ("M21", "5病根×3要素覆盖缺口数", metric_21_root_cause_coverage),
+    ("M22", "docstring 覆盖率倒数(公共函数无 docstring)", metric_22_docstring_coverage),
+    ("M23", "asyncio.run/get_event_loop 调用数", metric_23_asyncio_calls),
+    ("M26", "TODO/FIXME 计数", metric_26_todo_fixme),
+    ("M27", "open() 未在 with 语句计数", metric_27_open_not_in_with),
+    ("M29", "资源未在 try/finally 计数", metric_29_resource_not_in_try_finally),
 ]
 
 
