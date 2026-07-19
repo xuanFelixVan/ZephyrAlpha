@@ -209,6 +209,61 @@ class TestParseDdlColumns:
 
 
 # ---------------------------------------------------------------------------
+# 1b. parse_ddl_named_check_constraints 纯函数测试（Ruling:100PCT-AI-GOVERNANCE P1-2）
+# ---------------------------------------------------------------------------
+class TestParseDdlNamedCheckConstraints:
+    """验证从 DDL 文本中解析命名 CHECK 约束。"""
+
+    def test_no_named_constraints(self):
+        """无命名 CHECK 约束的 DDL 返回空列表"""
+        ddl = "CREATE TABLE foo (id TEXT, status TEXT CHECK (status IN ('a','b')))"
+        result = vsh.parse_ddl_named_check_constraints(ddl)
+        assert result == []
+
+    def test_single_named_constraint(self):
+        """单个命名 CHECK 约束"""
+        ddl = (
+            "CREATE TABLE decision_layers ("
+            "  layer_id TEXT PRIMARY KEY,"
+            "  domain_id TEXT,"
+            "  CONSTRAINT chk_domain_not_empty CHECK (domain_id IS NULL OR domain_id <> '')"
+            ")"
+        )
+        result = vsh.parse_ddl_named_check_constraints(ddl)
+        assert result == ["chk_domain_not_empty"]
+
+    def test_multiple_named_constraints(self):
+        """多个命名 CHECK 约束"""
+        ddl = (
+            "CREATE TABLE foo ("
+            "  id TEXT PRIMARY KEY,"
+            "  CONSTRAINT chk_a CHECK (id <> ''),"
+            "  CONSTRAINT chk_b CHECK (id IS NOT NULL)"
+            ")"
+        )
+        result = vsh.parse_ddl_named_check_constraints(ddl)
+        assert set(result) == {"chk_a", "chk_b"}
+
+    def test_case_insensitive(self):
+        """CONSTRAINT 关键字大小写不敏感"""
+        ddl = "CREATE TABLE foo (id TEXT, constraint chk_a check (id <> ''))"
+        result = vsh.parse_ddl_named_check_constraints(ddl)
+        assert result == ["chk_a"]
+
+    def test_real_decision_layers_ddl(self):
+        """用真源 _DDL_DECISION_LAYERS 验证解析正确性"""
+        from zephyr.governance.persistence import decisiongraph_schema
+        result = vsh.parse_ddl_named_check_constraints(decisiongraph_schema._DDL_DECISION_LAYERS)
+        assert "chk_decision_layers_domain_id_not_empty" in result
+
+    def test_inline_check_not_captured(self):
+        """内联 CHECK（无 CONSTRAINT 关键字）不被捕获——设计如此"""
+        ddl = "CREATE TABLE foo (id TEXT, status TEXT CHECK (status IN ('a','b')))"
+        result = vsh.parse_ddl_named_check_constraints(ddl)
+        assert result == []
+
+
+# ---------------------------------------------------------------------------
 # 2. check_ddl_columns 集成测试（注入漂移验证检测）
 # ---------------------------------------------------------------------------
 
@@ -217,6 +272,7 @@ class TestParseDdlColumns:
 # TODO(P2-migration): 后续需将本测试类改造为 PG 适配版本（用 get_db_connection + information_schema 替代 SQLite 临时库/sqlite_master），当前 skip。
 @pytest.mark.skip(reason="P2迁移：依赖 SQLite 临时库 + init_db 创建 SQLite 文件，不适用 PG")
 class TestCheckDdlColumns:
+
     def test_healthy_db_no_issues(self, healthy_db_conn):
         issues = []
         vsh.check_ddl_columns(healthy_db_conn, issues)

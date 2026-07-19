@@ -22,6 +22,7 @@ verify_schema_health.py — depgraph (PostgreSQL) Schema 健康度校验门禁�
   2. 只读触发器存在性：READONLY_TABLES 的 9 张表 × 3 触发器
   3. Schema 版本一致性：MAX(_schema_version) == len(_MIGRATIONS)
   4. PG 运行时健康：死锁计数 / 连接数饱和 / 长事务（P3-T4 改造，替代原计划常驻 monitor_pg.py）
+  5. CHECK 约束一致性：DDL 声明的命名 CHECK 约束必须在 DB 中存在（Ruling:100PCT-AI-GOVERNANCE P1-2）
 
 退出码：
   0 = 健康（PASS）
@@ -61,6 +62,8 @@ _REPO_ROOT = str(next(p for p in _THIS_FILE.parents if (p / "src" / "zephyr").ex
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, str(Path(_REPO_ROOT) / "src"))
 from zephyr.governance import depgraph_schema  # noqa: E402
+# Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 导入 decisiongraph_schema 用于 CHECK 约束校验
+from zephyr.governance.persistence import decisiongraph_schema  # noqa: E402
 
 # READONLY_TABLES 真源在 sync_yaml_to_depgraph.py（创建只读触发器的地方），
 # 此处动态导入消除硬编码副本，防止真源变更后漂移（红蓝对抗修复-严重1）
@@ -127,6 +130,15 @@ _DDL_MAP = {
     "domain_mapping": depgraph_schema._DDL_DOMAIN_MAPPING,
 }
 
+# Ruling:100PCT-AI-GOVERNANCE P1-2 (2026-07-19): 扩展 _DDL_MAP 包含 decisiongraph 表
+# 用于 CHECK 约束一致性校验（防止 P0-3 类 DB↔DDL drift 复发）
+_DDL_MAP.update({
+    "decision_layers": decisiongraph_schema._DDL_DECISION_LAYERS,
+    "decision_nodes": decisiongraph_schema._DDL_DECISION_NODES,
+    "decision_edges": decisiongraph_schema._DDL_DECISION_EDGES,
+    "decision_tracks": decisiongraph_schema._DDL_DECISION_TRACKS,
+})
+
 
 def check_ddl_columns(conn, issues: list) -> None:
     """校验1：DB 实际列 vs DDL 声明列。"""
@@ -180,6 +192,64 @@ def check_schema_version(conn, issues: list) -> None:
             f"[VERSION-DRIFT] _schema_version MAX={actual} 但 _MIGRATIONS 有 {expected} 条迁移"
             f"（差 {expected - actual} 条未执行）"
         )
+
+
+# ── 校验5：CHECK 约束一致性（Ruling:100PCT-AI-GOVERNANCE P1-2） ───────────────────
+# 病根（P0-3）：chk_decision_layers_domain_id_not_empty 约束在 DB 中存在但 DDL 文件缺失，
+# 或反之。DB↔DDL drift 导致 AI 在过期 DDL 上推断=幻觉温床。
+# 治本：解析 DDL 中所有 `CONSTRAINT <name> CHECK (...)` 声明，验证每个在 pg_constraint 中存在。
+import re as _re  # noqa: E402  已有 re 导入，此处的 _re 别名避免重复绑定告警
+
+_CONSTRAINT_CHECK_PATTERN = _re.compile(
+    r"CONSTRAINT\s+(\w+)\s+CHECK\s*\(",
+    _re.IGNORECASE,
+)
+
+
+def parse_ddl_named_check_constraints(ddl: str) -> list[str]:
+    """从 CREATE TABLE DDL 文本中解析命名 CHECK 约束列表。
+
+    只解析 `CONSTRAINT <name> CHECK (...)` 形式的命名约束，
+    不解析内联 `CHECK (...)`（PostgreSQL 自动生成名称，无法可靠匹配）。
+
+    Args:
+        ddl: CREATE TABLE DDL 文本
+
+    Returns:
+        命名 CHECK 约束名称列表（如 ["chk_decision_layers_domain_id_not_empty"]）
+    """
+    return _CONSTRAINT_CHECK_PATTERN.findall(ddl)
+
+
+def check_named_check_constraints(conn, issues: list) -> None:
+    """校验5：DDL 声明的命名 CHECK 约束必须在 DB 的 pg_constraint 中存在。
+
+    病根（P0-3）：DDL 文件声明了约束但 DB 中缺失（或反之），导致
+    AI 在过期 DDL 上推断=幻觉温床。治本：自动检测 drift。
+
+    只校验命名约束（CONSTRAINT <name> CHECK (...)），不校验内联 CHECK
+    （PostgreSQL 自动生成名称，无法可靠跨 DDL/DB 匹配）。
+    """
+    for table, ddl in _DDL_MAP.items():
+        expected_constraints = parse_ddl_named_check_constraints(ddl)
+        if not expected_constraints:
+            continue  # 该表无命名 CHECK 约束，跳过
+
+        # 查询 DB 中该表的所有 CHECK 约束名称
+        cursor = conn.execute(
+            "SELECT conname FROM pg_constraint "
+            "WHERE contype = 'c' AND conrelid = %s::regclass",
+            (table,),
+        )
+        actual_constraints = {row["conname"] for row in cursor.fetchall()}
+
+        for expected_name in expected_constraints:
+            if expected_name not in actual_constraints:
+                issues.append(
+                    f"[CHECK-CONSTRAINT-DRIFT] 表 '{table}' 的命名 CHECK 约束 "
+                    f"'{expected_name}' 在 DDL 中声明但 DB 中缺失"
+                    f"（pg_constraint 未找到——可能未运行迁移 DO 块）"
+                )
 
 
 # ── 校验4：PG 运行时健康（P3-T4 改造） ──────────────────────────────────────────
@@ -256,6 +326,8 @@ def main() -> int:
         check_ddl_columns(conn, issues)
         check_readonly_triggers(conn, issues)
         check_schema_version(conn, issues)
+        # Ruling:100PCT-AI-GOVERNANCE P1-2: CHECK 约束一致性校验
+        check_named_check_constraints(conn, issues)
         if not args.skip_runtime:
             check_pg_runtime_health(conn, issues)
     except Exception as e:
