@@ -218,14 +218,20 @@ RETURNS TRIGGER AS $$
 DECLARE
     v_allow TEXT;
 BEGIN
-    SHOW app.allow_design_maturity_delete INTO v_allow;
+    -- #ARCH-GUC-TRIGGER-FIX-001 (2026-07-19): 用 current_setting(..., true) 替代 SHOW
+    -- 原因: SHOW app.allow_design_maturity_delete 在 GUC 未注册时抛 UndefinedObject 异常，
+    -- 导致 sync_decision_registry 失败（与 sync_dataflow_registry 同类 bug）。
+    -- current_setting 的 missing_ok=true 参数在 GUC 未注册时返回 NULL，不抛异常，
+    -- 触发器正常跳过逃生通道检查，继续执行保护逻辑（阻断 design 删除）。
+    -- 对齐 02_create_pg_schema.sql L665 的 protect_depgraph_design_edges 模式（裁定#203）。
+    v_allow := current_setting('app.allow_design_maturity_delete', true);
     IF v_allow = 'on' THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
     IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 decision 行（表=%, id=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.layer_id, OLD.node_id::TEXT, OLD.edge_id::TEXT);
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 decision 行（表=%, row=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, OLD::text;
     ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM 'design' THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 decision 行降级（表=%, id=%, design→%）', TG_TABLE_NAME, COALESCE(OLD.layer_id, OLD.node_id::TEXT, OLD.edge_id::TEXT), NEW.design_maturity;
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 decision 行降级（表=%, row=%, design→%）', TG_TABLE_NAME, OLD::text, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;

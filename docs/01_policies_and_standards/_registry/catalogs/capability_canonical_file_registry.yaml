@@ -4172,6 +4172,98 @@ capabilities:
       解决发现性：新 AI 搜 "裁定引用/ruling reference/RULING-REFERENCE/裁定#NNN" 可定位真源。
 
   # --------------------------------------------------------------------------
+  # M04 治本补登（2026-07-19）：5 个新 gate 未在 capability registry 登记，
+  # 被 M04 检测器报为 GATE 未登记 capability 数。补登后 M04 闭环。
+  - capability_id: depgraph_freshness_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py
+    aliases:
+      - DEPGRAPH-FRESHNESS
+      - depgraph-freshness
+      - make_depgraph_freshness_gate
+    description: >-
+      DEPGRAPH-FRESHNESS depgraph 新鲜度门禁（gate_id=DEPGRAPH-FRESHNESS, priority=67）。
+      检测 depgraph (PostgreSQL) 运营态快照的新鲜度，过期（陈旧快照）时阻断，
+      防止在过期 depgraph 上施工产生幻觉。canonical = src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py。
+
+  - capability_id: git_call_budget_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py
+    aliases:
+      - GIT-CALL-BUDGET
+      - git-call-budget
+      - make_git_call_budget_gate
+    description: >-
+      GIT-CALL-BUDGET git 调用预算门禁（gate_id=GIT-CALL-BUDGET, priority=105）。
+      限制 commit 过程中的 git 命令调用次数/频率，防止失控的 git 操作风暴。
+      canonical = src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py。
+
+  - capability_id: manual_only_permanent_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py
+    aliases:
+      - MANUAL-ONLY-PERMANENT
+      - manual-only-permanent
+      - make_manual_only_permanent_gate
+    description: >-
+      MANUAL-ONLY-PERMANENT manual-only 永久脚本检测门禁（gate_id=MANUAL-ONLY-PERMANENT, priority=82）。
+      检测标记 [STARTUP] manual 的永久治理脚本（永久功能 MUST 事件触发，禁止 manual-only），
+      对标裁定3 P0 manual-only 永久脚本检测器。canonical = src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py。
+
+  - capability_id: reconciler_health_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py
+    aliases:
+      - RECONCILER-HEALTH
+      - reconciler-health
+      - make_reconciler_health_gate
+    description: >-
+      RECONCILER-HEALTH reconciler 健康度门禁（gate_id=RECONCILER-HEALTH, priority=64）。
+      检测 post-commit reconciler 的执行健康（报告落盘/异常/超时），
+      保障 reconciler 闭环可靠运行。canonical = src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py。
+
+  - capability_id: rule_execution_pairing_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/rule_execution_pairing_gate.py
+    aliases:
+      - RULE-EXECUTION-PAIRING
+      - rule-execution-pairing
+      - make_rule_execution_pairing_gate
+    description: >-
+      RULE-EXECUTION-PAIRING 规则-执行配对门禁（gate_id=RULE-EXECUTION-PAIRING, priority=61）。
+      检测 trae_* 规则文件是否声明配对门禁（paired_gate_id），
+      治"建议性规则无强制消费链"病根（裁定1/3）。canonical = src/zephyr/gov_enforcement/commit_gates/rule_execution_pairing_gate.py。
+
+  # M04 治本补登（2026-07-19，第二批 3 个）
+  - capability_id: snapshot_drift_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py
+    aliases:
+      - SNAPSHOT-DRIFT
+      - snapshot-drift
+      - make_snapshot_drift_gate
+    description: >-
+      SNAPSHOT-DRIFT 快照漂移检测门禁（gate_id=SNAPSHOT-DRIFT, priority=40）。
+      检测规则/契约的静态快照（trae_060 §5 式）与当前代码的漂移。
+      canonical = src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py。
+
+  - capability_id: undefined_name_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py
+    aliases:
+      - UNDEFINED-NAME
+      - undefined-name
+      - make_undefined_name_gate
+    description: >-
+      UNDEFINED-NAME 未定义名称检测门禁（gate_id=UNDEFINED-NAME, priority=106）。
+      AST 检测代码中引用未定义/未导入的名称（F821 级），防 NameError 漏网。
+      canonical = src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py。
+
+  - capability_id: vocab_chain_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/vocab_chain_gate.py
+    aliases:
+      - VOCAB-CHAIN
+      - vocab-chain
+      - make_vocab_chain_gate
+    description: >-
+      VOCAB-CHAIN 词表消费链门禁（gate_id=VOCAB-CHAIN, priority=80）。
+      检测词表合法值到代码的强制消费链（词表硬编码/值域漂移），
+      是 GATE-VOCAB 的补充链。canonical = src/zephyr/gov_enforcement/commit_gates/vocab_chain_gate.py。
+
+  # --------------------------------------------------------------------------
   # 裁定#20-A 建立（2026-07-18）：ruling_registry.yaml 是裁定中央登记表，作为独立
   # capability 登记——对标 architecture_issue_registry.yaml 的发现性模式。新 AI 搜
   # "裁定登记/裁定 registry/ruling registry/裁定#NNN 真源" 可定位 YAML 真源。
@@ -5608,6 +5700,23 @@ creation_tokens:
     token: "auto-commit-gw-abuse-monitor-20260719"
     created_by: "sess-16568-20260719211116"
     capability: "commit_gateway_abuse_monitor"
+  # --- #ARCH-GUC-TRIGGER-FIX-001 (2026-07-19): GUC 触发器缺陷治本修复 ---
+  # 裁定 A (P0): 修复 SHOW app.* → current_setting(..., true)
+  # 裁定 A+ (P0): 修复 COALESCE 跨表列引用 → OLD::text
+  # 裁定 B (P1): sync_all() 级联隔离（待实施）
+  # 裁定 C (P2): reconciler 错误分类（待实施）
+  - file: "docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md"
+    token: "auto-guc-trigger-ruling-20260719"
+    created_by: "sess-34696-20260719234628"
+    capability: "guc_trigger_fix_ruling"
+  - file: "scripts/governance/migrate_sqlite_to_pg/05_fix_guc_trigger_bug.sql"
+    token: "auto-guc-trigger-migration-20260719"
+    created_by: "sess-34696-20260719234628"
+    capability: "guc_trigger_fix_migration"
+  - file: "tests/governance/d8_doc_sync/test_guc_trigger_fix.py"
+    token: "auto-guc-trigger-smoke-test-20260719"
+    created_by: "sess-34696-20260719234628"
+    capability: "guc_trigger_fix_smoke_test"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

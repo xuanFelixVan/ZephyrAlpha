@@ -3786,3 +3786,72 @@ entries:
   related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
   created: '2026-07-19'
   last_updated: '2026-07-19'
+
+# --- #ARCH-GUC-TRIGGER-FIX-001: GUC 触发器缺陷 + sync 级联失败治本（2026-07-19） ---
+# 病根：03_create_dataflow_schema.sql / 03_create_decision_schema.sql 的触发器函数用
+# SHOW app.allow_design_maturity_delete INTO v_allow，但 GUC 未在 sync session 中 SET，
+# SHOW 抛 UndefinedObject 异常，导致 sync_dataflow_registry 失败，reconciler 重试 23 次仍失败。
+# 治本：替换为 current_setting(..., true)，GUC 未注册时返回 NULL 不抛异常。
+# 实施中还发现第二个 bug：COALESCE(OLD.entity_name, OLD.job_name) 跨表共享时求值不存在列，
+# 改用 OLD::text 修复。
+- issue_id: '#ARCH-GUC-TRIGGER-FIX-001'
+  title: GUC 触发器缺陷 + sync 级联失败治本——SHOW→current_setting + COALESCE→OLD::text
+  category: architecture_governance
+  severity: P0
+  adjudication: >-
+    2026-07-19 治本裁定（裁定 A，P0）。病根：protect_dataflow_design_maturity() 和
+    protect_decision_design_maturity() 触发器函数用 SHOW app.allow_design_maturity_delete
+    INTO v_allow 读取 GUC，但 sync_dataflow_registry 不需要绕过保护（只删 production 行），
+    所以不 SET GUC——触发器执行 SHOW 时 GUC 不存在，抛 UndefinedObject 异常。
+
+
+    第一性原理分析（4 层防御模型）：
+    L1 直接修复：GUC 触发器用 current_setting(..., true)——裁定 A（P0，本次完成）
+    L2 故障隔离：sync 函数独立 savepoint，单点失败不扩散——裁定 B（P1，待实施）
+    L3 错误分类：确定性错误不重试，立即 escalate——裁定 C（P2，待实施）
+    L4 场景适配：治理系统从"人辅助"升级为"100% AI 自治"——裁定 D（P3，长期）
+
+
+    实施中发现的第二个 bug（#ARCH-GUC-TRIGGER-FIX-001b→001c）：
+    修复 GUC bug 后，触发器在 dataflow_jobs 表上 RAISE 时崩溃，错误"记录 old 没有字段
+    entity_name"。根因：触发器函数跨 3 表共享（dataflow_datasets/jobs/edges），列结构
+    不同，COALESCE(OLD.entity_name, OLD.job_name) 会求值所有参数，访问不存在列抛异常。
+    尝试 CASE TG_TABLE_NAME 也失败（SQL CASE 同样求值所有分支）。最终修复：改用
+    OLD::text，将整行转为文本，不引用任何特定列。
+
+
+    启示：GUC bug 之前掩盖了 COALESCE bug——触发器在 SHOW 就失败了，根本走不到
+    COALESCE。这是典型的"修一个 bug 暴露另一个 bug"。未来触发器函数跨表共享时，
+    不应引用任何特定列，统一用 OLD::text 或 TG_ARGV 传参。
+  fix_phase: |
+    Phase 1 裁定 A 止血（已完成 2026-07-19）：
+      - 03_create_dataflow_schema.sql: SHOW→current_setting + COALESCE→OLD::text
+      - 03_create_decision_schema.sql: 同上
+      - 05_fix_guc_trigger_bug.sql: 幂等迁移脚本（对已部署 DB 应用修复）
+      - test_guc_trigger_fix.py: 7 个 smoke test 全部 PASSED
+      - 迁移已应用到 live DB，sync_dataflow_registry 恢复正常
+
+    Phase 2 裁定 B 级联隔离（待实施）：
+      - sync_all() 改为 per-function savepoint 隔离
+      - 新增 sync_failures_log 表记录失败项
+
+    Phase 3 裁定 C 错误分类（待实施）：
+      - reconciler 重试逻辑增加错误分类
+      - 确定性错误不重试，立即 escalate
+
+    Phase 4 裁定 D 100% AI 治理加固（长期）：
+      - session_worktree 可靠性修复
+      - fail-open → fail-closed 评估
+      - 自适应阈值
+  impact:
+    - scripts/governance/migrate_sqlite_to_pg/03_create_dataflow_schema.sql（触发器函数修复，Phase 1 已完成）
+    - scripts/governance/migrate_sqlite_to_pg/03_create_decision_schema.sql（触发器函数修复，Phase 1 已完成）
+    - scripts/governance/migrate_sqlite_to_pg/05_fix_guc_trigger_bug.sql（幂等迁移脚本，Phase 1 已完成）
+    - tests/governance/d8_doc_sync/test_guc_trigger_fix.py（7 个 smoke test，Phase 1 已完成）
+    - docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md（裁定文档）
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离，Phase 2 待实施）
+  status: in_progress
+  related_adjudication: 'ARCH-053 design_maturity 保护, ARCH-051 dataflowgraph, 裁定#203 protect_depgraph_design_edges'
+  related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
+  created: '2026-07-19'
+  last_updated: '2026-07-19'
