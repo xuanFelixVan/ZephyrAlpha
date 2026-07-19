@@ -3412,9 +3412,12 @@ entries:
       - 真实调用 CLI + 真实 PostgreSQL + 验证 DB 行写入
       - 用 D_SMOKE_TEST 临时域，测试后清理
 
-    Phase 5 POST-COMMIT-GUARD 升级（待执行）：
-      - warn-only 计数阈值阻断（同一 session 1 小时内 > 3 次 warn-only 升级为 reset_soft_HEAD~1）
-      - 新增 commit_gateway_abuse_monitor_reconciler.py
+    Phase 5 POST-COMMIT-GUARD 升级（裁定 B 阈值结构性修复已完成 2026-07-19 commit 565818c5a3；abuse monitor 待执行）：
+      - warn-only 计数阈值阻断——原设计 per-session 24h ≥3 结构性失效（session 典型寿命
+        1-3 commits，prior_warn_count max=2 永远到不了阈值 3，上线后实测 0 次 block）；
+        裁定 B 治本改为 per-hour aggregate ≥10（1h 滚动窗口全局累计，不限 session），
+        新增 POST_COMMIT_GUARD_NO_VERIFY_THRESHOLD/WINDOW_SECONDS 环境变量覆盖阈值与窗口
+      - 新增 commit_gateway_abuse_monitor_reconciler.py（待执行，Phase 5b）
 
     Phase 6 session 启动健康度自检（待执行）：
       - 新增 session_startup_health_check.py
@@ -3435,7 +3438,7 @@ entries:
     - AGENTS.md（§11.0.3 核心治理工具健康度铁律，Phase 7）
     - src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py（baseline 全扫模式，Phase 3 待执行）
     - tests/governance/test_apply_depgraph_smoke.py（e2e smoke test，Phase 4 待执行）
-    - scripts/governance/git_hooks/post_commit_guard.sh（warn-only 阈值阻断，Phase 5 待执行）
+    - scripts/governance/git_hooks/post_commit_guard.sh（warn-only 阈值阻断，裁定 B 治本已完成 Phase 5a 2026-07-19 commit 565818c5a3；per-hour aggregate ≥10 替代 per-session ≥3）
     - scripts/governance/meta/session_startup_health_check.py（启动健康度自检，Phase 6 待执行）
   status: in_progress
   related_adjudication: 'TRAE-062 SSoT 分类铁律, FP-ISO.4C worktree 君子协定, ARCH-DEPGRAPH-RECONCILER-FAILSILENT'
@@ -3666,5 +3669,56 @@ entries:
   status: in_progress
   related_adjudication: 'ARCH-GOV-CONVERGENCE-META Phase 3.4a, ARCH-TOOL-HEALTH-V1, FP-ISO.4C worktree 君子协定'
   related_rules: 'trae_063_capability_lookup_required (Phase 3.2 待建)'
+  created: '2026-07-19'
+  last_updated: '2026-07-19'
+
+# --- #ARCH-DOC-DRIFT-001: docstring/注释硬编码 gate/reconciler 数量漂移治本（裁定 D，2026-07-19） ---
+# 病根：session_worktree.py / batched_auto_committer.py / reconciliation_registry.py 等
+# 文件的 docstring/注释硬编码"7 个 gate"/"17 个 reconciler"等具体数量，但实际数量
+# 随注册表动态变化（实测 62 gate / 35 reconciler），导致文档系统性漂移。
+# 治本：docstring/注释引用 _WORKTREE_SKIP_GATES / _reconciliation_registry 等实际注册表，
+# 不硬编码具体数量。
+- issue_id: '#ARCH-DOC-DRIFT-001'
+  title: docstring/注释硬编码 gate/reconciler 数量漂移治本——引用注册表常量替代硬编码
+  category: architecture_governance
+  severity: P2
+  adjudication: >-
+    2026-07-19 治本裁定（裁定 D）。病根：session_worktree.py [INVARIANTS] 头部、
+    batched_auto_committer.py docstring、reconciliation_registry.py docstring 中
+    硬编码"7 个 worktree-compatible gate"/"17 个 reconciler"/"17+ 个 spec"等具体数量。
+    但实际数量以 _gate_registry / ReconciliationRegistry._specs 实际注册为准（实测
+    gate count=62 / reconciler count=35），随注册表演进动态变化。硬编码数量导致
+    docstring 系统性漂移：AI 读 docstring 得到错误数量认知，基于错误认知做决策。
+
+
+    第一性原理治本：docstring/注释中引用 gate/reconciler 数量时，必须引用注册表
+    常量本身（如 _WORKTREE_SKIP_GATES / _gate_registry / _reconciliation_registry），
+    不硬编码具体数字。新增 gate/reconciler 时 docstring 自动正确（因为是引用而非字面量）。
+
+
+    11 处漂移修复（commit 565818c5a3）：
+    (1) session_worktree.py [INVARIANTS] 3 处："7 个 worktree-compatible gate" →
+        "所有 worktree-compatible gate（跳过 _WORKTREE_SKIP_GATES）"
+    (2) session_worktree.py _WORKTREE_SKIP_GATES 定义处新增注释：禁止硬编码数量/名称
+    (3) session_worktree.py _run_reconcilers_after_merge docstring："17 个 reconciler" →
+        "所有已注册 reconciler"
+    (4) batched_auto_committer.py docstring 3 处："17 个 reconciler" →
+        "所有已注册 reconciler（数量以 ReconciliationRegistry 实际注册为准）"
+    (5) reconciliation_registry.py docstring 3 处："第18个 reconciler"/"现有 17 个" →
+        "增加一个 reconciler，序号以实际注册顺序为准"
+  fix_phase: |
+    Phase 2 文档漂移治本（已完成 2026-07-19 commit 565818c5a3）：
+      - session_worktree.py 5 处 docstring/注释修复
+      - batched_auto_committer.py 3 处 docstring 修复
+      - reconciliation_registry.py 3 处 docstring 修复
+      - 所有修复统一标注"裁定 D 治本 2026-07-19"便于追溯
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（5 处 docstring/注释，裁定 D 治本已完成）
+    - src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py（3 处 docstring，裁定 D 治本已完成）
+    - src/zephyr/governance/audit/reconciliation_registry.py（3 处 docstring，裁定 D 治本已完成）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  status: resolved
+  related_adjudication: 'ARCH-TOOL-HEALTH-V1 Phase 5a (裁定 B)'
+  related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
   created: '2026-07-19'
   last_updated: '2026-07-19'
