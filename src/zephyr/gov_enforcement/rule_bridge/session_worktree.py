@@ -804,6 +804,89 @@ def _check_duplicate_task(
     return None
 
 
+def _run_startup_health_check(root: Path) -> dict:
+    """AI session 启动健康度 smoke test（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7 Phase 3.3）。
+
+    检测 CAPABILITY-LOOKUP-REQUIRED gate 机制健康度——对标 §11.0.3 #ARCH-TOOL-HEALTH-V1。
+    失败时返回 status="failed" + details，调用方 SHOULD 上报（[ESCALATION]）而非
+    静默 workaround。
+
+    检查项（3 项）：
+      1. capability_lookup_required_gate 模块能否 import（gate 代码完整性）
+      2. .runtime/lookup_audit/ 目录存在且可写（audit log 落盘通路）
+      3. capability_lookup.write_lookup_audit_log 函数可调用（Python API 通路）
+
+    Returns:
+        {"status": "ok" | "failed", "checks": [{"name", "passed", "detail"}, ...]}
+    """
+    checks: list[dict] = []
+    all_passed = True
+
+    # 1. capability_lookup_required_gate 可 import
+    try:
+        from zephyr.gov_enforcement.commit_gates import capability_lookup_required_gate
+        gate_spec = capability_lookup_required_gate.make_capability_lookup_required_gate()
+        checks.append({
+            "name": "capability_lookup_required_gate import",
+            "passed": True,
+            "detail": f"gate_id={gate_spec.gate_id}, priority={gate_spec.priority}",
+        })
+    except Exception as e:  # noqa: BLE001 — 健康检查不抛异常
+        all_passed = False
+        checks.append({
+            "name": "capability_lookup_required_gate import",
+            "passed": False,
+            "detail": f"import failed: {type(e).__name__}: {e}",
+        })
+
+    # 2. .runtime/lookup_audit/ 目录可写
+    try:
+        audit_dir = root / ".runtime" / "lookup_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        # 验证可写：写一个临时测试文件然后删除
+        test_file = audit_dir / "._health_check_test"
+        test_file.write_text("ok", encoding="utf-8")
+        test_file.unlink()
+        checks.append({
+            "name": "lookup_audit dir writable",
+            "passed": True,
+            "detail": str(audit_dir),
+        })
+    except Exception as e:  # noqa: BLE001 — 健康检查不抛异常
+        all_passed = False
+        checks.append({
+            "name": "lookup_audit dir writable",
+            "passed": False,
+            "detail": f"write test failed: {type(e).__name__}: {e}",
+        })
+
+    # 3. capability_lookup.write_lookup_audit_log 可调用（不实际写入）
+    try:
+        from zephyr.governance.capability_lookup import write_lookup_audit_log
+        # 调用空 session_id 验证函数签名（空 session_id 不会写入）
+        write_lookup_audit_log(
+            session_id="",
+            query={}, result_count=0, capability_ids=[],
+        )
+        checks.append({
+            "name": "capability_lookup.write_lookup_audit_log callable",
+            "passed": True,
+            "detail": "function signature verified",
+        })
+    except Exception as e:  # noqa: BLE001 — 健康检查不抛异常
+        all_passed = False
+        checks.append({
+            "name": "capability_lookup.write_lookup_audit_log callable",
+            "passed": False,
+            "detail": f"call failed: {type(e).__name__}: {e}",
+        })
+
+    return {
+        "status": "ok" if all_passed else "failed",
+        "checks": checks,
+    }
+
+
 @_inject_ok
 def session_worktree_start(
     session_id: str | None = None,
@@ -849,11 +932,34 @@ def session_worktree_start(
     sid = session_id or generate_session_id()
     root = Path(project_root) if project_root else REPO_ROOT
 
+    # -1. 启动健康度 smoke test（#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S7 Phase 3.3）
+    #     非阻断——失败时仅 [ESCALATION] 警告，session 仍可创建。对标 §11.0.3 #ARCH-TOOL-HEALTH-V1。
+    #     病根 G7：原无启动 smoke test，gate 故障时 AI 静默 workaround（最大风险）。
+    #     治本：启动时自检 capability_lookup_required_gate + audit log 目录 + write_lookup_audit_log，
+    #     失败时强制 [ESCALATION] 标记暴露给 AI/人类，禁止静默 workaround。
+    health_check = _run_startup_health_check(root)
+    if health_check.get("status") != "ok":
+        failed_names = [
+            c["name"] for c in health_check.get("checks", []) if not c.get("passed")
+        ]
+        logger.error(
+            "[ESCALATION] session_worktree_start 健康度自检失败 (session=%s): %s. "
+            "AI MUST 上报人类而非静默 workaround——对标 #ARCH-TOOL-HEALTH-V1. "
+            "失败项: %s",
+            sid, health_check.get("status"), failed_names,
+        )
+    else:
+        logger.debug(
+            "session_worktree_start 健康度自检通过 (session=%s)", sid,
+        )
+
     # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
     #    双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
     #    逃生通道：allow_concurrent=True 跳过阻断（对标 allow_overlap）
     block_r = _check_concurrency_block(sid, allow_concurrent, breaking_change, root)
     if block_r is not None:
+        # 健康检查结果附加到阻断返回（信息性，不改变阻断决策）
+        block_r["health_check"] = health_check
         return block_r
 
     # 0.5 任务去重检测（裁定#D，2026-07-19）：任务文件指纹与活跃 session 重叠
@@ -882,6 +988,7 @@ def session_worktree_start(
             "registered": False,
             "created": False,
             "error": f"register session failed: {e}",
+            "health_check": health_check,
         }
 
     # 2. 创建 worktree
@@ -960,6 +1067,7 @@ def session_worktree_start(
             "branch": f"session/{sid}",
             "registered": registered,
             "created": created,
+            "health_check": health_check,
         }
     except WorktreeError as e:
         return {
@@ -969,6 +1077,7 @@ def session_worktree_start(
             "registered": registered,
             "created": False,
             "error": f"create worktree failed: {e}",
+            "health_check": health_check,
         }
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
@@ -978,6 +1087,7 @@ def session_worktree_start(
             "registered": registered,
             "created": False,
             "error": f"unexpected: {e}",
+            "health_check": health_check,
         }
 
 
