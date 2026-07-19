@@ -5820,6 +5820,35 @@ creation_tokens:
     token: "auto-gate-abuse-systemic-audit-20260720"
     created_by: "sess-50496-20260720014849"
     capability: "gate_abuse_systemic_audit_ruling"
+
+  # --- 架构债务防复发体系设计文档（2026-07-20，54 维度全覆盖设计）---
+  # 关联 architecture_debt_registry.md §四 54 维度 → 全自动化防犯体系设计（P0/P1/P2 分期）
+  - file: "docs/_working/anti_recurrence_design.md"
+    token: "auto-anti-recurrence-design-20260720"
+    created_by: "sess-35112-20260720042959"
+    capability: "anti_recurrence_design"
+
+  # --- session_worktree heartbeat daemon（2026-07-20，#ARCH-HEARTBEAT-001 P1-1 治本）---
+  # 独立 daemon 进程（DETACHED_PROCESS）替代 PID liveness，30s 刷新 registry heartbeat + JSONL 审计
+  # 关联 #ARCH-ASYNC-MERGE-RECONCILE-001 P1 fix_phase 落地 + Ruling:100PCT-AI-GOVERNANCE 裁定 D-1 / R4
+  - file: "src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py"
+    token: "auto-heartbeat-daemon-20260720"
+    created_by: "sess-heartbeat-p1-20260720"
+    capability: "session_heartbeat_daemon"
+
+  # --- heartbeat daemon smoke test（2026-07-20，#ARCH-HEARTBEAT-001 P1-6）---
+  # 34 个测试覆盖 heartbeat 创建/清理/stale 检测/merge 重试/emergency 成本递增
+  - file: "tests/governance/rule_bridge/test_heartbeat_daemon.py"
+    token: "auto-test-heartbeat-daemon-20260720"
+    created_by: "sess-heartbeat-p1-20260720"
+    capability: "session_heartbeat_daemon_smoke_test"
+
+  # --- heartbeat 治本独立裁定文档（2026-07-20，#ARCH-HEARTBEAT-001 P1-7，R4 交付物）---
+  # 第一性原理分析 + Phase 1 实施细节 + 验证结果 + Phase 2/3 后续路线图
+  - file: "docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md"
+    token: "auto-ruling-session-worktree-heartbeat-20260720"
+    created_by: "sess-heartbeat-p1-20260720"
+    capability: "ruling_session_worktree_heartbeat"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
