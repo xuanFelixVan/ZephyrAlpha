@@ -91,7 +91,14 @@ sections:
       violation_action: warn
     implementation_status:
       title: ARCH-GIT-CALL-BUDGET 建设阶段落地状态
-      description: 跟踪 P0-P3.4 各建设阶段的实际落地状态与 commit hash。SSoT——其他文档（capability_canonical_file_registry.yaml / full_project_tree_zh.md）引用本节为准。
+      description: |
+        跟踪 P0-P3.5 各建设阶段的实际落地状态与 commit hash。SSoT——其他文档
+        （capability_canonical_file_registry.yaml / full_project_tree_zh.md）引用本节为准。
+        2026-07-19 架构裁定（第一性原理 + Web 调研）：
+        - git 2.48.x 崩溃真实根因是 MSYS2/Cygwin FAST_CWD 指针计算失效（msys2-runtime#86 修复于 2.49.0），
+          fscache/fsmonitor 只是崩溃放大器（触发 fork+pipe-back-to-parent 代码路径）而非根因。
+        - P3.1/P3.4 基于错误假设（fscache/fsmonitor 是根因），裁定为 cancelled。
+        - 新增 P3.5 stale worktree 清理治本（调研中发现的真实运维债务）。
       last_updated: "2026-07-19"
       phases:
       - phase: P0
@@ -121,8 +128,16 @@ sections:
         date: "2026-07-19"
       - phase: P3.1
         title: node_modules 排除（fsmonitor 扫描优化）
-        status: skipped
-        reason: N/A——本项目无 node_modules 目录
+        status: cancelled
+        reason: |
+          范畴错误（category error）——前提假设"fsmonitor 是根因"已被推翻。
+          第一性原理调研（2026-07-19）：git 2.48.x 崩溃真实根因是 MSYS2/Cygwin
+          FAST_CWD 指针计算失效（msys2-runtime#86 修复于 2.49.0），fsmonitor 只是
+          fork+pipe-back-to-parent 代码路径上的崩溃放大器，且铁律3已将 fsmonitor 锁定
+          为 false。在 fsmonitor 禁用的前提下，"排除 node_modules" 无可优化对象。
+          且本项目无 node_modules 目录（.gitignore 已排除 .aidrafts/sess-*/、
+          __pycache__/、.venv/ 等），git status 实测 0.16s（60x 低于 warn 阈值）。
+          无问题可治，裁定 cancelled。
         date: "2026-07-19"
       - phase: P3.2
         title: git_health_smoke.py AI session 启动健康度 smoke test（git 版本/fscache/fsmonitor/status 计时/alias 状态）
@@ -138,6 +153,34 @@ sections:
         date: "2026-07-19"
       - phase: P3.4
         title: git fsmonitor--daemon 替代方案（PoC 探索）
-        status: deferred
-        reason: PoC 性质，待 git 2.48.x 崩溃根因 upstream 修复后再评估
+        status: cancelled
+        reason: |
+          同源崩溃路径——fsmonitor--daemon 与已禁用的 fsmonitor 共享 fork+pipe-back-to-parent
+          代码路径（FAST_CWD 崩溃热点），重新启用等于撤销 P0 已消除的放大路径。
+          第一性原理调研（2026-07-19）：
+          - 真实根因是 MSYS2/Cygwin FAST_CWD（msys2-runtime#86，2.49.0 修复），非 fsmonitor。
+          - 当前无性能问题：git status 实测 0.16s（warn 阈值 10s 的 1/60）。
+          - fsmonitor--daemon 与 worktree 快速生命周期不兼容：每个 worktree 需独立 daemon，
+            20 个 stale worktree = 20 个孤儿 daemon，运维负担不可接受。
+          - fsmonitor--daemon 要求 core.untrackedcache=true，否则在 20 万+ 文件仓库上
+            反而拖慢 git status（Tao Klerks 报告）。
+          裁定 cancelled——若未来升级到 git 2.50.1+ 后确认无 FAST_CWD 残留风险，且
+          untrackedcache 已验证，可重新立项（届时作为新 phase 而非复活 P3.4）。
+        date: "2026-07-19"
+      - phase: P3.5
+        title: Stale worktree 清理治本（增强 _branch_commits_superseded + age-based 强制清理）
+        status: planned
+        reason: |
+          调研中发现的真实运维债务（非 P3.1/P3.4 范畴错误）。当前 .aidrafts/ 下
+          20 个 worktree 但 registry 仅 4 个 session（0 active），134,962 文件
+          占项目 91%。session_worktree_sweep 报 swept=0——_branch_commits_superseded
+          过于保守（检测到 unmerged commit 即跳过清理，即使这些 commit 已被
+          其他路径 supersede）。治本方案：
+          1. 增强 _branch_commits_superseded：用 cherry-tracking 判定 commit 是否
+             已通过其他分支合入主仓（cherry-detected = superseded）。
+          2. age-based 强制清理：worktree 创建超过 N 天且 session 未注册 → 标记
+             stale，sweep 时强制清理（移送到 .runtime/orphan_quarantine/<sid>/，
+             保留 72h 后物理删除，可逆操作）。
+          3. 新增 git_performance_monitor reconciler（Phase 4）：持续监控 git status
+             计时，stale worktree 累积超阈值时早期预警。
         date: "2026-07-19"

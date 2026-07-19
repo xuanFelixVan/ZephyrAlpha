@@ -18,21 +18,47 @@
 
 AI session 启动时运行的核心工具健康度检查。
 
-检测项：1.git 版本(2.48.x 崩溃版本) 2.fscache/fsmonitor(仓库级 MUST false)
+检测项：1.git 版本(2.48.x 崩溃版本→warn，2.50.1+推荐) 2.fscache/fsmonitor(仓库级 MUST false)
 3.git status 计时(>30s fail/>10s warn) 4.git alias(5 个危险命令拦截活跃)
+
+版本语义（2026-07-19 架构裁定，第一性原理 + Web 调研）：
+- 2.48.x：warn——MSYS2/Cygwin FAST_CWD 指针计算失效（msys2-runtime#86），
+  fscache/fsmonitor 是 fork+pipe-back-to-parent 代码路径上的崩溃放大器。
+- 2.49.0+：pass（FAST_CWD 已修复）——但 2.49.x/2.50.0 存在 SSH hang regression。
+- 2.50.1+：pass（推荐版本）——FAST_CWD 修复 + SSH hang 修复。
 """
 from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import time
+from typing import Optional
 
 _STATUS_PRIORITY = {"pass": 0, "warn": 1, "fail": 2}
+# git 2.48.x：MSYS2/Cygwin FAST_CWD 指针计算失效（msys2-runtime#86），崩溃放大器
+# 是 fscache/fsmonitor 的 fork+pipe-back-to-parent 代码路径。铁律3 已锁定两者为 false。
 _CRASH_VERSION_PREFIX = "2.48."
+# 2.49.0+：FAST_CWD 已修复（msys2-runtime#86），但仍存在 SSH hang regression
+_FAST_CWD_FIXED_PREFIX = "2.49."
+# 2.50.1+：FAST_CWD 修复 + SSH hang regression 修复（推荐版本）
+_RECOMMENDED_VERSION = (2, 50, 1)
 _STATUS_WARN_SECONDS = 10.0
 _STATUS_FAIL_SECONDS = 30.0
+
+
+def _parse_git_version(version_str: str) -> Optional[tuple[int, int, int]]:
+    """从 'git version 2.50.1.windows.1' 解析出 (major, minor, patch)。
+
+    fail-open：解析失败返回 None（调用方降级为字符串前缀匹配）。
+    """
+    # 提取第一个 x.y.z 数字序列
+    m = re.search(r"(\d+)\.(\d+)\.(\d+)", version_str)
+    if not m:
+        return None
+    return (int(m.group(1)), int(m.group(2)), int(m.group(3)))
 
 
 def _run_git(args, cwd, timeout=60.0):
@@ -51,11 +77,47 @@ def _check_git_version(repo_root):
     if rc != 0:
         return {"check": "git_version", "status": "fail", "detail": f"git --version failed: {stderr}"}
     version = stdout.replace("git version", "").strip()
-    is_crash = version.startswith(_CRASH_VERSION_PREFIX)
-    status = "warn" if is_crash else "pass"
-    detail = (f"git version {version} — 已知崩溃版本(fscache/fsmonitor 0xc0000005)"
-              if is_crash else f"git version {version}")
-    return {"check": "git_version", "status": status, "detail": detail, "version": version}
+    parsed = _parse_git_version(version)
+
+    # 1. 2.48.x — FAST_CWD 崩溃版本（warn）
+    if version.startswith(_CRASH_VERSION_PREFIX):
+        detail = (
+            f"git version {version} — 已知崩溃版本（MSYS2/Cygwin FAST_CWD 指针计算失效，"
+            f"msys2-runtime#86）。铁律3 已锁定 core.fscache=false + core.fsmonitor=false "
+            f"切断崩溃放大路径。建议升级到 git {_RECOMMENDED_VERSION[0]}."
+            f"{_RECOMMENDED_VERSION[1]}.{_RECOMMENDED_VERSION[2]}+（FAST_CWD 修复 + "
+            f"SSH hang regression 修复）。"
+        )
+        return {"check": "git_version", "status": "warn", "detail": detail,
+                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+
+    # 2. 2.49.0+ 但低于 2.50.1 — FAST_CWD 已修复但存在 SSH hang regression（pass + 提示）
+    if parsed is not None and parsed >= (2, 49, 0) and parsed < _RECOMMENDED_VERSION:
+        detail = (
+            f"git version {version} — FAST_CWD 已修复（2.49.0+，msys2-runtime#86）。"
+            f"但仍存在 SSH hang regression（2.49.x/2.50.0），建议升级到 "
+            f"git {_RECOMMENDED_VERSION[0]}.{_RECOMMENDED_VERSION[1]}."
+            f"{_RECOMMENDED_VERSION[2]}+（同时修复 SSH hang）。"
+        )
+        return {"check": "git_version", "status": "pass", "detail": detail,
+                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+
+    # 3. 2.50.1+ — 推荐版本（pass）
+    if parsed is not None and parsed >= _RECOMMENDED_VERSION:
+        detail = (
+            f"git version {version} — 推荐版本（FAST_CWD 修复 + SSH hang regression 修复）。"
+        )
+        return {"check": "git_version", "status": "pass", "detail": detail,
+                "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
+
+    # 4. 低于 2.48 或解析失败 — fail-open pass + 提示
+    detail = (
+        f"git version {version} — 未识别版本（低于 2.48 或解析失败）。"
+        f"建议升级到 git {_RECOMMENDED_VERSION[0]}.{_RECOMMENDED_VERSION[1]}."
+        f"{_RECOMMENDED_VERSION[2]}+ 以确保 FAST_CWD 与 SSH hang 均已修复。"
+    )
+    return {"check": "git_version", "status": "pass", "detail": detail,
+            "version": version, "recommended": ".".join(map(str, _RECOMMENDED_VERSION))}
 
 
 def _check_fscache_fsmonitor(repo_root):
