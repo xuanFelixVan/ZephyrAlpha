@@ -45,6 +45,8 @@ from zephyr.autonomy_core.context.context_rule_registry import ContextRuleRegist
 
 if TYPE_CHECKING:
     from zephyr.shared.protocols.ports import RerankerProtocol
+    from zephyr.orchestrator.contracts.task_card import TaskCard
+    from zephyr.intelligence.model_evaluation.unified_memory_api import UnifiedMemoryAPI
 
 __all__ = [
     "AssembledContext",
