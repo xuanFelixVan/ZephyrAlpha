@@ -127,6 +127,7 @@ select = [
     "B",    # flake8-bugbear
     "SIM",  # flake8-simplify
     "RUF",  # ruff-specific rules
+    "BLE",  # flake8-blind-except (Ruling:100PCT-AI-GOVERNANCE P1-4 — 防止 silent failure 的宽泛 except)
 ]
 # 5.96 维度防御门闸（R67 引入）：
 # 布尔字段冗余/参数蔓延由 scripts/governance/d7_code/scan_debt.py 自定义 AST 扫描器检测
@@ -136,7 +137,12 @@ ignore = [
     "E501",  # line too long (handled by formatter)
     "E402",  # module level import not at top of file (项目风格：import前有docstring/注释)
     "E741",  # ambiguous variable name l (风格建议，不影响功能)
-    "E722",  # bare except (风格建议，不影响功能)
+    # Ruling:100PCT-AI-GOVERNANCE P1-4 (2026-07-19): E722 (bare except) 从 ignore 移除
+    # —— silent failure 治本：bare except 会吞掉所有异常包括 KeyboardInterrupt/SystemExit，
+    #    100% AI 开发场景下必须显式声明捕获类型。存量已清零。
+    # Ruling:100PCT-AI-GOVERNANCE P1-4 (2026-07-19): B904 (raise from err) 从 ignore 移除
+    # —— silent failure 治本：except 块内 raise 新异常不链式保留原因 = traceback 丢失，
+    #    AI 开发场景下必须 `from err`（保留原因）或 `from None`（显式抑制）。
     "RUF001",  # ambiguous unicode character in string (中文标点合理使用)
     "RUF002",  # ambiguous unicode character in docstring (中文标点合理使用)
     "RUF003",  # ambiguous unicode character in comment (中文标点合理使用)
@@ -154,7 +160,6 @@ ignore = [
     "B023",  # function-uses-loop-variable (风格建议)
     "B027",  # empty-method-without-abstract-decorator (风格建议)
     "B028",  # no-explicit-stacklevel (风格建议)
-    "B904",  # raise ... from err (风格建议，不影响功能)
     "B006",  # mutable-argument-default (风格建议，项目沿用模式)
     "SIM101",  # duplicate-isinstance-call (风格建议)
     "SIM102",  # nested if (风格建议)

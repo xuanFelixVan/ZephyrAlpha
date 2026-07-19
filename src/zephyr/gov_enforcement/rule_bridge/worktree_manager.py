@@ -136,7 +136,7 @@ class _WorktreeLock:
                     raise WorktreeError(
                         f"Cannot acquire worktree lock (timeout {self._timeout}s): "
                         f"{self._lock_file}"
-                    )
+                    ) from None
                 # PERM-TRIGGER fix: use Event().wait() instead of time.sleep()
                 threading.Event().wait(self._poll)
 

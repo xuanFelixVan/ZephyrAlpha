@@ -135,7 +135,7 @@ class DeprecationTracker:
                 os.remove(tmp_path)
             except OSError:
                 pass
-            raise DeprecationTrackerError("Permission denied writing deprecation record")
+            raise DeprecationTrackerError("Permission denied writing deprecation record") from None
         except OSError as exc:
             try:
                 os.remove(tmp_path)

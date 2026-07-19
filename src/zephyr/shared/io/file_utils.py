@@ -137,7 +137,7 @@ def atomic_write(
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         if tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
-        raise AtomicWriteError("atomic_write failed")
+        raise AtomicWriteError("atomic_write failed") from None
 
     return target
 

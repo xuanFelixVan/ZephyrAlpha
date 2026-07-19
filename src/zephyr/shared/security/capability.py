@@ -47,12 +47,12 @@ except ImportError:
     raise ImportError(
         "pydantic 未安装，请运行: pip install pydantic>=2.0.0\n"
         "或一键就绪: python scripts/governance/env_check.py --install"
-    )
+    ) from None
 
 try:
     import yaml
 except ImportError:
-    raise ImportError("PyYAML 未安装，请运行 `pip install pyyaml`")
+    raise ImportError("PyYAML 未安装，请运行 `pip install pyyaml`") from None
 
 from zephyr.shared.io.paths import REPO_ROOT
 

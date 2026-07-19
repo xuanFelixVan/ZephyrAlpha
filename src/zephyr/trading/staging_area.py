@@ -165,7 +165,7 @@ class _CrossProcessLock:
                     raise StagingError(
                         f"Cannot acquire cross-process lock (timeout {self._timeout}s)— another session is committing this file",
                         details={"file_path": str(self._file_path)},
-                    )
+                    ) from None
                 time.sleep(self._poll_interval)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
@@ -291,7 +291,7 @@ def _write_atomic_or_raise(target: Path, content: str, error_message: str) -> No
             os.remove(tmp)
         except OSError:
             pass
-        raise StagingError(error_message, details={"target_path": str(target)})
+        raise StagingError(error_message, details={"target_path": str(target)}) from None
 
 
 def _build_conflict_result(
@@ -441,7 +441,7 @@ class StagingArea:
             raise StagingError(
                 "Cannot write draft",
                 details={"draft_path": str(draft)},
-            )
+            ) from None
 
         baseline = draft.with_suffix(draft.suffix + ".baseline")
         baseline_data = f"{mtime}\n{fhash}\n"
@@ -458,7 +458,7 @@ class StagingArea:
             raise StagingError(
                 "Cannot write baseline",
                 details={"baseline_path": str(baseline)},
-            )
+            ) from None
 
         baseline_content_file = draft.with_suffix(draft.suffix + ".baseline_content")
         baseline_content_tmp = baseline_content_file.with_suffix(
@@ -476,7 +476,7 @@ class StagingArea:
             raise StagingError(
                 "Cannot write baseline content",
                 details={"baseline_content_path": str(baseline_content_file)},
-            )
+            ) from None
 
         return draft
 
@@ -548,7 +548,7 @@ class StagingArea:
                 raise StagingError(
                     "Cannot commit draft",
                     details={"target_path": str(target)},
-                )
+                ) from None
 
         self._cleanup_draft(session_id, file_path)
         return CommitResult(status=CommitStatus.OK, file_path=file_path, message="committed successfully")

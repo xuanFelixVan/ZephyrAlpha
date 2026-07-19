@@ -268,7 +268,7 @@ class ApiClient:
                 raise ApiCallError(
                     f"request timed out after {effective_timeout}s: {method.value}",
                     details={"url": url, "method": method.value, "timeout_seconds": effective_timeout},
-                )
+                ) from None
 
             duration_ms = (time.monotonic() - t0) * 1000
             metrics = ApiCallMetrics(

@@ -49,4 +49,4 @@ def __getattr__(name: str):
         globals()[name] = mod
         return mod
     except ImportError:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None

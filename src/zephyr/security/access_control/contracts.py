@@ -96,8 +96,9 @@ class RBACAuditBridge:
             # 调用 AuditWriter().write() —— mocked 测试 patch AuditWriter 类，
             # 配置 AuditWriter().write() 返回 chain_hash dict。
             audit_record = AuditWriter().write(**write_kwargs)
-        except Exception:
-            # 未 mock 场景：AuditWriter 是 ABC（TypeError）或全局 writer 未初始化
-            # （ContractViolationError）。回退到 plain dict，保证桥接层永不抛异常。
+        except Exception:  # noqa: BLE001  # 桥接层不变量：永不抛异常（Ruling:100PCT-AI-GOVERNANCE P1-4）
+            # 故意宽泛捕获：AuditWriter 是 ABC（TypeError）/ 全局 writer 未初始化
+            # （ContractViolationError）/ 其他审计基础设施故障均回退到 plain dict，
+            # 保证 RBAC 决策本身不受审计写入失败影响（审计是 side-effect，不能阻塞主流程）。
             audit_record = dict(write_kwargs)
         return {"granted": granted, "audit_record": audit_record}

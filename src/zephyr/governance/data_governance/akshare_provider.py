@@ -84,7 +84,7 @@ class AkshareProvider(DataSourceBase):
                 self._ak = ak
                 _logger.info("Akshare loaded successfully. version=%s", getattr(ak, "__version__", "unknown"))
             except ImportError:
-                raise ImportError("Akshare not installed. Run: pip install akshare")
+                raise ImportError("Akshare not installed. Run: pip install akshare") from None
         return self._ak
 
     def fetch_historical(

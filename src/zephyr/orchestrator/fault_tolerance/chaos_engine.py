@@ -394,7 +394,7 @@ class ChaosEngine:
         except ValueError:
             raise ChaosInjectError(
                 "Unknown fault type: %s. Valid types: %s" % (fault_type, [e.value for e in InjectType])
-            )
+            ) from None
 
         fault_id = "fault-%s" % uuid.uuid4().hex[:12]
         record = FaultRecord(

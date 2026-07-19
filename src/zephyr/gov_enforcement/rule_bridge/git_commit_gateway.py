@@ -121,6 +121,7 @@ from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import make_perm_trig
 from zephyr.gov_enforcement.commit_gates.msg_exposure_gate import make_msg_exposure_gate
 from zephyr.gov_enforcement.commit_gates.empty_handler_gate import make_empty_handler_gate
 from zephyr.gov_enforcement.commit_gates.orphan_module_gate import make_orphan_module_gate
+from zephyr.gov_enforcement.commit_gates.rule_execution_pairing_gate import make_rule_execution_pairing_gate  # Phase 3.5
 from zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate import make_doc_ref_broken_gate
 from zephyr.gov_enforcement.commit_gates.function_dup_gate import make_function_dup_gate
 from zephyr.gov_enforcement.commit_gates.bare_getenv_gate import make_bare_getenv_gate
@@ -290,7 +291,7 @@ class _GlobalCommitLock:
                     raise GatewayError(
                         f"Cannot acquire global commit lock (timeout {self._timeout}s)— "
                         f"another session is committing. Lock file: {self._lock_file}"
-                    )
+                    ) from None
                 # PERM-TRIGGER fix: use Event().wait() instead of time.sleep()
                 threading.Event().wait(self._poll_interval)
 
@@ -339,6 +340,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_ttl_gate())  # priority=32 ttl gate
         self._gate_registry.register(make_file_placement_ttl_gate())  # priority=33 文件放置与TTL一致性（ARCH-049，落地 ttl_vocabulary §146-152 永久区准入机制）
         self._gate_registry.register(make_create_guard())  # priority=60 治本"造第二真源"（trae_060 §2）
+        self._gate_registry.register(make_rule_execution_pairing_gate())  # priority=65 Phase 3.5 规则-执行配对（trae_*.yaml MUST 有 enforcement.paired_gate_id）
         self._gate_registry.register(make_dangling_reference_gate())  # priority=70 治本悬空引用（AGENTS.md §X.Y）
         self._gate_registry.register(make_arch_reference_gate())  # priority=75 治本 #ARCH-NNN 悬空引用（编号铁律#6 代码强制）
         self._gate_registry.register(make_ruling_reference_gate())  # priority=74 治本 裁定#NNN 悬空引用（裁定#20-B，阶段2 hard block 已启用 裁定#20-G，对标 ARCH-REFERENCE，紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后）

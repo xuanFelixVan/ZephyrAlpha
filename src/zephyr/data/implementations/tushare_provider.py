@@ -72,7 +72,7 @@ class TushareProvider(DataSourceBase):
         try:
             token = get_required_secret("TUSHARE_TOKEN")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            raise RuntimeError(f"TUSHARE_TOKEN 环境变量未设置: {e}")
+            raise RuntimeError(f"TUSHARE_TOKEN 环境变量未设置: {e}") from e
         import tushare as ts
         ts.set_token(token)
         self._pro = ts.pro_api()

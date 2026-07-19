@@ -198,7 +198,7 @@ class InputSanitizer:
         try:
             resolved.relative_to(self._root)
         except ValueError:
-            raise PathTraversalError("Path escapes root")
+            raise PathTraversalError("Path escapes root") from None
 
         if mode == "write":
             rel = str(resolved.relative_to(self._root)).replace("\\", "/")
