@@ -5503,6 +5503,12 @@ creation_tokens:
     token: "auto-decision-invariants-20260719"
     created_by: "sess-34624-20260719150215"
     capability: "decisiongraph_documentation_generation"
+
+  # --- 开发环境一次性初始化（2026-07-19 裁定 #ARCH-PYTHON-SITECUSTOMIZE，usercustomize.py 安装工具）---
+  - file: "scripts/setup_dev_env.py"
+    token: "auto-setup-dev-env-20260719"
+    created_by: "sess-16216-20260719163301"
+    capability: "dev_env_setup"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

@@ -10,21 +10,26 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 启动失败绝不阻断解释器——任何异常静默吞掉
 # [TESTS] tests/llm_security/test_runtime_interceptor.py
+# [TTL] permanent
 """
-sitecustomize.py — Python 解释器启动时自动加载的运行时 Gate 引导。
+sitecustomize.py — Python 解释器启动时自动加载的运行时 Gate 引导（fallback 机制）。
 
-Python 的 site 模块在解释器启动时自动 import sitecustomize（若 sys.path 上存在）。
-本文件利用该机制在进程启动时自动安装 LLM 裸调运行时拦截器（runtime_interceptor），
-实现“无需业务代码显式调用”的零侵入自动生效（对标 GATE-20 后备防线需求）。
+⚠️ Python 3.11 行为警示（2026-07-19 裁定 #ARCH-PYTHON-SITECUSTOMIZE）：
+  Python 3.11 的 site 模块在调用 execsitecustomize() 时，sys.path **不包含 cwd**
+  （安全机制）。经 PYTHONVERBOSE=2 实测确认：site 模块搜索 sitecustomize 时遍历
+  30 个路径（DLLs/Lib/Python311/site-packages 等），**无一是 cwd**。
+  因此 `python -c "..."` 模式下本文件**不会被加载**——它是死代码。
+
+  本文件仅作为以下场景的 fallback：
+  - `python script.py`（脚本在仓库根，sys.path[0]=脚本目录=仓库根）→ 生效
+  - `python -m pytest`（pytest 可能修改 sys.path 使仓库根可被搜索）→ 部分生效
+
+  **主要机制**：usercustomize.py（位于 USER_SITE，site 模块的 execusercustomize()
+  会可靠加载）。usercustomize.py 承担 `python -c` 模式下的 src/ 注入 +
+  runtime_interceptor 安装职责。usercustomize.py 不在版本控制中（全局文件），
+  由 AI 进项目时一次性配置（见 .trae/rules/project_rules.md FIRST-READ 步骤 0）。
 
 部署位置：仓库根目录（d:\\ZephyrAlpha\\sitecustomize.py）。
-生效场景（cwd=仓库根 或 仓库根在 sys.path 上）：
-  - python -m pytest / python -c / python -m zephyr...   → cwd='' 在 sys.path → 生效
-  - python foo.py（脚本在仓库根）                          → 生效
-  - python scripts/sub/foo.py（脚本在子目录）              → sys.path[0]=脚本目录，
-    仓库根不在 path → 不生效（此场景为静态脚本，非业务运行时，GATE-20 静态门禁已覆盖）
-    如需覆盖：set PYTHONPATH=<repo_root>
-
 kill-switch：ZEPHYR_RUNTIME_GATE=0 → 完全关闭（install() 内部再次校验，双重尊重）。
 
 铁律遵循：
