@@ -1,0 +1,179 @@
+rule_id: TRAE-065
+title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP，裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-065
+depends_on:
+- TRAE-054
+- TRAE-062
+- TRAE-064
+tags:
+- TRAE
+- capability_lookup
+- L1_foundation
+- anti_hallucination
+- zero幻觉空间
+- 能力反查
+- commit_gate
+- audit_log
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-CAPABILITY-LOOKUP
+- 能力反查
+- capability_lookup
+- CAPABILITY-LOOKUP-REQUIRED
+- ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD
+severity: critical
+scope: capability_lookup_required
+domain: TRAE
+triggers:
+- operation: file_write
+- operation: src_zephyr_business_code_write
+- operation: commit_gate_check
+- operation: session_worktree_start
+- operation: session_worktree_commit
+- operation: git_commit_gateway_commit
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+sections:
+  capability_lookup_required:
+    section_type: procedure
+    title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP）
+    original_rules:
+    - RULE-CAPABILITY-LOOKUP
+    conditions:
+    - type: trigger
+      check: AI 写第一行 src/zephyr/**/*.py 业务代码（不含 tests/ / *.md / *.yaml / *.json）前
+      pass: 先调用 rule_discovery.discover_applicable_rules 或 capability_lookup.find，进入"零幻觉空间"
+      fail: 凭记忆推断适用规则 → 幻觉/漂移根源
+    - type: constraint
+      check: 100% AI 开发场景下，AI 不查规则就写代码 = 在过期快照上推断 = 幻觉温床。5 层断裂模型：可知性(AI 不知道有规则) → 可达性(AI 无法调用规则查询) → 可观察性(AI 无反馈) → 可逃生性(逃生通道坏了) → 可追溯性(审计链断了)
+      pass: 5 层全部打通——AI 知道规则(MCP 注册) + AI 能调用(rule_discovery/capability_lookup) + AI 有反馈(audit log) + 逃生通道可用([no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP=1) + 审计链完整(.runtime/lookup_audit/<session_id>.jsonl)
+      fail: 任一层断裂 → gate 形同虚设或永久阻断所有 commit
+    actions:
+    - type: mandatory
+      step: '铁律1: AI 施工前 MUST 调用能力反查——写第一行 src/zephyr/**/*.py 业务代码前，必须先调用以下任一接口：(a) MCP 接口（首选）rule_discovery.discover_applicable_rules(operation="file_write")；(b) Python API（备选）capability_lookup.find(<keyword>, session_id=<sid>)'
+    - type: mandatory
+      step: '铁律2: 能力反查调用 MUST 传入 session_id（参数优先，回退 ZEPHYR_SESSION_ID 环境变量），以便 audit log 落盘到 .runtime/lookup_audit/<session_id>.jsonl'
+    - type: mandatory
+      step: '铁律3: CAPABILITY-LOOKUP-REQUIRED gate（priority=110）在 commit 时检查 audit log——session 级 JSONL 含 "tool" 字段的 entry 数 > 0 则放行，否则 fail-closed 阻断'
+    - type: mandatory
+      step: '铁律4: GitCommitGateway.commit() 和 session_worktree._run_pre_commit_gates() 两条 commit 路径 MUST 对称传递 commit_message 给 check_all()——禁止任一路径漏传（G1 止血铁律）'
+    - type: mandatory
+      step: '铁律5: rule_discovery server MUST 注册到 config/mcp.json——否则 AI 无法通过 MCP 调用（G2 可达性铁律）'
+    - type: mandatory
+      step: '铁律6: capability_lookup.find/get 和 rule_discovery.discover_applicable_rules MUST 写 audit log——JSONL 字段：ts / tool / query / result_count / rule_ids（G3 可追溯性铁律）'
+    - type: mandatory
+      step: '铁律7: session_worktree_start MUST 执行启动健康度 smoke test——检测 (a) capability_lookup_required_gate 可 import (b) .runtime/lookup_audit/ 可写 (c) write_lookup_audit_log 可调用。失败时 [ESCALATION] 上报而非静默 workaround（G7 启动健康度铁律，对标 §11.0.3 #ARCH-TOOL-HEALTH-V1）'
+    - type: mandatory
+      step: '逃生通道1（常规）: commit message 含 [no-lookup:<reason>] 标记 → gate 放行。reason MUST 说明为何不查规则（如 dogfooding 元场景、紧急 hotfix）'
+    - type: mandatory
+      step: '逃生通道2（紧急）: ZEPHYR_BYPASS_LOOKUP=1 环境变量 → gate 放行。仅限 capability lookup 机制本身施工（dogfooding）或紧急 hotfix'
+    - type: forbidden
+      step: '禁止: 凭记忆推断适用规则而不调用能力反查——幻觉/漂移根源'
+    - type: forbidden
+      step: '禁止: 绕过 audit log 落盘——gate 据此识别调用，无 log = 未调用 = 阻断'
+    - type: forbidden
+      step: '禁止: GitCommitGateway.commit() 漏传 commit_message 给 check_all()——逃生通道 [no-lookup:] 检测依赖 commit_message（G1 病根）'
+    - type: forbidden
+      step: '禁止: rule_discovery server 不注册到 mcp.json——AI 无法通过 MCP 调用 = 可达性断裂（G2 病根）'
+    - type: forbidden
+      step: '禁止: capability_lookup.find/get 不写 audit log——可追溯性断裂（G3 病根）'
+    - type: forbidden
+      step: '禁止: gate 故障时 AI 静默 workaround——MUST [ESCALATION] 上报人类（G7 病根，100% AI 开发场景最大风险）'
+    invariants:
+    - id: CAP-LOOKUP-INV-001
+      title: 施工前能力反查
+      description: AI 写第一行 src/zephyr/**/*.py 业务代码前 MUST 调用 rule_discovery.discover_applicable_rules 或 capability_lookup.find。调用 MUST 传 session_id 以落盘 audit log
+      enforcement: CAPABILITY-LOOKUP-REQUIRED gate（priority=110）+ audit log 检查
+      violation_action: block_commit
+    - id: CAP-LOOKUP-INV-002
+      title: 双路径 commit_message 对称
+      description: GitCommitGateway.commit() 和 session_worktree._run_pre_commit_gates() 两条 commit 路径 MUST 对称传递 commit_message 给 check_all()。禁止任一路径漏传
+      enforcement: test_commit_passes_message_to_gates 单测 + 双路径代码审查
+      violation_action: reject_change
+    - id: CAP-LOOKUP-INV-003
+      title: MCP 可达性
+      description: rule_discovery server MUST 注册到 config/mcp.json servers 段 + acl_by_server 段。禁止"server 存在但未注册"的可达性断裂
+      enforcement: mcp.json 注册 + RBAC 三档配置
+      violation_action: reject_change
+    - id: CAP-LOOKUP-INV-004
+      title: audit log 落盘
+      description: capability_lookup.find/get 和 rule_discovery.discover_applicable_rules MUST 写 JSONL audit log 到 .runtime/lookup_audit/<session_id>.jsonl。字段：ts / tool / query / result_count / rule_ids。best-effort fail-open（写入失败仅 logger.warning）
+      enforcement: write_lookup_audit_log 函数 + smoke test
+      violation_action: reject_change
+    - id: CAP-LOOKUP-INV-005
+      title: 启动健康度自检
+      description: session_worktree_start MUST 执行启动健康度 smoke test（3 项检查），失败时 [ESCALATION] 上报而非静默 workaround。非阻断设计（warn-only）
+      enforcement: _run_startup_health_check 函数 + [ESCALATION] 日志标记
+      violation_action: escalate_to_human
+    - id: CAP-LOOKUP-INV-006
+      title: 逃生通道可用
+      description: 逃生通道 MUST 可用——(a) [no-lookup:<reason>] commit message 标记 (b) ZEPHYR_BYPASS_LOOKUP=1 环境变量。逃生通道使用 MUST 在 commit message 说明原因
+      enforcement: gate _has_bypass_marker 检测 + commit message 审查
+      violation_action: warn_only
+    examples:
+    - scenario: AI 写 src/zephyr/governance/new_module.py 前
+      正确: 先调 rule_discovery.discover_applicable_rules(operation="file_write", session_id="sess-xxx") → audit log 落盘 → 写代码 → commit 时 gate 读 audit log 放行
+      错误: 凭记忆直接写代码 → commit 时 gate 无 audit log → fail-closed 阻断
+    - scenario: AI 为 capability lookup 机制本身施工（dogfooding）
+      正确: 使用 ZEPHYR_BYPASS_LOOKUP=1 紧急逃生通道 + commit message 说明 dogfooding 元场景
+      错误: 静默 workaround 绕过 gate → G7 病根复发
+    - scenario: 紧急 hotfix
+      正确: commit message 含 [no-lookup:emergency hotfix for XXX] → gate 放行
+      错误: 永久禁用 gate → 安全防线丧失
+    common_mistakes:
+    - '❌ 凭记忆推断适用规则而不调用能力反查——幻觉/漂移根源'
+    - '❌ GitCommitGateway.commit() 漏传 commit_message 给 check_all()——逃生通道 [no-lookup:] 检测失效（G1 病根）'
+    - '❌ rule_discovery server 不注册到 mcp.json——AI 无法通过 MCP 调用（G2 病根）'
+    - '❌ capability_lookup.find/get 不写 audit log——可追溯性断裂（G3 病根）'
+    - '❌ gate 故障时 AI 静默 workaround——100% AI 开发场景最大风险（G7 病根）'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-062
+  - TRAE-064
+  scripts:
+  - src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+  - src/zephyr/governance/capability_lookup.py
+  - src/zephyr/integration/mcp/rule_discovery_server.py
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - src/zephyr/gov_enforcement/git_commit_gateway.py
+  - scripts/git_commit.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  modules:
+  - MOD-GATE_ENGINE
+  - MOD-GOVERNANCE
+  - MOD-GOV-SESSION_WORKTREE
+  blueprints:
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  - docs/03_modules/_domain_governance/blueprint.md
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - config/mcp.json
+enforcement:
+  type: code
+  executors:
+  - capability_lookup_required_gate
+  - session_worktree_startup_health_check
+  - audit_log_jsonl
+  bypass_allowed: true
+  bypass_markers:
+  - commit_message: '[no-lookup:<reason>]'
+  - env_var: ZEPHYR_BYPASS_LOOKUP=1
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD'
+provenance:
+  extracted_at: '2026-07-19T00:00:00'
+  extracted_by: scaffold-generated
+  reason: 显化"能力反查强制 + 逃生通道治本"规则，写入所有 AI 操作时必看的位置。防止 AI 凭记忆推断规则（幻觉温床）+ 防止 gate 故障时静默 workaround（100% AI 开发场景最大风险）。裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD 7

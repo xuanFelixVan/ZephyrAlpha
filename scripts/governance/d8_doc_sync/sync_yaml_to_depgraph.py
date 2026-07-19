@@ -2008,7 +2008,7 @@ def sync_rule_ai_perception_index(cur):
         rule_file       TEXT NOT NULL DEFAULT ''
     )
     """)
-    cur.execute("COMMENT ON TABLE rule_ai_perception IS '规则AI感知索引（#183，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）— trae 规则→operations/gate_ids 映射，真源 rule_ai_perception_index.yaml'")
+    cur.execute("COMMENT ON TABLE rule_ai_perception IS '规则AI感知索引（#183，#ARCH-GOV-CONVERGENCE-META Phase 3.2a）— 表性质: YAML 真源只读缓存 | 禁止操作: readonly 触发器保护，禁止直接 INSERT/UPDATE/DELETE | 真源：docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml | 同步入口: scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py sync_rule_ai_perception_index()'")
 
     data = load_yaml("_registry/catalogs/rule_ai_perception_index.yaml")
     rules = data.get("rules", [])

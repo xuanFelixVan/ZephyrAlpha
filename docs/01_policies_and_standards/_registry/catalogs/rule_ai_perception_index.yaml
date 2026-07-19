@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-18T23:41:09Z'
+generated_at: '2026-07-19T06:51:05Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 64
+total_rules: 65
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1634,3 +1634,38 @@ rules:
   - ARCH-GIT-CALL-BUDGET
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_064_git_call_budget.yaml
+- rule_id: TRAE-065
+  title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP，裁定
+  module_id: TRAE-065
+  scope: capability_lookup_required
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - file_write
+  - src_zephyr_business_code_write
+  - commit_gate_check
+  - session_worktree_start
+  - session_worktree_commit
+  - git_commit_gateway_commit
+  gate_ids:
+  - CAPABILITY-LOOKUP-REQUIRED
+  tags:
+  - TRAE
+  - capability_lookup
+  - L1_foundation
+  - anti_hallucination
+  - zero幻觉空间
+  - 能力反查
+  - commit_gate
+  - audit_log
+  aliases:
+  - RULE-CAPABILITY-LOOKUP
+  - 能力反查
+  - capability_lookup
+  - CAPABILITY-LOOKUP-REQUIRED
+  - ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
