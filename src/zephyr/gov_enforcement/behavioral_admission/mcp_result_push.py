@@ -211,6 +211,9 @@ class ResultPushManager:
             _log.warning("task %s has no callback_url, marking as pushed (no-op)", task["task_id"])
             return PushStatus.PUSHED
 
+        # 5.40.2 修复：attempt_no 由 retry_count 派生（retry_failed 递增后调 _do_push），
+        # 首次推送 = 1，第 N 次重试 = N+1。
+        attempt_no = int(task.get("retry_count", 0)) + 1
         payload = json.dumps(
             {
                 "task_id": task["task_id"],
@@ -224,7 +227,15 @@ class ResultPushManager:
         req = urllib.request.Request(
             callback_url,
             data=payload,
-            headers={"Content-Type": "application/json"},
+            headers={
+                "Content-Type": "application/json",
+                # 5.40.2 修复：回调头携带 task_id + attempt_no 作为幂等键——
+                # 接收方按 (task_id, attempt_no) 去重：同一 attempt 的网络重发
+                # 被去重，新 attempt（retry_failed 递增 retry_count）视为新投递。
+                "X-Task-Id": task["task_id"],
+                "X-Attempt-No": str(attempt_no),
+                "Idempotency-Key": f"{task['task_id']}:{attempt_no}",
+            },
             method="POST",
         )
 
@@ -331,6 +342,10 @@ class ResultPushManager:
 
             task["retry_count"] = retry_count + 1
             task["last_attempt_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            # 5.40.2 配套修复：retry_count 递增必须先落盘——原代码未 save，
+            # 下方 retry delay 后 _load() 重读磁盘使递增被覆盖（attempt_no 永远为 1、
+            # max_retries 永不触发），幂等键 task_id:attempt_no 因此失效。
+            self._save(state)
 
         # P12 fix (2026-07-13): retry backoff uses threading.Event().wait() instead
         # of time.sleep() to avoid PERM-TRIGGER gate false-positive (this is a

@@ -143,6 +143,18 @@ class TaskQueue:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             logger.exception("TaskQueue: dispatch on task.created failed", exc_info=True)
 
+    @staticmethod
+    def _emit_dispatch_error(item: QueueItem, exc: Exception) -> None:
+        """5.40.8 修复：dispatch 异常审计——best-effort 事件，绝不反噬队列。"""
+        try:
+            from zephyr.shared.event_bus import bus as _bus
+            _bus.emit(
+                "task.dispatch_error",
+                {"item_id": item.item_id, "task_id": item.task_id, "error": f"{type(exc).__name__}: {exc}"},
+            )
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.exception("TaskQueue: emit task.dispatch_error failed", exc_info=True)
+
     def dispatch_now(self) -> None:
         """CI batch fallback：同步出队并 dispatch 一个 item。"""
         if not self._config.auto_dispatch:
@@ -151,7 +163,21 @@ class TaskQueue:
         if item and self._dispatch_handler:
             with self._status_lock:
                 item.status = QueueItemStatus.RUNNING
-            success = self._dispatch_handler(item)
+            # 5.40.8 修复：handler 抛异常时 item 原会永久卡 RUNNING（永远无法重派）。
+            # 回滚为 ENQUEUED 等待下轮重派 + 审计记录。
+            try:
+                success = self._dispatch_handler(item)
+            except Exception as exc:  # noqa: BLE001 — handler 任意异常都必须回滚状态
+                with self._status_lock:
+                    item.status = QueueItemStatus.ENQUEUED
+                    item.dispatched_at = ""
+                logger.exception(
+                    "TaskQueue: dispatch handler raised for item %s (task=%s)—status rolled back to ENQUEUED",
+                    item.item_id,
+                    item.task_id,
+                )
+                self._emit_dispatch_error(item, exc)
+                return
             with self._status_lock:
                 item.status = QueueItemStatus.COMPLETED if success else QueueItemStatus.FAILED
 

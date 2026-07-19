@@ -182,9 +182,102 @@ class TestHookDispatcher:
         hook = HookConfig(
             hook_id="HK-WH",
             event_type=EventType.TASK_COMPLETED,
-            callback_url="https://example.com/webhook",
+            # 5.40.5 修复后 webhook 真实发 HTTP POST：127.0.0.1:9（discard 端口）
+            # 确定性连接拒绝 -> 重试后记录失败执行，不 crash。
+            callback_url="http://127.0.0.1:9/webhook",
+            max_retries=2,
         )
         dispatcher.register_hook(hook)
         bus.publish(EventType.TASK_COMPLETED, "TASK-800")
         executions = dispatcher.get_executions()
-        assert len(executions) == 0
+        assert len(executions) == 1
+        assert executions[0].hook_id == "HK-WH"
+        assert executions[0].success is False
+
+    def test_webhook_success_records_execution_and_headers(self, tmp_path):
+        import hashlib
+        import hmac as hmac_mod
+        import json
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        captured: dict = {}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                body = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+                captured["headers"] = dict(self.headers)
+                captured["body"] = body
+                self.send_response(200)
+                self.end_headers()
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Handler)
+        port = server.server_address[1]
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            bus = EventBus()
+            dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+            hook = HookConfig(
+                hook_id="HK-WH-OK",
+                event_type=EventType.TASK_COMPLETED,
+                callback_url=f"http://127.0.0.1:{port}/webhook",
+                webhook_secret="s3cret",
+            )
+            dispatcher.register_hook(hook)
+            event = bus.publish(EventType.TASK_COMPLETED, "TASK-900")
+            executions = dispatcher.get_executions()
+            assert len(executions) == 1
+            assert executions[0].success is True
+            assert executions[0].response.startswith("HTTP 2")
+            # 幂等键：hook:{hook_id}:{event_id}（同一事件重投 = 同一键）
+            assert captured["headers"].get("Idempotency-Key") == f"hook:HK-WH-OK:{event.event_id}"
+            # HMAC-SHA256 签名
+            expected_sig = "sha256=" + hmac_mod.new(b"s3cret", captured["body"], hashlib.sha256).hexdigest()
+            assert captured["headers"].get("X-Zephyr-Signature") == expected_sig
+            payload = json.loads(captured["body"].decode("utf-8"))
+            assert payload["task_id"] == "TASK-900"
+            assert payload["event_type"] == "task.completed"
+        finally:
+            server.shutdown()
+            server.server_close()
+
+    def test_webhook_retries_on_5xx_then_succeeds(self, tmp_path):
+        import threading
+        from http.server import BaseHTTPRequestHandler, HTTPServer
+
+        state = {"calls": 0}
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                state["calls"] += 1
+                self.rfile.read(int(self.headers.get("Content-Length", 0)))
+                self.send_response(500 if state["calls"] < 3 else 200)
+                self.end_headers()
+
+            def log_message(self, *args):
+                pass
+
+        server = HTTPServer(("127.0.0.1", 0), Handler)
+        port = server.server_address[1]
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            bus = EventBus()
+            dispatcher = HookDispatcher(event_bus=bus, data_dir=tmp_path)
+            hook = HookConfig(
+                hook_id="HK-WH-RETRY",
+                event_type=EventType.TASK_COMPLETED,
+                callback_url=f"http://127.0.0.1:{port}/webhook",
+                max_retries=3,
+            )
+            dispatcher.register_hook(hook)
+            bus.publish(EventType.TASK_COMPLETED, "TASK-901")
+            executions = dispatcher.get_executions()
+            assert len(executions) == 1
+            assert executions[0].success is True
+            assert state["calls"] == 3  # 两次 500 transient 重试后第三次成功
+        finally:
+            server.shutdown()
+            server.server_close()

@@ -29,12 +29,21 @@ Hook Dispatcher — 任务状态变更 -> 外部回调触发。
 
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
+import logging
 import subprocess
+import threading
+import urllib.error
+import urllib.request
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
 from zephyr.shared.event_bus import DomainEvent, EventBus, EventType
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -45,6 +54,9 @@ class HookConfig:
     callback_script: str = ""
     enabled: bool = True
     max_retries: int = 3
+    # 5.40.5 修复：webhook 密钥（HMAC-SHA256 签名 X-Zephyr-Signature）与超时
+    webhook_secret: str = ""
+    timeout_seconds: float = 10.0
 
 
 @dataclass
@@ -121,7 +133,78 @@ class HookDispatcher:
             )
 
     def _call_webhook(self, hook: HookConfig, event: DomainEvent) -> None:
-        pass
+        """5.40.5 修复：实现真实 HTTP POST webhook（原方法体为 pass）。
+
+        - 幂等键：Idempotency-Key = hook:{hook_id}:{event_id}——同一事件的重投
+          （含 max_retries 内重试）用同一键，接收方可去重。
+        - 超时/重试：transient 失败（连接错误/超时/5xx）按 hook.max_retries 重试；
+          4xx 为永久失败不重试。
+        - HMAC 签名：配置 webhook_secret 时发送 X-Zephyr-Signature: sha256=<hex>。
+        - 无论成败都记录 HookExecution（与 _run_script 语义对齐）。
+        """
+        payload = json.dumps(
+            {
+                "hook_id": hook.hook_id,
+                "event_id": event.event_id,
+                "event_type": event.event_type.value,
+                "task_id": event.task_id,
+                "payload": event.payload,
+                "timestamp_utc": event.timestamp_utc,
+            },
+            ensure_ascii=False,
+        ).encode("utf-8")
+
+        headers = {
+            "Content-Type": "application/json",
+            "X-Zephyr-Hook-Id": hook.hook_id,
+            "X-Zephyr-Event-Id": event.event_id,
+            "X-Zephyr-Event-Type": event.event_type.value,
+            "Idempotency-Key": f"hook:{hook.hook_id}:{event.event_id}",
+        }
+        if hook.webhook_secret:
+            signature = hmac.new(hook.webhook_secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+            headers["X-Zephyr-Signature"] = f"sha256={signature}"
+
+        attempts = max(1, hook.max_retries)
+        last_error = ""
+        for attempt in range(1, attempts + 1):
+            req = urllib.request.Request(hook.callback_url, data=payload, headers=headers, method="POST")
+            try:
+                # 对齐 mcp_result_push 模式：context manager 确保响应关闭
+                with urllib.request.urlopen(req, timeout=hook.timeout_seconds) as resp:
+                    self._executions.append(
+                        HookExecution(
+                            hook_id=hook.hook_id,
+                            event_id=event.event_id,
+                            success=True,
+                            response=f"HTTP {resp.status}",
+                            timestamp_utc=datetime.now(UTC).isoformat(),
+                        )
+                    )
+                    return
+            except urllib.error.HTTPError as e:
+                # urllib 对非 2xx 抛 HTTPError；4xx 永久失败不重试，5xx transient 可重试
+                last_error = f"HTTP {e.code}"
+                if e.code < 500:
+                    break
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
+                last_error = f"{type(e).__name__}: {e}"
+            except Exception as e:  # noqa: BLE001 — 非网络类异常不重试，直接记录失败
+                last_error = f"{type(e).__name__}: {e}"
+                break
+            if attempt < attempts:
+                # 短退避；Event().wait() 对齐 mcp_result_push P12 模式（retry delay 非周期触发）
+                threading.Event().wait(0.2 * attempt)
+
+        self._executions.append(
+            HookExecution(
+                hook_id=hook.hook_id,
+                event_id=event.event_id,
+                success=False,
+                response=last_error[:500],
+                timestamp_utc=datetime.now(UTC).isoformat(),
+            )
+        )
 
     def get_executions(self, hook_id: str = "") -> list[HookExecution]:
         if hook_id:

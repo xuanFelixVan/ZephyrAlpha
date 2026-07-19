@@ -63,6 +63,9 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
+# 5.40.9：等待抢锁期间按此间隔重查持有者 TTL 是否已到期
+_TTL_RECHECK_INTERVAL_S = 0.05
+
 
 class LockError(ZephyrBaseError):
     """分布式锁操作失败——锁已被占用、后端不可达、超时。"""
@@ -97,6 +100,10 @@ class MemoryLock:
 
     对标 asyncio.Lock + context manager 语法糖。
 
+    TTL 语义（5.40.9）：`acquire(ttl_seconds=T)` 的持有超过 T 秒即视为死锁——
+    后续 acquire/is_locked 会自动强制释放并允许抢锁（防持有者崩溃后锁永久不释放）。
+    被强释的原持有者 release() 会因 owner 校验失败被拒绝。ttl_seconds <= 0 不启用过期。
+
     Usage::
 
         lock = MemoryLock()
@@ -109,6 +116,36 @@ class MemoryLock:
         self._owners: dict[str, str] = {}
         # 5.68.4 修复：跟踪 in-flight acquire 数，用于超时取消后判定是否可安全清理 _locks
         self._waiters: dict[str, int] = {}
+        # 5.40.9 修复：跟踪每次持有的 TTL 到期时刻（time.monotonic 基准），
+        # 使 acquire 时能识别"持有者已死/卡住"的锁并强制释放——此前 ttl_seconds 仅签名摆设。
+        self._expiry: dict[str, float] = {}
+
+    def _force_release_if_expired(self, lock_name: str) -> bool:
+        """5.40.9：TTL 到期的持有视为死锁——强制释放并允许抢锁。返回 True 表示发生了强释。
+
+        安全性：被强释的原持有者之后调 release() 会因 owner 校验不匹配被拒绝
+        （5.58.10 已实现的持有者一致性校验），不会误释放新持有者的锁。
+        本函数无 await，在事件循环内原子执行，无并发竞态。
+        """
+        lock = self._locks.get(lock_name)
+        if lock is None or not lock.locked():
+            return False
+        deadline = self._expiry.get(lock_name)
+        if deadline is None or time.monotonic() <= deadline:
+            return False
+        owner = self._owners.get(lock_name, "unknown")
+        try:
+            lock.release()
+        except RuntimeError:
+            return False
+        self._owners.pop(lock_name, None)
+        self._expiry.pop(lock_name, None)
+        logger.warning(
+            "lock '%s' TTL expired (previous owner='%s')—force-released; 原持有者 release 将被 owner 校验拒绝",
+            lock_name,
+            owner,
+        )
+        return True
 
     async def acquire(
         self,
@@ -124,6 +161,8 @@ class MemoryLock:
 
         acquired = False
         try:
+            # 5.40.9：抢锁前先强释 TTL 到期的死锁（过期自动释放语义）
+            self._force_release_if_expired(lock_name)
             if wait_timeout_seconds <= 0:
                 if lock.locked():
                     logger.debug("lock '%s' already held by '%s'", lock_name, self._owners.get(lock_name, "unknown"))
@@ -131,13 +170,22 @@ class MemoryLock:
                 await lock.acquire()
                 acquired = True
             else:
-                try:
-                    await asyncio.wait_for(
-                        lock.acquire(),
-                        timeout=wait_timeout_seconds,
-                    )
-                    acquired = True
-                except TimeoutError:
+                # 5.40.9：等待期间持有者可能 TTL 到期——分片等待 + 每片重查强释，
+                # 避免"锁已死却仍傻等到 wait_timeout"的假抢锁失败。
+                wait_deadline = time.monotonic() + wait_timeout_seconds
+                remaining = wait_timeout_seconds
+                while remaining > 0:
+                    self._force_release_if_expired(lock_name)
+                    try:
+                        await asyncio.wait_for(
+                            lock.acquire(),
+                            timeout=min(remaining, _TTL_RECHECK_INTERVAL_S),
+                        )
+                        acquired = True
+                        break
+                    except TimeoutError:
+                        remaining = wait_deadline - time.monotonic()
+                if not acquired:
                     logger.debug("lock '%s' acquisition timed out after %.1fs", lock_name, wait_timeout_seconds)
                     return None
         finally:
@@ -152,8 +200,11 @@ class MemoryLock:
 
         owner = str(uuid.uuid4())[:8]
         self._owners[lock_name] = owner
+        # ttl_seconds <= 0 视为不启用 TTL 强制（永不自动过期）
+        if ttl_seconds > 0:
+            self._expiry[lock_name] = time.monotonic() + ttl_seconds
         handle = LockHandle(lock_name=lock_name, owner_id=owner)
-        logger.debug("lock '%s' acquired by '%s'", lock_name, owner)
+        logger.debug("lock '%s' acquired by '%s' (ttl=%.1fs)", lock_name, owner, ttl_seconds)
         return handle
 
     async def release(self, handle: LockHandle) -> bool:
@@ -176,6 +227,7 @@ class MemoryLock:
         lock.release()
         if handle.lock_name in self._owners:
             del self._owners[handle.lock_name]
+        self._expiry.pop(handle.lock_name, None)
         # 5.65.4 修复：原 release 只删 _owners，不删 _locks。每个唯一锁名留下一个永久 asyncio.Lock 对象。
         # release时若_owners为空则删除_locks中的条目。
         if handle.lock_name not in self._owners and handle.lock_name in self._locks:
@@ -184,6 +236,8 @@ class MemoryLock:
         return True
 
     def is_locked(self, lock_name: str) -> bool:
+        # 5.40.9：TTL 到期的死锁先强释再报告——is_locked 对"已死持有"返回 False
+        self._force_release_if_expired(lock_name)
         lock = self._locks.get(lock_name)
         return lock is not None and lock.locked()
 
