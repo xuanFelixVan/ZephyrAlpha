@@ -21,6 +21,7 @@
 
 审计字段：
 - timestamp + client_session_id + tool_name + arguments_hash
+- actor + action + target（5.37.5：问责三元组，对标核心链 agent_id/operation/target_path）
 - result_status + duration_ms + error_code（如有）
 - 对标 R81 ZephyrLogger 格式
 - 同时写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链
@@ -56,6 +57,10 @@ AUDIT_FIELDS: Final[list] = [
     "client_session_id",
     "tool_name",
     "arguments_hash",
+    # 5.37.5：问责三元组（actor=调用者，action=动作，target=目标），向后兼容默认 ""
+    "actor",
+    "action",
+    "target",
     "result_status",
     "duration_ms",
     "error_code",
@@ -110,12 +115,19 @@ class AuditLogger:
         error_message: str | None = None,
         byte_in: int = 0,
         byte_out: int = 0,
+        # 5.37.5：问责三元组，默认 "" 保持向后兼容（旧调用方无需改动）
+        actor: str = "",
+        action: str = "",
+        target: str = "",
     ) -> dict[str, Any]:
         entry: dict[str, Any] = {
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "client_session_id": client_session_id,
             "tool_name": tool_name,
             "arguments_hash": arguments_hash or "",
+            "actor": actor,
+            "action": action,
+            "target": target,
             "result_status": result_status,
             "duration_ms": duration_ms,
             "error_code": error_code,
@@ -134,9 +146,11 @@ class AuditLogger:
             try:
                 core_event = dict(entry)
                 core_event["event_type"] = "mcp_tool_call"
-                core_event["agent_id"] = client_session_id
+                # 5.37.5：actor/action/target 映射到核心链问责字段，缺省时回退旧语义
+                core_event["agent_id"] = actor or client_session_id
                 core_event["session_id"] = client_session_id
-                core_event["target_path"] = tool_name
+                core_event["operation"] = action or "tools/call"
+                core_event["target_path"] = target or tool_name
                 core_event["status"] = result_status
                 self._core_writer.write(core_event)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

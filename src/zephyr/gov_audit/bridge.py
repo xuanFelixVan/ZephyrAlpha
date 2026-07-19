@@ -23,14 +23,15 @@ __all__ = ["OrchestratorBridge", "write_to_core"]
 
 
 def write_to_core(channel: str, payload: dict[str, Any]) -> str | None:
-    """写入核心审计链——治本（裁定#18 G7）：对齐 test_audit_bridge.py 契约。
+    """写入核心审计链——治本（裁定#18 G7 + 5.37.1）：真实落盘 events.jsonl。
 
     旧实现是 no-op（仅 log），_get_writer 恒返回 None，导致：
     - writer 可用时未写入也未返回 chain_hash
     - event_type / agent_id 默认逻辑缺失
 
-    现委托到 _get_writer() 返回的全局 writer，处理：
-    - writer 为 None → 返回 None
+    现委托到 _get_writer() 返回的全局 writer（5.37.1：懒初始化 get_audit_writer()，
+    复用 AuditWriter 的 append-only JSONL + SHA-256 hash chain + HMAC，不新造实现），处理：
+    - writer 为 None（初始化失败）→ 返回 None
     - event_type 设为 channel，agent_id 缺失时用 channel 兜底
     - writer 异常 → 返回 None（不传播）
     """
@@ -133,13 +134,28 @@ class OrchestratorBridge:
 
 
 def _get_writer(backend: str | None = None):
-    """获取全局 writer——治本（裁定#18 G7）：供 write_to_core 委托。
+    """获取全局 writer——治本（裁定#18 G7 + 5.37.1）：供 write_to_core 委托。
 
-    旧实现恒返回 None（桩），现路由到 writer._GLOBAL_WRITER。
+    旧实现恒返回 None（桩），之后路由到 writer._GLOBAL_WRITER——但全局 writer
+    仅在某个模块先调用过 get_audit_writer() 后才存在，否则 write_to_core 静默
+    丢弃事件（5.37.1：名实分离的 no-op）。
+
+    5.37.1 治本：_GLOBAL_WRITER 为 None 时懒初始化 get_audit_writer()（双重检查
+    锁定单例，底层 AuditWriter 写 events.jsonl append-only + hash chain）；
+    初始化失败降级返回 None（不传播异常，保持桥接 ERROR_CONTRACT）。
+    ``_AVAILABLE`` 为 falsy 时视为 writer 不可用，返回 None（向后兼容契约）。
     测试通过 patch ``bridge._get_writer`` 注入 mock。
     """
+    if not _AVAILABLE:
+        return None
     from zephyr.gov_audit import writer as _writer_mod
 
+    if _writer_mod._GLOBAL_WRITER is None:
+        try:
+            return _writer_mod.get_audit_writer()
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("_get_writer lazy init failed", exc_info=True)
+            return None
     return _writer_mod._GLOBAL_WRITER
 
 

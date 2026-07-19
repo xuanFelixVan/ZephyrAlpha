@@ -22,6 +22,7 @@
 # Enum + frozen dataclass，values 全部小写对齐 compliance_map.py 测试期望。
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -417,7 +418,23 @@ class AuditChain:
         self.entry_count = len(self.entries)
 
     def verify(self) -> bool:
-        return True
+        """基础一致性校验——5.37.2 治本：原实现永返 True（stub，名实分离）。
+
+        RULE-THREE 评估结论：全项目无生产调用方（仅 tests/audit/test_audit_models.py
+        构造本类，从不调用 verify()），故不实现完整 hash 链校验，降级为 deprecated
+        入口 + 诚实的一致性检查（entry_count 与实际加载的 entries 长度一致）。
+
+        真实 hash 链校验请使用：
+        - zephyr.gov_enforcement.rule_enforcement.audit_chain_verifier.AuditChainVerifier.verify_chain()
+        - zephyr.gov_audit.integrity（MerkleAggregator）
+        """
+        warnings.warn(
+            "AuditChain.verify() 已废弃（仅做 entry_count 一致性检查，非 hash 链校验）；"
+            "真实校验请用 AuditChainVerifier.verify_chain()",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.entry_count == len(self.entries)
 
 
 @dataclass(frozen=True)

@@ -5,26 +5,34 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] 链append-only持久化(gate_chain.jsonl); clear需confirm=True且留痕核心链
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
-# [TESTS]
+# [ERROR_CONTRACT] 持久化失败仅告警不阻断; clear无confirm抛PermissionError
+# [TESTS] tests/audit/test_audit_chain_verifier.py
 # [A_module] module_id=MOD-GOV_audit_chain_verifier | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
 """审计链验证工具——独立重放门禁判定+Hash链完整性校验（beta）
 同时将门禁审计事件写入核心 zephyr.gov_audit.writer.AuditWriter 不可变审计链
+
+5.37.8：本地门禁 hash 链持久化——append-only JSONL（gate_chain.jsonl）+ 重启恢复，
+与 AuditWriter 的 events.jsonl 同目录约定（data/audit_trail/）。
+5.37.9：clear() 权限保护——必须显式 confirm=True，操作本身写核心审计链留痕。
 """
 
 from zephyr.shared.io.serialization import dumps
 import hashlib
+import json
 import logging
+import os
+import threading
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 
 from zephyr.gov_enforcement.rule_enforcement.gate_engine.gate_context import GateContext, GateResult, GateStatus
 
@@ -65,15 +73,82 @@ class AuditReport:
 
 
 class AuditChainVerifier:
-    def __init__(self) -> None:
+    def __init__(self, persist_path: Path | str | None = None) -> None:
         self._chain: list[AuditEntry] = []
         self._last_hash = "0" * 64
+        # 5.37.8：门禁审计链持久化路径（append-only JSONL + hash chain）。
+        # 优先级：显式参数 > ZEPHYR_GATE_CHAIN_PATH 环境变量（测试隔离用）
+        # > 默认 data/audit_trail/gate_chain.jsonl（与 AuditWriter 同目录约定）。
+        env_path = os.environ.get("ZEPHYR_GATE_CHAIN_PATH", "")
+        if persist_path is not None:
+            self._persist_path = Path(persist_path)
+        elif env_path:
+            self._persist_path = Path(env_path)
+        else:
+            self._persist_path = Path.cwd() / "data" / "audit_trail" / "gate_chain.jsonl"
+        self._persist_lock = threading.Lock()
+        self._load_persisted_chain()
         self._core_writer: _CoreAuditWriter | None = None
         if _CORE_AUDIT_AVAILABLE:
             try:
                 self._core_writer = _CoreAuditWriter()
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
+
+    def _load_persisted_chain(self) -> None:
+        """从 gate_chain.jsonl 恢复链与尾哈希（5.37.8：重启后链连续，可跨进程校验）。"""
+        if not self._persist_path.exists():
+            return
+        try:
+            with open(self._persist_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        raw = json.loads(line)
+                        entry = AuditEntry(
+                            gate_id=raw["gate_id"],
+                            status=GateStatus[raw["status"]],
+                            reasons=list(raw.get("reasons") or []),
+                            previous_hash=raw["previous_hash"],
+                            hash=raw["hash"],
+                            timestamp=datetime.fromisoformat(raw["timestamp"]),
+                        )
+                    except (KeyError, ValueError, TypeError):
+                        logger.warning("skip malformed persisted gate audit line", exc_info=True)
+                        continue
+                    self._chain.append(entry)
+            if self._chain:
+                self._last_hash = self._chain[-1].hash
+        except OSError:
+            logger.warning("load persisted gate chain failed: %s", self._persist_path, exc_info=True)
+
+    def _persist_entry(self, entry: AuditEntry, ts: datetime) -> None:
+        """追加一条门禁审计条目到 JSONL（5.37.8：落盘失败仅告警，不阻断门禁主流程）。
+
+        ts 必须是 entry.hash 计算时覆盖的时间戳（即 GateResult.timestamp）——
+        持久化 entry.timestamp（append 时刻）会导致重载后 verify_chain 重算不一致。
+        """
+        try:
+            self._persist_path.parent.mkdir(parents=True, exist_ok=True)
+            line = dumps(
+                {
+                    "gate_id": entry.gate_id,
+                    "status": entry.status.name,
+                    "reasons": entry.reasons,
+                    "previous_hash": entry.previous_hash,
+                    "hash": entry.hash,
+                    "timestamp": ts.isoformat(),
+                },
+                ensure_ascii=False,
+            )
+            with self._persist_lock, open(self._persist_path, "a", encoding="utf-8") as f:
+                f.write(line + "\n")
+                f.flush()
+                os.fsync(f.fileno())
+        except OSError:
+            logger.warning("persist gate audit entry failed: %s", self._persist_path, exc_info=True)
 
     def append(self, gate_id: str, result: GateResult) -> AuditEntry:
         payload = {
@@ -94,6 +169,8 @@ class AuditChainVerifier:
         self._chain.append(entry)
         self._last_hash = entry_hash
         logger.debug("audit entry #%d: %s -> %s", len(self._chain), gate_id, entry_hash[:16])
+        # 持久化时间戳与 hash 载荷一致（result.timestamp，见 _persist_entry docstring）
+        self._persist_entry(entry, result.timestamp)
 
         if self._core_writer is not None:
             try:
@@ -163,14 +240,27 @@ class AuditChainVerifier:
     def length(self) -> int:
         return len(self._chain)
 
-    def clear(self, reason: str = "") -> None:
+    def clear(self, reason: str = "", *, confirm: bool = False, cleared_by: str = "") -> None:
+        """清空审计链——5.37.9 权限保护：高危操作，必须显式 confirm=True。
+
+        - confirm=False（默认）→ 抛 PermissionError，拒绝执行（防误调/未授权抹除链）。
+        - confirm=True → 先把 clear 操作本身写入核心审计链留痕（含 reason/cleared_by/
+          链长/尾哈希），再清空内存链与持久化文件（文件残留会导致重启后链复活，
+          与 clear 语义矛盾，故一并删除）。
+        """
+        if not confirm:
+            raise PermissionError(
+                "AuditChainVerifier.clear() refused: 抹除审计链必须显式 confirm=True "
+                "(5.37.9 permission guard); pass reason=/cleared_by= for accountability"
+            )
         # 5.17.4 修复：clear() 前写入审计事件，留痕可追溯（防止无审计抹除链）
         if self._core_writer is not None:
             try:
                 self._core_writer.write({
                     "event_type": "chain_cleared",
-                    "agent_id": "audit_chain_verifier",
+                    "agent_id": cleared_by or "audit_chain_verifier",
                     "reason": reason or "unspecified",
+                    "cleared_by": cleared_by,
                     "chain_length": len(self._chain),
                     "last_hash": self._last_hash,
                 })
@@ -178,6 +268,11 @@ class AuditChainVerifier:
                 logger.warning("suppressed error in audit_chain_verifier", exc_info=True)
         self._chain.clear()
         self._last_hash = "0" * 64
+        try:
+            if self._persist_path.exists():
+                self._persist_path.unlink()
+        except OSError:
+            logger.warning("remove persisted gate chain failed: %s", self._persist_path, exc_info=True)
 
 
 __all__ = ["AuditChainVerifier", "AuditEntry", "AuditReport"]
