@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 17 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
+# [INVARIANTS] 18 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 17 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 18 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（17 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（18 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -1420,9 +1420,76 @@ def metric_17_rule_perception_gap() -> dict:
     details = [f'UNPAIRED: {r.get("rule_id", "?")} ({r.get("title", "")[:40]})' for r in unpaired[:20]]
     return _make_metric('M17', '规则感知缺口(无门禁配对数)', len(unpaired), details=details, source='inline')
 
+
+# ── 指标 20：trae_060 §5 静态声明 vs 运行时快照漂移数 ──────────────────────
+
+# M20 路径常量（#ARCH-GOV-CONVERGENCE-META Phase 3.4b，病根1 治本）
+_RUNTIME_SNAPSHOT_REL = 'data/runtime_violation_snapshot/latest.json'
+
+
+def metric_20_runtime_snapshot_drift() -> dict:
+    """trae_060 §5 静态声明 vs 运行时快照漂移数（#ARCH-GOV-CONVERGENCE-META Phase 3.4b）。
+
+    病根1 治本指标：trae_060 §5 prohibitions 的历史计数（baseline_2026_06_26.yaml）
+    与运行时快照（latest.json）的漂移类别数。
+
+    - drift_count=0：live 检测结果与历史基线完全一致（无新增/无修复）
+    - drift_count>0：存在漂移（可能是修复了违规=负 drift，或新增了违规=正 drift）
+    - snapshot 不存在或 stale（>24h）：count=1 + error（reconciler 未运行或失败）
+
+    fail-open：snapshot 不存在/解析失败 → count=0 + error（首启正常）。
+    """
+    try:
+        from zephyr.governance.audit.runtime_violation_snapshot import (
+            compare_baseline_with_live,
+        )
+    except ImportError as e:
+        return _make_metric('M20', 'trae_060 §5 快照漂移数', 0,
+            details=[f'import failed: {e}'], source='inline',
+            error=f'import failed: {e}')
+
+    try:
+        comparison = compare_baseline_with_live(REPO_ROOT)
+    except Exception as e:  # noqa: BLE001 — fail-open
+        return _make_metric('M20', 'trae_060 §5 快照漂移数', 0,
+            details=[f'compare failed: {e}'], source='inline',
+            error=f'compare failed: {e}')
+
+    drift_count = comparison.get('drift_count', 0)
+    fresh = comparison.get('fresh', False)
+    error = comparison.get('error', '')
+
+    if not fresh and drift_count == 0:
+        # snapshot stale 且无 drift 信息——报告 1（stale 本身是问题）
+        details = ['snapshot stale or missing (reconciler not run recently)']
+        if error:
+            details.append(f'reason: {error}')
+        return _make_metric('M20', 'trae_060 §5 快照漂移数', 1,
+            details=details, source=_RUNTIME_SNAPSHOT_REL,
+            error=f'snapshot stale: {error}' if error else 'snapshot stale')
+
+    # 构造详细 drift 信息
+    details = []
+    for v in comparison.get('violations', [])[:20]:
+        cat = v.get('category', '?')
+        claimed = v.get('claimed', 0)
+        detected = v.get('detected', 0)
+        drift = v.get('drift', 0)
+        marker = ''
+        if drift < 0:
+            marker = ' (FIXED)'
+        elif drift > 0:
+            marker = ' (NEW VIOLATIONS)'
+        details.append(f'{cat}: claimed={claimed}, detected={detected}, drift={drift}{marker}')
+
+    return _make_metric('M20', 'trae_060 §5 快照漂移数', drift_count,
+        details=details, source=_RUNTIME_SNAPSHOT_REL,
+        error=error if not fresh else '')
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 17 项指标注册表（id → 检测函数）
+# 18 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1441,6 +1508,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M15", "depgraph新鲜度(>24h阻断数)", metric_15_depgraph_freshness),
     ("M16", "治本进度新鲜度(>90天超期数)", metric_16_remediation_progress_freshness),
     ("M17", "规则感知缺口(无门禁配对数)", metric_17_rule_perception_gap),
+    ("M20", "trae_060 §5 快照漂移数", metric_20_runtime_snapshot_drift),
 ]
 
 
@@ -1516,7 +1584,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（17 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（18 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")

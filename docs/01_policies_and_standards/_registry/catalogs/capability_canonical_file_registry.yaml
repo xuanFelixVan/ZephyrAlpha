@@ -5386,6 +5386,24 @@ creation_tokens:
     token: "auto-rule-discovery-server-20260719"
     created_by: "sess-33764-20260719"
     capability: "discover_applicable_rules"
+
+  # --- #ARCH-GOV-CONVERGENCE-META Phase 3.4b ---
+  - file: "src/zephyr/governance/audit/runtime_violation_snapshot.py"
+    token: "auto-runtime-violation-snapshot-20260719"
+    created_by: "sess-7268-20260719153348"
+    capability: "runtime_violation_snapshot"
+  - file: "src/zephyr/governance/audit/runtime_violation_snapshot_reconciler.py"
+    token: "auto-runtime-violation-snapshot-reconciler-20260719"
+    created_by: "sess-7268-20260719153348"
+    capability: "runtime_violation_snapshot"
+  - file: "data/runtime_violation_snapshot/baseline_2026_06_26.yaml"
+    token: "auto-runtime-violation-snapshot-baseline-20260719"
+    created_by: "sess-7268-20260719153348"
+    capability: "runtime_violation_snapshot"
+  - file: "data/runtime_violation_snapshot/latest.json"
+    token: "auto-runtime-violation-snapshot-latest-20260719"
+    created_by: "sess-7268-20260719153348"
+    capability: "runtime_violation_snapshot"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
