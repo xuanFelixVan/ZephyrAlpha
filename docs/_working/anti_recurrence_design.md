@@ -234,15 +234,17 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 **目标**：把 DATETIME-NOW-FORBIDDEN gate 的检测面从"生成器"扩展到 `src/zephyr/` 全量，硬阻断 `datetime.now()` / `time.time()` 用于 TTL 的误用。
 
 **实施步骤**：
-1. 读 `src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py`（或对应文件）了解现有检测逻辑。
-2. 扩展检测范围：从生成器扩展到 `src/zephyr/**/*.py`。
-3. 检测模式：`datetime.now()`（无 tz 参数）、`time.time()` 用于 TTL 计算（上下文启发式）。
-4. 豁免机制：`# noqa: datetime-now` 标记，登记到 `noqa_exempt_registry.yaml`。
-5. fail-closed：违规即阻断 commit。
-6. priority：维持现有（不插入新位置）。
-7. 配测试：`tests/governance/commit_gates/test_datetime_now_forbidden_gate.py`，违规样本拦截 + 合法样本零误伤。
-8. 登记 capability + creation_token（gate 已登记，扩展检测面无需新增）。
-9. 更新 `architecture_debt_registry.md` §四 5.46 行防复发机制为 "DATETIME-NOW-FORBIDDEN gate（扩展全量）"。
+1. ✅ 读 `src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py` 了解现有检测逻辑。
+2. ✅ 扩展检测范围：从生成器扩展到 `src/zephyr/**/*.py`。
+3. ✅ 检测模式：`datetime.now()`（无 tz 参数）、`time.time()` 用于 TTL 计算（上下文启发式）。
+4. ✅ 豁免机制：`# noqa: m46-time` 标记，登记到 `noqa_exempt_registry.yaml`。
+5. ✅ fail-closed：违规即阻断 commit。
+6. ✅ priority：维持现有（不插入新位置）。
+7. ✅ 配测试：`tests/governance/commit_gates/test_datetime_now_forbidden_gate.py`，违规样本拦截 + 合法样本零误伤。
+8. ✅ 登记 capability + creation_token（gate 已登记，扩展检测面无需新增）。
+9. ⏳ 更新 `architecture_debt_registry.md` §四 5.46 行防复发机制为 "DATETIME-NOW-FORBIDDEN gate（扩展全量）"（待后续同步）。
+
+**P0 完成状态**：✅ 代码+测试完成（commit c6b8b08a46 + merge 5e2d0659b8），noqa 标记从 `datetime-now` 改为 `m46-time`（与 §四 5.46 维度号对齐）。
 
 ### 5.2 P1：新增 5 个 dashboard metric（M22-M29）
 
@@ -257,12 +259,14 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 | M29 | 资源未在 try/finally 计数 | AST 扫描 acquire/release 模式不在 try/finally 内 | 5.169 |
 
 **实施步骤（每个 metric）**：
-1. 在 `architecture_health_dashboard.py` 实现 `metric_NN_xxx()` 函数。
-2. 加入 METRICS 列表（约 1681 行）。
-3. 同步 `architecture_debt_registry.md` §六 指标清单。
-4. 配测试：`tests/governance/test_architecture_health_dashboard.py` 追加 metric_NN 测试。
-5. 登记 capability（dashboard 已登记，新增 metric 无需新 capability_token）。
-6. 豁免机制：metric 为 warn-only，无需 noqa（趋势监控非阻断）。
+1. ✅ 在 `architecture_health_dashboard.py` 实现 `metric_NN_xxx()` 函数。
+2. ✅ 加入 METRICS 列表（20→25 项）。
+3. ✅ 同步 `architecture_debt_registry.md` §六 指标清单（M01-M21 → M01-M29）+ §四 5.42/5.100/5.139/5.144/5.169 防复发列。
+4. ✅ 配测试：`tests/governance/test_architecture_health_dashboard_metrics.py`（31 测试全通过）。
+5. ✅ 登记 capability（dashboard 已登记，新增 metric 无需新 capability_token）。
+6. ✅ 豁免机制：metric 为 warn-only，无需 noqa（趋势监控非阻断）。
+
+**P1 完成状态**：✅ 全部完成。实测读数：M22=6092, M23=19, M26=7, M27=2, M29=31。
 
 ### 5.3 P2：新增 5 个 dashboard metric（M24-M31）
 
@@ -289,13 +293,13 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 - [x] SSoT：gate 真源 gate_registry.yaml，metric 真源 dashboard METRICS
 
 ### 6.2 施工前置条件
-- [ ] 用户评审通过本设计文档
-- [ ] session_worktree 启动新 session
-- [ ] capability_canonical_file_registry.yaml 已登记 anti_recurrence_design creation_token
+- [x] 用户评审通过本设计文档
+- [x] session_worktree 启动新 session
+- [x] capability_canonical_file_registry.yaml 已登记 anti_recurrence_design creation_token
 
 ### 6.3 施工后验证
-- [ ] P0：DATETIME-NOW-FORBIDDEN gate 违规样本拦截 + 合法样本零误伤
-- [ ] P1：M22/M23/M26/M27/M29 仪表盘读数正常
+- [x] P0：DATETIME-NOW-FORBIDDEN gate 违规样本拦截 + 合法样本零误伤（commit c6b8b08a46 + merge 5e2d0659b8）
+- [x] P1：M22/M23/M26/M27/M29 仪表盘读数正常（M22=6092, M23=19, M26=7, M27=2, M29=31）
 - [ ] P2：M24/M25/M28/M30/M31 仪表盘读数正常
 - [ ] 全量：`PYTHONPATH=src python scripts/governance/architecture_health_dashboard.py` 无回归
 - [ ] 模拟再犯：故意引入 datetime.now() / TODO / open() 不在 with 验证检测

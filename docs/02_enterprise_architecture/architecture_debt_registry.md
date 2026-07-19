@@ -12,7 +12,7 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 
 > **文档性质**：活跃架构债务单一真源（SSoT）+ 未来审计审查系统的**维度清单基座**。
 > **瘦身说明（v2.0.0，2026-07-19）**：本文档自 4492 行瘦身重构。已完成任务的逐项修复日志（第 1-101 轮多轮状态行、执行摘要 3193 计数大表、已 FIXED 条目详情）全部移出正文——**已完成历史唯一追溯渠道是 git log**（第 102 轮 36 批提交，merge `44ebb73b26`，及此前全部修复 commit）。
-> **数据维护规则**：未来违规数据由架构健康度仪表盘（`scripts/governance/architecture_health_dashboard.py`，指标 M01-M21，post-commit 事件驱动自动生成快照到 `data/architecture_health/`）承接。**本清单不手工维护违规数据**；§四维度表是审计审查的清单基座（每维度一行抽象概念），§五是当前全部未完成任务的完整清单。
+> **数据维护规则**：未来违规数据由架构健康度仪表盘（`scripts/governance/architecture_health_dashboard.py`，指标 M01-M29，post-commit 事件驱动自动生成快照到 `data/architecture_health/`）承接。**本清单不手工维护违规数据**；§四维度表是审计审查的清单基座（每维度一行抽象概念），§五是当前全部未完成任务的完整清单。
 > **审核方法**（历史）：4 个并行子 agent 读真实文件 + Grep 真实结果 + AST 共享行百分比判定（详见 §七）。
 
 ---
@@ -33,7 +33,7 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
-- **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M21 实时基线自动发现，不再依赖人工调研快照。
+- **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M29 实时基线自动发现，不再依赖人工调研快照。
 - **剩余未完成任务 = 90 项**（§五完整清单）：
   - **wontfix（RATIFY 裁定关闭，防复发门禁在册）60 项**；
   - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）29 项**；
@@ -98,7 +98,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 ### 裁定 4：必须建"架构健康度仪表盘"（最高优先级基础设施）
 
-把 trae_060 §5 的"静态快照"变成"动态实时"，每次 commit 自动生成全维度违规清单——直接治根因 1，间接治根因 3，并把离散报告变成趋势曲线。**已实现**：`architecture_health_dashboard.py` + post-commit reconciler（`make_architecture_health_reconciler`），M01-M21 指标快照落盘 `data/architecture_health/`，M01-M14 已于 2026-07-18 全部归零。
+把 trae_060 §5 的"静态快照"变成"动态实时"，每次 commit 自动生成全维度违规清单——直接治根因 1，间接治根因 3，并把离散报告变成趋势曲线。**已实现**：`architecture_health_dashboard.py` + post-commit reconciler（`make_architecture_health_reconciler`），M01-M29 指标快照落盘 `data/architecture_health/`，M01-M14 已于 2026-07-18 全部归零。
 
 ### 裁定 5：DEFERRED vs DEFERRED-PERMANENT 分类法（R70 引入，存量债务管理框架）
 
@@ -121,7 +121,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 ## 四、审计审查维度清单（清单基座，54 维度）
 
-> 本表是未来审计审查系统的**维度基座**：每维度保留抽象概念（核心问题 + 病根归属 + 防复发机制 + 当前状态），不保留逐项违规明细（历史明细见 git log，增量违规见仪表盘 M01-M21）。
+> 本表是未来审计审查系统的**维度基座**：每维度保留抽象概念（核心问题 + 病根归属 + 防复发机制 + 当前状态），不保留逐项违规明细（历史明细见 git log，增量违规见仪表盘 M01-M29）。
 > 状态口径：`FIXED` = 该维度全部清零（DEFERRED=0 且 STILL_VALID=0）；`PERMANENT-N` = 残留 N 项未完成任务（wontfix/EXECUTE/SKIP，详情见 §五）。
 > 合计：**54 维度 = 39 FIXED + 15 PERMANENT（共 90 项未完成）**。
 
@@ -139,8 +139,8 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.39 | 可观测性深度 | health_monitor 丢弃指标 + counter() 幻影方法 + trace 断链 + SLOManager 死代码 | 根因 5 | span_stub contextvars 统一 + SLOManager 单例 + boot 订阅 | FIXED |
 | 5.40 | 幂等性与重试语义 | 重试无 Idempotency-Key + DLQ 为 stub + webhook 为 pass | 根因 5 | Idempotency-Key 稳定幂等键 + DLQ 真重试 + 持久化 IdempotencyStore | FIXED |
 | 5.41 | 状态机正确性 | 无转换校验 + 无锁 + force_state 绕过终态 + 假实现 | 根因 5 | VALID_TRANSITIONS 转换表 + RLock + 审计 | FIXED |
-| 5.42 | 代码注释与 API 文档 | 核心函数缺 docstring + baseline_manager 方法错误嵌套（结构 bug） | 根因 5 | — | PERMANENT-1 |
-| 5.46 | 时间与时区处理 | time.time() 用于 TTL + naive/aware datetime 混用 100+ 处 | 根因 5 | now_utc() 全局统一（time_utils SSoT） | PERMANENT-1 |
+| 5.42 | 代码注释与 API 文档 | 核心函数缺 docstring + baseline_manager 方法错误嵌套（结构 bug） | 根因 5 | M22 docstring 覆盖率监控（warn-only） | PERMANENT-1 |
+| 5.46 | 时间与时区处理 | time.time() 用于 TTL + naive/aware datetime 混用 100+ 处 | 根因 5 | now_utc() 全局统一（time_utils SSoT）+ DATETIME-NOW-FORBIDDEN gate（P0 扩展 src/zephyr/ 全量硬阻断，noqa: m46-time 豁免） | PERMANENT-1 |
 | 5.52 | 异步/同步边界 | asyncio.run 在 async 上下文静默绕过安全扫描 + run_coroutine_threadsafe 死锁 | 根因 5 | async_utils.run_coroutine_sync canonical + LSG fail-closed | FIXED |
 | 5.57 | 事件排序与因果一致性 | 事件 ID 秒级碰撞 + 异常静默吞没 + 完整性校验空操作 | 根因 5 | task_events seq + prev_hash 链（migration v32） | FIXED |
 | 5.58 | 分布式锁正确性 | 锁释放不验证持有者 + 无 fencing token + 无自动续期 + TOCTOU 竞态 | 根因 5 | next_fencing_token + SyncLockRenewer（shared/infra/lock.py） | FIXED |
@@ -155,14 +155,14 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.96 | 布尔参数蔓延 | TriggerDecision 3 布尔冗余 + _calculate_trust 3 布尔 + 行为切换布尔 | 根因 5 | GATE-DEBT-BRIDGE（DEBT-1/2/3，commit + CI 双硬阻断） | FIXED |
 | 5.97 | 深层嵌套与圈复杂度 | evolve 148 行 5 层 + register_boot_hooks 130 行 7 闭包 + dispatch 104 行 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | PERMANENT-1 |
 | 5.99 | 错误消息一致性 | SQL 泄露 + 中英混用 + 异常类型不一致 + MCP 错误码不统一 | 根因 5 | MSG-EXPOSURE（83）+ MSG-STYLE + error_code_registry.yaml SSoT | FIXED |
-| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | —（AGENTS.md 异步 IO 最佳实践规则约束） | PERMANENT-2 |
+| 5.100 | 异步资源生命周期 | limiter 锁反模式 + pipeline 死锁 + 阻塞 IO + get_event_loop 弃用 + asyncio.run 高频 | 根因 5 | M23 asyncio 调用监控（warn-only，AGENTS.md 异步 IO 最佳实践规则约束） | PERMANENT-2 |
 | 5.101 | 变量遮蔽与命名冲突 | 参数遮蔽 id + 42 处数据类字段遮蔽内置名 + 6 处模块名冲突标准库 | 根因 5 | —（R80 裁定不新增 gate，directory_contract 维护模块名） | PERMANENT-12 |
 | 5.114 | Final/@final 强制 | 可变 dict 常量无 Final + 375 处模块级常量未标 Final + @final 零使用 | 根因 5 | —（已全量标注完成，安全敏感类已加 @final） | FIXED |
 | 5.138 | 循环引用风险 | 根 __init__ Timer 延迟规避循环 + 包内循环 + try/except ImportError 容错 | 根因 5 | —（实证无真实循环链，已改模块级直接 import） | FIXED |
-| 5.139 | TODO/FIXME 技术债务标记 | 仅 1 处真实 TODO（已关联工单），代码库技术债务标记极清洁 | —（零检出维度） | — | FIXED |
+| 5.139 | TODO/FIXME 技术债务标记 | 仅 1 处真实 TODO（已关联工单），代码库技术债务标记极清洁 | —（零检出维度） | M26 TODO/FIXME 计数监控（warn-only） | FIXED |
 | 5.140 | 函数复杂度过高 | dispatch 461 行/7 层/30+ 分支 + integration 模块 8 个超标函数 | 根因 5 | NO-HIGH-COMPLEXITY gate（priority=85） | PERMANENT-3 |
 | 5.143 | API 契约一致性 | LSP 违规 + Protocol 误用为基类 + 13 组重复 ABC 各自独立 _registry | 根因 1/5 | ssot_redefinition_gate + cross_layer_contracts.yaml SSoT | PERMANENT-14 |
-| 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | —（异常隔离 + finally 模式已批量落地） | FIXED |
+| 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地） | FIXED |
 | 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE + mypy 加严（disallow_any_generics） | PERMANENT-14 |
 | 5.147 | 序列化/反序列化安全 | joblib.load 无校验 + MCP Content-Length 无上限 + json.dumps(default=str) 类型丢失 | 根因 5 | UNSAFE-DICT-SPREAD gate（66）+ serialization.py SSoT（dumps/filter_dataclass_fields） | FIXED |
 | 5.150 | 设计模式误用 | God Class 3 处 + Shotgun Surgery 4 处 + Long Parameter List 3 处 + Data Class | 根因 5 | —（R102 裁定 EXECUTE 测试先行；设计模式 AST gate 列为可选未来专项） | PERMANENT-9 |
@@ -175,7 +175,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.159 | 死代码 | governance/governance 错位包 7 文件 + rollback/governance 5 文件 + 20 死重复文件 | 根因 1 | ORPHAN-MODULE gate + M07 指标 | FIXED |
 | 5.160 | 魔法数字/字符串 | task_repo 40+ 条裸 SQL + apply_depgraph 40+ SQL + 安全扫描器正则阈值不一致 | 根因 2 | NO-BARE-SQL gate（87）+ NO-HARDCODED-URL gate（94） | PERMANENT-1 |
 | 5.165 | 全局状态管理 | ~20 处模块级单例无锁 double-check + import 时启 Timer + asyncio+全局状态冲突 | 根因 5 | —（Lock + 双重检查锁定模式已批量落地） | FIXED（残留 2 项 LOW 见 §五附注） |
-| 5.169 | 文件句柄/资源泄漏 | fd 泄漏 + urlopen 未 close + 25 处 sqlite3 无 try/finally + os.open 泄漏 | 根因 5 | —（try/finally 批量包装完成） | FIXED |
+| 5.169 | 文件句柄/资源泄漏 | fd 泄漏 + urlopen 未 close + 25 处 sqlite3 无 try/finally + os.open 泄漏 | 根因 5 | M29 资源未在 try/finally 监控（warn-only，try/finally 批量包装完成） | FIXED |
 | 5.171 | 类型注解缺失或不一致 | public API 无注解 + Any 滥用 + 返回类型不符 + stub-style 无注解 | 根因 5 | GATE-ANY-ABUSE + mypy 加严 | FIXED |
 | 5.174 | 导入循环/模块耦合 | shared 退化代理壳 + shared↔integration 双向耦合 + 延迟导入堆叠 | 根因 5 | NO-UPWARD-IMPORT gate（priority=97） | FIXED |
 | 5.180 | AI-11 审计遗留专项工程 | gate_engine 硬编码双真源 + check_types 死代码 + subprocess 绕过 _run_git | 根因 1/5 | _registry.yaml 动态加载 + _CHECK_DISPATCH 分发表 | PERMANENT-7 |
@@ -342,7 +342,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 ### 6.1 Phase 0：架构健康度仪表盘（数据基座）——✅ 已完成
 
-commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"动态实时"。已交付：`architecture_health_dashboard.py` + post-commit reconciler（`make_architecture_health_reconciler`），快照落盘 `data/architecture_health/`；M01-M14 全部 14 项指标 = 0（2026-07-18），后续扩展至 M01-M21。
+commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"动态实时"。已交付：`architecture_health_dashboard.py` + post-commit reconciler（`make_architecture_health_reconciler`），快照落盘 `data/architecture_health/`；M01-M14 全部 14 项指标 = 0（2026-07-18），后续扩展至 M01-M29。
 
 ### 6.2 Phase 1：AST 门禁（防复发层）——✅ 已大量落地，持续运行
 
@@ -380,7 +380,7 @@ commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"�
 **真源约束**（SSoT 铁律 TRAE-062）：
 - 规则数据（trae_*.yaml / 契约 / 门禁 / 词汇表 / 注册表）→ 真源是 YAML 文件，sync_yaml_to_depgraph.py 单向同步到 DB（DB 只读缓存）
 - 架构数据（depgraph.nodes/edges、decision_nodes/edges、dataflow 节点）→ 真源是 PostgreSQL DB，apply_depgraph.py / apply_decisiongraph.py / apply_dataflowgraph.py 直接写入
-- 违规数据 → 真源是架构健康度仪表盘（M01-M21，post-commit 自动生成）；本文档（v2.0.0 起）不再手工维护违规清单，仅保留维度基座（§四）与未完成任务（§五）
+- 违规数据 → 真源是架构健康度仪表盘（M01-M29，post-commit 自动生成）；本文档（v2.0.0 起）不再手工维护违规清单，仅保留维度基座（§四）与未完成任务（§五）
 
 ### 7.3 客观性保证机制
 
@@ -393,14 +393,14 @@ commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"�
 
 ### 7.4 局限性声明
 
-1. **调研滞后风险**：v1.x 违规清单为手动调研派生，存在代码变化后清单过期的风险（已由 DRIFTED 标记机制缓解）；v2.0.0 起该风险由仪表盘实时基线（M01-M21）承接，本文档维度状态以 §四为准
-2. **未逐条跟踪维度**：受人工调研成本限制，177 个执行摘要维度中仅 54 个展开逐条跟踪，其余维度（5.2-5.30 / 5.49 / 5.51 / 5.55 / 5.82-5.137 等）仅有执行摘要计数——仪表盘 M01-M21 已覆盖核心指标，剩余维度待 Phase 1 AST 门禁扩展后自动生成
+1. **调研滞后风险**：v1.x 违规清单为手动调研派生，存在代码变化后清单过期的风险（已由 DRIFTED 标记机制缓解）；v2.0.0 起该风险由仪表盘实时基线（M01-M29）承接，本文档维度状态以 §四为准
+2. **未逐条跟踪维度**：受人工调研成本限制，177 个执行摘要维度中仅 54 个展开逐条跟踪，其余维度（5.2-5.30 / 5.49 / 5.51 / 5.55 / 5.82-5.137 等）仅有执行摘要计数——仪表盘 M01-M29 已覆盖核心指标，剩余维度待 Phase 1 AST 门禁扩展后自动生成
 3. **病根治理属元问题**：3193 个问题归因 5 个病根，但病根本身的治理（规则文档膨胀、治理体系自身漂移）属元问题，需 Phase 3 治理层收敛解决
 4. **100% AI 开发场景特殊性**：所有裁定考虑 AI 上下文有限约束，"建议性规则必然失效"是核心假设——若未来引入人类开发者参与，部分裁定需重新评估
 
 ### 7.5 维护规则
 
-- **违规数据**：禁止手工编辑——由架构健康度仪表盘（M01-M21）自动生成，本文档不维护违规清单
+- **违规数据**：禁止手工编辑——由架构健康度仪表盘（M01-M29）自动生成，本文档不维护违规清单
 - **§四维度状态**：新增维度 MUST 遵循命名规范（5.X 序列），新增问题 MUST 归因 5 个病根之一（§二）；维度状态变更（FIXED ↔ PERMANENT-N）由修复 cycle 或架构师裁定更新，并同步 §五
 - **§五未完成任务**：EXECUTE 项施工完成后标注落地 commit 并移出本节（历史见 git log）；wontfix 项如需翻案 MUST 经架构师新裁定（ARCH-XXX）并更新 R102 裁定真源
 - **文档自身漂移检测**：路径漂移 / 数字漂移 / 引用断裂由对应 AST 门禁（DOC-REF-BROKEN 等）防复发
