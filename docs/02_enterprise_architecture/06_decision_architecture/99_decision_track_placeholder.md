@@ -1,6 +1,6 @@
 # 决策流图 · 占位轨（Placeholder Track）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | Track 99
@@ -13,7 +13,7 @@
 
 | Layer 数 | 决策节点数 | 域内边数 | 跨轨边数 |
 |----------|-----------|----------|----------|
-| 645 | 0 | 0 | 0 |
+| 648 | 0 | 0 | 0 |
 
 ## Layer 骨架图
 
@@ -142,6 +142,7 @@
 | MOD-GOV_runtime_violation_snapshot_reconciler | MOD-GOV_runtime_violation_snapshot_reconciler | MOD-GOV_runtime_violation_snapshot_reconciler | placeholder | MOD-GOV_runtime_violation_snapshot_reconciler | - | - | - | - | design | stable |
 | MOD-GOV_security_governance | MOD-GOV_security_governance | MOD-GOV_security_governance | placeholder | MOD-GOV_security_governance | - | - | - | - | prototype | generated |
 | MOD-GOV_sync_savepoint_test | MOD-GOV_sync_savepoint_test | MOD-GOV_sync_savepoint_test | placeholder | MOD-GOV_sync_savepoint_test | - | - | - | - | prototype | generated |
+| MOD-GOV_yaml_sync_error_class | MOD-GOV_yaml_sync_error_class | MOD-GOV_yaml_sync_error_class | placeholder | MOD-GOV_yaml_sync_error_class | - | - | - | - | prototype | generated |
 | MOD-INF-001 | MOD-INF-001 | MOD-INF-001 | placeholder | MOD-INF-001 | - | - | - | - | prototype | generated |
 | MOD-INF-002 | MOD-INF-002 | MOD-INF-002 | placeholder | MOD-INF-002 | - | - | - | - | prototype | generated |
 | MOD-INF-003 | MOD-INF-003 | MOD-INF-003 | placeholder | MOD-INF-003 | - | - | - | - | prototype | generated |
@@ -189,7 +190,7 @@
 | MOD-L02-001 | MOD-L02-001 | MOD-L02-001 | placeholder | MOD-L02-001 | - | - | - | - | prototype | stable |
 | MOD-L03-001 | MOD-L03-001 | MOD-L03-001 | placeholder | MOD-L03-001 | - | - | - | - | prototype | generated |
 | MOD-L04-001 | MOD-L04-001 | MOD-L04-001 | placeholder | MOD-L04-001 | - | - | - | - | prototype | generated |
-| MOD-L05-001 | MOD-L05-001 | MOD-L05-001 | placeholder | MOD-L05-001 | - | - | - | - | prototype | generated |
+| MOD-L05-001 | MOD-L05-001 | MOD-L05-001 | placeholder | MOD-L05-001 | - | - | - | - | prototype | stable |
 | MOD-L06-001 | MOD-L06-001 | MOD-L06-001 | placeholder | MOD-L06-001 | - | - | - | - | design | stable |
 | MOD-L07-001 | MOD-L07-001 | MOD-L07-001 | placeholder | MOD-L07-001 | - | - | - | - | prototype | generated |
 | MOD-L08-001 | MOD-L08-001 | MOD-L08-001 | placeholder | MOD-L08-001 | - | - | - | - | design | generated |
@@ -661,7 +662,9 @@
 | MOD-TEST-708 | MOD-TEST-708 | MOD-TEST-708 | placeholder | MOD-TEST-708 | - | - | - | - | prototype | generated |
 | MOD-TEST-710 | MOD-TEST-710 | MOD-TEST-710 | placeholder | MOD-TEST-710 | - | - | - | - | prototype | generated |
 | MOD-TEST-apply_depgraph_smoke | MOD-TEST-apply_depgraph_smoke | MOD-TEST-apply_depgraph_smoke | placeholder | MOD-TEST-apply_depgraph_smoke | - | - | - | - | prototype | generated |
+| MOD-TEST_apply_depgraph_smoke | MOD-TEST_apply_depgraph_smoke | MOD-TEST_apply_depgraph_smoke | placeholder | MOD-TEST_apply_depgraph_smoke | - | - | - | - | prototype | generated |
 | MOD-TRADING-001 | MOD-TRADING-001 | MOD-TRADING-001 | placeholder | MOD-TRADING-001 | - | - | - | - | prototype | generated |
+| MOD-WORKSPACE_TELEMETRY | MOD-WORKSPACE_TELEMETRY | MOD-WORKSPACE_TELEMETRY | placeholder | MOD-WORKSPACE_TELEMETRY | - | - | - | - | prototype | stable |
 | MOD-XLR-003 | MOD-XLR-003 | MOD-XLR-003 | placeholder | MOD-XLR-003 | - | - | - | - | prototype | generated |
 | MOD-migrate_sqlite_to_pg | MOD-migrate_sqlite_to_pg | MOD-migrate_sqlite_to_pg | placeholder | MOD-migrate_sqlite_to_pg | - | - | - | - | prototype | generated |
 | MOD-readme_version_sync | MOD-readme_version_sync | MOD-readme_version_sync | placeholder | MOD-readme_version_sync | - | - | - | - | prototype | generated |

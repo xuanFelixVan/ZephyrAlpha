@@ -1,11 +1,11 @@
-# 决策流图 · L3 功能域 aut_core
+# Decision Flow · L3 Functional Domain aut_core（自主核心）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → aut_core
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `aut_core`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `aut_core`（自主核心）
 
 ## 统计
 
@@ -120,20 +120,20 @@ flowchart TD
 | 1 | decision/simulation/sim_g1 | → | decision/aut_core/ac_01 | informing |
 | 2 | decision/trading/trd_11 | → | decision/aut_core/ac_02 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 4 个外部域直接连接。
+> 本域与 4 个外部域直接连接 / This domain directly connects to 4 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["aut_core"]:::selfDomain
-    EXT_ex_core["ex_core"]:::extDomain
+    SELF["aut_core（自主核心）"]:::selfDomain
+    EXT_ex_core["ex_core（执行核心）"]:::extDomain
     SELF -->|出 1| EXT_ex_core
-    EXT_aut_perm["aut_perm"]:::extDomain
+    EXT_aut_perm["aut_perm（aut_perm）"]:::extDomain
     SELF -->|出 1| EXT_aut_perm
-    EXT_simulation["simulation"]:::extDomain
+    EXT_simulation["simulation（仿真）"]:::extDomain
     EXT_simulation -->|入 1| SELF
-    EXT_trading["trading"]:::extDomain
+    EXT_trading["trading（交易）"]:::extDomain
     EXT_trading -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000

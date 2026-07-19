@@ -79,6 +79,16 @@ _LAYERS_FILE_NAME = "20_decision_layers.md"
 _INVARIANTS_FILE_NAME = "21_decision_invariants.md"
 _STALE_FILE_REGEX = r"^\d{2}_decision_[a-z0-9_]+\.md$"
 
+# 功能域英文→中文映射（双语标题/节点标签用）
+_DOMAIN_NAME_ZH: dict[str, str] = {
+    # L2A 信号层
+    "data": "数据", "factor": "因子", "frontend": "前端", "research": "研究",
+    "sell": "卖出", "signal": "信号", "simulation": "仿真",
+    # L3 策略组合层
+    "aut_core": "自主核心", "ex_core": "执行核心", "ex_sor": "执行排序",
+    "pf_alloc": "组合分配", "pf_core": "组合核心", "position": "持仓", "trading": "交易",
+}
+
 
 def _git_commit_timestamp() -> str:
     """获取本生成器脚本最近一次 git commit 时间（ISO 8601 秒精度）。
@@ -566,20 +576,23 @@ def _gen_cross_domain_mermaid(
     """
     lines = ["flowchart LR"]
     safe_self = self_domain.replace("-", "_")
-    lines.append(f'    SELF["{self_domain}"]:::selfDomain')
+    _self_zh = _DOMAIN_NAME_ZH.get(self_domain, self_domain)
+    lines.append(f'    SELF["{self_domain}（{_self_zh}）"]:::selfDomain')
     seen: set[str] = set()
     for d in outgoing_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
-            lines.append(f'    EXT_{safe}["{other}"]:::extDomain')
+            _other_zh = _DOMAIN_NAME_ZH.get(other, other)
+            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]:::extDomain')
             seen.add(other)
         lines.append(f'    SELF -->|出 {d["count"]}| EXT_{safe}')
     for d in incoming_agg:
         other = d["other_domain"]
         safe = other.replace("-", "_")
         if other not in seen:
-            lines.append(f'    EXT_{safe}["{other}"]:::extDomain')
+            _other_zh = _DOMAIN_NAME_ZH.get(other, other)
+            lines.append(f'    EXT_{safe}["{other}（{_other_zh}）"]:::extDomain')
             seen.add(other)
         lines.append(f'    EXT_{safe} -->|入 {d["count"]}| SELF')
     lines.append("")
@@ -820,12 +833,13 @@ def _gen_domain_file_md(
         design_only=True, track_id=track["id"], path_prefix=domain,
     )
 
+    _domain_zh = _DOMAIN_NAME_ZH.get(domain, domain)
     lines = _md_header(
-        f"决策流图 · {layer_id} 功能域 {domain}",
+        f"Decision Flow · {layer_id} Functional Domain {domain}（{_domain_zh}）",
         f"{track['name']} → {layer_id} → {domain}",
     )
     lines += [
-        f"**所属轨**: {track['name']}（`{track['id']}`） | **所属层**: {layer_id} | **功能域**: `{domain}`",
+        f"**所属轨**: {track['name']}（`{track['id']}`） | **所属层**: {layer_id} | **功能域**: `{domain}`（{_domain_zh}）",
         "",
         "## 统计",
         "",
@@ -869,10 +883,11 @@ def _gen_domain_file_md(
     lines += [""]
 
     # 跨域 mermaid
-    lines += ["## 跨域依赖图", ""]
+    lines += ["## 跨域依赖图（Cross-Domain Dependency Graph）", ""]
     if outgoing_agg or incoming_agg:
+        _ext_count = len(outgoing_agg) + len(incoming_agg)
         lines += [
-            f"> 本域与 {len(outgoing_agg) + len(incoming_agg)} 个外部域直接连接。",
+            f"> 本域与 {_ext_count} 个外部域直接连接 / This domain directly connects to {_ext_count} external domain(s).",
             "",
             "```mermaid",
             _gen_cross_domain_mermaid(domain, outgoing_agg, incoming_agg).rstrip("\n"),
@@ -971,7 +986,7 @@ def _gen_index_md(
         "",
         "## Track 导航（按优先级）",
         "",
-        "| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | 文档 |",
+        "| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | [📄 文档](.) |",
         "|------|----------|------|--------|----------|---------|------|",
     ]
     for t in tracks:
@@ -990,7 +1005,7 @@ def _gen_index_md(
         "",
         f"## L2A 信号层 · 功能域导航（{len(l2a_entries)} 域）",
         "",
-        "| 序号 | 功能域 | Node 数 | 文档 |",
+        "| 序号 | 功能域 | Node 数 | [📄 文档](.) |",
         "|------|--------|---------|------|",
     ]
     for d in l2a_entries:
@@ -1002,7 +1017,7 @@ def _gen_index_md(
         "",
         f"## L3 策略组合层 · 功能域导航（{len(l3_entries)} 域）",
         "",
-        "| 序号 | 功能域 | Node 数 | 文档 |",
+        "| 序号 | 功能域 | Node 数 | [📄 文档](.) |",
         "|------|--------|---------|------|",
     ]
     for d in l3_entries:

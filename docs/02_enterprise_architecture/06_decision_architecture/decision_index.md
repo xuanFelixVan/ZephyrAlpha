@@ -1,6 +1,6 @@
 # 决策流图（decisiongraph）索引
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 
@@ -19,12 +19,12 @@
 | 类型 | 数量 |
 |------|------|
 | Track（轨） | 5 |
-| Layer（层） | 655 |
+| Layer（层） | 658 |
 | Node（节点） | 214 |
 | Edge（边） | 213 |
 | 运营态 Layer（design_maturity=production） | 23 |
 | 设计态 Layer（design_maturity=design） | 63 |
-| 原型态 Layer（design_maturity=prototype） | 569 |
+| 原型态 Layer（design_maturity=prototype） | 572 |
 | 运营态 Node（design_maturity=production） | 0 |
 | 设计态 Node（design_maturity=design） | 214 |
 
@@ -32,17 +32,17 @@
 
 ## Track 导航（按优先级）
 
-| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | 文档 |
+| 序号 | track_id | 名称 | 优先级 | Layer 数 | Node 数 | [📄 文档](.) |
 |------|----------|------|--------|----------|---------|------|
 | 01 | model_driven | 模型驱动轨 | 1 | 10 | 214 | [📄 01_decision_track_model_driven.md](01_decision_track_model_driven.md) |
 | 02 | data_driven | 数据驱动轨 | 2 | 0 | 0 | [📄 02_decision_track_data_driven.md](02_decision_track_data_driven.md) |
 | 03 | human_override | 人工指令轨 | 3 | 0 | 0 | [📄 03_decision_track_human_override.md](03_decision_track_human_override.md) |
 | 04 | emergency | 应急保命轨 | 4 | 0 | 0 | [📄 04_decision_track_emergency.md](04_decision_track_emergency.md) |
-| 99 | placeholder | 占位轨 | 99 | 645 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
+| 99 | placeholder | 占位轨 | 99 | 648 | 0 | [📄 99_decision_track_placeholder.md](99_decision_track_placeholder.md) |
 
 ## L2A 信号层 · 功能域导航（7 域）
 
-| 序号 | 功能域 | Node 数 | 文档 |
+| 序号 | 功能域 | Node 数 | [📄 文档](.) |
 |------|--------|---------|------|
 | 06 | data | 3 | [📄 06_decision_l2a_data.md](06_decision_l2a_data.md) |
 | 07 | factor | 2 | [📄 07_decision_l2a_factor.md](07_decision_l2a_factor.md) |
@@ -54,7 +54,7 @@
 
 ## L3 策略组合层 · 功能域导航（7 域）
 
-| 序号 | 功能域 | Node 数 | 文档 |
+| 序号 | 功能域 | Node 数 | [📄 文档](.) |
 |------|--------|---------|------|
 | 13 | aut_core | 11 | [📄 13_decision_l3_aut_core.md](13_decision_l3_aut_core.md) |
 | 14 | ex_core | 9 | [📄 14_decision_l3_ex_core.md](14_decision_l3_ex_core.md) |

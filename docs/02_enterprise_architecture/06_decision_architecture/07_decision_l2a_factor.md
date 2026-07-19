@@ -1,11 +1,11 @@
-# 决策流图 · L2A 功能域 factor
+# Decision Flow · L2A Functional Domain factor（因子）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → factor
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `factor`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `factor`（因子）
 
 ## 统计
 
@@ -73,16 +73,16 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | decision/data/dt_03 | → | decision/factor/fc_01 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 2 个外部域直接连接。
+> 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["factor"]:::selfDomain
-    EXT_frontend["frontend"]:::extDomain
+    SELF["factor（因子）"]:::selfDomain
+    EXT_frontend["frontend（前端）"]:::extDomain
     SELF -->|出 1| EXT_frontend
-    EXT_data["data"]:::extDomain
+    EXT_data["data（数据）"]:::extDomain
     EXT_data -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000

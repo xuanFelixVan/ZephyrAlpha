@@ -1,11 +1,11 @@
-# 决策流图 · L2A 功能域 sell
+# Decision Flow · L2A Functional Domain sell（卖出）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `sell`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L2A | **功能域**: `sell`（卖出）
 
 ## 统计
 
@@ -158,16 +158,16 @@ flowchart TD
 |:--:|---------|:--:|---------|---------|
 | 1 | decision/research/rs_07 | → | decision/sell/sell_00 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 2 个外部域直接连接。
+> 本域与 2 个外部域直接连接 / This domain directly connects to 2 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["sell"]:::selfDomain
-    EXT_signal["signal"]:::extDomain
+    SELF["sell（卖出）"]:::selfDomain
+    EXT_signal["signal（信号）"]:::extDomain
     SELF -->|出 1| EXT_signal
-    EXT_research["research"]:::extDomain
+    EXT_research["research（研究）"]:::extDomain
     EXT_research -->|入 1| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000

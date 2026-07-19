@@ -1,11 +1,11 @@
-# 决策流图 · L3 功能域 ex_sor
+# Decision Flow · L3 Functional Domain ex_sor（执行排序）
 
-> 生成时间: 2026-07-19T16:24:12
+> 生成时间: 2026-07-20T01:15:30
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L3 → ex_sor
 
-**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `ex_sor`
+**所属轨**: 模型驱动轨（`model_driven`） | **所属层**: L3 | **功能域**: `ex_sor`（执行排序）
 
 ## 统计
 
@@ -90,18 +90,18 @@ flowchart TD
 | 1 | decision/ex_core/ex_15 | → | decision/ex_sor/ex_16 | informing |
 | 2 | decision/ex_core/ex_14 | → | decision/ex_sor/ex_18 | informing |
 
-## 跨域依赖图
+## 跨域依赖图（Cross-Domain Dependency Graph）
 
-> 本域与 3 个外部域直接连接。
+> 本域与 3 个外部域直接连接 / This domain directly connects to 3 external domain(s).
 
 ```mermaid
 flowchart LR
-    SELF["ex_sor"]:::selfDomain
-    EXT_pf_alloc["pf_alloc"]:::extDomain
+    SELF["ex_sor（执行排序）"]:::selfDomain
+    EXT_pf_alloc["pf_alloc（组合分配）"]:::extDomain
     SELF -->|出 1| EXT_pf_alloc
-    EXT_governance["governance"]:::extDomain
+    EXT_governance["governance（governance）"]:::extDomain
     SELF -->|出 1| EXT_governance
-    EXT_ex_core["ex_core"]:::extDomain
+    EXT_ex_core["ex_core（执行核心）"]:::extDomain
     EXT_ex_core -->|入 2| SELF
 
     classDef selfDomain fill:#fff9c4,stroke:#f9a825,stroke-width:3px,color:#000
