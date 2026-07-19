@@ -52,6 +52,7 @@ from __future__ import annotations
 import ast
 import logging
 import os
+import re
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 # 复用 perm_trigger_gate 的辅助函数（SSoT，避免 FUNCTION-DUP 重复定义）
@@ -69,6 +70,14 @@ _MANUAL_TRIGGER_IDENTIFIERS = frozenset({
     "ArgumentParser",
     "argparse",
 })
+
+# m11-perm-manual-legitimate noqa 标记正则（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 B / C，P3-1.2 治本）
+# 格式：`# noqa: m11-perm-manual-legitimate` + 2+ 空格 + reason（>=10 字符）
+# reason 末尾的尾随空白会被 rstrip 去除后再计数
+_M11_NOQA_PATTERN = re.compile(
+    r"#\s*noqa:\s*m11-perm-manual-legitimate\s{2,}(\S.*)$",
+    re.MULTILINE,
+)
 
 # 事件订阅/自动触发相关属性名/方法名（与 PERM-TRIGGER 共享语义）
 _EVENT_REGISTRATION_ATTRS = frozenset({"subscribe", "register_handler"})
@@ -260,7 +269,11 @@ def _get_added_set(gateway) -> set[str]:
 
 
 def _check_manual_only_permanent_new(abs_path: str, content: str) -> bool:
-    """检测新增 permanent 文件是否含 manual 触发但无事件/自动触发订阅。"""
+    """检测新增 permanent 文件是否含 manual 触发但无事件/自动触发订阅。
+
+    P3-1.2 治本（#ARCH-P3-FOLLOWUP-TODOS-001 裁定 B / C，2026-07-20）：
+    若文件含合规 m11-perm-manual-legitimate noqa 标记，视为合法豁免，返回 False（放行）。
+    """
     try:
         tree = ast.parse(content, filename=abs_path)
     except SyntaxError as e:
@@ -271,7 +284,38 @@ def _check_manual_only_permanent_new(abs_path: str, content: str) -> bool:
         return False
     has_manual = _detect_manual_trigger(tree)
     has_event = _detect_event_or_auto_trigger(tree)
-    return has_manual and not has_event
+    if has_manual and not has_event:
+        # 检查 m11 合规豁免（P3-1.2 治本：合法 manual 触发 permanent 脚本）
+        if _has_m11_exemption(content):
+            return False  # 合规豁免，放行
+        return True  # 违规：manual 触发 + 无事件订阅 + 无合规豁免
+    return False
+
+
+def _has_m11_exemption(content: str) -> bool:
+    """检测内容是否含合规的 m11-perm-manual-legitimate noqa 标记（P3-1.2 治本）。
+
+    合规条件（与 noqa_exempt_registry.yaml 的 m11 条目一致）：
+      1. 含 ``m11-perm-manual-legitimate`` noqa 标记（``#`` 引导，``noqa:`` 前缀）
+      2. 标记后跟 2+ 空格分隔的 reason
+      3. reason 长度 >= 10 字符（rstrip 后计数）
+
+    用途：MANUAL-ONLY-PERMANENT gate 的合法豁免路径——
+    AI/CI 按需调用的 permanent runner（非 cron / 非 daemon / 非常驻服务）
+    可通过 ``m11-perm-manual-legitimate`` noqa 标记 + ``M11豁免: <理由>`` 格式豁免。
+
+    Args:
+        content: 文件全文内容。
+
+    Returns:
+        True = 含合规 m11 豁免标记（gate 应放行）；
+        False = 无 m11 标记 / reason 不足 10 字符 / 其他 noqa 标记。
+    """
+    for match in _M11_NOQA_PATTERN.finditer(content):
+        reason = match.group(1).rstrip()
+        if len(reason) >= 10:
+            return True
+    return False
 
 
 def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str, content: str) -> bool:
