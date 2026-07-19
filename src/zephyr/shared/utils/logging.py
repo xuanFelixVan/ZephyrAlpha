@@ -35,7 +35,7 @@ AI 排障时无法快速定位根因的问题。
 AI 施工约定：
   - 所有模块 MUST 使用 get_logger(__name__) 获取日志器
   - 禁止直接使用 print() 或裸 logging.getLogger()
-  - trace_id 通过 TraceContext 上下文管理器自动传播
+  - trace_id 通过 trace_context 上下文管理器自动传播
 
 SSoT: MOD-INF-016 §2.10 shared-logging
 Version: 0.1.0
@@ -61,6 +61,7 @@ __all__ = [
     "module_id_var",
     "request_id_var",
     "session_id_var",
+    "trace_context",
     "trace_id_var",
 ]
 
@@ -287,7 +288,7 @@ def get_logger(
 
 
 @contextmanager
-def TraceContext(
+def trace_context(
     trace_id: str | None = None,
     *,
     session_id: str | None = None,
@@ -297,16 +298,16 @@ def TraceContext(
     """trace_id 传播上下文管理器。
 
     在 with 块内，所有日志调用自动携带指定的 trace_id / session_id / module_id / request_id。
-    嵌套 TraceContext 时，内层恢复外层 token。
+    嵌套 trace_context 时，内层恢复外层 token。
 
     用法:
-        with TraceContext() as tc:
+        with trace_context() as tc:
             log.info("inside trace")
             # 也可以子函数中嵌套:
-            with TraceContext() as tc2:
+            with trace_context() as tc2:
                 log.info("sub-trace")
 
-        with TraceContext(session_id="sess-001", module_id="MOD-INF-016", request_id="req-abc"):
+        with trace_context(session_id="sess-001", module_id="MOD-INF-016", request_id="req-abc"):
             log.info("scoped log")
     """
     if trace_id is None:
@@ -326,38 +327,16 @@ def TraceContext(
         request_id_var.reset(token_request)
 
 
+# [DEPRECATED] 兼容别名，新代码用 trace_context
+TraceContext = trace_context
+
+
 _root_configured = False
-
-
-def _resolve_default_level() -> str:
-    """5.34.10 修复：环境感知默认日志级别。
-
-    优先级：``ZEPHYR_LOG_LEVEL`` 环境变量（合法值才生效）> 环境感知默认——
-    dev->DEBUG（排障信息完整）/ test->WARNING（CI 输出安静）/
-    staging->INFO / prod->INFO（生产不输出 DEBUG 噪音）。
-    环境检测异常时回退 INFO。
-    """
-    import os
-
-    env_override = os.environ.get("ZEPHYR_LOG_LEVEL", "").strip().upper()
-    if env_override in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):
-        return env_override
-    try:
-        from zephyr.shared.foundation.env import Env, current_env
-
-        env = current_env()
-        if env is Env.DEV:
-            return "DEBUG"
-        if env is Env.TEST:
-            return "WARNING"
-        return "INFO"
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        return "INFO"
 
 
 def configure_root_logger(
     *,
-    level: str | None = None,
+    level: str = "INFO",
     json_file: str | None = None,
     human_console: bool = True,
 ) -> None:
@@ -366,9 +345,7 @@ def configure_root_logger(
     应在应用入口（如 main.py / cli.py）调用一次。
 
     Args:
-        level: 日志级别（DEBUG/INFO/WARNING/ERROR/CRITICAL）。
-            None（默认）= 环境感知（5.34.10：dev->DEBUG / test->WARNING /
-            prod->INFO，或被 ZEPHYR_LOG_LEVEL 环境变量覆盖）
+        level: 日志级别（DEBUG/INFO/WARNING/ERROR/CRITICAL）
         json_file: 可选 JSON 日志输出文件路径（None = 不写文件）
         human_console: 是否启用控制台人类可读输出
     """
@@ -376,9 +353,6 @@ def configure_root_logger(
     if _root_configured:
         return
     _root_configured = True
-
-    if level is None:
-        level = _resolve_default_level()
 
     root = logging.getLogger()
     root.setLevel(getattr(logging, level.upper(), logging.INFO))

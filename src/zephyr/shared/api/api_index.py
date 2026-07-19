@@ -376,14 +376,14 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # logging.py — 结构化日志系统（Phase 4 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.utils.logging import get_logger, TraceContext, configure_root_logger
+# from zephyr.shared.utils.logging import get_logger, trace_context, configure_root_logger
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
 # ├──────────────────────────────┼──────────────────────────────────────────┤
 # │ ZephyrLogger                 │ 结构化 JSON 日志器                        │
 # │ get_logger(name, **ctx)      │ 工厂函数——获取/创建 + 注入 module_id      │
-# │ TraceContext                 │ trace_id 传播上下文管理器                 │
+# │ trace_context                │ trace_id 传播上下文管理器                 │
 # │ configure_root_logger        │ 应用入口一次性配置（控制台+文件双模式）     │
 # │ trace_id_var / session_id_var│ contextvars——跨调用链自动传播             │
 # └──────────────────────────────┴──────────────────────────────────────────┘
