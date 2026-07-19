@@ -2131,7 +2131,7 @@ def _log_sync_failures(cur, failures):
         # Best-effort: 写日志失败不能阻断 sync 主流程
         try:
             cur.execute("ROLLBACK TO SAVEPOINT sp_log_failures")
-        except Exception:
+        except Exception:  # noqa: BLE001 — SAVEPOINT 可能未建立（best-effort 回滚，忽略失败不阻断主流程）
             pass  # SAVEPOINT 本身可能未建立
         print(f"[WARN] sync_failures_log 写入失败（不阻断）: {e}")
 
