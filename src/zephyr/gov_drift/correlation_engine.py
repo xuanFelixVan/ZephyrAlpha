@@ -28,8 +28,8 @@ from __future__ import annotations
 
 import os
 import sqlite3
+from itertools import combinations
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.shared.io.paths import DB_PATH
 from dataclasses import dataclass, field
 
 
@@ -47,9 +47,12 @@ class CorrelationReport:
 class CorrelationEngine:
     def __init__(self, db_path: str | None = None) -> None:
         if db_path is None:
-            # 5.34.7 治本：默认路径改用 SSoT DB_PATH（zephyr.shared.io.paths），
-            # 消除 __file__ 上溯 4 层 + 字面量 "data/databases/governance.db" 硬编码
-            db_path = str(DB_PATH)
+            db_path = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+                "data",
+                "databases",
+                "governance.db",
+            )
 
         self._db_path = db_path
 
@@ -73,24 +76,28 @@ class CorrelationEngine:
 
         matrix: dict[str, dict[str, float]] = {m: {} for m in modules}
 
-        for ma in modules:
-            for mb in modules:
-                if ma >= mb:
-                    continue
+        # W2 治本: 预计算 module->scans 映射一次（原 O(n^2*S) 内层重复构建）+
+        # itertools.combinations 只遍历上三角对（原 n^2 迭代 + ma>=mb 跳过一半）
+        module_scans: dict[str, set[str]] = {m: set() for m in modules}
 
-                a_scans = set(s for s, ms in scan_sets.items() if ma in ms)
+        for scan_id, mods in scan_sets.items():
+            for m in mods:
+                module_scans[m].add(scan_id)
 
-                b_scans = set(s for s, ms in scan_sets.items() if mb in ms)
+        for ma, mb in combinations(modules, 2):
+            a_scans = module_scans[ma]
 
-                inter = len(a_scans & b_scans)
+            b_scans = module_scans[mb]
 
-                union = len(a_scans | b_scans)
+            inter = len(a_scans & b_scans)
 
-                jaccard = inter / union if union > 0 else 0.0
+            union = len(a_scans | b_scans)
 
-                matrix[ma][mb] = round(jaccard, 4)
+            jaccard = inter / union if union > 0 else 0.0
 
-                matrix[mb][ma] = round(jaccard, 4)
+            matrix[ma][mb] = round(jaccard, 4)
+
+            matrix[mb][ma] = round(jaccard, 4)
 
         return matrix
 

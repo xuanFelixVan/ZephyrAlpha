@@ -67,6 +67,9 @@ class DriftStateMachine:
     def __init__(self) -> None:
         self.TTL_DETECTED_HOURS: int = 24
 
+        # W2 治本: _events 上限，超过时按最旧优先裁剪（终态/DEAD_LETTER 优先淘汰）
+        self.max_events: int = 10000
+
         self._events: dict[uuid.UUID, DriftEventRecord] = {}
 
     def validate_transition(self, from_state: DriftState, to_state: DriftState) -> bool:
@@ -200,7 +203,42 @@ class DriftStateMachine:
                     except InvalidTransitionError:
                         pass
 
+        self._evict_stale_events(now)
+
         return expired
+
+    def _evict_stale_events(self, now: datetime) -> None:
+        """淘汰 _events 中的过期/超额记录，防无界增长（内存泄漏治本）。
+
+        两档淘汰：
+        1. 生命周期已终结（VERIFIED/FALSE_POSITIVE/DEAD_LETTER）且 updated_at 超过
+           TTL_DETECTED_HOURS 的记录——状态不再变化，保留无意义。刚 transition 到
+           DEAD_LETTER 的事件 updated_at=now，不受影响。
+        2. 仍超 max_events 上限时，按终态优先 + updated_at 最旧优先裁剪。
+        """
+        terminal_or_dead = TERMINAL_STATES | {DriftState.DEAD_LETTER}
+
+        ttl = timedelta(hours=self.TTL_DETECTED_HOURS)
+
+        stale = [
+            event_id
+            for event_id, record in self._events.items()
+            if record.state in terminal_or_dead and now - record.updated_at > ttl
+        ]
+
+        for event_id in stale:
+            del self._events[event_id]
+
+        excess = len(self._events) - self.max_events
+
+        if excess > 0:
+            ordered = sorted(
+                self._events.values(),
+                key=lambda r: (r.state not in terminal_or_dead, r.updated_at),
+            )
+
+            for record in ordered[:excess]:
+                del self._events[record.event_id]
 
     def suppress(self, event_id: uuid.UUID, expires_at: datetime) -> DriftState:
         record = self._events.get(event_id)
