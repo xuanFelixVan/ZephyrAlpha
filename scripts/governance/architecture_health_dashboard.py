@@ -5,7 +5,7 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 18 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）
+# [INVARIANTS] 19 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）；M21 5病根×3要素覆盖缺口数追踪 Phase 3.6 病根治本闭环（persistence+discoverability+enforceability，target=0 全 15 cell 覆盖）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（18 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（19 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -1557,9 +1557,124 @@ def metric_19_governance_convergence_gap() -> dict:
         details=details, source=_CONVERGENCE_MAP_REL)
 
 
+# ── 指标 21：5 病根 × 3 要素覆盖缺口数 ────────────────────────────────────
+
+_RC_ELEMENTS = ('persistence', 'discoverability', 'enforceability')
+
+
+def _scan_root_cause_cells(
+    root_causes: list,
+) -> tuple[int, int, list[str]]:
+    """扫描 root_causes 列表，返回 (total_cells, covered_cells, uncovered_list)。
+
+    辅助 metric_21_root_cause_coverage 降低循环复杂度（Extract Method）。
+    """
+    total = 0
+    covered = 0
+    uncovered: list[str] = []
+    for rc in root_causes:
+        if not isinstance(rc, dict):
+            continue
+        rc_id = rc.get('id', '?')
+        elements = rc.get('elements', {}) or {}
+        for ek in _RC_ELEMENTS:
+            total += 1
+            elem = elements.get(ek, {}) or {}
+            if not isinstance(elem, dict):
+                continue
+            if elem.get('covered', False):
+                covered += 1
+            else:
+                gap = elem.get('gap', 'no gap description')
+                uncovered.append(f'{rc_id}/{ek}: {gap}')
+    return total, covered, uncovered
+
+
+def _format_coverage_details(
+    total: int, covered: int, uncovered: list[str],
+    declared_uncovered: int | None,
+) -> list[str]:
+    """格式化 M21 指标详情列表（辅助函数，降低 metric_21 循环复杂度）。"""
+    details = [f'total_cells={total}, covered={covered}, uncovered={len(uncovered)}']
+    if declared_uncovered is not None:
+        details.append(f'declared_uncovered={declared_uncovered} (SSoT)')
+        if declared_uncovered != len(uncovered):
+            details.append(
+                f'WARNING: declared ({declared_uncovered}) != scanned ({len(uncovered)})'
+            )
+    details.append('target: 0 (all 15 cells covered, M21=0)')
+    details.extend(f'  - {u}' for u in uncovered)
+    return details
+
+
+def metric_21_root_cause_coverage() -> dict:
+    """5 病根 × 3 要素覆盖缺口数（#ARCH-GOV-CONVERGENCE-META Phase 3.6）。
+
+    病根治本闭环指标：architecture_debt_registry.md §一 L358-363 定义的 5 个病根，
+    每个病根需 3 要素治本闭环（持久化 + 可发现 + 可阻断）。
+    M21 = 未覆盖 cell 数（15 - covered）。
+
+    - M21=0：全部 15 cell 覆盖（5 病根全部完成 3 要素治本闭环）
+    - M21>0：仍有病根的治本未闭环（通常 enforceability gap——warn-only 未转 gate）
+    - convergence_map 不存在/解析失败 → fail-open，count=0 + error
+
+    3 要素定义（对标 capability_canonical_file_registry 治本闭环模式）：
+      - persistence（持久化）：治本方案持久化到 YAML/DB
+      - discoverability（可发现）：新 AI 可通过 registry/MCP/metric 发现
+      - enforceability（可阻断）：commit gate 硬阻断违规
+
+    数据真源：docs/02_enterprise_architecture/governance_convergence_map.yaml
+              → root_cause_coverage section
+    """
+    import yaml as _yaml
+
+    map_path = REPO_ROOT / _CONVERGENCE_MAP_REL
+    if not map_path.exists():
+        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
+            details=[f'convergence map not found: {_CONVERGENCE_MAP_REL}'],
+            source='inline', error='convergence map not found')
+
+    try:
+        data = _yaml.safe_load(map_path.read_text(encoding='utf-8'))
+    except Exception as e:  # noqa: BLE001 — fail-open
+        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
+            details=[f'YAML parse failed: {e}'], source='inline',
+            error=f'YAML parse failed: {e}')
+
+    if not isinstance(data, dict):
+        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
+            details=['convergence map top-level not dict'],
+            source='inline', error='invalid structure')
+
+    rc_data = data.get('root_cause_coverage', {})
+    if not isinstance(rc_data, dict):
+        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
+            details=['root_cause_coverage section missing'],
+            source='inline', error='root_cause_coverage missing')
+
+    root_causes = rc_data.get('root_causes', []) or []
+    if not root_causes:
+        return _make_metric('M21', '5病根×3要素覆盖缺口数', 0,
+            details=['root_causes list empty'],
+            source='inline', error='root_causes empty')
+
+    total, covered, uncovered = _scan_root_cause_cells(root_causes)
+
+    summary = rc_data.get('coverage_summary', {}) or {}
+    declared_uncovered = (
+        summary.get('uncovered_cells') if isinstance(summary, dict) else None
+    )
+
+    details = _format_coverage_details(total, covered, uncovered, declared_uncovered)
+
+    # M21 = 实际扫描的未覆盖数（非声明值——扫描是真源）
+    return _make_metric('M21', '5病根×3要素覆盖缺口数', len(uncovered),
+        details=details, source=_CONVERGENCE_MAP_REL)
+
+
 # ── 仪表盘主逻辑 ──────────────────────────────────────────────────────────
 
-# 18 项指标注册表（id → 检测函数）
+# 19 项指标注册表（id → 检测函数）
 METRICS: list[tuple[str, str, callable]] = [
     ("M01", "词表硬编码违规数", metric_01_vocab_hardcode),
     ("M02", "manual-only 永久脚本数", metric_02_manual_only_permanent),
@@ -1580,6 +1695,7 @@ METRICS: list[tuple[str, str, callable]] = [
     ("M17", "规则感知缺口(无门禁配对数)", metric_17_rule_perception_gap),
     ("M19", "治理层收敛缺口数", metric_19_governance_convergence_gap),
     ("M20", "trae_060 §5 快照漂移数", metric_20_runtime_snapshot_drift),
+    ("M21", "5病根×3要素覆盖缺口数", metric_21_root_cause_coverage),
 ]
 
 

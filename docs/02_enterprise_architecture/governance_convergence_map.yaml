@@ -102,3 +102,116 @@ convergence_summary:
   convergence_ratio: 0.0  # consolidated / total
   # M19 指标 = total_components - consolidated_components = 206
   # 目标：M19 ≤ 6（仅 6 个核心功能入口点）
+
+# ── 5 病根 × 3 要素覆盖矩阵（#ARCH-GOV-CONVERGENCE-META Phase 3.6）─────────
+# 病源：architecture_debt_registry.md §一 L358-363（5 个病根导致 3193 个问题）
+# 3 要素（对标 capability_canonical_file_registry 的治本闭环模式）：
+#   - persistence（持久化）：治本方案持久化到 YAML/DB（非内存/脚本临时态）
+#   - discoverability（可发现）：新 AI 可通过 capability registry / MCP / metric 发现治本方案
+#   - enforceability（可阻断）：治本方案通过 commit gate 硬阻断违规（非 warn-only）
+# M21 指标 = 未覆盖 cell 数（target: 0，全部 15 cell 覆盖）
+root_cause_coverage:
+  root_causes:
+    - id: rc1_static_snapshot
+      name: "静态快照未动态更新"
+      source: "architecture_debt_registry.md L359"
+      problem_classes: "~15类（159文件复制对 / 时间触发残留 / 重复簇）"
+      elements:
+        persistence:
+          covered: true
+          treatment: "trae_060 §5 baseline_2026_06_26.yaml + runtime_violation_snapshot/latest.json"
+          phase: "3.4a/3.4b"
+        discoverability:
+          covered: true
+          treatment: "capability_canonical_file_registry 登记 + M20 metric 追踪 drift"
+          phase: "3.4b"
+        enforceability:
+          covered: false
+          treatment: null
+          gap: "M20 warn-only 检测 drift，无 commit gate 硬阻断静态快照漂移"
+          phase: "planned（第1期 AST 门禁）"
+
+    - id: rc2_vocab_chain_blindspot
+      name: "词表→代码消费链机械盲区"
+      source: "architecture_debt_registry.md L360"
+      problem_classes: "~12类（41词表硬编码 / stability值域错位）"
+      elements:
+        persistence:
+          covered: true
+          treatment: "34 vocab YAML 文件作为 SSoT（docs/01_policies_and_standards/_registry/vocabularies/）"
+          phase: "baseline"
+        discoverability:
+          covered: true
+          treatment: "capability_canonical_file_registry 登记 vocab + vocab_registry 索引"
+          phase: "baseline"
+        enforceability:
+          covered: false
+          treatment: null
+          gap: "VOCAB-HARDCODE gate (priority=50) 仅检测硬编码字符串，未覆盖完整消费链（值域/字段名/SsoT 引用）"
+          phase: "planned（第1期扩展 VOCAB-HARDCODE 覆盖面）"
+
+    - id: rc3_capability_lookup_suggestion
+      name: "CapabilityLookup 建议性反查"
+      source: "architecture_debt_registry.md L361"
+      problem_classes: "~10类（40 GATE 无反查 / 重复造轮子）"
+      elements:
+        persistence:
+          covered: true
+          treatment: "capability_canonical_file_registry.yaml（SSoT，5400+ 行）"
+          phase: "3.1"
+        discoverability:
+          covered: true
+          treatment: "MCP rule_discovery server + CAPABILITY-LOOKUP-REQUIRED gate (priority=110)"
+          phase: "3.1"
+        enforceability:
+          covered: true
+          treatment: "CAPABILITY-LOOKUP-REQUIRED gate 硬阻断（新文件无 creation_token → block）"
+          phase: "3.1"
+
+    - id: rc4_manual_exception_permissive
+      name: "manual 例外开口过大"
+      source: "architecture_debt_registry.md L362"
+      problem_classes: "~10类（96 manual 脚本 / rule_watcher 违规）"
+      elements:
+        persistence:
+          covered: true
+          treatment: "trae 规则定义 [STARTUP]/[TTL] 词表 + noqa_exempt_registry.yaml"
+          phase: "baseline"
+        discoverability:
+          covered: true
+          treatment: "M02 metric 追踪 manual-only 永久脚本 + capability registry"
+          phase: "baseline"
+        enforceability:
+          covered: false
+          treatment: null
+          gap: "M02 metric warn-only，无 commit gate 硬阻断含常驻服务特征的 manual-only permanent 脚本"
+          phase: "planned（第1期 MANUAL-ONLY-PERMANENT gate）"
+
+    - id: rc5_rule_inflation_execution_gap
+      name: "规则膨胀执行断层"
+      source: "architecture_debt_registry.md L363"
+      problem_classes: "~5类（元原因，298问题反复出现）"
+      elements:
+        persistence:
+          covered: true
+          treatment: "governance_convergence_map.yaml（收敛映射 SSoT，Phase 3.3）"
+          phase: "3.3"
+        discoverability:
+          covered: true
+          treatment: "M19 metric 追踪收敛缺口 + RULE-EXECUTION-PAIRING gate 注册（Phase 3.5）"
+          phase: "3.3/3.5"
+        enforceability:
+          covered: true
+          treatment: "RULE-EXECUTION-PAIRING gate (priority=61) 硬阻断无 paired_gate_id 的规则修改"
+          phase: "3.5"
+
+  coverage_summary:
+    total_cells: 15  # 5 root causes × 3 elements
+    covered_cells: 12
+    uncovered_cells: 3  # rc1/enforceability + rc2/enforceability + rc4/enforceability
+    # M21 指标 = uncovered_cells = 3
+    # 目标：M21 = 0（全部 15 cell 覆盖，第1期 AST 门禁补齐 3 个 enforceability gap）
+    uncovered_list:
+      - "rc1_static_snapshot/enforceability: 静态快照 drift 无 gate 阻断"
+      - "rc2_vocab_chain_blindspot/enforceability: VOCAB-HARDCODE 覆盖面不足"
+      - "rc4_manual_exception_permissive/enforceability: manual-only permanent 无 gate 阻断"
