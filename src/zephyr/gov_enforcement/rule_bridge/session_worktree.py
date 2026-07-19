@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GOV-session_worktree | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] zephyr.gov_enforcement.rule_bridge.session_worktree
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.gov_enforcement.rule_bridge.session_claim (generate_session_id); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源); scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment (subprocess 调用，PRE-MERGE-TOPO-CHECK 检测真源，#ARCH-DEP-001 第二期)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.gov_enforcement.rule_bridge.session_claim (generate_session_id); zephyr.gov_enforcement.rule_bridge.worktree_pool (MOD-GOV_ENFORCEMENT_worktree_pool, ARCH-GIT-CALL-BUDGET P3.3 session_worktree_start 优先 lease); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源); scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment (subprocess 调用，PRE-MERGE-TOPO-CHECK 检测真源，#ARCH-DEP-001 第二期)
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）+ 顺带清理 .aidrafts/ 根目录 age > 1h 的 _* 孤儿辅助脚本（P3 流程治本，2026-07-17，_cleanup_orphan_draft_scripts 非递归扫根目录仅删 _* 文件不删 sess-* 目录，消除「治本代码自身成为残留」递归问题，OSError 静默跳过不阻断 start）；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；pre-merge gate 检查（治本 merge 前 gate 漂移，2026-07-04）：session_worktree_merge 在 _pre_merge_auto_clean 后执行 _pre_merge_gate_check，用 git reset --soft merge-base 模拟 staged 状态运行 7 个 worktree-compatible gate（捕获 commit 后到 merge 前主分支更新的 gate 规则），gate 阻断则 return merged=False，gate 异常降级为 warn 不阻断，HEAD 用 git reset --soft orig_head 恢复；PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期，2026-07-17）：session_worktree_merge 在 _pre_merge_auto_clean 之前执行 _run_pre_merge_topo_check（时序修复 2026-07-17：原在 auto_clean 之后执行，auto_clean 会还原 checker 文件到 HEAD 旧版本导致降级），subprocess 调 MAIN 副本 check_blueprint_code_alignment.py --json --scan-root <worktree>（MAIN 副本有 DB 配置，--scan-root 仅重定向代码扫描），HIGH drift（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge，过滤到 session 变更文件（仅阻断 session 自身引入的 HIGH），LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍；独立于 commit gate（不受 gate 代码修改降级影响）；降级——checker 缺失 fail-closed 阻断，DB 不可用/超时/JSON 解析失败 fail-open 放行；reconcile_verify 默认 True（2026-07-04）：merge 后自动触发 17 个 reconciler（_run_reconcilers_after_merge），补齐 post-merge 漂移修复（manifest/path_tree/path_ownership/depgraph_ops 等 auto_commit + warn-only）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常；breaking_change 并发阻断（§9.7 治本 2026-07-04）：session_worktree_start 新增 breaking_change/allow_concurrent 参数，在注册 session 之前执行双向阻断——breaking_change=True 检查其他活跃 session（BREAKING_CHANGE_CONCURRENCY_BLOCKED），breaking_change=False 检查其他活跃 breaking_change session（BREAKING_CHANGE_AVOIDANCE_BLOCKED），allow_concurrent=True 逃生通道跳过阻断，异常 fail-open 降级放行；worktree base 新鲜度检查（裁定#19-B，2026-07-18）：session_worktree_commit 在 _sync_files_to_worktree 之前调 _ensure_worktree_base_fresh——检测 worktree HEAD vs 主工作区 HEAD 是否一致，落后则自动对齐（无 session commit → git reset --hard <main HEAD> 安全；有 session commit → git rebase <main HEAD> 冲突 fail-loud 返回 base_sync_failed=True 阻断），治本并发场景下 worktree base 过期导致 ① 搭便车提交（dev 多 commit 被 copy2 塞进 session commit 污染 git 历史）② ARCH-REFERENCE L2 误判（dev 新 #ARCH-NNN 引用被算作本次 commit 新增触发 ARCH_ATOMICITY_VIOLATION 硬阻断）
+# [INVARIANTS] worktree 物理隔离——每 AI 对话独占 .aidrafts/{session_id}/ worktree，消除共享工作目录导致的 stash 冲突/编辑覆盖/搭便车提交；session_worktree_start 原子注册 session + 创建 worktree（幂等，已存在则复用）+ 顺带清理 .aidrafts/ 根目录 age > 1h 的 _* 孤儿辅助脚本（P3 流程治本，2026-07-17，_cleanup_orphan_draft_scripts 非递归扫根目录仅删 _* 文件不删 sess-* 目录，消除「治本代码自身成为残留」递归问题，OSError 静默跳过不阻断 start）；ARCH-GIT-CALL-BUDGET P3.3（2026-07-19）：session_worktree_start 在 worktree 不存在时优先调 WorktreePool.lease(sid)——pool 预创建 worktree 在 .aidrafts_pool/，lease 通过 git worktree move 重定位到 .aidrafts/{sid}/ + git branch -m 重命名分支，瞬时返回消除 git worktree add 开销（~2-5s on Windows）；lease 失败（pool 空或 move 失败）fall back 到 manager.create_session_worktree（直接创建），pool 永远不阻断 session 启动；lease 成功后 prefetch_async(1) 在 daemon 线程异步补充池至 target_size；worktree 内 commit 用直接 git add+commit（worktree 有独立 index，无需 GitCommitGateway 共享 index 保护，无需全局锁）；session_worktree_commit 在 HELD-OVERLAP gate 后执行 DCR 检测（subprocess 调用 check_directory_contract.py，fail-closed——对标 GitCommitGateway DIRECTORY-CONTRACT gate，治本 ARCH-041 worktree 绕过 GitCommitGateway 导致 directory_contract 检测不触发）；pre-commit gate 检查（治本 --no-verify 绕过，2026-07-03）：git commit 前 GitCommitGateway._gate_registry.check_all 执行 7 个 worktree-compatible gate（跳过 HELD-OVERLAP/CLAIM-REQUIRED，session_worktree 有自己的 held_files 机制），关键适配——monkeypatch _gw._run_git 重定向 cwd 到 worktree 使 git diff --cached 查 worktree index（否则主仓库 index 返回空 gate 误判），gate 检出违规则 return GATE_VIOLATION 阻断，gate 框架异常降级为 warn 不阻断；merge 回主分支用 WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行化）；pre-merge gate 检查（治本 merge 前 gate 漂移，2026-07-04）：session_worktree_merge 在 _pre_merge_auto_clean 后执行 _pre_merge_gate_check，用 git reset --soft merge-base 模拟 staged 状态运行 7 个 worktree-compatible gate（捕获 commit 后到 merge 前主分支更新的 gate 规则），gate 阻断则 return merged=False，gate 异常降级为 warn 不阻断，HEAD 用 git reset --soft orig_head 恢复；PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期，2026-07-17）：session_worktree_merge 在 _pre_merge_auto_clean 之前执行 _run_pre_merge_topo_check（时序修复 2026-07-17：原在 auto_clean 之后执行，auto_clean 会还原 checker 文件到 HEAD 旧版本导致降级），subprocess 调 MAIN 副本 check_blueprint_code_alignment.py --json --scan-root <worktree>（MAIN 副本有 DB 配置，--scan-root 仅重定向代码扫描），HIGH drift（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）阻断 merge，过滤到 session 变更文件（仅阻断 session 自身引入的 HIGH），LOW（CODE_NOT_IN_DEPGRAPH）暂态容忍；独立于 commit gate（不受 gate 代码修改降级影响）；降级——checker 缺失 fail-closed 阻断，DB 不可用/超时/JSON 解析失败 fail-open 放行；reconcile_verify 默认 True（2026-07-04）：merge 后自动触发 17 个 reconciler（_run_reconcilers_after_merge），补齐 post-merge 漂移修复（manifest/path_tree/path_ownership/depgraph_ops 等 auto_commit + warn-only）；SessionRegistry 始终用主仓库根目录（非 worktree），确保所有 session 共享一个注册表；所有函数返回 dict 不抛异常；breaking_change 并发阻断（§9.7 治本 2026-07-04）：session_worktree_start 新增 breaking_change/allow_concurrent 参数，在注册 session 之前执行双向阻断——breaking_change=True 检查其他活跃 session（BREAKING_CHANGE_CONCURRENCY_BLOCKED），breaking_change=False 检查其他活跃 breaking_change session（BREAKING_CHANGE_AVOIDANCE_BLOCKED），allow_concurrent=True 逃生通道跳过阻断，异常 fail-open 降级放行；worktree base 新鲜度检查（裁定#19-B，2026-07-18）：session_worktree_commit 在 _sync_files_to_worktree 之前调 _ensure_worktree_base_fresh——检测 worktree HEAD vs 主工作区 HEAD 是否一致，落后则自动对齐（无 session commit → git reset --hard <main HEAD> 安全；有 session commit → git rebase <main HEAD> 冲突 fail-loud 返回 base_sync_failed=True 阻断），治本并发场景下 worktree base 过期导致 ① 搭便车提交（dev 多 commit 被 copy2 塞进 session commit 污染 git 历史）② ARCH-REFERENCE L2 误判（dev 新 #ARCH-NNN 引用被算作本次 commit 新增触发 ARCH_ATOMICITY_VIOLATION 硬阻断）
 # [MODIFY-GUARD] worktree 路径前缀 .aidrafts/；分支命名前缀 session/；worktree 内 commit 绕过 GitCommitGateway 的设计决策
 # [STABILITY] evolving
 # [SAFETY] M
@@ -611,8 +611,39 @@ def session_worktree_start(
         wt_path = manager._wt_path(sid)
         already_exists = manager._worktree_exists(sid)
         if not already_exists:
-            manager.create_session_worktree(sid)
-            created = True
+            # ARCH-GIT-CALL-BUDGET P3.3（2026-07-19）：优先尝试 pool lease
+            # pool 预创建 worktree（.aidrafts_pool/），lease 瞬时返回已创建的
+            # worktree（git worktree move 重定位 + git branch -m 重命名），
+            # 消除每次 session 启动的 git worktree add 开销（~2-5s on Windows）。
+            # pool 空或 move 失败时 lease 返回 None，fall back 到直接创建。
+            # 健壮性优先：pool 永远不阻断 session 启动。
+            leased_path = None
+            try:
+                from zephyr.gov_enforcement.rule_bridge.worktree_pool import get_pool
+                pool = get_pool(root)
+                leased_path = pool.lease(sid)
+            except Exception as e:  # noqa: BLE001 — pool 失败不阻断 start
+                logger.warning(
+                    "session_worktree_start: pool.lease 异常（fall back 到直接创建）: %s",
+                    e, exc_info=True,
+                )
+
+            if leased_path is not None:
+                wt_path = Path(leased_path)
+                created = True
+                # lease 成功后异步 prefetch 补充池（fire-and-forget，不阻塞返回）
+                try:
+                    pool.prefetch_async(1)
+                except Exception:  # noqa: BLE001 — prefetch 失败不阻断 start
+                    logger.debug(
+                        "session_worktree_start: prefetch_async 失败（不阻断）",
+                        exc_info=True,
+                    )
+            else:
+                # Fall back：直接创建 worktree（pool 空或 lease 失败）
+                manager.create_session_worktree(sid)
+                wt_path = manager._wt_path(sid)
+                created = True
         else:
             created = False
         return {
@@ -914,8 +945,13 @@ def _sync_files_to_worktree(root: Path, wt_path: Path, rel_files: list[str]) -> 
 def _run_pre_commit_gates(
     root: Path, wt_path: Path, rel_files: list[str],
     session_id: str, allow_promote: bool, allow_migration: bool,
+    message: str = "",
 ) -> dict | None:
-    """pre-commit gate 检查（对标 GitCommitGateway，worktree 兼容）。返回阻断 dict 或 None。"""
+    """pre-commit gate 检查（对标 GitCommitGateway，worktree 兼容）。返回阻断 dict 或 None。
+
+    ``message`` 透传到 ``check_all(commit_message=...)`` 以支持 gate 读 commit msg——
+    CAPABILITY-LOOKUP-REQUIRED gate 据此检测 ``[no-lookup:reason]`` 逃生标记。
+    """
     try:
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
             GitCommitGateway, _GATEWAY_ENV,
@@ -943,6 +979,7 @@ def _run_pre_commit_gates(
             _gate_results = _gw._gate_registry.check_all(
                 _gw, _staged_abs, session_id=session_id,
                 allow_promote=allow_promote,
+                commit_message=message,
             )
         finally:
             _gw._run_git = _orig_run_git
@@ -1373,7 +1410,7 @@ def session_worktree_commit(
             "commit_hash": "",
         }
 
-    err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration)
+    err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration, message)
     if err:
         return err
 
