@@ -1,0 +1,468 @@
+# [BLUEPRINT] MOD-GOV-emergency_commit | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P2-1
+# [MODULE] zephyr.gov_enforcement.rule_bridge.emergency_commit
+# [DOMAIN] D_GOV_ENFORCEMENT
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (log_emergency_commit); zephyr.shared.io.paths (REPO_ROOT)
+# [CONSUMERS] AI 紧急提交场景（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset 时）
+# [STARTUP] manual
+# [MATURITY] prototype
+# [INVARIANTS] 用 git commit-tree plumbing 绕过所有 hook（pre-commit AND post-commit）；临时 index 原子化多文件提交；每次提交持久化到 reconcile_execution_log（action='emergency_commit'）+ .runtime/reconcile_reports/ 审计文件；commit message 含 [GW:{session_id}:emergency] 标记；不获取 _GlobalCommitLock（emergency 模式前提是锁不可用）
+# [MODIFY-GUARD] emergency_commit 函数签名；commit-tree 调用序列；[GW:...:emergency] 标记格式
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 文件不存在/空列表→ok=False 不抛异常；git 命令失败→ok=False 含 stderr；DB 日志失败→warn 不阻断
+# [TESTS] tests/governance/rule_bridge/test_emergency_commit.py
+# [A_module] module_id=MOD-GOV-emergency_commit | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: 本模块无周期触发
+"""emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）
+
+用 ``git commit-tree`` plumbing 命令绕过所有 git hook（pre-commit AND post-commit），
+为 GitCommitGateway 锁死 / POST-COMMIT-GUARD 反复 reset 场景提供合法化逃生通道。
+
+病根（第一性原理）
+-----------------
+POST-COMMIT-GUARD (#ARCH-050) 对 non-GW commit 执行 ``git reset --soft HEAD~1``。
+``--no-verify`` 只跳过 pre-commit，不跳过 post-commit。当 GitCommitGateway 被
+stuck 进程阻塞（_GlobalCommitLock 超时）或 session 注册表异常导致 POST-COMMIT-GUARD
+反复 reset 时，唯一可靠绕过路径是 ``git commit-tree``（plumbing 命令不触发任何 hook）。
+
+但裸 ``git commit-tree`` 是治理盲区：
+  - 无 session_id 标记（审计不可追溯）
+  - 无 reconcile_execution_log 记录（AI 无法查询历史）
+  - 无 reconciler 触发（post-commit reconciler 链路跳过）
+  - 无 SessionRegistry 注册（并发可见性丢失）
+
+治本（P2-1）
+-----------
+本模块封装 ``git commit-tree`` 为合法化 Python API ``emergency_commit()``：
+  1. 添加 ``[GW:{session_id}:emergency]`` 标记到 commit message（审计可追溯）
+  2. 持久化到 ``reconcile_execution_log``（action='emergency_commit'）—— AI 可查询
+  3. 写审计报告到 ``.runtime/reconcile_reports/emergency_commit_*.json``
+  4. 可选触发 post-commit reconciler 链路（默认触发，补齐被绕过的 reconciler）
+  5. 临时 index（GIT_INDEX_FILE）原子化多文件提交，不污染主 index
+
+与 GitCommitGateway.commit() 的区别
+-----------------------------------
+  - GitCommitGateway.commit(): 正常通道，获取 _GlobalCommitLock，跑 pre-commit gate，
+    触发 pre-commit/post-commit hook，跑 reconciler
+  - emergency_commit(): 紧急通道，不获取锁（前提是锁不可用），跳过所有 gate/hook，
+    手动触发 reconciler，全程持久化审计
+
+使用场景
+--------
+  - GitCommitGateway 被 stuck 进程阻塞（_GlobalCommitLock 超时 60s）
+  - POST-COMMIT-GUARD 反复 reset（session 注册表异常，合法 GW commit 被误判）
+  - P0 紧急修复需要立即提交（生产故障）
+
+非使用场景（禁止）
+-----------------
+  - 常规提交（必须走 GitCommitGateway 或 session_worktree_commit）
+  - 绕过 gate 检查（gate 失败时必须修复问题，不能用 emergency_commit 逃避）
+  - 并发提交（emergency_commit 不获取锁，并发调用会产生 race condition）
+
+用法
+----
+    from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+
+    result = emergency_commit(
+        files=["src/zephyr/some_module/fix.py"],
+        message="P0 fix: critical bug in some_module",
+        session_id="sess-emergency-001",
+        reason="GitCommitGateway 锁死，POST-COMMIT-GUARD 反复 reset",
+    )
+    if result["ok"]:
+        print(f"紧急提交成功: {result['commit_hash']}")
+    else:
+        print(f"紧急提交失败: {result['error']}")
+"""
+
+from __future__ import annotations
+
+__all__ = ["emergency_commit"]
+
+import logging
+import os
+import subprocess
+import tempfile
+from pathlib import Path
+from typing import TypedDict
+
+from zephyr.governance.audit.reconciliation_registry import log_emergency_commit
+from zephyr.shared.io.paths import REPO_ROOT
+
+logger = logging.getLogger(__name__)
+
+# commit-tree plumbing 命令超时（秒）
+_COMMIT_TREE_TIMEOUT = 60
+# hash-object 单文件超时（秒）
+_HASH_OBJECT_TIMEOUT = 10
+
+
+class EmergencyCommitResult(TypedDict, total=False):
+    """emergency_commit 返回契约（对标 session_worktree_commit 的 CommitResult）。
+
+    ``ok`` 是判定成败的唯一入口（项目 memory 硬约束：TypedDict 统一 ok 键）。
+    """
+    ok: bool
+    session_id: str
+    status: str  # "OK" | "FAILED"
+    commit_hash: str  # 成功时为短 SHA，否则空
+    error: str  # 失败原因
+    branch: str  # 提交到的分支名
+    files_count: int  # 提交的文件数
+
+
+def _run_git(
+    cmd: list[str],
+    cwd: str,
+    env: dict | None = None,
+    timeout: int = _COMMIT_TREE_TIMEOUT,
+) -> subprocess.CompletedProcess:
+    """执行 git 命令（统一 encoding + timeout）。"""
+    full_env = os.environ.copy()
+    if env:
+        full_env.update(env)
+    return subprocess.run(
+        cmd,
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=timeout,
+        env=full_env,
+    )
+
+
+def _get_current_branch(root: str) -> str | None:
+    """获取当前分支名（用于 update-ref）。"""
+    r = _run_git(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=root)
+    if r.returncode != 0:
+        return None
+    branch = r.stdout.strip()
+    # detached HEAD 时返回 "HEAD"，无法 update-ref
+    if branch == "HEAD":
+        return None
+    return branch
+
+
+def _get_head_sha(root: str) -> str | None:
+    """获取当前 HEAD SHA（作为 commit-tree 的 parent）。"""
+    r = _run_git(["git", "rev-parse", "HEAD"], cwd=root)
+    if r.returncode != 0:
+        return None
+    return r.stdout.strip()
+
+
+def _normalize_files(files: list[str], root: Path) -> list[tuple[Path, str]]:
+    """归一化文件列表为 [(abs_path, rel_path), ...]。
+
+    - 绝对路径直接用，相对路径相对 root 解析
+    - 验证文件存在
+    - rel_path 用 forward slash（git index 规范）
+    """
+    result: list[tuple[Path, str]] = []
+    for f in files:
+        p = Path(f)
+        if not p.is_absolute():
+            p = (root / f).resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"文件不存在: {p}")
+        rel = p.relative_to(root).as_posix()
+        result.append((p, rel))
+    return result
+
+
+def emergency_commit(
+    files: list[str],
+    message: str,
+    session_id: str,
+    project_root: str | Path | None = None,
+    reason: str = "",
+    trigger_reconcilers: bool = True,
+) -> EmergencyCommitResult:
+    """紧急提交通道：用 git commit-tree 绕过所有 hook。
+
+    适用场景：GitCommitGateway 锁死 / POST-COMMIT-GUARD 反复 reset / P0 紧急修复。
+    禁止用于常规提交或绕过 gate 检查。
+
+    治理可见性（治本 vs 裸 commit-tree）：
+      1. commit message 添加 [GW:{session_id}:emergency] 标记
+      2. 持久化到 reconcile_execution_log（action='emergency_commit'）
+      3. 写审计报告到 .runtime/reconcile_reports/emergency_commit_*.json
+      4. 可选触发 post-commit reconciler 链路（默认触发）
+
+    技术实现：
+      - 临时 index（GIT_INDEX_FILE=<temp>）原子化多文件提交
+      - git read-tree HEAD → git hash-object -w <file> → git update-index --add --cacheinfo
+      - git write-tree → git commit-tree <tree> -p HEAD -F <msg> → git update-ref
+      - 完全不触发 git hook（plumbing 命令特性）
+
+    Args:
+        files: 要提交的文件列表（绝对路径或相对项目根的路径）。
+        message: commit message（不含 [GW:] 标记，本函数自动添加）。
+        session_id: session 标识（用于审计和 [GW:] 标记）。
+        project_root: 项目根目录（默认 REPO_ROOT）。
+        reason: 紧急提交原因（写入 reconcile_execution_log，便于事后审计）。
+        trigger_reconcilers: 是否触发 post-commit reconciler（默认 True）。
+            emergency 提交绕过了 post-commit hook，reconciler 不会自动触发。
+            设为 True 时手动调用 reconciler 链路补齐。设为 False 跳过（速度优先）。
+
+    Returns:
+        EmergencyCommitResult TypedDict，``ok`` 字段是判定成败的唯一入口。
+    """
+    root = Path(project_root) if project_root else REPO_ROOT
+    root = root.resolve()
+
+    # 输入校验
+    if not files:
+        return {
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": "empty files list",
+            "files_count": 0,
+        }
+    if not session_id:
+        return {
+            "ok": False,
+            "session_id": "",
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": "session_id required for audit trail",
+            "files_count": len(files),
+        }
+
+    # 归一化文件路径 + 存在性校验
+    try:
+        norm_files = _normalize_files(files, root)
+    except FileNotFoundError as e:
+        return {
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": str(e),
+            "files_count": len(files),
+        }
+
+    # 获取当前分支和 HEAD SHA
+    branch = _get_current_branch(str(root))
+    if not branch:
+        return {
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": "无法获取当前分支（detached HEAD？），emergency_commit 需要 branch ref",
+            "files_count": len(norm_files),
+        }
+    parent_sha = _get_head_sha(str(root))
+    if not parent_sha:
+        return {
+            "ok": False,
+            "session_id": session_id,
+            "status": "FAILED",
+            "commit_hash": "",
+            "error": "无法获取 HEAD SHA",
+            "files_count": len(norm_files),
+        }
+
+    # 临时 index 文件（原子化多文件提交，不污染主 index）
+    tmp_index = tempfile.NamedTemporaryFile(
+        prefix="emergency_index_", suffix=".tmp", delete=False, dir=str(root / ".git")
+    )
+    tmp_index.close()
+    tmp_index_path = tmp_index.name
+
+    # commit message 临时文件（避免 PowerShell 特殊字符问题，RULE-TWENTY 裁定2）
+    gw_marker = f"[GW:{session_id}:emergency]"
+    full_message = f"{message}\n\n{gw_marker}"
+    if reason:
+        full_message += f"\n\nEmergency reason: {reason}"
+    tmp_msg = tempfile.NamedTemporaryFile(
+        prefix="emergency_msg_", suffix=".txt", delete=False, mode="w",
+        encoding="utf-8", dir=str(root / ".git"),
+    )
+    tmp_msg.write(full_message)
+    tmp_msg.close()
+    tmp_msg_path = tmp_msg.name
+
+    try:
+        # Step 1: 临时 index 读取 HEAD tree
+        env_index = {"GIT_INDEX_FILE": tmp_index_path}
+        r = _run_git(
+            ["git", "read-tree", "HEAD"],
+            cwd=str(root), env=env_index, timeout=30,
+        )
+        if r.returncode != 0:
+            return {
+                "ok": False, "session_id": session_id, "status": "FAILED",
+                "commit_hash": "", "error": f"git read-tree HEAD failed: {r.stderr.strip()}",
+                "branch": branch, "files_count": len(norm_files),
+            }
+
+        # Step 2: 逐文件 hash-object + update-index
+        for abs_path, rel_path in norm_files:
+            # hash-object -w：写入 object store，返回 SHA
+            r = _run_git(
+                ["git", "hash-object", "-w", "--", str(abs_path)],
+                cwd=str(root), timeout=_HASH_OBJECT_TIMEOUT,
+            )
+            if r.returncode != 0:
+                return {
+                    "ok": False, "session_id": session_id, "status": "FAILED",
+                    "commit_hash": "", "error": f"git hash-object failed for {rel_path}: {r.stderr.strip()}",
+                    "branch": branch, "files_count": len(norm_files),
+                }
+            blob_sha = r.stdout.strip()
+
+            # update-index --add --cacheinfo：添加到临时 index
+            # --add 必须用于新文件（不在 HEAD tree 中的文件）
+            # 100644 = normal file mode
+            r = _run_git(
+                ["git", "update-index", "--add", "--cacheinfo",
+                 f"100644,{blob_sha},{rel_path}"],
+                cwd=str(root), env=env_index, timeout=30,
+            )
+            if r.returncode != 0:
+                return {
+                    "ok": False, "session_id": session_id, "status": "FAILED",
+                    "commit_hash": "", "error": f"git update-index failed for {rel_path}: {r.stderr.strip()}",
+                    "branch": branch, "files_count": len(norm_files),
+                }
+
+        # Step 3: write-tree（从临时 index 创建 tree object）
+        r = _run_git(
+            ["git", "write-tree"],
+            cwd=str(root), env=env_index, timeout=30,
+        )
+        if r.returncode != 0:
+            return {
+                "ok": False, "session_id": session_id, "status": "FAILED",
+                "commit_hash": "", "error": f"git write-tree failed: {r.stderr.strip()}",
+                "branch": branch, "files_count": len(norm_files),
+            }
+        tree_sha = r.stdout.strip()
+
+        # Step 4: commit-tree（创建 commit object，不触发任何 hook！）
+        r = _run_git(
+            ["git", "commit-tree", tree_sha, "-p", parent_sha, "-F", tmp_msg_path],
+            cwd=str(root), timeout=_COMMIT_TREE_TIMEOUT,
+        )
+        if r.returncode != 0:
+            return {
+                "ok": False, "session_id": session_id, "status": "FAILED",
+                "commit_hash": "", "error": f"git commit-tree failed: {r.stderr.strip()}",
+                "branch": branch, "files_count": len(norm_files),
+            }
+        commit_sha = r.stdout.strip()
+
+        # Step 5: update-ref（更新分支指针到新 commit）
+        # 这是 plumbing 命令，不触发 hook
+        r = _run_git(
+            ["git", "update-ref", f"refs/heads/{branch}", commit_sha, parent_sha],
+            cwd=str(root), timeout=30,
+        )
+        if r.returncode != 0:
+            return {
+                "ok": False, "session_id": session_id, "status": "FAILED",
+                "commit_hash": "", "error": f"git update-ref failed: {r.stderr.strip()}",
+                "branch": branch, "files_count": len(norm_files),
+            }
+
+        # Step 6: 治理可见性——持久化到 reconcile_execution_log + 审计报告
+        try:
+            log_emergency_commit(
+                project_root=root,
+                session_id=session_id,
+                commit_sha=commit_sha,
+                branch=branch,
+                files=[rel for _, rel in norm_files],
+                reason=reason or "unspecified",
+                message=full_message,
+            )
+        except Exception as e:  # noqa: BLE001 — 审计日志失败不阻断 commit
+            logger.warning("emergency_commit: log_emergency_commit failed: %s", e)
+
+        # Step 7: 可选触发 reconciler 链路
+        if trigger_reconcilers:
+            try:
+                _trigger_reconcilers_safely(root, session_id, commit_sha,
+                                            [rel for _, rel in norm_files])
+            except Exception as e:  # noqa: BLE001 — reconciler 失败不阻断 commit
+                logger.warning("emergency_commit: reconciler trigger failed: %s", e)
+
+        # 短 SHA（前 10 位）
+        short_sha = commit_sha[:10]
+        logger.info(
+            "emergency_commit: OK commit=%s branch=%s files=%d session=%s",
+            short_sha, branch, len(norm_files), session_id,
+        )
+        return {
+            "ok": True,
+            "session_id": session_id,
+            "status": "OK",
+            "commit_hash": short_sha,
+            "branch": branch,
+            "files_count": len(norm_files),
+        }
+
+    except subprocess.TimeoutExpired as e:
+        return {
+            "ok": False, "session_id": session_id, "status": "FAILED",
+            "commit_hash": "", "error": f"git command timeout: {e}",
+            "branch": branch, "files_count": len(norm_files),
+        }
+    finally:
+        # 清理临时文件
+        for tmp in (tmp_index_path, tmp_msg_path):
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
+
+
+def _trigger_reconcilers_safely(
+    root: Path,
+    session_id: str,
+    commit_sha: str,
+    rel_files: list[str],
+) -> None:
+    """手动触发 post-commit reconciler 链路（补齐被绕过的 hook）。
+
+    emergency_commit 绕过了 post-commit hook，reconciler 不会自动触发。
+    本函数手动调用 reconciler 链路，对标 GitCommitGateway._run_post_commit_reconcile。
+
+    失败不抛异常（reconciler 失败不阻断 emergency commit，已持久化到 DB）。
+    """
+    # 延迟导入避免循环依赖
+    try:
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconciliationRegistry,
+        )
+    except ImportError as e:
+        logger.warning("emergency_commit: cannot import reconciler modules: %s", e)
+        return
+
+    try:
+        gateway = GitCommitGateway(project_root=root)
+        # _run_post_commit_reconcile 是内部方法，但 emergency 场景需要补齐
+        # 对标 session_worktree.py:1852 的 _run_post_commit_reconcile 调用
+        abs_files = [str(root / f) for f in rel_files]
+        # 构造一个 minimal CommitResult 供 reconciler 使用
+        from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
+            CommitResult, CommitStatus,
+        )
+        result = CommitResult(
+            status=CommitStatus.OK,
+            message=f"emergency_commit {commit_sha[:10]}",
+            commit_hash=commit_sha[:10],
+        )
+        gateway._run_post_commit_reconcile(abs_files, session_id, result, commit_message="")
+        logger.info("emergency_commit: reconciler chain triggered for %s", commit_sha[:10])
+    except Exception as e:  # noqa: BLE001 — reconciler 失败不阻断
+        logger.warning("emergency_commit: reconciler chain failed: %s", e)

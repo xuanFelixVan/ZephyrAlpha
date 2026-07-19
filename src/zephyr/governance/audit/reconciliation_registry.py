@@ -110,6 +110,7 @@ __all__ = [
     "make_capability_lookup_health_reconciler",  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6
     "scan_and_archive_working_docs",
     "log_gate_failure",  # Ruling:100PCT-AI-GOVERNANCE P1-5 — gate fail-open 持久化
+    "log_emergency_commit",  # Ruling:100PCT-AI-GOVERNANCE P2-1 — emergency_commit 审计
 ]
 
 
@@ -571,6 +572,114 @@ def log_gate_failure(
             conn.close()
     except Exception as e:  # noqa: BLE001 — 持久化失败不能阻断 gate 主流程
         logger.warning("log_gate_failure: DB write failed: %s", e)
+
+
+def log_emergency_commit(
+    project_root: "object",
+    session_id: str,
+    commit_sha: str,
+    branch: str,
+    files: "list[str]",
+    reason: str,
+    message: str = "",
+) -> None:
+    """持久化 emergency_commit 到 reconcile_execution_log + 审计报告文件。
+
+    Ruling:100PCT-AI-GOVERNANCE P2-1 (2026-07-19) 治本：
+    emergency_commit 用 git commit-tree 绕过所有 hook，是治理盲区。本函数让
+    emergency_commit 持久化到 governance.db（action='emergency_commit'）+ 写
+    审计报告到 .runtime/reconcile_reports/，AI 可查询历史。
+
+    与 log_gate_failure 的区别：
+    - log_gate_failure: gate 检测器失效，action='critical_warn'，触发横幅告警
+    - log_emergency_commit: 紧急提交审计，action='emergency_commit'，不触发横幅
+      （emergency_commit 是合法操作，只是需要审计可追溯）
+
+    持久化内容：
+    1. reconcile_execution_log 表（gate_id='EMERGENCY-COMMIT', action='emergency_commit'）
+    2. .runtime/reconcile_reports/emergency_commit_<timestamp>.json 审计报告
+
+    Args:
+        project_root: Path 对象（项目根）。
+        session_id: emergency_commit 的 session_id。
+        commit_sha: commit SHA（完整或短 SHA 均可）。
+        branch: 提交到的分支名。
+        files: 提交的文件相对路径列表。
+        reason: 紧急提交原因（写入 detail 字段）。
+        message: 完整 commit message（含 [GW:...] 标记，写入 commit_message 字段）。
+    """
+    import json
+    import os
+    import sqlite3
+    import uuid
+    from pathlib import Path
+
+    try:
+        root = Path(str(project_root)).resolve()
+        db_path = _governance_db_path(root)
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+        # 持久化到 reconcile_execution_log
+        detail = (
+            f"emergency_commit sha={commit_sha} branch={branch} "
+            f"files={len(files)} reason={reason}"
+        )
+        files_summary = ", ".join(files[:20])  # 截断前 20 个文件避免过长
+        if len(files) > 20:
+            files_summary += f" ... (+{len(files) - 20} more)"
+
+        conn = sqlite3.connect(db_path, timeout=30.0)
+        try:
+            conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            _ensure_ack_column(conn)
+            _ensure_commit_message_column(conn)
+            log_id = f"ec-{uuid.uuid4().hex[:12]}"
+            conn.execute(
+                SQL_INSERT_RECONCILE_LOG,
+                (
+                    log_id,
+                    now_utc(),
+                    "EMERGENCY-COMMIT",  # gate_id 字段复用为操作标识
+                    session_id,
+                    "emergency_commit",  # trigger_source
+                    "emergency_commit",  # action
+                    detail,
+                    files_summary,
+                    message[:2000] if message else "",  # commit_message 截断
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+        # 写审计报告到 .runtime/reconcile_reports/
+        reports_dir = root / ".runtime" / "reconcile_reports"
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        import time
+        timestamp = int(time.time())
+        report = {
+            "gate_id": "EMERGENCY-COMMIT",
+            "timestamp": timestamp,
+            "session_id": session_id,
+            "commit_sha": commit_sha,
+            "branch": branch,
+            "files": files,
+            "files_count": len(files),
+            "reason": reason,
+            "action": "emergency_commit",
+            "message_preview": (message[:500] if message else ""),
+        }
+        report_file = reports_dir / f"emergency_commit_{timestamp}.json"
+        report_file.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
+        logger.info(
+            "log_emergency_commit: persisted sha=%s branch=%s files=%d",
+            commit_sha[:10] if commit_sha else "?", branch, len(files),
+        )
+    except Exception as e:  # noqa: BLE001 — 审计日志失败不能阻断 emergency commit
+        logger.warning("log_emergency_commit: persistence failed: %s", e)
 
 
 def _check_recent_critical_warns(
