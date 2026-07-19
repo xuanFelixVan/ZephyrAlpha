@@ -3998,22 +3998,6 @@ capabilities:
       fail-open 边界：YAML 读取异常→PASS；只检新增 [DOMAIN] 行（存量违规不阻断）。
       canonical = src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py。
 
-  - capability_id: domain_name_zh_direct_access_gate
-    canonical_override: src/zephyr/gov_enforcement/commit_gates/domain_name_zh_direct_access_gate.py
-    aliases:
-      - NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
-      - domain_name_zh_direct_access
-      - make_domain_name_zh_direct_access_gate
-    description: >-
-      NO-DOMAIN-NAME-ZH-DIRECT-ACCESS 域名字典直接访问硬阻断门禁
-      （Step 2.5 遗留风险修复，priority=72）。
-      diff-based 检测 staged .py 文件 added 行中 DOMAIN_NAME_ZH 字典直接访问
-      （.get/[/pop/items/keys/values），命中→硬阻断。
-      防止 AI 绕过 DB 优先级链直接访问硬编码 DOMAIN_NAME_ZH（v2.3 治本后仅含测试域）。
-      SSoT 定义文件 domain_name_mapping.py 豁免；tests/ 豁免；import/注释/docstring 行豁免；
-      git diff 不可达 fail-open；检出违规则 fail-closed。
-      canonical = src/zephyr/gov_enforcement/commit_gates/domain_name_zh_direct_access_gate.py。
-
   - capability_id: foreign_change_gate
     canonical_override: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
     aliases:

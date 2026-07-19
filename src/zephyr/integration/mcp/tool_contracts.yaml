@@ -1600,12 +1600,12 @@ resource_optimization:
           evictions: { type: integer }
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 11 · rule_discovery（MOD-INF-014 · #ARCH-GOV-CONVERGENCE-META Phase 3.2b）
+# Server 11 · rule_discovery（MOD-INF-014 · #ARCH-GOV-CONVERGENCE-META Phase 3.2b/3.4a）
 # ──────────────────────────────────────────────────────────────────────
 
   - server_id: rule_discovery
     module_id: MOD-INF-014
-    description: "规则发现 MCP Server——AI 施工前查询适用 trae 规则（病根2治本）"
+    description: "规则发现 MCP Server——AI 施工前查询适用 trae 规则（病根2治本）；Phase 3.4a 起调用会被 audit log 记录（病根3治本）"
     transport: "BaseMCPServer — JSON-RPC 2.0 over stdio"
     source: "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml"
     stability: evolving
@@ -1618,6 +1618,8 @@ resource_optimization:
         查询当前操作上下文适用的 trae 规则。AI MUST 在施工前调用此工具，
         按 operation/scope/domain/gate_id/tags 查询适用的治理规则。
         真源：rule_ai_perception_index.yaml（64条规则）。
+        Phase 3.4a 起：调用会被记录到 .runtime/lookup_audit/<session_id>.jsonl，
+        CAPABILITY-LOOKUP-REQUIRED gate 在 commit 时消费此 log 强制 AI 施工前查询。
       safety_level: L
       stability: evolving
       rate_limit_qps: 20
@@ -1634,6 +1636,12 @@ resource_optimization:
             items: { type: string }
             description: "标签过滤（AND 逻辑）"
           rule_id: { type: string, description: "按规则 ID 精确查询（如 TRAE-001）" }
+          session_id:
+            type: string
+            description: >-
+              AI session 标识（用于 audit log）。可选——未提供时从
+              ZEPHYR_SESSION_ID 环境变量读取。Phase 3.4a
+              CAPABILITY-LOOKUP-REQUIRED gate 消费此 log 强制 AI 施工前查询。
       output_schema:
         type: object
         properties:
