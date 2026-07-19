@@ -49,6 +49,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 
+from zephyr.shared.infra.lock import SyncLockRenewer, next_fencing_token  # 5.58.2/5.58.3 fencing+续期共享助手
+
 
 class LockStatus(str, Enum):
     ACQUIRED = "acquired"
@@ -67,6 +69,7 @@ class LockResult:
     locked_files: list[str] = field(default_factory=list)
     conflict_tasks: list[str] = field(default_factory=list)
     waited_ms: int = 0
+    fencing_token: int = 0  # 5.58.2：本次获取的 fencing token（0=未分配）
 
 
 class LockBackend(ABC):
@@ -224,6 +227,11 @@ class FileLockBackend(LockBackend):
       - 获取锁前检测 stale lock（PID 已死 或 TTL 过期 -> 自动清理）
 
     v0.9.0 B167：新增 TTL 过期自动释放——锁超过 TTL 秒自动视为 stale。
+
+    5.58.2：owner.json 含单调递增 fencing token（.fencing_counter 持久计数器），
+    validate_fencing() 供受保护操作前验证未被取代。
+    5.58.3：SyncLockRenewer 按 TTL/3 周期刷新 owner.json timestamp，持有者存活期间锁不过期。
+    5.58.9：两阶段锁定——冲突时回滚本次调用已获取的锁目录，杜绝部分失败泄漏。
     """
 
     _DEFAULT_LOCK_ROOT = ".pipeline_locks"
@@ -233,6 +241,9 @@ class FileLockBackend(LockBackend):
         self._lock_root = lock_root or os.path.join(os.getcwd(), self._DEFAULT_LOCK_ROOT)
         self._lock_ttl_s = lock_ttl_s or self._DEFAULT_LOCK_TTL_S
         self._thread_lock = threading.RLock()
+        self._fence_counter = os.path.join(self._lock_root, ".fencing_counter")
+        self._task_tokens: dict[str, int] = {}
+        self._renewers: dict[str, SyncLockRenewer] = {}
 
     @staticmethod
     def _sanitize_path(path: str) -> str:
@@ -251,7 +262,7 @@ class FileLockBackend(LockBackend):
     def _lock_dir(self, file_path: str) -> str:
         return os.path.join(self._lock_root, self._sanitize_path(file_path) + ".lock")
 
-    def _write_owner(self, lock_dir: str, task_id: str) -> None:
+    def _write_owner(self, lock_dir: str, task_id: str, fencing_token: int = 0) -> None:
         import json
 
         os.makedirs(lock_dir, exist_ok=True)
@@ -260,7 +271,7 @@ class FileLockBackend(LockBackend):
         try:
             with open(tmp_path, "w", encoding="utf-8") as fh:
                 json.dump(
-                    {"task_id": task_id, "pid": os.getpid(), "timestamp": time.time()},
+                    {"task_id": task_id, "pid": os.getpid(), "timestamp": time.time(), "fencing_token": fencing_token},
                     fh,
                 )
             os.replace(tmp_path, owner_file)
@@ -320,6 +331,72 @@ class FileLockBackend(LockBackend):
         if conflict_task != task_id and conflict_task not in conflicts:
             conflicts.append(conflict_task)
 
+    def _rollback_acquired(self, acquired_dirs: list[str], task_id: str) -> None:
+        """5.58.9 两阶段锁定回滚——冲突时撤销本次调用已获取的锁目录。
+
+        仅回滚 owner 仍为 task_id 的目录（防误删他人锁）。
+        """
+        import shutil
+
+        for lock_dir in acquired_dirs:
+            owner = self._read_owner(lock_dir)
+            if owner is not None and owner.get("task_id") == task_id:
+                shutil.rmtree(lock_dir, ignore_errors=True)
+
+    def _ensure_renewer(self, task_id: str) -> None:
+        """5.58.3 启动任务级续期 watchdog（已在运行则复用）。"""
+        if task_id in self._renewers:
+            return
+        renewer = SyncLockRenewer(
+            lambda: self._refresh_task_leases(task_id),
+            self._lock_ttl_s / 3,
+            name=f"pipeline-lock-renewer-{task_id[:16]}",
+        )
+        self._renewers[task_id] = renewer
+        renewer.start()
+
+    def _refresh_task_leases(self, task_id: str) -> bool:
+        """5.58.3 续约——刷新本任务全部锁目录的 timestamp。
+
+        持有者身份校验（task_id + fencing token）通过才刷新；
+        本任务已无持有锁时返回 False 让 watchdog 自动停止。
+        注意：watchdog 线程内运行，禁止获取 self._thread_lock
+        （release() 持锁 join watchdog，互相等待会死锁）。
+        """
+        if not os.path.isdir(self._lock_root):
+            return False
+        found = False
+        expected_token = self._task_tokens.get(task_id, 0)
+        for entry in os.listdir(self._lock_root):
+            lock_dir = os.path.join(self._lock_root, entry)
+            if not os.path.isdir(lock_dir) or not entry.endswith(".lock"):
+                continue
+            owner = self._read_owner(lock_dir)
+            if owner is None or owner.get("task_id") != task_id:
+                continue
+            if owner.get("fencing_token", 0) != expected_token:
+                continue
+            found = True
+            self._write_owner(lock_dir, task_id, fencing_token=expected_token)
+        return found
+
+    def validate_fencing(self, task_id: str, fencing_token: int) -> bool:
+        """5.58.2 受保护操作前验证——本任务持有的锁全部仍带有给定 fencing token（未被取代）。"""
+        with self._thread_lock:
+            if not os.path.isdir(self._lock_root):
+                return False
+            held = 0
+            for entry in os.listdir(self._lock_root):
+                lock_dir = os.path.join(self._lock_root, entry)
+                if not os.path.isdir(lock_dir) or not entry.endswith(".lock"):
+                    continue
+                owner = self._read_owner(lock_dir)
+                if owner is not None and owner.get("task_id") == task_id:
+                    if owner.get("fencing_token", 0) != fencing_token:
+                        return False
+                    held += 1
+            return held > 0
+
     def try_acquire(
         self,
         task_id: str,
@@ -334,26 +411,12 @@ class FileLockBackend(LockBackend):
             for lyr in layer_locks or []:
                 all_targets.append(f"LAYER:{lyr}")
 
+            # Phase 1（5.58.9）：只读检查全部目标——stale 先清理，活跃持有者记冲突
             for fp in all_targets:
                 lock_dir = self._lock_dir(fp)
                 if os.path.isdir(lock_dir):
                     if self._is_stale(lock_dir):
                         self._cleanup_stale(lock_dir)
-                    else:
-                        self._record_conflict_from_dir(lock_dir, task_id, conflicts)
-                        continue
-
-                try:
-                    os.makedirs(lock_dir, exist_ok=False)
-                    self._write_owner(lock_dir, task_id)
-                except FileExistsError:
-                    if self._is_stale(lock_dir):
-                        self._cleanup_stale(lock_dir)
-                        try:
-                            os.makedirs(lock_dir, exist_ok=False)
-                            self._write_owner(lock_dir, task_id)
-                        except FileExistsError:
-                            self._record_conflict_from_dir(lock_dir, task_id, conflicts)
                     else:
                         self._record_conflict_from_dir(lock_dir, task_id, conflicts)
 
@@ -365,17 +428,63 @@ class FileLockBackend(LockBackend):
                     conflict_tasks=sorted(conflicts),
                 )
 
+            # Phase 2（5.58.9）：原子创建全部锁目录；任一失败 -> 回滚已获取锁
+            acquired_dirs: list[str] = []
+            for fp in all_targets:
+                lock_dir = self._lock_dir(fp)
+                try:
+                    os.makedirs(lock_dir, exist_ok=False)
+                    self._write_owner(lock_dir, task_id)
+                    acquired_dirs.append(lock_dir)
+                    continue
+                except FileExistsError:
+                    pass
+                # 并发竞争：他人捷足先登——若为 stale 则清理后重试一次
+                if self._is_stale(lock_dir):
+                    self._cleanup_stale(lock_dir)
+                    try:
+                        os.makedirs(lock_dir, exist_ok=False)
+                        self._write_owner(lock_dir, task_id)
+                        acquired_dirs.append(lock_dir)
+                        continue
+                    except FileExistsError:
+                        pass
+                self._record_conflict_from_dir(lock_dir, task_id, conflicts)
+
+            if conflicts:
+                self._rollback_acquired(acquired_dirs, task_id)
+                return LockResult(
+                    acquired=False,
+                    status=LockStatus.CONFLICT,
+                    task_id=task_id,
+                    conflict_tasks=sorted(conflicts),
+                )
+
+            # 5.58.2：全部获取成功后分配单调递增 fencing token 并写回 owner.json
+            token = next_fencing_token(self._fence_counter)
+            for lock_dir in acquired_dirs:
+                self._write_owner(lock_dir, task_id, fencing_token=token)
+            self._task_tokens[task_id] = token
+            # 5.58.3：持有者存活期间自动续期
+            self._ensure_renewer(task_id)
+
             return LockResult(
                 acquired=True,
                 status=LockStatus.ACQUIRED,
                 task_id=task_id,
                 locked_files=sorted(all_targets),
+                fencing_token=token,
             )
 
     def release(self, task_id: str) -> list[str]:
         import shutil
 
         with self._thread_lock:
+            renewer = self._renewers.pop(task_id, None)
+            if renewer is not None:
+                renewer.stop()
+            self._task_tokens.pop(task_id, None)
+
             released: list[str] = []
             if not os.path.isdir(self._lock_root):
                 return released
@@ -423,6 +532,10 @@ class FileLockBackend(LockBackend):
         import shutil
 
         with self._thread_lock:
+            for renewer in self._renewers.values():
+                renewer.stop()
+            self._renewers.clear()
+            self._task_tokens.clear()
             if os.path.isdir(self._lock_root):
                 for entry in os.listdir(self._lock_root):
                     path = os.path.join(self._lock_root, entry)

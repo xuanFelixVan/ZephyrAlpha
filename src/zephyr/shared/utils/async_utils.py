@@ -20,7 +20,8 @@
 痛点：asyncio.run() 在已有事件循环上下文中抛 RuntimeError：
   "asyncio.run() cannot be called from a running event loop"
 
-本模块提供 run_sync() —— 从同步代码安全运行协程，无论是否已有运行中的事件循环。
+本模块提供 run_sync() / run_coroutine_sync() —— 从同步代码安全运行协程，
+无论是否已有运行中的事件循环。
 替代散布 40+ 处的裸 asyncio.run() 调用（5.12.8 签名漂移/边界统一）。
 
 设计：
@@ -29,7 +30,7 @@
     （避免嵌套 RuntimeError；协程每次新建，不捕获 loop-bound 状态，线程隔离安全）
 
 SSoT: 5.12.8 修复方向「统一async/sync边界」
-Version: 0.1.0
+Version: 0.2.0（5.52.4：新增 run_coroutine_sync 统一入口别名）
 """
 
 from __future__ import annotations
@@ -41,7 +42,7 @@ from typing import TypeVar
 
 T = TypeVar("T")
 
-__all__ = ["run_sync"]
+__all__ = ["run_coroutine_sync", "run_sync"]
 
 
 def run_sync(coro: Awaitable[T], *, timeout: float | None = None) -> T:
@@ -91,3 +92,15 @@ def run_sync(coro: Awaitable[T], *, timeout: float | None = None) -> T:
 async def _with_timeout(coro: Awaitable[T], timeout: float) -> T:
     """内部辅助——为协程包装超时。"""
     return await asyncio.wait_for(coro, timeout=timeout)
+
+
+def run_coroutine_sync(coro: Awaitable[T], *, timeout: float | None = None) -> T:
+    """5.52.4 统一入口——从同步代码安全运行协程（run_sync 的 canonical 别名）。
+
+    处理两种情形：
+      - 无运行中的事件循环 -> asyncio.run(coro)
+      - 有运行中的事件循环 -> 新线程 + 独立事件循环（带可选超时）
+
+    安全关键调用方（LSG 扫描等）禁止在异常时静默放行——必须 fail-closed。
+    """
+    return run_sync(coro, timeout=timeout)

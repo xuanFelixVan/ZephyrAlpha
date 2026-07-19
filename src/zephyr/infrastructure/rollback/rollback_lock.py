@@ -43,6 +43,8 @@ from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 
+from zephyr.shared.infra.lock import SyncLockRenewer, next_fencing_token  # 5.58.2/5.58.3 fencing+续期共享助手
+
 __all__ = [
     "LockAcquireResult",
     "LockPriority",
@@ -64,6 +66,7 @@ class LockAcquireResult:
     lock_id: str
     wait_time_ms: int
     reason: str = ""
+    fencing_token: int = 0  # 5.58.2：本次获取的 fencing token（0=未分配）
 
 
 @dataclass
@@ -103,7 +106,108 @@ class RollbackLock:
         self._lock_dir = lock_dir or (self._project_root / self.DEFAULT_LOCK_DIR)
         self._lock_path = self._lock_dir / self.DEFAULT_LOCK_FILE
         self._queue_path = self._lock_dir / self.DEFAULT_QUEUE_FILE
+        self._fence_path = self._lock_dir / "rollback.fence"  # 5.58.2 fencing 持久计数器
         self._lock_dir.mkdir(parents=True, exist_ok=True)
+        self._held_lock_id: str | None = None
+        self._held_token: int = 0
+        self._renewer: SyncLockRenewer | None = None
+
+    def _try_create_lock(
+        self,
+        request: LockRequest,
+        start_time: float,
+        reason: str = "",
+    ) -> LockAcquireResult | None:
+        """5.58.6：直接 O_EXCL 原子创建锁文件；成功返回结果，锁被占用返回 None。
+
+        5.58.2：创建成功后（已持锁）分配单调递增 fencing token 写入锁内容。
+        5.58.3：创建成功后启动 TTL 自动续期 watchdog。
+        """
+        try:
+            fd = os.open(
+                str(self._lock_path),
+                os.O_CREAT | os.O_EXCL | os.O_RDWR,
+                0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
+            )
+        except OSError:
+            return None
+        # 5.169 修复：try/finally 确保 fd 关闭，os.write 抛异常时不泄漏
+        try:
+            token = next_fencing_token(self._fence_path)
+            lock_data = json.dumps(
+                {
+                    "lock_id": request.lock_id,
+                    "owner": request.owner,
+                    "priority": request.priority.value,
+                    "task": request.task,
+                    "acquired_at": datetime.now(UTC).isoformat(),
+                    "ttl_seconds": self.DEFAULT_TTL_SECONDS,
+                    "fencing_token": token,
+                },
+                ensure_ascii=False,
+            )
+            os.write(fd, lock_data.encode("utf-8"))
+        finally:
+            os.close(fd)
+
+        self._held_lock_id = request.lock_id
+        self._held_token = token
+        self._start_renewer()
+        wait_time = int((time.time() - start_time) * 1000)
+        return LockAcquireResult(
+            acquired=True,
+            lock_id=request.lock_id,
+            wait_time_ms=wait_time,
+            reason=reason,
+            fencing_token=token,
+        )
+
+    def _start_renewer(self) -> None:
+        """5.58.3：启动 TTL 自动续期 watchdog（TTL/3 周期刷新 acquired_at）。"""
+        if self._renewer is not None:
+            self._renewer.stop()
+        self._renewer = SyncLockRenewer(
+            self._refresh_lease,
+            self.DEFAULT_TTL_SECONDS / 3,
+            name="rollback-lock-renewer",
+        )
+        self._renewer.start()
+
+    def _stop_renewer(self) -> None:
+        if self._renewer is not None:
+            self._renewer.stop()
+            self._renewer = None
+
+    def _refresh_lease(self) -> bool:
+        """5.58.3 续约：持有者身份校验（lock_id + fencing token）通过后刷新 acquired_at。"""
+        try:
+            lock_data = json.loads(self._lock_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        if lock_data.get("lock_id") != self._held_lock_id or lock_data.get("fencing_token") != self._held_token:
+            return False
+        lock_data["acquired_at"] = datetime.now(UTC).isoformat()
+        tmp_path = self._lock_path.with_name(f"{self._lock_path.name}.{os.getpid()}.tmp")
+        try:
+            tmp_path.write_text(json.dumps(lock_data, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp_path, self._lock_path)
+        except OSError:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+            return False
+        return True
+
+    def validate_fencing(self, lock_id: str) -> bool:
+        """5.58.2 受保护操作前验证——锁文件仍由本持有者持有（lock_id + fencing token 匹配，未被取代）。"""
+        if not lock_id or lock_id != self._held_lock_id:
+            return False
+        try:
+            lock_data = json.loads(self._lock_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return False
+        return lock_data.get("lock_id") == lock_id and lock_data.get("fencing_token") == self._held_token
 
     def acquire(
         self,
@@ -124,41 +228,11 @@ class RollbackLock:
 
         start_time = time.time()
 
-        try:
-            fd = os.open(
-                str(self._lock_path),
-                os.O_CREAT | os.O_EXCL | os.O_RDWR,
-                0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
-            )
-            # 5.169 修复：try/finally 确保 fd 关闭，os.write 抛异常时不泄漏
-            try:
-                lock_data = json.dumps(
-                    {
-                        "lock_id": request.lock_id,
-                        "owner": owner,
-                        "priority": priority.value,
-                        "task": task,
-                        "acquired_at": datetime.now(UTC).isoformat(),
-                        "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-                    },
-                    ensure_ascii=False,
-                )
-
-                os.write(fd, lock_data.encode("utf-8"))
-            finally:
-                os.close(fd)
-
-        except FileExistsError:
-            return self._handle_lock_conflict(request, start_time, timeout_ms)
-        except OSError:
-            return self._handle_lock_conflict(request, start_time, timeout_ms)
-
-        wait_time = int((time.time() - start_time) * 1000)
-        return LockAcquireResult(
-            acquired=True,
-            lock_id=request.lock_id,
-            wait_time_ms=wait_time,
-        )
+        # 5.58.6：直接 O_EXCL 尝试，失败再进入冲突处理（查 stale）
+        result = self._try_create_lock(request, start_time)
+        if result is not None:
+            return result
+        return self._handle_lock_conflict(request, start_time, timeout_ms)
 
     def _handle_lock_conflict(
         self,
@@ -168,39 +242,25 @@ class RollbackLock:
     ) -> LockAcquireResult:
         self._enqueue_request(request)
 
+        stole_stale = False
         while (time.time() - start_time) * 1000 < timeout_ms:
-            if self._try_steal_expired_lock():
-                wait_time = int((time.time() - start_time) * 1000)
-                os.remove(str(self._lock_path))
-                fd = os.open(
-                    str(self._lock_path),
-                    os.O_CREAT | os.O_EXCL | os.O_RDWR,
-                    0o600,  # 5.17.12 修复：锁文件权限收紧至 0o600
-                )
-                # 5.169 修复：try/finally 确保 fd 关闭，os.write 抛异常时不泄漏
-                try:
-                    lock_data = json.dumps(
-                        {
-                            "lock_id": request.lock_id,
-                            "owner": request.owner,
-                            "priority": request.priority.value,
-                            "task": request.task,
-                            "acquired_at": datetime.now(UTC).isoformat(),
-                            "ttl_seconds": self.DEFAULT_TTL_SECONDS,
-                        },
-                        ensure_ascii=False,
-                    )
-                    os.write(fd, lock_data.encode("utf-8"))
-                finally:
-                    os.close(fd)
+            # 5.58.6 TOCTOU 修复：直接 O_EXCL 尝试（持有者正常释放后立即可获取），
+            # 失败再查 stale——stale 则删除后下轮重试 O_EXCL，消除 os.remove->os.open 两步窗口。
+            result = self._try_create_lock(
+                request,
+                start_time,
+                reason="acquired after TTL expiry of previous holder" if stole_stale else "",
+            )
+            if result is not None:
                 self._dequeue_request(request.lock_id)
-                return LockAcquireResult(
-                    acquired=True,
-                    lock_id=request.lock_id,
-                    wait_time_ms=wait_time,
-                    reason="acquired after TTL expiry of previous holder",
-                )
-
+                return result
+            if self._try_steal_expired_lock():
+                try:
+                    os.remove(str(self._lock_path))
+                    stole_stale = True
+                except OSError:
+                    pass
+                continue
             time.sleep(0.1)
 
         wait_time = int((time.time() - start_time) * 1000)
@@ -241,6 +301,11 @@ class RollbackLock:
                 )
 
             os.remove(str(self._lock_path))
+            # 5.58.3：释放成功后停止续期 watchdog 并清理持有状态
+            if self._held_lock_id == lock_id:
+                self._stop_renewer()
+                self._held_lock_id = None
+                self._held_token = 0
             return LockAcquireResult(
                 acquired=True,
                 lock_id=lock_id,
@@ -297,6 +362,10 @@ class RollbackLock:
         if self._lock_path.exists():
             try:
                 os.remove(str(self._lock_path))
+                # 5.58.3：强制释放后停止续期 watchdog 并清理持有状态
+                self._stop_renewer()
+                self._held_lock_id = None
+                self._held_token = 0
                 return LockAcquireResult(
                     acquired=True,
                     lock_id="",

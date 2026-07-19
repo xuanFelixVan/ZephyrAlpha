@@ -40,12 +40,13 @@ SRC-0038: 副本文件 — 保持独立实现，待后续审核。
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import os
 import uuid
 from datetime import UTC, datetime
 from typing import Any
+
+from zephyr.shared.utils.async_utils import run_coroutine_sync  # 5.52.4 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
 
@@ -173,16 +174,10 @@ def _run_drift_scan(
     scan_fn: Any, level: Any, changed_files: list[str], result: dict[str, Any]
 ) -> Any:
     """执行漂移扫描；失败时记录错误并返回 None（调用方应直接 return）。"""
+    # 5.52.4 修复：run_coroutine_sync 统一处理无 loop/有 loop 两情形，
+    # 替代 get_event_loop().run_until_complete + new_event_loop 回退（3.12 下 get_event_loop 已废弃）。
     try:
-        return asyncio.get_event_loop().run_until_complete(
-            scan_fn(level=level, scope=changed_files or None)
-        )
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        try:
-            return loop.run_until_complete(scan_fn(level=level, scope=changed_files or None))
-        finally:
-            loop.close()
+        return run_coroutine_sync(scan_fn(level=level, scope=changed_files or None))
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
         result["errors"].append(f"scan failed: {exc}")
         result["recovery_status"] = "SCAN_FAILED"

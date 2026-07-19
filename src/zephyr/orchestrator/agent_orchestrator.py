@@ -909,12 +909,13 @@ class AgentOrchestrator:
 
     def _lsg_scan_agent_action(self, tool_name: str, tool_params: dict[str, Any]) -> str | None:
         # P0-5 LSG DI seam: 测试可通过 enable_lsg=False 关闭，或 lsg_gateway=<mock> 注入
-        if not self._enable_lsg:
+        # 5.52.1 修复：getattr 默认值 fail-closed（__new__ 实例缺属性时按"启用扫描"处理）；
+        # LSG 初始化/扫描执行失败返回阻断标记，禁止 return None 静默跳过安全扫描。
+        if not getattr(self, "_enable_lsg", True):
             return None
         # 优先用实例级 gateway（可 mock），否则 lazy init 类级单例（生产路径）
-        if self._lsg_gateway is not None:
-            gw = self._lsg_gateway
-        else:
+        gw = getattr(self, "_lsg_gateway", None)
+        if gw is None:
             # 5.172.M8 修复: 双重检查锁定, 防多线程并发首次调用创建多个 LSG Gateway 实例
             if AgentOrchestrator._lsg_gateway_instance is None:
                 with AgentOrchestrator._lsg_lock:
@@ -924,15 +925,15 @@ class AgentOrchestrator:
 
                             AgentOrchestrator._lsg_gateway_instance = LSGSecurityGateway()
                         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                            logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s)", type(e).__name__, e, exc_info=True)
-                            return None
+                            logger.warning("_lsg_scan_agent_action: failed to init LSG gateway (%s: %s) — fail-closed", type(e).__name__, e, exc_info=True)
+                            return "lsg_unavailable"
             gw = AgentOrchestrator._lsg_gateway_instance
         try:
-            import asyncio
-
             from zephyr.shared.contracts.security import SecurityDecision
 
             text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
+            # run_sync 统一处理无 loop/有 loop 两情形（5.12.8）；
+            # 5.52.4 修复：移除 get_event_loop().is_running() return None 的 fail-open 回退
             result = run_sync(
                 gw.scan_agent_action(
                     text=text,
@@ -943,28 +944,10 @@ class AgentOrchestrator:
             )
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_agent_scan"
-        except RuntimeError:
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    return None
-                result = loop.run_until_complete(
-                    gw.scan_agent_action(
-                        text=json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name,
-                        tool_name=tool_name,
-                        tool_params=tool_params,
-                        metadata={"source": "agent_orchestrator"},
-                    )
-                )
-                from zephyr.shared.contracts.security import SecurityDecision
-
-                if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
-                    return result.blocked_by or "lsg_agent_scan"
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("suppressed error in agent_orchestrator", exc_info=True)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in agent_orchestrator", exc_info=True)
-        return None
+            return None
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.warning("LSG agent-action scan failed — fail-closed (treated as blocked)", exc_info=True)
+            return "lsg_scan_error"
 
 
 # ---------------------------------------------------------------------------

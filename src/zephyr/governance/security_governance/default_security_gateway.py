@@ -32,6 +32,7 @@ Phase F — LLM 安全门禁落地
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -46,6 +47,8 @@ from zephyr.governance.security_governance.security_gateway_base import (
     SecurityGateway,
 )
 from zephyr.security.llm_defense.llm_security.input_sanitizer import InputSanitizer
+
+logger = logging.getLogger(__name__)
 
 _lsg_gateway = None
 
@@ -263,21 +266,22 @@ class DefaultSecurityGateway(SecurityGateway):
         )
 
     def _lsg_full_scan(self, content: str, metadata: dict[str, Any] | None = None) -> str | None:
+        # 5.52.1 fail-closed：LSG 不可用或扫描执行失败时视同阻断（返回 blocked_by 标记），
+        # 禁止 return None 静默跳过安全扫描。仅扫描正常执行且显式放行时返回 None。
         gw = _get_lsg()
         if gw is None:
-            return None
+            logger.warning("LSG gateway unavailable — fail-closed (treated as blocked)")
+            return "lsg_unavailable"
         try:
-            import asyncio
-
             from zephyr.shared.contracts.security.security_decision import SecurityDecision
 
             result = run_sync(gw.scan_input(content, source="l10-compliance", metadata=metadata or {}))
             if result.decision in (SecurityDecision.DENY, SecurityDecision.BLOCK):
                 return result.blocked_by or "lsg_input_scan"
+            return None
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 5.16.9 修复：移除废弃的 get_event_loop fallback，run_sync 已处理所有场景
-            pass
-        return None
+            logger.warning("LSG full scan failed — fail-closed (treated as blocked)", exc_info=True)
+            return "lsg_scan_error"
 
     def reset(self) -> None:
         self._findings.clear()
