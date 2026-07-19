@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-03-APPLICATION-ARCH
-related_rationale: R29, R30, R33, R49, R53, R54, R55, R56, R69
+related_rationale: []
 related_open_questions:
 - OQ-021
 - OQ-022
@@ -60,11 +60,11 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——模块归属原则、五大核心服务定位、容错与幂等设计、C4 视图分层、运行时三平面正交视图。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 全域清单与统计 → `generated/domains/index.md`（depgraph 派生）
+- 全域清单与统计 → `generated/domains/index.md`（depgraph 派生，待生成）
 - 域层级分布 → depgraph `domains` 表
 - 节点/边统计数字 → depgraph `nodes`/`edges` 表（时点快照）
 - 5 大核心服务域归属 → depgraph
-- 跨域依赖矩阵 → `cross_domain_matrix.md`（由 `generate_cross_domain_matrix.py` 派生）
+- 跨域依赖矩阵 → `../01_global_architecture_diagram/cross_domain_matrix.md`（由 `generate_cross_domain_matrix.py` 派生）
 - 治理代码拓扑 → `scripts/script-manifest.yaml`（SSoT）
 
 **与其他原则文档关系**：
@@ -133,7 +133,7 @@ ttl: permanent
 **容量治理二元规则**：单域 production_nodes ≤150 通过，>150 必须拆分，无例外（ARCH-CAP-002 v1.0.8）。
 
 - 单域节点上限：150（默认）/ 200（高度耦合可放宽）
-- 容量报告见 `capacity_report.md`（自动派生）
+- 容量报告见 `../03_governance_reports/capacity_report.md`（自动派生）
 - 超容域必须拆分（需 Owner 批准）
 
 ---
@@ -198,7 +198,7 @@ ttl: permanent
 
 **永恒约束**：三平面是正交视图，与域划分独立——同一域可同时包含 Hot/Warm/Cold 组件。
 
-> **注**：详细平面映射见 `runtime_planes.md`（待清理后→runtime_principles.md）。
+> **注**：详细平面映射见 `runtime_planes_principles.md`。
 
 ---
 
@@ -223,16 +223,16 @@ ttl: permanent
 
 | 内容 | 真源 |
 |------|------|
-| 全域清单与统计 | `generated/domains/index.md`（depgraph 派生）|
+| 全域清单与统计 | `generated/domains/index.md`（depgraph 派生，待生成）|
 | 域层级分布 | depgraph `domains` 表 |
 | 节点/边统计数字 | depgraph `nodes`/`edges` 表（时点快照）|
 | 5 大核心服务域归属 | depgraph |
-| 跨域依赖矩阵 | `cross_domain_matrix.md`（自动派生）|
+| 跨域依赖矩阵 | `../01_global_architecture_diagram/cross_domain_matrix.md`（自动派生）|
 | C4 图表 | `scripts/governance/d5_architecture/generators/`（自动生成）|
 | 治理代码拓扑 | `scripts/script-manifest.yaml`（SSoT）|
 | ACL 落盘位置 | `security_principles.md` |
 | 供应商注册表 | `architecture_model/technology/vendor_registry.yaml` |
-| 运行时平面详细映射 | `runtime_planes.md`（待清理后→runtime_principles.md）|
+| 运行时平面详细映射 | `runtime_planes_principles.md`|
 | LSG 详细设计原则 | `security_principles.md` §4 |
 
 ### 8.3 与其他原则文档关系

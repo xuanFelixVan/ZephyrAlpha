@@ -97,9 +97,9 @@ TOGAF 解决"从哪些角度看系统"，C4 解决"应用架构内部怎么画�
 
 | 目录 | 大白话 | 归属视图 | 归属文档 |
 |------|--------|---------|---------|
-| `docs/` | 所有文档（架构/蓝图/规则/报告） | 信息架构 | `information_architecture.md` |
-| `src/` | 所有业务代码 | 应用架构 | `application_architecture.md` |
-| `scripts/` | 所有脚本（治理/生成器/工具） | 应用架构（子视图） | `application_architecture.md` |
+| `docs/` | 所有文档（架构/蓝图/规则/报告） | 信息架构 | `information_principles.md` |
+| `src/` | 所有业务代码 | 应用架构 | `application_principles.md` |
+| `scripts/` | 所有脚本（治理/生成器/工具） | 应用架构（子视图） | `application_principles.md` |
 
 ---
 

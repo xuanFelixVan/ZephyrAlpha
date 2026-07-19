@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-04BIS-RUNTIME-PLANES
-related_rationale: R69
+related_rationale: []
 related_open_questions:
 - OQ-083
 related_kb:
@@ -50,7 +50,7 @@ ttl: permanent
 **保留内容**：方法论、设计原则、不变约束——正交视图方法论、三平面定义与 SLO、归属判定流程、跨平面通信协议、契约预留、技术选型矩阵、激活触发器、与治理层边界澄清、Sim-to-Real 保障。
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
-- 全域 × 三平面完整映射矩阵 → `architecture_model/cross_cutting/runtime_planes.yaml`（Hot 7/Warm 41/Cold 26 + 6 跨面规则）
+- 全域 × 三平面完整映射矩阵 → `architecture_model/cross_cutting/runtime_planes.yaml`（派生统计见该 YAML 的 planes.hot/warm/cold.modules[]）
 - 按平面维度反查表 → 同 YAML 的 `planes.hot.modules[]` / `planes.warm.modules[]` / `planes.cold.modules[]`
 - Tech Radar 当前状态 → `architecture_model/technology/technology_landscape.yaml`
 

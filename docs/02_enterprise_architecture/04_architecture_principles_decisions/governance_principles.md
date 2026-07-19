@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-09-GOVERNANCE-ARCH
-related_rationale: R65, R66, R67, R68, R69
+related_rationale: []
 related_open_questions:
 - OQ-076
 - OQ-079

@@ -12,7 +12,7 @@ created_by: human_plus_agent
 valid_from: 2026-07-19
 superseded_by: null
 supersedes: VIEW-04-TECHNOLOGY-ARCH
-related_rationale: R29, R30, R45, R46, R47, R48, R50, R51, R52
+related_rationale: []
 related_open_questions:
 - OQ-067
 tags:
@@ -292,7 +292,7 @@ ttl: permanent
 | 伸缩触发点 | 运营态维护 |
 | 第三方集成清单 | `integration_principles.md`（EI 系列）|
 | 安全认证机制 | `security_principles.md` |
-| 运维告警 | `operations_architecture.md`（待清理后→ops_principles.md）|
+| 运维告警 | `operations_principles.md`|
 
 ### 8.3 与其他原则文档关系
 
