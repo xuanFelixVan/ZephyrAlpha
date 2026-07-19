@@ -61,9 +61,11 @@ from __future__ import annotations
 import logging
 import os
 import subprocess
-import sys
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -116,9 +118,9 @@ def make_directory_contract_gate() -> GateSpec:
 
         # 3. 构造命令——文件数过多时改用 --all-files（避免 WinError 206）
         if len(rel_files) > _MAX_INLINE_FILES:
-            cmd = [sys.executable, str(check_script), "--all-files"]
+            cmd_args = ["--all-files"]
         else:
-            cmd = [sys.executable, str(check_script)] + rel_files
+            cmd_args = rel_files
 
         # 4. subprocess 调用复用真源
         # 治本(2026-07-19): 显式注入 PYTHONPATH，因为 check_directory_contract.py
@@ -131,12 +133,9 @@ def make_directory_contract_gate() -> GateSpec:
         if src_dir not in existing_pp.split(os.pathsep):
             env["PYTHONPATH"] = f"{src_dir}{os.pathsep}{existing_pp}" if existing_pp else src_dir
         try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                cwd=str(project_root),
-                env=env,
-                timeout=60,
+            result = run_checker_script(
+                check_script, cmd_args,
+                cwd=project_root, timeout=60, text=False, env=env,
             )
         except (subprocess.TimeoutExpired, OSError) as e:
             # fail-closed：执行失败阻断（目录契约是核心约束）

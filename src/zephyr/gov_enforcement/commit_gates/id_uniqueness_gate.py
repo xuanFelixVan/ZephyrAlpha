@@ -32,10 +32,11 @@ from __future__ import annotations
 
 import logging
 import os
-import subprocess
-import sys
 
-from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
+    GateSpec,
+    run_checker_script,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -64,14 +65,9 @@ def make_id_uniqueness_gate() -> GateSpec:
         if not triggered:
             return True, "no .pre-commit-config.yaml in commit"
 
-        result = subprocess.run(
-            [sys.executable, _CHECK_SCRIPT, "--ci"],
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
+        result = run_checker_script(
+            _CHECK_SCRIPT, ["--ci"],
+            cwd=project_root, timeout=30,
         )
 
         if result.returncode == 0:
