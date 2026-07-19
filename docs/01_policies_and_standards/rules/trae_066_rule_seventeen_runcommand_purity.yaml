@@ -1,0 +1,149 @@
+rule_id: TRAE-066
+title: RunCommand 命令纯洁性铁律（RULE-SEVENTEEN 外部化）
+name: RunCommand 命令纯洁性铁律（RULE-SEVENTEEN 外部化）
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-066
+priority: 50
+depends_on:
+- TRAE-001
+tags:
+- TRAE
+- rule_seventeen
+- L1_foundation
+- runcommand_purity
+- powershell_prohibition
+- shell_command_chaining
+- RULE-SEVENTEEN
+ttl: permanent
+stability: frozen
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-SEVENTEEN
+- RunCommand纯洁性
+- PowerShell禁止
+- 命令串联禁止
+severity: critical
+scope: runcommand_purity
+domain: TRAE
+triggers:
+- operation: runcommand_invoke
+- operation: shell_command_execution
+- operation: git_command_invocation
+sections:
+  runcommand_purity:
+    section_type: procedure
+    title: RunCommand 命令纯洁性铁律（RULE-SEVENTEEN）
+    original_rules:
+    - RULE-SEVENTEEN
+    conditions:
+    - type: trigger
+      check: AI 通过 RunCommand 工具执行任何 shell 命令时
+      pass: 命令为裸命令格式（python <脚本>.py / python scripts/git_commit.py ... / python -m pytest / python -m zephyr.<mod>）
+      fail: 命令含 PowerShell 语法（管道/引号嵌套/$变量/cmdlet/>重定向/;串联）或裸 git 命令
+    - type: constraint
+      check: 需要执行 git 操作（add/commit/status/log/diff 等）时
+      pass: 通过 python scripts/git_guard.py <子命令> 封装执行（commit 用 git_commit.py / session_worktree_commit）
+      fail: 直接使用裸 git 前缀命令（Trae 硬编码安全审查会弹批准框打断 AI 连续工作）
+    - type: constraint
+      check: 需要串联多个命令（如 cmd1 ; cmd2 或 cmd1 && cmd2）时
+      pass: 分多次 RunCommand 执行，或写 .py 脚本封装复合逻辑
+      fail: 用 ; 或 && 串联多个 git/shell 命令（破坏命令纯洁性 + 绕过 git_guard 审计）
+    actions:
+    - type: mandatory
+      step: 'RunCommand 仅允许裸命令格式：python <脚本>.py / python scripts/git_commit.py ... / python -m pytest / python -m zephyr.<mod>。复杂逻辑 MUST 写 .py 脚本封装，不在 RunCommand 中使用 shell 语法'
+    - type: mandatory
+      step: '文件操作映射（禁止用 shell 命令）：读文件 → Read 工具；写文件 → Write/Edit 工具；搜索文件 → Glob 工具；搜索内容 → Grep 工具；删除文件 → DeleteFile 工具。禁止用 cat/head/tail/sed/awk/echo/printf/Get-Content/Select-String 等 shell 命令做文件操作'
+    - type: mandatory
+      step: 'git 命令封装：暂存 → python scripts/git_guard.py add <file>；提交 → python scripts/git_commit.py（走 GitCommitGateway）或 session_worktree_commit；状态 → python scripts/git_guard.py status；日志 → python scripts/git_guard.py log --oneline -5。复合命令禁止：不用 ; 或 && 串联多个 git 命令，分多次 RunCommand 执行'
+    - type: forbidden
+      step: '禁止 PowerShell 语法：管道 |、引号嵌套、$ 变量、cmdlet（Get-Content/Set-Content/Select-String/Out-File 等）、> 重定向、; 串联'
+    - type: forbidden
+      step: '禁止裸 git 命令（Trae 硬编码安全审查会弹批准框）——必须通过 git_guard.py 封装，但 commit 子命令是裸透传会被阻断，commit 用 git_commit.py'
+    - type: forbidden
+      step: '禁止用 ; 或 && 串联多个 git/shell 命令（RULE-SEVENTEEN 复合命令禁令）——分多次 RunCommand 执行，或写 .py 脚本封装'
+    - type: forbidden
+      step: '禁止用 shell 命令做文件操作（cat/head/tail/sed/awk/echo/printf/Get-Content/Select-String）——MUST 用 Read/Write/Edit/Glob/Grep/DeleteFile 工具'
+    prohibitions:
+    - RunCommand 中使用 PowerShell 管道 |、引号嵌套、$ 变量、cmdlet、> 重定向、; 串联
+    - 直接使用裸 git 前缀命令（不经 git_guard.py 封装）
+    - 用 ; 或 && 串联多个 git/shell 命令
+    - 用 shell 命令做文件操作（cat/head/tail/sed/awk/echo/Get-Content/Select-String 等）
+    - 用 PowerShell echo/Out-File 默认参数写 .md 文件（默认编码非 UTF-8 导致中文乱码）
+    invariants:
+    - id: RULE-SEVENTEEN-INV-001
+      title: 命令纯洁性
+      description: RunCommand 仅允许裸命令格式，禁止 PowerShell 语法（管道/引号/$/cmdlet/重定向/;串联）和裸 git 命令
+      enforcement: Trae IDE 硬编码安全审查（git 前缀弹窗）+ AI 自觉遵循 + code review
+      violation_action: warn
+    - id: RULE-SEVENTEEN-INV-002
+      title: 复合命令禁令
+      description: 禁止用 ; 或 && 串联多个 git/shell 命令，分多次 RunCommand 执行或写 .py 脚本封装
+      enforcement: AI 自觉遵循 + code review
+      violation_action: warn
+    - id: RULE-SEVENTEEN-INV-003
+      title: 文件操作工具映射
+      description: 文件操作（读/写/搜索/删除）MUST 用专用工具（Read/Write/Edit/Glob/Grep/DeleteFile），禁止 shell 命令替代
+      enforcement: AI 自觉遵循 + code review
+      violation_action: warn
+    examples:
+    - scenario: 禁止的复合命令
+      wrong_action: git add foo.py ; git commit -m "msg" ; git push
+      correct_action: 分三次 RunCommand——python scripts/git_guard.py add foo.py；python scripts/git_commit.py -m "msg"；python scripts/git_guard.py push
+      reason: 复合命令破坏命令纯洁性 + 绕过 git_guard 审计 + ; 串联在 PowerShell 中语义不确定
+    - scenario: 禁止的 PowerShell 语法
+      wrong_action: Get-Content foo.py | Select-String "pattern" > output.txt
+      correct_action: 用 Grep 工具搜索 pattern，用 Write 工具写入 output.txt
+      reason: PowerShell 管道/重定向违反 RULE-SEVENTEEN 命令纯洁性
+    - scenario: 禁止的裸 git 命令
+      wrong_action: git status
+      correct_action: python scripts/git_guard.py status
+      reason: Trae 对 git 前缀硬编码安全审查，直接用 git xxx 会弹批准框打断 AI 连续工作
+    common_mistakes:
+    - '❌ 用 ; 串联多个 git 命令——分多次 RunCommand 执行'
+    - '❌ 用 && 串联命令——同 ; 禁令，写 .py 脚本封装复合逻辑'
+    - '❌ 直接用 git commit——用 python scripts/git_commit.py（走 GitCommitGateway）或 session_worktree_commit'
+    - '❌ 用 cat/head/tail 读文件——用 Read 工具'
+    - '❌ 用 echo/Out-File 写文件——用 Write/Edit 工具（且 PowerShell 默认编码非 UTF-8）'
+    - '❌ 用 grep/Select-String 搜索内容——用 Grep 工具'
+    background:
+      source: .trae/rules/project_rules.md L138-151（RULE-ONE + RULE-FIVE + RULE-SEVENTEEN 执行环境与文件卫生）
+      rationale: |
+        RULE-SEVENTEEN 之前仅在 .trae/rules/project_rules.md 散文中定义，
+        未外部化到 trae_*.yaml——新 AI 若不读 project_rules.md 则无法发现此规则。
+        本次外部化（#ARCH-GOV-CONVERGENCE-META G3）将规则迁移到 trae_066.yaml，
+        使 MCP rule_discovery 可查询，为 AGENTS.md 瘦身扫清覆盖度障碍。
+      related_arch: '#ARCH-GOV-CONVERGENCE-META'
+references:
+  rule_ids:
+  - TRAE-001
+  - TRAE-064
+  scripts:
+  - scripts/git_guard.py
+  - scripts/git_commit.py
+  modules:
+  - MOD-GOV
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §10 Git 命令封装约定
+  - .trae/rules/project_rules.md RULE-SEVENTEEN
+enforcement:
+  paired_gate_id: null  # 文档型规则，无对应 commit gate（Trae IDE 硬编码安全审查为运行时防护）
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - trae_ide_hardcoded_safety_check
+  bypass_allowed: false
+metadata:
+  change_policy: frozen
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-GOV-CONVERGENCE-META'
+provenance:
+  extracted_at: '2026-07-19'
+  extracted_by: sess-15708-20260719183420
+  source: '.trae/rules/project_rules.md L138-151 RULE-SEVENTEEN'

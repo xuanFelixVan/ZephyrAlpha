@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-19T10:44:26Z'
+generated_at: '2026-07-19T13:43:13Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 165
+total_files: 166
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -678,7 +678,7 @@ files:
   - DOC-006
   - DOC-008
   - DOC-018
-  section_count: 38
+  section_count: 39
 - path: docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml
   module_id: TRAE-029
   title: 文档治理-操作安全
@@ -785,7 +785,7 @@ files:
   aliases:
   - MOD-006
   - MOD-007
-  section_count: 2
+  section_count: 3
 - path: docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml
   module_id: TRAE-034
   title: 任务系统-卡片标准与生命周期
@@ -1380,6 +1380,25 @@ files:
   - capability_lookup
   - CAPABILITY-LOOKUP-REQUIRED
   - ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD
+  section_count: 1
+- path: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
+  module_id: TRAE-066
+  title: RunCommand 命令纯洁性铁律（RULE-SEVENTEEN 外部化）
+  doc_type: ''
+  status: ''
+  version: 1.0.0
+  rule_form: ''
+  scope: runcommand_purity
+  stability: frozen
+  layer: L1_foundation
+  superseded_by: ''
+  severity: critical
+  tier: ''
+  aliases:
+  - RULE-SEVENTEEN
+  - RunCommand纯洁性
+  - PowerShell禁止
+  - 命令串联禁止
   section_count: 1
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028

@@ -1446,6 +1446,45 @@ sections:
       结论:288个平铺远超AI可靠扫描区间;无前缀时可靠上限约60,有前缀时约120;超过则AI不会主动想到去找,
       直接回答"没有"而漏掉实际存在的文件。
       前置否决依据:线性增长无封顶型文件夹(如测试脚本随开发模块增加)无论当前数量,终局一定爆炸,数量阈值对它无意义。
+  gov_doc_019_module_nesting_discipline:
+    title: 模块目录嵌套纪律 (GOV-DOC-019，#ARCH-GOV-CONVERGENCE-META G4 外部化)
+    section_type: rule
+    original_rules:
+    - DOC-019
+    definition: |
+      本规则约束 src/zephyr/ 下模块目录的嵌套深度与根目录平铺纪律。
+      病根：AGENTS.md §7 散文中规定"禁止模块目录嵌套超过 3 层"和
+      "禁止在 src/zephyr/governance/ 根目录直接放 .py 文件"，但未外部化到
+      trae_*.yaml——新 AI 若不读 AGENTS.md §7 则无法发现此规则。
+      本次外部化（#ARCH-GOV-CONVERGENCE-META G4）将规则迁移到 trae_028.yaml，
+      使 MCP rule_discovery 可查询，为 AGENTS.md 瘦身扫清覆盖度障碍。
+    conditions:
+    - type: constraint
+      check: 模块目录嵌套深度
+      pass: src/zephyr/<domain>/<module>/ 下最多再嵌套 2 层子目录（总深度 ≤4 层含 src/zephyr/）
+      fail: 嵌套超过 3 层子目录（如 src/zephyr/governance/audit/reconcilers/xxx/yyy/）→ AI 召回困难 + import 路径过长
+      rationale: 嵌套过深导致 AI 无法凭直觉定位文件，import 路径冗长降低可读性，与 GOV-DOC-018 平铺阈值协议互补（一个管广度，一个管深度）
+    - type: constraint
+      check: 功能域根目录 .py 平铺
+      pass: src/zephyr/governance/ 等功能域根目录仅含 __init__.py + 子目录，业务 .py 归子目录
+      fail: src/zephyr/governance/*.py 直接平铺业务文件（除 __init__.py）→ 根目录爆炸 + 文件归属不清
+      rationale: 功能域根目录应仅作为包入口（__init__.py），业务文件按子域归类（如 governance/audit/、governance/persistence/），与 GOV-DOC-018 平铺阈值协议一致
+    actions:
+    - type: mandatory
+      step: '新建模块时 MUST 评估嵌套深度——src/zephyr/<domain>/<module>/ 下最多再嵌套 2 层子目录（总深度 ≤4 层含 src/zephyr/）。超出 MUST 重构（上提子目录或合并相邻层）'
+    - type: mandatory
+      step: '功能域根目录（如 src/zephyr/governance/、src/zephyr/infrastructure/）禁止直接放业务 .py 文件（仅允许 __init__.py）。业务 .py MUST 归子目录（按子域/功能归类）'
+    - type: mandatory
+      step: '检测脚本 validate_directory_structure.py 在 commit 时检测嵌套深度和根目录平铺违规（对标 GOV-DOC-018 阈值检测机制）'
+    prohibitions:
+    - 禁止模块目录嵌套超过 3 层子目录（src/zephyr/<domain>/<module>/ 下最多 2 层）
+    - 禁止功能域根目录直接平铺业务 .py 文件（仅允许 __init__.py）
+    - 禁止用"将来可能扩展"为由预先深嵌套（YAGNI 原则，按需扩展）
+    rationale: |
+      AGENTS.md §7 散文规则外部化（#ARCH-GOV-CONVERGENCE-META G4）。
+      嵌套深度与平铺阈值（GOV-DOC-018）互补——GOV-DOC-018 管"一个目录下多少文件"，
+      GOV-DOC-019 管"目录树有多深"。两者共同保证 AI 可靠召回（AI 凭直觉定位文件，
+      既不因平铺过多漏掉文件，也不因嵌套过深找不到文件）。
 references:
   rule_ids: [TRAE-010, TRAE-022, TRAE-030, TRAE-042]
   scripts: [scripts/governance/d3_metadata/check_naming_convention.py, scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py, scripts/governance/d5_architecture/validators/validate_directory_structure.py]

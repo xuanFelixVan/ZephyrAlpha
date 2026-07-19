@@ -224,6 +224,29 @@ sections:
       - version: 1.0.0
         date: '2026-05-02'
         change: '初始版本: MRS-002原子性+MRS-003校验+MRS-004禁止行为'
+  ai_registry_discovery:
+    section_type: rule
+    title: AI 启动注册表发现铁律（RULE-REGISTRY 外部化，#ARCH-GOV-CONVERGENCE-META G1）
+    original_rules:
+    - RULE-REGISTRY
+    conditions:
+    - type: trigger
+      check: AI 启动后需要查找项目 registry / 能力 / 真源文件时
+      pass: 先读 registry_master_index.yaml 或调用 discover_all_registries() 发现全部 25+ registry
+      fail: 硬编码路径只能覆盖 ~7 个 registry，导致"不知道某表存在"→ 重复造轮子或绕过治理
+    - type: constraint
+      check: AI 需要查询基础设施/API 契约/跨模块依赖/能力→真源文件反查时
+      pass: 通过 registry_master_index.yaml 总索引发现对应 registry，再查具体 registry
+      fail: 直接 grep 文件系统或凭记忆推断路径
+    actions:
+    - type: mandatory
+      step: 'AI 启动后查找任何 registry 前 MUST 先读 registry_master_index.yaml（25+ 个 registry 的总索引，自动生成）或调用 discover_all_registries() 函数（zephyr.infrastructure.asset_inventory.registry_adapter）'
+    - type: mandatory
+      step: '关键 registry 速查：基础设施（数据库/缓存/队列）→ infrastructure_registry.yaml；API 接口契约 → interface_contract_registry.yaml；跨模块依赖 → cross_module_dependency_registry.yaml；能力→真源文件反查 → capability_canonical_file_registry.yaml'
+    prohibitions:
+    - 硬编码 registry 路径（只能覆盖 ~7 个，遗漏 18+ 个 registry）
+    - 不查 registry_master_index.yaml 就凭记忆推断 registry 位置
+    - 重复造轮子（不知道某 registry 存在而新建同类 registry）
 references:
   rule_ids: []
   scripts:
