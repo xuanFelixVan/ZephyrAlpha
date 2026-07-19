@@ -3831,13 +3831,19 @@ entries:
       - test_guc_trigger_fix.py: 7 个 smoke test 全部 PASSED
       - 迁移已应用到 live DB，sync_dataflow_registry 恢复正常
 
-    Phase 2 裁定 B 级联隔离（待实施）：
-      - sync_all() 改为 per-function savepoint 隔离
-      - 新增 sync_failures_log 表记录失败项
+    Phase 2 裁定 B 级联隔离（已完成 2026-07-19）：
+      - sync_all() 改为 per-function SAVEPOINT 隔离（30 项 sync 各自独立 savepoint）
+      - 新增 3 个 helper：_ensure_sync_failures_log_table / _log_sync_failures / _run_sync_with_savepoint
+      - 新增 sync_failures_log 表（幂等 CREATE TABLE IF NOT EXISTS，含 error_class 列供 P2 填充）
+      - sync_all() 契约变更：从"任一失败即 raise"改为"部分失败返回 False，严重故障才 raise"
+        （reconciler 检查 returncode，main() 仍 sys.exit(1)，向后兼容）
+      - test_sync_savepoint_isolation.py: 7 个测试全部 PASSED（含 best-effort 日志隔离验证）
+      - 既有 smoke test 27 个全部 PASSED，无回归
 
     Phase 3 裁定 C 错误分类（待实施）：
       - reconciler 重试逻辑增加错误分类
       - 确定性错误不重试，立即 escalate
+      - 读取 sync_failures_log.error_class 字段（P2 填充）
 
     Phase 4 裁定 D 100% AI 治理加固（长期）：
       - session_worktree 可靠性修复
@@ -3849,9 +3855,67 @@ entries:
     - scripts/governance/migrate_sqlite_to_pg/05_fix_guc_trigger_bug.sql（幂等迁移脚本，Phase 1 已完成）
     - tests/governance/d8_doc_sync/test_guc_trigger_fix.py（7 个 smoke test，Phase 1 已完成）
     - docs/02_enterprise_architecture/ruling_guc_trigger_cascading_sync_failure.md（裁定文档）
-    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离，Phase 2 待实施）
+    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py（sync_all 级联隔离 + 3 helpers，Phase 2 已完成）
+    - tests/governance/d8_doc_sync/test_sync_savepoint_isolation.py（7 个 SAVEPOINT 隔离测试，Phase 2 已完成）
   status: in_progress
   related_adjudication: 'ARCH-053 design_maturity 保护, ARCH-051 dataflowgraph, 裁定#203 protect_depgraph_design_edges'
   related_rules: 'trae_062_ssot_classification (规则数据真源原则)'
+  created: '2026-07-19'
+  last_updated: '2026-07-19'
+# --- #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001: Gate-Abuse 5 维滥用系统性审计（2026-07-19） ---
+# 关联 #ARCH-P3-FOLLOWUP-TODOS-001 裁定 C 的 Layer 2 落地 + #ARCH-GUC-TRIGGER-FIX-001 Task 4 Phase 1 深化
+- issue_id: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001'
+  title: Gate-Abuse 5 维滥用系统性审计与治本路线图（emergency_commit / allow_overlap / warn_only / forged_gw_marker / non-GW commit）
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-19 系统性审计裁定。commit_gateway_abuse_monitor_reconciler 的 post-commit
+    5 维滥用检测全部触发（warn_only 203/24h、emergency_commit 15/24h、allow_overlap
+    1890/7d、forged_gw_marker 4/24h、non-GW commit 142/24h），超阈倍数 1.33×-63.0×。
+    不是阈值配置问题，而是 100% AI 开发场景下治理体系的"可预防性"缺失——post-commit
+    warn 无法挽回已入历史的 commit。
+
+
+    5 维层级关系：
+    L1 最深层根因：emergency_commit（session_worktree_merge 跨进程 PID liveness 失效 → AI fallback）
+    L2 派生层：allow_overlap（注册表可靠性 + emergency_commit 派生）/ warn_only（fail-open + per-hour 阈值失效）
+    L3 表层：forged_gw_marker（AI 伪造 [GW:*] 标记）/ non-GW commit（AI 裸 git commit）
+
+
+    治本路线图：
+    P1（本周）：emergency_commit 根因治本设计——heartbeat 机制替代 PID liveness + merge 重试退避 + emergency_commit 成本递增
+    P2（本月）：warn_only session-level budget + allow_overlap session 注册表审计
+    P3（长期）：forged_gw_marker 前置 forgery gate + non-GW commit server-side pre-receive hook
+
+
+    本案范围：仅产出审计文档 + emergency_commit 治本设计（不实施代码改动）。其余 4 维
+    在审计文档记录方向，后续独立裁定实施。
+  fix_phase: |
+    Layer 2 文档产出（已完成 2026-07-19）：
+      - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（5 维根因分析 + 治本路线图 + emergency_commit heartbeat 设计）
+      - architecture_issue_registry.yaml 登记本条目
+
+    P1 emergency_commit 治本（待独立裁定立项，本周）：
+      - heartbeat 机制（.runtime/sessions/<sid>/heartbeat.jsonl，30s 追加，>5min 无更新 = stale）
+      - session_worktree_merge 重试 3 次指数退避（1s/2s/4s）
+      - emergency_commit 成本递增（N>=3 需显式 reason）
+
+    P2 warn_only + allow_overlap 治本（待独立裁定立项，本月）：
+      - per-session warn budget（>10 次升级 block_next）
+      - 高风险 fail-open gate 评估转 fail-closed
+      - allow_overlap 成本递增 + session 注册表可靠性审计
+
+    P3 forged_gw_marker + non-GW commit 治本（待独立裁定立项，长期）：
+      - pre-commit forgery gate（commit message [GW:*] 标记合法性检测）
+      - server-side pre-receive hook（拦截 non-GW commit）
+      - 长期 GPG 签名机制
+  impact:
+    - docs/02_enterprise_architecture/ruling_gate_abuse_systemic_audit.md（审计文档，Layer 2 已完成）
+    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（5 维检测器，治本后阈值可能调整）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（heartbeat 机制改造点，P1 待实施）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: open
+  related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (5 层闭环模型 + 第 6 层可预防性)'
   created: '2026-07-19'
   last_updated: '2026-07-19'
