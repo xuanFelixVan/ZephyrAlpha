@@ -416,3 +416,142 @@ class TestCheckGitDiffRaises:
         passed, detail = gate.check(gw, [])
         assert passed is True
         assert detail == ""
+
+
+# ---------------------------------------------------------------------------
+# 4. fail-open 持久化契约（Ruling:100PCT-AI-GOVERNANCE P1-5）
+#    三条 fail-open 路径必须写入 reconcile_execution_log 表
+#    （action='critical_warn'，gate_id='GATE-PANORAMA-ALIGNMENT'）。
+#    治本动机：silent warning → 持久化失败让 AI 可查询历史失效。
+# ---------------------------------------------------------------------------
+
+
+def _query_reconcile_log(project_root: Path) -> list[dict]:
+    """读取 tmp_path/data/databases/governance.db → reconcile_execution_log 全部行。"""
+    import sqlite3
+
+    db_path = project_root / "data" / "databases" / "governance.db"
+    if not db_path.exists():
+        return []
+    conn = sqlite3.connect(str(db_path))
+    try:
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute(
+            "SELECT log_id, gate_id, session_id, trigger_source, action, detail "
+            "FROM reconcile_execution_log"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+class TestCheckFailOpenPersists:
+    """fail-open 路径必须持久化到 reconcile_execution_log（P1-5 治本）。
+
+    三条 fail-open 路径（git diff rc!=0 / git diff 异常 / run_alignment 异常）
+    均须写入 critical_warn 记录，让 AI 可查询历史失效——零 silent failure。
+    PanoramaEmptyError 为合法跳过，不应持久化。
+    """
+
+    def test_run_alignment_exception_persists(self, tmp_path, monkeypatch):
+        # run_alignment 抛通用异常 → fail-open 且持久化
+        _install_fake_align_module(monkeypatch, raises=RuntimeError("db down"))
+        gw = _make_gateway(
+            tmp_path,
+            diff_stdout="scripts/governance/generate_project_depgraph.py\n",
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [], session_id="sid-p1-5-1")
+        assert passed is True
+        assert detail == ""
+
+        rows = _query_reconcile_log(tmp_path)
+        assert len(rows) == 1, f"expected 1 row, got {rows}"
+        r = rows[0]
+        assert r["gate_id"] == "GATE-PANORAMA-ALIGNMENT"
+        assert r["action"] == "critical_warn"
+        assert r["trigger_source"] == "pre_commit_gate"
+        assert r["session_id"] == "sid-p1-5-1"
+        assert "run_alignment 异常" in r["detail"]
+        assert "RuntimeError" in r["detail"]
+
+    def test_git_diff_nonzero_persists(self, tmp_path, monkeypatch):
+        # git diff rc!=0 → fail-open 且持久化
+        _install_fake_align_module(
+            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
+        )
+        gw = _make_gateway(
+            tmp_path,
+            diff_stdout="src/zephyr/governance/depgraph_schema.py\n",
+            diff_rc=1,
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [], session_id="sid-p1-5-2")
+        assert passed is True
+        assert detail == ""
+
+        rows = _query_reconcile_log(tmp_path)
+        assert len(rows) == 1, f"expected 1 row, got {rows}"
+        r = rows[0]
+        assert r["gate_id"] == "GATE-PANORAMA-ALIGNMENT"
+        assert r["action"] == "critical_warn"
+        assert r["session_id"] == "sid-p1-5-2"
+        assert "git diff 失败" in r["detail"]
+        assert "rc=1" in r["detail"]
+
+    def test_git_diff_raises_persists(self, tmp_path, monkeypatch):
+        # git diff 抛异常 → fail-open 且持久化
+        _install_fake_align_module(
+            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
+        )
+        gw = _make_gateway(
+            tmp_path,
+            diff_raises=OSError("spawn failed"),
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [], session_id="sid-p1-5-3")
+        assert passed is True
+        assert detail == ""
+
+        rows = _query_reconcile_log(tmp_path)
+        assert len(rows) == 1, f"expected 1 row, got {rows}"
+        r = rows[0]
+        assert r["gate_id"] == "GATE-PANORAMA-ALIGNMENT"
+        assert r["action"] == "critical_warn"
+        assert "git diff 异常" in r["detail"]
+        assert "OSError" in r["detail"]
+
+    def test_panorama_empty_does_not_persist(self, tmp_path, monkeypatch):
+        # PanoramaEmptyError 为合法跳过——不应持久化
+        # 注意：必须用 fake 模块返回的 PanoramaEmptyError 类（gate 的 except 按类身份匹配），
+        # 否则会落到 fail-open 路径而非 skip 路径——这是 P1-5 治本要暴露的 silent failure。
+        fake = _install_fake_align_module(monkeypatch)
+        exc = fake.PanoramaEmptyError("empty")
+        fake.run_alignment = lambda *a, **k: (_ for _ in ()).throw(exc)
+        gw = _make_gateway(
+            tmp_path,
+            diff_stdout="scripts/governance/d5_architecture/generators/align_panoramas.py\n",
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [], session_id="sid-p1-5-skip")
+        assert passed is True
+        assert detail == ""
+
+        rows = _query_reconcile_log(tmp_path)
+        assert rows == [], f"PanoramaEmptyError 不应持久化, got {rows}"
+
+    def test_clean_check_does_not_persist(self, tmp_path, monkeypatch):
+        # 触发但报告无问题 → 不应持久化
+        _install_fake_align_module(
+            monkeypatch, run_alignment=lambda *a, **k: FakeReport()
+        )
+        gw = _make_gateway(
+            tmp_path, diff_stdout="src/zephyr/governance/depgraph_schema.py\n"
+        )
+        gate = make_panorama_alignment_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is True
+        assert detail == ""
+
+        rows = _query_reconcile_log(tmp_path)
+        assert rows == [], f"clean check 不应持久化, got {rows}"

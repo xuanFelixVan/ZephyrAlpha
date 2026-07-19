@@ -109,6 +109,7 @@ __all__ = [
     "make_blueprint_id_legacy_reconciler",  # ARCH-DATAQUALITY-V1.8 Task I
     "make_capability_lookup_health_reconciler",  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6
     "scan_and_archive_working_docs",
+    "log_gate_failure",  # Ruling:100PCT-AI-GOVERNANCE P1-5 — gate fail-open 持久化
 ]
 
 
@@ -516,6 +517,60 @@ def _log_reconcile_results(
             conn.close()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("_log_reconcile_results: DB write failed: %s", e)
+
+
+def log_gate_failure(
+    project_root: "object",
+    gate_id: str,
+    detail: str,
+    session_id: str = "",
+    trigger_source: str = "pre_commit_gate",
+) -> None:
+    """持久化 gate 检测器失效到 reconcile_execution_log 表。
+
+    Ruling:100PCT-AI-GOVERNANCE P1-5 (2026-07-19) 治本：
+    gate fail-open 时（检测器失效但放行 commit），仅 logger.warning 不够 loud，
+    且不持久化——AI 无法查询历史失败（fail-silent 最危险失败模式）。
+    本函数让 gate 失效持久化到 governance.db，AI 查 reconcile_execution_log 即可见。
+
+    与 _log_reconcile_results 的区别：
+    - _log_reconcile_results: post-commit/post-merge reconciler 批量结果持久化
+    - log_gate_failure: pre-commit gate 单条检测器失效持久化（action='critical_warn'）
+
+    复用 reconcile_execution_log 表（gate_id 字段已支持 gate 复用）。
+    action='critical_warn' 与 P0-1 治本一致，触发 _print_critical_warn_banner 横幅
+    （下次 commit/merge 时强制 AI 看到历史 gate 失效）。
+
+    Args:
+        project_root: Path 对象（gateway.project_root）。
+        gate_id: 失效的 gate ID（如 "GATE-PANORAMA-ALIGNMENT"）。
+        detail: 失败详情（完整错误信息，不截断）。
+        session_id: commit session_id（可空）。
+        trigger_source: 触发源标识（默认 "pre_commit_gate"）。
+    """
+    import os
+    import sqlite3
+    import uuid
+    try:
+        db_path = _governance_db_path(project_root)
+        # Ruling:100PCT-AI-GOVERNANCE P1-5: 确保目录存在（测试/首次运行场景）
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        conn = sqlite3.connect(db_path, timeout=30.0)
+        try:
+            conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
+            _ensure_ack_column(conn)
+            _ensure_commit_message_column(conn)
+            log_id = f"gf-{uuid.uuid4().hex[:12]}"
+            conn.execute(
+                SQL_INSERT_RECONCILE_LOG,
+                (log_id, now_utc(), gate_id, session_id,
+                 trigger_source, "critical_warn", detail, "", ""),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+    except Exception as e:  # noqa: BLE001 — 持久化失败不能阻断 gate 主流程
+        logger.warning("log_gate_failure: DB write failed: %s", e)
 
 
 def _check_recent_critical_warns(

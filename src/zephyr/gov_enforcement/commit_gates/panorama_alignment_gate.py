@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.generators.align_panoramas (run_alignment, PanoramaEmptyError)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); scripts.governance.d5_architecture.generators.align_panoramas (run_alignment, PanoramaEmptyError); zephyr.governance.audit.reconciliation_registry (log_gate_failure)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
+# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
 # [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——run_alignment/PanoramaEmptyError/DB 异常降级为 fail-open warn（不阻断 commit）；domain_mismatches>0 为确定性阻断（非异常路径）
+# [ERROR_CONTRACT] check 永不抛异常——run_alignment/DB 异常降级为 fail-open + logger.error + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）；PanoramaEmptyError 为合法跳过（不持久化）；domain_mismatches>0 为确定性阻断（非异常路径）
 # [TESTS] tests/governance/commit_gates/test_panorama_alignment_gate.py
 # [A_module] module_id=MOD-GOV-panorama_alignment_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -48,6 +48,10 @@ import os
 import sys
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+
+# Ruling:100PCT-AI-GOVERNANCE P1-5 (2026-07-19): gate fail-open 持久化治本
+# ——检测器失效时持久化到 reconcile_execution_log，让失败可见、可追踪
+from zephyr.governance.audit.reconciliation_registry import log_gate_failure
 
 logger = logging.getLogger(__name__)
 
@@ -99,16 +103,22 @@ def make_panorama_alignment_gate() -> GateSpec:
                 ["git", "diff", "--cached", "--name-only"]
             )
             if diff_result.returncode != 0:
-                logger.warning(
-                    "GATE-PANORAMA-ALIGNMENT gate fail-open: git diff 失败(rc=%d)，检测器失效。",
-                    diff_result.returncode,
+                # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+                detail = f"git diff 失败(rc={diff_result.returncode})，检测器失效"
+                logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
+                log_gate_failure(
+                    gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                    session_id=kwargs.get("session_id", ""),
                 )
                 return True, ""
             staged_files = diff_result.stdout.strip().splitlines()
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning(
-                "GATE-PANORAMA-ALIGNMENT gate fail-open: git diff 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True,
+            # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+            detail = f"git diff 异常({type(e).__name__}: {e})，检测器失效"
+            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
+            log_gate_failure(
+                gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                session_id=kwargs.get("session_id", ""),
             )
             return True, ""
 
@@ -139,10 +149,13 @@ def make_panorama_alignment_gate() -> GateSpec:
             )
             return True, ""
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # fail-loud：检测器失效，告警但不阻断
-            logger.warning(
-                "GATE-PANORAMA-ALIGNMENT gate fail-open: run_alignment 异常(%s: %s)，检测器失效。",
-                type(e).__name__, e, exc_info=True,
+            # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+            # ——检测器失效时持久化到 reconcile_execution_log，下次 commit 横幅告警
+            detail = f"run_alignment 异常({type(e).__name__}: {e})，检测器失效"
+            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
+            log_gate_failure(
+                gateway.project_root, "GATE-PANORAMA-ALIGNMENT", detail,
+                session_id=kwargs.get("session_id", ""),
             )
             return True, ""
 
