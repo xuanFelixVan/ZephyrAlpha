@@ -14,10 +14,6 @@ superseded_by: null
 supersedes: VIEW-09-GOVERNANCE-ARCH
 related_rationale: []
 related_open_questions:
-- OQ-076
-- OQ-079
-- OQ-080
-- OQ-081
 - OQ-083
 related_kb:
 - KBG-0009
@@ -116,7 +112,7 @@ ttl: permanent
 | **① Policy→Factory** | Policy 规则新增/变更（git commit） | policy_compiler：Markdown/YAML → 检查器配置 |
 | **② Factory→Runtime** | git commit / CI push / 交易执行 / AI 决策 | pre-commit hook / GitHub Actions / 函数调用 |
 | **③ Runtime→Audit** | 每次检查器执行后 | append-only 写入 `policy_decision_ledger.jsonl` |
-| **④ Audit→Policy** | 定期（周/月）+ 事件驱动 | `feedback_to_policy.py` 聚合 → PR 提案 |
+| **④ Audit→Policy** | 定期（周/月）+ 事件驱动 | `feedback_to_policy.py`（待创建）聚合 → PR 提案 |
 
 ### 3.3 四档执行约定（永恒，对标 OPA Gatekeeper 2026）
 
@@ -138,7 +134,7 @@ ttl: permanent
 **拍板**：**D3-B 三层都预留 AI 员工口子**（Policy 花名册 + Factory 命名空间 + Runtime 审计 schema）
 
 **用户决策原话**（2026-04-19）：
-> "D3：合规层 AI 员工规划（对标 OQ-062 AI 自治）这个肯定现在就要讨论清楚，不然给未来埋雷，选 D3-B。"
+> "D3：合规层 AI 员工规划（对标 OQ-062（待登记）AI 自治）这个肯定现在就要讨论清楚，不然给未来埋雷，选 D3-B。"
 
 ### 4.2 三层 AI 员工口子框架（永恒）
 
@@ -160,7 +156,7 @@ ttl: permanent
 
 ### 5.1 D4 拍板结论（永恒）
 
-**拍板**：**OQ-026 方案 B 稳健分三轮激活**
+**拍板**：**OQ-026（待登记）方案 B 稳健分三轮激活**
 
 **用户决策原话**（2026-04-19）：
 > "我的逻辑是分阶段，先激活能保证正常发布任务的，然后是施工，最后是业务。"
@@ -192,7 +188,7 @@ scaffold → experimental 的**强制门禁**，必须 100% 通过：
 - 所有 frontmatter schema 符合 KBG-0002
 - 所有跨文档引用链接 Valid（无死链）
 - 所有 `module_id` 在全库唯一（无重复）
-- 所有文件在 `directory-keep-whitelist.yaml` 或有明确 owner
+- 所有文件在 `directory-keep-whitelist.yaml`（待创建）或有明确 owner
 - 域分层无越界引用（D_FACTOR 不得 import D_PF_CORE，域边界由 depgraph 定义）
 - 5 大核心服务接口规范已全部在 `docs/03_modules/_cross_layer/_b_track_interfaces/` 就位
 

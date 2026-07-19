@@ -45,7 +45,7 @@ ttl: permanent
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
 - 密钥资产清单 → 由 `scripts/governance/scan_secret_leak.py` 自动扫描生成
-- Phase Roadmap 进度 → 由 `phase-transition-protocol.md` + 自动化 phase gate 维护
+- Phase Roadmap 进度 → 由 `phase-transition-protocol.md`（待创建）+ 自动化 phase gate 维护
 - Open Questions → 由决策注册表（`docs/02_enterprise_architecture/04_architecture_principles_decisions/`）维护
 - LSG 接口实现细节 → `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md`
 - Agent Sandbox 技术选型 → KBG-0018
@@ -389,7 +389,7 @@ AI Agent 的每次调用都带 `agent_id`，Session Log 按 agent_id 分流，�
 | LSG 接口实现 | `../../03_modules/_cross_layer/_b_track_interfaces/llm_security_gateway_interface.md` |
 | Agent Sandbox 技术选型 | KBG-0018 |
 | 密钥资产清单（动态） | `scripts/governance/scan_secret_leak.py` 自动扫描 |
-| Phase Roadmap 进度 | `phase-transition-protocol.md` + 自动化 phase gate |
+| Phase Roadmap 进度 | `phase-transition-protocol.md`（待创建）+ 自动化 phase gate |
 | Open Questions | 决策注册表（`04_architecture_principles_decisions/`）|
 | 代码级安全规范 | `.cursor/rules/code-conventions.mdc` 与 `encoding-tool-guard.mdc` |
 | SRE Runbook 正文 | D_OPS 域产出 |

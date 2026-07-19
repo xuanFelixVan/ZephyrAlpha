@@ -43,7 +43,7 @@ ttl: permanent
 
 **不保留内容**（派生/动态数据，由各自自动化系统维护）：
 - 全域→能力域映射 → `architecture_model/cross_cutting/capability_heatmap.yaml`（真源）
-- 能力成熟度评分 → `capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）
+- 能力成熟度评分 → `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）
 - VSM 阶段指标具体数字（LT/PT/%C&A）→ 由运营态 metrics 自动采集
 - Stakeholder RACI 矩阵 → 未来激活时从 git 历史恢复（v1.2.0, commit 69fa51dc12~1）
 
@@ -62,7 +62,7 @@ ttl: permanent
 
 ZephyrAlpha 2.0 是**量化投资全生命周期管理系统**，覆盖：数据 → 研究 → 模型 → 策略 → 执行 → 报告。
 
-**永恒框架**：**C1-C7（7个业务能力域）+ CC1-CC3（3个横切能力域）= 10个能力域**，映射到 53 物理域。
+**永恒框架**：**C1-C7（7个业务能力域）+ CC1-CC3（3个横切能力域）= 10个能力域**，映射到各物理域。
 
 ### 2.2 业务能力域（C1-C7，永恒分类）
 
@@ -86,7 +86,7 @@ ZephyrAlpha 2.0 是**量化投资全生命周期管理系统**，覆盖：数据
 
 ### 2.4 能力域→物理域映射（派生数据）
 
-> **注**：C1-C7+CC1-CC3 → 53 物理域的具体映射不在本文档硬编码。真源在 `architecture_model/cross_cutting/capability_heatmap.yaml`，可视化见 `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）。
+> **注**：C1-C7+CC1-CC3 → 各物理域的具体映射不在本文档硬编码。真源在 `architecture_model/cross_cutting/capability_heatmap.yaml`，可视化见 `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）。
 
 ---
 
@@ -248,7 +248,7 @@ KB决策append-only：100%；AI决策日志七维度覆盖率：≥99%；Git com
 | 内容 | 真源 |
 |------|------|
 | 全域→能力域映射 | `architecture_model/cross_cutting/capability_heatmap.yaml` |
-| 能力成熟度评分（L0-L5） | `capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）|
+| 能力成熟度评分（L0-L5） | `architecture_model/cross_cutting/capability_heatmap.yaml` + `../01_global_architecture_diagram/global_capability_heatmap.md`（自动派生）|
 | VSM 阶段指标具体数字（LT/PT/%C&A）| 运营态 metrics 自动采集 |
 | SLO 目标值矩阵 | SLO 矩阵文档（运营态维护）|
 | Stakeholder RACI 矩阵 | git 历史（v1.2.0，激活时恢复）|
