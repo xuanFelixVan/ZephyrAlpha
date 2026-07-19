@@ -79,12 +79,22 @@ class InjectedContext(BaseModel):
 class ContextInjector:
     """Retrieve and inject knowledge context.
 
-    KB refactor (Phase 1-3 done): removed kb_repo.py; inject_by_* return empty.
-    KB retrieval is handled by UnifiedMemoryAPI
+    KB refactor (Phase 1-3 done): removed kb_repo.py SQLite layer.
+    Production retrieval is handled by UnifiedMemoryAPI
     (zephyr.gov_kb.storage.unified_memory_api).
+
+    Backward-compatibility: accepts an optional ``repo`` positional
+    argument. When provided, ``inject_by_*`` methods query the repo
+    directly (used by tests and legacy consumers). When ``None``,
+    methods return empty ``InjectedContext`` (production path where
+    UnifiedMemoryAPI handles retrieval out-of-band).
 
     Parameters
     ----------
+    repo : object, optional
+        KB repository exposing ``list_by_status()`` and
+        ``search(query_text, collection, n_results, score_threshold)``.
+        Default ``None`` (empty stub mode).
     token_budget : int
         Maximum token budget for injected context (default 8000).
     max_sources : int
@@ -93,31 +103,134 @@ class ContextInjector:
 
     def __init__(
         self,
+        repo: object | None = None,
+        *,
         token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         max_sources: int = 10,
     ) -> None:
+        self._repo = repo
         self._token_budget = token_budget
         self._max_sources = max_sources
 
+    # ------------------------------------------------------------------
+    # Internal retrieval helpers (backward-compat with KB repo protocol)
+    # ------------------------------------------------------------------
+    def _list_records(self) -> list:
+        if self._repo is None:
+            return []
+        try:
+            records = self._repo.list_by_status()
+        except Exception:  # noqa: BLE001 — graceful degradation when repo fails
+            return []
+        return list(records or [])
+
+    def _search_records(self, keyword: str) -> list:
+        if self._repo is None:
+            return []
+        try:
+            hits = self._repo.search(
+                query_text=keyword,
+                n_results=self._max_sources,
+            )
+        except Exception:  # noqa: BLE001 — graceful degradation when repo fails
+            return []
+        return list(hits or [])
+
+    @staticmethod
+    def _record_text(record: object) -> str:
+        """Extract display text from a record (summary preferred, then content)."""
+        summary = getattr(record, "summary", "") or ""
+        if summary:
+            return summary
+        content = getattr(record, "content", "") or ""
+        return content
+
+    @staticmethod
+    def _record_source(record: object) -> str:
+        """Extract source identifier from a record (source_file preferred, then ke_id)."""
+        source = getattr(record, "source_file", "") or ""
+        if source:
+            return source
+        ke_id = getattr(record, "ke_id", "") or ""
+        return ke_id
+
+    def _build_context(self, records: list) -> tuple[str, int, list[str]]:
+        """Assemble context string from records, enforcing token budget.
+
+        Truncates the final record when adding it would exceed budget.
+        Returns ``(context, token_count, sources)``.
+        """
+        if not records:
+            return "", 0, []
+        parts: list[str] = []
+        sources: list[str] = []
+        total_tokens = 0
+        for record in records[: self._max_sources]:
+            text = self._record_text(record)
+            if not text:
+                continue
+            tokens = estimate_tokens(text)
+            if total_tokens + tokens > self._token_budget:
+                remaining_budget = max(0, self._token_budget - total_tokens)
+                if remaining_budget <= 0:
+                    break
+                # 1 token ≈ 4 chars; truncate to fit remaining budget
+                max_chars = remaining_budget * 4
+                if max_chars < len(text):
+                    text = text[:max_chars]
+                    tokens = estimate_tokens(text)
+            parts.append(text)
+            total_tokens += tokens
+            source = self._record_source(record)
+            if source:
+                sources.append(source)
+        return "\n".join(parts), total_tokens, sources
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
     def inject_by_task_id(self, task_id: str) -> InjectedContext:
+        records = [
+            r
+            for r in self._list_records()
+            if task_id in (getattr(r, "tags", None) or [])
+        ]
+        context, token_count, sources = self._build_context(records)
         return InjectedContext(
+            context=context,
+            sources=sources,
+            token_count=token_count,
             retrieval_mode=RetrievalMode.TASK_ID.value,
             query=task_id,
-            budget_remaining=self._token_budget,
+            budget_remaining=max(0, self._token_budget - token_count),
         )
 
     def inject_by_module_id(self, module_id: str) -> InjectedContext:
+        records = [
+            r
+            for r in self._list_records()
+            if getattr(r, "category", "") == module_id
+        ]
+        context, token_count, sources = self._build_context(records)
         return InjectedContext(
+            context=context,
+            sources=sources,
+            token_count=token_count,
             retrieval_mode=RetrievalMode.MODULE_ID.value,
             query=module_id,
-            budget_remaining=self._token_budget,
+            budget_remaining=max(0, self._token_budget - token_count),
         )
 
     def inject_by_keyword(self, keyword: str) -> InjectedContext:
+        records = self._search_records(keyword)
+        context, token_count, sources = self._build_context(records)
         return InjectedContext(
+            context=context,
+            sources=sources,
+            token_count=token_count,
             retrieval_mode=RetrievalMode.KEYWORD.value,
             query=keyword,
-            budget_remaining=self._token_budget,
+            budget_remaining=max(0, self._token_budget - token_count),
         )
 
     def inject(self, query: str, mode: RetrievalMode = RetrievalMode.KEYWORD) -> InjectedContext:
@@ -135,6 +248,7 @@ class ContextInjector:
     @property
     def max_sources(self) -> int:
         return self._max_sources
+
 
 
 class InjectionLayer(int, Enum):

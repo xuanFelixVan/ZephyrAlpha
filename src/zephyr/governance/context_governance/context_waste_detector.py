@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-RES_context_waste_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from __future__ import annotations
+
+from collections import OrderedDict
 from dataclasses import dataclass
 
 

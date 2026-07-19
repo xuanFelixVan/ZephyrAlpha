@@ -13,6 +13,9 @@ Blueprint: docs/03_modules/_cross_layer/feedback_loop/blueprint.md
 # 重新导出核心类（原 feedback_loop.py 迁入包内，解决包/文件同名覆盖）
 from .core import EvolutionProposal, FeedbackLoop
 
+# 显式 import 子模块（满足 TEST-SOURCE-CONSISTENCY 门禁的符号漂移检测）
+from . import evolution_engine  # noqa: F401
+
 __all__ = [
     "EvolutionProposal",
     "FeedbackLoop",

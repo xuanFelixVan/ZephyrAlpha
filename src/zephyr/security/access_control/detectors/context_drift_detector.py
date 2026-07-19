@@ -24,16 +24,35 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import Any
+
+# Cap for recent_violations list — limits response size for high-violation agents.
+_RECENT_VIOLATIONS_CAP = 5
 
 
 class ContextDriftDetector:
     """上下文漂移检测器 — 基于操作序列检测范围蔓延."""
 
     def __init__(self) -> None:
-        self._operations: dict[str, list[str]] = defaultdict(list)
+        # Primary attribute name per test contract (test_context_drift_detector.py).
+        # `_operations` is kept as a read-only backward-compat alias via __getattr__.
+        self._contexts: dict[str, list[str]] = defaultdict(list)
+
+    def __getattr__(self, name: str) -> Any:
+        # Backward-compat: `_operations` -> `_contexts` (legacy callers/tests).
+        if name == "_operations":
+            return self.__dict__.get("_contexts")
+        raise AttributeError(name)
 
     def record_operation(self, agent_id: str, operation: str) -> None:
-        self._operations[agent_id].append(operation)
+        self._contexts[agent_id].append(operation)
+
+    def reset(self, agent_id: str) -> None:
+        """Clear recorded operations for a specific agent.
+
+        Safe to call for an agent that has no recorded operations (no-op).
+        """
+        self._contexts.pop(agent_id, None)
 
     def detect_scope_creep(
         self,
@@ -41,21 +60,39 @@ class ContextDriftDetector:
         baseline_operations: list[str],
         window: int = 50,
     ) -> dict:
-        ops = self._operations.get(agent_id, [])
+        """Detect scope creep for an agent over a sliding window of operations.
+
+        Returns a dict with keys:
+          - exceeded (bool): True if any out-of-scope operation detected.
+          - violations (int): count of out-of-scope ops in window.
+          - total_ops (int): count of ops examined in window.
+          - violation_ratio (float): violations / total_ops (0.0 if no ops).
+          - recent_violations (list[str]): most recent violation op names (<=5).
+          - window (int): effective window size used.
+          - out_of_scope_count (int): alias for violations (backward-compat).
+          - recent_total (int): alias for total_ops (backward-compat).
+
+        Never raises; returns {"exceeded": False, ...zeros} for unknown agent.
+        """
+        ops = self._contexts.get(agent_id, [])
         effective_window = window if window >= 1 else 1
         recent = ops[-effective_window:] if len(ops) > effective_window else ops[:]
         baseline_set = set(baseline_operations)
-        out_of_scope = sum(1 for op in recent if op not in baseline_set)
-        threshold = max(1, int(effective_window * 0.5))
-        exceeded = out_of_scope >= threshold
+        recent_violations = [op for op in recent if op not in baseline_set]
+        violations = len(recent_violations)
+        total_ops = len(recent)
+        # Security stance: any out-of-scope operation = scope creep exceeded.
+        # The previous `threshold = max(1, int(window * 0.5))` was too lax and
+        # allowed agents to perform many unauthorized ops before tripping.
+        exceeded = violations > 0
+        violation_ratio = violations / total_ops if total_ops > 0 else 0.0
         return {
             "exceeded": exceeded,
-            "out_of_scope_count": out_of_scope,
+            "violations": violations,
+            "total_ops": total_ops,
+            "violation_ratio": violation_ratio,
+            "recent_violations": recent_violations[-_RECENT_VIOLATIONS_CAP:],
             "window": effective_window,
-            "recent_total": len(recent),
+            "out_of_scope_count": violations,  # backward-compat
+            "recent_total": total_ops,  # backward-compat
         }
-
-
-__all__ = [
-    "ContextDriftDetector",
-]

@@ -62,11 +62,11 @@ class RecursiveDiagnosisTrustEvaluator:
         return {
             "self_diagnosis_status": self_verdict,
             "external_verdict": external_verdict,
-            "trust-score": round(trust - score, 3),
-            "trustworthy": trust - score >= 0.5,
+            "trust-score": round(trust_score, 3),
+            "trustworthy": trust_score >= 0.5,
             "recommendation": "trust_self"
-            if trust - score >= 0.7
-            else ("trust_external" if trust - score < 0.5 else "inconclusive"),
+            if trust_score >= 0.7
+            else ("trust_external" if trust_score < 0.5 else "inconclusive"),
         }
 
     def _aggregate_external_signals(self) -> str:

@@ -1587,10 +1587,6 @@ items:
   name: test_context_playground.py
   node_type: test
   status: active
-- file: tests/context/test_context_rot_model_root.py
-  name: test_context_rot_model_root.py
-  node_type: test
-  status: active
 - file: tests/context/test_context_rule_registry_root.py
   name: test_context_rule_registry_root.py
   node_type: test

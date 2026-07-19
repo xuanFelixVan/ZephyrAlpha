@@ -11,15 +11,62 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
-# [TESTS] tests/audit-orchestrator/test_feedback_policy.py
+# [TESTS] tests/feedback/test_feedback_policy.py
 # [A_module] module_id=MOD-GOV_feedback_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""feedback_policy.py — Audit-findings → policy recommendation bridge.
+
+Two parallel APIs coexist in this module:
+  1. `FeedbackPolicy` (legacy): audit-findings evaluator that delegates to
+     `FeedbackBridge` and returns a single `PolicyDecision`.
+  2. `PolicyFeedbackBridge` (newer): aggregates anomaly patterns across
+     audit runs and generates `PolicyRecommendation` lists per pattern.
+     `feedback_to_policy(results)` is the functional entry point that
+     delegates to `PolicyFeedbackBridge`.
+
+The two APIs serve different consumers — both are kept to avoid breaking
+existing audit-orchestrator integrations.
+"""
 import logging
+from enum import Enum, unique
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["FeedbackPolicy", "PolicyDecision"]
+__all__ = [
+    "AnomalyPattern",
+    "FeedbackPolicy",
+    "FeedbackSummary",
+    "PolicyAction",
+    "PolicyDecision",
+    "PolicyFeedbackBridge",
+    "PolicyRecommendation",
+    "feedback_to_policy",
+]
+
+
+# Severity ordering — higher index = more severe. Used to upgrade pattern
+# severity when the same signature is observed at multiple severities.
+_SEVERITY_ORDER: dict[str, int] = {
+    "info": 0,
+    "low": 1,
+    "medium": 2,
+    "high": 3,
+    "critical": 4,
+}
+
+# Severities counted as "high severity" in FeedbackSummary.high_severity_count.
+_HIGH_SEVERITIES = frozenset({"high", "critical"})
+
+
+def _severity_rank(sev: str) -> int:
+    """Return integer rank for a severity string (unknown → 0)."""
+    return _SEVERITY_ORDER.get(str(sev).lower(), 0)
+
+
+# ---------------------------------------------------------------------------
+# Legacy FeedbackPolicy / PolicyDecision (audit-orchestrator consumer)
+# ---------------------------------------------------------------------------
 
 
 class PolicyDecision:
@@ -126,44 +173,72 @@ class FeedbackPolicy:
         return self._available
 
 
+# ---------------------------------------------------------------------------
+# Newer PolicyFeedbackBridge API (anomaly pattern aggregation)
+# ---------------------------------------------------------------------------
+
+
+@unique
+class PolicyAction(str, Enum):
+    """Enum of policy actions that can be recommended for an anomaly pattern."""
+
+    ALERT = "alert"
+    BLOCK = "block"
+    ESCALATE = "escalate"
+    THROTTLE = "throttle"
+
+
 class AnomalyPattern:
-    def __init__(self, pattern_id="", name="", description="", threshold=0.0, enabled=True):
-        self.pattern_id = pattern_id
-        self.name = name
-        self.description = description
-        self.threshold = threshold
-        self.enabled = enabled
+    """Aggregated anomaly pattern — tracks frequency, severity, affected agents."""
+
+    def __init__(
+        self,
+        anomaly_type: str = "",
+        severity: str = "low",
+        frequency: int = 0,
+        affected_agents: list[str] | None = None,
+    ) -> None:
+        self.anomaly_type = anomaly_type
+        self.severity = severity
+        self.frequency = frequency
+        self.affected_agents: list[str] = list(affected_agents) if affected_agents else []
+
+    def upgrade_severity(self, new_severity: str) -> None:
+        """Upgrade severity if `new_severity` is more severe than current."""
+        if _severity_rank(new_severity) > _severity_rank(self.severity):
+            self.severity = new_severity
+
+    def add_agent(self, agent_id: str) -> None:
+        """Add agent_id to affected_agents (dedup, skip empty)."""
+        if agent_id and agent_id not in self.affected_agents:
+            self.affected_agents.append(agent_id)
 
 
 class FeedbackSummary:
-    def __init__(self, total_feedback=0, by_channel=None, by_severity=None, period=""):
-        self.total_feedback = total_feedback
-        self.by_channel = by_channel or {}
-        self.by_severity = by_severity or {}
-        self.period = period
+    """Summary of PolicyFeedbackBridge state."""
 
-
-class PolicyAction:
-    def __init__(self, action="", target="", reason="", priority="medium"):
-        self.action = action
-        self.target = target
-        self.reason = reason
-        self.priority = priority
-
-
-class PolicyFeedbackBridge:
-    def __init__(self, config=None):
-        self.config = config or {}
-
-    def apply_policy(self, feedback):
-        return PolicyAction()
-
-    def get_policy(self, policy_id):
-        return None
+    def __init__(
+        self,
+        total_patterns: int = 0,
+        total_recommendations: int = 0,
+        high_severity_count: int = 0,
+    ) -> None:
+        self.total_patterns = total_patterns
+        self.total_recommendations = total_recommendations
+        self.high_severity_count = high_severity_count
 
 
 class PolicyRecommendation:
-    def __init__(self, policy_id: str = "", action: str = "", target: str = "", reason: str = "", confidence: float = 0.0) -> None:
+    """A single policy recommendation for an anomaly pattern."""
+
+    def __init__(
+        self,
+        policy_id: str = "",
+        action: PolicyAction | str = PolicyAction.ALERT,
+        target: str = "",
+        reason: str = "",
+        confidence: float = 0.0,
+    ) -> None:
         self.policy_id = policy_id
         self.action = action
         self.target = target
@@ -171,5 +246,140 @@ class PolicyRecommendation:
         self.confidence = confidence
 
 
-def feedback_to_policy(feedback: dict[str, Any], policies: list[str] | None = None) -> PolicyRecommendation:
-    return PolicyRecommendation()
+# Frequency thresholds for action escalation.
+_BLOCK_FREQ_THRESHOLD = 3  # critical severity + freq >= 3 → BLOCK
+_THROTTLE_FREQ_THRESHOLD = 5  # high severity + freq >= 5 → THROTTLE
+
+
+class PolicyFeedbackBridge:
+    """Aggregates anomaly patterns and generates policy recommendations.
+
+    Stateful bridge: `aggregate_patterns(results)` accumulates patterns across
+    calls (so multiple audit runs build up frequency). `generate_recommendations()`
+    reads the accumulated state and produces one recommendation per pattern.
+    """
+
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
+        self.config = config or {}
+        self._patterns: dict[str, AnomalyPattern] = {}
+        self._recommendations: list[PolicyRecommendation] = []
+
+    def aggregate_patterns(self, results: list[dict[str, Any]]) -> list[AnomalyPattern]:
+        """Aggregate anomaly results into patterns.
+
+        Each result dict should have:
+          - signature OR anomaly_type (string, used as pattern key)
+          - severity (string: info/low/medium/high/critical)
+          - agent_id (string, may be empty)
+
+        Patterns are accumulated in `self._patterns` across calls (stateful).
+        Returns the list of patterns touched by THIS call (not all patterns).
+        """
+        if not results:
+            return []
+        touched: list[AnomalyPattern] = []
+        for r in results:
+            anomaly_type = r.get("signature") or r.get("anomaly_type") or ""
+            if not anomaly_type:
+                continue
+            severity = str(r.get("severity", "low")).lower()
+            agent_id = str(r.get("agent_id", "") or "")
+            pattern = self._patterns.get(anomaly_type)
+            if pattern is None:
+                pattern = AnomalyPattern(
+                    anomaly_type=anomaly_type,
+                    severity=severity,
+                    frequency=0,
+                )
+                self._patterns[anomaly_type] = pattern
+            pattern.frequency += 1
+            pattern.upgrade_severity(severity)
+            pattern.add_agent(agent_id)
+            if pattern not in touched:
+                touched.append(pattern)
+        # Invalidate cached recommendations since patterns changed.
+        self._recommendations = []
+        return touched
+
+    def generate_recommendations(self) -> list[PolicyRecommendation]:
+        """Generate one PolicyRecommendation per accumulated pattern.
+
+        Action mapping:
+          - critical, freq >= 3 → BLOCK
+          - critical, freq < 3  → ESCALATE
+          - high,    freq >= 5 → THROTTLE
+          - high,    freq < 5  → ALERT
+          - medium/low/info     → ALERT
+        """
+        recs: list[PolicyRecommendation] = []
+        for pattern in self._patterns.values():
+            action = self._decide_action(pattern)
+            recs.append(
+                PolicyRecommendation(
+                    policy_id=f"POL-{pattern.anomaly_type}",
+                    action=action,
+                    target=pattern.anomaly_type,
+                    reason=f"severity={pattern.severity}, frequency={pattern.frequency}, agents={len(pattern.affected_agents)}",
+                    confidence=_pattern_confidence(pattern),
+                )
+            )
+        self._recommendations = recs
+        return recs
+
+    @staticmethod
+    def _decide_action(pattern: AnomalyPattern) -> PolicyAction:
+        sev = pattern.severity.lower()
+        freq = pattern.frequency
+        if sev == "critical":
+            return PolicyAction.BLOCK if freq >= _BLOCK_FREQ_THRESHOLD else PolicyAction.ESCALATE
+        if sev == "high":
+            return PolicyAction.THROTTLE if freq >= _THROTTLE_FREQ_THRESHOLD else PolicyAction.ALERT
+        return PolicyAction.ALERT
+
+    def get_summary(self) -> FeedbackSummary:
+        """Return FeedbackSummary reflecting current bridge state.
+
+        Note: `total_recommendations` reflects the cached recommendations from
+        the last `generate_recommendations()` call. If patterns changed since,
+        call `generate_recommendations()` first to refresh.
+        """
+        total_patterns = len(self._patterns)
+        high_severity_count = sum(
+            1 for p in self._patterns.values() if p.severity.lower() in _HIGH_SEVERITIES
+        )
+        return FeedbackSummary(
+            total_patterns=total_patterns,
+            total_recommendations=len(self._recommendations),
+            high_severity_count=high_severity_count,
+        )
+
+
+def _pattern_confidence(pattern: AnomalyPattern) -> float:
+    """Heuristic confidence in [0.0, 1.0] based on severity and frequency."""
+    sev_rank = _severity_rank(pattern.severity)
+    # severity contributes up to 0.6, frequency up to 0.4 (capped at freq=10)
+    sev_component = min(sev_rank / 4.0, 1.0) * 0.6
+    freq_component = min(pattern.frequency / 10.0, 1.0) * 0.4
+    return round(sev_component + freq_component, 3)
+
+
+def feedback_to_policy(
+    feedback: list[dict[str, Any]],
+    policies: list[str] | None = None,
+) -> list[PolicyRecommendation]:
+    """Functional entry point — aggregate feedback and return recommendations.
+
+    Args:
+        feedback: list of anomaly result dicts (same shape as
+            `PolicyFeedbackBridge.aggregate_patterns` input).
+        policies: optional list of policy IDs to filter by (currently unused;
+            reserved for future policy-filtering logic).
+
+    Returns:
+        List of PolicyRecommendation (empty if feedback is empty).
+    """
+    if not feedback:
+        return []
+    bridge = PolicyFeedbackBridge()
+    bridge.aggregate_patterns(feedback)
+    return bridge.generate_recommendations()

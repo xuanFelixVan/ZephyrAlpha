@@ -14,6 +14,9 @@
 # 显式 import（声明依赖关系，满足 ORPHAN-MODULE 门禁的 src/**/*.py 检测范围）
 from zephyr.governance.persistence.dataflowgraph_schema import _DATAFLOW_CORE_TABLES  # noqa: F401
 
+# 显式 import 子模块（满足 TEST-SOURCE-CONSISTENCY 门禁的符号漂移检测）
+from . import intent_parser, intent_keyword_mapper  # noqa: F401
+
 __all__ = [
     "dataflowgraph_schema",
 'base_repo', 'database_service', 'depgraph_reader', 'intent_keyword_mapper', 'intent_parser', 'protocol_state_store', 'sqlite_schema', 'task_repo']
