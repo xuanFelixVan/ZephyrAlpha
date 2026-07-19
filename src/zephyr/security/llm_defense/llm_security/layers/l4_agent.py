@@ -15,10 +15,30 @@
 # [TTL] permanent
 import hashlib
 import hmac
+import logging
 import secrets
 import time
 from enum import Enum
 from typing import Any
+
+logger = logging.getLogger(__name__)
+
+# 5.62.4 治本：L4 密钥统一经 SecretProvider 从环境变量解析，禁止硬编码默认密钥
+_L4_HMAC_SECRET_ENV = "ZEPHYR_LSG_L4_HMAC_SECRET"
+
+
+def _resolve_l4_secret(explicit: str | bytes | None) -> str | None:
+    """解析 L4 HMAC 密钥（5.62.4 治本）：显式参数 > SecretProvider（ZEPHYR_LSG_L4_HMAC_SECRET）。
+
+    未配置时返回 None，由调用方决定 fail-fast 或明确降级（本函数不提供任何默认密钥）。
+    """
+    if isinstance(explicit, bytes) and explicit:
+        return explicit.decode("utf-8")
+    if isinstance(explicit, str) and explicit.strip():
+        return explicit.strip()
+    from zephyr.shared.security.secrets import get_secret_or_default
+
+    return get_secret_or_default(_L4_HMAC_SECRET_ENV, "").strip() or None
 
 
 class RiskLevel(Enum):
@@ -131,7 +151,18 @@ class AgentSecurityLayer:
         max_permission: AgentPermission = AgentPermission.WRITE_SAFE,
     ):
         self.config = config or {}
-        self._hmac_key = hmac_key or "l4-agent-default-hmac-key"
+        # 5.62.4 治本：消除硬编码默认密钥 "l4-agent-default-hmac-key"。
+        # 显式参数 > SecretProvider（ZEPHYR_LSG_L4_HMAC_SECRET）；均未配置时明确降级为
+        # None + 告警。注：该字段当前未被本类任何密码学操作消费，fail-fast 会使
+        # LSG 网关默认构造（hmac_key=None）整体不可用=自我 DoS，故降级不 fail-fast；
+        # 身份冒充标记的 HMAC 密钥 fail-fast 见 AgentImpersonationDefender。
+        resolved = _resolve_l4_secret(hmac_key)
+        if resolved is None:
+            logger.warning(
+                "AgentSecurityLayer: 未传 hmac_key 且 %s 未设置，明确降级（无默认密钥）",
+                _L4_HMAC_SECRET_ENV,
+            )
+        self._hmac_key = resolved
         self._max_permission = max_permission
         self._approvals: dict[str, ApprovalRequest] = {}
         self._auto_approve = False
@@ -298,11 +329,21 @@ class FinancialComplianceGate:
 
 
 class AgentImpersonationDefender:
-    """检测 agent 身份冒充（HMAC 不可伪造标记）。"""
+    """检测 agent 身份冒充（HMAC 不可伪造标记）。
 
-    def __init__(self, config: dict[str, Any] | None = None, secret: str = "l4-impersonation-secret"):
+    5.62.4 治本：HMAC 密钥禁止硬编码默认（原默认 "l4-impersonation-secret" 公开可知，
+    冒充检测形同虚设）——必须显式传 secret 或设置 ZEPHYR_LSG_L4_HMAC_SECRET，否则 fail-fast。
+    """
+
+    def __init__(self, config: dict[str, Any] | None = None, secret: str | bytes | None = None):
         self.config = config or {}
-        self._secret = secret
+        resolved = _resolve_l4_secret(secret)
+        if resolved is None:
+            raise ValueError(
+                "AgentImpersonationDefender 需要 HMAC 密钥：请显式传 secret 参数或设置环境变量 "
+                f"{_L4_HMAC_SECRET_ENV}（禁止公开默认密钥，fail-fast）"
+            )
+        self._secret = resolved
 
     def generate_unforgeable_marker(self, agent_id: str) -> str:
         ts = str(int(time.time()))

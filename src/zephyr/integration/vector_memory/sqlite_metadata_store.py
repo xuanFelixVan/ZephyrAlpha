@@ -126,18 +126,25 @@ class SQLiteMetadataStore:
 
     @property
     def _conn(self) -> sqlite3.Connection:
-        if not hasattr(self._local, "conn") or self._local.conn is None:
-            conn = get_db_connection(str(self._db_path), check_same_thread=False)
-            conn.execute("PRAGMA journal_mode=WAL")
-            conn.execute("PRAGMA synchronous=NORMAL")
-            conn.execute("PRAGMA foreign_keys=ON")
-            conn.row_factory = sqlite3.Row
-            self._local.conn = conn
-            # 5.12.7 修复：注册到全局连接表，close_all 可关闭所有线程的连接
-            tid = threading.get_ident()
+        tid = threading.get_ident()
+        conn = getattr(self._local, "conn", None)
+        if conn is not None:
+            # 5.80.4 治本：close_all() 由其他线程调用后，本线程 local 仍持有已关闭连接——
+            # 注册表已清空，连接不在册即为 stale，丢弃重建（防 sqlite3.ProgrammingError）。
             with self._all_conns_lock:
-                self._all_conns[tid] = conn
-        return self._local.conn
+                if self._all_conns.get(tid) is conn:
+                    return conn
+            self._local.conn = None
+        conn = get_db_connection(str(self._db_path), check_same_thread=False)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        conn.execute("PRAGMA foreign_keys=ON")
+        conn.row_factory = sqlite3.Row
+        self._local.conn = conn
+        # 5.12.7 修复：注册到全局连接表，close_all 可关闭所有线程的连接
+        with self._all_conns_lock:
+            self._all_conns[tid] = conn
+        return conn
 
     def __enter__(self) -> "SQLiteMetadataStore":
         return self

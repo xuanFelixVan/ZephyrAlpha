@@ -90,9 +90,12 @@ def _cmd_pool_stats(_args: argparse.Namespace) -> int:
 
 def _audit_integrity_trail() -> tuple[str, Any]:
     try:
-        from zephyr.governance.integrity import IntegrityVerifier
+        # 5.62.2 治本：修正错误 import（zephyr.governance.integrity 是无 verify_chain 的 stub），
+        # 并显式传入 SecretProvider 统一密钥源（与 writer.py 签名方同一密钥源）。
+        from zephyr.gov_audit.integrity import IntegrityVerifier
+        from zephyr.gov_audit.writer import resolve_audit_hmac_secret
 
-        verifier = IntegrityVerifier()
+        verifier = IntegrityVerifier(hmac_key=resolve_audit_hmac_secret())
         chain = verifier.verify_chain()
         return ("ok" if chain["status"] == "valid" else "fail"), chain
     except ImportError as exc:

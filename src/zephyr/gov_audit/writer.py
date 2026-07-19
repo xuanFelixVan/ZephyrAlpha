@@ -33,7 +33,13 @@ from typing import Final
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["AuditReportWriter", "AuditWriter", "get_audit_writer"]
+__all__ = [
+    "AuditReportWriter",
+    "AuditWriter",
+    "get_audit_writer",
+    "resolve_audit_hmac_key",
+    "resolve_audit_hmac_secret",
+]
 
 DEFAULT_REPORT_DIR: Final[Any] = Path.cwd() / "data" / "audit_history"
 DEFAULT_AUDIT_DIR: Final[Any] = Path.cwd() / "data" / "audit_trail"
@@ -329,19 +335,45 @@ def _generate_entry_id(prefix: str = "AUD-T", seq: int | None = None) -> str:
     return f"{prefix}-{ts}-{short_uuid}{seq_str}"
 
 
-def _resolve_hmac_key(config=None) -> bytes:
-    """解析 HMAC 密钥：config 参数 > ZEPHYR_AUDIT_HMAC_SECRET 环境变量 > 兜底默认。
+def resolve_audit_hmac_secret(explicit: str | None = None) -> str:
+    """解析审计 HMAC 密钥（字符串形式）——5.62.1/5.62.2 治本：统一密钥源。
 
-    5.17.2 修复：旧代码无视 config 和 env 直接返回硬编码 b"default-key"。
-    现在优先读取显式传入的 config 字符串，其次读取环境变量，最后兜底默认。
+    优先级：显式参数 > SecretProvider（ZEPHYR_AUDIT_HMAC_SECRET 环境变量）。
+    未配置时返回 ""（不兜底默认密钥），由调用方决定 fail-fast 或明确降级。
+
+    Args:
+        explicit: 显式传入的密钥字符串（非空时优先）。
+
+    Returns:
+        密钥字符串；未配置时返回 ""。
     """
-    if config and isinstance(config, str) and config.strip():
-        return config.strip().encode("utf-8")
-    key = os.environ.get("ZEPHYR_AUDIT_HMAC_SECRET", "")
-    if key:
-        return key.encode("utf-8")
-    # 兜底默认（测试兼容 + 开发环境可用，生产应设置 env var）
+    if explicit and explicit.strip():
+        return explicit.strip()
+    from zephyr.shared.security.secrets import get_secret_or_default
+
+    return get_secret_or_default("ZEPHYR_AUDIT_HMAC_SECRET", "").strip()
+
+
+def resolve_audit_hmac_key(explicit: str | bytes | None = None) -> bytes:
+    """解析审计 HMAC 密钥（bytes 形式）——5.62.1 治本：SecretProvider 统一密钥源。
+
+    优先级：显式参数 > SecretProvider（ZEPHYR_AUDIT_HMAC_SECRET）> 公开默认密钥（明确降级+告警）。
+    """
+    if isinstance(explicit, bytes) and explicit:
+        return explicit
+    secret = resolve_audit_hmac_secret(explicit if isinstance(explicit, str) else None)
+    if secret:
+        return secret.encode("utf-8")
+    # 明确降级（测试兼容 + 开发环境可用，生产必须设置 env var）
     logger.warning(
         "ZEPHYR_AUDIT_HMAC_SECRET 未设置，使用公开默认密钥（不提供任何安全保证，仅限开发/测试）"
     )
     return b"zephyr-audit-hmac-default-key"
+
+
+def _resolve_hmac_key(config=None) -> bytes:
+    """向后兼容包装——真源为 resolve_audit_hmac_key（5.62.1）。
+
+    优先级：显式参数 > SecretProvider（ZEPHYR_AUDIT_HMAC_SECRET）> 公开默认密钥（明确降级+告警）。
+    """
+    return resolve_audit_hmac_key(config)

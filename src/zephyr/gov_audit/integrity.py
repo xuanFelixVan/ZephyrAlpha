@@ -109,11 +109,16 @@ class IntegrityVerifier:
             self._event_log_path = AUDIT_DATA_DIR / "events.jsonl"
         else:
             self._event_log_path = Path(event_log_path)
-        # 修复：原使用 AUDIT_HMAC_KEY 与 writer.py 的 ZEPHYR_AUDIT_HMAC_SECRET 不一致，
-        # 导致验证方永远使用空密钥=不验证。统一为 ZEPHYR_AUDIT_HMAC_SECRET。
+        # 5.62.2 治本：未显式传 hmac_key 时经 SecretProvider 统一密钥源解析
+        # （与 writer.py 签名方同一密钥源 ZEPHYR_AUDIT_HMAC_SECRET），禁止裸 os.environ。
         if not hmac_key:
-            import os
-            hmac_key = os.environ.get("ZEPHYR_AUDIT_HMAC_SECRET", "")
+            from zephyr.gov_audit.writer import resolve_audit_hmac_secret
+
+            hmac_key = resolve_audit_hmac_secret()
+        if not hmac_key:
+            _logger.warning(
+                "ZEPHYR_AUDIT_HMAC_SECRET 未设置，HMAC 验证明确降级为跳过（不验证签名）"
+            )
         self._hmac_key = hmac_key.encode("utf-8") if hmac_key else b""
 
     def verify_chain(self) -> dict[str, Any]:

@@ -59,7 +59,7 @@ from zephyr.trading.lifecycle_manager import BootReport, LifecycleManager, Shutd
 from zephyr.trading.module_onboarding_scanner import ModuleOnboardingScanner
 from zephyr.trading.night_shift_queue import NightShiftEntry, NightShiftQueue
 from zephyr.trading.orphan_detector import OrphanDetector
-from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs
+from zephyr.trading.runtime_config import RuntimeConfig, ensure_runtime_dirs, validate_config
 from zephyr.trading.status_dashboard import StatusDashboard
 from zephyr.trading.stop_gate import StopGate
 from zephyr.trading.work_dag import WorkItem
@@ -142,6 +142,8 @@ class AutoRuntimeCore:
         self._task_repo: TaskRepositoryProtocol | None = task_repo
 
     def boot(self) -> BootReport:
+        # 5.71.1 治本：boot 首步配置完整性校验——非法配置 fail-fast，不带病启动
+        validate_config(self._config)
         report = self._lifecycle.boot_sequence(
             audit_logger=self._audit_logger,
             registry=self._registry,
@@ -179,7 +181,7 @@ class AutoRuntimeCore:
             self._start_blueprint_watcher()
             self._start_fle_scheduler()
             self._run_boot_triple_alignment()
-            self._init_escalation_protocol()
+            self._init_escalation_protocol(report)
 
         self._booted = report.success
         return report
@@ -261,13 +263,19 @@ class AutoRuntimeCore:
                 return True
         return False
 
-    def _init_escalation_protocol(self) -> None:
+    def _init_escalation_protocol(self, report: BootReport | None = None) -> None:
         try:
             from zephyr.governance.ops_governance.coldstart_manager import ColdstartManager
 
             cm = ColdstartManager()
             cm.initialize()
-            logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
+            # 5.71.4 治本：initialize() 后检查 ready——未就绪记 warning 并计入启动报告
+            if cm.ready:
+                logger.info("Escalation coldstart initialized: ready=%s", cm.ready)
+            else:
+                logger.warning("Escalation coldstart NOT ready after initialize()")
+                if report is not None:
+                    report.errors.append("escalation_coldstart: not ready after initialize()")
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             # 5.70.2 修复：原 logger.debug 在生产环境默认日志级别下不可见，运维无感知。
             logger.warning("EscalationProtocol initialization failed", exc_info=True)

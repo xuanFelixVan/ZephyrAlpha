@@ -16,13 +16,21 @@
 # [TTL] permanent
 
 """
-CredentialRotationTrigger — 凭据自动轮替。
+CredentialRotationDetector — 回滚后凭据泄露检测（仅检测，不轮换）。
 
 依据: 蓝图 MOD-INF-021 §7 Phase 10 + §6.17 B126 + exit code 43
 
 回滚可能恢复含旧凭据的配置文件。
-回滚后自动触发凭据轮替——轮替成功的凭据标记为已过期。
+回滚后自动扫描敏感文件中的凭据模式——检测泄露并通知人工轮换。
 若检测到凭据泄露 -> exit 43 (CREDENTIAL_LEAK_DETECTED)。
+
+5.62.5 治本（名实分离）：本类从不执行任何轮换操作（credentials_rotated 恒为 0），
+原类名 CredentialRotationTrigger 与 scan_and_rotate 名不副实。
+判定依据：项目的 SecretRotation（feedback_loop/security/secret_rotation.py）仅管理
+registry 跟踪的内存密钥生命周期，无法轮换第三方文件凭据（API key 轮换必须在
+provider 侧执行，本地改写 .env 不等于服务端轮换，反而破坏可用性）——
+故本类正名为 Detector 语义：仅检测 + 通知（notify_rotation_needed），轮换为人工动作。
+原名 CredentialRotationTrigger / scan_and_rotate 保留为向后兼容别名（蓝图/YAML/测试引用）。
 """
 
 from __future__ import annotations
@@ -38,7 +46,7 @@ from typing import Any
 class CredentialScanResult:
     files_scanned: int
     credentials_detected: int
-    credentials_rotated: int
+    credentials_rotated: int  # 恒为 0——本检测器仅检测不轮换（5.62.5 名实分离），字段保留供兼容
     leaks_detected: int
     exit_code: int
     details: list[str] = field(default_factory=list)
@@ -53,14 +61,20 @@ CREDENTIAL_PATTERNS: list[tuple[str, str]] = [
 ]
 
 
-class CredentialRotationTrigger:
+class CredentialRotationDetector:
+    """凭据泄露检测器（仅检测，不轮换——5.62.5 治本名实分离）。
+
+    扫描 SENSITIVE_FILES 中的凭据模式，检测泄露并以 exit 43 通知人工轮换。
+    轮换本身 MUST 在 provider 侧人工执行（本地无法轮换第三方凭据）。
+    """
+
     EXIT_CODE_CREDENTIAL_LEAK: int = 43
     SENSITIVE_FILES: list[str] = [".env", ".env.local", "config.yaml", "config.yml", "settings.py", "secrets.yaml"]
 
     def __init__(self, project_root: Path | None = None) -> None:
         self._project_root = project_root or Path.cwd()
 
-    def scan_and_rotate(self) -> CredentialScanResult:
+    def scan(self) -> CredentialScanResult:
         files_scanned = 0
         credentials_detected = 0
         leaks_detected = 0
@@ -87,11 +101,15 @@ class CredentialRotationTrigger:
         return CredentialScanResult(
             files_scanned=files_scanned,
             credentials_detected=credentials_detected,
-            credentials_rotated=0,
+            credentials_rotated=0,  # 仅检测不轮换——轮换由 notify_rotation_needed 通知人工执行
             leaks_detected=leaks_detected,
             exit_code=exit_code,
             details=details,
         )
+
+    def scan_and_rotate(self) -> CredentialScanResult:
+        """向后兼容别名——真源为 scan()（5.62.5：仅检测不轮换）。"""
+        return self.scan()
 
     @staticmethod
     def notify_rotation_needed(reason: str) -> dict[str, Any]:
@@ -101,3 +119,7 @@ class CredentialRotationTrigger:
             "timestamp_utc": datetime.now(UTC).isoformat(),
             "instructions": "Manually rotate all detected credentials. Do NOT commit old values.",
         }
+
+
+# 5.62.5 治本：向后兼容别名（蓝图/YAML/测试仍引用旧名），真源为 CredentialRotationDetector
+CredentialRotationTrigger = CredentialRotationDetector
