@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-18T23:36:52Z
+# 自动生成于 2026-07-19T00:43:50Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-18T23:36:52Z'
+generated_at: '2026-07-19T00:43:50Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 30
+total_registries: 31
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -61,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 123
+  entry_count: 124
   status: active
 - registry_id: PS-REG-019
   name: 声明式契约跟踪登记表
@@ -125,7 +125,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 96
+  entry_count: 97
   status: active
 - registry_id: CFG-hard-boundaries
   name: 硬边界登记表
@@ -183,13 +183,21 @@ registries:
   maintenance: manual
   entry_count: 21
   status: active
+- registry_id: PS-REG-020
+  name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  format: yaml
+  maintenance: auto
+  entry_count: 0
+  status: active
 - registry_id: PS-REG-018
   name: 规则路径目录（唯一真源 SSoT）
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 163
+  entry_count: 164
   status: active
 - registry_id: CFG-rule-enforcement-registry
   name: 门禁规则集登记表

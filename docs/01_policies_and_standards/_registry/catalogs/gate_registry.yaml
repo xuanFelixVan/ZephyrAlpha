@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-18T22:28:36Z'
+generated_at: '2026-07-19T00:44:39Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 96
+total_gates: 97
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -415,6 +415,17 @@ gates:
     4.4）（CommitGate, priority=101）'
   entry: in-process (GitCommitGateway)
   description: 'Provider 路由-meta 一致性门禁（CAP-CONSISTENCY，裁定 #ARCH-CH-022 Phase 4.4）'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: CAPABILITY-LOOKUP-REQUIRED
+  name: 'CAPABILITY-LOOKUP-REQUIRED: Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
+    Phase 3.4a）（CommitGate, priority=31）'
+  entry: in-process (GitCommitGateway)
+  description: Capability Lookup 强制门禁（CAPABILITY-LOOKUP-REQUIRED，#ARCH-GOV-CONVERGENCE-META
+    Phase 3.4a）
   files_trigger: ''
   always_run: false
   category: commit_gate
