@@ -62,9 +62,9 @@
 
 ## RULE-REGISTRY：第四件事（ARCH-053 AI 可发现性，2026-07-06）
 
-> **查项目所有 registry**：MUST 先读 [`registry_master_index.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml)（25+ 个 registry 的总索引，自动生成）或调用 `discover_all_registries()` 函数（`zephyr.infrastructure.asset_inventory.registry_adapter`）。
+> **查项目所有 registry**：MUST 先读 [`registry_master_index.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml)（31 个 registry 的总索引，自动生成，精确数量以该文件 `total_registries` 字段为准）或调用 `discover_all_registries()` 函数（`zephyr.infrastructure.asset_inventory.registry_adapter`）。
 >
-> **为什么**：项目有 25+ 个 registry（基础设施/门禁/规则/脚本/测试/接口契约/聚合节点等），硬编码路径只能覆盖 ~7 个。AI 启动时通过总索引发现全部 registry，避免"不知道某表存在"导致重复造轮子或绕过治理。
+> **为什么**：项目有 31 个 registry（精确数量以总索引 `total_registries` 字段为准；基础设施/门禁/规则/脚本/测试/接口契约/聚合节点等），硬编码路径只能覆盖 ~7 个。AI 启动时通过总索引发现全部 registry，避免"不知道某表存在"导致重复造轮子或绕过治理。
 >
 > **关键 registry 速查**：
 > - 基础设施（数据库/缓存/队列）：[`infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml)
@@ -123,7 +123,7 @@
 > - **MCP 接口（首选，AI 自动可用）**：`rule_discovery.discover_applicable_rules(operation='file_write')` ——返回当前 session 适用规则清单 + 写入审计日志
 > - **Python API（备选，用于脚本/调试）**：`capability_lookup.find(<keyword>)` ——按关键字反查能力 → 真源文件
 >
-> 配套门禁：[`capability_lookup_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py)（priority=110，#ARCH-GOV-CONVERGENCE-META Phase 3.4a 建立）。规则真源：[`trae_063_capability_lookup_required.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_policies/trae_063_capability_lookup_required.yaml)。
+> 配套门禁：[`capability_lookup_required_gate.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py)（priority=110，#ARCH-GOV-CONVERGENCE-META Phase 3.4a 建立）。规则真源：[`trae_065_capability_lookup_required.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml)。
 >
 > **病根（第一性原理，5 层断裂模型）**：100% AI 开发场景下，机制必须经 5 层闭环才能可靠工作——①**可知性**（AI 知道机制存在）②**可达性**（AI 能调用接口）③**可观察性**（调用结果有反馈）④**可逃生性**（紧急情况能 bypass）⑤**可追溯性**（bypass 留审计链）。本次发现 7 个 Gap（G1-G7）：直接 commit 路径漏传 commit_message（G1）→ 逃生标记永远不触发；rule_discovery 未注册到 mcp.json（G2）→ AI 无法调用；capability_lookup.py 不写审计日志（G3）→ Phase 3.4a 半成品；AGENTS.md 无条款（G4，本节治本）；trae_*.yaml 无规则定义（G5）；`.runtime/lookup_audit/` 空目录（G6，铁证）；无启动 smoke test（G7）。
 >

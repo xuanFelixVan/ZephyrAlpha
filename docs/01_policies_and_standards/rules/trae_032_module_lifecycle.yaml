@@ -1,6 +1,6 @@
 rule_id: TRAE-032
 title: 模块治理-准入与生命周期
-version: 1.1.2
+version: 1.1.3
 layer: L1_foundation
 module_id: TRAE-032
 depends_on:
@@ -139,7 +139,7 @@ sections:
       fail: 非UTF-8编码
     - type: constraint
       check: IRN-002 Session预算
-      pass: 新创建文件≤8个，新建目录≤3个
+      pass: 新创建文件≤5个（清单制），新建目录≤3个
       fail: 超出预算
     - type: constraint
       check: IRN-003 SSoT唯一
@@ -264,6 +264,9 @@ sections:
     gov_mod_002_change_history:
       section_type: context
       entries:
+      - version: 1.1.3
+        date: '2026-07-20'
+        change: IRN-002 Session预算与TRAE-039对齐为新创建文件≤5个（清单制），新建目录≤3个
       - version: 1.0.0
         date: '2026-05-06'
         change: 新增IRN-011零残留原则(ZR-001~009); 铁律→ABS映射表; 消费者通知机制三层体系
@@ -641,9 +644,14 @@ metadata:
   impact_level: H
   modification_permission: human_gated
   superseded_by:
-  version: "1.1.2"
-  last_modified: "2026-06-21"
+  version: "1.1.3"
+  last_modified: "2026-07-20"
   change_history:
+  - version: 1.1.3
+    date: '2026-07-20'
+    by: sess-49952-20260720044516
+    changes:
+    - '裁定A1——IRN-002 Session预算与TRAE-039(≤5清单制)对齐为新创建文件≤5个（清单制），新建目录≤3个；消除与trae_034/trae_039的规则冲突（取更严值）'
   - version: 1.1.2
     date: '2026-06-21'
     by: AI-Assistant
