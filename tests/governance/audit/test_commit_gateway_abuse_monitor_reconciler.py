@@ -237,22 +237,22 @@ class TestClassifyAbuse:
         assert result["metrics"]["warn_only_24h"] == 51
 
     def test_dimension2_emergency_abuse(self):
-        # 21 个 emergency commit（>20 阈值，R2 2026-07-20 #ARCH-ASYNC-MERGE-RECONCILE-001）
+        # 15 个 emergency commit（>10 阈值，裁定 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 R1 过渡期 2026-07-19~2026-08-02）
         result = _classify_abuse(
             post_commit_reports=[],
             audit_reports=[],
-            emergency_count=21,
+            emergency_count=15,
             now_ts=self.NOW_TS,
         )
         assert "emergency_commit_abuse_24h" in result["dimensions_triggered"]
-        assert result["metrics"]["emergency_commit_24h"] == 21
+        assert result["metrics"]["emergency_commit_24h"] == 15
 
     def test_dimension3_allow_overlap_abuse(self):
-        # 501 个 gw_env=1 warn_only 事件（>500 阈值，7d 窗口，R2 2026-07-20 #ARCH-ASYNC-MERGE-RECONCILE-001）
+        # 31 个 gw_env=1 warn_only 事件（>30 阈值，7d 窗口）
         reports = [
             {"timestamp": self.NOW_TS - 100000, "action": "warn_only",
              "violation": "unregistered_session_id", "gw_env": "1"}
-            for _ in range(501)
+            for _ in range(31)
         ]
         result = _classify_abuse(
             post_commit_reports=reports,
@@ -261,7 +261,7 @@ class TestClassifyAbuse:
             now_ts=self.NOW_TS,
         )
         assert "allow_overlap_abuse_7d" in result["dimensions_triggered"]
-        assert result["metrics"]["allow_overlap_7d"] == 501
+        assert result["metrics"]["allow_overlap_7d"] == 31
 
     def test_dimension4_forged_gw_marker(self):
         # 4 个 forged_gw_marker（>3 阈值）
@@ -298,7 +298,7 @@ class TestClassifyAbuse:
         assert result["metrics"]["non_gw_commit_24h"] == 11
 
     def test_multiple_dimensions_triggered(self):
-        # 同时触发维度1 + 维度2（R2 2026-07-20: emergency_count 6→21 适配新阈值 20）
+        # 同时触发维度1 + 维度2（emergency_count 15 > 10 阈值）
         reports = [
             {"timestamp": self.NOW_TS - 100, "action": "warn_only",
              "violation": "unregistered_session_id"}
@@ -307,7 +307,7 @@ class TestClassifyAbuse:
         result = _classify_abuse(
             post_commit_reports=reports,
             audit_reports=[],
-            emergency_count=21,
+            emergency_count=15,
             now_ts=self.NOW_TS,
         )
         assert len(result["dimensions_triggered"]) == 2
