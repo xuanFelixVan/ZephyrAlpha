@@ -39,7 +39,9 @@ Registered Tools
 
 from __future__ import annotations
 
+import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Any, Final
@@ -49,7 +51,7 @@ import yaml
 from zephyr.integration.mcp._base_server import BaseMCPServer
 from zephyr.shared.io.paths import REPO_ROOT
 
-__all__ = ["RuleDiscoveryServer", "main"]
+__all__ = ["RuleDiscoveryServer", "main", "write_lookup_audit_log"]
 
 _logger = logging.getLogger(__name__)
 
@@ -69,6 +71,12 @@ PERCEPTION_INDEX_PATH: Final[Path] = (
     / "catalogs"
     / "rule_ai_perception_index.yaml"
 )
+
+# Phase 3.4a: audit log 目录——CAPABILITY-LOOKUP-REQUIRED gate 消费
+LOOKUP_AUDIT_DIR: Final[Path] = REPO_ROOT / ".runtime" / "lookup_audit"
+
+# session_id 环境变量（与 session_worktree 启动时设置的 env 对齐）
+SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"
 
 
 def _scalar_match(actual: Any, expected: str) -> bool:
@@ -140,6 +148,55 @@ def _build_rule_summary(rule: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def write_lookup_audit_log(
+    session_id: str,
+    query: dict[str, Any],
+    result_count: int,
+    rule_ids: list[str],
+    tool: str = "rule_discovery.discover_applicable_rules",
+) -> None:
+    """写入 session 级 lookup audit log（best-effort，失败不抛异常）。
+
+    Phase 3.4a：CAPABILITY-LOOKUP-REQUIRED gate 消费此 log 判断 AI 是否在施工前
+    调用了 rule_discovery / capability_lookup。log 文件路径：
+    ``.runtime/lookup_audit/<session_id>.jsonl``。
+
+    Args:
+        session_id: session 标识（必填，空串则跳过）。
+        query: 调用参数 dict（如 {"operation": "file_write"}）。
+        result_count: 返回结果数。
+        rule_ids: 命中的 rule_id 列表（如 ["TRAE-001"]）。
+        tool: 调用方 tool name（默认 rule_discovery.discover_applicable_rules）。
+
+    失败处理：log 写入失败仅 logger.warning，不抛异常——MCP 工具调用不应因
+    audit log 故障失败（fail-open）。gate 端会处理 log 缺失的情况（fail-closed）。
+    """
+    if not session_id or session_id in ("unknown", "none", "null"):
+        return  # 无有效 session_id，跳过 audit log
+    try:
+        LOOKUP_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+        log_path = LOOKUP_AUDIT_DIR / f"{session_id}.jsonl"
+        entry = {
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "tool": tool,
+            "query": query,
+            "result_count": result_count,
+            "rule_ids": rule_ids,
+        }
+        with open(log_path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except OSError as exc:
+        _logger.warning(
+            "rule_discovery: audit log 写入失败 (session=%s): %s",
+            session_id, exc, exc_info=True,
+        )
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+        _logger.warning(
+            "rule_discovery: audit log 写入异常 (session=%s): %s: %s",
+            session_id, type(exc).__name__, exc, exc_info=True,
+        )
+
+
 class RuleDiscoveryServer(BaseMCPServer):
     """MCP server for discovering applicable trae rules.
 
@@ -159,7 +216,8 @@ class RuleDiscoveryServer(BaseMCPServer):
                 "调用此工具，按即将执行的操作类型（operation）或作用域（scope/domain）"
                 "查询适用的治理规则。返回规则列表含 rule_id/title/operations/gate_ids/"
                 "rule_file 路径。真源：rule_ai_perception_index.yaml（64条规则）。"
-                "#ARCH-GOV-CONVERGENCE-META Phase 3.2b。"
+                "调用会被记录到 session audit log（CAPABILITY-LOOKUP-REQUIRED gate 消费）。"
+                "#ARCH-GOV-CONVERGENCE-META Phase 3.2b/3.4a。"
             ),
             input_schema={
                 "type": "object",
@@ -189,6 +247,15 @@ class RuleDiscoveryServer(BaseMCPServer):
                         "type": "string",
                         "description": "按规则 ID 精确查询（如 TRAE-001）",
                     },
+                    "session_id": {
+                        "type": "string",
+                        "description": (
+                            "AI session 标识（用于 audit log）。可选——未提供时"
+                            "从 ZEPHYR_SESSION_ID 环境变量读取。Phase 3.4a "
+                            "CAPABILITY-LOOKUP-REQUIRED gate 消费此 log 强制"
+                            "AI 在施工前查询适用规则。"
+                        ),
+                    },
                 },
                 "additionalProperties": False,
             },
@@ -207,10 +274,12 @@ class RuleDiscoveryServer(BaseMCPServer):
         domain: str | None = None,
         tags: list[str] | None = None,
         rule_id: str | None = None,
+        session_id: str | None = None,
     ) -> dict[str, Any]:
         """查询适用规则。
 
         至少提供一个过滤条件；若全为 None 则返回全部规则（limit 20）。
+        Phase 3.4a: 调用结果写入 session audit log（best-effort）。
         """
         rules = self._load_index()
         if rules is None:
@@ -235,6 +304,26 @@ class RuleDiscoveryServer(BaseMCPServer):
             matched = rules[:20]
 
         summaries = [_build_rule_summary(r) for r in matched]
+
+        # Phase 3.4a: 写入 session audit log（best-effort，失败不影响查询结果）
+        effective_sid = session_id or os.environ.get(SESSION_ID_ENV_VAR, "")
+        if effective_sid:
+            query_record = {
+                "operation": operation,
+                "gate_id": gate_id,
+                "scope": scope,
+                "domain": domain,
+                "tags": tags,
+                "rule_id": rule_id,
+            }
+            rule_ids_hit = [s.get("rule_id", "") for s in summaries if s.get("rule_id")]
+            write_lookup_audit_log(
+                session_id=effective_sid,
+                query=query_record,
+                result_count=len(summaries),
+                rule_ids=rule_ids_hit,
+            )
+
         return {
             "results": summaries,
             "count": len(summaries),

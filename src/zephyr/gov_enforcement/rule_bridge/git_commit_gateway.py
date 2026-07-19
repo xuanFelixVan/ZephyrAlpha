@@ -133,6 +133,7 @@ from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_de
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
 from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
+from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import make_capability_lookup_required_gate  # #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
@@ -383,6 +384,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
         self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
         self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
+        self._gate_registry.register(make_capability_lookup_required_gate())  # priority=110 #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本（强制 AI 施工前调 rule_discovery/capability_lookup，audit log 在 .runtime/lookup_audit/<session_id>.jsonl）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
