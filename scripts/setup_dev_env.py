@@ -97,8 +97,10 @@ def _is_installed(usercustomize_path: Path, repo_root: Path) -> bool:
     if not usercustomize_path.exists():
         return False
     content = usercustomize_path.read_text(encoding="utf-8")
-    # 检查是否包含当前仓库路径（大小写不敏感，Windows）
-    return str(repo_root).lower() in content.lower()
+    # usercustomize.py 模板用 raw string + 双反斜杠转义（r"D:\\ZephyrAlpha"），
+    # 归一化为单反斜杠后再做大小写不敏感匹配（Windows）
+    normalized = content.lower().replace("\\\\", "\\")
+    return str(repo_root).lower() in normalized
 
 
 def install(repo_root: Path | None = None) -> Path:
