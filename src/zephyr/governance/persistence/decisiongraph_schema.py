@@ -179,6 +179,10 @@ CREATE TABLE IF NOT EXISTS decision_layers (
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id           TEXT,
     domain_id           TEXT,
+    -- Ruling:100PCT-AI-GOVERNANCE P0-3 (2026-07-19): 补齐 DB↔DDL drift
+    -- 语义：允许 NULL（未知域），禁止 ''（空字符串应转为 NULL）
+    CONSTRAINT chk_decision_layers_domain_id_not_empty
+        CHECK (domain_id IS NULL OR domain_id <> ''),
     source_code_ref     TEXT
 )
 """

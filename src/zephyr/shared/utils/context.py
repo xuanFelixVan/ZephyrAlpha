@@ -43,6 +43,7 @@ Version: 0.1.0
 
 from __future__ import annotations
 
+import contextlib
 import contextvars
 import logging
 import uuid
@@ -54,8 +55,10 @@ __all__ = [
     "RequestContext",
     "current_context",
     "get_request_id",
+    "reset_context",
     "set_context",
     "set_request_id",
+    "use_context",
 ]
 
 logger = logging.getLogger(__name__)
@@ -156,8 +159,41 @@ def get_request_id() -> str:
     return str(uuid.uuid4())[:8]
 
 
-def set_request_id(request_id: str) -> None:
-    """设置当前 request_id——通常由 HTTP middleware 调用。"""
+def set_request_id(request_id: str) -> contextvars.Token:
+    """设置当前 request_id——返回 Token（5.80.1 治本：不再丢弃，防 request_id 跨请求泄漏）。
+
+    旧实现丢弃 Token，context 无法恢复，request_id 泄漏到后续请求。
+    调用方 MUST 保存返回的 Token 并在请求结束时调用 reset_context(token)，
+    或直接使用 use_context() 上下文管理器（自动栈式恢复）。
+
+    Args:
+        request_id: 请求 ID（通常由 HTTP middleware 生成）。
+
+    Returns:
+        contextvars.Token——请求结束时传给 reset_context() 恢复先前上下文。
+    """
     token = set_context(RequestContext(request_id=request_id))
-    # 不在 stack 上保持 token——因为 middleware 生命周期覆盖整个请求
     logger.debug("request_id set: %s", request_id)
+    return token
+
+
+def reset_context(token: contextvars.Token) -> None:
+    """恢复 Token 对应的先前上下文（5.80.1——与 set_context/set_request_id 配对使用）。"""
+    _current_context.reset(token)
+
+
+@contextlib.contextmanager
+def use_context(ctx: RequestContext):
+    """上下文管理器：块内设置 RequestContext，退出时自动 reset（5.80.1 栈式恢复，嵌套安全）。
+
+    Usage::
+
+        with use_context(RequestContext(tenant_id="t-1", request_id="r-1")):
+            await handle_request()
+        # 退出后自动恢复先前上下文——request_id 不跨请求泄漏
+    """
+    token = set_context(ctx)
+    try:
+        yield ctx
+    finally:
+        _current_context.reset(token)

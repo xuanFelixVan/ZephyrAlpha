@@ -169,11 +169,17 @@ BEGIN
     IF v_allow = 'on' THEN
         RETURN COALESCE(NEW, OLD);
     END IF;
+    -- Ruling:100PCT-AI-GOVERNANCE P0-4 (2026-07-19): 保护范围从 design 扩展到 design + prototype
+    -- 原因：sync_panorama_module.py 写入的 module_placeholder 占位记录使用 design_maturity='prototype',
+    -- 原触发器只保护 'design'，导致 prototype 占位记录被 sync_dataflow_registry 的
+    -- DELETE WHERE design_maturity != 'design' 误删（225 条 prototype 被并发 session 删除事件）。
+    -- 治本：触发器保护 design + prototype，配套 P0-5 修改 DELETE 谓词只删 production。
+    -- 逃生通道不变：SET app.allow_design_maturity_delete = on 仍可绕过（apply_dataflowgraph.py 用）。
     -- DELETE: OLD.design_maturity / UPDATE: OLD.design_maturity（before 状态）
-    IF TG_OP = 'DELETE' AND OLD.design_maturity = 'design' THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
-    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity = 'design' AND NEW.design_maturity IS DISTINCT FROM 'design' THEN
-        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design 态 dataflow 行降级（表=%, entity=%, design→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), NEW.design_maturity;
+    IF TG_OP = 'DELETE' AND OLD.design_maturity IN ('design', 'prototype') THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 DELETE design/prototype 态 dataflow 行（表=%, entity=%）。如需删除请启用 SET app.allow_design_maturity_delete = on', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name);
+    ELSIF TG_OP = 'UPDATE' AND OLD.design_maturity IN ('design', 'prototype') AND NEW.design_maturity IS DISTINCT FROM OLD.design_maturity THEN
+        RAISE EXCEPTION 'ARCH-053 design_maturity 保护: 禁止 UPDATE design/prototype 态 dataflow 行降级（表=%, entity=%, %→%）', TG_TABLE_NAME, COALESCE(OLD.entity_name, OLD.job_name), OLD.design_maturity, NEW.design_maturity;
     END IF;
     RETURN COALESCE(NEW, OLD);
 END;

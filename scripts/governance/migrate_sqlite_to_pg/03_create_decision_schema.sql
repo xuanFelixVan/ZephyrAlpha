@@ -54,6 +54,13 @@ CREATE TABLE IF NOT EXISTS decision_layers (
         CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated')),
     module_id              TEXT,
     domain_id              TEXT,
+    -- Ruling:100PCT-AI-GOVERNANCE P0-3 (2026-07-19): 补齐 DB↔DDL drift
+    -- 原 DB 有此约束但 DDL 文件缺失（drift 根因）。
+    -- 语义：允许 NULL（未知域），禁止 ''（空字符串，应为 NULL）。
+    -- 原因：weighted_domain_vote 返回 '' 时需 `or None` 转换才能 INSERT，
+    -- 否则 540 个空 domain_id 模块的 decision_layers INSERT 静默失败。
+    CONSTRAINT chk_decision_layers_domain_id_not_empty
+        CHECK (domain_id IS NULL OR domain_id <> ''),
     source_code_ref        TEXT
 );
 
@@ -238,3 +245,24 @@ DROP TRIGGER IF EXISTS trg_protect_decision_design_edges ON decision_edges;
 CREATE TRIGGER trg_protect_decision_design_edges
     BEFORE DELETE OR UPDATE ON decision_edges
     FOR EACH ROW EXECUTE FUNCTION protect_decision_design_maturity();
+
+-- ========== 10. P0-3 DB↔DDL drift 修复（2026-07-19，Ruling:100PCT-AI-GOVERNANCE） ==========
+-- 原 DB 有 chk_decision_layers_domain_id_not_empty 约束但 DDL 文件缺失。
+-- 由于 decision_layers 表已存在（CREATE TABLE IF NOT EXISTS 不会重建），
+-- 必须用 ALTER TABLE + DO 块幂等迁移补齐约束。
+-- 语义：允许 NULL（未知域），禁止 ''（空字符串应转为 NULL）。
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'chk_decision_layers_domain_id_not_empty'
+          AND conrelid = 'decision_layers'::regclass
+    ) THEN
+        ALTER TABLE decision_layers
+            ADD CONSTRAINT chk_decision_layers_domain_id_not_empty
+            CHECK (domain_id IS NULL OR domain_id <> '');
+        RAISE NOTICE 'P0-3: 已补齐 chk_decision_layers_domain_id_not_empty 约束';
+    ELSE
+        RAISE NOTICE 'P0-3: chk_decision_layers_domain_id_not_empty 约束已存在，跳过';
+    END IF;
+END $$;

@@ -227,7 +227,7 @@ def _sync_to_decision(conn, module: dict) -> int:
 def sync_module_panorama(module_id: str) -> int:
     """同步单个模块的四图核心字段。
 
-    Returns: 0=成功, 3=模块不存在, 4=DB异常
+    Returns: 0=成功, 3=模块不存在, 4=DB异常, 5=部分下游同步失败（dataflow/decision/blueprint）
     """
     depgraph_conn = get_depgraph_pg_connection()
     try:
@@ -243,13 +243,23 @@ def sync_module_panorama(module_id: str) -> int:
     # 环境级权限问题（InsufficientPrivilege on dataflow_jobs）不应让 frontmatter reconciler 失效。
     # FP-ISO.4C 修复（2026-07-19）：必须传 read_only=False，否则连接工厂默认只读角色，
     # INSERT/UPDATE 会被 PostgreSQL 拒绝（"对表 dataflow_jobs 权限不够"），同步静默失败。
+    #
+    # #Ruling:100PCT-AI-GOVERNANCE P0-2 (2026-07-19) 治本：
+    # 原 try/except 吞异常 + 始终 return 0，导致父 reconciler
+    # (make_blueprint_frontmatter_reconciler) 看到 rc=0 误以为全部成功，
+    # "616 模块 0 失败" 实际全失败的静默反模式。
+    # 治本：保留"三个下游相互独立、不互相阻断"的设计（继续独立 try/except），
+    # 但用 failed_count 计数 + 返回 exit 5 + stderr 最后一行打印 FAILED_COUNT=N，
+    # 让父 reconciler 检测到部分失败并升级为 critical_warn（P0-1 已对接）。
+    failed_count = 0
     dataflow_conn = get_dataflowgraph_pg_connection(
         read_only=False, allow_design_delete=True,
     )
     try:
         _sync_to_dataflow(dataflow_conn, module)
-    except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
-        print(f"[WARN] dataflow 同步失败（不阻断 frontmatter 对齐）: {e}", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
+        failed_count += 1
+        print(f"[ERROR] dataflow 同步失败（module={module_id}）: {e}", file=sys.stderr)
     finally:
         dataflow_conn.close()
 
@@ -258,8 +268,9 @@ def sync_module_panorama(module_id: str) -> int:
     )
     try:
         _sync_to_decision(decision_conn, module)
-    except Exception as e:  # noqa: BLE001 - 5.135治标: 同步失败降级为 warn，不阻断 frontmatter
-        print(f"[WARN] decision 同步失败（不阻断 frontmatter 对齐）: {e}", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
+        failed_count += 1
+        print(f"[ERROR] decision 同步失败（module={module_id}）: {e}", file=sys.stderr)
     finally:
         decision_conn.close()
 
@@ -269,14 +280,22 @@ def sync_module_panorama(module_id: str) -> int:
             reconcile_blueprint_frontmatter,
         )
         reconcile_blueprint_frontmatter(module_id)
-    except Exception as e:
-        print(f"[WARN] 蓝图 frontmatter 对齐失败（不阻断）: {e}", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001 - 三个下游相互独立，单点失败不阻断其他下游
+        failed_count += 1
+        print(f"[ERROR] 蓝图 frontmatter 对齐失败（module={module_id}）: {e}", file=sys.stderr)
 
+    if failed_count > 0:
+        # stderr 最后一行打印结构化失败计数，供父 reconciler 解析（机器可读契约）
+        print(f"FAILED_COUNT={failed_count} module={module_id}", file=sys.stderr)
+        return 5
     return 0
 
 
 def sync_all_panorama() -> int:
-    """同步所有有 blueprint_id 的模块。"""
+    """同步所有有 blueprint_id 的模块。
+
+    Returns: 0=全部成功, 1=至少一个模块失败（rc=3/4/5）
+    """
     conn = get_depgraph_pg_connection()
     try:
         with conn.cursor() as cur:
@@ -287,13 +306,23 @@ def sync_all_panorama() -> int:
         conn.close()
 
     failed = 0
+    partial = 0  # P0-2: 部分下游失败（rc=5）单独计数
     for mid in modules:
         rc = sync_module_panorama(mid)
-        if rc != 0:
+        if rc == 5:
+            # P0-2: 部分下游失败——不重复打印（sync_module_panorama 已打印详情）
+            partial += 1
+        elif rc != 0:
             print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
             failed += 1
-    print(f"[OK] 同步完成：{len(modules)} 个模块，{failed} 个失败")
-    return 0 if failed == 0 else 1
+    # P0-2: 汇总行打印结构化计数，供父 reconciler 解析
+    print(f"[OK] 同步完成：{len(modules)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
+    if failed > 0:
+        return 1
+    if partial > 0:
+        # P0-2: 部分下游失败也返回非零，让父 reconciler 检测到（升级为 critical_warn）
+        return 1
+    return 0
 
 
 def prune_orphans() -> dict:
