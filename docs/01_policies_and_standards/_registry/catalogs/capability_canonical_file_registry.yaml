@@ -4293,6 +4293,65 @@ capabilities:
       canonical = scripts/governance/generators/generate_rule_ai_perception_index.py。
       --check 模式对比生成版 vs 磁盘版（GATE-21 静态清单漂移检测）。
 
+  - capability_id: silent_failure_regression
+    canonical_override: scripts/governance/run_silent_failure_regression.py
+    aliases:
+      - run_silent_failure_regression
+      - silent_failure_regression_runner
+      - Ruling-100PCT-AI-GOVERNANCE-P3-2
+    description: >-
+      silent-failure 回归套件一键执行入口（Ruling:100PCT-AI-GOVERNANCE P3-2）。
+      三段式执行：pytest silent_failure marker 测试 + audit_return_contract_usage
+      全项目扫描 + audit_worktree_ops_telemetry gov_enforcement 扫描。
+      canonical = scripts/governance/run_silent_failure_regression.py
+      （MOD-GOV_SILENT_FAILURE_REGRESSION）。TypedDict 返回契约
+      （RegressionResult/RegressionStageResult，ok 键成败判定）。永不抛异常设计
+      （subprocess 失败转 failed 段）。消费方：AI 一键回归验证、CI workflow。
+
+  # --------------------------------------------------------------------------
+  - capability_id: commit_gateway_abuse_monitor
+    canonical_override: src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py
+    aliases:
+      - make_commit_gateway_abuse_monitor_reconciler
+      - GATE-COMMIT-GW-ABUSE-MONITOR
+      - commit_gateway_abuse_monitor_reconciler
+      - abuse_monitor_reconciler
+      - ARCH-TOOL-HEALTH-V1-Phase-5b
+    description: >-
+      commit gateway 持续滥用监控 reconciler（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。
+      post-commit 事件触发（priority=875），补强 POST-COMMIT-GUARD 1h 短窗口盲区。
+      五维滥用检测：①warn_only sustained (24h >50) ②emergency_commit abuse (24h >5)
+      ③allow_overlap abuse (7d >30) ④forged_gw_marker rate (24h >3 → critical_warn)
+      ⑤non-GW commit sustained (24h >10)。判定：0维 clean / 1-2维 warn / 3+维或
+      forged 触发 critical_warn。canonical = src/zephyr/governance/audit/
+      commit_gateway_abuse_monitor_reconciler.py（MOD-GOV_commit_gateway_abuse_monitor）。
+      数据源只读 .runtime/reconcile_reports/ 下 post_commit_guard_* + commit_gateway_audit_*
+      报告，落盘 commit_gateway_abuse_monitor_<ts>.json。永不抛异常（异常降级 warn）。
+      注册点：git_commit_gateway.py:644 _register_default_reconcilers。
+      治本（2d 可发现性）：新 AI 通过 capability_lookup.find("abuse_monitor") /
+      find("commit gateway abuse") 可定位真源，避免重复造轮子。
+
+  # --------------------------------------------------------------------------
+  - capability_id: reference_transaction_guard
+    canonical_override: scripts/governance/git_hooks/reference_transaction_guard.sh
+    aliases:
+      - REFERENCE-TRANSACTION-GUARD
+      - reference_transaction_guard_sh
+      - ref_tx_guard
+      - commit_tree_bypass_blocker
+      - ARCH-TOOL-HEALTH-V1-Phase-4
+    description: >-
+      git reference-transaction hook 堵漏 git commit-tree + git update-ref plumbing
+      命令绕过 pre-commit/post-commit hooks 的治理盲区（ARCH-TOOL-HEALTH-V1 Phase 4，
+      2026-07-19）。git 2.45+ 在 ref 事务 prepared 状态调用 hook，exit non-zero 回滚整个
+      事务。检查 refs/heads/dev forward 更新：跳过 reset/rewind/deletion/creation/merge
+      commit/含 [GW: 标记的 commit，其余 block（exit 1）。canonical = scripts/governance/
+      git_hooks/reference_transaction_guard.sh。安装方式：.git/hooks/reference-transaction
+      wrapper sourcing 本脚本。合法标识：[GW:{sid}] / [GW:{sid}:auto|worktree|merge|emergency]。
+      审计日志：.runtime/reconcile_reports/reference_transaction_guard_<ts>.json。
+      治本（2d 可发现性）：新 AI 通过 capability_lookup.find("reference_transaction") /
+      find("commit-tree bypass") 可定位真源，避免重复造轮子。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5541,6 +5600,14 @@ creation_tokens:
     token: "auto-agents-md-slimming-design-20260719"
     created_by: "sess-30532-20260719211319"
     capability: "agents_md_slimming_decision_doc"
+  - file: "scripts/governance/run_silent_failure_regression.py"
+    token: "auto-silent-failure-regression-20260719"
+    created_by: "sess-20240-20260719212647"
+    capability: "silent_failure_regression"
+  - file: "src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py"
+    token: "auto-commit-gw-abuse-monitor-20260719"
+    created_by: "sess-16568-20260719211116"
+    capability: "commit_gateway_abuse_monitor"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
@@ -5653,3 +5720,20 @@ di_seam_exemptions:
 #   - 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 rule_discovery_server.py 新建副本
 #   - 三要素闭环：持久化(YAML+DB) + 可发现(MCP tool + capability registry) + 可阻断(CREATE-GUARD + 后续 Phase 3.4a CAPABILITY-LOOKUP-REQUIRED gate)
 #   - session: sess-33764-20260719
+# 2026-07-19 Ruling:100PCT-AI-GOVERNANCE P3 闭环（silent-failure 防护层 CI 集成 + 回归套件统一）:
+#   - 新增 capability: silent_failure_regression（canonical_override=scripts/governance/run_silent_failure_regression.py，MOD-GOV_SILENT_FAILURE_REGRESSION）
+#     aliases 含 run_silent_failure_regression / silent_failure_regression_runner / Ruling-100PCT-AI-GOVERNANCE-P3-2
+#   - 新增 creation_token: run_silent_failure_regression.py（P3-2 一键回归 runner，三段式 pytest+audit_return_contract+audit_worktree_ops）
+#   - 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("silent_failure") / find("regression runner") 可定位真源
+#   - 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 silent_failure_regression 副本
+#   - session: sess-20240-20260719212647
+# 2026-07-19 ARCH-TOOL-HEALTH-V1 Phase 4 + Phase 5b capability 补登记（审查轮 P1 修复）:
+#   - 新增 capability: commit_gateway_abuse_monitor（canonical_override=src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py，MOD-GOV_commit_gateway_abuse_monitor）
+#     aliases 含 make_commit_gateway_abuse_monitor_reconciler / GATE-COMMIT-GW-ABUSE-MONITOR / ARCH-TOOL-HEALTH-V1-Phase-5b
+#   - 新增 capability: reference_transaction_guard（canonical_override=scripts/governance/git_hooks/reference_transaction_guard.sh）
+#     aliases 含 REFERENCE-TRANSACTION-GUARD / ref_tx_guard / commit_tree_bypass_blocker / ARCH-TOOL-HEALTH-V1-Phase-4
+#   - 新增 creation_token: commit_gateway_abuse_monitor_reconciler.py（Phase 5b reconciler，post-commit 五维滥用监控）
+#   - 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("abuse_monitor") / find("reference_transaction") 可定位真源
+#   - 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 commit_gateway_abuse_monitor_reconciler.py 副本
+#   - 注：reference_transaction_guard.sh 是 .sh 脚本，CREATE-GUARD 只检查 .py/非 rules/ .yaml，故无需 token；capability 条目仅用于可发现性
+#   - session: sess-39804-20260719221030
