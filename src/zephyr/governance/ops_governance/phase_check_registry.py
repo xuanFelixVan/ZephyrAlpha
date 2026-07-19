@@ -298,8 +298,17 @@ def check_alpha_validator() -> GateResult:
 
 
 def check_backtest_minimal() -> GateResult:
-    mod = REPO_ROOT / "src/zephyr/research_innovation/backtest_base.py"
-    return GateResult.GREEN if mod.exists() else GateResult.YELLOW
+    # 路径已于 2026-07-02 由 src/zephyr/research_innovation/backtest_base.py
+    # 迁移至 src/zephyr/backtest/（见 docs/03_modules/_domain_backtest/blueprint.md §安全删除）。
+    # 检查 backtest 域根目录 + 至少一个引擎实现存在，作为 minimal 通过线。
+    backtest_root = REPO_ROOT / "src/zephyr/backtest"
+    if not backtest_root.exists():
+        return GateResult.YELLOW
+    vectorized = backtest_root / "implementations" / "vectorized_engine.py"
+    event_driven = backtest_root / "implementations" / "event_driven_engine.py"
+    if vectorized.exists() or event_driven.exists():
+        return GateResult.GREEN
+    return GateResult.YELLOW
 
 
 def check_context_engine_health() -> GateResult:
