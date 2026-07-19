@@ -1,6 +1,6 @@
 # 决策流图 · L2A 功能域 sell
 
-> 生成时间: 2026-07-19T06:21:57
+> 生成时间: 2026-07-19T16:24:12
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 模型驱动轨 → L2A → sell

@@ -1,6 +1,6 @@
 # 决策流图 · 层级详情图
 
-> 生成时间: 2026-07-19T06:21:57
+> 生成时间: 2026-07-19T16:24:12
 > 真源: `architecture_model/domain/decision_graph_model.yaml` → PostgreSQL `decision_*` 表（TRAE-061）
 > 数据库: depgraph (PostgreSQL)
 > 导航: [返回主索引 decision_index.md](decision_index.md) | 辅助图
@@ -54,6 +54,8 @@ flowchart LR
     LMOD_GOV_SCRIPTS_ARCH["[prototype] MOD-GOV-SCRIPTS-ARCH MOD-GOV-SCRIPTS-ARCH<br/>MOD-GOV-SCRIPTS-ARCH<br/>蓝图: MOD-GOV-SCRIPTS-ARCH<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_SYNC_PANORAMA["[prototype] MOD-GOV-SYNC-PANORAMA MOD-GOV-SYNC-PANORAMA<br/>MOD-GOV-SYNC-PANORAMA<br/>蓝图: MOD-GOV-SYNC-PANORAMA<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_arch_reference_gate["[prototype] MOD-GOV-arch_reference_gate MOD-GOV-arch_reference_gate<br/>MOD-GOV-arch_reference_gate<br/>蓝图: MOD-GOV-arch_reference_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_audit_return_contract_usage["[prototype] MOD-GOV-audit_return_contract_usage MOD-GOV-audit_return_contract_usage<br/>MOD-GOV-audit_return_contract_usage<br/>蓝图: MOD-GOV-audit_return_contract_usage<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_audit_worktree_ops_telemetry["[prototype] MOD-GOV-audit_worktree_ops_telemetry MOD-GOV-audit_worktree_ops_telemetry<br/>MOD-GOV-audit_worktree_ops_telemetry<br/>蓝图: MOD-GOV-audit_worktree_ops_telemetry<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_bare_getenv_gate["[prototype] MOD-GOV-bare_getenv_gate MOD-GOV-bare_getenv_gate<br/>MOD-GOV-bare_getenv_gate<br/>蓝图: MOD-GOV-bare_getenv_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_bare_sql_gate["[prototype] MOD-GOV-bare_sql_gate MOD-GOV-bare_sql_gate<br/>MOD-GOV-bare_sql_gate<br/>蓝图: MOD-GOV-bare_sql_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_batched_auto_committer["[prototype] MOD-GOV-batched_auto_committer MOD-GOV-batched_auto_committer<br/>MOD-GOV-batched_auto_committer<br/>蓝图: MOD-GOV-batched_auto_committer<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -61,13 +63,14 @@ flowchart LR
     LMOD_GOV_capability_overlap_gate["[prototype] MOD-GOV-capability_overlap_gate MOD-GOV-capability_overlap_gate<br/>MOD-GOV-capability_overlap_gate<br/>蓝图: MOD-GOV-capability_overlap_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_check_vocab_hardcode["[prototype] MOD-GOV-check_vocab_hardcode MOD-GOV-check_vocab_hardcode<br/>MOD-GOV-check_vocab_hardcode<br/>蓝图: MOD-GOV-check_vocab_hardcode<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_claim_required_gate["[prototype] MOD-GOV-claim_required_gate MOD-GOV-claim_required_gate<br/>MOD-GOV-claim_required_gate<br/>蓝图: MOD-GOV-claim_required_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_GOV_commit_gate_registry["[prototype] MOD-GOV-commit_gate_registry MOD-GOV-commit_gate_registry<br/>MOD-GOV-commit_gate_registry<br/>蓝图: MOD-GOV-commit_gate_registry<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_commit_gate_registry["[prototype] MOD-GOV-commit_gate_registry MOD-GOV-commit_gate_registry<br/>MOD-GOV-commit_gate_registry<br/>蓝图: MOD-GOV-commit_gate_registry<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_commit_gates["[prototype] MOD-GOV-commit_gates MOD-GOV-commit_gates<br/>MOD-GOV-commit_gates<br/>蓝图: MOD-GOV-commit_gates<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_create_guard["[prototype] MOD-GOV-create_guard MOD-GOV-create_guard<br/>MOD-GOV-create_guard<br/>蓝图: MOD-GOV-create_guard<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_dangling_reference_gate["[prototype] MOD-GOV-dangling_reference_gate MOD-GOV-dangling_reference_gate<br/>MOD-GOV-dangling_reference_gate<br/>蓝图: MOD-GOV-dangling_reference_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_diff_helpers["[prototype] MOD-GOV-diff_helpers MOD-GOV-diff_helpers<br/>MOD-GOV-diff_helpers<br/>蓝图: MOD-GOV-diff_helpers<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_doc_ref_broken_gate["[prototype] MOD-GOV-doc_ref_broken_gate MOD-GOV-doc_ref_broken_gate<br/>MOD-GOV-doc_ref_broken_gate<br/>蓝图: MOD-GOV-doc_ref_broken_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_domain_fk_gate["[prototype] MOD-GOV-domain_fk_gate MOD-GOV-domain_fk_gate<br/>MOD-GOV-domain_fk_gate<br/>蓝图: MOD-GOV-domain_fk_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_emergency_commit["[production] MOD-GOV-emergency_commit MOD-GOV-emergency_commit<br/>MOD-GOV-emergency_commit<br/>蓝图: MOD-GOV-emergency_commit<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_GOV_empty_handler_gate["[prototype] MOD-GOV-empty_handler_gate MOD-GOV-empty_handler_gate<br/>MOD-GOV-empty_handler_gate<br/>蓝图: MOD-GOV-empty_handler_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_exempt_zone_frontmatter_gate["[prototype] MOD-GOV-exempt_zone_frontmatter_gate MOD-GOV-exempt_zone_frontmatter_gate<br/>MOD-GOV-exempt_zone_frontmatter_gate<br/>蓝图: MOD-GOV-exempt_zone_frontmatter_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_file_copy_gate["[prototype] MOD-GOV-file_copy_gate MOD-GOV-file_copy_gate<br/>MOD-GOV-file_copy_gate<br/>蓝图: MOD-GOV-file_copy_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -79,6 +82,7 @@ flowchart LR
     LMOD_GOV_id_uniqueness_gate["[prototype] MOD-GOV-id_uniqueness_gate MOD-GOV-id_uniqueness_gate<br/>MOD-GOV-id_uniqueness_gate<br/>蓝图: MOD-GOV-id_uniqueness_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_import_direction_gate["[prototype] MOD-GOV-import_direction_gate MOD-GOV-import_direction_gate<br/>MOD-GOV-import_direction_gate<br/>蓝图: MOD-GOV-import_direction_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_long_param_list_gate["[prototype] MOD-GOV-long_param_list_gate MOD-GOV-long_param_list_gate<br/>MOD-GOV-long_param_list_gate<br/>蓝图: MOD-GOV-long_param_list_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_manual_only_permanent_gate["[prototype] MOD-GOV-manual_only_permanent_gate MOD-GOV-manual_only_permanent_gate<br/>MOD-GOV-manual_only_permanent_gate<br/>蓝图: MOD-GOV-manual_only_permanent_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_migrate_metadata["[prototype] MOD-GOV-migrate_metadata MOD-GOV-migrate_metadata<br/>MOD-GOV-migrate_metadata<br/>蓝图: MOD-GOV-migrate_metadata<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_module_id_consistency_gate["[prototype] MOD-GOV-module_id_consistency_gate MOD-GOV-module_id_consistency_gate<br/>MOD-GOV-module_id_consistency_gate<br/>蓝图: MOD-GOV-module_id_consistency_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_no_import_side_effect_gate["[prototype] MOD-GOV-no_import_side_effect_gate MOD-GOV-no_import_side_effect_gate<br/>MOD-GOV-no_import_side_effect_gate<br/>蓝图: MOD-GOV-no_import_side_effect_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -87,17 +91,26 @@ flowchart LR
     LMOD_GOV_perm_trigger_gate["[prototype] MOD-GOV-perm_trigger_gate MOD-GOV-perm_trigger_gate<br/>MOD-GOV-perm_trigger_gate<br/>蓝图: MOD-GOV-perm_trigger_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_pre_write_gate["[prototype] MOD-GOV-pre_write_gate MOD-GOV-pre_write_gate<br/>MOD-GOV-pre_write_gate<br/>蓝图: MOD-GOV-pre_write_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_r5_digit_suffix_gate["[prototype] MOD-GOV-r5_digit_suffix_gate MOD-GOV-r5_digit_suffix_gate<br/>MOD-GOV-r5_digit_suffix_gate<br/>蓝图: MOD-GOV-r5_digit_suffix_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_reconcile_runner["[production] MOD-GOV-reconcile_runner MOD-GOV-reconcile_runner<br/>MOD-GOV-reconcile_runner<br/>蓝图: MOD-GOV-reconcile_runner<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LMOD_GOV_reconcile_worker["[production] MOD-GOV-reconcile_worker MOD-GOV-reconcile_worker<br/>MOD-GOV-reconcile_worker<br/>蓝图: MOD-GOV-reconcile_worker<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_GOV_reconciliation_registry["[prototype] MOD-GOV-reconciliation_registry MOD-GOV-reconciliation_registry<br/>MOD-GOV-reconciliation_registry<br/>蓝图: MOD-GOV-reconciliation_registry<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_rename_depgraph_sync_gate["[prototype] MOD-GOV-rename_depgraph_sync_gate MOD-GOV-rename_depgraph_sync_gate<br/>MOD-GOV-rename_depgraph_sync_gate<br/>蓝图: MOD-GOV-rename_depgraph_sync_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_rule_execution_pairing_gate["[design] MOD-GOV-rule_execution_pairing_gate MOD-GOV-rule_execution_pairing_gate<br/>MOD-GOV-rule_execution_pairing_gate<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_GOV_rule_four_way_alignment_gate["[prototype] MOD-GOV-rule_four_way_alignment_gate MOD-GOV-rule_four_way_alignment_gate<br/>MOD-GOV-rule_four_way_alignment_gate<br/>蓝图: MOD-GOV-rule_four_way_alignment_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_rule_patterns["[prototype] MOD-GOV-rule_patterns MOD-GOV-rule_patterns<br/>MOD-GOV-rule_patterns<br/>蓝图: MOD-GOV-rule_patterns<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_ruling_reference_gate["[prototype] MOD-GOV-ruling_reference_gate MOD-GOV-ruling_reference_gate<br/>MOD-GOV-ruling_reference_gate<br/>蓝图: MOD-GOV-ruling_reference_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_run_silent_failure_regression["[prototype] MOD-GOV-run_silent_failure_regression MOD-GOV-run_silent_failure_regression<br/>MOD-GOV-run_silent_failure_regression<br/>蓝图: MOD-GOV-run_silent_failure_regression<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_session_claim["[prototype] MOD-GOV-session_claim MOD-GOV-session_claim<br/>MOD-GOV-session_claim<br/>蓝图: MOD-GOV-session_claim<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_session_required_gate["[prototype] MOD-GOV-session_required_gate MOD-GOV-session_required_gate<br/>MOD-GOV-session_required_gate<br/>蓝图: MOD-GOV-session_required_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_session_startup_health_check["[design] MOD-GOV-session_startup_health_check MOD-GOV-session_startup_health_check<br/>MOD-GOV-session_startup_health_check<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_session_worktree["[prototype] MOD-GOV-session_worktree MOD-GOV-session_worktree<br/>MOD-GOV-session_worktree<br/>蓝图: MOD-GOV-session_worktree<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_GOV_ssot_redefinition_gate["[prototype] MOD-GOV-ssot_redefinition_gate MOD-GOV-ssot_redefinition_gate<br/>MOD-GOV-ssot_redefinition_gate<br/>蓝图: MOD-GOV-ssot_redefinition_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_test_claim_files_for_edit["[prototype] MOD-GOV-test_claim_files_for_edit MOD-GOV-test_claim_files_for_edit<br/>MOD-GOV-test_claim_files_for_edit<br/>蓝图: MOD-GOV-test_claim_files_for_edit<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_test_emergency_commit["[prototype] MOD-GOV-test_emergency_commit MOD-GOV-test_emergency_commit<br/>MOD-GOV-test_emergency_commit<br/>蓝图: MOD-GOV-test_emergency_commit<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_test_reconcile_async["[prototype] MOD-GOV-test_reconcile_async MOD-GOV-test_reconcile_async<br/>MOD-GOV-test_reconcile_async<br/>蓝图: MOD-GOV-test_reconcile_async<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_test_source_consistency_gate["[prototype] MOD-GOV-test_source_consistency_gate MOD-GOV-test_source_consistency_gate<br/>MOD-GOV-test_source_consistency_gate<br/>蓝图: MOD-GOV-test_source_consistency_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_vocab_hardcode_gate["[prototype] MOD-GOV-vocab_hardcode_gate MOD-GOV-vocab_hardcode_gate<br/>MOD-GOV-vocab_hardcode_gate<br/>蓝图: MOD-GOV-vocab_hardcode_gate<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_workspace_hygiene_reconciler["[design] MOD-GOV-workspace_hygiene_reconciler MOD-GOV-workspace_hygiene_reconciler<br/>MOD-GOV-workspace_hygiene_reconciler<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_worktree_manager["[production] MOD-GOV-worktree_manager MOD-GOV-worktree_manager<br/>MOD-GOV-worktree_manager<br/>蓝图: MOD-GOV-worktree_manager<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_GOVERNANCE["[design] MOD-GOVERNANCE MOD-GOVERNANCE<br/>MOD-GOVERNANCE<br/>成熟度: design<br/>build: generated"]:::bsGenerated
     LMOD_GOV_COMMON["[prototype] MOD-GOV_COMMON MOD-GOV_COMMON<br/>MOD-GOV_COMMON<br/>蓝图: MOD-GOV_COMMON<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -107,12 +120,20 @@ flowchart LR
     LMOD_GOV_ENFORCEMENT_worktree_pool["[design] MOD-GOV_ENFORCEMENT_worktree_pool MOD-GOV_ENFORCEMENT_worktree_pool<br/>MOD-GOV_ENFORCEMENT_worktree_pool<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_GOV_GATE_CACHE["[prototype] MOD-GOV_GATE_CACHE MOD-GOV_GATE_CACHE<br/>MOD-GOV_GATE_CACHE<br/>蓝图: MOD-GOV_GATE_CACHE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_HEALTH_SMOKE["[prototype] MOD-GOV_HEALTH_SMOKE MOD-GOV_HEALTH_SMOKE<br/>MOD-GOV_HEALTH_SMOKE<br/>蓝图: MOD-GOV_HEALTH_SMOKE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_SILENT_FAILURE_REGRESSION["[prototype] MOD-GOV_SILENT_FAILURE_REGRESSION MOD-GOV_SILENT_FAILURE_REGRESSION<br/>MOD-GOV_SILENT_FAILURE_REGRESSION<br/>蓝图: MOD-GOV_SILENT_FAILURE_REGRESSION<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_behavioral_admission["[prototype] MOD-GOV_behavioral_admission MOD-GOV_behavioral_admission<br/>MOD-GOV_behavioral_admission<br/>蓝图: MOD-GOV_behavioral_admission<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_code_quality_domain["[prototype] MOD-GOV_code_quality_domain MOD-GOV_code_quality_domain<br/>MOD-GOV_code_quality_domain<br/>蓝图: MOD-GOV_code_quality_domain<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_commit_gates["[production] MOD-GOV_commit_gates MOD-GOV_commit_gates<br/>MOD-GOV_commit_gates<br/>蓝图: MOD-GOV_commit_gates<br/>成熟度: production<br/>build: stable"]:::bsStable
+    LMOD_GOV_commit_gateway_abuse_monitor["[prototype] MOD-GOV_commit_gateway_abuse_monitor MOD-GOV_commit_gateway_abuse_monitor<br/>MOD-GOV_commit_gateway_abuse_monitor<br/>蓝图: MOD-GOV_commit_gateway_abuse_monitor<br/>成熟度: prototype<br/>build: stable"]:::bsStable
+    LMOD_GOV_git_performance_monitor["[prototype] MOD-GOV_git_performance_monitor MOD-GOV_git_performance_monitor<br/>MOD-GOV_git_performance_monitor<br/>蓝图: MOD-GOV_git_performance_monitor<br/>成熟度: prototype<br/>build: stable"]:::bsStable
+    LMOD_GOV_guc_trigger_fix["[prototype] MOD-GOV_guc_trigger_fix MOD-GOV_guc_trigger_fix<br/>MOD-GOV_guc_trigger_fix<br/>蓝图: MOD-GOV_guc_trigger_fix<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_resilience_governance["[prototype] MOD-GOV_resilience_governance MOD-GOV_resilience_governance<br/>MOD-GOV_resilience_governance<br/>蓝图: MOD-GOV_resilience_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_GOV_rule_domain["[prototype] MOD-GOV_rule_domain MOD-GOV_rule_domain<br/>MOD-GOV_rule_domain<br/>蓝图: MOD-GOV_rule_domain<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_rule_execution_pairing_gate["[design] MOD-GOV_rule_execution_pairing_gate MOD-GOV_rule_execution_pairing_gate<br/>MOD-GOV_rule_execution_pairing_gate<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_GOV_runtime_violation_snapshot["[design] MOD-GOV_runtime_violation_snapshot MOD-GOV_runtime_violation_snapshot<br/>MOD-GOV_runtime_violation_snapshot<br/>成熟度: design<br/>build: stable"]:::bsStable
+    LMOD_GOV_runtime_violation_snapshot_reconciler["[design] MOD-GOV_runtime_violation_snapshot_reconciler MOD-GOV_runtime_violation_snapshot_reconciler<br/>MOD-GOV_runtime_violation_snapshot_reconciler<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_GOV_security_governance["[prototype] MOD-GOV_security_governance MOD-GOV_security_governance<br/>MOD-GOV_security_governance<br/>蓝图: MOD-GOV_security_governance<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_GOV_sync_savepoint_test["[prototype] MOD-GOV_sync_savepoint_test MOD-GOV_sync_savepoint_test<br/>MOD-GOV_sync_savepoint_test<br/>蓝图: MOD-GOV_sync_savepoint_test<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_001["[prototype] MOD-INF-001 MOD-INF-001<br/>MOD-INF-001<br/>蓝图: MOD-INF-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_002["[prototype] MOD-INF-002 MOD-INF-002<br/>MOD-INF-002<br/>蓝图: MOD-INF-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_INF_003["[prototype] MOD-INF-003 MOD-INF-003<br/>MOD-INF-003<br/>蓝图: MOD-INF-003<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -160,7 +181,7 @@ flowchart LR
     LMOD_L02_001["[prototype] MOD-L02-001 MOD-L02-001<br/>MOD-L02-001<br/>蓝图: MOD-L02-001<br/>成熟度: prototype<br/>build: stable"]:::bsStable
     LMOD_L03_001["[prototype] MOD-L03-001 MOD-L03-001<br/>MOD-L03-001<br/>蓝图: MOD-L03-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L04_001["[prototype] MOD-L04-001 MOD-L04-001<br/>MOD-L04-001<br/>蓝图: MOD-L04-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
-    LMOD_L05_001["[prototype] MOD-L05-001 MOD-L05-001<br/>MOD-L05-001<br/>蓝图: MOD-L05-001<br/>成熟度: prototype<br/>build: stable"]:::bsStable
+    LMOD_L05_001["[prototype] MOD-L05-001 MOD-L05-001<br/>MOD-L05-001<br/>蓝图: MOD-L05-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L06_001["[design] MOD-L06-001 MOD-L06-001<br/>MOD-L06-001<br/>成熟度: design<br/>build: stable"]:::bsStable
     LMOD_L07_001["[prototype] MOD-L07-001 MOD-L07-001<br/>MOD-L07-001<br/>蓝图: MOD-L07-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_L08_001["[design] MOD-L08-001 MOD-L08-001<br/>MOD-L08-001<br/>成熟度: design<br/>build: generated"]:::bsGenerated
@@ -175,6 +196,9 @@ flowchart LR
     LMOD_MASTER_BLUEPRINT["[design] MOD-MASTER_BLUEPRINT MOD-MASTER_BLUEPRINT<br/>MOD-MASTER_BLUEPRINT<br/>成熟度: design<br/>build: deprecated"]:::bsDeprecated
     LMOD_MKT_DATA["[prototype] MOD-MKT_DATA MOD-MKT_DATA<br/>MOD-MKT_DATA<br/>蓝图: MOD-MKT_DATA<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_ML_SERVE["[prototype] MOD-ML_SERVE MOD-ML_SERVE<br/>MOD-ML_SERVE<br/>蓝图: MOD-ML_SERVE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_OPS_018["[prototype] MOD-OPS-018 MOD-OPS-018<br/>MOD-OPS-018<br/>蓝图: MOD-OPS-018<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_ORC_trigger_router["[prototype] MOD-ORC-trigger_router MOD-ORC-trigger_router<br/>MOD-ORC-trigger_router<br/>蓝图: MOD-ORC-trigger_router<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_PFC_001["[production] MOD-PFC-001 MOD-PFC-001<br/>MOD-PFC-001<br/>蓝图: MOD-PFC-001<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_PF_ALLOC["[design] MOD-PF_ALLOC MOD-PF_ALLOC<br/>MOD-PF_ALLOC<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_REMEDIATION_PROGRESS["[prototype] MOD-REMEDIATION_PROGRESS MOD-REMEDIATION_PROGRESS<br/>MOD-REMEDIATION_PROGRESS<br/>蓝图: MOD-REMEDIATION_PROGRESS<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_REMEDIATION_PROGRESS_SMOKE["[prototype] MOD-REMEDIATION_PROGRESS_SMOKE MOD-REMEDIATION_PROGRESS_SMOKE<br/>MOD-REMEDIATION_PROGRESS_SMOKE<br/>蓝图: MOD-REMEDIATION_PROGRESS_SMOKE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -186,10 +210,14 @@ flowchart LR
     LMOD_SHARED_001["[prototype] MOD-SHARED-001 MOD-SHARED-001<br/>MOD-SHARED-001<br/>蓝图: MOD-SHARED-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SHARED_002["[prototype] MOD-SHARED-002 MOD-SHARED-002<br/>MOD-SHARED-002<br/>蓝图: MOD-SHARED-002<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SHR_io_yaml["[prototype] MOD-SHR-io-yaml MOD-SHR-io-yaml<br/>MOD-SHR-io-yaml<br/>蓝图: MOD-SHR-io-yaml<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_SHR_workspace_telemetry["[prototype] MOD-SHR-workspace_telemetry MOD-SHR-workspace_telemetry<br/>MOD-SHR-workspace_telemetry<br/>蓝图: MOD-SHR-workspace_telemetry<br/>成熟度: prototype<br/>build: stable"]:::bsStable
+    LMOD_SHR_converters["[production] MOD-SHR_converters MOD-SHR_converters<br/>MOD-SHR_converters<br/>蓝图: MOD-SHR_converters<br/>成熟度: production<br/>build: stable"]:::bsStable
     LMOD_SIGNAL_ASHARE["[prototype] MOD-SIGNAL_ASHARE MOD-SIGNAL_ASHARE<br/>MOD-SIGNAL_ASHARE<br/>蓝图: MOD-SIGNAL_ASHARE<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SIGQC_001["[prototype] MOD-SIGQC-001 MOD-SIGQC-001<br/>MOD-SIGQC-001<br/>蓝图: MOD-SIGQC-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_SIMULATION["[design] MOD-SIMULATION MOD-SIMULATION<br/>MOD-SIMULATION<br/>成熟度: design<br/>build: planned"]:::bsPlanned
+    LMOD_SMOKE_TEST["[design] MOD-SMOKE-TEST MOD-SMOKE-TEST<br/>MOD-SMOKE-TEST<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_TASK_SYSTEM["[prototype] MOD-TASK_SYSTEM MOD-TASK_SYSTEM<br/>MOD-TASK_SYSTEM<br/>蓝图: MOD-TASK_SYSTEM<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_TEST["[design] MOD-TEST MOD-TEST<br/>MOD-TEST<br/>成熟度: design<br/>build: planned"]:::bsPlanned
     LMOD_TEST_202["[prototype] MOD-TEST-202 MOD-TEST-202<br/>MOD-TEST-202<br/>蓝图: MOD-TEST-202<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_203["[prototype] MOD-TEST-203 MOD-TEST-203<br/>MOD-TEST-203<br/>蓝图: MOD-TEST-203<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_204["[prototype] MOD-TEST-204 MOD-TEST-204<br/>MOD-TEST-204<br/>蓝图: MOD-TEST-204<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -624,6 +652,7 @@ flowchart LR
     LMOD_TEST_706["[prototype] MOD-TEST-706 MOD-TEST-706<br/>MOD-TEST-706<br/>蓝图: MOD-TEST-706<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_708["[prototype] MOD-TEST-708 MOD-TEST-708<br/>MOD-TEST-708<br/>蓝图: MOD-TEST-708<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TEST_710["[prototype] MOD-TEST-710 MOD-TEST-710<br/>MOD-TEST-710<br/>蓝图: MOD-TEST-710<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
+    LMOD_TEST_apply_depgraph_smoke["[prototype] MOD-TEST-apply_depgraph_smoke MOD-TEST-apply_depgraph_smoke<br/>MOD-TEST-apply_depgraph_smoke<br/>蓝图: MOD-TEST-apply_depgraph_smoke<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_TRADING_001["[prototype] MOD-TRADING-001 MOD-TRADING-001<br/>MOD-TRADING-001<br/>蓝图: MOD-TRADING-001<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_XLR_003["[prototype] MOD-XLR-003 MOD-XLR-003<br/>MOD-XLR-003<br/>蓝图: MOD-XLR-003<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
     LMOD_migrate_sqlite_to_pg["[prototype] MOD-migrate_sqlite_to_pg MOD-migrate_sqlite_to_pg<br/>MOD-migrate_sqlite_to_pg<br/>蓝图: MOD-migrate_sqlite_to_pg<br/>成熟度: prototype<br/>build: generated"]:::bsGenerated
@@ -679,7 +708,9 @@ flowchart LR
     LMOD_GOV_SCRIPTS -->|triggering| LMOD_GOV_SCRIPTS_ARCH
     LMOD_GOV_SCRIPTS_ARCH -->|triggering| LMOD_GOV_SYNC_PANORAMA
     LMOD_GOV_SYNC_PANORAMA -->|triggering| LMOD_GOV_arch_reference_gate
-    LMOD_GOV_arch_reference_gate -->|triggering| LMOD_GOV_bare_getenv_gate
+    LMOD_GOV_arch_reference_gate -->|triggering| LMOD_GOV_audit_return_contract_usage
+    LMOD_GOV_audit_return_contract_usage -->|triggering| LMOD_GOV_audit_worktree_ops_telemetry
+    LMOD_GOV_audit_worktree_ops_telemetry -->|triggering| LMOD_GOV_bare_getenv_gate
     LMOD_GOV_bare_getenv_gate -->|triggering| LMOD_GOV_bare_sql_gate
     LMOD_GOV_bare_sql_gate -->|triggering| LMOD_GOV_batched_auto_committer
     LMOD_GOV_batched_auto_committer -->|triggering| LMOD_GOV_blueprint_amodule_consistency_gate
@@ -693,7 +724,8 @@ flowchart LR
     LMOD_GOV_dangling_reference_gate -->|triggering| LMOD_GOV_diff_helpers
     LMOD_GOV_diff_helpers -->|triggering| LMOD_GOV_doc_ref_broken_gate
     LMOD_GOV_doc_ref_broken_gate -->|triggering| LMOD_GOV_domain_fk_gate
-    LMOD_GOV_domain_fk_gate -->|triggering| LMOD_GOV_empty_handler_gate
+    LMOD_GOV_domain_fk_gate -->|triggering| LMOD_GOV_emergency_commit
+    LMOD_GOV_emergency_commit -->|triggering| LMOD_GOV_empty_handler_gate
     LMOD_GOV_empty_handler_gate -->|triggering| LMOD_GOV_exempt_zone_frontmatter_gate
     LMOD_GOV_exempt_zone_frontmatter_gate -->|triggering| LMOD_GOV_file_copy_gate
     LMOD_GOV_file_copy_gate -->|triggering| LMOD_GOV_function_dup_gate
@@ -704,7 +736,8 @@ flowchart LR
     LMOD_GOV_high_complexity_gate -->|triggering| LMOD_GOV_id_uniqueness_gate
     LMOD_GOV_id_uniqueness_gate -->|triggering| LMOD_GOV_import_direction_gate
     LMOD_GOV_import_direction_gate -->|triggering| LMOD_GOV_long_param_list_gate
-    LMOD_GOV_long_param_list_gate -->|triggering| LMOD_GOV_migrate_metadata
+    LMOD_GOV_long_param_list_gate -->|triggering| LMOD_GOV_manual_only_permanent_gate
+    LMOD_GOV_manual_only_permanent_gate -->|triggering| LMOD_GOV_migrate_metadata
     LMOD_GOV_migrate_metadata -->|triggering| LMOD_GOV_module_id_consistency_gate
     LMOD_GOV_module_id_consistency_gate -->|triggering| LMOD_GOV_no_import_side_effect_gate
     LMOD_GOV_no_import_side_effect_gate -->|triggering| LMOD_GOV_orphan_module_gate
@@ -712,18 +745,27 @@ flowchart LR
     LMOD_GOV_panorama_alignment_gate -->|triggering| LMOD_GOV_perm_trigger_gate
     LMOD_GOV_perm_trigger_gate -->|triggering| LMOD_GOV_pre_write_gate
     LMOD_GOV_pre_write_gate -->|triggering| LMOD_GOV_r5_digit_suffix_gate
-    LMOD_GOV_r5_digit_suffix_gate -->|triggering| LMOD_GOV_reconciliation_registry
+    LMOD_GOV_r5_digit_suffix_gate -->|triggering| LMOD_GOV_reconcile_runner
+    LMOD_GOV_reconcile_runner -->|triggering| LMOD_GOV_reconcile_worker
+    LMOD_GOV_reconcile_worker -->|triggering| LMOD_GOV_reconciliation_registry
     LMOD_GOV_reconciliation_registry -->|triggering| LMOD_GOV_rename_depgraph_sync_gate
-    LMOD_GOV_rename_depgraph_sync_gate -->|triggering| LMOD_GOV_rule_four_way_alignment_gate
+    LMOD_GOV_rename_depgraph_sync_gate -->|triggering| LMOD_GOV_rule_execution_pairing_gate
+    LMOD_GOV_rule_execution_pairing_gate -->|triggering| LMOD_GOV_rule_four_way_alignment_gate
     LMOD_GOV_rule_four_way_alignment_gate -->|triggering| LMOD_GOV_rule_patterns
     LMOD_GOV_rule_patterns -->|triggering| LMOD_GOV_ruling_reference_gate
-    LMOD_GOV_ruling_reference_gate -->|triggering| LMOD_GOV_session_claim
+    LMOD_GOV_ruling_reference_gate -->|triggering| LMOD_GOV_run_silent_failure_regression
+    LMOD_GOV_run_silent_failure_regression -->|triggering| LMOD_GOV_session_claim
     LMOD_GOV_session_claim -->|triggering| LMOD_GOV_session_required_gate
-    LMOD_GOV_session_required_gate -->|triggering| LMOD_GOV_session_worktree
+    LMOD_GOV_session_required_gate -->|triggering| LMOD_GOV_session_startup_health_check
+    LMOD_GOV_session_startup_health_check -->|triggering| LMOD_GOV_session_worktree
     LMOD_GOV_session_worktree -->|triggering| LMOD_GOV_ssot_redefinition_gate
-    LMOD_GOV_ssot_redefinition_gate -->|triggering| LMOD_GOV_test_source_consistency_gate
+    LMOD_GOV_ssot_redefinition_gate -->|triggering| LMOD_GOV_test_claim_files_for_edit
+    LMOD_GOV_test_claim_files_for_edit -->|triggering| LMOD_GOV_test_emergency_commit
+    LMOD_GOV_test_emergency_commit -->|triggering| LMOD_GOV_test_reconcile_async
+    LMOD_GOV_test_reconcile_async -->|triggering| LMOD_GOV_test_source_consistency_gate
     LMOD_GOV_test_source_consistency_gate -->|triggering| LMOD_GOV_vocab_hardcode_gate
-    LMOD_GOV_vocab_hardcode_gate -->|triggering| LMOD_GOV_worktree_manager
+    LMOD_GOV_vocab_hardcode_gate -->|triggering| LMOD_GOV_workspace_hygiene_reconciler
+    LMOD_GOV_workspace_hygiene_reconciler -->|triggering| LMOD_GOV_worktree_manager
     LMOD_GOV_worktree_manager -->|triggering| LMOD_GOVERNANCE
     LMOD_GOVERNANCE -->|triggering| LMOD_GOV_COMMON
     LMOD_GOV_COMMON -->|triggering| LMOD_GOV_DATAFLOW_DIAGRAM
@@ -732,13 +774,21 @@ flowchart LR
     LMOD_GOV_ENFORCEMENT -->|triggering| LMOD_GOV_ENFORCEMENT_worktree_pool
     LMOD_GOV_ENFORCEMENT_worktree_pool -->|triggering| LMOD_GOV_GATE_CACHE
     LMOD_GOV_GATE_CACHE -->|triggering| LMOD_GOV_HEALTH_SMOKE
-    LMOD_GOV_HEALTH_SMOKE -->|triggering| LMOD_GOV_behavioral_admission
+    LMOD_GOV_HEALTH_SMOKE -->|triggering| LMOD_GOV_SILENT_FAILURE_REGRESSION
+    LMOD_GOV_SILENT_FAILURE_REGRESSION -->|triggering| LMOD_GOV_behavioral_admission
     LMOD_GOV_behavioral_admission -->|triggering| LMOD_GOV_code_quality_domain
     LMOD_GOV_code_quality_domain -->|triggering| LMOD_GOV_commit_gates
-    LMOD_GOV_commit_gates -->|triggering| LMOD_GOV_resilience_governance
+    LMOD_GOV_commit_gates -->|triggering| LMOD_GOV_commit_gateway_abuse_monitor
+    LMOD_GOV_commit_gateway_abuse_monitor -->|triggering| LMOD_GOV_git_performance_monitor
+    LMOD_GOV_git_performance_monitor -->|triggering| LMOD_GOV_guc_trigger_fix
+    LMOD_GOV_guc_trigger_fix -->|triggering| LMOD_GOV_resilience_governance
     LMOD_GOV_resilience_governance -->|triggering| LMOD_GOV_rule_domain
-    LMOD_GOV_rule_domain -->|triggering| LMOD_GOV_security_governance
-    LMOD_GOV_security_governance -->|triggering| LMOD_INF_001
+    LMOD_GOV_rule_domain -->|triggering| LMOD_GOV_rule_execution_pairing_gate
+    LMOD_GOV_rule_execution_pairing_gate -->|triggering| LMOD_GOV_runtime_violation_snapshot
+    LMOD_GOV_runtime_violation_snapshot -->|triggering| LMOD_GOV_runtime_violation_snapshot_reconciler
+    LMOD_GOV_runtime_violation_snapshot_reconciler -->|triggering| LMOD_GOV_security_governance
+    LMOD_GOV_security_governance -->|triggering| LMOD_GOV_sync_savepoint_test
+    LMOD_GOV_sync_savepoint_test -->|triggering| LMOD_INF_001
     LMOD_INF_001 -->|triggering| LMOD_INF_002
     LMOD_INF_002 -->|triggering| LMOD_INF_003
     LMOD_INF_003 -->|triggering| LMOD_INF_005
@@ -800,7 +850,10 @@ flowchart LR
     LMOD_MASTER_003 -->|triggering| LMOD_MASTER_BLUEPRINT
     LMOD_MASTER_BLUEPRINT -->|triggering| LMOD_MKT_DATA
     LMOD_MKT_DATA -->|triggering| LMOD_ML_SERVE
-    LMOD_ML_SERVE -->|triggering| LMOD_PF_ALLOC
+    LMOD_ML_SERVE -->|triggering| LMOD_OPS_018
+    LMOD_OPS_018 -->|triggering| LMOD_ORC_trigger_router
+    LMOD_ORC_trigger_router -->|triggering| LMOD_PFC_001
+    LMOD_PFC_001 -->|triggering| LMOD_PF_ALLOC
     LMOD_PF_ALLOC -->|triggering| LMOD_REMEDIATION_PROGRESS
     LMOD_REMEDIATION_PROGRESS -->|triggering| LMOD_REMEDIATION_PROGRESS_SMOKE
     LMOD_REMEDIATION_PROGRESS_SMOKE -->|triggering| LMOD_RESOURCE_OPTIMIZATION_ENGINE
@@ -811,11 +864,15 @@ flowchart LR
     LMOD_SELL_DECISION -->|triggering| LMOD_SHARED_001
     LMOD_SHARED_001 -->|triggering| LMOD_SHARED_002
     LMOD_SHARED_002 -->|triggering| LMOD_SHR_io_yaml
-    LMOD_SHR_io_yaml -->|triggering| LMOD_SIGNAL_ASHARE
+    LMOD_SHR_io_yaml -->|triggering| LMOD_SHR_workspace_telemetry
+    LMOD_SHR_workspace_telemetry -->|triggering| LMOD_SHR_converters
+    LMOD_SHR_converters -->|triggering| LMOD_SIGNAL_ASHARE
     LMOD_SIGNAL_ASHARE -->|triggering| LMOD_SIGQC_001
     LMOD_SIGQC_001 -->|triggering| LMOD_SIMULATION
-    LMOD_SIMULATION -->|triggering| LMOD_TASK_SYSTEM
-    LMOD_TASK_SYSTEM -->|triggering| LMOD_TEST_202
+    LMOD_SIMULATION -->|triggering| LMOD_SMOKE_TEST
+    LMOD_SMOKE_TEST -->|triggering| LMOD_TASK_SYSTEM
+    LMOD_TASK_SYSTEM -->|triggering| LMOD_TEST
+    LMOD_TEST -->|triggering| LMOD_TEST_202
     LMOD_TEST_202 -->|triggering| LMOD_TEST_203
     LMOD_TEST_203 -->|triggering| LMOD_TEST_204
     LMOD_TEST_204 -->|triggering| LMOD_TEST_205
@@ -1249,7 +1306,8 @@ flowchart LR
     LMOD_TEST_705 -->|triggering| LMOD_TEST_706
     LMOD_TEST_706 -->|triggering| LMOD_TEST_708
     LMOD_TEST_708 -->|triggering| LMOD_TEST_710
-    LMOD_TEST_710 -->|triggering| LMOD_TRADING_001
+    LMOD_TEST_710 -->|triggering| LMOD_TEST_apply_depgraph_smoke
+    LMOD_TEST_apply_depgraph_smoke -->|triggering| LMOD_TRADING_001
     LMOD_TRADING_001 -->|triggering| LMOD_XLR_003
     LMOD_XLR_003 -->|triggering| LMOD_migrate_sqlite_to_pg
     LMOD_migrate_sqlite_to_pg -->|triggering| LMOD_readme_version_sync
