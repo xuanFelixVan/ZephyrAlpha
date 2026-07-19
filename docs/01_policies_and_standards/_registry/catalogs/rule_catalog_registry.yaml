@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-07-19T05:21:02Z'
+generated_at: '2026-07-19T08:59:45Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 164
+total_files: 165
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1271,7 +1271,7 @@ files:
   title: 向内收原则（唯一真源·事件驱动·第一性原理）
   doc_type: ''
   status: ''
-  version: 1.0.1
+  version: 1.0.2
   rule_form: declarative
   scope: global
   stability: frozen
@@ -1363,7 +1363,7 @@ files:
   section_count: 1
 - path: docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml
   module_id: TRAE-065
-  title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP，裁定 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD）
+  title: 能力反查强制铁律（RULE-CAPABILITY-LOOKUP，裁定
   doc_type: ''
   status: ''
   version: 1.0.0
