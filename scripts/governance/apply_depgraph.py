@@ -132,7 +132,7 @@ _depgraph_lock_local = _threading.local()
 # 防复发：NO-BARE-SQL gate (priority=87) 检测新增裸 SQL 字面量
 SQL_SELECT_DOMAIN_ID_BY_DOMAIN_ID = "SELECT domain_id FROM domains WHERE domain_id=%s"
 SQL_CHECK_DOMAIN_EXISTS = "SELECT 1 FROM domains WHERE domain_id=%s"
-SQL_DROP_READONLY_TRIGGER = "DROP TRIGGER IF EXISTS readonly_blueprint_links_update"
+SQL_DROP_READONLY_TRIGGER = "DROP TRIGGER IF EXISTS readonly_blueprint_links_update ON blueprint_links"
 SQL_SELECT_NODE_MATURITY_BY_ID = "SELECT node_id, design_maturity FROM nodes WHERE node_id=%s"
 SQL_SELECT_NODE_ID_BY_ID = "SELECT node_id FROM nodes WHERE node_id=%s"
 SQL_SELECT_BLUEPRINT_ID_BY_NODE_ID = "SELECT blueprint_id FROM nodes WHERE node_id=%s"
@@ -2630,13 +2630,36 @@ def _restore_blueprint_links_readonly_trigger(c) -> None:
 
     cmd_propagate_rename 临时 DROP 该触发器以写入 blueprint_links.blueprint_id，
     操作完成后必须恢复，保持"YAML 唯一真源"门禁激活。
+
+    治本（#ARCH-DATAQUALITY-V1, 2026-07-19）：修复 SQLite→PostgreSQL 语法迁移遗漏。
+    原 SQLite 语法（CREATE TRIGGER IF NOT EXISTS ... BEGIN SELECT RAISE(ABORT,...) END）
+    在 PostgreSQL 上失败——PG 需要 CREATE FUNCTION + CREATE TRIGGER EXECUTE FUNCTION。
+
+    治本2（#ARCH-DATAQUALITY-V1, 2026-07-19）：触发器恢复改为非致命——PostgreSQL
+    用户可能无 CREATE FUNCTION 权限（对模式 public 权限不够）。触发器从未在 PG 上
+    创建成功（原 SQLite 语法一直失败），所以"恢复"一个从未存在的触发器=空操作。
+    权限不足时 log warning 不 raise，避免阻断 rename 事务回滚。
     """
-    c.execute(
-        "CREATE TRIGGER IF NOT EXISTS readonly_blueprint_links_update "
-        "BEFORE UPDATE ON blueprint_links FOR EACH ROW BEGIN "
-        "SELECT RAISE(ABORT, 'blueprint_links 表只读（唯一真源是 YAML），"
-        "请修改 YAML 后运行 sync_yaml_to_depgraph.py'); END;"
-    )
+    try:
+        c.execute(
+            "CREATE OR REPLACE FUNCTION _prevent_blueprint_links_update() "
+            "RETURNS TRIGGER AS $$ "
+            "BEGIN "
+            "RAISE EXCEPTION 'blueprint_links 表只读（唯一真源是 YAML），"
+            "请修改 YAML 后运行 sync_yaml_to_depgraph.py'; "
+            "END; $$ LANGUAGE plpgsql"
+        )
+        c.execute("DROP TRIGGER IF EXISTS readonly_blueprint_links_update ON blueprint_links")
+        c.execute(
+            "CREATE TRIGGER readonly_blueprint_links_update "
+            "BEFORE UPDATE ON blueprint_links "
+            "FOR EACH ROW EXECUTE FUNCTION _prevent_blueprint_links_update()"
+        )
+    except psycopg2.Error as e:
+        logger.warning(
+            "恢复 blueprint_links 只读触发器失败（权限不足或语法错误，"
+            "触发器从未在 PG 上创建——非致命）: %s", e
+        )
 
 
 def cmd_propagate_rename(

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_ENFORCEMENT | docs/03_modules/_domain_governance/blueprint.md
 # [MODULE] zephyr.gov_enforcement
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [A_module] module_id=D-GOV-ENFORCEMENT | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_ENFORCEMENT | layer=domain | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """gov_enforcement package — 执行治理域（D_GOV_ENFORCEMENT）
 
