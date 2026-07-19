@@ -143,7 +143,6 @@ build_status: planned
 | 29 | skills/skill_durable.py | 蓝图特有 | 持久执行 + 中断恢复 | 已实现 | — |
 | 30 | skills/skill_prompt_cache.py | 蓝图特有 | 三级 Prompt 缓存 | 已实现 | — |
 | 31 | skills/skill_cache_provider.py | 蓝图特有 | 跨 Provider 缓存自适应 | 已实现 | — |
-| 32 | skills/skill_knowledge_base.py | 蓝图特有 | 跨 Skill 经验知识库 | 已实现 | — |
 | 33 | skills/skill_di.py | 蓝图特有 | Skill 依赖注入 | 已实现 | — |
 | 34 | skills/skill_guardrails.py | §8 | 输出护栏三层校验 | 已实现 | — |
 | 35 | skills/skill_team_optimizer.py | 蓝图特有 | SCI 三维团队选择 | 已实现 | — |
@@ -1077,7 +1076,7 @@ class ConstructionStage(str, Enum):
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §4.1 SkillRouter + §4.7 扩展点 |
-| 产出文件 | skill_discovery.py + skill_knowledge_base.py（均已存在，扩展） |
+| 产出文件 | skill_discovery.py（已存在，扩展） |
 | 验证命令 | `python -m pytest tests/ -k "discovery or recommend" -v` |
 | 状态 | 🔧 部分实现 |
 
