@@ -89,9 +89,124 @@ from zephyr.security.access_control.session_concurrency import SessionRegistry
 from zephyr.gov_enforcement.rule_bridge.session_claim import generate_session_id
 from zephyr.shared.io.paths import REPO_ROOT
 
+import functools
 import logging
+from typing import TypedDict
 
 logger = logging.getLogger(__name__)
+
+
+class StartResult(TypedDict, total=False):
+    """session_worktree_start 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败（AI 契约机读化）
+    session_id: str
+    worktree_path: str
+    branch: str
+    registered: bool
+    created: bool
+    error: str                  # 失败时存在
+    blocked_by: list[str]       # 并发阻断时存在
+    warning: str                # 任务去重警告时存在
+    conflict_with: str          # 任务去重冲突 session
+    overlap_files: list[str]    # 任务去重重叠文件
+
+
+class CommitResult(TypedDict, total=False):
+    """session_worktree_commit 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败
+    session_id: str
+    status: str                 # "OK" | "NOTHING_TO_COMMIT" | "FAILED" | "GATE_VIOLATION"
+    message: str
+    commit_hash: str
+    not_found: bool             # worktree 不存在时 True
+    held_overlap: bool          # HELD-OVERLAP 阻断时 True
+    directory_contract_violation: bool  # DCR 阻断时 True
+    gate_violation: bool        # pre-commit gate 阻断时 True
+    gate_results: list[dict]    # gate 违规详情
+    base_sync_failed: bool      # worktree base 对齐失败时 True
+    reconcile_results: list[dict]  # reconciler 执行结果
+
+
+class MergeResult(TypedDict, total=False):
+    """session_worktree_merge 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败
+    session_id: str
+    merged: bool
+    message: str
+    cleaned: bool
+    unregistered: bool
+    gate_violation: bool
+    gate_results: list[dict]
+    reconcile_results: list[dict]
+    blocked: bool               # block_next 硬阻断时 True
+    blocked_next: bool          # 本次写入 block_next 时 True
+    error: str
+
+
+class AbortResult(TypedDict, total=False):
+    """session_worktree_abort 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败
+    session_id: str
+    aborted: bool
+    message: str
+    unregistered: bool
+    main_cleaned: int
+
+
+class StatusResult(TypedDict, total=False):
+    """session_worktree_status 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败
+    session_id: str
+    exists: bool
+    path: str
+    branch: str
+    dirty: bool
+    registered: bool
+
+
+class SweepResult(TypedDict, total=False):
+    """session_worktree_sweep 返回契约（裁定#A，2026-07-19）。"""
+    ok: bool                    # 消费方 MUST 只读此键判定成败
+    swept: int
+    skipped: int
+    warnings: list[str]
+    error: str
+
+
+def _compute_ok(result: dict) -> bool:
+    """裁定#A（2026-07-19）：统一 ok 键计算逻辑。
+    
+    病根：AI 消费者因键名幻觉误判（如误判 committed 键），实际契约使用 status: "OK"。
+    治本：统一注入 ok 键，作为消费方判定成败的唯一入口，消除键名幻觉空间。
+    """
+    if result.get("error"):
+        return False
+    if result.get("status") in ("FAILED", "GATE_VIOLATION"):
+        return False
+    for flag in ("gate_violation", "not_found", "held_overlap", 
+                 "directory_contract_violation", "base_sync_failed", "blocked"):
+        if result.get(flag):
+            return False
+    if result.get("merged") is False:
+        return False
+    if "aborted" in result and result.get("aborted") is False:
+        return False
+    return True
+
+
+def _inject_ok(fn):
+    """裁定#A（2026-07-19）：为返回 dict 的公开函数注入 ok 键。
+    
+    统一在返回 dict 上注入 ok 键（若不存在），消除 AI 消费者因键名幻觉导致的误判。
+    与 _compute_ok 配合，提供明确的成功判定标准。
+    """
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        r = fn(*args, **kwargs)
+        if isinstance(r, dict):
+            r.setdefault("ok", _compute_ok(r))
+        return r
+    return wrapper
 
 # worktree 路径下跳过的 gate（session_worktree 有自己的 held_files 机制替代
 # HELD-OVERLAP/CLAIM-REQUIRED；worktree 物理隔离消除搭便车风险，FOREIGN-CHANGE-DETECTION 无需）。
@@ -146,6 +261,121 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
             fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
     except Exception:  # noqa: BLE001 — 5.135治标: 遥测降级不阻断主流程
         logger.debug("worktree delete telemetry failed", exc_info=True)
+
+
+def _quarantine_root(root: Path) -> Path:
+    """隔离区根目录（裁定#B，2026-07-19）：.runtime/orphan_quarantine/。
+    
+    病根：主工作区 untracked 文件物理删除不可逆，并发 session 冲突时数据丢失。
+    治本：删除改为移送隔离区，保留 72h 后可恢复，sweep 定期清理过期文件。
+    """
+    return root / ".runtime" / "orphan_quarantine"
+
+
+def _log_workspace_op(
+    op: str,
+    session_id: str,
+    source: str,
+    root: Path,
+    file: str = "",
+    backup_path: str = "",
+) -> None:
+    """主工作区文件操作遥测（裁定#C，2026-07-19）。
+    
+    扩展 _log_worktree_delete，记录文件级 stash/quarantine 操作，支持事后审计与恢复。
+    降级：遥测失败仅 debug 日志，绝不阻断主流程。
+    """
+    try:
+        from datetime import datetime, timezone
+        from zephyr.shared.io.paths import strip_session_worktree
+
+        main_root = strip_session_worktree(Path(root))
+        log_dir = main_root / ".runtime"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        entry = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "op": op,
+            "session_id": session_id,
+            "source": source,
+            "file": file,
+            "backup_path": backup_path,
+        }
+        with open(log_dir / "worktree_ops_log.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 遥测降级不阻断主流程
+        logger.debug("workspace op telemetry failed", exc_info=True)
+
+
+def _quarantine_file(
+    root: Path, rel_file: str, session_id: str, source: str,
+) -> str | None:
+    """将主工作区文件移送隔离区（裁定#B，2026-07-19）。
+    
+    替代物理删除，保留 72h 可恢复。返回隔离区路径（失败返回 None）。
+    """
+    src = root / rel_file
+    if not src.exists():
+        return None
+    dest = _quarantine_root(root) / session_id / rel_file
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        src.replace(dest)
+        _log_workspace_op(
+            "file_quarantine", session_id, source, root,
+            file=rel_file, backup_path=str(dest),
+        )
+        logger.info(
+            "session_worktree quarantine: %s -> %s (session=%s, source=%s)",
+            rel_file, dest, session_id, source,
+        )
+        return str(dest)
+    except OSError:
+        logger.debug("quarantine move failed for %s", rel_file, exc_info=True)
+        return None
+
+
+def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
+    """清扫隔离区过期文件（裁定#B 配套，2026-07-19）。
+    
+    保留 72h 后物理删除，释放磁盘空间。在 session_worktree_start 时顺带执行。
+    """
+    import time as _time
+
+    q_root = _quarantine_root(root)
+    if not q_root.exists():
+        return {"deleted": 0, "skipped": 0, "warnings": []}
+    now = _time.time()
+    max_age_seconds = max_age_hours * 3600
+    deleted = 0
+    skipped = 0
+    warnings: list[str] = []
+    try:
+        for session_dir in q_root.iterdir():
+            if not session_dir.is_dir():
+                continue
+            try:
+                mtime = session_dir.stat().st_mtime
+            except OSError:
+                skipped += 1
+                continue
+            if (now - mtime) < max_age_seconds:
+                skipped += 1
+                continue
+            # 过期 session 目录——递归删除
+            try:
+                import shutil
+                shutil.rmtree(session_dir)
+                deleted += 1
+                logger.info(
+                    "session_worktree quarantine sweep: 删除过期隔离区 %s",
+                    session_dir.name,
+                )
+            except OSError as e:
+                warnings.append(f"{session_dir.name}: 删除异常 {e}")
+                skipped += 1
+    except OSError as e:
+        warnings.append(f"隔离区扫描异常: {e}")
+    return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
 
 
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
@@ -389,10 +619,11 @@ def _sweep_stale_worktrees(
     return {"swept": swept, "skipped": skipped, "warnings": warnings}
 
 
+@_inject_ok
 def session_worktree_sweep(
     project_root: str | Path | None = None,
     max_age_minutes: int = 30,
-) -> dict:
+) -> SweepResult:
     """公开入口：on-demand 清理 stale session worktree 残留（治本遗留项#2，2026-07-17）。
 
     包装私有 ``_sweep_stale_worktrees``，提供 AI/CLI 可调用的清理 API。
@@ -524,12 +755,64 @@ def _check_concurrency_block(sid, allow_concurrent, breaking_change, root):
     return None
 
 
+def _check_duplicate_task(
+    registry: SessionRegistry, sid: str, task_files: list[str],
+) -> dict | None:
+    """任务去重检测（裁定#D，2026-07-19）：任务文件集与活跃 session 重叠时阻断启动。
+
+    病根：并发 AI session 常被派发相同/高度重叠的任务（用户重复提问、多对话并行
+    治本同一问题），导致重复施工 + 并发文件擦除（实测：两 session 同时改同一批
+    文件，一方 auto-clean 擦除另一方未提交修改）。task_files 是任务的文件指纹，
+    start 阶段重叠检测把"事后互踩"前移为"事前暴露"。
+
+    判据：Jaccard 相似度 |A∩B| / |A∪B| ≥ 0.5（路径归一化为 posix + 小写）。
+    语义：阻断 + 逃生通道（allow_duplicate=True），与 _check_concurrency_block 一致。
+    降级：检测异常仅 debug 日志，不阻断 start（fail-open）。
+    """
+    if not task_files:
+        return None
+    try:
+        new_set = {str(Path(f).as_posix()).lower() for f in task_files}
+        for active in registry.list_active():
+            if active.session_id == sid:
+                continue
+            other_set = {str(Path(f).as_posix()).lower() for f in (active.task_files or [])}
+            if not other_set:
+                continue
+            intersection = new_set & other_set
+            union = new_set | other_set
+            if union and len(intersection) / len(union) >= 0.5:
+                pct = round(100 * len(intersection) / len(union))
+                return {
+                    "session_id": sid,
+                    "worktree_path": "",
+                    "branch": f"session/{sid}",
+                    "registered": False,
+                    "created": False,
+                    "error": (
+                        f"DUPLICATE_TASK_BLOCKED: 任务文件集与活跃 session "
+                        f"'{active.session_id}' 重叠 {pct}%（裁定#D 任务去重——"
+                        f"重复施工是并发文件擦除的主要根源）。确认非重复施工后 "
+                        f"用 allow_duplicate=True 重试。重叠文件: {sorted(intersection)[:10]}"
+                    ),
+                    "warning": "DUPLICATE_TASK_WARNING",
+                    "conflict_with": active.session_id,
+                    "overlap_files": sorted(intersection),
+                }
+    except Exception:  # noqa: BLE001 — 检测降级不阻断 start
+        logger.debug("duplicate task check failed", exc_info=True)
+    return None
+
+
+@_inject_ok
 def session_worktree_start(
     session_id: str | None = None,
     project_root: str | Path | None = None,
     breaking_change: bool = False,
     allow_concurrent: bool = False,
-) -> dict:
+    task_files: list[str] | None = None,
+    allow_duplicate: bool = False,
+) -> StartResult:
     """AI 对话启动第一步：注册 session + 创建独立 worktree。
 
     原子操作：先注册 session（SessionRegistry），再创建 worktree（WorktreeManager）。
@@ -545,9 +828,14 @@ def session_worktree_start(
         project_root: 项目根目录（默认 REPO_ROOT）。
         breaking_change: 本次会话是否为治本变更（refactor/fix 涉及多文件）。True 时阻断其他并发 session。
         allow_concurrent: 逃生通道，True 时跳过并发阻断（对标 allow_overlap）。
+        task_files: 本任务预计施工的文件列表（裁定#D 任务去重，2026-07-19）。
+            作为任务文件指纹注册到 SessionRegistry，与活跃 session 的 task_files
+            Jaccard 重叠 ≥50% 时阻断启动（DUPLICATE_TASK_BLOCKED）。
+        allow_duplicate: 逃生通道，True 时跳过任务去重阻断（确认非重复施工后用）。
 
     Returns:
         {
+            "ok": bool,                # 裁定#A：成功判定唯一入口（消费方 MUST 只读此键）
             "session_id": str,
             "worktree_path": str,      # worktree 绝对路径，AI 后续文件操作 MUST 用此路径前缀
             "branch": str,             # 分支名 session/{session_id}
@@ -555,6 +843,8 @@ def session_worktree_start(
             "created": bool,           # worktree 是否新建（False=已存在复用）
         }
         失败时附加 "error" 字段 + "blocked_by" 字段（阻断方 session_id）。
+        任务去重阻断时附加 "warning"="DUPLICATE_TASK_WARNING" + "conflict_with" +
+        "overlap_files"（裁定#D）。
     """
     sid = session_id or generate_session_id()
     root = Path(project_root) if project_root else REPO_ROOT
@@ -566,12 +856,23 @@ def session_worktree_start(
     if block_r is not None:
         return block_r
 
+    # 0.5 任务去重检测（裁定#D，2026-07-19）：任务文件指纹与活跃 session 重叠
+    #     ≥50% 时阻断启动；逃生通道 allow_duplicate=True
+    if task_files and not allow_duplicate:
+        dup_r = _check_duplicate_task(_get_registry(root), sid, task_files)
+        if dup_r is not None:
+            return dup_r
+
     # 1. 注册 session（held_files 留空——worktree 模式下文件隔离由 worktree 物理保证，
     #    不依赖 held_files claim 机制）
     registry = _get_registry(root)
     registered = False
     try:
-        registry.register(sid, pid=os.getpid(), held_files=[], is_breaking_change=breaking_change)
+        registry.register(
+            sid, pid=os.getpid(), held_files=[],
+            is_breaking_change=breaking_change,
+            task_files=task_files or [],  # 裁定#D：任务文件指纹注册
+        )
         registered = True
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {
@@ -606,6 +907,13 @@ def session_worktree_start(
             )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree orphan cleanup 异常（不阻断 start）: %s", e, exc_info=True)
+    # 3.5 清扫隔离区过期文件（裁定#B 配套：72h 保留期，非阻断）
+    try:
+        q_r = _sweep_quarantine(root)
+        if q_r.get("deleted"):
+            logger.info("session_worktree quarantine sweep: deleted=%s", q_r.get("deleted"))
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.debug("quarantine sweep 异常（不阻断 start）", exc_info=True)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)
@@ -1265,6 +1573,7 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
     print("=" * 80 + "\n", file=sys.stderr)
 
 
+@_inject_ok
 def session_worktree_commit(
     session_id: str,
     files: list[str],
@@ -1273,7 +1582,7 @@ def session_worktree_commit(
     allow_overlap: bool = False,
     allow_promote: bool = False,
     allow_migration: bool = False,
-) -> dict:
+) -> CommitResult:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
 
     worktree 有独立 git index，session 独占整个 worktree，不存在共享冲突，
@@ -1564,14 +1873,9 @@ def _execute_cleanups(
             "(recoverable via 'git stash pop')", len(to_checkout), session_id or "?",
         )
     for rel_file in to_unlink:
-        try:
-            (root / rel_file).unlink()
-        except OSError:
-            try:
-                os.chmod(str(root / rel_file), 0o644)
-                (root / rel_file).unlink()
-            except OSError:
-                pass  # 尽力而为
+        # 裁定#B（2026-07-19）：untracked 文件物理删除 → 隔离区移送（72h 可恢复）
+        # 病根：merge 失败后 abort 导致 untracked 文件永久丢失（实测 Phase 1+3 新文件全丢）
+        _quarantine_file(root, rel_file, session_id, "pre_merge_auto_clean")
 
 
 def _pre_merge_auto_clean(root: Path, session_id: str) -> tuple[int, list[str]]:
@@ -2113,12 +2417,13 @@ def _run_post_commit_reconcile(
         return [{"action": "warn", "detail": str(e)}]
 
 
+@_inject_ok
 def session_worktree_merge(
     session_id: str,
     project_root: str | Path | None = None,
     reconcile_verify: bool = True,
     allow_migration: bool = False,
-) -> dict:
+) -> MergeResult:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
     在主工作目录执行 git merge session/{session_id} --no-ff（保留 session 提交拓扑）。
@@ -2350,8 +2655,9 @@ def _dispose_main_workdir_files(
             to_stash.append(rel_file)
             cleaned += 1
         elif main_file.exists():
-            # untracked 文件——物理删除（行为不变）
-            if _safe_unlink_main_file(main_file):
+            # 裁定#B（2026-07-19）：untracked 文件物理删除 → 隔离区移送（72h 可恢复）
+            # 病根：abort 后 untracked 文件永久丢失，无法恢复
+            if _quarantine_file(root, rel_file, session_id or "unknown", "abort"):
                 cleaned += 1
 
     if to_stash:
@@ -2393,11 +2699,12 @@ def _clean_main_workdir_on_abort(
     return _dispose_main_workdir_files(root, rel_files, tracked_files, session_id)
 
 
+@_inject_ok
 def session_worktree_abort(
     session_id: str,
     files: list[str] | None = None,
     project_root: str | Path | None = None,
-) -> dict:
+) -> AbortResult:
     """放弃 worktree 工作：丢弃修改 + 清理 worktree + 注销 session。
 
     **警告**：此操作丢弃 worktree 内所有未提交/未 merge 的修改。
@@ -2467,10 +2774,11 @@ def session_worktree_abort(
     }
 
 
+@_inject_ok
 def session_worktree_status(
     session_id: str,
     project_root: str | Path | None = None,
-) -> dict:
+) -> StatusResult:
     """查询 session worktree 状态。
 
     Args:
