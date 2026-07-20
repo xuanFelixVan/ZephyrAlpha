@@ -2931,8 +2931,8 @@ capabilities:
       - metric_11
       - architecture_health_dashboard
     description: >-
-      架构健康度仪表盘（11 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）。
-      11 项指标覆盖 5 个病根：SSoT 真源唯一性/永久系统触发/新 AI 可发现性/DB 全景图深度/
+      架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）。
+      30 项指标覆盖 5 个病根：SSoT 真源唯一性/永久系统触发/新 AI 可发现性/DB 全景图深度/
       文档引用断裂。每项指标独立函数，复用现有检测脚本（subprocess 调用）。warn-only 起步
       （第0期仅记录基线 exit 0，第1期转 hard block exit 1 阻断）。解决发现性：新 AI 搜
       "架构健康/仪表盘/M11/ghost domain" 可定位真源。解决防重建：check_file_canonical()
@@ -5863,6 +5863,42 @@ creation_tokens:
     token: "auto-investigation-forged-gw-marker-20260720"
     created_by: "sess-54936-20260720051550"
     capability: "forged_gw_marker_investigation"
+
+  # --- d11 注册审计治本：6 个缺失包 __init__.py 补建（2026-07-20，sess-23300-20260720092540，清单制）---
+  # shared/{ai_guards,alerts,context,evaluation,observability,versioning} 包级 __init__.py 整体缺失导致
+  # d11 audit_registration 报 32 项 ORPHAN MODULES；补建后注册包内公开符号到 __all__
+  - file: "src/zephyr/shared/ai_guards/__init__.py"
+    token: "auto-shared-ai-guards-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+  - file: "src/zephyr/shared/alerts/__init__.py"
+    token: "auto-shared-alerts-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+  - file: "src/zephyr/shared/context/__init__.py"
+    token: "auto-shared-context-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+  - file: "src/zephyr/shared/evaluation/__init__.py"
+    token: "auto-shared-evaluation-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+  - file: "src/zephyr/shared/observability/__init__.py"
+    token: "auto-shared-observability-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+  - file: "src/zephyr/shared/versioning/__init__.py"
+    token: "auto-shared-versioning-init-20260720"
+    created_by: "sess-23300-20260720092540"
+    capability: "d11_registration_remediation"
+
+  # --- 第 6 层可预防性铁律规则（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001，裁定 D-4 / R6 正式落地）---
+  # 6 层闭环模型正式化：pre-commit 阻断 + 自适应学习 + post-only reconciler 前移评估
+  # 编号修正：原裁定 D-4 计划用 TRAE-067（编号冲突），改用 TRAE-068
+  - file: "docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml"
+    token: "auto-trae-068-preventability-20260720"
+    created_by: "sess-34792-20260720100112"
+    capability: "preventability_layer_rule"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

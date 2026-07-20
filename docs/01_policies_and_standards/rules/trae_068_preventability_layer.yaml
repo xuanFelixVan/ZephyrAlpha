@@ -1,0 +1,165 @@
+rule_id: TRAE-068
+title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化，裁定 #ARCH-PREVENTABILITY-LAYER-001）
+name: 第 6 层可预防性铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-068
+priority: 60
+depends_on:
+- TRAE-054
+- TRAE-062
+- TRAE-065
+tags:
+- TRAE
+- preventability
+- L1_foundation
+- 6层闭环模型
+- pre_commit_gate
+- post_to_pre_migration
+- anti_abuse
+- RULE-PREVENTABILITY
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-PREVENTABILITY
+- 可预防性
+- preventability
+- 第6层
+- 6层闭环模型
+- ARCH-PREVENTABILITY-LAYER-001
+severity: critical
+scope: preventability_layer
+domain: TRAE
+triggers:
+- operation: post_commit_reconciler_design
+- operation: pre_commit_gate_design
+- operation: governance_mechanism_design
+- operation: abuse_monitor_review
+- operation: rule_externalization
+- gate_id: GATE-FORGED-GW-MARKER
+sections:
+  preventability_layer:
+    section_type: procedure
+    title: 第 6 层可预防性铁律（RULE-PREVENTABILITY）
+    original_rules:
+    - RULE-PREVENTABILITY
+    conditions:
+    - type: trigger
+      check: 设计或新增任何 post-commit reconciler（如 commit_gateway_abuse_monitor / workspace_hygiene_reconciler）时
+      pass: 同步评估前移为 pre-commit gate（pre-commit 阻断 + post-commit 审计双轨）
+      fail: 仅 post-commit reconciler，warn 无法挽回已入历史 commit（100% AI 场景下 AI 把 warn 当"通过"）
+    - type: constraint
+      check: 100% AI 开发场景下，治理体系必须经 6 层闭环才能可靠工作——①可知性(AI 知道机制存在) ②可达性(AI 能调用接口) ③可观察性(调用结果有反馈) ④可逃生性(紧急情况能 bypass) ⑤可追溯性(bypass 留审计链) ⑥可预防性(pre-commit 阻断 + 自适应学习)
+      pass: 6 层全部打通——前 5 层（AGENTS.md §RULE-CAPABILITY-LOOKUP）+ 第 6 层（本规则 TRAE-068，pre-commit gate 配对 post-only reconciler）
+      fail: 第 6 层缺失 = 治理只能"事后报告"(post-commit warn)无法"事前预防"(pre-commit 阻断) = 5 维滥用全部超阈（实测 warn_only 203/24h、emergency_commit 15/24h、allow_overlap 1890/7d、forged_gw_marker 4/24h、non-GW commit 142/24h）
+    - type: constraint
+      check: 第 6 层"可预防性"与第 5 层"可追溯性"的区别
+      pass: 可追溯性=事后追溯(bypass 留审计链)；可预防性=事前预防(pre-commit 阻断 + 自适应学习 + AI 行为模式库)，两者时间轴互补
+      fail: 混淆两层 = post-only reconciler 被误认为已满足可预防性 = 第 6 层形同虚设
+    actions:
+    - type: mandatory
+      step: '铁律1: 禁止 post-commit reconciler 作为唯一治理机制——所有 post-only reconciler MUST 评估是否可前移为 pre-commit gate。评估维度：(a) 检测逻辑是否可在 commit 前执行（如 commit message 解析）；(b) 误报率是否可控（pre-commit 阻断代价高于 post-commit warn）；(c) 性能预算是否可接受（pre-commit gate <2s）'
+    - type: mandatory
+      step: '铁律2: 所有 post-only reconciler MUST 在 architecture_issue_registry.yaml 登记"前移评估"字段（evaluated_pre_commit_gate: yes/no + reason）'
+    - type: mandatory
+      step: '铁律3: 高风险 post-only reconciler（forged_gw_marker / non-GW commit / emergency_commit）MUST 优先前移为 pre-commit gate——commit_gateway_abuse_monitor 的 forged_gw_marker 检测前移为 GATE-FORGED-GW-MARKER（Phase 2 落地）'
+    - type: mandatory
+      step: '铁律4: 第 6 层落地实例 MUST 在 ruling_gate_abuse_systemic_audit.md §9 6 层闭环模型图表中标注状态（✅ 已落地 / ⏳ 待立项 / ⏳ Phase N）'
+    - type: mandatory
+      step: '铁律5: AGENTS.md preamble + trae_065 规则 + architecture_issue_registry.yaml related_rules 字段 MUST 保持"6 层闭环模型"统一真源——禁止部分文档用"5 层"部分用"6 层"造成真源漂移'
+    - type: forbidden
+      step: '禁止: 新增 post-only reconciler 而不评估前移为 pre-commit gate——第 6 层缺失的直接表现'
+    - type: forbidden
+      step: '禁止: 把 post-commit warn 当作"已满足可预防性"——warn 无法挽回已入历史 commit'
+    - type: forbidden
+      step: '禁止: 自适应阈值自我放松（"杀信使"反模式）——阈值调整需独立裁定 + smoke test，记录到 architecture_issue_registry.yaml 可追溯'
+    - type: forbidden
+      step: '禁止: 引入新的 5 层断裂模型引用——AGENTS.md 已升级为 6 层闭环模型，新文档/规则 MUST 引用"6 层闭环模型"'
+    examples:
+    - scenario: 新增 post-only reconciler（如 abuse monitor 检测 forged_gw_marker）
+      正确: 评估前移为 pre-commit gate（GATE-FORGED-GW-MARKER），形成"pre-commit 阻断伪造 + post-commit 审计漏网"双轨
+      错误: 仅 post-commit reconciler，warn 无法挽回已入历史 commit（AI 看到 warn 当"通过"继续伪造）
+      reason: 100% AI 场景下，post-commit warn 无人类视觉通道响应，第 6 层缺失=治理形同虚设
+    - scenario: 6 层闭环模型引用
+      正确: 文档/规则引用"6 层闭环模型（AGENTS.md §RULE-CAPABILITY-LOOKUP + TRAE-068）"
+      错误: 引用"5 层断裂模型"或"5 层闭环模型"（真源漂移）
+      reason: AGENTS.md L128 已升级为 6 层，旧引用是历史文档残留，新文档 MUST 用 6 层
+    - scenario: heartbeat 机制（第 6 层首个落地实例）
+      正确: heartbeat_daemon 30s 刷新 + _is_session_alive heartbeat >90s = stale → pre-emptive 释放 held_files（事前预防阻塞）
+      错误: 仅靠 TTL=3600s 兜底（事后 1h 才释放，已阻塞其他 session）
+      reason: heartbeat 是 pre-emptive 预防机制，TTL 是 reactive 兜底机制——第 6 层要求 pre-emptive
+    common_mistakes:
+    - '❌ 新增 post-only reconciler 而不评估前移为 pre-commit gate——第 6 层缺失直接表现'
+    - '❌ 把 post-commit warn 当作"已满足可预防性"——warn 无法挽回已入历史 commit'
+    - '❌ 文档引用"5 层断裂模型"——AGENTS.md 已升级 6 层，旧引用是真源漂移'
+    - '❌ 混淆第 5 层可追溯性与第 6 层可预防性——前者事后追溯，后者事前预防'
+    - '❌ 阈值自我放松（如 emergency_commit 5→30 的"杀信使"反模式）——需独立裁定 + smoke test'
+    background:
+      source: 2026-07-20 裁定 #ARCH-PREVENTABILITY-LAYER-001（Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 / R6 正式落地）
+      rationale: |
+        100% AI 开发场景下，5 层闭环模型（可知性/可达性/可观察性/可逃生性/可追溯性）只能"事后报告"，
+        无法"事前预防"。post-commit reconciler warn 无法挽回已入历史 commit，AI 把 warn 当"通过"
+        （无人类视觉通道）。实测 5 维滥用全部超阈（warn_only 4×/emergency_commit 3×/allow_overlap 63×/
+        forged_gw_marker 1.33×/non-GW commit 14×），正是第 6 层缺失的实例化后果。
+
+        第 6 层"可预防性"是 5 层的时间轴补全（不是功能扩展）：
+        - 第 5 层"可追溯性" = 事后追溯（bypass 留审计链）
+        - 第 6 层"可预防性" = 事前预防（pre-commit 阻断 + 自适应学习 + AI 行为模式库）
+        两者在时间轴上互补，形成"事前预防 → 事中检测 → 事后追溯"完整闭环。
+
+        编号说明：原裁定 D-4 计划用 TRAE-067，但 TRAE-067 已被 trae_067_window_flash_discipline.yaml
+        占用（2026-07-20 后期），故改用 TRAE-068（裁定 #ARCH-PREVENTABILITY-LAYER-001 修正）。
+
+        首批落地实例（2026-07-20）：
+        - heartbeat_daemon（#ARCH-HEARTBEAT-001）：stale session 90s 自动释放（pre-emptive 阻塞预防）
+        - emergency_commit 成本递增（N>=3 需 reason，N>=5 阻断 start）：逃生通道滥用预防
+        - pre-commit forgery gate（Phase 2 待立项）：forged_gw_marker 前置阻断
+      related_arch: '#ARCH-PREVENTABILITY-LAYER-001'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-062
+  - TRAE-065
+  scripts:
+  - src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+  - src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py
+  - src/zephyr/security/access_control/session_concurrency.py
+  - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GATE_ENGINE
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  - docs/03_modules/_domain_governance/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §RULE-CAPABILITY-LOOKUP（6 层闭环模型定义源）
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+enforcement:
+  paired_gate_id: null  # Phase 2 将配对 GATE-FORGED-GW-MARKER（pre-commit forgery 检测）
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - static_scan_warn_only
+  - rule_discovery_mcp
+  bypass_allowed: false
+  bypass_markers: []
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-PREVENTABILITY-LAYER-001'
+provenance:
+  extracted_at: '2026-07-20'
+  extracted_by: sess-34792-20260720100112
+  source: '裁定 #ARCH-PREVENTABILITY-LAYER-001（R6 治本落地，Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 修正：TRAE-067 编号冲突 → TRAE-068）'

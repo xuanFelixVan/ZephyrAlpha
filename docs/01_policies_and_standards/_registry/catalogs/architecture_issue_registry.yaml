@@ -2907,6 +2907,46 @@ entries:
   status: resolved
   created: '2026-07-17'
   last_updated: '2026-07-17'
+- issue_id: '#ARCH-HEALTH-DASHBOARD-001'
+  title: 架构健康度仪表盘指标数描述漂移治本
+  severity: P2中
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    architecture_health_dashboard.py 的 METRICS 列表从 11 项扩展到 30 项（P1+P2 阶段），
+    但表头 [INVARIANTS]/[TESTS]、docstring、__manifest__ description、argparse description
+    5 处仍写"11/18/19 项"；派生文件 reconciliation_registry.py 注释/docstring、
+    script_manifest.yaml description、capability_canonical_file_registry.yaml description
+    4 处也漂移（"11/15 项"）。共 9 处描述与 METRICS 实际长度（30）不一致。
+    根因：100% AI 开发场景下，描述性文本（docstring/注释/manifest）无机械同步约束，
+    AI 改 METRICS 列表是机械操作，但同步 9 处描述需 AI"意识到"所有位置存在——
+    与 AI 上下文有限、跨文件追踪能力弱的本质矛盾。人类项目靠 review 抓漂移，
+    100% AI 项目无 review 兜底，漂移必然累积。
+
+    裁定（D-P2-FOLLOWUP-001，2026-07-20）：
+    分两阶段治本——
+    阶段1（P0 立即治标）：手工同步 9 处漂移为"30 项" + AGENTS.md §7 新增
+    architecture_health_dashboard 专门小节（M01-M31 共 30 项，post-commit 自动检测，
+    warn-only），让新 AI 第一读 AGENTS.md 即知项目有 30 项自动化检测基线。
+    阶段2（P1 治本，下周立项）：指标数描述单真源化——METRICS 列表长度为唯一真源，
+    表头/docstring/manifest/argparse 改用 f-string 派生 len(METRICS)；新增
+    make_metric_count_drift_reconciler post-commit reconciler（priority=310），
+    Grep 派生文件中指标数描述对比 len(METRICS)，不一致写 reconcile_execution_log。
+    裁定 R1（不做）：不为描述性文本单独建 YAML 真源（过度工程）。
+    裁定 R2（不做）：不新建 commit gate 强制阻断（NLP 解析误报率高，reconciler 足够）。
+    裁定 R3（暂不做）：阶段3 长期战略推广到 gate_registry/capability_registry 等
+    "列表+描述"场景，需独立立项评估 ROI。
+  impact:
+  - scripts/governance/architecture_health_dashboard.py（5 处描述同步 11/18/19→30）
+  - src/zephyr/governance/audit/reconciliation_registry.py（2 处描述同步 11→30）
+  - scripts/governance/script_manifest.yaml（1 处描述同步 15→30）
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（1 处描述同步 11→30）
+  - AGENTS.md（§7 新增架构健康度仪表盘小节，#ARCH-HEALTH-DASHBOARD-001 立项）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  fix_phase: 阶段1已完成，阶段2待立项
+  status: open
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
 
 # --- #ARCH-TTL-DOC-001: tmp_ 前缀文件 gitignore 规则治本 ---
 - issue_id: '#ARCH-TTL-DOC-001'
@@ -3941,7 +3981,7 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: open
   related_adjudication: '#ARCH-P3-FOLLOWUP-TODOS-001 (裁定 C Layer 2), #ARCH-GUC-TRIGGER-FIX-001 (Task 4 Phase 1 深化), #ARCH-TOOL-HEALTH-V1 (abuse monitor 立项)'
-  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (5 层闭环模型 + 第 6 层可预防性)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，TRAE-068 #ARCH-PREVENTABILITY-LAYER-001)'
   created: '2026-07-19'
   last_updated: '2026-07-20'
 # --- #ARCH-ASYNC-MERGE-RECONCILE-001: session_worktree 异步化治本（2026-07-20） ---
@@ -3999,7 +4039,7 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: open
   related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (P1 emergency_commit 治本路线图), #ARCH-P3-FOLLOWUP-TODOS-001 (P3 收尾复核), Ruling:100PCT-AI-GOVERNANCE (R2 阈值调整)'
-  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行), trae_053 (双轨判定)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，TRAE-068 #ARCH-PREVENTABILITY-LAYER-001), trae_054 (备份先行), trae_053 (双轨判定)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
 # --- #ARCH-HEARTBEAT-001: session_worktree heartbeat daemon 治本（2026-07-20） ---
@@ -4051,7 +4091,62 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
   status: in_progress
   related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (P1 fix_phase 落地), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (allow_overlap 滥用治本), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D-1 / R4 交付物)'
-  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，TRAE-068 #ARCH-PREVENTABILITY-LAYER-001), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+# --- #ARCH-PREVENTABILITY-LAYER-001: 第 6 层可预防性正式化（2026-07-20，R6 落地）---
+# 关联 Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 / R6；原计划用 TRAE-067（编号冲突），改用 TRAE-068
+- issue_id: '#ARCH-PREVENTABILITY-LAYER-001'
+  title: 第 6 层可预防性正式化——6 层闭环模型落地（AGENTS.md + trae_068 + registry 同步）
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定（Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 / R6 正式落地）。
+    100% AI 开发场景下，5 层闭环模型只能"事后报告"(post-commit warn)，无法"事前预防"
+    (pre-commit 阻断)。实测 5 维滥用全部超阈（warn_only 4×/emergency_commit 3×/
+    allow_overlap 63×/forged_gw_marker 1.33×/non-GW commit 14×），正是第 6 层缺失的
+    实例化后果。本议题登记第 6 层"可预防性"正式化治本方案：
+
+    1. AGENTS.md L128 "5 层断裂模型" → "6 层闭环模型"（补充 ⑥ 可预防性定义）
+    2. 新建 trae_068_preventability_layer.yaml（结构化规则，prohibitions + requirements）
+    3. rule_ai_perception_index.yaml total_rules 67 → 68 + 追加 TRAE-068 条目
+    4. capability_canonical_file_registry.yaml 登记 preventability_layer_rule capability
+    5. trae_065 L52-54 "5 层断裂模型" → "6 层闭环模型"同步
+    6. architecture_issue_registry.yaml related_rules 字段真源对齐（3 处）
+
+    编号修正说明：原裁定 D-4 计划用 TRAE-067，但 TRAE-067 已被 trae_067_window_flash_discipline.yaml
+    占用（2026-07-20 后期），故改用 TRAE-068（下一个可用编号）。
+  fix_phase: |
+    Phase 1（已完成 2026-07-20）：
+      - AGENTS.md L128 升级 6 层闭环模型
+      - trae_068_preventability_layer.yaml 新建（166 行）
+      - rule_ai_perception_index.yaml total_rules=68
+      - capability_canonical_file_registry.yaml 登记 creation_token
+      - trae_065 L52-54 同步 6 层
+      - architecture_issue_registry.yaml related_rules 真源对齐（3 处）
+      - ruling_100pct_ai_governance_hardening.md §4 R6 标注已落地
+
+    Phase 2（本月，待立项）：
+      - 评估 10+ post-only reconciler 前移为 pre-commit gate
+      - 新增 GATE-FORGED-GW-MARKER pre-commit gate（forged_gw_marker 前置阻断）
+      - gate_registry.yaml 登记 GATE-FORGED-GW-MARKER
+      - trae_068 enforcement.paired_gate_id = "GATE-FORGED-GW-MARKER"
+
+    Phase 3（长期）：
+      - AI 行为模式库 + 自适应阈值
+      - non-GW commit server-side pre-receive hook
+      - GPG 签名机制评估
+  impact:
+    - AGENTS.md（L128 6 层闭环模型定义源）
+    - docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml（P1-2 新建规则）
+    - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（total_rules=68）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（preventability_layer_rule capability）
+    - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml（L52-54 6 层同步）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记 + related_rules 真源对齐）
+    - docs/02_enterprise_architecture/ruling_100pct_ai_governance_hardening.md（§4 R6 标注）
+  status: in_progress
+  related_adjudication: 'Ruling:100PCT-AI-GOVERNANCE (裁定 D-4 / R6 正式落地), #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD (G4/G5 延伸), #ARCH-HEARTBEAT-001 (第 6 层首批落地实例), #ARCH-ASYNC-MERGE-RECONCILE-001 (第 6 层第二个落地实例), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (5 维滥用=第 6 层缺失实例化)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型定义源), trae_068 (第 6 层可预防性铁律), trae_065 (能力反查强制), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
 # --- #ARCH-063: 5.178 测试-源码一致性门禁 DEFERRED 3 种检测裁定 wontfix ---
@@ -4110,5 +4205,77 @@ entries:
   status: resolved
   related_adjudication: 'R102 PERMANENT 裁定（5.178 维度主体）'
   related_rules: 'trae_047 工程文件头部（gate 头部规范）'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+
+# --- #ARCH-RUNCOMMAND-WINDOW-FLASH-001: RunCommand 窗口闪现治本（2026-07-20）---
+# 关联 #ARCH-HEARTBEAT-001（同源并发场景诊断延续）；规则 trae_067（RULE-EIGHTEEN 外部化）
+- issue_id: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001'
+  title: RunCommand 窗口闪现治本——TRAE toolhost 外部限制 + AI 纪律补位 + 项目层批量化替换
+  category: architecture_governance
+  severity: P2
+  adjudication: >-
+    2026-07-20 立项裁定。100% AI 开发场景下用户报告"后台隔一会儿就会弹出非常多的 Python
+    窗口，闪烁式自动弹出/关闭"。60s 实时进程监控捕获 13 个新 python.exe 进程（平均每 4-5
+    秒一个），根因锁定为 TRAE IDE RunCommand 工具宿主用 powershell.exe 包装未加
+    CREATE_NO_WINDOW（外部限制，项目层无法修复）。恶化因素：6+ 并发 AI session + AI 滥用
+    python -c 探查 + 2 个 TRAE 实例 + 卡死进程。本议题登记三层治本方案：Phase 1 规则外部化
+    + 僵尸清理；Phase 1.5 项目层 subprocess 批量替换（run_subprocess_hidden SSoT helper）；
+    Phase 2/3 外部工具治本（待立项）。
+  fix_phase: |
+    Phase 1（已完成 2026-07-20）：
+      - trae_067_window_flash_discipline.yaml 新增（RULE-EIGHTEEN 外部化，5 铁律 + 3 不变量）
+      - rule_ai_perception_index.yaml total_rules 66 -> 67
+      - 僵尸进程清理（killed PID 46896/48316/43852/52188）
+      - ruling_runcommand_window_flash.md 裁定文档产出
+
+    Phase 1.5（已完成 2026-07-20）：
+      - src/zephyr/shared/infra/process_pool.py 新增 run_subprocess_hidden / spawn_python_hidden SSoT helper
+      - 22 个文件批量替换裸 subprocess.run -> run_subprocess_hidden（36+ 处调用受益）：
+        governance/audit: reconciliation_registry, reconcile_runner
+        gov_enforcement/rule_bridge: session_worktree, commit_gate_registry, emergency_commit,
+          git_commit_gateway, worktree_manager, worktree_pool
+        trading: ide_health_daemon(6处), action_dispatcher, gpu_monitor
+        orchestrator/execution: trigger_router, script_runner
+        gov_code_quality: diff_detector
+        security: process_sandbox, l2a_process_sandbox, steady_state(4处)
+        shared: session_continuity, ssot_guard(2处)
+        gov_audit: supply_chain, external_tool_audit
+      - 验证：reconciler 批量跑 generator 脚本闪窗 100% 消除（30s 监控 4->0）
+
+    Phase 2/3（待立项）：
+      - 向 TRAE IDE 提交 feature request（RunCommand 工具宿主支持 CREATE_NO_WINDOW）
+      - 评估 pythonw.exe + 显式 pipe 重定向方案
+      - kimi-desktop gildata_tool.py 业务数据下载闪窗治本（外部工具）
+  impact:
+    - docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml（Phase 1 新增规则）
+    - docs/02_enterprise_architecture/ruling_runcommand_window_flash.md（裁定文档）
+    - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（TRAE-067 登记条目）
+    - src/zephyr/shared/infra/process_pool.py（Phase 1.5 SSoT helper 新增）
+    - src/zephyr/governance/audit/reconciliation_registry.py（Phase 1.5 批量替换，36 处受益）
+    - src/zephyr/governance/audit/reconcile_runner.py（Phase 1.5 worker spawn）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 1.5 daemon spawn）
+    - src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py（Phase 1.5 commit gate spawn）
+    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（Phase 1.5 git 命令）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 1.5 git 命令）
+    - src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py（Phase 1.5 git 命令）
+    - src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py（Phase 1.5 git 命令）
+    - src/zephyr/trading/ide_health_daemon.py（Phase 1.5 6 处替换）
+    - src/zephyr/orchestrator/execution/trigger_router.py（Phase 1.5 cleanup_due handler）
+    - src/zephyr/orchestrator/execution/script_runner.py（Phase 1.5 _run_one）
+    - src/zephyr/trading/action_dispatcher.py（Phase 1.5 _git_commit_hash）
+    - src/zephyr/trading/gpu_monitor.py（Phase 1.5 _parse_nvidia_smi）
+    - src/zephyr/gov_code_quality/code_dedup/diff_detector.py（Phase 1.5 _git_diff_files）
+    - src/zephyr/security/llm_defense/llm_security/process_sandbox.py（Phase 1.5 run 方法）
+    - src/zephyr/security/llm_defense/llm_security/layers/l2a_process_sandbox.py（Phase 1.5 execute 方法）
+    - src/zephyr/shared/session/session_continuity.py（Phase 1.5 _run_auto_sync）
+    - src/zephyr/security/adversarial_validation/steady_state.py（Phase 1.5 4 处替换）
+    - src/zephyr/shared/security/ssot_guard.py（Phase 1.5 2 处 git 命令）
+    - src/zephyr/gov_audit/supply_chain.py（Phase 1.5 _compute_package_hash）
+    - src/zephyr/gov_audit/external_tool_audit.py（Phase 1.5 audit_tool）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: in_progress
+  related_adjudication: '#ARCH-HEARTBEAT-001 (同源并发场景), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (gate 滥用审计 L1 根因治本)'
+  related_rules: 'trae_067 (RULE-EIGHTEEN 外部化), trae_066 (RULE-SEVENTEEN RunCommand 纯洁性), trae_064 (GIT-CALL-BUDGET)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
