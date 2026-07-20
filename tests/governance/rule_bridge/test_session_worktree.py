@@ -750,6 +750,169 @@ def test_sweep_skips_recent_dirs():
 
 
 # ---------------------------------------------------------------------------
+# P3.5 测试：age-based force-clean + quarantine ref（ARCH-GIT-CALL-BUDGET P3.5，2026-07-20）
+# 验证 _quarantine_branch_ref / _sweep_quarantine_refs / force_clean 逻辑
+# ---------------------------------------------------------------------------
+def test_quarantine_branch_ref_creates_ref():
+    """_quarantine_branch_ref: 调用 git update-ref 保存分支 tip，返回 ref 名称。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _quarantine_branch_ref
+
+    mgr = _MockManager([_git_result(returncode=0)])
+    result = _quarantine_branch_ref(mgr, "session/sess-test", "sess-test")
+    assert result == "refs/quarantine/sess-test"
+    # 验证调用了 git update-ref refs/quarantine/sess-test session/sess-test
+    assert mgr.calls[-1] == ["git", "update-ref", "refs/quarantine/sess-test", "session/sess-test"]
+
+
+def test_quarantine_branch_ref_returns_none_on_failure():
+    """_quarantine_branch_ref: update-ref 失败时返回 None。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _quarantine_branch_ref
+
+    mgr = _MockManager([_git_result(returncode=1, stderr="ref already exists")])
+    result = _quarantine_branch_ref(mgr, "session/sess-test", "sess-test")
+    assert result is None
+
+
+def test_sweep_quarantine_refs_cleans_expired():
+    """_sweep_quarantine_refs: 删除过期的 quarantine ref（age > 72h）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_quarantine_refs
+
+    # for-each-ref 返回 2 个 ref：一个过期（100h 前），一个未过期（1h 前）
+    import time as _time
+    old_ts = str(int(_time.time() - 100 * 3600))
+    new_ts = str(int(_time.time() - 1 * 3600))
+    for_each_output = f"refs/quarantine/sess-old {old_ts}\nrefs/quarantine/sess-new {new_ts}\n"
+    # 第一次 _run_git = for-each-ref，第二次 = update-ref -d（删旧的）
+    mgr = _MockManager([
+        _git_result(stdout=for_each_output, returncode=0),
+        _git_result(returncode=0),  # delete sess-old
+    ])
+    r = _sweep_quarantine_refs(mgr, max_age_hours=72)
+    assert r["deleted"] == 1
+    assert r["skipped"] == 1
+
+
+def test_sweep_quarantine_refs_empty():
+    """_sweep_quarantine_refs: 无 quarantine ref 时返回空结果。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_quarantine_refs
+
+    mgr = _MockManager([_git_result(stdout="", returncode=0)])
+    r = _sweep_quarantine_refs(mgr, max_age_hours=72)
+    assert r["deleted"] == 0
+    assert r["skipped"] == 0
+
+
+def test_sweep_one_dir_force_clean_skips_when_disabled():
+    """_sweep_one_dir: force_clean_threshold=0（默认）时，未合并提交仍跳过（向后兼容）。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_one_dir
+
+    # 构造一个有未合并+未被取代提交的 worktree 场景
+    # 需要 mock: _branch_name, _run_git (rev-parse, merge-base, cherry, log)
+    # 使用 _MockManager 不够（缺 _branch_name / _worktree_exists）
+    # 验证 force_clean_threshold=0 时行为不变——跳过
+    mgr = _MockManager([
+        _git_result(returncode=0),  # rev-parse --verify branch (exists)
+        _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor = has unmerged)
+        _git_result(stdout="+ abc1234\n", returncode=0),  # git cherry (1 not superseded)
+        _git_result(stdout="subject1", returncode=0),  # git log -1 format=%s
+        _git_result(stdout="", returncode=0),  # git log HEAD --format=%s (head_subjects empty → not superseded)
+    ])
+    mgr._branch_name = lambda sid: f"session/{sid}"
+    mgr._worktree_exists = lambda sid: False
+    mgr.repo_root = Path(REPO_ROOT)
+
+    # 创建老化的 worktree 目录
+    old_dir = Path(REPO_ROOT) / ".aidrafts" / "sess-force-clean-test"
+    old_dir.mkdir(parents=True, exist_ok=True)
+    old = time.time() - 100000  # ~28h ago
+    os.utime(old_dir, (old, old))
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(REPO_ROOT)
+        swept, skipped, warnings = _sweep_one_dir(
+            mgr, registry, old_dir, time.time(), 1800, set(),
+            force_clean_threshold=0,  # 禁用 force-clean
+        )
+        assert swept == 0, f"force_clean=0 时不应清理: {warnings}"
+        assert skipped == 1
+        assert any("未合并" in w for w in warnings)
+    finally:
+        if old_dir.exists():
+            _force_rmtree(old_dir)
+
+
+def test_sweep_one_dir_force_clean_triggers_when_over_age():
+    """_sweep_one_dir: force_clean_threshold > 0 且超龄时，保存 quarantine ref 后清理。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import _sweep_one_dir
+
+    # Mock 序列：
+    # 1. rev-parse --verify branch → exists
+    # 2. merge-base --is-ancestor → NOT ancestor
+    # 3. git cherry → 1 not superseded ("+ abc")
+    # 4. git log -1 format=%s (for _count_message_superseded) → subject
+    # 5. git log HEAD --format=%s (head_subjects) → empty (not superseded)
+    # 6. git update-ref refs/quarantine/<sid> <branch> → success (P3.5 quarantine)
+    # 7. git worktree prune (worktree not registered)
+    # 8. git worktree prune (again)
+    # 9. git branch -D <branch> → success
+    mgr = _MockManager([
+        _git_result(returncode=0),  # rev-parse --verify
+        _git_result(returncode=1),  # merge-base --is-ancestor (NOT ancestor)
+        _git_result(stdout="+ abc1234\n", returncode=0),  # cherry
+        _git_result(stdout="subject1", returncode=0),  # log -1 %s
+        _git_result(stdout="", returncode=0),  # log HEAD %s (empty → not superseded)
+        _git_result(returncode=0),  # update-ref (quarantine ref)
+        _git_result(returncode=0),  # worktree prune
+        _git_result(returncode=0),  # worktree prune (again)
+        _git_result(returncode=0),  # branch -D
+    ])
+    mgr._branch_name = lambda sid: f"session/{sid}"
+    mgr._worktree_exists = lambda sid: False
+    mgr.repo_root = Path(REPO_ROOT)
+
+    old_dir = Path(REPO_ROOT) / ".aidrafts" / "sess-force-clean-trigger"
+    old_dir.mkdir(parents=True, exist_ok=True)
+    old = time.time() - 100000  # ~28h ago, > 24h force_clean_threshold
+    os.utime(old_dir, (old, old))
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(REPO_ROOT)
+        # force_clean_threshold = 86400 (24h), age = 100000s (~28h) → triggers
+        swept, skipped, warnings = _sweep_one_dir(
+            mgr, registry, old_dir, time.time(), 1800, set(),
+            force_clean_threshold=86400,
+        )
+        assert swept == 1, f"force-clean 应清理超龄 worktree: {warnings}"
+        assert skipped == 0
+        # 验证 warning 包含 force-clean 信息
+        assert any("force-clean" in w for w in warnings)
+        # 验证调用了 update-ref（quarantine ref 保存）
+        update_ref_calls = [c for c in mgr.calls if "update-ref" in c and "refs/quarantine/" in " ".join(c)]
+        assert len(update_ref_calls) >= 1, f"应调用 update-ref 保存 quarantine ref: {mgr.calls}"
+    finally:
+        if old_dir.exists():
+            _force_rmtree(old_dir)
+        # 清理可能创建的 quarantine ref
+        subprocess.run(
+            ["git", "update-ref", "-d", "refs/quarantine/sess-force-clean-trigger"],
+            cwd=str(REPO_ROOT), capture_output=True,
+        )
+
+
+def test_session_worktree_sweep_accepts_force_clean_hours():
+    """session_worktree_sweep: 公开接口接受 force_clean_hours 参数且向后兼容。"""
+    from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_sweep
+    import inspect
+
+    sig = inspect.signature(session_worktree_sweep)
+    assert "force_clean_hours" in sig.parameters, "session_worktree_sweep 应有 force_clean_hours 参数"
+    assert sig.parameters["force_clean_hours"].default == 0, "默认值应为 0（禁用）"
+    # 调用不应抛异常（默认值=0，向后兼容）
+    r = session_worktree_sweep(max_age_minutes=30)
+    assert "swept" in r or "ok" in r
+
+
+# ---------------------------------------------------------------------------
 # 阶段2治本测试：sweep 取代判定（未合并提交陷阱，2026-07-18）
 # 验证 _branch_commits_superseded 的两维度检测（patch-id + message）：
 #   全 patch-id 等价 / 混合 / 全未取代 / git cherry 失败 / 空分支
