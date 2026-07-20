@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 SUPERADMIN_ACCOUNT = "superadmin"
 SUPERADMIN_ROLES = ["superadmin", "admin"]
 SUPERADMIN_CAPABILITIES = ["read", "write", "execute", "admin", "manage"]
+SUPERADMIN_AGENT_ID = "bytebuddy"
 
 
 class BootstrapSuperadmin:
@@ -69,21 +70,48 @@ class BootstrapSuperadmin:
         """superadmin账户ID."""
         return self.__class__._account
 
+    @property
+    def account_id(self) -> str:
+        """superadmin agent_id（RBAC 主体标识）."""
+        return SUPERADMIN_AGENT_ID
+
+    @property
+    def roles(self) -> list[str]:
+        """superadmin 角色列表."""
+        return list(SUPERADMIN_ROLES)
+
+    @property
+    def capabilities(self) -> list[str]:
+        """superadmin 权限列表."""
+        return list(SUPERADMIN_CAPABILITIES)
+
     def check(self, operation: str, target: str) -> dict[str, Any]:
         """检查superadmin权限.
 
         Args:
-            operation: 操作类型
-            target: 目标路径
+            operation: 权限名（read/write/execute/admin/manage）
+            target: 目标资源路径
 
         Returns:
-            dict包含 granted: bool
+            dict包含 granted: bool, role, agent_id, permission, resource, reason（拒绝时）
         """
+        if operation in SUPERADMIN_CAPABILITIES:
+            return {
+                "granted": True,
+                "role": "superadmin",
+                "agent_id": SUPERADMIN_AGENT_ID,
+                "account": SUPERADMIN_ACCOUNT,
+                "permission": operation,
+                "resource": target,
+            }
         return {
-            "granted": True,
+            "granted": False,
+            "role": "superadmin",
+            "agent_id": SUPERADMIN_AGENT_ID,
             "account": SUPERADMIN_ACCOUNT,
-            "operation": operation,
-            "target": target,
+            "permission": operation,
+            "resource": target,
+            "reason": "capability_not_granted",
         }
 
     def bootstrap(self) -> dict[str, Any]:
