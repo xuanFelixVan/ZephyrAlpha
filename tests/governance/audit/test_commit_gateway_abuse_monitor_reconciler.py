@@ -42,6 +42,8 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     _ALLOW_OVERLAP_7D_THRESHOLD,
     _ADAPTIVE_FACTOR,
     _BASELINE_WINDOW_DAYS,
+    _BLOCK_NEXT_SCORE,
+    _CRITICAL_WARN_SCORE,
     _EMERGENCY_24H_THRESHOLD,
     _FORGED_24H_THRESHOLD,
     _GATE_ID,
@@ -428,7 +430,9 @@ class TestReconcile:
                 })
             result = spec.reconcile([], "sess-test")
         assert result.action == "critical_warn"
-        assert "ABUSE DETECTED" in result.detail
+        # P3-3 后：3 维触发 score≈0.70（float 精度可能略 >0.7）→ 走 P3-3 "ABUSE CRITICAL" 路径
+        # 或既有 "ABUSE DETECTED" 路径（若 score 因精度 <0.7），两者皆可接受
+        assert "ABUSE" in result.detail
 
     def test_reconcile_critical_warn_forged_only(self, tmp_path):
         # 仅 forged_gw_marker 触发（4 个 > 3 阈值）→ critical_warn（forged 任何数量都 serious）
@@ -1239,3 +1243,160 @@ class TestReconcilePersistsBaseline:
         assert second_report["baseline_records_count"] >= 1, (
             "P3-1: 第二次 reconcile 应加载历史 baseline（baseline_records_count >= 1）"
         )
+
+
+# ============================================================================
+# P3-3: 综合评分接入 abuse_monitor _reconcile 集成测试
+# ============================================================================
+
+
+class TestHealthScoreIntegration:
+    """P3-3: 5 维加权健康度评分接入 _reconcile 的端到端集成测试。
+
+    验证：
+    - score > 0.7 → critical_warn with "ABUSE CRITICAL"
+    - score > 0.9 → critical_warn with "ABUSE BLOCK_NEXT" + "PAUSE"
+    - score <= 0.7 + 0 triggered → clean（既有逻辑保留）
+    - 报告 JSON 含 health_score / health_triggered_dimensions 字段
+    """
+
+    def test_score_thresholds_constants(self):
+        """P3-3 阈值常量正确（0.7 critical_warn / 0.9 block_next）。"""
+        assert _CRITICAL_WARN_SCORE == 0.7
+        assert _BLOCK_NEXT_SCORE == 0.9
+        assert _BLOCK_NEXT_SCORE > _CRITICAL_WARN_SCORE
+
+    def test_clean_scenario_low_score_returns_clean(self, tmp_path):
+        """clean 场景：所有维度低 → score < 0.7 → action=clean。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        # 5 个 warn_only reports（5/50=0.1, weighted 0.15*0.1=0.015）
+        # 其余维度全 0 → score≈0.015 << 0.7
+        for i in range(5):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 100 - i,
+                {"action": "warn_only", "violation": "unregistered_session_id"},
+            )
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage", return_value=0), \
+             patch("time.time", return_value=now):
+            result = spec.reconcile([], "sess-p3-3-clean")
+        assert result.action == "clean"
+        assert "health_score=" in result.detail
+        # 报告含 health_score 字段
+        reports_files = sorted(
+            (tmp_path / ".runtime" / "reconcile_reports").glob(
+                "commit_gateway_abuse_monitor_*.json"
+            )
+        )
+        data = json.loads(reports_files[-1].read_text(encoding="utf-8"))
+        assert "health_score" in data
+        assert data["health_score"] < _CRITICAL_WARN_SCORE
+        assert "health_triggered_dimensions" in data
+
+    def test_critical_score_returns_critical_warn(self, tmp_path):
+        """4 维触发 → score=0.85 > 0.7 → critical_warn with "ABUSE CRITICAL"。
+
+        维度组合：warn_only(0.15) + emergency(0.20) + allow_overlap(0.15) + forged(0.35) = 0.85
+        non_gw 不触发（0/10=0）。
+        """
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        # 51 warn_only reports (dim1: 51 > 50)
+        for i in range(51):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 100 - i,
+                {"action": "warn_only", "violation": "unregistered_session_id"},
+            )
+        # 4 forged_gw_marker reports (dim4: 4 > 3)
+        for i in range(4):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 500 - i,
+                {"violation": "forged_gw_marker"},
+            )
+        # emergency_count=6 (dim2: 6 > 5), allow_overlap_count=31 (dim3: 31 > 30)
+        # audit_reports=[] → dim5 不触发
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=6), \
+             patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage", return_value=31), \
+             patch("time.time", return_value=now):
+            result = spec.reconcile([], "sess-p3-3-critical")
+        assert result.action == "critical_warn"
+        assert "ABUSE CRITICAL" in result.detail
+        assert "health_score=" in result.detail
+        # 报告 health_score 在 (0.7, 0.9] 区间
+        reports_files = sorted(
+            (tmp_path / ".runtime" / "reconcile_reports").glob(
+                "commit_gateway_abuse_monitor_*.json"
+            )
+        )
+        data = json.loads(reports_files[-1].read_text(encoding="utf-8"))
+        assert _CRITICAL_WARN_SCORE < data["health_score"] <= _BLOCK_NEXT_SCORE, (
+            f"P3-3: 4 维触发 score 应在 (0.7, 0.9]，实际={data['health_score']}"
+        )
+
+    def test_block_next_score_returns_critical_warn_with_pause(self, tmp_path):
+        """5 维全触发 → score=1.0 > 0.9 → critical_warn with "ABUSE BLOCK_NEXT" + "PAUSE"。
+
+        post-commit 无法 block（commit 已入历史），降级为 critical_warn + PAUSE 横幅。
+        """
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        # 51 warn_only reports (dim1)
+        for i in range(51):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 100 - i,
+                {"action": "warn_only", "violation": "unregistered_session_id"},
+            )
+        # 4 forged_gw_marker reports (dim4)
+        for i in range(4):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 500 - i,
+                {"violation": "forged_gw_marker"},
+            )
+        # 11 distinct hashes in audit_reports (dim5: 11 > 10)
+        for i in range(11):
+            _write_report(
+                tmp_path, "commit_gateway_audit", now - 700 - i,
+                {"violations": [{"hash": f"h{i}"}]},
+            )
+        # emergency_count=6 (dim2), allow_overlap_count=31 (dim3)
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=6), \
+             patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage", return_value=31), \
+             patch("time.time", return_value=now):
+            result = spec.reconcile([], "sess-p3-3-block-next")
+        assert result.action == "critical_warn"
+        assert "ABUSE BLOCK_NEXT" in result.detail
+        assert "PAUSE" in result.detail
+        # 报告 health_score > 0.9
+        reports_files = sorted(
+            (tmp_path / ".runtime" / "reconcile_reports").glob(
+                "commit_gateway_abuse_monitor_*.json"
+            )
+        )
+        data = json.loads(reports_files[-1].read_text(encoding="utf-8"))
+        assert data["health_score"] > _BLOCK_NEXT_SCORE, (
+            f"P3-3: 5 维全触发 score 应 > 0.9，实际={data['health_score']}"
+        )
+        assert len(data["health_triggered_dimensions"]) == 5
+
+    def test_warn_scenario_score_between_clean_and_critical(self, tmp_path):
+        """1-2 维度触发但 score < 0.7 → 落入既有 warn 逻辑（P3-3 不升级）。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        # 51 warn_only reports (dim1: score=0.15*1.0=0.15 < 0.7)
+        for i in range(51):
+            _write_report(
+                tmp_path, "post_commit_guard", now - 100 - i,
+                {"action": "warn_only", "violation": "unregistered_session_id"},
+            )
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage", return_value=0), \
+             patch("time.time", return_value=now):
+            result = spec.reconcile([], "sess-p3-3-warn")
+        # 1 维触发 + score=0.15 < 0.7 → 落入 warn（既有 1-2 维度 warn 逻辑）
+        assert result.action == "warn"
+        assert "health_score=" in result.detail

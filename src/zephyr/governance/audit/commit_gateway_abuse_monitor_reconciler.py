@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-GOV_commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
 # [MODULE] zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); stdlib (json, logging, subprocess, time, pathlib)
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); zephyr.governance.audit.health_score_calculator (calculate_health_score — P3-3 接入); stdlib (json, logging, subprocess, time, pathlib)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，滥用监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只读 post_commit_guard/commit_gateway_audit 报告，不修改它们；P3-1 有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化；P3-6 baseline 持久化失败不阻断 reconciler（fail-open）
-# [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量 / _ADAPTIVE_FACTOR / _BASELINE_WINDOW_DAYS
+# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，滥用监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只读 post_commit_guard/commit_gateway_audit 报告，不修改它们；P3-1 有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化；P3-6 baseline 持久化失败不阻断 reconciler（fail-open）；P3-3 综合评分 >0.7 critical_warn / >0.9 block_next（post-commit 无法 block，降级为 critical_warn + 横幅，提示 PAUSE subsequent commits）；P3-3 评分失败降级 health_score=0.0（fail-open，不阻断 reconciler）
+# [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量 / _ADAPTIVE_FACTOR / _BASELINE_WINDOW_DAYS / _BLOCK_NEXT_SCORE / _CRITICAL_WARN_SCORE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -86,6 +86,7 @@ from zephyr.gov_enforcement.rule_enforcement.adaptive_threshold import (
     AdaptiveThreshold,
     ThresholdMode,
 )
+from zephyr.governance.audit.health_score_calculator import calculate_health_score
 from zephyr.governance.audit.reconciliation_registry import (
     ReconcileResult,
     ReconcilerSpec,
@@ -198,6 +199,16 @@ _BASELINE_WINDOW_DAYS = 7  # 滚动保留 7d
 _BASELINE_VERSION = "1.0"
 # P3-1: AdaptiveThreshold factor（基线 × factor = 告警阈值，留 50% 余量给正常波动）
 _ADAPTIVE_FACTOR = 1.5
+
+# === P3-3: 综合评分阈值（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）===
+# 基于健康度评分（health_score_calculator.calculate_health_score）的综合判定阈值。
+# - score > _BLOCK_NEXT_SCORE (0.9): 系统性失控，应 block_next session。
+#   reconciler 是 post-commit 无法 block（commit 已入历史不可逆），降级为
+#   critical_warn + 横幅强制 AI 看到，并提示应暂停后续 commit 排查根因。
+# - score > _CRITICAL_WARN_SCORE (0.7): 多维度叠加恶化，critical_warn 强制 AI 看到。
+# - score <= _CRITICAL_WARN_SCORE: 落入既有 1-2 维度 warn / clean 逻辑。
+_BLOCK_NEXT_SCORE = 0.9
+_CRITICAL_WARN_SCORE = 0.7
 
 # metrics key 映射：_classify_abuse 返回的简化 key → _DEFAULT_THRESHOLDS 的标准 dim_name。
 # baseline 文件按标准 dim_name 存储（与 trae_069 YAML 的 thresholds 段对齐）。
@@ -710,6 +721,22 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             except Exception as e:  # noqa: BLE001 — baseline 持久化失败不阻断 reconciler
                 logger.warning("P3-6: record daily metrics failed: %s", e)
 
+            # 4.6 P3-3: 计算 5 维加权健康度评分
+            # 综合评分 >0.7 critical_warn, >0.9 block_next（post-commit 无法 block，
+            # 降级为 critical_warn + 横幅）。阈值用 metrics["effective_thresholds"]
+            # （P3-1: 有效阈值 = max(adaptive, static)），确保评分基于生效阈值。
+            effective_thresholds = metrics.get("effective_thresholds") or metrics.get(
+                "thresholds", {}
+            )
+            try:
+                health = calculate_health_score(metrics, effective_thresholds)
+                health_score = health.score
+                health_triggered = health.triggered_dimensions
+            except Exception as e:  # noqa: BLE001 — 评分失败不阻断 reconciler
+                logger.warning("P3-3: calculate_health_score failed: %s", e)
+                health_score = 0.0
+                health_triggered = []
+
             # 5. 落盘审计报告（无论是否触发滥用都记录，供趋势追踪）
             report = {
                 "gate_id": _GATE_ID,
@@ -722,6 +749,9 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                 # P3-1: 记录自适应阈值是否启用（供报告消费方判断阈值来源）
                 "adaptive_enabled": bool(adaptive_thresholds),
                 "baseline_records_count": len(historical_records),
+                # P3-3: 综合健康度评分（0.0=完全健康, 1.0=完全失控）
+                "health_score": round(health_score, 4),
+                "health_triggered_dimensions": health_triggered,
             }
             report_path, write_err = _write_reconcile_report(
                 project_root, "commit_gateway_abuse_monitor", report,
@@ -733,7 +763,37 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                     gate_id=_GATE_ID,
                 )
 
-            # 6. 判定 action
+            # 6. 判定 action（P3-3: 综合评分优先于维度计数判定）
+            # 6.1 P3-3: block_next 阈值（>0.9）— post-commit 降级为 critical_warn + 横幅
+            if health_score > _BLOCK_NEXT_SCORE:
+                return ReconcileResult(
+                    action="critical_warn",
+                    detail=(
+                        f"ABUSE BLOCK_NEXT (health_score={health_score:.3f} > {_BLOCK_NEXT_SCORE}): "
+                        f"systemic abuse across multiple dimensions "
+                        f"(triggered={triggered}, health_triggered={health_triggered}). "
+                        f"PAUSE subsequent commits and investigate root cause. "
+                        + "; ".join(details)
+                        + f" (report={report_path.name})"
+                    ),
+                    gate_id=_GATE_ID,
+                )
+
+            # 6.2 P3-3: critical_warn 阈值（>0.7）— 多维度叠加恶化
+            if health_score > _CRITICAL_WARN_SCORE:
+                return ReconcileResult(
+                    action="critical_warn",
+                    detail=(
+                        f"ABUSE CRITICAL (health_score={health_score:.3f} > {_CRITICAL_WARN_SCORE}): "
+                        f"multi-dimensional deterioration "
+                        f"(triggered={triggered}, health_triggered={health_triggered}). "
+                        + "; ".join(details)
+                        + f" (report={report_path.name})"
+                    ),
+                    gate_id=_GATE_ID,
+                )
+
+            # 6.3 既有逻辑：维度计数判定
             if not triggered:
                 return ReconcileResult(
                     action="clean",
@@ -743,6 +803,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                         f"allow_overlap={metrics['allow_overlap_7d']}/7d, "
                         f"forged={metrics['forged_gw_marker_24h']}/24h, "
                         f"non_gw={metrics['non_gw_commit_24h']}/24h, "
+                        f"health_score={health_score:.3f}, "
                         f"report={report_path.name}"
                     ),
                     gate_id=_GATE_ID,
@@ -754,7 +815,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                 return ReconcileResult(
                     action="critical_warn",
                     detail=(
-                        f"ABUSE DETECTED ({len(triggered)} dimensions): "
+                        f"ABUSE DETECTED ({len(triggered)} dimensions, health_score={health_score:.3f}): "
                         + "; ".join(details)
                         + f" (report={report_path.name})"
                     ),
@@ -765,7 +826,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             return ReconcileResult(
                 action="warn",
                 detail=(
-                    f"abuse monitor warn ({len(triggered)} dimensions): "
+                    f"abuse monitor warn ({len(triggered)} dimensions, health_score={health_score:.3f}): "
                     + "; ".join(details)
                     + f" (report={report_path.name})"
                 ),

@@ -6195,6 +6195,12 @@ creation_tokens:
     token: "auto-forged-gw-marker-gate-20260720"
     created_by: "sess-16156-20260720110413"
     capability: "forged_gw_marker_prevention"
+  # --- 5 维加权健康度评分计算器（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2）---
+  # 将 abuse_monitor 5 维 metrics 归一化为 0.0-1.0 综合评分，供 P3-3 critical_warn/block_next 判定
+  - file: "src/zephyr/governance/audit/health_score_calculator.py"
+    token: "auto-health-score-calculator-20260720"
+    created_by: "sess-15208-20260720172003"
+    capability: "commit_gateway_abuse_monitor"
 
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
