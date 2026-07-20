@@ -214,6 +214,7 @@ CREATE TABLE IF NOT EXISTS slow_queries (
     duration_ms     REAL    NOT NULL,
     sql_preview     TEXT    NOT NULL,
     params_preview  TEXT,
+    explain_plan    TEXT,
     recorded_at     TEXT    NOT NULL
 )
 """
