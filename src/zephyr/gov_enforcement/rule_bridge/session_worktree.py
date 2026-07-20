@@ -94,6 +94,9 @@ from zephyr.shared.io.paths import REPO_ROOT
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
 from zephyr.gov_enforcement.rule_bridge.emergency_commit import check_start_blocked as _check_emergency_start_blocked
+from zephyr.governance.audit.ai_error_pattern_library import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-4
+    get_default_library as _get_error_pattern_library,
+)
 
 import functools
 import logging
@@ -1408,6 +1411,10 @@ def session_worktree_start(
             print("=" * 80 + "\n", file=sys.stderr)
     except Exception as _ws_err:  # noqa: BLE001 — fail-open
         logger.warning("[start] workspace clean check failed: %s", _ws_err)
+
+    # P4-4: session 启动推送近期高频错误提醒（#ARCH-PREVENTABILITY-LAYER-001 Phase 4）
+    # fail-open——加载/打印失败不阻断 session 创建
+    _print_startup_error_patterns(root)
 
     # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
     #    双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
@@ -4397,6 +4404,40 @@ def _workspace_clean_check_start(
 ) -> tuple[bool, str]:
     """start 前工作区 clean 检查（fail-open，不阻断 start）。"""
     return _check_workspace_clean(root, session_id, context="start")
+
+
+def _print_startup_error_patterns(root: Path) -> None:
+    """P4-4: session 启动时推送近期高频错误提醒（fail-open，不阻断 start）。
+
+    从 .runtime/ai_error_patterns/aggregated_patterns.json 加载聚合的错误模式，
+    若非空则打印 Top 3 模式 + 修复建议到 stderr，帮助 AI 在 session 开始时
+    意识到近期高频错误（对标第 6 层"可预防性"——事前预防 > 事后修复）。
+
+    病根：原 session 启动无错误模式提醒，AI 重复踩坑（如 allow_overlap 1890/7d）
+    却不知情。P4-1b consumer 已聚合模式，P4-1 library 已提供查询接口，本函数
+    是消费方——将聚合数据呈现给 AI。
+
+    治本（#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-4，2026-07-20）
+    """
+    try:
+        lib = _get_error_pattern_library(root)
+        if lib.is_empty:
+            return
+        top = lib.top_patterns(n=3)
+        if not top:
+            return
+        print("\n" + "=" * 80, file=sys.stderr)
+        print("[ERROR-PATTERN-ALERT] 近期高频 AI 行为错误模式（Top 3）:", file=sys.stderr)
+        for i, pat in enumerate(top, 1):
+            action = lib.suggest_action(pat.pattern_id)
+            print(
+                f"  {i}. [{pat.pattern_id}] {pat.error_type}/{pat.persistence}/{pat.source}"
+                f" (count={pat.count}, sev={pat.dominant_severity})", file=sys.stderr,
+            )
+            print(f"     → {action}", file=sys.stderr)
+        print("=" * 80 + "\n", file=sys.stderr)
+    except Exception as e:  # noqa: BLE001 — fail-open
+        logger.debug("[P4-4] startup error pattern print failed: %s", e)
 
 
 def _log_workspace_drift_warn(

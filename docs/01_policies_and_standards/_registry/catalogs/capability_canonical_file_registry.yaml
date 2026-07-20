@@ -6271,6 +6271,22 @@ creation_tokens:
     created_by: "sess-7276-20260720222009"
     capability: "error_pattern_aggregation"
 
+  # --- P4-1 AI 错误模式库（只读查询接口）（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1）---
+  # 消费 P4-1b 聚合输出，提供模式查询/匹配/Top N/修复建议
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("error_pattern_library") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ai_error_pattern_library 副本
+  - file: "src/zephyr/governance/audit/ai_error_pattern_library.py"
+    token: "auto-ai-error-pattern-library-20260720"
+    created_by: "sess-23904-20260721003148"
+    capability: "error_pattern_library"
+  # --- P4-1 ai_error_pattern_library 单测（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1）---
+  # 验证 ErrorPattern.from_dict / AIErrorPatternLibrary 加载/查询/匹配/建议 / get_default_library
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ai_error_pattern_library test 副本
+  - file: "tests/governance/audit/test_ai_error_pattern_library.py"
+    token: "auto-ai-error-pattern-library-test-20260720"
+    created_by: "sess-23904-20260721003148"
+    capability: "error_pattern_library"
+
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
