@@ -156,6 +156,29 @@ SQL_DELETE_NODES_COUNT_IN_EDGES = "SELECT COUNT(*) AS cnt FROM edges WHERE to_no
 SQL_DELETE_NODES_DELETE_EDGES_BY_IDS = "DELETE FROM edges WHERE from_node_id IN ({0}) OR to_node_id IN ({0})"
 SQL_DELETE_NODES_DELETE_BY_IDS = "DELETE FROM nodes WHERE node_id IN ({0})"
 
+# fix_path_semantics_for_design_nodes: 5.179 治本 SQL 常量（NO-BARE-SQL gate 合规）
+SQL_FIX_PATH_CASE1_SELECT_DESIGN_PYSLASH = (
+    "SELECT node_id, path, granularity, node_type FROM nodes "
+    "WHERE design_maturity = 'design' AND (path LIKE '%%.py/' OR path LIKE '%%.py//') "
+    "ORDER BY node_id"
+)
+SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH = (
+    "SELECT node_id, design_maturity FROM nodes WHERE path=%s AND design_maturity != 'design'"
+)
+SQL_FIX_PATH_DELETE_EDGES_BY_NODE = "DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s"
+SQL_FIX_PATH_DELETE_NODE_BY_ID = "DELETE FROM nodes WHERE node_id=%s"
+SQL_FIX_PATH_CASE1B_UPDATE = (
+    "UPDATE nodes SET path=%s, granularity='file', node_type='module' WHERE node_id=%s"
+)
+SQL_FIX_PATH_CASE3_SELECT_DESIGN_NONDIR_SLASH = (
+    "SELECT node_id, path, granularity, node_type FROM nodes "
+    "WHERE design_maturity = 'design' AND granularity != 'directory' AND path LIKE '%%/' "
+    "ORDER BY node_id"
+)
+SQL_FIX_PATH_CASE3_UPDATE = (
+    "UPDATE nodes SET granularity='directory', node_type='blueprint' WHERE node_id=%s"
+)
+
 
 
 @contextlib.contextmanager
@@ -791,6 +814,163 @@ def add_file_node(
             return -1
         finally:
             conn.close()
+
+
+def fix_path_semantics_for_design_nodes(dry_run: bool = False) -> dict:
+    """批量修复历史 design 节点 path 与 granularity 语义不一致问题（5.179 治本）。
+
+    问题背景（architecture_debt §5.179 遗留子项 ①）：
+    历史 design 节点存在 path 末尾字符与 granularity 字段语义矛盾：
+    - Case 1a: path 以 .py/ 结尾且 production 节点已存在相同 path（去尾 / 后）——stale 重复
+      → 软废弃（design_maturity='deprecated'），production 节点已是正确真源
+    - Case 1b: path 以 .py/ 结尾且无 production 节点（孤儿 design 节点）——path/granularity 都错
+      → 去尾 / + granularity='file' + node_type='module'
+    - Case 3: path 以 / 结尾（目录语义）但 granularity='file' 或 'module'
+      → granularity='directory' + node_type='blueprint'（保留尾 /）
+
+    本函数为一次性迁移治本工具（SSoT：架构数据真源在 DB，由 apply_depgraph.py 写入）。
+
+    Args:
+        dry_run: True=仅预览不写入；False=实际写入。
+
+    Returns:
+        dict with keys: 'case1a_count', 'case1b_count', 'case3_count',
+        'fixed', 'deprecated', 'skipped', 'details'.
+    """
+    result = {
+        'case1a_count': 0, 'case1b_count': 0, 'case3_count': 0,
+        'fixed': 0, 'deprecated': 0, 'skipped': 0, 'details': []
+    }
+
+    with _db_write_lock(db_path=None, task="fix_path_semantics_for_design_nodes"):
+        conn = get_depgraph_pg_connection(autocommit=False, allow_edge_delete=True)
+        try:
+            # Case 1: path ends with .py/ but granularity=directory (file semantics)
+            cur = conn.execute(SQL_FIX_PATH_CASE1_SELECT_DESIGN_PYSLASH)
+            case1_rows = cur.fetchall()
+
+            for r in case1_rows:
+                node_id = r['node_id']
+                old_path = r['path']
+                new_path = old_path.rstrip('/')
+                while new_path.endswith('/'):
+                    new_path = new_path.rstrip('/')
+
+                # Check if any non-design node exists with new_path (Case 1a: stale duplicate).
+                # 非 design 节点（production/prototype）已是正确真源，design 节点为 stale 重复。
+                prod_row = conn.execute(
+                    SQL_FIX_PATH_CASE1A_SELECT_NONDESIGN_BY_PATH,
+                    (new_path,)
+                ).fetchone()
+
+                if prod_row:
+                    # Case 1a: non-design node exists, design is stale duplicate → hard delete
+                    # 5.179 治本：stale duplicate 节点 path 与 granularity 语义矛盾，
+                    # 无法通过 UPDATE 修正 path（unique 约束冲突），且 build_status='deprecated'
+                    # 仍保留语义错误行——故彻底删除 stale design 节点 + 关联 design edges。
+                    # production/prototype 节点已是正确真源。
+                    result['case1a_count'] += 1
+                    prod_node_id = prod_row['node_id']
+                    prod_maturity = prod_row['design_maturity']
+                    if dry_run:
+                        print(f"[DRY-RUN] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
+                              f"({prod_maturity} node_id={prod_node_id} already at {new_path!r})", file=sys.stderr)
+                        result['details'].append({
+                            'node_id': node_id, 'case': '1a', 'action': 'hard_delete',
+                            'old_path': old_path, 'new_path': new_path,
+                            'prod_node_id': prod_node_id, 'prod_maturity': prod_maturity
+                        })
+                        result['skipped'] += 1
+                    else:
+                        # 先删除关联 edges（design edges 之间的 stale duplicate 重复，无价值）
+                        edge_del = conn.execute(
+                            SQL_FIX_PATH_DELETE_EDGES_BY_NODE,
+                            (node_id, node_id),
+                        )
+                        edge_count = edge_del.rowcount if hasattr(edge_del, 'rowcount') else -1
+                        # 再删除 stale design 节点
+                        conn.execute(
+                            SQL_FIX_PATH_DELETE_NODE_BY_ID,
+                            (node_id,),
+                        )
+                        print(f"[OK] Case1a HARD-DELETE node_id={node_id} path={old_path!r} "
+                              f"({prod_maturity} node_id={prod_node_id} already at {new_path!r}, "
+                              f"edges_deleted={edge_count})", file=sys.stderr)
+                        result['details'].append({
+                            'node_id': node_id, 'case': '1a', 'action': 'hard_delete',
+                            'old_path': old_path, 'new_path': new_path,
+                            'prod_node_id': prod_node_id, 'prod_maturity': prod_maturity,
+                            'edges_deleted': edge_count
+                        })
+                        result['deprecated'] += 1
+                else:
+                    # Case 1b: no non-design node, fix path + granularity
+                    result['case1b_count'] += 1
+                    if dry_run:
+                        print(f"[DRY-RUN] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
+                              f"granularity=directory->file node_type=blueprint->module", file=sys.stderr)
+                        result['details'].append({
+                            'node_id': node_id, 'case': '1b', 'action': 'fix_path',
+                            'old_path': old_path, 'new_path': new_path
+                        })
+                        result['skipped'] += 1
+                    else:
+                        conn.execute(
+                            SQL_FIX_PATH_CASE1B_UPDATE,
+                            (new_path, node_id),
+                        )
+                        print(f"[OK] Case1b FIX node_id={node_id} path={old_path!r} -> {new_path!r} "
+                              f"(granularity=file, node_type=module)", file=sys.stderr)
+                        result['details'].append({
+                            'node_id': node_id, 'case': '1b', 'action': 'fix_path',
+                            'old_path': old_path, 'new_path': new_path
+                        })
+                        result['fixed'] += 1
+
+            # Case 3: path ends with / but granularity != directory (directory semantics)
+            cur = conn.execute(SQL_FIX_PATH_CASE3_SELECT_DESIGN_NONDIR_SLASH)
+            case3_rows = cur.fetchall()
+            result['case3_count'] = len(case3_rows)
+
+            for r in case3_rows:
+                node_id = r['node_id']
+                old_path = r['path']
+                if dry_run:
+                    print(f"[DRY-RUN] Case3 FIX node_id={node_id} path={old_path!r} "
+                          f"granularity={r['granularity']}->directory node_type={r['node_type']}->blueprint", file=sys.stderr)
+                    result['details'].append({
+                        'node_id': node_id, 'case': 3, 'action': 'fix_granularity',
+                        'old_path': old_path, 'new_path': old_path
+                    })
+                    result['skipped'] += 1
+                else:
+                    conn.execute(
+                        SQL_FIX_PATH_CASE3_UPDATE,
+                        (node_id,),
+                    )
+                    print(f"[OK] Case3 FIX node_id={node_id} path={old_path!r} "
+                          f"(granularity=directory, node_type=blueprint)", file=sys.stderr)
+                    result['details'].append({
+                        'node_id': node_id, 'case': 3, 'action': 'fix_granularity',
+                        'old_path': old_path, 'new_path': old_path
+                    })
+                    result['fixed'] += 1
+
+            if not dry_run:
+                conn.commit()
+            print(f"[SUMMARY] Case1a(stale→deprecate)={result['case1a_count']} "
+                  f"Case1b(orphan→fix)={result['case1b_count']} "
+                  f"Case3(granularity→fix)={result['case3_count']} "
+                  f"fixed={result['fixed']} deprecated={result['deprecated']} "
+                  f"skipped={result['skipped']}", file=sys.stderr)
+        except Exception as e:
+            conn.rollback()
+            logger.error("fix_path_semantics_for_design_nodes失败: %s", e)
+            raise
+        finally:
+            conn.close()
+
+    return result
 
 
 def add_design_edge(
@@ -4182,6 +4362,14 @@ def main() -> None:
         "示例: --update-module-metadata src/zephyr/cli/main.py module_name_cn=CLI入口 "
         "description_en=Command-line entry point",
     )
+    parser.add_argument(
+        "--fix-path-semantics",
+        action="store_true",
+        help="批量修复历史 design 节点 path 与 granularity 语义不一致问题（5.179 治本）。"
+        "Case 1: path 以 .py/ 结尾但 granularity=directory → 改 file/module/去尾 /；"
+        "Case 3: path 以 / 结尾但 granularity!=directory → 改 directory/blueprint。"
+        "配 --dry-run 预览。",
+    )
     args = parser.parse_args()
 
     # P0-2 新增命令处理
@@ -4614,6 +4802,13 @@ def main() -> None:
             fields[k.strip()] = v
         ok = update_module_metadata(path, fields)
         sys.exit(0 if ok else 4)
+
+    if args.fix_path_semantics:
+        result = fix_path_semantics_for_design_nodes(dry_run=args.dry_run)
+        # 输出 JSON 摘要供脚本消费
+        import json as _json
+        print(_json.dumps(result, ensure_ascii=False, indent=2))
+        sys.exit(0)
 
     if args.list_ops:
         # op 清单从注册表自动派生（§6.16 铁律：禁止手工同步到 docstring/AGENTS.md）

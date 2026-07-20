@@ -34,11 +34,11 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
 - **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M31 实时基线自动发现，不再依赖人工调研快照。
-- **剩余未完成任务 = 90 项**（§五完整清单）：
+- **剩余未完成任务 = 89 项**（§五完整清单）：
   - **wontfix（RATIFY 裁定关闭，防复发门禁在册）60 项**；
   - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）29 项**；
-  - **SKIP（SAFETY=H + human_gated，待人工/Owner 授权）1 项**。
-- 另有 6 项 LOW/附注级残留（非 PERMANENT 裁定项，机会性清理或后续专项跟踪），见 §五末尾附注。
+  - **SKIP（SAFETY=H + human_gated，待人工/Owner 授权）0 项**（原 5.46.3 已由 Owner 授权治本修复）。
+- 另有 6 项 LOW/附注级残留（非 PERMANENT 裁定项，机会性清理或后续专项跟踪），**全部已 FIXED 或经裁定 CLOSED**（见 §五末尾附注）。
 
 ### 1.1 关键数据校正（历史首轮 → 实测，保留以防重蹈低估）
 
@@ -140,11 +140,11 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.40 | 幂等性与重试语义 | 重试无 Idempotency-Key + DLQ 为 stub + webhook 为 pass | 根因 5 | Idempotency-Key 稳定幂等键 + DLQ 真重试 + 持久化 IdempotencyStore | FIXED |
 | 5.41 | 状态机正确性 | 无转换校验 + 无锁 + force_state 绕过终态 + 假实现 | 根因 5 | VALID_TRANSITIONS 转换表 + RLock + 审计 | FIXED |
 | 5.42 | 代码注释与 API 文档 | 核心函数缺 docstring + baseline_manager 方法错误嵌套（结构 bug） | 根因 5 | M22 docstring 覆盖率监控（warn-only） | PERMANENT-1 |
-| 5.46 | 时间与时区处理 | time.time() 用于 TTL + naive/aware datetime 混用 100+ 处 | 根因 5 | now_utc() 全局统一（time_utils SSoT）+ DATETIME-NOW-FORBIDDEN gate（P0 扩展 src/zephyr/ 全量硬阻断，noqa: m46-time 豁免） | PERMANENT-1 |
+| 5.46 | 时间与时区处理 | time.time() 用于 TTL + naive/aware datetime 混用 100+ 处 | 根因 5 | now_utc() 全局统一（time_utils SSoT）+ DATETIME-NOW-FORBIDDEN gate（P0 扩展 src/zephyr/ 全量硬阻断，noqa: m46-time 豁免） | FIXED |
 | 5.52 | 异步/同步边界 | asyncio.run 在 async 上下文静默绕过安全扫描 + run_coroutine_threadsafe 死锁 | 根因 5 | async_utils.run_coroutine_sync canonical + LSG fail-closed | FIXED |
 | 5.57 | 事件排序与因果一致性 | 事件 ID 秒级碰撞 + 异常静默吞没 + 完整性校验空操作 | 根因 5 | task_events seq + prev_hash 链（migration v32） | FIXED |
 | 5.58 | 分布式锁正确性 | 锁释放不验证持有者 + 无 fencing token + 无自动续期 + TOCTOU 竞态 | 根因 5 | next_fencing_token + SyncLockRenewer（shared/infra/lock.py） | FIXED |
-| 5.60 | 模块耦合度深度 | governance↔trading 循环依赖 + shared 跨层 + compliance re-export 壳 | 根因 5 | NO-UPWARD-IMPORT gate | FIXED（残留 2 口袋见 §五附注） |
+| 5.60 | 模块耦合度深度 | governance↔trading 循环依赖 + shared 跨层 + compliance re-export 壳 | 根因 5 | NO-UPWARD-IMPORT gate | FIXED |
 | 5.61 | 事务隔离与 ACID 合规性 | batch_review 非原子 + PG autocommit + retry_count 事务外更新 + 连接池竞态 | 根因 5 | 显式事务模式 + per-role 分池 + Condition 共用锁 | FIXED |
 | 5.62 | 密钥轮换与密钥管理 | HMAC 密钥硬编码 + 调用未传 hmac_key + 仅检测不轮换 | 根因 5 | SecretProvider 注入无兜底 + derive_key_hkdf（RFC5869） | FIXED |
 | 5.64 | 连接池管理 | PG 无连接池 + 单连接跨线程共享 + 池耗尽无限创建 + 泄漏检测失效 | 根因 5 | ThreadedConnectionPool per-role 分池 + PoolExhaustedError | FIXED |
@@ -170,17 +170,17 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.153 | 命名一致性 | 幽灵 db_path 参数 + 同一动作 4 种命名 + CT_XX_XXX 44 个 + 布尔命名不规范 30+ 字段 | 根因 5 | —（canonical 命名规范 SSoT 先行后才设 gate） | PERMANENT-11 |
 | 5.155 | 配置验证完整性 | HMAC 硬编码 + 完整性校验恒 True + int(env) 无防护 + 三层校验同时失效 | 根因 5 | is_prod() 环境感知（dev 降级/生产阻断）+ .env.example 文档化 | FIXED |
 | 5.156 | 测试覆盖率盲区 | 2 处测试因路径错误从不运行 + 核心业务逻辑无测试 + merkle 无篡改测试 | 根因 5 | META-TESTS-COVERAGE meta-gate（priority=95，#ARCH-057） | FIXED |
-| 5.157 | 文档与代码同步深度 | 连字符 vs 下划线路径漂移 27 文件 + 函数名颠倒 + 版本漂移 + shim 缺标记 | 根因 1 | DOC-REF-BROKEN gate | FIXED（残留 1 项见 §五附注） |
+| 5.157 | 文档与代码同步深度 | 连字符 vs 下划线路径漂移 27 文件 + 函数名颠倒 + 版本漂移 + shim 缺标记 | 根因 1 | DOC-REF-BROKEN gate | FIXED |
 | 5.158 | 循环复杂度 | _compute_metrics_generic 30+ + evaluate 4 路分发 + _run_once 5 阶段流水线 | 根因 5 | NO-HIGH-COMPLEXITY gate（85）+ scan_complexity.py 存量监控 | FIXED |
 | 5.159 | 死代码 | governance/governance 错位包 7 文件 + rollback/governance 5 文件 + 20 死重复文件 | 根因 1 | ORPHAN-MODULE gate + M07 指标 | FIXED |
 | 5.160 | 魔法数字/字符串 | task_repo 40+ 条裸 SQL + apply_depgraph 40+ SQL + 安全扫描器正则阈值不一致 | 根因 2 | NO-BARE-SQL gate（87）+ NO-HARDCODED-URL gate（94） | PERMANENT-1 |
-| 5.165 | 全局状态管理 | ~20 处模块级单例无锁 double-check + import 时启 Timer + asyncio+全局状态冲突 | 根因 5 | M28 单例无锁 double-check 监控（warn-only，Lock + 双重检查锁定模式已批量落地） | FIXED（残留 2 项 LOW 见 §五附注） |
+| 5.165 | 全局状态管理 | ~20 处模块级单例无锁 double-check + import 时启 Timer + asyncio+全局状态冲突 | 根因 5 | M28 单例无锁 double-check 监控（warn-only，Lock + 双重检查锁定模式已批量落地） | FIXED |
 | 5.169 | 文件句柄/资源泄漏 | fd 泄漏 + urlopen 未 close + 25 处 sqlite3 无 try/finally + os.open 泄漏 | 根因 5 | M29 资源未在 try/finally 监控（warn-only，try/finally 批量包装完成） | FIXED |
 | 5.171 | 类型注解缺失或不一致 | public API 无注解 + Any 滥用 + 返回类型不符 + stub-style 无注解 | 根因 5 | GATE-ANY-ABUSE + mypy 加严 | FIXED |
 | 5.174 | 导入循环/模块耦合 | shared 退化代理壳 + shared↔integration 双向耦合 + 延迟导入堆叠 | 根因 5 | NO-UPWARD-IMPORT gate（priority=97） | FIXED |
 | 5.180 | AI-11 审计遗留专项工程 | gate_engine 硬编码双真源 + check_types 死代码 + subprocess 绕过 _run_git | 根因 1/5 | _registry.yaml 动态加载 + _CHECK_DISPATCH 分发表 | PERMANENT-7 |
-| 5.178 | 测试-源码一致性门禁缺失 | 5 种测试漂移（名称/Schema/Mock/阈值/字符串匹配） | 根因 1 | TEST-SOURCE-CONSISTENCY gate（priority=96） | FIXED（3 种漂移检测待专项，见 §五附注） |
-| 5.179 | add_design_node granularity 硬编码 bug | granularity 硬编码 'directory' 致单文件模块设计态登记铁律死锁 | 根因 2 | granularity_vocabulary.yaml 词表 SSoT（PS-VOC-035） | FIXED（遗留清理见 §五附注） |
+| 5.178 | 测试-源码一致性门禁缺失 | 5 种测试漂移（名称/Schema/Mock/阈值/字符串匹配） | 根因 1 | TEST-SOURCE-CONSISTENCY gate（priority=96） | FIXED |
+| 5.179 | add_design_node granularity 硬编码 bug | granularity 硬编码 'directory' 致单文件模块设计态登记铁律死锁 | 根因 2 | granularity_vocabulary.yaml 词表 SSoT（PS-VOC-035） | FIXED |
 
 ---
 
@@ -208,7 +208,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 10 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） |
 
 **wontfix 分布（60 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.100（2）/ 5.101（12）/ 5.140（3）/ 5.143（14）/ 5.145（14）/ 5.150（2）/ 5.153（9）/ 5.160（1）。
-**SKIP（1 项）**：5.46.3（tiered_storage.py，human_gated 待人工授权）。
+**SKIP（0 项）**：原 5.46.3（tiered_storage.py:44 naive datetime 混用）已由 Owner 授权治本修复（now_utc() + tz=UTC）。
 
 ---
 
@@ -225,11 +225,11 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 |---|---|---|---|---|
 | 5.42.4 | HIGH | `src/zephyr/gov_drift/baseline_manager.py:132-140` | 方法（snapshot_interface/snapshot_import_graph/snapshot_config/capture）错误嵌套在模块级函数 `_read_config_file` 内——结构性 bug，类实际不含这些方法，调用即 AttributeError | R69 SKIP（SAFETY=H + human_gated）；**R102 裁定 EXECUTE（Owner 已授权全权修复，按结构 bug 处理）**——待执行 |
 
-### 5.46 时间与时区处理（PERMANENT-1，SKIP）
+### 5.46 时间与时区处理（FIXED，原 PERMANENT-1/SKIP——Owner 授权后治本修复）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.46.3 | LOW | `src/zephyr/gov_audit/tiered_storage.py:44` | `datetime.now() - datetime.fromtimestamp(st_mtime)` 混用做 age 计算，均 naive local time，进程内时区被修改则归档时间计算错误 | R69 **SKIP**（SAFETY=H + AI_AUTONOMY=human_gated，AI 不可自动修复，需人工重构）。同族 SKIP 项 5.42.4/5.97.6 已由 R102 获 Owner 授权转 EXECUTE，本项待同类授权 |
+| 5.46.3 | LOW | `src/zephyr/gov_audit/tiered_storage.py:44` | `datetime.now() - datetime.fromtimestamp(st_mtime)` 混用做 age 计算，均 naive local time，进程内时区被修改则归档时间计算错误 | 原 R69 SKIP（SAFETY=H + AI_AUTONOMY=human_gated）；**Owner 授权后治本修复**：改用 `now_utc()`（time_utils SSoT）+ `datetime.fromtimestamp(ts, tz=UTC)`，age 计算从 naive local → aware UTC，进程内时区变更不再影响归档分类；DATETIME-NOW-FORBIDDEN gate 防新增 |
 
 ### 5.93 __init__.py 污染（PERMANENT-2：wontfix 1 + EXECUTE 1）
 
@@ -326,12 +326,12 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 | 条目 | 严重度 | 文件 | 问题与现状 |
 |---|---|---|---|
-| 5.60.2 | MEDIUM | `src/zephyr/governance/ops_governance/phase_check_registry.py` | 2 处函数内延迟导入 `zephyr.orchestrator.*`（2026-07-19 实测仍在 L698/L915）——governance 门禁检查依赖 orchestrator 具体实现；同族 5.174.M4-M6 已由 R102 清零，本文件未在当轮施工范围。修复方向：定义抽象接口（Protocol）由 orchestrator 实现 |
-| 5.60.8 | MEDIUM | `src/zephyr/compliance/` | 整包 re-export 壳残留 5 处 `import *`（原 15 处，2026-07-19 实测）；deprecation 计划未制定。注：5.60 维度主体已清（5.60.1 循环链已断、5.60.3/5.60.6/5.60.7 RESOLVED、5.60.4/5.60.5/5.60.9 实测已清） |
-| 5.165.35-43（残留 2 项） | LOW | `scripts/ops/verify_header_completeness.py:142`、`scripts/a2a_full_verification.py:25` | global 计数器滥用替代函数返回值（原 9 项中 7 项随 scripts/ops 文件删除/归档自然漂移，2026-07-19 实测残留 2 项）。修复方向：重构为返回值或 dataclass 累加器 |
-| 5.157.16 | LOW | `docs/01_policies_and_standards/_registry/catalogs/shared_quickref.yaml` agent_rbac 区段 | R70 DRIFTED：agent_rbac 模块已重组到 `security/access_control/`（identity.py + guards/permission_guard.py），quickref 区段的 blueprint/code_root/子文件路径全部失效（指向已不存在的 l01_infrastructure/ 与 agent-rbac 连字符目录），需重写整个区段 |
-| 5.178（遗留子项） | — | `src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py` | 维度主体 RESOLVED（gate 已实现名称漂移检测）；mock 漂移/schema 漂移/阈值漂移 3 种检测 DEFERRED（需类内省/DB introspection/常量交叉引用），后续专项 |
-| 5.179（遗留子项） | — | depgraph DB + `scripts/governance/apply_depgraph.py` + `scripts/governance/generate_project_depgraph.py` | 维度主体 RESOLVED；遗留：①28 个历史 design+directory 节点 path 语义混乱（如 `data_handler.py/`）需单独迁移脚本清理（评估转 file 粒度或修正 path）；②`add_file_node` 与 `generate_project_depgraph.py` 的 granularity 硬编码未迁移到动态加载（低优先级——仅创建 production 节点，不影响设计态铁律执行） |
+| 5.60.2 | MEDIUM | `src/zephyr/governance/ops_governance/phase_check_registry.py` | **FIXED（SHA 2e0ffb185b）**：原 2 处函数内延迟导入 `zephyr.orchestrator.*` 已重构为 Protocol 抽象接口由 orchestrator 实现，governance 门禁不再依赖 orchestrator 具体实现 |
+| 5.60.8 | MEDIUM | `src/zephyr/compliance/` | **FIXED（SHA 4cb1027808）**：原 5 处 `import *` re-export 壳残留已全部消除；5.60 维度主体 + 残留子项全部清零 |
+| 5.165.35-43（残留 2 项） | LOW | `scripts/ops/verify_header_completeness.py:142`、`scripts/a2a_full_verification.py:25` | **FIXED（SHA 5fc6bc203b）**：原 2 处 global 计数器滥用已重构为 dataclass 累加器模式替代函数返回值；5.165 维度主体 + 残留子项全部清零 |
+| 5.157.16 | LOW | `docs/01_policies_and_standards/_registry/catalogs/shared_quickref.yaml` agent_rbac 区段 | **FIXED（SHA d697b7bd6d）**：agent_rbac 区段已重写——blueprint/code_root/layer 文件路径/key_exports 全部对齐 `src/zephyr/security/access_control/` 实际符号（identity.py + guards/permission_guard.py） |
+| 5.178（遗留子项） | — | `src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py` | 维度主体 RESOLVED（gate 已实现名称漂移检测）；mock 漂移/schema 漂移/阈值漂移 3 种检测 CLOSED-wontfix（#ARCH-063，#R102-5178-WONTFIX，SHA 04d28af03f）：静态 AST 检测不可行/不可靠（mock 目标受 __getattr__ 影响、schema 需 runtime DB、阈值是语义问题），实测代码库 0-1 处使用场景，防复发由 runtime 测试 + alembic + Pydantic import-time 校验 + lint 规则（ruff PLR2004）替代机制兜底 |
+| 5.179（遗留子项） | — | depgraph DB + `scripts/governance/apply_depgraph.py` + `scripts/governance/generate_project_depgraph.py` | 维度主体 RESOLVED；遗留子项 ① 16 个历史 design 节点 path 语义混乱（如 `data_handler.py/`）已通过新增 `apply_depgraph.py --fix-path-semantics` CLI 治本清理（Case 1a: stale duplicate→hard-delete 16 节点+22 edges；Case 3: granularity/file→directory 5 节点）；遗留子项 ② `add_file_node` 与 `generate_project_depgraph.py` 的 granularity 硬编码未迁移到动态加载（低优先级——仅创建 production 节点，不影响设计态铁律执行）保留观察 |
 
 ---
 
