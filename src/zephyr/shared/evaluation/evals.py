@@ -145,7 +145,7 @@ class EvalRunner:
         baseline = self._baselines.get(case_id)
         if baseline is None:
             return {"regression": False, "reason": "no_baseline"}
-        delta = current_score - baseline
+        delta = round(current_score - baseline, 10)
         return {"regression": delta < 0, "delta": delta}
 
     @staticmethod

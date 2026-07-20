@@ -38,7 +38,7 @@ class SelfScanner:
 
     def __init__(self, engine_dir: str | Path | None = None) -> None:
         if engine_dir is None:
-            engine_dir = Path("src/zephyr/testing/code_dedup")
+            engine_dir = Path(__file__).resolve().parent
         self._engine_dir = Path(engine_dir)
 
     def scan_self(self) -> SelfScanResult:
