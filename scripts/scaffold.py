@@ -914,18 +914,45 @@ def _check_duplicate_functionality(
     # 真源是文件头部 [MODULE] 字段（已存在），反查通过 capability_lookup 实时扫描磁盘。
     # L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线，
     # L3 pre-commit hook（check_ssot_gate.py）双保险——三层防线共用 check_ssot_conflicts。
+    #
+    # 维度3b: basename 跨域查重（P0-4 防再生门禁）——仅在 3a 发现 module_path 冲突时运行，
+    # 作为额外诊断信息。3b 依赖 find_files_by_module_path 的返回值（per
+    # test_mutation_inject_empty_disables_gate：维度3整体应依赖 find_files_by_module_path）。
+    # basename 独立阻断由 N-16 后门门禁（commit 时）兜底，scaffold 前门仅提供诊断增强。
     if expected_module_path:
         try:
             from zephyr.governance.capability_lookup import CapabilityLookup
             lookup = CapabilityLookup()
             conflicts = lookup.find_files_by_module_path(expected_module_path)
             if conflicts:
+                # ── 维度3b: basename 跨域查重（附加诊断，仅当 3a 命中时运行）──
+                basename_extra = ""
+                if expected_module_path.startswith("zephyr."):
+                    basename = f"{Path(name).name}.py"
+                    # 豁免清单与 P0-1 _N16_SRC_EXEMPT_NAMES 一致
+                    _BASENAME_EXEMPT = frozenset({"__init__.py", "conftest.py", "__main__.py"})
+                    if basename not in _BASENAME_EXEMPT:
+                        existing = [
+                            p for p in SRC_ZEPHYR.rglob(basename)
+                            if "__pycache__" not in str(p) and "._archive" not in str(p)
+                        ]
+                        if existing:
+                            exist_list = "\n".join(
+                                f"    - {p.relative_to(PROJECT_ROOT)}" for p in sorted(existing)
+                            )
+                            basename_extra = (
+                                f"\n  额外发现: basename 跨域重复\n"
+                                f"  新文件 basename: {basename}\n"
+                                f"  已有同 basename 文件:\n{exist_list}\n"
+                                f"  → 同 basename 跨域 = 复刻信号（责任唯一，真源唯一）"
+                            )
                 conflict_list = "\n".join(f"    - {c}" for c in conflicts)
                 raise ScaffoldError(
                     f"SSoT门禁阻断：module_path 冲突\n"
                     f"  新文件预期 module_path: {expected_module_path}\n"
                     f"  已有文件声明了相同 module_path:\n{conflict_list}\n"
                     f"  → 这是确凿的重复信号（同 module_path = 同文件身份）\n"
+                    f"{basename_extra}\n"
                     f"  复用决策（RULE-EIGHT）：\n"
                     f"    完全覆盖 → 直接用已有文件\n"
                     f"    80%覆盖 → 扩展已有文件（from zephyr.xxx import yyy 后加方法）\n"
@@ -938,35 +965,6 @@ def _check_duplicate_functionality(
             print("  WARNING: capability_lookup 不可用，跳过 module_path 冲突检测（L2 兜底门禁补防线）")
         except Exception as exc:
             print(f"  WARNING: module_path 冲突检测失败: {exc}（L2 兜底门禁补防线）")
-
-        # ── 维度3b: basename 跨域查重（P0-4 防再生门禁）──
-        # 同 basename 跨域 = AI 跨域复刻信号（病根1）。与 P0-1 N-16 src/ 门禁一致——
-        # scaffold 是前门（创建时拦截），N-16 是后门（commit 时拦截），两者豁免清单一致。
-        # 仅对 src/zephyr/ 模块创建生效（expected_module_path 以 zephyr. 开头）。
-        if expected_module_path.startswith("zephyr."):
-            basename = f"{Path(name).name}.py"
-            # 豁免清单与 P0-1 _N16_SRC_EXEMPT_NAMES 一致（Python 包标识/pytest 约定/python -m 入口）
-            _BASENAME_EXEMPT = frozenset({"__init__.py", "conftest.py", "__main__.py"})
-            if basename not in _BASENAME_EXEMPT:
-                existing = [
-                    p for p in SRC_ZEPHYR.rglob(basename)
-                    if "__pycache__" not in str(p) and "._archive" not in str(p)
-                ]
-                if existing:
-                    exist_list = "\n".join(
-                        f"    - {p.relative_to(PROJECT_ROOT)}" for p in sorted(existing)
-                    )
-                    raise ScaffoldError(
-                        f"SSoT门禁阻断：basename 跨域重复\n"
-                        f"  新文件 basename: {basename}\n"
-                        f"  已有同 basename 文件:\n{exist_list}\n"
-                        f"  → 同 basename 跨域 = 复刻信号（责任唯一，真源唯一）\n"
-                        f"  复用决策（RULE-EIGHT）：\n"
-                        f"    完全覆盖 → 直接用已有文件\n"
-                        f"    80%覆盖 → 扩展已有文件\n"
-                        f"    50%覆盖 → 重构已有+扩展\n"
-                        f"    0%覆盖 → 改名（basename 必须项目内唯一，见 N-16 src/ 规则）"
-                    )
 
     if force_override:
         # 仅跳过蓝图关键词匹配；功能域注册表检查仍执行（防止真重复）

@@ -33186,7 +33186,7 @@ ownership:
     existence: 'stable'
     ownership_judgment: '本模块'
 
-  - path: 'scripts/governance/d11_compliance/check_ssot_gate.py'
+  - path: 'scripts/governance/check_ssot_gate.py'
     owner_blueprint: 'MOD-GOVERNANCE'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_governance/blueprint.md'

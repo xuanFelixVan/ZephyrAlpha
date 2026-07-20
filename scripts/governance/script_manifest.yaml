@@ -214,8 +214,8 @@ scripts:
   tags:
   - Periodic
   - Quick
-- name: d11_compliance/check_ssot_gate.py
-  owner: governance:d11_compliance
+- name: check_ssot_gate.py
+  owner: governance
   dimensions:
   - D1
   priority: P2

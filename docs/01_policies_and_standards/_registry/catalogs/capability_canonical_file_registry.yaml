@@ -4868,6 +4868,14 @@ creation_tokens:
     created_by: "session-sess-41620-20260706213808"
     capability: "database_crud_mixin"
 
+  # --- check_ssot_gate 文件迁移（2026-07-20，从 d11_compliance/ 迁移到 governance/ 根目录）---
+  # 原因：测试 from scripts.governance.check_ssot_gate import ... 需要此路径；
+  #       CREATE-GUARD basename 碰撞要求单 canonical，故删除 d11_compliance/check_ssot_gate.py。
+  - file: "scripts/governance/check_ssot_gate.py"
+    token: "auto-check-ssot-gate-migration-20260720"
+    created_by: "session-sess-21384-20260720232801"
+    capability: "ssot_create_gate"
+
   # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
   - file: "src/zephyr/shared/event_bus.py"
     token: "auto-event-bus-restore-20260706"
@@ -6244,6 +6252,24 @@ creation_tokens:
     token: "auto-error-pattern-id-column-test-20260720"
     created_by: "sess-44108-20260720211503"
     capability: "commit_gateway_abuse_monitor"
+
+  # --- P4-1b AI 行为遥测 JSONL 错误事件聚合 consumer（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b）---
+  # post-commit 事件触发，扫描 data/telemetry/prod/logs/telemetry_*.jsonl，
+  # 聚合 AI behavior error events 到 .runtime/ai_error_patterns/aggregated_patterns.json
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("error_pattern_aggregation") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 error_pattern_consumer 副本
+  - file: "src/zephyr/governance/audit/error_pattern_consumer_reconciler.py"
+    token: "auto-error-pattern-consumer-reconciler-20260720"
+    created_by: "sess-7276-20260720222009"
+    capability: "error_pattern_aggregation"
+
+  # --- P4-1b error_pattern_consumer 单测（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b）---
+  # 验证 compute_error_pattern_id / aggregate_error_patterns / reconciler factory
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 error_pattern_consumer test 副本
+  - file: "tests/governance/audit/test_error_pattern_consumer.py"
+    token: "auto-error-pattern-consumer-test-20260720"
+    created_by: "sess-7276-20260720222009"
+    capability: "error_pattern_aggregation"
 
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）

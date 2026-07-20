@@ -73,13 +73,26 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 # 双轨正则真源归位：从 validate_module_id_naming.py 复用（消除正则重复定义）
 # R2 治本修订（2026-07-05）：MODULE_ID_D_PREFIX_RE 已废弃为 module_id 派生轨，
 # 重定义为 SUBMODULE_ID_RE（submodule_id 专用，见 trae_028 gov_doc_009）
-from d3_metadata.validate_module_id_naming import (
-    MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
-    MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
-    MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
-    SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
-    is_valid_module_id as _is_valid_module_id,
-)
+#
+# 导入容错（2026-07-20）：pytest 收集时 tests/governance/d3_metadata/__init__.py（空包）
+# 会遮蔽 scripts/governance/d3_metadata/。优先用绝对导入避免遮蔽；
+# 独立脚本运行时（_GOV_DIR 已注入 sys.path）回退到顶层导入。
+try:
+    from scripts.governance.d3_metadata.validate_module_id_naming import (
+        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
+        MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
+        MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+        SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
+        is_valid_module_id as _is_valid_module_id,
+    )
+except ImportError:
+    from d3_metadata.validate_module_id_naming import (
+        MODULE_ID_LAYER_MASTER_RE as _MODULE_ID_LAYER_MASTER_RE,
+        MODULE_ID_DOMAIN_DERIVED_RE as _MODULE_ID_DOMAIN_DERIVED_RE,
+        MODULE_ID_SHARED_RE as _MODULE_ID_SHARED_RE,
+        SUBMODULE_ID_RE as _SUBMODULE_ID_RE,
+        is_valid_module_id as _is_valid_module_id,
+    )
 
 # ---------------------------------------------------------------------------
 # 白名单与豁免配置

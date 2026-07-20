@@ -115,9 +115,18 @@ from _shared.constants import (  # noqa: E402
 # 引入 module_id 双轨正则真源（真源唯一：从 validate_module_id_naming.py 复用）
 # 裁定#208 双轨制（R2 治本修订后）：layer-master 轨 + domain-functional 派生轨 + 跨域共享轨
 # R2 治本修订（2026-07-05）：D-XXX-NNN 已废弃为 module_id 派生轨，重定义为 submodule_id 专用
-from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
-from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
-from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402  真源统一：NR-002 复用
+#
+# 导入容错（2026-07-20）：pytest 收集时 tests/governance/d3_metadata/__init__.py（空包）
+# 会遮蔽 scripts/governance/d3_metadata/。优先用绝对导入避免遮蔽；
+# 独立脚本运行时（_GOV_DIR 已注入 sys.path）回退到顶层导入。
+try:
+    from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
+    from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
+    from scripts.governance.d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402
+except ImportError:
+    from d3_metadata.validate_module_id_naming import is_valid_module_id as _validate_bp_id_format  # noqa: E402
+    from d3_metadata.validate_module_id_naming import is_valid_domain_id as _validate_domain_id_format  # noqa: E402
+    from d3_metadata.validate_module_id_naming import DOMAIN_ID_RE as _DOMAIN_ID_RE  # noqa: E402
 
 # 裁定#209 阶段1（2026-07-02）：_db_write_lock 从 no-op 升级为 pg_advisory_lock 互斥保护。
 # 与 generate_project_depgraph.py.write_depgraph_to_db 共享 lock key 424242。
@@ -2643,8 +2652,9 @@ def cmd_replace_text_domain(
     """
     own_conn = conn is None
     # 校验 new_id 格式（必须是合法domain_id，复用 DOMAIN_ID_RE）
-    sys.path.insert(0, str(Path(__file__).resolve().parent / "d3_metadata"))
-    from validate_module_id_naming import is_valid_domain_id
+    # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
+    # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
+    from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_domain_id
     ok, reason = is_valid_domain_id(new_id)
     if not ok:
         print(f"ERROR: new_id '{new_id}' 格式不合法: {reason}", file=sys.stderr)
@@ -4895,9 +4905,10 @@ if __name__ == "__main__":
         is_dry_run = any(arg == "--dry-run" for arg in sys.argv)
         has_write_cmd = any(arg in _WRITE_COMMANDS for arg in sys.argv)
         if has_write_cmd and not is_dry_run:
-            sys.path.insert(0, str(Path(__file__).resolve().parent / "meta"))
+            # 治本(2026-07-20): 改用项目内模块路径导入，避免 sys.path.insert 后的悬空 import
+            # （IMPORT-INTEGRITY gate 不识别 sys.path.insert 注入的导入）
             try:
-                from backup_runtime_state import backup_pg_depgraph
+                from scripts.governance.meta.backup_runtime_state import backup_pg_depgraph
                 backup_pg_depgraph()
             except Exception as _e:
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr

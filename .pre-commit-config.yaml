@@ -412,7 +412,7 @@ repos:
       #           原 GATE-SSOT/SINGLESOURCE 均 pass_filenames=false 自扫描，合并后等价。
       - id: gate-ssot-code
         name: "GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）"
-        entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/check_ssot_gate.py scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
+        entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
         language: system
         pass_filenames: false
         always_run: false
