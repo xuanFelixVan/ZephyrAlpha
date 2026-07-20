@@ -106,6 +106,17 @@ VMS_PERSIST_DIR: Final[Path] = REPO_ROOT / "data" / "vector_db"
 # 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit-trail"`（违反"禁止相对路径"硬约束）。
 AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit-trail"
 
+# DM-90974 Phase 2 治本（2026-07-19 真源收敛）：depgraph dirty flag 路径真源。
+# PG-write 脚本（apply_depgraph.py 等）成功 commit DB 后调用 mark_depgraph_dirty() 落此空文件，
+# GATE-REGENERATE reconciler 的 _trigger_domain_doc 检测此 flag 存在即 fire，_reconcile_domain_doc
+# 成功后删除。真源仍是 PostgreSQL DB；此 flag 仅作"运行时 DB 写入→下次 commit 触发 reconciler"的桥接信号。
+# 历史问题：原在 scripts/governance/_shared/constants.py:49 和
+# src/zephyr/governance/audit/reconciliation_registry.py:2864 两处独立重算路径字符串，
+# 路径变更只改一处会导致写入端与读取端不一致（reconciler 静默失效）。治本：收敛为单一真源。
+# 写入端：scripts/governance/_shared/constants.py re-export 此常量（scripts/ 可 import src/）。
+# 读取端：reconciliation_registry.py 直接 import 此常量。
+DEPGRAPH_DIRTY_FLAG: Final[Path] = REPO_ROOT / "data" / "databases" / "depgraph_dirty.flag"
+
 
 def get_tmp_dir() -> Path:
     """返回运行时临时目录 REPO_ROOT / '.runtime' / 'tmp'，并确保目录存在。
@@ -144,6 +155,7 @@ __all__ = [
     "AUDIT_DATA_DIR",
     "DB_DIR",
     "DB_PATH",
+    "DEPGRAPH_DIRTY_FLAG",
     "GATES_DIR",
     "MAIN_REPO_ROOT",
     "MODELS_CACHE_DIR",

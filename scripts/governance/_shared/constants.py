@@ -44,21 +44,29 @@ if str(_SRC_ROOT) not in sys.path:
 
 # find_repo_root / REPO_ROOT 真源为 zephyr.shared.io.paths（project_memory 钦定唯一真源）。
 # 本模块 re-export，消除算法重复实现。scripts/ 可 import src/（已有先例），无需独立定义。
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT, find_repo_root  # noqa: E402
+# DM-90974 Phase 2 治本（2026-07-19 真源收敛）：DEPGRAPH_DIRTY_FLAG 同从此处导入，
+# 消除原 reconciliation_registry.py:2864 独立重算路径字符串的真源重复。
+from zephyr.shared.io.paths import (  # noqa: E402
+    DB_PATH,
+    DEPGRAPH_DIRTY_FLAG,
+    REPO_ROOT,
+    find_repo_root,
+)
 
 # DM-90974 Phase 2: depgraph dirty flag — PG 写入脚本落此空文件标记 DB 已变，
-# GATE-DOMAIN-DOC reconciler trigger 检测此 flag 存在即 fire，reconcile 成功后删除。
-# 真源仍是 PostgreSQL DB；此 flag 仅作"运行时 DB 写入→下次 commit 触发 reconciler"的桥接信号
-# （派生缓存，单向 DB 写入→flag→reconciler→删 flag）。
+# GATE-REGENERATE reconciler（含原 GATE-DOMAIN-DOC 功能）trigger 检测此 flag 存在即 fire，
+# reconcile 成功后删除。真源仍是 PostgreSQL DB；此 flag 仅作"运行时 DB 写入→下次 commit
+# 触发 reconciler"的桥接信号（派生缓存，单向 DB 写入→flag→reconcile→删 flag）。
 # 解决"apply_depgraph.py --delete-nodes 等运行时操作不产生 git commit → reconciler 永不 fire"的盲区。
-DEPGRAPH_DIRTY_FLAG = REPO_ROOT / "data" / "databases" / "depgraph_dirty.flag"
+# 路径真源：zephyr.shared.io.paths.DEPGRAPH_DIRTY_FLAG（本模块仅 re-export，禁止重算）。
 
 
 def mark_depgraph_dirty() -> None:
     """DM-90974: 标记 depgraph (PostgreSQL) 已被写入。
 
-    在 PG-write 脚本成功 commit 后调用，写一个空 flag 文件到 data/databases/depgraph_dirty.flag。
-    GATE-DOMAIN-DOC reconciler 的 _trigger_domain_doc 检测此 flag 存在即返回 True 触发重生。
+    在 PG-write 脚本成功 commit 后调用，写一个空 flag 文件到 data/databases/depgraph_dirty.flag
+    （路径真源：zephyr.shared.io.paths.DEPGRAPH_DIRTY_FLAG）。
+    GATE-REGENERATE reconciler 的 _trigger_domain_doc 检测此 flag 存在即返回 True 触发重生。
     _reconcile_domain_doc 成功后删除此 flag。
 
     失败不阻断主流程（写入脚本已成功 commit DB）——最坏情况是 flag 未写，
