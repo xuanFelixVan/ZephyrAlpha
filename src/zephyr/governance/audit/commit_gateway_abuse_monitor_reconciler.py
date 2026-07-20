@@ -39,8 +39,8 @@ reconciler 是 post-commit（commit 已入历史不可逆），故只能 warn / 
 -----------------------------------------
 1. **warn_only sustained (24h)**: >50 warn_only 事件/24h = 持续低频逃生通道滥用
 2. **emergency_commit abuse (24h)**: >5 [GW:*:emergency] commits/24h = 逃生通道日常化
-3. **allow_overlap abuse (7d)**: >30 warn_only(gw_env=1) 事件/7d = session 注册表 bug 或
-   allow_overlap 滥用
+3. **allow_overlap abuse (7d)**: >30 次真实 allow_overlap=True 提交/7d（gate 层审计
+   ``.runtime/gate_audit/allow_overlap_usage.jsonl`` 计数）= 逃生通道日常化
 4. **forged_gw_marker rate (24h)**: >3 forged_gw_marker/24h = 严重伪造（任何伪造都 serious）
 5. **non-GW commit sustained (24h)**: >10 non-GW commits/24h（commit_gw_audit violations
    sum）= 持续绕过 GitCommitGateway
@@ -87,12 +87,13 @@ _PRIORITY = 875
 # === 五维滥用阈值（warn-only，reconciler 不能 block post-commit）===
 # 维度1: warn_only 持续低频（24h）——per-hour POST-COMMIT-GUARD 阈值 10/h 抓不到 5/h 持续
 _WARN_ONLY_24H_THRESHOLD = 50
-# 维度2: emergency_commit 滥用（24h）——裁定 R1（2026-07-19）：30→10 过渡期
-# bc3cad107c 将阈值 5→30 掩盖 systemic 滥用（15/24h 变 clean），是"杀信使"反模式。
-# R1 回滚到 10（过渡期 2026-07-19 ~ 2026-08-02）：检测逻辑 count > threshold（严格大于），
-# 15 > 10 触发 critical_warn 保持信号可见性；10 是 2× 原阈值 5 的保守翻倍，容忍 dogfooding 极值。
-# 2026-08-02 heartbeat 落地（裁定 R4）后强制回滚到 5。
-_EMERGENCY_24H_THRESHOLD = 10
+# 维度2: emergency_commit 滥用（24h）—— P1-4 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# 历史：原阈值 5 → bc3cad107c 放松到 30（掩盖滥用）→ R1 回滚到 10（过渡期 2026-07-19~2026-08-02）
+# P1-4 治本（2026-07-20）：heartbeat 已落地（#ARCH-HEARTBEAT-001），R1 过渡期不再需要。
+# 同时 P1-3 已引入 scenario 过滤，dogfood/test/governance_fix 不计入 24h 计数，
+# production 场景的真实 emergency_commit 应 < 5/24h（GitCommitGateway timeout 治本前允许极值）。
+# 直接回滚到 5（原值）。
+_EMERGENCY_24H_THRESHOLD = 5
 # 维度3: allow_overlap 滥用（7d）——gw_env=1 warn_only 持续 7d = session 注册表 bug
 _ALLOW_OVERLAP_7D_THRESHOLD = 30
 # 维度4: forged_gw_marker 伪造率（24h）——任何伪造都 serious，3/天即 critical
@@ -149,9 +150,14 @@ def _read_json_reports(repo_root: Path, prefix: str, since_ts: int) -> list[dict
 
 
 def _count_emergency_commits(repo_root: Path, since_hours: int) -> int:
-    """统计最近 N 小时内 commit message 含 [GW:*:emergency] 标记的 commit 数。
+    """统计最近 N 小时内 production 场景的 emergency_commit 数（维度2 真源）。
 
     emergency_commit 是 P2-1 合法逃生通道，但反复使用 = 系统性问题。
+
+    P1-3 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+    按 scenario 过滤——只统计 commit message 含 [SCENARIO:production] 或
+    不含 [SCENARIO:...] 标记的 emergency_commit（向后兼容）。
+    dogfood / test / governance_fix 场景豁免，避免治本工作污染 24h 滥用计数。
 
     fail-open：git log 失败返回 0（降级为不触发维度2）。
     """
@@ -170,12 +176,56 @@ def _count_emergency_commits(repo_root: Path, since_hours: int) -> int:
         # %x1f (unit separator) 分隔 commit bodies
         count = 0
         for body in result.stdout.split("\x1f"):
-            if "[GW:" in body and "emergency" in body:
-                count += 1
+            if "[GW:" not in body or "emergency" not in body:
+                continue
+            # P1-3: scenario 过滤——非 production 场景豁免
+            # 向后兼容：无 [SCENARIO:...] 标记视为 production（旧 commit）
+            if "[SCENARIO:" in body:
+                # 提取 scenario 值
+                start = body.find("[SCENARIO:") + len("[SCENARIO:")
+                end = body.find("]", start)
+                if end > start:
+                    scenario = body[start:end].strip()
+                    if scenario != "production":
+                        continue  # dogfood/test/governance_fix 豁免
+            count += 1
         return count
     except (subprocess.TimeoutExpired, Exception) as e:  # noqa: BLE001 — 计数失败不阻断
         logger.warning("commit_gateway_abuse_monitor: count emergency commits failed: %s", e)
         return 0
+
+
+def _count_allow_overlap_usage(repo_root: Path, since_ts: int) -> int:
+    """统计 7d 窗口内真实 allow_overlap=True 提交数（维度3 真源）。
+
+    治本（2026-07-20，sess-23300-20260720092540）：原实现以 post_commit_guard
+    warn_only(gw_env=1) 事件反推 allow_overlap 滥用，混入 merge 后 reconciler
+    auto-commit 的注册表生命周期伪影（1829/7d 持续误报，结构性必然超阈值）。
+    改为读取 gate 层审计 ``.runtime/gate_audit/allow_overlap_usage.jsonl``
+    （commit_gate_registry.check_all 在 allow_overlap=True 时落盘），只计真实逃生。
+
+    fail-open：文件缺失/解析失败返回 0（无审计=无证据，不误报）。
+    """
+    audit_file = repo_root / ".runtime" / "gate_audit" / "allow_overlap_usage.jsonl"
+    if not audit_file.exists():
+        return 0
+    count = 0
+    try:
+        with audit_file.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if int(rec.get("timestamp", 0)) >= since_ts:
+                    count += 1
+    except OSError as e:
+        logger.warning("commit_gateway_abuse_monitor: read allow_overlap audit failed: %s", e)
+        return 0
+    return count
 
 
 def _classify_abuse(
@@ -183,6 +233,7 @@ def _classify_abuse(
     audit_reports: list[dict],
     emergency_count: int,
     now_ts: int,
+    allow_overlap_count: int = 0,
 ) -> dict:
     """五维滥用分类（纯函数，无副作用，便于单测）。
 
@@ -191,6 +242,8 @@ def _classify_abuse(
         audit_reports: 24h 内的 commit_gateway_audit 报告列表。
         emergency_count: 24h 内 emergency_commit 数量。
         now_ts: 当前 Unix 时间戳。
+        allow_overlap_count: 7d 内真实 allow_overlap=True 提交数（gate 层审计，
+            由调用方经 _count_allow_overlap_usage 传入）。
 
     Returns:
         {
@@ -201,7 +254,6 @@ def _classify_abuse(
     """
     # 计算各窗口的 since_ts
     since_24h = now_ts - _WINDOW_24H_SECONDS
-    since_7d = now_ts - _WINDOW_7D_SECONDS
 
     # === 维度1: warn_only 持续低频（24h）===
     warn_only_24h = sum(
@@ -211,13 +263,8 @@ def _classify_abuse(
         and r.get("violation") == "unregistered_session_id"
     )
 
-    # === 维度3: allow_overlap 滥用（7d）—— gw_env=1 的 warn_only 事件 ===
-    allow_overlap_7d = sum(
-        1 for r in post_commit_reports
-        if r.get("timestamp", 0) >= since_7d
-        and r.get("action") == "warn_only"
-        and r.get("gw_env") == "1"
-    )
+    # === 维度3: allow_overlap 滥用（7d）—— gate 层审计真实计数（由调用方传入）===
+    allow_overlap_7d = allow_overlap_count
 
     # === 维度4: forged_gw_marker 伪造率（24h）===
     forged_24h = sum(
@@ -265,7 +312,7 @@ def _classify_abuse(
         dimensions_triggered.append("allow_overlap_abuse_7d")
         details.append(
             f"allow_overlap 滥用: {allow_overlap_7d}/7d > {_ALLOW_OVERLAP_7D_THRESHOLD} 阈值"
-            f"——session 注册表 bug 或 allow_overlap 逃生通道滥用"
+            f"——逃生通道日常化（gate 层审计真实计数），排查为何频繁 HELD-OVERLAP 撞车"
         )
 
     if forged_24h > _FORGED_24H_THRESHOLD:
@@ -337,9 +384,17 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             # 3. 统计 24h 内 emergency_commit 数量（覆盖维度2）
             emergency_count = _count_emergency_commits(project_root, 24)
 
+            # 3.5 统计 7d 内真实 allow_overlap=True 使用次数（覆盖维度3 真源）
+            # P1-1 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+            # 原实现未调用 _count_allow_overlap_usage，allow_overlap_count 默认 0，
+            # 导致维度3 永远不触发（实际误报来自 L214 之前的 warn_only+gw_env=1 反推）。
+            # 现改为读取 gate 层审计 .runtime/gate_audit/allow_overlap_usage.jsonl
+            allow_overlap_count = _count_allow_overlap_usage(project_root, since_7d)
+
             # 4. 五维分类
             classification = _classify_abuse(
                 post_commit_reports, audit_reports, emergency_count, now_ts,
+                allow_overlap_count=allow_overlap_count,
             )
 
             triggered = classification["dimensions_triggered"]

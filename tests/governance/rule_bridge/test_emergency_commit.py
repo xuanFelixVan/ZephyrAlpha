@@ -437,3 +437,304 @@ class TestEdgeCases:
         # 临时仓库默认在 master 或 main 分支
         assert result["branch"] in ("master", "main"), \
             f"unexpected branch: {result['branch']}"
+
+
+# ---------------------------------------------------------------------------
+# P1-2 _agent_bucket_id 优先级链 smoke test
+# （#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ---------------------------------------------------------------------------
+
+
+class TestAgentBucketId:
+    """P1-2 治本：emergency_commit 计数按 agent_id 分桶（非 session_id）。
+
+    治本原因：100% AI 开发下，AI 每次启动新 session_id，按 session_id 分桶
+    计数永远停在 1，N>=3/N>=5 成本递增门禁永不触发。改为按 agent 持久标识分桶，
+    使同一 AI 的多次 emergency_commit 累积计数。
+
+    优先级链：
+      1. ZEPHYR_AGENT_ID 环境变量（AI 显式声明）
+      2. git config user.email（git 提交者标识）
+      3. USER / USERNAME 环境变量（OS 用户）
+      4. "default"（最终 fallback）
+    """
+
+    def test_env_zephyr_agent_id_takes_priority(self, isolated_repo, monkeypatch):
+        """ZEPHYR_AGENT_ID 环境变量优先级最高。"""
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "ai-glm-5.2-instance-1")
+        # 即使有 git config user.email，也应优先用环境变量
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+        bucket = _agent_bucket_id(isolated_repo)
+        assert bucket == "ai-glm-5.2-instance-1", (
+            f"ZEPHYR_AGENT_ID 应优先，实际: {bucket}"
+        )
+
+    def test_git_config_email_fallback(self, isolated_repo, monkeypatch):
+        """无 ZEPHYR_AGENT_ID 时，fallback 到 git config user.email。"""
+        monkeypatch.delenv("ZEPHYR_AGENT_ID", raising=False)
+        # isolated_repo fixture 设置了 user.email = test@zephyr.local
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+        bucket = _agent_bucket_id(isolated_repo)
+        assert bucket == "email:test@zephyr.local", (
+            f"应 fallback 到 git config user.email（前缀 email:），实际: {bucket}"
+        )
+
+    def test_user_env_fallback_when_git_fails(self, tmp_path, monkeypatch):
+        """git config 失败（非 git 仓库）时，fallback 到 USER/USERNAME。"""
+        monkeypatch.delenv("ZEPHYR_AGENT_ID", raising=False)
+        # 用未 git init 的 tmp_path（无 user.email 配置）
+        # 同时清空可能的 USER/USERNAME，先设置一个测试值
+        monkeypatch.setenv("USER", "test-user-p1-2")
+        # Windows 上 USERNAME 才是真正的环境变量
+        monkeypatch.setenv("USERNAME", "test-user-p1-2")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+        bucket = _agent_bucket_id(tmp_path)
+        # 应为 user:test-user-p1-2（git config 失败 → fallback USER/USERNAME）
+        assert bucket == "user:test-user-p1-2", (
+            f"git 失败时应 fallback 到 USER/USERNAME，实际: {bucket}"
+        )
+
+    def test_default_fallback(self, tmp_path, monkeypatch):
+        """所有标识都缺失时，fallback 到 "default"。"""
+        monkeypatch.delenv("ZEPHYR_AGENT_ID", raising=False)
+        monkeypatch.delenv("USER", raising=False)
+        monkeypatch.delenv("USERNAME", raising=False)
+        # tmp_path 不是 git 仓库，git config 会失败
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+        bucket = _agent_bucket_id(tmp_path)
+        assert bucket == "default", (
+            f"所有标识缺失时应 fallback 到 'default'，实际: {bucket}"
+        )
+
+    def test_bucket_id_stable_across_calls(self, isolated_repo, monkeypatch):
+        """同一 agent 的多次调用应返回相同 bucket_id（持久性验证）。"""
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "stable-agent-id-12345")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import _agent_bucket_id
+        b1 = _agent_bucket_id(isolated_repo)
+        b2 = _agent_bucket_id(isolated_repo)
+        b3 = _agent_bucket_id(isolated_repo)
+        assert b1 == b2 == b3 == "stable-agent-id-12345", (
+            "同一 agent 的 bucket_id 应跨调用稳定（持久性是 P1-2 治本核心）"
+        )
+
+
+# ---------------------------------------------------------------------------
+# P1-2 emergency_count 分桶集成测试
+# （#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ---------------------------------------------------------------------------
+
+
+class TestEmergencyCountBucketing:
+    """P1-2 治本：emergency_count 按 agent bucket 累积（跨 session 持久）。
+
+    验证 _read_emergency_count / _write_emergency_count / _increment_emergency_count
+    均按 agent bucket_id 操作（而非 session_id）。
+    """
+
+    def test_count_file_path_uses_agent_bucket(self, isolated_repo, monkeypatch):
+        """计数文件路径应为 .runtime/emergency_counts/{bucket_id}.json。"""
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "test-bucket-path-agent")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+            _agent_bucket_id, _emergency_count_path,
+        )
+        bucket = _agent_bucket_id(isolated_repo)
+        path = _emergency_count_path(isolated_repo, bucket)
+        assert path.name == "test-bucket-path-agent.json", (
+            f"文件名应为 bucket_id.json，实际: {path.name}"
+        )
+        assert path.parent.name == "emergency_counts", (
+            f"父目录应为 emergency_counts/（与 sessions/ 分离），实际: {path.parent.name}"
+        )
+        assert path.parent.parent.name == ".runtime"
+
+    def test_count_persists_across_sessions(self, isolated_repo, monkeypatch):
+        """同一 agent 的多次 emergency_commit 应累积计数（跨 session 持久）。
+
+        场景：session-1 提交 1 次 → session-2 启动新 session_id → 提交第 2 次
+        治本前（session_id 分桶）：session-2 看到计数 1（永远停在 1）
+        治本后（agent_id 分桶）：session-2 看到计数 2（累积）
+        """
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "cross-session-agent-p1-2")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+            _agent_bucket_id, _read_emergency_count, _increment_emergency_count,
+        )
+        bucket = _agent_bucket_id(isolated_repo)
+
+        # session-1: increment 到 1
+        n1 = _increment_emergency_count(isolated_repo, bucket)
+        assert n1 == 1, f"第一次 increment 应返回 1，实际: {n1}"
+
+        # 模拟 session-2 启动新 session_id（但 agent_id 不变）
+        # 治本后：bucket_id 仍是同一个，计数累积
+        bucket2 = _agent_bucket_id(isolated_repo)
+        assert bucket == bucket2, "同一 agent 的 bucket_id 应稳定"
+
+        # session-2: read 应看到 1（累积），increment 后变 2
+        data = _read_emergency_count(isolated_repo, bucket)
+        assert data["count"] == 1, (
+            f"session-2 应看到 session-1 的计数（累积），实际: {data['count']}"
+        )
+        n2 = _increment_emergency_count(isolated_repo, bucket)
+        assert n2 == 2, f"第二次 increment 应返回 2（累积），实际: {n2}"
+
+    def test_different_agents_separate_buckets(self, isolated_repo, monkeypatch):
+        """不同 agent 的计数应隔离（不同 bucket 文件）。"""
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+            _increment_emergency_count, _read_emergency_count,
+        )
+
+        # agent-A 提交 3 次
+        for _ in range(3):
+            _increment_emergency_count(isolated_repo, "agent-A-p1-2")
+        # agent-B 提交 1 次
+        _increment_emergency_count(isolated_repo, "agent-B-p1-2")
+
+        # 验证隔离
+        data_a = _read_emergency_count(isolated_repo, "agent-A-p1-2")
+        data_b = _read_emergency_count(isolated_repo, "agent-B-p1-2")
+        assert data_a["count"] == 3, f"agent-A 应有 3 次，实际: {data_a['count']}"
+        assert data_b["count"] == 1, f"agent-B 应有 1 次，实际: {data_b['count']}"
+
+    def test_escalation_blocks_at_threshold_five(self, isolated_repo, monkeypatch):
+        """N>=5 时 _check_emergency_escalation 应阻断提交。"""
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "escalation-test-agent-p1-2")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+            _agent_bucket_id, _check_emergency_escalation, _increment_emergency_count,
+            _EMERGENCY_BLOCK_THRESHOLD,
+        )
+        bucket = _agent_bucket_id(isolated_repo)
+        assert _EMERGENCY_BLOCK_THRESHOLD == 5
+
+        # increment 到 4 次（N=4，未达阈值）
+        for _ in range(4):
+            _increment_emergency_count(isolated_repo, bucket)
+        # N=4 仍允许（reason 非空，因 N>=3 需 reason）
+        allowed, _ = _check_emergency_escalation(isolated_repo, bucket, reason="test")
+        assert allowed is True, "N=4 应允许（reason 非空）"
+
+        # increment 到 5 次（N=5，达阈值）
+        _increment_emergency_count(isolated_repo, bucket)
+        # N=5 阻断
+        allowed, err = _check_emergency_escalation(isolated_repo, bucket, reason="test")
+        assert allowed is False, "N=5 应阻断"
+        assert "5" in err and "阈值" in err, f"错误消息应含阈值信息: {err}"
+
+    def test_escalation_requires_reason_at_threshold_three(self, isolated_repo, monkeypatch):
+        """N>=3 且 reason 为空时 _check_emergency_escalation 应拒绝。"""
+        monkeypatch.setenv("ZEPHYR_AGENT_ID", "reason-test-agent-p1-2")
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
+            _agent_bucket_id, _check_emergency_escalation, _increment_emergency_count,
+            _EMERGENCY_REASON_THRESHOLD,
+        )
+        bucket = _agent_bucket_id(isolated_repo)
+        assert _EMERGENCY_REASON_THRESHOLD == 3
+
+        # increment 到 3 次
+        for _ in range(3):
+            _increment_emergency_count(isolated_repo, bucket)
+        # N=3 reason 为空 → 拒绝
+        allowed, err = _check_emergency_escalation(isolated_repo, bucket, reason="")
+        assert allowed is False, "N=3 且 reason 为空应拒绝"
+        assert "3" in err and "reason" in err, f"错误消息应含 reason 要求: {err}"
+        # N=3 reason 非空 → 允许
+        allowed, _ = _check_emergency_escalation(isolated_repo, bucket, reason="P0 prod fix")
+        assert allowed is True, "N=3 且 reason 非空应允许"
+
+
+# ---------------------------------------------------------------------------
+# P1-3 emergency_commit scenario 参数 smoke test
+# （#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ---------------------------------------------------------------------------
+
+
+class TestEmergencyCommitScenario:
+    """P1-3 治本：emergency_commit 支持 scenario 参数（dogfood/test/governance_fix 豁免）。
+
+    commit message 应含 [SCENARIO:{scenario}] 标记，abuse_monitor 据此过滤——
+    非 production 场景不计入 24h 滥用计数。
+    """
+
+    def test_default_scenario_is_production(self, isolated_repo):
+        """默认 scenario=production（向后兼容）。"""
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+        f = _make_tracked_file(isolated_repo, "scenario_default.py", "old\n")
+        f.write_text("new\n", encoding="utf-8")
+        result = emergency_commit(
+            files=[str(f)],
+            message="default scenario test",
+            session_id="sess-scenario-default",
+            project_root=str(isolated_repo),
+            reason="test default scenario",
+            trigger_reconcilers=False,
+        )
+        assert result["ok"] is True
+        msg = _get_commit_message(isolated_repo)
+        assert "[SCENARIO:production]" in msg, (
+            f"默认应含 [SCENARIO:production] 标记，msg: {msg}"
+        )
+
+    def test_dogfood_scenario_marker(self, isolated_repo):
+        """scenario=dogfood 时 commit message 含 [SCENARIO:dogfood]。"""
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+        f = _make_tracked_file(isolated_repo, "scenario_dogfood.py", "old\n")
+        f.write_text("new\n", encoding="utf-8")
+        result = emergency_commit(
+            files=[str(f)],
+            message="dogfood scenario test",
+            session_id="sess-scenario-dogfood",
+            project_root=str(isolated_repo),
+            reason="test dogfood scenario",
+            trigger_reconcilers=False,
+            scenario="dogfood",
+        )
+        assert result["ok"] is True
+        msg = _get_commit_message(isolated_repo)
+        assert "[SCENARIO:dogfood]" in msg, (
+            f"应含 [SCENARIO:dogfood] 标记，msg: {msg}"
+        )
+
+    def test_governance_fix_scenario_marker(self, isolated_repo):
+        """scenario=governance_fix 时 commit message 含 [SCENARIO:governance_fix]。"""
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+        f = _make_tracked_file(isolated_repo, "scenario_govfix.py", "old\n")
+        f.write_text("new\n", encoding="utf-8")
+        result = emergency_commit(
+            files=[str(f)],
+            message="governance fix scenario test",
+            session_id="sess-scenario-govfix",
+            project_root=str(isolated_repo),
+            reason="test governance_fix scenario",
+            trigger_reconcilers=False,
+            scenario="governance_fix",
+        )
+        assert result["ok"] is True
+        msg = _get_commit_message(isolated_repo)
+        assert "[SCENARIO:governance_fix]" in msg, (
+            f"应含 [SCENARIO:governance_fix] 标记，msg: {msg}"
+        )
+
+    def test_scenario_marker_after_gw_marker(self, isolated_repo):
+        """[SCENARIO:] 标记应在 [GW:...] 之后（abuse_monitor 解析顺序）。"""
+        from zephyr.gov_enforcement.rule_bridge.emergency_commit import emergency_commit
+        f = _make_tracked_file(isolated_repo, "scenario_order.py", "old\n")
+        f.write_text("new\n", encoding="utf-8")
+        result = emergency_commit(
+            files=[str(f)],
+            message="order test",
+            session_id="sess-scenario-order",
+            project_root=str(isolated_repo),
+            reason="verify marker order",
+            trigger_reconcilers=False,
+            scenario="test",
+        )
+        assert result["ok"] is True
+        msg = _get_commit_message(isolated_repo)
+        # [GW:] 必须在 [SCENARIO:] 之前（abuse_monitor 先匹配 [GW:emergency]，再解析 scenario）
+        gw_pos = msg.find("[GW:")
+        scenario_pos = msg.find("[SCENARIO:")
+        assert gw_pos >= 0 and scenario_pos >= 0, (
+            f"两个标记都应存在，msg: {msg}"
+        )
+        assert gw_pos < scenario_pos, (
+            f"[GW:] 应在 [SCENARIO:] 之前（gw_pos={gw_pos}, scenario_pos={scenario_pos}）"
+        )

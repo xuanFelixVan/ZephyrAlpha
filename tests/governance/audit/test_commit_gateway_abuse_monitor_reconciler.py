@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -46,6 +47,7 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     _PRIORITY,
     _WARN_ONLY_24H_THRESHOLD,
     _classify_abuse,
+    _count_allow_overlap_usage,
     _count_emergency_commits,
     _read_json_reports,
     make_commit_gateway_abuse_monitor_reconciler,
@@ -248,7 +250,19 @@ class TestClassifyAbuse:
         assert result["metrics"]["emergency_commit_24h"] == 15
 
     def test_dimension3_allow_overlap_abuse(self):
-        # 31 个 gw_env=1 warn_only 事件（>30 阈值，7d 窗口）
+        # 31 次真实 allow_overlap=True 提交（>30 阈值，7d 窗口，gate 层审计计数）
+        result = _classify_abuse(
+            post_commit_reports=[],
+            audit_reports=[],
+            emergency_count=0,
+            now_ts=self.NOW_TS,
+            allow_overlap_count=31,
+        )
+        assert "allow_overlap_abuse_7d" in result["dimensions_triggered"]
+        assert result["metrics"]["allow_overlap_7d"] == 31
+
+    def test_dimension3_below_threshold_not_triggered(self):
+        # gate 层审计计数低于阈值 → 不触发（warn_only 报告数不再影响维度3）
         reports = [
             {"timestamp": self.NOW_TS - 100000, "action": "warn_only",
              "violation": "unregistered_session_id", "gw_env": "1"}
@@ -259,9 +273,30 @@ class TestClassifyAbuse:
             audit_reports=[],
             emergency_count=0,
             now_ts=self.NOW_TS,
+            allow_overlap_count=0,
         )
-        assert "allow_overlap_abuse_7d" in result["dimensions_triggered"]
-        assert result["metrics"]["allow_overlap_7d"] == 31
+        assert "allow_overlap_abuse_7d" not in result["dimensions_triggered"]
+        assert result["metrics"]["allow_overlap_7d"] == 0
+
+    def test_count_allow_overlap_usage(self, tmp_path):
+        # gate 层审计 JSONL 计数：窗口内 2 条 + 窗口外 1 条 + 1 条损坏行
+        audit_dir = tmp_path / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True)
+        now = int(time.time())
+        lines = [
+            json.dumps({"timestamp": now - 100, "session_id": "s1", "files_count": 2}),
+            json.dumps({"timestamp": now - 200, "session_id": "s2", "files_count": 1}),
+            json.dumps({"timestamp": now - 8 * 24 * 3600, "session_id": "s3", "files_count": 1}),
+            "{broken json",
+        ]
+        (audit_dir / "allow_overlap_usage.jsonl").write_text(
+            "\n".join(lines) + "\n", encoding="utf-8"
+        )
+        assert _count_allow_overlap_usage(tmp_path, now - 7 * 24 * 3600) == 2
+
+    def test_count_allow_overlap_usage_missing_file(self, tmp_path):
+        # 审计文件缺失 → fail-open 返回 0（无审计=无证据，不误报）
+        assert _count_allow_overlap_usage(tmp_path, self.NOW_TS - 100) == 0
 
     def test_dimension4_forged_gw_marker(self):
         # 4 个 forged_gw_marker（>3 阈值）
@@ -436,3 +471,262 @@ class TestReconcile:
         assert data["session_id"] == "sess-test-123"
         assert "metrics" in data
         assert "thresholds" in data["metrics"]
+
+
+# ============================================================================
+# P1-4 阈值回滚 smoke test（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ============================================================================
+
+
+class TestEmergencyThresholdRollback:
+    """P1-4 治本：emergency_commit 24h 阈值回滚 10→5。
+
+    历史：原阈值 5 → bc3cad107c 放松到 30（掩盖滥用）→ R1 过渡期 10
+    → P1-4 治本（2026-07-20）：heartbeat 已落地 + P1-3 scenario 过滤已引入，
+    dogfood/test/governance_fix 不再计入 24h 计数，production 场景真实
+    emergency_commit 应 < 5/24h。直接回滚到 5（原值）。
+    """
+
+    def test_emergency_threshold_is_five(self):
+        """阈值必须为 5（治本后原值，R1 过渡期 10 已撤销）。"""
+        assert _EMERGENCY_24H_THRESHOLD == 5, (
+            f"P1-4 治本：_EMERGENCY_24H_THRESHOLD 应为 5（原值），"
+            f"实际为 {_EMERGENCY_24H_THRESHOLD}。"
+            f"若值不是 5，说明 R1 过渡期阈值未回滚，或 P1-3 scenario 过滤未生效。"
+        )
+
+    def test_emergency_count_six_triggers_abuse(self):
+        """6 > 5 阈值 → 触发维度2（验证回滚后阈值边界）。"""
+        result = _classify_abuse(
+            post_commit_reports=[],
+            audit_reports=[],
+            emergency_count=6,
+            now_ts=1784000000,
+        )
+        assert "emergency_commit_abuse_24h" in result["dimensions_triggered"]
+        assert result["metrics"]["emergency_commit_24h"] == 6
+
+    def test_emergency_count_five_does_not_trigger(self):
+        """5 == 5 阈值（不 > 阈值）→ 不触发（边界值验证）。"""
+        result = _classify_abuse(
+            post_commit_reports=[],
+            audit_reports=[],
+            emergency_count=5,
+            now_ts=1784000000,
+        )
+        assert "emergency_commit_abuse_24h" not in result["dimensions_triggered"]
+
+
+# ============================================================================
+# P1-3 scenario 过滤 smoke test（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ============================================================================
+
+
+class TestCountEmergencyCommitsScenarioFilter:
+    """P1-3 治本：_count_emergency_commits 按 [SCENARIO:production] 过滤。
+
+    治本原因：dogfood/test/governance_fix 场景的 emergency_commit 不应计入
+    24h 滥用计数（治本工作本身可能多次 emergency_commit，污染真实滥用信号）。
+
+    过滤规则：
+      - 含 [SCENARIO:production] → 计入
+      - 不含 [SCENARIO:...] 标记 → 计入（向后兼容旧 commit）
+      - 含 [SCENARIO:dogfood] / [SCENARIO:test] / [SCENARIO:governance_fix] → 豁免
+    """
+
+    def test_production_scenario_counted(self, tmp_path):
+        """含 [SCENARIO:production] 的 emergency_commit 计入。"""
+        bodies = [
+            "fix: P0\n\n[GW:sess-1:emergency]\n[SCENARIO:production]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 1
+
+    def test_no_scenario_marker_backward_compatible(self, tmp_path):
+        """无 [SCENARIO:...] 标记的旧 commit 视为 production（向后兼容）。"""
+        bodies = [
+            "fix: legacy emergency\n\n[GW:sess-old:emergency]",
+            "fix: another legacy\n\n[GW:sess-old2:emergency]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 2, "无 scenario 标记的旧 commit 应计入（向后兼容）"
+
+    def test_dogfood_scenario_exempted(self, tmp_path):
+        """[SCENARIO:dogfood] 豁免（治本工作污染防护）。"""
+        bodies = [
+            "fix: dogfood emergency\n\n[GW:sess-d1:emergency]\n[SCENARIO:dogfood]",
+            "fix: another dogfood\n\n[GW:sess-d2:emergency]\n[SCENARIO:dogfood]",
+            "fix: real production\n\n[GW:sess-p1:emergency]\n[SCENARIO:production]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 1, "dogfood 应豁免，只统计 1 个 production"
+
+    def test_test_scenario_exempted(self, tmp_path):
+        """[SCENARIO:test] 豁免（测试场景不计入生产滥用）。"""
+        bodies = [
+            "test: emergency path\n\n[GW:sess-t1:emergency]\n[SCENARIO:test]",
+            "test: another\n\n[GW:sess-t2:emergency]\n[SCENARIO:test]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 0, "test 场景应豁免"
+
+    def test_governance_fix_scenario_exempted(self, tmp_path):
+        """[SCENARIO:governance_fix] 豁免（治理修复工作不计入滥用）。"""
+        bodies = [
+            "fix: governance repair\n\n[GW:sess-g1:emergency]\n[SCENARIO:governance_fix]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 0, "governance_fix 场景应豁免"
+
+    def test_mixed_scenarios_only_production_counted(self, tmp_path):
+        """混合场景：只统计 production，其余豁免。"""
+        bodies = [
+            "fix: prod\n\n[GW:sess-1:emergency]\n[SCENARIO:production]",
+            "fix: dogfood\n\n[GW:sess-2:emergency]\n[SCENARIO:dogfood]",
+            "fix: test\n\n[GW:sess-3:emergency]\n[SCENARIO:test]",
+            "fix: legacy (no marker)\n\n[GW:sess-4:emergency]",
+            "fix: gov_fix\n\n[GW:sess-5:emergency]\n[SCENARIO:governance_fix]",
+            "fix: prod2\n\n[GW:sess-6:emergency]\n[SCENARIO:production]",
+        ]
+        mock_output = "\x1f".join(bodies) + "\x1f"
+        with patch("subprocess.run") as mock_run:
+            mock_result = MagicMock()
+            mock_result.returncode = 0
+            mock_result.stdout = mock_output
+            mock_run.return_value = mock_result
+            count = _count_emergency_commits(tmp_path, since_hours=24)
+        assert count == 3, (
+            "应只统计 2 个 production + 1 个 legacy（无标记，向后兼容）= 3"
+        )
+
+
+# ============================================================================
+# P1-1 _count_allow_overlap_usage 集成 smoke test
+# （#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+# ============================================================================
+
+
+class TestReconcileCallsAllowOverlapUsage:
+    """P1-1 治本：reconcile 必须调用 _count_allow_overlap_usage 并传入 _classify_abuse。
+
+    治本原因：原实现未调用 _count_allow_overlap_usage，allow_overlap_count 默认 0，
+    导致维度3 永远不触发。实际误报来自 warn_only+gw_env=1 反推（94.9% 误报率）。
+
+    现改为：reconcile 读取 gate 层审计 .runtime/gate_audit/allow_overlap_usage.jsonl，
+    将真实 allow_overlap=True 计数传入 _classify_abuse。
+    """
+
+    def test_reconcile_calls_count_allow_overlap_usage(self, tmp_path):
+        """reconcile 必须调用 _count_allow_overlap_usage（验证调用链不缺失）。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch(
+                 "zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_allow_overlap_usage",
+                 return_value=0,
+             ) as mock_count:
+            spec.reconcile([], "sess-p1-1")
+        # 必须被调用（P1-1 修复点：原实现缺失此调用）
+        assert mock_count.called, (
+            "P1-1 治本失败：reconcile 未调用 _count_allow_overlap_usage，"
+            "维度3 永远不会触发。请检查 commit_gateway_abuse_monitor_reconciler.py L388 附近的调用。"
+        )
+
+    def test_reconcile_passes_allow_overlap_count_to_classify(self, tmp_path):
+        """reconcile 必须将 _count_allow_overlap_usage 返回值传入 _classify_abuse。
+
+        场景：审计文件有 35 条记录（>30 阈值）→ 维度3 应触发。
+        """
+        # 准备审计文件（35 条，全部在 7d 窗口内）
+        audit_dir = tmp_path / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True)
+        now = int(time.time())
+        lines = [
+            json.dumps({"timestamp": now - 100, "session_id": f"s{i}", "files_count": 1})
+            for i in range(35)
+        ]
+        (audit_dir / "allow_overlap_usage.jsonl").write_text(
+            "\n".join(lines) + "\n", encoding="utf-8"
+        )
+
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            spec.reconcile([], "sess-p1-1-integration")
+
+        # 验证报告落盘且 metrics.allow_overlap_7d = 35（不是 0）
+        reports = list((tmp_path / ".runtime" / "reconcile_reports").glob(
+            "commit_gateway_abuse_monitor_*.json"
+        ))
+        assert len(reports) == 1
+        data = json.loads(reports[0].read_text(encoding="utf-8"))
+        assert data["metrics"]["allow_overlap_7d"] == 35, (
+            f"P1-1 治本失败：allow_overlap_7d 应为 35（gate 层审计计数），"
+            f"实际为 {data['metrics']['allow_overlap_7d']}（0 = 调用链未生效）。"
+        )
+        assert "allow_overlap_abuse_7d" in data["dimensions_triggered"], (
+            "P1-1 治本失败：35 > 30 阈值应触发维度3，但未触发。"
+        )
+
+    def test_reconcile_no_audit_file_no_false_positive(self, tmp_path):
+        """审计文件缺失 → allow_overlap_7d=0，不触发维度3（fail-open 不误报）。
+
+        治本前：原实现以 warn_only+gw_env=1 反推，导致 1829/7d 持续误报。
+        治本后：无审计=无证据，不触发维度3。
+        """
+        # 不创建审计文件（模拟新部署或无 allow_overlap 使用）
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            # 即使有 warn_only+gw_env=1 报告，也不应触发维度3（不再反推）
+            for i in range(100):
+                _write_report(tmp_path, "post_commit_guard", now - 100 - i, {
+                    "action": "warn_only",
+                    "violation": "unregistered_session_id",
+                    "gw_env": "1",
+                })
+            spec.reconcile([], "sess-p1-1-clean")
+
+        reports = list((tmp_path / ".runtime" / "reconcile_reports").glob(
+            "commit_gateway_abuse_monitor_*.json"
+        ))
+        data = json.loads(reports[0].read_text(encoding="utf-8"))
+        assert data["metrics"]["allow_overlap_7d"] == 0, (
+            "fail-open：审计文件缺失时 allow_overlap_7d 应为 0"
+        )
+        assert "allow_overlap_abuse_7d" not in data["dimensions_triggered"], (
+            "P1-1 治本失败：无审计文件时不应触发维度3（原 warn_only+gw_env=1 反推已废止）。"
+        )
