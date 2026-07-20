@@ -5849,6 +5849,20 @@ creation_tokens:
     token: "auto-ruling-session-worktree-heartbeat-20260720"
     created_by: "sess-heartbeat-p1-20260720"
     capability: "ruling_session_worktree_heartbeat"
+
+  # --- session_worktree 异步化治本裁定文档（2026-07-20，#ARCH-ASYNC-MERGE-RECONCILE-001）---
+  # L1 根因分析 + 治本路线图（Layer 2 + P1 heartbeat + P1 异步化 + P2 阈值收紧）+ R2 阈值过渡
+  - file: "docs/02_enterprise_architecture/ruling_async_merge_reconcile.md"
+    token: "auto-ruling-async-merge-reconcile-20260720"
+    created_by: "sess-54936-20260720051550"
+    capability: "ruling_async_merge_reconcile"
+
+  # --- forged_gw_marker 违规排查报告（2026-07-20，#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 子交付物）---
+  # 4 个 commit hash + 根因 A/B 分析 + 5 条修复建议
+  - file: "docs/02_enterprise_architecture/investigation_forged_gw_marker.md"
+    token: "auto-investigation-forged-gw-marker-20260720"
+    created_by: "sess-54936-20260720051550"
+    capability: "forged_gw_marker_investigation"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

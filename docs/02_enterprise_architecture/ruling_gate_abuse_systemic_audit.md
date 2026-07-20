@@ -439,27 +439,47 @@ heartbeat 机制涉及:
 
 ---
 
-## 9. 与 AGENTS.md 5 层闭环模型的关系
+## 9. 与 AGENTS.md 6 层闭环模型的关系
 
-本案是 [AGENTS.md](../../AGENTS.md) 5 层闭环模型 + **第 6 层"可预防性"**的具体落地：
+本案是 [AGENTS.md](../../AGENTS.md) 5 层闭环模型 + **第 6 层"可预防性"**的具体落地（2026-07-20 Phase 1 heartbeat 已部分落地）：
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  5 层闭环模型（AGENTS.md）+ 第 6 层（本案补齐）           │
-├─────────────────────────────────────────────────────────────┤
-│  ① 可知性  ✅ abuse monitor 能检测 5 维滥用                 │
-│  ② 可达性  ✅ abuse monitor reconciler 已注册               │
-│  ③ 可观察性 ✅ critical_warn 横幅 + reconcile report 落盘    │
-│  ④ 可逃生性 ✅ emergency_commit / allow_overlap 是逃生通道   │
-│  ⑤ 可追溯性 ✅ reconcile_execution_log 记录失败详情          │
-│  ⑥ 可预防性 ❌ 缺失——post-commit warn 无法挽回已入历史 commit│
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  6 层闭环模型（AGENTS.md 5 层 + 第 6 层"可预防性"）              │
+├──────────────────────────────────────────────────────────────────┤
+│  ① 可知性   ✅ abuse monitor 能检测 5 维滥用                     │
+│  ② 可达性   ✅ abuse monitor reconciler 已注册                   │
+│  ③ 可观察性 ✅ critical_warn 横幅 + reconcile report 落盘         │
+│  ④ 可逃生性 ✅ emergency_commit / allow_overlap 是逃生通道        │
+│  ⑤ 可追溯性 ✅ reconcile_execution_log 记录失败详情               │
+│  ⑥ 可预防性 ⚠️ Phase 1 已部分落地（heartbeat daemon）            │
+│             ✅ #ARCH-HEARTBEAT-001: stale session 90s 自动释放    │
+│             ⏳ #ARCH-ASYNC-MERGE-RECONCILE-001: 异步化 + 阈值收紧 │
+│             ⏳ Phase 3: pre-commit forgery gate（pre-receive）    │
+└──────────────────────────────────────────────────────────────────┘
 ```
+
+**第 6 层"可预防性"heartbeat 落地标注**（2026-07-20）:
+
+| 子项 | 状态 | 裁定 | 落地说明 |
+|------|------|------|----------|
+| stale session 主动检测 | ✅ 已落地 | #ARCH-HEARTBEAT-001 | `heartbeat_daemon.py`（DETACHED_PROCESS）每 30s 刷新 registry heartbeat；`_is_session_alive` 双轨判据（pid=0 + heartbeat >90s = stale） |
+| 阻塞窗口缩短 | ✅ 已落地 | #ARCH-HEARTBEAT-001 | stale session 持有 held_files 的阻塞窗口从 **1h（TTL=3600s）缩短到 90s（heartbeat 3×30s，容忍 2 次漏跳）** |
+| session_worktree 异步化 | ⏳ 待立项 | #ARCH-ASYNC-MERGE-RECONCILE-001 | fire-and-forget merge + 后台 worker，消除同步阻塞导致的 emergency_commit 滥用 |
+| 阈值收紧到稳态 | ⏳ 待治本后 | #ARCH-ASYNC-MERGE-RECONCILE-001 | emergency 20→5、allow_overlap 500→200（治本后 7d 观察期校准） |
+| pre-commit forgery gate | ⏳ Phase 3 | 裁定 D-4 | 从 post-commit detect 升级为 pre-commit prevent（pre-receive hook） |
+
+**关键文件**:
+- daemon 入口: [heartbeat_daemon.py](../../src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py)（DETACHED_PROCESS，30s 心跳）
+- 判活逻辑: [session_concurrency.py](../../src/zephyr/security/access_control/session_concurrency.py)（`_is_session_alive` 双轨判据）
+- smoke test: [test_heartbeat_daemon.py](../../tests/governance/rule_bridge/test_heartbeat_daemon.py)（10/10 PASSED）
+- 落地裁定: [ruling_session_worktree_heartbeat.md](ruling_session_worktree_heartbeat.md)（#ARCH-HEARTBEAT-001）
+- 母裁定: [ruling_async_merge_reconcile.md](ruling_async_merge_reconcile.md)（#ARCH-ASYNC-MERGE-RECONCILE-001）
 
 **本案治本方向**:
-- **P1（heartbeat + 重试 + 成本递增）**: 让 emergency_commit 从"日常工具"变回"罕见逃生"
-- **P2（warn budget + fail-closed 评估）**: 让 warn_only 从"静默放行"变回"显式阻断"
-- **P3（pre-receive hook + forgery gate）**: 从"post-commit detect"升级为"pre-commit prevent"
+- **P1（heartbeat + 重试 + 成本递增）**: 让 emergency_commit 从"日常工具"变回"罕见逃生" — ✅ heartbeat 已落地（#ARCH-HEARTBEAT-001）
+- **P2（warn budget + fail-closed 评估）**: 让 warn_only 从"静默放行"变回"显式阻断" — ⏳ 待立项
+- **P3（pre-receive hook + forgery gate）**: 从"post-commit detect"升级为"pre-commit prevent" — ⏳ 待立项
 
 ---
 
