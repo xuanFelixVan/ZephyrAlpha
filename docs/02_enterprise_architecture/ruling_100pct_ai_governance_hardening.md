@@ -53,11 +53,17 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 4. **可逃生性(Escapability)**: 机制失败时有合法逃生通道(allow_overlap / emergency_commit / noqa)
 5. **可追溯性(Traceability)**: 机制执行全程可追溯(通过 reconcile_execution_log / worktree_ops_log)
 
-**缺失的第 6 层**:
+**第 6 层（Phase 1 已部分落地，2026-07-20）**:
 
 6. **可预防性(Preventability)**: 机制能在问题发生前预防(post-commit warn 无法挽回,需 pre-commit 阻断 + 自适应学习)
 
-第 6 层缺失是 5 维滥用的根本原因:现有体系只能"事后报告"(post-commit reconciler warn),无法"事前预防"(pre-commit gate 阻断 + AI 行为学习)。
+**Phase 1 落地（#ARCH-HEARTBEAT-001）**: heartbeat daemon（DETACHED_PROCESS，30s 刷新 registry）+ `_is_session_alive` 双轨判据（pid=0 + heartbeat >90s = stale），stale session 阻塞窗口从 1h（TTL）缩短到 90s（heartbeat 3×30s，容忍 2 次漏跳）。详见 [ruling_session_worktree_heartbeat.md](ruling_session_worktree_heartbeat.md)。
+
+**待落地**:
+- session_worktree 异步化（#ARCH-ASYNC-MERGE-RECONCILE-001，消除同步阻塞导致的 emergency_commit 滥用）
+- pre-commit forgery gate（Phase 3，从 post-commit detect 升级为 pre-commit prevent）
+
+第 6 层缺失曾是 5 维滥用的根本原因:现有体系只能"事后报告"(post-commit reconciler warn),无法"事前预防"(pre-commit gate 阻断 + AI 行为学习)。Phase 1 heartbeat 已落地主动检测（90s stale 判定），但完整可预防性仍需 pre-commit gate 配对。
 
 ### 1.3 系统性失效的三层因果链
 
