@@ -45,7 +45,7 @@ TRAE 工具宿主未加 `CREATE_NO_WINDOW` 标志，导致每次 RunCommand 闪�
 | 编号 | #ARCH-RUNCOMMAND-WINDOW-FLASH-001 |
 | 类型 | architecture_governance / fix-phase-1 |
 | 严重度 | P2（用户体验影响，非数据安全/正确性） |
-| 状态 | Phase 1 完成 |
+| 状态 | Phase 1 + 1.5 + 1.6 完成（commit ba40fa5b75, merge 3d24562899） |
 | 立项日期 | 2026-07-20 |
 | 完成日期 | 2026-07-20 |
 | 关联议题 | #ARCH-HEARTBEAT-001（同源并发场景） |
@@ -433,8 +433,8 @@ explorer.exe (PID 8216)
 | 根因 | TRAE IDE RunCommand 工具宿主用 powershell.exe 包装未加 CREATE_NO_WINDOW（外部限制） |
 | 恶化因素 | 6+ 并发 AI session + AI 滥用 python -c 探查 + 2 个 TRAE 实例 + 卡死进程 |
 | Phase 1 治本 | trae_067 规则外部化 + 僵尸进程清理 + 治理登记（已完成） |
-| Phase 1.5 治本 | reconciler 批量 spawn 闪窗 100% 消除（process_pool SSoT helper） |
-| Phase 1.6 治本 | commit 流程 spawn 闪窗预期 100% 消除（commit_gate_registry + session_worktree 5 入口） |
+| Phase 1.5 治本 | reconciler 批量 spawn 闪窗 100% 消除（process_pool SSoT helper，commit ba40fa5b75） |
+| Phase 1.6 治本 | commit 流程 spawn 闪窗预期 100% 消除（commit_gate_registry + session_worktree 5 入口，同 commit ba40fa5b75） |
 | Phase 2 调研裁定 | TRAE toolhost 不可项目层治本，已写 Feature Request 模板待用户提交 |
 | Phase 3 调研裁定 | pythonw.exe 方案不可行（4 步死锁反证），不立项 |
 | Phase 4 调研裁定 | kimi-desktop gildata 不可项目层治本，已写 Feature Request 模板待用户提交 |
