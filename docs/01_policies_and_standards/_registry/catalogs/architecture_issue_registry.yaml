@@ -9,7 +9,7 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.6
+version: 1.3.7
 created: '2026-06-26'
 last_updated: '2026-07-20'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
@@ -4052,5 +4052,63 @@ entries:
   status: in_progress
   related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (P1 fix_phase 落地), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (allow_overlap 滥用治本), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D-1 / R4 交付物)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (L1 根因消除), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+# --- #ARCH-063: 5.178 测试-源码一致性门禁 DEFERRED 3 种检测裁定 wontfix ---
+- issue_id: '#ARCH-063'
+  title: 5.178 TEST-SOURCE-CONSISTENCY gate DEFERRED 3 种漂移检测（mock/schema/阈值）裁定关闭
+  severity: P3低
+  category: gate_scope_decision
+  adjudication: |
+    问题背景：
+    architecture_debt §5.178 维度主体已 FIXED（TEST-SOURCE-CONSISTENCY gate priority=102
+    实现名称漂移检测，覆盖 `from zephyr.* import Symbol` 符号存在性静态校验）。
+    遗留 3 种漂移检测 DEFERRED：
+    (a) Mock 漂移——需类内省，检测 mock.patch 字符串目标的存在性
+    (b) Schema 漂移——需 DB introspection，检测测试 schema 与 DB schema 一致性
+    (c) 阈值漂移——需常量交叉引用，检测测试硬编码数值是否应从源码导入常量
+
+    第一性原理分析（5 维度）：
+    1. 代码验证（grep 实测 2026-07-20）：
+       - mock.patch("zephyr.*") 字符串模式：0 处使用（tests/ 全扫）
+       - autospec=True/spec=X 模式：19 处（已是项目规范）
+       - alembic/metadata.create_all：1 处（tests/agent/test_agent_creation_policy.py）
+       - assert x == 0.xx 阈值断言：289 处跨 100 文件（多为 fixture 期望值，非源码常量）
+    2. 问题本质：
+       - 名称漂移（已覆盖）：STATIC——AST 可靠解析符号存在性
+       - Mock 漂移：SEMI-STATIC——目标字符串存在性受 __getattr__/动态属性/__slots__ 影响，
+         误报率不可控；且 0 处实际使用，gate 无检测对象
+       - Schema 漂移：DYNAMIC——需运行时 DB 连接，pre-commit hook 不可依赖外部服务；
+         alembic 测试 + Pydantic import-time 校验已兜底
+       - 阈值漂移：SEMANTIC——"该 0.05 是否应从源码导入常量"是设计意图问题，
+         AST 无法判定；测试 fixture 期望值与源码常量是两类语义
+    3. 100% AI 开发特殊性：
+       - AI 倾向直接 mock 对象而非字符串 patch（autospec/spec），减少 mock 漂移风险
+       - AI 用 Pydantic schema 直接建模，减少 DB schema 耦合
+       - AI 硬编码数值是规范问题，应通过 lint 规则（ruff PLR2004 magic-value-comparison）兜底
+    4. 成本收益：
+       - Mock 漂移：~200 行代码，收益 0（无检测对象）——ROI 负
+       - Schema 漂移：~500+ 行（需 DB 连接），收益低（1 处 alembic 已覆盖）——ROI 负
+       - 阈值漂移：~300+ 行（语义不可靠），误报风险高——ROI 负
+    5. 防复发策略：
+       - 名称漂移：已落地 gate（priority=102，硬阻断）
+       - Mock 漂移：规范强制 autospec/spec（lint 规则可加）
+       - Schema 漂移：alembic 测试 + Pydantic schema import-time 校验
+       - 阈值漂移：lint 规则 ruff PLR2004 + 编码规范"测试阈值从源码 import 常量"
+
+    裁定：3 种 DEFERRED 检测全部 CLOSED-wontfix（R102 裁定编号 #R102-5178-WONTFIX）：
+    - 静态 AST 检测不可行或不可靠（技术不可行）
+    - 实际代码库 0-1 处使用场景（收益接近 0）
+    - runtime 测试 + alembic + Pydantic + lint 规则已构成替代防复发链
+    - 防复发由替代机制兜底，不依赖 commit-time gate
+
+    注：本裁定仅关闭 DEFERRED 子项，5.178 维度主体（名称漂移检测）保持 FIXED。
+  impact:
+  - docs/02_enterprise_architecture/architecture_debt_registry.md §5附注 5.178 行更新为 CLOSED-wontfix
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-063 登记）
+  fix_phase: 已完成（裁定关闭，无施工）
+  status: resolved
+  related_adjudication: 'R102 PERMANENT 裁定（5.178 维度主体）'
+  related_rules: 'trae_047 工程文件头部（gate 头部规范）'
   created: '2026-07-20'
   last_updated: '2026-07-20'
