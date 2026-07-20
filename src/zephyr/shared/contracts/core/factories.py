@@ -62,23 +62,27 @@ def make_risk_limits(
     max_drawdown_limit: float | None = None,
     symbol_overrides: dict[str, float] | None = None,
 ):
-    """创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。"""
-    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_limits")
-    _RiskLimits = _mod.RiskLimits
-    mpv: float | None = None
-    if max_portfolio_var_1d is not None:
-        mpv = float(max_portfolio_var_1d)
-    return _RiskLimits(
-        as_of_date=as_of_date or datetime.now(UTC),
-        idempotency_key=idempotency_key or f"limits-{int(datetime.now(UTC).timestamp())}",
+    """创建 RiskLimits 实例——与 CTR-003（float VaR 上限）对齐。
+
+    5.150.10 治本：本函数为 backward-compat 薄委托——业务逻辑 canonical 实现位于
+    `zephyr.trading.trading_contracts.factories.make_risk_limits`（参数对象版本）。
+    此处经 importlib 惰性加载打破 shared(L0)→trading(L2) 静态依赖，保留旧位置/
+    关键字签名以兼容历史调用方（当前 0 消费，仅为 API 兼容兜底）。
+    """
+    _fac = importlib.import_module("zephyr.trading.trading_contracts.factories")
+    _params_cls = _fac.RiskLimitsParams
+    params = _params_cls(
+        as_of_date=as_of_date,
+        idempotency_key=idempotency_key,
         max_single_position=max_single_position,
         min_single_position=min_single_position,
         max_gross_leverage=max_gross_leverage,
         max_sector_concentration=max_sector_concentration,
-        max_portfolio_var_1d=mpv,
+        max_portfolio_var_1d=max_portfolio_var_1d,
         max_drawdown_limit=max_drawdown_limit,
-        symbol_overrides=symbol_overrides or {},
+        symbol_overrides=symbol_overrides,
     )
+    return _fac.make_risk_limits(params)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -97,21 +101,25 @@ def make_risk_dashboard_snapshot(
     overall_risk_score: float = 0.0,
     idempotency_key: str = "",
 ):
-    """创建 RiskDashboardSnapshot——用于 D_RISK->D_FRONTEND 监控面板推送。"""
-    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_dashboard_snapshot")
-    _RiskDashboardSnapshot = _mod.RiskDashboardSnapshot
-    return _RiskDashboardSnapshot(
-        snapshot_time=datetime.now(UTC).isoformat(),
+    """创建 RiskDashboardSnapshot——用于 D_RISK->D_FRONTEND 监控面板推送。
+
+    5.150.11 治本：本函数为 backward-compat 薄委托——业务逻辑 canonical 实现位于
+    `zephyr.trading.trading_contracts.factories.make_risk_dashboard_snapshot`（参数对象版本）。
+    """
+    _fac = importlib.import_module("zephyr.trading.trading_contracts.factories")
+    _params_cls = _fac.RiskDashboardSnapshotParams
+    params = _params_cls(
         portfolio_id=portfolio_id,
-        portfolio_var_1d=float(portfolio_var_1d),
+        portfolio_var_1d=portfolio_var_1d,
         max_drawdown_current=max_drawdown_current,
         gross_leverage=gross_leverage,
         top_position_concentration=top_position_concentration,
-        sector_concentrations=sector_concentrations or {},
-        active_alerts=active_alerts or [],
+        sector_concentrations=sector_concentrations,
+        active_alerts=active_alerts,
         overall_risk_score=overall_risk_score,
-        idempotency_key=idempotency_key or f"snap-{int(datetime.now(UTC).timestamp())}",
+        idempotency_key=idempotency_key,
     )
+    return _fac.make_risk_dashboard_snapshot(params)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -138,16 +146,19 @@ def make_risk_metrics_report(
     idempotency_key: str = "",
     as_of_date: datetime | None = None,
 ):
-    """创建 RiskMetricsReport——用于 D_RISK->D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指标推送。"""
-    _mod = importlib.import_module("zephyr.trading.trading_contracts.risk.risk_metrics")
-    _RiskMetricsReport = _mod.RiskMetricsReport
-    return _RiskMetricsReport(
+    """创建 RiskMetricsReport——用于 D_RISK->D_PORTFOLIO_CORE/D_REPORTING/D_FRONTEND/D_COMPLIANCE 风险指标推送。
+
+    5.150.5 治本：本函数为 backward-compat 薄委托——业务逻辑 canonical 实现位于
+    `zephyr.trading.trading_contracts.factories.make_risk_metrics_report`（参数对象版本）。
+    """
+    _fac = importlib.import_module("zephyr.trading.trading_contracts.factories")
+    _params_cls = _fac.RiskMetricsReportParams
+    params = _params_cls(
         portfolio_id=portfolio_id,
-        as_of_date=as_of_date or datetime.now(UTC),
-        var_1d_95=float(var_1d_95),
-        var_1d_99=float(var_1d_99),
-        cvar_1d_95=float(cvar_1d_95),
-        cvar_1d_99=float(cvar_1d_99),
+        var_1d_95=var_1d_95,
+        var_1d_99=var_1d_99,
+        cvar_1d_95=cvar_1d_95,
+        cvar_1d_99=cvar_1d_99,
         max_drawdown=max_drawdown,
         current_drawdown=current_drawdown,
         beta=beta,
@@ -158,8 +169,10 @@ def make_risk_metrics_report(
         calculation_method=calculation_method,
         confidence_level=confidence_level,
         lookback_period=lookback_period,
-        idempotency_key=idempotency_key or f"metrics-{int(datetime.now(UTC).timestamp())}",
+        idempotency_key=idempotency_key,
+        as_of_date=as_of_date,
     )
+    return _fac.make_risk_metrics_report(params)
 
 
 # ═══════════════════════════════════════════════════════════════════
