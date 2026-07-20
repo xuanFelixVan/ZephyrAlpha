@@ -6237,6 +6237,14 @@ creation_tokens:
     created_by: "sess-44108-20260720211503"
     capability: "commit_gateway_abuse_monitor"
 
+  # --- P4-1a error_pattern_id 列幂等迁移测试（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1a）---
+  # 验证 reconcile_execution_log schema 扩展：error_pattern_id 列老库幂等补列
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 error_pattern_id 列迁移 test 副本
+  - file: "tests/governance/audit/test_error_pattern_id_column.py"
+    token: "auto-error-pattern-id-column-test-20260720"
+    created_by: "sess-44108-20260720211503"
+    capability: "commit_gateway_abuse_monitor"
+
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
