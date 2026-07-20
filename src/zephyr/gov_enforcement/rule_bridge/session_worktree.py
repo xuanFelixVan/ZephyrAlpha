@@ -398,6 +398,94 @@ def _sweep_quarantine(root: Path, max_age_hours: int = 72) -> dict:
     return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
 
 
+# --- ARCH-GIT-CALL-BUDGET P3.5 (2026-07-20): age-based force-clean + quarantine ref ---
+# 病根：_sweep_one_dir 对"未合并+未被取代提交"的 worktree 仅 warning 跳过，永不清理。
+# 被放弃的 AI session 累积 stale worktree（17-18 个实测），占用磁盘 + 拖慢 git status。
+# 治本：worktree age > force_clean_threshold 且 session 未注册且有未合并提交时，
+# 先将分支 tip 保存到 refs/quarantine/<sid>（72h 可恢复），再清理 worktree + 删分支。
+_DEFAULT_FORCE_CLEAN_HOURS = 24
+_QUARANTINE_REF_RETENTION_HOURS = 72
+_QUARANTINE_REF_PREFIX = "refs/quarantine/"
+
+
+def _quarantine_branch_ref(
+    manager: "WorktreeManager",
+    branch: str,
+    session_id: str,
+) -> str | None:
+    """将分支 tip 保存到 ``refs/quarantine/<sid>``（ARCH-GIT-CALL-BUDGET P3.5）。
+
+    在 force-clean 前，将分支 tip 保存为 quarantine ref，提供 72h 恢复窗口。
+    恢复方式：``git update-ref refs/heads/<branch> refs/quarantine/<sid>``。
+
+    Returns:
+        quarantine ref 名称（成功）或 None（失败）。
+    """
+    ref_name = f"{_QUARANTINE_REF_PREFIX}{session_id}"
+    r = manager._run_git(["git", "update-ref", ref_name, branch])
+    if r.returncode == 0:
+        logger.info(
+            "session_worktree P3.5: 分支 %s tip 已保存到 %s (session=%s, 72h 可恢复)",
+            branch, ref_name, session_id,
+        )
+        return ref_name
+    logger.warning(
+        "session_worktree P3.5: 保存 quarantine ref 失败: %s (stderr=%s)",
+        ref_name, (r.stderr or "").strip()[:80],
+    )
+    return None
+
+
+def _sweep_quarantine_refs(
+    manager: "WorktreeManager",
+    max_age_hours: int = _QUARANTINE_REF_RETENTION_HOURS,
+) -> dict:
+    """清理过期的 quarantine refs（ARCH-GIT-CALL-BUDGET P3.5 配套）。
+
+    扫描 ``refs/quarantine/`` 下所有 ref，删除 age > max_age_hours 的。
+    在 session_worktree_start 时顺带执行。
+
+    Returns:
+        ``{"deleted": int, "skipped": int, "warnings": list[str]}``
+    """
+    import time as _time
+
+    r = manager._run_git([
+        "git", "for-each-ref", "--format=%(refname) %(committerdate:unix)",
+        _QUARANTINE_REF_PREFIX,
+    ])
+    if r.returncode != 0:
+        return {"deleted": 0, "skipped": 0, "warnings": []}
+
+    now = _time.time()
+    max_age_seconds = max_age_hours * 3600
+    deleted = 0
+    skipped = 0
+    warnings: list[str] = []
+    for line in r.stdout.splitlines():
+        parts = line.strip().split()
+        if len(parts) < 2:
+            continue
+        ref_name = parts[0]
+        try:
+            ref_time = float(parts[1])
+        except (ValueError, IndexError):
+            skipped += 1
+            continue
+        if (now - ref_time) < max_age_seconds:
+            skipped += 1
+            continue
+        rd = manager._run_git(["git", "update-ref", "-d", ref_name])
+        if rd.returncode == 0:
+            deleted += 1
+            logger.info("session_worktree P3.5: 删除过期 quarantine ref %s", ref_name)
+        else:
+            warnings.append(f"删除 {ref_name} 失败: {(rd.stderr or '').strip()[:60]}")
+            skipped += 1
+
+    return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
+
+
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
     """获取 WorktreeManager 实例。"""
     root = Path(project_root) if project_root else REPO_ROOT
@@ -757,6 +845,7 @@ def _sweep_one_dir(
     now: float,
     age_threshold: int,
     active_sids: set,
+    force_clean_threshold: int = 0,
 ) -> tuple[int, int, list[str]]:
     """处理单个 stale worktree 候选目录，返回 (swept_delta, skipped_delta, warnings)。
 
@@ -767,6 +856,11 @@ def _sweep_one_dir(
        （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
     4. per-session active lockfile 不存在或已过期（P1-2, 2026-07-20——
        防止 commit/merge 关键操作期间 worktree 被 sweep 删除导致 NotADirectoryError）
+
+    P3.5 age-based force-clean（2026-07-20）：当判据 3 命中"未合并+未被取代"时，
+    若 force_clean_threshold > 0 且目录 age > force_clean_threshold，
+    先将分支 tip 保存到 refs/quarantine/<sid>（72h 可恢复），再继续清理。
+    force_clean_threshold=0（默认）禁用此功能，保持向后兼容。
     """
     sid = d.name
     # 判据 1：age（太新的不动，防误清并发 AI 正在创建的）
@@ -797,10 +891,26 @@ def _sweep_one_dir(
                 )
                 # fall through 到清理逻辑（分支可安全删除，修改已通过其他路径合并）
             else:
-                warnings.append(
-                    f"{sid}: 分支有未合并提交且未被取代（{reason}），需人工评估（已跳过）"
-                )
-                return 0, 1, warnings
+                # P3.5 age-based force-clean：超龄且有未合并提交时，保存 quarantine ref 后强制清理
+                age_seconds = now - mtime
+                if force_clean_threshold > 0 and age_seconds > force_clean_threshold:
+                    q_ref = _quarantine_branch_ref(manager, branch, sid)
+                    if q_ref:
+                        warnings.append(
+                            f"{sid}: force-clean 超龄 worktree（age={int(age_seconds)}s "
+                            f"> {force_clean_threshold}s，未合并提交已存 {q_ref}，72h 可恢复）"
+                        )
+                        # fall through 到清理逻辑
+                    else:
+                        warnings.append(
+                            f"{sid}: force-clean 失败——quarantine ref 保存失败，保留 worktree 待人工评估"
+                        )
+                        return 0, 1, warnings
+                else:
+                    warnings.append(
+                        f"{sid}: 分支有未合并提交且未被取代（{reason}），需人工评估（已跳过）"
+                    )
+                    return 0, 1, warnings
     # 通过三重保护——清理
     swept = 0
     try:
@@ -841,6 +951,7 @@ def _sweep_stale_worktrees(
     manager: WorktreeManager,
     registry: SessionRegistry,
     max_age_minutes: int = 30,
+    force_clean_hours: int = 0,
 ) -> dict:
     """启动清扫：清理 .aidrafts/ 下的 stale session worktree 残留。
 
@@ -854,6 +965,10 @@ def _sweep_stale_worktrees(
     3. 分支 tip 在 HEAD 祖先或无分支；有未合并提交时检测是否已被取代
        （阶段2治本：全部被取代则继续清理，否则 warning 提示人工处理）
 
+    P3.5 force-clean（2026-07-20）：force_clean_hours > 0 时，对超龄（age > force_clean_hours）
+    且有未合并+未被取代提交的 worktree，先保存分支 tip 到 refs/quarantine/<sid>（72h 可恢复），
+    再强制清理。force_clean_hours=0（默认）禁用此功能，保持向后兼容。
+
     异常不抛出（sweep 失败不阻断 start）。在独立 _WorktreeLock 周期内执行，
     退出锁后 caller 才调 create_session_worktree（避免锁重入死锁）。
 
@@ -861,6 +976,7 @@ def _sweep_stale_worktrees(
         manager: WorktreeManager 实例。
         registry: SessionRegistry 实例。
         max_age_minutes: 目录年龄阈值（分钟），默认 30。
+        force_clean_hours: 超龄强制清理阈值（小时），0=禁用（默认）。
 
     Returns:
         {"swept": int, "skipped": int, "warnings": list[str]}
@@ -887,6 +1003,8 @@ def _sweep_stale_worktrees(
 
     now = _time.time()
     age_threshold = max_age_minutes * 60
+    # P3.5: force_clean_threshold（秒），0=禁用
+    force_clean_threshold = force_clean_hours * 3600 if force_clean_hours > 0 else 0
 
     # 活跃 session（list_active 已 reap 过期条目，返回的即活跃；不依赖 pid）
     # list_active 返回 list[SessionInfo]（非 dict），提取 session_id 集合
@@ -905,7 +1023,8 @@ def _sweep_stale_worktrees(
                 if not d.is_dir() or not d.name.startswith("sess-"):
                     continue
                 d_swept, d_skipped, d_warnings = _sweep_one_dir(
-                    manager, registry, d, now, age_threshold, active_sids
+                    manager, registry, d, now, age_threshold, active_sids,
+                    force_clean_threshold=force_clean_threshold,
                 )
                 swept += d_swept
                 skipped += d_skipped
@@ -920,6 +1039,7 @@ def _sweep_stale_worktrees(
 def session_worktree_sweep(
     project_root: str | Path | None = None,
     max_age_minutes: int = 30,
+    force_clean_hours: int = 0,
 ) -> SweepResult:
     """公开入口：on-demand 清理 stale session worktree 残留（治本遗留项#2，2026-07-17）。
 
@@ -934,9 +1054,14 @@ def session_worktree_sweep(
       2. session 不在 active 注册表（活跃 session 不动）
       3. 分支 tip 在 HEAD 祖先或无分支（有未合并提交的不动，warning 提示人工处理）
 
+    P3.5 force-clean（2026-07-20）：force_clean_hours > 0 时，对超龄且有未合并提交的
+    worktree，先保存分支 tip 到 refs/quarantine/<sid>（72h 可恢复），再强制清理。
+    force_clean_hours=0（默认）禁用此功能，保持向后兼容。
+
     Args:
         project_root: 项目根目录（默认 REPO_ROOT）。
         max_age_minutes: 目录年龄阈值（分钟），默认 30。
+        force_clean_hours: 超龄强制清理阈值（小时），0=禁用（默认）。
 
     Returns:
         ``{"swept": int, "skipped": int, "warnings": list[str]}``。
@@ -944,7 +1069,11 @@ def session_worktree_sweep(
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)
     registry = _get_registry(root)
-    return _sweep_stale_worktrees(manager, registry, max_age_minutes=max_age_minutes)
+    return _sweep_stale_worktrees(
+        manager, registry,
+        max_age_minutes=max_age_minutes,
+        force_clean_hours=force_clean_hours,
+    )
 
 
 def _cleanup_orphan_draft_scripts(root: Path, max_age_seconds: int = 3600) -> dict:
@@ -1345,6 +1474,13 @@ def session_worktree_start(
             logger.info("session_worktree quarantine sweep: deleted=%s", q_r.get("deleted"))
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.debug("quarantine sweep 异常（不阻断 start）", exc_info=True)
+    # P3.5 清扫过期 quarantine refs（ARCH-GIT-CALL-BUDGET P3.5 配套：72h 保留期，非阻断）
+    try:
+        qr_r = _sweep_quarantine_refs(manager)
+        if qr_r.get("deleted"):
+            logger.info("session_worktree P3.5 quarantine ref sweep: deleted=%s", qr_r.get("deleted"))
+    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.debug("quarantine ref sweep 异常（不阻断 start）", exc_info=True)
     try:
         # 检测是否已存在（幂等）
         wt_path = manager._wt_path(sid)

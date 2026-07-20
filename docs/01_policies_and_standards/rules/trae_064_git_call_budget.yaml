@@ -168,21 +168,21 @@ sections:
           untrackedcache 已验证，可重新立项（届时作为新 phase 而非复活 P3.4）。
         date: "2026-07-19"
       - phase: P3.5
-        title: Stale worktree 清理治本（增强 _branch_commits_superseded + age-based 强制清理）
-        status: planned
+        title: Stale worktree 清理治本（age-based force-clean + quarantine ref + perf monitor）
+        status: landed
         reason: |
           调研中发现的真实运维债务（非 P3.1/P3.4 范畴错误）。当前 .aidrafts/ 下
           20 个 worktree 但 registry 仅 4 个 session（0 active），134,962 文件
           占项目 91%。session_worktree_sweep 报 swept=0——_branch_commits_superseded
           过于保守（检测到 unmerged commit 即跳过清理，即使这些 commit 已被
-          其他路径 supersede）。治本方案：
-          1. 增强 _branch_commits_superseded：用 cherry-tracking 判定 commit 是否
-             已通过其他分支合入主仓（cherry-detected = superseded）。
-          2. age-based 强制清理：worktree 创建超过 N 天且 session 未注册 → 标记
-             stale，sweep 时强制清理（移送到 .runtime/orphan_quarantine/<sid>/，
-             保留 72h 后物理删除，可逆操作）。
-          3. 新增 git_performance_monitor reconciler（Phase 4）：持续监控 git status
-             计时，stale worktree 累积超阈值时早期预警。
-        date: "2026-07-19"
+          其他路径 supersede）。治本方案（已落地）：
+          1. _branch_commits_superseded 已在前序 session 增强（patch-id + message 双维度）。
+          2. age-based force-clean（本 phase 落地）：worktree age > 24h 且 session 未注册
+             且有未合并+未被取代提交 → 先将分支 tip 保存到 refs/quarantine/<sid>（72h 可恢复），
+             再强制清理 worktree + 删分支。session_worktree_sweep 新增 force_clean_hours 参数，
+             默认 0=禁用（向后兼容），AI 可按需启用。
+          3. git_performance_monitor reconciler（Phase 4 已落地）：持续监控 git status
+             计时 + stale worktree 累积超阈值（>10）早期预警 + 退化趋势检测（连续 3 次递增）。
+        date: "2026-07-20"
 enforcement:
   paired_gate_id: "GIT-CALL-BUDGET"  # Phase 3.5 规则-执行配对
