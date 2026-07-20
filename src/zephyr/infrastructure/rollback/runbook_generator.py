@@ -31,6 +31,16 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+# 模块级工具函数委托给 canonical 实现 zephyr.gov_drift.runbook_generator
+# (MOD-INF-023 drift detector 蓝图)。tests/governance/ops/test_runbook_generator.py
+# 期望这些函数接受 drift event 对象并返回 Markdown + YAML frontmatter。
+# 原本地实现签名错误（接受 kwargs 而非 event），已替换为 canonical 委托。
+from zephyr.gov_drift.runbook_generator import (  # noqa: E402
+    build_runbook_frontmatter,
+    generate_bulk_runbook,
+    generate_runbook,
+)
+
 
 class RunbookGenerator:
     RUNBOOK_DIR: str = ".zephyr/runbooks"
@@ -106,36 +116,5 @@ class RunbookGenerator:
         return sorted(steps) if steps else ["Verify state -> Execute revert -> Verify result"]
 
 
-# 模块级工具函数（原 governance/runbook_generator.py 死副本合并，P2-1 价值保留）
-# 测试 tests/governance/ops/test_runbook_generator.py 消费这些函数
-
-
-def build_runbook_frontmatter(
-    title: str = "",
-    version: str = "1.0",
-    author: str = "",
-    created: str | None = None,
-    description: str = "",
-) -> dict[str, Any]:
-    """构建 runbook frontmatter 字典。"""
-    return {
-        "title": title,
-        "version": version,
-        "author": author,
-        "created": created,
-        "description": description,
-    }
-
-
-def generate_runbook(
-    title: str = "",
-    steps: list[str] | None = None,
-    rollback_plan: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """生成单个 runbook 字典。"""
-    return {"title": title, "steps": steps or [], "rollback_plan": rollback_plan or {}}
-
-
-def generate_bulk_runbook(items: list[Any]) -> list[dict[str, Any]]:
-    """批量生成 runbook 列表。"""
-    return [generate_runbook(title=getattr(i, "title", "")) for i in items]
+# 模块级工具函数 build_runbook_frontmatter / generate_runbook / generate_bulk_runbook
+# 在文件顶部从 zephyr.gov_drift.runbook_generator 导入（canonical 实现）。

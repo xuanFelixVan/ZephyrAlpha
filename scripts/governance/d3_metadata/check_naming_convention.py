@@ -87,14 +87,12 @@ from d3_metadata.validate_module_id_naming import (
 
 # 大写文件白名单（治本：对齐 trae_028.yaml L190 + L224 根目录白名单）
 # 硬约束：AGENTS.md(Trae IDE)、Dockerfile(Docker build)
-# GitHub平台功能：README.md/LICENSE/CONTRIBUTING.md/SECURITY.md（大小写不敏感识别，社区约定大写）
+# GitHub平台功能：LICENSE（大小写不敏感识别，社区约定大写）
+# 已移除：README.md/CONTRIBUTING.md/SECURITY.md（项目已迁移为小写，不再豁免）
 # 已移除：PKG_INFO/SOURCES.txt（Python setuptools 构建产物，应 gitignore，不应入库）
 FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
-    "README.md",
-    "CONTRIBUTING.md",
-    "SECURITY.md",
     "LICENSE",
 ]
 
@@ -709,16 +707,13 @@ def _check_n12_ke_naming(filepath: str) -> list[NamingViolation]:
 
 
 # ---------------------------------------------------------------------------
-# N-13: YAML/JSON/MD 文件名 snake_case 合规检测
+# N-13: YAML/JSON/MD 文件名 kebab-case 合规检测
 # ---------------------------------------------------------------------------
 
-_SNAKE_CASE_DATA_RE = re.compile(r"^[a-z][a-z0-9_]*\.(yaml|yml|json|md)$")
+_KEBAB_CASE_DATA_RE = re.compile(r"^[a-z][a-z0-9-]*\.(yaml|yml|json|md)$")
 _DATA_FILE_EXEMPT_NAMES: set[str] = {
     "AGENTS.md",
     "Makefile",
-    "README.md",
-    "CONTRIBUTING.md",
-    "SECURITY.md",
     "LICENSE",
     "PKG-INFO",
     "SOURCES.txt",
@@ -741,8 +736,8 @@ _AUTO_GENERATED_TS_RE = re.compile(r"(_\d{4}-\d{2}-\d{2}[T-]|_\d{8}T\d{6}Z)")
 
 
 def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
-    """YAML/JSON/MD 数据文件名必须使用 snake_case（小写+下划线）。
-    强化: 禁止大写字母/空格/连字符(除白名单); .trae/ 和 config/ 豁免;
+    """YAML/JSON/MD 数据文件名必须使用 kebab-case（小写+连字符）。
+    强化: 禁止大写字母/空格/下划线(除白名单); .trae/ 和 config/ 豁免;
           dot-prefix 文件豁免; 前导下划线注册/模板文件豁免
     """
     name = Path(filepath).name
@@ -775,21 +770,21 @@ def _check_n13_data_file_naming(filepath: str) -> list[NamingViolation]:
     # Auto-generated timestamp files (e.g. secret_baseline_2026-01-15T..., score_snapshot_2026-...)
     if _AUTO_GENERATED_TS_RE.search(name):
         return []
-    if _SNAKE_CASE_DATA_RE.match(name):
+    if _KEBAB_CASE_DATA_RE.match(name):
         return []
     reasons = []
     if re.search(r"[A-Z]", name):
         reasons.append("含大写字母")
     if " " in name:
         reasons.append("含空格")
-    if "-" in name.replace(".yaml", "").replace(".yml", "").replace(".json", "").replace(".md", ""):
-        reasons.append("含连字符(kebab_case)")
+    if "_" in name.replace(".yaml", "").replace(".yml", "").replace(".json", "").replace(".md", ""):
+        reasons.append("含下划线(snake_case)")
     if not reasons:
-        reasons.append("不符合 snake_case")
+        reasons.append("不符合 kebab-case")
     return [
         NamingViolation(
             rule="N-13",
-            message=f"YAML/JSON/MD 文件名不符合 snake_case({', '.join(reasons)}): {name}",
+            message=f"YAML/JSON/MD 文件名不符合 kebab-case({', '.join(reasons)}): {name}",
             filepath=filepath,
         )
     ]
@@ -889,7 +884,7 @@ _N16_YAML_PATH = (
 # fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)
 _N16_TESTS_EXEMPT_NAMES_FALLBACK: frozenset[str] = frozenset({"conftest.py", "__init__.py"})
 _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset({
-    "index.md", "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
+    "blueprint.md", "readme.md", "changelog.md", "spec.md", ".gitkeep", "_index.yaml",
 })
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
     "_DO_NOT_USE_old_tree", "_archive", "_backups", "session_logs",
@@ -1390,6 +1385,35 @@ def _is_path_exempt(filepath: str) -> bool:
     return False
 
 
+# 临时/构建/缓存目录前缀——这些目录虽位于 REPO_ROOT 内，但不应触发 N-16 项目级扫描
+# （pytest --basetemp 使 tmp_path 落在 .runtime/tmp/ 下，会误触发 N-16 扫描整个项目）
+_N16_TEMP_DIR_PREFIXES: tuple[str, ...] = (
+    ".runtime", ".tmp", ".cache", ".pytest_cache", "tmp",
+)
+
+
+def _is_path_inside_repo(target: Path) -> bool:
+    """判断目标路径是否位于 REPO_ROOT 内且非临时目录（用于 N-16 触发条件）。
+
+    相对路径（pre-commit hook 传入）视为项目内；绝对路径需解析后比较。
+    排除 .runtime/ / .tmp/ 等临时目录（pytest --basetemp 会使 tmp_path 落在 REPO_ROOT 内，
+    但这些是测试沙箱，不应触发 N-16 项目级同名扫描）。
+    """
+    try:
+        resolved = target.resolve()
+    except (OSError, RuntimeError):
+        return False
+    try:
+        rel = resolved.relative_to(REPO_ROOT)
+    except ValueError:
+        return False
+    # 路径第一段是临时目录 → 视为项目外（不触发 N-16）
+    parts = rel.parts
+    if parts and parts[0].lower() in _N16_TEMP_DIR_PREFIXES:
+        return False
+    return True
+
+
 # ---------------------------------------------------------------------------
 # N-17: blueprint_id 域片段与 [DOMAIN] 一致性检测（裁定#206 B-5 派生范式）
 # ---------------------------------------------------------------------------
@@ -1715,10 +1739,16 @@ def main() -> int:
     else:
         # 默认模式：检查传入的文件列表（pre-commit pass_filenames），或当前目录
         targets = args.paths if args.paths else ["."]
-        # N-16 全局检测不依赖传入文件列表——它是项目级唯一性检查，
-        # 在默认模式也必须运行（否则 pre-commit 钩子不会发现同名文件）
-        _project_root_for_n16 = REPO_ROOT
-        all_violations.extend(check_filename_uniqueness_all(_project_root_for_n16))
+        # N-16 全局检测——项目级唯一性检查，仅在目标位于 REPO_ROOT 内时运行。
+        # 原因: pre-commit hook 传入项目内文件（相对路径），需要 N-16 检测同名冲突；
+        # 但测试传入 tmp_path（位于 REPO_ROOT 外），N-16 扫描整个项目会检出与测试
+        # 无关的预存在同名文件，遮蔽被测文件的 N-13/N-01 违规。
+        _targets_in_repo = any(
+            _is_path_inside_repo(Path(t)) for t in targets
+        )
+        if _targets_in_repo or not args.paths:
+            _project_root_for_n16 = REPO_ROOT
+            all_violations.extend(check_filename_uniqueness_all(_project_root_for_n16))
         for target_path in targets:
             target = Path(target_path)
             if target.is_dir():
