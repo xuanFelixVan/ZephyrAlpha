@@ -1945,6 +1945,25 @@ capabilities:
       - make_bare_subprocess_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: ruling_commit_verified_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py
+    aliases:
+      - RULING-COMMIT-VERIFIED
+      - ruling-commit-verified
+      - make_ruling_commit_verified_gate
+      - ruling_commit_hash_verifier
+    description: >-
+      RULING-COMMIT-VERIFIED in-process 文档"已完成"声明 commit hash 真实性硬验证门禁
+      （#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 盲区4 治本，2026-07-20）。
+      检测 ruling_*.md / architecture_issue_registry.yaml 中"已完成...commit <hash>"声明，
+      用 git cat-file -e <hash>^{commit} 验证 hash 真实存在（diff-based 增量检测，不阻断历史）。
+      逃生通道：commit message 含 [no-verify-ruling:<reason>] 标记（noqa_exempt_registry 登记）。
+      非 Zephyr 项目 skip（无 scripts/governance/d1_structure 目录）。fail-closed（git 失败/ast 失败阻断）。
+      priority=77（紧接 RULE-FOUR-WAY-ALIGNMENT=76，属 reference-related gate 组）。
+    integrity_anchors:
+      - make_ruling_commit_verified_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -6265,6 +6284,15 @@ creation_tokens:
     token: "auto-trae-070-temp-file-placement-20260720"
     created_by: "sess-47424-20260720124449"
     capability: "temporary_file_placement"
+
+  # --- RULING-COMMIT-VERIFIED 文档"已完成"声明硬验证 gate（2026-07-20，#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 盲区4 治本）---
+  # pre-commit 阻断文档"已完成...commit <hash>"声明中 hash 不存在（priority=77）
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("ruling_commit_verified_gate") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling_commit_verified_gate 副本
+  - file: "src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py"
+    token: "auto-ruling-commit-verified-gate-20260720"
+    created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
+    capability: "ruling_commit_verified_gate"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
