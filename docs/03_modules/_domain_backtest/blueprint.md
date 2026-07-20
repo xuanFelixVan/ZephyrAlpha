@@ -41,7 +41,7 @@ ttl: permanent
 verifiability: automated
 version: 1.3.2
 responsibility_domain: 
-design_maturity: design
+design_maturity: prototype
 build_status: stable
 ---
 
