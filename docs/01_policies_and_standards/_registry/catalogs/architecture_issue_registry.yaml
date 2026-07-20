@@ -4542,19 +4542,35 @@ entries:
       - P1-4 新增单测 test_import_integrity_gate.py（合法 import 通过 / 悬空 import 阻断 /
         stdlib 通过 / 相对 import 处理 / wildcard 跳过）
 
-    Phase 2（后续）：
-      - 跨 commit 原子性规则外部化到 trae_069_cross_commit_atomicity.yaml
-      - session_worktree_commit 增加 cross-commit 依赖检测
-      - AI 协调机制：session 间依赖关系登记到 SessionRegistry
+    Phase 2（2026-07-20 已完成，sess-59928-20260720164928）：
+      - P2-1 跨 commit 原子性规则外部化到 trae_072_cross_commit_atomicity.yaml
+        （原计划 trae_069 编号冲突，改用 trae_072；含 5 铁律 + 4 禁止 + 3 示例）
+      - P2-2 rule_ai_perception_index.yaml 更新（total_rules 68→69 + TRAE-072 条目）
+      - P2-3 session_worktree_commit 增加 cross-commit 依赖检测：
+        新增 _check_cross_commit_deps 函数，在 _run_pre_commit_gates 前检查
+        depends_on_sessions 中是否仍有活跃 session（CROSS_COMMIT_DEP_BLOCKED）
+      - P2-4 SessionRegistry 增加 session 间依赖关系登记：
+        SessionInfo 新增 depends_on_sessions 字段（to_dict/from_dict 往返）
+        SessionRegistry 新增 register_dependency / clear_dependency 方法
+        session_worktree_start / session_worktree_commit 接受 depends_on_sessions 参数
+      - P2-5 新增单测 test_cross_commit_dependency.py（28 个测试全部通过）
+      - P2-6 capability_canonical_file_registry.yaml 登记 creation_token
+        （trae_072 yaml + test_cross_commit_dependency.py）
   impact:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
     - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（P1-1 新建 gate）
     - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（P1-2 注册 gate）
     - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（P1-3 登记 GATE-IMPORT-INTEGRITY）
     - tests/governance/commit_gates/test_import_integrity_gate.py（P1-4 单测）
-  status: in_progress
+    - docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml（P2-1 规则外部化）
+    - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（P2-2 索引更新）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（P2-3 cross-commit 依赖检测）
+    - src/zephyr/security/access_control/session_concurrency.py（P2-4 depends_on_sessions 字段 + 方法）
+    - tests/session/test_cross_commit_dependency.py（P2-5 单测）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（P2-6 creation_token）
+  status: resolved
   related_adjudication: '#ARCH-PREVENTABILITY-LAYER-001 (Phase 2 文件创建), #ARCH-RUNCOMMAND-WINDOW-FLASH-001 (Phase 1.5 夹带 import)'
-  related_rules: 'trae_060 (向内收三原则), trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_068 (第 6 层可预防性)'
+  related_rules: 'trae_060 (向内收三原则), trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_068 (第 6 层可预防性), trae_072 (跨 commit 原子性)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
 

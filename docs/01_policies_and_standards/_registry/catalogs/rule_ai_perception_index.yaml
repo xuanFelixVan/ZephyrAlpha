@@ -7,7 +7,7 @@ generated_at: '2026-07-20T05:29:59Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 68
+total_rules: 69
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1829,3 +1829,38 @@ rules:
   - ARCH-TEMP-FILE-LIFECYCLE-001
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
+- rule_id: TRAE-072
+  title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001）
+  module_id: TRAE-072
+  scope: cross_commit_atomicity
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - multi_file_feature_commit
+  - cross_session_dependency
+  - import_statement_addition
+  - session_worktree_commit
+  - session_worktree_start
+  gate_ids:
+  - GATE-IMPORT-INTEGRITY
+  tags:
+  - TRAE
+  - cross_commit_atomicity
+  - L1_foundation
+  - pre_commit_gate
+  - session_coordination
+  - anti_dangling_import
+  - RULE-CROSS-COMMIT-ATOMICITY
+  - ARCH-CROSS-COMMIT-ATOMICITY-001
+  aliases:
+  - RULE-CROSS-COMMIT-ATOMICITY
+  - 跨 commit 原子性
+  - cross_commit_atomicity
+  - 悬空 import 防护
+  - dangling import prevention
+  - ARCH-CROSS-COMMIT-ATOMICITY-001
+  paired_gate_id: GATE-IMPORT-INTEGRITY
+  rule_file: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml

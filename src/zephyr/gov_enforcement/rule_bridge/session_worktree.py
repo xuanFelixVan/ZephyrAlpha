@@ -1321,6 +1321,7 @@ def session_worktree_start(
     allow_concurrent: bool = False,
     task_files: list[str] | None = None,
     allow_duplicate: bool = False,
+    depends_on_sessions: list[str] | None = None,
 ) -> StartResult:
     """AI 对话启动第一步：注册 session + 创建独立 worktree。
 
@@ -1341,6 +1342,10 @@ def session_worktree_start(
             作为任务文件指纹注册到 SessionRegistry，与活跃 session 的 task_files
             Jaccard 重叠 ≥50% 时阻断启动（DUPLICATE_TASK_BLOCKED）。
         allow_duplicate: 逃生通道，True 时跳过任务去重阻断（确认非重复施工后用）。
+        depends_on_sessions: 本 session 依赖的其他 session_id 列表
+            （#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
+            commit 时 _check_cross_commit_deps 检查依赖 session 是否仍活跃——
+            仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED），避免悬空 import 污染 main 分支。
 
     Returns:
         {
@@ -1431,6 +1436,7 @@ def session_worktree_start(
             sid, pid=0, held_files=[],
             is_breaking_change=breaking_change,
             task_files=task_files or [],  # 裁定#D：任务文件指纹注册
+            depends_on_sessions=depends_on_sessions or [],  # TRAE-072：cross-commit 依赖登记
         )
         registered = True
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -2269,6 +2275,66 @@ def _warn_if_changes_missing(root: Path, rel_files: list[str], session_id: str) 
     print("=" * 80 + "\n", file=sys.stderr)
 
 
+def _check_cross_commit_deps(
+    root: Path, session_id: str,
+) -> dict | None:
+    """检查本 session 的 depends_on_sessions 中是否仍有活跃 session（TRAE-072 / #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2）。
+
+    在 session_worktree_commit 的 _run_pre_commit_gates 前调用。
+    若本 session 的 depends_on_sessions 中存在仍活跃的 session → 返回阻断 dict
+    （CROSS_COMMIT_DEP_BLOCKED）。所有依赖 session 都不活跃（已 commit/merge/unregister）
+    → 返回 None（放行，交给后续 GATE-IMPORT-INTEGRITY 兜底）。
+
+    病根（ba40fa5b75 同型违规治本）：
+    - session-A 的 commit 引入对 session-B 正在创建的模块的 import
+    - 若 session-A 先 commit → main 分支悬空 import → reconcile_async 测试批量失败
+    - 治本：session-A 显式登记 depends_on_sessions=[session-B]，commit 前检查
+      session-B 是否已结束（不活跃 = 已 commit+merge 或已 abort）
+
+    Args:
+        root: 项目根目录。
+        session_id: 当前 session_id。
+
+    Returns:
+        阻断 dict（含 active_deps 列表）或 None（放行）。
+    """
+    try:
+        registry = _get_registry(root)
+        info = registry.get_session(session_id)
+        if info is None:
+            # session 未注册或已过期——不阻断（其他 gate 如 SESSION-REQUIRED 会处理）
+            return None
+        deps = list(info.depends_on_sessions)
+        if not deps:
+            return None
+        active_deps: list[str] = []
+        for dep_sid in deps:
+            dep_info = registry.get_session(dep_sid)
+            if dep_info is not None:
+                # 依赖 session 仍活跃 → 阻断
+                active_deps.append(dep_sid)
+        if active_deps:
+            return {
+                "session_id": session_id,
+                "status": "FAILED",
+                "message": (
+                    f"CROSS_COMMIT_DEP_BLOCKED: session={session_id} depends on "
+                    f"still-active sessions={active_deps}. Wait for their commit+merge "
+                    f"or include their work in this commit (TRAE-072 / "
+                    f"#ARCH-CROSS-COMMIT-ATOMICITY-001)."
+                ),
+                "commit_hash": "",
+                "cross_commit_dep_blocked": True,
+                "active_deps": active_deps,
+            }
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        logger.warning(
+            "session_worktree_commit: _check_cross_commit_deps 异常降级（不阻断）: %s",
+            e, exc_info=True,
+        )
+    return None
+
+
 @_inject_ok
 def session_worktree_commit(
     session_id: str,
@@ -2278,6 +2344,7 @@ def session_worktree_commit(
     allow_overlap: bool = False,
     allow_promote: bool = False,
     allow_migration: bool = False,
+    depends_on_sessions: list[str] | None = None,
 ) -> CommitResult:
     """在 worktree 内提交修改（直接 git add + commit，绕过 GitCommitGateway）。
 
@@ -2302,6 +2369,12 @@ def session_worktree_commit(
     directory_contract 检测（含 _backups 禁止、DCR-001~007）不触发的问题。fail-closed——
     checker 缺失/超时也阻断。文件数 >200 时改用 ``--all-files``（避免命令行长度限制）。
 
+    **CROSS-COMMIT-DEP 检测（TRAE-072 / #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2，2026-07-20 加）**：
+    pre-commit gate 前检查本 session 的 depends_on_sessions 中是否仍有活跃 session。
+    有则阻断（CROSS_COMMIT_DEP_BLOCKED）——避免悬空 import 污染 main 分支
+    （ba40fa5b75 同型违规治本）。``depends_on_sessions`` 参数支持工作中途发现依赖时
+    动态登记（lazy register_dependency）。
+
     Args:
         session_id: 已注册的 session_id（必须有对应 worktree）。
         files: 要提交的文件列表。路径可以是绝对路径（项目根或 worktree 内）或相对的。
@@ -2316,6 +2389,10 @@ def session_worktree_commit(
             迁移场景（git mv + import 重写）——迁移文件天然与旧路径同名文件高度相似
            （FILE-COPY 误报），且迁移过程中 import 引用可能尚未完全更新（ORPHAN-MODULE
             误报）。仅在确认为合法迁移操作时使用。默认 False。
+        depends_on_sessions: 本 session 依赖的其他 session_id 列表（TRAE-072）。
+            提供时先调 register_dependency 动态登记，再调 _check_cross_commit_deps
+            检查依赖 session 是否仍活跃——仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED）。
+            用于工作中途发现依赖（如 import 了其他 session 正在创建的模块）时登记。
 
     Returns:
         {
@@ -2327,6 +2404,7 @@ def session_worktree_commit(
         worktree 不存在时附加 "not_found": True。
         HELD-OVERLAP 阻断时附加 "held_overlap": True。
         DCR 检测阻断时附加 "directory_contract_violation": True。
+        CROSS-COMMIT-DEP 阻断时附加 "cross_commit_dep_blocked": True + "active_deps"。
     """
     root = Path(project_root) if project_root else REPO_ROOT
     manager = _get_manager(root)
@@ -2426,6 +2504,21 @@ def session_worktree_commit(
     #   若此时 sweep 删除 worktree 则抛 NotADirectoryError。guard 创建 lockfile,
     #   _sweep_one_dir 判据 4 检查 lockfile 存在则跳过该 session。
     with _session_active_guard(root, session_id):
+        # TRAE-072 / #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2（2026-07-20）：
+        # cross-commit 依赖检测——pre-commit gate 前检查 depends_on_sessions 中
+        # 是否仍有活跃 session。提供 depends_on_sessions 参数时先动态登记依赖
+        # （lazy register_dependency），再检查。阻断 = CROSS_COMMIT_DEP_BLOCKED。
+        if depends_on_sessions:
+            registry = _get_registry(root)
+            for dep_sid in depends_on_sessions:
+                try:
+                    registry.register_dependency(session_id, dep_sid)
+                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    pass
+        dep_err = _check_cross_commit_deps(root, session_id)
+        if dep_err:
+            return dep_err
+
         err = _run_pre_commit_gates(root, wt_path, rel_files, session_id, allow_promote, allow_migration, message)
         if err:
             return err

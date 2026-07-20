@@ -1,0 +1,184 @@
+rule_id: TRAE-072
+title: 跨 commit 原子性铁律（Cross-Commit Atomicity，裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001）
+name: 跨 commit 原子性铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-072
+priority: 65
+depends_on:
+- TRAE-054
+- TRAE-060
+- TRAE-062
+- TRAE-068
+tags:
+- TRAE
+- cross_commit_atomicity
+- L1_foundation
+- pre_commit_gate
+- session_coordination
+- anti_dangling_import
+- RULE-CROSS-COMMIT-ATOMICITY
+- ARCH-CROSS-COMMIT-ATOMICITY-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-CROSS-COMMIT-ATOMICITY
+- 跨 commit 原子性
+- cross_commit_atomicity
+- 悬空 import 防护
+- dangling import prevention
+- ARCH-CROSS-COMMIT-ATOMICITY-001
+severity: critical
+scope: cross_commit_atomicity
+domain: TRAE
+triggers:
+- operation: multi_file_feature_commit
+- operation: cross_session_dependency
+- operation: import_statement_addition
+- operation: session_worktree_commit
+- operation: session_worktree_start
+- gate_id: GATE-IMPORT-INTEGRITY
+sections:
+  cross_commit_atomicity:
+    section_type: procedure
+    title: 跨 commit 原子性铁律（RULE-CROSS-COMMIT-ATOMICITY）
+    original_rules:
+    - RULE-CROSS-COMMIT-ATOMICITY
+    conditions:
+    - type: trigger
+      check: 同一功能涉及 2 个或以上文件（如 A.py 添加 import + B.py 创建被 import 的模块）时
+      pass: 全部文件在同一 commit 内原子提交（单 commit 完整可工作）
+      fail: 拆分到多个独立 commit（每个单独 commit 都不完整，main 分支出现 transient 悬空 import）
+    - type: constraint
+      check: 100% AI 开发场景下，多 session 并发各自独立 commit/merge，session 间依赖关系无登记时
+      pass: session 间依赖显式登记到 SessionRegistry.depends_on_sessions，commit 前检查依赖 session 是否已结束
+      fail: session A 引入 import（commit 早）、session B 创建文件（commit 晚）→ main 分支 transient 悬空 import → 触发 ModuleNotFoundError → reconcile_async 测试批量失败
+    - type: constraint
+      check: 跨 Phase 提交（Phase N 的 commit 引入对 Phase N+1 才创建的模块的 import）时
+      pass: import 语句与被 import 模块在同一 Phase 内原子提交，或推迟到被 import 模块落地后再添加 import
+      fail: Phase 1.5 commit 夹带 Phase 2 import（ba40fa5b75 模式），36 分钟后才由 Phase 2 commit 创建目标模块
+    - type: constraint
+      check: GATE-IMPORT-INTEGRITY（priority=107）在 commit 时检测 staged .py 文件中 from X.Y.Z import W / import X.Y.Z 的目标模块可解析性
+      pass: 目标模块在 staged_set + main HEAD 可解析（同 commit 创建 + 已存在）
+      fail: 目标模块不可解析 → 阻断 commit，提示"session-B 是否在并发创建该文件？是则登记 depends_on_sessions 后等待；否则同 commit 创建目标模块"
+    actions:
+    - type: mandatory
+      step: '铁律1: 同一功能涉及多文件 MUST 在同一 commit 内原子提交——禁止拆分到多个独立 commit。判定标准：删除其中任一文件后剩余文件功能不完整即视为同一功能（强耦合）'
+    - type: mandatory
+      step: '铁律2: 跨 session 依赖（session A 的 commit import session B 正在创建的模块）MUST 通过 SessionRegistry.register_dependency(session_A, session_B) 登记依赖关系，session_worktree_commit 在 _run_pre_commit_gates 前检查 depends_on_sessions 中是否仍有活跃 session，有则阻断（CROSS_COMMIT_DEP_BLOCKED）'
+    - type: mandatory
+      step: '铁律3: session_worktree_start / session_worktree_commit 接受 depends_on_sessions: list[str] 参数，AI 知道依赖关系时显式登记（如 session A 知道依赖 session B 的 forged_gw_marker_gate.py 创建工作，则 session_worktree_start(session_A_id, depends_on_sessions=[session_B_id])）'
+    - type: mandatory
+      step: '铁律4: 跨 Phase 提交场景（Phase N 引入对 Phase N+1 模块的 import）MUST 推迟 import 到 Phase N+1 同 commit 添加——禁止"import 先行"模式。GATE-IMPORT-INTEGRITY 会硬阻断此类悬空 import'
+    - type: mandatory
+      step: '铁律5: AI session 启动时若已知依赖其他活跃 session 的工作，MUST 在 session_worktree_start 时声明 depends_on_sessions；未知依赖由 GATE-IMPORT-INTEGRITY 兜底检测并提示"是否依赖其他活跃 session？是则登记 depends_on_sessions 后等待"'
+    - type: forbidden
+      step: '禁止: 同一功能涉及多文件拆分到多个独立 commit（每个单独 commit 都不完整）——ba40fa5b75 同型违规'
+    - type: forbidden
+      step: '禁止: 跨 Phase 提交（Phase N commit 引入对 Phase N+1 才创建的模块的 import）——裁定 #ARCH-PREVENTABILITY-LAYER-001 Phase 2"待立项"时禁止 Phase 1.5 夹带 import'
+    - type: forbidden
+      step: '禁止: session 间依赖关系不登记就 commit——100% AI 场景下无人类视觉通道协调，必须显式登记 depends_on_sessions 才能可靠编排'
+    - type: forbidden
+      step: '禁止: 把 GATE-IMPORT-INTEGRITY 的阻断当"通过"绕过（allow_overlap 模式）——allow_overlap 只跳过 HELD-OVERLAP，不跳过 IMPORT-INTEGRITY'
+    examples:
+    - scenario: 同一功能涉及多文件（ba40fa5b75 同型违规复现）
+      正确: git_commit_gateway.py 添加 import forged_gw_marker_gate + forged_gw_marker_gate.py 创建在同一 commit 内（git_commit_gateway.py 改动 staged + forged_gw_marker_gate.py 创建 staged → GATE-IMPORT-INTEGRITY 检测目标模块在 staged_set 可解析 → 放行）
+      错误: ba40fa5b75 单独 commit git_commit_gateway.py 含 import，36 分钟后 ce81f1077f 才创建 forged_gw_marker_gate.py（两 commit 之间 main 分支悬空 import）
+      reason: 同一功能（GW marker gate 注册）涉及 2 个强耦合文件，MUST 原子提交。GATE-IMPORT-INTEGRITY 在 ba40fa5b75 场景会检测到 forged_gw_marker_gate 模块在 staged_set + HEAD 都不可解析 → 阻断
+    - scenario: 跨 session 依赖协调（100% AI 场景）
+      正确: session-A 知道 forged_gw_marker_gate.py 由 session-B 创建 → session_worktree_start(session-A, depends_on_sessions=[session-B]) → session-A commit 时 _check_cross_commit_deps 检测 session-B 仍活跃 → 阻断（CROSS_COMMIT_DEP_BLOCKED）→ session-B commit + merge 后 → session-A 重试 commit → 通过
+      错误: session-A 不登记依赖直接 commit → GATE-IMPORT-INTEGRITY 阻断（悬空 import）→ AI 误判为"代码缺陷"反复修改 → 实际只需等待 session-B
+      reason: 100% AI 场景下无人类视觉通道协调，显式登记 depends_on_sessions 才能让 AI 正确编排跨 session 工作
+    - scenario: 跨 Phase 提交（Phase 1.5 夹带 Phase 2 import）
+      正确: Phase 1.5 commit 只含本 Phase 文件（git_commit_gateway.py 不含对 forged_gw_marker_gate 的 import），Phase 2 commit 同步添加 import + 创建目标模块（git_commit_gateway.py 改 import + forged_gw_marker_gate.py 创建）
+      错误: Phase 1.5 commit 夹带 Phase 2 import（ba40fa5b75），Phase 2 才创建目标模块（ce81f1077f）
+      reason: 跨 Phase 提交是"功能未完成却先登记调用点"的反模式，违反单一职责 Phase 边界
+    common_mistakes:
+    - '❌ 同一功能涉及多文件拆分到多个独立 commit——ba40fa5b75 同型违规'
+    - '❌ 跨 Phase 提交（Phase N 引入 Phase N+1 才创建的模块的 import）'
+    - '❌ session 间依赖不登记就 commit——100% AI 场景下必须显式登记 depends_on_sessions'
+    - '❌ 把 GATE-IMPORT-INTEGRITY 阻断当"代码缺陷"反复修改——实际只需等待依赖 session 或同 commit 创建目标模块'
+    - '❌ 用 allow_overlap 绕过 GATE-IMPORT-INTEGRITY——allow_overlap 只跳过 HELD-OVERLAP，IMPORT-INTEGRITY 不可绕过'
+    background:
+      source: 2026-07-20 裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001（ba40fa5b75 跨 commit 原子性违规 + ce81f1077f 36 分钟后修复 + GATE-IMPORT-INTEGRITY 治本）
+      rationale: |
+        ba40fa5b75（#ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.5 治本闪窗）在 git_commit_gateway.py
+        L154 + L345 添加了对 forged_gw_marker_gate.py 的 import 与 register 调用，但该文件 36 分钟后
+        才由 ce81f1077f（#ARCH-PREVENTABILITY-LAYER-001 Phase 2 落地）创建。两个 commit 之间 main
+        分支处于悬空 import 状态，触发 ModuleNotFoundError，导致 7 个 reconcile_async 测试批量失败
+        （上一会话误判为 pre-existing，实际是 transient 故障，ce81f1077f merge 后自然修复）。
+
+        病根（第一性原理）：
+        1. 跨文件原子性违规——同一功能涉及 2 个文件（git_commit_gateway.py 添加 import +
+           forged_gw_marker_gate.py 创建），被拆分到 2 个独立 commit
+        2. 跨 Phase 提交违规——Phase 1.5 commit 夹带 Phase 2 import（裁定 #ARCH-PREVENTABILITY-LAYER-001
+           明确 Phase 2"待立项"，但 import 已先行）
+        3. 100% AI 开发场景下多 session 并发无协调——AI session 各自独立 commit/merge，
+           session 间依赖关系无登记
+
+        现有门禁的盲区（Phase 1 已治本）：
+        - UNDEFINED-NAME (F821, priority=106)：检测 NameError 不检测 ImportError
+        - SCRIPTS-IMPORT-INTEGRITY (priority=104)：只检测 _shared.constants 符号
+        - TEST-SOURCE-CONSISTENCY (priority=102)：只检测已存在模块的符号存在性
+        - GATE-IMPORT-INTEGRITY (priority=107, Phase 1 落地)：检测 staged 文件中 import 的目标模块
+          在 staged_set + main HEAD 可解析性——治本 ba40fa5b75 同型违规
+
+        Phase 2 治本（本规则）：
+        - 跨 commit 原子性规则外部化到本规则文件（TRAE-072）
+        - session_worktree_commit 增加 cross-commit 依赖检测（_check_cross_commit_deps）
+        - AI 协调机制：SessionRegistry 增加 depends_on_sessions 字段 + register_dependency 方法
+
+        编号说明：原裁定 fix_phase 计划用 TRAE-069，但 TRAE-069 已被
+        trae_069_commit_gateway_abuse_thresholds.yaml 占用（2026-07-20 前期），
+        TRAE-070/071 也已占用（临时文件治理），故改用 TRAE-072（裁定修正）。
+      related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-060
+  - TRAE-062
+  - TRAE-068
+  scripts:
+  - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+  - src/zephyr/security/access_control/session_concurrency.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GATE_ENGINE
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOVERNANCE
+  - MOD-SECURITY-ACCESS_CONTROL
+  blueprints:
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  - docs/03_modules/_domain_governance/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §RULE-CAPABILITY-LOOKUP
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+enforcement:
+  paired_gate_id: IMPORT-INTEGRITY  # Phase 1 已落地（src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py，priority=107）
+  type: gate_plus_doc
+  executors:
+  - pre_commit_gate
+  - session_worktree_commit_check
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: false
+  bypass_markers: []
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
+provenance:
+  extracted_at: '2026-07-20'
+  extracted_by: sess-59928-20260720164928
+  source: '裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001（Phase 2 落地：跨 commit 原子性规则外部化 + session_worktree_commit cross-commit 依赖检测 + SessionRegistry session 间依赖登记）'
