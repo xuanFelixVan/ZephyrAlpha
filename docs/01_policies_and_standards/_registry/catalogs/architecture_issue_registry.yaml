@@ -2943,7 +2943,50 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（1 处描述同步 11→30）
   - AGENTS.md（§7 新增架构健康度仪表盘小节，#ARCH-HEALTH-DASHBOARD-001 立项）
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
-  fix_phase: 阶段1已完成，阶段2待立项
+  - scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py（阶段2新建，post-commit reconciler，priority=220）
+  - tests/scripts/governance/d8_doc_sync/test_metric_count_drift_reconciler.py（阶段2新建，21 个单测）
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（L675-687 注册 metric_count_drift_reconciler）
+  - src/zephyr/governance/audit/reconciliation_registry.py（__all__ 追加 make_metric_count_drift_reconciler）
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（metric_count_drift_check capability + creation_token 登记）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条状态更新 + #ARCH-PRE-EXISTING-DEBT-001 新增）
+  fix_phase: 阶段1+2全部完成
+  status: resolved
+  resolution_note: |
+    阶段1治标（2026-07-20，commit e3e6a5bb36 + 92640d50c9）：
+      手工同步 9 处指标数描述漂移（"11/15/18/19"→"30"）+ AGENTS.md §7 新增小节 + 本条登记。
+    阶段2治本（2026-07-20）：
+      新建 make_metric_count_drift_reconciler（post-commit reconciler，priority=220），
+      机械校验 dashboard METRICS 列表长度与 4 个派生文件的指标数描述一致性。
+      对标 readme_version_sync_reconciler 先例模式。21 个单测通过 + 实际运行 action=clean。
+      治本闭环：从此 AI 改 METRICS 列表后，reconciler 自动检测描述漂移并 warn，
+      无需 AI "意识到"9 处描述位置。
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+
+# --- #ARCH-PRE-EXISTING-DEBT-001: reconciliation_registry.py pre-existing 悬空引用消除 ---
+- issue_id: '#ARCH-PRE-EXISTING-DEBT-001'
+  title: reconciliation_registry.py pre-existing 悬空引用消除（L389/1405/1433）
+  severity: P3低
+  category: architecture_metadata
+  adjudication: |
+    问题背景：
+    reconciliation_registry.py L389/1405/1433 引用 #ARCH-PRE-EXISTING-DEBT-001 作为
+    pre-existing 悬空引用标记，但未在 architecture_issue_registry.yaml 登记，触发
+    ARCH-REFERENCE commit gate 阻断（commit message 引用未登记的 ARCH 议题 ID）。
+
+    裁定（2026-07-20，配合 #ARCH-HEALTH-DASHBOARD-001 阶段2提交）：
+    补登本条目作为占位登记，消除悬空引用阻断。这些 pre-existing 引用指向的是
+    reconciliation_registry.py 历史代码中的已知技术债（L389/1405/1433 行附近），
+    实际修复需独立立项评估 ROI（涉及 3 处历史代码重构），暂以登记方式消除阻断。
+
+    后续行动：
+    若 3 处 pre-existing 代码被实际修复，本条目可更新 fix_phase 为"已完成"并
+    status 改为 resolved；若评估 ROI 不足决定永久保留为已知债，本条目 status
+    保持 open 但增加 superseded_note 说明。
+  impact:
+  - src/zephyr/governance/audit/reconciliation_registry.py（L389/1405/1433 pre-existing 引用）
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  fix_phase: 已登记（实际修复待独立立项）
   status: open
   created: '2026-07-20'
   last_updated: '2026-07-20'

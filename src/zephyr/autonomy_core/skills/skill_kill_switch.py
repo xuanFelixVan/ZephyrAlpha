@@ -28,7 +28,7 @@ Skill 熔断开关 —— 紧急停用异常 Skill，防雪崩。
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, Optional
 
 from zephyr.autonomy_core.skills.skill_model import SkillStatus
 

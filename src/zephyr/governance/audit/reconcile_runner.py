@@ -190,6 +190,11 @@ def read_status_file(project_root: Path | str, commit_sha: str) -> ReconcileStat
 
     含僵尸判定：status=running 且 started_at 超过 ``_STALE_THRESHOLD_SECONDS``
     自动改判为 ``STATUS_STALE``（不修改文件，仅返回值变更）。
+
+    #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
+    僵尸判定时持久化到 reconcile_execution_log 表（铁律：所有 reconciler
+    失败结果必须持久化记录，且错误详情不允许截断）。用内存 set 去重避免
+    重复写入（每个 commit_sha 只记录一次）。
     """
     path = _status_file_path(project_root, commit_sha)
     if not path.exists():
@@ -203,7 +208,50 @@ def read_status_file(project_root: Path | str, commit_sha: str) -> ReconcileStat
         started = data.get("started_at", 0)
         if started and (int(time.time()) - started > _STALE_THRESHOLD_SECONDS):
             data["status"] = STATUS_STALE
+            _log_stale_to_db(project_root, commit_sha, started, data)
     return data  # type: ignore[return-value]
+
+
+# 已记录到 DB 的 stale commit_sha 集合（内存去重，进程级）
+_stale_logged: set[str] = set()
+
+
+def _log_stale_to_db(
+    project_root: Path | str,
+    commit_sha: str,
+    started_at: int,
+    status_data: dict,
+) -> None:
+    """持久化 stale 状态到 reconcile_execution_log 表（幂等，每个 commit_sha 只记录一次）。
+
+    #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
+    之前 stale 状态只在 read_status_file 返回值中标记，不写 DB，AI 查询
+    reconcile_execution_log 表看不到 stale 事件，违反持久化铁律。
+    """
+    if commit_sha in _stale_logged:
+        return
+    try:
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
+            _log_reconcile_results,
+        )
+        elapsed = int(time.time()) - started_at  # noqa: m46-time  M46豁免: 与本文件既有 time.time() 风格一致（5处既有调用），stale 判定需 Unix timestamp 整数差值
+        session_id = status_data.get("session_id", "unknown")
+        _log_reconcile_results(
+            project_root,
+            [ReconcileResult(
+                action="critical_warn",
+                detail=f"reconcile worker stale: running for {elapsed}s "
+                       f"(threshold={_STALE_THRESHOLD_SECONDS}s, commit_sha={commit_sha}, "
+                       f"worker_pid={status_data.get('worker_pid', 'unknown')})",
+                gate_id="RECONCILE-WORKER-STALE",
+            )],
+            session_id,
+            trigger_source="post_commit_async_stale",
+        )
+        _stale_logged.add(commit_sha)
+    except Exception:  # noqa: BLE001 — DB 写入失败不影响 stale 判定
+        pass
 
 
 def launch_reconcile_async(

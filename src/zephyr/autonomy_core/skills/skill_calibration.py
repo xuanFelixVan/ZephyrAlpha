@@ -28,7 +28,7 @@ Skill 校准 —— 置信度 vs 真实准确率对齐 + drift 监控.
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import Any, Optional
 
 
 class CalibrationEntry:
