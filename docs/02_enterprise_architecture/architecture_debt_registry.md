@@ -196,8 +196,8 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 | # | 分组 | 条目 | 动作 |
 |---|---|---|---|
-| 1 | God Class 拆分（顺序 1/4） | 5.150.7 ActionDispatcher（22 方法） | Extract Class + facade 向后兼容 + 每步测试验证 |
-| 2 | God Class 拆分（顺序 2/4） | 5.150.1 ResourceOptimizationEngine（39 方法） | 同上 |
+| 1 | God Class 拆分（顺序 1/4） | ✅ 5.150.7 ActionDispatcher（22 方法） | Extract Class + facade 向后兼容 + 每步测试验证（commit a91afffd95，39/39 测试通过） |
+| 2 | God Class 拆分（顺序 2/4） | ✅ 5.150.1 ResourceOptimizationEngine（39 方法） | 同上（前序 session，3 worker 提取，9 实质方法保留） |
 | 3 | God Class 拆分（顺序 3/4） | 5.150.3 FeedbackLoopScheduler（26 方法） | 同上 |
 | 4 | God Class 拆分（顺序 4/4） | 5.150.2 AutoRuntimeCore（42 方法） | 同上 |
 | 5 | 参数对象 | 5.150.5 / 5.150.10 / 5.150.11（factories.py 16/9/9 参数） | 引入参数对象（与 5.150.6 联动） |
@@ -277,12 +277,12 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 |---|---|---|---|---|
 | 5.145.13-5.145.26（14 项） | MEDIUM | 跨 100 文件 627 处裸 Any（ANY-1=455 + ANY-2=172；代表文件：l3_output/l1_input/l7_validation/l8_multi_agent/injection_patterns/scheduler_act/verdict_engine/resource_optimization/exam_judge 等） | 系统性 Any 滥用——配置型 dict[str,Any] 约 35% 合理、Python 协议要求 Any 约 5% 合理、真正需修裸 Any 约 60% 需逐处推断具体类型 | **wontfix（R84 升级 PERMANENT + R94 维持 + R102 RATIFY）**：GATE-ANY-ABUSE 防复发已在（manual 阶段）；627 处一次性替换不可验证（错误类型标注比无标注更危险）；Any 在 Python 运行时不做类型检查仅静态分析 warning；30-40% 为合理 Any；增量机会性清理为常态实践 |
 
-### 5.150 设计模式误用（PERMANENT-9：EXECUTE 7 + wontfix 2）
+### 5.150 设计模式误用（PERMANENT-9：EXECUTE 5 + wontfix 2 + FIXED 2）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.150.7 | MEDIUM | `src/zephyr/trading/action_dispatcher.py:90` | **God Class**：`ActionDispatcher` 22 个方法、753 行，承担文件修改/注释标注/模块发现/brain block 管理/triage 日志 5+ 职责 | **R102 裁定 EXECUTE（执行顺序 1/4）**：实测四类均有回归测试覆盖，"无回归测试"前提已失效；100% AI 开发下 God Class 是 AI 上下文天敌。方案：Extract Class + 保留 facade 向后兼容 + 每步测试验证 |
-| 5.150.1 | HIGH | `src/zephyr/trading/resource_optimization.py:260` | **God Class**：`ResourceOptimizationEngine` 单例约 39 个方法、880+ 行，承担压力状态机/熔断器/缓存管理/进程池/监控循环/自愈策略/配置加载/审计 7+ 职责 | **R102 裁定 EXECUTE（执行顺序 2/4）**：同上 |
+| 5.150.7 | MEDIUM | `src/zephyr/trading/action_dispatcher.py:90` | **God Class**：`ActionDispatcher` 22 个方法、753 行，承担文件修改/注释标注/模块发现/brain block 管理/triage 日志 5+ 职责 | **✅ FIXED（2026-07-21，commit a91afffd95）**：R102 裁定 EXECUTE（执行顺序 1/4）已完成。Extract Class 拆分为 1 facade（`action_dispatcher/__init__.py`）+ 4 workers（`_search_replace_engine.py` / `_file_lifecycle_manager.py` / `_annotation_writer.py` / `_audit_log_writer.py`），原 .py 保留为 ground truth 参考（被包遮蔽）。39/39 测试零修改通过。4 个类标记 `class-name-alias` 豁免（合法迁移），5 个 creation_tokens 已登记 |
+| 5.150.1 | HIGH | `src/zephyr/trading/resource_optimization.py:260` | **God Class**：`ResourceOptimizationEngine` 单例约 39 个方法、880+ 行，承担压力状态机/熔断器/缓存管理/进程池/监控循环/自愈策略/配置加载/审计 7+ 职责 | **✅ FIXED（2026-07-20，前序 session）**：R102 裁定 EXECUTE（执行顺序 2/4）已完成。Extract Class 提取 3 个同文件协作者类（`_ConfigReloader` 配置加载/热重载、`_StrategyExecutor` 策略执行/防御降级、`_ExternalNotifier` EventBus/审计外发），39 方法降为 9 实质方法 + 27 薄封装委托。剩余 9 方法（snapshot/_classify_pressure/optimize/health_check/force_pressure/start_monitor/monitor_tick/_load_config/_self_heal_cycle）与单例状态/调用顺序/副作用深度交织，保留有架构理由（见类文档注释）。45/49 测试通过（4 预存失败与提取无关） |
 | 5.150.3 | HIGH | `src/zephyr/feedback_loop/scheduler.py:96` | **God Class**：`FeedbackLoopScheduler` 26 个方法、520+ 行，注入 19+ 依赖，承担 collect→detect→diagnose→act→verify 全链路 + drift scan + safety gates + alerting + metrics 6+ 职责 | **R102 裁定 EXECUTE（执行顺序 3/4）**：同上 |
 | 5.150.2 | HIGH | `src/zephyr/trading/auto_runtime_core.py:65` | **God Class**：`AutoRuntimeCore` 约 42 个方法、672 行，承担 boot/shutdown/RBAC/Ollama 管理/任务队列/blueprint watcher/FLE scheduler/model router/A2A/任务学习 9+ 职责 | **R102 裁定 EXECUTE（执行顺序 4/4）**：同上 |
 | 5.150.5 | HIGH | `src/zephyr/trading/trading_contracts/factories.py:109` | **Long Parameter List**：`make_risk_metrics_report` 16 个参数，远超 7 阈值，直接源于 Data Class 反模式 | **R102 裁定 EXECUTE**：引入参数对象（与 5.150.6 联动） |
