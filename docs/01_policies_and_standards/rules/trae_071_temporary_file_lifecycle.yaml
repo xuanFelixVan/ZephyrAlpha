@@ -1,0 +1,537 @@
+# trae_071_temporary_file_lifecycle.yaml
+# 临时文件生命周期铁律（治本 #ARCH-TEMP-FILE-LIFECYCLE-001）
+#
+# SSoT 真源分类（trae_062）：本文件是临时文件生命周期（时间维度）的规则数据真源。
+# AI 在创建/保留/清理临时文件前 MUST 查阅本文件确定生命周期策略。
+#
+# 与 trae_070 的关系（正交补集，SRP 分离）：
+#   - trae_070 管空间维度（文件类型 → 存放目录）
+#   - trae_071 管时间维度（文件生命周期：创建 → 暂存 → promote/清理）
+#   两者正交，不重复。trae_070 回答"放哪里"，trae_071 回答"活多久/何时清/如何 promote"。
+#
+# 历史：
+#   2026-07-20: 上午双策略共振选股会话将成果 FINAL_resonance_rank.csv 写入
+#               .runtime/strategy_screen/（免跟踪暂存区），11:58 生成后 12:06 前被
+#               其他会话/清理进程无声删除（无审计痕迹），靠组件 CSV 重新生成。
+#               暴露免跟踪暂存区无生命周期治理的问题。
+#               同目录还存在数百个历史会话遗留垃圾（_*.py、pytest_tmp*、tmp_*、
+#               各种 .log/.txt），全部是各会话直写 .runtime 根目录造成。
+#               本规则治本：两级分类 + 生命周期 + promote 通道。
+#
+# 核心问题（第一性原理）：
+#   - .runtime/ 整目录被 .gitignore 免跟踪 → 无 git 历史审计 → 文件被删无痕迹
+#   - 各 AI 会话直写 .runtime/ 根目录 → 文件归属不明 → 清理责任悬空
+#   - 成果留在免跟踪区 = 草稿（可被任何清理进程无声删除）
+#   - 治本：① 禁止根目录直写 ② 强制会话级暂存隔离 ③ 成果必须 promote ④ TTL 自动清理
+#
+# 三级分类：
+#   层级        | 内容                          | 去向                              | 治理
+#   -----------|------------------------------|----------------------------------|--------------------------
+#   成果层      | 分析报告/选股清单/工作文档     | docs/_working/                    | git 跟踪 + front-matter + 归档
+#   暂存层      | 计算中间产物/缓存/调试脚本     | .runtime/sessions/<sid>/staging/ | 免跟踪 + 会话结束自动清理
+#   系统层      | 锁/会话注册/审计/pid/heartbeat | .runtime/ 现有系统子目录          | 免跟踪 + 现有 reconciler 维护
+#
+# 修改规则（铁律）：
+#   - 修改分类/生命周期必须改本文件，禁止散落在代码注释或 AGENTS.md 散文
+#   - 修改后必须运行 sync_yaml_to_depgraph.py 同步到 DB（缓存）
+#   - 必须更新 version 字段（语义化版本）
+
+meta:
+  rule_id: trae_071
+  rule_name: temporary_file_lifecycle
+  version: '1.0.0'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+  ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
+  related_issue: '#ARCH-TEMP-FILE-LIFECYCLE-001'  # 前向引用，Owner 需在 architecture_issue_registry.yaml 登记
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001'
+  depends_on:
+    - rule_id: trae_070
+      why: '空间维度分类（文件类型→目录）——本规则时间维度（生命周期）的协同正交补集'
+    - rule_id: trae_060
+      why: '向内收三原则——本规则§event_driven_cleanup 事件驱动清理（非 cron/sleep-loop）的依据'
+    - rule_id: trae_062
+      why: 'SSoT 真源分类——本文件是规则数据真源，通过 sync_yaml_to_depgraph.py 同步'
+
+# enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
+# 本 YAML 是临时文件生命周期的指引真源（数据/指引类规则 + 配套 reconciler 治本）。
+# 治本机制：
+#   1. AI 自觉查本规则 + capability_lookup.find("temporary_file_lifecycle") 反查
+#   2. post-commit reconciler（make_session_staging_lifecycle_reconciler，priority=802）
+#      在 session_worktree_merge / session_worktree_abort 事件触发后，
+#      清理对应 .runtime/sessions/<sid>/staging/ 目录（事件驱动，非时间触发）
+#   3. promote 通道：成果文件通过 shutil.copy 显式复制到 docs/_working/ 并加 front-matter
+#      才算正式交付；留在 .runtime/sessions/<sid>/staging/ 的成果视为草稿、可被清理
+enforcement:
+  paired_gate_id: null  # 指引类规则，无对应 pre-commit gate（.runtime/ 排除门禁）
+  post_commit_reconciler: 'make_session_staging_lifecycle_reconciler'  # priority=802
+  reconciler_gate_id: 'GATE-SESSION-STAGING-LIFECYCLE'
+
+# ============================================================
+# 1. 三级分类表（Three-Tier Classification）
+# ============================================================
+# AI 创建临时文件前 MUST 对照 trae_070（空间维度）确定存放目录，
+# 然后对照本表（时间维度）确定生命周期与归宿。
+# 判定流程：拿到要创建的文件 → trae_070 查"放哪里" → 本表查"活多久/何时清/如何 promote"。
+
+three_tier_classification:
+  # --- 成果层（Output Tier，正式交付物）---
+  - tier: output
+    zone: temporary  # 与 trae_070 docs/_working/ 对齐
+    destination: "docs/_working/"
+    subdirs:
+      - "docs/_working/"  # 根目录 YYYY-MM-DD-<topic>.md
+      - "docs/_working/audit/"
+      - "docs/_working/research_notes/"
+      - "docs/_working/ttl_content_audit/"
+      - "docs/_working/module_migration/"
+      - "docs/_working/p2_review_reports/"
+    git_tracked: true
+    ttl: task_bound
+    front_matter_required: true  # ttl/doc_type/completes_when
+    archive_destination: "docs/_archive/"
+    archive_trigger: "completes_when 满足 + auto_archive reconciler 归档"
+    examples:
+      - "分析报告（如选股清单、回测报告）"
+      - "工作文档（如设计稿、决策记录）"
+      - "任务计划/规格/spec"
+      - "审计报告"
+    promote_from: "暂存层（.runtime/sessions/<sid>/staging/）的成果通过 shutil.copy + front-matter 提升"
+
+  # --- 暂存层（Staging Tier，会话级中间产物）---
+  - tier: staging
+    zone: neutral  # .runtime/ neutral zone
+    destination: ".runtime/sessions/<session_id>/staging/"
+    git_tracked: false
+    ttl: 24h  # 24 小时 TTL（与 make_stash_lifecycle_reconciler 对齐）
+    cleanup_trigger: "session_worktree_merge / session_worktree_abort 事件触发（事件驱动，禁止 cron/sleep-loop）"
+    front_matter_required: false
+    isolation: "会话级隔离——每 AI 会话独立 staging 目录，禁止跨会话读写"
+    examples:
+      - "计算中间产物（CSV/JSON/parquet 临时文件）"
+      - "缓存数据（API 响应缓存、计算中间态）"
+      - "调试脚本（一次性探查/诊断 .py/.ps1）"
+      - "草稿文档（未确定是否 promote 的初稿）"
+    subdirs_allowed: true  # 允许 staging/ 下进一步分子目录（如 staging/csv/、staging/scripts/）
+    note: |
+      路径约定复用 #ARCH-HEARTBEAT-001 的 .runtime/sessions/<sid>/ 父目录，
+      本规则在其下加 staging/ 子目录与系统文件（heartbeat.jsonl/heartbeat.pid/emergency_count.json）隔离。
+      系统文件在 .runtime/sessions/<sid>/ 根，staging 在 .runtime/sessions/<sid>/staging/。
+
+  # --- 系统层（System Tier，运行时基础设施）---
+  - tier: system
+    zone: neutral
+    destination: ".runtime/ 现有系统子目录"
+    system_subdirs:
+      - ".runtime/sessions/<sid>/"  # heartbeat 系统文件（#ARCH-HEARTBEAT-001）
+      - ".runtime/claim_snapshots/"
+      - ".runtime/emergency_counts/"
+      - ".runtime/gate_audit/"
+      - ".runtime/handoffs/"
+      - ".runtime/lookup_audit/"
+      - ".runtime/reconcile_reports/"
+      - ".runtime/working_archive/"
+      - ".runtime/locks/"
+      - ".runtime/heartbeat/"
+      - ".runtime/reports/"
+      - ".runtime/aidrafts/"
+    system_root_files:
+      - ".runtime/ide_health_daemon.pid"
+      - ".runtime/session_registry.json"
+      - ".runtime/worktree_ops_log.jsonl"
+      - ".runtime/depgraph_scan_cache.json"
+      - ".runtime/git_performance_log.jsonl"
+      - ".runtime/domain_split_move_map.yaml"  # 引用配置（ast_import_rewriter.py 用）
+    git_tracked: false
+    ttl: null  # 系统文件生命周期由各系统自管（如 heartbeat daemon、reconciler）
+    cleanup_trigger: "现有 reconciler 维护（不动，本规则不干预）"
+    front_matter_required: false
+    note: "系统层不在本规则治理范围，仅声明边界——禁止 AI 直写或清理系统子目录/系统根文件"
+
+# ============================================================
+# 2. 铁律（Iron Laws）
+# ============================================================
+
+iron_laws:
+  # --- 硬规则①（Owner 裁定 2026-07-20）---
+  - id: TEMP-LIFE-LAW-1
+    name: "禁止向 .runtime 根目录直写文件"
+    statement: |
+      AI 会话创建临时文件 MUST 落在 .runtime/sessions/<session_id>/staging/ 下，
+      禁止向 .runtime/ 根目录直接写文件（如 .runtime/my_script.py、.runtime/output.txt）。
+      系统文件（系统层 system_root_files 清单）由系统自身写入，AI 不得模仿。
+    rationale: |
+      .runtime/ 根目录文件归属不明——无 session_id 标记，清理责任悬空，
+      历史已积累数百个遗留垃圾文件（_*.py/pytest_tmp*/tmp_*）需人工清理。
+      会话级 staging 目录有 session_id 隔离，session 结束自动清理，无残留。
+    prohibition: "禁止任何 AI 会话向 .runtime/ 根目录直写文件（系统层系统文件除外）"
+    detection: "post-commit reconciler（GATE-SESSION-STAGING-LIFECYCLE）检测 .runtime/ 根目录新增非系统文件并 warn"
+    violation_example: |
+      ❌ 错误：直接写 .runtime/FINAL_resonance_rank.csv
+      ❌ 错误：直接写 .runtime/_diag_sweep.py
+      ✅ 正确：写 .runtime/sessions/sess-XXXX-YYYYMMDDHHMMSS/staging/FINAL_resonance_rank.csv
+
+  # --- 硬规则②（Owner 裁定 2026-07-20）---
+  - id: TEMP-LIFE-LAW-2
+    name: "成果必须 promote 到 docs/_working 才算交付"
+    statement: |
+      暂存层的成果文件（分析报告/选股清单/工作文档）MUST 通过显式 promote 操作
+      复制到 docs/_working/ 并加 front-matter（ttl/doc_type/completes_when）才算正式交付。
+      留在 .runtime/sessions/<sid>/staging/ 的成果视为草稿、可被清理。
+    rationale: |
+      .runtime/ 免跟踪区无 git 历史审计，文件被删无痕迹（已实证：
+      FINAL_resonance_rank.csv 在 11:58 生成后 12:06 前被无声删除）。
+      必须通过显式 promote 到 git 跟踪区 + front-matter 标记生命周期，
+      才能保证成果持久化、可审计、可归档。
+    prohibition: "禁止将成果文件留在暂存层视为交付（必须 promote 到 docs/_working）"
+    promote_mechanism: |
+      promote 操作 = shutil.copy(src=staging_path, dst=docs/_working/YYYY-MM-DD-<topic>.<ext>)
+                  + 在 .md 文档中加 front-matter（ttl=task_bound/doc_type/completes_when）
+                  + 更新 docs/_working/index.md 登记新文档
+      promote 后原 staging 文件可保留（供会话内复用）或删除（避免冗余），
+      但不再视为成果——成果以 docs/_working/ 副本为准。
+
+  # --- 支撑规则③---
+  - id: TEMP-LIFE-LAW-3
+    name: "暂存层会话级隔离"
+    statement: |
+      每个 AI 会话的暂存目录 MUST 隔离在 .runtime/sessions/<session_id>/staging/，
+      禁止跨会话读写其他 session 的 staging 目录。
+    rationale: |
+      会话级隔离保证清理责任明确——session 结束时只需清理本 session 的 staging 目录，
+      不影响其他 session。跨会话读写会破坏隔离、导致清理误删。
+
+  # --- 支撑规则④---
+  - id: TEMP-LIFE-LAW-4
+    name: "暂存层 TTL=24h（事件驱动兜底）"
+    statement: |
+      暂存层文件 TTL=24h，超过 24h 的 staging 文件由 reconciler 自动清理。
+      TTL 触发机制：post-commit event-driven（session_worktree_merge/abort 事件），
+      禁止 cron/Timer/sleep-loop/periodic 时间触发（trae_060 §3）。
+    rationale: |
+      24h TTL 与 make_stash_lifecycle_reconciler 对齐（已有 stash 24h 清理先例）。
+      事件驱动保证永久系统全自动（trae_060 §2）——无需人工触发。
+    prohibition: "禁止用 cron/Timer/sleep-loop/periodic 做暂存层清理主触发"
+
+  # --- 支撑规则⑤---
+  - id: TEMP-LIFE-LAW-5
+    name: "系统层不干预"
+    statement: |
+      系统层（.runtime/ 现有系统子目录 + 系统根文件）由现有系统自管，
+      AI 不得直写、清理、移动系统层文件，除非通过对应系统的官方 API/工具。
+    rationale: |
+      系统层文件（如 session_registry.json、worktree_ops_log.jsonl、heartbeat.pid）
+      有自己的生命周期管理（heartbeat daemon、reconciler、commit gate），
+      AI 干预会破坏系统一致性。
+    prohibition: "禁止 AI 直接删除/修改系统层文件（如直接 rm .runtime/session_registry.json）"
+
+# ============================================================
+# 3. 暂存层路径约定（Staging Path Convention）
+# ============================================================
+# 复用 #ARCH-HEARTBEAT-001 的 .runtime/sessions/<sid>/ 父目录约定，
+# 本规则在其下加 staging/ 子目录与系统文件隔离。
+#
+# 路径结构：
+#   .runtime/sessions/<session_id>/
+#   ├── heartbeat.jsonl           ← #ARCH-HEARTBEAT-001 系统文件（系统层）
+#   ├── heartbeat.pid             ← #ARCH-HEARTBEAT-001 系统文件（系统层）
+#   ├── emergency_count.json      ← #ARCH-HEARTBEAT-001 系统文件（系统层）
+#   └── staging/                  ← 本规则暂存层（AI 会话可写）
+#       ├── csv/                  ← 子目录示例：CSV 中间产物
+#       │   └── FINAL_resonance_rank.csv
+#       ├── scripts/              ← 子目录示例：调试脚本
+#       │   └── diag_sweep.py
+#       └── drafts/               ← 子目录示例：草稿文档
+#           └── analysis_draft.md
+
+staging_path_convention:
+  parent: ".runtime/sessions/<session_id>/"
+  staging_subdir: "staging/"
+  full_pattern: ".runtime/sessions/<session_id>/staging/"
+  session_id_format: "sess-<pid>-<YYYYMMDDHHMMSS>"  # 与 session_worktree_start 生成格式对齐
+  subdirs_allowed:
+    - "csv/"
+    - "scripts/"
+    - "drafts/"
+    - "cache/"
+    - "logs/"
+  system_files_at_root:
+    - "heartbeat.jsonl"
+    - "heartbeat.pid"
+    - "emergency_count.json"
+  isolation_rule: "staging/ 子目录与系统根文件物理隔离，互不干扰"
+
+# ============================================================
+# 4. TTL 策略（TTL Policy）
+# ============================================================
+
+ttl_policy:
+  output_tier:
+    ttl: task_bound  # 与 trae_070 docs/_working/ 对齐
+    archive_on: "completes_when 满足"
+    archive_destination: "docs/_archive/"
+    archive_reconciler: "auto_archive（已有）"
+
+  staging_tier:
+    ttl: 24h  # 24 小时
+    cleanup_on:
+      - "session_worktree_merge 事件（session 成功合并后清理 staging）"
+      - "session_worktree_abort 事件（session 放弃后清理 staging）"
+      - "TTL 过期（24h 未访问的 staging 文件，由 reconciler 在下次事件触发时清理）"
+    cleanup_reconciler: "make_session_staging_lifecycle_reconciler"
+    cleanup_reconciler_priority: 802  # worktree_lifecycle=800, stash_lifecycle=801, 本规则=802
+    cleanup_reconciler_gate_id: "GATE-SESSION-STAGING-LIFECYCLE"
+    cleanup_trigger_type: "event_driven"  # 禁止 cron/Timer/sleep-loop
+
+  system_tier:
+    ttl: null  # 由各系统自管
+    cleanup_by: "现有 reconciler（不动）"
+
+# ============================================================
+# 5. 生命周期事件（Lifecycle Events）
+# ============================================================
+
+lifecycle_events:
+  - event: "session_worktree_start"
+    action: "创建 .runtime/sessions/<sid>/staging/ 目录"
+    trigger_point: "session_worktree_start 函数末尾"
+    implementation: "session_worktree.py 内 mkdir"
+
+  - event: "session_worktree_merge"
+    action: "清理 .runtime/sessions/<sid>/staging/ 目录（成果已 promote 则直接删；未 promote 则 warn 后删）"
+    trigger_point: "session_worktree_merge 函数末尾（merge 成功后）"
+    implementation: "make_session_staging_lifecycle_reconciler（post-commit event-driven）"
+    warn_on_unpromoted: true  # 检测 staging/ 内是否有 .md/.csv 等疑似成果文件未 promote
+
+  - event: "session_worktree_abort"
+    action: "清理 .runtime/sessions/<sid>/staging/ 目录（abandon 场景，全删）"
+    trigger_point: "session_worktree_abort 函数末尾"
+    implementation: "make_session_staging_lifecycle_reconciler（post-abort event-driven）"
+
+  - event: "post_commit"
+    action: "TTL 过期检查——清理 .runtime/sessions/*/staging/ 中超过 24h 的文件"
+    trigger_point: "post-commit hook（已有事件总线）"
+    implementation: "make_session_staging_lifecycle_reconciler._reconcile()"
+    ttl_check: "mtime + 24h < now()"
+
+# ============================================================
+# 6. Promote 机制（Promote Mechanism）
+# ============================================================
+
+promote_mechanism:
+  operation: "shutil.copy + 加 front-matter + 更新 index.md"
+  source_pattern: ".runtime/sessions/<sid>/staging/<filename>"
+  destination_pattern: "docs/_working/YYYY-MM-DD-<topic>.<ext>"
+  steps:
+    - step: 1
+      action: "确定成果类型（analysis_report/plan/spec/audit_report 等）"
+      reference: "docs/_working/index.md front-matter doc_type 词表"
+    - step: 2
+      action: "shutil.copy(src=staging_path, dst=docs/_working/YYYY-MM-DD-<topic>.<ext>)"
+    - step: 3
+      action: "若成果是 .md，加 front-matter（ttl=task_bound / doc_type=<type> / completes_when=<criterion>）"
+      required: true
+    - step: 4
+      action: "更新 docs/_working/index.md 登记新文档"
+      required: true
+    - step: 5
+      action: "（可选）删除 staging 原文件避免冗余"
+      required: false
+  front_matter_template: |
+    ---
+    ttl: task_bound
+    doc_type: analysis_report  # 或 plan/spec/audit_report 等
+    completes_when: <完成条件>
+    source_session: <session_id>
+    generated_at: <ISO8601>
+    archived_at: <ISO8601>
+    attachment: <optional_attachment_filename>
+    ---
+
+# ============================================================
+# 7. Reconciler 规格（Reconciler Spec）
+# ============================================================
+# 本规则配套的 reconciler 实现 spec（Part B.4 落地，待 sess-18504/sess-55092 释放）
+# 范本：src/zephyr/governance/audit/reconciliation_registry.py 的 make_stash_lifecycle_reconciler
+# （priority=801，GATE-STASH-LIFECYCLE，事件驱动清理 >24h 的 session_worktree 临时 stash）
+
+reconciler_spec:
+  function_name: "make_session_staging_lifecycle_reconciler"
+  module: "src/zephyr/governance/audit/reconciliation_registry.py"  # 待 sess-18504 释放后修改
+  gate_id: "GATE-SESSION-STAGING-LIFECYCLE"
+  priority: 802  # worktree_lifecycle=800, stash_lifecycle=801, session_staging_lifecycle=802
+  trigger:
+    type: "event_driven"
+    events:
+      - "post_commit"  # 主触发：post-commit 事件总线
+      - "session_worktree_merge"  # session 成功合并后清理
+      - "session_worktree_abort"  # session 放弃后清理
+    prohibitions:
+      - "cron"
+      - "Timer"
+      - "sleep_loop"
+      - "periodic"
+      - "进程内调度器"
+  reconcile_logic:
+    - step: 1
+      action: "枚举 .runtime/sessions/*/staging/ 下所有文件"
+    - step: 2
+      action: "对每个文件检查 mtime + 24h < now() 或 session 已结束"
+    - step: 3
+      action: "清理过期文件，记录到 reconcile_execution_log 表"
+    - step: 4
+      action: "对 session_worktree_merge/abort 事件，全量清理对应 session 的 staging 目录"
+    - step: 5
+      action: "检测 staging/ 内是否有疑似未 promote 的成果（.md/.csv 等），warn（不阻塞）"
+  registration_point: "src/zephyr/trading/boot_hooks.py（hook_registry.register）"
+  failure_handling:
+    - "reconciler 失败必须持久化到 reconcile_execution_log 表"
+    - "错误详情不允许截断"
+    - "fail-open（reconciler 失败不阻塞主流程）"
+
+# ============================================================
+# 8. 判定流程（Decision Flow）
+# ============================================================
+# AI 创建临时文件前的判定流程：
+#   Step 1: 文件类型是什么？（成果/中间产物/系统文件）
+#   Step 2: 查 trae_070 directory_purpose_classification 确定存放目录
+#   Step 3: 查本规则 three_tier_classification 确定生命周期
+#   Step 4: 若是成果 → 落 docs/_working/ + front-matter（LAW-2）
+#   Step 5: 若是中间产物 → 落 .runtime/sessions/<sid>/staging/（LAW-1 + LAW-3）
+#   Step 6: 若是系统文件 → 走对应系统 API，禁止 AI 直写（LAW-5）
+
+decision_flow:
+  step_1_identify_tier: "拿到要创建的文件 → 问'什么类型？'（成果/中间产物/系统）"
+  step_2_lookup_trae_070: "查 trae_070 directory_purpose_classification 确定存放目录"
+  step_3_lookup_trae_071: "查本规则 three_tier_classification 确定生命周期"
+  step_4_if_output: "成果 → 落 docs/_working/ + front-matter（LAW-2）"
+  step_5_if_staging: "中间产物 → 落 .runtime/sessions/<sid>/staging/（LAW-1 + LAW-3）"
+  step_6_if_system: "系统文件 → 走对应系统 API，禁止 AI 直写（LAW-5）"
+
+# ============================================================
+# 9. 常见错误（Common Mistakes，AI 须避免）
+# ============================================================
+
+common_mistakes:
+  - mistake: "向 .runtime/ 根目录直写文件（如 .runtime/my_script.py）"
+    correct: "向 .runtime/sessions/<sid>/staging/ 写（如 .runtime/sessions/sess-XXX/staging/my_script.py）"
+    reason: ".runtime/ 根目录文件归属不明，清理责任悬空"
+    violated_law: TEMP-LIFE-LAW-1
+
+  - mistake: "将成果文件留在 .runtime/sessions/<sid>/staging/ 视为交付"
+    correct: "通过 shutil.copy + front-matter promote 到 docs/_working/"
+    reason: ".runtime/ 免跟踪区文件可被无声删除，无审计痕迹"
+    violated_law: TEMP-LIFE-LAW-2
+
+  - mistake: "跨会话读写其他 session 的 staging 目录"
+    correct: "只读写自己 session 的 staging 目录"
+    reason: "跨会话读写破坏隔离、导致清理误删"
+    violated_law: TEMP-LIFE-LAW-3
+
+  - mistake: "用 cron/Timer/sleep-loop 触发暂存层清理"
+    correct: "用 post-commit event-driven + session_worktree_merge/abort 事件触发"
+    reason: "时间触发=人触发（未达自动），违反 trae_060 §3 事件驱动全自动"
+    violated_law: TEMP-LIFE-LAW-4
+
+  - mistake: "AI 直接删除/修改系统层文件（如 rm .runtime/session_registry.json）"
+    correct: "走对应系统 API/工具（如 session_worktree_abort 而非直接 rm）"
+    reason: "AI 干预系统层会破坏系统一致性"
+    violated_law: TEMP-LIFE-LAW-5
+
+  - mistake: "在 .runtime/ 根目录创建 staging 子目录（如 .runtime/staging/）"
+    correct: "在 .runtime/sessions/<sid>/staging/ 下创建"
+    reason: "staging 必须会话级隔离，根目录 staging 失去隔离"
+    violated_law: TEMP-LIFE-LAW-1 + LAW-3
+
+# ============================================================
+# 10. 不变量（Invariants）
+# ============================================================
+
+invariants:
+  - "AI 会话不得向 .runtime/ 根目录直写文件（系统层系统文件除外）"
+  - "成果必须 promote 到 docs/_working/ + front-matter 才算交付"
+  - "暂存层文件路径 MUST 是 .runtime/sessions/<sid>/staging/<filename>"
+  - "暂存层 TTL=24h，事件驱动清理（禁止 cron/Timer/sleep-loop）"
+  - "系统层文件由现有系统自管，AI 不得直写/清理/移动"
+  - "promote 操作 = shutil.copy + front-matter + 更新 index.md（缺一不可）"
+  - "trae_070（空间维度）与本规则（时间维度）正交，不重复"
+
+# ============================================================
+# 11. 与既有铁律关系（Cross-Rule Relation）
+# ============================================================
+
+cross_rule_relation:
+  applies_to:
+    - "trae_070 临时文件存放位置 → 空间维度（本规则时间维度的正交补集）"
+    - "trae_060 向内收原则 → §3 事件驱动全自动（本规则暂存层清理事件触发的依据）"
+    - "trae_062 SSoT 真源分类 → 本文件是规则数据真源，通过 sync_yaml_to_depgraph.py 同步"
+    - "trae_054 depgraph 程序化访问 → 本规则 reconciler 实现时通过 apply_depgraph.py 登记"
+    - "#ARCH-HEARTBEAT-001 → .runtime/sessions/<sid>/ 路径约定复用（系统文件 vs staging 隔离）"
+    - "make_stash_lifecycle_reconciler（priority=801） → 本规则 reconciler 范本"
+  not_applies_to:
+    - "docs/_working/ 内部生命周期（由 trae_070 + auto_archive reconciler 管）"
+    - "系统层文件生命周期（由各系统自管）"
+
+# ============================================================
+# 12. 引用（References）
+# ============================================================
+
+references:
+  rule_ids:
+    - TRAE-070  # 空间维度
+    - TRAE-060  # 向内收三原则
+    - TRAE-062  # SSoT 真源分类
+    - TRAE-054  # depgraph 程序化访问
+  arch_issues:
+    - "#ARCH-TEMP-FILE-PLACEMENT-001"  # trae_070 相关裁定
+    - "#ARCH-TEMP-FILE-LIFECYCLE-001"  # 本规则相关裁定（前向引用，Owner 需登记）
+    - "#ARCH-HEARTBEAT-001"  # .runtime/sessions/<sid>/ 路径约定来源
+  scripts:
+    - "scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py"  # 本文件同步到 DB
+    - "scripts/governance/apply_depgraph.py"  # reconciler 实现时登记设计态节点
+  modules:
+    - "src/zephyr/governance/audit/reconciliation_registry.py"  # reconciler 范本 + 落地点
+    - "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"  # session 生命周期钩子
+    - "src/zephyr/trading/boot_hooks.py"  # reconciler 注册点
+  yaml_sources:
+    - "docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml"  # 空间维度
+    - "docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml"  # 目录契约
+    - "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml"  # ARCH 登记
+
+# ============================================================
+# 13. 元数据（Metadata）
+# ============================================================
+
+metadata:
+  change_policy: evolving
+  impact_level: M  # 中等影响（新增规则，不修改既有功能）
+  modification_permission: ai_modifiable_with_owner_review
+  superseded_by: null
+  review_cycle: quarterly
+  design_rationale: |
+    背景：2026-07-20 上午双策略共振选股会话将成果 FINAL_resonance_rank.csv 写入
+    .runtime/strategy_screen/（免跟踪暂存区），被无声删除（无审计痕迹）。
+    同目录还存在数百个历史会话遗留垃圾，全部是各会话直写 .runtime 根目录造成。
+    Owner 裁定：取消"一刀切禁止 .runtime/"原案，改为三级分类 + 生命周期：
+    成果层（docs/_working）+ 暂存层（.runtime/sessions/<sid>/staging/）+ 系统层（不动）。
+    本规则固化此裁定为机器可读的 YAML 真源，配套 reconciler 实现自动清理。
+
+provenance:
+  extracted_at: '2026-07-20'
+  extracted_by: session-cleanup-runtime-20260720131433
+  source: |
+    Owner 裁定（2026-07-20）——
+    取消"全项目临时文件只能去 docs/_working、取消一切免跟踪暂存区"原案，
+    修正为三级分类（成果层/暂存层/系统层）+ 生命周期（TTL/promote/事件驱动清理）。
+    依据：2026-07-20 上午双策略共振选股会话事故（成果被无声删除）+ .runtime 根目录遗留垃圾实证。
+
+change_history:
+  - version: '1.0.0'
+    date: '2026-07-20'
+    change: |
+      初始创建——固化 Owner 2026-07-20 裁定（三级分类 + 生命周期）。
+      包含 5 铁律（LAW-1 禁止根目录直写 / LAW-2 成果必须 promote / LAW-3 会话级隔离 /
+      LAW-4 TTL=24h 事件驱动 / LAW-5 系统层不干预）+ 三级分类表 + 路径约定 +
+      TTL 策略 + 生命周期事件 + promote 机制 + reconciler spec。
+      配套 reconciler（make_session_staging_lifecycle_reconciler, priority=802）
+      由 Part B.4 落地（待 sess-18504/sess-55092 释放 reconciliation_registry.py / session_worktree.py）。
