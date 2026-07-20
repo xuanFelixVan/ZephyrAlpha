@@ -149,6 +149,8 @@ class ToolDefinition:
     deprecated: bool = False
     sunset_date: str | None = None  # ISO 8601 日期 (YYYY-MM-DD)，None 表示未定移除时间
     replacement: str | None = None  # 推荐的替代工具名，None 表示无直接替代
+    # 5.35.7 修复：新增 output_schema 字段，声明工具输出结构（MCP 2024-11-05 outputSchema）
+    output_schema: dict[str, Any] | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -263,6 +265,7 @@ class BaseMCPServer:
         deprecated: bool = False,
         sunset_date: str | None = None,
         replacement: str | None = None,
+        output_schema: dict[str, Any] | None = None,
     ) -> None:
         """注册一个 MCP Tool。
 
@@ -289,6 +292,9 @@ class BaseMCPServer:
             废弃工具的移除日期（ISO 8601 YYYY-MM-DD），None 表示未定。
         replacement:
             推荐的替代工具名，None 表示无直接替代。
+        output_schema:
+            工具输出结构的 JSON Schema（5.35.7 修复，MCP 2024-11-05 outputSchema）。
+            None 表示未声明输出结构。
         """
         self._tools[name] = ToolDefinition(
             name=name,
@@ -300,6 +306,7 @@ class BaseMCPServer:
             deprecated=deprecated,
             sunset_date=sunset_date,
             replacement=replacement,
+            output_schema=output_schema,
         )
 
     @property
@@ -434,6 +441,8 @@ class BaseMCPServer:
                 "deprecated": t.deprecated,
                 "sunsetDate": t.sunset_date,
                 "replacement": t.replacement,
+                # 5.35.7 修复：tools/list 返回 outputSchema（MCP 2024-11-05）
+                "outputSchema": t.output_schema,
             }
             for t in self._tools.values()
         ]
