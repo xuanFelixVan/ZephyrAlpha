@@ -179,6 +179,10 @@ def run_checker_script(
     }
     if text:
         kwargs.update({"text": True, "encoding": "utf-8", "errors": "replace"})
+    else:
+        # 显式设 text=False，防止 run_subprocess_hidden 的 setdefault("text", True)
+        # 覆盖调用方的字节模式意图（导致 ttl_gate.py result.stderr.decode() 崩溃）
+        kwargs["text"] = False
     if env is not None:
         kwargs["env"] = env
     # TRAE-067 铁律2 落地（2026-07-20 Phase 1.5）：commit gate spawn python checker

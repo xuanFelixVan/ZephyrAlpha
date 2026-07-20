@@ -134,9 +134,15 @@ def make_ttl_gate() -> GateSpec:
         # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
         if result.returncode == 0:
             return True, "ttl metadata check passed"
-        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        # 兼容 str/bytes：run_subprocess_hidden 的 setdefault("errors","replace")
+        # 会强制 text 模式（即使 text=False），导致 stderr 为 str 而非 bytes
+        def _decode(s: object) -> str:
+            if isinstance(s, bytes):
+                return s.decode("utf-8", errors="replace").strip()
+            return str(s).strip() if s else ""
+        detail = _decode(result.stderr)
         if not detail:
-            detail = result.stdout.decode("utf-8", errors="replace").strip()
+            detail = _decode(result.stdout)
         return False, detail or "ttl metadata violation (unknown detail)"
 
     return GateSpec(gate_id="TTL-METADATA", check=_check, priority=32)
