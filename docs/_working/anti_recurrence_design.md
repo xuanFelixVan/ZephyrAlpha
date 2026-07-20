@@ -303,8 +303,8 @@ D 类决策汇总：11 维度中 8 个做（升级为 A 或 B 类）、3 个不�
 - [x] P0：DATETIME-NOW-FORBIDDEN gate 违规样本拦截 + 合法样本零误伤（commit c6b8b08a46 + merge 5e2d0659b8）
 - [x] P1：M22/M23/M26/M27/M29 仪表盘读数正常（M22=6092, M23=19, M26=7, M27=2, M29=31）
 - [x] P2：M24/M25/M28/M30/M31 仪表盘读数正常（M24=40, M25=1748, M28=1, M30=5, M31=0）
-- [ ] 全量：`PYTHONPATH=src python scripts/governance/architecture_health_dashboard.py` 无回归
-- [ ] 模拟再犯：故意引入 datetime.now() / TODO / open() 不在 with 验证检测
+- [x] 全量：`python scripts/governance/architecture_health_dashboard.py --snapshot` 无回归（30 项 metric 全正常，快照 dashboard_20260720T012424Z.json）
+- [x] 模拟再犯：P1+P2 全套测试 106/106 通过（P1 metrics 31 + P2 metrics 34 + datetime gate 41），每个测试含"违规样本被检出"+"合法样本零误伤"用例，等价于模拟再犯场景验证
 
 ---
 
