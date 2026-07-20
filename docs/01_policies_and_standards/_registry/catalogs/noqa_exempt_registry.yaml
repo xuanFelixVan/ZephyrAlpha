@@ -199,6 +199,21 @@ markers:
     created: "2026-07-20"
     created_by: "ARCH-ANTI-RECURRENCE-P0"
 
+  - marker: "bare-subprocess"
+    metric_id: null  # 非 dashboard 指标，是 BARE-SUBPROCESS gate 行级豁免
+    description: "BARE-SUBPROCESS gate 行级豁免——裸 subprocess 调用检测的合法特殊情况"
+    applicable_conditions:
+      - "BARE-SUBPROCESS 检测器自身（源码含检测模式字符串 subprocess.run/Popen 用于 AST 匹配，非实际调用）"
+      - "测试文件中模拟/断言裸 subprocess 调用的测试用例（assert call.args 等场景）"
+      - "文档字符串/注释中引用 subprocess.run 字面量（非可执行代码）"
+      - "例外文件中已有 process_pool.run_subprocess_hidden 包装的 subprocess 调用（兼容性保留）"
+    reason_required: true
+    reason_format: "bare-subprocess豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"  # 行级豁免（per-line）
+    created: "2026-07-20"
+    created_by: "ARCH-RUNCOMMAND-WINDOW-FLASH-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）

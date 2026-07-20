@@ -78,7 +78,7 @@ sections:
     - id: RULE-EIGHTEEN-INV-001
       title: 窗口隐藏强制
       description: AI 内部代码 spawn python 子进程 MUST 设置 CREATE_NO_WINDOW（Windows），复用 process_pool.py 的 spawn helper
-      enforcement: AI 自觉遵循 + code review + CREATE-NO-WINDOW-GATE commit gate（P2 warn-only，P3 升级 block）
+      enforcement: AI 自觉遵循 + code review + BARE-SUBPROCESS commit gate（P1 warn-only 已落地 priority=108，P2 升级 block）
       violation_action: warn
     - id: RULE-EIGHTEEN-INV-002
       title: python -c 单行式禁令
@@ -137,12 +137,13 @@ references:
   - AGENTS.md §10 Git 命令封装约定
   - .trae/rules/project_rules.md RULE-SEVENTEEN
 enforcement:
-  paired_gate_id: null  # 文档型规则，无对应 commit gate（P2 warn-only via static scan，P3 升级 block）
+  paired_gate_id: BARE-SUBPROCESS  # trae_067 RULE-EIGHTEEN-INV-001 落地：commit-time warn-only gate（priority=108，AST 检测 added 行裸 subprocess.run/Popen/check_output/check_call）
   type: doc
   executors:
   - human_review
   - ai_pre_action_check
   - static_scan_warn_only
+  - commit_gate_bare_subprocess  # P8 落地（2026-07-20）：BARE-SUBPROCESS gate warn-only，P2 升级 block
   bypass_allowed: false
 metadata:
   change_policy: evolving

@@ -1,0 +1,223 @@
+# [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §ARCH-RUNCOMMAND-WINDOW-FLASH-001
+# [MODULE] zephyr.gov_enforcement.commit_gates.bare_subprocess_gate
+# [DOMAIN] D_GOV_CODE_QUALITY
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers; zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt)
+# [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+# [STARTUP] imported
+# [MATURITY] prototype
+# [INVARIANTS] warn-only——检测 staged .py added 行中裸 subprocess.run/Popen/check_output/check_call 调用（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）；命中返回 passed=True + warning detail（不阻断）；tests/ 豁免；6 个文件级例外（process_pool/diff_helpers/git_call_budget_gate/git_commit_gateway/bare_subprocess_gate 自身）；noqa: bare-subprocess 行级逃生；AST 精确检测；git diff 不可达 fail-open
+# [MODIFY-GUARD] gate_id="BARE-SUBPROCESS"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] check 永不抛异常——git diff 异常降级为 fail-open（passed=True）；ast.parse 失败 fail-open；检出违规则 warn-only（passed=True + detail）
+# [TESTS] tests/governance/commit_gates/test_bare_subprocess_gate.py
+# [A_module] module_id=MOD-GOV-bare_subprocess_gate | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# noqa: bare-subprocess  自身豁免: 本文件是BARE-SUBPROCESS检测器,源码含检测模式字符串(subprocess.run/Popen)用于AST匹配,非实际调用
+"""bare_subprocess_gate.py — 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）
+
+对应铁律 trae_067 RULE-EIGHTEEN-INV-001（CREATE_NO_WINDOW 强制）。
+裁定 #ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.6 补漏后立项（P8）。
+
+病根（第一性原理）
+-----------------
+trae_067 铁律2 + INV-001 要求"AI 内部代码 spawn python 子进程 MUST 设
+CREATE_NO_WINDOW，复用 process_pool.py"，但 enforcement.paired_gate_id=null
+（君子协定）。100% AI 开发场景下 AI 上下文有限，会遗漏——本案 Phase 1.6
+治本存在 55+ 处遗漏（已修复），证明君子协定不可靠。
+
+治本方案（本 gate，warn-only Phase 1）
+---------------------------------------
+1. AST 精确检测：ast.walk + ast.Attribute(attr in run/Popen/check_output/check_call)
+   + func.value.id == 'subprocess'（或 import alias）
+2. 只检测 added 行：存量违规由人工排查，gate 只防新增
+3. warn-only：对标 GIT-CALL-BUDGET 渐进策略——P1 warn-only 建立检测能力 +
+   数据收集，P2（未来）升级 block
+4. 6 个文件级例外 + noqa 行级逃生：合法保留场景（检测器自身 / process_pool
+   定义点 / git_call_budget_gate AST 检测器 / git_commit_gateway 注释引用）
+
+设计权衡
+--------
+1. **warn-only（P1）**：当前 warn-only 不阻断 commit，先建立检测能力 + 数据收集。
+   P2 升级为 block（INV-001 violation_action=reject_change）。
+2. **AST 精确检测**：比正则更准确，天然不检测字符串/注释内的 subprocess.run 引用
+3. **只检测 added 行**：存量违规由人工排查，gate 只防新增
+4. **priority=106**：在 GIT-CALL-BUDGET=105 之后，作为第二个 warn-only gate
+5. **import alias 识别**：`import subprocess as sp; sp.run(...)` 也检测
+
+Usage::
+
+    from zephyr.gov_enforcement.commit_gates.bare_subprocess_gate import make_bare_subprocess_gate
+
+    registry.register(make_bare_subprocess_gate())
+"""
+
+from __future__ import annotations
+
+import ast
+import logging
+import re
+
+from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _get_added_lines,
+    _get_staged_py_files,
+    _read_staged_file,
+)
+from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["make_bare_subprocess_gate"]
+
+# 文件级豁免：定义点 / 检测器自身 / AST 检测器引用 subprocess.run 字符串
+# - process_pool.py: 定义 run_subprocess_hidden / spawn_python_hidden（必然含 subprocess.run/Popen）
+# - _diff_helpers.py: gate 共享 helper（_read_staged_file 内部 gateway._run_git，不直接 subprocess）
+# - git_call_budget_gate.py: AST 检测器，源码含 "subprocess.run" 字符串用于检测模式
+# - git_commit_gateway.py: 注释引用 "subprocess.run(["git",...])" AST 检测逻辑说明
+# - bare_subprocess_gate.py: 本检测器自身
+_EXEMPT_FILES = {
+    "process_pool.py",
+    "_diff_helpers.py",
+    "git_call_budget_gate.py",
+    "git_commit_gateway.py",
+    "bare_subprocess_gate.py",
+}
+
+# noqa 行级逃生：对标 m10-time-trigger / m11-perm-manual-legitimate 模式
+# 格式：`# noqa: bare-subprocess` + 2+ 空格 + reason（>=10 字符）
+_BARE_SUBPROCESS_NOQA_PATTERN = re.compile(
+    r"#\s*noqa:\s*bare-subprocess\s{2,}(\S.*)$",
+    re.MULTILINE,
+)
+
+# subprocess 调用方法名集合
+_SUBPROCESS_CALL_ATTRS = frozenset({"run", "Popen", "check_output", "check_call"})
+
+
+def _is_bare_subprocess_exempt_file(py_file: str) -> bool:  # noqa: m03-duplicate  M03豁免: 与git_call_budget_gate._is_git_budget_exempt_file共享实现模式（各gate持自身_EXEMPT_FILES常量）
+    """文件级豁免：process_pool / _diff_helpers / git_call_budget_gate / git_commit_gateway / 本 gate 自身。"""
+    normalized = py_file.replace("\\", "/")
+    return any(normalized.endswith(f"/{name}") or py_file == name
+               for name in _EXEMPT_FILES)
+
+
+def _collect_subprocess_aliases(tree: ast.AST) -> set[str]:
+    """收集 import subprocess as <alias> 的别名集合（含 'subprocess' 自身）。
+
+    覆盖：
+      - ``import subprocess`` → {'subprocess'}
+      - ``import subprocess as sp`` → {'sp'}
+    """
+    aliases: set[str] = {"subprocess"}  # 默认名总是有效
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "subprocess":
+                    aliases.add(alias.asname or alias.name)
+    return aliases
+
+
+def _is_bare_subprocess_call(node: ast.AST, subprocess_aliases: set[str]) -> bool:
+    """判断 AST 节点是否是 subprocess.run/Popen/check_output/check_call 调用。
+
+    覆盖：
+      - ``subprocess.run(...)`` / ``sp.run(...)`` — ast.Attribute(attr='run')
+      - ``subprocess.Popen(...)`` / ``sp.Popen(...)`` — ast.Attribute(attr='Popen')
+      - ``subprocess.check_output(...)`` — ast.Attribute(attr='check_output')
+      - ``subprocess.check_call(...)`` — ast.Attribute(attr='check_call')
+
+    func.value 必须是 ast.Name 且 id 在 subprocess_aliases 中。
+    """
+    if not isinstance(node, ast.Call):
+        return False
+    func = node.func
+    if not isinstance(func, ast.Attribute):
+        return False
+    if func.attr not in _SUBPROCESS_CALL_ATTRS:
+        return False
+    # func.value 必须是 Name 且 id 是 subprocess 别名
+    if not isinstance(func.value, ast.Name):
+        return False
+    return func.value.id in subprocess_aliases
+
+
+def _extract_noqa_lines(file_content: str) -> set[int]:
+    """提取带 `# noqa: bare-subprocess  <reason>` 注释的行号集合（1-based）。
+
+    逃生通道：对标 m10-time-trigger / m11-perm-manual-legitimate 模式。
+    命中 noqa 的行不报告违规。
+    """
+    noqa_lines: set[int] = set()
+    for i, line in enumerate(file_content.splitlines(), start=1):
+        if _BARE_SUBPROCESS_NOQA_PATTERN.search(line):
+            noqa_lines.add(i)
+    return noqa_lines
+
+
+def make_bare_subprocess_gate() -> GateSpec:
+    """构造裸 subprocess 调用 warn-only GateSpec。
+
+    Returns:
+        GateSpec(gate_id="BARE-SUBPROCESS", priority=108)。
+        warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
+    """
+
+    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        py_files = [
+            f for f in _get_staged_py_files(gateway, "BARE-SUBPROCESS")
+            if not is_test_exempt(f) and not _is_bare_subprocess_exempt_file(f)
+        ]
+        if not py_files:
+            return True, ""
+
+        warnings: list[str] = []
+        for py_file in py_files:
+            file_content = _read_staged_file(gateway, py_file)
+            if not file_content:
+                continue
+            added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "BARE-SUBPROCESS")}
+            if not added_lines:
+                continue
+
+            try:
+                tree = ast.parse(file_content)
+            except SyntaxError:
+                logger.warning(
+                    "BARE-SUBPROCESS: ast.parse 失败 %s（语法错误），fail-open 跳过",
+                    py_file, exc_info=True,
+                )
+                continue
+
+            subprocess_aliases = _collect_subprocess_aliases(tree)
+            noqa_lines = _extract_noqa_lines(file_content)
+
+            for node in ast.walk(tree):
+                if not _is_bare_subprocess_call(node, subprocess_aliases):
+                    continue
+                call_line = node.lineno
+                if call_line not in added_lines:
+                    continue  # 不是 added 行，放行（存量违规由人工排查）
+                if call_line in noqa_lines:
+                    continue  # 行级 noqa 逃生
+                warnings.append(
+                    f"  {py_file}:{call_line}: 裸 subprocess.{node.func.attr}(...) 调用"
+                    f"（违反 trae_067 铁律2 CREATE_NO_WINDOW 强制）"
+                )
+
+        if warnings:
+            detail = (
+                "BARE-SUBPROCESS (warn-only)：检测到裸 subprocess.run/Popen/check_output/check_call 调用，\n"
+                "  违反铁律 trae_067 RULE-EIGHTEEN-INV-001 CREATE_NO_WINDOW 强制——\n"
+                "  裸 subprocess 在 Windows 上会创建控制台窗口闪现。\n"
+                + "\n".join(warnings)
+                + "\n-> 改用 process_pool 统一入口："
+                "from zephyr.shared.infra.process_pool import run_subprocess_hidden; "
+                "run_subprocess_hidden(cmd, **kwargs)"
+                + "\n-> 逃生通道：行尾加 `# noqa: bare-subprocess  <reason>` 注释（reason >= 10 字符）"
+            )
+            logger.warning("BARE-SUBPROCESS gate warn:\n%s", detail)
+            return True, detail  # warn-only：passed=True 不阻断
+        return True, ""
+
+    return GateSpec(gate_id="BARE-SUBPROCESS", check=_check, priority=108)

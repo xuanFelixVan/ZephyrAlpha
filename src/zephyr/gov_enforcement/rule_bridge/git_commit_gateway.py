@@ -149,6 +149,7 @@ from zephyr.gov_enforcement.commit_gates.bare_sql_gate import make_bare_sql_gate
 from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_depgraph_write_path_gate
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
+from zephyr.gov_enforcement.commit_gates.bare_subprocess_gate import make_bare_subprocess_gate  # trae_067 RULE-EIGHTEEN-INV-001 P8 warn-only
 from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.import_integrity_gate import make_import_integrity_gate  # #ARCH-CROSS-COMMIT-ATOMICITY-001 治本——悬空 import 硬阻断
 from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # Step 2.5 遗留风险修复（域名字典直接访问硬阻断 priority=72）
@@ -450,6 +451,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_reconciler_health_gate())  # priority=64 治本reconciler健康度dual-level（#ARCH-DATAQUALITY-V1.7，block_next硬阻断/critical_warn警告，复用_check_recent_blocks/_check_recent_critical_warns，统一GitCommitGateway和session_worktree_commit两条路径的reconciler健康检查）
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
         self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
+        self._gate_registry.register(make_bare_subprocess_gate())  # priority=108 warn-only 治本裸 subprocess.run/Popen 闪窗反模式（trae_067 RULE-EIGHTEEN-INV-001 P8，AST检测added行裸subprocess调用，warn-only P2升级block）
         self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
         self._gate_registry.register(make_import_integrity_gate())  # priority=107 治本悬空import硬阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001，检测staged文件中import的目标模块在staged+main HEAD可解析，防ba40fa5b75同型违规）
         self._gate_registry.register(make_capability_lookup_required_gate())  # priority=110 #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本（强制 AI 施工前调 rule_discovery/capability_lookup，audit log 在 .runtime/lookup_audit/<session_id>.jsonl）
