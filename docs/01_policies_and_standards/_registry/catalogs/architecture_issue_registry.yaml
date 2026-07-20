@@ -4419,33 +4419,70 @@ entries:
         验证：allow_overlap 真实使用计数 < 30、emergency 真实滥用 < 5、5 维告警从 41 降至 0
 
     Phase 2（本周-下周）：GitCommitGateway timeout 根因消除（裁定 R4）
-      - P2-1 GitCommitGateway timeout 根因分析
-      - P2-2 GitCommitGateway retry 机制（指数退避）
-      - P2-3 session_worktree_commit 异步化（fire-and-forget + token）
-      - P2-4 session_worktree_merge 异步化
-      - P2-5 后台 worker 串行处理（新建 async_commit_worker.py）
-      - P2-6 token 状态查询 API（新建 commit_status.py）
+      - P2-1 GitCommitGateway timeout 根因分析 ✅ 2026-07-20 完成
+        根因：60+ pre-commit gate 串行执行（commit_gate_registry.py:258 for spec in sorted），
+        6 个 subprocess gate 各 60s timeout + 50+ in-process AST gate，累计耗时易突破 120s。
+        _run_git 硬编码 timeout=120（git_commit_gateway.py:1674），无 retry（merge 有 retry，
+        commit 无）。session_worktree_commit 每次重建 GitCommitGateway 实例（构造开销大）。
+      - P2-2 GitCommitGateway retry 机制（指数退避）✅ 2026-07-20 完成
+        _run_pre_commit_gates 拆分为 _once（单次检查）+ wrapper（重试）。
+        对 status=GATE_TRANSIENT（subprocess.TimeoutExpired）重试 3 次，退避 [2, 4, 8] 秒。
+        deterministic gate 阻断立即返回不重试。重试耗尽时 fail-open（返回 None）。
+        _cleanup_worktree_locks 在退避期间清理 .git/index.lock / refs/heads/*.lock 残留。
+      - P2-2b _run_git timeout 分级 ✅ 2026-07-20 完成
+        原硬编码 timeout=120 改为 _classify_git_timeout(cmd) 按命令类型分级：
+        read 类（rev-parse/show/status/diff/log/...）15s，
+        write 类（commit/merge/checkout/reset/...）60s，
+        其他默认 30s。单个慢命令不再耗尽整个 session 预算。
+      - P2-5 smoke tests ✅ 2026-07-20 完成
+        TestClassifyGitTimeout 7 项（read/write/default 分级 + 集成验证）
+        TestPreCommitGatesRetry 5 项（pass/deterministic/transient-retry/fail-open/constants）
+        TestCleanupWorktreeLocks 5 项（index.lock/refs/empty/OSError）
+      - P2-3 session_worktree_commit 异步化（fire-and-forget + token）⏸️ 推迟到后续 phase
+        评估结论：async_commit_worker.py + commit_status.py 是多文件架构变更，
+        需 daemon 进程 + 任务队列 + 状态查询 API + 错误处理 + 与现有 session_worktree 集成。
+        P2-2 retry + P2-2b timeout 分级已解决 immediate timeout 问题（实证：本 session
+        emergency_commit 后未再触发 timeout）。async 化在 P2-2 验证稳定后再评估。
+      - P2-4 session_worktree_merge 异步化 ⏸️ 推迟到后续 phase（同 P2-3 评估结论）
+      - P2-6 后台 worker 串行处理 ⏸️ 推迟到后续 phase（同 P2-3 评估结论）
 
     Phase 3（本月）：阈值合理化 + 自适应
-      - P3-1 5 维阈值改可配置（YAML）
-      - P3-2 7d 滚动基线计算
-      - P3-3 5 维加权健康度评分
-      - P3-4 自适应阈值（基于 7d 基线 ±σ）
+      - P3-1 5 维阈值改可配置（YAML）✅ 2026-07-20 完成
+        新建 trae_069_commit_gateway_abuse_thresholds.yaml（SSoT 真源，trae_062 铁律）。
+        commit_gateway_abuse_monitor_reconciler.py 改为从 YAML 加载（_load_thresholds_from_yaml），
+        fail-open：YAML 缺失/解析失败时用 _DEFAULT_THRESHOLDS。
+        TestLoadThresholdsFromYaml 7 项 smoke test（文件存在/5 维/匹配常量/默认值/缺失/无效/部分无效）。
+      - P3-2 7d 滚动基线计算 ⏸️ 推迟到后续 phase
+        需要历史 reconciler 报告数据（.runtime/reconcile_reports/），至少 7d 生产数据才能
+        计算有意义的基线。当前 P1-4 治本后告警已降至 0，无紧急性。
+      - P3-3 5 维加权健康度评分 ⏸️ 推迟到后续 phase（同 P3-2 评估结论）
+      - P3-4 自适应阈值（基于 7d 基线 ±σ）⏸️ 推迟到后续 phase（同 P3-2 评估结论）
+        trae_069 YAML 已预留 adaptive 字段（enabled: false），待 P3-2/P3-3 落地后启用。
 
     Phase 4（下月）：裁定 D-2/D-3/D-4 持续推进
-      - D-2 P2-1~P2-12 fail-closed gate 转换（10 个 gate）
-      - D-3 自适应阈值（已在 P3-4 落地）
-      - D-4 GATE-FORGED-GW-MARKER 待立项
-      - merge 失败遥测补全（worktree_ops_log.jsonl）
+      - D-2 P2-1~P2-12 fail-closed gate 转换（10 个 gate）⏸️ 长期 ruling，无本期 code change
+        评估结论：当前 60+ gate 多为 fail-open（checker 失败默认放行）。转 fail-closed
+        是逐 gate 行为变更，需 per-gate 分析（checker 超时是否真应阻断 commit？）。
+        与 P2-2 retry 配合：gate retry 3 次仍失败才 fail-closed，避免 transient 误阻断。
+      - D-3 自适应阈值 ⏸️ 与 P3-4 绑定，推迟到后续 phase
+      - D-4 GATE-FORGED-GW-MARKER 待立项 ⏸️ 长期 ruling
+        需新建独立 gate 检测 forged_gw_marker（当前由 abuse_monitor reconciler 检测，
+        post-commit 只能 warn 不能 block）。D-4 将其升级为 pre-commit block gate。
+      - merge 失败遥测补全（worktree_ops_log.jsonl）⏸️ 长期 ruling
   impact:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml（P3-1 阈值 YAML 真源）
     - docs/02_enterprise_architecture/ruling_reconciler_health_warn_root_cause.md（裁定文档待产出）
-    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（P1-1 allow_overlap 统计逻辑修复 + P1-4 阈值回滚）
-    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-2 分桶维度修复 + P1-3 场景豁免）
-    - tests/governance/audit/test_commit_gateway_abuse_monitor_reconciler.py（P1-5 smoke test 新增）
-    - tests/gov_enforcement/rule_bridge/test_emergency_commit_agent_bucket.py（P1-5 分桶维度测试）
+    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（P1-1/P1-3/P1-4 + P3-1 YAML 加载）
+    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-2/P1-3 分桶+scenario）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（P2-2b timeout 分级）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（P2-2 retry + _cleanup_worktree_locks）
+    - tests/governance/audit/test_commit_gateway_abuse_monitor_reconciler.py（P1-5 + P3-1 smoke test）
+    - tests/gov_enforcement/rule_bridge/test_emergency_commit.py（P1-5 分桶+scenario test）
+    - tests/git/test_git_commit_gateway.py（P2-2b timeout 分级 test）
+    - tests/governance/rule_bridge/test_session_worktree.py（P2-2 retry + cleanup test）
   status: in_progress
   related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (5 维滥用审计 R1/R2 修正), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 阈值代码未生效), #ARCH-HEARTBEAT-001 (heartbeat 已落地但 emergency 仍超阈), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D 系列)'
-  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP, trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_064 (GIT-CALL-BUDGET)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP, trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_064 (GIT-CALL-BUDGET), trae_069 (commit_gateway_abuse_thresholds)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
