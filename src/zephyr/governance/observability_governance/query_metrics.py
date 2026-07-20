@@ -67,6 +67,13 @@ logger = logging.getLogger(__name__)
 _SLOW_THRESHOLD_MS: float = 500.0
 _MAX_SAMPLES: int = 1000
 
+# SQL 集中化（§5.160.2）：避免在函数体内散布裸 SQL 字面量
+_SQL_INSERT_SLOW_QUERY = """
+INSERT INTO slow_queries (operation, duration_ms, sql_preview, params_preview, explain_plan, recorded_at)
+VALUES (?, ?, ?, ?, ?, ?)
+"""
+_SQL_DELETE_SLOW_QUERIES_BEFORE = "DELETE FROM slow_queries WHERE recorded_at < ?"
+
 F = TypeVar("F", bound=Callable[..., Any])
 
 
@@ -105,13 +112,14 @@ class PercentileTracker:
     def stats(self) -> dict:
         with self._lock:
             if not self._samples:
-                return {"count": 0, "p50_ms": 0, "p95_ms": 0, "p99_ms": 0}
+                return {"count": 0, "avg_ms": 0, "p50_ms": 0, "p95_ms": 0, "p99_ms": 0, "max_ms": 0}
             return {
                 "count": len(self._samples),
+                "avg_ms": round(sum(self._samples) / len(self._samples), 2),
                 "p50_ms": round(self._percentile(50.0), 2),
                 "p95_ms": round(self._percentile(95.0), 2),
                 "p99_ms": round(self._percentile(99.0), 2),
-                "max_ms": round(max(self._samples), 2) if self._samples else 0,
+                "max_ms": round(max(self._samples), 2),
             }
 
     def _percentile(self, p: float) -> float:
@@ -210,15 +218,13 @@ class QueryMetrics:
         import json as _json
 
         explain_json = dumps(explain_rows, ensure_ascii=False)
+        conn = None
         try:
             conn = get_db_connection(str(self._db_path))
             from datetime import UTC, datetime
 
             conn.execute(
-                """
-                INSERT INTO slow_queries (operation, duration_ms, sql_preview, params_preview, explain_plan, recorded_at)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
+                _SQL_INSERT_SLOW_QUERY,
                 (
                     operation,
                     round(duration_ms, 4),
@@ -229,9 +235,14 @@ class QueryMetrics:
                 ),
             )
             conn.commit()
-            conn.close()
         except sqlite3.Error:
             pass
+        finally:
+            if conn is not None:
+                try:
+                    conn.close()
+                except sqlite3.Error:
+                    pass
 
     def track(self, operation: str) -> Callable[[F], F]:
         """装饰器工厂：包裹一个使用 conn.execute() 的函数并追踪耗时。"""
@@ -274,14 +285,17 @@ class QueryMetrics:
     def execute(
         self,
         conn: sqlite3.Connection,
-        operation: str,
         sql: str,
         params: Sequence[Any] | dict[str, Any] = (),
     ) -> sqlite3.Cursor:
-        """带监控的 sqlite3.execute 包装。"""
+        """带监控的 sqlite3.execute 包装。
+
+        用 SQL 语句前缀（如 SELECT / INSERT / UPDATE）作为 operation 追踪键。
+        """
         if not self._enabled:
             return conn.execute(sql, params)
 
+        operation = sql.strip().split()[0].upper() if sql.strip() else "UNKNOWN"
         tracker = self._get_tracker(operation)
         start = time.perf_counter()
         try:
@@ -302,6 +316,26 @@ class QueryMetrics:
         """清空所有采样数据（测试用）。"""
         with self._lock:
             self._trackers.clear()
+
+    def cleanup_old_slow_queries(self, retention_days: int = 30) -> int:
+        """清理超过 retention_days 天的慢查询记录，返回删除行数。"""
+        try:
+            from zephyr.shared.io.sqlite_factory import get_db_connection
+
+            conn = get_db_connection(str(self._db_path))
+            from datetime import UTC, datetime, timedelta
+
+            cutoff = (datetime.now(UTC) - timedelta(days=retention_days)).isoformat()
+            cursor = conn.execute(
+                _SQL_DELETE_SLOW_QUERIES_BEFORE,
+                (cutoff,),
+            )
+            deleted = cursor.rowcount
+            conn.commit()
+            conn.close()
+            return deleted
+        except sqlite3.Error:
+            return 0
 
 
 query_metrics = QueryMetrics.instance()
