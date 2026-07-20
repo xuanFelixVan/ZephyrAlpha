@@ -6311,6 +6311,22 @@ creation_tokens:
     created_by: "sess-23904-20260721003148"
     capability: "error_pattern_library"
 
+  # --- P4-3 GitHub Actions PR commit message guard 检测脚本（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-3）---
+  # 对 PR 的每个 commit 检查 [GW:session_id] 标记 + session_id 合法性（forged_gw_marker 检测）
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("commit_message_guard") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 check_commit_message 副本
+  - file: "scripts/governance/check_commit_message.py"
+    token: "auto-check-commit-message-20260720"
+    created_by: "sess-76664-20260721025201"
+    capability: "commit_message_guard"
+  # --- P4-3 check_commit_message 单测（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-3）---
+  # 验证 _extract_session_id / _load_registered_sessions / _extract_commit_type / _is_merge_commit / _check_commit
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 check_commit_message test 副本
+  - file: "tests/governance/test_check_commit_message.py"
+    token: "auto-check-commit-message-test-20260720"
+    created_by: "sess-76664-20260721025201"
+    capability: "commit_message_guard"
+
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
