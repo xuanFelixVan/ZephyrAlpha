@@ -40,9 +40,119 @@ from dataclasses import dataclass, field
 
 from zephyr.shared.lifecycle.resource_optimization_models import ProcessPoolStats
 
-__all__ = ["MCPProcessPool", "PooledProcess", "is_pid_alive"]
+__all__ = [
+    "MCPProcessPool",
+    "PooledProcess",
+    "is_pid_alive",
+    "run_subprocess_hidden",
+    "spawn_python_hidden",
+]
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# Hidden subprocess helpers (TRAE-067 / RULE-EIGHTEEN SSoT 入口)
+# ============================================================================
+# 病根（2026-07-20 裁定 #ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.5）：
+# Windows 控制台子系统程序（python.exe/powershell.exe）在无父控制台时会
+# 创建新控制台窗口 → 闪窗。DETACHED_PROCESS(0x8) 不继承父控制台但仍会
+# 创建新控制台；CREATE_NO_WINDOW(0x08000000) 才真正无窗口。两者互斥
+# （MSDN 明确），故 hidden helper 用 CREATE_NO_WINDOW 替代 DETACHED_PROCESS。
+#
+# 调用方（真源唯一，禁止重复造轮子）：
+#   - reconciliation_registry._run_subprocess（36 处 reconciler subprocess 统一入口）
+#   - reconcile_runner.launch_reconcile_async（worker spawn）
+#   - session_worktree._spawn_heartbeat_daemon（daemon spawn）
+#   - ide_health_daemon 6 处 powershell/git/python 调用
+#   - trigger_router / script_runner / action_dispatcher / gpu_monitor / diff_detector
+#   - process_sandbox / l2a_process_sandbox / auto_runtime_core
+# ============================================================================
+
+
+def _hidden_creationflags() -> int:
+    """返回 Windows 无窗口 creationflags；POSIX 返回 0。
+
+    CREATE_NO_WINDOW(0x08000000)：子进程不创建控制台窗口，无闪窗。
+    CREATE_NEW_PROCESS_GROUP(0x00000200)：独立进程组，Ctrl+C 不传播
+    （保留 detached 语义，与原 DETACHED_PROCESS 行为对齐）。
+
+    注意：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），不可叠加。
+    """
+    if os.name == "nt":
+        return getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000) | getattr(
+            subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200
+        )
+    return 0
+
+
+def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+    """统一无窗口 subprocess.run 入口（TRAE-067 铁律2 落地）。
+
+    与原 subprocess.run 行为一致，唯一区别：Windows 下加 CREATE_NO_WINDOW
+    消除闪窗。默认 errors='replace' 避免非 UTF-8 字符抛 UnicodeDecodeError
+    （5.59.5 修复策略继承）。
+
+    Args:
+        cmd: 命令列表（如 [sys.executable, "scripts/foo.py"]）
+        **kwargs: 透传给 subprocess.run（capture_output/text/encoding/errors/cwd/env/timeout 等）
+
+    Returns:
+        subprocess.CompletedProcess
+    """
+    kwargs.setdefault("capture_output", True)
+    kwargs.setdefault("text", True)
+    kwargs.setdefault("errors", "replace")
+    if os.name == "nt":
+        # 调用方可能已设 creationflags（如需 DETACHED_PROCESS）——不覆盖，
+        # 仅在未设时注入 hidden flags
+        kwargs.setdefault("creationflags", _hidden_creationflags())
+    return subprocess.run(cmd, **kwargs)
+
+
+def spawn_python_hidden(
+    cmd: list[str],
+    *,
+    cwd: str | None = None,
+    env: dict[str, str] | None = None,
+    stdin_to_devnull: bool = True,
+    stdout_to_devnull: bool = True,
+    stderr_to_devnull: bool = True,
+) -> subprocess.Popen:
+    """无窗口 spawn python 子进程（daemon/reconciler worker/scheduler 用）。
+
+    与 subprocess.Popen 行为一致，区别：
+    1. Windows 下用 CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP（无窗口 + 独立进程组）
+    2. 默认 stdin/stdout/stderr 重定向到 DEVNULL（daemon 无 IO 依赖）
+    3. close_fds=True（子进程不继承父 FD，detached 语义）
+
+    Args:
+        cmd: 命令列表（如 [sys.executable, "-m", "zephyr.foo.daemon", sid])
+        cwd: 工作目录
+        env: 环境变量（None 则继承父）
+        stdin_to_devnull: True 则 stdin=subprocess.DEVNULL
+        stdout_to_devnull: True 则 stdout=subprocess.DEVNULL
+        stderr_to_devnull: True 则 stderr=subprocess.DEVNULL
+
+    Returns:
+        subprocess.Popen（已启动，pid 可读）
+    """
+    popen_kwargs: dict = {
+        "close_fds": True,
+        "cwd": cwd,
+        "env": env,
+    }
+    if stdin_to_devnull:
+        popen_kwargs["stdin"] = subprocess.DEVNULL
+    if stdout_to_devnull:
+        popen_kwargs["stdout"] = subprocess.DEVNULL
+    if stderr_to_devnull:
+        popen_kwargs["stderr"] = subprocess.DEVNULL
+    if os.name == "nt":
+        popen_kwargs["creationflags"] = _hidden_creationflags()
+    else:
+        popen_kwargs["start_new_session"] = True  # POSIX: 新 session（setsid）
+    return subprocess.Popen(cmd, **popen_kwargs)
 
 
 def is_pid_alive(pid: int) -> bool:

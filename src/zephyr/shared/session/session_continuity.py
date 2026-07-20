@@ -506,7 +506,9 @@ class SessionContinuity:
                 / "auto_sync_all_registries.py"
             )
             if script.exists():
-                subprocess.run(
+                from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+                run_subprocess_hidden(
                     [sys.executable, str(script), "--all", "--warn-only"],
                     timeout=30,
                     capture_output=True,

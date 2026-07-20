@@ -99,14 +99,20 @@ class DiffDetector:
         if cached:
             args.append("--cached")
         try:
-            output = subprocess.check_output(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            result = run_subprocess_hidden(
                 args,
                 cwd=str(self._repo_root),
+                capture_output=True,
+                text=True,
                 encoding="utf-8",
                 errors="replace",
             )
-            return [line.strip() for line in output.splitlines() if line.strip()]
-        except (subprocess.CalledProcessError, FileNotFoundError):
+            if result.returncode != 0:
+                return []
+            return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+        except (FileNotFoundError, OSError):
             return []
 
     @staticmethod

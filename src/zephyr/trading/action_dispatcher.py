@@ -81,7 +81,9 @@ def _read_text(filepath: Path) -> str | None:
 
 def _git_commit_hash(project_root: Path) -> str | None:
     try:
-        result = subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        result = run_subprocess_hidden(
             ["git", "rev-parse", "HEAD"],
             cwd=str(project_root),
             capture_output=True,

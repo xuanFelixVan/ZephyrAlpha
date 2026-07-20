@@ -203,8 +203,10 @@ class WorktreeManager:
     # 内部辅助
     # ------------------------------------------------------------------
     def _run_git(self, cmd: list[str], cwd: str | Path | None = None) -> subprocess.CompletedProcess:
-        """执行 git 命令（统一 cwd + encoding）。"""
-        return subprocess.run(
+        """执行 git 命令（统一 cwd + encoding + CREATE_NO_WINDOW）。"""
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
             cmd,
             cwd=str(cwd or self.repo_root),
             capture_output=True,

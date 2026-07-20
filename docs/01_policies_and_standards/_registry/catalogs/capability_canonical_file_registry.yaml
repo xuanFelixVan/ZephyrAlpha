@@ -5899,6 +5899,23 @@ creation_tokens:
     token: "auto-trae-068-preventability-20260720"
     created_by: "sess-34792-20260720100112"
     capability: "preventability_layer_rule"
+
+  # --- RunCommand 窗口闪现治本裁定文档（2026-07-20，#ARCH-RUNCOMMAND-WINDOW-FLASH-001）---
+  # 裁定文档 + 规则文件 + SSoT helper 三件套登记 creation_token
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("window_flash") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
+  - file: "docs/02_enterprise_architecture/ruling_runcommand_window_flash.md"
+    token: "auto-ruling-runcommand-window-flash-20260720"
+    created_by: "sess-52476-20260720095800"
+    capability: "window_flash_discipline"
+  - file: "docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml"
+    token: "auto-trae-067-window-flash-20260720"
+    created_by: "sess-52476-20260720095800"
+    capability: "window_flash_discipline"
+  - file: "src/zephyr/shared/infra/process_pool.py"
+    token: "auto-process-pool-hidden-20260720"
+    created_by: "sess-52476-20260720095800"
+    capability: "subprocess_hidden_helper"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

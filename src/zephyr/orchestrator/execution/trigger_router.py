@@ -669,9 +669,9 @@ def handle_cleanup_stub(payload: dict[str, Any], **_: Any) -> dict[str, Any]:
     对标 MOD-TASK_SYSTEM (task-system) §9。
     """
     try:
-        import subprocess
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
-        result = subprocess.run(
+        result = run_subprocess_hidden(
             ["python", "scripts/governance/archive_drafts_zone.py", "--auto"],
             capture_output=True,
             text=True,

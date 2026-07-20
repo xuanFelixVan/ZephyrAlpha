@@ -252,7 +252,9 @@ class L2aSandbox:
         # 5. 执行
         t0 = time.monotonic()
         try:
-            proc = subprocess.run(  # — cmd 是 list，无 shell injection
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            proc = run_subprocess_hidden(  # — cmd 是 list，无 shell injection；CREATE_NO_WINDOW 无闪窗
                 cmd,
                 cwd=str(resolved_cwd),
                 env=safe_env,

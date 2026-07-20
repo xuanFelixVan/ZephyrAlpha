@@ -104,20 +104,79 @@ _HASH_OBJECT_TIMEOUT = 10
 # N >= 5 阻断下次 session_worktree_start（强制调查根因）
 _EMERGENCY_REASON_THRESHOLD: int = 3
 _EMERGENCY_BLOCK_THRESHOLD: int = 5
-_EMERGENCY_COUNTS_DIR: str = ".runtime/sessions"
+# P1-2 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# 原按 session_id 分桶，AI 每次新 session_id 导致计数永远停在 1，N>=3/N>=5 永不触发。
+# 改为按 agent_id 持久标识分桶（env ZEPHYR_AGENT_ID > git config user.email > "default"）。
+# 计数文件路径 .runtime/emergency_counts/<agent_id>.json（与 .runtime/sessions/ 分离）。
+_EMERGENCY_COUNTS_DIR: str = ".runtime/emergency_counts"
 
 
-def _emergency_count_path(project_root: str | Path, session_id: str) -> Path:
-    """返回 emergency_count.json 文件路径。"""
-    return Path(project_root) / _EMERGENCY_COUNTS_DIR / session_id / "emergency_count.json"
+def _agent_bucket_id(project_root: str | Path) -> str:
+    """获取 emergency_commit 计数分桶 ID（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 P1-2）。
+
+    100% AI 开发下，AI 每次启动新 session_id，按 session_id 分桶的计数永远停在 1。
+    改为按 agent 持久标识分桶，使同一 AI 的多次 emergency_commit 累积计数。
+
+    优先级：
+      1. 环境变量 ZEPHYR_AGENT_ID（AI 显式声明）
+      2. git config user.email（git 提交者标识）
+      3. 环境变量 USER / USERNAME（OS 用户）
+      4. "default"（最终 fallback）
+
+    Args:
+        project_root: 项目根目录（用于读取 git config）。
+
+    Returns:
+        agent_bucket_id 字符串（用于计数文件分桶路径）。
+    """
+    # 1. 环境变量 ZEPHYR_AGENT_ID
+    agent_id = os.environ.get("ZEPHYR_AGENT_ID", "").strip()
+    if agent_id:
+        return agent_id
+    # 2. git config user.email（项目层）
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+        r = run_subprocess_hidden(
+            ["git", "config", "user.email"],
+            cwd=str(project_root),
+            capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+            timeout=5,
+        )
+        if r.returncode == 0:
+            email = r.stdout.strip()
+            if email:
+                return f"email:{email}"
+    except Exception:  # noqa: BLE001 — git 失败 fallback 下一个
+        pass
+    # 3. USER / USERNAME
+    user = os.environ.get("USER") or os.environ.get("USERNAME", "")
+    if user:
+        return f"user:{user}"
+    # 4. default
+    return "default"
 
 
-def _read_emergency_count(project_root: str | Path, session_id: str) -> dict:
-    """读取 session 的 emergency 计数（返回 {"count": N, "block_next_start": bool}）。
+def _emergency_count_path(project_root: str | Path, bucket_id: str) -> Path:
+    """返回 emergency_count.json 文件路径（按 agent bucket_id 分桶）。
+
+    Args:
+        project_root: 项目根目录。
+        bucket_id: agent bucket ID（由 _agent_bucket_id 返回，非 session_id）。
+    """
+    return Path(project_root) / _EMERGENCY_COUNTS_DIR / f"{bucket_id}.json"
+
+
+def _read_emergency_count(project_root: str | Path, bucket_id: str) -> dict:
+    """读取 agent bucket 的 emergency 计数（返回 {"count": N, "block_next_start": bool}）。
 
     文件不存在时返回 {"count": 0, "block_next_start": False}（默认值）。
+
+    Args:
+        project_root: 项目根目录。
+        bucket_id: agent bucket ID（由 _agent_bucket_id 返回）。
     """
-    path = _emergency_count_path(project_root, session_id)
+    path = _emergency_count_path(project_root, bucket_id)
     if not path.exists():
         return {"count": 0, "block_next_start": False}
     try:
@@ -127,10 +186,16 @@ def _read_emergency_count(project_root: str | Path, session_id: str) -> dict:
 
 
 def _write_emergency_count(
-    project_root: str | Path, session_id: str, data: dict,
+    project_root: str | Path, bucket_id: str, data: dict,
 ) -> None:
-    """写入 emergency 计数（原子写入：tmp + os.replace）。"""
-    path = _emergency_count_path(project_root, session_id)
+    """写入 emergency 计数（原子写入：tmp + os.replace）。
+
+    Args:
+        project_root: 项目根目录。
+        bucket_id: agent bucket ID（由 _agent_bucket_id 返回）。
+        data: 计数数据 dict。
+    """
+    path = _emergency_count_path(project_root, bucket_id)
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(".tmp")
@@ -141,28 +206,28 @@ def _write_emergency_count(
 
 
 def _check_emergency_escalation(
-    project_root: str | Path, session_id: str, reason: str,
+    project_root: str | Path, bucket_id: str, reason: str,
 ) -> tuple[bool, str]:
-    """检查 emergency_commit 成本递增门禁（#ARCH-HEARTBEAT-001 P1-5）。
+    """检查 emergency_commit 成本递增门禁（#ARCH-HEARTBEAT-001 P1-5 + P1-2 治本）。
 
     - N >= 3 且 reason 为空 → 拒绝（强制说明原因）
     - N >= 5 → 拒绝（已超阈值，必须先解决根因）
 
     Args:
         project_root: 项目根目录。
-        session_id: session 标识。
+        bucket_id: agent bucket ID（由 _agent_bucket_id 返回，跨 session 持久）。
         reason: 调用方提供的紧急提交原因。
 
     Returns:
         (allowed, error_msg) — allowed=True 时 error_msg 为空。
     """
-    data = _read_emergency_count(project_root, session_id)
+    data = _read_emergency_count(project_root, bucket_id)
     count = data.get("count", 0)
     if count >= _EMERGENCY_BLOCK_THRESHOLD:
         return False, (
             f"emergency_commit 已达 {count} 次（阈值 {_EMERGENCY_BLOCK_THRESHOLD}），"
             f"阻断本次提交。必须先调查根因（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset），"
-            f"解决后调 session_worktree_abort 清理 session 计数。"
+            f"解决后清理 .runtime/emergency_counts/{bucket_id}.json 重置计数。"
         )
     if count >= _EMERGENCY_REASON_THRESHOLD and not reason.strip():
         return False, (
@@ -173,63 +238,66 @@ def _check_emergency_escalation(
 
 
 def _increment_emergency_count(
-    project_root: str | Path, session_id: str,
+    project_root: str | Path, bucket_id: str,
 ) -> int:
-    """emergency_commit 成功后递增计数（#ARCH-HEARTBEAT-001 P1-5）。
+    """emergency_commit 成功后递增计数（#ARCH-HEARTBEAT-001 P1-5 + P1-2 治本）。
 
     N+1 >= 5 时设置 block_next_start=True（阻断下次 session_worktree_start）。
+
+    Args:
+        project_root: 项目根目录。
+        bucket_id: agent bucket ID（由 _agent_bucket_id 返回）。
 
     Returns:
         递增后的新计数。
     """
-    data = _read_emergency_count(project_root, session_id)
+    data = _read_emergency_count(project_root, bucket_id)
     new_count = data.get("count", 0) + 1
     block_next = new_count >= _EMERGENCY_BLOCK_THRESHOLD
-    _write_emergency_count(project_root, session_id, {
+    _write_emergency_count(project_root, bucket_id, {
         "count": new_count,
         "block_next_start": block_next,
+        "bucket_id": bucket_id,
     })
     if block_next:
         logger.warning(
             "emergency_commit count reached %d (block threshold %d) — "
-            "next session_worktree_start will be blocked (session=%s)",
-            new_count, _EMERGENCY_BLOCK_THRESHOLD, session_id,
+            "next session_worktree_start will be blocked (bucket=%s)",
+            new_count, _EMERGENCY_BLOCK_THRESHOLD, bucket_id,
         )
     return new_count
 
 
 def check_start_blocked(project_root: str | Path) -> tuple[bool, str]:
-    """检查是否有 session 阻断 session_worktree_start（#ARCH-HEARTBEAT-001 P1-5）。
+    """检查是否有 agent bucket 阻断 session_worktree_start（#ARCH-HEARTBEAT-001 P1-5 + P1-2 治本）。
 
-    扫描 .runtime/sessions/*/emergency_count.json，若任何 session 的
+    扫描 .runtime/emergency_counts/*.json，若任何 bucket 的
     block_next_start=True 则阻断。
 
     Args:
         project_root: 项目根目录。
 
     Returns:
-        (blocked, reason) — blocked=True 时 reason 含阻断 session 信息。
+        (blocked, reason) — blocked=True 时 reason 含阻断 bucket 信息。
     """
-    sessions_dir = Path(project_root) / _EMERGENCY_COUNTS_DIR
-    if not sessions_dir.exists():
+    counts_dir = Path(project_root) / _EMERGENCY_COUNTS_DIR
+    if not counts_dir.exists():
         return False, ""
     try:
-        for sid_dir in sessions_dir.iterdir():
-            if not sid_dir.is_dir():
-                continue
-            count_file = sid_dir / "emergency_count.json"
-            if not count_file.exists():
+        for count_file in counts_dir.glob("*.json"):
+            if not count_file.is_file():
                 continue
             try:
                 data = json.loads(count_file.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 continue
             if data.get("block_next_start", False):
+                bucket_id = data.get("bucket_id", count_file.stem)
                 return True, (
-                    f"session {sid_dir.name} 的 emergency_commit 计数达 "
+                    f"agent bucket '{bucket_id}' 的 emergency_commit 计数达 "
                     f"{data.get('count', 0)} 次（阈值 {_EMERGENCY_BLOCK_THRESHOLD}），"
-                    f"阻断新 session 启动。必须先调 session_worktree_abort('{sid_dir.name}') "
-                    f"清理该 session 计数，或手动删除 {count_file}。"
+                    f"阻断新 session 启动。必须先调查根因（GitCommitGateway 锁死/POST-COMMIT-GUARD 反复 reset），"
+                    f"解决后删除 {count_file} 重置计数。"
                 )
     except OSError:
         pass
@@ -256,11 +324,13 @@ def _run_git(
     env: dict | None = None,
     timeout: int = _COMMIT_TREE_TIMEOUT,
 ) -> subprocess.CompletedProcess:
-    """执行 git 命令（统一 encoding + timeout）。"""
+    """执行 git 命令（统一 encoding + timeout + CREATE_NO_WINDOW）。"""
     full_env = os.environ.copy()
     if env:
         full_env.update(env)
-    return subprocess.run(
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    return run_subprocess_hidden(
         cmd,
         cwd=cwd,
         capture_output=True,
@@ -318,6 +388,7 @@ def emergency_commit(
     project_root: str | Path | None = None,
     reason: str = "",
     trigger_reconcilers: bool = True,
+    scenario: str = "production",
 ) -> EmergencyCommitResult:
     """紧急提交通道：用 git commit-tree 绕过所有 hook。
 
@@ -326,9 +397,10 @@ def emergency_commit(
 
     治理可见性（治本 vs 裸 commit-tree）：
       1. commit message 添加 [GW:{session_id}:emergency] 标记
-      2. 持久化到 reconcile_execution_log（action='emergency_commit'）
-      3. 写审计报告到 .runtime/reconcile_reports/emergency_commit_*.json
-      4. 可选触发 post-commit reconciler 链路（默认触发）
+      2. commit message 添加 [SCENARIO:{scenario}] 标记（P1-3 治本，dogfood 豁免）
+      3. 持久化到 reconcile_execution_log（action='emergency_commit'）
+      4. 写审计报告到 .runtime/reconcile_reports/emergency_commit_*.json
+      5. 可选触发 post-commit reconciler 链路（默认触发）
 
     技术实现：
       - 临时 index（GIT_INDEX_FILE=<temp>）原子化多文件提交
@@ -345,6 +417,10 @@ def emergency_commit(
         trigger_reconcilers: 是否触发 post-commit reconciler（默认 True）。
             emergency 提交绕过了 post-commit hook，reconciler 不会自动触发。
             设为 True 时手动调用 reconciler 链路补齐。设为 False 跳过（速度优先）。
+        scenario: 场景标签（P1-3 治本，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）。
+            可选值：production（默认，计入滥用监控）/ dogfood / test / governance_fix。
+            abuse_monitor 只统计 scenario=production 的 emergency_commit，
+            避免治本工作 dogfood 污染 24h 滥用计数。
 
     Returns:
         EmergencyCommitResult TypedDict，``ok`` 字段是判定成败的唯一入口。
@@ -352,9 +428,11 @@ def emergency_commit(
     root = Path(project_root) if project_root else REPO_ROOT
     root = root.resolve()
 
-    # #ARCH-HEARTBEAT-001 P1-5: 成本递增门禁检查
+    # #ARCH-HEARTBEAT-001 P1-5 + P1-2 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+    # 成本递增门禁检查——按 agent_id 分桶（跨 session 持久），而非 session_id
     # N>=3 需显式 reason，N>=5 阻断提交（强制调查根因）
-    allowed, escalation_error = _check_emergency_escalation(root, session_id, reason)
+    bucket_id = _agent_bucket_id(root)
+    allowed, escalation_error = _check_emergency_escalation(root, bucket_id, reason)
     if not allowed:
         return {
             "ok": False,
@@ -428,8 +506,12 @@ def emergency_commit(
     tmp_index_path = tmp_index.name
 
     # commit message 临时文件（避免 PowerShell 特殊字符问题，RULE-TWENTY 裁定2）
+    # P1-3 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+    # 追加 [SCENARIO:{scenario}] 标记，abuse_monitor 按 scenario 过滤——
+    # 只统计 scenario=production 的 emergency_commit，dogfood/test/governance_fix 豁免
     gw_marker = f"[GW:{session_id}:emergency]"
-    full_message = f"{message}\n\n{gw_marker}"
+    scenario_marker = f"[SCENARIO:{scenario}]"
+    full_message = f"{message}\n\n{gw_marker}\n{scenario_marker}"
     if reason:
         full_message += f"\n\nEmergency reason: {reason}"
     tmp_msg = tempfile.NamedTemporaryFile(
@@ -551,10 +633,10 @@ def emergency_commit(
             "emergency_commit: OK commit=%s branch=%s files=%d session=%s",
             short_sha, branch, len(norm_files), session_id,
         )
-        # #ARCH-HEARTBEAT-001 P1-5: 成本递增——成功后递增计数
+        # #ARCH-HEARTBEAT-001 P1-5 + P1-2 治本：成功后递增计数（按 agent bucket）
         # N+1 >= 5 时设置 block_next_start=True（阻断下次 session_worktree_start）
         try:
-            new_count = _increment_emergency_count(root, session_id)
+            new_count = _increment_emergency_count(root, bucket_id)
         except Exception as e:  # noqa: BLE001 — 计数失败不阻断 commit
             logger.warning("emergency_commit: increment count failed: %s", e)
             new_count = -1

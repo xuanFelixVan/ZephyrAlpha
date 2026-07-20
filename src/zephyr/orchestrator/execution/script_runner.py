@@ -125,7 +125,9 @@ class ScriptRunner:
     def _run_one(self, script_path: str, timeout: int) -> ScriptResult:
         start = time.perf_counter()
         try:
-            proc = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            proc = run_subprocess_hidden(
                 [sys.executable, script_path, "--warn-only"],
                 capture_output=True,
                 text=True,

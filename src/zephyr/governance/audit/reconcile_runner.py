@@ -282,10 +282,12 @@ def launch_reconcile_async(
 
     creationflags = 0
     if os.name == "nt":
-        # Windows: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
-        # DETACHED_PROCESS: 不继承父进程 console
-        # CREATE_NEW_PROCESS_GROUP: 独立进程组，Ctrl+C 不传播
-        creationflags = 0x00000008 | 0x00000200  # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+        # Windows: CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
+        # CREATE_NO_WINDOW(0x08000000): 不创建控制台窗口，无闪窗（TRAE-067 铁律2）
+        # CREATE_NEW_PROCESS_GROUP(0x00000200): 独立进程组，Ctrl+C 不传播
+        # 注：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），CREATE_NO_WINDOW
+        # 同时满足"无窗口"+"detached 语义"（父退出不影响子，因 close_fds=True）
+        creationflags = 0x08000000 | 0x00000200  # CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
 
     try:
         proc = subprocess.Popen(

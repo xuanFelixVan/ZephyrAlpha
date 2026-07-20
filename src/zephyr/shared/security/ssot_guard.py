@@ -190,7 +190,9 @@ class GuardReport:
 
 def _repo_root() -> Path:
     """返回 git 仓库根目录。"""
-    result = subprocess.run(
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    result = run_subprocess_hidden(
         ["git", "rev-parse", "--show-toplevel"],
         capture_output=True,
         text=True,
@@ -204,7 +206,9 @@ def _staged_files(repo_root: Path) -> dict[str, str]:
     返回暂存区文件字典：{相对路径(forward-slash) -> git status 字符('A','M','D','R',...)}。
     使用 --diff-filter=ACDMR 涵盖新增/修改/删除/重命名/复制。
     """
-    result = subprocess.run(
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    result = run_subprocess_hidden(
         ["git", "diff", "--cached", "--name-status", "--diff-filter=ACDMR"],
         capture_output=True,
         text=True,

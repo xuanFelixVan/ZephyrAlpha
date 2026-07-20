@@ -151,10 +151,12 @@ class WorktreePool:
         cmd: list[str],
         cwd: str | Path | None = None,
     ) -> subprocess.CompletedProcess:
-        """执行 git 命令（统一 cwd + encoding + fast-path env）。"""
+        """执行 git 命令（统一 cwd + encoding + fast-path env + CREATE_NO_WINDOW）。"""
         env = dict(os.environ)
         env[_FAST_PATH_ENV] = "1"  # GIT-BUDGET-INV-003 fast-path
-        return subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
             cmd,
             cwd=str(cwd or self.repo_root),
             capture_output=True,

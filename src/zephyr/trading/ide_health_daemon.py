@@ -36,6 +36,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from zephyr.shared.utils.time_utils import now_utc
 
+
+def _run_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+    """无窗口 subprocess.run wrapper（TRAE-067 铁律2 落地，消除 daemon 闪窗）。"""
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    return run_subprocess_hidden(cmd, **kwargs)
+
 # 5.160.11 修复：TaskStatus字符串替换为Enum引用
 from zephyr.shared.foundation.constants import TaskStatus
 
@@ -102,9 +109,7 @@ def _get_window_configs_from_cmdlines(pids: list[int]) -> dict[str, set[int]]:
     windows: dict[str, set[int]] = {}
     for pid in pids:
         try:
-            import subprocess
-
-            result = subprocess.run(
+            result = _run_hidden(
                 [
                     "powershell",
                     "-NoProfile",
@@ -134,7 +139,7 @@ def _get_visible_window_configs() -> set[str]:
 
     visible: set[str] = set()
     try:
-        result = subprocess.run(
+        result = _run_hidden(
             [
                 "powershell",
                 "-NoProfile",
@@ -162,7 +167,7 @@ def _get_mainwindow_handle_map() -> dict[int, int]:
     """
     handle_map: dict[int, int] = {}
     try:
-        result = subprocess.run(
+        result = _run_hidden(
             [
                 "powershell",
                 "-NoProfile",
@@ -422,7 +427,7 @@ class IdeHealthDaemon:
             "ghost_count": self._ghost_count,
         }
         # stash 数量
-        r = subprocess.run(
+        r = _run_hidden(
             ["git", "stash", "list"],
             capture_output=True, text=True,
             cwd=str(self._project_root),
@@ -437,7 +442,7 @@ class IdeHealthDaemon:
         else:
             metrics["stash_count"] = len([l for l in r.stdout.splitlines() if l.strip()])
         # worktree 变更量
-        r = subprocess.run(
+        r = _run_hidden(
             ["git", "status", "--porcelain"],
             capture_output=True, text=True,
             cwd=str(self._project_root),
@@ -465,7 +470,7 @@ class IdeHealthDaemon:
             logger.warning("drift health: stash_count=%d > 5, auto-cleanup", metrics["stash_count"])
             # P1-STH: 自动调用 cleanup_stash.py --cleanup（保留 KEEP_COUNT=3 最新，安全）
             try:
-                result = subprocess.run(
+                result = _run_hidden(
                     [sys.executable, "scripts/governance/cleanup_stash.py", "--cleanup"],
                     cwd=str(self._project_root),
                     capture_output=True, text=True, timeout=60,
