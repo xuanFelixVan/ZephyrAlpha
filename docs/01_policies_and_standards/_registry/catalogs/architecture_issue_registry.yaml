@@ -9,7 +9,7 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.3.7
+version: 1.3.8
 created: '2026-06-26'
 last_updated: '2026-07-20'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
@@ -4484,5 +4484,147 @@ entries:
   status: in_progress
   related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (5 维滥用审计 R1/R2 修正), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 阈值代码未生效), #ARCH-HEARTBEAT-001 (heartbeat 已落地但 emergency 仍超阈), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D 系列)'
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP, trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_064 (GIT-CALL-BUDGET), trae_069 (commit_gateway_abuse_thresholds)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+
+# --- #ARCH-CROSS-COMMIT-ATOMICITY-001: 跨 commit 原子性违规 + GATE-IMPORT-INTEGRITY 治本 ---
+- issue_id: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
+  title: 跨 commit 原子性违规——import 语句先行于目标文件创建 + GATE-IMPORT-INTEGRITY 治本
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定。ba40fa5b75（#ARCH-RUNCOMMAND-WINDOW-FLASH-001 Phase 1.5 治本闪窗）
+    在 git_commit_gateway.py L154 + L345 添加了对 forged_gw_marker_gate.py 的 import 与
+    register 调用，但该文件 36 分钟后才由 ce81f1077f（#ARCH-PREVENTABILITY-LAYER-001
+    Phase 2 落地）创建。两个 commit 之间 main 分支处于悬空 import 状态，触发
+    ModuleNotFoundError。
+
+
+    病根（第一性原理）：
+
+
+    1. 跨文件原子性违规——同一功能涉及 2 个文件（git_commit_gateway.py 添加 import +
+       forged_gw_marker_gate.py 创建），被拆分到 2 个独立 commit。每个 commit 单独看
+       都不完整。
+
+    2. 跨 Phase 提交违规——ba40fa5b75 是 Phase 1.5（闪窗治本），却夹带了 Phase 2
+       （forged_gw_marker）的 import 语句。裁定 #ARCH-PREVENTABILITY-LAYER-001 明确
+       Phase 2"待立项"，但 import 已先行。
+
+    3. 100% AI 开发场景下多 session 并发无协调——AI session 各自独立 commit/merge，
+       session 间依赖关系无登记。session A 引入 import（commit 早）、session B 创建
+       文件（commit 晚）时，main 分支会出现 transient 悬空 import。
+
+
+    现有门禁的盲区：
+
+
+    - UNDEFINED-NAME (F821, priority=106)：检测"使用未定义符号"（NameError），
+      不检测 import 的目标模块是否存在（ImportError）
+    - SCRIPTS-IMPORT-INTEGRITY (priority=104)：只检测 scripts/governance/ 对
+      _shared.constants 符号的使用，不通用
+    - TEST-SOURCE-CONSISTENCY (priority=102)：只检测已存在模块的符号存在性，
+      不检测模块本身存在性
+    - 无任何 gate 检测"commit 引入了对不存在模块的 import"——这正是 ba40fa5b75
+      漏过的原因
+
+
+    误判纠正：上一会话（#ARCH-PRE-EXISTING-DEBT-001 治本）声称"7 个 reconcile_async
+    测试失败是 pre-existing 问题——forged_gw_marker_gate.py 文件由其他 session 创建
+    但从未 commit，merge 清理时被删除"是错误判断。经 git log 实证，实际是本议题的
+    transient 故障，ce81f1077f merge 后已自然修复，76/76 测试全部通过。
+  fix_phase: |
+    Phase 1（立即，本次 commit）：
+      - P1-1 新增 import_integrity_gate.py（GATE-IMPORT-INTEGRITY，priority=107）：
+        检测 staged .py 文件中 from X.Y.Z import W / import X.Y.Z 的目标模块可解析性
+      - P1-2 git_commit_gateway.py __init__ 中注册 make_import_integrity_gate()
+      - P1-3 gate_registry.yaml 登记 GATE-IMPORT-INTEGRITY
+      - P1-4 新增单测 test_import_integrity_gate.py（合法 import 通过 / 悬空 import 阻断 /
+        stdlib 通过 / 相对 import 处理 / wildcard 跳过）
+
+    Phase 2（后续）：
+      - 跨 commit 原子性规则外部化到 trae_069_cross_commit_atomicity.yaml
+      - session_worktree_commit 增加 cross-commit 依赖检测
+      - AI 协调机制：session 间依赖关系登记到 SessionRegistry
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（P1-1 新建 gate）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（P1-2 注册 gate）
+    - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（P1-3 登记 GATE-IMPORT-INTEGRITY）
+    - tests/governance/commit_gates/test_import_integrity_gate.py（P1-4 单测）
+  status: in_progress
+  related_adjudication: '#ARCH-PREVENTABILITY-LAYER-001 (Phase 2 文件创建), #ARCH-RUNCOMMAND-WINDOW-FLASH-001 (Phase 1.5 夹带 import)'
+  related_rules: 'trae_060 (向内收三原则), trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_068 (第 6 层可预防性)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+
+# --- #ARCH-064: apply_depgraph.py CLI subcommand capability registry 登记完整性治本 ---
+- issue_id: '#ARCH-064'
+  title: apply_depgraph.py CLI subcommand capability registry 登记完整性治本（5.179 漏登记触发系统性补齐）
+  severity: P2中
+  category: gate_scope_decision
+  adjudication: |
+    问题背景：
+    2026-07-20 5.179 治本新增 apply_depgraph.py --fix-path-semantics CLI 后审查发现：
+    capability_canonical_file_registry.yaml 未登记该 CLI。进一步调研发现系统性问题：
+    apply_depgraph.py 48 个 CLI subcommand 中只有 4 个登记（漏登记率 ~79%）。
+    应登记的 19 个（裁定驱动 + 复杂 SQL + 防绕过 3 条标准之一）中漏登记 15 个。
+
+    第一性原理分析（5 维度）：
+    1. 代码验证（grep + AST 解析 2026-07-20）：
+       - apply_depgraph.py 总 CLI subcommand 数：~48（含辅助参数）
+       - 应登记（裁定驱动 + 复杂 SQL + 防绕过）：19 个
+       - 已登记到 capability_canonical_file_registry.yaml：4 个
+       - 漏登记：15 个（包括本次新增 --fix-path-semantics）
+       - M04 指标检测范围：仅 src/zephyr/gov_enforcement/commit_gates/*.py，不覆盖 scripts/governance/*.py
+    2. 问题本质：
+       - 登记标准未文档化：已登记的 4 条遵循"裁定驱动 + 复杂 SQL + 防绕过"3 条标准，但未写成规则
+       - M04 检测盲区：只覆盖 commit_gates/，不覆盖 scripts/governance/ CLI subcommands
+       - 无强制机制：君子协定失效（AI 新增 CLI 后不会主动登记）
+    3. 100% AI 开发特殊性：
+       - AI 上下文有限：不可能记住 48 个 CLI，漏登记的 CLI 后续 AI 搜不到 → 重复造轮子
+       - AI 可能绕过 apply_depgraph.py：漏登记的复杂治理 CLI（如 --rename-domain 18 步级联）
+         AI 可能直接写 SQL 实现域改名，绕过级联保护
+       - 已有 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD 治本：只覆盖"施工前查规则"，
+         未覆盖"CLI subcommand 登记完整性"
+    4. 成本收益：
+       - 阶段 1+2（补登记 15 条）：~200 行 YAML，收益高（一次性补齐历史债）
+       - 阶段 3.1（M32 指标）：~120 行代码，收益高（自动检测未来漏登记）
+       - 阶段 3.2（trae_065 铁律8）：~10 行规则，收益高（规则可被 MCP rule_discovery 发现）
+       - 阶段 3.3（#ARCH-064 登记）：~50 行 YAML，收益中（裁定真源）
+       - 硬阻断 gate ROI 负：apply_depgraph.py 低频使用（月改动 <5 次），硬阻断成本 > 收益
+    5. 防复发策略：
+       - 阶段 1+2：补登记 15 条历史漏登记（一次性消除存量债）
+       - 阶段 3.1：M32 指标 warn-only 自动检测（AST 解析 + capability registry 比对）
+       - 阶段 3.2：trae_065 铁律8 + CAP-LOOKUP-INV-007 不变量（规则可被 MCP 发现）
+       - 阶段 3.3：#ARCH-064 裁定登记（真源可追溯）
+       - 不建硬阻断 gate：ROI 负，warn-only 已足够
+
+    裁定：3 阶段治本全部 EXECUTE
+    - 阶段 1+2：补登记 15 条历史漏登记（包括 --fix-path-semantics + 14 个历史漏登记）
+    - 阶段 3.1：新增 M32 指标（apply_depgraph.py CLI 未登记 capability 数，warn-only）
+    - 阶段 3.2：trae_065 追加铁律8 + CAP-LOOKUP-INV-007 不变量
+    - 阶段 3.3：本条 #ARCH-064 登记
+    - 不建硬阻断 gate：ROI 负
+
+    登记标准（3 条标准之一即应登记，文档化到 trae_065 铁律8）：
+    1. 裁定驱动：CLI 实现源自某个 #ARCH-NNN 裁定（如 --rename-domain 源自裁定#204）
+    2. 复杂 SQL：CLI 涉及多表/级联/全表扫描/DDL（如 --rename-domain 18 步 UPDATE 11 表）
+    3. 防 SQL 绕过：CLI 的存在是为了防止 AI 直接写裸 SQL 绕过 apply_depgraph.py 级联保护
+
+    豁免（不需登记）：
+    - 常规 CRUD（add/delete/transition/update 单表简单操作，AI 通过 --help 即可发现）
+    - 辅助参数（--force/--dry-run/--dep-type 等，无独立能力，只是 CLI 开关）
+
+    验证：M32=0（全部 19 个应登记 CLI 已登记，14 个辅助参数 + 21 个常规 CRUD 被白名单排除）
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（补登记 15 条 capability）
+    - scripts/governance/architecture_health_dashboard.py（新增 M32 指标 + 注册到 METRICS）
+    - docs/01_policies_and_standards/rules/trae_065_capability_lookup_required.yaml（追加铁律8 + CAP-LOOKUP-INV-007 不变量）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-064 登记）
+  fix_phase: 已完成（3 阶段治本全部落地）
+  status: resolved
+  related_adjudication: '#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD (RULE-CAPABILITY-LOOKUP 主体), 5.179 (本次 --fix-path-semantics 触发系统性补齐)'
+  related_rules: 'trae_065 (RULE-CAPABILITY-LOOKUP), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
