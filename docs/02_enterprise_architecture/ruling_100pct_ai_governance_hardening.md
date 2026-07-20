@@ -709,13 +709,13 @@ R6(第 6 层正式化)可与 Phase 1 并行,是概念性工作,不依赖代码�
 ```
 Phase 3 (下月,L3 表层,依赖 Phase 2 完成):
 ─────────────────────────────────────────
-P3-0 (新增,2h) 扩展 AdaptiveThreshold 支持 count_threshold 模式
-P3-1 (6h,原 4h) 阈值从静态改为自适应(7d 滚动基线)
+P3-0 (新增,2h) 扩展 AdaptiveThreshold 支持 count_threshold 模式  ✅ 已落地 2026-07-20
+P3-1 (6h,原 4h) 阈值从静态改为自适应(7d 滚动基线)                ✅ 已落地 2026-07-20
 P3-2 (3h) 新增 health_score_calculator.py(5 维加权评分)
 P3-3 (2h) 综合评分 >0.7 critical_warn, >0.9 block_next
 P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)
 P3-5 (2h) smoke test
-P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json
+P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json  ✅ 已落地 2026-07-20
 
 Phase 4 (长期,依赖 Phase 3 完成):
 ─────────────────────────────────────────
@@ -728,6 +728,26 @@ P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message
 P4-4  (3h) session 启动推送"近期高频错误"提醒
 P4-5  (❌ 不实施,可行性低,边际收益低于成本)
 ```
+
+**P3-0/P3-6/P3-1 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）**:
+
+- **P3-0** `src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py`:
+  `ThresholdMode` 枚举（PROBABILITY/COUNT）+ `ThresholdState` 扩展 `mode`/`static_floor`/`factor` 字段 +
+  `set_count_config()`/`observe_count()`/`get_threshold()` 新 API。`static_floor` 强制下限防止阈值
+  过低掩盖真实恶化；mode 一经设置不可变更（fail-safe 返回当前阈值不变）。55/55 测试通过。
+- **P3-6** `commit_gateway_abuse_monitor_reconciler.py`: 新增 `_BASELINE_WINDOW_DAYS=7`/
+  `_BASELINE_VERSION="1.0"`/`_ADAPTIVE_FACTOR=1.5` 常量 + `_baseline_file()`/`_load_baseline()`/
+  `_save_baseline()`/`_record_daily_metrics()` 函数。baseline 持久化到
+  `.runtime/abuse_monitor/abuse_baseline.json`（系统层状态，同日覆盖，7d 滚动窗口裁剪）。
+  `_METRICS_KEY_MAP` 完成 `_classify_abuse` 简化 key → 标准 dim_name 映射。
+- **P3-1** `commit_gateway_abuse_monitor_reconciler.py`: 新增 `_compute_adaptive_thresholds()`
+  函数（接入 AdaptiveThreshold，遍历历史 7d baseline 调 `observe_count`，返回 5 维自适应阈值）。
+  `_classify_abuse()` 增加 `adaptive_thresholds` 参数，有效阈值 = `max(adaptive, static)`，
+  防止自适应阈值低于静态下限掩盖真实恶化（ruling §5.3 风险治本）。`_reconcile()` 整合调用：
+  先加载历史 baseline（不含今日）→ 计算自适应阈值 → `_classify_abuse` 用有效阈值判定 →
+  `_record_daily_metrics` 追加今日 metrics 到 baseline。20 个新增测试覆盖持久化/自适应/集成。
+- **trae_069 YAML**: `adaptive` 段从 `enabled:false` 升级为 `enabled:true`，新增
+  `baseline_persistence`/`factor`/`effective_threshold_rule`/`mode` 字段。version 1.0.0 → 1.1.0。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 

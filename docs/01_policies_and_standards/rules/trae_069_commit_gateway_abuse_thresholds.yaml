@@ -31,12 +31,12 @@
 meta:
   rule_id: trae_069
   rule_name: commit_gateway_abuse_thresholds
-  version: '1.0.0'
+  version: '1.1.0'
   created: '2026-07-20'
   last_updated: '2026-07-20'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
-  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正)'
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正), #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1)'
 
 # enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
 # 本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值真源（数据类规则，
@@ -134,19 +134,41 @@ classification_rules:
     action: critical_warn
     description: '3+ 维度触发 OR forged_gw_marker 维度触发'
 
-# Phase 3 自适应阈值预留（P3-2/P3-3/P3-4 待施工）
+# Phase 3 自适应阈值（P3-0/P3-6/P3-1 已落地 2026-07-20，P3-2/P3-3/P3-4 待施工）
 adaptive:
-  enabled: false  # P3-4 待施工：基于 7d 基线 ±σ 自适应
-  baseline_window_seconds: 604800  # 7d 滚动基线
-  sigma_multiplier: 2.0  # threshold = baseline_mean + 2*sigma
+  enabled: true  # P3-0/P3-6/P3-1 已落地：AdaptiveThreshold 双模式 + 7d baseline 持久化 + max(adaptive, static) 有效阈值
+  baseline_window_seconds: 604800  # 7d 滚动基线（P3-6: .runtime/abuse_monitor/abuse_baseline.json）
+  baseline_persistence: .runtime/abuse_monitor/abuse_baseline.json  # P3-6 系统层状态文件
+  factor: 1.5  # P3-1: 阈值 = max(ewma * factor, static_floor)，留 50% 余量给正常波动
+  effective_threshold_rule: max(adaptive, static)  # P3-1: 防止自适应阈值低于静态下限掩盖真实恶化
+  mode: count  # P3-0: AdaptiveThreshold.ThresholdMode.COUNT（次数型，区别于概率型）
   description: >-
+    P3-0/P3-6/P3-1 已落地（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）：
+    - P3-0: AdaptiveThreshold 双模式扩展（PROBABILITY + COUNT），static_floor 强制下限，
+      mode 不可变更。代码：src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py
+    - P3-6: 7d baseline 持久化到 .runtime/abuse_monitor/abuse_baseline.json（系统层状态，
+      同日覆盖，7d 滚动窗口裁剪）。代码：commit_gateway_abuse_monitor_reconciler.py
+      _record_daily_metrics / _load_baseline / _save_baseline
+    - P3-1: 接入 AdaptiveThreshold，从历史 7d baseline 计算 EWMA 自适应阈值。
+      最终有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化
+      （ruling §5.3 风险治本）。代码：_compute_adaptive_thresholds + _classify_abuse
     P3-2/P3-3/P3-4 待施工：
-    - P3-2: 7d 滚动基线计算（读取历史 reconciler 报告）
-    - P3-3: 5 维加权健康度评分（weighted_health_score）
-    - P3-4: 自适应阈值（基于 7d 基线 ±2σ，避免硬编码阈值过时）
+    - P3-2: 5 维加权健康度评分（weighted_health_score）
+    - P3-3: 综合评分 >0.7 critical_warn, >0.9 block_next
+    - P3-4: 阈值调整流程化（独立裁定 + smoke test）
 
 # changelog（每次修改必须追加记录）
 changelog:
+  - version: '1.1.0'
+    date: '2026-07-20'
+    change: 'P3-0/P3-6/P3-1 落地：adaptive 段从 enabled:false 升级为 enabled:true，新增 baseline_persistence / factor / effective_threshold_rule / mode 字段'
+    adjudication: '#ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1)'
+    notes: >-
+      P3-0: AdaptiveThreshold 双模式扩展（PROBABILITY + COUNT），static_floor 强制下限。
+      P3-6: 7d baseline 持久化到 .runtime/abuse_monitor/abuse_baseline.json。
+      P3-1: 接入 AdaptiveThreshold，有效阈值 = max(adaptive, static)。
+      阈值数值未变更（仍是 warn_only=50, emergency=5, allow_overlap=30, forged=3, non_gw=10），
+      本次仅启用自适应计算层（基于 7d EWMA 基线动态调整，但受 static_floor 下限约束）。
   - version: '1.0.0'
     date: '2026-07-20'
     change: 'P3-1 治本：从代码常量提取到 YAML（原散落在 commit_gateway_abuse_monitor_reconciler.py）'

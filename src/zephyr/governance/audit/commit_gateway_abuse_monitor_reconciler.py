@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-GOV_commit_gateway_abuse_monitor | docs/03_modules/_domain_governance/blueprint.md | §ARCH-TOOL-HEALTH-V1 Phase 5b
 # [MODULE] zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler
 # [DOMAIN] D_GOV_AUDIT
-# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); stdlib (json, logging, subprocess, time, pathlib)
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry (ReconcileResult, ReconcilerSpec, _write_reconcile_report); zephyr.gov_enforcement.rule_enforcement.adaptive_threshold (AdaptiveThreshold, ThresholdMode — P3-1 接入); stdlib (json, logging, subprocess, time, pathlib)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，滥用监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只读 post_commit_guard/commit_gateway_audit 报告，不修改它们
-# [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量
+# [INVARIANTS] post-commit 事件触发（任何 commit 都触发，滥用监控是全局关注）；reconciler 永不抛异常（异常降级为 warn）；只读 post_commit_guard/commit_gateway_audit 报告，不修改它们；P3-1 有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化；P3-6 baseline 持久化失败不阻断 reconciler（fail-open）
+# [MODIFY-GUARD] _GATE_ID / _PRIORITY / 阈值常量 / _ADAPTIVE_FACTOR / _BASELINE_WINDOW_DAYS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -20,6 +20,16 @@
 post-commit 事件触发，扫描 ``.runtime/reconcile_reports/`` 下 ``post_commit_guard_*``
 与 ``commit_gateway_audit_*`` 报告 + ``git log`` 中 emergency 标记，检测 **持续滥用模式**
 （24h/7d 长窗口），补强 POST-COMMIT-GUARD 的 1h 短窗口盲区。
+
+P3-6 + P3-1 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3，2026-07-20）
+-------------------------------------------------------------------
+- **P3-6**: 7d baseline 持久化到 ``.runtime/abuse_monitor/abuse_baseline.json``。
+  每次 reconcile 后将今日 5 维 metrics 追加到 baseline（同日覆盖，7d 滚动窗口裁剪）。
+  系统层状态（类似 session_registry.json），由 reconciler 维护。
+- **P3-1**: 接入 ``AdaptiveThreshold``（P3-0 双模式扩展），从历史 7d baseline 计算
+  EWMA 自适应阈值。最终有效阈值 = max(adaptive, static)，防止自适应阈值低于静态
+  下限掩盖真实恶化（ruling §5.3 风险治本）。自适应阈值基于历史 baseline（不含今日），
+  避免当日计数自我影响阈值。
 
 治本动机（第一性原理）
 --------------------
@@ -72,6 +82,10 @@ import subprocess
 import time
 from pathlib import Path
 
+from zephyr.gov_enforcement.rule_enforcement.adaptive_threshold import (
+    AdaptiveThreshold,
+    ThresholdMode,
+)
 from zephyr.governance.audit.reconciliation_registry import (
     ReconcileResult,
     ReconcilerSpec,
@@ -175,6 +189,176 @@ _WINDOW_7D_SECONDS = 7 * 24 * 3600
 
 # git log 超时（秒）
 _GIT_LOG_TIMEOUT = 15
+
+# === P3-6: 7d baseline 持久化（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）===
+# 系统层状态：5 维每日计数历史，由 reconciler 维护（类似 session_registry.json）。
+# 存放在 .runtime/abuse_monitor/ 子目录（避免直写 .runtime 根，遵循 trae_071 三级分类）。
+# 用途：P3-1 接入 AdaptiveThreshold 的 7d EWMA 基线数据源。
+_BASELINE_WINDOW_DAYS = 7  # 滚动保留 7d
+_BASELINE_VERSION = "1.0"
+# P3-1: AdaptiveThreshold factor（基线 × factor = 告警阈值，留 50% 余量给正常波动）
+_ADAPTIVE_FACTOR = 1.5
+
+# metrics key 映射：_classify_abuse 返回的简化 key → _DEFAULT_THRESHOLDS 的标准 dim_name。
+# baseline 文件按标准 dim_name 存储（与 trae_069 YAML 的 thresholds 段对齐）。
+_METRICS_KEY_MAP = {
+    "warn_only_24h": "warn_only_sustained_24h",
+    "emergency_commit_24h": "emergency_commit_abuse_24h",
+    "allow_overlap_7d": "allow_overlap_abuse_7d",
+    "forged_gw_marker_24h": "forged_gw_marker_rate_24h",
+    "non_gw_commit_24h": "non_gw_commit_sustained_24h",
+}
+# 反向映射：标准 dim_name → _classify_abuse 的 metrics key（用于 _compute_adaptive_thresholds）
+_METRICS_KEY_MAP_REVERSE = {v: k for k, v in _METRICS_KEY_MAP.items()}
+
+
+def _baseline_file(repo_root: Path) -> Path:
+    """baseline 文件路径：.runtime/abuse_monitor/abuse_baseline.json。"""
+    return repo_root / ".runtime" / "abuse_monitor" / "abuse_baseline.json"
+
+
+def _load_baseline(repo_root: Path) -> dict:
+    """加载 7d baseline state（P3-6）。
+
+    fail-open：文件缺失/解析失败返回空结构（reconciler 降级为无 baseline 不影响）。
+
+    Returns:
+        dict — {"version": str, "last_updated": int, "daily_records": list[dict]}
+        每条 daily_record 形如：
+            {"date": "YYYY-MM-DD", "timestamp": int, "metrics": {dim_name: count, ...}}
+    """
+    bf = _baseline_file(repo_root)
+    if not bf.exists():
+        return {"version": _BASELINE_VERSION, "last_updated": 0, "daily_records": []}
+    try:
+        data = json.loads(bf.read_text(encoding="utf-8"))
+        if not isinstance(data, dict) or "daily_records" not in data:
+            return {"version": _BASELINE_VERSION, "last_updated": 0, "daily_records": []}
+        return data
+    except (OSError, json.JSONDecodeError) as e:
+        logger.warning("P3-6: load baseline failed (%s), using empty", e)
+        return {"version": _BASELINE_VERSION, "last_updated": 0, "daily_records": []}
+
+
+def _save_baseline(repo_root: Path, baseline: dict) -> None:
+    """持久化 baseline state（P3-6）。
+
+    fail-open：写入失败仅记 warning（reconciler 永不抛异常）。
+    """
+    bf = _baseline_file(repo_root)
+    try:
+        bf.parent.mkdir(parents=True, exist_ok=True)
+        bf.write_text(json.dumps(baseline, ensure_ascii=False, indent=2), encoding="utf-8")
+    except OSError as e:
+        logger.warning("P3-6: save baseline failed: %s", e)
+
+
+def _record_daily_metrics(
+    repo_root: Path, metrics: dict, now_ts: int,
+) -> list[dict]:
+    """将今日 5 维 metrics 追加到 baseline 并保留 7d 滚动窗口（P3-6）。
+
+    同日多次记录覆盖（按 date 去重，保留最新），超过 7d 的旧记录裁剪。
+
+    Args:
+        repo_root: 仓库根路径。
+        metrics: 5 维今日计数 dict（key 为 dim_name，value 为 int）。
+            期望 key 与 _DEFAULT_THRESHOLDS 一致。
+        now_ts: 当前 Unix 时间戳。
+
+    Returns:
+        list[dict] — 更新后的 daily_records（7d 滚动窗口）。
+    """
+    baseline = _load_baseline(repo_root)
+    records = baseline.get("daily_records", [])
+    if not isinstance(records, list):
+        records = []
+
+    # UTC date 字符串作为 dedup key（reconciler 跨时区运行可能产生不同 date，但同一日只保留最新）
+    today_str = time.strftime("%Y-%m-%d", time.gmtime(now_ts))
+
+    # 提取 5 维计数（按标准 dim_name 存储，metrics 中是简化 key，需映射）
+    daily_metrics = {
+        dim_name: int(metrics.get(src_key, metrics.get(dim_name, 0)))
+        for src_key, dim_name in _METRICS_KEY_MAP.items()
+    }
+
+    # 同日覆盖：若已存在 today_str 记录，更新之；否则追加新记录
+    new_record = {
+        "date": today_str,
+        "timestamp": now_ts,
+        "metrics": daily_metrics,
+    }
+    found = False
+    for i, rec in enumerate(records):
+        if isinstance(rec, dict) and rec.get("date") == today_str:
+            records[i] = new_record
+            found = True
+            break
+    if not found:
+        records.append(new_record)
+
+    # 裁剪 7d 滚动窗口（按 timestamp 排序后保留最新 N 条）
+    cutoff_ts = now_ts - _BASELINE_WINDOW_DAYS * 24 * 3600
+    records = [
+        r for r in records
+        if isinstance(r, dict) and r.get("timestamp", 0) >= cutoff_ts
+    ]
+    records.sort(key=lambda r: r.get("timestamp", 0))
+
+    baseline["version"] = _BASELINE_VERSION
+    baseline["last_updated"] = now_ts
+    baseline["daily_records"] = records
+    _save_baseline(repo_root, baseline)
+    return records
+
+
+def _compute_adaptive_thresholds(daily_records: list[dict]) -> dict:
+    """从 7d baseline 计算各维度的自适应阈值（P3-1）。
+
+    接入 AdaptiveThreshold（P3-0）：为 5 维各自创建 COUNT 模式 state，
+    static_floor = 静态阈值（防止阈值过低掩盖问题），factor = _ADAPTIVE_FACTOR。
+    遍历 baseline 7d daily_records 调 observe_count，最后 get_threshold 得到
+    自适应阈值 = max(ewma * factor, static_floor)。
+
+    Args:
+        daily_records: 7d baseline daily_records 列表（由 _record_daily_metrics 返回）。
+
+    Returns:
+        dict — {dim_name: adaptive_threshold}，5 维自适应阈值。
+        若 daily_records 为空，返回空 dict（调用方降级为纯静态阈值）。
+    """
+    if not daily_records:
+        return {}
+
+    at = AdaptiveThreshold()
+    # 为 5 维配置 COUNT 模式：static_floor = 静态阈值（防自适应阈值低于下限）
+    for dim_name, static_value in _DEFAULT_THRESHOLDS.items():
+        at.set_count_config(
+            dim_name,
+            static_floor=float(static_value),
+            factor=_ADAPTIVE_FACTOR,
+        )
+
+    # 遍历 7d daily_records，按 dim_name 调 observe_count
+    for record in daily_records:
+        if not isinstance(record, dict):
+            continue
+        rec_metrics = record.get("metrics", {})
+        if not isinstance(rec_metrics, dict):
+            continue
+        for dim_name in _DEFAULT_THRESHOLDS:
+            count = rec_metrics.get(dim_name, 0)
+            try:
+                at.observe_count(dim_name, float(count))
+            except (TypeError, ValueError):
+                continue  # 跳过无效计数
+
+    # 获取 5 维自适应阈值
+    return {
+        dim_name: at.get_threshold(dim_name)
+        for dim_name in _DEFAULT_THRESHOLDS
+    }
 
 
 def _reports_dir(repo_root: Path) -> Path:
@@ -302,8 +486,13 @@ def _classify_abuse(
     emergency_count: int,
     now_ts: int,
     allow_overlap_count: int = 0,
+    adaptive_thresholds: dict | None = None,
 ) -> dict:
     """五维滥用分类（纯函数，无副作用，便于单测）。
+
+    P3-1 扩展（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）：
+    若传入 adaptive_thresholds，最终阈值 = max(adaptive, static)。
+    防止自适应阈值低于静态下限掩盖真实恶化（ruling §5.3 风险治本）。
 
     Args:
         post_commit_reports: 7d 内的 post_commit_guard 报告列表。
@@ -312,12 +501,14 @@ def _classify_abuse(
         now_ts: 当前 Unix 时间戳。
         allow_overlap_count: 7d 内真实 allow_overlap=True 提交数（gate 层审计，
             由调用方经 _count_allow_overlap_usage 传入）。
+        adaptive_thresholds: P3-1 自适应阈值 dict（{dim_name: threshold}）。
+            None 或空 dict 时降级为纯静态阈值（向后兼容）。
 
     Returns:
         {
             "dimensions_triggered": list[str],  # 触发的维度名
             "details": list[str],               # 每个维度的告警消息
-            "metrics": dict,                    # 所有维度的原始数值（供报告落盘）
+            "metrics": dict,                    # 所有维度的原始数值 + 阈值（供报告落盘）
         }
     """
     # 计算各窗口的 since_ts
@@ -359,41 +550,64 @@ def _classify_abuse(
 
     # === 维度2: emergency_commit 滥用（24h）—— 由调用方传入 emergency_count ===
 
+    # P3-1: 计算有效阈值 = max(adaptive, static)
+    # adaptive_thresholds 的 key 是标准 dim_name（与 _DEFAULT_THRESHOLDS 一致）
+    adaptive = adaptive_thresholds or {}
+
+    def _effective(static_val: int, dim_name: str) -> int:
+        """P3-1: 有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限。"""
+        ad_val = adaptive.get(dim_name, 0.0)
+        try:
+            return max(int(static_val), int(ad_val))
+        except (TypeError, ValueError):
+            return static_val
+
+    eff_warn_only = _effective(_WARN_ONLY_24H_THRESHOLD, "warn_only_sustained_24h")
+    eff_emergency = _effective(_EMERGENCY_24H_THRESHOLD, "emergency_commit_abuse_24h")
+    eff_allow_overlap = _effective(_ALLOW_OVERLAP_7D_THRESHOLD, "allow_overlap_abuse_7d")
+    eff_forged = _effective(_FORGED_24H_THRESHOLD, "forged_gw_marker_rate_24h")
+    eff_non_gw = _effective(_NON_GW_24H_THRESHOLD, "non_gw_commit_sustained_24h")
+
     dimensions_triggered: list[str] = []
     details: list[str] = []
 
-    if warn_only_24h > _WARN_ONLY_24H_THRESHOLD:
+    if warn_only_24h > eff_warn_only:
         dimensions_triggered.append("warn_only_sustained_24h")
         details.append(
-            f"warn_only 持续低频: {warn_only_24h}/24h > {_WARN_ONLY_24H_THRESHOLD} 阈值"
+            f"warn_only 持续低频: {warn_only_24h}/24h > {eff_warn_only} 阈值"
+            f"（static={_WARN_ONLY_24H_THRESHOLD}, adaptive={adaptive.get('warn_only_sustained_24h', 0):.1f}）"
             f"——POST-COMMIT-GUARD per-hour 阈值抓不到的持续逃生通道滥用"
         )
 
-    if emergency_count > _EMERGENCY_24H_THRESHOLD:
+    if emergency_count > eff_emergency:
         dimensions_triggered.append("emergency_commit_abuse_24h")
         details.append(
-            f"emergency_commit 滥用: {emergency_count}/24h > {_EMERGENCY_24H_THRESHOLD} 阈值"
+            f"emergency_commit 滥用: {emergency_count}/24h > {eff_emergency} 阈值"
+            f"（static={_EMERGENCY_24H_THRESHOLD}, adaptive={adaptive.get('emergency_commit_abuse_24h', 0):.1f}）"
             f"——逃生通道日常化（应为罕见），排查 session_worktree_merge 跨进程失效根因"
         )
 
-    if allow_overlap_7d > _ALLOW_OVERLAP_7D_THRESHOLD:
+    if allow_overlap_7d > eff_allow_overlap:
         dimensions_triggered.append("allow_overlap_abuse_7d")
         details.append(
-            f"allow_overlap 滥用: {allow_overlap_7d}/7d > {_ALLOW_OVERLAP_7D_THRESHOLD} 阈值"
+            f"allow_overlap 滥用: {allow_overlap_7d}/7d > {eff_allow_overlap} 阈值"
+            f"（static={_ALLOW_OVERLAP_7D_THRESHOLD}, adaptive={adaptive.get('allow_overlap_abuse_7d', 0):.1f}）"
             f"——逃生通道日常化（gate 层审计真实计数），排查为何频繁 HELD-OVERLAP 撞车"
         )
 
-    if forged_24h > _FORGED_24H_THRESHOLD:
+    if forged_24h > eff_forged:
         dimensions_triggered.append("forged_gw_marker_rate_24h")
         details.append(
-            f"forged_gw_marker 伪造率: {forged_24h}/24h > {_FORGED_24H_THRESHOLD} 阈值"
+            f"forged_gw_marker 伪造率: {forged_24h}/24h > {eff_forged} 阈值"
+            f"（static={_FORGED_24H_THRESHOLD}, adaptive={adaptive.get('forged_gw_marker_rate_24h', 0):.1f}）"
             f"——严重治理失效（任何伪造都是 intentional），需立即排查"
         )
 
-    if non_gw_24h > _NON_GW_24H_THRESHOLD:
+    if non_gw_24h > eff_non_gw:
         dimensions_triggered.append("non_gw_commit_sustained_24h")
         details.append(
-            f"non-GW commit 持续率: {non_gw_24h}/24h > {_NON_GW_24H_THRESHOLD} 阈值"
+            f"non-GW commit 持续率: {non_gw_24h}/24h > {eff_non_gw} 阈值"
+            f"（static={_NON_GW_24H_THRESHOLD}, adaptive={adaptive.get('non_gw_commit_sustained_24h', 0):.1f}）"
             f"——持续绕过 GitCommitGateway，排查 --no-verify 滥用或 commit-tree 绕过"
         )
 
@@ -412,6 +626,17 @@ def _classify_abuse(
                 "allow_overlap_7d": _ALLOW_OVERLAP_7D_THRESHOLD,
                 "forged_gw_marker_24h": _FORGED_24H_THRESHOLD,
                 "non_gw_commit_24h": _NON_GW_24H_THRESHOLD,
+            },
+            # P3-1: 记录有效阈值与自适应阈值（供报告落盘 + 趋势追踪）
+            "effective_thresholds": {
+                "warn_only_24h": eff_warn_only,
+                "emergency_commit_24h": eff_emergency,
+                "allow_overlap_7d": eff_allow_overlap,
+                "forged_gw_marker_24h": eff_forged,
+                "non_gw_commit_24h": eff_non_gw,
+            },
+            "adaptive_thresholds": {
+                dim: float(adaptive.get(dim, 0.0)) for dim in _DEFAULT_THRESHOLDS
             },
         },
     }
@@ -459,15 +684,31 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
             # 现改为读取 gate 层审计 .runtime/gate_audit/allow_overlap_usage.jsonl
             allow_overlap_count = _count_allow_overlap_usage(project_root, since_7d)
 
-            # 4. 五维分类
+            # 3.6 P3-1: 加载历史 baseline（不含今日）→ 计算自适应阈值
+            # 自适应阈值基于历史 7d EWMA，今日计数稍后由 _record_daily_metrics 追加。
+            # 这样自适应阈值反映"历史基线"，不包含今日（避免当日计数自我影响阈值）。
+            historical_baseline = _load_baseline(project_root)
+            historical_records = historical_baseline.get("daily_records", [])
+            adaptive_thresholds = _compute_adaptive_thresholds(historical_records)
+
+            # 4. 五维分类（P3-1: 传入 adaptive_thresholds，有效阈值 = max(adaptive, static)）
             classification = _classify_abuse(
                 post_commit_reports, audit_reports, emergency_count, now_ts,
                 allow_overlap_count=allow_overlap_count,
+                adaptive_thresholds=adaptive_thresholds,
             )
 
             triggered = classification["dimensions_triggered"]
             details = classification["details"]
             metrics = classification["metrics"]
+
+            # 4.5 P3-6: 将今日 5 维 metrics 追加到 baseline（7d 滚动窗口持久化）
+            # 注意：必须在 _classify_abuse 之后调用，因为 metrics 是今日计数。
+            # _record_daily_metrics 内部会裁剪 7d 旧记录并 save。
+            try:
+                _record_daily_metrics(project_root, metrics, now_ts)
+            except Exception as e:  # noqa: BLE001 — baseline 持久化失败不阻断 reconciler
+                logger.warning("P3-6: record daily metrics failed: %s", e)
 
             # 5. 落盘审计报告（无论是否触发滥用都记录，供趋势追踪）
             report = {
@@ -478,6 +719,9 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
                 "details": details,
                 "post_commit_reports_read": len(post_commit_reports),
                 "audit_reports_read": len(audit_reports),
+                # P3-1: 记录自适应阈值是否启用（供报告消费方判断阈值来源）
+                "adaptive_enabled": bool(adaptive_thresholds),
+                "baseline_records_count": len(historical_records),
             }
             report_path, write_err = _write_reconcile_report(
                 project_root, "commit_gateway_abuse_monitor", report,
