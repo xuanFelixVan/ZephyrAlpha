@@ -172,6 +172,11 @@ class SessionInfo:
     last_heartbeat: float = 0.0
     is_breaking_change: bool = False
     task_files: list[str] = field(default_factory=list)  # 裁定#D：任务文件集（重复施工检测）
+    # #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2（TRAE-072）：
+    # 本 session 依赖的其他 session_id 列表。commit 前由 _check_cross_commit_deps
+    # 检查依赖 session 是否仍活跃——仍活跃则阻断（CROSS_COMMIT_DEP_BLOCKED），
+    # 避免悬空 import 污染 main 分支（ba40fa5b75 同型违规治本）。
+    depends_on_sessions: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -182,6 +187,7 @@ class SessionInfo:
             "last_heartbeat": self.last_heartbeat,
             "is_breaking_change": self.is_breaking_change,
             "task_files": self.task_files,
+            "depends_on_sessions": self.depends_on_sessions,
         }
 
     @classmethod
@@ -195,6 +201,7 @@ class SessionInfo:
             last_heartbeat=d.get("last_heartbeat", 0.0),
             is_breaking_change=d.get("is_breaking_change", False),
             task_files=d.get("task_files") or [],
+            depends_on_sessions=d.get("depends_on_sessions") or [],
         )
 
 
@@ -254,8 +261,15 @@ class SessionRegistry:
         held_files: list[str] | None = None,
         is_breaking_change: bool = False,
         task_files: list[str] | None = None,
+        depends_on_sessions: list[str] | None = None,
     ) -> SessionInfo:
-        """注册一个活跃 session。"""
+        """注册一个活跃 session。
+
+        Args:
+            depends_on_sessions: 本 session 依赖的其他 session_id 列表
+                （#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
+                commit 前由 _check_cross_commit_deps 检查依赖 session 是否仍活跃。
+        """
         with self._lock:
             info = SessionInfo(
                 session_id=session_id,
@@ -265,15 +279,82 @@ class SessionRegistry:
                 last_heartbeat=time.time(),
                 is_breaking_change=is_breaking_change,
                 task_files=task_files or [],
+                depends_on_sessions=depends_on_sessions or [],
             )
             data = self._load()
             data[session_id] = info.to_dict()
             self._save(data)
             logger.info(
-                "SessionRegistry: registered session=%s pid=%d breaking_change=%s",
-                session_id, info.pid, is_breaking_change,
+                "SessionRegistry: registered session=%s pid=%d breaking_change=%s deps=%s",
+                session_id, info.pid, is_breaking_change, info.depends_on_sessions,
             )
             return info
+
+    def register_dependency(
+        self, session_id: str, depends_on_session_id: str,
+    ) -> bool:
+        """为本 session 动态登记对另一 session 的依赖（#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
+
+        场景：session-A 在工作中途发现 import 了 session-B 正在创建的模块，
+        通过此方法动态登记依赖，无需重新 session_worktree_start。
+
+        - session 未注册/过期 -> 懒注册（held_files=[]），记 warning
+        - 依赖已存在 -> 幂等返回 True
+        - 新增依赖 -> 加入 depends_on_sessions，顺带 heartbeat，原子写回，返回 True
+
+        Returns: True=登记成功（含幂等），False=session 未注册且懒注册失败。
+        """
+        with self._lock:
+            data = self._load()
+            now = time.time()  # noqa: m46-time — 注册依赖时的时间戳（对标 claim_file L404 同模式）
+            existing = data.get(session_id)
+            if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now):
+                logger.warning(
+                    "SessionRegistry: register_dependency auto-registering session=%s (not registered or dead/expired)",
+                    session_id,
+                )
+                data[session_id] = SessionInfo(
+                    session_id=session_id, pid=os.getpid(), start_time=now,
+                    held_files=[], last_heartbeat=now,
+                ).to_dict()
+                self._save(data)
+
+            info = SessionInfo.from_dict(data[session_id])
+            info.last_heartbeat = now  # noqa: m46-time — 顺带心跳刷新（对标 claim_file L436）
+            if depends_on_session_id not in info.depends_on_sessions:
+                info.depends_on_sessions.append(depends_on_session_id)
+            data[session_id] = info.to_dict()
+            self._save(data)
+            logger.info(
+                "SessionRegistry: registered dependency session=%s -> %s",
+                session_id, depends_on_session_id,
+            )
+            return True
+
+    def clear_dependency(
+        self, session_id: str, depends_on_session_id: str,
+    ) -> bool:
+        """清除本 session 对另一 session 的依赖登记（#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 / TRAE-072）。
+
+        场景：依赖 session 已 commit+merge，本 session commit 前可主动清除依赖
+        （也可不主动清除——_check_cross_commit_deps 检测到依赖 session 不活跃时自动放行）。
+
+        Returns: True=清除成功（含依赖不存在），False=session 未注册。
+        """
+        with self._lock:
+            data = self._load()
+            if session_id not in data:
+                return False
+            info = SessionInfo.from_dict(data[session_id])
+            if depends_on_session_id in info.depends_on_sessions:
+                info.depends_on_sessions.remove(depends_on_session_id)
+                data[session_id] = info.to_dict()
+                self._save(data)
+                logger.info(
+                    "SessionRegistry: cleared dependency session=%s -> %s",
+                    session_id, depends_on_session_id,
+                )
+            return True
 
     def find_breaking_change_session(self, exclude_session_id: str = "") -> SessionInfo | None:
         """查找是否有活跃 session 声明了 breaking_change（治本变更并发阻断，§9.7 治本 2026-07-04）。

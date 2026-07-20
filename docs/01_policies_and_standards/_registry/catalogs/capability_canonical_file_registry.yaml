@@ -1924,6 +1924,27 @@ capabilities:
       - make_bare_getenv_gate  # gate 工厂(删则 gate 不注册)
 
   # --------------------------------------------------------------------------
+  - capability_id: bare_subprocess_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
+    aliases:
+      - BARE-SUBPROCESS
+      - bare-subprocess
+      - make_bare_subprocess_gate
+      - bare_subprocess_blocker
+      - window_flash_blocker
+    description: >-
+      BARE-SUBPROCESS in-process 裸 subprocess.run/Popen/check_output/check_call warn-only 门禁
+      （§ARCH-RUNCOMMAND-WINDOW-FLASH-001 P8 治本防复发，2026-07-20）。
+      检测 staged added 行中裸 subprocess.run/Popen/check_output/check_call 调用
+      （违反 trae_067 RULE-EIGHTEEN-INV-001 CREATE_NO_WINDOW 强制）。
+      AST 精确检测 + import alias 识别（import subprocess as sp; sp.run 也检测）。
+      5 个文件级例外（process_pool/_diff_helpers/git_call_budget_gate/git_commit_gateway/bare_subprocess_gate 自身）。
+      支持 # noqa: bare-subprocess  <reason> 行级逃生（对标 m10/m11 模式）。
+      warn-only（passed=True + detail 不阻断）；P2 升级 block。priority=108。
+    integrity_anchors:
+      - make_bare_subprocess_gate  # gate 工厂(删则 gate 不注册)
+
+  # --------------------------------------------------------------------------
   - capability_id: claim_required_gate
     aliases:
       - CLAIM-REQUIRED
@@ -4982,6 +5003,11 @@ creation_tokens:
     created_by: "session-sess-20844-20260703190715"
     capability: "bare_getenv_gate"
 
+  - file: "src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py"
+    token: "auto-bare-subprocess-gate-20260720"
+    created_by: "session-sess-51660-20260720165623"
+    capability: "bare_subprocess_gate"
+
   - file: "src/zephyr/governance/commit_gates/rule_four_way_alignment_gate.py"
     token: "auto-rule-four-way-align-gate-20260704"
     created_by: "session-sess-11632-20260704044247"
@@ -6178,6 +6204,19 @@ creation_tokens:
     token: "auto-import-integrity-gate-20260720"
     created_by: "sess-36708-20260720114001"
     capability: "dangling_import_prevention"
+
+  # --- 跨 commit 原子性铁律规则 + cross-commit 依赖检测单测（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2）---
+  # 规则外部化（TRAE-072）：跨 commit 原子性铁律 + session 间依赖登记 + cross-commit 依赖检测
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("cross_commit_atomicity") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 trae_072 副本
+  - file: "docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml"
+    token: "auto-trae-072-cross-commit-atomicity-20260720"
+    created_by: "sess-59928-20260720164928"
+    capability: "cross_commit_atomicity_rule"
+  - file: "tests/session/test_cross_commit_dependency.py"
+    token: "auto-test-cross-commit-dependency-20260720"
+    created_by: "sess-59928-20260720164928"
+    capability: "cross_commit_dependency_detection"
 
   # --- RunCommand 窗口闪现治本裁定文档（2026-07-20，#ARCH-RUNCOMMAND-WINDOW-FLASH-001）---
   # 裁定文档 + 规则文件 + SSoT helper 三件套登记 creation_token
