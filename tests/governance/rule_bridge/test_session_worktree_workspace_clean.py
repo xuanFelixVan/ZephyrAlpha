@@ -404,3 +404,194 @@ class TestEndToEndScenario:
         passed, detail = _workspace_clean_check_start(tmp_path, "sess-test")
         # start 不阻断，但 auto-sync 已自动 restore
         assert passed is True
+
+
+# ============================================================================
+# Phase 2: auto-recover 内容完整性测试（staged / MM 状态处理）
+# ============================================================================
+
+
+def _make_auto_sync_staged(repo_dir: Path) -> None:
+    """让 auto-sync 产物变 staged（M 状态）。"""
+    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+        '{"v": 99}\n', encoding="utf-8",
+    )
+    subprocess.run(
+        ["git", "add", "data/reports/dashboard.json"],
+        cwd=str(repo_dir), capture_output=True, check=True,
+        env=_git_env(),
+    )
+
+
+def _make_auto_sync_mm_state(repo_dir: Path) -> None:
+    """让 auto-sync 产物变 MM 状态（staged + worktree 同时 modified）。"""
+    # 先 staged
+    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+        '{"v": 100}\n', encoding="utf-8",
+    )
+    subprocess.run(
+        ["git", "add", "data/reports/dashboard.json"],
+        cwd=str(repo_dir), capture_output=True, check=True,
+        env=_git_env(),
+    )
+    # 再 worktree modified
+    (repo_dir / "data" / "reports" / "dashboard.json").write_text(
+        '{"v": 101}\n', encoding="utf-8",
+    )
+
+
+def _git_porcelain_status(repo_dir: Path) -> str:
+    """获取 git status --porcelain 原始输出。"""
+    r = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=str(repo_dir), capture_output=True, text=True, check=True,
+        env=_git_env(),
+    )
+    return r.stdout
+
+
+class TestRestoreAutoSyncBatchStagedHandling:
+    """Phase 2: _restore_auto_sync_batch 处理 staged / MM 状态。"""
+
+    def test_staged_only_auto_sync_restored(self, tmp_path: Path):
+        """M 状态（staged only）的 auto-sync 文件 → unstage + restore。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _restore_auto_sync_batch,
+        )
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        _make_auto_sync_staged(tmp_path)
+        # 确认初始状态是 M （staged only）
+        assert _git_porcelain_status(tmp_path).startswith("M  ")
+
+        restored_count, failed = _restore_auto_sync_batch(
+            tmp_path, ["data/reports/dashboard.json"], "test",
+        )
+        assert restored_count == 1
+        assert failed == []
+        # 还原后应该是 clean
+        assert _git_porcelain_status(tmp_path).strip() == ""
+
+    def test_mm_state_auto_sync_restored(self, tmp_path: Path):
+        """MM 状态（staged + worktree）的 auto-sync 文件 → unstage + restore。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _restore_auto_sync_batch,
+        )
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        _make_auto_sync_mm_state(tmp_path)
+        # 确认初始状态是 MM（staged + worktree）
+        assert _git_porcelain_status(tmp_path).startswith("MM ")
+
+        restored_count, failed = _restore_auto_sync_batch(
+            tmp_path, ["data/reports/dashboard.json"], "test",
+        )
+        assert restored_count == 1
+        assert failed == []
+        # 还原后应该是 clean
+        assert _git_porcelain_status(tmp_path).strip() == ""
+
+    def test_mixed_staged_and_worktree_auto_sync(self, tmp_path: Path):
+        """混合 M  +  M 状态的 auto-sync 文件 → 都被还原。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _restore_auto_sync_batch,
+        )
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        # 创建第二个 auto-sync 产物（mock 路径模式）
+        (tmp_path / "data" / "reports" / "summary.json").write_text(
+            '{"s": 1}\n', encoding="utf-8",
+        )
+        subprocess.run(
+            ["git", "add", "-A"],
+            cwd=str(tmp_path), capture_output=True, check=True,
+            env=_git_env(),
+        )
+        subprocess.run(
+            ["git", "commit", "-m", "add summary"],
+            cwd=str(tmp_path), capture_output=True, check=True,
+            env=_git_env(),
+        )
+        # dashboard.json 设为 staged（M ）
+        _make_auto_sync_staged(tmp_path)
+        # summary.json 设为 worktree modified（ M）
+        (tmp_path / "data" / "reports" / "summary.json").write_text(
+            '{"s": 2}\n', encoding="utf-8",
+        )
+        # 验证状态
+        status = _git_porcelain_status(tmp_path)
+        assert "M  data/reports/dashboard.json" in status
+        assert " M data/reports/summary.json" in status
+
+        restored_count, failed = _restore_auto_sync_batch(
+            tmp_path,
+            ["data/reports/dashboard.json", "data/reports/summary.json"],
+            "test",
+        )
+        assert restored_count == 2
+        assert failed == []
+        # 还原后应该是 clean
+        assert _git_porcelain_status(tmp_path).strip() == ""
+
+    def test_empty_files_returns_zero(self, tmp_path: Path):
+        """空文件列表 → 返回 (0, [])。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _restore_auto_sync_batch,
+        )
+        restored_count, failed = _restore_auto_sync_batch(tmp_path, [], "test")
+        assert restored_count == 0
+        assert failed == []
+
+
+class TestCheckWorkspaceCleanStagedIntegration:
+    """Phase 2: _check_workspace_clean 集成测试——staged auto-sync 完整流程。"""
+
+    def test_staged_auto_sync_passes_merge(self, tmp_path: Path):
+        """merge context: staged auto-sync 文件 → 自动 unstage + restore → pass。"""
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        _make_auto_sync_staged(tmp_path)
+        passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="merge")
+        assert passed is True, f"staged auto-sync 应被自动还原: {detail}"
+        assert "restored" in detail
+        # 验证 git status 已 clean
+        assert _git_porcelain_status(tmp_path).strip() == ""
+
+    def test_mm_state_auto_sync_passes_merge(self, tmp_path: Path):
+        """merge context: MM 状态 auto-sync 文件 → 自动 unstage + restore → pass。"""
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        _make_auto_sync_mm_state(tmp_path)
+        passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="merge")
+        assert passed is True, f"MM 状态 auto-sync 应被自动还原: {detail}"
+        assert "restored" in detail
+        # 验证 git status 已 clean
+        assert _git_porcelain_status(tmp_path).strip() == ""
+
+    def test_staged_real_code_blocks_merge(self, tmp_path: Path):
+        """merge context: staged 真实代码修改 → 仍 fail-closed 阻断。"""
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        # 真实代码 staged
+        (tmp_path / "src" / "real_code.py").write_text("x = 99\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", "src/real_code.py"],
+            cwd=str(tmp_path), capture_output=True, check=True,
+            env=_git_env(),
+        )
+        passed, detail = _check_workspace_clean(tmp_path, "sess-test", context="merge")
+        assert passed is False
+        assert "阻断" in detail or "WORKSPACE-CLEAN-CHECK" in detail
+
+    def test_staged_real_code_fail_open_abort(self, tmp_path: Path):
+        """abort context: staged 真实代码 → fail-open 不阻断。"""
+        _init_git_repo(tmp_path)
+        _commit_initial(tmp_path)
+        (tmp_path / "src" / "real_code.py").write_text("x = 99\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "add", "src/real_code.py"],
+            cwd=str(tmp_path), capture_output=True, check=True,
+            env=_git_env(),
+        )
+        passed, _ = _check_workspace_clean(tmp_path, "sess-test", context="abort")
+        assert passed is True  # abort 不阻断
