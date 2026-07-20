@@ -221,6 +221,17 @@ def _inject_ok(fn):
 _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
 # 注意：docstring/注释中引用本常量时禁止硬编码具体数量/名称，必须引用 _WORKTREE_SKIP_GATES 本身（裁定 D 治本 2026-07-19）
 
+# #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+# pre-merge 阶段跳过所有 commit gate（pre-commit 阶段已运行，pre-merge 重复是冗余设计）。
+# 病根：_pre_merge_gate_check 在主工作区 Python 进程中运行，sys.path 指向主工作区 src；
+# worktree commit 修改了 src/ 的跨文件 import 依赖，主工作区 src 是 HEAD 版本，
+# 导致 subprocess-based gate（DIRECTORY-CONTRACT / TTL-METADATA / ENCODING-SAFETY /
+# RULE-FOUR-WAY-ALIGN 等）import 失败 → ImportError 阻断 merge。
+# 治本：pre-merge 阶段只保留 PRE-MERGE-TOPO-CHECK（独立 subprocess，无 sys.path 问题），
+# 跳过所有 commit gate。commit gate 的价值（捕获主分支状态变化）已被 PRE-MERGE-TOPO-CHECK
+# 覆盖（拓扑不一致检测）；代码质量类 gate 不依赖主分支状态，pre-commit 运行一次即够。
+_PRE_MERGE_SKIP_ALL_COMMIT_GATES = True
+
 # Fast-path env 授权（ARCH-GIT-CALL-BUDGET P1.3，2026-07-19）
 # session_worktree 是可信内部调用方——已通过 held_files 机制完成冲突检查，
 # 调 git checkout/reset/restore/revert 时设置此 env 使 scripts/git_guard.py
@@ -1384,6 +1395,20 @@ def session_worktree_start(
             "session_worktree_start 健康度自检通过 (session=%s)", sid,
         )
 
+    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: start 时工作区 clean 检查（fail-open）
+    # start 不阻断（业务流程不应卡死），仅告警让 AI 知情——主工作区有残留时
+    # 提醒 AI 先处理，否则 merge 时会被 WORKSPACE-CLEAN-CHECK 阻断。
+    try:
+        _ws_passed, _ws_detail = _workspace_clean_check_start(root, sid)
+        if "real code modified" in _ws_detail or "restore failed" in _ws_detail:
+            print("\n" + "=" * 80, file=sys.stderr)
+            print("[WORKSPACE-CLEAN-CHECK] WARNING: 主工作区检测到残留（session=%s）" % sid, file=sys.stderr)
+            print(f"  详情: {_ws_detail}", file=sys.stderr)
+            print("  建议: 先处理残留（commit/stash/restore）再开始新任务，否则 merge 时会被 WORKSPACE-CLEAN-CHECK 阻断。", file=sys.stderr)
+            print("=" * 80 + "\n", file=sys.stderr)
+    except Exception as _ws_err:  # noqa: BLE001 — fail-open
+        logger.warning("[start] workspace clean check failed: %s", _ws_err)
+
     # 0. 治本变更并发阻断（§9.7 治本，2026-07-04）
     #    双向阻断：breaking_change session 阻止其他 session，普通 session 避让 breaking_change session
     #    逃生通道：allow_concurrent=True 跳过阻断（对标 allow_overlap）
@@ -2434,6 +2459,14 @@ def session_worktree_commit(
         }
 
     rel_files = _normalize_commit_files(files, wt_path, root)
+
+    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1.5: commit 前 workspace drift 遥测（fail-open）
+    # 检测主工作区 modified 中"未在 rel_files 列出的真实代码修改"，落盘遥测供后续 reconciler 兜底。
+    # 不阻断 commit（fail-open）——遥测目的是收集数据 + 后续 reconciler 兜底，而非阻断业务流程。
+    try:
+        _log_workspace_drift_warn(root, session_id, rel_files)
+    except Exception as _drift_err:  # noqa: BLE001 — fail-open
+        logger.warning("[commit] workspace drift warn failed: %s", _drift_err)
 
     if not allow_overlap:
         err = _check_held_overlap(_get_registry(root), session_id, rel_files)
@@ -3566,6 +3599,7 @@ def session_worktree_merge(
     project_root: str | Path | None = None,
     reconcile_verify: bool = True,
     allow_migration: bool = False,
+    force: bool = False,
 ) -> MergeResult:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
@@ -3575,6 +3609,11 @@ def session_worktree_merge(
 
     Args:
         session_id: 已注册的 session_id。
+        force: #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本逃生通道——True 时跳过
+            pre-merge gate（PRE-MERGE-TOPO-CHECK + commit gate），直接 merge。
+            用于 pre-merge gate 误报或基础设施故障时逃生（对标 allow_overlap=True）。
+            滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 5 维审计
+            （force_merge 维度），日常不应使用。
 
     Returns:
         {
@@ -3626,6 +3665,34 @@ def session_worktree_merge(
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("session_worktree_merge: block_next check failed: %s", e)
 
+    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: merge 前工作区 clean 检查（fail-closed）
+    # 100% AI 场景铁律：warn 无效，merge 前真实代码修改=搭便车风险必须阻断。
+    # auto-sync 产物自动 restore；真实代码修改 fail-closed 阻断 merge。
+    # session_files 排除：worktree 模式下 AI 用 Edit 写项目根，session 文件在主工作区
+    # 是 modified 状态，但不是搭便车（已在 worktree commit 中）。
+    # force=True 时跳过（逃生通道，对标 PRE-MERGE-TOPO-CHECK 的 force 语义）。
+    if force:
+        logger.warning(
+            "session_worktree_merge(force=True): 跳过 WORKSPACE-CLEAN-CHECK "
+            "（#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 逃生通道）。"
+        )
+    else:
+        _ws_session_files = _get_session_branch_diff_files(root, session_id)
+        _ws_passed, _ws_detail = _workspace_clean_check_merge(
+            root, session_id, session_files=_ws_session_files,
+        )
+        if not _ws_passed:
+            return {
+                "session_id": session_id,
+                "merged": False,
+                "message": _ws_detail,
+                "cleaned": False,
+                "unregistered": False,
+                "gate_violation": True,
+                "gate_results": [{"gate_id": _WS_CLEAN_GATE_ID, "detail": _ws_detail}],
+                "reconcile_results": [],
+            }
+
     # PRE-MERGE-TOPO-CHECK（#ARCH-DEP-001 第二期）：pre-merge 拓扑硬阻断。
     # 时序关键（2026-07-17 修复）：必须在 _pre_merge_auto_clean 之前执行——
     # auto_clean 会还原 session 变更列表中的 checker 文件到 HEAD 旧版本（若 session
@@ -3633,11 +3700,22 @@ def session_worktree_merge(
     # --scan-root 参数而降级放行（fail-open）。在 auto_clean 之前执行时，MAIN 副本
     # checker 还是主工作区最新版本（含 --scan-root）。topo check 独立于 commit gate——
     # 不受 gate 代码修改降级影响（topo checker 是独立脚本，非 commit_gates/）。
+    #
+    # #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+    # force=True 时跳过 PRE-MERGE-TOPO-CHECK（逃生通道，对标 allow_overlap=True）。
     wt_path = manager._wt_path(session_id)
-    _topo_rel_files = _get_session_branch_diff_files(root, session_id)
-    _topo_passed, _topo_violations = _run_pre_merge_topo_check(
-        root, session_id, wt_path, _topo_rel_files,
-    )
+    if force:
+        logger.warning(
+            "session_worktree_merge(force=True): 跳过 PRE-MERGE-TOPO-CHECK "
+            "（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道）。"
+            "滥用风险：拓扑不一致可能引入漂移，仅用于 pre-merge gate 误报或基础设施故障。"
+        )
+        _topo_passed, _topo_violations = True, []
+    else:
+        _topo_rel_files = _get_session_branch_diff_files(root, session_id)
+        _topo_passed, _topo_violations = _run_pre_merge_topo_check(
+            root, session_id, wt_path, _topo_rel_files,
+        )
     if not _topo_passed:
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in _topo_violations)
         # #ARCH-DEP-PREMERGE-ENFORCE (P4.1)：拓扑检查失败写入 block_next 记录，
@@ -3694,7 +3772,29 @@ def session_worktree_merge(
 
         # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
         # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
-        gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
+        #
+        # #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+        # _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True 时跳过所有 commit gate——
+        # 这些 gate 在 pre-commit 阶段已运行，pre-merge 重复运行因 sys.path 指向
+        # 主工作区 src 会导致 ImportError（worktree commit 修改了 src/ 跨文件 import
+        # 依赖，主工作区 src 是 HEAD 版本）。pre-merge 阶段只保留 PRE-MERGE-TOPO-CHECK
+        # （独立 subprocess，无 sys.path 问题），已覆盖主分支状态变化检测。
+        # force=True 时也跳过（逃生通道）。
+        if force or _PRE_MERGE_SKIP_ALL_COMMIT_GATES:
+            if _PRE_MERGE_SKIP_ALL_COMMIT_GATES and not force:
+                logger.info(
+                    "session_worktree_merge: 跳过 commit gate（"
+                    "#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本，"
+                    "pre-commit 已运行，pre-merge 只保留 PRE-MERGE-TOPO-CHECK）"
+                )
+            elif force:
+                logger.warning(
+                    "session_worktree_merge(force=True): 跳过 commit gate "
+                    "（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道）"
+                )
+            gate_passed, gate_violations = True, []
+        else:
+            gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
         if not gate_passed:
             _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
             return {
@@ -3903,6 +4003,14 @@ def session_worktree_abort(
     manager = _get_manager(root)
     registry = _get_registry(root)
 
+    # #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1: abort 前工作区 clean 检查（fail-open）
+    # abort 是"放弃"语义，不应被阻断；真实代码修改留主工作区不动，仅告警让 AI 知情。
+    try:
+        _ws_passed, _ws_detail = _workspace_clean_check_abort(root, session_id)
+        logger.info("[abort] workspace clean check: %s", _ws_detail)
+    except Exception as _ws_err:  # noqa: BLE001 — fail-open
+        logger.warning("[abort] workspace clean check failed: %s", _ws_err)
+
     aborted = False
     msg = ""
     main_cleaned = 0
@@ -3997,3 +4105,348 @@ def session_worktree_status(
         "dirty": dirty,
         "registered": registered,
     }
+
+
+# ============================================================================
+# #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 1 + 1.5
+# 工作区漂移系统性防漂移体系（2026-07-20）
+#
+# 4 个系统性盲区治本：
+#   1. 工作区漂移检测全部 post-commit 触发（未 commit = 盲区）
+#      → Phase 1: session lifecycle 3 钩子（start/merge/abort）补 pre-event 检测
+#   2. session_worktree_commit 只提交显式列出的 files
+#      → Phase 1.5: commit 前遥测漏列文件，落盘 .runtime/workspace_drift_warn.jsonl
+#   3. 无 session_end 工作区 clean 检查
+#      → Phase 1: merge 前工作区 clean 检查（fail-closed 阻断搭便车提交）
+#   4. 文档"已完成"声明无硬验证
+#      → Phase 2（后续）：ruling_commit_verified_gate
+#
+# 设计原则（第一性原理）：
+#   - 100% AI 场景下 warn 无效（AI 把 warn 当"通过"，无人类视觉通道）
+#   - 治本必须 fail-closed 或自动处理
+#   - 向内收（trae_060）：不新建模块，复用 workspace_hygiene_reconciler 的
+#     _git_status_porcelain / _is_auto_sync_product + GitCommandBatcher.git_restore_batch
+#
+# fail-closed vs fail-open 策略：
+#   - merge = fail-closed（阻断，搭便车提交风险）
+#   - abort/start = fail-open（告警不阻断，业务流程不应卡死）
+#   - commit Phase 1.5 = fail-open（遥测落盘，不阻断 commit）
+# ============================================================================
+
+_WS_CLEAN_GATE_ID = "WORKSPACE-CLEAN-CHECK"
+
+
+def _classify_workspace_files(
+    modified: list[str],
+    session_files_set: set[str],
+) -> tuple[list[str], list[str]]:
+    """分类 modified 文件为 (auto_sync_files, real_changes)，排除 session_files。
+
+    向内收复用 workspace_hygiene_reconciler._is_auto_sync_product。
+
+    Args:
+        modified: git status --porcelain 解析后的 modified 文件列表。
+        session_files_set: worktree commit 涉及的文件集合（排除——已在 worktree commit 中）。
+
+    Returns:
+        (auto_sync_files, real_changes) — auto-sync 产物 vs 真实代码修改。
+    """
+    from zephyr.governance.audit.workspace_hygiene_reconciler import _is_auto_sync_product
+
+    auto_sync_files = [
+        f for f in modified
+        if _is_auto_sync_product(f) and f not in session_files_set
+    ]
+    real_changes = [
+        f for f in modified
+        if not _is_auto_sync_product(f) and f not in session_files_set
+    ]
+    return auto_sync_files, real_changes
+
+
+def _restore_auto_sync_batch(
+    root: Path,
+    auto_sync_files: list[str],
+    context: str,
+) -> tuple[int, list[str]]:
+    """批量 restore auto-sync 产物（GIT-BUDGET-INV-002 合规，复用 GitCommandBatcher）。
+
+    Args:
+        root: 仓库根路径。
+        auto_sync_files: 待 restore 的 auto-sync 文件列表。
+        context: 调用上下文（仅用于日志）。
+
+    Returns:
+        (restored_count, restore_failed) — 成功 restore 数量 + 失败的文件列表。
+    """
+    if not auto_sync_files:
+        return 0, []
+
+    from zephyr.infrastructure.git_batcher import GitCommandBatcher
+
+    try:
+        batcher = GitCommandBatcher(root)
+        restored_set = set(batcher.git_restore_batch(auto_sync_files))
+        restored_count = len(restored_set)
+        restore_failed = [f for f in auto_sync_files if f not in restored_set]
+        return restored_count, restore_failed
+    except Exception as e:  # noqa: BLE001 — fail-open
+        logger.warning(
+            "_check_workspace_clean[%s]: auto-sync restore failed: %s",
+            context, e,
+        )
+        return 0, list(auto_sync_files)
+
+
+def _evaluate_drift_after_restore(
+    root: Path,
+    real_changes: list[str],
+    restore_failed: list[str],
+    restored_count: int,
+    session_id: str,
+    context: str,
+) -> tuple[bool, str] | None:
+    """restore 后评估漂移状态，返回 (passed, detail) 或 None（表示无漂移）。
+
+    重新检测 git status，区分"restore 后已 clean"和"仍有真实代码修改"。
+
+    Args:
+        root: 仓库根路径。
+        real_changes: 原始检测到的真实代码修改列表。
+        restore_failed: auto-sync restore 失败的文件列表。
+        restored_count: auto-sync 成功 restore 的文件数量。
+        session_id: session 标识（仅用于 detail 文本）。
+        context: "merge" | "abort" | "start"，决定 fail-closed vs fail-open。
+
+    Returns:
+        None 表示无漂移（auto-sync 全部 restore 成功，无真实代码修改）；
+        否则 (passed, detail) — passed=False 仅 merge context，其他 context 全 True。
+    """
+    if not real_changes and not restore_failed:
+        return None  # 无漂移，调用方返回 restored 信息
+
+    from zephyr.governance.audit.workspace_hygiene_reconciler import (
+        _git_status_porcelain,
+        _is_auto_sync_product,
+    )
+
+    # 重新检测：auto-sync restore 后是否仍有真实代码修改
+    try:
+        remaining = _git_status_porcelain(str(root))
+    except Exception:  # noqa: BLE001 — fail-open
+        remaining = []  # 检测失败，保守认为仍有 real_changes
+
+    remaining_real = [f for f in remaining if not _is_auto_sync_product(f)]
+    remaining_failed = [f for f in remaining if f in restore_failed]
+
+    if not remaining_real and not remaining_failed:
+        # restore 后已 clean（原 real_changes 可能被 auto-sync restore 顺带处理）
+        return True, f"restored {restored_count} auto-sync files (now clean)"
+
+    sample = (remaining_real or remaining_failed)[:5]
+    total = len(remaining_real) + len(remaining_failed)
+    detail = (
+        f"{len(remaining_real)} real code modified + "
+        f"{len(remaining_failed)} auto-sync restore failed: {sample}"
+        f"{'...' if total > 5 else ''}"
+    )
+
+    if context == "merge":
+        # fail-closed：merge 前有真实代码修改 = 搭便车风险，阻断
+        # 100% AI 场景铁律：warn 无效，必须 fail-closed
+        return False, (
+            f"WORKSPACE-CLEAN-CHECK 阻断 merge: {detail}。"
+            f"修复：先 commit 或 stash 这些真实代码修改，再 merge。"
+            f"（auto-sync 产物已自动 restore {restored_count} 个；"
+            f"session_id={session_id}）"
+        )
+    # abort / start: fail-open 告警（不阻断业务流程）
+    return True, f"workspace drift (fail-open for {context}): {detail}"
+
+
+def _check_workspace_clean(
+    root: Path,
+    session_id: str,
+    *,
+    context: str,
+    session_files: list[str] | None = None,
+) -> tuple[bool, str]:
+    """检测主工作区 clean 状态，区分 auto-sync vs 真实代码（向内收复用 workspace_hygiene_reconciler）。
+
+    策略（按 context）：
+    - "merge": auto-sync 产物自动 restore；有真实代码修改 → fail-closed 阻断 merge
+               （100% AI 场景下 warn 无效，AI 把 warn 当"通过"，merge 前真实代码修改=搭便车风险必须阻断）
+               session_files 排除：worktree 模式下 AI 用 Edit 写项目根，session 文件在主工作区
+               是 modified 状态，但不是搭便车（已在 worktree commit 中）。session_files 是
+               worktree commit 涉及的文件列表（_get_session_branch_diff_files 返回值）。
+    - "abort": auto-sync 产物自动 restore；真实代码修改 → fail-open（abort 不应被阻断，
+               真实代码留主工作区不动，让 AI 显式处理；abort 是"放弃"语义，不应强行清理）
+    - "start": auto-sync 产物自动 restore；真实代码修改 → fail-open 告警（让 AI 知情处理，
+               不阻断 start，避免 start 卡死阻塞业务流程）
+
+    fail-open 全局：git status 失败 / 异常时不阻断业务流程，仅返回 (True, detail)。
+
+    Args:
+        root: 仓库根路径。
+        session_id: session 标识（仅用于日志）。
+        context: "merge" | "abort" | "start"，决定处置策略。
+        session_files: worktree commit 涉及的文件列表（仅 merge context 用于排除）。
+
+    Returns:
+        (is_clean_or_resolved, detail) —
+        True 表示工作区已 clean 或已自动清理完毕（或 fail-open 降级，业务可继续）；
+        False 表示检测到真实代码修改且 context 要求阻断（仅 merge context 可能返回 False）。
+    """
+    if context not in ("merge", "abort", "start"):
+        # 无效 context fail-open（不阻断业务流程），仅记录日志
+        # 抛异常会让调用方崩溃，不符合 fail-open 原则
+        logger.warning(
+            "_check_workspace_clean: invalid context %r (expected merge/abort/start), fail-open",
+            context,
+        )
+        return True, f"skip (invalid context: {context})"
+
+    try:
+        from zephyr.governance.audit.workspace_hygiene_reconciler import _git_status_porcelain
+    except ImportError as e:
+        # 依赖缺失——fail-open 不阻断业务流程（依赖故障不应卡死 session lifecycle）
+        logger.warning(
+            "_check_workspace_clean: import failed (%s), fail-open skip", e,
+        )
+        return True, f"skip (import failed: {e})"
+
+    # 仓库存在性预检查（区分"真的 clean"和"检测失败 fail-open"）
+    # _git_status_porcelain 在 git 命令失败时 fail-open 返回空列表，与"真的无修改"
+    # 不可区分；这里加一层存在性检查，让 detail 准确说明 fail-open 原因。
+    if not root.exists() or not (root / ".git").exists():
+        logger.warning(
+            "_check_workspace_clean[%s]: repo not found or not a git repo: %s",
+            context, root,
+        )
+        return True, f"skip (repo not found or not a git repo: {root})"
+
+    try:
+        modified = _git_status_porcelain(str(root))
+    except Exception as e:  # noqa: BLE001 — fail-open
+        logger.warning(
+            "_check_workspace_clean[%s]: _git_status_porcelain failed: %s",
+            context, e,
+        )
+        return True, f"skip (git status failed: {e})"
+
+    if not modified:
+        return True, "workspace clean (no modified files)"
+
+    # 分类 + restore + 评估（拆分到 helper 降低主函数复杂度）
+    session_files_set = set(session_files) if (context == "merge" and session_files) else set()
+    auto_sync_files, real_changes = _classify_workspace_files(modified, session_files_set)
+    restored_count, restore_failed = _restore_auto_sync_batch(root, auto_sync_files, context)
+
+    drift_result = _evaluate_drift_after_restore(
+        root, real_changes, restore_failed, restored_count, session_id, context,
+    )
+    if drift_result is not None:
+        return drift_result
+
+    # auto-sync 全部 restore 成功，无真实代码修改
+    return True, f"restored {restored_count} auto-sync files (now clean)"
+
+
+def _workspace_clean_check_merge(
+    root: Path, session_id: str, session_files: list[str] | None = None,
+) -> tuple[bool, str]:
+    """merge 前工作区 clean 检查（fail-closed 阻断搭便车提交）。
+
+    Args:
+        root: 仓库根路径。
+        session_id: session 标识。
+        session_files: worktree commit 涉及的文件列表（排除——已在 worktree commit 中）。
+    """
+    return _check_workspace_clean(root, session_id, context="merge", session_files=session_files)
+
+
+def _workspace_clean_check_abort(
+    root: Path, session_id: str,
+) -> tuple[bool, str]:
+    """abort 前工作区 clean 检查（fail-open，不阻断 abort）。"""
+    return _check_workspace_clean(root, session_id, context="abort")
+
+
+def _workspace_clean_check_start(
+    root: Path, session_id: str,
+) -> tuple[bool, str]:
+    """start 前工作区 clean 检查（fail-open，不阻断 start）。"""
+    return _check_workspace_clean(root, session_id, context="start")
+
+
+def _log_workspace_drift_warn(
+    root: Path,
+    session_id: str,
+    rel_files: list[str],
+) -> None:
+    """Phase 1.5: commit 前 workspace drift 遥测落盘（fail-open，不阻断 commit）。
+
+    检测主工作区 modified 文件中"未在 rel_files 列出的真实代码修改"，
+    落盘到 .runtime/workspace_drift_warn.jsonl 供后续 reconciler 兜底。
+
+    Args:
+        root: 仓库根路径。
+        session_id: session 标识。
+        rel_files: 本次 commit 显式列出的文件（相对路径，正斜杠归一化）。
+    """
+    try:
+        from zephyr.governance.audit.workspace_hygiene_reconciler import (
+            _git_status_porcelain,
+            _is_auto_sync_product,
+        )
+    except ImportError as e:
+        logger.warning(
+            "_log_workspace_drift_warn: import failed (%s), skip", e,
+        )
+        return
+
+    # 仓库存在性预检查（fail-open）
+    if not root.exists() or not (root / ".git").exists():
+        return
+
+    try:
+        modified = _git_status_porcelain(str(root))
+    except Exception as e:  # noqa: BLE001 — fail-open
+        logger.warning(
+            "_log_workspace_drift_warn[%s]: git status failed: %s",
+            session_id, e,
+        )
+        return
+
+    if not modified:
+        return  # 工作区 clean，无 drift
+
+    listed_set = set(rel_files)
+    # 漏列的真实代码修改 = modified 中非 auto-sync 且不在 listed_set 的文件
+    missed_real = [
+        f for f in modified
+        if not _is_auto_sync_product(f) and f not in listed_set
+    ]
+    if not missed_real:
+        return  # 无漏列
+
+    # 落盘遥测（fail-open：IO 失败不阻断 commit）
+    import json
+    import time
+    record = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "session_id": session_id,
+        "listed_files": list(rel_files),
+        "missed_real_changes": missed_real[:50],  # 截断防爆炸
+        "missed_count": len(missed_real),
+    }
+    warn_path = root / ".runtime" / "workspace_drift_warn.jsonl"
+    try:
+        warn_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(warn_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:
+        logger.warning(
+            "_log_workspace_drift_warn[%s]: failed to write %s: %s",
+            session_id, warn_path, e,
+        )
