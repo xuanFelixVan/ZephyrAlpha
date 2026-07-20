@@ -6210,6 +6210,14 @@ creation_tokens:
     created_by: "sess-39124-20260720180203"
     capability: "commit_gateway_abuse_monitor"
 
+  # --- Phase 3 全链路集成 smoke test（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-5）---
+  # 验证 AdaptiveThreshold / health_score / abuse_monitor 三组件端到端集成链路
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的集成 test 副本
+  - file: "tests/governance/audit/test_p3_integration_smoke.py"
+    token: "auto-p3-integration-smoke-20260720"
+    created_by: "sess-44108-20260720211503"
+    capability: "commit_gateway_abuse_monitor"
+
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
