@@ -34,9 +34,9 @@ completes_when: 全部 PERMANENT 项完成或经专项工程关闭
 - **历史规模**：去重后唯一违规点 **3193 个**（初轮 298 + 第 5-31 轮新增，执行摘要口径 177 个维度），归因于 5 个病根（§二）。其中 54 个维度展开逐条跟踪（原文 `### 5.x` 小节），其余维度仅有执行摘要计数。
 - **第 102 轮修复（2026-07-19）**：全部 DEFERRED 维度已清零——36 批提交，merge `44ebb73b26`。54 个已跟踪维度中 **39 个 FIXED（清零）**、**15 个残留 PERMANENT 项**（§四状态列）。
 - **仪表盘基线**：M01-M14 全部 14 项指标 = 0（2026-07-18 达成，含 M12 异常粒度 87→0、M13 异常信息泄露 #ARCH-SEC-001 裁定归零）；后续增量违规由仪表盘 M01-M31 实时基线自动发现，不再依赖人工调研快照。
-- **剩余未完成任务 = 89 项**（§五完整清单）：
+- **剩余未完成任务 = 87 项**（§五完整清单）：
   - **wontfix（RATIFY 裁定关闭，防复发门禁在册）60 项**；
-  - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）29 项**；
+  - **EXECUTE（R102 裁定立即治本施工，待执行/执行中）27 项**；
   - **SKIP（SAFETY=H + human_gated，待人工/Owner 授权）0 项**（原 5.46.3 已由 Owner 授权治本修复）。
 - 另有 6 项 LOW/附注级残留（非 PERMANENT 裁定项，机会性清理或后续专项跟踪），**全部已 FIXED 或经裁定 CLOSED**（见 §五末尾附注）。
 
@@ -123,7 +123,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 
 > 本表是未来审计审查系统的**维度基座**：每维度保留抽象概念（核心问题 + 病根归属 + 防复发机制 + 当前状态），不保留逐项违规明细（历史明细见 git log，增量违规见仪表盘 M01-M31）。
 > 状态口径：`FIXED` = 该维度全部清零（DEFERRED=0 且 STILL_VALID=0）；`PERMANENT-N` = 残留 N 项未完成任务（wontfix/EXECUTE/SKIP，详情见 §五）。
-> 合计：**54 维度 = 39 FIXED + 15 PERMANENT（共 90 项未完成）**。
+> 合计：**54 维度 = 39 FIXED + 15 PERMANENT（共 87 项未完成）**。
 
 | 维度号 | 维度名 | 核心问题 | 病根归属 | 防复发 gate/metric | 状态 |
 |---|---|---|---|---|---|
@@ -165,7 +165,7 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 5.144 | 资源清理顺序 | 核心关闭路径无异常隔离 + sqlite 清理缺 finally + 子进程管道关闭顺序错 | 根因 5 | M27 open() 未在 with 监控（warn-only，异常隔离 + finally 模式已批量落地） | FIXED |
 | 5.145 | 类型注解完整性 | 34 个文件 Any 滥用 >5 处 + audit_trail 三件套完全无类型 + 隐藏 NameError | 根因 5 | GATE-ANY-ABUSE + mypy 加严（disallow_any_generics） | PERMANENT-14 |
 | 5.147 | 序列化/反序列化安全 | joblib.load 无校验 + MCP Content-Length 无上限 + json.dumps(default=str) 类型丢失 | 根因 5 | UNSAFE-DICT-SPREAD gate（66）+ serialization.py SSoT（dumps/filter_dataclass_fields） | FIXED |
-| 5.150 | 设计模式误用 | God Class 3 处 + Shotgun Surgery 4 处 + Long Parameter List 3 处 + Data Class | 根因 5 | —（R102 裁定 EXECUTE 测试先行；设计模式 AST gate 列为可选未来专项） | PERMANENT-9 |
+| 5.150 | 设计模式误用 | God Class 3 处 + Shotgun Surgery 4 处 + Long Parameter List 3 处 + Data Class | 根因 5 | —（R102 裁定 EXECUTE 测试先行；设计模式 AST gate 列为可选未来专项） | PERMANENT-7 |
 | 5.152 | 依赖方向违规 | shared 底层向上依赖 5 处 HIGH + governance→trading shim 30+ 文件规模化 | 根因 5 | NO-UPWARD-IMPORT gate（priority=97） | PERMANENT-10 |
 | 5.153 | 命名一致性 | 幽灵 db_path 参数 + 同一动作 4 种命名 + CT_XX_XXX 44 个 + 布尔命名不规范 30+ 字段 | 根因 5 | —（canonical 命名规范 SSoT 先行后才设 gate） | PERMANENT-11 |
 | 5.155 | 配置验证完整性 | HMAC 硬编码 + 完整性校验恒 True + int(env) 无防护 + 三层校验同时失效 | 根因 5 | is_prod() 环境感知（dev 降级/生产阻断）+ .env.example 文档化 | FIXED |
@@ -190,22 +190,20 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 > 裁定口径：**EXECUTE** = R102（第 102 轮，2026-07-19，架构师受 Owner 委托）裁定立即治本施工，待执行/执行中；**wontfix（RATIFY）** = 确认前裁定关闭，防复发门禁已在册，不再施工；**SKIP** = SAFETY=H + human_gated，待人工/Owner 授权。
 > R102 裁定真源：[`debt_permanent_rulings_r102.md`](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/debt_permanent_rulings_r102.md)（裁定原则：P1 防复发 > 存量修复；P2 无回归测试不做高风险重构；P3 实际风险=0 的"违规"非债务；P4 净收益必须为正；P5 可机械验证/执行的优先；P6 SSoT 唯一真源最高原则）。
 
-### 5.0 未完成总览（90 项 = EXECUTE 29 + wontfix 60 + SKIP 1）
+### 5.0 未完成总览（87 项 = EXECUTE 27 + wontfix 60）
 
-**EXECUTE 工作清单（29 项，按 R102 建议顺序/分组，施工时 MUST 测试先行 + session_worktree_commit）**：
+**EXECUTE 工作清单（27 项，按 R102 建议顺序/分组，施工时 MUST 测试先行 + session_worktree_commit）**：
 
 | # | 分组 | 条目 | 动作 |
 |---|---|---|---|
-| 1 | God Class 拆分（顺序 1/4） | ✅ 5.150.7 ActionDispatcher（22 方法） | Extract Class + facade 向后兼容 + 每步测试验证（commit a91afffd95，39/39 测试通过） |
-| 2 | God Class 拆分（顺序 2/4） | ✅ 5.150.1 ResourceOptimizationEngine（39 方法） | 同上（前序 session，3 worker 提取，9 实质方法保留） |
-| 3 | God Class 拆分（顺序 3/4） | 5.150.3 FeedbackLoopScheduler（26 方法） | 同上 |
-| 4 | God Class 拆分（顺序 4/4） | 5.150.2 AutoRuntimeCore（42 方法） | 同上 |
-| 5 | 参数对象 | 5.150.5 / 5.150.10 / 5.150.11（factories.py 16/9/9 参数） | 引入参数对象（与 5.150.6 联动） |
-| 6 | 跨层依赖逐边分析（10 边） | 5.152 #8-#25 | 类型下沉 shared / 标记 sanctioned；cross_layer_contracts.yaml codegen 重构 + 序列化/DB 键回归测试先行 |
-| 7 | 命名重命名（评估后） | 5.153.11（CT_ 类 44 个）/ 5.153.13（TraceContext 函数） | 先验证序列化键影响；改 trace_context() + 兼容别名过渡 |
-| 8 | 共享 helper 提取 | 5.180.4 残留 7 处 gate subprocess | 提取 `run_checker_script()`（统一 cwd/timeout/exit 解析） |
-| 9 | 惰性导出修复 | 5.93.3（shared/__init__.py __all__ 170 名零 import） | PEP 562 `__getattr__` 惰性导出或裁剪 `__all__` |
-| 10 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） |
+| 1 | God Class 拆分（顺序 3/4） | 5.150.3 FeedbackLoopScheduler（26 方法） | 同上 |
+| 2 | God Class 拆分（顺序 4/4） | 5.150.2 AutoRuntimeCore（42 方法） | 同上 |
+| 3 | 参数对象 | 5.150.5 / 5.150.10 / 5.150.11（factories.py 16/9/9 参数） | 引入参数对象（与 5.150.6 联动） |
+| 4 | 跨层依赖逐边分析（10 边） | 5.152 #8-#25 | 类型下沉 shared / 标记 sanctioned；cross_layer_contracts.yaml codegen 重构 + 序列化/DB 键回归测试先行 |
+| 5 | 命名重命名（评估后） | 5.153.11（CT_ 类 44 个）/ 5.153.13（TraceContext 函数） | 先验证序列化键影响；改 trace_context() + 兼容别名过渡 |
+| 6 | 共享 helper 提取 | 5.180.4 残留 7 处 gate subprocess | 提取 `run_checker_script()`（统一 cwd/timeout/exit 解析） |
+| 7 | 惰性导出修复 | 5.93.3（shared/__init__.py __all__ 170 名零 import） | PEP 562 `__getattr__` 惰性导出或裁剪 `__all__` |
+| 8 | Owner 授权结构修复（2 项） | 5.42.4（baseline_manager.py 方法嵌套 bug）/ 5.97.6（audit_trail_cli.py 108 行 5 elif） | 按结构 bug 处理（Owner 已授权全权修复） |
 
 **wontfix 分布（60 项，已关闭不再施工）**：5.33（2）/ 5.93.1（1）/ 5.100（2）/ 5.101（12）/ 5.140（3）/ 5.143（14）/ 5.145（14）/ 5.150（2）/ 5.153（9）/ 5.160（1）。
 **SKIP（0 项）**：原 5.46.3（tiered_storage.py:44 naive datetime 混用）已由 Owner 授权治本修复（now_utc() + tz=UTC）。
@@ -224,12 +222,6 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
 | 5.42.4 | HIGH | `src/zephyr/gov_drift/baseline_manager.py:132-140` | 方法（snapshot_interface/snapshot_import_graph/snapshot_config/capture）错误嵌套在模块级函数 `_read_config_file` 内——结构性 bug，类实际不含这些方法，调用即 AttributeError | R69 SKIP（SAFETY=H + human_gated）；**R102 裁定 EXECUTE（Owner 已授权全权修复，按结构 bug 处理）**——待执行 |
-
-### 5.46 时间与时区处理（FIXED，原 PERMANENT-1/SKIP——Owner 授权后治本修复）
-
-| 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
-|---|---|---|---|---|
-| 5.46.3 | LOW | `src/zephyr/gov_audit/tiered_storage.py:44` | `datetime.now() - datetime.fromtimestamp(st_mtime)` 混用做 age 计算，均 naive local time，进程内时区被修改则归档时间计算错误 | 原 R69 SKIP（SAFETY=H + AI_AUTONOMY=human_gated）；**Owner 授权后治本修复**：改用 `now_utc()`（time_utils SSoT）+ `datetime.fromtimestamp(ts, tz=UTC)`，age 计算从 naive local → aware UTC，进程内时区变更不再影响归档分类；DATETIME-NOW-FORBIDDEN gate 防新增 |
 
 ### 5.93 __init__.py 污染（PERMANENT-2：wontfix 1 + EXECUTE 1）
 
@@ -277,12 +269,10 @@ AI 上下文有限 = AI 必然跳过部分规则 = 依赖 AI 自觉的规则必�
 |---|---|---|---|---|
 | 5.145.13-5.145.26（14 项） | MEDIUM | 跨 100 文件 627 处裸 Any（ANY-1=455 + ANY-2=172；代表文件：l3_output/l1_input/l7_validation/l8_multi_agent/injection_patterns/scheduler_act/verdict_engine/resource_optimization/exam_judge 等） | 系统性 Any 滥用——配置型 dict[str,Any] 约 35% 合理、Python 协议要求 Any 约 5% 合理、真正需修裸 Any 约 60% 需逐处推断具体类型 | **wontfix（R84 升级 PERMANENT + R94 维持 + R102 RATIFY）**：GATE-ANY-ABUSE 防复发已在（manual 阶段）；627 处一次性替换不可验证（错误类型标注比无标注更危险）；Any 在 Python 运行时不做类型检查仅静态分析 warning；30-40% 为合理 Any；增量机会性清理为常态实践 |
 
-### 5.150 设计模式误用（PERMANENT-9：EXECUTE 5 + wontfix 2 + FIXED 2）
+### 5.150 设计模式误用（PERMANENT-7：EXECUTE 5 + wontfix 2）
 
 | 条目 | 严重度 | 文件 | 问题 | 裁定结果与理由 |
 |---|---|---|---|---|
-| 5.150.7 | MEDIUM | `src/zephyr/trading/action_dispatcher.py:90` | **God Class**：`ActionDispatcher` 22 个方法、753 行，承担文件修改/注释标注/模块发现/brain block 管理/triage 日志 5+ 职责 | **✅ FIXED（2026-07-21，commit a91afffd95）**：R102 裁定 EXECUTE（执行顺序 1/4）已完成。Extract Class 拆分为 1 facade（`action_dispatcher/__init__.py`）+ 4 workers（`_search_replace_engine.py` / `_file_lifecycle_manager.py` / `_annotation_writer.py` / `_audit_log_writer.py`），原 .py 保留为 ground truth 参考（被包遮蔽）。39/39 测试零修改通过。4 个类标记 `class-name-alias` 豁免（合法迁移），5 个 creation_tokens 已登记 |
-| 5.150.1 | HIGH | `src/zephyr/trading/resource_optimization.py:260` | **God Class**：`ResourceOptimizationEngine` 单例约 39 个方法、880+ 行，承担压力状态机/熔断器/缓存管理/进程池/监控循环/自愈策略/配置加载/审计 7+ 职责 | **✅ FIXED（2026-07-20，前序 session）**：R102 裁定 EXECUTE（执行顺序 2/4）已完成。Extract Class 提取 3 个同文件协作者类（`_ConfigReloader` 配置加载/热重载、`_StrategyExecutor` 策略执行/防御降级、`_ExternalNotifier` EventBus/审计外发），39 方法降为 9 实质方法 + 27 薄封装委托。剩余 9 方法（snapshot/_classify_pressure/optimize/health_check/force_pressure/start_monitor/monitor_tick/_load_config/_self_heal_cycle）与单例状态/调用顺序/副作用深度交织，保留有架构理由（见类文档注释）。45/49 测试通过（4 预存失败与提取无关） |
 | 5.150.3 | HIGH | `src/zephyr/feedback_loop/scheduler.py:96` | **God Class**：`FeedbackLoopScheduler` 26 个方法、520+ 行，注入 19+ 依赖，承担 collect→detect→diagnose→act→verify 全链路 + drift scan + safety gates + alerting + metrics 6+ 职责 | **R102 裁定 EXECUTE（执行顺序 3/4）**：同上 |
 | 5.150.2 | HIGH | `src/zephyr/trading/auto_runtime_core.py:65` | **God Class**：`AutoRuntimeCore` 约 42 个方法、672 行，承担 boot/shutdown/RBAC/Ollama 管理/任务队列/blueprint watcher/FLE scheduler/model router/A2A/任务学习 9+ 职责 | **R102 裁定 EXECUTE（执行顺序 4/4）**：同上 |
 | 5.150.5 | HIGH | `src/zephyr/trading/trading_contracts/factories.py:109` | **Long Parameter List**：`make_risk_metrics_report` 16 个参数，远超 7 阈值，直接源于 Data Class 反模式 | **R102 裁定 EXECUTE**：引入参数对象（与 5.150.6 联动） |
@@ -354,7 +344,7 @@ commit 事件驱动自动生成全维度违规清单，把"静态快照"变成"�
 
 ### 6.4 Phase 3：治理层收敛（治本存量）——🔄 由架构师裁定推进中
 
-目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`），剩余 90 项见 §五——其中 EXECUTE 29 项待施工（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 60 项已关闭（防复发门禁在册），SKIP 1 项待人工授权。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
+目标：DEFERRED-PERMANENT 项清理。**当前状态**：第 102 轮（2026-07-19）已对全部 DEFERRED-PERMANENT 项完成逐项裁定（EXECUTE / RATIFY，裁定真源 `debt_permanent_rulings_r102.md`），剩余 87 项见 §五——其中 EXECUTE 27 项待施工（God Class 拆分 / 参数对象 / 跨层依赖逐边分析 / CT_ 类与 TraceContext 重命名 / run_checker_script 提取 / 2 项 Owner 授权结构修复），wontfix 60 项已关闭（防复发门禁在册）。元问题反思（原文 §四反思 1-3，保留结论）：L5 治理层 14 功能应收敛为 5-6 功能（统一检测器/统一修复器/统一验证器/审计/注册表/资产）；治理组件数 > 被治理组件数时治理体系自身就是最大漂移源（实测：trae_060 §5 快照失效、GATE-VOCAB 60 处盲区、40 GATE 无反查——治理体系自身漂移已被实证）；100% AI 开发场景下"建议性规则"是反模式，应用强制消费链替代。战略建议（裁定 1）：暂停新增规则文档 6 个月。
 
 ---
 
