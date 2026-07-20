@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_HEARTBEAT_DAEMON | docs/03_modules/_domain_governance/blueprint.md | §Ruling-100PCT-AI-GOVERNANCE-P3-1
+# [BLUEPRINT] MOD-GOV_HEARTBEAT_DAEMON | docs/02_enterprise_architecture/ruling_session_worktree_heartbeat.md | §P1-1
 # [MODULE] zephyr.gov_enforcement.rule_bridge.heartbeat_daemon
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.shared.io.paths (REPO_ROOT)
@@ -55,6 +55,15 @@ heartbeat 不再更新——后续 commit/merge 进程无法接续心跳。
 --------
 - 旧方案（仅 TTL=3600s）：AI 崩溃后 held_files 阻塞 1 小时
 - 新方案（heartbeat 90s + TTL 3600s）：阻塞窗口缩短到 90s（3×30s，容忍 2 次漏跳）
+
+绕过权衡（5.1 审查修复，2026-07-20）
+--------------------------------------
+``registry.heartbeat(session_id)`` 是公共 API，AI 理论上可直接调用绕过 daemon。
+但这是合理设计权衡：
+  - daemon 提供**持续**心跳（30s 循环），手动调用 ``registry.heartbeat()`` 只刷新一次
+  - 手动刷新一次只能延长 90s 生存期，无法替代 daemon 的持续保活
+  - daemon 的核心价值是"AI 崩溃后心跳停止→90s 自动释放"，手动调用无法实现这个崩溃检测语义
+因此不限制 ``registry.heartbeat()`` 的访问——它是底层 API，daemon 是封装层。
 
 Usage::
 
