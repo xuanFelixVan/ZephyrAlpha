@@ -721,11 +721,11 @@ Phase 4 (长期,依赖 Phase 3 完成):
 ─────────────────────────────────────────
 P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id  ✅ 已落地 2026-07-20
 P4-1b (新增,2h) event_sink.py JSONL consumer 聚合                    ✅ 已落地 2026-07-20
-P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)
+P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)    ✅ 已落地 2026-07-20
 P4-2  (✅ 已落地 2026-07-20,forged_gw_marker_gate.py)
 P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message.py
                  (原 git_pre_receive_hook.py 方案放弃,GitHub 项目内不可部署)
-P4-4  (3h) session 启动推送"近期高频错误"提醒
+P4-4  (3h) session 启动推送"近期高频错误"提醒                         ✅ 已落地 2026-07-20
 P4-5  (❌ 不实施,可行性低,边际收益低于成本)
 ```
 
@@ -881,6 +881,28 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
 - **capability_canonical_file_registry.yaml**: 登记 2 个 creation_token
   （`auto-error-pattern-consumer-reconciler-20260720` + `auto-error-pattern-consumer-test-20260720`）。
 - 22/22 PASSED in 0.78s（+ P4-1a 10/10 = 合计 32/32 PASSED）。
+
+**P4-1 + P4-4 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1+P4-4，commit 2468edb7cd + merge d5299e1489）**:
+
+- **P4-1 `src/zephyr/governance/audit/ai_error_pattern_library.py`**（新增，~367 行）:
+  - AI 错误模式库只读查询接口，消费 P4-1b 的 `aggregated_patterns.json` 聚合输出。
+  - 核心类：`ErrorPattern` dataclass（from_dict / dominant_severity / unexpected_ratio）+ `AIErrorPatternLibrary`（get_pattern / find_patterns / top_patterns / match_pattern / is_known_pattern / suggest_action / reload / properties）。
+  - `match_pattern` 使用 `compute_error_pattern_id` 计算指纹后 dict 查表（O(1)）。
+  - `_suggest_action_for_pattern` 规则引擎：permanent+fatal/blocking → 立即修复；permanent+degraded → 排查根因；intermittent → 监控+触发条件；transient+blocking → 重试+退避；transient+degraded → 监控趋势；叠加 source 维度 hint。
+  - `get_default_library(project_root)` 工厂函数。
+  - fail-open 设计：加载失败降级为空库，所有查询返回 None 或空列表。
+  - module_id: `MOD-GOV_error_pattern_library`（[BLUEPRINT] 下划线 + [A_module] dash 双轨格式）。
+- **P4-4 `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py`**（修改）:
+  - 新增 import：`from zephyr.governance.audit.ai_error_pattern_library import get_default_library as _get_error_pattern_library`。
+  - 新增 `_print_startup_error_patterns(root)` helper（fail-open）：从 `.runtime/ai_error_patterns/aggregated_patterns.json` 加载，若非空则打印 Top 3 模式 + 修复建议到 stderr。
+  - 在 `session_worktree_start` 工作区 clean 检查后调用，session 启动时自动提醒近期高频错误（对标第 6 层"可预防性"——事前预防 > 事后修复）。
+- **P4-1 单测 `tests/governance/audit/test_ai_error_pattern_library.py`**（新增，~430 行）:
+  - 7 个测试类 53 个测试：TestErrorPatternDataclass(9) / TestLibraryLoad(6) / TestLibraryQuery(16) / TestSuggestAction(11) / TestLibraryProperties(7) / TestGetDefaultLibrary(3) / TestComputePatternIdIntegration(1)。
+  - 关键 helper：`_make_pattern_dict` 用 `is None` 判断（避免空 dict 被当作 falsy）；`_build_lib` 用 `compute_error_pattern_id` 生成真实 pattern_id（与 match_pattern 一致性验证）。
+  - 53/53 PASSED。
+- **capability_canonical_file_registry.yaml**: 登记 2 个 creation_token
+  （`auto-ai-error-pattern-library-20260720` + `auto-ai-error-pattern-library-test-20260720`，capability=`error_pattern_library`）。
+- **设计决策**：P4-1（library）与 P4-4（session startup alert）合并提交，因 ORPHAN-MODULE gate 要求新模块必须有 `src/` 内 import 引用（P4-4 是 P4-1 的自然消费方，避免 library 作为死代码落地）。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 
