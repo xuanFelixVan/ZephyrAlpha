@@ -642,7 +642,7 @@ def _check_file(filepath: Path, vocab_dir: Path, startup_values: set[str] | None
     # 排除：docstring（模块/函数/类 body[0]）+ noqa: gate-vocab 豁免
     # 收敛期约束（AD-GOV-001）：扩展现有 _check_file 检测，非新增门禁。
     # 真源：src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py 的 TEST_EXEMPT_PREFIXES/is_test_exempt。
-    commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "governance" / "commit_gates"
+    commit_gates_dir = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
     try:
         is_commit_gate = filepath.is_relative_to(commit_gates_dir)
     except (ValueError, AttributeError):
