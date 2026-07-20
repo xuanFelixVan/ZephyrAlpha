@@ -1005,6 +1005,15 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: IMPORT-INTEGRITY
+  name: 'IMPORT-INTEGRITY: 悬空 import 硬阻断门禁（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）（CommitGate, priority=107）'
+  entry: in-process (GitCommitGateway)
+  description: 悬空 import 硬阻断门禁——检测 staged .py 文件中 import 的目标模块在 staged + main HEAD 可解析性，防 ba40fa5b75 同型违规（import 语句先行于目标文件创建）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: UNSAFE-DICT-SPREAD
   name: 'UNSAFE-DICT-SPREAD: ``**data`` 直接展开模式 warn 级门禁（CommitGate, priority=66）'
   entry: in-process (GitCommitGateway)

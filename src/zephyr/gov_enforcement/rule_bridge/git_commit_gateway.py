@@ -75,6 +75,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_worktree_lifecycle_reconciler,
     make_scripts_import_integrity_reconciler,  # ARCH-TOOL-HEALTH-V1 Phase 3
     make_undefined_name_baseline_reconciler,  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 baseline 全扫）
+    make_capability_lookup_health_reconciler,  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺
     make_stash_lifecycle_reconciler,  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理
     make_blueprint_id_legacy_reconciler,  # ARCH-DATAQUALITY-V1.8 Task I
     _log_reconcile_results,  # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2
@@ -149,6 +150,7 @@ from zephyr.gov_enforcement.commit_gates.depgraph_write_path_gate import make_de
 from zephyr.gov_enforcement.commit_gates.ch_batch_size_gate import make_ch_batch_size_gate
 from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_call_budget_gate
 from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
+from zephyr.gov_enforcement.commit_gates.import_integrity_gate import make_import_integrity_gate  # #ARCH-CROSS-COMMIT-ATOMICITY-001 治本——悬空 import 硬阻断
 from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # Step 2.5 遗留风险修复（域名字典直接访问硬阻断 priority=72）
 from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import make_capability_lookup_required_gate  # #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本
 from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate import make_forged_gw_marker_gate  # #ARCH-PREVENTABILITY-LAYER-001 Phase 2 第 6 层可预防性——forged_gw_marker 前置阻断
@@ -315,6 +317,47 @@ class _GlobalCommitLock:
         return False
 
 
+# P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# git 命令 timeout 分级——原硬编码 120s 对所有 git 命令共用，导致快速读命令
+# （rev-parse/show/status）与慢速写命令（commit/merge）共用上限。改为按命令类型
+# 分级，单个慢命令不会耗尽整个 session 预算。
+_GIT_TIMEOUT_READ = 15    # rev-parse/show/status/diff/log/ls-tree/merge-base/config
+_GIT_TIMEOUT_WRITE = 60   # commit/merge/checkout/reset/update-ref/rebase
+_GIT_TIMEOUT_DEFAULT = 30  # 其他默认
+
+_GIT_READ_SUBCMDS: frozenset[str] = frozenset({
+    "rev-parse", "show", "status", "diff", "log", "ls-tree", "ls-files",
+    "merge-base", "config", "cat-file", "rev-list", "name-rev", "describe",
+    "remote", "stash", "show-ref", "symbolic-ref", "for-each-ref",
+})
+
+_GIT_WRITE_SUBCMDS: frozenset[str] = frozenset({
+    "commit", "merge", "checkout", "reset", "update-ref", "rebase",
+    "cherry-pick", "revert", "apply", "am", "init", "clone", "fetch",
+    "push", "pull", "tag", "add", "rm", "mv", "worktree",
+})
+
+
+def _classify_git_timeout(cmd: list[str]) -> int:
+    """按 git 子命令类型返回 timeout 秒数（P2-2b 治本）。
+
+    Args:
+        cmd: git 命令列表（如 ``["git", "show", "HEAD"]``）。
+
+    Returns:
+        timeout 秒数：read 类 15s / write 类 60s / 其他默认 30s。
+        非 git 命令或空列表返回默认 30s。
+    """
+    if len(cmd) < 2 or cmd[0] != "git":
+        return _GIT_TIMEOUT_DEFAULT
+    subcmd = cmd[1]
+    if subcmd in _GIT_READ_SUBCMDS:
+        return _GIT_TIMEOUT_READ
+    if subcmd in _GIT_WRITE_SUBCMDS:
+        return _GIT_TIMEOUT_WRITE
+    return _GIT_TIMEOUT_DEFAULT
+
+
 class GitCommitGateway:
     """全项目唯一合法 git commit 入口。
 
@@ -408,6 +451,7 @@ class GitCommitGateway:
         self._gate_registry.register(make_scripts_import_integrity_gate())  # priority=104 治本_shared.constants符号导入完整性（#ARCH-DATAQUALITY-V1.4核心治本，AST检测staged _shared/constants.py added行的from-import symbols在src/zephyr/shared/io/paths.py中存在，防止符号漂移）
         self._gate_registry.register(make_git_call_budget_gate())  # priority=105 warn-only 治本 git 子进程循环调用反模式（§ARCH-GIT-CALL-BUDGET P2.2，AST检测subprocess.run(["git",...])在for/while内，warn-only P3升级block）
         self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
+        self._gate_registry.register(make_import_integrity_gate())  # priority=107 治本悬空import硬阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001，检测staged文件中import的目标模块在staged+main HEAD可解析，防ba40fa5b75同型违规）
         self._gate_registry.register(make_capability_lookup_required_gate())  # priority=110 #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本（强制 AI 施工前调 rule_discovery/capability_lookup，audit log 在 .runtime/lookup_audit/<session_id>.jsonl）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
@@ -642,6 +686,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_stash_lifecycle_reconciler(self))  # #ARCH-WORKTREE-002 Phase 4 stash 过期清理（priority=801，清理 >24h 的 session_worktree 临时 stash）
         self._reconciliation_registry.register(make_scripts_import_integrity_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 3 scripts import baseline 全扫（priority=210，post-commit 补强 pre-commit gate 只扫 staged 的盲区）
         self._reconciliation_registry.register(make_undefined_name_baseline_reconciler(self))  # GATE-DEPGRAPH-OPS 治本 Phase 1 undefined-name baseline 全扫（priority=211，post-commit 补强 UNDEFINED-NAME gate 只扫 staged + --no-verify 绕过盲区）
+        self._reconciliation_registry.register(make_capability_lookup_health_reconciler(self))  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6 监控欠缺（priority=220，post-commit 检测 [no-lookup:] bypass 频率 + audit log 健康）
         self._reconciliation_registry.register(make_blueprint_id_legacy_reconciler(self))  # ARCH-DATAQUALITY-V1.8 Task I blueprint_id legacy baseline 全扫（priority=145，post-commit warn-only，检测存量 119 条 invalid [BLUEPRINT] 头部，落盘报告供追踪，与 BLUEPRINT-FORMAT gate 互补——gate 防蔓延，reconciler 清存量）
         self._reconciliation_registry.register(make_remediation_progress_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.1 治本进度新鲜度（priority=900，>90天未更新 block_next）
         self._reconciliation_registry.register(make_runtime_violation_snapshot_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
@@ -671,6 +716,19 @@ class GitCommitGateway:
             self._reconciliation_registry.register(make_readme_version_sync_reconciler(self.project_root))
         except ImportError as e:
             logger.warning("readme_version_sync_reconciler not registered: %s", e)
+
+        # 注册 dashboard 指标数描述派生校验 reconciler（MOD-metric_count_drift，#ARCH-HEALTH-DASHBOARD-001 阶段2，2026-07-20 治本）
+        # 校验 architecture_health_dashboard.py METRICS 列表长度与 4 个派生文件指标数描述一致
+        # 漂移时 warn 不阻断（描述同步需人工决策），priority=220 晚于 README-VERSION-SYNC(210)
+        try:
+            import sys as _sys
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from metric_count_drift_reconciler import make_metric_count_drift_reconciler
+            self._reconciliation_registry.register(make_metric_count_drift_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("metric_count_drift_reconciler not registered: %s", e)
 
     # ------------------------------------------------------------------
     # 公开 API
@@ -1628,6 +1686,14 @@ class GitCommitGateway:
             cmd: git 命令列表（如 ``["git", "show", "HEAD:foo.py"]``）。
             cwd: 可选工作目录（默认使用 ``self.project_root``）。某些 gate 需在
                  ``git rev-parse --show-toplevel`` 返回的 worktree root 下执行。
+
+        P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+        timeout 按命令类型分级——原硬编码 120s 对所有 git 命令共用，导致
+        快速读命令（rev-parse/show/status）与慢速写命令（commit/merge）共用
+        上限，单个慢命令即可耗尽整个 session 预算。改为：
+          - read 类（rev-parse/show/status/diff/log/ls-tree/merge-base/config）: 15s
+          - write 类（commit/merge/checkout/reset/update-ref/rebase）: 60s
+          - 其他默认: 30s
         """
         if (
             len(cmd) >= 2
@@ -1649,6 +1715,8 @@ class GitCommitGateway:
         env[_GATEWAY_ENV] = "1"
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
+        # P2-2b 治本：timeout 按命令类型分级（原硬编码 120s）
+        timeout = _classify_git_timeout(cmd)
         return run_subprocess_hidden(
             cmd,
             cwd=cwd or str(self.project_root),
@@ -1656,6 +1724,6 @@ class GitCommitGateway:
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=120,
+            timeout=timeout,
             env=env,
         )

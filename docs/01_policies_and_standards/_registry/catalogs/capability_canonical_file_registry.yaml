@@ -2996,12 +2996,232 @@ capabilities:
       - delete-constraint
       - --delete-constraint
     description: >-
-      约束删除（apply_depgraph.py delete_constraint）。删除 arch_constraints 表单条约束记录，
+      约束删除（apply_depgraph.py delete_constraint）。删除 arch_constraints 表单条约束记录,
       自动触发 PG 备份（backup_pg_depgraph）。用于清理过时约束（如域删除后遗留的 constraint_id，
-      或旧格式连字符命名的过时约束）。CLI 入口 --delete-constraint <CONSTRAINT_ID>。解决发现性：
+      或旧格式连字符命名的过时约束）。CLI 入口 --delete-constraint <CONSTRAINT_ID>。解决发现性:
       新 AI 搜 "删除约束/delete constraint/约束残留" 可定位真源。解决防重建：阻止新 AI 写 SQL
       直接 DELETE FROM arch_constraints（违反 depgraph 硬约束）。对标 DM-100255 D_GOV_RULE
       constraint 残留 CONSTRAINT_D-GOV-RULE_ENFORCEMENT 清理（PG 备份 depgraph_20260703_120655.json）。
+
+  # ==========================================================================
+  # #ARCH-064 补登记：apply_depgraph.py 15 个漏登记 CLI（裁定驱动 + 复杂 SQL + 防绕过）
+  # 2026-07-20 治本批量登记，对齐既有 4 条格式
+  # ==========================================================================
+
+  - capability_id: fix_path_semantics_for_design_nodes
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - fix_path_semantics_for_design_nodes
+      - fix-path-semantics
+      - --fix-path-semantics
+      - 5.179_path_semantics_fix
+    description: >-
+      历史 design 节点 path/granularity 语义不一致批量修复（apply_depgraph.py
+      fix_path_semantics_for_design_nodes，5.179 治本）。3 种 Case：1a stale duplicate
+      → hard-delete 节点+关联 edges（production/prototype 已是真源）；1b orphan design
+      → UPDATE path 去尾 / + granularity=file；3 path 尾 / + granularity!=directory
+      → UPDATE granularity=directory。配 --dry-run 预览。解决发现性：新 AI 搜
+      "path 语义修复/granularity 不一致/5.179 治本" 可定位真源。解决防重建：阻止新 AI
+      写 SQL 直接 DELETE FROM nodes/edges（违反 depgraph 硬约束）。
+
+  - capability_id: rename_domain
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - rename_domain
+      - rename-domain
+      - --rename-domain
+      - ARCH_204_rename
+    description: >-
+      域 ID 重命名（apply_depgraph.py cmd_rename_domain，裁定#204）。18 步 UPDATE 覆盖
+      11 表，按顺序替换 domain_id 派生标识符。D-SIGNAL* 4 域改名专用。注意 D-SIGNAL 必须
+      最后替换（含其他旧域名前缀避免误伤）。完成后自动触发 scan_residual 后置校验（事件驱动，
+      无需手工跑 audit_rename_completeness）。CLI 入口 --rename-domain OLD NEW。解决发现性：
+      新 AI 搜 "域改名/rename domain/裁定#204" 可定位真源。解决防重建：阻止新 AI 写 SQL
+      直接 UPDATE domains（违反 18 步级联完整性 + depgraph 硬约束）。
+
+  - capability_id: merge_domain
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - merge_domain
+      - merge-domain
+      - --merge-domain
+      - ARCH_target_layer_merge
+    description: >-
+      域合并（apply_depgraph.py cmd_merge_domain，裁定#ARCH-target_layer_v1.0.0）。
+      将 old_id 的所有引用迁移到已存在的 new_id，然后删除 old_id。与 --rename-domain
+      的区别：rename 要求 new_id 不存在，merge 要求 new_id 已存在。domain_dependencies
+      复合 PK 冲突预检（冲突阻断）。完成后自动触发残留校验。CLI 入口 --merge-domain OLD NEW。
+      解决发现性：新 AI 搜 "域合并/merge domain/废弃域归并" 可定位真源。解决防重建：阻止
+      新 AI 写 SQL 直接 UPDATE/DELETE 多表（违反级联完整性 + depgraph 硬约束）。
+
+  - capability_id: replace_text_domain
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - replace_text_domain
+      - replace-text-domain
+      - --replace-text-domain
+      - ARCH_target_layer_text_replace
+    description: >-
+      全表 TEXT 列值替换（apply_depgraph.py cmd_replace_text_domain，裁定#ARCH-target_layer_v1.0.0）。
+      扫描所有表所有 TEXT 列，REPLACE OLD_TEXT→NEW_DOMAIN_ID。与 --merge-domain 区别：
+      不修改 domain 记录，仅清理描述性文本中的旧格式引用。复用 _scan_replace_all_text_columns
+      （已修复 LIKE 通配符陷阱）。用途：清理 D-COMPLIANCE（连字符）等旧格式残留。CLI 入口
+      --replace-text-domain OLD_TEXT NEW_DOMAIN_ID。解决发现性：新 AI 搜 "全表替换/
+      text domain/旧格式残留" 可定位真源。解决防重建：阻止新 AI 写 SQL 直接 UPDATE
+      多表 TEXT 列（违反 _scan_replace_all_text_columns 标准化逻辑）。
+
+  - capability_id: propagate_rename
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - propagate_rename
+      - --propagate-rename
+      - ARCH_206_blueprint_propagate
+    description: >-
+      blueprint_id 派生标识符传播（apply_depgraph.py cmd_propagate_rename，裁定#206 B-5/B-6
+      + 裁定#207 R1 B2）。精确值映射，禁止子串 REPLACE。传播 nodes.blueprint_id +
+      blueprint_links.blueprint_id + type_specific_data + blueprint_path。CLI 入口
+      --propagate-rename。解决发现性：新 AI 搜 "blueprint 改名传播/propagate rename/
+      裁定#206" 可定位真源。解决防重建：阻止新 AI 写 SQL 直接 UPDATE blueprint_id
+      （违反精确值映射约束，子串 REPLACE 会误伤）。
+
+  - capability_id: propagate_node_paths
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - propagate_node_paths
+      - --propagate-node-paths
+      - ARCH_206_node_path_propagate
+    description: >-
+      节点路径改名传播（apply_depgraph.py cmd_propagate_node_paths，裁定#206 节点路径派生
+      + 裁定#207 R1 阶段D）。读取 D2 映射 JSON，精确值映射 nodes.path +
+      blueprint_links.blueprint_path，按域内连续重新编号。CLI 入口 --propagate-node-paths
+      JSON_FILE。解决发现性：新 AI 搜 "节点路径改名/path propagate/裁定#206" 可定位真源。
+      解决防重建：阻止新 AI 写 SQL 直接 UPDATE nodes.path（违反域内重编号约束）。
+
+  - capability_id: mark_blueprint_invalid
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - mark_blueprint_invalid
+      - mark-invalid
+      - --mark-invalid
+      - ARCH_208_B5
+    description: >-
+      标记 blueprint_id 为 invalid（apply_depgraph.py cmd_mark_invalid，裁定#208 B5）。
+      软标记不删节点，保留追溯链；阶段 C/D 重编号专用。CLI 入口 --mark-invalid BLUEPRINT_ID
+      REASON。解决发现性：新 AI 搜 "blueprint 失效/标记 invalid/裁定#208" 可定位真源。
+      解决防重建：阻止新 AI 写 SQL 直接 UPDATE blueprint_id_invalid=1（违反追溯链保留约束）。
+
+  - capability_id: rename_blueprint_id
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - rename_blueprint_id
+      - rename-blueprint-id
+      - --rename-blueprint-id
+      - ARCH_208_D2
+    description: >-
+      blueprint_id 独立重命名（apply_depgraph.py cmd_rename_blueprint_id，裁定#208 D2）。
+      跨域共享模块 SH-* 改名专用。传播 nodes.blueprint_id + blueprint_links.blueprint_id
+      + type_specific_data + blueprint_path。安全保证：负向前瞻防止 MOD-SHARED 误匹配
+      MOD-SHARED-001。改名后自动扫描 docs/ 下 YAML 真源引用并输出 [YAML SYNC WARNING]
+      （无需手动 grep）。配 --dry-run 预览。CLI 入口 --rename-blueprint-id OLD NEW。
+      解决发现性：新 AI 搜 "blueprint 重命名/SH 模块改名/裁定#208" 可定位真源。解决防重建：
+      阻止新 AI 写 SQL 直接 UPDATE blueprint_id 多表（违反负向前瞻安全约束）。
+
+  - capability_id: apply_domain_id_check
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - apply_domain_id_check
+      - apply-domain-id-check
+      - --apply-domain-id-check
+      - ARCH_target_layer_check
+    description: >-
+      应用 domains.domain_id CHECK 约束（apply_depgraph.py cmd_apply_domain_id_check，
+      裁定#ARCH-target_layer_v1.0.0）。幂等 ALTER TABLE ADD CONSTRAINT
+      domains_domain_id_format_check CHECK (domain_id ~ '^D_[A-Z][A-Z0-9_]*$')。
+      预检所有 domain_id 值合规后再应用。背景：_MIGRATIONS P2 后不再执行，现有 DB
+      需通过此命令补丁式应用 CHECK 约束。CLI 入口 --apply-domain-id-check。解决发现性：
+      新 AI 搜 "domain_id CHECK 约束/格式校验应用" 可定位真源。解决防重建：阻止新 AI
+      写 SQL 直接 ALTER TABLE ADD CONSTRAINT（违反预检合规约束）。
+
+  - capability_id: fix_domains_defaults
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - fix_domains_defaults
+      - fix-domains-defaults
+      - --fix-domains-defaults
+      - ARCH_target_layer_v16_fix
+    description: >-
+      修复 domains 表 build_status DEFAULT 值（apply_depgraph.py cmd_fix_domains_defaults，
+      裁定#ARCH-target_layer_v1.0.0 v16 修复）。幂等 ALTER TABLE ALTER COLUMN build_status
+      SET DEFAULT 'planned'。修复预存 bug：DEFAULT 'unbuilt' 不在 CHECK 允许值中，INSERT
+      不提供 build_status 时失败。CLI 入口 --fix-domains-defaults。解决发现性：新 AI 搜
+      "domains DEFAULT 修复/build_status 默认值" 可定位真源。解决防重建：阻止新 AI 写
+      SQL 直接 ALTER TABLE ALTER COLUMN（违反幂等约束）。
+
+  - capability_id: cleanup_orphan_edges
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - cleanup_orphan_edges
+      - cleanup-orphan-edges
+      - --cleanup-orphan-edges
+    description: >-
+      清理孤儿边（apply_depgraph.py cmd_cleanup_orphan_edges）。删除 edges 表中引用不
+      存在 node 的边。CLI 入口 --cleanup-orphan-edges。解决发现性：新 AI 搜 "孤儿边
+      清理/edges 悬空引用" 可定位真源。解决防重建：阻止新 AI 写 SQL 直接 DELETE FROM
+      edges（违反引用完整性检查 + depgraph 硬约束）。
+
+  - capability_id: cleanup_orphan_nodes
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - cleanup_orphan_nodes
+      - cleanup-orphan-nodes
+      - --cleanup-orphan-nodes
+      - P1_DEP_symmetric_drift
+    description: >-
+      清理幽灵节点（apply_depgraph.py cmd_cleanup_orphan_nodes）。删除 nodes 表中 path
+      在磁盘不存在的 node（对称漂移修复，P1-DEP）。CLI 入口 --cleanup-orphan-nodes。解决
+      发现性：新 AI 搜 "幽灵节点/磁盘不存在的 path/对称漂移修复" 可定位真源。解决防重建：
+      阻止新 AI 写 SQL 直接 DELETE FROM nodes（违反磁盘存在性检查 + depgraph 硬约束）。
+
+  - capability_id: delete_nodes_batch
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - delete_nodes_batch
+      - delete-nodes
+      - --delete-nodes
+    description: >-
+      按 node_id 列表批量删除节点（apply_depgraph.py cmd_delete_nodes）。JSON 文件格式
+      [id1, id2, ...]。安全门：有入边（被依赖）则阻断，--force 可跳过。先删关联 edges
+      再删 nodes。改 depgraph 前须 git commit 备份。CLI 入口 --delete-nodes NODE_IDS_FILE
+      [--force]。解决发现性：新 AI 搜 "批量删节点/delete nodes/node_id 列表删除" 可定位
+      真源。解决防重建：阻止新 AI 写 SQL 直接 DELETE FROM nodes（违反入边安全门 + depgraph
+      硬约束）。
+
+  - capability_id: migrate_nodes_batch
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - migrate_nodes_batch
+      - migrate-nodes
+      - --migrate-nodes
+    description: >-
+      按 node_id 列表精确迁移 domain_id（apply_depgraph.py cmd_migrate_nodes）。JSON
+      文件格式 [id1, id2, ...]，迁移到 NEW_DOMAIN_ID。CLI 入口 --migrate-nodes
+      NODE_IDS_FILE NEW_DOMAIN_ID。解决发现性：新 AI 搜 "批量迁移 domain_id/migrate
+      nodes/域归属迁移" 可定位真源。解决防重建：阻止新 AI 写 SQL 直接 UPDATE nodes
+      SET domain_id（违反批量精确迁移约束）。
+
+  - capability_id: deprecate_node
+    canonical_override: scripts/governance/apply_depgraph.py
+    aliases:
+      - deprecate_node
+      - deprecate-node
+      - --deprecate-node
+    description: >-
+      软废弃任意节点（含 production）（apply_depgraph.py deprecate_node）。专用于孤儿节点
+      清理，绕过 5 态状态机（planned→generated→testing→stable→deprecated）。设置
+      build_status='deprecated' 保留行。CLI 入口 --deprecate-node NODE_ID。解决发现性：
+      新 AI 搜 "软废弃节点/deprecate node/孤儿节点清理" 可定位真源。解决防重建：阻止
+      新 AI 写 SQL 直接 UPDATE build_status='deprecated'（违反 5 态状态机约束 + depgraph
+      硬约束）。
 
   - capability_id: depgraph_scope_gate
     canonical_override: scripts/governance/apply_depgraph.py
@@ -5939,6 +6159,15 @@ creation_tokens:
     token: "auto-forged-gw-marker-gate-20260720"
     created_by: "sess-16156-20260720110413"
     capability: "forged_gw_marker_prevention"
+
+  # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
+  # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 import_integrity_gate 副本
+  - file: "src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py"
+    token: "auto-import-integrity-gate-20260720"
+    created_by: "sess-36708-20260720114001"
+    capability: "dangling_import_prevention"
 
   # --- RunCommand 窗口闪现治本裁定文档（2026-07-20，#ARCH-RUNCOMMAND-WINDOW-FLASH-001）---
   # 裁定文档 + 规则文件 + SSoT helper 三件套登记 creation_token
