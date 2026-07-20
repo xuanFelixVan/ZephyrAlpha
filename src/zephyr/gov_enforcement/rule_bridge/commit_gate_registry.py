@@ -56,6 +56,8 @@ Usage::
 
 from __future__ import annotations
 
+import json
+import time
 from typing import Final
 import logging
 import subprocess
@@ -65,6 +67,32 @@ from pathlib import Path
 from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
+
+
+def _audit_allow_overlap_usage(gateway: object, files: list[str], kwargs: dict) -> None:
+    """落审计：allow_overlap=True 逃生通道的真实使用（GATE-COMMIT-GW-ABUSE-MONITOR 维度3 真源）。
+
+    治本（2026-07-20，sess-23300-20260720092540）：滥用监控原以 post_commit_guard
+    warn_only(gw_env=1) 事件反推 allow_overlap 滥用，实际混入 merge 后 reconciler
+    auto-commit 的注册表生命周期伪影（1829/7d 持续误报）。改为在 gate 统一入口直接
+    落审计——只有真实传入 allow_overlap=True 的 commit 才计数。
+    fail-open：审计写入失败不阻断 commit（check_all ERROR_CONTRACT：永不抛异常）。
+    """
+    if not kwargs.get("allow_overlap"):
+        return
+    try:
+        root = Path(getattr(gateway, "project_root", "."))
+        audit_dir = root / ".runtime" / "gate_audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": int(time.time()),  # noqa: m46-time — 审计事件时间戳（allow_overlap 逃生通道使用记录），合法场景
+            "session_id": kwargs.get("session_id", "?"),
+            "files_count": len(files),
+        }
+        with (audit_dir / "allow_overlap_usage.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
+        logger.debug("allow_overlap usage audit write failed (non-blocking)", exc_info=True)
 
 __all__ = [
     "GateResult",
@@ -153,7 +181,13 @@ def run_checker_script(
         kwargs.update({"text": True, "encoding": "utf-8", "errors": "replace"})
     if env is not None:
         kwargs["env"] = env
-    return subprocess.run([sys.executable, str(script_path), *args], **kwargs)
+    # TRAE-067 铁律2 落地（2026-07-20 Phase 1.5）：commit gate spawn python checker
+    # MUST 用 CREATE_NO_WINDOW，消除 commit 流程闪窗（之前每次 commit 跑 10+ 个
+    # checker 都闪窗）。run_subprocess_hidden 默认注入 CREATE_NO_WINDOW |
+    # CREATE_NEW_PROCESS_GROUP，且 errors='replace' 与本函数语义一致。
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    return run_subprocess_hidden([sys.executable, str(script_path), *args], **kwargs)
 
 
 @dataclass
@@ -219,6 +253,7 @@ class CommitGateRegistry:
         单个 gate 异常降级为 fail-closed（passed=False，安全优先），
         不阻断后续 gate 执行。
         """
+        _audit_allow_overlap_usage(gateway, files, kwargs)
         results: list[GateResult] = []
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
             try:

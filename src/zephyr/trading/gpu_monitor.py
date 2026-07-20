@@ -34,7 +34,9 @@ __all__ = ["collect_gpu_stats"]
 
 
 def _parse_nvidia_smi() -> dict[str, Any]:
-    result = subprocess.run(
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    result = run_subprocess_hidden(
         [
             "nvidia-smi",
             "--query-gpu=utilization.gpu,memory.used,memory.total",

@@ -4279,3 +4279,130 @@ entries:
   related_rules: 'trae_067 (RULE-EIGHTEEN 外部化), trae_066 (RULE-SEVENTEEN RunCommand 纯洁性), trae_064 (GIT-CALL-BUDGET)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-EXTERNAL-TOOL-WINDOW-001: 外部工具宿主窗口闪现治理底线（2026-07-20）---
+# 关联 #ARCH-RUNCOMMAND-WINDOW-FLASH-001（项目层治本已在 Phase 1.5 完成，本议题登记外部工具责任边界）
+- issue_id: '#ARCH-EXTERNAL-TOOL-WINDOW-001'
+  title: 外部工具宿主（TRAE/kimi-desktop/OS）窗口闪现——L0/L1 项目层 100% 落地后的 L2/L3 责任边界裁定
+  category: architecture_governance
+  severity: P3
+  adjudication: >-
+    2026-07-20 立项裁定（ruling_runcommand_window_flash.md §治理底线）。第一性原理：100% AI
+    开发场景下 AI 通过 RunCommand 执行任何命令都依赖外部工具宿主（TRAE/kimi-desktop/VS Code
+    等）。项目层只能治理"项目代码 spawn 的子进程"（L0/L1），无法治理"外部工具宿主 spawn 的
+    子进程"（L2/L3）。本议题登记三层治理边界：
+    L0 项目代码层——Phase 1.5 已 100% 落地（run_subprocess_hidden SSoT，22 文件 36+ 处替换）；
+    L1 AI 调用纪律层——Phase 1 已外部化（trae_067 RULE-EIGHTEEN 5 铁律）；
+    L2 用户层——TRAE IDE 工具宿主用 powershell.exe 包装未加 CREATE_NO_WINDOW（待提交 feature
+    request），kimi-desktop gildata_tool.py 业务数据下载闪窗（外部工具，不可项目层治本）；
+    L3 OS 设计层——Windows 控制台子系统设计不可改（python.exe/powershell.exe 是控制台子系统
+    程序，必创建控制台窗口）。"0 闪窗"目标不可达（外部限制），但可从"每 4-5 秒一个"降到
+    "每 30+ 秒一个"。
+  fix_phase: |
+    Phase 1（已完成 2026-07-20）：
+      - L0/L1 100% 落地（详见 #ARCH-RUNCOMMAND-WINDOW-FLASH-001）
+    Phase 2（待立项，L2 用户层）：
+      - 向 TRAE IDE 提交 feature request（RunCommand 工具宿主支持 CREATE_NO_WINDOW）
+      - pythonw.exe 方案调研裁定：不可行（4 步死锁反证：pythonw 无控制台 -> subprocess
+        stdout/stderr 无继承句柄 -> PIPE 缓冲满 -> 子进程阻塞 -> 父进程 wait 死锁）
+      - kimi-desktop gildata_tool.py feature request 模板待用户提交
+    Phase 3（不立项，L3 OS 设计层）：
+      - Windows 控制台子系统设计不可改，python.exe/powershell.exe 必创建控制台窗口
+      - 仅作裁定记录，无技术治本路径
+  impact:
+    - docs/02_enterprise_architecture/ruling_runcommand_window_flash.md（裁定文档 §治理底线）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: adjudicated
+  related_adjudication: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001 (L0/L1 项目层治本主体), #ARCH-HEARTBEAT-001 (同源并发场景诊断延续)'
+  related_rules: 'trae_067 (RULE-EIGHTEEN 外部化，AI 纪律层)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+- issue_id: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
+  title: RECONCILER-HEALTH 41 条 critical_warn 根因——5 维滥用检测 3 个设计缺陷 + emergency_commit 分桶失效
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定。前序裁定 R1/R2（#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 +
+    #ARCH-ASYNC-MERGE-RECONCILE-001）在"5 维告警真实反映滥用"的假设下制定阈值调整方案，
+    但第一性原理调研证明 5 维告警本身存在 3 个设计缺陷，治本方向应从"调阈值"转向"修复检测逻辑"。
+
+    裁定 R3：5 维滥用检测存在 3 个设计缺陷（L1-L5 因果链递归）
+    - R3-1：allow_overlap_7d 维度统计逻辑错误（误报率 94.9%）
+      commit_gateway_abuse_monitor_reconciler.py L214-220 变量名与实际语义不符——
+      实际统计条件 action=warn_only AND gw_env=1，根本没检查 allow_overlap 标记。
+      1704/1796 事件是 reconciler auto-commit 复用 AI session_id 触发的 warn_only，
+      与 allow_overlap 逃生通道毫无关系。真实 allow_overlap 逃生通道使用仅 92 次（5.1%），
+      未超阈 30。
+    - R3-2：emergency_commit 成本递增门禁分桶维度错误
+      emergency_commit.py L110-112 按 session_id 分桶存储计数，AI 每次启动新 session，
+      计数永远停在 1，N>=3/N>=5 永不触发。13/14 个 session 仅用 1 次 emergency_commit，
+      .runtime/sessions/ 下仅 2 个 emergency_count.json，count 都是 1。设计应改为按
+      agent_id 持久化标识分桶。
+    - R3-3：5 维阈值不区分 dogfood vs 真实滥用
+      14 次 emergency_commit 中 9 次是 dogfood/治本工作（sess-p2-X-dogfood × 7 +
+      sess-phase4-test × 1 + 部分 Phase 治本），被全部计入 24h 滥用计数。
+      abuse_monitor 不读取 session_id 进行场景分类。
+
+    裁定 R4：emergency_commit 持续超阈的真正 L1 根因是 GitCommitGateway timeout 120s
+    heartbeat 已落地（#ARCH-HEARTBEAT-001 Phase 1 完成），解决了 stale session 持有 held_files
+    的阻塞问题。但最近 2 次 emergency_commit（heartbeat 落地后）reason 明确：
+    "GitCommitGateway timeout 120s (concurrent session lock contention or stale hook process)"，
+    与 PID liveness 无关——是 GitCommitGateway 同步阻塞超时。异步化方案
+    （#ARCH-ASYNC-MERGE-RECONCILE-001 P1）仅文档化，代码未施工。
+
+    裁定 R5：修正裁定 R2 阈值调整（代码未生效）
+    #ARCH-ASYNC-MERGE-RECONCILE-001 L4011-4014 + ruling_async_merge_reconcile.md L28/L110
+    声明 R2 已完成：emergency 30→20, allow_overlap 30→500。但代码实际值是
+    _EMERGENCY_24H_THRESHOLD=10（R1 过渡期值）、_ALLOW_OVERLAP_7D_THRESHOLD=30（原始值），
+    R2 阈值调整从未在代码生效。R5 决定：emergency 直接回滚到 5（heartbeat 已落地不再需要
+    过渡期）；allow_overlap 保留 30（R3-1 修正后此维度告警消除，真实使用 92 > 30 仍合理）。
+
+    裁定 R6：dogfood 场景豁免机制
+    5 维阈值应支持场景标签过滤。emergency_commit 函数新增 scenario 参数
+    （production/dogfood/test/governance_fix），abuse_monitor 按场景过滤。
+    dogfood/治本工作不计入滥用计数，仅 production 场景触发告警。
+
+    核心结论：Phase 1 修复 3 个误报/失效后，预计 41 条 critical_warn 降至 0。
+  fix_phase: |
+    Phase 1（立即，本周）：修复 3 个误报/失效（裁定 R3）
+      - P1-1 修复 allow_overlap_7d 统计逻辑（commit_gateway_abuse_monitor_reconciler.py L214-220）
+        改为统计 [GW:*:overlap] 标记的真实使用次数（grep git log），不再统计 warn_only+gw_env=1
+      - P1-2 修复 emergency_commit 分桶维度（emergency_commit.py L110-112）
+        按 agent_id 持久化标识分桶（优先级：env ZEPHYR_AGENT_ID > git config user.email > fallback session_id）
+      - P1-3 引入 dogfood 场景豁免机制（emergency_commit.py + abuse_monitor）
+        emergency_commit 函数新增 scenario 参数，abuse_monitor 按场景过滤
+      - P1-4 emergency 阈值回滚 10→5（commit_gateway_abuse_monitor_reconciler.py L95）
+        heartbeat 已落地，R1 过渡期不再需要
+      - P1-5 smoke test 覆盖 3 维度修正（tests/governance/audit/）
+        验证：allow_overlap 真实使用计数 < 30、emergency 真实滥用 < 5、5 维告警从 41 降至 0
+
+    Phase 2（本周-下周）：GitCommitGateway timeout 根因消除（裁定 R4）
+      - P2-1 GitCommitGateway timeout 根因分析
+      - P2-2 GitCommitGateway retry 机制（指数退避）
+      - P2-3 session_worktree_commit 异步化（fire-and-forget + token）
+      - P2-4 session_worktree_merge 异步化
+      - P2-5 后台 worker 串行处理（新建 async_commit_worker.py）
+      - P2-6 token 状态查询 API（新建 commit_status.py）
+
+    Phase 3（本月）：阈值合理化 + 自适应
+      - P3-1 5 维阈值改可配置（YAML）
+      - P3-2 7d 滚动基线计算
+      - P3-3 5 维加权健康度评分
+      - P3-4 自适应阈值（基于 7d 基线 ±σ）
+
+    Phase 4（下月）：裁定 D-2/D-3/D-4 持续推进
+      - D-2 P2-1~P2-12 fail-closed gate 转换（10 个 gate）
+      - D-3 自适应阈值（已在 P3-4 落地）
+      - D-4 GATE-FORGED-GW-MARKER 待立项
+      - merge 失败遥测补全（worktree_ops_log.jsonl）
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - docs/02_enterprise_architecture/ruling_reconciler_health_warn_root_cause.md（裁定文档待产出）
+    - src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py（P1-1 allow_overlap 统计逻辑修复 + P1-4 阈值回滚）
+    - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py（P1-2 分桶维度修复 + P1-3 场景豁免）
+    - tests/governance/audit/test_commit_gateway_abuse_monitor_reconciler.py（P1-5 smoke test 新增）
+    - tests/gov_enforcement/rule_bridge/test_emergency_commit_agent_bucket.py（P1-5 分桶维度测试）
+  status: in_progress
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (5 维滥用审计 R1/R2 修正), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 阈值代码未生效), #ARCH-HEARTBEAT-001 (heartbeat 已落地但 emergency 仍超阈), #ARCH-GUC-TRIGGER-FIX-001 (裁定 D 系列)'
+  related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP, trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_064 (GIT-CALL-BUDGET)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'

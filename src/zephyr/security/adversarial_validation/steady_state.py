@@ -143,7 +143,9 @@ class SteadyState:
         if not src.exists():
             return 0.0
         try:
-            result = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            result = run_subprocess_hidden(
                 ["grep", "-r", "-c", pattern, str(src)],
                 capture_output=True,
                 text=True,
@@ -173,7 +175,9 @@ class SteadyState:
         if not full_path.exists():
             return -1.0
         try:
-            result = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            result = run_subprocess_hidden(
                 ["python", str(full_path)],
                 capture_output=True,
                 text=True,
@@ -195,8 +199,10 @@ class SteadyState:
 
     def _lock_time(self, file_path: str) -> float:
         try:
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
             start = time.perf_counter()
-            result = subprocess.run(
+            result = run_subprocess_hidden(
                 ["python", "scripts/lock_files.py", "check", file_path],
                 capture_output=True,
                 text=True,
@@ -217,7 +223,9 @@ class SteadyState:
 
     def _process_count(self, name: str) -> float:
         try:
-            result = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            result = run_subprocess_hidden(
                 ["tasklist", "/FI", "IMAGENAME eq python.exe", "/FO", "CSV"],
                 capture_output=True,
                 text=True,

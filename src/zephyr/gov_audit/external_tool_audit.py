@@ -36,7 +36,9 @@ class ExternalToolAuditor:
 
     def audit_tool(self, name: str, command: list[str], cwd: str | None = None) -> dict[str, Any]:
         try:
-            proc = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            proc = run_subprocess_hidden(
                 command,
                 capture_output=True,
                 text=True,

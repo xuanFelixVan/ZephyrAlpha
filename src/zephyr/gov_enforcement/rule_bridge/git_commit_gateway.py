@@ -151,6 +151,7 @@ from zephyr.gov_enforcement.commit_gates.git_call_budget_gate import make_git_ca
 from zephyr.gov_enforcement.commit_gates.undefined_name_gate import make_undefined_name_gate  # GATE-DEPGRAPH-OPS 治本 Phase 1（F821 零防护缺口）
 from zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate import make_domain_name_zh_direct_access_gate  # Step 2.5 遗留风险修复（域名字典直接访问硬阻断 priority=72）
 from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import make_capability_lookup_required_gate  # #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本
+from zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate import make_forged_gw_marker_gate  # #ARCH-PREVENTABILITY-LAYER-001 Phase 2 第 6 层可预防性——forged_gw_marker 前置阻断
 from zephyr.gov_enforcement.commit_gates.ch_final_gate import make_ch_final_gate
 from zephyr.gov_enforcement.commit_gates.ch_version_col_gate import make_ch_version_col_gate
 from zephyr.gov_enforcement.commit_gates.god_class_gate import make_god_class_gate
@@ -341,6 +342,7 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         self._gate_registry.register(make_held_overlap_gate())
+        self._gate_registry.register(make_forged_gw_marker_gate())  # priority=30 #ARCH-PREVENTABILITY-LAYER-001 Phase 2 第 6 层可预防性——forged_gw_marker 前置阻断（早于 SESSION-REQUIRED=31）
         self._gate_registry.register(make_foreign_change_gate())  #ARCH-054 priority=45 外来变更检测（claim 时基线快照，commit 时对比）
         self._gate_registry.register(make_session_required_gate())  # priority=31 治本 session 注册强制（防 AI 绕过 session_worktree_start 传空 session_id）
         self._gate_registry.register(make_claim_required_gate())
@@ -1009,7 +1011,9 @@ class GitCommitGateway:
 
     def _is_git_tracked(self, rel_path: str) -> bool:
         """检查相对路径是否被 git 跟踪（:(icase) pathspec 兼容 Windows 大小写不敏感）。"""
-        chk = subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        chk = run_subprocess_hidden(
             ["git", "ls-files", "--error-unmatch", "--", f":(icase){rel_path}"],
             capture_output=True,
             cwd=str(self.project_root),
@@ -1020,7 +1024,9 @@ class GitCommitGateway:
         """检查相对路径是否为 staged delete（不在 index 但仍在 HEAD）。必需：_is_git_tracked 对 staged delete 返回 False，凡保留/排除 staged delete 场景必须用本方法补充。"""
         if self._is_git_tracked(rel_path):
             return False
-        chk = subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        chk = run_subprocess_hidden(
             ["git", "cat-file", "-e", f"HEAD:{rel_path}"],
             capture_output=True,
             cwd=str(self.project_root),
@@ -1641,7 +1647,9 @@ class GitCommitGateway:
             )
         env = os.environ.copy()
         env[_GATEWAY_ENV] = "1"
-        return subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
             cmd,
             cwd=cwd or str(self.project_root),
             capture_output=True,

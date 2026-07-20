@@ -588,10 +588,12 @@ def _spawn_heartbeat_daemon(
         creationflags = 0
         start_new_session = False
         if os.name == "nt":
-            # DETACHED_PROCESS: 不继承父控制台，父退出后存活
+            # CREATE_NO_WINDOW: 不创建控制台窗口，无闪窗（TRAE-067 铁律2）
             # CREATE_NEW_PROCESS_GROUP: 独立进程组，不受 Ctrl+C 影响
+            # 注：CREATE_NO_WINDOW 与 DETACHED_PROCESS 互斥（MSDN），CREATE_NO_WINDOW
+            # 同时满足"无窗口"+"detached"（父退出后子存活，因 close_fds=True）
             creationflags = (
-                getattr(subprocess, "DETACHED_PROCESS", 0x00000008)
+                getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
                 | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
             )
         else:
@@ -1409,7 +1411,9 @@ def _run_dcr_check(root: Path, rel_files: list[str], session_id: str) -> dict | 
     if _src_dir not in _existing_pp.split(os.pathsep):
         dcr_env["PYTHONPATH"] = f"{_src_dir}{os.pathsep}{_existing_pp}" if _existing_pp else _src_dir
     try:
-        dcr_result = subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        dcr_result = run_subprocess_hidden(
             dcr_cmd, capture_output=True, cwd=str(root), env=dcr_env, timeout=60,
         )
     except (subprocess.TimeoutExpired, OSError) as e:
@@ -2635,7 +2639,9 @@ def _run_pre_merge_topo_check(
         }]
     cmd = [sys.executable, str(check_script), "--json", "--scan-root", str(wt_path)]
     try:
-        result = subprocess.run(
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        result = run_subprocess_hidden(
             cmd, capture_output=True, text=True, cwd=str(root),
             encoding="utf-8", errors="replace", timeout=120,
         )
@@ -3276,6 +3282,15 @@ def session_worktree_merge(
             manager, session_id, auto_cleaned, skipped_files
         )
 
+        # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
+        # 时序治本（2026-07-20，sess-23300-20260720092540）：reconcile 必须先于
+        # unregister 执行——reconciler auto-commit 携带本 session_id，若先 unregister，
+        # POST-COMMIT-GUARD 查不到注册会刷 unregistered_session_id warn_only
+        # （B2 审计：warn_only/allow_overlap 误报的主根因，日均数百条噪音）。
+        reconcile_results: list[dict] = []
+        if reconcile_verify and merged and cleaned:
+            reconcile_results = _run_post_merge_reconcile(root, session_id)
+
         # merge 成功且 worktree 清理成功才注销 session；清理失败/冲突时保留 session 供重试
         unregistered = False
         if merged and cleaned:
@@ -3292,11 +3307,6 @@ def session_worktree_merge(
                 unregistered = registry.unregister(session_id)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.debug("suppressed error in session_worktree", exc_info=True)
-
-        # 裁定#209 后续：merge 后可选触发 reconciler（补齐 worktree 路径的验证）
-        reconcile_results: list[dict] = []
-        if reconcile_verify and merged and cleaned:
-            reconcile_results = _run_post_merge_reconcile(root, session_id)
 
         return {
             "session_id": session_id,

@@ -195,7 +195,9 @@ class SupplyChainAuditor:
     @staticmethod
     def _compute_package_hash(package_name: str) -> str:
         try:
-            result = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            result = run_subprocess_hidden(
                 ["pip", "show", "-f", package_name],
                 capture_output=True,
                 text=True,

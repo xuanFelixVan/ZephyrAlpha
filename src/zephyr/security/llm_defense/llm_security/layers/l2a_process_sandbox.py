@@ -207,7 +207,9 @@ class ProcessSandboxLayer:
                 blocked_by_guard=True,
             )
         try:
-            proc = subprocess.run(
+            from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+            proc = run_subprocess_hidden(
                 [sys.executable, "-c", code or ""],
                 capture_output=True,
                 text=True,

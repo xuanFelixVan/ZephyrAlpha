@@ -1,0 +1,156 @@
+rule_id: TRAE-067
+title: AI RunCommand 窗口闪现纪律铁律（Window Flash Discipline）
+name: AI RunCommand 窗口闪现纪律铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-067
+priority: 50
+depends_on:
+- TRAE-066
+tags:
+- TRAE
+- window_flash
+- L1_foundation
+- runcommand_discipline
+- powershell_window
+- create_no_window
+- RULE-EIGHTEEN
+ttl: permanent
+stability: evolving
+safety_level: M
+ai_autonomy: ai_modifiable
+aliases:
+- RULE-EIGHTEEN
+- 窗口闪现纪律
+- RunCommand窗口隐藏
+- pythonw首选
+- CREATE_NO_WINDOW
+severity: high
+scope: runcommand_window_discipline
+domain: TRAE
+triggers:
+- operation: runcommand_invoke
+- operation: shell_command_execution
+- operation: python_dash_c_one_liner
+- operation: ai_session_concurrent
+sections:
+  runcommand_window_discipline:
+    section_type: procedure
+    title: AI RunCommand 窗口闪现纪律铁律（RULE-EIGHTEEN）
+    original_rules:
+    - RULE-EIGHTEEN
+    conditions:
+    - type: trigger
+      check: AI 通过 RunCommand 工具执行任何 python 命令时
+      pass: 命令为 .py 脚本调用（python <script>.py），且脚本内 subprocess 调用带 CREATE_NO_WINDOW
+      fail: 命令为 python -c "..." 单行式（每次调用闪现一个 powershell+python 控制台窗口）
+    - type: constraint
+      check: 多 AI session 并发（>=3 个活跃 session）时
+      pass: 每个 session 控制 RunCommand 调用频率 ≤ 6 次/分钟，且优先用 Read/Grep/Glob/SearchCodebase 工具
+      fail: 单 session 高频调 python -c 探查 session_registry.json 等数据，叠加多 session 导致窗口"闪烁式弹出"
+    - type: constraint
+      check: AI 需要查询项目内部状态（session_registry/progress_store/depgraph 等）时
+      pass: 优先用专用 MCP 工具（task_manager.* / rule_discovery.* / depgraph query）或 Read 工具读 JSONL/YAML 文件
+      fail: 用 python -c "from pathlib import Path; import json; ..." 临时探查
+    actions:
+    - type: mandatory
+      step: '铁律1: RunCommand 中禁止使用 python -c "..." 单行式（含多语句、import、复合逻辑）。复杂逻辑 MUST 写 .py 脚本封装后用 python <script>.py 调用。例外：session_worktree_start/commit/merge 的 python -c "from zephyr...import..." 是 AGENTS.md §RULE-WORKTREE 规定的标准入口，允许保留（但应批量调用，不频繁探查）'
+    - type: mandatory
+      step: '铁律2: AI 内部代码中 spawn python 子进程时 MUST 设置 creationflags=subprocess.CREATE_NO_WINDOW（Windows）。已有最佳实践：auto_runtime_core.py:543 / ide_health_service.py:235 / process_pool.py:154 / reconcile_runner.py:288 / session_worktree.py:593。新代码 MUST 复用 process_pool.run_subprocess_hidden / spawn_python_hidden（2026-07-20 Phase 1.5 已落地，内置 CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP），禁止裸 subprocess.Popen(["python",...]) 不带 creationflags。注：DETACHED_PROCESS(0x8) 不继承父控制台但仍创建新控制台→闪窗；CREATE_NO_WINDOW(0x08000000) 才真正无窗口。两者互斥（MSDN）'
+    - type: mandatory
+      step: '铁律3: 查询项目内部状态优先级：(1) 专用 MCP 工具（task_manager/rule_discovery/depgraph） > (2) Read 工具读结构化文件（YAML/JSONL/JSON） > (3) Grep 工具搜索内容 > (4) 写 .py 脚本批量查询（单次 RunCommand） > (5) python -c 单行式（最后手段，仅用于无法用前 4 种方式完成的场景）'
+    - type: mandatory
+      step: '铁律4: 多 AI session 并发时（>=3 个活跃 session，查 .runtime/session_registry.json），每个 session 应控制 RunCommand 调用频率。诊断/探查类命令应批量化——把多个查询合并到一个 .py 脚本中单次执行，而非 N 次 python -c'
+    - type: mandatory
+      step: '铁律5: AI 编写的守护进程/调度器/reconciler spawn 子 python 时 MUST 用 process_pool.py 的 spawn helper（已内置 CREATE_NO_WINDOW | DETACHED_PROCESS）。禁止裸 subprocess.Popen(["python",...]) — 会导致每次 spawn 闪现一个控制台窗口'
+    - type: forbidden
+      step: '禁止: 在 RunCommand 中用 python -c "..." 做探查性查询（如读 session_registry.json、查 progress_store、列 depgraph 节点）——MUST 用 Read/Grep 工具或专用 MCP 工具'
+    - type: forbidden
+      step: '禁止: AI 业务代码中裸 subprocess.Popen(["python",...]) / subprocess.run(["python",...]) 不带 creationflags=CREATE_NO_WINDOW（Windows 平台）'
+    - type: forbidden
+      step: '禁止: 在 for/while 循环内 spawn python 子进程（每次循环闪一个窗口）——MUST 批量化或用 process_pool'
+    prohibitions:
+    - RunCommand 中使用 python -c "..." 做探查性查询（session_registry/progress_store/depgraph 等内部状态）
+    - AI 业务代码中裸 subprocess.Popen(["python",...]) 不带 creationflags=CREATE_NO_WINDOW（Windows）
+    - 在 for/while 循环内 spawn python 子进程（每次循环一个闪窗）
+    - 多 AI session 并发时单 session 高频调 RunCommand（>10 次/分钟）做诊断探查
+    invariants:
+    - id: RULE-EIGHTEEN-INV-001
+      title: 窗口隐藏强制
+      description: AI 内部代码 spawn python 子进程 MUST 设置 CREATE_NO_WINDOW（Windows），复用 process_pool.py 的 spawn helper
+      enforcement: AI 自觉遵循 + code review + CREATE-NO-WINDOW-GATE commit gate（P2 warn-only，P3 升级 block）
+      violation_action: warn
+    - id: RULE-EIGHTEEN-INV-002
+      title: python -c 单行式禁令
+      description: RunCommand 中禁止用 python -c "..." 做探查性查询，MUST 用 Read/Grep/MCP 工具或写 .py 脚本
+      enforcement: AI 自觉遵循 + RULE-SEVENTEEN 命令纯洁性（trae_066）协同 + code review
+      violation_action: warn
+    - id: RULE-EIGHTEEN-INV-003
+      title: 并发 session RunCommand 预算
+      description: 多 AI session 并发时（>=3），单 session RunCommand 调用 ≤ 6 次/分钟，诊断探查应批量化
+      enforcement: AI 自觉遵循 + IdeHealthDaemon drift_health metrics 监控
+      violation_action: warn
+    examples:
+    - scenario: 禁止的 python -c 探查
+      wrong_action: python -c "from pathlib import Path; import json; p = Path('.runtime/session_registry.json'); d = json.loads(p.read_text()); print(list(d.keys()))"
+      correct_action: 用 Read 工具读 .runtime/session_registry.json，或用 task_manager.list MCP 工具
+      reason: python -c 经 RunCommand → powershell.exe -Command 包装 → 创建控制台窗口闪现。Read 工具零窗口开销
+    - scenario: 禁止的裸 subprocess.Popen
+      wrong_action: 'subprocess.Popen(["python", "scripts/foo.py"], stdout=PIPE)'
+      correct_action: 'from zephyr.shared.infra.process_pool import spawn_python_hidden; proc = spawn_python_hidden(["scripts/foo.py"])'
+      reason: 裸 Popen 在 Windows 上会创建新控制台窗口。process_pool.spawn_python_hidden 内置 CREATE_NO_WINDOW
+    - scenario: 禁止的循环内 spawn
+      wrong_action: 'for script in scripts: subprocess.run(["python", script])'
+      correct_action: 写一个 run_all.py 脚本内部批量化执行，单次 RunCommand 调用
+      reason: N 个脚本 = N 个闪窗。批量化后仅 1 个窗口（且脚本内 subprocess 可加 CREATE_NO_WINDOW）
+    common_mistakes:
+    - '❌ 用 python -c "..." 读 JSONL/JSON/YAML——用 Read 工具'
+    - '❌ 用 python -c "from zephyr...import..." 探查内部状态——用专用 MCP 工具或 Read 文件'
+    - '❌ 裸 subprocess.Popen(["python",...]) 不带 creationflags——用 process_pool.spawn_python_hidden'
+    - '❌ 多 AI session 并发时各自高频 python -c 探查——批量化或用专用工具'
+    - '❌ 在循环内 spawn python——批量化或用 process_pool'
+    background:
+      source: 2026-07-20 实战诊断（用户报告"后台隔一会儿就会弹出非常多的 Python 窗口，闪烁式自动弹出/关闭"）
+      rationale: |
+        100% AI 开发场景下，TRAE IDE RunCommand 工具通过 powershell.exe -NoProfile -NonInteractive -Command "..."
+        包装执行 AI 命令。powershell.exe 和 python.exe 都是 Windows 控制台子系统程序，每次调用会创建一个
+        控制台窗口。TRAE 工具宿主未加 CREATE_NO_WINDOW 标志，导致每次 RunCommand 闪现一个窗口。
+        单 AI session 低频调用时窗口闪现不明显（<1 次/10 秒）；但多 AI session 并发（6+ 个活跃 session）
+        叠加 AI 诊断探查习惯（频繁 python -c 读 JSONL）会导致窗口"闪烁式弹出/关闭"。
+        根因是 TRAE 工具宿主外部限制（无法在项目层修复），但可通过 AI 调用纪律显著降低闪现频率。
+        本规则与 trae_066（RULE-SEVENTEEN 命令纯洁性）协同——trae_066 管"命令格式纯洁"，
+        本规则管"命令调用方式对窗口的影响"。
+      related_arch: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001'
+references:
+  rule_ids:
+  - TRAE-066
+  - TRAE-064
+  scripts:
+  - scripts/git_guard.py
+  - scripts/git_commit.py
+  modules:
+  - MOD-GOV
+  - zephyr.shared.infra.process_pool
+  blueprints:
+  - docs/03_modules/_domain_governance/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §10 Git 命令封装约定
+  - .trae/rules/project_rules.md RULE-SEVENTEEN
+enforcement:
+  paired_gate_id: null  # 文档型规则，无对应 commit gate（P2 warn-only via static scan，P3 升级 block）
+  type: doc
+  executors:
+  - human_review
+  - ai_pre_action_check
+  - static_scan_warn_only
+  bypass_allowed: false
+metadata:
+  change_policy: evolving
+  impact_level: M
+  modification_permission: ai_modifiable
+  superseded_by: null
+  related_arch: '#ARCH-RUNCOMMAND-WINDOW-FLASH-001'
+provenance:
+  extracted_at: '2026-07-20'
+  extracted_by: sess-user-diagnosis-20260720050000
+  source: '实战诊断：用户报告 Python 窗口闪烁式弹出/关闭，根因排查锁定 TRAE RunCommand toolhost + AI python -c 滥用'

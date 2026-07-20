@@ -1761,5 +1761,5 @@ rules:
   - 第6层
   - 6层闭环模型
   - ARCH-PREVENTABILITY-LAYER-001
-  paired_gate_id: null
+  paired_gate_id: FORGED-GW-MARKER
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
