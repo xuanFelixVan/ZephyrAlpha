@@ -4876,6 +4876,12 @@ creation_tokens:
     created_by: "session-sess-21384-20260720232801"
     capability: "ssot_create_gate"
 
+  # --- knowledge_base_server.py 提交登记（2026-07-20，文件已存在于工作区但未入库，gateway_server.py 导入需此文件）---
+  - file: "src/zephyr/integration/mcp/knowledge_base_server.py"
+    token: "auto-knowledge-base-server-commit-20260720"
+    created_by: "session-sess-47756-20260721011138"
+    capability: "mcp_knowledge_base_server"
+
   # --- EventBus 真源恢复（2026-07-06 AI-14 审计修复，从 git 历史恢复被误删的 event_bus.py）---
   - file: "src/zephyr/shared/event_bus.py"
     token: "auto-event-bus-restore-20260706"
@@ -6350,6 +6356,30 @@ creation_tokens:
     token: "auto-ruling-workspace-drift-systemic-20260720"
     created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
     capability: "workspace_drift_systemic_ruling"
+
+  # --- 5.150.7 ActionDispatcher God Class 拆分（2026-07-21，1 facade + 4 workers）---
+  # 原因：action_dispatcher.py (842行) 拆分为 package，__init__.py 为 facade，
+  #       4 个 _*.py 为提取的 worker 类。原 .py 保留为 ground truth 参考（被包遮蔽）。
+  - file: "src/zephyr/trading/action_dispatcher/__init__.py"
+    token: "auto-action-dispatcher-facade-20260721"
+    created_by: "sess-44240-20260721010426"
+    capability: "action_dispatcher_system"
+  - file: "src/zephyr/trading/action_dispatcher/_search_replace_engine.py"
+    token: "auto-action-dispatcher-search-replace-20260721"
+    created_by: "sess-44240-20260721010426"
+    capability: "action_dispatcher_system"
+  - file: "src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py"
+    token: "auto-action-dispatcher-file-lifecycle-20260721"
+    created_by: "sess-44240-20260721010426"
+    capability: "action_dispatcher_system"
+  - file: "src/zephyr/trading/action_dispatcher/_annotation_writer.py"
+    token: "auto-action-dispatcher-annotation-20260721"
+    created_by: "sess-44240-20260721010426"
+    capability: "action_dispatcher_system"
+  - file: "src/zephyr/trading/action_dispatcher/_audit_log_writer.py"
+    token: "auto-action-dispatcher-audit-log-20260721"
+    created_by: "sess-44240-20260721010426"
+    capability: "action_dispatcher_system"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
