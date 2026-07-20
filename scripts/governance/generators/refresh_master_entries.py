@@ -20,7 +20,7 @@ refresh_master_entries.py — 登记表总索引 entries 自动刷新器
 文件重新计数，将 entries / vr_rules / unresolved / resolved 等派生字段
 刷新为实际值。
 
-对标 §6.2 静态清单自动生成铁律。
+对标 §6.3 静态清单自动生成铁律。
 此脚本解决根因：master-index 的 entries 字段为手工维护快照，随各子注册表
 独立滚动后自然过时。接入 pre_commit 后每次 commit 自动校准。
 

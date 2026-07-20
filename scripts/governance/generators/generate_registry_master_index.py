@@ -19,7 +19,7 @@ generate_registry_master_index.py — 登记表总索引自动生成器
 扫描 _registry/catalogs/ 下所有 .yaml 文件 → 提取 frontmatter →
 生成 registry-master-index.yaml 的 registries 列表。
 
-对标 §6.2 静态清单自动生成铁律。
+对标 §6.3 静态清单自动生成铁律。
 手工 overlay（如 manual_notes、review_status）通过独立的 overlay.yaml 注入。
 
 Usage:
@@ -55,7 +55,7 @@ args:
 warn_only: false
 description: >
   扫描 _registry/catalogs/*.yaml 的 frontmatter/comment_meta，自动生成 registry-master-index.yaml。
-  对标 §6.2 静态清单自动生成铁律。
+  对标 §6.3 静态清单自动生成铁律。
 """
 
 CATALOGS_DIR = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"

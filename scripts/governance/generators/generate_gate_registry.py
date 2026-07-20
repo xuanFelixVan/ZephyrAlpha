@@ -17,7 +17,7 @@
 generate_gate_registry.py — 门禁登记表自动生成器
 
 从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。
-对标 §6.2 静态清单自动生成铁律——手工维护的 gate-registry 将被此脚本替代。
+对标 §6.3 静态清单自动生成铁律——手工维护的 gate-registry 将被此脚本替代。
 
 治本（ARCH-GATE-REGISTRY-SYNC-001）：post-commit 由 make_gate_registry_sync_reconciler
 （priority=830）自动触发重生成——commit commit_gates/*.py / .pre-commit-config.yaml /
@@ -55,7 +55,7 @@ args:
 warn_only: false
 description: >
   从 .pre-commit-config.yaml 自动派生 gate_registry.yaml。
-  对标 §6.2 静态清单自动生成铁律。
+  对标 §6.3 静态清单自动生成铁律。
 """
 
 PRE_COMMIT_PATH = REPO_ROOT / ".pre-commit-config.yaml"

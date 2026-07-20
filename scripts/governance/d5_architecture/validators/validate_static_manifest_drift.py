@@ -19,7 +19,7 @@ validate_static_manifest_drift.py — GATE-21 静态清单漂移阻断
 顺序运行所有静态清单生成器的 --check 模式。自动生成版与磁盘版任何不一致
 均触发硬失败（exit 1）。
 
-权威依据：AGENTS.md §6.2 静态清单自动生成铁律——任何"条目列表 + 计数"清单
+权威依据：AGENTS.md §6.3 静态清单自动生成铁律——任何"条目列表 + 计数"清单
 必须由生成器产出（Type A：从代码/配置派生）或以 schema 为输入（Type B），
 禁止手工维护条目（手工维护必然与真源漂移）。
 
@@ -31,7 +31,7 @@ validate_static_manifest_drift.py — GATE-21 静态清单漂移阻断
   - 清理代码退化结构（双 docstring / 重复 import / 游离 shebang / __manifest__ 块）
   - CHECKS 补齐 gate_registry.yaml（原仅 script_manifest.yaml，漏检门禁登记表漂移）
   - 输出消息 GATE-19 → GATE-21（2026-06-30 簇3合并重命名后消息未同步）
-  - §6.16 断头引用 → §6.2（AGENTS.md 原无 §6.16，本次治本补建 §6.2 并收敛引用）
+  - §6.16 断头引用 → §6.2 → §6.3（AGENTS.md 原无 §6.16，2026-07-17 治本补建 §6.2，2026-07-20 因新增临时文件分类存放铁律顺延为 §6.3）
   - 自举 sys.path 含 src/ + 子进程注入 PYTHONPATH=src，消除对调用方环境的依赖
     （原 validator 在未设 PYTHONPATH=src 的环境下崩溃 ModuleNotFoundError: No module named 'zephyr'）
 
