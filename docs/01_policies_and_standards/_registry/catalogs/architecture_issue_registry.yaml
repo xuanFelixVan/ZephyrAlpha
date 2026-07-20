@@ -4941,7 +4941,7 @@ entries:
       - 4 集成测试：staged_auto_sync_passes_merge / mm_state_passes_merge /
         staged_real_code_blocks_merge / staged_real_code_fail_open_abort
 
-    Phase 3（已完成 2026-07-20）：
+    Phase 3（已完成 2026-07-20，commit f7f79ae684，merge 07f1e58763）：
       - 新建 ruling_commit_verified_gate.py (256 行, MOD-GOV-ruling_commit_verified_gate)
       - 新建 test_ruling_commit_verified_gate.py (SRC-TST-2717, 36 测试全部通过)
       - 复杂度治本：_check 闭包 cc=16 → _detect_violations (cc=13) + _check (cc=5)
