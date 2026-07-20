@@ -5,13 +5,13 @@
 # [CONSUMERS] post-commit hook; AI session 冷启动; 治理基线追踪
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 19 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）；M21 5病根×3要素覆盖缺口数追踪 Phase 3.6 病根治本闭环（persistence+discoverability+enforceability，target=0 全 15 cell 覆盖）
+# [INVARIANTS] 30 项架构健康度指标自动化检测基线（architecture_debt_registry.md §六 第0期）；每项指标独立函数；复用现有检测脚本（subprocess 解析输出）；warn-only 起步（exit 0，仅记录基线）；YAML SSoT 原则；不破坏现有 151 个治理组件；M15 depgraph新鲜度与 GATE-DEPGRAPH-FRESHNESS 同阈值（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3.3）；M16 治本进度新鲜度与 GATE-REMEDIATION-PROGRESS 同阈值（#ARCH-GOV-CONVERGENCE-META Phase 3.1）；M17 规则感知缺口追踪 Phase 3.5 paired_gate_id 补齐进度（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）；M20 trae_060 §5 快照漂移数追踪 Phase 3.4b 病根1 治本（baseline vs live snapshot drift）；M21 5病根×3要素覆盖缺口数追踪 Phase 3.6 病根治本闭环（persistence+discoverability+enforceability，target=0 全 15 cell 覆盖）
 # [MODIFY-GUARD] 指标清单变更 MUST 同步 architecture_debt_registry.md §六 + 本文件 METRICS 列表
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] EXIT_PASS=0（始终，warn-only 基线模式）；单检测器异常降级为 error 字段不中断其余
-# [TESTS] 手动测试：独立运行输出 18 项指标；与手动调研基线 3193 可对账
+# [TESTS] 手动测试：独立运行输出 30 项指标；与手动调研基线 3193 可对账
 # [A_module] module_id=MOD-GOV-architecture_health_dashboard | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """architecture_health_dashboard.py — 架构健康度仪表盘（自动化检测基线）
@@ -26,7 +26,7 @@
   - DB 全景图深度（17）：949 真孤儿未监控 + 死代码
   - 文档引用断裂（26）：136 处引用断裂 + 三方对齐 9 个
 
-11 项指标（目标值均为 0，当前总值 3193 手动调研基线）：
+30 项指标（目标值均为 0，当前总值 3193 手动调研基线）：
   1. 词表硬编码违规数      — 复用 check_vocab_hardcode.py
   2. manual-only 永久脚本数 — [STARTUP] manual + [TTL] permanent 组合违规
   3. 重复簇函数数          — AST 函数体哈希聚类（>1 成员的簇）
@@ -71,7 +71,7 @@ args:
   - --json
   - --snapshot
   - --metric
-description: 架构健康度仪表盘（19 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+description: 架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
 dimensions:
 - D5
 priority: P1
@@ -2285,7 +2285,7 @@ def format_console_report(result: dict) -> str:
 def main() -> int:
     """入口：解析参数，运行检测，输出报告。"""
     parser = argparse.ArgumentParser(
-        description="架构健康度仪表盘（18 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
+        description="架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）"
     )
     parser.add_argument("--json", action="store_true", help="仅输出 JSON（供下游消费）")
     parser.add_argument("--snapshot", action="store_true", help="保存历史快照到 data/architecture_health/")
