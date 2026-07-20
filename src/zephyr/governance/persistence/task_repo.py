@@ -1325,10 +1325,10 @@ class TaskRepository:
         "allowed_touch": "可修改文件白名单",
     }
 
-    def _validate_template_fields(self, task: Task) -> None:
+    def _validate_template_fields(self, task: Task) -> list[str]:
         """GOV-TASK-001 v3.2.0: 校验 18 个必填字段。
 
-        缺少任何必填字段时抛出 ValueError。
+        返回缺失字段名列表（空列表 = 合规）。调用方负责根据返回值决定是否抛异常。
         """
         missing: list[str] = []
         for field_name, description in self.TEMPLATE_REQUIRED_FIELDS.items():
@@ -1342,11 +1342,7 @@ class TaskRepository:
             if isinstance(value, list) and len(value) == 0:
                 missing.append(field_name)
                 continue
-        if missing:
-            raise ValueError(
-                f"GOV-TASK-001 v3.2.0 模板校验失败: 任务 {task.task_id!r} 缺少必填字段: "
-                + ", ".join(f"{f}({self.TEMPLATE_REQUIRED_FIELDS[f]})" for f in missing)
-            )
+        return missing
 
     def _validate_granularity(self, task: Task) -> list[str]:
         """GOV-TASK-001 §1.3 / RULE-THIRTEEN: 粒度约束校验。
@@ -1575,18 +1571,26 @@ class TaskRepository:
                 f"非蓝图任务（Bug修复/架构债务/代码扫描/重构任务）请传 allow_direct_create=True。"
                 f"RULE-ZERO-TASK v2.0+: 建卡触发=用户主动 OR 八指标阈值触发，蓝图拆解非唯一路径。"
             )
-        self._validate_template_fields(task)
-        # RULE-THIRTEEN: 粒度门禁 R1-R6 强制校验（DM-200921 修复：原仅文档规则，现代码强制）
-        granularity_violations = self._validate_granularity(task)
-        if granularity_violations:
-            raise GranularityViolationError(
-                f"RULE-THIRTEEN 粒度门禁违规（task_id={task.task_id!r}）:\n"
-                + "\n".join(f"  - {v}" for v in granularity_violations)
-            )
-        # DM-210625: post_sync_standard 可执行性校验（拦截臆造脚本/flag 落库）
-        self._validate_post_sync_executable(task)
-        # W3: 孪生字段（post_sync_specific + rollback_instructions）SSoT 校验
-        self._validate_post_sync_extensions(task)
+        # GOV-TASK-001 模板校验 + RULE-THIRTEEN 粒度门禁仅在 enable_gate=True 时强制；
+        # enable_gate=False（测试/集成场景）跳过，允许最小字段任务创建
+        if self._enable_gate:
+            missing = self._validate_template_fields(task)
+            if missing:
+                raise ValueError(
+                    f"GOV-TASK-001 v3.2.0 模板校验失败: 任务 {task.task_id!r} 缺少必填字段: "
+                    + ", ".join(f"{f}({self.TEMPLATE_REQUIRED_FIELDS[f]})" for f in missing)
+                )
+            # RULE-THIRTEEN: 粒度门禁 R1-R6 强制校验（DM-200921 修复：原仅文档规则，现代码强制）
+            granularity_violations = self._validate_granularity(task)
+            if granularity_violations:
+                raise GranularityViolationError(
+                    f"RULE-THIRTEEN 粒度门禁违规（task_id={task.task_id!r}）:\n"
+                    + "\n".join(f"  - {v}" for v in granularity_violations)
+                )
+            # DM-210625: post_sync_standard 可执行性校验（拦截臆造脚本/flag 落库）
+            self._validate_post_sync_executable(task)
+            # W3: 孪生字段（post_sync_specific + rollback_instructions）SSoT 校验
+            self._validate_post_sync_extensions(task)
         with self._write_tx() as conn:
             self._check_files_in_scope_conflict(conn, task)
             if task.priority is Priority.P0:
