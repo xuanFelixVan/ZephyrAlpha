@@ -4446,6 +4446,34 @@ capabilities:
       从君子协定升级为自动化。
 
   # --------------------------------------------------------------------------
+  - capability_id: metric_count_drift_check
+    canonical_override: scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py
+    aliases:
+      - make_metric_count_drift_reconciler
+      - GATE-METRIC-COUNT-DRIFT
+      - metric_count_drift_reconciler
+      - metric_count_drift
+      - ARCH-HEALTH-DASHBOARD-001-Phase-2
+      - 指标数描述漂移校验
+    description: >-
+      dashboard 指标数描述派生校验 reconciler（#ARCH-HEALTH-DASHBOARD-001 阶段2治本，
+      2026-07-20）。post-commit 事件触发（priority=220），机械校验
+      architecture_health_dashboard.py 的 METRICS 列表长度与 4 个派生文件
+      （dashboard.py 表头/docstring/manifest、reconciliation_registry.py 注释、
+      script_manifest.yaml description、capability_canonical_file_registry.yaml
+      description）中的指标数描述一致性，不一致时 action=warn 写入 reconcile_execution_log。
+      canonical = scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py
+      （MOD-metric_count_drift）。注册点：git_commit_gateway.py:675
+      _register_default_reconcilers。治本动机：100% AI 开发下，描述性文本（docstring/
+      注释/manifest）无机械同步约束，AI 改 METRICS 列表是机械操作但同步 9 处描述需
+      "意识到"所有位置存在——与 AI 上下文有限矛盾，漂移必然累积。本 reconciler 把
+      "len(METRICS) 真源化"从君子协定升级为自动化机械校验。
+    integrity_anchors:
+      - make_metric_count_drift_reconciler
+      - _get_metric_count
+      - _COUNT_DESC_RE
+
+  # --------------------------------------------------------------------------
   - capability_id: session_startup_health_check
     canonical_override: scripts/governance/session_startup_health_check.py
     aliases:
@@ -5490,6 +5518,12 @@ creation_tokens:
     token: "auto-readme-version-sync-20260719"
     created_by: "session-sess-28516-20260719003114"
     capability: "readme_version_sync_check"
+  # 治本（2026-07-20，MOD-metric_count_drift）：dashboard 指标数描述派生校验 reconciler
+  # #ARCH-HEALTH-DASHBOARD-001 阶段2治本，文件位于 scripts/governance/d8_doc_sync/
+  - file: "scripts/governance/d8_doc_sync/metric_count_drift_reconciler.py"
+    token: "auto-metric-count-drift-20260720"
+    created_by: "session-sess-24512-20260720104006"
+    capability: "metric_count_drift_check"
   # --- GATE-DEPGRAPH-OPS 治本 Phase 1（2026-07-19，F821 未定义符号零防护缺口）---
   # undefined_name_gate.py: UNDEFINED-NAME commit gate（priority=106，stdlib AST
   # 静态检测 staged .py 未定义符号，硬阻断；对标 ruff F821，in-process 无 subprocess）
@@ -5899,6 +5933,12 @@ creation_tokens:
     token: "auto-trae-068-preventability-20260720"
     created_by: "sess-34792-20260720100112"
     capability: "preventability_layer_rule"
+  # --- forged_gw_marker 前置阻断 gate（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 2）---
+  # pre-commit 阻断 AI 手工伪造 [GW:session_id] 标记（priority=29，早于 DIRECTORY-CONTRACT=30）
+  - file: "src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py"
+    token: "auto-forged-gw-marker-gate-20260720"
+    created_by: "sess-16156-20260720110413"
+    capability: "forged_gw_marker_prevention"
 
   # --- RunCommand 窗口闪现治本裁定文档（2026-07-20，#ARCH-RUNCOMMAND-WINDOW-FLASH-001）---
   # 裁定文档 + 规则文件 + SSoT helper 三件套登记 creation_token

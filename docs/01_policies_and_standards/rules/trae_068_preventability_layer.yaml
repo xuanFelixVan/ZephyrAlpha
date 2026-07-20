@@ -144,7 +144,7 @@ references:
   - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
 enforcement:
-  paired_gate_id: null  # Phase 2 将配对 GATE-FORGED-GW-MARKER（pre-commit forgery 检测）
+  paired_gate_id: FORGED-GW-MARKER  # Phase 2 已落地（src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py，priority=29）
   type: doc
   executors:
   - human_review
