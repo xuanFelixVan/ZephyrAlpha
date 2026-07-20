@@ -15,9 +15,11 @@
 # [A_module] module_id=MOD-GOV_tiered_storage | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ class TieredStorage:
             d.mkdir(parents=True, exist_ok=True)
 
     def classify(self, path: Path) -> str:
-        age = datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
+        age = now_utc() - datetime.fromtimestamp(path.stat().st_mtime, tz=UTC)
         if age.days <= self.HOT_DAYS:
             return "hot"
         if age.days <= self.WARM_DAYS:
