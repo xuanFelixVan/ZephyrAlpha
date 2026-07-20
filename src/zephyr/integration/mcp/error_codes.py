@@ -35,14 +35,18 @@ ERR_TOOL_EXECUTION: Final[int] = -32002
 ERR_GATE_FAILED: Final[int] = -32003
 ERR_RBAC_DENIED: Final[int] = -32004
 ERR_SAFETY_APPROVAL_REQUIRED: Final[int] = -32005
+ERR_RATE_LIMITED: Final[int] = -32006
+ERR_API_SUNSET: Final[int] = -32007
 
 __all__ = [
+    "ERR_API_SUNSET",
     "ERR_GATE_FAILED",
     "ERR_INTERNAL_ERROR",
     "ERR_INVALID_PARAMS",
     "ERR_INVALID_REQUEST",
     "ERR_METHOD_NOT_FOUND",
     "ERR_PARSE_ERROR",
+    "ERR_RATE_LIMITED",
     "ERR_RBAC_DENIED",
     "ERR_SAFETY_APPROVAL_REQUIRED",
     "ERR_TOOL_EXECUTION",
@@ -60,6 +64,8 @@ _MESSAGE_MAP: dict[int, str] = {
     ERR_GATE_FAILED: "Gate check failed",
     ERR_RBAC_DENIED: "RBAC permission denied",
     ERR_SAFETY_APPROVAL_REQUIRED: "Safety approval required",
+    ERR_RATE_LIMITED: "Rate limited",
+    ERR_API_SUNSET: "API sunset",
 }
 
 

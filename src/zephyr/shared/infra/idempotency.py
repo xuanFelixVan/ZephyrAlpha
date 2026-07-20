@@ -45,10 +45,13 @@ Version: 0.1.0
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
+import sqlite3
 import time
 from dataclasses import dataclass, field
 from enum import Enum, unique
+from pathlib import Path
 from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -58,9 +61,43 @@ __all__ = [
     "IdempotencyRecord",
     "IdempotencyStatus",
     "IdempotencyStore",
+    "SQLiteIdempotencyStore",
+    "_build_idempotency_key",
 ]
 
 logger = logging.getLogger(__name__)
+
+# ------------------------------------------------------------------
+# SQL 集中化（§5.160.2 NO-BARE-SQL 治本）
+# ------------------------------------------------------------------
+_SQL_CREATE_TABLE = """
+CREATE TABLE IF NOT EXISTS idempotency_records (
+    key TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    result TEXT,
+    created_at REAL NOT NULL,
+    completed_at REAL NOT NULL DEFAULT 0
+)
+"""
+_SQL_DELETE_EXPIRED = (
+    "DELETE FROM idempotency_records WHERE completed_at > 0 AND completed_at < ?"
+)
+_SQL_DELETE_BY_KEY = "DELETE FROM idempotency_records WHERE key = ?"
+_SQL_SELECT_BY_KEY = (
+    "SELECT key, status, result, created_at, completed_at "
+    "FROM idempotency_records WHERE key = ?"
+)
+_SQL_INSERT = (
+    "INSERT INTO idempotency_records (key, status, result, created_at, completed_at) "
+    "VALUES (?, ?, NULL, ?, 0)"
+)
+_SQL_UPDATE_COMPLETE = (
+    "UPDATE idempotency_records SET status = ?, result = ?, completed_at = ? WHERE key = ?"
+)
+_SQL_UPDATE_FAIL = (
+    "UPDATE idempotency_records SET status = ?, completed_at = ? WHERE key = ?"
+)
+_SQL_COUNT = "SELECT COUNT(*) FROM idempotency_records"
 
 
 class IdempotencyError(ZephyrBaseError):
@@ -181,3 +218,117 @@ def _build_idempotency_key(prefix: str, *parts: str) -> str:
     raw = "|".join(parts)
     digest = hashlib.sha256(raw.encode()).hexdigest()[:16]
     return f"{prefix}:{digest}"
+
+
+class SQLiteIdempotencyStore:
+    """SQLite 持久化幂等性存储——跨进程/重启保持幂等记录。
+
+    对标 IdempotencyStore 的内存实现，但用 SQLite 作为后端，支持跨进程共享。
+    表结构：idempotency_records(key TEXT PRIMARY KEY, status TEXT, result TEXT,
+                                created_at REAL, completed_at REAL)
+    """
+
+    def __init__(
+        self,
+        db_path: str | Path,
+        default_ttl_seconds: int = 86400,
+    ) -> None:
+        self._db_path = str(db_path)
+        self._default_ttl = default_ttl_seconds
+        self._conn = sqlite3.connect(self._db_path)
+        self._conn.execute(_SQL_CREATE_TABLE)
+        self._conn.commit()
+
+    def _cleanup_expired(self) -> None:
+        now = time.monotonic()
+        cutoff = now - self._default_ttl
+        self._conn.execute(_SQL_DELETE_EXPIRED, (cutoff,))
+        self._conn.commit()
+
+    def _row_to_record(self, row: tuple) -> IdempotencyRecord:
+        key, status, result_json, created_at, completed_at = row
+        result = json.loads(result_json) if result_json else None
+        return IdempotencyRecord(
+            key=key,
+            status=IdempotencyStatus(status),
+            result=result,
+            created_at=created_at,
+            completed_at=completed_at,
+        )
+
+    def get(self, key: str) -> IdempotencyRecord | None:
+        self._cleanup_expired()
+        cur = self._conn.execute(_SQL_SELECT_BY_KEY, (key,))
+        row = cur.fetchone()
+        if row is None:
+            return None
+        record = self._row_to_record(row)
+        if record.status is IdempotencyStatus.COMPLETED:
+            elapsed = time.monotonic() - record.completed_at
+            if elapsed > self._default_ttl:
+                self._conn.execute(_SQL_DELETE_BY_KEY, (key,))
+                self._conn.commit()
+                return None
+        return record
+
+    def start(self, key: str) -> IdempotencyRecord:
+        self._cleanup_expired()
+        existing = self.get(key)
+        if existing is not None:
+            if existing.status is IdempotencyStatus.PROCESSING:
+                raise IdempotencyError(
+                    f"idempotency key '{key}' is already being processed",
+                    details={"key": key, "status": existing.status.value},
+                )
+            return existing
+        record = IdempotencyRecord(key=key, status=IdempotencyStatus.PROCESSING)
+        self._conn.execute(
+            _SQL_INSERT,
+            (key, record.status.value, record.created_at),
+        )
+        self._conn.commit()
+        return record
+
+    def complete(self, key: str, result: object) -> IdempotencyRecord:
+        existing = self.get(key)
+        if existing is None:
+            raise IdempotencyError(
+                f"idempotency key '{key}' not found—call start() first",
+                details={"key": key},
+            )
+        completed_at = time.monotonic()
+        self._conn.execute(
+            _SQL_UPDATE_COMPLETE,
+            (IdempotencyStatus.COMPLETED.value, json.dumps(result), completed_at, key),
+        )
+        self._conn.commit()
+        existing.status = IdempotencyStatus.COMPLETED
+        existing.result = result
+        existing.completed_at = completed_at
+        return existing
+
+    def fail(self, key: str) -> IdempotencyRecord:
+        existing = self.get(key)
+        if existing is None:
+            raise IdempotencyError(
+                f"idempotency key '{key}' not found—call start() first",
+                details={"key": key},
+            )
+        completed_at = time.monotonic()
+        self._conn.execute(
+            _SQL_UPDATE_FAIL,
+            (IdempotencyStatus.FAILED.value, completed_at, key),
+        )
+        self._conn.commit()
+        existing.status = IdempotencyStatus.FAILED
+        existing.completed_at = completed_at
+        return existing
+
+    @property
+    def size(self) -> int:
+        self._cleanup_expired()
+        cur = self._conn.execute(_SQL_COUNT)
+        return cur.fetchone()[0]
+
+    def close(self) -> None:
+        self._conn.close()

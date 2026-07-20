@@ -49,6 +49,7 @@ Version: 0.1.0
 import asyncio
 import functools
 import logging
+import threading
 import time
 from dataclasses import dataclass
 
@@ -57,6 +58,7 @@ from zephyr.shared.foundation.errors import ZephyrBaseError
 __all__ = [
     "RateLimitError",
     "RateLimiterStats",
+    "SyncTokenBucketLimiter",
     "TokenBucketLimiter",
     "async_limited",
 ]
@@ -196,3 +198,72 @@ def async_limited(
         return wrapper
 
     return decorator
+
+
+class SyncTokenBucketLimiter:
+    """同步 Token Bucket 速率限制器——线程安全，阻塞式 try_acquire。
+
+    对标 TokenBucketLimiter 的同步版本，用于同步代码路径（如 MCP gateway）。
+    子类化扩展点：zephyr.integration.mcp.rate_limiter.RateLimiter 继承本类。
+
+    Usage::
+
+        rl = SyncTokenBucketLimiter(permits_per_second=10.0, burst_size=30.0)
+        if not rl.try_acquire():
+            raise RateLimitError("rate limited")
+    """
+
+    def __init__(
+        self,
+        permits_per_second: float,
+        *,
+        burst_size: float | None = None,
+        max_wait_seconds: float = 30.0,
+    ) -> None:
+        self._rate = permits_per_second
+        self._burst = burst_size if burst_size is not None else permits_per_second
+        self._max_wait = max_wait_seconds
+        self._tokens = self._burst
+        self._last_refill = time.monotonic()
+        self._lock = threading.Lock()
+        self._acquired = 0
+        self._rejected = 0
+        self._waited = 0
+
+    def _refill(self) -> None:
+        now = time.monotonic()
+        elapsed = now - self._last_refill
+        self._tokens = min(self._burst, self._tokens + elapsed * self._rate)
+        self._last_refill = now
+
+    def try_acquire(self) -> bool:
+        """尝试获取 1 token。True=获取成功，False=被限流。"""
+        with self._lock:
+            self._refill()
+            if self._tokens >= 1.0:
+                self._tokens -= 1.0
+                self._acquired += 1
+                return True
+            self._rejected += 1
+            return False
+
+    def retry_after_seconds(self) -> float:
+        """返回需要等待多长时间才能获取下一个 token（秒）。0.0=立即可用。"""
+        with self._lock:
+            self._refill()
+            if self._tokens >= 1.0:
+                return 0.0
+            if self._rate <= 0:
+                return float("inf")
+            return (1.0 - self._tokens) / self._rate
+
+    def stats(self) -> RateLimiterStats:
+        with self._lock:
+            self._refill()
+            return RateLimiterStats(
+                permits_per_second=self._rate,
+                available_tokens=round(self._tokens, 2),
+                total_acquired=self._acquired,
+                total_rejected=self._rejected,
+                total_waited=self._waited,
+            )

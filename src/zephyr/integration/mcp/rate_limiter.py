@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # [MODULE] zephyr.integration.mcp.rate_limiter
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.infra.limiter
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -19,7 +19,7 @@
 """MCP Gateway 同步速率限制器（MOD-INF-013 §12 Step 3）。
 
 设计基线：
-- 自包含 sync TokenBucket——不依赖 shared/limiter.py 的 asyncio 实现
+- 继承 shared/infra/limiter.py 的 SyncTokenBucketLimiter（canonical SSoT）
 - Token Bucket 算法 + 线程安全（threading.Lock）
 - 按 tool_name 粒度独立 bucket（对标 R98）
 - 可配置：10 req/s default, 30 burst（从 config/mcp.json 加载）
@@ -29,10 +29,14 @@
 
 from __future__ import annotations
 
-from typing import Final
+from typing import Any, Final
+import json
 import threading
 import time
 from dataclasses import dataclass
+from pathlib import Path
+
+from zephyr.shared.infra.limiter import SyncTokenBucketLimiter
 
 __all__ = [
     "DEFAULT_BURST",
@@ -58,8 +62,8 @@ class RateLimiterStats:
     total_waited: int = 0
 
 
-class RateLimiter:
-    """同步 Token Bucket 速率限制器。
+class RateLimiter(SyncTokenBucketLimiter):
+    """MCP Gateway 同步速率限制器（继承 SyncTokenBucketLimiter）。
 
     Usage::
 
@@ -75,100 +79,132 @@ class RateLimiter:
         burst_size: float | None = None,
         max_wait_seconds: float = DEFAULT_MAX_WAIT,
     ) -> None:
-        self._rate = permits_per_second
-        self._burst = burst_size or permits_per_second
-        self._max_wait = max_wait_seconds
-        self._tokens = self._burst
-        self._last_refill = time.monotonic()
-        self._lock = threading.Lock()
-        self._acquired = 0
-        self._rejected = 0
-        self._waited = 0
-
-    def _refill(self) -> None:
-        now = time.monotonic()
-        elapsed = now - self._last_refill
-        self._tokens = min(self._burst, self._tokens + elapsed * self._rate)
-        self._last_refill = now
-
-    def try_acquire(self) -> bool:
-        """尝试获取 1 token。True=获取成功，False=被限流。"""
-        with self._lock:
-            self._refill()
-            if self._tokens >= 1.0:
-                self._tokens -= 1.0
-                self._acquired += 1
-                return True
-            self._rejected += 1
-            return False
-
-    def acquire(self, timeout: float | None = None) -> bool:
-        """获取 1 token，可选等待。True=获取成功；False=超时/被拒。"""
-        deadline = time.monotonic() + (timeout or self._max_wait)
-        while True:
-            with self._lock:
-                self._refill()
-                if self._tokens >= 1.0:
-                    self._tokens -= 1.0
-                    self._acquired += 1
-                    return True
-
-                wait_time = (1.0 - self._tokens) / self._rate
-                # 5.16.13 修复：_waited 自增移入锁内，避免并发 lost update
-                self._waited += 1
-
-            if time.monotonic() + wait_time > min(deadline, time.monotonic() + self._max_wait):
-                with self._lock:
-                    self._rejected += 1
-                return False
-
-            time.sleep(min(wait_time, 0.1))
-
-    def stats(self) -> RateLimiterStats:
-        with self._lock:
-            self._refill()
-            return RateLimiterStats(
-                permits_per_second=self._rate,
-                available_tokens=round(self._tokens, 2),
-                total_acquired=self._acquired,
-                total_rejected=self._rejected,
-                total_waited=self._waited,
-            )
+        super().__init__(
+            permits_per_second,
+            burst_size=burst_size,
+            max_wait_seconds=max_wait_seconds,
+        )
 
 
 class RateLimitExceeded(Exception):
     """速率限制超出。"""
 
 
+def _load_mcp_rate_limits() -> dict[str, tuple[float, float]]:
+    """从 config/mcp.json 加载 per-server rate_limit 配置。
+
+    返回 {tool_prefix: (qps, burst)} 映射，如 {"blueprint_search.": (30.0, 60.0)}。
+    加载失败返回空 dict（fail-open，使用默认值）。
+    """
+    try:
+        # file: src/zephyr/integration/mcp/rate_limiter.py
+        # parents[4] = project root (D:\ZephyrAlpha)
+        config_path = Path(__file__).resolve().parents[4] / "config" / "mcp.json"
+        if not config_path.exists():
+            return {}
+        with config_path.open(encoding="utf-8") as f:
+            cfg = json.load(f)
+        result: dict[str, tuple[float, float]] = {}
+        servers = cfg.get("mcpServers", cfg.get("servers", {}))
+        for _server_id, server_cfg in servers.items():
+            rl = server_cfg.get("rate_limit")
+            if not rl:
+                continue
+            qps = float(rl.get("default_qps", DEFAULT_QPS))
+            burst = float(rl.get("burst", DEFAULT_BURST))
+            tool_prefix = server_cfg.get("tool_prefix", f"{server_cfg.get('server_id', '')}.")
+            if tool_prefix:
+                result[tool_prefix] = (qps, burst)
+        return result
+    except Exception:  # noqa: BLE001 — fail-open
+        return {}
+
+
+def _resolve_tool_rate(
+    tool_name: str,
+    per_server: dict[str, tuple[float, float]],
+    default_qps: float,
+    default_burst: float,
+) -> tuple[float, float]:
+    """根据 tool_name 前缀匹配 per-server 配置，返回 (qps, burst)。"""
+    for prefix, (qps, burst) in per_server.items():
+        if tool_name.startswith(prefix):
+            return qps, burst
+    return default_qps, default_burst
+
+
 class PerToolRateLimiter:
     """按 tool_name 粒度管理多个 TokenBucket。
 
-    5.36.9 修复：原 docstring 误写为 "默认 10QPS per client"，但 try_acquire(tool_name)
-    实际按 tool_name 分桶（key = tool_name），无 client 维度。修正为 per-tool 描述，
-    避免安全审计/容量规划基于错误假设。若需 per-client 限流需引入 client_id 维度
-    （参见 5.36.2，待后续重构）。
+    5.36.2: 支持 (client_id, tool_name) 复合键分桶，跨客户端隔离。
+    5.36.6: 默认配额与 per-server 覆盖从 mcp.json 加载。
+    5.36.7: 限流拒绝响应携带 retry_after_seconds（受 config.rate_limit.retry_after_header 控制）。
 
     默认 10QPS per tool；可在 config/mcp.json 覆盖。
     """
 
-    def __init__(self, default_qps: float = DEFAULT_QPS, default_burst: float = DEFAULT_BURST) -> None:
-        self._default_qps = default_qps
-        self._default_burst = default_burst
+    def __init__(
+        self,
+        default_qps: float | None = None,
+        default_burst: float | None = None,
+        *,
+        config: dict[str, Any] | None = None,
+    ) -> None:
+        explicit = default_qps is not None
+        if default_qps is None:
+            default_qps = DEFAULT_QPS
+        if default_burst is None:
+            default_burst = DEFAULT_BURST
+        self._default_qps = float(default_qps)
+        self._default_burst = float(default_burst)
         self._buckets: dict[str, RateLimiter] = {}
         self._lock = threading.Lock()
+        self._config = config or {}
+        # 仅在无显式参数时从 mcp.json 加载 per-server 配置
+        self._per_server: dict[str, tuple[float, float]] = (
+            {} if explicit else _load_mcp_rate_limits()
+        )
 
-    def get_or_create(self, tool_name: str, qps: float | None = None, burst: float | None = None) -> RateLimiter:
-        key = tool_name
+    def _make_key(self, tool_name: str, client_id: str | None = None) -> str:
+        if client_id is None:
+            return tool_name
+        return f"{client_id}|{tool_name}"
+
+    def get_or_create(
+        self,
+        tool_name: str,
+        qps: float | None = None,
+        burst: float | None = None,
+        client_id: str | None = None,
+    ) -> RateLimiter:
+        key = self._make_key(tool_name, client_id)
         with self._lock:
             if key not in self._buckets:
+                if qps is None or burst is None:
+                    resolved_qps, resolved_burst = _resolve_tool_rate(
+                        tool_name, self._per_server, self._default_qps, self._default_burst
+                    )
+                    qps = qps if qps is not None else resolved_qps
+                    burst = burst if burst is not None else resolved_burst
                 self._buckets[key] = RateLimiter(
-                    qps or self._default_qps,
-                    burst_size=burst or self._default_burst,
+                    qps, burst_size=burst,
                 )
             return self._buckets[key]
 
-    def try_acquire(self, tool_name: str) -> bool:
-        return self.get_or_create(tool_name).try_acquire()
+    def try_acquire(self, tool_name: str, client_id: str | None = None) -> bool:
+        return self.get_or_create(tool_name, client_id=client_id).try_acquire()
+
+    def retry_after(self, tool_name: str, client_id: str | None = None) -> float:
+        """返回 tool 的 retry_after 秒数。受 config.rate_limit.retry_after_header 控制。"""
+        rl_cfg = self._config.get("rate_limit", {}) if self._config else {}
+        if not rl_cfg.get("retry_after_header", False):
+            return 0.0
+        key = self._make_key(tool_name, client_id)
+        with self._lock:
+            bucket = self._buckets.get(key)
+        if bucket is None:
+            return 0.0
+        return bucket.retry_after_seconds()
 
     def stats(self) -> dict[str, RateLimiterStats]:
         with self._lock:
