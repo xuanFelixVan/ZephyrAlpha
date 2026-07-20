@@ -382,14 +382,14 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 |---|---|---|---|
 | P4-1 | 新增 `src/zephyr/governance/audit/ai_error_pattern_library.py` | AI 错误模式库(历史错误模式检索) | 8h（深化评估见 §11.3.1） |
 | P4-2 | ✅ 已落地 2026-07-20（commit `ce81f1077f`，实际文件名 `forged_gw_marker_gate.py`，priority=29，原计划文件名 `forged_marker_detection_gate.py` 已弃用） | pre-commit 检测 [GW:*] 标记合法性 | 4h |
-| P4-3 | 新增 `scripts/governance/git_pre_receive_hook.py` | server-side pre-receive hook 拦截非 GW commit | 4h（深化评估见 §11.3.2，可行性下调） |
+| P4-3 | ✅ 已落地 2026-07-21（commit `ce1124f0f4` + merge `aef20ea518`，实际文件 `scripts/governance/check_commit_message.py` + `.github/workflows/commit_message_guard.yml` + `tests/governance/test_check_commit_message.py`，原计划 `git_pre_receive_hook.py` 方案放弃——GitHub-hosted 仓库不可部署 pre-receive） | GitHub Actions PR commit message guard（[GW:session_id] 标记 + session_id 合法性校验 + non-GW commit 拦截 + CI 模式降级） | 6h（深化评估见 §11.3.2） |
 | P4-4 | `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py` | session 启动推送"近期高频错误"提醒 | 3h |
 | P4-5 | 长期:GPG 签名强制 | server-side 强制 GPG 签名验证 | 待评估（深化评估见 §11.3.3，可行性下调为低） |
 
 **验证标准**:
 - [ ] AI 错误模式库可检索历史错误模式
 - [x] forged_gw_marker pre-commit gate 阻断伪造标记（✅ 2026-07-20 已落地，见 P4-2）
-- [ ] non-GW commit server-side pre-receive hook 拦截（深化评估见 §11.3.2，方案改为 GitHub Actions PR 检查）
+- [x] non-GW commit server-side pre-receive hook 拦截（✅ 2026-07-21 已落地，方案改为 GitHub Actions PR 检查，见 P4-3）
 - [ ] session 启动时推送近期高频错误提醒
 
 ---
@@ -723,7 +723,7 @@ P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id 
 P4-1b (新增,2h) event_sink.py JSONL consumer 聚合                    ✅ 已落地 2026-07-20
 P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)    ✅ 已落地 2026-07-20
 P4-2  (✅ 已落地 2026-07-20,forged_gw_marker_gate.py)
-P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message.py
+P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message.py  ✅ 已落地 2026-07-21
                  (原 git_pre_receive_hook.py 方案放弃,GitHub 项目内不可部署)
 P4-4  (3h) session 启动推送"近期高频错误"提醒                         ✅ 已落地 2026-07-20
 P4-5  (❌ 不实施,可行性低,边际收益低于成本)
@@ -903,6 +903,33 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
 - **capability_canonical_file_registry.yaml**: 登记 2 个 creation_token
   （`auto-ai-error-pattern-library-20260720` + `auto-ai-error-pattern-library-test-20260720`，capability=`error_pattern_library`）。
 - **设计决策**：P4-1（library）与 P4-4（session startup alert）合并提交，因 ORPHAN-MODULE gate 要求新模块必须有 `src/` 内 import 引用（P4-4 是 P4-1 的自然消费方，避免 library 作为死代码落地）。
+
+**P4-3 落地摘要（2026-07-21，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-3，commit ce1124f0f4 + merge aef20ea518）**:
+
+- **P4-3 `scripts/governance/check_commit_message.py`**（新增，~290 行）:
+  - GitHub Actions PR commit message guard，零项目依赖（纯 stdlib，CI `ubuntu-latest` 无需安装项目）。
+  - 检测规则（4 类）：
+    1. **merge commit 豁免**：`Merge branch`/`Merge pull request`/`Squashed commit`/`#N ` 前缀识别 GitHub merge/squash commit，自动放行。
+    2. **[GW:session_id] 标记合法性**：本地环境（registry 存在）校验 session_id 注册表成员资格；CI 环境（registry 不存在，因 `.runtime/` 在 `.gitignore`）降级为 `sess-\d{4,8}-\d{14}` 格式校验。
+    3. **non-GW commit 拦截**：无 [GW:] 标记 + 非 whitelist type（docs/test/chore/ci/style/refactor/revert/perf）→ 报告 `non_gw_commit` 违规。
+    4. **whitelist 放行**：无 [GW:] 标记但属 whitelist type → 自动放行（无需 session 标记）。
+  - 核心常量：`_GW_MARKER_RE` / `_SESSION_ID_RE` / `_REGISTRY_PATH` / `_SESSION_ID_FORMAT_RE` / `_WHITELIST_TYPES` / `_CONVENTIONAL_RE` / `_MERGE_PREFIX_RE`。
+  - 输出：stdout 打印检测结果摘要，`$GITHUB_STEP_SUMMARY` 写入 Markdown 报告；exit 0=pass，exit 1=findings，exit 2=error。
+  - [STARTUP] `event_driven`（GitHub Actions `pull_request` 事件自动触发，非 manual），含 `m11-perm-manual-legitimate` noqa 豁免（CI 触发脚本合法豁免）。
+- **P4-3 `.github/workflows/commit_message_guard.yml`**（新增）:
+  - `on: pull_request` 触发，`runs-on: ubuntu-latest`，checkout PR base/head SHA 后调用 `python scripts/governance/check_commit_message.py "$BASE_SHA" "$HEAD_SHA"`。
+  - 输出 `$GITHUB_STEP_SUMMARY` Markdown 报告。
+- **P4-3 单测 `tests/governance/test_check_commit_message.py`**（新增，~200 行）:
+  - 5 个测试类 21 个测试：TestExtractSessionId(3) / TestLoadRegisteredSessions(3) / TestExtractCommitType(3) / TestIsMergeCommit(4) / TestCheckCommit(8，含 2 个 CI 模式测试)。
+  - 关键 CI 模式测试：`test_ci_mode_format_valid`（合法格式放行）+ `test_ci_mode_format_invalid`（非法格式阻断）。
+  - 21/21 PASSED。
+- **capability_canonical_file_registry.yaml**: 登记 2 个 creation_token
+  （`auto-check-commit-message-20260721` + `auto-check-commit-message-test-20260721`，capability=`commit_message_guard`）。
+- **设计决策**：
+  - 原 P4-3 计划 `git_pre_receive_hook.py`（server-side bare repo hook）放弃——GitHub-hosted 仓库不可部署 pre-receive 脚本（需 GitHub Enterprise）。改走 GitHub Actions PR 检查路径。
+  - CI 模式降级：`.runtime/session_registry.json` 在 `.gitignore` 中，CI 环境无此文件，所有 `[GW:session_id]` 标记在空注册表下会被误判为 forged。解决方案：registry 不存在时降级为 `sess-\d{4,8}-\d{14}` 格式校验（session_id 格式本身就是合法性强约束）。
+  - merge commit 豁免：GitHub squash/merge commit 不带 [GW:] 标记，需通过前缀正则识别放行。
+  - BARE-SUBPROCESS gate 逃生：`subprocess.run` 调用 git log 时加 `# noqa: bare-subprocess`（CI 环境无 process_pool 依赖，纯 stdlib 实现需裸 subprocess）。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 
