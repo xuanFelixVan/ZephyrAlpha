@@ -720,7 +720,7 @@ P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json  �
 Phase 4 (长期,依赖 Phase 3 完成):
 ─────────────────────────────────────────
 P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id  ✅ 已落地 2026-07-20
-P4-1b (新增,2h) event_sink.py JSONL consumer 聚合
+P4-1b (新增,2h) event_sink.py JSONL consumer 聚合                    ✅ 已落地 2026-07-20
 P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)
 P4-2  (✅ 已落地 2026-07-20,forged_gw_marker_gate.py)
 P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message.py
@@ -837,6 +837,50 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
   （`_log_reconcile_results` 内部用 `uuid.uuid4()` 生成，无法外部指定）。
 - **capability_canonical_file_registry.yaml**: 登记 `auto-error-pattern-id-column-test-20260720` creation_token。
 - 10/10 PASSED in 0.98s。
+
+**P4-1b 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b，commit d75cd0afcf + merge 1559077826）**:
+
+- **src/zephyr/governance/audit/error_pattern_consumer_reconciler.py**（新建，~293 行，MOD-GOV-error_pattern_consumer）:
+  AI 行为遥测 JSONL 错误事件聚合 consumer。post-commit 事件触发，扫描
+  `data/telemetry/prod/logs/telemetry_*.jsonl` 下 AI behavior events
+  （`labels.__type == "ai_behavior_event"`），过滤含 `error` 字段的事件，
+  按 `(error_type, persistence, source)` 三元组计算 SHA1 指纹聚合，持久化到
+  `.runtime/ai_error_patterns/aggregated_patterns.json`。
+  1. `compute_error_pattern_id(error_type, persistence, source) -> str`:
+     `EP-` + sha1(error_type|persistence|source)[:16]，供 P4-1 回填
+     `reconcile_execution_log.error_pattern_id` 使用（P4-1a 已扩展 schema）
+  2. `_iter_error_events(telemetry_dir) -> Iterator[dict]`: 扫描 JSONL，
+     fail-open（单文件读取/解析失败跳过）
+  3. `_is_ai_behavior_error_event(entry) -> bool`: 事件类型 + error 字段双重过滤
+  4. `_merge_event_into_patterns(patterns, event)`: 单事件合并到 patterns dict
+     （count 累加 + first_seen/last_seen 更新 + expectation_dist/severity_dist 分布）
+  5. `aggregate_error_patterns(telemetry_dir, output_path) -> dict`: 全量重扫覆盖
+     输出（幂等，非增量）
+  6. `make_error_pattern_consumer_reconciler(gateway) -> ReconcilerSpec`:
+     post-commit reconciler 工厂（priority=880，晚于 abuse_monitor(875)，
+     早于 remediation_progress(900)），reconciler 永不抛异常（异常降级为 warn）
+- **src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py**（修改）:
+  注册 `make_error_pattern_consumer_reconciler` 到 post-commit reconciler 链
+  （`_register_default_reconcilers` 内，abuse_monitor(875) 之后，
+  workspace_hygiene(890) 之前）。
+- **src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py**（修改）:
+  `run_checker_script` 修复——`text=False` 分支显式设 `kwargs["text"] = False`，
+  防止 `run_subprocess_hidden` 的 `setdefault("text", True)` 覆盖调用方字节模式意图。
+- **src/zephyr/gov_enforcement/commit_gates/ttl_gate.py**（修改）:
+  修复 TTL-METADATA gate 崩溃（`'str' object has no attribute 'decode'`）——
+  `run_subprocess_hidden` 的 `setdefault("errors", "replace")` 会强制 text 模式
+  （即使 `text=False`），导致 `result.stderr` 为 str 而非 bytes。添加 `_decode()`
+  helper 兼容 str/bytes 两种返回类型。
+- **tests/governance/audit/test_error_pattern_consumer.py**（新建，~325 行，SRC-TST-3004）:
+  P4-1b 单测，5 个测试类 22 个测试：
+  1. `TestComputeErrorPatternId`（4 tests）——确定性 / 不同输入 / EP- 前缀格式 / 顺序敏感
+  2. `TestAggregateErrorPatterns`（7 tests）——空目录 / 不存在目录 / 单事件 / 同指纹聚合 / 异指纹分离 / 分布累加 / 多文件扫描
+  3. `TestEventFiltering`（4 tests）——非 ai_behavior 跳过 / 无 error 跳过 / 无 labels 跳过 / 损坏行跳过
+  4. `TestPersistenceAndIdempotency`（3 tests）——有效 JSON / 幂等 / 目录自动创建
+  5. `TestReconcilerFactory`（4 tests）——trigger / clean(无事件) / clean(有事件) / warn(异常降级)
+- **capability_canonical_file_registry.yaml**: 登记 2 个 creation_token
+  （`auto-error-pattern-consumer-reconciler-20260720` + `auto-error-pattern-consumer-test-20260720`）。
+- 22/22 PASSED in 0.78s（+ P4-1a 10/10 = 合计 32/32 PASSED）。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 
