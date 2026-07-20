@@ -4,39 +4,106 @@
 # [DEPENDENCIES]
 # [CONSUMERS] tests.test_microstructure_defense
 # [STARTUP] imported
-# [MATURITY] stub
-# [INVARIANTS]
+# [MATURITY] production
+# [INVARIANTS] DEFENSE_STRATEGIES覆盖所有DefenseType;FidelityFactor.composite_ff公式固定
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS]
+# [TESTS] tests/governance/governance_e2e/test_gov_microstructure_defense.py
 # [TTL] permanent
-"""Stub module: zephyr.security.access_control.microstructure_defense — implementation pending."""
+"""微结构防御——对抗做市/交易微结构攻击的策略与保真度因子。
 
+依据 MOD-INF-018 蓝图定义 5 类微结构攻击威胁及对应反制措施，
+并提供基于成交概率/滑点/盘口深度/部分成交的保真度综合评分。
+"""
+
+from __future__ import annotations
+
+from enum import StrEnum, unique
 from typing import Final
 
-DEFAULT_FIDELITY: Final[None] = None  # stub constant
-DEFENSE_STRATEGIES: Final[None] = None  # stub constant
+from pydantic import BaseModel, Field
 
 
-class DefenseStrategy:
-    """Stub class — implementation pending."""
+@unique
+class DefenseType(StrEnum):
+    """5 类微结构攻击威胁。"""
 
-    pass
+    HFT_FRONT_RUN = "HFT_FRONT_RUN"
+    STOP_HUNTING = "STOP_HUNTING"
+    SPREAD_EXPLOIT = "SPREAD_EXPLOIT"
+    ORDER_BOOK_HOLLOW = "ORDER_BOOK_HOLLOW"
+    GAPPING = "GAPPING"
 
 
-class DefenseType:
-    """Stub class — implementation pending."""
+class DefenseStrategy(BaseModel):
+    """单类威胁的防御策略描述。"""
 
-    pass
+    defense: DefenseType
+    threat: str
+    countermeasure: str
 
 
-class FidelityFactor:
-    """Stub class — implementation pending."""
+# 5 类威胁的 canonical 反制策略（与 DefenseType 一一对应）
+_DEFENSE_STRATEGY_DATA: Final[dict[DefenseType, DefenseStrategy]] = {
+    DefenseType.HFT_FRONT_RUN: DefenseStrategy(
+        defense=DefenseType.HFT_FRONT_RUN,
+        threat="Adversarial agent front-runs user orders using latency advantage",
+        countermeasure="Enforce order randomization and commit-reveal scheme",
+    ),
+    DefenseType.STOP_HUNTING: DefenseStrategy(
+        defense=DefenseType.STOP_HUNTING,
+        threat="Adversarial agent triggers clustered stop-loss orders to capture liquidity",
+        countermeasure="Distribute stop-loss levels and apply slippage guard",
+    ),
+    DefenseType.SPREAD_EXPLOIT: DefenseStrategy(
+        defense=DefenseType.SPREAD_EXPLOIT,
+        threat="Adversarial agent manipulates bid-ask spread to extract risk-free profit",
+        countermeasure="Apply minimum spread floor and inventory-based quoting",
+    ),
+    DefenseType.ORDER_BOOK_HOLLOW: DefenseStrategy(
+        defense=DefenseType.ORDER_BOOK_HOLLOW,
+        threat="Adversarial agent posts spoof orders to create false depth signal",
+        countermeasure="Require resting-order penalty and cancel-rate monitor",
+    ),
+    DefenseType.GAPPING: DefenseStrategy(
+        defense=DefenseType.GAPPING,
+        threat="Adversarial agent induces price gaps to break downstream risk models",
+        countermeasure="Enforce price-band circuit breaker and gap-fill monitor",
+    ),
+}
 
-    pass
+DEFENSE_STRATEGIES: Final[dict[DefenseType, DefenseStrategy]] = _DEFENSE_STRATEGY_DATA
+
+
+class FidelityFactor(BaseModel):
+    """微结构保真度因子——4 个子因子加权合成的 composite_ff。"""
+
+    fill_probability: float = Field(default=0.85, ge=0.0, le=1.0)
+    slippage: float = Field(default=0.30, ge=0.0, le=1.0)
+    order_book_depth: float = Field(default=0.20, ge=0.0, le=1.0)
+    partial_fill: float = Field(default=0.60, ge=0.0, le=1.0)
+
+    @property
+    def composite_ff(self) -> float:
+        """加权合成保真度评分——权重 0.30/0.35/0.20/0.15（合 1.0）。"""
+        raw = (
+            self.fill_probability * 0.30
+            + self.slippage * 0.35
+            + self.order_book_depth * 0.20
+            + self.partial_fill * 0.15
+        )
+        return round(raw, 4)
+
+    @property
+    def description(self) -> str:
+        """人类可读的保真度摘要——含 composite_ff 百分比。"""
+        return f"composite fidelity = {self.composite_ff * 100:.2f}%"
+
+
+DEFAULT_FIDELITY: Final[FidelityFactor] = FidelityFactor()
 
 
 __all__ = [
