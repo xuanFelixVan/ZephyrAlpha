@@ -40,6 +40,8 @@ if _SRC_DIR not in sys.path:
 from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec  # noqa: E402
 from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # noqa: E402
     _ALLOW_OVERLAP_7D_THRESHOLD,
+    _ADAPTIVE_FACTOR,
+    _BASELINE_WINDOW_DAYS,
     _EMERGENCY_24H_THRESHOLD,
     _FORGED_24H_THRESHOLD,
     _GATE_ID,
@@ -47,9 +49,12 @@ from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  #
     _PRIORITY,
     _WARN_ONLY_24H_THRESHOLD,
     _classify_abuse,
+    _compute_adaptive_thresholds,
     _count_allow_overlap_usage,
     _count_emergency_commits,
+    _load_baseline,
     _read_json_reports,
+    _record_daily_metrics,
     make_commit_gateway_abuse_monitor_reconciler,
 )
 
@@ -857,4 +862,380 @@ class TestReconcileCallsAllowOverlapUsage:
         )
         assert "allow_overlap_abuse_7d" not in data["dimensions_triggered"], (
             "P1-1 治本失败：无审计文件时不应触发维度3（原 warn_only+gw_env=1 反推已废止）。"
+        )
+
+
+# ============================================================================
+# P3-6: 7d baseline 持久化测试（#ARCH-PREVENTABILITY-LAYER-001 Phase 3）
+# ============================================================================
+
+
+class TestBaselinePersistence:
+    """P3-6: _load_baseline / _record_daily_metrics 持久化测试。"""
+
+    def test_load_baseline_missing_file_returns_empty(self, tmp_path):
+        """文件不存在时返回空结构（fail-open）。"""
+        result = _load_baseline(tmp_path)
+        assert result["daily_records"] == []
+        assert result["last_updated"] == 0
+
+    def test_load_baseline_corrupted_file_returns_empty(self, tmp_path):
+        """损坏 JSON 返回空结构（fail-open）。"""
+        bf = tmp_path / ".runtime" / "abuse_monitor" / "abuse_baseline.json"
+        bf.parent.mkdir(parents=True)
+        bf.write_text("{broken json", encoding="utf-8")
+        result = _load_baseline(tmp_path)
+        assert result["daily_records"] == []
+
+    def test_record_daily_metrics_appends_new_day(self, tmp_path):
+        """新日期追加到 daily_records。"""
+        now = int(time.time())
+        metrics = {
+            "warn_only_24h": 10,
+            "emergency_commit_24h": 1,
+            "allow_overlap_7d": 5,
+            "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 2,
+        }
+        records = _record_daily_metrics(tmp_path, metrics, now)
+        assert len(records) == 1
+        rec = records[0]
+        assert rec["metrics"]["warn_only_sustained_24h"] == 10
+        assert rec["metrics"]["emergency_commit_abuse_24h"] == 1
+        assert rec["metrics"]["allow_overlap_abuse_7d"] == 5
+        assert rec["metrics"]["forged_gw_marker_rate_24h"] == 0
+        assert rec["metrics"]["non_gw_commit_sustained_24h"] == 2
+
+    def test_record_daily_metrics_overwrites_same_day(self, tmp_path):
+        """同日多次记录覆盖（按 date 去重，保留最新）。"""
+        now = int(time.time())
+        # 第一次记录
+        _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 10, "emergency_commit_24h": 1,
+            "allow_overlap_7d": 5, "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 2,
+        }, now)
+        # 同日第二次记录（warn_only 从 10 → 25）
+        records = _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 25, "emergency_commit_24h": 1,
+            "allow_overlap_7d": 5, "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 2,
+        }, now + 3600)
+        assert len(records) == 1  # 同日不增加新记录
+        assert records[0]["metrics"]["warn_only_sustained_24h"] == 25  # 覆盖为最新值
+
+    def test_record_daily_metrics_trims_7d_window(self, tmp_path):
+        """超过 7d 的旧记录被裁剪。"""
+        now = int(time.time())
+        # 写入 8 天前的记录
+        old_ts = now - 8 * 24 * 3600
+        _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 100, "emergency_commit_24h": 0,
+            "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 0,
+        }, old_ts)
+        # 写入今日记录
+        records = _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 5, "emergency_commit_24h": 0,
+            "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 0,
+        }, now)
+        # 8 天前的记录应被裁剪
+        assert len(records) == 1
+        assert records[0]["metrics"]["warn_only_sustained_24h"] == 5
+
+    def test_record_daily_metrics_maps_keys_to_standard_dim_names(self, tmp_path):
+        """metrics 简化 key 映射到标准 dim_name（与 _DEFAULT_THRESHOLDS 一致）。"""
+        now = int(time.time())
+        _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 12, "emergency_commit_24h": 2,
+            "allow_overlap_7d": 3, "forged_gw_marker_24h": 1,
+            "non_gw_commit_24h": 4,
+        }, now)
+        baseline = _load_baseline(tmp_path)
+        rec = baseline["daily_records"][0]
+        # baseline 中存储的是标准 dim_name（非简化 key）
+        assert "warn_only_sustained_24h" in rec["metrics"]
+        assert "emergency_commit_abuse_24h" in rec["metrics"]
+        assert "allow_overlap_abuse_7d" in rec["metrics"]
+        assert "forged_gw_marker_rate_24h" in rec["metrics"]
+        assert "non_gw_commit_sustained_24h" in rec["metrics"]
+        # 不应包含简化 key
+        assert "warn_only_24h" not in rec["metrics"]
+
+    def test_record_daily_metrics_persists_across_loads(self, tmp_path):
+        """save 后 load 能读回（持久化验证）。"""
+        now = int(time.time())
+        _record_daily_metrics(tmp_path, {
+            "warn_only_24h": 15, "emergency_commit_24h": 0,
+            "allow_overlap_7d": 0, "forged_gw_marker_24h": 0,
+            "non_gw_commit_24h": 0,
+        }, now)
+        # 重新 load
+        baseline = _load_baseline(tmp_path)
+        assert baseline["last_updated"] == now
+        assert len(baseline["daily_records"]) == 1
+        assert baseline["daily_records"][0]["metrics"]["warn_only_sustained_24h"] == 15
+
+
+# ============================================================================
+# P3-1: _compute_adaptive_thresholds 自适应阈值计算测试
+# ============================================================================
+
+
+class TestComputeAdaptiveThresholds:
+    """P3-1: 从 7d baseline 计算自适应阈值测试。"""
+
+    def test_empty_records_returns_empty_dict(self):
+        """无历史记录返回空 dict（调用方降级为纯静态阈值）。"""
+        result = _compute_adaptive_thresholds([])
+        assert result == {}
+
+    def test_single_record_returns_at_least_static_floor(self):
+        """单条记录：阈值 = max(ewma * factor, static_floor) >= static_floor。"""
+        now = int(time.time())
+        records = [{
+            "date": "2026-07-20",
+            "timestamp": now,
+            "metrics": {
+                "warn_only_sustained_24h": 30,
+                "emergency_commit_abuse_24h": 1,
+                "allow_overlap_abuse_7d": 5,
+                "forged_gw_marker_rate_24h": 0,
+                "non_gw_commit_sustained_24h": 2,
+            },
+        }]
+        result = _compute_adaptive_thresholds(records)
+        # 5 维都应返回阈值
+        assert len(result) == 5
+        # 阈值 >= static_floor（因为 max(ewma*factor, static_floor)）
+        assert result["warn_only_sustained_24h"] >= _WARN_ONLY_24H_THRESHOLD
+        assert result["emergency_commit_abuse_24h"] >= _EMERGENCY_24H_THRESHOLD
+        assert result["allow_overlap_abuse_7d"] >= _ALLOW_OVERLAP_7D_THRESHOLD
+        assert result["forged_gw_marker_rate_24h"] >= _FORGED_24H_THRESHOLD
+        assert result["non_gw_commit_sustained_24h"] >= _NON_GW_24H_THRESHOLD
+
+    def test_high_baseline_raises_threshold_above_static(self):
+        """高基线（7d 平均高）→ 自适应阈值 > 静态阈值（ewma*factor > static_floor）。"""
+        now = int(time.time())
+        # 7 天每日 warn_only=100（远高于 static_floor=50）
+        records = [
+            {
+                "date": f"2026-07-{20 - i}",
+                "timestamp": now - i * 24 * 3600,
+                "metrics": {
+                    "warn_only_sustained_24h": 100,
+                    "emergency_commit_abuse_24h": 0,
+                    "allow_overlap_abuse_7d": 0,
+                    "forged_gw_marker_rate_24h": 0,
+                    "non_gw_commit_sustained_24h": 0,
+                },
+            }
+            for i in range(7)
+        ]
+        result = _compute_adaptive_thresholds(records)
+        # ewma(100) * 1.5 = 150 > 50(static_floor) → 自适应阈值 = 150
+        assert result["warn_only_sustained_24h"] > _WARN_ONLY_24H_THRESHOLD
+        assert result["warn_only_sustained_24h"] >= 100.0  # 至少 ewma*factor 附近
+
+    def test_low_baseline_keeps_static_floor(self):
+        """低基线（7d 平均低）→ 自适应阈值 = static_floor（防阈值过低）。"""
+        now = int(time.time())
+        # 7 天每日 warn_only=0（远低于 static_floor=50）
+        records = [
+            {
+                "date": f"2026-07-{20 - i}",
+                "timestamp": now - i * 24 * 3600,
+                "metrics": {
+                    "warn_only_sustained_24h": 0,
+                    "emergency_commit_abuse_24h": 0,
+                    "allow_overlap_abuse_7d": 0,
+                    "forged_gw_marker_rate_24h": 0,
+                    "non_gw_commit_sustained_24h": 0,
+                },
+            }
+            for i in range(7)
+        ]
+        result = _compute_adaptive_thresholds(records)
+        # ewma(0) * 1.5 = 0 < 50(static_floor) → 自适应阈值 = 50（static_floor 兜底）
+        assert result["warn_only_sustained_24h"] == float(_WARN_ONLY_24H_THRESHOLD)
+
+    def test_skips_invalid_records(self):
+        """损坏的 record 被跳过（不抛异常）。"""
+        records = [
+            "not a dict",  # 损坏
+            {"date": "2026-07-20", "timestamp": int(time.time()), "metrics": "not dict"},
+            None,
+        ]
+        # 不抛异常，返回 5 维阈值（基于空历史，应等于 static_floor）
+        result = _compute_adaptive_thresholds(records)
+        assert len(result) == 5
+
+
+# ============================================================================
+# P3-1: _classify_abuse 集成 adaptive_thresholds 测试
+# ============================================================================
+
+
+class TestClassifyAbuseWithAdaptive:
+    """P3-1: _classify_abuse 接受 adaptive_thresholds 参数测试。"""
+
+    NOW_TS = 1784000000
+
+    def test_adaptive_higher_than_static_uses_adaptive(self):
+        """adaptive > static → 有效阈值 = adaptive（更高更严格）。"""
+        # warn_only 静态阈值=50，自适应阈值=100 → 有效阈值=100
+        # 60 个 warn_only 事件：60 > 50(static) 触发，但 60 < 100(adaptive) 不触发
+        reports = [
+            {"timestamp": self.NOW_TS - 100, "action": "warn_only",
+             "violation": "unregistered_session_id"}
+            for _ in range(60)
+        ]
+        result = _classify_abuse(
+            post_commit_reports=reports,
+            audit_reports=[],
+            emergency_count=0,
+            now_ts=self.NOW_TS,
+            adaptive_thresholds={"warn_only_sustained_24h": 100.0},
+        )
+        # 60 < 100(有效阈值) → 不触发
+        assert "warn_only_sustained_24h" not in result["dimensions_triggered"]
+        # metrics 中记录有效阈值 = 100
+        assert result["metrics"]["effective_thresholds"]["warn_only_24h"] == 100
+
+    def test_adaptive_lower_than_static_uses_static(self):
+        """adaptive < static → 有效阈值 = static（防阈值过低）。"""
+        # warn_only 静态阈值=50，自适应阈值=10 → 有效阈值=max(10,50)=50
+        # 60 个 warn_only 事件：60 > 50(有效阈值) 触发
+        reports = [
+            {"timestamp": self.NOW_TS - 100, "action": "warn_only",
+             "violation": "unregistered_session_id"}
+            for _ in range(60)
+        ]
+        result = _classify_abuse(
+            post_commit_reports=reports,
+            audit_reports=[],
+            emergency_count=0,
+            now_ts=self.NOW_TS,
+            adaptive_thresholds={"warn_only_sustained_24h": 10.0},
+        )
+        # 60 > 50(有效阈值=static) → 触发
+        assert "warn_only_sustained_24h" in result["dimensions_triggered"]
+        assert result["metrics"]["effective_thresholds"]["warn_only_24h"] == 50
+
+    def test_adaptive_thresholds_recorded_in_metrics(self):
+        """metrics 中记录 effective_thresholds 和 adaptive_thresholds。"""
+        result = _classify_abuse(
+            post_commit_reports=[], audit_reports=[],
+            emergency_count=0, now_ts=self.NOW_TS,
+            adaptive_thresholds={"warn_only_sustained_24h": 75.0},
+        )
+        assert "effective_thresholds" in result["metrics"]
+        assert "adaptive_thresholds" in result["metrics"]
+        assert result["metrics"]["adaptive_thresholds"]["warn_only_sustained_24h"] == 75.0
+
+    def test_no_adaptive_thresholds_degrades_to_static(self):
+        """adaptive_thresholds=None 时降级为纯静态阈值（向后兼容）。"""
+        result = _classify_abuse(
+            post_commit_reports=[], audit_reports=[],
+            emergency_count=0, now_ts=self.NOW_TS,
+            adaptive_thresholds=None,
+        )
+        # 有效阈值 = 静态阈值
+        assert result["metrics"]["effective_thresholds"]["warn_only_24h"] == _WARN_ONLY_24H_THRESHOLD
+        # adaptive_thresholds 全为 0.0（因为传入 None）
+        assert result["metrics"]["adaptive_thresholds"]["warn_only_sustained_24h"] == 0.0
+
+
+# ============================================================================
+# P3-6 集成: reconcile 持久化 baseline 测试
+# ============================================================================
+
+
+class TestReconcilePersistsBaseline:
+    """P3-6: reconcile 后 baseline 文件被写入并包含今日 metrics。"""
+
+    def test_reconcile_writes_baseline_file(self, tmp_path):
+        """reconcile 后 .runtime/abuse_monitor/abuse_baseline.json 存在。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            spec.reconcile([], "sess-p3-6-baseline")
+
+        baseline_file = tmp_path / ".runtime" / "abuse_monitor" / "abuse_baseline.json"
+        assert baseline_file.exists(), "P3-6: baseline 文件未写入"
+
+    def test_reconcile_baseline_contains_today_metrics(self, tmp_path):
+        """baseline 包含今日 5 维 metrics（标准 dim_name）。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        # 写入一些 warn_only 报告（会产生 warn_only_24h 计数）
+        for i in range(15):
+            _write_report(tmp_path, "post_commit_guard", now - 100 - i, {
+                "action": "warn_only",
+                "violation": "unregistered_session_id",
+            })
+
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            spec.reconcile([], "sess-p3-6-metrics")
+
+        baseline = _load_baseline(tmp_path)
+        assert len(baseline["daily_records"]) == 1
+        rec = baseline["daily_records"][0]
+        # 今日 warn_only 计数应为 15
+        assert rec["metrics"]["warn_only_sustained_24h"] == 15
+        # 5 维都应有记录
+        assert "emergency_commit_abuse_24h" in rec["metrics"]
+        assert "allow_overlap_abuse_7d" in rec["metrics"]
+        assert "forged_gw_marker_rate_24h" in rec["metrics"]
+        assert "non_gw_commit_sustained_24h" in rec["metrics"]
+
+    def test_reconcile_report_includes_adaptive_fields(self, tmp_path):
+        """reconcile 报告包含 adaptive_enabled 和 baseline_records_count 字段。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            spec.reconcile([], "sess-p3-1-report")
+
+        reports = list((tmp_path / ".runtime" / "reconcile_reports").glob(
+            "commit_gateway_abuse_monitor_*.json"
+        ))
+        assert len(reports) == 1
+        data = json.loads(reports[0].read_text(encoding="utf-8"))
+        # P3-1: 报告应包含 adaptive_enabled 字段
+        assert "adaptive_enabled" in data
+        assert "baseline_records_count" in data
+        # metrics 应包含 effective_thresholds 和 adaptive_thresholds
+        assert "effective_thresholds" in data["metrics"]
+        assert "adaptive_thresholds" in data["metrics"]
+
+    def test_reconcile_second_run_uses_historical_baseline(self, tmp_path):
+        """第二次 reconcile 加载历史 baseline 计算自适应阈值。"""
+        gw = _FakeGateway(tmp_path)
+        spec = make_commit_gateway_abuse_monitor_reconciler(gw)
+        now = int(time.time())
+
+        # 第一次 reconcile（写入今日 baseline）
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now):
+            spec.reconcile([], "sess-p3-1-first")
+
+        # 第二次 reconcile（应加载历史 baseline）
+        with patch("zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._count_emergency_commits", return_value=0), \
+             patch("time.time", return_value=now + 60):
+            spec.reconcile([], "sess-p3-1-second")
+
+        # 第二次报告的 baseline_records_count 应 >= 1（历史 baseline 已加载）
+        reports = sorted((tmp_path / ".runtime" / "reconcile_reports").glob(
+            "commit_gateway_abuse_monitor_*.json"
+        ))
+        second_report = json.loads(reports[-1].read_text(encoding="utf-8"))
+        assert second_report["baseline_records_count"] >= 1, (
+            "P3-1: 第二次 reconcile 应加载历史 baseline（baseline_records_count >= 1）"
         )
