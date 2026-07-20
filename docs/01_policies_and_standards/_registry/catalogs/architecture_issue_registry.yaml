@@ -4951,6 +4951,7 @@ entries:
         noqa_exempt_registry.yaml（no-verify-ruling marker, scope=commit-message）
         architecture_issue_registry.yaml（本案登记）
       - ruling 文档落盘：docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md
+        （单独 commit 3c6c73b1ec，merge 82e9704ffd7b）
   impact:
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 1+1.5+2：4 钩子 + 5 helper + _restore_auto_sync_batch staged 修复）
     - src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py（Phase 3 新建 gate，priority=77）
@@ -4961,7 +4962,7 @@ entries:
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability + creation_token 登记）
     - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml（no-verify-ruling marker 登记）
     - docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md（Phase 3 ruling 文档落盘）
-  status: in_progress
+  status: resolved
   related_adjudication: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (pre-merge sys.path 治本，session lifecycle 同维度), #ARCH-WORKTREE-002 (worktree 物理隔离基础，本议题在其上加工作区 clean 检查), Ruling:100PCT-AI-GOVERNANCE (100% AI 场景第一性原理，warn=通过治本须 fail-closed), #ARCH-TOOL-HEALTH-V1 (workspace_hygiene_reconciler 复用基础), #ARCH-CROSS-COMMIT-ATOMICITY-001 (跨 commit 原子性，本议题 Phase 3 gate priority=77 紧接其后)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_054 (备份先行), trae_060 (向内收三原则), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
