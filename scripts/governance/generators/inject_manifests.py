@@ -20,7 +20,7 @@ inject_manifests.py — __manifest__ 批量注入器
 注入到对应的 .py 文件中作为 __manifest__ 块。
 无 manifest 记录的脚本：从 docstring + 目录路径自动推断。
 
-对标 §6.2 静态清单自动生成铁律：
+对标 §6.3 静态清单自动生成铁律：
 手工维护的静态清单 → 迁移为脚本内嵌的 __manifest__ Schema 输入。
 
 Usage:
@@ -53,7 +53,7 @@ args:
 warn_only: false
 description: >
   从现有 script_manifest.yaml 批量提取元数据，注入到各 .py 文件中作为 __manifest__ 块。
-  对标 §6.2 静态清单自动生成铁律。一次性迁移工具。
+  对标 §6.3 静态清单自动生成铁律。一次性迁移工具。
 """
 
 SCRIPTS_DIR = REPO_ROOT / "scripts" / "governance"

@@ -4670,14 +4670,90 @@ entries:
     (4) 登记到 capability_canonical_file_registry.yaml（creation_token=
         auto-trae-070-temp-file-placement-20260720）+ rule_ai_perception_index.yaml
         （TRAE-070 entry），确保 AI 可发现性
+
+    P2 治本升级（2026-07-20，强制门禁落地）：
+    用户诉求"不能依靠 AI 自觉，需要强制"——将 trae_070 从指引类升级为阻断类：
+    (a) trae_070 v1.1.0: paired_gate_id null → GATE-DIRECTORY-CONTRACT，enforcement_strength=block
+    (b) check_directory_contract.py 新增 DCR-008（check_purpose_extension）：校验
+        file extension ∈ directory_extensions[path].purpose_allowed_extensions，error 级阻断
+    (c) _DCR_EXEMPT_PREFIXES 拆分为 _DCR_DOC_TYPE_EXEMPT_PREFIXES（DCR-001）+
+        _DCR_EXTENSION_EXEMPT_PREFIXES（DCR-005/006/008），.runtime/ 不再豁免扩展名校验
+    (d) directory_contract.yaml 新增 purpose + purpose_allowed_extensions 字段，重点新增
+        .runtime/tmp/ 显式条目（purpose_allowed_extensions: [.ps1/.py/.sh/.txt/.log]）
+    (e) 治本效果：.runtime/tmp/*.md 被 DCR-006+DCR-008 双重阻断；docs/_working/*.py 被
+        DCR-006+DCR-008 双重阻断。AI 无法再绕过 docs/_working/ 的 auto_archive gate。
   impact:
-    - docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml（新增规则文件，5 铁律 + 目录用途分类表 + 判定流程）
+    - docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml（新增规则文件，5 铁律 + 目录用途分类表 + 判定流程；P2 升级 paired_gate_id → GATE-DIRECTORY-CONTRACT）
+    - docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml（P2 新增 purpose + purpose_allowed_extensions 字段 + .runtime/tmp/ 显式条目）
+    - scripts/governance/d1_structure/check_directory_contract.py（P2 新增 DCR-008 check_purpose_extension + 拆分豁免区常量）
+    - tests/governance/d1_structure/test_check_directory_contract_dcr008.py（P2 新增 28 个 DCR-008 单元测试）
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（登记 trae_070 creation_token）
     - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（添加 TRAE-070 entry）
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-TEMP-FILE-PLACEMENT-001 登记）
-  fix_phase: 已完成（规则文件 + capability 登记 + perception index 全部落地）
+    - AGENTS.md（P1 同步 §6.2 临时文件分类存放铁律说明）
+  fix_phase: 已完成（P1 规则文件 + capability 登记 + perception index + AGENTS.md 同步；P2 DCR-008 强制门禁 + 豁免区收紧 + 测试覆盖全部落地）
   status: resolved
   related_adjudication: '#ARCH-TTL-DOC-001 (tmp_ 前缀文件 gitignore 规则治本，互补关系)'
   related_rules: 'trae_070 (临时文件分类存放铁律), trae_047 (工程文件头部格式), directory_contract.yaml (目录契约)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+# --- #ARCH-TEMP-FILE-LIFECYCLE-001: 临时文件生命周期铁律治本（2026-07-20） ---
+- issue_id: '#ARCH-TEMP-FILE-LIFECYCLE-001'
+  title: 临时文件生命周期铁律治本——免跟踪暂存区无生命周期治理导致成果无声删除
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    2026-07-20 上午"双策略共振选股"分析中间产物被写入 .runtime/strategy_screen/
+    （.gitignore 第 105-117 行将 .runtime/ 整目录免跟踪）。成果文件
+    FINAL_resonance_rank.csv 在 11:58 生成后、12:06 前被其他会话/清理进程
+    无声删除（无审计痕迹），靠组件 CSV 重新生成。同目录还存在数百个历史
+    会话遗留垃圾（_*.py、pytest_tmp*、tmp_*、各种 .log/.txt），全部是各
+    会话直写 .runtime 根目录造成。
+
+    根因分析（第一性原理）：
+    (1) 主因——生命周期治理缺失：trae_070 治理"空间维度"（文件类型→目录），
+        但缺"时间维度"（生命周期：创建→暂存→promote/清理）。免跟踪暂存区
+        （.runtime/）无 TTL 约束，AI 可直写根目录导致会话间相互覆盖/删除。
+    (2) 成果层与暂存层未区分：分析成果（FINAL_resonance_rank.csv）与计算
+        中间产物（A_sector_rs.csv 等）同处 .runtime/strategy_screen/，
+        清理进程无法区分"成果"与"中间产物"，统一删除。
+    (3) 系统层与暂存层未隔离：.runtime/heartbeat/ 等系统文件与 AI 直写的
+        暂存文件混在同一根目录，无法实施差异化治理。
+
+    治本方案（Owner 裁定三级分类替代"一刀切"）：
+    (1) 成果层（docs/_working/）——git 跟踪 + ttl/doc_type/completes_when
+        front-matter + 完成归档 docs/_archive/；成果必须"提升"（promote）
+        到本层才算交付，留在 .runtime 视为草稿可被清理。
+    (2) 暂存层（.runtime/sessions/<sid>/staging/）——免跟踪 + 会话级隔离
+        （不同 session 物理隔离）+ TTL=24h 事件驱动清理（主清理时机：
+        session_worktree_merge/abort 事件触发；post-commit reconciler
+        make_session_staging_lifecycle_reconciler priority=802 兜底）。
+    (3) 系统层（.runtime/ 现有系统子目录）——免跟踪 + 现有 reconciler
+        维护（#ARCH-HEARTBEAT-001 等），本规则不触碰。
+
+    两条硬规则：
+    (1) 禁止任何 AI 会话向 .runtime 根目录直写文件（必须落在
+        .runtime/sessions/<sid>/staging/，与系统文件目录隔离）。
+    (2) 成果必须 promote 到 docs/_working/ 才算交付（shutil.copy + 写
+        front-matter + 更新 docs/_working/index.md）。
+
+    事故驱动：FINAL_resonance_rank.csv 无声删除事件 + 同目录数百个历史
+    会话遗留垃圾——本规则从源头禁止直写根目录 + 暂存层会话级隔离 +
+    事件驱动 TTL 兜底清理三层防御。
+
+  impact:
+    - docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml（新增规则文件，5 铁律 + 三级分类表 + 生命周期事件 + promote 机制）
+    - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（添加 TRAE-071 entry）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-TEMP-FILE-LIFECYCLE-001 登记）
+    - AGENTS.md（§6.4 引用 trae_071）
+    - docs/_working/2026-07-20-resonance-screen-result.md + .csv（事故驱动的成果归档示例，promote 机制落地）
+    - src/zephyr/governance/audit/reconciliation_registry.py（待实现 make_session_staging_lifecycle_reconciler priority=802，对标 make_stash_lifecycle_reconciler priority=801）
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（待注入 session_worktree_merge/abort 清理钩子）
+    - src/zephyr/trading/boot_hooks.py（待注册 reconciler 到 boot_hooks）
+  fix_phase: 规则文件 + perception index + AGENTS.md 已落地；reconciler 实现待落地（被 sess-18504/sess-55092 持有核心文件阻塞）
+  status: in_progress
+  related_adjudication: '#ARCH-TEMP-FILE-PLACEMENT-001 (空间维度互补), #ARCH-HEARTBEAT-001 (系统层 reconciler 边界)'
+  related_rules: 'trae_071 (临时文件生命周期铁律), trae_070 (临时文件分类存放铁律 - 空间维度), trae_060 (向内收三原则 - 事件驱动), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'

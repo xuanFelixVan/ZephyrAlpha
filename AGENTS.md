@@ -432,9 +432,21 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 - **根目录 `tmp_*` 文件/目录**：AI 会话临时产物（测试输出/调试残留），`.gitignore` `/tmp_*` 规则集全覆盖（文件 8 后缀 + `/tmp_*/` 目录，ARCH-TTL-DOC-001）。**pytest 必须使用 `--basetemp=tmp/<name>`**（落入 `tmp/` 退役区双重治理），禁止默认在项目根生成 `tmp_*/` 目录——根目录残留即使被 gitignore 也是可见性黑洞（2026-07-17 清理 12 个 `tmp_clean/tmp_extreme*/tmp_pytest*` 目录）。
 - **测试隔离红线（ARCH-BENCH-LEAK-001）**：测试禁止写入生产路径（`data/model_profiles/` 等 `data/` 业务目录），输出目录一律用 `tmp_path` fixture 或 `tmp/` 下路径；含周期线程/后台线程的被测对象，测试结尾必须调 `shutdown()` 并断言线程引用已清空——线程泄漏会将测试行为放大为生产路径 1Hz 写盘循环（2026-07-17 清理 1911 个零字节 `benchmark_*.jsonl`）。
 
-### 6.2 静态清单自动生成铁律（GATE-21 自动化执行层）
+### 6.2 临时文件分类存放铁律（ARCH-TEMP-FILE-PLACEMENT-001，2026-07-20 治本）
 
-任何"条目列表 + 计数"性质的清单文件**必须**由生成器自动产出（Type A：从代码/配置派生）或以 schema 为输入（Type B），**禁止手工维护条目**——手工维护必然与真源漂移。本铁律原以 §6.16 引用（断头引用，§6 下并不存在 §6.16），2026-07-17 治本补建为 §6.2 并收敛全部引用。
+AI 创建任何临时文件前 MUST 查 [`trae_070_temporary_file_placement.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml) 的 `directory_purpose_classification` 表确定存放目录，禁止凭"方便"选择。5 铁律：
+
+- **LAW-1**：任务文档类（.md/.csv/.yaml）必放 `docs/_working/`（temporary zone，auto_archive gate 保护，ttl=task_bound）
+- **LAW-2**：运行时辅助脚本（.ps1/.py/.sh/.txt/.log）必放 `.runtime/tmp/`（neutral zone，无门禁——这是技术原因不是"可以乱放"的许可）
+- **LAW-3**：AI session worktree 必放 `.aidrafts/{session_id}/`（session_worktree 默认路径）
+- **LAW-4**：测试输出按类型分类（报告 .md → `docs/_working/reports/`，数据 .json/.csv → `tests/fixtures/`，临时输出 .log → `.runtime/tmp/`）
+- **LAW-5**：禁止凭"方便"选择目录——必须按文件类型匹配 [`directory_contract.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml) zone
+
+**当前强制状态**：trae_070 v1.1.0 配对 GATE-DIRECTORY-CONTRACT（DCR-008 强制校验 file extension ↔ directory purpose_allowed_extensions，error 级阻断 commit）。DCR-008 治本前 `.runtime/` 整目录豁免所有 DCR 校验（AI 把任意文件放 `.runtime/` 不被拦截），治本后 `.runtime/tmp/` 显式声明 `purpose_allowed_extensions`，`.md/.csv/.yaml/.json` 在 `.runtime/tmp/` 即阻断。
+
+### 6.3 静态清单自动生成铁律（GATE-21 自动化执行层）
+
+任何"条目列表 + 计数"性质的清单文件**必须**由生成器自动产出（Type A：从代码/配置派生）或以 schema 为输入（Type B），**禁止手工维护条目**——手工维护必然与真源漂移。本铁律原以 §6.16 引用（断头引用，§6 下并不存在 §6.16），2026-07-17 治本补建为 §6.2 并收敛全部引用；2026-07-20 因新增 §6.2 临时文件分类存放铁律（ARCH-TEMP-FILE-PLACEMENT-001）顺延为 §6.3，全部引用同步收敛。
 
 **覆盖清单（自动生成真源 → 派生缓存，单向）**：
 - `docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml`（门禁登记表）—— 真源三源合并：`.pre-commit-config.yaml`（pre-commit hooks）+ `src/zephyr/gov_enforcement/commit_gates/*.py`（CommitGate GateSpec 声明）+ `MANUAL_GATES`（已合并/退役门禁重定向锚点）。生成器：[`scripts/governance/generators/generate_gate_registry.py`](file:///d:/ZephyrAlpha/scripts/governance/generators/generate_gate_registry.py)。`total_gates` 由 [`scripts/context/generate_architecture_context.py`](file:///d:/ZephyrAlpha/scripts/context/generate_architecture_context.py) 消费为 AI 架构上下文数据源。**post-commit 由 GATE-GATE-REGISTRY-SYNC reconciler 自动重生**（[`make_gate_registry_sync_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) priority=830，ARCH-GATE-REGISTRY-SYNC-001 治本，对标 GATE-MANIFEST reconciler；trigger 覆盖三源：commit_gates/*.py + .pre-commit-config.yaml + generate_gate_registry.py）。
@@ -443,6 +455,31 @@ governance/ 等包的根目录 vs 子目录同名文件（stale duplicate）有�
 **自动化执行层**：[`scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py)（GATE-21）顺序运行全部生成器 `--check` 模式，自动生成版 vs 磁盘版任何不一致 → 硬阻断（exit 1）。生成器 `import zephyr.*` 需 `src/` 在 `PYTHONPATH`——validator 自举 `sys.path` 含 `src/` 并向子进程注入 `PYTHONPATH=src`，不依赖调用方环境。
 
 **修复漂移**：运行对应生成器（不带 `--check`）重新生成，例如 `python scripts/governance/generators/generate_gate_registry.py`。
+
+### 6.4 临时文件生命周期铁律（ARCH-TEMP-FILE-LIFECYCLE-001，2026-07-20 治本）
+
+§6.2 trae_070 治理**空间维度**（文件类型 → 目录），本节 trae_071 治理**时间维度**（生命周期：创建 → 暂存 → promote/清理）——两者正交互补。背景：2026-07-20 上午"双策略共振选股"中间产物被写入 .runtime/strategy_screen/（免跟踪暂存区），成果文件 FINAL_resonance_rank.csv 在 11:58 生成后、12:06 前被其他会话/清理进程无声删除（无审计痕迹），暴露免跟踪暂存区无生命周期治理的问题。Owner 裁定三级分类替代"一刀切"：
+
+| 层级 | 内容 | 去向 | 治理 |
+|---|---|---|---|
+| 成果层 | 分析报告、选股清单、工作文档 | docs/_working/ | git 跟踪 + 	tl/doc_type/completes_when 头 + 完成归档 docs/_archive/ |
+| 暂存层 | 计算中间产物、缓存、调试脚本 | .runtime/sessions/<session_id>/staging/ | 免跟踪 + 会话结束自动清理 + 禁止直写 .runtime 根目录 |
+| 系统层 | 锁/会话注册/审计/pid/heartbeat | .runtime/ 现有系统子目录 | 免跟踪 + 现有 reconciler 维护（不动） |
+
+**5 铁律（详见 [	rae_071_temporary_file_lifecycle.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml)）**：
+
+- **LIFE-LAW-1**：禁止任何 AI 会话向 .runtime 根目录直写文件——必须落在 .runtime/sessions/<sid>/staging/（与 #ARCH-HEARTBEAT-001 系统文件目录隔离）
+- **LIFE-LAW-2**：成果必须"提升"（promote）到 docs/_working/ 才算交付——留在 .runtime 的成果视为草稿、可被清理；promote 机制：shutil.copy + 写 front-matter（	tl=task_bound / doc_type=analysis_report / completes_when=...）+ 更新 [docs/_working/index.md](file:///d:/ZephyrAlpha/docs/_working/index.md)
+- **LIFE-LAW-3**：暂存层会话级隔离——不同 session 的 staging 目录互不干扰（.runtime/sessions/<sid_A>/staging/ 与 .runtime/sessions/<sid_B>/staging/ 物理隔离）
+- **LIFE-LAW-4**：暂存层 TTL=24h（事件驱动兜底）——主清理时机是 session_worktree_merge / session_worktree_abort 事件触发；post-commit reconciler make_session_staging_lifecycle_reconciler（priority=802, gate=GATE-SESSION-STAGING-LIFECYCLE，对标 make_stash_lifecycle_reconciler priority=801）兜底清理 >24h 的孤儿 staging 目录（禁止 cron/sleep-loop，事件驱动对齐 trae_060 向内收原则②）
+- **LIFE-LAW-5**：系统层不干预——.runtime/heartbeat/ / .runtime/sessions/<sid>/heartbeat.jsonl 等系统文件由 #ARCH-HEARTBEAT-001 现有 reconciler 维护，本规则不触碰
+
+**事故驱动**：2026-07-20 FINAL_resonance_rank.csv 无声删除事件 + 同目录数百个历史会话遗留垃圾（_*.py / pytest_tmp* / 	mp_* / 各种 .log/.txt，全部是各会话直写 .runtime 根目录造成）——本规则从源头禁止直写根目录 + 暂存层会话级隔离 + 事件驱动 TTL 兜底清理三层防御。
+
+**当前落地状态**：
+- 规则真源：[	rae_071_temporary_file_lifecycle.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml)（v1.0.0，已 sync 到 DB）
+- paired_gate_id=null（暂无 pre-commit gate，.runtime/ 免跟踪区无 commit-time 拦截点；治理依赖 AI 自觉 + 事件驱动 reconciler 兜底）
+- reconciler 实现待落地（被 sess-18504 持有 econciliation_registry.py + sess-55092 持有 session_worktree.py 阻塞，待释放后实现 make_session_staging_lifecycle_reconciler 并注册到 oot_hooks.py）
 
 ## 7. 代码规范
 

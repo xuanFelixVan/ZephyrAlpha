@@ -19,7 +19,7 @@ Consumes directory_contract.yaml（目录维度约束的唯一真源，合并原
 trae_047 directory_mapping / ttl_vocabulary Q3 / doc_type_vocabulary crosscheck
 三维来源）并校验文件合规性。
 
-Implemented checks (DCR-001~007):
+Implemented checks (DCR-001~008):
   DCR-001: directory.allowed_doc_types contains file.doc_type (error, P3 改造)
   DCR-002: 废弃（P3 改造——forbidden_directories 全为空，allowed_doc_types 白名单已足够）
   DCR-003: permanent zone file ttl == permanent             (error)
@@ -27,9 +27,16 @@ Implemented checks (DCR-001~007):
   DCR-005: file extension in directory_extensions.allowed   (error)
   DCR-006: file extension not in directory_extensions.forbidden (error)
   DCR-007: root directory file in root_directory_whitelist  (error)
+  DCR-008: file extension in directory_extensions.purpose_allowed_extensions (error, 治本 #ARCH-TEMP-FILE-PLACEMENT-001)
 
-DCR-001 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）、.trae/（IDE 工具区）、docs/01_policies_and_standards/templates/（模板区 TMP-EX-001）
+DCR-001 (doc_type) 豁免区：docs/_working/（临时区）、docs/_archive/（归档区）、.runtime/（运行时归档区）、.trae/（IDE 工具区）、docs/01_policies_and_standards/templates/（模板区 TMP-EX-001）
+DCR-005/006/008 (扩展名) 豁免区：docs/_archive/（历史归档，不强制扩展名）、docs/01_policies_and_standards/templates/（模板区）
+  治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：.runtime/ 不再豁免扩展名校验。
+  原先 _DCR_EXEMPT_PREFIXES 名字暗示"全 DCR 豁免"，实际只在 check_doc_type_directory 使用；
+  本治本拆分为 _DCR_DOC_TYPE_EXEMPT_PREFIXES（DCR-001）+ _DCR_EXTENSION_EXEMPT_PREFIXES（DCR-005/006/008），
+  语义清晰且 .runtime/ 强制扩展名校验生效。
 DCR-001 真源：directory_contract.yaml directory_extensions[].allowed_doc_types（P3 改造，原 doc_type_vocabulary.yaml allowed_directories 已废弃）
+DCR-008 真源：directory_contract.yaml directory_extensions[].purpose_allowed_extensions（治本 #ARCH-TEMP-FILE-PLACEMENT-001）
 
 Modes:
   --staged              check git-staged files only (pre-commit use)
@@ -83,15 +90,30 @@ _VOCABULARY_PATH = (
     / "_registry" / "vocabularies" / "doc_type_vocabulary.yaml"
 )
 
-# DCR-001/002 豁免目录前缀（临时区 + 归档区 + 运行时/IDE 工具区 + 模板区）
+# DCR-001 (doc_type) 豁免目录前缀（临时区 + 归档区 + 运行时/IDE 工具区 + 模板区）
+# 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：原 _DCR_EXEMPT_PREFIXES 拆分为
+# _DCR_DOC_TYPE_EXEMPT_PREFIXES（DCR-001）和 _DCR_EXTENSION_EXEMPT_PREFIXES（DCR-005/006/008）。
 # docs/_working/：临时工作区（过程性文档）
 # docs/_archive/：永久区归档（历史遗留，不受新规则约束）
-# .runtime/：运行时归档区（working_archive 等，neutral zone，非正式文档区）
+# .runtime/：运行时归档区（working_archive 等，neutral zone，非正式文档区，无 doc_type 概念）
 # .trae/：IDE 工具区（documents 等，过程性文档，非正式文档区）
 # docs/01_policies_and_standards/templates/：模板区（TMP-EX-001 豁免——模板是 Class Definition，
 #   cookbook template 的 doc_type 取目标类型，不受目标类型的 allowed_directories 约束）
-_DCR_EXEMPT_PREFIXES = (
+_DCR_DOC_TYPE_EXEMPT_PREFIXES = (
     "docs/_working/", "docs/_archive/", ".runtime/", ".trae/",
+    "docs/01_policies_and_standards/templates/",
+)
+
+# DCR-005/006/008 (扩展名) 豁免区——只有真正无扩展名约束的目录才豁免
+# 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：
+#   .runtime/ 不再豁免扩展名校验（force-add .md 到 .runtime/tmp/ 会被 DCR-006+DCR-008 阻断）
+#   .trae/ 不再豁免扩展名校验（.trae/rules/ 由 directory_contract 显式约束）
+#   docs/_working/ 不豁免（DCR-005/006 已生效，强制 .md/.csv/.yaml）
+# 保留豁免：
+#   docs/_archive/：历史归档，不强制扩展名（可能含遗留 .py 等历史文件）
+#   docs/01_policies_and_standards/templates/：模板区（模板可能含多种格式示例）
+_DCR_EXTENSION_EXEMPT_PREFIXES = (
+    "docs/_archive/",
     "docs/01_policies_and_standards/templates/",
 )
 
@@ -225,10 +247,17 @@ def check_extension(rel_path: str, contract: dict) -> list[dict]:
 
     DCR-005: file.extension in directory_extensions[path].allowed OR allowed_exceptions
     DCR-006: file.extension not in directory_extensions[path].forbidden
+
+    治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：新增 _DCR_EXTENSION_EXEMPT_PREFIXES
+    豁免区检查。原 check_extension 无豁免（任何目录都校验），现在 docs/_archive/ 和
+    templates/ 豁免扩展名校验（历史归档/模板区允许遗留多种格式）。
     """
     rel_dir = str(Path(rel_path).parent).replace("\\", "/")
     if rel_dir == ".":
         return []  # 根目录文件由 DCR-007 处理
+    rel_posix = rel_path.replace("\\", "/")
+    if any(rel_posix.startswith(prefix) for prefix in _DCR_EXTENSION_EXEMPT_PREFIXES):
+        return []  # 豁免区：历史归档/模板区不强制扩展名
     ext = Path(rel_path).suffix
     rule = find_extension_rule(contract, rel_dir)
     if not rule:
@@ -254,6 +283,46 @@ def check_extension(rel_path: str, contract: dict) -> list[dict]:
             "detail": f"扩展名 {ext} 在 {rule['path']} 的 forbidden 清单内",
         })
     return findings
+
+
+def check_purpose_extension(rel_path: str, contract: dict) -> list[dict]:
+    """DCR-008: 文件扩展名必须匹配目录用途（purpose_allowed_extensions）。
+
+    治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：DCR-005（allowed 白名单）只校验
+    "技术允许"，DCR-008 进一步校验"用途匹配"。例如 .runtime/tmp/ 的 allowed=[.ps1/.py/.sh/.txt/.log]，
+    purpose_allowed_extensions 同集合——若 AI 在 .runtime/tmp/ 创建 .md 文件，DCR-005 已阻断
+    （.md 不在 allowed），DCR-008 双重保险阻断。
+
+    数据源：directory_contract.yaml directory_extensions[].purpose_allowed_extensions
+    配对规则：trae_070_temporary_file_placement.yaml（paired_gate_id=GATE-DIRECTORY-CONTRACT）
+
+    豁免区：与 DCR-005/006 共用 _DCR_EXTENSION_EXEMPT_PREFIXES（docs/_archive/、templates/）
+    """
+    rel_dir = str(Path(rel_path).parent).replace("\\", "/")
+    if rel_dir == ".":
+        return []  # 根目录文件由 DCR-007 处理
+    rel_posix = rel_path.replace("\\", "/")
+    if any(rel_posix.startswith(prefix) for prefix in _DCR_EXTENSION_EXEMPT_PREFIXES):
+        return []  # 豁免区：历史归档/模板区不强制用途匹配
+    ext = Path(rel_path).suffix.lower()
+    rule = find_extension_rule(contract, rel_dir)
+    if not rule:
+        return []  # 该目录无扩展名规则
+    purpose_allowed = rule.get("purpose_allowed_extensions")
+    if not purpose_allowed:
+        return []  # 目录未声明 purpose_allowed_extensions，跳过（向后兼容）
+    if ext not in purpose_allowed:
+        return [{
+            "rule": "DCR-008",
+            "severity": "error",
+            "file": rel_path,
+            "detail": (
+                f"文件扩展名 {ext} 不匹配目录用途 "
+                f"{rule.get('purpose', 'unknown')}（purpose_allowed_extensions="
+                f"{purpose_allowed}），目录 {rule['path']}"
+            ),
+        }]
+    return []
 
 
 def check_root_whitelist(rel_path: str, contract: dict) -> list[dict]:
@@ -368,7 +437,7 @@ def check_doc_type_directory(rel_path: str, contract: dict, vocab: dict | None =
         return []  # 根目录文件由 DCR-007 处理
 
     # 豁免区检查（临时区、归档区、运行时区、模板区）
-    if any(rel_posix.startswith(prefix) for prefix in _DCR_EXEMPT_PREFIXES):
+    if any(rel_posix.startswith(prefix) for prefix in _DCR_DOC_TYPE_EXEMPT_PREFIXES):
         return []
 
     # 查找文件所在目录的 extension rule（longest-prefix match）
@@ -430,6 +499,7 @@ def scan_files(files: list[str], contract: dict, vocab: dict | None = None) -> l
     for rel_path in files:
         findings.extend(check_doc_type_directory(rel_path, contract, vocab))
         findings.extend(check_extension(rel_path, contract))
+        findings.extend(check_purpose_extension(rel_path, contract))
         findings.extend(check_root_whitelist(rel_path, contract))
         findings.extend(check_ttl_zone(rel_path, contract))
         findings.extend(check_deprecated_directory(rel_path, contract))
@@ -538,7 +608,7 @@ def _scan_all_walk(contract: dict, scan_prefixes: set[str]) -> list[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007）"
+        description="GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008）"
     )
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--ci", action="store_true",
