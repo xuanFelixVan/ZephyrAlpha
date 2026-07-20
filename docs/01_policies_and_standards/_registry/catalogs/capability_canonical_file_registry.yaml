@@ -6185,6 +6185,15 @@ creation_tokens:
     token: "auto-process-pool-hidden-20260720"
     created_by: "sess-52476-20260720095800"
     capability: "subprocess_hidden_helper"
+
+  # --- 临时文件分类存放铁律（2026-07-20，#ARCH-TEMP-FILE-PLACEMENT-001）---
+  # 治本：AI 创建临时文件前 MUST 查此规则确定存放目录，禁止凭"方便"选择
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("temporary_file_placement") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 trae_070 副本
+  - file: "docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml"
+    token: "auto-trae-070-temp-file-placement-20260720"
+    created_by: "sess-47424-20260720124449"
+    capability: "temporary_file_placement"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

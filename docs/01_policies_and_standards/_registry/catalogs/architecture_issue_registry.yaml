@@ -4628,3 +4628,56 @@ entries:
   related_rules: 'trae_065 (RULE-CAPABILITY-LOOKUP), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+
+# --- #ARCH-TEMP-FILE-PLACEMENT-001: 临时文件分类存放铁律治本（2026-07-20） ---
+- issue_id: '#ARCH-TEMP-FILE-PLACEMENT-001'
+  title: 临时文件分类存放铁律治本——禁止 AI 凭方便选择目录乱放临时文件
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    AI 在执行任务时产生临时文件（任务文档/运行时辅助脚本/worktree/测试输出/日志），
+    原先无明确的分类存放规则，AI 凭"方便"选择目录导致：
+    (1) 任务文档（.md）被创建在 .runtime/tmp/（neutral zone，无门禁），
+        绕过 docs/_working/ 的 auto_archive gate 约束，post-commit reconciler
+        无法自动归档；
+    (2) 运行时辅助脚本（.ps1/.py）被创建在 docs/_working/（temporary zone），
+        违反 directory_contract.yaml 第 277-281 行的扩展名约束（forbidden: .py/.sh/.ps1）；
+    (3) AI 误以为 .runtime/ 无门禁=可以乱放，实际无门禁是技术原因（运行态目录），
+        不是"可以乱放"的许可。
+
+    根因分析（第一性原理）：
+    (1) 主因——规则缺失：trae_001~069 无明确的临时文件分类存放铁律，AI 缺乏决策依据。
+    (2) directory_contract.yaml 定义了 zone 和扩展名约束，但缺乏"AI 拿到临时文件应放哪里"
+        的正面指引（只定义"不能放哪里"）。
+    (3) .runtime/ 在 directory_contract.yaml §exclude_from_governance 被排除门禁，
+        AI 误读为"可以乱放"。
+
+    裁定（治本策略）：
+    (1) 新增 trae_070_temporary_file_placement.yaml 规则文件，明确 5 铁律：
+        - LAW-1: 任务文档类（.md/.csv/.yaml）必放 docs/_working/（auto_archive gate 保护）
+        - LAW-2: 运行时辅助脚本（.ps1/.py/.sh/.txt/.log）必放 .runtime/tmp/（无门禁，
+          但这是技术原因，不是可以乱放 .md 的许可）
+        - LAW-3: AI session worktree 必放 .aidrafts/{session_id}/（session_worktree 默认路径）
+        - LAW-4: 测试输出文件按类型分类（测试报告 .md → docs/_working/reports/，
+          测试数据 .json/.csv → tests/fixtures/，临时测试输出 .log → .runtime/tmp/）
+        - LAW-5: 禁止凭"方便"选择目录——必须按文件类型匹配 directory_contract.yaml zone
+    (2) 提供 4 步判定流程：拿到文件 → ① 判定文件类型（任务文档/运行时脚本/worktree/测试输出/日志）
+        → ② 查 directory_purpose_classification 表确定目标目录 → ③ 查 directory_contract.yaml
+        确认扩展名允许 → ④ 创建文件
+    (3) paired_gate_id=null（指引类规则，directory_contract.yaml DCR-001~007 已硬约束扩展名，
+       本规则提供正面分类指引，不需新增 gate）
+    (4) 登记到 capability_canonical_file_registry.yaml（creation_token=
+        auto-trae-070-temp-file-placement-20260720）+ rule_ai_perception_index.yaml
+        （TRAE-070 entry），确保 AI 可发现性
+  impact:
+    - docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml（新增规则文件，5 铁律 + 目录用途分类表 + 判定流程）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（登记 trae_070 creation_token）
+    - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（添加 TRAE-070 entry）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-TEMP-FILE-PLACEMENT-001 登记）
+  fix_phase: 已完成（规则文件 + capability 登记 + perception index 全部落地）
+  status: resolved
+  related_adjudication: '#ARCH-TTL-DOC-001 (tmp_ 前缀文件 gitignore 规则治本，互补关系)'
+  related_rules: 'trae_070 (临时文件分类存放铁律), trae_047 (工程文件头部格式), directory_contract.yaml (目录契约)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'

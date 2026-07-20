@@ -1763,3 +1763,36 @@ rules:
   - ARCH-PREVENTABILITY-LAYER-001
   paired_gate_id: FORGED-GW-MARKER
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
+- rule_id: TRAE-070
+  title: 临时文件分类存放铁律（Temporary File Placement，治本 #ARCH-TEMP-FILE-PLACEMENT-001）
+  module_id: TRAE-070
+  scope: temporary_file_placement
+  domain: TRAE
+  severity: high
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - temporary_file_creation
+  - task_document_placement
+  - runtime_script_placement
+  - worktree_placement
+  - test_output_placement
+  gate_ids: []
+  tags:
+  - TRAE
+  - temporary_file
+  - file_placement
+  - directory_discipline
+  - docs_working
+  - runtime_tmp
+  - aidrafts
+  - RULE-TEMP-PLACE
+  aliases:
+  - RULE-TEMP-PLACE
+  - 临时文件存放
+  - 临时文件分类
+  - temp_file_placement
+  - ARCH-TEMP-FILE-PLACEMENT-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml

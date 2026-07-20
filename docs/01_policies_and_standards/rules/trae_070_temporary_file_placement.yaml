@@ -1,0 +1,242 @@
+# trae_070_temporary_file_placement.yaml
+# 临时文件分类存放铁律（治本 #ARCH-TEMP-FILE-PLACEMENT-001）
+#
+# SSoT 真源分类（trae_062）：本文件是临时文件存放位置的规则数据真源。
+# AI 在创建任何临时文件前 MUST 查阅本文件确定存放目录，禁止凭"方便"选择。
+#
+# 历史：
+#   2026-07-20: 发现 AI 将任务背景文档错放到 .runtime/tmp/（运行时临时目录），
+#               原因是 .runtime/tmp/ 被 directory_contract exclude_from_governance
+#               排除门禁，AI 可随意放文件不被拦截。本规则治本：明确分类铁律。
+#
+# 核心问题（第一性原理）：
+#   - .runtime/tmp/ 在 neutral zone + exclude_from_governance → 无门禁约束 → AI 凭方便乱放
+#   - docs/_working/ 在 temporary zone + auto_archive gate → 有门禁约束 → AI 嫌麻烦避开
+#   - 结果：该放 docs/_working/ 的任务文档错放 .runtime/tmp/，该放 .runtime/tmp/ 的
+#     运行时脚本有时又污染 docs/_working/
+#   - 治本：明确分类铁律 + AI 创建临时文件前 MUST 查本规则
+#
+# 5 铁律：
+#   1. 任务文档类 → docs/_working/（ttl=task_bound，auto_archive 归档）
+#   2. 运行时辅助脚本 → .runtime/tmp/（无门禁，纯运行时产物）
+#   3. AI session worktree → .aidrafts/{session_id}/（worktree 物理隔离）
+#   4. 测试输出文件 → .runtime/tmp/（临时）或 docs/_working/（需保留分析）
+#   5. 禁止跨类乱放——判定流程见下文
+#
+# 修改规则（铁律）：
+#   - 修改分类必须改本文件，禁止散落在代码注释或 AGENTS.md 散文
+#   - 修改后必须运行 sync_yaml_to_depgraph.py 同步到 DB（缓存）
+#   - 必须更新 version 字段（语义化版本）
+
+meta:
+  rule_id: trae_070
+  rule_name: temporary_file_placement
+  version: '1.0.0'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+  ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
+  related_issue: '#ARCH-TEMP-FILE-PLACEMENT-001'
+  related_adjudication: '#ARCH-TEMP-FILE-PLACEMENT-001'
+
+# enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
+# 本 YAML 是临时文件存放位置的指引真源（数据/指引类规则，非行为规则）。
+# 无对应 pre-commit gate（.runtime/tmp/ 被 exclude_from_governance 排除，无法 gate）。
+# 治本依赖：AI 自觉查本规则 + capability_lookup.find("temporary_file_placement") 反查。
+# 未来可选：增加 post-commit reconciler 检测 .runtime/tmp/ 下的 .md 文件并 warn。
+enforcement:
+  paired_gate_id: null  # 指引类规则，无对应 enforcement gate（.runtime/tmp/ 排除门禁）
+  post_commit_reconciler: null  # 未来可选：检测 .runtime/tmp/*.md 并 warn
+
+# ============================================================
+# 1. 目录用途分类表（Directory Purpose Classification）
+# ============================================================
+# AI 创建临时文件前 MUST 对照本表确定存放目录。
+# 判定流程：拿到要创建的文件 → 问"什么类型？" → 查下表 → 放对应目录。
+
+directory_purpose_classification:
+  # --- temporary zone（有门禁 auto_archive，ttl=task_bound）---
+  - directory: "docs/_working/"
+    zone: temporary
+    ttl: task_bound
+    purpose: "任务文档类——过程性文档，post-commit reconciler 自动归档"
+    allowed_extensions: [".md", ".csv", ".yaml"]
+    forbidden_extensions: [".py", ".sh", ".ps1", ".bak", ".baseline"]
+    file_types:
+      - "任务背景文档（task context/directive）"
+      - "任务计划文档（plan/spec）"
+      - "任务报告文档（report/analysis）"
+      - "研究笔记（research notes）"
+      - "决策记录（decision record）"
+      - "临时分析文档（temporary analysis）"
+    gate: auto_archive
+
+  # --- temporary zone 子目录（覆盖父目录约束）---
+  - directory: "docs/_working/audit/"
+    zone: temporary
+    ttl: task_bound
+    purpose: "审计工作文档——仅 .md"
+    allowed_extensions: [".md"]
+    forbidden_extensions: [".csv", ".yaml", ".json"]
+    overrides_parent: true
+    gate: auto_archive
+
+  - directory: "docs/_working/research_notes/"
+    zone: temporary
+    ttl: task_bound
+    purpose: "研究笔记——.md/.txt/.yaml"
+    allowed_extensions: [".md", ".txt", ".yaml"]
+    forbidden_extensions: [".py", ".sh", ".ps1"]
+    overrides_parent: true
+    gate: auto_archive
+
+  - directory: "docs/_working/ttl_content_audit/"
+    zone: temporary
+    ttl: task_bound
+    purpose: "TTL 内容审计——仅 .csv"
+    allowed_extensions: [".csv"]
+    forbidden_extensions: [".md", ".yaml", ".json"]
+    overrides_parent: true
+    gate: auto_archive
+
+  # --- neutral zone（无门禁，default_ttl=null，运行时产物）---
+  - directory: ".runtime/tmp/"
+    zone: neutral
+    ttl: null
+    purpose: "运行时辅助脚本——纯运行时产物，无门禁约束"
+    allowed_extensions: [".ps1", ".py", ".sh", ".txt", ".log"]
+    forbidden_extensions: [".md"]  # 禁止任务文档放此（本规则铁律1）
+    file_types:
+      - "PowerShell 辅助脚本（.ps1，绕过工具 bug 的临时脚本）"
+      - "Python 临时脚本（.py，诊断/探查用）"
+      - "Shell 脚本（.sh）"
+      - "测试输出文件（.txt/.log，临时，不需保留）"
+    gate: none
+    note: "被 directory_contract exclude_from_governance 排除，无门禁拦截，AI 须自觉遵循本规则"
+
+  - directory: ".runtime/lookup_audit/"
+    zone: neutral
+    ttl: null
+    purpose: "capability lookup 审计日志——运行时产物"
+    allowed_extensions: [".jsonl"]
+    gate: none
+
+  - directory: ".runtime/claim_snapshots/"
+    zone: neutral
+    ttl: null
+    purpose: "commit claim 快照——FOREIGN_CHANGE gate 崩溃恢复"
+    allowed_extensions: [".json"]
+    gate: none
+
+  # --- AI session worktree（物理隔离）---
+  - directory: ".aidrafts/{session_id}/"
+    zone: neutral
+    ttl: null
+    purpose: "AI session worktree——独立 git worktree 物理隔离，每 session 独立"
+    allowed_extensions: ["*"]  # worktree 内可放任何文件（commit 时仍受 gate 约束）
+    gate: none
+    note: "session_worktree_start 创建，session_worktree_commit 提交，session_worktree_merge 合并"
+
+  # --- 日志目录 ---
+  - directory: "logs/"
+    zone: neutral
+    ttl: null
+    purpose: "运行时日志——.jsonl/.log"
+    allowed_extensions: [".jsonl", ".log"]
+    gate: none
+
+  - directory: ".runtime/logs/"
+    zone: neutral
+    ttl: null
+    purpose: "运行时日志（.runtime 下）"
+    allowed_extensions: [".jsonl", ".log"]
+    gate: none
+
+# ============================================================
+# 2. 5 铁律（Iron Laws）
+# ============================================================
+
+iron_laws:
+  - id: TEMP-PLACE-LAW-1
+    name: "任务文档类必放 docs/_working/"
+    statement: "任务背景/指令/计划/报告/分析/研究笔记等任务文档 MUST 放 docs/_working/（或其子目录），禁止放 .runtime/tmp/"
+    rationale: "docs/_working/ 是 temporary zone，有 auto_archive gate 归档，ttl=task_bound；.runtime/tmp/ 是运行时临时目录，无归档，任务文档放此会丢失"
+    prohibition: "禁止将 .md 任务文档放 .runtime/tmp/"
+    detection: "post-commit reconciler 可检测 .runtime/tmp/*.md 并 warn（未来可选）"
+
+  - id: TEMP-PLACE-LAW-2
+    name: "运行时辅助脚本必放 .runtime/tmp/"
+    statement: "PowerShell/Python/Shell 辅助脚本（绕过工具 bug、诊断探查用）MUST 放 .runtime/tmp/，禁止放 docs/_working/（directory_contract 已禁止 .py/.sh/.ps1）"
+    rationale: "docs/_working/ forbidden_extensions 包含 .py/.sh/.ps1；.runtime/tmp/ 无门禁约束适合运行时脚本"
+    prohibition: "禁止将 .ps1/.py/.sh 运行时脚本放 docs/_working/"
+
+  - id: TEMP-PLACE-LAW-3
+    name: "AI session worktree 必放 .aidrafts/{session_id}/"
+    statement: "AI session 的 worktree MUST 放 .aidrafts/{session_id}/，由 session_worktree_start 创建"
+    rationale: "worktree 物理隔离消除搭便车提交，每 session 独立 git index"
+    prohibition: "禁止在主工作区直接编辑后裸 git commit（须通过 session_worktree_commit）"
+
+  - id: TEMP-PLACE-LAW-4
+    name: "测试输出文件分类存放"
+    statement: "测试输出文件（.txt/.log）：临时不需保留 → .runtime/tmp/；需保留分析 → docs/_working/（.md 格式）"
+    rationale: "临时测试输出是运行时产物；需保留的分析应转为 .md 文档归档"
+
+  - id: TEMP-PLACE-LAW-5
+    name: "禁止凭方便选择目录"
+    statement: "AI 创建临时文件前 MUST 查本规则 directory_purpose_classification 确定存放目录，禁止凭'方便'选择（如因 .runtime/tmp/ 无门禁就往里放任务文档）"
+    rationale: ".runtime/tmp/ 无门禁是技术原因（运行时产物排除治理），不是'可以乱放'的许可"
+    prohibition: "禁止以'.runtime/tmp/ 方便'为由将任务文档放此"
+
+# ============================================================
+# 3. 判定流程（Decision Flow）
+# ============================================================
+# AI 创建临时文件前的判定流程：
+#   Step 1: 文件类型是什么？
+#     - 任务文档（.md，任务背景/指令/计划/报告/分析/笔记）→ LAW-1 → docs/_working/
+#     - 运行时脚本（.ps1/.py/.sh，辅助/诊断/探查）→ LAW-2 → .runtime/tmp/
+#     - AI session worktree 内容 → LAW-3 → .aidrafts/{session_id}/
+#     - 测试输出（.txt/.log）→ LAW-4 → .runtime/tmp/（临时）或 docs/_working/（保留）
+#     - 日志（.jsonl/.log）→ logs/ 或 .runtime/logs/
+#   Step 2: 查 directory_purpose_classification 确认目录
+#   Step 3: 检查 extension 是否在 allowed_extensions 内
+#   Step 4: 创建文件
+
+decision_flow:
+  step_1_identify_type: "拿到要创建的文件 → 问'什么类型？'（任务文档/运行时脚本/worktree/测试输出/日志）"
+  step_2_lookup_classification: "查 directory_purpose_classification 表确定存放目录"
+  step_3_check_extension: "检查文件扩展名是否在目录的 allowed_extensions 内"
+  step_4_create: "创建文件到对应目录"
+
+# ============================================================
+# 4. 常见错误（Common Mistakes，AI 须避免）
+# ============================================================
+
+common_mistakes:
+  - mistake: "任务背景文档放 .runtime/tmp/"
+    correct: "放 docs/_working/"
+    reason: ".runtime/tmp/ 无归档，任务文档会丢失；docs/_working/ 有 auto_archive 归档"
+    violated_law: TEMP-PLACE-LAW-1
+
+  - mistake: "PowerShell 辅助脚本放 docs/_working/"
+    correct: "放 .runtime/tmp/"
+    reason: "directory_contract 禁止 docs/_working/ 下 .ps1 文件"
+    violated_law: TEMP-PLACE-LAW-2
+
+  - mistake: "在主工作区直接编辑后裸 git commit"
+    correct: "用 session_worktree_start 创建 worktree，在 worktree 内编辑/commit"
+    reason: "worktree 物理隔离消除搭便车提交"
+    violated_law: TEMP-PLACE-LAW-3
+
+  - mistake: "凭'.runtime/tmp/ 方便'放任务文档"
+    correct: "查本规则 directory_purpose_classification 确定目录"
+    reason: ".runtime/tmp/ 无门禁是技术原因，不是'可以乱放'的许可"
+    violated_law: TEMP-PLACE-LAW-5
+
+# ============================================================
+# 5. 不变量（Invariants）
+# ============================================================
+
+invariants:
+  - "docs/_working/ 下禁止 .py/.sh/.ps1/.bak/.baseline（directory_contract 约束）"
+  - ".runtime/tmp/ 下禁止 .md 任务文档（本规则 LAW-1 约束）"
+  - ".aidrafts/{session_id}/ 是唯一合法 AI session worktree 位置"
+  - "AI 创建临时文件前 MUST 查本规则（禁止凭记忆/方便选择目录）"
