@@ -1195,3 +1195,102 @@ class TestNonWorktreeCommitWarning:
         assert any("无其他活跃 session" in r.message for r in infos), (
             f"异常降级应走 INFO 路径: {[r.message for r in infos]!r}"
         )
+
+
+# ---------------------------------------------------------------------------
+# P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# _classify_git_timeout 单元测试——验证按 git 子命令类型分类 timeout。
+# 原硬编码 timeout=120s → 改为 read 15s / write 60s / default 30s。
+# ---------------------------------------------------------------------------
+from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
+    _classify_git_timeout,
+    _GIT_TIMEOUT_DEFAULT,
+    _GIT_TIMEOUT_READ,
+    _GIT_TIMEOUT_WRITE,
+)
+
+
+class TestClassifyGitTimeout:
+    """_classify_git_timeout 按命令类型分类 timeout（P2-2b 治本）。"""
+
+    def test_read_commands_return_15s(self) -> None:
+        """rev-parse/show/status/diff/log 等 read 子命令返回 15s。"""
+        for subcmd in ["rev-parse", "show", "status", "diff", "log", "ls-tree",
+                        "merge-base", "config", "cat-file", "rev-list"]:
+            assert _classify_git_timeout(["git", subcmd]) == _GIT_TIMEOUT_READ, (
+                f"git {subcmd} 应返回 READ timeout ({_GIT_TIMEOUT_READ}s)"
+            )
+
+    def test_write_commands_return_60s(self) -> None:
+        """commit/merge/checkout/reset 等 write 子命令返回 60s。"""
+        for subcmd in ["commit", "merge", "checkout", "reset", "update-ref",
+                        "rebase", "cherry-pick", "revert", "apply", "am"]:
+            assert _classify_git_timeout(["git", subcmd]) == _GIT_TIMEOUT_WRITE, (
+                f"git {subcmd} 应返回 WRITE timeout ({_GIT_TIMEOUT_WRITE}s)"
+            )
+
+    def test_unknown_subcommand_returns_default(self) -> None:
+        """未登记的 git 子命令返回 default timeout（30s）。"""
+        # stash/show-ref 已登记为 read；用一个未登记的命令名
+        assert _classify_git_timeout(["git", "weird-command"]) == _GIT_TIMEOUT_DEFAULT
+        # 空字符串子命令
+        assert _classify_git_timeout(["git", ""]) == _GIT_TIMEOUT_DEFAULT
+
+    def test_non_git_command_returns_default(self) -> None:
+        """非 git 命令返回 default timeout（30s）。"""
+        assert _classify_git_timeout(["python", "script.py"]) == _GIT_TIMEOUT_DEFAULT
+        assert _classify_git_timeout(["cmd", "/c", "dir"]) == _GIT_TIMEOUT_DEFAULT
+        assert _classify_git_timeout(["echo", "hello"]) == _GIT_TIMEOUT_DEFAULT
+
+    def test_empty_or_short_command_returns_default(self) -> None:
+        """空命令或长度不足返回 default timeout（30s）。"""
+        assert _classify_git_timeout([]) == _GIT_TIMEOUT_DEFAULT
+        assert _classify_git_timeout(["git"]) == _GIT_TIMEOUT_DEFAULT
+        # 仅 1 个元素不能取 cmd[1]，返回 default
+
+    def test_timeout_values_unchanged(self) -> None:
+        """timeout 值常量未被意外修改。"""
+        assert _GIT_TIMEOUT_READ == 15
+        assert _GIT_TIMEOUT_WRITE == 60
+        assert _GIT_TIMEOUT_DEFAULT == 30
+        # read < default < write（read 应最快，write 最慢）
+        assert _GIT_TIMEOUT_READ < _GIT_TIMEOUT_DEFAULT < _GIT_TIMEOUT_WRITE
+
+    def test_run_git_uses_classified_timeout(self, tmp_path: Path, monkeypatch) -> None:
+        """_run_git 调用 run_subprocess_hidden 时使用分类 timeout（集成测试）。
+
+        Mock run_subprocess_hidden 捕获 timeout 参数，验证 read 命令传 15s、
+        write 命令传 60s。
+        """
+        _init_git_repo(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+
+        captured_timeouts: list[int] = []
+
+        def _fake_run(cmd, **kwargs):
+            captured_timeouts.append(kwargs.get("timeout", -1))
+            return subprocess.CompletedProcess(cmd, 0, "", "")
+
+        # patch run_subprocess_hidden（在函数内部 import 的位置）
+        import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as _gw_mod
+        monkeypatch.setattr(
+            "zephyr.shared.infra.process_pool.run_subprocess_hidden",
+            _fake_run,
+        )
+
+        # read 命令 → 15s
+        gw._run_git(["git", "status", "--porcelain"])
+        assert captured_timeouts[-1] == _GIT_TIMEOUT_READ, (
+            f"git status 应传 READ timeout: {captured_timeouts[-1]}"
+        )
+
+        # write 命令 → 60s（需 _in_commit_flow=True 避开守卫）
+        gw._in_commit_flow = True
+        try:
+            gw._run_git(["git", "commit", "-m", "test", "--allow-empty"])
+            assert captured_timeouts[-1] == _GIT_TIMEOUT_WRITE, (
+                f"git commit 应传 WRITE timeout: {captured_timeouts[-1]}"
+            )
+        finally:
+            gw._in_commit_flow = False
+

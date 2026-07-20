@@ -518,6 +518,134 @@ class TestEmergencyThresholdRollback:
 
 
 # ============================================================================
+# P3-1 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# _load_thresholds_from_yaml YAML 加载 smoke test
+# ============================================================================
+
+
+class TestLoadThresholdsFromYaml:
+    """P3-1 治本：阈值从 trae_069 YAML 加载（SSoT 铁律：规则数据真源是 YAML）。
+
+    治本原因：原 5 维阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等），
+    修改需改代码 + 重新部署。改为从 YAML 加载（trae_062 SSoT 铁律：规则数据
+    真源是 YAML 文件），修改只需改 YAML + sync，无需改代码。
+
+    fail-open：YAML 缺失/解析失败时返回 _DEFAULT_THRESHOLDS（不阻断 reconciler）。
+    """
+
+    def test_yaml_file_exists(self):
+        """trae_069 YAML 文件必须存在（SSoT 真源铁律）。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _THRESHOLDS_YAML_PATH,
+        )
+        assert _THRESHOLDS_YAML_PATH.exists(), (
+            f"P3-1 治本：trae_069 YAML 必须存在（SSoT 真源），"
+            f"路径: {_THRESHOLDS_YAML_PATH}"
+        )
+
+    def test_load_returns_all_5_dimensions(self):
+        """_load_thresholds_from_yaml 返回 5 个维度的阈值。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _load_thresholds_from_yaml, _DEFAULT_THRESHOLDS,
+        )
+        thresholds = _load_thresholds_from_yaml()
+        assert set(thresholds.keys()) == set(_DEFAULT_THRESHOLDS.keys()), (
+            f"应返回 5 个维度，实际: {set(thresholds.keys())}"
+        )
+        # 每个维度值必须为非负 int
+        for dim, value in thresholds.items():
+            assert isinstance(value, int), f"{dim} 应为 int，实际: {type(value)}"
+            assert value > 0, f"{dim} 应 > 0，实际: {value}"
+
+    def test_yaml_values_match_code_constants(self):
+        """YAML 加载的值必须与代码常量一致（启动时已加载）。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _WARN_ONLY_24H_THRESHOLD, _EMERGENCY_24H_THRESHOLD,
+            _ALLOW_OVERLAP_7D_THRESHOLD, _FORGED_24H_THRESHOLD,
+            _NON_GW_24H_THRESHOLD, _load_thresholds_from_yaml,
+        )
+        yaml_thresholds = _load_thresholds_from_yaml()
+        assert _WARN_ONLY_24H_THRESHOLD == yaml_thresholds["warn_only_sustained_24h"]
+        assert _EMERGENCY_24H_THRESHOLD == yaml_thresholds["emergency_commit_abuse_24h"]
+        assert _ALLOW_OVERLAP_7D_THRESHOLD == yaml_thresholds["allow_overlap_abuse_7d"]
+        assert _FORGED_24H_THRESHOLD == yaml_thresholds["forged_gw_marker_rate_24h"]
+        assert _NON_GW_24H_THRESHOLD == yaml_thresholds["non_gw_commit_sustained_24h"]
+
+    def test_default_thresholds_match_p1_values(self):
+        """_DEFAULT_THRESHOLDS 必须与 P1 治本后的值一致（回归保护）。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _DEFAULT_THRESHOLDS,
+        )
+        assert _DEFAULT_THRESHOLDS["warn_only_sustained_24h"] == 50
+        assert _DEFAULT_THRESHOLDS["emergency_commit_abuse_24h"] == 5  # P1-4 治本
+        assert _DEFAULT_THRESHOLDS["allow_overlap_abuse_7d"] == 30
+        assert _DEFAULT_THRESHOLDS["forged_gw_marker_rate_24h"] == 3
+        assert _DEFAULT_THRESHOLDS["non_gw_commit_sustained_24h"] == 10
+
+    def test_load_fail_open_on_missing_file(self, tmp_path, monkeypatch):
+        """YAML 文件缺失 → fail-open 返回默认值（不抛异常）。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _load_thresholds_from_yaml, _DEFAULT_THRESHOLDS,
+        )
+        # mock 路径为不存在的临时目录
+        monkeypatch.setattr(
+            "zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._THRESHOLDS_YAML_PATH",
+            tmp_path / "nonexistent.yaml",
+        )
+        result = _load_thresholds_from_yaml()
+        assert result == _DEFAULT_THRESHOLDS, "YAML 缺失时应返回默认值"
+
+    def test_load_fail_open_on_invalid_yaml(self, tmp_path, monkeypatch):
+        """YAML 解析失败 → fail-open 返回默认值（不抛异常）。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _load_thresholds_from_yaml, _DEFAULT_THRESHOLDS,
+        )
+        # 创建一个无效的 YAML 文件
+        bad_yaml = tmp_path / "bad.yaml"
+        bad_yaml.write_text("{invalid yaml content", encoding="utf-8")
+        monkeypatch.setattr(
+            "zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._THRESHOLDS_YAML_PATH",
+            bad_yaml,
+        )
+        result = _load_thresholds_from_yaml()
+        assert result == _DEFAULT_THRESHOLDS, "YAML 解析失败时应返回默认值"
+
+    def test_load_handles_invalid_threshold_value(self, tmp_path, monkeypatch):
+        """YAML 中某维度值无效（非 int 或 < 0）→ 用默认值替换该维度。"""
+        from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (
+            _load_thresholds_from_yaml, _DEFAULT_THRESHOLDS,
+        )
+        # 创建一个有无效值的 YAML
+        invalid_yaml = tmp_path / "invalid_threshold.yaml"
+        invalid_yaml.write_text(
+            "thresholds:\n"
+            "  warn_only_sustained_24h:\n"
+            "    value: -5  # 负值，无效\n"
+            "  emergency_commit_abuse_24h:\n"
+            "    value: \"not_an_int\"  # 字符串，无效\n"
+            "  allow_overlap_abuse_7d:\n"
+            "    value: 99  # 有效，保留\n"
+            "  forged_gw_marker_rate_24h:\n"
+            "    value: 1  # 有效，保留\n"
+            "  non_gw_commit_sustained_24h:\n"
+            "    value: 5  # 有效，保留\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(
+            "zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler._THRESHOLDS_YAML_PATH",
+            invalid_yaml,
+        )
+        result = _load_thresholds_from_yaml()
+        # 无效维度用默认值替换
+        assert result["warn_only_sustained_24h"] == _DEFAULT_THRESHOLDS["warn_only_sustained_24h"]
+        assert result["emergency_commit_abuse_24h"] == _DEFAULT_THRESHOLDS["emergency_commit_abuse_24h"]
+        # 有效维度保留 YAML 值
+        assert result["allow_overlap_abuse_7d"] == 99
+        assert result["forged_gw_marker_rate_24h"] == 1
+        assert result["non_gw_commit_sustained_24h"] == 5
+
+
+# ============================================================================
 # P1-3 scenario 过滤 smoke test（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
 # ============================================================================
 

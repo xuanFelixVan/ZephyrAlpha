@@ -85,21 +85,89 @@ _GATE_ID = "GATE-COMMIT-GW-ABUSE-MONITOR"
 _PRIORITY = 875
 
 # === 五维滥用阈值（warn-only，reconciler 不能 block post-commit）===
+# P3-1 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# 阈值真源已提取到 trae_069_commit_gateway_abuse_thresholds.yaml（SSoT 铁律：
+# 规则数据真源是 YAML 文件）。代码常量改为从此文件加载（fail-open：
+# YAML 缺失/解析失败时使用代码内默认值，不阻断 reconciler）。
+#
+# 历史（裁定 R3/R5/R6 + P1 治本链）：
+#   2026-07-19: 原阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等）
+#   2026-07-20 P1-4: emergency 10→5 回滚（heartbeat 已落地 + scenario 过滤已引入）
+#   2026-07-20 P3-1: 提取到 YAML，代码常量改为 _load_thresholds_from_yaml() 返回值
+_THRESHOLDS_YAML_PATH = (
+    Path(__file__).resolve().parents[4]  # src/zephyr/governance/audit → repo root
+    / "docs" / "01_policies_and_standards" / "rules"
+    / "trae_069_commit_gateway_abuse_thresholds.yaml"
+)
+
+# 代码内默认值（YAML 缺失/解析失败时 fallback，与 P1 治本后的值一致）
+_DEFAULT_THRESHOLDS = {
+    "warn_only_sustained_24h": 50,
+    "emergency_commit_abuse_24h": 5,
+    "allow_overlap_abuse_7d": 30,
+    "forged_gw_marker_rate_24h": 3,
+    "non_gw_commit_sustained_24h": 10,
+}
+
+
+def _load_thresholds_from_yaml() -> dict[str, int]:
+    """从 trae_069_commit_gateway_abuse_thresholds.yaml 加载阈值（P3-1 治本）。
+
+    SSoT 铁律（trae_062）：规则数据真源是 YAML 文件。本函数从 YAML 加载阈值，
+    替代原硬编码常量。fail-open：YAML 缺失/解析失败时返回 _DEFAULT_THRESHOLDS
+    （不阻断 reconciler，但记录 WARNING）。
+
+    Returns:
+        dict[str, int] — 5 维阈值字典，key 为维度名，value 为阈值 int。
+    """
+    try:
+        if not _THRESHOLDS_YAML_PATH.exists():
+            logger.warning(
+                "P3-1: thresholds YAML not found at %s, using defaults",
+                _THRESHOLDS_YAML_PATH,
+            )
+            return dict(_DEFAULT_THRESHOLDS)
+        import yaml
+        with _THRESHOLDS_YAML_PATH.open("r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        thresholds_section = data.get("thresholds", {})
+        result: dict[str, int] = {}
+        for dim_name in _DEFAULT_THRESHOLDS:
+            dim_config = thresholds_section.get(dim_name, {})
+            value = dim_config.get("value", _DEFAULT_THRESHOLDS[dim_name])
+            if not isinstance(value, int) or value < 0:
+                logger.warning(
+                    "P3-1: invalid threshold for %s (%r), using default %d",
+                    dim_name, value, _DEFAULT_THRESHOLDS[dim_name],
+                )
+                value = _DEFAULT_THRESHOLDS[dim_name]
+            result[dim_name] = value
+        return result
+    except Exception as e:  # noqa: BLE001 — YAML 加载失败不阻断 reconciler
+        logger.warning(
+            "P3-1: failed to load thresholds YAML (%s), using defaults", e,
+        )
+        return dict(_DEFAULT_THRESHOLDS)
+
+
+# 启动时加载阈值（fail-open：YAML 缺失时使用默认值）
+_THRESHOLD_CONFIG = _load_thresholds_from_yaml()
+
 # 维度1: warn_only 持续低频（24h）——per-hour POST-COMMIT-GUARD 阈值 10/h 抓不到 5/h 持续
-_WARN_ONLY_24H_THRESHOLD = 50
+_WARN_ONLY_24H_THRESHOLD = _THRESHOLD_CONFIG["warn_only_sustained_24h"]
 # 维度2: emergency_commit 滥用（24h）—— P1-4 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
 # 历史：原阈值 5 → bc3cad107c 放松到 30（掩盖滥用）→ R1 回滚到 10（过渡期 2026-07-19~2026-08-02）
 # P1-4 治本（2026-07-20）：heartbeat 已落地（#ARCH-HEARTBEAT-001），R1 过渡期不再需要。
 # 同时 P1-3 已引入 scenario 过滤，dogfood/test/governance_fix 不计入 24h 计数，
 # production 场景的真实 emergency_commit 应 < 5/24h（GitCommitGateway timeout 治本前允许极值）。
 # 直接回滚到 5（原值）。
-_EMERGENCY_24H_THRESHOLD = 5
+_EMERGENCY_24H_THRESHOLD = _THRESHOLD_CONFIG["emergency_commit_abuse_24h"]
 # 维度3: allow_overlap 滥用（7d）——gw_env=1 warn_only 持续 7d = session 注册表 bug
-_ALLOW_OVERLAP_7D_THRESHOLD = 30
+_ALLOW_OVERLAP_7D_THRESHOLD = _THRESHOLD_CONFIG["allow_overlap_abuse_7d"]
 # 维度4: forged_gw_marker 伪造率（24h）——任何伪造都 serious，3/天即 critical
-_FORGED_24H_THRESHOLD = 3
+_FORGED_24H_THRESHOLD = _THRESHOLD_CONFIG["forged_gw_marker_rate_24h"]
 # 维度5: non-GW commit 持续率（24h）——commit_gw_audit violations sum
-_NON_GW_24H_THRESHOLD = 10
+_NON_GW_24H_THRESHOLD = _THRESHOLD_CONFIG["non_gw_commit_sustained_24h"]
 
 # 时间窗口（秒）
 _WINDOW_24H_SECONDS = 24 * 3600

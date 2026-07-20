@@ -1,0 +1,156 @@
+# trae_069_commit_gateway_abuse_thresholds.yaml
+# Commit Gateway 滥用监控 5 维阈值配置（P3-1 治本，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）
+#
+# SSoT 真源分类（trae_062）：本文件是 commit_gateway_abuse_monitor_reconciler.py
+# 5 维阈值的规则数据真源。代码常量（_WARN_ONLY_24H_THRESHOLD 等）从此文件同步，
+# 禁止直接修改代码常量（必须改本文件后通过 _load_thresholds_from_yaml 重载）。
+#
+# 历史（裁定 R3/R5/R6 + P1 治本链）：
+#   2026-07-19: 原阈值散落在代码常量（_WARN_ONLY_24H_THRESHOLD = 50 等）
+#   2026-07-20 P1-4: emergency 10→5 回滚（heartbeat 已落地 + scenario 过滤已引入）
+#   2026-07-20 P3-1: 提取到 YAML（本文件），代码常量改为从此文件加载（fail-open）
+#
+# 5 维滥用检测维度：
+#   1. warn_only_sustained_24h: 持续 warn-only 低频（24h 窗口）
+#   2. emergency_commit_abuse_24h: emergency_commit 滥用（24h 窗口，仅 production scenario）
+#   3. allow_overlap_abuse_7d: allow_overlap=True 真实使用（7d 窗口，gate 层审计）
+#   4. forged_gw_marker_rate_24h: 伪造 GW 标记（24h 窗口，任何伪造都 serious）
+#   5. non_gw_commit_sustained_24h: 非 GW commit 持续（24h 窗口）
+#
+# 判定规则（reconciler 永不 block post-commit，只 warn / critical_warn）：
+#   0 个维度触发 → clean
+#   1-2 个维度触发 → warn
+#   3+ 个维度触发 OR forged_gw_marker 维度触发 → critical_warn
+#
+# 修改规则（铁律）：
+#   - 修改阈值必须改本文件，禁止直接改代码常量
+#   - 修改后必须运行 sync_yaml_to_depgraph.py 同步到 DB（缓存）
+#   - 必须更新 version 字段（语义化版本）
+#   - 必须在 changelog 记录修改原因 + 裁定编号
+
+meta:
+  rule_id: trae_069
+  rule_name: commit_gateway_abuse_thresholds
+  version: '1.0.0'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
+  ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
+  related_issue: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正)'
+
+# enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
+# 本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值真源（数据类规则，
+# 非行为规则）。reconciler 在每次 reconcile 时通过 _load_thresholds_from_yaml()
+# 读取阈值，若 YAML 缺失/解析失败则 fail-open 使用 _DEFAULT_THRESHOLDS。
+# paired_gate_id=null：本 YAML 是数据源（非行为规则），无对应 enforcement gate。
+# 消费方 commit_gateway_abuse_monitor_reconciler（reconciler gate_id=
+# GATE-COMMIT-GW-ABUSE-MONITOR，priority=875）通过 _load_thresholds_from_yaml
+# 读取，reconciler 不在 gate_registry.yaml 注册（reconciler 走 reconciliation_registry）。
+enforcement:
+  paired_gate_id: null  # 数据源类规则，无对应 enforcement gate
+  consumer_reconciler_id: GATE-COMMIT-GW-ABUSE-MONITOR
+  consumer_module: zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler
+  enforcement_strength: warn_only  # post-commit reconciler 只能 warn/critical_warn，不能 block
+  description: >-
+    本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值数据真源（数据类规则，
+    非行为规则）。reconciler 读取 thresholds 段做 5 维滥用分类（clean/warn/critical_warn），
+    永不 block post-commit（commit 已入历史不可逆）。YAML 缺失/解析失败时 fail-open
+    使用 _DEFAULT_THRESHOLDS（不阻断 reconciler）。
+
+# 5 维滥用阈值
+thresholds:
+  # 维度1: warn_only 持续低频（24h）
+  # 治本理由：POST-COMMIT-GUARD per-hour 阈值 10/h 抓不到 5/h 持续（5×24=120 但每小时<10）
+  warn_only_sustained_24h:
+    value: 50
+    unit: count
+    window_seconds: 86400  # 24h
+    description: >-
+      24h 内 warn_only 事件数阈值。超过此值判定为"持续低频逃生通道滥用"。
+      POST-COMMIT-GUARD per-hour 阈值 10/h 抓不到 5/h 持续（5×24=120 但每小时<10），
+      故 reconciler 用 24h 长窗口补强。
+
+  # 维度2: emergency_commit 滥用（24h）
+  # P1-4 治本（2026-07-20）：原阈值 5 → bc3cad107c 放松到 30 → R1 回滚到 10 → P1-4 回滚到 5
+  # P1-3 治本：仅统计 [SCENARIO:production] 的 emergency_commit，dogfood/test/governance_fix 豁免
+  emergency_commit_abuse_24h:
+    value: 5
+    unit: count
+    window_seconds: 86400  # 24h
+    description: >-
+      24h 内 production scenario 的 emergency_commit 数阈值。超过此值判定为
+      "逃生通道日常化"。heartbeat 已落地（#ARCH-HEARTBEAT-001），P1-3 scenario
+      过滤已引入，production 场景真实 emergency_commit 应 < 5/24h。
+      历史：5→30（掩盖滥用）→10（R1 过渡期）→5（P1-4 治本原值）
+
+  # 维度3: allow_overlap 滥用（7d）
+  # P1-1 治本：原实现未调用 _count_allow_overlap_usage，allow_overlap_count 默认 0
+  # 现改为读取 .runtime/gate_audit/allow_overlap_usage.jsonl 真实计数
+  allow_overlap_abuse_7d:
+    value: 30
+    unit: count
+    window_seconds: 604800  # 7d
+    description: >-
+      7d 内真实 allow_overlap=True 提交数阈值（gate 层审计 .runtime/gate_audit/
+      allow_overlap_usage.jsonl 计数）。超过此值判定为"逃生通道日常化"。
+      P1-1 治本前：以 warn_only+gw_env=1 反推（94.9% 误报率，1829/7d）。
+      P1-1 治本后：只统计真实 allow_overlap=True 提交（92/7d，未超阈 30）。
+
+  # 维度4: forged_gw_marker 伪造率（24h）
+  # 任何伪造都 serious，3/天即 critical
+  forged_gw_marker_rate_24h:
+    value: 3
+    unit: count
+    window_seconds: 86400  # 24h
+    description: >-
+      24h 内 forged_gw_marker 伪造事件数阈值。任何伪造都 serious，
+      超过 3/天即触发 critical_warn（横幅强制 AI 看到）。
+      此维度触发即 critical_warn（无需其他维度配合）。
+
+  # 维度5: non-GW commit 持续率（24h）
+  # P3 (2026-07-20, bc3cad107c): 改用 violations[].hash distinct 计数
+  non_gw_commit_sustained_24h:
+    value: 10
+    unit: count
+    window_seconds: 86400  # 24h
+    description: >-
+      24h 内 non-GW commit 数阈值（commit_gw_audit violations[].hash distinct 计数）。
+      超过此值判定为"持续绕过 GitCommitGateway"。
+      P3 治本：原 sum(violations_count) 会因多报告覆盖同一 commit 膨胀，
+      改用 violations[].hash distinct 计数。
+
+# 判定规则（不变量）
+classification_rules:
+  clean:
+    dimensions_triggered: 0
+    action: clean
+  warn:
+    dimensions_triggered_min: 1
+    dimensions_triggered_max: 2
+    action: warn
+  critical_warn:
+    dimensions_triggered_min: 3
+    dimensions_triggered_max: null  # 无上限
+    action: critical_warn
+    description: '3+ 维度触发 OR forged_gw_marker 维度触发'
+
+# Phase 3 自适应阈值预留（P3-2/P3-3/P3-4 待施工）
+adaptive:
+  enabled: false  # P3-4 待施工：基于 7d 基线 ±σ 自适应
+  baseline_window_seconds: 604800  # 7d 滚动基线
+  sigma_multiplier: 2.0  # threshold = baseline_mean + 2*sigma
+  description: >-
+    P3-2/P3-3/P3-4 待施工：
+    - P3-2: 7d 滚动基线计算（读取历史 reconciler 报告）
+    - P3-3: 5 维加权健康度评分（weighted_health_score）
+    - P3-4: 自适应阈值（基于 7d 基线 ±2σ，避免硬编码阈值过时）
+
+# changelog（每次修改必须追加记录）
+changelog:
+  - version: '1.0.0'
+    date: '2026-07-20'
+    change: 'P3-1 治本：从代码常量提取到 YAML（原散落在 commit_gateway_abuse_monitor_reconciler.py）'
+    adjudication: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 P3-1'
+    notes: >-
+      阈值与 P1 治本后的代码常量值一致（无值变更，仅提取到 YAML）：
+      warn_only=50, emergency=5, allow_overlap=30, forged=3, non_gw=10
