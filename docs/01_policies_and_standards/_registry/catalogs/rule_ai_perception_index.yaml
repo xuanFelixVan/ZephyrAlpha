@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-07-19T13:49:23Z'
+generated_at: '2026-07-20T05:29:59Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
@@ -1699,7 +1699,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
 - rule_id: TRAE-067
-  title: AI RunCommand 窗口闪现纪律铁律（Window Flash Discipline，RULE-EIGHTEEN 外部化）
+  title: AI RunCommand 窗口闪现纪律铁律（Window Flash Discipline）
   module_id: TRAE-067
   scope: runcommand_window_discipline
   domain: TRAE
@@ -1730,7 +1730,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml
 - rule_id: TRAE-068
-  title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化，裁定 #ARCH-PREVENTABILITY-LAYER-001）
+  title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化，裁定
   module_id: TRAE-068
   scope: preventability_layer
   domain: TRAE
@@ -1744,7 +1744,8 @@ rules:
   - governance_mechanism_design
   - abuse_monitor_review
   - rule_externalization
-  gate_ids: []
+  gate_ids:
+  - GATE-FORGED-GW-MARKER
   tags:
   - TRAE
   - preventability
@@ -1761,7 +1762,7 @@ rules:
   - 第6层
   - 6层闭环模型
   - ARCH-PREVENTABILITY-LAYER-001
-  paired_gate_id: FORGED-GW-MARKER
+  paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml
 - rule_id: TRAE-070
   title: 临时文件分类存放铁律（Temporary File Placement，治本 #ARCH-TEMP-FILE-PLACEMENT-001）
@@ -1778,7 +1779,8 @@ rules:
   - runtime_script_placement
   - worktree_placement
   - test_output_placement
-  gate_ids: []
+  gate_ids:
+  - GATE-DIRECTORY-CONTRACT
   tags:
   - TRAE
   - temporary_file
@@ -1794,5 +1796,36 @@ rules:
   - 临时文件分类
   - temp_file_placement
   - ARCH-TEMP-FILE-PLACEMENT-001
-  paired_gate_id: null
+  paired_gate_id: GATE-DIRECTORY-CONTRACT
   rule_file: docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml
+- rule_id: TRAE-071
+  title: 临时文件生命周期铁律（Temporary File Lifecycle，治本 #ARCH-TEMP-FILE-LIFECYCLE-001）
+  module_id: TRAE-071
+  scope: temporary_file_lifecycle
+  domain: TRAE
+  severity: high
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: L
+  operations:
+  - temporary_file_creation
+  - staging_promotion
+  - session_cleanup
+  - ttl_enforcement
+  gate_ids: []
+  tags:
+  - TRAE
+  - temporary_file
+  - file_lifecycle
+  - staging_cleanup
+  - ttl
+  - promote
+  - RULE-TEMP-LIFE
+  aliases:
+  - RULE-TEMP-LIFE
+  - 临时文件生命周期
+  - 暂存层清理
+  - temp_file_lifecycle
+  - ARCH-TEMP-FILE-LIFECYCLE-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml
