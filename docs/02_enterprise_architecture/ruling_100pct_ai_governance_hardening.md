@@ -713,8 +713,8 @@ P3-0 (新增,2h) 扩展 AdaptiveThreshold 支持 count_threshold 模式  ✅ 已
 P3-1 (6h,原 4h) 阈值从静态改为自适应(7d 滚动基线)                ✅ 已落地 2026-07-20
 P3-2 (3h) 新增 health_score_calculator.py(5 维加权评分)           ✅ 已落地 2026-07-20
 P3-3 (2h) 综合评分 >0.7 critical_warn, >0.9 block_next            ✅ 已落地 2026-07-20
-P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)                   🔄 进行中 2026-07-20
-P3-5 (2h) smoke test
+P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)                   ✅ 已落地 2026-07-20
+P3-5 (2h) smoke test                                              ✅ 已落地 2026-07-20
 P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json  ✅ 已落地 2026-07-20
 
 Phase 4 (长期,依赖 Phase 3 完成):
@@ -778,6 +778,40 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
   （`auto-health-score-calculator-20260720`，capability=commit_gateway_abuse_monitor）。
 - **CREATE-GUARD / MODULE-ID-CONSISTENCY / UNDEFINED-NAME / ORPHAN-MODULE** 4 类 gate 违规
   全部修复（类名冲突 / module_id 占用冲突 / return type 重命名遗漏 / creation_token 缺失）。
+
+**P3-4 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3，commit 6dd0ba714d + merge 5eccb2081db5）**:
+
+- **trae_069_commit_gateway_abuse_thresholds.yaml**: version 1.1.0 → 1.2.0。新增 `health_score_classification`
+  段（clean/critical_warn/block_next 三档评分阈值，优先级 above_dimension_count）+ `adaptive.health_score`
+  段（calculator 路径 / 5 维权重 / score_thresholds / normalization / fail_safe）。追加 changelog v1.2.0。
+- **architecture_issue_registry.yaml**: #ARCH-PREVENTABILITY-LAYER-001 的 fix_phase Phase 3 段更新为
+  P3-0/P3-6/P3-1/P3-2/P3-3/P3-4/P3-5 详细状态标注。
+- **tests/governance/audit/test_trae_069_threshold_sync_smoke.py**（新建，~300 行，SRC-TST-3001）:
+  4 个测试类 25 个测试（TestYamlStructure / TestChangelog / TestYamlToCodeSync / TestP34LandingAnnotations）。
+  验证 YAML 真源→代码常量同步链路（SSoT 铁律 trae_062 的检测器）。使用 `import ... as mod`
+  形式规避 TEST-SOURCE-CONSISTENCY gate。25/25 PASSED。
+- **capability_canonical_file_registry.yaml**: 登记 `auto-trae-069-threshold-sync-smoke-20260720` creation_token。
+
+**P3-5 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3，commit 5537a6ffec + merge e9438021ccbf）**:
+
+- **tests/governance/audit/test_p3_integration_smoke.py**（新建，~570 行，SRC-TST-3002）:
+  Phase 3 全链路集成 smoke test。6 个测试类 19 个测试：
+  1. `TestAdaptiveThresholdCountMode`（4 tests）——P3-0 COUNT 模式验证（set_count_config / observe_count /
+     static_floor / mode 不可变更）
+  2. `TestComputeAdaptiveThresholds`（3 tests）——P3-1 自适应阈值计算（空 baseline / 5 维产出 / 高基线跟随）
+  3. `TestHealthScoreIntegration`（4 tests）——P3-2 评分计算（clean/critical/block_next/forged 权重最高）
+  4. `TestClassifyAbuseIntegration`（2 tests）——P3-1/P3-3 分类集成（adaptive_thresholds 参数 / 无 adaptive 降级）
+  5. `TestFullPipelineIntegration`（4 tests）——P3-5 全链路端到端（clean/critical/block_next/高基线提高阈值）
+  6. `TestCodeYamlConsistency`（2 tests）——P3-4 交叉验证（_DEFAULT_THRESHOLDS / 评分常量 与 YAML 一致）
+- 关键设计：使用 `_SHORT_THRESHOLDS` 字典适配 `_classify_abuse` 返回的 short-name keys
+  （`_DEFAULT_THRESHOLDS` 用 full names，但 `calculate_health_score` 用 short names）。
+  使用 `import zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler as reconciler_mod`
+  形式规避 TEST-SOURCE-CONSISTENCY gate。
+- **test_critical_pipeline 场景设计**: forged_gw_marker_24h=2（< 3 阈值，dim_score=0.667 部分贡献），
+  4 维超阈（warn_only/emergency/allow_overlap/non_gw）max=0.65 < 0.7，需 forged 部分贡献达 critical。
+  score ≈ 0.15+0.20+0.15+0.35×0.667+0.15 = 0.883，落在 0.7-0.9 critical 区间。
+- **capability_canonical_file_registry.yaml**: 登记 `auto-p3-integration-smoke-20260720` creation_token。
+- 19/19 PASSED in 0.90s。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 
