@@ -238,20 +238,13 @@ def load_policy_rules() -> list[dict[str, Any]]:
     ]
 
 
-class AppConfig:
-    def __init__(self, config_path: str | Path | None = None, data: dict[str, Any] | None = None) -> None:
-        self.config_path: str | Path | None = config_path
-        self.data: dict[str, Any] = data or {}
-
-
-def load_config(path: str | Path | None = None) -> AppConfig:
-    # 5.12.2#6 修复：补充类型注解（原完全无注解）
-    return AppConfig(config_path=path)
-
-
-def reload_config(app_config: AppConfig) -> AppConfig:
-    # 5.12.2#6 修复：补充类型注解
-    return app_config
+# 5.35.9 修复：委托到 infrastructure.config.app_config（SSoT），消除 stub 实现
+# test_app_config_yaml.py 期望 env_override 参数 + AppConfig.env/log_level/data_source_priority 属性
+from zephyr.infrastructure.config.app_config import (
+    AppConfig,
+    load_config,
+    reload_config,
+)
 
 
 DEFAULT_CONFIG_FILENAMES = ["config.yaml", "config.yml", ".code_dedup.yaml"]

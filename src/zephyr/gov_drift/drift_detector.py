@@ -68,3 +68,6 @@ class DriftDetector:
 
 def trigger_recovery(drift_event: object, strategy: str | None = None) -> bool:
     return True
+
+
+__version__ = "1.0.0"
