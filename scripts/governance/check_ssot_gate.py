@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.check_ssot_gate
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.capability_lookup
-# [CONSUMERS] pre-commit GATE-SSOT hook; GitCommitGateway._check_ssot_canonical（主防线）
+# [CONSUMERS] pre-commit GATE-SSOT hook; GitCommitGateway._check_ssot_canonical（主防线）; tests/governance/rule_bridge/test_ssot_gate.py
 # [STARTUP] manual
 # [MATURITY] prototype
 # [INVARIANTS] 真源是文件头部 [MODULE] 字段；fail-open（capability_lookup 不可用时放行）
@@ -11,7 +11,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=PASS, exit 1=BLOCK, exit 2=ERROR
-# [TESTS] tests/test_ssot_gate.py
+# [TESTS] tests/governance/rule_bridge/test_ssot_gate.py
 # [TTL] permanent
 """GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。
 
@@ -65,7 +65,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 

@@ -782,8 +782,8 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: governance/d11_compliance/check_ssot_gate.py
-  path: governance/d11_compliance/check_ssot_gate.py
+- name: governance/check_ssot_gate.py
+  path: governance/check_ssot_gate.py
   description: 检测 staged 新增 .py 文件是否违反 SSoT（四层硬阻断）：
   domain: governance
   execution_plane: hot-path

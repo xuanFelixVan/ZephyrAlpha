@@ -299,7 +299,7 @@ items:
   name: audit_registration.py
   node_type: script
   status: active
-- file: scripts/governance/d11_compliance/check_ssot_gate.py
+- file: scripts/governance/check_ssot_gate.py
   name: check_ssot_gate.py
   node_type: script
   status: active

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-20T09:24:59Z'
+generated_at: '2026-07-20T14:04:17Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 107
+total_gates: 108
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -182,7 +182,7 @@ gates:
   source: pre-commit
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
-  entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/check_ssot_gate.py
+  entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py
     scripts/governance/d3_metadata/check_module_singlesource.py,--check scripts/governance/d7_code/check_pure_shim.py,--ci
   description: 代码 SSoT 合并门禁——GATE-SSOT(module_path冲突) + SINGLESOURCE(文件名级) + NO-PURE-SHIM(纯re-export
     shim，无参数全量扫描src/zephyr/)，run_gate_chain 顺序执行
@@ -932,6 +932,16 @@ gates:
   name: 'RULE-FOUR-WAY-ALIGN: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
   description: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: RULING-COMMIT-VERIFIED
+  name: 'RULING-COMMIT-VERIFIED: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）（CommitGate,
+    priority=77）'
+  entry: in-process (GitCommitGateway)
+  description: 文档"已完成"声明 commit hash 真实性硬验证门禁（RULING-COMMIT-VERIFIED）
   files_trigger: ''
   always_run: false
   category: commit_gate
