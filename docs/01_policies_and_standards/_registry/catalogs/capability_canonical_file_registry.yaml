@@ -6293,6 +6293,13 @@ creation_tokens:
     token: "auto-ruling-commit-verified-gate-20260720"
     created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
     capability: "ruling_commit_verified_gate"
+
+  # --- ruling_workspace_drift_systemic.md 裁定文档（2026-07-20，#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001）---
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 ruling 副本
+  - file: "docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md"
+    token: "auto-ruling-workspace-drift-systemic-20260720"
+    created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
+    capability: "workspace_drift_systemic_ruling"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
