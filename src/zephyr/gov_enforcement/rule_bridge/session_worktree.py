@@ -4171,6 +4171,16 @@ def _restore_auto_sync_batch(
 ) -> tuple[int, list[str]]:
     """批量 restore auto-sync 产物（GIT-BUDGET-INV-002 合规，复用 GitCommandBatcher）。
 
+    #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 Phase 2: auto-recover 内容完整性修复。
+
+    处理 staged（``M `` / ``MM``）+ worktree（`` M``）三种状态：
+    1. ``git_restore_batch(staged=True)`` 先 unstage（对纯 worktree modified 是 no-op）
+    2. ``git_restore_batch(staged=False)`` 再 restore worktree 到 HEAD
+
+    病根：旧版只调用 ``git_restore_batch(staged=False)``，对 ``M `` (staged only)
+    完全无效，对 ``MM`` (staged + worktree) 只还原 worktree 部分，staged 版本保留
+    ——staged auto-sync 文件被带入下次 commit，搭便车风险。
+
     Args:
         root: 仓库根路径。
         auto_sync_files: 待 restore 的 auto-sync 文件列表。
@@ -4178,6 +4188,7 @@ def _restore_auto_sync_batch(
 
     Returns:
         (restored_count, restore_failed) — 成功 restore 数量 + 失败的文件列表。
+        成功 = 既 unstage 成功又 restore 成功（unstage 完全失败时退化到只看 restore 结果）。
     """
     if not auto_sync_files:
         return 0, []
@@ -4186,9 +4197,18 @@ def _restore_auto_sync_batch(
 
     try:
         batcher = GitCommandBatcher(root)
-        restored_set = set(batcher.git_restore_batch(auto_sync_files))
-        restored_count = len(restored_set)
-        restore_failed = [f for f in auto_sync_files if f not in restored_set]
+        # Phase 2: 先 unstage（对纯 worktree modified 是 no-op，无副作用）
+        unstaged_set = set(batcher.git_restore_batch(auto_sync_files, staged=True))
+        # 再 restore worktree 到 HEAD
+        restored_set = set(batcher.git_restore_batch(auto_sync_files, staged=False))
+        # 合并：既 unstage 成功又 restore 成功的文件才算完全还原
+        # unstage 完全失败（git restore --staged 返回空）时退化到只看 restore 结果
+        if unstaged_set:
+            fully_restored_set = unstaged_set & restored_set
+        else:
+            fully_restored_set = restored_set
+        restored_count = len(fully_restored_set)
+        restore_failed = [f for f in auto_sync_files if f not in fully_restored_set]
         return restored_count, restore_failed
     except Exception as e:  # noqa: BLE001 — fail-open
         logger.warning(
