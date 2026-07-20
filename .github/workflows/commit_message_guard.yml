@@ -1,0 +1,69 @@
+# ZephyrAlpha — Commit Message Guard (P4-3)
+# #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-3 (2026-07-20)
+#
+# 对标裁定 §11.3.2：GitHub-hosted 仓库无法部署 pre-receive hook（需 GitHub
+# Enterprise），改走 GitHub Actions——对 PR 的每个 commit 检查 commit message
+# 是否带 [GW:session_id] 标记 + session_id 合法性（forged_gw_marker 检测）。
+#
+# 强制层级：PR 阶段（非 commit 阶段）。本地 commit 仍可绕过，但 push 到
+# GitHub 后 PR 阶段会阻断 merge。配合 Branch Protection "Require status
+# checks to pass before merging" 将本 job 设为 required status check。
+#
+# 检测逻辑（与 forged_gw_marker_gate.py 对齐）：
+#   - merge commit → 放行
+#   - [GW:session_id] + session 已注册 → 放行（合法 GW commit）
+#   - [GW:session_id] + session 未注册 → 阻断（forged_gw_marker）
+#   - 无 [GW:] + type ∈ 白名单（docs/test/chore/ci/style/refactor/revert/perf）→ 放行
+#   - 无 [GW:] + type ∉ 白名单 → 阻断（non_gw_commit）
+
+name: Commit Message Guard
+
+on:
+  pull_request:
+    branches: [main, master, dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commit-message-guard:
+    name: Check commit messages
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout (full history for commit range)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check PR commit messages
+        env:
+          # PR base/head SHA 通过 github context 获取
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo "Checking commits in range ${BASE_SHA:0:8}..${HEAD_SHA:0:8}"
+          python scripts/governance/check_commit_message.py "$BASE_SHA" "$HEAD_SHA"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Commit Message Guard Result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ All commits in this PR are compliant." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Commit message violations detected. See logs above." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 修复指引" >> $GITHUB_STEP_SUMMARY
+            echo "- **forged_gw_marker**: 使用 GitCommitGateway/session_worktree_commit 提交，禁止手工添加 [GW:session_id] 标记" >> $GITHUB_STEP_SUMMARY
+            echo "- **non_gw_commit**: 使用白名单 type (docs/test/chore/ci/style/refactor/revert/perf) 或通过 GitCommitGateway 提交（自动添加 [GW:session_id] 标记）" >> $GITHUB_STEP_SUMMARY
+          fi
