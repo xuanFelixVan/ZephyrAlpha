@@ -23,7 +23,7 @@
 #   - 本契约收敛目录维度到一处，词表维度保留在各自 vocabulary.yaml
 #
 # 消费者：
-#   - check_directory_contract.py（已创建）—— pre-commit/CI 目录校验，DCR-001~007 全部启用
+#   - check_directory_contract.py（已创建）—— pre-commit/CI 目录校验，DCR-001~008 全部启用
 #   - GitCommitGateway._PERMANENT_ZONE_DIRS（已改为从本契约动态加载，git_commit_gateway.py:140-144）
 #   - backfill_ttl_metadata.py（路径→ttl 推断，经 ttl_vocabulary.yaml decision_tree Q3 的 criteria_source 间接读取本契约永久区路径）
 #   - check_src_no_data.py（从本契约 global_forbidden[].forbidden_prefix 动态加载 forbidden 前缀）
@@ -43,12 +43,12 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-002
-version: "1.0.0"
+version: "1.1.0"
 title: "Directory Contract"
 status: active
 ttl: permanent
-contract_version: "1.0.0"
-last_updated: "2026-07-09"
+contract_version: "1.1.0"
+last_updated: "2026-07-20"
 
 # ============================================================
 # 0. 真源溯源（三维来源声明）
@@ -103,7 +103,7 @@ directory_zones:
     # 消费者明确声明（消除死字段歧义，2026-06-30 裁定）：
     #   - 仅 GitCommitGateway._check_permanent_zone_new_files（PROMOTION_BLOCKED）消费——
     #     生成器输出文件免 --allow-promote 晋升批准
-    #   - check_directory_contract.py 的 DCR-001~007 仍正常校验这些路径下的文件——
+    #   - check_directory_contract.py 的 DCR-001~008 仍正常校验这些路径下的文件——
     #     生成器输出的文件仍须满足 doc_type 目录归属（DCR-001/002）、扩展名（DCR-005/006）、
     #     ttl=permanent（DCR-003）等约束
     #   - 理由：生成器输出的 doc_type 与扩展名基本稳定（overview_entry 生成 architecture_view），
@@ -274,11 +274,18 @@ directory_extensions:
     note: "src/ 下的配置子树——与根 config/ 同级语义。src/zephyr/ 规则不覆盖此子目录（longest-prefix match 独立）"
 
   # --- 临时区 ---
+  # 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：新增 purpose + purpose_allowed_extensions
+  # 字段，由 DCR-008 (check_directory_contract.py::check_purpose_extension) 强制校验。
+  # purpose 是目录正面用途声明（机器可读），purpose_allowed_extensions 是该用途下的严格白名单
+  # （必须是 allowed 的子集）。AI 创建临时文件前 MUST 对照 trae_070 directory_purpose_classification
+  # 确定目标目录，DCR-008 在 commit 时强制阻断跨类乱放。
   - path: "docs/_working/"
     allowed: [".md", ".csv", ".yaml"]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
     zone: temporary
     allowed_doc_types: []
+    purpose: task_document
+    purpose_allowed_extensions: [".md", ".csv", ".yaml"]
 
   - path: "docs/_working/audit/"
     allowed: [".md"]
@@ -286,6 +293,8 @@ directory_extensions:
     zone: temporary
     allowed_doc_types: []
     overrides_parent: true
+    purpose: audit_work_doc
+    purpose_allowed_extensions: [".md"]
 
   - path: "docs/_working/research_notes/"
     allowed: [".md", ".txt", ".yaml"]
@@ -293,6 +302,8 @@ directory_extensions:
     zone: temporary
     allowed_doc_types: []
     overrides_parent: true
+    purpose: research_note
+    purpose_allowed_extensions: [".md", ".txt", ".yaml"]
 
   - path: "docs/_working/ttl_content_audit/"
     allowed: [".csv"]
@@ -300,6 +311,83 @@ directory_extensions:
     zone: temporary
     allowed_doc_types: []
     overrides_parent: true
+    purpose: ttl_content_audit
+    purpose_allowed_extensions: [".csv"]
+
+  # --- 运行时中性区（.runtime/ 树，治本 #ARCH-TEMP-FILE-PLACEMENT-001）---
+  # 原先 .runtime/ 整体被 .gitignore 排除（line 106），但 force-add 仍可绕过；且
+  # directory_extensions 无任何 .runtime/ 条目 → find_extension_rule 返回 None →
+  # DCR-005/006 跳过。本治本新增 5 条 .runtime/ 树规则，配合 DCR-008 强制校验
+  # 文件扩展名匹配目录用途。
+  - path: ".runtime/"
+    allowed: [".ps1", ".py", ".sh", ".txt", ".log", ".jsonl", ".json", ".yaml", ".md", ".pid", ".lock", ".diff", ".patch", ".csv", ".tmp", ".db", ".toml", ".xml", ".yml", ".gitkeep", ".pyc", ".sql"]
+    forbidden: []
+    zone: neutral
+    allowed_doc_types: []
+    purpose: runtime_root
+    purpose_allowed_extensions: [".ps1", ".py", ".sh", ".txt", ".log", ".jsonl", ".json", ".yaml", ".md", ".pid", ".lock", ".diff", ".patch", ".csv", ".tmp", ".db", ".toml", ".xml", ".yml", ".gitkeep", ".pyc", ".sql"]
+    note: ".runtime/ 根兜底——子目录已精细化，本条覆盖未显式声明的子目录。整体 .gitignored，force-add 时由 DCR-005/006/008 兜底校验"
+
+  - path: ".runtime/tmp/"
+    allowed: [".ps1", ".py", ".sh", ".txt", ".log"]
+    forbidden: [".md", ".csv", ".yaml", ".json", ".jsonl"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: runtime_aux_script
+    purpose_allowed_extensions: [".ps1", ".py", ".sh", ".txt", ".log"]
+    note: "运行时辅助脚本——纯运行时产物，禁止任务文档类（.md/.csv/.yaml/.json）。治本 trae_070 LAW-1：任务文档必放 docs/_working/。force-add .md 文件会被 DCR-006+DCR-008 双重阻断"
+
+  - path: ".runtime/logs/"
+    allowed: [".jsonl", ".log"]
+    forbidden: [".md", ".csv", ".yaml", ".json", ".py", ".sh", ".ps1"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: runtime_log
+    purpose_allowed_extensions: [".jsonl", ".log"]
+
+  - path: ".runtime/lookup_audit/"
+    allowed: [".jsonl"]
+    forbidden: [".md", ".csv", ".yaml", ".json", ".py", ".sh", ".ps1", ".log", ".txt"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: capability_lookup_audit
+    purpose_allowed_extensions: [".jsonl"]
+    note: "capability lookup 审计日志——运行时产物，仅 .jsonl"
+
+  - path: ".runtime/claim_snapshots/"
+    allowed: [".json"]
+    forbidden: [".md", ".csv", ".yaml", ".jsonl", ".py", ".sh", ".ps1", ".log", ".txt"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: commit_claim_snapshot
+    purpose_allowed_extensions: [".json"]
+    note: "commit claim 快照——FOREIGN_CHANGE gate 崩溃恢复，仅 .json"
+
+  # --- IDE 工具区（.trae/ 树）---
+  # .trae/ 部分被 .gitignore 排除（.trae/documents/、.trae/session_state/），
+  # 但 .trae/rules/ 是 tracked 的 IDE 规则文件。本治本新增 .trae/ 树规则。
+  - path: ".trae/"
+    allowed: [".md", ".yaml", ".py", ".json", ".txt"]
+    forbidden: [".sh", ".ps1", ".bak", ".baseline", ".csv", ".jsonl"]
+    zone: neutral
+    allowed_doc_types: []
+    purpose: ide_tool_root
+    purpose_allowed_extensions: [".md", ".yaml", ".py", ".json", ".txt"]
+    note: ".trae/ 根兜底——IDE 工具区，子目录已精细化。.trae/documents/ 和 .trae/session_state/ 已被 .gitignore 排除"
+
+  - path: ".trae/rules/"
+    allowed: [".md"]
+    forbidden: [".py", ".sh", ".ps1", ".csv", ".yaml", ".json", ".jsonl", ".bak", ".baseline"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: ide_rule_doc
+    purpose_allowed_extensions: [".md"]
+    note: "IDE 规则文档——onboarding_detail.md、project_rules.md 等人读规则文档"
 
   # --- 根级兜底声明（P1 阶段新增，2026-07-01 治裸奔）---
   # 防未来文件落入 docs/、src/ 根级无约束
@@ -717,6 +805,12 @@ doc_type_directory_crosscheck:
       name: "根目录文件在白名单内"
       check: "if file.directory == project_root then file.name in root_directory_whitelist.files"
       severity: error
+
+    - id: DCR-008
+      name: "文件扩展名匹配目录用途（purpose_allowed_extensions）"
+      check: "file.extension in directory_extensions[path].purpose_allowed_extensions"
+      severity: error
+      note: "治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：DCR-005（allowed 白名单）只校验'技术允许'，DCR-008 进一步校验'用途匹配'。例如 .runtime/tmp/ 的 allowed=[.ps1/.py/.sh/.txt/.log]，purpose_allowed_extensions 同集合——若 AI 在 .runtime/tmp/ 创建 .md 文件，DCR-005 已阻断（.md 不在 allowed），DCR-008 双重保险阻断。配对 trae_070 temporary_file_placement 规则（paired_gate_id=GATE-DIRECTORY-CONTRACT）"
 
 # ============================================================
 # 5. 生成器豁免规则（Generator Exemption）

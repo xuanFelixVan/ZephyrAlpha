@@ -31,7 +31,7 @@
 meta:
   rule_id: trae_070
   rule_name: temporary_file_placement
-  version: '1.0.0'
+  version: '1.1.0'  # 1.0.0->1.1.0: paired_gate_id null->GATE-DIRECTORY-CONTRACT
   created: '2026-07-20'
   last_updated: '2026-07-20'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
@@ -40,12 +40,21 @@ meta:
 
 # enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
 # 本 YAML 是临时文件存放位置的指引真源（数据/指引类规则，非行为规则）。
-# 无对应 pre-commit gate（.runtime/tmp/ 被 exclude_from_governance 排除，无法 gate）。
-# 治本依赖：AI 自觉查本规则 + capability_lookup.find("temporary_file_placement") 反查。
-# 未来可选：增加 post-commit reconciler 检测 .runtime/tmp/ 下的 .md 文件并 warn。
+# 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20 升级）：原先 paired_gate_id=null
+# 靠 AI 自觉。用户反馈"不能依靠 AI 自觉，需要强制"。本治本升级：
+# - 配对 GATE-DIRECTORY-CONTRACT（DCR-008）—— commit 时阻断跨类乱放
+# - directory_contract.yaml 新增 .runtime/tmp/ 等 7 条目录规则
+# - .runtime/ 不再豁免扩展名校验（force-add .md 到 .runtime/tmp/ 会被 DCR-006+DCR-008 阻断）
 enforcement:
-  paired_gate_id: null  # 指引类规则，无对应 enforcement gate（.runtime/tmp/ 排除门禁）
-  post_commit_reconciler: null  # 未来可选：检测 .runtime/tmp/*.md 并 warn
+  paired_gate_id: GATE-DIRECTORY-CONTRACT  # 强制类规则，配对 DCR-008（治本 #ARCH-TEMP-FILE-PLACEMENT-001）
+  consumer_module: scripts.governance.d1_structure.check_directory_contract
+  enforcement_strength: block  # 指引类 → 阻断类（违规即阻断 commit）
+  description: >-
+    本规则配对 GATE-DIRECTORY-CONTRACT (DCR-008)。DCR-008 校验文件扩展名
+    必须匹配 directory_contract.yaml 的 purpose_allowed_extensions 字段。
+    违规即阻断 commit（error 级）。例如 AI 把 .md 任务文档放到 .runtime/tmp/
+    会被 DCR-006（forbidden）+ DCR-008（purpose mismatch）双重阻断。
+  post_commit_reconciler: null  # 暂无 post-commit reconciler（DCR-008 已是 commit-time 阻断）
 
 # ============================================================
 # 1. 目录用途分类表（Directory Purpose Classification）
