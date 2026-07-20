@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-19T08:42:05Z'
+generated_at: '2026-07-20T03:03:39Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 98
+total_gates: 105
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -282,6 +282,26 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+- gate_id: GATE-RETURN-CONTRACT
+  name: 'GATE-RETURN-CONTRACT: TypedDict 返回契约 ok 键审计（P2-5/P3-1）'
+  entry: python scripts/governance/audit_return_contract_usage.py
+  description: AST + regex 双重检测 session_worktree_*/emergency_commit 返回值的 forbidden
+    key 访问（committed/merged/success/status_ok）—— 防止 AI 误用旧键名导致 KeyError 静默失败
+  files_trigger: ^src/zephyr/.*\.py$|^scripts/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-WORKTREE-OPS-TELEMETRY
+  name: 'GATE-WORKTREE-OPS-TELEMETRY: 主工作区擦除操作遥测审计（P2-6/P3-1）'
+  entry: python scripts/governance/audit_worktree_ops_telemetry.py
+  description: AST 函数边界识别 + regex 擦除操作检测——确保 git stash push/git restore/Path.unlink/_quarantine_file
+    等操作同函数内有 _log_workspace_op 遥测调用（防主工作区文件擦除无遥测）
+  files_trigger: ^src/zephyr/.*\.py$|^scripts/.*\.py$
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
   entry: python scripts/governance/d3_metadata/validate_tool_contracts_consistency.py
@@ -521,10 +541,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: DATETIME-NOW-FORBIDDEN
-  name: 'DATETIME-NOW-FORBIDDEN: 生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN）（CommitGate,
-    priority=34）'
+  name: 'DATETIME-NOW-FORBIDDEN: 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）（CommitGate, priority=34）'
   entry: in-process (GitCommitGateway)
-  description: 生成器代码 datetime.now() 硬阻断门禁（DATETIME-NOW-FORBIDDEN）
+  description: 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -647,6 +666,17 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: FORGED-GW-MARKER
+  name: 'FORGED-GW-MARKER: Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001
+    Phase 2）（CommitGate, priority=29）'
+  entry: in-process (GitCommitGateway)
+  description: Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001
+    Phase 2）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: FUNCTION-DUP
   name: 'FUNCTION-DUP: 重复函数实现阻断门禁（FUNCTION-DUP）（CommitGate, priority=90）'
   entry: in-process (GitCommitGateway)
@@ -729,6 +759,17 @@ gates:
     priority=95）'
   entry: in-process (GitCommitGateway)
   description: 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: MANUAL-ONLY-PERMANENT
+  name: 'MANUAL-ONLY-PERMANENT: 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META
+    Phase 3.6 补齐 rc4 enforceability）（CommitGate, priority=82）'
+  entry: in-process (GitCommitGateway)
+  description: 永久系统脚本 manual 触发无事件订阅阻断门禁（MANUAL-ONLY-PERMANENT，#ARCH-GOV-CONVERGENCE-META
+    Phase 3.6 补齐 rc4 enforceability）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -858,6 +899,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: RULE-EXECUTION-PAIRING
+  name: 'RULE-EXECUTION-PAIRING: 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）（CommitGate,
+    priority=61）'
+  entry: in-process (GitCommitGateway)
+  description: 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: RULE-FOUR-WAY-ALIGN
   name: 'RULE-FOUR-WAY-ALIGN: 规则四方对齐门禁（RULE-FOUR-WAY-ALIGN）（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
@@ -890,6 +941,17 @@ gates:
     件1改）（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
   description: session 注册强制门禁（SESSION-REQUIRED，2026-07-01 治本 FP-ISO.4B 件1改）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: SNAPSHOT-DRIFT
+  name: 'SNAPSHOT-DRIFT: 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase
+    3.6 补齐 rc1 enforceability）（CommitGate, priority=40）'
+  entry: in-process (GitCommitGateway)
+  description: 运行时违规快照漂移阻断门禁（SNAPSHOT-DRIFT，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐
+    rc1 enforceability）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -947,6 +1009,17 @@ gates:
   name: 'UNSAFE-DICT-SPREAD: ``**data`` 直接展开模式 warn 级门禁（CommitGate, priority=66）'
   entry: in-process (GitCommitGateway)
   description: '``**data`` 直接展开模式 warn 级门禁'
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: VOCAB-CHAIN
+  name: 'VOCAB-CHAIN: SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase
+    3.6 补齐 rc2 enforceability）（CommitGate, priority=80）'
+  entry: in-process (GitCommitGateway)
+  description: SSoT 引用硬编码阻断门禁（VOCAB-CHAIN，#ARCH-GOV-CONVERGENCE-META Phase 3.6 补齐
+    rc2 enforceability）
   files_trigger: ''
   always_run: false
   category: commit_gate
