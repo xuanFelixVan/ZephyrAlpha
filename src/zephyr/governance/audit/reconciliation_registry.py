@@ -4659,7 +4659,7 @@ def make_runtime_cleanup_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 # trae_060-reviewed: 架构健康度仪表盘 post-commit 基线记录（第0期 warn-only，architecture_debt_registry.md §六）。
-# 触发条件：任何 .py 文件变更（11 项指标覆盖代码/脚本/门禁/depgraph 维度）
+# 触发条件：任何 .py 文件变更（30 项指标覆盖代码/脚本/门禁/depgraph 维度）
 # 行为：subprocess 调用 architecture_health_dashboard.py --snapshot 保存基线快照到 data/architecture_health/
 # 非阻断：ReconcileResult(action="clean"/"warn")，第0期仅记录基线不阻断 commit
 # 第1期升级路径：转为 pre-commit commit gate（exit 1 阻断），见 architecture_debt_registry.md §六 第1期
@@ -4667,7 +4667,7 @@ def make_architecture_health_reconciler(gateway: "object") -> ReconcilerSpec:
     """构造架构健康度仪表盘 post-commit 基线记录 reconciler（第0期 warn-only）。
 
     architecture_debt_registry.md §六 第0期：每次 commit 自动生成架构健康度指标快照，
-    替代手动调研。仪表盘 11 项指标（M01-M11），warn-only 模式（exit 0 不阻断 commit）。
+    替代手动调研。仪表盘 30 项指标（M01-M31），warn-only 模式（exit 0 不阻断 commit）。
 
     对账链：
     1. trigger: committed_files 含 .py 文件 -> 命中
