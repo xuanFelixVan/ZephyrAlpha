@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-20T07:41:44Z'
+generated_at: '2026-07-20T09:24:59Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 106
+total_gates: 107
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -420,6 +420,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: BARE-SUBPROCESS
+  name: 'BARE-SUBPROCESS: 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）（CommitGate,
+    priority=108）'
+  entry: in-process (GitCommitGateway)
+  description: 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
   name: 'BLUEPRINT-AMODULE-CONSISTENCY: [A_module] 头部 module_id 格式一致性门禁（CommitGate,
     priority=79）'
@@ -691,16 +701,6 @@ gates:
     P2.2）（CommitGate, priority=105）'
   entry: in-process (GitCommitGateway)
   description: Git 调用预算 warn-only 门禁（GIT-CALL-BUDGET，§ARCH-GIT-CALL-BUDGET P2.2）
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-- gate_id: BARE-SUBPROCESS
-  name: 'BARE-SUBPROCESS: 裸 subprocess.run/Popen/check_output/check_call warn-only 门禁（BARE-SUBPROCESS，§ARCH-RUNCOMMAND-WINDOW-FLASH-001
-    P8）（CommitGate, priority=108）'
-  entry: in-process (GitCommitGateway)
-  description: 裸 subprocess 调用 warn-only 门禁（BARE-SUBPROCESS，§ARCH-RUNCOMMAND-WINDOW-FLASH-001 P8）
   files_trigger: ''
   always_run: false
   category: commit_gate

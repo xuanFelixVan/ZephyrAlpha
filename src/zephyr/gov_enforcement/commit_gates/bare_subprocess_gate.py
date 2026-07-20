@@ -43,7 +43,7 @@ CREATE_NO_WINDOW，复用 process_pool.py"，但 enforcement.paired_gate_id=null
    P2 升级为 block（INV-001 violation_action=reject_change）。
 2. **AST 精确检测**：比正则更准确，天然不检测字符串/注释内的 subprocess.run 引用
 3. **只检测 added 行**：存量违规由人工排查，gate 只防新增
-4. **priority=106**：在 GIT-CALL-BUDGET=105 之后，作为第二个 warn-only gate
+4. **priority=108**：在 IMPORT-INTEGRITY=107 之后，CAPABILITY-LOOKUP-REQUIRED=110 之前，作为第二个 warn-only gate
 5. **import alias 识别**：`import subprocess as sp; sp.run(...)` 也检测
 
 Usage::

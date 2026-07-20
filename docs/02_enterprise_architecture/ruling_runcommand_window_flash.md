@@ -438,6 +438,8 @@ explorer.exe (PID 8216)
 | Phase 2 调研裁定 | TRAE toolhost 不可项目层治本，已写 Feature Request 模板待用户提交 |
 | Phase 3 调研裁定 | pythonw.exe 方案不可行（4 步死锁反证），不立项 |
 | Phase 4 调研裁定 | kimi-desktop gildata 不可项目层治本，已写 Feature Request 模板待用户提交 |
+| Phase P8 治本 | BARE-SUBPROCESS commit gate warn-only 落地（commit 48aac939a1）：trae_067 铁律2 从君子协定升级为 commit-time 强制检测，AST 检测 added 行裸 subprocess.run/Popen/check_output/check_call + import alias 识别 + 5 文件级例外 + noqa 行级逃生，priority=108，33/33 测试 PASSED |
+| Phase P8 提交通道 | emergency_commit（session_worktree_commit 卡住超 100s，疑似 PERM-TRIGGER gate 误判检测器源码 ast.walk for 循环为时间触发循环，与 P1-P7 同根因）|
 | 治理底线 #ARCH-EXTERNAL-TOOL-WINDOW-001 | L0/L1 项目层 100% 落地，L2 用户层责任，L3 OS 设计不可改 |
 | "0 闪窗"目标 | 不可达（外部限制），但可从"每 4-5 秒一个"降到"每 30+ 秒一个" |
 | 严重度定级 | P2（用户体验影响，非数据安全/正确性） |
