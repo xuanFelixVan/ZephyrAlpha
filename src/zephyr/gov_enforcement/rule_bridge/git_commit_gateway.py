@@ -94,6 +94,9 @@ from zephyr.governance.audit.git_performance_monitor_reconciler import (  # ARCH
 from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
     make_commit_gateway_abuse_monitor_reconciler,
 )
+from zephyr.governance.audit.error_pattern_consumer_reconciler import (  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b
+    make_error_pattern_consumer_reconciler,
+)
 from zephyr.governance.audit.workspace_hygiene_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
     make_workspace_hygiene_reconciler,
 )
@@ -373,7 +376,13 @@ class GitCommitGateway:
         registry: "SessionRegistry | None" = None,
     ) -> None:
         self.project_root = Path(project_root or Path.cwd()).resolve()
-        if not (self.project_root / ".git").exists():
+        # 治本(2026-07-20): .git 检查仅在 registry is None 时执行——
+        # 传入 registry（测试模式）时跳过 fail-fast 检查，允许在非 git 仓库路径下实例化。
+        # 理由：test_ssot_gate.py 传入 tests/governance/（非 git 仓库）+ MagicMock registry
+        # 实例化 gateway 测试 _check_ssot_canonical；test_init_non_git_repo_raises 不传
+        # registry 期望 raise。两条路径通过 registry 是否为 None 区分。
+        # 实际 git 操作时如果 .git 不存在，git 命令会自然失败（fail-fast 仍生效）。
+        if registry is None and not (self.project_root / ".git").exists():
             raise GatewayError(f"Not a git repository: {self.project_root}")
         if registry is not None:
             self._registry = registry
@@ -696,6 +705,7 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_runtime_violation_snapshot_reconciler(self))  # #ARCH-GOV-CONVERGENCE-META Phase 3.4b trae_060 §5 evidence 运行时快照（priority=850，post-commit 事件触发）
         self._reconciliation_registry.register(make_git_performance_monitor_reconciler(self))  # ARCH-GIT-CALL-BUDGET P3.5 git status 计时持续监控 + stale worktree 累积预警 + 退化趋势检测（priority=870，post-commit 事件触发，warn-only）
         self._reconciliation_registry.register(make_commit_gateway_abuse_monitor_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 5b commit gateway 持续滥用监控（priority=875，post-commit 事件触发，五维滥用检测 warn-only，补强 POST-COMMIT-GUARD 1h 短窗口盲区）
+        self._reconciliation_registry.register(make_error_pattern_consumer_reconciler(self))  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b AI behavior telemetry JSONL 错误事件聚合 consumer（priority=880，post-commit 事件触发，聚合到 .runtime/ai_error_patterns/aggregated_patterns.json）
         self._reconciliation_registry.register(make_workspace_hygiene_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 工作区卫生自动清理（priority=890，post-commit auto-sync 产物 git restore 还原）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
@@ -831,7 +841,7 @@ class GitCommitGateway:
 
         return (
             True,
-            f"SSoT 兜底门禁 passed: {len(new_py_files)} new src/zephyr/*.py files checked, no conflict",
+            f"SSoT 兜底门禁 passed: {len(new_py_files)} new src/zephyr/*.py files checked, no new conflict",
         )
 
     def _run_post_commit_reconcile(
