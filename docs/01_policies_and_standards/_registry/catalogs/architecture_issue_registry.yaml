@@ -4828,3 +4828,141 @@ entries:
   related_rules: 'trae_071 (临时文件生命周期铁律), trae_070 (临时文件分类存放铁律 - 空间维度), trae_060 (向内收三原则 - 事件驱动), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001: 系统性防漂移体系盲区（2026-07-20，4 盲区 3 Phase 治本）---
+# 关联裁定：Ruling:100PCT-AI-GOVERNANCE 第一性原理（100% AI 场景下 warn=通过，治本须 fail-closed 或自动处理）
+- issue_id: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
+  title: 系统性防漂移体系盲区——4 盲区 3 Phase 治本（post-commit→pre-commit/clean-check/verified-gate）
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定。前序会话"遗留风险"报告指出 4 个系统性盲区：
+
+
+    1. 工作区漂移检测全部 post-commit 触发——workspace_hygiene_reconciler 是 post-commit
+       priority=890，commit 时已搭便车完成，post-commit warn 无治本作用
+
+    2. session_worktree_commit 只提交显式列出的 files——AI 用 Edit/Write 写项目根，
+       session 文件在主工作区是 modified 状态，commit 时未列入 files 参数=搭便车风险
+
+    3. 无 session_end 工作区 clean 检查——session_worktree_start/abort 无工作区 clean
+       验证，新 session 启动时主工作区可能有其他 session 残留，merge 时被 WORKSPACE-CLEAN-CHECK
+       阻断（本 session 实证：48 real code modified 阻断 merge）
+
+    4. 文档"已完成"声明无硬验证——ruling_*.md / architecture_issue_registry.yaml 中
+       "已完成（commit <hash>）"声明，AI 可凭记忆/幻觉填写不存在的 hash，无门禁强制验证
+
+
+    病根分析（第一性原理·100% AI 场景）：
+
+
+    - 5 层闭环模型（post-commit warn）依赖人类视觉通道闭环——100% AI 场景下 AI 把 warn
+      当"通过"，warn=无效。治本必须前置为 pre-commit fail-closed 或自动处理（无人类介入）
+
+    - session_worktree 物理隔离消除搭便车，但 4 个钩子（start/commit/merge/abort）无工作区
+      clean 检查=session 间漂移无防护
+
+    - 文档 SSoT（ruling/architecture_issue_registry）若允许 AI 凭记忆填写 commit hash，
+      则文档本身可能是幻觉产物——SSoT 失效
+
+
+    治本方案（3 Phase 渐进，对标 5 层闭环模型升级）：
+
+
+    Phase 1（session lifecycle 工作区 clean 检查 + pre-commit drift warn）：
+
+      - 4 钩子接入（session_worktree_start/abort/merge + pre-commit）+ 5 helper 函数
+
+      - fail-closed/fail-open 策略：merge=fail-closed（阻断），start/abort=fail-open
+        （告警不阻断），commit Phase 1.5=fail-open（遥测落盘 .runtime/workspace_drift_warn.jsonl）
+
+      - 复用 workspace_hygiene_reconciler 的 _git_status_porcelain / _is_auto_sync_product
+        + GitCommandBatcher.git_restore_batch（向内收原则 trae_060）
+
+      - session_files 排除语义：worktree 模式下 AI 用 Edit 写项目根，session 文件在主工作区
+        是 modified 状态但不是搭便车（已在 worktree commit 中）
+
+      - force=True 逃生通道：对标 PRE-MERGE-TOPO-CHECK 的 force 语义，跳过 WORKSPACE-CLEAN-CHECK
+
+
+    Phase 2（auto-recover staged 完整性修复）：
+
+      - _restore_auto_sync_batch 添加 unstage+restore 两步（原版只 restore worktree，
+        对 staged/MM 状态无效——staged auto-sync 文件被带入下次 commit）
+
+      - 病根：旧版只调用 git_restore_batch(staged=False)，对 "M " (staged only)
+        完全无效，对 "MM" (staged + worktree) 只还原 worktree 部分，staged 版本保留
+
+      - 治本：先 git_restore_batch(staged=True) unstage，再 git_restore_batch(staged=False)
+        restore worktree 到 HEAD，合并判断"既 unstage 成功又 restore 成功才算完全还原"
+
+
+    Phase 3（RULING-COMMIT-VERIFIED gate + ruling 文档落盘）：
+
+      - 新建 RULING-COMMIT-VERIFIED gate (priority=77)，diff-based 增量检测
+
+      - 检测 _TRIGGER_PATTERNS（ruling_*.md + architecture_issue_registry.yaml）的
+        added 行中"已完成...commit <hash>"声明
+
+      - 用 git cat-file -e <hash>^{commit} 验证 hash 真实存在
+
+      - 逃生通道：commit message 含 [no-verify-ruling:<reason>] 标记
+        （noqa_exempt_registry 登记 marker）
+
+      - fail-closed：git 失败/ast 失败阻断（非 Zephyr 项目 skip）
+
+      - 复杂度治本：_check 闭包 cc=16 → 提取 _detect_violations helper (cc=13) + _check (cc=5)
+
+      - 36 测试全部通过（TestExtractCommitHashes 9 + TestIsTriggerFile 6 +
+        TestVerifyCommitExists 3 + TestRulingCommitVerifiedGate 12 +
+        TestGateSpecMetadata 3 + TestEscapeMarker 4）
+
+
+    架构师裁定（不实现项）：
+
+
+    - batch commit 入口是伪需求——违反"一个任务一个 commit"语义，不实现
+
+    - 全量 schema 化是过度工程——ruling 文档结构多样性高，强制 schema 化反而阻碍表达，不实现
+  fix_phase: |
+    Phase 1（已完成 2026-07-20，commit 4f56348145，merge 9a6d66efac）：
+      - session_worktree.py 4 钩子接入 + 5 helper 函数
+        (_classify_workspace_files cc=7 / _restore_auto_sync_batch cc=6 /
+         _evaluate_drift_after_restore cc=13 / _check_workspace_clean cc=10 /
+         _log_workspace_drift_warn cc=11) + 3 包装函数 + _WS_CLEAN_GATE_ID 常量
+      - Phase 1.5 pre-commit drift warn 遥测落盘 .runtime/workspace_drift_warn.jsonl
+      - 169 tests passed (test_session_worktree_workspace_clean.py 33 + 相关 136)
+      - start 钩子告警实际触发验证成功（新 session 启动时检测到 48 real code modified）
+
+    Phase 2（已完成 2026-07-20，commit c343ae5d6b，merge 0259db8a1fef）：
+      - _restore_auto_sync_batch 添加 staged/MM 状态处理（cc=6）
+      - 先 git_restore_batch(staged=True) unstage + 再 git_restore_batch(staged=False) restore
+      - 177 tests passed + 1608 commit_gates 全量通过
+      - 4 新测试：staged_only / mm_state / mixed_staged_and_worktree / empty_files
+      - 4 集成测试：staged_auto_sync_passes_merge / mm_state_passes_merge /
+        staged_real_code_blocks_merge / staged_real_code_fail_open_abort
+
+    Phase 3（已完成 2026-07-20）：
+      - 新建 ruling_commit_verified_gate.py (256 行, MOD-GOV-ruling_commit_verified_gate)
+      - 新建 test_ruling_commit_verified_gate.py (SRC-TST-2717, 36 测试全部通过)
+      - 复杂度治本：_check 闭包 cc=16 → _detect_violations (cc=13) + _check (cc=5)
+      - gate 注册：git_commit_gateway.py L115 import + L404 register
+      - 注册表登记：
+        capability_canonical_file_registry.yaml（capability_id + creation_token）
+        noqa_exempt_registry.yaml（no-verify-ruling marker, scope=commit-message）
+        architecture_issue_registry.yaml（本案登记）
+      - ruling 文档落盘：docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 1+1.5+2：4 钩子 + 5 helper + _restore_auto_sync_batch staged 修复）
+    - src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py（Phase 3 新建 gate，priority=77）
+    - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 3 gate 注册 L115 import + L404 register）
+    - tests/governance/commit_gates/test_ruling_commit_verified_gate.py（Phase 3 新建测试，36 测试）
+    - tests/governance/rule_bridge/test_session_worktree_workspace_clean.py（Phase 1+2 测试，33+8 测试）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability + creation_token 登记）
+    - docs/01_policies_and_standards/_registry/catalogs/noqa_exempt_registry.yaml（no-verify-ruling marker 登记）
+    - docs/02_enterprise_architecture/ruling_workspace_drift_systemic.md（Phase 3 ruling 文档落盘）
+  status: in_progress
+  related_adjudication: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (pre-merge sys.path 治本，session lifecycle 同维度), #ARCH-WORKTREE-002 (worktree 物理隔离基础，本议题在其上加工作区 clean 检查), Ruling:100PCT-AI-GOVERNANCE (100% AI 场景第一性原理，warn=通过治本须 fail-closed), #ARCH-TOOL-HEALTH-V1 (workspace_hygiene_reconciler 复用基础), #ARCH-CROSS-COMMIT-ATOMICITY-001 (跨 commit 原子性，本议题 Phase 3 gate priority=77 紧接其后)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_054 (备份先行), trae_060 (向内收三原则), trae_062 (SSoT 真源分类)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'

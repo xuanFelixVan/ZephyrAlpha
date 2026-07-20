@@ -214,6 +214,20 @@ markers:
     created: "2026-07-20"
     created_by: "ARCH-RUNCOMMAND-WINDOW-FLASH-001"
 
+  - marker: "no-verify-ruling"
+    metric_id: null  # 非 dashboard 指标，是 RULING-COMMIT-VERIFIED gate commit-msg 级豁免
+    description: "RULING-COMMIT-VERIFIED gate commit-msg 级豁免——文档'已完成'声明 commit hash 真实性硬验证的逃生通道"
+    applicable_conditions:
+      - "草稿/占位 ruling 文档（'已完成'声明为模板，commit hash 尚未生成）"
+      - "迁移历史 ruling 文档时引用了其他仓库的 commit hash（跨仓库迁移场景）"
+      - "测试环境无法访问真实 git history（CI 干跑场景）"
+    reason_required: true
+    reason_format: "[no-verify-ruling:<具体理由>]"
+    reason_min_length: 10
+    scope: "commit-message"  # commit-msg 级豁免（per-commit）
+    created: "2026-07-20"
+    created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
