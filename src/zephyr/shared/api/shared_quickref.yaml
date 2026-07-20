@@ -577,79 +577,112 @@ blueprint_scorer:
   anti_patterns:
   - 裸路由查表不评分——用 score_and_rank_routes 避免短链路截?最长匹配陷
 agent_rbac:
-  description: Agent 身份与权限系统——静态权限注册表升级为七层运行时强制执行
-  blueprint: docs/03_modules/l01_infrastructure/agent-rbac/blueprint.md
-  code_root: src/zephyr/agent_rbac/
-  status: draft (0% 施工)
-  architecture: L0 Immutable Core ?L1 RBAC ?L2 ABAC ?L3 Input Guard ?L4 Sequence
-    Guard ?[执行] ?L5 Output Guard ?L6 Observability
+  description: Agent 身份与权限系统——七层纵深防御·六横切面运行时权限强制执行（5.157.16 治本：路径全部重写指向 security/access_control/）
+  blueprint: docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md
+  code_root: src/zephyr/security/access_control/
+  status: production（已实施，148+ 组件文件）
+  architecture: L0 Immutable Core → L1 RBAC → L2 ABAC → L3 Input Guard → L4 Sequence
+    Guard → [执行] → L5 Output Guard → L6 Observability
   layers:
     l0_immutable_core:
-      file: agent_rbac/immutable_core.py
-      description: 硬编码不可变保护路径 + Kill Switch 全局熔断 + Engine 降级策略（崩=blocked
+      file: security/access_control/immutable_core.py
+      description: 硬编码不可变保护路径 + Kill Switch 全局熔断 + Engine 降级策略（崩=blocked）
       key_exports:
       - symbol: PROTECTED_PATHS
-        note: 硬编码保护路径列表—?git, agent_rbac/, AGENTS.md, .pre-commit-config.yaml
-      - symbol: ALWAYS_BLOCKED
+        note: 硬编码保护路径列表——.git, security/access_control/, AGENTS.md, .pre-commit-config.yaml
+      - symbol: ALWAYS_BLOCKED_OPERATIONS
         note: 硬编码禁止操作——modify_self_permissions, delete_audit_logs, shell_true_execution
-      - symbol: KillSwitch
-        note: 全局熔断器—? 种自动触发器 + 手动熔断
-      - symbol: EngineDegradation
-        note: Engine 故障降级——崩=blocked，绝不放
+      - symbol: ImmutableCore
+        note: 不可变核心类——硬编码保护区与禁操作列表的运行时访问入口
+      - symbol: IntegrityResult
+        note: 完整性检查结果 dataclass
       anti_patterns:
-      - AI 修改 immutable_core.py ?rbac_roles.yaml 给自己提权——L0 必须硬阻
+      - AI 修改 immutable_core.py 或 rbac_roles.yaml 给自己提权——L0 必须硬阻断
+    l0_kill_switch:
+      file: security/access_control/kill_switch.py
+      description: 全局熔断器——多种自动触发器 + 手动熔断
+      key_exports:
+      - symbol: KillSwitch
+        note: 全局熔断管理类（多触发器 + 手动熔断 API）
+      - symbol: KillSwitchState
+        note: ARMED / TRIPPED / RECOVERING 状态枚举
+      - symbol: get_kill_switch
+        note: 进程级单例获取器
+    l0_engine_degradation:
+      file: security/access_control/engine_degradation.py
+      description: Engine 故障降级——崩=blocked，绝不放行
+      key_exports:
+      - symbol: EngineDegradationManager
+        note: 降级管理类（DegradationLevel + DegradationReason + DegradationState）
+      - symbol: get_engine_degradation_manager
+        note: 进程级单例获取器
     l1_rbac:
-      file: agent_rbac/rbac_guard.py
-      description: RBAC 角色权限——三?always_allow 95% / auto_guard 4% / blocked 1%
+      file: security/access_control/guards/rbac_guard.py
+      description: RBAC 角色权限——三层 always_allow 95% / auto_guard 4% / blocked 1%
       key_exports:
-      - symbol: PermissionGuard.check()
-        note: 七层权限检查入口——每 Tool 调用前必
+      - symbol: RBACGuard
+        note: RBAC 守卫类——角色权限检查入口
       - symbol: PermissionDecision
-        note: ALLOW / AUTO_GUARD / BLOCKED / SKIPPED
+        note: ALLOW / AUTO_GUARD / BLOCKED / SKIPPED 决策枚举
       - symbol: PermissionResult
-        note: 判定结果 + layered_decisions 逐层明细
+        note: 判定结果 + layered_decisions 逐层明细 dataclass
       config: rbac_roles.yaml——从 GOV-AI-001 自动派生
-    l2_abac:
-      file: agent_rbac/abac_guard.py
-      description: ABAC 属性权限——意图感?+ 时间窗口 + Agent 成熟度四?+ 资源敏感
+    l1_permission_guard:
+      file: security/access_control/guards/permission_guard.py
+      description: 七层权限检查入口——每次 Tool 调用前必须先 PermissionGuard.check()
       key_exports:
-      - symbol: AgentMaturityLevel
-        note: INTERN / JUNIOR / SENIOR / PRINCIPAL 四级信任
-      - symbol: AbacContext
+      - symbol: PermissionGuard
+        note: 七层权限检查协调器
+      - symbol: GuardDecision
+        note: 守卫决策枚举
+      - symbol: GuardResult
+        note: 守卫结果 dataclass
+    l2_abac:
+      file: security/access_control/guards/abac_guard.py
+      description: ABAC 属性权限——意图感知 + 时间窗口 + Agent 成熟度四级 + 资源敏感性
+      key_exports:
+      - symbol: ABACGuard
+        note: ABAC 守卫类
+      - symbol: ABACContext
         note: 四维属性上下文——intent + temporal + maturity + sensitivity
+      - symbol: MaturityLevel
+        note: INTERN / JUNIOR / SENIOR / PRINCIPAL 四级信任（注：与 identity.MaturityLevel 同名）
+      - symbol: SensitivityLabel
+        note: 资源敏感性标签枚举
+      - symbol: TemporalCategory
+        note: 时间窗口分类枚举
     l3_input_guard:
-      file: agent_rbac/input_guard.py
-      description: 参数护栏——schema 白名?+ 范围限制 + 危险模式检测（DROP TABLE/shell injection
+      file: security/access_control/guards/input_guard.py
+      description: 参数护栏——schema 白名单 + 范围限制 + 危险模式检测（DROP TABLE/shell injection）
     l4_sequence_guard:
-      file: agent_rbac/sequence_guard.py
-      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive->external_output
+      file: security/access_control/guards/sequence_guard.py
+      description: 序列护栏——会话级操作序列追踪 + 禁止序列阻断（read_sensitive→external_output）
       note: 最关键盲点补丁——防止多步合法操作组成攻击链
     l5_output_guard:
-      file: agent_rbac/output_guard.py
-      description: 输出护栏——PII 脱敏 + 凭证检?+ 大小截断
+      file: security/access_control/guards/output_guard.py
+      description: 输出护栏——PII 脱敏 + 凭证检测 + 大小截断
     l6_observability:
-      file: agent_rbac/observability.py
-      description: 可观测性——OpenTelemetry 指标 + 行为异常检?+ 权限变更审计
+      file: security/access_control/observability.py
+      description: 可观测性——OpenTelemetry 指标 + 行为异常检测 + 权限变更审计
     l7_testing:
-      file: agent_rbac/dry_run.py
-      description: 测试与模拟——权限影响分?+ Dry-Run 模式 + 自动化测试框
+      file: security/access_control/dry_run.py
+      description: 测试与模拟——权限影响分析 + Dry-Run 模式 + 自动化测试框架
   identity:
-    file: agent_rbac/identity.py
+    file: security/access_control/identity.py
     key_exports:
     - symbol: AgentIdentity
-      note: agent_id + agent_type + ide_source + role_bindings + maturity_level +
-        session_id
-    - symbol: AgentType
-      note: ARCHITECT / IMPLEMENTER / REVIEWER / GOVERNOR / RESEARCHER / OPERATOR
+      note: agent_id + agent_type + ide_source + role_bindings + maturity_level + session_id
+    - symbol: MaturityLevel
+      note: INTERN / JUNIOR / SENIOR / PRINCIPAL 四级信任枚举
     - symbol: IDESource
-      note: TRAE / CURSOR / ROOCODE / CLI——多 IDE 统一身份
+      note: TRAE / CURSOR / ROOCODE / CLI——多 IDE 统一身份枚举
   integration_points:
   - target: gates.gate_engine
-    at: G0 前置检
-    why: 每个 Tool 调用?PermissionGuard.check()
+    at: G0 前置检查
+    why: 每个 Tool 调用前先 PermissionGuard.check()
   - target: mcp._base_server
     at: tool_call 拦截
-    why: MCP Tool 执行前七层权限检
+    why: MCP Tool 执行前七层权限检查
   - target: audit_trail
     at: MOD-INF-020
     why: 权限判定 + 序列违规 + Kill Switch 事件
@@ -661,7 +694,7 @@ agent_rbac:
     why: L0 Kill Switch 复用熔断器基础设施
   decisions:
   - id: D-018-01
-    summary: 三层权限 95/4/1 分布，取?needs_approval
+    summary: 三层权限 95/4/1 分布，取代 needs_approval
   - id: D-018-02
     summary: 先干后验 + 自动护栏，非事前审批
   - id: D-018-03
@@ -673,15 +706,15 @@ agent_rbac:
   - id: D-018-06
     summary: L0 Engine 降级策略——崩=blocked
   - id: D-018-07
-    summary: L2 ABAC——四维属性权
+    summary: L2 ABAC——四维属性权限
   - id: D-018-08
     summary: L3 Input Guard——参数级护栏
   - id: D-018-09
-    summary: L4 Sequence Guard——操作序列追踪与阻断（最关键
+    summary: L4 Sequence Guard——操作序列追踪与阻断（最关键）
   - id: D-018-10
-    summary: L5 Output Guard——输出护
+    summary: L5 Output Guard——输出护栏
   - id: D-018-11
-    summary: L6 Observability——可观测
+    summary: L6 Observability——可观测性
   - id: D-018-12
     summary: L7 Testing & Dry-Run——权限可测试
 consumers:
