@@ -7,7 +7,7 @@ generated_at: '2026-07-19T13:49:23Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 66
+total_rules: 68
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1698,3 +1698,68 @@ rules:
   - 命令串联禁止
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml
+- rule_id: TRAE-067
+  title: AI RunCommand 窗口闪现纪律铁律（Window Flash Discipline，RULE-EIGHTEEN 外部化）
+  module_id: TRAE-067
+  scope: runcommand_window_discipline
+  domain: TRAE
+  severity: high
+  stability: evolving
+  ai_autonomy: ai_modifiable
+  safety_level: M
+  operations:
+  - runcommand_invoke
+  - shell_command_execution
+  - python_dash_c_one_liner
+  - ai_session_concurrent
+  gate_ids: []
+  tags:
+  - TRAE
+  - window_flash
+  - L1_foundation
+  - runcommand_discipline
+  - powershell_window
+  - create_no_window
+  - RULE-EIGHTEEN
+  aliases:
+  - RULE-EIGHTEEN
+  - 窗口闪现纪律
+  - RunCommand窗口隐藏
+  - pythonw首选
+  - CREATE_NO_WINDOW
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_067_window_flash_discipline.yaml
+- rule_id: TRAE-068
+  title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化，裁定 #ARCH-PREVENTABILITY-LAYER-001）
+  module_id: TRAE-068
+  scope: preventability_layer
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - post_commit_reconciler_design
+  - pre_commit_gate_design
+  - governance_mechanism_design
+  - abuse_monitor_review
+  - rule_externalization
+  gate_ids: []
+  tags:
+  - TRAE
+  - preventability
+  - L1_foundation
+  - 6层闭环模型
+  - pre_commit_gate
+  - post_to_pre_migration
+  - anti_abuse
+  - RULE-PREVENTABILITY
+  aliases:
+  - RULE-PREVENTABILITY
+  - 可预防性
+  - preventability
+  - 第6层
+  - 6层闭环模型
+  - ARCH-PREVENTABILITY-LAYER-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml

@@ -49,8 +49,8 @@ sections:
       pass: 先调用 rule_discovery.discover_applicable_rules 或 capability_lookup.find，进入"零幻觉空间"
       fail: 凭记忆推断适用规则 → 幻觉/漂移根源
     - type: constraint
-      check: 100% AI 开发场景下，AI 不查规则就写代码 = 在过期快照上推断 = 幻觉温床。5 层断裂模型：可知性(AI 不知道有规则) → 可达性(AI 无法调用规则查询) → 可观察性(AI 无反馈) → 可逃生性(逃生通道坏了) → 可追溯性(审计链断了)
-      pass: 5 层全部打通——AI 知道规则(MCP 注册) + AI 能调用(rule_discovery/capability_lookup) + AI 有反馈(audit log) + 逃生通道可用([no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP=1) + 审计链完整(.runtime/lookup_audit/<session_id>.jsonl)
+      check: 100% AI 开发场景下，AI 不查规则就写代码 = 在过期快照上推断 = 幻觉温床。6 层闭环模型（AGENTS.md §RULE-CAPABILITY-LOOKUP + TRAE-068）：可知性(AI 不知道有规则) → 可达性(AI 无法调用规则查询) → 可观察性(AI 无反馈) → 可逃生性(逃生通道坏了) → 可追溯性(审计链断了) → 可预防性(pre-commit 阻断 + 自适应学习，TRAE-068)
+      pass: 6 层全部打通——AI 知道规则(MCP 注册) + AI 能调用(rule_discovery/capability_lookup) + AI 有反馈(audit log) + 逃生通道可用([no-lookup:reason] / ZEPHYR_BYPASS_LOOKUP=1) + 审计链完整(.runtime/lookup_audit/<session_id>.jsonl) + 第 6 层可预防性(pre-commit gate 配对 post-only reconciler，TRAE-068)
       fail: 任一层断裂 → gate 形同虚设或永久阻断所有 commit
     actions:
     - type: mandatory

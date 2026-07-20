@@ -167,9 +167,9 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 - R1(已落地): emergency_commit 阈值过渡期回滚
 - R2(已完成): P3-1.1/1.2 + 审计文档闭环提交
 - R3(已完成): 审计文档与 registry 同步修正
-- **R4(待实施)**: heartbeat 治本立项(2 周内 2026-08-02 前产出独立裁定 + smoke test)
+- R4(已完成 2026-07-20): heartbeat 治本立项 + smoke test（#ARCH-HEARTBEAT-001，commit e609252cb7）
 - R5(已完成): 工作区卫生强制清理
-- **R6(待实施)**: 6 层闭环模型正式化(AGENTS.md + `trae_067_preventability_layer.yaml`)
+- **R6(已完成 2026-07-20)**: 6 层闭环模型正式化（AGENTS.md L128 + `trae_068_preventability_layer.yaml`，#ARCH-PREVENTABILITY-LAYER-001）——**编号修正**：原计划用 TRAE-067（编号冲突），改用 TRAE-068
 
 **4 阶段治本方案**:
 - Phase A(已完成): P3-1.1/1.2 + 审计文档闭环
@@ -262,26 +262,28 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 - 综合健康度评分提供治理健康度的全貌,而非单一维度的误报
 - 阈值自我放松被流程化防护,避免"杀信使"反模式
 
-### 裁定 D-4: 第 6 层"可预防性"正式化(R6, 本周)
+### 裁定 D-4: 第 6 层"可预防性"正式化(R6, 本周)——✅ 已完成 2026-07-20
 
 **问题**: 现有 5 层闭环模型(可知性/可达性/可观察性/可逃生性/可追溯性)只能"事后报告",无法"事前预防"。post-commit reconciler warn 无法挽回已 commit 的影响。
 
 **治本方案**:
-1. **AGENTS.md preamble 5 层 → 6 层**(补充 ⑥ 可预防性):
+1. **AGENTS.md preamble 5 层 → 6 层**(补充 ⑥ 可预防性): ✅ 已落地（AGENTS.md L128）
    - ⑥ 可预防性(Preventability): 机制能在问题发生前预防(pre-commit 阻断 + 自适应学习 + AI 行为模式库)
    - 与 ③ 可观察性的区别:可观察性是事后观察,可预防性是事前预防
 
-2. **新增 `trae_067_preventability_layer.yaml`**(结构化规则):
-   - rule_id: TRAE-067
-   - title: 第 6 层可预防性 — pre-commit 阻断 + 自适应学习
+2. **新增 `trae_068_preventability_layer.yaml`**(结构化规则): ✅ 已落地（166 行）
+   - rule_id: TRAE-068（编号修正:原计划 TRAE-067 编号冲突,改用 TRAE-068）
+   - title: 第 6 层可预防性铁律（Preventability Layer，6 层闭环模型正式化）
    - prohibitions: 禁止 post-commit reconciler 作为唯一治理机制(必须有 pre-commit gate 配对)
    - requirements: 所有 post-only reconciler 必须评估是否可前移为 pre-commit gate
 
-3. **`capability_canonical_file_registry.yaml` 登记 `preventability` capability**
+3. **`capability_canonical_file_registry.yaml` 登记 `preventability_layer_rule` capability**: ✅ 已落地（token=auto-trae-068-preventability-20260720）
 
-4. **`rule_ai_perception_index.yaml` 重新生成**(66 → 67 rules)
+4. **`rule_ai_perception_index.yaml` 重新生成**(67 → 68 rules): ✅ 已落地（total_rules=68）
 
-5. **`gate_registry.yaml` 配对 gate**(pre-commit forgery gate,Phase 3 实施)
+5. **`gate_registry.yaml` 配对 gate**(pre-commit forgery gate,Phase 2 实施): ⏳ 待立项（GATE-FORGED-GW-MARKER）
+
+**裁定修正（#ARCH-PREVENTABILITY-LAYER-001）**: 原裁定 D-4 计划用 TRAE-067,但 TRAE-067 已被 `trae_067_window_flash_discipline.yaml` 占用（2026-07-20 后期），故改用 TRAE-068（下一个可用编号）。详见 [architecture_issue_registry.yaml #ARCH-PREVENTABILITY-LAYER-001](../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
 **预期效果**:
 - 6 层闭环模型正式化,可预防性成为治理体系的显性概念
