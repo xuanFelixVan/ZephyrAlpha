@@ -281,7 +281,7 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 
 4. **`rule_ai_perception_index.yaml` 重新生成**(67 → 68 rules): ✅ 已落地（total_rules=68）
 
-5. **`gate_registry.yaml` 配对 gate**(pre-commit forgery gate,Phase 2 实施): ⏳ 待立项（GATE-FORGED-GW-MARKER）
+5. **`gate_registry.yaml` 配对 gate**(pre-commit forgery gate,Phase 2 实施): ✅ 已落地 2026-07-20（commit `ce81f1077f` + merge `ed9243c8ba`，GATE-FORGED-GW-MARKER，priority=29，src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py，23/23 smoke test PASSED）
 
 **裁定修正（#ARCH-PREVENTABILITY-LAYER-001）**: 原裁定 D-4 计划用 TRAE-067,但 TRAE-067 已被 `trae_067_window_flash_discipline.yaml` 占用（2026-07-20 后期），故改用 TRAE-068（下一个可用编号）。详见 [architecture_issue_registry.yaml #ARCH-PREVENTABILITY-LAYER-001](../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 
@@ -380,16 +380,16 @@ ZephyrAlpha 项目的治理体系(gate / reconciler / session_registry / worktre
 
 | Task | 文件 | 内容 | 预估工时 |
 |---|---|---|---|
-| P4-1 | 新增 `src/zephyr/governance/audit/ai_error_pattern_library.py` | AI 错误模式库(历史错误模式检索) | 8h |
-| P4-2 | 新增 `src/zephyr/gov_enforcement/commit_gates/forged_marker_detection_gate.py` | pre-commit 检测 [GW:*] 标记合法性 | 4h |
-| P4-3 | 新增 `scripts/governance/git_pre_receive_hook.py` | server-side pre-receive hook 拦截非 GW commit | 4h |
+| P4-1 | 新增 `src/zephyr/governance/audit/ai_error_pattern_library.py` | AI 错误模式库(历史错误模式检索) | 8h（深化评估见 §11.3.1） |
+| P4-2 | ✅ 已落地 2026-07-20（commit `ce81f1077f`，实际文件名 `forged_gw_marker_gate.py`，priority=29，原计划文件名 `forged_marker_detection_gate.py` 已弃用） | pre-commit 检测 [GW:*] 标记合法性 | 4h |
+| P4-3 | 新增 `scripts/governance/git_pre_receive_hook.py` | server-side pre-receive hook 拦截非 GW commit | 4h（深化评估见 §11.3.2，可行性下调） |
 | P4-4 | `src/zephyr/gov_enforcement/rule_bridge/session_worktree.py` | session 启动推送"近期高频错误"提醒 | 3h |
-| P4-5 | 长期:GPG 签名强制 | server-side 强制 GPG 签名验证 | 待评估 |
+| P4-5 | 长期:GPG 签名强制 | server-side 强制 GPG 签名验证 | 待评估（深化评估见 §11.3.3，可行性下调为低） |
 
 **验证标准**:
 - [ ] AI 错误模式库可检索历史错误模式
-- [ ] forged_gw_marker pre-commit gate 阻断伪造标记
-- [ ] non-GW commit server-side pre-receive hook 拦截
+- [x] forged_gw_marker pre-commit gate 阻断伪造标记（✅ 2026-07-20 已落地，见 P4-2）
+- [ ] non-GW commit server-side pre-receive hook 拦截（深化评估见 §11.3.2，方案改为 GitHub Actions PR 检查）
 - [ ] session 启动时推送近期高频错误提醒
 
 ---
@@ -527,3 +527,227 @@ R6(第 6 层正式化)可与 Phase 1 并行,是概念性工作,不依赖代码�
 **裁定人**: ZephyrAlpha AI Architect(客观第三方架构师视角)
 **裁定日期**: 2026-07-20
 **预计完成时间**: Phase 1 本周(2026-08-02 前)/ Phase 2 本月 / Phase 3 下月 / Phase 4 长期
+
+---
+
+## 11. Phase 2 收尾 + Phase 3/4 深化可行性评估（2026-07-20 后期）
+
+> 本章节是对 §3 裁定 D-4 与 §4 Phase 2/3/4 任务清单的深化评估，基于 Phase 1/2 落地后的实际基础设施现状与 reconciler 全景调研。评估目的：把"待评估"与"长期"的具体可行性落到事实层。
+
+### 11.0 摘要
+
+- **Phase 2 reconciler 前移评估**: 用户原预估"10+"post-only reconciler 可前移,实际调研显示 40 个 reconciler 中可前移候选仅 6 个,明确推荐前移仅 3 个。差异源于"post-only"语义混淆(强 post-only / 弱 post-only 双防 / 可前移候选 三类)。
+- **Phase 3 自适应阈值**: 可行性中。`AdaptiveThreshold` 类已存在但模型不匹配(概率型 vs 次数型),需扩展;7d 基线需数据积累期。
+- **Phase 4 AI 行为模式库**: 可行性中高。数据源齐备(reconcile_execution_log + .runtime/reconcile_reports/*.json + event_sink JSONL),但需先扩展 schema 支持"错误模式"结构化字段。
+- **Phase 4 server-side pre-receive hook**: 可行性低-中。GitHub-hosted 仓库无法部署项目内 pre-receive 脚本,必须改走 GitHub Actions + Branch Protection。强制层从 commit 降级为 PR。
+- **Phase 4 GPG 签名**: 可行性低。100% AI 开发场景下"签名"含义弱化(同一 AI 用同一 key),私钥管理方案完全缺失,边际收益低于成本。建议**不实施**,由 P4-2 forged_gw_marker_gate 已落地的 in-process forgery 防御 + GitHub Actions PR 检查覆盖。
+
+### 11.1 Phase 2 收尾:post-only reconciler 前移评估(用户原预估"10+"→ 实际推荐 3 个)
+
+#### 11.1.1 调研基础
+
+调研对象:`src/zephyr/governance/audit/reconciliation_registry.py` 内 34 个 `make_*_reconciler` + 外部文件 6 个 reconciler = **共 40 个 reconciler**。
+
+关键事实:根据 `reconciliation_registry.py` 文件头部注释(L19-23),**所有 reconciler 在设计上都是 post-commit 的**。原因:`GitCommitGateway` 在所有 commit 路径统一使用 `--no-verify` 斩断 stash 冲突链,副作用是系统性关闭全部 pre-commit GATE。reconciler 在 commit 完成后由 `ReconciliationRegistry.reconcile_for()` 统一调度补偿检测。因此"post-only"的语义需要细分为三类。
+
+#### 11.1.2 三类 post-only 语义澄清
+
+| 分类 | 数量 | 前移可行性 | 说明 |
+|------|------|-----------|------|
+| 强 post-only | 26 | 不可行 | auto-commit 副作用 / DB 状态依赖 / cleanup 性质 / commit history 审计 |
+| 弱 post-only(已有 pre-commit 双防) | 8 | 已实现,无需再前移 | pre-commit gate 防新增 + reconciler 清存量,双层防御 |
+| 可前移候选 | 6 | 部分可行 | 纯静态检测、无 auto-commit 副作用,且当前无 pre-commit 对应 gate |
+
+**强 post-only 26 个**(不可前移根因分类):
+
+- (a) auto-commit/auto-fix 类(15 个):前移会导致 pre-commit 死循环。包括 manifest/path_tree/path_ownership/blueprint_frontmatter/drift_fix/module_id_recommend/vocab_change/delete_audit/regenerate/index_generator/session_log_index/arch_diagram/gate_inventory_sync/gate_registry_sync/rule_audit(catalog 部分)。`make_gate_inventory_sync_reconciler` 与 `make_gate_registry_sync_reconciler` 的 docstring 已明确记载此结论("否决策略 A pre-commit 阻断型:阻断会导致 AI 无法 commit 新 gate 代码,死循环")。
+- (b) DB 写入/状态同步类(4 个):需 post-state 才有意义。包括 depgraph_ops/yaml_sync/constraint_detect(PG 写入)/drift_scan(需对比 post-state 检测 drift)。
+- (c) cleanup 类(5 个):与 commit 内容无关。包括 runtime_cleanup/tmp_cleanup/worktree_lifecycle/stash_lifecycle/workspace_hygiene。
+- (d) commit history 审计/snapshot 类(2 个):本质上只能 post。包括 integrity_audit 的 COMMIT-GW-AUDIT 子组件/commit_gateway_abuse_monitor。
+
+**弱 post-only 8 个**(已有 pre-commit 双防,无需再前移):
+
+| Reconciler | 对应 pre-commit gate (priority) |
+|------------|--------------------------------|
+| make_precommit_id_uniqueness_reconciler | make_id_uniqueness_gate (86) |
+| make_exempt_zone_frontmatter_reconciler | make_exempt_zone_frontmatter_gate (87) |
+| make_module_id_consistency_reconciler | make_module_id_consistency_gate (88) |
+| make_scripts_import_integrity_reconciler | make_scripts_import_integrity_gate (104) |
+| make_undefined_name_baseline_reconciler | make_undefined_name_gate (106) |
+| make_blueprint_id_legacy_reconciler | make_blueprint_format_gate (77) |
+| make_deprecated_directory_reconciler | make_directory_contract_gate |
+| make_capability_lookup_health_reconciler | make_capability_lookup_required_gate (110) |
+
+#### 11.1.3 6 个可前移候选逐个评估
+
+| # | 候选 | 可行性 | 成本 | 收益 | 推荐 |
+|---|------|--------|------|------|------|
+| 1 | make_constraint_detect_reconciler (priority=625) | 中 | 中 | 高 | 可行,需重构为 read-only |
+| 2 | make_architecture_health_reconciler (priority=300) | 高(已规划) | 低 | 高 | **推荐**,按第1期路径推进 |
+| 3 | GATE-ARCH-REFS(rule_audit 子组件, priority=710) | 高 | 低 | 中 | **推荐**,注意与现有 arch_reference_gate 去重 |
+| 4 | GATE-AGENTS-MD-REFS(integrity_audit 子组件, priority=810) | 中 | 低 | 中 | 可行,收益有限 |
+| 5 | make_metric_count_drift_reconciler (priority=220) | 高 | 低 | 中 | **推荐**,作为 warn-only pre-commit gate |
+| 6 | make_drift_scan_reconciler (priority=140) | 低 | 高 | 高 | 不推荐直接前移,可拆分轻量版 |
+
+**候选 1 make_constraint_detect_reconciler**:当前跑 `detect_constraint_violations.py` 检测 5 类架构违规(cross_domain/capacity/hard_limit/orphan_node/layer_violation),写 PG arch_constraints 表。前移需把"检测器→写 PG"改为"检测器→阻断 commit",检测器需重构为 read-only 模式(commit 失败时 PG 不被污染)。
+
+**候选 2 make_architecture_health_reconciler**:docstring 明确写"第1期升级路径:转为 pre-commit commit gate(exit 1 阻断),见 architecture_debt_registry.md §六 第1期"。前移成本最低,但 dashboard 跑全量指标耗时 120s,需做增量检测或缓存。
+
+**候选 3 GATE-ARCH-REFS**:纯静态文本检测(正则 + yaml 加载),无副作用,无 auto-commit。需先与现有 `make_arch_reference_gate` (priority=75) 去重,若重复则只需强化现有 gate 而非新建。
+
+**候选 5 make_metric_count_drift_reconciler**:校验 `dashboard.py` + 4 个派生文件中所有 `(\d+) 项指标` 描述与 `len(METRICS)` 一致性。纯静态文本检测,低成本。注意:自动修复不能前置(docstring 提到"描述同步需人工决策"),前移后只能阻断不能修复。
+
+**候选 6 make_drift_scan_reconciler**(不推荐):全量 drift 扫描依赖 depgraph 已同步(依赖 make_depgraph_ops_reconciler priority=130 先跑),但 pre-commit 阶段 depgraph 还未同步。存在循环依赖:drift 扫描依赖 depgraph 同步,depgraph 同步依赖 commit 完成。可考虑拆分为"轻量 staged-file drift check(pre-commit)+全量 drift scan(post-commit 保留)"。
+
+#### 11.1.4 推荐前移清单(3 个,需在 Phase 2 收尾时单独立项裁定)
+
+1. **make_architecture_health_reconciler** → 新增 `architecture_health_gate.py` (pre-commit, project-内已有规划路径)
+2. **GATE-ARCH-REFS 子组件** → 强化现有 `arch_reference_gate.py` 或新增独立 gate(先做去重分析)
+3. **make_metric_count_drift_reconciler** → 新增 `metric_count_drift_gate.py` (pre-commit, warn-only)
+
+#### 11.1.5 用户预估"10+"vs 实际推荐 3 的差异说明
+
+差异根因:用户基于"trae_068 §requirements: 所有 post-only reconciler 必须评估是否可前移为 pre-commit gate"的表述,默认 40 个 reconciler 中至少 10+ 可前移。但实际:
+- 26 个强 post-only 因技术约束不可前移(auto-commit 死循环 / DB 状态依赖 / cleanup 与 commit 无关 / 审计只能 post)
+- 8 个弱 post-only 已有 pre-commit 双防,本就是"前移已完成"状态
+- 6 个可前移候选中 3 个明确推荐,2 个可行但收益有限,1 个不推荐(循环依赖)
+
+**结论**:trae_068 §requirements 的"必须评估"已对所有 40 个 reconciler 完成,产出本章节评估报告。前移清单为 3 个,而非 10+,这是基于事实的修正。
+
+### 11.2 Phase 3 深化评估:自适应阈值 + 健康度评分
+
+#### 11.2.1 现状
+
+- `commit_gateway_abuse_monitor_reconciler.py`(420 行,MATURITY=prototype)当前 5 维阈值**全部静态硬编码**:
+  - `_WARN_ONLY_24H_THRESHOLD = 50`
+  - `_EMERGENCY_24H_THRESHOLD = 10`(R1 由 30 回滚到 10;R4 计划 2026-08-02 heartbeat 落地后强制回滚到 5)
+  - `_ALLOW_OVERLAP_7D_THRESHOLD = 30`
+  - `_FORGED_24H_THRESHOLD = 3`
+  - `_NON_GW_24H_THRESHOLD = 10`
+- `AdaptiveThreshold` 类已存在(`src/zephyr/gov_enforcement/rule_enforcement/adaptive_threshold.py`,EWMA + smoothing 算法)但**未被 abuse_monitor 引用**。其设计是基于 PASS/FAIL outcome 反馈调节阈值(0.1-0.99 概率型),与 abuse_monitor 的"次数阈值"模型不匹配。
+
+#### 11.2.2 可行性:中
+
+- **阻断点 1**:`AdaptiveThreshold` 需扩展支持"次数阈值"而非"概率阈值"。当前 EWMA 算法可复用,但语义层需重新设计。
+- **阻断点 2**:7d 滚动基线需数据积累期。当前 `.runtime/reconcile_reports/commit_gateway_audit_*.json` 最早 2026-07-13,仅 7d 数据,基线统计置信度不足。建议 Phase 3 启动时先观察 14d 再启用自适应。
+- **阻断点 3**:`reconcile_execution_log.detail` 是自由文本,无结构化字段,综合健康度评分(5 维加权)需先扩展 schema 或在 abuse_monitor 内单独维护统计表。
+
+#### 11.2.3 修正建议
+
+- P3-1 工时 4h → 调整为 6h(含 AdaptiveThreshold 类扩展 + 7d 基线实现)
+- P3-2 工时 3h 保持不变
+- P3-3 工时 2h 保持不变
+- 新增 P3-0(前置任务,2h):扩展 `AdaptiveThreshold` 类支持 `count_threshold` 模式,与现有 `probability_threshold` 模式并存
+- 新增 P3-6(前置任务,1h):在 `commit_gateway_abuse_monitor_reconciler.py` 内新增 `_7d_baseline_state` 字典,持久化到 `.runtime/abuse_baseline.json`
+
+### 11.3 Phase 4 深化评估
+
+#### 11.3.1 AI 行为模式库(P4-1)— 可行性中高
+
+**现状**:
+- `src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py`(246 行,MATURITY=production)提供 `AIBehaviorEvent` dataclass,覆盖 7 大监测维度(model/task/prompt/tokens/decision/tools/gates/quality/error/rate_limit),含 `is_suspicious` 启发式判定。**这是事件发射层(emit),不是模式聚合层(pattern aggregation)**。
+- `reconcile_execution_log` 表存在(SQLite governance.db),含 log_id/gate_id/session_id/trigger_source/action/detail/committed_files_summary/commit_message 字段。**无"错误模式"字段**,detail 是自由文本。
+- `.runtime/reconcile_reports/*.json`(200+ 文件,最早 2026-07-13)结构化但分散。
+- `event_sink.py` 落地的 JSONL 事件无后续聚合消费代码(`CONSUMERS` 注释写 `behavioral-auditor`,但 Glob 无此模块)。
+
+**可行性:中高**。
+
+**阻断点**:
+1. `reconcile_execution_log.detail` 是自由文本,无法直接做模式聚合。需先扩展 schema 增加 `error_pattern_id` / `error_pattern_fingerprint` 字段,或在 P4-1 模块内单独维护"模式字典 + 指纹索引"。
+2. `event_sink.py` 的 JSONL 事件无消费方,需新建 consumer 模块聚合到模式库。
+3. 模式提取算法需选择:正则聚类(简单但漏召)vs 嵌入向量聚类(需 LLM 调用,成本高)。建议先用正则聚类 + 人工标注种子模式,后续迭代。
+
+**修正建议**:
+- P4-1 工时 8h → 调整为 12h(含 reconcile_execution_log schema 扩展 + event_sink JSONL consumer + 模式字典初版)
+- 新增 P4-1a(前置,2h):扩展 `reconcile_execution_log` schema 增加 `error_pattern_id` 字段(PRAGMA 幂等迁移,对标已存在的 `acknowledged_at` / `commit_message` 列追加模式)
+- 新增 P4-1b(2h):实现 `event_sink.py` 的 JSONL consumer,聚合到 `ai_error_pattern_library.py`
+
+#### 11.3.2 server-side pre-receive hook(P4-3)— 可行性低-中,方案改走 GitHub Actions
+
+**现状**:
+- 项目是 GitHub-hosted 仓库(`.git/config` remote = `https://github.com/xuanFelixVan/ZephyrAlpha.git`),**不是 bare repo**,本地 `.git/hooks/pre-receive` 不会在 `git commit` 时触发(仅在 push 到 bare repo 时触发)。
+- GitHub 项目内**无法部署 pre-receive 脚本**(需 GitHub Enterprise + pre-receive hooks 才能部署脚本)。
+- 现有 server-side 强制层:`.github/workflows/governance.yml`(373 行)`on: push` + `on: pull_request`,7 个 Tier 检查。**未包含任何 GPG 签名验证、commit message `[GW:]` 标记强制检查、non-GW commit 拦截逻辑**。
+- `git_pre_receive_hook.py` 文件**完全不存在**(原计划文件)。
+
+**可行性:低-中**。
+
+**方案调整**:
+- 放弃"项目内 pre-receive 脚本"路径(物理不可行)。
+- 改走 GitHub Actions + Branch Protection:
+  1. **GitHub Actions job**(新增,在 governance.yml 内):对 PR 的每个 commit 检查 commit message 是否带 `[GW:session_id]` 标记 + session_id 合法性(调用 `forged_gw_marker_gate.py` 的检测逻辑),违规 PR 阻断 merge。
+  2. **GitHub Branch Protection**(需 GitHub Web UI 或 `gh api` 配置):启用 "Require status checks to pass before merging",将上述 job 设为 required。
+- **强制层级降级**:从 commit(原计划)降级为 PR。本地 commit 仍可绕过,但 push 到 GitHub 后 PR 阶段会阻断 merge。
+
+**修正建议**:
+- P4-3 工时 4h → 调整为 6h(含 GitHub Actions job 实现 + Branch Protection 配置指南)
+- 文件路径:原计划 `scripts/governance/git_pre_receive_hook.py` → 改为 `.github/workflows/commit_message_guard.yml`(GitHub Actions workflow)+ `scripts/governance/check_commit_message.py`(可被 Actions 调用的检测脚本,复用 `forged_gw_marker_gate.py` 逻辑)
+
+#### 11.3.3 GPG 签名(P4-5)— 可行性低,建议不实施
+
+**现状**:
+- `.git/config` 完全无 GPG 配置(无 `user.signingkey` / `commit.gpgsign` / `tag.gpgsign` / `gpg.format` / `gpg.program`)。
+- `user.email = trae@example.com` 是**合成 AI 用户**,非真实身份。当前所有 commit 必然未签名。
+- 项目对 GPG 的要求:**完全无**(AGENTS.md / trae_*.yaml / .pre-commit-config.yaml 均无 git commit GPG 签名要求;trae_*.yaml 中的"签名"全部是函数签名/JWT 签名/接口契约签名)。
+- GPG 仅出现在未来规划文档中(5 个文件,15 处匹配,全部是"长期规划"或"待评估")。
+
+**可行性:低**。
+
+**阻断点**:
+1. **100% AI 开发场景下"签名"含义弱化**:同一 AI 进程用同一 GPG key 签名所有 commit,签名只能证明"这是 AI 用这个 key 签的",无法区分"AI 合法 commit"与"AI 被诱导后用同一 key 签的伪造 commit"。GPG 签名的信任模型假设是"私钥只有持有者知道",但 AI 进程对私钥的访问权限与合法用户无差别。
+2. **私钥管理方案完全缺失**:AI 进程需访问 GPG 私钥才能签名,但项目无任何密钥管理方案。私钥放本地 keyring → AI 进程可读;放 HSM → AI 进程无法访问;放 KMS → 需网络调用 + 成本。
+3. **GPG 在 Windows 上配置复杂**:GnuPG 安装 / 密钥生成 / agent 管理 / Windows path 配置,在 100% AI 开发场景下增加大量维护成本。
+4. **边际收益低于成本**:P4-2 forged_gw_marker_gate 已落地(in-process pre-commit forgery 防御)+ §11.3.2 GitHub Actions PR 检查(覆盖 push 后路径),GPG 签名能防的"伪造 commit"场景已被覆盖。GPG 仅在"AI 进程被完全接管 + 私钥泄露"极端场景下有额外价值,但此场景下 in-process gate 也会被绕过,GPG 同样无法防御。
+
+**修正建议**:
+- **P4-5 不实施**,状态从"待评估"改为"不实施(可行性低,边际收益低于成本)"。
+- 由 P4-2(forged_gw_marker_gate,已落地)+ §11.3.2(GitHub Actions PR 检查)覆盖伪造场景。
+- 若未来项目迁移到 GitHub Enterprise 或需要 SOX 合规,可重新评估 GPG 签名(届时私钥管理方案需独立立项)。
+
+### 11.4 修正后的 Phase 3/4 路线图
+
+```
+Phase 3 (下月,L3 表层,依赖 Phase 2 完成):
+─────────────────────────────────────────
+P3-0 (新增,2h) 扩展 AdaptiveThreshold 支持 count_threshold 模式
+P3-1 (6h,原 4h) 阈值从静态改为自适应(7d 滚动基线)
+P3-2 (3h) 新增 health_score_calculator.py(5 维加权评分)
+P3-3 (2h) 综合评分 >0.7 critical_warn, >0.9 block_next
+P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)
+P3-5 (2h) smoke test
+P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json
+
+Phase 4 (长期,依赖 Phase 3 完成):
+─────────────────────────────────────────
+P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id
+P4-1b (新增,2h) event_sink.py JSONL consumer 聚合
+P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)
+P4-2  (✅ 已落地 2026-07-20,forged_gw_marker_gate.py)
+P4-3  (6h,原 4h) GitHub Actions commit_message_guard.yml + check_commit_message.py
+                 (原 git_pre_receive_hook.py 方案放弃,GitHub 项目内不可部署)
+P4-4  (3h) session 启动推送"近期高频错误"提醒
+P4-5  (❌ 不实施,可行性低,边际收益低于成本)
+```
+
+**修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
+
+### 11.5 关键事实澄清(影响后续 Phase 设计)
+
+1. **`commit_gateway_abuse_log` 表在项目中完全不存在**(Grep 全项目 0 匹配)。abuse monitor 实际数据载体是 `.runtime/reconcile_reports/commit_gateway_audit_*.json`(200+ 文件,最早 2026-07-13)。Phase 3 设计需澄清这一点,所有阈值计算基于 JSON 文件而非 DB 表。
+2. **`AdaptiveThreshold` 类已存在但未被 abuse_monitor 引用**,且模型不匹配(概率型 0.1-0.99 vs 次数型阈值)。Phase 3 P3-0 前置任务需扩展该类。
+3. **GitHub-hosted 仓库无法部署项目内 pre-receive 脚本**,Phase 4 P4-3 必须改走 GitHub Actions 路径。
+4. **现有 commit 全部未签名**(`.git/config` 无 GPG 配置 + `user.email = trae@example.com` 是合成 AI 用户),GPG 签名基础设施完全缺失,从零开始的成本远超边际收益。
+5. **trae_068 §requirements "所有 post-only reconciler 必须评估是否可前移为 pre-commit gate" 已在本章节 §11.1 完成评估**,40 个 reconciler 全部覆盖,推荐前移 3 个,详见 §11.1.4。
+
+### 11.6 本章节评估的边界与限制
+
+- 本评估基于 2026-07-20 的代码现状,不预测未来基础设施变化。
+- "可行性"评级是相对的:低 = 边际收益低于成本;中 = 可行但需重构;高 = 可直接施工。
+- 推荐前移的 3 个 reconciler(§11.1.4)需在 Phase 2 收尾时单独立项裁定,本章节仅做可行性评估,不做施工决策。
+- Phase 3/4 修正后工时是预估值,实际施工时可能因代码复杂度(目标 ≤15)约束需要拆分为更多子任务。
+
+---
+
+**§11 评估人**: ZephyrAlpha AI Architect
+**§11 评估日期**: 2026-07-20
+**§11 状态**: 评估完成,待用户审批 Phase 3/4 修正后路线图
