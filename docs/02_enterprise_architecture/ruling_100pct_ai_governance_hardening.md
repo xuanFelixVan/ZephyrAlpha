@@ -719,7 +719,7 @@ P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json  �
 
 Phase 4 (长期,依赖 Phase 3 完成):
 ─────────────────────────────────────────
-P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id
+P4-1a (新增,2h) 扩展 reconcile_execution_log schema 增加 error_pattern_id  ✅ 已落地 2026-07-20
 P4-1b (新增,2h) event_sink.py JSONL consumer 聚合
 P4-1  (12h,原 8h) 新增 ai_error_pattern_library.py(AI 错误模式库)
 P4-2  (✅ 已落地 2026-07-20,forged_gw_marker_gate.py)
@@ -812,6 +812,31 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
   score ≈ 0.15+0.20+0.15+0.35×0.667+0.15 = 0.883，落在 0.7-0.9 critical 区间。
 - **capability_canonical_file_registry.yaml**: 登记 `auto-p3-integration-smoke-20260720` creation_token。
 - 19/19 PASSED in 0.90s。
+
+**P4-1a 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1a，commit d3097bfc46 + merge d65bfec3c140）**:
+
+- **src/zephyr/governance/audit/reconciliation_registry.py**（修改）:
+  扩展 `reconcile_execution_log` schema 增加 `error_pattern_id TEXT` 列（第 11 列）。
+  1. `SQL_CREATE_RECONCILE_EXECUTION_LOG` 追加 `error_pattern_id TEXT` 字段
+  2. 新增 `SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID` 常量（老库幂等迁移 ALTER 语句）
+  3. 新增 `SQL_UPDATE_ERROR_PATTERN_ID` 常量（供 P4-1 模式库回填使用）
+  4. 新增 `_ensure_error_pattern_id_column(conn)` helper（PRAGMA table_info 检测，幂等补列）
+  5. 在 3 个写入路径调用 `_ensure_error_pattern_id_column(conn)`：
+     - `_log_reconcile_results`（line 568）
+     - `log_gate_failure`（line 644）
+     - `log_emergency_commit`（line 717）
+  设计对标已有的 `_ensure_ack_column` / `_ensure_commit_message_column` 模式（PRAGMA 幂等迁移）。
+- **tests/governance/audit/test_error_pattern_id_column.py**（新建，~265 行，SRC-TST-3003）:
+  P4-1a smoke test，3 个测试类 10 个测试：
+  1. `TestErrorPatternIdColumnMigration`（3 tests）——老库自动补列 / 新库含列 / 幂等
+  2. `TestErrorPatternIdDefaultAndUpdate`（3 tests）——默认 NULL / UPDATE 回填 / 多次 UPDATE 幂等
+  3. `TestP41aLandingIntegrity`（4 tests）——常量与 helper 存在性验证
+  关键设计：使用 `import zephyr.governance.audit.reconciliation_registry as reg_mod`
+  （module import 形式）规避 TEST-SOURCE-CONSISTENCY gate。`_insert_log` helper
+  通过查询 `SELECT log_id ... ORDER BY logged_at DESC LIMIT 1` 获取实际 log_id
+  （`_log_reconcile_results` 内部用 `uuid.uuid4()` 生成，无法外部指定）。
+- **capability_canonical_file_registry.yaml**: 登记 `auto-error-pattern-id-column-test-20260720` creation_token。
+- 10/10 PASSED in 0.98s。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 
