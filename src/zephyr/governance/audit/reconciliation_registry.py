@@ -193,7 +193,8 @@ SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_exe
     detail TEXT,
     committed_files_summary TEXT,
     acknowledged_at TEXT,
-    commit_message TEXT
+    commit_message TEXT,
+    error_pattern_id TEXT
 )"""
 
 # 治本（test_critical_warn_ack SSoT）：SQL_INSERT_RECONCILE_LOG 只插入 8 字段
@@ -229,6 +230,24 @@ SQL_ALTER_RECONCILE_LOG_ADD_ACK = (
 # reconciler 无法获取 commit_message 做审计。
 SQL_ALTER_RECONCILE_LOG_ADD_COMMIT_MESSAGE = (
     "ALTER TABLE reconcile_execution_log ADD COLUMN commit_message TEXT"
+)
+
+# #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1a 治本（2026-07-20）：
+# 老库幂等迁移——2026-07-20 前创建的 governance.db 无 error_pattern_id 列，
+# 写入路径统一经 _ensure_error_pattern_id_column 补列（PRAGMA 检测，幂等）。
+# error_pattern_id 用于关联 reconciler 失败记录到 AI 错误模式库
+# （P4-1 ai_error_pattern_library.py），使 AI 可查询"同类错误历史"而非
+# "单次错误详情"。referential-by-convention（SQLite 未启用 FK 约束）。
+SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID = (
+    "ALTER TABLE reconcile_execution_log ADD COLUMN error_pattern_id TEXT"
+)
+
+# P4-1a: error_pattern_id 单独 UPDATE（INSERT 后调用，供 P4-1 模式库回填使用）。
+# P4-1a 阶段只提供 schema 支持，不填充值；P4-1 ai_error_pattern_library.py
+# 会从 detail 提取错误模式指纹，回填 error_pattern_id。
+SQL_UPDATE_ERROR_PATTERN_ID = (
+    "UPDATE reconcile_execution_log SET error_pattern_id = ? "
+    "WHERE log_id = ?"
 )
 
 # GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：活跃 critical_warn 查询。
@@ -474,6 +493,18 @@ def _ensure_commit_message_column(conn: "object") -> None:
         conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_COMMIT_MESSAGE)
 
 
+def _ensure_error_pattern_id_column(conn: "object") -> None:
+    """老库幂等补 error_pattern_id 列（#ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1a）。
+
+    2026-07-20 前创建的 governance.db 无 error_pattern_id 列；PRAGMA table_info
+    检测，缺失才 ALTER（幂等，新库 no-op）。所有写入路径统一调用，确保 P4-1
+    ai_error_pattern_library.py 可回填 error_pattern_id（关联失败记录到错误模式库）。
+    """
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(reconcile_execution_log)")}
+    if cols and "error_pattern_id" not in cols:
+        conn.execute(SQL_ALTER_RECONCILE_LOG_ADD_ERROR_PATTERN_ID)
+
+
 def _log_reconcile_results(
     project_root: "object",
     results: "list[ReconcileResult]",
@@ -534,6 +565,7 @@ def _log_reconcile_results(
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
             _ensure_ack_column(conn)  # 老库补 ack 列（幂等）
             _ensure_commit_message_column(conn)  # 老库补 commit_message 列（幂等，Phase 3.4 断点7）
+            _ensure_error_pattern_id_column(conn)  # P4-1a: 老库补 error_pattern_id 列（幂等）
             for r in results:
                 if r.action == "skip":
                     continue  # skip 未触发对账，无日志价值
@@ -609,6 +641,7 @@ def log_gate_failure(
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
             _ensure_ack_column(conn)
             _ensure_commit_message_column(conn)
+            _ensure_error_pattern_id_column(conn)  # P4-1a: 老库补 error_pattern_id 列（幂等）
             log_id = f"gf-{uuid.uuid4().hex[:12]}"
             conn.execute(
                 SQL_INSERT_RECONCILE_LOG,
@@ -681,6 +714,7 @@ def log_emergency_commit(
             conn.execute(SQL_CREATE_RECONCILE_EXECUTION_LOG)
             _ensure_ack_column(conn)
             _ensure_commit_message_column(conn)
+            _ensure_error_pattern_id_column(conn)  # P4-1a: 老库补 error_pattern_id 列（幂等）
             log_id = f"ec-{uuid.uuid4().hex[:12]}"
             conn.execute(
                 SQL_INSERT_RECONCILE_LOG,
