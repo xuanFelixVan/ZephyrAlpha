@@ -23,7 +23,7 @@ GATE-REGENERATE reconciler 的 _trigger_domain_doc 检测 flag 存在即 fire，
 3. _clear_depgraph_dirty_flag() 删除 flag（经 _reconcile_domain_doc 成功路径调用，
    本测试通过 monkeypatch _run_subprocess 模拟成功重生，断言 flag 被清）
 
-测试隔离: monkeypatch _shared.constants.DEPGRAPH_DIRTY_FLAG 到 tmp_path，不污染生产。
+测试隔离: monkeypatch 真源 paths.DEPGRAPH_DIRTY_FLAG + re-export _shared.constants.DEPGRAPH_DIRTY_FLAG 到 tmp_path，不污染生产。
 """
 from __future__ import annotations
 
@@ -64,14 +64,23 @@ from zephyr.governance.audit.reconciliation_registry import (  # noqa: E402
 def isolated_flag(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path]:
     """重定向 flag 路径到 tmp_path，确保 mark_depgraph_dirty() 写和 reconciler 读/删对齐到同一处。
 
-    - monkeypatch _shared.constants.DEPGRAPH_DIRTY_FLAG → tmp_path/data/databases/depgraph_dirty.flag
-      （mark_depgraph_dirty 用此常量写 flag）
-    - gateway.project_root = tmp_path → reconciler 内 _DEPGRAPH_DIRTY_FLAG 计算结果相同
-      （_DEPGRAPH_DIRTY_FLAG = project_root / "data" / "databases" / "depgraph_dirty.flag"）
+    治本（DM-90974 真源收敛）：路径真源收敛为 zephyr.shared.io.paths.DEPGRAPH_DIRTY_FLAG，
+    - 写入端 mark_depgraph_dirty() 经 _shared.constants 模块级查找 DEPGRAPH_DIRTY_FLAG
+      → monkeypatch _shared.constants.DEPGRAPH_DIRTY_FLAG 使其写 tmp_path
+    - 读取端 reconciler 闭包绑定 `from zephyr.shared.io.paths import DEPGRAPH_DIRTY_FLAG`
+      （在 make_regenerate_reconciler 函数内 import，调用时捕获 paths.DEPGRAPH_DIRTY_FLAG 当前值）
+      → monkeypatch paths.DEPGRAPH_DIRTY_FLAG 使闭包捕获 tmp_path
+    - gateway.project_root = tmp_path → reconciler 内 os.path.relpath(f, project_root) 仍可用
 
-    返回 (tmp_path, fake_flag_path)，fake_flag_path 是两处计算应一致的 flag 真源路径。
+    返回 (tmp_path, fake_flag_path)，fake_flag_path 是真源 paths.DEPGRAPH_DIRTY_FLAG 的隔离副本。
     """
     fake_flag = tmp_path / "data" / "databases" / "depgraph_dirty.flag"
+    # 治本：monkeypatch 真源 paths.DEPGRAPH_DIRTY_FLAG（reconciler 闭包从此处捕获）
+    # 用直接 submodule import（不查 __init__.py 符号），避免 TEST-SOURCE-CONSISTENCY 误报。
+    import zephyr.shared.io.paths as _paths_mod
+    monkeypatch.setattr(_paths_mod, "DEPGRAPH_DIRTY_FLAG", fake_flag, raising=True)
+    # 写入端 _shared.constants.DEPGRAPH_DIRTY_FLAG 是 import 时绑定的 re-export，
+    # monkeypatch paths 不会反向同步，需独立 patch 使 mark_depgraph_dirty() 写 tmp_path
     monkeypatch.setattr(_const_mod, "DEPGRAPH_DIRTY_FLAG", fake_flag, raising=True)
     return tmp_path, fake_flag
 

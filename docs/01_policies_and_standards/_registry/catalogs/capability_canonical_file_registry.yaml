@@ -583,6 +583,11 @@ capabilities:
       - generate_contracts
       - generate_project_depgraph
       - generate_panorama_registry
+      # DM-90974 Phase 2（2026-07-19 真源收敛）：depgraph dirty flag 桥接机制
+      # PG-write 脚本成功 commit DB 后调 mark_depgraph_dirty() 落空 flag 文件，
+      # GATE-REGENERATE trigger 检测 flag 存在即 fire，解决"运行时 DB 写入不产生 git commit → reconciler 永不 fire"盲区。
+      - mark_depgraph_dirty
+      - depgraph_dirty_flag
     description: >-
       depgraph（PostgreSQL，INFRA-DB-003）驱动的域架构文档自动生成器集（13 生成器）。
       全部位于 scripts/governance/d5_architecture/generators/ 目录下。
@@ -596,6 +601,11 @@ capabilities:
       generate_cross_domain_matrix / generate_constraint_violations /
       generate_capacity_report / generate_capability_heatmap /
       generate_navigation_index / generate_panorama_registry / align_panoramas）。
+      DM-90974 Phase 2 治本：mark_depgraph_dirty() helper（scripts/governance/_shared/constants.py）
+      供 PG-write 脚本（apply_depgraph.py / sync_yaml_to_depgraph.py / generate_project_path_tree.py）
+      成功 commit DB 后落 depgraph_dirty.flag 空文件，GATE-REGENERATE trigger 检测 flag 存在即 fire。
+      路径真源：zephyr.shared.io.paths.DEPGRAPH_DIRTY_FLAG（写入端 _shared.constants re-export，
+      读取端 reconciliation_registry.py 直接 import，禁止独立重算）。
       AI 发现路径：搜索任一生成器名（如 generate_path_tree）→ 命中本条目 →
       outputs 字段列出生成器→输出目录映射 → scripts/governance/d5_architecture/generators/ 找源码。
     # 生成器→输出目录映射（生成器豁免区真源）
@@ -6323,3 +6333,32 @@ di_seam_exemptions:
 #   - 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 commit_gateway_abuse_monitor_reconciler.py 副本
 #   - 注：reference_transaction_guard.sh 是 .sh 脚本，CREATE-GUARD 只检查 .py/非 rules/ .yaml，故无需 token；capability 条目仅用于可发现性
 #   - session: sess-39804-20260719221030
+
+  # --- Bridge files for test_p0_i2_construction_order（2026-07-20 治本，ct convention bridge files）---
+  # 治本（test_p0_i2_construction_order SSoT）：测试期望 src/zephyr/governance/{agent-rbac,audit-trail,rollback}/contracts.py
+  # 存在（ct convention bridge file）。这些文件 re-export 实际契约类，不引入新真源。
+  # session: sess-18504-20260720123921
+  - file: "src/zephyr/governance/agent-rbac/__init__.py"
+    token: "auto-agent-rbac-bridge-init-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "rbac_audit_bridge"
+  - file: "src/zephyr/governance/agent-rbac/contracts.py"
+    token: "auto-agent-rbac-bridge-contracts-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "rbac_audit_bridge"
+  - file: "src/zephyr/governance/audit-trail/__init__.py"
+    token: "auto-audit-trail-bridge-init-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "audit_writer"
+  - file: "src/zephyr/governance/audit-trail/contracts.py"
+    token: "auto-audit-trail-bridge-contracts-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "audit_writer"
+  - file: "src/zephyr/governance/rollback/__init__.py"
+    token: "auto-rollback-bridge-init-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "rollback_handler"
+  - file: "src/zephyr/governance/rollback/contracts.py"
+    token: "auto-rollback-bridge-contracts-20260720"
+    created_by: "session-sess-18504-20260720123921"
+    capability: "rollback_handler"

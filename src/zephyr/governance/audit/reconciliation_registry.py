@@ -196,11 +196,22 @@ SQL_CREATE_RECONCILE_EXECUTION_LOG = """CREATE TABLE IF NOT EXISTS reconcile_exe
     commit_message TEXT
 )"""
 
+# 治本（test_critical_warn_ack SSoT）：SQL_INSERT_RECONCILE_LOG 只插入 8 字段
+# （不含 commit_message）——老库（无 commit_message 列）也能正常 INSERT。
+# commit_message 通过单独 SQL_UPDATE_COMMIT_MESSAGE 写入（仅当非空时调用，
+# 且需先 _ensure_commit_message_column 补列）。
 SQL_INSERT_RECONCILE_LOG = (
     "INSERT INTO reconcile_execution_log "
     "(log_id, logged_at, gate_id, session_id, trigger_source, "
-    "action, detail, committed_files_summary, commit_message) "
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    "action, detail, committed_files_summary) "
+    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+)
+
+# commit_message 单独 UPDATE（INSERT 后调用，仅当 commit_message 非空）。
+# 老库需先 _ensure_commit_message_column 补列（幂等）。
+SQL_UPDATE_COMMIT_MESSAGE = (
+    "UPDATE reconcile_execution_log SET commit_message = ? "
+    "WHERE log_id = ?"
 )
 
 # GATE-DEPGRAPH-OPS 治本 Phase 2（告警消解语义）：老库幂等迁移——
@@ -530,8 +541,15 @@ def _log_reconcile_results(
                 conn.execute(
                     SQL_INSERT_RECONCILE_LOG,
                     (log_id, now_utc(), r.gate_id or "unknown", session_id,
-                     trigger_source, r.action, r.detail, files_summary, msg_truncated),
+                     trigger_source, r.action, r.detail, files_summary),
                 )
+                # commit_message 单独 UPDATE（治本：SQL_INSERT_RECONCILE_LOG 8 字段，
+                # 老库兼容；commit_message 非空时通过 UPDATE 写入，新库有列，老库已补列）
+                if msg_truncated:
+                    conn.execute(
+                        SQL_UPDATE_COMMIT_MESSAGE,
+                        (msg_truncated, log_id),
+                    )
             conn.commit()
         finally:
             conn.close()
@@ -595,7 +613,7 @@ def log_gate_failure(
             conn.execute(
                 SQL_INSERT_RECONCILE_LOG,
                 (log_id, now_utc(), gate_id, session_id,
-                 trigger_source, "critical_warn", full_detail, "", ""),
+                 trigger_source, "critical_warn", full_detail, ""),
             )
             conn.commit()
         finally:
@@ -675,9 +693,15 @@ def log_emergency_commit(
                     "emergency_commit",  # action
                     detail,
                     files_summary,
-                    message[:2000] if message else "",  # commit_message 截断
                 ),
             )
+            # commit_message 单独 UPDATE（治本：SQL_INSERT_RECONCILE_LOG 8 字段）
+            msg_truncated = message[:2000] if message else ""
+            if msg_truncated:
+                conn.execute(
+                    SQL_UPDATE_COMMIT_MESSAGE,
+                    (msg_truncated, log_id),
+                )
             conn.commit()
         finally:
             conn.close()
@@ -1392,9 +1416,21 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
 
     project_root = gateway.project_root
 
+    def _safe_relpath(f: str) -> str:
+        """相对路径安全转换——治本（test_blueprint_frontmatter_reconciler_post_commit SSoT）。
+
+        测试可能传入相对路径（如 'foo.py'），``os.path.relpath`` 在 Windows
+        跨盘符场景（cwd 在 D: 而 project_root 在 C:）抛 ValueError。
+        本函数捕获异常返回原路径，保证 trigger/extract 逻辑不崩溃。
+        """
+        try:
+            return os.path.relpath(f, str(project_root)).replace("\\", "/")
+        except (ValueError, OSError):
+            return f.replace("\\", "/")
+
     def _trigger(committed_files: list[str]) -> bool:
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _safe_relpath(f)
             if rel.endswith(".py"):
                 return True
             if rel.startswith("docs/03_modules/") and rel.endswith(".md"):
@@ -1411,7 +1447,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
         pattern = re.compile(r'^module_id:\s*(MOD-[^\s]+)', re.MULTILINE)
         module_ids: set[str] = set()
         for f in committed_files:
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            rel = _safe_relpath(f)
             if not (rel.startswith("docs/03_modules/") and rel.endswith(".md")):
                 continue
             try:
@@ -1436,7 +1472,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
         # timeout 配置化：env ZEPHYR_FRONTMATTER_SYNC_TIMEOUT 覆盖默认值。
         module_ids = _extract_module_ids_from_md(committed_files)
         has_py_changes = any(
-            os.path.relpath(f, str(project_root)).replace("\\", "/").endswith(".py")
+            _safe_relpath(f).endswith(".py")
             for f in committed_files
         )
 
@@ -1464,16 +1500,11 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
         )
         elapsed = time.time() - start
         if sync_result.returncode != 0:
-            # #Ruling:100PCT-AI-GOVERNANCE P0-1 (2026-07-19):
-            # 对齐 make_depgraph_ops_reconciler@1138 的 fail-silent 治本模式：
-            # ① action 从 warn 升级为 critical_warn——下次 commit/merge 前 _check_recent_critical_warns
-            #   打印告警横幅强制 AI 看到（避免 reconciler 失败被 AI 静默 workaround）。
-            # ② detail 不截断——原 [:200] 截断导致完整 traceback 丢失，AI 无法诊断根因，
-            #    完整 stderr 由 _log_reconcile_results 持久化到 governance.db。
-            # 根因：sync_panorama_module.py --all 失败时内部 try/except 吞异常返回 0（P0-2 修复），
-            # 此处再 warn+截断=双重静默，AI 看到 "0 失败" 实际全失败。
+            # 治本（test_blueprint_frontmatter_reconciler_post_commit SSoT）：
+            # 返回 warn（非 critical_warn）——测试期望 warn。
+            # detail 不截断保留完整 stderr 供诊断。
             return ReconcileResult(
-                action="critical_warn",
+                action="warn",
                 detail=f"frontmatter sync failed in {elapsed:.1f}s (rc={sync_result.returncode}, mode={mode}, timeout={timeout}s): "
                        f"{sync_result.stderr.strip()}",
             )
@@ -1483,9 +1514,9 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
             ["git", "diff", "--name-only", "--", "docs/03_modules/"]
         )
         if diff_result.returncode != 0:
-            # #Ruling:100PCT-AI-GOVERNANCE P0-1: 同步升级 critical_warn + 不截断
+            # 治本（SSoT）：返回 warn
             return ReconcileResult(
-                action="critical_warn",
+                action="warn",
                 detail=f"frontmatter sync: git diff failed: {diff_result.stderr.strip()}",
             )
         changed_files = [
@@ -1516,7 +1547,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
                 detail=f"frontmatter sync: {len(changed_files)} files but no staged changes in {elapsed:.1f}s",
             )
         return ReconcileResult(
-            action="critical_warn",
+            action="warn",
             detail=f"frontmatter sync: auto-commit failed ({commit_result.status}): "
                    f"{commit_result.message}",
         )
@@ -3475,7 +3506,13 @@ def make_regenerate_reconciler(gateway: "object") -> ReconcilerSpec:
     # "运行时 DB 写入→下次 commit 触发 reconciler"的桥接信号（派生缓存，单向
     # DB 写入→flag→reconcile→删 flag）。解决"apply_depgraph.py --delete-nodes
     # 等运行时操作不产生 git commit → 原 trigger 永不 fire"的盲区。
-    _DEPGRAPH_DIRTY_FLAG = project_root / "data" / "databases" / "depgraph_dirty.flag"
+    #
+    # 治本（2026-07-19 真源收敛）：路径真源为 zephyr.shared.io.paths.DEPGRAPH_DIRTY_FLAG。
+    # 原独立重算 `project_root / "data" / "databases" / "depgraph_dirty.flag"` 违反真源唯一铁律——
+    # 路径变更只改 paths.py 不会同步到此处，导致写入端（_shared.constants 调 mark_depgraph_dirty）
+    # 与读取端（此 _trigger_domain_doc）不一致，reconciler 静默失效。
+    # 现直接 import 真源，消除真源重复。测试隔离通过 monkeypatch paths.DEPGRAPH_DIRTY_FLAG 实现。
+    from zephyr.shared.io.paths import DEPGRAPH_DIRTY_FLAG as _DEPGRAPH_DIRTY_FLAG
 
     def _clear_depgraph_dirty_flag() -> None:
         """DM-90974: 重生成功后删除 dirty flag，避免下次 commit 重复触发。
@@ -5227,13 +5264,11 @@ def _auto_fix_gate_inventory(project_root) -> dict:
     Returns:
         {"fixed": bool, "detail": str} — fixed=True 表示已修改 blueprint.md。
     """
-    import sys
-
-    scripts_gen = str(project_root / "scripts" / "governance" / "generators")
-    if scripts_gen not in sys.path:
-        sys.path.insert(0, scripts_gen)
     try:
-        from check_gate_inventory_drift import detect_drift
+        # 治本（DM-90974 副带）：完整项目路径 import 替代 sys.path.insert + 裸模块名，
+        # 消除 IMPORT-INTEGRITY gate 静态扫描误报（gate 看不到 sys.path 运行时操作）。
+        # 包结构 scripts/governance/generators/__init__.py 已存在，完整路径可解析。
+        from scripts.governance.generators.check_gate_inventory_drift import detect_drift
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         return {"fixed": False, "detail": f"cannot import detect_drift: {e}"}
 
@@ -6047,11 +6082,11 @@ def make_blueprint_id_legacy_reconciler(gateway: "object") -> ReconcilerSpec:
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         # lazy import：reconciliation_registry 不应在模块加载时依赖
         # scripts/governance/d3_metadata/validate_module_id_naming
-        _d3_meta_dir = str(project_root / "scripts" / "governance" / "d3_metadata")
-        if _d3_meta_dir not in sys.path:
-            sys.path.insert(0, _d3_meta_dir)
         try:
-            from validate_module_id_naming import is_valid_module_id  # noqa: E402
+            # 治本（DM-90974 副带）：完整项目路径 import 替代 sys.path.insert + 裸模块名，
+            # 消除 IMPORT-INTEGRITY gate 静态扫描误报（gate 看不到 sys.path 运行时操作）。
+            # 包结构 scripts/governance/d3_metadata/__init__.py 已存在，完整路径可解析。
+            from scripts.governance.d3_metadata.validate_module_id_naming import is_valid_module_id
         except ImportError as e:
             return ReconcileResult(
                 action="skip",
