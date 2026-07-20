@@ -6202,6 +6202,14 @@ creation_tokens:
     created_by: "sess-15208-20260720172003"
     capability: "commit_gateway_abuse_monitor"
 
+  # --- trae_069 阈值同步 smoke test（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-4）---
+  # 验证 trae_069 YAML 真源→代码常量同步链路（SSoT 铁律 trae_062 的检测器）
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 smoke test 副本
+  - file: "tests/governance/audit/test_trae_069_threshold_sync_smoke.py"
+    token: "auto-trae-069-threshold-sync-smoke-20260720"
+    created_by: "sess-39124-20260720180203"
+    capability: "commit_gateway_abuse_monitor"
+
   # --- IMPORT-INTEGRITY 悬空 import 硬阻断 gate（2026-07-20，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）---
   # pre-commit 阻断 commit 引入对不存在模块的 import（priority=107，紧接 UNDEFINED-NAME=106）
   # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("import_integrity") 可定位真源
