@@ -711,9 +711,9 @@ Phase 3 (下月,L3 表层,依赖 Phase 2 完成):
 ─────────────────────────────────────────
 P3-0 (新增,2h) 扩展 AdaptiveThreshold 支持 count_threshold 模式  ✅ 已落地 2026-07-20
 P3-1 (6h,原 4h) 阈值从静态改为自适应(7d 滚动基线)                ✅ 已落地 2026-07-20
-P3-2 (3h) 新增 health_score_calculator.py(5 维加权评分)
-P3-3 (2h) 综合评分 >0.7 critical_warn, >0.9 block_next
-P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)
+P3-2 (3h) 新增 health_score_calculator.py(5 维加权评分)           ✅ 已落地 2026-07-20
+P3-3 (2h) 综合评分 >0.7 critical_warn, >0.9 block_next            ✅ 已落地 2026-07-20
+P3-4 (1h) 阈值调整流程化(独立裁定 + smoke test)                   🔄 进行中 2026-07-20
 P3-5 (2h) smoke test
 P3-6 (新增,1h) _7d_baseline_state 持久化到 .runtime/abuse_baseline.json  ✅ 已落地 2026-07-20
 
@@ -748,6 +748,36 @@ P4-5  (❌ 不实施,可行性低,边际收益低于成本)
   `_record_daily_metrics` 追加今日 metrics 到 baseline。20 个新增测试覆盖持久化/自适应/集成。
 - **trae_069 YAML**: `adaptive` 段从 `enabled:false` 升级为 `enabled:true`，新增
   `baseline_persistence`/`factor`/`effective_threshold_rule`/`mode` 字段。version 1.0.0 → 1.1.0。
+
+**P3-2/P3-3 落地摘要（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3，commit b160c82a03 + merge 19dd6661c6）**:
+
+- **P3-2** `src/zephyr/governance/audit/health_score_calculator.py`（新建，164 行）:
+  `AbuseHealthScore` dataclass（原 HealthScore，因 CREATE-GUARD ARCH-034 与
+  asset_inventory/models.py:HealthScore 同名冲突，改名 AbuseHealthScore） +
+  `calculate_health_score(metrics, thresholds, weights=None) -> AbuseHealthScore`。
+  5 维默认权重：`forged_gw_marker_24h=0.35`（最高，任何伪造都 serious）/
+  `emergency_commit_24h=0.20`/其余 3 维各 0.15。归一化：`min(count/threshold, 1.0)`。
+  fail-safe：threshold 非数字/<=0/0 → dim_score=0.0（避免除零或类型错误）。权重自动归一化；
+  权重总和=0 fallback 到默认。score clamp [0, 1]（浮点误差防护）。
+  25/25 测试通过（`tests/governance/audit/test_health_score_calculator.py`，8 个测试类）。
+- **P3-3** `src/zephyr/governance/audit/commit_gateway_abuse_monitor_reconciler.py`（修改）:
+  新增 import `calculate_health_score` + 常量 `_BLOCK_NEXT_SCORE=0.9`/`_CRITICAL_WARN_SCORE=0.7`。
+  `_reconcile()` §4.6 健康度评分计算：从 metrics 中提取 `effective_thresholds`（fallback
+  `thresholds`），调 `calculate_health_score` 得综合评分 + 触发维度。评分失败 fail-open
+  （score=0.0，不阻断 reconciler）。报告新增 `health_score`/`health_triggered_dimensions` 字段。
+  判定 action 逻辑更新（P3-3 评分优先于维度计数）：score>0.9 → critical_warn "ABUSE BLOCK_NEXT"
+  + "PAUSE subsequent commits"（post-commit 无法真正 block，降级为 critical_warn + PAUSE 横幅）；
+  score>0.7 → critical_warn "ABUSE CRITICAL"；其余走既有维度计数逻辑（0=clean, 1-2=warn,
+  3+/forged=critical_warn）。98/98 测试通过（73 abuse_monitor + 25 health_score），
+  含 5 个 `TestHealthScoreIntegration` 场景（clean/critical/block_next/warn/常量校验）。
+- **trae_069 YAML**: version 1.1.0 → 1.2.0。新增 `health_score_classification` 段
+  （clean/critical_warn/block_next 三档评分阈值，优先级 above_dimension_count） +
+  `adaptive.health_score` 段（calculator 路径 / 5 维权重 / score_thresholds / normalization /
+  fail_safe）。常量同步说明（`_CRITICAL_WARN_SCORE=0.7` / `_BLOCK_NEXT_SCORE=0.9`）。
+- **capability_canonical_file_registry.yaml**: 登记 `health_score_calculator.py` creation_token
+  （`auto-health-score-calculator-20260720`，capability=commit_gateway_abuse_monitor）。
+- **CREATE-GUARD / MODULE-ID-CONSISTENCY / UNDEFINED-NAME / ORPHAN-MODULE** 4 类 gate 违规
+  全部修复（类名冲突 / module_id 占用冲突 / return type 重命名遗漏 / creation_token 缺失）。
 
 **修正后总工时**:Phase 3 = 17h(原 12h,+5h 前置任务);Phase 4 = 25h(原 19h + P4-5 取消 -4h + 前置任务 +4h + 工时调整 +6h)。
 

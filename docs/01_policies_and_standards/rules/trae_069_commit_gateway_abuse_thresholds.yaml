@@ -31,12 +31,12 @@
 meta:
   rule_id: trae_069
   rule_name: commit_gateway_abuse_thresholds
-  version: '1.1.0'
+  version: '1.2.0'
   created: '2026-07-20'
   last_updated: '2026-07-20'
   ssot_classification: rule_data  # trae_062: 规则数据真源是 YAML 文件
   related_issue: '#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001'
-  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正), #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1)'
+  related_adjudication: '#ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (R1/R2), #ARCH-ASYNC-MERGE-RECONCILE-001 (R2 修正), #ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-0/P3-6/P3-1/P3-2/P3-3)'
 
 # enforcement 配对（RULE-EXECUTION-PAIRING gate 要求）
 # 本 YAML 是 commit_gateway_abuse_monitor_reconciler 的阈值真源（数据类规则，
@@ -134,7 +134,33 @@ classification_rules:
     action: critical_warn
     description: '3+ 维度触发 OR forged_gw_marker 维度触发'
 
-# Phase 3 自适应阈值（P3-0/P3-6/P3-1 已落地 2026-07-20，P3-2/P3-3/P3-4 待施工）
+# P3-3 综合评分判定规则（health_score 优先于维度计数判定，2026-07-20 落地）
+# 评分阈值常量同步到 commit_gateway_abuse_monitor_reconciler.py：
+#   _CRITICAL_WARN_SCORE = 0.7 / _BLOCK_NEXT_SCORE = 0.9
+# 评分计算由 health_score_calculator.calculate_health_score() 完成（5 维加权，
+# forged=0.35 / emergency=0.20 / 其余 3 维各 0.15，归一化 min(count/threshold, 1.0)）
+health_score_classification:
+  enabled: true  # P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）
+  clean:
+    score_max: 0.7  # score < 0.7 → clean（不触发任何 action）
+    action: clean
+  critical_warn:
+    score_min: 0.7  # score >= 0.7 → critical_warn（横幅强制 AI 看到）
+    score_max: 0.9
+    action: critical_warn
+    description: 'ABUSE CRITICAL — 综合评分达到 critical 阈值'
+  block_next:
+    score_min: 0.9  # score >= 0.9 → block_next（post-commit 无法 block，降级为 critical_warn + PAUSE 横幅）
+    action: critical_warn  # post-commit reconciler 不可逆，降级为 critical_warn + PAUSE subsequent commits
+    description: 'ABUSE BLOCK_NEXT — 综合评分达到 block 阈值（post-commit 降级 critical_warn + PAUSE）'
+  priority: above_dimension_count  # P3-3 评分判定优先于维度计数判定
+  note: >-
+    post-commit reconciler 永不真正 block（commit 已入历史不可逆）。
+    score > 0.9 时降级为 critical_warn + "PAUSE subsequent commits" 横幅，
+    提示 AI 在下一个 commit 前人工复核。若需真正 block，须由 pre-commit gate 实现
+    （如 forged_gw_marker_gate 已前移到 pre-commit）。
+
+# Phase 3 自适应阈值（P3-0/P3-6/P3-1/P3-2/P3-3 已落地 2026-07-20，P3-4 进行中）
 adaptive:
   enabled: true  # P3-0/P3-6/P3-1 已落地：AdaptiveThreshold 双模式 + 7d baseline 持久化 + max(adaptive, static) 有效阈值
   baseline_window_seconds: 604800  # 7d 滚动基线（P3-6: .runtime/abuse_monitor/abuse_baseline.json）
@@ -142,6 +168,20 @@ adaptive:
   factor: 1.5  # P3-1: 阈值 = max(ewma * factor, static_floor)，留 50% 余量给正常波动
   effective_threshold_rule: max(adaptive, static)  # P3-1: 防止自适应阈值低于静态下限掩盖真实恶化
   mode: count  # P3-0: AdaptiveThreshold.ThresholdMode.COUNT（次数型，区别于概率型）
+  health_score:  # P3-2/P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）
+    enabled: true
+    calculator: zephyr.governance.audit.health_score_calculator.calculate_health_score
+    weights:  # 5 维默认权重（总和=1.0）
+      warn_only_24h: 0.15
+      emergency_commit_24h: 0.20
+      allow_overlap_7d: 0.15
+      forged_gw_marker_24h: 0.35  # 最高权重（任何伪造都 serious）
+      non_gw_commit_24h: 0.15
+    score_thresholds:
+      critical_warn: 0.7  # _CRITICAL_WARN_SCORE 同步到 commit_gateway_abuse_monitor_reconciler.py
+      block_next: 0.9      # _BLOCK_NEXT_SCORE 同步到 commit_gateway_abuse_monitor_reconciler.py
+    normalization: min(count / threshold, 1.0)  # 每维归一化方式
+    fail_safe: threshold <= 0 or non-numeric → dim_score = 0.0  # 避免除零或类型错误
   description: >-
     P3-0/P3-6/P3-1 已落地（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）：
     - P3-0: AdaptiveThreshold 双模式扩展（PROBABILITY + COUNT），static_floor 强制下限，
@@ -152,13 +192,39 @@ adaptive:
     - P3-1: 接入 AdaptiveThreshold，从历史 7d baseline 计算 EWMA 自适应阈值。
       最终有效阈值 = max(adaptive, static)，防止自适应阈值低于静态下限掩盖真实恶化
       （ruling §5.3 风险治本）。代码：_compute_adaptive_thresholds + _classify_abuse
-    P3-2/P3-3/P3-4 待施工：
-    - P3-2: 5 维加权健康度评分（weighted_health_score）
-    - P3-3: 综合评分 >0.7 critical_warn, >0.9 block_next
-    - P3-4: 阈值调整流程化（独立裁定 + smoke test）
+    P3-2/P3-3 已落地（2026-07-20，commit b160c82a03 + merge 19dd6661c6）：
+    - P3-2: 5 维加权健康度评分（weighted_health_score）。代码：
+      src/zephyr/governance/audit/health_score_calculator.py（AbuseHealthScore +
+      calculate_health_score，25/25 测试通过）。权重见 health_score.weights 段。
+    - P3-3: 综合评分接入 abuse_monitor _reconcile，优先于维度计数判定。
+      score > 0.7 → critical_warn "ABUSE CRITICAL"；
+      score > 0.9 → critical_warn "ABUSE BLOCK_NEXT" + "PAUSE subsequent commits"
+      （post-commit 无法真正 block，降级为 critical_warn + PAUSE 横幅）。
+      阈值见 health_score_classification 段（同步常量到代码 _CRITICAL_WARN_SCORE=0.7 /
+      _BLOCK_NEXT_SCORE=0.9）。98/98 测试通过（25 health_score + 73 abuse_monitor）。
+    P3-4 待施工（本次任务）：
+    - P3-4: 阈值调整流程化（本 YAML v1.2.0 升级 + smoke test + architecture_issue_registry
+      fix_phase Phase 3 标注 + ruling §11.4 标注）
 
 # changelog（每次修改必须追加记录）
 changelog:
+  - version: '1.2.0'
+    date: '2026-07-20'
+    change: 'P3-4 落地：新增 health_score_classification 段 + adaptive.health_score 段；description 更新 P3-2/P3-3 已落地状态'
+    adjudication: '#ARCH-PREVENTABILITY-LAYER-001 Phase 3 (P3-4)'
+    notes: >-
+      P3-2/P3-3 已在 commit b160c82a03 + merge 19dd6661c6 落地（health_score_calculator.py
+      新建 + commit_gateway_abuse_monitor_reconciler.py 接入综合评分判定），但 trae_069 YAML
+      此前未登记相关阈值规则（评分权重、评分阈值、归一化方式、fail-safe 策略）。
+      本次 v1.2.0 升级补齐：
+      1. 新增 health_score_classification 段：clean(<0.7)/critical_warn(>=0.7)/block_next(>=0.9)，
+         优先级 above_dimension_count（P3-3 评分判定优先于维度计数判定）。
+      2. 新增 adaptive.health_score 段：calculator 路径 / 5 维权重 / score_thresholds /
+         normalization / fail_safe。常量同步说明（_CRITICAL_WARN_SCORE=0.7 /
+         _BLOCK_NEXT_SCORE=0.9）。
+      3. adaptive.description 更新 P3-2/P3-3 已落地状态，仅 P3-4 待施工（本次任务）。
+      阈值数值未变更（仍是 warn_only=50, emergency=5, allow_overlap=30, forged=3, non_gw=10），
+      本次仅登记评分相关结构化规则（数据类规则，YAML 是真源，代码常量从此同步）。
   - version: '1.1.0'
     date: '2026-07-20'
     change: 'P3-0/P3-6/P3-1 落地：adaptive 段从 enabled:false 升级为 enabled:true，新增 baseline_persistence / factor / effective_threshold_rule / mode 字段'
