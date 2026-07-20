@@ -35,10 +35,12 @@
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
 import logging
 import threading
 import time
+from pathlib import Path
 from typing import Any
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
@@ -47,9 +49,11 @@ from zephyr.integration.mcp._base_server import (
 )
 from zephyr.integration.mcp.audit_logger import AuditLogger, create_audit_logger
 from zephyr.integration.mcp.error_codes import (
+    ERR_API_SUNSET,
     ERR_GATE_FAILED,
     ERR_INTERNAL_ERROR,
     ERR_INVALID_PARAMS,
+    ERR_RATE_LIMITED,
     ERR_RBAC_DENIED,
     ERR_SAFETY_APPROVAL_REQUIRED,
     ERR_TOOL_EXECUTION,
@@ -67,6 +71,31 @@ _log = logging.getLogger(__name__)
 _GATEWAY_ID = "mcp_gateway"
 _GATEWAY_VERSION = "1.0.0"
 _GATEWAY_DESC = "集中式 MCP Gateway — Auth/ACL + RateLimit + Route + Audit + Degrade"
+
+# ------------------------------------------------------------------
+# mcp.json 配置加载（5.35.1/5.35.3/5.35.8/5.36.6 治本）
+# ------------------------------------------------------------------
+_MCP_CONFIG_CACHE: dict[str, Any] | None = None
+
+
+def _load_mcp_config() -> dict[str, Any]:
+    """加载 config/mcp.json（带缓存）。失败返回空 dict（fail-open）。"""
+    global _MCP_CONFIG_CACHE
+    if _MCP_CONFIG_CACHE is not None:
+        return _MCP_CONFIG_CACHE
+    try:
+        # file: src/zephyr/integration/mcp/gateway_server.py
+        # parents[4] = project root (D:\ZephyrAlpha)
+        cfg_path = Path(__file__).resolve().parents[4] / "config" / "mcp.json"
+        if not cfg_path.exists():
+            _MCP_CONFIG_CACHE = {}
+            return _MCP_CONFIG_CACHE
+        with cfg_path.open(encoding="utf-8") as f:
+            _MCP_CONFIG_CACHE = json.load(f) or {}
+        return _MCP_CONFIG_CACHE
+    except Exception:  # noqa: BLE001 — fail-open
+        _MCP_CONFIG_CACHE = {}
+        return _MCP_CONFIG_CACHE
 
 _lsg_gateway = None
 
@@ -181,74 +210,39 @@ class CircuitBreaker:
 
 
 def _default_routes() -> dict[str, dict[str, Any]]:
-    return {
-        "task_manager": {
-            "module": "task_manager_server",
-            "server_id": "task_manager",
-            "transport": "FastMCP",
+    """5.35.1 修复：路由表从 mcp.json servers 单向生成。
+
+    - server_id 直接作为 route key（已是 underscore 命名，如 vector_memory）
+    - 跳过 transport=stdio 的 server（不入进程内路由，如 red_blue_validator）
+    - 透入 version 字段（5.35.3）
+    - tool_prefix 缺省为 f"{server_id}."
+    """
+    cfg = _load_mcp_config()
+    servers = cfg.get("servers", {}) or {}
+    routes: dict[str, dict[str, Any]] = {}
+    for server_id, server_cfg in servers.items():
+        transport = server_cfg.get("transport", "BaseMCPServer")
+        # stdio servers 不入进程内路由（由独立 subprocess 处理）
+        if transport == "stdio":
+            continue
+        # server_id 作为 route key（已是 underscore 命名）
+        prefix = server_cfg.get("tool_prefix", f"{server_id}.")
+        route: dict[str, Any] = {
+            "module": server_cfg.get("module", ""),
+            "server_id": server_id,
+            "transport": transport,
             "handler": None,
-            "prefix": "task_manager.",
-        },
-        "gate_engine": {
-            "module": "gate_engine_server",
-            "server_id": "gate_engine",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "gate_engine.",
-        },
-        "session_handoff": {
-            "module": "doc_guard_server",
-            "server_id": "session_handoff",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "session_handoff.",
-            "note": "module_name != server_id",
-        },
-        "intent_router": {
-            "module": "sentinel_server",
-            "server_id": "intent_router",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "intent_router.",
-            "note": "module_name != server_id",
-        },
-        "blueprint_search": {
-            "module": "blueprint_search_server",
-            "server_id": "blueprint_search",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "blueprint_search.",
-        },
-        "sandbox": {
-            "module": "sandbox_server",
-            "server_id": "sandbox",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "sandbox.",
-            "status": "planning",
-        },
-        "governance": {
-            "module": "governance_server",
-            "server_id": "governance",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "governance.",
-        },
-        "telemetry": {
-            "module": "telemetry_server",
-            "server_id": "telemetry",
-            "transport": "FastMCP",
-            "handler": None,
-            "prefix": "telemetry.",
-        },
-        "vector-memory": {
-            "module": "vector_memory_server",
-            "server_id": "vector-memory",
-            "transport": "BaseMCPServer",
-            "handler": None,
-            "prefix": "vector-memory.",
-        },
-    }
+            "prefix": prefix,
+        }
+        # 5.35.3：透入 version 字段
+        if "version" in server_cfg:
+            route["version"] = server_cfg["version"]
+        if "status" in server_cfg:
+            route["status"] = server_cfg["status"]
+        if "note" in server_cfg:
+            route["note"] = server_cfg["note"]
+        routes[server_id] = route
+    return routes
 
 
 class MCPGateway(BaseMCPServer):
@@ -265,6 +259,11 @@ class MCPGateway(BaseMCPServer):
     ) -> None:
         super().__init__(_GATEWAY_ID, _GATEWAY_VERSION, _GATEWAY_DESC)
         self._routes = _default_routes()
+        # 5.35.8：api_version 来自 mcp.json 顶层 version 字段
+        cfg = _load_mcp_config()
+        self._api_version: str = str(cfg.get("version", _GATEWAY_VERSION))
+        # 5.36.8：ACL 配置（auth.acl_by_server + role_assignment）
+        self._auth_cfg: dict[str, Any] = cfg.get("auth", {}) or {}
         self._server_instances: dict[str, BaseMCPServer | Any] = {}
         self._init_server_handlers()
         self._audit = audit_logger or create_audit_logger()
@@ -321,9 +320,21 @@ class MCPGateway(BaseMCPServer):
         try:
             from zephyr.integration.mcp.vector_memory_server import VectorMemoryServer
 
-            self._server_instances["vector-memory"] = VectorMemoryServer()
+            self._server_instances["vector_memory"] = VectorMemoryServer()
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _log.warning("vector-memory server init failed: %s", exc, exc_info=True)
+            _log.warning("vector_memory server init failed: %s", exc, exc_info=True)
+        try:
+            from zephyr.integration.mcp.knowledge_base_server import KnowledgeBaseServer
+
+            self._server_instances["knowledge_base"] = KnowledgeBaseServer()
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            _log.warning("knowledge_base server init failed: %s", exc, exc_info=True)
+        try:
+            from zephyr.integration.mcp.sandbox_server import SandboxServer
+
+            self._server_instances["sandbox"] = SandboxServer()
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            _log.warning("sandbox server init failed: %s", exc, exc_info=True)
 
     def _register_gateway_tools(self) -> None:
         self.register_tool(
@@ -335,6 +346,18 @@ class MCPGateway(BaseMCPServer):
                 "properties": {},
             },
             handler=self._health_status,
+            output_schema={
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string"},
+                    "gateway_version": {"type": "string"},
+                    "servers_loaded": {"type": "integer"},
+                    "circuit_breakers": {"type": "object"},
+                    "rate_limit": {"type": "object"},
+                    "aggregated_tools_count": {"type": "integer"},
+                    "checked_at": {"type": "string"},
+                },
+            },
         )
         self.register_tool(
             name="mcp_gateway.list_servers",
@@ -345,6 +368,26 @@ class MCPGateway(BaseMCPServer):
                 "properties": {},
             },
             handler=self._list_servers,
+            output_schema={
+                "type": "object",
+                "properties": {
+                    "servers": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "server_id": {"type": "string"},
+                                "module": {"type": "string"},
+                                "transport": {"type": "string"},
+                                "loaded": {"type": "boolean"},
+                                "circuit_breaker": {"type": "string"},
+                                "status": {"type": "string"},
+                            },
+                        },
+                    },
+                    "count": {"type": "integer"},
+                },
+            },
         )
         self.register_tool(
             name="mcp_gateway.audit_stats",
@@ -358,6 +401,14 @@ class MCPGateway(BaseMCPServer):
                 },
             },
             handler=self._audit_stats,
+            output_schema={
+                "type": "object",
+                "properties": {
+                    "client_session_id": {"type": "string"},
+                    "total_calls": {"type": "integer"},
+                    "by_status": {"type": "object"},
+                },
+            },
         )
 
     # ------------------------------------------------------------------
@@ -385,6 +436,8 @@ class MCPGateway(BaseMCPServer):
                         "name": tname,
                         "description": getattr(tdef, "description", ""),
                         "inputSchema": getattr(tdef, "input_schema", {}),
+                        # 5.35.7：透出 outputSchema
+                        "outputSchema": getattr(tdef, "output_schema", None),
                     }
                 )
 
@@ -395,6 +448,8 @@ class MCPGateway(BaseMCPServer):
                     "name": tname,
                     "description": getattr(tdef, "description", ""),
                     "inputSchema": getattr(tdef, "input_schema", {}),
+                    # 5.35.7：透出 outputSchema
+                    "outputSchema": getattr(tdef, "output_schema", None),
                 }
             )
 
@@ -419,16 +474,18 @@ class MCPGateway(BaseMCPServer):
         method = request.get("method", "")
 
         if method == "tools/call":
-            return self._handle_tools_call_with_pipeline(request, sid)
-        if method == "initialize":
-            return self._handle_initialize(request)
-        if method == "ping":
-            return self._ok(request.get("id"), {"pong": True, "gateway": True})
-        if method == "tools/list":
-            resp = self._handle_tools_list(request.get("id"))
-            return self._ok(request.get("id"), resp)
-
-        resp = super().handle_request(request)
+            resp = self._handle_tools_call_with_pipeline(request, sid)
+        elif method == "initialize":
+            resp = self._handle_initialize(request)
+        elif method == "ping":
+            resp = self._ok(request.get("id"), {"pong": True, "gateway": True})
+        elif method == "tools/list":
+            resp = self._ok(request.get("id"), self._handle_tools_list(request.get("id")))
+        else:
+            resp = super().handle_request(request)
+        # 5.35.8：所有响应统一携带 api_version
+        if isinstance(resp, dict):
+            resp["api_version"] = self._api_version
         return resp
 
     def _handle_initialize(self, request: dict[str, Any]) -> dict[str, Any]:
@@ -529,12 +586,99 @@ class MCPGateway(BaseMCPServer):
             if cb:
                 cb.success()
 
+    def _resolve_role(self, request: dict[str, Any]) -> str:
+        """5.36.8：从 request._role 解析角色，缺省按 role_assignment.ai_agent_default。"""
+        role = request.get("_role")
+        if role:
+            return str(role)
+        role_assignment = self._auth_cfg.get("role_assignment", {}) or {}
+        return str(role_assignment.get("ai_agent_default", "operator"))
+
+    def _check_permission_acl(
+        self, role: str, tool_name: str, routed_sid: str,
+    ) -> tuple[bool, str]:
+        """5.36.8：Permission 阶段——按 mcp.json auth.acl_by_server 校验。
+
+        Returns
+        -------
+        (allowed, reason): allowed=True 表示放行；allowed=False 时 reason 为拒绝原因。
+        """
+        # gateway 自身工具（mcp_gateway.*）跳过 ACL——内部管理工具
+        if routed_sid == "mcp_gateway":
+            return True, ""
+        acl_by_server = self._auth_cfg.get("acl_by_server", {}) or {}
+        server_acl = acl_by_server.get(routed_sid, {})
+        # 角色继承链：admin -> operator -> reader（有界遍历，防环）
+        roles_cfg = self._auth_cfg.get("roles", {}) or {}
+        inheritance_chain: list[str] = [role]
+        seen: set[str] = {role}
+        current = role
+        # 最多遍历 4 层（reader/operator/admin/extra），防止循环引用
+        for _ in range(4):
+            role_cfg = roles_cfg.get(current, {}) or {}
+            inherits = role_cfg.get("inherits", []) or []
+            next_role = inherits[0] if inherits else None
+            if not next_role or next_role in seen:
+                break
+            inheritance_chain.append(next_role)
+            seen.add(next_role)
+            current = next_role
+        # 合并继承链中所有角色的允许工具
+        allowed_tools: set[str] = set()
+        for r in inheritance_chain:
+            allowed_tools.update(server_acl.get(r, []) or [])
+        if tool_name in allowed_tools:
+            return True, ""
+        return False, f"role {role!r} not allowed for {tool_name!r} on {routed_sid!r}"
+
+    def _check_sunset(
+        self, tool_name: str, routed_sid: str, req_id: Any,
+    ) -> dict[str, Any] | None:
+        """5.35.4：APIVersionContract——sunset_date 已过的工具被拦截。
+
+        Returns
+        -------
+        None 表示通过（未 sunset 或 sunset_date 在未来）；dict 表示拦截响应。
+        """
+        tdef = None
+        if routed_sid == "mcp_gateway":
+            tdef = self._tools.get(tool_name)
+        else:
+            srv = self._server_instances.get(routed_sid)
+            if srv is not None:
+                srv_tools: dict = getattr(srv, "_tools", {})
+                tdef = srv_tools.get(tool_name)
+        if tdef is None:
+            return None
+        sunset_date = getattr(tdef, "sunset_date", None)
+        if not sunset_date:
+            return None
+        try:
+            sunset_dt = _dt.date.fromisoformat(sunset_date)
+        except ValueError:
+            return None
+        if sunset_dt >= _dt.date.today():
+            return None  # sunset 在未来，允许
+        replacement = getattr(tdef, "replacement", None)
+        data: dict[str, Any] = {
+            "sunset_date": sunset_date,
+            "tool": tool_name,
+        }
+        if replacement:
+            data["replacement"] = replacement
+        return self._err(
+            req_id,
+            ERR_API_SUNSET,
+            f"tool {tool_name!r} is sunset (sunset_date={sunset_date})",
+            data=data,
+        )
+
     def _handle_tools_call_with_pipeline(
         self,
         request: dict[str, Any],
         session_id: str,
     ) -> dict[str, Any]:
-        """五阶段管道：Permission -> RateLimit ->Route -> Audit ->Degrade。"""
+        """六阶段管道：Permission -> RateLimit -> Sunset -> SafetyLevel -> LSG -> Degrade。"""
         t0 = time.perf_counter()
         req_id = request.get("id")
         params: dict[str, Any] = request.get("params", {})
@@ -554,32 +698,70 @@ class MCPGateway(BaseMCPServer):
             )
             return msg
 
+        # 5.36.8：Permission 阶段（排在 RateLimit 前）
+        role = self._resolve_role(request)
+        allowed, deny_reason = self._check_permission_acl(role, tool_name, routed_sid)
+        if not allowed:
+            duration_ms = int((time.monotonic() - t0) * 1000)
+            self._audit.log_call(
+                client_session_id=session_id,
+                tool_name=tool_name,
+                result_status="rbac_denied",
+                error_code=ERR_RBAC_DENIED,
+                error_message=deny_reason,
+                duration_ms=duration_ms,
+            )
+            return self._err(req_id, ERR_RBAC_DENIED, f"RBAC denied: {deny_reason}")
+
+        # 5.36.1：RateLimit 阶段——使用 ERR_RATE_LIMITED + retry_after_seconds
         if not self._rate_limiter.try_acquire(routed_sid):
             duration_ms = int((time.monotonic() - t0) * 1000)
+            retry_after = 0.0
+            if hasattr(self._rate_limiter, "retry_after"):
+                retry_after = float(self._rate_limiter.retry_after(routed_sid) or 0.0)
             self._audit.log_call(
                 client_session_id=session_id,
                 tool_name=tool_name,
                 result_status=RATE_LIMITED_KEY,
                 duration_ms=duration_ms,
             )
-            return self._err(req_id, ERR_RBAC_DENIED, f"{RATE_LIMITED_KEY}: {tool_name!r} (10QPS exceeded)")
-
-        tool_params = params.get("arguments", {})
-        lsg_text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
-        lsg_blocked = _lsg_scan_tool_call_sync(tool_name, tool_params, lsg_text)
-        if lsg_blocked:
-            duration_ms = int((time.monotonic() - t0) * 1000)
-            self._audit.log_call(
-                client_session_id=session_id,
-                tool_name=tool_name,
-                result_status="lsg_blocked",
-                duration_ms=duration_ms,
+            return self._err(
+                req_id,
+                ERR_RATE_LIMITED,
+                f"{RATE_LIMITED_KEY}: {tool_name!r} (rate exceeded)",
+                data={"retry_after_seconds": retry_after, "tool": tool_name},
             )
-            return self._err(req_id, ERR_RBAC_DENIED, f"LSG security blocked: {lsg_blocked}")
 
+        # 5.35.4：Sunset 阶段——sunset_date 已过的工具被拦截
+        sunset_err = self._check_sunset(tool_name, routed_sid, req_id)
+        if sunset_err is not None:
+            return sunset_err
+
+        # SafetyLevel 阶段——H 工具需 Owner approval
         safety_result = self._check_safety_level(tool_name, routed_sid, session_id, req_id=req_id)
         if safety_result is not None:
             return safety_result
+
+        # LSG 阶段——跳过 gateway 自身工具、admin 角色、L safety 工具
+        # （L 工具低风险，Permission ACL 已校验；admin 高权限；gateway 内部管理工具）
+        tool_params = params.get("arguments", {})
+        tool_safety = self._lookup_safety_level(tool_name, routed_sid)
+        if (
+            routed_sid != "mcp_gateway"
+            and role != "admin"
+            and tool_safety not in (None, "L")
+        ):
+            lsg_text = json.dumps(tool_params, ensure_ascii=False) if tool_params else tool_name
+            lsg_blocked = _lsg_scan_tool_call_sync(tool_name, tool_params, lsg_text)
+            if lsg_blocked:
+                duration_ms = int((time.monotonic() - t0) * 1000)
+                self._audit.log_call(
+                    client_session_id=session_id,
+                    tool_name=tool_name,
+                    result_status="lsg_blocked",
+                    duration_ms=duration_ms,
+                )
+                return self._err(req_id, ERR_RBAC_DENIED, f"LSG security blocked: {lsg_blocked}")
 
         cb_err = self._check_circuit_breaker(routed_sid, tool_name, session_id, req_id, t0)
         if cb_err is not None:
@@ -637,22 +819,17 @@ class MCPGateway(BaseMCPServer):
             return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")
 
     def _route_tool_name(self, tool_name: str) -> str | None:
+        """5.35.1 修复：路由表从 mcp.json 生成，server_id 即 route key（underscore 命名）。"""
         lower = tool_name.lower()
-        mapping: list[tuple[str, str]] = [
-            ("task_manager.", "task_manager"),
-            ("gate_engine.", "gate_engine"),
-            ("session_handoff.", "session_handoff"),
-            ("intent_router.", "intent_router"),
-            ("blueprint_search.", "blueprint_search"),
-            ("sandbox.", "sandbox"),
-            ("governance.", "governance"),
-            ("telemetry.", "telemetry"),
-            ("vector-memory.", "vector-memory"),
-            ("mcp_gateway.", "mcp_gateway"),
-        ]
-        for prefix, sid in mapping:
-            if lower.startswith(prefix):
+        # 优先按 routes 表的 prefix 匹配（routes 来自 mcp.json）
+        for sid, route in self._routes.items():
+            prefix = route.get("prefix", f"{sid}.")
+            if lower.startswith(prefix.lower()):
                 return sid
+        # 回退：gateway 自身工具
+        if lower.startswith("mcp_gateway."):
+            return "mcp_gateway"
+        # 再回退：按 server_instances 的 sid 前缀匹配
         for sid in self._server_instances:
             if lower.startswith(f"{sid.lower()}."):
                 return sid
