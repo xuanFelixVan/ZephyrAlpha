@@ -1,17 +1,17 @@
-# 自动生成于 2026-07-18T23:10:32Z
+# 自动生成于 2026-07-20T02:30:35Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-07-18T23:10:32Z'
+generated_at: '2026-07-20T02:30:35Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 348
+total_scripts: 352
 with_manifest: 309
-missing_manifest: 39
+missing_manifest: 43
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 21
+  governance: 24
   governance:d10_performance: 1
   governance:d11_compliance: 22
   governance:d12_ai_hallucination: 4
@@ -25,7 +25,7 @@ categories:
   governance:d8_doc_sync: 10
   governance:d9_knowledge: 2
   governance:data_quality: 1
-  governance:generators: 9
+  governance:generators: 10
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
   governance:observability: 1
@@ -147,10 +147,30 @@ scripts:
   - --snapshot
   - --metric
   warn_only: true
-  description: 架构健康度仪表盘（15 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
+  description: 架构健康度仪表盘（30 项指标自动化检测基线，architecture_debt_registry.md §六 第0期）
   tags:
   - Critical
 - name: ast_import_rewriter.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: audit_return_contract_usage.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: audit_worktree_ops_telemetry.py
   owner: governance
   dimensions: []
   priority: P2
@@ -3358,6 +3378,16 @@ scripts:
   - Critical
   - Disruptive
   - Quick
+- name: generators/generate_rule_ai_perception_index.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_script_manifest.py
   owner: governance:generators
   dimensions:
@@ -4056,10 +4086,10 @@ scripts:
   dimensions:
   - D1
   priority: P2
-  timeout_seconds: 60
+  timeout_seconds: 120
   args: []
   warn_only: false
-  description: SQLite → PostgreSQL 数据迁移脚本
+  description: SQLite → PostgreSQL 运营数据迁移脚本（每表独立事务+migration_log幂等）
   tags:
   - Quick
 - name: migrate_sqlite_to_pg/seed_from_yaml.py
@@ -4208,6 +4238,16 @@ scripts:
   description: run_gate_chain.py — 顺序运行多个门禁脚本，任一失败即整体失败。
   tags:
   - Quick
+- name: run_silent_failure_regression.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: session_startup_health_check.py
   owner: governance
   dimensions: []
