@@ -41,6 +41,8 @@
 > - [并行 session 协调策略](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md)（held_files 协议 + handoff 交接 + 冲突升级）
 >
 > **stash 自动清理（#ARCH-WORKTREE-002 Phase 4，2026-07-19）**：`session_worktree` 在 pre_merge/abort/auto-recover 多处 stash 临时修改。post-commit reconciler `GATE-STASH-LIFECYCLE`（[`make_stash_lifecycle_reconciler`](file:///d:/ZephyrAlpha/src/zephyr/governance/audit/reconciliation_registry.py) priority=801）事件驱动清理 > 24h 的 session_worktree 临时 stash（按 msg 前缀 `session_worktree_pre_merge`/`session_worktree_abort` 识别，按索引降序 drop 避免 renumbering），不影响用户手动 stash。AI 无需手动 `git stash drop`。
+>
+> **heartbeat 保活机制（#ARCH-HEARTBEAT-001 Phase 1，2026-07-20 治本）**：`session_worktree_start` 用 `pid=0`（逻辑 session）注册，跨多个 `python -c` 进程存活靠 TTL。旧方案仅 TTL=3600s，AI 崩溃后 held_files 阻塞 1 小时。治本：`session_worktree_start` 自动 spawn detached heartbeat daemon（[`heartbeat_daemon.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py)），daemon 每 30s 调 `registry.heartbeat(session_id)` 刷新 `last_heartbeat` + 追加 `heartbeat.jsonl` 审计记录。`_is_session_alive` 用 90s 新鲜度判据（3×30s，容忍 2 次漏跳），daemon 死亡→90s 后 session 判死→held_files 自动释放。`session_worktree_merge`/`abort` 时 `_kill_heartbeat_daemon` 终止 daemon + `cleanup_heartbeat_file` 清理审计文件。阻塞窗口从 1h 缩短到 90s，消除 `HELD_OVERLAP_VIOLATION` 误阻断根因（之前 allow_overlap 62× 超阈）。AI 无需手动管理 heartbeat 生命周期。
 
 ## RULE-DEPGRAPH：第三件事（防幻觉/防漂移治本规则，2026-07-02）
 
@@ -792,6 +794,14 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 **调试**：`REF_TX_GUARD_DEBUG=1` 环境变量启用调用日志（写 `.runtime/ref_tx_guard_debug.log`），用于排查 hook 是否被 git 调用。
 
 **测试覆盖**（6 用例）：non-GW forward block / GW forward allow / merge allow / reset allow / session branch allow / committed state allow。真实环境验证：`git commit-tree` + `git update-ref` bypass 被 block（exit 128），`emergency_commit` 仍正常工作。
+
+### 10.1.2 emergency commit 路径规范（2026-07-20，B1b 审计治本）
+
+**铁律**：任何 `[GW:*:emergency]` 标记的 commit MUST 经 [`emergency_commit.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py) 生成。禁止手写 `[GW:*:emergency]` 标记走裸 `git commit` 或其他未设 `ZEPHYR_COMMIT_GATEWAY=1` 的路径——此类 commit 会被 POST-COMMIT-GUARD 判定为 forged_gw_marker 并 `git reset --soft HEAD~1`（B1b 审计实证：sess-27964-p0-emergency 两次被 reset）。
+
+**为什么**：`emergency_commit.py` 用 `git commit-tree` plumbing 原子化提交并落审计（reconcile_execution_log + reconcile_reports），是唯一同时满足「绕过失效锁」与「治理可见性」的通道。手写标记的非标路径既触发 guard 回滚，又污染 forged_gw_marker 监控信号（伪造与误报不可区分=监控失效）。
+
+**emergency session id**：`sess-em-*` / `sess-*-emergency` 不注册 SessionRegistry（emergency 前提是注册表/锁不可用），其 commit 合法性由审计落盘与 reference-transaction guard 的 `[GW:` 标记豁免共同保证。
 
 ### 10.2 代码内部 subprocess 调用与文件删除弹窗规避（Trae Shell Interception，2026-07-19）
 
