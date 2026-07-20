@@ -37,6 +37,7 @@ from pathlib import Path
 import pytest
 
 from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+    kill_all_heartbeat_daemons,
     session_worktree_abort,
     session_worktree_commit,
     session_worktree_merge,
@@ -80,6 +81,13 @@ def _cleanup_artifacts(repo: Path, orig_head: str | None = None) -> None:
         orig_head: 测试前的 HEAD SHA。提供时用 ``git reset --soft`` 回退测试 commit
             （保留工作区未提交改动，避免 ``--hard`` 误伤 worktree_manager.py 等修复）。
     """
+    # 治本 #ARCH-HEARTBEAT-001-TEST-FAIL：清理所有残留 daemon 进程。
+    # 不调用 merge/abort 的测试（如 test_two_sessions_separate_worktrees）会留下
+    # 运行中的 daemon，累积导致系统资源耗尽（43 测试 × 1-2 daemon = 最多 86 个
+    # Python 解释器进程）。kill_all_heartbeat_daemons 遍历 _DAEMON_PROCS 批量
+    # taskkill + pop + wait 回收 handle，防止 GC __del__ 误报 ResourceWarning。
+    kill_all_heartbeat_daemons(repo)
+
     for sid in _TEST_SIDS:
         wt = repo / ".aidrafts" / sid
         if wt.exists():
@@ -1283,3 +1291,201 @@ def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
     )
     assert passed is True
     assert violations == []
+
+
+# ---------------------------------------------------------------------------
+# P2-2 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
+# _run_pre_commit_gates 重试机制 + _cleanup_worktree_locks 单元测试。
+# 原 _run_pre_commit_gates 单次执行，subprocess 超时即 fail-open
+# （masking 真问题）。治本：区分 transient/deterministic，transient 错误
+# 重试 3 次（指数退避 2/4/8s），重试间清理 worktree 残留 lock。
+# ---------------------------------------------------------------------------
+import zephyr.gov_enforcement.rule_bridge.session_worktree as _sw_mod_retry  # noqa: E402
+from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: E402
+    _cleanup_worktree_locks,
+    _GATE_RETRY_DELAYS,
+    _GATE_RETRY_MAX_ATTEMPTS,
+    _run_pre_commit_gates,
+    _run_pre_commit_gates_once,
+)
+
+
+class TestPreCommitGatesRetry:
+    """_run_pre_commit_gates 重试机制测试（P2-2 治本）。
+
+    使用 monkeypatch 替换 _run_pre_commit_gates_once 模拟不同场景，
+    并将 _GATE_RETRY_DELAYS 替换为 (0, 0, 0) 避免测试慢。
+    """
+
+    def test_pass_on_first_attempt(self, tmp_path, monkeypatch):
+        """首次通过 → 不重试，返回 None。"""
+        call_count = [0]
+
+        def _fake_once(*args, **kwargs):
+            call_count[0] += 1
+            return None  # 首次通过
+
+        monkeypatch.setattr(_sw_mod_retry, "_run_pre_commit_gates_once", _fake_once)
+        monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
+
+        result = _run_pre_commit_gates(
+            tmp_path, tmp_path / "wt", [], "sess-test",
+            allow_promote=False, allow_migration=False,
+        )
+        assert result is None
+        assert call_count[0] == 1
+
+    def test_deterministic_violation_no_retry(self, tmp_path, monkeypatch):
+        """GATE_VIOLATION deterministic 违规 → 不重试，直接返回。"""
+        call_count = [0]
+        violation = {
+            "session_id": "sess-test",
+            "status": "GATE_VIOLATION",
+            "message": "test violation",
+            "commit_hash": "",
+        }
+
+        def _fake_once(*args, **kwargs):
+            call_count[0] += 1
+            return violation
+
+        monkeypatch.setattr(_sw_mod_retry, "_run_pre_commit_gates_once", _fake_once)
+        monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
+
+        result = _run_pre_commit_gates(
+            tmp_path, tmp_path / "wt", [], "sess-test",
+            allow_promote=False, allow_migration=False,
+        )
+        assert result is violation
+        assert call_count[0] == 1, "deterministic 违规不应重试"
+
+    def test_transient_retry_then_pass(self, tmp_path, monkeypatch):
+        """首次 transient → 重试 → 第二次通过。"""
+        call_count = [0]
+
+        def _fake_once(*args, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                return {
+                    "session_id": "sess-test",
+                    "status": "GATE_TRANSIENT",
+                    "message": "timeout",
+                    "commit_hash": "",
+                    "transient": True,
+                }
+            return None  # 第二次通过
+
+        monkeypatch.setattr(_sw_mod_retry, "_run_pre_commit_gates_once", _fake_once)
+        monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
+        # Mock _cleanup_worktree_locks 避免真实文件操作
+        monkeypatch.setattr(_sw_mod_retry, "_cleanup_worktree_locks", lambda wt: None)
+
+        result = _run_pre_commit_gates(
+            tmp_path, tmp_path / "wt", [], "sess-test",
+            allow_promote=False, allow_migration=False,
+        )
+        assert result is None
+        assert call_count[0] == 2, "应重试 1 次后通过"
+
+    def test_transient_all_retry_fail_open(self, tmp_path, monkeypatch):
+        """3 次都 transient → fail-open（返回 None）。"""
+        call_count = [0]
+
+        def _fake_once(*args, **kwargs):
+            call_count[0] += 1
+            return {
+                "session_id": "sess-test",
+                "status": "GATE_TRANSIENT",
+                "message": f"timeout attempt {call_count[0]}",
+                "commit_hash": "",
+                "transient": True,
+            }
+
+        monkeypatch.setattr(_sw_mod_retry, "_run_pre_commit_gates_once", _fake_once)
+        monkeypatch.setattr(_sw_mod_retry, "_GATE_RETRY_DELAYS", (0, 0, 0))
+        monkeypatch.setattr(_sw_mod_retry, "_cleanup_worktree_locks", lambda wt: None)
+
+        result = _run_pre_commit_gates(
+            tmp_path, tmp_path / "wt", [], "sess-test",
+            allow_promote=False, allow_migration=False,
+        )
+        assert result is None, "3 次重试耗尽应 fail-open 返回 None"
+        assert call_count[0] == _GATE_RETRY_MAX_ATTEMPTS, (
+            f"应重试 {_GATE_RETRY_MAX_ATTEMPTS} 次: {call_count[0]}"
+        )
+
+    def test_retry_constants_unchanged(self):
+        """重试常量未被意外修改。"""
+        assert _GATE_RETRY_MAX_ATTEMPTS == 3
+        assert _GATE_RETRY_DELAYS == (2, 4, 8)
+        # 退避时间应递增（指数退避）
+        assert _GATE_RETRY_DELAYS[0] < _GATE_RETRY_DELAYS[1] < _GATE_RETRY_DELAYS[2]
+
+
+class TestCleanupWorktreeLocks:
+    """_cleanup_worktree_locks lock 文件清理测试（P2-2 治本辅助）。"""
+
+    def test_cleanup_index_lock(self, tmp_path):
+        """存在的 .git/index.lock 应被删除。"""
+        wt = tmp_path / "wt"
+        git_dir = wt / ".git"
+        git_dir.mkdir(parents=True)
+        index_lock = git_dir / "index.lock"
+        index_lock.write_text("dummy", encoding="utf-8")
+        assert index_lock.exists()
+
+        _cleanup_worktree_locks(wt)
+
+        assert not index_lock.exists(), "index.lock 应被删除"
+
+    def test_cleanup_refs_heads_locks(self, tmp_path):
+        """存在的 .git/refs/heads/*.lock 应被删除。"""
+        wt = tmp_path / "wt"
+        git_dir = wt / ".git"
+        refs_heads = git_dir / "refs" / "heads"
+        refs_heads.mkdir(parents=True)
+        lock1 = refs_heads / "main.lock"
+        lock2 = refs_heads / "feature.lock"
+        lock1.write_text("dummy", encoding="utf-8")
+        lock2.write_text("dummy", encoding="utf-8")
+
+        _cleanup_worktree_locks(wt)
+
+        assert not lock1.exists()
+        assert not lock2.exists()
+
+    def test_no_git_dir_silent(self, tmp_path):
+        """worktree 无 .git 目录 → 静默返回（不抛异常）。"""
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        # 不创建 .git 目录
+        _cleanup_worktree_locks(wt)  # 不应抛异常
+
+    def test_no_locks_silent(self, tmp_path):
+        """.git 目录存在但无 lock 文件 → 静默返回。"""
+        wt = tmp_path / "wt"
+        git_dir = wt / ".git"
+        git_dir.mkdir(parents=True)
+        # 无 lock 文件
+        _cleanup_worktree_locks(wt)  # 不应抛异常
+
+    def test_oserror_silent(self, tmp_path, monkeypatch):
+        """unlink 抛 OSError → 静默忽略（不抛异常）。"""
+        wt = tmp_path / "wt"
+        git_dir = wt / ".git"
+        git_dir.mkdir(parents=True)
+        index_lock = git_dir / "index.lock"
+        index_lock.write_text("dummy", encoding="utf-8")
+
+        # mock Path.unlink 抛 OSError
+        original_unlink = type(index_lock).unlink
+
+        def _raise_oserror(self, *args, **kwargs):
+            raise OSError("test permission denied")
+
+        monkeypatch.setattr(type(index_lock), "unlink", _raise_oserror)
+        try:
+            _cleanup_worktree_locks(wt)  # 不应抛异常
+        finally:
+            monkeypatch.setattr(type(index_lock), "unlink", original_unlink)
+
