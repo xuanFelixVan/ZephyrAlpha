@@ -321,24 +321,16 @@ def test_increment_emergency_count_starts_from_zero(tmp_path: Path) -> None:
 
 
 def test_check_start_blocked_no_sessions_dir(tmp_path: Path) -> None:
-    """sessions 目录不存在时返回 (False, '')。"""
+    """emergency_counts 目录不存在时返回 (False, '')。"""
     blocked, reason = check_start_blocked(tmp_path)
     assert blocked is False
     assert reason == ""
 
 
 def test_check_start_blocked_no_block(tmp_path: Path) -> None:
-    """所有 session 都未阻断时返回 (False, '')。"""
-    sessions_dir = tmp_path / ".runtime" / "sessions"
-    sessions_dir.mkdir(parents=True)
-    (sessions_dir / "sess-001").mkdir()
-    (sessions_dir / "sess-001" / "emergency_count.json").write_text(
-        '{"count":2,"block_next_start":false}', encoding="utf-8"
-    )
-    (sessions_dir / "sess-002").mkdir()
-    (sessions_dir / "sess-002" / "emergency_count.json").write_text(
-        '{"count":4,"block_next_start":false}', encoding="utf-8"
-    )
+    """所有 agent bucket 都未阻断时返回 (False, '')。"""
+    _write_emergency_count(tmp_path, "agent-001", {"count": 2, "block_next_start": False})
+    _write_emergency_count(tmp_path, "agent-002", {"count": 4, "block_next_start": False})
 
     blocked, reason = check_start_blocked(tmp_path)
     assert blocked is False
@@ -346,30 +338,21 @@ def test_check_start_blocked_no_block(tmp_path: Path) -> None:
 
 
 def test_check_start_blocked_detects_blocked_session(tmp_path: Path) -> None:
-    """任一 session block_next_start=True 时返回 (True, reason)。"""
-    sessions_dir = tmp_path / ".runtime" / "sessions"
-    sessions_dir.mkdir(parents=True)
-    (sessions_dir / "sess-001").mkdir()
-    (sessions_dir / "sess-001" / "emergency_count.json").write_text(
-        '{"count":2,"block_next_start":false}', encoding="utf-8"
-    )
-    (sessions_dir / "sess-bad").mkdir()
-    (sessions_dir / "sess-bad" / "emergency_count.json").write_text(
-        '{"count":5,"block_next_start":true}', encoding="utf-8"
-    )
+    """任一 agent bucket block_next_start=True 时返回 (True, reason)。"""
+    _write_emergency_count(tmp_path, "agent-001", {"count": 2, "block_next_start": False})
+    _write_emergency_count(tmp_path, "agent-bad", {"count": 5, "block_next_start": True})
 
     blocked, reason = check_start_blocked(tmp_path)
     assert blocked is True
-    assert "sess-bad" in reason
+    assert "agent-bad" in reason
     assert "5" in reason
 
 
 def test_check_start_blocked_skips_corrupt_json(tmp_path: Path) -> None:
     """损坏的 JSON 文件被跳过（不阻断扫描）。"""
-    sessions_dir = tmp_path / ".runtime" / "sessions"
-    sessions_dir.mkdir(parents=True)
-    (sessions_dir / "sess-corrupt").mkdir()
-    (sessions_dir / "sess-corrupt" / "emergency_count.json").write_text(
+    counts_dir = tmp_path / ".runtime" / "emergency_counts"
+    counts_dir.mkdir(parents=True)
+    (counts_dir / "agent-corrupt.json").write_text(
         'not valid json {{{', encoding="utf-8"
     )
 

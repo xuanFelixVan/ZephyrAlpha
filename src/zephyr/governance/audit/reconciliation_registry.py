@@ -113,6 +113,7 @@ __all__ = [
     "log_emergency_commit",  # Ruling:100PCT-AI-GOVERNANCE P2-1 — emergency_commit 审计
     "make_commit_gateway_abuse_monitor_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 5b
     "make_workspace_hygiene_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
+    "make_metric_count_drift_reconciler",  # #ARCH-HEALTH-DASHBOARD-001 阶段2 dashboard 指标数描述漂移校验
 ]
 
 
@@ -384,6 +385,22 @@ class ReconciliationRegistry:
                 if not result.gate_id:
                     result.gate_id = spec.gate_id
                 results.append(result)
+            except subprocess.TimeoutExpired as e:
+                # #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
+                # timeout 异常升级 critical_warn（非 warn），让 _check_recent_critical_warns
+                # 横幅强制 AI 看到。原设计 timeout 被降级为 warn，AI 看不到 loud 提示，
+                # 违反 P0-1 ruling「reconciler 失败升级 critical_warn 强制 AI 看到」。
+                logger.warning(
+                    "ReconciliationRegistry: reconciler %s timed out: %s",
+                    spec.gate_id, e,
+                )
+                results.append(
+                    ReconcileResult(
+                        action="critical_warn",
+                        detail=f"reconciler {spec.gate_id} timed out (timeout={e.timeout}s): {e}",
+                        gate_id=spec.gate_id,
+                    )
+                )
             except (Exception, KeyboardInterrupt) as e:  # noqa: BLE001 — drift 对账非阻断；KeyboardInterrupt 也降级（commit 已入库，reconciler 中断不应 crash 进程，治本 #2026-0701）
                 logger.warning(
                     "ReconciliationRegistry: reconciler %s failed: %s",
@@ -1384,23 +1401,65 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
                 return True
         return False
 
+    def _extract_module_ids_from_md(committed_files: list[str]) -> list[str]:
+        """从 docs/03_modules/*.md frontmatter 提取 module_id（#ARCH-PRE-EXISTING-DEBT-001 治本，2026-07-20）。
+
+        增量分发的核心：只同步本次 commit 涉及的模块，避免全量扫描 616+ 模块。
+        提取策略：读 .md 文件前 30 行，正则匹配 ``module_id: MOD-XXX``。
+        """
+        import re
+        pattern = re.compile(r'^module_id:\s*(MOD-[^\s]+)', re.MULTILINE)
+        module_ids: set[str] = set()
+        for f in committed_files:
+            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+            if not (rel.startswith("docs/03_modules/") and rel.endswith(".md")):
+                continue
+            try:
+                with open(f, 'r', encoding='utf-8', errors='replace') as fh:
+                    head = ''.join(fh.readline() for _ in range(30))
+                m = pattern.search(head)
+                if m:
+                    module_ids.add(m.group(1))
+            except OSError:
+                continue
+        return sorted(module_ids)
+
     def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
         start = time.time()
         _env = dict(os.environ)
         _src = str(project_root / "src")
         _env["PYTHONPATH"] = _src + (os.pathsep + _env["PYTHONPATH"] if _env.get("PYTHONPATH") else "")
+
+        # #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
+        # 增量分发——从 committed_files 提取 module_id，只同步涉及的模块。
+        # 全量 --all 模式作 fallback（.py 改动可能影响多个模块的 depgraph）。
+        # timeout 配置化：env ZEPHYR_FRONTMATTER_SYNC_TIMEOUT 覆盖默认值。
+        module_ids = _extract_module_ids_from_md(committed_files)
+        has_py_changes = any(
+            os.path.relpath(f, str(project_root)).replace("\\", "/").endswith(".py")
+            for f in committed_files
+        )
+
+        default_timeout = 300 if (has_py_changes or not module_ids) else 120
+        timeout = int(_env.get("ZEPHYR_FRONTMATTER_SYNC_TIMEOUT", str(default_timeout)))
+
+        if module_ids and not has_py_changes:
+            # 增量模式：只同步 .md frontmatter 涉及的模块
+            cmd = [sys.executable, "scripts/governance/sync_panorama_module.py"] + module_ids
+            mode = f"incremental ({len(module_ids)} modules)"
+        else:
+            # 全量模式：.py 改动或无 module_id 提取失败时 fallback
+            cmd = [sys.executable, "scripts/governance/sync_panorama_module.py", "--all"]
+            mode = "full (--all)"
+
         sync_result = _run_subprocess(
-            [
-                sys.executable,
-                "scripts/governance/sync_panorama_module.py",
-                "--all",
-            ],
+            cmd,
             cwd=str(project_root),
             capture_output=True,
             text=True,
             encoding="utf-8",
             errors="replace",
-            timeout=120,
+            timeout=timeout,
             env=_env,
         )
         elapsed = time.time() - start
@@ -1415,7 +1474,7 @@ def make_blueprint_frontmatter_reconciler(gateway: "object") -> ReconcilerSpec:
             # 此处再 warn+截断=双重静默，AI 看到 "0 失败" 实际全失败。
             return ReconcileResult(
                 action="critical_warn",
-                detail=f"frontmatter sync failed in {elapsed:.1f}s (rc={sync_result.returncode}): "
+                detail=f"frontmatter sync failed in {elapsed:.1f}s (rc={sync_result.returncode}, mode={mode}, timeout={timeout}s): "
                        f"{sync_result.stderr.strip()}",
             )
 

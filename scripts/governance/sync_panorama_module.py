@@ -332,6 +332,36 @@ def sync_all_panorama() -> int:
     return 0
 
 
+def sync_modules_panorama(module_ids: list[str]) -> int:
+    """增量同步指定的模块列表（#ARCH-PRE-EXISTING-DEBT-001 治本，2026-07-20）。
+
+    与 sync_all_panorama 的区别：只同步传入的 module_id 列表，避免全量扫描 616+ 模块。
+    供 reconciler 增量分发使用（committed_files → module_ids → 本函数）。
+
+    Args:
+        module_ids: 要同步的模块 ID 列表（如 ["MOD-INF-013", "MOD-GOV-001"]）。
+
+    Returns: 0=全部成功, 1=至少一个模块失败（rc=3/4/5）
+    """
+    if not module_ids:
+        print("[WARN] sync_modules_panorama: 空模块列表，跳过", file=sys.stderr)
+        return 0
+
+    failed = 0
+    partial = 0
+    for mid in module_ids:
+        rc = sync_module_panorama(mid)
+        if rc == 5:
+            partial += 1
+        elif rc != 0:
+            print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
+            failed += 1
+    print(f"[OK] 增量同步完成：{len(module_ids)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
+    if failed > 0 or partial > 0:
+        return 1
+    return 0
+
+
 def prune_orphans() -> dict:
     """删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）。
 
@@ -413,7 +443,7 @@ def prune_orphans() -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description="四图模块同步引擎（ARCH-056）")
-    parser.add_argument("module_id", nargs="?", help="要同步的模块 ID（MOD-XXX）")
+    parser.add_argument("module_ids", nargs="*", help="要同步的模块 ID 列表（MOD-XXX MOD-YYY ...）")
     parser.add_argument("--all", action="store_true", help="同步所有模块")
     parser.add_argument("--prune-orphans", action="store_true",
                         help="删除 decision_layers + dataflow_jobs 中的孤儿占位记录（ARCH-057 + ARCH-058）")
@@ -428,8 +458,9 @@ def main():
         return 0
     if args.all:
         return sync_all_panorama()
-    if args.module_id:
-        return sync_module_panorama(args.module_id)
+    if args.module_ids:
+        # 增量模式：多模块入口（#ARCH-PRE-EXISTING-DEBT-001 治本，2026-07-20）
+        return sync_modules_panorama(args.module_ids)
     parser.print_help()
     return 3
 

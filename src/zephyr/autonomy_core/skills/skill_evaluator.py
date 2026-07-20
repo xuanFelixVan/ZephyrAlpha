@@ -34,7 +34,7 @@ Skill 质量评估器 — 多维度输出质量评分
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, Tuple
 
 
 class SkillEvaluator:

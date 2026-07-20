@@ -82,7 +82,12 @@ def _write_failed_status(
     started_at: int,
     errors: list[str],
 ) -> None:
-    """写 status=failed（worker 异常退出兜底）。"""
+    """写 status=failed（worker 异常退出兜底）+ 持久化到 DB。
+
+    #ARCH-PRE-EXISTING-DEBT-001 治本（2026-07-20）：
+    之前 worker 启动失败只写 status file，不写 reconcile_execution_log 表，
+    违反"所有 reconciler 失败结果必须持久化记录"铁律。现补 DB 持久化。
+    """
     try:
         from zephyr.governance.audit.reconcile_runner import (
             STATUS_FAILED,
@@ -97,6 +102,26 @@ def _write_failed_status(
             trigger_source="post_commit_async",
         )
     except Exception:  # noqa: BLE001 — 兜底日志失败不阻断 exit
+        pass
+
+    # 持久化 worker 启动失败到 reconcile_execution_log 表（铁律：失败结果必须持久化）
+    try:
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
+            _log_reconcile_results,
+        )
+        detail = "; ".join(errors) if errors else "worker boot failed (unknown reason)"
+        _log_reconcile_results(
+            project_root,
+            [ReconcileResult(
+                action="critical_warn",
+                detail=f"reconcile_worker boot failed (commit={commit_sha}): {detail}",
+                gate_id="RECONCILE-WORKER-BOOT",
+            )],
+            session_id or "unknown",
+            trigger_source="post_commit_async",
+        )
+    except Exception:  # noqa: BLE001 — DB 写入失败不阻断 exit
         pass
 
 
