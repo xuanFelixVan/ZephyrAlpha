@@ -672,6 +672,19 @@ class GitCommitGateway:
         except ImportError as e:
             logger.warning("readme_version_sync_reconciler not registered: %s", e)
 
+        # 注册 dashboard 指标数描述派生校验 reconciler（MOD-metric_count_drift，#ARCH-HEALTH-DASHBOARD-001 阶段2，2026-07-20 治本）
+        # 校验 architecture_health_dashboard.py METRICS 列表长度与 4 个派生文件指标数描述一致
+        # 漂移时 warn 不阻断（描述同步需人工决策），priority=220 晚于 README-VERSION-SYNC(210)
+        try:
+            import sys as _sys
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from metric_count_drift_reconciler import make_metric_count_drift_reconciler
+            self._reconciliation_registry.register(make_metric_count_drift_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("metric_count_drift_reconciler not registered: %s", e)
+
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------
