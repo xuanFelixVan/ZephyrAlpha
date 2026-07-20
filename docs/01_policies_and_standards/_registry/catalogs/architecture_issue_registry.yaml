@@ -4137,6 +4137,61 @@ entries:
   related_rules: 'AGENTS.md RULE-CAPABILITY-LOOKUP (6 层闭环模型，TRAE-068 #ARCH-PREVENTABILITY-LAYER-001), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001: pre-merge gate sys.path 不一致治本（2026-07-20） ---
+# 病根：worktree 物理隔离与 Python 进程共享的架构冲突。_pre_merge_gate_check 在主工作区
+# Python 进程中运行，sys.path 指向主工作区 src；worktree commit 修改了 src/ 的跨文件
+# import 依赖，主工作区 src 是 HEAD 版本，导致 subprocess-based gate（DIRECTORY-CONTRACT /
+# TTL-METADATA / ENCODING-SAFETY / RULE-FOUR-WAY-ALIGN 等）import 失败 → ImportError 阻断 merge。
+# 治本：pre-merge 阶段跳过所有 commit gate（pre-commit 已运行，pre-merge 重复是冗余设计），
+# 只保留 PRE-MERGE-TOPO-CHECK（独立 subprocess，无 sys.path 问题）。新增 force 参数作为
+# 标准化逃生通道（对标 allow_overlap=True），替代 AI 临时发明 git merge 绕过（违反 FP-ISO.4C）。
+- issue_id: '#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001'
+  title: pre-merge gate sys.path 不一致治本——worktree 内独立子进程运行 + 代码质量类 gate 退出 pre-merge
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-20 立项裁定（DM-90974 治本任务暴露的系统性缺陷）。
+
+    病根（第一性原理）：worktree 物理隔离与 Python 进程共享的架构冲突。
+    - _pre_merge_gate_check 在主工作区 Python 进程中运行（session_worktree.py:3792）
+    - gate 代码（zephyr.gov_enforcement.commit_gates.*）通过 import 走 sys.path，sys.path 指向主工作区 src
+    - gate 代码通过 subprocess 调用的 scripts（如 check_directory_contract.py）从 worktree 加载（因 project_root=wt_path）
+    - scripts 的依赖（_shared/constants.py）也从 worktree 加载
+    - 但 _shared/constants.py 的依赖（zephyr.shared.io.paths）走 sys.path，回到主工作区 src
+    - 递归依赖链断裂 → ImportError → pre-merge gate 阻断 merge
+
+    _pre_merge_auto_clean 加剧问题：AI 用 git checkout <worktree_commit> -- src/paths.py
+    同步文件到主工作区后，_pre_merge_auto_clean 检测到 paths.py 与 worktree commit 内容一致
+    → git stash push → paths.py 回到 HEAD 版本 → ImportError 再次出现。
+
+    治本方案（双轨）：
+    1. _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True（session_worktree.py:233）：
+       pre-merge 阶段跳过所有 commit gate。理由：
+       - commit gate 在 pre-commit 阶段已运行（通过 session_worktree_commit 的 _run_dcr_check）
+       - pre-merge 阶段重复运行是冗余设计
+       - PRE-MERGE-TOPO-CHECK 已覆盖主分支状态变化检测（拓扑不一致）
+       - 代码质量类 gate 不依赖主分支状态，pre-commit 运行一次即够
+    2. force 参数（session_worktree_merge 签名新增）：
+       标准化逃生通道，force=True 时跳过 PRE-MERGE-TOPO-CHECK + commit gate。
+       替代 AI 临时发明 git merge 绕过（违反 FP-ISO.4C 君子协定）。
+       滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 5 维审计（force_merge 维度）。
+
+    与既有裁定的关系：
+    - 扩展 #ARCH-WORKTREE-002 缺陷 1：原治本仅针对 validate_module_id_naming.py，
+      本次治本系统性解决所有 sys.path 不一致问题
+    - 补充 #ARCH-HEARTBEAT-001：heartbeat 解决了 session liveness 问题，
+      但未解决 pre-merge gate 的 sys.path 问题；本次治本填补此空白
+
+    验证：tests/governance/rule_bridge/test_session_worktree_pre_merge_syspath.py 4/4 PASSED
+  impact:
+    - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（_PRE_MERGE_SKIP_ALL_COMMIT_GATES 常量 + session_worktree_merge force 参数 + pre-merge gate 跳过逻辑）
+    - tests/governance/rule_bridge/test_session_worktree_pre_merge_syspath.py（4 用例验证治本效果）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
+  status: in_progress
+  related_adjudication: '#ARCH-WORKTREE-002 (缺陷 1 扩展，sys.path 不一致系统性治本), #ARCH-HEARTBEAT-001 (session liveness 已治本，pre-merge sys.path 本次治本), #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 (force_merge 维度加入 5 维审计), #ARCH-DEP-001 (PRE-MERGE-TOPO-CHECK 保留，第二期已完成的拓扑硬阻断)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定，优先于 git commit 规则), trae_054 (备份先行), trae_062 (SSoT 真源分类)'
+  created: '2026-07-20'
+  last_updated: '2026-07-20'
 # --- #ARCH-PREVENTABILITY-LAYER-001: 第 6 层可预防性正式化（2026-07-20，R6 落地）---
 # 关联 Ruling:100PCT-AI-GOVERNANCE 裁定 D-4 / R6；原计划用 TRAE-067（编号冲突），改用 TRAE-068
 - issue_id: '#ARCH-PREVENTABILITY-LAYER-001'

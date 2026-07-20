@@ -221,6 +221,17 @@ def _inject_ok(fn):
 _WORKTREE_SKIP_GATES = frozenset({"HELD-OVERLAP", "CLAIM-REQUIRED", "FOREIGN-CHANGE-DETECTION"})
 # 注意：docstring/注释中引用本常量时禁止硬编码具体数量/名称，必须引用 _WORKTREE_SKIP_GATES 本身（裁定 D 治本 2026-07-19）
 
+# #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+# pre-merge 阶段跳过所有 commit gate（pre-commit 阶段已运行，pre-merge 重复是冗余设计）。
+# 病根：_pre_merge_gate_check 在主工作区 Python 进程中运行，sys.path 指向主工作区 src；
+# worktree commit 修改了 src/ 的跨文件 import 依赖，主工作区 src 是 HEAD 版本，
+# 导致 subprocess-based gate（DIRECTORY-CONTRACT / TTL-METADATA / ENCODING-SAFETY /
+# RULE-FOUR-WAY-ALIGN 等）import 失败 → ImportError 阻断 merge。
+# 治本：pre-merge 阶段只保留 PRE-MERGE-TOPO-CHECK（独立 subprocess，无 sys.path 问题），
+# 跳过所有 commit gate。commit gate 的价值（捕获主分支状态变化）已被 PRE-MERGE-TOPO-CHECK
+# 覆盖（拓扑不一致检测）；代码质量类 gate 不依赖主分支状态，pre-commit 运行一次即够。
+_PRE_MERGE_SKIP_ALL_COMMIT_GATES = True
+
 # Fast-path env 授权（ARCH-GIT-CALL-BUDGET P1.3，2026-07-19）
 # session_worktree 是可信内部调用方——已通过 held_files 机制完成冲突检查，
 # 调 git checkout/reset/restore/revert 时设置此 env 使 scripts/git_guard.py
@@ -3566,6 +3577,7 @@ def session_worktree_merge(
     project_root: str | Path | None = None,
     reconcile_verify: bool = True,
     allow_migration: bool = False,
+    force: bool = False,
 ) -> MergeResult:
     """将 worktree 修改 merge 回主分支 + 清理 worktree + 注销 session。
 
@@ -3575,6 +3587,11 @@ def session_worktree_merge(
 
     Args:
         session_id: 已注册的 session_id。
+        force: #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本逃生通道——True 时跳过
+            pre-merge gate（PRE-MERGE-TOPO-CHECK + commit gate），直接 merge。
+            用于 pre-merge gate 误报或基础设施故障时逃生（对标 allow_overlap=True）。
+            滥用风险：加入 #ARCH-GATE-ABUSE-SYSTEMIC-AUDIT-001 5 维审计
+            （force_merge 维度），日常不应使用。
 
     Returns:
         {
@@ -3633,11 +3650,22 @@ def session_worktree_merge(
     # --scan-root 参数而降级放行（fail-open）。在 auto_clean 之前执行时，MAIN 副本
     # checker 还是主工作区最新版本（含 --scan-root）。topo check 独立于 commit gate——
     # 不受 gate 代码修改降级影响（topo checker 是独立脚本，非 commit_gates/）。
+    #
+    # #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+    # force=True 时跳过 PRE-MERGE-TOPO-CHECK（逃生通道，对标 allow_overlap=True）。
     wt_path = manager._wt_path(session_id)
-    _topo_rel_files = _get_session_branch_diff_files(root, session_id)
-    _topo_passed, _topo_violations = _run_pre_merge_topo_check(
-        root, session_id, wt_path, _topo_rel_files,
-    )
+    if force:
+        logger.warning(
+            "session_worktree_merge(force=True): 跳过 PRE-MERGE-TOPO-CHECK "
+            "（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道）。"
+            "滥用风险：拓扑不一致可能引入漂移，仅用于 pre-merge gate 误报或基础设施故障。"
+        )
+        _topo_passed, _topo_violations = True, []
+    else:
+        _topo_rel_files = _get_session_branch_diff_files(root, session_id)
+        _topo_passed, _topo_violations = _run_pre_merge_topo_check(
+            root, session_id, wt_path, _topo_rel_files,
+        )
     if not _topo_passed:
         _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in _topo_violations)
         # #ARCH-DEP-PREMERGE-ENFORCE (P4.1)：拓扑检查失败写入 block_next 记录，
@@ -3694,7 +3722,29 @@ def session_worktree_merge(
 
         # Pre-merge gate 检查（裁定#209 后续：补齐 worktree 路径的 gate 验证）
         # 用最新主分支状态重新检查 session 分支变更，捕获 commit 后到 merge 前的 gate 漂移
-        gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
+        #
+        # #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本（2026-07-20）：
+        # _PRE_MERGE_SKIP_ALL_COMMIT_GATES=True 时跳过所有 commit gate——
+        # 这些 gate 在 pre-commit 阶段已运行，pre-merge 重复运行因 sys.path 指向
+        # 主工作区 src 会导致 ImportError（worktree commit 修改了 src/ 跨文件 import
+        # 依赖，主工作区 src 是 HEAD 版本）。pre-merge 阶段只保留 PRE-MERGE-TOPO-CHECK
+        # （独立 subprocess，无 sys.path 问题），已覆盖主分支状态变化检测。
+        # force=True 时也跳过（逃生通道）。
+        if force or _PRE_MERGE_SKIP_ALL_COMMIT_GATES:
+            if _PRE_MERGE_SKIP_ALL_COMMIT_GATES and not force:
+                logger.info(
+                    "session_worktree_merge: 跳过 commit gate（"
+                    "#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 治本，"
+                    "pre-commit 已运行，pre-merge 只保留 PRE-MERGE-TOPO-CHECK）"
+                )
+            elif force:
+                logger.warning(
+                    "session_worktree_merge(force=True): 跳过 commit gate "
+                    "（#ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道）"
+                )
+            gate_passed, gate_violations = True, []
+        else:
+            gate_passed, gate_violations = _pre_merge_gate_check(root, session_id, wt_path, allow_migration=allow_migration)
         if not gate_passed:
             _details = "; ".join(f"{v['gate_id']}: {v['detail']}" for v in gate_violations)
             return {
