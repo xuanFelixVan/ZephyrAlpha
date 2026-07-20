@@ -45,3 +45,5 @@ __all__ = [
     "TimeoutLevel",
     "TrackerScope",
 ]
+
+__version__ = "0.8.0"

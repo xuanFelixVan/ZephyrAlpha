@@ -496,3 +496,6 @@ class EscalationEngine:
                 raise PermissionError(f"LSG blocked escalation input: {result.decision.value}")
         except ImportError:
             pass
+
+
+__version__ = "0.14.0"

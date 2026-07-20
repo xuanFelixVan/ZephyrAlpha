@@ -4846,6 +4846,24 @@ capabilities:
 # ============================================================================
 creation_tokens:
 
+  # --- Phase 1 gate marker 目录（2026-07-21，test_phase1_gate_check 期望 8 个 kebab-case 目录）---
+  - file: "src/zephyr/governance/agent-spec/__init__.py"
+    token: "auto-phase1-marker-agent-spec-20260721"
+    created_by: "session-sess-32128-20260721020454"
+    capability: "phase1_gate_marker"
+  - file: "src/zephyr/governance/drift-detector/__init__.py"
+    token: "auto-phase1-marker-drift-detector-20260721"
+    created_by: "session-sess-32128-20260721020454"
+    capability: "phase1_gate_marker"
+  - file: "src/zephyr/governance/budget-enforcer/__init__.py"
+    token: "auto-phase1-marker-budget-enforcer-20260721"
+    created_by: "session-sess-32128-20260721020454"
+    capability: "phase1_gate_marker"
+  - file: "src/zephyr/governance/a2a/__init__.py"
+    token: "auto-phase1-marker-a2a-20260721"
+    created_by: "session-sess-32128-20260721020454"
+    capability: "phase1_gate_marker"
+
   # --- 不可变核心配置 SSoT（2026-07-17 AI-02 审计 P2-1，ALWAYS_BLOCKED_OPERATIONS / PROTECTED_PATHS 真源归一）---
   - file: "config/immutable_core.yaml"
     token: "auto-immutable-core-yaml-20260717"

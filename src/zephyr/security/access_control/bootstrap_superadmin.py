@@ -30,9 +30,9 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-SUPERADMIN_ACCOUNT = "superadmin"
-SUPERADMIN_ROLES = ["superadmin", "admin"]
-SUPERADMIN_CAPABILITIES = ["read", "write", "execute", "admin", "manage"]
+SUPERADMIN_ACCOUNT = "bytebuddy"
+SUPERADMIN_ROLES = ["superadmin", "admin", "auditor", "operator"]
+SUPERADMIN_CAPABILITIES = ["read", "write", "execute", "admin", "manage", "escalate", "rollback"]
 SUPERADMIN_AGENT_ID = "bytebuddy"
 
 

@@ -56,6 +56,10 @@ class AnomalySignature(Enum):
     INDIRECT_OPERATION = "ANM-007"
     DRY_RUN_MISMATCH = "ANM-008"
     TRUST_TREND = "ANM-009"
+    HIGH_FREQUENCY = "ANM-010"
+    CROSS_AGENT_CONFLICT = "ANM-011"
+    COLLUSION_PATTERN = "ANM-012"
+    PRIVILEGE_ESCALATION = "ANM-013"
 
 
 class AnomalyResult:
@@ -173,9 +177,11 @@ class AnomalyDetector:
         results: list[AnomalyResult] = []
         delete_counts: dict[str, int] = {}
         trust_scores: dict[str, list[float]] = {}
+        freq_buckets: dict[str, dict[str, int]] = {}
+        cross_agent: dict[str, set[str]] = {}
         for event in events:
-            self._detect_per_event(event, results, delete_counts, trust_scores)
-        self._detect_aggregated(delete_counts, trust_scores, results)
+            self._detect_per_event(event, results, delete_counts, trust_scores, freq_buckets, cross_agent)
+        self._detect_aggregated(delete_counts, trust_scores, freq_buckets, cross_agent, results)
         return results
 
     def _detect_per_event(
@@ -184,6 +190,8 @@ class AnomalyDetector:
         results: list[AnomalyResult],
         delete_counts: dict[str, int],
         trust_scores: dict[str, list[float]],
+        freq_buckets: dict[str, dict[str, int]],
+        cross_agent: dict[str, set[str]],
     ) -> None:
         """对单个事件执行规则检测（Extract Method 降低 scan 复杂度）。"""
         et = event.get("event_type", "")
@@ -197,27 +205,39 @@ class AnomalyDetector:
             delete_counts[agent_id] = delete_counts.get(agent_id, 0) + 1
         ts = event.get("timestamp")
         if ts and self._is_off_hours(ts):
+            hour = self._extract_hour(ts)
             results.append(AnomalyResult(
                 signature=AnomalySignature.OFF_HOURS_ACTIVITY, severity="medium",
                 description=f"Off-hours activity by {agent_id}",
-                evidence={"timestamp": ts, "agent_id": agent_id}))
+                evidence={"timestamp": ts, "agent_id": agent_id, "hour": hour}))
         self._check_delegation(event, agent_id, results)
-        self._check_indirect(event, agent_id, results)
-        self._check_dry_run(event, agent_id, results)
+        self._check_indirect(event, et, agent_id, results)
+        self._check_collusion(et, agent_id, results)
+        self._check_dry_run(event, et, agent_id, results)
         score = event.get("trust-score")
         if score is not None:
             trust_scores.setdefault(agent_id, []).append(float(score))
+        ts = event.get("timestamp")
+        if ts and agent_id:
+            minute_key = self._minute_key(ts)
+            if minute_key:
+                freq_buckets.setdefault(agent_id, {})
+                freq_buckets[agent_id][minute_key] = freq_buckets[agent_id].get(minute_key, 0) + 1
+        target = event.get("target_path")
+        if target and agent_id:
+            cross_agent.setdefault(target, set()).add(agent_id)
 
     def _check_unauthorized(
         self, event: dict[str, Any], et: str, agent_id: str,
         results: list[AnomalyResult],
     ) -> None:
-        """检测 UNAUTHORIZED_ACCESS（permission_violation/gate_fail/status=denied）。"""
-        if et in ("permission_violation", "gate_fail") or event.get("status") == "denied":
+        """检测 UNAUTHORIZED_ACCESS（permission_violation/gate_fail/status in denied/blocked/rejected）。"""
+        if et in ("permission_violation", "gate_fail") or event.get("status") in ("denied", "blocked", "rejected"):
             results.append(AnomalyResult(
                 signature=AnomalySignature.UNAUTHORIZED_ACCESS, severity="high",
                 description=f"Unauthorized access by {agent_id}",
-                evidence={"event_type": et, "agent_id": agent_id}))
+                evidence={"event_type": et, "agent_id": agent_id},
+                score=0.9))
 
     def _check_simple_match(
         self, et: str, match_type: str, sig: "AnomalySignature",
@@ -245,32 +265,50 @@ class AnomalyDetector:
                 evidence={"delegation_depth": depth, "agent_id": agent_id}))
 
     def _check_indirect(
-        self, event: dict[str, Any], agent_id: str,
+        self, event: dict[str, Any], et: str, agent_id: str,
         results: list[AnomalyResult],
     ) -> None:
-        """检测 INDIRECT_OPERATION。"""
-        if event.get("indirect_operation"):
+        """检测 INDIRECT_OPERATION（indirect_operation 标志或 event_type=indirect_operation）。"""
+        if event.get("indirect_operation") or et == "indirect_operation":
             results.append(AnomalyResult(
                 signature=AnomalySignature.INDIRECT_OPERATION, severity="high",
                 description=f"Indirect operation via {event.get('indirect_method', 'unknown')}",
                 evidence={"indirect_method": event.get("indirect_method"), "agent_id": agent_id}))
 
     def _check_dry_run(
-        self, event: dict[str, Any], agent_id: str,
+        self, event: dict[str, Any], et: str, agent_id: str,
         results: list[AnomalyResult],
     ) -> None:
-        """检测 DRY_RUN_MISMATCH。"""
-        if event.get("dry_run") and event.get("dry_run_real_diff"):
+        """检测 DRY_RUN_MISMATCH（dry_run 标志 + diff_score > 0.3，或 event_type=dry_run_mismatch）。"""
+        diff_score = event.get("dry_run_real_diff_score", 0.0)
+        if et == "dry_run_mismatch":
             results.append(AnomalyResult(
                 signature=AnomalySignature.DRY_RUN_MISMATCH, severity="high",
                 description="Dry-run/real mismatch detected",
-                evidence={"dry_run_real_diff_score": event.get("dry_run_real_diff_score"),
-                          "agent_id": agent_id}))
+                evidence={"diff_score": diff_score, "agent_id": agent_id}))
+        elif event.get("dry_run") and event.get("dry_run_real_diff") and diff_score > 0.3:
+            results.append(AnomalyResult(
+                signature=AnomalySignature.DRY_RUN_MISMATCH, severity="high",
+                description="Dry-run/real mismatch detected",
+                evidence={"diff_score": diff_score, "agent_id": agent_id}))
+
+    def _check_collusion(
+        self, et: str, agent_id: str,
+        results: list[AnomalyResult],
+    ) -> None:
+        """检测 COLLUSION_PATTERN（event_type=collusion_pattern）。"""
+        if et == "collusion_pattern":
+            results.append(AnomalyResult(
+                signature=AnomalySignature.COLLUSION_PATTERN, severity="high",
+                description=f"Collusion pattern by {agent_id}",
+                evidence={"agent_id": agent_id}))
 
     def _detect_aggregated(
         self,
         delete_counts: dict[str, int],
         trust_scores: dict[str, list[float]],
+        freq_buckets: dict[str, dict[str, int]],
+        cross_agent: dict[str, set[str]],
         results: list[AnomalyResult],
     ) -> None:
         """循环后聚合判定（Extract Method 降低 scan 复杂度）。"""
@@ -286,6 +324,19 @@ class AnomalyDetector:
                     signature=AnomalySignature.TRUST_TREND, severity="high",
                     description=f"Trust score declining trend for {agent_id}",
                     evidence={"scores": scores, "agent_id": agent_id}))
+        for agent_id, buckets in freq_buckets.items():
+            max_ops = max(buckets.values()) if buckets else 0
+            if max_ops >= 10:
+                results.append(AnomalyResult(
+                    signature=AnomalySignature.HIGH_FREQUENCY, severity="high",
+                    description=f"High frequency operations by {agent_id}",
+                    evidence={"max_ops_per_minute": max_ops, "agent_id": agent_id}))
+        for target, agents in cross_agent.items():
+            if len(agents) >= 3:
+                results.append(AnomalyResult(
+                    signature=AnomalySignature.CROSS_AGENT_CONFLICT, severity="high",
+                    description=f"Cross-agent conflict on {target}",
+                    evidence={"agents": list(agents), "target_path": target}))
 
     def _load_from_file(self) -> list[dict[str, Any]]:
         """从 _event_log_path 加载 JSONL 事件。文件不存在或空 → 返回空列表。"""
@@ -305,13 +356,31 @@ class AnomalyDetector:
 
     @staticmethod
     def _is_off_hours(ts: str) -> bool:
-        """判定时间戳是否为非工作时间（UTC 09:00-18:00 之外）。"""
+        """判定时间戳是否为非工作时间（UTC 06:00-22:00 之外，含 06 和 22）。"""
         try:
             dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
             hour = dt.hour
-            return hour < 9 or hour >= 18
+            return hour < 6 or hour > 22
         except (ValueError, TypeError):
             return False
+
+    @staticmethod
+    def _extract_hour(ts: str) -> int:
+        """从时间戳提取小时（失败返回 -1）。"""
+        try:
+            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            return dt.hour
+        except (ValueError, TypeError):
+            return -1
+
+    @staticmethod
+    def _minute_key(ts: str) -> str:
+        """从时间戳提取分钟级 key（YYYY-MM-DDTHH:MM），失败返回空串。"""
+        try:
+            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            return dt.strftime("%Y-%m-%dT%H:%M")
+        except (ValueError, TypeError):
+            return ""
 
     @staticmethod
     def _is_declining(scores: list[float]) -> bool:

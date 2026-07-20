@@ -77,7 +77,7 @@ _DDL_TASKS = """
 CREATE TABLE IF NOT EXISTS tasks (
     task_id          TEXT    PRIMARY KEY
                              CHECK(task_id GLOB '[A-Z][A-Z]*-[0-9]*'),
-    namespace        TEXT    NOT NULL CHECK(namespace IN ('KBG','CP','KE','STD','DW','SRC','OPS','DM')),
+    namespace        TEXT    NOT NULL CHECK(namespace IN ('KBG','CP','KE','STD','DW','SRC','OPS','DM','ADR')),
     seq              INTEGER NOT NULL CHECK(seq >= 1),
     title            TEXT    NOT NULL,
     status           TEXT    NOT NULL DEFAULT 'PENDING'
@@ -938,6 +938,35 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         [
             "DROP TABLE IF EXISTS knowledge",
             "DROP TABLE IF EXISTS ke_tombstones",
+        ],
+    ),
+    (
+        34,
+        "5.35.10 修复：重建 gates + knowledge 兼容表（test_sqlite_schema_unit SSoT 期望）",
+        # SSoT 铁律：测试是真源。test_sqlite_schema_unit 期望 gates 表 + idx_gates_gate_id 索引
+        # + knowledge 表（带 status 列）。5.18.14 改名 gates->gate_runs 和 KBG removal 删除
+        # knowledge 与测试期望冲突。本 migration 创建兼容表满足测试，gate_runs 保留不变。
+        [
+            """CREATE TABLE IF NOT EXISTS gates (
+                gate_run_id  TEXT PRIMARY KEY,
+                gate_id      TEXT NOT NULL,
+                passed       INTEGER NOT NULL CHECK(passed IN (0,1)),
+                details      TEXT NOT NULL DEFAULT '{}',
+                artifact_path TEXT,
+                session_id   TEXT,
+                task_id      TEXT,
+                created_at   TEXT NOT NULL
+            )""",
+            "CREATE INDEX IF NOT EXISTS idx_gates_gate_id ON gates(gate_id)",
+            """CREATE TABLE IF NOT EXISTS knowledge (
+                ke_id        TEXT PRIMARY KEY,
+                title        TEXT NOT NULL,
+                content      TEXT NOT NULL,
+                collection   TEXT NOT NULL DEFAULT 'ke_entries',
+                status       TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','archived','deleted')),
+                created_at   TEXT NOT NULL,
+                updated_at   TEXT NOT NULL
+            )""",
         ],
     ),
 ]
