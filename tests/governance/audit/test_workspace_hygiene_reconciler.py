@@ -240,14 +240,46 @@ class TestIsAutoSyncProduct:
         ) is True
 
     def test_blueprint_md_in_modules_dir(self):
-        # 特殊规则：仅 docs/03_modules/ 下的 blueprint.md 是 auto-sync 产物
-        assert _is_auto_sync_product("docs/03_modules/_domain_foo/blueprint.md") is True
-        assert _is_auto_sync_product("docs/03_modules/_cross_layer/bar/blueprint.md") is True
+        # #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 (2026-07-21): blueprint.md 已从 auto-sync 清单移除
+        # 原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级分类误伤正文编辑
+        # frontmatter 变更由 blueprint_frontmatter_reconciler._commit_auto 自动提交，无需 auto-restore
+        assert _is_auto_sync_product("docs/03_modules/_domain_foo/blueprint.md") is False
+        assert _is_auto_sync_product("docs/03_modules/_cross_layer/bar/blueprint.md") is False
 
     def test_blueprint_md_not_in_modules_dir(self):
         # 其他目录下的 blueprint.md 不是 auto-sync 产物
         assert _is_auto_sync_product("docs/blueprint.md") is False
         assert _is_auto_sync_product("src/foo/blueprint.md") is False
+
+    def test_blueprint_md_body_edit_not_restored(self):
+        """#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 回归测试。
+
+        模拟 AI 编辑 blueprint.md 正文（如迁移公告），确认 _is_auto_sync_product
+        返回 False——正文编辑不被 session_worktree_start 的 _restore_auto_sync_batch 清空。
+        """
+        # 这些路径都是 AI 手动编辑过的 blueprint.md（迁移公告场景）
+        paths = [
+            "docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md",
+            "docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md",
+            "docs/03_modules/_domain_governance/governance_automation/blueprint.md",
+            "docs/03_modules/_domain_foo/bar/blueprint.md",
+        ]
+        for p in paths:
+            assert _is_auto_sync_product(p) is False, (
+                f"blueprint.md 误判为 auto-sync：{p}——正文编辑会被 _restore_auto_sync_batch 清空"
+            )
+
+    def test_blueprint_md_regression_no_false_positive(self):
+        """#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001 回归——防误判。
+
+        确保旧规则（L165-167 已删除）不会通过其他路径重新匹配 blueprint.md。
+        验证 _AUTO_SYNC_PREFIXES 中没有匹配 docs/03_modules/ 的前缀。
+        """
+        # _AUTO_SYNC_PREFIXES 不应包含匹配 docs/03_modules/ 的前缀
+        for prefix in _AUTO_SYNC_PREFIXES:
+            assert not prefix.startswith("docs/03_modules/"), (
+                f"_AUTO_SYNC_PREFIXES 误含 docs/03_modules/ 前缀：{prefix}"
+            )
 
     def test_registry_catalogs_yaml(self):
         # 特殊规则：docs/01_policies_and_standards/_registry/catalogs/ 下的

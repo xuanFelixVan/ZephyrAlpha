@@ -82,6 +82,11 @@ GitCommitGateway post-commit 自动触发的 reconciler 重新生成的文件，
 | `data/classified/classified-assets.json` | classifier | 运行时快照 |
 | `scripts/governance/meta/rules_integrity_db.json` | integrity checker | 运行时快照 |
 
+> **注意（#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001，2026-07-21）**：`docs/03_modules/**/blueprint.md`
+> 已从 auto-sync 清单移除。原因：blueprint.md 是混合文件（frontmatter 派生 + 正文手写），文件级
+> 分类误伤正文编辑。frontmatter 变更由 `blueprint_frontmatter_reconciler._commit_auto` 自动提交，
+> 无需 auto-restore。
+
 ### 2.2 处理策略：还原优先
 
 - **工作区中 auto-sync 产物的 modified 状态**：`git checkout -- <file>` 还原到 HEAD 版本
