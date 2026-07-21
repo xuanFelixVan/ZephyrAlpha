@@ -10,6 +10,7 @@ depends_on:
 - TRAE-060
 - TRAE-062
 - TRAE-068
+- TRAE-078  # force=True 逃生通道安全分类铁律（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22）
 tags:
 - TRAE
 - worktree_base_freshness
@@ -71,9 +72,9 @@ sections:
       pass: 主工作区文件 vs HEAD 一致性检查（warn-only，不阻断 emergency），diff 写入 worktree_ops_log.jsonl 留审计痕迹
       fail: 不阻断（emergency_commit 是最后逃生通道），但 reflog message 含 [emergency_commit] 标记供事后审计
     - type: escape_hatch
-      check: session_worktree_merge(force=True) 显式逃生通道
-      pass: 跳过 base freshness check（对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 的 force 语义）
-      fail: 滥用风险——可能引入薛定谔的回退，仅用于 base freshness 误报或基础设施故障
+      check: session_worktree_merge(force=True) 显式逃生通道（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22）
+      pass: 跳过可绕过类检测（WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK / commit gate），但**不可绕过** base freshness check（不可绕过类——无 post-merge 替代 + 跳过后不可挽回）
+      fail: force=True 仍落审计（_audit_force_merge_usage）；仅用于可绕过类检测的误报或基础设施故障
     actions:
     - type: mandatory
       step: '铁律1: session_worktree_start MUST 调用 _ensure_worktree_base_fresh(stage="start")——fail-open（warning + 遥测），不阻断 start'
@@ -90,11 +91,11 @@ sections:
     - type: mandatory
       step: '铁律7: emergency_commit MUST 做主工作区 vs HEAD 一致性检查（warn-only）+ reflog message 含 [emergency_commit] 标记——关闭 governance black hole'
     - type: mandatory
-      step: '铁律8: session_worktree_merge(force=True) 是逃生通道——跳过 base freshness check，但滥用风险高（可能引入薛定谔的回退），仅用于误报或基础设施故障'
+      step: '铁律8: session_worktree_merge(force=True) 是逃生通道——跳过可绕过类检测（WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK / commit gate），但**不可绕过** base freshness check（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22：不可绕过类——无 post-merge 替代 + 跳过后不可挽回）；force=True 仍落审计（_audit_force_merge_usage）'
     - type: forbidden
       step: '禁止: _ensure_worktree_base_fresh 内部任何 git 命令失败时 fail-open（返回 None 放行）——这是原裁定#19-B 的病根，薛定谔的回退由此发生'
     - type: forbidden
-      step: '禁止: session_worktree_merge 跳过 base freshness check（除非 force=True 显式逃生）——merge 是薛定谔的回退高发点'
+      step: '禁止: session_worktree_merge 跳过 base freshness check——merge 是薛定谔的回退高发点（#ARCH-FORCE-MERGE-SAFETY-001 治本：force=True 也不可绕过，无任何逃生通道）'
     - type: forbidden
       step: '禁止: 用 time.sleep() 做重试退避——PERM-TRIGGER gate 会误判为永久系统时间触发'
     - type: forbidden
@@ -108,16 +109,16 @@ sections:
       正确: _ensure_worktree_base_fresh 内部 git rev-parse 失败 → 3 次重试后仍失败 → 返回错误 dict（status=FAILED, base_sync_failed=True, stage=merge）→ merge 阻断
       错误: _ensure_worktree_base_fresh 内部 git rev-parse 失败 → return None（fail-open 降级放行）→ merge 继续 → 薛定谔的回退发生
       reason: fail-open 是薛定谔的回退病根——git 命令失败时降级放行等于不检测，必须 fail-closed 阻断
-    - scenario: 逃生通道（force=True）
-      正确: session_worktree_merge(force=True) 在 base freshness 误报或基础设施故障时逃生——跳过检测，warning 提示滥用风险
-      错误: 用 force=True 绕过真实的 base 过期——会引入薛定谔的回退
-      reason: 逃生通道对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 的 force 语义，仅用于误报或基础设施故障
+    - scenario: 逃生通道（force=True，#ARCH-FORCE-MERGE-SAFETY-001 治本后）
+      正确: session_worktree_merge(force=True) 跳过可绕过类检测（WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK / commit gate），但 base freshness check 仍运行——base 新鲜则 merge 成功
+      错误: 期望 force=True 能跳过 base freshness check——治本后不可绕过（无 post-merge 替代 + 不可挽回）
+      reason: base freshness 是不可绕过类检测——force=True 仅用于可绕过类检测的误报或基础设施故障
     common_mistakes:
     - '❌ _ensure_worktree_base_fresh 内部 git 命令失败时 fail-open（return None）——薛定谔的回退病根'
     - '❌ session_worktree_merge 跳过 base freshness check——merge 是薛定谔的回退高发点'
     - '❌ 用 time.sleep() 做重试退避——PERM-TRIGGER gate 误判'
     - '❌ emergency_commit 不留审计痕迹——governance black hole'
-    - '❌ 滥用 force=True 绕过真实 base 过期——会引入薛定谔的回退'
+    - '❌ 期望 force=True 能绕过 base freshness check——治本后不可绕过（#ARCH-FORCE-MERGE-SAFETY-001，无 post-merge 替代 + 不可挽回）'
     background:
       source: 2026-07-21 裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001（薛定谔的回退多次发生，裁定#19-B 只覆盖 commit 时检测，扩展到全生命周期）
       rationale: |
@@ -158,6 +159,7 @@ references:
   - TRAE-060
   - TRAE-062
   - TRAE-068
+  - TRAE-078
   scripts:
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
   - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py
@@ -191,15 +193,15 @@ enforcement:
   - emergency_commit_consistency_check
   - rule_discovery_mcp
   - ai_pre_action_check
-  bypass_allowed: true
+  bypass_allowed: true  # force=True 仍可用（绕过可绕过类），但不可绕过 base freshness check（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22）
   bypass_markers:
-  - force=True
+  - force=True  # 仅绕过可绕过类（WORKSPACE-CLEAN / TOPO / commit gate），不可绕过不可绕过类（base freshness）——见 #ARCH-FORCE-MERGE-SAFETY-001
 metadata:
   change_policy: evolving
   impact_level: H
   modification_permission: immutable_core
   superseded_by: null
-  related_arch: '#ARCH-WORKTREE-BASE-FRESHNESS-001, #19-B'
+  related_arch: '#ARCH-WORKTREE-BASE-FRESHNESS-001, #19-B, #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本 2026-07-22)'
 provenance:
   extracted_at: '2026-07-21'
   extracted_by: sess-16112-20260721180739
