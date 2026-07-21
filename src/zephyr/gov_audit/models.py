@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 反序列化失败抛ValidationError
 # [TESTS] tests/audit/test_audit_models.py; tests/audit/test_audit_core.py
-# [A_module] module_id=MOD-GOV_models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-models | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # 治本（裁定#18 G2）：本文件原为桩实现——AuditEventType/FileActionType/ProvenanceDepth/
 # ProvenanceLevel 用类常量模拟枚举（非 Enum，value 大写），ProvenanceLight/Standard/

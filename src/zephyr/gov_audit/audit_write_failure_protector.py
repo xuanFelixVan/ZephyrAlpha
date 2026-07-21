@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/test_escalation_engine.py
-# [A_module] module_id=MOD-RES_audit_write_failure_protector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RES-audit_write_failure_protector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """

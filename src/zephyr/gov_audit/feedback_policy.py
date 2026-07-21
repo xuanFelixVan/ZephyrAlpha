@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 策略评估失败返回保守策略
 # [TESTS] tests/feedback/test_feedback_policy.py
-# [A_module] module_id=MOD-GOV_feedback_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-feedback_policy | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """feedback_policy.py — Audit-findings → policy recommendation bridge.
 

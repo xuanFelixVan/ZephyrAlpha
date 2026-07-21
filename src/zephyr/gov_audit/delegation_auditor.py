@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 审计失败返回空结果
 # [TESTS] tests/governance/audit/test_delegation_auditor.py
-# [A_module] module_id=MOD-GOV_delegation_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-delegation_auditor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from dataclasses import dataclass, field

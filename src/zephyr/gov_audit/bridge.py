@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 桥接失败返回None或空结果
 # [TESTS] tests/audit-orchestrator/test_bridge.py
-# [A_module] module_id=MOD-GOV_bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-bridge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from typing import Any
