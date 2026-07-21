@@ -70,7 +70,7 @@ _DEFAULT_TIMEOUT = 600
 # SQL 常量集中化（NO-BARE-SQL gate 豁免 SQL_* 前缀）
 SQL_ENGINE_BY_DB = "SELECT engine FROM system.tables WHERE database = '{}' AND name = '{}'"
 SQL_ENGINE_BY_NAME = "SELECT engine FROM system.tables WHERE name = '{}'"
-SQL_INSERT_TSV = "INSERT INTO {table} {cols_clause} SETTINGS max_partitions_per_insert_block=0 FORMAT TSV"
+SQL_INSERT_TSV = "INSERT INTO {table} {cols_clause} SETTINGS async_insert=0, max_partitions_per_insert_block=0 FORMAT TSV"
 
 # clickhouse-driver TCP 客户端单例
 _ch_client = None
@@ -343,8 +343,11 @@ def tsv_escape(v) -> str:
     if isinstance(v, float) and v != v:  # NaN
         return "\\N"
     s = str(v)
-    # TSV 中不能有 \n \t \r
+    # TSV 中不能有 \x00（CH TSV 解析器遇 \x00 状态错乱，#ARCH-CH-023）
+    # 也不能有 \n \t \r 及其他控制字符（0x01-0x08, 0x0B, 0x0C, 0x0E-0x1F）
+    s = s.replace("\x00", "")  # NULL 字节直接删除（mootdx C 扩展泄漏的终止符）
     s = s.replace("\\", "\\\\").replace("\t", " ").replace("\n", " ").replace("\r", " ")
+    s = "".join(c if ord(c) >= 0x20 else " " for c in s)  # 控制字符→空格
     return s
 
 

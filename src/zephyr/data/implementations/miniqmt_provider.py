@@ -2368,7 +2368,7 @@ class MiniQMTProvider(DataSourceBase):
             amt = self.safe_float(row.get("amount"))
             rows.append((
                 trade_date, timestamp, symbol, market_type, price, vol, amt,
-                "",  # direction: QMT 不提供买卖方向
+                "none",  # direction: QMT 不提供买卖方向（#ARCH-CH-023: 空字符串致 CH TSV 解析错误）
                 "miniqmt",
                 self.safe_float(row.get("bid_price") or row.get("bid1")),
                 self.safe_float(row.get("ask_price") or row.get("ask1")),

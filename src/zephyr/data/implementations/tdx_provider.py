@@ -109,16 +109,16 @@ class TDXProvider(DataSourceBase):
             )
             return
 
-        cap = (payload.extra or {}).get("capability")
-        if cap == "industry_class":
+        capability = (payload.extra or {}).get("capability")
+        if capability == "industry_class":
             yield from self._fetch_industry_class(payload, policy)
-        elif cap == "kline_sector":
+        elif capability == "kline_sector":
             yield from self._fetch_kline_sector(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
                 last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 板块分类 ----
@@ -139,7 +139,7 @@ class TDXProvider(DataSourceBase):
             if df is not None and not df.empty:
                 # 列提取替代 iterrows（38万行性能）
                 blocknames = df["blockname"].astype(str).tolist()
-                codes = df["code"].astype(str).tolist()
+                codes = df["code"].astype(str).str.replace("\x00", "", regex=False).tolist()
                 rows = list(zip([""] * len(df), blocknames, codes, [""] * len(df)))
 
             self._log.info(f"板块分类获取完成，{len(rows)} 行")

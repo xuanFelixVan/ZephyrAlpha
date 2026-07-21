@@ -1204,6 +1204,7 @@ tasks:
     table: c1_market.l2_tick
     source: miniqmt
     schedule: intraday_realtime
+    disabled: true  # #ARCH-CH-023: 需付费 L2 行情权限，裁定删除并在源头标注暂不需要
     incremental: true
     date_col: trade_date
     dependencies: []
@@ -1279,7 +1280,7 @@ tasks:
 
   - task_id: etf_nav_refresh
     table: c1_market.etf_nav
-    source: miniqmt
+    source: akshare  # #ARCH-CH-023: miniQMT get_etf_info 不支持，改用 akshare fund_etf_fund_info_em
     schedule: daily_kline
     incremental: true
     date_col: trade_date

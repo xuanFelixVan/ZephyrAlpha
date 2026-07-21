@@ -62,6 +62,7 @@ _AKSHARE_CAPABILITIES = frozenset({
     "top10_shareholders", "top10_circulating_shareholders", "disclosure_plan",
     "repurchase", "convertible_bond_list", "etf_list", "lof_list",
     "hk_stock_list", "hk_trade_calendar", "index_list", "etf_benchmark",
+    "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
 })
 
 
@@ -2651,7 +2652,8 @@ class AKShareProvider(DataSourceBase):
                     rows.append((
                         f"{code}.{market}",
                         name, market, "交易所", "指数",
-                        "", 0.0, "", "", 0.0,
+                        datetime.date(1970, 1, 1), 0.0,
+                        datetime.date(1970, 1, 1), "", 0.0,
                     ))
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._log.debug(f"{func_name} 失败: {e}")
@@ -2683,3 +2685,62 @@ class AKShareProvider(DataSourceBase):
         yield FetchResult(table=table, columns=columns, rows=rows,
                           last_key=datetime.date.today().isoformat(),
                           elapsed_sec=time.time() - t0)
+
+    # ---- ETF基金净值（etf_nav，#ARCH-CH-023: 替代 miniQMT get_etf_info） ----
+
+    def _fetch_etf_nav(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """ETF基金净值增量，写入 c1_market.etf_nav。
+
+        使用 akshare fund_etf_fund_info_em 获取 ETF 历史净值数据。
+        替代 miniQMT get_etf_info（客户端不支持，需升级投研版）。
+        表 schema: (trade_date, symbol, etf_code, nav, cash_balance, data_source)
+        """
+        import akshare as ak
+        table = payload.table or "c1_market.etf_nav"
+        columns = ["trade_date", "symbol", "etf_code", "nav", "cash_balance", "data_source"]
+        symbols = payload.symbols or []
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=0.0,
+                error="etf_nav 需要 symbols 参数指定 ETF 代码（如 510050）",
+            )
+            return
+
+        start_date = payload.start.strftime("%Y%m%d") if payload.start else "20200101"
+        end_date = payload.end.strftime("%Y%m%d") if payload.end else datetime.date.today().strftime("%Y%m%d")
+
+        for symbol in symbols:
+            fund_code = symbol.split(".")[0] if "." in symbol else symbol
+            t0 = time.monotonic()  # #ARCH-CH-023: time.monotonic 替代 time.time（DATETIME-NOW-FORBIDDEN gate 合规）
+            try:
+                df = self._call_with_policy(
+                    ak.fund_etf_fund_info_em, policy,
+                    fund=fund_code, start_date=start_date, end_date=end_date,
+                )
+                if df is None or len(df) == 0:
+                    continue
+                rows: list[tuple] = []
+                for _, r in df.iterrows():
+                    trade_date = str(r.get("净值日期", "") or "")
+                    nav = safe_float(r.get("单位净值"))
+                    if not trade_date:
+                        continue
+                    rows.append((
+                        trade_date, symbol, fund_code, nav, None, "akshare",
+                    ))
+                self._log.info(f"ETF {fund_code} 净值获取完成，{len(rows)} 行")
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=end_date, elapsed_sec=time.monotonic() - t0,
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"ETF {fund_code} 净值获取失败: {e}")
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key="", elapsed_sec=time.monotonic() - t0,
+                    error=str(e),
+                )
+

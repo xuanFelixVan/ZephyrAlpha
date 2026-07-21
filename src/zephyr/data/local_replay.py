@@ -262,6 +262,17 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
                 remaining_entries.append(entry)
             processed += 1
 
+    # 修复 manifest 覆盖 bug（#ARCH-CH-023 Phase 3）：
+    # _replay_one_file 失败时 ch_writer.write_tsv 内部调用 save_fallback
+    # 追加新条目到 manifest。直接 _write_manifest(remaining_entries) 会用 "w" 模式
+    # 覆盖，丢失循环中新增的 fallback 条目，导致孤儿文件堆积。
+    # 修复：重新读取 manifest 合并去重后再写入。
+    current_entries = _read_manifest()
+    existing_files = {e.get("file") for e in remaining_entries}
+    for entry in current_entries:
+        if entry.get("file") not in existing_files:
+            remaining_entries.append(entry)
+            existing_files.add(entry.get("file"))
     result["remaining"] = len(remaining_entries)
     _write_manifest(remaining_entries)
 
