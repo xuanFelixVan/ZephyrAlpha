@@ -4728,9 +4728,10 @@ capabilities:
     description: >-
       commit gateway 持续滥用监控 reconciler（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。
       post-commit 事件触发（priority=875），补强 POST-COMMIT-GUARD 1h 短窗口盲区。
-      五维滥用检测：①warn_only sustained (24h >50) ②emergency_commit abuse (24h >15,
-      R1 过渡期 2026-08-02 回滚到 >5) ③allow_overlap abuse (7d >30)
-      ④forged_gw_marker rate (24h >3 → critical_warn) ⑤non-GW commit sustained (24h >10)。
+      六维滥用检测：①warn_only sustained (24h >50) ②emergency_commit abuse (24h >5)
+      ③allow_overlap abuse (7d >30) ④forged_gw_marker rate (24h >3 → critical_warn)
+      ⑤non-GW commit sustained (24h >10) ⑥force_merge abuse (7d >5，
+      #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 逃生通道监控，v1.3.0 新增)。
       判定：0维 clean / 1-2维 warn / 3+维或
       forged 触发 critical_warn。canonical = src/zephyr/governance/audit/
       commit_gateway_abuse_monitor_reconciler.py（MOD-GOV_commit_gateway_abuse_monitor）。
@@ -6468,7 +6469,7 @@ creation_tokens:
     capability: "commit_gateway_abuse_monitor"
 
   # --- trae_069 规则文件本身（2026-07-20，#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 P3-1）---
-  # 5 维滥用阈值的规则数据真源（SSoT 铁律 trae_062：规则数据真源是 YAML 文件）
+  # 6 维滥用阈值的规则数据真源（SSoT 铁律 trae_062：规则数据真源是 YAML 文件）
   # 消费方：commit_gateway_abuse_monitor_reconciler.py 通过 _load_thresholds_from_yaml() 读取
   # 治本（2c 防重建）：登记规则文件本身的 creation_token，AI 通过 capability 反查可发现
   - file: "docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml"
