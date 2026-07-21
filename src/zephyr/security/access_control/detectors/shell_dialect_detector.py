@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] detect() never raises; returns result with blocked=False on error
 # [TESTS] tests/agent_rbac/test_forensic_b.py
-# [A_module] module_id=MOD-SEC-shell_dialect_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SEC_shell_dialect_detector | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """ShellDialectDetector — Shell 方言检测器.
 
