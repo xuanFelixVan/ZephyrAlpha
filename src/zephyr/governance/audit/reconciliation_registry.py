@@ -13371,46 +13371,38 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
     """构造 GATE-ROOT-TEMP-SWEEP post-commit 根目录临时文件清扫 reconciler.
 
+    治本（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 + #ARCH-ROOT-TEMP-WHITELIST-001/002）：
 
-
-    治本（#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 + #ARCH-ROOT-TEMP-WHITELIST-001）：
-
-    - trigger: 任何 commit 都触发（扫描根目录 depth-0 平铺文件成本 <0.01s）
-
-    - reconcile: 白名单模式——扫描根目录 depth-0 平铺文件，不在白名单内的文件
-
-      按策略处理（.log 删除，其余移到 .runtime/tmp/ 隔离）
-
+    - trigger: 任何 commit 都触发（扫描根目录+子目录根 depth-0 平铺文件成本 <0.05s）
+    - reconcile: 白名单模式 v2——动态从 git ls-tree HEAD 获取跟踪文件列表，
+      不在跟踪列表内的文件按策略处理（.log 删除，其余移到 .runtime/tmp/ 隔离）
+    - .runtime/tmp/ TTL 清理：24h 过期文件自动删除（#ARCH-ROOT-TEMP-WHITELIST-002
+      防止隔离区变垃圾场——v1 只移动不清理，.runtime/tmp/ 积压 126 文件无清理机制）
+    - 子目录根清扫：src/scripts/docs 根的 _*.py 临时文件（v1 只扫项目根，
+      src/_fix_all.py 等子目录根临时文件不受覆盖）
     - 自维护/自关闭：每次 commit 后自动清扫，无需 AI 干预
 
+    白名单模式 v2（#ARCH-ROOT-TEMP-WHITELIST-002 治本，2026-07-22）：
 
-
-    白名单模式（#ARCH-ROOT-TEMP-WHITELIST-001 治本，2026-07-22）：
-
-    原枚举模式（_DELETE_PATTERNS + _MOVE_PATTERNS）追不上 AI 造词速度——
-
-    AI 每次用新动词前缀（autofix_*/scan_*/fix_*/commit_*/verify_*/stage_*）创建
-
-    一次性脚本，枚举模式永远补不全。白名单模式从"追新动词"改为"封死未知"——
-
-    只有已知合法根文件在白名单内，其余一律清扫。
-
-
+    v1 用手工 frozenset，与 .gitignore ! 例外 + git tracked 形成三源手工维护，
+    必然漂移。v2 从 git ls-tree HEAD 动态派生白名单——新增合法根文件只需 git add，
+    无需改代码。git 不可达时 fail-open 用 v1 硬编码白名单兜底。
 
     保护规则（第一性原理：根目录平铺文件几乎都是临时产物，但需防误删正在写入的文件）：
 
     - mtime < 10min 的文件：跳过（可能正在写入——pytest 运行中/commit 进行中）
-
     - 不递归子目录：仅扫平铺文件（目录删除风险高）
-
-    - 白名单内的文件：跳过（已知合法根文件）
-
+    - git tracked 文件：跳过（动态白名单——根目录全量，子目录只扫 _ 前缀）
     - .env*：跳过（含密钥，即使不在白名单也绝不触碰）
+    - __ 前缀文件：跳过（__init__.py 等合法 Python 包标记）
 
+    红蓝对抗第二轮修复（2026-07-22）：
 
+    CRITICAL-1: .runtime/tmp/ 24h TTL 清理（v1 移动不清理=新垃圾场）
+    CRITICAL-2: 子目录根清扫（v1 只扫项目根，src/_fix_*.py 无人管）
+    HIGH-1: 动态白名单（v1 手工 frozenset 三源漂移）
 
     向内收：扩展 ReconciliationRegistry 框架，复用 logger，零新真源。
-
     """
 
     import os
@@ -13427,11 +13419,15 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
     _FRESH_SECONDS = 10 * 60  # 10 分钟安全阈值（避免删到正在写入的文件）
 
-    # 白名单（治本 #ARCH-ROOT-TEMP-WHITELIST-001）：已知合法根文件。
+    _RUNTIME_TMP_TTL = 24 * 60 * 60  # 24h——.runtime/tmp/ 隔离区文件 TTL
 
-    # 新增合法根文件时须更新此集合（git tracked 根目录平铺文件即合法）。
+    _SWEEP_SUBDIRS = ("src", "scripts", "docs")  # 子目录根清扫目标
 
-    _ROOT_FILE_WHITELIST = frozenset({
+
+
+    # v1 硬编码白名单（git 不可达时的 fail-open 兜底，#ARCH-ROOT-TEMP-WHITELIST-001）
+
+    _ROOT_FILE_WHITELIST_FALLBACK = frozenset({
 
         ".dockerignore", ".editorconfig", ".env", ".env.example", ".gitattributes",
 
@@ -13447,7 +13443,7 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
     })
 
-    # 删除模式（零持久价值，直接删而非移动到 .runtime/tmp/）
+
 
     _DELETE_PATTERNS = (
 
@@ -13463,6 +13459,144 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 
+    def _get_tracked_files(subdir: str = ""):
+
+        """从 git ls-tree HEAD 动态获取跟踪文件列表（#ARCH-ROOT-TEMP-WHITELIST-002）。
+
+        消除手工白名单三源问题：白名单真源为 git tracked 文件。
+
+        git 不可达时返回 None，调用方用 _ROOT_FILE_WHITELIST_FALLBACK 兜底。
+
+        """
+
+        try:
+
+            cmd = ["git", "ls-tree", "--name-only", "HEAD"]
+
+            if subdir:
+
+                cmd.extend(["--", subdir + "/"])
+
+            result = _run_subprocess(
+
+                cmd,
+
+                cwd=str(project_root),
+
+                capture_output=True,
+
+                text=True,
+
+                encoding="utf-8",
+
+                errors="replace",
+
+                timeout=10,
+
+            )
+
+            if result.returncode != 0:
+
+                return None
+
+            tracked = set()
+
+            prefix = (subdir + "/") if subdir else ""
+
+            for line in result.stdout.strip().splitlines():
+
+                if prefix:
+
+                    if line.startswith(prefix):
+
+                        remainder = line[len(prefix):]
+
+                        if "/" not in remainder:
+
+                            tracked.add(remainder)
+
+                else:
+
+                    if "/" not in line:
+
+                        tracked.add(line)
+
+            return frozenset(tracked)
+
+        except Exception:
+
+            return None
+
+
+
+    def _cleanup_runtime_tmp(rt_tmp, now):
+
+        """清理 .runtime/tmp/ 中超过 TTL 的文件（#ARCH-ROOT-TEMP-WHITELIST-002）。
+
+        v1 病根：reconciler 移动文件到 .runtime/tmp/ 但无清理——隔离区变垃圾场，
+
+        积压 126 文件。TTL=24h 确保隔离区只保留近期文件。
+
+        """
+
+        if not rt_tmp.exists():
+
+            return 0, 0
+
+        purged = 0
+
+        errors = 0
+
+        try:
+
+            for name in os.listdir(str(rt_tmp)):
+
+                if name == ".gitkeep":
+
+                    continue
+
+                full = os.path.join(str(rt_tmp), name)
+
+                if not os.path.isfile(full):
+
+                    continue
+
+                try:
+
+                    mtime = os.path.getmtime(full)
+
+                except OSError:
+
+                    continue
+
+                if now - mtime > _RUNTIME_TMP_TTL:
+
+                    try:
+
+                        os.remove(full)
+
+                        purged += 1
+
+                        logger.info(
+
+                            "GATE-ROOT-TEMP-SWEEP: purged %s from .runtime/tmp/ (TTL>24h)",
+
+                            name,
+
+                        )
+
+                    except OSError:
+
+                        errors += 1
+
+        except OSError:
+
+            pass
+
+        return purged, errors
+
+
+
     def _trigger(committed_files: list[str]) -> bool:
 
         return True  # 根目录清扫与每次 commit 正相关
@@ -13474,6 +13608,8 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
         if not project_root.exists():
 
             return ReconcileResult(action="skip", detail="root_temp_sweep: project_root not found")
+
+
 
         now = time.time()
 
@@ -13487,6 +13623,18 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
         skipped_fresh = 0
 
+
+
+        # === 1. 根目录清扫（动态白名单 v2，#ARCH-ROOT-TEMP-WHITELIST-002） ===
+
+        root_whitelist = _get_tracked_files()
+
+        if root_whitelist is None:
+
+            root_whitelist = _ROOT_FILE_WHITELIST_FALLBACK
+
+            logger.warning("GATE-ROOT-TEMP-SWEEP: git unreachable, using fallback whitelist")
+
         try:
 
             entries = os.listdir(project_root)
@@ -13494,6 +13642,8 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
         except OSError as exc:
 
             return ReconcileResult(action="warn", detail=f"root_temp_sweep: listdir failed: {exc}")
+
+
 
         for name in entries:
 
@@ -13503,19 +13653,17 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
                 continue  # 仅扫平铺文件，跳过目录
 
-            # 密钥保护：.env* 文件绝不触碰（即使不在白名单，如 .env.local/.env.qmt）
+            # 密钥保护：.env* 文件绝不触碰
 
             if name.startswith(".env"):
 
                 continue
 
-            # 白名单检查（#ARCH-ROOT-TEMP-WHITELIST-001）：已知合法根文件跳过
+            # 动态白名单检查（#ARCH-ROOT-TEMP-WHITELIST-002）
 
-            if name in _ROOT_FILE_WHITELIST:
+            if name in root_whitelist:
 
                 continue
-
-            # 非白名单文件 → 判定 delete（.log）或 move（其余非白名单文件）
 
             is_delete = _match_delete(name)
 
@@ -13541,7 +13689,7 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
                     deleted += 1
 
-                    logger.info("GATE-ROOT-TEMP-SWEEP: deleted %s (process token/log)", name)
+                    logger.info("GATE-ROOT-TEMP-SWEEP: deleted %s (token/log)", name)
 
                 else:
 
@@ -13569,9 +13717,135 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
 
 
-        if deleted == 0 and moved == 0 and errors == 0:
+        # === 2. 子目录根清扫（src/scripts/docs，#ARCH-ROOT-TEMP-WHITELIST-002） ===
 
-            return ReconcileResult(action="skip", detail="root_temp_sweep: 根目录无过期临时文件")
+        # v1 病根：只扫项目根目录，src/_fix_all.py 等子目录根临时文件不受覆盖。
+
+        # 子目录策略：只扫 _ 前缀文件（temp 模式），跳过 __ 前缀（__init__.py 等）。
+
+        # 不用全量白名单（子目录有大量合法未跟踪文件如 .pyc，白名单策略不适用）。
+
+        for subdir in _SWEEP_SUBDIRS:
+
+            subdir_path = project_root / subdir
+
+            if not subdir_path.exists():
+
+                continue
+
+            subdir_whitelist = _get_tracked_files(subdir)
+
+            if subdir_whitelist is None:
+
+                continue  # git 不可达时子目录不扫（fail-safe）
+
+            try:
+
+                sub_entries = os.listdir(str(subdir_path))
+
+            except OSError:
+
+                continue
+
+
+
+            for name in sub_entries:
+
+                full = os.path.join(str(subdir_path), name)
+
+                if not os.path.isfile(full):
+
+                    continue
+
+                if name.startswith(".env"):
+
+                    continue
+
+                if name in subdir_whitelist:
+
+                    continue
+
+                # 子目录只扫 _ 前缀（temp），跳过 __ 前缀（__init__.py 等）
+
+                if not name.startswith("_") or name.startswith("__"):
+
+                    continue
+
+                is_delete = _match_delete(name)
+
+                try:
+
+                    mtime = os.path.getmtime(full)
+
+                except OSError:
+
+                    continue
+
+                if now - mtime < _FRESH_SECONDS:
+
+                    skipped_fresh += 1
+
+                    continue
+
+                try:
+
+                    if is_delete:
+
+                        os.remove(full)
+
+                        deleted += 1
+
+                        logger.info(
+
+                            "GATE-ROOT-TEMP-SWEEP: deleted %s/%s (subdir temp)", subdir, name)
+
+                    else:
+
+                        rt_tmp.mkdir(parents=True, exist_ok=True)
+
+                        dst_name = f"{subdir}_{name}"  # 加子目录前缀防冲突
+
+                        dst = os.path.join(str(rt_tmp), dst_name)
+
+                        if os.path.exists(dst):
+
+                            stem, ext = os.path.splitext(dst_name)
+
+                            dst = os.path.join(str(rt_tmp), f"{stem}.sweep{int(now)}{ext}")
+
+                        shutil.move(full, dst)
+
+                        moved += 1
+
+                        logger.info(
+
+                            "GATE-ROOT-TEMP-SWEEP: moved %s/%s -> .runtime/tmp/", subdir, name)
+
+                except OSError as exc:
+
+                    errors += 1
+
+                    logger.warning(
+
+                        "GATE-ROOT-TEMP-SWEEP: process %s/%s failed: %s", subdir, name, exc)
+
+
+
+        # === 3. .runtime/tmp/ TTL 清理（#ARCH-ROOT-TEMP-WHITELIST-002） ===
+
+        # v1 病根：reconciler 移动文件到 .runtime/tmp/ 但无清理——隔离区变垃圾场。
+
+        purged, purge_errors = _cleanup_runtime_tmp(rt_tmp, now)
+
+        errors += purge_errors
+
+
+
+        if deleted == 0 and moved == 0 and errors == 0 and purged == 0:
+
+            return ReconcileResult(action="skip", detail="root_temp_sweep: 无过期临时文件")
+
+
 
         action = "clean" if errors == 0 else "warn"
 
@@ -13581,9 +13855,11 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
 
             detail=(
 
-                f"root_temp_sweep: deleted={deleted} (token/log), moved={moved} "
+                f"root_temp_sweep: deleted={deleted}, moved={moved} (->.runtime/tmp/), "
 
-                f"(->.runtime/tmp/), errors={errors}, skipped_fresh={skipped_fresh}"
+                f"purged={purged} (.runtime/tmp/ TTL>24h), errors={errors}, "
+
+                f"skipped_fresh={skipped_fresh}"
 
             ),
 
@@ -13600,8 +13876,6 @@ def make_root_temp_sweep_reconciler(gateway: "object") -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=803,  # session_staging=802 之后，gate_registry_sync=830 之前
-
-        # （根目录清扫是 FS 级兜底，紧跟暂存层清理）
 
     )
 

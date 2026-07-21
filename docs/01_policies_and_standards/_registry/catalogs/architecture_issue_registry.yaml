@@ -7187,6 +7187,50 @@ entries:
   created: '2026-07-22'
   last_updated: '2026-07-22'
 
+# --- #ARCH-ROOT-TEMP-WHITELIST-002: root-sweep v2 动态白名单 + .runtime/tmp/ TTL + 子目录清扫（2026-07-22）---
+# 关联裁定：#ARCH-ROOT-TEMP-WHITELIST-001（父裁定——本裁定修复其红蓝对抗发现的 3 个弱点）
+- issue_id: '#ARCH-ROOT-TEMP-WHITELIST-002'
+  title: root-sweep v1 红蓝对抗发现 3 弱点——动态白名单 + .runtime/tmp/ TTL 清理 + 子目录根清扫
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    #ARCH-ROOT-TEMP-WHITELIST-001 落地了白名单模式（手工 frozenset + .gitignore ! 例外）。
+    用户质疑"以后还会出现吗？做过红蓝对抗极限测试吗？"——触发红蓝对抗第一轮测试，
+    发现 3 个弱点（2 CRITICAL + 1 HIGH）。
+
+    红蓝对抗发现：
+    (A) CRITICAL-1：.runtime/tmp/ 新垃圾场——v1 reconciler 移动文件到 .runtime/tmp/ 但无清理，
+        积压 126 文件（最老 3 天），无任何清理机制。治标不治本。
+    (B) CRITICAL-2：子目录根不受保护——v1 只扫项目根目录，src/_fix_all.py 等 5 个子目录根
+        临时文件完全无人管。
+    (C) HIGH-1：三源手工维护必然漂移——reconciler frozenset、.gitignore ! 例外、git tracked
+        三个手工列表无同步机制，新增合法根文件需改 3 处，漏改任何一处导致丢失或误删。
+
+    第一性原理分析：
+    (1) 临时文件生命周期必须闭环：创建→使用→隔离→清理。v1 只做到隔离，缺清理环节。
+    (2) 白名单真源应单一：git tracked 是文件合法性的唯一真源，动态派生消除副本漂移。
+    (3) 临时文件不只在根目录：AI 在 src/scripts/docs 根创建 _fix_*.py，防御边界应覆盖。
+
+    裁定（3 条）：
+    1. 动态白名单 v2（修复 HIGH-1）：_get_tracked_files() 从 git ls-tree HEAD 动态派生，
+       git 不可达时 fail-open 用 v1 硬编码白名单兜底。
+    2. .runtime/tmp/ TTL 清理（修复 CRITICAL-1）：_cleanup_runtime_tmp() 删除 mtime>24h 文件。
+    3. 子目录根清扫（修复 CRITICAL-2）：扩展扫描 src/scripts/docs，只扫 _ 前缀，跳过 __ 前缀。
+
+    不实施项：
+    - TTL-METADATA gate fail-open 改 fail-closed：影响 162 个无 frontmatter .md（29.6%），需单独裁定。
+    - 全子目录递归清扫：成本高且误删风险大，仅扫 depth-0。
+
+    红蓝对抗第二轮验证：R2-1~R2-4 全部通过。
+
+  status: resolved
+  related_adjudication: '#ARCH-ROOT-TEMP-WHITELIST-001 (父裁定——本裁定修复其红蓝对抗发现的弱点)'
+  related_rules: 'trae_071 (时间维度生命周期), trae_070 (空间维度临时文件分类)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+
 # --- #ARCH-DEPGRAPH-OPS-TIMEOUT-001: GATE-DEPGRAPH-OPS reconciler 超时治本（2026-07-22）---
 # 关联裁定：#ARCH-DEPGRAPH-RECONCILER-FAILSILENT（reconciler fail-silent 治本——本裁定补充超时维度）
 - issue_id: '#ARCH-DEPGRAPH-OPS-TIMEOUT-001'
