@@ -8,6 +8,7 @@ priority: 66
 depends_on:
 - TRAE-068
 - TRAE-074
+- TRAE-078  # force=True 逃生通道安全分类铁律（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22）
 tags:
 - TRAE
 - worktree_commit_persistence
@@ -150,11 +151,12 @@ sections:
           但 start 时 fail-open——本裁定将 start 改为 fail-closed
         - 遵循 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068）：100% AI 场景下 warn 无效，
           必须 fail-closed 或自动处理
-      related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展), #19-B (扩展)'
+      related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001 (扩展), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (扩展), #19-B (扩展), #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本，force=True 安全分类，2026-07-22)'
 references:
   rule_ids:
   - TRAE-068
   - TRAE-074
+  - TRAE-078
   scripts:
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
   - tests/governance/rule_bridge/test_session_worktree.py
@@ -194,7 +196,7 @@ metadata:
   impact_level: H
   modification_permission: immutable_core
   superseded_by: null
-  related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001, #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
+  related_arch: '#ARCH-WORKTREE-COMMIT-PERSISTENCE-001, #ARCH-WORKTREE-BASE-FRESHNESS-001, #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001, #ARCH-FORCE-MERGE-SAFETY-001 (扩展治本 2026-07-22)'
 provenance:
   extracted_at: '2026-07-22'
   extracted_by: sess-54776-20260722005342
