@@ -5844,6 +5844,18 @@ creation_tokens:
     created_by: "session-data-sector-kline"
     capability: "sector_ranking"
 
+  # --- 880xxx 板块实时快照采集器（2026-07-22，tqcenter混合模式99推送+584轮询→sector_snapshot表）---
+  - file: "src/zephyr/data/sector_snapshot_collector.py"
+    token: "auto-sector-snapshot-collector-20260722"
+    created_by: "session-data-sector-snapshot"
+    capability: "sector_snapshot_collection"
+
+  # --- 880xxx 板块K线合成器（2026-07-22，1m→15m/30m/60m ClickHouse聚合合成）---
+  - file: "src/zephyr/data/kline_resampler.py"
+    token: "auto-kline-resampler-20260722"
+    created_by: "session-data-sector-snapshot"
+    capability: "kline_resampling"
+
   # --- MOD-L00-004 数据源集成器阶段3（2026-07-06，5 新 Provider + metrics.py + 61 任务）---
   - file: "src/zephyr/data/implementations/baostock_provider.py"
     token: "auto-baostock-provider-20260706"
