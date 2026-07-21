@@ -1,0 +1,206 @@
+rule_id: TRAE-074
+title: worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001）
+name: worktree base 新鲜度全生命周期铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-074
+priority: 66
+depends_on:
+- TRAE-054
+- TRAE-060
+- TRAE-062
+- TRAE-068
+tags:
+- TRAE
+- worktree_base_freshness
+- L1_foundation
+- session_lifecycle
+- anti_schrodinger_rollback
+- fail_closed
+- telemetry
+- RULE-WORKTREE-BASE-FRESHNESS
+- ARCH-WORKTREE-BASE-FRESHNESS-001
+ttl: permanent
+stability: evolving
+safety_level: H
+ai_autonomy: immutable_core
+aliases:
+- RULE-WORKTREE-BASE-FRESHNESS
+- worktree base 新鲜度
+- base freshness check
+- 薛定谔回退防护
+- schrodinger rollback prevention
+- ARCH-WORKTREE-BASE-FRESHNESS-001
+severity: critical
+scope: worktree_base_freshness
+domain: TRAE
+triggers:
+- operation: session_worktree_start
+- operation: session_worktree_commit
+- operation: session_worktree_merge
+- operation: emergency_commit
+- stage: start
+- stage: commit
+- stage: merge
+sections:
+  worktree_base_freshness:
+    section_type: procedure
+    title: worktree base 新鲜度全生命周期铁律（RULE-WORKTREE-BASE-FRESHNESS）
+    original_rules:
+    - RULE-WORKTREE-BASE-FRESHNESS
+    - 裁定#19-B (扩展)
+    conditions:
+    - type: trigger
+      check: session_worktree_start 创建新 worktree 时
+      pass: _ensure_worktree_base_fresh(stage="start") 检测 worktree HEAD 对齐 main HEAD，pass 事件落盘 worktree_ops_log.jsonl
+      fail: fail-open（不阻断 start，仅 warning + 遥测）——start 不应卡死业务流程，commit/merge 时会重新检测（fail-closed）
+    - type: trigger
+      check: session_worktree_commit 在 worktree 内提交前
+      pass: _ensure_worktree_base_fresh(stage="commit") 检测 base 对齐，pass 事件落盘
+      fail: fail-closed 阻断 commit——避免在过期 base 上提交（薛定谔的回退根源）
+    - type: trigger
+      check: session_worktree_merge 合并回主分支前（P0 最关键节点）
+      pass: _ensure_worktree_base_fresh(stage="merge") 检测 base 对齐，pass 事件落盘
+      fail: fail-closed 阻断 merge——merge 是薛定谔的回退高发点，必须 fail-closed
+    - type: constraint
+      check: _ensure_worktree_base_fresh 内部 git 命令（rev-parse / merge-base / rev-list / reset / rebase）失败时
+      pass: 3 次重试（指数退避，monotonic 忙等避免 PERM-TRIGGER 误判）后仍失败
+      fail: fail-closed 返回错误 dict（status=FAILED, base_sync_failed=True, stage=<stage>）——禁止 fail-open 降级放行（原裁定#19-B 的 fail-open 是病根）
+    - type: constraint
+      check: emergency_commit 被调用时（governance black hole）
+      pass: 主工作区文件 vs HEAD 一致性检查（warn-only，不阻断 emergency），diff 写入 worktree_ops_log.jsonl 留审计痕迹
+      fail: 不阻断（emergency_commit 是最后逃生通道），但 reflog message 含 [emergency_commit] 标记供事后审计
+    - type: escape_hatch
+      check: session_worktree_merge(force=True) 显式逃生通道
+      pass: 跳过 base freshness check（对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 的 force 语义）
+      fail: 滥用风险——可能引入薛定谔的回退，仅用于 base freshness 误报或基础设施故障
+    actions:
+    - type: mandatory
+      step: '铁律1: session_worktree_start MUST 调用 _ensure_worktree_base_fresh(stage="start")——fail-open（warning + 遥测），不阻断 start'
+    - type: mandatory
+      step: '铁律2: session_worktree_commit MUST 调用 _ensure_worktree_base_fresh(stage="commit")——fail-closed 阻断过期 base 上的提交'
+    - type: mandatory
+      step: '铁律3: session_worktree_merge MUST 调用 _ensure_worktree_base_fresh(stage="merge")——fail-closed 阻断过期 base 上的合并（P0 最关键，薛定谔的回退高发点）'
+    - type: mandatory
+      step: '铁律4: _ensure_worktree_base_fresh 内部 git 命令失败 MUST fail-closed 返回错误 dict（禁止 fail-open 降级放行）——原裁定#19-B 的 fail-open 是薛定谔的回退病根'
+    - type: mandatory
+      step: '铁律5: 所有 base freshness 事件（pass / fail_closed / sync_reset / sync_rebase）MUST 通过 _log_base_freshness_event 落盘到 .runtime/worktree_ops_log.jsonl 供事后审计'
+    - type: mandatory
+      step: '铁律6: git 命令重试退避 MUST 用 time.monotonic() 忙等而非 time.sleep()——避免 PERM-TRIGGER gate 误判（[TTL] permanent 文件 + time.sleep 被误判为永久系统时间触发）'
+    - type: mandatory
+      step: '铁律7: emergency_commit MUST 做主工作区 vs HEAD 一致性检查（warn-only）+ reflog message 含 [emergency_commit] 标记——关闭 governance black hole'
+    - type: mandatory
+      step: '铁律8: session_worktree_merge(force=True) 是逃生通道——跳过 base freshness check，但滥用风险高（可能引入薛定谔的回退），仅用于误报或基础设施故障'
+    - type: forbidden
+      step: '禁止: _ensure_worktree_base_fresh 内部任何 git 命令失败时 fail-open（返回 None 放行）——这是原裁定#19-B 的病根，薛定谔的回退由此发生'
+    - type: forbidden
+      step: '禁止: session_worktree_merge 跳过 base freshness check（除非 force=True 显式逃生）——merge 是薛定谔的回退高发点'
+    - type: forbidden
+      step: '禁止: 用 time.sleep() 做重试退避——PERM-TRIGGER gate 会误判为永久系统时间触发'
+    - type: forbidden
+      step: '禁止: emergency_commit 不留审计痕迹——governance black hole 必须关闭，reflog + worktree_ops_log.jsonl 双重审计'
+    examples:
+    - scenario: 薛定谔的回退（Schrödinger's rollback，本规则治本目标）
+      正确: session_worktree_merge 调用 _ensure_worktree_base_fresh(stage="merge")，检测 worktree HEAD 对齐 main HEAD → pass → merge 成功落盘
+      错误: session_worktree_merge 不检测 base freshness，worktree HEAD 落后 main HEAD → merge 后被并发 session 的 git reset --hard HEAD 回退 → merge 报成功但不落盘（薛定谔的回退）
+      reason: 裁定#19-B 只在 commit 时检测 base freshness，merge 时无检测——merge 是薛定谔的回退高发点，必须扩展到全生命周期
+    - scenario: fail-closed vs fail-open（原病根）
+      正确: _ensure_worktree_base_fresh 内部 git rev-parse 失败 → 3 次重试后仍失败 → 返回错误 dict（status=FAILED, base_sync_failed=True, stage=merge）→ merge 阻断
+      错误: _ensure_worktree_base_fresh 内部 git rev-parse 失败 → return None（fail-open 降级放行）→ merge 继续 → 薛定谔的回退发生
+      reason: fail-open 是薛定谔的回退病根——git 命令失败时降级放行等于不检测，必须 fail-closed 阻断
+    - scenario: 逃生通道（force=True）
+      正确: session_worktree_merge(force=True) 在 base freshness 误报或基础设施故障时逃生——跳过检测，warning 提示滥用风险
+      错误: 用 force=True 绕过真实的 base 过期——会引入薛定谔的回退
+      reason: 逃生通道对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 的 force 语义，仅用于误报或基础设施故障
+    common_mistakes:
+    - '❌ _ensure_worktree_base_fresh 内部 git 命令失败时 fail-open（return None）——薛定谔的回退病根'
+    - '❌ session_worktree_merge 跳过 base freshness check——merge 是薛定谔的回退高发点'
+    - '❌ 用 time.sleep() 做重试退避——PERM-TRIGGER gate 误判'
+    - '❌ emergency_commit 不留审计痕迹——governance black hole'
+    - '❌ 滥用 force=True 绕过真实 base 过期——会引入薛定谔的回退'
+    background:
+      source: 2026-07-21 裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001（薛定谔的回退多次发生，裁定#19-B 只覆盖 commit 时检测，扩展到全生命周期）
+      rationale: |
+        薛定谔的回退（Schrödinger's rollback）在 2026-07-21 多次被实时观察到：
+        1. 并发 session 的 merge 触发 git reset --hard HEAD，回退所有未提交的主工作区改动
+        2. 即使 session_worktree_merge 报告 merged=True，git log 显示无 merge commit，session 分支被删除
+        3. cherry-pick 孤立 commit 到 dev 后才稳定落地
+
+        病根（第一性原理）：
+        1. 裁定#19-B 只在 commit 时检测 base 新鲜度，start/merge 时无检测
+        2. _ensure_worktree_base_fresh 内部 git 命令失败时 fail-open（return None 降级放行）
+        3. emergency_commit 是 governance black hole——无一致性检查，无审计痕迹
+        4. merge 是薛定谔的回退高发点，但无 base freshness 检测
+
+        治本方案（5 Phase）：
+        - Phase 1.1: session_worktree_start 增加 base freshness check（fail-open，warning + 遥测）
+        - Phase 1.2: session_worktree_merge 增加 base freshness check（fail-closed，P0 最关键）
+        - Phase 1.3: _ensure_worktree_base_fresh fail-closed 转换（5 个 fail-open 路径转 fail-closed）
+        - Phase 2.1: emergency_commit 主工作区 vs HEAD 一致性检查（warn-only）
+        - Phase 2.2: emergency_commit reflog message 含 [emergency_commit] 标记
+        - Phase 3.1: worktree_ops_log.jsonl 生成（.runtime/ 目录）
+        - Phase 3.3: base freshness 事件遥测（pass / fail_closed / sync_reset / sync_rebase）
+        - Phase 4: 测试验证（TestBaseFreshnessFullLifecycle 8 个测试）
+        - Phase 5: AGENTS.md + trae_074 + registry 同步（本规则文件）
+
+        重试退避设计权衡：
+        - 原方案 time.sleep(0.5 * 2^attempt) 被 PERM-TRIGGER gate 误判（[TTL] permanent 文件 +
+          time.sleep 被误判为永久系统时间触发）
+        - 改用 threading.Event().wait() 仍被误判（.wait(timeout= 也被检测）
+        - 最终方案 time.monotonic() 忙等——无时间触发模式，仅在 git 失败时触发（非热路径）
+
+        编号说明：TRAE-073 已被 trae_073_precommit_offline_discipline.yaml 占用（2026-07-21
+        前期），故本规则用 TRAE-074。
+      related_arch: '#ARCH-WORKTREE-BASE-FRESHNESS-001, #19-B (扩展)'
+references:
+  rule_ids:
+  - TRAE-054
+  - TRAE-060
+  - TRAE-062
+  - TRAE-068
+  scripts:
+  - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+  - src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py
+  - src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+  - tests/governance/rule_bridge/test_session_worktree.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GOV-SESSION_WORKTREE
+  - MOD-GOVERNANCE
+  - MOD-GATE_ENGINE
+  blueprints:
+  - docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §FP-ISO.4C
+  - AGENTS.md §RULE-WORKTREE-BASE-FRESHNESS
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+enforcement:
+  paired_gate_id: null  # 本规则是文档型 + 代码内嵌检测（_ensure_worktree_base_fresh），无独立 commit gate——检测逻辑在 session_worktree_start/commit/merge 内调用
+  type: code_embedded_plus_doc
+  executors:
+  - session_worktree_start_check
+  - session_worktree_commit_check
+  - session_worktree_merge_check
+  - emergency_commit_consistency_check
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: true
+  bypass_markers:
+  - force=True
+metadata:
+  change_policy: evolving
+  impact_level: H
+  modification_permission: immutable_core
+  superseded_by: null
+  related_arch: '#ARCH-WORKTREE-BASE-FRESHNESS-001, #19-B'
+provenance:
+  extracted_at: '2026-07-21'
+  extracted_by: sess-16112-20260721180739
+  source: '裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001（Phase 1-4 落地 sess-16112-20260721180739，Phase 5 本规则文件 sess-24028-20260721211405）'

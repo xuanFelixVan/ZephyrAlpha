@@ -4864,6 +4864,56 @@ capabilities:
       self_healer._rollback。治本（2d 可发现性）：新 AI 通过
       capability_lookup.find("workspace_telemetry") / find("log_workspace_op") 可定位真源。
 
+  # --------------------------------------------------------------------------
+  - capability_id: any_type_inferrer
+    canonical_override: scripts/governance/d7_code/any_type_inferrer.py
+    aliases:
+      - any-type-inferrer
+      - infer_any_type
+      - any_inference_report
+      - any_type_inference_tool
+    description: >-
+      裸 Any 类型推断辅助工具（#ARCH-ANY-GOVERNANCE-001 Phase 1，2026-07-21）。
+      对标 check_any_abuse.py 的检测能力，本工具补位"推断"能力——对每个函数签名中的
+      裸 Any（参数或返回值），基于函数体内使用模式推断候选类型（method_call /
+      isinstance / return_literal / subscript / iteration / arithmetic 6 类证据）。
+      纯 stdlib 实现（ast + dataclasses + argparse），非阻断报告模式（exit 0）。
+      canonical = scripts/governance/d7_code/any_type_inferrer.py（MOD-GOV-008）。
+      消费方：#ARCH-ANY-GOVERNANCE-001 Phase 2 Batch 1-8 治理、manual AI 审核辅助、
+      architecture_debt_registry §5.145 治本工程。治本（2d 可发现性）：新 AI 通过
+      capability_lookup.find("any_type_inferrer") / find("infer_any_type") 可定位真源。
+
+  # --------------------------------------------------------------------------
+  - capability_id: worktree_base_freshness_check
+    aliases:
+      - _ensure_worktree_base_fresh
+      - _log_base_freshness_event
+      - _run_git_with_retry
+      - base_freshness
+      - base_sync_failed
+      - 薛定谔回退防护
+      - schrodinger_rollback_prevention
+      - ARCH-WORKTREE-BASE-FRESHNESS-001
+      - RULE-WORKTREE-BASE-FRESHNESS
+      - TRAE-074
+    description: >-
+      worktree base 新鲜度全生命周期检测能力（#ARCH-WORKTREE-BASE-FRESHNESS-001，
+      2026-07-21，治本薛定谔的回退）。裁定#19-B 只在 commit 时检测 base 新鲜度且
+      fail-open 降级放行——多次实时观察到薛定谔的回退（merge 报成功但不落盘）。
+      本能力扩展到全生命周期（start/commit/merge）+ fail-closed 转换 + 遥测落盘。
+      实现跨两个文件：session_worktree.py（_ensure_worktree_base_fresh +
+      _log_base_freshness_event + _run_git_with_retry + start/commit/merge 三阶段
+      调用）+ emergency_commit.py（主工作区 vs HEAD 一致性检查 warn-only +
+      reflog [emergency_commit] 标记）。遥测落盘 .runtime/worktree_ops_log.jsonl
+      （pass / fail_closed / sync_reset / sync_rebase 事件）。逃生通道 force=True
+      跳过检测（对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 语义）。重试退避
+      用 time.monotonic() 忙等而非 time.sleep()——避免 PERM-TRIGGER gate 误判。
+      canonical 两个文件均为真源（lifecycle 检测在 session_worktree.py，emergency
+      black hole 关闭在 emergency_commit.py）。解决发现性：新 AI 搜
+      "base 新鲜度/薛定谔回退/schrodinger rollback/base_sync_failed" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止新 AI 重建检测逻辑。
+      关联规则：TRAE-074（worktree_base_freshness）、裁定#19-B（扩展）。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -6548,6 +6598,38 @@ creation_tokens:
     token: "auto-worktree-state-machine-20260721"
     created_by: "ARCH-WORKTREE-LIFECYCLE-001"
     capability: "worktree_lifecycle"
+  - file: "scripts/governance/d7_code/any_type_inferrer.py"
+    token: "auto-any-type-inferrer-20260721"
+    created_by: "ARCH-ANY-GOVERNANCE-001"
+    capability: "any_type_inferrer"
+  - file: "src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py"
+    token: "auto-folder-capacity-hard-limit-gate-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py"
+    token: "auto-depgraph-pre-registration-gate-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py"
+    token: "auto-derivation-annotation-gate-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/gov_enforcement/commit_gates/relative_path_literal_gate.py"
+    token: "auto-relative-path-literal-gate-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/governance/audit/cross_layer_contract_signature_reconciler.py"
+    token: "auto-cross-layer-contract-signature-reconciler-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/governance/audit/blueprint_status_transition_reconciler.py"
+    token: "auto-blueprint-status-transition-reconciler-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
+  - file: "src/zephyr/governance/audit/_git_helpers.py"
+    token: "auto-git-helpers-shared-20260721"
+    created_by: "sess-46560-20260721162044"
+    capability: "twelve_dimension_audit_automation"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

@@ -7,7 +7,7 @@ generated_at: '2026-07-21T00:00:00Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
-total_rules: 70
+total_rules: 71
 rules:
 - rule_id: TRAE-001
   title: 文件操作安全协议
@@ -1904,3 +1904,37 @@ rules:
   - ARCH-CROSS-COMMIT-ATOMICITY-001
   paired_gate_id: GATE-IMPORT-INTEGRITY
   rule_file: docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml
+- rule_id: TRAE-074
+  title: worktree base 新鲜度全生命周期铁律（Worktree Base Freshness Full Lifecycle，裁定 #ARCH-WORKTREE-BASE-FRESHNESS-001）
+  module_id: TRAE-074
+  scope: worktree_base_freshness
+  domain: TRAE
+  severity: critical
+  stability: evolving
+  ai_autonomy: immutable_core
+  safety_level: H
+  operations:
+  - session_worktree_start
+  - session_worktree_commit
+  - session_worktree_merge
+  - emergency_commit
+  gate_ids: []
+  tags:
+  - TRAE
+  - worktree_base_freshness
+  - L1_foundation
+  - session_lifecycle
+  - anti_schrodinger_rollback
+  - fail_closed
+  - telemetry
+  - RULE-WORKTREE-BASE-FRESHNESS
+  - ARCH-WORKTREE-BASE-FRESHNESS-001
+  aliases:
+  - RULE-WORKTREE-BASE-FRESHNESS
+  - worktree base 新鲜度
+  - base freshness check
+  - 薛定谔回退防护
+  - schrodinger rollback prevention
+  - ARCH-WORKTREE-BASE-FRESHNESS-001
+  paired_gate_id: null
+  rule_file: docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml
