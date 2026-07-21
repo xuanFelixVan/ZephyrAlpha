@@ -1,0 +1,177 @@
+rule_id: TRAE-077
+title: capability lookup bypass 场景分类铁律（Capability Lookup Bypass Scene Classification，裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001）
+name: capability lookup bypass 场景分类铁律
+version: '1.0.0'
+layer: L1_foundation
+module_id: TRAE-077
+priority: 67
+depends_on:
+- TRAE-065
+- TRAE-068
+tags:
+- TRAE
+- capability_lookup_scene_classify
+- L1_foundation
+- bypass_scene_classification
+- anti_false_alarm
+- preventability
+- RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+- ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+ttl: permanent
+stability: evolving
+safety_level: M
+ai_autonomy: ai_modifiable
+aliases:
+- RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+- bypass 场景分类
+- bypass scene classification
+- 白名单豁免
+- exempt bypass
+- ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+severity: warning
+scope: capability_lookup_bypass_stats
+domain: TRAE
+triggers:
+- operation: capability_lookup_health_reconciler
+- gate_id: CAPABILITY-LOOKUP-HEALTH
+sections:
+  capability_lookup_scene_classify:
+    section_type: procedure
+    title: capability lookup bypass 场景分类铁律（RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY）
+    original_rules:
+    - RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+    - 裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+    - 扩展 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD（6 层闭环——可预防性精确化）
+    - 扩展 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068 第 6 层——告警准确性）
+    conditions:
+    - type: trigger
+      check: CAPABILITY-LOOKUP-HEALTH reconciler 统计 bypass 频率时
+      pass: reason 含白名单关键词 → 豁免统计（scene=exempt，不计入 violation_count）
+      fail: reason 不含白名单关键词 → 计入违规统计（scene=violation，计入 violation_count）
+    - type: constraint
+      check: critical_warn 阈值判断
+      pass: violation_count > 5（最近窗口内违规 bypass 超 5 次）→ critical_warn
+      fail: violation_count <= 5（合法豁免不计入）→ clean/warn
+    - type: maintenance
+      check: 新增合法 bypass 场景时
+      pass: MUST 同步更新 _BYPASS_EXEMPT_KEYWORDS 常量 + 本规则文档
+      fail: 仅更新代码不更新文档 → 白名单真源漂移
+    actions:
+    - type: mandatory
+      step: '铁律1: CAPABILITY-LOOKUP-HEALTH reconciler MUST 按 _BYPASS_EXEMPT_KEYWORDS 白名单分类 bypass——合法 bypass（exempt）豁免统计，违规 bypass（violation）计入统计'
+    - type: mandatory
+      step: '铁律2: critical_warn 阈值基于 violation_count（违规 bypass 数量），非 bypass_count（总 bypass 数量）——合法 bypass 不触发 critical_warn'
+    - type: mandatory
+      step: '铁律3: bypass_audit.jsonl entry MUST 包含 scene 字段（exempt/violation）——便于审计追溯场景分类判定'
+    - type: mandatory
+      step: '铁律4: 新增合法 bypass 场景时 MUST 同步更新 _BYPASS_EXEMPT_KEYWORDS 常量（reconciliation_registry.py）+ 本规则文档的白名单关键词清单——单一真源原则'
+    - type: mandatory
+      step: '铁律5: 白名单关键词匹配使用大小写不敏感的子串匹配（reason_lower contains keyword）——容忍 reason 格式变体'
+    - type: mandatory
+      step: '铁律6: 旧格式 [no-lookup:reason] 向后兼容——reason 不含白名单关键词时计入违规统计（倒逼 AI 使用规范 reason）'
+    - type: forbidden
+      step: '禁止: 把合法 bypass（gate-fix/test-fix/merge-prep/continuation 等）计入违规统计——会导致 critical_warn 误报（狼来了效应）'
+    - type: forbidden
+      step: '禁止: 仅更新代码白名单不更新规则文档——白名单真源漂移会导致 AI 不知道哪些 reason 合法'
+    examples:
+    - scenario: gate-fix bypass 豁免统计（合法场景）
+      正确: AI 修复 gate bug → commit msg 含 [no-lookup:gate-fix-xxx] → reconciler 匹配 "gate-fix" → scene=exempt → 不计入 violation_count → clean
+      错误: AI 修复 gate bug → commit msg 含 [no-lookup:gate-fix-xxx] → reconciler 不分类 → 计入 bypass_count → 误报 critical_warn
+      reason: gate 自身代码变更天然不适用规则反查——gate-fix 是合法 bypass，不应触发告警
+    - scenario: 新功能开发 bypass 计入统计（违规场景）
+      正确: AI 写新功能未查规则 → commit msg 含 [no-lookup:new-feature-xxx] → reconciler 不匹配白名单 → scene=violation → 计入 violation_count → 超 5 次 critical_warn
+      错误: AI 写新功能未查规则 → commit msg 含 [no-lookup:new-feature-xxx] → reconciler 豁免 → 不计入统计 → 违规被淹没
+      reason: 新功能开发 MUST 查规则——违规 bypass 应触发告警
+    - scenario: 白名单维护（新增合法场景）
+      正确: 发现新的合法场景（如 hotfix） → 更新 _BYPASS_EXEMPT_KEYWORDS + trae_077 文档 → 下次 reconciler 自动豁免
+      错误: 发现新的合法场景 → 仅更新代码 → 文档漂移 → 其他 AI 不知道合法 reason 列表
+      reason: 白名单单一真源——代码常量 + 规则文档 MUST 同步
+    common_mistakes:
+    - '❌ 把所有 [no-lookup:] bypass 一视同仁计入统计——合法 bypass 误报 critical_warn（狼来了效应）'
+    - '❌ 更新代码白名单不更新 trae_077 文档——白名单真源漂移'
+    - '❌ 白名单关键词过大写敏感——reason 格式变体导致匹配失败'
+    - '❌ critical_warn 阈值基于 bypass_count 而非 violation_count——合法 bypass 触发误报'
+    background:
+      source: 2026-07-22 裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001
+      rationale: |
+        #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD 治本建立了 CAPABILITY-LOOKUP-REQUIRED gate
+        （priority=110）+ CAPABILITY-LOOKUP-HEALTH reconciler（priority=220）的 6 层闭环。
+        但 reconciler 的 bypass 频率统计存在场景分类缺陷——把所有 [no-lookup:reason]
+        bypass 一视同仁计入统计，不区分"新功能开发违规 bypass"与"合法运维场景 bypass"。
+
+        实证（bypass_audit.jsonl 最近 10 条记录全部分析）：
+        全部 10+ 条记录均为合法场景（gate-fix/test-fix/merge-prep/continuation/
+        investigated/auto-fix/batch-treatment/batch-governance/architectural-refactor/sync），
+        无一例"AI 跳过能力反查直接施工新功能"违规。但触发 critical_warn 误报。
+
+        病根（TRAE-068 第 6 层可预防性违反）：
+        critical_warn 误报违反"可预防性"——告警准确性是可预防性的前提。误报导致 AI 对
+        critical_warn 脱敏（狼来了效应），当真正违规发生时 AI 可能忽视告警。100% AI 场景下
+        无人类视觉通道过滤误报，告警 MUST 精确——只在真正违规时触发。
+
+        治本方案（5 Phase）：
+        - Phase 1: reconciler 增加白名单豁免统计（_BYPASS_EXEMPT_KEYWORDS + _is_exempt_bypass）
+        - Phase 2: 本规则文件（trae_077）——白名单维护规则 + 场景分类定义
+        - Phase 3: AGENTS.md §RULE-CAPABILITY-LOOKUP 补充场景分类说明
+        - Phase 4: 测试验证
+        - Phase 5: registry 同步
+
+        白名单关键词清单（单一真源——代码常量 + 本文档同步维护）：
+        - gate-fix：gate 自身修复
+        - test-fix：测试修复
+        - merge-prep：merge 准备
+        - continuation：已批准裁定/修复计划续作
+        - investigated：bug 修复已调研
+        - auto-fix：自动修复
+        - batch-treatment：批量处理（已批准裁定）
+        - batch-governance：批量治理
+        - architectural-refactor：架构重构
+        - sync：文档/注释/维度同步
+
+        与现有裁定的关系：
+        - 扩展 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD（父裁定）：该裁定建立 6 层闭环，
+          但 reconciler 统计层缺场景分类——本裁定补
+        - 扩展 #ARCH-PREVENTABILITY-LAYER-001（TRAE-068）：第 6 层可预防性要求告警精确，
+          误报导致 AI 脱敏——本裁定治本告警准确性
+      related_arch: '#ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001, #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD (父裁定), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层)'
+references:
+  rule_ids:
+  - TRAE-065
+  - TRAE-068
+  scripts:
+  - src/zephyr/governance/audit/reconciliation_registry.py
+  - tests/governance/audit/test_capability_lookup_health_reconciler.py
+  - scripts/governance/generators/generate_rule_ai_perception_index.py
+  - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
+  modules:
+  - MOD-GOV-reconciliation_registry
+  - MOD-GOVERNANCE
+  blueprints:
+  - docs/03_modules/_cross_layer/gate_engine/blueprint.md
+  agents_md_sections:
+  - AGENTS.md §RULE-CAPABILITY-LOOKUP
+  - AGENTS.md §RULE-CAPABILITY-LOOKUP-SCENE-CLASSIFY
+  yaml_sources:
+  - docs/01_policies_and_standards/rules/trae_077_capability_lookup_scene_classify.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+enforcement:
+  paired_gate_id: null  # 本规则是文档型 + 代码内嵌检测（reconciler 白名单匹配），无独立 commit gate
+  type: code_embedded_plus_doc
+  executors:
+  - capability_lookup_health_reconciler_scene_classify
+  - rule_discovery_mcp
+  - ai_pre_action_check
+  bypass_allowed: true
+  bypass_markers:
+  - '[no-lookup:reason]（gate 层逃生通道，本规则管的是 reconciler 统计层的场景分类）'
+metadata:
+  change_policy: evolving
+  impact_level: M
+  modification_permission: ai_modifiable
+  superseded_by: null
+  related_arch: '#ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001, #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD, #ARCH-PREVENTABILITY-LAYER-001'
+provenance:
+  extracted_at: '2026-07-22'
+  extracted_by: sess-2948-20260722023028
+  source: '裁定 #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001（Phase 1-5 落地 sess-2948-20260722023028）'

@@ -6463,9 +6463,37 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
     project_root = gateway.project_root
     BYPASS_AUDIT_LOG = project_root / ".runtime" / "lookup_audit" / "bypass_audit.jsonl"
     LOOKUP_AUDIT_DIR = project_root / ".runtime" / "lookup_audit"
-    # 升级阈值：最近 10 次 src/zephyr/**/*.py commit 中 >5 次 bypass → critical_warn
+    # 升级阈值：最近 10 次 src/zephyr/**/*.py commit 中 >5 次 **违规** bypass → critical_warn
     BYPASS_ESCALATION_THRESHOLD = 5
     BYPASS_WINDOW = 10
+
+    # #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001: bypass scene 白名单——
+    # reason 含以下关键词的 bypass 豁免统计（合法场景），只统计非白名单 bypass（违规）。
+    # 白名单维护规则：新增合法场景时 MUST 同步更新此常量 + trae_077 规则文档。
+    _BYPASS_EXEMPT_KEYWORDS = frozenset({
+        "gate-fix",               # gate 自身修复
+        "test-fix",               # 测试修复
+        "merge-prep",             # merge 准备
+        "continuation",           # 已批准裁定/修复计划续作
+        "investigated",           # bug 修复已调研
+        "auto-fix",               # 自动修复
+        "batch-treatment",        # 批量处理（已批准裁定）
+        "batch-governance",       # 批量治理
+        "architectural-refactor", # 架构重构
+        "sync",                   # 文档/注释/维度同步
+    })
+
+    def _is_exempt_bypass(reason: str) -> bool:
+        """判断 bypass reason 是否属于合法豁免场景（白名单关键词匹配）。
+
+        #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001: 合法 bypass（gate-fix/test-fix/
+        merge-prep/continuation 等）不计入违规统计——避免 critical_warn 误报（狼来了效应）。
+        """
+        reason_lower = reason.lower()
+        for keyword in _BYPASS_EXEMPT_KEYWORDS:
+            if keyword in reason_lower:
+                return True
+        return False
 
     def _trigger(committed_files: list[str]) -> bool:
         """命中 src/zephyr/**/*.py 业务代码 commit。"""
@@ -6510,11 +6538,15 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
     def _reconcile(
         committed_files: list[str], session_id: str, commit_message: str = "",
     ) -> ReconcileResult:
-        """3-arg reconciler：检测 bypass + 监控 audit log 健康。"""
+        """3-arg reconciler：检测 bypass + 监控 audit log 健康。
+
+        #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001: bypass 统计场景分类——
+        合法 bypass（白名单关键词匹配）豁免统计，只统计违规 bypass。
+        """
         msg = commit_message or ""
         has_bypass_marker = "[no-lookup:" in msg
 
-        # 1. 记录 bypass 使用
+        # 1. 记录 bypass 使用（新增 scene 字段——exempt/violation）
         if has_bypass_marker:
             try:
                 BYPASS_AUDIT_LOG.parent.mkdir(parents=True, exist_ok=True)
@@ -6523,10 +6555,13 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
                     start = msg.index("[no-lookup:") + len("[no-lookup:")
                     end = msg.find("]", start)
                     reason = msg[start:end] if end > start else ""
+                # #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001: scene 分类
+                scene = "exempt" if _is_exempt_bypass(reason) else "violation"
                 entry = {
                     "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                     "session_id": session_id,
                     "reason": reason,
+                    "scene": scene,
                     "commit_message_snippet": msg[:200],
                 }
                 with open(BYPASS_AUDIT_LOG, "a", encoding="utf-8") as fh:
@@ -6534,16 +6569,22 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
             except OSError as e:
                 logger.warning("CAPABILITY-LOOKUP-HEALTH: bypass log write failed: %s", e)
 
-        # 2. 统计 bypass 频率 → 升级
+        # 2. 统计 **违规** bypass 频率 → 升级
+        # #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001: 只统计非白名单 bypass（违规），
+        # 合法 bypass（exempt）不计入——避免 critical_warn 误报（狼来了效应）。
         recent_bypasses = _read_recent_bypasses()
-        bypass_count = len(recent_bypasses)
-        if bypass_count > BYPASS_ESCALATION_THRESHOLD:
+        violation_count = sum(
+            1 for entry in recent_bypasses
+            if not _is_exempt_bypass(entry.get("reason", ""))
+        )
+        if violation_count > BYPASS_ESCALATION_THRESHOLD:
+            exempt_count = len(recent_bypasses) - violation_count
             detail = (
-                f"CAPABILITY-LOOKUP-HEALTH: ZEPHYR_BYPASS_LOOKUP / [no-lookup:] "
-                f"使用频率过高——最近 {BYPASS_WINDOW} 次 src/zephyr commit 中 {bypass_count} 次 bypass "
-                f"(阈值 {BYPASS_ESCALATION_THRESHOLD})。"
-                f"这可能表明 CAPABILITY-LOOKUP-REQUIRED gate 机制存在系统性问题（AI 频繁无法正常 "
-                f"调用能力反查），MUST 上报人类排查。对标 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD G6。"
+                f"CAPABILITY-LOOKUP-HEALTH: [no-lookup:] **违规** bypass 频率过高——"
+                f"最近 {BYPASS_WINDOW} 次 bypass 中 {violation_count} 次违规 "
+                f"(合法豁免 {exempt_count} 次，阈值 {BYPASS_ESCALATION_THRESHOLD})。"
+                f"这表明 AI 频繁在非合法场景跳过能力反查，MUST 上报人类排查。"
+                f"对标 #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD G6 + #ARCH-CAPABILITY-LOOKUP-SCENE-CLASSIFY-001。"
             )
             logger.error("[ESCALATION] %s", detail)
             return ReconcileResult(action="critical_warn", detail=detail)
@@ -6561,14 +6602,21 @@ def make_capability_lookup_health_reconciler(gateway: "object") -> ReconcilerSpe
 
         # 4. 正常路径
         if has_bypass_marker:
+            reason = ""
+            if "[no-lookup:" in msg:
+                start = msg.index("[no-lookup:") + len("[no-lookup:")
+                end = msg.find("]", start)
+                reason = msg[start:end] if end > start else ""
+            scene = "exempt" if _is_exempt_bypass(reason) else "violation"
             detail = (
                 f"CAPABILITY-LOOKUP-HEALTH: 本次 commit 使用 [no-lookup:] bypass "
-                f"(最近 {bypass_count}/{BYPASS_WINDOW} 次)，频率正常。"
+                f"(scene={scene}, 最近 {violation_count} 违规/{len(recent_bypasses)} 总 bypass)，"
+                f"违规频率正常。"
             )
         else:
             detail = (
                 f"CAPABILITY-LOOKUP-HEALTH: audit log 正常，gate 工作正常 "
-                f"(最近 {bypass_count}/{BYPASS_WINDOW} 次 bypass)。"
+                f"(最近 {violation_count} 违规/{len(recent_bypasses)} 总 bypass)。"
             )
         return ReconcileResult(action="clean", detail=detail)
 
