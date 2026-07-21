@@ -46,7 +46,7 @@ class AuditLogGuard:
     字符串不包含控制字符或转义序列，防止日志注入（log forging）攻击。
     """
 
-    def sanitize(self, value: Any) -> Any:
+    def sanitize(self, value: object) -> object:
         """净化字符串：替换控制字符与字面转义序列。
 
         - 实际控制字符 \\n/\\r/\\t → 空格，\\x00 → 删除
@@ -63,7 +63,7 @@ class AuditLogGuard:
             result = result.replace(seq, " ")
         return result
 
-    def validate_entry(self, key: str, value: Any) -> dict[str, Any]:
+    def validate_entry(self, key: str, value: object) -> dict[str, Any]:
         """校验单个键值对是否包含注入字符。
 
         Returns:

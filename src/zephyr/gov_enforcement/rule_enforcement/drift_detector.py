@@ -44,7 +44,11 @@ import logging
 import os
 import uuid
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any, Callable
+
+if TYPE_CHECKING:
+    from zephyr.gov_drift.drift_models import ScanLevel, ScanResult
+    from zephyr.gov_drift.reconciler import AutoFixer
 
 from zephyr.shared.utils.async_utils import run_coroutine_sync  # 5.52.4 修复：统一 async/sync 边界
 
@@ -171,8 +175,8 @@ def _check_hotfix_bypass(
 
 
 def _run_drift_scan(
-    scan_fn: Any, level: Any, changed_files: list[str], result: dict[str, Any]
-) -> Any:
+    scan_fn: Callable[..., Any], level: "ScanLevel", changed_files: list[str], result: dict[str, Any]
+) -> "ScanResult | None":
     """执行漂移扫描；失败时记录错误并返回 None（调用方应直接 return）。"""
     # 5.52.4 修复：run_coroutine_sync 统一处理无 loop/有 loop 两情形，
     # 替代 get_event_loop().run_until_complete + new_event_loop 回退（3.12 下 get_event_loop 已废弃）。
@@ -185,7 +189,7 @@ def _run_drift_scan(
 
 
 def _detect_cascade_and_check_lockout(
-    scan_result: Any, module_id: str, result: dict[str, Any]
+    scan_result: "ScanResult", module_id: str, result: dict[str, Any]
 ) -> bool:
     """级联检测；若 auto-fix 被暂停则置位 result 并返回 True（调用方应直接 return）。"""
     try:
@@ -224,7 +228,7 @@ def _detect_cascade_and_check_lockout(
 
 
 def _run_auto_fixes(
-    fixer: Any, scan_result: Any, changed_files: list[str]
+    fixer: "AutoFixer", scan_result: "ScanResult", changed_files: list[str]
 ) -> tuple[list[dict[str, Any]], int, int]:
     """对每个漂移事件执行自动修复；返回 (fix_results, fixed_count, failed_count)。"""
     fix_results: list[dict[str, Any]] = []

@@ -17,7 +17,7 @@
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from zephyr.feedback_loop.diagnosers.numerical_stability_guard import NumericalStabilityGuard
 from zephyr.feedback_loop.diagnosers.temporal_integrity_guard import TemporalIntegrityGuard
@@ -28,7 +28,7 @@ from zephyr.feedback_loop.security.wireheading_prevention import WireheadingPrev
 from zephyr.shared.io.paths import GATES_DIR
 
 
-def _load_fle_gate_instance(cache: dict[str, Any], gate_id: str, gate_file: str) -> Any:
+def _load_fle_gate_instance(cache: dict[str, Any], gate_id: str, gate_file: str) -> object | None:
     if gate_id in cache:
         return cache[gate_id]
     rel_path = gate_file.replace("../", "").replace("/", ".").replace(".py", "")
@@ -60,7 +60,7 @@ def _load_fle_gate_instance(cache: dict[str, Any], gate_id: str, gate_file: str)
     return gate_instance
 
 
-def _evaluate_gate_method(method: Any, method_name: str, action_id: str) -> bool:
+def _evaluate_gate_method(method: Callable[..., Any], method_name: str, action_id: str) -> bool:
     import inspect
 
     sig = inspect.signature(method)

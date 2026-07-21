@@ -483,7 +483,7 @@ def _generate_entry_id(prefix: str = "AUD-T", seq: int = 0) -> str:
     return f"{prefix}-{seq:04d}"
 
 
-def audit_entry_sort_key(entry: Any) -> Any:
+def audit_entry_sort_key(entry: tuple[str, int] | object) -> tuple[str, int] | int:
     """审计条目排序键——治本（裁定#18 G2）：接受 (ide, counter) 元组。
 
     对齐 test_audit_models.py 契约：

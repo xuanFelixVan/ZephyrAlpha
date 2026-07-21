@@ -124,7 +124,7 @@ def _query_vms_collection(
 
 
 def _query_kb_collection(
-    kb_client: Any, kb_collection_name: str, query: str, k: int
+    kb_client: object, kb_collection_name: str, query: str, k: int
 ) -> list[dict[str, Any]]:
     """Query the kb/ collection and return list of result dicts.
 

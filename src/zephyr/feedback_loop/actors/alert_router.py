@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +82,7 @@ class AlertRouter:
     Stateless — safe to use as a singleton or per-invocation.
     """
 
-    def route(self, alert: Any) -> AlertRoutingDecision:
+    def route(self, alert: object) -> AlertRoutingDecision:
         """Route an alert to channels based on its severity.
 
         Never raises; unknown severity returns empty channel list with
@@ -116,6 +115,6 @@ class AlertRouter:
         )
 
 
-def route(alert: Any) -> AlertRoutingDecision:
+def route(alert: object) -> AlertRoutingDecision:
     """Module-level convenience: route an alert using a default AlertRouter."""
     return AlertRouter().route(alert)

@@ -60,7 +60,7 @@ class AuditWriterProtocol(Protocol):
     未注册时跳过全局审计事件（best-effort，对齐原 ImportError 容错语义）。
     """
 
-    def write(self, record: dict[str, Any]) -> Any:
+    def write(self, record: dict[str, Any]) -> None:
         """写入一条审计事件。"""
         ...
 

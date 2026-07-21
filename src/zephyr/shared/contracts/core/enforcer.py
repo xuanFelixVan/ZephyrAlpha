@@ -506,7 +506,7 @@ def _check_deep_mutable_nesting(
 
 
 def _match_param_annotation(
-    anno: Any,
+    anno: object,
     contract_type: type[Any],
     contract_name: str,
 ) -> bool:

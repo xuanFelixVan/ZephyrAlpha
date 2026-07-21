@@ -79,7 +79,7 @@ LOOKUP_AUDIT_DIR: Final[Path] = REPO_ROOT / ".runtime" / "lookup_audit"
 SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"
 
 
-def _scalar_match(actual: Any, expected: str) -> bool:
+def _scalar_match(actual: object, expected: str) -> bool:
     """标量字符串匹配（大小写不敏感，None/空视为空串）。"""
     return str(actual or "").lower() == expected.lower()
 

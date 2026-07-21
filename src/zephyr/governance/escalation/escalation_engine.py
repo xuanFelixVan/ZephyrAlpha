@@ -43,7 +43,7 @@ import importlib
 import logging
 import threading
 from datetime import UTC, datetime, timedelta
-from typing import Any, Callable
+from typing import Callable, Protocol, runtime_checkable
 from zephyr.shared.utils.async_utils import run_sync  # 5.12.8 修复：统一 async/sync 边界
 
 logger = logging.getLogger(__name__)
@@ -63,12 +63,23 @@ from zephyr.governance.escalation.escalation_models import (
 from zephyr.governance.resilience_governance.circuit_breaker import CircuitBreaker, CircuitState
 
 
+@runtime_checkable
+class ExtensionDetector(Protocol):
+    """空 Protocol 作为 12 个异构 detector 类的鸭子类型标记。
+
+    Batch 1 (#ARCH-ANY-GOVERNANCE-001)：替换裸 Any 注解。
+    每个 detector 类实现不同的方法集，无法用具体 Protocol 描述统一接口。
+    """
+
+    pass
+
+
 # === 裁定#216 Tier1 P2 table-driven dispatch 重构（2026-07-15） ===
 # 12 个模块级 hook 函数，签名 (event, detector, engine) -> None，就地 mutate event。
 # 每个 hook 对应原 _run_extension_hooks 中的一个 detector 块，按原始顺序注册到 _HOOK_DISPATCH。
 
 
-def _hook_escalation_loop(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_escalation_loop(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """EscalationLoopDetector: record transition + detect_loop → L2."""
     detector.record_transition(event.event_id, "incoming", event.level.name)
     if detector.detect_loop():
@@ -77,7 +88,7 @@ def _hook_escalation_loop(event: EscalationEvent, detector: Any, engine: "Escala
             event.level = EscalationLevel.L2_HUMAN_REVIEW
 
 
-def _hook_persuasion(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_persuasion(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """PersuasionDetector: detect → flag（仅 SECURITY_VIOLATION/DEADLOCK）。"""
     if event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.DEADLOCK):
         flagged, _ = detector.detect(event.description)
@@ -85,7 +96,7 @@ def _hook_persuasion(event: EscalationEvent, detector: Any, engine: "EscalationE
             event.description += " | persuasion_flagged=True"
 
 
-def _hook_deadlock(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_deadlock(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """DeadlockDetector: detect_cycle → L3（仅 DEADLOCK）。"""
     if event.category is RuleCategory.DEADLOCK:
         cycle = detector.detect_cycle()
@@ -95,21 +106,21 @@ def _hook_deadlock(event: EscalationEvent, detector: Any, engine: "EscalationEng
                 event.level = EscalationLevel.L3_CRITICAL
 
 
-def _hook_credential_guard(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_credential_guard(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """CredentialGuard: scan → flag（仅 SECURITY_VIOLATION）。"""
     if event.category is RuleCategory.SECURITY_VIOLATION:
         if hasattr(detector, "scan") and detector.scan(event.description):
             event.description += " | credential_leak_detected=True"
 
 
-def _hook_clock_guard(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_clock_guard(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """ClockGuard: verify → flag。"""
     if hasattr(detector, "verify"):
         if not detector.verify():
             event.description += " | clock_integrity_failed=True"
 
 
-def _hook_command_chain(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_command_chain(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """CommandChainGate: check → flag。"""
     if hasattr(detector, "check"):
         ok, limit = detector.check(event.description)
@@ -117,14 +128,14 @@ def _hook_command_chain(event: EscalationEvent, detector: Any, engine: "Escalati
             event.description += f" | command_chain_exceeded={limit}"
 
 
-def _hook_confidence_estimator(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_confidence_estimator(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """ConfidenceEstimator: estimate → annotate。"""
     if hasattr(detector, "estimate"):
         conf = detector.estimate(event.description)
         event.description += f" | meta_confidence={conf:.2f}"
 
 
-def _hook_drift_detector(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_drift_detector(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """DriftDetector: is_drifting → L2（仅 DRIFT_DETECTED，需 engine._recent_escalations）。"""
     if event.category is RuleCategory.DRIFT_DETECTED:
         if hasattr(detector, "is_drifting"):
@@ -138,7 +149,7 @@ def _hook_drift_detector(event: EscalationEvent, detector: Any, engine: "Escalat
                     event.level = EscalationLevel.L2_HUMAN_REVIEW
 
 
-def _hook_merkle_audit(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_merkle_audit(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """MerkleAudit: record → annotate。"""
     if hasattr(detector, "record"):
         root_hash = detector.record(
@@ -147,7 +158,7 @@ def _hook_merkle_audit(event: EscalationEvent, detector: Any, engine: "Escalatio
         event.description += f" | merkle_root={root_hash[:12]}"
 
 
-def _hook_anti_automation_bias(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_anti_automation_bias(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """AntiAutomationBias: evaluate → flag。"""
     if hasattr(detector, "evaluate"):
         result = detector.evaluate(
@@ -160,7 +171,7 @@ def _hook_anti_automation_bias(event: EscalationEvent, detector: Any, engine: "E
             event.description += " | forced_review=True"
 
 
-def _hook_slo_contract(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_slo_contract(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """SLOContractEngine: get_recommended_scaling → escalate。"""
     if hasattr(detector, "get_recommended_scaling"):
         scaling = detector.get_recommended_scaling()
@@ -172,7 +183,7 @@ def _hook_slo_contract(event: EscalationEvent, detector: Any, engine: "Escalatio
             event.level = EscalationLevel(new_level)
 
 
-def _hook_rebound_detector(event: EscalationEvent, detector: Any, engine: "EscalationEngine") -> None:
+def _hook_rebound_detector(event: EscalationEvent, detector: ExtensionDetector, engine: "EscalationEngine") -> None:
     """ReboundDetector: record + detect_rebound → L4（仅 SECURITY_VIOLATION/REWARD_HACKING_REBOUND）。"""
     if event.category in (RuleCategory.SECURITY_VIOLATION, RuleCategory.REWARD_HACKING_REBOUND):
         owner = event.owner_id or "unknown"
@@ -190,7 +201,7 @@ def _hook_rebound_detector(event: EscalationEvent, detector: Any, engine: "Escal
             detector.mark_rebound_agent(owner)
 
 
-_HOOK_DISPATCH: dict[str, Callable[[EscalationEvent, Any, "EscalationEngine"], None]] = {
+_HOOK_DISPATCH: dict[str, Callable[[EscalationEvent, ExtensionDetector, "EscalationEngine"], None]] = {
     "EscalationLoopDetector": _hook_escalation_loop,
     "PersuasionDetector": _hook_persuasion,
     "DeadlockDetector": _hook_deadlock,
@@ -232,7 +243,7 @@ class EscalationEngine:
         self._recent_escalations: list[EscalationEvent] = []
         self._lock = threading.Lock()
         self._hooks_enabled = hooks_enabled
-        self._extension_detectors: dict[str, Any] = {}
+        self._extension_detectors: dict[str, ExtensionDetector] = {}
         self._register_default_rules()
         if self._hooks_enabled:
             self._load_extension_detectors()

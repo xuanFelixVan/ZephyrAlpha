@@ -42,7 +42,7 @@ AS-CT-005: 跨层审计追踪
 from __future__ import annotations
 
 import uuid
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -260,7 +260,7 @@ class AlphaSignalPipeline:
 
     def _collect_factor_result(
         self,
-        future: Any,
+        future: Future[Any],
         futures: dict,
         factor_signals: list,
         builtins_snapshot: frozenset,

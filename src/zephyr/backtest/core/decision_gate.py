@@ -671,7 +671,7 @@ class DecisionGate:
     @staticmethod
     def _collect_window_points(
         sorted_points: list[tuple[Any, float]],
-        center_value: Any,
+        center_value: int | float,
         center_sharpe: float,
         center_sorted_idx: int,
     ) -> list[tuple[Any, float]]:

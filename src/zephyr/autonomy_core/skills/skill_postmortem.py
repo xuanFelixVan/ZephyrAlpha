@@ -78,7 +78,7 @@ _WHY_PROBES = [
 ]
 
 
-def _load_skill_registry() -> Any:
+def _load_skill_registry() -> dict[str, Any] | None:
     """Load the skill registry cache, returning None on failure."""
     try:
         from zephyr.autonomy_core.skills.skill_loader import SkillLoader
@@ -90,7 +90,7 @@ def _load_skill_registry() -> Any:
         return None
 
 
-def _find_skill_data(layer_registry_cache: Any, skill_id: str) -> dict[str, Any] | None:
+def _find_skill_data(layer_registry_cache: dict[str, Any] | None, skill_id: str) -> dict[str, Any] | None:
     """Locate the skill entry matching skill_id within the registry cache."""
     if not layer_registry_cache:
         return None

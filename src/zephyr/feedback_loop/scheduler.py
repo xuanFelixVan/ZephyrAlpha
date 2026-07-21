@@ -287,7 +287,7 @@ class ExternalPersistenceWriter:
             logger.debug("[FLE-DB] alert persist skipped", exc_info=True)
 
     @staticmethod
-    def persist_failure_pattern(vector_bridge: Any, event: FLEPipelineEvent) -> None:
+    def persist_failure_pattern(vector_bridge: "VectorMemoryProtocol | None", event: FLEPipelineEvent) -> None:
         """5.158.4 重构：从 _run_once 提取 VMS 失败模式持久化逻辑。
 
         治本(风险B): str(diagnosis) 含 uuid diagnosis_id -> 内容哈希每次不同 = 无幂等

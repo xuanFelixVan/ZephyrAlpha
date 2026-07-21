@@ -482,7 +482,7 @@ def _collect_day_prices_single(
         pass
 
 
-def _normalize_day_signals(day_signals: Any, weights: dict[str, float]) -> None:
+def _normalize_day_signals(day_signals: object, weights: dict[str, float]) -> None:
     """对单日信号做dropna/过滤>0/归一化,结果写入weights。
 
     等价于原_get_day_signals中获取day_signals之后的归一化逻辑:

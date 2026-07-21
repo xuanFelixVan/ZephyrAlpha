@@ -94,7 +94,7 @@ class GenesisVerificationResult:
         self.genesis_hash = genesis_hash
 
 
-def _canonical_json(data: Any) -> str:
+def _canonical_json(data: object) -> str:
     """生成确定性 JSON 字符串用于哈希。"""
     return json.dumps(data, sort_keys=True, ensure_ascii=False, default=str)
 

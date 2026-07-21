@@ -130,9 +130,9 @@ class AuditIndexer(AuditIndexerABC):
 
     def __init__(
         self,
-        db_path: Any = None,
-        events_path: Any = None,
-        index_dir: Any = None,
+        db_path: str | Path | None = None,
+        events_path: str | Path | None = None,
+        index_dir: str | Path | None = None,
     ) -> None:
         # 向后兼容：旧 index_dir 调用 → 派生 db_path
         if index_dir is not None and db_path is None:

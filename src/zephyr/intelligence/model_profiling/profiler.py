@@ -42,7 +42,7 @@ import re
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, Callable
 
 from zephyr.intelligence.model_profiling.benchmark_suite import (
     ALL_BENCHMARK_CASES,
@@ -582,7 +582,7 @@ def _score_output_type(case: BenchmarkCase, output: str, score: float) -> float:
 def _set_latency_percentiles(
     profile: ModelProfile,
     all_latencies: list[float],
-    percentile: Any,
+    percentile: Callable[[list[float], float], float],
 ) -> None:
     if all_latencies:
         sorted_lat = sorted(all_latencies)

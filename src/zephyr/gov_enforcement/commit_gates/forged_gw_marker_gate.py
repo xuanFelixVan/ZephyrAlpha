@@ -57,6 +57,7 @@ from __future__ import annotations
 
 import os
 import re
+from pathlib import Path
 from typing import Any
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
@@ -93,7 +94,7 @@ def _extract_session_id(commit_msg: str) -> str | None:
     return match.group(1)
 
 
-def _is_session_registered(project_root: Any, session_id: str) -> bool:
+def _is_session_registered(project_root: str | Path, session_id: str) -> bool:
     """检查 session_id 是否在 SessionRegistry 中注册。
 
     与 post_commit_guard.sh L70 grep '"$session_id"' registry_file 对齐，
@@ -124,7 +125,7 @@ def make_forged_gw_marker_gate() -> GateSpec:
         priority=29 早于 DIRECTORY-CONTRACT=30 和 SESSION-REQUIRED=31，确保 GW 标记合法性最先检查。
     """
 
-    def _check(gateway: Any, files: list[str], **kwargs: Any) -> tuple[bool, str]:
+    def _check(gateway: object, files: list[str], **kwargs: Any) -> tuple[bool, str]:
         """检测 commit message 中 [GW:*] 标记合法性。
 
         判定逻辑：

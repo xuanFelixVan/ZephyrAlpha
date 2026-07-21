@@ -173,7 +173,7 @@ class MetaAuditLogger:
             "timestamp": now_utc().isoformat(),
         })
 
-    def log_query(self, query: Any, result_count: int = 0) -> None:
+    def log_query(self, query: object, result_count: int = 0) -> None:
         self._entries.append({
             "operation": "query",
             "query": str(query),

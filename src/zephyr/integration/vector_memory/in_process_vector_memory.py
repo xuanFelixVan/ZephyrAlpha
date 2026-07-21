@@ -314,7 +314,7 @@ class InProcessVectorMemory:
 
     def _query_chromadb(
         self,
-        col: Any,
+        col: object,
         query: str,
         collection_name: str,
         k: int,

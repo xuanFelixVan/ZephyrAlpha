@@ -70,7 +70,7 @@ class DelegationChainAuditor:
     detect_escalation(chain) returns list[tuple[int, EscalationType, str]].
     """
 
-    def __init__(self, max_depth: int = MAX_DELEGATION_DEPTH, config: Any = None) -> None:
+    def __init__(self, max_depth: int = MAX_DELEGATION_DEPTH, config: dict[str, Any] | None = None) -> None:
         self.max_depth = max_depth
         self.config = config or {}
 

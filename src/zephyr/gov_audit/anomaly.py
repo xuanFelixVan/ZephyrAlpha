@@ -144,7 +144,7 @@ class AnomalyDetector:
         "root",
     }
 
-    def __init__(self, event_log_path: Any = None, window_size: int = 50) -> None:
+    def __init__(self, event_log_path: int | Path | None = None, window_size: int = 50) -> None:
         # 向后兼容：旧调用 AnomalyDetector(50) 将 int 位置参视为 window_size
         if isinstance(event_log_path, int):
             window_size = event_log_path
@@ -397,7 +397,7 @@ class AnomalyDetector:
         if len(self._values) > self._window_size * 2:
             self._values = self._values[-self._window_size :]
 
-    def detect(self, value: Any, threshold: float = 2.0) -> Any:
+    def detect(self, value: dict[str, Any] | float | int, threshold: float = 2.0) -> AnomalyEvent | dict[str, Any] | None:
         """检测异常——双 API 类型分派（G-CT-002）。
 
         本方法根据 ``value`` 的类型分派到两条独立的检测路径：

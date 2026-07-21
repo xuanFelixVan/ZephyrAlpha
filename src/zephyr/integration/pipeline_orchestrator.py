@@ -99,6 +99,7 @@ if TYPE_CHECKING:
 from zephyr.infrastructure.pipeline.circuit_breaker_manager import CircuitBreakerManager
 from zephyr.infrastructure.pipeline.cost_tracker import CostTracker
 from zephyr.infrastructure.pipeline.ct_pipe_routing import (
+    CtPipeRoutingHints,
     PipelineRoutingInputsError,
     ct_pipe_hints_from_task_card,
     modules_slice_from_node,
@@ -759,7 +760,7 @@ class PipelineOrchestrator:
     def _resolve_pipeline_and_modules(
         self,
         task_card: TaskCard,
-        hints: Any,
+        hints: CtPipeRoutingHints | None,
         dry_run: bool,
         ct_warnings: list[str],
     ) -> tuple[str, list[str], Any] | PipelineResult:
@@ -811,8 +812,8 @@ class PipelineOrchestrator:
     def _setup_lock_and_skills(
         self,
         task_card: TaskCard,
-        hints: Any,
-        ct_decision: Any,
+        hints: CtPipeRoutingHints | None,
+        ct_decision: PipelineRouteDecision | None,
         ct_warnings: list[str],
         dry_run: bool,
         modules: list[str],
@@ -891,7 +892,7 @@ class PipelineOrchestrator:
     def _inject_skill(
         self,
         task_card: TaskCard,
-        hints: Any,
+        hints: CtPipeRoutingHints | None,
         ct_warnings: list[str],
     ) -> SkillInjectionResult | None:
         """技能注入（裁定#216 P4：从 _setup_lock_and_skills 提取以降低复杂度）。

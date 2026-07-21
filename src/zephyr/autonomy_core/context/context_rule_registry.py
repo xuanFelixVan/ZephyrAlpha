@@ -68,7 +68,7 @@ def _condition_matches_keywords(cond_keywords: list[Any], input_text: str) -> bo
     return False
 
 
-def _condition_matches_on_demand(on_demand: Any, kwargs: dict[str, Any]) -> bool:
+def _condition_matches_on_demand(on_demand: object, kwargs: dict[str, Any]) -> bool:
     return bool(on_demand and kwargs.get("include_cold", False))
 
 

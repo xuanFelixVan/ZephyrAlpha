@@ -504,7 +504,7 @@ class MCPGateway(BaseMCPServer):
         )
 
     def _check_circuit_breaker(
-        self, routed_sid: str, tool_name: str, session_id: str, req_id: Any, t0: float
+        self, routed_sid: str, tool_name: str, session_id: str, req_id: str | int | None, t0: float
     ) -> dict[str, Any] | None:
         """检查熔断器状态，返回错误响应 dict 或 None（允许通过）。"""
         cb = self._circuit_breakers.get(routed_sid)
@@ -526,7 +526,7 @@ class MCPGateway(BaseMCPServer):
 
     def _try_gateway_local_tool(
         self, routed_sid: str, tool_name: str, params: dict[str, Any],
-        req_id: Any, session_id: str, t0: float,
+        req_id: str | int | None, session_id: str, t0: float,
     ) -> dict[str, Any] | None:
         """处理 gateway 自身工具（mcp_gateway），返回响应 dict 或 None（非本地工具）。"""
         if routed_sid != "mcp_gateway":
@@ -558,7 +558,7 @@ class MCPGateway(BaseMCPServer):
 
     def _audit_and_track(
         self, error: dict | None, tool_name: str, arguments: dict,
-        session_id: str, cb: Any, duration_ms: int,
+        session_id: str, cb: CircuitBreaker | None, duration_ms: int,
     ) -> None:
         """记录审计日志并更新熔断器状态。"""
         status = "error" if error else "success"
@@ -632,7 +632,7 @@ class MCPGateway(BaseMCPServer):
         return False, f"role {role!r} not allowed for {tool_name!r} on {routed_sid!r}"
 
     def _check_sunset(
-        self, tool_name: str, routed_sid: str, req_id: Any,
+        self, tool_name: str, routed_sid: str, req_id: str | int | None,
     ) -> dict[str, Any] | None:
         """5.35.4：APIVersionContract——sunset_date 已过的工具被拦截。
 

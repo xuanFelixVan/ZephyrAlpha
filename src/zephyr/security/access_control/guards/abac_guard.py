@@ -89,7 +89,7 @@ _BLITZ_THRESHOLD = 5
 _BLITZ_WINDOW_SECONDS = 60.0
 
 
-def _maturity_value(maturity: Any) -> str:
+def _maturity_value(maturity: MaturityLevel | str | None) -> str:
     """提取成熟度的字符串值——兼容 MaturityLevel 枚举与 pydantic 转换后的纯字符串。"""
     if maturity is None:
         return "L0_INTERN"
@@ -98,7 +98,7 @@ def _maturity_value(maturity: Any) -> str:
     return str(maturity)
 
 
-def _maturity_to_enum(maturity: Any) -> MaturityLevel:
+def _maturity_to_enum(maturity: MaturityLevel | str | None) -> MaturityLevel:
     """将 maturity 归一化为 MaturityLevel 枚举——兼容 str/Enum/None。"""
     if isinstance(maturity, MaturityLevel):
         return maturity
@@ -110,7 +110,7 @@ def _maturity_to_enum(maturity: Any) -> MaturityLevel:
         return MaturityLevel.L0_INTERN
 
 
-def _sensitivity_to_enum(sensitivity: Any) -> SensitivityLabel | None:
+def _sensitivity_to_enum(sensitivity: SensitivityLabel | str | None) -> SensitivityLabel | None:
     """将 sensitivity 归一化为 SensitivityLabel 枚举——无法识别时返回 None。"""
     if isinstance(sensitivity, SensitivityLabel):
         return sensitivity
@@ -155,7 +155,7 @@ class TLBRecord:
 
 
 def _check_maturity_gate(
-    maturity: Any, operation: str
+    maturity: MaturityLevel | str | None, operation: str
 ) -> tuple[bool, str] | None:
     """成熟度门控：L0_INTERN 只能读，返回拒绝元组或 None（继续）."""
     maturity_enum = _maturity_to_enum(maturity)
@@ -166,7 +166,7 @@ def _check_maturity_gate(
 
 
 def _check_sensitivity_gate(
-    sensitivity: Any, maturity: Any
+    sensitivity: SensitivityLabel | str | None, maturity: MaturityLevel | str | None
 ) -> tuple[bool, str] | None:
     """敏感度门控，返回拒绝元组或 None（继续）."""
     sensitivity_enum = _sensitivity_to_enum(sensitivity)
@@ -281,7 +281,7 @@ class ABACGuard:
         )
 
     def _evaluate_tlb(
-        self, agent_id: str, maturity: Any
+        self, agent_id: str, maturity: MaturityLevel | str | None
     ) -> tuple[bool, str] | None:
         """评估 TLB 限额，返回拒绝元组或 None（继续）."""
         if agent_id in self._tlb:
@@ -296,7 +296,7 @@ class ABACGuard:
         return None
 
     def _check_temporal_gate(
-        self, temporal: TemporalCategory, maturity: Any, operation: str
+        self, temporal: TemporalCategory, maturity: MaturityLevel | str | None, operation: str
     ) -> tuple[bool, str] | None:
         """时间门控，返回拒绝元组或 None（继续）."""
         maturity_enum = _maturity_to_enum(maturity)

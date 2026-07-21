@@ -732,7 +732,7 @@ class AgentOrchestrator:
         default_token_budget: int = DEFAULT_CONTEXT_TOKEN_BUDGET,
         sanitize_llm_context: bool = True,
         input_sanitizer: InputSanitizer | None = None,
-        lsg_gateway: Any | None = None,
+        lsg_gateway: "LSGSecurityGateway | None" = None,
         enable_lsg: bool = True,
     ) -> None:
         self._router = router
