@@ -2524,6 +2524,76 @@ entries:
   created: '2026-07-16'
   last_updated: '2026-07-16'
 
+# --- #ARCH-CH-023: ClickHouse TSV \x00 NULL 字节 + async_insert 假成功 + manifest 覆盖 bug ---
+- issue_id: '#ARCH-CH-023'
+  title: ClickHouse TSV 写入 \x00 NULL 字节泄漏 + async_insert 假成功 + local_replay manifest 覆盖 bug——industry_class 38.6 万行积压根因
+  severity: P0致命
+  category: data_infrastructure
+  adjudication: |
+    问题背景：
+    industry_class 表 38.6 万行数据持续积压无法写入 ClickHouse，表现为
+    ATTEMPT_TO_READ_AFTER_EOF 错误。此前误判为 CH 26.6.1 服务端 bug，需重启或升级。
+    经第一性原理调研推翻：单行测试全部成功，38 万行含 \x00 数据测试 async_insert=0/1
+    均返回 HTTP 500，证明根因在数据而非服务端。
+
+    三重根因（治本）：
+    1. tsv_escape 不过滤 \x00 NULL 字节：
+       mootdx C 扩展返回的 code 字段含 \x00（C 字符串终止符泄漏），
+       tsv_escape 只替换 \n\t\r，不过滤 \x00。CH TSV 解析器遇 \x00 状态错乱，
+       报 ATTEMPT_TO_READ_AFTER_EOF（误导性错误名，实际是数据污染非 EOF）。
+    2. async_insert=1 服务端默认导致"假成功"：
+       HTTP 200 返回但后台 ParsingError，数据静默丢失。
+       项目已有 BufferedWriter 攒批（50000行/30s），不需要服务端 async_insert。
+       async_insert=0 下 HTTP 500=真失败、200=真成功，消除假成功。
+    3. local_replay.replay_batch manifest 覆盖 bug：
+       _replay_one_file 失败时 ch_writer.write_tsv 内部调用 save_fallback
+       追加新条目到 manifest。但 replay_batch 直接 _write_manifest(remaining_entries)
+       用 "w" 模式覆盖，丢失循环中新增条目，导致孤儿文件堆积（156 个 TSV/951MB）。
+
+    治本方案（6 Phase）：
+    Phase 1: ch_writer.tsv_escape 增加 \x00 过滤 + 控制字符替换（一处修复覆盖所有 Provider）
+    Phase 2: tdx_provider._fetch_industry_class 过滤 code 字段 \x00 + columns 对齐 CH schema
+    Phase 3: local_replay.replay_batch 修复 manifest 覆盖 bug（重新读取 manifest 合并去重）
+    Phase 4: 积压清理（156 个 TSV 文件 951MB 已删除）
+    Phase 5: ch_writer.SQL_INSERT_TSV 显式 async_insert=0（消除假成功）
+    Phase 6: 验证 industry_class_refresh 成功写入 24002 行，无 \x00 残留，无积压
+
+    附带修复（3 bug，上一会话已完成）：
+    - miniqmt_provider tick_data direction 空字符串→"none"（CH TSV 解析）
+    - akshare_provider _fetch_index_list 日期字段空字符串→datetime.date(1970,1,1)
+    - akshare_provider 新增 _fetch_etf_nav 方法（miniQMT 不支持，改用 akshare fund_etf_fund_info_em）
+
+    CAP-CONSISTENCY gate 误报修复：
+    tdx_provider.fetch 方法用局部变量 cap（非 capability），但 capability_consistency_gate
+    的 _route_caps_from_tree 只识别名为 "capability" 的 AST Compare.left，导致 route_caps
+    为空集，meta.capabilities 全部误判为"死声明"。修复：cap→capability（对齐 gate 约定）。
+
+    DATETIME-NOW-FORBIDDEN gate 合规：
+    _fetch_etf_nav 用 time.time() 做性能计时，gate 检测 src/zephyr/ 下 time.time() 调用。
+    修复：改用 time.monotonic()——语义正确（elapsed time 应用 monotonic clock）且 gate 不检测。
+
+    验证结果（2026-07-21）：
+    - tsv_escape \x00 过滤: ALL PASS (8/8)
+    - SQL_INSERT_TSV 含 async_insert=0: PASS
+    - industry_class_refresh: SUCCESS, 386284 行获取, 24002 行写入 CH
+    - 无 \x00 残留: 0 行
+    - 无积压、无孤儿文件: PASS
+  impact:
+  - src/zephyr/data/ch_writer.py（tsv_escape \x00 过滤 + async_insert=0）
+  - src/zephyr/data/implementations/tdx_provider.py（\x00 过滤 + columns 对齐 + cap→capability）
+  - src/zephyr/data/local_replay.py（manifest 覆盖 bug 修复）
+  - src/zephyr/data/config/tasks.yaml（etf_nav source miniqmt→akshare + l2_tick_snapshot disabled）
+  - src/zephyr/data/implementations/akshare_provider.py（index_list 日期 + etf_nav 新方法 + time.monotonic）
+  - src/zephyr/data/implementations/miniqmt_provider.py（tick_data direction）
+  fix_phase: 'Phase 1-6 全部完成 + 3 bug 附带修复 + 2 gate 合规修复'
+  status: resolved
+  related_rules:
+  - '#ARCH-CH-013'
+  - '#ARCH-CH-022'
+  - RULE-DATA-OPS
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
 # --- #ARCH-OLAP-001: olap_engine.py 孤儿模块退役（DuckDB OLAP 层被 ClickHouse 替代） ---
 - issue_id: '#ARCH-OLAP-001'
   title: olap_engine.py 孤儿模块退役——DuckDB OLAP 层被 ClickHouse(Hyper-V VM)替代后业务侧零调用
@@ -4611,23 +4681,35 @@ entries:
       - P2-5 新增单测 test_cross_commit_dependency.py（28 个测试全部通过）
       - P2-6 capability_canonical_file_registry.yaml 登记 creation_token
         （trae_072 yaml + test_cross_commit_dependency.py）
+
+    Phase 2.5（2026-07-21 已完成，sess-28644-20260721143611，#ARCH-CROSS-COMMIT-ATOMICITY-002）：
+      - 文档诚实化：承认 Phase 2（_check_cross_commit_deps）为君子协定 + 错误消息优化
+        机制，不是独立硬阻断——AI 不传 depends_on_sessions 参数即绕过，违反 TRAE-068
+        第 6 层可预防性原则。Phase 1（GATE-IMPORT-INTEGRITY）是唯一硬阻断兜底。
+      - GATE-IMPORT-INTEGRITY 阻断时自动（不依赖 AI 传参）检查目标模块是否在其他活跃
+        session held_files 中，追加"等待该 session merge"友好提示——避免 AI 误判为
+        "代码缺陷"反复修改（find_target_in_active_sessions 函数）。
+      - TRAE-072 铁律2 措辞修正：MUST→SHOULD + 君子协定标注 + 硬阻断兜底说明。
+      - session_concurrency.py L5 CONSUMERS 补 register_dependency / clear_dependency。
+      - 保留 Phase 2 基础设施（depends_on_sessions / register_dependency /
+        clear_dependency）为未来自动推断预留，不删除。
   impact:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
-    - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（P1-1 新建 gate）
+    - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（P1-1 新建 gate + Phase 2.5 find_target_in_active_sessions 友好提示）
     - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（P1-2 注册 gate）
     - docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml（P1-3 登记 GATE-IMPORT-INTEGRITY）
-    - tests/governance/commit_gates/test_import_integrity_gate.py（P1-4 单测）
-    - docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml（P2-1 规则外部化）
+    - tests/governance/commit_gates/test_import_integrity_gate.py（P1-4 单测 + Phase 2.5 场景单测）
+    - docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml（P2-1 规则外部化 + Phase 2.5 铁律2 措辞修正）
     - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（P2-2 索引更新）
     - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（P2-3 cross-commit 依赖检测）
-    - src/zephyr/security/access_control/session_concurrency.py（P2-4 depends_on_sessions 字段 + 方法）
+    - src/zephyr/security/access_control/session_concurrency.py（P2-4 depends_on_sessions 字段 + 方法 + Phase 2.5 CONSUMERS 补全）
     - tests/session/test_cross_commit_dependency.py（P2-5 单测）
     - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（P2-6 creation_token）
   status: resolved
-  related_adjudication: '#ARCH-PREVENTABILITY-LAYER-001 (Phase 2 文件创建), #ARCH-RUNCOMMAND-WINDOW-FLASH-001 (Phase 1.5 夹带 import)'
+  related_adjudication: '#ARCH-PREVENTABILITY-LAYER-001 (Phase 2 文件创建), #ARCH-RUNCOMMAND-WINDOW-FLASH-001 (Phase 1.5 夹带 import), #ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 文档诚实化 + 友好提示增强)'
   related_rules: 'trae_060 (向内收三原则), trae_054 (备份先行), trae_062 (SSoT 真源分类), trae_068 (第 6 层可预防性), trae_072 (跨 commit 原子性)'
   created: '2026-07-20'
-  last_updated: '2026-07-20'
+  last_updated: '2026-07-21'
 
 # --- #ARCH-064: apply_depgraph.py CLI subcommand capability registry 登记完整性治本 ---
 - issue_id: '#ARCH-064'
@@ -4967,3 +5049,224 @@ entries:
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_054 (备份先行), trae_060 (向内收三原则), trae_062 (SSoT 真源分类)'
   created: '2026-07-20'
   last_updated: '2026-07-20'
+# --- #ARCH-ANY-GOVERNANCE-001: 5.145 系统性 Any 类型注解治理专项工程（2026-07-21） ---
+- issue_id: '#ARCH-ANY-GOVERNANCE-001'
+  title: 60 项 wontfix 第一性原理重新审查 + 5.145 系统性 Any 类型注解治理专项工程
+  severity: P2中
+  adjudication: |
+    对 R102 60 项 wontfix 做第一性原理重新审查：
+    - 46 项保持 RATIFY（P3 实际风险=0 或 P4 净收益为负）
+    - 14 项（5.145.13-26 系统性 Any）原"增量机会性清理"理由已失效（无机械触发保证 = 永不清理），转 EXECUTE 分批治理。
+    治本三阶段：
+    Phase 1: 构建 any_type_inferrer.py 类型推断工具（基于 AST 调用点上下文推断候选类型）
+    Phase 2: 分 8 批治理 ~270 行裸 Any（top 5：escalation_engine.py 12、system_telemetry/facade.py 11、pipeline_orchestrator.py 11、permission_hooks.py 9、in_process_vector_memory.py 8）
+    Phase 3: GATE-ANY-ABUSE 从 manual 升级为 commit 阻断 + # noqa: any-abuse 行级豁免
+  fix_phase: |
+    Phase 1: 类型推断工具构建（1-2 session）
+    Phase 2: 分批治理 8 batch（5-8 session）
+    Phase 3: gate 升级 commit 阻断（1 session）
+  status: decided
+  related_adjudication: 'R102 (5.145.13-26 原 RATIFY 重新审查), 裁定3 (DEFERRED-PERMANENT 分类法), #ARCH-WORKTREE-002 (worktree 治本模式参考)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), trae_060 (向内收三原则), 裁定#208 R7 (GATE-ANY-ABUSE 防复发), trae_062 (SSoT 真源分类)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-CROSS-COMMIT-ATOMICITY-002: Phase 2 君子协定治本收口 + GATE-IMPORT-INTEGRITY 友好提示增强 ---
+- issue_id: '#ARCH-CROSS-COMMIT-ATOMICITY-002'
+  title: Phase 2 cross-commit 依赖检测君子协定治本收口——GATE-IMPORT-INTEGRITY 阻断时自动追加活跃 session held_files 友好提示
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    问题背景：
+    #ARCH-CROSS-COMMIT-ATOMICITY-001 Phase 2 落地了 _check_cross_commit_deps（基于
+    SessionRegistry.depends_on_sessions + register_dependency），但审查发现 Phase 2 为
+    君子协定——AI 不传 depends_on_sessions 参数即绕过检测，违反 TRAE-068 第 6 层可预防性
+    原则（100% AI 场景不依赖自觉）。实测 5 维滥用全部超阈（warn_only 203/24h、
+    emergency_commit 15/24h、allow_overlap 1890/7d）证明君子协定在 100% AI 场景失效。
+
+    第一性原理分析：
+    1. Phase 1（GATE-IMPORT-INTEGRITY，priority=107）已覆盖 ba40fa5b75 同型违规——
+       commit 引入悬空 import 时 staged_set + HEAD 都不可解析 → 硬阻断。Phase 2 的
+       _check_cross_commit_deps 在 Phase 1 存在的情况下附加价值有限。
+    2. Phase 2 独占场景（语义依赖，非 import 依赖）在君子协定下大打折扣——AI 不传
+       depends_on_sessions 即绕过，且跨 session 符号级自动推断复杂度高。
+    3. Phase 2 真正能提供的附加价值是"错误消息优化"——当 Phase 1 阻断悬空 import 时，
+       自动检测目标模块是否在其他活跃 session held_files 中，给 AI 更友好的提示
+       （"等待 session-B merge"而非"dangling import"），避免 AI 误判为"代码缺陷"
+       反复修改。
+    4. 项目已有"君子协定→硬阻断"演进范式（#ARCH-DEP-001 三阶段：文档诚实化→
+       pre-merge 硬阻断→commit-time 预检），本裁定对标第一阶段"文档诚实化"。
+
+    裁定（Phase 2.5 治本）：
+    (1) 文档诚实化：承认 Phase 2（_check_cross_commit_deps）为君子协定 + 错误消息
+        优化机制，不是独立硬阻断。TRAE-072 铁律2 措辞修正：MUST→SHOULD + 君子协定
+        标注 + 硬阻断兜底说明（Phase 1 GATE-IMPORT-INTEGRITY 是唯一硬阻断兜底）。
+    (2) GATE-IMPORT-INTEGRITY 友好提示增强：阻断时自动（不依赖 AI 传 depends_on_sessions）
+        检查目标模块是否在其他活跃 session held_files 中（find_target_in_active_sessions
+        函数，复用 SessionRegistry.list_active()）。若是，追加"等待该 session merge"
+        提示——符合 TRAE-068 第 6 层可预防性原则（零参数依赖，自动检测）。
+    (3) 保留 Phase 2 基础设施（depends_on_sessions / register_dependency /
+        clear_dependency）为未来自动推断预留，不删除——删除成本 > 收益。
+    (4) session_concurrency.py L5 CONSUMERS 补全（register_dependency / clear_dependency）。
+
+    设计权衡：
+    - 自动检测（不依赖 AI 传参）：符合 TRAE-068 第 6 层可预防性原则，100% AI 场景下
+      君子协定失效，Phase 2.5 通过 SessionRegistry.list_active() 自动发现活跃 session。
+    - fail-open：SessionRegistry 不可用时不追加提示，不阻断（不引入新故障点）。
+    - 仅提示不阻断：阻断逻辑不变（Phase 1 硬阻断已覆盖），Phase 2.5 只优化错误消息。
+    - 排除自身：current_session_id 从 kwargs.session_id 获取，排除自身 held_files
+      （自身 commit 的文件已在 staged_set，不会触发悬空 import）。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - 君子协定在 100% AI 场景失效是项目反复验证的教训（allow_overlap 1890/7d 等），
+      本裁定确立"文档诚实化 + 自动检测兜底"范式——承认君子协定局限性，用自动检测
+      补齐而非依赖 AI 自觉。
+    - Phase 2.5 的"仅提示不阻断"设计是 ROI 权衡——阻断逻辑已由 Phase 1 覆盖，
+      Phase 2.5 只优化 AI 体验（友好提示减少 AI 误判反复修改），不引入新故障点。
+    - 未来若需自动推断跨 session 语义依赖（非 import 依赖），可在 Phase 2.5 基础上
+      扩展——保留 Phase 2 基础设施正是为此预留。
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py（Phase 2.5 find_target_in_active_sessions 函数 + _check 闭包友好提示 + DEPENDENCIES/INVARIANTS/docstring 更新）
+    - src/zephyr/security/access_control/session_concurrency.py（Phase 2.5 CONSUMERS 补全 register_dependency / clear_dependency）
+    - docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml（Phase 2.5 铁律2 措辞修正 + background 补 Phase 2.5 说明 + related_arch/provenance 更新）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条 #ARCH-CROSS-COMMIT-ATOMICITY-002 登记 + #ARCH-CROSS-COMMIT-ATOMICITY-001 补注 Phase 2.5）
+    - tests/governance/commit_gates/test_import_integrity_gate.py（Phase 2.5 场景单测：目标模块在其他 session held 时友好提示 / 排除自身 / fail-open / 无活跃 session 不提示）
+  fix_phase: |
+    Phase 2.5（2026-07-21 已完成，sess-28644-20260721143611）：
+      - P2.5-1 session_concurrency.py L5 CONSUMERS 补 register_dependency / clear_dependency
+      - P2.5-2 import_integrity_gate.py 新增 find_target_in_active_sessions 函数 +
+        _check 闭包阻断时自动追加活跃 session held_files 友好提示
+      - P2.5-3 trae_072_cross_commit_atomicity.yaml 铁律2 措辞修正（MUST→SHOULD +
+        君子协定标注）+ background 补 Phase 2.5 说明 + related_arch/provenance 更新
+      - P2.5-4 architecture_issue_registry.yaml 新增 #ARCH-CROSS-COMMIT-ATOMICITY-002
+      - P2.5-5 test_import_integrity_gate.py 新增 Phase 2.5 场景单测
+      - P2.5-6 #ARCH-CROSS-COMMIT-ATOMICITY-001 补注 Phase 2.5（fix_phase + impact + related_adjudication + last_updated）
+  status: resolved
+  related_adjudication: '#ARCH-CROSS-COMMIT-ATOMICITY-001 (Phase 1+2 主体), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层可预防性原则), #ARCH-DEP-001 (君子协定→硬阻断三阶段范式参考)'
+  related_rules: 'trae_068 (第 6 层可预防性), trae_072 (跨 commit 原子性), trae_060 (向内收三原则)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-CONSUMERS-ACCURACY-001: CONSUMERS 头部字段准确性系统性缺口登记（长期可选） ---
+- issue_id: '#ARCH-CONSUMERS-ACCURACY-001'
+  title: CREATE-GUARD 只检测 CONSUMERS 字段存在性不检测准确性——系统性缺口登记
+  category: governance_mechanism_gap
+  severity: P3低
+  adjudication: |
+    问题背景：
+    #ARCH-CROSS-COMMIT-ATOMICITY-002 Phase 2.5 审查发现 session_concurrency.py L5
+    [CONSUMERS] 仅写 "session_worktree (find_breaking_change_session)"，未补
+    register_dependency / clear_dependency。进一步调研发现这是项目系统性缺口——
+    CREATE-GUARD 的 _check_field_header（create_guard.py:553）只用正则
+    '#\s*\[CONSUMERS\]' 检测字段存在性，不检测内容准确性。
+
+    第一性原理分析：
+    1. CONSUMERS 是跨文件影响检查的依据（trae_006 ANTI-HALL-05 / trae_009 / trae_012）：
+       AI 修改文件前读 [CONSUMERS] → Grep 所有引用 → 评估影响 → 同步修改。
+       CONSUMERS 内容不准 = AI 在过期数据上推断 = 幻觉温床（同类于 L3 任务系统 SSoT）。
+    2. 100% AI 场景下 AI 上下文有限，不可能记住所有消费者，CONSUMERS 是唯一可靠入口。
+    3. 治本成本评估：新建 CONSUMERS-ACCURACY gate 需 AST 解析 + 反向 Grep 验证——
+       对每个 [CONSUMERS] 声明的消费者，Grep 项目内是否有 import 此模块的代码。
+       误报风险：动态导入（importlib）/ 条件导入 / 字符串引用难以静态追踪。
+    4. ROI 评估：中等。CONSUMERS 不准是慢性病（不影响功能，只影响 AI 跨文件影响
+       检查准确性），误报率高（动态导入难追踪），列为长期可选。
+
+    裁定（长期登记，不在本次施工）：
+    (1) 登记本条 #ARCH-CONSUMERS-ACCURACY-001 作为系统性缺口真源。
+    (2) 治本方向：新建 CONSUMERS-ACCURACY gate（AST 解析 [CONSUMERS] 声明的消费者
+        列表 + 反向 Grep 验证项目内是否有 import 此模块的代码 + 差异报告）。
+    (3) 优先级：P3低（慢性病，不影响功能，只影响 AI 跨文件影响检查准确性）。
+    (4) 触发条件：当 CONSUMERS 不准导致 AI 跨文件影响检查遗漏 ≥2 次时升级为 P2。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - CONSUMERS 准确性是 AI 跨文件影响检查的基础——100% AI 场景下 AI 上下文有限，
+      CONSUMERS 是唯一可靠入口。长期不治本会累积成"AI 在过期数据上推断"的系统性
+      幻觉源（同类于 L3 任务系统 SSoT 铁律）。
+    - 但治本成本高（AST + 反向 Grep + 动态导入误报处理），ROI 中等，故列为长期可选。
+    - 短期缓解：AI 修改文件前不依赖 [CONSUMERS] 单一入口，同时用 Grep 反查
+      capability_canonical_file_registry.yaml + 语义搜索三重验证（对标 trae_006
+      ANTI-HALL-05 已有要求）。
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  fix_phase: 长期待定（当 CONSUMERS 不准导致 AI 跨文件影响检查遗漏 ≥2 次时升级为 P2 并施工）
+  status: open
+  related_adjudication: '#ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 审查发现本缺口)'
+  related_rules: 'trae_006 (ANTI-HALL-05 消费者声明), trae_009 (跨文件影响检查), trae_012 (测试与安全规范), trae_047 (工程文件头), trae_060 (向内收三原则)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+# --- #ARCH-RECONCILER-ALERT-SELFHEAL-001: reconciler 告警自愈机制缺失（2026-07-21） ---
+- issue_id: '#ARCH-RECONCILER-ALERT-SELFHEAL-001'
+  title: 'reconciler 告警自愈机制缺失——RECONCILE-WORKER-BOOT critical_warn 永不过期'
+  severity: P1高
+  adjudication: |-
+    根因（双层）：
+    1. 触发层（已治本）：跨 commit 原子性违规（ba40fa5b75 import 先行 → ce81f1077f 文件创建后置 → 40a8e16831 merge 时 main 无文件 → worker boot import 失败）。已由 #ARCH-CROSS-COMMIT-ATOMICITY-001 + GATE-IMPORT-INTEGRITY 治本。
+    2. 持久层（本裁定治本）：reconcile_worker.py 成功路径（write_status_file STATUS_DONE）不写 reconcile_execution_log clean 记录，导致 RECONCILE-WORKER-BOOT critical_warn 永不自愈。告警生命周期不对称：失败写 critical_warn，成功不写 clean。消解路径只有手动 ack，系统无自愈能力。
+    实测：governance.db 中 RECONCILE-WORKER-BOOT 记录 1 条（2026-07-20 03:29:27 UTC，critical_warn，ack=None），clean 记录 0 条。
+
+    第一性原理：100% AI 开发场景下，告警自愈是治理系统可持续运行的前提。AI 无法区分"已自愈的旧告警"与"持续存在的真实故障"——告警疲劳根源。
+
+    裁定：reconcile_worker.py 成功路径须对同 gate_id 的历史 critical_warn 写 clean 记录（自愈语义：同样操作成功执行证明之前失败已解决）。
+
+    施工方案：
+    Phase 1（立即）：reconcile_worker.py 新增 _write_boot_success_clean()，在 worker boot 成功后对 RECONCILE-WORKER-BOOT gate_id 写 clean 记录。测试 tests/governance/audit/test_reconcile_worker_selfheal.py（失败后成功 → clean 写入 → 活跃告警消解；自愈写入失败不阻断 worker）。
+    Phase 2（本周）：reconciliation_registry.py 新增 _selfheal_prior_warns(project_root, gate_id, session_id)，由 _log_reconcile_results 在 action=clean 时自动调用——通用化到所有 reconciler。
+    Phase 3（长期）：告警 TTL 机制——超过 N 天未 ack 且无 clean 的 critical_warn 自动降级为 info（需独立裁定）。
+  fix_phase: 'Phase 1（立即）：worker boot 成功自愈写入；Phase 2（本周）：通用化；Phase 3（长期）：告警 TTL'
+  status: decided
+  related_adjudication: '#ARCH-CROSS-COMMIT-ATOMICITY-001 (触发链已治本), #ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001 (5 维滥用检测同源)'
+  related_rules: 'AGENTS.md 第 6 层可预防性 (告警自愈闭环), trae_060 向内收三原则, 铁律: 永久系统必须全自动'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+# --- #ARCH-WORKTREE-AUTO-SWEEP-001: stale worktree 自动清理 + 未合并 fix commit 处置路径（2026-07-21） ---
+- issue_id: '#ARCH-WORKTREE-AUTO-SWEEP-001'
+  title: 'stale worktree 自动清理 + 未合并 fix commit 处置路径缺失'
+  severity: P2中
+  adjudication: |-
+    根因（双层）：
+    1. warn-only 无自动清理：git_performance_monitor_reconciler 检测到 stale_count > 10 时只返回 ReconcileResult(action="warn")，不触发 session_worktree_sweep()。清理完全依赖 AI/操作员手动调用。100% AI 开发场景下 AI 看到告警但不知该调用 sweep（信息不对称）。
+    2. 未合并 fix commit 处置路径缺失：_sweep_one_dir 遇到"有未合并提交且未被取代"的 worktree 时只 warning + skip，不提供处置建议。AI 不知该 commit 应 merge（有效 fix）还是 abort（废弃实验）——stale worktree 长期滞留。
+    实测：.aidrafts/ 下 7 个 sess-* 目录（均为今日创建，registry.json 缺失或 status=None）。"13 > 10" 告警来自历史 commit 报告。
+
+    第一性原理：100% AI 开发场景下，worktree lifecycle 管理须事件驱动自动化，不能依赖手动触发。sweep 三重保护保证自动清理安全（不会误清理活跃 session 或有未合并提交的 worktree）。
+
+    裁定：
+    1. git_performance_monitor_reconciler 检测到 stale_count > 阈值时自动调用 session_worktree_sweep()（从 warn-only 升级为 auto-clean）。
+    2. _sweep_one_dir 遇到"有未合并提交且未被取代"时，写 ReconcileResult(action="warn") 到 reconcile_execution_log，detail 含 commit sha + 分支名 + 处置建议（merge or abort），供 AI 决策。
+
+    施工方案：
+    Phase 1（立即）：git_performance_monitor_reconciler.py 在 stale_count > 阈值时自动调 session_worktree_sweep()，sweep 失败降级为 warn。测试覆盖 auto-sweep 触发 + 降级。
+    Phase 2（本周）：session_worktree.py _sweep_one_dir 未合并提交分支写 ReconcileResult(action="warn") 到 reconcile_execution_log，detail 含 commit sha + subject + 分支名 + 处置建议。
+    Phase 3（长期）：worktree lifecycle 状态机（created → active → idle → quarantined → swept），idle 自动进 quarantine（72h 可恢复），quarantine 超时自动 swept（需独立裁定）。
+  fix_phase: 'Phase 1（立即）：auto-sweep 触发；Phase 2（本周）：未合并 fix commit 处置建议；Phase 3（长期）：lifecycle 状态机'
+  status: decided
+  related_adjudication: '#ARCH-WORKTREE-001/002 (worktree 物理隔离与清理基础), #ARCH-WORKTREE-PRE-MERGE-SYSPATH-001 (pre-merge sys.path 治本), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (告警自愈同源——运维自动化)'
+  related_rules: 'AGENTS.md FP-ISO.4C (worktree 君子协定), 铁律: 永久系统必须全自动, 铁律: 所有 reconciler 必须事件触发'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+# --- #ARCH-CROSSDRIVE-RELPATH-001: 跨盘 os.path.relpath 失败治本（2026-07-21） ---
+- issue_id: '#ARCH-CROSSDRIVE-RELPATH-001'
+  title: "reconciliation_registry.py 跨盘 D:/C: 导致 os.path.relpath 全量失败治本"
+  category: architecture_governance
+  severity: P2
+  adjudication: >-
+    2026-07-21 立项裁定。reconciliation_registry.py 有 34 处 os.path.relpath(f, str(project_root))
+    裸调用，Windows 跨盘场景（项目在 D 盘，Python/临时文件在 C 盘）下抛 ValueError:
+    "path is on mount D, start on mount C"。此前仅 1 处（L555）有 try/except
+    兜底，其余 33 处裸调用，跨盘时整个 reconciler 失败——post-merge reconciler
+    异步化（#ARCH-ASYNC-MERGE-RECONCILE-001）在跨盘环境下无法正常工作。
+
+    治本方向：提取 _rel_path(f, project_root_str) 工具函数作为 SSoT，内部 try/except
+    ValueError, OSError 兜底 fallback 到 os.path.basename(f)（至少保留文件名用于日志），
+    34 处调用点统一改用 _rel_path。
+  fix_phase: |
+    Layer 2 立项+落地（2026-07-21）：
+      - architecture_issue_registry.yaml 登记本条目
+      - _rel_path 函数加跨盘兜底（try/except ValueError, OSError → basename fallback）
+      - 34 处调用点统一改用 _rel_path(f, str(project_root))
+      - L555 冗余 try/except 简化为列表推导
+  status: decided
+  related_adjudication: '#ARCH-ASYNC-MERGE-RECONCILE-001 (post-merge reconciler 异步化——跨盘失败影响其正常工作)'
+  related_rules: 'AGENTS.md SSoT 真源分类铁律 (单一真源原则), 铁律: 所有 reconciler 失败结果必须持久化记录'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'

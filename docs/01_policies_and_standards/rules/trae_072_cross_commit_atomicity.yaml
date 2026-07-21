@@ -67,7 +67,7 @@ sections:
     - type: mandatory
       step: '铁律1: 同一功能涉及多文件 MUST 在同一 commit 内原子提交——禁止拆分到多个独立 commit。判定标准：删除其中任一文件后剩余文件功能不完整即视为同一功能（强耦合）'
     - type: mandatory
-      step: '铁律2: 跨 session 依赖（session A 的 commit import session B 正在创建的模块）MUST 通过 SessionRegistry.register_dependency(session_A, session_B) 登记依赖关系，session_worktree_commit 在 _run_pre_commit_gates 前检查 depends_on_sessions 中是否仍有活跃 session，有则阻断（CROSS_COMMIT_DEP_BLOCKED）'
+      step: '铁律2: 跨 session 依赖（session A 的 commit import session B 正在创建的模块）SHOULD 通过 SessionRegistry.register_dependency(session_A, session_B) 登记依赖关系，session_worktree_commit 在 _run_pre_commit_gates 前检查 depends_on_sessions 中是否仍有活跃 session，有则阻断（CROSS_COMMIT_DEP_BLOCKED）。注：本条为君子协定（AI 不传 depends_on_sessions 参数即绕过），硬阻断兜底由铁律4（GATE-IMPORT-INTEGRITY）+ Phase 2.5 友好提示（#ARCH-CROSS-COMMIT-ATOMICITY-002）提供——GATE-IMPORT-INTEGRITY 硬阻断悬空 import，阻断时自动检查目标模块是否在其他活跃 session held_files 中并追加"等待该 session merge"提示'
     - type: mandatory
       step: '铁律3: session_worktree_start / session_worktree_commit 接受 depends_on_sessions: list[str] 参数，AI 知道依赖关系时显式登记（如 session A 知道依赖 session B 的 forged_gw_marker_gate.py 创建工作，则 session_worktree_start(session_A_id, depends_on_sessions=[session_B_id])）'
     - type: mandatory
@@ -130,10 +130,22 @@ sections:
         - session_worktree_commit 增加 cross-commit 依赖检测（_check_cross_commit_deps）
         - AI 协调机制：SessionRegistry 增加 depends_on_sessions 字段 + register_dependency 方法
 
+        Phase 2.5 治本（#ARCH-CROSS-COMMIT-ATOMICITY-002，2026-07-21）：
+        - 文档诚实化：承认 Phase 2（_check_cross_commit_deps）为君子协定 + 错误消息优化
+          机制，不是独立硬阻断——AI 不传 depends_on_sessions 参数即绕过，违反 TRAE-068
+          第 6 层可预防性原则（100% AI 场景不依赖自觉）
+        - Phase 1（GATE-IMPORT-INTEGRITY）是 ba40fa5b75 同型违规的唯一硬阻断兜底
+        - Phase 2.5 增强：GATE-IMPORT-INTEGRITY 阻断时自动（不依赖 AI 传参）检查目标
+          模块是否在其他活跃 session held_files 中，追加"等待该 session merge"友好提示
+          ——避免 AI 误判为"代码缺陷"反复修改（实际只需等待依赖 session merge）
+        - 保留 Phase 2 基础设施（depends_on_sessions / register_dependency /
+          clear_dependency）为未来自动推断预留，不删除
+        - 铁律2 措辞修正：MUST→SHOULD + 君子协定标注 + 硬阻断兜底说明
+
         编号说明：原裁定 fix_phase 计划用 TRAE-069，但 TRAE-069 已被
         trae_069_commit_gateway_abuse_thresholds.yaml 占用（2026-07-20 前期），
         TRAE-070/071 也已占用（临时文件治理），故改用 TRAE-072（裁定修正）。
-      related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
+      related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001, #ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5)'
 references:
   rule_ids:
   - TRAE-054
@@ -163,7 +175,7 @@ references:
   - docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
 enforcement:
-  paired_gate_id: IMPORT-INTEGRITY  # Phase 1 已落地（src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py，priority=107）
+  paired_gate_id: IMPORT-INTEGRITY  # Phase 1 已落地（src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py，priority=107）；Phase 2.5 增强（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动追加活跃 session held_files 友好提示
   type: gate_plus_doc
   executors:
   - pre_commit_gate
@@ -177,8 +189,8 @@ metadata:
   impact_level: H
   modification_permission: immutable_core
   superseded_by: null
-  related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001'
+  related_arch: '#ARCH-CROSS-COMMIT-ATOMICITY-001, #ARCH-CROSS-COMMIT-ATOMICITY-002'
 provenance:
   extracted_at: '2026-07-20'
   extracted_by: sess-59928-20260720164928
-  source: '裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001（Phase 2 落地：跨 commit 原子性规则外部化 + session_worktree_commit cross-commit 依赖检测 + SessionRegistry session 间依赖登记）'
+  source: '裁定 #ARCH-CROSS-COMMIT-ATOMICITY-001（Phase 2 落地）+ #ARCH-CROSS-COMMIT-ATOMICITY-002（Phase 2.5 文档诚实化 + GATE-IMPORT-INTEGRITY 友好提示增强，2026-07-21 sess-28644-20260721143611）'

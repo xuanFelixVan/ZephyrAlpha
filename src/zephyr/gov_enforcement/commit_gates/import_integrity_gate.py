@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.import_integrity_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec)
+# [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers (_get_staged_py_files, _read_staged_file); zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.security.access_control.session_concurrency (SessionRegistry, Phase 2.5 find_target_in_active_sessions 懒导入)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate registration)
 # [STARTUP] imported
 # [MATURITY] prototype
-# [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找
+# [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）
 # [MODIFY-GUARD] gate_id="IMPORT-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -66,6 +66,24 @@ transient 悬空 import。
    再检查 main HEAD（已存在），两者都无才阻断。
 7. **priority=107**：紧接 UNDEFINED-NAME=106，同属 import-related gate 组。
 
+Phase 2.5 友好提示（#ARCH-CROSS-COMMIT-ATOMICITY-002，2026-07-21）
+-------------------------------------------------------------------
+阻断悬空 import 时，自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否
+在其他活跃 session held 的文件中。若是，追加友好提示——"目标模块在活跃 session
+sess-B 的 held_files 中，可能正在创建中。修复：①等待该 session merge 后重试；
+②同 commit 创建目标模块"——避免 AI 误判为"代码缺陷"反复修改（实际只需等待
+依赖 session merge）。
+
+设计权衡：
+- 自动检测（不依赖 AI 传参）：符合 TRAE-068 第 6 层可预防性原则——100% AI 场景
+  下君子协定失效（Phase 2 的 depends_on_sessions 参数 AI 不传即绕过），Phase 2.5
+  通过 SessionRegistry.list_active() 自动发现活跃 session，零参数依赖。
+- fail-open：SessionRegistry 不可用时不追加提示，不阻断（不引入新故障点）。
+- 仅提示不阻断：阻断逻辑不变（Phase 1 硬阻断已覆盖），Phase 2.5 只优化错误消息。
+- 排除自身：current_session_id 从 kwargs.session_id 获取，排除自身 held_files
+  （自身 commit 的文件已在 staged_set，不会触发悬空 import，但 held_files 可能
+  包含尚未 staged 的同模块文件，排除自身避免误报）。
+
 Usage::
 
     from zephyr.gov_enforcement.commit_gates.import_integrity_gate import (
@@ -79,6 +97,7 @@ from __future__ import annotations
 import ast
 import importlib.util
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -93,6 +112,7 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "make_import_integrity_gate",
     "scan_content_for_dangling_imports",
+    "find_target_in_active_sessions",
 ]
 
 # 扫描范围：与 UNDEFINED-NAME 对齐
@@ -203,6 +223,56 @@ def _check_external_module_resolvable(module_path: str) -> bool:
         return True  # fail-open：未知异常不阻断
 
 
+def find_target_in_active_sessions(
+    project_root: Path,
+    module_path: str,
+    current_session_id: str | None = None,
+) -> list[tuple[str, str]]:
+    """检查目标模块是否在其他活跃 session 的 held_files 中（Phase 2.5 友好提示）。
+
+    #ARCH-CROSS-COMMIT-ATOMICITY-002 Phase 2.5：
+    GATE-IMPORT-INTEGRITY 阻断悬空 import 时，自动（不依赖 AI 传 depends_on_sessions）
+    检查目标模块是否在其他活跃 session held 的文件中。若是，追加友好提示——
+    "目标模块在活跃 session sess-B 的 held_files 中，可能正在创建中"——
+    避免 AI 误判为"代码缺陷"反复修改（实际只需等待依赖 session merge）。
+
+    Args:
+        project_root: 项目根目录（用于构造 SessionRegistry）
+        module_path: 模块路径（如 zephyr.gov_enforcement.commit_gates.forged_gw_marker_gate）
+        current_session_id: 当前 commit 的 session_id（排除自身；自身 commit 的文件
+            已在 staged_set，不会触发悬空 import，但 held_files 可能包含尚未 staged
+            的同模块文件，排除自身避免误报）
+
+    Returns:
+        [(session_id, matched_candidate_path), ...] 列表。空列表=未在其他 session 中
+        或 SessionRegistry 不可用（fail-open）。
+    """
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+        registry = SessionRegistry(project_root=project_root)
+        active_sessions = registry.list_active()
+        candidates = _module_to_file_candidates(module_path)
+        hits: list[tuple[str, str]] = []
+        for info in active_sessions:
+            if current_session_id and info.session_id == current_session_id:
+                continue  # 排除自身
+            for held_file in info.held_files:
+                # held_file 是绝对路径（_normalize_file_path 归一化），candidates 是
+                # 相对路径（src/zephyr/... 或 zephyr/...）。用 endswith 匹配（跨平台
+                # 路径分隔符归一化为正斜杠）。
+                held_norm = held_file.replace("\\", "/")
+                for candidate in candidates:
+                    if held_norm.endswith(candidate):
+                        hits.append((info.session_id, candidate))
+                        break
+        return hits
+    except Exception as e:  # noqa: BLE001 — fail-open
+        logger.debug(
+            "IMPORT-INTEGRITY: find_target_in_active_sessions fail-open: %s", e,
+        )
+        return []
+
+
 def scan_content_for_dangling_imports(
     py_file: str,
     content: str,
@@ -271,6 +341,32 @@ def make_import_integrity_gate() -> GateSpec:
             )
 
         if violations:
+            # Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：
+            # 阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在
+            # 其他活跃 session held 的文件中。若是，追加友好提示——避免 AI 误判
+            # 为"代码缺陷"反复修改（实际只需等待依赖 session merge）。
+            current_session_id = _kwargs.get("session_id")
+            _project_root = getattr(gateway, "project_root", None)
+            enhanced: list[str] = []
+            for v in violations:
+                m = re.search(r"dangling import '([^']+)'", v)
+                if m and _project_root is not None:
+                    _mod = m.group(1)
+                    hits = find_target_in_active_sessions(
+                        _project_root, _mod, current_session_id,
+                    )
+                    if hits:
+                        hit_str = "; ".join(
+                            f"sess={sid} held={cand}" for sid, cand in hits
+                        )
+                        v = (
+                            v
+                            + f"  [Phase 2.5 hint: 目标模块在活跃 session 的 "
+                            f"held_files 中 ({hit_str})。修复：①等待该 session "
+                            f"merge 后重试；②同 commit 创建目标模块]"
+                        )
+                enhanced.append(v)
+
             detail = (
                 "IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，"
                 "#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）\n"
@@ -279,8 +375,8 @@ def make_import_integrity_gate() -> GateSpec:
                 "  修复：①将 import 与目标文件放同 commit；\n"
                 "        ②若目标文件已存在于其他分支，先 merge 再 import；\n"
                 "        ③若为外部库，先 pip install 并更新 requirements。\n"
-                + "\n".join(violations[:50])
-                + (f"\n  ...(+{len(violations) - 50} more)" if len(violations) > 50 else "")
+                + "\n".join(enhanced[:50])
+                + (f"\n  ...(+{len(enhanced) - 50} more)" if len(enhanced) > 50 else "")
             )
             logger.error("IMPORT-INTEGRITY gate block:\n%s", detail)
             return False, detail
