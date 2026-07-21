@@ -22,17 +22,21 @@
 """
 
 import hashlib
+import io
 import json
+import keyword
 import logging
 import os
+import re
 import time
+import tokenize
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 
 from pydantic import BaseModel
 
-from zephyr.infrastructure.asset_inventory.models import RawFileEntry, ScanResult
+from zephyr.infrastructure.asset_inventory.models import DuplicateGroup, RawFileEntry, ScanResult
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 logger = logging.getLogger(__name__)
@@ -42,6 +46,21 @@ _TIMEOUT_SECONDS = 300
 _MAX_FILE_SIZE_MB = 50
 _MAX_DEPTH = 15
 _GLIDE_WINDOW_SECONDS = 60
+
+# MOD-INF-017: 重复代码检测常量
+_MINHASH_SIZE = 8
+_MINHASH_SEEDS = [
+    (31, 1000000007),
+    (37, 1000000009),
+    (41, 1000000021),
+    (43, 1000000033),
+    (47, 1000000087),
+    (53, 1000000093),
+    (59, 1000000097),
+    (61, 1000000103),
+]
+_BLOCK_MIN_LINES = 3
+_DEFAULT_THRESHOLD = 0.7
 
 SCANS_DIR = REPO_ROOT / "data" / "scans"
 
@@ -93,6 +112,8 @@ class Scanner:
         self.max_file_size = max_file_size_mb * 1024 * 1024
         self.max_depth = max_depth
         self.root = root or REPO_ROOT
+        # MOD-INF-017: 单文件扫描结果缓存（find_duplicates 使用）
+        self._file_results: list[ScanResult] = []
 
     def scan(self, *, incremental: bool = False, last_scan_time: datetime | None = None) -> ScanResult:
         scan_id = _generate_scan_id()
@@ -137,6 +158,163 @@ class Scanner:
             errors=errors,
             duration_seconds=round(duration, 2),
         )
+
+    # ── MOD-INF-017: 重复代码检测方法 ──────────────────────────────────
+    def scan_file(self, file_path: str) -> ScanResult:
+        """扫描单个文件，返回带 minhash 的 ScanResult。"""
+        p = Path(file_path)
+        if not p.exists() or not p.is_file():
+            return ScanResult(file=str(file_path), token_count=0, minhash=[0] * _MINHASH_SIZE)
+        try:
+            content = p.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return ScanResult(file=str(file_path), token_count=0, minhash=[0] * _MINHASH_SIZE)
+        tokens = self._tokenize_and_normalize(content)
+        minhash = self._compute_minhash(tokens)
+        result = ScanResult(
+            file=str(file_path),
+            token_count=len(tokens),
+            minhash=minhash,
+        )
+        self._file_results.append(result)
+        return result
+
+    def scan_files(self, file_paths: list[str]) -> list[ScanResult]:
+        """批量扫描多个文件。"""
+        return [self.scan_file(fp) for fp in file_paths]
+
+    def find_duplicates(self) -> list[DuplicateGroup]:
+        """检测已扫描文件中的重复组。"""
+        groups: list[DuplicateGroup] = []
+        results = list(self._file_results)
+        n = len(results)
+        if n < 2:
+            return groups
+        group_id_counter = 1
+        for i in range(n):
+            for j in range(i + 1, n):
+                sim = self._jaccard_estimate(results[i].minhash, results[j].minhash)
+                threshold = self._get_threshold(results[i].file)
+                if sim >= threshold:
+                    groups.append(
+                        DuplicateGroup(
+                            group_id=f"DUP-{group_id_counter:03d}",
+                            members=[
+                                (results[i].file, ""),
+                                (results[j].file, ""),
+                            ],
+                            similarity=round(sim, 4),
+                            detection_method="minhash_lsh",
+                            confidence=round(sim * 100, 2),
+                        )
+                    )
+                    group_id_counter += 1
+        return groups
+
+    def scan_blocks(self, code: str) -> list[str]:
+        """将代码切分为块（每块至少 _BLOCK_MIN_LINES 行）。"""
+        lines = code.splitlines()
+        if len(lines) < _BLOCK_MIN_LINES:
+            return []
+        blocks: list[str] = []
+        step = _BLOCK_MIN_LINES
+        for start in range(0, len(lines) - step + 1, step):
+            block = "\n".join(lines[start:start + step])
+            blocks.append(block)
+        return blocks
+
+    def _tokenize_and_normalize(self, code: str) -> list[str]:
+        """tokenize 并归一化：关键字保留，名称→_NAME_，字符串→_STR_，注释剔除。"""
+        tokens: list[str] = []
+        try:
+            reader = io.StringIO(code).readline
+            for tok in tokenize.generate_tokens(reader):
+                normalized = self._normalize_token(tok.type, tok.string)
+                if normalized is not None:
+                    tokens.append(normalized)
+        except tokenize.TokenError:
+            tokens = self._fallback_tokenize(code)
+        return tokens
+
+    @staticmethod
+    def _normalize_token(ttype: int, tval: str) -> str | None:
+        """将单个 token 归一化为标准形式，返回 None 表示跳过。"""
+        _SKIP_TYPES = {tokenize.ENCODING, tokenize.ENDMARKER,
+                       tokenize.NEWLINE, tokenize.NL, tokenize.INDENT, tokenize.DEDENT,
+                       tokenize.COMMENT}
+        if ttype in _SKIP_TYPES:
+            return None
+        if ttype == tokenize.STRING:
+            return "_STR_"
+        if ttype == tokenize.NAME:
+            return tval if keyword.iskeyword(tval) else "_NAME_"
+        if ttype == tokenize.NUMBER:
+            return "_NUM_"
+        return tval if tval.strip() else None
+
+    @staticmethod
+    def _fallback_tokenize(code: str) -> list[str]:
+        """语法错误时的退化分词器。"""
+        tokens: list[str] = []
+        parts = re.findall(r"\w+|[^\s\w]+", code)
+        for part in parts:
+            if part.startswith("#"):
+                continue
+            if part.startswith('"') or part.startswith("'"):
+                tokens.append("_STR_")
+            elif keyword.iskeyword(part):
+                tokens.append(part)
+            elif re.match(r"^\d", part):
+                tokens.append("_NUM_")
+            elif re.match(r"^[A-Za-z_]\w*$", part):
+                tokens.append("_NAME_")
+            else:
+                tokens.append(part)
+        return tokens
+
+    def _compute_minhash(self, tokens: list[str]) -> list[int]:
+        """计算 MinHash 签名（8 维）。空输入返回 [0]*8。
+
+        使用 2-gram shingle 保留 token 序列信息，避免纯 token 集合导致的误判。
+        """
+        if not tokens:
+            return [0] * _MINHASH_SIZE
+        # 构建 2-gram shingles（单 token 时退化为 1-gram）
+        if len(tokens) == 1:
+            shingles = [tokens[0]]
+        else:
+            shingles = [f"{tokens[i]}|{tokens[i + 1]}" for i in range(len(tokens) - 1)]
+        minhash: list[int] = []
+        for a, m in _MINHASH_SEEDS:
+            min_h = m
+            for s in shingles:
+                h = (a * hash(s) + 17) % m
+                if h < min_h:
+                    min_h = h
+            minhash.append(min_h)
+        return minhash
+
+    def _jaccard_estimate(self, a: list[int], b: list[int]) -> float:
+        """基于 MinHash 签名估算 Jaccard 相似度。"""
+        if not a or not b:
+            return 0.0
+        if len(a) != len(b):
+            return 0.0
+        matches = sum(1 for x, y in zip(a, b) if x == y)
+        return matches / len(a)
+
+    def _get_threshold(self, path: str) -> float:
+        """根据文件路径返回相似度阈值。"""
+        p = str(path).replace("\\", "/")
+        if "shared" in p:
+            return 0.3
+        if "core" in p:
+            return 0.6
+        if "tests" in p:
+            return 0.9
+        if "scripts" in p:
+            return 0.7
+        return _DEFAULT_THRESHOLD
 
     def _walk(
         self,

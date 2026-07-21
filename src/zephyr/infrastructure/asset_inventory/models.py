@@ -100,15 +100,20 @@ class RawFileEntry(BaseModel):
 
 
 class ScanResult(BaseModel):
-    scan_id: str = Field(description="扫描唯一标识 SCAN-YYYYMMDD-NNN")
+    scan_id: str = Field(default="", description="扫描唯一标识 SCAN-YYYYMMDD-NNN")
     scanned_at: datetime = Field(default_factory=datetime.utcnow, description="扫描开始时间")
     completed_at: datetime | None = Field(default=None, description="扫描完成时间")
-    total_files: int = Field(description="扫描文件总数")
-    total_size_bytes: int = Field(description="扫描总大小")
+    total_files: int = Field(default=0, description="扫描文件总数")
+    total_size_bytes: int = Field(default=0, description="扫描总大小")
     scan_mode: str = Field(default="full", description="full / incremental")
     entries: list[RawFileEntry] = Field(default_factory=list, description="扫描条目")
     errors: list[str] = Field(default_factory=list, description="扫描错误列表")
     duration_seconds: float | None = Field(default=None, description="扫描耗时")
+    # MOD-INF-017 重复代码检测字段（code_dedup_engine 复用 ScanResult 作为单文件扫描结果）
+    file: str = Field(default="", description="单文件扫描时的文件路径")
+    token_count: int = Field(default=0, description="文件 token 数（归一化后）")
+    minhash: list[int] = Field(default_factory=list, description="MinHash 签名（8 维）")
+    matches: list = Field(default_factory=list, description="匹配的重复组列表")
 
 
 class ClassifiedAsset(BaseModel):

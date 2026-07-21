@@ -107,6 +107,7 @@ try:
     from zephyr.gov_audit.changelog_manager import ChangeImpact
     from zephyr.infrastructure.asset_inventory.classifier import Classifier
     from zephyr.gov_code_quality.code_dedup.cli import main
+    import zephyr.gov_code_quality.code_dedup.cli as cli
     from zephyr.gov_audit.code_archaeology import BlameRecord
     from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.gov_audit.compliance_map import ComplianceFramework
@@ -210,7 +211,7 @@ try:
     import zephyr.gov_enforcement.behavioral_admission.post_process as post_process
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
     import zephyr.gov_drift.detector_core.regime_detector as regime_detector
-    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio
+    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio  # noqa: import-integrity  wrapped in try/except, module may not exist yet
     import zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（同上）
@@ -234,6 +235,7 @@ __all__ = [
     "ConstitutionalAutoUpdate",
     "ConstructionVerifier",
     "CorporateActionType",
+    "cli",
     "DORATargets",
     "Dashboard",
     "DatabaseService",
@@ -356,7 +358,8 @@ __all__ = [
     "strategy_registry",
 ]
 
-__version__ = "0.2.0"
+__version__ = "0.15.0"
+__module_id__ = "MOD-INF-017"
 __domain_id__ = "DOM-GOV-001"
 __module_count__ = 8
 __contract_count__ = 8
