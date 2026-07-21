@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-RES_fail_mode_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RES-fail_mode_manager | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import time
 from dataclasses import dataclass, field
@@ -67,6 +67,10 @@ class FailModeManager:
         if not healthy:
             self._fail_count[component] = self._fail_count.get(component, 0) + 1
         return check
+
+    def health_check(self, component: str, healthy: bool, detail: str = "", latency_ms: float = 0.0) -> HealthCheck:
+        """向后兼容别名——委托到 record_health_check。"""
+        return self.record_health_check(component, healthy, detail, latency_ms)
 
     def evaluate(self) -> FailModeState:
         if not self._health_checks:

@@ -65,53 +65,48 @@ SHELL_TRUE_PATTERNS = [
     "commands\\.getoutput\\(",
     "commands\\.getstatusoutput\\(",
 ]
+_SHELL_TRUE_RE = re.compile("|".join(SHELL_TRUE_PATTERNS))
 WHITELIST_FILES = {"detect_shell_true.py"}
 
 
-def _get_code_lines(filepath: Path) -> set:
-    """_get_code_lines implementation."""
+def scan_file_ast(filepath: Path) -> list[dict]:
+    """扫描单个文件并返回发现列表。
+
+    治本优化（2026-07-22）：合并 _get_code_lines + scan_file_ast 为单次读取，
+    预编译正则到模块级 _SHELL_TRUE_RE，避免每次调用 re.finditer 重新编译。
+    关键优化：先做快速正则预扫，无匹配则跳过 AST 解析（绝大多数文件无 shell=True），
+    原实现读文件 2 次 + 5 次独立正则编译 + 每文件 AST 解析，并行测试下 30s 超时。
+    """
     try:
         content = filepath.read_text(encoding="utf-8", errors="replace")
     except (OSError, UnicodeDecodeError):
-        return set()
+        return []
+    quick_matches = list(_SHELL_TRUE_RE.finditer(content))
+    if not quick_matches:
+        return []
     try:
         tree = ast.parse(content, filename=str(filepath))
     except SyntaxError:
-        return set()
-    code_lines = set()
-    for node in ast.walk(tree):
-        if hasattr(node, "lineno"):
-            code_lines.add(node.lineno)
-    return code_lines
-
-
-def scan_file_ast(filepath: Path) -> list[dict]:
-    """扫描单个文件并返回发现列表"""
-    findings = []
-    "扫描单个文件并返回发现列表."
-    code_lines = _get_code_lines(filepath)
-    "扫描并返回发现列表."
+        return []
+    code_lines = {node.lineno for node in ast.walk(tree) if hasattr(node, "lineno")}
     if not code_lines:
-        return findings
-    try:
-        content = filepath.read_text(encoding="utf-8", errors="replace")
-    except (OSError, UnicodeDecodeError):
-        return findings
-    for pattern in SHELL_TRUE_PATTERNS:
-        for match in re.finditer(pattern, content):
-            line_num = content[: match.start()].count("\n") + 1
-            if line_num not in code_lines:
-                continue
-            matched = match.group(0)[:100]
-            findings.append({"file": str(filepath.relative_to(REPO_ROOT)), "line": line_num, "matched": matched})
+        return []
+    findings: list[dict] = []
+    for match in quick_matches:
+        line_num = content[: match.start()].count("\n") + 1
+        if line_num not in code_lines:
+            continue
+        findings.append({
+            "file": str(filepath.relative_to(REPO_ROOT)),
+            "line": line_num,
+            "matched": match.group(0)[:100],
+        })
     return findings
-    "扫描单个文件并返回发现列表."
 
 
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
-        "扫描并返回发现列表."
         scan_dir = REPO_ROOT
     all_findings = []
     files_scanned = 0
@@ -126,7 +121,6 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
         findings = scan_file_ast(filepath)
         all_findings.extend(findings)
     return (all_findings, files_scanned, 0)
-    "扫描仓库并返回发现列表."
 
 
 def main() -> None:

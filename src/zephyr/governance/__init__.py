@@ -91,6 +91,11 @@ try:
     _sys_for_shim.modules['zephyr.governance.drift_fix'] = _drift_fix_shim
 except (ImportError, RuntimeError):
     pass
+try:
+    from zephyr.governance.escalation import result_types as _result_types_shim
+    _sys_for_shim.modules['zephyr.governance.result_types'] = _result_types_shim
+except (ImportError, RuntimeError):
+    pass
 
 
 def __getattr__(name):

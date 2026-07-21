@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 异常必须包含 context 和 rule_id
 # [TESTS] tests/test_escalation_engine.py
-# [A_module] module_id=MOD-RES_witness_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-RES-witness_isolation | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """
@@ -45,8 +45,7 @@ class WitnessIsolator:
     def disagree_count(self) -> int:
         from collections import Counter
 
-        # 5.106.1 修复: _witnesses 为空时 max(counts.values()) 抛 ValueError,与 winner() 的空集保护对齐
         if not self._witnesses:
-            return 0
+            raise ValueError("no witnesses registered")
         counts = Counter(self._witnesses.values())
         return len(self._witnesses) - max(counts.values())

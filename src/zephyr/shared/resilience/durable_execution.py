@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] none
 # [TESTS] tests/test_durable_execution.py
-# [A_module] module_id=MOD-INT_durable_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INT-durable_execution | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import json
 import os
@@ -136,9 +136,15 @@ class WorkflowManager:
                 break
         return dict(self._results)
 
-    def save_snapshot(self) -> None:
+    def save_snapshot(self) -> ProgressSnapshot | None:
+        snapshot = ProgressSnapshot(
+            workflow_id=self.workflow_id,
+            completed_activities=list(self._completed_order),
+            current_activity=self._completed_order[-1] if self._completed_order else "",
+            version=1,
+        )
         if not self._snapshot_dir:
-            return
+            return snapshot
         data = {
             "workflow_id": self.workflow_id,
             "completed_activities": self._completed_order,
@@ -155,6 +161,7 @@ class WorkflowManager:
                 os.remove(tmp_path)
             except OSError:
                 pass
+        return snapshot
 
     def load_snapshot(self) -> ProgressSnapshot | None:
         if not self._snapshot_dir:

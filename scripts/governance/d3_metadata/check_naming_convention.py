@@ -107,9 +107,6 @@ FILENAME_UPPERCASE_WHITELIST: list[str] = [
     "AGENTS.md",
     "Dockerfile",
     "LICENSE",
-    "README.md",
-    "CONTRIBUTING.md",
-    "SECURITY.md",
 ]
 
 TECH_VERSION_TOKENS: list[str] = [
