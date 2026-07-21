@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-L13-001-implementations | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/blueprint.md
 # [MODULE] zephyr.simulation.implementations
 # [INVARIANTS] pending_review

@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-SHR_protocols | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-SHR-protocols | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols
 # [INVARIANTS] protocols contains only Protocol interfaces and data contracts; no concrete implementations

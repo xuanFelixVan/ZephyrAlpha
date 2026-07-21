@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-UNK_impl | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-UNK-impl | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.combiner.impl
 # [INVARIANTS] pending_review
