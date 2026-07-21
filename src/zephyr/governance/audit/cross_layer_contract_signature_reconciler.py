@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——git/AST/DB 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_cross_layer_contract_signature_reconciler.py
-# [A_module] module_id=MOD-GOV-cross_layer_contract_signature_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_cross_layer_contract_signature_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """cross_layer_contract_signature_reconciler.py — 跨层契约签名漂移检测 reconciler（P1-b，2026-07-21）。

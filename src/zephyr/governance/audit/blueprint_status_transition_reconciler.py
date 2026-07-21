@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] reconcile 永不抛异常——git/正则/DB 异常降级为 ReconcileResult(action="warn")
 # [TESTS] tests/governance/audit/test_blueprint_status_transition_reconciler.py
-# [A_module] module_id=MOD-GOV-blueprint_status_transition_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_blueprint_status_transition_reconciler | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 """blueprint_status_transition_reconciler.py — 蓝图状态单调推进 reconciler（P1-d，2026-07-21）。

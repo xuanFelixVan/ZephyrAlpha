@@ -1,11 +1,11 @@
-# 自动生成于 2026-07-20T13:22:19Z
+# 自动生成于 2026-07-21T20:16:40Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-07-20T13:22:19Z'
+generated_at: '2026-07-21T20:16:40Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 31
+total_registries: 32
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 123
+  entry_count: 157
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -125,7 +125,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 107
+  entry_count: 118
   status: active
 - registry_id: CFG-hard-boundaries
   name: 硬边界登记表
@@ -134,6 +134,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
+  status: active
+- registry_id: CFG-IN-PROCESS-GATE-REGISTRY-001
+  name: In-Process Gate 注册真源（YAML 驱动自动注册）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 78
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
