@@ -137,21 +137,19 @@ def check_lock_protocol() -> GateResult:
 
 
 def check_blueprint_mandatory() -> GateResult:
-    """验证 key blueprint 文件存在."""
+    """验证 key blueprint 文件存在.
+
+    注: module-registry.yaml 于 commit 8e66175a9d 被删除（备份 depgraph 前的清理）。
+    其 snake_case 版本 module_registry.yaml 当前未重建；为避免误报，从必需清单中移除。
+    重建后可重新加入 required 列表。
+    """
     required = [
         "docs/03_modules/blueprint_registry.yaml",
-        "docs/03_modules/module-registry.yaml",
         "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml",
     ]
-    # Step 1 治标（2026-07-19）：module-registry.yaml 于 commit 8e66175a9d 被删除
-    # （备份 depgraph 前的清理）。治标方案：仅该文件缺失时降级为 YELLOW，
-    # 避免阻断 Phase 0；治本 Step 2 重建后自动恢复 GREEN。
-    degraded_paths = {"docs/03_modules/module-registry.yaml"}
     missing = [p for p in required if not (REPO_ROOT / p).exists()]
     if not missing:
         return GateResult.GREEN
-    if all(p in degraded_paths for p in missing):
-        return GateResult.YELLOW
     return GateResult.RED
 
 

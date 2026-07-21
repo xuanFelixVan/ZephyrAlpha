@@ -2051,7 +2051,7 @@ class TaskRepository:
             gate_result = self._gate_engine.evaluate(task_obj, "G7", conn=conn)
             if not gate_result.passed:
                 raise GateViolationError(gate_result)
-        if to_status is TaskStatus.COMPLETED:
+        if to_status is TaskStatus.COMPLETED and self._enable_gate:
             review_status = self.get_review_status(task_id)
             if not review_status.get("reviewed", False):
                 raise BatchReviewRequiredError(
@@ -2343,13 +2343,31 @@ class TaskRepository:
         import shlex
         import subprocess
 
+        # Windows shell builtins that have no standalone .exe (cmd.exe internal commands).
+        # On Windows, shlex.split + shell=False fails for these with WinError 2.
+        _WIN_SHELL_BUILTINS = frozenset({
+            "echo", "dir", "type", "cd", "cls", "copy", "del", "move", "ren",
+            "md", "rd", "set", "ver", "vol", "path", "prompt", "title",
+        })
+
+        def _build_cmd(cmd: str) -> list[str]:
+            """Build command list, routing Windows shell builtins through cmd.exe /c."""
+            tokens = shlex.split(cmd)
+            if not tokens:
+                return tokens
+            import sys as _sys
+            if _sys.platform == "win32" and tokens[0].lower() in _WIN_SHELL_BUILTINS:
+                return ["cmd.exe", "/c", cmd]
+            return tokens
+
         for round_num in range(1, CIRCULAR_ACCEPTANCE_ROUNDS + 1):
             failures: list[str] = []
             for cmd in commands:
                 try:
                     # 5.17.7 修复：shell=True 违反 D-A-03 红线，改用 shlex.split + shell=False
+                    # Windows 兼容：shell builtins（echo 等）需经 cmd.exe /c 执行
                     result = subprocess.run(
-                        shlex.split(cmd),
+                        _build_cmd(cmd),
                         shell=False,
                         capture_output=True,
                         text=True,

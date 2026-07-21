@@ -16,30 +16,59 @@
 # [TTL] permanent
 import json
 import logging
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Final
 
 from zephyr.gov_audit.contracts import AuditQuery as AuditQueryABC  # 5.104.16 修复: 继承ABC契约
-from zephyr.gov_audit.models import AuditIssue, OrchestratorStatus
+from zephyr.gov_audit.models import AuditIssue, IntegrityReport, OrchestratorStatus
 from zephyr.shared.utils.time_utils import now_utc
-from typing import Final
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["AuditQueryEngine"]
+__all__ = ["AuditQueryEngine", "AuditQuery", "MetaAuditLogger", "_sanitize_for_ai_context"]
 
 DEFAULT_REPORT_DIR: Final[Any] = Path("data/audit_history")
 
+# AI context sanitization patterns
+_INJECTION_PATTERNS = [
+    re.compile(r"ignore all previous instructions", re.IGNORECASE),
+    re.compile(r"disregard the above", re.IGNORECASE),
+    re.compile(r"forget your instructions", re.IGNORECASE),
+]
+_ROLE_PATTERNS = [
+    re.compile(r"^(system|user|assistant)\s*:", re.IGNORECASE),
+]
+_TOOL_CALL_PATTERN = re.compile(r"<function_call>|</function_call>|<tool_call>|</tool_call>", re.IGNORECASE)
+_MAX_AI_CONTEXT_LENGTH = 530
 
-class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
+
+def _sanitize_for_ai_context(text: str) -> str:
+    """净化文本以安全传递给 AI 上下文。"""
+    if not text:
+        return ""
+    result = text
+    for pattern in _INJECTION_PATTERNS:
+        result = pattern.sub("[REDACTED_INSTRUCTION]", result)
+    for pattern in _ROLE_PATTERNS:
+        result = pattern.sub("[REDACTED_ROLE]:", result)
+    result = _TOOL_CALL_PATTERN.sub("[REDACTED_TAG]", result)
+    result = result.replace("```", "")
+    if len(result) > _MAX_AI_CONTEXT_LENGTH:
+        result = result[:_MAX_AI_CONTEXT_LENGTH]
+    return result
+
+
+class AuditQueryEngine(AuditQueryABC):
+    """旧版查询引擎（保留以兼容现有调用方）。"""
+
     def __init__(self, report_dir: Path | None = None) -> None:
         self._report_dir = Path(report_dir or DEFAULT_REPORT_DIR)
 
     def get_status(self) -> OrchestratorStatus:
         reports = self._list_reports()
         pending = len([r for r in reports if not self._is_completed(r)])
-
         return OrchestratorStatus(
             phase="IDLE" if pending == 0 else "EXECUTING",
             active_sessions=0,
@@ -100,24 +129,268 @@ class AuditQueryEngine(AuditQueryABC):  # 5.104.16 修复: 继承ABC契约
             return False
 
 
-class AuditQuery:
-    def __init__(self, filters=None, sort_by="", limit=100, offset=0):
-        self.filters = filters or {}
-        self.sort_by = sort_by
-        self.limit = limit
-        self.offset = offset
-
-
 class MetaAuditLogger:
-    def __init__(self, config=None):
+    """元审计日志器（补全测试期望接口）。"""
+
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         self.config = config or {}
+        self._entries: list[dict[str, Any]] = []
 
-    def log_query(self, query, result_count=0):
-        pass
+    @property
+    def entries(self) -> list[dict[str, Any]]:
+        """返回 entries 的副本，防止外部修改。"""
+        return list(self._entries)
 
-    def get_stats(self):
-        return {}
+    def log_audit_query(self, querier: str, query: dict[str, Any]) -> None:
+        self._entries.append({
+            "operation": "audit_query",
+            "querier": querier,
+            "query": query,
+            "timestamp": now_utc().isoformat(),
+        })
+
+    def log_index_rebuild(self, reason: str, entries_count: int) -> None:
+        self._entries.append({
+            "operation": "index_rebuild",
+            "reason": reason,
+            "entries_count": entries_count,
+            "timestamp": now_utc().isoformat(),
+        })
+
+    def log_integrity_check(self, report: IntegrityReport) -> None:
+        self._entries.append({
+            "operation": "integrity_check",
+            "is_valid": report.is_valid,
+            "total_entries": report.total_entries,
+            "timestamp": now_utc().isoformat(),
+        })
+
+    def log_retention_enforcement(self, count: int, dry_run: bool = False) -> None:
+        self._entries.append({
+            "operation": "retention_enforcement",
+            "count": count,
+            "dry_run": dry_run,
+            "timestamp": now_utc().isoformat(),
+        })
+
+    def log_query(self, query: Any, result_count: int = 0) -> None:
+        self._entries.append({
+            "operation": "query",
+            "query": str(query),
+            "result_count": result_count,
+            "timestamp": now_utc().isoformat(),
+        })
+
+    def get_stats(self) -> dict[str, Any]:
+        return {
+            "total_entries": len(self._entries),
+            "operations": list({e.get("operation", "") for e in self._entries}),
+        }
 
 
-def _sanitize_for_ai_context(data: object) -> object:
-    return data
+class AuditQuery:
+    """审计查询接口（补全测试期望接口）。
+
+    支持按 agent/session/event_type/timerange/target/anomaly/drift/cost/task/permission_level 查询。
+    """
+
+    def __init__(self, event_log_path: Path | None = None) -> None:
+        self._event_log_path = Path(event_log_path) if event_log_path is not None else Path("data/audit_trail/events.jsonl")
+        self._events: list[dict[str, Any]] | None = None
+        self._meta_logger = MetaAuditLogger()
+
+    def _load_events(self) -> None:
+        """加载事件到缓存。"""
+        if self._event_log_path is None or not self._event_log_path.exists():
+            self._events = []
+            return
+        events: list[dict[str, Any]] = []
+        try:
+            with open(self._event_log_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        events.append(json.loads(line))
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.error("Failed to load events from %s: %s", self._event_log_path, exc, exc_info=True)
+            events = []
+        self._events = events
+
+    def _get_events(self) -> list[dict[str, Any]]:
+        if self._events is None:
+            self._load_events()
+        return self._events or []
+
+    def refresh(self) -> None:
+        """清除缓存，下次查询时重新加载。"""
+        self._events = None
+
+    def count(self) -> int:
+        return len(self._get_events())
+
+    def _record_query(self, operation: str, **kwargs: Any) -> None:
+        """记录元审计查询。"""
+        self._meta_logger.log_audit_query(operation, kwargs)
+
+    def by_agent(self, agent_id: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("agent_id") == agent_id]
+        self._record_query("by_agent", agent_id=agent_id, result_count=len(result))
+        return result
+
+    def by_session(self, session_id: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("session_id") == session_id]
+        self._record_query("by_session", session_id=session_id, result_count=len(result))
+        return result
+
+    def by_event_type(self, event_type: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("event_type") == event_type]
+        self._record_query("by_event_type", event_type=event_type, result_count=len(result))
+        return result
+
+    def by_timerange(self, start: str, end: str) -> list[dict[str, Any]]:
+        start_dt = self._parse_ts(start)
+        end_dt = self._parse_ts(end)
+        if start_dt is None or end_dt is None:
+            return []
+        result = []
+        for e in self._get_events():
+            ts = e.get("timestamp")
+            if not ts:
+                continue
+            event_dt = self._parse_ts(ts)
+            if event_dt is None:
+                continue
+            if start_dt <= event_dt <= end_dt:
+                result.append(e)
+        self._record_query("by_timerange", start=start, end=end, result_count=len(result))
+        return result
+
+    def by_target(self, target: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("target_path") == target]
+        self._record_query("by_target", target=target, result_count=len(result))
+        return result
+
+    def by_anomaly(self, min_score: float = 0.0) -> list[dict[str, Any]]:
+        result = []
+        for e in self._get_events():
+            if e.get("anomaly_detected"):
+                score = e.get("anomaly_score", 0.0)
+                if score >= min_score:
+                    result.append(e)
+        self._record_query("by_anomaly", min_score=min_score, result_count=len(result))
+        return result
+
+    def by_drift(self, severity: str = "") -> list[dict[str, Any]]:
+        result = []
+        for e in self._get_events():
+            if e.get("drift_detected"):
+                if not severity or e.get("drift_severity", "").upper() == severity.upper():
+                    result.append(e)
+        self._record_query("by_drift", severity=severity, result_count=len(result))
+        return result
+
+    def by_cost(self, min_cost_usd: float = 0.0) -> list[dict[str, Any]]:
+        result = []
+        for e in self._get_events():
+            cost = e.get("cost_estimate_usd", 0.0)
+            if cost >= min_cost_usd:
+                result.append(e)
+        self._record_query("by_cost", min_cost_usd=min_cost_usd, result_count=len(result))
+        return result
+
+    def by_task(self, task_id: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("task_id") == task_id]
+        self._record_query("by_task", task_id=task_id, result_count=len(result))
+        return result
+
+    def by_permission_level(self, level: str) -> list[dict[str, Any]]:
+        result = [e for e in self._get_events() if e.get("permission_level") == level]
+        self._record_query("by_permission_level", level=level, result_count=len(result))
+        return result
+
+    def search(self, keyword: str) -> list[dict[str, Any]]:
+        """在事件中搜索关键词。"""
+        result = []
+        for e in self._get_events():
+            for v in e.values():
+                if isinstance(v, str) and keyword in v:
+                    result.append(e)
+                    break
+        self._record_query("search", keyword=keyword, result_count=len(result))
+        return result
+
+    def trail_for_ai_context(self, session_id: str | None = None) -> dict[str, Any]:
+        """生成 AI 上下文审计轨迹。"""
+        events = self._get_events()
+        if session_id:
+            events = [e for e in events if e.get("session_id") == session_id]
+
+        total = len(events)
+        injection_detected = False
+        for e in events:
+            for v in e.values():
+                if isinstance(v, str):
+                    sanitized = _sanitize_for_ai_context(v)
+                    if "[REDACTED_INSTRUCTION]" in sanitized or "[REDACTED_ROLE]" in sanitized:
+                        injection_detected = True
+                        break
+            if injection_detected:
+                break
+
+        summary_parts = []
+        for e in events[:10]:
+            entry = {
+                "entry_id": e.get("entry_id", ""),
+                "agent_id": e.get("agent_id", ""),
+                "event_type": e.get("event_type", ""),
+                "timestamp": e.get("timestamp", ""),
+            }
+            for k, v in entry.items():
+                if isinstance(v, str):
+                    entry[k] = _sanitize_for_ai_context(v)
+            summary_parts.append(entry)
+
+        return {
+            "total_events": total,
+            "summary": summary_parts,
+            "injection_detected": injection_detected,
+            "within_budget": total <= 1000,
+        }
+
+    def meta_audit_report(self) -> list[dict[str, Any]]:
+        """返回元审计日志。"""
+        return self._meta_logger.entries
+
+    def verify_integrity(self) -> IntegrityReport:
+        """验证审计链完整性。"""
+        from zephyr.gov_audit import integrity
+        verifier = integrity.IntegrityVerifier(event_log_path=self._event_log_path)
+        result = verifier.verify_chain()
+        is_valid = result.get("status") == "valid"
+        total = result.get("events_checked", 0)
+        report = IntegrityReport(
+            is_valid=is_valid,
+            total_entries=total,
+            checked_at=now_utc().isoformat(),
+        )
+        self._meta_logger.log_integrity_check(report)
+        return report
+
+    def rebuild_index(self) -> int:
+        """重建审计索引。"""
+        from zephyr.gov_audit import indexer
+        idx = indexer.AuditIndexer(events_path=self._event_log_path)
+        result = idx.rebuild()
+        count = getattr(result, "events_indexed", 0)
+        self._meta_logger.log_index_rebuild("manual", count)
+        return count
+
+    def _parse_ts(self, ts: str | None) -> datetime | None:
+        if not ts:
+            return None
+        try:
+            if ts.endswith("Z"):
+                ts = ts[:-1] + "+00:00"
+            return datetime.fromisoformat(ts)
+        except (TypeError, ValueError):
+            return None

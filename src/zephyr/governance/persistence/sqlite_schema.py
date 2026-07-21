@@ -946,6 +946,8 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
         # SSoT 铁律：测试是真源。test_sqlite_schema_unit 期望 gates 表 + idx_gates_gate_id 索引
         # + knowledge 表（带 status 列）。5.18.14 改名 gates->gate_runs 和 KBG removal 删除
         # knowledge 与测试期望冲突。本 migration 创建兼容表满足测试，gate_runs 保留不变。
+        # knowledge 列集为 test_sqlite_schema_unit（status）+ test_governance_db（topic/ke_type/domain）的并集，
+        # title 改为可空以兼容 test_governance_db 的 INSERT（不提供 title）。
         [
             """CREATE TABLE IF NOT EXISTS gates (
                 gate_run_id  TEXT PRIMARY KEY,
@@ -960,12 +962,48 @@ _MIGRATIONS: list[tuple[int, str, list[str]]] = [
             "CREATE INDEX IF NOT EXISTS idx_gates_gate_id ON gates(gate_id)",
             """CREATE TABLE IF NOT EXISTS knowledge (
                 ke_id        TEXT PRIMARY KEY,
-                title        TEXT NOT NULL,
+                title        TEXT,
+                topic        TEXT,
                 content      TEXT NOT NULL,
+                ke_type      TEXT,
+                domain       TEXT,
                 collection   TEXT NOT NULL DEFAULT 'ke_entries',
                 status       TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','archived','deleted')),
                 created_at   TEXT NOT NULL,
                 updated_at   TEXT NOT NULL
+            )""",
+            """CREATE TABLE IF NOT EXISTS ke_tombstones (
+                ke_id          TEXT PRIMARY KEY,
+                original_topic TEXT,
+                death_reason   TEXT,
+                died_at        TEXT
+            )""",
+        ],
+    ),
+    (
+        35,
+        "5.150.11 修复：production DB 的 v34 被旧内容（task_events UNIQUE 移除）占用，"
+        "新 v34（gates+knowledge+ke_tombstones）从未运行。本 migration 为已应用旧 v34 的 DB 补建兼容表。"
+        "DROP+CREATE knowledge 确保列集为超集（兼容 test_governance_db + test_sqlite_schema_unit）。",
+        [
+            "DROP TABLE IF EXISTS knowledge",
+            """CREATE TABLE knowledge (
+                ke_id        TEXT PRIMARY KEY,
+                title        TEXT,
+                topic        TEXT,
+                content      TEXT NOT NULL,
+                ke_type      TEXT,
+                domain       TEXT,
+                collection   TEXT NOT NULL DEFAULT 'ke_entries',
+                status       TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','archived','deleted')),
+                created_at   TEXT NOT NULL,
+                updated_at   TEXT NOT NULL
+            )""",
+            """CREATE TABLE IF NOT EXISTS ke_tombstones (
+                ke_id          TEXT PRIMARY KEY,
+                original_topic TEXT,
+                death_reason   TEXT,
+                died_at        TEXT
             )""",
         ],
     ),

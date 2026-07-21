@@ -58,7 +58,7 @@ from _shared.walk import iter_files
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.infrastructure.finding import (
+    from zephyr.infrastructure.script_system.finding import (
         BlastRadius,
         Dimension,
         Finding,

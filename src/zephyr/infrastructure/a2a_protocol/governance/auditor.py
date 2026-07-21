@@ -27,7 +27,8 @@ try:
 except (ImportError, AttributeError):
 
     class AuditWriter:
-        def write(self, **kwargs):
+        @staticmethod
+        def write(**kwargs):
             return kwargs
 
 

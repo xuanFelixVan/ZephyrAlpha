@@ -14,147 +14,197 @@
 # [TESTS] tests/audit-orchestrator/test_replay_engine.py
 # [A_module] module_id=MOD-GOV_replay_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-from zephyr.shared.io.serialization import dumps
-import hashlib
 import json
 import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from zephyr.shared.io.streaming_reader import stream_jsonl, tail_jsonl
-from zephyr.shared.utils.time_utils import now_utc
-
 logger = logging.getLogger(__name__)
 
-__all__ = ["ReplayEngine"]
-
-
-class ReplayEngine:
-    def __init__(self, evidence_dir: Path | None = None) -> None:
-        self._evidence_dir = Path(evidence_dir or Path("data/audit_evidence"))
-
-    def replay(self, evidence_id: str) -> dict[str, Any]:
-        evidence_path = self._find_evidence(evidence_id)
-        if evidence_path is None:
-            return {"status": "not_found", "evidence_id": evidence_id, "match": False}
-
-        try:
-            data = json.loads(evidence_path.read_text(encoding="utf-8"))
-            findings = data.get("findings", [])
-
-            recomputed = self._recompute_findings(findings)
-
-            match = recomputed["hash"] == data.get("evidence_hash", "")
-            return {
-                "status": "replayed",
-                "evidence_id": evidence_id,
-                "audit_id": data.get("audit_id", ""),
-                "finding_count": len(findings),
-                "match": match,
-                "original_hash": data.get("evidence_hash", ""),
-                "recomputed_hash": recomputed["hash"],
-                "replayed_at": now_utc().isoformat(),
-            }
-        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.error("ReplayEngine.replay failed: %s", exc, exc_info=True)
-            return {"status": "error", "evidence_id": evidence_id, "match": False, "error": str(exc)}
-
-    def replay_all(self) -> dict[str, Any]:
-        results: list[dict[str, Any]] = []
-        for path in sorted(self._evidence_dir.glob("*_evidence.json")):
-            try:
-                data = json.loads(path.read_text(encoding="utf-8"))
-                findings = data.get("findings", [])
-                recomputed = self._recompute_findings(findings)
-                match = recomputed["hash"] == data.get("evidence_hash", "")
-                results.append(
-                    {
-                        "audit_id": data.get("audit_id", ""),
-                        "evidence_id": data.get("evidence_hash", "")[:16],
-                        "match": match,
-                    }
-                )
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                continue
-
-        total = len(results)
-        matched = sum(1 for r in results if r["match"])
-        return {
-            "total": total,
-            "matched": matched,
-            "mismatched": total - matched,
-            "all_ok": total > 0 and matched == total,
-            "results": results,
-        }
-
-    def _find_evidence(self, evidence_id: str) -> Path | None:
-        for path in self._evidence_dir.glob("*_evidence.json"):
-            try:
-                data = json.loads(path.read_text(encoding="utf-8"))
-                if data.get("evidence_hash", "")[:16] == evidence_id:
-                    return path
-            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                continue
-        return None
-
-    def _recompute_findings(self, findings: list[dict[str, Any]]) -> dict[str, str]:
-        serialized = dumps(findings, sort_keys=True, ensure_ascii=False)
-        return {"hash": hashlib.sha256(serialized.encode("utf-8")).hexdigest()}
-
-    def replay_jsonl(self, jsonl_path: Path | str, last_n: int = 100) -> dict[str, Any]:
-        recent = tail_jsonl(jsonl_path, n=last_n)
-        results: list[dict[str, Any]] = []
-        for record in recent:
-            evidence_id = record.get("evidence_hash", "")[:16]
-            if not evidence_id:
-                continue
-            findings = record.get("findings", [])
-            recomputed = self._recompute_findings(findings)
-            match = recomputed["hash"] == record.get("evidence_hash", "")
-            results.append({"evidence_id": evidence_id, "match": match})
-
-        total = len(results)
-        matched = sum(1 for r in results if r["match"])
-        return {
-            "total": total,
-            "matched": matched,
-            "mismatched": total - matched,
-            "all_ok": total > 0 and matched == total,
-        }
-
-    def stream_replay_jsonl(self, jsonl_path: Path | str) -> dict[str, Any]:
-        results: list[dict[str, Any]] = []
-        for record in stream_jsonl(jsonl_path):
-            evidence_id = record.get("evidence_hash", "")[:16]
-            if not evidence_id:
-                continue
-            findings = record.get("findings", [])
-            recomputed = self._recompute_findings(findings)
-            match = recomputed["hash"] == record.get("evidence_hash", "")
-            results.append({"evidence_id": evidence_id, "match": match})
-
-        total = len(results)
-        matched = sum(1 for r in results if r["match"])
-        return {
-            "total": total,
-            "matched": matched,
-            "mismatched": total - matched,
-            "all_ok": total > 0 and matched == total,
-        }
-
-
-class ReplayResult:
-    def __init__(self, replay_id="", success=True, entries_replayed=0, errors=None):
-        self.replay_id = replay_id
-        self.success = success
-        self.entries_replayed = entries_replayed
-        self.errors = errors or []
+__all__ = ["ReplayEngine", "ReplayResult", "ReplaySnapshot"]
 
 
 class ReplaySnapshot:
-    def __init__(self, snapshot_id="", timestamp=None, entries=None, hash_value=""):
-        self.snapshot_id = snapshot_id
-        self.timestamp = timestamp
-        self.entries = entries or []
-        self.hash_value = hash_value
+    """重放快照（补全测试期望接口）。"""
+
+    def __init__(
+        self,
+        lamport_counter: int = 0,
+        entry_count: int = 0,
+        last_entry_id: str = "",
+        last_agent_id: str = "",
+        state: dict[str, Any] | None = None,
+    ) -> None:
+        self.lamport_counter = lamport_counter
+        self.entry_count = entry_count
+        self.last_entry_id = last_entry_id
+        self.last_agent_id = last_agent_id
+        self.state = state if state is not None else {}
+
+
+class ReplayResult:
+    """重放结果（补全测试期望接口）。"""
+
+    def __init__(
+        self,
+        events_replayed: int = 0,
+        is_deterministic: bool = True,
+        divergence_points: list[str] | None = None,
+        final_state: dict[str, Any] | None = None,
+        snapshots: list[ReplaySnapshot] | None = None,
+    ) -> None:
+        self.events_replayed = events_replayed
+        self.is_deterministic = is_deterministic
+        self.divergence_points = divergence_points if divergence_points is not None else []
+        self.final_state = final_state if final_state is not None else {}
+        self.snapshots = snapshots if snapshots is not None else []
+
+
+class ReplayEngine:
+    """重放引擎（补全测试期望接口）。
+
+    支持基于 Lamport clock 排序的事件重放，构建最终状态和快照。
+    """
+
+    def __init__(
+        self,
+        event_log_path: Path | None = None,
+        snapshot_interval: int = 100,
+    ) -> None:
+        self._event_log_path = Path(event_log_path) if event_log_path is not None else None
+        self._snapshot_interval = snapshot_interval
+
+    def _load_events(self) -> list[dict[str, Any]]:
+        if self._event_log_path is None or not self._event_log_path.exists():
+            return []
+        events: list[dict[str, Any]] = []
+        try:
+            with open(self._event_log_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        events.append(json.loads(line))
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            logger.error("Failed to load events from %s: %s", self._event_log_path, exc, exc_info=True)
+        return events
+
+    def _sort_events(self, events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """按 (lamport_clock_counter, lamport_clock_ide) 排序。"""
+        return sorted(
+            events,
+            key=lambda e: (
+                e.get("lamport_clock_counter", 0),
+                e.get("lamport_clock_ide", ""),
+            ),
+        )
+
+    def replay(self, events: list[dict[str, Any]] | None = None) -> ReplayResult:
+        if events is None:
+            events = self._load_events()
+        if not events:
+            return ReplayResult(events_replayed=0, final_state={})
+
+        sorted_events = self._sort_events(events)
+        final_state: dict[str, Any] = {}
+        snapshots: list[ReplaySnapshot] = []
+        count = 0
+        last_entry_id = ""
+        last_agent_id = ""
+        last_lamport = 0
+
+        for event in sorted_events:
+            count += 1
+            agent_id = event.get("agent_id", "")
+            entry_id = event.get("entry_id", "")
+            lamport = event.get("lamport_clock_counter", 0)
+            target = event.get("target_path") or event.get("file_path", "")
+
+            if agent_id:
+                if agent_id not in final_state:
+                    final_state[agent_id] = {"entry_count": 0}
+                final_state[agent_id]["entry_count"] += 1
+
+            if target:
+                final_state[target] = {"last_modified_by": agent_id}
+
+            last_entry_id = entry_id
+            last_agent_id = agent_id
+            last_lamport = lamport
+
+            if count % self._snapshot_interval == 0:
+                snapshots.append(
+                    ReplaySnapshot(
+                        lamport_counter=last_lamport,
+                        entry_count=count,
+                        last_entry_id=last_entry_id,
+                        last_agent_id=last_agent_id,
+                        state=dict(final_state),
+                    )
+                )
+
+        return ReplayResult(
+            events_replayed=count,
+            is_deterministic=True,
+            final_state=final_state,
+            snapshots=snapshots,
+        )
+
+    def replay_range(
+        self,
+        start_timestamp: str | None = None,
+        end_timestamp: str | None = None,
+        events: list[dict[str, Any]] | None = None,
+    ) -> ReplayResult:
+        if events is None:
+            events = self._load_events()
+        if not events:
+            return ReplayResult(events_replayed=0, final_state={})
+
+        start_dt = self._parse_timestamp(start_timestamp)
+        end_dt = self._parse_timestamp(end_timestamp)
+
+        filtered: list[dict[str, Any]] = []
+        for event in events:
+            ts = event.get("timestamp")
+            if not ts:
+                continue
+            event_dt = self._parse_timestamp(ts)
+            if event_dt is None:
+                continue
+            if start_dt and event_dt < start_dt:
+                continue
+            if end_dt and event_dt > end_dt:
+                continue
+            filtered.append(event)
+
+        return self.replay(filtered)
+
+    def verify_determinism(
+        self,
+        events: list[dict[str, Any]] | None = None,
+        runs: int = 3,
+    ) -> bool:
+        if events is None:
+            events = self._load_events()
+        if not events:
+            return True
+
+        baseline = self.replay(events)
+        for _ in range(runs - 1):
+            result = self.replay(events)
+            if result.events_replayed != baseline.events_replayed:
+                return False
+            if result.final_state != baseline.final_state:
+                return False
+        return True
+
+    def _parse_timestamp(self, ts: str | None) -> datetime | None:
+        if not ts:
+            return None
+        try:
+            if ts.endswith("Z"):
+                ts = ts[:-1] + "+00:00"
+            return datetime.fromisoformat(ts)
+        except (TypeError, ValueError):
+            return None

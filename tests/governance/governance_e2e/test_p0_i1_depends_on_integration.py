@@ -39,7 +39,7 @@ class TestP0I1DependsOnIntegration:
         assert len(gcts) >= 8, f"Expected >= 8 GCT contracts, found {len(gcts)}: {sorted(gcts)}"
 
     def test_blueprint_references_sys_master(self):
-        bp_path = REPO_ROOT / "docs" / "03_modules" / "_domain-governance" / "blueprint.md"
+        bp_path = REPO_ROOT / "docs" / "03_modules" / "_domain_governance" / "blueprint.md"
         content = bp_path.read_text(encoding="utf-8")
         assert "SYS-MASTER" in content or "sys-master" in content.lower()
 

@@ -93,7 +93,7 @@ class SnapshotExistenceCheck:
 
 class S3SnapshotLifecycle:
     def __init__(self, snapshot_dir: Path | None = None) -> None:
-        self._snapshot_dir = snapshot_dir or (REPO_ROOT / "data" / "rollback" / "db_snapshots")
+        self._snapshot_dir = snapshot_dir or Path("data/rollback/db_snapshots")
         self._manifest_dir = self._snapshot_dir / ".manifests"
         self._policy = LifecyclePolicy()
 
