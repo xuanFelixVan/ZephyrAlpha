@@ -114,6 +114,8 @@ __all__ = [
     "make_commit_gateway_abuse_monitor_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 5b
     "make_workspace_hygiene_reconciler",  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002
     "make_metric_count_drift_reconciler",  # #ARCH-HEALTH-DASHBOARD-001 阶段2 dashboard 指标数描述漂移校验
+    "make_cross_layer_contract_signature_reconciler",  # 12维度审计自动化 P1-b 跨层契约签名漂移检测
+    "make_blueprint_status_transition_reconciler",  # 12维度审计自动化 P1-d BLUEPRINT 状态转跃检测
 ]
 
 

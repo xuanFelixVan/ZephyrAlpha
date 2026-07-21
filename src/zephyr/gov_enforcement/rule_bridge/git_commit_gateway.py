@@ -176,6 +176,12 @@ from zephyr.gov_enforcement.commit_gates.domain_fk_gate import make_domain_fk_ga
 from zephyr.gov_enforcement.commit_gates.blueprint_amodule_consistency_gate import make_blueprint_amodule_consistency_gate
 from zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate import make_consumers_accuracy_gate  # #ARCH-CONSUMERS-ACCURACY-001 治本——CONSUMERS 字段准确性 warn-only 检测
 from zephyr.gov_enforcement.commit_gates.precommit_offline_gate import make_precommit_offline_gate  # #ARCH-PRECOMMIT-OFFLINE-001 治本——pre-commit 配置离线可运行硬阻断
+from zephyr.gov_enforcement.commit_gates.folder_capacity_hard_limit_gate import make_folder_capacity_hard_limit_gate  # 12维度审计自动化 P0-a 文件夹容量硬限制
+from zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate import make_depgraph_pre_registration_gate  # 12维度审计自动化 P0-b depgraph预登记强制
+from zephyr.gov_enforcement.commit_gates.derivation_annotation_gate import make_derivation_annotation_gate  # 12维度审计自动化 P1-a 派生注解验证
+from zephyr.gov_enforcement.commit_gates.relative_path_literal_gate import make_relative_path_literal_gate  # 12维度审计自动化 P1-c 相对路径字面量硬阻断
+from zephyr.governance.audit.cross_layer_contract_signature_reconciler import make_cross_layer_contract_signature_reconciler  # 12维度审计自动化 P1-b 跨层契约签名reconciler
+from zephyr.governance.audit.blueprint_status_transition_reconciler import make_blueprint_status_transition_reconciler  # 12维度审计自动化 P1-d BLUEPRINT状态转跃reconciler
 from zephyr.shared.infra.process_pool import is_pid_alive
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -470,8 +476,12 @@ class GitCommitGateway:
         self._gate_registry.register(make_undefined_name_gate())  # priority=106 治本F821未定义符号零防护（GATE-DEPGRAPH-OPS 治本 Phase 1，AI提交路径--no-verify绕过外部pre-commit，in-process stdlib AST硬阻断）
         self._gate_registry.register(make_import_integrity_gate())  # priority=107 治本悬空import硬阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001，检测staged文件中import的目标模块在staged+main HEAD可解析，防ba40fa5b75同型违规）
         self._gate_registry.register(make_capability_lookup_required_gate())  # priority=110 #ARCH-GOV-CONVERGENCE-META Phase 3.4a 病根3治本（强制 AI 施工前调 rule_discovery/capability_lookup，audit log 在 .runtime/lookup_audit/<session_id>.jsonl）
-        self._gate_registry.register(make_consumers_accuracy_gate())  # priority=116 warn-only 治本 [CONSUMERS] 字段准确性（#ARCH-CONSUMERS-ACCURACY-001，检测 orphan+phantom 违规，passed=True + detail 不阻断 commit；原 113 与 depgraph_pre_registration 冲突，迁移至 116）
         self._gate_registry.register(make_precommit_offline_gate())  # priority=111 治本 pre-commit 配置离线可运行（#ARCH-PRECOMMIT-OFFLINE-001，检测 .pre-commit-config.yaml 中外部 repo 引用 + language 非 system，硬阻断）
+        self._gate_registry.register(make_folder_capacity_hard_limit_gate())  # priority=112 12维度审计自动化——文件夹容量>120硬阻断
+        self._gate_registry.register(make_depgraph_pre_registration_gate())  # priority=113 12维度审计自动化——depgraph build_status=planned 但 impl_lines>50 硬阻断
+        self._gate_registry.register(make_derivation_annotation_gate())  # priority=114 12维度审计自动化——[DERIVES_FROM] 源文件不存在硬阻断
+        self._gate_registry.register(make_relative_path_literal_gate())  # priority=115 12维度审计自动化——.py 字符串中相对路径字面量硬阻断
+        self._gate_registry.register(make_consumers_accuracy_gate())  # priority=116 warn-only 治本 [CONSUMERS] 字段准确性（#ARCH-CONSUMERS-ACCURACY-001，检测 orphan+phantom 违规，passed=True + detail 不阻断 commit；原 113 与 depgraph_pre_registration 冲突，迁移至 116）
         self._in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         #ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），
@@ -713,6 +723,8 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_commit_gateway_abuse_monitor_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 5b commit gateway 持续滥用监控（priority=875，post-commit 事件触发，五维滥用检测 warn-only，补强 POST-COMMIT-GUARD 1h 短窗口盲区）
         self._reconciliation_registry.register(make_error_pattern_consumer_reconciler(self))  # #ARCH-PREVENTABILITY-LAYER-001 Phase 4 P4-1b AI behavior telemetry JSONL 错误事件聚合 consumer（priority=880，post-commit 事件触发，聚合到 .runtime/ai_error_patterns/aggregated_patterns.json）
         self._reconciliation_registry.register(make_workspace_hygiene_reconciler(self))  # ARCH-TOOL-HEALTH-V1 Phase 6 + DEBT-WORKSPACE-001/002 工作区卫生自动清理（priority=890，post-commit auto-sync 产物 git restore 还原）
+        self._reconciliation_registry.register(make_cross_layer_contract_signature_reconciler(self))  # 12维度审计自动化 P1-b——跨层契约签名漂移检测（priority=215，post-commit 事件触发，对比 [C_contract] 签名 git show HEAD~1 vs HEAD）
+        self._reconciliation_registry.register(make_blueprint_status_transition_reconciler(self))  # 12维度审计自动化 P1-d——BLUEPRINT 状态转跃检测（priority=825，post-commit 事件触发，STABILITY/MATURITY 逆向转跃 hard-fail）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys
