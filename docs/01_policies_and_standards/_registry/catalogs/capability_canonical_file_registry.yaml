@@ -4914,6 +4914,57 @@ capabilities:
       解决防重建：check_file_canonical() 反查阻止新 AI 重建检测逻辑。
       关联规则：TRAE-074（worktree_base_freshness）、裁定#19-B（扩展）。
 
+  # --------------------------------------------------------------------------
+  - capability_id: consumers_accuracy_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py
+    aliases:
+      - CONSUMERS-ACCURACY
+      - consumers-accuracy
+      - make_consumers_accuracy_gate
+      - consumers_accuracy_check
+      - ARCH-CONSUMERS-ACCURACY-001
+      - ARCH-CONSUMERS-ACCURACY-002
+    description: >-
+      CONSUMERS-ACCURACY in-process warn-only 门禁（#ARCH-CONSUMERS-ACCURACY-001
+      治本，2026-07-21，priority=116）。检测 staged scripts/governance/** + src/**.py
+      的 [CONSUMERS] 头部字段准确性——三类违规：orphan（括号内函数名在当前文件不存在，
+      AST 精确检测）+ phantom（消费者模块路径在项目内不存在，文件系统查找）+ stale
+      （消费者模块存在但不 import 当前模块，baseline-scan 专用 git grep，commit-time
+      不检测避免性能损耗）。warn-only（passed=True + detail 不阻断 commit）；P2 升级 block。
+      抽象代号（MOD-XXX/SH-XXX）豁免；含中文括号内容跳过；tests/ 豁免；noqa: consumers-accuracy
+      行级逃生。fail-open（git/ast 异常不阻断）。canonical = consumers_accuracy_gate.py 的
+      check_consumers_accuracy + make_consumers_accuracy_gate。解决发现性：新 AI 通过
+      capability_lookup.find("consumers_accuracy") 可定位真源。解决防重建：CREATE-GUARD
+      阻断无 token 的 consumers_accuracy_gate 副本。关联规则：trae_006（ANTI-HALL-05）、
+      trae_009（跨文件影响检查）、trae_012（CODE-010）、trae_047（工程文件头）。
+    integrity_anchors:
+      - make_consumers_accuracy_gate  # gate 工厂(删则 gate 不注册)
+      - check_consumers_accuracy      # 检测逻辑真源(删则 orphan+phantom 检测失效)
+      - parse_consumers_field         # [CONSUMERS] 字段解析(删则检测输入失效)
+
+  # --------------------------------------------------------------------------
+  - capability_id: consumers_accuracy_baseline_scan
+    canonical_override: scripts/governance/d7_code/scan_consumers_accuracy.py
+    aliases:
+      - scan_consumers_accuracy
+      - CONSUMERS-ACCURACY-BASELINE
+      - ARCH-CONSUMERS-ACCURACY-002
+      - consumers_accuracy_baseline
+    description: >-
+      CONSUMERS 字段准确性 baseline-scan 脚本（#ARCH-CONSUMERS-ACCURACY-002 Phase 1，
+      2026-07-21）。全项目扫描 src/**.py + scripts/governance/**.py 的 [CONSUMERS] 字段，
+      三类违规检测：orphan + phantom（复用 consumers_accuracy_gate 函数）+ stale（git grep
+      反向查找，baseline-scan 专用）。支持 --json 输出（供后续 reconciler 消费）、
+      --no-stale 跳过 stale 检测（性能优化）。纯 stdlib + 复用 gate 函数（DRY）。
+      fail-open（git 不可达时跳过 stale 检测）。退出码 0=扫描完成（诊断工具非门禁）。
+      canonical = scan_consumers_accuracy.py 的 main + _scan_file。解决发现性：新 AI
+      通过 capability_lookup.find("consumers_accuracy_baseline_scan") 可定位真源。解决
+      防重建：CREATE-GUARD 阻断无 token 的 scan_consumers_accuracy 副本。
+    integrity_anchors:
+      - main                     # CLI 入口(删则脚本不可运行)
+      - _scan_file               # 单文件扫描逻辑(删则检测失效)
+      - _check_stale_violation   # stale 检测(删则 stale 检测失效)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5747,6 +5798,12 @@ creation_tokens:
     token: "auto-data-sources-registry-20260706"
     created_by: "session-sess-44960-20260706204645"
     capability: "data_source_registry"
+
+  # --- Code Wiki 半自动维护生成器（2026-07-21，G-WIKI 同步 AUTO 标记块）---
+  - file: "scripts/governance/d5_architecture/generators/generate_code_wiki_stats.py"
+    token: "auto-generate-code-wiki-stats-20260721"
+    created_by: "session-sess-50776-20260721230158"
+    capability: "domain_architecture_generators"
   - file: "architecture_model/data/data_source_apis_registry.yaml"
     token: "auto-data-source-apis-registry-20260709"
     created_by: "session-sess-23196-20260709011620"
@@ -5873,18 +5930,37 @@ creation_tokens:
     token: "auto-worktree-lifecycle-reconciler-20260717"
     created_by: "session-sweep-fix-20260717"
     capability: "worktree_lifecycle_reconciler"
-  # GATE-STASH-LIFECYCLE reconciler: post-commit 事件驱动 session_worktree 临时 stash 过期清理
-  # （#ARCH-WORKTREE-002 Phase 4, 2026-07-19）
+  # GATE-STASH-LIFECYCLE reconciler: post-commit 事件驱动 AI 临时 stash 过期清理
+  # （#ARCH-WORKTREE-002 Phase 4 → #ARCH-STASH-ACCUMULATION-001 Phase 1 系统性扩展, 2026-07-21）
   # 病根：session_worktree pre_merge/abort/auto-recover 多处 stash 临时修改但从不清理，
   #   实测 34 个 stash 堆积（部分 30+ 小时），导致 stash 栈污染、pop 风险、索引漂移。
-  # 治本：reconciler 在任何非空 commit 后自动触发（priority=801），清理 > 24h 的
-  #   session_worktree 临时 stash（按 msg 前缀 session_worktree_pre_merge /
-  #   session_worktree_abort 识别，按索引降序 drop 避免 renumbering），不影响用户手动 stash。
+  # 治本：reconciler 在任何非空 commit 后自动触发（priority=801），清理 > 4h 的
+  #   AI 前缀 stash（8 个前缀：session_worktree_pre_merge / session_worktree_abort /
+  #   phase- / temp-stash-for- / pre-merge stash / pre-merge-stash / merge-prep- /
+  #   stash-for-merge，按索引降序 drop 避免 renumbering），user-manual- 前缀永不被清理。
+  #   aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1）清理所有非 user-manual- stash。
   # capability 反查：新 AI 搜 stash 清理/stash 过期/stash lifecycle/临时 stash 可定位此 reconciler。
   - file: "src/zephyr/governance/audit/reconciliation_registry.py"
     token: "auto-stash-lifecycle-reconciler-20260719"
     created_by: "sess-arch-worktree-002-20260719"
     capability: "stash_lifecycle_reconciler"
+  # #ARCH-STASH-ACCUMULATION-001 Phase 4（2026-07-21）：STASH-ACCUMULATION pre-commit gate
+  # 阈值检测：> 20 warn（passed=True + detail），> 40 block（passed=False 阻断 commit）。
+  # 病根：100% AI 开发场景下多 session 并发 + WORKSPACE-CLEAN-CHECK merge 阻断 = stash 累积。
+  # 治本：阈值阻断 + reconciler 4h TTL 自动清理 + merge 后 auto drop。
+  # capability 反查：新 AI 搜 stash 累积/stash 堆积/stash 阈值/stash accumulation 可定位此 gate。
+  - file: "src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py"
+    token: "auto-stash-accumulation-gate-20260721"
+    created_by: "sess-39544-20260721221413"
+    capability: "stash_accumulation_gate"
+  # #ARCH-STASH-ACCUMULATION-001 Phase 7（2026-07-21）：trae_075 stash 生命周期规则真源
+  # 5 铁律：STASH-LIFE-LAW-1（message 含 session_id）/ LAW-2（TTL=4h 事件驱动）/
+  # LAW-3（merge 后 auto drop）/ LAW-4（累积阈值阻断）/ LAW-5（user-manual- 保护）。
+  # capability 反查：新 AI 搜 stash 规则/stash 生命周期/stash lifecycle rule 可定位此规则真源。
+  - file: "docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml"
+    token: "auto-trae-075-stash-lifecycle-20260721"
+    created_by: "sess-39544-20260721221413"
+    capability: "stash_lifecycle_rule"
   # 治本（2026-07-18）：logs 模块此前被 .gitignore logs/ 规则误忽略，首次纳入版本控制
   - file: "src/zephyr/infrastructure/system_telemetry/logs/__init__.py"
     token: "auto-sys-telemetry-logs-init-20260718"
@@ -6789,3 +6865,19 @@ di_seam_exemptions:
     token: "auto-rollback-bridge-contracts-20260720"
     created_by: "session-sess-18504-20260720123921"
     capability: "rollback_handler"
+
+  # --- CONSUMERS-ACCURACY gate + baseline-scan 脚本（2026-07-21，#ARCH-CONSUMERS-ACCURACY-001/002 治本）---
+  # pre-commit warn-only 检测 [CONSUMERS] 字段准确性（priority=116，紧接 RELATIVE-PATH-LITERAL=115）
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("consumers_accuracy") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 consumers_accuracy_gate 副本
+  - file: "src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py"
+    token: "auto-consumers-accuracy-gate-20260721"
+    created_by: "session-sess-55768-20260721214631"
+    capability: "consumers_accuracy_gate"
+  # baseline-scan 脚本——全项目扫描 [CONSUMERS] 字段准确性（orphan+phantom+stale）
+  # 治本（2d 可发现性）：新 AI 通过 capability_lookup.find("consumers_accuracy_baseline_scan") 可定位真源
+  # 治本（2c 防重建）：CREATE-GUARD 阻断无 token 的 scan_consumers_accuracy 副本
+  - file: "scripts/governance/d7_code/scan_consumers_accuracy.py"
+    token: "auto-scan-consumers-accuracy-20260721"
+    created_by: "session-sess-55768-20260721214631"
+    capability: "consumers_accuracy_baseline_scan"

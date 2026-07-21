@@ -5367,12 +5367,12 @@ entries:
       - P1-1 consumers_accuracy_gate.py 新建（orphan+phantom 检测 + noqa 豁免 + fail-open）
       - P1-2 git_commit_gateway.py 注册（import + register）+ gate_registry.yaml 登记
       - P1-3 test_consumers_accuracy_gate.py 配套测试（53 测试覆盖 9 个测试组）
-      - P1-4 capability_canonical_file_registry.yaml 登记
+      - P1-4 capability_canonical_file_registry.yaml 登记（capability_id + creation_token 双登记，含 consumers_accuracy_gate + consumers_accuracy_baseline_scan 两个 capability + 2 个 token）
       - P1-5 noqa_exempt_registry.yaml 登记
       - P1-6 trae_006/009/012 规则更新（CONSUMERS 降级 + Grep 强制为权威源）
       - P1-7 architecture_issue_registry 更新（#ARCH-CONSUMERS-ACCURACY-001 升级 + 本条登记）
       - P1-8 baseline-scan 脚本创建（scripts/governance/d7_code/scan_consumers_accuracy.py）
-      - P1-9 执行 baseline-scan 生成差异报告
+      - P1-9 执行 baseline-scan 验证——手动运行脚本检测到 842 violations（1047 个有 [CONSUMERS] 字段的文件中），报告 in-memory 输出不持久化到文件（对标 undefined_name_baseline_reconciler 模式）；JSON 报告因 DCR 不允许 .json 在 docs/_working/ 且无自动化消费者，已删除（#ARCH-CONSUMERS-ACCURACY-003 裁定）
     Phase 2（待定，历史漂移治理完成后）：warn-only → block 升级
   status: resolved
   related_adjudication: '#ARCH-CONSUMERS-ACCURACY-001 (原始缺口登记), #ARCH-CROSS-COMMIT-ATOMICITY-002 (Phase 2.5 审查发现本缺口), #ARCH-PREVENTABILITY-LAYER-001 (TRAE-068 第 6 层可预防性原则), #ARCH-DEP-001 (君子协定→硬阻断三阶段范式参考)'
@@ -5713,5 +5713,252 @@ entries:
   status: decided
   related_adjudication: '裁定#19-B (worktree base 新鲜度检测——commit-only), #ARCH-RECONCILER-ALERT-SELFHEAL-001 (worktree 自愈同源), #ARCH-WORKTREE-AUTO-SWEEP-001 (worktree 自动清扫同源)'
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_062 (SSoT 真源分类), 铁律: 永久系统必须全自动'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+# --- #ARCH-STASH-ACCUMULATION-001: stash 累积系统性治理（2026-07-21）---
+# 父裁定: #ARCH-WORKTREE-002（缺陷4 stash 堆积治本）→ 本议题系统性扩展
+# 关联: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001（WORKSPACE-CLEAN-CHECK 引入，stash 累积根因之一）
+#       #ARCH-TEMP-FILE-LIFECYCLE-002（不可能三角——frontmatter 冲突，已 resolved）
+- issue_id: '#ARCH-STASH-ACCUMULATION-001'
+  title: stash 累积系统性治理——自动 drop + 阈值阻断 + 4h TTL + user-manual- 保护（100% AI 开发场景治本）
+  category: architecture_governance
+  severity: P1
+  adjudication: >-
+    2026-07-21 立项裁定。100% AI 开发场景下，多 session 并发 + WORKSPACE-CLEAN-CHECK
+    merge 阻断 + 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制）+
+    stash_lifecycle_reconciler 只清理 24h 以上 session_worktree 前缀 stash = stash 累积。
+    实测 34-45 个 stash 堆积，部分 30+ 小时。
+
+
+    第一性原理病根（3 个盲区 + 新不可能三角）：
+
+    1. **自动 push 有，自动 drop 无**：session_worktree 在 _execute_cleanups pre-merge
+       + _dispose_main_workdir_files abort 时自动 stash push，但 merge 成功后从不
+       auto drop 本 session 的 pre_merge stash——AI 忘记手动 drop = 累积
+
+    2. **reconciler TTL 太长**：原 make_stash_lifecycle_reconciler TTL=24h，
+       AI session 典型生命周期 1-4h，24h 内 stash 全部保留 = 累积
+
+    3. **AI 前缀识别不全**：原 reconciler 只识别 session_worktree_pre_merge /
+       session_worktree_abort 2 个前缀，但实际 AI stash 有 8 种前缀
+       （phase- / temp-stash-for- / pre-merge stash / pre-merge-stash /
+       merge-prep- / stash-for-merge）= 漏清
+
+    4. **无前置阻断**：stash 累积到 34 个时才被人工发现，reconciler 只清理过期的，
+       无法阻止"活跃 stash 持续累积"的趋势
+
+    新不可能三角（#ARCH-STASH-ACCUMULATION-001）：
+    - WORKSPACE-CLEAN-CHECK 要求 merge 时主工作区 clean（fail-closed 阻断）
+    - 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制，无法物理隔离）
+    - stash_lifecycle_reconciler 只清理 24h 以上 session_worktree 前缀 stash
+    → 三者交集 = stash 累积
+
+
+    stash 累积后果（第一性原理）：
+    1. git 对象存储膨胀（45 个 stash = 45 个 tree 对象）
+    2. AI 判断混淆（看到 stash list 以为有未提交工作）
+    3. stash pop 误恢复其他 session WIP 覆盖当前工作
+    4. stash 索引漂移（drop stash@{3} 后 stash@{4} 变 stash@{3}）
+
+
+    治本方案（7 Phase，全生命周期治理）：
+
+    Phase 1（reconciler 扩展，已落地）：
+    - make_stash_lifecycle_reconciler TTL 24h → 4h（AI session 典型生命周期）
+    - _STASH_PREFIXES 2 个 → _AI_STASH_PREFIXES 8 个前缀
+    - 新增 _PROTECTED_STASH_PREFIXES（user-manual- 永不被清理）
+    - 新增 aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1 清理所有非 user-manual- stash）
+    - 新增 _is_protected / _is_ai_generated / _should_drop 3 个 helper 函数
+
+    Phase 4（新建 gate，已落地）：
+    - stash_accumulation_gate.py 新建（priority=113）
+    - 阈值：> 20 warn（passed=True + detail），> 40 block（passed=False 阻断 commit）
+    - fail-open：git stash list 失败不阻断
+    - 已在 git_commit_gateway.py 注册（Phase 4 注册，第二次 commit 落地）
+
+    Phase 5（auto drop，已落地）：
+    - session_worktree.py 新建 _drop_session_pre_merge_stash 函数
+    - merge 成功后自动调用（fail-open，drop 失败不阻断 merge）
+    - 按 message 完全匹配 session_id 的 stash 降序 drop（避免 renumbering）
+
+    Phase 7（规则真源，已落地）：
+    - trae_075_stash_lifecycle.yaml 新建（5 铁律）
+    - capability_canonical_file_registry.yaml 登记 creation_token
+    - rule_ai_perception_index.yaml 登记 TRAE-075 条目（total_rules 72）
+
+    Phase 6（长期方向，超出 AI 能力，仅文档化）：
+    - IDE 插件层拦截 Edit/Write 重定向到 worktree
+    - 物理隔离消除 stash push 需求（从源头消除 stash 累积）
+
+    架构师裁定不实现项（超出 AI 能力或过度工程）：
+    - per-session stash_refs.json 追踪——过度工程，reconciler 扫描 stash list 足够
+    - stash pop 恢复——AI 责任，不自动化（误恢复风险 > 自动化收益）
+    - abort stash auto drop——abort 场景少，reconciler 4h TTL 兜底足够
+  fix_phase: |
+    Phase 1（已落地，本次 commit）：
+      - reconciliation_registry.py: make_stash_lifecycle_reconciler 扩展
+        （TTL 4h + 8 前缀 + aggressive 模式 + user-manual- 保护）
+    Phase 4 gate 文件（已落地，本次 commit）：
+      - stash_accumulation_gate.py 新建（priority=113，> 20 warn / > 40 block）
+    Phase 4 注册（第二次 commit，stash 清理后）：
+      - git_commit_gateway.py 注册 stash_accumulation_gate
+        （需 stash < 40 才能通过 STASH-ACCUMULATION gate）
+    Phase 5（已落地，上次 commit）：
+      - session_worktree.py: _drop_session_pre_merge_stash + merge 后调用
+    Phase 7（已落地，本次 commit）：
+      - trae_075_stash_lifecycle.yaml 新建（5 铁律）
+      - capability_canonical_file_registry.yaml 登记 creation_token
+      - rule_ai_perception_index.yaml 登记 TRAE-075 条目
+    Phase 6（长期方向，超出 AI 能力，仅文档化）：
+      - IDE 插件层拦截 Edit/Write 重定向到 worktree
+  impact:
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（Phase 1 扩展）'
+    - 'src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py（Phase 4 新建）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 4 注册，第二次 commit）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 5 auto drop）'
+    - 'docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml（Phase 7 规则真源）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（Phase 7 creation_token）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（Phase 7 索引）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）'
+  status: resolved
+  related_adjudication: '#ARCH-WORKTREE-002 (缺陷4 stash 堆积治本——父裁定，本议题系统性扩展), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (WORKSPACE-CLEAN-CHECK 引入——stash 累积根因之一), #ARCH-TEMP-FILE-LIFECYCLE-002 (不可能三角——frontmatter 冲突，已 resolved)'
+  related_rules: 'trae_075 (stash 生命周期全生命周期铁律), AGENTS.md FP-ISO.4C (worktree 君子协定), trae_062 (SSoT 真源分类), trae_060 (向内收三原则——reconciler 扩展不新建系统)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-CONSUMERS-ACCURACY-003: P1-4 capability registry 收尾登记 + P1-9 baseline-scan 报告持久化策略裁定 ---
+- issue_id: '#ARCH-CONSUMERS-ACCURACY-003'
+  title: 'CONSUMERS-ACCURACY Phase 1 收尾——capability registry 双重登记补全 + baseline-scan JSON 报告持久化策略裁定'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    问题背景：
+    #ARCH-CONSUMERS-ACCURACY-002 Phase 1 标记 resolved 但 P1-4（capability_canonical_file_registry.yaml
+    登记）实际从未完成——capability_id 和 creation_token 双缺失。同时 P1-9 的 baseline-scan
+    JSON 报告（docs/_working/consumers_accuracy_baseline_scan_20260721.json）违反 DCR
+    （.json 不在 docs/_working/ allowed 扩展名清单）且无自动化消费者。
+
+    第一性原理分析：
+    1. capability registry 的双重作用（从 bare_subprocess_gate 正确模式提炼）：
+       (a) capability_id（可发现性）：AI 通过 capability_lookup.find 定位真源。100% AI
+           开发中 AI 上下文有限，capability registry 是 AI 发现现有实现的唯一可靠入口。
+           缺失 = gate 对 AI 不可见 = AI 误判"需要新建" = 造第二真源（违反 trae_060 §2）。
+       (b) creation_token（防重建）：CREATE-GUARD 检测新增 .py 文件是否有 token。缺失 =
+           CREATE-GUARD 无法区分"合法修改"和"误建副本" = AI 可造副本而不被阻断。
+    2. baseline-scan 报告持久化：项目既有模式（undefined_name_baseline_reconciler）是
+       in-memory 扫描 + ReconcileResult warn + reconcile_execution_log 表持久化，不生成
+       任何文件。当前 JSON 报告是手动调试残留，无自动化消费者，违反 DCR。
+    3. "Resolved but incomplete" 系统性风险：#ARCH-CONSUMERS-ACCURACY-002 标记 resolved
+       但 P1-4 未完成——AI 倾向于在主体工作完成后立即标记 resolved，遗漏收尾登记工作。
+       这与 #ARCH-CONSUMERS-ACCURACY-001 本身治标的病根同构（派生数据被当作声明数据
+       对待，无门禁强制验证 resolved 完整性）。
+
+    裁定：
+    (1) P1-4 必须修复——consumers_accuracy_gate.py + scan_consumers_accuracy.py 在
+        capability_canonical_file_registry.yaml 添加 capability_id + creation_token
+        双重登记（对标 bare_subprocess_gate 正确模式）。
+    (2) P1-9 删除 JSON 残留——对标 in-memory 扫描模式，不持久化到文件。scan 脚本的
+        --json 输出能力保留作为接口，供未来 reconciler 消费。
+    (3) 修正 #ARCH-CONSUMERS-ACCURACY-002 的 fix_phase 描述，将 P1-4 从"计划"改为
+        "已完成"，P1-9 描述更新为"in-memory 输出不持久化"。
+    (4) 不修改 #ARCH-CONSUMERS-ACCURACY-002 的 status（保持 resolved）——P1-4 是收尾
+        登记，不影响 gate 功能（gate 已上线运行）。
+
+    针对 100% AI 开发的长远期战略考虑：
+    - capability registry 是 AI 发现现有实现的唯一可靠入口——不登记 = AI 不可见 = 造第二真源
+    - baseline-scan 结果是诊断数据不是永久制品——正确持久化位置是 reconcile_execution_log 表
+    - "Resolved but incomplete" 是系统性风险——长期可选建 issue resolved 完整性 gate
+      （检测 issue 标记 resolved 但 fix_phase 未全部完成），本次不实施
+
+    Phase 2（长期可选，不本次执行）：
+    - P2-1 建 consumers_accuracy_baseline_reconciler（对标 undefined_name_baseline_reconciler）
+    - P2-2 issue resolved 完整性 gate（#ARCH-ISSUE-RESOLVED-INTEGRITY-001 系统性缺口登记）
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（capability_id + creation_token 双登记）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记 + #ARCH-CONSUMERS-ACCURACY-002 fix_phase 描述修正）
+    - docs/_working/consumers_accuracy_baseline_scan_20260721.json（删除，untracked 残留）
+  fix_phase: |
+    Phase 1（2026-07-21，sess-42724-20260721230056）：
+      - P1-4a 添加 capability_id: consumers_accuracy_gate（canonical_override + aliases + description + integrity_anchors）
+      - P1-4a 添加 capability_id: consumers_accuracy_baseline_scan（scan 脚本 capability）
+      - P1-4b 添加 creation_token: consumers_accuracy_gate.py（auto-consumers-accuracy-gate-20260721）
+      - P1-4b 添加 creation_token: scan_consumers_accuracy.py（auto-scan-consumers-accuracy-20260721）
+      - P1-4c 修正 #ARCH-CONSUMERS-ACCURACY-002 fix_phase P1-4/P1-9 描述
+      - P1-9a 删除 docs/_working/consumers_accuracy_baseline_scan_20260721.json（untracked 残留）
+    Phase 2（长期可选）：
+      - P2-1 建 consumers_accuracy_baseline_reconciler
+      - P2-2 issue resolved 完整性 gate
+  status: resolved
+  related_adjudication: '#ARCH-CONSUMERS-ACCURACY-001 (原始缺口登记), #ARCH-CONSUMERS-ACCURACY-002 (Phase 1 治本施工, fix_phase 描述已修正)'
+  related_rules: 'trae_060 (向内收三原则 §2 防造第二真源), trae_006 (ANTI-HALL-05 消费者声明), trae_047 (工程文件头)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-STASH-ACCUMULATION-001: 占位登记——stash 堆积治理（另一 session 主导，待完整登记） ---
+- issue_id: '#ARCH-STASH-ACCUMULATION-001'
+  title: 'stash 堆积治理——STASH-ACCUMULATION pre-commit gate + reconciler TTL 清理 + trae_075 规则真源（占位登记，另一 session 主导）'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    占位登记说明：
+    本条目由 #ARCH-CONSUMERS-ACCURACY-003 会话（sess-42724-20260721230056）代为登记，
+    原因：capability_canonical_file_registry.yaml 中引用了 #ARCH-STASH-ACCUMULATION-001
+    （stash_accumulation_gate.py token + trae_075 规则 + stash_lifecycle_reconciler 扩展），
+    但原 session（sess-39544-20260721221413）未在 architecture_issue_registry.yaml 登记
+    本编号，导致 ARCH-REFERENCE gate 阻断并发 session 的 commit。
+
+    已知信息（从 capability_canonical_file_registry.yaml 注释提取）：
+    - Phase 1: stash_lifecycle_reconciler 系统性扩展（#ARCH-WORKTREE-002 Phase 4 → 本条）
+    - Phase 4: STASH-ACCUMULATION pre-commit gate（>20 warn, >40 block）
+    - Phase 7: trae_075 stash 生命周期规则真源（5 铁律：STASH-LIFE-LAW-1~5）
+
+    待办：原 session（sess-39544）需补充完整裁定内容（病根分析/治本方案/Phase 清单/impact）。
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py（Phase 4 gate）
+    - src/zephyr/governance/audit/reconciliation_registry.py（Phase 1 reconciler 扩展）
+    - docs/01_policies_and_standards/rules/trae_075_*.yaml（Phase 7 规则真源，待确认文件名）
+  fix_phase: |
+    Phase 1: stash_lifecycle_reconciler 系统性扩展
+    Phase 4: STASH-ACCUMULATION pre-commit gate
+    Phase 7: trae_075 stash 生命周期规则真源
+    （完整 Phase 清单待原 session 补充）
+  status: decided
+  related_adjudication: '#ARCH-WORKTREE-002 (Phase 4 stash lifecycle 基础), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (workspace drift 同源)'
+  related_rules: 'trae_075 (stash 生命周期规则真源，待确认), AGENTS.md FP-ISO.4C (worktree 物理隔离)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
+# --- #ARCH-ISSUE-RESOLVED-INTEGRITY-001: 占位登记——issue resolved 完整性 gate（Phase 2 长期可选） ---
+- issue_id: '#ARCH-ISSUE-RESOLVED-INTEGRITY-001'
+  title: 'issue resolved 完整性 gate——检测 issue 标记 resolved 但 fix_phase 未全部完成（Phase 2 长期可选，占位登记）'
+  category: architecture_governance
+  severity: P3低
+  adjudication: |
+    占位登记说明：
+    本条目由 #ARCH-CONSUMERS-ACCURACY-003 会话（sess-42724-20260721230056）代为登记，
+    原因：#ARCH-CONSUMERS-ACCURACY-003 裁定文本中引用了本编号作为 Phase 2 长期可选工作项，
+    需登记以通过 ARCH-REFERENCE gate。
+
+    病根（从 #ARCH-CONSUMERS-ACCURACY-003 裁定提取）：
+    "Resolved but incomplete" 系统性风险——AI 倾向于在主体工作完成后立即标记 resolved，
+    遗漏收尾登记工作。这与 CONSUMERS 字段准确性问题的病根同构——派生数据（issue status）
+    被当作声明数据对待，无门禁强制验证 resolved 的完整性。
+
+    治本方向（Phase 2 长期可选，不本次实施）：
+    建 issue resolved 完整性 gate——检测 architecture_issue_registry.yaml 中 status=resolved
+    的条目，验证其 fix_phase 清单中所有工作项是否全部完成（通过 git 历史/文件存在性验证）。
+
+    待办：本条目为占位登记，Phase 2 启动时需补充完整裁定内容。
+  impact:
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+    - src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py（Phase 2 待建）
+  fix_phase: |
+    Phase 2（长期可选，不本次执行）：
+      - 建 issue_resolved_integrity_gate.py（检测 status=resolved 但 fix_phase 未全部完成）
+      - 注册到 git_commit_gateway.py
+      - 配套测试
+  status: decided
+  related_adjudication: '#ARCH-CONSUMERS-ACCURACY-003 (本编号在裁定文本中引用为 Phase 2 长期可选工作项)'
+  related_rules: 'trae_060 (向内收三原则)'
   created: '2026-07-21'
   last_updated: '2026-07-21'
