@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T10:37:18Z'
+generated_at: '2026-07-21T16:35:15Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 115
+total_gates: 117
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -357,9 +357,9 @@ gates:
   source: pre-commit
 - gate_id: GATE-NO-TESTS-UNIT
   name: 'GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）'
-  entry: tests/unit/
-  description: ARCH-029 漂移种子防复发——检测活跃代码/文档中 tests/unit/ 旧路径重引入，归档/历史/自动生成数据豁免
-  files_trigger: \.(py|md|yaml|yml)$
+  entry: python scripts/governance/d7_code/check_no_tests_unit.py
+  description: '纯 stdlib 检测 staged 文件中 tests/unit/ 旧路径（local 替代 pygrep #ARCH-PRECOMMIT-OFFLINE-001）'
+  files_trigger: ''
   always_run: false
   category: unknown
   status: active
@@ -385,10 +385,10 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-ANY-ABUSE
-  name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发）'
+  name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）'
   entry: python scripts/governance/d7_code/check_any_abuse.py --ci
-  description: 5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。阶段1 manual（R70 基线
-    634），存量清零后转硬阻断
+  description: '5.145 维度防复发——检测函数签名裸 Any 滥用（ANY-1 参数 / ANY-2 返回值）。Phase 3 commit 阻断（存量已清零
+    e494c72623），`# noqa: any-abuse` 行级豁免合理 Any'
   files_trigger: ^src/zephyr/.*\.py$
   always_run: false
   category: unknown
@@ -525,7 +525,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=116)'
+    priority=113）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''
@@ -815,6 +815,16 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
+- gate_id: ISSUE-RESOLVED-INTEGRITY
+  name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY warn-only 门禁（CommitGate,
+    priority=117）'
+  entry: in-process (GitCommitGateway)
+  description: ISSUE-RESOLVED-INTEGRITY warn-only 门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
 - gate_id: NO-LONG-PARAM-LIST
   name: 'NO-LONG-PARAM-LIST: 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150 防复发）（CommitGate,
     priority=95）'
@@ -1061,6 +1071,15 @@ gates:
   name: 'SSOT-REDEFINITION: SSoT 符号重复定义硬阻断门禁（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
   description: SSoT 符号重复定义硬阻断门禁
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: STASH-ACCUMULATION
+  name: 'STASH-ACCUMULATION: stash 堆积阈值检测门禁（STASH-ACCUMULATION）（CommitGate, priority=114）'
+  entry: in-process (GitCommitGateway)
+  description: stash 堆积阈值检测门禁（STASH-ACCUMULATION）
   files_trigger: ''
   always_run: false
   category: commit_gate
