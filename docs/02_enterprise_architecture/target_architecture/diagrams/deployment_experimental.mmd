@@ -1,4 +1,4 @@
-%% Source: technology_architecture.md §6.1
+%% Source: technology_principles.md §4.1（experimental vs Post-Activation 部署框架）
 %%{init: {'theme': 'default'}}%%
 graph TD
     subgraph DEV["开发机（Windows 10/11）"]
@@ -7,7 +7,7 @@ graph TD
             HOOKS["Git Hooks (pre-commit)"]
         end
         subgraph STORAGE["本地存储"]
-            PARQUET["Data Store (Parquet/DuckDB · 待定)"]
+            PARQUET["Data Store (PostgreSQL + TimescaleDB + DuckDB + Parquet)"]
             DOCS["docs/ (Git + Markdown)"]
         end
     end

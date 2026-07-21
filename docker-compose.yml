@@ -1,4 +1,10 @@
 # Docker Compose — ZephyrAlpha 开发/测试环境
+# ⚠️ 阶段定性（2026-07-22，#ARCH-065）：本文件为 Post-Activation 预置配置，定义 experimental
+#   阶段激活后要起的容器化 + 可观测性栈（zephyr-core / prometheus / grafana / node-exporter）。
+#   当前 experimental 阶段（Windows 本地单机 + 本地日志文件）不调用 docker compose up——这是
+#   technology_principles.md §4.1（experimental vs Post-Activation）的预期行为，非死代码。
+#   激活触发：接入真实资金 / 外部投资人 / 多账户 / SRE 抽屉激活。
+#   注：Dockerfile + .dockerignore 仍被 .github/workflows/governance.yml docker-build job 使用，勿删。
 # Phase B: 加入 Prometheus + Grafana 可观测性
 # 5.31.15 修复：移除已废弃的 version 字段（Docker Compose v2 忽略并输出 warning）
 #

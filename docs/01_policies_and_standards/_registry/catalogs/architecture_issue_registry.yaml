@@ -11,7 +11,7 @@ tier: tier_1_governance
 status: active
 version: 1.3.8
 created: '2026-06-26'
-last_updated: '2026-07-20'
+last_updated: '2026-07-22'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -4998,12 +4998,12 @@ entries:
       且 doc_type 非空的文件；TTL-METADATA `if not metadata: return issues`）
     - 长期方案 (Phase 7)：新建 GATE-TEMP-FILE-LIFECYCLE gate (priority=803)
       取代 EXEMPT-ZONE-FM + TTL-METADATA 在 docs/_working/ 区的冲突检测
-  fix_phase: Phase 1-6 全部落地
+  fix_phase: Phase 1-6 裁定声明落地（2026-07-21）。真源核实修正（2026-07-22, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001）——git HEAD 客观核实发现 Phase 1（trae_071 registration_point）与 Phase 2（staging reconciler 实现）在 2026-07-21 时真源未真正落地（trae_071 registration_point 仍为 boot_hooks.py、reconciler 函数不存在、session_worktree_abort 无 staging 清理），由 ROOT-TEMP-FILE-ENFORCEMENT-001 Phase 3 于 2026-07-22 实际完成并修正 trae_071 registration_point 真源。status 维持 resolved（工作现已真正完成）。
   status: resolved
-  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001, #ARCH-RECONCILER-ALERT-SELFHEAL-001'
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001, #ARCH-RECONCILER-ALERT-SELFHEAL-001, #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001 (真源核实修正 + Phase 3 实际完成)'
   related_rules: 'trae_071, trae_070, trae_060, trae_062'
   created: '2026-07-21'
-  last_updated: '2026-07-21'
+  last_updated: '2026-07-22'
 # --- #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001: 系统性防漂移体系盲区（2026-07-20，4 盲区 3 Phase 治本）---
 # 关联裁定：Ruling:100PCT-AI-GOVERNANCE 第一性原理（100% AI 场景下 warn=通过，治本须 fail-closed 或自动处理）
 - issue_id: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001'
@@ -6855,5 +6855,141 @@ entries:
   status: decided
   related_adjudication: '#ARCH-CH-017 (CH 连接配置单真源化——同构根因"巧合成功"), #ARCH-CH-022 (capability 契约可执行化——同构渐进式 WARN→block 模式), #ARCH-CH-019 (CH 配置 fail-closed)'
   related_rules: 'trae_062 (SSoT 分类铁律——表名是声明态规则数据真源是 YAML), AGENTS.md §11.0/§11.0.2 (SSoT 真源规则), AGENTS.md §11.4 (依赖关系先行)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+# --- #ARCH-065: 部署图源指针双重失效 + 存储栈与 §4.1 漂移（修复 deployment_experimental.mmd） ---
+- issue_id: '#ARCH-065'
+  title: deployment_experimental.mmd 源指针指向不存在的 technology_architecture.md + 错误章节 §6.1，存储节点遗漏 PostgreSQL/TimescaleDB 且误标"待定"
+  severity: P3低
+  category: architecture_documentation
+  adjudication: |
+    问题背景：
+    目标架构部署图 deployment_experimental.mmd 第 1 行源指针双重失效：
+      (1) 文件名错——写 `technology_architecture.md`，但仓库无此文件，实际权威源是
+          `docs/02_enterprise_architecture/04_architecture_principles_decisions/technology_principles.md`
+          （该文件 frontmatter supersedes: VIEW-04-TECHNOLOGY-ARCH，说明经 VIEW-04PRINC-TECHNOLOGY
+          重构改名，部署图源指针未同步更新）
+      (2) 章节号错——写 §6.1，但 technology_principles.md §6.1 是"四环境定义
+          （Dev/UAT/Staging/Prod）"，部署框架实际在 §4.1（experimental vs Post-Activation）
+    内容漂移：存储节点标注 `Data Store (Parquet/DuckDB · 待定)`，但 §4.1 experimental
+      列明确为 `PostgreSQL + TimescaleDB + DuckDB + Parquet`——遗漏 PostgreSQL +
+      TimescaleDB，且状态已是 Decided 不该标"待定"。
+
+    根因：架构原则文档重构改名（VIEW-04-TECHNOLOGY-ARCH → technology_principles.md）+
+      存储栈决策细化（加入 TimescaleDB）后，部署图未跟进。文档维护滞后型漂移，无运行时影响。
+
+    衍生澄清（顺带厘清，非本裁定主体）：docker-compose.yml 定性。查证发现 Docker 并非
+      被弃用，而是 §4.1 二阶段框架中属于 Post-Activation 阶段；security_principles.md:229
+      进一步规定"beta 接入真实资金后必须升级到 Docker 沙箱"。docker-compose.yml 当前无人
+      调用 docker compose up 是 experimental 阶段的预期行为，非死代码。
+
+    治本方案（本次落地）：
+      A1. 修正 deployment_experimental.mmd：
+          - 源指针 technology_architecture.md §6.1 → technology_principles.md §4.1
+          - 存储节点补全 PostgreSQL + TimescaleDB，去除"待定"
+          - 节点 ID 保留 PARQUET（仅修正标签，避免无谓重命名风险）
+      A2. docker-compose.yml 顶部加阶段定性注释，明确为 Post-Activation 预置配置，
+          experimental 阶段不调用是 §4.1 预期行为，避免未来被当死代码误删；
+          注明 Dockerfile + .dockerignore 仍被 CI docker-build job 使用。
+
+    不实施项（避免过度工程）：
+      - 不重绘整张部署图（仅修发现的漂移点；图中其余结构与 §4.1 experimental 列一致）
+      - 不更新 entry_schema 注释中 status 枚举（注释写 open|decided|deprecated|superseded，
+        但实际主流值是 resolved——90/155 条，这是独立文档维护问题，本裁定不治理）
+      - 不为 docker-compose.yml 加 CI 验证（其属 Post-Activation 阶段，当前无验证需求）
+      - 不重命名节点 ID PARQUET（保留 ID，仅修标签，降低 diff 风险）
+
+    与既有裁定关系：
+      - 源自 technology_principles.md §4.1 二阶段部署框架（experimental vs Post-Activation），
+        非独立裁定，是文档与权威源对齐的维护性修复
+      - 引用 security_principles.md §229（Docker 沙箱是 Post-Activation 强制项）作定性依据
+  fix_phase: |
+    本次落地（2026-07-22）：
+      - docs/02_enterprise_architecture/target_architecture/diagrams/deployment_experimental.mmd
+        （源指针修正 → technology_principles.md §4.1；存储栈补全 PostgreSQL/TimescaleDB、去"待定"）
+      - docker-compose.yml（顶部加 Post-Activation 阶段定性注释，指向 technology_principles.md §4.1）
+      - 本注册表追加 #ARCH-065 条目（self-referential 登记）
+  impact:
+    - 'docs/02_enterprise_architecture/target_architecture/diagrams/deployment_experimental.mmd（源指针修正 + 存储栈补全 PostgreSQL/TimescaleDB + 去"待定"，节点 ID 保留 PARQUET）'
+    - 'docker-compose.yml（顶部加 Post-Activation 阶段定性注释，指向 technology_principles.md §4.1）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（追加 #ARCH-065）'
+  status: resolved
+  related_adjudication: 'technology_principles.md §4.1 (experimental vs Post-Activation 二阶段部署框架——权威源), security_principles.md §229 (Docker 沙箱是 Post-Activation 强制项)'
+  related_rules: 'trae_062 (SSoT 分类铁律——架构文档须与权威源对齐), AGENTS.md (文档维护同步)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+# --- #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: 根目录临时文件零容忍治本（2026-07-22）---
+# 关联裁定：#ARCH-TEMP-FILE-LIFECYCLE-001/002（本裁定 Phase 3 实际完成 002 真源未落地的部分）
+- issue_id: '#ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001'
+  title: 根目录临时文件堆积治本——gw_* 进程 token 错位 + commit gate gitignored 盲区 + 无运行时清扫
+  category: governance_mechanism_gap
+  severity: P2中
+  adjudication: |
+    问题背景：
+    项目根目录堆积约 30 个临时文件 + 6 个散落目录（gw_commit_msg_*.txt/gw_pathspec_*.txt、
+    tmp_*.txt/xml/py、.tmp_*.py/.txt、*.log、tmp_*/ 孤儿目录）。用户质疑初步建议
+    "新建 .runtime/gw_tmp/" 是否符合真源唯一/责任唯一，要求从第一性原理重新审视。
+
+    第一性原理分析：
+    (1) gw_commit_msg_*/gw_pathspec_* 本质是 GitCommitGateway 的进程内 IPC token
+        （commit message 写临时文件 → git -F 读取 → finally 删除；pathspec 同理经
+        --pathspec-from-file）。存在时间 = 一次 git 子进程调用，零持久价值。
+    (2) 真源唯一检验：进程临时文件的规范真源是 OS temp dir（tempfile.mkstemp 不传
+        dir= 即用 tempfile.gettempdir()，OS 管理生命周期/清理/隔离）。新建
+        .runtime/gw_tmp/ = 在项目内建立平行真源定义"进程 token 放哪"，违反一数据一真源。
+    (3) 责任唯一检验：OS 已对进程临时文件负全责。新建 .runtime/gw_tmp/ = 把责任分裂
+        给项目（GitCommitGateway 成新目录 owner + 需新 reconciler 清崩溃残留），违反
+        一责任一 owner。
+    (4) 治理成本对比：新建 .runtime/gw_tmp/ 需 5 处登记 + 1 新 owner + 1 新 reconciler；
+        改用 OS temp 需去除 2 处 dir= 参数，零治理面。
+
+    三个执行缺口（非策略缺失，策略层 trae_070/071 + directory_contract 已完备）：
+    (A) 产生者写错位置：GitCommitGateway 硬编码 dir=project_root；AI 相对路径调 pytest
+        输出落根目录。
+    (B) 门禁对 gitignored 文件盲区：DCR-007 commit 时阻断根目录临时文件，但根目录临时
+        文件全被 .gitignore 忽略 → 永不 staged → DCR-007 永远看不见（结构性盲区）。
+    (C) 无运行时 FS 扫描 reconciler：make_tmp_cleanup_reconciler 只清 tmp/ 目录；
+        无 reconciler 扫描根目录平铺文件。
+
+    裁定（5 条）：
+    1. 驳回"新建 .runtime/gw_tmp/"方案。gw_* 是进程内 IPC token，非项目文件。正确修复
+       = 去除 dir=project_root（2 行改动，零治理面）。
+    2. 不新建任何目录。trae_070/071 + directory_contract 已穷尽定义所有临时文件类型
+       合法归宿，根因是执行缺口非缺目录，新建目录是治标增加治理面。
+    3. 三层防御治本：①源头改写产生者（gw_*→OS temp、pytest→.runtime/tmp/+cache_dir）
+       ②新建 root-sweep reconciler（post-commit FS 扫描，混合策略：过程性删除 + 疑似
+       成果移到 .runtime/tmp/ 隔离）③DCR-007 已存在（第三道防线）。
+    4. 落地 trae_071 的 make_session_staging_lifecycle_reconciler（priority=802）+
+       补 session_worktree_abort 触发点（abort 是放弃语义，session 终止后 staging 沦为
+       孤儿，立即清理而非等 24h TTL 兜底；merge 不清理因 session 继续 staging 被复用）。
+    5. .gitignore 补 /.tmp_* 漏洞（前导点+下划线变体原 /tmp_* 不匹配）。
+
+    真源漂移发现（直接回答"符合真源唯一/责任唯一吗？"）：
+    #ARCH-TEMP-FILE-LIFECYCLE-002（status=resolved, last_updated 2026-07-21）裁定文
+    声称 "Phase 1-6 全部落地"，含 Phase 1（trae_071 registration_point 改 git_commit_gateway.py）
+    与 Phase 2（make_session_staging_lifecycle_reconciler priority=802 实现）。但 git HEAD
+    客观核实：trae_071 L386 registration_point 仍为 boot_hooks.py；reconciler 函数在 HEAD
+    不存在；session_worktree_abort 无 staging 清理。即 002 裁定真源（YAML registry）与
+    代码真源（Python）漂移——AI session 凭意图/计划标记 resolved 而未验证真源落地。这是
+    100% AI 开发根本矛盾的典型实例（AI 既是开发者又是被治理对象，裁定可被幻觉标记）。
+    本裁定 Phase 3 实际完成 002 所述但真源未落地的部分，并修正 trae_071 registration_point
+    真源。002 状态维持 resolved（工作现已真正完成），追加本 correction note。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（gw_* tempfile.mkstemp 去 dir=project_root；_register_default_reconcilers 注册 2 新 reconciler）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（新增 make_root_temp_sweep_reconciler priority=803 + make_session_staging_lifecycle_reconciler priority=802）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（新增 _cleanup_session_staging + abort 触发点）'
+    - 'pyproject.toml（cache_dir=.runtime/tmp/pytest_cache）'
+    - 'tests/conftest.py（pytest_configure hook：basetemp+xmlpath 默认值归 .runtime/tmp/）'
+    - '.gitignore（补 /.tmp_* 漏洞）'
+    - 'AGENTS.md（§6.5 根目录临时文件零容忍铁律 + 三层防御说明）'
+    - 'docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml（补 gw_* 非 项目文件说明）'
+    - 'docs/01_policies_and_standards/rules/trae_071_temporary_file_lifecycle.yaml（§7 registration_point 真源修正 boot_hooks.py→git_commit_gateway.py + 标注 root-sweep 803 配套）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记 + 002 correction note）'
+    - 'data/reports/root_temp_cleanup_2026-07-22.md（Phase 0 清理快照）'
+  fix_phase: Phase 0-5 全部落地（本次会话 2026-07-22）
+  status: resolved
+  related_adjudication: '#ARCH-TEMP-FILE-LIFECYCLE-001 (三级分类空间维度), #ARCH-TEMP-FILE-LIFECYCLE-002 (staging reconciler 计划——本裁定 Phase 3 实际完成其真源未落地部分), #ARCH-TTL-DOC-001 (tmp_ gitignore 互补)'
+  related_rules: 'trae_070 (空间维度), trae_071 (时间维度), trae_062 (SSoT 真源分类), directory_contract.yaml (DCR-007 根目录临时文件阻断)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
