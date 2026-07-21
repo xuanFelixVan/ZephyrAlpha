@@ -2294,6 +2294,91 @@ def _scan_stash_for_files(
         return None
 
 
+def _drop_session_pre_merge_stash(
+    root: Path, session_id: str,
+) -> dict[str, list[str] | int]:
+    """Merge 完成后删除本次 session 的 pre-merge stash（trae_075 STASH-LIFE-LAW-3）。
+
+    ``_execute_cleanups`` 在 pre-merge 阶段用 ``git stash push -m
+    "session_worktree_pre_merge: {session_id}"`` 保存主工作区冗余改动以便
+    merge 能干净进行。merge 成功后这些 stash 已无意义（改动已通过 worktree
+    commit 进入主分支），必须删除否则 stash 栈无限堆积。
+
+    匹配规则：stash message 包含 ``session_worktree_pre_merge: {session_id}``
+    子串（``git stash push -m`` 的 reflog subject 通常带 ``WIP on <branch>:`` 前缀，
+    故用子串匹配而非 startswith；精确匹配本次 session，保留其他 session 的 stash）。
+
+    从后往前 drop（索引倒序）避免索引漂移——``git stash drop stash@{i}`` 后
+    ``stash@{i+1}`` 变成 ``stash@{i}``，正序 drop 会跳过元素。
+
+    fail-open 策略：git 故障（非 git 仓库 / git 不可用 / stash list 失败）时
+    返回 ``dropped=0`` 且不抛异常（merge 已成功，stash 清理失败不应回滚 merge）。
+    错误详情记入 ``errors`` 列表供调用方审计。
+
+    Args:
+        root: 仓库根目录。
+        session_id: 当前 session 标识。
+
+    Returns:
+        {"dropped": int, "errors": list[str]} — dropped=成功删除的 stash 数，
+        errors=git 故障时的错误消息列表（成功时为空列表）。
+    """
+    prefix = f"session_worktree_pre_merge: {session_id}"
+    errors: list[str] = []
+    try:
+        list_r = subprocess.run(
+            ["git", "stash", "list", "--format=%gd|%s"],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=15,
+        )
+    except (subprocess.TimeoutExpired, OSError) as e:
+        errors.append(f"git stash list failed: {e}")
+        return {"dropped": 0, "errors": errors}
+    if list_r.returncode != 0:
+        # 非 git 仓库或 git 故障——fail-open（dropped=0，不抛异常）
+        if list_r.stderr.strip():
+            errors.append(list_r.stderr.strip())
+        return {"dropped": 0, "errors": errors}
+    if not list_r.stdout.strip():
+        return {"dropped": 0, "errors": []}
+
+    # 收集匹配本 session 的 stash 索引（从后往前 drop 避免索引漂移）
+    matching_indices: list[int] = []
+    for line in list_r.stdout.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split("|", 1)
+        if len(parts) < 2:
+            continue
+        stash_ref, stash_msg = parts[0], parts[1]
+        if prefix in stash_msg:
+            # 解析 stash@{N} 中的 N
+            try:
+                idx_str = stash_ref.split("{", 1)[1].rstrip("}")
+                matching_indices.append(int(idx_str))
+            except (IndexError, ValueError):
+                continue
+
+    if not matching_indices:
+        return {"dropped": 0, "errors": []}
+
+    # 从后往前 drop（索引倒序）避免索引漂移
+    dropped = 0
+    for idx in sorted(matching_indices, reverse=True):
+        ref = f"stash@{{{idx}}}"
+        drop_r = subprocess.run(
+            ["git", "stash", "drop", ref],
+            cwd=str(root), capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=15,
+        )
+        if drop_r.returncode == 0:
+            dropped += 1
+        else:
+            errors.append(f"drop {ref} failed: {drop_r.stderr.strip()}")
+    return {"dropped": dropped, "errors": errors}
+
+
 def _detect_changes_in_stash(
     root: Path, rel_files: list[str],
 ) -> tuple[str, str, list[str]] | None:
@@ -4052,6 +4137,25 @@ def session_worktree_merge(
                 logger.debug("cleanup heartbeat file failed (best-effort)", exc_info=True)
             # #ARCH-WORKTREE-COMMIT-PERSISTENCE-001: merge 成功后清除持久性标记
             _clear_commit_persisted_marker(root, session_id)
+            # trae_075 STASH-LIFE-LAW-3: merge 成功后删除本次 session 的 pre-merge stash。
+            # _pre_merge_auto_clean 用 git stash push 保存主工作区冗余改动以便 merge
+            # 干净进行，merge 成功后这些 stash 已无意义（改动已通过 worktree commit 进入
+            # 主分支），必须删除否则 stash 栈无限堆积。fail-open：失败不阻断 merge。
+            try:
+                _drop_result = _drop_session_pre_merge_stash(root, session_id)
+                if _drop_result["dropped"] > 0:
+                    logger.info(
+                        "session_worktree_merge: dropped %d pre-merge stash(es) "
+                        "for session=%s (trae_075 STASH-LIFE-LAW-3)",
+                        _drop_result["dropped"], session_id,
+                    )
+                if _drop_result["errors"]:
+                    logger.warning(
+                        "session_worktree_merge: pre-merge stash drop had errors: %s",
+                        _drop_result["errors"],
+                    )
+            except Exception:  # noqa: BLE001 — best-effort, 不阻断 merge
+                logger.debug("drop pre-merge stash failed (best-effort)", exc_info=True)
             try:
                 unregistered = registry.unregister(session_id)
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

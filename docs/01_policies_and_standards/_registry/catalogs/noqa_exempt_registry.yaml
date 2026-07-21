@@ -228,6 +228,19 @@ markers:
     created: "2026-07-20"
     created_by: "ARCH-WORKSPACE-DRIFT-SYSTEMIC-001"
 
+  - marker: "blueprint-amodule-cross-check"
+    metric_id: null  # 非 dashboard 指标，是 BLUEPRINT-AMODULE-CROSS-CHECK gate 行级豁免
+    description: "BLUEPRINT-AMODULE-CROSS-CHECK gate 行级豁免——同模块双拼写的合法迁移场景"
+    applicable_conditions:
+      - "历史遗留双拼写文件在批量统一迁移期间暂豁免（迁移完成后移除）"
+      - "测试文件中模拟双拼写场景的测试用例"
+    reason_required: true
+    reason_format: "blueprint-amodule-cross-check豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-07-22"
+    created_by: "ARCH-MODULE-ID-DUAL-SPELLING-001"
+
   - marker: "consumers-accuracy"
     metric_id: null  # 非 dashboard 指标，是 CONSUMERS-ACCURACY gate 文件级豁免
     description: "CONSUMERS-ACCURACY gate 文件级豁免——[CONSUMERS] 字段准确性检测的逃生通道"

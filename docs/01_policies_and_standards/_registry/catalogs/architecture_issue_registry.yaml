@@ -6281,6 +6281,121 @@ entries:
   last_updated: '2026-07-22'
 
 
+# --- #ARCH-CONSUMERS-ACCURACY-004: CONSUMERS-ACCURACY phantom 检测算法格式假设缺陷治本 ---
+- issue_id: '#ARCH-CONSUMERS-ACCURACY-004'
+  title: 'CONSUMERS-ACCURACY gate phantom 检测算法格式假设缺陷——filepath/glob/descriptive 格式系统性误报治本'
+  category: architecture_governance
+  severity: P2中
+  adjudication: |
+    2026-07-22 立项裁定。#ARCH-CONSUMERS-ACCURACY-001/002/003 已落地 CONSUMERS-ACCURACY
+    gate（warn-only priority=116）检测 [CONSUMERS] 字段准确性。但实测发现 gate 的 phantom
+    检测算法存在格式假设缺陷——_module_to_file_candidates 假设输入全是 dotted 模块路径
+    （a.b.c），但 [CONSUMERS] 字段真源允许 4 种格式：
+
+    1. dotted 模块路径（zephyr.foo.bar）——算法正确处理
+    2. slash 文件路径（scripts/git_commit.py）——算法误报 phantom（将 .py 后缀当 dotted 段）
+    3. glob 模式（scripts/governance/*）——算法误报 phantom
+    4. 描述性文字（AI 对话启动时调用）——算法误报 phantom
+
+    实证：scripts/git_commit.py 文件实际存在（Glob 确认），但 gate 误报 phantom consumer。
+    baseline scan 1091 violations 中大部分是格式假设缺陷导致的误报，真正的 phantom 占比 <30%。
+
+    第一性原理病根：
+    检测算法是"派生数据"——它假设输入遵循 dotted 格式契约，但真源（1047+ 文件的
+    [CONSUMERS] 字段）从未被强制对齐到这个契约。算法在"假设的格式"上运行，必然产生
+    系统性误报。这与 #ARCH-CONSUMERS-ACCURACY-001 本身治标的病根同构：
+    CONSUMERS 字段是派生数据被当作声明数据对待——而检测算法的格式假设也是
+    派生数据被当作声明数据对待。
+
+    治本方案（Phase 1，本次落地）：
+    新增 _classify_consumer_format 函数，按格式分类处理 phantom 检测：
+    - dotted → 现有逻辑（候选文件 + 逐级缩短）
+    - filepath → 直接 _check_filepath_exists 存在性检查
+    - glob → 豁免（无法静态验证，类比抽象代号）
+    - descriptive → 豁免（非路径声明）
+
+    设计权衡：
+    1. 不修改 [CONSUMERS] 字段内容——真源允许 4 种格式是历史事实，强行规范化
+       1047+ 文件成本高且无门禁强制。治本在算法侧而非数据侧。
+    2. filepath 格式检查支持 src/ 前缀路径（src/zephyr/foo.py → 去前缀检查）。
+    3. glob 豁免对标抽象代号豁免——都是"无法静态验证"的合法声明。
+    4. descriptive 豁免的判据：含 CJK、含空格、以括号开头。
+
+    Phase 2（长期，不本次执行）：
+    - 补充测试用例覆盖更多边界格式
+    - baseline-scan 脚本同步修复
+    - 评估是否在 trae_047 中明确允许的 4 种格式
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py（_classify_consumer_format + _check_filepath_exists + check_consumers_accuracy 修改）
+    - tests/governance/commit_gates/test_consumers_accuracy_gate.py（17 新测试用例）
+  fix_phase: |
+    Phase 1（本次落地，2026-07-22）：
+      - consumers_accuracy_gate.py: 新增 _classify_consumer_format 函数（4 种格式分类）
+      - consumers_accuracy_gate.py: 新增 _check_filepath_exists 函数（filepath 格式存在性检查）
+      - consumers_accuracy_gate.py: check_consumers_accuracy phantom 检测分支按格式分类
+      - test_consumers_accuracy_gate.py: TestConsumerFormatClassification + TestConsumersAccuracyFilepathFormat 2 个新测试类
+    Phase 2（长期，不本次执行）：
+      - baseline-scan 脚本同步修复
+      - 评估 [CONSUMERS] 字段格式规范化
+  status: resolved
+  related_adjudication: '#ARCH-CONSUMERS-ACCURACY-001 (原始缺口登记), #ARCH-CONSUMERS-ACCURACY-002 (gate Phase 1 治本), #ARCH-CONSUMERS-ACCURACY-003 (capability registry 双登记)'
+  related_rules: 'trae_006 (anti_hall_05 CONSUMERS 字段), trae_009 (修改前检查 CONSUMERS), trae_012 (跨文件影响检查)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+
+# --- #ARCH-CAPABILITY-OVERLAP-001: CAPABILITY-OVERLAP token 过滤 stop-word 治本 ---
+- issue_id: '#ARCH-CAPABILITY-OVERLAP-001'
+  title: 'CAPABILITY-OVERLAP gate token 过滤缺陷——gate 共性 token 导致确定性误报治本'
+  category: architecture_governance
+  severity: P3低
+  adjudication: |
+    2026-07-22 立项裁定。CAPABILITY-OVERLAP gate（warn-only priority=200）检测新建 .py
+    文件名 token 是否与已注册 capability aliases token 重叠。但 _tokenize 函数的
+    len>=4 过滤阈值使 gate（4 字符）通过过滤，而 gate 是 commit_gates/ 目录下
+    77 个 *_gate.py 文件的共性后缀 token。
+
+    实证：issue_resolved_integrity_gate.py 触发 'gate' token overlap with
+    vocab_hardcode_detector——两个 capability 毫无功能重叠，但因 'gate' 共性 token
+    产生确定性误报。任何新建 *_gate.py 文件都会与所有已注册 gate capability 的
+    token set 产生 'gate' 交集。
+
+    第一性原理病根：
+    token 匹配是启发式（heuristic），高频共性 token（gate/test/init）无诊断价值——
+    它们在特定命名约定下必然出现，保留只会产生噪音。这削弱了 gate 的信号价值：
+    AI 学会忽略所有 overlap warning = gate 失效。
+
+    治本方案（Phase 1，本次落地）：
+    新增 _STOP_WORDS 集合（frozenset）过滤已知高频共性 token：
+    - gate：77 个 *_gate.py 文件的共性后缀
+    - test：测试文件共性前缀
+    - init：__init__.py 的共性 token
+
+    设计权衡（方案 B stop-word vs 方案 A 阈值>=5）：
+    方案 B 更精准——不会误过滤 data/core/base 等有诊断价值的 4 字符 token。
+    方案 A（阈值>=5）会误过滤 data（4 字符），降低 gate 对真正功能重叠的检测能力。
+
+    Phase 2（长期，不本次执行）：
+    - 评估是否需要扩展 stop-word 集合
+    - 评估 token 匹配算法升级（如 TF-IDF 权重）
+  impact:
+    - src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py（_STOP_WORDS + _tokenize 修改）
+    - tests/governance/commit_gates/test_capability_overlap_gate.py（6 新测试用例）
+  fix_phase: |
+    Phase 1（本次落地，2026-07-22）：
+      - capability_overlap_gate.py: 新增 _STOP_WORDS frozenset（gate/test/init）
+      - capability_overlap_gate.py: _tokenize 过滤条件加 p not in _STOP_WORDS
+      - test_capability_overlap_gate.py: 6 个新测试用例验证 stop-word 过滤 + 诊断价值保留
+    Phase 2（长期，不本次执行）：
+      - 评估 stop-word 集合扩展
+      - token 匹配算法升级评估
+  status: resolved
+  related_adjudication: '#ARCH-CONSUMERS-ACCURACY-003 (Phase 2 issue_resolved_integrity_gate 触发本误报)'
+  related_rules: 'trae_060 (向内收三原则), AGENTS.md §7 (CAPABILITY-OVERLAP gate 规范)'
+  created: '2026-07-22'
+  last_updated: '2026-07-22'
+
+
 # --- #ARCH-CREATE-GUARD-STALE-HEAD-001: CREATE-GUARD worktree stale HEAD 误报治本 ---
 - issue_id: '#ARCH-CREATE-GUARD-STALE-HEAD-001'
   title: 'CREATE-GUARD gate worktree stale HEAD 误报——_check_reconciler_marker 用 HEAD 对比导致并发 session 的 reconciler 被误判为新增治本'
