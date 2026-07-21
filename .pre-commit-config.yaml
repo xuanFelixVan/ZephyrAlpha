@@ -340,9 +340,9 @@ repos:
         always_run: false
         description: "src/data/ 路径硬阻断——数据真源唯一位置为 data/，src/ 仅放代码（trae_047 §gov_eng_002_directory_mapping）"
 
-      # ── GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007）──
+      # ── GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008）──
       # 真源：docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
-      #       （目录维度约束唯一真源——P3/P4 治本后收敛 allowed_doc_types + 扩展名 + ttl + 白名单）
+      #       （目录维度约束唯一真源——P3/P4 治本后收敛 allowed_doc_types + 扩展名 + ttl + 白名单 + purpose_allowed_extensions）
       #       doc_type_vocabulary.yaml 仅用于 doc_type 合法性验证（GATE-15 主责）
       # 检测范围：staged 文件（新增/修改/重命名）
       # 检测内容：
@@ -353,17 +353,18 @@ repos:
       #   DCR-005: 文件扩展名必须在目录 allowed 清单内
       #   DCR-006: 文件扩展名不得在目录 forbidden 清单内
       #   DCR-007: 根目录文件必须在白名单内
+      #   DCR-008: 文件扩展名必须匹配目录用途（purpose_allowed_extensions，治本 #ARCH-TEMP-FILE-PLACEMENT-001，2026-07-20）
       # 模式：--staged 硬阻断（违规 = 拒绝提交）
       # 注：gate-src-no-data 是本契约 DCR-005/006 的子集（src/ 禁止 .json/.jsonl），
       #     保留 gate-src-no-data 作为纵深防御（其检查更具体的 src/data/ 路径）
       - id: gate-directory-contract
-        name: "GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml）"
+        name: "GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）"
         entry: python scripts/governance/d1_structure/check_directory_contract.py
         args: ["--staged"]
         language: system
         pass_filenames: false
         always_run: false
-        description: "目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl + 白名单），校验 staged 文件合规性。DCR-001/003~007 启用，DCR-002 废弃（P3/P4 治本）"
+        description: "目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl + 白名单 + purpose_allowed_extensions），校验 staged 文件合规性。DCR-001/003~008 启用，DCR-002 废弃（P3/P4 治本）。DCR-008 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：校验 file extension ∈ directory_extensions[path].purpose_allowed_extensions，配对 trae_070 temporary_file_placement 规则（paired_gate_id=GATE-DIRECTORY-CONTRACT），error 级阻断 commit"
 
       # ── GATE-VMS-SSOT: VMS 单一真源门禁（双检测：governance/vector_memory 漂移副本 + snapshot 方法重建）──
       # 权威依据：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4 snapshot 整体删除治本

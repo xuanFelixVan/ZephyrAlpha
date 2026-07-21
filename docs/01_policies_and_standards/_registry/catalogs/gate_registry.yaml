@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T08:44:52Z'
+generated_at: '2026-07-21T08:50:28Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 114
+total_gates: 115
 gates:
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
@@ -148,10 +148,13 @@ gates:
   status: active
   source: pre-commit
 - gate_id: GATE-DIRECTORY-CONTRACT
-  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~007，真源 directory_contract.yaml）'
+  name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
-  description: 目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl +
-    白名单），校验 staged 文件合规性。DCR-001/003~007 启用，DCR-002 废弃（P3/P4 治本）
+  description: '目录契约校验——消费 directory_contract.yaml（allowed_doc_types + 扩展名 + ttl +
+    白名单 + purpose_allowed_extensions），校验 staged 文件合规性。DCR-001/003~008 启用，DCR-002 废弃（P3/P4
+    治本）。DCR-008 治本 #ARCH-TEMP-FILE-PLACEMENT-001（2026-07-20）：校验 file extension ∈ directory_extensions[path].purpose_allowed_extensions，配对
+    trae_070 temporary_file_placement 规则（paired_gate_id=GATE-DIRECTORY-CONTRACT），error
+    级阻断 commit'
   files_trigger: ''
   always_run: false
   category: unknown
@@ -522,7 +525,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=109）'
+    priority=113）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''
@@ -856,6 +859,16 @@ gates:
   name: 'MSG-STYLE: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）（CommitGate, priority=96）'
   entry: in-process (GitCommitGateway)
   description: 错误消息标点/箭头风格阻断门禁（MSG-STYLE）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
+  name: 'NEW-FILE-DEPGRAPH-ENFORCEMENT: 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）（CommitGate,
+    priority=58）'
+  entry: in-process (GitCommitGateway)
+  description: 新建 .py 文件 depgraph 未登记硬阻断门禁（NEW-FILE-DEPGRAPH-ENFORCEMENT）
   files_trigger: ''
   always_run: false
   category: commit_gate
