@@ -45,7 +45,7 @@ from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 sys.path.insert(0, str(REPO_ROOT / "src"))
 try:
-    from zephyr.infrastructure.finding import (
+    from zephyr.infrastructure.script_system.finding import (
         BlastRadius,
         Dimension,
         Finding,

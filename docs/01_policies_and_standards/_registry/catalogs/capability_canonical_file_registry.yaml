@@ -6414,6 +6414,16 @@ creation_tokens:
     token: "auto-action-dispatcher-audit-log-20260721"
     created_by: "sess-44240-20260721010426"
     capability: "action_dispatcher_system"
+
+  # --- budget_enforcement re-export shim（2026-07-21，test_phase4_gate_check 期望 zephyr.infrastructure.budget_enforcement.rbac_bridge 可导入）---
+  - file: "src/zephyr/infrastructure/budget_enforcement/__init__.py"
+    token: "auto-budget-enforcement-shim-init-20260721"
+    created_by: "sess-gov-test-fix-20260721"
+    capability: "budget_enforcement_shim"
+  - file: "src/zephyr/infrastructure/budget_enforcement/rbac_bridge.py"
+    token: "auto-budget-enforcement-rbac-bridge-shim-20260721"
+    created_by: "sess-gov-test-fix-20260721"
+    capability: "budget_enforcement_rbac_bridge_shim"
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

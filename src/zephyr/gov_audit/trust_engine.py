@@ -15,12 +15,13 @@
 # [A_module] module_id=MOD-GOV_trust_engine | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["TrustEngine", "TrustLevel"]
+__all__ = ["TrustEngine", "TrustLevel", "TrustScoreEngine", "TrustAdjustment", "TrustRecord"]
 
 
 class TrustLevel(str, Enum):
@@ -96,27 +97,101 @@ class TrustEngine:
 
 
 class TrustAdjustment:
-    def __init__(self, entity: str = "", delta: float = 0.0, reason: str = "", timestamp: str | None = None) -> None:
-        self.entity = entity
+    """信任评分调整记录（补全测试期望接口）。"""
+
+    def __init__(
+        self,
+        agent_id: str = "",
+        delta: float = 0.0,
+        reason: str = "",
+        timestamp: str | None = None,
+    ) -> None:
+        self.agent_id = agent_id
         self.delta = delta
         self.reason = reason
         self.timestamp = timestamp
 
 
 class TrustRecord:
-    def __init__(self, entity: str = "", trust_score: float = 1.0, last_updated: str | None = None, history: list[dict[str, Any]] | None = None) -> None:
-        self.entity = entity
-        self.trust_score = trust_score
-        self.last_updated = last_updated
-        self.history = history or []
+    """Agent 信任评分记录（补全测试期望接口）。"""
+
+    def __init__(
+        self,
+        agent_id: str = "",
+        score: float = 0.5,
+        adjustment_count: int = 0,
+        history: list[TrustAdjustment] | None = None,
+        last_adjusted_at: str | None = None,
+    ) -> None:
+        self.agent_id = agent_id
+        self.score = score
+        self.adjustment_count = adjustment_count
+        self.history: list[TrustAdjustment] = history if history is not None else []
+        self.last_adjusted_at = last_adjusted_at or datetime.now(UTC).isoformat()
 
 
 class TrustScoreEngine:
-    def __init__(self, config: dict[str, Any] | None = None) -> None:
-        self.config = config or {}
+    """信任评分引擎（补全测试期望接口）。
 
-    def compute_score(self, entity: str, history: list[dict[str, Any]] | None = None) -> float:
-        return 1.0
+    维护 agent -> TrustRecord 映射，支持评分调整、衰减和查询。
+    """
 
-    def adjust(self, entity: str, delta: float) -> TrustAdjustment:
-        return TrustAdjustment(entity=entity, delta=delta)
+    def __init__(
+        self,
+        initial_score: float = 0.5,
+        decay_rate: float = 0.005,
+        floor: float = 0.1,
+        ceiling: float = 1.0,
+    ) -> None:
+        self._initial_score = initial_score
+        self._decay_rate = decay_rate
+        self._floor = floor
+        self._ceiling = ceiling
+        self._records: dict[str, TrustRecord] = {}
+
+    def _get_or_create(self, agent_id: str) -> TrustRecord:
+        if agent_id not in self._records:
+            self._records[agent_id] = TrustRecord(
+                agent_id=agent_id,
+                score=self._initial_score,
+                adjustment_count=0,
+                history=[],
+                last_adjusted_at=datetime.now(UTC).isoformat(),
+            )
+        return self._records[agent_id]
+
+    def compute_score(self, agent_id: str) -> float:
+        record = self._get_or_create(agent_id)
+        try:
+            last = datetime.fromisoformat(record.last_adjusted_at)
+        except (TypeError, ValueError):
+            last = datetime.now(UTC)
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=UTC)
+        days = max(0, (datetime.now(UTC) - last).days)
+        decayed = record.score * ((1 - self._decay_rate) ** days)
+        return max(self._floor, min(self._ceiling, decayed))
+
+    def adjust(self, agent_id: str, delta: float, reason: str = "") -> float:
+        record = self._get_or_create(agent_id)
+        current = self.compute_score(agent_id)
+        new_score = max(self._floor, min(self._ceiling, current + delta))
+        record.score = new_score
+        record.adjustment_count += 1
+        record.history.append(TrustAdjustment(agent_id=agent_id, delta=delta, reason=reason))
+        record.last_adjusted_at = datetime.now(UTC).isoformat()
+        return new_score
+
+    def get_score(self, agent_id: str) -> float:
+        if agent_id not in self._records:
+            return self._initial_score
+        return self.compute_score(agent_id)
+
+    def get_record(self, agent_id: str) -> TrustRecord | None:
+        return self._records.get(agent_id)
+
+    def decay_all(self) -> dict[str, float]:
+        results: dict[str, float] = {}
+        for agent_id in list(self._records.keys()):
+            results[agent_id] = self.compute_score(agent_id)
+        return results

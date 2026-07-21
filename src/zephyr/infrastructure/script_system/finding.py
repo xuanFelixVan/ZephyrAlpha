@@ -253,9 +253,10 @@ class Finding:
 
     def __repr__(self) -> str:
         # 5.110.4 修复: 统一为 f"ClassName(field={self.field!r}, ...)" 格式, 使 __repr__ 可重建
+        # test_finding.py 契约: repr 须含 SEV=<LEVEL> 标记
         return (
             f"Finding(finding_id={self.finding_id!r}, "
-            f"dimension={self.dimension.value!r}, severity={self.severity.value!r}, "
+            f"dimension={self.dimension.value!r}, SEV={self.severity.value}, "
             f"target_file={self.target_file!r})"
         )
 

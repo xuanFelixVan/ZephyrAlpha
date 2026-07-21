@@ -56,12 +56,14 @@ from zephyr.shared.protocols.a2a import (
 )
 
 from . import layer1_discovery, layer2_communication
+from .governance.auditor import A2AAuditor
 from .governance.governance_adapter import GovernanceAdapter
 
 
 __all__ = [
     "A2ACommunication",
     "A2ACommunicationProtocol",
+    "A2AAuditor",
     "A2AGovernanceRecord",
     "A2AMessage",
     "A2AMessagePart",
