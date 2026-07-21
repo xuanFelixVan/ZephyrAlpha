@@ -99,11 +99,21 @@ class IndexResult:
     字段：status("ok"/"no_data")、events_scanned、events_indexed、new_entries、errors。
     """
 
-    status: str = "ok"
+    status: str = ""
     events_scanned: int = 0
     events_indexed: int = 0
     new_entries: int = 0
     errors: list[str] = field(default_factory=list)
+
+    def model_dump(self) -> dict[str, Any]:
+        """Pydantic-compatible dump -- 对齐 test_indexer.py."""
+        return {
+            "status": self.status,
+            "events_scanned": self.events_scanned,
+            "events_indexed": self.events_indexed,
+            "new_entries": self.new_entries,
+            "errors": list(self.errors),
+        }
 
 
 class AuditIndexer(AuditIndexerABC):
@@ -138,6 +148,7 @@ class AuditIndexer(AuditIndexerABC):
     # 新 API（裁定#18 G5）：rebuild + query_stats
     # ------------------------------------------------------------------
     def _connect(self) -> sqlite3.Connection:
+        self._db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(str(self._db_path))
         conn.executescript(_SCHEMA)
         return conn

@@ -73,7 +73,7 @@ class AuditDelegationBridge:
         try:
             from pathlib import Path
 
-            from zephyr.gov_audit.writer import AuditWriter
+            from zephyr.gov_audit.delegation_bridge import AuditWriter
 
             writer = AuditWriter(Path("data/audit-trail"))
             chain_hash = writer.write(record)

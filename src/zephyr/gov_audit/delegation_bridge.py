@@ -79,3 +79,17 @@ class DelegationBridge:
 
     def is_available(self) -> bool:
         return self._available
+
+
+def __getattr__(name: str):
+    """Module-level __getattr__ -- expose AuditWriter for patch compatibility.
+
+    test_delegation_bridge.py patches ``zephyr.gov_audit.delegation_bridge.AuditWriter``
+    and audit_delegation_bridge.py imports AuditWriter from here. This __getattr__
+    resolves AuditWriter lazily from zephyr.gov_audit.writer so patches on either
+    module affect the import.
+    """
+    if name == "AuditWriter":
+        from zephyr.gov_audit.writer import AuditWriter
+        return AuditWriter
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

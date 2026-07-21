@@ -396,6 +396,15 @@ class VerdictEngine:
                     graduated_level=GraduatedLevel.L6,
                     reason=f"evaluate_error:{exc}",
                 )
+            except Exception as exc:
+                # SSoT (test_verdict_engine): evaluate raising any exception
+                # returns RED verdict with error message, does not break batch.
+                self._red_count += 1
+                return Verdict(
+                    verdict_level=VerdictLevel.RED,
+                    graduated_level=GraduatedLevel.L6,
+                    reason=f"evaluate_error:{exc}",
+                )
 
         sem = asyncio.Semaphore(8)
 
