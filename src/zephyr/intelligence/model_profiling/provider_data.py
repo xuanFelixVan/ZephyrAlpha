@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     import importlib as _importlib
 
-    ModelTier = _importlib.import_module("zephyr.infrastructure.budget_enforcement.budget_models").ModelTier
+    ModelTier = _importlib.import_module("zephyr.governance.ops_governance.budget_models").ModelTier
 
 DEFAULT_PROVIDERS: Final[dict[str, dict[str, str | float | list[str]]]] = {
     "zhipu": {
@@ -69,7 +69,7 @@ def __getattr__(name: str):
     if name == "TIER_MODEL_MAP":
         import importlib as _importlib
 
-        ModelTier = _importlib.import_module("zephyr.infrastructure.budget_enforcement.budget_models").ModelTier
+        ModelTier = _importlib.import_module("zephyr.governance.ops_governance.budget_models").ModelTier
 
         _map: dict[ModelTier, list[str]] = {ModelTier[k]: v for k, v in _RAW_TIER_MAP.items()}
         globals()["TIER_MODEL_MAP"] = _map

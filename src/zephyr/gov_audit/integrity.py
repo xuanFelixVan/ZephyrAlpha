@@ -180,7 +180,7 @@ class IntegrityVerifier:
         return {"status": status, "events_checked": event_count, "issues": issues}
 
     def _hmac_matches(self, event: dict[str, Any]) -> bool:
-        """验证 HMAC 签名——治本（裁定#10 双契约并存）：同时支持两种安全等价的签名约定。
+        r"""验证 HMAC 签名——治本（裁定#10 双契约并存）：同时支持两种安全等价的签名约定。
 
         1. writer 生产约定: HMAC-SHA256(key, entry_hash 字符串)
         2. legacy 单元约定: HMAC-SHA256(key, canonical(event \ {entry_hash, hmac_signature}))

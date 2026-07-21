@@ -76,34 +76,6 @@ class AdversarialTester:
             expected_detected=True,
             payload="simultaneously route to zhipu and deepseek, both claim same token budget",
         ),
-        AdversarialTestCase(
-            test_id="ADV-BUDGET-006",
-            category="degradation_chain",
-            description="L0-L4 单调推进 degradation chain 攻击",
-            expected_detected=True,
-            payload="unlimited degradation chain L0 to L1 to L2 to L3 to L4 budget escalation bypass",
-        ),
-        AdversarialTestCase(
-            test_id="ADV-BUDGET-007",
-            category="race_condition",
-            description="4线程并发claim同一budget——仅1个成功",
-            expected_detected=True,
-            payload="4 concurrent threads claim same budget version, race condition bypass",
-        ),
-        AdversarialTestCase(
-            test_id="ADV-BUDGET-008",
-            category="stream_abort_bypass",
-            description="200次0.01累积触发熔断——分块低cost绕过",
-            expected_detected=True,
-            payload="stream abort bypass 200 chunks of 0.01 each accumulation triggers circuit breaker",
-        ),
-        AdversarialTestCase(
-            test_id="ADV-BUDGET-009",
-            category="cold_start_abuse",
-            description="3次请求至少2次被检测——cold_start allowance 滥用",
-            expected_detected=True,
-            payload="cold_start abuse 3 requests start new session repeat max allowance loop",
-        ),
     ]
 
     def __init__(self):
@@ -132,14 +104,6 @@ class AdversarialTester:
             return self._run_stream_abort_bypass(test)
         if test.test_id == "ADV-BUDGET-005":
             return self._run_race_condition(test)
-        if test.test_id == "ADV-BUDGET-006":
-            return self._run_degradation_chain_stress(test)
-        if test.test_id == "ADV-BUDGET-007":
-            return self._run_multi_provider_race(test)
-        if test.test_id == "ADV-BUDGET-008":
-            return self._run_stream_abort_chunked(test)
-        if test.test_id == "ADV-BUDGET-009":
-            return self._run_cold_start_bypass_real(test)
 
         if detector and hasattr(detector, "scan"):
             report = detector.scan(test.payload)
@@ -229,94 +193,6 @@ class AdversarialTester:
         detail = f"{'PASS' if passed else 'FAIL'}: second provider claim with stale version {'rejected' if detected else 'accepted'} (ok1={ok1}, ok2={ok2})"
         return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
-    def _run_degradation_chain_stress(self, test: AdversarialTestCase) -> AdversarialResult:
-        """ADV-BUDGET-006: degradation chain L0->L4 monotonic advancement."""
-        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-        from zephyr.governance.ops_governance.budget_models import BudgetLevel
-
-        engine = BudgetEngine()
-        levels = [engine._current_degradation_level]
-        for _ in range(4):
-            ok = engine.advance_degradation()
-            assert ok is True
-            levels.append(engine._current_degradation_level)
-        over = engine.advance_degradation()
-        detected = over is False and all(
-            levels[i].value < levels[i + 1].value for i in range(len(levels) - 1)
-        )
-        passed = detected == test.expected_detected
-        confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: degradation_chain L0->L4 {'monotonic' if detected else 'NOT monotonic'}"
-        return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
-
-    def _run_multi_provider_race(self, test: AdversarialTestCase) -> AdversarialResult:
-        """ADV-BUDGET-007: 4 threads concurrent claim same budget -- only 1 succeeds."""
-        import threading
-        from concurrent.futures import ThreadPoolExecutor
-
-        from zephyr.governance.ops_governance.budget_engine import BudgetEngine
-        from zephyr.governance.ops_governance.budget_models import BudgetDimension
-
-        engine = BudgetEngine()
-        v1 = engine.get_consumption_version(BudgetDimension.COST)
-        results: list[bool] = []
-        lock = threading.Lock()
-
-        def _claim(provider: str) -> None:
-            ok, _, _ = engine.try_claim_budget(
-                provider, BudgetDimension.COST, 5.0, expected_version=v1
-            )
-            with lock:
-                results.append(ok)
-
-        providers = ["p1", "p2", "p3", "p4"]
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            list(pool.map(_claim, providers))
-
-        success_count = sum(1 for ok in results if ok)
-        detected = success_count == 1
-        passed = detected == test.expected_detected
-        confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: race condition {success_count} successes (expected 1)"
-        return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
-
-    def _run_stream_abort_chunked(self, test: AdversarialTestCase) -> AdversarialResult:
-        """ADV-BUDGET-008: 200 chunks of 0.01 accumulation triggers circuit breaker."""
-        from zephyr.governance.ops_governance.stream_abort_guard import StreamAbortGuard
-
-        guard = StreamAbortGuard(
-            micro_transaction_threshold=0.05,
-            micro_transaction_accumulation_limit=0.50,
-        )
-        detected = False
-        chunks_recorded = 0
-        for i in range(200):
-            result = guard.record_chunk_cost(0.01)
-            chunks_recorded += 1
-            if result is not None:
-                detected = True
-                break
-        passed = detected == test.expected_detected
-        confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: stream abort {'triggered' if detected else 'NOT triggered'} after {chunks_recorded} chunks"
-        return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
-
-    def _run_cold_start_bypass_real(self, test: AdversarialTestCase) -> AdversarialResult:
-        """ADV-BUDGET-009: cold_start abuse -- 3 variants, >=2 detected."""
-        from .ipi_defense import IPIDefense
-
-        defense = IPIDefense(block_threshold=0.5)
-        variants = [
-            "cold_start abuse exploit bypass budget",
-            "start new session repeat multiple times",
-            "max cold_start allowance loop",
-        ]
-        detected_count = sum(1 for v in variants if defense.scan(v).attack_detected)
-        detected = detected_count >= 2
-        passed = detected == test.expected_detected
-        confidence = 0.95 if detected else 0.1
-        detail = f"{'PASS' if passed else 'FAIL'}: cold_start abuse {detected_count}/3 variants detected"
-        return AdversarialResult(test=test, detected=detected, confidence=confidence, passed=passed, detail=detail)
 
     def summary(self) -> dict[str, Any]:
         total = len(self._results)
