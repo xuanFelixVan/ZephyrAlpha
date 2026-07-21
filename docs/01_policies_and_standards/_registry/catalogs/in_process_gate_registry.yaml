@@ -82,7 +82,7 @@ gates:
   source: in_process
   register_line: 413
   enabled: true
-- gate_id: TTL
+- gate_id: TTL-METADATA
   module_path: zephyr.gov_enforcement.commit_gates.ttl_gate
   factory_function: make_ttl_gate
   source: in_process
@@ -124,7 +124,7 @@ gates:
   source: in_process
   register_line: 420
   enabled: true
-- gate_id: RULE-FOUR-WAY-ALIGNMENT
+- gate_id: RULE-FOUR-WAY-ALIGN
   module_path: zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate
   factory_function: make_rule_four_way_alignment_gate
   source: in_process
@@ -190,7 +190,7 @@ gates:
   source: in_process
   register_line: 431
   enabled: true
-- gate_id: DOMAIN-NAME-ZH-DIRECT-ACCESS
+- gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
   module_path: zephyr.gov_enforcement.commit_gates.domain_name_zh_direct_access_gate
   factory_function: make_domain_name_zh_direct_access_gate
   source: in_process
@@ -232,7 +232,7 @@ gates:
   source: in_process
   register_line: 439
   enabled: true
-- gate_id: EXEMPT-ZONE-FRONTMATTER
+- gate_id: EXEMPT-ZONE-FM
   module_path: zephyr.gov_enforcement.commit_gates.exempt_zone_frontmatter_gate
   factory_function: make_exempt_zone_frontmatter_gate
   source: in_process
@@ -286,7 +286,7 @@ gates:
   source: in_process
   register_line: 449
   enabled: true
-- gate_id: BARE-GETENV
+- gate_id: NO-BARE-GETENV
   module_path: zephyr.gov_enforcement.commit_gates.bare_getenv_gate
   factory_function: make_bare_getenv_gate
   source: in_process
@@ -298,31 +298,31 @@ gates:
   source: in_process
   register_line: 451
   enabled: true
-- gate_id: IMPORT-DIRECTION
+- gate_id: NO-UPWARD-IMPORT
   module_path: zephyr.gov_enforcement.commit_gates.import_direction_gate
   factory_function: make_import_direction_gate
   source: in_process
   register_line: 452
   enabled: true
-- gate_id: HARDCODED-URL
+- gate_id: NO-HARDCODED-URL
   module_path: zephyr.gov_enforcement.commit_gates.hardcoded_url_gate
   factory_function: make_hardcoded_url_gate
   source: in_process
   register_line: 453
   enabled: true
-- gate_id: PANORAMA-ALIGNMENT
+- gate_id: GATE-PANORAMA-ALIGNMENT
   module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
   factory_function: make_panorama_alignment_gate
   source: in_process
   register_line: 454
   enabled: true
-- gate_id: LONG-PARAM-LIST
+- gate_id: NO-LONG-PARAM-LIST
   module_path: zephyr.gov_enforcement.commit_gates.long_param_list_gate
   factory_function: make_long_param_list_gate
   source: in_process
   register_line: 455
   enabled: true
-- gate_id: BARE-SQL
+- gate_id: NO-BARE-SQL
   module_path: zephyr.gov_enforcement.commit_gates.bare_sql_gate
   factory_function: make_bare_sql_gate
   source: in_process
@@ -334,7 +334,7 @@ gates:
   source: in_process
   register_line: 457
   enabled: true
-- gate_id: CH-FINAL
+- gate_id: CH-FINAL-GATE
   module_path: zephyr.gov_enforcement.commit_gates.ch_final_gate
   factory_function: make_ch_final_gate
   source: in_process
@@ -346,19 +346,19 @@ gates:
   source: in_process
   register_line: 459
   enabled: true
-- gate_id: GOD-CLASS
+- gate_id: NO-GOD-CLASS
   module_path: zephyr.gov_enforcement.commit_gates.god_class_gate
   factory_function: make_god_class_gate
   source: in_process
   register_line: 460
   enabled: true
-- gate_id: HIGH-COMPLEXITY
+- gate_id: NO-HIGH-COMPLEXITY
   module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
   factory_function: make_high_complexity_gate
   source: in_process
   register_line: 461
   enabled: true
-- gate_id: TESTS-COVERAGE
+- gate_id: META-TESTS-COVERAGE
   module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
   factory_function: make_tests_coverage_gate
   source: in_process
@@ -376,7 +376,7 @@ gates:
   source: in_process
   register_line: 464
   enabled: true
-- gate_id: DOMAIN-FK
+- gate_id: GATE-DOMAIN-FK
   module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
   factory_function: make_domain_fk_gate
   source: in_process
@@ -400,7 +400,7 @@ gates:
   source: in_process
   register_line: 468
   enabled: true
-- gate_id: CAPABILITY-CONSISTENCY
+- gate_id: CAP-CONSISTENCY
   module_path: zephyr.gov_enforcement.commit_gates.capability_consistency_gate
   factory_function: make_capability_consistency_gate
   source: in_process

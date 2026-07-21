@@ -307,3 +307,17 @@ class CommitGateRegistry:
             GateSpec 或 None（gate_id 未注册时）。
         """
         return self._specs.get(gate_id)
+
+    def list_all(self) -> list[GateSpec]:
+        """返回所有已注册的 GateSpec（按 priority 升序）。
+
+        #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——用于 YAML ↔ 内存注册表双向校验。
+        """
+        return sorted(self._specs.values(), key=lambda s: s.priority)
+
+    def list_gate_ids(self) -> list[str]:
+        """返回所有已注册的 gate_id 列表（按 priority 升序）。
+
+        #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——用于 YAML ↔ 内存注册表双向校验。
+        """
+        return [s.gate_id for s in self.list_all()]

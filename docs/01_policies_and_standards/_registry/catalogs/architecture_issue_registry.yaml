@@ -6018,9 +6018,9 @@ entries:
     Phase 1: ✅ 完成（GATE-PRECOMMIT-OFFLINE 注册，commit 7573fea9a4）
     Phase 2: ✅ 完成（in_process_gate_registry.yaml 创建，76 个 gate 条目）
     Phase 3: ✅ 完成（gate_auto_registrar.py + test_gate_auto_registrar.py 创建，20 个测试）
-    Phase 4: ⏳ pending（渐进式迁移 75 个显式注册到 YAML 驱动）
-    Phase 5: ⏳ pending（过渡期协调协议——GATE-GATEWAY-FILE-LOCK 门禁）
-    Phase 6: ⏳ pending（验证与监控——reconciler 双向校验 + list_all API）
+    Phase 4: ✅ 完成（一次性迁移 76 个显式 import+register 到 auto_register_gates() 调用，净减 154 行，commit 439bfe8b1d + merge）
+    Phase 5: ✅ 简化（因 Phase 4 已消除 git_commit_gateway.py 并发修改根因——新增 gate 只需 YAML 追加条目，无需修改 git_commit_gateway.py，GATE-GATEWAY-FILE-LOCK 门禁不再需要）
+    Phase 6: ✅ 完成（list_all/list_gate_ids API + in_process_gate_registry_drift_reconciler 双向校验 + 16 个 YAML gate_id 修正）
   impact:
     - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本案登记）
     - docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml（Phase 2 注册真源 YAML）
