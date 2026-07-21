@@ -4934,7 +4934,8 @@ capabilities:
       调用）+ emergency_commit.py（主工作区 vs HEAD 一致性检查 warn-only +
       reflog [emergency_commit] 标记）。遥测落盘 .runtime/worktree_ops_log.jsonl
       （pass / fail_closed / sync_reset / sync_rebase 事件）。逃生通道 force=True
-      跳过检测（对标 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 语义）。重试退避
+      仅跳过可绕过类检测（WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK），**不可绕过**
+      base freshness check（#ARCH-FORCE-MERGE-SAFETY-001 治本 2026-07-22）。重试退避
       用 time.monotonic() 忙等而非 time.sleep()——避免 PERM-TRIGGER gate 误判。
       canonical 两个文件均为真源（lifecycle 检测在 session_worktree.py，emergency
       black hole 关闭在 emergency_commit.py）。解决发现性：新 AI 搜
@@ -5836,6 +5837,12 @@ creation_tokens:
     token: "auto-sector-kline-downloader-20260722"
     created_by: "session-data-sector-kline"
     capability: "sector_kline_download"
+
+  # --- 880xxx 板块动态排名引擎（2026-07-22，5因子复合排名调整99只推送池）---
+  - file: "src/zephyr/data/sector_ranking_engine.py"
+    token: "auto-sector-ranking-engine-20260722"
+    created_by: "session-data-sector-kline"
+    capability: "sector_ranking"
 
   # --- MOD-L00-004 数据源集成器阶段3（2026-07-06，5 新 Provider + metrics.py + 61 任务）---
   - file: "src/zephyr/data/implementations/baostock_provider.py"

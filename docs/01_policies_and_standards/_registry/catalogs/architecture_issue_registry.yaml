@@ -5700,7 +5700,8 @@ entries:
     - Phase 5: AGENTS.md + trae_073 + registry 同步
 
     新增 _run_git_with_retry（3 次重试，0.5s/1s/2s 指数退避）减少瞬态失败假阳性。
-    force=True 逃生通道（对齐 WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK 语义）。
+    force=True 逃生通道（对齐可绕过类检测——WORKSPACE-CLEAN-CHECK / PRE-MERGE-TOPO-CHECK
+    语义，但**不可绕过** base freshness check，#ARCH-FORCE-MERGE-SAFETY-001 治本 2026-07-22）。
   fix_phase: |
     Phase 1-4（立即，2026-07-21）：
       - session_worktree.py: 加 _log_base_freshness_event + _run_git_with_retry helpers
