@@ -55,6 +55,7 @@ _TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
 _TBL_CASHFLOW_STATEMENT = get_registry().table("fund_cashflow_statement")
 _TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
 _TBL_DRAGON_TIGER = get_registry().table("market_dragon_tiger")
+_TBL_FETCH_PERF = get_registry().table("meta_fetch_perf")
 _TBL_FINANCIAL_INDICATOR = get_registry().table("fund_financial_indicator")
 _TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
 _TBL_INCOME_STATEMENT = get_registry().table("fund_income_statement")
@@ -513,8 +514,8 @@ def save_to_clickhouse(results: list[dict]) -> bool:
         tsv_lines.append("\t".join(ch_writer.tsv_escape(v) for v in row))
 
     tsv_bytes = ("\n".join(tsv_lines) + "\n").encode("utf-8")
-    ok = ch_writer.write_tsv("c0_meta.fetch_perf", columns_str, tsv_bytes)
-    print(f"\n写入 c0_meta.fetch_perf: {len(results)} 条 {'成功' if ok else '失败'}")
+    ok = ch_writer.write_tsv(_TBL_FETCH_PERF, columns_str, tsv_bytes)
+    print(f"\n写入 {_TBL_FETCH_PERF}: {len(results)} 条 {'成功' if ok else '失败'}")
     return ok
 
 
