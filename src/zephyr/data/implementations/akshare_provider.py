@@ -169,6 +169,7 @@ class AKShareProvider(DataSourceBase):
             "convertible_bond_list", "etf_list", "lof_list",
             "hk_stock_list", "hk_trade_calendar", "index_list",
             "etf_benchmark",
+            "etf_nav",  # #ARCH-CH-023: 替代 miniQMT get_etf_info（不支持）
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )

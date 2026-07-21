@@ -485,7 +485,8 @@ class TestGateSpecMetadata:
 
     def test_priority(self):
         gate = make_ruling_commit_verified_gate()
-        assert gate.priority == 77
+        # priority=109：原 77 与 BLUEPRINT-FORMAT 撞号（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 1 治本）
+        assert gate.priority == 109
 
     def test_check_callable(self):
         gate = make_ruling_commit_verified_gate()
