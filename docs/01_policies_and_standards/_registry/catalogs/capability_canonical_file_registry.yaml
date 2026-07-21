@@ -6453,8 +6453,8 @@ creation_tokens:
     token: "auto-forged-gw-marker-gate-20260720"
     created_by: "sess-16156-20260720110413"
     capability: "forged_gw_marker_prevention"
-  # --- 5 维加权健康度评分计算器（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2）---
-  # 将 abuse_monitor 5 维 metrics 归一化为 0.0-1.0 综合评分，供 P3-3 critical_warn/block_next 判定
+  # --- 6 维加权健康度评分计算器（2026-07-20，#ARCH-PREVENTABILITY-LAYER-001 Phase 3 P3-2）---
+  # 将 abuse_monitor 6 维 metrics 归一化为 0.0-1.0 综合评分，供 P3-3 critical_warn/block_next 判定
   - file: "src/zephyr/governance/audit/health_score_calculator.py"
     token: "auto-health-score-calculator-20260720"
     created_by: "sess-15208-20260720172003"
@@ -6751,6 +6751,11 @@ creation_tokens:
     token: "auto-test-gate-auto-registrar-20260721"
     created_by: "ARCH-GATE-REGISTRY-AUTO-001"
     capability: "gate_auto_registrar"
+  # --- ISSUE-RESOLVED-INTEGRITY gate（2026-07-22，#ARCH-CONSUMERS-ACCURACY-003 Phase 2）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py"
+    token: "auto-issue-resolved-integrity-gate-20260722"
+    created_by: "session-sess-12656-20260722002724"
+    capability: "issue_resolved_integrity_gate"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
