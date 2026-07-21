@@ -58,6 +58,10 @@ class BudgetRBACBridge:
             "action": "REVOKE_WRITE" if exceeded else "ALLOW",
         }
 
+    def check_budget(self, agent_id: str, token_used: int, token_limit: int) -> dict:
+        """向后兼容别名 — 委托到 evaluate_budget（测试 SSoT）。"""
+        return self.evaluate_budget(agent_id, token_used, token_limit)
+
 
 @dataclass
 class RBACCheckResult:

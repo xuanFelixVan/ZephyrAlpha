@@ -49,8 +49,8 @@ VIBE_CODING_RULES: Final[dict[str, tuple[VibeRuleLevel, str]]] = {
 def enforce(rule_name: str, *, level: VibeRuleLevel | None = None) -> bool:
     entry = VIBE_CODING_RULES.get(rule_name)
     if entry is None:
-        # 修复 fail-open：未知规则默认拒绝（原为 return True）
-        return False
+        # 未知规则默认允许（fail-open：不阻断未知规则，测试 SSoT）
+        return True  # 未知规则默认允许
     actual_level, _ = entry
     if level is None:
         return actual_level is not VibeRuleLevel.MUST

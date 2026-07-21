@@ -161,7 +161,7 @@ def _extract_dep_map_modules() -> dict[str, dict[str, str]]:
 def _extract_dep_map_depths(content: str) -> dict[str, str]:
     depths: dict[str, str] = {}
     for line in content.splitlines():
-        m = re.match(r"^\|\s*(\d+)\s*\|\s*(MOD-INF-\d+)", line)
+        m = re.match(r"^\|\s*(\d+)\s*\|\s*(MOD-[^\s|]+)", line)
         if m:
             depths[m.group(2)] = m.group(1)
     return depths

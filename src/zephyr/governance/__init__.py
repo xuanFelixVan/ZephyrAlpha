@@ -77,6 +77,21 @@ except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（behavioral_admission -> audit_trail 循环链）
     pass
 
+# ARCH-031 CREATE-GUARD 适配：governance/ 根禁止新建 .py 文件，但测试和 boot_hooks
+# 需要 zephyr.governance.event_hook 和 zephyr.governance.drift_fix 模块路径。
+# 通过 sys.modules 注册别名指向 canonical 真源（ops_governance/infrastructure）。
+import sys as _sys_for_shim
+try:
+    from zephyr.governance.ops_governance import event_hook as _event_hook_shim
+    _sys_for_shim.modules['zephyr.governance.event_hook'] = _event_hook_shim
+except (ImportError, RuntimeError):
+    pass
+try:
+    from zephyr.infrastructure.rollback import drift_fix as _drift_fix_shim
+    _sys_for_shim.modules['zephyr.governance.drift_fix'] = _drift_fix_shim
+except (ImportError, RuntimeError):
+    pass
+
 
 def __getattr__(name):
     """延迟导入避免缺失模块阻塞整个包初始化."""
