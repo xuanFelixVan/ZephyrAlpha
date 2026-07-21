@@ -1,6 +1,13 @@
 # Dependencies — SSoT: pyproject.toml [project.dependencies]
 # This file is a mirror of pyproject.toml; update pyproject.toml first, then sync here.
 # 5.17.11 修复：统一 SSoT + 添加主版本上界（防止 breaking change）
+#
+# 2026-07-21 裁定 #ARCH-TORCH-CPU-ONLY:
+# 项目代码 0 个 `import torch`,但 sentence-transformers 间接依赖。
+# embedding_router.py 明确 device="cpu" —— GPU CUDA 完全浪费。
+# 治本:torch 已替换为 CPU 版 (2.5.1+cu121 4.27GB → 2.13.0+cpu 0.48GB)。
+# 重装命令: pip install torch --index-url https://download.pytorch.org/whl/cpu --no-deps
+# 阿里云镜像备用: pip install torch -i https://mirrors.aliyun.com/pypi/simple/ --no-cache-dir
 pydantic>=2.0.0,<3.0.0
 pyyaml>=6.0,<7.0
 pandas>=2.0.0,<3.0.0

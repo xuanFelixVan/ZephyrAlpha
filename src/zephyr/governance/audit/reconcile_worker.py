@@ -125,6 +125,46 @@ def _write_failed_status(
         pass
 
 
+
+
+def _write_boot_success_clean(
+    project_root: str,
+    commit_sha: str,
+    session_id: str,
+) -> None:
+    """worker boot 成功 → 对 RECONCILE-WORKER-BOOT gate_id 写 clean 记录（自愈）。
+
+    #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1 治本（2026-07-21）：
+    之前 worker 成功路径只写 status file（STATUS_DONE），不写 reconcile_execution_log
+    clean 记录，导致 RECONCILE-WORKER-BOOT critical_warn 永不自愈（告警生命周期不对称：
+    失败写 critical_warn，成功不写 clean）。本函数补全对称性——同样操作（worker boot）
+    成功执行证明之前失败已解决，写 clean 记录使活跃告警自动消解。
+
+    语义：仅对 RECONCILE-WORKER-BOOT gate_id 写 clean，不影响其他 gate_id 的告警。
+    幂等：多次成功写多条 clean 记录无副作用（SQL_SELECT_ACTIVE_CRITICAL_WARNS 只需
+    一条 clean 即可消解对应 critical_warn）。
+    """
+    try:
+        from zephyr.governance.audit.reconciliation_registry import (
+            ReconcileResult,
+            _log_reconcile_results,
+        )
+        _log_reconcile_results(
+            project_root,
+            [ReconcileResult(
+                action="clean",
+                detail=(
+                    f"reconcile_worker boot succeeded (commit={commit_sha}) "
+                    f"— auto-selfheal of prior RECONCILE-WORKER-BOOT critical_warn"
+                ),
+                gate_id="RECONCILE-WORKER-BOOT",
+            )],
+            session_id or "unknown",
+            trigger_source="post_commit_async",
+        )
+    except Exception:  # noqa: BLE001 — 自愈写入失败不阻断 worker 主流程
+        pass
+
 def _run_worker(payload: dict) -> int:
     """worker 主流程，返回 exit code（0=成功，1=失败）。"""
     from zephyr.governance.audit.reconcile_runner import (
@@ -212,6 +252,10 @@ def _run_worker(payload: dict) -> int:
         trigger_source="post_commit_async",
         worker_pid=os.getpid(),
     )
+
+    # 6. 自愈写入：worker boot 成功 → 对 RECONCILE-WORKER-BOOT 写 clean 记录
+    #    #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1：补全告警生命周期对称性
+    _write_boot_success_clean(project_root, commit_sha, session_id)
     return 0
 
 
