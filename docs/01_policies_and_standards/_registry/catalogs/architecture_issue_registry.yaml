@@ -3167,11 +3167,28 @@ entries:
     fail-open 放行（DB 不可用时无法可靠拓扑检查，post-merge reconciler 兜底）。第三期
     （可选长期）commit-time 轻量预检——depgraph YAML 镜像 + commit gate 检查
     [DEPENDENCIES] 头部声明在镜像中存在。
-  fix_phase: 第一期已完成（文档诚实化）；第二期已完成（pre-merge 拓扑硬阻断）；第三期待定（commit-time 轻量预检，可选长期）
-  status: in_progress
+  fix_phase: 第一期已完成（文档诚实化）；第二期已完成（pre-merge 拓扑硬阻断）；第三期已完成（commit-time 轻量预检——NEW-FILE-DEPGRAPH-ENFORCEMENT gate 落地，2026-07-21）
+  status: resolved
   related_adjudication: 遗留项#1治本
   created: '2026-07-17'
-  last_updated: '2026-07-17'
+  last_updated: '2026-07-21'
+  resolution_note: >-
+    第三期治本闭环（2026-07-21）：新建 new_file_depgraph_gate.py（priority=58，
+    #ARCH-DEP-001 第三期），检测 staged 新增 .py 文件（src/zephyr/ 或 scripts/ 下，
+    tests/ 豁免）在 depgraph nodes 表完全无记录时硬阻断 commit。设计三决策：
+    ①严格度=硬阻断（L1 原文"MUST"非建议，warn-only 无效）；
+    ②范围=src/zephyr/ + scripts/ 全覆盖 tests/ 豁免（tests 不是模块依赖链节点）；
+    ③现有节点处理=放行 generated/planned/stable/deprecated 任一状态（bootstrap 豁免，
+    不批量转 planned——保持 generated 是诚实状态）。
+    bootstrap 证据（2026-07-21 depgraph DB 查询）：整个项目 planned=41 vs generated=3811
+    （占比 1.05%），d8_doc_sync 目录 planned=0 vs generated=12，scripts/ 下 reconciler
+    planned=0 vs generated=3 stable=1。L1 执行差距是项目级系统性问题（3811 节点），
+    本 gate 只阻断"完全无记录"的新文件，不追溯现有 3811 个 generated 节点。
+    32 个单测 PASSED，gate 注册到 git_commit_gateway.py L417 post-HELDOVERLAP(50)
+    pre-CREATE-GUARD(60) 结构性检查位置。与 RENAME-DEPGRAPH-SYNC(39) 互补：
+    rename gate 管文件重命名(R)，本 gate 管新建文件(A)，覆盖完整。
+    L1 铁律从"君子协定 + post-merge reconciler 兜底"升级为"君子协定 + pre-merge
+    拓扑硬阻断 + commit-time 轻量预检"三层防御。
 
 # --- #ARCH-BENCH-LEAK-001: 周期 benchmark 线程泄漏 + 空 JSONL 文件泄漏治本 ---
 - issue_id: '#ARCH-BENCH-LEAK-001'
