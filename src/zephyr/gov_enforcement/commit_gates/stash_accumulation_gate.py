@@ -46,8 +46,8 @@ session_worktree_commit 漏列文件检测 = stash 累积。原 reconciler
    的红线。低于 40 时 warn 让 AI 有机会自愈（运行 reconciler）
 2. **warn 阈值 20**：低于 20 是正常范围（活跃 session 各 1-2 个 stash），
    20+ 提醒 AI 注意
-3. **priority=114**：在 DEPGRAPH-PRE-REGISTRATION=113 之后，CONSUMERS-ACCURACY=116
-   之前，作为基础设施级 stash 治理 gate（原 113 与 DEPGRAPH-PRE-REGISTRATION 冲突，后到者让位）
+3. **priority=118**：在 ISSUE-RESOLVED-INTEGRITY=117 之后，作为基础设施级
+   stash 治理 gate（原 113/114/115 均被占用，后到者让位至 118）
 4. **不检测 staged files**：本 gate 检测全局 stash 状态，与 staged files
    无关——即使空 commit 也检测（防 stash 累积）
 
@@ -105,7 +105,7 @@ def make_stash_accumulation_gate() -> GateSpec:
     """构造 stash 堆积阈值检测 GateSpec。
 
     Returns:
-        GateSpec(gate_id="STASH-ACCUMULATION", priority=114).
+        GateSpec(gate_id="STASH-ACCUMULATION", priority=118).
         - stash count > 40: (False, detail) 阻断 commit
         - stash count > 20: (True, detail) warn 不阻断
         - stash count <= 20: (True, "") 通过
@@ -137,7 +137,7 @@ def make_stash_accumulation_gate() -> GateSpec:
     return GateSpec(
         gate_id="STASH-ACCUMULATION",
         check=_check,
-        priority=114,  # DEPGRAPH-PRE-REGISTRATION=113 之后，CONSUMERS-ACCURACY=116 之前（后到者让位）
+        priority=118,  # ISSUE-RESOLVED-INTEGRITY=117 之后（原 113/114/115 均被占用，后到者让位）
     )
 
 

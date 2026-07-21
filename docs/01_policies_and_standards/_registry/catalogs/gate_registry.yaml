@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-07-21T16:35:15Z'
+generated_at: '2026-07-21T16:51:24Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -1077,7 +1077,7 @@ gates:
   status: active
   source: commit-gate
 - gate_id: STASH-ACCUMULATION
-  name: 'STASH-ACCUMULATION: stash 堆积阈值检测门禁（STASH-ACCUMULATION）（CommitGate, priority=114）'
+  name: 'STASH-ACCUMULATION: stash 堆积阈值检测门禁（STASH-ACCUMULATION）（CommitGate, priority=118）'
   entry: in-process (GitCommitGateway)
   description: stash 堆积阈值检测门禁（STASH-ACCUMULATION）
   files_trigger: ''

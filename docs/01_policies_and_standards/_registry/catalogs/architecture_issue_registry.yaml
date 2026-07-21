@@ -5967,6 +5967,77 @@ entries:
   created: '2026-07-21'
   last_updated: '2026-07-21'
 
+# --- #ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001: blueprint.md auto-sync 误分类治本（2026-07-21）---
+- issue_id: '#ARCH-BLUEPRINT-AUTOSYNC-MISCLASSIFY-001'
+  title: 'blueprint.md auto-sync 误分类治本——从 auto-sync 清单移除混合文件（frontmatter 派生 + 正文手写）'
+  category: architecture_governance
+  severity: P1
+  adjudication: |-
+    2026-07-21 立项裁定。#ARCH-WORKTREE-LIFECYCLE-001 Phase 3.1 施工时发现：
+    AI 编辑 docs/03_modules/**/blueprint.md 正文（迁移公告）后，调用
+    session_worktree_start 会触发 _check_workspace_clean -> _restore_auto_sync_batch，
+    把整个 blueprint.md 文件 git restore 到 HEAD 版本，导致正文编辑被清空（数据丢失）。
+
+    根因（第一性原理——分类粒度不匹配）：
+    - 生成器层（blueprint_frontmatter_reconciler._update_frontmatter L81-97）：字段级——
+      只同步 frontmatter 4 个字段（module_id/responsibility_domain/design_maturity/build_status），
+      正文 content[match.end():] 原样保留，"文档内容不动"（docstring 明示）
+    - 分类器层（workspace_hygiene_reconciler._is_auto_sync_product L165-167）：文件级——
+      docs/03_modules/**/blueprint.md 整文件判定为 auto-sync 产物
+    - 还原器层（session_worktree._restore_auto_sync_batch L4246）：文件级——
+      git restore 整个文件到 HEAD
+
+    病根：blueprint.md 是 auto-sync 清单中唯一的"混合文件"——部分内容是派生产物
+    （frontmatter），部分是 AI 手写真源（正文）。文件级分类对混合文件必然误伤。
+    其他 auto-sync 文件（dashboard.json/raw-asset-scan.json 等）是纯派生产物，
+    不存在此问题。
+
+    连锁后果：AI 被迫绕过 session_worktree_start（用 SessionRegistry.register + 
+    GitCommitGateway.commit 直接提交），worktree 君子协定被架空（技术降级，非主观绕过）。
+
+    方案对比（5 方案）：
+    A. 字段级 restore（读文件->分离 frontmatter/正文->只 restore frontmatter）：精确但复杂度>15
+    B. diff 感知分类（git diff 检测变更范围）：通用但需解析 diff
+    C. 从清单移除（删除 L165-167 特殊规则）：最简单，frontmatter 残留变 real_code warn
+    D. noqa 标记（AI 在文件中加标记）：违反"全自动"原则，依赖 AI 记忆
+    E. 变更来源追踪（reconciler 记录变更到 .runtime/）：需所有 reconciler 配合
+
+    裁定：方案 C——从 auto-sync 清单移除 blueprint.md 特殊规则。
+    理由（第一性原理三铁律）：
+    1. 能删除/合并的绝不保留 -> 倾向 C
+    2. 永久系统必须全自动 -> 排除 D（需手工标记）
+    3. 复杂度控制在 15 以下 -> 排除 A/E
+
+    方案 C 的安全性依据：blueprint_frontmatter_reconciler 已有 _commit_auto 机制
+    （reconciliation_registry.py L1564-1585），post-commit 会自动提交 frontmatter 变更。
+    所以工作区通常不会有 frontmatter 的 modified 残留——只有 AI 手动编辑时才会出现
+    modified，而这时的 modified 要么是正文（real_code），要么是 frontmatter（会被
+    _commit_auto 自动提交）。移除后 frontmatter 残留的 warn 风险远低于正文丢失的
+    数据丢失风险。
+
+    长远战略考虑（不在本次裁定范围，记录备查）：
+    - 混合文件的根本矛盾：blueprint.md 既是 AI 手写真源（正文）又是 reconciler 派生缓存
+      （frontmatter）。长远治本方向是把 frontmatter 缓存从 blueprint.md 分离到单独的
+      .frontmatter.yaml，消除"混合文件"类别
+    - auto-restore 的适用边界：只应包含"整文件都是派生产物"的文件，不应包含混合文件
+    - worktree 君子协定的韧性：session_worktree_start 的子机制应有独立逃生通道
+      （如 skip_auto_restore=True 参数），避免单个子机制 bug 导致整个 worktree 路径失效
+  impact:
+    - src/zephyr/governance/audit/workspace_hygiene_reconciler.py（删除 _is_auto_sync_product L165-167 blueprint.md 特殊规则 + 更新注释 + INVARIANTS）
+    - docs/01_policies_and_standards/policies/workspace_governance_policy.md（§2.1 添加移除说明）
+    - tests/governance/audit/test_workspace_hygiene_reconciler.py（修改 test_blueprint_md_in_modules_dir 期望值 + 新增 2 个回归测试）
+    - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）
+  fix_phase: |
+    Phase 1: 代码修改（workspace_hygiene_reconciler.py 删除 L165-167 + 更新注释 + INVARIANTS）
+    Phase 2: 文档同步（workspace_governance_policy.md §2.1 添加移除说明）
+    Phase 3: 测试（修改 test_blueprint_md_in_modules_dir 期望值 True->False + 新增 2 个回归测试）
+    Phase 4: 裁定登记（本条目）
+  status: resolved
+  related_adjudication: '#ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (auto-restore 机制引入者，本裁定修正其 blueprint.md 分类盲区), #ARCH-WORKTREE-LIFECYCLE-001 (Phase 3.1 施工时发现此问题)'
+  related_rules: 'trae_060 (向内收三原则——能删除/合并的绝不保留), AGENTS.md FP-ISO.4C (worktree 物理隔离，本裁定恢复其可用性)'
+  created: '2026-07-21'
+  last_updated: '2026-07-21'
+
 # --- #ARCH-STASH-ACCUMULATION-001: 占位登记——stash 堆积治理（另一 session 主导，待完整登记） ---
 - issue_id: '#ARCH-STASH-ACCUMULATION-001'
   title: 'stash 堆积治理——STASH-ACCUMULATION pre-commit gate + reconciler TTL 清理 + trae_075 规则真源（占位登记，另一 session 主导）'
