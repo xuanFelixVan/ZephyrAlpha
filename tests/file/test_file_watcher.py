@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0912 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_file_watcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §file_watcher
 # [MODULE] tests.test_file_watcher
 # [INVARIANTS] FileWatcher.poll_interval>=10s; FileChangeEvent必须包含path+event_type+timestamp

@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0829 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_emergency_takeover | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_emergency_takeover
 # [INVARIANTS] Emergency takeover must be irreversible once triggered

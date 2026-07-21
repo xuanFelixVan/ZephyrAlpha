@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0922 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_fix_reliability | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_fix_reliability
 # [INVARIANTS] IdempotencyGuard 24h TTL; DeadLetterQueue max 3 retries; ConflictResolver serializes same-file fixes

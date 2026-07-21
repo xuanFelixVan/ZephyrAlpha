@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1443 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_regulatory_audit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_regulatory_audit
 # [INVARIANTS] RegulatoryAudit.regulations is list[str]; default contains MiFID II and SEC Rule 606

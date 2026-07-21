@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0920 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_fix_health_check | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_fix_health_check
 # [INVARIANTS] 测试覆盖check/_check_db/_check_config;边界:空输入/None/异常

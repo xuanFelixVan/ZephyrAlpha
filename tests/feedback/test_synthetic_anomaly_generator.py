@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1713 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_synthetic_anomaly_generator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_synthetic_anomaly_generator
 # [INVARIANTS] generate returns list[dict] with length=count; each dict has pattern and id

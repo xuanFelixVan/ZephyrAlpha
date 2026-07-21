@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1436 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_recursive_diagnosis_trust_evaluator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_recursive_diagnosis_trust_evaluator
 # [INVARIANTS] none

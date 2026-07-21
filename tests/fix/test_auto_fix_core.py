@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1827 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_auto_fix_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-456 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.auto_fix_engine.test_auto_fix_core
 # [STABILITY] evolving

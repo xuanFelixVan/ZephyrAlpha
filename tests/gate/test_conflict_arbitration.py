@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-0576 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_conflict_arbitration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_conflict_arbitration
 # [INVARIANTS] Higher priority proposal must always win

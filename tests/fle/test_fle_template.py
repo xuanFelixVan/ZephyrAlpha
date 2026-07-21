@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1023 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_fle_template | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] tests.test_fle_template
 # [INVARIANTS] SKELETONS dict must be non-empty; all values must be non-empty strings

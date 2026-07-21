@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1530 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_scheduler_health | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_scheduler_health
 # [INVARIANTS] test_coverage>=2_public_methods;boundary_tests_included

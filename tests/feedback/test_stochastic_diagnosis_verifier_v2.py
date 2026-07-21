@@ -1,4 +1,4 @@
-# [A_test] module_id: SRC-TST-1691 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [A_test] module_id: MOD-GOV_stochastic_diagnosis_verifier_v2 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_stochastic_diagnosis_verifier_v2
 # [INVARIANTS] consensus_threshold=0.60; min_reruns=5; max_variance_tolerance=0.20
