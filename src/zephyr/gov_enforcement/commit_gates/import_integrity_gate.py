@@ -121,6 +121,26 @@ _SCAN_PREFIXES: tuple[str, ...] = ("scripts/governance/", "src/")
 # 项目内模块前缀（用文件系统查找，避免 import 副作用）
 _PROJECT_PREFIXES: tuple[str, ...] = ("zephyr.", "scripts.", "tests.")
 
+# noqa 行级逃生：对标 bare-subprocess gate 模式
+# 格式：`# noqa: import-integrity` + 2+ 空格 + reason（>=10 字符）
+_IMPORT_INTEGRITY_NOQA_PATTERN = re.compile(
+    r"#\s*noqa:\s*import-integrity\s{2,}(\S.*)$",
+    re.MULTILINE,
+)
+
+
+def _extract_noqa_lines(file_content: str) -> set[int]:
+    """提取带 `# noqa: import-integrity  <reason>` 注释的行号集合（1-based）。
+
+    逃生通道：对标 bare-subprocess gate 模式。
+    命中 noqa 的行不报告悬空 import。
+    """
+    noqa_lines: set[int] = set()
+    for i, line in enumerate(file_content.splitlines(), start=1):
+        if _IMPORT_INTEGRITY_NOQA_PATTERN.search(line):
+            noqa_lines.add(i)
+    return noqa_lines
+
 
 def _is_relative_import(node: ast.Import | ast.ImportFrom) -> bool:
     """判断是否为相对 import（from . / from ..）。"""
@@ -296,8 +316,11 @@ def scan_content_for_dangling_imports(
         return []  # fail-open：语法错误由其他阶段检测
 
     imports = _collect_imports(tree)
+    noqa_lines = _extract_noqa_lines(content)
     violations: list[str] = []
     for lineno, module_path, _is_from in imports:
+        if lineno in noqa_lines:
+            continue  # 行级 noqa 逃生
         if _is_project_module(module_path):
             if not _check_project_module_resolvable(module_path, staged_files, gateway):
                 violations.append(

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.boot_hooks
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.ops_governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
+# [DEPENDENCIES] zephyr.shared.event_bus; zephyr.governance.event_hook; zephyr.trading.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.governance.persistence.task_repo; zephyr.gov_enforcement.rule_enforcement.triple_alignment; zephyr.intelligence.model_evaluation.sync_engine; zephyr.governance.__init__; zephyr.governance.resilience_governance.f5_boot_integration; zephyr.governance.resilience_governance.f5_shutdown_manager
 # [CONSUMERS] zephyr.trading.auto_runtime_core
 # [STARTUP] imported
 # [MATURITY] prototype
@@ -237,7 +237,7 @@ def _subscribe_eventbus_consumers() -> None:
 def _register_rbac_hooks() -> None:
     """注册RBAC事件钩子 — 在任务状态转换时检查权限."""
     try:
-        from zephyr.governance.ops_governance.event_hook import hook_registry
+        from zephyr.governance.event_hook import hook_registry  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
 
         def _on_task_in_progress_rbac_check(event: object) -> None:
             """任务开始执行时验证RBAC系统就绪状态."""
@@ -548,7 +548,7 @@ def register_boot_hooks(
     budget_engine: BudgetEngineProtocol | None = None,
 ) -> None:
     try:
-        from zephyr.governance.ops_governance.event_hook import hook_registry
+        from zephyr.governance.event_hook import hook_registry  # noqa: import-integrity  sys.modules shim registered in governance/__init__.py
 
         # Task system hooks — 需要 task_repo 的用 lambda 绑定
         hook_registry.register(lambda e: _hook_auto_unblock_dependents(e, task_repo), priority=50, name="auto_unblock_dependents")

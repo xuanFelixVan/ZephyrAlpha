@@ -137,6 +137,10 @@ class P0InflationWarning(TaskRepositoryError):
 
 
 _ALLOWED_TRANSITIONS: dict[TaskStatus, frozenset[TaskStatus]] = {
+    TaskStatus.CREATED: frozenset({TaskStatus.PENDING, TaskStatus.LOCKED, TaskStatus.CANCELLED}),
+    TaskStatus.LOCKED: frozenset({TaskStatus.PENDING, TaskStatus.ASSIGNED, TaskStatus.CANCELLED}),
+    TaskStatus.ASSIGNED: frozenset({TaskStatus.IN_PROGRESS, TaskStatus.PENDING, TaskStatus.CANCELLED}),
+    TaskStatus.REVIEWING: frozenset({TaskStatus.COMPLETED, TaskStatus.IN_PROGRESS, TaskStatus.FAILED}),
     TaskStatus.PENDING: frozenset(
         {
             TaskStatus.IN_PROGRESS,

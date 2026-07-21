@@ -127,7 +127,7 @@ class ConstitutionalAutoUpdate:
                         seen_patterns.add(l.pattern_id)
 
             for decision in record.get("decisions", []):
-                if decision.get("id", "").startswith("D_RISK"):
+                if decision.get("id", "").startswith("D-RISK"):
                     pattern_id = f"L-DEC-{session_id}-{len(learnings):03d}"
                     l = Learning(
                         pattern_id=pattern_id,

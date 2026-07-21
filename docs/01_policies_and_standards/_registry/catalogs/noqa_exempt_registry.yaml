@@ -243,6 +243,21 @@ markers:
     created: "2026-07-21"
     created_by: "ARCH-CONSUMERS-ACCURACY-001"
 
+  - marker: "import-integrity"
+    metric_id: null  # 非 dashboard 指标，是 GATE-IMPORT-INTEGRITY gate 行级豁免
+    description: "GATE-IMPORT-INTEGRITY gate 行级豁免——悬空 import 检测的合法特殊情况"
+    applicable_conditions:
+      - "模块通过 sys.modules 注册别名（如 governance/__init__.py 注册 zephyr.governance.event_hook 指向子目录模块）"
+      - "模块在 try/except 中 import，运行时可能不存在但代码已处理 ImportError"
+      - "模块路径在运行时动态拼接，静态分析无法解析"
+      - "re-export shim 通过 __init__.py 聚合，目标模块在不同包路径"
+    reason_required: true
+    reason_format: "import-integrity豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"  # 行级豁免（per-line）
+    created: "2026-07-21"
+    created_by: "ARCH-CROSS-COMMIT-ATOMICITY-001"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
