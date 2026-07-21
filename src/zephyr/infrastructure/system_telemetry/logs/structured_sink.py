@@ -13,7 +13,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 写入失败->stderr->内存缓冲(1000条)->丢弃+告警;单Consumer线程串行化
 # [TESTS] tests/infrastructure/
-# [A_module] module_id=MOD-INF-015-sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_structured_sink | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 """logs/structured_sink — 结构化日志管道（D_SYSTEM_TELEMETRY）。

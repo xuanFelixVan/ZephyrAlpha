@@ -1,4 +1,4 @@
-# [A_module] module_id=MOD-INF-015-logs | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-GOV_init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | 蓝图特有§A
 # [MODULE] zephyr.infrastructure.system_telemetry.logs
 # [DOMAIN] D_INFRA_RUNTIME
